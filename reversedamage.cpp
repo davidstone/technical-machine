@@ -33,8 +33,8 @@ void reversedamagecalculator (teams &attacker, const teams &defender, const weat
 	unsigned char old_spe_ev = 32;		// Illegal value to force recalculation of speed stat
 	unsigned char old_offense_ev = 32;	// Illegal value to force recalculation of attacking stat
 	
-	int type1 = effectiveness (attacker.active->move->type, defender.active->type1);		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
-	int type2 = effectiveness (attacker.active->move->type, defender.active->type2);		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
+	int type1 = effectiveness [attacker.active->move->type] [defender.active->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
+	int type2 = effectiveness [attacker.active->move->type] [defender.active->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 	for (std::vector<Unknown>::const_iterator it = hidden.begin(); it != hidden.end(); ++it) {
 		attacker.active->item = static_cast<items> (it->item);
 		attacker.active->nature = static_cast<natures> (it->nature);

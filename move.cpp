@@ -613,7 +613,7 @@ void switchpokemon (teams &team, const pokemon &memberin, const weathers &weathe
 			heal (*team.active, -16, team.spikes + 1);
 	}
 	if (team.stealth_rock)
-		heal (*team.active, -32, effectiveness (ROCK, team.active->type1) * effectiveness (ROCK, team.active->type2));	// effectiveness () outputs a value between 1 and 4, with higher numbers being more effective. 4 * effective Stealth Rock does 16 / 32 damage.
+		heal (*team.active, -32, effectiveness [ROCK] [team.active->type1] * effectiveness [ROCK] [team.active->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
 }
 
 #endif

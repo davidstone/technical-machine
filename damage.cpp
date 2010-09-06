@@ -391,8 +391,8 @@ int damagerandom (const pokemon &attacker, const teams &defender, int &stab, int
 
 int damagecalculator (const pokemon &attacker, const teams &defender, const weathers &weather) {
 	int damage = 0;
-	int type1 = effectiveness (attacker.move->type, defender.active->type1);		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
-	int type2 = effectiveness (attacker.move->type, defender.active->type2);		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
+	int type1 = effectiveness [attacker.move->type] [defender.active->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
+	int type2 = effectiveness [attacker.move->type] [defender.active->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 	if ((type1 == 0 or type2 == 0) or (GROUND == attacker.move->type and !grounded (*defender.active, weather)) == false) {
 		int stab;		// Same Type Attack Bonus: 3 / 2
 		int aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4

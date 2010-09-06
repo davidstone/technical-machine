@@ -12,184 +12,30 @@
 #ifndef TYPE_H_
 #define TYPE_H_
 
-enum types { BUG, DARK, DRAGON, ELECTRIC, FIGHTING, FIRE, FLYING, GHOST, GRASS, GROUND, ICE, NORMAL, POISON, PSYCHIC_TYPE, ROCK, STEEL, WATER, TYPELESS };
+enum types { BUG, DARK, DRAGON, ELECTRIC, FIGHTING, FIRE, FLYING, GHOST, GRASS, GROUND, ICE, NORMAL, POISON, PSYCHIC_TYPE, ROCK, STEEL, TYPELESS, WATER };
 
-// Calculate the effectiveness of move_type on defender_type. 0 is no effect, 1 is not very effective, 2 is neutral, and 4 is super effective.
+// Calculate the effectiveness of attacking type on defending type. 0 is no effect, 1 is not very effective, 2 is neutral, and 4 is super effective.
 
-int effectiveness (types move_type, types defender_type) {
-	
-	int effectiveness;
-	
-	if (move_type == BUG) {
-		if (defender_type == DARK or defender_type == GRASS or defender_type == PSYCHIC_TYPE)
-			effectiveness = 4;
-		else if (defender_type == FIGHTING or defender_type == FIRE or defender_type == FLYING or defender_type == GHOST or defender_type == POISON or defender_type == STEEL)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == DARK) {
-		if (defender_type == GHOST or defender_type == PSYCHIC_TYPE)
-			effectiveness = 4;
-		else if (defender_type == DARK or defender_type == FIGHTING or defender_type == STEEL)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == DRAGON) {
-		if (defender_type == DRAGON)
-			effectiveness = 4;
-		else if (defender_type == STEEL)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == ELECTRIC) {
-		if (defender_type == FLYING or defender_type == WATER)
-			effectiveness = 4;
-		else if (defender_type == DRAGON or defender_type == ELECTRIC or defender_type == GRASS)
-			effectiveness = 1;
-		else if (defender_type == GROUND)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == FIGHTING) {
-		if (defender_type == DARK or defender_type == ICE or defender_type == NORMAL or defender_type == ROCK or defender_type == STEEL)
-			effectiveness = 4;
-		else if (defender_type == BUG or defender_type == FLYING or defender_type == POISON or defender_type == PSYCHIC_TYPE)
-			effectiveness = 1;
-		else if (defender_type == GHOST)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == FIRE) {
-		if (defender_type == BUG or defender_type == GRASS or defender_type == ICE or defender_type == STEEL)
-			effectiveness = 4;
-		else if (defender_type == DRAGON or defender_type == FIRE or defender_type == ROCK or defender_type == WATER)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == FLYING) {
-		if (defender_type == BUG or defender_type == FIGHTING or defender_type == GRASS)
-			effectiveness = 4;
-		else if (defender_type == ELECTRIC or defender_type == ROCK or defender_type == STEEL)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == GHOST) {
-		if (defender_type == GHOST or defender_type == PSYCHIC_TYPE)
-			effectiveness = 4;
-		else if (defender_type == DARK or defender_type == STEEL)
-			effectiveness = 1;
-		else if (defender_type == NORMAL)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == GRASS) {
-		if (defender_type == GROUND or defender_type == ROCK or defender_type == WATER)
-			effectiveness = 4;
-		else if (defender_type == BUG or defender_type == DRAGON or defender_type == FIRE or defender_type == FLYING or defender_type == GRASS or defender_type == POISON or defender_type == STEEL)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == GROUND) {
-		if (defender_type == ELECTRIC or defender_type == FIRE or defender_type == POISON or defender_type == ROCK or defender_type == STEEL)
-			effectiveness = 4;
-		else if (defender_type == BUG or defender_type == GRASS)
-			effectiveness = 1;
-		else if (defender_type == FLYING)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == ICE) {
-		if (defender_type == DRAGON or defender_type == FLYING or defender_type == GRASS or defender_type == GROUND)
-			effectiveness = 4;
-		else if (defender_type == FIRE or defender_type == ICE or defender_type == STEEL or defender_type == WATER)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == NORMAL) {
-		if (defender_type == ROCK or defender_type == STEEL)
-			effectiveness = 1;
-		else if (defender_type == GHOST)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == POISON) {
-		if (defender_type == GRASS)
-			effectiveness = 4;
-		else if (defender_type == GHOST or defender_type == GROUND or defender_type == POISON or defender_type == ROCK)
-			effectiveness = 1;
-		else if (defender_type == STEEL)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == PSYCHIC_TYPE) {
-		if (defender_type == FIGHTING or defender_type == POISON)
-			effectiveness = 4;
-		else if (defender_type == PSYCHIC_TYPE or defender_type == STEEL)
-			effectiveness = 1;
-		else if (defender_type == DARK)
-			effectiveness = 0;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == ROCK) {
-		if (defender_type == BUG or defender_type == FIRE or defender_type == FLYING or defender_type == ICE)
-			effectiveness = 4;
-		else if (defender_type == FIGHTING or defender_type == GRASS or defender_type == STEEL)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == STEEL) {
-		if (defender_type == ICE or defender_type == ROCK)
-			effectiveness = 4;
-		else if (defender_type == ELECTRIC or defender_type == FIRE or defender_type == STEEL or defender_type == WATER)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else if (move_type == WATER) {
-		if (defender_type == FIRE or defender_type == GROUND or defender_type == ROCK)
-			effectiveness = 4;
-		else if (defender_type == DRAGON or defender_type == GRASS or defender_type == WATER)
-			effectiveness = 1;
-		else
-			effectiveness = 2;
-	}
-	
-	else				// typeless moves
-		effectiveness = 2;
-	
-	return effectiveness;
-}
+const int effectiveness [18][18] = {
+	{ 2, 4, 2, 2, 1, 1, 1, 1, 4, 2, 2, 2, 1, 4, 2, 1, 2, 2 },		// Bug
+	{ 2, 1, 2, 2, 1, 2, 2, 4, 2, 2, 2, 2, 2, 4, 2, 1, 2, 2 },		// Dark
+	{ 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2 },		// Dragon
+	{ 2, 2, 1, 1, 2, 2, 4, 2, 1, 0, 2, 2, 2, 2, 2, 2, 2, 4 },		// Electric
+	{ 1, 4, 2, 2, 2, 2, 1, 0, 2, 2, 4, 4, 1, 1, 4, 4, 2, 2 },		// Fighting
+	{ 4, 2, 1, 2, 2, 1, 2, 2, 4, 2, 4, 2, 2, 2, 1, 4, 2, 1 },		// Fire
+	{ 4, 2, 2, 1, 4, 2, 2, 2, 4, 2, 2, 2, 2, 2, 1, 1, 2, 2 },		// Flying
+	{ 2, 1, 2, 2, 2, 2, 2, 4, 2, 2, 2, 0, 2, 4, 2, 1, 2, 2 },		// Ghost
+	{ 1, 2, 1, 2, 2, 1, 1, 2, 1, 4, 2, 2, 1, 2, 4, 1, 2, 4 },		// Grass
+	{ 1, 2, 2, 4, 2, 4, 0, 2, 1, 2, 2, 2, 4, 2, 4, 4, 2, 2 },		// Ground
+	{ 2, 2, 4, 2, 2, 1, 4, 2, 4, 4, 1, 2, 2, 2, 2, 1, 2, 1 },		// Ice
+	{ 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2 },		// Normal
+	{ 2, 2, 2, 2, 2, 2, 2, 1, 4, 1, 2, 2, 1, 2, 1, 0, 2, 2 },		// Poison
+	{ 2, 0, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 4, 1, 2, 1, 2, 2 },		// Psychic
+	{ 4, 2, 2, 2, 1, 4, 4, 2, 2, 1, 4, 2, 2, 2, 2, 1, 2, 2 },		// Rock
+	{ 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 4, 2, 2, 2, 4, 1, 2, 1 },		// Steel
+	{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },		// Typless
+	{ 2, 2, 1, 2, 2, 4, 2, 2, 1, 4, 2, 2, 2, 2, 4, 2, 2, 1 }		// Water
+};
 
 /*
 std::map <std::string, types> types_map;
