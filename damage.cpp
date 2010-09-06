@@ -269,112 +269,96 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 
 int damagenonrandom (const pokemon &attacker, const teams &defender, const weathers &weather, int &stab, int &type1, int &type2, int &aem, int &eb, int &tl, int &rb) {
 	int damage;
-	if (DRAGON_RAGE == attacker.move->name)
-		damage = 40;
-	else if (ENDEAVOR == attacker.move->name)
-		damage = defender.active->hp.stat - attacker.hp.stat;
-	else if (FISSURE == attacker.move->name or GUILLOTINE == attacker.move->name or HORN_DRILL == attacker.move->name or SHEER_COLD == attacker.move->name)
-		damage = defender.active->hp.max;
-	else if (NIGHT_SHADE == attacker.move->name or SEISMIC_TOSS == attacker.move->name)
-		damage = attacker.level;
-	else if (PSYWAVE == attacker.move->name)
-		damage = attacker.move->variable * attacker.level / 10;
-	else if (SONICBOOM == attacker.move->name)
-		damage = 20;
-	else if (SUPER_FANG == attacker.move->name)
-		damage = defender.active->hp.stat / 2;
+	int rl;					// Reflect / Light Screen (2)
+	if (((0 != defender.reflect and attacker.move->physical) or (0 != defender.light_screen and false == attacker.move->physical)) and false == attacker.move->ch)
+		rl = 2;
+	else
+		rl = 1;
 
-	else {
+	int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+	if ((0 != weather.rain and WATER == attacker.move->type) or (0 != weather.sun and FIRE == attacker.move->type))
+		weather_mod = 3;
+	else if ((0 != weather.rain and FIRE == attacker.move->type) or (0 != weather.sun and WATER == attacker.move->type))
+		weather_mod = 1;
+	else
+		weather_mod = 2;
+
+	int ff_mod;				// Flash Fire: 3 / 2
+	if (attacker.ff and FIRE == attacker.move->type)
+		ff_mod = 3;
+	else
+		ff_mod = 2;
+
+	int ch_mod;				// Critical Hit (2 normally, 3 with Sniper)
+	if (attacker.move->ch) {
+		if (SNIPER == attacker.ability)
+			ch_mod = 3;
+		else
+			ch_mod = 2;
+	}
+	else
+		ch_mod = 1;
+
+	int itm;					// Life Orb (13), Metronome (10 through 20) / 10
+	if (LIFE_ORB == attacker.item)
+		itm = 13;
+	else if (METRONOME_ITEM == attacker.item) {
+		if (attacker.move->times_used >= 10)
+			itm = 20;
+		else
+			itm = 10 + attacker.move->times_used;
+	}
+	else
+		itm = 10;
+
+	int mf_mod;				// Me First: 3 / 2
+	if (attacker.mf)
+		mf_mod = 3;
+	else
+		mf_mod = 2;
+	
+	damage = (attacker.level * 2 / 5 + 2) * attacker.move->power;
+	if (attacker.move->physical) {
 		int burn;				// Burn (2)
-		if (BURN == attacker.status and attacker.move->physical and GUTS != attacker.ability)
+		if (BURN == attacker.status and GUTS != attacker.ability)
 			burn = 2;
 		else
 			burn = 1;
-	
-		int rl;					// Reflect / Light Screen (2)
-		if (((0 != defender.reflect and attacker.move->physical) or (0 != defender.light_screen and false == attacker.move->physical)) and false == attacker.move->ch)
-			rl = 2;
-		else
-			rl = 1;
 
-		int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-		if ((0 != weather.rain and WATER == attacker.move->type) or (0 != weather.sun and FIRE == attacker.move->type))
-			weather_mod = 3;
-		else if ((0 != weather.rain and FIRE == attacker.move->type) or (0 != weather.sun and WATER == attacker.move->type))
-			weather_mod = 1;
-		else
-			weather_mod = 2;
-
-		int ff_mod;				// Flash Fire: 3 / 2
-		if (attacker.ff and FIRE == attacker.move->type)
-			ff_mod = 3;
-		else
-			ff_mod = 2;
-
-		int ch_mod;				// Critical Hit (2 normally, 3 with Sniper)
-		if (attacker.move->ch) {
-			if (SNIPER == attacker.ability)
-				ch_mod = 3;
-			else
-				ch_mod = 2;
-		}
-		else
-			ch_mod = 1;
-
-		int itm;					// Life Orb (13), Metronome (10 through 20) / 10
-		if (LIFE_ORB == attacker.item)
-			itm = 13;
-		else if (METRONOME_ITEM == attacker.item) {
-			if (attacker.move->times_used >= 10)
-				itm = 20;
-			else
-				itm = 10 + attacker.move->times_used;
-		}
-		else
-			itm = 10;
-
-		int mf_mod;				// Me First: 3 / 2
-		if (attacker.mf)
-			mf_mod = 3;
-		else
-			mf_mod = 2;
-		
-		damage = (attacker.level * 2 / 5 + 2) * attacker.move->power;
-		if (attacker.move->physical)
-			damage = damage * attacker.atk.stat / 50 / defender.active->def.stat / burn;
-		else
-			damage = damage * attacker.spa.stat / 50 / defender.active->spd.stat;
-		damage = (damage / rl * weather_mod / 2 * ff_mod / 2 + 2) * ch_mod * itm / 10 * mf_mod / 2;
-
-		if (istype (attacker, attacker.move->type) and TYPELESS != attacker.move->type) {
-			if (ADAPTABILITY == attacker.ability)
-				stab = 4;
-			else
-				stab = 3;
-		}
-		else
-			stab = 2;
-
-		if ((FILTER == defender.active->ability or SOLID_ROCK == defender.active->ability) and type1 * type2 > 2)
-			aem = 3;
-		else
-			aem = 4;
-
-		if (EXPERT_BELT == attacker.item and type1 * type2 > 2)
-			eb = 6;
-		else
-			eb = 5;
-
-		if (TINTED_LENS == attacker.ability and type1 * type2 < 2)
-			tl = 2;
-		else
-			tl = 1;
-
-		if ((defender.active->item == CHILAN_BERRY and attacker.move->type == NORMAL) or (type1 * type2 > 2 and ((defender.active->item == BABIRI_BERRY and attacker.move->type == STEEL) or (defender.active->item == CHARTI_BERRY and attacker.move->type == ROCK) or (defender.active->item == CHOPLE_BERRY and attacker.move->type == FIGHTING) or (defender.active->item == COBA_BERRY and attacker.move->type == FLYING) or (defender.active->item == COLBUR_BERRY and attacker.move->type == DARK) or (defender.active->item == HABAN_BERRY and attacker.move->type == DRAGON) or (defender.active->item == KASIB_BERRY and attacker.move->type == GHOST) or (defender.active->item == KEBIA_BERRY and attacker.move->type == POISON) or (defender.active->item == OCCA_BERRY and attacker.move->type == FIRE) or (defender.active->item == PASSHO_BERRY and attacker.move->type == WATER) or (defender.active->item == PAYAPA_BERRY and attacker.move->type == PSYCHIC_TYPE) or (defender.active->item == RINDO_BERRY and attacker.move->type == GRASS) or (defender.active->item == SHUCA_BERRY and attacker.move->type == GROUND) or (defender.active->item == TANGA_BERRY and attacker.move->type == BUG) or (defender.active->item == WACAN_BERRY and attacker.move->type == ELECTRIC) or (defender.active->item == YACHE_BERRY and attacker.move->type == ICE))))
-			rb = 2;
-		else
-			rb = 1;
+		damage = damage * attacker.atk.stat / 50 / defender.active->def.stat / burn;
 	}
+	else
+		damage = damage * attacker.spa.stat / 50 / defender.active->spd.stat;
+	damage = (damage / rl * weather_mod / 2 * ff_mod / 2 + 2) * ch_mod * itm / 10 * mf_mod / 2;
+
+	if (istype (attacker, attacker.move->type) and TYPELESS != attacker.move->type) {
+		if (ADAPTABILITY == attacker.ability)
+			stab = 4;
+		else
+			stab = 3;
+	}
+	else
+		stab = 2;
+
+	if ((FILTER == defender.active->ability or SOLID_ROCK == defender.active->ability) and type1 * type2 > 2)
+		aem = 3;
+	else
+		aem = 4;
+
+	if (EXPERT_BELT == attacker.item and type1 * type2 > 2)
+		eb = 6;
+	else
+		eb = 5;
+
+	if (TINTED_LENS == attacker.ability and type1 * type2 < 2)
+		tl = 2;
+	else
+		tl = 1;
+
+	if ((defender.active->item == CHILAN_BERRY and attacker.move->type == NORMAL) or (type1 * type2 > 2 and ((defender.active->item == BABIRI_BERRY and attacker.move->type == STEEL) or (defender.active->item == CHARTI_BERRY and attacker.move->type == ROCK) or (defender.active->item == CHOPLE_BERRY and attacker.move->type == FIGHTING) or (defender.active->item == COBA_BERRY and attacker.move->type == FLYING) or (defender.active->item == COLBUR_BERRY and attacker.move->type == DARK) or (defender.active->item == HABAN_BERRY and attacker.move->type == DRAGON) or (defender.active->item == KASIB_BERRY and attacker.move->type == GHOST) or (defender.active->item == KEBIA_BERRY and attacker.move->type == POISON) or (defender.active->item == OCCA_BERRY and attacker.move->type == FIRE) or (defender.active->item == PASSHO_BERRY and attacker.move->type == WATER) or (defender.active->item == PAYAPA_BERRY and attacker.move->type == PSYCHIC_TYPE) or (defender.active->item == RINDO_BERRY and attacker.move->type == GRASS) or (defender.active->item == SHUCA_BERRY and attacker.move->type == GROUND) or (defender.active->item == TANGA_BERRY and attacker.move->type == BUG) or (defender.active->item == WACAN_BERRY and attacker.move->type == ELECTRIC) or (defender.active->item == YACHE_BERRY and attacker.move->type == ICE))))
+		rb = 2;
+	else
+		rb = 1;
 	return damage;
 }
 
@@ -394,13 +378,30 @@ int damagecalculator (const pokemon &attacker, const teams &defender, const weat
 	int type1 = effectiveness [attacker.move->type] [defender.active->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
 	int type2 = effectiveness [attacker.move->type] [defender.active->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 	if ((type1 == 0 or type2 == 0) or (GROUND == attacker.move->type and !grounded (*defender.active, weather)) == false) {
-		int stab;		// Same Type Attack Bonus: 3 / 2
-		int aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-		int eb;		// Expert Belt: 6 / 5
-		int tl;			// Tinted Lens (2)
-		int rb;		// Resistance berries (2)
-		damage = damagenonrandom (attacker, defender, weather, stab, type1, type2, aem, eb, tl, rb);
-		damage = damagerandom (attacker, defender, stab, type1, type2, aem, eb, tl, rb, damage);
+		if (DRAGON_RAGE == attacker.move->name)
+			damage = 40;
+		else if (ENDEAVOR == attacker.move->name)
+			damage = defender.active->hp.stat - attacker.hp.stat;
+		else if (FISSURE == attacker.move->name or GUILLOTINE == attacker.move->name or HORN_DRILL == attacker.move->name or SHEER_COLD == attacker.move->name)
+			damage = defender.active->hp.max;
+		else if (NIGHT_SHADE == attacker.move->name or SEISMIC_TOSS == attacker.move->name)
+			damage = attacker.level;
+		else if (PSYWAVE == attacker.move->name)
+			damage = attacker.move->variable * attacker.level / 10;
+		else if (SONICBOOM == attacker.move->name)
+			damage = 20;
+		else if (SUPER_FANG == attacker.move->name)
+			damage = defender.active->hp.stat / 2;
+
+		else {
+			int stab;		// Same Type Attack Bonus: 3 / 2
+			int aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+			int eb;		// Expert Belt: 6 / 5
+			int tl;			// Tinted Lens (2)
+			int rb;		// Resistance berries (2)
+			damage = damagenonrandom (attacker, defender, weather, stab, type1, type2, aem, eb, tl, rb);
+			damage = damagerandom (attacker, defender, stab, type1, type2, aem, eb, tl, rb, damage);
+		}
 	}
 	return damage;
 }
