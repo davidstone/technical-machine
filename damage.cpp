@@ -265,17 +265,14 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 	}
 }
 
-// I split my damage calculator up into a function that calculates as much as possible without the random number and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code. Profiling showed this to be a sound optimization.
+// I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
 
-int damagenonrandom (const pokemon &attacker, const teams &defender, const weathers &weather, int &stab, int &type1, int &type2, int &aem, int &eb, int &tl, int &rb) {
-	int damage;
-	int rl;					// Reflect / Light Screen (2)
+int damageknown (const pokemon &attacker, const teams &defender, const weathers &weather, int &rl, int &weather_mod, int &ff, int &mf) {
 	if (((0 != defender.reflect and attacker.move->physical) or (0 != defender.light_screen and false == attacker.move->physical)) and false == attacker.move->ch)
 		rl = 2;
 	else
 		rl = 1;
 
-	int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
 	if ((0 != weather.rain and WATER == attacker.move->type) or (0 != weather.sun and FIRE == attacker.move->type))
 		weather_mod = 3;
 	else if ((0 != weather.rain and FIRE == attacker.move->type) or (0 != weather.sun and WATER == attacker.move->type))
@@ -283,12 +280,22 @@ int damagenonrandom (const pokemon &attacker, const teams &defender, const weath
 	else
 		weather_mod = 2;
 
-	int ff_mod;				// Flash Fire: 3 / 2
 	if (attacker.ff and FIRE == attacker.move->type)
-		ff_mod = 3;
+		ff = 3;
 	else
-		ff_mod = 2;
+		ff = 2;
 
+	if (attacker.mf)
+		mf = 3;
+	else
+		mf = 2;
+	
+	return attacker.level * 2 / 5 + 2;
+}
+
+
+
+int damagenonrandom (const pokemon &attacker, const teams &defender, int &rl, int &weather_mod, int &ff, int &mf, int &stab, int &type1, int &type2, int &aem, int &eb, int &tl, int &rb, int damage) {
 	int ch_mod;				// Critical Hit (2 normally, 3 with Sniper)
 	if (attacker.move->ch) {
 		if (SNIPER == attacker.ability)
@@ -311,13 +318,7 @@ int damagenonrandom (const pokemon &attacker, const teams &defender, const weath
 	else
 		itm = 10;
 
-	int mf_mod;				// Me First: 3 / 2
-	if (attacker.mf)
-		mf_mod = 3;
-	else
-		mf_mod = 2;
-	
-	damage = (attacker.level * 2 / 5 + 2) * attacker.move->power;
+	damage *= attacker.move->power;
 	if (attacker.move->physical) {
 		int burn;				// Burn (2)
 		if (BURN == attacker.status and GUTS != attacker.ability)
@@ -329,7 +330,7 @@ int damagenonrandom (const pokemon &attacker, const teams &defender, const weath
 	}
 	else
 		damage = damage * attacker.spa.stat / 50 / defender.active->spd.stat;
-	damage = (damage / rl * weather_mod / 2 * ff_mod / 2 + 2) * ch_mod * itm / 10 * mf_mod / 2;
+	damage = (damage / rl * weather_mod / 2 * ff / 2 + 2) * ch_mod * itm / 10 * mf / 2;
 
 	if (istype (attacker, attacker.move->type) and TYPELESS != attacker.move->type) {
 		if (ADAPTABILITY == attacker.ability)
@@ -394,12 +395,17 @@ int damagecalculator (const pokemon &attacker, const teams &defender, const weat
 			damage = defender.active->hp.stat / 2;
 
 		else {
-			int stab;		// Same Type Attack Bonus: 3 / 2
-			int aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-			int eb;		// Expert Belt: 6 / 5
-			int tl;			// Tinted Lens (2)
-			int rb;		// Resistance berries (2)
-			damage = damagenonrandom (attacker, defender, weather, stab, type1, type2, aem, eb, tl, rb);
+			int rl;						// Reflect / Light Screen (2)
+			int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+			int ff;					// Flash Fire: 3 / 2
+			int mf;					// Me First: 3 / 2
+			int stab;					// Same Type Attack Bonus: 3 / 2
+			int aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+			int eb;					// Expert Belt: 6 / 5
+			int tl;						// Tinted Lens (2)
+			int rb;					// Resistance berries (2)
+			damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
+			damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, type1, type2, aem, eb, tl, rb, damage);
 			damage = damagerandom (attacker, defender, stab, type1, type2, aem, eb, tl, rb, damage);
 		}
 	}
