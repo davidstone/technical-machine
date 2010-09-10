@@ -134,21 +134,8 @@ void loadpokemon (teams& team, std::ifstream &file) {	// Replace this with a rea
 	hitpoints (member);
 	member.hp.stat = member.hp.max;
 
-	if (member.pokemon == BLISSEY) {
-		member.mass = 120;										// fix later
-	}
-	else if (member.pokemon == SUICUNE) {
-		member.mass = 100;
-	}
-	else if (member.pokemon == INFERNAPE) {
-		member.mass = 80;
-	}
-	else if (member.pokemon == SALAMENCE) {
-		member.mass = 100;
-	}
-	else if (member.pokemon == LATIAS) {
-		member.mass = 60;
-	}
+	member.mass = mass [member.pokemon];
+
 	team.member.push_back (member);
 }
 

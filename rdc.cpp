@@ -52,7 +52,7 @@ int main () {
 	foe.member.push_back (member);
 	foe.active = foe.member.begin();
 	foe.active->pokemon = INFERNAPE;
-	foe.active->mass = 80;
+	foe.active->mass = mass [foe.active->pokemon];
 	foe.active->level = 100;
 	foe.active->hp.base = base_stat [foe.active->pokemon][0];
 	foe.active->atk.base = base_stat [foe.active->pokemon][1];
