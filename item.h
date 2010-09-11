@@ -15,24 +15,26 @@
 #include <map>
 
 /*
-"MAIL" collectively represents all types of mail, as they have identical effects.
+MAIL collectively represents all types of mail, as they have identical effects.
 
-"POWER_ITEMS" represents all items beginning with the word "Power", with the exception of Power Herb, as they have identical effects.
+POWER_ITEMS represents all items beginning with the word "Power", with the exception of Power Herb, as they have identical effects.
 
-"WAVE_INCENSE" is an alias for Sea Incense as well as Wave Incense, so chosen because they have identical effects and "Wave Incense" does not contain a homophone. A quick informal poll in #stark also shows support for Wave Incense over Sea Incense.
+WAVE_INCENSE represents Sea Incense as well as Wave Incense, so chosen because they have identical effects and "Wave Incense" does not contain a homophone. A quick informal poll in #stark also shows support for Wave Incense over Sea Incense.
 
-"LAGGING_TAIL" is an alias for Full Incense as well as Lagging Tail, so chosen because they have identical effects and "Lagging Tail" does not contain the word "Incense" thus reducing the risk of a typo. It also sounds cooler and is the example item I've been using since I learned of these items, so is quicker to come to mind.
+LAGGING_TAIL represents Full Incense as well as Lagging Tail, so chosen because they have identical effects and "Lagging Tail" does not contain the word "Incense" thus reducing the risk of a typo. It also sounds cooler and is the example item I've been using since I learned of these items, so is quicker to come to mind.
 
-"OTHER" represents those items that can be held, but otherwise have no competitive effect. These items cannot be used with Fling. The OTHER items followed by a number represent those items that can be held and used with Fling (with the number representing Fling's power used with that item), but otherwise have no competitive effect.
+KINGS_ROCK represents King's Rock as well as Razor Fang. King's Rock was chosen because it is the item most people refer to when they consider the effect.
 
-Every other item listed has a unique competitive effect. For instance, Stone Plate, Hard Stone, and Rock Incense all have different powers when used with Fling. "END_ITEM" is used to make iterating over the list easier.
+OTHER represents those items that can be held, but otherwise have no competitive effect. These items cannot be used with Fling. The OTHER items followed by a number represent those items that can be held and used with Fling (with the number representing Fling's power used with that item), but otherwise have no competitive effect.
+
+Every other item listed has a unique competitive effect. For instance, Stone Plate, Hard Stone, and Rock Incense all have different powers when used with Fling. END_ITEM is used to make iterating over the list easier.
 
 I used METRONOME_ITEM (along with METRONOME_MOVE) instead of just making one of them METRONOME and the other METRONOME_WHATEVER so that I will never get confused as to what to type. Attempting to use METRONOME will create an error on compile, allowing me to fix it.
 
-There are 163 unique items.
+There are 162 unique items.
 */
 
-enum items { NO_ITEM, ADAMANT_ORB, AGUAV_BERRY, APICOT_BERRY, ASPEAR_BERRY, BABIRI_BERRY, BELUE_BERRY, BERRY_JUICE, BIG_ROOT, BLACK_BELT, BLACK_SLUDGE, BLACKGLASSES, BLUK_BERRY, BRIGHTPOWDER, CHARCOAL, CHARTI_BERRY, CHERI_BERRY, CHESTO_BERRY, CHILAN_BERRY, CHOICE_BAND, CHOICE_SCARF, CHOICE_SPECS, CHOPLE_BERRY, COBA_BERRY, COLBUR_BERRY, CORNN_BERRY, CUSTAP_BERRY, DAMP_ROCK, DEEPSEASCALE, DEEPSEATOOTH, DESTINY_KNOT, DRACO_PLATE, DRAGON_FANG, DREAD_PLATE, DURIN_BERRY, EARTH_PLATE, ENIGMA_BERRY, EXPERT_BELT, FIGY_BERRY, FIST_PLATE, FLAME_ORB, FLAME_PLATE, FOCUS_BAND, FOCUS_SASH, GANLON_BERRY, GREPA_BERRY, GRIP_CLAW, GRISEOUS_ORB, HABAN_BERRY, HARD_STONE, HEAT_ROCK, HONDEW_BERRY, IAPAPA_BERRY, ICICLE_PLATE, ICY_ROCK, INSECT_PLATE, IRON_BALL, IRON_PLATE, JABOCA_BERRY, KASIB_BERRY, KEBIA_BERRY, KELPSY_BERRY, KINGS_ROCK, LAGGING_TAIL, LANSAT_BERRY, LAX_INCENSE, LEFTOVERS, LEPPA_BERRY, LIECHI_BERRY, LIFE_ORB, LIGHT_BALL, LIGHT_CLAY, LUCKY_PUNCH, LUM_BERRY, LUSTROUS_ORB, MACHO_BRACE, MAGNET, MAGO_BERRY, MAGOST_BERRY, MAIL, MEADOW_PLATE, MENTAL_HERB, METAL_COAT, METAL_POWDER, METRONOME_ITEM, MICLE_BERRY, MIND_PLATE, MIRACLE_SEED, MUSCLE_BAND, MYSTIC_WATER, NANAB_BERRY, NEVERMELTICE, NOMEL_BERRY, OCCA_BERRY, ODD_INCENSE, ORAN_BERRY, PAMTRE_BERRY, PASSHO_BERRY, PAYAPA_BERRY, PECHA_BERRY, PERSIM_BERRY, PETAYA_BERRY, PINAP_BERRY, POISON_BARB, POMEG_BERRY, POWER_HERB, POWER_ITEMS, QUALOT_BERRY, QUICK_CLAW, QUICK_POWDER, RABUTA_BERRY, RAWST_BERRY, RAZOR_CLAW, RAZOR_FANG, RAZZ_BERRY, RINDO_BERRY, ROCK_INCENSE, ROSE_INCENSE, ROWAP_BERRY, SALAC_BERRY, SCOPE_LENS, SHARP_BEAK, SHED_SHELL, SHELL_BELL, SHUCA_BERRY, SILK_SCARF, SILVERPOWDER, SITRUS_BERRY, SKY_PLATE, SMOOTH_ROCK, SOFT_SAND, SOUL_DEW, SPELL_TAG, SPELON_BERRY, SPLASH_PLATE, SPOOKY_PLATE, STARF_BERRY, STICK, STICKY_BARB, STONE_PLATE, TAMATO_BERRY, TANGA_BERRY, THICK_CLUB, TOXIC_ORB, TOXIC_PLATE, TWISTEDSPOON, WACAN_BERRY, WATMEL_BERRY, WAVE_INCENSE, WEPEAR_BERRY, WHITE_HERB, WIDE_LENS, WIKI_BERRY, WISE_GLASSES, YACHE_BERRY, ZAP_PLATE, ZOOM_LENS, OTHER, OTHER10, OTHER30, OTHER50, OTHER80, OTHER100, END_ITEM };
+enum items { NO_ITEM, ADAMANT_ORB, AGUAV_BERRY, APICOT_BERRY, ASPEAR_BERRY, BABIRI_BERRY, BELUE_BERRY, BERRY_JUICE, BIG_ROOT, BLACK_BELT, BLACK_SLUDGE, BLACKGLASSES, BLUK_BERRY, BRIGHTPOWDER, CHARCOAL, CHARTI_BERRY, CHERI_BERRY, CHESTO_BERRY, CHILAN_BERRY, CHOICE_BAND, CHOICE_SCARF, CHOICE_SPECS, CHOPLE_BERRY, COBA_BERRY, COLBUR_BERRY, CORNN_BERRY, CUSTAP_BERRY, DAMP_ROCK, DEEPSEASCALE, DEEPSEATOOTH, DESTINY_KNOT, DRACO_PLATE, DRAGON_FANG, DREAD_PLATE, DURIN_BERRY, EARTH_PLATE, ENIGMA_BERRY, EXPERT_BELT, FIGY_BERRY, FIST_PLATE, FLAME_ORB, FLAME_PLATE, FOCUS_BAND, FOCUS_SASH, GANLON_BERRY, GREPA_BERRY, GRIP_CLAW, GRISEOUS_ORB, HABAN_BERRY, HARD_STONE, HEAT_ROCK, HONDEW_BERRY, IAPAPA_BERRY, ICICLE_PLATE, ICY_ROCK, INSECT_PLATE, IRON_BALL, IRON_PLATE, JABOCA_BERRY, KASIB_BERRY, KEBIA_BERRY, KELPSY_BERRY, KINGS_ROCK, LAGGING_TAIL, LANSAT_BERRY, LAX_INCENSE, LEFTOVERS, LEPPA_BERRY, LIECHI_BERRY, LIFE_ORB, LIGHT_BALL, LIGHT_CLAY, LUCKY_PUNCH, LUM_BERRY, LUSTROUS_ORB, MACHO_BRACE, MAGNET, MAGO_BERRY, MAGOST_BERRY, MAIL, MEADOW_PLATE, MENTAL_HERB, METAL_COAT, METAL_POWDER, METRONOME_ITEM, MICLE_BERRY, MIND_PLATE, MIRACLE_SEED, MUSCLE_BAND, MYSTIC_WATER, NANAB_BERRY, NEVERMELTICE, NOMEL_BERRY, OCCA_BERRY, ODD_INCENSE, ORAN_BERRY, PAMTRE_BERRY, PASSHO_BERRY, PAYAPA_BERRY, PECHA_BERRY, PERSIM_BERRY, PETAYA_BERRY, PINAP_BERRY, POISON_BARB, POMEG_BERRY, POWER_HERB, POWER_ITEMS, QUALOT_BERRY, QUICK_CLAW, QUICK_POWDER, RABUTA_BERRY, RAWST_BERRY, RAZOR_CLAW, RAZZ_BERRY, RINDO_BERRY, ROCK_INCENSE, ROSE_INCENSE, ROWAP_BERRY, SALAC_BERRY, SCOPE_LENS, SHARP_BEAK, SHED_SHELL, SHELL_BELL, SHUCA_BERRY, SILK_SCARF, SILVERPOWDER, SITRUS_BERRY, SKY_PLATE, SMOOTH_ROCK, SOFT_SAND, SOUL_DEW, SPELL_TAG, SPELON_BERRY, SPLASH_PLATE, SPOOKY_PLATE, STARF_BERRY, STICK, STICKY_BARB, STONE_PLATE, TAMATO_BERRY, TANGA_BERRY, THICK_CLUB, TOXIC_ORB, TOXIC_PLATE, TWISTEDSPOON, WACAN_BERRY, WATMEL_BERRY, WAVE_INCENSE, WEPEAR_BERRY, WHITE_HERB, WIDE_LENS, WIKI_BERRY, WISE_GLASSES, YACHE_BERRY, ZAP_PLATE, ZOOM_LENS, OTHER, OTHER10, OTHER30, OTHER50, OTHER80, OTHER100, END_ITEM };
 
 void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["No Item"] = NO_ITEM;
@@ -98,6 +100,7 @@ void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["Kebia Berry"] = KEBIA_BERRY;
 	items_map["Kelpsy Berry"] = KELPSY_BERRY;
 	items_map["King's Rock"] = KINGS_ROCK;
+	items_map["Razor Fang"] = KINGS_ROCK;
 	items_map["Full Incense"] = LAGGING_TAIL;
 	items_map["Lagging Tail"] = LAGGING_TAIL;
 	items_map["Lansat Berry"] = LANSAT_BERRY;
@@ -165,7 +168,6 @@ void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["Rabuta Berry"] = RABUTA_BERRY;
 	items_map["Rawst Berry"] = RAWST_BERRY;
 	items_map["Razor Claw"] = RAZOR_CLAW;
-	items_map["Razor Fang"] = RAZOR_FANG;
 	items_map["Razz Berry"] = RAZZ_BERRY;
 	items_map["Rindo Berry"] = RINDO_BERRY;
 	items_map["Rock Incense"] = ROCK_INCENSE;
