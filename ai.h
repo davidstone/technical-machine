@@ -36,7 +36,7 @@ void initialize (teams &ai, teams &foe, weathers &weather) {
 	for (std::vector<moves>::iterator it = foe.active->moveset.begin(); it != foe.active->moveset.end(); ++it) {
 		it->physical = false;
 		it->ch = false;
-		it->priority = 0;
+		it->priority = move_priority [move.name];
 	}
 	
 	switchpokemon (ai, ai.member.at(2), weather);
@@ -45,7 +45,7 @@ void initialize (teams &ai, teams &foe, weathers &weather) {
 	for (std::vector<moves>::iterator it = ai.active->moveset.begin(); it != ai.active->moveset.end(); ++it) {
 		it->physical = true;
 		it->ch = false;
-		it->priority = 0;
+		it->priority = move_priority [move.name];
 	}
 }
 

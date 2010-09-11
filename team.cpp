@@ -96,8 +96,9 @@ void loadpokemon (teams& team, std::ifstream &file) {	// Replace this with a rea
 		move.pp_max = boost::lexical_cast <int> (output2);
 		move.pp = move.pp_max;
 		move_type (move);
-		move.basepower = base_power [static_cast <short> (move.name)];
+		move.basepower = base_power [move.name];
 		move.r = 100;
+		move.priority = move_priority [move.name];
 		member.moveset.push_back (move);
 	}
 	

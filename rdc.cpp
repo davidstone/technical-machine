@@ -80,7 +80,7 @@ int main () {
 	move.times_used = 0;
 	move.pp_max = 8;
 	move.pp = move.pp_max;
-	move.priority = 0;
+	move.priority = move_priority [move.name];
 	move.basepower = base_power [static_cast <short> (move.name)];
 	foe.active->moveset.push_back (move);
 	foe.active->move = foe.active->moveset.begin();
