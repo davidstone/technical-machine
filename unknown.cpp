@@ -35,7 +35,7 @@ struct Unknown {
 /*
 This creates a list of all possible variables for a given Pokemon. Other functions are then used to remove impossible data points. For instance, the reverse damage calculator removes stat / ability combinations that are not possible for the given damage. The battle log parser removes things based on messages.
 
-I used a list (doubly linked list) over other data structures because I need efficient deletion at arbitrary points in the data structure, and I do not care about accessing elements by their value. I only access elements by starting at the beginning and going over every element.
+Profiling showed that creating a new std::vector in each other function is significantly faster and much less memory intensive than deleting elements from a std::list.
 */
 
 void unknown (std::vector<Unknown> &hidden) {

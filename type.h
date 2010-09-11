@@ -37,7 +37,7 @@ const int effectiveness [18][18] = {
 	{ 2, 2, 1, 2, 2, 4, 2, 2, 1, 4, 2, 2, 2, 2, 4, 2, 2, 1 }		// Water
 };
 
-/*
+/* Don't need this yet
 std::map <std::string, types> types_map;
 types_map["Bug"] = BUG;
 types_map["Dark"] = DARK;

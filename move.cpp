@@ -175,7 +175,7 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 		for (std::vector<pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it)
 			it->status = NO_STATUS;
 	}
-	else if (ATTRACT == user.active->move->name and static_cast<int> (user.active->gender) + static_cast<int> (target.active->gender) == 1)		// male + female == 1
+	else if (ATTRACT == user.active->move->name and static_cast<int> (user.active->gender) * static_cast<int> (target.active->gender) == -1)		// male * female == -1
 			target.active->attract = true;
 //	else if (BATON_PASS == user.active->move->name)
 	else if (BELLY_DRUM == user.active->move->name) {
@@ -201,7 +201,7 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 		statboost (user.active->spd, 1);
 	}
 //	else if (CAMOUFLAGE == user.active->move->name)
-	else if (CAPTIVATE == user.active->move->name and static_cast<int> (user.active->gender) + static_cast<int> (target.active->gender) == 1)		// male + female == 1
+	else if (CAPTIVATE == user.active->move->name and static_cast<int> (user.active->gender) * static_cast<int> (target.active->gender) == -1)		// male + female == -1
 		statboost (target.active->spd, -2);
 	else if (CHARGE == user.active->move->name) {
 		user.active->charge = true;
@@ -323,7 +323,8 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 				it->status = NO_STATUS;
 		}
 	}
-//	else if (HEAL_BLOCK == user.active->move->name)
+	else if (HEAL_BLOCK == user.active->move->name and target.active->heal_block == 0)
+		target.active->heal_block = 5;
 	else if (HEAL_ORDER == user.active->move->name or MILK_DRINK == user.active->move->name or RECOVER == user.active->move->name or SLACK_OFF == user.active->move->name or SOFTBOILED == user.active->move->name)
 		heal (*user.active, 2);
 //	else if (HEALING_WISH == user.active->move->name)
@@ -355,7 +356,8 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 		else
 			user.light_screen = 5;
 	}
-//	else if (LOCK_ON == user.active->move->name or MIND-READER == user.active->move->name)
+	else if (LOCK_ON == user.active->move->name or MIND_READER == user.active->move->name)
+		target.active->lock_on == true;
 	else if (LUCKY_CHANT == user.active->move->name and user.lucky_chant == 0)
 		user.lucky_chant = 5;
 //	else if (LUNAR_DANCE == user.active->move->name)
@@ -372,7 +374,8 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 //	else if (MIMIC == user.active->move->name)
 //	else if (MIRACLE_EYE == user.active->move->name)
 //	else if (MIRROR_COAT == user.active->move->name)
-//	else if (MIST == user.active->move->name)
+	else if (MIST == user.active->move->name)
+		user.mist = 5;
 //	else if (MOONLIGHT == user.active->move->name or MORNING_SUN == user.active->move->name or SYNTHESIS == user.active->move->name)
 	else if (MUD_SPORT == user.active->move->name)
 		user.active->mud_sport = true;
@@ -552,19 +555,23 @@ void switchpokemon (teams &team, const pokemon &memberin, const weathers &weathe
 	// Change the active Pokemon to the one switching in. Initialize all variables that switches reset.
 	*team.active = memberin;
 	team.active->aqua_ring = false;
+	team.active->attract = false;
 	team.active->charge = false;
 	team.active->curse = false;
 	team.active->damaged = false;
 	team.active->defense_curl = false;
 	team.active->ff = false;
 	team.active->flinch = false;
+	team.active->focus_energy = false;
 	team.active->heal_block = false;
+	team.active->identified = false;
 	team.active->imprison = false;
 	team.active->ingrain = false;
 	team.active->item_recycle = false;
 	team.active->item_unburden = false;
 	team.active->leech_seed = false;
 	team.active->loaf = false;			// Do I set to true or false? True makes it wrong when a fainted Pokemon is replaced; false makes it wrong otherwise
+	team.active->lock_on = false;
 	team.active->mf = false;
 	team.active->minimize = false;
 	team.active->moved = true;

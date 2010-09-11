@@ -240,12 +240,8 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 		else if (((IRON_FIST == attacker.ability) and (BULLET_PUNCH == attacker.move->name or COMET_PUNCH == attacker.move->name or DIZZY_PUNCH == attacker.move->name or DRAIN_PUNCH == attacker.move->name or DYNAMICPUNCH == attacker.move->name or FIRE_PUNCH == attacker.move->name or FOCUS_PUNCH == attacker.move->name or HAMMER_ARM == attacker.move->name or ICE_PUNCH == attacker.move->name or MACH_PUNCH == attacker.move->name or MEGA_PUNCH == attacker.move->name or METEOR_MASH == attacker.move->name or SHADOW_PUNCH == attacker.move->name or SKY_UPPERCUT == attacker.move->name or THUNDERPUNCH == attacker.move->name))
 			 or ((RECKLESS == attacker.ability) and (attacker.move->name == BRAVE_BIRD or attacker.move->name == DOUBLE_EDGE or attacker.move->name == FLARE_BLITZ or attacker.move->name == HEAD_SMASH or attacker.move->name == SUBMISSION or attacker.move->name == TAKE_DOWN or attacker.move->name == VOLT_TACKLE or attacker.move->name == WOOD_HAMMER)))
 			bpaam = 24;
-		else if (RIVALRY == attacker.ability and GENDERLESS != attacker.gender and GENDERLESS != defender.gender) {
-			if (attacker.gender == defender.gender)
-				bpaam = 25;
-			else
-				bpaam = 15;
-		}
+		else if (RIVALRY == attacker.ability)
+			bpaam = 20 + 5 * static_cast<int> (attacker.gender) * static_cast<int> (defender.gender);		// Same gender == 20 + 5, opposite gender == 20 - 5
 		else
 			bpaam = 20;
 	

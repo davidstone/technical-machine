@@ -83,6 +83,7 @@ struct pokemon {
 	bool item_unburden;		// Was the item lost in a way that activates Unburden?
 	bool leech_seed;
 	bool loaf;
+	bool lock_on;
 	bool mf;						// Me First
 	bool minimize;
 	bool moved;
