@@ -98,6 +98,7 @@ void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["Kebia Berry"] = KEBIA_BERRY;
 	items_map["Kelpsy Berry"] = KELPSY_BERRY;
 	items_map["King's Rock"] = KINGS_ROCK;
+	items_map["Razor Fang"] = KINGS_ROCK;
 	items_map["Full Incense"] = LAGGING_TAIL;
 	items_map["Lagging Tail"] = LAGGING_TAIL;
 	items_map["Lansat Berry"] = LANSAT_BERRY;
