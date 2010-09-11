@@ -15,17 +15,19 @@
 #include <map>
 
 /*
-"MAIL" collectively represents all types of mail, as they have identical effects.
+MAIL collectively represents all types of mail, as they have identical effects.
 
-"POWER_ITEMS" represents all items beginning with the word "Power", with the exception of Power Herb, as they have identical effects.
+POWER_ITEMS represents all items beginning with the word "Power", with the exception of Power Herb, as they have identical effects.
 
-"WAVE_INCENSE" is an alias for Sea Incense as well as Wave Incense, so chosen because they have identical effects and "Wave Incense" does not contain a homophone. A quick informal poll in #stark also shows support for Wave Incense over Sea Incense.
+WAVE_INCENSE represents Sea Incense as well as Wave Incense, so chosen because they have identical effects and "Wave Incense" does not contain a homophone. A quick informal poll in #stark also shows support for Wave Incense over Sea Incense.
 
-"LAGGING_TAIL" is an alias for Full Incense as well as Lagging Tail, so chosen because they have identical effects and "Lagging Tail" does not contain the word "Incense" thus reducing the risk of a typo. It also sounds cooler and is the example item I've been using since I learned of these items, so is quicker to come to mind.
+LAGGING_TAIL represents Full Incense as well as Lagging Tail, so chosen because they have identical effects and "Lagging Tail" does not contain the word "Incense" thus reducing the risk of a typo. It also sounds cooler and is the example item I've been using since I learned of these items, so is quicker to come to mind.
 
-"OTHER" represents those items that can be held, but otherwise have no competitive effect. These items cannot be used with Fling. The OTHER items followed by a number represent those items that can be held and used with Fling (with the number representing Fling's power used with that item), but otherwise have no competitive effect.
+KINGS_ROCK represents King's Rock as well as Razor Fang. King's Rock was chosen because it is the item most people refer to when they consider the effect.
 
-Every other item listed has a unique competitive effect. For instance, Stone Plate, Hard Stone, and Rock Incense all have different powers when used with Fling. "END_ITEM" is used to make iterating over the list easier.
+OTHER represents those items that can be held, but otherwise have no competitive effect. These items cannot be used with Fling. The OTHER items followed by a number represent those items that can be held and used with Fling (with the number representing Fling's power used with that item), but otherwise have no competitive effect.
+
+Every other item listed has a unique competitive effect. For instance, Stone Plate, Hard Stone, and Rock Incense all have different powers when used with Fling. END_ITEM is used to make iterating over the list easier.
 
 I used METRONOME_ITEM (along with METRONOME_MOVE) instead of just making one of them METRONOME and the other METRONOME_WHATEVER so that I will never get confused as to what to type. Attempting to use METRONOME will create an error on compile, allowing me to fix it.
 
