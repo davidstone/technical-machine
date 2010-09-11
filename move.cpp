@@ -175,7 +175,7 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 		for (std::vector<pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it)
 			it->status = NO_STATUS;
 	}
-	else if (ATTRACT == user.active->move->name and static_cast<int> (user.active->gender) * static_cast<int> (target.active->gender) == -1)		// male * female == -1
+	else if (ATTRACT == user.active->move->name and user.active->gender * target.active->gender) == -1		// male * female == -1
 			target.active->attract = true;
 //	else if (BATON_PASS == user.active->move->name)
 	else if (BELLY_DRUM == user.active->move->name) {
@@ -201,7 +201,7 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 		statboost (user.active->spd, 1);
 	}
 //	else if (CAMOUFLAGE == user.active->move->name)
-	else if (CAPTIVATE == user.active->move->name and static_cast<int> (user.active->gender) * static_cast<int> (target.active->gender) == -1)		// male + female == -1
+	else if (CAPTIVATE == user.active->move->name and user.active->gender * target.active->gender == -1)		// male + female == -1
 		statboost (target.active->spd, -2);
 	else if (CHARGE == user.active->move->name) {
 		user.active->charge = true;

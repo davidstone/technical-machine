@@ -241,7 +241,7 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 			 or ((RECKLESS == attacker.ability) and (attacker.move->name == BRAVE_BIRD or attacker.move->name == DOUBLE_EDGE or attacker.move->name == FLARE_BLITZ or attacker.move->name == HEAD_SMASH or attacker.move->name == SUBMISSION or attacker.move->name == TAKE_DOWN or attacker.move->name == VOLT_TACKLE or attacker.move->name == WOOD_HAMMER)))
 			bpaam = 24;
 		else if (RIVALRY == attacker.ability)
-			bpaam = 20 + 5 * static_cast<int> (attacker.gender) * static_cast<int> (defender.gender);		// Same gender == 20 + 5, opposite gender == 20 - 5
+			bpaam = 20 + 5 * attacker.gender * defender.gender;		// Same gender == 20 + 5, opposite gender == 20 - 5
 		else
 			bpaam = 20;
 	
