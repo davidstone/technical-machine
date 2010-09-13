@@ -128,7 +128,7 @@ void pokelabpokemon (teams& team, std::ifstream &file) {	// Replace this with a 
 			break;
 		moves move;
 		move.name = moves_map[output1];
-		move.pp_max = boost::lexical_cast <int> (output2);
+		move.pp_max = get_pp [move.name] * (5 + boost::lexical_cast <int> (output2)) / 5;
 		member.moveset.push_back (move);
 	}
 	
