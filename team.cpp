@@ -26,10 +26,13 @@
 // Warning: Almost everything you see here is a hack.
 
 std::string search (std::ifstream &file, std::string &output2, const std::string &data);
-void loadsb2team (teams &team, const std::string &name);
-void loadpokemon (teams &team, std::ifstream &file);
+void loadteam (teams &team, const std::string &name);
+void loadpokemon (pokemon &member);
+void loadmove (moves &move);
+void pokelabteam (teams &team, const std::string &name);
+void pokelabpokemon (teams &team, std::ifstream &file);
 
-// I do no error checking because I assume Shoddy Battle 2's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
+// I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
 
 void loadteam (teams &team, const std::string &name) {
 	team.counter = 0;
@@ -44,19 +47,51 @@ void loadteam (teams &team, const std::string &name) {
 	team.toxic_spikes = 0;
 	team.wish = 0;
 	if (name != "") {
-		loadsb2team (team, name);
+		pokelabteam (team, name);
 		team.active = team.member.begin();
 	}
+	for (std::vector<pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it)
+		loadpokemon (*it);
 }
 
-void loadsb2team (teams &team, const std::string &name) {
+void loadpokemon (pokemon &member) {
+	member.status = NO_STATUS;
+	
+	member.type1 = get_pokemon_type [member.pokemon][0];
+	member.type2 = get_pokemon_type [member.pokemon][1];
+
+	member.hp.base = base_stat [member.pokemon][0];
+	member.atk.base = base_stat [member.pokemon][1];
+	member.def.base = base_stat [member.pokemon][2];
+	member.spa.base = base_stat [member.pokemon][3];
+	member.spd.base = base_stat [member.pokemon][4];
+	member.spe.base = base_stat [member.pokemon][5];
+	hitpoints (member);
+	member.hp.stat = member.hp.max;
+
+	member.mass = mass [member.pokemon];
+	
+	for (std::vector<moves>::iterator move = member.moveset.begin(); move != member.moveset.end(); ++move)
+		loadmove (*move);
+
+}
+
+void loadmove (moves &move) {
+	move.pp = move.pp_max;
+	move_type (move);
+	move.basepower = base_power [move.name];
+	move_priority (move);
+	move.r = 100;
+}
+
+void pokelabteam (teams &team, const std::string &name) {
 	std::ifstream file (name.c_str());
 	for (int n = 0; n != 6; ++n)
-		loadpokemon(team, file);
+		pokelabpokemon(team, file);
 	file.close ();
 }
 
-void loadpokemon (teams& team, std::ifstream &file) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
+void pokelabpokemon (teams& team, std::ifstream &file) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
 	pokemon member;
 	std::string output2;	// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
@@ -94,11 +129,6 @@ void loadpokemon (teams& team, std::ifstream &file) {	// Replace this with a rea
 		moves move;
 		move.name = moves_map[output1];
 		move.pp_max = boost::lexical_cast <int> (output2);
-		move.pp = move.pp_max;
-		move_type (move);
-		move.basepower = base_power [move.name];
-		move.r = 100;
-		move.priority = move_priority [move.name];
 		member.moveset.push_back (move);
 	}
 	
@@ -121,22 +151,6 @@ void loadpokemon (teams& team, std::ifstream &file) {	// Replace this with a rea
 	member.spd.iv = boost::lexical_cast <int> (output1);
 	member.spd.ev = boost::lexical_cast <int> (output2) / 4;
 	
-	member.status = NO_STATUS;
-	
-	member.type1 = get_pokemon_type [member.pokemon][0];
-	member.type2 = get_pokemon_type [member.pokemon][1];
-
-	member.hp.base = base_stat [member.pokemon][0];
-	member.atk.base = base_stat [member.pokemon][1];
-	member.def.base = base_stat [member.pokemon][2];
-	member.spa.base = base_stat [member.pokemon][3];
-	member.spd.base = base_stat [member.pokemon][4];
-	member.spe.base = base_stat [member.pokemon][5];
-	hitpoints (member);
-	member.hp.stat = member.hp.max;
-
-	member.mass = mass [member.pokemon];
-
 	team.member.push_back (member);
 }
 

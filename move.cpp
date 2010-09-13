@@ -175,7 +175,7 @@ void usemove2 (teams &user, teams &target, weathers &weather) {
 		for (std::vector<pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it)
 			it->status = NO_STATUS;
 	}
-	else if (ATTRACT == user.active->move->name and user.active->gender * target.active->gender) == -1		// male * female == -1
+	else if (ATTRACT == user.active->move->name and user.active->gender * target.active->gender == -1)		// male * female == -1
 			target.active->attract = true;
 //	else if (BATON_PASS == user.active->move->name)
 	else if (BELLY_DRUM == user.active->move->name) {
