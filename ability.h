@@ -14,7 +14,24 @@
 
 #include <map>
 
-enum abilities { ADAPTABILITY, AFTERMATH, AIR_LOCK, ANGER_POINT, ANTICIPATION, ARENA_TRAP, BAD_DREAMS, BATTLE_ARMOR, BLAZE, CHLOROPHYLL, CLEAR_BODY, CLOUD_NINE, COLOR_CHANGE, COMPOUNDEYES, CUTE_CHARM, DAMP, DOWNLOAD, DRIZZLE, DROUGHT, DRY_SKIN, EARLY_BIRD, EFFECT_SPORE, FILTER, FLAME_BODY, FLASH_FIRE, FLOWER_GIFT, FORECAST, FOREWARN, FRISK, GLUTTONY, GUTS, HEATPROOF, HONEY_GATHER, HUGE_POWER, HUSTLE, HYDRATION, HYPER_CUTTER, ICE_BODY, ILLUMINATE, IMMUNITY, INNER_FOCUS, INSOMNIA, INTIMIDATE, IRON_FIST, KEEN_EYE, KLUTZ, LEAF_GUARD, LEVITATE, LIGHTNINGROD, LIMBER, LIQUID_OOZE, MAGIC_GUARD, MAGMA_ARMOR, MAGNET_PULL, MARVEL_SCALE, MINUS, MOLD_BREAKER, MOTOR_DRIVE, MULTITYPE, NATURAL_CURE, NO_GUARD, NORMALIZE, OBLIVIOUS, OVERGROW, OWN_TEMPO, PICKUP, PLUS, POISON_HEAL, POISON_POINT, PRESSURE, PURE_POWER, QUICK_FEET, RAIN_DISH, RECKLESS, RIVALRY, ROCK_HEAD, ROUGH_SKIN, RUN_AWAY, SAND_STREAM, SAND_VEIL, SCRAPPY, SERENE_GRACE, SHADOW_TAG, SHED_SKIN, SHELL_ARMOR, SHIELD_DUST, SIMPLE, SKILL_LINK, SLOW_START, SNIPER, SNOW_CLOAK, SNOW_WARNING, SOLAR_POWER, SOLID_ROCK, SOUNDPROOF, SPEED_BOOST, STALL, STATIC, STEADFAST, STENCH, STICKY_HOLD, STORM_DRAIN, STURDY, SUCTION_CUPS, SUPER_LUCK, SWARM, SWIFT_SWIM, SYNCHRONIZE, TANGLED_FEET, TECHNICIAN, THICK_FAT, TINTED_LENS, TORRENT, TRACE, TRUANT, UNAWARE, UNBURDEN, VITAL_SPIRIT, VOLT_ABSORB, WATER_ABSORB, WATER_VEIL, WHITE_SMOKE, WONDER_GUARD };
+enum abilities { ADAPTABILITY, AFTERMATH, AIR_LOCK, ANGER_POINT, ANTICIPATION, ARENA_TRAP, BAD_DREAMS, BATTLE_ARMOR, BLAZE, CHLOROPHYLL, CLEAR_BODY, COLOR_CHANGE, COMPOUNDEYES, CUTE_CHARM, DAMP, DOWNLOAD, DRIZZLE, DROUGHT, DRY_SKIN, EARLY_BIRD, EFFECT_SPORE, FLAME_BODY, FLASH_FIRE, FLOWER_GIFT, FORECAST, FOREWARN, FRISK, GLUTTONY, GUTS, HEATPROOF, HUSTLE, HYDRATION, HYPER_CUTTER, ICE_BODY, IMMUNITY, INNER_FOCUS, INSOMNIA, INTIMIDATE, IRON_FIST, KEEN_EYE, KLUTZ, LEAF_GUARD, LEVITATE, LIGHTNINGROD, LIMBER, LIQUID_OOZE, MAGIC_GUARD, MAGMA_ARMOR, MAGNET_PULL, MARVEL_SCALE, MINUS, MOLD_BREAKER, MOTOR_DRIVE, MULTITYPE, NATURAL_CURE, NO_GUARD, NORMALIZE, OBLIVIOUS, OVERGROW, OWN_TEMPO, PLUS, POISON_HEAL, POISON_POINT, PRESSURE, PURE_POWER, QUICK_FEET, RAIN_DISH, RECKLESS, RIVALRY, ROCK_HEAD, ROUGH_SKIN, SAND_STREAM, SAND_VEIL, SCRAPPY, SERENE_GRACE, SHADOW_TAG, SHED_SKIN, SHIELD_DUST, SIMPLE, SKILL_LINK, SLOW_START, SNIPER, SNOW_CLOAK, SNOW_WARNING, SOLAR_POWER, SOLID_ROCK, SOUNDPROOF, SPEED_BOOST, STALL, STATIC, STEADFAST, STENCH, STICKY_HOLD, STORM_DRAIN, STURDY, SUCTION_CUPS, SUPER_LUCK, SWARM, SWIFT_SWIM, SYNCHRONIZE, TANGLED_FEET, TECHNICIAN, THICK_FAT, TINTED_LENS, TORRENT, TRACE, TRUANT, UNAWARE, UNBURDEN, VOLT_ABSORB, WATER_ABSORB, WATER_VEIL, WONDER_GUARD };
+
+
+/*
+Stench replaces Honey Gather, Illuminate, Pickup, and Run Away.
+
+Air Lock replaces Cloud Nine.
+
+Pure Power replaces Huge Power.
+
+Battle Armor replaces Shell Armor.
+
+Insomnia replaces Vital Spirit.
+
+Clear Body replaces White Smoke.
+
+Solid Rock replaces Filter.
+*/
 
 void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Adaptability"] = ADAPTABILITY;
@@ -28,7 +45,7 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Blaze"] = BLAZE;
 	abilities_map["Chlorophyll"] = CHLOROPHYLL;
 	abilities_map["Clear Body"] = CLEAR_BODY;
-	abilities_map["Cloud Nine"] = CLOUD_NINE;
+	abilities_map["Cloud Nine"] = AIR_LOCK;
 	abilities_map["Color Change"] = COLOR_CHANGE;
 	abilities_map["Compoundeyes"] = COMPOUNDEYES;
 	abilities_map["Cute Charm"] = CUTE_CHARM;
@@ -39,7 +56,7 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Dry Skin"] = DRY_SKIN;
 	abilities_map["Early Bird"] = EARLY_BIRD;
 	abilities_map["Effect Spore"] = EFFECT_SPORE;
-	abilities_map["Filter"] = FILTER;
+	abilities_map["Filter"] = SOLID_ROCK;
 	abilities_map["Flame Body"] = FLAME_BODY;
 	abilities_map["Flash Fire"] = FLASH_FIRE;
 	abilities_map["Flower Gift"] = FLOWER_GIFT;
@@ -49,13 +66,13 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Gluttony"] = GLUTTONY;
 	abilities_map["Guts"] = GUTS;
 	abilities_map["Heatproof"] = HEATPROOF;
-	abilities_map["Honey Gather"] = HONEY_GATHER;
-	abilities_map["Huge Power"] = HUGE_POWER;
+	abilities_map["Honey Gather"] = STENCH;
+	abilities_map["Huge Power"] = PURE_POWER;
 	abilities_map["Hustle"] = HUSTLE;
 	abilities_map["Hydration"] = HYDRATION;
 	abilities_map["Hyper Cutter"] = HYPER_CUTTER;
 	abilities_map["Ice Body"] = ICE_BODY;
-	abilities_map["Illuminate"] = ILLUMINATE;
+	abilities_map["Illuminate"] = STENCH;
 	abilities_map["Immunity"] = IMMUNITY;
 	abilities_map["Inner Focus"] = INNER_FOCUS;
 	abilities_map["Insomnia"] = INSOMNIA;
@@ -82,7 +99,7 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Oblivious"] = OBLIVIOUS;
 	abilities_map["Overgrow"] = OVERGROW;
 	abilities_map["Own Tempo"] = OWN_TEMPO;
-	abilities_map["Pickup"] = PICKUP;
+	abilities_map["Pickup"] = STENCH;
 	abilities_map["Plus"] = PLUS;
 	abilities_map["Poison Heal"] = POISON_HEAL;
 	abilities_map["Poison Point"] = POISON_POINT;
@@ -94,14 +111,14 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Rivalry"] = RIVALRY;
 	abilities_map["Rock Head"] = ROCK_HEAD;
 	abilities_map["Rough Skin"] = ROUGH_SKIN;
-	abilities_map["Run Away"] = RUN_AWAY;
+	abilities_map["Run Away"] = STENCH;
 	abilities_map["Sand Stream"] = SAND_STREAM;
 	abilities_map["Sand Veil"] = SAND_VEIL;
 	abilities_map["Scrappy"] = SCRAPPY;
 	abilities_map["Serene Grace"] = SERENE_GRACE;
 	abilities_map["Shadow Tag"] = SHADOW_TAG;
 	abilities_map["Shed Skin"] = SHED_SKIN;
-	abilities_map["Shell Armor"] = SHELL_ARMOR;
+	abilities_map["Shell Armor"] = BATTLE_ARMOR;
 	abilities_map["Shield Dust"] = SHIELD_DUST;
 	abilities_map["Simple"] = SIMPLE;
 	abilities_map["Skill Link"] = SKILL_LINK;
@@ -134,11 +151,11 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Truant"] = TRUANT;
 	abilities_map["Unaware"] = UNAWARE;
 	abilities_map["Unburden"] = UNBURDEN;
-	abilities_map["Vital Spirit"] = VITAL_SPIRIT;
+	abilities_map["Vital Spirit"] = INSOMNIA;
 	abilities_map["Volt Absorb"] = VOLT_ABSORB;
 	abilities_map["Water Absorb"] = WATER_ABSORB;
 	abilities_map["Water Veil"] = WATER_VEIL;
-	abilities_map["White Smoke"] = WHITE_SMOKE;
+	abilities_map["White Smoke"] = CLEAR_BODY;
 	abilities_map["Wonder Guard"] = WONDER_GUARD;
 }
 
