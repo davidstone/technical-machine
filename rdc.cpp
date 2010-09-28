@@ -74,11 +74,11 @@ int main () {
 
 	moves move;
 	move.name = CLOSE_COMBAT;
-	move.type = move_type (move);
+	move.type = move_type [move.name];
 	move.physical = true;
 	move.ch = false;
 	move.times_used = 0;
-	move.pp_max = get_pp [move.name] * (5 + boost::lexical_cast <int> (output2)) / 5;
+	move.pp_max = get_pp [move.name] * 8 / 5;
 	move.pp = move.pp_max;
 	move_priority (move);
 	move.basepower = base_power [static_cast <short> (move.name)];

@@ -42,62 +42,476 @@ struct moves {
 	char variable;		// Used for moves of variable power. Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal)
 };
 
-void move_type (moves &move) {
-	if (move.name == ATTACK_ORDER or move.name == BUG_BITE or move.name == BUG_BUZZ or move.name == DEFEND_ORDER or move.name == FURY_CUTTER or move.name == HEAL_ORDER or move.name == LEECH_LIFE or move.name == MEGAHORN or move.name == PIN_MISSILE or move.name == SIGNAL_BEAM or move.name == SILVER_WIND or move.name == SPIDER_WEB or move.name == STRING_SHOT or move.name == TAIL_GLOW or move.name == TWINEEDLE or move.name == U_TURN or move.name == X_SCISSOR)
-		move.type = BUG;
-
-	else if (move.name == ASSURANCE or move.name == BEAT_UP or move.name == BITE or move.name == CRUNCH or move.name == DARK_PULSE or move.name == DARK_VOID or move.name == EMBARGO or move.name == FAINT_ATTACK or move.name == FAKE_TEARS or move.name == FLATTER or move.name == FLING or move.name == KNOCK_OFF or move.name == MEMENTO or move.name == NASTY_PLOT or move.name == NIGHT_SLASH or move.name == PAYBACK or move.name == PUNISHMENT or move.name == PURSUIT or move.name == SNATCH or move.name == SUCKER_PUNCH or move.name == SWITCHEROO or move.name == TAUNT or move.name == THIEF or move.name == TORMENT)
-		move.type = DARK;
-
-	else if (move.name == DRACO_METEOR or move.name == DRAGONBREATH or move.name == DRAGON_CLAW or move.name == DRAGON_DANCE or move.name == DRAGON_PULSE or move.name == DRAGON_RAGE or move.name == DRAGON_RUSH or move.name == OUTRAGE or move.name == ROAR_OF_TIME or move.name == SPACIAL_REND or move.name == TWISTER)
-		move.type = DRAGON;
-
-	else if (move.name == CHARGE or move.name == CHARGE_BEAM or move.name == DISCHARGE or move.name == MAGNET_RISE or move.name == SHOCK_WAVE or move.name == SPARK or move.name == THUNDER or move.name == THUNDERBOLT or move.name == THUNDER_FANG or move.name == THUNDERPUNCH or move.name == THUNDERSHOCK or move.name == THUNDER_WAVE or move.name == VOLT_TACKLE or move.name == ZAP_CANNON)
-		move.type = ELECTRIC;
-
-	else if (move.name == ARM_THRUST or move.name == AURA_SPHERE or move.name == BRICK_BREAK or move.name == BULK_UP or move.name == CLOSE_COMBAT or move.name == COUNTER or move.name == CROSS_CHOP or move.name == DETECT or move.name == DOUBLE_KICK or move.name == DRAIN_PUNCH or move.name == DYNAMICPUNCH or move.name == FOCUS_BLAST or move.name == FOCUS_PUNCH or move.name == FORCE_PALM or move.name == HAMMER_ARM or move.name == HI_JUMP_KICK or move.name == JUMP_KICK or move.name == KARATE_CHOP or move.name == LOW_KICK or move.name == MACH_PUNCH or move.name == REVENGE or move.name == REVERSAL or move.name == ROCK_SMASH or move.name == ROLLING_KICK or move.name == SEISMIC_TOSS or move.name == SKY_UPPERCUT or move.name == SUBMISSION or move.name == SUPERPOWER or move.name == TRIPLE_KICK or move.name == VACUUM_WAVE or move.name == VITAL_THROW or move.name == WAKE_UP_SLAP)
-		move.type = FIGHTING;
-
-	else if (move.name == BLAST_BURN or move.name == BLAZE_KICK or move.name == EMBER or move.name == ERUPTION or move.name == FIRE_BLAST or move.name == FIRE_FANG or move.name == FIRE_PUNCH or move.name == FIRE_SPIN or move.name == FLAMETHROWER or move.name == FLAME_WHEEL or move.name == FLARE_BLITZ or move.name == HEAT_WAVE or move.name == LAVA_PLUME or move.name == MAGMA_STORM or move.name == OVERHEAT or move.name == SACRED_FIRE or move.name == SUNNY_DAY or move.name == WILL_O_WISP)
-		move.type = FIRE;
-
-	else if (move.name == AERIAL_ACE or move.name == AEROBLAST or move.name == AIR_CUTTER or move.name == AIR_SLASH or move.name == BOUNCE or move.name == BRAVE_BIRD or move.name == CHATTER or move.name == DEFOG or move.name == DRILL_PECK or move.name == FEATHERDANCE or move.name == FLY or move.name == GUST or move.name == MIRROR_MOVE or move.name == PECK or move.name == PLUCK or move.name == ROOST or move.name == SKY_ATTACK or move.name == TAILWIND or move.name == WING_ATTACK)
-		move.type = FLYING;
-
-	else if (move.name == ASTONISH or move.name == CONFUSE_RAY or move.name == DESTINY_BOND or move.name == GRUDGE or move.name == LICK or move.name == NIGHTMARE or move.name == NIGHT_SHADE or move.name == OMINOUS_WIND or move.name == SHADOW_BALL or move.name == SHADOW_CLAW or move.name == SHADOW_FORCE or move.name == SHADOW_PUNCH or move.name == SHADOW_SNEAK or move.name == SPITE)
-		move.type = GHOST;
-
-	else if (move.name == ABSORB or move.name == AROMATHERAPY or move.name == BULLET_SEED or move.name == COTTON_SPORE or move.name == ENERGY_BALL or move.name == FRENZY_PLANT or move.name == GIGA_DRAIN or move.name == GRASS_KNOT or move.name == GRASSWHISTLE or move.name == INGRAIN or move.name == LEAF_BLADE or move.name == LEAF_STORM or move.name == LEECH_SEED or move.name == MAGICAL_LEAF or move.name == MEGA_DRAIN or move.name == NEEDLE_ARM or move.name == PETAL_DANCE or move.name == POWER_WHIP or move.name == RAZOR_LEAF or move.name == SEED_BOMB or move.name == SEED_FLARE or move.name == SLEEP_POWDER or move.name == SOLARBEAM or move.name == SPORE or move.name == STUN_SPORE or move.name == SYNTHESIS or move.name == VINE_WHIP or move.name == WOOD_HAMMER or move.name == WORRY_SEED)
-		move.type = GRASS;
-
-	else if (move.name == BONE_CLUB or move.name == BONEMERANG or move.name == BONE_RUSH or move.name == DIG or move.name == EARTH_POWER or move.name == EARTHQUAKE or move.name == FISSURE or move.name == MAGNITUDE or move.name == MUD_BOMB or move.name == MUD_SHOT or move.name == MUD_SLAP or move.name == MUD_SPORT or move.name == SAND_ATTACK or move.name == SAND_TOMB or move.name == SPIKES)
-		move.type = GROUND;
-
-	else if (move.name == AURORA_BEAM or move.name == AVALANCHE or move.name == BLIZZARD or move.name == HAIL_MOVE or move.name == HAZE or move.name == ICE_BALL or move.name == ICE_BEAM or move.name == ICE_FANG or move.name == ICE_PUNCH or move.name == ICE_SHARD or move.name == ICICLE_SPEAR or move.name == ICY_WIND or move.name == MIST or move.name == POWDER_SNOW or move.name == SHEER_COLD)
-		move.type = ICE;
-
-	else if (move.name == ACID or move.name == ACID_ARMOR or move.name == CROSS_POISON or move.name == GASTRO_ACID or move.name == GUNK_SHOT or move.name == POISON_FANG or move.name == POISON_GAS or move.name == POISON_JAB or move.name == POISONPOWDER or move.name == POISON_STING or move.name == POISON_TAIL or move.name == SLUDGE or move.name == SLUDGE_BOMB or move.name == SMOG or move.name == TOXIC or move.name == TOXIC_SPIKES)
-		move.type = POISON;
-
-	else if (move.name == AGILITY or move.name == AMNESIA or move.name == BARRIER or move.name == CALM_MIND or move.name == CONFUSION or move.name == COSMIC_POWER or move.name == DREAM_EATER or move.name == EXTRASENSORY or move.name == FUTURE_SIGHT or move.name == GRAVITY or move.name == GUARD_SWAP or move.name == HEAL_BLOCK or move.name == HEALING_WISH or move.name == HEART_SWAP or move.name == HYPNOSIS or move.name == IMPRISON or move.name == KINESIS or move.name == LIGHT_SCREEN or move.name == LUNAR_DANCE or move.name == LUSTER_PURGE or move.name == MAGIC_COAT or move.name == MEDITATE or move.name == MIRACLE_EYE or move.name == MIRROR_COAT or move.name == MIST_BALL or move.name == POWER_SWAP or move.name == POWER_TRICK or move.name == PSYBEAM or move.name == PSYCHIC_MOVE or move.name == PSYCHO_BOOST or move.name == PSYCHO_CUT or move.name == PSYCHO_SHIFT or move.name == PSYWAVE or move.name == REFLECT or move.name == REST or move.name == ROLE_PLAY or move.name == SKILL_SWAP or move.name == TELEPORT or move.name == TRICK or move.name == TRICK_ROOM or move.name == ZEN_HEADBUTT)
-		move.type = PSYCHIC_TYPE;
-
-	else if (move.name == ANCIENTPOWER or move.name == HEAD_SMASH or move.name == POWER_GEM or move.name == ROCK_BLAST or move.name == ROCK_POLISH or move.name == ROCK_SLIDE or move.name == ROCK_THROW or move.name == ROCK_TOMB or move.name == ROCK_WRECKER or move.name == ROLLOUT or move.name == SANDSTORM or move.name == STEALTH_ROCK or move.name == STONE_EDGE)
-		move.type = ROCK;
-
-	else if (move.name == BULLET_PUNCH or move.name == DOOM_DESIRE or move.name == FLASH_CANNON or move.name == GYRO_BALL or move.name == IRON_DEFENSE or move.name == IRON_HEAD or move.name == IRON_TAIL or move.name == MAGNET_BOMB or move.name == METAL_BURST or move.name == METAL_CLAW or move.name == METAL_SOUND or move.name == METEOR_MASH or move.name == MIRROR_SHOT or move.name == STEEL_WING)
-		move.type = STEEL;
-
-	else if (move.name == AQUA_JET or move.name == AQUA_RING or move.name == AQUA_TAIL or move.name == BRINE or move.name == BUBBLE or move.name == BUBBLEBEAM or move.name == CLAMP or move.name == CRABHAMMER or move.name == DIVE or move.name == HYDRO_CANNON or move.name == HYDRO_PUMP or move.name == MUDDY_WATER or move.name == OCTAZOOKA or move.name == RAIN_DANCE or move.name == SURF or move.name == WATERFALL or move.name == WATER_GUN or move.name == WATER_PULSE or move.name == WATER_SPORT or move.name == WATER_SPOUT or move.name == WHIRLPOOL or move.name == WITHDRAW)
-		move.type = WATER;
-
-	else if (move.name == CURSE or move.name == STRUGGLE)
-		move.type = TYPELESS;
-	
-	else
-		move.type = NORMAL;
-	//	else if (move.name == ACUPRESSURE or move.name == ASSIST or move.name == ATTRACT or move.name == BARRAGE or move.name == BATON_PASS or move.name == BELLY_DRUM or move.name == BIDE or move.name == BIND or move.name == BLOCK or move.name == BODY_SLAM or move.name == CAMOUFLAGE or move.name == CAPTIVATE or move.name == CHARM or move.name == COMET_PUNCH or move.name == CONSTRICT or move.name == CONVERSION or move.name == CONVERSION_2 or move.name == COPYCAT or move.name == COVET or move.name == CRUSH_CLAW or move.name == CRUSH_GRIP or move.name == CUT or move.name == DEFENSE_CURL or move.name == DISABLE or move.name == DIZZY_PUNCH or move.name == DOUBLE_EDGE or move.name == DOUBLE_HIT or move.name == DOUBLESLAP or move.name == DOUBLE_TEAM or move.name == EGG_BOMB or move.name == ENCORE or move.name == ENDEAVOR or move.name == ENDURE or move.name == EXPLOSION or move.name == EXTREMESPEED or move.name == FACADE or move.name == FAKE_OUT or move.name == FALSE_SWIPE or move.name == FEINT or move.name == FLAIL or move.name == FLASH or move.name == FOCUS_ENERGY or move.name == FOLLOW_ME or move.name == FORESIGHT or move.name == FRUSTRATION or move.name == FURY_ATTACK or move.name == FURY_SWIPES or move.name == GIGA_IMPACT or move.name == GLARE or move.name == GROWL or move.name == GROWTH or move.name == GUILLOTINE or move.name == HARDEN or move.name == HEADBUTT or move.name == HEAL_BELL or move.name == HELPING_HAND or move.name == HIDDEN_POWER or move.name == HORN_ATTACK or move.name == HORN_DRILL or move.name == HOWL or move.name == HYPER_BEAM or move.name == HYPER_FANG or move.name == HYPER_VOICE or move.name == JUDGMENT or move.name == LAST_RESORT or move.name == LEER or move.name == LOCK_ON or move.name == LOVELY_KISS or move.name == LUCKY_CHANT or move.name == MEAN_LOOK or move.name == ME_FIRST or move.name == MEGA_KICK or move.name == MEGA_PUNCH or move.name == METRONOME_MOVE or move.name == MILK_DRINK or move.name == MIMIC or move.name == MIND_READER or move.name == MINIMIZE or move.name == MOONLIGHT or move.name == MORNING_SUN or move.name == NATURAL_GIFT or move.name == NATURE_POWER or move.name == ODOR_SLEUTH or move.name == PAIN_SPLIT or move.name == PAY_DAY or move.name == PERISH_SONG or move.name == POUND or move.name == PRESENT or move.name == PROTECT or move.name == PSYCH_UP or move.name == QUICK_ATTACK or move.name == RAGE or move.name == RAPID_SPIN or move.name == RAZOR_WIND or move.name == RECOVER or move.name == RECYCLE or move.name == REFRESH or move.name == RETURN or move.name == ROAR or move.name == ROCK_CLIMB or move.name == SAFEGUARD or move.name == SCARY_FACE or move.name == SCRATCH or move.name == SCREECH or move.name == SECRET_POWER or move.name == SELFDESTRUCT or move.name == SHARPEN or move.name == SING or move.name == SKETCH or move.name == SKULL_BASH or move.name == SLACK_OFF or move.name == SLAM or move.name == SLASH or move.name == SLEEP_TALK or move.name == SMELLINGSALT or move.name == SMOKESCREEN or move.name == SNORE or move.name == SOFTBOILED or move.name == SONICBOOM or move.name == SPIKE_CANNON or move.name == SPIT_UP or move.name == SPLASH or move.name == STOCKPILE or move.name == STOMP or move.name == STRENGTH or move.name == STRUGGLE or move.name == SUBSTITUTE or move.name == SUPER_FANG or move.name == SUPERSONIC or move.name == SWAGGER or move.name == SWALLOW or move.name == SWEET_KISS or move.name == SWEET_SCENT or move.name == SWIFT or move.name == SWORDS_DANCE or move.name == TACKLE or move.name == TAIL_WHIP or move.name == TAKE_DOWN or move.name == TEETER_DANCE or move.name == THRASH or move.name == TICKLE or move.name == TRANSFORM or move.name == TRI_ATTACK or move.name == TRUMP_CARD or move.name == UPROAR or move.name == VICEGRIP or move.name == WEATHER_BALL or move.name == WHIRLWIND or move.name == WISH or move.name == WRAP or move.name == WRING_OUT or move.name == YAWN)
-}
+const types move_type [] = {
+GRASS,		// ABSORB
+POISON,		// ACID
+POISON,		// ACID_ARMOR
+NORMAL,		// ACUPRESSURE
+FLYING,		// AERIAL_ACE
+FLYING,		// AEROBLAST
+PSYCHIC_TYPE,	// AGILITY
+FLYING,		// AIR_CUTTER
+FLYING,		// AIR_SLASH
+PSYCHIC_TYPE,	// AMNESIA
+ROCK,		// ANCIENTPOWER
+WATER,		// AQUA_JET
+WATER,		// AQUA_RING
+WATER,		// AQUA_TAIL
+FIGHTING,	// ARM_THRUST
+GRASS,		// AROMATHERAPY
+NORMAL,		// ASSIST
+DARK,		// ASSURANCE
+GHOST,		// ASTONISH
+BUG,		// ATTACK_ORDER
+NORMAL,		// ATTRACT
+FIGHTING,	// AURA_SPHERE
+ICE,		// AURORA_BEAM
+ICE,		// AVALANCHE
+NORMAL,		// BARRAGE
+PSYCHIC_TYPE,	// BARRIER
+NORMAL,		// BATON_PASS
+DARK,		// BEAT_UP
+NORMAL,		// BELLY_DRUM
+NORMAL,		// BIDE
+NORMAL,		// BIND
+DARK,		// BITE
+FIRE,		// BLAST_BURN
+FIRE,		// BLAZE_KICK
+ICE,		// BLIZZARD
+NORMAL,		// BLOCK
+NORMAL,		// BODY_SLAM
+GROUND,		// BONE_CLUB
+GROUND,		// BONE_RUSH
+GROUND,		// BONEMERANG
+FLYING,		// BOUNCE
+FLYING,		// BRAVE_BIRD
+FIGHTING,	// BRICK_BREAK
+WATER,		// BRINE
+WATER,		// BUBBLE
+WATER,		// BUBBLEBEAM
+BUG,		// BUG_BITE
+BUG,		// BUG_BUZZ
+FIGHTING,	// BULK_UP
+STEEL,		// BULLET_PUNCH
+GRASS,		// BULLET_SEED
+PSYCHIC_TYPE,	// CALM_MIND
+NORMAL,		// CAMOUFLAGE
+NORMAL,		// CAPTIVATE
+ELECTRIC,	// CHARGE
+ELECTRIC,	// CHARGE_BEAM
+NORMAL,		// CHARM
+FLYING,		// CHATTER
+WATER,		// CLAMP
+FIGHTING,	// CLOSE_COMBAT
+NORMAL,		// COMET_PUNCH
+GHOST,		// CONFUSE_RAY
+PSYCHIC_TYPE,	// CONFUSION
+NORMAL,		// CONSTRICT
+NORMAL,		// CONVERSION
+NORMAL,		// CONVERSION_2
+NORMAL,		// COPYCAT
+PSYCHIC_TYPE,	// COSMIC_POWER
+GRASS,		// COTTON_SPORE
+FIGHTING,	// COUNTER
+NORMAL,		// COVET
+WATER,		// CRABHAMMER
+FIGHTING,	// CROSS_CHOP
+POISON,		// CROSS_POISON
+DARK,		// CRUNCH
+NORMAL,		// CRUSH_CLAW
+NORMAL,		// CRUSH_GRIP
+TYPELESS,	// CURSE
+NORMAL,		// CUT
+DARK,		// DARK_PULSE
+DARK,		// DARK_VOID
+BUG,		// DEFEND_ORDER
+NORMAL,		// DEFENSE_CURL
+FLYING,		// DEFOG
+GHOST,		// DESTINY_BOND
+FIGHTING,	// DETECT
+GROUND,		// DIG
+NORMAL,		// DISABLE
+ELECTRIC,	// DISCHARGE
+WATER,		// DIVE
+NORMAL,		// DIZZY_PUNCH
+STEEL,		// DOOM_DESIRE
+NORMAL,		// DOUBLE_EDGE
+NORMAL,		// DOUBLE_HIT
+FIGHTING,	// DOUBLE_KICK
+NORMAL,		// DOUBLE_TEAM
+NORMAL,		// DOUBLESLAP
+DRAGON,		// DRACO_METEOR
+DRAGON,		// DRAGON_CLAW
+DRAGON,		// DRAGON_DANCE
+DRAGON,		// DRAGON_PULSE
+DRAGON,		// DRAGON_RAGE
+DRAGON,		// DRAGON_RUSH
+DRAGON,		// DRAGONBREATH
+FIGHTING,	// DRAIN_PUNCH
+PSYCHIC_TYPE,	// DREAM_EATER
+FLYING,		// DRILL_PECK
+FIGHTING,	// DYNAMICPUNCH
+GROUND,		// EARTH_POWER
+GROUND,		// EARTHQUAKE
+NORMAL,		// EGG_BOMB
+DARK,		// EMBARGO
+FIRE,		// EMBER
+NORMAL,		// ENCORE
+NORMAL,		// ENDEAVOR
+NORMAL,		// ENDURE
+GRASS,		// ENERGY_BALL
+FIRE,		// ERUPTION
+NORMAL,		// EXPLOSION
+PSYCHIC_TYPE,	// EXTRASENSORY
+NORMAL,		// EXTREMESPEED
+NORMAL,		// FACADE
+DARK,		// FAINT_ATTACK
+NORMAL,		// FAKE_OUT
+DARK,		// FAKE_TEARS
+NORMAL,		// FALSE_SWIPE
+FLYING,		// FEATHERDANCE
+NORMAL,		// FEINT
+FIRE,		// FIRE_BLAST
+FIRE,		// FIRE_FANG
+FIRE,		// FIRE_PUNCH
+FIRE,		// FIRE_SPIN
+GROUND,		// FISSURE
+NORMAL,		// FLAIL
+FIRE,		// FLAME_WHEEL
+FIRE,		// FLAMETHROWER
+FIRE,		// FLARE_BLITZ
+NORMAL,		// FLASH
+STEEL,		// FLASH_CANNON
+DARK,		// FLATTER
+DARK,		// FLING
+FLYING,		// FLY
+FIGHTING,	// FOCUS_BLAST
+NORMAL,		// FOCUS_ENERGY
+FIGHTING,	// FOCUS_PUNCH
+NORMAL,		// FOLLOW_ME
+FIGHTING,	// FORCE_PALM
+NORMAL,		// FORESIGHT
+GRASS,		// FRENZY_PLANT
+NORMAL,		// FRUSTRATION
+NORMAL,		// FURY_ATTACK
+BUG,		// FURY_CUTTER
+NORMAL,		// FURY_SWIPES
+PSYCHIC_TYPE,	// FUTURE_SIGHT
+POISON,		// GASTRO_ACID
+GRASS,		// GIGA_DRAIN
+NORMAL,		// GIGA_IMPACT
+NORMAL,		// GLARE
+GRASS,		// GRASS_KNOT
+GRASS,		// GRASSWHISTLE
+PSYCHIC_TYPE,	// GRAVITY
+NORMAL,		// GROWL
+NORMAL,		// GROWTH
+GHOST,		// GRUDGE
+PSYCHIC_TYPE,	// GUARD_SWAP
+NORMAL,		// GUILLOTINE
+POISON,		// GUNK_SHOT
+FLYING,		// GUST
+STEEL,		// GYRO_BALL
+ICE,		// HAIL_MOVE
+FIGHTING,	// HAMMER_ARM
+NORMAL,		// HARDEN
+ICE,		// HAZE
+ROCK,		// HEAD_SMASH
+NORMAL,		// HEADBUTT
+NORMAL,		// HEAL_BELL
+PSYCHIC_TYPE,	// HEAL_BLOCK
+BUG,		// HEAL_ORDER
+PSYCHIC_TYPE,	// HEALING_WISH
+PSYCHIC_TYPE,	// HEART_SWAP
+FIRE,		// HEAT_WAVE
+NORMAL,		// HELPING_HAND
+FIGHTING,	// HI_JUMP_KICK
+NORMAL,		// HIDDEN_POWER
+NORMAL,		// HORN_ATTACK
+NORMAL,		// HORN_DRILL
+NORMAL,		// HOWL
+WATER,		// HYDRO_CANNON
+WATER,		// HYDRO_PUMP
+NORMAL,		// HYPER_BEAM
+NORMAL,		// HYPER_FANG
+NORMAL,		// HYPER_VOICE
+PSYCHIC_TYPE,	// HYPNOSIS
+ICE,		// ICE_BALL
+ICE,		// ICE_BEAM
+ICE,		// ICE_FANG
+ICE,		// ICE_PUNCH
+ICE,		// ICE_SHARD
+ICE,		// ICICLE_SPEAR
+ICE,		// ICY_WIND
+PSYCHIC_TYPE,	// IMPRISON
+GRASS,		// INGRAIN
+STEEL,		// IRON_DEFENSE
+STEEL,		// IRON_HEAD
+STEEL,		// IRON_TAIL
+NORMAL,		// JUDGMENT
+FIGHTING,	// JUMP_KICK
+FIGHTING,	// KARATE_CHOP
+PSYCHIC_TYPE,	// KINESIS
+DARK,		// KNOCK_OFF
+NORMAL,		// LAST_RESORT
+FIRE,		// LAVA_PLUME
+GRASS,		// LEAF_BLADE
+GRASS,		// LEAF_STORM
+BUG,		// LEECH_LIFE
+GRASS,		// LEECH_SEED
+NORMAL,		// LEER
+GHOST,		// LICK
+PSYCHIC_TYPE,	// LIGHT_SCREEN
+NORMAL,		// LOCK_ON
+NORMAL,		// LOVELY_KISS
+FIGHTING,	// LOW_KICK
+NORMAL,		// LUCKY_CHANT
+PSYCHIC_TYPE,	// LUNAR_DANCE
+PSYCHIC_TYPE,	// LUSTER_PURGE
+FIGHTING,	// MACH_PUNCH
+PSYCHIC_TYPE,	// MAGIC_COAT
+GRASS,		// MAGICAL_LEAF
+FIRE,		// MAGMA_STORM
+STEEL,		// MAGNET_BOMB
+ELECTRIC,	// MAGNET_RISE
+GROUND,		// MAGNITUDE
+NORMAL,		// ME_FIRST
+NORMAL,		// MEAN_LOOK
+PSYCHIC_TYPE,	// MEDITATE
+GRASS,		// MEGA_DRAIN
+NORMAL,		// MEGA_KICK
+NORMAL,		// MEGA_PUNCH
+BUG,		// MEGAHORN
+DARK,		// MEMENTO
+STEEL,		// METAL_BURST
+STEEL,		// METAL_CLAW
+STEEL,		// METAL_SOUND
+STEEL,		// METEOR_MASH
+NORMAL,		// METRONOME_MOVE
+NORMAL,		// MILK_DRINK
+NORMAL,		// MIMIC
+NORMAL,		// MIND_READER
+NORMAL,		// MINIMIZE
+PSYCHIC_TYPE,	// MIRACLE_EYE
+PSYCHIC_TYPE,	// MIRROR_COAT
+FLYING,		// MIRROR_MOVE
+STEEL,		// MIRROR_SHOT
+ICE,		// MIST
+PSYCHIC_TYPE,	// MIST_BALL
+NORMAL,		// MOONLIGHT
+NORMAL,		// MORNING_SUN
+GROUND,		// MUD_BOMB
+GROUND,		// MUD_SHOT
+GROUND,		// MUD_SLAP
+GROUND,		// MUD_SPORT
+WATER,		// MUDDY_WATER
+DARK,		// NASTY_PLOT
+NORMAL,		// NATURAL_GIFT
+NORMAL,		// NATURE_POWER
+GRASS,		// NEEDLE_ARM
+GHOST,		// NIGHT_SHADE
+DARK,		// NIGHT_SLASH
+GHOST,		// NIGHTMARE
+WATER,		// OCTAZOOKA
+NORMAL,		// ODOR_SLEUTH
+GHOST,		// OMINOUS_WIND
+DRAGON,		// OUTRAGE
+FIRE,		// OVERHEAT
+NORMAL,		// PAIN_SPLIT
+NORMAL,		// PAY_DAY
+DARK,		// PAYBACK
+FLYING,		// PECK
+NORMAL,		// PERISH_SONG
+GRASS,		// PETAL_DANCE
+BUG,		// PIN_MISSILE
+FLYING,		// PLUCK
+POISON,		// POISON_FANG
+POISON,		// POISON_GAS
+POISON,		// POISON_JAB
+POISON,		// POISON_STING
+POISON,		// POISON_TAIL
+POISON,		// POISONPOWDER
+NORMAL,		// POUND
+ICE,		// POWDER_SNOW
+ROCK,		// POWER_GEM
+PSYCHIC_TYPE,	// POWER_SWAP
+PSYCHIC_TYPE,	// POWER_TRICK
+GRASS,		// POWER_WHIP
+NORMAL,		// PRESENT
+NORMAL,		// PROTECT
+PSYCHIC_TYPE,	// PSYBEAM
+NORMAL,		// PSYCH_UP
+PSYCHIC_TYPE,	// PSYCHIC_MOVE
+PSYCHIC_TYPE,	// PSYCHO_BOOST
+PSYCHIC_TYPE,	// PSYCHO_CUT
+PSYCHIC_TYPE,	// PSYCHO_SHIFT
+PSYCHIC_TYPE,	// PSYWAVE
+DARK,		// PUNISHMENT
+DARK,		// PURSUIT
+NORMAL,		// QUICK_ATTACK
+NORMAL,		// RAGE
+WATER,		// RAIN_DANCE
+NORMAL,		// RAPID_SPIN
+GRASS,		// RAZOR_LEAF
+NORMAL,		// RAZOR_WIND
+NORMAL,		// RECOVER
+NORMAL,		// RECYCLE
+PSYCHIC_TYPE,	// REFLECT
+NORMAL,		// REFRESH
+PSYCHIC_TYPE,	// REST
+NORMAL,		// RETURN
+FIGHTING,	// REVENGE
+FIGHTING,	// REVERSAL
+NORMAL,		// ROAR
+DRAGON,		// ROAR_OF_TIME
+ROCK,		// ROCK_BLAST
+NORMAL,		// ROCK_CLIMB
+ROCK,		// ROCK_POLISH
+ROCK,		// ROCK_SLIDE
+FIGHTING,	// ROCK_SMASH
+ROCK,		// ROCK_THROW
+ROCK,		// ROCK_TOMB
+ROCK,		// ROCK_WRECKER
+PSYCHIC_TYPE,	// ROLE_PLAY
+FIGHTING,	// ROLLING_KICK
+ROCK,		// ROLLOUT
+FLYING,		// ROOST
+FIRE,		// SACRED_FIRE
+NORMAL,		// SAFEGUARD
+GROUND,		// SAND_ATTACK
+GROUND,		// SAND_TOMB
+ROCK,		// SANDSTORM
+NORMAL,		// SCARY_FACE
+NORMAL,		// SCRATCH
+NORMAL,		// SCREECH
+NORMAL,		// SECRET_POWER
+GRASS,		// SEED_BOMB
+GRASS,		// SEED_FLARE
+FIGHTING,	// SEISMIC_TOSS
+NORMAL,		// SELFDESTRUCT
+GHOST,		// SHADOW_BALL
+GHOST,		// SHADOW_CLAW
+GHOST,		// SHADOW_FORCE
+GHOST,		// SHADOW_PUNCH
+GHOST,		// SHADOW_SNEAK
+NORMAL,		// SHARPEN
+ICE,		// SHEER_COLD
+ELECTRIC,	// SHOCK_WAVE
+BUG,		// SIGNAL_BEAM
+BUG,		// SILVER_WIND
+NORMAL,		// SING
+NORMAL,		// SKETCH
+PSYCHIC_TYPE,	// SKILL_SWAP
+NORMAL,		// SKULL_BASH
+FLYING,		// SKY_ATTACK
+FIGHTING,	// SKY_UPPERCUT
+NORMAL,		// SLACK_OFF
+NORMAL,		// SLAM
+NORMAL,		// SLASH
+GRASS,		// SLEEP_POWDER
+NORMAL,		// SLEEP_TALK
+POISON,		// SLUDGE
+POISON,		// SLUDGE_BOMB
+NORMAL,		// SMELLINGSALT
+POISON,		// SMOG
+NORMAL,		// SMOKESCREEN
+DARK,		// SNATCH
+NORMAL,		// SNORE
+NORMAL,		// SOFTBOILED
+GRASS,		// SOLARBEAM
+NORMAL,		// SONICBOOM
+DRAGON,		// SPACIAL_REND
+ELECTRIC,	// SPARK
+BUG,		// SPIDER_WEB
+NORMAL,		// SPIKE_CANNON
+GROUND,		// SPIKES
+NORMAL,		// SPIT_UP
+GHOST,		// SPITE
+NORMAL,		// SPLASH
+GRASS,		// SPORE
+ROCK,		// STEALTH_ROCK
+STEEL,		// STEEL_WING
+NORMAL,		// STOCKPILE
+NORMAL,		// STOMP
+ROCK,		// STONE_EDGE
+NORMAL,		// STRENGTH
+BUG,		// STRING_SHOT
+NORMAL,		// STRUGGLE
+TYPELESS,	// STRUGGLE
+GRASS,		// STUN_SPORE
+FIGHTING,	// SUBMISSION
+NORMAL,		// SUBSTITUTE
+DARK,		// SUCKER_PUNCH
+FIRE,		// SUNNY_DAY
+NORMAL,		// SUPER_FANG
+FIGHTING,	// SUPERPOWER
+NORMAL,		// SUPERSONIC
+WATER,		// SURF
+NORMAL,		// SWAGGER
+NORMAL,		// SWALLOW
+NORMAL,		// SWEET_KISS
+NORMAL,		// SWEET_SCENT
+NORMAL,		// SWIFT
+DARK,		// SWITCHEROO
+NORMAL,		// SWORDS_DANCE
+GRASS,		// SYNTHESIS
+NORMAL,		// TACKLE
+BUG,		// TAIL_GLOW
+NORMAL,		// TAIL_WHIP
+FLYING,		// TAILWIND
+NORMAL,		// TAKE_DOWN
+DARK,		// TAUNT
+NORMAL,		// TEETER_DANCE
+PSYCHIC_TYPE,	// TELEPORT
+DARK,		// THIEF
+NORMAL,		// THRASH
+ELECTRIC,	// THUNDER
+ELECTRIC,	// THUNDER_FANG
+ELECTRIC,	// THUNDER_WAVE
+ELECTRIC,	// THUNDERBOLT
+ELECTRIC,	// THUNDERPUNCH
+ELECTRIC,	// THUNDERSHOCK
+NORMAL,		// TICKLE
+DARK,		// TORMENT
+POISON,		// TOXIC
+POISON,		// TOXIC_SPIKES
+NORMAL,		// TRANSFORM
+NORMAL,		// TRI_ATTACK
+PSYCHIC_TYPE,	// TRICK
+PSYCHIC_TYPE,	// TRICK_ROOM
+FIGHTING,	// TRIPLE_KICK
+NORMAL,		// TRUMP_CARD
+BUG,		// TWINEEDLE
+DRAGON,		// TWISTER
+BUG,		// U_TURN
+NORMAL,		// UPROAR
+FIGHTING,	// VACUUM_WAVE
+NORMAL,		// VICEGRIP
+GRASS,		// VINE_WHIP
+FIGHTING,	// VITAL_THROW
+ELECTRIC,	// VOLT_TACKLE
+FIGHTING,	// WAKE_UP_SLAP
+WATER,		// WATER_GUN
+WATER,		// WATER_PULSE
+WATER,		// WATER_SPORT
+WATER,		// WATER_SPOUT
+WATER,		// WATERFALL
+NORMAL,		// WEATHER_BALL
+WATER,		// WHIRLPOOL
+NORMAL,		// WHIRLWIND
+FIRE,		// WILL_O_WISP
+FLYING,		// WING_ATTACK
+NORMAL,		// WISH
+WATER,		// WITHDRAW
+GRASS,		// WOOD_HAMMER
+GRASS,		// WORRY_SEED
+NORMAL,		// WRAP
+NORMAL,		// WRING_OUT
+BUG,		// X_SCISSOR
+NORMAL,		// YAWN
+ELECTRIC,	// ZAP_CANNON
+PSYCHIC_TYPE		// ZEN_HEADBUTT
+};
 
 void move_priority (moves &move) {
 	if (move.name == HELPING_HAND)

@@ -78,7 +78,7 @@ void loadpokemon (pokemon &member) {
 
 void loadmove (moves &move) {
 	move.pp = move.pp_max;
-	move_type (move);
+	move.type = move_type [move.name];
 	move.basepower = base_power [move.name];
 	move_priority (move);
 	move.r = 100;

@@ -337,7 +337,7 @@ int damagenonrandom (const pokemon &attacker, const teams &defender, int &rl, in
 	else
 		stab = 2;
 
-	if ((FILTER == defender.active->ability or SOLID_ROCK == defender.active->ability) and type1 * type2 > 2)
+	if (SOLID_ROCK == defender.active->ability and type1 * type2 > 2)
 		aem = 3;
 	else
 		aem = 4;
