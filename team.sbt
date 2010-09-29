@@ -34,10 +34,10 @@
 <item>Leftovers</item>
 <ability>Pressure</ability>
 <moveset>
-	<move pp-up="16">Calm Mind</move>
-	<move pp-up="16">Surf</move>
-	<move pp-up="16">Rest</move>
-	<move pp-up="16">Sleep Talk</move>
+	<move pp-up="3">Calm Mind</move>
+	<move pp-up="3">Surf</move>
+	<move pp-up="3">Rest</move>
+	<move pp-up="3">Sleep Talk</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -58,10 +58,10 @@
 <item>Shed Shell</item>
 <ability>Intimidate</ability>
 <moveset>
-	<move pp-up="16">Dragon Dance</move>
-	<move pp-up="16">Dragon Claw</move>
-	<move pp-up="16">Roost</move>
-	<move pp-up="16">Flamethrower</move>
+	<move pp-up="3">Dragon Dance</move>
+	<move pp-up="3">Dragon Claw</move>
+	<move pp-up="3">Roost</move>
+	<move pp-up="3">Flamethrower</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="4" />

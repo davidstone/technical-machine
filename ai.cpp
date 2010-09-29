@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
 	int score;
 	moves_list best_move = expectiminimax (ai, foe, weather, depth, score);
 	std::cout << "Use " << move_name [best_move];
-	if (INT_MIN < score and score < INT_MAX)
+	if (-INT_MAX < score and score < INT_MAX)
 		std::cout << " for a minimum expected score of " << score << "\n";
 	else if (score == INT_MAX)
 		std::cout << ", winning the game.\n";

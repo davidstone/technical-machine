@@ -25,18 +25,7 @@ moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int d
 	return best_move;
 }
 
-int tree1_base (const teams &ai, const teams &foe, const weathers &weather, const int &depth, moves_list &best_move, teams* first, teams* last, int beta) {
-	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		beta = std::min (beta, (tree2 (ai, foe, weather, depth, best_move) + tree2 (foe, ai, weather, depth, best_move)) / 2);
-	else
-		beta = std::min (beta, tree2 (*first, *last, weather, depth, best_move));
-	return beta;
-}
-
-
 int tree1 (teams ai, teams foe, weathers weather, int depth, moves_list &best_move) {
-	test (ai);
-	test (foe);
 	reset_iterators (ai);
 	reset_iterators (foe);
 	--depth;
@@ -64,21 +53,10 @@ int tree1 (teams ai, teams foe, weathers weather, int depth, moves_list &best_mo
 					order (ai, foe, weather, first, last);
 					ai.active->move->ch = false;
 					foe.active->move->ch = false;
-					tree1_base (ai, foe, weather, depth, best_move, first, last, beta);
-					if (ai.active->move->basepower != 0) {
-						ai.active->move->ch = true;
-						tree1_base (ai, foe, weather, depth, best_move, first, last, beta);
-						ai.active->move->ch = false;
-					}
-					if (foe.active->move->basepower != 0) {
-						foe.active->move->ch = true;
-						tree1_base (ai, foe, weather, depth, best_move, first, last, beta);
-						if (ai.active->move->basepower != 0) {
-							ai.active->move->ch = true;
-							tree1_base (ai, foe, weather, depth, best_move, first, last, beta);
-						}
-					}
-
+					if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
+						beta = std::min (beta, (tree2 (ai, foe, weather, depth, best_move) + tree2 (foe, ai, weather, depth, best_move)) / 2);
+					else
+						beta = std::min (beta, tree2 (*first, *last, weather, depth, best_move));
 					if (beta <= alpha)	// Alpha-Beta pruning
 						break;
 				}
