@@ -107,7 +107,7 @@ void test (const teams &team) {
 		std::cout << "Type2: " << static_cast<int> (team.active->type2) << '\n';
 		std::cout << "Vanish: " << static_cast<int> (team.active->vanish) << '\n';
 //		for (std::vector<moves>::iterator team.active->move = team.active->moveset.begin(); team.active->move != team.active->moveset.end(); ++team.active->move) {
-			std::cout << "Name: " << team.active->move->name << '\n';
+			std::cout << "Name: " << move_name [team.active->move->name] << '\n';
 			std::cout << "CH: " << team.active->move->ch << '\n';
 			std::cout << "Execute: " << team.active->move->execute << '\n';
 			std::cout << "Physical: " << team.active->move->physical << '\n';

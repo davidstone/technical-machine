@@ -73,7 +73,6 @@ void loadpokemon (pokemon &member) {
 	
 	for (std::vector<moves>::iterator move = member.moveset.begin(); move != member.moveset.end(); ++move)
 		loadmove (*move);
-
 }
 
 void loadmove (moves &move) {

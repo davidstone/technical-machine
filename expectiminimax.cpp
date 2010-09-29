@@ -35,6 +35,8 @@ int tree1_base (const teams &ai, const teams &foe, const weathers &weather, cons
 
 
 int tree1 (teams ai, teams foe, weathers weather, int depth, moves_list &best_move) {
+	test (ai);
+	test (foe);
 	reset_iterators (ai);
 	reset_iterators (foe);
 	--depth;

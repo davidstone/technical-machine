@@ -536,6 +536,8 @@ void move_priority (moves &move) {
 		move.priority = -5;
 	else if (move.name == TRICK_ROOM)
 		move.priority = -6;
+	else
+		move.priority = 0;
 }
 
 const short base_power [] = {
