@@ -20,30 +20,50 @@
 #include "weather.h"
 
 moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int depth, int &score) {
-	moves_list best_move;
+	moves_list best_move = STRUGGLE;
 	score = tree1 (ai, foe, weather, depth, best_move);
+	// Without this, if all moves lead to the foe winning, no move is ever put into best_move, and the program crashes. I iterate over all moves to try and find a legal option.
+	if (best_move == STRUGGLE) {
+		for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
+			blockselection (ai, foe, weather);
+			if (ai.active->move->selectable) {
+				best_move = ai.active->move->name;
+				break;
+			}
+		}
+	}
 	return best_move;
 }
+
+int tree1_base (const teams &ai, const teams &foe, const weathers &weather, const int &depth, moves_list &best_move, teams* first, teams* last, int beta) {
+	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
+		beta = std::min (beta, (tree2 (ai, foe, weather, depth, best_move) + tree2 (foe, ai, weather, depth, best_move)) / 2);
+	else
+		beta = std::min (beta, tree2 (*first, *last, weather, depth, best_move));
+	return beta;
+}
+
 
 int tree1 (teams ai, teams foe, weathers weather, int depth, moves_list &best_move) {
 	reset_iterators (ai);
 	reset_iterators (foe);
-	--depth;
+	if (depth != -1)
+		--depth;
 	
 	/* Working from the inside loop out:
 
-	The following begins by setting beta to the largest possible value. This is the variable that the opposing player is trying to minimize. As long as the opposing player has any move that won't guarantee their loss, that move will score lower (more negative) than INT_MAX, and thus the opponent will set that as their best response to the particular move that the AI uses.
+	The following begins by setting beta to the largest possible value. This is the variable that the opposing player is trying to minimize. As long as the opposing player has any move that won't guarantee their loss, that move will score lower (more negative) than VICTORY, and thus the opponent will set that as their best response to the particular move that the AI uses.
 
-	After looking at each response the opponent has to a given move, beta is finally set to whatever the score will be if the AI uses that move. alpha is initially set to the lowest possible value, so as long as the AI has any move that won't guarantee its loss, that move will score higher (more positive) than -INT_MAX, and thus the AI will set that as its best response. It then replaces that move if it finds a move for which the opponent's best response is more positive than the first move found. In other words, it finds the move for the AI for which the foe's best response is the weakest.
+	After looking at each response the opponent has to a given move, beta is finally set to whatever the score will be if the AI uses that move. alpha is initially set to the lowest possible value, so as long as the AI has any move that won't guarantee its loss, that move will score higher (more positive) than -VICTORY, and thus the AI will set that as its best response. It then replaces that move if it finds a move for which the opponent's best response is more positive than the first move found. In other words, it finds the move for the AI for which the foe's best response is the weakest.
 	*/
 	
-	int alpha = -INT_MAX;		// -INT_MAX is used in place of INT_MIN because I want max value + min value == 0. This helps when averaging scores.
+	int alpha = -VICTORY;
 
 	// Determine which moves can be legally selected
 	for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
 		blockselection (ai, foe, weather);
 		if (ai.active->move->selectable) {
-			int beta = INT_MAX;
+			int beta = VICTORY;
 			for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
 				blockselection (foe, ai, weather);
 				if (foe.active->move->selectable) {
@@ -53,10 +73,31 @@ int tree1 (teams ai, teams foe, weathers weather, int depth, moves_list &best_mo
 					order (ai, foe, weather, first, last);
 					ai.active->move->ch = false;
 					foe.active->move->ch = false;
-					if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-						beta = std::min (beta, (tree2 (ai, foe, weather, depth, best_move) + tree2 (foe, ai, weather, depth, best_move)) / 2);
-					else
-						beta = std::min (beta, tree2 (*first, *last, weather, depth, best_move));
+					int beta2 = beta;
+					beta = tree1_base (ai, foe, weather, depth, best_move, first, last, beta2);
+					if (ai.active->move->basepower != 0 and foe.active->move->basepower == 0) {
+						beta *= 15;
+						ai.active->move->ch = true;
+						beta += tree1_base (ai, foe, weather, depth, best_move, first, last, beta2);
+						beta /= 16;
+					}
+					else if (foe.active->move->basepower != 0 and ai.active->move->basepower == 0) {
+						beta *= 15;
+						foe.active->move->ch = true;
+						beta += tree1_base (ai, foe, weather, depth, best_move, first, last, beta2);
+						beta /= 16;
+					}
+					else if (ai.active->move->basepower != 0 and foe.active->move->basepower != 0) {
+						beta *= 225;
+						ai.active->move->ch = true;
+						beta += tree1_base (ai, foe, weather, depth, best_move, first, last, beta2) * 15;
+						ai.active->move->ch = false;
+						foe.active->move->ch = true;
+						beta += tree1_base (ai, foe, weather, depth, best_move, first, last, beta2) * 15;
+						ai.active->move->ch = true;
+						beta += tree1_base (ai, foe, weather, depth, best_move, first, last, beta2);
+						beta /= 256;
+					}
 					if (beta <= alpha)	// Alpha-Beta pruning
 						break;
 				}
@@ -66,7 +107,7 @@ int tree1 (teams ai, teams foe, weathers weather, int depth, moves_list &best_mo
 				alpha = beta;
 				best_move = ai.active->move->name;
 			}
-			if (alpha == INT_MAX)
+			if (alpha == VICTORY)
 				break;
 		}
 	}
@@ -130,7 +171,7 @@ int tree3 (teams first, teams last, weathers weather, int length_first, int leng
 	reset_iterators (last);
 	endofturn (first, last, weather, length_first, length_last, shed_skin_first, shed_skin_last);
 	if (win (first) != 0 or win (last) != 0)
-		return win (first) + win (last);			// 0 if both Pokemon die (a draw), INT_MAX if the AI wins, -INT_MAX if the foe wins
+		return win (first) + win (last);			// 0 if both Pokemon die (a draw), VICTORY if the AI wins, -VICTORY if the foe wins
 	teams* ai;
 	teams* foe;
 	if (first.me) {

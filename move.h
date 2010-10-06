@@ -617,7 +617,7 @@ const short base_power [] = {
 70,		// CROSS_POISON	
 80,		// CRUNCH	
 75,		// CRUSH_CLAW	
-0,		// CRUSH_GRIP	
+80,		// CRUSH_GRIP	
 0,		// CURSE	
 50,		// CUT	
 80,		// DARK_PULSE	
@@ -642,7 +642,7 @@ const short base_power [] = {
 80,		// DRAGON_CLAW	
 0,		// DRAGON_DANCE	
 90,		// DRAGON_PULSE	
-0,		// DRAGON_RAGE	
+-1,		// DRAGON_RAGE	
 100,		// DRAGON_RUSH	
 60,		// DRAGONBREATH	
 60,		// DRAIN_PUNCH	
@@ -655,7 +655,7 @@ const short base_power [] = {
 0,		// EMBARGO	
 40,		// EMBER	
 0,		// ENCORE	
-0,		// ENDEAVOR	
+-1,		// ENDEAVOR	
 0,		// ENDURE	
 80,		// ENERGY_BALL	
 150,		// ERUPTION	
@@ -673,7 +673,7 @@ const short base_power [] = {
 65,		// FIRE_FANG	
 75,		// FIRE_PUNCH	
 15,		// FIRE_SPIN	
-0,		// FISSURE	
+-1,		// FISSURE	
 0,		// FLAIL	
 60,		// FLAME_WHEEL	
 95,		// FLAMETHROWER	
@@ -706,7 +706,7 @@ const short base_power [] = {
 0,		// GROWTH	
 0,		// GRUDGE	
 0,		// GUARD_SWAP	
-0,		// GUILLOTINE	
+-1,		// GUILLOTINE	
 120,		// GUNK_SHOT	
 40,		// GUST	
 0,		// GYRO_BALL	
@@ -726,7 +726,7 @@ const short base_power [] = {
 100,		// HI_JUMP_KICK	
 0,		// HIDDEN_POWER	
 65,		// HORN_ATTACK	
-0,		// HORN_DRILL	
+-1,		// HORN_DRILL	
 0,		// HOWL	
 150,		// HYDRO_CANNON	
 120,		// HYDRO_PUMP	
@@ -807,7 +807,7 @@ const short base_power [] = {
 0,		// NATURAL_GIFT	
 0,		// NATURE_POWER	
 60,		// NEEDLE_ARM	
-0,		// NIGHT_SHADE	
+-1,		// NIGHT_SHADE	
 70,		// NIGHT_SLASH	
 0,		// NIGHTMARE	
 65,		// OCTAZOOKA	
@@ -843,7 +843,7 @@ const short base_power [] = {
 140,		// PSYCHO_BOOST	
 70,		// PSYCHO_CUT	
 0,		// PSYCHO_SHIFT	
-0,		// PSYWAVE	
+-1,		// PSYWAVE	
 0,		// PUNISHMENT	
 40,		// PURSUIT	
 40,		// QUICK_ATTACK	
@@ -885,7 +885,7 @@ const short base_power [] = {
 70,		// SECRET_POWER	
 80,		// SEED_BOMB	
 120,		// SEED_FLARE	
-0,		// SEISMIC_TOSS	
+-1,		// SEISMIC_TOSS	
 200,		// SELFDESTRUCT	
 80,		// SHADOW_BALL	
 70,		// SHADOW_CLAW	
@@ -893,7 +893,7 @@ const short base_power [] = {
 60,		// SHADOW_PUNCH	
 40,		// SHADOW_SNEAK	
 0,		// SHARPEN	
-0,		// SHEER_COLD	
+-1,		// SHEER_COLD	
 60,		// SHOCK_WAVE	
 75,		// SIGNAL_BEAM	
 60,		// SILVER_WIND	
@@ -917,7 +917,7 @@ const short base_power [] = {
 40,		// SNORE	
 0,		// SOFTBOILED	
 60,		// SOLARBEAM	(I double the power if it's not raining, rather than halve it if it is)
-0,		// SONICBOOM	
+-1,		// SONICBOOM	
 100,		// SPACIAL_REND	
 65,		// SPARK	
 0,		// SPIDER_WEB	
@@ -940,7 +940,7 @@ const short base_power [] = {
 0,		// SUBSTITUTE	
 80,		// SUCKER_PUNCH	
 0,		// SUNNY_DAY	
-0,		// SUPER_FANG	
+-1,		// SUPER_FANG	
 120,		// SUPERPOWER	
 0,		// SUPERSONIC	
 95,		// SURF	
@@ -1003,7 +1003,7 @@ const short base_power [] = {
 120,		// WOOD_HAMMER	
 0,		// WORRY_SEED	
 15,		// WRAP	
-0,		// WRING_OUT	
+80,		// WRING_OUT	
 80,		// X_SCISSOR	
 0,		// YAWN	
 120,		// ZAP_CANNON	

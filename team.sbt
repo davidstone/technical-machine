@@ -34,10 +34,7 @@
 <item>Leftovers</item>
 <ability>Pressure</ability>
 <moveset>
-	<move pp-up="3">Calm Mind</move>
-	<move pp-up="3">Surf</move>
-	<move pp-up="3">Rest</move>
-	<move pp-up="3">Sleep Talk</move>
+	<move pp-up="0">Seismic Toss</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -61,10 +58,9 @@
 	<move pp-up="3">Dragon Dance</move>
 	<move pp-up="3">Dragon Claw</move>
 	<move pp-up="3">Roost</move>
-	<move pp-up="3">Flamethrower</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="4" />
+	<stat name="HP" iv="0" ev="0" />
 	<stat name="Atk" iv="31" ev="252" />
 	<stat name="Def" iv="31" ev="0" />
 	<stat name="Spd" iv="31" ev="252" />

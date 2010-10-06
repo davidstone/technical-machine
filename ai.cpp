@@ -44,11 +44,16 @@ int main (int argc, char* argv[]) {
 	int score;
 	moves_list best_move = expectiminimax (ai, foe, weather, depth, score);
 	std::cout << "Use " << move_name [best_move];
-	if (-INT_MAX < score and score < INT_MAX)
-		std::cout << " for a minimum expected score of " << score << "\n";
-	else if (score == INT_MAX)
-		std::cout << ", winning the game.\n";
+	if (depth == -1) {
+		double probability = 100.0 * static_cast <double> (score + VICTORY) / static_cast <double> (2 * VICTORY);
+		std::cout << " for ";
+		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (80 <= probability and probability < 90))
+			std::cout << "an ";
+		else
+			std::cout << "a ";
+		std::cout << probability << "% chance to win.\n";
+	}
 	else
-		std::cout << ", losing the game anyway.\n";
+		std::cout << " for a minimum expected score of " << score << "\n";
 	return 0;
 }

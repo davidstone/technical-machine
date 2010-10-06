@@ -19,6 +19,8 @@
 #include "team.h"
 #include "weather.h"
 
+const int VICTORY = 1048576;
+
 int scorepokemon (const pokemon &member, const teams &foe, const weathers &weather);
 int scoremove (const moves &move, const pokemon &member, const teams &foe, const weathers &weather);
 
@@ -29,7 +31,7 @@ int evaluate (const teams &ai, const teams &foe, const weathers &weather) {
 	for (std::vector<pokemon>::const_iterator it = foe.member.begin(); it != foe.member.end(); ++it)
 		score -= scorepokemon (*it, ai, weather);
 
-*/	int score = 1000 * ai.active->hp.stat / ai.active->hp.max - 1000 * foe.active->hp.stat / foe.active->hp.max;
+*/	int score = 100 * ai.active->hp.stat / ai.active->hp.max - 100 * foe.active->hp.stat / foe.active->hp.max;
 	return score;
 }
 
@@ -83,8 +85,8 @@ int scoremove (const moves &move, const pokemon &member, const teams &foe, const
 int win (const teams &team) {
 	if (team.active->hp.stat == 0) {
 		if (team.me)
-			return -INT_MAX;
-		return INT_MAX;
+			return -VICTORY;
+		return VICTORY;
 	}
 	return 0;
 }
