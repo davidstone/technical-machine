@@ -31,7 +31,16 @@ bool imprison (const teams &user, const teams &target);
 
 void blockselection (teams &user, const teams &target, const weathers &weather) {
 	user.active->move->selectable = true;
-	if ((block1 (user, target))
+	if (user.active->move->name == STRUGGLE) {
+		std::cout << "Hi\n";
+		for (std::vector<moves>::iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
+			if (it->selectable = true) {
+				user.active->move->selectable = false;
+				break;
+			}
+		}
+	}
+	else if ((block1 (user, target))
 	 or (block2 (user, weather))
 	 or (user.active->torment and 0 != user.active->move->times_used))
 		user.active->move->selectable = false;

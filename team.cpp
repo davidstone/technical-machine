@@ -73,6 +73,11 @@ void loadpokemon (pokemon &member) {
 	
 	for (std::vector<moves>::iterator move = member.moveset.begin(); move != member.moveset.end(); ++move)
 		loadmove (*move);
+	moves struggle;
+	struggle.name = STRUGGLE;
+	struggle.pp_max = get_pp [struggle.name];
+	loadmove (struggle);
+	member.moveset.push_back (struggle);
 }
 
 void loadmove (moves &move) {

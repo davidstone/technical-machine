@@ -34,7 +34,7 @@
 <item>Leftovers</item>
 <ability>Pressure</ability>
 <moveset>
-	<move pp-up="0">Seismic Toss</move>
+	<move pp-up="0">Roost</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -52,12 +52,10 @@
 <happiness>255</happiness>
 <gender>Female</gender>
 <nature>Adamant</nature>
-<item>Shed Shell</item>
+<item>Leftovers</item>
 <ability>Intimidate</ability>
 <moveset>
-	<move pp-up="3">Dragon Dance</move>
-	<move pp-up="3">Dragon Claw</move>
-	<move pp-up="3">Roost</move>
+	<move pp-up="3">Splash</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="0" ev="0" />
