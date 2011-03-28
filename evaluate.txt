@@ -1,0 +1,31 @@
+Transposition Table	4096
+
+Light Screen	64
+Lucky Chant	4
+Mist	4
+Reflect	64
+Safeguard	32
+Tailwind	32
+Wish	300
+
+Spikes	-100
+Stealth Rock	-500
+Toxic Spikes	-100
+
+Members	1024
+HP	1024
+Aqua Ring	1
+Curse	-1
+Imprison	-1
+Ingrain	1
+Leech Seed	-1
+Loaf	-1
+Nightmare	-1
+Torment	-1
+Trapped	-1
+
+Burn	-1
+Freeze	-1
+Paralysis	-1
+Poison	-1
+Sleep	-1

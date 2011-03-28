@@ -1,4 +1,4 @@
-// Stats data structures
+// Data structure for unknowns
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,21 +9,28 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT_H_
-#define STAT_H_
+#ifndef UNKNOWN_H_
+#define UNKNOWN_H_
 
-#include <map>
-#include <string>
-
-struct stats {
-	unsigned char base;
-	char iv;			// 0 through 31
-	char ev;			// 0 through 63
-	char stage;		// -6 though 6
-	short stat;		// Current HP or last calculated value for other stats
-	short max;		// Max HP only
+struct Unknown {
+//	std::vector<moves> moveset;
+//	unsigned char ability;
+	unsigned char item;
+	unsigned char nature;
+//	unsigned char hpiv;
+	unsigned char hpev;
+//	unsigned char atkiv;
+	unsigned char atkev;
+//	unsigned char defiv;
+//	unsigned char defev;
+//	unsigned char spaiv;
+//	unsigned char spaev;
+//	unsigned char spdiv;
+//	unsigned char spdev;
+//	unsigned char speiv;
+	unsigned char speev;
 };
 
-enum natures { ADAMANT, BASHFUL, BOLD, BRAVE, CALM, CAREFUL, DOCILE, GENTLE, HARDY, HASTY, IMPISH, JOLLY, LAX, LONELY, MILD, MODEST, NAIVE, NAUGHTY, QUIET, QUIRKY, RASH, RELAXED, SASSY, SERIOUS, TIMID };
+void unknown (std::vector<Unknown> &hidden);
 
 #endif

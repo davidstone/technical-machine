@@ -1,5 +1,5 @@
 // Reverse damage calculator interface
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -15,28 +15,61 @@
 #include "ability.h"
 #include "item.h"
 #include "move.h"
+#include "movefunction.h"
 #include "pokemon.h"
+#include "reversedamage.h"
+#include "statfunction.h"
 #include "status.h"
 #include "team.h"
+#include "teampredictor.h"
 #include "type.h"
+#include "unknown.h"
 #include "weather.h"
-#include "stat.cpp"
-#include "damage.cpp"
-#include "unknown.cpp"
-#include "reversedamage.cpp"
-#include "team.cpp"
-#include "move.cpp"
 
 // What follows is a temporary file that initializes variables that I don't have functions to initialize yet. It also provides the interface for the reverse damage calculator.
 
 int main () {
-
+	
+	Map map;
+	set_species_map (map.specie);
+	set_ability_map (map.ability);
+	set_item_map (map.item);
+	set_nature_map (map.nature);
+	set_move_map (map.move);
+	int detailed [END_SPECIES] [7];
+	detailed_stats (map, detailed);
 	teams ai;
-	loadteam (ai, "team.sbt");
-	teams foe;
-	loadteam (foe, "");
+	loadteam (ai, "ai.sbt", map, detailed);
 	ai.me = true;
+
+	teams foe;
 	foe.me = false;
+
+	pokemon member;
+	foe.member.push_back (member);
+	foe.active = foe.member.begin();
+	foe.active->name = INFERNAPE;
+	foe.active->level = 100;
+	foe.active->gender = MALE;
+	foe.active->ability = BLAZE;
+	foe.active->hp.iv = 0;
+	foe.active->def.iv = 0;
+	foe.active->spa.iv = 0;
+	foe.active->spd.iv = 0;
+	foe.active->spe.iv = 0;
+	foe.active->hp.ev = 0;
+	foe.active->def.ev = 0;
+	foe.active->spa.ev = 0;
+	foe.active->spd.ev = 0;
+	foe.active->spe.ev = 0;
+
+	moves move;
+	move.name = CLOSE_COMBAT;
+	move.pp_max = get_pp [move.name] * 8 / 5;
+	move.ch = false;
+	foe.active->moveset.push_back (move);
+
+	loadteam (foe, "", map, detailed);
 
 	weathers weather;
 	weather.trick_room = 0;
@@ -48,46 +81,10 @@ int main () {
 	weather.sand = 0;
 	weather.rain = 0;
 	
-	pokemon member;
-	foe.member.push_back (member);
-	foe.active = foe.member.begin();
-	foe.active->pokemon = INFERNAPE;
-	foe.active->mass = mass [foe.active->pokemon];
-	foe.active->level = 100;
-	foe.active->hp.base = base_stat [foe.active->pokemon][0];
-	foe.active->atk.base = base_stat [foe.active->pokemon][1];
-	foe.active->def.base = base_stat [foe.active->pokemon][2];
-	foe.active->spa.base = base_stat [foe.active->pokemon][3];
-	foe.active->spd.base = base_stat [foe.active->pokemon][4];
-	foe.active->spe.base = base_stat [foe.active->pokemon][5];
-	hitpoints (*foe.active);
-	foe.active->hp.stat = foe.active->hp.max;
-	foe.active->ability = BLAZE;
-	foe.active->status = NO_STATUS;
-	foe.active->gender = MALE;
-	foe.active->type1 = get_pokemon_type [foe.active->pokemon][0];
-	foe.active->type2 = get_pokemon_type [foe.active->pokemon][1];
-	foe.active->def.ev = 0;
-	foe.active->spa.ev = 0;
-	foe.active->spd.ev = 0;
-	foe.active->spe.ev = 0;
-
-	moves move;
-	move.name = CLOSE_COMBAT;
-	move.type = move_type [move.name];
-	move.physical = true;
-	move.ch = false;
-	move.times_used = 0;
-	move.pp_max = get_pp [move.name] * 8 / 5;
-	move.pp = move.pp_max;
-	move_priority (move);
-	move.basepower = base_power [static_cast <short> (move.name)];
-	foe.active->moveset.push_back (move);
-	foe.active->move = foe.active->moveset.begin();
-	ai.active->move = ai.active->moveset.begin();
-
-	switchpokemon (ai, *ai.active, weather);
-	switchpokemon (foe, *foe.active, weather);
+	ai.replacement = 0;
+	switchpokemon (ai, *foe.active, weather);
+	foe.replacement = 0;
+	switchpokemon (foe, *ai.active, weather);
 	defense (*foe.active, *ai.active, weather);
 	speed (ai, weather);
 	

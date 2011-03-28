@@ -1,4 +1,4 @@
-// Stats data structures
+// Gender map
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,21 +9,13 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT_H_
-#define STAT_H_
-
 #include <map>
 #include <string>
+#include "gender.h"
 
-struct stats {
-	unsigned char base;
-	char iv;			// 0 through 31
-	char ev;			// 0 through 63
-	char stage;		// -6 though 6
-	short stat;		// Current HP or last calculated value for other stats
-	short max;		// Max HP only
-};
+void set_gender_map (std::map <std::string, genders> &genders_map) {
+	genders_map["None"] = GENDERLESS;
+	genders_map["Female"] = FEMALE;
+	genders_map["Male"] = MALE;
+}
 
-enum natures { ADAMANT, BASHFUL, BOLD, BRAVE, CALM, CAREFUL, DOCILE, GENTLE, HARDY, HASTY, IMPISH, JOLLY, LAX, LONELY, MILD, MODEST, NAIVE, NAUGHTY, QUIET, QUIRKY, RASH, RELAXED, SASSY, SERIOUS, TIMID };
-
-#endif

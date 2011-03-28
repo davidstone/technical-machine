@@ -1,5 +1,5 @@
 // Pokemon data structure
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -13,6 +13,7 @@
 #define POKEMON_H_
 
 #include <map>
+#include <string>
 #include <vector>
 #include "ability.h"
 #include "gender.h"
@@ -22,7 +23,7 @@
 #include "status.h"
 #include "type.h"
 
-enum species { ABOMASNOW, ABRA, ABSOL, AERODACTYL, AGGRON, AIPOM, ALAKAZAM, ALTARIA, AMBIPOM, AMPHAROS, ANORITH, ARBOK, ARCANINE, ARCEUS, ARIADOS, ARMALDO, ARON, ARTICUNO, AZELF, AZUMARILL, AZURILL, BAGON, BALTOY, BANETTE, BARBOACH, BASTIODON, BAYLEEF, BEAUTIFLY, BEEDRILL, BELDUM, BELLOSSOM, BELLSPROUT, BIBAREL, BIDOOF, BLASTOISE, BLAZIKEN, BLISSEY, BONSLY, BRELOOM, BRONZONG, BRONZOR, BUDEW, BUIZEL, BULBASAUR, BUNEARY, BURMY, BUTTERFREE, CACNEA, CACTURNE, CAMERUPT, CARNIVINE, CARVANHA, CASCOON, CASTFORM, CATERPIE, CELEBI, CHANSEY, CHARIZARD, CHARMANDER, CHARMELEON, CHATOT, CHERRIM, CHERUBI, CHIKORITA, CHIMCHAR, CHIMECHO, CHINCHOU, CHINGLING, CLAMPERL, CLAYDOL, CLEFABLE, CLEFAIRY, CLEFFA, CLOYSTER, COMBEE, COMBUSKEN, CORPHISH, CORSOLA, CRADILY, CRANIDOS, CRAWDAUNT, CRESSELIA, CROAGUNK, CROBAT, CROCONAW, CUBONE, CYNDAQUIL, DARKRAI, DELCATTY, DELIBIRD, DEOXYS_A, DEOXYS_D, DEOXYS_M, DEOXYS_S, DEWGONG, DIALGA, DIGLETT, DITTO, DODRIO, DODUO, DONPHAN, DRAGONAIR, DRAGONITE, DRAPION, DRATINI, DRIFBLIM, DRIFLOON, DROWZEE, DUGTRIO, DUNSPARCE, DUSCLOPS, DUSKNOIR, DUSKULL, DUSTOX, EEVEE, EKANS, ELECTABUZZ, ELECTIVIRE, ELECTRIKE, ELECTRODE, ELEKID, EMPOLEON, ENTEI, ESPEON, EXEGGCUTE, EXEGGUTOR, EXPLOUD, FARFETCHD, FEAROW, FEEBAS, FERALIGATR, FINNEON, FLAAFFY, FLAREON, FLOATZEL, FLYGON, FORRETRESS, FROSLASS, FURRET, GABITE, GALLADE, GARCHOMP, GARDEVOIR, GASTLY, GASTRODON, GENGAR, GEODUDE, GIBLE, GIRAFARIG, GIRATINA_A, GIRATINA_O, GLACEON, GLALIE, GLAMEOW, GLIGAR, GLISCOR, GLOOM, GOLBAT, GOLDEEN, GOLDUCK, GOLEM, GOREBYSS, GRANBULL, GRAVELER, GRIMER, GROTLE, GROUDON, GROVYLE, GROWLITHE, GRUMPIG, GULPIN, GYARADOS, HAPPINY, HARIYAMA, HAUNTER, HEATRAN, HERACROSS, HIPPOPOTAS, HIPPOWDON, HITMONCHAN, HITMONLEE, HITMONTOP, HO_OH, HONCHKROW, HOOTHOOT, HOPPIP, HORSEA, HOUNDOOM, HOUNDOUR, HUNTAIL, HYPNO, IGGLYBUFF, ILLUMISE, INFERNAPE, IVYSAUR, JIGGLYPUFF, JIRACHI, JOLTEON, JUMPLUFF, JYNX, KABUTO, KABUTOPS, KADABRA, KAKUNA, KANGASKHAN, KECLEON, KINGDRA, KINGLER, KIRLIA, KOFFING, KRABBY, KRICKETOT, KRICKETUNE, KYOGRE, LAIRON, LANTURN, LAPRAS, LARVITAR, LATIAS, LATIOS, LEAFEON, LEDIAN, LEDYBA, LICKILICKY, LICKITUNG, LILEEP, LINOONE, LOMBRE, LOPUNNY, LOTAD, LOUDRED, LUCARIO, LUDICOLO, LUGIA, LUMINEON, LUNATONE, LUVDISC, LUXIO, LUXRAY, MACHAMP, MACHOKE, MACHOP, MAGBY, MAGCARGO, MAGIKARP, MAGMAR, MAGMORTAR, MAGNEMITE, MAGNETON, MAGNEZONE, MAKUHITA, MAMOSWINE, MANAPHY, MANECTRIC, MANKEY, MANTINE, MANTYKE, MAREEP, MARILL, MAROWAK, MARSHTOMP, MASQUERAIN, MAWILE, MEDICHAM, MEDITITE, MEGANIUM, MEOWTH, MESPRIT, METAGROSS, METANG, METAPOD, MEW, MEWTWO, MIGHTYENA, MILOTIC, MILTANK, MIME_JR, MINUN, MISDREAVUS, MISMAGIUS, MOLTRES, MONFERNO, MOTHIM, MR_MIME, MUDKIP, MUK, MUNCHLAX, MURKROW, NATU, NIDOKING, NIDOQUEEN, NIDORAN_F, NIDORAN_M, NIDORINA, NIDORINO, NINCADA, NINETALES, NINJASK, NOCTOWL, NOSEPASS, NUMEL, NUZLEAF, OCTILLERY, ODDISH, OMANYTE, OMASTAR, ONIX, PACHIRISU, PALKIA, PARAS, PARASECT, PELIPPER, PERSIAN, PHANPY, PHIONE, PICHU, PIDGEOT, PIDGEOTTO, PIDGEY, PIKACHU, PILOSWINE, PINECO, PINSIR, PIPLUP, PLUSLE, POLITOED, POLIWAG, POLIWHIRL, POLIWRATH, PONYTA, POOCHYENA, PORYGON, PORYGON_Z, PORYGON2, PRIMEAPE, PRINPLUP, PROBOPASS, PSYDUCK, PUPITAR, PURUGLY, QUAGSIRE, QUILAVA, QWILFISH, RAICHU, RAIKOU, RALTS, RAMPARDOS, RAPIDASH, RATICATE, RATTATA, RAYQUAZA, REGICE, REGIGIGAS, REGIROCK, REGISTEEL, RELICANTH, REMORAID, RHYDON, RHYHORN, RHYPERIOR, RIOLU, ROSELIA, ROSERADE, ROTOM, ROTOM_C, ROTOM_F, ROTOM_H, ROTOM_S, ROTOM_W, SABLEYE, SALAMENCE, SANDSHREW, SANDSLASH, SCEPTILE, SCIZOR, SCYTHER, SEADRA, SEAKING, SEALEO, SEEDOT, SEEL, SENTRET, SEVIPER, SHARPEDO, SHAYMIN_L, SHAYMIN_S, SHEDINJA, SHELGON, SHELLDER, SHELLOS, SHIELDON, SHIFTRY, SHINX, SHROOMISH, SHUCKLE, SHUPPET, SILCOON, SKARMORY, SKIPLOOM, SKITTY, SKORUPI, SKUNTANK, SLAKING, SLAKOTH, SLOWBRO, SLOWKING, SLOWPOKE, SLUGMA, SMEARGLE, SMOOCHUM, SNEASEL, SNORLAX, SNORUNT, SNOVER, SNUBBULL, SOLROCK, SPEAROW, SPHEAL, SPINARAK, SPINDA, SPIRITOMB, SPOINK, SQUIRTLE, STANTLER, STARAPTOR, STARAVIA, STARLY, STARMIE, STARYU, STEELIX, STUNKY, SUDOWOODO, SUICUNE, SUNFLORA, SUNKERN, SURSKIT, SWABLU, SWALOT, SWAMPERT, SWELLOW, SWINUB, TAILLOW, TANGELA, TANGROWTH, TAUROS, TEDDIURSA, TENTACOOL, TENTACRUEL, TOGEKISS, TOGEPI, TOGETIC, TORCHIC, TORKOAL, TORTERRA, TOTODILE, TOXICROAK, TRAPINCH, TREECKO, TROPIUS, TURTWIG, TYPHLOSION, TYRANITAR, TYROGUE, UMBREON, UNOWN, URSARING, UXIE, VAPOREON, VENOMOTH, VENONAT, VENUSAUR, VESPIQUEN, VIBRAVA, VICTREEBEL, VIGOROTH, VILEPLUME, VOLBEAT, VOLTORB, VULPIX, WAILMER, WAILORD, WALREIN, WARTORTLE, WEAVILE, WEEDLE, WEEPINBELL, WEEZING, WHISCASH, WHISMUR, WIGGLYTUFF, WINGULL, WOBBUFFET, WOOPER, WORMADAM_P, WORMADAM_S, WORMADAM_T, WURMPLE, WYNAUT, XATU, YANMA, YANMEGA, ZANGOOSE, ZAPDOS, ZIGZAGOON, ZUBAT };
+enum species { ABOMASNOW, ABRA, ABSOL, AERODACTYL, AGGRON, AIPOM, ALAKAZAM, ALTARIA, AMBIPOM, AMPHAROS, ANORITH, ARBOK, ARCANINE, ARCEUS, ARIADOS, ARMALDO, ARON, ARTICUNO, AZELF, AZUMARILL, AZURILL, BAGON, BALTOY, BANETTE, BARBOACH, BASTIODON, BAYLEEF, BEAUTIFLY, BEEDRILL, BELDUM, BELLOSSOM, BELLSPROUT, BIBAREL, BIDOOF, BLASTOISE, BLAZIKEN, BLISSEY, BONSLY, BRELOOM, BRONZONG, BRONZOR, BUDEW, BUIZEL, BULBASAUR, BUNEARY, BURMY, BUTTERFREE, CACNEA, CACTURNE, CAMERUPT, CARNIVINE, CARVANHA, CASCOON, CASTFORM, CATERPIE, CELEBI, CHANSEY, CHARIZARD, CHARMANDER, CHARMELEON, CHATOT, CHERRIM, CHERUBI, CHIKORITA, CHIMCHAR, CHIMECHO, CHINCHOU, CHINGLING, CLAMPERL, CLAYDOL, CLEFABLE, CLEFAIRY, CLEFFA, CLOYSTER, COMBEE, COMBUSKEN, CORPHISH, CORSOLA, CRADILY, CRANIDOS, CRAWDAUNT, CRESSELIA, CROAGUNK, CROBAT, CROCONAW, CUBONE, CYNDAQUIL, DARKRAI, DELCATTY, DELIBIRD, DEOXYS_A, DEOXYS_D, DEOXYS_M, DEOXYS_S, DEWGONG, DIALGA, DIGLETT, DITTO, DODRIO, DODUO, DONPHAN, DRAGONAIR, DRAGONITE, DRAPION, DRATINI, DRIFBLIM, DRIFLOON, DROWZEE, DUGTRIO, DUNSPARCE, DUSCLOPS, DUSKNOIR, DUSKULL, DUSTOX, EEVEE, EKANS, ELECTABUZZ, ELECTIVIRE, ELECTRIKE, ELECTRODE, ELEKID, EMPOLEON, ENTEI, ESPEON, EXEGGCUTE, EXEGGUTOR, EXPLOUD, FARFETCHD, FEAROW, FEEBAS, FERALIGATR, FINNEON, FLAAFFY, FLAREON, FLOATZEL, FLYGON, FORRETRESS, FROSLASS, FURRET, GABITE, GALLADE, GARCHOMP, GARDEVOIR, GASTLY, GASTRODON, GENGAR, GEODUDE, GIBLE, GIRAFARIG, GIRATINA_A, GIRATINA_O, GLACEON, GLALIE, GLAMEOW, GLIGAR, GLISCOR, GLOOM, GOLBAT, GOLDEEN, GOLDUCK, GOLEM, GOREBYSS, GRANBULL, GRAVELER, GRIMER, GROTLE, GROUDON, GROVYLE, GROWLITHE, GRUMPIG, GULPIN, GYARADOS, HAPPINY, HARIYAMA, HAUNTER, HEATRAN, HERACROSS, HIPPOPOTAS, HIPPOWDON, HITMONCHAN, HITMONLEE, HITMONTOP, HO_OH, HONCHKROW, HOOTHOOT, HOPPIP, HORSEA, HOUNDOOM, HOUNDOUR, HUNTAIL, HYPNO, IGGLYBUFF, ILLUMISE, INFERNAPE, IVYSAUR, JIGGLYPUFF, JIRACHI, JOLTEON, JUMPLUFF, JYNX, KABUTO, KABUTOPS, KADABRA, KAKUNA, KANGASKHAN, KECLEON, KINGDRA, KINGLER, KIRLIA, KOFFING, KRABBY, KRICKETOT, KRICKETUNE, KYOGRE, LAIRON, LANTURN, LAPRAS, LARVITAR, LATIAS, LATIOS, LEAFEON, LEDIAN, LEDYBA, LICKILICKY, LICKITUNG, LILEEP, LINOONE, LOMBRE, LOPUNNY, LOTAD, LOUDRED, LUCARIO, LUDICOLO, LUGIA, LUMINEON, LUNATONE, LUVDISC, LUXIO, LUXRAY, MACHAMP, MACHOKE, MACHOP, MAGBY, MAGCARGO, MAGIKARP, MAGMAR, MAGMORTAR, MAGNEMITE, MAGNETON, MAGNEZONE, MAKUHITA, MAMOSWINE, MANAPHY, MANECTRIC, MANKEY, MANTINE, MANTYKE, MAREEP, MARILL, MAROWAK, MARSHTOMP, MASQUERAIN, MAWILE, MEDICHAM, MEDITITE, MEGANIUM, MEOWTH, MESPRIT, METAGROSS, METANG, METAPOD, MEW, MEWTWO, MIGHTYENA, MILOTIC, MILTANK, MIME_JR, MINUN, MISDREAVUS, MISMAGIUS, MOLTRES, MONFERNO, MOTHIM, MR_MIME, MUDKIP, MUK, MUNCHLAX, MURKROW, NATU, NIDOKING, NIDOQUEEN, NIDORAN_F, NIDORAN_M, NIDORINA, NIDORINO, NINCADA, NINETALES, NINJASK, NOCTOWL, NOSEPASS, NUMEL, NUZLEAF, OCTILLERY, ODDISH, OMANYTE, OMASTAR, ONIX, PACHIRISU, PALKIA, PARAS, PARASECT, PELIPPER, PERSIAN, PHANPY, PHIONE, PICHU, PIDGEOT, PIDGEOTTO, PIDGEY, PIKACHU, PILOSWINE, PINECO, PINSIR, PIPLUP, PLUSLE, POLITOED, POLIWAG, POLIWHIRL, POLIWRATH, PONYTA, POOCHYENA, PORYGON, PORYGON_Z, PORYGON2, PRIMEAPE, PRINPLUP, PROBOPASS, PSYDUCK, PUPITAR, PURUGLY, QUAGSIRE, QUILAVA, QWILFISH, RAICHU, RAIKOU, RALTS, RAMPARDOS, RAPIDASH, RATICATE, RATTATA, RAYQUAZA, REGICE, REGIGIGAS, REGIROCK, REGISTEEL, RELICANTH, REMORAID, RHYDON, RHYHORN, RHYPERIOR, RIOLU, ROSELIA, ROSERADE, ROTOM, ROTOM_C, ROTOM_F, ROTOM_H, ROTOM_S, ROTOM_W, SABLEYE, SALAMENCE, SANDSHREW, SANDSLASH, SCEPTILE, SCIZOR, SCYTHER, SEADRA, SEAKING, SEALEO, SEEDOT, SEEL, SENTRET, SEVIPER, SHARPEDO, SHAYMIN_L, SHAYMIN_S, SHEDINJA, SHELGON, SHELLDER, SHELLOS, SHIELDON, SHIFTRY, SHINX, SHROOMISH, SHUCKLE, SHUPPET, SILCOON, SKARMORY, SKIPLOOM, SKITTY, SKORUPI, SKUNTANK, SLAKING, SLAKOTH, SLOWBRO, SLOWKING, SLOWPOKE, SLUGMA, SMEARGLE, SMOOCHUM, SNEASEL, SNORLAX, SNORUNT, SNOVER, SNUBBULL, SOLROCK, SPEAROW, SPHEAL, SPINARAK, SPINDA, SPIRITOMB, SPOINK, SQUIRTLE, STANTLER, STARAPTOR, STARAVIA, STARLY, STARMIE, STARYU, STEELIX, STUNKY, SUDOWOODO, SUICUNE, SUNFLORA, SUNKERN, SURSKIT, SWABLU, SWALOT, SWAMPERT, SWELLOW, SWINUB, TAILLOW, TANGELA, TANGROWTH, TAUROS, TEDDIURSA, TENTACOOL, TENTACRUEL, TOGEKISS, TOGEPI, TOGETIC, TORCHIC, TORKOAL, TORTERRA, TOTODILE, TOXICROAK, TRAPINCH, TREECKO, TROPIUS, TURTWIG, TYPHLOSION, TYRANITAR, TYROGUE, UMBREON, UNOWN, URSARING, UXIE, VAPOREON, VENOMOTH, VENONAT, VENUSAUR, VESPIQUEN, VIBRAVA, VICTREEBEL, VIGOROTH, VILEPLUME, VOLBEAT, VOLTORB, VULPIX, WAILMER, WAILORD, WALREIN, WARTORTLE, WEAVILE, WEEDLE, WEEPINBELL, WEEZING, WHISCASH, WHISMUR, WIGGLYTUFF, WINGULL, WOBBUFFET, WOOPER, WORMADAM_P, WORMADAM_S, WORMADAM_T, WURMPLE, WYNAUT, XATU, YANMA, YANMEGA, ZANGOOSE, ZAPDOS, ZIGZAGOON, ZUBAT, END_SPECIES };
 
 /*
 I decided to go with alphabetical listing over Pokedex listing due to the issue of alternate forms. Alternate forms (like Deoxys-A vs. Deoxys-S) mean that I have two choices: I can have one be in the middle of the list, and the other be at the other end, or I can stick the forms together. Either way, it ruins the idea of referencing Pokemon by #, so to avoid any mistakes, I just went alphabetical.
@@ -31,41 +32,45 @@ Hyphens and spaces were replaced by underscores. Dots and apostrophes were remov
 
 The following are my format for species:
 
-Deoxys-A(ttack), Deoxys-D(efense), Deoxys-M(ediocre), Deoxys-S(peed). All of these are standard except Deoxys-M, which is usually refered as simply Deoxys. On Shoddybattle, A = f, D = l, S = e, and M has no letter.
+Deoxys-A(ttack), Deoxys-D(efense), Deoxys-M(ediocre), Deoxys-S(peed). All of these are standard except Deoxys-M, which is usually refered as simply Deoxys. On Shoddy Battle, A = f, D = l, S = e, and M has no letter. Pokemon Online uses my standard abbreviations, except with Deoxys-M being just Deoxys.
 
-Giratina-A(nother), Giratina-O(rigin). Both of these are somewhat standard. Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A has no letter, and Giratina-O is Giratina-o.
+Giratina-A(nother), Giratina-O(rigin). Both of these are somewhat standard. Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A has no letter, and Giratina-O is Giratina-o. Pokemon Online uses Giratina and Giratina-O.
 
-The weaker Rotom form is Rotom. The appliance Rotom forms use their standard one-letter abbreviation. This is the same as Shoddybattle, except Shoddy does not capitalize the form letter.
+The weaker Rotom form is Rotom. The appliance Rotom forms use their standard one-letter abbreviation. This is the same as Shoddy Battle, except Shoddy does not capitalize the form letter. For reference: Rotom-C(ut), Rotom-F(ridge), Rotom-H(eat), Rotom-S(pin), Rotom-W(ash). Pokemon Online uses the same as I do.
 
-Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s.
+Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon Online uses Shaymin and Shaymin-S.
 
-Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) = Steel-type. On Shoddybattle, P = no letter, S = g, T = s.
+Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) = Steel-type. On Shoddy Battle, P = no letter, S = g, T = s. Pokemon Online uses Wormadam, Wormadam-G, and Wormadam-S.
+
+Pokemon Online refers to Porygon2 as Porygon 2.
 */
 
 struct pokemon {
-
-	species pokemon;
+	species name;
+	std::string nickname;
 	genders gender;
 	statuses status;
 	types type1;
 	types type2;
 	Vanish vanish;
+	short bide_damage;
+	char bide;
 	char confused;
 	char embargo;
 	char encore;
 	char heal_block;
 	char level;
 	char magnet_rise;
-	unsigned char mass;	// mass == power of Grass Knot / Low Kick, not the actual mass stat
-	char partial_trap;			// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
+	char mass;				// mass == power of Grass Knot / Low Kick, not the actual mass stat
+	char partial_trap;		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
 	char perish_song;
-	char rampage;				// Number of turns remaining on Outrage, Petal Dance, and Thrash
-	char sleep;					// 2 through 5
+	char rampage;			// Number of turns remaining on Outrage, Petal Dance, and Thrash
+	char sleep;				// 2 through 5
 	char slow_start;
 	char stockpile;
 	char taunt;
-	char toxic;					// Number of turns this Pokemon has already taken Toxic damage (or would have if Magic Guard weren't in play)
-	char uproar;				// Number of turns remaining on Uproar
+	char toxic;				// Number of turns this Pokemon has already taken Toxic damage (or would have if Magic Guard / Poison Heal weren't in play)
+	char uproar;			// Number of turns remaining on Uproar
 	char yawn;
 	bool aqua_ring;
 	bool attract;
@@ -73,40 +78,56 @@ struct pokemon {
 	bool curse;
 	bool damaged;
 	bool defense_curl;
-	bool ff;						// Flash Fire
+	bool destiny_bond;
+	bool ff;				// Flash Fire
 	bool flinch;
 	bool focus_energy;
 	bool identified;
-	bool imprison;				// Has this Pokemon used Imprison?
+	bool imprison;			// Has this Pokemon used Imprison?
 	bool ingrain;
 	bool item_recycle;		// Was the item lost in a way that can be restored with Recycle?
 	bool item_unburden;		// Was the item lost in a way that activates Unburden?
 	bool leech_seed;
 	bool loaf;
 	bool lock_on;
-	bool mf;						// Me First
+	bool mf;				// Me First
 	bool minimize;
 	bool moved;
 	bool mud_sport;
 	bool nightmare;
 	bool roost;
 	bool torment;
-	bool trapped;				// Block, Mean Look, Spider Web
+	bool trapped;			// Block, Mean Look, Spider Web
 	bool water_sport;
 
 	// Hidden variables intrinsic to the Pokemon
 	unsigned char happiness;
-	abilities ability;
-	items item;
-	natures nature;
+	char accuracy;
+	char evasion;
 	stats hp;
 	stats atk;
 	stats def;
 	stats spa;
 	stats spd;
 	stats spe;
+	abilities ability;
+	items item;
+	natures nature;
 	std::vector<moves> moveset;
 	std::vector<moves>::iterator move;			// The move currently being used
+	
+	bool operator== (const pokemon &other) const {
+		if (this->moveset.size() != other.moveset.size())
+			return false;
+		for (size_t n = 0; n != this->moveset.size(); ++n) {
+			if (this->moveset.at (n) == other.moveset.at (n))
+				return false;
+		}
+		return this->name == other.name and this->status == other.status and this->vanish == other.vanish and this->bide == other.bide and this->confused == other.confused and this->embargo == other.embargo and this->encore == other.encore and this->heal_block == other.heal_block and this->magnet_rise == other.magnet_rise and this->partial_trap == other.partial_trap and this->perish_song == other.perish_song and this->rampage == other.rampage and this->sleep == other.sleep and this->slow_start == other.slow_start and this->stockpile == other.stockpile and this->taunt == other.taunt and this->toxic == other.toxic and this->uproar == other.yawn and this->aqua_ring == other.aqua_ring and this->attract == other.attract and this->charge == other.charge and this->curse == other.curse and this->defense_curl == other.defense_curl and this->destiny_bond == other.destiny_bond and this->ff == other.ff and this->focus_energy == other.focus_energy and this->identified == other.identified and this->imprison == other.imprison and this->ingrain == other.ingrain and this->leech_seed == other.leech_seed and this->loaf == other.loaf and this->lock_on == other.lock_on and this->minimize == other.minimize and this->mud_sport == other.mud_sport and this->nightmare == other.nightmare and this->torment == other.torment and this->trapped == other.trapped and this->water_sport == other.water_sport and this->accuracy == other.accuracy and this->evasion == other.evasion and this->hp.stat == other.hp.stat and this->atk.stage == other.atk.stage and this->def.stage == other.def.stage and this->spa.stage == other.spa.stage and this->spd.stage == other.spd.stage and this->spe.stage == other.spe.stage and this->item == other.item;
+	}
+	bool operator!= (const pokemon &other) const {
+		return !(*this == other);
+	}
 };
 
 const unsigned char base_stat [][6] = {
@@ -1125,7 +1146,7 @@ const types get_pokemon_type [][2] = {
 { POISON, FLYING }			// Zubat
 };
 
-const unsigned char mass [] = {
+const char mass [] = {
 100,	// Abomasnow
 40,	// Abra
 60,	// Absol
@@ -1633,512 +1654,17 @@ const unsigned char mass [] = {
 20		// Zubat
 };
 
-void set_species_map (std::map <std::string, species> &species_map) {
-	species_map["Abomasnow"] = ABOMASNOW;
-	species_map["Abra"] = ABRA;
-	species_map["Absol"] = ABSOL;
-	species_map["Aerodactyl"] = AERODACTYL;
-	species_map["Aggron"] = AGGRON;
-	species_map["Aipom"] = AIPOM;
-	species_map["Alakazam"] = ALAKAZAM;
-	species_map["Altaria"] = ALTARIA;
-	species_map["Ambipom"] = AMBIPOM;
-	species_map["Ampharos"] = AMPHAROS;
-	species_map["Anorith"] = ANORITH;
-	species_map["Arbok"] = ARBOK;
-	species_map["Arcanine"] = ARCANINE;
-	species_map["Arceus"] = ARCEUS;
-	species_map["Ariados"] = ARIADOS;
-	species_map["Armaldo"] = ARMALDO;
-	species_map["Aron"] = ARON;
-	species_map["Articuno"] = ARTICUNO;
-	species_map["Azelf"] = AZELF;
-	species_map["Azumarill"] = AZUMARILL;
-	species_map["Azurill"] = AZURILL;
-	species_map["Bagon"] = BAGON;
-	species_map["Baltoy"] = BALTOY;
-	species_map["Banette"] = BANETTE;
-	species_map["Barboach"] = BARBOACH;
-	species_map["Bastiodon"] = BASTIODON;
-	species_map["Bayleef"] = BAYLEEF;
-	species_map["Beautifly"] = BEAUTIFLY;
-	species_map["Beedrill"] = BEEDRILL;
-	species_map["Beldum"] = BELDUM;
-	species_map["Bellossom"] = BELLOSSOM;
-	species_map["Bellsprout"] = BELLSPROUT;
-	species_map["Bibarel"] = BIBAREL;
-	species_map["Bidoof"] = BIDOOF;
-	species_map["Blastoise"] = BLASTOISE;
-	species_map["Blaziken"] = BLAZIKEN;
-	species_map["Blissey"] = BLISSEY;
-	species_map["Bonsly"] = BONSLY;
-	species_map["Breloom"] = BRELOOM;
-	species_map["Bronzong"] = BRONZONG;
-	species_map["Bronzor"] = BRONZOR;
-	species_map["Budew"] = BUDEW;
-	species_map["Buizel"] = BUIZEL;
-	species_map["Bulbasaur"] = BULBASAUR;
-	species_map["Buneary"] = BUNEARY;
-	species_map["Burmy"] = BURMY;
-	species_map["Butterfree"] = BUTTERFREE;
-	species_map["Cacnea"] = CACNEA;
-	species_map["Cacturne"] = CACTURNE;
-	species_map["Camerupt"] = CAMERUPT;
-	species_map["Carnivine"] = CARNIVINE;
-	species_map["Carvanha"] = CARVANHA;
-	species_map["Cascoon"] = CASCOON;
-	species_map["Castform"] = CASTFORM;
-	species_map["Caterpie"] = CATERPIE;
-	species_map["Celebi"] = CELEBI;
-	species_map["Chansey"] = CHANSEY;
-	species_map["Charizard"] = CHARIZARD;
-	species_map["Charmander"] = CHARMANDER;
-	species_map["Charmeleon"] = CHARMELEON;
-	species_map["Chatot"] = CHATOT;
-	species_map["Cherrim"] = CHERRIM;
-	species_map["Cherubi"] = CHERUBI;
-	species_map["Chikorita"] = CHIKORITA;
-	species_map["Chimchar"] = CHIMCHAR;
-	species_map["Chimecho"] = CHIMECHO;
-	species_map["Chinchou"] = CHINCHOU;
-	species_map["Chingling"] = CHINGLING;
-	species_map["Clamperl"] = CLAMPERL;
-	species_map["Claydol"] = CLAYDOL;
-	species_map["Clefable"] = CLEFABLE;
-	species_map["Clefairy"] = CLEFAIRY;
-	species_map["Cleffa"] = CLEFFA;
-	species_map["Cloyster"] = CLOYSTER;
-	species_map["Combee"] = COMBEE;
-	species_map["Combusken"] = COMBUSKEN;
-	species_map["Corphish"] = CORPHISH;
-	species_map["Corsola"] = CORSOLA;
-	species_map["Cradily"] = CRADILY;
-	species_map["Cranidos"] = CRANIDOS;
-	species_map["Crawdaunt"] = CRAWDAUNT;
-	species_map["Cresselia"] = CRESSELIA;
-	species_map["Croagunk"] = CROAGUNK;
-	species_map["Crobat"] = CROBAT;
-	species_map["Croconaw"] = CROCONAW;
-	species_map["Cubone"] = CUBONE;
-	species_map["Cyndaquil"] = CYNDAQUIL;
-	species_map["Darkrai"] = DARKRAI;
-	species_map["Delcatty"] = DELCATTY;
-	species_map["Delibird"] = DELIBIRD;
-	species_map["Deoxys-a"] = DEOXYS_A;
-	species_map["Deoxys-d"] = DEOXYS_D;
-	species_map["Deoxys"] = DEOXYS_M;
-	species_map["Deoxys-s"] = DEOXYS_S;
-	species_map["Dewgong"] = DEWGONG;
-	species_map["Dialga"] = DIALGA;
-	species_map["Diglett"] = DIGLETT;
-	species_map["Ditto"] = DITTO;
-	species_map["Dodrio"] = DODRIO;
-	species_map["Doduo"] = DODUO;
-	species_map["Donphan"] = DONPHAN;
-	species_map["Dragonair"] = DRAGONAIR;
-	species_map["Dragonite"] = DRAGONITE;
-	species_map["Drapion"] = DRAPION;
-	species_map["Dratini"] = DRATINI;
-	species_map["Drifblim"] = DRIFBLIM;
-	species_map["Drifloon"] = DRIFLOON;
-	species_map["Drowzee"] = DROWZEE;
-	species_map["Dugtrio"] = DUGTRIO;
-	species_map["Dunsparce"] = DUNSPARCE;
-	species_map["Dusclops"] = DUSCLOPS;
-	species_map["Dusknoir"] = DUSKNOIR;
-	species_map["Duskull"] = DUSKULL;
-	species_map["Dustox"] = DUSTOX;
-	species_map["Eevee"] = EEVEE;
-	species_map["Ekans"] = EKANS;
-	species_map["Electabuzz"] = ELECTABUZZ;
-	species_map["Electivire"] = ELECTIVIRE;
-	species_map["Electrike"] = ELECTRIKE;
-	species_map["Electrode"] = ELECTRODE;
-	species_map["Elekid"] = ELEKID;
-	species_map["Empoleon"] = EMPOLEON;
-	species_map["Entei"] = ENTEI;
-	species_map["Espeon"] = ESPEON;
-	species_map["Exeggcute"] = EXEGGCUTE;
-	species_map["Exeggutor"] = EXEGGUTOR;
-	species_map["Exploud"] = EXPLOUD;
-	species_map["Farfetch'd"] = FARFETCHD;
-	species_map["Fearow"] = FEAROW;
-	species_map["Feebas"] = FEEBAS;
-	species_map["Feraligatr"] = FERALIGATR;
-	species_map["Finneon"] = FINNEON;
-	species_map["Flaaffy"] = FLAAFFY;
-	species_map["Flareon"] = FLAREON;
-	species_map["Floatzel"] = FLOATZEL;
-	species_map["Flygon"] = FLYGON;
-	species_map["Forretress"] = FORRETRESS;
-	species_map["Froslass"] = FROSLASS;
-	species_map["Furret"] = FURRET;
-	species_map["Gabite"] = GABITE;
-	species_map["Gallade"] = GALLADE;
-	species_map["Garchomp"] = GARCHOMP;
-	species_map["Gardevoir"] = GARDEVOIR;
-	species_map["Gastly"] = GASTLY;
-	species_map["Gastrodon"] = GASTRODON;
-	species_map["Gengar"] = GENGAR;
-	species_map["Geodude"] = GEODUDE;
-	species_map["Gible"] = GIBLE;
-	species_map["Girafarig"] = GIRAFARIG;
-	species_map["Giratina"] = GIRATINA_A;
-	species_map["Giratina-o"] = GIRATINA_O;
-	species_map["Glaceon"] = GLACEON;
-	species_map["Glalie"] = GLALIE;
-	species_map["Glameow"] = GLAMEOW;
-	species_map["Gligar"] = GLIGAR;
-	species_map["Gliscor"] = GLISCOR;
-	species_map["Gloom"] = GLOOM;
-	species_map["Golbat"] = GOLBAT;
-	species_map["Goldeen"] = GOLDEEN;
-	species_map["Golduck"] = GOLDUCK;
-	species_map["Golem"] = GOLEM;
-	species_map["Gorebyss"] = GOREBYSS;
-	species_map["Granbull"] = GRANBULL;
-	species_map["Graveler"] = GRAVELER;
-	species_map["Grimer"] = GRIMER;
-	species_map["Grotle"] = GROTLE;
-	species_map["Groudon"] = GROUDON;
-	species_map["Grovyle"] = GROVYLE;
-	species_map["Growlithe"] = GROWLITHE;
-	species_map["Grumpig"] = GRUMPIG;
-	species_map["Gulpin"] = GULPIN;
-	species_map["Gyarados"] = GYARADOS;
-	species_map["Happiny"] = HAPPINY;
-	species_map["Hariyama"] = HARIYAMA;
-	species_map["Haunter"] = HAUNTER;
-	species_map["Heatran"] = HEATRAN;
-	species_map["Heracross"] = HERACROSS;
-	species_map["Hippopotas"] = HIPPOPOTAS;
-	species_map["Hippowdon"] = HIPPOWDON;
-	species_map["Hitmonchan"] = HITMONCHAN;
-	species_map["Hitmonlee"] = HITMONLEE;
-	species_map["Hitmontop"] = HITMONTOP;
-	species_map["Ho-Oh"] = HO_OH;
-	species_map["Honchkrow"] = HONCHKROW;
-	species_map["Hoothoot"] = HOOTHOOT;
-	species_map["Hoppip"] = HOPPIP;
-	species_map["Horsea"] = HORSEA;
-	species_map["Houndoom"] = HOUNDOOM;
-	species_map["Houndour"] = HOUNDOUR;
-	species_map["Huntail"] = HUNTAIL;
-	species_map["Hypno"] = HYPNO;
-	species_map["Igglybuff"] = IGGLYBUFF;
-	species_map["Illumise"] = ILLUMISE;
-	species_map["Infernape"] = INFERNAPE;
-	species_map["Ivysaur"] = IVYSAUR;
-	species_map["Jigglypuff"] = JIGGLYPUFF;
-	species_map["Jirachi"] = JIRACHI;
-	species_map["Jolteon"] = JOLTEON;
-	species_map["Jumpluff"] = JUMPLUFF;
-	species_map["Jynx"] = JYNX;
-	species_map["Kabuto"] = KABUTO;
-	species_map["Kabutops"] = KABUTOPS;
-	species_map["Kadabra"] = KADABRA;
-	species_map["Kakuna"] = KAKUNA;
-	species_map["Kangaskhan"] = KANGASKHAN;
-	species_map["Kecleon"] = KECLEON;
-	species_map["Kingdra"] = KINGDRA;
-	species_map["Kingler"] = KINGLER;
-	species_map["Kirlia"] = KIRLIA;
-	species_map["Koffing"] = KOFFING;
-	species_map["Krabby"] = KRABBY;
-	species_map["Kricketot"] = KRICKETOT;
-	species_map["Kricketune"] = KRICKETUNE;
-	species_map["Kyogre"] = KYOGRE;
-	species_map["Lairon"] = LAIRON;
-	species_map["Lanturn"] = LANTURN;
-	species_map["Lapras"] = LAPRAS;
-	species_map["Larvitar"] = LARVITAR;
-	species_map["Latias"] = LATIAS;
-	species_map["Latios"] = LATIOS;
-	species_map["Leafeon"] = LEAFEON;
-	species_map["Ledian"] = LEDIAN;
-	species_map["Ledyba"] = LEDYBA;
-	species_map["Lickilicky"] = LICKILICKY;
-	species_map["Lickitung"] = LICKITUNG;
-	species_map["Lileep"] = LILEEP;
-	species_map["Linoone"] = LINOONE;
-	species_map["Lombre"] = LOMBRE;
-	species_map["Lopunny"] = LOPUNNY;
-	species_map["Lotad"] = LOTAD;
-	species_map["Loudred"] = LOUDRED;
-	species_map["Lucario"] = LUCARIO;
-	species_map["Ludicolo"] = LUDICOLO;
-	species_map["Lugia"] = LUGIA;
-	species_map["Lumineon"] = LUMINEON;
-	species_map["Lunatone"] = LUNATONE;
-	species_map["Luvdisc"] = LUVDISC;
-	species_map["Luxio"] = LUXIO;
-	species_map["Luxray"] = LUXRAY;
-	species_map["Machamp"] = MACHAMP;
-	species_map["Machoke"] = MACHOKE;
-	species_map["Machop"] = MACHOP;
-	species_map["Magby"] = MAGBY;
-	species_map["Magcargo"] = MAGCARGO;
-	species_map["Magikarp"] = MAGIKARP;
-	species_map["Magmar"] = MAGMAR;
-	species_map["Magmortar"] = MAGMORTAR;
-	species_map["Magnemite"] = MAGNEMITE;
-	species_map["Magneton"] = MAGNETON;
-	species_map["Magnezone"] = MAGNEZONE;
-	species_map["Makuhita"] = MAKUHITA;
-	species_map["Mamoswine"] = MAMOSWINE;
-	species_map["Manaphy"] = MANAPHY;
-	species_map["Manectric"] = MANECTRIC;
-	species_map["Mankey"] = MANKEY;
-	species_map["Mantine"] = MANTINE;
-	species_map["Mantyke"] = MANTYKE;
-	species_map["Mareep"] = MAREEP;
-	species_map["Marill"] = MARILL;
-	species_map["Marowak"] = MAROWAK;
-	species_map["Marshtomp"] = MARSHTOMP;
-	species_map["Masquerain"] = MASQUERAIN;
-	species_map["Mawile"] = MAWILE;
-	species_map["Medicham"] = MEDICHAM;
-	species_map["Meditite"] = MEDITITE;
-	species_map["Meganium"] = MEGANIUM;
-	species_map["Meowth"] = MEOWTH;
-	species_map["Mesprit"] = MESPRIT;
-	species_map["Metagross"] = METAGROSS;
-	species_map["Metang"] = METANG;
-	species_map["Metapod"] = METAPOD;
-	species_map["Mew"] = MEW;
-	species_map["Mewtwo"] = MEWTWO;
-	species_map["Mightyena"] = MIGHTYENA;
-	species_map["Milotic"] = MILOTIC;
-	species_map["Miltank"] = MILTANK;
-	species_map["Mime Jr."] = MIME_JR;
-	species_map["Minun"] = MINUN;
-	species_map["Misdreavus"] = MISDREAVUS;
-	species_map["Mismagius"] = MISMAGIUS;
-	species_map["Moltres"] = MOLTRES;
-	species_map["Monferno"] = MONFERNO;
-	species_map["Mothim"] = MOTHIM;
-	species_map["Mr. Mime"] = MR_MIME;
-	species_map["Mudkip"] = MUDKIP;
-	species_map["Muk"] = MUK;
-	species_map["Munchlax"] = MUNCHLAX;
-	species_map["Murkrow"] = MURKROW;
-	species_map["Natu"] = NATU;
-	species_map["Nidoking"] = NIDOKING;
-	species_map["Nidoqueen"] = NIDOQUEEN;
-	species_map["Nidoran-F"] = NIDORAN_F;
-	species_map["Nidoran-M"] = NIDORAN_M;
-	species_map["Nidorina"] = NIDORINA;
-	species_map["Nidorino"] = NIDORINO;
-	species_map["Nincada"] = NINCADA;
-	species_map["Ninetales"] = NINETALES;
-	species_map["Ninjask"] = NINJASK;
-	species_map["Noctowl"] = NOCTOWL;
-	species_map["Nosepass"] = NOSEPASS;
-	species_map["Numel"] = NUMEL;
-	species_map["Nuzleaf"] = NUZLEAF;
-	species_map["Octillery"] = OCTILLERY;
-	species_map["Oddish"] = ODDISH;
-	species_map["Omanyte"] = OMANYTE;
-	species_map["Omastar"] = OMASTAR;
-	species_map["Onix"] = ONIX;
-	species_map["Pachirisu"] = PACHIRISU;
-	species_map["Palkia"] = PALKIA;
-	species_map["Paras"] = PARAS;
-	species_map["Parasect"] = PARASECT;
-	species_map["Pelipper"] = PELIPPER;
-	species_map["Persian"] = PERSIAN;
-	species_map["Phanpy"] = PHANPY;
-	species_map["Phione"] = PHIONE;
-	species_map["Pichu"] = PICHU;
-	species_map["Pidgeot"] = PIDGEOT;
-	species_map["Pidgeotto"] = PIDGEOTTO;
-	species_map["Pidgey"] = PIDGEY;
-	species_map["Pikachu"] = PIKACHU;
-	species_map["Piloswine"] = PILOSWINE;
-	species_map["Pineco"] = PINECO;
-	species_map["Pinsir"] = PINSIR;
-	species_map["Piplup"] = PIPLUP;
-	species_map["Plusle"] = PLUSLE;
-	species_map["Politoed"] = POLITOED;
-	species_map["Poliwag"] = POLIWAG;
-	species_map["Poliwhirl"] = POLIWHIRL;
-	species_map["Poliwrath"] = POLIWRATH;
-	species_map["Ponyta"] = PONYTA;
-	species_map["Poochyena"] = POOCHYENA;
-	species_map["Porygon"] = PORYGON;
-	species_map["Porygon-Z"] = PORYGON_Z;
-	species_map["Porygon2"] = PORYGON2;
-	species_map["Primeape"] = PRIMEAPE;
-	species_map["Prinplup"] = PRINPLUP;
-	species_map["Probopass"] = PROBOPASS;
-	species_map["Psyduck"] = PSYDUCK;
-	species_map["Pupitar"] = PUPITAR;
-	species_map["Purugly"] = PURUGLY;
-	species_map["Quagsire"] = QUAGSIRE;
-	species_map["Quilava"] = QUILAVA;
-	species_map["Qwilfish"] = QWILFISH;
-	species_map["Raichu"] = RAICHU;
-	species_map["Raikou"] = RAIKOU;
-	species_map["Ralts"] = RALTS;
-	species_map["Rampardos"] = RAMPARDOS;
-	species_map["Rapidash"] = RAPIDASH;
-	species_map["Raticate"] = RATICATE;
-	species_map["Rattata"] = RATTATA;
-	species_map["Rayquaza"] = RAYQUAZA;
-	species_map["Regice"] = REGICE;
-	species_map["Regigigas"] = REGIGIGAS;
-	species_map["Regirock"] = REGIROCK;
-	species_map["Registeel"] = REGISTEEL;
-	species_map["Relicanth"] = RELICANTH;
-	species_map["Remoraid"] = REMORAID;
-	species_map["Rhydon"] = RHYDON;
-	species_map["Rhyhorn"] = RHYHORN;
-	species_map["Rhyperior"] = RHYPERIOR;
-	species_map["Riolu"] = RIOLU;
-	species_map["Roselia"] = ROSELIA;
-	species_map["Roserade"] = ROSERADE;
-	species_map["Rotom"] = ROTOM;
-	species_map["Rotom-c"] = ROTOM_C;
-	species_map["Rotom-f"] = ROTOM_F;
-	species_map["Rotom-h"] = ROTOM_H;
-	species_map["Rotom-s"] = ROTOM_S;
-	species_map["Rotom-w"] = ROTOM_W;
-	species_map["Sableye"] = SABLEYE;
-	species_map["Salamence"] = SALAMENCE;
-	species_map["Sandshrew"] = SANDSHREW;
-	species_map["Sandslash"] = SANDSLASH;
-	species_map["Sceptile"] = SCEPTILE;
-	species_map["Scizor"] = SCIZOR;
-	species_map["Scyther"] = SCYTHER;
-	species_map["Seadra"] = SEADRA;
-	species_map["Seaking"] = SEAKING;
-	species_map["Sealeo"] = SEALEO;
-	species_map["Seedot"] = SEEDOT;
-	species_map["Seel"] = SEEL;
-	species_map["Sentret"] = SENTRET;
-	species_map["Seviper"] = SEVIPER;
-	species_map["Sharpedo"] = SHARPEDO;
-	species_map["Shaymin"] = SHAYMIN_L;
-	species_map["Shaymin-s"] = SHAYMIN_S;
-	species_map["Shedinja"] = SHEDINJA;
-	species_map["Shelgon"] = SHELGON;
-	species_map["Shellder"] = SHELLDER;
-	species_map["Shellos"] = SHELLOS;
-	species_map["Shieldon"] = SHIELDON;
-	species_map["Shiftry"] = SHIFTRY;
-	species_map["Shinx"] = SHINX;
-	species_map["Shroomish"] = SHROOMISH;
-	species_map["Shuckle"] = SHUCKLE;
-	species_map["Shuppet"] = SHUPPET;
-	species_map["Silcoon"] = SILCOON;
-	species_map["Skarmory"] = SKARMORY;
-	species_map["Skiploom"] = SKIPLOOM;
-	species_map["Skitty"] = SKITTY;
-	species_map["Skorupi"] = SKORUPI;
-	species_map["Skuntank"] = SKUNTANK;
-	species_map["Slaking"] = SLAKING;
-	species_map["Slakoth"] = SLAKOTH;
-	species_map["Slowbro"] = SLOWBRO;
-	species_map["Slowking"] = SLOWKING;
-	species_map["Slowpoke"] = SLOWPOKE;
-	species_map["Slugma"] = SLUGMA;
-	species_map["Smeargle"] = SMEARGLE;
-	species_map["Smoochum"] = SMOOCHUM;
-	species_map["Sneasel"] = SNEASEL;
-	species_map["Snorlax"] = SNORLAX;
-	species_map["Snorunt"] = SNORUNT;
-	species_map["Snover"] = SNOVER;
-	species_map["Snubbull"] = SNUBBULL;
-	species_map["Solrock"] = SOLROCK;
-	species_map["Spearow"] = SPEAROW;
-	species_map["Spheal"] = SPHEAL;
-	species_map["Spinarak"] = SPINARAK;
-	species_map["Spinda"] = SPINDA;
-	species_map["Spiritomb"] = SPIRITOMB;
-	species_map["Spoink"] = SPOINK;
-	species_map["Squirtle"] = SQUIRTLE;
-	species_map["Stantler"] = STANTLER;
-	species_map["Staraptor"] = STARAPTOR;
-	species_map["Staravia"] = STARAVIA;
-	species_map["Starly"] = STARLY;
-	species_map["Starmie"] = STARMIE;
-	species_map["Staryu"] = STARYU;
-	species_map["Steelix"] = STEELIX;
-	species_map["Stunky"] = STUNKY;
-	species_map["Sudowoodo"] = SUDOWOODO;
-	species_map["Suicune"] = SUICUNE;
-	species_map["Sunflora"] = SUNFLORA;
-	species_map["Sunkern"] = SUNKERN;
-	species_map["Surskit"] = SURSKIT;
-	species_map["Swablu"] = SWABLU;
-	species_map["Swalot"] = SWALOT;
-	species_map["Swampert"] = SWAMPERT;
-	species_map["Swellow"] = SWELLOW;
-	species_map["Swinub"] = SWINUB;
-	species_map["Taillow"] = TAILLOW;
-	species_map["Tangela"] = TANGELA;
-	species_map["Tangrowth"] = TANGROWTH;
-	species_map["Tauros"] = TAUROS;
-	species_map["Teddiursa"] = TEDDIURSA;
-	species_map["Tentacool"] = TENTACOOL;
-	species_map["Tentacruel"] = TENTACRUEL;
-	species_map["Togekiss"] = TOGEKISS;
-	species_map["Togepi"] = TOGEPI;
-	species_map["Togetic"] = TOGETIC;
-	species_map["Torchic"] = TORCHIC;
-	species_map["Torkoal"] = TORKOAL;
-	species_map["Torterra"] = TORTERRA;
-	species_map["Totodile"] = TOTODILE;
-	species_map["Toxicroak"] = TOXICROAK;
-	species_map["Trapinch"] = TRAPINCH;
-	species_map["Treecko"] = TREECKO;
-	species_map["Tropius"] = TROPIUS;
-	species_map["Turtwig"] = TURTWIG;
-	species_map["Typhlosion"] = TYPHLOSION;
-	species_map["Tyranitar"] = TYRANITAR;
-	species_map["Tyrogue"] = TYROGUE;
-	species_map["Umbreon"] = UMBREON;
-	species_map["Unown"] = UNOWN;
-	species_map["Ursaring"] = URSARING;
-	species_map["Uxie"] = UXIE;
-	species_map["Vaporeon"] = VAPOREON;
-	species_map["Venomoth"] = VENOMOTH;
-	species_map["Venonat"] = VENONAT;
-	species_map["Venusaur"] = VENUSAUR;
-	species_map["Vespiquen"] = VESPIQUEN;
-	species_map["Vibrava"] = VIBRAVA;
-	species_map["Victreebel"] = VICTREEBEL;
-	species_map["Vigoroth"] = VIGOROTH;
-	species_map["Vileplume"] = VILEPLUME;
-	species_map["Volbeat"] = VOLBEAT;
-	species_map["Voltorb"] = VOLTORB;
-	species_map["Vulpix"] = VULPIX;
-	species_map["Wailmer"] = WAILMER;
-	species_map["Wailord"] = WAILORD;
-	species_map["Walrein"] = WALREIN;
-	species_map["Wartortle"] = WARTORTLE;
-	species_map["Weavile"] = WEAVILE;
-	species_map["Weedle"] = WEEDLE;
-	species_map["Weepinbell"] = WEEPINBELL;
-	species_map["Weezing"] = WEEZING;
-	species_map["Whiscash"] = WHISCASH;
-	species_map["Whismur"] = WHISMUR;
-	species_map["Wigglytuff"] = WIGGLYTUFF;
-	species_map["Wingull"] = WINGULL;
-	species_map["Wobbuffet"] = WOBBUFFET;
-	species_map["Wooper"] = WOOPER;
-	species_map["Wormadam"] = WORMADAM_P;
-	species_map["Wormadam-g"] = WORMADAM_S;
-	species_map["Wormadam-s"] = WORMADAM_T;
-	species_map["Wurmple"] = WURMPLE;
-	species_map["Wynaut"] = WYNAUT;
-	species_map["Xatu"] = XATU;
-	species_map["Yanma"] = YANMA;
-	species_map["Yanmega"] = YANMEGA;
-	species_map["Zangoose"] = ZANGOOSE;
-	species_map["Zapdos"] = ZAPDOS;
-	species_map["Zigzagoon"] = ZIGZAGOON;
-	species_map["Zubat"] = ZUBAT;
-}
+const std::string pokemon_name [] = { "Abomasnow", "Abra", "Absol", "Aerodactyl", "Aggron", "Aipom", "Alakazam", "Altaria", "Ambipom", "Ampharos", "Anorith", "Arbok", "Arcanine", "Arceus", "Ariados", "Armaldo", "Aron", "Articuno", "Azelf", "Azumarill", "Azurill", "Bagon", "Baltoy", "Banette", "Barboach", "Bastiodon", "Bayleef", "Beautifly", "Beedrill", "Beldum", "Bellossom", "Bellsprout", "Bibarel", "Bidoof", "Blastoise", "Blaziken", "Blissey", "Bonsly", "Breloom", "Bronzong", "Bronzor", "Budew", "Buizel", "Bulbasaur", "Buneary", "Burmy", "Butterfree", "Cacnea", "Cacturne", "Camerupt", "Carnivine", "Carvanha", "Cascoon", "Castform", "Caterpie", "Celebi", "Chansey", "Charizard", "Charmander", "Charmeleon", "Chatot", "Cherrim", "Cherubi", "Chikorita", "Chimchar", "Chimecho", "Chinchou", "Chingling", "Clamperl", "Claydol", "Clefable", "Clefairy", "Cleffa", "Cloyster", "Combee", "Combusken", "Corphish", "Corsola", "Cradily", "Cranidos", "Crawdaunt", "Cresselia", "Croagunk", "Crobat", "Croconaw", "Cubone", "Cyndaquil", "Darkrai", "Delcatty", "Delibird", "Deoxys-A", "Deoxys-D", "Deoxys-M", "Deoxys-S", "Dewgong", "Dialga", "Diglett", "Ditto", "Dodrio", "Doduo", "Donphan", "Dragonair", "Dragonite", "Drapion", "Dratini", "Drifblim", "Drifloon", "Drowzee", "Dugtrio", "Dunsparce", "Dusclops", "Dusknoir", "Duskull", "Dustox", "Eevee", "Ekans", "Electabuzz", "Electivire", "Electrike", "Electrode", "Elekid", "Empoleon", "Entei", "Espeon", "Exeggcute", "Exeggutor", "Exploud", "Farfetch'd", "Fearow", "Feebas", "Feraligatr", "Finneon", "Flaaffy", "Flareon", "Floatzel", "Flygon", "Forretress", "Froslass", "Furret", "Gabite", "Gallade", "Garchomp", "Gardevoir", "Gastly", "Gastrodon", "Gengar", "Geodude", "Gible", "Girafarig", "Giratina-A", "Giratina-O", "Glaceon", "Glalie", "Glameow", "Gligar", "Gliscor", "Gloom", "Golbat", "Goldeen", "Golduck", "Golem", "Gorebyss", "Granbull", "Graveler", "Grimer", "Grotle", "Groudon", "Grovyle", "Growlithe", "Grumpig", "Gulpin", "Gyarados", "Happiny", "Hariyama", "Haunter", "Heatran", "Heracross", "Hippopotas", "Hippowdon", "Hitmonchan", "Hitmonlee", "Hitmontop", "Ho-Oh", "Honchkrow", "Hoothoot", "Hoppip", "Horsea", "Houndoom", "Houndour", "Huntail", "Hypno", "Igglybuff", "Illumise", "Infernape", "Ivysaur", "Jigglypuff", "Jirachi", "Jolteon", "Jumpluff", "Jynx", "Kabuto", "Kabutops", "Kadabra", "Kakuna", "Kangaskhan", "Kecleon", "Kingdra", "Kingler", "Kirlia", "Koffing", "Krabby", "Kricketot", "Kricketune", "Kyogre", "Lairon", "Lanturn", "Lapras", "Larvitar", "Latias", "Latios", "Leafeon", "Ledian", "Ledyba", "Lickilicky", "Lickitung", "Lileep", "Linoone", "Lombre", "Lopunny", "Lotad", "Loudred", "Lucario", "Ludicolo", "Lugia", "Lumineon", "Lunatone", "Luvdisc", "Luxio", "Luxray", "Machamp", "Machoke", "Machop", "Magby", "Magcargo", "Magikarp", "Magmar", "Magmortar", "Magnemite", "Magneton", "Magnezone", "Makuhita", "Mamoswine", "Manaphy", "Manectric", "Mankey", "Mantine", "Mantyke", "Mareep", "Marill", "Marowak", "Marshtomp", "Masquerain", "Mawile", "Medicham", "Meditite", "Meganium", "Meowth", "Mesprit", "Metagross", "Metang", "Metapod", "Mew", "Mewtwo", "Mightyena", "Milotic", "Miltank", "Mime Jr.", "Minun", "Misdreavus", "Mismagius", "Moltres", "Monferno", "Mothim", "Mr. Mime", "Mudkip", "Muk", "Munchlax", "Murkrow", "Natu", "Nidoking", "Nidoqueen", "Nidoran-F", "Nidoran-M", "Nidorina", "Nidorino", "Nincada", "Ninetales", "Ninjask", "Noctowl", "Nosepass", "Numel", "Nuzleaf", "Octillery", "Oddish", "Omanyte", "Omastar", "Onix", "Pachirisu", "Palkia", "Paras", "Parasect", "Pelipper", "Persian", "Phanpy", "Phione", "Pichu", "Pidgeot", "Pidgeotto", "Pidgey", "Pikachu", "Piloswine", "Pineco", "Pinsir", "Piplup", "Plusle", "Politoed", "Poliwag", "Poliwhirl", "Poliwrath", "Ponyta", "Poochyena", "Porygon", "Porygon-Z", "Porygon2", "Primeape", "Prinplup", "Probopass", "Psyduck", "Pupitar", "Purugly", "Quagsire", "Quilava", "Qwilfish", "Raichu", "Raikou", "Ralts", "Rampardos", "Rapidash", "Raticate", "Rattata", "Rayquaza", "Regice", "Regigigas", "Regirock", "Registeel", "Relicanth", "Remoraid", "Rhydon", "Rhyhorn", "Rhyperior", "Riolu", "Roselia", "Roserade", "Rotom", "Rotom-C", "Rotom-F", "Rotom-H", "Rotom-S", "Rotom-W", "Sableye", "Salamence", "Sandshrew", "Sandslash", "Sceptile", "Scizor", "Scyther", "Seadra", "Seaking", "Sealeo", "Seedot", "Seel", "Sentret", "Seviper", "Sharpedo", "Shaymin-L", "Shaymin-S", "Shedinja", "Shelgon", "Shellder", "Shellos", "Shieldon", "Shiftry", "Shinx", "Shroomish", "Shuckle", "Shuppet", "Silcoon", "Skarmory", "Skiploom", "Skitty", "Skorupi", "Skuntank", "Slaking", "Slakoth", "Slowbro", "Slowking", "Slowpoke", "Slugma", "Smeargle", "Smoochum", "Sneasel", "Snorlax", "Snorunt", "Snover", "Snubbull", "Solrock", "Spearow", "Spheal", "Spinarak", "Spinda", "Spiritomb", "Spoink", "Squirtle", "Stantler", "Staraptor", "Staravia", "Starly", "Starmie", "Staryu", "Steelix", "Stunky", "Sudowoodo", "Suicune", "Sunflora", "Sunkern", "Surskit", "Swablu", "Swalot", "Swampert", "Swellow", "Swinub", "Taillow", "Tangela", "Tangrowth", "Tauros", "Teddiursa", "Tentacool", "Tentacruel", "Togekiss", "Togepi", "Togetic", "Torchic", "Torkoal", "Torterra", "Totodile", "Toxicroak", "Trapinch", "Treecko", "Tropius", "Turtwig", "Typhlosion", "Tyranitar", "Tyrogue", "Umbreon", "Unown", "Ursaring", "Uxie", "Vaporeon", "Venomoth", "Venonat", "Venusaur", "Vespiquen", "Vibrava", "Victreebel", "Vigoroth", "Vileplume", "Volbeat", "Voltorb", "Vulpix", "Wailmer", "Wailord", "Walrein", "Wartortle", "Weavile", "Weedle", "Weepinbell", "Weezing", "Whiscash", "Whismur", "Wigglytuff", "Wingull", "Wobbuffet", "Wooper", "Wormadam-P", "Wormadam-S", "Wormadam-T", "Wurmple", "Wynaut", "Xatu", "Yanma", "Yanmega", "Zangoose", "Zapdos", "Zigzagoon", "Zubat" };
+
+struct Map {
+	std::map <std::string, species> specie;
+	std::map <std::string, genders> gender;
+	std::map <std::string, natures> nature;
+	std::map <std::string, items> item;
+	std::map <std::string, abilities> ability;
+	std::map <std::string, moves_list> move;
+};
+
+void set_species_map (std::map <std::string, species> &species_map);
 
 #endif

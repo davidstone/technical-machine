@@ -1,5 +1,5 @@
-// Gender enumeration
-// Copyright 2010 David Stone
+// Gender header
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -13,16 +13,12 @@
 #define GENDER_H_
 
 #include <map>
+#include <string>
 
 // Silly genderless Pokemon not letting me use a bool.
 
 enum genders { GENDERLESS = 0, FEMALE = -1, MALE = 1 };
 
-void set_gender_map (std::map <std::string, genders> &genders_map) {
-	genders_map["None"] = GENDERLESS;
-	genders_map["Female"] = FEMALE;
-	genders_map["Male"] = MALE;
-}
-
+void set_gender_map (std::map <std::string, genders> &genders_map);
 
 #endif

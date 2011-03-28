@@ -1,5 +1,5 @@
 // Team data structure
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -16,11 +16,12 @@
 #include "pokemon.h"
 
 struct teams {
-	std::vector<pokemon> member;				// All Pokemon on the team
+	std::string player;						// The player's name
+	std::vector<pokemon> member;			// All Pokemon on the team
 	std::vector<pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
 	
 	pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
-	char counter;	// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
+	char counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
 
 	// Number of turns remaining
 	char light_screen;
@@ -39,6 +40,28 @@ struct teams {
 	bool stealth_rock;
 
 	bool me;				// Is this my team?
+	
+	unsigned char replacement;		// If a Pokemon faints, what Pokemon should replace it?
+	
+	bool operator== (const teams &other) const {
+		if (this->member.size() != other.member.size())
+			return false;
+		for (size_t n = 0; n != this->member.size(); ++n) {
+			if (this->member.at (n) != other.member.at (n))
+				return false;
+		}
+		return this->active->name == other.active->name and this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;
+	}
 };
+
+std::string search (std::ifstream &file, std::string &output2, const std::string &data);
+void loadteam (teams &team, const std::string &name, const Map &map, int detailed [][7]);
+void loadpokemon (teams &team, pokemon &member);
+void loadmove (moves &move);
+void pokelabteam (teams &team, const std::string &name, const Map &map);
+void pokelabpokemon (teams& team, std::ifstream &file, const Map &map);
+void poteam (teams &team, const std::string &name);
+void popokemon (teams &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
+unsigned poconverter (const std::string &data, const std::string end, const std::string &line);
 
 #endif

@@ -1,5 +1,5 @@
 // AI to win a 1v1 battle
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -10,10 +10,10 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include <cstdlib>
 #include <iostream>
-#include "team.cpp"
+#include <boost/lexical_cast.hpp>
 #include "ai.h"
+#include "expectiminimax.h"
 #include "item.h"
 #include "move.h"
 #include "pokemon.h"
@@ -21,33 +21,34 @@
 #include "team.h"
 #include "type.h"
 #include "weather.h"
-#include "test.h"
-#include "stat.cpp"
-#include "move.cpp"
-#include "endofturn.cpp"
-#include "expectiminimax.cpp"
 
 int main (int argc, char* argv[]) {
+	int depth;
+	if (argc == 1)
+		depth = -1;
+	else
+		depth = boost::lexical_cast <int> (argv[1]);
+
 	teams ai;
 	teams foe;
 	weathers weather;
-	initialize (ai, foe, weather);
-	ai.active->move = ai.active->moveset.begin();
-	foe.active->move = foe.active->moveset.begin();
-	ai.me = true;
-	foe.me = false;
-	int depth;
-	if (argc == 1)
-		depth = 1;
+	score_variables sv;
+	Map map;
+	int detailed [END_SPECIES][7] = {{ 0 }};
+	initialize (ai, foe, weather, sv, map, detailed);
+
+	long score;
+	moves_list best_move = expectiminimax (ai, foe, weather, depth, sv, score);
+	
+	if (SWITCH1 <= best_move and best_move <= SWITCH6)
+		std::cout << "Switch to " << pokemon_name [ai.member.at (best_move - SWITCH1).name];
+
 	else
-		depth = atoi (argv[1]);
-	int score;
-	moves_list best_move = expectiminimax (ai, foe, weather, depth, score);
-	std::cout << "Use " << move_name [best_move];
+		std::cout << "Use " << move_name [best_move];
 	if (depth == -1) {
-		double probability = 100.0 * static_cast <double> (score + VICTORY) / static_cast <double> (2 * VICTORY);
+		long double probability = 100.0 * static_cast <long double> (score + VICTORY) / static_cast <long double> (2 * VICTORY);
 		std::cout << " for ";
-		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (80 <= probability and probability < 90))
+		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
 			std::cout << "an ";
 		else
 			std::cout << "a ";
@@ -55,5 +56,6 @@ int main (int argc, char* argv[]) {
 	}
 	else
 		std::cout << " for a minimum expected score of " << score << "\n";
+	
 	return 0;
 }

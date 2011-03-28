@@ -15,7 +15,7 @@
 /*
 Weather is defined as the set of things that are not specific to either team.
 
-Weathers are represented as an char due to the "acid weather" effect, which means that multiple weathers can be in effect at the same time. The order of the weathers is their order when all effects are active. Uproar is present because it can be activated without being associated with any particular Pokemon.
+Weathers are represented as a char due to the "acid weather" effect, which means that multiple weathers can be in effect at the same time. The order of the weathers is their order when all effects are active. Uproar is present because it can be activated without being associated with any particular Pokemon.
 
 The number for the char represents the number of turns remaining on that weather. A value of -1 indicates permanent weather. Fog is a bool because it only exists as a permanent weather condition.
 */
@@ -29,6 +29,18 @@ struct weathers {
 	char sun;
 	char sand;
 	char rain;
+	
+	bool operator == (const weathers &other) const {
+		return this->trick_room == other.trick_room and this->fog == other.fog and this->gravity == other.gravity and this->uproar == other.uproar and this->hail == other.hail and this->sun == other.sun and this->sand == other.sand and this->rain == other.rain;
+	}
 };
+
+void trick_room (weathers &weather);
+void gravity (weathers &weather);
+void uproar (weathers &weather, int duration);
+void hail (weathers &weather, int duration);
+void sun (weathers &weather, int duration);
+void sand (weathers &weather, int duration);
+void rain (weathers &weather, int duration);
 
 #endif

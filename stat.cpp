@@ -1,5 +1,5 @@
 // Stat formulas
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -9,15 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT_CPP_
-#define STAT_CPP_
-
+#include <map>
+#include <string>
 #include "ability.h"
 #include "item.h"
 #include "move.h"
 #include "pokemon.h"
 #include "simple.h"
 #include "stat.h"
+#include "statfunction.h"
 #include "status.h"
 #include "team.h"
 #include "weather.h"
@@ -31,72 +31,56 @@ void hitpoints (pokemon &member) {
 
 void attack (pokemon &member, const weathers &weather) {
 	if (member.move->physical) {
-		int nature;
+		member.atk.stat = (2 * member.atk.base + member.atk.iv + member.atk.ev) * member.level / 100 + 5;
 		if (ADAMANT == member.nature or BRAVE == member.nature or LONELY == member.nature or NAUGHTY == member.nature)
-			nature = 11;
+			member.atk.stat = member.atk.stat * 11 / 10;
 		else if (BOLD == member.nature or CALM == member.nature or MODEST == member.nature or TIMID == member.nature)
-			nature = 9;
-		else
-			nature = 10;
+			member.atk.stat = member.atk.stat * 9 / 10;
 
-		int aam;				// Attack Ability Mod: Flower Gift (3), Guts (3), Huge Power (4), Hustle (3), Pure Power (4), Slow Start (1) / 2
-		if (0 != member.slow_start)
-			aam = 1;
-		else if ((FLOWER_GIFT == member.ability and 0 != weather.sun) or (GUTS == member.ability and NO_STATUS != member.status) or (HUSTLE == member.ability))
-			aam = 3;
-		else if (PURE_POWER == member.ability)
-			aam = 4;
-		else
-			aam = 2;
-	
-		int aim;				// Attack Item Mod: Choice Band (3), Light Ball (4), Thick Club (4) / 2
-		if (CHOICE_BAND == member.item)
-			aim = 3;
-		else if ((LIGHT_BALL == member.item and PIKACHU == member.pokemon) or (THICK_CLUB == member.item and (CUBONE == member.pokemon or MAROWAK == member.pokemon)))
-			aim = 4;
-		else
-			aim = 2;
-	
-		if (member.atk.stage >= 0)	// >= is superior to > due to no stage boosts not having to check for a CH
-			member.atk.stat = ((2 * member.atk.base + member.atk.iv + member.atk.ev) * member.level / 100 + 5) * nature / 10 * (2 + member.atk.stage) / 2 * aam / 2 * aim / 2;
+		if (member.atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
+			member.atk.stat = member.atk.stat * (2 + member.atk.stage) / 2;
 		else {
-			if (member.move->ch)
-				member.atk.stage = 0;
-			member.atk.stat = ((2 * member.atk.base + member.atk.iv + member.atk.ev) * member.level / 100 + 5) * nature / 10 * 2 / (2 - member.atk.stage) * aam / 2 * aim / 2;
+			if (!member.move->ch)
+				member.atk.stat = member.atk.stat * 2 / (2 - member.atk.stage);
 		}
+
+		if (member.slow_start != 0)
+			member.atk.stat /= 2;
+		else if ((FLOWER_GIFT == member.ability and 0 != weather.sun) or (GUTS == member.ability and NO_STATUS != member.status) or (HUSTLE == member.ability))
+			member.atk.stat = member.atk.stat * 3 / 2;
+		else if (PURE_POWER == member.ability)
+			member.atk.stat *= 2;
+	
+		if (CHOICE_BAND == member.item)
+			member.atk.stat = member.atk.stat * 3 / 2;
+		else if ((LIGHT_BALL == member.item and PIKACHU == member.name) or (THICK_CLUB == member.item and (CUBONE == member.name or MAROWAK == member.name)))
+			member.atk.stat *= 2;
+		
 		if (member.atk.stat == 0)
 			member.atk.stat = 1;
 	}
 	else {
-		int nature;
+		member.spa.stat = (2 * member.spa.base + member.spa.iv + member.spa.ev) * member.level / 100 + 5;
 		if (MILD == member.nature or MODEST == member.nature or QUIET == member.nature or RASH == member.nature)
-			nature = 11;
+			member.spa.stat = member.spa.stat * 11 / 10;
 		else if (ADAMANT == member.nature or CAREFUL == member.nature or IMPISH == member.nature or JOLLY == member.nature)
-			nature = 9;
-		else
-			nature = 10;
+			member.spa.stat = member.spa.stat * 9 / 10;
 
-		int aam;				// Attack Ability Mod: Solar Power (3) / 2
-		if (SOLAR_POWER == member.ability and 0 != weather.sun)
-			aam = 3;
-		else
-			aam = 2;
-
-		int aim;				// Attack Item Mod: Choice Specs (3), DeepSeaTooth (4), Light Ball (4), Soul Dew (3) / 2
-		if ((CHOICE_SPECS == member.item) or (SOUL_DEW == member.item and (LATIAS == member.pokemon or LATIOS == member.pokemon)))
-			aim = 3;
-		else if ((DEEPSEATOOTH == member.item and CLAMPERL == member.pokemon) or (LIGHT_BALL == member.item and PIKACHU == member.pokemon))
-			aim = 4;
-		else
-			aim = 2;
-
-		if (member.spa.stage >= 0)	// >= is superior to > due to no stage boosts not having to check for a CH
-			member.spa.stat = ((2 * member.spa.base + member.spa.iv + member.spa.ev) * member.level / 100 + 5) * nature / 10 * (2 + member.spa.stage) / 2 * aam / 2 * aim / 2;
+		if (member.spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
+			member.spa.stat = member.spa.stat * (2 + member.spa.stage) / 2;
 		else {
-			if (member.move->ch)
-				member.spa.stage = 0;
-			member.spa.stat = ((2 * member.spa.base + member.spa.iv + member.spa.ev) * member.level / 100 + 5) * nature / 10 * 2 / (2 - member.spa.stage) * aam / 2 * aim / 2;
+			if (!member.move->ch)
+				member.spa.stat = member.spa.stat * 2 / (2 - member.spa.stage);
 		}
+
+		if (SOLAR_POWER == member.ability and 0 != weather.sun)
+			member.spa.stat = member.spa.stat * 3 / 2;
+
+		if ((CHOICE_SPECS == member.item) or (SOUL_DEW == member.item and (LATIAS == member.name or LATIOS == member.name)))
+			member.spa.stat = member.spa.stat * 3 / 2;
+		else if ((DEEPSEATOOTH == member.item and CLAMPERL == member.name) or (LIGHT_BALL == member.item and PIKACHU == member.name))
+			member.spa.stat *= 2;
+
 		if (member.spa.stat == 0)
 			member.spa.stat = 1;
 	}
@@ -104,132 +88,95 @@ void attack (pokemon &member, const weathers &weather) {
 
 void defense (const pokemon &attacker, pokemon &defender, const weathers &weather) {
 	if (attacker.move->physical) {
-		int nature;
+		defender.def.stat = (2 * defender.def.base + defender.def.iv + defender.def.ev) * defender.level / 100 + 5;
 		if (BOLD == defender.nature or IMPISH == defender.nature or LAX == defender.nature or RELAXED == defender.nature)
-			nature = 11;
+			defender.def.stat = defender.def.stat * 11 / 10;
 		else if (GENTLE == defender.nature or HASTY == defender.nature or LONELY == defender.nature or MILD == defender.nature)
-			nature = 9;
-		else
-			nature = 10;
+			defender.def.stat = defender.def.stat * 9 / 10;
 
-		int dam;					// Defense Ability Modifier: Marvel Scale (3) / 2
-		if (MARVEL_SCALE == defender.ability and NO_STATUS != defender.status)
-			dam = 3;
-		else
-			dam = 2;
-		
-		int dim;					// Defense Item Modifier: Metal Powder (3) / 2
-		if (METAL_POWDER == defender.item and DITTO == defender.pokemon)
-			dim = 3;
-		else
-			dim = 2;
-		
-		int boom;				// Explosion / Selfdestuct Defense modifier: 2
-		if (EXPLOSION == attacker.move->name or SELFDESTRUCT == attacker.move->name)
-			boom = 2;
-		else
-			boom = 1;
-	
-		if (defender.def.stage > 0) {	// > is superior to >= due to no stage boosts not having to check for a CH
-			if (attacker.move->ch)
-				defender.def.stage = 0;
-			defender.def.stat = ((2 * defender.def.base + defender.def.iv + defender.def.ev) * defender.level / 100 + 5) * nature / 10 * (2 + defender.def.stage) / 2 * dam / 2 * dim / 2 / boom;
+		if (defender.def.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
+			if (!attacker.move->ch)
+				defender.def.stat = defender.def.stat * (2 + defender.def.stage) / 2;
 		}
 		else
-			defender.def.stat = ((2 * defender.def.base + defender.def.iv + defender.def.ev) * defender.level / 100 + 5) * nature / 10 * 2 / (2 - defender.def.stage) * dam / 2 * dim / 2 / boom;
+			defender.def.stat = defender.def.stat * 2 / (2 - defender.def.stage);
+
+		if (MARVEL_SCALE == defender.ability and NO_STATUS != defender.status)
+			defender.def.stat = defender.def.stat * 3 / 2;
+		
+		if (METAL_POWDER == defender.item and DITTO == defender.name)
+			defender.def.stat = defender.def.stat * 3 / 2;
+		
+		if (EXPLOSION == attacker.move->name or SELFDESTRUCT == attacker.move->name)
+			defender.def.stat /= 2;
+	
 		if (0 == defender.def.stat)
 			defender.def.stat = 1;
 	}
 	else {
-		int nature;
+		defender.spd.stat = (2 * defender.spd.base + defender.spd.iv + defender.spd.ev) * defender.level / 100 + 5;
 		if (CALM == defender.nature or CAREFUL == defender.nature or GENTLE == defender.nature or SASSY == defender.nature)
-			nature = 11;
+			defender.spd.stat = defender.spd.stat * 11 / 10;
 		else if (LAX == defender.nature or NAIVE == defender.nature or NAUGHTY == defender.nature or RASH == defender.nature)
-			nature = 9;
-		else
-			nature = 10;
+			defender.spd.stat = defender.spd.stat * 9 / 10;
 
-		int dam;					// Defense Ability Modifier: Flower Gift (3) / 2
-		if (FLOWER_GIFT == defender.ability and 0 != weather.sun)
-			dam = 3;
-		else
-			dam = 2;
-		
-		int dim;					// Defense Item Modifier: DeepSeaScale (4), Metal Powder (3), Soul Dew (3) / 2
-		if (DEEPSEASCALE == defender.item and CLAMPERL == defender.pokemon)
-			dim = 4;
-		else if ((METAL_POWDER == defender.item and DITTO == defender.pokemon) or (SOUL_DEW == defender.item and (LATIAS == defender.pokemon or LATIOS == defender.pokemon)))
-			dim = 3;
-		else
-			dim = 2;
-		
-		int ss;					// Sandstorm Special Defense bonus to Rocks: 3 / 2
-		if (istype (defender, ROCK) and 0 != weather.sand)
-			ss = 3;
-		else
-			ss = 2;
-		
-		if (defender.spd.stage > 0) {	// > is superior to >= due to no stage boosts not having to check for a CH
-			if (attacker.move->ch)
-				defender.spd.stage = 0;
-			defender.spd.stat = ((2 * defender.spd.base + defender.spd.iv + defender.spd.ev) * defender.level / 100 + 5) * nature / 10 * (2 + defender.spd.stage) / 2 * dam / 2 * dim / 2 * ss / 2;
+		if (defender.spd.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
+			if (!attacker.move->ch)
+				defender.spd.stat = defender.spd.stat * (2 + defender.spd.stage) / 2;
 		}
 		else
-			defender.spd.stat = ((2 * defender.spd.base + defender.spd.iv + defender.spd.ev) * defender.level / 100 + 5) * nature / 10 * 2 / (2 - defender.spd.stage) * dam / 2 * dim / 2 * ss / 2;
+			defender.spd.stat = defender.spd.stat * 2 / (2 - defender.spd.stage);
+
+		if (FLOWER_GIFT == defender.ability and 0 != weather.sun)
+			defender.spd.stat = defender.spd.stat * 3 / 2;
+		
+		if (DEEPSEASCALE == defender.item and CLAMPERL == defender.name)
+			defender.spd.stat *= 2;
+		else if ((METAL_POWDER == defender.item and DITTO == defender.name) or (SOUL_DEW == defender.item and (LATIAS == defender.name or LATIOS == defender.name)))
+			defender.spd.stat = defender.spd.stat * 3 / 2;
+		
+		if (istype (defender, ROCK) and 0 != weather.sand)
+			defender.spd.stat = defender.spd.stat * 3 / 2;
+		
 		if (0 == defender.spd.stat)
 			defender.spd.stat = 1;
 	}
 }
 
 void speed (teams &team, const weathers &weather) {
-	int nature;
+	team.active->spe.stat = (2 * team.active->spe.base + team.active->spe.iv + team.active->spe.ev) * team.active->level / 100 + 5;
+
 	if (HASTY == team.active->nature or JOLLY == team.active->nature or NAIVE == team.active->nature or TIMID == team.active->nature)
-		nature = 11;
+		team.active->spe.stat = team.active->spe.stat * 11 / 10;
 	else if (BRAVE == team.active->nature or QUIET == team.active->nature or RELAXED == team.active->nature or SASSY == team.active->nature)
-		nature = 9;
-	else
-		nature = 10;
+		team.active->spe.stat = team.active->spe.stat * 9 / 10;
 	
-	int sam;				// Speed Ability Modifier: Chlorophyll (4), Swift Swim (4), Unburden (4), Quick Feet (3), Slow Start (1) / 2
-	if ((CHLOROPHYLL == team.active->ability and 0 != weather.sun) or (SWIFT_SWIM == team.active->ability and 0 != weather.rain) or (UNBURDEN == team.active->ability and team.active->item_unburden))
-		sam = 4;
-	else if (QUICK_FEET == team.active->ability and NO_STATUS != team.active->status)
-		sam = 3;
-	else if (0 != team.active->slow_start)
-		sam = 1;
-	else
-		sam = 2;
-		
-	int sim;				// Speed Item Modifier: Quick Powder (4), Choice Scarf (3), Macho Brace (1), Power Items (1) / 2
-	if (QUICK_POWDER == team.active->item and DITTO == team.active->pokemon)
-		sim = 4;
-	else if (CHOICE_SCARF == team.active->item)
-		sim = 3;
-	else if (MACHO_BRACE == team.active->item or POWER_ITEMS == team.active->item)
-		sim = 1;
-	else
-		sim = 2;
-		
-	int paralysis;		// Paralysis Speed drop (4)
-	if (PARALYSIS == team.active->status and QUICK_FEET != team.active->ability)
-		paralysis = 4;
-	else
-		paralysis = 1;
-	
-	int tailwind_mod;	// 2
-	if (team.tailwind)
-		tailwind_mod = 2;
-	else
-		tailwind_mod = 1;
-	
-	team.active->spe.stat = ((2 * team.active->spe.base + team.active->spe.iv + team.active->spe.ev) * team.active->level / 100 + 5) * nature / 10;	
 	if (team.active->spe.stage >= 0)
 		team.active->spe.stat = team.active->spe.stat * (2 + team.active->spe.stage) / 2;
 	else
 		team.active->spe.stat = team.active->spe.stat * 2 / (2 - team.active->spe.stage);
-	team.active->spe.stat = team.active->spe.stat * sam / 2 * sim / 2 / paralysis * tailwind_mod;
 
-	if (0 == team.active->spe.stat)
+	if ((CHLOROPHYLL == team.active->ability and 0 != weather.sun) or (SWIFT_SWIM == team.active->ability and 0 != weather.rain) or (UNBURDEN == team.active->ability and team.active->item_unburden))
+		team.active->spe.stat *= 2;
+	else if (QUICK_FEET == team.active->ability and NO_STATUS != team.active->status)
+		team.active->spe.stat = team.active->spe.stat * 3 / 2;
+	else if (0 != team.active->slow_start)
+		team.active->spe.stat /= 2;
+		
+	if (QUICK_POWDER == team.active->item and DITTO == team.active->name)
+		team.active->spe.stat *= 2;
+	else if (CHOICE_SCARF == team.active->item)
+		team.active->spe.stat = team.active->spe.stat * 3 / 2;
+	else if (MACHO_BRACE == team.active->item or POWER_ITEMS == team.active->item)
+		team.active->spe.stat /= 2;
+		
+	if (PARALYSIS == team.active->status and QUICK_FEET != team.active->ability)
+		team.active->spe.stat /= 4;
+	
+	if (team.tailwind)
+		team.active->spe.stat *= 2;
+
+	if (team.active->spe.stat == 0)
 		team.active->spe.stat = 1;
 }
 
@@ -258,12 +205,38 @@ void order (teams &team1, teams &team2, const weathers &weather, teams* &faster,
 	}
 }
 
-void statboost (stats &stat, int n) {
-	stat.stage += n;
-	if (stat.stage > 6)
-		stat.stage = 6;
-	else if (stat.stage < -6)
-		stat.stage = -6;
+void statboost (char &stage, int n) {
+	stage += n;
+	if (stage > 6)
+		stage = 6;
+	else if (stage < -6)
+		stage = -6;
 }
 
-#endif
+void set_nature_map (std::map <std::string, natures> &natures_map) {
+	natures_map["Adamant"] = ADAMANT;
+	natures_map["Bashful"] = BASHFUL;
+	natures_map["Bold"] = BOLD;
+	natures_map["Brave"] = BRAVE;
+	natures_map["Calm"] = CALM;
+	natures_map["Careful"] = CAREFUL;
+	natures_map["Docile"] = DOCILE;
+	natures_map["Gentle"] = GENTLE;
+	natures_map["Hardy"] = HARDY;
+	natures_map["Hasty"] = HASTY;
+	natures_map["Impish"] = IMPISH;
+	natures_map["Jolly"] = JOLLY;
+	natures_map["Lax"] = LAX;
+	natures_map["Lonely"] = LONELY;
+	natures_map["Mild"] = MILD;
+	natures_map["Modest"] = MODEST;
+	natures_map["Naive"] = NAIVE;
+	natures_map["Naughty"] = NAUGHTY;
+	natures_map["Quiet"] = QUIET;
+	natures_map["Quirky"] = QUIRKY;
+	natures_map["Rash"] = RASH;
+	natures_map["Relaxed"] = RELAXED;
+	natures_map["Sassy"] = SASSY;
+	natures_map["Serious"] = SERIOUS;
+	natures_map["Timid"] = TIMID;
+}

@@ -1,5 +1,5 @@
 // End of turn effects
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -9,25 +9,20 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "endofturn.h"
 #include "ability.h"
-#include "damage.cpp"
+#include "damage.h"
+#include "expectiminimax.h"
 #include "pokemon.h"
 #include "simple.h"
+#include "statfunction.h"
+#include "statusfunction.h"
 #include "team.h"
 #include "weather.h"
 
-void endofturn0 (teams &team);
-void endofturn1 (teams &team);
-void endofturn2 (teams &team);
-void endofturn4 (teams &team, const weathers &weather);
-void endofturn6 (teams &first, teams &last, weathers &weather, int length_first, bool shed_skin_first);
-void endofturn7 (teams &target, const weathers &weather);
-void endofturn8 (teams &team);
-void endofturn10 (teams &team, const pokemon &replacement, const weathers &weather);
-
-void endofturn (teams &first, teams &last, weathers &weather, int length_first, int length_last, bool shed_skin_first, bool shed_skin_last) {
-	endofturn0 (first);
-	endofturn0 (last);
+void endofturn (teams &first, teams &last, weathers &weather, const Random &random) {
+	endofturn0 (*first.active);
+	endofturn0 (*last.active);
 	endofturn1 (first);
 	endofturn1 (last);
 	endofturn2 (first);
@@ -36,33 +31,29 @@ void endofturn (teams &first, teams &last, weathers &weather, int length_first, 
 	decrement (weather.sun);
 	decrement (weather.sand);
 	decrement (weather.rain);
-	endofturn4 (first, weather);
-	endofturn4 (last, weather);
+	if (first.active->ability != AIR_LOCK and last.active->ability != AIR_LOCK) {
+		endofturn3 (*first.active, weather);
+		endofturn3 (*last.active, weather);
+	}
 	decrement (weather.gravity);
-	endofturn6 (first, last, weather, length_first, shed_skin_first);
-	endofturn6 (last, first, weather, length_last, shed_skin_last);
-	endofturn7 (first, weather);
-	endofturn7 (last, weather);
-	endofturn8 (first);
-	endofturn8 (last);
+	endofturn5 (*first.active, *last.active, weather, random.first);
+	endofturn5 (*last.active, *first.active, weather, random.last);
+	endofturn6 (first, weather);
+	endofturn6 (last, weather);
+	endofturn7 (*first.active);
+	endofturn7 (*last.active);
 	decrement (weather.trick_room);
-//	if (first.active->hp.stat == 0)
-//		first.member.erase (first.active);
-//	endofturn10 (first);
-//	if (last.active->hp.stat == 0)
-//		last.member.erase (last.active);
-//	endofturn10 (last);
 }
 
-void endofturn0 (teams &team) {
-	team.active->damaged = false;
-	team.active->flinch = false;
-	team.active->moved = false;
-	team.active->mf = false;
-	if (team.active->loaf)
-		team.active->loaf = false;
+void endofturn0 (pokemon &member) {
+	member.damaged = false;
+	member.flinch = false;
+	member.moved = false;
+	member.mf = false;
+	if (member.loaf)
+		member.loaf = false;
 	else
-		team.active->loaf = true;
+		member.loaf = true;
 }
 
 void endofturn1 (teams &team) {
@@ -80,123 +71,122 @@ void endofturn2 (teams &team) {
 	decrement (team.wish);
 }
 
-void endofturn4 (teams &team, const weathers &weather) {
-	if (DRY_SKIN == team.active->ability) {
+void endofturn3 (pokemon &member, const weathers &weather) {
+	if (weather.hail != 0 and !istype (member,ICE))
+		heal (member, -16);
+	if (weather.sand != 0 and !(istype (member, GROUND) or istype (member, ROCK) or istype (member, STEEL)))
+		heal (member, -16);
+	if (DRY_SKIN == member.ability) {
 		if (0 != weather.rain)
-			heal (*team.active, 8);
+			heal (member, 8);
 		else if (0 != weather.sun)
-			heal (*team.active, -8);
+			heal (member, -8);
 	}
-	else if (HYDRATION == team.active->ability and 0 != weather.rain)
-		team.active->status = NO_STATUS;
-	else if ((ICE_BODY == team.active->ability and 0 != weather.hail) or (RAIN_DISH == team.active->ability and 0 != weather.rain))
-		heal (*team.active, 16);
+	else if (HYDRATION == member.ability and 0 != weather.rain)
+		member.status = NO_STATUS;
+	else if ((ICE_BODY == member.ability and 0 != weather.hail) or (RAIN_DISH == member.ability and 0 != weather.rain))
+		heal (member, 16);
 }
 
-void endofturn6 (teams &first, teams &last, weathers &weather, int length, bool shed_skin) {
-	if (first.active->ingrain)
-		heal (*first.active, 16);
-	if (first.active->aqua_ring)
-		heal (*first.active, 16);
-	if (SPEED_BOOST == first.active->ability)
-		statboost (first.active->spe, 1);
-	else if (SHED_SKIN == first.active->ability and shed_skin)
-		first.active->status = NO_STATUS;
-	if (LEFTOVERS == first.active->item)
-		heal (*first.active, 16);
-	else if (BLACK_SLUDGE == first.active->item) {
-		if (istype (*first.active, POISON))
-			heal (*first.active, 16);
+void endofturn5 (pokemon &member, pokemon &foe, weathers &weather, const random_team &random) {
+	if (member.ingrain)
+		heal (member, 16);
+	if (member.aqua_ring)
+		heal (member, 16);
+	if (SPEED_BOOST == member.ability)
+		statboost (member.spe.stage, 1);
+	else if (SHED_SKIN == member.ability and random.shed_skin)
+		member.status = NO_STATUS;
+	if (LEFTOVERS == member.item)
+		heal (member, 16);
+	else if (BLACK_SLUDGE == member.item) {
+		if (istype (member, POISON))
+			heal (member, 16);
 		else
-			heal (*first.active, -16);
+			heal (member, -16);
 	}
-	if (first.active->leech_seed) {
-		int n = first.active->hp.stat;
-		heal (*first.active, -8);
-		if (last.active->hp.stat != 0) {
-			if (LIQUID_OOZE == first.active->ability) {
-				last.active->hp.stat -= n - first.active->hp.stat;
-				if (last.active->hp.stat < 0)
-					last.active->hp.stat = 0;
+	if (member.leech_seed) {
+		int n = member.hp.stat;
+		heal (member, -8);
+		if (foe.hp.stat != 0) {
+			if (LIQUID_OOZE == member.ability) {
+				foe.hp.stat -= n - member.hp.stat;
+				if (foe.hp.stat < 0)
+					foe.hp.stat = 0;
 			}
 			else {
-				last.active->hp.stat += n - first.active->hp.stat;
-				if (last.active->hp.stat > last.active->hp.max)
-					last.active->hp.stat = last.active->hp.max;
+				foe.hp.stat += n - member.hp.stat;
+				if (foe.hp.stat > foe.hp.max)
+					foe.hp.stat = foe.hp.max;
 			}
 		}
 	}
-	if (BURN == first.active->status) {
-		if (HEATPROOF == first.active->ability)
-			heal (*first.active, -16);
+	if (BURN == member.status) {
+		if (HEATPROOF == member.ability)
+			heal (member, -16);
 		else
-			heal (*first.active, -8);
+			heal (member, -8);
 	}
-	else if (POISON_NORMAL == first.active->status or POISON_TOXIC == first.active->status) {
-		if (POISON_HEAL == first.active->ability)
-			heal (*first.active, 8);
-		else if (POISON_NORMAL == first.active->status)
-			heal (*first.active, -8);
+	else if (POISON_NORMAL == member.status or POISON_TOXIC == member.status) {
+		if (POISON_HEAL == member.ability)
+			heal (member, 8);
+		else if (POISON_NORMAL == member.status)
+			heal (member, -8);
 		else {
-			if (15 != first.active->toxic)
-				++first.active->toxic;
-			heal (*first.active, -16, first.active->toxic);
+			if (15 != member.toxic)
+				++member.toxic;
+			heal (member, -16, member.toxic);
 		}
 	}
-	else if (first.active->nightmare)
-		heal (*first.active, -4);
-	if (FLAME_ORB == first.active->item and NO_STATUS == first.active->status)
-		first.active->status = BURN;
-	else if (TOXIC_ORB == first.active->item and NO_STATUS == first.active->status)
-		first.active->status = POISON_TOXIC;
-	if (first.active->curse)
-		heal (*first.active, -4);
-	if (0 < first.active->partial_trap) {
-		heal (*first.active, -16);
-		--first.active->partial_trap;				// No need to use decrement here, as I already know first.active->partial_trap > 0
+	else if (member.nightmare)
+		heal (member, -4);
+	if (FLAME_ORB == member.item)
+		burn (member, member, weather);
+	else if (TOXIC_ORB == member.item and NO_STATUS == member.status)
+		poison_toxic (member, member, weather);
+	if (member.curse)
+		heal (member, -4);
+	if (0 < member.partial_trap) {
+		heal (member, -16);
+		--member.partial_trap;				// No need to use decrement here, as I already know member.partial_trap > 0
 	}
-	if (BAD_DREAMS == last.active->ability and SLEEP == first.active->status)
-		heal (*first.active, -8);
-	if (0 != first.active->rampage) {			// Can't use decrement here because I only want to cause confusion when first.active->rampage becomes 0.
-		--first.active->rampage;
-		if (0 == first.active->rampage)
-			first.active->confused = true;
+	if (BAD_DREAMS == foe.ability and SLEEP == member.status)
+		heal (member, -8);
+	if (0 != member.rampage) {			// Can't use decrement here because I only want to cause confusion when member.rampage becomes 0.
+		--member.rampage;
+		if (0 == member.rampage)
+			member.confused = true;
 	}
 	else {
-		decrement (first.active->uproar);
+		decrement (member.uproar);
 		decrement (weather.uproar);
 	}
-	for (std::vector<moves>::iterator it = first.active->moveset.begin(); it != first.active->moveset.end(); ++it)
+	for (std::vector<moves>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
 		decrement (it->disable);
-	decrement (first.active->encore);
-	decrement (first.active->taunt);
-	decrement (first.active->magnet_rise);
-	decrement (first.active->heal_block);
-	decrement (first.active->embargo);
-	if (1 == first.active->yawn and NO_STATUS == first.active->status) {
-		first.active->status = SLEEP;
-		first.active->sleep = length;
+	decrement (member.encore);
+	decrement (member.taunt);
+	decrement (member.magnet_rise);
+	decrement (member.heal_block);
+	decrement (member.embargo);
+	if (1 == member.yawn) {
+		sleep (member, member, weather);
+		member.sleep = random.length;
 	}
-	decrement (first.active->yawn);
-	if (STICKY_BARB == first.active->item)
-		heal (*first.active, -8);
+	decrement (member.yawn);
+	if (STICKY_BARB == member.item)
+		heal (member, -8);
 }
 
-void endofturn7 (teams &target, const weathers &weather) {		// Doom Desire / Future Sight
-	if (1 == target.counter) {
+void endofturn6 (teams &target, const weathers &weather) {		// Doom Desire / Future Sight
+	if (target.counter == 1) {
 		defense (target.ddfs, *target.active, weather);
 		target.active->hp.stat -= damagecalculator (target.ddfs, target, weather);
 	}
 	decrement (target.counter);
 }
 
-void endofturn8 (teams &team)  {
-	if (1 == team.active->perish_song)
-		team.active->hp.stat = 0;
-	decrement (team.active->perish_song);
-}
-
-void endofturn10 (teams &team, const pokemon &replacement, const weathers &weather) {
-	if (0 == team.active->hp.stat)
-		switchpokemon (team, replacement, weather);
+void endofturn7 (pokemon &member)  {
+	if (member.perish_song == 1)
+		member.hp.stat = 0;
+	decrement (member.perish_song);
 }

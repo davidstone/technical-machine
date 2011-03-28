@@ -1,3 +1,14 @@
+// Test thingy
+// Copyright 2011 David Stone
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
+// as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #ifndef TEST_H_
 #define TEST_H_
 
@@ -21,56 +32,62 @@ void test (const teams &team) {
 	std::cout << "Toxic Spikes: " << static_cast<int> (team.toxic_spikes) << '\n';
 	std::cout << "Wish: " << static_cast<int> (team.wish) << '\n';
 	std::cout << "Doom Desire / Future Sight: " << static_cast<int> (team.counter) << '\n';
+	std::cout << "Spikes: " << static_cast<int> (team.spikes) << '\n';
+	std::cout << "Stealth Rock: " << team.stealth_rock << '\n';
+	std::cout << "Toxic Spikes: " << static_cast<int> (team.toxic_spikes) << '\n';
 	std::cout << "Me: " << team.me << '\n';
-//	for (std::vector<pokemon>::iterator team.active = team.member.begin(); team.active != team.member.end(); ++team.active) {
-		std::cout << "Pokemon: " << team.active->pokemon << '\n';
-		std::cout << "Ability: " << team.active->ability << '\n';
+//	for (std::vector<pokemon>::iterator active = team.member.begin(); active != team.member.end(); ++active) {
+		std::cout << "Pokemon: " << pokemon_name [team.active->name] << '\n';
+		std::cout << "Nickname: " << team.active->nickname << '\n';
+		std::cout << "Ability: " << ability_name [team.active->ability] << '\n';
 		std::cout << "Aqua Ring: " << team.active->aqua_ring << '\n';
 		std::cout << "Attract: " << team.active->attract << '\n';
+		std::cout << "Bide: " << static_cast<int> (team.active->bide) << '\n';
+		std::cout << "Bide damage: " << team.active->bide_damage << '\n';
 		std::cout << "Charge: " << team.active->charge << '\n';
+		std::cout << "Confused: " << static_cast<int> (team.active->confused) << '\n';
 		std::cout << "Curse: " << team.active->curse << '\n';
 		std::cout << "Damaged: " << team.active->damaged << '\n';
 		std::cout << "Defense Curl: " << team.active->defense_curl << '\n';
+		std::cout << "Destiny Bond: " << team.active->destiny_bond << '\n';
+		std::cout << "Embargo: " << static_cast<int> (team.active->embargo) << '\n';
+		std::cout << "Encore: " << static_cast<int> (team.active->encore) << '\n';
 		std::cout << "Flash Fire: " << team.active->ff << '\n';
 		std::cout << "Flinch: " << team.active->flinch << '\n';
 		std::cout << "Focus Energy: " << team.active->focus_energy << '\n';
+		std::cout << "Gender: " << team.active->gender << '\n';
+		std::cout << "Happiness: " << static_cast<int> (team.active->happiness) << '\n';
+		std::cout << "Heal Block: " << static_cast<int> (team.active->heal_block) << '\n';
 		std::cout << "Identified: " << team.active->identified << '\n';
 		std::cout << "Imprison: " << team.active->imprison << '\n';
 		std::cout << "Ingrain: " << team.active->ingrain << '\n';
+		std::cout << "Item: " << item_name [team.active->item] << '\n';
 		std::cout << "Item Recycle: " << team.active->item_recycle << '\n';
 		std::cout << "Item Unburden: " << team.active->item_unburden << '\n';
 		std::cout << "Leech Seed: " << team.active->leech_seed << '\n';
+		std::cout << "Level: " << static_cast<int> (team.active->level) << '\n';
 		std::cout << "Loaf: " << team.active->loaf << '\n';
 		std::cout << "Lock-On: " << team.active->lock_on << '\n';
+		std::cout << "Magnet Rise: " << static_cast<int> (team.active->magnet_rise) << '\n';
+		std::cout << "Mass: " << static_cast<int> (team.active->mass) << '\n';
 		std::cout << "Me First: " << team.active->mf << '\n';
 		std::cout << "Minimize: " << team.active->minimize << '\n';
 		std::cout << "Moved: " << team.active->moved << '\n';
 		std::cout << "Mud Sport: " << team.active->mud_sport << '\n';
 		std::cout << "Nightmare: " << team.active->nightmare << '\n';
+		std::cout << "Partial Trap: " << static_cast<int> (team.active->partial_trap) << '\n';
+		std::cout << "Perish Song: " << static_cast<int> (team.active->perish_song) << '\n';
+		std::cout << "Rampage: " << static_cast<int> (team.active->rampage) << '\n';
 		std::cout << "Roost: " << team.active->roost << '\n';
 		std::cout << "Torment: " << team.active->torment << '\n';
 		std::cout << "Trapped: " << team.active->trapped << '\n';
 		std::cout << "Water Sport: " << team.active->water_sport << '\n';
-		std::cout << "Gender: " << team.active->gender << '\n';
-		std::cout << "Confused: " << static_cast<int> (team.active->confused) << '\n';
-		std::cout << "Embargo: " << static_cast<int> (team.active->embargo) << '\n';
-		std::cout << "Encore: " << static_cast<int> (team.active->encore) << '\n';
-		std::cout << "Happiness: " << static_cast<int> (team.active->happiness) << '\n';
-		std::cout << "Heal Block: " << static_cast<int> (team.active->heal_block) << '\n';
-		std::cout << "Level: " << static_cast<int> (team.active->level) << '\n';
-		std::cout << "Magnet Rise: " << static_cast<int> (team.active->magnet_rise) << '\n';
-		std::cout << "Mass: " << static_cast<int> (team.active->mass) << '\n';
-		std::cout << "Partial Trap: " << static_cast<int> (team.active->partial_trap) << '\n';
-		std::cout << "Perish Song: " << static_cast<int> (team.active->perish_song) << '\n';
-		std::cout << "Rampage: " << static_cast<int> (team.active->rampage) << '\n';
-		std::cout << "Sleep: " << static_cast<int> (team.active->sleep) << '\n';
 		std::cout << "Slow Start: " << static_cast<int> (team.active->slow_start) << '\n';
 		std::cout << "Stockpile: " << static_cast<int> (team.active->stockpile) << '\n';
 		std::cout << "Taunt: " << static_cast<int> (team.active->taunt) << '\n';
 		std::cout << "Toxic: " << static_cast<int> (team.active->toxic) << '\n';
 		std::cout << "Uproar: " << static_cast<int> (team.active->uproar) << '\n';
 		std::cout << "Yawn: " << static_cast<int> (team.active->yawn) << '\n';
-		std::cout << "Item: " << team.active->item << '\n';
 		std::cout << "Nature: " << team.active->nature << '\n';
 		std::cout << "HP base: " << static_cast<int> (team.active->hp.base) << '\n';
 		std::cout << "HP IV: " << static_cast<int> (team.active->hp.iv) << '\n';
@@ -102,11 +119,14 @@ void test (const teams &team) {
 		std::cout << "Spe EV: " << static_cast<int> (team.active->spe.ev) << '\n';
 		std::cout << "Spe stage: " << static_cast<int> (team.active->spe.stage) << '\n';
 		std::cout << "Spe stat: " << static_cast<int> (team.active->spe.stat) << '\n';
-		std::cout << "Status: " << static_cast<int> (team.active->status) << '\n';
-		std::cout << "Type1: " << static_cast<int> (team.active->type1) << '\n';
-		std::cout << "Type2: " << static_cast<int> (team.active->type2) << '\n';
-		std::cout << "Vanish: " << static_cast<int> (team.active->vanish) << '\n';
-//		for (std::vector<moves>::iterator team.active->move = team.active->moveset.begin(); team.active->move != team.active->moveset.end(); ++team.active->move) {
+		std::cout << "Accuracy: " << static_cast<int> (team.active->accuracy) << '\n';
+		std::cout << "Evasion: " << static_cast<int> (team.active->evasion) << '\n';
+		std::cout << "Status: " << team.active->status << '\n';
+		std::cout << "Sleep: " << static_cast<int> (team.active->sleep) << '\n';
+		std::cout << "Type1: " << team.active->type1 << '\n';
+		std::cout << "Type2: " << team.active->type2 << '\n';
+		std::cout << "Vanish: " << team.active->vanish << '\n';
+//		for (std::vector<moves>::iterator move = team.active->moveset.begin(); move != team.active->moveset.end(); ++move) {
 			std::cout << "Name: " << move_name [team.active->move->name] << '\n';
 			std::cout << "CH: " << team.active->move->ch << '\n';
 			std::cout << "Execute: " << team.active->move->execute << '\n';
@@ -115,13 +135,15 @@ void test (const teams &team) {
 			std::cout << "Accuracy: " << static_cast<int> (team.active->move->accuracy) << '\n';
 			std::cout << "Base Power: " << team.active->move->basepower << '\n';
 			std::cout << "Disable: " << static_cast<int> (team.active->move->disable) << '\n';
+			std::cout << "Effect: " << static_cast<int> (team.active->move->effect) << '\n';
+			std::cout << "Probability: " << team.active->move->probability << '\n';
 			std::cout << "Power: " << team.active->move->power << '\n';
 			std::cout << "PP: " << static_cast<int> (team.active->move->pp) << '\n';
 			std::cout << "PP max: " << static_cast<int> (team.active->move->pp_max) << '\n';
 			std::cout << "Priority: " << static_cast<int> (team.active->move->priority) << '\n';
 			std::cout << "r: " << static_cast<int> (team.active->move->r) << '\n';
 			std::cout << "Times used: " << static_cast<int> (team.active->move->times_used) << '\n';
-			std::cout << "Variable: " << static_cast<int> (team.active->move->variable) << '\n';
+			std::cout << "Variable: " << static_cast<int> (*team.active->move->variable) << '\n';
 			std::cout << "Type: " << team.active->move->type << '\n';
 //		}
 //	}

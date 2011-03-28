@@ -1,5 +1,5 @@
 // Reverse damage calculator
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -10,10 +10,13 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
-#include "damage.cpp"
+#include "reversedamage.h"
+#include "damage.h"
 #include "item.h"
+#include "statfunction.h"
 #include "team.h"
 #include "weather.h"
+#include "unknown.h"
 
 /*
 This function takes damage and calculates all possible values that can cause that damage. It removes any element from the list that is unable to cause a given damage. Given enough data points, the hidden values are reduced to a single data point.
@@ -40,7 +43,7 @@ void reversedamagecalculator (teams &attacker, const teams &defender, const weat
 	int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
 	int ff;					// Flash Fire: 3 / 2
 	int mf;					// Me First: 3 / 2
-	int known;
+	int known;			// Never used unitialized. If variable is true, set before entering the loop. If variable is false, set after entering the loop but before it's used in the loop.
 	bool variable = attacker.active->move->name != HIDDEN_POWER and attacker.active->move->name != NATURAL_GIFT;
 	if (variable)
 		known = damageknown (*attacker.active, defender, weather, rl, weather_mod, ff, mf);
@@ -94,7 +97,7 @@ void reversedamagecalculator (teams &attacker, const teams &defender, const weat
 		int low = 86;
 		bool found = false;
 		
-		// Mathematical analysis shows that checking r == 93 first has an average case of 3.09 calculations, as opposed to 3.23 for r == 91 or 3.23 for r == 92 or r == 94. The worst case for r == 93 is 4 calculations, which happens 34% of the time, compared to r == 91 which has a worst case of 5 calculations 5.7% of the time and 4 calculations 43% if the time. r == 92 or r == 94 also have worst case scenarios more likely than r == 93. The average time reduction for r == 93 over its best competitor is 4.3%, assuming an r value generates a legal damage. If it does not, it has the lowest worst-case performance, so it is still the fastest.
+		// Mathematical analysis shows that checking r == 93 first has an average case of 3.09 calculations (based on the probability distribution of various values for r in the damage formula), as opposed to 3.23 for r == 91, r == 92, or r == 94. The worst case for r == 93 is 4 calculations, which happens 34% of the time, compared to r == 91 which has a worst case of 5 calculations 5.7% of the time and 4 calculations 43% if the time. r == 92 or r == 94 also have worst case scenarios more likely than r == 93. The average time reduction for r == 93 over its best competitor is 4.3%, assuming an r value generates a legal damage. If it does not, it has the lowest worst-case performance, so it is still the fastest.
 		attacker.active->move->r = 93;
 		while (low <= high) {
 			estimate = damagerandom (*attacker.active, defender, stab, type1, type2, aem, eb, tl, rb, nonrandom);
