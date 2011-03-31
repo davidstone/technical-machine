@@ -15,10 +15,13 @@
 #include <map>
 #include <string>
 
+namespace tm {
+
 // Silly genderless Pokemon not letting me use a bool.
 
 enum genders { GENDERLESS = 0, FEMALE = -1, MALE = 1 };
 
 void set_gender_map (std::map <std::string, genders> &genders_map);
 
+}
 #endif

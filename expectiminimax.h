@@ -18,6 +18,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 struct random_team {
 	int length;			// Length of sleep
 	bool shed_skin;		// Does Shed Skin activate?
@@ -40,4 +42,5 @@ void reset_iterators (teams &team);
 void reset_iterators_pokemon (teams &team);
 void reset_iterators_move (pokemon &member);
 
+}
 #endif

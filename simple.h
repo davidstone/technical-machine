@@ -16,10 +16,13 @@
 #include "type.h"
 #include "weather.h"
 
+namespace tm {
+
 bool istype (const pokemon &member, types type);
 void heal (pokemon &member, int denominator, int numerator = 1);
 void decrement (char &n);
 bool grounded (const pokemon &member, const weathers &weather);
 void recoil (pokemon &user, int damage, int denominator);
 
+}
 #endif

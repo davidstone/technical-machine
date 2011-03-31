@@ -19,6 +19,8 @@
 #include "team.h"
 #include "pokemon.h"
 
+namespace tm {
+
 void overall_stats (std::vector<double> &overall);
 
 void team_stats (const std::vector<double> &overall, double total, double multiplier [END_SPECIES][END_SPECIES]);
@@ -35,4 +37,5 @@ void predict_pokemon (teams &team, std::vector<double> estimate, int detailed []
 
 void predict_move (pokemon &member, int detailed [][7]);
 
+}
 #endif

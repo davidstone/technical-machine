@@ -13,6 +13,8 @@
 #include <string>
 #include "item.h"
 
+namespace tm {
+
 void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["No Item"] = NO_ITEM;
 	items_map["Adamant Orb "] = ADAMANT_ORB;
@@ -419,4 +421,6 @@ void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["Rare Bone"] = OTHER100;
 	items_map["Root Fossil"] = OTHER100;
 	items_map["Skull Fossil"] = OTHER100;
+}
+
 }

@@ -22,6 +22,8 @@
 #include "type.h"
 #include "weather.h"
 
+namespace tm {
+
 int main (int argc, char* argv[]) {
 	int depth;
 	if (argc == 1)
@@ -39,7 +41,7 @@ int main (int argc, char* argv[]) {
 
 	long score;
 	moves_list best_move = expectiminimax (ai, foe, weather, depth, sv, score);
-	
+
 	if (SWITCH1 <= best_move and best_move <= SWITCH6)
 		std::cout << "Switch to " << pokemon_name [ai.member.at (best_move - SWITCH1).name];
 
@@ -56,6 +58,8 @@ int main (int argc, char* argv[]) {
 	}
 	else
 		std::cout << " for a minimum expected score of " << score << "\n";
-	
+
 	return 0;
+}
+
 }

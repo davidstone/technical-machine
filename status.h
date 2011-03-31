@@ -12,8 +12,11 @@
 #ifndef STATUS_H_
 #define STATUS_H_
 
+namespace tm {
+
 enum statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, SLEEP };
 
 // I'm not including pseudo-status like Leech Seed and Confusion here, because those have dramatically different effects in the game.
 
+}
 #endif

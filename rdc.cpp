@@ -28,6 +28,8 @@
 
 // What follows is a temporary file that initializes variables that I don't have functions to initialize yet. It also provides the interface for the reverse damage calculator.
 
+namespace tm {
+
 int main () {
 	
 	Map map;
@@ -115,4 +117,6 @@ int main () {
 	output += '\n';
 	std::cout << output;
 	return 0;
+}
+
 }

@@ -21,6 +21,8 @@
 #include "teampredictor.h"
 #include "weather.h"
 
+namespace tm {
+
 void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, Map &map, int detailed [][7]) {
 	set_species_map (map.specie);
 	set_ability_map (map.ability);
@@ -51,13 +53,13 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 	weather.sun = 0;
 	weather.sand = 0;
 	weather.rain = 0;
-	
+
 	ai.replacement = 0;
 	ai.active = ai.member.begin();
 	switchpokemon (ai, *foe.active, weather);
 	ai.active->moved = false;
 	ai.active->move = ai.active->moveset.begin();
-	
+
 	foe.replacement = 0;
 	foe.active = foe.member.begin();
 	switchpokemon (foe, *ai.active, weather);
@@ -124,9 +126,10 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 			sv.poison = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Sleep")
 			sv.sleep = boost::lexical_cast<int> (line.substr (x + 1));
-		
+	
 		getline (file, line);
 	}
 }
 
+}
 #endif

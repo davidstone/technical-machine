@@ -13,6 +13,8 @@
 #include <string>
 #include "ability.h"
 
+namespace tm {
+
 void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Adaptability"] = ADAPTABILITY;
 	abilities_map["Aftermath"] = AFTERMATH;
@@ -137,4 +139,6 @@ void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Water Veil"] = WATER_VEIL;
 	abilities_map["White Smoke"] = CLEAR_BODY;
 	abilities_map["Wonder Guard"] = WONDER_GUARD;
+}
+
 }

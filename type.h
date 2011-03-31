@@ -1,5 +1,5 @@
 // Type information
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -11,6 +11,8 @@
 
 #ifndef TYPE_H_
 #define TYPE_H_
+
+namespace tm {
 
 enum types { BUG, DARK, DRAGON, ELECTRIC, FIGHTING, FIRE, FLYING, GHOST, GRASS, GROUND, ICE, NORMAL, POISON, PSYCHIC_TYPE, ROCK, STEEL, WATER, TYPELESS };
 
@@ -38,4 +40,5 @@ const int effectiveness [18][18] = {
 	//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
 };
 
+}
 #endif

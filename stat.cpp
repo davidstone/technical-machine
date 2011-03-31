@@ -22,6 +22,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 void hitpoints (pokemon &member) {
 	if (1 == member.hp.base)
 		member.hp.max = 1;
@@ -239,4 +241,6 @@ void set_nature_map (std::map <std::string, natures> &natures_map) {
 	natures_map["Sassy"] = SASSY;
 	natures_map["Serious"] = SERIOUS;
 	natures_map["Timid"] = TIMID;
+}
+
 }

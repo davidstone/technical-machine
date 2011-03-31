@@ -15,6 +15,8 @@
 #include "pokemon.h"
 #include "weather.h"
 
+namespace tm {
+
 void burn (pokemon &user, pokemon &target, const weathers &weather);
 void freeze (const pokemon &user, pokemon &target, const weathers &weather);
 void paralyze (pokemon &user, pokemon &target, const weathers &weather);
@@ -22,4 +24,5 @@ void sleep (const pokemon &user, pokemon &target, const weathers &weather);
 void poison_normal (pokemon &user, pokemon &target, const weathers &weather);
 void poison_toxic (pokemon &user, pokemon &target, const weathers &weather);
 
+}
 #endif

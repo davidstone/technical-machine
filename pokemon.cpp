@@ -13,6 +13,8 @@
 #include <string>
 #include "pokemon.h"
 
+namespace tm {
+
 void set_species_map (std::map <std::string, species> &species_map) {
 	species_map["Abomasnow"] = ABOMASNOW;
 	species_map["Abra"] = ABRA;
@@ -549,4 +551,6 @@ void set_species_map (std::map <std::string, species> &species_map) {
 	species_map["Zapdos"] = ZAPDOS;
 	species_map["Zigzagoon"] = ZIGZAGOON;
 	species_map["Zubat"] = ZUBAT;
+}
+
 }

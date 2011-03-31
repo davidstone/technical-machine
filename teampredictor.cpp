@@ -17,6 +17,8 @@
 #include "team.h"
 #include "pokemon.h"
 
+namespace tm {
+
 void overall_stats (std::vector<double> &overall) {
 	std::ifstream file ("usage.txt");
 	std::string line;
@@ -226,4 +228,6 @@ void predict_move (pokemon &member, int detailed [][7]) {
 			member.moveset.push_back (move);
 		}
 	}
+}
+
 }

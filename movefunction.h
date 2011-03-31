@@ -19,6 +19,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 void move_priority (moves &move);
 int usemove (teams &user, teams &target, weathers &weather, bool hitself, int old_damage = 0);
 int usemove2 (teams &user, teams &target, weathers &weather, int old_damage);
@@ -31,4 +33,5 @@ bool imprison (const teams &user, const teams &target);
 void set_move_map (std::map <std::string, moves_list> &moves_map);
 void reset_variables (pokemon &member);
 
+}
 #endif

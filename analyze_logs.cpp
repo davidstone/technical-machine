@@ -1,5 +1,5 @@
 // Analyze Shoddy Battle logs
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -17,6 +17,8 @@
 #include "pokemon.h"
 #include "move.h"
 #include "ability.h"
+
+namespace tm {
 
 void log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search) {
 	previous = &member;
@@ -171,7 +173,7 @@ int main (int argc, char* argv[]) {
 				active = player2.active;
 				inactive = player1.active;
 			}
-			
+		
 			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
 			// nickname used move.
 			search = active->nickname + " used ";
@@ -231,4 +233,6 @@ int main (int argc, char* argv[]) {
 	output (out, *player);
 	out.close();
 	return 0;
+}
+
 }

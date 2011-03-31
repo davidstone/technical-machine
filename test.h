@@ -16,6 +16,10 @@
 #include "pokemon.h"
 #include "move.h"
 
+namespace tm {
+
+// Checks what all my variables are set to. Helps with debugging.
+
 void test (const teams &team) {
 	if (team.me)
 		std::cout << "---------AI---------\n";
@@ -152,5 +156,7 @@ void test (const teams &team) {
 	else
 		std::cout << "---------Foe---------\n\n";
 	std::cin.get();
+}
+
 }
 #endif

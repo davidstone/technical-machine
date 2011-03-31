@@ -15,6 +15,8 @@
 #include <map>
 #include <string>
 
+namespace tm {
+
 /*
 MAIL collectively represents all types of mail, as they have identical effects.
 
@@ -41,4 +43,5 @@ const std::string item_name [] = { "No Item", "Adamant Orb ", "Aguav Berry", "Ap
 
 void set_item_map (std::map <std::string, items> &items_map);
 
+}
 #endif

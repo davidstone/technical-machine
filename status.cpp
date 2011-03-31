@@ -1,5 +1,5 @@
 // Status functions
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -14,6 +14,8 @@
 #include "status.h"
 #include "statusfunction.h"
 #include "weather.h"
+
+namespace tm {
 
 void burn (pokemon &user, pokemon &target, const weathers &weather) {
 	if (target.status == NO_STATUS and (user.ability == MOLD_BREAKER or (target.ability != WATER_VEIL and (target.ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, FIRE)) {
@@ -55,4 +57,6 @@ void poison_toxic (pokemon &user, pokemon &target, const weathers &weather) {
 		if (target.ability == SYNCHRONIZE)
 			poison_normal (target, user, weather);
 	}
+}
+
 }

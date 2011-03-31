@@ -1,5 +1,5 @@
 // Damage calculator
-// Copyright 2010 David Stone
+// Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 // as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -19,15 +19,17 @@
 #include "status.h"
 #include "weather.h"
 
+namespace tm {
+
 void movepower (pokemon &attacker, const pokemon &defender, const weathers weather) {
 
 	// I account for the doubling of the base power for Pursuit in the switching function by simply multiplying the final base power by 2. Regardless of the combination of modifiers, this does not change the final base power. The exception is if the attacker's ally uses Helping Hand. The target uses U-turn and the attacker uses Pursuit with a slower Pokemon that has Rivalry and a Muscle Band and neither the attacker nor target is genderless. This will cause the base power to be 1 less than it should be.
-	
+
 	// Variable power moves
-	
+
 	if (CRUSH_GRIP == attacker.move->name or WRING_OUT == attacker.move->name)
 		attacker.move->basepower = 120 * defender.hp.stat / defender.hp.max + 1;
-	
+
 	else if (ERUPTION == attacker.move->name or WATER_SPOUT == attacker.move->name)
 		attacker.move->basepower = 150 * attacker.hp.stat / attacker.hp.max;
 
@@ -80,7 +82,7 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 
 	else if (GRASS_KNOT == attacker.move->name or LOW_KICK == attacker.move->name)
 		attacker.move->basepower = defender.mass;
-	
+
 	else if (attacker.move->name == GYRO_BALL) {
 		attacker.move->basepower = 25 * defender.spe.stat / attacker.spe.stat + 1;
 		if (attacker.move->basepower > 150)
@@ -98,7 +100,7 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 		int x = ((attacker.spe.iv >> 1) % 2) * 8;
 		int y = ((attacker.spa.iv >> 1) % 2) * 16;
 		int z = ((attacker.spd.iv >> 1) % 2) * 32;
-		
+	
 		attacker.move->basepower = (u + v + w + x + y + z) * 40 / 63 + 30;
 	}
 
@@ -151,7 +153,7 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 		else
 			attacker.move->basepower = 40;
 	}
-	
+
 	attacker.move->power = attacker.move->basepower;
 
 	if ((ASSURANCE == attacker.move->name and defender.damaged)
@@ -197,7 +199,7 @@ void movepower (pokemon &attacker, const pokemon &defender, const weathers weath
 
 	if ((defender.mud_sport and ELECTRIC == attacker.move->type) or (defender.water_sport and FIRE == attacker.move->type))
 		attacker.move->power /= 2;
-	
+
 	if ((TECHNICIAN == attacker.ability and attacker.move->basepower <= 60)
 	 or (BLAZE == attacker.ability and FIRE == attacker.move->type and attacker.hp.stat <= attacker.hp.max / 3)
 	 or (OVERGROW == attacker.ability and GRASS == attacker.move->type and attacker.hp.stat <= attacker.hp.max / 3)
@@ -244,7 +246,7 @@ int damageknown (const pokemon &attacker, const teams &defender, const weathers 
 		mf = 3;
 	else
 		mf = 2;
-	
+
 	return attacker.level * 2 / 5 + 2;
 }
 
@@ -361,4 +363,6 @@ int damagecalculator (const pokemon &attacker, const teams &defender, const weat
 		}
 	}
 	return damage;
+}
+
 }

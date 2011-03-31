@@ -15,6 +15,8 @@
 #include <vector>
 #include "pokemon.h"
 
+namespace tm {
+
 struct teams {
 	std::string player;						// The player's name
 	std::vector<pokemon> member;			// All Pokemon on the team
@@ -64,4 +66,5 @@ void poteam (teams &team, const std::string &name);
 void popokemon (teams &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
 unsigned poconverter (const std::string &data, const std::string end, const std::string &line);
 
+}
 #endif

@@ -20,6 +20,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 void endofturn (teams &first, teams &last, weathers &weather, const Random &random) {
 	endofturn0 (*first.active);
 	endofturn0 (*last.active);
@@ -189,4 +191,6 @@ void endofturn7 (pokemon &member)  {
 	if (member.perish_song == 1)
 		member.hp.stat = 0;
 	decrement (member.perish_song);
+}
+
 }

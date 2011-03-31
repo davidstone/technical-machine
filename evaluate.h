@@ -19,7 +19,9 @@
 #include "team.h"
 #include "weather.h"
 
-const long VICTORY = 65536;
+namespace tm {
+
+const long VICTORY = 65536;		// Highest score possible. 100% chance to win.
 
 struct score_variables {
 	int transposition_table;	
@@ -61,4 +63,5 @@ long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, con
 long scoremove (const moves &move, const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv);
 long int win (const teams &team);
 
+}
 #endif

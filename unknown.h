@@ -12,6 +12,8 @@
 #ifndef UNKNOWN_H_
 #define UNKNOWN_H_
 
+namespace tm {
+
 struct Unknown {
 //	std::vector<moves> moveset;
 //	unsigned char ability;
@@ -33,4 +35,5 @@ struct Unknown {
 
 void unknown (std::vector<Unknown> &hidden);
 
+}
 #endif

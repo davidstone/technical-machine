@@ -13,9 +13,12 @@
 #include <string>
 #include "gender.h"
 
+namespace tm {
+
 void set_gender_map (std::map <std::string, genders> &genders_map) {
 	genders_map["None"] = GENDERLESS;
 	genders_map["Female"] = FEMALE;
 	genders_map["Male"] = MALE;
 }
 
+}

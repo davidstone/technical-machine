@@ -15,6 +15,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 struct State {
 	teams ai;
 	teams foe;
@@ -26,4 +28,5 @@ struct State {
 	}
 };
 
+}
 #endif

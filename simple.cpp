@@ -16,6 +16,8 @@
 #include "type.h"
 #include "weather.h"
 
+namespace tm {
+
 bool istype (const pokemon &member, types type) {
 	if ((member.type1 == type or member.type2 == type) and (type != FLYING or member.roost == false))
 		return true;
@@ -60,4 +62,6 @@ void recoil (pokemon &user, int damage, int denominator) {
 		if (user.hp.stat < 0)
 			user.hp.stat = 0;
 	}
+}
+
 }

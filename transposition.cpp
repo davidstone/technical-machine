@@ -16,6 +16,10 @@
 #include "evaluate.h"
 #include "state.h"
 
+namespace tm {
+
+// This currently generates no hits. I'm currently working on this to find out why.
+
 long transposition (const teams &ai, const teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	State state;		// This causes possibly needless copying. Changing my code elsewhere to use the State data structure could solve this problem.
 
@@ -66,4 +70,6 @@ long hash_move (const moves &move) {
 
 long hash_weather (const weathers &weather) {
 	return weather.trick_room + weather.fog + weather.gravity + weather.uproar + weather.hail + weather.sun + weather.sand + weather.rain;
+}
+
 }

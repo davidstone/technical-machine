@@ -20,6 +20,8 @@
 #include "type.h"
 #include "weather.h"
 
+namespace tm {
+
 void move_priority (moves &move) {
 	if (move.name == SWITCH1 or move.name == SWITCH2 or move.name == SWITCH3 or move.name == SWITCH4 or move.name == SWITCH5 or move.name == SWITCH6)
 		move.priority = 6;
@@ -1443,4 +1445,6 @@ void switchpokemon (teams &user, pokemon &target, weathers &weather) {
 		hail (weather, -1);
 	else if (user.active->ability == TRACE) {
 	}
+}
+
 }

@@ -25,6 +25,8 @@
 #include "teampredictor.h"
 #include "type.h"
 
+namespace tm {
+
 // Warning: Almost everything you see here is a hack.
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
@@ -390,17 +392,4 @@ unsigned poconverter (const std::string &data, const std::string end, const std:
 	return boost::lexical_cast<unsigned> (line.substr (a + x, b - a - x));
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}

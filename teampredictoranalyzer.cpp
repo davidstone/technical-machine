@@ -16,6 +16,10 @@
 #include <vector>
 #include "pokemon.h"
 
+namespace tm {
+
+// This was designed to test how accurate different versions of my team prediction function were to make sure my changes actually helped. It's useless now, but the code might be the base for a future such test.
+
 void test_teams (const std::vector<double> &old_estimate, const std::vector<double> &new_estimate, unsigned old_correct[][6], unsigned new_correct [][6], const std::map<std::string, species> &species_map);
 
 void combination (const std::vector<species> &team, const std::vector<species> &known, std::vector<double> estimate, double multiplier [][END_SPECIES], unsigned correct[][6]);
@@ -164,4 +168,6 @@ void tabulate (unsigned old_correct [][6], unsigned new_correct [][6]) {
 		std::cout << "Old version is correct " << 100.0 * old_total / static_cast<double> (old_correct [n][n] * (5 - n)) << "% of the time\n";
 		std::cout << "New version is correct " << 100.0 * new_total / static_cast<double> (new_correct [n][n] * (5 - n)) << "% of the time\n";
 	}
+}
+
 }

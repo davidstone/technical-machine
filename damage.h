@@ -16,6 +16,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 void movepower (pokemon &attacker, const pokemon &defender, const weathers weather);
 
 int damageknown (const pokemon &attacker, const teams &defender, const weathers &weather, int &rl, int &weather_mod, int &ff, int &mf);
@@ -25,5 +27,7 @@ int damagenonrandom (const pokemon &attacker, const teams &defender, const int &
 int damagerandom (const pokemon &attacker, const teams &defender, const int &stab, const int &type1, const int &type2, const int &aem, const int &eb, const int &tl, const int &rb, int damage);
 
 int damagecalculator (const pokemon &attacker, const teams &defender, const weathers &weather);
+
+}
 
 #endif

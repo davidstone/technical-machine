@@ -17,6 +17,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 void endofturn (teams &first, teams &last, weathers &weather, const Random &random);
 void endofturn0 (pokemon &member);
 void endofturn1 (teams &team);
@@ -25,5 +27,7 @@ void endofturn3 (pokemon &member, const weathers &weather);
 void endofturn5 (pokemon &member, pokemon &foe, weathers &weather, const random_team &random);
 void endofturn6 (teams &target, const weathers &weather);
 void endofturn7 (pokemon &member);
+
+}
 
 #endif

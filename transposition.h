@@ -17,6 +17,8 @@
 #include "team.h"
 #include "weather.h"
 
+namespace tm {
+
 long transposition (const teams &ai, const teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
 long hash_state (const State &state, const score_variables &sv);
 long hash_team (const teams &team);
@@ -24,4 +26,5 @@ long hash_pokemon (const pokemon &member);
 long hash_move (const moves &move);
 long hash_weather (const weathers &weather);
 
+}
 #endif

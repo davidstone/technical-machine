@@ -11,6 +11,8 @@
 
 #include "weather.h"
 
+namespace tm {
+
 void trick_room (weathers &weather) {
 	if (weather.trick_room == 0)
 		weather.trick_room = 5;
@@ -56,4 +58,6 @@ void rain (weathers &weather, int duration) {
 		weather.sand = 0;
 		weather.rain = duration;
 	}
+}
+
 }
