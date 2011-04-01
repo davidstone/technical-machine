@@ -17,7 +17,7 @@
 #include "weather.h"
 #include "unknown.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void reversedamagecalculator (teams &attacker, const teams &defender, const weathers &weather, int damage, std::vector<Unknown> &hidden);
 

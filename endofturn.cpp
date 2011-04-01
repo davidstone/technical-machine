@@ -20,7 +20,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void endofturn (teams &first, teams &last, weathers &weather, const Random &random) {
 	endofturn0 (*first.active);

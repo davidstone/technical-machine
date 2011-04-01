@@ -11,7 +11,7 @@
 
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void trick_room (weathers &weather) {
 	if (weather.trick_room == 0)

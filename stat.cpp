@@ -22,7 +22,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void hitpoints (pokemon &member) {
 	if (1 == member.hp.base)

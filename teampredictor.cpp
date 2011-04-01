@@ -17,7 +17,7 @@
 #include "team.h"
 #include "pokemon.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void overall_stats (std::vector<double> &overall) {
 	std::ifstream file ("usage.txt");

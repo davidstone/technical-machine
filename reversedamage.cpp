@@ -18,7 +18,7 @@
 #include "weather.h"
 #include "unknown.h"
 
-namespace tm {
+namespace technicalmachine {
 
 /*
 This function takes damage and calculates all possible values that can cause that damage. It removes any element from the list that is unable to cause a given damage. Given enough data points, the hidden values are reduced to a single data point.

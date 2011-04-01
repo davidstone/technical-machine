@@ -16,7 +16,7 @@
 #include "type.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 bool istype (const pokemon &member, types type) {
 	if ((member.type1 == type or member.type2 == type) and (type != FLYING or member.roost == false))

@@ -16,7 +16,7 @@
 #include "pokemon.h"
 #include "move.h"
 
-namespace tm {
+namespace technicalmachine {
 
 // Checks what all my variables are set to. Helps with debugging.
 

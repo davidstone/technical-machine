@@ -16,7 +16,7 @@
 #include "type.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 bool istype (const pokemon &member, types type);
 void heal (pokemon &member, int denominator, int numerator = 1);

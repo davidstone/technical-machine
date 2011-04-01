@@ -16,7 +16,7 @@
 #include "evaluate.h"
 #include "state.h"
 
-namespace tm {
+namespace technicalmachine {
 
 // This currently generates no hits. I'm currently working on this to find out why.
 

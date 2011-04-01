@@ -23,7 +23,7 @@
 #include "type.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, long &score) {
 	moves_list best_move = END_MOVE;

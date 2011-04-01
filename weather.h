@@ -12,7 +12,7 @@
 #ifndef WEATHER_H_
 #define WEATHER_H_
 
-namespace tm {
+namespace technicalmachine {
 
 /*
 Weather is defined as the set of things that are not specific to either team.

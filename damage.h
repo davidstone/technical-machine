@@ -16,7 +16,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void movepower (pokemon &attacker, const pokemon &defender, const weathers weather);
 

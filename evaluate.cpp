@@ -15,7 +15,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 long evaluate (const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv) {
 	long score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;

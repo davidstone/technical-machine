@@ -15,7 +15,7 @@
 #include <vector>
 #include "pokemon.h"
 
-namespace tm {
+namespace technicalmachine {
 
 struct teams {
 	std::string player;						// The player's name

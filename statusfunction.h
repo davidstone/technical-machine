@@ -15,7 +15,7 @@
 #include "pokemon.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void burn (pokemon &user, pokemon &target, const weathers &weather);
 void freeze (const pokemon &user, pokemon &target, const weathers &weather);

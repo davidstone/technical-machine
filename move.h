@@ -16,7 +16,7 @@
 #include <vector>
 #include "type.h"
 
-namespace tm {
+namespace technicalmachine {
 
 // I use PSYCHIC_MOVE (along with PSYCHIC_TYPE) instead of just making one of them PSYCHIC and the other PSYCHIC_WHATEVER so that I will never get confused as to what to type. Attempting to use PSYCHIC will create an error on compile, allowing me to fix it. Same for METRONOME with the move vs. item.
 

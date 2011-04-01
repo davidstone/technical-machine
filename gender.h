@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 
-namespace tm {
+namespace technicalmachine {
 
 // Silly genderless Pokemon not letting me use a bool.
 

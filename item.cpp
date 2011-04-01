@@ -13,7 +13,7 @@
 #include <string>
 #include "item.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void set_item_map (std::map <std::string, items> &items_map) {
 	items_map["No Item"] = NO_ITEM;

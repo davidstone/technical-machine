@@ -13,7 +13,7 @@
 #include <string>
 #include "ability.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void set_ability_map (std::map <std::string, abilities> &abilities_map) {
 	abilities_map["Adaptability"] = ADAPTABILITY;

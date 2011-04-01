@@ -14,7 +14,7 @@
 #include "item.h"
 #include "stat.h"
 
-namespace tm {
+namespace technicalmachine {
 
 /*
 This creates a list of all possible variables for a given Pokemon. Other functions are then used to remove impossible data points. For instance, the reverse damage calculator removes stat / ability combinations that are not possible for the given damage. The battle log parser removes things based on messages.

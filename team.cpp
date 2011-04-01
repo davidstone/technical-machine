@@ -25,7 +25,7 @@
 #include "teampredictor.h"
 #include "type.h"
 
-namespace tm {
+namespace technicalmachine {
 
 // Warning: Almost everything you see here is a hack.
 

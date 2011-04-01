@@ -17,7 +17,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void endofturn (teams &first, teams &last, weathers &weather, const Random &random);
 void endofturn0 (pokemon &member);

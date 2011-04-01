@@ -15,7 +15,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 struct State {
 	teams ai;

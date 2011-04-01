@@ -28,7 +28,7 @@
 
 // What follows is a temporary file that initializes variables that I don't have functions to initialize yet. It also provides the interface for the reverse damage calculator.
 
-namespace tm {
+using namespace technicalmachine;
 
 int main () {
 	
@@ -117,6 +117,4 @@ int main () {
 	output += '\n';
 	std::cout << output;
 	return 0;
-}
-
 }

@@ -25,7 +25,9 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Output.H>
 
-namespace tm {
+using namespace technicalmachine;
+
+// A GUI version of the team predictor.
 
 struct Data {
 	std::vector<Fl_Input*> input;
@@ -140,6 +142,4 @@ void predict (int detailed [][7], teams &team, bool using_lead) {
 			estimate.at (n) *= multiplier [it->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
-}
-
 }

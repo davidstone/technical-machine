@@ -15,7 +15,7 @@
 #include "statusfunction.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void burn (pokemon &user, pokemon &target, const weathers &weather) {
 	if (target.status == NO_STATUS and (user.ability == MOLD_BREAKER or (target.ability != WATER_VEIL and (target.ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, FIRE)) {

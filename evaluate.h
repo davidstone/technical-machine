@@ -19,7 +19,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 const long VICTORY = 65536;		// Highest score possible. 100% chance to win.
 

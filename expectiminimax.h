@@ -18,7 +18,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 struct random_team {
 	int length;			// Length of sleep

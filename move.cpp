@@ -20,7 +20,7 @@
 #include "type.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void move_priority (moves &move) {
 	if (move.name == SWITCH1 or move.name == SWITCH2 or move.name == SWITCH3 or move.name == SWITCH4 or move.name == SWITCH5 or move.name == SWITCH6)

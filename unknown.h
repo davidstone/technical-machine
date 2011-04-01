@@ -12,7 +12,7 @@
 #ifndef UNKNOWN_H_
 #define UNKNOWN_H_
 
-namespace tm {
+namespace technicalmachine {
 
 struct Unknown {
 //	std::vector<moves> moveset;

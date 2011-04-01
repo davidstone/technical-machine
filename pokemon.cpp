@@ -13,7 +13,7 @@
 #include <string>
 #include "pokemon.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void set_species_map (std::map <std::string, species> &species_map) {
 	species_map["Abomasnow"] = ABOMASNOW;

@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 
-namespace tm {
+namespace technicalmachine {
 
 struct stats {
 	unsigned char base;

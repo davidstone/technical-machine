@@ -22,7 +22,7 @@
 #include "type.h"
 #include "weather.h"
 
-namespace tm {
+using namespace technicalmachine;
 
 int main (int argc, char* argv[]) {
 	int depth;
@@ -60,6 +60,4 @@ int main (int argc, char* argv[]) {
 		std::cout << " for a minimum expected score of " << score << "\n";
 
 	return 0;
-}
-
 }

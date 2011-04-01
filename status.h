@@ -12,7 +12,7 @@
 #ifndef STATUS_H_
 #define STATUS_H_
 
-namespace tm {
+namespace technicalmachine {
 
 enum statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, SLEEP };
 

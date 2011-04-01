@@ -18,7 +18,7 @@
 #include "move.h"
 #include "ability.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search) {
 	previous = &member;

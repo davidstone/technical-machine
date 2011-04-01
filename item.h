@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 
-namespace tm {
+namespace technicalmachine {
 
 /*
 MAIL collectively represents all types of mail, as they have identical effects.

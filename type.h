@@ -12,7 +12,7 @@
 #ifndef TYPE_H_
 #define TYPE_H_
 
-namespace tm {
+namespace technicalmachine {
 
 enum types { BUG, DARK, DRAGON, ELECTRIC, FIGHTING, FIRE, FLYING, GHOST, GRASS, GROUND, ICE, NORMAL, POISON, PSYCHIC_TYPE, ROCK, STEEL, WATER, TYPELESS };
 

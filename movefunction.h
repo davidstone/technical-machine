@@ -19,7 +19,7 @@
 #include "team.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void move_priority (moves &move);
 int usemove (teams &user, teams &target, weathers &weather, bool hitself, int old_damage = 0);

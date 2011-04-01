@@ -21,7 +21,7 @@
 #include "teampredictor.h"
 #include "weather.h"
 
-namespace tm {
+namespace technicalmachine {
 
 void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, Map &map, int detailed [][7]) {
 	set_species_map (map.specie);
