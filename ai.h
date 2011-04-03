@@ -30,7 +30,7 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 	set_nature_map (map.nature);
 	set_move_map (map.move);
 	detailed_stats (map, detailed);
-	loadteam (ai, "ai.sbt", map, detailed);
+	loadteam (ai, "teams/ai.sbt", map, detailed);
 	ai.me = true;
 	for (std::vector<pokemon>::iterator it = ai.member.begin(); it != ai.member.end(); ++it)
 		reset_variables (*it);
@@ -40,7 +40,7 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 	member.level = 100;
 	member.nickname = "Suicune";
 	foe.member.push_back (member);
-*/	loadteam (foe, "foe.sbt", map, detailed);
+*/	loadteam (foe, "teams/foe.sbt", map, detailed);
 	foe.me = false;
 	for (std::vector<pokemon>::iterator it = foe.member.begin(); it != foe.member.end(); ++it)
 		reset_variables (*it);

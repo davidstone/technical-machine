@@ -41,7 +41,7 @@ int main () {
 	int detailed [END_SPECIES] [7];
 	detailed_stats (map, detailed);
 	teams ai;
-	loadteam (ai, "ai.sbt", map, detailed);
+	loadteam (ai, "teams/ai.sbt", map, detailed);
 	ai.me = true;
 
 	teams foe;
