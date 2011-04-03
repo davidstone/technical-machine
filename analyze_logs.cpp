@@ -13,112 +13,13 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include "analyze_logs.h"
 #include "team.h"
 #include "pokemon.h"
 #include "move.h"
 #include "ability.h"
 
 namespace technicalmachine {
-
-void log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search) {
-	previous = &member;
-	// Account for Windows / Unix line endings
-	size_t n = 1;
-	if (line.find(".\r") != std::string::npos)
-		n = 2;
-	moves_list move_name = moves_map.find (line.substr (search.length(), line.length() - search.length() - n))->second;
-	bool isfound = false;
-	for (std::vector<moves>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
-		if (move_name == it->name) {
-			isfound = true;
-			member.move = it;
-			break;
-		}
-	}
-	if (!isfound) {
-		moves move;
-		member.moveset.push_back (move);
-		member.move = member.moveset.end() - 1;
-		member.move->name = move_name;
-	}
-}
-
-void log_pokemon  (teams &team, const std::string &line, const std::map <std::string, species> &species_map, std::string &search1) {
-	search1 = team.player + search1;
-	std::string search2 = " (lvl ";
-	size_t found2 = line.find (search2);
-	std::string nickname = line.substr (search1.length(), found2 - search1.length());
-	bool found = false;
-	for (std::vector<pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it) {
-		if (nickname == it->nickname) {
-			found = true;
-			team.active = it;
-			break;
-		}
-	}
-	if (!found) {
-		pokemon member;
-		team.member.push_back (member);
-		team.active = team.member.end() - 1;
-		team.active->nickname = nickname;
-		team.active->item = END_ITEM;
-		team.active->ability = END_ABILITY;
-		search1 = " ";
-		size_t found1 = line.find (search1, found2 + 6);
-		team.active->level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
-		search2 = " ?).";
-		found2 = line.find (search2);
-		if (found2 == std::string::npos) {
-			search2 = " ♂).";
-			found2 = line.find (search2);
-			if (found2 != std::string::npos)
-				team.active->gender = MALE;
-		}
-		if (found2 == std::string::npos) {
-			search2 = " ♀).";
-			found2 = line.find (search2);
-			if (found2 != std::string::npos)
-				team.active->gender = FEMALE;
-		}
-		if (found2 == std::string::npos) {
-			search2 = ").";
-			found2 = line.find (search2);
-		}
-		team.active->name = species_map.find (line.substr (found1 + search1.length(), found2 - found1 - search1.length()))->second;
-	}
-}
-
-void first (teams &team, std::ifstream &file, const std::map <std::string, species> &species_map) {
-	std::string line;
-	getline (file, line);	// Data I need starts on the second line
-	std::string search = " sent out ";
-	team.player = line.substr (0, line.find (search));
-	log_pokemon (team, line, species_map, search);
-}
-
-void output (std::ofstream &output, const teams &team) {
-	output << team.player << ":\n";
-	for (std::vector<pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
-		output << pokemon_name [active->name];
-		if (active->item == LEFTOVERS)
-			output << " @ Leftovers";
-		else if (active->item == BLACK_SLUDGE)
-			output << " @ Black Sludge";
-		output << " ** " << active->nickname << '\n';
-		if (active->ability != END_ABILITY)
-			output << "\tAbility: " << ability_name [active->ability] << '\n';
-		for (std::vector<moves>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
-			output << "\t- " << move_name [move->name] << '\n';
-	}
-	output << '\n';
-}
-
-void isme (teams &team) {
-	if (team.player == "graviton" or team.player == "Graviton" or team.player == "king of the king" or team.player == "Morlock" or team.player == "obi" or team.player == "Obi" or team.player == "reziarfg" or team.player == "Reziarfg" or team.player == "Specter" or team.player == "Sylar" or team.player == "Tracer Tong")
-		team.me = true;
-	else
-		team.me = false;
-}
 
 int main (int argc, char* argv[]) {
 	std::map <std::string, species> species_map;
@@ -233,6 +134,106 @@ int main (int argc, char* argv[]) {
 	output (out, *player);
 	out.close();
 	return 0;
+}
+
+void first (teams &team, std::ifstream &file, const std::map <std::string, species> &species_map) {
+	std::string line;
+	getline (file, line);	// Data I need starts on the second line
+	std::string search = " sent out ";
+	team.player = line.substr (0, line.find (search));
+	log_pokemon (team, line, species_map, search);
+}
+
+void log_pokemon  (teams &team, const std::string &line, const std::map <std::string, species> &species_map, std::string &search1) {
+	search1 = team.player + search1;
+	std::string search2 = " (lvl ";
+	size_t found2 = line.find (search2);
+	std::string nickname = line.substr (search1.length(), found2 - search1.length());
+	bool found = false;
+	for (std::vector<pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it) {
+		if (nickname == it->nickname) {
+			found = true;
+			team.active = it;
+			break;
+		}
+	}
+	if (!found) {
+		pokemon member;
+		team.member.push_back (member);
+		team.active = team.member.end() - 1;
+		team.active->nickname = nickname;
+		team.active->item = END_ITEM;
+		team.active->ability = END_ABILITY;
+		search1 = " ";
+		size_t found1 = line.find (search1, found2 + 6);
+		team.active->level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
+		search2 = " ?).";
+		found2 = line.find (search2);
+		if (found2 == std::string::npos) {
+			search2 = " ♂).";
+			found2 = line.find (search2);
+			if (found2 != std::string::npos)
+				team.active->gender = MALE;
+		}
+		if (found2 == std::string::npos) {
+			search2 = " ♀).";
+			found2 = line.find (search2);
+			if (found2 != std::string::npos)
+				team.active->gender = FEMALE;
+		}
+		if (found2 == std::string::npos) {
+			search2 = ").";
+			found2 = line.find (search2);
+		}
+		team.active->name = species_map.find (line.substr (found1 + search1.length(), found2 - found1 - search1.length()))->second;
+	}
+}
+
+void log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search) {
+	previous = &member;
+	// Account for Windows / Unix line endings
+	size_t n = 1;
+	if (line.find(".\r") != std::string::npos)
+		n = 2;
+	moves_list move_name = moves_map.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+	bool isfound = false;
+	for (std::vector<moves>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+		if (move_name == it->name) {
+			isfound = true;
+			member.move = it;
+			break;
+		}
+	}
+	if (!isfound) {
+		moves move;
+		member.moveset.push_back (move);
+		member.move = member.moveset.end() - 1;
+		member.move->name = move_name;
+	}
+}
+
+void isme (teams &team) {
+	if (team.player == "graviton" or team.player == "Graviton" or team.player == "king of the king" or team.player == "Morlock" or team.player == "obi" or team.player == "Obi" or team.player == "reziarfg" or team.player == "Reziarfg" or team.player == "Specter" or team.player == "Sylar" or team.player == "Tracer Tong")
+		team.me = true;
+	else
+		team.me = false;
+}
+
+void output (std::ofstream &output, const teams &team) {
+	output << team.player << ":\n";
+	for (std::vector<pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
+		output << pokemon_name [active->name];
+		if (active->item == LEFTOVERS)
+			output << " @ Leftovers";
+		else if (active->item == BLACK_SLUDGE)
+			output << " @ Black Sludge";
+		output << " ** " << active->nickname << '\n';
+		if (active->ability != END_ABILITY)
+			output << "\tAbility: " << ability_name [active->ability] << '\n';
+		for (std::vector<moves>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
+			output << "\t- " << move_name [move->name] << '\n';
+	}
+	output << '\n';
 }
 
 }
