@@ -4,6 +4,8 @@ predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o
 
 rdcobjects = rdc.o ability.o damage.o item.o move.o pokemon.o reversedamage.o simple.o stat.o status.o team.o teampredictor.o unknown.o weather.o
 
+analogobjects = analyze_logs.o ability.o damage.o move.o pokemon.o simple.o stat.o status.o weather.o
+
 warnings = -Wall -Wextra -pedantic -Wno-unused
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
 fastdebug = -g -O1 -march=native -ffast-math -fno-var-tracking-assignments
@@ -27,6 +29,10 @@ rdc : optimizations = $(fastdebug)
 rdco : $(rdcobjects)
 	g++ -o rdco $(rdcobjects) $(CXXFLAGS)
 rdco : optimizations = $(fulloptimizations)
+
+analog : $(analogobjects)
+	g++ -o analog $(analogobjects) $(CXXFLAGS)
+analog : optimizations = $(fastdebug)
 
 CXXFLAGS = $(warnings) $(optimizations)
 

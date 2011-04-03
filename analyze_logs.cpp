@@ -14,12 +14,13 @@
 #include <iostream>
 #include <map>
 #include "analyze_logs.h"
-#include "team.h"
-#include "pokemon.h"
-#include "move.h"
 #include "ability.h"
+#include "move.h"
+#include "movefunction.h"
+#include "pokemon.h"
+#include "team.h"
 
-namespace technicalmachine {
+using namespace technicalmachine;
 
 int main (int argc, char* argv[]) {
 	std::map <std::string, species> species_map;
@@ -28,7 +29,7 @@ int main (int argc, char* argv[]) {
 	set_move_map (moves_map);
 	std::map <std::string, abilities> abilities_map;
 	set_ability_map (abilities_map);
-	std::string input = "/media/C/Documents and Settings/David/Shoddy logs/";
+	std::string input = "/home/david/data/New folder/Shoddy logs/";
 	if (argc == 1)
 		input += "hey young world OU_Machamp9 lose ST6.doc";
 	else {
@@ -136,7 +137,7 @@ int main (int argc, char* argv[]) {
 	return 0;
 }
 
-void first (teams &team, std::ifstream &file, const std::map <std::string, species> &species_map) {
+void technicalmachine::first (teams &team, std::ifstream &file, const std::map <std::string, species> &species_map) {
 	std::string line;
 	getline (file, line);	// Data I need starts on the second line
 	std::string search = " sent out ";
@@ -144,7 +145,7 @@ void first (teams &team, std::ifstream &file, const std::map <std::string, speci
 	log_pokemon (team, line, species_map, search);
 }
 
-void log_pokemon  (teams &team, const std::string &line, const std::map <std::string, species> &species_map, std::string &search1) {
+void technicalmachine::log_pokemon  (teams &team, const std::string &line, const std::map <std::string, species> &species_map, std::string &search1) {
 	search1 = team.player + search1;
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
@@ -189,7 +190,7 @@ void log_pokemon  (teams &team, const std::string &line, const std::map <std::st
 	}
 }
 
-void log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search) {
+void technicalmachine::log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search) {
 	previous = &member;
 	// Account for Windows / Unix line endings
 	size_t n = 1;
@@ -212,14 +213,14 @@ void log_move (pokemon &member, pokemon* &previous, const std::string &line, con
 	}
 }
 
-void isme (teams &team) {
+void technicalmachine::isme (teams &team) {
 	if (team.player == "graviton" or team.player == "Graviton" or team.player == "king of the king" or team.player == "Morlock" or team.player == "obi" or team.player == "Obi" or team.player == "reziarfg" or team.player == "Reziarfg" or team.player == "Specter" or team.player == "Sylar" or team.player == "Tracer Tong")
 		team.me = true;
 	else
 		team.me = false;
 }
 
-void output (std::ofstream &output, const teams &team) {
+void technicalmachine::output (std::ofstream &output, const teams &team) {
 	output << team.player << ":\n";
 	for (std::vector<pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
 		output << pokemon_name [active->name];
@@ -234,6 +235,4 @@ void output (std::ofstream &output, const teams &team) {
 			output << "\t- " << move_name [move->name] << '\n';
 	}
 	output << '\n';
-}
-
 }
