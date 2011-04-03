@@ -11,8 +11,8 @@
 <ability>Sand Stream</ability>
 <moveset>
 	<move pp-up="3">Earthquake</move>
-	<move pp-up="3">Slack Off</move>
 	<move pp-up="3">Stealth Rock</move>
+	<move pp-up="3">Slack Off</move>
 	<move pp-up="3">Ice Fang</move>
 </moveset>
 <stats>
@@ -36,7 +36,7 @@
 <moveset>
 	<move pp-up="3">Grass Knot</move>
 	<move pp-up="3">Recover</move>
-	<move pp-up="3">Perish Song</move>
+	<move pp-up="3">Calm Mind</move>
 	<move pp-up="3">U-turn</move>
 </moveset>
 <stats>
@@ -46,6 +46,102 @@
 	<stat name="Spd" iv="31" ev="32" />
 	<stat name="SpAtk" iv="31" ev="0" />
 	<stat name="SpDef" iv="31" ev="8" />
+</stats>
+</pokemon>
+
+<pokemon species="Blissey">
+<nickname>Helios</nickname>
+<level>100</level>
+<happiness>255</happiness>
+<gender>Female</gender>
+<nature>Calm</nature>
+<item>Leftovers</item>
+<ability>Natural Cure</ability>
+<moveset>
+	<move pp-up="3">Wish</move>
+	<move pp-up="3">Protect</move>
+	<move pp-up="3">Flamethrower</move>
+	<move pp-up="3">Toxic</move>
+</moveset>
+<stats>
+	<stat name="HP" iv="31" ev="0" />
+	<stat name="Atk" iv="31" ev="0" />
+	<stat name="Def" iv="31" ev="252" />
+	<stat name="Spd" iv="31" ev="0" />
+	<stat name="SpAtk" iv="31" ev="80" />
+	<stat name="SpDef" iv="31" ev="176" />
+</stats>
+</pokemon>
+
+<pokemon species="Skarmory">
+<nickname>Icarus</nickname>
+<level>100</level>
+<happiness>255</happiness>
+<gender>Male</gender>
+<nature>Impish</nature>
+<item>Shed Shell</item>
+<ability>Keen Eye</ability>
+<moveset>
+	<move pp-up="3">Spikes</move>
+	<move pp-up="3">Roost</move>
+	<move pp-up="3">Drill Peck</move>
+	<move pp-up="3">Taunt</move>
+</moveset>
+<stats>
+	<stat name="HP" iv="31" ev="252" />
+	<stat name="Atk" iv="31" ev="0" />
+	<stat name="Def" iv="31" ev="200" />
+	<stat name="Spd" iv="31" ev="20" />
+	<stat name="SpAtk" iv="31" ev="0" />
+	<stat name="SpDef" iv="31" ev="36" />
+</stats>
+</pokemon>
+
+<pokemon species="Tentacruel">
+<nickname>Morpheus</nickname>
+<level>100</level>
+<happiness>255</happiness>
+<gender>Male</gender>
+<nature>Calm</nature>
+<item>Leftovers</item>
+<ability>Liquid Ooze</ability>
+<moveset>
+	<move pp-up="3">Toxic Spikes</move>
+	<move pp-up="3">Surf</move>
+	<move pp-up="3">Rapid Spin</move>
+	<move pp-up="3">Sludge Bomb</move>
+</moveset>
+<stats>
+	<stat name="HP" iv="31" ev="252" />
+	<stat name="Atk" iv="31" ev="0" />
+	<stat name="Def" iv="31" ev="120" />
+	<stat name="Spd" iv="31" ev="0" />
+	<stat name="SpAtk" iv="31" ev="0" />
+	<stat name="SpDef" iv="31" ev="136" />
+</stats>
+</pokemon>
+
+<pokemon species="Spiritomb">
+<nickname>The Man Who Was Thursday</nickname>
+<level>100</level>
+<happiness>255</happiness>
+<gender>Male</gender>
+<nature>Impish</nature>
+<item>Leftovers</item>
+<ability>Pressure</ability>
+<moveset>
+	<move pp-up="3">Rest</move>
+	<move pp-up="3">Sleep Talk</move>
+	<move pp-up="3">Dark Pulse</move>
+	<move pp-up="3">Calm Mind</move>
+</moveset>
+<stats>
+	<stat name="HP" iv="31" ev="252" />
+	<stat name="Atk" iv="31" ev="0" />
+	<stat name="Def" iv="31" ev="10" />
+	<stat name="Spd" iv="31" ev="0" />
+	<stat name="SpAtk" iv="31" ev="0" />
+	<stat name="SpDef" iv="31" ev="156" />
 </stats>
 </pokemon>
 

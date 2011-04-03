@@ -320,10 +320,10 @@ long tree7 (teams first, teams last, weathers weather, int depth, const score_va
 			ai = &last;
 		}
 	
-//		if (depth == 0)
-//			return evaluate (*ai, *foe, weather, sv);
-//		return tree1 (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
-		return transposition (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
+		if (depth == 0)
+			return evaluate (*ai, *foe, weather, sv);
+		return tree1 (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
+//		return transposition (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
 	}
 	return tree6 (first, last, weather, depth, sv, best_move, output, transposition_table);
 }

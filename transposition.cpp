@@ -20,7 +20,9 @@ namespace technicalmachine {
 
 // This currently generates no hits. I'm currently working on this to find out why.
 
-long transposition (const teams &ai, const teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long transposition (teams &ai, teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+	reset_iterators (ai);	
+	reset_iterators (foe);
 	State state;		// This causes possibly needless copying. Changing my code elsewhere to use the State data structure could solve this problem.
 
 	if (depth == 0)
@@ -32,15 +34,19 @@ long transposition (const teams &ai, const teams &foe, const weathers &weather, 
 		state.depth = depth;
 		const long hash = hash_state (state, sv);
 		std::map<long, State>::iterator it = transposition_table.find (hash);
-		if (it != transposition_table.end() and it->second.depth >= depth and state == it->second) {
-			std::cout << "Need for speed\n";
+		// If I can find the current state in my transposition table at a depth of at least the current depth, set the score to the stored score.
+		if (it != transposition_table.end() and it->second.depth >= depth) {
+//			std::cout << "Need for speed\n";
 			state.score = it->second.score;
 		}
 		else {
+			// If I can't find it, set the score to the evaluation of the state at depth - 1.
 			state.score = tree1 (state.ai, state.foe, state.weather, state.depth, sv, best_move, output, transposition_table);
-
-			if (it == transposition_table.end() or state.depth >= it->second.depth)
+			
+			// If I didn't find any stored value at the same hash as the current state, add it to my table. If the value I found was for a search at a shallower depth, replace it with the new value.
+			if (it == transposition_table.end() or state.depth >= it->second.depth) {
 				transposition_table [hash] = state;
+			}
 		}
 	}
 	return state.score;

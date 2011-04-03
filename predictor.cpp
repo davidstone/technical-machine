@@ -119,7 +119,7 @@ int main () {
 	return Fl::run();
 }
 
-void predict (int detailed [][7], teams &team, bool using_lead) {
+void technicalmachine::predict (int detailed [][7], teams &team, bool using_lead) {
 	std::vector<double> overall;
 	overall_stats (overall);
 	double total = 961058;	// Total number of teams

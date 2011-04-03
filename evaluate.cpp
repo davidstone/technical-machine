@@ -33,8 +33,6 @@ long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, con
 	if (member.hp.stat != 0) {
 		score += sv.members;
 		score += sv.hp * member.hp.stat / member.hp.max;	// Each % is worth about 10 points
-		for (std::vector<moves>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
-			score += scoremove (*it, ai, foe, weather, sv);
 		if (member.aqua_ring)
 			score += sv.aqua_ring;
 		if (member.curse)
@@ -57,19 +55,21 @@ long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, con
 			score += sv.trapped;
 		if (member.status == BURN)
 			score += sv.burn;
-		if (member.status == FREEZE)
+		else if (member.status == FREEZE)
 			score += sv.freeze;
-		if (member.status == PARALYSIS)
+		else if (member.status == PARALYSIS)
 			score += sv.paralysis;
-		if (member.status == POISON_NORMAL or member.status == POISON_TOXIC)
+		else if (member.status == POISON_NORMAL or member.status == POISON_TOXIC)
 			score += sv.poison;
-		if (member.status == SLEEP)
+		else if (member.status == SLEEP)
 			score += sv.sleep;
 //		score += 1 * member.atk.stage;
 //		score += 1 * member.def.stage;
 //		score += 1 * member.spa.stage;
 //		score += 1 * member.spd.stage;
 //		score += 1 * member.spe.stage;
+		for (std::vector<moves>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
+			score += scoremove (*it, ai, foe, weather, sv);
 	}
 	return score;
 }

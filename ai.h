@@ -35,12 +35,12 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 	for (std::vector<pokemon>::iterator it = ai.member.begin(); it != ai.member.end(); ++it)
 		reset_variables (*it);
 
-	pokemon member;
+/*	pokemon member;
 	member.name = SUICUNE;
 	member.level = 100;
 	member.nickname = "Suicune";
 	foe.member.push_back (member);
-	loadteam (foe, "", map, detailed);
+*/	loadteam (foe, "foe.sbt", map, detailed);
 	foe.me = false;
 	for (std::vector<pokemon>::iterator it = foe.member.begin(); it != foe.member.end(); ++it)
 		reset_variables (*it);
