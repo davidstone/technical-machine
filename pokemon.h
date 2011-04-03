@@ -48,13 +48,24 @@ Pokemon Online refers to Porygon2 as Porygon 2.
 */
 
 struct pokemon {
-	species name;
 	std::string nickname;
+	species name;
 	genders gender;
 	statuses status;
 	types type1;
 	types type2;
 	Vanish vanish;
+	abilities ability;
+	items item;
+	std::vector<moves> moveset;
+	std::vector<moves>::iterator move;			// The move currently being used
+	stats hp;
+	stats atk;
+	stats def;
+	stats spa;
+	stats spd;
+	stats spe;
+	natures nature;
 	short bide_damage;
 	char bide;
 	char confused;
@@ -102,21 +113,9 @@ struct pokemon {
 	bool trapped;			// Block, Mean Look, Spider Web
 	bool water_sport;
 
-	// Hidden variables intrinsic to the Pokemon
 	unsigned char happiness;
 	char accuracy;
 	char evasion;
-	stats hp;
-	stats atk;
-	stats def;
-	stats spa;
-	stats spd;
-	stats spe;
-	abilities ability;
-	items item;
-	natures nature;
-	std::vector<moves> moveset;
-	std::vector<moves>::iterator move;			// The move currently being used
 	
 	bool operator== (const pokemon &other) const {
 		if (this->moveset.size() != other.moveset.size())
