@@ -29,11 +29,12 @@ int main (int argc, char* argv[]) {
 	set_move_map (moves_map);
 	std::map <std::string, abilities> abilities_map;
 	set_ability_map (abilities_map);
-	std::string input = "/home/david/data/New folder/Shoddy logs/";
+	std::string input = "";
 	if (argc == 1)
-		input += "hey young world OU_Machamp9 lose ST6.doc";
+		input += "/home/david/Shoddy logs/hey young world OU_Machamp9 lose ST6.doc";
 	else {
 		input += argv [1];
+		// Account for spaces in file names
 		for (int n = 2; n != argc; ++n) {
 			input += ' ';
 			input += argv[n];

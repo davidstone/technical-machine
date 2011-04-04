@@ -15,6 +15,7 @@
 open ('output.txt', 'w').close()
 
 import subprocess, glob, os
-for i in glob.glob ('../Shoddy logs/*'):
+for i in glob.glob ('/home/david/Shoddy logs/*'):
 	if not os.path.isdir (i):
-	    subprocess.call (['./analog', i])
+		subprocess.call (['./analog', i])
+
