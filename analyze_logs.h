@@ -17,11 +17,13 @@
 
 namespace technicalmachine {
 
-void log_pokemon  (teams &team, const std::string &line, const std::map <std::string, species> &species_map, std::string &search1);
+void log_pokemon  (teams &team, const std::string &line, const Map &map, std::string &search1);
 
-void log_move (pokemon &member, pokemon* &previous, const std::string &line, const std::map <std::string, moves_list> &moves_map, const std::string &search);
+void log_move (pokemon &member, pokemon* &previous, const std::string &line, const Map &map, const std::string &search);
 
-void first (teams &team, std::ifstream &file, const std::map <std::string, species> &species_map);
+void log_misc (pokemon &active, pokemon &inactive, const std::string &line, const Map &map);
+
+void first (teams &team, std::string &line, const Map &map);
 
 void output (std::ofstream &output, const teams &team);
 

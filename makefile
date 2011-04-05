@@ -4,7 +4,9 @@ predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o
 
 rdcobjects = rdc.o ability.o damage.o item.o move.o pokemon.o reversedamage.o simple.o stat.o status.o team.o teampredictor.o unknown.o weather.o
 
-analogobjects = analyze_logs.o ability.o damage.o move.o pokemon.o simple.o stat.o status.o weather.o
+analogobjects = analyze_logs_main.o ability.o analyze_logs.o damage.o move.o pokemon.o simple.o stat.o status.o weather.o
+
+analogguiobjects = analyze_logs_gui.o ability.o analyze_logs.o damage.o move.o pokemon.o simple.o stat.o status.o weather.o
 
 warnings = -Wall -Wextra -pedantic -Wno-unused  -Wformat=2
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
@@ -34,6 +36,10 @@ analog : $(analogobjects)
 	g++ -o analog $(analogobjects) $(CXXFLAGS)
 analog : optimizations = -g
 
+analoggui : $(analogguiobjects)
+	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
+analoggui : optimizations = -g
+
 CXXFLAGS = $(warnings) $(optimizations)
 
 ability.o: ability.cpp ability.h
@@ -43,6 +49,12 @@ ai.o: ai.cpp ai.h evaluate.h move.h type.h pokemon.h ability.h gender.h \
 analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
  gender.h item.h move.h type.h stat.h status.h team.h movefunction.h \
  weather.h
+analyze_logs_main.o: analyze_logs_main.cpp analyze_logs.h pokemon.h \
+ ability.h gender.h item.h move.h type.h stat.h status.h team.h \
+ movefunction.h weather.h
+analyze_logs_gui.o: analyze_logs_gui.cpp analyze_logs.h pokemon.h \
+ ability.h gender.h item.h move.h type.h stat.h status.h team.h \
+ movefunction.h weather.h
 damage.o: damage.cpp damage.h pokemon.h ability.h gender.h item.h move.h \
  type.h stat.h status.h team.h weather.h simple.h
 endofturn.o: endofturn.cpp endofturn.h expectiminimax.h evaluate.h move.h \
