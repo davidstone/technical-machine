@@ -22,14 +22,57 @@
 
 namespace technicalmachine {
 
-void first (teams &team, std::string &line, const Map &map) {
-	std::string search = " sent out ";
-	team.player = line.substr (0, line.find (search));
-	log_pokemon (team, line, map, search);
+void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, const Map &map) {
+	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : in anywhere in their names
+		// name sent out nickname (lvl x species ?).
+		std::string search = " sent out ";
+		size_t found = line.find (search);
+		if (found != std::string::npos) {
+			if (player1.player == "") {
+				player1.player = line.substr (0, line.find (search));
+				search = player1.player + search;
+				log_pokemon (player1, line, map, search);
+			}
+			else {
+				player2.player = line.substr (0, line.find (search));
+				search = player2.player + search;
+				log_pokemon (player2, line, map, search);
+			}
+		}
+		else {
+			// name switched in nickname (lvl x species ?).
+			search = player1.player + " switched in ";
+			if (line.substr (0, search.length()) == search)
+				log_pokemon (player1, line, map, search);
+			else {
+				search = player2.player + " switched in ";
+				if (line.substr (0, search.length()) == search)
+					log_pokemon (player2, line, map, search);
+			}
+
+			std::vector<pokemon>::iterator active;
+			std::vector<pokemon>::iterator inactive;
+			if (line.substr (0, player1.active->nickname.length()) == player1.active->nickname) {
+				active = player1.active;
+				inactive = player2.active;
+			}
+			else {
+				active = player2.active;
+				inactive = player1.active;
+			}
+
+			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
+			// nickname used move.
+			search = active->nickname + " used ";
+			if (line.find (search) == 0)		// If the beginning of the line is this
+				log_move (*active, previous, line, map, search);
+			else
+				log_misc (*active, *inactive, line, map);
+		}
+	}
 }
 
 void log_pokemon  (teams &team, const std::string &line, const Map &map, std::string &search1) {
-	search1 = team.player + search1;
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
@@ -97,33 +140,101 @@ void log_move (pokemon &member, pokemon* &previous, const std::string &line, con
 }
 
 void log_misc (pokemon &active, pokemon &inactive, const std::string &line, const Map &map) {
-	if (active.item == END_ITEM) {
-		if (active.nickname + "'s Black Sludge restored a little health!" == line)
-			active.item = BLACK_SLUDGE;
-		else if (active.nickname + "'s leftovers restored its health a little!" == line)
-			active.item = LEFTOVERS;
-	}
 	if (active.ability == END_ABILITY) {
-		if (active.nickname + " makes ground moves miss with Levitate!" == line)
-			active.ability = LEVITATE;
-		else if (active.nickname + "'s intimidate cut " + inactive.nickname + "'s attack!" == line)
+		if (active.nickname + "'s Anger Point raised its attack!" == line)
+			active.ability = ANGER_POINT;
+		else if (active.nickname + "'s Anticipation made it shudder!" == line)
+			active.ability = ANTICIPATION;
+		else if (active.nickname + "'s Cute Charm infatuated " + inactive.nickname == line)
+			inactive.ability = CUTE_CHARM;
+		else if (active.nickname + "'s Damp prevents explosions!" == line)
+			active.ability = DAMP;
+		else if (active.nickname + "'s Download raised its stats!" == line)
+			active.ability = DOWNLOAD;
+		else if (active.nickname + "'s Drizzle caused a storm!" == line)
+			active.ability = DRIZZLE;
+		else if (active.nickname + "'s Drought intensified the sun's rays!" == line)
+			active.ability = DROUGHT;
+		else if (active.nickname + " soaked up rain!" == line or active.nickname + "'s Dry Skin absorbed damage!" == line or active.nickname + "'s Dry Skin restored its health a little!" == line)	// Not sure which is correct
+			active.ability = DRY_SKIN;
+		else if (active.nickname + " was hurt by the sunlight!" == line)
+			{/* Dry Skin and Solar Power. Need a way to distinguish them. */}
+		else if (active.nickname + "'s Flame Body burned " + inactive.nickname == line)
+			active.ability = FLAME_BODY;
+		else if (active.nickname + "'s Flash Fire raised its fire power!" == line)
+			active.ability = FLASH_FIRE;
+		else if (line.find (active.nickname + "Forewarn alerted it to ") != std::string::npos)	// Fix to get the full information of Forewarn
+			active.ability = FOREWARN;
+		else if (line.find (active.nickname + " found " + inactive.nickname + "'s ") != std::string::npos)	// Fix to get full information of Frisk
+			active.ability = FRISK;
+		else if (active.nickname + "'s status was cured!" == line)
+			active.ability = HYDRATION;
+		else if (active.nickname + "absorbed the hail!" == line or active.nickname + "'s Ice Body restored its health a little!" == line)	// Not sure which is correct
+			active.ability = ICE_BODY;
+		else if (active.nickname + "'s Immunity prevents poisoning!" == line)
+			active.ability = IMMUNITY;
+		else if (active.nickname + "'s Insomnia kept it awake!" == line)
+			active.ability = INSOMNIA;
+		else if (active.nickname + "'s Intimidate cut " + inactive.nickname + "'s attack!" == line)
 			active.ability = INTIMIDATE;
+		else if (active.nickname + " makes ground moves miss with Levitate!" == line)
+			active.ability = LEVITATE;
+		else if (active.nickname + "'s Lightningrod drew the attack!" == line)
+			active.ability = LIGHTNINGROD;
+		else if (active.nickname + " has Mold Breaker!" == line)
+			active.ability = MOLD_BREAKER;
+		else if (active.nickname + "'s Motor Drive increased its speed!" == line)
+			active.ability = MOTOR_DRIVE;
+		else if (active.nickname + "'s Oblivious prevents attraction!" == line)
+			active.ability = OBLIVIOUS;
 		else if (active.nickname + "'s Poison Heal restored health!" == line)
 			active.ability = POISON_HEAL;
 		else if (active.nickname + " is exerting its pressure!" == line)
 			active.ability = PRESSURE;
+		else if (active.nickname + "'s Rain Dish restored its health a little!" == line)
+			active.ability = RAIN_DISH;
 		else if (active.nickname + "'s Sand Stream whipped up a sandstorm!" == line)
 			active.ability = SAND_STREAM;
-		else if (active.nickname + "'s Speed Boost raised its speed!" == line)
-			active.ability = SPEED_BOOST;
+		else if (active.nickname + " shed its skin!" == line)
+			active.ability = SHED_SKIN;
+		else if (active.nickname + " can't get going due to its Slow Start!" == line)
+			active.ability = SLOW_START;
 		else if (active.nickname + "'s Snow Warning whipped up a hailstorm!" == line or active.nickname + "'s Snow Warning whipped up a hailstorm! " == line)
 			active.ability = SNOW_WARNING;
+		else if (line.find (active.nickname + "'s Soundproof blocks") != std::string::npos)
+			active.ability = SOUNDPROOF;
+		else if (active.nickname + "'s Speed Boost raised its speed!" == line)
+			active.ability = SPEED_BOOST;
+		else if (active.nickname + " held on with its Sticky Hold!" == line)
+			active.ability = STICKY_HOLD;
+		else if (active.nickname + "'s Storm Drain drew the attack!" == line)
+			active.ability = STORM_DRAIN;
+		else if (active.nickname + " held Sturdy!" == line)
+			active.ability = STURDY;
+		else if (active.nickname + "'s Synchronize activated!" == line)
+			active.ability = SYNCHRONIZE;
+		else if (active.nickname + "'s Tangled Feet raised its evasion!" == line)
+			active.ability = TANGLED_FEET;
 		else if (line.find (active.nickname + " traced " + inactive.nickname + "'s ") == 0)
 			active.ability = TRACE;
+		else if (active.nickname + " is loafing around!" == line)
+			active.ability = TRUANT;
+		else if (active.nickname + " lost its burden!" == line)
+			active.ability = UNBURDEN;
+		else if (active.nickname + "'s Water Veil prevents burns!" == line)
+			active.ability = WATER_VEIL;
+		else if (active.nickname + " avoided damage with Wonder Guard!" == line)
+			active.ability = WONDER_GUARD;
 	}
 	if (inactive.ability == END_ABILITY) {
-		if (active.nickname + " sucked up liquid ooze!" == line)
+		if (active.nickname + " was hurt by  " + inactive.nickname + "'s Aftermath!" == line)
+			inactive.ability = AFTERMATH;
+		else if (active.nickname + "is tormented by the foe " +inactive.nickname + "'s Bad Dreams!" == line)
+			inactive.ability = BAD_DREAMS;
+		else if (active.nickname + " sucked up liquid ooze!" == line)
 			inactive.ability = LIQUID_OOZE;
+		else if (active.nickname + " was hurt by " + inactive.nickname + "'s Rough Skin!" == line)
+			inactive.ability = ROUGH_SKIN;
 		std::string search = active.nickname + " traced " + inactive.nickname + "'s ";
 		if (line.find (search) != std::string::npos) {
 			size_t n = 1;
@@ -131,6 +242,16 @@ void log_misc (pokemon &active, pokemon &inactive, const std::string &line, cons
 				n = 2;
 			inactive.ability = map.ability.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 		}
+	}
+	if (active.item == END_ITEM) {
+		if (active.nickname + "'s Black Sludge restored a little health!" == line)
+			active.item = BLACK_SLUDGE;
+		else if (active.nickname + "'s leftovers restored its health a little!" == line)
+			active.item = LEFTOVERS;
+		else if (active.nickname + "'s Quick Claw activated!" == line)
+			active.item = QUICK_CLAW;
+		else if (active.nickname + " became fully charged due to its Power Herb!" == line)
+			active.item = NO_ITEM;
 	}
 }
 
