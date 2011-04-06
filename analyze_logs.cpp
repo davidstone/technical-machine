@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, const Map &map) {
+void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, bool recoil, const Map &map) {
 	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : in anywhere in their names
 		// name sent out nickname (lvl x species ?).
 		std::string search = " sent out ";
@@ -62,6 +62,9 @@ void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std
 			}
 
 			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
+			
+			if (active->nickname + " was hit by recoil!" == line)
+				recoil = true;
 			// nickname used move.
 			search = active->nickname + " used ";
 			if (line.find (search) == 0)		// If the beginning of the line is this

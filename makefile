@@ -34,7 +34,7 @@ rdco : optimizations = $(fulloptimizations)
 
 analog : $(analogobjects)
 	g++ -o analog $(analogobjects) $(CXXFLAGS)
-analog : optimizations = -g
+analog : optimizations = $(fulloptimizations)
 
 analoggui : $(analogguiobjects)
 	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk

@@ -17,7 +17,7 @@
 
 namespace technicalmachine {
 
-void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, const Map &map);
+void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, bool recoil, const Map &map);
 
 void log_pokemon  (teams &team, const std::string &line, const Map &map, std::string &search1);
 
