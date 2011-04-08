@@ -13,6 +13,7 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include "ai.h"
+#include "analyze_logs.h"
 #include "expectiminimax.h"
 #include "item.h"
 #include "move.h"
@@ -38,26 +39,46 @@ int main (int argc, char* argv[]) {
 	Map map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
 	initialize (ai, foe, weather, sv, map, detailed);
+	
+	teams* first;
+	teams* last;
+	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
+	
+	switchpokemon (*first, *last->active, weather);
+	first->active->moved = false;
+	first->active->move = first->active->moveset.begin();
 
-	long score;
-	moves_list best_move = expectiminimax (ai, foe, weather, depth, sv, score);
+	switchpokemon (*last, *first->active, weather);
+	last->active->moved = false;
+	last->active->move = last->active->moveset.begin();
 
-	if (SWITCH1 <= best_move and best_move <= SWITCH6)
-		std::cout << "Switch to " << pokemon_name [ai.member.at (best_move - SWITCH1).name];
+	while ((ai.member.size() > 1 or ai.active->hp.stat > 0) and (foe.member.size() > 1 or foe.active->hp.stat > 0)) {
+		teams predicted = foe;
+		reset_iterators_pokemon (predicted);
+		predict (detailed, predicted);
 
-	else
-		std::cout << "Use " << move_name [best_move];
-	if (depth == -1) {
-		long double probability = 100.0 * static_cast <long double> (score + VICTORY) / static_cast <long double> (2 * VICTORY);
-		std::cout << " for ";
-		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
-			std::cout << "an ";
+		long score;
+		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
+
+		if (SWITCH1 <= best_move and best_move <= SWITCH6)
+			std::cout << "Switch to " << pokemon_name [ai.member.at (best_move - SWITCH1).name];
+
 		else
-			std::cout << "a ";
-		std::cout << probability << "% chance to win.\n";
+			std::cout << "Use " << move_name [best_move];
+		if (depth == -1) {
+			long double probability = 100.0 * static_cast <long double> (score + VICTORY) / static_cast <long double> (2 * VICTORY);
+			std::cout << " for ";
+			if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
+				std::cout << "an ";
+			else
+				std::cout << "a ";
+			std::cout << probability << "% chance to win.\n";
+		}
+		else
+			std::cout << " for a minimum expected score of " << score << "\n";
+
+		analyze_turn (ai, foe, first, last, weather, map);
 	}
-	else
-		std::cout << " for a minimum expected score of " << score << "\n";
 
 	return 0;
 }

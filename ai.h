@@ -30,46 +30,10 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 	set_nature_map (map.nature);
 	set_move_map (map.move);
 	detailed_stats (map, detailed);
-	loadteam (ai, "teams/ai.sbt", map, detailed);
-	ai.me = true;
-	for (std::vector<pokemon>::iterator it = ai.member.begin(); it != ai.member.end(); ++it)
-		reset_variables (*it);
-
-/*	pokemon member;
-	member.name = SUICUNE;
-	member.level = 100;
-	member.nickname = "Suicune";
-	foe.member.push_back (member);
-*/	loadteam (foe, "teams/foe.sbt", map, detailed);
-	foe.me = false;
-	for (std::vector<pokemon>::iterator it = foe.member.begin(); it != foe.member.end(); ++it)
-		reset_variables (*it);
-
-	weather.trick_room = 0;
-	weather.fog = false;
-	weather.gravity = 0;
-	weather.uproar = 0;
-	weather.hail = 0;
-	weather.sun = 0;
-	weather.sand = 0;
-	weather.rain = 0;
-
-	ai.replacement = 0;
-	ai.active = ai.member.begin();
-	switchpokemon (ai, *foe.active, weather);
-	ai.active->moved = false;
-	ai.active->move = ai.active->moveset.begin();
-
-	foe.replacement = 0;
-	foe.active = foe.member.begin();
-	switchpokemon (foe, *ai.active, weather);
-	foe.active->moved = false;
-	foe.active->move = foe.active->moveset.begin();
 
 	std::ifstream file ("evaluate.txt");
 	std::string line;
-	getline (file, line);
-	while (!file.eof()) {
+	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t x = line.find ('\t');
 		std::string data = line.substr (0, x);
 		if (data == "Transposition Table")
@@ -126,9 +90,30 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 			sv.poison = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Sleep")
 			sv.sleep = boost::lexical_cast<int> (line.substr (x + 1));
-	
-		getline (file, line);
 	}
+
+	weather.trick_room = 0;
+	weather.fog = false;
+	weather.gravity = 0;
+	weather.uproar = 0;
+	weather.hail = 0;
+	weather.sun = 0;
+	weather.sand = 0;
+	weather.rain = 0;
+
+	ai.player = "Technical Machine";
+	ai.me = true;
+	loadteam (ai, "teams/stall.sbt", map, detailed);
+	ai.active = ai.member.begin();
+
+/*	pokemon member;
+	member.name = SUICUNE;
+	member.level = 100;
+	member.nickname = "Suicune";
+	foe.member.push_back (member);
+*/
+	foe.me = false;
+	loadteam (foe, "", map, detailed);
 }
 
 }

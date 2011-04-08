@@ -10,67 +10,102 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
 #include "analyze_logs.h"
 #include "ability.h"
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
 #include "team.h"
+#include "weather.h"
 
 namespace technicalmachine {
 
-void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, bool recoil, const Map &map) {
-	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : in anywhere in their names
+void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers &weather, const Map &map) {
+	first = NULL;		// Only check if first == NULL, so no need to set last = NULL
+	std::cout << "Enter the log for the turn, followed by a ~.\n";
+	std::string input;
+	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
+	size_t newline1 = 0;
+	size_t newline2 = input.find ('\n', newline1 + 1);
+	while (newline2 != std::string::npos) {
+		std::string line = input.substr (newline1, newline2);
+		analyze_line (ai, foe, first, line, map);
+		newline1 = newline2;
+		newline2 = input.find ('\n', newline1 + 1);
+	}
+	if (first->me)
+		last = &foe;
+	else
+		last = &ai;
+}
+
+void analyze_line (teams &ai, teams &foe, teams* &ordering, const std::string &line, const Map &map) {
+	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
 		// name sent out nickname (lvl x species ?).
 		std::string search = " sent out ";
 		size_t found = line.find (search);
 		if (found != std::string::npos) {
-			if (player1.player == "") {
-				player1.player = line.substr (0, line.find (search));
-				search = player1.player + search;
-				log_pokemon (player1, line, map, search);
+//			if (ai.player == "")
+//				ai.player = line.substr (0, found);
+			search = ai.player + " sent out ";
+			if (line.substr (0, search.length()) == search) {
+				log_pokemon (ai, line, map, search);
+				if (ordering == NULL)
+					ordering = &ai;
 			}
 			else {
-				player2.player = line.substr (0, line.find (search));
-				search = player2.player + search;
-				log_pokemon (player2, line, map, search);
+				if (foe.player == "")
+					foe.player = line.substr (0, found);
+				search = foe.player + " sent out ";
+				log_pokemon (foe, line, map, search);
+				if (ordering == NULL)
+					ordering = &foe;
 			}
 		}
 		else {
 			// name switched in nickname (lvl x species ?).
-			search = player1.player + " switched in ";
-			if (line.substr (0, search.length()) == search)
-				log_pokemon (player1, line, map, search);
+			search = ai.player + " switched in ";
+			if (line.substr (0, search.length()) == search) {
+				log_pokemon (ai, line, map, search);
+				if (ordering == NULL)
+					ordering = &ai;
+			}
 			else {
-				search = player2.player + " switched in ";
+				search = foe.player + " switched in ";
 				if (line.substr (0, search.length()) == search)
-					log_pokemon (player2, line, map, search);
+					log_pokemon (foe, line, map, search);
+				if (ordering == NULL)
+					ordering = &foe;
 			}
 
-			std::vector<pokemon>::iterator active;
-			std::vector<pokemon>::iterator inactive;
-			if (line.substr (0, player1.active->nickname.length()) == player1.active->nickname) {
-				active = player1.active;
-				inactive = player2.active;
+			teams* active;
+			teams* inactive;
+			if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
+				active = &ai;
+				inactive = &foe;
 			}
 			else {
-				active = player2.active;
-				inactive = player1.active;
+				active = &foe;
+				inactive = &ai;
 			}
 
 			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
 			
-			if (active->nickname + " was hit by recoil!" == line)
-				recoil = true;
 			// nickname used move.
-			search = active->nickname + " used ";
-			if (line.find (search) == 0)		// If the beginning of the line is this
-				log_move (*active, previous, line, map, search);
-			else
-				log_misc (*active, *inactive, line, map);
+			search = active->active->nickname + " used ";
+			if (line.find (search) == 0) {		// If the beginning of the line is this
+				log_move (*active->active, line, map, search);
+				if (ordering == NULL)
+					ordering = active;
+			}
+			else {
+				log_misc (*active->active, *inactive->active, line, map);
+				if (ordering == NULL)
+					ordering = active;
+			}
 		}
 	}
 }
@@ -91,36 +126,69 @@ void log_pokemon  (teams &team, const std::string &line, const Map &map, std::st
 		pokemon member;
 		team.member.push_back (member);
 		team.active = team.member.end() - 1;
+
 		team.active->nickname = nickname;
+		team.active->happiness = 255;
 		team.active->item = END_ITEM;
 		team.active->ability = END_ABILITY;
 		search1 = " ";
-		size_t found1 = line.find (search1, found2 + 6);
+		size_t found1 = line.find (search1, found2 + search2.length());
 		team.active->level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
 		search2 = " ?).";
 		found2 = line.find (search2);
 		if (found2 == std::string::npos) {
-			search2 = " ♂).";
+			search2 = " ?)!";
 			found2 = line.find (search2);
-			if (found2 != std::string::npos)
-				team.active->gender = MALE;
+			if (found2 == std::string::npos) {
+				search2 = " ♂).";
+				found2 = line.find (search2);
+				if (found2 == std::string::npos) {
+					search2 = " ♂)!";
+					found2 = line.find (search2);
+				}
+			}
 		}
-		if (found2 == std::string::npos) {
+		if (found2 != std::string::npos)
+			team.active->gender = MALE;		// No sexism here!
+		else {
 			search2 = " ♀).";
 			found2 = line.find (search2);
+			if (found2 == std::string::npos) {
+				search2 = " ♀)!";
+				found2 = line.find (search2);
+			}
 			if (found2 != std::string::npos)
 				team.active->gender = FEMALE;
 		}
 		if (found2 == std::string::npos) {
 			search2 = ").";
 			found2 = line.find (search2);
+			if (found2 == std::string::npos) {
+				search2 = " )!";
+				found2 = line.find (search2);
+			}
+			team.active->gender = GENDERLESS;
 		}
 		team.active->name = map.specie.find (line.substr (found1 + search1.length(), found2 - found1 - search1.length()))->second;
+		
+		team.active->hp.iv = 31;
+		team.active->hp.ev = 0;
+		team.active->atk.iv = 31;
+		team.active->atk.ev = 0;
+		team.active->def.iv = 31;
+		team.active->def.ev = 0;
+		team.active->spe.iv = 31;
+		team.active->spe.ev = 0;
+		team.active->spa.iv = 31;
+		team.active->spa.ev = 0;
+		team.active->spd.iv = 31;
+		team.active->spd.ev = 0;
+		
+		loadpokemon (team, *team.active);
 	}
 }
 
-void log_move (pokemon &member, pokemon* &previous, const std::string &line, const Map &map, const std::string &search) {
-	previous = &member;
+void log_move (pokemon &member, const std::string &line, const Map &map, const std::string &search) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
@@ -263,6 +331,20 @@ void isme (teams &team) {		// Top secret information. Can't let this leak out. M
 		team.me = true;
 	else
 		team.me = false;
+}
+
+void output (std::string &output, const teams &team) {
+	output += team.player + ":\n";
+	for (std::vector<pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
+		output += pokemon_name [active->name];
+		output += " @ " + item_name [active->item];
+		output += " ** " + active->nickname + '\n';
+		if (active->ability != END_ABILITY)
+			output += "\tAbility: " + ability_name [active->ability] + '\n';
+		for (std::vector<moves>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
+			output += "\t- " + move_name [move->name] + '\n';
+	}
+	output += '\n';
 }
 
 }

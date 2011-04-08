@@ -1,4 +1,4 @@
-aiobjects = ai.o ability.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o team.o teampredictor.o transposition.o weather.o
+aiobjects = ai.o ability.o analyze_logs.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o team.o teampredictor.o transposition.o weather.o
 
 predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o simple.o stat.o status.o team.o teampredictor.o weather.o
 
@@ -14,7 +14,7 @@ fastdebug = -g -O1 -march=native -ffast-math -fno-var-tracking-assignments
 
 ai : $(aiobjects)
 	g++ -o ai $(aiobjects) $(CXXFLAGS)
-ai : optimizations = $(fastdebug)
+ai : optimizations = -g
 
 aio : $(aiobjects)
 	g++ -o aio $(aiobjects) $(CXXFLAGS)
@@ -34,7 +34,7 @@ rdco : optimizations = $(fulloptimizations)
 
 analog : $(analogobjects)
 	g++ -o analog $(analogobjects) $(CXXFLAGS)
-analog : optimizations = $(fulloptimizations)
+analog : optimizations = -g
 
 analoggui : $(analogguiobjects)
 	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
@@ -45,10 +45,10 @@ CXXFLAGS = $(warnings) $(optimizations)
 ability.o: ability.cpp ability.h
 ai.o: ai.cpp ai.h evaluate.h move.h type.h pokemon.h ability.h gender.h \
  item.h stat.h status.h simple.h weather.h team.h movefunction.h \
- statfunction.h teampredictor.h expectiminimax.h state.h
+ statfunction.h teampredictor.h analyze_logs.h expectiminimax.h state.h
 analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
- gender.h item.h move.h type.h stat.h status.h team.h movefunction.h \
- weather.h
+ gender.h item.h move.h type.h stat.h status.h team.h weather.h \
+ movefunction.h
 analyze_logs_main.o: analyze_logs_main.cpp analyze_logs.h pokemon.h \
  ability.h gender.h item.h move.h type.h stat.h status.h team.h \
  movefunction.h weather.h

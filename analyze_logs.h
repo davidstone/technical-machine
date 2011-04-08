@@ -14,18 +14,21 @@
 #include <string>
 #include "pokemon.h"
 #include "team.h"
+#include "weather.h"
 
 namespace technicalmachine {
 
-void analyze_line (teams &player1, teams &player2, pokemon* &previous, const std::string &line, bool recoil, const Map &map);
+void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers &weather, const Map &map);
+
+void analyze_line (teams &ai, teams &foe, teams* &ordering, const std::string &line, const Map &map);
 
 void log_pokemon  (teams &team, const std::string &line, const Map &map, std::string &search1);
 
-void log_move (pokemon &member, pokemon* &previous, const std::string &line, const Map &map, const std::string &search);
+void log_move (pokemon &member, const std::string &line, const Map &map, const std::string &search);
 
 void log_misc (pokemon &active, pokemon &inactive, const std::string &line, const Map &map);
 
-void output (std::ofstream &output, const teams &team);
+void output (std::string &output, const teams &team);
 
 void isme (teams &team);
 

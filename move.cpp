@@ -23,7 +23,7 @@
 namespace technicalmachine {
 
 void move_priority (moves &move) {
-	if (move.name == SWITCH1 or move.name == SWITCH2 or move.name == SWITCH3 or move.name == SWITCH4 or move.name == SWITCH5 or move.name == SWITCH6)
+	if (SWITCH1 <= move.name and move.name <= SWITCH6)
 		move.priority = 6;
 	if (move.name == HELPING_HAND)
 		move.priority = 5;

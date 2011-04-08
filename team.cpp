@@ -33,28 +33,31 @@ namespace technicalmachine {
 
 void loadteam (teams &team, const std::string &name, const Map &map, int detailed [][7]) {
 	team.counter = 0;
+
 	team.light_screen = 0;
 	team.lucky_chant = 0;
 	team.mist = 0;
 	team.reflect = 0;
 	team.safeguard = 0;
 	team.tailwind = 0;
+
 	team.stealth_rock = false;
 	team.spikes = 0;
 	team.toxic_spikes = 0;
+
 	team.wish = 0;
-	if (name == "")
-		predict (detailed, team);
-	else {
+	
+	team.replacement = 0;
+
+	if (name != "") {
 		if (name.substr (name.length() - 3) == ".tp")
 			poteam (team, name);
 		else			// if (name.substr (name.length() - 4) == ".sbt")
 			pokelabteam (team, name, map);
 		for (std::vector<pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it)
 			loadpokemon (team, *it);
+		team.active = team.member.begin();
 	}
-	
-	team.active = team.member.begin();
 }
 
 void loadpokemon (teams &team, pokemon &member) {
@@ -120,6 +123,7 @@ void loadpokemon (teams &team, pokemon &member) {
 		}
 	}
 	member.move = member.moveset.begin();
+	reset_variables (member);
 }
 
 void loadmove (moves &move) {
