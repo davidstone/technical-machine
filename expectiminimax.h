@@ -38,9 +38,6 @@ long tree4 (teams first, teams last, weathers weather, int depth, const score_va
 long tree5 (teams first, teams last, weathers weather, const Random &random, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
 long tree6 (teams &first, teams &last, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
 long tree7 (teams first, teams last, weathers weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
-void reset_iterators (teams &team);
-void reset_iterators_pokemon (teams &team);
-void reset_iterators_move (pokemon &member);
 
 }
 #endif

@@ -44,11 +44,9 @@ int main (int argc, char* argv[]) {
 	teams* last;
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
 	
-	switchpokemon (*first, *last->active, weather);
 	first->active->moved = false;
 	first->active->move = first->active->moveset.begin();
 
-	switchpokemon (*last, *first->active, weather);
 	last->active->moved = false;
 	last->active->move = last->active->moveset.begin();
 

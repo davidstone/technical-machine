@@ -328,29 +328,4 @@ long tree7 (teams first, teams last, weathers weather, int depth, const score_va
 	return tree6 (first, last, weather, depth, sv, best_move, output, transposition_table);
 }
 
-void reset_iterators_pokemon (teams &team) {
-	const species name = team.active->name;
-	for (std::vector<pokemon>::iterator it = team.member.begin(); ; ++it) {
-		if (it->name == name) {
-			team.active = it;
-			break;
-		}
-	}
-}
-
-void reset_iterators_move (pokemon &member) {
-	const moves_list name = member.move->name;
-	for (std::vector<moves>::iterator it = member.moveset.begin(); ; ++it) {
-		if (it->name == name) {
-			member.move = it;
-			break;
-		}
-	}
-}
-
-void reset_iterators (teams &team) {
-	reset_iterators_pokemon (team);
-	reset_iterators_move (*team.active);
-}
-
 }

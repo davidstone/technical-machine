@@ -12,6 +12,7 @@
 #ifndef TEST_H_
 #define TEST_H_
 
+#include <iostream>
 #include "team.h"
 #include "pokemon.h"
 #include "move.h"

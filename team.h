@@ -65,6 +65,9 @@ void pokelabpokemon (teams& team, std::ifstream &file, const Map &map);
 void poteam (teams &team, const std::string &name);
 void popokemon (teams &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
 unsigned poconverter (const std::string &data, const std::string end, const std::string &line);
+void reset_iterators (teams &team);
+void reset_iterators_pokemon (teams &team);
+void reset_iterators_move (pokemon &member);
 
 }
 #endif

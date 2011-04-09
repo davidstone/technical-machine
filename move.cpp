@@ -1374,7 +1374,6 @@ void reset_variables (pokemon &member) {
 }
 
 void switchpokemon (teams &user, pokemon &target, weathers &weather) {
-
 	if (user.active->hp.stat == 0) {
 		if (user.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
 			return;

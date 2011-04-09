@@ -27,6 +27,31 @@
 
 namespace technicalmachine {
 
+void reset_iterators (teams &team) {
+	reset_iterators_pokemon (team);
+	reset_iterators_move (*team.active);
+}
+
+void reset_iterators_pokemon (teams &team) {
+	const species name = team.active->name;
+	for (std::vector<pokemon>::iterator it = team.member.begin(); ; ++it) {
+		if (it->name == name) {
+			team.active = it;
+			break;
+		}
+	}
+}
+
+void reset_iterators_move (pokemon &member) {
+	const moves_list name = member.move->name;
+	for (std::vector<moves>::iterator it = member.moveset.begin(); ; ++it) {
+		if (it->name == name) {
+			member.move = it;
+			break;
+		}
+	}
+}
+
 // Warning: Almost everything you see here is a hack.
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
