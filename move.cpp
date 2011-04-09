@@ -9,6 +9,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include "move.h"
 #include "movefunction.h"
 #include "ability.h"
@@ -583,8 +584,8 @@ void blockselection (teams &user, const teams &target, const weathers &weather) 
 		}
 		else if (user.active->move->name == STRUGGLE) {
 			for (std::vector<moves>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
-				if (it->selectable
-				 and it->pp != -1) {	// Don't let Struggle or Switch keep Struggle from being selectable
+				if (it->pp != -1
+				 and it->selectable) {	// Don't let Struggle or Switch keep Struggle from being selectable
 					user.active->move->selectable = false;
 					break;
 				}

@@ -28,17 +28,18 @@ void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers 
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	std::string input;
 	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
-	std::cout << "======================\n" + '\n';
+	std::cout << "======================\n";
 	size_t newline1 = 0;
 	size_t newline2 = input.find ('\n', newline1 + 1);
 	while (newline2 != std::string::npos) {
 		std::string line = input.substr (newline1, newline2);
-		std::cout << line << '\n';
-		std::cout << "Cool!\n";
 		analyze_line (ai, foe, first, weather, line, map);
-		std::cout << "Alright!\n";
 		newline1 = newline2;
 		newline2 = input.find ('\n', newline1 + 1);
+		while (newline1 + 1 == newline2) {
+			newline1 = newline2;
+			newline2 = input.find ('\n', newline1 + 1);
+		}
 	}
 	if (first->me)
 		last = &foe;
@@ -127,11 +128,15 @@ void log_pokemon  (teams &team, pokemon &target, weathers &weather, const std::s
 		}
 	}
 	if (!found) {
+			// Insertion to a vector invalidates all iterators if the insertion causes a reallocation. This corrects for that.
+		unsigned n = 0;
+		if (team.member.size() > 0)
+			n = team.active - team.member.begin();
 		pokemon member;
 		team.member.push_back (member);
 
-		if (team.member.size() == 1)
-			team.active = team.member.begin();
+		team.active = team.member.begin() + n;
+
 		team.replacement = team.member.size() - 1;
 		
 		team.member.back().nickname = nickname;
@@ -177,9 +182,7 @@ void log_pokemon  (teams &team, pokemon &target, weathers &weather, const std::s
 			}
 			team.member.back().gender = GENDERLESS;
 		}
-//		std::cout << line.substr (found1 + search1.length(), found2 - found1 - search1.length()) << '\n';
 		team.member.back().name = map.specie.find (line.substr (found1 + search1.length(), found2 - found1 - search1.length()))->second;
-//		std::cout << pokemon_name [team.member.back().name] << '\n';
 		
 		team.member.back().nature = HARDY;
 		team.member.back().hp.iv = 31;
@@ -198,6 +201,7 @@ void log_pokemon  (teams &team, pokemon &target, weathers &weather, const std::s
 		loadpokemon (team, team.member.back());
 	}
 	switchpokemon (team, target, weather);
+	std::cout << pokemon_name [team.member.back().name] + '\n';
 }
 
 void log_move (pokemon &member, const std::string &line, const Map &map, const std::string &search) {
