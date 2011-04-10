@@ -28,7 +28,7 @@ void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers 
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	std::string input;
 	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
-	std::cout << "======================\n";
+	std::cout << "======================\nAnalyzing...\n";
 	size_t newline1 = 0;
 	size_t newline2 = input.find ('\n', newline1 + 1);
 	while (newline2 != std::string::npos) {
@@ -201,7 +201,6 @@ void log_pokemon  (teams &team, pokemon &target, weathers &weather, const std::s
 		loadpokemon (team, team.member.back());
 	}
 	switchpokemon (team, target, weather);
-	std::cout << pokemon_name [team.member.back().name] + '\n';
 }
 
 void log_move (pokemon &member, const std::string &line, const Map &map, const std::string &search) {
@@ -223,6 +222,8 @@ void log_move (pokemon &member, const std::string &line, const Map &map, const s
 		member.moveset.push_back (move);
 		member.move = member.moveset.end() - 1;
 		member.move->name = move_name;
+		member.move->pp_max = get_pp [member.move->name] * 8 / 5;
+		loadmove (*member.move);
 	}
 }
 

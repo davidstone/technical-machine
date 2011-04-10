@@ -43,7 +43,6 @@ int main (int argc, char* argv[]) {
 	teams* first;
 	teams* last;
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
-	
 	first->active->moved = false;
 	first->active->move = first->active->moveset.begin();
 
@@ -53,7 +52,9 @@ int main (int argc, char* argv[]) {
 	while ((ai.member.size() > 1 or ai.active->hp.stat > 0) and (foe.member.size() > 1 or foe.active->hp.stat > 0)) {
 		teams predicted = foe;
 		reset_iterators_pokemon (predicted);
+		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);
+		std::cout << "======================\nEvaluating...\n";
 
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);

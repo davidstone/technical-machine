@@ -584,8 +584,8 @@ void blockselection (teams &user, const teams &target, const weathers &weather) 
 		}
 		else if (user.active->move->name == STRUGGLE) {
 			for (std::vector<moves>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
-				if (it->pp != -1
-				 and it->selectable) {	// Don't let Struggle or Switch keep Struggle from being selectable
+				if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
+				 and it->selectable) {
 					user.active->move->selectable = false;
 					break;
 				}

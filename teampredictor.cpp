@@ -213,7 +213,10 @@ void predict_pokemon (teams &team, std::vector<double> estimate, int detailed []
 }
 
 void predict_move (pokemon &member, int detailed [][7]) {
-	for (unsigned n = 3; member.moveset.size() < 4 and detailed [member.name] [n] != END_MOVE; ++n) {
+	for (unsigned n = 3;
+	 member.moveset.size() < 4
+	 and detailed [member.name] [n] != END_MOVE;
+	 ++n) {
 		moves move;
 		bool found = false;
 		for (std::vector<moves>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
@@ -225,7 +228,7 @@ void predict_move (pokemon &member, int detailed [][7]) {
 		if (!found) {
 			move.name = static_cast<moves_list> (detailed [member.name] [n]);
 			move.pp_max = get_pp [move.name] * 8 / 5;
-			member.moveset.push_back (move);
+			member.moveset.insert (member.moveset.begin(), move);
 		}
 	}
 }
