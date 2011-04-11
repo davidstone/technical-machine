@@ -26,7 +26,7 @@
 
 namespace technicalmachine {
 
-moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, long &score) {
+moves_list expectiminimax (teams &ai, teams &foe, const Weather &weather, int depth, const score_variables &sv, long &score) {
 	moves_list best_move = END_MOVE;
 	std::string output = "";
 	std::map<long, State> transposition_table;
@@ -37,7 +37,7 @@ moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int d
 }
 
 
-long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table, bool first) {
+long tree1 (teams &ai, teams &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table, bool first) {
 	reset_iterators (ai);		// I'm not sure why these two lines are needed when I'm passing both teams by reference instead of value
 	reset_iterators (foe);
 	if (depth != -1)
@@ -108,7 +108,7 @@ long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const sco
 }
 
 
-long tree2 (teams &ai, teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long tree2 (teams &ai, teams &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	// Determine turn order
 	teams* first;
 	teams* last;
@@ -179,14 +179,14 @@ long tree2 (teams &ai, teams &foe, const weathers &weather, const int &depth, co
 }
 
 
-long tree3 (const teams &ai, const teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, teams* first, teams* last, std::string &output, std::map<long, State> &transposition_table) {
+long tree3 (const teams &ai, const teams &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, teams* first, teams* last, std::string &output, std::map<long, State> &transposition_table) {
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
 		return (tree4 (ai, foe, weather, depth, sv, best_move, output, transposition_table) + tree4 (foe, ai, weather, depth, sv, best_move, output, transposition_table)) / 2;
 	return tree4 (*first, *last, weather, depth, sv, best_move, output, transposition_table);
 }
 
 
-long tree4 (teams first, teams last, weathers weather, int depth, const score_variables &sv, moves_list &old_move, std::string &output, std::map<long, State> &transposition_table) {
+long tree4 (teams first, teams last, Weather weather, int depth, const score_variables &sv, moves_list &old_move, std::string &output, std::map<long, State> &transposition_table) {
 	reset_iterators (first);
 	reset_iterators (last);
 
@@ -251,7 +251,7 @@ long tree4 (teams first, teams last, weathers weather, int depth, const score_va
 }
 
 
-long tree5 (teams first, teams last, weathers weather, const Random &random, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long tree5 (teams first, teams last, Weather weather, const Random &random, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	reset_iterators_pokemon (first);
 	reset_iterators_pokemon (last);
 	endofturn (first, last, weather, random);
@@ -260,7 +260,7 @@ long tree5 (teams first, teams last, weathers weather, const Random &random, int
 	return tree6 (first, last, weather, depth, sv, best_move, output, transposition_table);
 }
 
-long tree6 (teams &first, teams &last, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long tree6 (teams &first, teams &last, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	long score;
 	if (first.active->hp.stat == 0) {
 		output += "hi";
@@ -301,7 +301,7 @@ long tree6 (teams &first, teams &last, const weathers &weather, int depth, const
 	return score;
 }
 
-long tree7 (teams first, teams last, weathers weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long tree7 (teams first, teams last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	reset_iterators_pokemon (first);
 	reset_iterators_pokemon (last);
 	if (first.active->hp.stat == 0)

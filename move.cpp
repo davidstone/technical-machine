@@ -564,7 +564,7 @@ void set_move_map (std::map <std::string, moves_list> &moves_map) {
 	moves_map["End Move"] = END_MOVE;
 }
 
-void blockselection (teams &user, const teams &target, const weathers &weather) {
+void blockselection (teams &user, const teams &target, const Weather &weather) {
 	user.active->move->selectable = true;
 	if (user.active->bide != 0) {
 		if (user.active->move->name != BIDE)
@@ -604,7 +604,7 @@ void blockselection (teams &user, const teams &target, const weathers &weather) 
 	}
 }
 
-void blockexecution (teams &user, const teams &target, const weathers &weather, bool hitself) {
+void blockexecution (teams &user, const teams &target, const Weather &weather, bool hitself) {
 	user.active->move->execute = true;
 	if (user.active->hp.stat == 0 or (target.active->hp.stat == 0 and false))
 		user.active->move->execute = false;
@@ -665,14 +665,14 @@ bool imprison (const teams &user, const teams &target) {
 	return false;
 }
 
-bool block2 (const teams &user, const weathers &weather) {		// Things that both block selection and block execution after flinching
+bool block2 (const teams &user, const Weather &weather) {		// Things that both block selection and block execution after flinching
 	if ((0 != user.active->taunt and 0 == user.active->move->basepower)
 	 or (0 < weather.gravity and (BOUNCE == user.active->move->name or FLY == user.active->move->name or HI_JUMP_KICK == user.active->move->name or JUMP_KICK == user.active->move->name or MAGNET_RISE == user.active->move->name or SPLASH == user.active->move->name)))
 		return true;
 	return false;
 }
 
-int usemove (teams &user, teams &target, weathers &weather, bool hitself, int old_damage) {
+int usemove (teams &user, teams &target, Weather &weather, bool hitself, int old_damage) {
 	int damage = 0;
 	user.active->destiny_bond = false;
 	blockexecution (user, target, weather, hitself);
@@ -694,7 +694,7 @@ int usemove (teams &user, teams &target, weathers &weather, bool hitself, int ol
 	return damage;
 }
 
-int usemove2 (teams &user, teams &target, weathers &weather, int old_damage) {
+int usemove2 (teams &user, teams &target, Weather &weather, int old_damage) {
 	speed (user, weather);
 	speed (target, weather);
 	movepower (*user.active, *target.active, weather);
@@ -1374,7 +1374,7 @@ void reset_variables (pokemon &member) {
 	}
 }
 
-void switchpokemon (teams &user, pokemon &target, weathers &weather) {
+void switchpokemon (teams &user, pokemon &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
 		if (user.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
 			return;

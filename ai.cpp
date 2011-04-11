@@ -34,11 +34,11 @@ int main (int argc, char* argv[]) {
 
 	teams ai;
 	teams foe;
-	weathers weather;
+	Weather weather;
 	score_variables sv;
 	Map map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
-	initialize (ai, foe, weather, sv, map, detailed);
+	initialize (ai, foe, sv, map, detailed);
 	
 	teams* first;
 	teams* last;

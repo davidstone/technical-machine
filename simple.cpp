@@ -42,7 +42,7 @@ void decrement (char &n) {
 		--n;
 }
 
-bool grounded (const pokemon &member, const weathers &weather) {
+bool grounded (const pokemon &member, const Weather &weather) {
 	if ((!istype (member, FLYING) 
 	and LEVITATE != member.ability 
 	and member.magnet_rise == 0) 

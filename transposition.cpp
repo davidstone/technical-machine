@@ -20,7 +20,7 @@ namespace technicalmachine {
 
 // This currently generates no hits. I'm currently working on this to find out why.
 
-long transposition (teams &ai, teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long transposition (teams &ai, teams &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	reset_iterators (ai);	
 	reset_iterators (foe);
 	State state;		// This causes possibly needless copying. Changing my code elsewhere to use the State data structure could solve this problem.
@@ -74,7 +74,7 @@ long hash_move (const moves &move) {
 	return move.name + move.disable + move.pp + move.times_used;
 }
 
-long hash_weather (const weathers &weather) {
+long hash_weather (const Weather &weather) {
 	return weather.trick_room + weather.fog + weather.gravity + weather.uproar + weather.hail + weather.sun + weather.sand + weather.rain;
 }
 

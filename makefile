@@ -40,7 +40,7 @@ analoggui : $(analogguiobjects)
 	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
 analoggui : optimizations = -g
 
-CXXFLAGS = $(warnings) $(optimizations) -pg
+CXXFLAGS = $(warnings) $(optimizations)
 
 ability.o: ability.cpp ability.h
 ai.o: ai.cpp ai.h evaluate.h move.h type.h pokemon.h ability.h gender.h \

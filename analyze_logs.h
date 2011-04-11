@@ -18,11 +18,11 @@
 
 namespace technicalmachine {
 
-void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers &weather, const Map &map);
+void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, Weather &weather, const Map &map);
 
-void analyze_line (teams &ai, teams &foe, teams* &ordering, weathers &weather, const std::string &line, const Map &map);
+void analyze_line (teams &ai, teams &foe, teams* &ordering, Weather &weather, const std::string &line, const Map &map);
 
-void log_pokemon  (teams &team, pokemon &target, weathers &weather, const std::string &line, const Map &map, std::string &search1);
+void log_pokemon  (teams &team, pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1);
 
 void log_move (pokemon &member, const std::string &line, const Map &map, const std::string &search);
 

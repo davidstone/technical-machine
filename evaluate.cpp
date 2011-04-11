@@ -17,7 +17,7 @@
 
 namespace technicalmachine {
 
-long evaluate (const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv) {
+long evaluate (const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv) {
 	long score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
 	for (std::vector<pokemon>::const_iterator it = ai.member.begin(); it != ai.member.end(); ++it)
 		score += scorepokemon (*it, ai, foe, weather, sv);
@@ -26,7 +26,7 @@ long evaluate (const teams &ai, const teams &foe, const weathers &weather, const
 	return score;
 }
 
-long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv) {
+long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv) {
 	long score = ai.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
 	if (grounded (member, weather))
 		score += ai.spikes * sv.spikes + ai.toxic_spikes * sv.toxic_spikes;
@@ -75,7 +75,7 @@ long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, con
 }
 
 
-long scoremove (const moves &move, const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv) {
+long scoremove (const moves &move, const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv) {
 	long score = 0;
 	if (move.physical)
 		score += foe.reflect * sv.reflect;

@@ -58,9 +58,9 @@ struct score_variables {
 	int sleep;
 };
 
-long evaluate (const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv);
-long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv);
-long scoremove (const moves &move, const teams &ai, const teams &foe, const weathers &weather, const score_variables &sv);
+long evaluate (const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv);
+long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv);
+long scoremove (const moves &move, const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv);
 long int win (const teams &team);
 
 }

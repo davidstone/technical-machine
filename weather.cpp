@@ -13,21 +13,21 @@
 
 namespace technicalmachine {
 
-void trick_room (weathers &weather) {
+void trick_room (Weather &weather) {
 	if (weather.trick_room == 0)
 		weather.trick_room = 5;
 	else
 		weather.trick_room = 0;
 }
-void gravity (weathers &weather) {
+void gravity (Weather &weather) {
 	if (weather.gravity == 0)
 		weather.gravity = 5;
 }
-void uproar (weathers &weather, int duration) {
+void uproar (Weather &weather, int duration) {
 	if (weather.uproar < duration)
 		weather.uproar = duration;
 }
-void hail (weathers &weather, int duration) {
+void hail (Weather &weather, int duration) {
 	if (weather.hail == 0) {
 		weather.sun = 0;
 		weather.sand = 0;
@@ -35,7 +35,7 @@ void hail (weathers &weather, int duration) {
 		weather.hail = duration;
 	}
 }
-void sun (weathers &weather, int duration) {
+void sun (Weather &weather, int duration) {
 	if (weather.sun == 0) {
 		weather.hail = 0;
 		weather.sand = 0;
@@ -43,7 +43,7 @@ void sun (weathers &weather, int duration) {
 		weather.sun = duration;
 	}
 }
-void sand (weathers &weather, int duration) {
+void sand (Weather &weather, int duration) {
 	if (weather.sand == 0) {
 		weather.hail = 0;
 		weather.sun = 0;
@@ -51,7 +51,7 @@ void sand (weathers &weather, int duration) {
 		weather.sand = duration;
 	}
 }
-void rain (weathers &weather, int duration) {
+void rain (Weather &weather, int duration) {
 	if (weather.rain == 0) {
 		weather.hail = 0;
 		weather.sun = 0;

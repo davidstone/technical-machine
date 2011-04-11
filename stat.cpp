@@ -31,7 +31,7 @@ void hitpoints (pokemon &member) {
 		member.hp.max = (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
 }
 
-void attack (pokemon &member, const weathers &weather) {
+void attack (pokemon &member, const Weather &weather) {
 	if (member.move->physical) {
 		member.atk.stat = (2 * member.atk.base + member.atk.iv + member.atk.ev) * member.level / 100 + 5;
 		if (ADAMANT == member.nature or BRAVE == member.nature or LONELY == member.nature or NAUGHTY == member.nature)
@@ -88,7 +88,7 @@ void attack (pokemon &member, const weathers &weather) {
 	}
 }
 
-void defense (const pokemon &attacker, pokemon &defender, const weathers &weather) {
+void defense (const pokemon &attacker, pokemon &defender, const Weather &weather) {
 	if (attacker.move->physical) {
 		defender.def.stat = (2 * defender.def.base + defender.def.iv + defender.def.ev) * defender.level / 100 + 5;
 		if (BOLD == defender.nature or IMPISH == defender.nature or LAX == defender.nature or RELAXED == defender.nature)
@@ -145,7 +145,7 @@ void defense (const pokemon &attacker, pokemon &defender, const weathers &weathe
 	}
 }
 
-void speed (teams &team, const weathers &weather) {
+void speed (teams &team, const Weather &weather) {
 	team.active->spe.stat = (2 * team.active->spe.base + team.active->spe.iv + team.active->spe.ev) * team.active->level / 100 + 5;
 
 	if (HASTY == team.active->nature or JOLLY == team.active->nature or NAIVE == team.active->nature or TIMID == team.active->nature)
@@ -182,7 +182,7 @@ void speed (teams &team, const weathers &weather) {
 		team.active->spe.stat = 1;
 }
 
-void order (teams &team1, teams &team2, const weathers &weather, teams* &faster, teams* &slower) {
+void order (teams &team1, teams &team2, const Weather &weather, teams* &faster, teams* &slower) {
 	if (team1.active->move->priority == team2.active->move->priority) {
 		speed (team1, weather);
 		speed (team2, weather);

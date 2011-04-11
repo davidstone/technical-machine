@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-void endofturn (teams &first, teams &last, weathers &weather, const Random &random) {
+void endofturn (teams &first, teams &last, Weather &weather, const Random &random) {
 	endofturn0 (*first.active);
 	endofturn0 (*last.active);
 	endofturn1 (first);
@@ -73,7 +73,7 @@ void endofturn2 (teams &team) {
 	decrement (team.wish);
 }
 
-void endofturn3 (pokemon &member, const weathers &weather) {
+void endofturn3 (pokemon &member, const Weather &weather) {
 	if (weather.hail != 0 and !istype (member,ICE))
 		heal (member, -16);
 	if (weather.sand != 0 and !(istype (member, GROUND) or istype (member, ROCK) or istype (member, STEEL)))
@@ -90,7 +90,7 @@ void endofturn3 (pokemon &member, const weathers &weather) {
 		heal (member, 16);
 }
 
-void endofturn5 (pokemon &member, pokemon &foe, weathers &weather, const random_team &random) {
+void endofturn5 (pokemon &member, pokemon &foe, Weather &weather, const random_team &random) {
 	if (member.ingrain)
 		heal (member, 16);
 	if (member.aqua_ring)
@@ -179,7 +179,7 @@ void endofturn5 (pokemon &member, pokemon &foe, weathers &weather, const random_
 		heal (member, -8);
 }
 
-void endofturn6 (teams &target, const weathers &weather) {		// Doom Desire / Future Sight
+void endofturn6 (teams &target, const Weather &weather) {		// Doom Desire / Future Sight
 	if (target.counter == 1) {
 		defense (target.ddfs, *target.active, weather);
 		target.active->hp.stat -= damagecalculator (target.ddfs, target, weather);

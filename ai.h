@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, Map &map, int detailed [][7]) {
+void initialize (teams &ai, teams &foe, score_variables &sv, Map &map, int detailed [][7]) {
 	set_species_map (map.specie);
 	set_ability_map (map.ability);
 	set_item_map (map.item);
@@ -92,15 +92,6 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 			sv.sleep = boost::lexical_cast<int> (line.substr (x + 1));
 	}
 	file.close();
-
-	weather.trick_room = 0;
-	weather.fog = false;
-	weather.gravity = 0;
-	weather.uproar = 0;
-	weather.hail = 0;
-	weather.sun = 0;
-	weather.sand = 0;
-	weather.rain = 0;
 
 	ai.player = "Technical Machine";
 	ai.me = true;

@@ -20,7 +20,7 @@ namespace technicalmachine {
 struct State {
 	teams ai;
 	teams foe;
-	weathers weather;
+	Weather weather;
 	long score;
 	int depth;
 	bool operator== (const State &other) const {

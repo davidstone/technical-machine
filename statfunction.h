@@ -21,10 +21,10 @@
 namespace technicalmachine {
 
 void hitpoints (pokemon &member);
-void attack (pokemon &member, const weathers &weather);
-void defense (const pokemon &attacker, pokemon &defender, const weathers &weather);
-void speed (teams &team, const weathers &weather);
-void order (teams &team1, teams &team2, const weathers &weather, teams* &faster, teams* &slower);
+void attack (pokemon &member, const Weather &weather);
+void defense (const pokemon &attacker, pokemon &defender, const Weather &weather);
+void speed (teams &team, const Weather &weather);
+void order (teams &team1, teams &team2, const Weather &weather, teams* &faster, teams* &slower);
 void statboost (char &stage, int n);
 void set_nature_map (std::map <std::string, natures> &natures_map);
 

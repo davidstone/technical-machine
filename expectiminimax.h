@@ -30,14 +30,14 @@ struct Random {
 	random_team last;
 };
 
-moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, long &score);
-long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table, bool first = false);
-long tree2 (teams &ai, teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
-long tree3 (const teams &ai, const teams &foe, const weathers &weather, const int &depth, const score_variables &sv, moves_list &best_move, teams* first, teams* last, std::string &output, std::map<long, State> &transposition_table);
-long tree4 (teams first, teams last, weathers weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
-long tree5 (teams first, teams last, weathers weather, const Random &random, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
-long tree6 (teams &first, teams &last, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
-long tree7 (teams first, teams last, weathers weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
+moves_list expectiminimax (teams &ai, teams &foe, const Weather &weather, int depth, const score_variables &sv, long &score);
+long tree1 (teams &ai, teams &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table, bool first = false);
+long tree2 (teams &ai, teams &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
+long tree3 (const teams &ai, const teams &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, teams* first, teams* last, std::string &output, std::map<long, State> &transposition_table);
+long tree4 (teams first, teams last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
+long tree5 (teams first, teams last, Weather weather, const Random &random, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
+long tree6 (teams &first, teams &last, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
+long tree7 (teams first, teams last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
 
 }
 #endif

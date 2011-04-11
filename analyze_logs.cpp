@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers &weather, const Map &map) {
+void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, Weather &weather, const Map &map) {
 	first = NULL;		// Only check if first == NULL, so no need to set last = NULL
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	std::string input;
@@ -47,7 +47,7 @@ void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, weathers 
 		last = &ai;
 }
 
-void analyze_line (teams &ai, teams &foe, teams* &ordering, weathers &weather, const std::string &line, const Map &map) {
+void analyze_line (teams &ai, teams &foe, teams* &ordering, Weather &weather, const std::string &line, const Map &map) {
 	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
 		// name sent out nickname (lvl x species ?).
 		std::string search = " sent out ";
@@ -115,7 +115,7 @@ void analyze_line (teams &ai, teams &foe, teams* &ordering, weathers &weather, c
 	}
 }
 
-void log_pokemon  (teams &team, pokemon &target, weathers &weather, const std::string &line, const Map &map, std::string &search1) {
+void log_pokemon  (teams &team, pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
