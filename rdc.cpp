@@ -33,11 +33,6 @@ using namespace technicalmachine;
 int main () {
 	
 	Map map;
-	set_species_map (map.specie);
-	set_ability_map (map.ability);
-	set_item_map (map.item);
-	set_nature_map (map.nature);
-	set_move_map (map.move);
 	int detailed [END_SPECIES] [7];
 	detailed_stats (map, detailed);
 	teams ai;

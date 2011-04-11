@@ -11,7 +11,9 @@
 
 #include <map>
 #include <string>
+#include "movefunction.h"
 #include "pokemon.h"
+#include "statfunction.h"
 
 namespace technicalmachine {
 
@@ -551,6 +553,14 @@ void set_species_map (std::map <std::string, species> &species_map) {
 	species_map["Zapdos"] = ZAPDOS;
 	species_map["Zigzagoon"] = ZIGZAGOON;
 	species_map["Zubat"] = ZUBAT;
+}
+
+Map::Map() {
+	set_species_map (specie);
+	set_ability_map (ability);
+	set_item_map (item);
+	set_nature_map (nature);
+	set_move_map (move);
 }
 
 }

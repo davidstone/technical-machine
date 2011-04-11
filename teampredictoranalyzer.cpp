@@ -28,7 +28,6 @@ void tabulate (unsigned old_correct [][6], unsigned new_correct [][6]);
 
 int main () {
 	std::map <std::string, species> species_map;
-	set_species_map (species_map);
 	std::vector<double> overall;
 	overall_stats (overall);
 	double total = 961058;	// Total number of teams

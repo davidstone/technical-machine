@@ -23,9 +23,6 @@ using namespace technicalmachine;
 int main (int argc, char* argv[]) {
 
 	Map map;
-	set_species_map (map.specie);
-	set_move_map (map.move);
-	set_ability_map (map.ability);
 
 	std::string input = "";
 	if (argc == 1)

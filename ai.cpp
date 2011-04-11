@@ -38,7 +38,7 @@ int main (int argc, char* argv[]) {
 	score_variables sv;
 	Map map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
-	initialize (ai, foe, sv, map, detailed);
+	initialize (ai, foe, map, detailed);
 	
 	teams* first;
 	teams* last;

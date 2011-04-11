@@ -93,11 +93,6 @@ int main () {
 	win.end();
 
 	Data data;
-	set_species_map (data.map.specie);
-	set_ability_map (data.map.ability);
-	set_item_map (data.map.item);
-	set_nature_map (data.map.nature);
-	set_move_map (data.map.move);
 	detailed_stats (data.map, data.detailed);
 	
 	data.input.push_back (&input0);

@@ -67,9 +67,6 @@ int main (int argc, char* argv[]) {
 	win.end();
 
 	Data data;
-	set_species_map (data.map.specie);
-	set_move_map (data.map.move);
-	set_ability_map (data.map.ability);
 	data.input = &inputfile;
 	data.multiout = &output;
 	data.log_path = "/home/david/Shoddy logs/";
