@@ -36,16 +36,16 @@ struct Weather {
 		return this->trick_room == other.trick_room and this->fog == other.fog and this->gravity == other.gravity and this->uproar == other.uproar and this->hail == other.hail and this->sun == other.sun and this->sand == other.sand and this->rain == other.rain;
 	}
 	
-	Weather () {
-	trick_room = 0;
-	fog = false;
-	gravity = 0;
-	uproar = 0;
-	hail = 0;
-	sun = 0;
-	sand = 0;
-	rain = 0;
-	}
+	Weather () :
+		trick_room (0),
+		fog (false),
+		gravity (0),
+		uproar (0),
+		hail (0),
+		sun (0),
+		sand (0),
+		rain (0)
+		{}
 };
 
 void trick_room (Weather &weather);
