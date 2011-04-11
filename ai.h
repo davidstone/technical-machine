@@ -22,12 +22,12 @@
 
 namespace technicalmachine {
 
-void initialize (teams &ai, teams &foe, Map &map, int detailed [][7]) {
+void initialize (Team &ai, Team &foe, Map &map, int detailed [][7]) {
 	detailed_stats (map, detailed);
 
 	ai.player = "Technical Machine";
-	ai.me = true;
 	std::string ai_file;
+	std::string line;
 	std::ifstream settings ("settings.txt");
 	for (getline (settings, line); !settings.eof(); getline (settings, line)) {
 		size_t found = line.find ('\t');
@@ -38,13 +38,6 @@ void initialize (teams &ai, teams &foe, Map &map, int detailed [][7]) {
 	loadteam (ai, "teams/" + ai_file, map, detailed);
 	ai.active = ai.member.begin();
 
-/*	pokemon member;
-	member.name = SUICUNE;
-	member.level = 100;
-	member.nickname = "Suicune";
-	foe.member.push_back (member);
-*/
-	foe.me = false;
 	loadteam (foe, "", map, detailed);
 }
 

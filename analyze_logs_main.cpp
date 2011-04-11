@@ -41,9 +41,9 @@ int main (int argc, char* argv[]) {
 		return 1;
 	}
 	std::string line;
-	teams player1;
+	Team player1;
 	player1.player = "";
-	teams player2;
+	Team player2;
 	player2.player = "";
 	pokemon* previous;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
@@ -55,7 +55,7 @@ int main (int argc, char* argv[]) {
 	isme (player2);
 	if (!player1.me and !player2.me)
 		std::cout << player1.player << " vs. " << player2.player << '\n';
-	teams* player;
+	Team* player;
 	if (player1.me)
 		player = &player2;
 	else

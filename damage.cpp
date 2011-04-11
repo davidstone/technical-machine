@@ -224,7 +224,7 @@ void movepower (pokemon &attacker, const pokemon &defender, const Weather weathe
 
 // I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
 
-int damageknown (const pokemon &attacker, const teams &defender, const Weather &weather, int &rl, int &weather_mod, int &ff, int &mf) {
+int damageknown (const pokemon &attacker, const Team &defender, const Weather &weather, int &rl, int &weather_mod, int &ff, int &mf) {
 	if (((0 != defender.reflect and attacker.move->physical) or (0 != defender.light_screen and false == attacker.move->physical)) and false == attacker.move->ch)
 		rl = 2;
 	else
@@ -252,7 +252,7 @@ int damageknown (const pokemon &attacker, const teams &defender, const Weather &
 
 
 
-int damagenonrandom (const pokemon &attacker, const teams &defender, const int &rl, const int &weather_mod, const int &ff, const int &mf, int &stab, const int &type1, const int &type2, int &aem, int &eb, int &tl, int &rb, int damage) {
+int damagenonrandom (const pokemon &attacker, const Team &defender, const int &rl, const int &weather_mod, const int &ff, const int &mf, int &stab, const int &type1, const int &type2, int &aem, int &eb, int &tl, int &rb, int damage) {
 
 	damage *= attacker.move->power;
 
@@ -315,7 +315,7 @@ int damagenonrandom (const pokemon &attacker, const teams &defender, const int &
 	return damage;
 }
 
-int damagerandom (const pokemon &attacker, const teams &defender, const int &stab, const int &type1, const int &type2, const int &aem, const int &eb, const int &tl, const int &rb, int damage) {
+int damagerandom (const pokemon &attacker, const Team &defender, const int &stab, const int &type1, const int &type2, const int &aem, const int &eb, const int &tl, const int &rb, int damage) {
 	damage = damage * attacker.move->r / 100 * stab / 2 * type1 / 2 * type2 / 2 * aem / 4 * eb / 5 * tl / rb;
 	if (damage == 0)
 		damage = 1;
@@ -327,7 +327,7 @@ int damagerandom (const pokemon &attacker, const teams &defender, const int &sta
 	return damage;
 }
 
-int damagecalculator (const pokemon &attacker, const teams &defender, const Weather &weather) {
+int damagecalculator (const pokemon &attacker, const Team &defender, const Weather &weather) {
 	int damage = 0;
 	const int type1 = effectiveness [attacker.move->type] [defender.active->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
 	const int type2 = effectiveness [attacker.move->type] [defender.active->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2

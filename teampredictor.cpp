@@ -150,7 +150,7 @@ void detailed_stats (const Map &map, int detailed [][7]) {
 	}
 }
 
-void predict (int detailed [][7], teams &team) {
+void predict (int detailed [][7], Team &team) {
 	std::vector<double> overall;
 	overall_stats (overall);
 	double total = 961058;	// Total number of teams
@@ -170,7 +170,7 @@ void predict (int detailed [][7], teams &team) {
 	predict_pokemon (team, estimate, detailed, multiplier);
 }
 
-void predict_pokemon (teams &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
+void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
 	unsigned n = team.active - team.member.begin();
 	while (team.member.size() < 6) {
 		double top = 0.0;

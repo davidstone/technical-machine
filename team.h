@@ -17,7 +17,7 @@
 
 namespace technicalmachine {
 
-struct teams {
+struct Team {
 	std::string player;						// The player's name
 	std::vector<pokemon> member;			// All Pokemon on the team
 	std::vector<pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
@@ -41,11 +41,11 @@ struct teams {
 	char toxic_spikes;
 	bool stealth_rock;
 
-	bool me;				// Is this my team?
-	
 	unsigned char replacement;		// If a Pokemon faints, what Pokemon should replace it?
 	
-	bool operator== (const teams &other) const {
+	const bool me;				// Is this my team?
+	
+	bool operator== (const Team &other) const {
 		if (this->member.size() != other.member.size())
 			return false;
 		for (size_t n = 0; n != this->member.size(); ++n) {
@@ -54,19 +54,39 @@ struct teams {
 		}
 		return this->active->name == other.active->name and this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;
 	}
+	
+	Team (bool isme) :
+		counter (0),
+
+		light_screen (0),
+		lucky_chant (0),
+		mist (0),
+		reflect (0),
+		safeguard (0),
+		tailwind (0),
+
+		wish (0),
+
+		spikes (0),
+		toxic_spikes (0),
+		stealth_rock (false),
+	
+		replacement (0),
+		me (isme)
+		{}
 };
 
 std::string search (std::ifstream &file, std::string &output2, const std::string &data);
-void loadteam (teams &team, const std::string &name, const Map &map, int detailed [][7]);
-void loadpokemon (teams &team, pokemon &member);
+void loadteam (Team &team, const std::string &name, const Map &map, int detailed [][7]);
+void loadpokemon (Team &team, pokemon &member);
 void loadmove (moves &move);
-void pokelabteam (teams &team, const std::string &name, const Map &map);
-void pokelabpokemon (teams& team, std::ifstream &file, const Map &map);
-void poteam (teams &team, const std::string &name);
-void popokemon (teams &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
+void pokelabteam (Team &team, const std::string &name, const Map &map);
+void pokelabpokemon (Team& team, std::ifstream &file, const Map &map);
+void poteam (Team &team, const std::string &name);
+void popokemon (Team &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
 unsigned poconverter (const std::string &data, const std::string end, const std::string &line);
-void reset_iterators (teams &team);
-void reset_iterators_pokemon (teams &team);
+void reset_iterators (Team &team);
+void reset_iterators_pokemon (Team &team);
 void reset_iterators_move (pokemon &member);
 
 }

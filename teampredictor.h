@@ -29,11 +29,11 @@ void lead_stats (std::vector<double> &lead);
 
 void detailed_stats (const Map &map, int detailed [][7]);
 
-void predict (int detailed [][7], teams &team);
+void predict (int detailed [][7], Team &team);
 
-void predict (int detailed [][7], teams &team, bool using_lead);	// For the stand-alone team predictor
+void predict (int detailed [][7], Team &team, bool using_lead);	// For the stand-alone team predictor
 
-void predict_pokemon (teams &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]);
+void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]);
 
 void predict_move (pokemon &member, int detailed [][7]);
 

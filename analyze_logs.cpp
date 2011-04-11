@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, Weather &weather, const Map &map) {
+void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map) {
 	first = NULL;		// Only check if first == NULL, so no need to set last = NULL
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	std::string input;
@@ -47,7 +47,7 @@ void analyze_turn (teams &ai, teams &foe, teams* &first, teams* &last, Weather &
 		last = &ai;
 }
 
-void analyze_line (teams &ai, teams &foe, teams* &ordering, Weather &weather, const std::string &line, const Map &map) {
+void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const std::string &line, const Map &map) {
 	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
 		// name sent out nickname (lvl x species ?).
 		std::string search = " sent out ";
@@ -86,8 +86,8 @@ void analyze_line (teams &ai, teams &foe, teams* &ordering, Weather &weather, co
 					ordering = &foe;
 			}
 
-			teams* active;
-			teams* inactive;
+			Team* active;
+			Team* inactive;
 			if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
 				active = &ai;
 				inactive = &foe;
@@ -115,7 +115,7 @@ void analyze_line (teams &ai, teams &foe, teams* &ordering, Weather &weather, co
 	}
 }
 
-void log_pokemon  (teams &team, pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1) {
+void log_pokemon  (Team &team, pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
@@ -343,14 +343,7 @@ void log_misc (pokemon &active, pokemon &inactive, const std::string &line, cons
 	}
 }
 
-void isme (teams &team) {		// Top secret information. Can't let this leak out. Make sure to remove this function before uploading.
-	if (team.player == "graviton" or team.player == "Graviton" or team.player == "king of the king" or team.player == "Morlock" or team.player == "obi" or team.player == "Obi" or team.player == "reziarfg" or team.player == "Reziarfg" or team.player == "Specter" or team.player == "Sylar" or team.player == "Tracer Tong")
-		team.me = true;
-	else
-		team.me = false;
-}
-
-void output (std::string &output, const teams &team) {
+void output (std::string &output, const Team &team) {
 	output += team.player + ":\n";
 	for (std::vector<pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
 		output += pokemon_name [active->name];

@@ -12,6 +12,7 @@
 #ifndef EVALUATE_H_
 #define EVALUATE_H_
 
+#include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <string>
 #include "move.h"
@@ -124,10 +125,10 @@ struct score_variables {
 	}
 };
 
-long evaluate (const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv);
-long scorepokemon (const pokemon &member, const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv);
-long scoremove (const moves &move, const teams &ai, const teams &foe, const Weather &weather, const score_variables &sv);
-long int win (const teams &team);
+long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
+long scorepokemon (const pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
+long scoremove (const moves &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
+long int win (const Team &team);
 
 }
 #endif

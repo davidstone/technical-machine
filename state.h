@@ -18,14 +18,15 @@
 namespace technicalmachine {
 
 struct State {
-	teams ai;
-	teams foe;
+	Team ai;
+	Team foe;
 	Weather weather;
 	long score;
 	int depth;
 	bool operator== (const State &other) const {
 		return this->ai == other.ai and this->foe == other.foe and this->weather == other.weather;
 	}
+	State () : ai (true), foe (false) {}
 };
 
 }

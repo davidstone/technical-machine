@@ -145,7 +145,7 @@ void defense (const pokemon &attacker, pokemon &defender, const Weather &weather
 	}
 }
 
-void speed (teams &team, const Weather &weather) {
+void speed (Team &team, const Weather &weather) {
 	team.active->spe.stat = (2 * team.active->spe.base + team.active->spe.iv + team.active->spe.ev) * team.active->level / 100 + 5;
 
 	if (HASTY == team.active->nature or JOLLY == team.active->nature or NAIVE == team.active->nature or TIMID == team.active->nature)
@@ -182,7 +182,7 @@ void speed (teams &team, const Weather &weather) {
 		team.active->spe.stat = 1;
 }
 
-void order (teams &team1, teams &team2, const Weather &weather, teams* &faster, teams* &slower) {
+void order (Team &team1, Team &team2, const Weather &weather, Team* &faster, Team* &slower) {
 	if (team1.active->move->priority == team2.active->move->priority) {
 		speed (team1, weather);
 		speed (team2, weather);

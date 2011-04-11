@@ -32,16 +32,16 @@ int main (int argc, char* argv[]) {
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	teams ai;
-	teams foe;
+	Team ai (true);
+	Team foe (false);
 	Weather weather;
 	score_variables sv;
 	Map map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
 	initialize (ai, foe, map, detailed);
 	
-	teams* first;
-	teams* last;
+	Team* first;
+	Team* last;
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
 	first->active->moved = false;
 	first->active->move = first->active->moveset.begin();
@@ -50,7 +50,7 @@ int main (int argc, char* argv[]) {
 	last->active->move = last->active->moveset.begin();
 
 	while ((ai.member.size() > 1 or ai.active->hp.stat > 0) and (foe.member.size() > 1 or foe.active->hp.stat > 0)) {
-		teams predicted = foe;
+		Team predicted = foe;
 		reset_iterators_pokemon (predicted);
 		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);

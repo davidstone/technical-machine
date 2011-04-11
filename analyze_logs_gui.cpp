@@ -42,11 +42,11 @@ void load_log (Fl_Widget* w, void* data) {
 		std::cerr << d->input->value() << " is not a valid file.\n";
 	else {
 		std::string line;
-		teams player1;
+		Team player1;
 		player1.player = "";
-		teams player2;
+		Team player2;
 		player2.player = "";
-		teams* previous;
+		Team* previous;
 		for (getline (file, line); !file.eof(); getline (file, line))
 			analyze_line (player1, player2, previous, d->weather, line, d->map);
 		file.close ();

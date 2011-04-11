@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-void endofturn (teams &first, teams &last, Weather &weather, const Random &random) {
+void endofturn (Team &first, Team &last, Weather &weather, const Random &random) {
 	endofturn0 (*first.active);
 	endofturn0 (*last.active);
 	endofturn1 (first);
@@ -58,7 +58,7 @@ void endofturn0 (pokemon &member) {
 		member.loaf = true;
 }
 
-void endofturn1 (teams &team) {
+void endofturn1 (Team &team) {
 	decrement (team.light_screen);
 	decrement (team.lucky_chant);
 	decrement (team.mist);
@@ -67,7 +67,7 @@ void endofturn1 (teams &team) {
 	decrement (team.tailwind);
 }
 
-void endofturn2 (teams &team) {
+void endofturn2 (Team &team) {
 	if (1 == team.wish)
 		heal (*team.active, 2);
 	decrement (team.wish);
@@ -179,7 +179,7 @@ void endofturn5 (pokemon &member, pokemon &foe, Weather &weather, const random_t
 		heal (member, -8);
 }
 
-void endofturn6 (teams &target, const Weather &weather) {		// Doom Desire / Future Sight
+void endofturn6 (Team &target, const Weather &weather) {		// Doom Desire / Future Sight
 	if (target.counter == 1) {
 		defense (target.ddfs, *target.active, weather);
 		target.active->hp.stat -= damagecalculator (target.ddfs, target, weather);

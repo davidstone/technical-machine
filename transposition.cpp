@@ -20,7 +20,7 @@ namespace technicalmachine {
 
 // This currently generates no hits. I'm currently working on this to find out why.
 
-long transposition (teams &ai, teams &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long transposition (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	reset_iterators (ai);	
 	reset_iterators (foe);
 	State state;		// This causes possibly needless copying. Changing my code elsewhere to use the State data structure could solve this problem.
@@ -56,7 +56,7 @@ long hash_state (const State &state, const score_variables &sv) {
 	return (hash_team (state.ai) + 7 * hash_team (state.foe) + hash_weather (state.weather)) % sv.transposition_table;
 }
 
-long hash_team (const teams &team) {
+long hash_team (const Team &team) {
 	long hash = team.active->name + team.light_screen + team.lucky_chant + team.mist + team.reflect + team.safeguard + team.tailwind + team.wish + team.spikes + team.toxic_spikes + team.stealth_rock;
 	for (std::vector<pokemon>::const_iterator it = team.member.begin(); it != team.member.end(); ++it)
 		hash += hash_pokemon (*it);
