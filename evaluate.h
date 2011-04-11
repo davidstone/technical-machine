@@ -66,59 +66,59 @@ struct score_variables {
 			size_t x = line.find ('\t');
 			std::string data = line.substr (0, x);
 			if (data == "Transposition Table")
-				sv.transposition_table = boost::lexical_cast<int> (line.substr (x + 1));
+				transposition_table = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Light Screen")
-				sv.light_screen = boost::lexical_cast<int> (line.substr (x + 1));
+				light_screen = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Lucky Chant")
-				sv.lucky_chant = boost::lexical_cast<int> (line.substr (x + 1));
+				lucky_chant = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Mist")
-				sv.mist = boost::lexical_cast<int> (line.substr (x + 1));
+				mist = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Reflect")
-				sv.reflect = boost::lexical_cast<int> (line.substr (x + 1));
+				reflect = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Safeguard")
-				sv.safeguard = boost::lexical_cast<int> (line.substr (x + 1));
+				safeguard = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Tailwind")
-				sv.tailwind = boost::lexical_cast<int> (line.substr (x + 1));
+				tailwind = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Wish")
-				sv.wish = boost::lexical_cast<int> (line.substr (x + 1));
+				wish = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Spikes")
-				sv.spikes = boost::lexical_cast<int> (line.substr (x + 1));
+				spikes = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Stealth Rock")
-				sv.stealth_rock = boost::lexical_cast<int> (line.substr (x + 1));
+				stealth_rock = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Toxic Spikes")
-				sv.toxic_spikes = boost::lexical_cast<int> (line.substr (x + 1));
+				toxic_spikes = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Members")
-				sv.members = boost::lexical_cast<int> (line.substr (x + 1));
+				members = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "HP")
-				sv.hp = boost::lexical_cast<int> (line.substr (x + 1));
+				hp = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Aqua Ring")
-				sv.aqua_ring = boost::lexical_cast<int> (line.substr (x + 1));
+				aqua_ring = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Curse")
-				sv.curse = boost::lexical_cast<int> (line.substr (x + 1));
+				curse = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Imprison")
-				sv.imprison = boost::lexical_cast<int> (line.substr (x + 1));
+				imprison = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Ingrain")
-				sv.ingrain = boost::lexical_cast<int> (line.substr (x + 1));
+				ingrain = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Leech Seed")
-				sv.leech_seed = boost::lexical_cast<int> (line.substr (x + 1));
+				leech_seed = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Loaf")
-				sv.loaf = boost::lexical_cast<int> (line.substr (x + 1));
+				loaf = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Nightmare")
-				sv.nightmare = boost::lexical_cast<int> (line.substr (x + 1));
+				nightmare = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Torment")
-				sv.torment = boost::lexical_cast<int> (line.substr (x + 1));
+				torment = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Trapped")
-				sv.trapped = boost::lexical_cast<int> (line.substr (x + 1));
+				trapped = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Burn")
-				sv.burn = boost::lexical_cast<int> (line.substr (x + 1));
+				burn = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Freeze")
-				sv.freeze = boost::lexical_cast<int> (line.substr (x + 1));
+				freeze = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Paralysis")
-				sv.paralysis = boost::lexical_cast<int> (line.substr (x + 1));
+				paralysis = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Poison")
-				sv.poison = boost::lexical_cast<int> (line.substr (x + 1));
+				poison = boost::lexical_cast<int> (line.substr (x + 1));
 			else if (data == "Sleep")
-				sv.sleep = boost::lexical_cast<int> (line.substr (x + 1));
+				sleep = boost::lexical_cast<int> (line.substr (x + 1));
 		}
 		file.close();
 	}
