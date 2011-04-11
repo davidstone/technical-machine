@@ -9,6 +9,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include <boost/lexical_cast.hpp>
 #include "expectiminimax.h"
 #include "endofturn.h"
@@ -29,14 +30,14 @@ moves_list expectiminimax (teams &ai, teams &foe, const weathers &weather, int d
 	moves_list best_move = END_MOVE;
 	std::string output = "";
 	std::map<long, State> transposition_table;
-	score = tree1 (ai, foe, weather, depth, sv, best_move, output, transposition_table);
+	score = tree1 (ai, foe, weather, depth, sv, best_move, output, transposition_table, true);
 
 //	std::cout << output + "\n";
 	return best_move;
 }
 
 
-long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
+long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table, bool first) {
 	reset_iterators (ai);		// I'm not sure why these two lines are needed when I'm passing both teams by reference instead of value
 	reset_iterators (foe);
 	if (depth != -1)
@@ -56,8 +57,12 @@ long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const sco
 	
 	// Determine which moves can be legally selected
 	for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
+		if (first)
+			std::cout << "Evaluating " << move_name [ai.active->move->name] << '\n';
 		blockselection (ai, foe, weather);
 		if (ai.active->move->selectable) {
+			if (best_move == END_MOVE)
+				best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
 			for (ai.replacement = 0; ai.replacement != ai.member.size(); ++ai.replacement) {
 				if (ai.member.at (ai.replacement).name == ai.active->name and ai.member.size() > 1)
 					continue;
@@ -86,24 +91,19 @@ long tree1 (teams &ai, teams &foe, const weathers &weather, int depth, const sco
 					}
 				}
 				// If their best response still isn't as good as their previous best response, then this new move must be better than the previous AI's best move
-				if (beta >= alpha) {	// Test for equality to make sure best_move gets filled
+				if (beta > alpha) {
 					alpha = beta;
 					ai.active->move->score = alpha;
 					best_move = ai.active->move->name;
+					if (first)
+						std::cout << "Estimated score is " << alpha << '\n';
 				}
 				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
 					break;
 			}
 		}
 	}
-
-	std::string output1 = "With a remaining depth of " + boost::lexical_cast<std::string> (depth + 1) + ": " + pokemon_name [ai.active->name];
-	if (SWITCH1 <= best_move and best_move <= SWITCH6)
-		output1 += " switched to " + pokemon_name [ai.member.at (best_move - SWITCH1).name];
-	else
-		output1 += " used " + move_name [best_move];
-	output = output1 + ", " + output2 + "\n" + output;
-
+	
 	return alpha;
 }
 

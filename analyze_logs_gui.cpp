@@ -31,6 +31,7 @@ struct Data {
 	std::string output;
 	Fl_Multiline_Output* multiout;
 	std::string log_path;
+	weathers weather;
 	Map map;
 };
 
@@ -45,9 +46,9 @@ void load_log (Fl_Widget* w, void* data) {
 		player1.player = "";
 		teams player2;
 		player2.player = "";
-		pokemon* previous;
+		teams* previous;
 		for (getline (file, line); !file.eof(); getline (file, line))
-			analyze_line (player1, player2, previous, line, d->map);
+			analyze_line (player1, player2, previous, d->weather, line, d->map);
 		file.close ();
 		d->output = "";
 		output (d->output, player1);

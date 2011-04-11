@@ -1,1 +1,2 @@
 log path	/home/david/Shoddy logs/
+team	paralysis.sbt

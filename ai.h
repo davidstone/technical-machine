@@ -91,6 +91,7 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 		else if (data == "Sleep")
 			sv.sleep = boost::lexical_cast<int> (line.substr (x + 1));
 	}
+	file.close();
 
 	weather.trick_room = 0;
 	weather.fog = false;
@@ -103,7 +104,15 @@ void initialize (teams &ai, teams &foe, weathers &weather, score_variables &sv, 
 
 	ai.player = "Technical Machine";
 	ai.me = true;
-	loadteam (ai, "teams/stall.sbt", map, detailed);
+	std::string ai_team;
+	std::ifstream settings ("settings.txt");
+	for (getline (settings, line); !settings.eof(); getline (settings, line)) {
+		size_t found = line.find ('\t');
+		if (line.substr (0, found) == "team")
+			ai_team = line.substr (found + 1);
+	}
+	
+	loadteam (ai, "teams/" + ai_team, map, detailed);
 	ai.active = ai.member.begin();
 
 /*	pokemon member;

@@ -4,9 +4,9 @@ predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o
 
 rdcobjects = rdc.o ability.o damage.o item.o move.o pokemon.o reversedamage.o simple.o stat.o status.o team.o teampredictor.o unknown.o weather.o
 
-analogobjects = analyze_logs_main.o ability.o analyze_logs.o damage.o move.o pokemon.o simple.o stat.o status.o weather.o
+analogobjects = analyze_logs_main.o ability.o analyze_logs.o damage.o move.o pokemon.o simple.o stat.o status.o team.o weather.o
 
-analogguiobjects = analyze_logs_gui.o ability.o analyze_logs.o damage.o move.o pokemon.o simple.o stat.o status.o weather.o
+analogguiobjects = analyze_logs_gui.o ability.o analyze_logs.o damage.o move.o pokemon.o simple.o stat.o status.o team.o weather.o
 
 warnings = -Wall -Wextra -pedantic -Wno-unused  -Wformat=2
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
@@ -40,7 +40,7 @@ analoggui : $(analogguiobjects)
 	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
 analoggui : optimizations = -g
 
-CXXFLAGS = $(warnings) $(optimizations)
+CXXFLAGS = $(warnings) $(optimizations) -pg
 
 ability.o: ability.cpp ability.h
 ai.o: ai.cpp ai.h evaluate.h move.h type.h pokemon.h ability.h gender.h \
