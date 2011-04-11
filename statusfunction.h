@@ -17,12 +17,12 @@
 
 namespace technicalmachine {
 
-void burn (pokemon &user, pokemon &target, const Weather &weather);
-void freeze (const pokemon &user, pokemon &target, const Weather &weather);
-void paralyze (pokemon &user, pokemon &target, const Weather &weather);
-void sleep (const pokemon &user, pokemon &target, const Weather &weather);
-void poison_normal (pokemon &user, pokemon &target, const Weather &weather);
-void poison_toxic (pokemon &user, pokemon &target, const Weather &weather);
+void burn (Pokemon &user, Pokemon &target, const Weather &weather);
+void freeze (const Pokemon &user, Pokemon &target, const Weather &weather);
+void paralyze (Pokemon &user, Pokemon &target, const Weather &weather);
+void sleep (const Pokemon &user, Pokemon &target, const Weather &weather);
+void poison_normal (Pokemon &user, Pokemon &target, const Weather &weather);
+void poison_toxic (Pokemon &user, Pokemon &target, const Weather &weather);
 
 }
 #endif

@@ -47,16 +47,16 @@ Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) 
 Pokemon Online refers to Porygon2 as Porygon 2.
 */
 
-struct pokemon {
+struct Pokemon {
 	std::string nickname;
 	species name;
+	abilities ability;
 	genders gender;
+	items item;
 	statuses status;
 	types type1;
 	types type2;
 	Vanish vanish;
-	abilities ability;
-	items item;
 	std::vector<moves> moveset;
 	std::vector<moves>::iterator move;			// The move currently being used
 	stats hp;
@@ -74,7 +74,7 @@ struct pokemon {
 	char heal_block;
 	char level;
 	char magnet_rise;
-	char mass;				// mass == power of Grass Knot / Low Kick, not the actual mass stat
+	char mass;		// mass == power of Grass Knot / Low Kick, not the actual mass stat
 	char partial_trap;		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
 	char perish_song;
 	char rampage;			// Number of turns remaining on Outrage, Petal Dance, and Thrash
@@ -98,8 +98,6 @@ struct pokemon {
 	bool identified;
 	bool imprison;			// Has this Pokemon used Imprison?
 	bool ingrain;
-	bool item_recycle;		// Was the item lost in a way that can be restored with Recycle?
-	bool item_unburden;		// Was the item lost in a way that activates Unburden?
 	bool leech_seed;
 	bool loaf;
 	bool lock_on;
@@ -117,7 +115,7 @@ struct pokemon {
 	char accuracy;
 	char evasion;
 	
-	bool operator== (const pokemon &other) const {
+	bool operator== (const Pokemon &other) const {
 		if (this->moveset.size() != other.moveset.size())
 			return false;
 		for (size_t n = 0; n != this->moveset.size(); ++n) {
@@ -126,9 +124,10 @@ struct pokemon {
 		}
 		return this->name == other.name and this->status == other.status and this->vanish == other.vanish and this->bide == other.bide and this->confused == other.confused and this->embargo == other.embargo and this->encore == other.encore and this->heal_block == other.heal_block and this->magnet_rise == other.magnet_rise and this->partial_trap == other.partial_trap and this->perish_song == other.perish_song and this->rampage == other.rampage and this->sleep == other.sleep and this->slow_start == other.slow_start and this->stockpile == other.stockpile and this->taunt == other.taunt and this->toxic == other.toxic and this->uproar == other.yawn and this->aqua_ring == other.aqua_ring and this->attract == other.attract and this->charge == other.charge and this->curse == other.curse and this->defense_curl == other.defense_curl and this->destiny_bond == other.destiny_bond and this->ff == other.ff and this->focus_energy == other.focus_energy and this->identified == other.identified and this->imprison == other.imprison and this->ingrain == other.ingrain and this->leech_seed == other.leech_seed and this->loaf == other.loaf and this->lock_on == other.lock_on and this->minimize == other.minimize and this->mud_sport == other.mud_sport and this->nightmare == other.nightmare and this->torment == other.torment and this->trapped == other.trapped and this->water_sport == other.water_sport and this->accuracy == other.accuracy and this->evasion == other.evasion and this->hp.stat == other.hp.stat and this->atk.stage == other.atk.stage and this->def.stage == other.def.stage and this->spa.stage == other.spa.stage and this->spd.stage == other.spd.stage and this->spe.stage == other.spe.stage and this->item == other.item;
 	}
-	bool operator!= (const pokemon &other) const {
+	bool operator!= (const Pokemon &other) const {
 		return !(*this == other);
 	}
+	Pokemon (const species &member);
 };
 
 const unsigned char base_stat [][6] = {
@@ -1147,7 +1146,7 @@ const types get_pokemon_type [][2] = {
 { POISON, FLYING }			// Zubat
 };
 
-const char mass [] = {
+const char get_mass [] = {
 100,	// Abomasnow
 40,	// Abra
 60,	// Absol

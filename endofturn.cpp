@@ -47,7 +47,7 @@ void endofturn (Team &first, Team &last, Weather &weather, const Random &random)
 	decrement (weather.trick_room);
 }
 
-void endofturn0 (pokemon &member) {
+void endofturn0 (Pokemon &member) {
 	member.damaged = false;
 	member.flinch = false;
 	member.moved = false;
@@ -73,7 +73,7 @@ void endofturn2 (Team &team) {
 	decrement (team.wish);
 }
 
-void endofturn3 (pokemon &member, const Weather &weather) {
+void endofturn3 (Pokemon &member, const Weather &weather) {
 	if (weather.hail != 0 and !istype (member,ICE))
 		heal (member, -16);
 	if (weather.sand != 0 and !(istype (member, GROUND) or istype (member, ROCK) or istype (member, STEEL)))
@@ -90,7 +90,7 @@ void endofturn3 (pokemon &member, const Weather &weather) {
 		heal (member, 16);
 }
 
-void endofturn5 (pokemon &member, pokemon &foe, Weather &weather, const random_team &random) {
+void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_team &random) {
 	if (member.ingrain)
 		heal (member, 16);
 	if (member.aqua_ring)
@@ -180,14 +180,14 @@ void endofturn5 (pokemon &member, pokemon &foe, Weather &weather, const random_t
 }
 
 void endofturn6 (Team &target, const Weather &weather) {		// Doom Desire / Future Sight
-	if (target.counter == 1) {
+/*	if (target.counter == 1) {
 		defense (target.ddfs, *target.active, weather);
 		target.active->hp.stat -= damagecalculator (target.ddfs, target, weather);
 	}
-	decrement (target.counter);
+	decrement (target.counter);*/
 }
 
-void endofturn7 (pokemon &member)  {
+void endofturn7 (Pokemon &member)  {
 	if (member.perish_song == 1)
 		member.hp.stat = 0;
 	decrement (member.perish_song);

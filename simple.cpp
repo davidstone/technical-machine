@@ -18,13 +18,13 @@
 
 namespace technicalmachine {
 
-bool istype (const pokemon &member, types type) {
+bool istype (const Pokemon &member, types type) {
 	if ((member.type1 == type or member.type2 == type) and (type != FLYING or member.roost == false))
 		return true;
 	return false;
 }
 
-void heal (pokemon &member, int denominator, int numerator) {
+void heal (Pokemon &member, int denominator, int numerator) {
 	if (0 != member.hp.stat) {
 		if ((denominator > 0 and denominator / numerator < member.hp.max) or (denominator < 0 and -denominator / numerator < member.hp.max and MAGIC_GUARD != member.ability))
 			member.hp.stat += member.hp.max * numerator / denominator;
@@ -42,7 +42,7 @@ void decrement (char &n) {
 		--n;
 }
 
-bool grounded (const pokemon &member, const Weather &weather) {
+bool grounded (const Pokemon &member, const Weather &weather) {
 	if ((!istype (member, FLYING) 
 	and LEVITATE != member.ability 
 	and member.magnet_rise == 0) 
@@ -53,7 +53,7 @@ bool grounded (const pokemon &member, const Weather &weather) {
 	return false;
 }
 
-void recoil (pokemon &user, int damage, int denominator) {
+void recoil (Pokemon &user, int damage, int denominator) {
 	if (user.ability != MAGIC_GUARD and user.ability != ROCK_HEAD) {
 		if (damage <= denominator)
 			--user.hp.stat;

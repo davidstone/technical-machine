@@ -163,7 +163,7 @@ void predict (int detailed [][7], Team &team) {
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall.at (n) / total) * lead.at (n));
 
-	for (std::vector<pokemon>::const_iterator it = team.member.begin(); it != team.member.end(); ++it) {
+	for (std::vector<Pokemon>::const_iterator it = team.member.begin(); it != team.member.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [it->name] [n];
 	}
@@ -171,24 +171,25 @@ void predict (int detailed [][7], Team &team) {
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
-	unsigned n = team.active - team.member.begin();
+	unsigned active = team.active - team.member.begin();
 	while (team.member.size() < 6) {
 		double top = 0.0;
-		pokemon member;
-		team.member.push_back (member);
-		team.active = team.member.begin() + n;
+		species name;
 		for (int n = 0; n != END_SPECIES; ++n) {
 			if (top < estimate.at (n)) {
 				top = estimate.at (n);
-				team.member.back().name = static_cast<species> (n);
+				name = static_cast<species> (n);
 			}
 		}
+		Pokemon member (name);
+		team.member.push_back (member);
+		team.active = team.member.begin() + active;
 		if (team.member.size() == 6)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [team.member.back().name] [n];
 	}
-	for (std::vector<pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it) {
+	for (std::vector<Pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it) {
 		it->level = 100;
 		it->ability = static_cast<abilities> (detailed [it->name] [0]);
 		it->item = static_cast<items> (detailed [it->name] [1]);
@@ -212,7 +213,7 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 	}
 }
 
-void predict_move (pokemon &member, int detailed [][7]) {
+void predict_move (Pokemon &member, int detailed [][7]) {
 	for (unsigned n = 3;
 	 member.moveset.size() < 4
 	 and detailed [member.name] [n] != END_MOVE;

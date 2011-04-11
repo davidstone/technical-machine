@@ -115,10 +115,11 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 	}
 }
 
-void log_pokemon  (Team &team, pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1) {
+void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
+
 	bool found = false;
 	for (unsigned char replacement = 0; replacement != team.member.size(); ++replacement) {
 		if (nickname == team.member.at (replacement).nickname) {
@@ -128,82 +129,83 @@ void log_pokemon  (Team &team, pokemon &target, Weather &weather, const std::str
 		}
 	}
 	if (!found) {
-			// Insertion to a vector invalidates all iterators if the insertion causes a reallocation. This corrects for that.
-		unsigned n = 0;
-		if (team.member.size() > 0)
-			n = team.active - team.member.begin();
-		pokemon member;
-		team.member.push_back (member);
-
-		team.active = team.member.begin() + n;
-
-		team.replacement = team.member.size() - 1;
-		
-		team.member.back().nickname = nickname;
-		team.member.back().happiness = 255;
-		team.member.back().item = END_ITEM;
-		team.member.back().ability = END_ABILITY;
 		search1 = " ";
 		size_t found1 = line.find (search1, found2 + search2.length());
-		team.member.back().level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
-
-		search2 = " ?).";
-		found2 = line.find (search2);
-		if (found2 == std::string::npos) {
-			search2 = " ?)!";
-			found2 = line.find (search2);
-			if (found2 == std::string::npos) {
-				search2 = " ♂).";
-				found2 = line.find (search2);
-				if (found2 == std::string::npos) {
-					search2 = " ♂)!";
-					found2 = line.find (search2);
+		std::string search3 = " ?).";
+		size_t found3 = line.find (search3);
+		genders gender;
+		if (found3 == std::string::npos) {
+			search3 = " ?)!";
+			found3 = line.find (search3);
+			if (found3 == std::string::npos) {
+				search3 = " ♂).";
+				found3 = line.find (search3);
+				if (found3 == std::string::npos) {
+					search3 = " ♂)!";
+					found3 = line.find (search3);
 				}
 			}
 		}
-		if (found2 != std::string::npos)
-			team.member.back().gender = MALE;		// No sexism here!
+		if (found3 != std::string::npos)
+			gender = MALE;		// No sexism here!
 		else {
-			search2 = " ♀).";
-			found2 = line.find (search2);
-			if (found2 == std::string::npos) {
-				search2 = " ♀)!";
-				found2 = line.find (search2);
+			search3 = " ♀).";
+			found3 = line.find (search3);
+			if (found3 == std::string::npos) {
+				search3 = " ♀)!";
+				found3 = line.find (search3);
 			}
-			if (found2 != std::string::npos)
-				team.member.back().gender = FEMALE;
+			if (found3 != std::string::npos)
+				gender = FEMALE;
 		}
-		if (found2 == std::string::npos) {
-			search2 = ").";
-			found2 = line.find (search2);
-			if (found2 == std::string::npos) {
-				search2 = " )!";
-				found2 = line.find (search2);
+		if (found3 == std::string::npos) {
+			search3 = ").";
+			found3 = line.find (search3);
+			if (found3 == std::string::npos) {
+				search3 = " )!";
+				found3 = line.find (search3);
 			}
-			team.member.back().gender = GENDERLESS;
+			gender = GENDERLESS;
 		}
-		team.member.back().name = map.specie.find (line.substr (found1 + search1.length(), found2 - found1 - search1.length()))->second;
+		species name = map.specie.find (line.substr (found1 + search1.length(), found3 - found1 - search1.length()))->second;
+		Pokemon member (name);
+		member.gender = gender;
+
+		member.nickname = nickname;
+		member.happiness = 255;
+		member.item = END_ITEM;
+		member.ability = END_ABILITY;
+
+		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
+
+		member.nature = HARDY;
+		member.hp.iv = 31;
+		member.hp.ev = 0;
+		member.atk.iv = 31;
+		member.atk.ev = 0;
+		member.def.iv = 31;
+		member.def.ev = 0;
+		member.spe.iv = 31;
+		member.spe.ev = 0;
+		member.spa.iv = 31;
+		member.spa.ev = 0;
+		member.spd.iv = 31;
+		member.spd.ev = 0;
 		
-		team.member.back().nature = HARDY;
-		team.member.back().hp.iv = 31;
-		team.member.back().hp.ev = 0;
-		team.member.back().atk.iv = 31;
-		team.member.back().atk.ev = 0;
-		team.member.back().def.iv = 31;
-		team.member.back().def.ev = 0;
-		team.member.back().spe.iv = 31;
-		team.member.back().spe.ev = 0;
-		team.member.back().spa.iv = 31;
-		team.member.back().spa.ev = 0;
-		team.member.back().spd.iv = 31;
-		team.member.back().spd.ev = 0;
+		// Insertion to a vector invalidates all iterators if the insertion causes a reallocation. This corrects that.
+		unsigned n = 0;
+		if (team.member.size() > 0)
+			n = team.active - team.member.begin();
+		team.member.push_back (member);
+		team.active = team.member.begin() + n;
+		team.replacement = team.member.size() - 1;
 		
 		loadpokemon (team, team.member.back());
 	}
 	switchpokemon (team, target, weather);
 }
 
-void log_move (pokemon &member, const std::string &line, const Map &map, const std::string &search) {
+void log_move (Pokemon &member, const std::string &line, const Map &map, const std::string &search) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
@@ -227,7 +229,7 @@ void log_move (pokemon &member, const std::string &line, const Map &map, const s
 	}
 }
 
-void log_misc (pokemon &active, pokemon &inactive, const std::string &line, const Map &map) {
+void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map) {
 	if (active.ability == END_ABILITY) {
 		if (active.nickname + "'s Anger Point raised its attack!" == line)
 			active.ability = ANGER_POINT;
@@ -345,7 +347,7 @@ void log_misc (pokemon &active, pokemon &inactive, const std::string &line, cons
 
 void output (std::string &output, const Team &team) {
 	output += team.player + ":\n";
-	for (std::vector<pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
+	for (std::vector<Pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
 		output += pokemon_name [active->name];
 		output += " @ " + item_name [active->item];
 		output += " ** " + active->nickname + '\n';

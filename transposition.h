@@ -13,6 +13,7 @@
 #define TRANSPOSITION_H_
 
 #include "evaluate.h"
+#include "pokemon.h"
 #include "state.h"
 #include "team.h"
 #include "weather.h"
@@ -22,7 +23,7 @@ namespace technicalmachine {
 long transposition (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
 long hash_state (const State &state, const score_variables &sv);
 long hash_team (const Team &team);
-long hash_pokemon (const pokemon &member);
+long hash_pokemon (const Pokemon &member);
 long hash_move (const moves &move);
 long hash_weather (const Weather &weather);
 

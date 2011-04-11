@@ -35,7 +35,7 @@ void predict (int detailed [][7], Team &team, bool using_lead);	// For the stand
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]);
 
-void predict_move (pokemon &member, int detailed [][7]);
+void predict_move (Pokemon &member, int detailed [][7]);
 
 }
 #endif

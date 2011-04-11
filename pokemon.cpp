@@ -17,6 +17,66 @@
 
 namespace technicalmachine {
 
+Pokemon::Pokemon (const species &member) : 
+	name (member),
+	status (NO_STATUS),
+	type1 (get_pokemon_type [name][0]),
+	type2 (get_pokemon_type [name][1]),
+	vanish (LANDED),
+	bide_damage (0),
+	bide (0),
+	confused (0),
+	encore (0),
+	heal_block (0),
+	magnet_rise (0),
+	mass (get_mass [name]),
+	partial_trap (0),
+	perish_song (0),
+	rampage (0),
+	sleep (0),
+	slow_start (0),
+	stockpile (0),
+	taunt (0),
+	toxic (0),
+	uproar (0),
+	yawn (0),
+	aqua_ring (false),
+	attract (false),
+	charge (false),
+	curse (false),
+	damaged (false),
+	defense_curl (false),
+	destiny_bond (false),
+	ff (false),
+	flinch (false),
+	focus_energy (false),
+	identified (false),
+	imprison (false),
+	ingrain (false),
+	leech_seed (false),
+	loaf (false),
+	lock_on (false),
+	mf (false),
+	minimize (false),
+	moved (false),
+	mud_sport (false),
+	nightmare (false),
+	roost (false),
+	torment (false),
+	trapped (false),
+	water_sport (false),
+	accuracy (0),
+	evasion (0) {
+	hp.base = base_stat [name][0];
+	atk.base = base_stat [name][1];
+	def.base = base_stat [name][2];
+	spa.base = base_stat [name][3];
+	spd.base = base_stat [name][4];
+	spe.base = base_stat [name][5];
+	hitpoints (*this);
+}
+
+
 void set_species_map (std::map <std::string, species> &species_map) {
 	species_map["Abomasnow"] = ABOMASNOW;
 	species_map["Abra"] = ABRA;

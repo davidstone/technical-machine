@@ -126,7 +126,7 @@ struct score_variables {
 };
 
 long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
-long scorepokemon (const pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
+long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
 long scoremove (const moves &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
 long int win (const Team &team);
 

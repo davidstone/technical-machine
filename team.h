@@ -19,10 +19,10 @@ namespace technicalmachine {
 
 struct Team {
 	std::string player;						// The player's name
-	std::vector<pokemon> member;			// All Pokemon on the team
-	std::vector<pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
+	std::vector<Pokemon> member;			// All Pokemon on the team
+	std::vector<Pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
 	
-	pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
+//	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
 	char counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
 
 	// Number of turns remaining
@@ -78,7 +78,7 @@ struct Team {
 
 std::string search (std::ifstream &file, std::string &output2, const std::string &data);
 void loadteam (Team &team, const std::string &name, const Map &map, int detailed [][7]);
-void loadpokemon (Team &team, pokemon &member);
+void loadpokemon (Team &team, Pokemon &member);
 void loadmove (moves &move);
 void pokelabteam (Team &team, const std::string &name, const Map &map);
 void pokelabpokemon (Team& team, std::ifstream &file, const Map &map);
@@ -87,7 +87,7 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 unsigned poconverter (const std::string &data, const std::string end, const std::string &line);
 void reset_iterators (Team &team);
 void reset_iterators_pokemon (Team &team);
-void reset_iterators_move (pokemon &member);
+void reset_iterators_move (Pokemon &member);
 
 }
 #endif

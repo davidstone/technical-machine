@@ -24,14 +24,15 @@
 
 namespace technicalmachine {
 
-void hitpoints (pokemon &member) {
+void hitpoints (Pokemon &member) {
 	if (1 == member.hp.base)
 		member.hp.max = 1;
 	else
 		member.hp.max = (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
+	member.hp.stat = member.hp.max;
 }
 
-void attack (pokemon &member, const Weather &weather) {
+void attack (Pokemon &member, const Weather &weather) {
 	if (member.move->physical) {
 		member.atk.stat = (2 * member.atk.base + member.atk.iv + member.atk.ev) * member.level / 100 + 5;
 		if (ADAMANT == member.nature or BRAVE == member.nature or LONELY == member.nature or NAUGHTY == member.nature)
@@ -88,7 +89,7 @@ void attack (pokemon &member, const Weather &weather) {
 	}
 }
 
-void defense (const pokemon &attacker, pokemon &defender, const Weather &weather) {
+void defense (const Pokemon &attacker, Pokemon &defender, const Weather &weather) {
 	if (attacker.move->physical) {
 		defender.def.stat = (2 * defender.def.base + defender.def.iv + defender.def.ev) * defender.level / 100 + 5;
 		if (BOLD == defender.nature or IMPISH == defender.nature or LAX == defender.nature or RELAXED == defender.nature)
@@ -158,7 +159,7 @@ void speed (Team &team, const Weather &weather) {
 	else
 		team.active->spe.stat = team.active->spe.stat * 2 / (2 - team.active->spe.stage);
 
-	if ((CHLOROPHYLL == team.active->ability and 0 != weather.sun) or (SWIFT_SWIM == team.active->ability and 0 != weather.rain) or (UNBURDEN == team.active->ability and team.active->item_unburden))
+	if ((CHLOROPHYLL == team.active->ability and 0 != weather.sun) or (SWIFT_SWIM == team.active->ability and 0 != weather.rain) or (UNBURDEN == team.active->ability and false))
 		team.active->spe.stat *= 2;
 	else if (QUICK_FEET == team.active->ability and NO_STATUS != team.active->status)
 		team.active->spe.stat = team.active->spe.stat * 3 / 2;

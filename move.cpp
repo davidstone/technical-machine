@@ -756,7 +756,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (AQUA_RING == user.active->move->name)
 		user.active->aqua_ring = true;
 	else if (AROMATHERAPY == user.active->move->name) {
-		for (std::vector<pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it)
+		for (std::vector<Pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it)
 			it->status = NO_STATUS;
 	}
 	else if (ATTRACT == user.active->move->name and user.active->gender * target.active->gender == -1)		// male * female == -1
@@ -920,7 +920,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (HEAD_SMASH == user.active->move->name)
 		recoil (*user.active, damage, 2);
 	else if (HEAL_BELL == user.active->move->name) {
-		for (std::vector<pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it) {
+		for (std::vector<Pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it) {
 			if (it->ability != SOUNDPROOF)
 				it->status = NO_STATUS;
 		}
@@ -1316,7 +1316,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	return damage;
 }
 
-void reset_variables (pokemon &member) {
+void reset_variables (Pokemon &member) {
 	//  Initialize all variables that switches reset.
 	member.aqua_ring = false;
 	member.attract = false;
@@ -1331,8 +1331,6 @@ void reset_variables (pokemon &member) {
 	member.identified = false;
 	member.imprison = false;
 	member.ingrain = false;
-	member.item_recycle = false;
-	member.item_unburden = false;
 	member.leech_seed = false;
 	member.loaf = false;			// Do I set to true or false? True makes it wrong when a fainted Pokemon is replaced; false makes it wrong otherwise
 	member.lock_on = false;
@@ -1374,7 +1372,7 @@ void reset_variables (pokemon &member) {
 	}
 }
 
-void switchpokemon (Team &user, pokemon &target, Weather &weather) {
+void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
 		if (user.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
 			return;
@@ -1386,7 +1384,7 @@ void switchpokemon (Team &user, pokemon &target, Weather &weather) {
 			user.active = user.member.begin() + user.replacement;
 		else
 			user.active = user.member.begin() + user.replacement - 1;
-		for (std::vector<pokemon>::iterator active = user.member.begin(); active != user.member.end(); ++active)
+		for (std::vector<Pokemon>::iterator active = user.member.begin(); active != user.member.end(); ++active)
 			active->moveset.pop_back();		// You cannot switch to a fainted Pokemon
 	}
 	else {

@@ -34,7 +34,7 @@ void reset_iterators (Team &team) {
 
 void reset_iterators_pokemon (Team &team) {
 	const species name = team.active->name;
-	for (std::vector<pokemon>::iterator it = team.member.begin(); ; ++it) {
+	for (std::vector<Pokemon>::iterator it = team.member.begin(); ; ++it) {
 		if (it->name == name) {
 			team.active = it;
 			break;
@@ -42,7 +42,7 @@ void reset_iterators_pokemon (Team &team) {
 	}
 }
 
-void reset_iterators_move (pokemon &member) {
+void reset_iterators_move (Pokemon &member) {
 	const moves_list name = member.move->name;
 	for (std::vector<moves>::iterator it = member.moveset.begin(); ; ++it) {
 		if (it->name == name) {
@@ -62,31 +62,13 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 			poteam (team, name);
 		else			// if (name.substr (name.length() - 4) == ".sbt")
 			pokelabteam (team, name, map);
-		for (std::vector<pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it)
+		for (std::vector<Pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it)
 			loadpokemon (team, *it);
 		team.active = team.member.begin();
 	}
 }
 
-void loadpokemon (Team &team, pokemon &member) {
-	member.status = NO_STATUS;
-	member.sleep = 0;
-	member.slow_start = 0;
-	
-	member.type1 = get_pokemon_type [member.name][0];
-	member.type2 = get_pokemon_type [member.name][1];
-
-	member.hp.base = base_stat [member.name][0];
-	member.atk.base = base_stat [member.name][1];
-	member.def.base = base_stat [member.name][2];
-	member.spa.base = base_stat [member.name][3];
-	member.spd.base = base_stat [member.name][4];
-	member.spe.base = base_stat [member.name][5];
-	hitpoints (member);
-	member.hp.stat = member.hp.max;
-
-	member.mass = mass [member.name];
-	
+void loadpokemon (Team &team, Pokemon &member) {
 	for (std::vector<moves>::iterator move = member.moveset.begin(); move != member.moveset.end(); ++move)
 		loadmove (*move);
 	moves move;
@@ -217,10 +199,9 @@ void pokelabteam (Team &team, const std::string &name, const Map &map) {
 }
 
 void pokelabpokemon (Team& team, std::ifstream &file, const Map &map) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
-	pokemon member;
 	std::string output2;	// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
-	member.name = map.specie.find (output1)->second;
+	Pokemon member (map.specie.find (output1)->second);
 	member.nickname = search (file, output2, "<nickname>");
 	if (member.nickname == "")
 		member.nickname = output1;
@@ -310,8 +291,7 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 	std::string line;
 	getline (file, line);
 	getline (file, line);
-	pokemon member;
-	member.name = pokemon_converter [poconverter ("Num=\"", "\"", line)];
+	Pokemon member (pokemon_converter [poconverter ("Num=\"", "\"", line)]);
 	int forme = poconverter ("Forme=\"", "\"", line);
 	if (member.name == DEOXYS_A) {
 		if (forme == 0)

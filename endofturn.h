@@ -20,13 +20,13 @@
 namespace technicalmachine {
 
 void endofturn (Team &first, Team &last, Weather &weather, const Random &random);
-void endofturn0 (pokemon &member);
+void endofturn0 (Pokemon &member);
 void endofturn1 (Team &team);
 void endofturn2 (Team &team);
-void endofturn3 (pokemon &member, const Weather &weather);
-void endofturn5 (pokemon &member, pokemon &foe, Weather &weather, const random_team &random);
+void endofturn3 (Pokemon &member, const Weather &weather);
+void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_team &random);
 void endofturn6 (Team &target, const Weather &weather);
-void endofturn7 (pokemon &member);
+void endofturn7 (Pokemon &member);
 
 }
 

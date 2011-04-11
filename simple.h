@@ -18,11 +18,11 @@
 
 namespace technicalmachine {
 
-bool istype (const pokemon &member, types type);
-void heal (pokemon &member, int denominator, int numerator = 1);
+bool istype (const Pokemon &member, types type);
+void heal (Pokemon &member, int denominator, int numerator = 1);
 void decrement (char &n);
-bool grounded (const pokemon &member, const Weather &weather);
-void recoil (pokemon &user, int damage, int denominator);
+bool grounded (const Pokemon &member, const Weather &weather);
+void recoil (Pokemon &user, int damage, int denominator);
 
 }
 #endif

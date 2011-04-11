@@ -18,15 +18,15 @@
 
 namespace technicalmachine {
 
-void movepower (pokemon &attacker, const pokemon &defender, const Weather weather);
+void movepower (Pokemon &attacker, const Pokemon &defender, const Weather weather);
 
-int damageknown (const pokemon &attacker, const Team &defender, const Weather &weather, int &rl, int &weather_mod, int &ff, int &mf);
+int damageknown (const Pokemon &attacker, const Team &defender, const Weather &weather, int &rl, int &weather_mod, int &ff, int &mf);
 
-int damagenonrandom (const pokemon &attacker, const Team &defender, const int &rl, const int &weather_mod, const int &ff, const int &mf, int &stab, const int &type1, const int &type2, int &aem, int &eb, int &tl, int &rb, int damage);
+int damagenonrandom (const Pokemon &attacker, const Team &defender, const int &rl, const int &weather_mod, const int &ff, const int &mf, int &stab, const int &type1, const int &type2, int &aem, int &eb, int &tl, int &rb, int damage);
 
-int damagerandom (const pokemon &attacker, const Team &defender, const int &stab, const int &type1, const int &type2, const int &aem, const int &eb, const int &tl, const int &rb, int damage);
+int damagerandom (const Pokemon &attacker, const Team &defender, const int &stab, const int &type1, const int &type2, const int &aem, const int &eb, const int &tl, const int &rb, int damage);
 
-int damagecalculator (const pokemon &attacker, const Team &defender, const Weather &weather);
+int damagecalculator (const Pokemon &attacker, const Team &defender, const Weather &weather);
 
 }
 
