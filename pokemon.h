@@ -57,8 +57,8 @@ struct Pokemon {
 	types type1;
 	types type2;
 	Vanish vanish;
-	std::vector<moves> moveset;
-	std::vector<moves>::iterator move;			// The move currently being used
+	std::vector<Move> moveset;
+	std::vector<Move>::iterator move;			// The move currently being used
 	stats hp;
 	stats atk;
 	stats def;

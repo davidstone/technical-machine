@@ -21,7 +21,7 @@
 
 namespace technicalmachine {
 
-void move_priority (moves &move);
+int move_priority (const moves_list &name);
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, int old_damage = 0);
 int usemove2 (Team &user, Team &target, Weather &weather, int old_damage);
 void switchpokemon (Team &team, Pokemon &target, Weather &weather);

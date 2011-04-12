@@ -24,7 +24,7 @@ long transposition (Team &ai, Team &foe, const Weather &weather, const int &dept
 long hash_state (const State &state, const score_variables &sv);
 long hash_team (const Team &team);
 long hash_pokemon (const Pokemon &member);
-long hash_move (const moves &move);
+long hash_move (const Move &move);
 long hash_weather (const Weather &weather);
 
 }

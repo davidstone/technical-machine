@@ -24,12 +24,10 @@
 
 namespace technicalmachine {
 
-void hitpoints (Pokemon &member) {
+int hitpoints (Pokemon &member) {
 	if (1 == member.hp.base)
-		member.hp.max = 1;
-	else
-		member.hp.max = (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
-	member.hp.stat = member.hp.max;
+		return 1;
+	return (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
 }
 
 void attack (Pokemon &member, const Weather &weather) {

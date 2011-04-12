@@ -13,6 +13,7 @@
 #include "ability.h"
 #include "damage.h"
 #include "expectiminimax.h"
+#include "move.h"
 #include "pokemon.h"
 #include "simple.h"
 #include "statfunction.h"
@@ -163,7 +164,7 @@ void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_t
 		decrement (member.uproar);
 		decrement (weather.uproar);
 	}
-	for (std::vector<moves>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
+	for (std::vector<Move>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
 		decrement (it->disable);
 	decrement (member.encore);
 	decrement (member.taunt);

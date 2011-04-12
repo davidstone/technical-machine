@@ -73,7 +73,8 @@ Pokemon::Pokemon (const species &member) :
 	spa.base = base_stat [name][3];
 	spd.base = base_stat [name][4];
 	spe.base = base_stat [name][5];
-	hitpoints (*this);
+	hp.max = hitpoints (*this);
+	hp.stat = hp.max;
 }
 
 

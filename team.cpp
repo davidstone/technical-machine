@@ -44,7 +44,7 @@ void reset_iterators_pokemon (Team &team) {
 
 void reset_iterators_move (Pokemon &member) {
 	const moves_list name = member.move->name;
-	for (std::vector<moves>::iterator it = member.moveset.begin(); ; ++it) {
+	for (std::vector<Move>::iterator it = member.moveset.begin(); ; ++it) {
 		if (it->name == name) {
 			member.move = it;
 			break;
@@ -69,43 +69,38 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 }
 
 void loadpokemon (Team &team, Pokemon &member) {
-	for (std::vector<moves>::iterator move = member.moveset.begin(); move != member.moveset.end(); ++move)
-		loadmove (*move);
-	moves move;
-	move.name = STRUGGLE;
-	move.pp_max = get_pp [move.name];
-	loadmove (move);
+	{
+	Move move (STRUGGLE, 0);
 	member.moveset.push_back (move);
+	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
 	if (team.member.size() > 1) {
-		move.name = SWITCH1;
-		move.pp_max = get_pp [move.name];
-		loadmove (move);
+		{
+		Move move (SWITCH1, 0);
 		member.moveset.push_back (move);
-		move.name = SWITCH2;
-		move.pp_max = get_pp [move.name];
-		loadmove (move);
+		}
+		{
+		Move move (SWITCH2, 0);
 		member.moveset.push_back (move);
+		}
 		if (team.member.size() > 2) {
-			move.name = SWITCH3;
-			move.pp_max = get_pp [move.name];
-			loadmove (move);
+			{
+			Move move (SWITCH3, 0);
 			member.moveset.push_back (move);
+			}
 			if (team.member.size() > 3) {
-				move.name = SWITCH4;
-				move.pp_max = get_pp [move.name];
-				loadmove (move);
+				{
+				Move move (SWITCH4, 0);
 				member.moveset.push_back (move);
+				}
 				if (team.member.size() > 4) {
-					move.name = SWITCH5;
-					move.pp_max = get_pp [move.name];
-					loadmove (move);
+					{
+					Move move (SWITCH5, 0);
 					member.moveset.push_back (move);
+					}
 					if (team.member.size() > 5) {
-						move.name = SWITCH6;
-						move.pp_max = get_pp [move.name];
-						loadmove (move);
+						Move move (SWITCH6, 0);
 						member.moveset.push_back (move);
 					}
 				}
@@ -114,65 +109,6 @@ void loadpokemon (Team &team, Pokemon &member) {
 	}
 	member.move = member.moveset.begin();
 	reset_variables (member);
-}
-
-void loadmove (moves &move) {
-	move.pp = move.pp_max;
-	move.type = move_type [move.name];
-	move.basepower = base_power [move.name];
-	move_priority (move);
-	move.physical = is_physical [move.name];
-	move.r = 100;
-	move.probability = get_probability [move.name];
-	if (move.name == ACUPRESSURE) {
-		for (int n = 0; n <= 6; ++n)
-			move.range.push_back(n);
-	}
-	else if (move.name == BIND or move.name == CLAMP or move.name == FIRE_SPIN or move.name == MAGMA_STORM or move.name == SAND_TOMB or move.name == WHIRLPOOL or move.name == WRAP) {
-		for (int n = 2; n <= 5; ++n)
-			move.range.push_back(n);
-	}
-	else if (move.name == ENCORE) {
-		for (int n = 4; n <= 8; ++n)
-			move.range.push_back(n);
-	}
-	else if (move.name == MAGNITUDE ) {
-		for (int n = 10; n <= 110; n += 20)
-			move.range.push_back(n);
-		move.range.push_back(150);
-/*		4 = 10;
-		5 = 30;
-		6 = 50;
-		7 = 70;
-		8 = 90;
-		9 = 110;
-		10 = 150;*/
-	}
-	else if (move.name == OUTRAGE or move.name == PETAL_DANCE or move.name == THRASH) {
-		move.range.push_back (2);
-		move.range.push_back (3);
-	}
-	else if (move.name == PRESENT) {
-		for (int n = 0; n <= 120; n += 40)
-			move.range.push_back(n);
-	}
-	else if (move.name == ROAR or move.name == WHIRLWIND) {
-		for (unsigned int n = 0; n != 6; ++n)
-			move.range.push_back(n);
-	}
-	else if (move.name == TAUNT) {
-		move.range.push_back(2);
-		move.range.push_back(3);
-	}
-	else if (move.name == TRI_ATTACK) {
-		for (int n = 0; n <= 2; ++n)
-			move.range.push_back(n);
-	}
-	else if (move.range.size() == 0)
-		move.range.push_back(0);
-	move.variable = move.range.begin();
-// Confusion / Sleep!!!
-	
 }
 
 unsigned team_size (const std::string &name) {
@@ -217,9 +153,9 @@ void pokelabpokemon (Team& team, std::ifstream &file, const Map &map) {	// Repla
 		output1 = search (file, output2, "\">");
 		if ("No" == output1)
 			break;
-		moves move;
-		move.name = map.move.find (output1)->second;
-		move.pp_max = get_pp [move.name] * (5 + boost::lexical_cast <int> (output2)) / 5;
+		moves_list name = map.move.find (output1)->second;
+		int pp_ups = boost::lexical_cast <int> (output2);
+		Move move (name, pp_ups);
 		member.moveset.push_back (move);
 	}
 	
@@ -344,9 +280,7 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 
 	for (unsigned n = 0; n != 4; ++n) {
 		getline (file, line);
-		moves move;
-		move.name = move_converter [poconverter ("<Move>", "</Move>", line)];
-		move.pp_max = get_pp [move.name] * 8 / 5;
+		Move move (move_converter [poconverter ("<Move>", "</Move>", line)], 3);
 		member.moveset.push_back (move);
 	}
 	getline (file, line);
@@ -377,7 +311,7 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 		team.member.push_back (member);
 }
 
-unsigned poconverter (const std::string &data, const std::string end, const std::string &line) {
+unsigned poconverter (const std::string &data, const std::string &end, const std::string &line) {
 	const size_t x = data.length();
 	const size_t a = line.find (data);
 	const size_t b = line.find (end, a + x);

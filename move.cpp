@@ -23,33 +23,96 @@
 
 namespace technicalmachine {
 
-void move_priority (moves &move) {
-	if (SWITCH1 <= move.name and move.name <= SWITCH6)
-		move.priority = 6;
-	if (move.name == HELPING_HAND)
-		move.priority = 5;
-	else if (move.name == MAGIC_COAT or move.name == SNATCH)
-		move.priority = 4;
-	else if (move.name == DETECT or move.name == ENDURE or move.name == FOLLOW_ME or move.name == PROTECT)
-		move.priority = 3;
-	else if (move.name ==  FEINT)
-		move.priority = 2;
-	else if (move.name == AQUA_JET or move.name == BIDE or move.name == BULLET_PUNCH or move.name == EXTREMESPEED or move.name == FAKE_OUT or move.name == ICE_SHARD or move.name == MACH_PUNCH or move.name == QUICK_ATTACK or move.name == SHADOW_SNEAK or move.name == SUCKER_PUNCH or move.name == VACUUM_WAVE)
-		move.priority = 1;
-	else if (move.name == VITAL_THROW)
-		move.priority = -1;
-	else if (move.name == FOCUS_PUNCH)
-		move.priority = -2;
-	else if (move.name == AVALANCHE or move.name == REVENGE)
-		move.priority = -3;
-	else if (move.name == COUNTER or move.name == MIRROR_COAT)
-		move.priority = -4;
-	else if (move.name == ROAR  or move.name == WHIRLWIND)
-		move.priority = -5;
-	else if (move.name == TRICK_ROOM)
-		move.priority = -6;
+Move::Move (moves_list move, int pp_ups) :
+	name (move),
+	type (move_type [name]),
+	basepower (base_power [name]),
+	physical (is_physical [name]),
+	pp_max (get_pp [name] * (5 + pp_ups) / 5),
+	pp (pp_max),
+	priority (move_priority (name)),
+	r (100),
+	times_used (0),
+	probability (get_probability [name]) {
+		if (name == ACUPRESSURE) {
+			for (int n = 0; n <= 6; ++n)
+				range.push_back(n);
+		}
+		else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
+			for (int n = 2; n <= 5; ++n)
+				range.push_back(n);
+		}
+		else if (name == ENCORE) {
+			for (int n = 4; n <= 8; ++n)
+				range.push_back(n);
+		}
+		else if (name == MAGNITUDE ) {
+			for (int n = 10; n <= 110; n += 20)
+				range.push_back(n);
+			range.push_back(150);
+	/*		4 = 10;
+			5 = 30;
+			6 = 50;
+			7 = 70;
+			8 = 90;
+			9 = 110;
+			10 = 150;*/
+		}
+		else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
+			range.push_back (2);
+			range.push_back (3);
+		}
+		else if (name == PRESENT) {
+			for (int n = 0; n <= 120; n += 40)
+				range.push_back(n);
+		}
+		else if (name == ROAR or name == WHIRLWIND) {
+			for (unsigned int n = 0; n != 6; ++n)
+				range.push_back(n);
+		}
+		else if (name == TAUNT) {
+			range.push_back(2);
+			range.push_back(3);
+		}
+		else if (name == TRI_ATTACK) {
+			for (int n = 0; n <= 2; ++n)
+				range.push_back(n);
+		}
+		else if (range.size() == 0)
+			range.push_back(0);
+		variable = range.begin();
+		// Confusion / Sleep!!!
+}
+
+int move_priority (const moves_list &name) {
+	int priority;
+	if (SWITCH1 <= name and name <= SWITCH6)
+		priority = 6;
+	if (name == HELPING_HAND)
+		priority = 5;
+	else if (name == MAGIC_COAT or name == SNATCH)
+		priority = 4;
+	else if (name == DETECT or name == ENDURE or name == FOLLOW_ME or name == PROTECT)
+		priority = 3;
+	else if (name ==  FEINT)
+		priority = 2;
+	else if (name == AQUA_JET or name == BIDE or name == BULLET_PUNCH or name == EXTREMESPEED or name == FAKE_OUT or name == ICE_SHARD or name == MACH_PUNCH or name == QUICK_ATTACK or name == SHADOW_SNEAK or name == SUCKER_PUNCH or name == VACUUM_WAVE)
+		priority = 1;
+	else if (name == VITAL_THROW)
+		priority = -1;
+	else if (name == FOCUS_PUNCH)
+		priority = -2;
+	else if (name == AVALANCHE or name == REVENGE)
+		priority = -3;
+	else if (name == COUNTER or name == MIRROR_COAT)
+		priority = -4;
+	else if (name == ROAR  or name == WHIRLWIND)
+		priority = -5;
+	else if (name == TRICK_ROOM)
+		priority = -6;
 	else
-		move.priority = 0;
+		priority = 0;
+	return priority;
 }
 
 void set_move_map (std::map <std::string, moves_list> &moves_map) {
@@ -583,7 +646,7 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 				user.active->move->selectable = false;
 		}
 		else if (user.active->move->name == STRUGGLE) {
-			for (std::vector<moves>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
+			for (std::vector<Move>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
 				if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
 				 and it->selectable) {
 					user.active->move->selectable = false;
@@ -596,7 +659,7 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 		 or (user.active->torment and 0 != user.active->move->times_used))
 			user.active->move->selectable = false;
 		else if (0 != user.active->encore or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
-			for (std::vector<moves>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
+			for (std::vector<Move>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
 				if (it->name != user.active->move->name and it->times_used != 0)
 					user.active->move->selectable = false;
 			}
@@ -657,7 +720,7 @@ bool block1 (const Team &user, const Team &target) {		// Things that both block 
 
 bool imprison (const Team &user, const Team &target) {
 	if (target.active->imprison) {
-		for (std::vector<moves>::const_iterator it = target.active->moveset.begin(); it != target.active->moveset.end(); ++it) {
+		for (std::vector<Move>::const_iterator it = target.active->moveset.begin(); it != target.active->moveset.end(); ++it) {
 			if (user.active->move->name == it->name)
 				return true;
 		}
@@ -1366,7 +1429,7 @@ void reset_variables (Pokemon &member) {
 	member.vanish = LANDED;
 	member.yawn = 0;
 
-	for (std::vector<moves>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+	for (std::vector<Move>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
 		it->disable = 0;
 		it->times_used = 0;
 	}

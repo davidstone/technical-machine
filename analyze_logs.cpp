@@ -212,7 +212,7 @@ void log_move (Pokemon &member, const std::string &line, const Map &map, const s
 		n = 2;
 	moves_list move_name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 	bool isfound = false;
-	for (std::vector<moves>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+	for (std::vector<Move>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
 		if (move_name == it->name) {
 			isfound = true;
 			member.move = it;
@@ -220,12 +220,9 @@ void log_move (Pokemon &member, const std::string &line, const Map &map, const s
 		}
 	}
 	if (!isfound) {
-		moves move;
+		Move move (move_name, int pp_ups = 3);
 		member.moveset.push_back (move);
 		member.move = member.moveset.end() - 1;
-		member.move->name = move_name;
-		member.move->pp_max = get_pp [member.move->name] * 8 / 5;
-		loadmove (*member.move);
 	}
 }
 
@@ -353,7 +350,7 @@ void output (std::string &output, const Team &team) {
 		output += " ** " + active->nickname + '\n';
 		if (active->ability != END_ABILITY)
 			output += "\tAbility: " + ability_name [active->ability] + '\n';
-		for (std::vector<moves>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
+		for (std::vector<Move>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
 			output += "\t- " + move_name [move->name] + '\n';
 	}
 	output += '\n';

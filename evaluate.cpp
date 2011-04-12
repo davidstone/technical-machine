@@ -68,14 +68,14 @@ long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const
 //		score += 1 * member.spa.stage;
 //		score += 1 * member.spd.stage;
 //		score += 1 * member.spe.stage;
-		for (std::vector<moves>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
+		for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
 			score += scoremove (*it, ai, foe, weather, sv);
 	}
 	return score;
 }
 
 
-long scoremove (const moves &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
+long scoremove (const Move &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
 	long score = 0;
 	if (move.physical)
 		score += foe.reflect * sv.reflect;

@@ -12,6 +12,8 @@
 #ifndef TEAM_H_
 #define TEAM_H_
 
+#include <fstream>
+#include <string>
 #include <vector>
 #include "pokemon.h"
 
@@ -79,12 +81,11 @@ struct Team {
 std::string search (std::ifstream &file, std::string &output2, const std::string &data);
 void loadteam (Team &team, const std::string &name, const Map &map, int detailed [][7]);
 void loadpokemon (Team &team, Pokemon &member);
-void loadmove (moves &move);
 void pokelabteam (Team &team, const std::string &name, const Map &map);
 void pokelabpokemon (Team& team, std::ifstream &file, const Map &map);
 void poteam (Team &team, const std::string &name);
 void popokemon (Team &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
-unsigned poconverter (const std::string &data, const std::string end, const std::string &line);
+unsigned poconverter (const std::string &data, const std::string &end, const std::string &line);
 void reset_iterators (Team &team);
 void reset_iterators_pokemon (Team &team);
 void reset_iterators_move (Pokemon &member);
