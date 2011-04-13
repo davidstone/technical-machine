@@ -43,11 +43,12 @@ analoggui : optimizations = -g
 CXXFLAGS = $(warnings) $(optimizations)
 
 ability.o: ability.cpp ability.h
-ai.o: ai.cpp ai.h evaluate.h move.h type.h pokemon.h ability.h gender.h \
- item.h stat.h status.h simple.h weather.h team.h movefunction.h \
- statfunction.h teampredictor.h analyze_logs.h expectiminimax.h state.h
+ai.o: ai.cpp ai.h move.h type.h movefunction.h pokemon.h ability.h \
+ gender.h item.h species.h stat.h status.h team.h weather.h \
+ statfunction.h teampredictor.h analyze_logs.h expectiminimax.h \
+ evaluate.h simple.h state.h
 analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
- gender.h item.h move.h type.h stat.h status.h team.h weather.h \
+ gender.h item.h move.h type.h species.h stat.h status.h team.h weather.h \
  movefunction.h
 analyze_logs_main.o: analyze_logs_main.cpp analyze_logs.h pokemon.h \
  ability.h gender.h item.h move.h type.h stat.h status.h team.h \
@@ -56,23 +57,25 @@ analyze_logs_gui.o: analyze_logs_gui.cpp analyze_logs.h pokemon.h \
  ability.h gender.h item.h move.h type.h stat.h status.h team.h \
  movefunction.h weather.h
 damage.o: damage.cpp damage.h pokemon.h ability.h gender.h item.h move.h \
- type.h stat.h status.h team.h weather.h simple.h
+ type.h species.h stat.h status.h team.h weather.h simple.h
 endofturn.o: endofturn.cpp endofturn.h expectiminimax.h evaluate.h move.h \
- type.h pokemon.h ability.h gender.h item.h stat.h status.h simple.h \
- weather.h team.h state.h damage.h statfunction.h statusfunction.h
+ type.h pokemon.h ability.h gender.h item.h species.h stat.h status.h \
+ simple.h weather.h team.h state.h damage.h statfunction.h \
+ statusfunction.h
 evaluate.o: evaluate.cpp evaluate.h move.h type.h pokemon.h ability.h \
- gender.h item.h stat.h status.h simple.h weather.h team.h
+ gender.h item.h species.h stat.h status.h simple.h weather.h team.h
 expectiminimax.o: expectiminimax.cpp expectiminimax.h evaluate.h move.h \
- type.h pokemon.h ability.h gender.h item.h stat.h status.h simple.h \
- weather.h team.h state.h endofturn.h movefunction.h statfunction.h \
- transposition.h
+ type.h pokemon.h ability.h gender.h item.h species.h stat.h status.h \
+ simple.h weather.h team.h state.h endofturn.h movefunction.h \
+ statfunction.h transposition.h
 gender.o: gender.cpp gender.h
 item.o: item.cpp item.h
 move.o: move.cpp move.h type.h movefunction.h pokemon.h ability.h \
- gender.h item.h stat.h status.h team.h weather.h damage.h simple.h \
- statfunction.h statusfunction.h
-pokemon.o: pokemon.cpp pokemon.h ability.h gender.h item.h move.h type.h \
- stat.h status.h
+ gender.h item.h species.h stat.h status.h team.h weather.h damage.h \
+ simple.h statfunction.h statusfunction.h
+pokemon.o: pokemon.cpp movefunction.h move.h type.h pokemon.h ability.h \
+ gender.h item.h species.h stat.h status.h team.h weather.h \
+ statfunction.h
 predictor.o: predictor.cpp movefunction.h move.h type.h pokemon.h \
  ability.h gender.h item.h stat.h status.h team.h weather.h \
  statfunction.h teampredictor.h
@@ -83,16 +86,16 @@ reversedamage.o: reversedamage.cpp reversedamage.h team.h pokemon.h \
  ability.h gender.h item.h move.h type.h stat.h status.h weather.h \
  unknown.h damage.h statfunction.h
 simple.o: simple.cpp simple.h pokemon.h ability.h gender.h item.h move.h \
- type.h stat.h status.h weather.h
-stat.o: stat.cpp ability.h item.h move.h type.h pokemon.h gender.h stat.h \
- status.h simple.h weather.h statfunction.h team.h
+ type.h species.h stat.h status.h weather.h
+stat.o: stat.cpp ability.h item.h move.h type.h pokemon.h gender.h \
+ species.h stat.h status.h simple.h weather.h statfunction.h team.h
 status.o: status.cpp pokemon.h ability.h gender.h item.h move.h type.h \
- stat.h status.h simple.h weather.h statusfunction.h
+ species.h stat.h status.h simple.h weather.h statusfunction.h
 team.o: team.cpp ability.h gender.h item.h move.h type.h movefunction.h \
- pokemon.h stat.h status.h team.h weather.h statfunction.h \
+ pokemon.h species.h stat.h status.h team.h weather.h statfunction.h \
  teampredictor.h
-teampredictor.o: teampredictor.cpp teampredictor.h team.h pokemon.h \
- ability.h gender.h item.h move.h type.h stat.h status.h
+teampredictor.o: teampredictor.cpp pokemon.h ability.h gender.h item.h \
+ move.h type.h species.h stat.h status.h team.h teampredictor.h
 transposition.o: transposition.cpp expectiminimax.h evaluate.h move.h \
  type.h pokemon.h ability.h gender.h item.h stat.h status.h simple.h \
  weather.h team.h state.h transposition.h

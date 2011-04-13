@@ -11,11 +11,15 @@
 
 #include <iostream>
 #include <map>
+#include <string>
+#include "evaluate.h"
 #include "expectiminimax.h"
 #include "move.h"
-#include "transposition.h"
-#include "evaluate.h"
+#include "pokemon.h"
 #include "state.h"
+#include "team.h"
+#include "transposition.h"
+#include "weather.h"
 
 namespace technicalmachine {
 
@@ -64,7 +68,7 @@ long hash_team (const Team &team) {
 	return hash;
 }
 
-long hash_pokemon (const pokemon &member) {
+long hash_pokemon (const Pokemon &member) {
 	long hash = 1234 * member.name + member.status + member.vanish + member.confused + member.embargo + member.encore + member.heal_block + member.magnet_rise + member.partial_trap + member.perish_song + member.rampage + member.sleep + member.slow_start + member.stockpile + member.taunt + member.toxic + member.uproar + member.yawn + member.aqua_ring + member.attract + member.charge + member.curse + member.damaged + member.defense_curl + member.destiny_bond + member.	ff + member.flinch + member.focus_energy + member.identified + member.imprison + member.ingrain + member.item_recycle + member.item_unburden + member.leech_seed + member.loaf + member.lock_on + member.mf + member.minimize + member.moved + member.mud_sport + member.nightmare + member.roost + member.torment + member.trapped + member.water_sport + member.accuracy + member.evasion + member.hp.stat + member.atk.stage + member.def.stage + member.spa.stage + member.spd.stage + member.spe.stage + member.ability + member.item + member.nature;
 	for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
 		hash += hash_move (*it);

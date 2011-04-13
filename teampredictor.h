@@ -16,8 +16,9 @@
 #include <fstream>
 #include <map>
 #include <vector>
-#include "team.h"
 #include "pokemon.h"
+#include "species.h"
+#include "team.h"
 
 namespace technicalmachine {
 

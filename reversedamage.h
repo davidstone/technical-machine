@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void reversedamagecalculator (teams &attacker, const teams &defender, const weathers &weather, int damage, std::vector<Unknown> &hidden);
+void reversedamagecalculator (Team &attacker, const Team &defender, const Weather &weather, int damage, std::vector<Unknown> &hidden);
 
 }
 #endif

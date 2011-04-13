@@ -13,6 +13,8 @@
 #include <string>
 #include "movefunction.h"
 #include "pokemon.h"
+#include "species.h"
+#include "stat.h"
 #include "statfunction.h"
 
 namespace technicalmachine {
@@ -23,6 +25,12 @@ Pokemon::Pokemon (const species &member) :
 	type1 (get_pokemon_type [name][0]),
 	type2 (get_pokemon_type [name][1]),
 	vanish (LANDED),
+	hp (name, HP),
+	atk (name, ATK),
+	def (name, DEF),
+	spa (name, SPA),
+	spd (name, SPD),
+	spe (name, SPE),
 	bide_damage (0),
 	bide (0),
 	confused (0),
@@ -67,15 +75,9 @@ Pokemon::Pokemon (const species &member) :
 	water_sport (false),
 	accuracy (0),
 	evasion (0) {
-	hp.base = base_stat [name][0];
-	atk.base = base_stat [name][1];
-	def.base = base_stat [name][2];
-	spa.base = base_stat [name][3];
-	spd.base = base_stat [name][4];
-	spe.base = base_stat [name][5];
 	hp.max = hitpoints (*this);
 	hp.stat = hp.max;
-}
+	}
 
 
 void set_species_map (std::map <std::string, species> &species_map) {

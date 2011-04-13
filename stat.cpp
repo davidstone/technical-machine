@@ -24,6 +24,13 @@
 
 namespace technicalmachine {
 
+Stat::Stat (species name, stats stat) :
+	base (base_stat [name] [stat]),
+	iv (31),
+	ev (84),		// Adds up to 504 EVs, temporary until I add in EV prediction
+	stage (0) {
+	}
+
 int hitpoints (Pokemon &member) {
 	if (1 == member.hp.base)
 		return 1;

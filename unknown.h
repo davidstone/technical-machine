@@ -12,6 +12,8 @@
 #ifndef UNKNOWN_H_
 #define UNKNOWN_H_
 
+#include <vector>
+
 namespace technicalmachine {
 
 struct Unknown {

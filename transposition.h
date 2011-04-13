@@ -12,7 +12,10 @@
 #ifndef TRANSPOSITION_H_
 #define TRANSPOSITION_H_
 
+#include <map>
+#include <string>
 #include "evaluate.h"
+#include "move.h"
 #include "pokemon.h"
 #include "state.h"
 #include "team.h"
