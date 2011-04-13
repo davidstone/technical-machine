@@ -121,10 +121,9 @@ void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::str
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
 
 	bool found = false;
-	for (unsigned char replacement = 0; replacement != team.member.size(); ++replacement) {
-		if (nickname == team.member.at (replacement).nickname) {
+	for (team.replacement = 0; team.replacement != team.member.size(); ++team.replacement) {
+		if (nickname == team.member [team.replacement].nickname) {
 			found = true;
-			team.replacement = replacement;
 			break;
 		}
 	}
@@ -194,10 +193,9 @@ void log_move (Pokemon &member, const std::string &line, const Map &map, const s
 		n = 2;
 	moves_list move_name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 	bool isfound = false;
-	for (std::vector<Move>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
-		if (move_name == it->name) {
+	for (member.move = member.moveset.begin(); member.move != member.moveset.end(); ++member.move) {
+		if (move_name == member.move->name) {
 			isfound = true;
-			member.move = it;
 			break;
 		}
 	}
