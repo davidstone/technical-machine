@@ -192,12 +192,7 @@ void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::str
 		member.spd.iv = 31;
 		member.spd.ev = 0;
 		
-		// Insertion to a vector invalidates all iterators if the insertion causes a reallocation. This corrects that.
-		unsigned n = 0;
-		if (team.member.size() > 0)
-			n = team.active - team.member.begin();
 		team.member.push_back (member);
-		team.active = team.member.begin() + n;
 		team.replacement = team.member.size() - 1;
 		
 		loadpokemon (team, team.member.back());
@@ -220,7 +215,7 @@ void log_move (Pokemon &member, const std::string &line, const Map &map, const s
 		}
 	}
 	if (!isfound) {
-		Move move (move_name, int pp_ups = 3);
+		Move move (move_name, 3);
 		member.moveset.push_back (move);
 		member.move = member.moveset.end() - 1;
 	}

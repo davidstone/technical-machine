@@ -51,7 +51,6 @@ int main (int argc, char* argv[]) {
 
 	while ((ai.member.size() > 1 or ai.active->hp.stat > 0) and (foe.member.size() > 1 or foe.active->hp.stat > 0)) {
 		Team predicted = foe;
-		reset_iterators_pokemon (predicted);
 		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);
 		std::cout << "======================\nEvaluating...\n";

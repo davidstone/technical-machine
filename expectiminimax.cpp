@@ -252,8 +252,6 @@ long tree4 (Team first, Team last, Weather weather, int depth, const score_varia
 
 
 long tree5 (Team first, Team last, Weather weather, const Random &random, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
-	reset_iterators_pokemon (first);
-	reset_iterators_pokemon (last);
 	endofturn (first, last, weather, random);
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);			// 0 if both Pokemon die (a draw), VICTORY if the AI wins, -VICTORY if the foe wins
@@ -302,8 +300,6 @@ long tree6 (Team &first, Team &last, const Weather &weather, int depth, const sc
 }
 
 long tree7 (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
-	reset_iterators_pokemon (first);
-	reset_iterators_pokemon (last);
 	if (first.active->hp.stat == 0)
 		switchpokemon (first, *last.active, weather);
 	if (last.active->hp.stat == 0)

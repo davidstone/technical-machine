@@ -28,18 +28,7 @@
 namespace technicalmachine {
 
 void reset_iterators (Team &team) {
-	reset_iterators_pokemon (team);
 	reset_iterators_move (*team.active);
-}
-
-void reset_iterators_pokemon (Team &team) {
-	const species name = team.active->name;
-	for (std::vector<Pokemon>::iterator it = team.member.begin(); ; ++it) {
-		if (it->name == name) {
-			team.active = it;
-			break;
-		}
-	}
 }
 
 void reset_iterators_move (Pokemon &member) {
@@ -64,7 +53,6 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 			pokelabteam (team, name, map);
 		for (std::vector<Pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it)
 			loadpokemon (team, *it);
-		team.active = team.member.begin();
 	}
 }
 

@@ -36,7 +36,6 @@ void initialize (Team &ai, Team &foe, Map &map, int detailed [][7]) {
 	}
 	
 	loadteam (ai, "teams/" + ai_file, map, detailed);
-	ai.active = ai.member.begin();
 
 	loadteam (foe, "", map, detailed);
 }

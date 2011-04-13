@@ -19,10 +19,34 @@
 
 namespace technicalmachine {
 
+template <class T>
+class Active {
+	std::vector<T>& v;
+	public:
+		unsigned char index;
+		Active (std::vector<T> &vec) :
+			v (vec),
+			index (0)
+			{}
+		T * operator-> () {
+			return &v [index];
+		}
+		T const * operator->() const {
+			return &v [index];
+		}
+		T & operator*() {
+			return v [index];
+		}
+		T const & operator*() const {
+			return v [index];
+		}
+};
+
 struct Team {
 	std::string player;						// The player's name
 	std::vector<Pokemon> member;			// All Pokemon on the team
-	std::vector<Pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
+//	std::vector<Pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
+	Active<Pokemon> active;
 	
 //	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
 	char counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
@@ -54,10 +78,11 @@ struct Team {
 			if (this->member.at (n) != other.member.at (n))
 				return false;
 		}
-		return this->active->name == other.active->name and this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;
+		return /*this->active->name == other.active->name and */this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;
 	}
 	
 	Team (bool isme) :
+		active (member),
 		counter (0),
 
 		light_screen (0),
@@ -87,7 +112,6 @@ void poteam (Team &team, const std::string &name);
 void popokemon (Team &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
 unsigned poconverter (const std::string &data, const std::string &end, const std::string &line);
 void reset_iterators (Team &team);
-void reset_iterators_pokemon (Team &team);
 void reset_iterators_move (Pokemon &member);
 
 }

@@ -1440,13 +1440,11 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		if (user.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
 			return;
 		
-		// Deleting from a vector invalidates all iterators at or beyond the point deleted. This makes sure I send in the right Pokemon.
-		unsigned n = user.active - user.member.begin();
-		user.member.erase (user.active);
-		if (n > user.replacement)
-			user.active = user.member.begin() + user.replacement;
+		user.member.erase (user.member.begin() + user.active.index);
+		if (user.active.index > user.replacement)
+			user.active.index = user.replacement;
 		else
-			user.active = user.member.begin() + user.replacement - 1;
+			user.active.index = user.replacement - 1;
 		for (std::vector<Pokemon>::iterator active = user.member.begin(); active != user.member.end(); ++active)
 			active->moveset.pop_back();		// You cannot switch to a fainted Pokemon
 	}
@@ -1458,7 +1456,7 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		reset_variables (*user.active);
 	
 		// Change the active Pokemon to the one switching in.
-		user.active = user.member.begin() + user.replacement;
+		user.active.index = user.replacement;
 	}
 
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {

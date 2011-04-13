@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-void hitpoints (Pokemon &member);
+int hitpoints (Pokemon &member);
 void attack (Pokemon &member, const Weather &weather);
 void defense (const Pokemon &attacker, Pokemon &defender, const Weather &weather);
 void speed (Team &team, const Weather &weather);
