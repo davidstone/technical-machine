@@ -19,6 +19,7 @@
 #include "pokemon.h"
 #include "simple.h"
 #include "statfunction.h"
+#include "switch.h"
 #include "team.h"
 #include "transposition.h"
 #include "type.h"

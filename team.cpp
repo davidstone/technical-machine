@@ -21,6 +21,7 @@
 #include "pokemon.h"
 #include "stat.h"
 #include "statfunction.h"
+#include "switch.h"
 #include "team.h"
 #include "teampredictor.h"
 #include "type.h"

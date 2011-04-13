@@ -1,4 +1,4 @@
-aiobjects = ai.o ability.o analyze_logs.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o team.o teampredictor.o weather.o
+aiobjects = ai.o ability.o analyze_logs.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o switch.o team.o teampredictor.o weather.o
 
 predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o simple.o stat.o status.o team.o teampredictor.o weather.o
 
@@ -49,7 +49,7 @@ ai.o: ai.cpp ai.h move.h type.h movefunction.h pokemon.h ability.h \
  evaluate.h simple.h state.h
 analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
  gender.h item.h move.h type.h species.h stat.h status.h team.h weather.h \
- movefunction.h
+ movefunction.h switch.h
 analyze_logs_main.o: analyze_logs_main.cpp analyze_logs.h pokemon.h \
  ability.h gender.h item.h move.h type.h stat.h status.h team.h \
  movefunction.h weather.h
@@ -67,12 +67,12 @@ evaluate.o: evaluate.cpp evaluate.h move.h type.h pokemon.h ability.h \
 expectiminimax.o: expectiminimax.cpp expectiminimax.h evaluate.h move.h \
  type.h pokemon.h ability.h gender.h item.h species.h stat.h status.h \
  simple.h weather.h team.h state.h endofturn.h movefunction.h \
- statfunction.h transposition.h
+ statfunction.h transposition.h switch.h
 gender.o: gender.cpp gender.h
 item.o: item.cpp item.h
 move.o: move.cpp move.h type.h movefunction.h pokemon.h ability.h \
  gender.h item.h species.h stat.h status.h team.h weather.h damage.h \
- simple.h statfunction.h statusfunction.h
+ simple.h statfunction.h statusfunction.h switch.h
 pokemon.o: pokemon.cpp movefunction.h move.h type.h pokemon.h ability.h \
  gender.h item.h species.h stat.h status.h team.h weather.h \
  statfunction.h
@@ -91,9 +91,12 @@ stat.o: stat.cpp ability.h item.h move.h type.h pokemon.h gender.h \
  species.h stat.h status.h simple.h weather.h statfunction.h team.h
 status.o: status.cpp pokemon.h ability.h gender.h item.h move.h type.h \
  species.h stat.h status.h simple.h weather.h statusfunction.h
+switch.o: switch.cpp pokemon.h ability.h active.h gender.h item.h move.h \
+ type.h species.h stat.h status.h simple.h weather.h statfunction.h \
+ team.h statusfunction.h switch.h
 team.o: team.cpp ability.h gender.h item.h move.h type.h movefunction.h \
  pokemon.h species.h stat.h status.h team.h weather.h statfunction.h \
- teampredictor.h
+ teampredictor.h switch.h
 teampredictor.o: teampredictor.cpp pokemon.h ability.h gender.h item.h \
  move.h type.h species.h stat.h status.h team.h teampredictor.h
 transposition.o: transposition.cpp expectiminimax.h evaluate.h move.h \
