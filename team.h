@@ -15,37 +15,14 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "active.h"
 #include "pokemon.h"
 
 namespace technicalmachine {
 
-template <class T>
-class Active {
-	std::vector<T>& v;
-	public:
-		unsigned char index;
-		Active (std::vector<T> &vec) :
-			v (vec),
-			index (0)
-			{}
-		T * operator-> () {
-			return &v [index];
-		}
-		T const * operator->() const {
-			return &v [index];
-		}
-		T & operator*() {
-			return v [index];
-		}
-		T const & operator*() const {
-			return v [index];
-		}
-};
-
 struct Team {
 	std::string player;						// The player's name
 	std::vector<Pokemon> member;			// All Pokemon on the team
-//	std::vector<Pokemon>::iterator active;	// An iterator to the Pokemon that is currently out
 	Active<Pokemon> active;
 	
 //	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight

@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include "ability.h"
+#include "active.h"
 #include "gender.h"
 #include "item.h"
 #include "move.h"
@@ -38,6 +39,7 @@ struct Pokemon {
 	Vanish vanish;
 	std::vector<Move> moveset;
 	std::vector<Move>::iterator move;			// The move currently being used
+//	Active<Move> move;
 	Stat hp;
 	Stat atk;
 	Stat def;

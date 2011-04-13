@@ -172,25 +172,12 @@ void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::str
 		member.gender = gender;
 
 		member.nickname = nickname;
-		member.happiness = 255;
 		member.item = END_ITEM;
 		member.ability = END_ABILITY;
 
 		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
 
 		member.nature = HARDY;
-		member.hp.iv = 31;
-		member.hp.ev = 0;
-		member.atk.iv = 31;
-		member.atk.ev = 0;
-		member.def.iv = 31;
-		member.def.ev = 0;
-		member.spe.iv = 31;
-		member.spe.ev = 0;
-		member.spa.iv = 31;
-		member.spa.ev = 0;
-		member.spd.iv = 31;
-		member.spd.ev = 0;
 		
 		team.member.push_back (member);
 		team.replacement = team.member.size() - 1;

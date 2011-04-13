@@ -44,10 +44,8 @@ int main (int argc, char* argv[]) {
 	Team* last;
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
 	first->active->moved = false;
-	first->active->move = first->active->moveset.begin();
 
 	last->active->moved = false;
-	last->active->move = last->active->moveset.begin();
 
 	while ((ai.member.size() > 1 or ai.active->hp.stat > 0) and (foe.member.size() > 1 or foe.active->hp.stat > 0)) {
 		Team predicted = foe;

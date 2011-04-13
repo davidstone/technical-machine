@@ -11,6 +11,7 @@
 
 #include <map>
 #include <string>
+#include "active.h"
 #include "movefunction.h"
 #include "pokemon.h"
 #include "species.h"
@@ -25,6 +26,8 @@ Pokemon::Pokemon (const species &member) :
 	type1 (get_pokemon_type [name][0]),
 	type2 (get_pokemon_type [name][1]),
 	vanish (LANDED),
+	move (moveset.begin()),
+//	move (moveset),
 	hp (name, HP),
 	atk (name, ATK),
 	def (name, DEF),
@@ -73,6 +76,7 @@ Pokemon::Pokemon (const species &member) :
 	torment (false),
 	trapped (false),
 	water_sport (false),
+	happiness (255),
 	accuracy (0),
 	evasion (0) {
 	hp.max = hitpoints (*this);
