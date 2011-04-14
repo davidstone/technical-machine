@@ -1140,5 +1140,7 @@ struct Map {
 	Map ();
 };
 
+void reset_iterators_move (Pokemon &member);
+
 }
 #endif

@@ -17,6 +17,7 @@
 #include "switch.h"
 #include "team.h"
 #include "weather.h"
+#include <iostream>
 
 namespace technicalmachine {
 

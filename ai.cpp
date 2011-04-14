@@ -44,7 +44,6 @@ int main (int argc, char* argv[]) {
 	Team* last;
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
 	first->active->moved = false;
-
 	last->active->moved = false;
 
 	while ((ai.active.member.size() > 1 or ai.active->hp.stat > 0) and (foe.active.member.size() > 1 or foe.active->hp.stat > 0)) {
@@ -52,32 +51,16 @@ int main (int argc, char* argv[]) {
 		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);
 		for (std::vector<Pokemon>::const_iterator active = predicted.active.member.begin(); active != predicted.active.member.end(); ++active) {
-			std::cout << pokemon_name [active->name] + "\n";
-			for (std::vector<Move>::const_iterator move = active->moveset.begin(); move->name != STRUGGLE; ++move)
+			std::cout << pokemon_name [active->name] + " @ " + item_name [active->item] + "\n";
+			for (std::vector<Move>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
 				std::cout << "\t" + move_name [move->name] + "\n";
 		}
-		std::cout << "======================\nEvaluating...\n";
 
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
 
-		if (SWITCH1 <= best_move and best_move <= SWITCH6)
-			std::cout << "Switch to " << pokemon_name [ai.active.member [best_move - SWITCH1].name];
-
-		else
-			std::cout << "Use " << move_name [best_move];
-		if (depth == -1) {
-			long double probability = 100.0 * static_cast <long double> (score + VICTORY) / static_cast <long double> (2 * VICTORY);
-			std::cout << " for ";
-			if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
-				std::cout << "an ";
-			else
-				std::cout << "a ";
-			std::cout << probability << "% chance to win.\n";
-		}
-		else
-			std::cout << " for a minimum expected score of " << score << "\n";
-
+		first = NULL;
+		last = NULL;
 		analyze_turn (ai, foe, first, last, weather, map);
 	}
 

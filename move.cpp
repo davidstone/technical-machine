@@ -29,6 +29,7 @@ Move::Move (moves_list move, int pp_ups) :
 	type (move_type [name]),
 	basepower (base_power [name]),
 	physical (is_physical [name]),
+	disable (0),
 	pp_max (get_pp [name] * (5 + pp_ups) / 5),
 	pp (pp_max),
 	priority (move_priority (name)),
@@ -157,7 +158,6 @@ void blockselection (Team &user, const Pokemon &target, const Weather &weather) 
 }
 
 void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather, bool hitself) {
-	user.move->execute = true;
 	if (user.hp.stat == 0 or (target.hp.stat == 0 and false))
 		user.move->execute = false;
 	else if (user.move->pp_max != -1 or user.move->name == STRUGGLE) {
@@ -224,10 +224,12 @@ bool block2 (const Pokemon &user, const Weather &weather) {		// Things that both
 	return false;
 }
 
-int usemove (Team &user, Team &target, Weather &weather, bool hitself, int old_damage) {
+int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log, int old_damage) {
 	int damage = 0;
 	user.active->destiny_bond = false;
-	blockexecution (*user.active, *target.active, weather, hitself);
+	user.active->move->execute = true;
+	if (!log)
+		blockexecution (*user.active, *target.active, weather, hitself);
 	if (user.active->move->execute) {
 		lower_pp (*user.active, *target.active);
 //		if (ASSIST == user.active->move->name or COPYCAT == user.active->move->name or ME_FIRST == user.active->move->name or METRONOME_MOVE == user.active->move->name or MIRROR_MOVE == user.active->move->name or SLEEP_TALK == user.active->move->name)

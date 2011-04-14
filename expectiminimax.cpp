@@ -28,19 +28,34 @@
 namespace technicalmachine {
 
 moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, long &score) {
+	std::cout << "======================\nEvaluating...\n";
 	moves_list best_move = END_MOVE;
 	std::string output = "";
 	std::map<long, State> transposition_table;
 	score = tree1 (ai, foe, weather, depth, sv, best_move, output, transposition_table, true);
 
 //	std::cout << output + "\n";
+	if (SWITCH1 <= best_move and best_move <= SWITCH6)
+		std::cout << "Switch to " << pokemon_name [ai.active.member [best_move - SWITCH1].name];
+	else
+		std::cout << "Use " << move_name [best_move];
+	if (depth == -1) {
+		long double probability = 100.0 * static_cast <long double> (score + VICTORY) / static_cast <long double> (2 * VICTORY);
+		std::cout << " for ";
+		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
+			std::cout << "an ";
+		else
+			std::cout << "a ";
+		std::cout << probability << "% chance to win.\n";
+	}
+	else
+		std::cout << " for a minimum expected score of " << score << "\n";
+
 	return best_move;
 }
 
 
 long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table, bool first) {
-	reset_iterators (ai);		// I'm not sure why these two lines are needed when I'm passing both teams by reference instead of value
-	reset_iterators (foe);
 	if (depth != -1)
 		--depth;
 	
@@ -176,8 +191,8 @@ long tree3 (const Team &ai, const Team &foe, const Weather &weather, const int &
 
 
 long tree4 (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &old_move, std::string &output, std::map<long, State> &transposition_table) {
-	reset_iterators (first);
-	reset_iterators (last);
+	reset_iterators_move (*first.active);
+	reset_iterators_move (*last.active);
 
 	// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
 	moves_list best_move = old_move;
@@ -190,7 +205,7 @@ long tree4 (Team first, Team last, Weather weather, int depth, const score_varia
 	// win() already corrects for whether it's the AI or the foe that is passed as first vs. last
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);			// 0 if both Pokemon die (a draw), VICTORY if the AI wins, -VICTORY if the foe wins
-	usemove (last, first, weather, hitself, old_damage);
+	usemove (last, first, weather, hitself, false, old_damage);
 
 //	std::cout << "Remaining depth is " << depth << " as " << pokemon_name [last.active->name] << " uses " << move_name [last.active->move->name] << " leaving the foe at " << first.active->hp.stat << '\n';
 	if (win (first) != 0 or win (last) != 0)

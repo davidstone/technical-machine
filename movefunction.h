@@ -22,7 +22,7 @@
 namespace technicalmachine {
 
 int move_priority (const moves_list &name);
-int usemove (Team &user, Team &target, Weather &weather, bool hitself, int old_damage = 0);
+int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log = false, int old_damage = 0);
 int usemove2 (Team &user, Team &target, Weather &weather, int old_damage);
 void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather, bool hitself);
 void blockselection (Team &user, const Pokemon &target, const Weather &weather);

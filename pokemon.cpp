@@ -37,6 +37,7 @@ Pokemon::Pokemon (const species &member) :
 	bide_damage (0),
 	bide (0),
 	confused (0),
+	embargo (0),
 	encore (0),
 	heal_block (0),
 	magnet_rise (0),
@@ -626,6 +627,16 @@ Map::Map() {
 	set_item_map (item);
 	set_nature_map (nature);
 	set_move_map (move);
+}
+
+void reset_iterators_move (Pokemon &member) {
+	const moves_list name = member.move->name;
+	for (std::vector<Move>::iterator it = member.moveset.begin(); ; ++it) {
+		if (it->name == name) {
+			member.move = it;
+			break;
+		}
+	}
 }
 
 }

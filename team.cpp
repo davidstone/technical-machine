@@ -28,20 +28,6 @@
 
 namespace technicalmachine {
 
-void reset_iterators (Team &team) {
-	reset_iterators_move (*team.active);
-}
-
-void reset_iterators_move (Pokemon &member) {
-	const moves_list name = member.move->name;
-	for (std::vector<Move>::iterator it = member.moveset.begin(); ; ++it) {
-		if (it->name == name) {
-			member.move = it;
-			break;
-		}
-	}
-}
-
 // Warning: Almost everything you see here is a hack.
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
@@ -60,46 +46,55 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 void loadpokemon (Team &team, Pokemon &member) {
 	member.hp.max = hitpoints (member);
 	member.hp.stat = member.hp.max;
-	{
-	Move move (STRUGGLE, 0);
-	member.moveset.push_back (move);
+	bool struggle = false;
+	moves_list switchn = static_cast<moves_list> (SWITCH1 - 1);
+	for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+		if (it->name == STRUGGLE)
+			struggle = true;
+		if (SWITCH1 <= it->name and it->name <= SWITCH6)
+			switchn = it->name;
+	}
+	if (!struggle) {
+		Move move (STRUGGLE, 0);
+		member.moveset.push_back (move);
 	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
 	if (team.active.member.size() > 1) {
-		{
-		Move move (SWITCH1, 0);
-		member.moveset.push_back (move);
+		if (switchn < SWITCH1) {
+			Move move (SWITCH1, 0);
+			member.moveset.push_back (move);
 		}
-		{
-		Move move (SWITCH2, 0);
-		member.moveset.push_back (move);
+		if (switchn < SWITCH2) {
+			Move move (SWITCH2, 0);
+			member.moveset.push_back (move);
 		}
 		if (team.active.member.size() > 2) {
-			{
-			Move move (SWITCH3, 0);
-			member.moveset.push_back (move);
+			if (switchn < SWITCH3) {
+				Move move (SWITCH3, 0);
+				member.moveset.push_back (move);
 			}
 			if (team.active.member.size() > 3) {
-				{
-				Move move (SWITCH4, 0);
-				member.moveset.push_back (move);
+				if (switchn < SWITCH4) {
+					Move move (SWITCH4, 0);
+					member.moveset.push_back (move);
 				}
 				if (team.active.member.size() > 4) {
-					{
-					Move move (SWITCH5, 0);
-					member.moveset.push_back (move);
+					if (switchn < SWITCH5) {
+						Move move (SWITCH5, 0);
+						member.moveset.push_back (move);
 					}
 					if (team.active.member.size() > 5) {
-						Move move (SWITCH6, 0);
-						member.moveset.push_back (move);
+						if (switchn < SWITCH6) {
+							Move move (SWITCH6, 0);
+							member.moveset.push_back (move);
+						}
 					}
 				}
 			}
 		}
 	}
 	member.move = member.moveset.begin();
-	reset_variables (member);
 }
 
 unsigned team_size (const std::string &name) {

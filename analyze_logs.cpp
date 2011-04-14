@@ -194,12 +194,11 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	}
 	if (!isfound) {
 		Move move (move_name, 3);
-		user.active->moveset.push_back (move);
-		user.active->move = user.active->moveset.end() - 1;
+		user.active->moveset.insert (user.active->moveset.begin(), move);
+		user.active->move = user.active->moveset.begin();
 	}
 	bool hitself = false;
-	int old_damage = 0;
- 	usemove (user, target, weather, hitself, old_damage);
+ 	usemove (user, target, weather, hitself, true);
 }
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map) {
