@@ -89,7 +89,7 @@ int move_priority (const moves_list &name) {
 	int priority;
 	if (SWITCH1 <= name and name <= SWITCH6)
 		priority = 6;
-	if (name == HELPING_HAND)
+	else if (name == HELPING_HAND)
 		priority = 5;
 	else if (name == MAGIC_COAT or name == SNATCH)
 		priority = 4;
@@ -116,7 +116,7 @@ int move_priority (const moves_list &name) {
 	return priority;
 }
 
-void blockselection (Team &user, const Team &target, const Weather &weather) {
+void blockselection (Team &user, const Pokemon &target, const Weather &weather) {
 	user.active->move->selectable = true;
 	if (user.active->bide != 0) {
 		if (user.active->move->name != BIDE)
@@ -124,7 +124,7 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 	}
 	else {
 		if (user.active->move->pp_max == -1 and user.active->move->name != STRUGGLE) {
-			if ((((target.active->ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.active->ability == ARENA_TRAP and grounded (*user.active, weather)) or (target.active->ability == MAGNET_PULL and istype (*user.active, STEEL)) or user.active->trapped or user.active->partial_trap != 0) and user.active->item != SHED_SHELL)
+			if ((((target.ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.ability == ARENA_TRAP and grounded (*user.active, weather)) or (target.ability == MAGNET_PULL and istype (*user.active, STEEL)) or user.active->trapped or user.active->partial_trap != 0) and user.active->item != SHED_SHELL)
 			or ((user.active.member.front().name == user.active->name and user.active->move->name == SWITCH1)
 			// I'm relying on lazy evaluation for teams smaller than 6 to prevent attempting to read a Pokemon that doesn't exist
 			 or (user.active.member.size() > 1 and user.active.member [1].name == user.active->name and user.active->move->name == SWITCH2)
@@ -143,8 +143,8 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 				}
 			}
 		}
-		else if ((block1 (user, target))
-		 or (block2 (user, weather))
+		else if ((block1 (*user.active, target))
+		 or (block2 (*user.active, weather))
 		 or (user.active->torment and 0 != user.active->move->times_used))
 			user.active->move->selectable = false;
 		else if (0 != user.active->encore or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
@@ -156,70 +156,70 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 	}
 }
 
-void blockexecution (Team &user, const Team &target, const Weather &weather, bool hitself) {
-	user.active->move->execute = true;
-	if (user.active->hp.stat == 0 or (target.active->hp.stat == 0 and false))
-		user.active->move->execute = false;
-	else if (user.active->move->pp_max != -1 or user.active->move->name == STRUGGLE) {
-		if (FREEZE == user.active->status and (FLAME_WHEEL != user.active->move->name and SACRED_FIRE != user.active->move->name))
-			user.active->move->execute = false;
+void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather, bool hitself) {
+	user.move->execute = true;
+	if (user.hp.stat == 0 or (target.hp.stat == 0 and false))
+		user.move->execute = false;
+	else if (user.move->pp_max != -1 or user.move->name == STRUGGLE) {
+		if (FREEZE == user.status and (FLAME_WHEEL != user.move->name and SACRED_FIRE != user.move->name))
+			user.move->execute = false;
 
-		else if (SLEEP == user.active->status) {
-			if (EARLY_BIRD == user.active->ability and user.active->sleep >= 2)
-				user.active->sleep -= 2;
+		else if (SLEEP == user.status) {
+			if (EARLY_BIRD == user.ability and user.sleep >= 2)
+				user.sleep -= 2;
 			else
-				--user.active->sleep;
-			if (0 == user.active->sleep)
-				user.active->status = NO_STATUS;
-			else if (SLEEP_TALK != user.active->move->name and SNORE != user.active->move->name)
-				user.active->move->execute = false;
+				--user.sleep;
+			if (0 == user.sleep)
+				user.status = NO_STATUS;
+			else if (SLEEP_TALK != user.move->name and SNORE != user.move->name)
+				user.move->execute = false;
 		}
 
 		if (block1 (user, target)
-		 or (TRUANT == user.active->ability and user.active->loaf))
-			user.active->move->execute = false;
+		 or (TRUANT == user.ability and user.loaf))
+			user.move->execute = false;
 
-		if (user.active->move->execute and 0 != user.active->confused) {
+		if (user.move->execute and 0 != user.confused) {
 			if (hitself) {
 				// fix
-				user.active->move->execute = false;
+				user.move->execute = false;
 			}
 			else
-				--user.active->confused;
+				--user.confused;
 		}
-		if (user.active->move->execute and user.active->flinch) {
-			if (STEADFAST == user.active->ability)
-				statboost (user.active->spe.stage, 1);
-			user.active->move->execute = false;
+		if (user.move->execute and user.flinch) {
+			if (STEADFAST == user.ability)
+				statboost (user.spe.stage, 1);
+			user.move->execute = false;
 		}
 	
 		if (block2 (user, weather))
-			user.active->move->execute = false;
+			user.move->execute = false;
 	}
 }
 
-bool block1 (const Team &user, const Team &target) {		// Things that both block selection and block execution in between sleep and confusion
-	if ((0 == user.active->move->pp)
-	 or (0 != user.active->move->disable)
-	 or (0 != user.active->heal_block and (HEAL_ORDER == user.active->move->name or MILK_DRINK == user.active->move->name or MOONLIGHT == user.active->move->name or MORNING_SUN == user.active->move->name or RECOVER == user.active->move->name or REST == user.active->move->name or ROOST == user.active->move->name or SLACK_OFF == user.active->move->name or SOFTBOILED == user.active->move->name or SWALLOW == user.active->move->name or SYNTHESIS == user.active->move->name or WISH == user.active->move->name))
-	  or (imprison (user, target)))
+bool block1 (const Pokemon &user, const Pokemon &target) {		// Things that both block selection and block execution in between sleep and confusion
+	if ((0 == user.move->pp)
+	 or (0 != user.move->disable)
+	 or (0 != user.heal_block and (HEAL_ORDER == user.move->name or MILK_DRINK == user.move->name or MOONLIGHT == user.move->name or MORNING_SUN == user.move->name or RECOVER == user.move->name or REST == user.move->name or ROOST == user.move->name or SLACK_OFF == user.move->name or SOFTBOILED == user.move->name or SWALLOW == user.move->name or SYNTHESIS == user.move->name or WISH == user.move->name))
+	  or (imprison (*user.move, target)))
 		return true;
 	return false;
 }
 
-bool imprison (const Team &user, const Team &target) {
-	if (target.active->imprison) {
-		for (std::vector<Move>::const_iterator it = target.active->moveset.begin(); it != target.active->moveset.end(); ++it) {
-			if (user.active->move->name == it->name)
+bool imprison (const Move &move, const Pokemon &target) {
+	if (target.imprison) {
+		for (std::vector<Move>::const_iterator it = target.moveset.begin(); it != target.moveset.end(); ++it) {
+			if (move.name == it->name)
 				return true;
 		}
 	}
 	return false;
 }
 
-bool block2 (const Team &user, const Weather &weather) {		// Things that both block selection and block execution after flinching
-	if ((0 != user.active->taunt and 0 == user.active->move->basepower)
-	 or (0 < weather.gravity and (BOUNCE == user.active->move->name or FLY == user.active->move->name or HI_JUMP_KICK == user.active->move->name or JUMP_KICK == user.active->move->name or MAGNET_RISE == user.active->move->name or SPLASH == user.active->move->name)))
+bool block2 (const Pokemon &user, const Weather &weather) {		// Things that both block selection and block execution after flinching
+	if ((0 != user.taunt and 0 == user.move->basepower)
+	 or (0 < weather.gravity and (BOUNCE == user.move->name or FLY == user.move->name or HI_JUMP_KICK == user.move->name or JUMP_KICK == user.move->name or MAGNET_RISE == user.move->name or SPLASH == user.move->name)))
 		return true;
 	return false;
 }
@@ -227,20 +227,14 @@ bool block2 (const Team &user, const Weather &weather) {		// Things that both bl
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, int old_damage) {
 	int damage = 0;
 	user.active->destiny_bond = false;
-	blockexecution (user, target, weather, hitself);
+	blockexecution (*user.active, *target.active, weather, hitself);
 	if (user.active->move->execute) {
-		if (user.active->move->pp != -1 and user.active->bide == 0) {
-			if (target.active->ability == PRESSURE and 2 <= user.active->move->pp)
-				user.active->move->pp -= 2;
-			else
-				--user.active->move->pp;
-		}
-
+		lower_pp (*user.active, *target.active);
 //		if (ASSIST == user.active->move->name or COPYCAT == user.active->move->name or ME_FIRST == user.active->move->name or METRONOME_MOVE == user.active->move->name or MIRROR_MOVE == user.active->move->name or SLEEP_TALK == user.active->move->name)
 //			usemove2 (user, target, move2, weather);		// ???
 //		 (NATURE_POWER == user.active->move->name)
 //		else
-			damage = usemove2 (user, target, weather, old_damage);
+		damage = usemove2 (user, target, weather, old_damage);
 		++user.active->move->times_used;
 	}
 	return damage;
@@ -867,6 +861,16 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 		target.active->hp.stat = 0;
 	return damage;
 }
+
+void lower_pp (Pokemon &user, const Pokemon &target) {
+	if (user.move->pp != -1 and user.bide == 0) {
+		if (target.ability == PRESSURE and 2 <= user.move->pp)
+			user.move->pp -= 2;
+		else
+			--user.move->pp;
+	}
+}
+
 
 void set_move_map (std::map <std::string, moves_list> &moves_map) {
 	moves_map["Absorb"] = ABSORB;

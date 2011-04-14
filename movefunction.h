@@ -24,11 +24,12 @@ namespace technicalmachine {
 int move_priority (const moves_list &name);
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, int old_damage = 0);
 int usemove2 (Team &user, Team &target, Weather &weather, int old_damage);
-void blockexecution (Team &user, const Team &target, const Weather &weather, bool hitself);
-void blockselection (Team &user, const Team &target, const Weather &weather);
-bool block1 (const Team &user, const Team &target);
-bool block2 (const Team &user, const Weather &weather);
-bool imprison (const Team &user, const Team &target);
+void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather, bool hitself);
+void blockselection (Team &user, const Pokemon &target, const Weather &weather);
+bool block1 (const Pokemon &user, const Pokemon &target);
+bool block2 (const Pokemon &user, const Weather &weather);
+bool imprison (const Move &move, const Pokemon &target);
+void lower_pp (Pokemon &user, const Pokemon &target);
 void set_move_map (std::map <std::string, moves_list> &moves_map);
 
 }

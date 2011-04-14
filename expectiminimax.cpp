@@ -59,7 +59,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
 		if (first)
 			std::cout << "Evaluating " << move_name [ai.active->move->name] << '\n';
-		blockselection (ai, foe, weather);
+		blockselection (ai, *foe.active, weather);
 		if (ai.active->move->selectable) {
 			if (best_move == END_MOVE)
 				best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
@@ -67,7 +67,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 			for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
 				if (first)
 					std::cout << "Evaluating the foe's " << move_name [foe.active->move->name] << '\n';
-				blockselection (foe, ai, weather);
+				blockselection (foe, *ai.active, weather);
 				if (foe.active->move->selectable) {
 					long score = tree2 (ai, foe, weather, depth, sv, best_move, output, transposition_table);
 					if (beta >= score) {	// Test for equality to make sure a move is the foe's best move
