@@ -18,16 +18,15 @@
 #include "team.h"
 #include "teampredictor.h"
 
+#include <iostream>
+
 namespace technicalmachine {
 
 void overall_stats (std::vector<double> &overall) {
 	std::ifstream file ("usage.txt");
 	std::string line;
-	getline (file, line);
-	while (!file.eof()) {
+	for (getline (file, line); !file.eof(); getline (file, line))
 		overall.push_back (boost::lexical_cast<double> (line));
-		getline (file, line);
-	}
 	file.close ();
 }
 
@@ -53,8 +52,7 @@ void team_stats (const std::vector<double> &overall, double total, double multip
 
 	std::ifstream file ("teammate.txt");
 	std::string line;
-	getline (file, line);
-	while (!file.eof()) {
+	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t x = line.find ('\t');
 		int member = boost::lexical_cast<int> (line.substr (0, x));
 		size_t y = line.find ('\t', x + 1);
@@ -63,7 +61,6 @@ void team_stats (const std::vector<double> &overall, double total, double multip
 		unaccounted [member] -= boost::lexical_cast<double> (line.substr (y + 1));
 		// multiplier = % used with this Pokemon / % used overall
 		multiplier [member][ally] = (boost::lexical_cast<double> (line.substr (y + 1)) / overall.at (member)) / (overall.at (ally) / total);
-		getline (file, line);
 	}
 	for (unsigned n = 0; n != END_SPECIES; ++n) {
 		if (overall.at (n) == 0) {
@@ -86,11 +83,8 @@ void team_stats (const std::vector<double> &overall, double total, double multip
 void lead_stats (std::vector<double> &lead) {		// Multiplier for Pokemon after you've seen the lead
 	std::ifstream file ("lead.txt");
 	std::string line;
-	getline (file, line);
-	while (!file.eof()) {
+	for (getline (file, line); !file.eof(); getline (file, line))
 		lead.push_back (boost::lexical_cast<double> (line));
-		getline (file, line);
-	}
 }
 
 void detailed_stats (const Map &map, int detailed [][7]) {
@@ -101,8 +95,7 @@ void detailed_stats (const Map &map, int detailed [][7]) {
 	bool item = false;
 	bool nature = false;
 	unsigned move = 0;
-	getline (file, line);
-	while (!file.eof()) {
+	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t x = line.find ('\t');
 		species new_member = map.specie.find (line.substr (0, x))->second;
 		if (old_member != new_member) {
@@ -147,7 +140,6 @@ void detailed_stats (const Map &map, int detailed [][7]) {
 		}
 		if (n != 7)
 			detailed [new_member] [n] = data;
-		getline (file, line);
 	}
 }
 
@@ -164,7 +156,7 @@ void predict (int detailed [][7], Team &team) {
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall.at (n) / total) * lead.at (n));
 
-	for (std::vector<Pokemon>::const_iterator it = team.member.begin(); it != team.member.end(); ++it) {
+	for (std::vector<Pokemon>::const_iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [it->name] [n];
 	}
@@ -172,7 +164,7 @@ void predict (int detailed [][7], Team &team) {
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
-	while (team.member.size() < 6) {
+	while (team.active.member.size() < 6) {
 		double top = 0.0;
 		species name;
 		for (int n = 0; n != END_SPECIES; ++n) {
@@ -182,31 +174,18 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 			}
 		}
 		Pokemon member (name);
-		team.member.push_back (member);
-		if (team.member.size() == 6)
+		team.active.member.push_back (member);
+		if (team.active.member.size() == 6)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [team.member.back().name] [n];
+			estimate.at (n) *= multiplier [team.active.member.back().name] [n];
 	}
-	for (std::vector<Pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it) {
+	for (std::vector<Pokemon>::iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
 		it->level = 100;
 		it->ability = static_cast<abilities> (detailed [it->name] [0]);
 		it->item = static_cast<items> (detailed [it->name] [1]);
 		it->nature = static_cast<natures> (detailed [it->name] [2]);
 		it->gender = GENDERLESS;
-		it->hp.iv = 31;
-		it->atk.iv = 31;
-		it->def.iv = 31;
-		it->spa.iv = 31;
-		it->spd.iv = 31;
-		it->spe.iv = 31;
-		it->hp.ev = 63;
-		it->atk.ev = 0;
-		it->def.ev = 63;
-		it->spa.ev = 0;
-		it->spd.ev = 1;
-		it->spe.ev = 0;
-		it->happiness = 255;
 		predict_move (*it, detailed);
 		loadpokemon (team, *it);
 	}

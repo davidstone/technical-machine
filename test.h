@@ -21,7 +21,7 @@ namespace technicalmachine {
 
 // Checks what all my variables are set to. Helps with debugging.
 
-void test (const teams &team) {
+void test (const Team &team) {
 	if (team.me)
 		std::cout << "---------AI---------\n";
 	else
@@ -67,8 +67,6 @@ void test (const teams &team) {
 		std::cout << "Imprison: " << team.active->imprison << '\n';
 		std::cout << "Ingrain: " << team.active->ingrain << '\n';
 		std::cout << "Item: " << item_name [team.active->item] << '\n';
-		std::cout << "Item Recycle: " << team.active->item_recycle << '\n';
-		std::cout << "Item Unburden: " << team.active->item_unburden << '\n';
 		std::cout << "Leech Seed: " << team.active->leech_seed << '\n';
 		std::cout << "Level: " << static_cast<int> (team.active->level) << '\n';
 		std::cout << "Loaf: " << team.active->loaf << '\n';

@@ -22,9 +22,9 @@ void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 
 void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const std::string &line, const Map &map);
 
-void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1);
+void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1);
 
-void log_move (Pokemon &member, const std::string &line, const Map &map, const std::string &search);
+void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search);
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map);
 

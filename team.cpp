@@ -52,19 +52,21 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 			poteam (team, name);
 		else			// if (name.substr (name.length() - 4) == ".sbt")
 			pokelabteam (team, name, map);
-		for (std::vector<Pokemon>::iterator it = team.member.begin(); it != team.member.end(); ++it)
+		for (std::vector<Pokemon>::iterator it = team.active.member.begin(); it != team.active.member.end(); ++it)
 			loadpokemon (team, *it);
 	}
 }
 
 void loadpokemon (Team &team, Pokemon &member) {
+	member.hp.max = hitpoints (member);
+	member.hp.stat = member.hp.max;
 	{
 	Move move (STRUGGLE, 0);
 	member.moveset.push_back (move);
 	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team.member.size() > 1) {
+	if (team.active.member.size() > 1) {
 		{
 		Move move (SWITCH1, 0);
 		member.moveset.push_back (move);
@@ -73,22 +75,22 @@ void loadpokemon (Team &team, Pokemon &member) {
 		Move move (SWITCH2, 0);
 		member.moveset.push_back (move);
 		}
-		if (team.member.size() > 2) {
+		if (team.active.member.size() > 2) {
 			{
 			Move move (SWITCH3, 0);
 			member.moveset.push_back (move);
 			}
-			if (team.member.size() > 3) {
+			if (team.active.member.size() > 3) {
 				{
 				Move move (SWITCH4, 0);
 				member.moveset.push_back (move);
 				}
-				if (team.member.size() > 4) {
+				if (team.active.member.size() > 4) {
 					{
 					Move move (SWITCH5, 0);
 					member.moveset.push_back (move);
 					}
-					if (team.member.size() > 5) {
+					if (team.active.member.size() > 5) {
 						Move move (SWITCH6, 0);
 						member.moveset.push_back (move);
 					}
@@ -161,7 +163,7 @@ void pokelabpokemon (Team& team, std::ifstream &file, const Map &map) {	// Repla
 	member.spd.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
 	member.spd.ev = boost::lexical_cast <int> (output2) / 4;
 	
-	team.member.push_back (member);
+	team.active.member.push_back (member);
 }
 
 std::string search (std::ifstream &file, std::string &output2, const std::string &data) {
@@ -297,7 +299,7 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 	getline (file, line);
 	member.spe.ev = poconverter ("<EV>", "</EV>", line);
 	if (member.name != END_SPECIES and member.moveset.size() != 0)
-		team.member.push_back (member);
+		team.active.member.push_back (member);
 }
 
 unsigned poconverter (const std::string &data, const std::string &end, const std::string &line) {

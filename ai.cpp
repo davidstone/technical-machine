@@ -47,7 +47,7 @@ int main (int argc, char* argv[]) {
 
 	last->active->moved = false;
 
-	while ((ai.member.size() > 1 or ai.active->hp.stat > 0) and (foe.member.size() > 1 or foe.active->hp.stat > 0)) {
+	while ((ai.active.member.size() > 1 or ai.active->hp.stat > 0) and (foe.active.member.size() > 1 or foe.active->hp.stat > 0)) {
 		Team predicted = foe;
 		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);
@@ -57,7 +57,7 @@ int main (int argc, char* argv[]) {
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
 
 		if (SWITCH1 <= best_move and best_move <= SWITCH6)
-			std::cout << "Switch to " << pokemon_name [ai.member.at (best_move - SWITCH1).name];
+			std::cout << "Switch to " << pokemon_name [ai.active.member [best_move - SWITCH1].name];
 
 		else
 			std::cout << "Use " << move_name [best_move];

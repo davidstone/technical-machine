@@ -19,9 +19,9 @@ namespace technicalmachine {
 
 long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
 	long score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
-	for (std::vector<Pokemon>::const_iterator it = ai.member.begin(); it != ai.member.end(); ++it)
+	for (std::vector<Pokemon>::const_iterator it = ai.active.member.begin(); it != ai.active.member.end(); ++it)
 		score += scorepokemon (*it, ai, foe, weather, sv);
-	for (std::vector<Pokemon>::const_iterator it = foe.member.begin(); it != foe.member.end(); ++it)
+	for (std::vector<Pokemon>::const_iterator it = foe.active.member.begin(); it != foe.active.member.end(); ++it)
 		score -= scorepokemon (*it, foe, ai, weather, sv);
 	return score;
 }
@@ -88,7 +88,7 @@ long scoremove (const Move &move, const Team &ai, const Team &foe, const Weather
 
 
 long int win (const Team &team) {
-	if (team.member.size() == 1 and team.active->hp.stat == 0) {
+	if (team.active.member.size() == 1 and team.active->hp.stat == 0) {
 		if (team.me)
 			return -VICTORY;
 		return VICTORY;

@@ -78,15 +78,15 @@ void reset_variables (Pokemon &member) {
 
 void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
-		if (user.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
+		if (user.active.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
 			return;
 		
-		user.member.erase (user.member.begin() + user.active.index);
+		user.active.member.erase (user.active.member.begin() + user.active.index);
 		if (user.active.index > user.replacement)
 			user.active.index = user.replacement;
 		else
 			user.active.index = user.replacement - 1;
-		for (std::vector<Pokemon>::iterator active = user.member.begin(); active != user.member.end(); ++active)
+		for (std::vector<Pokemon>::iterator active = user.active.member.begin(); active != user.active.member.end(); ++active)
 			active->moveset.pop_back();		// You cannot switch to a fainted Pokemon
 	}
 	else {

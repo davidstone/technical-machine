@@ -125,13 +125,13 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 	else {
 		if (user.active->move->pp_max == -1 and user.active->move->name != STRUGGLE) {
 			if ((((target.active->ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.active->ability == ARENA_TRAP and grounded (*user.active, weather)) or (target.active->ability == MAGNET_PULL and istype (*user.active, STEEL)) or user.active->trapped or user.active->partial_trap != 0) and user.active->item != SHED_SHELL)
-			or ((user.member.at(0).name == user.active->name and user.active->move->name == SWITCH1)
+			or ((user.active.member.front().name == user.active->name and user.active->move->name == SWITCH1)
 			// I'm relying on lazy evaluation for teams smaller than 6 to prevent attempting to read a Pokemon that doesn't exist
-			 or (user.member.size() > 1 and user.member.at(1).name == user.active->name and user.active->move->name == SWITCH2)
-			 or (user.member.size() > 2 and user.member.at(2).name == user.active->name and user.active->move->name == SWITCH3)
-			 or (user.member.size() > 3 and user.member.at(3).name == user.active->name and user.active->move->name == SWITCH4)
-			 or (user.member.size() > 4 and user.member.at(4).name == user.active->name and user.active->move->name == SWITCH5)
-			 or (user.member.size() > 5 and user.member.at(5).name == user.active->name and user.active->move->name == SWITCH6)))	// Can't switch to yourself
+			 or (user.active.member.size() > 1 and user.active.member [1].name == user.active->name and user.active->move->name == SWITCH2)
+			 or (user.active.member.size() > 2 and user.active.member [2].name == user.active->name and user.active->move->name == SWITCH3)
+			 or (user.active.member.size() > 3 and user.active.member [3].name == user.active->name and user.active->move->name == SWITCH4)
+			 or (user.active.member.size() > 4 and user.active.member [4].name == user.active->name and user.active->move->name == SWITCH5)
+			 or (user.active.member.size() > 5 and user.active.member [5].name == user.active->name and user.active->move->name == SWITCH6)))	// Can't switch to yourself
 				user.active->move->selectable = false;
 		}
 		else if (user.active->move->name == STRUGGLE) {
@@ -308,7 +308,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (AQUA_RING == user.active->move->name)
 		user.active->aqua_ring = true;
 	else if (AROMATHERAPY == user.active->move->name) {
-		for (std::vector<Pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it)
+		for (std::vector<Pokemon>::iterator it = user.active.member.begin(); it != user.active.member.end(); ++it)
 			it->status = NO_STATUS;
 	}
 	else if (ATTRACT == user.active->move->name and user.active->gender * target.active->gender == -1)		// male * female == -1
@@ -472,7 +472,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (HEAD_SMASH == user.active->move->name)
 		recoil (*user.active, damage, 2);
 	else if (HEAL_BELL == user.active->move->name) {
-		for (std::vector<Pokemon>::iterator it = user.member.begin(); it != user.member.end(); ++it) {
+		for (std::vector<Pokemon>::iterator it = user.active.member.begin(); it != user.active.member.end(); ++it) {
 			if (it->ability != SOUNDPROOF)
 				it->status = NO_STATUS;
 		}

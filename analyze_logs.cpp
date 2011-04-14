@@ -33,14 +33,10 @@ void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	size_t newline1 = 0;
 	size_t newline2 = input.find ('\n', newline1 + 1);
 	while (newline2 != std::string::npos) {
-		std::string line = input.substr (newline1, newline2);
+		std::string line = input.substr (newline1, newline2 - newline1);
 		analyze_line (ai, foe, first, weather, line, map);
 		newline1 = newline2;
 		newline2 = input.find ('\n', newline1 + 1);
-		while (newline1 + 1 == newline2) {
-			newline1 = newline2;
-			newline2 = input.find ('\n', newline1 + 1);
-		}
 	}
 	if (first->me)
 		last = &foe;
@@ -54,8 +50,6 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 		std::string search = " sent out ";
 		size_t found = line.find (search);
 		if (found != std::string::npos) {
-//			if (ai.player == "")
-//				ai.player = line.substr (0, found);
 			search = ai.player + " sent out ";
 			if (line.substr (0, search.length()) == search) {
 				log_pokemon (ai, *foe.active, weather, line, map, search);
@@ -103,7 +97,7 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 			// nickname used move.
 			search = active->active->nickname + " used ";
 			if (line.find (search) == 0) {		// If the beginning of the line is this
-				log_move (*active->active, line, map, search);
+				log_move (*active, *inactive, weather, line, map, search);
 				if (ordering == NULL)
 					ordering = active;
 			}
@@ -116,95 +110,101 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 	}
 }
 
-void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::string &line, const Map &map, std::string &search1) {
+void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
 
 	bool found = false;
-	for (team.replacement = 0; team.replacement != team.member.size(); ++team.replacement) {
-		if (nickname == team.member [team.replacement].nickname) {
+	for (team.replacement = 0; team.replacement != team.active.member.size(); ++team.replacement) {
+		if (nickname == team.active.member [team.replacement].nickname) {
 			found = true;
 			break;
 		}
 	}
 	if (!found) {
-		search1 = " ";
-		size_t found1 = line.find (search1, found2 + search2.length());
-		std::string search3 = " ?).";
-		size_t found3 = line.find (search3);
+		std::string search3 = " ";
+		size_t found3 = line.find (search3, found2 + search2.length());
+		std::string search4 = " ?).";
+		size_t found4 = line.find (search4);
 		genders gender;
-		if (found3 == std::string::npos) {
-			search3 = " ?)!";
-			found3 = line.find (search3);
-			if (found3 == std::string::npos) {
-				search3 = " ♂).";
-				found3 = line.find (search3);
-				if (found3 == std::string::npos) {
-					search3 = " ♂)!";
-					found3 = line.find (search3);
+		if (found4 == std::string::npos) {
+			search4 = " ?)!";
+			found4 = line.find (search4);
+			if (found4 == std::string::npos) {
+				search4 = " ♂).";
+				found4 = line.find (search4);
+				if (found4 == std::string::npos) {
+					search4 = " ♂)!";
+					found4 = line.find (search4);
 				}
 			}
 		}
-		if (found3 != std::string::npos)
+		if (found4 != std::string::npos)
 			gender = MALE;		// No sexism here!
 		else {
-			search3 = " ♀).";
-			found3 = line.find (search3);
-			if (found3 == std::string::npos) {
-				search3 = " ♀)!";
-				found3 = line.find (search3);
+			search4 = " ♀).";
+			found4 = line.find (search4);
+			if (found4 == std::string::npos) {
+				search4 = " ♀)!";
+				found4 = line.find (search4);
 			}
-			if (found3 != std::string::npos)
+			if (found4 != std::string::npos)
 				gender = FEMALE;
 		}
-		if (found3 == std::string::npos) {
-			search3 = ").";
-			found3 = line.find (search3);
-			if (found3 == std::string::npos) {
-				search3 = " )!";
-				found3 = line.find (search3);
+		if (found4 == std::string::npos) {
+			search4 = ").";
+			found4 = line.find (search4);
+			if (found4 == std::string::npos) {
+				search4 = ")!";
+				found4 = line.find (search4);
 			}
 			gender = GENDERLESS;
 		}
-		species name = map.specie.find (line.substr (found1 + search1.length(), found3 - found1 - search1.length()))->second;
+		std::cout << line << '\n';
+		std::cout << line.substr (found3 + search3.length(), found4 - found3 - search3.length()) << '\n';
+		std::cout << "found4 == " << found4 << " | found3 == " << found3 << '\n';
+		species name = map.specie.find (line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
+		std::cout << pokemon_name [name] << '\n';
 		Pokemon member (name);
 		member.gender = gender;
 
 		member.nickname = nickname;
-		member.item = END_ITEM;
 		member.ability = END_ABILITY;
+		member.item = END_ITEM;
 
-		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found1 - found2 - search2.length()));
+		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 
 		member.nature = HARDY;
+		team.active.member.push_back (member);
+		team.replacement = team.active.member.size() - 1;
 		
-		team.member.push_back (member);
-		team.replacement = team.member.size() - 1;
-		
-		loadpokemon (team, team.member.back());
+		loadpokemon (team, team.active.member.back());
 	}
 	switchpokemon (team, target, weather);
 }
 
-void log_move (Pokemon &member, const std::string &line, const Map &map, const std::string &search) {
+void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
 		n = 2;
 	moves_list move_name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 	bool isfound = false;
-	for (member.move = member.moveset.begin(); member.move != member.moveset.end(); ++member.move) {
-		if (move_name == member.move->name) {
+	for (user.active->move = user.active->moveset.begin(); user.active->move != user.active->moveset.end(); ++user.active->move) {
+		if (move_name == user.active->move->name) {
 			isfound = true;
 			break;
 		}
 	}
 	if (!isfound) {
 		Move move (move_name, 3);
-		member.moveset.push_back (move);
-		member.move = member.moveset.end() - 1;
+		user.active->moveset.push_back (move);
+		user.active->move = user.active->moveset.end() - 1;
 	}
+	bool hitself = false;
+	int old_damage = 0;
+ 	usemove (user, target, weather, hitself, old_damage);
 }
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map) {
@@ -261,8 +261,10 @@ void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, cons
 			active.ability = PRESSURE;
 		else if (active.nickname + "'s Rain Dish restored its health a little!" == line)
 			active.ability = RAIN_DISH;
-		else if (active.nickname + "'s Sand Stream whipped up a sandstorm!" == line)
+		else if (active.nickname + "'s Sand Stream whipped up a sandstorm!" == line) {
 			active.ability = SAND_STREAM;
+			std::cout << "Cool!\n";
+		}
 		else if (active.nickname + " shed its skin!" == line)
 			active.ability = SHED_SKIN;
 		else if (active.nickname + " can't get going due to its Slow Start!" == line)
@@ -325,7 +327,7 @@ void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, cons
 
 void output (std::string &output, const Team &team) {
 	output += team.player + ":\n";
-	for (std::vector<Pokemon>::const_iterator active = team.member.begin(); active != team.member.end(); ++active) {
+	for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
 		output += pokemon_name [active->name];
 		output += " @ " + item_name [active->item];
 		output += " ** " + active->nickname + '\n';

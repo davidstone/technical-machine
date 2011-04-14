@@ -28,12 +28,12 @@ Pokemon::Pokemon (const species &member) :
 	vanish (LANDED),
 	move (moveset.begin()),
 //	move (moveset),
-	hp (name, HP),
-	atk (name, ATK),
-	def (name, DEF),
-	spa (name, SPA),
-	spd (name, SPD),
-	spe (name, SPE),
+	hp (name, level, HP),
+	atk (name, level, ATK),
+	def (name, level, DEF),
+	spa (name, level, SPA),
+	spd (name, level, SPD),
+	spe (name, level, SPE),
 	bide_damage (0),
 	bide (0),
 	confused (0),
@@ -79,8 +79,6 @@ Pokemon::Pokemon (const species &member) :
 	happiness (255),
 	accuracy (0),
 	evasion (0) {
-	hp.max = hitpoints (*this);
-	hp.stat = hp.max;
 	}
 
 

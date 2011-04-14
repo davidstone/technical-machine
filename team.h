@@ -22,7 +22,6 @@ namespace technicalmachine {
 
 struct Team {
 	std::string player;						// The player's name
-	std::vector<Pokemon> member;			// All Pokemon on the team
 	Active<Pokemon> active;
 	
 //	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
@@ -49,17 +48,16 @@ struct Team {
 	const bool me;				// Is this my team?
 	
 	bool operator== (const Team &other) const {
-		if (this->member.size() != other.member.size())
+		if (this->active.member.size() != other.active.member.size())
 			return false;
-		for (size_t n = 0; n != this->member.size(); ++n) {
-			if (this->member.at (n) != other.member.at (n))
+		for (size_t n = 0; n != this->active.member.size(); ++n) {
+			if (this->active.member.at (n) != other.active.member.at (n))
 				return false;
 		}
 		return /*this->active->name == other.active->name and */this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;
 	}
 	
 	Team (bool isme) :
-		active (member),
 		counter (0),
 
 		light_screen (0),

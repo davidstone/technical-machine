@@ -19,7 +19,10 @@
 namespace technicalmachine {
 
 bool istype (const Pokemon &member, types type) {
-	if ((member.type1 == type or member.type2 == type) and (type != FLYING or member.roost == false))
+	if ((member.type1 == type
+	 or member.type2 == type)
+	 and (type != FLYING
+	 or member.roost == false))
 		return true;
 	return false;
 }
@@ -43,12 +46,7 @@ void decrement (char &n) {
 }
 
 bool grounded (const Pokemon &member, const Weather &weather) {
-	if ((!istype (member, FLYING) 
-	and LEVITATE != member.ability 
-	and member.magnet_rise == 0) 
-	or 0 != weather.gravity 
-	or IRON_BALL == member.item 
-	or member.ingrain)
+	if ((!istype (member, FLYING) and LEVITATE != member.ability and member.magnet_rise == 0) or 0 != weather.gravity or IRON_BALL == member.item or member.ingrain)
 		return true;
 	return false;
 }

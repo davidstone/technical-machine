@@ -53,7 +53,6 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	Something to consider as a potential speed up at the cost of some accuracy (but would allow a deeper, thus more accurate, search) would be to pick from all random numbers randomly, rather than seeing the outcome of all of them and averaging it. In other words, do several trials assuming a particular (but different for each trial) set of random numbers are selected, and then average that result. This would give massive reductions to the branching factor, and with a large enough number of trials should be close enough to the average to potentially speed up the program enough to justify the loss in accuracy.
 	*/
 	
-	std::string output2 = "";
 	long alpha = -VICTORY;
 	
 	// Determine which moves can be legally selected
@@ -64,44 +63,33 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 		if (ai.active->move->selectable) {
 			if (best_move == END_MOVE)
 				best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
-			for (ai.replacement = 0; ai.replacement != ai.member.size(); ++ai.replacement) {
-				if (ai.member.at (ai.replacement).name == ai.active->name and ai.member.size() > 1)
-					continue;
-				long beta = VICTORY;
-				for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
-					blockselection (foe, ai, weather);
-					if (foe.active->move->selectable) {
-						for (foe.replacement = 0; foe.replacement != foe.member.size(); ++foe.replacement) {
-							if (foe.member.at (foe.replacement).name == foe.active->name and foe.member.size() > 1)
-								continue;
-							std::string maybe_output;
-							long score = tree2 (ai, foe, weather, depth, sv, best_move, maybe_output, transposition_table);
-							if (beta >= score) {	// Test for equality to make sure a move is the foe's best move
-								beta = score;
-								foe.active->move->score = beta;
-								output2 = pokemon_name [foe.active->name];
-								if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
-									output2 += " switched to " + pokemon_name [foe.member.at (foe.active->move->name - SWITCH1).name];
-								else
-									output2 += " used " + move_name [foe.active->move->name];
-								output = maybe_output;
-							}
-							if (beta <= alpha)	// Alpha-Beta pruning
-								break;
-						}
+			long beta = VICTORY;
+			for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
+				if (first)
+					std::cout << "Evaluating the foe's " << move_name [foe.active->move->name] << '\n';
+				blockselection (foe, ai, weather);
+				if (foe.active->move->selectable) {
+					long score = tree2 (ai, foe, weather, depth, sv, best_move, output, transposition_table);
+					if (beta >= score) {	// Test for equality to make sure a move is the foe's best move
+						beta = score;
+						foe.active->move->score = beta;
+						if (first)
+							std::cout << "Estimated score is " << beta << '\n';
 					}
+					if (beta <= alpha)	// Alpha-Beta pruning
+						break;
 				}
-				// If their best response still isn't as good as their previous best response, then this new move must be better than the previous AI's best move
-				if (beta > alpha) {
-					alpha = beta;
-					ai.active->move->score = alpha;
-					best_move = ai.active->move->name;
-					if (first)
-						std::cout << "Estimated score is " << alpha << '\n';
-				}
-				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
-					break;
 			}
+			// If their best response still isn't as good as their previous best response, then this new move must be better than the previous AI's best move
+			if (beta > alpha) {
+				alpha = beta;
+				ai.active->move->score = alpha;
+				best_move = ai.active->move->name;
+				if (first)
+					std::cout << "Estimated score is " << alpha << '\n';
+			}
+			if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
+				break;
 		}
 	}
 	
@@ -262,15 +250,13 @@ long tree5 (Team first, Team last, Weather weather, const Random &random, int de
 long tree6 (Team &first, Team &last, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
 	long score;
 	if (first.active->hp.stat == 0) {
-		output += "hi";
 		long alpha = -VICTORY;
-		for (first.replacement = 0; first.replacement != first.member.size(); ++first.replacement) {
-			if (first.member.at (first.replacement).name != first.active->name or first.member.size() == 1) {
+		for (first.replacement = 0; first.replacement != first.active.member.size(); ++first.replacement) {
+			if (first.active.member.at (first.replacement).name != first.active->name) {
 				long beta = VICTORY;
-				for (last.replacement = 0; last.replacement != last.member.size(); ++last.replacement) {
-					if (last.member.at (last.replacement).name != last.active->name or last.member.size() == 1) {
+				for (last.replacement = 0; last.replacement != last.active.member.size(); ++last.replacement) {
+					if (last.active.member.at (last.replacement).name != last.active->name or last.active.member.size() == 1) {
 						if (last.active->hp.stat == 0) {
-							output += "hello";
 							beta = std::min (beta, tree7 (first, last, weather, depth, sv, best_move, output, transposition_table));
 							if (beta <= alpha)	// Alpha-Beta pruning
 								break;
@@ -286,10 +272,9 @@ long tree6 (Team &first, Team &last, const Weather &weather, int depth, const sc
 		score = alpha;
 	}
 	else if (last.active->hp.stat == 0) {
-		output += "hola";
 		long beta = VICTORY;
-		for (last.replacement = 0; last.replacement != last.member.size(); ++last.replacement) {
-			if (last.member.at (last.replacement).name != last.active->name or last.member.size() == 1)
+		for (last.replacement = 0; last.replacement != last.active.member.size(); ++last.replacement) {
+			if (last.active.member.at (last.replacement).name != last.active->name)
 				beta = std::min (beta, tree7 (first, last, weather, depth, sv, best_move, output, transposition_table));
 		}
 		score = beta;
@@ -305,7 +290,10 @@ long tree7 (Team first, Team last, Weather weather, int depth, const score_varia
 		switchpokemon (first, *last.active, weather);
 	if (last.active->hp.stat == 0)
 		switchpokemon (last, *first.active, weather);
-	if (first.active->hp.stat != 0 and last.active->hp.stat != 0) {
+	long score;
+	if (first.active->hp.stat == 0 or last.active->hp.stat == 0)
+		score = tree6 (first, last, weather, depth, sv, best_move, output, transposition_table);
+	else {
 		Team* ai;
 		Team* foe;
 		if (first.me) {
@@ -318,11 +306,12 @@ long tree7 (Team first, Team last, Weather weather, int depth, const score_varia
 		}
 	
 		if (depth == 0)
-			return evaluate (*ai, *foe, weather, sv);
-		return tree1 (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
+			score = evaluate (*ai, *foe, weather, sv);
+		else
+			score = tree1 (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
 //		return transposition (*ai, *foe, weather, depth, sv, best_move, output, transposition_table);
 	}
-	return tree6 (first, last, weather, depth, sv, best_move, output, transposition_table);
+	return score;
 }
 
 }
