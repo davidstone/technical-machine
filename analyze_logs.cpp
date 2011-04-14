@@ -35,7 +35,7 @@ void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	while (newline2 != std::string::npos) {
 		std::string line = input.substr (newline1, newline2 - newline1);
 		analyze_line (ai, foe, first, weather, line, map);
-		newline1 = newline2;
+		newline1 = newline2 + 1;
 		newline2 = input.find ('\n', newline1 + 1);
 	}
 	if (first->me)
@@ -46,7 +46,6 @@ void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 
 void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const std::string &line, const Map &map) {
 	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-		// name sent out nickname (lvl x species ?).
 		std::string search = " sent out ";
 		size_t found = line.find (search);
 		if (found != std::string::npos) {
@@ -161,11 +160,7 @@ void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::str
 			}
 			gender = GENDERLESS;
 		}
-		std::cout << line << '\n';
-		std::cout << line.substr (found3 + search3.length(), found4 - found3 - search3.length()) << '\n';
-		std::cout << "found4 == " << found4 << " | found3 == " << found3 << '\n';
 		species name = map.specie.find (line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
-		std::cout << pokemon_name [name] << '\n';
 		Pokemon member (name);
 		member.gender = gender;
 
@@ -261,10 +256,8 @@ void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, cons
 			active.ability = PRESSURE;
 		else if (active.nickname + "'s Rain Dish restored its health a little!" == line)
 			active.ability = RAIN_DISH;
-		else if (active.nickname + "'s Sand Stream whipped up a sandstorm!" == line) {
+		else if (active.nickname + "'s Sand Stream whipped up a sandstorm!" == line)
 			active.ability = SAND_STREAM;
-			std::cout << "Cool!\n";
-		}
 		else if (active.nickname + " shed its skin!" == line)
 			active.ability = SHED_SKIN;
 		else if (active.nickname + " can't get going due to its Slow Start!" == line)

@@ -192,10 +192,19 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 }
 
 void predict_move (Pokemon &member, int detailed [][7]) {
-	for (unsigned n = 3;
-	 member.moveset.size() < 4
-	 and detailed [member.name] [n] != END_MOVE;
-	 ++n) {
+	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
+	bool seen = false;
+	unsigned n;
+	for (n = 0; n != member.moveset.size(); ++n) {
+		if (member.moveset [n].name == STRUGGLE) {
+			seen = true;
+			break;
+		}
+	}
+	unsigned max_moves = 4;
+	if (seen)
+		max_moves += member.moveset.size() - n;
+	for (unsigned n = 3; member.moveset.size() < max_moves and detailed [member.name] [n] != END_MOVE; ++n) {
 		bool found = false;
 		for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
 			if (it->name == static_cast<moves_list> (detailed [member.name] [n])) {

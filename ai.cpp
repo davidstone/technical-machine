@@ -51,6 +51,11 @@ int main (int argc, char* argv[]) {
 		Team predicted = foe;
 		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);
+		for (std::vector<Pokemon>::const_iterator active = predicted.active.member.begin(); active != predicted.active.member.end(); ++active) {
+			std::cout << pokemon_name [active->name] + "\n";
+			for (std::vector<Move>::const_iterator move = active->moveset.begin(); move->name != STRUGGLE; ++move)
+				std::cout << "\t" + move_name [move->name] + "\n";
+		}
 		std::cout << "======================\nEvaluating...\n";
 
 		long score;

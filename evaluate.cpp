@@ -79,7 +79,7 @@ long scoremove (const Move &move, const Team &ai, const Team &foe, const Weather
 	long score = 0;
 	if (move.physical)
 		score += foe.reflect * sv.reflect;
-	else
+	else if (move.basepower > 0)
 		score += foe.light_screen * sv.light_screen;
 	if (move.pp == 0)
 		score -= 256;					// Each move with 0 PP has a penalty equal to 25% of the Pokemon's HP
