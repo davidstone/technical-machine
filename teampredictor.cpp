@@ -144,6 +144,8 @@ void detailed_stats (const Map &map, int detailed [][7]) {
 }
 
 void predict (int detailed [][7], Team &team) {
+	std::cout << "======================\nPredicting...\n";
+
 	std::vector<double> overall;
 	overall_stats (overall);
 	double total = 961058;	// Total number of teams
@@ -161,6 +163,12 @@ void predict (int detailed [][7], Team &team) {
 			estimate.at (n) *= multiplier [it->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
+
+	for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
+		std::cout << pokemon_name [active->name] + " @ " + item_name [active->item] + "\n";
+		for (std::vector<Move>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
+			std::cout << "\t" + move_name [move->name] + "\n";
+	}
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {

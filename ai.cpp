@@ -48,19 +48,11 @@ int main (int argc, char* argv[]) {
 
 	while ((ai.active.member.size() > 1 or ai.active->hp.stat > 0) and (foe.active.member.size() > 1 or foe.active->hp.stat > 0)) {
 		Team predicted = foe;
-		std::cout << "======================\nPredicting...\n";
 		predict (detailed, predicted);
-		for (std::vector<Pokemon>::const_iterator active = predicted.active.member.begin(); active != predicted.active.member.end(); ++active) {
-			std::cout << pokemon_name [active->name] + " @ " + item_name [active->item] + "\n";
-			for (std::vector<Move>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
-				std::cout << "\t" + move_name [move->name] + "\n";
-		}
 
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
 
-		first = NULL;
-		last = NULL;
 		analyze_turn (ai, foe, first, last, weather, map);
 	}
 

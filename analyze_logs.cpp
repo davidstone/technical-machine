@@ -31,11 +31,15 @@ void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
 	std::cout << "======================\nAnalyzing...\n";
 	size_t newline1 = 0;
+	while (newline1 < input.length() and input.at (newline1) == '\n')
+		++newline1;
 	size_t newline2 = input.find ('\n', newline1 + 1);
 	while (newline2 != std::string::npos) {
 		std::string line = input.substr (newline1, newline2 - newline1);
 		analyze_line (ai, foe, first, weather, line, map);
 		newline1 = newline2 + 1;
+		while (newline1 < input.length() and input.at (newline1) == '\n')
+			++newline1;
 		newline2 = input.find ('\n', newline1 + 1);
 	}
 	if (first->me)
