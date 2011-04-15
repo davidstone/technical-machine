@@ -166,7 +166,7 @@ void predict (int detailed [][7], Team &team) {
 
 	for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
 		std::cout << pokemon_name [active->name] + " @ " + item_name [active->item] + "\n";
-		for (std::vector<Move>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
+		for (std::vector<Move>::const_iterator move = active->moveset.begin(); move->name != STRUGGLE; ++move)
 			std::cout << "\t" + move_name [move->name] + "\n";
 	}
 }

@@ -55,6 +55,5 @@ int main (int argc, char* argv[]) {
 
 		analyze_turn (ai, foe, first, last, weather, map);
 	}
-
 	return 0;
 }

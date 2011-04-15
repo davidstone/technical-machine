@@ -81,7 +81,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 			long beta = VICTORY;
 			for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
 				if (first)
-					std::cout << "Evaluating the foe's " << move_name [foe.active->move->name] << '\n';
+					std::cout << "\tEvaluating the foe's " << move_name [foe.active->move->name] << '\n';
 				blockselection (foe, *ai.active, weather);
 				if (foe.active->move->selectable) {
 					long score = tree2 (ai, foe, weather, depth, sv, best_move, output, transposition_table);
@@ -89,7 +89,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 						beta = score;
 						foe.active->move->score = beta;
 						if (first)
-							std::cout << "Estimated score is " << beta << '\n';
+							std::cout << "\tEstimated score is " << beta << '\n';
 					}
 					if (beta <= alpha)	// Alpha-Beta pruning
 						break;

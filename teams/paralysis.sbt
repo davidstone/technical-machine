@@ -10,10 +10,10 @@
 <item>Leftovers</item>
 <ability>Serene Grace</ability>
 <moveset>
-	<move pp-up="3">Body Slam</move>
-	<move pp-up="3">Wish</move>
 	<move pp-up="3">Iron Head</move>
 	<move pp-up="3">Stealth Rock</move>
+	<move pp-up="3">Body Slam</move>
+	<move pp-up="3">Wish</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
