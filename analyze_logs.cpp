@@ -24,28 +24,34 @@
 
 namespace technicalmachine {
 
-void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map) {
+bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map) {
 	first = NULL;		// Only check if first == NULL, so no need to set last = NULL
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	std::string input;
 	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
 	std::cout << "======================\nAnalyzing...\n";
-	size_t newline1 = 0;
-	while (newline1 < input.length() and input.at (newline1) == '\n')
-		++newline1;
-	size_t newline2 = input.find ('\n', newline1 + 1);
-	while (newline2 != std::string::npos) {
-		std::string line = input.substr (newline1, newline2 - newline1);
-		analyze_line (ai, foe, first, weather, line, map);
-		newline1 = newline2 + 1;
+	bool won = false;
+	if (input == "~")
+		won = true;
+	else {
+		size_t newline1 = 0;
 		while (newline1 < input.length() and input.at (newline1) == '\n')
 			++newline1;
-		newline2 = input.find ('\n', newline1 + 1);
+		size_t newline2 = input.find ('\n', newline1 + 1);
+		while (newline2 != std::string::npos) {
+			std::string line = input.substr (newline1, newline2 - newline1);
+			analyze_line (ai, foe, first, weather, line, map);
+			newline1 = newline2 + 1;
+			while (newline1 < input.length() and input.at (newline1) == '\n')
+				++newline1;
+			newline2 = input.find ('\n', newline1 + 1);
+		}
+		if (first->me)
+			last = &foe;
+		else
+			last = &ai;
 	}
-	if (first->me)
-		last = &foe;
-	else
-		last = &ai;
+	return won;
 }
 
 void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const std::string &line, const Map &map) {
@@ -188,21 +194,22 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
 		n = 2;
-	moves_list move_name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+	moves_list name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 	bool isfound = false;
 	for (user.active->move = user.active->moveset.begin(); user.active->move != user.active->moveset.end(); ++user.active->move) {
-		if (move_name == user.active->move->name) {
+		if (name == user.active->move->name) {
 			isfound = true;
 			break;
 		}
 	}
 	if (!isfound) {
-		Move move (move_name, 3);
+		Move move (name, 3);
 		user.active->moveset.insert (user.active->moveset.begin(), move);
 		user.active->move = user.active->moveset.begin();
 	}
 	bool hitself = false;
- 	usemove (user, target, weather, hitself, true);
+	std::cout << move_name [user.active->move->name] + "\n";
+	std::cout << usemove (user, target, weather, hitself, true) << '\n';
 }
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map) {

@@ -18,7 +18,7 @@
 
 namespace technicalmachine {
 
-void analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map);
+bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map);
 
 void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const std::string &line, const Map &map);
 

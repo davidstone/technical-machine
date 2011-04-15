@@ -45,15 +45,16 @@ int main (int argc, char* argv[]) {
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
 	first->active->moved = false;
 	last->active->moved = false;
-
-	while ((ai.active.member.size() > 1 or ai.active->hp.stat > 0) and (foe.active.member.size() > 1 or foe.active->hp.stat > 0)) {
+	
+	bool won = false;
+	while (!won) {
 		Team predicted = foe;
 		predict (detailed, predicted);
 
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
 
-		analyze_turn (ai, foe, first, last, weather, map);
+		won = analyze_turn (ai, foe, first, last, weather, map);
 	}
 	return 0;
 }

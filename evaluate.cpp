@@ -26,10 +26,10 @@ long evaluate (const Team &ai, const Team &foe, const Weather &weather, const sc
 	return score;
 }
 
-long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
-	long score = ai.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
+long scorepokemon (const Pokemon &member, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
+	long score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
 	if (grounded (member, weather))
-		score += ai.spikes * sv.spikes + ai.toxic_spikes * sv.toxic_spikes;
+		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
 	if (member.hp.stat != 0) {
 		score += sv.members;
 		score += sv.hp * member.hp.stat / member.hp.max;	// Each % is worth about 10 points
@@ -43,8 +43,8 @@ long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const
 			score += sv.ingrain;
 		if (member.leech_seed)
 			score += sv.leech_seed;
-//		if (foe.active->leech_seed)
-//			score += 1 * foe.active->hp.max / member.hp.max;
+//		if (other.active->leech_seed)
+//			score += 1 * other.active->hp.max / member.hp.max;
 		if (member.loaf)
 			score += sv.loaf;
 		if (member.nightmare)
@@ -69,18 +69,18 @@ long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const
 //		score += 1 * member.spd.stage;
 //		score += 1 * member.spe.stage;
 		for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
-			score += scoremove (*it, ai, foe, weather, sv);
+			score += scoremove (*it, team, other, weather, sv);
 	}
 	return score;
 }
 
 
-long scoremove (const Move &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
+long scoremove (const Move &move, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
 	long score = 0;
 	if (move.physical)
-		score += foe.reflect * sv.reflect;
+		score += other.reflect * sv.reflect;
 	else if (move.basepower > 0)
-		score += foe.light_screen * sv.light_screen;
+		score += other.light_screen * sv.light_screen;
 	if (move.pp == 0)
 		score -= 256;					// Each move with 0 PP has a penalty equal to 25% of the Pokemon's HP
 	return score;
