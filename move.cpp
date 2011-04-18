@@ -28,6 +28,7 @@ Move::Move (moves_list move, int pp_ups) :
 	name (move),
 	type (move_type [name]),
 	basepower (base_power [name]),
+	ch (false),
 	physical (is_physical [name]),
 	disable (0),
 	pp_max (get_pp [name] * (5 + pp_ups) / 5),
