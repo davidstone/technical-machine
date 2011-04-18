@@ -845,7 +845,6 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if ((MIRROR_SHOT == user.active->move->name or MUD_BOMB == user.active->move->name or MUDDY_WATER == user.active->move->name or OCTAZOOKA == user.active->move->name) and user.active->move->effect)
 		statboost (target.active->accuracy, -1);
 	else if (((ROAR == user.active->move->name and target.active->ability != SOUNDPROOF) or WHIRLWIND == user.active->move->name) and !target.active->ingrain and target.active->ability != SUCTION_CUPS) {
-		// Pretty major bug here. If a Pokemon is caused to faint from Roar / Whirlwind (entry hazards), their selection of which Pokemon to replace it with is removed.
 		target.replacement = *user.active->move->variable;
 		switchpokemon (target, *user.active, weather);
 	}

@@ -130,8 +130,12 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 		foe_max = 4;
 	long score5 = 0;
 	for (ai.active->move->variable = ai.active->move->range.begin(); ai.active->move->variable != ai.active->move->range.end(); ++ai.active->move->variable) {
+		if ((ai.active->move->name == ROAR or ai.active->move->name == WHIRLWIND) and *ai.active->move->variable == foe.active.index and foe.active.member.size() > 1)
+			continue;
 		long score4 = 0;
 		for (foe.active->move->variable = foe.active->move->range.begin(); foe.active->move->variable != foe.active->move->range.end(); ++foe.active->move->variable) {
+			if ((foe.active->move->name == ROAR or foe.active->move->name == WHIRLWIND) and *foe.active->move->variable == ai.active.index and ai.active.member.size() > 1)
+				continue;
 			ai.active->move->effect = 0;
 			long score3 = 0;		// Temporary variable for probability calculations
 			do {
@@ -200,14 +204,14 @@ long tree4 (Team first, Team last, Weather weather, int depth, const score_varia
 	bool hitself = false;
 	int old_damage = usemove (first, last, weather, hitself);
 
-//	std::cout << "Remaining depth is " << depth << " as " << pokemon_name [first.active->name] << " uses " << move_name [first.active->move->name] << " leaving the foe at " << last.active->hp.stat << '\n';
+	std::cout << "Remaining depth is " << depth << " as " << pokemon_name [first.active->name] << " uses " << move_name [first.active->move->name] << " leaving the foe at " << last.active->hp.stat << '\n';
 
 	// win() already corrects for whether it's the AI or the foe that is passed as first vs. last
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);			// 0 if both Pokemon die (a draw), VICTORY if the AI wins, -VICTORY if the foe wins
 	usemove (last, first, weather, hitself, false, old_damage);
 
-//	std::cout << "Remaining depth is " << depth << " as " << pokemon_name [last.active->name] << " uses " << move_name [last.active->move->name] << " leaving the foe at " << first.active->hp.stat << '\n';
+	std::cout << "Remaining depth is " << depth << " as " << pokemon_name [last.active->name] << " uses " << move_name [last.active->move->name] << " leaving the foe at " << first.active->hp.stat << '\n';
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);
 
