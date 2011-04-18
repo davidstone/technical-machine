@@ -237,7 +237,6 @@ int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log,
 //		 (NATURE_POWER == user.active->move->name)
 //		else
 		damage = usemove2 (user, target, weather, old_damage);
-		++user.active->move->times_used;
 	}
 	return damage;
 }
@@ -856,6 +855,9 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 		uproar (weather, *user.active->move->variable);
 	}
 //	else if (YAWN == user.active->move->name and false) {}
+
+	++user.active->move->times_used;
+
 	if (user.active->hp.stat < 0)
 		user.active->hp.stat = 0;
 	if (target.active->hp.stat < 0)

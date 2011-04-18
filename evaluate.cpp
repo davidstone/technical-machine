@@ -96,4 +96,68 @@ long int win (const Team &team) {
 	return 0;
 }
 
+score_variables::score_variables () {
+	std::ifstream file ("evaluate.txt");
+	std::string line;
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		size_t x = line.find ('\t');
+		std::string data = line.substr (0, x);
+		if (data == "Transposition Table")
+			transposition_table = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Light Screen")
+			light_screen = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Lucky Chant")
+			lucky_chant = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Mist")
+			mist = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Reflect")
+			reflect = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Safeguard")
+			safeguard = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Tailwind")
+			tailwind = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Wish")
+			wish = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Spikes")
+			spikes = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Stealth Rock")
+			stealth_rock = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Toxic Spikes")
+			toxic_spikes = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Members")
+			members = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "HP")
+			hp = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Aqua Ring")
+			aqua_ring = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Curse")
+			curse = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Imprison")
+			imprison = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Ingrain")
+			ingrain = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Leech Seed")
+			leech_seed = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Loaf")
+			loaf = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Nightmare")
+			nightmare = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Torment")
+			torment = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Trapped")
+			trapped = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Burn")
+			burn = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Freeze")
+			freeze = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Paralysis")
+			paralysis = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Poison")
+			poison = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Sleep")
+			sleep = boost::lexical_cast<int> (line.substr (x + 1));
+	}
+	file.close();
+}
+
 }
