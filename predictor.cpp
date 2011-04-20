@@ -23,7 +23,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Input.H>
-#include <FL/Fl_Output.H>
+#include <FL/Fl_Multiline_Output.H>
 
 using namespace technicalmachine;
 
@@ -31,7 +31,7 @@ using namespace technicalmachine;
 
 struct Data {
 	std::vector<Fl_Input*> input;
-	std::vector<Fl_Output*> output;
+	Fl_Multiline_Output* output;
 	Map map;
  	int detailed [END_SPECIES][7];
 };
@@ -59,35 +59,31 @@ void function (Fl_Widget* w, void* data) {
 	
 	if (team.active.member.size() > 0) {
 		predict (d->detailed, team, using_lead);
-		for (unsigned n = 0; n != d->output.size(); ++n) {
-			std::string output = pokemon_name [team.active.member [n].name] + ": ";
-			for (std::vector<Move>::const_iterator move = team.active.member [n].moveset.begin(); move->name != STRUGGLE; ++move)
-				output += move_name [move->name] + ", ";
-			output.erase (output.end() - 2, output.end());
-			d->output.at (n)->value (output.c_str());
+		std::string output = "";
+		for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
+			output += pokemon_name [active->name] + " @ " + item_name  [active->item];
+			output += "\nAbility: " + ability_name [active->ability];
+			for (std::vector<Move>::const_iterator move = active->moveset.begin(); move->name != STRUGGLE; ++move)
+				output += "\n\t- " + move_name [move->name];
+			output += "\n\n";
 		}
+		output.erase (output.end() - 2, output.end());
+		d->output->value (output.c_str());
 	}
-	else {
-		for (std::vector<Fl_Output*>::iterator out = d->output.begin(); out != d->output.end(); ++out)
-			(*out)->value ("");
-	}
+	else
+		d->output->value ("");
 }
 
 int main () {
-	Fl_Window win (800, 280, "Team Predictor");
-		Fl_Input input0 (60, 10, 120, 30, "Input");
-		Fl_Input input1 (60, 50, 120, 30);
-		Fl_Input input2 (60, 90, 120, 30);
-		Fl_Input input3 (60, 130, 120, 30);
-		Fl_Input input4 (60, 170, 120, 30);
-		Fl_Input input5 (60, 210, 120, 30);
-		Fl_Output output0 (260, 10, 500, 30, "Output");
-		Fl_Output output1 (260, 50, 500, 30);
-		Fl_Output output2 (260, 90, 500, 30);
-		Fl_Output output3 (260, 130, 500, 30);
-		Fl_Output output4 (260, 170, 500, 30);
-		Fl_Output output5 (260, 210, 500, 30);
-		Fl_Return_Button calculate (60, 250, 700, 30, "Calculate");
+	Fl_Window win (520, 730, "Team Predictor");
+		Fl_Input input0 (50, 10, 120, 30, "Input");
+		Fl_Input input1 (50, 50, 120, 30);
+		Fl_Input input2 (50, 90, 120, 30);
+		Fl_Input input3 (50, 130, 120, 30);
+		Fl_Input input4 (50, 170, 120, 30);
+		Fl_Input input5 (50, 210, 120, 30);
+		Fl_Return_Button calculate (50, 250, 120, 30, "Calculate");
+		Fl_Multiline_Output output (250, 10, 260, 710, "Output");
 	win.end();
 
 	Data data;
@@ -99,12 +95,7 @@ int main () {
 	data.input.push_back (&input3);
 	data.input.push_back (&input4);
 	data.input.push_back (&input5);
-	data.output.push_back (&output0);
-	data.output.push_back (&output1);
-	data.output.push_back (&output2);
-	data.output.push_back (&output3);
-	data.output.push_back (&output4);
-	data.output.push_back (&output5);
+	data.output = &output;
 
 	calculate.callback (function, &data);
 	win.show();
@@ -128,11 +119,11 @@ void technicalmachine::predict (int detailed [][7], Team &team, bool using_lead)
 	
 	std::vector<double> estimate;
 	for (unsigned n = 0; n != END_SPECIES; ++n)
-		estimate.push_back ((overall.at (n) / total) * lead.at (n));
+		estimate.push_back ((overall [n] / total) * lead [n]);
 
 	for (std::vector<Pokemon>::const_iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [it->name] [n];
+			estimate [n] *= multiplier [it->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 }

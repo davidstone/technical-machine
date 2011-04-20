@@ -28,7 +28,7 @@
 namespace technicalmachine {
 
 moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, long &score) {
-	std::cout << "======================\nEvaluating...\n";
+	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	moves_list best_move = END_MOVE;
 	std::map<long, State> transposition_table;
 	score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table, true);
@@ -70,18 +70,28 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	
 	// Determine which moves can be legally selected
 	for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
-		if (first)
-			std::cout << "Evaluating " << move_name [ai.active->move->name] << '\n';
 		blockselection (ai, *foe.active, weather);
 		if (ai.active->move->selectable) {
+			if (first) {
+				std::cout << "Evaluating ";
+				if (SWITCH1 <= ai.active->move->name and ai.active->move->name <= SWITCH6)
+					std::cout << "switch to " + pokemon_name [ai.active.member [ai.active->move->name - SWITCH1].name] + "\n";
+				else
+					std::cout << move_name [ai.active->move->name] + "\n";
+			}
 			if (best_move == END_MOVE)
 				best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
 			long beta = VICTORY;
 			for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
-				if (first)
-					std::cout << "\tEvaluating the foe's " + move_name [foe.active->move->name] + "\n";
 				blockselection (foe, *ai.active, weather);
 				if (foe.active->move->selectable) {
+					if (first) {
+						std::cout << "\tEvaluating the foe's ";
+						if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
+							std::cout << "switch to " + pokemon_name [foe.active.member [foe.active->move->name - SWITCH1].name] + "\n";
+						else
+							std::cout << move_name [foe.active->move->name] + "\n";
+					}
 					long score = tree2 (ai, foe, weather, depth, sv, best_move, transposition_table);
 					if (first)
 						std::cout << "\tEstimated score is " << score << '\n';
