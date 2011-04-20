@@ -54,9 +54,7 @@ moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int dept
 
 
 long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first) {
-	if (depth != -1)
-		--depth;
-	
+
 	/* Working from the inside loop out:
 
 	The following begins by setting beta to the largest possible value. This is the variable that the opposing player is trying to minimize. As long as the opposing player has any move that won't guarantee their loss, that move will score lower (more negative) than VICTORY, and thus the opponent will set that as their best response to the particular move that the AI uses.
@@ -67,57 +65,89 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	*/
 	
 	long alpha = -VICTORY;
-	
-	// Determine which moves can be legally selected
-	for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
-		blockselection (ai, *foe.active, weather);
-		if (ai.active->move->selectable) {
-			if (first) {
-				std::cout << "Evaluating ";
-				if (SWITCH1 <= ai.active->move->name and ai.active->move->name <= SWITCH6)
-					std::cout << "switch to " + pokemon_name [ai.active.member [ai.active->move->name - SWITCH1].name] + "\n";
-				else
-					std::cout << move_name [ai.active->move->name] + "\n";
-			}
-			if (best_move == END_MOVE)
-				best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
-			long beta = VICTORY;
-			for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
-				blockselection (foe, *ai.active, weather);
-				if (foe.active->move->selectable) {
-					if (first) {
-						std::cout << "\tEvaluating the foe's ";
-						if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
-							std::cout << "switch to " + pokemon_name [foe.active.member [foe.active->move->name - SWITCH1].name] + "\n";
-						else
-							std::cout << move_name [foe.active->move->name] + "\n";
+
+	// This section is for replacing fainted Pokemon.
+
+	if (ai.active->hp.stat == 0) {
+		for (ai.replacement = 0; ai.replacement != ai.active.member.size(); ++ai.replacement) {
+			if (ai.active.member.at (ai.replacement).name != ai.active->name) {
+				long beta = VICTORY;
+				for (foe.replacement = 0; foe.replacement != foe.active.member.size(); ++foe.replacement) {
+					if (foe.active.member.at (foe.replacement).name != foe.active->name or foe.active.member.size() == 1) {
+						beta = std::min (beta, fainted (ai, foe, weather, depth, sv, best_move, transposition_table));
+						if (beta <= alpha)	// Alpha-Beta pruning
+							break;
+						if (foe.active->hp.stat != 0)		// Foe doesn't need replacement
+							break;
 					}
-					long score = tree2 (ai, foe, weather, depth, sv, best_move, transposition_table);
-					if (first)
-						std::cout << "\tEstimated score is " << score << '\n';
-					if (beta >= score) {	// Test for equality to make sure a move is the foe's best move
-						beta = score;
-						foe.active->move->score = beta;
-//						if (first)
-//							std::cout << "\tEstimated score is " << beta << '\n';
-					}
-					if (beta <= alpha)	// Alpha-Beta pruning
-						break;
 				}
+				if (beta >= alpha)
+					alpha = beta;
 			}
-			// If their best response still isn't as good as their previous best response, then this new move must be better than the previous AI's best move
-			if (beta > alpha) {
-				alpha = beta;
-				ai.active->move->score = alpha;
-				best_move = ai.active->move->name;
-				if (first)
-					std::cout << "Estimated score is " << alpha << '\n';
-			}
-			if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
-				break;
 		}
 	}
+	else if (foe.active->hp.stat == 0) {
+		long beta = VICTORY;
+		for (foe.replacement = 0; foe.replacement != foe.active.member.size(); ++foe.replacement) {
+			if (foe.active.member.at (foe.replacement).name != foe.active->name)
+				beta = std::min (beta, fainted (ai, foe, weather, depth, sv, best_move, transposition_table));
+		}
+		alpha = beta;
+	}
+	else {
+		if (depth != -1)
+			--depth;
 	
+		// Determine which moves can be legally selected
+		for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
+			blockselection (ai, *foe.active, weather);
+			if (ai.active->move->selectable) {
+				if (first) {
+					std::cout << "Evaluating ";
+					if (SWITCH1 <= ai.active->move->name and ai.active->move->name <= SWITCH6)
+						std::cout << "switching to " + pokemon_name [ai.active.member [ai.active->move->name - SWITCH1].name] + "\n";
+					else
+						std::cout << move_name [ai.active->move->name] + "\n";
+				}
+				if (best_move == END_MOVE)
+					best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
+				long beta = VICTORY;
+				for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
+					blockselection (foe, *ai.active, weather);
+					if (foe.active->move->selectable) {
+						if (first) {
+							std::cout << "\tEvaluating the foe's ";
+							if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
+								std::cout << "switching to " + pokemon_name [foe.active.member [foe.active->move->name - SWITCH1].name] + "\n";
+							else
+								std::cout << move_name [foe.active->move->name] + "\n";
+						}
+						long score = tree2 (ai, foe, weather, depth, sv, best_move, transposition_table);
+						if (first)
+							std::cout << "\tEstimated score is " << score << '\n';
+						if (beta >= score) {	// Test for equality to make sure a move is the foe's best move
+							beta = score;
+							foe.active->move->score = beta;
+	//						if (first)
+	//							std::cout << "\tEstimated score is " << beta << '\n';
+						}
+						if (beta <= alpha)	// Alpha-Beta pruning
+							break;
+					}
+				}
+				// If their best response still isn't as good as their previous best response, then this new move must be better than the previous AI's best move
+				if (beta > alpha) {
+					alpha = beta;
+					ai.active->move->score = alpha;
+					best_move = ai.active->move->name;
+					if (first)
+						std::cout << "Estimated score is " << alpha << '\n';
+				}
+				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
+					break;
+			}
+		}
+	}
 	return alpha;
 }
 
@@ -283,56 +313,7 @@ long tree5 (Team first, Team last, Weather weather, const Random &random, int de
 	endofturn (first, last, weather, random);
 	long score;
 	if (win (first) != 0 or win (last) != 0)
-		score = win (first) + win (last);			// 0 if both Pokemon die (a draw), VICTORY if the AI wins, -VICTORY if the foe wins
-	else
-		score = tree6 (first, last, weather, depth, sv, best_move, transposition_table);
-	return score;
-}
-
-long tree6 (Team &first, Team &last, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table) {
-	long score;
-	if (first.active->hp.stat == 0) {
-		long alpha = -VICTORY;
-		for (first.replacement = 0; first.replacement != first.active.member.size(); ++first.replacement) {
-			if (first.active.member.at (first.replacement).name != first.active->name) {
-				long beta = VICTORY;
-				for (last.replacement = 0; last.replacement != last.active.member.size(); ++last.replacement) {
-					if (last.active.member.at (last.replacement).name != last.active->name or last.active.member.size() == 1) {
-						beta = std::min (beta, tree7 (first, last, weather, depth, sv, best_move, transposition_table));
-						if (beta <= alpha)	// Alpha-Beta pruning
-							break;
-						if (last.active->hp.stat != 0)		// Foe doesn't need replacement
-							break;
-					}
-				}
-				if (beta >= alpha)
-					alpha = beta;
-			}
-		}
-		score = alpha;
-	}
-	else if (last.active->hp.stat == 0) {
-		long beta = VICTORY;
-		for (last.replacement = 0; last.replacement != last.active.member.size(); ++last.replacement) {
-			if (last.active.member.at (last.replacement).name != last.active->name)
-				beta = std::min (beta, tree7 (first, last, weather, depth, sv, best_move, transposition_table));
-		}
-		score = beta;
-	}
-	else
-		score = tree7 (first, last, weather, depth, sv, best_move, transposition_table);
-
-	return score;
-}
-
-long tree7 (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table) {
-	if (first.active->hp.stat == 0)
-		switchpokemon (first, *last.active, weather);
-	if (last.active->hp.stat == 0)
-		switchpokemon (last, *first.active, weather);
-	long score;
-	if (first.active->hp.stat == 0 or last.active->hp.stat == 0)
-		score = tree6 (first, last, weather, depth, sv, best_move, transposition_table);
+		score = win (first) + win (last);
 	else {
 		Team* ai;
 		Team* foe;
@@ -344,13 +325,29 @@ long tree7 (Team first, Team last, Weather weather, int depth, const score_varia
 			foe = &first;
 			ai = &last;
 		}
-	
 		if (depth == 0)
 			score = evaluate (*ai, *foe, weather, sv);
 		else
 			score = tree1 (*ai, *foe, weather, depth, sv, best_move, transposition_table);
-//		return transposition (*ai, *foe, weather, depth, sv, best_move, transposition_table);
 	}
+	return score;
+}
+
+long fainted (Team ai, Team foe, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table) {
+	Team* first;
+	Team* last;
+	order (ai, foe, weather, first, last);
+	if (first->active->hp.stat == 0)
+		switchpokemon (*first, *last->active, weather);
+	if (last->active->hp.stat == 0)
+		switchpokemon (*last, *first->active, weather);
+
+	long score;
+	if (depth == 0)
+		score = evaluate (ai, foe, weather, sv);
+	else
+		score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table);
+//		return transposition (*ai, *foe, weather, depth, sv, best_move, transposition_table);
 	return score;
 }
 

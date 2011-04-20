@@ -82,7 +82,7 @@ long scoremove (const Move &move, const Team &team, const Team &other, const Wea
 	else if (move.basepower > 0)
 		score += other.light_screen * sv.light_screen;
 	if (move.pp == 0)
-		score -= 256;					// Each move with 0 PP has a penalty equal to 25% of the Pokemon's HP
+		score += sv.no_pp;
 	return score;
 }
 
@@ -156,6 +156,8 @@ score_variables::score_variables () {
 			poison = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Sleep")
 			sleep = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "No PP")
+			no_pp = boost::lexical_cast<int> (line.substr (x + 1));
 	}
 	file.close();
 }

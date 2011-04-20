@@ -29,3 +29,5 @@ Freeze	-100
 Paralysis	-100
 Poison	-100
 Sleep	-100
+
+No PP	-256

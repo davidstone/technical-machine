@@ -60,6 +60,8 @@ struct score_variables {
 	int poison;
 	int sleep;
 	
+	int no_pp;
+	
 	score_variables ();
 };
 
