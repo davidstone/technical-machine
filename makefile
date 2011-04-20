@@ -1,6 +1,6 @@
 aiobjects = ai.o ability.o analyze_logs.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o switch.o team.o teampredictor.o weather.o
 
-predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o simple.o stat.o status.o team.o teampredictor.o weather.o
+predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o simple.o stat.o status.o switch.o team.o teampredictor.o weather.o
 
 rdcobjects = rdc.o ability.o damage.o item.o move.o pokemon.o reversedamage.o simple.o stat.o status.o team.o teampredictor.o unknown.o weather.o
 

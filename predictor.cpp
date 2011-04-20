@@ -39,31 +39,29 @@ struct Data {
 void function (Fl_Widget* w, void* data) {
 	Data* d = reinterpret_cast<Data*> (data);
 	
-	teams team;
+	Team team (false);
 	bool using_lead;
 	std::map<std::string, species>::const_iterator it = d->map.specie.find ((*d->input.begin())->value());
 	if (it != d->map.specie.end()) {
 		using_lead = true;
-		pokemon member;
-		member.name = it->second;
-		team.member.push_back (member);
+		Pokemon member (it->second);
+		team.active.member.push_back (member);
 	}
 	else
 		using_lead = false;
 	for (std::vector<Fl_Input*>::const_iterator in = d->input.begin() + 1; in != d->input.end(); ++in) {
 		it = d->map.specie.find ((*in)->value());
 		if (it != d->map.specie.end()) {
-			pokemon member;
-			member.name = it->second;
-			team.member.push_back (member);
+			Pokemon member (it->second);
+			team.active.member.push_back (member);
 		}
 	}
 	
-	if (team.member.size() > 0) {
+	if (team.active.member.size() > 0) {
 		predict (d->detailed, team, using_lead);
 		for (unsigned n = 0; n != d->output.size(); ++n) {
-			std::string output = pokemon_name [team.member.at (n).name] + ": ";
-			for (std::vector<moves>::const_iterator move = team.member.at(n).moveset.begin(); move->name != STRUGGLE; ++move)
+			std::string output = pokemon_name [team.active.member [n].name] + ": ";
+			for (std::vector<Move>::const_iterator move = team.active.member [n].moveset.begin(); move->name != STRUGGLE; ++move)
 				output += move_name [move->name] + ", ";
 			output.erase (output.end() - 2, output.end());
 			d->output.at (n)->value (output.c_str());
@@ -114,7 +112,7 @@ int main () {
 	return Fl::run();
 }
 
-void technicalmachine::predict (int detailed [][7], teams &team, bool using_lead) {
+void technicalmachine::predict (int detailed [][7], Team &team, bool using_lead) {
 	std::vector<double> overall;
 	overall_stats (overall);
 	double total = 961058;	// Total number of teams
@@ -132,7 +130,7 @@ void technicalmachine::predict (int detailed [][7], teams &team, bool using_lead
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall.at (n) / total) * lead.at (n));
 
-	for (std::vector<pokemon>::const_iterator it = team.member.begin(); it != team.member.end(); ++it) {
+	for (std::vector<Pokemon>::const_iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [it->name] [n];
 	}
