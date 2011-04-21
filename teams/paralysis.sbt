@@ -133,7 +133,7 @@
 	<move pp-up="3">Flamethrower</move>
 	<move pp-up="3">Substitute</move>
 	<move pp-up="3">Roost</move>
-	<move pp-up="3">Hidden Power</move>
+	<move pp-up="3">Air Slash</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="248" />

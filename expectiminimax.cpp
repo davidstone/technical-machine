@@ -323,7 +323,7 @@ long tree5 (Team first, Team last, Weather weather, const Random &random, int de
 			foe = &first;
 			ai = &last;
 		}
-		if (depth == 0)
+		if (depth == 0 and first.active->hp.stat > 0 and last.active->hp.stat > 0)
 			score = evaluate (*ai, *foe, weather, sv);
 		else
 			score = tree1 (*ai, *foe, weather, depth, sv, best_move, transposition_table);
@@ -341,6 +341,8 @@ long fainted (Team ai, Team foe, Weather weather, int depth, const score_variabl
 		switchpokemon (*last, *first->active, weather);
 
 	long score;
+	if (win (first) != 0 or win (last) != 0)
+		score = win (first) + win (last);
 	if (depth == 0)
 		score = evaluate (ai, foe, weather, sv);
 	else

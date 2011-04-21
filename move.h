@@ -2070,7 +2070,7 @@ const char get_probability [] = {		// Chance (out of 10) to activate side-effect
 0,		// Drain Punch
 0,		// Dream Eater
 0,		// Drill Peck
-0,		// DynamicPunch
+10,		// DynamicPunch
 1,		// Earth Power
 0,		// Earthquake
 0,		// Egg Bomb

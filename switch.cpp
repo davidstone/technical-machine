@@ -17,7 +17,6 @@
 #include "switch.h"
 #include "team.h"
 #include "weather.h"
-#include "test.h"
 
 namespace technicalmachine {
 
@@ -41,7 +40,6 @@ void reset_variables (Pokemon &member) {
 	member.lock_on = false;
 	member.mf = false;
 	member.minimize = false;
-	member.moved = true;
 	member.mud_sport = false;
 	member.nightmare = false;
 	member.roost = false;
@@ -101,7 +99,6 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		user.active.index = user.replacement;
 	}
 	
-	test (user);
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {
 		if (0 != user.toxic_spikes) {
 			if (istype(*user.active, POISON))
