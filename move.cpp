@@ -430,7 +430,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (EMBARGO == user.active->move->name)
 		target.active->embargo = 5;
 	else if (ENCORE == user.active->move->name) {
-		if (target.active->encore = 0)
+		if (target.active->encore == 0)
 			target.active->encore = *user.active->move->variable;
 	}
 //	else if (ENDURE == user.active->move->name)
