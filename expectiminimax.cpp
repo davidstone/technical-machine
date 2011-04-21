@@ -55,6 +55,9 @@ moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int dept
 
 long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first) {
 
+	// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
+	moves_list phony = END_MOVE;
+
 	/* Working from the inside loop out:
 
 	The following begins by setting beta to the largest possible value. This is the variable that the opposing player is trying to minimize. As long as the opposing player has any move that won't guarantee their loss, that move will score lower (more negative) than VICTORY, and thus the opponent will set that as their best response to the particular move that the AI uses.
@@ -64,6 +67,9 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	Something to consider as a potential speed up at the cost of some accuracy (but would allow a deeper, thus more accurate, search) would be to pick from all random numbers randomly, rather than seeing the outcome of all of them and averaging it. In other words, do several trials assuming a particular (but different for each trial) set of random numbers are selected, and then average that result. This would give massive reductions to the branching factor, and with a large enough number of trials should be close enough to the average to potentially speed up the program enough to justify the loss in accuracy.
 	*/
 	
+	if (depth != -1)
+		--depth;
+
 	long alpha = -VICTORY;
 
 	// This section is for replacing fainted Pokemon.
@@ -74,15 +80,17 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 				long beta = VICTORY;
 				for (foe.replacement = 0; foe.replacement != foe.active.set.size(); ++foe.replacement) {
 					if (foe.active.set [foe.replacement].name != foe.active->name or foe.active.set.size() == 1) {
-						beta = std::min (beta, fainted (ai, foe, weather, depth, sv, best_move, transposition_table));
+						beta = std::min (beta, fainted (ai, foe, weather, depth, sv, phony, transposition_table));
 						if (beta <= alpha)	// Alpha-Beta pruning
 							break;
 						if (foe.active->hp.stat != 0)		// Foe doesn't need replacement
 							break;
 					}
 				}
-				if (beta >= alpha)
+				if (beta >= alpha) {
 					alpha = beta;
+					best_move = static_cast<moves_list> (SWITCH1 + ai.replacement);
+				}
 			}
 		}
 	}
@@ -90,14 +98,11 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 		long beta = VICTORY;
 		for (foe.replacement = 0; foe.replacement != foe.active.set.size(); ++foe.replacement) {
 			if (foe.active.set [foe.replacement].name != foe.active->name)
-				beta = std::min (beta, fainted (ai, foe, weather, depth, sv, best_move, transposition_table));
+				beta = std::min (beta, fainted (ai, foe, weather, depth, sv, phony, transposition_table));
 		}
 		alpha = beta;
 	}
 	else {
-		if (depth != -1)
-			--depth;
-	
 		// Determine which moves can be legally selected
 		for (ai.active->move.index = 0; ai.active->move.index != ai.active->move.set.size(); ++ai.active->move.index) {
 			blockselection (ai, *foe.active, weather);
@@ -122,12 +127,11 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 							else
 								std::cout << "'s " + move_name [foe.active->move->name] + "\n";
 						}
-						long score = tree2 (ai, foe, weather, depth, sv, best_move, transposition_table);
+						long score = tree2 (ai, foe, weather, depth, sv, phony, transposition_table);
 						if (first)
 							std::cout << "\tEstimated score is " << score << '\n';
 						if (beta >= score) {	// Test for equality to make sure a move is the foe's best move
 							beta = score;
-							foe.active->move->score = beta;
 	//						if (first)
 	//							std::cout << "\tEstimated score is " << beta << '\n';
 						}
@@ -138,7 +142,6 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 				// If their best response still isn't as good as their previous best response, then this new move must be better than the previous AI's best move
 				if (beta > alpha) {
 					alpha = beta;
-					ai.active->move->score = alpha;
 					best_move = ai.active->move->name;
 					if (first)
 						std::cout << "Estimated score is " << alpha << '\n';
@@ -244,10 +247,7 @@ long tree3 (const Team &ai, const Team &foe, const Weather &weather, const int &
 }
 
 
-long tree4 (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &old_move, std::map<long, State> &transposition_table) {
-
-	// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
-	moves_list best_move = old_move;
+long tree4 (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table) {
 
 	bool hitself = false;
 	int old_damage = usemove (first, last, weather, hitself);
