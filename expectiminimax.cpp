@@ -116,11 +116,11 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 					blockselection (foe, *ai.active, weather);
 					if (foe.active->move->selectable) {
 						if (first) {
-							std::cout << "\tEvaluating the foe's ";
+							std::cout << "\tEvaluating the foe";
 							if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
-								std::cout << "switching to " + pokemon_name [foe.active.set [foe.active->move->name - SWITCH1].name] + "\n";
+								std::cout << " switching to " + pokemon_name [foe.active.set [foe.active->move->name - SWITCH1].name] + "\n";
 							else
-								std::cout << move_name [foe.active->move->name] + "\n";
+								std::cout << "'s " + move_name [foe.active->move->name] + "\n";
 						}
 						long score = tree2 (ai, foe, weather, depth, sv, best_move, transposition_table);
 						if (first)
@@ -337,12 +337,15 @@ long fainted (Team ai, Team foe, Weather weather, int depth, const score_variabl
 	order (ai, foe, weather, first, last);
 	if (first->active->hp.stat == 0)
 		switchpokemon (*first, *last->active, weather);
+	if (win (first) != 0 or win (last) != 0)
+		return win (first) + win (last);
+
 	if (last->active->hp.stat == 0)
 		switchpokemon (*last, *first->active, weather);
+	if (win (first) != 0 or win (last) != 0)
+		return win (first) + win (last);
 
 	long score;
-	if (win (first) != 0 or win (last) != 0)
-		score = win (first) + win (last);
 	if (depth == 0)
 		score = evaluate (ai, foe, weather, sv);
 	else

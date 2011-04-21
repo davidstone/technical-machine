@@ -77,10 +77,9 @@ void reset_variables (Pokemon &member) {
 
 void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
-		if (user.active.set.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
-			return;
-		
 		user.active.set.erase (user.active.set.begin() + user.active.index);
+		if (user.active.set.size() == 0)		// The last Pokemon is fainted; there is nothing left to do.
+			return;
 		if (user.active.index > user.replacement)
 			user.active.index = user.replacement;
 		else

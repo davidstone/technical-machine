@@ -60,39 +60,9 @@ void loadpokemon (Team &team, Pokemon &member) {
 	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team.active.set.size() > 1) {
-		if (switchn < SWITCH1) {
-			Move move (SWITCH1, 0);
-			member.move.set.push_back (move);
-		}
-		if (switchn < SWITCH2) {
-			Move move (SWITCH2, 0);
-			member.move.set.push_back (move);
-		}
-		if (team.active.set.size() > 2) {
-			if (switchn < SWITCH3) {
-				Move move (SWITCH3, 0);
-				member.move.set.push_back (move);
-			}
-			if (team.active.set.size() > 3) {
-				if (switchn < SWITCH4) {
-					Move move (SWITCH4, 0);
-					member.move.set.push_back (move);
-				}
-				if (team.active.set.size() > 4) {
-					if (switchn < SWITCH5) {
-						Move move (SWITCH5, 0);
-						member.move.set.push_back (move);
-					}
-					if (team.active.set.size() > 5) {
-						if (switchn < SWITCH6) {
-							Move move (SWITCH6, 0);
-							member.move.set.push_back (move);
-						}
-					}
-				}
-			}
-		}
+	for (size_t index = switchn + 1; index - SWITCH1 < team.active.set.size() and team.active.set.size() > 1; ++index) {
+		Move move (static_cast<moves_list> (index), 0);
+		member.move.set.push_back (move);
 	}
 }
 

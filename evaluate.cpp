@@ -88,7 +88,7 @@ long scoremove (const Move &move, const Team &team, const Team &other, const Wea
 
 
 long int win (const Team &team) {
-	if (team.active.set.size() == 1 and team.active->hp.stat == 0) {
+	if (team.active.set.size() == 0) {
 		if (team.me)
 			return -VICTORY;
 		return VICTORY;
