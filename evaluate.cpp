@@ -19,9 +19,9 @@ namespace technicalmachine {
 
 long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
 	long score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
-	for (std::vector<Pokemon>::const_iterator it = ai.active.member.begin(); it != ai.active.member.end(); ++it)
+	for (std::vector<Pokemon>::const_iterator it = ai.active.set.begin(); it != ai.active.set.end(); ++it)
 		score += scorepokemon (*it, ai, foe, weather, sv);
-	for (std::vector<Pokemon>::const_iterator it = foe.active.member.begin(); it != foe.active.member.end(); ++it)
+	for (std::vector<Pokemon>::const_iterator it = foe.active.set.begin(); it != foe.active.set.end(); ++it)
 		score -= scorepokemon (*it, foe, ai, weather, sv);
 	return score;
 }
@@ -68,7 +68,7 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 //		score += 1 * member.spa.stage;
 //		score += 1 * member.spd.stage;
 //		score += 1 * member.spe.stage;
-		for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
+		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it)
 			score += scoremove (*it, team, other, weather, sv);
 	}
 	return score;
@@ -88,7 +88,7 @@ long scoremove (const Move &move, const Team &team, const Team &other, const Wea
 
 
 long int win (const Team &team) {
-	if (team.active.member.size() == 1 and team.active->hp.stat == 0) {
+	if (team.active.set.size() == 1 and team.active->hp.stat == 0) {
 		if (team.me)
 			return -VICTORY;
 		return VICTORY;

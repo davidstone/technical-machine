@@ -34,7 +34,7 @@ moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int dept
 	score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table, true);
 
 	if (SWITCH1 <= best_move and best_move <= SWITCH6)
-		std::cout << "Switch to " << pokemon_name [ai.active.member [best_move - SWITCH1].name];
+		std::cout << "Switch to " << pokemon_name [ai.active.set [best_move - SWITCH1].name];
 	else
 		std::cout << "Use " << move_name [best_move];
 	if (depth == -1) {
@@ -69,11 +69,11 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	// This section is for replacing fainted Pokemon.
 
 	if (ai.active->hp.stat == 0) {
-		for (ai.replacement = 0; ai.replacement != ai.active.member.size(); ++ai.replacement) {
-			if (ai.active.member.at (ai.replacement).name != ai.active->name) {
+		for (ai.replacement = 0; ai.replacement != ai.active.set.size(); ++ai.replacement) {
+			if (ai.active.set [ai.replacement].name != ai.active->name) {
 				long beta = VICTORY;
-				for (foe.replacement = 0; foe.replacement != foe.active.member.size(); ++foe.replacement) {
-					if (foe.active.member.at (foe.replacement).name != foe.active->name or foe.active.member.size() == 1) {
+				for (foe.replacement = 0; foe.replacement != foe.active.set.size(); ++foe.replacement) {
+					if (foe.active.set [foe.replacement].name != foe.active->name or foe.active.set.size() == 1) {
 						beta = std::min (beta, fainted (ai, foe, weather, depth, sv, best_move, transposition_table));
 						if (beta <= alpha)	// Alpha-Beta pruning
 							break;
@@ -88,8 +88,8 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	}
 	else if (foe.active->hp.stat == 0) {
 		long beta = VICTORY;
-		for (foe.replacement = 0; foe.replacement != foe.active.member.size(); ++foe.replacement) {
-			if (foe.active.member.at (foe.replacement).name != foe.active->name)
+		for (foe.replacement = 0; foe.replacement != foe.active.set.size(); ++foe.replacement) {
+			if (foe.active.set [foe.replacement].name != foe.active->name)
 				beta = std::min (beta, fainted (ai, foe, weather, depth, sv, best_move, transposition_table));
 		}
 		alpha = beta;
@@ -99,26 +99,26 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 			--depth;
 	
 		// Determine which moves can be legally selected
-		for (ai.active->move = ai.active->moveset.begin(); ai.active->move != ai.active->moveset.end(); ++ai.active->move) {
+		for (ai.active->move.index = 0; ai.active->move.index != ai.active->move.set.size(); ++ai.active->move.index) {
 			blockselection (ai, *foe.active, weather);
 			if (ai.active->move->selectable) {
 				if (first) {
 					std::cout << "Evaluating ";
 					if (SWITCH1 <= ai.active->move->name and ai.active->move->name <= SWITCH6)
-						std::cout << "switching to " + pokemon_name [ai.active.member [ai.active->move->name - SWITCH1].name] + "\n";
+						std::cout << "switching to " + pokemon_name [ai.active.set [ai.active->move->name - SWITCH1].name] + "\n";
 					else
 						std::cout << move_name [ai.active->move->name] + "\n";
 				}
 				if (best_move == END_MOVE)
-					best_move = ai.active->moveset.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
+					best_move = ai.active->move.set.front().name;		// Makes sure that even if all moves lead to a guaranteed loss, the program still decides that some move is the best move instead of crashing
 				long beta = VICTORY;
-				for (foe.active->move = foe.active->moveset.begin(); foe.active->move != foe.active->moveset.end(); ++foe.active->move) {
+				for (foe.active->move.index = 0; foe.active->move.index != foe.active->move.set.size(); ++foe.active->move.index) {
 					blockselection (foe, *ai.active, weather);
 					if (foe.active->move->selectable) {
 						if (first) {
 							std::cout << "\tEvaluating the foe's ";
 							if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
-								std::cout << "switching to " + pokemon_name [foe.active.member [foe.active->move->name - SWITCH1].name] + "\n";
+								std::cout << "switching to " + pokemon_name [foe.active.set [foe.active->move->name - SWITCH1].name] + "\n";
 							else
 								std::cout << move_name [foe.active->move->name] + "\n";
 						}
@@ -171,15 +171,15 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 	long score5 = 0;
 
 	unsigned ai_range = 0;
-	for (ai.active->move->variable = ai.active->move->range.begin(); ai.active->move->variable != ai.active->move->range.end(); ++ai.active->move->variable) {
-		if ((ai.active->move->name == ROAR or ai.active->move->name == WHIRLWIND) and *ai.active->move->variable == foe.active.index and foe.active.member.size() > 1)
+	for (ai.active->move->variable.index = 0; ai.active->move->variable.index != ai.active->move->variable.set.size(); ++ai.active->move->variable.index) {
+		if ((ai.active->move->name == ROAR or ai.active->move->name == WHIRLWIND) and *ai.active->move->variable == foe.active.index and foe.active.set.size() > 1)
 			continue;
 		else
 			++ai_range;
 		long score4 = 0;
 		unsigned foe_range = 0;
-		for (foe.active->move->variable = foe.active->move->range.begin(); foe.active->move->variable != foe.active->move->range.end(); ++foe.active->move->variable) {
-			if ((foe.active->move->name == ROAR or foe.active->move->name == WHIRLWIND) and *foe.active->move->variable == ai.active.index and ai.active.member.size() > 1)
+		for (foe.active->move->variable.index = 0; foe.active->move->variable.index != foe.active->move->variable.set.size(); ++foe.active->move->variable.index) {
+			if ((foe.active->move->name == ROAR or foe.active->move->name == WHIRLWIND) and *foe.active->move->variable == ai.active.index and ai.active.set.size() > 1)
 				continue;
 			else
 				++foe_range;
@@ -245,8 +245,6 @@ long tree3 (const Team &ai, const Team &foe, const Weather &weather, const int &
 
 
 long tree4 (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &old_move, std::map<long, State> &transposition_table) {
-	reset_iterators_move (*first.active);
-	reset_iterators_move (*last.active);
 
 	// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
 	moves_list best_move = old_move;

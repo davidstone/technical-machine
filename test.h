@@ -154,7 +154,7 @@ void test (const Team &team) {
 		std::cout << "---------AI---------\n\n";
 	else
 		std::cout << "---------Foe---------\n\n";
-	std::cin.get();
+//	std::cin.get();
 }
 
 }

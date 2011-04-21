@@ -48,10 +48,10 @@ struct Team {
 	const bool me;				// Is this my team?
 	
 	bool operator== (const Team &other) const {
-		if (this->active.member.size() != other.active.member.size())
+		if (this->active.set.size() != other.active.set.size())
 			return false;
-		for (size_t n = 0; n != this->active.member.size(); ++n) {
-			if (this->active.member.at (n) != other.active.member.at (n))
+		for (size_t n = 0; n != this->active.set.size(); ++n) {
+			if (this->active.set [n] != other.active.set [n])
 				return false;
 		}
 		return /*this->active->name == other.active->name and */this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;

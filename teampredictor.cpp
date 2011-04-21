@@ -158,21 +158,21 @@ void predict (int detailed [][7], Team &team) {
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall.at (n) / total) * lead.at (n));
 
-	for (std::vector<Pokemon>::const_iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
+	for (std::vector<Pokemon>::const_iterator it = team.active.set.begin(); it != team.active.set.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [it->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 
-	for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
+	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
 		std::cout << pokemon_name [active->name] + " @ " + item_name [active->item] + "\n";
-		for (std::vector<Move>::const_iterator move = active->moveset.begin(); move->name != STRUGGLE; ++move)
+		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
 			std::cout << "\t" + move_name [move->name] + "\n";
 	}
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
-	while (team.active.member.size() < 6) {
+	while (team.active.set.size() < 6) {
 		double top = 0.0;
 		species name;
 		for (int n = 0; n != END_SPECIES; ++n) {
@@ -182,13 +182,13 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 			}
 		}
 		Pokemon member (name);
-		team.active.member.push_back (member);
-		if (team.active.member.size() == 6)
+		team.active.set.push_back (member);
+		if (team.active.set.size() == 6)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [team.active.member.back().name] [n];
+			estimate.at (n) *= multiplier [team.active.set.back().name] [n];
 	}
-	for (std::vector<Pokemon>::iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
+	for (std::vector<Pokemon>::iterator it = team.active.set.begin(); it != team.active.set.end(); ++it) {
 		it->level = 100;
 		it->ability = static_cast<abilities> (detailed [it->name] [0]);
 		it->item = static_cast<items> (detailed [it->name] [1]);
@@ -203,18 +203,18 @@ void predict_move (Pokemon &member, int detailed [][7]) {
 	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
 	bool seen = false;
 	unsigned n;
-	for (n = 0; n != member.moveset.size(); ++n) {
-		if (member.moveset [n].name == STRUGGLE) {
+	for (n = 0; n != member.move.set.size(); ++n) {
+		if (member.move.set [n].name == STRUGGLE) {
 			seen = true;
 			break;
 		}
 	}
 	unsigned max_moves = 4;
 	if (seen)
-		max_moves += member.moveset.size() - n;
-	for (unsigned n = 3; member.moveset.size() < max_moves and detailed [member.name] [n] != END_MOVE; ++n) {
+		max_moves += member.move.set.size() - n;
+	for (unsigned n = 3; member.move.set.size() < max_moves and detailed [member.name] [n] != END_MOVE; ++n) {
 		bool found = false;
-		for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
 			if (it->name == static_cast<moves_list> (detailed [member.name] [n])) {
 				found = true;
 				break;
@@ -222,7 +222,7 @@ void predict_move (Pokemon &member, int detailed [][7]) {
 		}
 		if (!found) {
 			Move move (static_cast<moves_list> (detailed [member.name] [n]), 3);
-			member.moveset.insert (member.moveset.begin(), move);
+			member.move.set.insert (member.move.set.begin(), move);
 		}
 	}
 }

@@ -17,7 +17,7 @@
 #include "switch.h"
 #include "team.h"
 #include "weather.h"
-#include <iostream>
+#include "test.h"
 
 namespace technicalmachine {
 
@@ -71,7 +71,7 @@ void reset_variables (Pokemon &member) {
 	member.vanish = LANDED;
 	member.yawn = 0;
 
-	for (std::vector<Move>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+	for (std::vector<Move>::iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
 		it->disable = 0;
 		it->times_used = 0;
 	}
@@ -79,16 +79,16 @@ void reset_variables (Pokemon &member) {
 
 void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
-		if (user.active.member.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
+		if (user.active.set.size() == 1)		// The last Pokemon is fainted; there is nothing left to do.
 			return;
 		
-		user.active.member.erase (user.active.member.begin() + user.active.index);
+		user.active.set.erase (user.active.set.begin() + user.active.index);
 		if (user.active.index > user.replacement)
 			user.active.index = user.replacement;
 		else
 			user.active.index = user.replacement - 1;
-		for (std::vector<Pokemon>::iterator active = user.active.member.begin(); active != user.active.member.end(); ++active)
-			active->moveset.pop_back();		// You cannot switch to a fainted Pokemon
+		for (std::vector<Pokemon>::iterator active = user.active.set.begin(); active != user.active.set.end(); ++active)
+			active->move.set.pop_back();		// You cannot switch to a fainted Pokemon
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out
@@ -100,7 +100,8 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		// Change the active Pokemon to the one switching in.
 		user.active.index = user.replacement;
 	}
-
+	
+	test (user);
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {
 		if (0 != user.toxic_spikes) {
 			if (istype(*user.active, POISON))
@@ -116,35 +117,34 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 	if (user.stealth_rock)
 		heal (*user.active, -32, effectiveness [ROCK] [user.active->type1] * effectiveness [ROCK] [user.active->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
 	
-	if (user.active->hp.stat <= 0)
-		return;
-
-	if (SLOW_START == user.active->ability)
-		user.active->slow_start = 5;
-	else
-		user.active->slow_start = 0;
-	
-	// Activate abilities upon switching in
-	
-	if (user.active->ability == DOWNLOAD) {
-		if (target.def.stat >= target.spd.stat)
-			statboost (user.active->spa.stage, 1);
+	if (user.active->hp.stat > 0) {
+		if (SLOW_START == user.active->ability)
+			user.active->slow_start = 5;
 		else
-			statboost (user.active->atk.stage, 1);
-	}
-	else if (user.active->ability == DRIZZLE)
-		rain (weather, -1);
-	else if (user.active->ability == DROUGHT)
-		sun (weather, -1);
-	else if (user.active->ability == FORECAST) {	// fix
-	}
-	else if (user.active->ability == INTIMIDATE)
-		statboost (target.atk.stage, -1);
-	else if (user.active->ability == SAND_STREAM)
-		sand (weather, -1);
-	else if (user.active->ability == SNOW_WARNING)
-		hail (weather, -1);
-	else if (user.active->ability == TRACE) {
+			user.active->slow_start = 0;
+	
+		// Activate abilities upon switching in
+	
+		if (user.active->ability == DOWNLOAD) {
+			if (target.def.stat >= target.spd.stat)
+				statboost (user.active->spa.stage, 1);
+			else
+				statboost (user.active->atk.stage, 1);
+		}
+		else if (user.active->ability == DRIZZLE)
+			rain (weather, -1);
+		else if (user.active->ability == DROUGHT)
+			sun (weather, -1);
+		else if (user.active->ability == FORECAST) {	// fix
+		}
+		else if (user.active->ability == INTIMIDATE)
+			statboost (target.atk.stage, -1);
+		else if (user.active->ability == SAND_STREAM)
+			sand (weather, -1);
+		else if (user.active->ability == SNOW_WARNING)
+			hail (weather, -1);
+		else if (user.active->ability == TRACE) {
+		}
 	}
 }
 

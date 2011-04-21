@@ -37,9 +37,9 @@ struct Pokemon {
 	types type1;
 	types type2;
 	Vanish vanish;
-	std::vector<Move> moveset;
-	std::vector<Move>::iterator move;			// The move currently being used
-//	Active<Move> move;
+//	std::vector<Move> moveset;
+//	std::vector<Move>::iterator move;			// The move currently being used
+	Active<Move> move;
 	Stat hp;
 	Stat atk;
 	Stat def;
@@ -97,10 +97,10 @@ struct Pokemon {
 	char evasion;
 	
 	bool operator== (const Pokemon &other) const {
-		if (this->moveset.size() != other.moveset.size())
+		if (this->move.set.size() != other.move.set.size())
 			return false;
-		for (size_t n = 0; n != this->moveset.size(); ++n) {
-			if (this->moveset.at (n) == other.moveset.at (n))
+		for (size_t n = 0; n != this->move.set.size(); ++n) {
+			if (this->move.set [n] == other.move.set [n])
 				return false;
 		}
 		return this->name == other.name and this->status == other.status and this->vanish == other.vanish and this->bide == other.bide and this->confused == other.confused and this->embargo == other.embargo and this->encore == other.encore and this->heal_block == other.heal_block and this->magnet_rise == other.magnet_rise and this->partial_trap == other.partial_trap and this->perish_song == other.perish_song and this->rampage == other.rampage and this->sleep == other.sleep and this->slow_start == other.slow_start and this->stockpile == other.stockpile and this->taunt == other.taunt and this->toxic == other.toxic and this->uproar == other.yawn and this->aqua_ring == other.aqua_ring and this->attract == other.attract and this->charge == other.charge and this->curse == other.curse and this->defense_curl == other.defense_curl and this->destiny_bond == other.destiny_bond and this->ff == other.ff and this->focus_energy == other.focus_energy and this->identified == other.identified and this->imprison == other.imprison and this->ingrain == other.ingrain and this->leech_seed == other.leech_seed and this->loaf == other.loaf and this->lock_on == other.lock_on and this->minimize == other.minimize and this->mud_sport == other.mud_sport and this->nightmare == other.nightmare and this->torment == other.torment and this->trapped == other.trapped and this->water_sport == other.water_sport and this->accuracy == other.accuracy and this->evasion == other.evasion and this->hp.stat == other.hp.stat and this->atk.stage == other.atk.stage and this->def.stage == other.def.stage and this->spa.stage == other.spa.stage and this->spd.stage == other.spd.stage and this->spe.stage == other.spe.stage and this->item == other.item;
@@ -1139,8 +1139,6 @@ struct Map {
 	
 	Map ();
 };
-
-void reset_iterators_move (Pokemon &member);
 
 }
 #endif

@@ -164,7 +164,7 @@ void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_t
 		decrement (member.uproar);
 		decrement (weather.uproar);
 	}
-	for (std::vector<Move>::iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
+	for (std::vector<Move>::iterator it = member.move.set.begin(); it != member.move.set.end(); ++it)
 		decrement (it->disable);
 	decrement (member.encore);
 	decrement (member.taunt);

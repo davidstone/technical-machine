@@ -14,6 +14,7 @@
 
 #include <string>
 #include <vector>
+#include "active.h"
 #include "type.h"
 
 namespace technicalmachine {
@@ -44,8 +45,7 @@ struct Move {
 	// probability determines the odds that the effect does work. For moves without a side effect, probability == 0
 	double probability;
 	// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal).
-	std::vector<unsigned char> range;
-	std::vector<unsigned char>::iterator variable;
+	Active<unsigned char> variable;
 	
 	bool operator== (const Move &other) const {
 		return this->pp == other.pp and this->times_used == other.times_used;

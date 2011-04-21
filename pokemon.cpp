@@ -22,12 +22,11 @@ namespace technicalmachine {
 
 Pokemon::Pokemon (const species &member) : 
 	name (member),
+	gender (MALE),
 	status (NO_STATUS),
 	type1 (get_pokemon_type [name][0]),
 	type2 (get_pokemon_type [name][1]),
 	vanish (LANDED),
-	move (moveset.begin()),
-//	move (moveset),
 	hp (name, level, HP),
 	atk (name, level, ATK),
 	def (name, level, DEF),
@@ -627,16 +626,6 @@ Map::Map() {
 	set_item_map (item);
 	set_nature_map (nature);
 	set_move_map (move);
-}
-
-void reset_iterators_move (Pokemon &member) {
-	const moves_list name = member.move->name;
-	for (std::vector<Move>::iterator it = member.moveset.begin(); ; ++it) {
-		if (it->name == name) {
-			member.move = it;
-			break;
-		}
-	}
 }
 
 }

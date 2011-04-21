@@ -125,8 +125,8 @@ void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::str
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
 
 	bool found = false;
-	for (team.replacement = 0; team.replacement != team.active.member.size(); ++team.replacement) {
-		if (nickname == team.active.member [team.replacement].nickname) {
+	for (team.replacement = 0; team.replacement != team.active.set.size(); ++team.replacement) {
+		if (nickname == team.active.set [team.replacement].nickname) {
 			found = true;
 			break;
 		}
@@ -181,10 +181,10 @@ void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::str
 		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 
 		member.nature = HARDY;
-		team.active.member.push_back (member);
-		team.replacement = team.active.member.size() - 1;
+		team.active.set.push_back (member);
+		team.replacement = team.active.set.size() - 1;
 		
-		loadpokemon (team, team.active.member.back());
+		loadpokemon (team, team.active.set.back());
 	}
 	switchpokemon (team, target, weather);
 }
@@ -196,7 +196,7 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 		n = 2;
 	moves_list name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 	bool isfound = false;
-	for (user.active->move = user.active->moveset.begin(); user.active->move != user.active->moveset.end(); ++user.active->move) {
+	for (user.active->move.index = 0; user.active->move.index != user.active->move.set.size(); ++user.active->move.index) {
 		if (name == user.active->move->name) {
 			isfound = true;
 			break;
@@ -204,8 +204,8 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	}
 	if (!isfound) {
 		Move move (name, 3);
-		user.active->moveset.insert (user.active->moveset.begin(), move);
-		user.active->move = user.active->moveset.begin();
+		user.active->move.set.insert (user.active->move.set.begin(), move);
+		user.active->move.index = 0;
 	}
 	bool hitself = false;
 	usemove (user, target, weather, hitself, true);
@@ -329,13 +329,13 @@ void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, cons
 
 void output (std::string &output, const Team &team) {
 	output += team.player + ":\n";
-	for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
+	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
 		output += pokemon_name [active->name];
 		output += " @ " + item_name [active->item];
 		output += " ** " + active->nickname + '\n';
 		if (active->ability != END_ABILITY)
 			output += "\tAbility: " + ability_name [active->ability] + '\n';
-		for (std::vector<Move>::const_iterator move = active->moveset.begin(); move != active->moveset.end(); ++move)
+		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move != active->move.set.end(); ++move)
 			output += "\t- " + move_name [move->name] + '\n';
 	}
 	output += '\n';

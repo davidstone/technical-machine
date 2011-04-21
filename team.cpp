@@ -38,7 +38,7 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 			poteam (team, name);
 		else			// if (name.substr (name.length() - 4) == ".sbt")
 			pokelabteam (team, name, map);
-		for (std::vector<Pokemon>::iterator it = team.active.member.begin(); it != team.active.member.end(); ++it)
+		for (std::vector<Pokemon>::iterator it = team.active.set.begin(); it != team.active.set.end(); ++it)
 			loadpokemon (team, *it);
 	}
 }
@@ -48,7 +48,7 @@ void loadpokemon (Team &team, Pokemon &member) {
 	member.hp.stat = member.hp.max;
 	bool struggle = false;
 	moves_list switchn = static_cast<moves_list> (SWITCH1 - 1);
-	for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it) {
+	for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
 		if (it->name == STRUGGLE)
 			struggle = true;
 		if (SWITCH1 <= it->name and it->name <= SWITCH6)
@@ -56,45 +56,44 @@ void loadpokemon (Team &team, Pokemon &member) {
 	}
 	if (!struggle) {
 		Move move (STRUGGLE, 0);
-		member.moveset.push_back (move);
+		member.move.set.push_back (move);
 	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team.active.member.size() > 1) {
+	if (team.active.set.size() > 1) {
 		if (switchn < SWITCH1) {
 			Move move (SWITCH1, 0);
-			member.moveset.push_back (move);
+			member.move.set.push_back (move);
 		}
 		if (switchn < SWITCH2) {
 			Move move (SWITCH2, 0);
-			member.moveset.push_back (move);
+			member.move.set.push_back (move);
 		}
-		if (team.active.member.size() > 2) {
+		if (team.active.set.size() > 2) {
 			if (switchn < SWITCH3) {
 				Move move (SWITCH3, 0);
-				member.moveset.push_back (move);
+				member.move.set.push_back (move);
 			}
-			if (team.active.member.size() > 3) {
+			if (team.active.set.size() > 3) {
 				if (switchn < SWITCH4) {
 					Move move (SWITCH4, 0);
-					member.moveset.push_back (move);
+					member.move.set.push_back (move);
 				}
-				if (team.active.member.size() > 4) {
+				if (team.active.set.size() > 4) {
 					if (switchn < SWITCH5) {
 						Move move (SWITCH5, 0);
-						member.moveset.push_back (move);
+						member.move.set.push_back (move);
 					}
-					if (team.active.member.size() > 5) {
+					if (team.active.set.size() > 5) {
 						if (switchn < SWITCH6) {
 							Move move (SWITCH6, 0);
-							member.moveset.push_back (move);
+							member.move.set.push_back (move);
 						}
 					}
 				}
 			}
 		}
 	}
-	member.move = member.moveset.begin();
 }
 
 unsigned team_size (const std::string &name) {
@@ -142,7 +141,7 @@ void pokelabpokemon (Team& team, std::ifstream &file, const Map &map) {	// Repla
 		moves_list name = map.move.find (output1)->second;
 		int pp_ups = boost::lexical_cast <int> (output2);
 		Move move (name, pp_ups);
-		member.moveset.push_back (move);
+		member.move.set.push_back (move);
 	}
 	
 	member.hp.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
@@ -158,7 +157,7 @@ void pokelabpokemon (Team& team, std::ifstream &file, const Map &map) {	// Repla
 	member.spd.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
 	member.spd.ev = boost::lexical_cast <int> (output2) / 4;
 	
-	team.active.member.push_back (member);
+	team.active.set.push_back (member);
 }
 
 std::string search (std::ifstream &file, std::string &output2, const std::string &data) {
@@ -267,7 +266,7 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 	for (unsigned n = 0; n != 4; ++n) {
 		getline (file, line);
 		Move move (move_converter [poconverter ("<Move>", "</Move>", line)], 3);
-		member.moveset.push_back (move);
+		member.move.set.push_back (move);
 	}
 	getline (file, line);
 	member.hp.iv = poconverter ("<DV>", "</DV>", line);
@@ -293,8 +292,8 @@ void popokemon (Team &team, std::ifstream &file, const species pokemon_converter
 	member.spd.ev = poconverter ("<EV>", "</EV>", line);
 	getline (file, line);
 	member.spe.ev = poconverter ("<EV>", "</EV>", line);
-	if (member.name != END_SPECIES and member.moveset.size() != 0)
-		team.active.member.push_back (member);
+	if (member.name != END_SPECIES and member.move.set.size() != 0)
+		team.active.set.push_back (member);
 }
 
 unsigned poconverter (const std::string &data, const std::string &end, const std::string &line) {

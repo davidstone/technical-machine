@@ -19,22 +19,22 @@ namespace technicalmachine {
 template <class T>
 class Active {
 	public:
-		std::vector<T> member;			// All Pokemon on the team
+		std::vector<T> set;			// All Pokemon on the team
 		unsigned char index;
 		Active () :
 			index (0)
 			{}
 		T * operator-> () {
-			return &member [index];
+			return &set [index];
 		}
 		T const * operator->() const {
-			return &member [index];
+			return &set [index];
 		}
 		T & operator*() {
-			return member [index];
+			return set [index];
 		}
 		T const & operator*() const {
-			return member [index];
+			return set [index];
 		}
 };
 

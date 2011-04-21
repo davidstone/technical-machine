@@ -39,20 +39,20 @@ Move::Move (moves_list move, int pp_ups) :
 	probability (get_probability [name]) {
 		if (name == ACUPRESSURE) {
 			for (int n = 0; n <= 6; ++n)
-				range.push_back(n);
+				variable.set.push_back(n);
 		}
 		else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
 			for (int n = 2; n <= 5; ++n)
-				range.push_back(n);
+				variable.set.push_back(n);
 		}
 		else if (name == ENCORE) {
 			for (int n = 4; n <= 8; ++n)
-				range.push_back(n);
+				variable.set.push_back(n);
 		}
 		else if (name == MAGNITUDE ) {
 			for (int n = 10; n <= 110; n += 20)
-				range.push_back(n);
-			range.push_back(150);
+				variable.set.push_back(n);
+			variable.set.push_back(150);
 	/*		4 = 10;
 			5 = 30;
 			6 = 50;
@@ -62,28 +62,27 @@ Move::Move (moves_list move, int pp_ups) :
 			10 = 150;*/
 		}
 		else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
-			range.push_back (2);
-			range.push_back (3);
+			variable.set.push_back (2);
+			variable.set.push_back (3);
 		}
 		else if (name == PRESENT) {
 			for (int n = 0; n <= 120; n += 40)
-				range.push_back(n);
+				variable.set.push_back(n);
 		}
 		else if (name == ROAR or name == WHIRLWIND) {
 			for (unsigned int n = 0; n != 6; ++n)
-				range.push_back(n);
+				variable.set.push_back(n);
 		}
 		else if (name == TAUNT) {
-			range.push_back(2);
-			range.push_back(3);
+			variable.set.push_back(2);
+			variable.set.push_back(3);
 		}
 		else if (name == TRI_ATTACK) {
 			for (int n = 0; n <= 2; ++n)
-				range.push_back(n);
+				variable.set.push_back(n);
 		}
-		else if (range.size() == 0)
-			range.push_back(0);
-		variable = range.begin();
+		else if (variable.set.size() == 0)
+			variable.set.push_back(0);
 		// Confusion / Sleep!!!
 }
 
@@ -127,17 +126,17 @@ void blockselection (Team &user, const Pokemon &target, const Weather &weather) 
 	else {
 		if (user.active->move->pp_max == -1 and user.active->move->name != STRUGGLE) {
 			if ((((target.ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.ability == ARENA_TRAP and grounded (*user.active, weather)) or (target.ability == MAGNET_PULL and istype (*user.active, STEEL)) or user.active->trapped or user.active->partial_trap != 0) and user.active->item != SHED_SHELL)
-			or ((user.active.member.front().name == user.active->name and user.active->move->name == SWITCH1)
+			or ((user.active.set.front().name == user.active->name and user.active->move->name == SWITCH1)
 			// I'm relying on lazy evaluation for teams smaller than 6 to prevent attempting to read a Pokemon that doesn't exist
-			 or (user.active.member.size() > 1 and user.active.member [1].name == user.active->name and user.active->move->name == SWITCH2)
-			 or (user.active.member.size() > 2 and user.active.member [2].name == user.active->name and user.active->move->name == SWITCH3)
-			 or (user.active.member.size() > 3 and user.active.member [3].name == user.active->name and user.active->move->name == SWITCH4)
-			 or (user.active.member.size() > 4 and user.active.member [4].name == user.active->name and user.active->move->name == SWITCH5)
-			 or (user.active.member.size() > 5 and user.active.member [5].name == user.active->name and user.active->move->name == SWITCH6)))	// Can't switch to yourself
+			 or (user.active.set.size() > 1 and user.active.set [1].name == user.active->name and user.active->move->name == SWITCH2)
+			 or (user.active.set.size() > 2 and user.active.set [2].name == user.active->name and user.active->move->name == SWITCH3)
+			 or (user.active.set.size() > 3 and user.active.set [3].name == user.active->name and user.active->move->name == SWITCH4)
+			 or (user.active.set.size() > 4 and user.active.set [4].name == user.active->name and user.active->move->name == SWITCH5)
+			 or (user.active.set.size() > 5 and user.active.set [5].name == user.active->name and user.active->move->name == SWITCH6)))	// Can't switch to yourself
 				user.active->move->selectable = false;
 		}
 		else if (user.active->move->name == STRUGGLE) {
-			for (std::vector<Move>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
+			for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
 				if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
 				 and it->selectable) {
 					user.active->move->selectable = false;
@@ -150,7 +149,7 @@ void blockselection (Team &user, const Pokemon &target, const Weather &weather) 
 		 or (user.active->torment and 0 != user.active->move->times_used))
 			user.active->move->selectable = false;
 		else if (0 != user.active->encore or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
-			for (std::vector<Move>::const_iterator it = user.active->moveset.begin(); it != user.active->moveset.end(); ++it) {
+			for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
 				if (it->name != user.active->move->name and it->times_used != 0)
 					user.active->move->selectable = false;
 			}
@@ -210,7 +209,7 @@ bool block1 (const Pokemon &user, const Pokemon &target) {		// Things that both 
 
 bool imprison (const Move &move, const Pokemon &target) {
 	if (target.imprison) {
-		for (std::vector<Move>::const_iterator it = target.moveset.begin(); it != target.moveset.end(); ++it) {
+		for (std::vector<Move>::const_iterator it = target.move.set.begin(); it != target.move.set.end(); ++it) {
 			if (move.name == it->name)
 				return true;
 		}
@@ -304,7 +303,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (AQUA_RING == user.active->move->name)
 		user.active->aqua_ring = true;
 	else if (AROMATHERAPY == user.active->move->name) {
-		for (std::vector<Pokemon>::iterator it = user.active.member.begin(); it != user.active.member.end(); ++it)
+		for (std::vector<Pokemon>::iterator it = user.active.set.begin(); it != user.active.set.end(); ++it)
 			it->status = NO_STATUS;
 	}
 	else if (ATTRACT == user.active->move->name and user.active->gender * target.active->gender == -1)		// male * female == -1
@@ -468,7 +467,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (HEAD_SMASH == user.active->move->name)
 		recoil (*user.active, damage, 2);
 	else if (HEAL_BELL == user.active->move->name) {
-		for (std::vector<Pokemon>::iterator it = user.active.member.begin(); it != user.active.member.end(); ++it) {
+		for (std::vector<Pokemon>::iterator it = user.active.set.begin(); it != user.active.set.end(); ++it) {
 			if (it->ability != SOUNDPROOF)
 				it->status = NO_STATUS;
 		}
