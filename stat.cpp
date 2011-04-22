@@ -192,16 +192,7 @@ void order (Team &team1, Team &team2, const Weather &weather, Team* &faster, Tea
 	if (team1.active->move->priority == team2.active->move->priority) {
 		speed (team1, weather);
 		speed (team2, weather);
-		if (team1.active->spe.stat > team2.active->spe.stat) {
-			faster = &team1;
-			slower = &team2;
-		}
-		else if (team2.active->spe.stat > team1.active->spe.stat) {
-			faster = &team2;
-			slower = &team1;
-		}
-		else				// All things are equal
-			faster = NULL;			// I'll only check if faster == NULL, so no point wasting my time setting slower to NULL, too
+		faster_pokemon (team1, team2, weather, faster, slower);
 	}
 	else if (team1.active->move->priority > team2.active->move->priority) {
 		faster = &team1;
@@ -211,6 +202,23 @@ void order (Team &team1, Team &team2, const Weather &weather, Team* &faster, Tea
 		faster = &team2;
 		slower = &team1;
 	}
+}
+
+void faster_pokemon (Team &team1, Team &team2, const Weather &weather, Team* &faster, Team* &slower) {
+	if (team1.active->spe.stat > team2.active->spe.stat) {
+		faster = &team1;
+		slower = &team2;
+	}
+	else if (team2.active->spe.stat > team1.active->spe.stat) {
+		faster = &team2;
+		slower = &team1;
+	}
+	else {				// All things are equal
+		faster = NULL;
+		slower = NULL;
+	}
+	if (weather.trick_room != 0)
+		std::swap (faster, slower);
 }
 
 void statboost (char &stage, int n) {

@@ -25,6 +25,7 @@ void attack (Pokemon &member, const Weather &weather);
 void defense (const Pokemon &attacker, Pokemon &defender, const Weather &weather);
 void speed (Team &team, const Weather &weather);
 void order (Team &team1, Team &team2, const Weather &weather, Team* &faster, Team* &slower);
+void faster_pokemon (Team &team1, Team &team2, const Weather &weather, Team* &faster, Team* &slower);
 void statboost (char &stage, int n);
 void set_nature_map (std::map <std::string, natures> &natures_map);
 

@@ -18,6 +18,8 @@
 #include "team.h"
 #include "weather.h"
 
+#include <iostream>
+
 namespace technicalmachine {
 
 void reset_variables (Pokemon &member) {

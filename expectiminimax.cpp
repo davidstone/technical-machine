@@ -67,20 +67,23 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	Something to consider as a potential speed up at the cost of some accuracy (but would allow a deeper, thus more accurate, search) would be to pick from all random numbers randomly, rather than seeing the outcome of all of them and averaging it. In other words, do several trials assuming a particular (but different for each trial) set of random numbers are selected, and then average that result. This would give massive reductions to the branching factor, and with a large enough number of trials should be close enough to the average to potentially speed up the program enough to justify the loss in accuracy.
 	*/
 	
-	if (depth != -1)
-		--depth;
-
 	long alpha = -VICTORY;
 
 	// This section is for replacing fainted Pokemon.
 
 	if (ai.active->hp.stat == 0) {
+		Team* first;
+		Team* last;
+		order (ai, foe, weather, first, last);
 		for (ai.replacement = 0; ai.replacement != ai.active.set.size(); ++ai.replacement) {
 			if (ai.active.set [ai.replacement].name != ai.active->name) {
 				long beta = VICTORY;
 				for (foe.replacement = 0; foe.replacement != foe.active.set.size(); ++foe.replacement) {
 					if (foe.active.set [foe.replacement].name != foe.active->name or foe.active.set.size() == 1) {
-						beta = std::min (beta, fainted (ai, foe, weather, depth, sv, phony, transposition_table));
+						if (first == NULL)
+							beta = std::min (beta, (fainted (ai, foe, weather, depth, sv, phony, transposition_table) + fainted (foe, ai, weather, depth, sv, phony, transposition_table)) / 2);
+						else
+							beta = std::min (beta, fainted (*first, *last, weather, depth, sv, phony, transposition_table));
 						if (beta <= alpha)	// Alpha-Beta pruning
 							break;
 						if (foe.active->hp.stat != 0)		// Foe doesn't need replacement
@@ -95,14 +98,23 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 		}
 	}
 	else if (foe.active->hp.stat == 0) {
+		Team* first;
+		Team* last;
+		order (ai, foe, weather, first, last);
 		long beta = VICTORY;
 		for (foe.replacement = 0; foe.replacement != foe.active.set.size(); ++foe.replacement) {
-			if (foe.active.set [foe.replacement].name != foe.active->name)
-				beta = std::min (beta, fainted (ai, foe, weather, depth, sv, phony, transposition_table));
+			if (foe.active.set [foe.replacement].name != foe.active->name) {
+				if (first == NULL)
+					beta = std::min (beta, (fainted (ai, foe, weather, depth, sv, phony, transposition_table) + fainted (foe, ai, weather, depth, sv, phony, transposition_table)) / 2);
+				else
+					beta = std::min (beta, fainted (*first, *last, weather, depth, sv, phony, transposition_table));
+			}
 		}
 		alpha = beta;
 	}
 	else {
+		if (depth != -1)
+			--depth;
 		// Determine which moves can be legally selected
 		for (ai.active->move.index = 0; ai.active->move.index != ai.active->move.set.size(); ++ai.active->move.index) {
 			blockselection (ai, *foe.active, weather);
@@ -171,6 +183,7 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 		foe_max = 2;
 	else
 		foe_max = 4;
+
 	long score5 = 0;
 
 	unsigned ai_range = 0;
@@ -331,25 +344,32 @@ long tree5 (Team first, Team last, Weather weather, const Random &random, int de
 	return score;
 }
 
-long fainted (Team ai, Team foe, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table) {
-	Team* first;
-	Team* last;
-	order (ai, foe, weather, first, last);
-	if (first->active->hp.stat == 0)
-		switchpokemon (*first, *last->active, weather);
+long fainted (Team first, Team last, Weather weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table) {
+	if (first.active->hp.stat == 0)
+		switchpokemon (first, *last.active, weather);
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);
 
-	if (last->active->hp.stat == 0)
-		switchpokemon (*last, *first->active, weather);
+	if (last.active->hp.stat == 0)
+		switchpokemon (last, *first.active, weather);
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);
 
 	long score;
+	Team* ai;
+	Team* foe;
+	if (first.me) {
+		ai = &first;
+		foe = &last;
+	}
+	else {
+		foe = &first;
+		ai = &last;
+	}
 	if (depth == 0)
-		score = evaluate (ai, foe, weather, sv);
+		score = evaluate (*ai, *foe, weather, sv);
 	else
-		score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table);
+		score = tree1 (*ai, *foe, weather, depth, sv, best_move, transposition_table);
 //		return transposition (*ai, *foe, weather, depth, sv, best_move, transposition_table);
 	return score;
 }
