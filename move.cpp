@@ -719,7 +719,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 		statboost (target.active->evasion, -1);
 	else if (SWITCH1 <= user.active->move->name and user.active->move->name <= SWITCH6) {
 		user.replacement = user.active->move->name - SWITCH1;
-		switchpokemon (user, *target.active, weather);
+		switchpokemon (user, target, weather);
 	}
 	else if (SWITCHEROO == user.active->move->name or TRICK == user.active->move->name)
 		std::swap (user.active->item, target.active->item);
@@ -789,7 +789,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 		sleep (*user.active, *target.active, weather);
 	else if (((ROAR == user.active->move->name and target.active->ability != SOUNDPROOF) or WHIRLWIND == user.active->move->name) and !target.active->ingrain and target.active->ability != SUCTION_CUPS) {
 		target.replacement = *user.active->move->variable;
-		switchpokemon (target, *user.active, weather);
+		switchpokemon (target, user, weather);
 	}
 	else if (TAUNT == user.active->move->name) {
 		if (target.active->taunt == 0)

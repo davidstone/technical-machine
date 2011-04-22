@@ -61,7 +61,7 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 		if (found != std::string::npos) {
 			search = ai.player + " sent out ";
 			if (line.substr (0, search.length()) == search) {
-				log_pokemon (ai, *foe.active, weather, line, map, search);
+				log_pokemon (ai, foe, weather, line, map, search);
 				if (ordering == NULL)
 					ordering = &ai;
 			}
@@ -69,7 +69,7 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 				if (foe.player == "")
 					foe.player = line.substr (0, found);
 				search = foe.player + " sent out ";
-				log_pokemon (foe, *ai.active, weather, line, map, search);
+				log_pokemon (foe, ai, weather, line, map, search);
 				if (ordering == NULL)
 					ordering = &foe;
 			}
@@ -78,14 +78,14 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 			// name switched in nickname (lvl x species ?).
 			search = ai.player + " switched in ";
 			if (line.substr (0, search.length()) == search) {
-				log_pokemon (ai, *foe.active, weather, line, map, search);
+				log_pokemon (ai, foe, weather, line, map, search);
 				if (ordering == NULL)
 					ordering = &ai;
 			}
 			else {
 				search = foe.player + " switched in ";
 				if (line.substr (0, search.length()) == search)
-					log_pokemon (foe, *ai.active, weather, line, map, search);
+					log_pokemon (foe, ai, weather, line, map, search);
 				if (ordering == NULL)
 					ordering = &foe;
 			}
@@ -119,7 +119,7 @@ void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const
 	}
 }
 
-void log_pokemon  (Team &team, Pokemon &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1) {
+void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());

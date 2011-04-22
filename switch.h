@@ -17,6 +17,6 @@
 namespace technicalmachine {
 
 void reset_variables (Pokemon &member);
-void switchpokemon (Team &team, Pokemon &target, Weather &weather);
+void switchpokemon (Team &team, Team &target, Weather &weather);
 
 }

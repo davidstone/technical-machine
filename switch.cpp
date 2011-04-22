@@ -77,9 +77,15 @@ void reset_variables (Pokemon &member) {
 	}
 }
 
-void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
+void switchpokemon (Team &user, Team &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
 		user.active.set.erase (user.active.set.begin() + user.active.index);
+		for (std::vector<Pokemon>::iterator active = target.active.set.begin(); active != target.active.set.end(); ++active) {
+			for (std::vector<Move>::iterator move = active->move.set.begin(); move != active->move.set.end(); ++move) {
+				if (move->name == ROAR or move->name == WHIRLWIND)
+					move->variable.set.pop_back();
+			}
+		}
 		if (user.active.set.size() == 0)		// The last Pokemon is fainted; there is nothing left to do.
 			return;
 		if (user.active.index > user.replacement)
@@ -100,6 +106,8 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		user.active.index = user.replacement;
 	}
 	
+	std::cout << pokemon_name [user.active->name] + "\n";
+	std::cout << user.active->type1 << ", " << user.active->type2 << '\n';
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {
 		if (0 != user.toxic_spikes) {
 			if (istype(*user.active, POISON))
@@ -124,7 +132,7 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		// Activate abilities upon switching in
 	
 		if (user.active->ability == DOWNLOAD) {
-			if (target.def.stat >= target.spd.stat)
+			if (target.active->def.stat >= target.active->spd.stat)
 				statboost (user.active->spa.stage, 1);
 			else
 				statboost (user.active->atk.stage, 1);
@@ -136,7 +144,7 @@ void switchpokemon (Team &user, Pokemon &target, Weather &weather) {
 		else if (user.active->ability == FORECAST) {	// fix
 		}
 		else if (user.active->ability == INTIMIDATE)
-			statboost (target.atk.stage, -1);
+			statboost (target.active->atk.stage, -1);
 		else if (user.active->ability == SAND_STREAM)
 			sand (weather, -1);
 		else if (user.active->ability == SNOW_WARNING)
