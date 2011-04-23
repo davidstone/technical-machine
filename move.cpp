@@ -787,9 +787,13 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 	else if ((DARK_VOID == user.active->move->name or GRASSWHISTLE == user.active->move->name or HYPNOSIS == user.active->move->name or LOVELY_KISS == user.active->move->name or SING == user.active->move->name or SLEEP_POWDER == user.active->move->name or SPORE == user.active->move->name) and false) // fix
 		sleep (*user.active, *target.active, weather);
-	else if (((ROAR == user.active->move->name and target.active->ability != SOUNDPROOF) or WHIRLWIND == user.active->move->name) and !target.active->ingrain and target.active->ability != SUCTION_CUPS) {
-		target.replacement = *user.active->move->variable;
-		switchpokemon (target, user, weather);
+	else if (ROAR == user.active->move->name or WHIRLWIND == user.active->move->name) {
+		if ((target.active->ability != SOUNDPROOF or user.active->move->name != ROAR) and !target.active->ingrain and target.active->ability != SUCTION_CUPS) {
+			if (target.active.set.size() > 1) {
+				target.replacement = *user.active->move->variable;
+				switchpokemon (target, user, weather);
+			}
+		}
 	}
 	else if (TAUNT == user.active->move->name) {
 		if (target.active->taunt == 0)

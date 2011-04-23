@@ -23,7 +23,7 @@
 namespace technicalmachine {
 
 void reset_variables (Pokemon &member) {
-	//  Initialize all variables that switches reset.
+	//  Reset all variables that switches reset.
 	member.aqua_ring = false;
 	member.attract = false;
 	member.charge = false;
@@ -68,7 +68,7 @@ void reset_variables (Pokemon &member) {
 	member.taunt = 0;
 	member.toxic = 0;
 	member.uproar = 0;
-	member.vanish = LANDED;
+	member.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	member.yawn = 0;
 
 	for (std::vector<Move>::iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
@@ -79,23 +79,29 @@ void reset_variables (Pokemon &member) {
 
 void switchpokemon (Team &user, Team &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
+		std::cout << "Cool!\n";
+		// First, remove the active Pokemon because it has 0 HP.
 		user.active.set.erase (user.active.set.begin() + user.active.index);
+		// If the last Pokemon is fainted; there is nothing left to do.
+		if (user.active.set.size() == 0)
+			return;
+		// Then, remove the ability to bring out that Pokemon from Roar and Whirlwind in the foe's team.
 		for (std::vector<Pokemon>::iterator active = target.active.set.begin(); active != target.active.set.end(); ++active) {
 			for (std::vector<Move>::iterator move = active->move.set.begin(); move != active->move.set.end(); ++move) {
 				if (move->name == ROAR or move->name == WHIRLWIND)
 					move->variable.set.pop_back();
 			}
 		}
-		if (user.active.set.size() == 0)		// The last Pokemon is fainted; there is nothing left to do.
-			return;
 		if (user.active.index > user.replacement)
 			user.active.index = user.replacement;
 		else
 			user.active.index = user.replacement - 1;
+		// Finally, remove the ability to switch to that Pokemon.
 		for (std::vector<Pokemon>::iterator active = user.active.set.begin(); active != user.active.set.end(); ++active)
-			active->move.set.pop_back();		// You cannot switch to a fainted Pokemon
+			active->move.set.pop_back();
 	}
 	else {
+		std::cout << "Alright!\n";
 		// Cure the status of a Natural Cure Pokemon as it switches out
 		if (NATURAL_CURE == user.active->ability)
 			user.active->status = NO_STATUS;
@@ -103,11 +109,12 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 		reset_variables (*user.active);
 	
 		// Change the active Pokemon to the one switching in.
+		std::cout << pokemon_name [user.active->name] + "\n";
+		std::cout << static_cast<int> (user.active.index) << " turns into " << static_cast<int> (user.replacement) << " in a team of size " << user.active.set.size() << '\n';
 		user.active.index = user.replacement;
+		std::cout << pokemon_name [user.active->name] + "\n";
 	}
 	
-	std::cout << pokemon_name [user.active->name] + "\n";
-	std::cout << user.active->type1 << ", " << user.active->type2 << '\n';
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {
 		if (0 != user.toxic_spikes) {
 			if (istype(*user.active, POISON))
