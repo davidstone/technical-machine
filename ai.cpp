@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
 	Team foe (false);
 	Weather weather;
 	score_variables sv;
-	Map map;
+	Map const map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
 	initialize (ai, foe, map, detailed);
 	

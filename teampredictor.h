@@ -28,7 +28,7 @@ void team_stats (const std::vector<double> &overall, double total, double multip
 
 void lead_stats (std::vector<double> &lead);
 
-void detailed_stats (const Map &map, int detailed [][7]);
+void detailed_stats (Map const &map, int detailed [][7]);
 
 void predict (int detailed [][7], Team &team);
 

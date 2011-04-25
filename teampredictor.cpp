@@ -87,7 +87,7 @@ void lead_stats (std::vector<double> &lead) {		// Multiplier for Pokemon after y
 		lead.push_back (boost::lexical_cast<double> (line));
 }
 
-void detailed_stats (const Map &map, int detailed [][7]) {
+void detailed_stats (Map const &map, int detailed [][7]) {
 	std::ifstream file ("detailed.txt");
 	std::string line;
 	species old_member = END_SPECIES;

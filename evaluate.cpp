@@ -32,7 +32,7 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
 	if (member.hp.stat != 0) {
 		score += sv.members;
-		score += sv.hp * member.hp.stat / member.hp.max;	// Each % is worth about 10 points
+		score += sv.hp * member.hp.stat / member.hp.max;
 		if (member.aqua_ring)
 			score += sv.aqua_ring;
 		if (member.curse)

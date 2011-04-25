@@ -79,7 +79,7 @@ void reset_variables (Pokemon &member) {
 
 void switchpokemon (Team &user, Team &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
-		std::cout << "Cool!\n";
+//		std::cout << "Cool!\n";
 		// First, remove the active Pokemon because it has 0 HP.
 		user.active.set.erase (user.active.set.begin() + user.active.index);
 		// If the last Pokemon is fainted; there is nothing left to do.
@@ -101,7 +101,7 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 			active->move.set.pop_back();
 	}
 	else {
-		std::cout << "Alright!\n";
+//		std::cout << "Alright!\n";
 		// Cure the status of a Natural Cure Pokemon as it switches out
 		if (NATURAL_CURE == user.active->ability)
 			user.active->status = NO_STATUS;
@@ -109,10 +109,10 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 		reset_variables (*user.active);
 	
 		// Change the active Pokemon to the one switching in.
-		std::cout << pokemon_name [user.active->name] + "\n";
-		std::cout << static_cast<int> (user.active.index) << " turns into " << static_cast<int> (user.replacement) << " in a team of size " << user.active.set.size() << '\n';
+//		std::cout << pokemon_name [user.active->name] + "\n";
+//		std::cout << static_cast<int> (user.active.index) << " turns into " << static_cast<int> (user.replacement) << " in a team of size " << user.active.set.size() << '\n';
 		user.active.index = user.replacement;
-		std::cout << pokemon_name [user.active->name] + "\n";
+//		std::cout << pokemon_name [user.active->name] + "\n";
 	}
 	
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {

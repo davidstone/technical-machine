@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-void initialize (Team &ai, Team &foe, Map &map, int detailed [][7]) {
+void initialize (Team &ai, Team &foe, Map const &map, int detailed [][7]) {
 	detailed_stats (map, detailed);
 
 	ai.player = "Technical Machine";
