@@ -35,16 +35,59 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 		won = true;
 	else {
 		size_t newline1 = 0;
-		while (newline1 < input.length() and input.at (newline1) == '\n')
-			++newline1;
-		size_t newline2 = input.find ('\n', newline1 + 1);
-		while (newline2 != std::string::npos) {
-			std::string line = input.substr (newline1, newline2 - newline1);
-			analyze_line (ai, foe, first, weather, line, map);
-			newline1 = newline2 + 1;
+		while (true) {
 			while (newline1 < input.length() and input.at (newline1) == '\n')
 				++newline1;
-			newline2 = input.find ('\n', newline1 + 1);
+			size_t newline2 = input.find ('\n', newline1 + 1);
+			if (newline2 == std::string::npos)
+				break;
+			std::string line = input.substr (newline1, newline2 - newline1);
+
+			if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
+				std::string search = " sent out ";
+				size_t found = line.find (search);
+				if (found != std::string::npos) {
+					search = ai.player + " sent out ";
+					if (line.substr (0, search.length()) == search) {
+						log_pokemon (ai, foe, weather, line, map, search);
+						if (first == NULL)
+							first = &ai;
+					}
+					else {
+						if (foe.player == "")
+							foe.player = line.substr (0, found);
+						search = foe.player + " sent out ";
+						log_pokemon (foe, ai, weather, line, map, search);
+						if (first == NULL)
+							first = &foe;
+					}
+				}
+				else {
+					Team* active;
+					Team* inactive;
+					if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
+						active = &ai;
+						inactive = &foe;
+					}
+					else {
+						active = &foe;
+						inactive = &ai;
+					}
+					if (first == NULL)
+						first = active;
+
+					// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
+			
+					// nickname used move.
+					search = active->active->nickname + " used ";
+					if (line.substr (0, search.length()) == search)
+						log_move (*active, *inactive, weather, line, map, search);
+					else
+						log_misc (*active->active, *inactive->active, line, map);
+				}
+			}
+
+			newline1 = newline2 + 1;
 		}
 		if (first->me)
 			last = &foe;
@@ -52,71 +95,6 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			last = &ai;
 	}
 	return won;
-}
-
-void analyze_line (Team &ai, Team &foe, Team* &ordering, Weather &weather, const std::string &line, const Map &map) {
-	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-		std::string search = " sent out ";
-		size_t found = line.find (search);
-		if (found != std::string::npos) {
-			search = ai.player + " sent out ";
-			if (line.substr (0, search.length()) == search) {
-				log_pokemon (ai, foe, weather, line, map, search);
-				if (ordering == NULL)
-					ordering = &ai;
-			}
-			else {
-				if (foe.player == "")
-					foe.player = line.substr (0, found);
-				search = foe.player + " sent out ";
-				log_pokemon (foe, ai, weather, line, map, search);
-				if (ordering == NULL)
-					ordering = &foe;
-			}
-		}
-		else {
-			// name switched in nickname (lvl x species ?).
-			search = ai.player + " switched in ";
-			if (line.substr (0, search.length()) == search) {
-				log_pokemon (ai, foe, weather, line, map, search);
-				if (ordering == NULL)
-					ordering = &ai;
-			}
-			else {
-				search = foe.player + " switched in ";
-				if (line.substr (0, search.length()) == search)
-					log_pokemon (foe, ai, weather, line, map, search);
-				if (ordering == NULL)
-					ordering = &foe;
-			}
-
-			Team* active;
-			Team* inactive;
-			if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
-				active = &ai;
-				inactive = &foe;
-			}
-			else {
-				active = &foe;
-				inactive = &ai;
-			}
-
-			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
-			
-			// nickname used move.
-			search = active->active->nickname + " used ";
-			if (line.find (search) == 0) {		// If the beginning of the line is this
-				log_move (*active, *inactive, weather, line, map, search);
-				if (ordering == NULL)
-					ordering = active;
-			}
-			else {
-				log_misc (*active->active, *inactive->active, line, map);
-				if (ordering == NULL)
-					ordering = active;
-			}
-		}
-	}
 }
 
 void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1) {
