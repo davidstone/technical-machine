@@ -186,7 +186,8 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 		user.active->move.index = 0;
 	}
 	bool hitself = false;
-	usemove (user, target, weather, hitself, true);
+	bool log = true;
+	usemove (user, target, weather, hitself, log);
 }
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map) {

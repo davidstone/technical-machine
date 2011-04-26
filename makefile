@@ -1,4 +1,4 @@
-aiobjects = ai.o ability.o analyze_logs.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o switch.o team.o teampredictor.o weather.o
+aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o item.o move.o pokemon.o simple.o stat.o status.o switch.o team.o teampredictor.o weather.o
 
 predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o simple.o stat.o status.o switch.o team.o teampredictor.o weather.o
 
@@ -56,6 +56,9 @@ analyze_logs_main.o: analyze_logs_main.cpp analyze_logs.h pokemon.h \
 analyze_logs_gui.o: analyze_logs_gui.cpp analyze_logs.h pokemon.h \
  ability.h gender.h item.h move.h type.h stat.h status.h team.h \
  movefunction.h weather.h
+block.o: block.cpp block.h move.h active.h type.h pokemon.h ability.h \
+ gender.h item.h species.h stat.h status.h team.h weather.h simple.h \
+ statfunction.h
 damage.o: damage.cpp damage.h pokemon.h ability.h gender.h item.h move.h \
  type.h species.h stat.h status.h team.h weather.h simple.h
 endofturn.o: endofturn.cpp endofturn.h expectiminimax.h evaluate.h move.h \

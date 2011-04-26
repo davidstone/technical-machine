@@ -23,8 +23,8 @@ struct Stat {
 	char iv;			// 0 through 31
 	char ev;			// 0 through 63
 	char stage;		// -6 though 6
-	short max;		// Max HP only
-	short stat;		// Current HP or last calculated value for other stats
+	int max;		// Max HP only
+	int stat;		// Current HP or last calculated value for other stats
 	
 	Stat (species name, int level, stats stat);
 };

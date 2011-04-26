@@ -12,6 +12,7 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include "expectiminimax.h"
+#include "block.h"
 #include "endofturn.h"
 #include "evaluate.h"
 #include "move.h"
