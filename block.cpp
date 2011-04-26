@@ -91,7 +91,7 @@ void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weathe
 		}
 		if (user.move->execute and user.flinch) {
 			if (STEADFAST == user.ability)
-				statboost (user.spe.stage, 1);
+				user.spe.boost (1);
 			user.move->execute = false;
 		}
 	

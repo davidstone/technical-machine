@@ -20,14 +20,16 @@
 
 namespace technicalmachine {
 
-struct random_team {
-	int length;			// Length of sleep
-	bool shed_skin;		// Does Shed Skin activate?
+class random_team {
+	public:
+		int length;			// Length of sleep
+		bool shed_skin;		// Does Shed Skin activate?
 };
 
-struct Random {
-	random_team first;
-	random_team last;
+class Random {
+	public:
+		random_team first;
+		random_team last;
 };
 
 moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, long &score);

@@ -140,22 +140,22 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 	
 		if (user.active->ability == DOWNLOAD) {
 			if (target.active->def.stat >= target.active->spd.stat)
-				statboost (user.active->spa.stage, 1);
+				user.active->spa.boost (1);
 			else
-				statboost (user.active->atk.stage, 1);
+				user.active->atk.boost (1);
 		}
 		else if (user.active->ability == DRIZZLE)
-			rain (weather, -1);
+			weather.set_rain (-1);
 		else if (user.active->ability == DROUGHT)
-			sun (weather, -1);
+			weather.set_sun (-1);
 		else if (user.active->ability == FORECAST) {	// fix
 		}
 		else if (user.active->ability == INTIMIDATE)
-			statboost (target.active->atk.stage, -1);
+			target.active->atk.boost (-1);
 		else if (user.active->ability == SAND_STREAM)
-			sand (weather, -1);
+			weather.set_sand (-1);
 		else if (user.active->ability == SNOW_WARNING)
-			hail (weather, -1);
+			weather.set_hail (-1);
 		else if (user.active->ability == TRACE) {
 		}
 	}

@@ -26,49 +26,50 @@ namespace technicalmachine {
 
 const long VICTORY = 65536;		// Highest score possible. 100% chance to win.
 
-struct score_variables {
-	int transposition_table;	
+class score_variables {
+	public:
+		int transposition_table;	
 	
-	int light_screen;
-	int lucky_chant;
-	int mist;
-	int reflect;
-	int safeguard;
-	int tailwind;
+		int light_screen;
+		int lucky_chant;
+		int mist;
+		int reflect;
+		int safeguard;
+		int tailwind;
 
-	int wish;
+		int wish;
 
-	int spikes;
-	int stealth_rock;
-	int toxic_spikes;
+		int spikes;
+		int stealth_rock;
+		int toxic_spikes;
 
-	int members;
-	int hp;
-	int aqua_ring;
-	int curse;
-	int imprison;
-	int ingrain;
-	int leech_seed;
-	int loaf;
-	int nightmare;
-	int torment;
-	int trapped;
+		int members;
+		int hp;
+		int aqua_ring;
+		int curse;
+		int imprison;
+		int ingrain;
+		int leech_seed;
+		int loaf;
+		int nightmare;
+		int torment;
+		int trapped;
 
-	int burn;
-	int freeze;
-	int paralysis;
-	int poison;
-	int sleep;
+		int burn;
+		int freeze;
+		int paralysis;
+		int poison;
+		int sleep;
 	
-	int no_pp;
+		int no_pp;
 	
-	score_variables ();
+		score_variables ();
 };
 
 long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
 long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
 long scoremove (const Move &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
-long int win (const Team &team);
+long win (const Team &team);
 
 }
 #endif

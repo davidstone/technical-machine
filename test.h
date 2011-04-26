@@ -139,7 +139,7 @@ void test (const Team &team) {
 			std::cout << "Base Power: " << team.active->move->basepower << '\n';
 			std::cout << "Disable: " << static_cast<int> (team.active->move->disable) << '\n';
 			std::cout << "Effect: " << static_cast<int> (team.active->move->effect) << '\n';
-			std::cout << "Probability: " << team.active->move->probability << '\n';
+			std::cout << "Probability: " << static_cast<int> (team.active->move->probability) << '\n';
 			std::cout << "Power: " << team.active->move->power << '\n';
 			std::cout << "PP: " << static_cast<int> (team.active->move->pp) << '\n';
 			std::cout << "PP max: " << static_cast<int> (team.active->move->pp_max) << '\n';

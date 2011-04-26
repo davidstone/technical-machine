@@ -33,10 +33,11 @@ Move::Move (moves_list move, int pp_ups) :
 	disable (0),
 	pp_max (get_pp [name] * (5 + pp_ups) / 5),
 	pp (pp_max),
-	priority (move_priority (name)),
 	r (100),
 	times_used (0),
 	probability (get_probability [name]) {
+		set_priority();
+		
 		if (name == ACUPRESSURE) {
 			for (int n = 0; n <= 6; ++n)
 				variable.set.push_back(n);
@@ -86,8 +87,7 @@ Move::Move (moves_list move, int pp_ups) :
 		// Confusion / Sleep!!!
 }
 
-int move_priority (const moves_list &name) {
-	int priority;
+void Move::set_priority () {
 	if (SWITCH1 <= name and name <= SWITCH6)
 		priority = 6;
 	else if (name == HELPING_HAND)
@@ -114,7 +114,6 @@ int move_priority (const moves_list &name) {
 		priority = -6;
 	else
 		priority = 0;
-	return priority;
 }
 
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log, int old_damage) {
@@ -196,11 +195,11 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	++user.active->move->times_used;
 
 	if (ACID_ARMOR == user.active->move->name or BARRIER == user.active->move->name or IRON_DEFENSE == user.active->move->name)
-		statboost (user.active->def.stage, 2);
+		user.active->def.boost (2);
 	else if (AGILITY == user.active->move->name or ROCK_POLISH == user.active->move->name)
-		statboost (user.active->spe.stage, 2);
+		user.active->spe.boost (2);
 	else if (AMNESIA == user.active->move->name)
-		statboost (user.active->spd.stage, 2);
+		user.active->spd.boost (2);
 	else if (AQUA_RING == user.active->move->name)
 		user.active->aqua_ring = true;
 	else if (AROMATHERAPY == user.active->move->name) {
@@ -235,34 +234,34 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 		target.active->trapped = true;
 //	else if (BUG_BITE == user.active->move->name or PLUCK == user.active->move->name)
 	else if (BULK_UP == user.active->move->name) {
-		statboost (user.active->atk.stage, 1);
-		statboost (user.active->def.stage, 1);
+		user.active->atk.boost (1);
+		user.active->def.boost (1);
 	}
 	else if (CALM_MIND == user.active->move->name) {
-		statboost (user.active->spa.stage, 1);
-		statboost (user.active->spd.stage, 1);
+		user.active->spa.boost (1);
+		user.active->spd.boost (1);
 	}
 //	else if (CAMOUFLAGE == user.active->move->name)
 	else if (CAPTIVATE == user.active->move->name) {
 		if (user.active->gender * target.active->gender == -1)		// male * female == -1
-			statboost (target.active->spd.stage, -2);
+			target.active->spd.boost (-2);
 	}
 	else if (CHARGE == user.active->move->name) {
 		user.active->charge = true;
-		statboost (user.active->spd.stage, 1);
+		user.active->spd.boost (1);
 	}
 	else if (CHARM == user.active->move->name or FEATHERDANCE == user.active->move->name)
-		statboost (target.active->atk.stage, -2);
+		target.active->atk.boost (-2);
 	else if (CLOSE_COMBAT == user.active->move->name) {
-		statboost (user.active->atk.stage, -1);
-		statboost (user.active->def.stage, -1);
+		user.active->atk.boost (-1);
+		user.active->def.boost (-1);
 	}
 	else if (COSMIC_POWER == user.active->move->name or DEFEND_ORDER == user.active->move->name) {
-		statboost (user.active->def.stage, 1);
-		statboost (user.active->spd.stage, 1);
+		user.active->def.boost (1);
+		user.active->spd.boost (1);
 	}
 	else if (COTTON_SPORE == user.active->move->name or SCARY_FACE == user.active->move->name)
-		statboost (target.active->spe.stage, -2);
+		target.active->spe.boost (-2);
 	else if (COUNTER == user.active->move->name) {
 			if (target.active->move->physical) {
 				target.active->hp.stat -= old_damage * 2;
@@ -287,17 +286,18 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 			}
 		}
 		else {
-			statboost (user.active->atk.stage, 1);
-			statboost (user.active->def.stage, 1);
-			statboost (user.active->spe.stage, -1);
+			user.active->atk.boost (1);
+			user.active->def.boost (1);
+			user.active->spe.boost (-1);
 		}
 	}
 	else if (DEFENSE_CURL == user.active->move->name) {
-		statboost (user.active->def.stage, 1);
+		user.active->def.boost (1);
 		user.active->defense_curl = true;
 	}
 	else if (DEFOG == user.active->move->name) {
-		statboost (target.active->evasion, -1);
+		if (target.active->evasion > -6)
+			-- target.active->evasion;
 		weather.fog = false;
 	}
 	else if (DESTINY_BOND == user.active->move->name)
@@ -305,13 +305,15 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 //	else if (DETECT == user.active->move->name or PROTECT == user.active->move->name)
 //	else if (DISABLE == user.active->move->name)
 //	else if (DOOM_DESIRE == user.active->move->name or FUTURE_SIGHT == user.active->move->name)
-	else if (DOUBLE_TEAM == user.active->move->name or MINIMIZE == user.active->move->name)
-		statboost (user.active->evasion, 1);
+	else if (DOUBLE_TEAM == user.active->move->name or MINIMIZE == user.active->move->name) {
+		if (user.active->evasion < 6)
+			++user.active->evasion;
+	}
 	else if (DRACO_METEOR == user.active->move->name or LEAF_STORM == user.active->move->name or OVERHEAT == user.active->move->name or PSYCHO_BOOST == user.active->move->name)
-		statboost (user.active->spa.stage, -2);
+		user.active->spa.boost (-2);
 	else if (DRAGON_DANCE == user.active->move->name) {
-		statboost (user.active->atk.stage, 1);
-		statboost (user.active->spe.stage, 1);
+		user.active->atk.boost (1);
+		user.active->spe.boost (1);
 	}
 	else if (DREAM_EATER == user.active->move->name) {
 		if (target.active->status == SLEEP) {
@@ -332,12 +334,14 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (FAKE_OUT == user.active->move->name)
 		target.active->flinch = true;
 	else if (FAKE_TEARS == user.active->move->name or METAL_SOUND == user.active->move->name)
-		statboost (target.active->spd.stage, -2);
+		target.active->spd.boost (-2);
 //	else if (FEINT == user.active->move->name)
-	else if (FLASH == user.active->move->name or KINESIS == user.active->move->name or MUD_SLAP == user.active->move->name or SAND_ATTACK == user.active->move->name or SMOKESCREEN == user.active->move->name)
-		statboost (target.active->accuracy, -1);
+	else if (FLASH == user.active->move->name or KINESIS == user.active->move->name or MUD_SLAP == user.active->move->name or SAND_ATTACK == user.active->move->name or SMOKESCREEN == user.active->move->name) {
+		if (target.active->accuracy > -6)
+			--target.active->accuracy;
+	}
 	else if (FLATTER == user.active->move->name)
-		statboost (target.active->spa.stage, 1);
+		target.active->spa.boost (1);
 	else if (FLING == user.active->move->name)
 		user.active->item = NO_ITEM;
 	else if (FOCUS_ENERGY == user.active->move->name)
@@ -350,11 +354,11 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (GLARE == user.active->move->name or STUN_SPORE == user.active->move->name or THUNDER_WAVE == user.active->move->name or ZAP_CANNON == user.active->move->name)
 		paralyze (*user.active, *target.active, weather);
 	else if (GRAVITY == user.active->move->name)
-		gravity (weather);
+		weather.set_gravity();
 	else if (GROWL == user.active->move->name)
-		statboost (target.active->atk.stage, -1);
+		target.active->atk.boost (-1);
 	else if (GROWTH == user.active->move->name)
-		statboost (user.active->spa.stage, 1);
+		user.active->spa.boost (1);
 //	else if (GRUDGE == user.active->move->name)
 	else if (GUARD_SWAP == user.active->move->name) {
 		std::swap (user.active->def.stage, target.active->def.stage);
@@ -362,14 +366,14 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 	else if (HAIL == user.active->move->name) {
 		if (user.active->item == ICY_ROCK)
-			hail (weather, 8);
+			weather.set_hail (8);
 		else
-			hail (weather, 5);
+			weather.set_hail (5);
 	}
 	else if (HAMMER_ARM == user.active->move->name)
-		statboost (user.active->spe.stage, -1);
+		user.active->spe.boost (-1);
 	else if (HARDEN == user.active->move->name or WITHDRAW == user.active->move->name)
-		statboost (user.active->def.stage, 1);
+		user.active->def.boost (1);
 	else if (HAZE == user.active->move->name) {
 		user.active->atk.stage = 0;
 		user.active->def.stage = 0;
@@ -404,10 +408,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 //	else if (HI_JUMP_KICK == user.active->move->name or JUMP_KICK == user.active->move->name)
 	else if (HOWL == user.active->move->name or MEDITATE == user.active->move->name or SHARPEN == user.active->move->name)
-		statboost (user.active->atk.stage, 1);
+		user.active->atk.boost (1);
 //	else if (ICE_BALL == user.active->move->name or ROLLOUT == user.active->move->name)
 	else if (ICY_WIND == user.active->move->name or MUD_SHOT == user.active->move->name or ROCK_TOMB == user.active->move->name or STRING_SHOT == user.active->move->name)
-		statboost (target.active->spe.stage, -1);
+		target.active->spe.boost (-1);
 	else if (IMPRISON == user.active->move->name)
 		user.active->imprison = true;
 	else if (INGRAIN == user.active->move->name)
@@ -416,7 +420,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (LEECH_SEED == user.active->move->name)
 		target.active->leech_seed = true;
 	else if (LEER == user.active->move->name or TAIL_WHIP == user.active->move->name)
-		statboost (target.active->def.stage, -1);
+		target.active->def.boost (-1);
 	else if (LIGHT_SCREEN == user.active->move->name) {
 		if (user.light_screen == 0) {
 			if (user.active->item == LIGHT_CLAY)
@@ -439,8 +443,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 //	else if (ME_FIRST == user.active->move->name)
 	else if (MEMENTO == user.active->move->name) {
-		statboost (target.active->atk.stage, -2);
-		statboost (target.active->spa.stage, -2);
+		target.active->atk.boost (-2);
+		target.active->spa.boost (-2);
 		user.active->hp.stat = 0;
 	}
 	else if (METAL_BURST == user.active->move->name)
@@ -467,7 +471,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (MUD_SPORT == user.active->move->name)
 		user.active->mud_sport = true;
 	else if (NASTY_PLOT == user.active->move->name or TAIL_GLOW == user.active->move->name)
-		statboost (user.active->spa.stage, 2);
+		user.active->spa.boost (2);
 	else if (NIGHTMARE == user.active->move->name)
 		target.active->nightmare = true;
 	else if (OUTRAGE == user.active->move->name or PETAL_DANCE == user.active->move->name or THRASH == user.active->move->name) {
@@ -527,9 +531,9 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 //	else if (RAGE == user.active->move->name)
 	else if (RAIN_DANCE == user.active->move->name) {
 		if (user.active->item == DAMP_ROCK)
-			rain (weather, 8);
+			weather.set_rain (8);
 		else
-			rain (weather, 5);
+			weather.set_rain (5);
 	}
 	else if (RAPID_SPIN == user.active->move->name) {
 		user.spikes = 0;
@@ -568,12 +572,12 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 	else if (SANDSTORM == user.active->move->name) {
 		if (user.active->item == SMOOTH_ROCK)
-			sand (weather, 8);
+			weather.set_sand (8);
 		else
-			sand (weather, 5);
+			weather.set_sand (5);
 	}
 	else if (SCREECH == user.active->move->name)
-		statboost (target.active->def.stage, -2);
+		target.active->def.boost (-2);
 //	else if (SKETCH == user.active->move->name)
 //	else if (SKILL_SWAP == user.active->move->name)
 //	else if (SKULL_BASH == user.active->move->name)
@@ -598,18 +602,20 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 //	else if (SUBSTITUTE == user.active->move->name)
 	else if (SUNNY_DAY == user.active->move->name) {
 		if (user.active->item == HEAT_ROCK)
-			sun (weather, 8);
+			weather.set_sun (8);
 		else
-			sun (weather, 5);
+			weather.set_sun (5);
 	}
 	else if (SUPERPOWER == user.active->move->name) {
-		statboost (user.active->atk.stage, -1);
-		statboost (user.active->def.stage, -1);
+		user.active->atk.boost (-1);
+		user.active->def.boost (-1);
 	}
 //	else if (SWAGGER == user.active->move->name)
 //	else if (SWALLOW == user.active->move->name)
-	else if (SWEET_SCENT == user.active->move->name)
-		statboost (target.active->evasion, -1);
+	else if (SWEET_SCENT == user.active->move->name) {
+		if (target.active->evasion > -6)
+			--target.active->evasion;
+	}
 	else if (SWITCH1 <= user.active->move->name and user.active->move->name <= SWITCH6) {
 		user.replacement = user.active->move->name - SWITCH1;
 		switchpokemon (user, target, weather);
@@ -617,14 +623,14 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (SWITCHEROO == user.active->move->name or TRICK == user.active->move->name)
 		std::swap (user.active->item, target.active->item);
 	else if (SWORDS_DANCE == user.active->move->name)
-		statboost (user.active->atk.stage, 2);
+		user.active->atk.boost (2);
 	else if (TAILWIND == user.active->move->name) {
 		if (user.tailwind == 0)
 			user.tailwind = 3;
 	}
 	else if (TICKLE == user.active->move->name) {
-		statboost (target.active->atk.stage, -1);
-		statboost (target.active->def.stage, -1);
+		target.active->atk.boost (-1);
+		target.active->def.boost (-1);
 	}
 	else if (TORMENT == user.active->move->name)
 		target.active->torment = true;
@@ -636,7 +642,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 //	else if (TRANSFORM == user.active->move->name)
 	else if (TRICK_ROOM == user.active->move->name)
-		trick_room (weather);
+		weather.set_trick_room ();
 //	else if (U_TURN == user.active->move->name)
 	else if (WAKE_UP_SLAP == user.active->move->name) {
 		if (target.active->status == SLEEP)
@@ -660,15 +666,15 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	
 	else if (ACUPRESSURE == user.active->move->name) {		// fix
 		if (*user.active->move->variable == 0)
-			statboost (user.active->atk.stage, 2);
+			user.active->atk.boost (2);
 		else if (*user.active->move->variable == 1)
-			statboost (user.active->def.stage, 2);
+			user.active->def.boost (2);
 		else if (*user.active->move->variable == 2)
-			statboost (user.active->spa.stage, 2);
+			user.active->spa.boost (2);
 		else if (*user.active->move->variable == 3)
-			statboost (user.active->spd.stage, 2);
+			user.active->spd.boost (2);
 		else
-			statboost (user.active->spe.stage, 2);
+			user.active->spe.boost (2);
 	}
 	else if (BIND == user.active->move->name or CLAMP == user.active->move->name or FIRE_SPIN == user.active->move->name or MAGMA_STORM == user.active->move->name or SAND_TOMB == user.active->move->name or WHIRLPOOL == user.active->move->name or WRAP == user.active->move->name) {
 		if (target.active->partial_trap == 0)
@@ -694,36 +700,36 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	}
 	else if (UPROAR == user.active->move->name) {
 		user.active->uproar = *user.active->move->variable;
-		uproar (weather, *user.active->move->variable);
+		weather.set_uproar (user.active->uproar);
 	}
 
 	else if (user.active->move->effect) {
 		if (ANCIENTPOWER == user.active->move->name or OMINOUS_WIND == user.active->move->name or SILVER_WIND == user.active->move->name) {
-			statboost (user.active->atk.stage, 1);
-			statboost (user.active->def.stage, 1);
-			statboost (user.active->spa.stage, 1);
-			statboost (user.active->spd.stage, 1);
-			statboost (user.active->spe.stage, 1);
+			user.active->atk.boost (1);
+			user.active->def.boost (1);
+			user.active->spa.boost (1);
+			user.active->spd.boost (1);
+			user.active->spe.boost (1);
 		}
 		else if (METAL_CLAW == user.active->move->name or METEOR_MASH == user.active->move->name)
-			statboost (user.active->atk.stage, 1);
+			user.active->atk.boost (1);
 		else if (STEEL_WING == user.active->move->name)
-			statboost (user.active->def.stage, 1);
+			user.active->def.boost (1);
 		else if (CHARGE_BEAM == user.active->move->name)
-			statboost (user.active->spa.stage, 1);
+			user.active->spa.boost (1);
 
 		else if (AURORA_BEAM == user.active->move->name)
-			statboost (target.active->atk.stage, -1);
+			target.active->atk.boost (-1);
 		else if (CRUNCH == user.active->move->name or CRUSH_CLAW == user.active->move->name or IRON_TAIL == user.active->move->name or ROCK_SMASH == user.active->move->name)
-			statboost (target.active->def.stage, -1);
+			target.active->def.boost (-1);
 		else if (MIST_BALL == user.active->move->name)
-			statboost (target.active->spa.stage, -1);
+			target.active->spa.boost (-1);
 		else if (ACID == user.active->move->name or BUG_BUZZ == user.active->move->name or EARTH_POWER == user.active->move->name or ENERGY_BALL == user.active->move->name or FLASH_CANNON == user.active->move->name or FOCUS_BLAST == user.active->move->name or LUSTER_PURGE == user.active->move->name or PSYCHIC_MOVE == user.active->move->name or SHADOW_BALL == user.active->move->name)
-			statboost (target.active->spd.stage, -1);
+			target.active->spd.boost (-1);
 		else if (SEED_FLARE == user.active->move->name)
-			statboost (target.active->spd.stage, -2);
+			target.active->spd.boost (-2);
 		else if (BUBBLE == user.active->move->name or BUBBLEBEAM == user.active->move->name or CONSTRICT == user.active->move->name)
-			statboost (target.active->spe.stage, -1);
+			target.active->spe.boost (-1);
 
 		else if (AIR_SLASH == user.active->move->name or ASTONISH == user.active->move->name or BITE == user.active->move->name or BONE_CLUB == user.active->move->name or DARK_PULSE == user.active->move->name or DRAGON_RUSH == user.active->move->name or EXTRASENSORY == user.active->move->name or HEADBUTT == user.active->move->name or HYPER_FANG == user.active->move->name or IRON_HEAD == user.active->move->name or NEEDLE_ARM == user.active->move->name or ROCK_SLIDE == user.active->move->name or ROLLING_KICK == user.active->move->name or SNORE == user.active->move->name or STOMP == user.active->move->name or TWISTER == user.active->move->name or WATERFALL == user.active->move->name or ZEN_HEADBUTT == user.active->move->name)
 			target.active->flinch = true;
@@ -778,8 +784,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 				target.active->flinch = true;
 		}
 
-		else if (MIRROR_SHOT == user.active->move->name or MUD_BOMB == user.active->move->name or MUDDY_WATER == user.active->move->name or OCTAZOOKA == user.active->move->name)
-			statboost (target.active->accuracy, -1);
+		else if (MIRROR_SHOT == user.active->move->name or MUD_BOMB == user.active->move->name or MUDDY_WATER == user.active->move->name or OCTAZOOKA == user.active->move->name) {
+			if (target.active->accuracy > -6)
+				--target.active->accuracy;
+		}
 		else if (SKY_ATTACK == user.active->move->name) {}
 	}
 //	else if (YAWN == user.active->move->name and false) {}

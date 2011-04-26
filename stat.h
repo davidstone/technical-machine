@@ -18,15 +18,17 @@ namespace technicalmachine {
 
 enum stats { HP, ATK, DEF, SPA, SPD, SPE };
 
-struct Stat {
-	unsigned char base;
-	char iv;			// 0 through 31
-	char ev;			// 0 through 63
-	char stage;		// -6 though 6
-	int max;		// Max HP only
-	int stat;		// Current HP or last calculated value for other stats
+class Stat {
+	public:
+		unsigned char base;
+		char iv;			// 0 through 31
+		char ev;			// 0 through 63
+		char stage;		// -6 though 6
+		int max;		// Max HP only
+		int stat;		// Current HP or last calculated value for other stats
 	
-	Stat (species name, int level, stats stat);
+		Stat (species name, int level, stats stat);
+		void boost (int n);
 };
 
 enum natures { ADAMANT, BASHFUL, BOLD, BRAVE, CALM, CAREFUL, DOCILE, GENTLE, HARDY, HASTY, IMPISH, JOLLY, LAX, LONELY, MILD, MODEST, NAIVE, NAUGHTY, QUIET, QUIRKY, RASH, RELAXED, SASSY, SERIOUS, TIMID };

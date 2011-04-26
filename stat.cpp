@@ -221,7 +221,7 @@ void faster_pokemon (Team &team1, Team &team2, const Weather &weather, Team* &fa
 		std::swap (faster, slower);
 }
 
-void statboost (char &stage, int n) {
+void Stat::boost (int n) {
 	stage += n;
 	if (stage > 6)
 		stage = 6;

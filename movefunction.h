@@ -21,7 +21,6 @@
 
 namespace technicalmachine {
 
-int move_priority (const moves_list &name);
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log = false, int old_damage = 0);
 int usemove2 (Team &user, Team &target, Weather &weather, int old_damage);
 void lower_pp (Pokemon &user, const Pokemon &target);

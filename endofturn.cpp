@@ -97,7 +97,7 @@ void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_t
 	if (member.aqua_ring)
 		heal (member, 16);
 	if (SPEED_BOOST == member.ability)
-		statboost (member.spe.stage, 1);
+		member.spe.boost (1);
 	else if (SHED_SKIN == member.ability and random.shed_skin)
 		member.status = NO_STATUS;
 	if (LEFTOVERS == member.item)
