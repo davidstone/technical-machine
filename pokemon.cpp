@@ -53,6 +53,7 @@ Pokemon::Pokemon (const species &member) :
 	yawn (0),
 	aqua_ring (false),
 	attract (false),
+	awaken (false),
 	charge (false),
 	curse (false),
 	damaged (false),

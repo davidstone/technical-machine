@@ -37,54 +37,7 @@ Move::Move (moves_list move, int pp_ups) :
 	times_used (0),
 	probability (get_probability [name]) {
 		set_priority();
-		
-		if (name == ACUPRESSURE) {
-			for (int n = 0; n <= 6; ++n)
-				variable.set.push_back(n);
-		}
-		else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
-			for (int n = 2; n <= 5; ++n)
-				variable.set.push_back(n);
-		}
-		else if (name == ENCORE) {
-			for (int n = 4; n <= 8; ++n)
-				variable.set.push_back(n);
-		}
-		else if (name == MAGNITUDE ) {
-			for (int n = 10; n <= 110; n += 20)
-				variable.set.push_back(n);
-			variable.set.push_back(150);
-	/*		4 = 10;
-			5 = 30;
-			6 = 50;
-			7 = 70;
-			8 = 90;
-			9 = 110;
-			10 = 150;*/
-		}
-		else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
-			variable.set.push_back (2);
-			variable.set.push_back (3);
-		}
-		else if (name == PRESENT) {
-			for (int n = 0; n <= 120; n += 40)
-				variable.set.push_back(n);
-		}
-		else if (name == ROAR or name == WHIRLWIND) {
-			for (unsigned int n = 0; n != 6; ++n)
-				variable.set.push_back(n);
-		}
-		else if (name == TAUNT) {
-			variable.set.push_back(2);
-			variable.set.push_back(3);
-		}
-		else if (name == TRI_ATTACK) {
-			for (int n = 0; n <= 2; ++n)
-				variable.set.push_back(n);
-		}
-		else if (variable.set.size() == 0)
-			variable.set.push_back(0);
-		// Confusion / Sleep!!!
+		set_variable();
 }
 
 void Move::set_priority () {
@@ -116,6 +69,56 @@ void Move::set_priority () {
 		priority = 0;
 }
 
+void Move::set_variable () {
+	if (name == ACUPRESSURE) {
+		for (int n = 0; n <= 6; ++n)
+			variable.set.push_back(n);
+	}
+	else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
+		for (int n = 2; n <= 5; ++n)
+			variable.set.push_back(n);
+	}
+	else if (name == ENCORE) {
+		for (int n = 4; n <= 8; ++n)
+			variable.set.push_back(n);
+	}
+	else if (name == MAGNITUDE ) {
+		for (int n = 10; n <= 110; n += 20)
+			variable.set.push_back(n);
+		variable.set.push_back(150);
+/*		4 = 10;
+		5 = 30;
+		6 = 50;
+		7 = 70;
+		8 = 90;
+		9 = 110;
+		10 = 150;*/
+	}
+	else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
+		variable.set.push_back (2);
+		variable.set.push_back (3);
+	}
+	else if (name == PRESENT) {
+		for (int n = 0; n <= 120; n += 40)
+			variable.set.push_back(n);
+	}
+	else if (name == ROAR or name == WHIRLWIND) {
+		for (unsigned int n = 0; n != 6; ++n)
+			variable.set.push_back(n);
+	}
+	else if (name == TAUNT) {
+		variable.set.push_back(2);
+		variable.set.push_back(3);
+	}
+	else if (name == TRI_ATTACK) {
+		for (int n = 0; n <= 2; ++n)
+			variable.set.push_back(n);
+	}
+	else if (variable.set.size() == 0)
+		variable.set.push_back(0);
+	// Confusion / Sleep!!!
+}
+
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log, int old_damage) {
 	int damage = 0;
 	user.active->destiny_bond = false;
@@ -129,12 +132,12 @@ int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log,
 //			usemove2 (user, target, move2, weather);		// ???
 //		 (NATURE_POWER == user.active->move->name)
 //		else
-		damage = usemove2 (user, target, weather, old_damage);
+		damage = usemove2 (user, target, weather, log, old_damage);
 	}
 	return damage;
 }
 
-int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
+int usemove2 (Team &user, Team &target, Weather &weather, bool log, int old_damage) {
 	speed (user, weather);
 	speed (target, weather);
 	movepower (*user.active, *target.active, weather);
@@ -152,45 +155,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 		defense (*user.active, *target.active, weather);
 		attack (*user.active, weather);
 		damage = damagecalculator (*user.active, target, weather);
-		if (damage != 0) {
-			target.active->hp.stat -= damage;
-			if (user.active->item == LIFE_ORB)
-				heal (*user.active, -10);
-			if (target.active->hp.stat > 0) {
-				if (target.active->bide != 0)
-					target.active->bide_damage += damage;
-			}
-			if (ABSORB == user.active->move->name or DRAIN_PUNCH == user.active->move->name or GIGA_DRAIN == user.active->move->name or LEECH_LIFE == user.active->move->name or MEGA_DRAIN == user.active->move->name) {
-				if (LIQUID_OOZE == target.active->ability) {
-					if (damage / 2 > 0) {
-						user.active->hp.stat -= damage / 2;
-						if (user.active->hp.stat < 0)
-							user.active->hp.stat = 0;
-					}
-					else
-						--user.active->hp.stat;
-				}
-				else {
-					if (damage / 2 > 0) {
-						user.active->hp.stat += damage / 2;
-						if (user.active->hp.stat > user.active->hp.max)
-							user.active->hp.stat = user.active->hp.max;
-					}
-					else
-						++user.active->hp.stat;
-				}
-			}
-			else if (BRAVE_BIRD == user.active->move->name or DOUBLE_EDGE == user.active->move->name or FLARE_BLITZ == user.active->move->name or WOOD_HAMMER == user.active->move->name or VOLT_TACKLE == user.active->move->name)
-				recoil (*user.active, damage, 3);
-			else if (HEAD_SMASH == user.active->move->name)
-				recoil (*user.active, damage, 2);
-			else if (SUBMISSION == user.active->move->name or TAKE_DOWN == user.active->move->name)
-				recoil (*user.active, damage, 4);
-			if (user.active->hp.stat < 0)
-				user.active->hp.stat = 0;
-			if (target.active->hp.stat < 0)
-				target.active->hp.stat = 0;
-		}
+		if (damage != 0 and !log)
+			do_damage (user, target, damage);
 	}
 	++user.active->move->times_used;
 
@@ -314,13 +280,6 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 	else if (DRAGON_DANCE == user.active->move->name) {
 		user.active->atk.boost (1);
 		user.active->spe.boost (1);
-	}
-	else if (DREAM_EATER == user.active->move->name) {
-		if (target.active->status == SLEEP) {
-			user.active->hp.stat += damage / 2;
-			if (user.active->hp.stat > user.active->hp.max)
-				user.active->hp.stat = user.active->hp.max;
-		}
 	}
 	else if (EMBARGO == user.active->move->name)
 		target.active->embargo = 5;
@@ -793,6 +752,53 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage) {
 //	else if (YAWN == user.active->move->name and false) {}
 
 	return damage;
+}
+
+void do_damage (Team &user, Team &target, int damage) {
+	target.active->hp.stat -= damage;
+	if (user.active->item == LIFE_ORB)
+		heal (*user.active, -10);
+	if (target.active->hp.stat > 0) {
+		if (target.active->bide != 0)
+			target.active->bide_damage += damage;
+	}
+	if (ABSORB == user.active->move->name or DRAIN_PUNCH == user.active->move->name or GIGA_DRAIN == user.active->move->name or LEECH_LIFE == user.active->move->name or MEGA_DRAIN == user.active->move->name) {
+		if (LIQUID_OOZE == target.active->ability) {
+			if (damage / 2 > 0) {
+				user.active->hp.stat -= damage / 2;
+				if (user.active->hp.stat < 0)
+					user.active->hp.stat = 0;
+			}
+			else
+				--user.active->hp.stat;
+		}
+		else {
+			if (damage / 2 > 0) {
+				user.active->hp.stat += damage / 2;
+				if (user.active->hp.stat > user.active->hp.max)
+					user.active->hp.stat = user.active->hp.max;
+			}
+			else
+				++user.active->hp.stat;
+		}
+	}
+	else if (DREAM_EATER == user.active->move->name) {
+		if (target.active->status == SLEEP) {
+			user.active->hp.stat += damage / 2;
+			if (user.active->hp.stat > user.active->hp.max)
+				user.active->hp.stat = user.active->hp.max;
+		}
+	}
+	else if (BRAVE_BIRD == user.active->move->name or DOUBLE_EDGE == user.active->move->name or FLARE_BLITZ == user.active->move->name or WOOD_HAMMER == user.active->move->name or VOLT_TACKLE == user.active->move->name)
+		recoil (*user.active, damage, 3);
+	else if (HEAD_SMASH == user.active->move->name)
+		recoil (*user.active, damage, 2);
+	else if (SUBMISSION == user.active->move->name or TAKE_DOWN == user.active->move->name)
+		recoil (*user.active, damage, 4);
+	if (user.active->hp.stat < 0)
+		user.active->hp.stat = 0;
+	if (target.active->hp.stat < 0)
+		target.active->hp.stat = 0;
 }
 
 void lower_pp (Pokemon &user, const Pokemon &target) {

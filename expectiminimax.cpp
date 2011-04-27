@@ -243,17 +243,40 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 }
 
 
-long tree3 (const Team &ai, const Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
+long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
+	int ai_divisor = 5 - ai.active->sleep;
+	int foe_divisor = 5 - foe.active->sleep;
+	long score;
+	ai.active->awaken = false;
+	foe.active->awaken = false;
+	score = tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+	if (ai_divisor < 5) {
+		score *= ai_divisor - 1;
+		ai.active->awaken = true;
+		score += tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+		if (foe_divisor < 5) {
+			foe.active->awaken = true;
+			score += tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+			ai.active->awaken = false;
+			score += (ai_divisor - 1) * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+			score /= foe_divisor;
+		}
+		score /= ai_divisor;
+	}
+	return score;
+}
+
+long tree4 (const Team &ai, const Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
 	long score;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		score = (tree4 (ai, foe, weather, depth, sv, transposition_table) + tree4 (foe, ai, weather, depth, sv, transposition_table)) / 2;
+		score = (tree5 (ai, foe, weather, depth, sv, transposition_table) + tree5 (foe, ai, weather, depth, sv, transposition_table)) / 2;
 	else
-		score = tree4 (*first, *last, weather, depth, sv, transposition_table);
+		score = tree5 (*first, *last, weather, depth, sv, transposition_table);
 	return score;
 }
 
 
-long tree4 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+long tree5 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
 
 	bool hitself = false;
 	int old_damage = usemove (first, last, weather, hitself);
@@ -273,47 +296,31 @@ long tree4 (Team first, Team last, Weather weather, int depth, const score_varia
 	
 	Random random;
 	
-	long score3 = 0;
-	// Length of sleep caused by Yawn is a value between 2 and 5
-	for (random.first.length = 2; random.first.length != 6;) {
-		long score2 = 0;
-		for (random.last.length = 2; random.last.length != 6;) {
+	random.first.shed_skin = false;
+	random.last.shed_skin = false;
+	long score1 = 49 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+	long divisor = 49;
+	if (first.active->ability == SHED_SKIN and first.active->status != NO_STATUS) {
+		random.first.shed_skin = true;
+		score1 += 21 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+		divisor += 21;
+		if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
+			random.last.shed_skin = true;
+			score1 += 9 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+			divisor += 9;
 			random.first.shed_skin = false;
-			random.last.shed_skin = false;
-			long score1 = 49 * tree5 (first, last, weather, random, depth, sv, transposition_table);
-			long divisor = 49;
-			if (first.active->ability == SHED_SKIN and first.active->status != NO_STATUS) {
-				random.first.shed_skin = true;
-				score1 += 21 * tree5 (first, last, weather, random, depth, sv, transposition_table);
-				divisor += 21;
-				if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
-					random.last.shed_skin = true;
-					score1 += 9 * tree5 (first, last, weather, random, depth, sv, transposition_table);
-					divisor += 9;
-					random.first.shed_skin = false;
-				}
-			}
-			if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
-				random.last.shed_skin = true;
-				score1 += 21 * tree5 (first, last, weather, random, depth, sv, transposition_table);
-				divisor += 21;
-			}
-			score2 += score1 / divisor;
-			++random.last.length;
-			// Don't find out the possible outcomes from Yawn if Yawn isn't active
-			if (last.active->yawn == 0)
-				break;
 		}
-		score3 += score2 / (random.last.length - 2);
-		++random.first.length;
-		if (first.active->yawn == 0)
-			break;
 	}
-	return score3 / (random.first.length - 2);
+	if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
+		random.last.shed_skin = true;
+		score1 += 21 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+		divisor += 21;
+	}
+	return score1 / divisor;
 }
 
 
-long tree5 (Team first, Team last, Weather weather, const Random &random, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+long tree6 (Team first, Team last, Weather weather, const Random &random, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
 	endofturn (first, last, weather, random);
 	long score;
 	if (win (first) != 0 or win (last) != 0)

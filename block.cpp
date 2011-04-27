@@ -66,15 +66,19 @@ void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weathe
 		if (FREEZE == user.status and (FLAME_WHEEL != user.move->name and SACRED_FIRE != user.move->name))
 			user.move->execute = false;
 
-		else if (SLEEP == user.status) {
-			if (EARLY_BIRD == user.ability and user.sleep >= 2)
-				user.sleep -= 2;
-			else
-				--user.sleep;
-			if (0 == user.sleep)
+		else if (SLEEP == user.status) {		// Currently working here!
+			if (user.awaken) {
+				user.sleep = 0;
 				user.status = NO_STATUS;
-			else if (SLEEP_TALK != user.move->name and SNORE != user.move->name)
-				user.move->execute = false;
+			}
+			else {
+				if (EARLY_BIRD == user.ability)
+					user.sleep += 2;
+				else
+					++user.sleep;
+				if (SLEEP_TALK != user.move->name and SNORE != user.move->name)
+					user.move->execute = false;
+			}
 		}
 
 		if (block1 (user, target)

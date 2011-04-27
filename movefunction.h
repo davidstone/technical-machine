@@ -22,7 +22,8 @@
 namespace technicalmachine {
 
 int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log = false, int old_damage = 0);
-int usemove2 (Team &user, Team &target, Weather &weather, int old_damage);
+int usemove2 (Team &user, Team &target, Weather &weather, bool log, int old_damage);
+void do_damage (Team &user, Team &target, int damage);
 void lower_pp (Pokemon &user, const Pokemon &target);
 void set_move_map (std::map <std::string, moves_list> &moves_map);
 

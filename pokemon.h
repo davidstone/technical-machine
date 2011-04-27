@@ -60,7 +60,7 @@ class Pokemon {
 		char partial_trap;		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
 		char perish_song;
 		char rampage;			// Number of turns remaining on Outrage, Petal Dance, and Thrash
-		char sleep;				// 2 through 5
+		char sleep;				// wakes up when this number is 2 through 5
 		char slow_start;
 		char stockpile;
 		char taunt;
@@ -69,6 +69,7 @@ class Pokemon {
 		char yawn;
 		bool aqua_ring;
 		bool attract;
+		bool awaken;		// Will it wake up
 		bool charge;
 		bool curse;
 		bool damaged;

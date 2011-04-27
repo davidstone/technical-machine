@@ -173,7 +173,7 @@ void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_t
 	decrement (member.embargo);
 	if (1 == member.yawn) {
 		sleep (member, member, weather);
-		member.sleep = random.length;
+		member.sleep = 0;
 	}
 	decrement (member.yawn);
 	if (STICKY_BARB == member.item)

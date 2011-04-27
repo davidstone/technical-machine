@@ -53,6 +53,7 @@ class Move {
 		}
 	private:
 		void set_priority ();
+		void set_variable ();
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

@@ -15,6 +15,7 @@
 #include <string>
 #include "analyze_logs.h"
 #include "ability.h"
+#include "expectiminimax.h"
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
@@ -25,7 +26,7 @@
 namespace technicalmachine {
 
 bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map) {
-	first = NULL;		// Only check if first == NULL, so no need to set last = NULL
+	first = NULL;
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	std::string input;
 	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
@@ -34,6 +35,7 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	if (input == "~")
 		won = true;
 	else {
+		Random random;
 		size_t newline1 = 0;
 		while (true) {
 			while (newline1 < input.length() and input.at (newline1) == '\n')
@@ -50,16 +52,20 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					search = ai.player + " sent out ";
 					if (line.substr (0, search.length()) == search) {
 						log_pokemon (ai, foe, weather, line, map, search);
-						if (first == NULL)
+						if (first == NULL) {
 							first = &ai;
+							last = &foe;
+						}
 					}
 					else {
 						if (foe.player == "")
 							foe.player = line.substr (0, found);
 						search = foe.player + " sent out ";
 						log_pokemon (foe, ai, weather, line, map, search);
-						if (first == NULL)
+						if (first == NULL) {
 							first = &foe;
+							last = &ai;
+						}
 					}
 				}
 				else {
@@ -73,26 +79,37 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 						active = &foe;
 						inactive = &ai;
 					}
-					if (first == NULL)
+					if (first == NULL) {
 						first = active;
+						last = inactive;
+					}
 
 					// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
+					
+//					if (line == "===============")
+//						endofturn (*first, *last, weather)
 			
+					search = active->active->nickname + " lost ";
+					if (line.substr (0, search.length()) == search) {
+						size_t division = line.find ("/", search.length());
+						int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
+						++division;
+						int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ") - division));
+						active->active->hp.stat -= active->active->hp.max * numerator / denominator;
+					}
 					// nickname used move.
 					search = active->active->nickname + " used ";
 					if (line.substr (0, search.length()) == search)
 						log_move (*active, *inactive, weather, line, map, search);
-					else
-						log_misc (*active->active, *inactive->active, line, map);
+					else {
+						bool shed_skin = true;
+						log_misc (*active->active, *inactive->active, line, map, shed_skin);		// Fix
+					}
 				}
 			}
 
 			newline1 = newline2 + 1;
 		}
-		if (first->me)
-			last = &foe;
-		else
-			last = &ai;
 	}
 	return won;
 }
@@ -190,7 +207,7 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	usemove (user, target, weather, hitself, log);
 }
 
-void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map) {
+void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin) {
 	if (active.ability == END_ABILITY) {
 		if (active.nickname + "'s Anger Point raised its attack!" == line)
 			active.ability = ANGER_POINT;
@@ -246,8 +263,10 @@ void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, cons
 			active.ability = RAIN_DISH;
 		else if (active.nickname + "'s Sand Stream whipped up a sandstorm!" == line)
 			active.ability = SAND_STREAM;
-		else if (active.nickname + " shed its skin!" == line)
+		else if (active.nickname + " shed its skin!" == line) {
 			active.ability = SHED_SKIN;
+			shed_skin = true;
+		}
 		else if (active.nickname + " can't get going due to its Slow Start!" == line)
 			active.ability = SLOW_START;
 		else if (active.nickname + "'s Snow Warning whipped up a hailstorm!" == line or active.nickname + "'s Snow Warning whipped up a hailstorm! " == line)
