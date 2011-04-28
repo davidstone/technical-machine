@@ -20,6 +20,7 @@
 #include "reversedamage.h"
 #include "statfunction.h"
 #include "status.h"
+#include "switch.h"
 #include "team.h"
 #include "teampredictor.h"
 #include "type.h"
@@ -35,48 +36,22 @@ int main () {
 	Map map;
 	int detailed [END_SPECIES] [7];
 	detailed_stats (map, detailed);
-	teams ai;
+	Team ai (true);
 	loadteam (ai, "teams/ai.sbt", map, detailed);
-	ai.me = true;
 
-	teams foe;
-	foe.me = false;
+	Team foe (false);
 
-	pokemon member;
-	foe.member.push_back (member);
-	foe.active = foe.member.begin();
-	foe.active->name = INFERNAPE;
+	Pokemon member (INFERNAPE);
+	foe.active.set.push_back (member);
 	foe.active->level = 100;
-	foe.active->gender = MALE;
 	foe.active->ability = BLAZE;
-	foe.active->hp.iv = 0;
-	foe.active->def.iv = 0;
-	foe.active->spa.iv = 0;
-	foe.active->spd.iv = 0;
-	foe.active->spe.iv = 0;
-	foe.active->hp.ev = 0;
-	foe.active->def.ev = 0;
-	foe.active->spa.ev = 0;
-	foe.active->spd.ev = 0;
-	foe.active->spe.ev = 0;
 
-	moves move;
-	move.name = CLOSE_COMBAT;
-	move.pp_max = get_pp [move.name] * 8 / 5;
-	move.ch = false;
-	foe.active->moveset.push_back (move);
+	Move move (CLOSE_COMBAT, 3);
+	foe.active->move.set.push_back (move);
 
 	loadteam (foe, "", map, detailed);
 
-	weathers weather;
-	weather.trick_room = 0;
-	weather.fog = false;
-	weather.gravity = 0;
-	weather.uproar = 0;
-	weather.hail = 0;
-	weather.sun = 0;
-	weather.sand = 0;
-	weather.rain = 0;
+	Weather weather;
 	
 	ai.replacement = 0;
 	switchpokemon (ai, *foe.active, weather);

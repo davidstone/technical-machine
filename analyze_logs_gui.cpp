@@ -31,7 +31,7 @@ struct Data {
 	std::string output;
 	Fl_Multiline_Output* multiout;
 	std::string log_path;
-	weathers weather;
+	Weather weather;
 	Map map;
 };
 
@@ -42,9 +42,9 @@ void load_log (Fl_Widget* w, void* data) {
 		std::cerr << d->input->value() << " is not a valid file.\n";
 	else {
 		std::string line;
-		Team player1;
+		Team player1 (false);
 		player1.player = "";
-		Team player2;
+		Team player2 (false);
 		player2.player = "";
 		Team* previous;
 		for (getline (file, line); !file.eof(); getline (file, line))
