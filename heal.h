@@ -1,4 +1,4 @@
-// End of turn function forward declaration
+// heal declaration
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,24 +9,14 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENDOFTURN_H_
-#define ENDOFTURN_H_
+#ifndef HEAL_H_
+#define HEAL_H_
 
 #include "pokemon.h"
-#include "team.h"
-#include "weather.h"
 
 namespace technicalmachine {
 
-void endofturn (Team &first, Team &last, Weather &weather);
-void endofturn0 (Pokemon &member);
-void endofturn1 (Team &team);
-void endofturn2 (Team &team);
-void endofturn3 (Pokemon &member, const Weather &weather);
-void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather);
-void endofturn6 (Team &target, const Weather &weather);
-void endofturn7 (Pokemon &member);
-void decrement (char &n);
+void heal (Pokemon &member, int denominator, int numerator = 1);
 
 }
 

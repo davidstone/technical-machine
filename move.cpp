@@ -14,12 +14,13 @@
 #include "ability.h"
 #include "block.h"
 #include "damage.h"
+#include "heal.h"
 #include "pokemon.h"
-#include "simple.h"
 #include "statfunction.h"
 #include "statusfunction.h"
 #include "switch.h"
 #include "type.h"
+#include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {

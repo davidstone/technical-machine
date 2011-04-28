@@ -1,4 +1,4 @@
-// Miscellaneous functions
+// Type function declarations
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,8 +9,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SIMPLE_H_
-#define SIMPLE_H_
+#ifndef TYPEFUNCTION_H_
+#define TYPEFUNCTION_H_
 
 #include "pokemon.h"
 #include "type.h"
@@ -19,10 +19,8 @@
 namespace technicalmachine {
 
 bool istype (const Pokemon &member, types type);
-void heal (Pokemon &member, int denominator, int numerator = 1);
-void decrement (char &n);
 bool grounded (const Pokemon &member, const Weather &weather);
-void recoil (Pokemon &user, int damage, int denominator);
+
 
 }
 #endif

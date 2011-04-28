@@ -17,7 +17,6 @@
 #include <string>
 #include "move.h"
 #include "pokemon.h"
-#include "simple.h"
 #include "status.h"
 #include "team.h"
 #include "weather.h"

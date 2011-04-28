@@ -18,7 +18,6 @@
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
-#include "simple.h"
 #include "statfunction.h"
 #include "switch.h"
 #include "team.h"
@@ -294,34 +293,32 @@ long tree5 (Team first, Team last, Weather weather, int depth, const score_varia
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
-	Random random;
-	
-	random.first.shed_skin = false;
-	random.last.shed_skin = false;
-	long score1 = 49 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+	first.active->shed_skin = false;
+	last.active->shed_skin = false;
+	long score1 = 49 * tree6 (first, last, weather, depth, sv, transposition_table);
 	long divisor = 49;
 	if (first.active->ability == SHED_SKIN and first.active->status != NO_STATUS) {
-		random.first.shed_skin = true;
-		score1 += 21 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+		first.active->shed_skin = true;
+		score1 += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
 		divisor += 21;
 		if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
-			random.last.shed_skin = true;
-			score1 += 9 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+			last.active->shed_skin = true;
+			score1 += 9 * tree6 (first, last, weather, depth, sv, transposition_table);
 			divisor += 9;
-			random.first.shed_skin = false;
+			first.active->shed_skin = false;
 		}
 	}
 	if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
-		random.last.shed_skin = true;
-		score1 += 21 * tree6 (first, last, weather, random, depth, sv, transposition_table);
+		last.active->shed_skin = true;
+		score1 += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
 		divisor += 21;
 	}
 	return score1 / divisor;
 }
 
 
-long tree6 (Team first, Team last, Weather weather, const Random &random, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
-	endofturn (first, last, weather, random);
+long tree6 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+	endofturn (first, last, weather);
 	long score;
 	if (win (first) != 0 or win (last) != 0)
 		score = win (first) + win (last);

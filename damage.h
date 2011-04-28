@@ -28,6 +28,7 @@ int damagerandom (const Pokemon &attacker, const Team &defender, const int &stab
 
 int damagecalculator (const Pokemon &attacker, const Team &defender, const Weather &weather);
 
+void recoil (Pokemon &user, int damage, int denominator);
 }
 
 #endif

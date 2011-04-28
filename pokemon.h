@@ -90,6 +90,7 @@ class Pokemon {
 		bool mud_sport;
 		bool nightmare;
 		bool roost;
+		bool shed_skin;
 		bool torment;
 		bool trapped;			// Block, Mean Look, Spider Web
 		bool water_sport;

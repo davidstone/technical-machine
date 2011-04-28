@@ -74,6 +74,7 @@ Pokemon::Pokemon (const species &member) :
 	mud_sport (false),
 	nightmare (false),
 	roost (false),
+	shed_skin (false),
 	torment (false),
 	trapped (false),
 	water_sport (false),

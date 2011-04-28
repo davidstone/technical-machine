@@ -15,11 +15,11 @@
 #include "item.h"
 #include "move.h"
 #include "pokemon.h"
-#include "simple.h"
 #include "stat.h"
 #include "statfunction.h"
 #include "status.h"
 #include "team.h"
+#include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {

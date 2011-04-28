@@ -15,8 +15,8 @@
 #include "item.h"
 #include "move.h"
 #include "pokemon.h"
-#include "simple.h"
 #include "status.h"
+#include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {
@@ -363,6 +363,17 @@ int damagecalculator (const Pokemon &attacker, const Team &defender, const Weath
 		}
 	}
 	return damage;
+}
+
+void recoil (Pokemon &user, int damage, int denominator) {
+	if (user.ability != MAGIC_GUARD and user.ability != ROCK_HEAD) {
+		if (damage <= denominator)
+			--user.hp.stat;
+		else
+			user.hp.stat -= damage / denominator;
+		if (user.hp.stat < 0)
+			user.hp.stat = 0;
+	}
 }
 
 }

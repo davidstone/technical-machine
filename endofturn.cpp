@@ -12,18 +12,18 @@
 #include "endofturn.h"
 #include "ability.h"
 #include "damage.h"
-#include "expectiminimax.h"
+#include "heal.h"
 #include "move.h"
 #include "pokemon.h"
-#include "simple.h"
 #include "statfunction.h"
 #include "statusfunction.h"
 #include "team.h"
+#include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {
 
-void endofturn (Team &first, Team &last, Weather &weather, const Random &random) {
+void endofturn (Team &first, Team &last, Weather &weather) {
 	endofturn0 (*first.active);
 	endofturn0 (*last.active);
 	endofturn1 (first);
@@ -39,8 +39,8 @@ void endofturn (Team &first, Team &last, Weather &weather, const Random &random)
 		endofturn3 (*last.active, weather);
 	}
 	decrement (weather.gravity);
-	endofturn5 (*first.active, *last.active, weather, random.first);
-	endofturn5 (*last.active, *first.active, weather, random.last);
+	endofturn5 (*first.active, *last.active, weather);
+	endofturn5 (*last.active, *first.active, weather);
 	endofturn6 (first, weather);
 	endofturn6 (last, weather);
 	endofturn7 (*first.active);
@@ -91,14 +91,14 @@ void endofturn3 (Pokemon &member, const Weather &weather) {
 		heal (member, 16);
 }
 
-void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_team &random) {
+void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather) {
 	if (member.ingrain)
 		heal (member, 16);
 	if (member.aqua_ring)
 		heal (member, 16);
 	if (SPEED_BOOST == member.ability)
 		member.spe.boost (1);
-	else if (SHED_SKIN == member.ability and random.shed_skin)
+	else if (member.shed_skin)
 		member.status = NO_STATUS;
 	if (LEFTOVERS == member.item)
 		heal (member, 16);
@@ -149,7 +149,7 @@ void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather, const random_t
 		poison_toxic (member, member, weather);
 	if (member.curse)
 		heal (member, -4);
-	if (0 < member.partial_trap) {
+	if (member.partial_trap > 0) {
 		heal (member, -16);
 		--member.partial_trap;				// No need to use decrement here, as I already know member.partial_trap > 0
 	}
@@ -192,6 +192,11 @@ void endofturn7 (Pokemon &member)  {
 	if (member.perish_song == 1)
 		member.hp.stat = 0;
 	decrement (member.perish_song);
+}
+
+void decrement (char &n) {
+	if (n > 0)
+		--n;
 }
 
 }

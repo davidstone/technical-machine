@@ -1,4 +1,4 @@
-// End of turn function forward declaration
+// Function to heal Pokemon
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,25 +9,22 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENDOFTURN_H_
-#define ENDOFTURN_H_
-
+#include "heal.h"
 #include "pokemon.h"
-#include "team.h"
-#include "weather.h"
 
 namespace technicalmachine {
 
-void endofturn (Team &first, Team &last, Weather &weather);
-void endofturn0 (Pokemon &member);
-void endofturn1 (Team &team);
-void endofturn2 (Team &team);
-void endofturn3 (Pokemon &member, const Weather &weather);
-void endofturn5 (Pokemon &member, Pokemon &foe, Weather &weather);
-void endofturn6 (Team &target, const Weather &weather);
-void endofturn7 (Pokemon &member);
-void decrement (char &n);
-
+void heal (Pokemon &member, int denominator, int numerator) {
+	if (0 != member.hp.stat) {
+		if ((denominator > 0 and denominator / numerator < member.hp.max) or (denominator < 0 and -denominator / numerator < member.hp.max and member.ability != MAGIC_GUARD))
+			member.hp.stat += member.hp.max * numerator / denominator;
+		else if (denominator > 0)	// If it would normally heal less than 1, heal 1
+			++member.hp.stat;
+		else if (member.ability != MAGIC_GUARD)	// If it would normally damage less than 1, damage 1
+			--member.hp.stat;
+		if (member.hp.stat > member.hp.max)
+			member.hp.stat = member.hp.max;
+	}
 }
 
-#endif
+}

@@ -15,7 +15,6 @@
 #include <string>
 #include "analyze_logs.h"
 #include "ability.h"
-#include "expectiminimax.h"
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
@@ -35,7 +34,6 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	if (input == "~")
 		won = true;
 	else {
-		Random random;
 		size_t newline1 = 0;
 		while (true) {
 			while (newline1 < input.length() and input.at (newline1) == '\n')
