@@ -243,24 +243,40 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 
 
 long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
-	int ai_divisor = 5 - ai.active->sleep;
-	int foe_divisor = 5 - foe.active->sleep;
+	int n;
+	if (ai.active->ability == EARLY_BIRD)
+		n = 2;
+	else
+		n = 1;
+	int ai_numerator = ai.active->sleep + n - 1;
+	if (foe.active->ability == EARLY_BIRD)
+		n = 2;
+	else
+		n = 1;
+	int foe_numerator = foe.active->sleep + n - 1;
 	long score;
 	ai.active->awaken = false;
 	foe.active->awaken = false;
 	score = tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
-	if (ai_divisor < 5) {
-		score *= ai_divisor - 1;
+	if (ai_numerator > 1) {
+		score *= 4 - ai_numerator;
 		ai.active->awaken = true;
-		score += tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
-		if (foe_divisor < 5) {
+		score += ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+		if (ai_numerator > 1) {
+			score *= 4 - foe_numerator;
 			foe.active->awaken = true;
-			score += tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+			score += foe_numerator * (4 - ai_numerator) * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
 			ai.active->awaken = false;
-			score += (ai_divisor - 1) * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
-			score /= foe_divisor;
+			score += foe_numerator * ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+			score /= 4;
 		}
-		score /= ai_divisor;
+		score /= 4;
+	}
+	else if (foe_numerator > 1) {
+		score *= 4 - foe_numerator;
+		foe.active->awaken = true;
+		score += foe_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+		score /= 4;
 	}
 	return score;
 }
