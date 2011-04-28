@@ -1,6 +1,6 @@
 aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
 
-predictobjects = predictor.o ability.o damage.o gender.o item.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o weather.o
+predictobjects = predictor.o ability.o block.o damage.o gender.o heal.o item.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
 
 rdcobjects = rdc.o ability.o damage.o item.o move.o pokemon.o reversedamage.o stat.o status.o team.o teampredictor.o unknown.o weather.o
 
@@ -74,6 +74,9 @@ move.o: move.cpp move.h active.h type.h movefunction.h pokemon.h \
 pokemon.o: pokemon.cpp active.h movefunction.h move.h type.h pokemon.h \
  ability.h gender.h item.h species.h stat.h status.h team.h weather.h \
  statfunction.h
+predictor.o: predictor.cpp movefunction.h move.h active.h type.h \
+ pokemon.h ability.h gender.h item.h species.h stat.h status.h team.h \
+ weather.h statfunction.h teampredictor.h
 stat.o: stat.cpp ability.h item.h move.h active.h type.h pokemon.h \
  gender.h species.h stat.h status.h statfunction.h team.h weather.h \
  typefunction.h

@@ -45,7 +45,7 @@ void function (Fl_Widget* w, void* data) {
 	if (it != d->map.specie.end()) {
 		using_lead = true;
 		Pokemon member (it->second);
-		team.active.member.push_back (member);
+		team.active.set.push_back (member);
 	}
 	else
 		using_lead = false;
@@ -53,17 +53,17 @@ void function (Fl_Widget* w, void* data) {
 		it = d->map.specie.find ((*in)->value());
 		if (it != d->map.specie.end()) {
 			Pokemon member (it->second);
-			team.active.member.push_back (member);
+			team.active.set.push_back (member);
 		}
 	}
 	
-	if (team.active.member.size() > 0) {
+	if (team.active.set.size() > 0) {
 		predict (d->detailed, team, using_lead);
 		std::string output = "";
-		for (std::vector<Pokemon>::const_iterator active = team.active.member.begin(); active != team.active.member.end(); ++active) {
+		for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
 			output += pokemon_name [active->name] + " @ " + item_name  [active->item];
 			output += "\nAbility: " + ability_name [active->ability];
-			for (std::vector<Move>::const_iterator move = active->moveset.begin(); move->name != STRUGGLE; ++move)
+			for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
 				output += "\n\t- " + move_name [move->name];
 			output += "\n\n";
 		}
@@ -121,7 +121,7 @@ void technicalmachine::predict (int detailed [][7], Team &team, bool using_lead)
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall [n] / total) * lead [n]);
 
-	for (std::vector<Pokemon>::const_iterator it = team.active.member.begin(); it != team.active.member.end(); ++it) {
+	for (std::vector<Pokemon>::const_iterator it = team.active.set.begin(); it != team.active.set.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate [n] *= multiplier [it->name] [n];
 	}
