@@ -59,34 +59,34 @@ void blockselection (Team &user, const Pokemon &target, const Weather &weather) 
 	}
 }
 
-void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather, bool hitself) {
+void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather) {
 	if (user.hp.stat == 0 or (target.hp.stat == 0 and false))
 		user.move->execute = false;
 	else if (user.move->pp_max != -1 or user.move->name == STRUGGLE) {
-		if (FREEZE == user.status and (FLAME_WHEEL != user.move->name and SACRED_FIRE != user.move->name))
+		if (user.status == FREEZE and (user.move->name != FLAME_WHEEL and user.move->name != SACRED_FIRE))
 			user.move->execute = false;
 
-		else if (SLEEP == user.status) {		// Currently working here!
+		else if (user.status == SLEEP) {
 			if (user.awaken) {
 				user.sleep = 0;
 				user.status = NO_STATUS;
 			}
 			else {
-				if (EARLY_BIRD == user.ability)
+				if (user.ability == EARLY_BIRD)
 					user.sleep += 2;
 				else
 					++user.sleep;
-				if (SLEEP_TALK != user.move->name and SNORE != user.move->name)
+				if (user.move->name != SLEEP_TALK and user.move->name != SNORE)
 					user.move->execute = false;
 			}
 		}
 
 		if (block1 (user, target)
-		 or (TRUANT == user.ability and user.loaf))
+		 or (user.ability == TRUANT and user.loaf))
 			user.move->execute = false;
 
-		if (user.move->execute and 0 != user.confused) {
-			if (hitself) {
+		if (user.move->execute and user.confused != 0) {
+			if (user.hitself) {
 				// fix
 				user.move->execute = false;
 			}
@@ -94,7 +94,7 @@ void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weathe
 				--user.confused;
 		}
 		if (user.move->execute and user.flinch) {
-			if (STEADFAST == user.ability)
+			if (user.ability == STEADFAST)
 				user.spe.boost (1);
 			user.move->execute = false;
 		}

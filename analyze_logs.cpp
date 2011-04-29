@@ -15,6 +15,7 @@
 #include <string>
 #include "analyze_logs.h"
 #include "ability.h"
+#include "endofturn.h"
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
@@ -34,7 +35,12 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	if (input == "~")
 		won = true;
 	else {
+		bool replacing = false;
 		size_t newline1 = 0;
+		
+		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that line. This helps keep track of information on future lines so I can do things like assign critical hits to the right move.
+		Team* active;
+		Team* inactive;
 		while (true) {
 			while (newline1 < input.length() and input.at (newline1) == '\n')
 				++newline1;
@@ -50,16 +56,22 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					search = ai.player + " sent out ";
 					if (line.substr (0, search.length()) == search) {
 						log_pokemon (ai, foe, weather, line, map, search);
+						active = &ai;
+						inactive = &foe;
 						if (first == NULL) {
 							first = &ai;
 							last = &foe;
 						}
 					}
 					else {
-						if (foe.player == "")
+						if (foe.player == "") {
 							foe.player = line.substr (0, found);
+							replacing = true;
+						}
 						search = foe.player + " sent out ";
 						log_pokemon (foe, ai, weather, line, map, search);
+						active = &foe;
+						inactive = &ai;
 						if (first == NULL) {
 							first = &foe;
 							last = &ai;
@@ -67,13 +79,11 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					}
 				}
 				else {
-					Team* active;
-					Team* inactive;
 					if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
 						active = &ai;
 						inactive = &foe;
 					}
-					else {
+					else if (line.substr (0, foe.active->nickname.length()) == foe.active->nickname) {
 						active = &foe;
 						inactive = &ai;
 					}
@@ -84,29 +94,36 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 
 					// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
 					
-//					if (line == "===============")
-//						endofturn (*first, *last, weather)
-			
 					search = active->active->nickname + " lost ";
 					if (line.substr (0, search.length()) == search) {
 						size_t division = line.find ("/", search.length());
+//						std::cout << line.substr (search.length(), division - search.length()) << '\n';
 						int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
 						++division;
-						int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ") - division));
-						active->active->hp.stat -= active->active->hp.max * numerator / denominator;
+						int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ", division) - division));
+						active->active->damage = active->active->hp.max * numerator / denominator;
 					}
-					// nickname used move.
-					search = active->active->nickname + " used ";
-					if (line.substr (0, search.length()) == search)
-						log_move (*active, *inactive, weather, line, map, search);
+					else if (line == "A critical hit!")
+						active->active->move->ch = true;
 					else {
-						bool shed_skin = true;
-						log_misc (*active->active, *inactive->active, line, map, shed_skin);		// Fix
+						search = active->active->nickname + " used ";
+						if (line.substr (0, search.length()) == search)
+							log_move (*active, *inactive, weather, line, map, search);
+						else if (line != "===============") {
+							bool shed_skin = false;
+							log_misc (*active->active, *inactive->active, line, map, shed_skin);		// Fix
+						}
 					}
 				}
 			}
-
 			newline1 = newline2 + 1;
+		}
+		if (!replacing) {
+			usemove (*first, *last, weather);
+			usemove (*last, *first, weather);
+			endofturn (*first, *last, weather);
+			ai.active->damage = 0;
+			foe.active->damage = 0;
 		}
 	}
 	return won;
@@ -200,19 +217,20 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 		user.active->move.set.insert (user.active->move.set.begin(), move);
 		user.active->move.index = 0;
 	}
-	bool hitself = false;
-	bool log = true;
-	usemove (user, target, weather, hitself, log);
 }
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin) {
 	if (active.ability == END_ABILITY) {
-		if (active.nickname + "'s Anger Point raised its attack!" == line)
+		if (active.nickname + "'s Anger Point raised its attack!" == line) {
 			active.ability = ANGER_POINT;
+			active.atk.stage = 6;
+		}
 		else if (active.nickname + "'s Anticipation made it shudder!" == line)
 			active.ability = ANTICIPATION;
-		else if (active.nickname + "'s Cute Charm infatuated " + inactive.nickname == line)
+		else if (active.nickname + "'s Cute Charm infatuated " + inactive.nickname == line) {
 			inactive.ability = CUTE_CHARM;
+			active.attract = true;
+		}
 		else if (active.nickname + "'s Damp prevents explosions!" == line)
 			active.ability = DAMP;
 		else if (active.nickname + "'s Download raised its stats!" == line)

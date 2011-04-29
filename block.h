@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather, bool hitself);
+void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather);
 void blockselection (Team &user, const Pokemon &target, const Weather &weather);
 bool block1 (const Pokemon &user, const Pokemon &target);
 bool block2 (const Pokemon &user, const Weather &weather);

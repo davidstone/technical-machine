@@ -48,7 +48,7 @@ ai.o: ai.cpp ai.h move.h active.h type.h movefunction.h pokemon.h \
 ability.o: ability.cpp ability.h
 analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
  active.h gender.h item.h move.h type.h species.h stat.h status.h team.h \
- weather.h movefunction.h switch.h
+ weather.h endofturn.h movefunction.h switch.h
 block.o: block.cpp block.h move.h active.h type.h pokemon.h ability.h \
  gender.h item.h species.h stat.h status.h team.h weather.h \
  statfunction.h typefunction.h

@@ -49,6 +49,7 @@ void endofturn (Team &first, Team &last, Weather &weather) {
 }
 
 void endofturn0 (Pokemon &member) {
+	member.move->ch = false;
 	member.damaged = false;
 	member.flinch = false;
 	member.moved = false;

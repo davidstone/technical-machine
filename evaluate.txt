@@ -9,7 +9,7 @@ Tailwind	32
 Wish	300
 
 Spikes	-100
-Stealth Rock	-300
+Stealth Rock	-200
 Toxic Spikes	-100
 
 Members	1024

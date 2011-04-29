@@ -120,25 +120,24 @@ void Move::set_variable () {
 	// Confusion / Sleep!!!
 }
 
-int usemove (Team &user, Team &target, Weather &weather, bool hitself, bool log, int old_damage) {
+int usemove (Team &user, Team &target, Weather &weather, int old_damage, int log_damage) {
 	int damage = 0;
 	user.active->destiny_bond = false;
 	user.active->moved = true;
 	user.active->move->execute = true;
-	if (!log)
-		blockexecution (*user.active, *target.active, weather, hitself);
+	blockexecution (*user.active, *target.active, weather);
 	if (user.active->move->execute) {
 		lower_pp (*user.active, *target.active);
 //		if (ASSIST == user.active->move->name or COPYCAT == user.active->move->name or ME_FIRST == user.active->move->name or METRONOME_MOVE == user.active->move->name or MIRROR_MOVE == user.active->move->name or SLEEP_TALK == user.active->move->name)
 //			usemove2 (user, target, move2, weather);		// ???
 //		 (NATURE_POWER == user.active->move->name)
 //		else
-		damage = usemove2 (user, target, weather, log, old_damage);
+		damage = usemove2 (user, target, weather, old_damage, log_damage);
 	}
 	return damage;
 }
 
-int usemove2 (Team &user, Team &target, Weather &weather, bool log, int old_damage) {
+int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int log_damage) {
 	speed (user, weather);
 	speed (target, weather);
 	movepower (*user.active, *target.active, weather);
@@ -153,10 +152,14 @@ int usemove2 (Team &user, Team &target, Weather &weather, bool log, int old_dama
 			if (user.active->status == FREEZE)
 				user.active->status = NO_STATUS;
 		}
-		defense (*user.active, *target.active, weather);
-		attack (*user.active, weather);
-		damage = damagecalculator (*user.active, target, weather);
-		if (damage != 0 and !log)
+		if (log_damage == -1) {
+			defense (*user.active, *target.active, weather);
+			attack (*user.active, weather);
+			damage = damagecalculator (*user.active, target, weather);
+		}
+		else
+			damage = log_damage;
+		if (damage != 0)
 			do_damage (user, target, damage);
 	}
 	++user.active->move->times_used;

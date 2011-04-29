@@ -293,15 +293,14 @@ long tree4 (const Team &ai, const Team &foe, const Weather &weather, const int &
 
 long tree5 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
 
-	bool hitself = false;
-	int old_damage = usemove (first, last, weather, hitself);
+	int old_damage = usemove (first, last, weather);
 
 //	std::cout << "\t\t" + pokemon_name [first.active->name] + " uses " + move_name [first.active->move->name] + " leaving the foe at " << last.active->hp.stat << '\n';
 
 	// win() already corrects for whether it's the AI or the foe that is passed as first vs. last
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);			// 0 if both Pokemon die (a draw), VICTORY if the AI wins, -VICTORY if the foe wins
-	usemove (last, first, weather, hitself, false, old_damage);
+	usemove (last, first, weather, old_damage);
 
 //	std::cout << "\t\t" + pokemon_name [last.active->name] + " uses " + move_name [last.active->move->name] + " leaving the foe at " << first.active->hp.stat << '\n';
 	if (win (first) != 0 or win (last) != 0)
@@ -311,25 +310,25 @@ long tree5 (Team first, Team last, Weather weather, int depth, const score_varia
 	
 	first.active->shed_skin = false;
 	last.active->shed_skin = false;
-	long score1 = 49 * tree6 (first, last, weather, depth, sv, transposition_table);
+	long score = 49 * tree6 (first, last, weather, depth, sv, transposition_table);
 	long divisor = 49;
 	if (first.active->ability == SHED_SKIN and first.active->status != NO_STATUS) {
 		first.active->shed_skin = true;
-		score1 += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
+		score += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
 		divisor += 21;
 		if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
 			last.active->shed_skin = true;
-			score1 += 9 * tree6 (first, last, weather, depth, sv, transposition_table);
+			score += 9 * tree6 (first, last, weather, depth, sv, transposition_table);
 			divisor += 9;
 			first.active->shed_skin = false;
 		}
 	}
 	if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
 		last.active->shed_skin = true;
-		score1 += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
+		score += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
 		divisor += 21;
 	}
-	return score1 / divisor;
+	return score / divisor;
 }
 
 

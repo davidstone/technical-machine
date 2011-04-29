@@ -48,6 +48,7 @@ class Pokemon {
 		Stat spd;
 		Stat spe;
 		natures nature;
+		short damage;		// How much damage will this Pokemon do
 		short bide_damage;
 		char bide;
 		char confused;
@@ -78,6 +79,7 @@ class Pokemon {
 		bool ff;				// Flash Fire
 		bool flinch;
 		bool focus_energy;
+		bool hitself;			// Will this Pokemon hit itself in its confusion this turn?
 		bool identified;
 		bool imprison;			// Has this Pokemon used Imprison?
 		bool ingrain;
