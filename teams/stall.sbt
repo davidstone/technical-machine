@@ -2,7 +2,7 @@
 <shoddybattle>
 
 <pokemon species="Hippowdon">
-<nickname>Daedalus</nickname>
+<nickname>Dkef0Dxks</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -13,7 +13,7 @@
 	<move pp-up="3">Earthquake</move>
 	<move pp-up="3">Stealth Rock</move>
 	<move pp-up="3">Slack Off</move>
-	<move pp-up="3">Ice Fang</move>
+	<move pp-up="3">Roar</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -26,7 +26,7 @@
 </pokemon>
 
 <pokemon species="Celebi">
-<nickname>Celobi</nickname>
+<nickname>SoelscncEsl0</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>None</gender>
@@ -37,7 +37,7 @@
 	<move pp-up="3">Grass Knot</move>
 	<move pp-up="3">Recover</move>
 	<move pp-up="3">Calm Mind</move>
-	<move pp-up="3">U-turn</move>
+	<move pp-up="3">Psychic</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -50,7 +50,7 @@
 </pokemon>
 
 <pokemon species="Blissey">
-<nickname>Helios</nickname>
+<nickname>SDlksfed</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Female</gender>
@@ -74,7 +74,7 @@
 </pokemon>
 
 <pokemon species="Skarmory">
-<nickname>Icarus</nickname>
+<nickname>Zlsofsef</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -85,7 +85,7 @@
 	<move pp-up="3">Spikes</move>
 	<move pp-up="3">Roost</move>
 	<move pp-up="3">Drill Peck</move>
-	<move pp-up="3">Taunt</move>
+	<move pp-up="3">Whirlwind</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -98,7 +98,7 @@
 </pokemon>
 
 <pokemon species="Tentacruel">
-<nickname>Morpheus</nickname>
+<nickname>DlskenD</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -122,7 +122,7 @@
 </pokemon>
 
 <pokemon species="Spiritomb">
-<nickname>The Man Who Was Thursday</nickname>
+<nickname>DlsoDkdmn</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>

@@ -8,7 +8,7 @@ Safeguard	32
 Tailwind	32
 Wish	300
 
-Spikes	-100
+Spikes	-200
 Stealth Rock	-200
 Toxic Spikes	-100
 
@@ -29,5 +29,11 @@ Freeze	-100
 Paralysis	-100
 Poison	-100
 Sleep	-100
+
+Attack boost	50
+Defense boost	50
+Special Attack boost	50
+Special Defense boost	50
+Speed boost	60
 
 No PP	-256

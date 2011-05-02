@@ -59,6 +59,12 @@ class score_variables {
 		int paralysis;
 		int poison;
 		int sleep;
+		
+		int atk_boost;
+		int def_boost;
+		int spa_boost;
+		int spd_boost;
+		int spe_boost;
 	
 		int no_pp;
 	

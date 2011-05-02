@@ -64,11 +64,11 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 			score += sv.poison;
 		else if (member.status == SLEEP)
 			score += sv.sleep;
-//		score += 1 * member.atk.stage;
-//		score += 1 * member.def.stage;
-//		score += 1 * member.spa.stage;
-//		score += 1 * member.spd.stage;
-//		score += 1 * member.spe.stage;
+		score += member.atk.stage * sv.atk_stage;
+		score += member.def.stage * sv.def_stage;
+		score += member.spa.stage * sv.spa_stage;
+		score += member.spd.stage * sv.spd_stage;
+		score += member.spe.stage * sv.spe_stage;
 		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it)
 			score += scoremove (*it, team, other, weather, sv);
 	}
@@ -157,6 +157,16 @@ score_variables::score_variables () {
 			poison = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Sleep")
 			sleep = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Attack boost")
+			atk_boost = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Defense boost")
+			def_boost = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Special Attack boost")
+			spa_boost = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Special Defense boost")
+			spd_boost = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Speed boost")
+			spe_boost = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "No PP")
 			no_pp = boost::lexical_cast<int> (line.substr (x + 1));
 	}
