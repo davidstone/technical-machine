@@ -44,8 +44,8 @@ class Team {
 		char toxic_spikes;
 		bool stealth_rock;
 
-		unsigned char replacement;		// If a Pokemon faints, what Pokemon should replace it?
-	
+		unsigned char replacement;		// If a Pokemon switches / faints, what Pokemon should replace it?
+		
 		const bool me;				// Is this my team?
 	
 		bool operator== (const Team &other) const {

@@ -42,7 +42,7 @@ Move::Move (moves_list move, int pp_ups) :
 }
 
 void Move::set_priority () {
-	if (SWITCH1 <= name and name <= SWITCH6)
+	if (SWITCH0 <= name and name <= SWITCH5)
 		priority = 6;
 	else if (name == HELPING_HAND)
 		priority = 5;
@@ -579,8 +579,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		if (target.active->evasion > -6)
 			--target.active->evasion;
 	}
-	else if (SWITCH1 <= user.active->move->name and user.active->move->name <= SWITCH6) {
-		user.replacement = user.active->move->name - SWITCH1;
+	else if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
+		user.replacement = user.active->move->name - SWITCH0;
 		switchpokemon (user, target, weather);
 	}
 	else if (SWITCHEROO == user.active->move->name or TRICK == user.active->move->name)

@@ -32,10 +32,13 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
 	std::cout << "======================\nAnalyzing...\n";
 	bool won = false;
-	if (input == "~")
+	if (input == "")
 		won = true;
 	else {
-		bool replacing = false;
+		ai.replacement = ai.active.index;
+		foe.replacement = foe.active.index;
+		bool first_replacing = false;
+		bool last_replacing = false;
 		size_t newline1 = 0;
 		
 		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that line. This helps keep track of information on future lines so I can do things like assign critical hits to the right move.
@@ -66,7 +69,8 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					else {
 						if (foe.player == "") {
 							foe.player = line.substr (0, found);
-							replacing = true;
+							first_replacing = true;
+							last_replacing = true;
 						}
 						search = foe.player + " sent out ";
 						log_pokemon (foe, ai, weather, line, map, search);
@@ -105,11 +109,18 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					}
 					else if (line == "A critical hit!")
 						active->active->move->ch = true;
+					else if (line == active->active->nickname + " flinched!")
+						active->active->flinch = true;
+					else if (line == first->active->nickname + " fainted!")
+						first_replacing = true;
+					else if (line == last->active->nickname + " fainted!")
+						last_replacing = true;
 					else {
 						search = active->active->nickname + " used ";
 						if (line.substr (0, search.length()) == search)
 							log_move (*active, *inactive, weather, line, map, search);
-						else if (line != "===============") {
+						// else if (line != "===============") {
+						else {
 							bool shed_skin = false;
 							log_misc (*active->active, *inactive->active, line, map, shed_skin);		// Fix
 						}
@@ -118,7 +129,23 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			}
 			newline1 = newline2 + 1;
 		}
-		if (!replacing) {
+		if (first_replacing or last_replacing) {
+			if (first_replacing)
+				switchpokemon (*first, *last, weather);
+			if (last_replacing)
+				switchpokemon (*last, *first, weather);
+		}
+		else {
+			if (ai.replacement != ai.active.index) {
+				ai.active->move.index = 0;
+				while (ai.active->move->name - SWITCH0 != ai.replacement)
+					++ai.active->move.index;
+			}
+			if (foe.replacement != foe.active.index) {
+				foe.active->move.index = 0;
+				while (foe.active->move->name - SWITCH0 != foe.replacement)
+					++foe.active->move.index;
+			}
 			usemove (*first, *last, weather);
 			usemove (*last, *first, weather);
 			endofturn (*first, *last, weather);
@@ -185,8 +212,6 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 		member.gender = gender;
 
 		member.nickname = nickname;
-		member.ability = END_ABILITY;
-		member.item = END_ITEM;
 
 		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 
@@ -194,9 +219,15 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 		team.active.set.push_back (member);
 		team.replacement = team.active.set.size() - 1;
 		
-		loadpokemon (team, team.active.set.back());
+		for (std::vector<Pokemon>::iterator active = team.active.set.begin(); active != team.active.set.end(); ++active)
+			loadpokemon (team, *active);
 	}
-	switchpokemon (team, target, weather);
+	team.active->move.index = 0;
+	if (team.active->move.set.size() > 1) {
+		while (team.active->move->name != SWITCH0)
+			++team.active->move.index;
+	}
+	team.active->move.index += team.replacement;
 }
 
 void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search) {
@@ -217,6 +248,8 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 		user.active->move.set.insert (user.active->move.set.begin(), move);
 		user.active->move.index = 0;
 	}
+	user.active->move->ch = false;
+	user.active->move->effect = false;
 }
 
 void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin) {

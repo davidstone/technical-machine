@@ -26,29 +26,23 @@ void blockselection (Team &user, const Pokemon &target, const Weather &weather) 
 			user.active->move->selectable = false;
 	}
 	else {
-		if (user.active->move->pp_max == -1 and user.active->move->name != STRUGGLE) {
+		if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
 			if ((((target.ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.ability == ARENA_TRAP and grounded (*user.active, weather)) or (target.ability == MAGNET_PULL and istype (*user.active, STEEL)) or user.active->trapped or user.active->partial_trap != 0) and user.active->item != SHED_SHELL)
-			or ((user.active.set.front().name == user.active->name and user.active->move->name == SWITCH1)
-			// I'm relying on lazy evaluation for teams smaller than 6 to prevent attempting to read a Pokemon that doesn't exist
-			 or (user.active.set.size() > 1 and user.active.set [1].name == user.active->name and user.active->move->name == SWITCH2)
-			 or (user.active.set.size() > 2 and user.active.set [2].name == user.active->name and user.active->move->name == SWITCH3)
-			 or (user.active.set.size() > 3 and user.active.set [3].name == user.active->name and user.active->move->name == SWITCH4)
-			 or (user.active.set.size() > 4 and user.active.set [4].name == user.active->name and user.active->move->name == SWITCH5)
-			 or (user.active.set.size() > 5 and user.active.set [5].name == user.active->name and user.active->move->name == SWITCH6)))	// Can't switch to yourself
+					or (user.active.set [user.active->move->name - SWITCH0].name == user.active->name and user.active.set.size() > 1))		// Can't switch to yourself
 				user.active->move->selectable = false;
 		}
 		else if (user.active->move->name == STRUGGLE) {
 			for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
 				if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
-				 and it->selectable) {
+						and it->selectable) {
 					user.active->move->selectable = false;
 					break;
 				}
 			}
 		}
 		else if ((block1 (*user.active, target))
-		 or (block2 (*user.active, weather))
-		 or (user.active->torment and 0 != user.active->move->times_used))
+				or (block2 (*user.active, weather))
+				or (user.active->torment and 0 != user.active->move->times_used))
 			user.active->move->selectable = false;
 		else if (0 != user.active->encore or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
 			for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {

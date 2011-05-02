@@ -9,7 +9,7 @@ analogobjects = analyze_logs_main.o ability.o analyze_logs.o damage.o move.o pok
 analogguiobjects = analyze_logs_gui.o ability.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
 warnings = -Wall -Wextra -pedantic -Wno-unused  -Wformat=2
-fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
+fulloptimizations = -O3 -march=native -ffast-math
 
 ai : $(aiobjects)
 	g++ -o ai $(aiobjects) $(CXXFLAGS)
@@ -17,7 +17,7 @@ ai : optimizations = -g
 
 aio : $(aiobjects)
 	g++ -o aio $(aiobjects) $(CXXFLAGS)
-aio : optimizations = $(fulloptimizations)
+aio : optimizations = $(fulloptimizations) -g
 
 predict : $(predictobjects)
 	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)

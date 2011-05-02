@@ -28,7 +28,8 @@ Stat::Stat (species name, int level, stats stat) :
 	base (base_stat [name] [stat]),
 	iv (31),
 	ev (21),		// Adds up to 126 points, temporary until I add in EV prediction
-	stage (0) {
+	stage (0),
+	max (-1) {
 	}
 
 int hitpoints (Pokemon &member) {

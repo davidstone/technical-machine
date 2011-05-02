@@ -22,7 +22,9 @@ namespace technicalmachine {
 
 Pokemon::Pokemon (const species &member) : 
 	name (member),
-	gender (MALE),
+	ability (END_ABILITY),
+	gender (MALE),		// No sexism here!
+	item (END_ITEM),
 	status (NO_STATUS),
 	type1 (get_pokemon_type [name][0]),
 	type2 (get_pokemon_type [name][1]),

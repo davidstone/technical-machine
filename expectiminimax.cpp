@@ -33,8 +33,8 @@ moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int dept
 	std::map<long, State> transposition_table;
 	score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table, true);
 
-	if (SWITCH1 <= best_move and best_move <= SWITCH6)
-		std::cout << "Switch to " << pokemon_name [ai.active.set [best_move - SWITCH1].name];
+	if (SWITCH0 <= best_move and best_move <= SWITCH5)
+		std::cout << "Switch to " << pokemon_name [ai.active.set [best_move - SWITCH0].name];
 	else
 		std::cout << "Use " << move_name [best_move];
 	if (depth == -1) {
@@ -93,7 +93,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 				}
 				if (beta > alpha) {
 					alpha = beta;
-					best_move = static_cast<moves_list> (SWITCH1 + ai.replacement);
+					best_move = static_cast<moves_list> (SWITCH0 + ai.replacement);
 				}
 				if (ai.active->hp.stat != 0)
 					break;
@@ -117,8 +117,8 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 //				std::cout << indent + "Evaluating ";
 				if (first) {
 					std::cout << "Evaluating ";
-					if (SWITCH1 <= ai.active->move->name and ai.active->move->name <= SWITCH6)
-						std::cout << "switching to " + pokemon_name [ai.active.set [ai.active->move->name - SWITCH1].name] + "\n";
+					if (SWITCH0 <= ai.active->move->name and ai.active->move->name <= SWITCH5)
+						std::cout << "switching to " + pokemon_name [ai.active.set [ai.active->move->name - SWITCH0].name] + "\n";
 					else
 						std::cout << move_name [ai.active->move->name] + "\n";
 				}
@@ -129,8 +129,8 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 //						std::cout << indent + "\tEvaluating the foe";
 						if (first) {
 							std::cout << "\tEvaluating the foe";
-							if (SWITCH1 <= foe.active->move->name and foe.active->move->name <= SWITCH6)
-								std::cout << " switching to " + pokemon_name [foe.active.set [foe.active->move->name - SWITCH1].name] + "\n";
+							if (SWITCH0 <= foe.active->move->name and foe.active->move->name <= SWITCH5)
+								std::cout << " switching to " + pokemon_name [foe.active.set [foe.active->move->name - SWITCH0].name] + "\n";
 							else
 								std::cout << "'s " + move_name [foe.active->move->name] + "\n";
 						}

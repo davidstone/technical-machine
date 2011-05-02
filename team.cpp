@@ -44,14 +44,16 @@ void loadteam (Team &team, const std::string &name, const Map &map, int detailed
 }
 
 void loadpokemon (Team &team, Pokemon &member) {
-	member.hp.max = hitpoints (member);
-	member.hp.stat = member.hp.max;
+	if (member.hp.max == -1) {
+		member.hp.max = hitpoints (member);
+		member.hp.stat = member.hp.max;
+	}
 	bool struggle = false;
-	moves_list switchn = static_cast<moves_list> (SWITCH1 - 1);
+	moves_list switchn = static_cast<moves_list> (SWITCH0 - 1);
 	for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
 		if (it->name == STRUGGLE)
 			struggle = true;
-		if (SWITCH1 <= it->name and it->name <= SWITCH6)
+		if (SWITCH0 <= it->name and it->name <= SWITCH5)
 			switchn = it->name;
 	}
 	if (!struggle) {
@@ -60,9 +62,11 @@ void loadpokemon (Team &team, Pokemon &member) {
 	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	for (size_t index = switchn + 1; index - SWITCH1 < team.active.set.size() and team.active.set.size() > 1; ++index) {
-		Move move (static_cast<moves_list> (index), 0);
-		member.move.set.push_back (move);
+	if (team.active.set.size() > 1) {
+		for (size_t index = switchn + 1; index - SWITCH0 < team.active.set.size(); ++index) {
+			Move move (static_cast<moves_list> (index), 0);
+			member.move.set.push_back (move);
+		}
 	}
 }
 
