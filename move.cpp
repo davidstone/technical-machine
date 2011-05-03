@@ -180,7 +180,34 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		if (user.active->gender * target.active->gender == -1)		// male * female == -1
 			target.active->attract = true;
 	}
-//	else if (BATON_PASS == user.active->move->name)
+	else if (BATON_PASS == user.active->move->name) {
+		user.active.set [user.replacement].aqua_ring = user.active->aqua_ring;
+		user.active.set [user.replacement].trapped = user.active->trapped;
+		user.active.set [user.replacement].confused = user.active->confused;
+		user.active.set [user.replacement].curse = user.active->curse;
+		user.active.set [user.replacement].embargo = user.active->embargo;
+		user.active.set [user.replacement].focus_energy = user.active->focus_energy;
+		user.active.set [user.replacement].gastro_acid = user.active->gastro_acid;
+		user.active.set [user.replacement].ingrain = user.active->ingrain;
+		user.active.set [user.replacement].leech_seed = user.active->leech_seed;
+		user.active.set [user.replacement].lock_on = user.active->lock_on;
+		user.active.set [user.replacement].magnet_rise = user.active->magnet_rise;
+		user.active.set [user.replacement].perish_song = user.active->perish_song;
+		user.active.set [user.replacement].power_trick = user.active->power_trick;
+		user.active.set [user.replacement].substitute = user.active->substitute;
+		user.active.set [user.replacement].atk.stage = user.active->atk.stage;
+		user.active.set [user.replacement].def.stage = user.active->def.stage;
+		user.active.set [user.replacement].spa.stage = user.active->spa.stage;
+		user.active.set [user.replacement].spd.stage = user.active->spd.stage;
+		user.active.set [user.replacement].spe.stage = user.active->spe.stage;
+		user.active.set [user.replacement].accuracy = user.active->accuracy;
+		user.active.set [user.replacement].evasion = user.active->evasion;
+		
+		// Change the active Pokemon to the one switching in.
+		user.replacement = user.active->move->variable.index;
+		
+		switchpokemon (user, target, weather);
+	}
 	else if (BELLY_DRUM == user.active->move->name) {
 		user.active->atk.stage = 6;
 		if (user.active->hp.max <= 2)

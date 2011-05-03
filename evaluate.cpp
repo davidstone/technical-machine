@@ -30,10 +30,11 @@ long evaluate (const Team &ai, const Team &foe, const Weather &weather, const sc
 long scorepokemon (const Pokemon &member, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
 	long score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
 	if (grounded (member, weather))
-		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
+		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes + member.magnet_rise * sv.magnet_rise;
 	if (member.hp.stat != 0) {
 		score += sv.members;
 		score += sv.hp * member.hp.stat / member.hp.max;
+		score += sv.substitute * member.substitute / member.hp.max;
 		if (member.aqua_ring)
 			score += sv.aqua_ring;
 		if (member.curse)
@@ -69,21 +70,26 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 		score += member.spa.stage * sv.spa_stage;
 		score += member.spd.stage * sv.spd_stage;
 		score += member.spe.stage * sv.spe_stage;
-		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it)
-			score += scoremove (*it, team, other, weather, sv);
+		if (member.focus_energy)
+			score += sv.focus_energy;
+		score += scoremove (member, team, other, weather, sv);
 	}
 	return score;
 }
 
 
-long scoremove (const Move &move, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
+long scoremove (const Pokemon &member, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
 	long score = 0;
-	if (move.physical)
-		score += other.reflect * sv.reflect;
-	else if (move.basepower > 0)
-		score += other.light_screen * sv.light_screen;
-	if (move.pp == 0)
-		score += sv.no_pp;
+	for (std::vector<Move>::const_iterator move = member.move.set.begin(); move != member.move.set.end(); ++move) {
+		if (move->physical)
+			score += other.reflect * sv.reflect;
+		else if (move->basepower > 0)		// Non-damaging moves have physical == false
+			score += other.light_screen * sv.light_screen;
+		else if (move->name == BATON_PASS)
+			score += sv.baton_pass * (member.aqua_ring * sv.aqua_ring + member.focus_energy * sv.focus_energy + member.ingrain * sv.ingrain + member.magnet_rise * sv.magnet_rise + member.substitute * sv.substitute + member.atk.stage * sv.atk_stage + member.def.stage * sv.def_stage + member.spa.stage * sv.spa_stage + member.spd.stage * sv.spd_stage + member.spe.stage * sv.spe_stage);
+		if (move->pp == 0)
+			score += sv.no_pp;
+	}
 	return score;
 }
 
@@ -141,8 +147,12 @@ score_variables::score_variables () {
 			leech_seed = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Loaf")
 			loaf = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Magnet Rise")
+			magnet_rise = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Nightmare")
 			nightmare = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Substitute")
+			substitute = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Torment")
 			torment = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Trapped")
@@ -157,16 +167,20 @@ score_variables::score_variables () {
 			poison = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "Sleep")
 			sleep = boost::lexical_cast<int> (line.substr (x + 1));
-		else if (data == "Attack boost")
-			atk_boost = boost::lexical_cast<int> (line.substr (x + 1));
-		else if (data == "Defense boost")
-			def_boost = boost::lexical_cast<int> (line.substr (x + 1));
-		else if (data == "Special Attack boost")
-			spa_boost = boost::lexical_cast<int> (line.substr (x + 1));
-		else if (data == "Special Defense boost")
-			spd_boost = boost::lexical_cast<int> (line.substr (x + 1));
-		else if (data == "Speed boost")
-			spe_boost = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Attack stage")
+			atk_stage = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Defense stage")
+			def_stage = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Special Attack stage")
+			spa_stage = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Special Defense stage")
+			spd_stage = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Speed stage")
+			spe_stage = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Focus Energy")
+			focus_energy = boost::lexical_cast<int> (line.substr (x + 1));
+		else if (data == "Baton Pass")
+			baton_pass = boost::lexical_cast<int> (line.substr (x + 1));
 		else if (data == "No PP")
 			no_pp = boost::lexical_cast<int> (line.substr (x + 1));
 	}

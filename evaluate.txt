@@ -14,15 +14,17 @@ Toxic Spikes	-100
 
 Members	1024
 HP	1024
-Aqua Ring	10
-Curse	-1
-Imprison	-1
-Ingrain	1
-Leech Seed	-1
-Loaf	-1
-Nightmare	-1
-Torment	-1
-Trapped	-1
+Aqua Ring	24
+Curse	-80
+Imprison	-80
+Ingrain	64
+Leech Seed	-80
+Loaf	-60
+Magnet Rise	1
+Nightmare	-50
+Substitute	256
+Torment	-70
+Trapped	-70
 
 Burn	-100
 Freeze	-100
@@ -30,10 +32,12 @@ Paralysis	-100
 Poison	-100
 Sleep	-100
 
-Attack boost	50
-Defense boost	50
-Special Attack boost	50
-Special Defense boost	50
-Speed boost	60
+Attack stage	50
+Defense stage	50
+Special Attack stage	50
+Special Defense stage	50
+Speed stage	60
+Focus Energy	5
 
+Baton Pass	5
 No PP	-256

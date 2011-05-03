@@ -33,6 +33,7 @@ void reset_variables (Pokemon &member) {
 	member.ff = false;
 	member.flinch = false;
 	member.focus_energy = false;
+	member.gastro_acid = false;
 	member.identified = false;
 	member.imprison = false;
 	member.ingrain = false;
@@ -43,6 +44,7 @@ void reset_variables (Pokemon &member) {
 	member.minimize = false;
 	member.mud_sport = false;
 	member.nightmare = false;
+	member.power_trick = false;
 	member.roost = false;
 	member.torment = false;
 	member.trapped = false;
@@ -64,6 +66,7 @@ void reset_variables (Pokemon &member) {
 	member.accuracy = 0;
 	member.evasion = 0;
 	member.stockpile = 0;
+	member.substitute = 0;
 	member.taunt = 0;
 	member.toxic = 0;
 	member.uproar = 0;
@@ -111,6 +114,13 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 		user.active.index = user.replacement;
 	}
 	
+	entry_hazards (user, weather);
+
+	if (user.active->hp.stat > 0)
+		activate_ability (*user.active, *target.active, weather);
+}
+
+void entry_hazards (Team &user, Weather const &weather) {
 	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {
 		if (0 != user.toxic_spikes) {
 			if (istype(*user.active, POISON))
@@ -125,36 +135,34 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 	}
 	if (user.stealth_rock)
 		heal (*user.active, -32, effectiveness [ROCK] [user.active->type1] * effectiveness [ROCK] [user.active->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
-	
-	if (user.active->hp.stat > 0) {
-		if (SLOW_START == user.active->ability)
-			user.active->slow_start = 5;
-		else
-			user.active->slow_start = 0;
-	
+}
+
+void activate_ability (Pokemon &user, Pokemon &target, Weather &weather) {
 		// Activate abilities upon switching in
-	
-		if (user.active->ability == DOWNLOAD) {
-			if (target.active->def.stat >= target.active->spd.stat)
-				user.active->spa.boost (1);
+
+		user.slow_start = 0;
+		if (user.ability == SLOW_START)
+			user.slow_start = 5;
+		else if (user.ability == DOWNLOAD) {
+			if (target.def.stat >= target.spd.stat)
+				user.spa.boost (1);
 			else
-				user.active->atk.boost (1);
+				user.atk.boost (1);
 		}
-		else if (user.active->ability == DRIZZLE)
+		else if (user.ability == DRIZZLE)
 			weather.set_rain (-1);
-		else if (user.active->ability == DROUGHT)
+		else if (user.ability == DROUGHT)
 			weather.set_sun (-1);
-		else if (user.active->ability == FORECAST) {	// fix
+		else if (user.ability == FORECAST) {	// fix
 		}
-		else if (user.active->ability == INTIMIDATE)
-			target.active->atk.boost (-1);
-		else if (user.active->ability == SAND_STREAM)
+		else if (user.ability == INTIMIDATE)
+			target.atk.boost (-1);
+		else if (user.ability == SAND_STREAM)
 			weather.set_sand (-1);
-		else if (user.active->ability == SNOW_WARNING)
+		else if (user.ability == SNOW_WARNING)
 			weather.set_hail (-1);
-		else if (user.active->ability == TRACE) {
+		else if (user.ability == TRACE) {
 		}
-	}
 }
 
 }

@@ -50,6 +50,7 @@ class Pokemon {
 		natures nature;
 		short damage;		// How much damage will this Pokemon do
 		short bide_damage;
+		short substitute;	// How much HP does the substitute have left?
 		char bide;
 		char confused;
 		char embargo;
@@ -79,6 +80,7 @@ class Pokemon {
 		bool ff;				// Flash Fire
 		bool flinch;
 		bool focus_energy;
+		bool gastro_acid;
 		bool hitself;			// Will this Pokemon hit itself in its confusion this turn?
 		bool identified;
 		bool imprison;			// Has this Pokemon used Imprison?
@@ -91,6 +93,7 @@ class Pokemon {
 		bool moved;
 		bool mud_sport;
 		bool nightmare;
+		bool power_trick;
 		bool roost;
 		bool shed_skin;
 		bool torment;

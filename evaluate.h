@@ -50,7 +50,9 @@ class score_variables {
 		int ingrain;
 		int leech_seed;
 		int loaf;
+		int magnet_rise;
 		int nightmare;
+		int substitute;
 		int torment;
 		int trapped;
 
@@ -60,12 +62,14 @@ class score_variables {
 		int poison;
 		int sleep;
 		
-		int atk_boost;
-		int def_boost;
-		int spa_boost;
-		int spd_boost;
-		int spe_boost;
+		int atk_stage;
+		int def_stage;
+		int spa_stage;
+		int spd_stage;
+		int spe_stage;
+		int focus_energy;
 	
+		int baton_pass;
 		int no_pp;
 	
 		score_variables ();
@@ -73,7 +77,7 @@ class score_variables {
 
 long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
 long scorepokemon (const Pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
-long scoremove (const Move &move, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
+long scoremove (const Pokemon &member, const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv);
 long win (const Team &team);
 
 }
