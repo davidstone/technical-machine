@@ -29,31 +29,31 @@ long evaluate (const Team &ai, const Team &foe, const Weather &weather, const sc
 
 long scorepokemon (const Pokemon &member, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
 	long score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
-	if (grounded (member, weather))
-		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes + member.magnet_rise * sv.magnet_rise;
+	if (grounded (team, weather))
+		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes + team.magnet_rise * sv.magnet_rise;
 	if (member.hp.stat != 0) {
 		score += sv.members;
 		score += sv.hp * member.hp.stat / member.hp.max;
-		score += sv.substitute * member.substitute / member.hp.max;
-		if (member.aqua_ring)
+		score += sv.substitute * team.substitute / member.hp.max;
+		if (team.aqua_ring)
 			score += sv.aqua_ring;
-		if (member.curse)
+		if (team.curse)
 			score += sv.curse;
-		if (member.imprison)
+		if (team.imprison)
 			score += sv.imprison;
-		if (member.ingrain)
+		if (team.ingrain)
 			score += sv.ingrain;
-		if (member.leech_seed)
+		if (team.leech_seed)
 			score += sv.leech_seed;
 //		if (other.active->leech_seed)
 //			score += 1 * other.active->hp.max / member.hp.max;
-		if (member.loaf)
+		if (team.loaf)
 			score += sv.loaf;
-		if (member.nightmare)
+		if (team.nightmare)
 			score += sv.nightmare;
-		if (member.torment)
+		if (team.torment)
 			score += sv.torment;
-		if (member.trapped)
+		if (team.trapped)
 			score += sv.trapped;
 		if (member.status == BURN)
 			score += sv.burn;
@@ -70,7 +70,7 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 		score += member.spa.stage * sv.spa_stage;
 		score += member.spd.stage * sv.spd_stage;
 		score += member.spe.stage * sv.spe_stage;
-		if (member.focus_energy)
+		if (team.focus_energy)
 			score += sv.focus_energy;
 		score += scoremove (member, team, other, weather, sv);
 	}
@@ -86,7 +86,7 @@ long scoremove (const Pokemon &member, const Team &team, const Team &other, cons
 		else if (move->basepower > 0)		// Non-damaging moves have physical == false
 			score += other.light_screen * sv.light_screen;
 		else if (move->name == BATON_PASS)
-			score += sv.baton_pass * (member.aqua_ring * sv.aqua_ring + member.focus_energy * sv.focus_energy + member.ingrain * sv.ingrain + member.magnet_rise * sv.magnet_rise + member.substitute * sv.substitute + member.atk.stage * sv.atk_stage + member.def.stage * sv.def_stage + member.spa.stage * sv.spa_stage + member.spd.stage * sv.spd_stage + member.spe.stage * sv.spe_stage);
+			score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + member.atk.stage * sv.atk_stage + member.def.stage * sv.def_stage + member.spa.stage * sv.spa_stage + member.spd.stage * sv.spd_stage + member.spe.stage * sv.spe_stage);
 		if (move->pp == 0)
 			score += sv.no_pp;
 	}

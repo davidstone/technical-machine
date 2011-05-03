@@ -13,16 +13,17 @@
 #define STATUSFUNCTION_H_
 
 #include "pokemon.h"
+#include "team.h"
 #include "weather.h"
 
 namespace technicalmachine {
 
-void burn (Pokemon &user, Pokemon &target, const Weather &weather);
-void freeze (const Pokemon &user, Pokemon &target, const Weather &weather);
+void burn (Team &user, Team &target, const Weather &weather);
+void freeze (const Pokemon &user, Team &target, const Weather &weather);
 void paralyze (Pokemon &user, Pokemon &target, const Weather &weather);
 void sleep (const Pokemon &user, Pokemon &target, const Weather &weather);
-void poison_normal (Pokemon &user, Pokemon &target, const Weather &weather);
-void poison_toxic (Pokemon &user, Pokemon &target, const Weather &weather);
+void poison_normal (Team &user, Team &target, const Weather &weather);
+void poison_toxic (Team &user, Team &target, const Weather &weather);
 
 }
 #endif

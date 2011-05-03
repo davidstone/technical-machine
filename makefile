@@ -81,7 +81,7 @@ stat.o: stat.cpp ability.h item.h move.h active.h type.h pokemon.h \
  gender.h species.h stat.h status.h statfunction.h team.h weather.h \
  typefunction.h
 status.o: status.cpp pokemon.h ability.h active.h gender.h item.h move.h \
- type.h species.h stat.h status.h statusfunction.h weather.h \
+ type.h species.h stat.h status.h statusfunction.h team.h weather.h \
  typefunction.h
 switch.o: switch.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
  move.h type.h species.h stat.h status.h statfunction.h team.h weather.h \
@@ -92,7 +92,7 @@ team.o: team.cpp ability.h gender.h item.h move.h active.h type.h \
 teampredictor.o: teampredictor.cpp pokemon.h ability.h active.h gender.h \
  item.h move.h type.h species.h stat.h status.h team.h teampredictor.h
 type.o: type.cpp pokemon.h ability.h active.h gender.h item.h move.h \
- type.h species.h stat.h status.h typefunction.h weather.h
+ type.h species.h stat.h status.h team.h typefunction.h weather.h
 weather.o: weather.cpp weather.h
 
 .PHONY: clean

@@ -38,117 +38,117 @@ int hitpoints (Pokemon &member) {
 	return (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
 }
 
-void attack (Pokemon &member, const Weather &weather) {
-	if (member.move->physical) {
-		member.atk.stat = (2 * member.atk.base + member.atk.iv + member.atk.ev) * member.level / 100 + 5;
-		if (ADAMANT == member.nature or BRAVE == member.nature or LONELY == member.nature or NAUGHTY == member.nature)
-			member.atk.stat = member.atk.stat * 11 / 10;
-		else if (BOLD == member.nature or CALM == member.nature or MODEST == member.nature or TIMID == member.nature)
-			member.atk.stat = member.atk.stat * 9 / 10;
+void attack (Team &attacker, const Weather &weather) {
+	if (attacker.active->move->physical) {
+		attacker.active->atk.stat = (2 * attacker.active->atk.base + attacker.active->atk.iv + attacker.active->atk.ev) * attacker.active->level / 100 + 5;
+		if (ADAMANT == attacker.active->nature or BRAVE == attacker.active->nature or LONELY == attacker.active->nature or NAUGHTY == attacker.active->nature)
+			attacker.active->atk.stat = attacker.active->atk.stat * 11 / 10;
+		else if (BOLD == attacker.active->nature or CALM == attacker.active->nature or MODEST == attacker.active->nature or TIMID == attacker.active->nature)
+			attacker.active->atk.stat = attacker.active->atk.stat * 9 / 10;
 
-		if (member.atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
-			member.atk.stat = member.atk.stat * (2 + member.atk.stage) / 2;
+		if (attacker.active->atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
+			attacker.active->atk.stat = attacker.active->atk.stat * (2 + attacker.active->atk.stage) / 2;
 		else {
-			if (!member.move->ch)
-				member.atk.stat = member.atk.stat * 2 / (2 - member.atk.stage);
+			if (!attacker.active->move->ch)
+				attacker.active->atk.stat = attacker.active->atk.stat * 2 / (2 - attacker.active->atk.stage);
 		}
 
-		if (member.slow_start != 0)
-			member.atk.stat /= 2;
-		else if ((FLOWER_GIFT == member.ability and 0 != weather.sun) or (GUTS == member.ability and NO_STATUS != member.status) or (HUSTLE == member.ability))
-			member.atk.stat = member.atk.stat * 3 / 2;
-		else if (PURE_POWER == member.ability)
-			member.atk.stat *= 2;
+		if (attacker.slow_start != 0)
+			attacker.active->atk.stat /= 2;
+		else if ((FLOWER_GIFT == attacker.active->ability and 0 != weather.sun) or (GUTS == attacker.active->ability and NO_STATUS != attacker.active->status) or (HUSTLE == attacker.active->ability))
+			attacker.active->atk.stat = attacker.active->atk.stat * 3 / 2;
+		else if (PURE_POWER == attacker.active->ability)
+			attacker.active->atk.stat *= 2;
 	
-		if (CHOICE_BAND == member.item)
-			member.atk.stat = member.atk.stat * 3 / 2;
-		else if ((LIGHT_BALL == member.item and PIKACHU == member.name) or (THICK_CLUB == member.item and (CUBONE == member.name or MAROWAK == member.name)))
-			member.atk.stat *= 2;
+		if (CHOICE_BAND == attacker.active->item)
+			attacker.active->atk.stat = attacker.active->atk.stat * 3 / 2;
+		else if ((LIGHT_BALL == attacker.active->item and PIKACHU == attacker.active->name) or (THICK_CLUB == attacker.active->item and (CUBONE == attacker.active->name or MAROWAK == attacker.active->name)))
+			attacker.active->atk.stat *= 2;
 		
-		if (member.atk.stat == 0)
-			member.atk.stat = 1;
+		if (attacker.active->atk.stat == 0)
+			attacker.active->atk.stat = 1;
 	}
 	else {
-		member.spa.stat = (2 * member.spa.base + member.spa.iv + member.spa.ev) * member.level / 100 + 5;
-		if (MILD == member.nature or MODEST == member.nature or QUIET == member.nature or RASH == member.nature)
-			member.spa.stat = member.spa.stat * 11 / 10;
-		else if (ADAMANT == member.nature or CAREFUL == member.nature or IMPISH == member.nature or JOLLY == member.nature)
-			member.spa.stat = member.spa.stat * 9 / 10;
+		attacker.active->spa.stat = (2 * attacker.active->spa.base + attacker.active->spa.iv + attacker.active->spa.ev) * attacker.active->level / 100 + 5;
+		if (MILD == attacker.active->nature or MODEST == attacker.active->nature or QUIET == attacker.active->nature or RASH == attacker.active->nature)
+			attacker.active->spa.stat = attacker.active->spa.stat * 11 / 10;
+		else if (ADAMANT == attacker.active->nature or CAREFUL == attacker.active->nature or IMPISH == attacker.active->nature or JOLLY == attacker.active->nature)
+			attacker.active->spa.stat = attacker.active->spa.stat * 9 / 10;
 
-		if (member.spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
-			member.spa.stat = member.spa.stat * (2 + member.spa.stage) / 2;
+		if (attacker.active->spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
+			attacker.active->spa.stat = attacker.active->spa.stat * (2 + attacker.active->spa.stage) / 2;
 		else {
-			if (!member.move->ch)
-				member.spa.stat = member.spa.stat * 2 / (2 - member.spa.stage);
+			if (!attacker.active->move->ch)
+				attacker.active->spa.stat = attacker.active->spa.stat * 2 / (2 - attacker.active->spa.stage);
 		}
 
-		if (SOLAR_POWER == member.ability and 0 != weather.sun)
-			member.spa.stat = member.spa.stat * 3 / 2;
+		if (SOLAR_POWER == attacker.active->ability and 0 != weather.sun)
+			attacker.active->spa.stat = attacker.active->spa.stat * 3 / 2;
 
-		if ((CHOICE_SPECS == member.item) or (SOUL_DEW == member.item and (LATIAS == member.name or LATIOS == member.name)))
-			member.spa.stat = member.spa.stat * 3 / 2;
-		else if ((DEEPSEATOOTH == member.item and CLAMPERL == member.name) or (LIGHT_BALL == member.item and PIKACHU == member.name))
-			member.spa.stat *= 2;
+		if ((CHOICE_SPECS == attacker.active->item) or (SOUL_DEW == attacker.active->item and (LATIAS == attacker.active->name or LATIOS == attacker.active->name)))
+			attacker.active->spa.stat = attacker.active->spa.stat * 3 / 2;
+		else if ((DEEPSEATOOTH == attacker.active->item and CLAMPERL == attacker.active->name) or (LIGHT_BALL == attacker.active->item and PIKACHU == attacker.active->name))
+			attacker.active->spa.stat *= 2;
 
-		if (member.spa.stat == 0)
-			member.spa.stat = 1;
+		if (attacker.active->spa.stat == 0)
+			attacker.active->spa.stat = 1;
 	}
 }
 
-void defense (const Pokemon &attacker, Pokemon &defender, const Weather &weather) {
+void defense (const Pokemon &attacker, Team &defender, const Weather &weather) {
 	if (attacker.move->physical) {
-		defender.def.stat = (2 * defender.def.base + defender.def.iv + defender.def.ev) * defender.level / 100 + 5;
-		if (BOLD == defender.nature or IMPISH == defender.nature or LAX == defender.nature or RELAXED == defender.nature)
-			defender.def.stat = defender.def.stat * 11 / 10;
-		else if (GENTLE == defender.nature or HASTY == defender.nature or LONELY == defender.nature or MILD == defender.nature)
-			defender.def.stat = defender.def.stat * 9 / 10;
+		defender.active->def.stat = (2 * defender.active->def.base + defender.active->def.iv + defender.active->def.ev) * defender.active->level / 100 + 5;
+		if (BOLD == defender.active->nature or IMPISH == defender.active->nature or LAX == defender.active->nature or RELAXED == defender.active->nature)
+			defender.active->def.stat = defender.active->def.stat * 11 / 10;
+		else if (GENTLE == defender.active->nature or HASTY == defender.active->nature or LONELY == defender.active->nature or MILD == defender.active->nature)
+			defender.active->def.stat = defender.active->def.stat * 9 / 10;
 
-		if (defender.def.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
+		if (defender.active->def.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
 			if (!attacker.move->ch)
-				defender.def.stat = defender.def.stat * (2 + defender.def.stage) / 2;
+				defender.active->def.stat = defender.active->def.stat * (2 + defender.active->def.stage) / 2;
 		}
 		else
-			defender.def.stat = defender.def.stat * 2 / (2 - defender.def.stage);
+			defender.active->def.stat = defender.active->def.stat * 2 / (2 - defender.active->def.stage);
 
-		if (MARVEL_SCALE == defender.ability and NO_STATUS != defender.status)
-			defender.def.stat = defender.def.stat * 3 / 2;
+		if (MARVEL_SCALE == defender.active->ability and NO_STATUS != defender.active->status)
+			defender.active->def.stat = defender.active->def.stat * 3 / 2;
 		
-		if (METAL_POWDER == defender.item and DITTO == defender.name)
-			defender.def.stat = defender.def.stat * 3 / 2;
+		if (METAL_POWDER == defender.active->item and DITTO == defender.active->name)
+			defender.active->def.stat = defender.active->def.stat * 3 / 2;
 		
 		if (EXPLOSION == attacker.move->name or SELFDESTRUCT == attacker.move->name)
-			defender.def.stat /= 2;
+			defender.active->def.stat /= 2;
 	
-		if (0 == defender.def.stat)
-			defender.def.stat = 1;
+		if (0 == defender.active->def.stat)
+			defender.active->def.stat = 1;
 	}
 	else {
-		defender.spd.stat = (2 * defender.spd.base + defender.spd.iv + defender.spd.ev) * defender.level / 100 + 5;
-		if (CALM == defender.nature or CAREFUL == defender.nature or GENTLE == defender.nature or SASSY == defender.nature)
-			defender.spd.stat = defender.spd.stat * 11 / 10;
-		else if (LAX == defender.nature or NAIVE == defender.nature or NAUGHTY == defender.nature or RASH == defender.nature)
-			defender.spd.stat = defender.spd.stat * 9 / 10;
+		defender.active->spd.stat = (2 * defender.active->spd.base + defender.active->spd.iv + defender.active->spd.ev) * defender.active->level / 100 + 5;
+		if (CALM == defender.active->nature or CAREFUL == defender.active->nature or GENTLE == defender.active->nature or SASSY == defender.active->nature)
+			defender.active->spd.stat = defender.active->spd.stat * 11 / 10;
+		else if (LAX == defender.active->nature or NAIVE == defender.active->nature or NAUGHTY == defender.active->nature or RASH == defender.active->nature)
+			defender.active->spd.stat = defender.active->spd.stat * 9 / 10;
 
-		if (defender.spd.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
+		if (defender.active->spd.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
 			if (!attacker.move->ch)
-				defender.spd.stat = defender.spd.stat * (2 + defender.spd.stage) / 2;
+				defender.active->spd.stat = defender.active->spd.stat * (2 + defender.active->spd.stage) / 2;
 		}
 		else
-			defender.spd.stat = defender.spd.stat * 2 / (2 - defender.spd.stage);
+			defender.active->spd.stat = defender.active->spd.stat * 2 / (2 - defender.active->spd.stage);
 
-		if (FLOWER_GIFT == defender.ability and 0 != weather.sun)
-			defender.spd.stat = defender.spd.stat * 3 / 2;
+		if (FLOWER_GIFT == defender.active->ability and 0 != weather.sun)
+			defender.active->spd.stat = defender.active->spd.stat * 3 / 2;
 		
-		if (DEEPSEASCALE == defender.item and CLAMPERL == defender.name)
-			defender.spd.stat *= 2;
-		else if ((METAL_POWDER == defender.item and DITTO == defender.name) or (SOUL_DEW == defender.item and (LATIAS == defender.name or LATIOS == defender.name)))
-			defender.spd.stat = defender.spd.stat * 3 / 2;
+		if (DEEPSEASCALE == defender.active->item and CLAMPERL == defender.active->name)
+			defender.active->spd.stat *= 2;
+		else if ((METAL_POWDER == defender.active->item and DITTO == defender.active->name) or (SOUL_DEW == defender.active->item and (LATIAS == defender.active->name or LATIOS == defender.active->name)))
+			defender.active->spd.stat = defender.active->spd.stat * 3 / 2;
 		
 		if (istype (defender, ROCK) and 0 != weather.sand)
-			defender.spd.stat = defender.spd.stat * 3 / 2;
+			defender.active->spd.stat = defender.active->spd.stat * 3 / 2;
 		
-		if (0 == defender.spd.stat)
-			defender.spd.stat = 1;
+		if (0 == defender.active->spd.stat)
+			defender.active->spd.stat = 1;
 	}
 }
 
@@ -169,7 +169,7 @@ void speed (Team &team, const Weather &weather) {
 		team.active->spe.stat *= 2;
 	else if (QUICK_FEET == team.active->ability and NO_STATUS != team.active->status)
 		team.active->spe.stat = team.active->spe.stat * 3 / 2;
-	else if (0 != team.active->slow_start)
+	else if (0 != team.slow_start)
 		team.active->spe.stat /= 2;
 		
 	if (QUICK_POWDER == team.active->item and DITTO == team.active->name)

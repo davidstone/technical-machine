@@ -24,7 +24,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 
 void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search);
 
-void log_misc (Pokemon &active, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin);
+void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin);
 
 void output (std::string &output, const Team &team);
 

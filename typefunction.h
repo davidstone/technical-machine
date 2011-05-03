@@ -12,14 +12,14 @@
 #ifndef TYPEFUNCTION_H_
 #define TYPEFUNCTION_H_
 
-#include "pokemon.h"
+#include "team.h"
 #include "type.h"
 #include "weather.h"
 
 namespace technicalmachine {
 
-bool istype (const Pokemon &member, types type);
-bool grounded (const Pokemon &member, const Weather &weather);
+bool istype (const Team &team, types type);
+bool grounded (const Team &team, const Weather &weather);
 
 
 }

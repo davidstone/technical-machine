@@ -9,21 +9,21 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "pokemon.h"
+#include "team.h"
 #include "type.h"
 #include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {
 
-bool istype (const Pokemon &member, types type) {
-	if ((member.type1 == type or member.type2 == type) and (type != FLYING or !member.roost))
+bool istype (const Team &team, types type) {
+	if ((team.active->type1 == type or team.active->type2 == type) and (type != FLYING or !team.roost))
 		return true;
 	return false;
 }
 
-bool grounded (const Pokemon &member, const Weather &weather) {
-	if ((!istype (member, FLYING) and member.ability == LEVITATE and member.magnet_rise == 0) or weather.gravity != 0 or member.item == IRON_BALL or member.ingrain)
+bool grounded (const Team &team, const Weather &weather) {
+	if ((!istype (team, FLYING) and team.active->ability == LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.active->item == IRON_BALL or team.ingrain)
 		return true;
 	return false;
 }

@@ -112,7 +112,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 //			indent += "\t\t";
 		// Determine which moves can be legally selected
 		for (ai.active->move.index = 0; ai.active->move.index != ai.active->move.set.size(); ++ai.active->move.index) {
-			blockselection (ai, *foe.active, weather);
+			blockselection (ai, foe, weather);
 			if (ai.active->move->selectable) {
 //				std::cout << indent + "Evaluating ";
 				if (first) {
@@ -124,7 +124,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 				}
 				long beta = VICTORY + 1;
 				for (foe.active->move.index = 0; foe.active->move.index != foe.active->move.set.size(); ++foe.active->move.index) {
-					blockselection (foe, *ai.active, weather);
+					blockselection (foe, ai, weather);
 					if (foe.active->move->selectable) {
 //						std::cout << indent + "\tEvaluating the foe";
 						if (first) {
@@ -255,18 +255,18 @@ long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 		n = 1;
 	int foe_numerator = foe.active->sleep + n - 1;
 	long score;
-	ai.active->awaken = false;
-	foe.active->awaken = false;
+	ai.awaken = false;
+	foe.awaken = false;
 	score = tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
 	if (ai_numerator > 1) {
 		score *= 4 - ai_numerator;
-		ai.active->awaken = true;
+		ai.awaken = true;
 		score += ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
 		if (ai_numerator > 1) {
 			score *= 4 - foe_numerator;
-			foe.active->awaken = true;
+			foe.awaken = true;
 			score += foe_numerator * (4 - ai_numerator) * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
-			ai.active->awaken = false;
+			ai.awaken = false;
 			score += foe_numerator * ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
 			score /= 4;
 		}
@@ -274,7 +274,7 @@ long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 	}
 	else if (foe_numerator > 1) {
 		score *= 4 - foe_numerator;
-		foe.active->awaken = true;
+		foe.awaken = true;
 		score += foe_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
 		score /= 4;
 	}
@@ -308,23 +308,23 @@ long tree5 (Team first, Team last, Weather weather, int depth, const score_varia
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
-	first.active->shed_skin = false;
-	last.active->shed_skin = false;
+	first.shed_skin = false;
+	last.shed_skin = false;
 	long score = 49 * tree6 (first, last, weather, depth, sv, transposition_table);
 	long divisor = 49;
 	if (first.active->ability == SHED_SKIN and first.active->status != NO_STATUS) {
-		first.active->shed_skin = true;
+		first.shed_skin = true;
 		score += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
 		divisor += 21;
 		if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
-			last.active->shed_skin = true;
+			last.shed_skin = true;
 			score += 9 * tree6 (first, last, weather, depth, sv, transposition_table);
 			divisor += 9;
-			first.active->shed_skin = false;
+			first.shed_skin = false;
 		}
 	}
 	if (last.active->ability == SHED_SKIN and last.active->status != NO_STATUS) {
-		last.active->shed_skin = true;
+		last.shed_skin = true;
 		score += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
 		divisor += 21;
 	}

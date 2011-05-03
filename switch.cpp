@@ -21,59 +21,59 @@
 
 namespace technicalmachine {
 
-void reset_variables (Pokemon &member) {
+void reset_variables (Team &team) {
 	//  Reset all variables that switches reset.
-	member.aqua_ring = false;
-	member.attract = false;
-	member.charge = false;
-	member.curse = false;
-	member.damaged = false;
-	member.defense_curl = false;
-	member.destiny_bond = false;
-	member.ff = false;
-	member.flinch = false;
-	member.focus_energy = false;
-	member.gastro_acid = false;
-	member.identified = false;
-	member.imprison = false;
-	member.ingrain = false;
-	member.leech_seed = false;
-	member.loaf = false;			// Do I set to true or false? True makes it wrong when a fainted Pokemon is replaced; false makes it wrong otherwise
-	member.lock_on = false;
-	member.mf = false;
-	member.minimize = false;
-	member.mud_sport = false;
-	member.nightmare = false;
-	member.power_trick = false;
-	member.roost = false;
-	member.torment = false;
-	member.trapped = false;
-	member.water_sport = false;
-	member.bide = 0;
-	member.confused = 0;
-	member.embargo = 0;
-	member.encore = 0;
-	member.heal_block = 0;
-	member.magnet_rise = 0;
-	member.partial_trap = 0;
-	member.perish_song = 0;
-	member.rampage = 0;
-	member.atk.stage = 0;
-	member.def.stage = 0;
-	member.spa.stage = 0;
-	member.spd.stage = 0;
-	member.spe.stage = 0;
-	member.accuracy = 0;
-	member.evasion = 0;
-	member.stockpile = 0;
-	member.substitute = 0;
-	member.taunt = 0;
-	member.toxic = 0;
-	member.uproar = 0;
-	member.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
-	member.yawn = 0;
+	team.aqua_ring = false;
+	team.attract = false;
+	team.charge = false;
+	team.curse = false;
+	team.damaged = false;
+	team.defense_curl = false;
+	team.destiny_bond = false;
+	team.ff = false;
+	team.flinch = false;
+	team.focus_energy = false;
+	team.gastro_acid = false;
+	team.identified = false;
+	team.imprison = false;
+	team.ingrain = false;
+	team.leech_seed = false;
+	team.loaf = false;			// Do I set to true or false? True makes it wrong when a fainted Pokemon is replaced; false makes it wrong otherwise
+	team.lock_on = false;
+	team.mf = false;
+	team.minimize = false;
+	team.mud_sport = false;
+	team.nightmare = false;
+	team.power_trick = false;
+	team.roost = false;
+	team.torment = false;
+	team.trapped = false;
+	team.water_sport = false;
+	team.bide = 0;
+	team.confused = 0;
+	team.embargo = 0;
+	team.encore = 0;
+	team.heal_block = 0;
+	team.magnet_rise = 0;
+	team.partial_trap = 0;
+	team.perish_song = 0;
+	team.rampage = 0;
+	team.active->atk.stage = 0;
+	team.active->def.stage = 0;
+	team.active->spa.stage = 0;
+	team.active->spd.stage = 0;
+	team.active->spe.stage = 0;
+	team.accuracy = 0;
+	team.evasion = 0;
+	team.stockpile = 0;
+	team.substitute = 0;
+	team.taunt = 0;
+	team.toxic = 0;
+	team.uproar = 0;
+	team.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
+	team.yawn = 0;
 
-	for (std::vector<Move>::iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
+	for (std::vector<Move>::iterator it = team.active->move.set.begin(); it != team.active->move.set.end(); ++it) {
 		it->disable = 0;
 		it->times_used = 0;
 	}
@@ -108,7 +108,7 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 		if (NATURAL_CURE == user.active->ability)
 			user.active->status = NO_STATUS;
 		
-		reset_variables (*user.active);
+		reset_variables (user);
 	
 		// Change the active Pokemon to the one switching in.
 		user.active.index = user.replacement;
@@ -117,18 +117,18 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 	entry_hazards (user, weather);
 
 	if (user.active->hp.stat > 0)
-		activate_ability (*user.active, *target.active, weather);
+		activate_ability (user, *target.active, weather);
 }
 
 void entry_hazards (Team &user, Weather const &weather) {
-	if (grounded (*user.active, weather) and MAGIC_GUARD != user.active->ability) {
+	if (grounded (user, weather) and MAGIC_GUARD != user.active->ability) {
 		if (0 != user.toxic_spikes) {
-			if (istype(*user.active, POISON))
+			if (istype(user, POISON))
 				user.toxic_spikes = 0;
 			else if (1 == user.toxic_spikes)
-				poison_normal (*user.active, *user.active, weather);
+				poison_normal (user, user, weather);
 			else
-				poison_toxic (*user.active, *user.active, weather);
+				poison_toxic (user, user, weather);
 		}
 		if (0 != user.spikes)
 			heal (*user.active, -16, user.spikes + 1);
@@ -137,31 +137,31 @@ void entry_hazards (Team &user, Weather const &weather) {
 		heal (*user.active, -32, effectiveness [ROCK] [user.active->type1] * effectiveness [ROCK] [user.active->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
 }
 
-void activate_ability (Pokemon &user, Pokemon &target, Weather &weather) {
+void activate_ability (Team &user, Pokemon &target, Weather &weather) {
 		// Activate abilities upon switching in
 
 		user.slow_start = 0;
-		if (user.ability == SLOW_START)
+		if (user.active->ability == SLOW_START)
 			user.slow_start = 5;
-		else if (user.ability == DOWNLOAD) {
+		else if (user.active->ability == DOWNLOAD) {
 			if (target.def.stat >= target.spd.stat)
-				user.spa.boost (1);
+				user.active->spa.boost (1);
 			else
-				user.atk.boost (1);
+				user.active->atk.boost (1);
 		}
-		else if (user.ability == DRIZZLE)
+		else if (user.active->ability == DRIZZLE)
 			weather.set_rain (-1);
-		else if (user.ability == DROUGHT)
+		else if (user.active->ability == DROUGHT)
 			weather.set_sun (-1);
-		else if (user.ability == FORECAST) {	// fix
+		else if (user.active->ability == FORECAST) {	// fix
 		}
-		else if (user.ability == INTIMIDATE)
+		else if (user.active->ability == INTIMIDATE)
 			target.atk.boost (-1);
-		else if (user.ability == SAND_STREAM)
+		else if (user.active->ability == SAND_STREAM)
 			weather.set_sand (-1);
-		else if (user.ability == SNOW_WARNING)
+		else if (user.active->ability == SNOW_WARNING)
 			weather.set_hail (-1);
-		else if (user.ability == TRACE) {
+		else if (user.active->ability == TRACE) {
 		}
 }
 

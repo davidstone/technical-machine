@@ -43,8 +43,8 @@ int main (int argc, char* argv[]) {
 	Team* first;
 	Team* last;
 	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
-	first->active->moved = false;
-	last->active->moved = false;
+	first->moved = false;
+	last->moved = false;
 	
 	bool won = false;
 	while (!won) {

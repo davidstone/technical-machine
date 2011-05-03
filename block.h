@@ -19,11 +19,11 @@
 
 namespace technicalmachine {
 
-void blockexecution (Pokemon &user, const Pokemon &target, const Weather &weather);
-void blockselection (Team &user, const Pokemon &target, const Weather &weather);
-bool block1 (const Pokemon &user, const Pokemon &target);
-bool block2 (const Pokemon &user, const Weather &weather);
-bool imprison (const Move &move, const Pokemon &target);
+void blockexecution (Team &user, const Team &target, const Weather &weather);
+void blockselection (Team &user, const Team &target, const Weather &weather);
+bool block1 (const Team &user, const Team &target);
+bool block2 (const Team &user, const Weather &weather);
+bool imprison (const Move &move, const Team &target);
 
 }
 

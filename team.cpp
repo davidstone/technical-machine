@@ -28,6 +28,78 @@
 
 namespace technicalmachine {
 
+Team::Team (bool isme) :
+	vanish (LANDED),
+	damage (0),
+	bide_damage (0),
+	substitute (0),
+	bide (0),
+	confused (0),
+	embargo (0),
+	encore (0),
+	heal_block (0),
+	magnet_rise (0),
+	partial_trap (0),
+	perish_song (0),
+	rampage (0),
+	slow_start (0),
+	stockpile (0),
+	taunt (0),
+	toxic (0),
+	uproar (0),
+	yawn (0),
+	aqua_ring (false),
+	attract (false),
+	awaken (false),
+	charge (false),
+	curse (false),
+	damaged (false),
+	defense_curl (false),
+	destiny_bond (false),
+	ff (false),
+	flinch (false),
+	focus_energy (false),
+	gastro_acid (false),
+	hitself (false),
+	identified (false),
+	imprison (false),
+	ingrain (false),
+	leech_seed (false),
+	loaf (false),
+	lock_on (false),
+	mf (false),
+	minimize (false),
+	moved (false),
+	mud_sport (false),
+	nightmare (false),
+	power_trick (false),
+	roost (false),
+	shed_skin (false),
+	torment (false),
+	trapped (false),
+	water_sport (false),
+	accuracy (0),
+	evasion (0),
+	
+	counter (0),
+
+	light_screen (0),
+	lucky_chant (0),
+	mist (0),
+	reflect (0),
+	safeguard (0),
+	tailwind (0),
+
+	wish (0),
+
+	spikes (0),
+	toxic_spikes (0),
+	stealth_rock (false),
+
+	replacement (0),
+	me (isme)
+	{}
+
 // Warning: Almost everything you see here is a hack.
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
