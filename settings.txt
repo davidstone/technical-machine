@@ -1,2 +1,2 @@
 log path	/home/david/Shoddy logs/
-team	baton_pass.sbt
+team	paralysis.sbt

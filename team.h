@@ -68,6 +68,7 @@ class Team {
 		bool moved;
 		bool mud_sport;
 		bool nightmare;
+		bool pass;
 		bool power_trick;
 		bool roost;
 		bool shed_skin;

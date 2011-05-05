@@ -202,8 +202,8 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 void predict_move (Pokemon &member, int detailed [][7]) {
 	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
 	bool seen = false;
-	unsigned n;
-	for (n = 0; n != member.move.set.size(); ++n) {
+	unsigned n = 0;
+	for ( ; n != member.move.set.size(); ++n) {
 		if (member.move.set [n].name == STRUGGLE) {
 			seen = true;
 			break;
@@ -212,17 +212,19 @@ void predict_move (Pokemon &member, int detailed [][7]) {
 	unsigned max_moves = 4;
 	if (seen)
 		max_moves += member.move.set.size() - n;
-	for (unsigned n = 3; member.move.set.size() < max_moves and detailed [member.name] [n] != END_MOVE; ++n) {
+	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != END_MOVE; ++m) {
 		bool found = false;
 		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
-			if (it->name == static_cast<moves_list> (detailed [member.name] [n])) {
+			if (it->name == static_cast<moves_list> (detailed [member.name] [m])) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			Move move (static_cast<moves_list> (detailed [member.name] [n]), 3);
-			member.move.set.insert (member.move.set.begin(), move);
+			Move move (static_cast<moves_list> (detailed [member.name] [m]), 3);
+			// I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
+			member.move.set.insert (member.move.set.begin() + n, move);
+			++n;
 		}
 	}
 }

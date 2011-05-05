@@ -23,50 +23,53 @@ namespace technicalmachine {
 
 void reset_variables (Team &team) {
 	//  Reset all variables that switches reset.
-	team.aqua_ring = false;
+
+	if (!team.pass) {
+		team.aqua_ring = false;
+		team.curse = false;
+		team.focus_energy = false;
+		team.gastro_acid = false;
+		team.ingrain = false;
+		team.leech_seed = false;
+		team.lock_on = false;
+		team.power_trick = false;
+		team.confused = 0;
+		team.embargo = 0;
+		team.magnet_rise = 0;
+		team.perish_song = 0;
+		team.accuracy = 0;
+		team.evasion = 0;
+		team.substitute = 0;
+	}
 	team.attract = false;
 	team.charge = false;
-	team.curse = false;
 	team.damaged = false;
 	team.defense_curl = false;
 	team.destiny_bond = false;
 	team.ff = false;
 	team.flinch = false;
-	team.focus_energy = false;
-	team.gastro_acid = false;
 	team.identified = false;
 	team.imprison = false;
-	team.ingrain = false;
-	team.leech_seed = false;
 	team.loaf = false;			// Do I set to true or false? True makes it wrong when a fainted Pokemon is replaced; false makes it wrong otherwise
-	team.lock_on = false;
-	team.mf = false;
 	team.minimize = false;
+	team.mf = false;
 	team.mud_sport = false;
 	team.nightmare = false;
-	team.power_trick = false;
 	team.roost = false;
 	team.torment = false;
 	team.trapped = false;
 	team.water_sport = false;
 	team.bide = 0;
-	team.confused = 0;
-	team.embargo = 0;
 	team.encore = 0;
 	team.heal_block = 0;
-	team.magnet_rise = 0;
 	team.partial_trap = 0;
-	team.perish_song = 0;
 	team.rampage = 0;
 	team.active->atk.stage = 0;
 	team.active->def.stage = 0;
 	team.active->spa.stage = 0;
 	team.active->spd.stage = 0;
 	team.active->spe.stage = 0;
-	team.accuracy = 0;
-	team.evasion = 0;
 	team.stockpile = 0;
-	team.substitute = 0;
 	team.taunt = 0;
 	team.toxic = 0;
 	team.uproar = 0;
@@ -81,6 +84,7 @@ void reset_variables (Team &team) {
 
 void switchpokemon (Team &user, Team &target, Weather &weather) {
 	if (user.active->hp.stat == 0) {
+		reset_variables (user);
 		// First, remove the active Pokemon because it has 0 HP.
 		user.active.set.erase (user.active.set.begin() + user.active.index);
 

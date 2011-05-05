@@ -39,26 +39,33 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 		foe.replacement = foe.active.index;
 		bool first_replacing = false;
 		bool last_replacing = false;
-		size_t newline1 = 0;
+		bool phaze = false;
 		
 		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that line. This helps keep track of information on future lines so I can do things like assign critical hits to the right move.
 		Team* active;
 		Team* inactive;
+		size_t newline1;
+		size_t newline2 = -1;
 		while (true) {
+			newline1 = newline2 + 1;
 			while (newline1 < input.length() and input.at (newline1) == '\n')
 				++newline1;
-			size_t newline2 = input.find ('\n', newline1 + 1);
+			newline2 = input.find ('\n', newline1 + 1);
 			if (newline2 == std::string::npos)
 				break;
 			std::string line = input.substr (newline1, newline2 - newline1);
 
 			if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-				std::string search = " sent out ";
+				std::cout << line << '\n';
+				std::string search = "Begin turn #";
+				if (line.substr (0, search.length()) == search)
+					continue;
+				search = " sent out ";
 				size_t found = line.find (search);
 				if (found != std::string::npos) {
 					search = ai.player + " sent out ";
 					if (line.substr (0, search.length()) == search) {
-						log_pokemon (ai, foe, weather, line, map, search);
+						log_pokemon (ai, foe, weather, line, map, search, phaze);
 						active = &ai;
 						inactive = &foe;
 						if (first == NULL) {
@@ -73,7 +80,7 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 							last_replacing = true;
 						}
 						search = foe.player + " sent out ";
-						log_pokemon (foe, ai, weather, line, map, search);
+						log_pokemon (foe, ai, weather, line, map, search, phaze);
 						active = &foe;
 						inactive = &ai;
 						if (first == NULL) {
@@ -83,6 +90,14 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					}
 				}
 				else {
+					if (foe.player != "") {
+						search = ai.player + " withdrew ";
+						if (line.substr (0, search.length()) == search)
+							continue;
+						search = foe.player + " withdrew ";
+						if (line.substr (0, search.length()) == search)
+							continue;
+					}
 					if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
 						active = &ai;
 						inactive = &foe;
@@ -118,7 +133,7 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					else {
 						search = active->active->nickname + " used ";
 						if (line.substr (0, search.length()) == search)
-							log_move (*active, *inactive, weather, line, map, search);
+							log_move (*active, *inactive, weather, line, map, search, phaze);
 						// else if (line != "===============") {
 						else {
 							bool shed_skin = false;
@@ -127,7 +142,6 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					}
 				}
 			}
-			newline1 = newline2 + 1;
 		}
 		if (first_replacing or last_replacing) {
 			if (first_replacing)
@@ -149,14 +163,12 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			usemove (*first, *last, weather);
 			usemove (*last, *first, weather);
 			endofturn (*first, *last, weather);
-			ai.damage = 0;
-			foe.damage = 0;
 		}
 	}
 	return won;
 }
 
-void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1) {
+void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1, bool &phaze) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
 	std::string nickname = line.substr (search1.length(), found2 - search1.length());
@@ -222,15 +234,22 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 		for (std::vector<Pokemon>::iterator active = team.active.set.begin(); active != team.active.set.end(); ++active)
 			loadpokemon (team, *active);
 	}
-	team.active->move.index = 0;
-	if (team.active->move.set.size() > 1) {
-		while (team.active->move->name != SWITCH0)
-			++team.active->move.index;
+	if (phaze) {
+		target.active->move->variable.index = 0;
+		while (team.active.set [target.active->move->variable.index].nickname != nickname)
+			++target.active->move->variable.index;
+	}
+	else {
+		team.active->move.index = 0;
+		if (team.active->move.set.size() > 1) {
+			while (team.active->move->name != SWITCH0)
+				++team.active->move.index;
+		}
 	}
 	team.active->move.index += team.replacement;
 }
 
-void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search) {
+void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
@@ -248,6 +267,8 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 		user.active->move.set.insert (user.active->move.set.begin(), move);
 		user.active->move.index = 0;
 	}
+	if (user.active->move->name == ROAR or user.active->move->name == WHIRLWIND)
+		phaze = true;
 	user.active->move->ch = false;
 	user.active->move->effect = false;
 }

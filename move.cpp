@@ -120,7 +120,7 @@ void Move::set_variable () {
 	// Confusion / Sleep!!!
 }
 
-int usemove (Team &user, Team &target, Weather &weather, int old_damage, int log_damage) {
+int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
 	int damage = 0;
 	user.destiny_bond = false;
 	user.moved = true;
@@ -132,12 +132,12 @@ int usemove (Team &user, Team &target, Weather &weather, int old_damage, int log
 //			usemove2 (user, target, move2, weather);		// ???
 //		 (NATURE_POWER == user.active->move->name)
 //		else
-		damage = usemove2 (user, target, weather, old_damage, log_damage);
+		damage = usemove2 (user, target, weather, log_damage);
 	}
 	return damage;
 }
 
-int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int log_damage) {
+int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	speed (user, weather);
 	speed (target, weather);
 	movepower (user, target, weather);
@@ -180,7 +180,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		if (user.active->gender * target.active->gender == -1)		// male * female == -1
 			target.attract = true;
 	}
-	else if (BATON_PASS == user.active->move->name) {
+	else if (BATON_PASS == user.active->move->name and false) {
 		user.active.set [user.replacement].atk.stage = user.active->atk.stage;
 		user.active.set [user.replacement].def.stage = user.active->def.stage;
 		user.active.set [user.replacement].spa.stage = user.active->spa.stage;
@@ -188,8 +188,6 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		user.active.set [user.replacement].spe.stage = user.active->spe.stage;
 		
 		// Change the active Pokemon to the one switching in.
-		user.replacement = user.active->move->variable.index;
-		
 		switchpokemon (user, target, weather);
 	}
 	else if (BELLY_DRUM == user.active->move->name) {
@@ -245,7 +243,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		target.active->spe.boost (-2);
 	else if (COUNTER == user.active->move->name) {
 			if (target.active->move->physical) {
-				target.active->hp.stat -= old_damage * 2;
+				target.active->hp.stat -= user.damage * 2;
 				if (target.active->hp.stat < 0)
 					target.active->hp.stat = 0;
 			}
@@ -305,8 +303,6 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 //	else if (ENDURE == user.active->move->name)
 	else if (EXPLOSION == user.active->move->name or SELFDESTRUCT == user.active->move->name)
 		user.active->hp.stat = 0;
-	else if (FAKE_OUT == user.active->move->name)
-		target.flinch = true;
 	else if (FAKE_TEARS == user.active->move->name or METAL_SOUND == user.active->move->name)
 		target.active->spd.boost (-2);
 //	else if (FEINT == user.active->move->name)
@@ -422,12 +418,12 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		user.active->hp.stat = 0;
 	}
 	else if (METAL_BURST == user.active->move->name)
-		target.active->hp.stat -= old_damage * 3 / 2;
+		target.active->hp.stat -= user.damage * 3 / 2;
 //	else if (MIMIC == user.active->move->name)
 //	else if (MIRACLE_EYE == user.active->move->name)
 	else if (MIRROR_COAT == user.active->move->name) {
 		if (!target.active->move->physical) {
-			target.active->hp.stat -= old_damage * 2;
+			target.active->hp.stat -= user.damage * 2;
 			if (target.active->hp.stat < 0)
 				target.active->hp.stat = 0;
 		}
@@ -705,7 +701,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 		else if (BUBBLE == user.active->move->name or BUBBLEBEAM == user.active->move->name or CONSTRICT == user.active->move->name)
 			target.active->spe.boost (-1);
 
-		else if (AIR_SLASH == user.active->move->name or ASTONISH == user.active->move->name or BITE == user.active->move->name or BONE_CLUB == user.active->move->name or DARK_PULSE == user.active->move->name or DRAGON_RUSH == user.active->move->name or EXTRASENSORY == user.active->move->name or HEADBUTT == user.active->move->name or HYPER_FANG == user.active->move->name or IRON_HEAD == user.active->move->name or NEEDLE_ARM == user.active->move->name or ROCK_SLIDE == user.active->move->name or ROLLING_KICK == user.active->move->name or SNORE == user.active->move->name or STOMP == user.active->move->name or TWISTER == user.active->move->name or WATERFALL == user.active->move->name or ZEN_HEADBUTT == user.active->move->name)
+		else if (AIR_SLASH == user.active->move->name or ASTONISH == user.active->move->name or BITE == user.active->move->name or BONE_CLUB == user.active->move->name or DARK_PULSE == user.active->move->name or DRAGON_RUSH == user.active->move->name or EXTRASENSORY == user.active->move->name or FAKE_OUT == user.active->move->name or HEADBUTT == user.active->move->name or HYPER_FANG == user.active->move->name or IRON_HEAD == user.active->move->name or NEEDLE_ARM == user.active->move->name or ROCK_SLIDE == user.active->move->name or ROLLING_KICK == user.active->move->name or SNORE == user.active->move->name or STOMP == user.active->move->name or TWISTER == user.active->move->name or WATERFALL == user.active->move->name or ZEN_HEADBUTT == user.active->move->name)
 			target.flinch = true;
 
 		else if (BLAZE_KICK == user.active->move->name or EMBER == user.active->move->name or FIRE_BLAST == user.active->move->name or FIRE_PUNCH == user.active->move->name or FLAME_WHEEL == user.active->move->name or FLAMETHROWER == user.active->move->name or FLARE_BLITZ == user.active->move->name or HEAT_WAVE == user.active->move->name or LAVA_PLUME == user.active->move->name or SACRED_FIRE == user.active->move->name)
@@ -740,21 +736,21 @@ int usemove2 (Team &user, Team &target, Weather &weather, int old_damage, int lo
 	//	else if (DIZZY_PUNCH == user.active->move->name or ROCK_CLIMB == user.active->move->name or WATER_PULSE == user.active->move->name) {}
 
 		else if (FIRE_FANG == user.active->move->name) {
-			if (user.active->move->effect == 1 or user.active->move->effect == 3)
+			if (user.active->move->effect != 2)
 				burn (user, target, weather);
-			if (user.active->move->effect >= 2)
+			if (user.active->move->effect != 1)
 				target.flinch = true;
 		}
 		else if (ICE_FANG == user.active->move->name) {
-			if (user.active->move->effect == 1 or user.active->move->effect == 3)
+			if (user.active->move->effect != 2)
 				freeze (*user.active, target, weather);
-			if (user.active->move->effect >= 2)
+			if (user.active->move->effect != 1)
 				target.flinch = true;
 		}
 		else if (THUNDER_FANG == user.active->move->name) {
-			if (user.active->move->effect == 1 or user.active->move->effect == 3)
+			if (user.active->move->effect != 2)
 				paralyze (*user.active, *target.active, weather);
-			if (user.active->move->effect >= 2)
+			if (user.active->move->effect != 1)
 				target.flinch = true;
 		}
 

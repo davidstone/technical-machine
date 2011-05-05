@@ -20,9 +20,9 @@ namespace technicalmachine {
 
 bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map);
 
-void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1);
+void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1, bool &phaze);
 
-void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search);
+void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze);
 
 void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin);
 

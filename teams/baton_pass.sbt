@@ -11,10 +11,10 @@
 <item>Leftovers</item>
 <ability>Hyper Cutter</ability>
 <moveset>
-	<move pp-up="3">Baton Pass</move>
 	<move pp-up="3">Rock Polish</move>
 	<move pp-up="3">Roost</move>
 	<move pp-up="3">Taunt</move>
+	<move pp-up="3">Baton Pass</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -36,9 +36,9 @@
 <ability>Water Absorb</ability>
 <moveset>
 	<move pp-up="3">Aqua Ring</move>
-	<move pp-up="3">Baton Pass</move>
 	<move pp-up="3">Substitute</move>
 	<move pp-up="3">Surf</move>
+	<move pp-up="3">Baton Pass</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="244" />
@@ -59,10 +59,10 @@
 <item>Leftovers</item>
 <ability>Technician</ability>
 <moveset>
-	<move pp-up="3">Baton Pass</move>
-	<move pp-up="3">Bug Bite</move>
 	<move pp-up="3">Iron Defense</move>
 	<move pp-up="3">Substitute</move>
+	<move pp-up="3">Bug Bite</move>
+	<move pp-up="3">Baton Pass</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="248" />
@@ -83,10 +83,10 @@
 <item>Leftovers</item>
 <ability>Soundproof</ability>
 <moveset>
-	<move pp-up="3">Baton Pass</move>
 	<move pp-up="3">Calm Mind</move>
 	<move pp-up="3">Encore</move>
 	<move pp-up="3">Psychic</move>
+	<move pp-up="3">Baton Pass</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -107,10 +107,10 @@
 <item>Shed Shell</item>
 <ability>Own Tempo</ability>
 <moveset>
-	<move pp-up="3">Baton Pass</move>
 	<move pp-up="3">Ingrain</move>
 	<move pp-up="3">Spider Web</move>
 	<move pp-up="3">Spore</move>
+	<move pp-up="3">Baton Pass</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="140" />

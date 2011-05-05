@@ -18,23 +18,22 @@
 
 namespace technicalmachine {
 
-long evaluate (const Team &ai, const Team &foe, const Weather &weather, const score_variables &sv) {
+long evaluate (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv) {
 	long score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
+	score += scoreteam (ai, sv);
 	for (std::vector<Pokemon>::const_iterator it = ai.active.set.begin(); it != ai.active.set.end(); ++it)
 		score += scorepokemon (*it, ai, foe, weather, sv);
+	score -= scoreteam (foe, sv);
 	for (std::vector<Pokemon>::const_iterator it = foe.active.set.begin(); it != foe.active.set.end(); ++it)
 		score -= scorepokemon (*it, foe, ai, weather, sv);
 	return score;
 }
 
-long scorepokemon (const Pokemon &member, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
-	long score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
-	if (grounded (team, weather))
-		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes + team.magnet_rise * sv.magnet_rise;
-	if (member.hp.stat != 0) {
-		score += sv.members;
-		score += sv.hp * member.hp.stat / member.hp.max;
-		score += sv.substitute * team.substitute / member.hp.max;
+long scoreteam (Team const &team, score_variables const &sv) {
+	long score = 0;
+	if (team.active->hp.stat != 0) {
+		score += team.magnet_rise * sv.magnet_rise;
+		score += sv.substitute * team.substitute / team.active->hp.max;
 		if (team.aqua_ring)
 			score += sv.aqua_ring;
 		if (team.curse)
@@ -45,8 +44,8 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 			score += sv.ingrain;
 		if (team.leech_seed)
 			score += sv.leech_seed;
-//		if (other.active->leech_seed)
-//			score += 1 * other.active->hp.max / member.hp.max;
+	//	if (other.active->leech_seed)
+	//		score += 1 * other.active->hp.max / member.hp.max;
 		if (team.loaf)
 			score += sv.loaf;
 		if (team.nightmare)
@@ -55,6 +54,28 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 			score += sv.torment;
 		if (team.trapped)
 			score += sv.trapped;
+		if (team.focus_energy)
+			score += sv.focus_energy;
+		bool bp = false;
+		for (std::vector<Move>::const_iterator move = team.active->move.set.begin(); move != team.active->move.set.end(); ++move) {
+			if (move->name == BATON_PASS) {
+				bp = true;
+				break;
+			}
+		}
+		if (bp)
+			score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.active->atk.stage * sv.atk_stage + team.active->def.stage * sv.def_stage + team.active->spa.stage * sv.spa_stage + team.active->spd.stage * sv.spd_stage + team.active->spe.stage * sv.spe_stage);
+	}
+	return score;
+}
+
+long scorepokemon (Pokemon const &member, Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
+	long score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
+	if (grounded (team, weather))
+		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
+	if (member.hp.stat != 0) {
+		score += sv.members;
+		score += sv.hp * member.hp.stat / member.hp.max;
 		if (member.status == BURN)
 			score += sv.burn;
 		else if (member.status == FREEZE)
@@ -70,23 +91,19 @@ long scorepokemon (const Pokemon &member, const Team &team, const Team &other, c
 		score += member.spa.stage * sv.spa_stage;
 		score += member.spd.stage * sv.spd_stage;
 		score += member.spe.stage * sv.spe_stage;
-		if (team.focus_energy)
-			score += sv.focus_energy;
 		score += scoremove (member, team, other, weather, sv);
 	}
 	return score;
 }
 
 
-long scoremove (const Pokemon &member, const Team &team, const Team &other, const Weather &weather, const score_variables &sv) {
+long scoremove (Pokemon const &member, Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
 	long score = 0;
 	for (std::vector<Move>::const_iterator move = member.move.set.begin(); move != member.move.set.end(); ++move) {
 		if (move->physical)
 			score += other.reflect * sv.reflect;
 		else if (move->basepower > 0)		// Non-damaging moves have physical == false
 			score += other.light_screen * sv.light_screen;
-		else if (move->name == BATON_PASS)
-			score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + member.atk.stage * sv.atk_stage + member.def.stage * sv.def_stage + member.spa.stage * sv.spa_stage + member.spd.stage * sv.spd_stage + member.spe.stage * sv.spe_stage);
 		if (move->pp == 0)
 			score += sv.no_pp;
 	}
@@ -94,7 +111,7 @@ long scoremove (const Pokemon &member, const Team &team, const Team &other, cons
 }
 
 
-long win (const Team &team) {
+long win (Team const &team) {
 	if (team.active.set.size() == 0) {
 		if (team.me)
 			return -VICTORY;

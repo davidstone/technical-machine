@@ -72,6 +72,7 @@ Team::Team (bool isme) :
 	moved (false),
 	mud_sport (false),
 	nightmare (false),
+	pass (false),
 	power_trick (false),
 	roost (false),
 	shed_skin (false),

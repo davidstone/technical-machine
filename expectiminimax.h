@@ -27,7 +27,9 @@ long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 long tree4 (const Team &ai, const Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table);
 long tree5 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
 long tree6 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
+long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint);
 long fainted (Team ai, Team foe, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
+void deorder (Team &first, Team &last, Team* &ai, Team* &foe);
 
 }
 #endif

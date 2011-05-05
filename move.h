@@ -2088,7 +2088,7 @@ const char get_probability [] = {		// Chance (out of 10) to activate side-effect
 0,		// ExtremeSpeed
 0,		// Facade
 0,		// Faint Attack
-0,		// Fake Out
+10,		// Fake Out
 0,		// Fake Tears
 0,		// False Swipe
 0,		// FeatherDance

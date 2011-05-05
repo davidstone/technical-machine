@@ -17,7 +17,7 @@ ai : optimizations = -g
 
 aio : $(aiobjects)
 	g++ -o aio $(aiobjects) $(CXXFLAGS)
-aio : optimizations = $(fulloptimizations) -g
+aio : optimizations = $(fulloptimizations) -DNDEBUG -pg
 
 predict : $(predictobjects)
 	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)

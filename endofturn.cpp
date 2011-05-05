@@ -49,6 +49,7 @@ void endofturn (Team &first, Team &last, Weather &weather) {
 }
 
 void endofturn0 (Team &team) {
+	team.damage = 0;
 	team.damaged = false;
 	team.flinch = false;
 	team.moved = false;
