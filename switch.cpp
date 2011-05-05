@@ -87,6 +87,7 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 		reset_variables (user);
 		// First, remove the active Pokemon because it has 0 HP.
 		user.active.set.erase (user.active.set.begin() + user.active.index);
+		--user.size;
 
 		// If the last Pokemon is fainted; there is nothing left to do.
 		if (user.active.set.size() == 0)

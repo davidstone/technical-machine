@@ -172,7 +172,7 @@ void predict (int detailed [][7], Team &team) {
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
-	while (team.active.set.size() < 6) {
+	while (team.active.set.size() < team.size) {
 		double top = 0.0;
 		species name;
 		for (int n = 0; n != END_SPECIES; ++n) {

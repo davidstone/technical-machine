@@ -99,6 +99,8 @@ class Team {
 
 		unsigned char replacement;		// If a Pokemon switches / faints, what Pokemon should replace it?
 		
+		unsigned char size;			// How big is the team?
+		
 		const bool me;				// Is this my team?
 	
 		bool operator== (const Team &other) const {

@@ -98,6 +98,7 @@ Team::Team (bool isme) :
 	stealth_rock (false),
 
 	replacement (0),
+	size (6),
 	me (isme)
 	{}
 
