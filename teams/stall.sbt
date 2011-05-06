@@ -59,7 +59,7 @@
 <ability>Natural Cure</ability>
 <moveset>
 	<move pp-up="3">Wish</move>
-	<move pp-up="3">Protect</move>
+	<move pp-up="3">Softboiled</move>
 	<move pp-up="3">Flamethrower</move>
 	<move pp-up="3">Toxic</move>
 </moveset>

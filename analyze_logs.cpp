@@ -144,10 +144,17 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			}
 		}
 		if (first_replacing or last_replacing) {
-			if (first_replacing)
+			if (first_replacing) {
+				// Hopefully this will catch minor rounding errors and nothing else.
+				if (first->active->hp.stat != first->active->hp.max)
+					first->active->hp.stat = 0;
 				switchpokemon (*first, *last, weather);
-			if (last_replacing)
+			}
+			if (last_replacing) {
+				if (last->active->hp.stat != last->active->hp.max)
+					last->active->hp.stat = 0;
 				switchpokemon (*last, *first, weather);
+			}
 		}
 		else {
 			if (ai.replacement != ai.active.index) {
@@ -163,6 +170,12 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			usemove (*first, *last, weather);
 			usemove (*last, *first, weather);
 			endofturn (*first, *last, weather);
+		}
+		std::cout << "======================\nAI team:\n";
+		for (std::vector<Pokemon>::const_iterator active = ai.active.set.begin(); active != ai.active.set.end(); ++active) {
+			std::cout << pokemon_name [active->name] + " (" << active->hp.stat << " HP) @ " + item_name [active->item] + "\n";
+			for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
+				std::cout << "\t" + move_name [move->name] + "\n";
 		}
 	}
 	return won;
@@ -249,6 +262,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 	team.active->move.index += team.replacement;
 }
 
+
 void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
@@ -272,6 +286,7 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	user.active->move->ch = false;
 	user.active->move->effect = false;
 }
+
 
 void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin) {
 	if (user.active->ability == END_ABILITY) {

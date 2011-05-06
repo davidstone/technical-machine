@@ -13,6 +13,7 @@
 #define AI_H_
 
 #include <map>
+#include "load_stats.h"
 #include "move.h"
 #include "movefunction.h"
 #include "statfunction.h"

@@ -1,4 +1,4 @@
-aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
+aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o load_stats.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
 
 predictobjects = predictor.o ability.o block.o damage.o gender.o heal.o item.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
 
@@ -9,7 +9,8 @@ analogobjects = analyze_logs_main.o ability.o analyze_logs.o damage.o move.o pok
 analogguiobjects = analyze_logs_gui.o ability.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
 warnings = -Wall -Wextra -pedantic -Wno-unused  -Wformat=2
-fulloptimizations = -O3 -march=native -ffast-math
+fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
+experimental = -fno-rtti
 
 ai : $(aiobjects)
 	g++ -o ai $(aiobjects) $(CXXFLAGS)
@@ -17,7 +18,7 @@ ai : optimizations = -g
 
 aio : $(aiobjects)
 	g++ -o aio $(aiobjects) $(CXXFLAGS)
-aio : optimizations = $(fulloptimizations) -DNDEBUG -pg
+aio : optimizations = $(fulloptimizations) $(experimental)
 
 predict : $(predictobjects)
 	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)
@@ -41,9 +42,9 @@ analoggui : optimizations = -g
 
 CXXFLAGS = $(warnings) $(optimizations)
 
-ai.o: ai.cpp ai.h move.h active.h type.h movefunction.h pokemon.h \
- ability.h gender.h item.h species.h stat.h status.h team.h weather.h \
- statfunction.h teampredictor.h analyze_logs.h expectiminimax.h \
+ai.o: ai.cpp ai.h load_stats.h pokemon.h ability.h active.h gender.h \
+ item.h move.h type.h species.h stat.h status.h movefunction.h team.h \
+ weather.h statfunction.h teampredictor.h analyze_logs.h expectiminimax.h \
  evaluate.h state.h
 ability.o: ability.cpp ability.h
 analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
@@ -67,6 +68,8 @@ expectiminimax.o: expectiminimax.cpp expectiminimax.h evaluate.h move.h \
  statfunction.h switch.h transposition.h
 gender.o: gender.cpp gender.h
 item.o: item.cpp item.h
+load_stats.o: load_stats.cpp pokemon.h ability.h active.h gender.h item.h \
+ move.h type.h species.h stat.h status.h
 move.o: move.cpp move.h active.h type.h movefunction.h pokemon.h \
  ability.h gender.h item.h species.h stat.h status.h team.h weather.h \
  block.h damage.h heal.h statfunction.h statusfunction.h switch.h \
@@ -89,8 +92,9 @@ switch.o: switch.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
 team.o: team.cpp ability.h gender.h item.h move.h active.h type.h \
  movefunction.h pokemon.h species.h stat.h status.h team.h weather.h \
  statfunction.h switch.h teampredictor.h
-teampredictor.o: teampredictor.cpp pokemon.h ability.h active.h gender.h \
- item.h move.h type.h species.h stat.h status.h team.h teampredictor.h
+teampredictor.o: teampredictor.cpp load_stats.h pokemon.h ability.h \
+ active.h gender.h item.h move.h type.h species.h stat.h status.h team.h \
+ teampredictor.h
 type.o: type.cpp pokemon.h ability.h active.h gender.h item.h move.h \
  type.h species.h stat.h status.h team.h typefunction.h weather.h
 weather.o: weather.cpp weather.h
