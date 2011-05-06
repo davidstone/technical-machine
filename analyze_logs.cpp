@@ -116,13 +116,14 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 					search = active->active->nickname + " lost ";
 					if (line.substr (0, search.length()) == search) {
 						size_t division = line.find ("/", search.length());
-//						std::cout << line.substr (search.length(), division - search.length()) << '\n';
-						int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
-						++division;
-						int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ", division) - division));
-						active->damage = active->active->hp.max * numerator / denominator;
+						if (division != std::string::npos) {
+							int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
+							++division;
+							int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ", division) - division));
+							active->damage = active->active->hp.max * numerator / denominator;
+						}
 					}
-					else if (line == "A critical hit!")
+					if (line == "A critical hit!")
 						active->active->move->ch = true;
 					else if (line == active->active->nickname + " flinched!")
 						active->flinch = true;

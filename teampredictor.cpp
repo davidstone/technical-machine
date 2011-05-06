@@ -34,14 +34,14 @@ void predict (int detailed [][7], Team &team) {
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall.at (n) / total) * lead.at (n));
 
-	for (std::vector<Pokemon>::const_iterator it = team.active.set.begin(); it != team.active.set.end(); ++it) {
+	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [it->name] [n];
+			estimate.at (n) *= multiplier [active->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 
 	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
-		std::cout << pokemon_name [active->name] + " @ " + item_name [active->item] + "\n";
+		std::cout << pokemon_name [active->name] + " (" << active->hp.stat << " HP) @ " + item_name [active->item] + "\n";
 		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
 			std::cout << "\t" + move_name [move->name] + "\n";
 	}
