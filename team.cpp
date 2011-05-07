@@ -11,6 +11,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <string>
 #include "ability.h"
@@ -349,6 +350,27 @@ unsigned poconverter (const std::string &data, const std::string &end, const std
 	const size_t a = line.find (data);
 	const size_t b = line.find (end, a + x);
 	return boost::lexical_cast<unsigned> (line.substr (a + x, b - a - x));
+}
+
+void output (Team const &team, std::string &output) {
+	output = "======================\n";
+	if (team.me)
+		output += "AI";
+	else
+		output += "Foe";
+	output += " team:\n";
+	output += team.player + ":\n";
+	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
+		output += pokemon_name [active->name];
+		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (active->hp.stat) / static_cast<double> (active->hp.max)) + "% HP)";
+		output += " @ " + item_name [active->item];
+		output += " ** " + active->nickname + '\n';
+		if (active->ability != END_ABILITY)
+			output += "\tAbility: " + ability_name [active->ability] + '\n';
+		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
+			output += "\t" + move_name [move->name] + "\n";
+	}
+	output += '\n';
 }
 
 }

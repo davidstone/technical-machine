@@ -23,7 +23,7 @@ bool istype (const Team &team, types type) {
 }
 
 bool grounded (const Team &team, const Weather &weather) {
-	if ((!istype (team, FLYING) and team.active->ability == LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.active->item == IRON_BALL or team.ingrain)
+	if ((!istype (team, FLYING) and team.active->ability != LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.active->item == IRON_BALL or team.ingrain)
 		return true;
 	return false;
 }

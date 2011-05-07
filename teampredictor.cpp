@@ -40,11 +40,9 @@ void predict (int detailed [][7], Team &team) {
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 
-	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
-		std::cout << pokemon_name [active->name] + " (" << active->hp.stat << " HP) @ " + item_name [active->item] + "\n";
-		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
-			std::cout << "\t" + move_name [move->name] + "\n";
-	}
+	std::string out;
+	output (team, out);
+	std::cout << out;
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {

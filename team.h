@@ -123,6 +123,8 @@ void pokelabpokemon (Team& team, std::ifstream &file, const Map &map);
 void poteam (Team &team, const std::string &name);
 void popokemon (Team &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
 unsigned poconverter (const std::string &data, const std::string &end, const std::string &line);
+void output (Team const &team, std::string &output);
+
 
 }
 #endif

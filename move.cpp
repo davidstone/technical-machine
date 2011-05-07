@@ -157,8 +157,9 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			attack (user, weather);
 			damage = damagecalculator (user, target, weather);
 		}
-		else
+		else {
 			damage = log_damage;
+		}
 		if (damage != 0)
 			do_damage (user, target, damage);
 	}

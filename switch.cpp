@@ -10,6 +10,7 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
+#include <iostream>
 #include "heal.h"
 #include "pokemon.h"
 #include "statfunction.h"
@@ -127,7 +128,7 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 
 void entry_hazards (Team &user, Weather const &weather) {
 	if (grounded (user, weather) and MAGIC_GUARD != user.active->ability) {
-		if (0 != user.toxic_spikes) {
+		if (user.toxic_spikes != 0) {
 			if (istype(user, POISON))
 				user.toxic_spikes = 0;
 			else if (1 == user.toxic_spikes)
@@ -135,7 +136,7 @@ void entry_hazards (Team &user, Weather const &weather) {
 			else
 				poison_toxic (user, user, weather);
 		}
-		if (0 != user.spikes)
+		if (user.spikes != 0)
 			heal (*user.active, -16, user.spikes + 1);
 	}
 	if (user.stealth_rock)

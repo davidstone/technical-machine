@@ -40,10 +40,11 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 		bool first_replacing = false;
 		bool last_replacing = false;
 		bool phaze = false;
+		bool move_damage = false;
 		
 		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that line. This helps keep track of information on future lines so I can do things like assign critical hits to the right move.
-		Team* active;
-		Team* inactive;
+		Team* active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
+		Team* inactive = NULL;
 		size_t newline1;
 		size_t newline2 = -1;
 		while (true) {
@@ -54,132 +55,106 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			if (newline2 == std::string::npos)
 				break;
 			std::string line = input.substr (newline1, newline2 - newline1);
-
-			if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-				std::cout << line << '\n';
-				std::string search = "Begin turn #";
-				if (line.substr (0, search.length()) == search)
-					continue;
-				search = " sent out ";
-				size_t found = line.find (search);
-				if (found != std::string::npos) {
-					search = ai.player + " sent out ";
-					if (line.substr (0, search.length()) == search) {
-						log_pokemon (ai, foe, weather, line, map, search, phaze);
-						active = &ai;
-						inactive = &foe;
-						if (first == NULL) {
-							first = &ai;
-							last = &foe;
-						}
-					}
-					else {
-						if (foe.player == "") {
-							foe.player = line.substr (0, found);
-							first_replacing = true;
-							last_replacing = true;
-						}
-						search = foe.player + " sent out ";
-						log_pokemon (foe, ai, weather, line, map, search, phaze);
-						active = &foe;
-						inactive = &ai;
-						if (first == NULL) {
-							first = &foe;
-							last = &ai;
-						}
-					}
-				}
-				else {
-					if (foe.player != "") {
-						search = ai.player + " withdrew ";
-						if (line.substr (0, search.length()) == search)
-							continue;
-						search = foe.player + " withdrew ";
-						if (line.substr (0, search.length()) == search)
-							continue;
-					}
-					if (line.substr (0, ai.active->nickname.length()) == ai.active->nickname) {
-						active = &ai;
-						inactive = &foe;
-					}
-					else if (line.substr (0, foe.active->nickname.length()) == foe.active->nickname) {
-						active = &foe;
-						inactive = &ai;
-					}
-					if (first == NULL) {
-						first = active;
-						last = inactive;
-					}
-
-					// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
-					
-					search = active->active->nickname + " lost ";
-					if (line.substr (0, search.length()) == search) {
-						size_t division = line.find ("/", search.length());
-						if (division != std::string::npos) {
-							int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
-							++division;
-							int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ", division) - division));
-							active->damage = active->active->hp.max * numerator / denominator;
-						}
-					}
-					if (line == "A critical hit!")
-						active->active->move->ch = true;
-					else if (line == active->active->nickname + " flinched!")
-						active->flinch = true;
-					else if (line == first->active->nickname + " fainted!")
-						first_replacing = true;
-					else if (line == last->active->nickname + " fainted!")
-						last_replacing = true;
-					else {
-						search = active->active->nickname + " used ";
-						if (line.substr (0, search.length()) == search)
-							log_move (*active, *inactive, weather, line, map, search, phaze);
-						// else if (line != "===============") {
-						else {
-							bool shed_skin = false;
-							log_misc (*active, *inactive->active, line, map, shed_skin);		// Fix
-						}
-					}
-				}
-			}
+			analyze_line (ai, foe, active, inactive, first, last, weather, map, phaze, first_replacing, last_replacing, move_damage, line);
 		}
-		if (first_replacing or last_replacing) {
-			if (first_replacing) {
-				// Hopefully this will catch minor rounding errors and nothing else.
-				if (first->active->hp.stat != first->active->hp.max)
-					first->active->hp.stat = 0;
-				switchpokemon (*first, *last, weather);
+		do_turn (*first, *last, weather, first_replacing, last_replacing);
+	}
+	return won;
+}
+
+void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &first, Team* &last, Weather &weather, Map const &map, bool &phaze, bool &first_replacing, bool &last_replacing, bool &move_damage, std::string const &line) {
+	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
+		std::cout << line << '\n';
+		std::string search = "Begin turn #";
+		if (line.substr (0, search.length()) == search)
+			return;
+		search = " sent out ";
+		size_t found = line.find (search);
+		if (found != std::string::npos) {
+			search = ai.player + " sent out ";
+			if (line.substr (0, search.length()) == search) {
+				log_pokemon (ai, foe, weather, line, map, search, phaze);
+				active = &ai;
+				inactive = &foe;
+				if (first == NULL) {
+					first = &ai;
+					last = &foe;
+				}
 			}
-			if (last_replacing) {
-				if (last->active->hp.stat != last->active->hp.max)
-					last->active->hp.stat = 0;
-				switchpokemon (*last, *first, weather);
+			else {
+				if (foe.player == "") {
+					foe.player = line.substr (0, found);
+					first_replacing = true;
+					last_replacing = true;
+				}
+				search = foe.player + " sent out ";
+				log_pokemon (foe, ai, weather, line, map, search, phaze);
+				active = &foe;
+				inactive = &ai;
+				if (first == NULL) {
+					first = &foe;
+					last = &ai;
+				}
 			}
 		}
 		else {
-			if (ai.replacement != ai.active.index) {
-				ai.active->move.index = 0;
-				while (ai.active->move->name - SWITCH0 != ai.replacement)
-					++ai.active->move.index;
+			if (foe.player != "") {
+				search = ai.player + " withdrew ";
+				if (line.substr (0, search.length()) == search)
+					return;
+				search = foe.player + " withdrew ";
+				if (line.substr (0, search.length()) == search)
+					return;
 			}
-			if (foe.replacement != foe.active.index) {
-				foe.active->move.index = 0;
-				while (foe.active->move->name - SWITCH0 != foe.replacement)
-					++foe.active->move.index;
+			if (line.substr (0, ai.active.set [ai.replacement].nickname.length()) == ai.active.set [ai.replacement].nickname) {
+				active = &ai;
+				inactive = &foe;
 			}
-			usemove (*first, *last, weather);
-			usemove (*last, *first, weather);
-			endofturn (*first, *last, weather);
-		}
-		std::cout << "======================\nAI team:\n";
-		for (std::vector<Pokemon>::const_iterator active = ai.active.set.begin(); active != ai.active.set.end(); ++active) {
-			std::cout << pokemon_name [active->name] + " (" << active->hp.stat << " HP) @ " + item_name [active->item] + "\n";
-			for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
-				std::cout << "\t" + move_name [move->name] + "\n";
+			else if (line.substr (0, foe.active.set [foe.replacement].nickname.length()) == foe.active.set [foe.replacement].nickname) {
+				active = &foe;
+				inactive = &ai;
+			}
+			if (first == NULL) {
+				first = active;
+				last = inactive;
+			}
+
+			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
+			if (move_damage) {
+				search = active->active.set [active->replacement].nickname + " lost ";
+				if (line.substr (0, search.length()) == search) {
+					size_t division = line.find ("/", search.length());
+					if (division != std::string::npos) {
+						int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
+						++division;
+						int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ", division) - division));
+						active->damage = active->active.set [active->replacement].hp.max * numerator / denominator;
+						move_damage = false;
+					}
+				}
+				else if (line == "It had no effect.")
+					move_damage = false;
+			}
+			if (line == "A critical hit!")
+				active->active.set [active->replacement].move->ch = true;
+			else if (line == active->active.set [active->replacement].nickname + " flinched!")
+				active->flinch = true;
+			else if (line == first->active.set [first->replacement].nickname + " fainted!")
+				first_replacing = true;
+			else if (line == last->active.set [last->replacement].nickname + " fainted!")
+				last_replacing = true;
+			else {
+				search = active->active.set [active->replacement].nickname + " used ";
+				if (line.substr (0, search.length()) == search)
+					log_move (*active, *inactive, weather, line, map, search, phaze, move_damage);
+				// else if (line != "===============") {
+				else {
+					bool shed_skin = false;
+					log_misc (*active, inactive->active.set [inactive->replacement], line, map, shed_skin);		// Fix
+				}
+			}
 		}
 	}
-	return won;
 }
 
 void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1, bool &phaze) {
@@ -264,7 +239,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 }
 
 
-void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze) {
+void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze, bool &move_damage) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
@@ -286,6 +261,8 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 		phaze = true;
 	user.active->move->ch = false;
 	user.active->move->effect = false;
+	if (user.active->move->basepower != 0)
+		move_damage = true;
 }
 
 
@@ -411,18 +388,44 @@ void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map
 	}
 }
 
-void output (std::string &output, const Team &team) {
-	output += team.player + ":\n";
-	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
-		output += pokemon_name [active->name];
-		output += " @ " + item_name [active->item];
-		output += " ** " + active->nickname + '\n';
-		if (active->ability != END_ABILITY)
-			output += "\tAbility: " + ability_name [active->ability] + '\n';
-		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move != active->move.set.end(); ++move)
-			output += "\t- " + move_name [move->name] + '\n';
+void do_turn (Team &first, Team &last, Weather &weather, bool first_replacing, bool last_replacing) {
+	if (first_replacing or last_replacing) {
+		if (first_replacing) {
+			// Hopefully this will catch minor rounding errors and nothing else.
+			if (first.active->hp.stat != first.active->hp.max)
+				first.active->hp.stat = 0;
+			switchpokemon (first, last, weather);
+			first.moved = false;
+		}
+		if (last_replacing) {
+			if (last.active->hp.stat != last.active->hp.max)
+				last.active->hp.stat = 0;
+			switchpokemon (last, first, weather);
+			last.moved = false;
+		}
 	}
-	output += '\n';
+	else {
+		if (first.replacement != first.active.index) {
+			first.active->move.index = 0;
+			while (first.active->move->name - SWITCH0 != first.replacement)
+				++first.active->move.index;
+		}
+		if (last.replacement != last.active.index) {
+			last.active->move.index = 0;
+			while (last.active->move->name - SWITCH0 != last.replacement)
+				++last.active->move.index;
+		}
+		usemove (first, last, weather, last.damage);
+		usemove (last, first, weather, first.damage);
+		std::cout << static_cast<int> (first.spikes) << '\n';
+		std::cout << static_cast<int> (last.spikes) << '\n';
+		endofturn (first, last, weather);
+	}
+	std::string out;
+	output (first, out);
+	std::cout << out;
+	output (last, out);
+	std::cout << out;
 }
 
 }

@@ -20,12 +20,14 @@ namespace technicalmachine {
 
 bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map);
 
+void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &first, Team* &last, Weather &weather, Map const &map, bool &phaze, bool &first_replacing, bool &last_replacing, bool &move_damage, std::string const &line);
+
 void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1, bool &phaze);
 
-void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze);
+void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze, bool &move_damage);
 
 void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin);
 
-void output (std::string &output, const Team &team);
+void do_turn (Team &first, Team &last, Weather &weather, bool first_replacing, bool last_replacing);
 
 }
