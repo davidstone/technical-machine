@@ -2,17 +2,17 @@
 <shoddybattle>
 
 <pokemon species="Jirachi">
-<nickname>Qf376Dcb</nickname>
+<nickname>Jke4Dk</nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>None</gender>
+<gender>No Gender</gender>
 <nature>Impish</nature>
 <item>Leftovers</item>
 <ability>Serene Grace</ability>
 <moveset>
+	<move pp-up="3">Body Slam</move>
 	<move pp-up="3">Iron Head</move>
 	<move pp-up="3">Stealth Rock</move>
-	<move pp-up="3">Body Slam</move>
 	<move pp-up="3">Wish</move>
 </moveset>
 <stats>
@@ -26,7 +26,7 @@
 </pokemon>
 
 <pokemon species="Machamp">
-<nickname>Zd03jdDkl</nickname>
+<nickname>Qadk3w</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -36,8 +36,8 @@
 <moveset>
 	<move pp-up="3">DynamicPunch</move>
 	<move pp-up="3">Ice Punch</move>
-	<move pp-up="3">Rest</move>
-	<move pp-up="3">Sleep Talk</move>
+	<move pp-up="3">Payback</move>
+	<move pp-up="3">Stone Edge</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -50,7 +50,7 @@
 </pokemon>
 
 <pokemon species="Blissey">
-<nickname>16DddgYUjd2</nickname>
+<nickname>Dls03Dc</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Female</gender>
@@ -58,10 +58,10 @@
 <item>Leftovers</item>
 <ability>Natural Cure</ability>
 <moveset>
-	<move pp-up="3">Thunder Wave</move>
-	<move pp-up="3">Softboiled</move>
 	<move pp-up="3">Flamethrower</move>
 	<move pp-up="3">Grass Knot</move>
+	<move pp-up="3">Softboiled</move>
+	<move pp-up="3">Thunder Wave</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="0" />
@@ -74,18 +74,18 @@
 </pokemon>
 
 <pokemon species="Celebi">
-<nickname>EoskNElsk08</nickname>
+<nickname>DSkws03</nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>None</gender>
+<gender>No Gender</gender>
 <nature>Bold</nature>
 <item>Leftovers</item>
 <ability>Natural Cure</ability>
 <moveset>
 	<move pp-up="3">Grass Knot</move>
+	<move pp-up="3">Psychic</move>
 	<move pp-up="3">Recover</move>
 	<move pp-up="3">Thunder Wave</move>
-	<move pp-up="3">Psychic</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -98,7 +98,7 @@
 </pokemon>
 
 <pokemon species="Tyranitar">
-<nickname>M3ejwSLkdEs</nickname>
+<nickname>Dsl40dS</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -106,8 +106,8 @@
 <item>Choice Band</item>
 <ability>Sand Stream</ability>
 <moveset>
+	<move pp-up="3">Aqua Tail</move>
 	<move pp-up="3">Crunch</move>
-	<move pp-up="3">Pursuit</move>
 	<move pp-up="3">Earthquake</move>
 	<move pp-up="3">Stone Edge</move>
 </moveset>
@@ -121,26 +121,26 @@
 </stats>
 </pokemon>
 
-<pokemon species="Moltres">
-<nickname>Dksj0jswfns</nickname>
+<pokemon species="Starmie">
+<nickname>Dsakl03</nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>None</gender>
-<nature>Impish</nature>
+<gender>No Gender</gender>
+<nature>Timid</nature>
 <item>Leftovers</item>
-<ability>Pressure</ability>
+<ability>Natural Cure</ability>
 <moveset>
-	<move pp-up="3">Flamethrower</move>
-	<move pp-up="3">Substitute</move>
-	<move pp-up="3">Roost</move>
-	<move pp-up="3">Air Slash</move>
+	<move pp-up="3">Ice Beam</move>
+	<move pp-up="3">Recover</move>
+	<move pp-up="3">Surf</move>
+	<move pp-up="3">Thunderbolt</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="248" />
+	<stat name="HP" iv="31" ev="40" />
 	<stat name="Atk" iv="31" ev="0" />
-	<stat name="Def" iv="31" ev="124" />
-	<stat name="Spd" iv="31" ev="120" />
-	<stat name="SpAtk" iv="30" ev="16" />
+	<stat name="Def" iv="31" ev="0" />
+	<stat name="Spd" iv="31" ev="216" />
+	<stat name="SpAtk" iv="31" ev="252" />
 	<stat name="SpDef" iv="31" ev="0" />
 </stats>
 </pokemon>

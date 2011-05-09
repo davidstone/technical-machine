@@ -21,33 +21,31 @@ namespace technicalmachine {
 
 void blockselection (Team &user, const Team &target, const Weather &weather) {
 	user.active->move->selectable = true;
-	if (user.bide != 0) {
-		if (user.active->move->name != BIDE)
+	if (user.bide != 0 and user.active->move->name != BIDE)
+			user.active->move->selectable = false;
+	else if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
+		if ((((target.active->ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.active->ability == ARENA_TRAP and grounded (user, weather)) or (target.active->ability == MAGNET_PULL and istype (user, STEEL)) or user.trapped or user.partial_trap != 0) and user.active->item != SHED_SHELL)
+				or (user.active.set [user.active->move->name - SWITCH0].name == user.active->name and user.active.set.size() > 1))		// Can't switch to yourself
 			user.active->move->selectable = false;
 	}
-	else {
-		if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
-			if ((((target.active->ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.active->ability == ARENA_TRAP and grounded (user, weather)) or (target.active->ability == MAGNET_PULL and istype (user, STEEL)) or user.trapped or user.partial_trap != 0) and user.active->item != SHED_SHELL)
-					or (user.active.set [user.active->move->name - SWITCH0].name == user.active->name and user.active.set.size() > 1))		// Can't switch to yourself
+	else if (user.active->move->name == STRUGGLE) {
+		for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
+			if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
+					and it->selectable) {
 				user.active->move->selectable = false;
-		}
-		else if (user.active->move->name == STRUGGLE) {
-			for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
-				if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
-						and it->selectable) {
-					user.active->move->selectable = false;
-					break;
-				}
+				break;
 			}
 		}
-		else if ((block1 (user, target))
-				or (block2 (user, weather))
-				or (user.torment and 0 != user.active->move->times_used))
-			user.active->move->selectable = false;
-		else if (0 != user.encore or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
-			for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
-				if (it->name != user.active->move->name and it->times_used != 0)
-					user.active->move->selectable = false;
+	}
+	else if ((block1 (user, target))
+			or (block2 (user, weather))
+			or (user.torment and user.active->move->times_used != 0))
+		user.active->move->selectable = false;
+	else if (user.encore != 0 or user.recharging or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
+		for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
+			if (it->name != user.active->move->name and it->times_used != 0) {
+				user.active->move->selectable = false;
+				break;
 			}
 		}
 	}
@@ -56,7 +54,7 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 void blockexecution (Team &user, const Team &target, const Weather &weather) {
 	if (user.active->hp.stat == 0 or (target.active->hp.stat == 0 and false))
 		user.active->move->execute = false;
-	else if (user.active->move->pp_max != -1 or user.active->move->name == STRUGGLE) {
+	else if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
 		if (user.active->status == FREEZE and (user.active->move->name != FLAME_WHEEL and user.active->move->name != SACRED_FIRE))
 			user.active->move->execute = false;
 
@@ -93,8 +91,13 @@ void blockexecution (Team &user, const Team &target, const Weather &weather) {
 			user.active->move->execute = false;
 		}
 	
-		if (block2 (user, weather))
+		if (block2 (user, weather) or user.fully_paralyzed)
 			user.active->move->execute = false;
+		
+		if (user.recharging) {
+			user.active->move->execute = false;
+			user.recharging = false;
+		}
 	}
 }
 

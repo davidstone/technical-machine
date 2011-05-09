@@ -2,7 +2,7 @@
 <shoddybattle>
 
 <pokemon species="Hippowdon">
-<nickname>Dkef0Dxks</nickname>
+<nickname>D64Sdvs</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -11,9 +11,9 @@
 <ability>Sand Stream</ability>
 <moveset>
 	<move pp-up="3">Earthquake</move>
-	<move pp-up="3">Stealth Rock</move>
-	<move pp-up="3">Slack Off</move>
 	<move pp-up="3">Roar</move>
+	<move pp-up="3">Slack Off</move>
+	<move pp-up="3">Stealth Rock</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -26,18 +26,18 @@
 </pokemon>
 
 <pokemon species="Celebi">
-<nickname>SoelscncEsl0</nickname>
+<nickname>OLfxghg3</nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>None</gender>
+<gender>No Gender</gender>
 <nature>Bold</nature>
 <item>Leftovers</item>
 <ability>Natural Cure</ability>
 <moveset>
-	<move pp-up="3">Grass Knot</move>
-	<move pp-up="3">Recover</move>
 	<move pp-up="3">Calm Mind</move>
+	<move pp-up="3">Grass Knot</move>
 	<move pp-up="3">Psychic</move>
+	<move pp-up="3">Recover</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -50,7 +50,7 @@
 </pokemon>
 
 <pokemon species="Blissey">
-<nickname>SDlksfed</nickname>
+<nickname>ofJKdnD</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Female</gender>
@@ -58,10 +58,10 @@
 <item>Leftovers</item>
 <ability>Natural Cure</ability>
 <moveset>
-	<move pp-up="3">Wish</move>
-	<move pp-up="3">Softboiled</move>
 	<move pp-up="3">Flamethrower</move>
+	<move pp-up="3">Softboiled</move>
 	<move pp-up="3">Toxic</move>
+	<move pp-up="3">Wish</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="0" />
@@ -74,7 +74,7 @@
 </pokemon>
 
 <pokemon species="Skarmory">
-<nickname>Zlsofsef</nickname>
+<nickname>124652Dss</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -82,9 +82,9 @@
 <item>Shed Shell</item>
 <ability>Keen Eye</ability>
 <moveset>
-	<move pp-up="3">Spikes</move>
-	<move pp-up="3">Roost</move>
 	<move pp-up="3">Drill Peck</move>
+	<move pp-up="3">Roost</move>
+	<move pp-up="3">Spikes</move>
 	<move pp-up="3">Whirlwind</move>
 </moveset>
 <stats>
@@ -98,7 +98,7 @@
 </pokemon>
 
 <pokemon species="Tentacruel">
-<nickname>DlskenD</nickname>
+<nickname>Dkeos40</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -106,10 +106,10 @@
 <item>Leftovers</item>
 <ability>Liquid Ooze</ability>
 <moveset>
-	<move pp-up="3">Toxic Spikes</move>
-	<move pp-up="3">Surf</move>
 	<move pp-up="3">Rapid Spin</move>
 	<move pp-up="3">Sludge Bomb</move>
+	<move pp-up="3">Surf</move>
+	<move pp-up="3">Toxic Spikes</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -122,7 +122,7 @@
 </pokemon>
 
 <pokemon species="Spiritomb">
-<nickname>DlsoDkdmn</nickname>
+<nickname>Dls40sjsd</nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -130,10 +130,10 @@
 <item>Leftovers</item>
 <ability>Pressure</ability>
 <moveset>
-	<move pp-up="3">Rest</move>
-	<move pp-up="3">Sleep Talk</move>
-	<move pp-up="3">Dark Pulse</move>
 	<move pp-up="3">Calm Mind</move>
+	<move pp-up="3">Dark Pulse</move>
+	<move pp-up="3">Psychic</move>
+	<move pp-up="3">Rest</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />

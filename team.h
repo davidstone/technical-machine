@@ -55,6 +55,7 @@ class Team {
 		bool ff;				// Flash Fire
 		bool flinch;
 		bool focus_energy;
+		bool fully_paralyzed;
 		bool gastro_acid;
 		bool hitself;			// Will this Pokemon hit itself in its confusion this turn?
 		bool identified;
@@ -63,6 +64,7 @@ class Team {
 		bool leech_seed;
 		bool loaf;
 		bool lock_on;
+		bool miss;
 		bool mf;				// Me First
 		bool minimize;
 		bool moved;
@@ -70,6 +72,7 @@ class Team {
 		bool nightmare;
 		bool pass;
 		bool power_trick;
+		bool recharging;
 		bool roost;
 		bool shed_skin;
 		bool torment;

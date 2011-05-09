@@ -132,7 +132,8 @@ int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
 //			usemove2 (user, target, move2, weather);		// ???
 //		 (NATURE_POWER == user.active->move->name)
 //		else
-		damage = usemove2 (user, target, weather, log_damage);
+		if (!user.miss)
+			damage = usemove2 (user, target, weather, log_damage);
 	}
 	return damage;
 }
@@ -209,7 +210,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			--user.bide;
 		}
 }
-//	else if (BLAST_BURN == user.active->move->name or FRENZY_PLANT == user.active->move->name or GIGA_IMPACT == user.active->move->name or HYDRO_CANNON == user.active->move->name or HYPER_BEAM == user.active->move->name or ROAR_OF_TIME == user.active->move->name or ROCK_WRECKER == user.active->move->name)
+	else if (BLAST_BURN == user.active->move->name or FRENZY_PLANT == user.active->move->name or GIGA_IMPACT == user.active->move->name or HYDRO_CANNON == user.active->move->name or HYPER_BEAM == user.active->move->name or ROAR_OF_TIME == user.active->move->name or ROCK_WRECKER == user.active->move->name)
+		user.recharging = true;
 	else if (BLOCK == user.active->move->name or MEAN_LOOK == user.active->move->name or SPIDER_WEB == user.active->move->name)
 		target.trapped = true;
 //	else if (BUG_BITE == user.active->move->name or PLUCK == user.active->move->name)

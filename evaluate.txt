@@ -8,7 +8,7 @@ Safeguard	32
 Tailwind	32
 Wish	300
 
-Spikes	-200
+Spikes	-150
 Stealth Rock	-200
 Toxic Spikes	-100
 
