@@ -35,7 +35,9 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	if (input == "")
 		won = true;
 	else {
+		ai.ch = false;
 		ai.replacement = ai.active.index;
+		foe.ch = false;
 		foe.replacement = foe.active.index;
 		bool first_replacing = false;
 		bool last_replacing = false;
@@ -139,7 +141,7 @@ void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &f
 			if (line.substr (0, search.length()) == line)
 				active->miss = true;
 			else if (line == "A critical hit!")
-				active->active.set [active->replacement].move->ch = true;
+				active->ch = true;
 			else if (line == active->active.set [active->replacement].nickname + " flinched!")
 				active->flinch = true;
 			else if (line == first->active.set [first->replacement].nickname + " fainted!")
@@ -262,7 +264,6 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	}
 	if (user.active->move->name == ROAR or user.active->move->name == WHIRLWIND)
 		phaze = true;
-	user.active->move->ch = false;
 	user.active->move->effect = false;
 	if (user.active->move->basepower != 0)
 		move_damage = true;

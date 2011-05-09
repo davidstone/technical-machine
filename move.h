@@ -29,7 +29,6 @@ class Move {
 		types type;
 		short basepower;
 		short power;
-		bool ch;
 		bool execute;
 		bool physical;
 		bool selectable;

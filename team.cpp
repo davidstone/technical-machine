@@ -52,6 +52,7 @@ Team::Team (bool isme) :
 	aqua_ring (false),
 	attract (false),
 	awaken (false),
+	ch (false),
 	charge (false),
 	curse (false),
 	damaged (false),
