@@ -321,7 +321,7 @@ int damagerandom (const Pokemon &attacker, const Team &defender, const int &stab
 		damage = 1;
 	else if (damage >= defender.active->hp.stat) {
 		damage = defender.active->hp.stat;
-		if (FALSE_SWIPE == attacker.move->name)
+		if (FALSE_SWIPE == attacker.move->name or defender.endure)
 			--damage;
 	}
 	return damage;

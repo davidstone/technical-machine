@@ -57,6 +57,7 @@ Team::Team (bool isme) :
 	damaged (false),
 	defense_curl (false),
 	destiny_bond (false),
+	endure (false),
 	ff (false),
 	flinch (false),
 	focus_energy (false),

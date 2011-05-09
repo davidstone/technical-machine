@@ -52,6 +52,7 @@ class Team {
 		bool damaged;
 		bool defense_curl;
 		bool destiny_bond;
+		bool endure;
 		bool ff;				// Flash Fire
 		bool flinch;
 		bool focus_energy;

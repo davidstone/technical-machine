@@ -51,6 +51,7 @@ void endofturn (Team &first, Team &last, Weather &weather) {
 void endofturn0 (Team &team) {
 	team.damage = 0;
 	team.damaged = false;
+	team.endure = false;
 	team.flinch = false;
 	team.moved = false;
 	team.mf = false;
@@ -172,10 +173,8 @@ void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
 	decrement (team.magnet_rise);
 	decrement (team.heal_block);
 	decrement (team.embargo);
-	if (1 == team.yawn) {
+	if (team.yawn == 1)
 		sleep (*team.active, *team.active, weather);
-		team.active->sleep = 0;
-	}
 	decrement (team.yawn);
 	if (STICKY_BARB == team.active->item)
 		heal (*team.active, -8);

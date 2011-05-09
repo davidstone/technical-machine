@@ -303,7 +303,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		if (target.encore == 0)
 			target.encore = *user.active->move->variable;
 	}
-//	else if (ENDURE == user.active->move->name)
+	else if (ENDURE == user.active->move->name)
+		user.endure = true;
 	else if (EXPLOSION == user.active->move->name or SELFDESTRUCT == user.active->move->name)
 		user.active->hp.stat = 0;
 	else if (FAKE_TEARS == user.active->move->name or METAL_SOUND == user.active->move->name)
@@ -471,7 +472,12 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		std::swap (user.active->atk.stage, target.active->atk.stage);
 		std::swap (user.active->spa.stage, target.active->spa.stage);
 	}
-//	else if (POWER_TRICK == user.active->move->name) {
+	else if (POWER_TRICK == user.active->move->name) {
+		if (user.power_trick)
+			user.power_trick = false;
+		else
+			user.power_trick = true;
+	}
 	else if (PRESENT == user.active->move->name) {
 		if (*user.active->move->variable == 0) {
 			target.active->hp.stat += 80;
@@ -572,7 +578,12 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		if (user.active->hp.stat < 0)
 			user.active->hp.stat = 0;
 	}
-//	else if (SUBSTITUTE == user.active->move->name)
+	else if (SUBSTITUTE == user.active->move->name) {
+		if (user.substitute == 0 and user.active->hp.stat > user.active->hp.max / 4) {
+			user.substitute = user.active->hp.max / 4;
+			user.active->hp.stat -= user.active->hp.max / 4;
+		}
+	}
 	else if (SUNNY_DAY == user.active->move->name) {
 		if (user.active->item == HEAT_ROCK)
 			weather.set_sun (8);
@@ -630,11 +641,37 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			user.wish = 2;
 	}
 //	else if (WORRY_SEED == user.active->move->name)
-//	else if (SHADOW_FORCE == user.active->move->name)
-//	else if (DIG == user.active->move->name)
-//	else if (DIVE == user.active->move->name)
-//	else if (FLY == user.active->move->name)
-//	else if (BOUNCE == user.active->move->name)
+
+	else if (BOUNCE == user.active->move->name) {
+		if (user.vanish == LANDED)
+			user.vanish = BOUNCED;
+		else
+			user.vanish = LANDED;
+	}
+	else if (DIG == user.active->move->name) {
+		if (user.vanish == LANDED)
+			user.vanish = DUG;
+		else
+			user.vanish = LANDED;
+	}
+	else if (DIVE == user.active->move->name) {
+		if (user.vanish == LANDED)
+			user.vanish = DIVED;
+		else
+			user.vanish = LANDED;
+	}
+	else if (FLY == user.active->move->name) {
+		if (user.vanish == LANDED)
+			user.vanish = FLOWN;
+		else
+			user.vanish = LANDED;
+	}
+	else if (SHADOW_FORCE == user.active->move->name) {
+		if (user.vanish == LANDED)
+			user.vanish = SHADOW_FORCED;
+		else
+			user.vanish = LANDED;
+	}
 	
 	
 	else if (ACUPRESSURE == user.active->move->name) {		// fix
@@ -657,7 +694,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	 	if (target.confused == 0)
 			target.confused = *user.active->move->variable;
 	}
-	else if ((DARK_VOID == user.active->move->name or GRASSWHISTLE == user.active->move->name or HYPNOSIS == user.active->move->name or LOVELY_KISS == user.active->move->name or SING == user.active->move->name or SLEEP_POWDER == user.active->move->name or SPORE == user.active->move->name) and false) // fix
+	else if (DARK_VOID == user.active->move->name or GRASSWHISTLE == user.active->move->name or HYPNOSIS == user.active->move->name or LOVELY_KISS == user.active->move->name or SING == user.active->move->name or SLEEP_POWDER == user.active->move->name or SPORE == user.active->move->name)
 		sleep (*user.active, *target.active, weather);
 	else if (ROAR == user.active->move->name or WHIRLWIND == user.active->move->name) {
 		if ((target.active->ability != SOUNDPROOF or user.active->move->name != ROAR) and !target.ingrain and target.active->ability != SUCTION_CUPS) {
@@ -763,7 +800,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		}
 		else if (SKY_ATTACK == user.active->move->name) {}
 	}
-//	else if (YAWN == user.active->move->name and false) {}
+	else if (YAWN == user.active->move->name) {
+		if (user.yawn == 0)
+			user.yawn = 2;
+	}
 
 	return damage;
 }
