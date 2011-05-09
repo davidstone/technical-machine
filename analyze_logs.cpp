@@ -135,7 +135,10 @@ void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &f
 				else if (line == "It had no effect.")
 					move_damage = false;
 			}
-			if (line == "A critical hit!")
+			search = active->active->nickname + "'s attack missed";
+			if (line.substr (0, search.length()) == line)
+				active->miss = true;
+			else if (line == "A critical hit!")
 				active->active.set [active->replacement].move->ch = true;
 			else if (line == active->active.set [active->replacement].nickname + " flinched!")
 				active->flinch = true;
