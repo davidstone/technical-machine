@@ -38,7 +38,7 @@ int hitpoints (Pokemon &member) {
 	return (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
 }
 
-void attack (Team &attacker, const Weather &weather) {
+void attack (Team &attacker, Weather const &weather) {
 	if (attacker.active->move->physical) {
 		attacker.active->atk.stat = (2 * attacker.active->atk.base + attacker.active->atk.iv + attacker.active->atk.ev) * attacker.active->level / 100 + 5;
 		if (ADAMANT == attacker.active->nature or BRAVE == attacker.active->nature or LONELY == attacker.active->nature or NAUGHTY == attacker.active->nature)
@@ -49,7 +49,7 @@ void attack (Team &attacker, const Weather &weather) {
 		if (attacker.active->atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
 			attacker.active->atk.stat = attacker.active->atk.stat * (2 + attacker.active->atk.stage) / 2;
 		else {
-			if (!attacker.active->move->ch)
+			if (!attacker.ch)
 				attacker.active->atk.stat = attacker.active->atk.stat * 2 / (2 - attacker.active->atk.stage);
 		}
 
@@ -78,7 +78,7 @@ void attack (Team &attacker, const Weather &weather) {
 		if (attacker.active->spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
 			attacker.active->spa.stat = attacker.active->spa.stat * (2 + attacker.active->spa.stage) / 2;
 		else {
-			if (!attacker.active->move->ch)
+			if (!attacker.ch)
 				attacker.active->spa.stat = attacker.active->spa.stat * 2 / (2 - attacker.active->spa.stage);
 		}
 
@@ -95,8 +95,8 @@ void attack (Team &attacker, const Weather &weather) {
 	}
 }
 
-void defense (const Pokemon &attacker, Team &defender, const Weather &weather) {
-	if (attacker.move->physical) {
+void defense (Team const &attacker, Team &defender, Weather const &weather) {
+	if (attacker.active->move->physical) {
 		defender.active->def.stat = (2 * defender.active->def.base + defender.active->def.iv + defender.active->def.ev) * defender.active->level / 100 + 5;
 		if (BOLD == defender.active->nature or IMPISH == defender.active->nature or LAX == defender.active->nature or RELAXED == defender.active->nature)
 			defender.active->def.stat = defender.active->def.stat * 11 / 10;
@@ -104,7 +104,7 @@ void defense (const Pokemon &attacker, Team &defender, const Weather &weather) {
 			defender.active->def.stat = defender.active->def.stat * 9 / 10;
 
 		if (defender.active->def.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
-			if (!attacker.move->ch)
+			if (!attacker.ch)
 				defender.active->def.stat = defender.active->def.stat * (2 + defender.active->def.stage) / 2;
 		}
 		else
@@ -116,7 +116,7 @@ void defense (const Pokemon &attacker, Team &defender, const Weather &weather) {
 		if (METAL_POWDER == defender.active->item and DITTO == defender.active->name)
 			defender.active->def.stat = defender.active->def.stat * 3 / 2;
 		
-		if (EXPLOSION == attacker.move->name or SELFDESTRUCT == attacker.move->name)
+		if (EXPLOSION == attacker.active->move->name or SELFDESTRUCT == attacker.active->move->name)
 			defender.active->def.stat /= 2;
 	
 		if (0 == defender.active->def.stat)
@@ -130,7 +130,7 @@ void defense (const Pokemon &attacker, Team &defender, const Weather &weather) {
 			defender.active->spd.stat = defender.active->spd.stat * 9 / 10;
 
 		if (defender.active->spd.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
-			if (!attacker.move->ch)
+			if (!attacker.ch)
 				defender.active->spd.stat = defender.active->spd.stat * (2 + defender.active->spd.stage) / 2;
 		}
 		else
@@ -152,7 +152,7 @@ void defense (const Pokemon &attacker, Team &defender, const Weather &weather) {
 	}
 }
 
-void speed (Team &team, const Weather &weather) {
+void speed (Team &team, Weather const &weather) {
 	team.active->spe.stat = (2 * team.active->spe.base + team.active->spe.iv + team.active->spe.ev) * team.active->level / 100 + 5;
 
 	if (HASTY == team.active->nature or JOLLY == team.active->nature or NAIVE == team.active->nature or TIMID == team.active->nature)
@@ -189,7 +189,7 @@ void speed (Team &team, const Weather &weather) {
 		team.active->spe.stat = 1;
 }
 
-void order (Team &team1, Team &team2, const Weather &weather, Team* &faster, Team* &slower) {
+void order (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower) {
 	if (team1.active->move->priority == team2.active->move->priority) {
 		speed (team1, weather);
 		speed (team2, weather);
@@ -205,7 +205,7 @@ void order (Team &team1, Team &team2, const Weather &weather, Team* &faster, Tea
 	}
 }
 
-void faster_pokemon (Team &team1, Team &team2, const Weather &weather, Team* &faster, Team* &slower) {
+void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower) {
 	if (team1.active->spe.stat > team2.active->spe.stat) {
 		faster = &team1;
 		slower = &team2;

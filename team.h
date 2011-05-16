@@ -47,6 +47,7 @@ class Team {
 		bool aqua_ring;
 		bool attract;
 		bool awaken;		// Will it wake up
+		bool ch;
 		bool charge;
 		bool curse;
 		bool damaged;
@@ -65,15 +66,16 @@ class Team {
 		bool leech_seed;
 		bool loaf;
 		bool lock_on;
-		bool miss;
 		bool mf;				// Me First
 		bool minimize;
+		bool miss;
 		bool moved;
 		bool mud_sport;
 		bool nightmare;
 		bool pass;
 		bool power_trick;
 		bool recharging;
+		bool replacing;	// Replacing a fainted Pokemon. Also used for initial switch-in at start of battle.
 		bool roost;
 		bool shed_skin;
 		bool torment;

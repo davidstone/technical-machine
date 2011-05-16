@@ -35,10 +35,14 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 	if (input == "")
 		won = true;
 	else {
+		ai.ch = false;
+		ai.miss = false;
 		ai.replacement = ai.active.index;
+		foe.ch = false;
+		foe.miss = false;
 		foe.replacement = foe.active.index;
-		bool first_replacing = false;
-		bool last_replacing = false;
+		ai.replacing = false;
+		foe.replacing = false;
 		bool phaze = false;
 		bool move_damage = false;
 		
@@ -55,14 +59,14 @@ bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weat
 			if (newline2 == std::string::npos)
 				break;
 			std::string line = input.substr (newline1, newline2 - newline1);
-			analyze_line (ai, foe, active, inactive, first, last, weather, map, phaze, first_replacing, last_replacing, move_damage, line);
+			analyze_line (ai, foe, active, inactive, first, last, weather, map, phaze, move_damage, line);
 		}
-		do_turn (*first, *last, weather, first_replacing, last_replacing);
+		do_turn (*first, *last, weather);
 	}
 	return won;
 }
 
-void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &first, Team* &last, Weather &weather, Map const &map, bool &phaze, bool &first_replacing, bool &last_replacing, bool &move_damage, std::string const &line) {
+void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &first, Team* &last, Weather &weather, Map const &map, bool &phaze, bool &move_damage, std::string const &line) {
 	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
 		std::cout << line << '\n';
 		std::string search = "Begin turn #";
@@ -84,8 +88,8 @@ void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &f
 			else {
 				if (foe.player == "") {
 					foe.player = line.substr (0, found);
-					first_replacing = true;
-					last_replacing = true;
+					ai.replacing = true;
+					foe.replacing = true;
 				}
 				search = foe.player + " sent out ";
 				log_pokemon (foe, ai, weather, line, map, search, phaze);
@@ -139,13 +143,11 @@ void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &f
 			if (line.substr (0, search.length()) == search)
 				active->miss = true;
 			else if (line == "A critical hit!")
-				active->active.set [active->replacement].move->ch = true;
+				active->ch = true;
 			else if (line == active->active.set [active->replacement].nickname + " flinched!")
 				active->flinch = true;
-			else if (line == first->active.set [first->replacement].nickname + " fainted!")
-				first_replacing = true;
-			else if (line == last->active.set [last->replacement].nickname + " fainted!")
-				last_replacing = true;
+			else if (line == active->active.set [active->replacement].nickname + " fainted!")
+				active->replacing = true;
 			else {
 				search = active->active.set [active->replacement].nickname + " used ";
 				if (line.substr (0, search.length()) == search)
@@ -262,7 +264,6 @@ void log_move (Team &user, Team &target, Weather &weather, const std::string &li
 	}
 	if (user.active->move->name == ROAR or user.active->move->name == WHIRLWIND)
 		phaze = true;
-	user.active->move->ch = false;
 	user.active->move->effect = false;
 	if (user.active->move->basepower != 0)
 		move_damage = true;
@@ -391,16 +392,16 @@ void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map
 	}
 }
 
-void do_turn (Team &first, Team &last, Weather &weather, bool first_replacing, bool last_replacing) {
-	if (first_replacing or last_replacing) {
-		if (first_replacing) {
+void do_turn (Team &first, Team &last, Weather &weather) {
+	if (first.replacing or last.replacing) {
+		if (first.replacing) {
 			// Hopefully this will catch minor rounding errors and nothing else.
 			if (first.active->hp.stat != first.active->hp.max)
 				first.active->hp.stat = 0;
 			switchpokemon (first, last, weather);
 			first.moved = false;
 		}
-		if (last_replacing) {
+		if (last.replacing) {
 			if (last.active->hp.stat != last.active->hp.max)
 				last.active->hp.stat = 0;
 			switchpokemon (last, first, weather);
@@ -419,10 +420,20 @@ void do_turn (Team &first, Team &last, Weather &weather, bool first_replacing, b
 				++last.active->move.index;
 		}
 		usemove (first, last, weather, last.damage);
+		if (first.active->hp.stat == 0)
+			first.active->hp.stat = 1;
+		if (last.active->hp.stat == 0)
+			last.active->hp.stat = 1;
 		usemove (last, first, weather, first.damage);
-		std::cout << static_cast<int> (first.spikes) << '\n';
-		std::cout << static_cast<int> (last.spikes) << '\n';
+		if (first.active->hp.stat == 0)
+			first.active->hp.stat = 1;
+		if (last.active->hp.stat == 0)
+			last.active->hp.stat = 1;
 		endofturn (first, last, weather);
+		if (first.active->hp.stat == 0)
+			first.active->hp.stat = 1;
+		if (last.active->hp.stat == 0)
+			last.active->hp.stat = 1;
 	}
 	std::string out;
 	output (first, out);

@@ -179,28 +179,28 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 						long score2 = 0;		// Temporary variable for probability calculations
 						foe.active->move->effect = 0;
 						do {
-							ai.active->move->ch = false;
-							foe.active->move->ch = false;
+							ai.ch = false;
+							foe.ch = false;
 							long score1 = tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
 							if (ai.active->move->basepower > 0 and foe.active->move->basepower <= 0) {
 								score1 *= 15;
-								ai.active->move->ch = true;
+								ai.ch = true;
 								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
 								score1 /= 16;
 							}
 							else if (ai.active->move->basepower <= 0 and foe.active->move->basepower > 0) {
 								score1 *= 15;
-								foe.active->move->ch = true;
+								foe.ch = true;
 								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
 								score1 /= 16;
 							}
 							else if (ai.active->move->basepower > 0 and foe.active->move->basepower > 0) {
 								score1 *= 225;
-								ai.active->move->ch = true;
+								ai.ch = true;
 								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table) * 15;
-								foe.active->move->ch = true;
+								foe.ch = true;
 								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
-								ai.active->move->ch = false;
+								ai.ch = false;
 								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table) * 15;
 								score1 /= 256;
 							}

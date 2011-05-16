@@ -29,7 +29,6 @@ Move::Move (moves_list move, int pp_ups) :
 	name (move),
 	type (move_type [name]),
 	basepower (base_power [name]),
-	ch (false),
 	physical (is_physical [name]),
 	disable (0),
 	pp_max (get_pp [name] * (5 + pp_ups) / 5),
@@ -117,7 +116,6 @@ void Move::set_variable () {
 	}
 	else if (variable.set.size() == 0)
 		variable.set.push_back(0);
-	// Confusion / Sleep!!!
 }
 
 int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
@@ -154,7 +152,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 				user.active->status = NO_STATUS;
 		}
 		if (log_damage == -1) {
-			defense (*user.active, target, weather);
+			defense (user, target, weather);
 			attack (user, weather);
 			damage = damagecalculator (user, target, weather);
 		}
@@ -694,8 +692,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	 	if (target.confused == 0)
 			target.confused = *user.active->move->variable;
 	}
-	else if (DARK_VOID == user.active->move->name or GRASSWHISTLE == user.active->move->name or HYPNOSIS == user.active->move->name or LOVELY_KISS == user.active->move->name or SING == user.active->move->name or SLEEP_POWDER == user.active->move->name or SPORE == user.active->move->name)
-		sleep (*user.active, *target.active, weather);
+//	else if (DARK_VOID == user.active->move->name or GRASSWHISTLE == user.active->move->name or HYPNOSIS == user.active->move->name or LOVELY_KISS == user.active->move->name or SING == user.active->move->name or SLEEP_POWDER == user.active->move->name or SPORE == user.active->move->name)
+//		sleep (*user.active, *target.active, weather);
 	else if (ROAR == user.active->move->name or WHIRLWIND == user.active->move->name) {
 		if ((target.active->ability != SOUNDPROOF or user.active->move->name != ROAR) and !target.ingrain and target.active->ability != SUCTION_CUPS) {
 			if (target.active.set.size() > 1) {
@@ -800,10 +798,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		}
 		else if (SKY_ATTACK == user.active->move->name) {}
 	}
-	else if (YAWN == user.active->move->name) {
-		if (user.yawn == 0)
-			user.yawn = 2;
-	}
+//	else if (YAWN == user.active->move->name) {
+//		if (user.yawn == 0)
+//			user.yawn = 2;
+//	}
 
 	return damage;
 }
