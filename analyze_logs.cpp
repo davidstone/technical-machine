@@ -136,7 +136,7 @@ void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &f
 					move_damage = false;
 			}
 			search = active->active->nickname + "'s attack missed";
-			if (line.substr (0, search.length()) == line)
+			if (line.substr (0, search.length()) == search)
 				active->miss = true;
 			else if (line == "A critical hit!")
 				active->active.set [active->replacement].move->ch = true;
