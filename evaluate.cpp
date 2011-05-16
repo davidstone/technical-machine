@@ -57,14 +57,12 @@ long scoreteam (Team const &team, score_variables const &sv) {
 		if (team.focus_energy)
 			score += sv.focus_energy;
 		bool bp = false;
-		for (std::vector<Move>::const_iterator move = team.active->move.set.begin(); move != team.active->move.set.end(); ++move) {
+		for (std::vector<Move>::const_iterator move = team.active->move.set.begin(); move->name != STRUGGLE; ++move) {
 			if (move->name == BATON_PASS) {
-				bp = true;
+				score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.active->atk.stage * sv.atk_stage + team.active->def.stage * sv.def_stage + team.active->spa.stage * sv.spa_stage + team.active->spd.stage * sv.spd_stage + team.active->spe.stage * sv.spe_stage);
 				break;
 			}
 		}
-		if (bp)
-			score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.active->atk.stage * sv.atk_stage + team.active->def.stage * sv.def_stage + team.active->spa.stage * sv.spa_stage + team.active->spd.stage * sv.spd_stage + team.active->spe.stage * sv.spe_stage);
 	}
 	return score;
 }

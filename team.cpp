@@ -80,6 +80,7 @@ Team::Team (bool isme) :
 	pass (false),
 	power_trick (false),
 	recharging (false),
+	replacing (false),
 	roost (false),
 	shed_skin (false),
 	torment (false),
@@ -373,9 +374,8 @@ void output (Team const &team, std::string &output) {
 		if (active->ability != END_ABILITY)
 			output += "\tAbility: " + ability_name [active->ability] + '\n';
 		for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
-			output += "\t" + move_name [move->name] + "\n";
+			output += "\t- " + move_name [move->name] + "\n";
 	}
-	output += '\n';
 }
 
 }

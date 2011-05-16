@@ -75,6 +75,7 @@ class Team {
 		bool pass;
 		bool power_trick;
 		bool recharging;
+		bool replacing;	// Replacing a fainted Pokemon. Also used for initial switch-in at start of battle.
 		bool roost;
 		bool shed_skin;
 		bool torment;
