@@ -39,178 +39,178 @@ int hitpoints (Pokemon &member) {
 }
 
 void attack (Team &attacker, Weather const &weather) {
-	if (attacker.active->move->physical) {
-		attacker.active->atk.stat = (2 * attacker.active->atk.base + attacker.active->atk.iv + attacker.active->atk.ev) * attacker.active->level / 100 + 5;
-		if (ADAMANT == attacker.active->nature or BRAVE == attacker.active->nature or LONELY == attacker.active->nature or NAUGHTY == attacker.active->nature)
-			attacker.active->atk.stat = attacker.active->atk.stat * 11 / 10;
-		else if (BOLD == attacker.active->nature or CALM == attacker.active->nature or MODEST == attacker.active->nature or TIMID == attacker.active->nature)
-			attacker.active->atk.stat = attacker.active->atk.stat * 9 / 10;
+	if (attacker.pokemon->move->physical) {
+		attacker.pokemon->atk.stat = (2 * attacker.pokemon->atk.base + attacker.pokemon->atk.iv + attacker.pokemon->atk.ev) * attacker.pokemon->level / 100 + 5;
+		if (ADAMANT == attacker.pokemon->nature or BRAVE == attacker.pokemon->nature or LONELY == attacker.pokemon->nature or NAUGHTY == attacker.pokemon->nature)
+			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 11 / 10;
+		else if (BOLD == attacker.pokemon->nature or CALM == attacker.pokemon->nature or MODEST == attacker.pokemon->nature or TIMID == attacker.pokemon->nature)
+			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 9 / 10;
 
-		if (attacker.active->atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
-			attacker.active->atk.stat = attacker.active->atk.stat * (2 + attacker.active->atk.stage) / 2;
+		if (attacker.pokemon->atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
+			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * (2 + attacker.pokemon->atk.stage) / 2;
 		else {
 			if (!attacker.ch)
-				attacker.active->atk.stat = attacker.active->atk.stat * 2 / (2 - attacker.active->atk.stage);
+				attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 2 / (2 - attacker.pokemon->atk.stage);
 		}
 
 		if (attacker.slow_start != 0)
-			attacker.active->atk.stat /= 2;
-		else if ((FLOWER_GIFT == attacker.active->ability and 0 != weather.sun) or (GUTS == attacker.active->ability and NO_STATUS != attacker.active->status) or (HUSTLE == attacker.active->ability))
-			attacker.active->atk.stat = attacker.active->atk.stat * 3 / 2;
-		else if (PURE_POWER == attacker.active->ability)
-			attacker.active->atk.stat *= 2;
+			attacker.pokemon->atk.stat /= 2;
+		else if ((FLOWER_GIFT == attacker.pokemon->ability and 0 != weather.sun) or (GUTS == attacker.pokemon->ability and NO_STATUS != attacker.pokemon->status) or (HUSTLE == attacker.pokemon->ability))
+			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
+		else if (PURE_POWER == attacker.pokemon->ability)
+			attacker.pokemon->atk.stat *= 2;
 	
-		if (CHOICE_BAND == attacker.active->item)
-			attacker.active->atk.stat = attacker.active->atk.stat * 3 / 2;
-		else if ((LIGHT_BALL == attacker.active->item and PIKACHU == attacker.active->name) or (THICK_CLUB == attacker.active->item and (CUBONE == attacker.active->name or MAROWAK == attacker.active->name)))
-			attacker.active->atk.stat *= 2;
+		if (CHOICE_BAND == attacker.pokemon->item)
+			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
+		else if ((LIGHT_BALL == attacker.pokemon->item and PIKACHU == attacker.pokemon->name) or (THICK_CLUB == attacker.pokemon->item and (CUBONE == attacker.pokemon->name or MAROWAK == attacker.pokemon->name)))
+			attacker.pokemon->atk.stat *= 2;
 		
-		if (attacker.active->atk.stat == 0)
-			attacker.active->atk.stat = 1;
+		if (attacker.pokemon->atk.stat == 0)
+			attacker.pokemon->atk.stat = 1;
 	}
 	else {
-		attacker.active->spa.stat = (2 * attacker.active->spa.base + attacker.active->spa.iv + attacker.active->spa.ev) * attacker.active->level / 100 + 5;
-		if (MILD == attacker.active->nature or MODEST == attacker.active->nature or QUIET == attacker.active->nature or RASH == attacker.active->nature)
-			attacker.active->spa.stat = attacker.active->spa.stat * 11 / 10;
-		else if (ADAMANT == attacker.active->nature or CAREFUL == attacker.active->nature or IMPISH == attacker.active->nature or JOLLY == attacker.active->nature)
-			attacker.active->spa.stat = attacker.active->spa.stat * 9 / 10;
+		attacker.pokemon->spa.stat = (2 * attacker.pokemon->spa.base + attacker.pokemon->spa.iv + attacker.pokemon->spa.ev) * attacker.pokemon->level / 100 + 5;
+		if (MILD == attacker.pokemon->nature or MODEST == attacker.pokemon->nature or QUIET == attacker.pokemon->nature or RASH == attacker.pokemon->nature)
+			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 11 / 10;
+		else if (ADAMANT == attacker.pokemon->nature or CAREFUL == attacker.pokemon->nature or IMPISH == attacker.pokemon->nature or JOLLY == attacker.pokemon->nature)
+			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 9 / 10;
 
-		if (attacker.active->spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
-			attacker.active->spa.stat = attacker.active->spa.stat * (2 + attacker.active->spa.stage) / 2;
+		if (attacker.pokemon->spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
+			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * (2 + attacker.pokemon->spa.stage) / 2;
 		else {
 			if (!attacker.ch)
-				attacker.active->spa.stat = attacker.active->spa.stat * 2 / (2 - attacker.active->spa.stage);
+				attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 2 / (2 - attacker.pokemon->spa.stage);
 		}
 
-		if (SOLAR_POWER == attacker.active->ability and 0 != weather.sun)
-			attacker.active->spa.stat = attacker.active->spa.stat * 3 / 2;
+		if (SOLAR_POWER == attacker.pokemon->ability and 0 != weather.sun)
+			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 3 / 2;
 
-		if ((CHOICE_SPECS == attacker.active->item) or (SOUL_DEW == attacker.active->item and (LATIAS == attacker.active->name or LATIOS == attacker.active->name)))
-			attacker.active->spa.stat = attacker.active->spa.stat * 3 / 2;
-		else if ((DEEPSEATOOTH == attacker.active->item and CLAMPERL == attacker.active->name) or (LIGHT_BALL == attacker.active->item and PIKACHU == attacker.active->name))
-			attacker.active->spa.stat *= 2;
+		if ((CHOICE_SPECS == attacker.pokemon->item) or (SOUL_DEW == attacker.pokemon->item and (LATIAS == attacker.pokemon->name or LATIOS == attacker.pokemon->name)))
+			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 3 / 2;
+		else if ((DEEPSEATOOTH == attacker.pokemon->item and CLAMPERL == attacker.pokemon->name) or (LIGHT_BALL == attacker.pokemon->item and PIKACHU == attacker.pokemon->name))
+			attacker.pokemon->spa.stat *= 2;
 
-		if (attacker.active->spa.stat == 0)
-			attacker.active->spa.stat = 1;
+		if (attacker.pokemon->spa.stat == 0)
+			attacker.pokemon->spa.stat = 1;
 	}
 }
 
 void defense (Team const &attacker, Team &defender, Weather const &weather) {
-	if (attacker.active->move->physical) {
-		defender.active->def.stat = (2 * defender.active->def.base + defender.active->def.iv + defender.active->def.ev) * defender.active->level / 100 + 5;
-		if (BOLD == defender.active->nature or IMPISH == defender.active->nature or LAX == defender.active->nature or RELAXED == defender.active->nature)
-			defender.active->def.stat = defender.active->def.stat * 11 / 10;
-		else if (GENTLE == defender.active->nature or HASTY == defender.active->nature or LONELY == defender.active->nature or MILD == defender.active->nature)
-			defender.active->def.stat = defender.active->def.stat * 9 / 10;
+	if (attacker.pokemon->move->physical) {
+		defender.pokemon->def.stat = (2 * defender.pokemon->def.base + defender.pokemon->def.iv + defender.pokemon->def.ev) * defender.pokemon->level / 100 + 5;
+		if (BOLD == defender.pokemon->nature or IMPISH == defender.pokemon->nature or LAX == defender.pokemon->nature or RELAXED == defender.pokemon->nature)
+			defender.pokemon->def.stat = defender.pokemon->def.stat * 11 / 10;
+		else if (GENTLE == defender.pokemon->nature or HASTY == defender.pokemon->nature or LONELY == defender.pokemon->nature or MILD == defender.pokemon->nature)
+			defender.pokemon->def.stat = defender.pokemon->def.stat * 9 / 10;
 
-		if (defender.active->def.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
+		if (defender.pokemon->def.stage > 0) {	// > is better than >= to reduce the frequency of checking for a CH
 			if (!attacker.ch)
-				defender.active->def.stat = defender.active->def.stat * (2 + defender.active->def.stage) / 2;
+				defender.pokemon->def.stat = defender.pokemon->def.stat * (2 + defender.pokemon->def.stage) / 2;
 		}
 		else
-			defender.active->def.stat = defender.active->def.stat * 2 / (2 - defender.active->def.stage);
+			defender.pokemon->def.stat = defender.pokemon->def.stat * 2 / (2 - defender.pokemon->def.stage);
 
-		if (MARVEL_SCALE == defender.active->ability and NO_STATUS != defender.active->status)
-			defender.active->def.stat = defender.active->def.stat * 3 / 2;
+		if (MARVEL_SCALE == defender.pokemon->ability and NO_STATUS != defender.pokemon->status)
+			defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
 		
-		if (METAL_POWDER == defender.active->item and DITTO == defender.active->name)
-			defender.active->def.stat = defender.active->def.stat * 3 / 2;
+		if (METAL_POWDER == defender.pokemon->item and DITTO == defender.pokemon->name)
+			defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
 		
-		if (EXPLOSION == attacker.active->move->name or SELFDESTRUCT == attacker.active->move->name)
-			defender.active->def.stat /= 2;
+		if (EXPLOSION == attacker.pokemon->move->name or SELFDESTRUCT == attacker.pokemon->move->name)
+			defender.pokemon->def.stat /= 2;
 	
-		if (0 == defender.active->def.stat)
-			defender.active->def.stat = 1;
+		if (0 == defender.pokemon->def.stat)
+			defender.pokemon->def.stat = 1;
 	}
 	else {
-		defender.active->spd.stat = (2 * defender.active->spd.base + defender.active->spd.iv + defender.active->spd.ev) * defender.active->level / 100 + 5;
-		if (CALM == defender.active->nature or CAREFUL == defender.active->nature or GENTLE == defender.active->nature or SASSY == defender.active->nature)
-			defender.active->spd.stat = defender.active->spd.stat * 11 / 10;
-		else if (LAX == defender.active->nature or NAIVE == defender.active->nature or NAUGHTY == defender.active->nature or RASH == defender.active->nature)
-			defender.active->spd.stat = defender.active->spd.stat * 9 / 10;
+		defender.pokemon->spd.stat = (2 * defender.pokemon->spd.base + defender.pokemon->spd.iv + defender.pokemon->spd.ev) * defender.pokemon->level / 100 + 5;
+		if (CALM == defender.pokemon->nature or CAREFUL == defender.pokemon->nature or GENTLE == defender.pokemon->nature or SASSY == defender.pokemon->nature)
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 11 / 10;
+		else if (LAX == defender.pokemon->nature or NAIVE == defender.pokemon->nature or NAUGHTY == defender.pokemon->nature or RASH == defender.pokemon->nature)
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 9 / 10;
 
-		if (defender.active->spd.stage > 0) {	// > is better than == to reduce the frequency of checking for a CH
+		if (defender.pokemon->spd.stage > 0) {	// > is better than >= to reduce the frequency of checking for a CH
 			if (!attacker.ch)
-				defender.active->spd.stat = defender.active->spd.stat * (2 + defender.active->spd.stage) / 2;
+				defender.pokemon->spd.stat = defender.pokemon->spd.stat * (2 + defender.pokemon->spd.stage) / 2;
 		}
 		else
-			defender.active->spd.stat = defender.active->spd.stat * 2 / (2 - defender.active->spd.stage);
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 2 / (2 - defender.pokemon->spd.stage);
 
-		if (FLOWER_GIFT == defender.active->ability and 0 != weather.sun)
-			defender.active->spd.stat = defender.active->spd.stat * 3 / 2;
+		if (FLOWER_GIFT == defender.pokemon->ability and 0 != weather.sun)
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 		
-		if (DEEPSEASCALE == defender.active->item and CLAMPERL == defender.active->name)
-			defender.active->spd.stat *= 2;
-		else if ((METAL_POWDER == defender.active->item and DITTO == defender.active->name) or (SOUL_DEW == defender.active->item and (LATIAS == defender.active->name or LATIOS == defender.active->name)))
-			defender.active->spd.stat = defender.active->spd.stat * 3 / 2;
+		if (DEEPSEASCALE == defender.pokemon->item and CLAMPERL == defender.pokemon->name)
+			defender.pokemon->spd.stat *= 2;
+		else if ((METAL_POWDER == defender.pokemon->item and DITTO == defender.pokemon->name) or (SOUL_DEW == defender.pokemon->item and (LATIAS == defender.pokemon->name or LATIOS == defender.pokemon->name)))
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 		
 		if (istype (defender, ROCK) and 0 != weather.sand)
-			defender.active->spd.stat = defender.active->spd.stat * 3 / 2;
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 		
-		if (0 == defender.active->spd.stat)
-			defender.active->spd.stat = 1;
+		if (0 == defender.pokemon->spd.stat)
+			defender.pokemon->spd.stat = 1;
 	}
 }
 
 void speed (Team &team, Weather const &weather) {
-	team.active->spe.stat = (2 * team.active->spe.base + team.active->spe.iv + team.active->spe.ev) * team.active->level / 100 + 5;
+	team.pokemon->spe.stat = (2 * team.pokemon->spe.base + team.pokemon->spe.iv + team.pokemon->spe.ev) * team.pokemon->level / 100 + 5;
 
-	if (HASTY == team.active->nature or JOLLY == team.active->nature or NAIVE == team.active->nature or TIMID == team.active->nature)
-		team.active->spe.stat = team.active->spe.stat * 11 / 10;
-	else if (BRAVE == team.active->nature or QUIET == team.active->nature or RELAXED == team.active->nature or SASSY == team.active->nature)
-		team.active->spe.stat = team.active->spe.stat * 9 / 10;
+	if (HASTY == team.pokemon->nature or JOLLY == team.pokemon->nature or NAIVE == team.pokemon->nature or TIMID == team.pokemon->nature)
+		team.pokemon->spe.stat = team.pokemon->spe.stat * 11 / 10;
+	else if (BRAVE == team.pokemon->nature or QUIET == team.pokemon->nature or RELAXED == team.pokemon->nature or SASSY == team.pokemon->nature)
+		team.pokemon->spe.stat = team.pokemon->spe.stat * 9 / 10;
 	
-	if (team.active->spe.stage >= 0)
-		team.active->spe.stat = team.active->spe.stat * (2 + team.active->spe.stage) / 2;
+	if (team.pokemon->spe.stage >= 0)
+		team.pokemon->spe.stat = team.pokemon->spe.stat * (2 + team.pokemon->spe.stage) / 2;
 	else
-		team.active->spe.stat = team.active->spe.stat * 2 / (2 - team.active->spe.stage);
+		team.pokemon->spe.stat = team.pokemon->spe.stat * 2 / (2 - team.pokemon->spe.stage);
 
-	if ((CHLOROPHYLL == team.active->ability and 0 != weather.sun) or (SWIFT_SWIM == team.active->ability and 0 != weather.rain) or (UNBURDEN == team.active->ability and false))
-		team.active->spe.stat *= 2;
-	else if (QUICK_FEET == team.active->ability and NO_STATUS != team.active->status)
-		team.active->spe.stat = team.active->spe.stat * 3 / 2;
+	if ((CHLOROPHYLL == team.pokemon->ability and 0 != weather.sun) or (SWIFT_SWIM == team.pokemon->ability and 0 != weather.rain) or (UNBURDEN == team.pokemon->ability and false))
+		team.pokemon->spe.stat *= 2;
+	else if (QUICK_FEET == team.pokemon->ability and NO_STATUS != team.pokemon->status)
+		team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
 	else if (0 != team.slow_start)
-		team.active->spe.stat /= 2;
+		team.pokemon->spe.stat /= 2;
 		
-	if (QUICK_POWDER == team.active->item and DITTO == team.active->name)
-		team.active->spe.stat *= 2;
-	else if (CHOICE_SCARF == team.active->item)
-		team.active->spe.stat = team.active->spe.stat * 3 / 2;
-	else if (MACHO_BRACE == team.active->item or POWER_ITEMS == team.active->item)
-		team.active->spe.stat /= 2;
+	if (QUICK_POWDER == team.pokemon->item and DITTO == team.pokemon->name)
+		team.pokemon->spe.stat *= 2;
+	else if (CHOICE_SCARF == team.pokemon->item)
+		team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
+	else if (MACHO_BRACE == team.pokemon->item or POWER_ITEMS == team.pokemon->item)
+		team.pokemon->spe.stat /= 2;
 		
-	if (PARALYSIS == team.active->status and QUICK_FEET != team.active->ability)
-		team.active->spe.stat /= 4;
+	if (PARALYSIS == team.pokemon->status and QUICK_FEET != team.pokemon->ability)
+		team.pokemon->spe.stat /= 4;
 	
 	if (team.tailwind)
-		team.active->spe.stat *= 2;
+		team.pokemon->spe.stat *= 2;
 
-	if (team.active->spe.stat == 0)
-		team.active->spe.stat = 1;
+	if (team.pokemon->spe.stat == 0)
+		team.pokemon->spe.stat = 1;
 }
 
 void order (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower) {
-	if (team1.active->move->priority == team2.active->move->priority) {
+	if (team1.pokemon->move->priority == team2.pokemon->move->priority) {
 		speed (team1, weather);
 		speed (team2, weather);
 		faster_pokemon (team1, team2, weather, faster, slower);
 	}
-	else if (team1.active->move->priority > team2.active->move->priority) {
+	else if (team1.pokemon->move->priority > team2.pokemon->move->priority) {
 		faster = &team1;
 		slower = &team2;
 	}
-	else {				// (team2.active->move->priority > team1.active->move->priority)
+	else {				// (team2.pokemon->move->priority > team1.pokemon->move->priority)
 		faster = &team2;
 		slower = &team1;
 	}
 }
 
 void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower) {
-	if (team1.active->spe.stat > team2.active->spe.stat) {
+	if (team1.pokemon->spe.stat > team2.pokemon->spe.stat) {
 		faster = &team1;
 		slower = &team2;
 	}
-	else if (team2.active->spe.stat > team1.active->spe.stat) {
+	else if (team2.pokemon->spe.stat > team1.pokemon->spe.stat) {
 		faster = &team2;
 		slower = &team1;
 	}

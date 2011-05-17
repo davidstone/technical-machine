@@ -20,31 +20,31 @@
 namespace technicalmachine {
 
 void blockselection (Team &user, const Team &target, const Weather &weather) {
-	user.active->move->selectable = true;
-	if (user.bide != 0 and user.active->move->name != BIDE)
-			user.active->move->selectable = false;
-	else if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
-		if ((((target.active->ability == SHADOW_TAG and user.active->ability != SHADOW_TAG) or (target.active->ability == ARENA_TRAP and grounded (user, weather)) or (target.active->ability == MAGNET_PULL and istype (user, STEEL)) or user.trapped or user.partial_trap != 0) and user.active->item != SHED_SHELL)
-				or (user.active.set [user.active->move->name - SWITCH0].name == user.active->name and user.active.set.size() > 1))		// Can't switch to yourself
-			user.active->move->selectable = false;
+	user.pokemon->move->selectable = true;
+	if (user.bide != 0 and user.pokemon->move->name != BIDE)
+			user.pokemon->move->selectable = false;
+	else if (SWITCH0 <= user.pokemon->move->name and user.pokemon->move->name <= SWITCH5) {
+		if ((((target.pokemon->ability == SHADOW_TAG and user.pokemon->ability != SHADOW_TAG) or (target.pokemon->ability == ARENA_TRAP and grounded (user, weather)) or (target.pokemon->ability == MAGNET_PULL and istype (user, STEEL)) or user.trapped or user.partial_trap != 0) and user.pokemon->item != SHED_SHELL)
+				or (user.pokemon.set [user.pokemon->move->name - SWITCH0].name == user.pokemon->name and user.pokemon.set.size() > 1))		// Can't switch to yourself
+			user.pokemon->move->selectable = false;
 	}
-	else if (user.active->move->name == STRUGGLE) {
-		for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
+	else if (user.pokemon->move->name == STRUGGLE) {
+		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
 			if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
 					and it->selectable) {
-				user.active->move->selectable = false;
+				user.pokemon->move->selectable = false;
 				break;
 			}
 		}
 	}
 	else if ((block1 (user, target))
 			or (block2 (user, weather))
-			or (user.torment and user.active->move->times_used != 0))
-		user.active->move->selectable = false;
-	else if (user.encore != 0 or user.recharging or CHOICE_BAND == user.active->item or CHOICE_SCARF == user.active->item or CHOICE_SPECS == user.active->item) {
-		for (std::vector<Move>::const_iterator it = user.active->move.set.begin(); it != user.active->move.set.end(); ++it) {
-			if (it->name != user.active->move->name and it->times_used != 0) {
-				user.active->move->selectable = false;
+			or (user.torment and user.pokemon->move->times_used != 0))
+		user.pokemon->move->selectable = false;
+	else if (user.encore != 0 or user.recharging or CHOICE_BAND == user.pokemon->item or CHOICE_SCARF == user.pokemon->item or CHOICE_SPECS == user.pokemon->item) {
+		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
+			if (it->name != user.pokemon->move->name and it->times_used != 0) {
+				user.pokemon->move->selectable = false;
 				break;
 			}
 		}
@@ -52,67 +52,67 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 }
 
 void blockexecution (Team &user, const Team &target, const Weather &weather) {
-	if (user.active->hp.stat == 0 or (target.active->hp.stat == 0 and false))
-		user.active->move->execute = false;
-	else if (SWITCH0 <= user.active->move->name and user.active->move->name <= SWITCH5) {
-		if (user.active->status == FREEZE and (user.active->move->name != FLAME_WHEEL and user.active->move->name != SACRED_FIRE))
-			user.active->move->execute = false;
+	if (user.pokemon->hp.stat == 0 or (target.pokemon->hp.stat == 0 and false))
+		user.pokemon->move->execute = false;
+	else if (SWITCH0 <= user.pokemon->move->name and user.pokemon->move->name <= SWITCH5) {
+		if (user.pokemon->status == FREEZE and (user.pokemon->move->name != FLAME_WHEEL and user.pokemon->move->name != SACRED_FIRE))
+			user.pokemon->move->execute = false;
 
-		else if (user.active->status == SLEEP) {
+		else if (user.pokemon->status == SLEEP) {
 			if (user.awaken) {
-				user.active->sleep = 0;
-				user.active->status = NO_STATUS;
+				user.pokemon->sleep = 0;
+				user.pokemon->status = NO_STATUS;
 			}
 			else {
-				if (user.active->ability == EARLY_BIRD)
-					user.active->sleep += 2;
+				if (user.pokemon->ability == EARLY_BIRD)
+					user.pokemon->sleep += 2;
 				else
-					++user.active->sleep;
-				if (user.active->move->name != SLEEP_TALK and user.active->move->name != SNORE)
-					user.active->move->execute = false;
+					++user.pokemon->sleep;
+				if (user.pokemon->move->name != SLEEP_TALK and user.pokemon->move->name != SNORE)
+					user.pokemon->move->execute = false;
 			}
 		}
 
 		if (block1 (user, target)
-		 or (user.active->ability == TRUANT and user.loaf))
-			user.active->move->execute = false;
+		 or (user.pokemon->ability == TRUANT and user.loaf))
+			user.pokemon->move->execute = false;
 
-		if (user.active->move->execute and user.confused != 0) {
+		if (user.pokemon->move->execute and user.confused != 0) {
 			if (user.hitself) {
 				// fix
-				user.active->move->execute = false;
+				user.pokemon->move->execute = false;
 			}
 			else
 				--user.confused;
 		}
-		if (user.active->move->execute and user.flinch) {
-			if (user.active->ability == STEADFAST)
-				user.active->spe.boost (1);
-			user.active->move->execute = false;
+		if (user.pokemon->move->execute and user.flinch) {
+			if (user.pokemon->ability == STEADFAST)
+				user.pokemon->spe.boost (1);
+			user.pokemon->move->execute = false;
 		}
 	
 		if (block2 (user, weather) or user.fully_paralyzed)
-			user.active->move->execute = false;
+			user.pokemon->move->execute = false;
 		
 		if (user.recharging) {
-			user.active->move->execute = false;
+			user.pokemon->move->execute = false;
 			user.recharging = false;
 		}
 	}
 }
 
 bool block1 (const Team &user, const Team &target) {		// Things that both block selection and block execution in between sleep and confusion
-	if ((0 == user.active->move->pp)
-	 or (0 != user.active->move->disable)
-	 or (0 != user.heal_block and (HEAL_ORDER == user.active->move->name or MILK_DRINK == user.active->move->name or MOONLIGHT == user.active->move->name or MORNING_SUN == user.active->move->name or RECOVER == user.active->move->name or REST == user.active->move->name or ROOST == user.active->move->name or SLACK_OFF == user.active->move->name or SOFTBOILED == user.active->move->name or SWALLOW == user.active->move->name or SYNTHESIS == user.active->move->name or WISH == user.active->move->name))
-	  or (imprison (*user.active->move, target)))
+	if ((0 == user.pokemon->move->pp)
+	 or (0 != user.pokemon->move->disable)
+	 or (0 != user.heal_block and (HEAL_ORDER == user.pokemon->move->name or MILK_DRINK == user.pokemon->move->name or MOONLIGHT == user.pokemon->move->name or MORNING_SUN == user.pokemon->move->name or RECOVER == user.pokemon->move->name or REST == user.pokemon->move->name or ROOST == user.pokemon->move->name or SLACK_OFF == user.pokemon->move->name or SOFTBOILED == user.pokemon->move->name or SWALLOW == user.pokemon->move->name or SYNTHESIS == user.pokemon->move->name or WISH == user.pokemon->move->name))
+	  or (imprison (*user.pokemon->move, target)))
 		return true;
 	return false;
 }
 
 bool imprison (const Move &move, const Team &target) {
 	if (target.imprison) {
-		for (std::vector<Move>::const_iterator it = target.active->move.set.begin(); it != target.active->move.set.end(); ++it) {
+		for (std::vector<Move>::const_iterator it = target.pokemon->move.set.begin(); it != target.pokemon->move.set.end(); ++it) {
 			if (move.name == it->name)
 				return true;
 		}
@@ -121,8 +121,8 @@ bool imprison (const Move &move, const Team &target) {
 }
 
 bool block2 (const Team &user, const Weather &weather) {		// Things that both block selection and block execution after flinching
-	if ((0 != user.taunt and 0 == user.active->move->basepower)
-	 or (0 < weather.gravity and (BOUNCE == user.active->move->name or FLY == user.active->move->name or HI_JUMP_KICK == user.active->move->name or JUMP_KICK == user.active->move->name or MAGNET_RISE == user.active->move->name or SPLASH == user.active->move->name)))
+	if ((0 != user.taunt and 0 == user.pokemon->move->basepower)
+	 or (0 < weather.gravity and (BOUNCE == user.pokemon->move->name or FLY == user.pokemon->move->name or HI_JUMP_KICK == user.pokemon->move->name or JUMP_KICK == user.pokemon->move->name or MAGNET_RISE == user.pokemon->move->name or SPLASH == user.pokemon->move->name)))
 		return true;
 	return false;
 }

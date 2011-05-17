@@ -18,20 +18,20 @@
 
 namespace technicalmachine {
 
-void burn (Team &user, Team &target, const Weather &weather) {
-	if (target.active->status == NO_STATUS and (user.active->ability == MOLD_BREAKER or (target.active->ability != WATER_VEIL and (target.active->ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, FIRE)) {
-		target.active->status = BURN;
-		if (target.active->ability == SYNCHRONIZE)
+void burn (Team &user, Team &target, Weather const &weather) {
+	if (target.pokemon->status == NO_STATUS and (user.pokemon->ability == MOLD_BREAKER or (target.pokemon->ability != WATER_VEIL and (target.pokemon->ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, FIRE)) {
+		target.pokemon->status = BURN;
+		if (target.pokemon->ability == SYNCHRONIZE)
 			burn (target, user, weather);
 	}
 }
 
-void freeze (const Pokemon &user, Team &target, const Weather &weather) {
-	if (target.active->status == NO_STATUS and (user.ability == MOLD_BREAKER or target.active->ability != MAGMA_ARMOR) and weather.sun == 0 and !istype (target, ICE))
-		target.active->status = FREEZE;
+void freeze (Pokemon const &user, Team &target, Weather const &weather) {
+	if (target.pokemon->status == NO_STATUS and (user.ability == MOLD_BREAKER or target.pokemon->ability != MAGMA_ARMOR) and weather.sun == 0 and !istype (target, ICE))
+		target.pokemon->status = FREEZE;
 }
 
-void paralyze (Pokemon &user, Pokemon &target, const Weather &weather) {
+void paralyze (Pokemon &user, Pokemon &target, Weather const &weather) {
 	if (target.status == NO_STATUS and (user.ability == MOLD_BREAKER or (target.ability != LIMBER and (target.ability != LEAF_GUARD or weather.sun == 0)))) {
 		target.status = PARALYSIS;
 		if (target.ability == SYNCHRONIZE)
@@ -39,23 +39,23 @@ void paralyze (Pokemon &user, Pokemon &target, const Weather &weather) {
 	}
 }
 
-void sleep (const Pokemon &user, Pokemon &target, const Weather &weather) {
+void sleep (Pokemon const &user, Pokemon &target, Weather const &weather) {
 	if (target.status == NO_STATUS and weather.uproar == 0 and (user.ability == MOLD_BREAKER or (target.ability != INSOMNIA and (target.ability != LEAF_GUARD or weather.sun == 0))))
 		target.status = SLEEP;
 }
 
-void poison_normal (Team &user, Team &target, const Weather &weather) {
-	if (target.active->status == NO_STATUS and (user.active->ability == MOLD_BREAKER or (target.active->ability != IMMUNITY and (target.active->ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, POISON) and !istype (target, STEEL)) {
-		target.active->status = POISON_NORMAL;
-		if (target.active->ability == SYNCHRONIZE)
+void poison_normal (Team &user, Team &target, Weather const &weather) {
+	if (target.pokemon->status == NO_STATUS and (user.pokemon->ability == MOLD_BREAKER or (target.pokemon->ability != IMMUNITY and (target.pokemon->ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, POISON) and !istype (target, STEEL)) {
+		target.pokemon->status = POISON_NORMAL;
+		if (target.pokemon->ability == SYNCHRONIZE)
 			poison_normal (target, user, weather);
 	}
 }
 
-void poison_toxic (Team &user, Team &target, const Weather &weather) {
-	if (target.active->status == NO_STATUS and (user.active->ability == MOLD_BREAKER or (target.active->ability != IMMUNITY and (target.active->ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, POISON) and !istype (target, STEEL)) {
-		target.active->status = POISON_TOXIC;
-		if (target.active->ability == SYNCHRONIZE)
+void poison_toxic (Team &user, Team &target, Weather const &weather) {
+	if (target.pokemon->status == NO_STATUS and (user.pokemon->ability == MOLD_BREAKER or (target.pokemon->ability != IMMUNITY and (target.pokemon->ability != LEAF_GUARD or weather.sun == 0))) and !istype (target, POISON) and !istype (target, STEEL)) {
+		target.pokemon->status = POISON_TOXIC;
+		if (target.pokemon->ability == SYNCHRONIZE)
 			poison_normal (target, user, weather);
 	}
 }

@@ -65,11 +65,11 @@ void reset_variables (Team &team) {
 	team.heal_block = 0;
 	team.partial_trap = 0;
 	team.rampage = 0;
-	team.active->atk.stage = 0;
-	team.active->def.stage = 0;
-	team.active->spa.stage = 0;
-	team.active->spd.stage = 0;
-	team.active->spe.stage = 0;
+	team.pokemon->atk.stage = 0;
+	team.pokemon->def.stage = 0;
+	team.pokemon->spa.stage = 0;
+	team.pokemon->spd.stage = 0;
+	team.pokemon->spe.stage = 0;
 	team.stockpile = 0;
 	team.taunt = 0;
 	team.toxic = 0;
@@ -77,57 +77,57 @@ void reset_variables (Team &team) {
 	team.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	team.yawn = 0;
 
-	for (std::vector<Move>::iterator it = team.active->move.set.begin(); it != team.active->move.set.end(); ++it) {
+	for (std::vector<Move>::iterator it = team.pokemon->move.set.begin(); it != team.pokemon->move.set.end(); ++it) {
 		it->disable = 0;
 		it->times_used = 0;
 	}
 }
 
 void switchpokemon (Team &user, Team &target, Weather &weather) {
-	if (user.active->hp.stat == 0) {
+	if (user.pokemon->hp.stat == 0) {
 		reset_variables (user);
-		// First, remove the active Pokemon because it has 0 HP.
-		user.active.set.erase (user.active.set.begin() + user.active.index);
+		// First, remove the pokemon Pokemon because it has 0 HP.
+		user.pokemon.set.erase (user.pokemon.set.begin() + user.pokemon.index);
 		--user.size;
 
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (user.active.set.size() == 0)
+		if (user.pokemon.set.size() == 0)
 			return;
 
 		// Then, remove the ability to bring out that Pokemon from Roar and Whirlwind in the foe's team.
-		for (std::vector<Pokemon>::iterator active = target.active.set.begin(); active != target.active.set.end(); ++active) {
-			for (std::vector<Move>::iterator move = active->move.set.begin(); move != active->move.set.end(); ++move) {
+		for (std::vector<Pokemon>::iterator pokemon = target.pokemon.set.begin(); pokemon != target.pokemon.set.end(); ++pokemon) {
+			for (std::vector<Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
 				if (move->name == ROAR or move->name == WHIRLWIND)
 					move->variable.set.pop_back();
 			}
 		}
-		if (user.active.index > user.replacement)
-			user.active.index = user.replacement;
+		if (user.pokemon.index > user.replacement)
+			user.pokemon.index = user.replacement;
 		else
-			user.active.index = user.replacement - 1;
+			user.pokemon.index = user.replacement - 1;
 		// Finally, remove the ability to switch to that Pokemon.
-		for (std::vector<Pokemon>::iterator active = user.active.set.begin(); active != user.active.set.end(); ++active)
-			active->move.set.pop_back();
+		for (std::vector<Pokemon>::iterator pokemon = user.pokemon.set.begin(); pokemon != user.pokemon.set.end(); ++pokemon)
+			pokemon->move.set.pop_back();
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (NATURAL_CURE == user.active->ability)
-			user.active->status = NO_STATUS;
+		if (NATURAL_CURE == user.pokemon->ability)
+			user.pokemon->status = NO_STATUS;
 		
 		reset_variables (user);
 	
-		// Change the active Pokemon to the one switching in.
-		user.active.index = user.replacement;
+		// Change the pokemon Pokemon to the one switching in.
+		user.pokemon.index = user.replacement;
 	}
 	
 	entry_hazards (user, weather);
 
-	if (user.active->hp.stat > 0)
-		activate_ability (user, *target.active, weather);
+	if (user.pokemon->hp.stat > 0)
+		activate_ability (user, *target.pokemon, weather);
 }
 
 void entry_hazards (Team &user, Weather const &weather) {
-	if (grounded (user, weather) and MAGIC_GUARD != user.active->ability) {
+	if (grounded (user, weather) and MAGIC_GUARD != user.pokemon->ability) {
 		if (user.toxic_spikes != 0) {
 			if (istype(user, POISON))
 				user.toxic_spikes = 0;
@@ -137,37 +137,37 @@ void entry_hazards (Team &user, Weather const &weather) {
 				poison_toxic (user, user, weather);
 		}
 		if (user.spikes != 0)
-			heal (*user.active, -16, user.spikes + 1);
+			heal (*user.pokemon, -16, user.spikes + 1);
 	}
 	if (user.stealth_rock)
-		heal (*user.active, -32, effectiveness [ROCK] [user.active->type1] * effectiveness [ROCK] [user.active->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
+		heal (*user.pokemon, -32, effectiveness [ROCK] [user.pokemon->type1] * effectiveness [ROCK] [user.pokemon->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
 }
 
 void activate_ability (Team &user, Pokemon &target, Weather &weather) {
 		// Activate abilities upon switching in
 
 		user.slow_start = 0;
-		if (user.active->ability == SLOW_START)
+		if (user.pokemon->ability == SLOW_START)
 			user.slow_start = 5;
-		else if (user.active->ability == DOWNLOAD) {
+		else if (user.pokemon->ability == DOWNLOAD) {
 			if (target.def.stat >= target.spd.stat)
-				user.active->spa.boost (1);
+				user.pokemon->spa.boost (1);
 			else
-				user.active->atk.boost (1);
+				user.pokemon->atk.boost (1);
 		}
-		else if (user.active->ability == DRIZZLE)
+		else if (user.pokemon->ability == DRIZZLE)
 			weather.set_rain (-1);
-		else if (user.active->ability == DROUGHT)
+		else if (user.pokemon->ability == DROUGHT)
 			weather.set_sun (-1);
-		else if (user.active->ability == FORECAST) {	// fix
+		else if (user.pokemon->ability == FORECAST) {	// fix
 		}
-		else if (user.active->ability == INTIMIDATE)
+		else if (user.pokemon->ability == INTIMIDATE)
 			target.atk.boost (-1);
-		else if (user.active->ability == SAND_STREAM)
+		else if (user.pokemon->ability == SAND_STREAM)
 			weather.set_sand (-1);
-		else if (user.active->ability == SNOW_WARNING)
+		else if (user.pokemon->ability == SNOW_WARNING)
 			weather.set_hail (-1);
-		else if (user.active->ability == TRACE) {
+		else if (user.pokemon->ability == TRACE) {
 		}
 }
 

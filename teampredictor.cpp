@@ -34,9 +34,9 @@ void predict (int detailed [][7], Team &team) {
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back ((overall.at (n) / total) * lead.at (n));
 
-	for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
+	for (std::vector<Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [active->name] [n];
+			estimate.at (n) *= multiplier [pokemon->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 
@@ -46,7 +46,7 @@ void predict (int detailed [][7], Team &team) {
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
-	while (team.active.set.size() < team.size) {
+	while (team.pokemon.set.size() < team.size) {
 		double top = 0.0;
 		species name;
 		for (int n = 0; n != END_SPECIES; ++n) {
@@ -56,13 +56,13 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 			}
 		}
 		Pokemon member (name);
-		team.active.set.push_back (member);
-		if (team.active.set.size() == 6)
+		team.pokemon.set.push_back (member);
+		if (team.pokemon.set.size() == 6)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [team.active.set.back().name] [n];
+			estimate.at (n) *= multiplier [team.pokemon.set.back().name] [n];
 	}
-	for (std::vector<Pokemon>::iterator it = team.active.set.begin(); it != team.active.set.end(); ++it) {
+	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it) {
 		it->level = 100;
 		it->ability = static_cast<abilities> (detailed [it->name] [0]);
 		it->item = static_cast<items> (detailed [it->name] [1]);

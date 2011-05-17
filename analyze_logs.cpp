@@ -141,7 +141,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 	std::string nickname = log.line.substr (log.search.length(), found2 - log.search.length());
 
 	bool found = false;
-	for (team.replacement = 0; team.replacement != team.active.set.size(); ++team.replacement) {
+	for (team.replacement = 0; team.replacement != team.pokemon.set.size(); ++team.replacement) {
 		if (nickname == team.at_replacement().nickname) {
 			found = true;
 			break;
@@ -195,24 +195,24 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 		member.level = boost::lexical_cast<int> (log.line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 
 		member.nature = HARDY;
-		team.active.set.push_back (member);
-		team.replacement = team.active.set.size() - 1;
+		team.pokemon.set.push_back (member);
+		team.replacement = team.pokemon.set.size() - 1;
 		
-		for (std::vector<Pokemon>::iterator active = team.active.set.begin(); active != team.active.set.end(); ++active)
-			loadpokemon (team, *active);
+		for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon)
+			loadpokemon (team, *pokemon);
 	}
 	if (log.phaze) {
-		target.active->move->variable.index = 0;
-		while (team.active.set [target.active->move->variable.index].nickname != nickname)
-			++target.active->move->variable.index;
+		target.pokemon->move->variable.index = 0;
+		while (team.pokemon.set [target.pokemon->move->variable.index].nickname != nickname)
+			++target.pokemon->move->variable.index;
 	}
 	else {
-		team.active->move.index = 0;
-		if (team.active->move.set.size() > 1) {
-			while (team.active->move->name != SWITCH0)
-				++team.active->move.index;
+		team.pokemon->move.index = 0;
+		if (team.pokemon->move.set.size() > 1) {
+			while (team.pokemon->move->name != SWITCH0)
+				++team.pokemon->move.index;
 		}
-		team.active->move.index += team.replacement;
+		team.pokemon->move.index += team.replacement;
 	}
 	log.active = &team;
 	log.inactive = &target;
@@ -375,36 +375,36 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 	if (first.replacing or last.replacing) {
 		if (first.replacing) {
 			// Hopefully this will catch minor rounding errors and nothing else.
-			if (first.active->hp.stat != first.active->hp.max)
-				first.active->hp.stat = 0;
+			if (first.pokemon->hp.stat != first.pokemon->hp.max)
+				first.pokemon->hp.stat = 0;
 			switchpokemon (first, last, weather);
 			first.moved = false;
 		}
 		if (last.replacing) {
-			if (last.active->hp.stat != last.active->hp.max)
-				last.active->hp.stat = 0;
+			if (last.pokemon->hp.stat != last.pokemon->hp.max)
+				last.pokemon->hp.stat = 0;
 			switchpokemon (last, first, weather);
 			last.moved = false;
 		}
 	}
 	else {
 		usemove (first, last, weather, last.damage);
-		if (first.active->hp.stat == 0)
-			first.active->hp.stat = 1;
-		if (last.active->hp.stat == 0)
-			last.active->hp.stat = 1;
+		if (first.pokemon->hp.stat == 0)
+			first.pokemon->hp.stat = 1;
+		if (last.pokemon->hp.stat == 0)
+			last.pokemon->hp.stat = 1;
 
 		usemove (last, first, weather, first.damage);
-		if (first.active->hp.stat == 0)
-			first.active->hp.stat = 1;
-		if (last.active->hp.stat == 0)
-			last.active->hp.stat = 1;
+		if (first.pokemon->hp.stat == 0)
+			first.pokemon->hp.stat = 1;
+		if (last.pokemon->hp.stat == 0)
+			last.pokemon->hp.stat = 1;
 
 		endofturn (first, last, weather);
-		if (first.active->hp.stat == 0)
-			first.active->hp.stat = 1;
-		if (last.active->hp.stat == 0)
-			last.active->hp.stat = 1;
+		if (first.pokemon->hp.stat == 0)
+			first.pokemon->hp.stat = 1;
+		if (last.pokemon->hp.stat == 0)
+			last.pokemon->hp.stat = 1;
 	}
 	std::string out;
 	output (first, out);
@@ -443,11 +443,11 @@ void initialize_turn (Team &ai, Team &foe, Log &log) {
 }
 
 void initialize_team (Team &team) {
-	for (std::vector<Pokemon>::iterator active = team.active.set.begin(); active != team.active.set.end(); ++active)
-		active->move.index = 0;
+	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon)
+		pokemon->move.index = 0;
 	team.ch = false;
 	team.miss = false;
-	team.replacement = team.active.index;
+	team.replacement = team.pokemon.index;
 	team.replacing = false;
 }
 

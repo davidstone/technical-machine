@@ -17,13 +17,13 @@
 namespace technicalmachine {
 
 bool istype (const Team &team, types type) {
-	if ((team.active->type1 == type or team.active->type2 == type) and (type != FLYING or !team.roost))
+	if ((team.pokemon->type1 == type or team.pokemon->type2 == type) and (type != FLYING or !team.roost))
 		return true;
 	return false;
 }
 
 bool grounded (const Team &team, const Weather &weather) {
-	if ((!istype (team, FLYING) and team.active->ability != LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.active->item == IRON_BALL or team.ingrain)
+	if ((!istype (team, FLYING) and team.pokemon->ability != LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon->item == IRON_BALL or team.ingrain)
 		return true;
 	return false;
 }

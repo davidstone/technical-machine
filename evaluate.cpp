@@ -21,19 +21,19 @@ namespace technicalmachine {
 long evaluate (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv) {
 	long score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
 	score += scoreteam (ai, sv);
-	for (std::vector<Pokemon>::const_iterator it = ai.active.set.begin(); it != ai.active.set.end(); ++it)
+	for (std::vector<Pokemon>::const_iterator it = ai.pokemon.set.begin(); it != ai.pokemon.set.end(); ++it)
 		score += scorepokemon (*it, ai, foe, weather, sv);
 	score -= scoreteam (foe, sv);
-	for (std::vector<Pokemon>::const_iterator it = foe.active.set.begin(); it != foe.active.set.end(); ++it)
+	for (std::vector<Pokemon>::const_iterator it = foe.pokemon.set.begin(); it != foe.pokemon.set.end(); ++it)
 		score -= scorepokemon (*it, foe, ai, weather, sv);
 	return score;
 }
 
 long scoreteam (Team const &team, score_variables const &sv) {
 	long score = 0;
-	if (team.active->hp.stat != 0) {
+	if (team.pokemon->hp.stat != 0) {
 		score += team.magnet_rise * sv.magnet_rise;
-		score += sv.substitute * team.substitute / team.active->hp.max;
+		score += sv.substitute * team.substitute / team.pokemon->hp.max;
 		if (team.aqua_ring)
 			score += sv.aqua_ring;
 		if (team.curse)
@@ -44,8 +44,8 @@ long scoreteam (Team const &team, score_variables const &sv) {
 			score += sv.ingrain;
 		if (team.leech_seed)
 			score += sv.leech_seed;
-	//	if (other.active->leech_seed)
-	//		score += 1 * other.active->hp.max / member.hp.max;
+	//	if (other.pokemon->leech_seed)
+	//		score += 1 * other.pokemon->hp.max / member.hp.max;
 		if (team.loaf)
 			score += sv.loaf;
 		if (team.nightmare)
@@ -57,9 +57,9 @@ long scoreteam (Team const &team, score_variables const &sv) {
 		if (team.focus_energy)
 			score += sv.focus_energy;
 		bool bp = false;
-		for (std::vector<Move>::const_iterator move = team.active->move.set.begin(); move->name != STRUGGLE; ++move) {
+		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
 			if (move->name == BATON_PASS) {
-				score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.active->atk.stage * sv.atk_stage + team.active->def.stage * sv.def_stage + team.active->spa.stage * sv.spa_stage + team.active->spd.stage * sv.spd_stage + team.active->spe.stage * sv.spe_stage);
+				score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.pokemon->atk.stage * sv.atk_stage + team.pokemon->def.stage * sv.def_stage + team.pokemon->spa.stage * sv.spa_stage + team.pokemon->spd.stage * sv.spd_stage + team.pokemon->spe.stage * sv.spe_stage);
 				break;
 			}
 		}
@@ -110,7 +110,7 @@ long scoremove (Pokemon const &member, Team const &team, Team const &other, Weat
 
 
 long win (Team const &team) {
-	if (team.active.set.size() == 0) {
+	if (team.pokemon.set.size() == 0) {
 		if (team.me)
 			return -VICTORY;
 		return VICTORY;
