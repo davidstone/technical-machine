@@ -225,8 +225,8 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 			while (team.active->move->name != SWITCH0)
 				++team.active->move.index;
 		}
+		team.active->move.index += team.replacement;
 	}
-	team.active->move.index += team.replacement;
 }
 
 
@@ -369,7 +369,7 @@ void log_misc (Log &log, Map const &map, bool &shed_skin) {
 	if (log.active->at_replacement().item == END_ITEM) {
 		if (log.active->at_replacement().nickname + "'s Black Sludge restored a little health!" == log.line)
 			log.active->at_replacement().item = BLACK_SLUDGE;
-		else if (log.active->at_replacement().nickname + "'s leftovers restored its health a little!" == log.line)
+		else if (log.active->at_replacement().nickname + "'s Leftovers restored its health a little!" == log.line)
 			log.active->at_replacement().item = LEFTOVERS;
 		else if (log.active->at_replacement().nickname + "'s Quick Claw activated!" == log.line)
 			log.active->at_replacement().item = QUICK_CLAW;
@@ -395,26 +395,18 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 		}
 	}
 	else {
-		if (first.replacement != first.active.index) {
-			first.active->move.index = 0;
-			while (first.active->move->name - SWITCH0 != first.replacement)
-				++first.active->move.index;
-		}
-		if (last.replacement != last.active.index) {
-			last.active->move.index = 0;
-			while (last.active->move->name - SWITCH0 != last.replacement)
-				++last.active->move.index;
-		}
 		usemove (first, last, weather, last.damage);
 		if (first.active->hp.stat == 0)
 			first.active->hp.stat = 1;
 		if (last.active->hp.stat == 0)
 			last.active->hp.stat = 1;
+
 		usemove (last, first, weather, first.damage);
 		if (first.active->hp.stat == 0)
 			first.active->hp.stat = 1;
 		if (last.active->hp.stat == 0)
 			last.active->hp.stat = 1;
+
 		endofturn (first, last, weather);
 		if (first.active->hp.stat == 0)
 			first.active->hp.stat = 1;
