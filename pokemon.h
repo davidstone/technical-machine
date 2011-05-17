@@ -45,6 +45,7 @@ class Pokemon {
 		Stat spd;
 		Stat spe;
 		natures nature;
+		bool fainted;
 		char level;
 		char mass;		// mass == power of Grass Knot / Low Kick, not the actual mass stat
 		char sleep;				// wakes up when this number is 2 through 5

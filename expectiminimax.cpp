@@ -101,7 +101,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 //				std::cout << indent + "Evaluating ";
 				if (first) {
 					std::cout << "Evaluating ";
-					if (SWITCH0 <= ai.pokemon->move->name and ai.pokemon->move->name <= SWITCH5)
+					if (ai.pokemon->move->is_switch())
 						std::cout << "switching to " + pokemon_name [ai.pokemon.set [ai.pokemon->move->name - SWITCH0].name] + "\n";
 					else
 						std::cout << move_name [ai.pokemon->move->name] + "\n";
@@ -113,7 +113,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 //						std::cout << indent + "\tEvaluating the foe";
 						if (first) {
 							std::cout << "\tEvaluating the foe";
-							if (SWITCH0 <= foe.pokemon->move->name and foe.pokemon->move->name <= SWITCH5)
+							if (foe.pokemon->move->is_switch())
 								std::cout << " switching to " + pokemon_name [foe.pokemon.set [foe.pokemon->move->name - SWITCH0].name] + "\n";
 							else
 								std::cout << "'s " + move_name [foe.pokemon->move->name] + "\n";

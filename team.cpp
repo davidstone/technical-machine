@@ -134,7 +134,7 @@ void loadpokemon (Team &team, Pokemon &member) {
 	for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
 		if (it->name == STRUGGLE)
 			struggle = true;
-		if (SWITCH0 <= it->name and it->name <= SWITCH5)
+		if (it->is_switch())
 			switchn = it->name;
 	}
 	if (!struggle) {

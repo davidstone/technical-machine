@@ -23,7 +23,7 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 	user.pokemon->move->selectable = true;
 	if (user.bide != 0 and user.pokemon->move->name != BIDE)
 			user.pokemon->move->selectable = false;
-	else if (SWITCH0 <= user.pokemon->move->name and user.pokemon->move->name <= SWITCH5) {
+	else if (user.pokemon->move->is_switch()) {
 		if ((((target.pokemon->ability == SHADOW_TAG and user.pokemon->ability != SHADOW_TAG) or (target.pokemon->ability == ARENA_TRAP and grounded (user, weather)) or (target.pokemon->ability == MAGNET_PULL and istype (user, STEEL)) or user.trapped or user.partial_trap != 0) and user.pokemon->item != SHED_SHELL)
 				or (user.pokemon.set [user.pokemon->move->name - SWITCH0].name == user.pokemon->name and user.pokemon.set.size() > 1))		// Can't switch to yourself
 			user.pokemon->move->selectable = false;
@@ -52,51 +52,53 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 }
 
 void blockexecution (Team &user, const Team &target, const Weather &weather) {
-	if (user.pokemon->hp.stat == 0 or (target.pokemon->hp.stat == 0 and false))
-		user.pokemon->move->execute = false;
-	else if (SWITCH0 <= user.pokemon->move->name and user.pokemon->move->name <= SWITCH5) {
-		if (user.pokemon->status == FREEZE and (user.pokemon->move->name != FLAME_WHEEL and user.pokemon->move->name != SACRED_FIRE))
+	if (!user.pokemon->move->is_switch()) {
+		if (user.pokemon->hp.stat == 0 or (target.pokemon->hp.stat == 0 and false))
 			user.pokemon->move->execute = false;
+		else {
+			if (user.pokemon->status == FREEZE and (user.pokemon->move->name != FLAME_WHEEL and user.pokemon->move->name != SACRED_FIRE))
+				user.pokemon->move->execute = false;
 
-		else if (user.pokemon->status == SLEEP) {
-			if (user.awaken) {
-				user.pokemon->sleep = 0;
-				user.pokemon->status = NO_STATUS;
+			else if (user.pokemon->status == SLEEP) {
+				if (user.awaken) {
+					user.pokemon->sleep = 0;
+					user.pokemon->status = NO_STATUS;
+				}
+				else {
+					if (user.pokemon->ability == EARLY_BIRD)
+						user.pokemon->sleep += 2;
+					else
+						++user.pokemon->sleep;
+					if (user.pokemon->move->name != SLEEP_TALK and user.pokemon->move->name != SNORE)
+						user.pokemon->move->execute = false;
+				}
 			}
-			else {
-				if (user.pokemon->ability == EARLY_BIRD)
-					user.pokemon->sleep += 2;
-				else
-					++user.pokemon->sleep;
-				if (user.pokemon->move->name != SLEEP_TALK and user.pokemon->move->name != SNORE)
+
+			if (block1 (user, target)
+			 or (user.pokemon->ability == TRUANT and user.loaf))
+				user.pokemon->move->execute = false;
+
+			if (user.pokemon->move->execute and user.confused != 0) {
+				if (user.hitself) {
+					// fix
 					user.pokemon->move->execute = false;
+				}
+				else
+					--user.confused;
 			}
-		}
-
-		if (block1 (user, target)
-		 or (user.pokemon->ability == TRUANT and user.loaf))
-			user.pokemon->move->execute = false;
-
-		if (user.pokemon->move->execute and user.confused != 0) {
-			if (user.hitself) {
-				// fix
+			if (user.pokemon->move->execute and user.flinch) {
+				if (user.pokemon->ability == STEADFAST)
+					user.pokemon->spe.boost (1);
 				user.pokemon->move->execute = false;
 			}
-			else
-				--user.confused;
-		}
-		if (user.pokemon->move->execute and user.flinch) {
-			if (user.pokemon->ability == STEADFAST)
-				user.pokemon->spe.boost (1);
-			user.pokemon->move->execute = false;
-		}
 	
-		if (block2 (user, weather) or user.fully_paralyzed)
-			user.pokemon->move->execute = false;
+			if (block2 (user, weather) or user.fully_paralyzed)
+				user.pokemon->move->execute = false;
 		
-		if (user.recharging) {
-			user.pokemon->move->execute = false;
-			user.recharging = false;
+			if (user.recharging) {
+				user.pokemon->move->execute = false;
+				user.recharging = false;
+			}
 		}
 	}
 }

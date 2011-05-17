@@ -56,4 +56,8 @@ void initialize_turn (Team &ai, Team &foe, Log &log);
 
 void initialize_team (Team &team);
 
+void normalize_hp (Team &first, Team &last);
+
+void normalize_hp_team (Team &team);
+
 }

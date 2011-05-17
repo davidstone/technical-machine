@@ -35,6 +35,7 @@ Pokemon::Pokemon (const species &member) :
 	spd (name, level, SPD),
 	spe (name, level, SPE),
 
+	fainted (false),
 	mass (get_mass [name]),
 	sleep (0),
 

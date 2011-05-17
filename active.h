@@ -20,7 +20,7 @@ template <class T>
 class Active {
 	public:
 		std::vector<T> set;			// All Pokemon on the team
-		unsigned char index;
+		size_t index;
 		Active () :
 			index (0)
 			{}

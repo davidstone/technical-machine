@@ -50,6 +50,11 @@ class Move {
 		bool operator== (const Move &other) const {
 			return this->pp == other.pp and this->times_used == other.times_used;
 		}
+		bool is_switch () const {
+			if (SWITCH0 <= name and name <= SWITCH5)
+				return true;
+			return false;
+		}
 	private:
 		void set_priority ();
 		void set_variable ();

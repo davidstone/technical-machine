@@ -43,14 +43,22 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 	if (log.input == "")
 		won = true;
 	else {
+		bool ai_replacing;
 		initialize_turn (ai, foe, log);
 		while (log.getline()) {
+			ai_replacing = false;
 			if (log.line == "===============") {
 				do_turn (*log.first, *log.last, weather);
 				initialize_turn (ai, foe, log);
+				ai_replacing = true;
 			}
 			else
 				analyze_line (ai, foe, weather, map, log);
+		}
+		if (ai_replacing) {
+			ai.replacing = true;
+			foe.replacing = false;
+			do_turn (*log.first, *log.last, weather);
 		}
 	}
 	return won;
@@ -124,7 +132,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 			else if (log.line == log.active->at_replacement().nickname + " flinched!")
 				log.active->flinch = true;
 			else if (log.line == log.active->at_replacement().nickname + " fainted!")
-				log.active->replacing = true;
+				log.active->at_replacement().fainted = true;
 			else {
 				log.search = log.active->at_replacement().nickname + " used ";
 				if (log.search_is_first())
@@ -143,6 +151,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 	size_t found2 = log.line.find (search2);
 	std::string nickname = log.line.substr (log.search.length(), found2 - log.search.length());
 
+	size_t replacement = team.replacement;
 	bool found = false;
 	for (team.replacement = 0; team.replacement != team.pokemon.set.size(); ++team.replacement) {
 		if (nickname == team.at_replacement().nickname) {
@@ -205,17 +214,17 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 			loadpokemon (team, *pokemon);
 	}
 	if (log.phaze) {
-		target.pokemon->move->variable.index = 0;
-		while (team.pokemon.set [target.pokemon->move->variable.index].nickname != nickname)
-			++target.pokemon->move->variable.index;
+		target.at_replacement().move->variable.index = 0;
+		while (team.pokemon.set [target.at_replacement().move->variable.index].nickname != nickname)
+			++target.at_replacement().move->variable.index;
 	}
 	else {
-		team.pokemon->move.index = 0;
-		if (team.pokemon->move.set.size() > 1) {
-			while (team.pokemon->move->name != SWITCH0)
-				++team.pokemon->move.index;
+		team.pokemon.set [replacement].move.index = 0;
+		if (team.pokemon.set [replacement].move.set.size() > 1) {
+			while (team.pokemon.set [replacement].move->name != SWITCH0)
+				++team.pokemon.set [replacement].move.index;
 		}
-		team.pokemon->move.index += team.replacement;
+		team.pokemon.set [replacement].move.index += team.replacement;
 	}
 	log.active = &team;
 	log.inactive = &target;
@@ -377,37 +386,24 @@ void log_misc (Log &log, Map const &map, bool &shed_skin) {
 void do_turn (Team &first, Team &last, Weather &weather) {
 	if (first.replacing or last.replacing) {
 		if (first.replacing) {
-			// Hopefully this will catch minor rounding errors and nothing else.
-			if (first.pokemon->hp.stat != first.pokemon->hp.max)
-				first.pokemon->hp.stat = 0;
 			switchpokemon (first, last, weather);
 			first.moved = false;
+			normalize_hp (first, last);
 		}
 		if (last.replacing) {
-			if (last.pokemon->hp.stat != last.pokemon->hp.max)
-				last.pokemon->hp.stat = 0;
 			switchpokemon (last, first, weather);
 			last.moved = false;
+			normalize_hp (first, last);
 		}
 	}
 	else {
 		usemove (first, last, weather, last.damage);
-		if (first.pokemon->hp.stat == 0)
-			first.pokemon->hp.stat = 1;
-		if (last.pokemon->hp.stat == 0)
-			last.pokemon->hp.stat = 1;
-
+		normalize_hp (first, last);
 		usemove (last, first, weather, first.damage);
-		if (first.pokemon->hp.stat == 0)
-			first.pokemon->hp.stat = 1;
-		if (last.pokemon->hp.stat == 0)
-			last.pokemon->hp.stat = 1;
+		normalize_hp (first, last);
 
 		endofturn (first, last, weather);
-		if (first.pokemon->hp.stat == 0)
-			first.pokemon->hp.stat = 1;
-		if (last.pokemon->hp.stat == 0)
-			last.pokemon->hp.stat = 1;
+		normalize_hp (first, last);
 	}
 	std::string out;
 	output (first, out);
@@ -452,6 +448,18 @@ void initialize_team (Team &team) {
 	team.miss = false;
 	team.replacement = team.pokemon.index;
 	team.replacing = false;
+}
+
+void normalize_hp (Team &first, Team &last) {
+	normalize_hp_team (first);
+	normalize_hp_team (last);
+}
+
+void normalize_hp_team (Team &team) {
+	if (team.pokemon->fainted)
+		team.pokemon->hp.stat = 0;
+	else if (team.pokemon->hp.stat == 0)
+		team.pokemon->hp.stat = 1;
 }
 
 }

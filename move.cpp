@@ -41,7 +41,7 @@ Move::Move (moves_list move, int pp_ups) :
 }
 
 void Move::set_priority () {
-	if (SWITCH0 <= name and name <= SWITCH5)
+	if (is_switch())
 		priority = 6;
 	else if (name == HELPING_HAND)
 		priority = 5;
@@ -142,7 +142,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	movepower (user, target, weather);
 	int damage = 0;
 	
-	if (0 != user.pokemon->move->basepower) {
+	if (user.pokemon->move->basepower != 0) {
 		if (BRICK_BREAK == user.pokemon->move->name) {
 			target.reflect = 0;
 			target.light_screen = 0;
@@ -598,7 +598,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		if (target.evasion > -6)
 			--target.evasion;
 	}
-	else if (SWITCH0 <= user.pokemon->move->name and user.pokemon->move->name <= SWITCH5) {
+	else if (user.pokemon->move->is_switch()) {
 		user.replacement = user.pokemon->move->name - SWITCH0;
 		switchpokemon (user, target, weather);
 	}
