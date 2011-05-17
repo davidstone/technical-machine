@@ -34,7 +34,7 @@ Log::Log () :
 	move_damage (false) {
 }
 
-bool analyze_turn (Team &ai, Team &foe, Weather &weather, const Map &map) {
+bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	Log log;
 	getline (std::cin, log.input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
@@ -45,10 +45,13 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, const Map &map) {
 	else {
 		initialize_turn (ai, foe, log);
 		while (log.getline()) {
-//			if (log.line == "===============")
-			analyze_line (ai, foe, weather, map, log);
+			if (log.line == "===============") {
+				do_turn (*log.first, *log.last, weather);
+				initialize_turn (ai, foe, log);
+			}
+			else
+				analyze_line (ai, foe, weather, map, log);
 		}
-		do_turn (*log.first, *log.last, weather);
 	}
 	return won;
 }

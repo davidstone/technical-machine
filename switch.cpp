@@ -86,7 +86,7 @@ void reset_variables (Team &team) {
 void switchpokemon (Team &user, Team &target, Weather &weather) {
 	if (user.pokemon->hp.stat == 0) {
 		reset_variables (user);
-		// First, remove the pokemon Pokemon because it has 0 HP.
+		// First, remove the active Pokemon because it has 0 HP.
 		user.pokemon.set.erase (user.pokemon.set.begin() + user.pokemon.index);
 		--user.size;
 
@@ -116,7 +116,7 @@ void switchpokemon (Team &user, Team &target, Weather &weather) {
 		
 		reset_variables (user);
 	
-		// Change the pokemon Pokemon to the one switching in.
+		// Change the active Pokemon to the one switching in.
 		user.pokemon.index = user.replacement;
 	}
 	

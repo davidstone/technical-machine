@@ -187,7 +187,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		user.pokemon.set [user.replacement].spd.stage = user.pokemon->spd.stage;
 		user.pokemon.set [user.replacement].spe.stage = user.pokemon->spe.stage;
 		
-		// Change the pokemon Pokemon to the one switching in.
+		// Change the active Pokemon to the one switching in.
 		switchpokemon (user, target, weather);
 	}
 	else if (BELLY_DRUM == user.pokemon->move->name) {
