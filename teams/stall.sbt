@@ -11,9 +11,9 @@
 <ability>Sand Stream</ability>
 <moveset>
 	<move pp-up="3">Earthquake</move>
-	<move pp-up="3">Roar</move>
 	<move pp-up="3">Slack Off</move>
 	<move pp-up="3">Stealth Rock</move>
+	<move pp-up="3">Roar</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -35,9 +35,9 @@
 <ability>Natural Cure</ability>
 <moveset>
 	<move pp-up="3">Calm Mind</move>
+	<move pp-up="3">Recover</move>
 	<move pp-up="3">Grass Knot</move>
 	<move pp-up="3">Psychic</move>
-	<move pp-up="3">Recover</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -58,10 +58,10 @@
 <item>Leftovers</item>
 <ability>Natural Cure</ability>
 <moveset>
-	<move pp-up="3">Flamethrower</move>
+	<move pp-up="3">Wish</move>
 	<move pp-up="3">Softboiled</move>
 	<move pp-up="3">Toxic</move>
-	<move pp-up="3">Wish</move>
+	<move pp-up="3">Flamethrower</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="0" />
@@ -82,9 +82,9 @@
 <item>Shed Shell</item>
 <ability>Keen Eye</ability>
 <moveset>
-	<move pp-up="3">Drill Peck</move>
-	<move pp-up="3">Roost</move>
 	<move pp-up="3">Spikes</move>
+	<move pp-up="3">Roost</move>
+	<move pp-up="3">Drill Peck</move>
 	<move pp-up="3">Whirlwind</move>
 </moveset>
 <stats>
@@ -106,10 +106,10 @@
 <item>Leftovers</item>
 <ability>Liquid Ooze</ability>
 <moveset>
-	<move pp-up="3">Rapid Spin</move>
-	<move pp-up="3">Sludge Bomb</move>
-	<move pp-up="3">Surf</move>
 	<move pp-up="3">Toxic Spikes</move>
+	<move pp-up="3">Rapid Spin</move>
+	<move pp-up="3">Surf</move>
+	<move pp-up="3">Sludge Bomb</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />

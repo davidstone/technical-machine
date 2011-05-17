@@ -25,170 +25,156 @@
 
 namespace technicalmachine {
 
-bool analyze_turn (Team &ai, Team &foe, Team* &first, Team* &last, Weather &weather, const Map &map) {
-	first = NULL;
+Log::Log () :
+	newline2 (-1),
+	active (NULL),
+	inactive (NULL),
+	first (NULL),
+	phaze (false),
+	move_damage (false) {
+}
+
+bool analyze_turn (Team &ai, Team &foe, Weather &weather, const Map &map) {
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
-	std::string input;
-	getline (std::cin, input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
+	Log log;
+	getline (std::cin, log.input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
 	std::cout << "======================\nAnalyzing...\n";
 	bool won = false;
-	if (input == "")
+	if (log.input == "")
 		won = true;
 	else {
-		ai.ch = false;
-		ai.miss = false;
-		ai.replacement = ai.active.index;
-		foe.ch = false;
-		foe.miss = false;
-		foe.replacement = foe.active.index;
-		ai.replacing = false;
-		foe.replacing = false;
-		bool phaze = false;
-		bool move_damage = false;
-		
-		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that line. This helps keep track of information on future lines so I can do things like assign critical hits to the right move.
-		Team* active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
-		Team* inactive = NULL;
-		size_t newline1;
-		size_t newline2 = -1;
-		while (true) {
-			newline1 = newline2 + 1;
-			while (newline1 < input.length() and input.at (newline1) == '\n')
-				++newline1;
-			newline2 = input.find ('\n', newline1 + 1);
-			if (newline2 == std::string::npos)
-				break;
-			std::string line = input.substr (newline1, newline2 - newline1);
-			analyze_line (ai, foe, active, inactive, first, last, weather, map, phaze, move_damage, line);
+		initialize_turn (ai, foe, log);
+		while (log.getline()) {
+//			if (log.line == "===============")
+			analyze_line (ai, foe, weather, map, log);
 		}
-		do_turn (*first, *last, weather);
+		do_turn (*log.first, *log.last, weather);
 	}
 	return won;
 }
 
-void analyze_line (Team &ai, Team &foe, Team* &active, Team* &inactive, Team* &first, Team* &last, Weather &weather, Map const &map, bool &phaze, bool &move_damage, std::string const &line) {
-	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-		std::cout << line << '\n';
-		std::string search = "Begin turn #";
-		if (line.substr (0, search.length()) == search)
+void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &log) {
+	if (log.line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
+		std::cout << log.line << '\n';
+		log.search = "Begin turn #";
+		if (log.search_is_first())
 			return;
-		search = " sent out ";
-		size_t found = line.find (search);
+		log.search = " sent out ";
+		size_t found = log.line.find (log.search);
 		if (found != std::string::npos) {
-			search = ai.player + " sent out ";
-			if (line.substr (0, search.length()) == search) {
-				log_pokemon (ai, foe, weather, line, map, search, phaze);
-				active = &ai;
-				inactive = &foe;
-				if (first == NULL) {
-					first = &ai;
-					last = &foe;
+			log.search = ai.player + " sent out ";
+			if (log.search_is_first()) {
+				log_pokemon (ai, foe, weather, map, log);
+				log.active = &ai;
+				log.inactive = &foe;
+				if (log.first == NULL) {
+					log.first = &ai;
+					log.last = &foe;
 				}
 			}
 			else {
 				if (foe.player == "") {
-					foe.player = line.substr (0, found);
+					foe.player = log.line.substr (0, found);
 					ai.replacing = true;
 					foe.replacing = true;
 				}
-				search = foe.player + " sent out ";
-				log_pokemon (foe, ai, weather, line, map, search, phaze);
-				active = &foe;
-				inactive = &ai;
-				if (first == NULL) {
-					first = &foe;
-					last = &ai;
+				log.search = foe.player + " sent out ";
+				log_pokemon (foe, ai, weather, map, log);
+				log.active = &foe;
+				log.inactive = &ai;
+				if (log.first == NULL) {
+					log.first = &foe;
+					log.last = &ai;
 				}
 			}
 		}
 		else {
 			if (foe.player != "") {
-				search = ai.player + " withdrew ";
-				if (line.substr (0, search.length()) == search)
+				log.search = ai.player + " withdrew ";
+				if (log.search_is_first())
 					return;
-				search = foe.player + " withdrew ";
-				if (line.substr (0, search.length()) == search)
+				log.search = foe.player + " withdrew ";
+				if (log.search_is_first())
 					return;
 			}
-			if (line.substr (0, ai.active.set [ai.replacement].nickname.length()) == ai.active.set [ai.replacement].nickname) {
-				active = &ai;
-				inactive = &foe;
+			if (log.line.substr (0, ai.at_replacement().nickname.length()) == ai.at_replacement().nickname) {
+				log.active = &ai;
+				log.inactive = &foe;
 			}
-			else if (line.substr (0, foe.active.set [foe.replacement].nickname.length()) == foe.active.set [foe.replacement].nickname) {
-				active = &foe;
-				inactive = &ai;
+			else if (log.line.substr (0, foe.at_replacement().nickname.length()) == foe.at_replacement().nickname) {
+				log.active = &foe;
+				log.inactive = &ai;
 			}
-			if (first == NULL) {
-				first = active;
-				last = inactive;
+			if (log.first == NULL) {
+				log.first = log.active;
+				log.last = log.inactive;
 			}
 
 			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
-			if (move_damage) {
-				search = active->active.set [active->replacement].nickname + " lost ";
-				if (line.substr (0, search.length()) == search) {
-					size_t division = line.find ("/", search.length());
+			if (log.move_damage) {
+				log.search = log.active->at_replacement().nickname + " lost ";
+				if (log.search_is_first()) {
+					size_t division = log.line.find ("/", log.search.length());
 					if (division != std::string::npos) {
-						int numerator = boost::lexical_cast<int> (line.substr (search.length(), division - search.length()));
+						int numerator = boost::lexical_cast<int> (log.line.substr (log.search.length(), division - log.search.length()));
 						++division;
-						int denominator = boost::lexical_cast<int> (line.substr (division, line.find(" ", division) - division));
-						active->damage = active->active.set [active->replacement].hp.max * numerator / denominator;
-						move_damage = false;
+						int denominator = boost::lexical_cast<int> (log.line.substr (division, log.line.find(" ", division) - division));
+						log.active->damage = log.active->at_replacement().hp.max * numerator / denominator;
+						log.move_damage = false;
 					}
 				}
-				else if (line == "It had no effect.")
-					move_damage = false;
+				else if (log.line == "It had no effect.")
+					log.move_damage = false;
 			}
-			search = active->active->nickname + "'s attack missed";
-			if (line.substr (0, search.length()) == search)
-				active->miss = true;
-			else if (line == "A critical hit!")
-				active->ch = true;
-			else if (line == active->active.set [active->replacement].nickname + " flinched!")
-				active->flinch = true;
-			else if (line == active->active.set [active->replacement].nickname + " fainted!")
-				active->replacing = true;
+			log.search = log.active->at_replacement().nickname + "'s attack missed";
+			if (log.search_is_first())
+				log.active->miss = true;
+			else if (log.line == "A critical hit!")
+				log.active->ch = true;
+			else if (log.line == log.active->at_replacement().nickname + " flinched!")
+				log.active->flinch = true;
+			else if (log.line == log.active->at_replacement().nickname + " fainted!")
+				log.active->replacing = true;
 			else {
-				search = active->active.set [active->replacement].nickname + " used ";
-				if (line.substr (0, search.length()) == search)
-					log_move (*active, *inactive, weather, line, map, search, phaze, move_damage);
-				// else if (line != "===============") {
+				log.search = log.active->at_replacement().nickname + " used ";
+				if (log.search_is_first())
+					log_move (log, weather, map);
 				else {
 					bool shed_skin = false;
-					log_misc (*active, inactive->active.set [inactive->replacement], line, map, shed_skin);		// Fix
+					log_misc (log, map, shed_skin);		// Fix
 				}
 			}
 		}
 	}
 }
 
-void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search1, bool &phaze) {
+void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, Log &log) {
 	std::string search2 = " (lvl ";
-	size_t found2 = line.find (search2);
-	std::string nickname = line.substr (search1.length(), found2 - search1.length());
+	size_t found2 = log.line.find (search2);
+	std::string nickname = log.line.substr (log.search.length(), found2 - log.search.length());
 
 	bool found = false;
 	for (team.replacement = 0; team.replacement != team.active.set.size(); ++team.replacement) {
-		if (nickname == team.active.set [team.replacement].nickname) {
+		if (nickname == team.at_replacement().nickname) {
 			found = true;
 			break;
 		}
 	}
 	if (!found) {
 		std::string search3 = " ";
-		size_t found3 = line.find (search3, found2 + search2.length());
+		size_t found3 = log.line.find (search3, found2 + search2.length());
 		std::string search4 = " ?).";
-		size_t found4 = line.find (search4);
+		size_t found4 = log.line.find (search4);
 		genders gender;
 		if (found4 == std::string::npos) {
 			search4 = " ?)!";
-			found4 = line.find (search4);
+			found4 = log.line.find (search4);
 			if (found4 == std::string::npos) {
 				search4 = " ♂).";
-				found4 = line.find (search4);
+				found4 = log.line.find (search4);
 				if (found4 == std::string::npos) {
 					search4 = " ♂)!";
-					found4 = line.find (search4);
+					found4 = log.line.find (search4);
 				}
 			}
 		}
@@ -196,30 +182,30 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 			gender = MALE;		// No sexism here!
 		else {
 			search4 = " ♀).";
-			found4 = line.find (search4);
+			found4 = log.line.find (search4);
 			if (found4 == std::string::npos) {
 				search4 = " ♀)!";
-				found4 = line.find (search4);
+				found4 = log.line.find (search4);
 			}
 			if (found4 != std::string::npos)
 				gender = FEMALE;
 		}
 		if (found4 == std::string::npos) {
 			search4 = ").";
-			found4 = line.find (search4);
+			found4 = log.line.find (search4);
 			if (found4 == std::string::npos) {
 				search4 = ")!";
-				found4 = line.find (search4);
+				found4 = log.line.find (search4);
 			}
 			gender = GENDERLESS;
 		}
-		species name = map.specie.find (line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
+		species name = map.specie.find (log.line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
 		Pokemon member (name);
 		member.gender = gender;
 
 		member.nickname = nickname;
 
-		member.level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
+		member.level = boost::lexical_cast<int> (log.line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 
 		member.nature = HARDY;
 		team.active.set.push_back (member);
@@ -228,7 +214,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 		for (std::vector<Pokemon>::iterator active = team.active.set.begin(); active != team.active.set.end(); ++active)
 			loadpokemon (team, *active);
 	}
-	if (phaze) {
+	if (log.phaze) {
 		target.active->move->variable.index = 0;
 		while (team.active.set [target.active->move->variable.index].nickname != nickname)
 			++target.active->move->variable.index;
@@ -244,151 +230,151 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, const std::string
 }
 
 
-void log_move (Team &user, Team &target, Weather &weather, const std::string &line, const Map &map, const std::string &search, bool &phaze, bool &move_damage) {
+void log_move (Log &log, Weather &weather, Map const &map) {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
-	if (line.find(".\r") != std::string::npos)
+	if (log.line.find(".\r") != std::string::npos)
 		n = 2;
-	moves_list name = map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+	moves_list name = map.move.find (log.line.substr (log.search.length(), log.line.length() - log.search.length() - n))->second;
 	bool isfound = false;
-	for (user.active->move.index = 0; user.active->move.index != user.active->move.set.size(); ++user.active->move.index) {
-		if (name == user.active->move->name) {
+	for (log.active->at_replacement().move.index = 0; log.active->at_replacement().move.index != log.active->at_replacement().move.set.size(); ++log.active->at_replacement().move.index) {
+		if (name == log.active->at_replacement().move->name) {
 			isfound = true;
 			break;
 		}
 	}
 	if (!isfound) {
 		Move move (name, 3);
-		user.active->move.set.insert (user.active->move.set.begin(), move);
-		user.active->move.index = 0;
+		log.active->at_replacement().move.set.insert (log.active->at_replacement().move.set.begin(), move);
+		log.active->at_replacement().move.index = 0;
 	}
-	if (user.active->move->name == ROAR or user.active->move->name == WHIRLWIND)
-		phaze = true;
-	user.active->move->effect = false;
-	if (user.active->move->basepower != 0)
-		move_damage = true;
+	if (log.active->at_replacement().move->name == ROAR or log.active->at_replacement().move->name == WHIRLWIND)
+		log.phaze = true;
+	log.active->at_replacement().move->effect = false;
+	if (log.active->at_replacement().move->basepower != 0)
+		log.move_damage = true;
 }
 
 
-void log_misc (Team &user, Pokemon &inactive, const std::string &line, const Map &map, bool &shed_skin) {
-	if (user.active->ability == END_ABILITY) {
-		if (user.active->nickname + "'s Anger Point raised its attack!" == line) {
-			user.active->ability = ANGER_POINT;
-			user.active->atk.stage = 6;
+void log_misc (Log &log, Map const &map, bool &shed_skin) {
+	if (log.active->at_replacement().ability == END_ABILITY) {
+		if (log.active->at_replacement().nickname + "'s Anger Point raised its attack!" == log.line) {
+			log.active->at_replacement().ability = ANGER_POINT;
+			log.active->at_replacement().atk.stage = 6;
 		}
-		else if (user.active->nickname + "'s Anticipation made it shudder!" == line)
-			user.active->ability = ANTICIPATION;
-		else if (user.active->nickname + "'s Cute Charm infatuated " + inactive.nickname == line) {
-			inactive.ability = CUTE_CHARM;
-			user.attract = true;
+		else if (log.active->at_replacement().nickname + "'s Anticipation made it shudder!" == log.line)
+			log.active->at_replacement().ability = ANTICIPATION;
+		else if (log.active->at_replacement().nickname + "'s Cute Charm infatuated " + log.inactive->at_replacement().nickname == log.line) {
+			log.active->at_replacement().ability = CUTE_CHARM;
+			log.inactive->attract = true;
 		}
-		else if (user.active->nickname + "'s Damp prevents explosions!" == line)
-			user.active->ability = DAMP;
-		else if (user.active->nickname + "'s Download raised its stats!" == line)
-			user.active->ability = DOWNLOAD;
-		else if (user.active->nickname + "'s Drizzle caused a storm!" == line)
-			user.active->ability = DRIZZLE;
-		else if (user.active->nickname + "'s Drought intensified the sun's rays!" == line)
-			user.active->ability = DROUGHT;
-		else if (user.active->nickname + " soaked up rain!" == line or user.active->nickname + "'s Dry Skin absorbed damage!" == line or user.active->nickname + "'s Dry Skin restored its health a little!" == line)	// Not sure which is correct
-			user.active->ability = DRY_SKIN;
-		else if (user.active->nickname + " was hurt by the sunlight!" == line)
+		else if (log.active->at_replacement().nickname + "'s Damp prevents explosions!" == log.line)
+			log.active->at_replacement().ability = DAMP;
+		else if (log.active->at_replacement().nickname + "'s Download raised its stats!" == log.line)
+			log.active->at_replacement().ability = DOWNLOAD;
+		else if (log.active->at_replacement().nickname + "'s Drizzle caused a storm!" == log.line)
+			log.active->at_replacement().ability = DRIZZLE;
+		else if (log.active->at_replacement().nickname + "'s Drought intensified the sun's rays!" == log.line)
+			log.active->at_replacement().ability = DROUGHT;
+		else if (log.active->at_replacement().nickname + " soaked up rain!" == log.line or log.active->at_replacement().nickname + "'s Dry Skin absorbed damage!" == log.line or log.active->at_replacement().nickname + "'s Dry Skin restored its health a little!" == log.line)	// Not sure which is correct
+			log.active->at_replacement().ability = DRY_SKIN;
+		else if (log.active->at_replacement().nickname + " was hurt by the sunlight!" == log.line)
 			{/* Dry Skin and Solar Power. Need a way to distinguish them. */}
-		else if (user.active->nickname + "'s Flame Body burned " + inactive.nickname == line)
-			user.active->ability = FLAME_BODY;
-		else if (user.active->nickname + "'s Flash Fire raised its fire power!" == line)
-			user.active->ability = FLASH_FIRE;
-		else if (line.find (user.active->nickname + "Forewarn alerted it to ") != std::string::npos)	// Fix to get the full information of Forewarn
-			user.active->ability = FOREWARN;
-		else if (line.find (user.active->nickname + " found " + inactive.nickname + "'s ") != std::string::npos)	// Fix to get full information of Frisk
-			user.active->ability = FRISK;
-		else if (user.active->nickname + "'s status was cured!" == line)
-			user.active->ability = HYDRATION;
-		else if (user.active->nickname + "absorbed the hail!" == line or user.active->nickname + "'s Ice Body restored its health a little!" == line)	// Not sure which is correct
-			user.active->ability = ICE_BODY;
-		else if (user.active->nickname + "'s Immunity prevents poisoning!" == line)
-			user.active->ability = IMMUNITY;
-		else if (user.active->nickname + "'s Insomnia kept it awake!" == line)
-			user.active->ability = INSOMNIA;
-		else if (user.active->nickname + "'s Intimidate cut " + inactive.nickname + "'s attack!" == line)
-			user.active->ability = INTIMIDATE;
-		else if (user.active->nickname + " makes ground moves miss with Levitate!" == line)
-			user.active->ability = LEVITATE;
-		else if (user.active->nickname + "'s Lightningrod drew the attack!" == line)
-			user.active->ability = LIGHTNINGROD;
-		else if (user.active->nickname + " has Mold Breaker!" == line)
-			user.active->ability = MOLD_BREAKER;
-		else if (user.active->nickname + "'s Motor Drive increased its speed!" == line)
-			user.active->ability = MOTOR_DRIVE;
-		else if (user.active->nickname + "'s Oblivious prevents attraction!" == line)
-			user.active->ability = OBLIVIOUS;
-		else if (user.active->nickname + "'s Poison Heal restored health!" == line)
-			user.active->ability = POISON_HEAL;
-		else if (user.active->nickname + " is exerting its pressure!" == line)
-			user.active->ability = PRESSURE;
-		else if (user.active->nickname + "'s Rain Dish restored its health a little!" == line)
-			user.active->ability = RAIN_DISH;
-		else if (user.active->nickname + "'s Sand Stream whipped up a sandstorm!" == line)
-			user.active->ability = SAND_STREAM;
-		else if (user.active->nickname + " shed its skin!" == line) {
-			user.active->ability = SHED_SKIN;
+		else if (log.active->at_replacement().nickname + "'s Flame Body burned " + log.inactive->at_replacement().nickname == log.line)
+			log.active->at_replacement().ability = FLAME_BODY;
+		else if (log.active->at_replacement().nickname + "'s Flash Fire raised its fire power!" == log.line)
+			log.active->at_replacement().ability = FLASH_FIRE;
+		else if (log.line.find (log.active->at_replacement().nickname + "Forewarn alerted it to ") != std::string::npos)	// Fix to get the full information of Forewarn
+			log.active->at_replacement().ability = FOREWARN;
+		else if (log.line.find (log.active->at_replacement().nickname + " found " + log.inactive->at_replacement().nickname + "'s ") != std::string::npos)	// Fix to get full information of Frisk
+			log.active->at_replacement().ability = FRISK;
+		else if (log.active->at_replacement().nickname + "'s status was cured!" == log.line)
+			log.active->at_replacement().ability = HYDRATION;
+		else if (log.active->at_replacement().nickname + "absorbed the hail!" == log.line or log.active->at_replacement().nickname + "'s Ice Body restored its health a little!" == log.line)	// Not sure which is correct
+			log.active->at_replacement().ability = ICE_BODY;
+		else if (log.active->at_replacement().nickname + "'s Immunity prevents poisoning!" == log.line)
+			log.active->at_replacement().ability = IMMUNITY;
+		else if (log.active->at_replacement().nickname + "'s Insomnia kept it awake!" == log.line)
+			log.active->at_replacement().ability = INSOMNIA;
+		else if (log.active->at_replacement().nickname + "'s Intimidate cut " + log.inactive->at_replacement().nickname + "'s attack!" == log.line)
+			log.active->at_replacement().ability = INTIMIDATE;
+		else if (log.active->at_replacement().nickname + " makes ground moves miss with Levitate!" == log.line)
+			log.active->at_replacement().ability = LEVITATE;
+		else if (log.active->at_replacement().nickname + "'s Lightningrod drew the attack!" == log.line)
+			log.active->at_replacement().ability = LIGHTNINGROD;
+		else if (log.active->at_replacement().nickname + " has Mold Breaker!" == log.line)
+			log.active->at_replacement().ability = MOLD_BREAKER;
+		else if (log.active->at_replacement().nickname + "'s Motor Drive increased its speed!" == log.line)
+			log.active->at_replacement().ability = MOTOR_DRIVE;
+		else if (log.active->at_replacement().nickname + "'s Oblivious prevents attraction!" == log.line)
+			log.active->at_replacement().ability = OBLIVIOUS;
+		else if (log.active->at_replacement().nickname + "'s Poison Heal restored health!" == log.line)
+			log.active->at_replacement().ability = POISON_HEAL;
+		else if (log.active->at_replacement().nickname + " is exerting its pressure!" == log.line)
+			log.active->at_replacement().ability = PRESSURE;
+		else if (log.active->at_replacement().nickname + "'s Rain Dish restored its health a little!" == log.line)
+			log.active->at_replacement().ability = RAIN_DISH;
+		else if (log.active->at_replacement().nickname + "'s Sand Stream whipped up a sandstorm!" == log.line)
+			log.active->at_replacement().ability = SAND_STREAM;
+		else if (log.active->at_replacement().nickname + " shed its skin!" == log.line) {
+			log.active->at_replacement().ability = SHED_SKIN;
 			shed_skin = true;
 		}
-		else if (user.active->nickname + " can't get going due to its Slow Start!" == line)
-			user.active->ability = SLOW_START;
-		else if (user.active->nickname + "'s Snow Warning whipped up a hailstorm!" == line or user.active->nickname + "'s Snow Warning whipped up a hailstorm! " == line)
-			user.active->ability = SNOW_WARNING;
-		else if (line.find (user.active->nickname + "'s Soundproof blocks") != std::string::npos)
-			user.active->ability = SOUNDPROOF;
-		else if (user.active->nickname + "'s Speed Boost raised its speed!" == line)
-			user.active->ability = SPEED_BOOST;
-		else if (user.active->nickname + " held on with its Sticky Hold!" == line)
-			user.active->ability = STICKY_HOLD;
-		else if (user.active->nickname + "'s Storm Drain drew the attack!" == line)
-			user.active->ability = STORM_DRAIN;
-		else if (user.active->nickname + " held Sturdy!" == line)
-			user.active->ability = STURDY;
-		else if (user.active->nickname + "'s Synchronize activated!" == line)
-			user.active->ability = SYNCHRONIZE;
-		else if (user.active->nickname + "'s Tangled Feet raised its evasion!" == line)
-			user.active->ability = TANGLED_FEET;
-		else if (line.find (user.active->nickname + " traced " + inactive.nickname + "'s ") == 0)
-			user.active->ability = TRACE;
-		else if (user.active->nickname + " is loafing around!" == line)
-			user.active->ability = TRUANT;
-		else if (user.active->nickname + " lost its burden!" == line)
-			user.active->ability = UNBURDEN;
-		else if (user.active->nickname + "'s Water Veil prevents burns!" == line)
-			user.active->ability = WATER_VEIL;
-		else if (user.active->nickname + " avoided damage with Wonder Guard!" == line)
-			user.active->ability = WONDER_GUARD;
+		else if (log.active->at_replacement().nickname + " can't get going due to its Slow Start!" == log.line)
+			log.active->at_replacement().ability = SLOW_START;
+		else if (log.active->at_replacement().nickname + "'s Snow Warning whipped up a hailstorm!" == log.line or log.active->at_replacement().nickname + "'s Snow Warning whipped up a hailstorm! " == log.line)
+			log.active->at_replacement().ability = SNOW_WARNING;
+		else if (log.line.find (log.active->at_replacement().nickname + "'s Soundproof blocks") != std::string::npos)
+			log.active->at_replacement().ability = SOUNDPROOF;
+		else if (log.active->at_replacement().nickname + "'s Speed Boost raised its speed!" == log.line)
+			log.active->at_replacement().ability = SPEED_BOOST;
+		else if (log.active->at_replacement().nickname + " held on with its Sticky Hold!" == log.line)
+			log.active->at_replacement().ability = STICKY_HOLD;
+		else if (log.active->at_replacement().nickname + "'s Storm Drain drew the attack!" == log.line)
+			log.active->at_replacement().ability = STORM_DRAIN;
+		else if (log.active->at_replacement().nickname + " held Sturdy!" == log.line)
+			log.active->at_replacement().ability = STURDY;
+		else if (log.active->at_replacement().nickname + "'s Synchronize activated!" == log.line)
+			log.active->at_replacement().ability = SYNCHRONIZE;
+		else if (log.active->at_replacement().nickname + "'s Tangled Feet raised its evasion!" == log.line)
+			log.active->at_replacement().ability = TANGLED_FEET;
+		else if (log.line.find (log.active->at_replacement().nickname + " traced " + log.inactive->at_replacement().nickname + "'s ") == 0)
+			log.active->at_replacement().ability = TRACE;
+		else if (log.active->at_replacement().nickname + " is loafing around!" == log.line)
+			log.active->at_replacement().ability = TRUANT;
+		else if (log.active->at_replacement().nickname + " lost its burden!" == log.line)
+			log.active->at_replacement().ability = UNBURDEN;
+		else if (log.active->at_replacement().nickname + "'s Water Veil prevents burns!" == log.line)
+			log.active->at_replacement().ability = WATER_VEIL;
+		else if (log.active->at_replacement().nickname + " avoided damage with Wonder Guard!" == log.line)
+			log.active->at_replacement().ability = WONDER_GUARD;
 	}
-	if (inactive.ability == END_ABILITY) {
-		if (user.active->nickname + " was hurt by  " + inactive.nickname + "'s Aftermath!" == line)
-			inactive.ability = AFTERMATH;
-		else if (user.active->nickname + "is tormented by the foe " +inactive.nickname + "'s Bad Dreams!" == line)
-			inactive.ability = BAD_DREAMS;
-		else if (user.active->nickname + " sucked up liquid ooze!" == line)
-			inactive.ability = LIQUID_OOZE;
-		else if (user.active->nickname + " was hurt by " + inactive.nickname + "'s Rough Skin!" == line)
-			inactive.ability = ROUGH_SKIN;
-		std::string search = user.active->nickname + " traced " + inactive.nickname + "'s ";
-		if (line.find (search) != std::string::npos) {
+	if (log.inactive->at_replacement().ability == END_ABILITY) {
+		if (log.active->at_replacement().nickname + " was hurt by  " + log.inactive->at_replacement().nickname + "'s Aftermath!" == log.line)
+			log.inactive->at_replacement().ability = AFTERMATH;
+		else if (log.active->at_replacement().nickname + "is tormented by the foe " +log.inactive->at_replacement().nickname + "'s Bad Dreams!" == log.line)
+			log.inactive->at_replacement().ability = BAD_DREAMS;
+		else if (log.active->at_replacement().nickname + " sucked up liquid ooze!" == log.line)
+			log.inactive->at_replacement().ability = LIQUID_OOZE;
+		else if (log.active->at_replacement().nickname + " was hurt by " + log.inactive->at_replacement().nickname + "'s Rough Skin!" == log.line)
+			log.inactive->at_replacement().ability = ROUGH_SKIN;
+		std::string search = log.active->at_replacement().nickname + " traced " + log.inactive->at_replacement().nickname + "'s ";
+		if (log.line.find (search) != std::string::npos) {
 			size_t n = 1;
-			if (line.find(".\r") != std::string::npos)
+			if (log.line.find(".\r") != std::string::npos)
 				n = 2;
-			inactive.ability = map.ability.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+			log.inactive->at_replacement().ability = map.ability.find (log.line.substr (search.length(), log.line.length() - search.length() - n))->second;
 		}
 	}
-	if (user.active->item == END_ITEM) {
-		if (user.active->nickname + "'s Black Sludge restored a little health!" == line)
-			user.active->item = BLACK_SLUDGE;
-		else if (user.active->nickname + "'s leftovers restored its health a little!" == line)
-			user.active->item = LEFTOVERS;
-		else if (user.active->nickname + "'s Quick Claw activated!" == line)
-			user.active->item = QUICK_CLAW;
-		else if (user.active->nickname + " became fully charged due to its Power Herb!" == line)
-			user.active->item = NO_ITEM;
+	if (log.active->at_replacement().item == END_ITEM) {
+		if (log.active->at_replacement().nickname + "'s Black Sludge restored a little health!" == log.line)
+			log.active->at_replacement().item = BLACK_SLUDGE;
+		else if (log.active->at_replacement().nickname + "'s leftovers restored its health a little!" == log.line)
+			log.active->at_replacement().item = LEFTOVERS;
+		else if (log.active->at_replacement().nickname + "'s Quick Claw activated!" == log.line)
+			log.active->at_replacement().item = QUICK_CLAW;
+		else if (log.active->at_replacement().nickname + " became fully charged due to its Power Herb!" == log.line)
+			log.active->at_replacement().item = NO_ITEM;
 	}
 }
 
@@ -440,6 +426,44 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 	std::cout << out;
 	output (last, out);
 	std::cout << out;
+}
+
+bool Log::getline () {
+	newline1 = newline2 + 1;
+	while (newline1 < input.length() and input.at (newline1) == '\n')
+		++newline1;
+	newline2 = input.find ('\n', newline1 + 1);
+	if (newline2 == std::string::npos)
+		return false;
+	else {
+		line = input.substr (newline1, newline2 - newline1);
+		return true;
+	}
+}
+
+bool Log::search_is_first () {
+	if (line.substr (0, search.length()) == search)
+		return true;
+	return false;
+}
+
+void initialize_turn (Team &ai, Team &foe, Log &log) {
+	initialize_team (ai);
+	initialize_team (foe);
+	log.phaze = false;
+	log.move_damage = false;
+	
+	log.active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
+	log.inactive = NULL;
+}
+
+void initialize_team (Team &team) {
+	for (std::vector<Pokemon>::iterator active = team.active.set.begin(); active != team.active.set.end(); ++active)
+		active->move.index = 0;
+	team.ch = false;
+	team.miss = false;
+	team.replacement = team.active.index;
+	team.replacing = false;
 }
 
 }

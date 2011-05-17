@@ -40,9 +40,7 @@ int main (int argc, char* argv[]) {
 	int detailed [END_SPECIES][7] = {{ 0 }};
 	initialize (ai, foe, map, detailed);
 	
-	Team* first;
-	Team* last;
-	analyze_turn (ai, foe, first, last, weather, map);		// Turn 0, sending out initial Pokemon
+	analyze_turn (ai, foe, weather, map);		// Turn 0, sending out initial Pokemon
 	
 	bool won = false;
 	while (!won) {
@@ -52,7 +50,7 @@ int main (int argc, char* argv[]) {
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
 
-		won = analyze_turn (ai, foe, first, last, weather, map);
+		won = analyze_turn (ai, foe, weather, map);
 	}
 	return 0;
 }

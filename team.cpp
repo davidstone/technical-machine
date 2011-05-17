@@ -106,8 +106,8 @@ Team::Team (bool isme) :
 
 	replacement (0),
 	size (6),
-	me (isme)
-	{}
+	me (isme) {
+}
 
 // Warning: Almost everything you see here is a hack.
 
