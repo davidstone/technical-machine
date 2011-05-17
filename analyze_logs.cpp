@@ -63,15 +63,8 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 		size_t found = log.line.find (log.search);
 		if (found != std::string::npos) {
 			log.search = ai.player + " sent out ";
-			if (log.search_is_first()) {
+			if (log.search_is_first())
 				log_pokemon (ai, foe, weather, map, log);
-				log.active = &ai;
-				log.inactive = &foe;
-				if (log.first == NULL) {
-					log.first = &ai;
-					log.last = &foe;
-				}
-			}
 			else {
 				if (foe.player == "") {
 					foe.player = log.line.substr (0, found);
@@ -80,12 +73,6 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 				}
 				log.search = foe.player + " sent out ";
 				log_pokemon (foe, ai, weather, map, log);
-				log.active = &foe;
-				log.inactive = &ai;
-				if (log.first == NULL) {
-					log.first = &foe;
-					log.last = &ai;
-				}
 			}
 		}
 		else {
@@ -226,6 +213,12 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 				++team.active->move.index;
 		}
 		team.active->move.index += team.replacement;
+	}
+	log.active = &team;
+	log.inactive = &target;
+	if (log.first == NULL) {
+		log.first = &team;
+		log.last = &target;
 	}
 }
 
