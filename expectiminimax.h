@@ -21,13 +21,13 @@
 namespace technicalmachine {
 
 moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, long &score);
-long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first = false);
+long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first_turn = false);
 long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, std::map<long, State> &transposition_table);
 long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table);
 long tree4 (const Team &ai, const Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table);
 long tree5 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
 long tree6 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
-long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint);
+long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint, bool first_turn);
 long fainted (Team ai, Team foe, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
 void deorder (Team &first, Team &last, Team* &ai, Team* &foe);
 

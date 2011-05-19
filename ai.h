@@ -26,17 +26,18 @@ namespace technicalmachine {
 void initialize (Team &ai, Team &foe, Map const &map, int detailed [][7]) {
 	detailed_stats (map, detailed);
 
-	ai.player = "Technical Machine";
-	std::string ai_file;
+	std::string ai_team_file;
 	std::string line;
 	std::ifstream settings ("settings.txt");
 	for (getline (settings, line); !settings.eof(); getline (settings, line)) {
 		size_t found = line.find ('\t');
-		if (line.substr (0, found) == "team")
-			ai_file = line.substr (found + 1);
+		if (line.substr (0, found) == "username")
+			ai.player = line.substr (found + 1);
+		else if (line.substr (0, found) == "team")
+			ai_team_file = line.substr (found + 1);
 	}
 	
-	loadteam (ai, "teams/" + ai_file, map, detailed);
+	loadteam (ai, "teams/" + ai_team_file, map, detailed);
 
 	loadteam (foe, "", map, detailed);
 }

@@ -107,34 +107,22 @@ class Team {
 		
 		unsigned char size;			// How big is the team?
 		
-		const bool me;				// Is this my team?
+		bool const me;				// Is this my team?
 	
-		bool operator== (const Team &other) const {
-			if (this->pokemon.set.size() != other.pokemon.set.size())
-				return false;
-			for (size_t n = 0; n != this->pokemon.set.size(); ++n) {
-				if (this->pokemon.set [n] != other.pokemon.set [n])
-					return false;
-			}
-			return this->pokemon->name == other.pokemon->name and this->vanish == other.vanish and this->bide == other.bide and this->confused == other.confused and this->embargo == other.embargo and this->encore == other.encore and this->heal_block == other.heal_block and this->magnet_rise == other.magnet_rise and this->partial_trap == other.partial_trap and this->perish_song == other.perish_song and this->rampage == other.rampage and this->slow_start == other.slow_start and this->stockpile == other.stockpile and this->taunt == other.taunt and this->toxic == other.toxic and this->uproar == other.yawn and this->aqua_ring == other.aqua_ring and this->attract == other.attract and this->charge == other.charge and this->curse == other.curse and this->defense_curl == other.defense_curl and this->destiny_bond == other.destiny_bond and this->ff == other.ff and this->focus_energy == other.focus_energy and this->identified == other.identified and this->imprison == other.imprison and this->ingrain == other.ingrain and this->leech_seed == other.leech_seed and this->loaf == other.loaf and this->lock_on == other.lock_on and this->minimize == other.minimize and this->mud_sport == other.mud_sport and this->nightmare == other.nightmare and this->torment == other.torment and this->trapped == other.trapped and this->water_sport == other.water_sport and this->accuracy == other.accuracy and this->evasion == other.evasion and this->counter == other.counter and this->light_screen == other.light_screen and this->lucky_chant == other.lucky_chant and this->mist == other.mist and this->reflect == other.reflect and this->safeguard == other.safeguard and this->tailwind == other.tailwind and this->wish == other.wish and this->spikes == other.spikes and this->toxic_spikes == other.toxic_spikes and this->stealth_rock == other.stealth_rock and this->me == other.me;
-		}
+		bool operator== (Team const &other) const;
 		Team (bool isme);
-		Pokemon& at_replacement () {
-			return pokemon.set [replacement];
-		}
-		Pokemon const & at_replacement () const {
-			return pokemon.set [replacement];
-		}
+		Pokemon& at_replacement ();
+		Pokemon const & at_replacement () const;
 };
 
-std::string search (std::ifstream &file, std::string &output2, const std::string &data);
-void loadteam (Team &team, const std::string &name, const Map &map, int detailed [][7]);
+std::string search (std::ifstream &file, std::string &output2, std::string const &data);
+void loadteam (Team &team, std::string const &name, Map const &map, int detailed [][7]);
 void loadpokemon (Team &team, Pokemon &member);
-void pokelabteam (Team &team, const std::string &name, const Map &map);
-void pokelabpokemon (Team& team, std::ifstream &file, const Map &map);
-void poteam (Team &team, const std::string &name);
-void popokemon (Team &team, std::ifstream &file, const species pokemon_converter [], const abilities ability_converter [], const items item_converter [], const natures nature_converter [], const moves_list move_converter []);
-unsigned poconverter (const std::string &data, const std::string &end, const std::string &line);
+void pokelabteam (Team &team, std::string const &name, Map const &map);
+void pokelabpokemon (Team& team, std::ifstream &file, Map const &map);
+void poteam (Team &team, std::string const &name);
+void popokemon (Team &team, std::ifstream &file, species const pokemon_converter [], abilities const ability_converter [], items const item_converter [], natures const nature_converter [], moves_list const move_converter []);
+unsigned poconverter (std::string const &data, std::string const &end, std::string const &line);
 void output (Team const &team, std::string &output);
 
 

@@ -43,23 +43,19 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 	if (log.input == "")
 		won = true;
 	else {
-		bool ai_replacing;
 		initialize_turn (ai, foe, log);
 		while (log.getline()) {
-			ai_replacing = false;
 			if (log.line == "===============") {
 				do_turn (*log.first, *log.last, weather);
 				initialize_turn (ai, foe, log);
-				ai_replacing = true;
 			}
 			else
 				analyze_line (ai, foe, weather, map, log);
 		}
-		if (ai_replacing) {
-			ai.replacing = true;
-			foe.replacing = false;
+		if (ai.pokemon->hp.stat == 0)
+			do_turn (ai, foe, weather);
+		else if (ai.pokemon->fainted)
 			do_turn (*log.first, *log.last, weather);
-		}
 	}
 	return won;
 }
@@ -129,10 +125,24 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 				log.active->miss = true;
 			else if (log.line == "A critical hit!")
 				log.active->ch = true;
-			else if (log.line == log.active->at_replacement().nickname + " flinched!")
-				log.active->flinch = true;
 			else if (log.line == log.active->at_replacement().nickname + " fainted!")
 				log.active->at_replacement().fainted = true;
+			else if (log.line == log.active->at_replacement().nickname + " is paralysed! It can't move!")
+				log.active->fully_paralyzed = true;
+			else if (log.line == "It hurt itself in confusion!")
+				log.active->hitself = true;
+			else if (log.line == log.active->at_replacement().nickname + " is paralysed! It may be unable to move!"
+					or log.line == log.active->at_replacement().nickname + " was burned!"
+					or log.line == log.active->at_replacement().nickname + " became confused!"
+					or log.line == log.active->at_replacement().nickname + " was frozen solid!"
+					or log.line == log.active->at_replacement().nickname + " was poisoned!"
+					or log.line == log.active->at_replacement().nickname + " was badly poisoned!"
+					or log.line == log.active->at_replacement().nickname + " flinched!"
+					or log.line.find (" was sharply raised!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos
+					or log.line.find (" was raised!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos
+					or log.line.find (" was harshly lowered!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos
+					or log.line.find (" was lowered!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos)
+				log.inactive->at_replacement().move->effect = 1;
 			else {
 				log.search = log.active->at_replacement().nickname + " used ";
 				if (log.search_is_first())
@@ -255,7 +265,7 @@ void log_move (Log &log, Weather &weather, Map const &map) {
 	}
 	if (log.active->at_replacement().move->name == ROAR or log.active->at_replacement().move->name == WHIRLWIND)
 		log.phaze = true;
-	log.active->at_replacement().move->effect = false;
+	log.active->at_replacement().move->effect = 0;
 	if (log.active->at_replacement().move->basepower != 0)
 		log.move_damage = true;
 }
@@ -379,12 +389,13 @@ void log_misc (Log &log, Map const &map, bool &shed_skin) {
 		else if (log.active->at_replacement().nickname + "'s Quick Claw activated!" == log.line)
 			log.active->at_replacement().item = QUICK_CLAW;
 		else if (log.active->at_replacement().nickname + " became fully charged due to its Power Herb!" == log.line)
-			log.active->at_replacement().item = NO_ITEM;
+			log.active->at_replacement().item = POWER_HERB;
 	}
 }
 
 void do_turn (Team &first, Team &last, Weather &weather) {
 	if (first.replacing or last.replacing) {
+		normalize_hp (first, last);
 		if (first.replacing) {
 			switchpokemon (first, last, weather);
 			first.moved = false;
@@ -397,10 +408,11 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 		}
 	}
 	else {
+		// Anything with recoil will mess this up
 		usemove (first, last, weather, last.damage);
-		normalize_hp (first, last);
+		normalize_hp_team (last);
 		usemove (last, first, weather, first.damage);
-		normalize_hp (first, last);
+		normalize_hp_team (first);
 
 		endofturn (first, last, weather);
 		normalize_hp (first, last);
@@ -411,6 +423,14 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 	output (last, out);
 	std::cout << out;
 }
+
+/*void end_of_turn_messages () {
+	"Reflect wore off!"
+	"Light Screen wore off!"
+	player + "'s team's mist wore off!"
+	player + "'s team is no longer protected by safeguard!"
+}
+*/
 
 bool Log::getline () {
 	newline1 = newline2 + 1;
@@ -445,6 +465,8 @@ void initialize_team (Team &team) {
 	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon)
 		pokemon->move.index = 0;
 	team.ch = false;
+	team.fully_paralyzed = false;
+	team.hitself = false;
 	team.miss = false;
 	team.replacement = team.pokemon.index;
 	team.replacing = false;
@@ -456,6 +478,7 @@ void normalize_hp (Team &first, Team &last) {
 }
 
 void normalize_hp_team (Team &team) {
+	// This is to correct for rounding issues caused by only seeing the foe's HP to the nearest 48th.
 	if (team.pokemon->fainted)
 		team.pokemon->hp.stat = 0;
 	else if (team.pokemon->hp.stat == 0)

@@ -53,7 +53,7 @@ moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int dept
 }
 
 
-long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first) {
+long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first_turn) {
 
 	/* Working from the inside loop out:
 
@@ -67,7 +67,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 	
 	For a similar reason, I later set beta to VICTORY + 1.
 	
-	This change also has the advantage of making sure a move is always put into best_move without any additional logic, like pre-filling it with some result.
+	This change also has the advantage of making sure a move is always put into best_move without any additional logic, such as pre-filling it with some result.
 	*/
 	long alpha = -VICTORY - 1;
 	
@@ -78,11 +78,11 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 
 	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0) {
 		bool faint = true;
-		alpha = replace (ai, foe, weather, depth, sv, best_move, transposition_table, faint);
+		alpha = replace (ai, foe, weather, depth, sv, best_move, transposition_table, faint, first_turn);
 	}
 	else if (ai.pass or foe.pass) {
 		bool faint = false;
-		alpha = replace (ai, foe, weather, depth, sv, best_move, transposition_table, faint);
+		alpha = replace (ai, foe, weather, depth, sv, best_move, transposition_table, faint, first_turn);
 	}
 	
 	// This section is for selecting a move, including switches that aren't replacing a fainted Pokemon.
@@ -92,14 +92,14 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 			--depth;
 		
 //		std::string indent = "";
-//		if (!first)
+//		if (!first_turn)
 //			indent += "\t\t";
 		// Determine which moves can be legally selected
 		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index) {
 			blockselection (ai, foe, weather);
 			if (ai.pokemon->move->selectable) {
 //				std::cout << indent + "Evaluating ";
-				if (first) {
+				if (first_turn) {
 					std::cout << "Evaluating ";
 					if (ai.pokemon->move->is_switch())
 						std::cout << "switching to " + pokemon_name [ai.pokemon.set [ai.pokemon->move->name - SWITCH0].name] + "\n";
@@ -111,7 +111,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 					blockselection (foe, ai, weather);
 					if (foe.pokemon->move->selectable) {
 //						std::cout << indent + "\tEvaluating the foe";
-						if (first) {
+						if (first_turn) {
 							std::cout << "\tEvaluating the foe";
 							if (foe.pokemon->move->is_switch())
 								std::cout << " switching to " + pokemon_name [foe.pokemon.set [foe.pokemon->move->name - SWITCH0].name] + "\n";
@@ -120,7 +120,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 						}
 						long score = tree2 (ai, foe, weather, depth, sv, transposition_table);
 //						std::cout << indent + "\tEstimated score is " << score << '\n';
-						if (first)
+						if (first_turn)
 							std::cout << "\tEstimated score is " << score << '\n';
 						if (beta > score)
 							beta = score;
@@ -133,7 +133,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 					alpha = beta;
 					best_move = ai.pokemon->move->name;
 //					std::cout << indent + "Estimated score is " << alpha << '\n';
-					if (first)
+					if (first_turn)
 						std::cout << "Estimated score is " << alpha << '\n';
 				}
 				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
@@ -358,7 +358,7 @@ long tree6 (Team first, Team last, Weather weather, int depth, const score_varia
 	return score;
 }
 
-long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint) {
+long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint, bool first_turn) {
 
 	long (*function) (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
 	if (faint)
@@ -371,6 +371,8 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	long alpha = -VICTORY - 1;
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
+			if (first_turn)
+				std::cout << "Evaluating switching to " + pokemon_name [ai.pokemon.set [ai.replacement].name] + "\n";
 			long beta = VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
@@ -387,6 +389,8 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 			if (beta > alpha) {
 				alpha = beta;
 				best_move = static_cast<moves_list> (SWITCH0 + ai.replacement);
+				if (first_turn)
+					std::cout << "Estimated score is " << alpha << '\n';
 			}
 			if ((ai.pokemon->hp.stat != 0 and faint) or (!ai.pass and !faint))
 				break;

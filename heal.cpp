@@ -24,6 +24,8 @@ void heal (Pokemon &member, int denominator, int numerator) {
 			--member.hp.stat;
 		if (member.hp.stat > member.hp.max)
 			member.hp.stat = member.hp.max;
+		if (member.hp.stat < 0)
+			member.hp.stat = 0;
 	}
 }
 
