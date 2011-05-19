@@ -64,8 +64,10 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 	}
 	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it) {
 		it->level = 100;
-		it->ability = static_cast<abilities> (detailed [it->name] [0]);
-		it->item = static_cast<items> (detailed [it->name] [1]);
+		if (it->ability == END_ABILITY)
+			it->ability = static_cast<abilities> (detailed [it->name] [0]);
+		if (it->item == END_ITEM)
+			it->item = static_cast<items> (detailed [it->name] [1]);
 		it->nature = static_cast<natures> (detailed [it->name] [2]);
 		it->gender = GENDERLESS;
 		predict_move (*it, detailed);
