@@ -37,7 +37,8 @@ Log::Log () :
 bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	Log log;
-	getline (std::cin, log.input, '~');		// Need to find a better way to signifiy end-of-turn. This works for now.
+	// Need to find a better way to signifiy end-of-turn. Currently the ~ with getline seems to remove the final line of a log, meaning I need to hit enter and then enter the ~.
+	getline (std::cin, log.input, '~');
 	std::cout << "======================\nAnalyzing...\n";
 	bool won = false;
 	if (log.input == "")
@@ -52,8 +53,10 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 			else
 				analyze_line (ai, foe, weather, map, log);
 		}
-		if (ai.pokemon->hp.stat == 0)
+		if (ai.pokemon->hp.stat == 0) {
+			ai.replacing = true;
 			do_turn (ai, foe, weather);
+		}
 		else if (ai.pokemon->fainted)
 			do_turn (*log.first, *log.last, weather);
 	}
@@ -64,6 +67,9 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 	if (log.line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
 		std::cout << log.line << '\n';
 		log.search = "Begin turn #";
+		if (log.search_is_first())
+			return;
+		log.search = "***";
 		if (log.search_is_first())
 			return;
 		log.search = " sent out ";
@@ -219,9 +225,7 @@ void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, L
 		member.nature = HARDY;
 		team.pokemon.set.push_back (member);
 		team.replacement = team.pokemon.set.size() - 1;
-		
-		for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon)
-			loadpokemon (team, *pokemon);
+		loadpokemon (team, team.pokemon.set.back());
 	}
 	if (log.phaze) {
 		target.at_replacement().move->variable.index = 0;
@@ -394,13 +398,11 @@ void log_misc (Log &log, Map const &map, bool &shed_skin) {
 }
 
 void do_turn (Team &first, Team &last, Weather &weather) {
-	if (first.replacing or last.replacing) {
+	if (first.replacing) {
 		normalize_hp (first, last);
-		if (first.replacing) {
-			switchpokemon (first, last, weather);
-			first.moved = false;
-			normalize_hp (first, last);
-		}
+		switchpokemon (first, last, weather);
+		first.moved = false;
+		normalize_hp (first, last);
 		if (last.replacing) {
 			switchpokemon (last, first, weather);
 			last.moved = false;
@@ -416,6 +418,18 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 
 		endofturn (first, last, weather);
 		normalize_hp (first, last);
+		Team* ai;
+		Team* foe;
+		if (first.me) {
+			ai = &first;
+			foe = &last;
+		}
+		else {
+			foe = &first;
+			ai = &last;
+		}
+		while (foe->pokemon->fainted)
+			usemove (*foe, *ai, weather, first.damage);
 	}
 	std::string out;
 	output (first, out);

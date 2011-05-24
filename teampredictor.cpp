@@ -57,7 +57,7 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 		}
 		Pokemon member (name);
 		team.pokemon.set.push_back (member);
-		if (team.pokemon.set.size() == 6)
+		if (team.pokemon.set.size() == team.size)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [team.pokemon.set.back().name] [n];

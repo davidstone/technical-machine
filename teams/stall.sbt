@@ -121,27 +121,27 @@
 </stats>
 </pokemon>
 
-<pokemon species="Spiritomb">
-<nickname>Dls40sjsd</nickname>
+<pokemon species="Rotom-w">
+<nickname>DkxndS13</nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>Male</gender>
-<nature>Impish</nature>
+<gender>No Gender</gender>
+<nature>Calm</nature>
 <item>Leftovers</item>
-<ability>Pressure</ability>
+<ability>Levitate</ability>
 <moveset>
-	<move pp-up="3">Calm Mind</move>
-	<move pp-up="3">Dark Pulse</move>
-	<move pp-up="3">Psychic</move>
-	<move pp-up="3">Rest</move>
+	<move pp-up="3">Thunderbolt</move>
+	<move pp-up="3">Shadow Ball</move>
+	<move pp-up="3">Reflect</move>
+	<move pp-up="3">Hydro Pump</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
 	<stat name="Atk" iv="31" ev="0" />
-	<stat name="Def" iv="31" ev="10" />
+	<stat name="Def" iv="31" ev="136" />
 	<stat name="Spd" iv="31" ev="0" />
 	<stat name="SpAtk" iv="31" ev="0" />
-	<stat name="SpDef" iv="31" ev="156" />
+	<stat name="SpDef" iv="31" ev="120" />
 </stats>
 </pokemon>
 
