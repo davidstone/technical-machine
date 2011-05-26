@@ -23,7 +23,7 @@
 namespace technicalmachine {
 
 void reset_variables (Team &team) {
-	//  Reset all variables that switches reset.
+	// Reset all variables that switches reset.
 
 	if (!team.pass) {
 		team.aqua_ring = false;

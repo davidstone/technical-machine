@@ -33,7 +33,7 @@ struct Data {
 	std::vector<Fl_Input*> input;
 	Fl_Multiline_Output* output;
 	Map map;
- 	int detailed [END_SPECIES][7];
+	int detailed [END_SPECIES][7];
 };
 
 void function (Fl_Widget* w, void* data) {
@@ -61,7 +61,7 @@ void function (Fl_Widget* w, void* data) {
 		predict (d->detailed, team, using_lead);
 		std::string output = "";
 		for (std::vector<Pokemon>::const_iterator active = team.active.set.begin(); active != team.active.set.end(); ++active) {
-			output += pokemon_name [active->name] + " @ " + item_name  [active->item];
+			output += pokemon_name [active->name] + " @ " + item_name [active->item];
 			output += "\nAbility: " + ability_name [active->ability];
 			for (std::vector<Move>::const_iterator move = active->move.set.begin(); move->name != STRUGGLE; ++move)
 				output += "\n\t- " + move_name [move->name];

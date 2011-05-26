@@ -188,7 +188,7 @@ void endofturn6 (Team &target, Weather const &weather) {		// Doom Desire / Futur
 	decrement (target.counter);*/
 }
 
-void endofturn7 (Team &team)  {
+void endofturn7 (Team &team) {
 	if (team.perish_song == 1)
 		team.pokemon->hp.stat = 0;
 	decrement (team.perish_song);

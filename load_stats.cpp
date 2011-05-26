@@ -29,10 +29,10 @@ void team_stats (std::vector<double> const &overall, double total, double multip
 	for (unsigned n = 0; n != END_SPECIES; ++n) {
 		for (unsigned m = 0; m != END_SPECIES; ++m) {
 			if (((n == DEOXYS_A or n == DEOXYS_D or n == DEOXYS_M or n == DEOXYS_S) and (m == DEOXYS_A or m == DEOXYS_D or m == DEOXYS_M or m == DEOXYS_S))
-			 or ((n == GIRATINA_A or n == GIRATINA_O) and (m == GIRATINA_A or m == GIRATINA_O))
-			 or ((n == ROTOM_C or n == ROTOM_F or n == ROTOM_H or n == ROTOM_S or n == ROTOM_W) and (m == ROTOM_C or m == ROTOM_F or m == ROTOM_H or m == ROTOM_S or m == ROTOM_W))
-			 or ((n == SHAYMIN_L or n == SHAYMIN_S) and (m == SHAYMIN_L or m == SHAYMIN_S))
-			 or ((n == WORMADAM_P or n == WORMADAM_S or n == WORMADAM_T) and (m == WORMADAM_P or m == WORMADAM_S or m == WORMADAM_T)))
+					or ((n == GIRATINA_A or n == GIRATINA_O) and (m == GIRATINA_A or m == GIRATINA_O))
+					or ((n == ROTOM_C or n == ROTOM_F or n == ROTOM_H or n == ROTOM_S or n == ROTOM_W) and (m == ROTOM_C or m == ROTOM_F or m == ROTOM_H or m == ROTOM_S or m == ROTOM_W))
+					or ((n == SHAYMIN_L or n == SHAYMIN_S) and (m == SHAYMIN_L or m == SHAYMIN_S))
+					or ((n == WORMADAM_P or n == WORMADAM_S or n == WORMADAM_T) and (m == WORMADAM_P or m == WORMADAM_S or m == WORMADAM_T)))
 				multiplier [n][m] = 0;	// Species clause
 			else
 				multiplier [n][m] = -1;		// Replaced with other value later

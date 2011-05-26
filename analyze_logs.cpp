@@ -164,7 +164,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 	}
 }
 
-void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, Log &log) {
+void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Log &log) {
 	std::string search2 = " (lvl ";
 	size_t found2 = log.line.find (search2);
 	std::string nickname = log.line.substr (log.search.length(), found2 - log.search.length());
@@ -371,7 +371,7 @@ void log_misc (Log &log, Map const &map, bool &shed_skin) {
 			log.active->at_replacement().ability = WONDER_GUARD;
 	}
 	if (log.inactive->at_replacement().ability == END_ABILITY) {
-		if (log.active->at_replacement().nickname + " was hurt by  " + log.inactive->at_replacement().nickname + "'s Aftermath!" == log.line)
+		if (log.active->at_replacement().nickname + " was hurt by " + log.inactive->at_replacement().nickname + "'s Aftermath!" == log.line)
 			log.inactive->at_replacement().ability = AFTERMATH;
 		else if (log.active->at_replacement().nickname + "is tormented by the foe " +log.inactive->at_replacement().nickname + "'s Bad Dreams!" == log.line)
 			log.inactive->at_replacement().ability = BAD_DREAMS;

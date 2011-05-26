@@ -49,7 +49,7 @@ void Move::set_priority () {
 		priority = 4;
 	else if (name == DETECT or name == ENDURE or name == FOLLOW_ME or name == PROTECT)
 		priority = 3;
-	else if (name ==  FEINT)
+	else if (name == FEINT)
 		priority = 2;
 	else if (name == AQUA_JET or name == BIDE or name == BULLET_PUNCH or name == EXTREMESPEED or name == FAKE_OUT or name == ICE_SHARD or name == MACH_PUNCH or name == QUICK_ATTACK or name == SHADOW_SNEAK or name == SUCKER_PUNCH or name == VACUUM_WAVE)
 		priority = 1;
@@ -61,7 +61,7 @@ void Move::set_priority () {
 		priority = -3;
 	else if (name == COUNTER or name == MIRROR_COAT)
 		priority = -4;
-	else if (name == ROAR  or name == WHIRLWIND)
+	else if (name == ROAR or name == WHIRLWIND)
 		priority = -5;
 	else if (name == TRICK_ROOM)
 		priority = -6;
@@ -128,7 +128,7 @@ int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
 		lower_pp (user, *target.pokemon);
 //		if (ASSIST == user.pokemon->move->name or COPYCAT == user.pokemon->move->name or ME_FIRST == user.pokemon->move->name or METRONOME_MOVE == user.pokemon->move->name or MIRROR_MOVE == user.pokemon->move->name or SLEEP_TALK == user.pokemon->move->name)
 //			usemove2 (user, target, move2, weather);		// ???
-//		 (NATURE_POWER == user.pokemon->move->name)
+//		if (NATURE_POWER == user.pokemon->move->name)
 //		else
 		if (!user.miss)
 			damage = usemove2 (user, target, weather, log_damage);
@@ -688,8 +688,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		if (target.partial_trap == 0)
 			target.partial_trap = *user.pokemon->move->variable;
 	}
-	 else if ((CONFUSE_RAY == user.pokemon->move->name or SUPERSONIC == user.pokemon->move->name or SWEET_KISS == user.pokemon->move->name or TEETER_DANCE == user.pokemon->move->name) and target.pokemon->ability != OWN_TEMPO) {
-	 	if (target.confused == 0)
+	else if ((CONFUSE_RAY == user.pokemon->move->name or SUPERSONIC == user.pokemon->move->name or SWEET_KISS == user.pokemon->move->name or TEETER_DANCE == user.pokemon->move->name) and target.pokemon->ability != OWN_TEMPO) {
+		if (target.confused == 0)
 			target.confused = *user.pokemon->move->variable;
 	}
 //	else if (DARK_VOID == user.pokemon->move->name or GRASSWHISTLE == user.pokemon->move->name or HYPNOSIS == user.pokemon->move->name or LOVELY_KISS == user.pokemon->move->name or SING == user.pokemon->move->name or SLEEP_POWDER == user.pokemon->move->name or SPORE == user.pokemon->move->name)

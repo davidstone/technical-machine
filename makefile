@@ -8,7 +8,7 @@ analogobjects = analyze_logs_main.o ability.o analyze_logs.o damage.o move.o pok
 
 analogguiobjects = analyze_logs_gui.o ability.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
-warnings = -Wall -Wextra -pedantic -Wno-unused  -Wformat=2
+warnings = -Wall -Wextra -pedantic -Wno-unused -Wformat=2
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
 experimental = -fno-rtti
 

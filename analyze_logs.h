@@ -44,7 +44,7 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map);
 
 void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &log);
 
-void log_pokemon  (Team &team, Team &target, Weather &weather, Map const &map, Log &log);
+void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Log &log);
 
 void log_move (Log &log, Weather &weather, Map const &map);
 

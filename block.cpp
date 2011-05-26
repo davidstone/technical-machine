@@ -75,7 +75,7 @@ void blockexecution (Team &user, Team const &target, Weather const &weather) {
 			}
 
 			if (block1 (user, target)
-			 or (user.pokemon->ability == TRUANT and user.loaf))
+					or (user.pokemon->ability == TRUANT and user.loaf))
 				user.pokemon->move->execute = false;
 
 			if (user.pokemon->move->execute and user.confused != 0) {
@@ -105,9 +105,9 @@ void blockexecution (Team &user, Team const &target, Weather const &weather) {
 
 bool block1 (Team const &user, Team const &target) {		// Things that both block selection and block execution in between sleep and confusion
 	if ((0 == user.pokemon->move->pp)
-	 or (0 != user.pokemon->move->disable)
-	 or (0 != user.heal_block and (HEAL_ORDER == user.pokemon->move->name or MILK_DRINK == user.pokemon->move->name or MOONLIGHT == user.pokemon->move->name or MORNING_SUN == user.pokemon->move->name or RECOVER == user.pokemon->move->name or REST == user.pokemon->move->name or ROOST == user.pokemon->move->name or SLACK_OFF == user.pokemon->move->name or SOFTBOILED == user.pokemon->move->name or SWALLOW == user.pokemon->move->name or SYNTHESIS == user.pokemon->move->name or WISH == user.pokemon->move->name))
-	  or (imprison (*user.pokemon->move, target)))
+			or (0 != user.pokemon->move->disable)
+			or (0 != user.heal_block and (HEAL_ORDER == user.pokemon->move->name or MILK_DRINK == user.pokemon->move->name or MOONLIGHT == user.pokemon->move->name or MORNING_SUN == user.pokemon->move->name or RECOVER == user.pokemon->move->name or REST == user.pokemon->move->name or ROOST == user.pokemon->move->name or SLACK_OFF == user.pokemon->move->name or SOFTBOILED == user.pokemon->move->name or SWALLOW == user.pokemon->move->name or SYNTHESIS == user.pokemon->move->name or WISH == user.pokemon->move->name))
+			or (imprison (*user.pokemon->move, target)))
 		return true;
 	return false;
 }
@@ -124,7 +124,7 @@ bool imprison (Move const &move, Team const &target) {
 
 bool block2 (Team const &user, Weather const &weather) {		// Things that both block selection and block execution after flinching
 	if ((0 != user.taunt and 0 == user.pokemon->move->basepower)
-	 or (0 < weather.gravity and (BOUNCE == user.pokemon->move->name or FLY == user.pokemon->move->name or HI_JUMP_KICK == user.pokemon->move->name or JUMP_KICK == user.pokemon->move->name or MAGNET_RISE == user.pokemon->move->name or SPLASH == user.pokemon->move->name)))
+			or (0 < weather.gravity and (BOUNCE == user.pokemon->move->name or FLY == user.pokemon->move->name or HI_JUMP_KICK == user.pokemon->move->name or JUMP_KICK == user.pokemon->move->name or MAGNET_RISE == user.pokemon->move->name or SPLASH == user.pokemon->move->name)))
 		return true;
 	return false;
 }
