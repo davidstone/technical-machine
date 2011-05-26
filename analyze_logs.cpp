@@ -49,6 +49,7 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 			if (log.line == "===============") {
 				do_turn (*log.first, *log.last, weather);
 				initialize_turn (ai, foe, log);
+				std::cout << "\n";
 			}
 			else
 				analyze_line (ai, foe, weather, map, log);
@@ -57,7 +58,8 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 			ai.replacing = true;
 			do_turn (ai, foe, weather);
 		}
-		else if (ai.pokemon->fainted)
+		// I have to check at_replacement(). instead of pokemon-> because when the AI switches to a Pokemon that then faints, the turn doesn't end, so there is never a ===... Therefore, that initial switch is never done, so if I don't check at_replacement()., I'm checking if the Pokemon that switched out fainted, which is not the behavior I want.
+		else if (ai.at_replacement().fainted)
 			do_turn (*log.first, *log.last, weather);
 	}
 	return won;
@@ -437,14 +439,6 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 	output (last, out);
 	std::cout << out;
 }
-
-/*void end_of_turn_messages () {
-	"Reflect wore off!"
-	"Light Screen wore off!"
-	player + "'s team's mist wore off!"
-	player + "'s team is no longer protected by safeguard!"
-}
-*/
 
 bool Log::getline () {
 	newline1 = newline2 + 1;
