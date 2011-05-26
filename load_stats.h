@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <vector>
+#include "map.h"
 #include "pokemon.h"
 
 namespace technicalmachine {

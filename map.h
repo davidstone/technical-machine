@@ -1,4 +1,4 @@
-// Gender map
+// Map enum to string
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,16 +9,40 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef MAP_H_
+#define MAP_H_
+
 #include <map>
 #include <string>
+#include "ability.h"
 #include "gender.h"
+#include "item.h"
+#include "move.h"
+#include "stat.h"
+#include "species.h"
 
 namespace technicalmachine {
 
-void set_gender_map (std::map <std::string, genders> &genders_map) {
-	genders_map["None"] = GENDERLESS;
-	genders_map["Female"] = FEMALE;
-	genders_map["Male"] = MALE;
-}
+class Map {
+	public:
+		std::map <std::string, abilities> ability;
+		std::map <std::string, genders> gender;
+		std::map <std::string, items> item;
+		std::map <std::string, moves_list> move;
+		std::map <std::string, natures> nature;
+		std::map <std::string, species> specie;
+	
+		Map ();
+
+	private:
+		void set_ability ();
+		void set_gender ();
+		void set_item ();
+		void set_move ();
+		void set_nature ();
+		void set_species ();
+};
 
 }
+
+#endif

@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include "active.h"
+#include "map.h"
 #include "pokemon.h"
 
 namespace technicalmachine {

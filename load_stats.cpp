@@ -13,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "map.h"
 #include "pokemon.h"
 
 namespace technicalmachine {

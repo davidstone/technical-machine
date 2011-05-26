@@ -9,8 +9,6 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <map>
-#include <string>
 #include "ability.h"
 #include "item.h"
 #include "move.h"
@@ -228,34 +226,6 @@ void Stat::boost (int n) {
 		stage = 6;
 	else if (stage < -6)
 		stage = -6;
-}
-
-void set_nature_map (std::map <std::string, natures> &natures_map) {
-	natures_map["Adamant"] = ADAMANT;
-	natures_map["Bashful"] = BASHFUL;
-	natures_map["Bold"] = BOLD;
-	natures_map["Brave"] = BRAVE;
-	natures_map["Calm"] = CALM;
-	natures_map["Careful"] = CAREFUL;
-	natures_map["Docile"] = DOCILE;
-	natures_map["Gentle"] = GENTLE;
-	natures_map["Hardy"] = HARDY;
-	natures_map["Hasty"] = HASTY;
-	natures_map["Impish"] = IMPISH;
-	natures_map["Jolly"] = JOLLY;
-	natures_map["Lax"] = LAX;
-	natures_map["Lonely"] = LONELY;
-	natures_map["Mild"] = MILD;
-	natures_map["Modest"] = MODEST;
-	natures_map["Naive"] = NAIVE;
-	natures_map["Naughty"] = NAUGHTY;
-	natures_map["Quiet"] = QUIET;
-	natures_map["Quirky"] = QUIRKY;
-	natures_map["Rash"] = RASH;
-	natures_map["Relaxed"] = RELAXED;
-	natures_map["Sassy"] = SASSY;
-	natures_map["Serious"] = SERIOUS;
-	natures_map["Timid"] = TIMID;
 }
 
 }

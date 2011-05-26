@@ -12,8 +12,6 @@
 #ifndef STATFUNCTION_H_
 #define STATFUNCTION_H_
 
-#include <map>
-#include <string>
 #include "pokemon.h"
 #include "team.h"
 #include "weather.h"
@@ -26,7 +24,6 @@ void defense (Team const &attacker, Team &defender, Weather const &weather);
 void speed (Team &team, Weather const &weather);
 void order (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower);
 void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower);
-void set_nature_map (std::map <std::string, natures> &natures_map);
 
 }
 #endif

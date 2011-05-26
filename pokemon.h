@@ -12,7 +12,6 @@
 #ifndef POKEMON_H_
 #define POKEMON_H_
 
-#include <map>
 #include <string>
 #include <vector>
 #include "ability.h"
@@ -1080,21 +1079,7 @@ char const get_mass [] = {
 60,	// Zangoose
 80,	// Zapdos
 40,	// Zigzagoon
-20		// Zubat
-};
-
-void set_species_map (std::map <std::string, species> &species_map);
-
-class Map {
-	public:
-		std::map <std::string, species> specie;
-		std::map <std::string, genders> gender;
-		std::map <std::string, natures> nature;
-		std::map <std::string, items> item;
-		std::map <std::string, abilities> ability;
-		std::map <std::string, moves_list> move;
-	
-		Map ();
+20	// Zubat
 };
 
 }
