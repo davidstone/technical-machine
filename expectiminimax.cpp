@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 
-moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, long &score) {
+moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, long &score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	moves_list best_move;
 	std::map<long, State> transposition_table;
@@ -53,7 +53,7 @@ moves_list expectiminimax (Team &ai, Team &foe, const Weather &weather, int dept
 }
 
 
-long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_variables &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first_turn) {
+long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first_turn) {
 
 	/* Working from the inside loop out:
 
@@ -145,7 +145,7 @@ long tree1 (Team &ai, Team &foe, const Weather &weather, int depth, const score_
 }
 
 
-long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, std::map<long, State> &transposition_table) {
 	// Determine turn order
 	Team* first;
 	Team* last;
@@ -226,7 +226,7 @@ long tree2 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 }
 
 
-long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
+long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
 	int n;
 	if (ai.pokemon->ability == EARLY_BIRD)
 		n = 2;
@@ -266,7 +266,7 @@ long tree3 (Team &ai, Team &foe, const Weather &weather, const int &depth, const
 }
 
 
-long tree4 (const Team &ai, const Team &foe, const Weather &weather, const int &depth, const score_variables &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
+long tree4 (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
 	long score;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
 		score = (tree5 (ai, foe, weather, depth, sv, transposition_table) + tree5 (foe, ai, weather, depth, sv, transposition_table)) / 2;
@@ -276,7 +276,7 @@ long tree4 (const Team &ai, const Team &foe, const Weather &weather, const int &
 }
 
 
-long tree5 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+long tree5 (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table) {
 	if (!last.pass) {
 		if (!first.pass) {
 			if (first.pokemon->move->name == BATON_PASS and false) {
@@ -335,7 +335,7 @@ long tree5 (Team first, Team last, Weather weather, int depth, const score_varia
 }
 
 
-long tree6 (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+long tree6 (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table) {
 	endofturn (first, last, weather);
 	long score;
 	if (win (first) != 0 or win (last) != 0)
@@ -360,7 +360,7 @@ long tree6 (Team first, Team last, Weather weather, int depth, const score_varia
 
 long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint, bool first_turn) {
 
-	long (*function) (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table);
+	long (*function) (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table);
 	if (faint)
 		function = &fainted;
 	else
@@ -399,7 +399,7 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	return alpha;
 }
 
-long fainted (Team first, Team last, Weather weather, int depth, const score_variables &sv, std::map<long, State> &transposition_table) {
+long fainted (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table) {
 	if (first.pokemon->hp.stat == 0) {
 		switchpokemon (first, last, weather);
 		if (win (first) != 0 or win (last) != 0)

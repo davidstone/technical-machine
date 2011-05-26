@@ -21,7 +21,7 @@ namespace technicalmachine {
 
 // Checks what all my variables are set to. Helps with debugging.
 
-void test (const Team &team) {
+void test (Team const &team) {
 	if (team.me)
 		std::cout << "---------AI---------\n";
 	else

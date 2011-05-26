@@ -18,8 +18,8 @@
 
 namespace technicalmachine {
 
-bool istype (const Team &team, types type);
-bool grounded (const Team &team, const Weather &weather);
+bool istype (Team const &team, types type);
+bool grounded (Team const &team, Weather const &weather);
 
 
 }

@@ -52,7 +52,7 @@ class Pokemon {
 
 		unsigned char happiness;
 	
-		bool operator== (const Pokemon &other) const {
+		bool operator== (Pokemon const &other) const {
 			if (this->move.set.size() != other.move.set.size())
 				return false;
 			for (size_t n = 0; n != this->move.set.size(); ++n) {
@@ -61,13 +61,13 @@ class Pokemon {
 			}
 			return this->name == other.name and this->status == other.status and this->sleep == other.sleep and this->hp.stat == other.hp.stat and this->atk.stage == other.atk.stage and this->def.stage == other.def.stage and this->spa.stage == other.spa.stage and this->spd.stage == other.spd.stage and this->spe.stage == other.spe.stage and this->item == other.item;
 		}
-		bool operator!= (const Pokemon &other) const {
+		bool operator!= (Pokemon const &other) const {
 			return !(*this == other);
 		}
-		Pokemon (const species &member);
+		Pokemon (species const &member);
 };
 
-const types get_pokemon_type [][2] = {
+types const get_pokemon_type [][2] = {
 { GRASS, ICE },				// Abomasnow
 { PSYCHIC_TYPE, TYPELESS },		// Abra
 { DARK, TYPELESS },			// Absol
@@ -575,7 +575,7 @@ const types get_pokemon_type [][2] = {
 { POISON, FLYING }			// Zubat
 };
 
-const char get_mass [] = {
+char const get_mass [] = {
 100,	// Abomasnow
 40,	// Abra
 60,	// Absol

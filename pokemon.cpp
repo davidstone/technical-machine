@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (const species &member) : 
+Pokemon::Pokemon (species const &member) : 
 	name (member),
 	ability (END_ABILITY),
 	gender (MALE),		// No sexism here!

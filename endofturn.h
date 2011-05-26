@@ -22,9 +22,9 @@ void endofturn (Team &first, Team &last, Weather &weather);
 void endofturn0 (Team &team);
 void endofturn1 (Team &team);
 void endofturn2 (Team &team);
-void endofturn3 (Team &team, const Weather &weather);
+void endofturn3 (Team &team, Weather const &weather);
 void endofturn5 (Team &team, Pokemon &foe, Weather &weather);
-void endofturn6 (Team &target, const Weather &weather);
+void endofturn6 (Team &target, Weather const &weather);
 void endofturn7 (Team &team);
 void decrement (char &n);
 

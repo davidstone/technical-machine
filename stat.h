@@ -33,7 +33,7 @@ class Stat {
 
 enum natures { ADAMANT, BASHFUL, BOLD, BRAVE, CALM, CAREFUL, DOCILE, GENTLE, HARDY, HASTY, IMPISH, JOLLY, LAX, LONELY, MILD, MODEST, NAIVE, NAUGHTY, QUIET, QUIRKY, RASH, RELAXED, SASSY, SERIOUS, TIMID };
 
-const unsigned char base_stat [][6] = {
+unsigned char const base_stat [][6] = {
 	{ 90, 92, 75, 92, 85, 60 },			// Abomasnow
 	{ 25, 20, 15, 105, 55, 90 },		// Abra	
 	{ 65, 130, 60, 75, 60, 75 },		// Absol	

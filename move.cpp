@@ -853,7 +853,7 @@ void do_damage (Team &user, Team &target, int damage) {
 		target.pokemon->hp.stat = 0;
 }
 
-void lower_pp (Team &user, const Pokemon &target) {
+void lower_pp (Team &user, Pokemon const &target) {
 	if (user.pokemon->move->pp != -1 and user.bide == 0) {
 		if (target.ability == PRESSURE and 2 <= user.pokemon->move->pp)
 			user.pokemon->move->pp -= 2;

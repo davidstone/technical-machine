@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void blockselection (Team &user, const Team &target, const Weather &weather) {
+void blockselection (Team &user, Team const &target, Weather const &weather) {
 	user.pokemon->move->selectable = true;
 	if (user.bide != 0 and user.pokemon->move->name != BIDE)
 			user.pokemon->move->selectable = false;
@@ -51,7 +51,7 @@ void blockselection (Team &user, const Team &target, const Weather &weather) {
 	}
 }
 
-void blockexecution (Team &user, const Team &target, const Weather &weather) {
+void blockexecution (Team &user, Team const &target, Weather const &weather) {
 	if (!user.pokemon->move->is_switch()) {
 		if (user.pokemon->hp.stat == 0 or (target.pokemon->hp.stat == 0 and false))
 			user.pokemon->move->execute = false;
@@ -103,7 +103,7 @@ void blockexecution (Team &user, const Team &target, const Weather &weather) {
 	}
 }
 
-bool block1 (const Team &user, const Team &target) {		// Things that both block selection and block execution in between sleep and confusion
+bool block1 (Team const &user, Team const &target) {		// Things that both block selection and block execution in between sleep and confusion
 	if ((0 == user.pokemon->move->pp)
 	 or (0 != user.pokemon->move->disable)
 	 or (0 != user.heal_block and (HEAL_ORDER == user.pokemon->move->name or MILK_DRINK == user.pokemon->move->name or MOONLIGHT == user.pokemon->move->name or MORNING_SUN == user.pokemon->move->name or RECOVER == user.pokemon->move->name or REST == user.pokemon->move->name or ROOST == user.pokemon->move->name or SLACK_OFF == user.pokemon->move->name or SOFTBOILED == user.pokemon->move->name or SWALLOW == user.pokemon->move->name or SYNTHESIS == user.pokemon->move->name or WISH == user.pokemon->move->name))
@@ -112,7 +112,7 @@ bool block1 (const Team &user, const Team &target) {		// Things that both block 
 	return false;
 }
 
-bool imprison (const Move &move, const Team &target) {
+bool imprison (Move const &move, Team const &target) {
 	if (target.imprison) {
 		for (std::vector<Move>::const_iterator it = target.pokemon->move.set.begin(); it != target.pokemon->move.set.end(); ++it) {
 			if (move.name == it->name)
@@ -122,7 +122,7 @@ bool imprison (const Move &move, const Team &target) {
 	return false;
 }
 
-bool block2 (const Team &user, const Weather &weather) {		// Things that both block selection and block execution after flinching
+bool block2 (Team const &user, Weather const &weather) {		// Things that both block selection and block execution after flinching
 	if ((0 != user.taunt and 0 == user.pokemon->move->basepower)
 	 or (0 < weather.gravity and (BOUNCE == user.pokemon->move->name or FLY == user.pokemon->move->name or HI_JUMP_KICK == user.pokemon->move->name or JUMP_KICK == user.pokemon->move->name or MAGNET_RISE == user.pokemon->move->name or SPLASH == user.pokemon->move->name)))
 		return true;

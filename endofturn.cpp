@@ -76,7 +76,7 @@ void endofturn2 (Team &team) {
 	decrement (team.wish);
 }
 
-void endofturn3 (Team &team, const Weather &weather) {
+void endofturn3 (Team &team, Weather const &weather) {
 	if (weather.hail != 0 and !istype (team, ICE))
 		heal (*team.pokemon, -16);
 	if (weather.sand != 0 and !(istype (team, GROUND) or istype (team, ROCK) or istype (team, STEEL)))
@@ -180,7 +180,7 @@ void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
 		heal (*team.pokemon, -8);
 }
 
-void endofturn6 (Team &target, const Weather &weather) {		// Doom Desire / Future Sight
+void endofturn6 (Team &target, Weather const &weather) {		// Doom Desire / Future Sight
 /*	if (target.counter == 1) {
 		defense (target.ddfs, *target.pokemon, weather);
 		target.pokemon->hp.stat -= damagecalculator (target.ddfs, target, weather);
