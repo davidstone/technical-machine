@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void predict_team (int detailed [][7], Team &team) {
+void predict_team (int detailed [][7], Team &team, bool using_lead) {
 	std::cout << "======================\nPredicting...\n";
 
 	std::vector<double> overall;
@@ -28,7 +28,12 @@ void predict_team (int detailed [][7], Team &team) {
 	double multiplier [END_SPECIES][END_SPECIES];
 	team_stats (overall, total, multiplier);
 	std::vector<double> lead;
-	lead_stats (lead);
+	if (using_lead)
+		lead_stats (lead);
+	else {
+		for (int n = 0; n != END_SPECIES; ++n)
+			lead.push_back (1);
+	}
 	
 	std::vector<double> estimate;
 	for (unsigned n = 0; n != END_SPECIES; ++n)

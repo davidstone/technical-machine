@@ -18,9 +18,7 @@
 
 namespace technicalmachine {
 
-void predict_team (int detailed [][7], Team &team);
-
-void predict (int detailed [][7], Team &team, bool using_lead);	// For the stand-alone team predictor
+void predict_team (int detailed [][7], Team &team, bool using_lead = true);
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]);
 
