@@ -18,7 +18,7 @@
 
 namespace technicalmachine {
 
-void predict (int detailed [][7], Team &team);
+void predict_team (int detailed [][7], Team &team);
 
 void predict (int detailed [][7], Team &team, bool using_lead);	// For the stand-alone team predictor
 

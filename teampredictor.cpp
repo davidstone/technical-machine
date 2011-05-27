@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void predict (int detailed [][7], Team &team) {
+void predict_team (int detailed [][7], Team &team) {
 	std::cout << "======================\nPredicting...\n";
 
 	std::vector<double> overall;

@@ -37,10 +37,8 @@ int main () {
 	Map map;
 	int detailed [END_SPECIES] [7];
 	detailed_stats (map, detailed);
-	Team ai (true);
-	loadteam (ai, "teams/ai.sbt", map, detailed);
-
-	Team foe (false);
+	Team ai (true, map);
+	Team foe (false, map);
 
 	Pokemon member (INFERNAPE);
 	foe.pokemon.set.push_back (member);

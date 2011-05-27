@@ -41,7 +41,7 @@ analoggui : optimizations = -g
 
 CXXFLAGS = $(warnings) $(optimizations)
 
-ai.o: ai.cpp ai.h load_stats.h map.h ability.h gender.h item.h move.h \
+ai.o: ai.cpp load_stats.h map.h ability.h gender.h item.h move.h \
  active.h type.h stat.h species.h pokemon.h status.h movefunction.h \
  team.h weather.h statfunction.h teampredictor.h analyze_logs.h \
  expectiminimax.h evaluate.h state.h

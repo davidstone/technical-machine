@@ -12,14 +12,15 @@
 
 #include <iostream>
 #include <boost/lexical_cast.hpp>
-#include "ai.h"
 #include "analyze_logs.h"
 #include "expectiminimax.h"
 #include "item.h"
+#include "load_stats.h"
 #include "move.h"
 #include "pokemon.h"
 #include "status.h"
 #include "team.h"
+#include "teampredictor.h"
 #include "type.h"
 #include "weather.h"
 
@@ -32,20 +33,20 @@ int main (int argc, char* argv[]) {
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	Team ai (true);
-	Team foe (false);
-	Weather weather;
-	score_variables sv;
 	Map const map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
-	initialize (ai, foe, map, detailed);
+	detailed_stats (map, detailed);
+	Team ai (true, map);
+	Team foe (false, map);
+	Weather weather;
+	score_variables sv;
 	
 	analyze_turn (ai, foe, weather, map);		// Turn 0, sending out initial Pokemon
 	
 	bool won = false;
 	while (!won) {
 		Team predicted = foe;
-		predict (detailed, predicted);
+		predict_team (detailed, predicted);
 
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);

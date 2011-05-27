@@ -26,7 +26,7 @@ struct State {
 	bool operator== (State const &other) const {
 		return this->ai == other.ai and this->foe == other.foe and this->weather == other.weather;
 	}
-	State () : ai (true), foe (false) {}
+	State (Map const &map) : ai (true, map), foe (false, map) {}
 };
 
 }

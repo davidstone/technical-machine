@@ -12,7 +12,6 @@
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <string>
 #include "ability.h"
 #include "gender.h"
@@ -29,7 +28,7 @@
 
 namespace technicalmachine {
 
-Team::Team (bool isme) :
+Team::Team (bool isme, Map const &map) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -109,13 +108,17 @@ Team::Team (bool isme) :
 	me (isme) {
 	if (me) {
 		std::string line;
+		std::string team_file;
 		std::ifstream settings ("settings.txt");
 		for (getline (settings, line); !settings.eof(); getline (settings, line)) {
 			size_t found = line.find ('\t');
 			if (line.substr (0, found) == "username")
 				player = line.substr (found + 1);
+			else if (line.substr (0, found) == "team")
+				team_file = line.substr (found + 1);
 		}
 		settings.close();
+		loadteam (*this, "teams/" + team_file, map);
 	}
 }
 
@@ -123,7 +126,7 @@ Team::Team (bool isme) :
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
 
-void loadteam (Team &team, std::string const &name, Map const &map, int detailed [][7]) {
+void loadteam (Team &team, std::string const &name, Map const &map) {
 	if (name != "") {
 		if (name.substr (name.length() - 3) == ".tp")
 			poteam (team, name);
