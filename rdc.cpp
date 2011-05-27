@@ -46,9 +46,9 @@ int main () {
 	foe.pokemon->ability = BLAZE;
 
 	Move move (CLOSE_COMBAT, 3);
-	foe.pokemon->move.set.push_back (move);
+	foe.pokemon->move.set.insert (foe.pokemon->move.set.begin(), move);
 
-	loadpokemon (foe, foe.pokemon.set.back());
+	loadpokemon (foe.pokemon.set.back(), foe.size);
 
 	Weather weather;
 	

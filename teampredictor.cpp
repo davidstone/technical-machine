@@ -62,37 +62,26 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 		}
 		Pokemon member (name);
 		team.pokemon.set.push_back (member);
+		team.pokemon.set.back().ability = static_cast<abilities> (detailed [team.pokemon.set.back().name] [0]);
+		team.pokemon.set.back().item = static_cast<items> (detailed [team.pokemon.set.back().name] [1]);
+		team.pokemon.set.back().nature = static_cast<natures> (detailed [team.pokemon.set.back().name] [2]);
+		team.pokemon.set.back().gender = GENDERLESS;
+		loadpokemon (team.pokemon.set.back(), team.size);
 		if (team.pokemon.set.size() == team.size)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [team.pokemon.set.back().name] [n];
 	}
-	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it) {
-		it->level = 100;
-		if (it->ability == END_ABILITY)
-			it->ability = static_cast<abilities> (detailed [it->name] [0]);
-		if (it->item == END_ITEM)
-			it->item = static_cast<items> (detailed [it->name] [1]);
-		it->nature = static_cast<natures> (detailed [it->name] [2]);
-		it->gender = GENDERLESS;
+	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
 		predict_move (*it, detailed);
-		loadpokemon (team, *it);
-	}
 }
 
 void predict_move (Pokemon &member, int detailed [][7]) {
 	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
-	bool seen = false;
 	unsigned n = 0;
-	for ( ; n != member.move.set.size(); ++n) {
-		if (member.move.set [n].name == STRUGGLE) {
-			seen = true;
-			break;
-		}
-	}
-	unsigned max_moves = 4;
-	if (seen)
-		max_moves += member.move.set.size() - n;
+	while (member.move.set [n].name != STRUGGLE)
+		++n;
+	unsigned max_moves = 4 + member.move.set.size() - n;
 	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != END_MOVE; ++m) {
 		bool found = false;
 		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {

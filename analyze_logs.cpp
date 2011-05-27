@@ -227,7 +227,7 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 		member.nature = HARDY;
 		team.pokemon.set.push_back (member);
 		team.replacement = team.pokemon.set.size() - 1;
-		loadpokemon (team, team.pokemon.set.back());
+		loadpokemon (team.pokemon.set.back(), team.size);
 	}
 	if (log.phaze) {
 		target.at_replacement().move->variable.index = 0;

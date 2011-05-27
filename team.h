@@ -119,7 +119,7 @@ class Team {
 };
 
 std::string search (std::ifstream &file, std::string &output2, std::string const &data);
-void loadpokemon (Team &team, Pokemon &member);
+void loadpokemon (Pokemon &member, unsigned char size);
 void pokelabteam (Team &team, std::string const &name, Map const &map);
 void pokelabpokemon (Team& team, std::ifstream &file, Map const &map);
 void poteam (Team &team, std::string const &name);

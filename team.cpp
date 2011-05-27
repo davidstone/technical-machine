@@ -118,6 +118,7 @@ Team::Team (bool isme, Map const &map) :
 				team_file = line.substr (found + 1);
 		}
 		settings.close();
+
 		load ("teams/" + team_file, map);
 	}
 }
@@ -132,14 +133,13 @@ void Team::load (std::string const &name, Map const &map) {
 	else			// if (name.substr (name.length() - 4) == ".sbt")
 		pokelabteam (*this, name, map);
 	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
-		loadpokemon (*this, *it);
+		loadpokemon (*it, size);
 }
 
-void loadpokemon (Team &team, Pokemon &member) {
-	if (member.hp.max == -1) {
-		member.hp.max = hitpoints (member);
-		member.hp.stat = member.hp.max;
-	}
+void loadpokemon (Pokemon &member, unsigned char size) {
+	member.hp.max = hitpoints (member);
+	member.hp.stat = member.hp.max;
+
 	bool struggle = false;
 	moves_list switchn = static_cast<moves_list> (SWITCH0 - 1);
 	for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
@@ -154,8 +154,8 @@ void loadpokemon (Team &team, Pokemon &member) {
 	}
 
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team.size > 1) {
-		for (size_t index = switchn + 1; index - SWITCH0 < team.size; ++index) {
+	if (size > 1) {
+		for (size_t index = switchn + 1; index - SWITCH0 < size; ++index) {
 			Move move (static_cast<moves_list> (index), 0);
 			member.move.set.push_back (move);
 		}
@@ -181,7 +181,7 @@ void pokelabteam (Team &team, std::string const &name, Map const &map) {
 	unsigned size = team_size (name);
 	std::ifstream file (name.c_str());
 	for (unsigned n = 0; n != size; ++n)
-		pokelabpokemon(team, file, map);
+		pokelabpokemon (team, file, map);
 	file.close ();
 }
 
