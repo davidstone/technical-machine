@@ -110,14 +110,15 @@ class Team {
 		
 		bool const me;				// Is this my team?
 	
-		bool operator== (Team const &other) const;
 		Team (bool isme, Map const &map);
+		bool operator== (Team const &other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
+	private:
+		void load (std::string const &name, Map const &map);
 };
 
 std::string search (std::ifstream &file, std::string &output2, std::string const &data);
-void loadteam (Team &team, std::string const &name, Map const &map);
 void loadpokemon (Team &team, Pokemon &member);
 void pokelabteam (Team &team, std::string const &name, Map const &map);
 void pokelabpokemon (Team& team, std::ifstream &file, Map const &map);

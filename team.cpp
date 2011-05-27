@@ -118,7 +118,7 @@ Team::Team (bool isme, Map const &map) :
 				team_file = line.substr (found + 1);
 		}
 		settings.close();
-		loadteam (*this, "teams/" + team_file, map);
+		load ("teams/" + team_file, map);
 	}
 }
 
@@ -126,15 +126,13 @@ Team::Team (bool isme, Map const &map) :
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
 
-void loadteam (Team &team, std::string const &name, Map const &map) {
-	if (name != "") {
-		if (name.substr (name.length() - 3) == ".tp")
-			poteam (team, name);
-		else			// if (name.substr (name.length() - 4) == ".sbt")
-			pokelabteam (team, name, map);
-		for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
-			loadpokemon (team, *it);
-	}
+void Team::load (std::string const &name, Map const &map) {
+	if (name.substr (name.length() - 3) == ".tp")
+		poteam (*this, name);
+	else			// if (name.substr (name.length() - 4) == ".sbt")
+		pokelabteam (*this, name, map);
+	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
+		loadpokemon (*this, *it);
 }
 
 void loadpokemon (Team &team, Pokemon &member) {
