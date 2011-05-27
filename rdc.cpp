@@ -14,6 +14,7 @@
 #include <vector>
 #include "ability.h"
 #include "item.h"
+#include "load_stats.h"
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
@@ -42,29 +43,32 @@ int main () {
 	Team foe (false);
 
 	Pokemon member (INFERNAPE);
-	foe.active.set.push_back (member);
-	foe.active->level = 100;
-	foe.active->ability = BLAZE;
+	foe.pokemon.set.push_back (member);
+	foe.pokemon->level = 100;
+	foe.pokemon->ability = BLAZE;
 
 	Move move (CLOSE_COMBAT, 3);
-	foe.active->move.set.push_back (move);
+	foe.pokemon->move.set.push_back (move);
 
-	loadteam (foe, "", map, detailed);
+	loadpokemon (foe, foe.pokemon.set.back());
 
 	Weather weather;
 	
 	ai.replacement = 0;
-	switchpokemon (ai, *foe.active, weather);
+	switchpokemon (ai, foe, weather);
 	foe.replacement = 0;
-	switchpokemon (foe, *ai.active, weather);
-	defense (*foe.active, *ai.active, weather);
+	switchpokemon (foe, ai, weather);
+	defense (foe, ai, weather);
 	speed (ai, weather);
 	
+	std::cout << "Creating vector\n";
 	std::vector<Unknown> hidden;
 	unknown (hidden);
 	
 	int damage = 660;
+	std::cout << "Reverse damage calculation 1\n";
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
+	std::cout << "Reverse damage calculation 2\n";
 	damage = 668;
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
 	

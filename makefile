@@ -2,15 +2,14 @@ aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectim
 
 predictobjects = predictor.o block.o damage.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
 
-rdcobjects = rdc.o damage.o move.o pokemon.o reversedamage.o stat.o status.o team.o teampredictor.o unknown.o weather.o
+rdcobjects = rdc.o block.o damage.o heal.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o
 
 analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o type.o weather.o
 
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
-warnings = -Wall -Wextra -pedantic -Wno-unused -Wformat=2
-fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG
-experimental = -fno-rtti
+warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
+fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -fno-rtti
 
 ai : $(aiobjects)
 	g++ -o ai $(aiobjects) $(CXXFLAGS)
@@ -18,7 +17,7 @@ ai : optimizations = -g
 
 aio : $(aiobjects)
 	g++ -o aio $(aiobjects) $(CXXFLAGS)
-aio : optimizations = $(fulloptimizations) $(experimental)
+aio : optimizations = $(fulloptimizations)
 
 predict : $(predictobjects)
 	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)

@@ -107,6 +107,16 @@ Team::Team (bool isme) :
 	replacement (0),
 	size (6),
 	me (isme) {
+	if (me) {
+		std::string line;
+		std::ifstream settings ("settings.txt");
+		for (getline (settings, line); !settings.eof(); getline (settings, line)) {
+			size_t found = line.find ('\t');
+			if (line.substr (0, found) == "username")
+				player = line.substr (found + 1);
+		}
+		settings.close();
+	}
 }
 
 // Warning: Almost everything you see here is a hack.

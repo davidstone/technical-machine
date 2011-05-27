@@ -31,11 +31,10 @@ void initialize (Team &ai, Team &foe, Map const &map, int detailed [][7]) {
 	std::ifstream settings ("settings.txt");
 	for (getline (settings, line); !settings.eof(); getline (settings, line)) {
 		size_t found = line.find ('\t');
-		if (line.substr (0, found) == "username")
-			ai.player = line.substr (found + 1);
-		else if (line.substr (0, found) == "team")
+		if (line.substr (0, found) == "team")
 			ai_team_file = line.substr (found + 1);
 	}
+	settings.close();
 	
 	loadteam (ai, "teams/" + ai_team_file, map, detailed);
 
