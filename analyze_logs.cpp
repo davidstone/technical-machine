@@ -217,7 +217,7 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 			gender = GENDERLESS;
 		}
 		species name = map.specie.find (log.line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
-		Pokemon member (name);
+		Pokemon member (name, team.size);
 		member.gender = gender;
 
 		member.nickname = nickname;
@@ -227,7 +227,7 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 		member.nature = HARDY;
 		team.pokemon.set.push_back (member);
 		team.replacement = team.pokemon.set.size() - 1;
-		loadpokemon (team.pokemon.set.back(), team.size);
+		team.pokemon.set.back().load();
 	}
 	if (log.phaze) {
 		target.at_replacement().move->variable.index = 0;
@@ -434,13 +434,14 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 			usemove (*foe, *ai, weather, first.damage);
 	}
 	std::string out;
-	output (first, out);
+	first.output (out);
 	std::cout << out;
-	output (last, out);
+	last.output (out);
 	std::cout << out;
 }
 
 bool Log::getline () {
+	// Returns false if there are no more non-empty newline delimited strings remaining, otherwise, gives the next non-empty newline delimited string from a multi-line string and returns true.
 	newline1 = newline2 + 1;
 	while (newline1 < input.length() and input.at (newline1) == '\n')
 		++newline1;

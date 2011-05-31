@@ -21,7 +21,11 @@ aio : optimizations = $(fulloptimizations)
 
 predict : $(predictobjects)
 	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)
-predict : optimizations = $(fulloptimizations)
+predict : optimizations = -g
+
+predicto : $(predictobjects)
+	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)
+predicto : optimizations = $(fulloptimizations)
 
 rdc : $(rdcobjects)
 	g++ -o rdc $(rdcobjects) $(CXXFLAGS)

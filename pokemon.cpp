@@ -18,7 +18,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (species const &member) : 
+Pokemon::Pokemon (species const &member, unsigned size) : 
 	name (member),
 	ability (END_ABILITY),
 	gender (MALE),		// No sexism here!
@@ -39,6 +39,20 @@ Pokemon::Pokemon (species const &member) :
 	sleep (0),
 
 	happiness (255) {
-	}
+		Move struggle (STRUGGLE, 0);
+		move.set.push_back (struggle);
+		// A Pokemon has a new "Switch" move for each Pokemon in the party.
+		if (size > 1) {
+			for (size_t index = SWITCH0; index - SWITCH0 < size; ++index) {
+				Move switchn (static_cast<moves_list> (index), 0);
+				move.set.push_back (switchn);
+			}
+		}
+}
+
+void Pokemon::load () {
+	hp.max = hitpoints (*this);
+	hp.stat = hp.max;
+}
 
 }

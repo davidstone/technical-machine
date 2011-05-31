@@ -45,7 +45,7 @@ void function (Fl_Widget* w, void* data) {
 	std::map<std::string, species>::const_iterator it = d->map.specie.find ((*d->input.begin())->value());
 	if (it != d->map.specie.end()) {
 		using_lead = true;
-		Pokemon member (it->second);
+		Pokemon member (it->second, team.size);
 		team.pokemon.set.push_back (member);
 	}
 	else
@@ -53,23 +53,16 @@ void function (Fl_Widget* w, void* data) {
 	for (std::vector<Fl_Input*>::const_iterator in = d->input.begin() + 1; in != d->input.end(); ++in) {
 		it = d->map.specie.find ((*in)->value());
 		if (it != d->map.specie.end()) {
-			Pokemon member (it->second);
+			Pokemon member (it->second, team.size);
 			team.pokemon.set.push_back (member);
 		}
 	}
 	
 	if (team.pokemon.set.size() > 0) {
 		predict_team (d->detailed, team, using_lead);
-		std::string output = "";
-		for (std::vector<Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-			output += pokemon_name [pokemon->name] + " @ " + item_name [pokemon->item];
-			output += "\nAbility: " + ability_name [pokemon->ability];
-			for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != STRUGGLE; ++move)
-				output += "\n\t- " + move_name [move->name];
-			output += "\n\n";
-		}
-		output.erase (output.end() - 2, output.end());
-		d->output->value (output.c_str());
+		std::string out;
+		team.output (out);
+		d->output->value (out.c_str());
 	}
 	else
 		d->output->value ("");

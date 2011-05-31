@@ -20,8 +20,6 @@
 namespace technicalmachine {
 
 void predict_team (int detailed [][7], Team &team, bool using_lead) {
-	std::cout << "======================\nPredicting...\n";
-
 	std::vector<double> overall;
 	overall_stats (overall);
 	double total = 961058;	// Total number of teams
@@ -44,10 +42,8 @@ void predict_team (int detailed [][7], Team &team, bool using_lead) {
 			estimate.at (n) *= multiplier [pokemon->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
-
-	std::string out;
-	output (team, out);
-	std::cout << out;
+	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
+		predict_move (*it, detailed);
 }
 
 void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
@@ -60,20 +56,18 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 				name = static_cast<species> (n);
 			}
 		}
-		Pokemon member (name);
+		Pokemon member (name, team.size);
 		team.pokemon.set.push_back (member);
 		team.pokemon.set.back().ability = static_cast<abilities> (detailed [team.pokemon.set.back().name] [0]);
 		team.pokemon.set.back().item = static_cast<items> (detailed [team.pokemon.set.back().name] [1]);
 		team.pokemon.set.back().nature = static_cast<natures> (detailed [team.pokemon.set.back().name] [2]);
 		team.pokemon.set.back().gender = GENDERLESS;
-		loadpokemon (team.pokemon.set.back(), team.size);
+		team.pokemon.set.back().load ();
 		if (team.pokemon.set.size() == team.size)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [team.pokemon.set.back().name] [n];
 	}
-	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
-		predict_move (*it, detailed);
 }
 
 void predict_move (Pokemon &member, int detailed [][7]) {
@@ -84,7 +78,7 @@ void predict_move (Pokemon &member, int detailed [][7]) {
 	unsigned max_moves = 4 + member.move.set.size() - n;
 	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != END_MOVE; ++m) {
 		bool found = false;
-		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
+		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it->name != STRUGGLE; ++it) {
 			if (it->name == static_cast<moves_list> (detailed [member.name] [m])) {
 				found = true;
 				break;

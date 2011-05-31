@@ -63,7 +63,8 @@ class Pokemon {
 		bool operator!= (Pokemon const &other) const {
 			return !(*this == other);
 		}
-		Pokemon (species const &member);
+		Pokemon (species const &member, unsigned size);
+		void load ();
 };
 
 types const get_pokemon_type [][2] = {

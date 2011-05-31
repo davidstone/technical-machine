@@ -133,33 +133,7 @@ void Team::load (std::string const &name, Map const &map) {
 	else			// if (name.substr (name.length() - 4) == ".sbt")
 		pokelabteam (*this, name, map);
 	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
-		loadpokemon (*it, size);
-}
-
-void loadpokemon (Pokemon &member, unsigned char size) {
-	member.hp.max = hitpoints (member);
-	member.hp.stat = member.hp.max;
-
-	bool struggle = false;
-	moves_list switchn = static_cast<moves_list> (SWITCH0 - 1);
-	for (std::vector<Move>::const_iterator it = member.move.set.begin(); it != member.move.set.end(); ++it) {
-		if (it->name == STRUGGLE)
-			struggle = true;
-		if (it->is_switch())
-			switchn = it->name;
-	}
-	if (!struggle) {
-		Move move (STRUGGLE, 0);
-		member.move.set.push_back (move);
-	}
-
-	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (size > 1) {
-		for (size_t index = switchn + 1; index - SWITCH0 < size; ++index) {
-			Move move (static_cast<moves_list> (index), 0);
-			member.move.set.push_back (move);
-		}
-	}
+		it->load();
 }
 
 unsigned team_size (std::string const &name) {
@@ -178,9 +152,9 @@ unsigned team_size (std::string const &name) {
 }
 
 void pokelabteam (Team &team, std::string const &name, Map const &map) {
-	unsigned size = team_size (name);
+	team.size = team_size (name);
 	std::ifstream file (name.c_str());
-	for (unsigned n = 0; n != size; ++n)
+	for (unsigned n = 0; n != team.size; ++n)
 		pokelabpokemon (team, file, map);
 	file.close ();
 }
@@ -188,7 +162,7 @@ void pokelabteam (Team &team, std::string const &name, Map const &map) {
 void pokelabpokemon (Team& team, std::ifstream &file, Map const &map) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
 	std::string output2;	// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
-	Pokemon member (map.specie.find (output1)->second);
+	Pokemon member (map.specie.find (output1)->second, team.size);
 	member.nickname = search (file, output2, "<nickname>");
 	if (member.nickname == "")
 		member.nickname = output1;
@@ -200,14 +174,14 @@ void pokelabpokemon (Team& team, std::ifstream &file, Map const &map) {	// Repla
 	member.ability = map.ability.find (search (file, output2, "<ability>"))->second;
 	
 	
-	while (true) {
+	for (unsigned n = 0; ; ++n) {
 		output1 = search (file, output2, "\">");
 		if ("No" == output1)
 			break;
 		moves_list name = map.move.find (output1)->second;
 		int pp_ups = boost::lexical_cast <int> (output2);
 		Move move (name, pp_ups);
-		member.move.set.push_back (move);
+		member.move.set.insert (member.move.set.begin() + n, move);
 	}
 	
 	member.hp.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
@@ -270,15 +244,16 @@ void poteam (Team &team, std::string const &name) {
 	std::string line;
 	getline (file, line);
 	for (unsigned n = 0; n != 6; ++n)
-		popokemon(team, file, pokemon_converter, ability_converter, item_converter, nature_converter, move_converter);
+		popokemon (team, file, pokemon_converter, ability_converter, item_converter, nature_converter, move_converter);
 	file.close ();
+	team.size = team.pokemon.set.size ();
 }
 
 void popokemon (Team &team, std::ifstream &file, species const pokemon_converter [], abilities const ability_converter [], items const item_converter [], natures const nature_converter [], moves_list const move_converter []) {
 	std::string line;
 	getline (file, line);
 	getline (file, line);
-	Pokemon member (pokemon_converter [poconverter ("Num=\"", "\"", line)]);
+	Pokemon member (pokemon_converter [poconverter ("Num=\"", "\"", line)], team.size);
 	int forme = poconverter ("Forme=\"", "\"", line);
 	if (member.name == DEOXYS_A) {
 		if (forme == 0)
@@ -386,22 +361,21 @@ Pokemon const & Team::at_replacement () const {
 	return pokemon.set [replacement];
 }
 
-void output (Team const &team, std::string &output) {
-	output = "======================\n";
-	if (team.me)
-		output += "AI";
+void Team::output (std::string &output) {
+	if (me)
+		output = "AI";
 	else
-		output += "Foe";
+		output = "Foe";
 	output += " team:\n";
-	output += team.player + ":\n";
-	for (std::vector<Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		output += pokemon_name [pokemon->name];
-		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (pokemon->hp.stat) / static_cast<double> (pokemon->hp.max)) + "% HP)";
-		output += " @ " + item_name [pokemon->item];
-		output += " ** " + pokemon->nickname + '\n';
-		if (pokemon->ability != END_ABILITY)
-			output += "\tAbility: " + ability_name [pokemon->ability] + '\n';
-		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != STRUGGLE; ++move)
+	output += player + ":\n";
+	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it) {
+		output += pokemon_name [it->name];
+		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (it->hp.stat) / static_cast<double> (it->hp.max)) + "% HP)";
+		output += " @ " + item_name [it->item];
+		output += " ** " + it->nickname + '\n';
+		if (it->ability != END_ABILITY)
+			output += "\tAbility: " + ability_name [it->ability] + '\n';
+		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != STRUGGLE; ++move)
 			output += "\t- " + move_name [move->name] + "\n";
 	}
 }

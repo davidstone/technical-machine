@@ -40,7 +40,7 @@ int main () {
 	Team ai (true, map);
 	Team foe (false, map);
 
-	Pokemon member (INFERNAPE);
+	Pokemon member (INFERNAPE, foe.size);
 	foe.pokemon.set.push_back (member);
 	foe.pokemon->level = 100;
 	foe.pokemon->ability = BLAZE;
@@ -48,7 +48,7 @@ int main () {
 	Move move (CLOSE_COMBAT, 3);
 	foe.pokemon->move.set.insert (foe.pokemon->move.set.begin(), move);
 
-	loadpokemon (foe.pokemon.set.back(), foe.size);
+	foe.pokemon.set.back().load ();
 
 	Weather weather;
 	

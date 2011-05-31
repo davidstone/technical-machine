@@ -46,7 +46,11 @@ int main (int argc, char* argv[]) {
 	bool won = false;
 	while (!won) {
 		Team predicted = foe;
+		std::cout << "======================\nPredicting...\n";
 		predict_team (detailed, predicted);
+		std::string out;
+		predicted.output (out);
+		std::cout << out;
 
 		long score;
 		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
