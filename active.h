@@ -12,6 +12,7 @@
 #ifndef ACTIVE_H_
 #define ACTIVE_H_
 
+#include <cstddef>
 #include <vector>
 
 namespace technicalmachine {
