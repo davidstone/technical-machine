@@ -1,8 +1,8 @@
-aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
+aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
-predictobjects = predictor.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o
+predictobjects = predictor.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
-rdcobjects = rdc.o block.o damage.o heal.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o
+rdcobjects = rdc.o block.o damage.o heal.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
 analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o type.o weather.o
 
@@ -107,7 +107,8 @@ switch.o: switch.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
  weather.h statusfunction.h switch.h typefunction.h
 team.o: team.cpp ability.h gender.h item.h move.h active.h type.h \
  movefunction.h pokemon.h species.h stat.h status.h team.h map.h \
- weather.h statfunction.h switch.h teampredictor.h
+ weather.h statfunction.h switch.h teampredictor.h pokemon_lab/file.h \
+ pokemon_online/file.h
 teampredictor.o: teampredictor.cpp load_stats.h map.h ability.h gender.h \
  item.h move.h active.h type.h stat.h species.h pokemon.h status.h team.h \
  teampredictor.h
@@ -115,6 +116,12 @@ type.o: type.cpp team.h active.h map.h ability.h gender.h item.h move.h \
  type.h stat.h species.h pokemon.h status.h typefunction.h weather.h
 unknown.o: unknown.cpp unknown.h item.h stat.h species.h
 weather.o: weather.cpp weather.h
+pokemon_lab/file.o: pokemon_lab/file.cpp pokemon_lab/file.h map.h \
+ ability.h gender.h item.h move.h active.h type.h stat.h species.h team.h \
+ map.h pokemon.h status.h
+pokemon_online/file.o: pokemon_online/file.cpp pokemon_online/file.h \
+ team.h active.h map.h ability.h gender.h item.h move.h type.h \
+ stat.h species.h pokemon.h status.h
 
 .PHONY: clean
 clean:

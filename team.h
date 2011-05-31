@@ -119,12 +119,5 @@ class Team {
 		void load (std::string const &name, Map const &map);
 };
 
-std::string search (std::ifstream &file, std::string &output2, std::string const &data);
-void pokelabteam (Team &team, std::string const &name, Map const &map);
-void pokelabpokemon (Team& team, std::ifstream &file, Map const &map);
-void poteam (Team &team, std::string const &name);
-void popokemon (Team &team, std::ifstream &file, species const pokemon_converter [], abilities const ability_converter [], items const item_converter [], natures const nature_converter [], moves_list const move_converter []);
-unsigned poconverter (std::string const &data, std::string const &end, std::string const &line);
-
 }
 #endif

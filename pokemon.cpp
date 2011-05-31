@@ -50,6 +50,20 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 		}
 }
 
+bool Pokemon::operator== (Pokemon const &other) const {
+	if (this->move.set.size() != other.move.set.size())
+		return false;
+	for (size_t n = 0; n != this->move.set.size(); ++n) {
+		if (this->move.set [n] == other.move.set [n])
+			return false;
+	}
+	return this->name == other.name and this->status == other.status and this->sleep == other.sleep and this->hp.stat == other.hp.stat and this->atk.stage == other.atk.stage and this->def.stage == other.def.stage and this->spa.stage == other.spa.stage and this->spd.stage == other.spd.stage and this->spe.stage == other.spe.stage and this->item == other.item;
+}
+
+bool Pokemon::operator!= (Pokemon const &other) const {
+	return !(*this == other);
+}
+
 void Pokemon::load () {
 	hp.max = hitpoints (*this);
 	hp.stat = hp.max;

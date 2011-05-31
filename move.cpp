@@ -862,4 +862,18 @@ void lower_pp (Team &user, Pokemon const &target) {
 	}
 }
 
+bool Move::operator== (Move const &other) const {
+	return this->pp == other.pp and this->times_used == other.times_used;
+}
+
+bool Move::operator!= (Move const &other) const {
+	return !(*this == other);
+}
+
+bool Move::is_switch () const {
+	if (SWITCH0 <= name and name <= SWITCH5)
+		return true;
+	return false;
+}
+
 }

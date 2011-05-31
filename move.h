@@ -47,14 +47,9 @@ class Move {
 		Active<unsigned char> variable;
 	
 		Move (moves_list move, int pp_ups);
-		bool operator== (Move const &other) const {
-			return this->pp == other.pp and this->times_used == other.times_used;
-		}
-		bool is_switch () const {
-			if (SWITCH0 <= name and name <= SWITCH5)
-				return true;
-			return false;
-		}
+		bool operator== (Move const &other) const;
+		bool operator!= (Move const &other) const;
+		bool is_switch () const;
 	private:
 		void set_priority ();
 		void set_variable ();
