@@ -22,7 +22,7 @@ namespace technicalmachine {
 void predict_team (int detailed [][7], Team &team, bool using_lead) {
 	std::vector<double> overall;
 	overall_stats (overall);
-	double total = 961058;	// Total number of teams
+	double const total = 961058;	// Total number of teams
 	double multiplier [END_SPECIES][END_SPECIES];
 	team_stats (overall, total, multiplier);
 	std::vector<double> lead;
