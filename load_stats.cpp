@@ -19,15 +19,15 @@
 
 namespace technicalmachine {
 
-void overall_stats (std::vector<double> &overall) {
+void overall_stats (std::vector<unsigned> &overall) {
 	std::ifstream file ("usage.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
-		overall.push_back (boost::lexical_cast<double> (line));
+		overall.push_back (boost::lexical_cast<unsigned> (line));
 	file.close ();
 }
 
-void team_stats (std::vector<double> const &overall, double total, double multiplier [END_SPECIES][END_SPECIES]) {
+void team_stats (std::vector<unsigned> const &overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]) {
 	for (unsigned n = 0; n != END_SPECIES; ++n) {
 		for (unsigned m = 0; m != END_SPECIES; ++m) {
 			if (((n == DEOXYS_A or n == DEOXYS_D or n == DEOXYS_M or n == DEOXYS_S) and (m == DEOXYS_A or m == DEOXYS_D or m == DEOXYS_M or m == DEOXYS_S))
@@ -43,9 +43,9 @@ void team_stats (std::vector<double> const &overall, double total, double multip
 	}
 
 	// There are 5 other Pokemon on a team for each individual Pokemon. Therefore, if I've seen a Pokemon with n usages, there are 5 * n other Pokemon on the team. Subtract the known number of usages from this number until all known usages are gone. Then, assume the distribution of Pokemon not on the team mate stats is equal to the relative overall distribution and divide up all remaining usages proportionally.
-	double unaccounted [END_SPECIES];
+	unsigned unaccounted [END_SPECIES];
 	for (unsigned n = 0; n != END_SPECIES; ++n)
-		unaccounted [n] = overall.at (n) * 5;
+		unaccounted [n] = overall [n] * 5;
 
 	std::ifstream file ("teammate.txt");
 	std::string line;
@@ -55,12 +55,12 @@ void team_stats (std::vector<double> const &overall, double total, double multip
 		size_t y = line.find ('\t', x + 1);
 		int ally = boost::lexical_cast<int> (line.substr (x + 1, y - x - 1));
 		// Subtract known usages
-		unaccounted [member] -= boost::lexical_cast<double> (line.substr (y + 1));
-		// multiplier = % used with this Pokemon / % used overall
-		multiplier [member][ally] = (boost::lexical_cast<double> (line.substr (y + 1)) / overall.at (member)) / (overall.at (ally) / total);
+		unaccounted [member] -= boost::lexical_cast<unsigned> (line.substr (y + 1));
+		// multiplier = % used with this Pokemon / % used overall, rewritten to be a proper fraction
+		multiplier [member][ally] = (boost::lexical_cast<float> (line.substr (y + 1)) * total) / (static_cast <float> (overall [member]) * overall [ally]);
 	}
 	for (unsigned n = 0; n != END_SPECIES; ++n) {
-		if (overall.at (n) == 0) {
+		if (overall [n] == 0) {
 			for (unsigned m = 0; m != END_SPECIES; ++m)
 				// 1 is superior to 0 because if they use an unused Pokemon, this will have no effect instead of making everything equally 0
 				multiplier [n][m] = 1;
@@ -69,7 +69,7 @@ void team_stats (std::vector<double> const &overall, double total, double multip
 			for (unsigned m = 0; m != END_SPECIES; ++m) {
 				if (multiplier [n][m] == -1) {
 					// New method takes the total number of remaining Pokemon not accounted for and assumes they're evenly distributed (based on overall stats) among all Pokemon not on the list. This is the same as giving all those Pokemon the same multiplier. Reality probably has very low usage Pokemon more evenly distributed and high usage Pokemon that don't appear with a much lower multiplier.
-					multiplier [n][m] = unaccounted [n] / (overall.at (n) * 5);
+					multiplier [n][m] = unaccounted [n] / (overall [n] * 5.0);
 				}
 			}
 		}
@@ -77,11 +77,11 @@ void team_stats (std::vector<double> const &overall, double total, double multip
 	file.close ();
 }
 
-void lead_stats (std::vector<double> &lead) {		// Multiplier for Pokemon after you've seen the lead
+void lead_stats (std::vector<float> &lead) {		// Multiplier for Pokemon after you've seen the lead
 	std::ifstream file ("lead.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
-		lead.push_back (boost::lexical_cast<double> (line));
+		lead.push_back (boost::lexical_cast<float> (line));
 }
 
 void detailed_stats (Map const &map, int detailed [][7]) {

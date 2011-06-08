@@ -19,11 +19,11 @@
 
 namespace technicalmachine {
 
-void overall_stats (std::vector<double> &overall);
+void overall_stats (std::vector<unsigned> &overall);
 
-void team_stats (std::vector<double> const &overall, double total, double multiplier [END_SPECIES][END_SPECIES]);
+void team_stats (std::vector<unsigned> const &overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]);
 
-void lead_stats (std::vector<double> &lead);
+void lead_stats (std::vector<float> &lead);
 
 void detailed_stats (Map const &map, int detailed [][7]);
 

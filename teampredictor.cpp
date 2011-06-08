@@ -20,12 +20,12 @@
 namespace technicalmachine {
 
 void predict_team (int detailed [][7], Team &team, bool using_lead) {
-	std::vector<double> overall;
+	std::vector<unsigned> overall;
 	overall_stats (overall);
-	double const total = 961058;	// Total number of teams
-	double multiplier [END_SPECIES][END_SPECIES];
+	unsigned const total = 961058;	// Total number of teams
+	float multiplier [END_SPECIES][END_SPECIES];
 	team_stats (overall, total, multiplier);
-	std::vector<double> lead;
+	std::vector<float> lead;
 	if (using_lead)
 		lead_stats (lead);
 	else {
@@ -33,26 +33,26 @@ void predict_team (int detailed [][7], Team &team, bool using_lead) {
 			lead.push_back (1);
 	}
 	
-	std::vector<double> estimate;
+	std::vector<float> estimate;
 	for (unsigned n = 0; n != END_SPECIES; ++n)
-		estimate.push_back ((overall.at (n) / total) * lead.at (n));
+		estimate.push_back (lead [n] * overall [n] / total);
 
 	for (std::vector<Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [pokemon->name] [n];
+			estimate [n] *= multiplier [pokemon->name] [n];
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
 		predict_move (*it, detailed);
 }
 
-void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][7], double multiplier [END_SPECIES][END_SPECIES]) {
+void predict_pokemon (Team &team, std::vector<float> estimate, int detailed [][7], float multiplier [END_SPECIES][END_SPECIES]) {
 	while (team.pokemon.set.size() < team.size) {
-		double top = 0.0;
+		float top = 0.0;
 		species name;
 		for (int n = 0; n != END_SPECIES; ++n) {
-			if (top < estimate.at (n)) {
-				top = estimate.at (n);
+			if (top < estimate [n]) {
+				top = estimate [n];
 				name = static_cast<species> (n);
 			}
 		}
@@ -66,7 +66,7 @@ void predict_pokemon (Team &team, std::vector<double> estimate, int detailed [][
 		if (team.pokemon.set.size() == team.size)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate.at (n) *= multiplier [team.pokemon.set.back().name] [n];
+			estimate [n] *= multiplier [team.pokemon.set.back().name] [n];
 	}
 }
 
