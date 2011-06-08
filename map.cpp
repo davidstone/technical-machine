@@ -18,7 +18,7 @@ Map::Map() {
 	set_item ();
 	set_nature ();
 	set_move ();
-	set_species  ();
+	set_species ();
 }
 
 void Map::set_ability () {

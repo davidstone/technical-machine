@@ -172,7 +172,7 @@ void Team::output (std::string &output) {
 		if (it->ability != END_ABILITY)
 			output += "\tAbility: " + ability_name [it->ability] + '\n';
 		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != STRUGGLE; ++move)
-			output += "\t- " + move_name [move->name] + "\n";
+			output += "\t- " + move->get_name() + "\n";
 	}
 }
 

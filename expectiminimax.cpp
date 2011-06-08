@@ -36,7 +36,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 	if (SWITCH0 <= best_move and best_move <= SWITCH5)
 		std::cout << "Switch to " << pokemon_name [ai.pokemon.set [best_move - SWITCH0].name];
 	else
-		std::cout << "Use " << move_name [best_move];
+		std::cout << "Use " << Move::name_to_string [best_move];
 	if (depth == -1) {
 		double probability = 100.0 * static_cast <double> (score + VICTORY) / static_cast <double> (2 * VICTORY);
 		std::cout << " for ";
@@ -104,7 +104,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 					if (ai.pokemon->move->is_switch())
 						std::cout << "switching to " + pokemon_name [ai.pokemon.set [ai.pokemon->move->name - SWITCH0].name] + "\n";
 					else
-						std::cout << move_name [ai.pokemon->move->name] + "\n";
+						std::cout << ai.pokemon->move->get_name() + "\n";
 				}
 				long beta = VICTORY + 1;
 				for (foe.pokemon->move.index = 0; foe.pokemon->move.index != foe.pokemon->move.set.size(); ++foe.pokemon->move.index) {
@@ -116,7 +116,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 							if (foe.pokemon->move->is_switch())
 								std::cout << " switching to " + pokemon_name [foe.pokemon.set [foe.pokemon->move->name - SWITCH0].name] + "\n";
 							else
-								std::cout << "'s " + move_name [foe.pokemon->move->name] + "\n";
+								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
 						}
 						long score = tree2 (ai, foe, weather, depth, sv, transposition_table);
 //						std::cout << indent + "\tEstimated score is " << score << '\n';
