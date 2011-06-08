@@ -165,7 +165,7 @@ void Team::output (std::string &output) {
 	output += " team:\n";
 	output += player + ":\n";
 	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it) {
-		output += pokemon_name [it->name];
+		output += it->get_name();
 		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (it->hp.stat) / static_cast<double> (it->hp.max)) + "% HP)";
 		output += " @ " + item_name [it->item];
 		output += " ** " + it->nickname + '\n';

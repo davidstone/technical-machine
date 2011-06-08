@@ -34,7 +34,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 	score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table, true);
 
 	if (SWITCH0 <= best_move and best_move <= SWITCH5)
-		std::cout << "Switch to " << pokemon_name [ai.pokemon.set [best_move - SWITCH0].name];
+		std::cout << "Switch to " << ai.pokemon.set [best_move - SWITCH0].get_name ();
 	else
 		std::cout << "Use " << Move::name_to_string [best_move];
 	if (depth == -1) {
@@ -102,7 +102,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 				if (first_turn) {
 					std::cout << "Evaluating ";
 					if (ai.pokemon->move->is_switch())
-						std::cout << "switching to " + pokemon_name [ai.pokemon.set [ai.pokemon->move->name - SWITCH0].name] + "\n";
+						std::cout << "switching to " + ai.pokemon.set [ai.pokemon->move->name - SWITCH0].get_name () + "\n";
 					else
 						std::cout << ai.pokemon->move->get_name() + "\n";
 				}
@@ -114,7 +114,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 						if (first_turn) {
 							std::cout << "\tEvaluating the foe";
 							if (foe.pokemon->move->is_switch())
-								std::cout << " switching to " + pokemon_name [foe.pokemon.set [foe.pokemon->move->name - SWITCH0].name] + "\n";
+								std::cout << " switching to " + foe.pokemon.set [foe.pokemon->move->name - SWITCH0].get_name() + "\n";
 							else
 								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
 						}
@@ -372,7 +372,7 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
 			if (first_turn)
-				std::cout << "Evaluating switching to " + pokemon_name [ai.pokemon.set [ai.replacement].name] + "\n";
+				std::cout << "Evaluating switching to " + ai.pokemon.set [ai.replacement].get_name () + "\n";
 			long beta = VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
