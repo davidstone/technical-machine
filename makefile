@@ -125,4 +125,4 @@ pokemon_online/file.o: pokemon_online/file.cpp pokemon_online/file.h \
 
 .PHONY: clean
 clean:
-	rm *.o
+	find . -name "*.o" -print0 | xargs --null rm
