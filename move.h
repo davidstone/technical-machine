@@ -49,6 +49,7 @@ class Move {
 		static std::string const name_to_string [];
 
 		Move (moves_list move, int pp_ups);
+		unsigned long hash() const;
 		std::string get_name () const;			// Gets the string version of the name.
 		bool operator== (Move const &other) const;
 		bool operator!= (Move const &other) const;

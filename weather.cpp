@@ -13,6 +13,17 @@
 
 namespace technicalmachine {
 
+Weather::Weather () :
+	trick_room (0),
+	fog (false),
+	gravity (0),
+	uproar (0),
+	hail (0),
+	sun (0),
+	sand (0),
+	rain (0) {
+	}
+
 void Weather::set_trick_room () {
 	if (trick_room == 0)
 		trick_room = 5;
@@ -58,6 +69,11 @@ void Weather::set_rain (int duration) {
 		sand = 0;
 		rain = duration;
 	}
+}
+
+unsigned long Weather::hash () const {
+	// The + 1 is because they have a minimum value of -1 to represent infinite weather
+	return trick_room + 5 * (fog + 2 * ((gravity + 1) + 6 * ((uproar + 1) + 6 * ((hail + 1) + 6 * ((sun + 1) + 6 * ((sand + 1) + 6 * (rain + 1)))))));
 }
 
 }

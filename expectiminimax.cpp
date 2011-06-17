@@ -91,37 +91,37 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 		if (depth > 0)
 			--depth;
 		
-//		std::string indent = "";
-//		if (!first_turn)
-//			indent += "\t\t";
+		std::string indent = "";
+		if (!first_turn)
+			indent += "\t\t";
 		// Determine which moves can be legally selected
 		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index) {
 			blockselection (ai, foe, weather);
 			if (ai.pokemon->move->selectable) {
-//				std::cout << indent + "Evaluating ";
-				if (first_turn) {
-					std::cout << "Evaluating ";
+				std::cout << indent + "Evaluating ";
+//				if (first_turn) {
+//					std::cout << "Evaluating ";
 					if (ai.pokemon->move->is_switch())
 						std::cout << "switching to " + ai.pokemon.set [ai.pokemon->move->name - SWITCH0].get_name () + "\n";
 					else
 						std::cout << ai.pokemon->move->get_name() + "\n";
-				}
+//				}
 				long beta = VICTORY + 1;
 				for (foe.pokemon->move.index = 0; foe.pokemon->move.index != foe.pokemon->move.set.size(); ++foe.pokemon->move.index) {
 					blockselection (foe, ai, weather);
 					if (foe.pokemon->move->selectable) {
-//						std::cout << indent + "\tEvaluating the foe";
-						if (first_turn) {
-							std::cout << "\tEvaluating the foe";
+						std::cout << indent + "\tEvaluating the foe";
+//						if (first_turn) {
+//							std::cout << "\tEvaluating the foe";
 							if (foe.pokemon->move->is_switch())
 								std::cout << " switching to " + foe.pokemon.set [foe.pokemon->move->name - SWITCH0].get_name() + "\n";
 							else
 								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
-						}
+//						}
 						long score = tree2 (ai, foe, weather, depth, sv, transposition_table);
-//						std::cout << indent + "\tEstimated score is " << score << '\n';
-						if (first_turn)
-							std::cout << "\tEstimated score is " << score << '\n';
+						std::cout << indent + "\tEstimated score is " << score << '\n';
+//						if (first_turn)
+//							std::cout << "\tEstimated score is " << score << '\n';
 						if (beta > score)
 							beta = score;
 						if (beta <= alpha)	// Alpha-Beta pruning
@@ -132,9 +132,9 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 				if (beta > alpha) {
 					alpha = beta;
 					best_move = ai.pokemon->move->name;
-//					std::cout << indent + "Estimated score is " << alpha << '\n';
-					if (first_turn)
-						std::cout << "Estimated score is " << alpha << '\n';
+					std::cout << indent + "Estimated score is " << alpha << '\n';
+//					if (first_turn)
+//						std::cout << "Estimated score is " << alpha << '\n';
 				}
 				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
 					break;
@@ -246,7 +246,7 @@ long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 		score *= 4 - ai_numerator;
 		ai.awaken = true;
 		score += ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
-		if (ai_numerator > 1) {
+		if (foe_numerator > 1) {
 			score *= 4 - foe_numerator;
 			foe.awaken = true;
 			score += foe_numerator * (4 - ai_numerator) * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
@@ -372,7 +372,7 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
 			if (first_turn)
-				std::cout << "Evaluating switching to " + ai.pokemon.set [ai.replacement].get_name () + "\n";
+				std::cout << "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
 			long beta = VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {

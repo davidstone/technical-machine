@@ -40,6 +40,10 @@ Move::Move (moves_list move, int pp_ups) :
 		set_variable();
 }
 
+unsigned long Move::hash () const {
+	return name + END_MOVE * (disable + 7 * (pp + pp_max * (times_used)));
+}
+
 void Move::set_priority () {
 	if (is_switch())
 		priority = 6;

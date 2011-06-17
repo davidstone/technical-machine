@@ -22,7 +22,7 @@
 #include "weather.h"
 
 namespace technicalmachine {
-
+	
 // This currently generates no hits. I'm currently working on this to find out why.
 
 long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
@@ -55,32 +55,6 @@ long transposition (Team &ai, Team &foe, Weather const &weather, int const &dept
 		}
 	}
 	return state.score;
-}
-
-long hash_state (State const &state, score_variables const &sv) {
-	return (hash_team (state.ai) + 7 * hash_team (state.foe) + hash_weather (state.weather)) % sv.transposition_table;
-}
-
-long hash_team (Team const &team) {
-	long hash = team.active->name + team.light_screen + team.lucky_chant + team.mist + team.reflect + team.safeguard + team.tailwind + team.wish + team.spikes + team.toxic_spikes + team.stealth_rock;
-	for (std::vector<pokemon>::const_iterator it = team.member.begin(); it != team.member.end(); ++it)
-		hash += hash_pokemon (*it);
-	return hash;
-}
-
-long hash_pokemon (Pokemon const &member) {
-	long hash = 1234 * member.name + member.status + member.vanish + member.confused + member.embargo + member.encore + member.heal_block + member.magnet_rise + member.partial_trap + member.perish_song + member.rampage + member.sleep + member.slow_start + member.stockpile + member.taunt + member.toxic + member.uproar + member.yawn + member.aqua_ring + member.attract + member.charge + member.curse + member.damaged + member.defense_curl + member.destiny_bond + member.	ff + member.flinch + member.focus_energy + member.identified + member.imprison + member.ingrain + member.item_recycle + member.item_unburden + member.leech_seed + member.loaf + member.lock_on + member.mf + member.minimize + member.moved + member.mud_sport + member.nightmare + member.roost + member.torment + member.trapped + member.water_sport + member.accuracy + member.evasion + member.hp.stat + member.atk.stage + member.def.stage + member.spa.stage + member.spd.stage + member.spe.stage + member.ability + member.item + member.nature;
-	for (std::vector<Move>::const_iterator it = member.moveset.begin(); it != member.moveset.end(); ++it)
-		hash += hash_move (*it);
-	return hash;
-}
-
-long hash_move (Move const &move) {
-	return move.name + move.disable + move.pp + move.times_used;
-}
-
-long hash_weather (Weather const &weather) {
-	return weather.trick_room + weather.fog + weather.gravity + weather.uproar + weather.hail + weather.sun + weather.sand + weather.rain;
 }
 
 }

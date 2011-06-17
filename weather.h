@@ -37,17 +37,7 @@ class Weather {
 			return this->trick_room == other.trick_room and this->fog == other.fog and this->gravity == other.gravity and this->uproar == other.uproar and this->hail == other.hail and this->sun == other.sun and this->sand == other.sand and this->rain == other.rain;
 		}
 	
-		Weather () :
-			trick_room (0),
-			fog (false),
-			gravity (0),
-			uproar (0),
-			hail (0),
-			sun (0),
-			sand (0),
-			rain (0)
-			{}
-
+		Weather ();
 		void set_trick_room ();
 		void set_gravity ();
 		void set_uproar (int duration);
@@ -55,6 +45,7 @@ class Weather {
 		void set_sun (int duration);
 		void set_sand (int duration);
 		void set_rain (int duration);
+		unsigned long hash () const;
 };
 
 }

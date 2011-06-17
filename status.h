@@ -14,7 +14,7 @@
 
 namespace technicalmachine {
 
-enum statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, SLEEP };
+enum statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, SLEEP, END_STATUS };
 
 // I'm not including pseudo-status like Leech Seed and Confusion here, because those have dramatically different effects in the game.
 

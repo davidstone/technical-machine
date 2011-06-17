@@ -52,6 +52,7 @@ class Pokemon {
 		unsigned char happiness;
 	
 		Pokemon (species const &member, unsigned size);
+		unsigned long hash () const;
 		std::string get_name () const;
 		bool operator== (Pokemon const &other) const;
 		bool operator!= (Pokemon const &other) const;

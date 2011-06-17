@@ -114,6 +114,7 @@ class Team {
 		bool operator== (Team const &other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
+		unsigned long hash () const;
 		void output (std::string &output);
 	private:
 		void load (std::string const &name, Map const &map);

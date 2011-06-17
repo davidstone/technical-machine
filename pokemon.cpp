@@ -50,6 +50,13 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 		}
 }
 
+unsigned long Pokemon::hash () const {
+	unsigned long hash = 0;
+	for (std::vector<Move>::const_iterator it = move.set.begin(); it != move.set.end(); ++it)
+		hash ^= it->hash();
+	return name + END_SPECIES * (item + END_ITEM * (status + END_STATUS * (hp.stat + hp.max * (atk.stage + 13 * (def.stage + 13 * (spa.stage + 13 * (spd.stage + 13 * (spe.stage + 13 * (sleep + 5 * hash)))))))));
+}
+
 bool Pokemon::operator== (Pokemon const &other) const {
 	if (this->move.set.size() != other.move.set.size())
 		return false;
