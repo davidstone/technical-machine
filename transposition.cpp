@@ -31,6 +31,7 @@ public:
 	Hash ();
 	Hash (unsigned long ai_hash, unsigned long foe_hash, unsigned long weather_hash, int depth_current);
 	bool operator== (Hash const &other) const;
+	bool operator!= (Hash const &other) const;
 };
 
 Hash::Hash ():
@@ -48,33 +49,34 @@ bool Hash::operator== (Hash const &other) const {
 	return ai == other.ai and foe == other.foe and weather == other.weather;
 }
 
+bool Hash::operator!= (Hash const &other) const {
+	return !(*this == other);
+}
+
 long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
 	long score;
 	if (depth == 0)
 		score = evaluate (ai, foe, weather, sv);
 	else {
+		// First, I hash both teams and the weather. These are the long-form hashes that are each the size of an unsigned long, and should be unique within a game. I then take those hashes and divide them modulo their relevant dimension (used to determine the size of the transposition table). These short-form hashes are used as the array index. The shortened hash combinations are used to look up the full hashes, score, and depth.
 		Hash hash (ai.hash(), foe.hash(), weather.hash(), depth);
-		static unsigned long const ai_dimension = 128;
-		static unsigned long const foe_dimension = 128;
+		static unsigned long const ai_dimension = 256;
+		static unsigned long const foe_dimension = 256;
 		static unsigned long const weather_dimension = 32;
 		static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
 		Hash * const transpose = &table [hash.ai % ai_dimension] [hash.foe % foe_dimension] [hash.weather % weather_dimension];
-		std::cout << "Hashes: " << hash.ai << ", " << hash.foe << ", " << hash.weather << '\n';
 		// If I can find the current state in my transposition table at a depth of at least the current depth, set the score to the stored score.
-		if (transpose->depth >= hash.depth and *transpose == hash) {
+		if (transpose->depth >= hash.depth and *transpose == hash)
 			score = transpose->score;
-			std::cout << "transpose->score: " << transpose->score << '\n';
-		}
 		else {
 			moves_list phony = END_MOVE;
 			// If I can't find it, set the score to the evaluation of the state at depth - 1.
 			hash.score = tree1 (ai, foe, weather, depth, sv, phony);
-			std::cout << "Cool! " << hash.score << '\n';
 		
-			// If I didn't find any stored value at the same hash as the current state, add it to my table. If the value I found was for a search at a shallower depth, replace it with the new value.
+			// Since I didn't find any stored value at the same hash as the current state, or the value I found was for a shallower depth, add the new value to my table.
 			*transpose = hash;
+			score = hash.score;
 		}
-		score = hash.score;
 	}
 	return score;
 }
