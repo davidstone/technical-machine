@@ -10,8 +10,6 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include <map>
-#include <string>
 #include "evaluate.h"
 #include "expectiminimax.h"
 #include "move.h"
@@ -22,39 +20,63 @@
 #include "weather.h"
 
 namespace technicalmachine {
-	
-// This currently generates no hits. I'm currently working on this to find out why.
 
-long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table) {
-	reset_iterators (ai);	
-	reset_iterators (foe);
-	State state;		// This causes possibly needless copying. Changing my code elsewhere to use the State data structure could solve this problem.
+class Hash {
+public:
+	unsigned long ai;
+	unsigned long foe;
+	unsigned long weather;
+	long score;
+	int depth;
+	Hash ();
+	Hash (unsigned long ai_hash, unsigned long foe_hash, unsigned long weather_hash, int depth_current);
+	bool operator== (Hash const &other) const;
+};
 
+Hash::Hash ():
+	depth (0) {
+}
+
+Hash::Hash (unsigned long ai_hash, unsigned long foe_hash, unsigned long weather_hash, int depth_current):
+	ai (ai_hash),
+	foe (foe_hash),
+	weather (weather_hash),
+	depth (depth_current) {
+}
+
+bool Hash::operator== (Hash const &other) const {
+	return ai == other.ai and foe == other.foe and weather == other.weather;
+}
+
+long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
+	long score;
 	if (depth == 0)
-		state.score = evaluate (ai, foe, weather, sv);
+		score = evaluate (ai, foe, weather, sv);
 	else {
-		state.ai = ai;
-		state.foe = foe;
-		state.weather = weather;
-		state.depth = depth;
-		long const hash = hash_state (state, sv);
-		std::map<long, State>::iterator it = transposition_table.find (hash);
+		Hash hash (ai.hash(), foe.hash(), weather.hash(), depth);
+		static unsigned long const ai_dimension = 128;
+		static unsigned long const foe_dimension = 128;
+		static unsigned long const weather_dimension = 32;
+		static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
+		Hash * const transpose = &table [hash.ai % ai_dimension] [hash.foe % foe_dimension] [hash.weather % weather_dimension];
+		std::cout << "Hashes: " << hash.ai << ", " << hash.foe << ", " << hash.weather << '\n';
 		// If I can find the current state in my transposition table at a depth of at least the current depth, set the score to the stored score.
-		if (it != transposition_table.end() and it->second.depth >= depth) {
-//			std::cout << "Need for speed\n";
-			state.score = it->second.score;
+		if (transpose->depth >= hash.depth and *transpose == hash) {
+			score = transpose->score;
+			std::cout << "transpose->score: " << transpose->score << '\n';
 		}
 		else {
+			moves_list phony = END_MOVE;
 			// If I can't find it, set the score to the evaluation of the state at depth - 1.
-			state.score = tree1 (state.ai, state.foe, state.weather, state.depth, sv, best_move, output, transposition_table);
-			
+			hash.score = tree1 (ai, foe, weather, depth, sv, phony);
+			std::cout << "Cool! " << hash.score << '\n';
+		
 			// If I didn't find any stored value at the same hash as the current state, add it to my table. If the value I found was for a search at a shallower depth, replace it with the new value.
-			if (it == transposition_table.end() or state.depth >= it->second.depth) {
-				transposition_table [hash] = state;
-			}
+			*transpose = hash;
 		}
+		score = hash.score;
 	}
-	return state.score;
+	return score;
 }
 
 }

@@ -31,7 +31,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	moves_list best_move;
 	std::map<long, State> transposition_table;
-	score = tree1 (ai, foe, weather, depth, sv, best_move, transposition_table, true);
+	score = tree1 (ai, foe, weather, depth, sv, best_move, true);
 
 	if (SWITCH0 <= best_move and best_move <= SWITCH5)
 		std::cout << "Switch to " << ai.pokemon.set [best_move - SWITCH0].get_name ();
@@ -53,7 +53,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 }
 
 
-long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool first_turn) {
+long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn) {
 
 	/* Working from the inside loop out:
 
@@ -74,15 +74,17 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 	speed (ai, weather);
 	speed (foe, weather);
 
+	bool const verbose = false;
+
 	// This section is for replacing fainted Pokemon (and eventually Baton Pass and U-turn, theoretically).
 
 	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0) {
 		bool faint = true;
-		alpha = replace (ai, foe, weather, depth, sv, best_move, transposition_table, faint, first_turn);
+		alpha = replace (ai, foe, weather, depth, sv, best_move, faint, first_turn, verbose);
 	}
 	else if (ai.pass or foe.pass) {
 		bool faint = false;
-		alpha = replace (ai, foe, weather, depth, sv, best_move, transposition_table, faint, first_turn);
+		alpha = replace (ai, foe, weather, depth, sv, best_move, faint, first_turn, verbose);
 	}
 	
 	// This section is for selecting a move, including switches that aren't replacing a fainted Pokemon.
@@ -92,36 +94,33 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 			--depth;
 		
 		std::string indent = "";
-		if (!first_turn)
+		if (verbose and !first_turn)
 			indent += "\t\t";
 		// Determine which moves can be legally selected
 		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index) {
 			blockselection (ai, foe, weather);
 			if (ai.pokemon->move->selectable) {
-				std::cout << indent + "Evaluating ";
-//				if (first_turn) {
-//					std::cout << "Evaluating ";
+				if (verbose or first_turn) {
+					std::cout << indent + "Evaluating ";
 					if (ai.pokemon->move->is_switch())
 						std::cout << "switching to " + ai.pokemon.set [ai.pokemon->move->name - SWITCH0].get_name () + "\n";
 					else
 						std::cout << ai.pokemon->move->get_name() + "\n";
-//				}
+				}
 				long beta = VICTORY + 1;
 				for (foe.pokemon->move.index = 0; foe.pokemon->move.index != foe.pokemon->move.set.size(); ++foe.pokemon->move.index) {
 					blockselection (foe, ai, weather);
 					if (foe.pokemon->move->selectable) {
-						std::cout << indent + "\tEvaluating the foe";
-//						if (first_turn) {
-//							std::cout << "\tEvaluating the foe";
+						if (verbose or first_turn) {
+							std::cout << indent + "\tEvaluating the foe";
 							if (foe.pokemon->move->is_switch())
 								std::cout << " switching to " + foe.pokemon.set [foe.pokemon->move->name - SWITCH0].get_name() + "\n";
 							else
 								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
-//						}
-						long score = tree2 (ai, foe, weather, depth, sv, transposition_table);
-						std::cout << indent + "\tEstimated score is " << score << '\n';
-//						if (first_turn)
-//							std::cout << "\tEstimated score is " << score << '\n';
+						}
+						long score = tree2 (ai, foe, weather, depth, sv);
+						if (verbose or first_turn)
+							std::cout << indent + "\tEstimated score is " << score << '\n';
 						if (beta > score)
 							beta = score;
 						if (beta <= alpha)	// Alpha-Beta pruning
@@ -132,9 +131,8 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 				if (beta > alpha) {
 					alpha = beta;
 					best_move = ai.pokemon->move->name;
-					std::cout << indent + "Estimated score is " << alpha << '\n';
-//					if (first_turn)
-//						std::cout << "Estimated score is " << alpha << '\n';
+					if (verbose or first_turn)
+						std::cout << indent + "Estimated score is " << alpha << '\n';
 				}
 				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
 					break;
@@ -145,7 +143,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 }
 
 
-long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, std::map<long, State> &transposition_table) {
+long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
 	// Determine turn order
 	Team* first;
 	Team* last;
@@ -181,27 +179,27 @@ long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 						do {
 							ai.ch = false;
 							foe.ch = false;
-							long score1 = tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
+							long score1 = tree3 (ai, foe, weather, depth, sv, first, last);
 							if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower <= 0) {
 								score1 *= 15;
 								ai.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
+								score1 += tree3 (ai, foe, weather, depth, sv, first, last);
 								score1 /= 16;
 							}
 							else if (ai.pokemon->move->basepower <= 0 and foe.pokemon->move->basepower > 0) {
 								score1 *= 15;
 								foe.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
+								score1 += tree3 (ai, foe, weather, depth, sv, first, last);
 								score1 /= 16;
 							}
 							else if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower > 0) {
 								score1 *= 225;
 								ai.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table) * 15;
+								score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
 								foe.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table);
+								score1 += tree3 (ai, foe, weather, depth, sv, first, last);
 								ai.ch = false;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last, transposition_table) * 15;
+								score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
 								score1 /= 256;
 							}
 							if (foe.pokemon->move->effect == 0)
@@ -226,7 +224,7 @@ long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 }
 
 
-long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
+long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
 	int n;
 	if (ai.pokemon->ability == EARLY_BIRD)
 		n = 2;
@@ -241,17 +239,17 @@ long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 	long score;
 	ai.awaken = false;
 	foe.awaken = false;
-	score = tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+	score = tree4 (ai, foe, weather, depth, sv, first, last);
 	if (ai_numerator > 1) {
 		score *= 4 - ai_numerator;
 		ai.awaken = true;
-		score += ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+		score += ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last);
 		if (foe_numerator > 1) {
 			score *= 4 - foe_numerator;
 			foe.awaken = true;
-			score += foe_numerator * (4 - ai_numerator) * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+			score += foe_numerator * (4 - ai_numerator) * tree4 (ai, foe, weather, depth, sv, first, last);
 			ai.awaken = false;
-			score += foe_numerator * ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+			score += foe_numerator * ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last);
 			score /= 4;
 		}
 		score /= 4;
@@ -259,24 +257,24 @@ long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 	else if (foe_numerator > 1) {
 		score *= 4 - foe_numerator;
 		foe.awaken = true;
-		score += foe_numerator * tree4 (ai, foe, weather, depth, sv, first, last, transposition_table);
+		score += foe_numerator * tree4 (ai, foe, weather, depth, sv, first, last);
 		score /= 4;
 	}
 	return score;
 }
 
 
-long tree4 (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last, std::map<long, State> &transposition_table) {
+long tree4 (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
 	long score;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		score = (tree5 (ai, foe, weather, depth, sv, transposition_table) + tree5 (foe, ai, weather, depth, sv, transposition_table)) / 2;
+		score = (tree5 (ai, foe, weather, depth, sv) + tree5 (foe, ai, weather, depth, sv)) / 2;
 	else
-		score = tree5 (*first, *last, weather, depth, sv, transposition_table);
+		score = tree5 (*first, *last, weather, depth, sv);
 	return score;
 }
 
 
-long tree5 (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table) {
+long tree5 (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
 	if (!last.pass) {
 		if (!first.pass) {
 			if (first.pokemon->move->name == BATON_PASS and false) {
@@ -285,7 +283,7 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 				Team* foe;
 				deorder (first, last, ai, foe);
 				moves_list phony = END_MOVE;
-				return tree1 (*ai, *foe, weather, depth, sv, phony, transposition_table);
+				return tree1 (*ai, *foe, weather, depth, sv, phony);
 			}
 		}
 		last.damage = usemove (first, last, weather);
@@ -300,7 +298,7 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 			Team* foe;
 			deorder (first, last, ai, foe);
 			moves_list phony = END_MOVE;
-			return tree1 (*ai, *foe, weather, depth, sv, phony, transposition_table);
+			return tree1 (*ai, *foe, weather, depth, sv, phony);
 		}
 	}
 
@@ -313,29 +311,29 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 	
 	first.shed_skin = false;
 	last.shed_skin = false;
-	long score = 49 * tree6 (first, last, weather, depth, sv, transposition_table);
+	long score = 49 * tree6 (first, last, weather, depth, sv);
 	long divisor = 49;
 	if (first.pokemon->ability == SHED_SKIN and first.pokemon->status != NO_STATUS) {
 		first.shed_skin = true;
-		score += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
+		score += 21 * tree6 (first, last, weather, depth, sv);
 		divisor += 21;
 		if (last.pokemon->ability == SHED_SKIN and last.pokemon->status != NO_STATUS) {
 			last.shed_skin = true;
-			score += 9 * tree6 (first, last, weather, depth, sv, transposition_table);
+			score += 9 * tree6 (first, last, weather, depth, sv);
 			divisor += 9;
 			first.shed_skin = false;
 		}
 	}
 	if (last.pokemon->ability == SHED_SKIN and last.pokemon->status != NO_STATUS) {
 		last.shed_skin = true;
-		score += 21 * tree6 (first, last, weather, depth, sv, transposition_table);
+		score += 21 * tree6 (first, last, weather, depth, sv);
 		divisor += 21;
 	}
 	return score / divisor;
 }
 
 
-long tree6 (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table) {
+long tree6 (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
 	endofturn (first, last, weather);
 	long score;
 	if (win (first) != 0 or win (last) != 0)
@@ -345,22 +343,14 @@ long tree6 (Team first, Team last, Weather weather, int depth, score_variables c
 		Team* foe;
 		deorder (first, last, ai, foe);
 
-		if (depth == 0)
-		// and first.pokemon->hp.stat > 0 and last.pokemon->hp.stat > 0) // This line creates an infinite loop for some reason. Will look at fixing this later.
-			score = evaluate (*ai, *foe, weather, sv);
-		else {
-			// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
-			moves_list phony = END_MOVE;
-
-			score = tree1 (*ai, *foe, weather, depth, sv, phony, transposition_table);
-		}
+		score = transposition (*ai, *foe, weather, depth, sv);
 	}
 	return score;
 }
 
-long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, std::map<long, State> &transposition_table, bool faint, bool first_turn) {
+long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool faint, bool first_turn, bool verbose) {
 
-	long (*function) (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table);
+	long (*function) (Team first, Team last, Weather weather, int depth, score_variables const &sv);
 	if (faint)
 		function = &fainted;
 	else
@@ -368,18 +358,21 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	Team* first;
 	Team* last;
 	faster_pokemon (ai, foe, weather, first, last);
+	std::string indent = "";
+	if (verbose and !first_turn)
+		indent += "\t\t";
 	long alpha = -VICTORY - 1;
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
-			if (first_turn)
-				std::cout << "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
+			if (verbose or first_turn)
+				std::cout << indent + "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
 			long beta = VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
 					if (first == NULL)
-						beta = std::min (beta, ((*function) (ai, foe, weather, depth, sv, transposition_table) + (*function) (foe, ai, weather, depth, sv, transposition_table)) / 2);
+						beta = std::min (beta, ((*function) (ai, foe, weather, depth, sv) + (*function) (foe, ai, weather, depth, sv)) / 2);
 					else
-						beta = std::min (beta, (*function) (*first, *last, weather, depth, sv, transposition_table));
+						beta = std::min (beta, (*function) (*first, *last, weather, depth, sv));
 					if (beta <= alpha	// Alpha-Beta pruning
 							or (foe.pokemon->hp.stat != 0 and faint)
 							or (!foe.pass and !faint))
@@ -389,8 +382,8 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 			if (beta > alpha) {
 				alpha = beta;
 				best_move = static_cast<moves_list> (SWITCH0 + ai.replacement);
-				if (first_turn)
-					std::cout << "Estimated score is " << alpha << '\n';
+				if (verbose or first_turn)
+					std::cout << indent + "Estimated score is " << alpha << '\n';
 			}
 			if ((ai.pokemon->hp.stat != 0 and faint) or (!ai.pass and !faint))
 				break;
@@ -399,7 +392,7 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	return alpha;
 }
 
-long fainted (Team first, Team last, Weather weather, int depth, score_variables const &sv, std::map<long, State> &transposition_table) {
+long fainted (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
 	if (first.pokemon->hp.stat == 0) {
 		switchpokemon (first, last, weather);
 		if (win (first) != 0 or win (last) != 0)
@@ -420,8 +413,8 @@ long fainted (Team first, Team last, Weather weather, int depth, score_variables
 	else {
 		// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
 		moves_list phony = END_MOVE;
-		score = tree1 (*ai, *foe, weather, depth, sv, phony, transposition_table);
-//		return transposition (*ai, *foe, weather, depth, sv, transposition_table);
+		score = tree1 (*ai, *foe, weather, depth, sv, phony);
+//		return transposition (*ai, *foe, weather, depth, sv);
 	}
 	return score;
 }

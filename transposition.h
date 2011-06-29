@@ -23,12 +23,7 @@
 
 namespace technicalmachine {
 
-long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, moves_list &best_move, std::string &output, std::map<long, State> &transposition_table);
-long hash_state (State const &state, score_variables const &sv);
-long hash_team (Team const &team);
-long hash_pokemon (Pokemon const &member);
-long hash_move (Move const &move);
-long hash_weather (Weather const &weather);
+long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
 
 }
 #endif

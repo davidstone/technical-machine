@@ -73,7 +73,7 @@ void Weather::set_rain (int duration) {
 
 unsigned long Weather::hash () const {
 	// The + 1 is because they have a minimum value of -1 to represent infinite weather
-	return trick_room + 5 * (fog + 2 * ((gravity + 1) + 6 * ((uproar + 1) + 6 * ((hail + 1) + 6 * ((sun + 1) + 6 * ((sand + 1) + 6 * (rain + 1)))))));
+	return trick_room + 5 * (fog + 2 * ((gravity + 1) + 6 * ((uproar + 1) + 6 * ((hail + 1) + 9 * ((sun + 1) + 9 * ((sand + 1) + 9 * (rain + 1)))))));
 }
 
 }

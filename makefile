@@ -1,4 +1,4 @@
-aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
+aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
 predictobjects = predictor.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -112,6 +112,9 @@ team.o: team.cpp ability.h gender.h item.h move.h active.h type.h \
 teampredictor.o: teampredictor.cpp load_stats.h map.h ability.h gender.h \
  item.h move.h active.h type.h stat.h species.h pokemon.h status.h team.h \
  teampredictor.h
+transposition.o: transposition.cpp evaluate.h move.h active.h type.h \
+ pokemon.h ability.h gender.h item.h species.h stat.h status.h team.h \
+ map.h weather.h expectiminimax.h state.h transposition.h
 type.o: type.cpp team.h active.h map.h ability.h gender.h item.h move.h \
  type.h stat.h species.h pokemon.h status.h typefunction.h weather.h
 unknown.o: unknown.cpp unknown.h item.h stat.h species.h

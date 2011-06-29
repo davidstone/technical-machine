@@ -107,7 +107,7 @@ void Move::set_variable () {
 			variable.set.push_back(n);
 	}
 	else if (name == ROAR or name == WHIRLWIND) {
-		for (unsigned int n = 0; n != 6; ++n)
+		for (unsigned n = 0; n != 6; ++n)
 			variable.set.push_back(n);
 	}
 	else if (name == TAUNT) {
