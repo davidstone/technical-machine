@@ -85,12 +85,7 @@ void predict_move (Pokemon &member, int detailed [][7], unsigned size) {
 			}
 		}
 		if (!found) {
-			Move move (static_cast<moves_list> (detailed [member.name] [m]), 3);
-			// Makes sure that a predicted Roar / Whirlwind will not attempt to bring out Pokemon that do not exist.
-			if (move.name == ROAR or move.name == WHIRLWIND) {
-				while (move.variable.set.size() > size)
-					move.variable.set.pop_back();
-			}
+			Move move (static_cast<moves_list> (detailed [member.name] [m]), 3, size);
 
 // I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
 			member.move.set.insert (member.move.set.begin() + n, move);

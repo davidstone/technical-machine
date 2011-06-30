@@ -30,7 +30,6 @@ namespace technicalmachine {
 moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, long &score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	moves_list best_move;
-	std::map<long, State> transposition_table;
 	score = tree1 (ai, foe, weather, depth, sv, best_move, true);
 
 	if (SWITCH0 <= best_move and best_move <= SWITCH5)

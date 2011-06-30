@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-Move::Move (moves_list move, int pp_ups) :
+Move::Move (moves_list move, int pp_ups, unsigned size) :
 	name (move),
 	type (move_type [name]),
 	basepower (base_power [name]),
@@ -37,7 +37,7 @@ Move::Move (moves_list move, int pp_ups) :
 	times_used (0),
 	probability (get_probability [name]) {
 		set_priority();
-		set_variable();
+		set_variable (size);
 }
 
 unsigned long Move::hash () const {
@@ -73,7 +73,7 @@ void Move::set_priority () {
 		priority = 0;
 }
 
-void Move::set_variable () {
+void Move::set_variable (unsigned size) {
 	int p = get_probability [name];
 	if (name == ACUPRESSURE) {
 		for (int n = 0; n <= 6; ++n)
@@ -108,7 +108,7 @@ void Move::set_variable () {
 			variable.set.push_back(n);
 	}
 	else if (name == ROAR or name == WHIRLWIND) {
-		for (int n = 0; n != 6; ++n)
+		for (unsigned n = 0; n != size; ++n)
 			variable.set.push_back(n);
 	}
 	else if (name == TAUNT) {

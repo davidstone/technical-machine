@@ -48,7 +48,7 @@ class Move {
 
 		static std::string const name_to_string [];
 
-		Move (moves_list move, int pp_ups);
+		Move (moves_list move, int pp_ups, unsigned size);
 		unsigned long hash() const;
 		std::string get_name () const;			// Gets the string version of the name.
 		bool operator== (Move const &other) const;
@@ -56,7 +56,7 @@ class Move {
 		bool is_switch () const;
 	private:
 		void set_priority ();
-		void set_variable ();
+		void set_variable (unsigned size);
 
 		static types const move_type [];
 		static bool const is_physical [];

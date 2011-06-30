@@ -32,7 +32,7 @@
 
 namespace technicalmachine {
 
-Team::Team (bool isme, Map const &map) :
+Team::Team (bool isme, Map const &map, unsigned size) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -123,7 +123,7 @@ Team::Team (bool isme, Map const &map) :
 		}
 		settings.close();
 
-		load ("teams/" + team_file, map);
+		load ("teams/" + team_file, map, size);
 	}
 }
 
@@ -139,11 +139,11 @@ unsigned long Team::hash () const {
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
 
-void Team::load (std::string const &name, Map const &map) {
+void Team::load (std::string const &name, Map const &map, unsigned size) {
 	if (name.substr (name.length() - 3) == ".tp")
-		po::load_team (*this, name);
+		po::load_team (*this, name, size);
 	else			// if (name.substr (name.length() - 4) == ".sbt")
-		pl::load_team (*this, name, map);
+		pl::load_team (*this, name, map, size);
 	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
 		it->load();
 }

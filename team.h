@@ -110,14 +110,14 @@ class Team {
 		
 		bool const me;				// Is this my team?
 	
-		Team (bool isme, Map const &map);
+		Team (bool isme, Map const &map, unsigned size);
 		bool operator== (Team const &other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
 		unsigned long hash () const;
 		void output (std::string &output);
 	private:
-		void load (std::string const &name, Map const &map);
+		void load (std::string const &name, Map const &map, unsigned size);
 };
 
 }

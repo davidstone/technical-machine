@@ -14,7 +14,6 @@
 
 #include "evaluate.h"
 #include "move.h"
-#include "state.h"
 #include "team.h"
 #include "weather.h"
 

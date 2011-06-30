@@ -27,6 +27,7 @@
 using namespace technicalmachine;
 
 int main (int argc, char* argv[]) {
+	unsigned const foe_size = 6;
 	int depth;
 	if (argc == 1)
 		depth = -1;
@@ -36,8 +37,8 @@ int main (int argc, char* argv[]) {
 	Map const map;
 	int detailed [END_SPECIES][7] = {{ 0 }};
 	detailed_stats (map, detailed);
-	Team ai (true, map);
-	Team foe (false, map);
+	Team ai (true, map, foe_size);
+	Team foe (false, map, ai.size);
 	Weather weather;
 	score_variables sv;
 	

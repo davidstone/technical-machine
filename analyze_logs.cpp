@@ -266,7 +266,7 @@ void log_move (Log &log, Weather &weather, Map const &map) {
 		}
 	}
 	if (!isfound) {
-		Move move (name, 3);
+		Move move (name, 3, log.inactive->size);
 		log.active->at_replacement().move.set.insert (log.active->at_replacement().move.set.begin(), move);
 		log.active->at_replacement().move.index = 0;
 	}

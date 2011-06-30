@@ -14,7 +14,6 @@
 #include "expectiminimax.h"
 #include "move.h"
 #include "pokemon.h"
-#include "state.h"
 #include "team.h"
 #include "transposition.h"
 #include "weather.h"

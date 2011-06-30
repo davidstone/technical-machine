@@ -28,15 +28,15 @@ unsigned team_size (std::string const &name) {
 	return size;
 }
 
-void load_team (Team &team, std::string const &name, Map const &map) {
+void load_team (Team &team, std::string const &name, Map const &map, unsigned size) {
 	team.size = team_size (name);
 	std::ifstream file (name.c_str());
 	for (unsigned n = 0; n != team.size; ++n)
-		load_pokemon (team, file, map);
+		load_pokemon (team, file, map, size);
 	file.close ();
 }
 
-void load_pokemon (Team& team, std::ifstream &file, Map const &map) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
+void load_pokemon (Team& team, std::ifstream &file, Map const &map, unsigned size) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
 	std::string output2;	// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
 	Pokemon member (map.specie.find (output1)->second, team.size);
@@ -57,7 +57,7 @@ void load_pokemon (Team& team, std::ifstream &file, Map const &map) {	// Replace
 			break;
 		moves_list name = map.move.find (output1)->second;
 		int pp_ups = boost::lexical_cast <int> (output2);
-		Move move (name, pp_ups);
+		Move move (name, pp_ups, size);
 		member.move.set.insert (member.move.set.begin() + n, move);
 	}
 	

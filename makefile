@@ -45,10 +45,9 @@ analoggui : optimizations = -g
 
 CXXFLAGS = $(warnings) $(optimizations)
 
-ai.o: ai.cpp load_stats.h map.h ability.h gender.h item.h move.h \
- active.h type.h stat.h species.h pokemon.h status.h movefunction.h \
- team.h weather.h statfunction.h teampredictor.h analyze_logs.h \
- expectiminimax.h evaluate.h state.h
+ai.o: ai.cpp analyze_logs.h pokemon.h ability.h active.h gender.h item.h \
+ move.h type.h species.h stat.h status.h team.h map.h weather.h \
+ expectiminimax.h evaluate.h load_stats.h teampredictor.h
 analyze_logs_gui.o: analyze_logs_gui.cpp analyze_logs.h pokemon.h \
  ability.h active.h gender.h item.h move.h type.h species.h stat.h \
  status.h team.h map.h weather.h movefunction.h
@@ -72,8 +71,8 @@ evaluate.o: evaluate.cpp evaluate.h move.h active.h type.h pokemon.h \
  weather.h typefunction.h
 expectiminimax.o: expectiminimax.cpp expectiminimax.h evaluate.h move.h \
  active.h type.h pokemon.h ability.h gender.h item.h species.h stat.h \
- status.h team.h map.h weather.h state.h block.h endofturn.h \
- movefunction.h statfunction.h switch.h transposition.h
+ status.h team.h map.h weather.h block.h endofturn.h movefunction.h \
+ statfunction.h switch.h transposition.h
 heal.o: heal.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
  move.h type.h species.h stat.h status.h
 load_stats.o: load_stats.cpp map.h ability.h gender.h item.h move.h \
@@ -114,7 +113,7 @@ teampredictor.o: teampredictor.cpp load_stats.h map.h ability.h gender.h \
  teampredictor.h
 transposition.o: transposition.cpp evaluate.h move.h active.h type.h \
  pokemon.h ability.h gender.h item.h species.h stat.h status.h team.h \
- map.h weather.h expectiminimax.h state.h transposition.h
+ map.h weather.h expectiminimax.h transposition.h
 type.o: type.cpp team.h active.h map.h ability.h gender.h item.h move.h \
  type.h stat.h species.h pokemon.h status.h typefunction.h weather.h
 unknown.o: unknown.cpp unknown.h item.h stat.h species.h
