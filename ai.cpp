@@ -47,7 +47,7 @@ int main (int argc, char* argv[]) {
 	while (!won) {
 		Team predicted = foe;
 		std::cout << "======================\nPredicting...\n";
-		predict_team (detailed, predicted);
+		predict_team (detailed, predicted, ai.size);
 		std::string out;
 		predicted.output (out);
 		std::cout << out;

@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void predict_team (int detailed [][7], Team &team, bool using_lead) {
+void predict_team (int detailed [][7], Team &team, unsigned size, bool using_lead) {
 	std::vector<unsigned> overall;
 	overall_stats (overall);
 	unsigned const total = 961058;	// Total number of teams
@@ -43,7 +43,7 @@ void predict_team (int detailed [][7], Team &team, bool using_lead) {
 	}
 	predict_pokemon (team, estimate, detailed, multiplier);
 	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
-		predict_move (*it, detailed);
+		predict_move (*it, detailed, size);
 }
 
 void predict_pokemon (Team &team, std::vector<float> estimate, int detailed [][7], float multiplier [END_SPECIES][END_SPECIES]) {
@@ -70,7 +70,7 @@ void predict_pokemon (Team &team, std::vector<float> estimate, int detailed [][7
 	}
 }
 
-void predict_move (Pokemon &member, int detailed [][7]) {
+void predict_move (Pokemon &member, int detailed [][7], unsigned size) {
 	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
 	unsigned n = 0;
 	while (member.move.set [n].name != STRUGGLE)
@@ -86,7 +86,13 @@ void predict_move (Pokemon &member, int detailed [][7]) {
 		}
 		if (!found) {
 			Move move (static_cast<moves_list> (detailed [member.name] [m]), 3);
-			// I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
+			// Makes sure that a predicted Roar / Whirlwind will not attempt to bring out Pokemon that do not exist.
+			if (move.name == ROAR or move.name == WHIRLWIND) {
+				while (move.variable.set.size() > size)
+					move.variable.set.pop_back();
+			}
+
+// I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
 			member.move.set.insert (member.move.set.begin() + n, move);
 			++n;
 		}

@@ -301,7 +301,7 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 			return tree1 (*ai, *foe, weather, depth, sv, phony);
 		}
 	}
-
+	
 	usemove (last, first, weather);
 	last.pass = false;
 	if (win (first) != 0 or win (last) != 0)
