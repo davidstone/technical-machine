@@ -74,6 +74,7 @@ void Move::set_priority () {
 }
 
 void Move::set_variable () {
+	int p = get_probability [name];
 	if (name == ACUPRESSURE) {
 		for (int n = 0; n <= 6; ++n)
 			variable.set.push_back(n);
@@ -107,7 +108,7 @@ void Move::set_variable () {
 			variable.set.push_back(n);
 	}
 	else if (name == ROAR or name == WHIRLWIND) {
-		for (unsigned n = 0; n != 6; ++n)
+		for (int n = 0; n != 6; ++n)
 			variable.set.push_back(n);
 	}
 	else if (name == TAUNT) {
@@ -703,6 +704,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			if (target.pokemon.set.size() > 1) {
 				target.replacement = *user.pokemon->move->variable;
 				switchpokemon (target, user, weather);
+				target.moved = true;
 			}
 		}
 	}
@@ -879,9 +881,7 @@ bool Move::operator!= (Move const &other) const {
 }
 
 bool Move::is_switch () const {
-	if (SWITCH0 <= name and name <= SWITCH5)
-		return true;
-	return false;
+	return SWITCH0 <= name and name <= SWITCH5;
 }
 
 types const Move::move_type [] = {

@@ -302,7 +302,9 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 		}
 	}
 	
-	usemove (last, first, weather);
+	// If first uses a phazing move before last gets a chance to move, the newly brought out Pokemon would try to move without checking to see if it's already moved.
+	if (!last.moved)
+		usemove (last, first, weather);
 	last.pass = false;
 	if (win (first) != 0 or win (last) != 0)
 		return win (first) + win (last);
