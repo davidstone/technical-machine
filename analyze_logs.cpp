@@ -456,9 +456,7 @@ bool Log::getline () {
 }
 
 bool Log::search_is_first () {
-	if (line.substr (0, search.length()) == search)
-		return true;
-	return false;
+	return line.substr (0, search.length()) == search;
 }
 
 void initialize_turn (Team &ai, Team &foe, Log &log) {
@@ -469,6 +467,8 @@ void initialize_turn (Team &ai, Team &foe, Log &log) {
 	
 	log.active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
 	log.inactive = NULL;
+	log.first = NULL;
+	log.last = NULL;
 }
 
 void initialize_team (Team &team) {
