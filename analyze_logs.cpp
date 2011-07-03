@@ -82,7 +82,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 			if (log.search_is_first())
 				log_pokemon (ai, foe, weather, map, log);
 			else {
-				if (foe.player == "") {
+				if (foe.player == "") {	// If it's the very first turn
 					foe.player = log.line.substr (0, found);
 					ai.replacing = true;
 					foe.replacing = true;
@@ -166,11 +166,19 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 }
 
 void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Log &log) {
+	log.active = &team;
+	log.inactive = &target;
+	if (log.first == NULL) {
+		log.first = &team;
+		log.last = &target;
+	}
 	std::string search2 = " (lvl ";
 	size_t found2 = log.line.find (search2);
 	std::string nickname = log.line.substr (log.search.length(), found2 - log.search.length());
 
-	size_t replacement = team.replacement;
+	size_t replacement = team.replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
+	
+	// Check if this Pokemon has been seen already.
 	bool found = false;
 	for (team.replacement = 0; team.replacement != team.pokemon.set.size(); ++team.replacement) {
 		if (nickname == team.at_replacement().nickname) {
@@ -178,6 +186,8 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 			break;
 		}
 	}
+	
+	// If it hasn't been seen already, get information like gender and level and add it to the team.
 	if (!found) {
 		std::string search3 = " ";
 		size_t found3 = log.line.find (search3, found2 + search2.length());
@@ -230,29 +240,26 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 		team.replacement = team.pokemon.set.size() - 1;
 		team.pokemon.set.back().load();
 	}
+
+	// Special analysis when a Pokemon is brought out due to a phazing move
 	if (log.phaze) {
 		target.at_replacement().move->variable.index = 0;
 		while (team.pokemon.set [target.at_replacement().move->variable.index].nickname != nickname)
 			++target.at_replacement().move->variable.index;
 	}
-	else {
+	else if (!log.active->moved) {
 		team.pokemon.set [replacement].move.index = 0;
-		if (team.pokemon.set [replacement].move.set.size() > 1) {
-			while (team.pokemon.set [replacement].move->name != SWITCH0)
-				++team.pokemon.set [replacement].move.index;
+		while (team.pokemon.set [replacement].move->name != SWITCH0)
+			++team.pokemon.set [replacement].move.index;
 		}
 		team.pokemon.set [replacement].move.index += team.replacement;
-	}
-	log.active = &team;
-	log.inactive = &target;
-	if (log.first == NULL) {
-		log.first = &team;
-		log.last = &target;
+		log.active->moved = false;
 	}
 }
 
 
-void log_move (Log &log, Weather &weather, Map const &map) {
+void log_move (Log &log, Weather const &weather, Map const &map) {
+	log.active->moved = true;
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (log.line.find(".\r") != std::string::npos)
@@ -401,6 +408,8 @@ void log_misc (Log &log, Map const &map, bool &shed_skin) {
 }
 
 void do_turn (Team &first, Team &last, Weather &weather) {
+	first.moved = false;
+	last.moved = false;
 	if (first.replacing) {
 		normalize_hp (first, last);
 		switchpokemon (first, last, weather);
@@ -431,8 +440,15 @@ void do_turn (Team &first, Team &last, Weather &weather) {
 			foe = &first;
 			ai = &last;
 		}
-		while (foe->pokemon->fainted)
+		while (foe->pokemon->fainted) {
+			if (!foe->pokemon->move->is_switch()) {
+				foe->pokemon->move.index = 0;
+				while (foe->pokemon->move->name != SWITCH0)
+					++foe->pokemon->move.index;
+				foe->pokemon->move.index += foe->replacement;
+			}
 			usemove (*foe, *ai, weather, first.damage);
+		}
 	}
 	std::string out;
 	first.output (out);

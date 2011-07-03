@@ -24,9 +24,8 @@
 #include "type.h"
 #include "weather.h"
 
-using namespace technicalmachine;
-
 int main (int argc, char* argv[]) {
+	using namespace technicalmachine;
 	unsigned const foe_size = 6;
 	int depth;
 	if (argc == 1)
