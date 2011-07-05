@@ -68,7 +68,6 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 
 void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &log) {
 	if (log.line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-		std::cout << log.line << '\n';
 		log.search = "Begin turn #";
 		if (log.search_is_first())
 			return;
@@ -251,7 +250,6 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 		team.pokemon.set [replacement].move.index = 0;
 		while (team.pokemon.set [replacement].move->name != SWITCH0)
 			++team.pokemon.set [replacement].move.index;
-		}
 		team.pokemon.set [replacement].move.index += team.replacement;
 		log.active->moved = false;
 	}
