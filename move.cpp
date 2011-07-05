@@ -34,8 +34,7 @@ Move::Move (moves_list move, int pp_ups, unsigned size) :
 	pp_max (get_pp [name] * (5 + pp_ups) / 5),
 	pp (pp_max),
 	r (100),
-	times_used (0),
-	probability (get_probability [name]) {
+	times_used (0) {
 		set_priority();
 		set_variable (size);
 }
@@ -74,22 +73,31 @@ void Move::set_priority () {
 }
 
 void Move::set_variable (unsigned size) {
-	int p = get_probability [name];
+	std::pair <unsigned char, char> effect;
+	effect.second = get_probability [name];
 	if (name == ACUPRESSURE) {
-		for (int n = 0; n <= 6; ++n)
-			variable.set.push_back(n);
+		for (unsigned n = 0; n <= 6; ++n) {
+			effect.first = n;
+			variable.set.push_back (effect);
+		}
 	}
 	else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
-		for (int n = 2; n <= 5; ++n)
-			variable.set.push_back(n);
+		for (unsigned n = 2; n <= 5; ++n) {
+			effect.first = n;
+			variable.set.push_back (effect);
+		}
 	}
 	else if (name == ENCORE) {
-		for (int n = 4; n <= 8; ++n)
-			variable.set.push_back(n);
+		for (unsigned n = 4; n <= 8; ++n) {
+			effect.first = n;
+			variable.set.push_back (effect);
+		}
 	}
 	else if (name == MAGNITUDE ) {
-		for (int n = 10; n <= 110; n += 20)
-			variable.set.push_back(n);
+		for (unsigned n = 10; n <= 110; n += 20) {
+			effect.first = n;
+			variable.set.push_back (effect);
+		}
 		variable.set.push_back(150);
 /*		4 = 10;
 		5 = 30;
@@ -2900,7 +2908,7 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Egg Bomb
 	0,		// Embargo
 	1,		// Ember
-	0,		// Encore
+	2,		// Encore
 	0,		// Endeavor
 	0,		// Endure
 	1,		// Energy Ball
@@ -3209,7 +3217,7 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Tail Whip
 	0,		// Tailwind
 	0,		// Take Down
-	0,		// Taunt
+	5,		// Taunt
 	0,		// Teeter Dance
 	0,		// Teleport
 	0,		// Thief

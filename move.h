@@ -39,12 +39,8 @@ class Move {
 		char priority;
 		char r;					// The random number (85 through 100)
 		char times_used;
-		// effect is used for side effects of moves. 0 means it doesn't activate, 1 means it does. For Fire Fang, Ice Fang, and Thunder Fang: effect == 1 = status, effect == 2 = flinch, effect == 3 = both.
-		char effect;
-		// probability determines the odds that the effect does work (out of 10). For moves without a side effect, probability = 0
-		char probability;
-		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal).
-		Active<unsigned char> variable;
+		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
+		Active <std::pair <unsigned char, char> > variable;
 
 		static std::string const name_to_string [];
 

@@ -20,11 +20,11 @@ namespace technicalmachine {
 template <class T>
 class Active {
 	public:
-		std::vector<T> set;			// All Pokemon on the team
+		std::vector<T> set;			// All Pokemon on the team, all moves on the Pokemon, etc.
 		size_t index;
 		Active () :
-			index (0)
-			{}
+			index (0) {
+		}
 		T * operator-> () {
 			return &set [index];
 		}
