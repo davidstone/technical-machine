@@ -74,21 +74,42 @@ void Move::set_priority () {
 
 void Move::set_variable (unsigned size) {
 	std::pair <unsigned char, char> effect;
+	unsigned first = 0;
+	unsigned increment = 1;
+	unsigned last = 0;
 	effect.second = get_probability [name];
 	if (name == ACUPRESSURE) {
-		for (unsigned n = 0; n <= 6; ++n) {
-			effect.first = n;
-			variable.set.push_back (effect);
-		}
+		last = 6;
 	}
 	else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
-		for (unsigned n = 2; n <= 5; ++n) {
-			effect.first = n;
-			variable.set.push_back (effect);
-		}
+		first = 2;
+		last = 5;
 	}
 	else if (name == ENCORE) {
-		for (unsigned n = 4; n <= 8; ++n) {
+		first = 4;
+		last = 8;
+	}
+	else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
+		first = 2;
+		last = 3;
+	}
+	else if (name == PRESENT) {
+		increment = 40;
+		last = 120;
+	}
+	else if (name == ROAR or name == WHIRLWIND) {
+		last = size;
+	}
+	else if (name == TAUNT) {
+		first = 2;
+		last = 3;
+	}
+	else if (name == TRI_ATTACK) {
+		last = 2;
+	}
+	if (name == FIRE_FANG or name == ICE_FANG or name == THUNDER_FANG) {
+		// Need to add proper probability estimates
+		for (unsigned n = 0; n <= 3; ++n) {
 			effect.first = n;
 			variable.set.push_back (effect);
 		}
@@ -98,7 +119,8 @@ void Move::set_variable (unsigned size) {
 			effect.first = n;
 			variable.set.push_back (effect);
 		}
-		variable.set.push_back(150);
+		effect.first = 150;
+		variable.set.push_back (effect);
 /*		4 = 10;
 		5 = 30;
 		6 = 50;
@@ -107,28 +129,13 @@ void Move::set_variable (unsigned size) {
 		9 = 110;
 		10 = 150;*/
 	}
-	else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
-		variable.set.push_back (2);
-		variable.set.push_back (3);
+	else {
+		while (first <= last) {
+			effect.first = first;
+			variable.set.push_back (effect);
+			first += increment;
+		}
 	}
-	else if (name == PRESENT) {
-		for (int n = 0; n <= 120; n += 40)
-			variable.set.push_back(n);
-	}
-	else if (name == ROAR or name == WHIRLWIND) {
-		for (unsigned n = 0; n != size; ++n)
-			variable.set.push_back(n);
-	}
-	else if (name == TAUNT) {
-		variable.set.push_back(2);
-		variable.set.push_back(3);
-	}
-	else if (name == TRI_ATTACK) {
-		for (int n = 0; n <= 2; ++n)
-			variable.set.push_back(n);
-	}
-	else if (variable.set.size() == 0)
-		variable.set.push_back(0);
 }
 
 int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
