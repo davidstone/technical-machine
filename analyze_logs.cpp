@@ -53,7 +53,7 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 				std::cout << "\n";
 			}
 			else
-				analyze_line (ai, foe, weather, map, log);
+				analyze_line (ai, foe, map, log);
 		}
 		if (ai.pokemon->hp.stat == 0) {
 			ai.replacing = true;
@@ -66,7 +66,7 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 	return won;
 }
 
-void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &log) {
+void analyze_line (Team &ai, Team &foe, Map const &map, Log &log) {
 	if (log.line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
 		log.search = "Begin turn #";
 		if (log.search_is_first())
@@ -79,7 +79,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 		if (found != std::string::npos) {
 			log.search = ai.player + " sent out ";
 			if (log.search_is_first())
-				log_pokemon (ai, foe, weather, map, log);
+				log_pokemon (ai, foe, map, log);
 			else {
 				if (foe.player == "") {	// If it's the very first turn
 					foe.player = log.line.substr (0, found);
@@ -87,7 +87,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 					foe.replacing = true;
 				}
 				log.search = foe.player + " sent out ";
-				log_pokemon (foe, ai, weather, map, log);
+				log_pokemon (foe, ai, map, log);
 			}
 		}
 		else {
@@ -154,7 +154,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 			else {
 				log.search = log.active->at_replacement().nickname + " used ";
 				if (log.search_is_first())
-					log_move (log, weather, map);
+					log_move (log, map);
 				else {
 					bool shed_skin = false;
 					log_misc (log, map, shed_skin);		// Fix
@@ -164,7 +164,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 	}
 }
 
-void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Log &log) {
+void log_pokemon (Team &team, Team &target, Map const &map, Log &log) {
 	log.active = &team;
 	log.inactive = &target;
 	if (log.first == NULL) {
@@ -256,7 +256,7 @@ void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Lo
 }
 
 
-void log_move (Log &log, Weather const &weather, Map const &map) {
+void log_move (Log &log, Map const &map) {
 	log.active->moved = true;
 	// Account for Windows / Unix line endings
 	size_t n = 1;

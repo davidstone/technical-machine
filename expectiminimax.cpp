@@ -73,7 +73,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 	speed (ai, weather);
 	speed (foe, weather);
 
-	bool const verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
+	bool const verbose = true;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
 
 	// This section is for replacing fainted Pokemon (and eventually Baton Pass and U-turn, theoretically).
 

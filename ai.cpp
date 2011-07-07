@@ -53,7 +53,7 @@ int main (int argc, char* argv[]) {
 		std::cout << out;
 
 		long score;
-		moves_list best_move = expectiminimax (ai, predicted, weather, depth, sv, score);
+		expectiminimax (ai, predicted, weather, depth, sv, score);
 
 		won = analyze_turn (ai, foe, weather, map);
 	}

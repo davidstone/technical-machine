@@ -42,11 +42,11 @@ class Log {
 
 bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map);
 
-void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &log);
+void analyze_line (Team &ai, Team &foe, Map const &map, Log &log);
 
-void log_pokemon (Team &team, Team &target, Weather &weather, Map const &map, Log &log);
+void log_pokemon (Team &team, Team &target, Map const &map, Log &log);
 
-void log_move (Log &log, Weather const &weather, Map const &map);
+void log_move (Log &log, Map const &map);
 
 void log_misc (Log &log, Map const &map, bool &shed_skin);
 

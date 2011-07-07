@@ -56,7 +56,6 @@ long scoreteam (Team const &team, score_variables const &sv) {
 			score += sv.trapped;
 		if (team.focus_energy)
 			score += sv.focus_energy;
-		bool bp = false;
 		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
 			if (move->name == BATON_PASS) {
 				score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.pokemon->atk.stage * sv.atk_stage + team.pokemon->def.stage * sv.def_stage + team.pokemon->spa.stage * sv.spa_stage + team.pokemon->spd.stage * sv.spd_stage + team.pokemon->spe.stage * sv.spe_stage);
