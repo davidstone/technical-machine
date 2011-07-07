@@ -377,12 +377,8 @@ long fainted (Team first, Team last, Weather weather, int depth, score_variables
 	deorder (first, last, ai, foe);
 	if (depth == 0)
 		score = evaluate (*ai, *foe, weather, sv);
-	else {
-		// I have to pass best_move by reference so select_move_branch() can give information to expectiminimax(), but I don't want future calls to overwrite information
-		moves_list phony = END_MOVE;
-		score = select_move_branch (*ai, *foe, weather, depth, sv, phony);
-//		return transposition (*ai, *foe, weather, depth, sv);
-	}
+	else
+		score = transposition (*ai, *foe, weather, depth, sv);
 	return score;
 }
 
