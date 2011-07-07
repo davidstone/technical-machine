@@ -16,11 +16,16 @@ namespace technicalmachine {
 
 void heal (Pokemon &member, int denominator, int numerator) {
 	if (0 != member.hp.stat) {
+		// There is no risk of signed overflow here, because denominator is never INT_MIN.
 		if ((denominator > 0 and denominator / numerator < member.hp.max) or (denominator < 0 and -denominator / numerator < member.hp.max and member.ability != MAGIC_GUARD))
 			member.hp.stat += member.hp.max * numerator / denominator;
-		else if (denominator > 0)	// If it would normally heal less than 1, heal 1
+
+		// If it would normally heal less than 1, heal 1
+		else if (denominator > 0)
 			++member.hp.stat;
-		else if (member.ability != MAGIC_GUARD)	// If it would normally damage less than 1, damage 1
+
+		// If it would normally damage less than 1, damage 1
+		else if (member.ability != MAGIC_GUARD)
 			--member.hp.stat;
 		if (member.hp.stat > member.hp.max)
 			member.hp.stat = member.hp.max;

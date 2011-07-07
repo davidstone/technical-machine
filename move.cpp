@@ -747,8 +747,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		if (target.confused == 0)
 			target.confused = user.pokemon->move->variable->first;
 	}
-//	else if (DARK_VOID == user.pokemon->move->name or GRASSWHISTLE == user.pokemon->move->name or HYPNOSIS == user.pokemon->move->name or LOVELY_KISS == user.pokemon->move->name or SING == user.pokemon->move->name or SLEEP_POWDER == user.pokemon->move->name or SPORE == user.pokemon->move->name)
-//		sleep (*user.pokemon, *target.pokemon, weather);
+	else if (DARK_VOID == user.pokemon->move->name or GRASSWHISTLE == user.pokemon->move->name or HYPNOSIS == user.pokemon->move->name or LOVELY_KISS == user.pokemon->move->name or SING == user.pokemon->move->name or SLEEP_POWDER == user.pokemon->move->name or SPORE == user.pokemon->move->name)
+		sleep (*user.pokemon, *target.pokemon, weather);
 	else if (ROAR == user.pokemon->move->name or WHIRLWIND == user.pokemon->move->name) {
 		if ((target.pokemon->ability != SOUNDPROOF or user.pokemon->move->name != ROAR) and !target.ingrain and target.pokemon->ability != SUCTION_CUPS) {
 			if (target.pokemon.set.size() > 1) {
@@ -854,10 +854,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		}
 		else if (SKY_ATTACK == user.pokemon->move->name) {}
 	}
-//	else if (YAWN == user.pokemon->move->name) {
-//		if (user.yawn == 0)
-//			user.yawn = 2;
-//	}
+	else if (YAWN == user.pokemon->move->name) {
+		if (target.yawn == 0)
+			target.yawn = 2;
+	}
 
 	return damage;
 }
