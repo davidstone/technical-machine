@@ -41,12 +41,19 @@ void predict_team (int detailed [][7], Team &team, unsigned size, bool using_lea
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate [n] *= multiplier [pokemon->name] [n];
 	}
-	predict_pokemon (team, estimate, detailed, multiplier);
-	for (std::vector<Pokemon>::iterator it = team.pokemon.set.begin(); it != team.pokemon.set.end(); ++it)
-		predict_move (*it, detailed, size);
+	predict_pokemon (team, estimate, multiplier);
+	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
+		if (pokemon->ability == END_ABILITY)
+			pokemon->ability = static_cast<abilities> (detailed [pokemon->name] [0]);
+		if (pokemon->item == END_ITEM)
+			pokemon->item = static_cast<items> (detailed [pokemon->name] [1]);
+		if (pokemon->nature == END_NATURE)
+			pokemon->nature = static_cast<natures> (detailed [pokemon->name] [2]);
+		predict_move (*pokemon, detailed, size);
+	}
 }
 
-void predict_pokemon (Team &team, std::vector<float> estimate, int detailed [][7], float multiplier [END_SPECIES][END_SPECIES]) {
+void predict_pokemon (Team &team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]) {
 	while (team.pokemon.set.size() < team.size) {
 		float top = 0.0;
 		species name;
@@ -57,12 +64,8 @@ void predict_pokemon (Team &team, std::vector<float> estimate, int detailed [][7
 			}
 		}
 		Pokemon member (name, team.size);
+		member.load ();
 		team.pokemon.set.push_back (member);
-		team.pokemon.set.back().ability = static_cast<abilities> (detailed [team.pokemon.set.back().name] [0]);
-		team.pokemon.set.back().item = static_cast<items> (detailed [team.pokemon.set.back().name] [1]);
-		team.pokemon.set.back().nature = static_cast<natures> (detailed [team.pokemon.set.back().name] [2]);
-		team.pokemon.set.back().gender = GENDERLESS;
-		team.pokemon.set.back().load ();
 		if (team.pokemon.set.size() == team.size)
 			break;
 		for (unsigned n = 0; n != END_SPECIES; ++n)

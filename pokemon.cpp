@@ -33,6 +33,7 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 	spd (name, level, SPD),
 	spe (name, level, SPE),
 
+	nature (END_NATURE),
 	fainted (false),
 	level (100),
 	mass (get_mass [name]),
