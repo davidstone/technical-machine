@@ -73,67 +73,102 @@ void Move::set_priority () {
 }
 
 void Move::set_variable (unsigned size) {
-	std::pair <unsigned char, char> effect;
-	unsigned first = 0;
+	std::pair <unsigned short, unsigned short> effect;
+	effect.first = 0;
 	unsigned increment = 1;
 	unsigned last = 0;
+	bool simple_range = true;
 	effect.second = get_probability [name];
-	if (name == ACUPRESSURE) {
+	if (name == ACUPRESSURE)
 		last = 6;
-	}
 	else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
-		first = 2;
-		last = 5;
+		simple_range = false;
+		for (effect.first = 2; effect.first <= 5; ++effect.first) {
+			if (effect.first == 4)
+				effect.second /= 3;
+			variable.set.push_back (effect);
+		}
 	}
 	else if (name == ENCORE) {
-		first = 4;
+		effect.first = 4;
 		last = 8;
 	}
+	else if (name == FIRE_FANG or name == ICE_FANG or name == THUNDER_FANG) {
+		simple_range = false;
+		effect.second = max_probability - 2 * max_probability / 10 + max_probability / 100;
+		variable.set.push_back (effect);
+		effect.first = 1;
+		effect.second = max_probability / 10;
+		variable.set.push_back (effect);
+		effect.first = 2;
+		variable.set.push_back (effect);
+		effect.first = 3;
+		effect.second = effect.second / 10;
+		variable.set.push_back (effect);
+	}
+	else if (name == MAGNITUDE ) {
+		simple_range = false;
+		effect.first = 10;
+		effect.second = max_probability * 5 / 100;
+		variable.set.push_back (effect);
+		effect.first = 30;
+		effect.second = max_probability * 10 / 100;
+		variable.set.push_back (effect);
+		effect.first = 50;
+		effect.second = max_probability * 20 / 100;
+		variable.set.push_back (effect);
+		effect.first = 70;
+		effect.second = max_probability * 30 / 100;
+		variable.set.push_back (effect);
+		effect.first = 90;
+		effect.second = max_probability * 20 / 100;
+		variable.set.push_back (effect);
+		effect.first = 110;
+		effect.second = max_probability * 10 / 100;
+		variable.set.push_back (effect);
+		effect.first = 150;
+		effect.second = max_probability * 5 / 100;
+		variable.set.push_back (effect);
+	}
 	else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
-		first = 2;
+		effect.first = 2;
 		last = 3;
 	}
 	else if (name == PRESENT) {
 		increment = 40;
 		last = 120;
 	}
+	else if (name == PSYWAVE) {
+		effect.first = 5;
+		last = 15;
+	}
 	else if (name == ROAR or name == WHIRLWIND) {
-		last = size;
+		if (size > 2)
+			effect.second = max_probability / (size - 1);
+		else
+			effect.second = max_probability;
+		last = size - 1;
 	}
 	else if (name == TAUNT) {
-		first = 2;
+		effect.first = 2;
 		last = 3;
 	}
 	else if (name == TRI_ATTACK) {
-		last = 2;
-	}
-	if (name == FIRE_FANG or name == ICE_FANG or name == THUNDER_FANG) {
-		// Need to add proper probability estimates
-		for (unsigned n = 0; n <= 3; ++n) {
-			effect.first = n;
-			variable.set.push_back (effect);
-		}
-	}
-	else if (name == MAGNITUDE ) {
-		for (unsigned n = 10; n <= 110; n += 20) {
-			effect.first = n;
-			variable.set.push_back (effect);
-		}
-		effect.first = 150;
-		variable.set.push_back (effect);
-/*		4 = 10;
-		5 = 30;
-		6 = 50;
-		7 = 70;
-		8 = 90;
-		9 = 110;
-		10 = 150;*/
+		last = 3;
 	}
 	else {
-		while (first <= last) {
-			effect.first = first;
+		simple_range = false;
+		while (effect.first <= 1) {
+			effect.second = max_probability - effect.second;
+			if (effect.second != 0)
+				variable.set.push_back (effect);
+			++effect.first;
+		}
+	}
+	if (simple_range) {
+		while (effect.first <= last) {
 			variable.set.push_back (effect);
-			first += increment;
+			effect.first += increment;
 		}
 	}
 }
@@ -319,7 +354,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		target.embargo = 5;
 	else if (ENCORE == user.pokemon->move->name) {
 		if (target.encore == 0)
-			target.encore = *user.pokemon->move->variable;
+			target.encore = user.pokemon->move->variable->first;
 	}
 	else if (ENDURE == user.pokemon->move->name)
 		user.endure = true;
@@ -468,7 +503,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		target.nightmare = true;
 	else if (OUTRAGE == user.pokemon->move->name or PETAL_DANCE == user.pokemon->move->name or THRASH == user.pokemon->move->name) {
 		if (user.rampage == 0)
-			user.rampage = *user.pokemon->move->variable;
+			user.rampage = user.pokemon->move->variable->first;
 	}
 	else if (PAIN_SPLIT == user.pokemon->move->name) {
 		user.pokemon->hp.stat = (user.pokemon->hp.stat + target.pokemon->hp.stat) / 2;
@@ -497,7 +532,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			user.power_trick = true;
 	}
 	else if (PRESENT == user.pokemon->move->name) {
-		if (*user.pokemon->move->variable == 0) {
+		if (user.pokemon->move->variable->first == 0) {
 			target.pokemon->hp.stat += 80;
 			if (target.pokemon->hp.stat > target.pokemon->hp.max)
 				target.pokemon->hp.stat = target.pokemon->hp.max;
@@ -693,31 +728,31 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	
 	
 	else if (ACUPRESSURE == user.pokemon->move->name) {		// fix
-		if (*user.pokemon->move->variable == 0)
+		if (user.pokemon->move->variable->first == 0)
 			user.pokemon->atk.boost (2);
-		else if (*user.pokemon->move->variable == 1)
+		else if (user.pokemon->move->variable->first == 1)
 			user.pokemon->def.boost (2);
-		else if (*user.pokemon->move->variable == 2)
+		else if (user.pokemon->move->variable->first == 2)
 			user.pokemon->spa.boost (2);
-		else if (*user.pokemon->move->variable == 3)
+		else if (user.pokemon->move->variable->first == 3)
 			user.pokemon->spd.boost (2);
 		else
 			user.pokemon->spe.boost (2);
 	}
 	else if (BIND == user.pokemon->move->name or CLAMP == user.pokemon->move->name or FIRE_SPIN == user.pokemon->move->name or MAGMA_STORM == user.pokemon->move->name or SAND_TOMB == user.pokemon->move->name or WHIRLPOOL == user.pokemon->move->name or WRAP == user.pokemon->move->name) {
 		if (target.partial_trap == 0)
-			target.partial_trap = *user.pokemon->move->variable;
+			target.partial_trap = user.pokemon->move->variable->first;
 	}
 	else if ((CONFUSE_RAY == user.pokemon->move->name or SUPERSONIC == user.pokemon->move->name or SWEET_KISS == user.pokemon->move->name or TEETER_DANCE == user.pokemon->move->name) and target.pokemon->ability != OWN_TEMPO) {
 		if (target.confused == 0)
-			target.confused = *user.pokemon->move->variable;
+			target.confused = user.pokemon->move->variable->first;
 	}
 //	else if (DARK_VOID == user.pokemon->move->name or GRASSWHISTLE == user.pokemon->move->name or HYPNOSIS == user.pokemon->move->name or LOVELY_KISS == user.pokemon->move->name or SING == user.pokemon->move->name or SLEEP_POWDER == user.pokemon->move->name or SPORE == user.pokemon->move->name)
 //		sleep (*user.pokemon, *target.pokemon, weather);
 	else if (ROAR == user.pokemon->move->name or WHIRLWIND == user.pokemon->move->name) {
 		if ((target.pokemon->ability != SOUNDPROOF or user.pokemon->move->name != ROAR) and !target.ingrain and target.pokemon->ability != SUCTION_CUPS) {
 			if (target.pokemon.set.size() > 1) {
-				target.replacement = *user.pokemon->move->variable;
+				target.replacement = user.pokemon->move->variable->first;
 				switchpokemon (target, user, weather);
 				target.moved = true;
 			}
@@ -725,14 +760,14 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	}
 	else if (TAUNT == user.pokemon->move->name) {
 		if (target.taunt == 0)
-			target.taunt = *user.pokemon->move->variable;
+			target.taunt = user.pokemon->move->variable->first;
 	}
 	else if (UPROAR == user.pokemon->move->name) {
-		user.uproar = *user.pokemon->move->variable;
+		user.uproar = user.pokemon->move->variable->first;
 		weather.set_uproar (user.uproar);
 	}
 
-	else if (user.pokemon->move->effect) {
+	else if (user.pokemon->move->variable->first != 0) {
 		if (ANCIENTPOWER == user.pokemon->move->name or OMINOUS_WIND == user.pokemon->move->name or SILVER_WIND == user.pokemon->move->name) {
 			user.pokemon->atk.boost (1);
 			user.pokemon->def.boost (1);
@@ -774,42 +809,42 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		else if (POISON_FANG == user.pokemon->move->name)
 			poison_toxic (user, target, weather);
 		else if (TRI_ATTACK == user.pokemon->move->name) {
-			if (*user.pokemon->move->variable == 0)
+			if (user.pokemon->move->variable->first == 1)
 				burn (user, target, weather);
-			else if (*user.pokemon->move->variable == 1)
+			else if (user.pokemon->move->variable->first == 2)
 				freeze (*user.pokemon, target, weather);
-			else if (*user.pokemon->move->variable == 2)
+			else if (user.pokemon->move->variable->first == 3)
 				paralyze (*user.pokemon, *target.pokemon, weather);
 		}
 
 		else if (CHATTER == user.pokemon->move->name) {
 			if (user.pokemon->name == CHATOT and target.pokemon->ability != OWN_TEMPO and target.confused == 0)
-				target.confused = *user.pokemon->move->variable;
+				target.confused = user.pokemon->move->variable->first;
 		}
 		else if (CONFUSION == user.pokemon->move->name or DYNAMICPUNCH == user.pokemon->move->name or PSYBEAM == user.pokemon->move->name or SIGNAL_BEAM == user.pokemon->move->name) {
 			if (target.pokemon->ability != OWN_TEMPO and target.confused == 0 and false)
-				target.confused = *user.pokemon->move->variable;
+				target.confused = user.pokemon->move->variable->first;
 		}
 	//	else if (CONVERSION == user.pokemon->move->name and false) {}
 	//	else if (CONVERSION2 == user.pokemon->move->name and false) {}
 	//	else if (DIZZY_PUNCH == user.pokemon->move->name or ROCK_CLIMB == user.pokemon->move->name or WATER_PULSE == user.pokemon->move->name) {}
 
 		else if (FIRE_FANG == user.pokemon->move->name) {
-			if (user.pokemon->move->effect != 2)
+			if (user.pokemon->move->variable->first != 2)
 				burn (user, target, weather);
-			if (user.pokemon->move->effect != 1)
+			if (user.pokemon->move->variable->first != 1)
 				target.flinch = true;
 		}
 		else if (ICE_FANG == user.pokemon->move->name) {
-			if (user.pokemon->move->effect != 2)
+			if (user.pokemon->move->variable->first != 2)
 				freeze (*user.pokemon, target, weather);
-			if (user.pokemon->move->effect != 1)
+			if (user.pokemon->move->variable->first != 1)
 				target.flinch = true;
 		}
 		else if (THUNDER_FANG == user.pokemon->move->name) {
-			if (user.pokemon->move->effect != 2)
+			if (user.pokemon->move->variable->first != 2)
 				paralyze (*user.pokemon, *target.pokemon, weather);
-			if (user.pokemon->move->effect != 1)
+			if (user.pokemon->move->variable->first != 1)
 				target.flinch = true;
 		}
 
@@ -2801,18 +2836,21 @@ char const Move::get_pp [] = {
 	5,		// Zap Cannon
 	15		// Zen Headbutt
 };
-char const Move::get_probability [] = {		// Chance (out of 10) to activate side-effect
+
+unsigned short const Move::max_probability = 840;
+
+unsigned short const Move::get_probability [] = {			// Chance (out of max_probability) to activate side-effect	
 	0,		// Absorb
-	1,		// Acid
+	84,		// Acid
 	0,		// Acid Armor
-	0,		// Acupressure
+	140,		// Acupressure
 	0,		// Aerial Ace
 	0,		// Aeroblast
 	0,		// Agility
 	0,		// Air Cutter
-	3,		// Air Slash
+	252,		// Air Slash
 	0,		// Amnesia
-	1,		// AncientPower
+	84,		// AncientPower
 	0,		// Aqua Jet
 	0,		// Aqua Ring
 	0,		// Aqua Tail
@@ -2820,11 +2858,11 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Aromatherapy
 	0,		// Assist
 	0,		// Assurance
-	3,		// Astonish
+	252,		// Astonish
 	0,		// Attack Order
 	0,		// Attract
 	0,		// Aura Sphere
-	1,		// Aurora Beam
+	84,		// Aurora Beam
 	0,		// Avalanche
 	0,		// Barrage
 	0,		// Barrier
@@ -2832,24 +2870,24 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Beat Up
 	0,		// Belly Drum
 	0,		// Bide
-	0,		// Bind
-	3,		// Bite
+	315,		// Bind
+	252,		// Bite
 	0,		// Blast Burn
-	1,		// Blaze Kick
-	1,		// Blizzard
+	84,		// Blaze Kick
+	84,		// Blizzard
 	0,		// Block
-	3,		// Body Slam
-	1,		// Bone Club
+	252,		// Body Slam
+	84,		// Bone Club
 	0,		// Bone Rush
 	0,		// Bonemerang
-	3,		// Bounce
+	252,		// Bounce
 	0,		// Brave Bird
 	0,		// Brick Break
 	0,		// Brine
-	1,		// Bubble
-	1,		// BubbleBeam
+	84,		// Bubble
+	84,		// BubbleBeam
 	0,		// Bug Bite
-	1,		// Bug Buzz
+	84,		// Bug Buzz
 	0,		// Bulk Up
 	0,		// Bullet Punch
 	0,		// Bullet Seed
@@ -2857,15 +2895,15 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Camouflage
 	0,		// Captivate
 	0,		// Charge
-	7,		// Charge Beam
+	588,		// Charge Beam
 	0,		// Charm
 	0,		// Chatter
-	0,		// Clamp
+	315,		// Clamp
 	0,		// Close Combat
 	0,		// Comet Punch
 	0,		// Confuse Ray
-	1,		// Confusion
-	1,		// Constrict
+	84,		// Confusion
+	84,		// Constrict
 	0,		// Conversion
 	0,		// Conversion2
 	0,		// Copycat
@@ -2875,13 +2913,13 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Covet
 	0,		// Crabhammer
 	0,		// Cross Chop
-	1,		// Cross Poison
-	2,		// Crunch
-	5,		// Crush Claw
+	84,		// Cross Poison
+	168,		// Crunch
+	420,		// Crush Claw
 	0,		// Crush Grip
 	0,		// Curse
 	0,		// Cut
-	2,		// Dark Pulse
+	168,		// Dark Pulse
 	0,		// Dark Void
 	0,		// Defend Order
 	0,		// Defense Curl
@@ -2890,9 +2928,9 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Detect
 	0,		// Dig
 	0,		// Disable
-	3,		// Discharge
+	252,		// Discharge
 	0,		// Dive
-	2,		// Dizzy Punch
+	168,		// Dizzy Punch
 	0,		// Doom Desire
 	0,		// Double Hit
 	0,		// Double Kick
@@ -2904,51 +2942,51 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Dragon Dance
 	0,		// Dragon Pulse
 	0,		// Dragon Rage
-	2,		// Dragon Rush
-	3,		// DragonBreath
+	168,		// Dragon Rush
+	252,		// DragonBreath
 	0,		// Drain Punch
 	0,		// Dream Eater
 	0,		// Drill Peck
-	10,		// DynamicPunch
-	1,		// Earth Power
+	840,		// DynamicPunch
+	84,		// Earth Power
 	0,		// Earthquake
 	0,		// Egg Bomb
 	0,		// Embargo
-	1,		// Ember
-	2,		// Encore
+	84,		// Ember
+	168,		// Encore
 	0,		// Endeavor
 	0,		// Endure
-	1,		// Energy Ball
+	84,		// Energy Ball
 	0,		// Eruption
 	0,		// Explosion
-	1,		// Extrasensory
+	84,		// Extrasensory
 	0,		// ExtremeSpeed
 	0,		// Facade
 	0,		// Faint Attack
-	10,		// Fake Out
+	840,		// Fake Out
 	0,		// Fake Tears
 	0,		// False Swipe
 	0,		// FeatherDance
 	0,		// Feint
-	1,		// Fire Blast
-	1,		// Fire Fang
-	1,		// Fire Punch
-	0,		// Fire Spin
+	84,		// Fire Blast
+	84,		// Fire Fang
+	84,		// Fire Punch
+	315,		// Fire Spin
 	0,		// Fissure
 	0,		// Flail
-	1,		// Flame Wheel
-	1,		// Flamethrower
-	1,		// Flare Blitz
+	84,		// Flame Wheel
+	84,		// Flamethrower
+	84,		// Flare Blitz
 	0,		// Flash
-	1,		// Flash Cannon
+	84,		// Flash Cannon
 	0,		// Flatter
 	0,		// Fling
 	0,		// Fly
-	1,		// Focus Blast
+	84,		// Focus Blast
 	0,		// Focus Energy
 	0,		// Focus Punch
 	0,		// Follow Me
-	3,		// Force Palm
+	252,		// Force Palm
 	0,		// Foresight
 	0,		// Frenzy Plant
 	0,		// Frustration
@@ -2968,7 +3006,7 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Grudge
 	0,		// Guard Swap
 	0,		// Guillotine
-	3,		// Gunk Shot
+	252,		// Gunk Shot
 	0,		// Gust
 	0,		// Gyro Ball
 	0,		// Hail
@@ -2976,13 +3014,13 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Harden
 	0,		// Haze
 	0,		// Head Smash
-	3,		// Headbutt
+	252,		// Headbutt
 	0,		// Heal Bell
 	0,		// Heal Block
 	0,		// Heal Order
 	0,		// Healing Wish
 	0,		// Heart Swap
-	1,		// Heat Wave
+	84,		// Heat Wave
 	0,		// Helping Hand
 	0,		// Hi Jump Kick
 	0,		// Hidden Power
@@ -2992,45 +3030,45 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Hydro Cannon
 	0,		// Hydro Pump
 	0,		// Hyper Beam
-	1,		// Hyper Fang
+	84,		// Hyper Fang
 	0,		// Hyper Voice
 	0,		// Hypnosis
 	0,		// Ice Ball
-	1,		// Ice Beam
-	1,		// Ice Fang
-	1,		// Ice Punch
+	84,		// Ice Beam
+	84,		// Ice Fang
+	84,		// Ice Punch
 	0,		// Ice Shard
 	0,		// Icicle Spear
 	0,		// Icy Wind
 	0,		// Imprison
 	0,		// Ingrain
 	0,		// Iron Defense
-	3,		// Iron Head
-	3,		// Iron Tail
+	252,		// Iron Head
+	252,		// Iron Tail
 	0,		// Judgment
 	0,		// Jump Kick
 	0,		// Karate Chop
 	0,		// Kinesis
 	0,		// Knock Off
 	0,		// Last Resort
-	3,		// Lava Plume
+	252,		// Lava Plume
 	0,		// Leaf Blade
 	0,		// Leaf Storm
 	0,		// Leech Life
 	0,		// Leech Seed
 	0,		// Leer
-	3,		// Lick
+	252,		// Lick
 	0,		// Light Screen
 	0,		// Lock-On
 	0,		// Lovely Kiss
 	0,		// Low Kick
 	0,		// Lucky Chant
 	0,		// Lunar Dance
-	5,		// Luster Purge
+	420,		// Luster Purge
 	0,		// Mach Punch
 	0,		// Magic Coat
 	0,		// Magical Leaf
-	0,		// Magma Storm
+	315,		// Magma Storm
 	0,		// Magnet Bomb
 	0,		// Magnet Rise
 	0,		// Magnitude
@@ -3043,9 +3081,9 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Megahorn
 	0,		// Memento
 	0,		// Metal Burst
-	1,		// Metal Claw
+	84,		// Metal Claw
 	0,		// Metal Sound
-	2,		// Meteor Mash
+	168,		// Meteor Mash
 	0,		// Metronome
 	0,		// Milk Drink
 	0,		// Mimic
@@ -3054,53 +3092,53 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Miracle Eye
 	0,		// Mirror Coat
 	0,		// Mirror Move
-	3,		// Mirror Shot
+	252,		// Mirror Shot
 	0,		// Mist
-	5,		// Mist Ball
+	420,		// Mist Ball
 	0,		// Moonlight
 	0,		// Morning Sun
-	3,		// Mud Bomb
+	252,		// Mud Bomb
 	0,		// Mud Shot
 	0,		// Mud Sport
 	0,		// Mud-Slap
-	3,		// Muddy Water
+	252,		// Muddy Water
 	0,		// Nasty Plot
 	0,		// Natural Gift
 	0,		// Nature Power
-	3,		// Needle Arm
+	252,		// Needle Arm
 	0,		// Night Shade
 	0,		// Night Slash
 	0,		// Nightmare
-	5,		// Octazooka
+	420,		// Octazooka
 	0,		// Odor Sleuth
-	1,		// Ominous Wind
-	0,		// Outrage
+	84,		// Ominous Wind
+	420,		// Outrage
 	0,		// Overheat
 	0,		// Pain Split
 	0,		// Pay Day
 	0,		// Payback
 	0,		// Peck
 	0,		// Perish Song
-	0,		// Petal Dance
+	420,		// Petal Dance
 	0,		// Pin Missile
 	0,		// Pluck
-	3,		// Poison Fang
+	252,		// Poison Fang
 	0,		// Poison Gas
-	3,		// Poison Jab
-	3,		// Poison Sting
-	1,		// Poison Tail
+	252,		// Poison Jab
+	252,		// Poison Sting
+	84,		// Poison Tail
 	0,		// PoisonPowder
 	0,		// Pound
-	1,		// Powder Snow
+	84,		// Powder Snow
 	0,		// Power Gem
 	0,		// Power Swap
 	0,		// Power Trick
 	0,		// Power Whip
-	0,		// Present
+	210,		// Present
 	0,		// Protect
-	1,		// Psybeam
+	84,		// Psybeam
 	0,		// Psych Up
-	1,		// Psychic
+	84,		// Psychic
 	0,		// Psycho Boost
 	0,		// Psycho Cut
 	0,		// Psycho Shift
@@ -3124,20 +3162,20 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Roar
 	0,		// Roar Of Time
 	0,		// Rock Blast
-	2,		// Rock Climb
+	168,		// Rock Climb
 	0,		// Rock Polish
-	3,		// Rock Slide
-	5,		// Rock Smash
+	252,		// Rock Slide
+	420,		// Rock Smash
 	0,		// Rock Throw
 	0,		// Rock Tomb
 	0,		// Rock Wrecker
 	0,		// Role Play
-	3,		// Rolling Kick
+	252,		// Rolling Kick
 	0,		// Rollout
 	0,		// Roost
-	5,		// Sacred Fire
+	420,		// Sacred Fire
 	0,		// Safeguard
-	0,		// Sand Tomb
+	315,		// Sand Tomb
 	0,		// Sand-Attack
 	0,		// Sandstorm
 	0,		// Scary Face
@@ -3145,10 +3183,10 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Screech
 	0,		// Secret Power
 	0,		// Seed Bomb
-	4,		// Seed Flare
+	336,		// Seed Flare
 	0,		// Seismic Toss
 	0,		// Selfdestruct
-	2,		// Shadow Ball
+	168,		// Shadow Ball
 	0,		// Shadow Claw
 	0,		// Shadow Force
 	0,		// Shadow Punch
@@ -3156,31 +3194,31 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Sharpen
 	0,		// Sheer Cold
 	0,		// Shock Wave
-	1,		// Signal Beam
-	1,		// Silver Wind
+	84,		// Signal Beam
+	84,		// Silver Wind
 	0,		// Sing
 	0,		// Sketch
 	0,		// Skill Swap
 	0,		// Skull Bash
-	3,		// Sky Attack
+	252,		// Sky Attack
 	0,		// Sky Uppercut
 	0,		// Slack Off
 	0,		// Slam
 	0,		// Slash
 	0,		// Sleep Powder
 	0,		// Sleep Talk
-	3,		// Sludge
-	3,		// Sludge Bomb
+	252,		// Sludge
+	252,		// Sludge Bomb
 	0,		// SmellingSalt
-	4,		// Smog
+	336,		// Smog
 	0,		// SmokeScreen
 	0,		// Snatch
-	3,		// Snore
+	252,		// Snore
 	0,		// Softboiled
 	0,		// SolarBeam
 	0,		// SonicBoom
 	0,		// Spacial Rend
-	3,		// Spark
+	252,		// Spark
 	0,		// Spider Web
 	0,		// Spike Cannon
 	0,		// Spikes
@@ -3189,9 +3227,9 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Splash
 	0,		// Spore
 	0,		// Stealth Rock
-	1,		// Steel Wing
+	84,		// Steel Wing
 	0,		// Stockpile
-	3,		// Stomp
+	252,		// Stomp
 	0,		// Stone Edge
 	0,		// Strength
 	0,		// String Shot
@@ -3224,44 +3262,44 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Tail Whip
 	0,		// Tailwind
 	0,		// Take Down
-	5,		// Taunt
+	420,		// Taunt
 	0,		// Teeter Dance
 	0,		// Teleport
 	0,		// Thief
-	0,		// Thrash
-	3,		// Thunder
-	1,		// Thunder Fang
+	420,		// Thrash
+	252,		// Thunder
+	84,		// Thunder Fang
 	0,		// Thunder Wave
-	1,		// Thunderbolt
-	1,		// ThunderPunch
-	1,		// ThunderShock
+	84,		// Thunderbolt
+	84,		// ThunderPunch
+	84,		// ThunderShock
 	0,		// Tickle
 	0,		// Torment
 	0,		// Toxic
 	0,		// Toxic Spikes
 	0,		// Transform
-	2,		// Tri Attack
+	168,		// Tri Attack
 	0,		// Trick
 	0,		// Trick Room
 	0,		// Triple Kick
 	0,		// Trump Card
-	2,		// Twineedle
-	2,		// Twister
+	168,		// Twineedle
+	168,		// Twister
 	0,		// U-turn
 	0,		// Uproar
 	0,		// Vacuum Wave
 	0,		// ViceGrip
 	0,		// Vine Whip
 	0,		// Vital Throw
-	1,		// Volt Tackle
+	84,		// Volt Tackle
 	0,		// Wake-Up Slap
 	0,		// Water Gun
-	2,		// Water Pulse
+	168,		// Water Pulse
 	0,		// Water Sport
 	0,		// Water Spout
-	2,		// Waterfall
+	168,		// Waterfall
 	0,		// Weather Ball
-	0,		// Whirlpool
+	315,		// Whirlpool
 	0,		// Whirlwind
 	0,		// Will-O-Wisp
 	0,		// Wing Attack
@@ -3269,14 +3307,18 @@ char const Move::get_probability [] = {		// Chance (out of 10) to activate side-
 	0,		// Withdraw
 	0,		// Wood Hammer
 	0,		// Worry Seed
-	0,		// Wrap
+	315,		// Wrap
 	0,		// Wring Out
 	0,		// X-Scissor
 	0,		// Yawn
 	0,		// Zap Cannon
-	2		// Zen Headbutt
+	168		// Zen Headbut
 };
 
 std::string const Move::name_to_string [] = { "Absorb", "Acid", "Acid Armor", "Acupressure", "Aerial Ace", "Aeroblast", "Agility", "Air Cutter", "Air Slash", "Amnesia", "AncientPower", "Aqua Jet", "Aqua Ring", "Aqua Tail", "Arm Thrust", "Aromatherapy", "Assist", "Assurance", "Astonish", "Attack Order", "Attract", "Aura Sphere", "Aurora Beam", "Avalanche", "Barrage", "Barrier", "Baton Pass", "Beat Up", "Belly Drum", "Bide", "Bind", "Bite", "Blast Burn", "Blaze Kick", "Blizzard", "Block", "Body Slam", "Bone Club", "Bone Rush", "Bonemerang", "Bounce", "Brave Bird", "Brick Break", "Brine", "Bubble", "BubbleBeam", "Bug Bite", "Bug Buzz", "Bulk Up", "Bullet Punch", "Bullet Seed", "Calm Mind", "Camouflage", "Captivate", "Charge", "Charge Beam", "Charm", "Chatter", "Clamp", "Close Combat", "Comet Punch", "Confuse Ray", "Confusion", "Constrict", "Conversion", "Conversion2", "Copycat", "Cosmic Power", "Cotton Spore", "Counter", "Covet", "Crabhammer", "Cross Chop", "Cross Poison", "Crunch", "Crush Claw", "Crush Grip", "Curse", "Cut", "Dark Pulse", "Dark Void", "Defend Order", "Defense Curl", "Defog", "Destiny Bond", "Detect", "Dig", "Disable", "Discharge", "Dive", "Dizzy Punch", "Doom Desire", "Double Hit", "Double Kick", "Double Team", "Double-Edge", "DoubleSlap", "Draco Meteor", "Dragon Claw", "Dragon Dance", "Dragon Pulse", "Dragon Rage", "Dragon Rush", "DragonBreath", "Drain Punch", "Dream Eater", "Drill Peck", "DynamicPunch", "Earth Power", "Earthquake", "Egg Bomb", "Embargo", "Ember", "Encore", "Endeavor", "Endure", "Energy Ball", "Eruption", "Explosion", "Extrasensory", "ExtremeSpeed", "Facade", "Faint Attack", "Fake Out", "Fake Tears", "False Swipe", "FeatherDance", "Feint", "Fire Blast", "Fire Fang", "Fire Punch", "Fire Spin", "Fissure", "Flail", "Flame Wheel", "Flamethrower", "Flare Blitz", "Flash", "Flash Cannon", "Flatter", "Fling", "Fly", "Focus Blast", "Focus Energy", "Focus Punch", "Follow Me", "Force Palm", "Foresight", "Frenzy Plant", "Frustration", "Fury Attack", "Fury Cutter", "Fury Swipes", "Future Sight", "Gastro Acid", "Giga Drain", "Giga Impact", "Glare", "Grass Knot", "GrassWhistle", "Gravity", "Growl", "Growth", "Grudge", "Guard Swap", "Guillotine", "Gunk Shot", "Gust", "Gyro Ball", "Hail", "Hammer Arm", "Harden", "Haze", "Head Smash", "Headbutt", "Heal Bell", "Heal Block", "Heal Order", "Healing Wish", "Heart Swap", "Heat Wave", "Helping Hand", "Hi Jump Kick", "Hidden Power", "Horn Attack", "Horn Drill", "Howl", "Hydro Cannon", "Hydro Pump", "Hyper Beam", "Hyper Fang", "Hyper Voice", "Hypnosis", "Ice Ball", "Ice Beam", "Ice Fang", "Ice Punch", "Ice Shard", "Icicle Spear", "Icy Wind", "Imprison", "Ingrain", "Iron Defense", "Iron Head", "Iron Tail", "Judgment", "Jump Kick", "Karate Chop", "Kinesis", "Knock Off", "Last Resort", "Lava Plume", "Leaf Blade", "Leaf Storm", "Leech Life", "Leech Seed", "Leer", "Lick", "Light Screen", "Lock-On", "Lovely Kiss", "Low Kick", "Lucky Chant", "Lunar Dance", "Luster Purge", "Mach Punch", "Magic Coat", "Magical Leaf", "Magma Storm", "Magnet Bomb", "Magnet Rise", "Magnitude", "Me First", "Mean Look", "Meditate", "Mega Drain", "Mega Kick", "Mega Punch", "Megahorn", "Memento", "Metal Burst", "Metal Claw", "Metal Sound", "Meteor Mash", "Metronome", "Milk Drink", "Mimic", "Mind Reader", "Minimize", "Miracle Eye", "Mirror Coat", "Mirror Move", "Mirror Shot", "Mist", "Mist Ball", "Moonlight", "Morning Sun", "Mud Bomb", "Mud Shot", "Mud Sport", "Mud-Slap", "Muddy Water", "Nasty Plot", "Natural Gift", "Nature Power", "Needle Arm", "Night Shade", "Night Slash", "Nightmare", "Octazooka", "Odor Sleuth", "Ominous Wind", "Outrage", "Overheat", "Pain Split", "Pay Day", "Payback", "Peck", "Perish Song", "Petal Dance", "Pin Missile", "Pluck", "Poison Fang", "Poison Gas", "Poison Jab", "Poison Sting", "Poison Tail", "PoisonPowder", "Pound", "Powder Snow", "Power Gem", "Power Swap", "Power Trick", "Power Whip", "Present", "Protect", "Psybeam", "Psych Up", "Psychic", "Psycho Boost", "Psycho Cut", "Psycho Shift", "Psywave", "Punishment", "Pursuit", "Quick Attack", "Rage", "Rain Dance", "Rapid Spin", "Razor Leaf", "Razor Wind", "Recover", "Recycle", "Reflect", "Refresh", "Rest", "Return", "Revenge", "Reversal", "Roar", "Roar Of Time", "Rock Blast", "Rock Climb", "Rock Polish", "Rock Slide", "Rock Smash", "Rock Throw", "Rock Tomb", "Rock Wrecker", "Role Play", "Rolling Kick", "Rollout", "Roost", "Sacred Fire", "Safeguard", "Sand Tomb", "Sand-Attack", "Sandstorm", "Scary Face", "Scratch", "Screech", "Secret Power", "Seed Bomb", "Seed Flare", "Seismic Toss", "Selfdestruct", "Shadow Ball", "Shadow Claw", "Shadow Force", "Shadow Punch", "Shadow Sneak", "Sharpen", "Sheer Cold", "Shock Wave", "Signal Beam", "Silver Wind", "Sing", "Sketch", "Skill Swap", "Skull Bash", "Sky Attack", "Sky Uppercut", "Slack Off", "Slam", "Slash", "Sleep Powder", "Sleep Talk", "Sludge", "Sludge Bomb", "SmellingSalt", "Smog", "SmokeScreen", "Snatch", "Snore", "Softboiled", "SolarBeam", "SonicBoom", "Spacial Rend", "Spark", "Spider Web", "Spike Cannon", "Spikes", "Spit Up", "Spite", "Splash", "Spore", "Stealth Rock", "Steel Wing", "Stockpile", "Stomp", "Stone Edge", "Strength", "String Shot", "Struggle", "Stun Spore", "Submission", "Substitute", "Sucker Punch", "Sunny Day", "Super Fang", "Superpower", "Supersonic", "Surf", "Swagger", "Swallow", "Sweet Kiss", "Sweet Scent", "Swift", "Switch0", "Switch1", "Switch2", "Switch3", "Switch4", "Switch5", "Switcheroo", "Swords Dance", "Synthesis", "Tackle", "Tail Glow", "Tail Whip", "Tailwind", "Take Down", "Taunt", "Teeter Dance", "Teleport", "Thief", "Thrash", "Thunder", "Thunder Fang", "Thunder Wave", "Thunderbolt", "ThunderPunch", "ThunderShock", "Tickle", "Torment", "Toxic", "Toxic Spikes", "Transform", "Tri Attack", "Trick", "Trick Room", "Triple Kick", "Trump Card", "Twineedle", "Twister", "U-turn", "Uproar", "Vacuum Wave", "ViceGrip", "Vine Whip", "Vital Throw", "Volt Tackle", "Wake-Up Slap", "Water Gun", "Water Pulse", "Water Sport", "Water Spout", "Waterfall", "Weather Ball", "Whirlpool", "Whirlwind", "Will-O-Wisp", "Wing Attack", "Wish", "Withdraw", "Wood Hammer", "Worry Seed", "Wrap", "Wring Out", "X-Scissor", "Yawn", "Zap Cannon", "Zen Headbutt", "End Move" };
+
+void Move::get_magnitude (unsigned magnitude) {
+	variable.index = magnitude - 4;
+}
 
 }

@@ -40,9 +40,10 @@ class Move {
 		char r;					// The random number (85 through 100)
 		char times_used;
 		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
-		Active <std::pair <unsigned char, char> > variable;
+		Active <std::pair <unsigned short, unsigned short> > variable;
 
 		static std::string const name_to_string [];
+		static unsigned short const max_probability;
 
 		Move (moves_list move, int pp_ups, unsigned size);
 		unsigned long hash() const;
@@ -50,6 +51,7 @@ class Move {
 		bool operator== (Move const &other) const;
 		bool operator!= (Move const &other) const;
 		bool is_switch () const;
+		void get_magnitude (unsigned magnitude);
 	private:
 		void set_priority ();
 		void set_variable (unsigned size);
@@ -58,7 +60,7 @@ class Move {
 		static bool const is_physical [];
 		static short const base_power [];
 		static char const get_pp [];
-		static char const get_probability [];
+		static unsigned short const get_probability [];
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

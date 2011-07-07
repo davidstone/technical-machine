@@ -73,7 +73,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 	speed (ai, weather);
 	speed (foe, weather);
 
-	bool const verbose = false;
+	bool const verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
 
 	// This section is for replacing fainted Pokemon (and eventually Baton Pass and U-turn, theoretically).
 
@@ -148,78 +148,44 @@ long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 	Team* last;
 	order (ai, foe, weather, first, last);
 
-	char ai_max;
-	if (ai.pokemon->move->name != FIRE_FANG and ai.pokemon->move->name != ICE_FANG and ai.pokemon->move->name != THUNDER_FANG)
-		ai_max = 2;
-	else
-		ai_max = 4;
-	char foe_max;
-	if (foe.pokemon->move->name != FIRE_FANG and foe.pokemon->move->name != ICE_FANG and foe.pokemon->move->name != THUNDER_FANG)
-		foe_max = 2;
-	else
-		foe_max = 4;
-
-	long score5 = 0;
-
-	unsigned ai_range = 0;
+	long score3 = 0;
 	for (ai.pokemon->move->variable.index = 0; ai.pokemon->move->variable.index != ai.pokemon->move->variable.set.size(); ++ai.pokemon->move->variable.index) {
-		if ((ai.pokemon->move->name != ROAR and ai.pokemon->move->name != WHIRLWIND) or *ai.pokemon->move->variable != foe.pokemon.index or foe.pokemon.set.size() == 1) {
-			++ai_range;
-			long score4 = 0;
-			unsigned foe_range = 0;
+		if ((ai.pokemon->move->name != ROAR and ai.pokemon->move->name != WHIRLWIND) or ai.pokemon->move->variable->first != foe.pokemon.index or foe.pokemon.set.size() == 1) {
+			long score2 = 0;
 			for (foe.pokemon->move->variable.index = 0; foe.pokemon->move->variable.index != foe.pokemon->move->variable.set.size(); ++foe.pokemon->move->variable.index) {
-				if ((foe.pokemon->move->name != ROAR and foe.pokemon->move->name != WHIRLWIND) or *foe.pokemon->move->variable != ai.pokemon.index or ai.pokemon.set.size() == 1) {
-					++foe_range;
-					ai.pokemon->move->effect = 0;
-					long score3 = 0;		// Temporary variable for probability calculations
-					do {
-						long score2 = 0;		// Temporary variable for probability calculations
-						foe.pokemon->move->effect = 0;
-						do {
-							ai.ch = false;
-							foe.ch = false;
-							long score1 = tree3 (ai, foe, weather, depth, sv, first, last);
-							if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower <= 0) {
-								score1 *= 15;
-								ai.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last);
-								score1 /= 16;
-							}
-							else if (ai.pokemon->move->basepower <= 0 and foe.pokemon->move->basepower > 0) {
-								score1 *= 15;
-								foe.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last);
-								score1 /= 16;
-							}
-							else if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower > 0) {
-								score1 *= 225;
-								ai.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
-								foe.ch = true;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last);
-								ai.ch = false;
-								score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
-								score1 /= 256;
-							}
-							if (foe.pokemon->move->effect == 0)
-								score2 += score1 * (10 - foe.pokemon->move->probability);
-							else if (foe.pokemon->move->effect == 1)
-								score2 += score1 * foe.pokemon->move->probability;
-							++foe.pokemon->move->effect;
-						} while (foe.pokemon->move->probability != 0 and foe.pokemon->move->effect < foe_max);
-						if (ai.pokemon->move->effect == 0)
-							score3 += score2 * (10 - ai.pokemon->move->probability);
-						else if (ai.pokemon->move->effect == 1)
-							score3 += score2 * ai.pokemon->move->probability;
-						++ai.pokemon->move->effect;
-					} while (ai.pokemon->move->probability != 0 and ai.pokemon->move->effect < ai_max);
-					score4 += score3 / 100;
+				if ((foe.pokemon->move->name != ROAR and foe.pokemon->move->name != WHIRLWIND) or foe.pokemon->move->variable->first != ai.pokemon.index or ai.pokemon.set.size() == 1) {
+					ai.ch = false;
+					foe.ch = false;
+					long score1 = tree3 (ai, foe, weather, depth, sv, first, last);
+					if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower <= 0) {
+						score1 *= 15;
+						ai.ch = true;
+						score1 += tree3 (ai, foe, weather, depth, sv, first, last);
+						score1 /= 16;
+					}
+					else if (ai.pokemon->move->basepower <= 0 and foe.pokemon->move->basepower > 0) {
+						score1 *= 15;
+						foe.ch = true;
+						score1 += tree3 (ai, foe, weather, depth, sv, first, last);
+						score1 /= 16;
+					}
+					else if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower > 0) {
+						score1 *= 225;
+						ai.ch = true;
+						score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
+						foe.ch = true;
+						score1 += tree3 (ai, foe, weather, depth, sv, first, last);
+						ai.ch = false;
+						score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
+						score1 /= 256;
+					}
+					score2 += score1 * foe.pokemon->move->variable->second;
 				}
 			}
-			score5 += score4 / foe_range;
+			score3 += score2 * ai.pokemon->move->variable->second / Move::max_probability;
 		}
 	}
-	return score5 / ai_range;
+	return score3 / Move::max_probability;
 }
 
 

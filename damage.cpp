@@ -105,7 +105,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 	}
 
 	else if (MAGNITUDE == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = *attacker.pokemon->move->variable;
+		attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
 
 	else if (NATURAL_GIFT == attacker.pokemon->move->name) {
 		if (AGUAV_BERRY == attacker.pokemon->item or ASPEAR_BERRY == attacker.pokemon->item or BABIRI_BERRY == attacker.pokemon->item or CHARTI_BERRY == attacker.pokemon->item or CHERI_BERRY == attacker.pokemon->item or CHESTO_BERRY == attacker.pokemon->item or CHILAN_BERRY == attacker.pokemon->item or CHOPLE_BERRY == attacker.pokemon->item or COBA_BERRY == attacker.pokemon->item or COLBUR_BERRY == attacker.pokemon->item or FIGY_BERRY == attacker.pokemon->item or HABAN_BERRY == attacker.pokemon->item or IAPAPA_BERRY == attacker.pokemon->item or KASIB_BERRY == attacker.pokemon->item or KEBIA_BERRY == attacker.pokemon->item or LEPPA_BERRY == attacker.pokemon->item or LUM_BERRY == attacker.pokemon->item or MAGO_BERRY == attacker.pokemon->item or OCCA_BERRY == attacker.pokemon->item or ORAN_BERRY == attacker.pokemon->item or PASSHO_BERRY == attacker.pokemon->item or PAYAPA_BERRY == attacker.pokemon->item or PECHA_BERRY == attacker.pokemon->item or PERSIM_BERRY == attacker.pokemon->item or RAWST_BERRY == attacker.pokemon->item or RAZZ_BERRY == attacker.pokemon->item or RINDO_BERRY == attacker.pokemon->item or SHUCA_BERRY == attacker.pokemon->item or SITRUS_BERRY == attacker.pokemon->item or TANGA_BERRY == attacker.pokemon->item or WACAN_BERRY == attacker.pokemon->item or WIKI_BERRY == attacker.pokemon->item or YACHE_BERRY == attacker.pokemon->item)
@@ -117,7 +117,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 	}
 
 	else if (PRESENT == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = *attacker.pokemon->move->variable;
+		attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
 
 	else if (PUNISHMENT == attacker.pokemon->move->name) {
 		attacker.pokemon->move->basepower = 60;
@@ -341,7 +341,7 @@ int damagecalculator (Team const &attacker, Team const &defender, Weather const 
 		else if (NIGHT_SHADE == attacker.pokemon->move->name or SEISMIC_TOSS == attacker.pokemon->move->name)
 			damage = attacker.pokemon->level;
 		else if (PSYWAVE == attacker.pokemon->move->name)
-			damage = attacker.pokemon->level * *attacker.pokemon->move->variable / 10;
+			damage = attacker.pokemon->level * attacker.pokemon->move->variable->first / 10;
 		else if (SONICBOOM == attacker.pokemon->move->name)
 			damage = 20;
 		else if (SUPER_FANG == attacker.pokemon->move->name)

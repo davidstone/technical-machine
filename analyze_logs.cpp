@@ -150,7 +150,7 @@ void analyze_line (Team &ai, Team &foe, Weather &weather, Map const &map, Log &l
 					or log.line.find (" was raised!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos
 					or log.line.find (" was harshly lowered!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos
 					or log.line.find (" was lowered!", log.line.find (log.active->at_replacement().nickname + "'s ")) != std::string::npos)
-				log.inactive->at_replacement().move->effect = 1;
+				log.inactive->at_replacement().move->variable.index = 1;
 			else {
 				log.search = log.active->at_replacement().nickname + " used ";
 				if (log.search_is_first())
@@ -277,7 +277,7 @@ void log_move (Log &log, Weather const &weather, Map const &map) {
 	}
 	if (log.active->at_replacement().move->name == ROAR or log.active->at_replacement().move->name == WHIRLWIND)
 		log.phaze = true;
-	log.active->at_replacement().move->effect = 0;
+	log.active->at_replacement().move->variable.index = 0;
 	if (log.active->at_replacement().move->basepower != 0)
 		log.move_damage = true;
 }

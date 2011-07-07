@@ -17,8 +17,8 @@
 namespace technicalmachine {
 
 void reset_variables (Team &team);
-void switchpokemon (Team &team, Team &target, Weather &weather);
-void entry_hazards (Team &user, Weather const &weather);
-void activate_ability (Team &user, Pokemon &target, Weather &weather);
+void switchpokemon (Team &switcher, Team &other, Weather &weather);
+void entry_hazards (Team &switcher, Weather const &weather);
+void activate_ability (Team &switcher, Pokemon &other, Weather &weather);
 
 }

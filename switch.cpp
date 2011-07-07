@@ -83,91 +83,98 @@ void reset_variables (Team &team) {
 	}
 }
 
-void switchpokemon (Team &user, Team &target, Weather &weather) {
-	if (user.pokemon->hp.stat == 0) {
-		reset_variables (user);
+void switchpokemon (Team &switcher, Team &other, Weather &weather) {
+	if (switcher.pokemon->hp.stat == 0) {
+		reset_variables (switcher);
 		// First, remove the active Pokemon because it has 0 HP.
-		user.pokemon.set.erase (user.pokemon.set.begin() + user.pokemon.index);
-		--user.size;
+		switcher.pokemon.set.erase (switcher.pokemon.set.begin() + switcher.pokemon.index);
+		--switcher.size;
 
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (user.pokemon.set.size() == 0)
+		if (switcher.pokemon.set.size() == 0)
 			return;
 
 		// Then, remove the ability to bring out that Pokemon from Roar and Whirlwind in the foe's team.
-		for (std::vector<Pokemon>::iterator pokemon = target.pokemon.set.begin(); pokemon != target.pokemon.set.end(); ++pokemon) {
+		for (std::vector<Pokemon>::iterator pokemon = other.pokemon.set.begin(); pokemon != other.pokemon.set.end(); ++pokemon) {
 			for (std::vector<Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
-				if (move->name == ROAR or move->name == WHIRLWIND)
+				if (move->name == ROAR or move->name == WHIRLWIND) {
 					move->variable.set.pop_back();
+					for (std::vector <std::pair <unsigned short, unsigned short> >::iterator variable = move->variable.set.begin(); variable != move->variable.set.end(); ++variable) {
+						if (switcher.size > 2)
+							variable->second = Move::max_probability / (switcher.size - 1);
+						else
+							variable->second = Move::max_probability;
+					}
+				}
 			}
 		}
-		if (user.pokemon.index > user.replacement)
-			user.pokemon.index = user.replacement;
+		if (switcher.pokemon.index > switcher.replacement)
+			switcher.pokemon.index = switcher.replacement;
 		else
-			user.pokemon.index = user.replacement - 1;
+			switcher.pokemon.index = switcher.replacement - 1;
 		// Finally, remove the ability to switch to that Pokemon.
-		for (std::vector<Pokemon>::iterator pokemon = user.pokemon.set.begin(); pokemon != user.pokemon.set.end(); ++pokemon)
+		for (std::vector<Pokemon>::iterator pokemon = switcher.pokemon.set.begin(); pokemon != switcher.pokemon.set.end(); ++pokemon)
 			pokemon->move.set.pop_back();
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (NATURAL_CURE == user.pokemon->ability)
-			user.pokemon->status = NO_STATUS;
+		if (NATURAL_CURE == switcher.pokemon->ability)
+			switcher.pokemon->status = NO_STATUS;
 		
-		reset_variables (user);
+		reset_variables (switcher);
 	
 		// Change the active Pokemon to the one switching in.
-		user.pokemon.index = user.replacement;
+		switcher.pokemon.index = switcher.replacement;
 	}
 	
-	entry_hazards (user, weather);
+	entry_hazards (switcher, weather);
 
-	if (user.pokemon->hp.stat > 0)
-		activate_ability (user, *target.pokemon, weather);
+	if (switcher.pokemon->hp.stat > 0)
+		activate_ability (switcher, *other.pokemon, weather);
 }
 
-void entry_hazards (Team &user, Weather const &weather) {
-	if (grounded (user, weather) and MAGIC_GUARD != user.pokemon->ability) {
-		if (user.toxic_spikes != 0) {
-			if (istype(user, POISON))
-				user.toxic_spikes = 0;
-			else if (1 == user.toxic_spikes)
-				poison_normal (user, user, weather);
+void entry_hazards (Team &switcher, Weather const &weather) {
+	if (grounded (switcher, weather) and MAGIC_GUARD != switcher.pokemon->ability) {
+		if (switcher.toxic_spikes != 0) {
+			if (istype (switcher, POISON))
+				switcher.toxic_spikes = 0;
+			else if (switcher.toxic_spikes == 1)
+				poison_normal (switcher, switcher, weather);
 			else
-				poison_toxic (user, user, weather);
+				poison_toxic (switcher, switcher, weather);
 		}
-		if (user.spikes != 0)
-			heal (*user.pokemon, -16, user.spikes + 1);
+		if (switcher.spikes != 0)
+			heal (*switcher.pokemon, -16, switcher.spikes + 1);
 	}
-	if (user.stealth_rock)
-		heal (*user.pokemon, -32, effectiveness [ROCK] [user.pokemon->type1] * effectiveness [ROCK] [user.pokemon->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
+	if (switcher.stealth_rock)
+		heal (*switcher.pokemon, -32, effectiveness [ROCK] [switcher.pokemon->type1] * effectiveness [ROCK] [switcher.pokemon->type2]);	// effectiveness [][] outputs a value between 0 and 4, with higher numbers being more effective, meaning effectiveness [][] * effectiveness [][] is a value between 0 and 16. 4 * effective Stealth Rock does 16 / 32 damage.
 }
 
-void activate_ability (Team &user, Pokemon &target, Weather &weather) {
+void activate_ability (Team &switcher, Pokemon &other, Weather &weather) {
 		// Activate abilities upon switching in
 
-		user.slow_start = 0;
-		if (user.pokemon->ability == SLOW_START)
-			user.slow_start = 5;
-		else if (user.pokemon->ability == DOWNLOAD) {
-			if (target.def.stat >= target.spd.stat)
-				user.pokemon->spa.boost (1);
+		switcher.slow_start = 0;
+		if (switcher.pokemon->ability == SLOW_START)
+			switcher.slow_start = 5;
+		else if (switcher.pokemon->ability == DOWNLOAD) {
+			if (other.def.stat >= other.spd.stat)
+				switcher.pokemon->spa.boost (1);
 			else
-				user.pokemon->atk.boost (1);
+				switcher.pokemon->atk.boost (1);
 		}
-		else if (user.pokemon->ability == DRIZZLE)
+		else if (switcher.pokemon->ability == DRIZZLE)
 			weather.set_rain (-1);
-		else if (user.pokemon->ability == DROUGHT)
+		else if (switcher.pokemon->ability == DROUGHT)
 			weather.set_sun (-1);
-		else if (user.pokemon->ability == FORECAST) {	// fix
+		else if (switcher.pokemon->ability == FORECAST) {	// fix
 		}
-		else if (user.pokemon->ability == INTIMIDATE)
-			target.atk.boost (-1);
-		else if (user.pokemon->ability == SAND_STREAM)
+		else if (switcher.pokemon->ability == INTIMIDATE)
+			other.atk.boost (-1);
+		else if (switcher.pokemon->ability == SAND_STREAM)
 			weather.set_sand (-1);
-		else if (user.pokemon->ability == SNOW_WARNING)
+		else if (switcher.pokemon->ability == SNOW_WARNING)
 			weather.set_hail (-1);
-		else if (user.pokemon->ability == TRACE) {
+		else if (switcher.pokemon->ability == TRACE) {
 		}
 }
 
