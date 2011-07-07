@@ -30,6 +30,7 @@ Move::Move (moves_list move, int pp_ups, unsigned size) :
 	type (move_type [name]),
 	basepower (base_power [name]),
 	physical (is_physical [name]),
+	accuracy (get_accuracy [name]),
 	disable (0),
 	pp_max (get_pp [name] * (5 + pp_ups) / 5),
 	pp (pp_max),
@@ -3313,6 +3314,482 @@ unsigned short const Move::get_probability [] = {			// Chance (out of max_probab
 	0,		// Yawn
 	0,		// Zap Cannon
 	168		// Zen Headbut
+};
+
+short const Move::get_accuracy [] = {
+	100,		// Absorb
+	100,		// Acid
+	-1,		// Acid Armor
+	-1,		// Acupressure
+	-1,		// Aerial Ace
+	95,		// Aeroblast
+	-1,		// Agility
+	95,		// Air Cutter
+	95,		// Air Slash
+	-1,		// Amnesia
+	100,		// AncientPower
+	100,		// Aqua Jet
+	-1,		// Aqua Ring
+	90,		// Aqua Tail
+	100,		// Arm Thrust
+	-1,		// Aromatherapy
+	-1,		// Assist
+	100,		// Assurance
+	100,		// Astonish
+	100,		// Attack Order
+	100,		// Attract
+	-1,		// Aura Sphere
+	100,		// Aurora Beam
+	100,		// Avalanche
+	85,		// Barrage
+	-1,		// Barrier
+	-1,		// Baton Pass
+	100,		// Beat Up
+	-1,		// Belly Drum
+	-1,		// Bide
+	75,		// Bind
+	100,		// Bite
+	90,		// Blast Burn
+	90,		// Blaze Kick
+	70,		// Blizzard
+	-1,		// Block
+	100,		// Body Slam
+	85,		// Bone Club
+	80,		// Bone Rush
+	90,		// Bonemerang
+	85,		// Bounce
+	100,		// Brave Bird
+	100,		// Brick Break
+	100,		// Brine
+	100,		// Bubble
+	100,		// BubbleBeam
+	100,		// Bug Bite
+	100,		// Bug Buzz
+	-1,		// Bulk Up
+	100,		// Bullet Punch
+	100,		// Bullet Seed
+	-1,		// Calm Mind
+	-1,		// Camouflage
+	100,		// Captivate
+	-1,		// Charge
+	90,		// Charge Beam
+	100,		// Charm
+	100,		// Chatter
+	75,		// Clamp
+	100,		// Close Combat
+	85,		// Comet Punch
+	100,		// Confuse Ray
+	100,		// Confusion
+	100,		// Constrict
+	-1,		// Conversion
+	-1,		// Conversion2
+	-1,		// Copycat
+	-1,		// Cosmic Power
+	85,		// Cotton Spore
+	100,		// Counter
+	100,		// Covet
+	85,		// Crabhammer
+	80,		// Cross Chop
+	100,		// Cross Poison
+	100,		// Crunch
+	95,		// Crush Claw
+	100,		// Crush Grip
+	-1,		// Curse
+	95,		// Cut
+	100,		// Dark Pulse
+	80,		// Dark Void
+	-1,		// Defend Order
+	-1,		// Defense Curl
+	-1,		// Defog
+	-1,		// Destiny Bond
+	-1,		// Detect
+	100,		// Dig
+	80,		// Disable
+	100,		// Discharge
+	100,		// Dive
+	100,		// Dizzy Punch
+	85,		// Doom Desire
+	90,		// Double Hit
+	100,		// Double Kick
+	-1,		// Double Team
+	100,		// Double-Edge
+	85,		// DoubleSlap
+	90,		// Draco Meteor
+	100,		// Dragon Claw
+	-1,		// Dragon Dance
+	100,		// Dragon Pulse
+	100,		// Dragon Rage
+	75,		// Dragon Rush
+	100,		// DragonBreath
+	100,		// Drain Punch
+	100,		// Dream Eater
+	100,		// Drill Peck
+	50,		// DynamicPunch
+	100,		// Earth Power
+	100,		// Earthquake
+	75,		// Egg Bomb
+	100,		// Embargo
+	100,		// Ember
+	100,		// Encore
+	100,		// Endeavor
+	-1,		// Endure
+	100,		// Energy Ball
+	100,		// Eruption
+	100,		// Explosion
+	100,		// Extrasensory
+	100,		// ExtremeSpeed
+	100,		// Facade
+	-1,		// Faint Attack
+	100,		// Fake Out
+	100,		// Fake Tears
+	100,		// False Swipe
+	100,		// FeatherDance
+	100,		// Feint
+	85,		// Fire Blast
+	95,		// Fire Fang
+	100,		// Fire Punch
+	70,		// Fire Spin
+	30,		// Fissure
+	100,		// Flail
+	100,		// Flame Wheel
+	100,		// Flamethrower
+	100,		// Flare Blitz
+	100,		// Flash
+	100,		// Flash Cannon
+	100,		// Flatter
+	100,		// Fling
+	95,		// Fly
+	70,		// Focus Blast
+	-1,		// Focus Energy
+	100,		// Focus Punch
+	-1,		// Follow Me
+	100,		// Force Palm
+	-1,		// Foresight
+	90,		// Frenzy Plant
+	100,		// Frustration
+	85,		// Fury Attack
+	95,		// Fury Cutter
+	80,		// Fury Swipes
+	90,		// Future Sight
+	100,		// Gastro Acid
+	100,		// Giga Drain
+	90,		// Giga Impact
+	75,		// Glare
+	100,		// Grass Knot
+	55,		// GrassWhistle
+	-1,		// Gravity
+	100,		// Growl
+	-1,		// Growth
+	-1,		// Grudge
+	-1,		// Guard Swap
+	30,		// Guillotine
+	70,		// Gunk Shot
+	100,		// Gust
+	100,		// Gyro Ball
+	-1,		// Hail
+	90,		// Hammer Arm
+	-1,		// Harden
+	-1,		// Haze
+	80,		// Head Smash
+	100,		// Headbutt
+	-1,		// Heal Bell
+	100,		// Heal Block
+	-1,		// Heal Order
+	-1,		// Healing Wish
+	-1,		// Heart Swap
+	90,		// Heat Wave
+	-1,		// Helping Hand
+	90,		// Hi Jump Kick
+	100,		// Hidden Power
+	100,		// Horn Attack
+	30,		// Horn Drill
+	-1,		// Howl
+	90,		// Hydro Cannon
+	80,		// Hydro Pump
+	90,		// Hyper Beam
+	90,		// Hyper Fang
+	100,		// Hyper Voice
+	60,		// Hypnosis
+	90,		// Ice Ball
+	100,		// Ice Beam
+	95,		// Ice Fang
+	100,		// Ice Punch
+	100,		// Ice Shard
+	100,		// Icicle Spear
+	95,		// Icy Wind
+	-1,		// Imprison
+	-1,		// Ingrain
+	-1,		// Iron Defense
+	100,		// Iron Head
+	75,		// Iron Tail
+	100,		// Judgment
+	95,		// Jump Kick
+	100,		// Karate Chop
+	80,		// Kinesis
+	100,		// Knock Off
+	100,		// Last Resort
+	100,		// Lava Plume
+	100,		// Leaf Blade
+	90,		// Leaf Storm
+	100,		// Leech Life
+	90,		// Leech Seed
+	100,		// Leer
+	100,		// Lick
+	-1,		// Light Screen
+	-1,		// Lock-On
+	75,		// Lovely Kiss
+	100,		// Low Kick
+	-1,		// Lucky Chant
+	-1,		// Lunar Dance
+	100,		// Luster Purge
+	100,		// Mach Punch
+	-1,		// Magic Coat
+	-1,		// Magical Leaf
+	70,		// Magma Storm
+	-1,		// Magnet Bomb
+	-1,		// Magnet Rise
+	100,		// Magnitude
+	-1,		// Me First
+	-1,		// Mean Look
+	-1,		// Meditate
+	100,		// Mega Drain
+	75,		// Mega Kick
+	85,		// Mega Punch
+	85,		// Megahorn
+	100,		// Memento
+	100,		// Metal Burst
+	95,		// Metal Claw
+	85,		// Metal Sound
+	85,		// Meteor Mash
+	-1,		// Metronome
+	-1,		// Milk Drink
+	-1,		// Mimic
+	-1,		// Mind Reader
+	-1,		// Minimize
+	-1,		// Miracle Eye
+	100,		// Mirror Coat
+	-1,		// Mirror Move
+	85,		// Mirror Shot
+	-1,		// Mist
+	100,		// Mist Ball
+	-1,		// Moonlight
+	-1,		// Morning Sun
+	85,		// Mud Bomb
+	95,		// Mud Shot
+	-1,		// Mud Sport
+	100,		// Mud-Slap
+	85,		// Muddy Water
+	-1,		// Nasty Plot
+	100,		// Natural Gift
+	-1,		// Nature Power
+	100,		// Needle Arm
+	100,		// Night Shade
+	100,		// Night Slash
+	100,		// Nightmare
+	85,		// Octazooka
+	-1,		// Odor Sleuth
+	100,		// Ominous Wind
+	100,		// Outrage
+	90,		// Overheat
+	-1,		// Pain Split
+	100,		// Pay Day
+	100,		// Payback
+	100,		// Peck
+	-1,		// Perish Song
+	100,		// Petal Dance
+	85,		// Pin Missile
+	100,		// Pluck
+	100,		// Poison Fang
+	55,		// Poison Gas
+	100,		// Poison Jab
+	100,		// Poison Sting
+	100,		// Poison Tail
+	75,		// PoisonPowder
+	100,		// Pound
+	100,		// Powder Snow
+	100,		// Power Gem
+	-1,		// Power Swap
+	-1,		// Power Trick
+	85,		// Power Whip
+	90,		// Present
+	-1,		// Protect
+	100,		// Psybeam
+	-1,		// Psych Up
+	100,		// Psychic
+	90,		// Psycho Boost
+	100,		// Psycho Cut
+	90,		// Psycho Shift
+	80,		// Psywave
+	100,		// Punishment
+	100,		// Pursuit
+	100,		// Quick Attack
+	100,		// Rage
+	-1,		// Rain Dance
+	100,		// Rapid Spin
+	95,		// Razor Leaf
+	100,		// Razor Wind
+	-1,		// Recover
+	-1,		// Recycle
+	-1,		// Reflect
+	-1,		// Refresh
+	-1,		// Rest
+	100,		// Return
+	100,		// Revenge
+	100,		// Reversal
+	100,		// Roar
+	90,		// Roar Of Time
+	80,		// Rock Blast
+	85,		// Rock Climb
+	-1,		// Rock Polish
+	90,		// Rock Slide
+	100,		// Rock Smash
+	90,		// Rock Throw
+	80,		// Rock Tomb
+	90,		// Rock Wrecker
+	-1,		// Role Play
+	85,		// Rolling Kick
+	90,		// Rollout
+	-1,		// Roost
+	95,		// Sacred Fire
+	-1,		// Safeguard
+	70,		// Sand Tomb
+	100,		// Sand-Attack
+	-1,		// Sandstorm
+	90,		// Scary Face
+	100,		// Scratch
+	85,		// Screech
+	100,		// Secret Power
+	100,		// Seed Bomb
+	85,		// Seed Flare
+	100,		// Seismic Toss
+	100,		// Selfdestruct
+	100,		// Shadow Ball
+	100,		// Shadow Claw
+	100,		// Shadow Force
+	-1,		// Shadow Punch
+	100,		// Shadow Sneak
+	-1,		// Sharpen
+	30,		// Sheer Cold
+	-1,		// Shock Wave
+	100,		// Signal Beam
+	100,		// Silver Wind
+	55,		// Sing
+	-1,		// Sketch
+	-1,		// Skill Swap
+	100,		// Skull Bash
+	90,		// Sky Attack
+	90,		// Sky Uppercut
+	-1,		// Slack Off
+	75,		// Slam
+	100,		// Slash
+	75,		// Sleep Powder
+	-1,		// Sleep Talk
+	100,		// Sludge
+	100,		// Sludge Bomb
+	100,		// SmellingSalt
+	70,		// Smog
+	100,		// SmokeScreen
+	-1,		// Snatch
+	100,		// Snore
+	-1,		// Softboiled
+	100,		// SolarBeam
+	90,		// SonicBoom
+	95,		// Spacial Rend
+	100,		// Spark
+	-1,		// Spider Web
+	100,		// Spike Cannon
+	-1,		// Spikes
+	100,		// Spit Up
+	100,		// Spite
+	-1,		// Splash
+	100,		// Spore
+	-1,		// Stealth Rock
+	90,		// Steel Wing
+	-1,		// Stockpile
+	100,		// Stomp
+	80,		// Stone Edge
+	100,		// Strength
+	95,		// String Shot
+	-1,		// Struggle
+	75,		// Stun Spore
+	80,		// Submission
+	-1,		// Substitute
+	100,		// Sucker Punch
+	-1,		// Sunny Day
+	90,		// Super Fang
+	100,		// Superpower
+	55,		// Supersonic
+	100,		// Surf
+	90,		// Swagger
+	-1,		// Swallow
+	75,		// Sweet Kiss
+	100,		// Sweet Scent
+	-1,		// Swift
+	-1,		// Switch0
+	-1,		// Switch1
+	-1,		// Switch2
+	-1,		// Switch3
+	-1,		// Switch4
+	-1,		// Switch5
+	100,		// Switcheroo
+	-1,		// Swords Dance
+	-1,		// Synthesis
+	95,		// Tackle
+	-1,		// Tail Glow
+	100,		// Tail Whip
+	-1,		// Tailwind
+	85,		// Take Down
+	100,		// Taunt
+	100,		// Teeter Dance
+	-1,		// Teleport
+	100,		// Thief
+	100,		// Thrash
+	70,		// Thunder
+	95,		// Thunder Fang
+	100,		// Thunder Wave
+	100,		// Thunderbolt
+	100,		// ThunderPunch
+	100,		// ThunderShock
+	100,		// Tickle
+	100,		// Torment
+	85,		// Toxic
+	-1,		// Toxic Spikes
+	-1,		// Transform
+	100,		// Tri Attack
+	100,		// Trick
+	-1,		// Trick Room
+	90,		// Triple Kick
+	-1,		// Trump Card
+	100,		// Twineedle
+	100,		// Twister
+	100,		// U-turn
+	100,		// Uproar
+	100,		// Vacuum Wave
+	100,		// ViceGrip
+	100,		// Vine Whip
+	-1,		// Vital Throw
+	100,		// Volt Tackle
+	100,		// Wake-Up Slap
+	100,		// Water Gun
+	100,		// Water Pulse
+	-1,		// Water Sport
+	100,		// Water Spout
+	100,		// Waterfall
+	100,		// Weather Ball
+	70,		// Whirlpool
+	100,		// Whirlwind
+	75,		// Will-O-Wisp
+	100,		// Wing Attack
+	-1,		// Wish
+	-1,		// Withdraw
+	100,		// Wood Hammer
+	100,		// Worry Seed
+	85,		// Wrap
+	100,		// Wring Out
+	100,		// X-Scissor
+	-1,		// Yawn
+	50,		// Zap Cannon
+	90		// Zen Headbutt
 };
 
 std::string const Move::name_to_string [] = { "Absorb", "Acid", "Acid Armor", "Acupressure", "Aerial Ace", "Aeroblast", "Agility", "Air Cutter", "Air Slash", "Amnesia", "AncientPower", "Aqua Jet", "Aqua Ring", "Aqua Tail", "Arm Thrust", "Aromatherapy", "Assist", "Assurance", "Astonish", "Attack Order", "Attract", "Aura Sphere", "Aurora Beam", "Avalanche", "Barrage", "Barrier", "Baton Pass", "Beat Up", "Belly Drum", "Bide", "Bind", "Bite", "Blast Burn", "Blaze Kick", "Blizzard", "Block", "Body Slam", "Bone Club", "Bone Rush", "Bonemerang", "Bounce", "Brave Bird", "Brick Break", "Brine", "Bubble", "BubbleBeam", "Bug Bite", "Bug Buzz", "Bulk Up", "Bullet Punch", "Bullet Seed", "Calm Mind", "Camouflage", "Captivate", "Charge", "Charge Beam", "Charm", "Chatter", "Clamp", "Close Combat", "Comet Punch", "Confuse Ray", "Confusion", "Constrict", "Conversion", "Conversion2", "Copycat", "Cosmic Power", "Cotton Spore", "Counter", "Covet", "Crabhammer", "Cross Chop", "Cross Poison", "Crunch", "Crush Claw", "Crush Grip", "Curse", "Cut", "Dark Pulse", "Dark Void", "Defend Order", "Defense Curl", "Defog", "Destiny Bond", "Detect", "Dig", "Disable", "Discharge", "Dive", "Dizzy Punch", "Doom Desire", "Double Hit", "Double Kick", "Double Team", "Double-Edge", "DoubleSlap", "Draco Meteor", "Dragon Claw", "Dragon Dance", "Dragon Pulse", "Dragon Rage", "Dragon Rush", "DragonBreath", "Drain Punch", "Dream Eater", "Drill Peck", "DynamicPunch", "Earth Power", "Earthquake", "Egg Bomb", "Embargo", "Ember", "Encore", "Endeavor", "Endure", "Energy Ball", "Eruption", "Explosion", "Extrasensory", "ExtremeSpeed", "Facade", "Faint Attack", "Fake Out", "Fake Tears", "False Swipe", "FeatherDance", "Feint", "Fire Blast", "Fire Fang", "Fire Punch", "Fire Spin", "Fissure", "Flail", "Flame Wheel", "Flamethrower", "Flare Blitz", "Flash", "Flash Cannon", "Flatter", "Fling", "Fly", "Focus Blast", "Focus Energy", "Focus Punch", "Follow Me", "Force Palm", "Foresight", "Frenzy Plant", "Frustration", "Fury Attack", "Fury Cutter", "Fury Swipes", "Future Sight", "Gastro Acid", "Giga Drain", "Giga Impact", "Glare", "Grass Knot", "GrassWhistle", "Gravity", "Growl", "Growth", "Grudge", "Guard Swap", "Guillotine", "Gunk Shot", "Gust", "Gyro Ball", "Hail", "Hammer Arm", "Harden", "Haze", "Head Smash", "Headbutt", "Heal Bell", "Heal Block", "Heal Order", "Healing Wish", "Heart Swap", "Heat Wave", "Helping Hand", "Hi Jump Kick", "Hidden Power", "Horn Attack", "Horn Drill", "Howl", "Hydro Cannon", "Hydro Pump", "Hyper Beam", "Hyper Fang", "Hyper Voice", "Hypnosis", "Ice Ball", "Ice Beam", "Ice Fang", "Ice Punch", "Ice Shard", "Icicle Spear", "Icy Wind", "Imprison", "Ingrain", "Iron Defense", "Iron Head", "Iron Tail", "Judgment", "Jump Kick", "Karate Chop", "Kinesis", "Knock Off", "Last Resort", "Lava Plume", "Leaf Blade", "Leaf Storm", "Leech Life", "Leech Seed", "Leer", "Lick", "Light Screen", "Lock-On", "Lovely Kiss", "Low Kick", "Lucky Chant", "Lunar Dance", "Luster Purge", "Mach Punch", "Magic Coat", "Magical Leaf", "Magma Storm", "Magnet Bomb", "Magnet Rise", "Magnitude", "Me First", "Mean Look", "Meditate", "Mega Drain", "Mega Kick", "Mega Punch", "Megahorn", "Memento", "Metal Burst", "Metal Claw", "Metal Sound", "Meteor Mash", "Metronome", "Milk Drink", "Mimic", "Mind Reader", "Minimize", "Miracle Eye", "Mirror Coat", "Mirror Move", "Mirror Shot", "Mist", "Mist Ball", "Moonlight", "Morning Sun", "Mud Bomb", "Mud Shot", "Mud Sport", "Mud-Slap", "Muddy Water", "Nasty Plot", "Natural Gift", "Nature Power", "Needle Arm", "Night Shade", "Night Slash", "Nightmare", "Octazooka", "Odor Sleuth", "Ominous Wind", "Outrage", "Overheat", "Pain Split", "Pay Day", "Payback", "Peck", "Perish Song", "Petal Dance", "Pin Missile", "Pluck", "Poison Fang", "Poison Gas", "Poison Jab", "Poison Sting", "Poison Tail", "PoisonPowder", "Pound", "Powder Snow", "Power Gem", "Power Swap", "Power Trick", "Power Whip", "Present", "Protect", "Psybeam", "Psych Up", "Psychic", "Psycho Boost", "Psycho Cut", "Psycho Shift", "Psywave", "Punishment", "Pursuit", "Quick Attack", "Rage", "Rain Dance", "Rapid Spin", "Razor Leaf", "Razor Wind", "Recover", "Recycle", "Reflect", "Refresh", "Rest", "Return", "Revenge", "Reversal", "Roar", "Roar Of Time", "Rock Blast", "Rock Climb", "Rock Polish", "Rock Slide", "Rock Smash", "Rock Throw", "Rock Tomb", "Rock Wrecker", "Role Play", "Rolling Kick", "Rollout", "Roost", "Sacred Fire", "Safeguard", "Sand Tomb", "Sand-Attack", "Sandstorm", "Scary Face", "Scratch", "Screech", "Secret Power", "Seed Bomb", "Seed Flare", "Seismic Toss", "Selfdestruct", "Shadow Ball", "Shadow Claw", "Shadow Force", "Shadow Punch", "Shadow Sneak", "Sharpen", "Sheer Cold", "Shock Wave", "Signal Beam", "Silver Wind", "Sing", "Sketch", "Skill Swap", "Skull Bash", "Sky Attack", "Sky Uppercut", "Slack Off", "Slam", "Slash", "Sleep Powder", "Sleep Talk", "Sludge", "Sludge Bomb", "SmellingSalt", "Smog", "SmokeScreen", "Snatch", "Snore", "Softboiled", "SolarBeam", "SonicBoom", "Spacial Rend", "Spark", "Spider Web", "Spike Cannon", "Spikes", "Spit Up", "Spite", "Splash", "Spore", "Stealth Rock", "Steel Wing", "Stockpile", "Stomp", "Stone Edge", "Strength", "String Shot", "Struggle", "Stun Spore", "Submission", "Substitute", "Sucker Punch", "Sunny Day", "Super Fang", "Superpower", "Supersonic", "Surf", "Swagger", "Swallow", "Sweet Kiss", "Sweet Scent", "Swift", "Switch0", "Switch1", "Switch2", "Switch3", "Switch4", "Switch5", "Switcheroo", "Swords Dance", "Synthesis", "Tackle", "Tail Glow", "Tail Whip", "Tailwind", "Take Down", "Taunt", "Teeter Dance", "Teleport", "Thief", "Thrash", "Thunder", "Thunder Fang", "Thunder Wave", "Thunderbolt", "ThunderPunch", "ThunderShock", "Tickle", "Torment", "Toxic", "Toxic Spikes", "Transform", "Tri Attack", "Trick", "Trick Room", "Triple Kick", "Trump Card", "Twineedle", "Twister", "U-turn", "Uproar", "Vacuum Wave", "ViceGrip", "Vine Whip", "Vital Throw", "Volt Tackle", "Wake-Up Slap", "Water Gun", "Water Pulse", "Water Sport", "Water Spout", "Waterfall", "Weather Ball", "Whirlpool", "Whirlwind", "Will-O-Wisp", "Wing Attack", "Wish", "Withdraw", "Wood Hammer", "Worry Seed", "Wrap", "Wring Out", "X-Scissor", "Yawn", "Zap Cannon", "Zen Headbutt", "End Move" };

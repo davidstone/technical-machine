@@ -32,7 +32,7 @@ class Move {
 		bool execute;
 		bool physical;
 		bool selectable;
-		char accuracy;		// A number between 0 (1?) and 100, according to poccil.
+		char accuracy;		// A number between 0 (1?) and 100, according to poccil. -1 means never miss
 		char disable;			// Number of turns left on this move being Disabled (4-7)
 		char pp_max;			// PP after all PP ups are applied
 		char pp;
@@ -61,6 +61,7 @@ class Move {
 		static short const base_power [];
 		static char const get_pp [];
 		static unsigned short const get_probability [];
+		static short const get_accuracy [];
 };
 
 // Various states a Pokemon can be in due to vanishing moves.
