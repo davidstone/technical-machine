@@ -23,11 +23,11 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 
 long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn = false);
 
-long random_move_effects_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
+long order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
 
-long awaken_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last);
+long random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
 
-long order_branch (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last);
+long awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
 
 long use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
 

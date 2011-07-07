@@ -117,7 +117,7 @@ long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth,
 							else
 								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
 						}
-						long score = random_move_effects_branch (ai, foe, weather, depth, sv);
+						long score = order_branch (ai, foe, weather, depth, sv);
 						if (verbose or first_turn)
 							std::cout << indent + "\tEstimated score is " << score << '\n';
 						if (beta > score)
@@ -142,99 +142,99 @@ long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth,
 }
 
 
-long random_move_effects_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
+long order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
 	// Determine turn order
 	Team* first;
 	Team* last;
 	order (ai, foe, weather, first, last);
 
+	long score;
+	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
+		score = (random_move_effects_branch (ai, foe, weather, depth, sv) + random_move_effects_branch (foe, ai, weather, depth, sv)) / 2;
+	else
+		score = random_move_effects_branch (*first, *last, weather, depth, sv);
+	return score;
+}
+
+
+long random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
 	long score3 = 0;
-	for (ai.pokemon->move->variable.index = 0; ai.pokemon->move->variable.index != ai.pokemon->move->variable.set.size(); ++ai.pokemon->move->variable.index) {
-		if ((ai.pokemon->move->name != ROAR and ai.pokemon->move->name != WHIRLWIND) or ai.pokemon->move->variable->first != foe.pokemon.index or foe.pokemon.set.size() == 1) {
+	for (first.pokemon->move->variable.index = 0; first.pokemon->move->variable.index != first.pokemon->move->variable.set.size(); ++first.pokemon->move->variable.index) {
+		if ((first.pokemon->move->name != ROAR and first.pokemon->move->name != WHIRLWIND) or first.pokemon->move->variable->first != last.pokemon.index or last.pokemon.set.size() == 1) {
 			long score2 = 0;
-			for (foe.pokemon->move->variable.index = 0; foe.pokemon->move->variable.index != foe.pokemon->move->variable.set.size(); ++foe.pokemon->move->variable.index) {
-				if ((foe.pokemon->move->name != ROAR and foe.pokemon->move->name != WHIRLWIND) or foe.pokemon->move->variable->first != ai.pokemon.index or ai.pokemon.set.size() == 1) {
-					ai.ch = false;
-					foe.ch = false;
-					long score1 = awaken_branch (ai, foe, weather, depth, sv, first, last);
-					if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower <= 0) {
+			for (last.pokemon->move->variable.index = 0; last.pokemon->move->variable.index != last.pokemon->move->variable.set.size(); ++last.pokemon->move->variable.index) {
+				if ((last.pokemon->move->name != ROAR and last.pokemon->move->name != WHIRLWIND) or last.pokemon->move->variable->first != first.pokemon.index or first.pokemon.set.size() == 1) {
+					first.ch = false;
+					last.ch = false;
+					long score1 = awaken_branch (first, last, weather, depth, sv);
+					if (first.pokemon->move->basepower > 0 and last.pokemon->move->basepower <= 0) {
 						score1 *= 15;
-						ai.ch = true;
-						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last);
+						first.ch = true;
+						score1 += awaken_branch (first, last, weather, depth, sv);
 						score1 /= 16;
 					}
-					else if (ai.pokemon->move->basepower <= 0 and foe.pokemon->move->basepower > 0) {
+					else if (first.pokemon->move->basepower <= 0 and last.pokemon->move->basepower > 0) {
 						score1 *= 15;
-						foe.ch = true;
-						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last);
+						last.ch = true;
+						score1 += awaken_branch (first, last, weather, depth, sv);
 						score1 /= 16;
 					}
-					else if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower > 0) {
+					else if (first.pokemon->move->basepower > 0 and last.pokemon->move->basepower > 0) {
 						score1 *= 225;
-						ai.ch = true;
-						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last) * 15;
-						foe.ch = true;
-						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last);
-						ai.ch = false;
-						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last) * 15;
+						first.ch = true;
+						score1 += awaken_branch (first, last, weather, depth, sv) * 15;
+						last.ch = true;
+						score1 += awaken_branch (first, last, weather, depth, sv);
+						first.ch = false;
+						score1 += awaken_branch (first, last, weather, depth, sv) * 15;
 						score1 /= 256;
 					}
-					score2 += score1 * foe.pokemon->move->variable->second;
+					score2 += score1 * last.pokemon->move->variable->second;
 				}
 			}
-			score3 += score2 * ai.pokemon->move->variable->second / Move::max_probability;
+			score3 += score2 * first.pokemon->move->variable->second / Move::max_probability;
 		}
 	}
 	return score3 / Move::max_probability;
 }
 
 
-long awaken_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
+long awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
 	int n;
-	if (ai.pokemon->ability == EARLY_BIRD)
+	if (first.pokemon->ability == EARLY_BIRD)
 		n = 2;
 	else
 		n = 1;
-	int ai_numerator = ai.pokemon->sleep + n - 1;
-	if (foe.pokemon->ability == EARLY_BIRD)
+	int first_numerator = first.pokemon->sleep + n - 1;
+	if (last.pokemon->ability == EARLY_BIRD)
 		n = 2;
 	else
 		n = 1;
-	int foe_numerator = foe.pokemon->sleep + n - 1;
+	int last_numerator = last.pokemon->sleep + n - 1;
 	long score;
-	ai.awaken = false;
-	foe.awaken = false;
-	score = order_branch (ai, foe, weather, depth, sv, first, last);
-	if (ai_numerator > 1) {
-		score *= 4 - ai_numerator;
-		ai.awaken = true;
-		score += ai_numerator * order_branch (ai, foe, weather, depth, sv, first, last);
-		if (foe_numerator > 1) {
-			score *= 4 - foe_numerator;
-			foe.awaken = true;
-			score += foe_numerator * (4 - ai_numerator) * order_branch (ai, foe, weather, depth, sv, first, last);
-			ai.awaken = false;
-			score += foe_numerator * ai_numerator * order_branch (ai, foe, weather, depth, sv, first, last);
+	first.awaken = false;
+	last.awaken = false;
+	score = use_move_branch (first, last, weather, depth, sv);
+	if (first_numerator > 1) {
+		score *= 4 - first_numerator;
+		first.awaken = true;
+		score += first_numerator * use_move_branch (first, last, weather, depth, sv);
+		if (last_numerator > 1) {
+			score *= 4 - last_numerator;
+			last.awaken = true;
+			score += last_numerator * (4 - first_numerator) * use_move_branch (first, last, weather, depth, sv);
+			first.awaken = false;
+			score += last_numerator * first_numerator * use_move_branch (first, last, weather, depth, sv);
 			score /= 4;
 		}
 		score /= 4;
 	}
-	else if (foe_numerator > 1) {
-		score *= 4 - foe_numerator;
-		foe.awaken = true;
-		score += foe_numerator * order_branch (ai, foe, weather, depth, sv, first, last);
+	else if (last_numerator > 1) {
+		score *= 4 - last_numerator;
+		last.awaken = true;
+		score += last_numerator * use_move_branch (first, last, weather, depth, sv);
 		score /= 4;
 	}
-	return score;
-}
-
-
-long order_branch (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
-	long score;
-	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		score = (use_move_branch (ai, foe, weather, depth, sv) + use_move_branch (foe, ai, weather, depth, sv)) / 2;
-	else
-		score = use_move_branch (*first, *last, weather, depth, sv);
 	return score;
 }
 
