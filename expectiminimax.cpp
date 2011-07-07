@@ -30,7 +30,7 @@ namespace technicalmachine {
 moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, long &score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	moves_list best_move;
-	score = tree1 (ai, foe, weather, depth, sv, best_move, true);
+	score = select_move_branch (ai, foe, weather, depth, sv, best_move, true);
 
 	if (SWITCH0 <= best_move and best_move <= SWITCH5)
 		std::cout << "Switch to " << ai.pokemon.set [best_move - SWITCH0].get_name ();
@@ -52,7 +52,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 }
 
 
-long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn) {
+long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn) {
 
 	/* Working from the inside loop out:
 
@@ -117,7 +117,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 							else
 								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
 						}
-						long score = tree2 (ai, foe, weather, depth, sv);
+						long score = random_move_effects_branch (ai, foe, weather, depth, sv);
 						if (verbose or first_turn)
 							std::cout << indent + "\tEstimated score is " << score << '\n';
 						if (beta > score)
@@ -142,7 +142,7 @@ long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variab
 }
 
 
-long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
+long random_move_effects_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
 	// Determine turn order
 	Team* first;
 	Team* last;
@@ -156,27 +156,27 @@ long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 				if ((foe.pokemon->move->name != ROAR and foe.pokemon->move->name != WHIRLWIND) or foe.pokemon->move->variable->first != ai.pokemon.index or ai.pokemon.set.size() == 1) {
 					ai.ch = false;
 					foe.ch = false;
-					long score1 = tree3 (ai, foe, weather, depth, sv, first, last);
+					long score1 = awaken_branch (ai, foe, weather, depth, sv, first, last);
 					if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower <= 0) {
 						score1 *= 15;
 						ai.ch = true;
-						score1 += tree3 (ai, foe, weather, depth, sv, first, last);
+						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last);
 						score1 /= 16;
 					}
 					else if (ai.pokemon->move->basepower <= 0 and foe.pokemon->move->basepower > 0) {
 						score1 *= 15;
 						foe.ch = true;
-						score1 += tree3 (ai, foe, weather, depth, sv, first, last);
+						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last);
 						score1 /= 16;
 					}
 					else if (ai.pokemon->move->basepower > 0 and foe.pokemon->move->basepower > 0) {
 						score1 *= 225;
 						ai.ch = true;
-						score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
+						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last) * 15;
 						foe.ch = true;
-						score1 += tree3 (ai, foe, weather, depth, sv, first, last);
+						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last);
 						ai.ch = false;
-						score1 += tree3 (ai, foe, weather, depth, sv, first, last) * 15;
+						score1 += awaken_branch (ai, foe, weather, depth, sv, first, last) * 15;
 						score1 /= 256;
 					}
 					score2 += score1 * foe.pokemon->move->variable->second;
@@ -189,7 +189,7 @@ long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 }
 
 
-long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
+long awaken_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
 	int n;
 	if (ai.pokemon->ability == EARLY_BIRD)
 		n = 2;
@@ -204,17 +204,17 @@ long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 	long score;
 	ai.awaken = false;
 	foe.awaken = false;
-	score = tree4 (ai, foe, weather, depth, sv, first, last);
+	score = order_branch (ai, foe, weather, depth, sv, first, last);
 	if (ai_numerator > 1) {
 		score *= 4 - ai_numerator;
 		ai.awaken = true;
-		score += ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last);
+		score += ai_numerator * order_branch (ai, foe, weather, depth, sv, first, last);
 		if (foe_numerator > 1) {
 			score *= 4 - foe_numerator;
 			foe.awaken = true;
-			score += foe_numerator * (4 - ai_numerator) * tree4 (ai, foe, weather, depth, sv, first, last);
+			score += foe_numerator * (4 - ai_numerator) * order_branch (ai, foe, weather, depth, sv, first, last);
 			ai.awaken = false;
-			score += foe_numerator * ai_numerator * tree4 (ai, foe, weather, depth, sv, first, last);
+			score += foe_numerator * ai_numerator * order_branch (ai, foe, weather, depth, sv, first, last);
 			score /= 4;
 		}
 		score /= 4;
@@ -222,24 +222,24 @@ long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score
 	else if (foe_numerator > 1) {
 		score *= 4 - foe_numerator;
 		foe.awaken = true;
-		score += foe_numerator * tree4 (ai, foe, weather, depth, sv, first, last);
+		score += foe_numerator * order_branch (ai, foe, weather, depth, sv, first, last);
 		score /= 4;
 	}
 	return score;
 }
 
 
-long tree4 (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
+long order_branch (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last) {
 	long score;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		score = (tree5 (ai, foe, weather, depth, sv) + tree5 (foe, ai, weather, depth, sv)) / 2;
+		score = (use_move_branch (ai, foe, weather, depth, sv) + use_move_branch (foe, ai, weather, depth, sv)) / 2;
 	else
-		score = tree5 (*first, *last, weather, depth, sv);
+		score = use_move_branch (*first, *last, weather, depth, sv);
 	return score;
 }
 
 
-long tree5 (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
+long use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
 	if (!last.pass) {
 		if (!first.pass) {
 			if (first.pokemon->move->name == BATON_PASS and false) {
@@ -248,7 +248,7 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 				Team* foe;
 				deorder (first, last, ai, foe);
 				moves_list phony = END_MOVE;
-				return tree1 (*ai, *foe, weather, depth, sv, phony);
+				return select_move_branch (*ai, *foe, weather, depth, sv, phony);
 			}
 		}
 		last.damage = usemove (first, last, weather);
@@ -263,7 +263,7 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 			Team* foe;
 			deorder (first, last, ai, foe);
 			moves_list phony = END_MOVE;
-			return tree1 (*ai, *foe, weather, depth, sv, phony);
+			return select_move_branch (*ai, *foe, weather, depth, sv, phony);
 		}
 	}
 	
@@ -278,29 +278,29 @@ long tree5 (Team first, Team last, Weather weather, int depth, score_variables c
 	
 	first.shed_skin = false;
 	last.shed_skin = false;
-	long score = 49 * tree6 (first, last, weather, depth, sv);
+	long score = 49 * end_of_turn_branch (first, last, weather, depth, sv);
 	long divisor = 49;
 	if (first.pokemon->ability == SHED_SKIN and first.pokemon->status != NO_STATUS) {
 		first.shed_skin = true;
-		score += 21 * tree6 (first, last, weather, depth, sv);
+		score += 21 * end_of_turn_branch (first, last, weather, depth, sv);
 		divisor += 21;
 		if (last.pokemon->ability == SHED_SKIN and last.pokemon->status != NO_STATUS) {
 			last.shed_skin = true;
-			score += 9 * tree6 (first, last, weather, depth, sv);
+			score += 9 * end_of_turn_branch (first, last, weather, depth, sv);
 			divisor += 9;
 			first.shed_skin = false;
 		}
 	}
 	if (last.pokemon->ability == SHED_SKIN and last.pokemon->status != NO_STATUS) {
 		last.shed_skin = true;
-		score += 21 * tree6 (first, last, weather, depth, sv);
+		score += 21 * end_of_turn_branch (first, last, weather, depth, sv);
 		divisor += 21;
 	}
 	return score / divisor;
 }
 
 
-long tree6 (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
+long end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
 	endofturn (first, last, weather);
 	long score;
 	if (win (first) != 0 or win (last) != 0)
@@ -321,7 +321,7 @@ long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_vari
 	if (faint)
 		function = &fainted;
 	else
-		function = &tree5;
+		function = &use_move_branch;
 	Team* first;
 	Team* last;
 	faster_pokemon (ai, foe, weather, first, last);
@@ -378,9 +378,9 @@ long fainted (Team first, Team last, Weather weather, int depth, score_variables
 	if (depth == 0)
 		score = evaluate (*ai, *foe, weather, sv);
 	else {
-		// I have to pass best_move by reference so tree1() can give information to expectiminimax(), but I don't want future calls to overwrite information
+		// I have to pass best_move by reference so select_move_branch() can give information to expectiminimax(), but I don't want future calls to overwrite information
 		moves_list phony = END_MOVE;
-		score = tree1 (*ai, *foe, weather, depth, sv, phony);
+		score = select_move_branch (*ai, *foe, weather, depth, sv, phony);
 //		return transposition (*ai, *foe, weather, depth, sv);
 	}
 	return score;

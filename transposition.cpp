@@ -70,7 +70,7 @@ long transposition (Team &ai, Team &foe, Weather const &weather, int const &dept
 		else {
 			moves_list phony = END_MOVE;
 			// If I can't find it, set the score to the evaluation of the state at depth - 1.
-			hash.score = tree1 (ai, foe, weather, depth, sv, phony);
+			hash.score = select_move_branch (ai, foe, weather, depth, sv, phony);
 		
 			// Since I didn't find any stored value at the same hash as the current state, or the value I found was for a shallower depth, add the new value to my table.
 			*transpose = hash;

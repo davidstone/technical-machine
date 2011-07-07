@@ -20,14 +20,23 @@
 namespace technicalmachine {
 
 moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, long &score);
-long tree1 (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn = false);
-long tree2 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
-long tree3 (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last);
-long tree4 (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last);
-long tree5 (Team first, Team last, Weather weather, int depth, score_variables const &sv);
-long tree6 (Team first, Team last, Weather weather, int depth, score_variables const &sv);
+
+long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn = false);
+
+long random_move_effects_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
+
+long awaken_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last);
+
+long order_branch (Team const &ai, Team const &foe, Weather const &weather, int const &depth, score_variables const &sv, Team* first, Team* last);
+
+long use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
+
+long end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
+
 long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool faint, bool first_turn, bool verbose);
+
 long fainted (Team ai, Team foe, Weather weather, int depth, score_variables const &sv);
+
 void deorder (Team &first, Team &last, Team* &ai, Team* &foe);
 
 }
