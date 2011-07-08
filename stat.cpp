@@ -220,6 +220,43 @@ void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &fa
 		std::swap (faster, slower);
 }
 
+void chance_to_hit (Team &user, Team const &target, Weather const &weather) {
+	if (user.pokemon->move->accuracy == -1)
+		user.chance_to_hit = 100;
+	else {
+		user.chance_to_hit = user.pokemon->move->accuracy;
+		if (user.accuracy >= 0)
+			user.chance_to_hit = user.chance_to_hit * (3 + user.accuracy) / 3;
+		else
+			user.chance_to_hit = user.chance_to_hit * 3 / (3 - user.accuracy);
+		if (target.evasion <= 0)
+			user.chance_to_hit = user.chance_to_hit * (3 - target.evasion) / 3;
+		else
+			user.chance_to_hit = user.chance_to_hit * 3 / (3 + target.evasion);
+		if (user.pokemon->item == WIDE_LENS)
+			user.chance_to_hit = user.chance_to_hit * 11 / 10;
+		else if (user.pokemon->item == ZOOM_LENS and target.moved)
+			user.chance_to_hit = user.chance_to_hit * 6 / 5;
+		if (target.pokemon->item == BRIGHTPOWDER)
+			user.chance_to_hit = user.chance_to_hit * 9 / 10;
+		else if (target.pokemon->item == LAX_INCENSE)
+			user.chance_to_hit = user.chance_to_hit * 19 / 20;
+		if (user.pokemon->ability == COMPOUNDEYES)
+			user.chance_to_hit = user.chance_to_hit * 13 / 10;
+		else if (user.pokemon->ability == HUSTLE and user.pokemon->move->physical)
+			user.chance_to_hit = user.chance_to_hit * 4 / 5;
+		if ((target.pokemon->ability == SAND_VEIL and weather.sand != 0)
+				or (target.pokemon->ability == SNOW_CLOAK and weather.hail != 0)
+				or (target.pokemon->ability == TANGLED_FEET and target.confused != 0))
+			user.chance_to_hit = user.chance_to_hit * 4 / 5;
+		if (weather.gravity != 0)
+			user.chance_to_hit = user.chance_to_hit * 5 / 3;
+		if (user.chance_to_hit > 100)
+			user.chance_to_hit = 100;
+	}
+	user.chance_to_hit = user.chance_to_hit;
+}
+
 void Stat::boost (int n) {
 	stage += n;
 	if (stage > 6)

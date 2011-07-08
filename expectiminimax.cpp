@@ -147,12 +147,22 @@ long order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth
 	Team* first;
 	Team* last;
 	order (ai, foe, weather, first, last);
-
 	long score;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		score = (random_move_effects_branch (ai, foe, weather, depth, sv) + random_move_effects_branch (foe, ai, weather, depth, sv)) / 2;
+		score = (accuracy_branch (ai, foe, weather, depth, sv) + accuracy_branch (foe, ai, weather, depth, sv)) / 2;
 	else
-		score = random_move_effects_branch (*first, *last, weather, depth, sv);
+		score = accuracy_branch (*first, *last, weather, depth, sv);
+	return score;
+}
+
+
+long accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
+	long score = 0;
+	chance_to_hit (first, last, weather);
+	first.moved = true;
+	chance_to_hit (last, first, weather);
+	first.moved = false;
+	score = random_move_effects_branch (first, last, weather, depth, sv);
 	return score;
 }
 

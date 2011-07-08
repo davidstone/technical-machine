@@ -31,6 +31,7 @@ class Team {
 		short bide_damage;
 		short substitute;	// How much HP does the substitute have left?
 		char bide;
+		unsigned char chance_to_hit;
 		char confused;
 		char embargo;
 		char encore;

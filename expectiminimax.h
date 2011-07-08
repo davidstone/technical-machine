@@ -25,6 +25,8 @@ long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth,
 
 long order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
 
+long accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+
 long random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
 
 long awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);

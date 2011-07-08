@@ -38,6 +38,7 @@ Team::Team (bool isme, Map const &map, unsigned size) :
 	bide_damage (0),
 	substitute (0),
 	bide (0),
+	chance_to_hit (100),
 	confused (0),
 	embargo (0),
 	encore (0),
