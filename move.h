@@ -13,6 +13,7 @@
 #define MOVE_H_
 
 #include <string>
+#include <utility>
 #include <vector>
 #include "active.h"
 #include "type.h"

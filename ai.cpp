@@ -11,6 +11,7 @@
 
 
 #include <iostream>
+#include <string>
 #include <boost/lexical_cast.hpp>
 #include "analyze_logs.h"
 #include "evaluate.h"

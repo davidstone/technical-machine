@@ -9,6 +9,9 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef SWITCH_H_
+#define SWITCH_H_
+
 #include <vector>
 
 namespace technicalmachine {
@@ -23,3 +26,5 @@ void entry_hazards (Team &switcher, Weather const &weather);
 void activate_ability (Team &switcher, Pokemon &other, Weather &weather);
 
 }
+
+#endif

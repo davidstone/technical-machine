@@ -9,6 +9,9 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef ANALYZE_LOGS_H_
+#define ANALYZE_LOGS_H_
+
 #include <fstream>
 #include <map>
 #include <string>
@@ -62,3 +65,4 @@ void normalize_hp (Team &first, Team &last);
 void normalize_hp_team (Team &team);
 
 }
+#endif

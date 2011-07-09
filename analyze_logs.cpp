@@ -14,6 +14,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 #include "analyze_logs.h"
 #include "ability.h"
 #include "endofturn.h"
