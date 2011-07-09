@@ -13,10 +13,11 @@
 #define TEAMPREDICTOR_H_
 
 #include <vector>
-#include "pokemon.h"
-#include "team.h"
 
 namespace technicalmachine {
+
+class Pokemon;
+class Team;
 
 void predict_team (int detailed [][7], Team &team, unsigned size, bool using_lead = true);
 

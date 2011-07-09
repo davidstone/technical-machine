@@ -19,7 +19,7 @@
 #include "movefunction.h"
 #include "pokemon.h"
 #include "reversedamage.h"
-#include "statfunction.h"
+#include "stat.h"
 #include "status.h"
 #include "switch.h"
 #include "team.h"

@@ -12,10 +12,10 @@
 #ifndef STATE_H_
 #define STATE_H_
 
-#include "team.h"
-#include "weather.h"
-
 namespace technicalmachine {
+
+class Team;
+class Weather;
 
 struct State {
 	Team ai;

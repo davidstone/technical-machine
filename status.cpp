@@ -13,7 +13,7 @@
 #include "status.h"
 #include "statusfunction.h"
 #include "team.h"
-#include "typefunction.h"
+#include "type.h"
 #include "weather.h"
 
 namespace technicalmachine {

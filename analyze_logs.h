@@ -12,11 +12,12 @@
 #include <fstream>
 #include <map>
 #include <string>
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
 
 namespace technicalmachine {
+
+class Map;
+class Team;
+class Weather;
 
 class Log {
 	public:

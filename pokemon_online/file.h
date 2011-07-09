@@ -11,9 +11,16 @@
 
 #include <fstream>
 #include <string>
-#include "../team.h"
+#include "../ability.h"
+#include "../item.h"
+#include "../move.h"
+#include "../species.h"
+#include "../stat.h"
+
 
 namespace technicalmachine {
+
+class Team;
 
 namespace po {
 

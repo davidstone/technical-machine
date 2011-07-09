@@ -15,11 +15,6 @@
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <string>
-#include "move.h"
-#include "pokemon.h"
-#include "status.h"
-#include "team.h"
-#include "weather.h"
 
 namespace technicalmachine {
 
@@ -74,6 +69,10 @@ class score_variables {
 	
 		score_variables ();
 };
+
+class Pokemon;
+class Team;
+class Weather;
 
 long evaluate (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
 long scoreteam (Team const &team, score_variables const &sv);

@@ -16,7 +16,6 @@
 #include "load_stats.h"
 #include "movefunction.h"
 #include "pokemon.h"
-#include "statfunction.h"
 #include "team.h"
 #include "teampredictor.h"
 

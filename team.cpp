@@ -20,8 +20,6 @@
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
-#include "stat.h"
-#include "statfunction.h"
 #include "switch.h"
 #include "team.h"
 #include "teampredictor.h"

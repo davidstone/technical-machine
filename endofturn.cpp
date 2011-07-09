@@ -15,10 +15,8 @@
 #include "heal.h"
 #include "move.h"
 #include "pokemon.h"
-#include "statfunction.h"
 #include "statusfunction.h"
 #include "team.h"
-#include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {

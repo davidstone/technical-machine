@@ -16,11 +16,11 @@
 #include "damage.h"
 #include "heal.h"
 #include "pokemon.h"
-#include "statfunction.h"
+#include "stat.h"
 #include "statusfunction.h"
 #include "switch.h"
+#include "team.h"
 #include "type.h"
-#include "typefunction.h"
 #include "weather.h"
 
 namespace technicalmachine {

@@ -12,9 +12,9 @@
 #ifndef HEAL_H_
 #define HEAL_H_
 
-#include "pokemon.h"
-
 namespace technicalmachine {
+
+class Pokemon;
 
 void heal (Pokemon &member, int denominator, int numerator = 1);
 

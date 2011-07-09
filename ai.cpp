@@ -13,9 +13,11 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include "analyze_logs.h"
+#include "evaluate.h"
 #include "expectiminimax.h"
 #include "item.h"
 #include "load_stats.h"
+#include "map.h"
 #include "move.h"
 #include "pokemon.h"
 #include "status.h"

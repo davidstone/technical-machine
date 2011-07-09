@@ -17,6 +17,7 @@
 #include "analyze_logs.h"
 #include "ability.h"
 #include "endofturn.h"
+#include "map.h"
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"

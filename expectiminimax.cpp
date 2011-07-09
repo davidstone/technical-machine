@@ -18,7 +18,7 @@
 #include "move.h"
 #include "movefunction.h"
 #include "pokemon.h"
-#include "statfunction.h"
+#include "stat.h"
 #include "switch.h"
 #include "team.h"
 #include "transposition.h"

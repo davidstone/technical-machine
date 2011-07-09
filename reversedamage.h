@@ -13,13 +13,14 @@
 #define REVERSEDAMAGE_H_
 
 #include <vector>
-#include "team.h"
-#include "weather.h"
-#include "unknown.h"
 
 namespace technicalmachine {
 
-void reversedamagecalculator (Team &attacker, const Team &defender, const Weather &weather, int damage, std::vector<Unknown> &hidden);
+class Team;
+class Unknown;
+class Weather;
+
+void reversedamagecalculator (Team &attacker, Team const &defender, Weather const &weather, int damage, std::vector<Unknown> &hidden);
 
 }
 #endif

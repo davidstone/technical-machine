@@ -40,5 +40,11 @@ int const effectiveness [18][18] = {
 	//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
 };
 
+class Team;
+class Weather;
+
+bool istype (Team const &team, types type);
+bool grounded (Team const &team, Weather const &weather);
+
 }
 #endif

@@ -16,7 +16,7 @@
 #include "move.h"
 #include "pokemon.h"
 #include "status.h"
-#include "typefunction.h"
+#include "team.h"
 #include "weather.h"
 
 namespace technicalmachine {

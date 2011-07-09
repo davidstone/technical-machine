@@ -12,11 +12,11 @@
 #ifndef DAMAGE_H_
 #define DAMAGE_H_
 
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
-
 namespace technicalmachine {
+
+class Pokemon;
+class Team;
+class Weather;
 
 void movepower (Team &attacker, Team const &defender, Weather const weather);
 

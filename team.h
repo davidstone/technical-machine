@@ -16,10 +16,11 @@
 #include <string>
 #include <vector>
 #include "active.h"
-#include "map.h"
-#include "pokemon.h"
 
 namespace technicalmachine {
+
+class Map;
+class Pokemon;
 
 class Team {
 	public:

@@ -13,11 +13,10 @@
 #include <iostream>
 #include "heal.h"
 #include "pokemon.h"
-#include "statfunction.h"
 #include "statusfunction.h"
 #include "switch.h"
 #include "team.h"
-#include "typefunction.h"
+#include "type.h"
 #include "weather.h"
 
 namespace technicalmachine {

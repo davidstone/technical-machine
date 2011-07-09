@@ -12,12 +12,13 @@
 #ifndef EXPECTIMINIMAX_H_
 #define EXPECTIMINIMAX_H_
 
-#include "evaluate.h"
 #include "move.h"
-#include "team.h"
-#include "weather.h"
 
 namespace technicalmachine {
+
+class score_variables;
+class Team;
+class Weather;
 
 moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, long &score);
 

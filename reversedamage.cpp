@@ -13,7 +13,7 @@
 #include "reversedamage.h"
 #include "damage.h"
 #include "item.h"
-#include "statfunction.h"
+#include "stat.h"
 #include "team.h"
 #include "weather.h"
 #include "unknown.h"

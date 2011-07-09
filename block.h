@@ -12,12 +12,11 @@
 #ifndef BLOCK_H_
 #define BLOCK_H
 
-#include "move.h"
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
-
 namespace technicalmachine {
+
+class Move;
+class Team;
+class Weather;
 
 void blockexecution (Team &user, Team const &target, Weather const &weather);
 void blockselection (Team &user, Team const &target, Weather const &weather);

@@ -14,10 +14,11 @@
 
 #include <fstream>
 #include <vector>
-#include "map.h"
-#include "pokemon.h"
+#include "species.h"
 
 namespace technicalmachine {
+
+class Map;
 
 void overall_stats (std::vector<unsigned> &overall);
 

@@ -14,7 +14,6 @@
 #include "pokemon.h"
 #include "species.h"
 #include "stat.h"
-#include "statfunction.h"
 
 namespace technicalmachine {
 

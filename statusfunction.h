@@ -12,11 +12,11 @@
 #ifndef STATUSFUNCTION_H_
 #define STATUSFUNCTION_H_
 
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
-
 namespace technicalmachine {
+
+class Pokemon;
+class Team;
+class Weather;
 
 void burn (Team &user, Team &target, Weather const &weather);
 void freeze (Pokemon const &user, Team &target, Weather const &weather);

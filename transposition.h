@@ -14,13 +14,12 @@
 
 #include <map>
 #include <string>
-#include "evaluate.h"
-#include "move.h"
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
 
 namespace technicalmachine {
+
+class score_variables;
+class Team;
+class Weather;
 
 long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
 

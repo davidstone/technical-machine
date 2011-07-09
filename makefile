@@ -59,20 +59,20 @@ analyze_logs.o: analyze_logs.cpp analyze_logs.h pokemon.h ability.h \
  map.h weather.h endofturn.h movefunction.h switch.h
 block.o: block.cpp block.h move.h active.h type.h pokemon.h ability.h \
  gender.h item.h species.h stat.h status.h team.h map.h weather.h \
- statfunction.h typefunction.h
+
 damage.o: damage.cpp damage.h pokemon.h ability.h active.h gender.h \
  item.h move.h type.h species.h stat.h status.h team.h map.h weather.h \
- typefunction.h
+
 endofturn.o: endofturn.cpp endofturn.h pokemon.h ability.h active.h \
  gender.h item.h move.h type.h species.h stat.h status.h team.h map.h \
- weather.h damage.h heal.h statfunction.h statusfunction.h typefunction.h
+ weather.h damage.h heal.h statusfunction.h
 evaluate.o: evaluate.cpp evaluate.h move.h active.h type.h pokemon.h \
  ability.h gender.h item.h species.h stat.h status.h team.h map.h \
- weather.h typefunction.h
+ weather.h
 expectiminimax.o: expectiminimax.cpp expectiminimax.h evaluate.h move.h \
  active.h type.h pokemon.h ability.h gender.h item.h species.h stat.h \
  status.h team.h map.h weather.h block.h endofturn.h movefunction.h \
- statfunction.h switch.h transposition.h
+ switch.h transposition.h
 heal.o: heal.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
  move.h type.h species.h stat.h status.h
 load_stats.o: load_stats.cpp map.h ability.h gender.h item.h move.h \
@@ -81,32 +81,32 @@ map.o: map.cpp map.h ability.h gender.h item.h move.h active.h type.h \
  stat.h species.h
 move.o: move.cpp move.h active.h type.h movefunction.h pokemon.h \
  ability.h gender.h item.h species.h stat.h status.h team.h map.h \
- weather.h block.h damage.h heal.h statfunction.h statusfunction.h \
- switch.h typefunction.h
+ weather.h block.h damage.h heal.h statusfunction.h \
+ switch.h
 pokemon.o: pokemon.cpp active.h movefunction.h pokemon.h ability.h \
  gender.h item.h move.h type.h species.h stat.h status.h team.h map.h \
- weather.h statfunction.h
+ weather.h
 predictor.o: predictor.cpp load_stats.h map.h ability.h gender.h item.h \
  move.h active.h type.h stat.h species.h pokemon.h status.h \
- movefunction.h team.h weather.h statfunction.h teampredictor.h
+ movefunction.h team.h weather.h teampredictor.h
 rdc.o: rdc.cpp ability.h item.h move.h active.h type.h movefunction.h \
  pokemon.h gender.h species.h stat.h status.h team.h map.h weather.h \
- reversedamage.h unknown.h statfunction.h switch.h teampredictor.h
+ reversedamage.h unknown.h switch.h teampredictor.h
 reversedamage.o: reversedamage.cpp reversedamage.h team.h active.h map.h \
  ability.h gender.h item.h move.h type.h stat.h species.h pokemon.h \
- status.h weather.h unknown.h damage.h statfunction.h
+ status.h weather.h unknown.h damage.h
 stat.o: stat.cpp ability.h item.h move.h active.h type.h pokemon.h \
- gender.h species.h stat.h status.h statfunction.h team.h map.h weather.h \
- typefunction.h
+ gender.h species.h stat.h status.h team.h map.h weather.h \
+
 status.o: status.cpp pokemon.h ability.h active.h gender.h item.h move.h \
  type.h species.h stat.h status.h statusfunction.h team.h map.h weather.h \
- typefunction.h
+
 switch.o: switch.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
- move.h type.h species.h stat.h status.h statfunction.h team.h map.h \
- weather.h statusfunction.h switch.h typefunction.h
+ move.h type.h species.h stat.h status.h team.h map.h \
+ weather.h statusfunction.h switch.h
 team.o: team.cpp ability.h gender.h item.h move.h active.h type.h \
  movefunction.h pokemon.h species.h stat.h status.h team.h map.h \
- weather.h statfunction.h switch.h teampredictor.h pokemon_lab/file.h \
+ weather.h switch.h teampredictor.h pokemon_lab/file.h \
  pokemon_online/file.h
 teampredictor.o: teampredictor.cpp load_stats.h map.h ability.h gender.h \
  item.h move.h active.h type.h stat.h species.h pokemon.h status.h team.h \
@@ -115,7 +115,7 @@ transposition.o: transposition.cpp evaluate.h move.h active.h type.h \
  pokemon.h ability.h gender.h item.h species.h stat.h status.h team.h \
  map.h weather.h expectiminimax.h transposition.h
 type.o: type.cpp team.h active.h map.h ability.h gender.h item.h move.h \
- type.h stat.h species.h pokemon.h status.h typefunction.h weather.h
+ type.h stat.h species.h pokemon.h status.h weather.h
 unknown.o: unknown.cpp unknown.h item.h stat.h species.h
 weather.o: weather.cpp weather.h
 pokemon_lab/file.o: pokemon_lab/file.cpp pokemon_lab/file.h map.h \

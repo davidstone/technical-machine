@@ -12,9 +12,8 @@
 #include "block.h"
 #include "move.h"
 #include "pokemon.h"
-#include "statfunction.h"
 #include "team.h"
-#include "typefunction.h"
+#include "type.h"
 #include "weather.h"
 
 namespace technicalmachine {

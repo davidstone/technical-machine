@@ -12,11 +12,11 @@
 #ifndef MOVEFUNCTION_H_
 #define MOVEFUNCTION_H_
 
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
-
 namespace technicalmachine {
+
+class Pokemon;
+class Team;
+class Weather;
 
 int usemove (Team &user, Team &target, Weather &weather, int log_damage = -1);
 int usemove2 (Team &user, Team &target, Weather &weather, int damage);

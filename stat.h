@@ -35,5 +35,17 @@ class Stat {
 
 enum natures { ADAMANT, BASHFUL, BOLD, BRAVE, CALM, CAREFUL, DOCILE, GENTLE, HARDY, HASTY, IMPISH, JOLLY, LAX, LONELY, MILD, MODEST, NAIVE, NAUGHTY, QUIET, QUIRKY, RASH, RELAXED, SASSY, SERIOUS, TIMID, END_NATURE };
 
+class Pokemon;
+class Team;
+class Weather;
+
+int hitpoints (Pokemon &member);
+void attack (Team &attacker, Weather const &weather);
+void defense (Team const &attacker, Team &defender, Weather const &weather);
+void speed (Team &team, Weather const &weather);
+void order (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower);
+void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower);
+void chance_to_hit (Team &user, Team const &target, Weather const &weather);
+
 }
 #endif

@@ -12,10 +12,10 @@
 #include <fstream>
 #include <string>
 
-#include "../map.h"
-#include "../team.h"
-
 namespace technicalmachine {
+
+class Map;
+class Team;
 
 namespace pl {
 
