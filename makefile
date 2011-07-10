@@ -11,36 +11,38 @@ analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o s
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -fno-rtti
 
+CXX = g++
+
 ai : $(aiobjects)
-	g++ -o ai $(aiobjects) $(CXXFLAGS)
+	$(CXX) -o ai $(aiobjects) $(CXXFLAGS)
 ai : optimizations = -g
 
 aio : $(aiobjects)
-	g++ -o aio $(aiobjects) $(CXXFLAGS)
+	$(CXX) -o aio $(aiobjects) $(CXXFLAGS)
 aio : optimizations = $(fulloptimizations)
 
 predict : $(predictobjects)
-	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)
+	$(CXX) -o predict $(predictobjects) -l fltk $(CXXFLAGS)
 predict : optimizations = -g
 
 predicto : $(predictobjects)
-	g++ -o predict $(predictobjects) -l fltk $(CXXFLAGS)
+	$(CXX) -o predict $(predictobjects) -l fltk $(CXXFLAGS)
 predicto : optimizations = $(fulloptimizations)
 
 rdc : $(rdcobjects)
-	g++ -o rdc $(rdcobjects) $(CXXFLAGS)
+	$(CXX) -o rdc $(rdcobjects) $(CXXFLAGS)
 rdc : optimizations = -g
 
 rdco : $(rdcobjects)
-	g++ -o rdco $(rdcobjects) $(CXXFLAGS)
+	$(CXX) -o rdco $(rdcobjects) $(CXXFLAGS)
 rdco : optimizations = $(fulloptimizations)
 
 analog : $(analogobjects)
-	g++ -o analog $(analogobjects) $(CXXFLAGS)
+	$(CXX) -o analog $(analogobjects) $(CXXFLAGS)
 analog : optimizations = -g
 
 analoggui : $(analogguiobjects)
-	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
+	$(CXX) -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
 analoggui : optimizations = -g
 
 CXXFLAGS = $(warnings) $(optimizations) -std=c++0x
