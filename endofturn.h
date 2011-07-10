@@ -12,6 +12,8 @@
 #ifndef ENDOFTURN_H_
 #define ENDOFTURN_H_
 
+#include <cstdint>
+
 namespace technicalmachine {
 
 class Pokemon;
@@ -26,7 +28,7 @@ void endofturn3 (Team &team, Weather const &weather);
 void endofturn5 (Team &team, Pokemon &foe, Weather &weather);
 void endofturn6 (Team &target, Weather const &weather);
 void endofturn7 (Team &team);
-void decrement (char &n);
+void decrement (int8_t &n);
 
 }
 

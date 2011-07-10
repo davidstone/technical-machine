@@ -45,21 +45,21 @@ class Pokemon {
 		Stat spe;
 		natures nature;
 		bool fainted;
-		char level;
-		char mass;		// mass == power of Grass Knot / Low Kick, not the actual mass stat
-		char sleep;				// wakes up when this number is 2 through 5
+		int8_t level;
+		int8_t mass;		// mass == power of Grass Knot / Low Kick, not the actual mass stat
+		int8_t sleep;				// wakes up when this number is 2 through 5
 
-		unsigned char happiness;
+		uint8_t happiness;
 	
 		Pokemon (species const &member, unsigned size);
-		unsigned long hash () const;
+		uint64_t hash () const;
 		std::string get_name () const;
 		bool operator== (Pokemon const &other) const;
 		bool operator!= (Pokemon const &other) const;
 		void load ();
 	private:
 		static types const get_type [][2];
-		static char const get_mass [];
+		static int8_t const get_mass [];
 		static std::string const name_to_string [];
 };
 

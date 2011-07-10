@@ -10,6 +10,7 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -55,7 +56,7 @@ int main (int argc, char* argv[]) {
 		predicted.output (out);
 		std::cout << out;
 
-		long score;
+		int64_t score;
 		expectiminimax (ai, predicted, weather, depth, sv, score);
 
 		won = analyze_turn (ai, foe, weather, map);

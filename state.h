@@ -21,7 +21,7 @@ struct State {
 	Team ai;
 	Team foe;
 	Weather weather;
-	long score;
+	int64_t score;
 	int depth;
 	bool operator== (State const &other) const {
 		return this->ai == other.ai and this->foe == other.foe and this->weather == other.weather;

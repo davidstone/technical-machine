@@ -52,8 +52,8 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 		}
 }
 
-unsigned long Pokemon::hash () const {
-	unsigned long hash = 0;
+uint64_t Pokemon::hash () const {
+	uint64_t hash = 0;
 	for (std::vector<Move>::const_iterator it = move.set.begin(); it != move.set.end(); ++it)
 		hash ^= it->hash();
 	return name + END_SPECIES * (item + END_ITEM * (status + END_STATUS * (hp.stat + hp.max * (atk.stage + 13 * (def.stage + 13 * (spa.stage + 13 * (spd.stage + 13 * (spe.stage + 13 * (sleep + 5 * hash)))))))));
@@ -586,7 +586,7 @@ types const Pokemon::get_type [][2] = {
 	{ POISON, FLYING }			// Zubat
 };
 
-char const Pokemon::get_mass [] = {
+int8_t const Pokemon::get_mass [] = {
 	100,	// Abomasnow
 	40,	// Abra
 	60,	// Absol

@@ -9,6 +9,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstdint>
 #include <vector>
 #include "reversedamage.h"
 #include "damage.h"
@@ -35,8 +36,8 @@ void reversedamagecalculator (Team &attacker, Team const &defender, Weather cons
 	
 	std::vector<Unknown> refined_hidden;
 	items old_item = END_ITEM;
-	unsigned char old_spe_ev = 32;		// Illegal value to force recalculation of speed stat
-	unsigned char old_offense_ev = 32;	// Illegal value to force recalculation of attacking stat
+	uint8_t old_spe_ev = 32;		// Illegal value to force recalculation of speed stat
+	uint8_t old_offense_ev = 32;	// Illegal value to force recalculation of attacking stat
 	
 	int type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
 	int type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2

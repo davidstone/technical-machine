@@ -43,7 +43,7 @@ analoggui : $(analogguiobjects)
 	g++ -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
 analoggui : optimizations = -g
 
-CXXFLAGS = $(warnings) $(optimizations)
+CXXFLAGS = $(warnings) $(optimizations) -std=c++0x
 
 ai.o: ai.cpp analyze_logs.h evaluate.h expectiminimax.h move.h active.h \
  type.h item.h load_stats.h species.h map.h ability.h gender.h stat.h \

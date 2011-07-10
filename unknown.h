@@ -12,27 +12,28 @@
 #ifndef UNKNOWN_H_
 #define UNKNOWN_H_
 
+#include <cstdint>
 #include <vector>
 
 namespace technicalmachine {
 
 struct Unknown {
 //	std::vector<moves> moveset;
-//	unsigned char ability;
-	unsigned char item;
-	unsigned char nature;
-//	unsigned char hpiv;
-	unsigned char hpev;
-//	unsigned char atkiv;
-	unsigned char atkev;
-//	unsigned char defiv;
-//	unsigned char defev;
-//	unsigned char spaiv;
-//	unsigned char spaev;
-//	unsigned char spdiv;
-//	unsigned char spdev;
-//	unsigned char speiv;
-	unsigned char speev;
+//	uint8_t ability;
+	uint8_t item;
+	uint8_t nature;
+//	uint8_t hpiv;
+	uint8_t hpev;
+//	uint8_t atkiv;
+	uint8_t atkev;
+//	uint8_t defiv;
+//	uint8_t defev;
+//	uint8_t spaiv;
+//	uint8_t spaev;
+//	uint8_t spdiv;
+//	uint8_t spdev;
+//	uint8_t speiv;
+	uint8_t speev;
 };
 
 void unknown (std::vector<Unknown> &hidden);

@@ -9,6 +9,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
@@ -43,7 +44,7 @@ Move::Move (moves_list move, int pp_ups, unsigned size) :
 		set_variable (size);
 }
 
-unsigned long Move::hash () const {
+uint64_t Move::hash () const {
 	return name + END_MOVE * (disable + 7 * (pp + pp_max * (times_used)));
 }
 
@@ -77,7 +78,7 @@ void Move::set_priority () {
 }
 
 void Move::set_variable (unsigned size) {
-	std::pair <unsigned short, unsigned short> effect;
+	std::pair <uint16_t, uint16_t> effect;
 	effect.first = 0;
 	unsigned increment = 1;
 	unsigned last = 0;
@@ -1889,7 +1890,7 @@ bool const Move::is_physical [] = {
 	true		// Zen Headbutt
 };
 
-short const Move::base_power [] = {
+int16_t const Move::base_power [] = {
 	20,		// ABSORB
 	40,		// ACID
 	0,		// ACID_ARMOR
@@ -2365,7 +2366,7 @@ short const Move::base_power [] = {
 	80		// ZEN_HEADBUTT
 };
 
-char const Move::get_pp [] = {
+int8_t const Move::get_pp [] = {
 	25,		// Absorb
 	30,		// Acid
 	40,		// Acid Armor
@@ -2841,9 +2842,9 @@ char const Move::get_pp [] = {
 	15		// Zen Headbutt
 };
 
-unsigned short const Move::max_probability = 840;
+uint16_t const Move::max_probability = 840;
 
-unsigned short const Move::get_probability [] = {			// Chance (out of max_probability) to activate side-effect	
+uint16_t const Move::get_probability [] = {			// Chance (out of max_probability) to activate side-effect	
 	0,		// Absorb
 	84,		// Acid
 	0,		// Acid Armor
@@ -3319,7 +3320,7 @@ unsigned short const Move::get_probability [] = {			// Chance (out of max_probab
 	168		// Zen Headbut
 };
 
-short const Move::get_accuracy [] = {
+int16_t const Move::get_accuracy [] = {
 	100,		// Absorb
 	100,		// Acid
 	-1,		// Acid Armor

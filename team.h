@@ -12,6 +12,7 @@
 #ifndef TEAM_H_
 #define TEAM_H_
 
+#include <cstdint>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -28,25 +29,25 @@ class Team {
 		Active<Pokemon> pokemon;
 
 		Vanish vanish;
-		short damage;		// How much damage will this Pokemon do
-		short bide_damage;
-		short substitute;	// How much HP does the substitute have left?
-		char bide;
-		unsigned char chance_to_hit;
-		char confused;
-		char embargo;
-		char encore;
-		char heal_block;
-		char magnet_rise;
-		char partial_trap;		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
-		char perish_song;
-		char rampage;			// Number of turns remaining on Outrage, Petal Dance, and Thrash
-		char slow_start;
-		char stockpile;
-		char taunt;
-		char toxic;				// Number of turns this Pokemon has already taken Toxic damage (or would have if Magic Guard / Poison Heal weren't in play)
-		char uproar;			// Number of turns remaining on Uproar
-		char yawn;
+		int16_t damage;		// How much damage will this Pokemon do
+		int16_t bide_damage;
+		int16_t substitute;	// How much HP does the substitute have left?
+		int8_t bide;
+		uint8_t chance_to_hit;
+		int8_t confused;
+		int8_t embargo;
+		int8_t encore;
+		int8_t heal_block;
+		int8_t magnet_rise;
+		int8_t partial_trap;		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
+		int8_t perish_song;
+		int8_t rampage;			// Number of turns remaining on Outrage, Petal Dance, and Thrash
+		int8_t slow_start;
+		int8_t stockpile;
+		int8_t taunt;
+		int8_t toxic;				// Number of turns this Pokemon has already taken Toxic damage (or would have if Magic Guard / Poison Heal weren't in play)
+		int8_t uproar;			// Number of turns remaining on Uproar
+		int8_t yawn;
 		bool aqua_ring;
 		bool attract;
 		bool awaken;		// Will it wake up
@@ -84,31 +85,31 @@ class Team {
 		bool torment;
 		bool trapped;			// Block, Mean Look, Spider Web
 		bool water_sport;
-		char accuracy;
-		char evasion;
+		int8_t accuracy;
+		int8_t evasion;
 	
 	//	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
-		char counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
+		int8_t counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
 
 		// Number of turns remaining
-		char light_screen;
-		char lucky_chant;
-		char mist;
-		char reflect;
-		char safeguard;
-		char tailwind;
+		int8_t light_screen;
+		int8_t lucky_chant;
+		int8_t mist;
+		int8_t reflect;
+		int8_t safeguard;
+		int8_t tailwind;
 
-		char wish;		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish is not in play
+		int8_t wish;		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish is not in play
 	
 		// The entry hazards represent those down on this team's side of the field. Using an entry hazard puts them down on the opponent's side of the field
 		// Number of layers of Spikes / Toxic Spikes
-		char spikes;
-		char toxic_spikes;
+		int8_t spikes;
+		int8_t toxic_spikes;
 		bool stealth_rock;
 
-		unsigned char replacement;		// If a Pokemon switches / faints, what Pokemon should replace it?
+		uint8_t replacement;		// If a Pokemon switches / faints, what Pokemon should replace it?
 		
-		unsigned char size;			// How big is the team?
+		uint8_t size;			// How big is the team?
 		
 		bool const me;				// Is this my team?
 	
@@ -116,7 +117,7 @@ class Team {
 		bool operator== (Team const &other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
-		unsigned long hash () const;
+		uint64_t hash () const;
 		void output (std::string &output);
 	private:
 		void load (std::string const &name, Map const &map, unsigned size);

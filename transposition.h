@@ -12,6 +12,7 @@
 #ifndef TRANSPOSITION_H_
 #define TRANSPOSITION_H_
 
+#include <cstdint>
 #include <map>
 #include <string>
 
@@ -21,7 +22,7 @@ class score_variables;
 class Team;
 class Weather;
 
-long transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
 
 }
 #endif

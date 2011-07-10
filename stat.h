@@ -20,17 +20,17 @@ enum stats { HP, ATK, DEF, SPA, SPD, SPE };
 
 class Stat {
 	public:
-		unsigned char base;
-		char iv;			// 0 through 31
-		char ev;			// 0 through 63
-		char stage;		// -6 though 6
+		uint8_t base;
+		int8_t iv;			// 0 through 31
+		int8_t ev;			// 0 through 63
+		int8_t stage;		// -6 though 6
 		int max;		// Max HP only
 		int stat;		// Current HP or last calculated value for other stats
 	
 		Stat (species name, int level, stats stat);
 		void boost (int n);
 	private:
-		static unsigned char const base_stat [][6];
+		static uint8_t const base_stat [][6];
 };
 
 enum natures { ADAMANT, BASHFUL, BOLD, BRAVE, CALM, CAREFUL, DOCILE, GENTLE, HARDY, HASTY, IMPISH, JOLLY, LAX, LONELY, MILD, MODEST, NAIVE, NAUGHTY, QUIET, QUIRKY, RASH, RELAXED, SASSY, SERIOUS, TIMID, END_NATURE };

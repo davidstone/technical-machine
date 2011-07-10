@@ -9,6 +9,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstdint>
 #include "endofturn.h"
 #include "ability.h"
 #include "damage.h"
@@ -192,7 +193,7 @@ void endofturn7 (Team &team) {
 	decrement (team.perish_song);
 }
 
-void decrement (char &n) {
+void decrement (int8_t &n) {
 	if (n > 0)
 		--n;
 }

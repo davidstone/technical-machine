@@ -12,6 +12,7 @@
 #ifndef MOVE_H_
 #define MOVE_H_
 
+#include <cstdint>
 #include <string>
 #include <utility>
 #include <vector>
@@ -28,26 +29,26 @@ class Move {
 	public:
 		moves_list name;
 		types type;
-		short basepower;
-		short power;
+		int16_t basepower;
+		int16_t power;
 		bool execute;
 		bool physical;
 		bool selectable;
-		char accuracy;		// A number between 0 (1?) and 100, according to poccil. -1 means never miss
-		char disable;			// Number of turns left on this move being Disabled (4-7)
-		char pp_max;			// PP after all PP ups are applied
-		char pp;
-		char priority;
-		char r;					// The random number (85 through 100)
-		char times_used;
+		int8_t accuracy;		// A number between 0 (1?) and 100, according to poccil. -1 means never miss
+		int8_t disable;			// Number of turns left on this move being Disabled (4-7)
+		int8_t pp_max;			// PP after all PP ups are applied
+		int8_t pp;
+		int8_t priority;
+		int8_t r;					// The random number (85 through 100)
+		int8_t times_used;
 		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
-		Active <std::pair <unsigned short, unsigned short> > variable;
+		Active <std::pair <uint16_t, uint16_t> > variable;
 
 		static std::string const name_to_string [];
-		static unsigned short const max_probability;
+		static uint16_t const max_probability;
 
 		Move (moves_list move, int pp_ups, unsigned size);
-		unsigned long hash() const;
+		uint64_t hash() const;
 		std::string get_name () const;			// Gets the string version of the name.
 		bool operator== (Move const &other) const;
 		bool operator!= (Move const &other) const;
@@ -59,10 +60,10 @@ class Move {
 
 		static types const move_type [];
 		static bool const is_physical [];
-		static short const base_power [];
-		static char const get_pp [];
-		static unsigned short const get_probability [];
-		static short const get_accuracy [];
+		static int16_t const base_power [];
+		static int8_t const get_pp [];
+		static uint16_t const get_probability [];
+		static int16_t const get_accuracy [];
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

@@ -9,11 +9,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/lexical_cast.hpp>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 
 #include "ability.h"
 #include "gender.h"
@@ -127,8 +128,8 @@ Team::Team (bool isme, Map const &map, unsigned size) :
 	}
 }
 
-unsigned long Team::hash () const {
-	unsigned long hash = 0;
+uint64_t Team::hash () const {
+	uint64_t hash = 0;
 	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
 		hash ^= it->hash();
 	// Accuracy and Evasion are +6 to account for negative stat boosts

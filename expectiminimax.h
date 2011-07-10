@@ -12,6 +12,7 @@
 #ifndef EXPECTIMINIMAX_H_
 #define EXPECTIMINIMAX_H_
 
+#include <cstdint>
 #include "move.h"
 
 namespace technicalmachine {
@@ -20,25 +21,25 @@ class score_variables;
 class Team;
 class Weather;
 
-moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, long &score);
+moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, int64_t &score);
 
-long select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn = false);
+int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn = false);
 
-long order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
 
-long accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
 
-long random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
 
-long awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
 
-long use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
+int64_t use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
 
-long end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
+int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
 
-long replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool faint, bool first_turn, bool verbose);
+int64_t replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool faint, bool first_turn, bool verbose);
 
-long fainted (Team ai, Team foe, Weather weather, int depth, score_variables const &sv);
+int64_t fainted (Team ai, Team foe, Weather weather, int depth, score_variables const &sv);
 
 void deorder (Team &first, Team &last, Team* &ai, Team* &foe);
 

@@ -18,7 +18,7 @@
 
 namespace technicalmachine {
 
-long const VICTORY = 65536;		// Highest score possible. 100% chance to win.
+int64_t const VICTORY = 65536;		// Highest score possible. 100% chance to win.
 
 class score_variables {
 	public:
@@ -74,11 +74,11 @@ class Pokemon;
 class Team;
 class Weather;
 
-long evaluate (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
-long scoreteam (Team const &team, score_variables const &sv);
-long scorepokemon (Pokemon const &member, Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
-long scoremove (Pokemon const &member, Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
-long win (Team const &team);
+int64_t evaluate (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
+int64_t scoreteam (Team const &team, score_variables const &sv);
+int64_t scorepokemon (Pokemon const &member, Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
+int64_t scoremove (Pokemon const &member, Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
+int64_t win (Team const &team);
 
 }
 #endif

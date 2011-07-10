@@ -9,6 +9,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstdint>
 #include "weather.h"
 
 namespace technicalmachine {
@@ -71,7 +72,7 @@ void Weather::set_rain (int duration) {
 	}
 }
 
-unsigned long Weather::hash () const {
+uint64_t Weather::hash () const {
 	// The + 1 is because they have a minimum value of -1 to represent infinite weather
 	return trick_room + 5 * (fog + 2 * ((gravity + 1) + 6 * ((uproar + 1) + 6 * ((hail + 1) + 9 * ((sun + 1) + 9 * ((sand + 1) + 9 * (rain + 1)))))));
 }

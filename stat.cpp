@@ -263,7 +263,7 @@ void Stat::boost (int n) {
 		stage = -6;
 }
 
-unsigned char const Stat::base_stat [][6] = {
+uint8_t const Stat::base_stat [][6] = {
 	{ 90, 92, 75, 92, 85, 60 },			// Abomasnow
 	{ 25, 20, 15, 105, 55, 90 },		// Abra	
 	{ 65, 130, 60, 75, 60, 75 },		// Absol	
