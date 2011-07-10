@@ -13,7 +13,7 @@
 #include <vector>
 #include "heal.h"
 #include "pokemon.h"
-#include "statusfunction.h"
+#include "status.h"
 #include "switch.h"
 #include "team.h"
 #include "type.h"

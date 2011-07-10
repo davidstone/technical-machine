@@ -65,7 +65,7 @@ damage.o: damage.cpp damage.h ability.h gender.h item.h move.h active.h \
  type.h pokemon.h species.h stat.h status.h team.h weather.h
 endofturn.o: endofturn.cpp endofturn.h ability.h damage.h heal.h move.h \
  active.h type.h pokemon.h gender.h item.h species.h stat.h status.h \
- statusfunction.h team.h weather.h
+ team.h weather.h
 evaluate.o: evaluate.cpp evaluate.h move.h active.h type.h pokemon.h \
  ability.h gender.h item.h species.h stat.h status.h team.h weather.h
 expectiminimax.o: expectiminimax.cpp expectiminimax.h move.h active.h \
@@ -80,7 +80,7 @@ map.o: map.cpp map.h ability.h gender.h item.h move.h active.h type.h \
  stat.h species.h
 move.o: move.cpp move.h active.h type.h movefunction.h ability.h block.h \
  damage.h heal.h pokemon.h gender.h item.h species.h stat.h status.h \
- statusfunction.h switch.h team.h weather.h
+ switch.h team.h weather.h
 pokemon.o: pokemon.cpp active.h movefunction.h pokemon.h ability.h \
  gender.h item.h move.h type.h species.h stat.h status.h
 predictor.o: predictor.cpp load_stats.h species.h movefunction.h \
@@ -94,10 +94,9 @@ reversedamage.o: reversedamage.cpp reversedamage.h damage.h item.h stat.h \
 stat.o: stat.cpp ability.h item.h move.h active.h type.h pokemon.h \
  gender.h species.h stat.h status.h team.h weather.h
 status.o: status.cpp pokemon.h ability.h active.h gender.h item.h move.h \
- type.h species.h stat.h status.h statusfunction.h team.h weather.h
+ type.h species.h stat.h status.h team.h weather.h
 switch.o: switch.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
- move.h type.h species.h stat.h status.h statusfunction.h switch.h team.h \
- weather.h
+ move.h type.h species.h stat.h status.h switch.h team.h weather.h
 team.o: team.cpp ability.h gender.h item.h move.h active.h type.h \
  movefunction.h pokemon.h species.h stat.h status.h switch.h team.h \
  teampredictor.h pokemon_lab/file.h pokemon_online/file.h

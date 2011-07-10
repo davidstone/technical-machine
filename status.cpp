@@ -11,7 +11,6 @@
 
 #include "pokemon.h"
 #include "status.h"
-#include "statusfunction.h"
 #include "team.h"
 #include "type.h"
 #include "weather.h"

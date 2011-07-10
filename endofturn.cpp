@@ -16,7 +16,7 @@
 #include "heal.h"
 #include "move.h"
 #include "pokemon.h"
-#include "statusfunction.h"
+#include "status.h"
 #include "team.h"
 #include "weather.h"
 

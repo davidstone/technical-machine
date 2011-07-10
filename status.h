@@ -14,9 +14,20 @@
 
 namespace technicalmachine {
 
+class Pokemon;
+class Team;
+class Weather;
+
 enum statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, SLEEP, END_STATUS };
 
 // I'm not including pseudo-status like Leech Seed and Confusion here, because those have dramatically different effects in the game.
+
+void burn (Team &user, Team &target, Weather const &weather);
+void freeze (Pokemon const &user, Team &target, Weather const &weather);
+void paralyze (Pokemon &user, Pokemon &target, Weather const &weather);
+void sleep (Pokemon const &user, Pokemon &target, Weather const &weather);
+void poison_normal (Team &user, Team &target, Weather const &weather);
+void poison_toxic (Team &user, Team &target, Weather const &weather);
 
 }
 #endif
