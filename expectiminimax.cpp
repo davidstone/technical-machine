@@ -158,12 +158,34 @@ int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int const &de
 
 
 int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
-	int64_t score = 0;
+	unsigned divisor = 100 * 100;
 	chance_to_hit (first, last, weather);
 	first.moved = true;
 	chance_to_hit (last, first, weather);
 	first.moved = false;
-	score = random_move_effects_branch (first, last, weather, depth, sv);
+	int64_t score = first.chance_to_hit * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, sv);
+	if (first.chance_to_hit != 100) {
+		first.miss = true;
+		score += (100 - first.chance_to_hit) * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, sv);
+		if (last.chance_to_hit != 100) {
+			last.miss = true;
+			score += (100 - first.chance_to_hit) * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, sv);
+			last.miss = false;
+		}
+		else
+			divisor -= (100 - first.chance_to_hit) * (100 - last.chance_to_hit);
+		first.miss = false;
+	}
+	else
+		divisor -= (100 - first.chance_to_hit) * 100;
+	if (last.chance_to_hit != 100) {
+		last.miss = true;
+		score += first.chance_to_hit * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, sv);
+		last.miss = false;
+	}
+	else
+		divisor -= 100 * (100 - last.chance_to_hit);
+	score /= divisor;
 	return score;
 }
 
