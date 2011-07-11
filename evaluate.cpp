@@ -9,6 +9,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstddef>
+#include <cstdint>
 #include "evaluate.h"
 #include "move.h"
 #include "pokemon.h"
@@ -17,14 +19,19 @@
 
 namespace technicalmachine {
 
-int64_t evaluate (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv) {
+int64_t evaluate (Team &ai, Team &foe, Weather const &weather, score_variables const &sv) {
 	int64_t score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
 	score += scoreteam (ai, sv);
-	for (std::vector<Pokemon>::const_iterator it = ai.pokemon.set.begin(); it != ai.pokemon.set.end(); ++it)
-		score += scorepokemon (*it, ai, foe, weather, sv);
+	size_t index = ai.pokemon.index;
+	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
+		score += scorepokemon (ai, foe, weather, sv);
+	ai.pokemon.index = index;
+
 	score -= scoreteam (foe, sv);
-	for (std::vector<Pokemon>::const_iterator it = foe.pokemon.set.begin(); it != foe.pokemon.set.end(); ++it)
-		score -= scorepokemon (*it, foe, ai, weather, sv);
+	index = foe.pokemon.index;
+	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
+		score -= scorepokemon (foe, ai, weather, sv);
+	foe.pokemon.index = index;
 	return score;
 }
 
@@ -65,37 +72,37 @@ int64_t scoreteam (Team const &team, score_variables const &sv) {
 	return score;
 }
 
-int64_t scorepokemon (Pokemon const &member, Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
-	int64_t score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [member.type1] * effectiveness [ROCK] [member.type2] / 4;
+int64_t scorepokemon (Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
+	int64_t score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [team.pokemon->type1] * effectiveness [ROCK] [team.pokemon->type2] / 4;
 	if (grounded (team, weather))
 		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
-	if (member.hp.stat != 0) {
+	if (team.pokemon->hp.stat != 0) {
 		score += sv.members;
-		score += sv.hp * member.hp.stat / member.hp.max;
-		if (member.status == BURN)
+		score += sv.hp * team.pokemon->hp.stat / team.pokemon->hp.max;
+		if (team.pokemon->status == BURN)
 			score += sv.burn;
-		else if (member.status == FREEZE)
+		else if (team.pokemon->status == FREEZE)
 			score += sv.freeze;
-		else if (member.status == PARALYSIS)
+		else if (team.pokemon->status == PARALYSIS)
 			score += sv.paralysis;
-		else if (member.status == POISON_NORMAL or member.status == POISON_TOXIC)
+		else if (team.pokemon->status == POISON_NORMAL or team.pokemon->status == POISON_TOXIC)
 			score += sv.poison;
-		else if (member.status == SLEEP)
+		else if (team.pokemon->status == SLEEP)
 			score += sv.sleep;
-		score += member.atk.stage * sv.atk_stage;
-		score += member.def.stage * sv.def_stage;
-		score += member.spa.stage * sv.spa_stage;
-		score += member.spd.stage * sv.spd_stage;
-		score += member.spe.stage * sv.spe_stage;
-		score += scoremove (member, team, other, weather, sv);
+		score += team.pokemon->atk.stage * sv.atk_stage;
+		score += team.pokemon->def.stage * sv.def_stage;
+		score += team.pokemon->spa.stage * sv.spa_stage;
+		score += team.pokemon->spd.stage * sv.spd_stage;
+		score += team.pokemon->spe.stage * sv.spe_stage;
+		score += scoremove (team, other, weather, sv);
 	}
 	return score;
 }
 
 
-int64_t scoremove (Pokemon const &member, Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
+int64_t scoremove (Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
 	int64_t score = 0;
-	for (std::vector<Move>::const_iterator move = member.move.set.begin(); move != member.move.set.end(); ++move) {
+	for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move != team.pokemon->move.set.end(); ++move) {
 		if (move->physical)
 			score += other.reflect * sv.reflect;
 		else if (move->basepower > 0)		// Non-damaging moves have physical == false
