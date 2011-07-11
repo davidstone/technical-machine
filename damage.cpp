@@ -26,134 +26,203 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 	// I account for the doubling of the base power for Pursuit in the switching function by simply multiplying the final base power by 2. Regardless of the combination of modifiers, this does not change the final base power. The exception is if the attacker's ally uses Helping Hand. The target uses U-turn and the attacker uses Pursuit with a slower Pokemon that has Rivalry and a Muscle Band and neither the attacker nor target is genderless. This will cause the base power to be 1 less than it should be.
 
 	// Variable power moves
-
-	if (CRUSH_GRIP == attacker.pokemon->move->name or WRING_OUT == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = 120 * defender.pokemon->hp.stat / defender.pokemon->hp.max + 1;
-
-	else if (ERUPTION == attacker.pokemon->move->name or WATER_SPOUT == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = 150 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
-
-	else if (FLAIL == attacker.pokemon->move->name or REVERSAL == attacker.pokemon->move->name) {
-		if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 1)
-			attacker.pokemon->move->basepower = 200;
-		else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 5)
-			attacker.pokemon->move->basepower = 150;
-		else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 12)
-			attacker.pokemon->move->basepower = 100;
-		else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 21)
-			attacker.pokemon->move->basepower = 80;
-		else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 42)
-			attacker.pokemon->move->basepower = 40;
-		else
-			attacker.pokemon->move->basepower = 20;
-	}
-
-	else if (FLING == attacker.pokemon->move->name) {
-		if (IRON_BALL == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 130;
-		else if (HARD_STONE == attacker.pokemon->item or OTHER100 == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 100;
-		else if (DEEPSEATOOTH == attacker.pokemon->item or DRACO_PLATE == attacker.pokemon->item or DREAD_PLATE == attacker.pokemon->item or EARTH_PLATE == attacker.pokemon->item or FIST_PLATE == attacker.pokemon->item or FLAME_PLATE == attacker.pokemon->item or GRIP_CLAW == attacker.pokemon->item or ICICLE_PLATE == attacker.pokemon->item or INSECT_PLATE == attacker.pokemon->item or IRON_PLATE == attacker.pokemon->item or MEADOW_PLATE == attacker.pokemon->item or MIND_PLATE == attacker.pokemon->item or SKY_PLATE == attacker.pokemon->item or SPLASH_PLATE == attacker.pokemon->item or SPOOKY_PLATE == attacker.pokemon->item or STONE_PLATE == attacker.pokemon->item or THICK_CLUB == attacker.pokemon->item or TOXIC_PLATE == attacker.pokemon->item or ZAP_PLATE == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 90;
-		else if (QUICK_CLAW == attacker.pokemon->item or RAZOR_CLAW == attacker.pokemon->item or STICKY_BARB == attacker.pokemon->item or OTHER80 == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 80;
-		else if (DRAGON_FANG == attacker.pokemon->item or POISON_BARB == attacker.pokemon->item or POWER_ITEMS == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 70;
-		else if (ADAMANT_ORB == attacker.pokemon->item or DAMP_ROCK == attacker.pokemon->item or HEAT_ROCK == attacker.pokemon->item or LUSTROUS_ORB == attacker.pokemon->item or MACHO_BRACE == attacker.pokemon->item or STICK == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 60;
-		else if (SHARP_BEAK == attacker.pokemon->item or OTHER50 == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 50;
-		else if (ICY_ROCK == attacker.pokemon->item or LUCKY_PUNCH == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 40;
-		else if (BERRY_JUICE == attacker.pokemon->item or BLACK_BELT == attacker.pokemon->item or BLACK_SLUDGE == attacker.pokemon->item or BLACKGLASSES == attacker.pokemon->item or CHARCOAL == attacker.pokemon->item or DEEPSEASCALE == attacker.pokemon->item or FLAME_ORB == attacker.pokemon->item or KINGS_ROCK == attacker.pokemon->item or LIFE_ORB == attacker.pokemon->item or LIGHT_BALL == attacker.pokemon->item or LIGHT_CLAY == attacker.pokemon->item or MAGNET == attacker.pokemon->item or METAL_COAT == attacker.pokemon->item or METRONOME_ITEM == attacker.pokemon->item or MIRACLE_SEED == attacker.pokemon->item or MYSTIC_WATER == attacker.pokemon->item or NEVERMELTICE == attacker.pokemon->item or SCOPE_LENS == attacker.pokemon->item or SHELL_BELL == attacker.pokemon->item or SOUL_DEW == attacker.pokemon->item or SPELL_TAG == attacker.pokemon->item or TOXIC_ORB == attacker.pokemon->item or TWISTEDSPOON == attacker.pokemon->item or OTHER30 == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 30;
-		else
-			attacker.pokemon->move->basepower = 10;
-	}
-
-	else if (FRUSTRATION == attacker.pokemon->move->name or RETURN == attacker.pokemon->move->name) {
-		attacker.pokemon->move->basepower = attacker.pokemon->happiness * 2 / 5;
-		if (FRUSTRATION == attacker.pokemon->move->name)
-			attacker.pokemon->move->basepower = 102 - attacker.pokemon->move->basepower;
-	}
-
-	else if (FURY_CUTTER == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = 10 << attacker.pokemon->move->times_used;					// Equivalent to 10 * 2 ^ attacker.pokemon->move->times_used
-
-	else if (GRASS_KNOT == attacker.pokemon->move->name or LOW_KICK == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = defender.pokemon->mass;
-
-	else if (attacker.pokemon->move->name == GYRO_BALL) {
-		attacker.pokemon->move->basepower = 25 * defender.pokemon->spe.stat / attacker.pokemon->spe.stat + 1;
-		if (attacker.pokemon->move->basepower > 150)
-			attacker.pokemon->move->basepower = 150;
-	}
-
-	else if (ICE_BALL == attacker.pokemon->move->name or ROLLOUT == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = 30 << attacker.pokemon->move->times_used;					// Equivalent to 30 * 2 ^ attacker.pokemon->move->times_used
-
-	else if (HIDDEN_POWER == attacker.pokemon->move->name) {
-		// The second-least significant bit of each stat determines the power of Hidden Power
-		int u = (attacker.pokemon->hp.iv >> 1) % 2;
-		int v = ((attacker.pokemon->atk.iv >> 1) % 2) * 2;
-		int w = ((attacker.pokemon->def.iv >> 1) % 2) * 4;
-		int x = ((attacker.pokemon->spe.iv >> 1) % 2) * 8;
-		int y = ((attacker.pokemon->spa.iv >> 1) % 2) * 16;
-		int z = ((attacker.pokemon->spd.iv >> 1) % 2) * 32;
 	
-		attacker.pokemon->move->basepower = (u + v + w + x + y + z) * 40 / 63 + 30;
-	}
-
-	else if (MAGNITUDE == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
-
-	else if (NATURAL_GIFT == attacker.pokemon->move->name) {
-		if (AGUAV_BERRY == attacker.pokemon->item or ASPEAR_BERRY == attacker.pokemon->item or BABIRI_BERRY == attacker.pokemon->item or CHARTI_BERRY == attacker.pokemon->item or CHERI_BERRY == attacker.pokemon->item or CHESTO_BERRY == attacker.pokemon->item or CHILAN_BERRY == attacker.pokemon->item or CHOPLE_BERRY == attacker.pokemon->item or COBA_BERRY == attacker.pokemon->item or COLBUR_BERRY == attacker.pokemon->item or FIGY_BERRY == attacker.pokemon->item or HABAN_BERRY == attacker.pokemon->item or IAPAPA_BERRY == attacker.pokemon->item or KASIB_BERRY == attacker.pokemon->item or KEBIA_BERRY == attacker.pokemon->item or LEPPA_BERRY == attacker.pokemon->item or LUM_BERRY == attacker.pokemon->item or MAGO_BERRY == attacker.pokemon->item or OCCA_BERRY == attacker.pokemon->item or ORAN_BERRY == attacker.pokemon->item or PASSHO_BERRY == attacker.pokemon->item or PAYAPA_BERRY == attacker.pokemon->item or PECHA_BERRY == attacker.pokemon->item or PERSIM_BERRY == attacker.pokemon->item or RAWST_BERRY == attacker.pokemon->item or RAZZ_BERRY == attacker.pokemon->item or RINDO_BERRY == attacker.pokemon->item or SHUCA_BERRY == attacker.pokemon->item or SITRUS_BERRY == attacker.pokemon->item or TANGA_BERRY == attacker.pokemon->item or WACAN_BERRY == attacker.pokemon->item or WIKI_BERRY == attacker.pokemon->item or YACHE_BERRY == attacker.pokemon->item)
+	switch (attacker.pokemon->move->name) {
+		case CRUSH_GRIP:
+		case WRING_OUT:
+			attacker.pokemon->move->basepower = 120 * defender.pokemon->hp.stat / defender.pokemon->hp.max + 1;
+			break;
+		case ERUPTION:
+		case WATER_SPOUT:
+			attacker.pokemon->move->basepower = 150 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
+			break;
+		case FLAIL:
+		case REVERSAL:
+			if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 1)
+				attacker.pokemon->move->basepower = 200;
+			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 5)
+				attacker.pokemon->move->basepower = 150;
+			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 12)
+				attacker.pokemon->move->basepower = 100;
+			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 21)
+				attacker.pokemon->move->basepower = 80;
+			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 42)
+				attacker.pokemon->move->basepower = 40;
+			else
+				attacker.pokemon->move->basepower = 20;
+			break;
+		case FLING:
+			switch (attacker.pokemon->item) {
+				case IRON_BALL:
+					attacker.pokemon->move->basepower = 130;
+					break;
+				case HARD_STONE:
+				case OTHER100:
+					attacker.pokemon->move->basepower = 100;
+					break;
+				case DEEPSEATOOTH:
+				case DRACO_PLATE:
+				case DREAD_PLATE:
+				case EARTH_PLATE:
+				case FIST_PLATE:
+				case FLAME_PLATE:
+				case GRIP_CLAW:
+				case ICICLE_PLATE:
+				case INSECT_PLATE:
+				case IRON_PLATE:
+				case MEADOW_PLATE:
+				case MIND_PLATE:
+				case SKY_PLATE:
+				case SPLASH_PLATE:
+				case SPOOKY_PLATE:
+				case STONE_PLATE:
+				case THICK_CLUB:
+				case TOXIC_PLATE:
+				case ZAP_PLATE:
+					attacker.pokemon->move->basepower = 90;
+					break;
+				case QUICK_CLAW:
+				case RAZOR_CLAW:
+				case STICKY_BARB:
+				case OTHER80:
+					attacker.pokemon->move->basepower = 80;
+					break;
+				case DRAGON_FANG:
+				case POISON_BARB:
+				case POWER_ITEMS:
+					attacker.pokemon->move->basepower = 70;
+					break;
+				case ADAMANT_ORB:
+				case DAMP_ROCK:
+				case HEAT_ROCK:
+				case LUSTROUS_ORB:
+				case MACHO_BRACE:
+				case STICK:
+					attacker.pokemon->move->basepower = 60;
+					break;
+				case SHARP_BEAK:
+				case OTHER50:
+					attacker.pokemon->move->basepower = 50;
+					break;
+				case ICY_ROCK:
+				case LUCKY_PUNCH:
+					attacker.pokemon->move->basepower = 40;
+					break;
+				case BERRY_JUICE:
+				case BLACK_BELT:
+				case BLACK_SLUDGE:
+				case BLACKGLASSES:
+				case CHARCOAL:
+				case DEEPSEASCALE:
+				case FLAME_ORB:
+				case KINGS_ROCK:
+				case LIFE_ORB:
+				case LIGHT_BALL:
+				case LIGHT_CLAY:
+				case MAGNET:
+				case METAL_COAT:
+				case METRONOME_ITEM:
+				case MIRACLE_SEED:
+				case MYSTIC_WATER:
+				case NEVERMELTICE:
+				case SCOPE_LENS:
+				case SHELL_BELL:
+				case SOUL_DEW:
+				case SPELL_TAG:
+				case TOXIC_ORB:
+				case TWISTEDSPOON:
+				case OTHER30:
+					attacker.pokemon->move->basepower = 30;
+					break;
+				default:
+					attacker.pokemon->move->basepower = 10;
+					break;
+			}
+			break;
+		case FRUSTRATION:
+		case RETURN:
+			attacker.pokemon->move->basepower = attacker.pokemon->happiness * 2 / 5;
+			if (FRUSTRATION == attacker.pokemon->move->name)
+				attacker.pokemon->move->basepower = 102 - attacker.pokemon->move->basepower;
+			break;
+		case FURY_CUTTER:
+			attacker.pokemon->move->basepower = 10 << attacker.pokemon->move->times_used;					// Equivalent to 10 * 2 ^ attacker.pokemon->move->times_used
+			break;
+		case GRASS_KNOT:
+		case LOW_KICK:
+			attacker.pokemon->move->basepower = defender.pokemon->mass;
+			break;
+		case GYRO_BALL:
+			attacker.pokemon->move->basepower = 25 * defender.pokemon->spe.stat / attacker.pokemon->spe.stat + 1;
+			if (attacker.pokemon->move->basepower > 150)
+				attacker.pokemon->move->basepower = 150;
+			break;
+		case ICE_BALL:
+		case ROLLOUT:
+			attacker.pokemon->move->basepower = 30 << attacker.pokemon->move->times_used;			// Equivalent to 30 * 2 ^ attacker.pokemon->move->times_used
+			break;
+		case HIDDEN_POWER: {
+			// The second-least significant bit of each stat determines the power of Hidden Power
+			unsigned const u = (attacker.pokemon->hp.iv >> 1) % 2;
+			unsigned const v = ((attacker.pokemon->atk.iv >> 1) % 2) * 2;
+			unsigned const w = ((attacker.pokemon->def.iv >> 1) % 2) * 4;
+			unsigned const x = ((attacker.pokemon->spe.iv >> 1) % 2) * 8;
+			unsigned const y = ((attacker.pokemon->spa.iv >> 1) % 2) * 16;
+			unsigned const z = ((attacker.pokemon->spd.iv >> 1) % 2) * 32;
+	
+			attacker.pokemon->move->basepower = (u + v + w + x + y + z) * 40 / 63 + 30;
+			break;
+		}
+		case MAGNITUDE:
+			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
+			break;
+		case NATURAL_GIFT:
+			if (AGUAV_BERRY == attacker.pokemon->item or ASPEAR_BERRY == attacker.pokemon->item or BABIRI_BERRY == attacker.pokemon->item or CHARTI_BERRY == attacker.pokemon->item or CHERI_BERRY == attacker.pokemon->item or CHESTO_BERRY == attacker.pokemon->item or CHILAN_BERRY == attacker.pokemon->item or CHOPLE_BERRY == attacker.pokemon->item or COBA_BERRY == attacker.pokemon->item or COLBUR_BERRY == attacker.pokemon->item or FIGY_BERRY == attacker.pokemon->item or HABAN_BERRY == attacker.pokemon->item or IAPAPA_BERRY == attacker.pokemon->item or KASIB_BERRY == attacker.pokemon->item or KEBIA_BERRY == attacker.pokemon->item or LEPPA_BERRY == attacker.pokemon->item or LUM_BERRY == attacker.pokemon->item or MAGO_BERRY == attacker.pokemon->item or OCCA_BERRY == attacker.pokemon->item or ORAN_BERRY == attacker.pokemon->item or PASSHO_BERRY == attacker.pokemon->item or PAYAPA_BERRY == attacker.pokemon->item or PECHA_BERRY == attacker.pokemon->item or PERSIM_BERRY == attacker.pokemon->item or RAWST_BERRY == attacker.pokemon->item or RAZZ_BERRY == attacker.pokemon->item or RINDO_BERRY == attacker.pokemon->item or SHUCA_BERRY == attacker.pokemon->item or SITRUS_BERRY == attacker.pokemon->item or TANGA_BERRY == attacker.pokemon->item or WACAN_BERRY == attacker.pokemon->item or WIKI_BERRY == attacker.pokemon->item or YACHE_BERRY == attacker.pokemon->item)
+				attacker.pokemon->move->basepower = 60;
+			else if (BLUK_BERRY == attacker.pokemon->item or CORNN_BERRY == attacker.pokemon->item or GREPA_BERRY == attacker.pokemon->item or HONDEW_BERRY == attacker.pokemon->item or KELPSY_BERRY == attacker.pokemon->item or MAGOST_BERRY == attacker.pokemon->item or NANAB_BERRY == attacker.pokemon->item or NOMEL_BERRY == attacker.pokemon->item or PAMTRE_BERRY == attacker.pokemon->item or PINAP_BERRY == attacker.pokemon->item or POMEG_BERRY == attacker.pokemon->item or QUALOT_BERRY == attacker.pokemon->item or RABUTA_BERRY == attacker.pokemon->item or SPELON_BERRY == attacker.pokemon->item or TAMATO_BERRY == attacker.pokemon->item or WEPEAR_BERRY == attacker.pokemon->item)
+				attacker.pokemon->move->basepower = 70;
+			else if (APICOT_BERRY == attacker.pokemon->item or BELUE_BERRY == attacker.pokemon->item or CUSTAP_BERRY == attacker.pokemon->item or DURIN_BERRY == attacker.pokemon->item or ENIGMA_BERRY == attacker.pokemon->item or GANLON_BERRY == attacker.pokemon->item or JABOCA_BERRY == attacker.pokemon->item or LANSAT_BERRY == attacker.pokemon->item or LIECHI_BERRY == attacker.pokemon->item or MICLE_BERRY == attacker.pokemon->item or PETAYA_BERRY == attacker.pokemon->item or ROWAP_BERRY == attacker.pokemon->item or SALAC_BERRY == attacker.pokemon->item or STARF_BERRY == attacker.pokemon->item or WATMEL_BERRY == attacker.pokemon->item)
+				attacker.pokemon->move->basepower = 80;
+			break;
+		case PRESENT:
+			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
+			break;
+		case PUNISHMENT:
 			attacker.pokemon->move->basepower = 60;
-		else if (BLUK_BERRY == attacker.pokemon->item or CORNN_BERRY == attacker.pokemon->item or GREPA_BERRY == attacker.pokemon->item or HONDEW_BERRY == attacker.pokemon->item or KELPSY_BERRY == attacker.pokemon->item or MAGOST_BERRY == attacker.pokemon->item or NANAB_BERRY == attacker.pokemon->item or NOMEL_BERRY == attacker.pokemon->item or PAMTRE_BERRY == attacker.pokemon->item or PINAP_BERRY == attacker.pokemon->item or POMEG_BERRY == attacker.pokemon->item or QUALOT_BERRY == attacker.pokemon->item or RABUTA_BERRY == attacker.pokemon->item or SPELON_BERRY == attacker.pokemon->item or TAMATO_BERRY == attacker.pokemon->item or WEPEAR_BERRY == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 70;
-		else if (APICOT_BERRY == attacker.pokemon->item or BELUE_BERRY == attacker.pokemon->item or CUSTAP_BERRY == attacker.pokemon->item or DURIN_BERRY == attacker.pokemon->item or ENIGMA_BERRY == attacker.pokemon->item or GANLON_BERRY == attacker.pokemon->item or JABOCA_BERRY == attacker.pokemon->item or LANSAT_BERRY == attacker.pokemon->item or LIECHI_BERRY == attacker.pokemon->item or MICLE_BERRY == attacker.pokemon->item or PETAYA_BERRY == attacker.pokemon->item or ROWAP_BERRY == attacker.pokemon->item or SALAC_BERRY == attacker.pokemon->item or STARF_BERRY == attacker.pokemon->item or WATMEL_BERRY == attacker.pokemon->item)
-			attacker.pokemon->move->basepower = 80;
+			if (defender.pokemon->atk.stage > 0)
+				attacker.pokemon->move->basepower += 20 * defender.pokemon->atk.stage;
+			if (defender.pokemon->def.stage > 0)
+				attacker.pokemon->move->basepower += 20 * defender.pokemon->def.stage;
+			if (defender.pokemon->spa.stage > 0)
+				attacker.pokemon->move->basepower += 20 * defender.pokemon->spa.stage;
+			if (defender.pokemon->spd.stage > 0)
+				attacker.pokemon->move->basepower += 20 * defender.pokemon->spd.stage;
+			if (defender.pokemon->spe.stage > 0)
+				attacker.pokemon->move->basepower += 20 * defender.pokemon->spe.stage;
+			if (attacker.pokemon->move->basepower > 200)
+				attacker.pokemon->move->basepower = 200;
+			break;
+		case SPIT_UP:
+			attacker.pokemon->move->basepower = attacker.stockpile * 100;
+			break;
+		case TRIPLE_KICK:
+			attacker.pokemon->move->basepower = 10 * attacker.pokemon->move->times_used;
+			break;
+		case TRUMP_CARD:
+			if (0 == attacker.pokemon->move->pp)
+				attacker.pokemon->move->basepower = 200;
+			else if (1 == attacker.pokemon->move->pp)
+				attacker.pokemon->move->basepower = 80;
+			else if (2 == attacker.pokemon->move->pp)
+				attacker.pokemon->move->basepower = 60;
+			else if (3 == attacker.pokemon->move->pp)
+				attacker.pokemon->move->basepower = 50;
+			else
+				attacker.pokemon->move->basepower = 40;
+			break;
+		default:
+			break;
 	}
-
-	else if (PRESENT == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
-
-	else if (PUNISHMENT == attacker.pokemon->move->name) {
-		attacker.pokemon->move->basepower = 60;
-		if (defender.pokemon->atk.stage > 0)
-			attacker.pokemon->move->basepower += 20 * defender.pokemon->atk.stage;
-		if (defender.pokemon->def.stage > 0)
-			attacker.pokemon->move->basepower += 20 * defender.pokemon->def.stage;
-		if (defender.pokemon->spa.stage > 0)
-			attacker.pokemon->move->basepower += 20 * defender.pokemon->spa.stage;
-		if (defender.pokemon->spd.stage > 0)
-			attacker.pokemon->move->basepower += 20 * defender.pokemon->spd.stage;
-		if (defender.pokemon->spe.stage > 0)
-			attacker.pokemon->move->basepower += 20 * defender.pokemon->spe.stage;
-		if (attacker.pokemon->move->basepower > 200)
-			attacker.pokemon->move->basepower = 200;
-	}
-
-	else if (SPIT_UP == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = attacker.stockpile * 100;
-
-	else if (TRIPLE_KICK == attacker.pokemon->move->name)
-		attacker.pokemon->move->basepower = 10 * attacker.pokemon->move->times_used;
-
-	else if (TRUMP_CARD == attacker.pokemon->move->name) {
-		if (0 == attacker.pokemon->move->pp)
-			attacker.pokemon->move->basepower = 200;
-		else if (1 == attacker.pokemon->move->pp)
-			attacker.pokemon->move->basepower = 80;
-		else if (2 == attacker.pokemon->move->pp)
-			attacker.pokemon->move->basepower = 60;
-		else if (3 == attacker.pokemon->move->pp)
-			attacker.pokemon->move->basepower = 50;
-		else
-			attacker.pokemon->move->basepower = 40;
-	}
-
 	attacker.pokemon->move->power = attacker.pokemon->move->basepower;
 
 	if ((ASSURANCE == attacker.pokemon->move->name and defender.damaged)
