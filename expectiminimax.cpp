@@ -74,7 +74,7 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 	speed (ai, weather);
 	speed (foe, weather);
 
-	bool const verbose = true;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
+	bool const verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
 
 	// This section is for replacing fainted Pokemon (and eventually Baton Pass and U-turn, theoretically).
 
@@ -158,7 +158,7 @@ int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int const &de
 
 
 int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
-	unsigned divisor = 100 * 100;
+	int divisor = 100 * 100;
 	chance_to_hit (first, last, weather);
 	first.moved = true;
 	chance_to_hit (last, first, weather);
@@ -172,19 +172,13 @@ int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int co
 			score += (100 - first.chance_to_hit) * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, sv);
 			last.miss = false;
 		}
-		else
-			divisor -= (100 - first.chance_to_hit) * (100 - last.chance_to_hit);
 		first.miss = false;
 	}
-	else
-		divisor -= (100 - first.chance_to_hit) * 100;
 	if (last.chance_to_hit != 100) {
 		last.miss = true;
 		score += first.chance_to_hit * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, sv);
 		last.miss = false;
 	}
-	else
-		divisor -= 100 * (100 - last.chance_to_hit);
 	score /= divisor;
 	return score;
 }

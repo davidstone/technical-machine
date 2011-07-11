@@ -8,8 +8,8 @@ analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o sta
 
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
-warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
-fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -fno-rtti
+warnings = -Wall -Wextra -pedantic -Wformat=2
+fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -fno-rtti -funsafe-loop-optimizations
 
 CXX = g++
 

@@ -181,6 +181,7 @@ void Move::set_variable (unsigned size) {
 int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
 	int damage = 0;
 	user.destiny_bond = false;
+	user.lock_on = false;
 	user.moved = true;
 	user.pokemon->move->execute = true;
 	blockexecution (user, target, weather);
@@ -462,7 +463,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		}
 	}
 	else if (LOCK_ON == user.pokemon->move->name or MIND_READER == user.pokemon->move->name)
-		target.lock_on == true;
+		user.lock_on = true;
 	else if (LUCKY_CHANT == user.pokemon->move->name) {
 		if (user.lucky_chant == 0)
 			user.lucky_chant = 5;

@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-Stat::Stat (species name, int level, stats stat) :
+Stat::Stat (species name, stats stat) :
 	base (base_stat [name] [stat]),
 	iv (31),
 	ev (21),		// Adds up to 126 points, temporary until I add in EV prediction
@@ -219,7 +219,7 @@ void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &fa
 }
 
 void chance_to_hit (Team &user, Team const &target, Weather const &weather) {
-	if (user.pokemon->move->accuracy == -1)
+	if (user.pokemon->move->accuracy == -1 or user.pokemon->ability == NO_GUARD or target.pokemon->ability == NO_GUARD or user.lock_on)
 		user.chance_to_hit = 100;
 	else {
 		user.chance_to_hit = user.pokemon->move->accuracy;
@@ -252,7 +252,6 @@ void chance_to_hit (Team &user, Team const &target, Weather const &weather) {
 		if (user.chance_to_hit > 100)
 			user.chance_to_hit = 100;
 	}
-	user.chance_to_hit = user.chance_to_hit;
 }
 
 void Stat::boost (int n) {

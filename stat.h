@@ -27,7 +27,7 @@ class Stat {
 		int max;		// Max HP only
 		int stat;		// Current HP or last calculated value for other stats
 	
-		Stat (species name, int level, stats stat);
+		Stat (species name, stats stat);
 		void boost (int n);
 	private:
 		static uint8_t const base_stat [][6];

@@ -33,7 +33,7 @@ class Team {
 		int16_t bide_damage;
 		int16_t substitute;	// How much HP does the substitute have left?
 		int8_t bide;
-		uint8_t chance_to_hit;
+		int16_t chance_to_hit;
 		int8_t confused;
 		int8_t embargo;
 		int8_t encore;
