@@ -190,8 +190,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 				or (PSYCHIC_TYPE == attacker.pokemon->move->type and (MIND_PLATE == attacker.pokemon->item or TWISTEDSPOON == attacker.pokemon->item or ODD_INCENSE == attacker.pokemon->item))
 				or (ROCK == attacker.pokemon->move->type and (STONE_PLATE == attacker.pokemon->item or HARD_STONE == attacker.pokemon->item or ROCK_INCENSE == attacker.pokemon->item))
 				or (STEEL == attacker.pokemon->move->type and (IRON_PLATE == attacker.pokemon->item or METAL_COAT == attacker.pokemon->item or (ADAMANT_ORB == attacker.pokemon->item and DIALGA == attacker.pokemon->name)))
-				or (WATER == attacker.pokemon->move->type and (SPLASH_PLATE == attacker.pokemon->item or MYSTIC_WATER == attacker.pokemon->item or WAVE_INCENSE == attacker.pokemon->item))
-				or (LUSTROUS_ORB == attacker.pokemon->item and PALKIA == attacker.pokemon->name))
+				or (WATER == attacker.pokemon->move->type and (SPLASH_PLATE == attacker.pokemon->item or MYSTIC_WATER == attacker.pokemon->item or WAVE_INCENSE == attacker.pokemon->item or (LUSTROUS_ORB == attacker.pokemon->item and PALKIA == attacker.pokemon->name))))
 		attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
 
 	if (attacker.charge and ELECTRIC == attacker.pokemon->move->type)
