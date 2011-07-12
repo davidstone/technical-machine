@@ -37,20 +37,22 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			attacker.pokemon->move->basepower = 150 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
 			break;
 		case FLAIL:
-		case REVERSAL:
-			if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 1)
+		case REVERSAL: {
+			int k = 64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
+			if (k <= 1)
 				attacker.pokemon->move->basepower = 200;
-			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 5)
+			else if (k <= 5)
 				attacker.pokemon->move->basepower = 150;
-			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 12)
+			else if (k <= 12)
 				attacker.pokemon->move->basepower = 100;
-			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 21)
+			else if (k <= 21)
 				attacker.pokemon->move->basepower = 80;
-			else if (64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max <= 42)
+			else if (k <= 42)
 				attacker.pokemon->move->basepower = 40;
 			else
 				attacker.pokemon->move->basepower = 20;
 			break;
+		}
 		case FLING:
 			switch (attacker.pokemon->item) {
 				case IRON_BALL:
@@ -140,10 +142,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			}
 			break;
 		case FRUSTRATION:
-		case RETURN:
-			attacker.pokemon->move->basepower = attacker.pokemon->happiness * 2 / 5;
-			if (FRUSTRATION == attacker.pokemon->move->name)
-				attacker.pokemon->move->basepower = 102 - attacker.pokemon->move->basepower;
+			attacker.pokemon->move->basepower = 102 - attacker.pokemon->happiness * 2 / 5;
 			break;
 		case FURY_CUTTER:
 			attacker.pokemon->move->basepower = 10 << attacker.pokemon->move->times_used;					// Equivalent to 10 * 2 ^ attacker.pokemon->move->times_used
@@ -202,6 +201,9 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			if (attacker.pokemon->move->basepower > 200)
 				attacker.pokemon->move->basepower = 200;
 			break;
+		case RETURN:
+			attacker.pokemon->move->basepower = attacker.pokemon->happiness * 2 / 5;
+			break;
 		case SPIT_UP:
 			attacker.pokemon->move->basepower = attacker.stockpile * 100;
 			break;
@@ -241,7 +243,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			or (WEATHER_BALL == attacker.pokemon->move->name and (0 != weather.hail or 0 != weather.rain or 0 != weather.sand or 0 != weather.sun)))
 		attacker.pokemon->move->power *= 2;
 
-	if ((MUSCLE_BAND == attacker.pokemon->item and attacker.pokemon->move->physical) or (WISE_GLASSES == attacker.pokemon->item and false == attacker.pokemon->move->physical))
+	if ((MUSCLE_BAND == attacker.pokemon->item and attacker.pokemon->move->physical) or (WISE_GLASSES == attacker.pokemon->item and !attacker.pokemon->move->physical))
 		attacker.pokemon->move->power = attacker.pokemon->move->power * 11 / 10;
 	else if ((BUG == attacker.pokemon->move->type and (INSECT_PLATE == attacker.pokemon->item or SILVERPOWDER == attacker.pokemon->item))
 				or (DARK == attacker.pokemon->move->type and (DREAD_PLATE == attacker.pokemon->item or BLACKGLASSES == attacker.pokemon->item))
@@ -293,19 +295,23 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 // I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
 
 int damageknown (Team const &attacker, Team const &defender, Weather const &weather, int &rl, int &weather_mod, int &ff, int &mf) {
-	if (((0 != defender.reflect and attacker.pokemon->move->physical) or (0 != defender.light_screen and false == attacker.pokemon->move->physical)) and false == attacker.ch)
+	if (((defender.reflect != 0 and attacker.pokemon->move->physical)
+			or (defender.light_screen != 0 and !attacker.pokemon->move->physical))
+			and !attacker.ch)
 		rl = 2;
 	else
 		rl = 1;
 
-	if ((0 != weather.rain and WATER == attacker.pokemon->move->type) or (0 != weather.sun and FIRE == attacker.pokemon->move->type))
+	if ((weather.rain != 0 and attacker.pokemon->move->type == WATER)
+			or (weather.sun != 0 and attacker.pokemon->move->type == FIRE))
 		weather_mod = 3;
-	else if ((0 != weather.rain and FIRE == attacker.pokemon->move->type) or (0 != weather.sun and WATER == attacker.pokemon->move->type))
+	else if ((weather.rain != 0 and attacker.pokemon->move->type == FIRE)
+			or (weather.sun != 0 and attacker.pokemon->move->type == WATER))
 		weather_mod = 1;
 	else
 		weather_mod = 2;
 
-	if (attacker.ff and FIRE == attacker.pokemon->move->type)
+	if (attacker.ff and attacker.pokemon->move->type == FIRE)
 		ff = 3;
 	else
 		ff = 2;
@@ -326,7 +332,7 @@ int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, 
 
 	if (attacker.pokemon->move->physical) {
 		damage = damage * attacker.pokemon->atk.stat / 50 / defender.pokemon->def.stat;
-		if (BURN == attacker.pokemon->status and GUTS != attacker.pokemon->ability)
+		if (attacker.pokemon->status == BURN and attacker.pokemon->ability != GUTS)
 			damage /= 2;
 	}
 	else
@@ -335,7 +341,7 @@ int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, 
 	damage = damage / rl * weather_mod / 2 * ff / 2 + 2;
 
 	if (attacker.ch) {
-		if (SNIPER == attacker.pokemon->ability)
+		if (attacker.pokemon->ability == SNIPER)
 			damage *= 3;
 		else
 			damage *= 2;
@@ -352,8 +358,8 @@ int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, 
 
 	damage = damage * mf / 2;
 
-	if (istype (attacker, attacker.pokemon->move->type) and TYPELESS != attacker.pokemon->move->type) {
-		if (ADAPTABILITY == attacker.pokemon->ability)
+	if (istype (attacker, attacker.pokemon->move->type) and attacker.pokemon->move->type != TYPELESS) {
+		if (attacker.pokemon->ability == ADAPTABILITY)
 			stab = 4;
 		else
 			stab = 3;
@@ -361,17 +367,17 @@ int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, 
 	else
 		stab = 2;
 
-	if (SOLID_ROCK == defender.pokemon->ability and type1 * type2 > 2)
+	if (defender.pokemon->ability == SOLID_ROCK and type1 * type2 > 2)
 		aem = 3;
 	else
 		aem = 4;
 
-	if (EXPERT_BELT == attacker.pokemon->item and type1 * type2 > 2)
+	if (attacker.pokemon->item == EXPERT_BELT and type1 * type2 > 2)
 		eb = 6;
 	else
 		eb = 5;
 
-	if (TINTED_LENS == attacker.pokemon->ability and type1 * type2 < 2)
+	if (attacker.pokemon->ability == TINTED_LENS and type1 * type2 < 2)
 		tl = 2;
 	else
 		tl = 1;
