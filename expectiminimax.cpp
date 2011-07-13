@@ -143,7 +143,7 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 }
 
 
-int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
+int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv) {
 	// Determine turn order
 	Team* first;
 	Team* last;
@@ -157,7 +157,7 @@ int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int const &de
 }
 
 
-int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
+int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv) {
 	int divisor = 100 * 100;
 	chance_to_hit (first, last, weather);
 	first.moved = true;
@@ -184,7 +184,7 @@ int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int co
 }
 
 
-int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
+int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv) {
 	int64_t score3 = 0;
 	for (first.pokemon->move->variable.index = 0; first.pokemon->move->variable.index != first.pokemon->move->variable.set.size(); ++first.pokemon->move->variable.index) {
 		if ((first.pokemon->move->name != ROAR and first.pokemon->move->name != WHIRLWIND) or first.pokemon->move->variable->first != last.pokemon.index or last.pokemon.set.size() == 1) {
@@ -226,7 +226,7 @@ int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weat
 }
 
 
-int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv) {
+int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv) {
 	int n;
 	if (first.pokemon->ability == EARLY_BIRD)
 		n = 2;

@@ -25,13 +25,13 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 
 int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn = false);
 
-int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv);
 
-int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv);
 
-int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv);
 
-int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int const &depth, score_variables const &sv);
+int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv);
 
 int64_t use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv);
 
