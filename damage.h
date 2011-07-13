@@ -22,9 +22,9 @@ void movepower (Team &attacker, Team const &defender, Weather const weather);
 
 int damageknown (Team const &attacker, Team const &defender, Weather const &weather, int &rl, int &weather_mod, int &ff, int &mf);
 
-int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, int const &weather_mod, int const &ff, int const &mf, int &stab, int const &type1, int const &type2, int &aem, int &eb, int &tl, int &rb, int damage);
+int damagenonrandom (Team const &attacker, Team const &defender, int rl, int weather_mod, int ff, int mf, int &stab, int type1, int type2, int &aem, int &eb, int &tl, int &rb, int damage);
 
-int damagerandom (Pokemon const &attacker, Team const &defender, int const &stab, int const &type1, int const &type2, int const &aem, int const &eb, int const &tl, int const &rb, int damage);
+int damagerandom (Pokemon const &attacker, Team const &defender, int stab, int type1, int type2, int aem, int eb, int tl, int rb, int damage);
 
 int damagecalculator (Team const &attacker, Team const &defender, Weather const &weather);
 

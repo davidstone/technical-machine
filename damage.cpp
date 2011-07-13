@@ -326,7 +326,7 @@ int damageknown (Team const &attacker, Team const &defender, Weather const &weat
 
 
 
-int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, int const &weather_mod, int const &ff, int const &mf, int &stab, int const &type1, int const &type2, int &aem, int &eb, int &tl, int &rb, int damage) {
+int damagenonrandom (Team const &attacker, Team const &defender, int rl, int weather_mod, int ff, int mf, int &stab, int type1, int type2, int &aem, int &eb, int &tl, int &rb, int damage) {
 
 	damage *= attacker.pokemon->move->power;
 
@@ -382,14 +382,30 @@ int damagenonrandom (Team const &attacker, Team const &defender, int const &rl, 
 	else
 		tl = 1;
 
-	if ((defender.pokemon->item == CHILAN_BERRY and attacker.pokemon->move->type == NORMAL) or (type1 * type2 > 2 and defender.pokemon->item - TANGA_BERRY == attacker.pokemon->move->type))
+	if ((defender.pokemon->item == CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
+			or (type1 * type2 > 2 and ((defender.pokemon->item == BABIRI_BERRY and attacker.pokemon->move->type == STEEL)
+			or (defender.pokemon->item == CHARTI_BERRY and attacker.pokemon->move->type == ROCK)
+			or (defender.pokemon->item == CHOPLE_BERRY and attacker.pokemon->move->type == FIGHTING)
+			or (defender.pokemon->item == COBA_BERRY and attacker.pokemon->move->type == FLYING)
+			or (defender.pokemon->item == COLBUR_BERRY and attacker.pokemon->move->type == DARK)
+			or (defender.pokemon->item == HABAN_BERRY and attacker.pokemon->move->type == DRAGON)
+			or (defender.pokemon->item == KASIB_BERRY and attacker.pokemon->move->type == GHOST)
+			or (defender.pokemon->item == KEBIA_BERRY and attacker.pokemon->move->type == POISON)
+			or (defender.pokemon->item == OCCA_BERRY and attacker.pokemon->move->type == FIRE)
+			or (defender.pokemon->item == PASSHO_BERRY and attacker.pokemon->move->type == WATER)
+			or (defender.pokemon->item == PAYAPA_BERRY and attacker.pokemon->move->type == PSYCHIC_TYPE)
+			or (defender.pokemon->item == RINDO_BERRY and attacker.pokemon->move->type == GRASS)
+			or (defender.pokemon->item == SHUCA_BERRY and attacker.pokemon->move->type == GROUND)
+			or (defender.pokemon->item == TANGA_BERRY and attacker.pokemon->move->type == BUG)
+			or (defender.pokemon->item == WACAN_BERRY and attacker.pokemon->move->type == ELECTRIC)
+			or (defender.pokemon->item == YACHE_BERRY and attacker.pokemon->move->type == ICE))))
 		rb = 2;
 	else
 		rb = 1;
 	return damage;
 }
 
-int damagerandom (Pokemon const &attacker, Team const &defender, int const &stab, int const &type1, int const &type2, int const &aem, int const &eb, int const &tl, int const &rb, int damage) {
+int damagerandom (Pokemon const &attacker, Team const &defender, int stab, int type1, int type2, int aem, int eb, int tl, int rb, int damage) {
 	damage = damage * attacker.move->r / 100 * stab / 2 * type1 / 2 * type2 / 2 * aem / 4 * eb / 5 * tl / rb;
 	if (damage == 0)
 		damage = 1;
