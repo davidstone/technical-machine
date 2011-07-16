@@ -79,7 +79,7 @@ load_stats.o: load_stats.cpp map.h ability.h gender.h item.h move.h \
 map.o: map.cpp map.h ability.h gender.h item.h move.h active.h type.h \
  stat.h species.h
 move.o: move.cpp move.h active.h type.h movefunction.h ability.h block.h \
- damage.h evaluate.h heal.h pokemon.h gender.h item.h species.h stat.h \
+ damage.h heal.h pokemon.h gender.h item.h species.h stat.h \
  status.h switch.h team.h weather.h
 pokemon.o: pokemon.cpp active.h movefunction.h pokemon.h ability.h \
  gender.h item.h move.h type.h species.h stat.h status.h
