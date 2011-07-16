@@ -121,8 +121,10 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 						int64_t score = order_branch (ai, foe, weather, depth, sv);
 						if (verbose or first_turn)
 							std::cout << indent + "\tEstimated score is " << score << '\n';
-						if (beta > score)
+						if (beta > score) {
 							beta = score;
+							foe.pokemon->move->score = beta;
+						}
 						if (beta <= alpha)	// Alpha-Beta pruning
 							break;
 					}
@@ -130,6 +132,7 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 				// If their best response isn't as good as their previous best response, then this new move must be better than the previous AI's best move
 				if (beta > alpha) {
 					alpha = beta;
+					ai.pokemon->move->score = alpha;
 					best_move = ai.pokemon->move->name;
 					if (verbose or first_turn)
 						std::cout << indent + "Estimated score is " << alpha << '\n';

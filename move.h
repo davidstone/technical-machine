@@ -29,6 +29,7 @@ class Move {
 	public:
 		moves_list name;
 		types type;
+		int64_t score;
 		int16_t basepower;
 		int16_t power;
 		bool execute;
@@ -54,6 +55,7 @@ class Move {
 		bool operator!= (Move const &other) const;
 		bool is_switch () const;
 		void get_magnitude (unsigned magnitude);
+		static bool compare_scores (Move const &first, Move const &second);
 	private:
 		void set_priority ();
 		void set_variable (unsigned size);

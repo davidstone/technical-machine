@@ -18,6 +18,7 @@
 #include "ability.h"
 #include "block.h"
 #include "damage.h"
+#include "evaluate.h"
 #include "heal.h"
 #include "pokemon.h"
 #include "stat.h"
@@ -32,6 +33,7 @@ namespace technicalmachine {
 Move::Move (moves_list move, int pp_ups, unsigned size) :
 	name (move),
 	type (move_type [name]),
+	score (-VICTORY - 1),
 	basepower (base_power [name]),
 	physical (is_physical [name]),
 	accuracy (get_accuracy [name]),
@@ -938,6 +940,10 @@ bool Move::operator!= (Move const &other) const {
 
 bool Move::is_switch () const {
 	return SWITCH0 <= name and name <= SWITCH5;
+}
+
+bool compare_scores (Move const &first, Move const &second) {
+	return first.score < second.score;
 }
 
 types const Move::move_type [] = {
