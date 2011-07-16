@@ -17,7 +17,6 @@
 #include "endofturn.h"
 #include "evaluate.h"
 #include "move.h"
-#include "movefunction.h"
 #include "pokemon.h"
 #include "stat.h"
 #include "switch.h"

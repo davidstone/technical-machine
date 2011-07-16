@@ -14,7 +14,6 @@
 #include <map>
 #include <string>
 #include "analyze_logs.h"
-#include "movefunction.h"
 #include "pokemon.h"
 #include "team.h"
 

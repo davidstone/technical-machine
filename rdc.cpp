@@ -16,7 +16,6 @@
 #include "item.h"
 #include "load_stats.h"
 #include "move.h"
-#include "movefunction.h"
 #include "pokemon.h"
 #include "reversedamage.h"
 #include "stat.h"

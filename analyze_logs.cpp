@@ -20,7 +20,6 @@
 #include "endofturn.h"
 #include "map.h"
 #include "move.h"
-#include "movefunction.h"
 #include "pokemon.h"
 #include "switch.h"
 #include "team.h"

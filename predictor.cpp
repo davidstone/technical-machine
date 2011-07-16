@@ -14,7 +14,6 @@
 #include <map>
 #include <vector>
 #include "load_stats.h"
-#include "movefunction.h"
 #include "pokemon.h"
 #include "team.h"
 #include "teampredictor.h"

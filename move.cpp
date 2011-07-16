@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 #include "move.h"
-#include "movefunction.h"
 #include "ability.h"
 #include "block.h"
 #include "damage.h"

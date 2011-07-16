@@ -72,5 +72,14 @@ class Move {
 
 enum Vanish { LANDED, BOUNCED, DUG, DIVED, FLOWN, SHADOW_FORCED };
 
+class Pokemon;
+class Team;
+class Weather;
+
+int usemove (Team &user, Team &target, Weather &weather, int log_damage = -1);
+int usemove2 (Team &user, Team &target, Weather &weather, int damage);
+void do_damage (Team &user, Team &target, int damage);
+void lower_pp (Team &user, Pokemon const &target);
+
 }
 #endif

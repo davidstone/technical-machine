@@ -20,7 +20,6 @@
 #include "gender.h"
 #include "item.h"
 #include "move.h"
-#include "movefunction.h"
 #include "pokemon.h"
 #include "switch.h"
 #include "team.h"
