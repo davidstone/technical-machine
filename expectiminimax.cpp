@@ -9,14 +9,18 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <utility>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 #include "expectiminimax.h"
 #include "block.h"
 #include "endofturn.h"
 #include "evaluate.h"
 #include "move.h"
+#include "reorder_moves.h"
 #include "pokemon.h"
 #include "stat.h"
 #include "switch.h"
@@ -95,6 +99,10 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 		std::string indent = "";
 		if (verbose and !first_turn)
 			indent += "\t\t";
+
+		std::vector <std::pair <int64_t, size_t> > ai_index;
+		reorder (ai.pokemon->move.set, ai_index);
+		
 		// Determine which moves can be legally selected
 		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index) {
 			blockselection (ai, foe, weather);

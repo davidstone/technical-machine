@@ -1,4 +1,4 @@
-aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
+aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
 predictobjects = predictor.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -69,8 +69,8 @@ endofturn.o: endofturn.cpp endofturn.h ability.h damage.h heal.h move.h \
 evaluate.o: evaluate.cpp evaluate.h move.h active.h type.h pokemon.h \
  ability.h gender.h item.h species.h stat.h status.h team.h weather.h
 expectiminimax.o: expectiminimax.cpp expectiminimax.h move.h active.h \
- type.h block.h endofturn.h evaluate.h pokemon.h ability.h gender.h \
- item.h species.h stat.h status.h switch.h team.h \
+ type.h block.h endofturn.h evaluate.h reorder_moves.h pokemon.h \
+ ability.h gender.h item.h species.h stat.h status.h switch.h team.h \
  transposition.h weather.h
 heal.o: heal.cpp heal.h pokemon.h ability.h active.h gender.h item.h \
  move.h type.h species.h stat.h status.h
@@ -89,6 +89,7 @@ predictor.o: predictor.cpp load_stats.h species.h pokemon.h ability.h \
 rdc.o: rdc.cpp ability.h item.h load_stats.h species.h move.h active.h \
  type.h pokemon.h gender.h stat.h status.h reversedamage.h \
  switch.h team.h teampredictor.h unknown.h weather.h
+reorder_moves.o: reorder_moves.cpp reorder_moves.h move.h active.h type.h
 reversedamage.o: reversedamage.cpp reversedamage.h damage.h item.h stat.h \
  species.h team.h active.h weather.h unknown.h
 stat.o: stat.cpp ability.h item.h move.h active.h type.h pokemon.h \

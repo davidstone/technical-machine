@@ -82,4 +82,5 @@ void do_damage (Team &user, Team &target, int damage);
 void lower_pp (Team &user, Pokemon const &target);
 
 }
+
 #endif
