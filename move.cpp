@@ -17,6 +17,7 @@
 #include "ability.h"
 #include "block.h"
 #include "damage.h"
+#include "evaluate.h"
 #include "heal.h"
 #include "pokemon.h"
 #include "stat.h"
@@ -31,7 +32,8 @@ namespace technicalmachine {
 Move::Move (moves_list move, int pp_ups, unsigned size) :
 	name (move),
 	type (move_type [name]),
-	score (0),
+	// Guarantee moves that weren't good enough to be fully evaluated are sorted at the end:
+	score (-VICTORY - 1),
 	basepower (base_power [name]),
 	physical (is_physical [name]),
 	accuracy (get_accuracy [name]),

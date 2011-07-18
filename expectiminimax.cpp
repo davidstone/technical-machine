@@ -33,8 +33,18 @@ namespace technicalmachine {
 
 moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, int64_t &score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
+	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
+	for (std::vector <Pokemon>::iterator pokemon = foe.pokemon.set.begin(); pokemon != foe.pokemon.set.end(); ++pokemon) {
+		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move)
+			move->score = VICTORY + 1;
+	}
 	moves_list best_move;
-	score = select_move_branch (ai, foe, weather, depth, sv, best_move, true);
+	for (int deeper = 1; deeper <= depth; ++deeper) {
+		bool first_turn = false;
+		if (deeper == depth)
+			first_turn = true;
+		score = select_move_branch (ai, foe, weather, deeper, sv, best_move, first_turn);
+	}
 
 	if (SWITCH0 <= best_move and best_move <= SWITCH5)
 		std::cout << "Switch to " << ai.pokemon.set [best_move - SWITCH0].get_name ();
@@ -101,11 +111,19 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 			indent += "\t\t";
 
 		std::vector <std::pair <int64_t, size_t> > ai_index;
-		reorder (ai.pokemon->move.set, ai_index);
+		reorder (ai.pokemon->move.set, ai_index, true);
+		std::vector <std::pair <int64_t, size_t> > foe_index;
+		reorder (foe.pokemon->move.set, foe_index, false);
 		
 		// Determine which moves can be legally selected
-		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index) {
+		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index)
 			blockselection (ai, foe, weather);
+		for (foe.pokemon->move.index = 0; foe.pokemon->move.index != foe.pokemon->move.set.size(); ++foe.pokemon->move.index)
+			blockselection (foe, ai, weather);
+
+		// Iterate through each move each Pokemon has in combination with each move the other Pokemon has, and evaluate the score of each combination.
+		for (std::vector <std::pair <int64_t, size_t> >::const_iterator ai_move = ai_index.begin(); ai_move != ai_index.end(); ++ai_move) {
+			ai.pokemon->move.index = ai_move->second;
 			if (ai.pokemon->move->selectable) {
 				if (verbose or first_turn) {
 					std::cout << indent + "Evaluating ";
@@ -115,8 +133,8 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 						std::cout << ai.pokemon->move->get_name() + "\n";
 				}
 				int64_t beta = VICTORY + 1;
-				for (foe.pokemon->move.index = 0; foe.pokemon->move.index != foe.pokemon->move.set.size(); ++foe.pokemon->move.index) {
-					blockselection (foe, ai, weather);
+				for (std::vector <std::pair <int64_t, size_t> >::const_iterator foe_move = foe_index.begin(); foe_move != foe_index.end(); ++foe_move) {
+					foe.pokemon->move.index = foe_move->second;
 					if (foe.pokemon->move->selectable) {
 						if (verbose or first_turn) {
 							std::cout << indent + "\tEvaluating the foe";
