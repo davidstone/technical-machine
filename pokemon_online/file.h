@@ -9,6 +9,9 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef POKEMON_ONLINE_FILE_H_
+#define POKEMON_ONLINE_FILE_H_
+
 #include <fstream>
 #include <string>
 #include "../ability.h"
@@ -31,3 +34,5 @@ unsigned converter (std::string const &data, std::string const &end, std::string
 }
 
 }
+
+#endif
