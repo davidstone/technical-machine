@@ -51,32 +51,69 @@ uint64_t Move::hash () const {
 }
 
 void Move::set_priority () {
-	if (is_switch())
-		priority = 6;
-	else if (name == HELPING_HAND)
-		priority = 5;
-	else if (name == MAGIC_COAT or name == SNATCH)
-		priority = 4;
-	else if (name == DETECT or name == ENDURE or name == FOLLOW_ME or name == PROTECT)
-		priority = 3;
-	else if (name == FEINT)
-		priority = 2;
-	else if (name == AQUA_JET or name == BIDE or name == BULLET_PUNCH or name == EXTREMESPEED or name == FAKE_OUT or name == ICE_SHARD or name == MACH_PUNCH or name == QUICK_ATTACK or name == SHADOW_SNEAK or name == SUCKER_PUNCH or name == VACUUM_WAVE)
-		priority = 1;
-	else if (name == VITAL_THROW)
-		priority = -1;
-	else if (name == FOCUS_PUNCH)
-		priority = -2;
-	else if (name == AVALANCHE or name == REVENGE)
-		priority = -3;
-	else if (name == COUNTER or name == MIRROR_COAT)
-		priority = -4;
-	else if (name == ROAR or name == WHIRLWIND)
-		priority = -5;
-	else if (name == TRICK_ROOM)
-		priority = -6;
-	else
-		priority = 0;
+	switch (name) {
+		case SWITCH0:
+		case SWITCH1:
+		case SWITCH2:
+		case SWITCH3:
+		case SWITCH4:
+		case SWITCH5:
+			priority = 6;
+			break;
+		case HELPING_HAND:
+			priority = 5;
+			break;
+		case MAGIC_COAT:
+		case SNATCH:
+			priority = 4;
+			break;
+		case DETECT:
+		case ENDURE:
+		case FOLLOW_ME:
+		case PROTECT:
+			priority = 3;
+			break;
+		case FEINT:
+			priority = 2;
+			break;
+		case AQUA_JET:
+		case BIDE:
+		case BULLET_PUNCH:
+		case EXTREMESPEED:
+		case FAKE_OUT:
+		case ICE_SHARD:
+		case MACH_PUNCH:
+		case QUICK_ATTACK:
+		case SHADOW_SNEAK:
+		case SUCKER_PUNCH:
+		case VACUUM_WAVE:
+			priority = 1;
+			break;
+		case VITAL_THROW:
+			priority = -1;
+			break;
+		case FOCUS_PUNCH:
+			priority = -2;
+			break;
+		case AVALANCHE:
+		case REVENGE:
+			priority = -3;
+			break;
+		case COUNTER:
+		case MIRROR_COAT:
+			priority = -4;
+			break;
+		case ROAR:
+		case WHIRLWIND:
+			priority = -5;
+			break;
+		case TRICK_ROOM:
+			priority = -6;
+			break;
+		default:
+			priority = 0;
+			break;
+	}
 }
 
 void Move::set_variable (unsigned size) {
@@ -86,91 +123,105 @@ void Move::set_variable (unsigned size) {
 	unsigned last = 0;
 	bool simple_range = true;
 	effect.second = get_probability [name];
-	if (name == ACUPRESSURE)
-		last = 6;
-	else if (name == BIND or name == CLAMP or name == FIRE_SPIN or name == MAGMA_STORM or name == SAND_TOMB or name == WHIRLPOOL or name == WRAP) {
-		simple_range = false;
-		for (effect.first = 2; effect.first <= 5; ++effect.first) {
-			if (effect.first == 4)
-				effect.second /= 3;
-			variable.set.push_back (effect);
-		}
-	}
-	else if (name == ENCORE) {
-		effect.first = 4;
-		last = 8;
-	}
-	else if (name == FIRE_FANG or name == ICE_FANG or name == THUNDER_FANG) {
-		simple_range = false;
-		effect.second = max_probability - 2 * max_probability / 10 + max_probability / 100;
-		variable.set.push_back (effect);
-		effect.first = 1;
-		effect.second = max_probability / 10;
-		variable.set.push_back (effect);
-		effect.first = 2;
-		variable.set.push_back (effect);
-		effect.first = 3;
-		effect.second = effect.second / 10;
-		variable.set.push_back (effect);
-	}
-	else if (name == MAGNITUDE ) {
-		simple_range = false;
-		effect.first = 10;
-		effect.second = max_probability * 5 / 100;
-		variable.set.push_back (effect);
-		effect.first = 30;
-		effect.second = max_probability * 10 / 100;
-		variable.set.push_back (effect);
-		effect.first = 50;
-		effect.second = max_probability * 20 / 100;
-		variable.set.push_back (effect);
-		effect.first = 70;
-		effect.second = max_probability * 30 / 100;
-		variable.set.push_back (effect);
-		effect.first = 90;
-		effect.second = max_probability * 20 / 100;
-		variable.set.push_back (effect);
-		effect.first = 110;
-		effect.second = max_probability * 10 / 100;
-		variable.set.push_back (effect);
-		effect.first = 150;
-		effect.second = max_probability * 5 / 100;
-		variable.set.push_back (effect);
-	}
-	else if (name == OUTRAGE or name == PETAL_DANCE or name == THRASH) {
-		effect.first = 2;
-		last = 3;
-	}
-	else if (name == PRESENT) {
-		increment = 40;
-		last = 120;
-	}
-	else if (name == PSYWAVE) {
-		effect.first = 5;
-		last = 15;
-	}
-	else if (name == ROAR or name == WHIRLWIND) {
-		if (size > 2)
-			effect.second = max_probability / (size - 1);
-		else
-			effect.second = max_probability;
-		last = size - 1;
-	}
-	else if (name == TAUNT) {
-		effect.first = 2;
-		last = 3;
-	}
-	else if (name == TRI_ATTACK) {
-		last = 3;
-	}
-	else {
-		simple_range = false;
-		while (effect.first <= 1) {
-			effect.second = max_probability - effect.second;
-			if (effect.second != 0)
+	switch (name) {
+		case ACUPRESSURE:
+			last = 6;
+			break;
+		case BIND:
+		case CLAMP:
+		case FIRE_SPIN:
+		case MAGMA_STORM:
+		case SAND_TOMB:
+		case WHIRLPOOL:
+		case WRAP:
+			simple_range = false;
+			for (effect.first = 2; effect.first <= 5; ++effect.first) {
+				if (effect.first == 4)
+					effect.second /= 3;
 				variable.set.push_back (effect);
-			++effect.first;
-		}
+			}
+			break;
+		case ENCORE:
+			effect.first = 4;
+			last = 8;
+			break;
+		case FIRE_FANG:
+		case ICE_FANG:
+		case THUNDER_FANG:
+			simple_range = false;
+			effect.second = max_probability - 2 * max_probability / 10 + max_probability / 100;
+			variable.set.push_back (effect);
+			effect.first = 1;
+			effect.second = max_probability / 10;
+			variable.set.push_back (effect);
+			effect.first = 2;
+			variable.set.push_back (effect);
+			effect.first = 3;
+			effect.second = effect.second / 10;
+			variable.set.push_back (effect);
+			break;
+		case MAGNITUDE:
+			simple_range = false;
+			effect.first = 10;
+			effect.second = max_probability * 5 / 100;
+			variable.set.push_back (effect);
+			effect.first = 30;
+			effect.second = max_probability * 10 / 100;
+			variable.set.push_back (effect);
+			effect.first = 50;
+			effect.second = max_probability * 20 / 100;
+			variable.set.push_back (effect);
+			effect.first = 70;
+			effect.second = max_probability * 30 / 100;
+			variable.set.push_back (effect);
+			effect.first = 90;
+			effect.second = max_probability * 20 / 100;
+			variable.set.push_back (effect);
+			effect.first = 110;
+			effect.second = max_probability * 10 / 100;
+			variable.set.push_back (effect);
+			effect.first = 150;
+			effect.second = max_probability * 5 / 100;
+			variable.set.push_back (effect);
+			break;
+		case OUTRAGE:
+		case PETAL_DANCE:
+		case THRASH:
+			effect.first = 2;
+			last = 3;
+			break;
+		case PRESENT:
+			increment = 40;
+			last = 120;
+			break;
+		case PSYWAVE:
+			effect.first = 5;
+			last = 15;
+			break;
+		case ROAR:
+		case WHIRLWIND:
+			if (size > 2)
+				effect.second = max_probability / (size - 1);
+			else
+				effect.second = max_probability;
+			last = size - 1;
+			break;
+		case TAUNT:
+			effect.first = 2;
+			last = 3;
+			break;
+		case TRI_ATTACK:
+			last = 3;
+			break;
+		default:
+			simple_range = false;
+			while (effect.first <= 1) {
+				effect.second = max_probability - effect.second;
+				if (effect.second != 0)
+					variable.set.push_back (effect);
+				++effect.first;
+			}
+			break;
 	}
 	if (simple_range) {
 		while (effect.first <= last) {
@@ -228,6 +279,29 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 	++user.pokemon->move->times_used;
 
 	switch (user.pokemon->move->name) {
+		case DREAM_EATER:
+			if (target.pokemon->status != SLEEP)
+				break;
+		case ABSORB:
+		case DRAIN_PUNCH:
+		case GIGA_DRAIN:
+		case LEECH_LIFE:
+		case MEGA_DRAIN:
+			if (LIQUID_OOZE == target.pokemon->ability) {
+				if (damage <= 3)
+					--user.pokemon->hp.stat;
+				else
+					damage_side_effect (*user.pokemon, damage / 2);
+			}
+			else {
+				if (damage <= 3)
+					++user.pokemon->hp.stat;
+				else {
+					user.pokemon->hp.stat += damage / 2;
+					if (user.pokemon->hp.stat > user.pokemon->hp.max)
+						user.pokemon->hp.stat = user.pokemon->hp.max;
+				}
+			}
 		case ACID:
 		case BUG_BUZZ:
 		case EARTH_POWER:
@@ -363,13 +437,14 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case ROCK_WRECKER:
 			user.recharging = true;
 			break;
+		case FLARE_BLITZ:
+			recoil (*user.pokemon, damage, 3);
 		case BLAZE_KICK:
 		case EMBER:
 		case FIRE_BLAST:
 		case FIRE_PUNCH:
 		case FLAME_WHEEL:
 		case FLAMETHROWER:
-		case FLARE_BLITZ:
 		case HEAT_WAVE:
 		case LAVA_PLUME:
 		case SACRED_FIRE:
@@ -390,6 +465,8 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case SPIDER_WEB:
 			target.trapped = true;
 			break;
+		case VOLT_TACKLE:
+			recoil (*user.pokemon, damage, 3);
 		case BODY_SLAM:
 		case DISCHARGE:
 		case DRAGONBREATH:
@@ -401,7 +478,6 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case THUNDERBOLT:
 		case THUNDERPUNCH:
 		case THUNDERSHOCK:
-		case VOLT_TACKLE:
 			if (user.pokemon->move->variable->first == 0)
 				break;
 		case GLARE:
@@ -415,6 +491,11 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 				user.vanish = BOUNCED;
 			else
 				user.vanish = LANDED;
+			break;
+		case BRAVE_BIRD:
+		case DOUBLE_EDGE:
+		case WOOD_HAMMER:
+			recoil (*user.pokemon, damage, 3);
 			break;
 		case BUBBLE:
 		case BUBBLEBEAM:
@@ -709,6 +790,9 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 			target.pokemon->spa.stage = 0;
 			target.pokemon->spd.stage = 0;
 			target.pokemon->spe.stage = 0;
+			break;
+		case HEAD_SMASH:
+			recoil (*user.pokemon, damage, 2);
 			break;
 		case HEAL_BELL: {
 			for (std::vector<Pokemon>::iterator it = user.pokemon.set.begin(); it != user.pokemon.set.end(); ++it) {
@@ -1012,6 +1096,10 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 			else
 				damage_side_effect (*user.pokemon, user.pokemon->hp.max / 4);
 			break;
+		case SUBMISSION:
+		case TAKE_DOWN:
+			recoil (*user.pokemon, damage, 4);
+			break;
 		case SUBSTITUTE:
 			if (user.substitute == 0 and user.pokemon->hp.stat > user.pokemon->hp.max / 4) {
 				user.substitute = user.pokemon->hp.max / 4;
@@ -1126,29 +1214,6 @@ void do_damage (Team &user, Team &target, unsigned damage) {
 		if (target.bide != 0)
 			target.bide_damage += damage;
 	}
-	if (ABSORB == user.pokemon->move->name or DRAIN_PUNCH == user.pokemon->move->name or GIGA_DRAIN == user.pokemon->move->name or LEECH_LIFE == user.pokemon->move->name or MEGA_DRAIN == user.pokemon->move->name or (DREAM_EATER == user.pokemon->move->name and target.pokemon->status == SLEEP)) {
-		if (LIQUID_OOZE == target.pokemon->ability) {
-			if (damage <= 3)
-				--user.pokemon->hp.stat;
-			else
-				damage_side_effect (*user.pokemon, damage / 2);
-		}
-		else {
-			if (damage <= 3)
-				++user.pokemon->hp.stat;
-			else {
-				user.pokemon->hp.stat += damage / 2;
-				if (user.pokemon->hp.stat > user.pokemon->hp.max)
-					user.pokemon->hp.stat = user.pokemon->hp.max;
-			}
-		}
-	}
-	else if (BRAVE_BIRD == user.pokemon->move->name or DOUBLE_EDGE == user.pokemon->move->name or FLARE_BLITZ == user.pokemon->move->name or WOOD_HAMMER == user.pokemon->move->name or VOLT_TACKLE == user.pokemon->move->name)
-		recoil (*user.pokemon, damage, 3);
-	else if (HEAD_SMASH == user.pokemon->move->name)
-		recoil (*user.pokemon, damage, 2);
-	else if (SUBMISSION == user.pokemon->move->name or TAKE_DOWN == user.pokemon->move->name)
-		recoil (*user.pokemon, damage, 4);
 }
 
 void lower_pp (Team &user, Pokemon const &target) {
