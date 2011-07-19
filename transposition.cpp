@@ -53,7 +53,7 @@ bool Hash::operator!= (Hash const &other) const {
 	return !(*this == other);
 }
 
-int64_t transposition (Team &ai, Team &foe, Weather const &weather, int const &depth, score_variables const &sv) {
+int64_t transposition (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv) {
 	int64_t score;
 	if (depth == 0)
 		score = evaluate (ai, foe, weather, sv);

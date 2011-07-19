@@ -119,9 +119,9 @@ void analyze_line (Team &ai, Team &foe, Map const &map, Log &log) {
 				if (log.search_is_first()) {
 					size_t division = log.line.find ("/", log.search.length());
 					if (division != std::string::npos) {
-						int numerator = boost::lexical_cast<int> (log.line.substr (log.search.length(), division - log.search.length()));
+						unsigned numerator = boost::lexical_cast<unsigned> (log.line.substr (log.search.length(), division - log.search.length()));
 						++division;
-						int denominator = boost::lexical_cast<int> (log.line.substr (division, log.line.find(" ", division) - division));
+						unsigned denominator = boost::lexical_cast<unsigned> (log.line.substr (division, log.line.find(" ", division) - division));
 						log.active->damage = log.active->at_replacement().hp.max * numerator / denominator;
 						log.move_damage = false;
 					}

@@ -25,7 +25,7 @@ namespace technicalmachine {
 This function takes damage and calculates all possible values that can cause that damage. It removes any element from the list that is unable to cause a given damage. Given enough data points, the hidden values are reduced to a single data point.
 */
 
-void reversedamagecalculator (Team &attacker, Team const &defender, Weather const &weather, int damage, std::vector<Unknown> &hidden) {
+void reversedamagecalculator (Team &attacker, Team const &defender, Weather const &weather, unsigned damage, std::vector<Unknown> &hidden) {
 
 	attacker.pokemon->hp.iv = 31;
 	attacker.pokemon->atk.iv = 31;
@@ -39,24 +39,24 @@ void reversedamagecalculator (Team &attacker, Team const &defender, Weather cons
 	uint8_t old_spe_ev = 32;		// Illegal value to force recalculation of speed stat
 	uint8_t old_offense_ev = 32;	// Illegal value to force recalculation of attacking stat
 	
-	int type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
-	int type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
+	unsigned type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
+	unsigned type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 
-	int rl;						// Reflect / Light Screen (2)
-	int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-	int ff;					// Flash Fire: 3 / 2
-	int mf;					// Me First: 3 / 2
-	int known;			// Never used unitialized. If variable is true, set before entering the loop. If variable is false, set after entering the loop but before it's used in the loop.
+	unsigned rl;						// Reflect / Light Screen (2)
+	unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+	unsigned ff;					// Flash Fire: 3 / 2
+	unsigned mf;					// Me First: 3 / 2
+	unsigned known;			// Never used unitialized. If variable is true, set before entering the loop. If variable is false, set after entering the loop but before it's used in the loop.
 	bool variable = attacker.pokemon->move->name != HIDDEN_POWER and attacker.pokemon->move->name != NATURAL_GIFT;
 	if (variable)
 		known = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
 
-	int stab;		// Same Type Attack Bonus: 3 / 2
-	int aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-	int eb;		// Expert Belt: 6 / 5
-	int tl;			// Tinted Lens (2)
-	int rb;		// Resistance berries (2)
-	int nonrandom;
+	unsigned stab;		// Same Type Attack Bonus: 3 / 2
+	unsigned aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+	unsigned eb;		// Expert Belt: 6 / 5
+	unsigned tl;			// Tinted Lens (2)
+	unsigned rb;		// Resistance berries (2)
+	unsigned nonrandom;
 
 	for (std::vector<Unknown>::const_iterator it = hidden.begin(); it != hidden.end(); ++it) {
 		attacker.pokemon->item = static_cast<items> (it->item);
@@ -84,7 +84,7 @@ void reversedamagecalculator (Team &attacker, Team const &defender, Weather cons
 		// First check to see if the damage is higher than it can possibly be, then check to see if it's lower than it can possibly be, then binary search the remainder. Profiling showed the removal of the "too high" and "too low" damage points to be valid optimizations.
 		
 		attacker.pokemon->move->r = 85;
-		int estimate = damagerandom (*attacker.pokemon, defender, stab, type1, type2, aem, eb, tl, rb, nonrandom);
+		unsigned estimate = damagerandom (*attacker.pokemon, defender, stab, type1, type2, aem, eb, tl, rb, nonrandom);
 		if (estimate == damage)
 			refined_hidden.push_back (*it);
 		if (estimate >= damage)

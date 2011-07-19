@@ -10,27 +10,29 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "heal.h"
+#include "damage.h"
 #include "pokemon.h"
 
 namespace technicalmachine {
 
-void heal (Pokemon &member, int denominator, int numerator) {
-	if (0 != member.hp.stat) {
-		// There is no risk of signed overflow here, because denominator is never INT_MIN.
-		if ((denominator > 0 and denominator / numerator < member.hp.max) or (denominator < 0 and -denominator / numerator < member.hp.max and member.ability != MAGIC_GUARD))
-			member.hp.stat += member.hp.max * numerator / denominator;
-
-		// If it would normally heal less than 1, heal 1
-		else if (denominator > 0)
-			++member.hp.stat;
-
-		// If it would normally damage less than 1, damage 1
-		else if (member.ability != MAGIC_GUARD)
-			--member.hp.stat;
-		if (member.hp.stat > member.hp.max)
-			member.hp.stat = member.hp.max;
-		if (member.hp.stat < 0)
-			member.hp.stat = 0;
+void heal (Pokemon &member, int denominator, unsigned numerator) {
+	if (member.hp.stat != 0) {
+		if (denominator > 0) {
+			if (member.hp.max * numerator <= static_cast <unsigned> (2 * denominator - 1))
+				++member.hp.stat;
+			else
+				member.hp.stat += member.hp.max * numerator / denominator;
+			if (member.hp.stat > member.hp.max)
+				member.hp.stat = member.hp.max;
+		}
+		else {
+			if (member.ability != MAGIC_GUARD) {
+				if (member.hp.max * numerator <= static_cast <unsigned> (-2 * denominator - 1))
+					-- member.hp.stat;
+				else
+					damage_side_effect (member, member.hp.max * numerator / (-denominator));
+			}
+		}
 	}
 }
 

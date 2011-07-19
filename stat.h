@@ -24,8 +24,8 @@ class Stat {
 		int8_t iv;			// 0 through 31
 		int8_t ev;			// 0 through 63
 		int8_t stage;		// -6 though 6
-		int max;		// Max HP only
-		int stat;		// Current HP or last calculated value for other stats
+		unsigned max;		// Max HP only
+		unsigned stat;		// Current HP or last calculated value for other stats
 	
 		Stat (species name, stats stat);
 		void boost (int n);
@@ -39,7 +39,7 @@ class Pokemon;
 class Team;
 class Weather;
 
-int hitpoints (Pokemon &member);
+unsigned hitpoints (Pokemon &member);
 void attack (Team &attacker, Weather const &weather);
 void defense (Team const &attacker, Team &defender, Weather const &weather);
 void speed (Team &team, Weather const &weather);

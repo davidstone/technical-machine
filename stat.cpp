@@ -28,7 +28,7 @@ Stat::Stat (species name, stats stat) :
 	max (-1) {
 	}
 
-int hitpoints (Pokemon &member) {
+unsigned hitpoints (Pokemon &member) {
 	if (1 == member.hp.base)
 		return 1;
 	return (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;

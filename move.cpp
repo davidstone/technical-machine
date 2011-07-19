@@ -180,8 +180,8 @@ void Move::set_variable (unsigned size) {
 	}
 }
 
-int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
-	int damage = 0;
+unsigned usemove (Team &user, Team &target, Weather &weather, unsigned log_damage) {
+	unsigned damage = 0;
 	user.destiny_bond = false;
 	user.lock_on = false;
 	user.moved = true;
@@ -199,22 +199,22 @@ int usemove (Team &user, Team &target, Weather &weather, int log_damage) {
 	return damage;
 }
 
-int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
+unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_damage) {
 	speed (user, weather);
 	speed (target, weather);
 	movepower (user, target, weather);
-	int damage = 0;
+	unsigned damage = 0;
 	
 	if (user.pokemon->move->basepower != 0) {
-		if (BRICK_BREAK == user.pokemon->move->name) {
+		if (user.pokemon->move->name == BRICK_BREAK) {
 			target.reflect = 0;
 			target.light_screen = 0;
 		}
-		else if (FLAME_WHEEL == user.pokemon->move->name or SACRED_FIRE == user.pokemon->move->name) {
+		else if (user.pokemon->move->name == FLAME_WHEEL or user.pokemon->move->name == SACRED_FIRE) {
 			if (user.pokemon->status == FREEZE)
 				user.pokemon->status = NO_STATUS;
 		}
-		if (log_damage == -1) {
+		if (log_damage == -1u) {
 			defense (user, target, weather);
 			attack (user, weather);
 			damage = damagecalculator (user, target, weather);
@@ -328,11 +328,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			}
 			break;
 		case BELLY_DRUM:
-			user.pokemon->atk.stage = 6;
-			if (user.pokemon->hp.max <= 2)
-				--user.pokemon->hp.stat;
-			else
+			if (user.pokemon->hp.stat > user.pokemon->hp.max / 2 and user.pokemon->hp.stat > 1) {
 				user.pokemon->hp.stat -= user.pokemon->hp.max / 2;
+				user.pokemon->atk.stage = 6;
+			}
 			break;
 		case BIDE:
 			if (user.bide == 0) {
@@ -341,7 +340,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			}
 			else {
 				if (user.bide == 1)
-					target.pokemon->hp.stat -= user.bide_damage * 2;
+					damage_side_effect (*target.pokemon, user.bide_damage * 2);
 				--user.bide;
 			}
 			break;
@@ -506,11 +505,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			target.pokemon->spe.boost (-2);
 			break;
 		case COUNTER:
-			if (target.pokemon->move->physical) {
-				target.pokemon->hp.stat -= user.damage * 2;
-				if (target.pokemon->hp.stat < 0)
-					target.pokemon->hp.stat = 0;
-			}
+			if (target.pokemon->move->physical)
+				damage_side_effect (*target.pokemon, user.damage * 2);
 			break;
 		case COVET:
 		case THIEF:
@@ -534,12 +530,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		case CURSE:
 			if (istype (user, GHOST) and user.pokemon->ability != MAGIC_GUARD) {
 				if (!target.curse) {
-					if (user.pokemon->hp.max <= 4)
+					if (user.pokemon->hp.max <= 3)
 						--user.pokemon->hp.stat;
 					else
-						user.pokemon->hp.stat -= user.pokemon->hp.max / 2;
-					if (user.pokemon->hp.stat < 0)
-						user.pokemon->hp.stat = 0;
+						damage_side_effect (*user.pokemon, user.pokemon->hp.max / 2);
 					target.curse = true;
 				}
 			}
@@ -811,7 +805,7 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 			user.pokemon->hp.stat = 0;
 			break;
 		case METAL_BURST:
-			target.pokemon->hp.stat -= user.damage * 3 / 2;
+			damage_side_effect (*target.pokemon, user.damage * 3 / 2);
 			break;
 		case METAL_CLAW:
 		case MIMIC:		// Fix
@@ -819,11 +813,8 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		case MIRACLE_EYE:		// Fix
 			break;
 		case MIRROR_COAT:
-			if (!target.pokemon->move->physical) {
-				target.pokemon->hp.stat -= user.damage * 2;
-				if (target.pokemon->hp.stat < 0)
-					target.pokemon->hp.stat = 0;
-			}
+			if (!target.pokemon->move->physical)
+				damage_side_effect (*target.pokemon, user.damage * 2);
 			break;
 		case MIST:
 			user.mist = 5;
@@ -1016,9 +1007,10 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 		case STOCKPILE:		// Fix
 			break;
 		case STRUGGLE:
-			user.pokemon->hp.stat -= user.pokemon->hp.max / 4;
-			if (user.pokemon->hp.stat < 0)
-				user.pokemon->hp.stat = 0;
+			if (user.pokemon->hp.max <= 7)
+				--user.pokemon->hp.stat;
+			else
+				damage_side_effect (*user.pokemon, user.pokemon->hp.max / 4);
 			break;
 		case SUBSTITUTE:
 			if (user.substitute == 0 and user.pokemon->hp.stat > user.pokemon->hp.max / 4) {
@@ -1126,39 +1118,29 @@ int usemove2 (Team &user, Team &target, Weather &weather, int log_damage) {
 	return damage;
 }
 
-void do_damage (Team &user, Team &target, int damage) {
-	target.pokemon->hp.stat -= damage;
+void do_damage (Team &user, Team &target, unsigned damage) {
+	damage_side_effect (*target.pokemon, damage);
 	if (user.pokemon->item == LIFE_ORB)
 		heal (*user.pokemon, -10);
 	if (target.pokemon->hp.stat > 0) {
 		if (target.bide != 0)
 			target.bide_damage += damage;
 	}
-	if (ABSORB == user.pokemon->move->name or DRAIN_PUNCH == user.pokemon->move->name or GIGA_DRAIN == user.pokemon->move->name or LEECH_LIFE == user.pokemon->move->name or MEGA_DRAIN == user.pokemon->move->name) {
+	if (ABSORB == user.pokemon->move->name or DRAIN_PUNCH == user.pokemon->move->name or GIGA_DRAIN == user.pokemon->move->name or LEECH_LIFE == user.pokemon->move->name or MEGA_DRAIN == user.pokemon->move->name or (DREAM_EATER == user.pokemon->move->name and target.pokemon->status == SLEEP)) {
 		if (LIQUID_OOZE == target.pokemon->ability) {
-			if (damage / 2 > 0) {
-				user.pokemon->hp.stat -= damage / 2;
-				if (user.pokemon->hp.stat < 0)
-					user.pokemon->hp.stat = 0;
-			}
-			else
+			if (damage <= 3)
 				--user.pokemon->hp.stat;
+			else
+				damage_side_effect (*user.pokemon, damage / 2);
 		}
 		else {
-			if (damage / 2 > 0) {
+			if (damage <= 3)
+				++user.pokemon->hp.stat;
+			else {
 				user.pokemon->hp.stat += damage / 2;
 				if (user.pokemon->hp.stat > user.pokemon->hp.max)
 					user.pokemon->hp.stat = user.pokemon->hp.max;
 			}
-			else
-				++user.pokemon->hp.stat;
-		}
-	}
-	else if (DREAM_EATER == user.pokemon->move->name) {
-		if (target.pokemon->status == SLEEP) {
-			user.pokemon->hp.stat += damage / 2;
-			if (user.pokemon->hp.stat > user.pokemon->hp.max)
-				user.pokemon->hp.stat = user.pokemon->hp.max;
 		}
 	}
 	else if (BRAVE_BIRD == user.pokemon->move->name or DOUBLE_EDGE == user.pokemon->move->name or FLARE_BLITZ == user.pokemon->move->name or WOOD_HAMMER == user.pokemon->move->name or VOLT_TACKLE == user.pokemon->move->name)
@@ -1167,10 +1149,6 @@ void do_damage (Team &user, Team &target, int damage) {
 		recoil (*user.pokemon, damage, 2);
 	else if (SUBMISSION == user.pokemon->move->name or TAKE_DOWN == user.pokemon->move->name)
 		recoil (*user.pokemon, damage, 4);
-	if (user.pokemon->hp.stat < 0)
-		user.pokemon->hp.stat = 0;
-	if (target.pokemon->hp.stat < 0)
-		target.pokemon->hp.stat = 0;
 }
 
 void lower_pp (Team &user, Pokemon const &target) {

@@ -20,15 +20,17 @@ class Weather;
 
 void movepower (Team &attacker, Team const &defender, Weather const weather);
 
-int damageknown (Team const &attacker, Team const &defender, Weather const &weather, int &rl, int &weather_mod, int &ff, int &mf);
+unsigned damageknown (Team const &attacker, Team const &defender, Weather const &weather, unsigned &rl, unsigned &weather_mod, unsigned &ff, unsigned &mf);
 
-int damagenonrandom (Team const &attacker, Team const &defender, int rl, int weather_mod, int ff, int mf, int &stab, int type1, int type2, int &aem, int &eb, int &tl, int &rb, int damage);
+unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned &stab, unsigned type1, unsigned type2, unsigned &aem, unsigned &eb, unsigned &tl, unsigned &rb, unsigned damage);
 
-int damagerandom (Pokemon const &attacker, Team const &defender, int stab, int type1, int type2, int aem, int eb, int tl, int rb, int damage);
+unsigned damagerandom (Pokemon const &attacker, Team const &defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage);
 
-int damagecalculator (Team const &attacker, Team const &defender, Weather const &weather);
+unsigned damagecalculator (Team const &attacker, Team const &defender, Weather const &weather);
 
-void recoil (Pokemon &user, int damage, int denominator);
+void recoil (Pokemon &user, unsigned damage, unsigned denominator);
+
+void damage_side_effect (Pokemon &user, unsigned damage);
+
 }
-
 #endif

@@ -110,14 +110,11 @@ void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
 			heal (*team.pokemon, -16);
 	}
 	if (team.leech_seed) {
-		int n = team.pokemon->hp.stat;
+		unsigned n = team.pokemon->hp.stat;
 		heal (*team.pokemon, -8);
 		if (foe.hp.stat != 0) {
-			if (LIQUID_OOZE == team.pokemon->ability) {
-				foe.hp.stat -= n - team.pokemon->hp.stat;
-				if (foe.hp.stat < 0)
-					foe.hp.stat = 0;
-			}
+			if (LIQUID_OOZE == team.pokemon->ability)
+				damage_side_effect (foe, n - team.pokemon->hp.stat);
 			else {
 				foe.hp.stat += n - team.pokemon->hp.stat;
 				if (foe.hp.stat > foe.hp.max)

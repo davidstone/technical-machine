@@ -38,7 +38,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			break;
 		case FLAIL:
 		case REVERSAL: {
-			int k = 64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
+			unsigned k = 64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
 			if (k <= 1)
 				attacker.pokemon->move->basepower = 200;
 			else if (k <= 5)
@@ -294,7 +294,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 
 // I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
 
-int damageknown (Team const &attacker, Team const &defender, Weather const &weather, int &rl, int &weather_mod, int &ff, int &mf) {
+unsigned damageknown (Team const &attacker, Team const &defender, Weather const &weather, unsigned &rl, unsigned &weather_mod, unsigned &ff, unsigned &mf) {
 	if (((defender.reflect != 0 and attacker.pokemon->move->physical)
 			or (defender.light_screen != 0 and !attacker.pokemon->move->physical))
 			and !attacker.ch)
@@ -326,7 +326,7 @@ int damageknown (Team const &attacker, Team const &defender, Weather const &weat
 
 
 
-int damagenonrandom (Team const &attacker, Team const &defender, int rl, int weather_mod, int ff, int mf, int &stab, int type1, int type2, int &aem, int &eb, int &tl, int &rb, int damage) {
+unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned &stab, unsigned type1, unsigned type2, unsigned &aem, unsigned &eb, unsigned &tl, unsigned &rb, unsigned damage) {
 
 	damage *= attacker.pokemon->move->power;
 
@@ -405,7 +405,7 @@ int damagenonrandom (Team const &attacker, Team const &defender, int rl, int wea
 	return damage;
 }
 
-int damagerandom (Pokemon const &attacker, Team const &defender, int stab, int type1, int type2, int aem, int eb, int tl, int rb, int damage) {
+unsigned damagerandom (Pokemon const &attacker, Team const &defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
 	damage = damage * attacker.move->r / 100 * stab / 2 * type1 / 2 * type2 / 2 * aem / 4 * eb / 5 * tl / rb;
 	if (damage == 0)
 		damage = 1;
@@ -417,15 +417,19 @@ int damagerandom (Pokemon const &attacker, Team const &defender, int stab, int t
 	return damage;
 }
 
-int damagecalculator (Team const &attacker, Team const &defender, Weather const &weather) {
-	int damage = 0;
-	int const type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
-	int const type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
+unsigned damagecalculator (Team const &attacker, Team const &defender, Weather const &weather) {
+	unsigned damage = 0;
+	unsigned const type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
+	unsigned const type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 	if ((type1 != 0 and type2 != 0) or (GROUND == attacker.pokemon->move->type and grounded (defender, weather))) {
 		if (DRAGON_RAGE == attacker.pokemon->move->name)
 			damage = 40;
-		else if (ENDEAVOR == attacker.pokemon->move->name)
-			damage = defender.pokemon->hp.stat - attacker.pokemon->hp.stat;
+		else if (ENDEAVOR == attacker.pokemon->move->name) {
+			if (defender.pokemon->hp.stat > attacker.pokemon->hp.stat)
+				damage = defender.pokemon->hp.stat - attacker.pokemon->hp.stat;
+			else
+				damage = 0;
+		}
 		else if (FISSURE == attacker.pokemon->move->name or GUILLOTINE == attacker.pokemon->move->name or HORN_DRILL == attacker.pokemon->move->name or SHEER_COLD == attacker.pokemon->move->name)
 			damage = defender.pokemon->hp.max;
 		else if (NIGHT_SHADE == attacker.pokemon->move->name or SEISMIC_TOSS == attacker.pokemon->move->name)
@@ -438,15 +442,15 @@ int damagecalculator (Team const &attacker, Team const &defender, Weather const 
 			damage = defender.pokemon->hp.stat / 2;
 
 		else {
-			int rl;						// Reflect / Light Screen (2)
-			int weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-			int ff;					// Flash Fire: 3 / 2
-			int mf;					// Me First: 3 / 2
-			int stab;					// Same Type Attack Bonus: 3 / 2
-			int aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-			int eb;					// Expert Belt: 6 / 5
-			int tl;						// Tinted Lens (2)
-			int rb;					// Resistance berries (2)
+			unsigned rl;						// Reflect / Light Screen (2)
+			unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+			unsigned ff;					// Flash Fire: 3 / 2
+			unsigned mf;					// Me First: 3 / 2
+			unsigned stab;					// Same Type Attack Bonus: 3 / 2
+			unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+			unsigned eb;					// Expert Belt: 6 / 5
+			unsigned tl;						// Tinted Lens (2)
+			unsigned rb;					// Resistance berries (2)
 			damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
 			damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, type1, type2, aem, eb, tl, rb, damage);
 			damage = damagerandom (*attacker.pokemon, defender, stab, type1, type2, aem, eb, tl, rb, damage);
@@ -455,15 +459,20 @@ int damagecalculator (Team const &attacker, Team const &defender, Weather const 
 	return damage;
 }
 
-void recoil (Pokemon &user, int damage, int denominator) {
+void recoil (Pokemon &user, unsigned damage, unsigned denominator) {
 	if (user.ability != MAGIC_GUARD and user.ability != ROCK_HEAD) {
-		if (damage <= denominator)
+		if (damage <= 2 * denominator - 1)
 			--user.hp.stat;
 		else
-			user.hp.stat -= damage / denominator;
-		if (user.hp.stat < 0)
-			user.hp.stat = 0;
+			damage_side_effect (user, damage / denominator);
 	}
+}
+
+void damage_side_effect (Pokemon &user, unsigned damage) {
+	if (user.hp.stat > damage)
+		user.hp.stat -= damage;
+	else
+		user.hp.stat = 0;
 }
 
 }

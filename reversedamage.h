@@ -20,7 +20,7 @@ class Team;
 class Unknown;
 class Weather;
 
-void reversedamagecalculator (Team &attacker, Team const &defender, Weather const &weather, int damage, std::vector<Unknown> &hidden);
+void reversedamagecalculator (Team &attacker, Team const &defender, Weather const &weather, unsigned damage, std::vector<Unknown> &hidden);
 
 }
 #endif

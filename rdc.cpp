@@ -62,7 +62,7 @@ int main () {
 	std::vector<Unknown> hidden;
 	unknown (hidden);
 	
-	int damage = 660;
+	unsigned damage = 660;
 	std::cout << "Reverse damage calculation 1\n";
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
 	std::cout << "Reverse damage calculation 2\n";
