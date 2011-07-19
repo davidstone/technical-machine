@@ -20,14 +20,13 @@
 namespace technicalmachine {
 
 int64_t evaluate (Team &ai, Team &foe, Weather const &weather, score_variables const &sv) {
-	int64_t score = (ai.lucky_chant - foe.lucky_chant) * sv.lucky_chant + (ai.mist - foe.mist) * sv.mist + (ai.safeguard - foe.safeguard) * sv.safeguard + (ai.tailwind - foe.tailwind) * sv.tailwind + (ai.wish - foe.wish) * sv.wish;
-	score += scoreteam (ai, sv);
+	int64_t score = scoreteam (ai, sv) - scoreteam (foe, sv);
+
 	size_t index = ai.pokemon.index;
 	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
 		score += scorepokemon (ai, foe, weather, sv);
 	ai.pokemon.index = index;
 
-	score -= scoreteam (foe, sv);
 	index = foe.pokemon.index;
 	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
 		score -= scorepokemon (foe, ai, weather, sv);
@@ -36,7 +35,7 @@ int64_t evaluate (Team &ai, Team &foe, Weather const &weather, score_variables c
 }
 
 int64_t scoreteam (Team const &team, score_variables const &sv) {
-	int64_t score = 0;
+	int64_t score = sv.lucky_chant * team.lucky_chant + sv.mist * team.mist + sv.safeguard * team.safeguard + sv.tailwind * team.tailwind + sv.wish * team.wish;
 	if (team.pokemon->hp.stat != 0) {
 		score += team.magnet_rise * sv.magnet_rise;
 		score += sv.substitute * team.substitute / team.pokemon->hp.max;
@@ -73,7 +72,7 @@ int64_t scoreteam (Team const &team, score_variables const &sv) {
 }
 
 int64_t scorepokemon (Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
-	int64_t score = team.stealth_rock * sv.stealth_rock * effectiveness [ROCK] [team.pokemon->type1] * effectiveness [ROCK] [team.pokemon->type2] / 4;
+	int64_t score = team.stealth_rock * sv.stealth_rock * static_cast <int> (effectiveness [ROCK] [team.pokemon->type1] * effectiveness [ROCK] [team.pokemon->type2]) / 4;
 	if (grounded (team, weather))
 		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
 	if (team.pokemon->hp.stat != 0) {
