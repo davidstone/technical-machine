@@ -21,6 +21,7 @@
 #include "../crypt/sha2.hpp"
 #include "../crypt/rijndael.h"
 
+
 namespace technicalmachine {
 
 class InMessage {
@@ -84,12 +85,11 @@ InMessage::InMessage ():
 
 void InMessage::recvfully (unsigned bytes) {
 	buffer.clear();
-	unsigned read = 0;
+	std::vector<uint8_t> buf (4);
+	size_t read = 0;
 	while (read < bytes) {
-//		std::string str = socket.recv (bytes - read);
-		std::string str = "";
-		read += str.length();
-		for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+		read += boost::asio::read (socket, boost::asio::buffer (buf));
+		for (std::vector<uint8_t>::const_iterator it = buf.begin(); it != buf.end(); ++it)
 			buffer.push_back (*it);
 	}
 }
@@ -190,14 +190,15 @@ void OutMessage::finalize () {
 
 class BotClient {
 	private:
-		std::string password;
+		std::string const username;
+		std::string const password;
 	public:
-//		??? socket;
-		std::queue<OutMessage> send_queue;
 		boost::asio::io_service io;
+		boost::asio::ip::tcp::socket socket;
+		std::queue<OutMessage> send_queue;
 		boost::asio::deadline_timer timer;
-		BotClient (std::string const &host, uint16_t port);
-		void authenticate (std::string const & username, std::string const & password);
+		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd);
+		void authenticate ();
 		void activity_proxy ();
 		void send (OutMessage message);
 		std::string get_shared_secret (int secret_style, std::string const & salt);
@@ -212,17 +213,27 @@ class BotClient {
 		void reject_challenge (std::string const & user);
 };
 
-BotClient::BotClient (std::string const & host, uint16_t port):
-	password (""),
-	timer (io, boost::posix_time::seconds (45)) {
-//	socket = ???.socket()
-//	socket.connect (host, port);
+BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd):
+	username (user),
+	password (pswd),
+	socket (io),
+	timer (io, boost::posix_time::seconds (1)) {
+	std::cout << "Constructed!\n";
+	boost::asio::ip::tcp::resolver resolver (io);
+	boost::asio::ip::tcp::resolver::query query (host, port);
+	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
+	boost::asio::ip::tcp::resolver::iterator end;
+	boost::system::error_code error = boost::asio::error::host_not_found;
+	while (error and endpoint_iterator != end) {
+		socket.close();
+		socket.connect (*endpoint_iterator++, error);
+	}
+	std::cout << "Connected...\n";
 }
 
-void BotClient::authenticate (std::string const & username, std::string const & password_) {
+void BotClient::authenticate () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
 	message.write_string (username);
-	password = password_;
 	send (message);
 }
 
@@ -278,17 +289,22 @@ void BotClient::activity_proxy () {
 
 void BotClient::run () {
 	while (true) {
+		std::cout << "Cool!\n";
 		InMessage msg;
+		std::cout << "Hello\n";
 		// read in the five byte header
 		msg.recvfully (5);
+		std::cout << "Alright!\n";
 
 		// extract the message type and length components
 		InMessage::Message code = static_cast <InMessage::Message> (msg.read_byte ());
 		uint32_t length = msg.read_int ();
+		std::cout << "Yup!\n";
 
 		// read in the whole message
 		msg.recvfully (length);
 		handle_message (code, msg);
+		std::cout << "Oh yeah!\n";
 	}
 }
 
@@ -611,11 +627,12 @@ using namespace technicalmachine;
 
 int main () {
 	std::string host = "lab.pokemonexperte.de";
-	uint16_t port = 8446;
-	BotClient client (host, port);
+	std::string port = "8446";
 	std::string username = "TM1.0";
 	std::string password = "Maximum Security";
-	client.authenticate (username, password);
+	BotClient client (host, port, username, password);
+	client.authenticate ();
+	std::cout << "Authenticated.\n";
 	client.run();
 	return 0;
 }
