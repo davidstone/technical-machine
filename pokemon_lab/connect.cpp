@@ -88,7 +88,9 @@ void InMessage::recvfully (boost::asio::ip::tcp::socket & socket, unsigned bytes
 	buffer.clear();
 	buffer.resize (bytes);
 	index = 0;
+	std::cout << "buffer.size(): " << buffer.size() << '\n';
 	boost::asio::read (socket, boost::asio::buffer (buffer));
+	std::cout << "testing\n";
 }
 
 uint32_t InMessage::read_bytes (int bytes) {
@@ -363,20 +365,23 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 }
 
 void BotClient::send (OutMessage message) {
-	send_queue.push (message);
+	message.finalize (socket);
 }
 
 void activity_proxy (BotClient & client) {
 	while (true) {
 		boost::asio::deadline_timer timer (client.io, boost::posix_time::seconds (45));
 		timer.wait ();
+		std::cout << "sending activity notice\n";
 		client.send (OutMessage (OutMessage::CLIENT_ACTIVITY));
 	}
 }
 
 void send_proxy (BotClient & client) {
 	while (true) {
+		std::cout.flush();
 		if (client.send_queue.size() > 0) {
+			std::cout << "send_queue.size(): " << client.send_queue.size() << '\n';
 			OutMessage msg = client.send_queue.front();
 			client.send_queue.pop();
 			msg.finalize (client.socket);
@@ -386,7 +391,9 @@ void send_proxy (BotClient & client) {
 
 void BotClient::run () {
 	while (true) {
+		std::cout << "Yo!\n";
 		InMessage msg;
+		std::cout << "Yo ma!\n";
 		// read in the five byte header
 		msg.recvfully (socket, 5);
 		std::cout << "Hey there\n";
@@ -781,7 +788,7 @@ int main () {
 	std::string const password = "Maximum Security";
 	BotClient client (host, port, username, password);
 	boost::thread keep_alive (boost::bind (& activity_proxy, boost::ref (client)));
-	boost::thread send_messages (boost::bind (& send_proxy, boost::ref (client)));
+//	boost::thread send_messages (boost::bind (& send_proxy, boost::ref (client)));
 	client.authenticate ();
 	std::cout << "Authenticated.\n";
 	client.run();
