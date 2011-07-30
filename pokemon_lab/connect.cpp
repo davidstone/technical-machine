@@ -666,6 +666,9 @@ void BotClient::handle_registry_response (uint8_t type, std::string const & deta
 	}
 }
 
+void BotClient::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
+}
+
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
 	if (true or (n > 1 or team_length > 6 or generation != 4))
 		reject_challenge (user);
