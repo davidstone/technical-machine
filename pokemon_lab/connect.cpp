@@ -16,6 +16,7 @@
 #include <vector>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread.hpp>
 
 #include "../crypt/md5.hpp"
 #include "../crypt/sha2.hpp"
@@ -30,7 +31,7 @@ class InMessage {
 		unsigned index;
 	public:
 		InMessage ();
-		void recvfully (unsigned bytes);
+		void recvfully (boost::asio::ip::tcp::socket & socket, unsigned bytes);
 		uint8_t read_byte ();
 		uint16_t read_short ();
 		uint32_t read_int ();
@@ -83,24 +84,20 @@ InMessage::InMessage ():
 	index (0) {
 }
 
-void InMessage::recvfully (unsigned bytes) {
+void InMessage::recvfully (boost::asio::ip::tcp::socket & socket, unsigned bytes) {
 	buffer.clear();
-	std::vector<uint8_t> buf (4);
-	size_t read = 0;
-	while (read < bytes) {
-		read += boost::asio::read (socket, boost::asio::buffer (buf));
-		for (std::vector<uint8_t>::const_iterator it = buf.begin(); it != buf.end(); ++it)
-			buffer.push_back (*it);
-	}
+	buffer.resize (bytes);
+	index = 0;
+	boost::asio::read (socket, boost::asio::buffer (buffer));
 }
 
 uint32_t InMessage::read_bytes (int bytes) {
 	uint32_t data = 0;
 	for (int n = 0; n != bytes; ++n) {
-		data += buffer [index] << (bytes - n - 1);
+		data += buffer [index] << (8 * (bytes - n - 1));
 		++index;
 	}
-	return ntohl (data);
+	return data;
 }
 
 uint8_t InMessage::read_byte () {
@@ -117,6 +114,7 @@ uint32_t InMessage::read_int () {
 
 std::string InMessage::read_string () {
 	unsigned short length = read_short ();
+	std::cout << "length: " << length << '\n';
 	std::string data = "";
 	for (unsigned n = 0; n != length; ++n) {
 		data += buffer [index];
@@ -133,7 +131,7 @@ class OutMessage {
 		void write_byte (uint8_t byte);
 		void write_int (uint32_t bytes);
 		void write_string (std::string const & string);
-		void finalize ();
+		void finalize (boost::asio::ip::tcp::socket & socket);
 		enum Message {
 			REQUEST_CHALLENGE = 0,
 			CHALLENGE_RESPONSE = 1,
@@ -181,11 +179,12 @@ void OutMessage::write_string (std::string const & string) {
 		buffer.push_back (*it);
 }
 
-void OutMessage::finalize () {
+void OutMessage::finalize (boost::asio::ip::tcp::socket & socket) {
 	uint32_t length = htonl (buffer.size() - 1);
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
 		buffer.insert (buffer.begin() + 1, *(byte + n));
+	boost::asio::write (socket, boost::asio::buffer (buffer));
 }
 
 class BotClient {
@@ -196,15 +195,14 @@ class BotClient {
 		boost::asio::io_service io;
 		boost::asio::ip::tcp::socket socket;
 		std::queue<OutMessage> send_queue;
-		boost::asio::deadline_timer timer;
 		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd);
 		void authenticate ();
-		void activity_proxy ();
 		void send (OutMessage message);
 		std::string get_shared_secret (int secret_style, std::string const & salt);
 		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);
 		void run ();
 		void handle_message (InMessage::Message &code, InMessage &msg);
+		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message);
 		void handle_challenge (InMessage msg);
 		void handle_registry_response (uint8_t type, std::string const & details);
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
@@ -216,9 +214,7 @@ class BotClient {
 BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd):
 	username (user),
 	password (pswd),
-	socket (io),
-	timer (io, boost::posix_time::seconds (1)) {
-	std::cout << "Constructed!\n";
+	socket (io) {
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
 	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
@@ -228,7 +224,6 @@ BotClient::BotClient (std::string const & host, std::string const & port, std::s
 		socket.close();
 		socket.connect (*endpoint_iterator++, error);
 	}
-	std::cout << "Connected...\n";
 }
 
 void BotClient::authenticate () {
@@ -279,30 +274,38 @@ void BotClient::send (OutMessage message) {
 	send_queue.push (message);
 }
 
-void BotClient::activity_proxy () {
+void activity_proxy (BotClient & client) {
 	while (true) {
+		boost::asio::deadline_timer timer (client.io, boost::posix_time::seconds (45));
 		timer.wait ();
-		send (OutMessage (OutMessage::CLIENT_ACTIVITY));
-		timer.expires_at (timer.expires_at() + boost::posix_time::seconds (45));
+		client.send (OutMessage (OutMessage::CLIENT_ACTIVITY));
+	}
+}
+
+void send_proxy (BotClient & client) {
+	while (true) {
+		OutMessage msg = client.send_queue.front();
+		client.send_queue.pop();
+		msg.finalize (client.socket);
 	}
 }
 
 void BotClient::run () {
 	while (true) {
-		std::cout << "Cool!\n";
+		std::cout << "first\n";
 		InMessage msg;
-		std::cout << "Hello\n";
 		// read in the five byte header
-		msg.recvfully (5);
-		std::cout << "Alright!\n";
+		msg.recvfully (socket, 5);
 
 		// extract the message type and length components
 		InMessage::Message code = static_cast <InMessage::Message> (msg.read_byte ());
+		std::cout << "code: " << code << '\n';
 		uint32_t length = msg.read_int ();
-		std::cout << "Yup!\n";
+		std::cout << "length: " << length << '\n';
 
 		// read in the whole message
-		msg.recvfully (length);
+		msg.recvfully (socket, length);
+		std::cout << "Hey\n";
 		handle_message (code, msg);
 		std::cout << "Oh yeah!\n";
 	}
@@ -310,12 +313,16 @@ void BotClient::run () {
 
 void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 	switch (code) {
-		case InMessage::WELCOME_MESSAGE:
+		case InMessage::WELCOME_MESSAGE: {
 			// int32  : server version
 			// string : server name
 			// string : welcome message
-//			handle_welcome_message (msg.read_int(), msg.read_string(), msg.read_string());
+			uint32_t version = msg.read_int();
+			std::string server = msg.read_string();
+			std::string message = msg.read_string();
+			handle_welcome_message (version, server, message);
 			break;
+		}
 		case InMessage::PASSWORD_CHALLENGE:
 			handle_challenge (msg);
 			break;
@@ -567,6 +574,9 @@ void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 	}
 }
 
+void BotClient::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) {
+}
+
 void BotClient::handle_challenge (InMessage msg) {
 	std::string challenge = "";
 	for (unsigned n = 0; n != 16; ++n)
@@ -593,7 +603,7 @@ void BotClient::handle_registry_response (uint8_t type, std::string const & deta
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	if (true or (n > 1 or team_length > 6))
+	if (true or (n > 1 or team_length > 6 or generation != 4))
 		reject_challenge (user);
 	else {
 //		accept_challenge (user, team);
@@ -601,7 +611,7 @@ void BotClient::handle_incoming_challenge (std::string const & user, uint8_t gen
 }
 
 void BotClient::join_channel (std::string const & channel) {
-	OutMessage msg (3);
+	OutMessage msg (OutMessage::JOIN_CHANNEL);
 	msg.write_string (channel);
 	send (msg);
 }
@@ -616,7 +626,7 @@ void BotClient::join_channel (std::string const & channel) {
 */
 
 void BotClient::reject_challenge (std::string const & user) {
-	OutMessage msg (7);
+	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (0);
 	send (msg);
@@ -626,11 +636,13 @@ void BotClient::reject_challenge (std::string const & user) {
 using namespace technicalmachine;
 
 int main () {
-	std::string host = "lab.pokemonexperte.de";
-	std::string port = "8446";
-	std::string username = "TM1.0";
-	std::string password = "Maximum Security";
+	std::string const host = "lab.pokemonexperte.de";
+	std::string const port = "8446";
+	std::string const username = "TM1.0";
+	std::string const password = "Maximum Security";
 	BotClient client (host, port, username, password);
+	boost::thread keep_alive (boost::bind (& activity_proxy, boost::ref (client)));
+	boost::thread send_messages (boost::bind (& send_proxy, boost::ref (client)));
 	client.authenticate ();
 	std::cout << "Authenticated.\n";
 	client.run();
