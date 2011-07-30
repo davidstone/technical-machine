@@ -36,6 +36,7 @@ class InMessage {
 		uint16_t read_short ();
 		uint32_t read_int ();
 		std::string read_string ();
+		void skip ();
 	private:
 		uint32_t read_bytes (int bytes);
 	public:
@@ -121,6 +122,10 @@ std::string InMessage::read_string () {
 		++index;
 	}
 	return data;
+}
+
+void InMessage::skip () {
+	buffer.clear();
 }
 
 class OutMessage {
@@ -284,9 +289,11 @@ void activity_proxy (BotClient & client) {
 
 void send_proxy (BotClient & client) {
 	while (true) {
-		OutMessage msg = client.send_queue.front();
-		client.send_queue.pop();
-		msg.finalize (client.socket);
+		if (client.send_queue.size() > 0) {
+			OutMessage msg = client.send_queue.front();
+			client.send_queue.pop();
+			msg.finalize (client.socket);
+		}
 	}
 }
 
@@ -311,100 +318,165 @@ void BotClient::run () {
 	}
 }
 
+class Channel {
+	std::string name;
+	uint8_t type;
+	std::string topic;
+	uint32_t population;
+	Channel (InMessage & msg):
+		name (msg.read_string()),
+		type (msg.read_byte()),
+		topic (msg.read_string()),
+		population (msg.read_int()) {
+	}
+};
+
+class Metagame {
+	public:
+		uint8_t index;
+		std::string name;
+		std::string id;
+		std::string description;
+		uint8_t party_size;
+		uint8_t max_team_length;
+
+		std::vector <uint16_t> bans;
+		std::vector <std::string> clauses;
+
+		bool timing;
+		uint16_t pool_length;
+		uint8_t periods;
+		uint16_t period_length;
+	private:
+		void load_bans (InMessage &msg) {
+			uint16_t ban_list_count = msg.read_short ();
+			for (uint16_t n = 0; n != ban_list_count; ++n) {
+				uint16_t species_id = msg.read_short ();
+				bans.push_back (species_id);
+			}
+		}
+		void load_clauses (InMessage &msg) {
+			uint16_t clause_count = msg.read_short ();
+			for (uint16_t b = 0; b != clause_count; ++b) {
+				std::string clause_name = msg.read_string ();
+				clauses.push_back (clause_name);
+			}
+		}
+		void load_timer (InMessage &msg) {
+			timing = msg.read_byte ();
+			if (timing) {
+				pool_length = msg.read_short ();
+				periods = msg.read_byte ();
+				period_length = msg.read_short ();
+			}
+		}
+	public:
+		Metagame (InMessage &msg):
+			index (msg.read_byte ()),
+			name (msg.read_string ()),
+			id (msg.read_string ()),
+			description (msg.read_string ()),
+			party_size (msg.read_byte ()),
+			max_team_length (msg.read_byte ()),
+			pool_length (-1),
+			periods (-1),
+			period_length (-1) {
+			load_bans (msg);
+			load_clauses (msg);
+			load_timer (msg);
+		}
+};
+
 void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 	switch (code) {
 		case InMessage::WELCOME_MESSAGE: {
-			// int32  : server version
-			// string : server name
-			// string : welcome message
 			uint32_t version = msg.read_int();
-			std::string server = msg.read_string();
+			std::string server_name = msg.read_string();
 			std::string message = msg.read_string();
-			handle_welcome_message (version, server, message);
+			handle_welcome_message (version, server_name, message);
 			break;
 		}
 		case InMessage::PASSWORD_CHALLENGE:
 			handle_challenge (msg);
 			break;
-		case InMessage::REGISTRY_RESPONSE:
-			// byte   : type
-			// string : details
-			handle_registry_response (msg.read_byte(), msg.read_string());
+		case InMessage::REGISTRY_RESPONSE: {
+			uint8_t type = msg.read_byte();
+			std::string details = msg.read_string();
+			handle_registry_response (type, details);
 			break;
-		case InMessage::CHANNEL_INFO:
-			// _int 32 : channel id
-			// byte   : channel info
-			// string : channel name
-			// string : channel topic
-			// int32  : channel flags
-			// int32  : number of users
-			// for each user:
-			//   string : name
-			//   int32  : flags
-/*			uint32_t id = msg.read_int();
+		}
+		case InMessage::CHANNEL_INFO: {
+			uint32_t id = msg.read_int();
 			uint8_t info = msg.read_byte();
-			std::string name = msg.read_string();
+			std::string channel_name = msg.read_string();
 			std::string topic = msg.read_string();
+			uint32_t channel_flags = msg.read_int();
+			uint32_t number_of_users = msg.read_int();
+			std::vector <std::pair <std::string, uint32_t> > users;
+			for (uint32_t n = 0; n != number_of_users; ++n) {
+				std::string username = msg.read_string();
+				uint32_t flags = msg.read_int();
+				std::pair <std::string, uint32_t> user (username, flags);
+				users.push_back (user);
+			}
+			handle_channel_info (id, info, channel_name, topic, channel_flags, users);
+			break;
+		}
+		case InMessage::CHANNEL_JOIN_PART: {
+			uint32_t id = msg.read_int();
+			std::string user = msg.read_string();
+			uint8_t joining = msg.read_byte();
+			handle_channel_join_part (id, user, joining);
+			break;
+		}
+		case InMessage::CHANNEL_STATUS: {
+			uint32_t channel_id = msg.read_int();
+			std::string invoker = msg.read_string();
+			std::string user = msg.read_string();
 			uint32_t flags = msg.read_int();
-			uint32_t pop = msg.read_int();
-			users = [(msg.read_string(), msg.read_int()) for i in range(pop)]
-			handle_channel_info (id, info, name, topic, flags, users);
-*/			break;
-		case InMessage::CHANNEL_JOIN_PART:
-			// int32  : channel id
-			// string : user
-			// byte   : joining?
-//			handle_channel_join_part (msg.read_int(), msg.read_string(), msg.read_byte())
+			handle_channel_status (id, invoker, user, flags);
 			break;
-		case InMessage::CHANNEL_STATUS:
-			// int32  : channel id
-			// string: invoker
-			// string : user
-			// int32  : flags
-//			handle_channel_status (msg.read_int(), msg.read_string(), msg.read_string(), msg.read_int())
-			break;
-		case InMessage::CHANNEL_LIST:
-			// int32 : number of channels
-			// for each channel:
-			//   string : name
-			//   byte   : type
-			//   string : topic
-			//   int32 : population
-/*			uint32_t n = msg.read_int()
-			channels = [(msg.read_string(), msg.read_byte(), msg.read_string(), msg.read_int()) for i in range(n)]
+		}
+		case InMessage::CHANNEL_LIST: {
+			uint32_t number_of_channels = msg.read_int();
+			std::vector <Channel> channels;
+			for (uint32_t n = 0; n != number_of_channels; ++n) {
+				Channel channel (msg);
+				channels.push_back (channel);
+			}
 			handle_channel_list (channels)
-*/			break;
-		case InMessage::CHANNEL_MESSAGE:
-			// int32  : channel id
-			// string : user
-			// string : message
-//			handle_channel_message (msg.read_int(), msg.read_string(), msg.read_string())
 			break;
-		case InMessage::INCOMING_CHALLENGE:
-			// string : user
-			// byte   : generation
-			// int32  : active party size
-			// int32  : max team length
-			handle_incoming_challenge (msg.read_string(), msg.read_byte(), msg.read_int(), msg.read_int());
+		}
+		case InMessage::CHANNEL_MESSAGE: {
+			uint32_t channel_id = msg.read_int();
+			std::string user = msg.read_string ();
+			std::string message = msg.read_string ();
+			handle_channel_message (id, user, message);
 			break;
-		case InMessage::FINALISE_CHALLENGE:
-			// string : user
-			// byte   : whether the challenge was accepted
-//			handle_finalize_challenge (msg.read_string(), msg.read_byte())
+		}
+		case InMessage::INCOMING_CHALLENGE: {
+			std::string user = msg.read_string ();
+			uint8_t generation = msg.read_byte ();
+			uint32_t active_party_size = msg.read_int ();
+			uint32_t max_team_length = msg.read_int ();
+			handle_incoming_challenge (user, generation, active_party_size, max_team_length);
 			break;
-		case InMessage::BATTLE_BEGIN:
-			// int32  : field id
-			// string : opponent
-			// byte   : party
-//			handle_battle_begin (msg.read_int(), msg.read_string(), msg.read_byte())
+		}
+		case InMessage::FINALISE_CHALLENGE: {
+			std::string user = msg.read_string ();
+			uint8_t accepted = msg.read_byte ();
+			handle_finalize_challenge (user, accepted);
 			break;
-		case InMessage::REQUEST_ACTION:
-			// int32  : field id
-			// byte   : slot of pokemon
-			// byte   : position of pokemon
-			// byte   : whether this is a replacement
-			// int32  : number of pokemon
-			// for each pokemon
+		}
+		case InMessage::BATTLE_BEGIN: {
+			uint32_t field_id = msg.read_int ();
+			std::string opponent = msg.read_string ();
+			uint8_t party = msg.read_byte ();
+			handle_battle_begin (field_id, opponent, party);
+			break;
+		}
+		case InMessage::REQUEST_ACTION: {
+/*			// for each pokemon
 			//	 byte: whether it is legal to switch to this pokemon
 			// if not replacement
 			//	 byte : whether switching is legal
@@ -413,12 +485,19 @@ void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 			//		 int32 : total number of moves
 			//		 for each move:
 			//			 byte: whether the move is legal
-/*			fid = msg.read_int();
-			slot = msg.read_byte();
-			pos = msg.read_byte();
-			replace = msg.read_byte();
-			num_pokes = msg.read_int();
-			switches = [msg.read_byte() for i in range(num_pokes)]
+
+			uint32_t field_id = msg.read_int ();
+			uint8_t slot = msg.read_byte ();
+			uint8_t position = msg.read_byte ();
+			uint8_t replacement = msg.read_byte ();
+			uint32_t number_of_pokemon = msg.read_int ();
+			std::vector <uint8_t> switches;
+			for (uint32_t n = 0; n != number_of_pokemon; ++n) {
+				// Whether it's legal to switch to this Pokemon
+				bool can_switch_to = msg.read_byte ();
+				switches.push_back (can_switch_to);
+			}
+
 			can_switch = false;
 			forced = false;
 			moves = []
@@ -431,9 +510,11 @@ void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 			}
 			if not 1 in switches:
 				can_switch = false
-			handle_request_action(fid, slot, pos, replace, switches, can_switch, forced, moves)
-*/			break;
-		case InMessage::BATTLE_POKEMON:
+			handle_request_action(fid, slot, pos, replace, switches, can_switch, forced, moves) */
+			msg.clear ();
+			break;
+		}
+		case InMessage::BATTLE_POKEMON: {
 			// int32 : field id
 			// for 0..1:
 			//	 for 0..n-1:
@@ -444,130 +525,113 @@ void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 			//			 byte: shiny
 		   
 			// the bot probably doesn't need to care about this
+			msg.clear ();
 			break;
-		case InMessage::BATTLE_PRINT:
-			// int32 : field id
-			// byte  : category
-			// int16 : message id
-			// byte  : number of arguments
-			// for each argument:
-			//   string : value of the argument
-/*			fid = msg.read_int();
-			cat = msg.read_byte();
-			id = msg.read_short();
-			argc = msg.read_byte();
-			args = [msg.read_string() for i in range(argc)]
-			handle_battle_print (fid, cat, id, args);
-*/			break;
-		case InMessage::BATTLE_VICTORY:
-			// int32 : field id
-			// int16 : party id
-//			handle_battle_victory (msg.read_int(), msg.read_short());
+		}
+		case InMessage::BATTLE_PRINT: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t category = msg.read_byte ();
+			uint16_t message_id = msg.read_short ();
+			uint8_t argc = msg.read_byte ();
+			std::vector <std::string> arguments;
+			for (uint8_t n = 0; n != argc; ++n) {
+				std::string argument = msg.read_string ();
+				arguments.push_back (argument);
+			}
+			handle_battle_print (field_id, category, message_id, arguments);
 			break;
-		case InMessage::BATTLE_USE_MOVE:
-			// int32  : field id
-			// byte   : party
-			// byte   : slot
-			// string : user [nick]name
-			// int16  : move id
-//			handle_battle_use_move (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_string(), msg.read_short());
+		}
+		case InMessage::BATTLE_VICTORY: {
+			uint32_t field_id = msg.read_int ();
+			uint16_t party_id = msg.read_short ();
+			handle_battle_victory (field_id, party_id);
 			break;
-		case InMessage::BATTLE_WITHDRAW:
-			// int32  : field id
-			// byte   : party
-			// byte   : slot
-			// string : user [nick]name
-//			handle_battle_withdraw (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_string());
+		}
+		case InMessage::BATTLE_USE_MOVE: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t party = msg.read_byte ();
+			uint8_t slot = msg.read_byte ();
+			std::string nickname = msg.read_string ();
+			uint16_t move_id = msg.read_short ();
+			handle_battle_use_move (field_id, party, slot, nickname, move_id);
 			break;
-		case InMessage::BATTLE_SEND_OUT:
-			// int32  : field id
-			// byte   : party
-			// byte   : slot
-			// byte   : index
-			// string : user [nick]name
-			// int16  : species id
-			// byte   : gender
-			// byte   : level
-//			handle_battle_send_out (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_byte(), msg.read_string(), msg.read_short(), msg.read_byte(), msg.read_byte());
+		}
+		case InMessage::BATTLE_WITHDRAW: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t party = msg.read_byte ();
+			uint8_t slot = msg.read_byte ();
+			std::string nickname = msg.read_string ();
+			handle_battle_withdraw (field_id, party, slot, nickname);
 			break;
-		case InMessage::BATTLE_HEALTH_CHANGE:
-			// int32 : field id
-			// byte  : party
-			// byte  : slot
-			// int16 : delta health in [0, 48]
-			// int16 : new total health in [0, 48]
-			// int16 : denominator
-//			handle_battle_health_change (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_short(), msg.read_short(), msg.read_short());
+		}
+		case InMessage::BATTLE_SEND_OUT: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t party = msg.read_byte ();
+			uint8_t slot = msg.read_byte ();
+			uint8_t index = msg.read_byte ();
+			std::string nickname = msg.read_string ();
+			uint16_t species_id = msg.read_short ();
+			uint8_t gender = msg.read_byte ();
+			uint8_t level = msg.read_byte();
+			handle_battle_send_out (field_id, party, slot, index, nickname, species_id, gender, level);
 			break;
-		case InMessage::BATTLE_SET_PP:
-			// int32 : field id
-			// byte  : party
-			// byte  : slot
-			// byte  : pp
-//			handle_battle_set_pp (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_byte());
+		}
+		case InMessage::BATTLE_HEALTH_CHANGE: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t party = msg.read_byte ();
+			uint8_t slot = msg.read_byte ();
+			uint16_t change_in_health = msg.read_short ();	// 0 through 48
+			uint16_t remaining_health = msg.read_short ();	// 0 through 48
+			uint16_t denominator = msg.read_short ();
+			handle_battle_health_change (field_id, party, slot, change_in_health, remaining_health, denominator);
 			break;
-		case InMessage::BATTLE_FAINTED:
-			// int32  : field id
-			// byte   : party
-			// byte   : slot
-			// string : user [nick]name
-//			handle_battle_fainted (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_string());
+		}
+		case InMessage::BATTLE_SET_PP: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t party = msg.read_byte ();
+			uint8_t slot = msg.read_byte ();
+			uint8_t pp = msg.read_byte ();
+			handle_battle_set_pp (field_Id, party, slot, pp);
 			break;
-		case InMessage::BATTLE_BEGIN_TURN:
-			// int32 : field id
-			// int16 : turn count
-//			handle_battle_begin_turn (msg.read_int(), msg.read_short());
+		}
+		case InMessage::BATTLE_FAINTED: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t party = msg.read_byte ();
+			uint8_t slot = msg.read_byte ();
+			std::string nickname = msg.read_string ();
+			handle_battle_fainted (field_id, party, slot, nickname);
 			break;
-		case InMessage::SPECTATOR_BEGIN:
+		}
+		case InMessage::BATTLE_BEGIN_TURN: {
+			uint32_t field_id = msg.read_int ();
+			uint16_t turn_count = msg.read_short ();
+			handle_battle_begin_turn (field_id, turn_count);
 			break;
-		case InMessage::BATTLE_SET_MOVE:
-			// int32  : field id
-			// byte   : pokemon
-			// byte   : move slot
-			// int16  : new move
-			// byte   : pp
-			// byte   : max pp
-//			handle_battle_set_move (msg.read_int(), msg.read_byte(), msg.read_byte(), msg.read_short(), msg.read_byte(), msg.read_byte());
+		}
+		case InMessage::SPECTATOR_BEGIN: {
+			msg.clear();
 			break;
-		case InMessage::METAGAME_LIST:
-			// int16  : metagame count
-			// for 0..metagame count - 1:
-			//	byte   : index
-			//	string : name
-			//	string : id
-			//	string : description
-			//	byte   : party size
-			//	byte   : max team length
-			//	int16  : ban list count
-			//	for 0..ban list count - 1:
-			//		int16  : species id
-			//	int16  : clause count
-			//	for 0..clause count - 1:
-			//		string : clause name
-			//	byte	: if timing is enabled
-			//	if timing is enabled:
-			//	   short : pool length
-			//	   byte  : periods
-			//	   short : period length
-/*			mcount = msg.read_short()
-			metagames = []
-			for i in xrange(0, mcount):
-				index, name, id, desc = msg.read_byte(), msg.read_string(), msg.read_string(), msg.read_string()
-				party_size, max_team_length = msg.read_byte(), msg.read_byte()
-				bans = [msg.read_short() for i in xrange(0, msg.read_short())]
-				clauses = [msg.read_string() for i in xrange(0, msg.read_short())]
-				timing = (msg.read_byte() != 0)
-				if timing:
-					pool = msg.read_short();
-					periods = msg.read_byte();
-					period_length = msg.read_short();
-				else:
-					pool = -1;
-					periods = -1;
-					period_length = -1
-				metagames.append((index, name, id, desc, party_size, max_team_length, bans, clauses, pool, periods, period_length))
-			handle_metagame_list(metagames)
-*/			break;
+		}
+		case InMessage::BATTLE_SET_MOVE: {
+			uint32_t field_id = msg.read_int ();
+			uint8_t pokemon = msg.read_byte ();
+			uint8_t move_slot = msg.read_byte ();
+			uint16_t new_move = msg.read_short ();
+			uint8_t pp = msg.read_byte ();
+			uint8_t max_pp = msg.read_byte ();
+			handle_battle_set_move (field_id, pokemon, move_slot, new_move, pp, max_pp);
+			break;
+		}
+		case InMessage::METAGAME_LIST: {
+			uint16_t metagame_count = msg.read_short ();
+			std::vector <Metagame> metagames;
+			for (uint16_t n = 0; n != metagame_count; ++n) {
+				Metagame metagame;
+				metagames.push_back (metagame);
+			}
+			handle_metagame_list (metagames);
+			break;
+		}
 		default:
 			std::cerr << "Unknown code: " << code << '\n';
 			break;
