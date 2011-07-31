@@ -11,11 +11,9 @@
 
 #include <cstdint>
 #include <iostream>
-#include <queue>
 #include <vector>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread.hpp>
 
 #include "../crypt/md5.hpp"
 #include "../crypt/sha2.hpp"
@@ -88,9 +86,7 @@ void InMessage::recvfully (boost::asio::ip::tcp::socket & socket, unsigned bytes
 	buffer.clear();
 	buffer.resize (bytes);
 	index = 0;
-	std::cout << "buffer.size(): " << buffer.size() << '\n';
 	boost::asio::read (socket, boost::asio::buffer (buffer));
-	std::cout << "testing\n";
 }
 
 uint32_t InMessage::read_bytes (int bytes) {
@@ -129,11 +125,11 @@ void InMessage::skip () {
 }
 
 class OutMessage {
-	private:
-		std::vector <uint8_t> buffer;
 	public:
+		std::vector <uint8_t> buffer;
 		OutMessage (uint8_t code);
 		void write_byte (uint8_t byte);
+		void write_short (uint16_t bytes);
 		void write_int (uint32_t bytes);
 		void write_string (std::string const & string);
 		void finalize (boost::asio::ip::tcp::socket & socket);
@@ -172,6 +168,13 @@ void OutMessage::write_byte (uint8_t byte) {
 	buffer.push_back (byte);
 }
 
+void OutMessage::write_short (uint16_t bytes) {
+	uint16_t network_byte = htons (bytes);
+	uint8_t * byte = reinterpret_cast <uint8_t *> (&network_byte);
+	for (unsigned n = 0; n != sizeof (uint16_t); ++n)
+		buffer.push_back (*(byte + n));
+}
+
 void OutMessage::write_int (uint32_t bytes) {
 	uint32_t network_byte = htonl (bytes);
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&network_byte);
@@ -180,6 +183,7 @@ void OutMessage::write_int (uint32_t bytes) {
 }
 
 void OutMessage::write_string (std::string const & string) {
+	write_short (string.length());
 	for (std::string::const_iterator it = string.begin(); it != string.end(); ++it)
 		buffer.push_back (*it);
 }
@@ -269,7 +273,6 @@ class BotClient {
 	public:
 		boost::asio::io_service io;
 		boost::asio::ip::tcp::socket socket;
-		std::queue<OutMessage> send_queue;
 		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd);
 		void authenticate ();
 		void send (OutMessage message);
@@ -342,21 +345,23 @@ std::string BotClient::get_shared_secret (int secret_style, std::string const & 
 std::string BotClient::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
 	std::string digest = getSHA256Hash (get_shared_secret (secret_style, salt));
 	rijndael_ctx ctx;
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 16);
+	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
 	unsigned char middle [16];
 	rijndael_decrypt (&ctx, reinterpret_cast <unsigned char const *> (challenge.c_str()), middle);
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 16);
+	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
 	unsigned char result [16];
 	rijndael_decrypt (&ctx, middle, result);
+	
+	uint32_t r = (result [0] << 3 * 8) + (result [1] << 2 * 8) + (result [2] << 1 * 8) + result [3] + 1;
+	r = htonl (r);
 
-	uint32_t r = (result [0] << 3) + (result [1] << 2) + (result [3] << 1) + result [4] + 1;
 	unsigned char response_array [16] = { 0 };
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&r);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
 		response_array [n] = (*(byte + n));
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 16);
+	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
 	rijndael_encrypt (&ctx, response_array, middle);
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 16);
+	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
 	rijndael_encrypt (&ctx, middle, response_array);
 	std::string response = "";
 	for (unsigned n = 0; n != 16; ++n)
@@ -377,38 +382,19 @@ void activity_proxy (BotClient & client) {
 	}
 }
 
-void send_proxy (BotClient & client) {
-	while (true) {
-		std::cout.flush();
-		if (client.send_queue.size() > 0) {
-			std::cout << "send_queue.size(): " << client.send_queue.size() << '\n';
-			OutMessage msg = client.send_queue.front();
-			client.send_queue.pop();
-			msg.finalize (client.socket);
-		}
-	}
-}
-
 void BotClient::run () {
 	while (true) {
-		std::cout << "Yo!\n";
 		InMessage msg;
-		std::cout << "Yo ma!\n";
 		// read in the five byte header
 		msg.recvfully (socket, 5);
-		std::cout << "Hey there\n";
 
 		// extract the message type and length components
 		InMessage::Message code = static_cast <InMessage::Message> (msg.read_byte ());
-		std::cout << "Howdy\n";
 		uint32_t length = msg.read_int ();
 
-		std::cout << "Hola\n";
 		// read in the whole message
 		msg.recvfully (socket, length);
-		std::cout << "Hi\n";
 		handle_message (code, msg);
-		std::cout << "Hello\n";
 	}
 }
 
@@ -685,7 +671,7 @@ void BotClient::handle_registry_response (uint8_t type, std::string const & deta
 		join_channel ("main");
 	}
 	else {
-		std::cout << "Authentication failed with code: " << type << ". =(\n";
+		std::cout << "Authentication failed with code: " << static_cast <int> (type) << ". =(\n";
 		if (details.length() > 0)
 			std::cout << details + "\n";
 	}
@@ -787,7 +773,7 @@ int main () {
 	std::string const username = "TM1.0";
 	std::string const password = "Maximum Security";
 	BotClient client (host, port, username, password);
-	boost::thread keep_alive (boost::bind (& activity_proxy, boost::ref (client)));
+//	boost::thread keep_alive (boost::bind (& activity_proxy, boost::ref (client)));
 //	boost::thread send_messages (boost::bind (& send_proxy, boost::ref (client)));
 	client.authenticate ();
 	std::cout << "Authenticated.\n";
