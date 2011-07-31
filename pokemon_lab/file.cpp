@@ -16,7 +16,6 @@
 #include "file.h"
 
 namespace technicalmachine {
-
 namespace pl {
 
 unsigned team_size (std::string const &name) {
