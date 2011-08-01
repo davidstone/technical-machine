@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 #include <boost/asio.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "connect.h"
@@ -31,6 +33,7 @@ namespace pl {
 BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd):
 	username (user),
 	password (pswd),
+	timer (io, boost::posix_time::seconds (45)),
 	socket (io) {
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
@@ -94,28 +97,40 @@ void BotClient::send (OutMessage message) {
 	message.finalize (socket);
 }
 
-/*void activity_proxy (BotClient & client) {
-	while (true) {
-		boost::asio::deadline_timer timer (client.io, boost::posix_time::seconds (45));
-		timer.wait ();
-		std::cout << "sending activity notice\n";
-		client.send (OutMessage (OutMessage::CLIENT_ACTIVITY));
-	}
-}*/
+/*void BotClient::handle_full_message (boost::system::error_code const & error) {
+	InMessage msg;
+	// read in the five byte header
+	msg.recvfully (socket, 5);
+
+	// extract the message type and length components
+	InMessage::Message code = static_cast <InMessage::Message> (msg.read_byte ());
+	uint32_t length = msg.read_int ();
+
+	// read in the whole message
+	msg.recvfully (socket, length);
+	handle_message (code, msg);
+}
+*/
 
 void BotClient::run () {
-	while (true) {
-		InMessage msg;
-		// read in the five byte header
-		msg.recvfully (socket, 5);
+	timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
 
-		// extract the message type and length components
-		InMessage::Message code = static_cast <InMessage::Message> (msg.read_byte ());
-		uint32_t length = msg.read_int ();
+	InMessage msg;
+	msg.read_header (socket, this);
 
-		// read in the whole message
-		msg.recvfully (socket, length);
-		handle_message (code, msg);
+	io.run();
+}
+
+void BotClient::reset_timer (boost::system::error_code const & error) {
+	if (!error) {
+		std::cout << "Sending activity notice\n";
+		send (OutMessage (OutMessage::CLIENT_ACTIVITY));
+		timer.expires_from_now (boost::posix_time::seconds (45));
+		timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
+	}
+	else {
+		std::cerr << "An error has occured handling the keep alive timer! =o\n";
+		std::cerr << "Error code: " << error << '\n';
 	}
 }
 
@@ -164,7 +179,7 @@ class Metagame {
 				clauses.push_back (clause_name);
 			}
 		}
-		void load_timer (InMessage &msg) {
+		void load_battle_timer (InMessage &msg) {
 			timing = msg.read_byte ();
 			if (timing) {
 				pool_length = msg.read_short ();
@@ -185,7 +200,7 @@ class Metagame {
 			period_length (-1) {
 			load_bans (msg);
 			load_clauses (msg);
-			load_timer (msg);
+			load_battle_timer (msg);
 		}
 };
 
@@ -438,6 +453,7 @@ void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
 			std::cerr << "Unknown code: " << code << '\n';
 			break;
 	}
+	msg.read_header (socket, this);
 }
 
 void BotClient::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) {

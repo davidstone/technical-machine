@@ -12,7 +12,9 @@
 #include <cstdint>
 #include <vector>
 #include <boost/asio.hpp>
+#include <boost/bind.hpp>
 #include "inmessage.h"
+#include "connect.h"
 
 namespace technicalmachine {
 namespace pl {
@@ -21,11 +23,24 @@ InMessage::InMessage ():
 	index (0) {
 }
 
-void InMessage::recvfully (boost::asio::ip::tcp::socket & socket, unsigned bytes) {
+void InMessage::reset (unsigned bytes) {
 	buffer.clear();
 	buffer.resize (bytes);
 	index = 0;
-	boost::asio::read (socket, boost::asio::buffer (buffer));
+}
+
+void InMessage::read_header (boost::asio::ip::tcp::socket & socket, BotClient * client) {
+	reset (5);
+	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, socket, client));
+}
+
+void InMessage::read_body (boost::asio::ip::tcp::socket & socket, BotClient * client) {
+	// extract the message type and length components
+	Message code = static_cast <InMessage::Message> (read_byte ());
+	uint32_t bytes = read_int ();
+
+	reset (bytes);
+	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& BotClient::handle_message, client, code, *this));
 }
 
 uint32_t InMessage::read_bytes (int bytes) {

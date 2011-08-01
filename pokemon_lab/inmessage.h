@@ -19,13 +19,17 @@
 namespace technicalmachine {
 namespace pl {
 
+class BotClient;
+
 class InMessage {
 	private:
 		std::vector <uint8_t> buffer;
 		unsigned index;
 	public:
 		InMessage ();
-		void recvfully (boost::asio::ip::tcp::socket & socket, unsigned bytes);
+		void reset (unsigned bytes);
+		void read_header (boost::asio::ip::tcp::socket & socket, BotClient * client);
+		void read_body (boost::asio::ip::tcp::socket & socket, BotClient * client);
 		uint8_t read_byte ();
 		uint16_t read_short ();
 		uint32_t read_int ();
