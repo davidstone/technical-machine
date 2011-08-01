@@ -40,7 +40,7 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, BotClient * cl
 	uint32_t bytes = read_int ();
 
 	reset (bytes);
-	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& BotClient::handle_message, client, code, *this));
+	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& BotClient::handle_message, client, code, boost::ref (*this)));
 }
 
 uint32_t InMessage::read_bytes (int bytes) {
