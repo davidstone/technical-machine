@@ -31,7 +31,7 @@ void InMessage::reset (unsigned bytes) {
 
 void InMessage::read_header (boost::asio::ip::tcp::socket & socket, BotClient * client) {
 	reset (5);
-	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, socket, client));
+	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, boost::ref (socket), client));
 }
 
 void InMessage::read_body (boost::asio::ip::tcp::socket & socket, BotClient * client) {

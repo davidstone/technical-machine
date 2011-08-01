@@ -93,24 +93,9 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	return response;
 }
 
-void BotClient::send (OutMessage message) {
+void BotClient::send (OutMessage & message) {
 	message.finalize (socket);
 }
-
-/*void BotClient::handle_full_message (boost::system::error_code const & error) {
-	InMessage msg;
-	// read in the five byte header
-	msg.recvfully (socket, 5);
-
-	// extract the message type and length components
-	InMessage::Message code = static_cast <InMessage::Message> (msg.read_byte ());
-	uint32_t length = msg.read_int ();
-
-	// read in the whole message
-	msg.recvfully (socket, length);
-	handle_message (code, msg);
-}
-*/
 
 void BotClient::run () {
 	timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
@@ -124,7 +109,8 @@ void BotClient::run () {
 void BotClient::reset_timer (boost::system::error_code const & error) {
 	if (!error) {
 		std::cout << "Sending activity notice\n";
-		send (OutMessage (OutMessage::CLIENT_ACTIVITY));
+		OutMessage msg (OutMessage::CLIENT_ACTIVITY);
+		send (msg);
 		timer.expires_from_now (boost::posix_time::seconds (45));
 		timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
 	}
@@ -179,7 +165,7 @@ class Metagame {
 				clauses.push_back (clause_name);
 			}
 		}
-		void load_battle_timer (InMessage &msg) {
+		void load_battle_timer (InMessage & msg) {
 			timing = msg.read_byte ();
 			if (timing) {
 				pool_length = msg.read_short ();
@@ -188,7 +174,7 @@ class Metagame {
 			}
 		}
 	public:
-		Metagame (InMessage &msg):
+		Metagame (InMessage & msg):
 			index (msg.read_byte ()),
 			name (msg.read_string ()),
 			id (msg.read_string ()),
@@ -204,7 +190,7 @@ class Metagame {
 		}
 };
 
-void BotClient::handle_message (InMessage::Message & code, InMessage & msg) {
+void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::WELCOME_MESSAGE: {
 			uint32_t version = msg.read_int();

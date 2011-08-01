@@ -38,13 +38,12 @@ class BotClient {
 		boost::asio::ip::tcp::socket socket;
 		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd);
 		void run ();
-		void handle_message (InMessage::Message &code, InMessage &msg);
+		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
 		void authenticate ();
-		void send (OutMessage message);
+		void send (OutMessage & message);
 		std::string get_shared_secret (int secret_style, std::string const & salt);
 		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);
-		void handle_full_message (boost::system::error_code const & error);
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message);
 		void handle_challenge (InMessage msg);
 		void handle_registry_response (uint8_t type, std::string const & details);
