@@ -18,7 +18,7 @@
  */
 
 #include <string>
-#include "md5.hpp" 
+#include "get_md5.h" 
 #include "hex.h"
 #include "md5.h"
 

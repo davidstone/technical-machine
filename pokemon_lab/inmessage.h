@@ -14,7 +14,7 @@
 
 #include <cstdint>
 #include <vector>
-#include <boost/asio.hpp>
+#include "../species.h"
 
 namespace technicalmachine {
 namespace pl {
@@ -37,6 +37,7 @@ class InMessage {
 		void skip ();
 	private:
 		uint32_t read_bytes (int bytes);
+		species pl_to_tm_species (int id);
 	public:
 		enum Message {
 			WELCOME_MESSAGE = 0,
@@ -79,6 +80,6 @@ class InMessage {
 		};
 };
 
-}
-}
+}		// namespace pl
+}		// namespace technicalmachine
 #endif

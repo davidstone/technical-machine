@@ -17,8 +17,8 @@
  * online at http://gnu.org.
  */
 
-#ifndef CRYPT_SHA2_HPP_
-#define CRYPT_SHA2_HPP_
+#ifndef CRYPT_GET_SHA2_H_
+#define CRYPT_GET_SHA2_H_
 
 #include <string>
 

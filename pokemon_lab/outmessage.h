@@ -13,10 +13,11 @@
 #define POKEMON_LAB_OUTMESSAGE_H_
 
 #include <cstdint>
+#include <string>
 #include <vector>
-#include <boost/asio.hpp>
 
 namespace technicalmachine {
+class Team;
 namespace pl {
 
 class OutMessage {
@@ -27,7 +28,11 @@ class OutMessage {
 		void write_short (uint16_t bytes);
 		void write_int (uint32_t bytes);
 		void write_string (std::string const & string);
+		void write_team (Team const & team);
 		void finalize (boost::asio::ip::tcp::socket & socket);
+	private:
+		int tm_to_pl_species (species id);
+	public:
 		enum Message {
 			REQUEST_CHALLENGE = 0,
 			CHALLENGE_RESPONSE = 1,

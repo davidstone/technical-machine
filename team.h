@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 #include "active.h"
+#include "move.h"
 
 namespace technicalmachine {
 

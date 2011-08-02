@@ -15,6 +15,7 @@ namespace technicalmachine {
 
 Map::Map() {
 	set_ability ();
+	set_gender ();
 	set_item ();
 	set_nature ();
 	set_move ();
@@ -149,6 +150,7 @@ void Map::set_ability () {
 
 void Map::set_gender () {
 	gender ["None"] = GENDERLESS;
+	gender ["No Gender"] = GENDERLESS;
 	gender ["Female"] = FEMALE;
 	gender ["Male"] = MALE;
 }

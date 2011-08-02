@@ -33,7 +33,7 @@ void unknown (std::vector<Unknown> &hidden) {
 //	unknown.spdev = 0;
 	
 	for (unknown.item = 0; unknown.item != static_cast<unsigned char> (END_ITEM); ++unknown.item) {
-		for (unknown.nature = static_cast<unsigned char> (MODEST); unknown.nature <= static_cast<unsigned char> (NAUGHTY); ++unknown.nature) {		// This is to make output "pretty". Fix later.
+		for (unknown.nature = static_cast<unsigned char> (NAUGHTY); unknown.nature <= static_cast<unsigned char> (DOCILE); ++unknown.nature) {		// This is to make output "pretty". Fix later.
 			for (unknown.atkev = 0; unknown.atkev <= 63; ++unknown.atkev) {
 				for (unknown.speev = 0; unknown.speev <= 63; ++unknown.speev) {
 					for (unknown.hpev = 0; unknown.hpev <= 63; ++unknown.hpev) {

@@ -19,7 +19,7 @@
 
 #include <iostream>
 #include <string>
-#include "sha2.hpp"
+#include "get_sha2.h"
 #include "hex.h"
 #include "sha2.h"
 

@@ -8,6 +8,8 @@ analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o sta
 
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
+connectobjects = block.o damage.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.cpp pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
+
 warnings = -Wall -Wextra -pedantic -Wformat=2
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -fno-rtti -funsafe-loop-optimizations
 
@@ -20,6 +22,10 @@ ai : optimizations = -g
 aio : $(aiobjects)
 	$(CXX) -o aio $(aiobjects) $(CXXFLAGS)
 aio : optimizations = $(fulloptimizations)
+
+connect : $(connectobjects)
+	$(CXX) -o connect $(connectobjects) -lpthread -lboost_system $(CXXFLAGS)
+connect : optimizations = -g -Wno-unused
 
 predict : $(predictobjects)
 	$(CXX) -o predict $(predictobjects) -l fltk $(CXXFLAGS)

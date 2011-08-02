@@ -13,6 +13,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "../crypt/get_md5.h"
+#include "../crypt/get_sha2.h"
+#include "../crypt/rijndael.h"
+
+#include "../map.h"
+#include "../pokemon.h"
+#include "../species.h"
+#include "../team.h"
+
 #include <boost/asio.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/bind.hpp>
@@ -21,11 +31,7 @@
 #include "connect.h"
 #include "inmessage.h"
 #include "outmessage.h"
-
-#include "../crypt/md5.hpp"
-#include "../crypt/sha2.hpp"
-#include "../crypt/rijndael.h"
-
+#undef SING
 
 namespace technicalmachine {
 namespace pl {
@@ -67,15 +73,21 @@ std::string BotClient::get_shared_secret (int secret_style, std::string const & 
 }
 
 std::string BotClient::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
+	// Hash of the password is the key to decrypting the number sent.
 	std::string digest = getSHA256Hash (get_shared_secret (secret_style, salt));
+	
+	// Decrypt the challenge in the reverse order it was encrypted.
 	rijndael_ctx ctx;
+	// First use the second half of the bits to decrypt
 	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
 	unsigned char middle [16];
 	rijndael_decrypt (&ctx, reinterpret_cast <unsigned char const *> (challenge.c_str()), middle);
+	// Then use the first half of the bits to decrypt that decrypted value.
 	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
 	unsigned char result [16];
 	rijndael_decrypt (&ctx, middle, result);
 	
+	// Add 1 to the decrypted number, which is an int stored in the first 4 bytes (all other bytes are 0).
 	uint32_t r = (result [0] << 3 * 8) + (result [1] << 2 * 8) + (result [2] << 1 * 8) + result [3] + 1;
 	r = htonl (r);
 
@@ -83,8 +95,10 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&r);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
 		response_array [n] = (*(byte + n));
+	// Encrypt that incremented value first with the first half of the bits of my hashed password.
 	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
 	rijndael_encrypt (&ctx, response_array, middle);
+	// Then re-encrypt that encrypted value with the second half of the bits of my hashed password.
 	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
 	rijndael_encrypt (&ctx, middle, response_array);
 	std::string response = "";
@@ -488,10 +502,13 @@ void BotClient::handle_channel_message (uint32_t channel_id, std::string const &
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	if (true or (n > 1 or team_length != 6 or generation != 4))
+	if (n > 1 or team_length != 6)
 		reject_challenge (user);
 	else {
-//		accept_challenge (user, team);
+		std::cout << static_cast <int> (generation)<< '\n';
+		Map const map;
+		Team ai (true, map, 6);
+		accept_challenge (user, ai);
 	}
 }
 
@@ -543,45 +560,22 @@ void BotClient::join_channel (std::string const & channel) {
 	send (msg);
 }
 
-/* void BotClient::accept_challenge (std::string const & user, ??? team) {
-	OutMessage msg (7);
+void BotClient::accept_challenge (std::string const & user, Team const & team) {
+	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (1);
-	write_team (msg, team);
+	msg.write_team (team);
 	send (msg);
+	std::cout << "Accepted challenge vs. " + user + "\n";
 }
-*/
+
 
 void BotClient::reject_challenge (std::string const & user) {
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (0);
 	send (msg);
-}
-
-// writes a list of Pokemon objects to a message
-void write_team (Team const & team) {
-	write_int (team.size);
-	for (std::vector <Pokemon>::const_iterator pokemon = team.member.set.begin(); pokemon != team.member.set.end(); ++pokemon) {
-		write_int (it->species)
-		write_string(p.get_nickname())
-		write_byte(0)
-		write_byte(p.get_gender())
-		write_byte(p.get_happiness())
-		write_int(p.get_level())
-		write_string(p.get_item())
-		write_string(p.get_ability())
-		write_int(p.get_nature())
-		moves = p.get_moves()
-		write_int(len(moves))
-		for move in moves:
-			write_int(self.client.move_list[move[0]]["id"])
-			write_int(move[1])
-		for stat in ["HP", "Atk", "Def", "Spd", "SpAtk", "SpDef"]:
-			tup = p.get_stat(stat)
-			write_int(tup[0])
-			write_int(tup[1])
-	}
+	std::cout << "Rejected challenge vs. " + user + "\n";
 }
 
 }		// namespace pl

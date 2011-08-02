@@ -15,11 +15,14 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <boost/asio.hpp>
 
 #include "inmessage.h"
 
+class io_service;
+class deadline_timer;
+class socket;
 namespace technicalmachine {
+class Team;
 namespace pl {
 
 class Channel;
@@ -68,7 +71,7 @@ class BotClient {
 		void handle_battle_set_move (uint32_t field_id, uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void join_channel (std::string const & channel);
-//		void accept_challenge (std::string const & user, ??? team);
+		void accept_challenge (std::string const & user, Team const & team);
 		void reject_challenge (std::string const & user);
 		void reset_timer (boost::system::error_code const & error);
 };
