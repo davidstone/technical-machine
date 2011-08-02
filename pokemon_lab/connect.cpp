@@ -488,7 +488,7 @@ void BotClient::handle_channel_message (uint32_t channel_id, std::string const &
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	if (true or (n > 1 or team_length > 6 or generation != 4))
+	if (true or (n > 1 or team_length != 6 or generation != 4))
 		reject_challenge (user);
 	else {
 //		accept_challenge (user, team);
@@ -559,8 +559,33 @@ void BotClient::reject_challenge (std::string const & user) {
 	send (msg);
 }
 
+// writes a list of Pokemon objects to a message
+void write_team (Team const & team) {
+	write_int (team.size);
+	for (std::vector <Pokemon>::const_iterator pokemon = team.member.set.begin(); pokemon != team.member.set.end(); ++pokemon) {
+		write_int (it->species)
+		write_string(p.get_nickname())
+		write_byte(0)
+		write_byte(p.get_gender())
+		write_byte(p.get_happiness())
+		write_int(p.get_level())
+		write_string(p.get_item())
+		write_string(p.get_ability())
+		write_int(p.get_nature())
+		moves = p.get_moves()
+		write_int(len(moves))
+		for move in moves:
+			write_int(self.client.move_list[move[0]]["id"])
+			write_int(move[1])
+		for stat in ["HP", "Atk", "Def", "Spd", "SpAtk", "SpDef"]:
+			tup = p.get_stat(stat)
+			write_int(tup[0])
+			write_int(tup[1])
+	}
 }
-}
+
+}		// namespace pl
+}		// namespace technicalmachine
 using namespace technicalmachine;
 using namespace pl;
 
@@ -570,7 +595,6 @@ int main () {
 	std::string const username = "TM1.0";
 	std::string const password = "Maximum Security";
 	BotClient client (host, port, username, password);
-	std::cout << "Authenticated.\n";
 	client.run();
 	return 0;
 }

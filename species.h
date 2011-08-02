@@ -29,7 +29,7 @@ The weaker Rotom form is Rotom. The appliance Rotom forms use their standard one
 
 Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon Online uses Shaymin and Shaymin-S.
 
-Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) = Steel-type. On Shoddy Battle, P = no letter, S = g, T = s. Pokemon Online uses Wormadam, Wormadam-G, and Wormadam-S.
+Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) = Steel-type. These names are based on the in-game Pokedex descriptions of the forms. On Shoddy Battle, P = no letter, S = g, T = s. Pokemon Online uses Wormadam, Wormadam-G, and Wormadam-S.
 
 Pokemon Online refers to Porygon2 as Porygon 2.
 */
