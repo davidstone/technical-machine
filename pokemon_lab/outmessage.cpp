@@ -56,12 +56,12 @@ void OutMessage::write_team (Team const & team) {
 		write_byte (0);
 
 		uint8_t gender;
-		if (pokemon->gender == GENDERLESS)
-			gender = 0;
-		else if (pokemon->gender == MALE)
+		if (pokemon->gender == MALE)
 			gender = 1;
-		else
+		else if (pokemon->gender == FEMALE)
 			gender = 2;
+		else
+			gender = 0;
 		write_byte (gender);
 
 		write_byte (pokemon->happiness);
@@ -70,7 +70,7 @@ void OutMessage::write_team (Team const & team) {
 		write_string (ability_name [pokemon->ability]);
 		write_int (pokemon->nature);
 		write_int (pokemon->move.set.size());
-		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
+		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
 			write_int (move->name);
 			write_int (3);		// Replace this with real PP-ups logic later
 		}
@@ -80,12 +80,12 @@ void OutMessage::write_team (Team const & team) {
 		write_int (pokemon->atk.ev);
 		write_int (pokemon->def.iv);
 		write_int (pokemon->def.ev);
+		write_int (pokemon->spe.iv);
+		write_int (pokemon->spe.ev);
 		write_int (pokemon->spa.iv);
 		write_int (pokemon->spa.ev);
 		write_int (pokemon->spd.iv);
 		write_int (pokemon->spd.ev);
-		write_int (pokemon->spe.iv);
-		write_int (pokemon->spe.ev);
 	}
 }
 

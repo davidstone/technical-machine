@@ -122,7 +122,6 @@ void BotClient::run () {
 
 void BotClient::reset_timer (boost::system::error_code const & error) {
 	if (!error) {
-		std::cout << "Sending activity notice\n";
 		OutMessage msg (OutMessage::CLIENT_ACTIVITY);
 		send (msg);
 		timer.expires_from_now (boost::posix_time::seconds (45));
@@ -449,6 +448,16 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			handle_metagame_list (metagames);
 			break;
 		}
+		case InMessage::INVALID_TEAM: {
+			std::string user = msg.read_string ();
+			uint8_t size = msg.read_byte ();
+			uint16_t violation_size = msg.read_short ();
+			std::vector <int16_t> violation;
+			for (unsigned n = 0; n != violation_size; ++n)
+				violation.push_back (msg.read_short());
+			handle_invalid_team (violation);
+			break;
+		}
 		default:
 			std::cerr << "Unknown code: " << code << '\n';
 			break;
@@ -487,15 +496,18 @@ void BotClient::handle_registry_response (uint8_t type, std::string const & deta
 }
 
 void BotClient::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
+	std::cout << "handle_channel_info\n";
 }
 
 void BotClient::handle_channel_join_part (uint32_t id, std::string const & user, bool joining) {
 }
 
 void BotClient::handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags) {
+	std::cout << "handle_channel_status\n";
 }
 
 void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
+	std::cout << "handle_channel_list\n";
 }
 
 void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
@@ -505,7 +517,6 @@ void BotClient::handle_incoming_challenge (std::string const & user, uint8_t gen
 	if (n > 1 or team_length != 6)
 		reject_challenge (user);
 	else {
-		std::cout << static_cast <int> (generation)<< '\n';
 		Map const map;
 		Team ai (true, map, 6);
 		accept_challenge (user, ai);
@@ -513,45 +524,66 @@ void BotClient::handle_incoming_challenge (std::string const & user, uint8_t gen
 }
 
 void BotClient::handle_finalize_challenge (std::string const & user, bool accepted) {
+	std::cout << "handle_finalize_challenge\n";
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
+	std::cout << "handle_battle_begin\n";
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t position, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
+	std::cout << "handle_request_action\n";
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
+	std::cout << "handle_battle_print\n";
 }
 
 void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
+	std::cout << "handle_battle_victory\n";
 }
 
 void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+	std::cout << "handle_battle_use_move\n";
 }
 
 void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
+	std::cout << "handle_battle_withdraw\n";
 }
 
 void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+	std::cout << "handle_battle_send_out\n";
 }
 
 void BotClient::handle_battle_health_change (uint32_t field_id, uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
+	std::cout << "handle_battle_health_change\n";
 }
 
 void BotClient::handle_battle_set_pp (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t pp) {
+	std::cout << "handle_battle_set_pp\n";
 }
 
 void BotClient::handle_battle_fainted (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
+	std::cout << "handle_battle_fainted\n";
 }
 
 void BotClient::handle_battle_begin_turn (uint32_t field_id, uint16_t turn_count) {
+	std::cout << "handle_battle_begin_turn\n";
 }
 
 void BotClient::handle_battle_set_move (uint32_t field_id, uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
+	std::cout << "handle_battle_set_move\n";
 }
 
 void BotClient::handle_metagame_list (std::vector <Metagame> const & metagames) {
+	std::cout << "handle_metagame_list\n";
+}
+
+void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
+	for (std::vector<int16_t>::const_iterator it = violation.begin(); it != violation.end(); ++it) {
+		int pokemon = (-(*it + 1)) % 6;
+		std::cout << "Problem at Pokemon " << pokemon << ", error code " << -(*it + pokemon + 1) / 6 << '\n';
+	}
 }
 
 void BotClient::join_channel (std::string const & channel) {

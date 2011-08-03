@@ -70,6 +70,7 @@ class BotClient {
 		void handle_battle_begin_turn (uint32_t field_id, uint16_t turn_count);
 		void handle_battle_set_move (uint32_t field_id, uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
+		void handle_invalid_team (std::vector <int16_t> const & violation);
 		void join_channel (std::string const & channel);
 		void accept_challenge (std::string const & user, Team const & team);
 		void reject_challenge (std::string const & user);
