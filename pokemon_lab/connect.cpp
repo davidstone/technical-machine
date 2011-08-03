@@ -18,6 +18,7 @@
 #include "../crypt/get_sha2.h"
 #include "../crypt/rijndael.h"
 
+#include "../analyze_logs.h"
 #include "../load_stats.h"
 #include "../map.h"
 #include "../pokemon.h"
@@ -26,6 +27,7 @@
 #include "../team.h"
 #include "../weather.h"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/bind.hpp>
@@ -518,6 +520,11 @@ void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
 }
 
 void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
+	// Vanity mode!
+	std::string copy = message;
+	boost::to_lower (copy);
+	if (copy.find ("obi") != std::string::npos or copy.find ("david stone") != std::string::npos or copy.find ("technical machine") != std::string::npos or copy.find ("tm") != std::string::npos)
+		std::cout << message + "\n"; 
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
@@ -534,6 +541,7 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
 	foe.player = opponent;
+	log.initialize_turn (ai, foe);
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t position, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
@@ -542,6 +550,10 @@ void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t 
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 	std::cout << "handle_battle_print\n";
+	std::cout << "category: " << static_cast <int> (category) << '\n';
+	std::cout << "message id: " << message_id << '\n';
+	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
+		std::cout << *it + "\n";
 }
 
 void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
@@ -573,6 +585,7 @@ void BotClient::handle_battle_fainted (uint32_t field_id, uint8_t party, uint8_t
 }
 
 void BotClient::handle_battle_begin_turn (uint32_t field_id, uint16_t turn_count) {
+	log.initialize_turn (ai, foe);
 	std::cout << "handle_battle_begin_turn\n";
 }
 

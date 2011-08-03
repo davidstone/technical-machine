@@ -46,11 +46,11 @@ bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map) {
 	if (log.input == "")
 		won = true;
 	else {
-		initialize_turn (ai, foe, log);
+		log.initialize_turn (ai, foe);
 		while (log.getline()) {
 			if (log.line == "===============") {
 				do_turn (*log.first, *log.last, weather);
-				initialize_turn (ai, foe, log);
+				log.initialize_turn (ai, foe);
 				std::cout << "\n";
 			}
 			else
@@ -474,16 +474,16 @@ bool Log::search_is_first () {
 	return line.substr (0, search.length()) == search;
 }
 
-void initialize_turn (Team &ai, Team &foe, Log &log) {
+void Log::initialize_turn (Team &ai, Team &foe) {
 	initialize_team (ai);
 	initialize_team (foe);
-	log.phaze = false;
-	log.move_damage = false;
+	phaze = false;
+	move_damage = false;
 	
-	log.active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
-	log.inactive = NULL;
-	log.first = NULL;
-	log.last = NULL;
+	active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
+	inactive = NULL;
+	first = NULL;
+	last = NULL;
 }
 
 void initialize_team (Team &team) {

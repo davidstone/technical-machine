@@ -19,6 +19,7 @@
 #include "inmessage.h"
 
 namespace technicalmachine {
+class Log;
 class Map;
 class score_variables;
 class Team;
@@ -40,6 +41,7 @@ class BotClient {
 		Team foe;
 		Weather weather;
 		score_variables sv;
+		Log log;
 		boost::asio::io_service io;
 	private:
 		boost::asio::deadline_timer timer;

@@ -42,6 +42,7 @@ class Log {
 		Log ();
 		bool getline ();
 		bool search_is_first ();
+		void initialize_turn (Team &ai, Team &foe);
 };
 
 bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map);
@@ -55,8 +56,6 @@ void log_move (Log &log, Map const &map);
 void log_misc (Log &log, Map const &map, bool &shed_skin);
 
 void do_turn (Team &first, Team &last, Weather &weather);
-
-void initialize_turn (Team &ai, Team &foe, Log &log);
 
 void initialize_team (Team &team);
 
