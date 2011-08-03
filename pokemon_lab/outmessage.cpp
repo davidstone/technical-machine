@@ -69,7 +69,10 @@ void OutMessage::write_team (Team const & team) {
 		write_string (item_name [pokemon->item]);
 		write_string (ability_name [pokemon->ability]);
 		write_int (pokemon->nature);
-		write_int (pokemon->move.set.size());
+		unsigned number_of_moves = 0;
+		while (pokemon->move.set [number_of_moves].name != STRUGGLE)
+			++number_of_moves;
+		write_int (number_of_moves);
 		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
 			int name = move->name;
 			if (name >= SWITCH0)
