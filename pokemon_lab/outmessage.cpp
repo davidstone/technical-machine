@@ -71,7 +71,10 @@ void OutMessage::write_team (Team const & team) {
 		write_int (pokemon->nature);
 		write_int (pokemon->move.set.size());
 		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
-			write_int (move->name);
+			int name = move->name;
+			if (name >= SWITCH0)
+				name -= 6;
+			write_int (name);
 			write_int (3);		// Replace this with real PP-ups logic later
 		}
 		write_int (pokemon->hp.iv);
