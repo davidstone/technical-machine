@@ -91,19 +91,19 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	uint32_t r = (result [0] << 3 * 8) + (result [1] << 2 * 8) + (result [2] << 1 * 8) + result [3] + 1;
 	r = htonl (r);
 
-	unsigned char response_array [16] = { 0 };
+	// I write back into result instead of a new array so that I supporting a potential future improvement in the security of Pokemon Lab. This will allow the protocol to work even if the server checks all of the digits for correctness, instead of just the first four.
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&r);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
-		response_array [n] = (*(byte + n));
+		result [n] = (*(byte + n));
 	// Encrypt that incremented value first with the first half of the bits of my hashed password.
 	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
-	rijndael_encrypt (&ctx, response_array, middle);
+	rijndael_encrypt (&ctx, result, middle);
 	// Then re-encrypt that encrypted value with the second half of the bits of my hashed password.
 	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
-	rijndael_encrypt (&ctx, middle, response_array);
+	rijndael_encrypt (&ctx, middle, result);
 	std::string response = "";
 	for (unsigned n = 0; n != 16; ++n)
-		response += response_array [n];
+		response += result [n];
 	return response;
 }
 
