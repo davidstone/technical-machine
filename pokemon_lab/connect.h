@@ -18,11 +18,11 @@
 
 #include "inmessage.h"
 
-class io_service;
-class deadline_timer;
-class socket;
 namespace technicalmachine {
+class Map;
+class score_variables;
 class Team;
+class Weather;
 namespace pl {
 
 class Channel;
@@ -34,6 +34,12 @@ class BotClient {
 		std::string const username;
 		std::string const password;
 	public:
+		Map map;
+		int detailed [END_SPECIES][7];
+		Team ai;
+		Team foe;
+		Weather weather;
+		score_variables sv;
 		boost::asio::io_service io;
 	private:
 		boost::asio::deadline_timer timer;
@@ -72,7 +78,7 @@ class BotClient {
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
 		void join_channel (std::string const & channel);
-		void accept_challenge (std::string const & user, Team const & team);
+		void accept_challenge (std::string const & user);
 		void reject_challenge (std::string const & user);
 		void reset_timer (boost::system::error_code const & error);
 };

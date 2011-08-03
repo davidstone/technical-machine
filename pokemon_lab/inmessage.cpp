@@ -11,11 +11,16 @@
 
 #include <cstdint>
 #include <vector>
+#include "../evaluate.h"
+#include "../map.h"
+#include "../species.h"
+#include "../team.h"
+#include "../weather.h"
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include "inmessage.h"
 #include "connect.h"
-#include "../species.h"
+#undef SING
 
 namespace technicalmachine {
 namespace pl {

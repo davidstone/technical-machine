@@ -27,39 +27,49 @@
 #include "teampredictor.h"
 #include "type.h"
 #include "weather.h"
+#include "pokemon_lab/connect.h"
 
 int main (int argc, char* argv[]) {
 	using namespace technicalmachine;
 	unsigned const foe_size = 6;
 	int depth;
 	if (argc == 1)
-		depth = -1;
+		depth = 2;
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	Map const map;
-	int detailed [END_SPECIES][7] = {{ 0 }};
-	detailed_stats (map, detailed);
-	Team ai (true, map, foe_size);
-	Team foe (false, map, ai.size);
-	Weather weather;
-	score_variables sv;
+	if (true) {
+		std::string const host = "lab.pokemonexperte.de";
+		std::string const port = "8446";
+		std::string const username = "TM1.0";
+		std::string const password = "Maximum Security";
+		pl::BotClient client (host, port, username, password);
+		client.run();
+	}
+	else {
+		Map const map;
+		int detailed [END_SPECIES][7] = {{ 0 }};
+		detailed_stats (map, detailed);
+		Team ai (true, map, foe_size);
+		Team foe (false, map, ai.size);
+		Weather weather;
+		score_variables sv;
+		analyze_turn (ai, foe, weather, map);		// Turn 0, sending out initial Pokemon
 	
-	analyze_turn (ai, foe, weather, map);		// Turn 0, sending out initial Pokemon
-	
-	bool won = false;
-	while (!won) {
-		Team predicted = foe;
-		std::cout << "======================\nPredicting...\n";
-		predict_team (detailed, predicted, ai.size);
-		std::string out;
-		predicted.output (out);
-		std::cout << out;
+		bool won = false;
+		while (!won) {
+			Team predicted = foe;
+			std::cout << "======================\nPredicting...\n";
+			predict_team (detailed, predicted, ai.size);
+			std::string out;
+			predicted.output (out);
+			std::cout << out;
 
-		int64_t score;
-		expectiminimax (ai, predicted, weather, depth, sv, score);
+			int64_t score;
+			expectiminimax (ai, predicted, weather, depth, sv, score);
 
-		won = analyze_turn (ai, foe, weather, map);
+			won = analyze_turn (ai, foe, weather, map);
+		}
 	}
 	return 0;
 }

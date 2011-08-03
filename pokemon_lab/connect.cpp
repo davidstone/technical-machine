@@ -18,10 +18,13 @@
 #include "../crypt/get_sha2.h"
 #include "../crypt/rijndael.h"
 
+#include "../load_stats.h"
 #include "../map.h"
 #include "../pokemon.h"
+#include "../evaluate.h"
 #include "../species.h"
 #include "../team.h"
+#include "../weather.h"
 
 #include <boost/asio.hpp>
 #include <boost/asio/error.hpp>
@@ -39,8 +42,12 @@ namespace pl {
 BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd):
 	username (user),
 	password (pswd),
+	detailed ({{ 0 }}),
+	ai (true, map, 6),
+	foe (false, map, ai.size),
 	timer (io, boost::posix_time::seconds (45)),
 	socket (io) {
+	detailed_stats (map, detailed);
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
 	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
@@ -514,12 +521,10 @@ void BotClient::handle_channel_message (uint32_t channel_id, std::string const &
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	if (n > 1 or team_length != 6)
+	if (n > 1 or team_length != 6 or user != "Technical Machine")
 		reject_challenge (user);
 	else {
-		Map const map;
-		Team ai (true, map, 6);
-		accept_challenge (user, ai);
+		accept_challenge (user);
 	}
 }
 
@@ -528,7 +533,7 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
-	std::cout << "handle_battle_begin\n";
+	foe.player = opponent;
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t position, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
@@ -592,11 +597,11 @@ void BotClient::join_channel (std::string const & channel) {
 	send (msg);
 }
 
-void BotClient::accept_challenge (std::string const & user, Team const & team) {
+void BotClient::accept_challenge (std::string const & user) {
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (1);
-	msg.write_team (team);
+	msg.write_team (ai);
 	send (msg);
 	std::cout << "Accepted challenge vs. " + user + "\n";
 }
@@ -612,15 +617,3 @@ void BotClient::reject_challenge (std::string const & user) {
 
 }		// namespace pl
 }		// namespace technicalmachine
-using namespace technicalmachine;
-using namespace pl;
-
-int main () {
-	std::string const host = "lab.pokemonexperte.de";
-	std::string const port = "8446";
-	std::string const username = "TM1.0";
-	std::string const password = "Maximum Security";
-	BotClient client (host, port, username, password);
-	client.run();
-	return 0;
-}

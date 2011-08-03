@@ -13,6 +13,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include "map.h"
 #include "load_stats.h"
 #include "pokemon.h"
 #include "team.h"
@@ -38,7 +39,7 @@ struct Data {
 void function (Fl_Widget* w, void* data) {
 	Data* d = reinterpret_cast<Data*> (data);
 	
-	Team team (false, d->map);
+	Team team (false, d->map, 6);
 	bool using_lead;
 	std::map<std::string, species>::const_iterator it = d->map.specie.find ((*d->input.begin())->value());
 	if (it != d->map.specie.end()) {

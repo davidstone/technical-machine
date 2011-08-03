@@ -1,4 +1,4 @@
-aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
+aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.cpp pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
 
 predictobjects = predictor.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -10,17 +10,17 @@ analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o s
 
 connectobjects = block.o damage.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.cpp pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
 
-warnings = -Wall -Wextra -pedantic -Wformat=2
-fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -fno-rtti -funsafe-loop-optimizations
+warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
+fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -funsafe-loop-optimizations
 
 CXX = g++
 
 ai : $(aiobjects)
-	$(CXX) -o ai $(aiobjects) $(CXXFLAGS)
+	$(CXX) -o ai $(aiobjects) -lpthread -lboost_system $(CXXFLAGS)
 ai : optimizations = -g
 
 aio : $(aiobjects)
-	$(CXX) -o aio $(aiobjects) $(CXXFLAGS)
+	$(CXX) -o aio $(aiobjects) -lpthread -lboost_system $(CXXFLAGS)
 aio : optimizations = $(fulloptimizations)
 
 connect : $(connectobjects)
@@ -52,6 +52,7 @@ analoggui : $(analogguiobjects)
 analoggui : optimizations = -g
 
 CXXFLAGS = $(warnings) $(optimizations) -std=c++0x
+CFLAGS = $(warnings) $(optimizations) -std=c99
 
 ai.o: ai.cpp analyze_logs.h evaluate.h expectiminimax.h move.h active.h \
  type.h item.h load_stats.h species.h map.h ability.h gender.h stat.h \
@@ -117,9 +118,27 @@ type.o: type.cpp pokemon.h ability.h active.h gender.h item.h move.h \
  type.h species.h stat.h status.h team.h weather.h
 unknown.o: unknown.cpp unknown.h item.h stat.h species.h
 weather.o: weather.cpp weather.h
+crypt/get_md5.o: crypt/get_md5.cpp crypt/get_md5.h crypt/hex.h crypt/md5.h
+crypt/get_sha2.o: crypt/get_sha2.cpp crypt/get_sha2.h crypt/hex.h crypt/sha2.h
+crypt/hex.o: crypt/hex.cpp crypt/hex.h
+crypt/md5.o: crypt/md5.c crypt/md5.h
+crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
+crypt/sha2.o: crypt/sha2.c crypt/sha2.h
+connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
+ crypt/get_sha2.h crypt/rijndael.h load_stats.h map.h ability.h gender.h \
+ item.h move.h active.h type.h stat.h pokemon.h \
+ status.h evaluate.h species.h team.h weather.h \
+ pokemon_lab/connect.h pokemon_lab/inmessage.h pokemon_lab/outmessage.h
 pokemon_lab/file.o: pokemon_lab/file.cpp map.h ability.h gender.h item.h \
  move.h active.h type.h stat.h species.h pokemon.h status.h team.h \
  pokemon_lab/file.h
+inmessage.o: pokemon_lab/inmessage.cpp evaluate.h \
+ map.h ability.h gender.h item.h move.h active.h \
+ type.h stat.h species.h team.h weather.h \
+ pokemon_lab/inmessage.h pokemon_lab/connect.h
+pokemon_lab/outmessage.o: pokemon_lab/outmessage.cpp pokemon.h \
+ ability.h active.h gender.h item.h move.h type.h species.h stat.h \
+ status.h team.h pokemon_lab/outmessage.h
 pokemon_online/file.o: pokemon_online/file.cpp pokemon.h ability.h active.h \
  gender.h item.h move.h type.h species.h stat.h status.h team.h \
  pokemon_online/file.h
