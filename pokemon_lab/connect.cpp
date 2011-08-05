@@ -582,11 +582,20 @@ void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
 
 void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
 	Team * team;
-	if (party == party_)
+	Team * other;
+	if (party == party_) {
 		team = &ai;
-	else
+		other = &foe;
+	}
+	else {
 		team = &foe;
+		other = &ai;
+	}
 	log.active = team;
+	if (log.first == NULL) {
+		log.first = team;
+		log.last = other;
+	}
 	int move = move_id;
 	if (move >= SWITCH0)
 		move += 6;
