@@ -30,9 +30,7 @@ class OutMessage {
 		void write_string (std::string const & string);
 		void write_team (Team const & team);
 		void finalize (boost::asio::ip::tcp::socket & socket);
-	private:
-		int tm_to_pl_species (species id);
-	public:
+		static int tm_to_pl_species (species id);
 		enum Message {
 			REQUEST_CHALLENGE = 0,
 			CHALLENGE_RESPONSE = 1,

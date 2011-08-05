@@ -42,12 +42,14 @@ class BotClient {
 		Weather weather;
 		score_variables sv;
 		Log log;
+		int depth;
+		uint8_t party;
 		boost::asio::io_service io;
 	private:
 		boost::asio::deadline_timer timer;
 	public:
 		boost::asio::ip::tcp::socket socket;
-		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd);
+		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd, int d);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:

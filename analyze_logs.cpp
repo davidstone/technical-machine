@@ -33,7 +33,8 @@ Log::Log () :
 	inactive (NULL),
 	first (NULL),
 	phaze (false),
-	move_damage (false) {
+	move_damage (false),
+	shed_skin (false) {
 }
 
 bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
@@ -68,13 +69,7 @@ bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
 }
 
 void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
-	if (line.find(": ") == std::string::npos) {		// Should ignore all comments, hopefully nobody puts : anywhere in their names
-		search = "Begin turn #";
-		if (search_is_first())
-			return;
-		search = "***";
-		if (search_is_first())
-			return;
+	if (!ignore_line (ai, foe)) {
 		search = " sent out ";
 		size_t found = line.find (search);
 		if (found != std::string::npos) {
@@ -92,14 +87,6 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 			}
 		}
 		else {
-			if (foe.player != "") {
-				search = ai.player + " withdrew ";
-				if (search_is_first())
-					return;
-				search = foe.player + " withdrew ";
-				if (search_is_first())
-					return;
-			}
 			if (line.substr (0, ai.at_replacement().nickname.length()) == ai.at_replacement().nickname) {
 				active = &ai;
 				inactive = &foe;
@@ -115,8 +102,7 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 
 			// It's best to include both nicknames in the search instead of just the invariant section. This prevents any combination of nicknames from causing an error. A Pokemon cannot have its own nickname plus something else in its nickname.
 			if (move_damage) {
-				search = active->at_replacement().nickname + " lost ";
-				if (search_is_first()) {
+				if (search_is_first (active->at_replacement().nickname + " lost ")) {
 					size_t division = line.find ("/", search.length());
 					if (division != std::string::npos) {
 						unsigned numerator = boost::lexical_cast<unsigned> (line.substr (search.length(), division - search.length()));
@@ -129,8 +115,7 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 				else if (line == "It had no effect.")
 					move_damage = false;
 			}
-			search = active->at_replacement().nickname + "'s attack missed";
-			if (search_is_first())
+			if (search_is_first (active->at_replacement().nickname + "'s attack missed"))
 				active->miss = true;
 			else if (line == "A critical hit!")
 				active->ch = true;
@@ -140,31 +125,28 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 				active->fully_paralyzed = true;
 			else if (line == "It hurt itself in confusion!")
 				active->hitself = true;
-			else if (line == active->at_replacement().nickname + " is paralysed! It may be unable to move!"
-					or line == active->at_replacement().nickname + " was burned!"
-					or line == active->at_replacement().nickname + " became confused!"
-					or line == active->at_replacement().nickname + " was frozen solid!"
-					or line == active->at_replacement().nickname + " was poisoned!"
-					or line == active->at_replacement().nickname + " was badly poisoned!"
-					or line == active->at_replacement().nickname + " flinched!"
-					or line.find (" was sharply raised!", line.find (active->at_replacement().nickname + "'s ")) != std::string::npos
-					or line.find (" was raised!", line.find (active->at_replacement().nickname + "'s ")) != std::string::npos
-					or line.find (" was harshly lowered!", line.find (active->at_replacement().nickname + "'s ")) != std::string::npos
-					or line.find (" was lowered!", line.find (active->at_replacement().nickname + "'s ")) != std::string::npos)
-				inactive->at_replacement().move->variable.index = 1;
-			else {
-				search = active->at_replacement().nickname + " used ";
-				if (search_is_first()) {
+			else if (!side_effect ()) {
+				if (search_is_first (active->at_replacement().nickname + " used ")) {
 					moves_list move = find_move_name (map);
 					log_move (move);
 				}
-				else {
-					bool shed_skin = false;
-					log_misc (map, shed_skin);		// Fix
-				}
+				else
+					log_misc (map);
 			}
 		}
 	}
+}
+
+bool Log::ignore_line (Team const & ai, Team const & foe) {
+	bool ignore = false;
+	// Ignore comments. Hopefully nobody puts ':' anywhere in their names.
+	if (line.find (": ") == std::string::npos
+			or search_is_first ("Begin turn #")
+			or search_is_first ("***")
+			or search_is_first (ai.player + " withdrew ")
+			or search_is_first (foe.player + " withdrew "))
+		ignore = true;
+	return ignore;
 }
 
 void Log::log_pokemon (Team & team, Team & other, Map const & map) {
@@ -303,8 +285,26 @@ void Log::log_move (moves_list name) {
 		move_damage = true;
 }
 
+bool Log::side_effect () {
+	if (line == active->at_replacement().nickname + " is paralysed! It may be unable to move!"
+			or line == active->at_replacement().nickname + " was burned!"
+			or line == active->at_replacement().nickname + " became confused!"
+			or line == active->at_replacement().nickname + " was frozen solid!"
+			or line == active->at_replacement().nickname + " was poisoned!"
+			or line == active->at_replacement().nickname + " was badly poisoned!"
+			or line == active->at_replacement().nickname + " flinched!"
+			or line.find (" was sharply raised!", (active->at_replacement().nickname + "'s ").length ()) != std::string::npos
+			or line.find (" was raised!", (active->at_replacement().nickname + "'s ").length ()) != std::string::npos
+			or line.find (" was harshly lowered!", (active->at_replacement().nickname + "'s ").length ()) != std::string::npos
+			or line.find (" was lowered!", (active->at_replacement().nickname + "'s ").length ()) != std::string::npos) {
+		inactive->at_replacement().move->variable.index = 1;
+		return true;
+	}
+	return false;
+}
 
-void Log::log_misc (Map const & map, bool & shed_skin) {
+
+void Log::log_misc (Map const & map) {
 	if (active->at_replacement().ability == END_ABILITY) {
 		if (active->at_replacement().nickname + "'s Anger Point raised its attack!" == line) {
 			active->at_replacement().ability = ANGER_POINT;
@@ -491,6 +491,12 @@ bool Log::getline () {
 }
 
 bool Log::search_is_first () {
+	return line.substr (0, search.length()) == search;
+}
+
+bool Log::search_is_first (std::string const & str) {
+	// I set search to str and then operate on that, rather than just checking against str so that way future operations still have str saved into class Log.
+	search = str;
 	return line.substr (0, search.length()) == search;
 }
 

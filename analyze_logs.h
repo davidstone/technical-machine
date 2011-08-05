@@ -41,12 +41,17 @@ class Log {
 		Team* last;
 		bool phaze;
 		bool move_damage;
+		bool shed_skin;
 
 		Log ();
 		bool getline ();
 		bool search_is_first ();
+		bool search_is_first (std::string const & str);
 		moves_list find_move_name (Map const & map) const;
 		void analyze_line (Team &ai, Team &foe, Map const &map);
+	private:
+		bool ignore_line (Team const & ai, Team const & foe);
+	public:
 		void log_pokemon (Team &team, Team &target, Map const &map);
 		bool seen_pokemon (Team & team, species nickname);
 	private:
@@ -57,7 +62,10 @@ class Log {
 		void add_pokemon (Team & team, species name, std::string const & nickname, int level, genders gender);
 	public:
 		void log_move (moves_list name);
-		void log_misc (Map const &map, bool &shed_skin);
+	private:
+		bool side_effect ();
+	public:
+		void log_misc (Map const &map);
 		void initialize_turn (Team &ai, Team &foe);
 	private:
 		void initialize_team (Team &team);

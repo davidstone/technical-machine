@@ -42,7 +42,7 @@ int main (int argc, char* argv[]) {
 		std::string const port = "8446";
 		std::string const username = "TM1.0";
 		std::string const password = "Maximum Security";
-		pl::BotClient client (host, port, username, password);
+		pl::BotClient client (host, port, username, password, depth);
 		client.run();
 	}
 	else {

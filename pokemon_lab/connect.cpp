@@ -19,12 +19,14 @@
 #include "../crypt/rijndael.h"
 
 #include "../analyze_logs.h"
+#include "../evaluate.h"
+#include "../expectiminimax.h"
 #include "../load_stats.h"
 #include "../map.h"
 #include "../pokemon.h"
-#include "../evaluate.h"
 #include "../species.h"
 #include "../team.h"
+#include "../teampredictor.h"
 #include "../weather.h"
 
 #include <boost/algorithm/string.hpp>
@@ -41,12 +43,13 @@
 namespace technicalmachine {
 namespace pl {
 
-BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd):
+BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd, int d):
 	username (user),
 	password (pswd),
 	detailed ({{ 0 }}),
 	ai (true, map, 6),
 	foe (false, map, ai.size),
+	depth (d),
 	timer (io, boost::posix_time::seconds (45)),
 	socket (io) {
 	detailed_stats (map, detailed);
@@ -100,7 +103,7 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	uint32_t r = (result [0] << 3 * 8) + (result [1] << 2 * 8) + (result [2] << 1 * 8) + result [3] + 1;
 	r = htonl (r);
 
-	// I write back into result instead of a new array so that I supporting a potential future improvement in the security of Pokemon Lab. This will allow the protocol to work even if the server checks all of the digits for correctness, instead of just the first four.
+	// I write back into result instead of a new array so that TM supports a potential future improvement in the security of Pokemon Lab. This will allow the protocol to work even if the server checks all of the digits for correctness, instead of just the first four.
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&r);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
 		result [n] = (*(byte + n));
@@ -405,8 +408,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t field_id = msg.read_int ();
 			uint8_t party = msg.read_byte ();
 			uint8_t slot = msg.read_byte ();
-			uint16_t change_in_health = msg.read_short ();	// 0 through 48
-			uint16_t remaining_health = msg.read_short ();	// 0 through 48
+			uint16_t change_in_health = msg.read_short ();
+			uint16_t remaining_health = msg.read_short ();
 			uint16_t denominator = msg.read_short ();
 			handle_battle_health_change (field_id, party, slot, change_in_health, remaining_health, denominator);
 			break;
@@ -521,9 +524,9 @@ void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
 
 void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
 	// Vanity mode!
-	std::string copy = message;
-	boost::to_lower (copy);
-	if (copy.find ("obi") != std::string::npos or copy.find ("david stone") != std::string::npos or copy.find ("technical machine") != std::string::npos or copy.find ("tm") != std::string::npos)
+	std::string msg = message;
+	boost::to_lower (msg);
+	if (msg.find ("obi") != std::string::npos or msg.find ("david stone") != std::string::npos or msg.find ("technical machine") != std::string::npos or msg.find ("tm") != std::string::npos)
 		std::cout << message + "\n"; 
 }
 
@@ -539,21 +542,33 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 	std::cout << "handle_finalize_challenge\n";
 }
 
-void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
+void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party_) {
 	foe.player = opponent;
 	log.initialize_turn (ai, foe);
+	ai.replacing = true;
+	foe.replacing = true;
+	party = party_;
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t position, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
-	std::cout << "handle_request_action\n";
+	Team predicted = foe;
+	std::cout << "======================\nPredicting...\n";
+	predict_team (detailed, predicted, ai.size);
+	std::string out;
+	predicted.output (out);
+	std::cout << out;
+
+	int64_t score;
+	expectiminimax (ai, predicted, weather, depth, sv, score);
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 	std::cout << "handle_battle_print\n";
 	std::cout << "category: " << static_cast <int> (category) << '\n';
 	std::cout << "message id: " << message_id << '\n';
+	std::cout << "arguments: " << '\n';
 	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
-		std::cout << *it + "\n";
+		std::cout << "\t" + *it + "\n";
 }
 
 void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
@@ -568,12 +583,27 @@ void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_
 	std::cout << "handle_battle_withdraw\n";
 }
 
-void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
-	std::cout << "handle_battle_send_out\n";
+void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+	Team * team;
+	Team * other;
+	if (party == party_) {
+		team = &ai;
+		other = &foe;
+	}
+	else {
+		team = &foe;
+		other = &ai;
+	}
+	species name = InMessage::pl_to_tm_species (species_id);
+	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
 }
 
 void BotClient::handle_battle_health_change (uint32_t field_id, uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
 	std::cout << "handle_battle_health_change\n";
+	if (log.move_damage) {
+		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
+		log.move_damage = false;
+	}
 }
 
 void BotClient::handle_battle_set_pp (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t pp) {

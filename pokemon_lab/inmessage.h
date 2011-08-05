@@ -39,8 +39,8 @@ class InMessage {
 		void skip ();
 	private:
 		uint32_t read_bytes (int bytes);
-		species pl_to_tm_species (int id);
 	public:
+		static species pl_to_tm_species (int id);
 		enum Message {
 			WELCOME_MESSAGE = 0,
 			PASSWORD_CHALLENGE = 1,
