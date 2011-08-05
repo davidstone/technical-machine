@@ -13,8 +13,6 @@ connectobjects = block.o damage.o heal.o map.o move.o pokemon.o stat.o status.o 
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -funsafe-loop-optimizations
 
-CXX = g++
-
 ai : $(aiobjects)
 	$(CXX) -o ai $(aiobjects) -lpthread -lboost_system $(CXXFLAGS)
 ai : optimizations = -g
