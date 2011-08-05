@@ -43,7 +43,7 @@ class Log {
 		bool move_damage;
 		bool shed_skin;
 
-		Log ();
+		Log (Team & ai, Team & foe);
 		bool getline ();
 		bool search_is_first ();
 		bool search_is_first (std::string const & str);

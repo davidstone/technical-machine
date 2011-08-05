@@ -54,7 +54,6 @@ class BotClient {
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
 		void authenticate ();
-		void send (OutMessage & message);
 		std::string get_shared_secret (int secret_style, std::string const & salt);
 		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message);
@@ -68,7 +67,7 @@ class BotClient {
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
 		void handle_finalize_challenge (std::string const & user, bool accepted);
 		void handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party);
-		void handle_request_action (uint32_t field_id, uint8_t slot, uint8_t position, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
+		void handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
 		void handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
 		void handle_battle_victory (uint32_t field_id, uint16_t party_id);
 		void handle_battle_use_move (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id);

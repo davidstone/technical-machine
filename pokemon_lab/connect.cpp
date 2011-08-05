@@ -49,6 +49,7 @@ BotClient::BotClient (std::string const & host, std::string const & port, std::s
 	detailed ({{ 0 }}),
 	ai (true, map, 6),
 	foe (false, map, ai.size),
+	log (ai, foe),
 	depth (d),
 	timer (io, boost::posix_time::seconds (45)),
 	socket (io) {
@@ -68,7 +69,7 @@ BotClient::BotClient (std::string const & host, std::string const & port, std::s
 void BotClient::authenticate () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
 	message.write_string (username);
-	send (message);
+	message.send (socket);
 }
 
 std::string BotClient::get_shared_secret (int secret_style, std::string const & salt) {
@@ -119,10 +120,6 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	return response;
 }
 
-void BotClient::send (OutMessage & message) {
-	message.finalize (socket);
-}
-
 void BotClient::run () {
 	timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
 
@@ -135,7 +132,7 @@ void BotClient::run () {
 void BotClient::reset_timer (boost::system::error_code const & error) {
 	if (!error) {
 		OutMessage msg (OutMessage::CLIENT_ACTIVITY);
-		send (msg);
+		msg.send (socket);
 		timer.expires_from_now (boost::posix_time::seconds (45));
 		timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
 	}
@@ -306,7 +303,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::REQUEST_ACTION: {
 			uint32_t field_id = msg.read_int ();
 			uint8_t slot = msg.read_byte ();
-			uint8_t position = msg.read_byte ();
+			uint8_t index = msg.read_byte ();
 			bool replace = msg.read_byte ();
 			uint8_t request_sequences = msg.read_byte ();
 			uint8_t sequential_requests = msg.read_byte ();
@@ -338,7 +335,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 				}
 			}
 			can_switch = can_switch_to;
-			handle_request_action (field_id, slot, position, replace, switches, can_switch, forced, moves);
+			handle_request_action (field_id, slot, index, replace, switches, can_switch, forced, moves);
 			break;
 		}
 		case InMessage::BATTLE_POKEMON: {
@@ -492,7 +489,7 @@ void BotClient::handle_challenge (InMessage msg) {
 	OutMessage out (1);
 	for (unsigned n = 0; n != 16; ++n)
 		out.write_byte (response [n]);
-	send (out);
+	out.send (socket);
 }
 
 void BotClient::handle_registry_response (uint8_t type, std::string const & details) {
@@ -544,13 +541,14 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party_) {
 	foe.player = opponent;
-	log.initialize_turn (ai, foe);
 	ai.replacing = true;
 	foe.replacing = true;
 	party = party_;
 }
 
-void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t position, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
+void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
+	std::cout << "handle_request_action\n";
+	do_turn (*log.first, *log.last, weather);
 	Team predicted = foe;
 	std::cout << "======================\nPredicting...\n";
 	predict_team (detailed, predicted, ai.size);
@@ -559,7 +557,14 @@ void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t 
 	std::cout << out;
 
 	int64_t score;
-	expectiminimax (ai, predicted, weather, depth, sv, score);
+	moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
+
+	uint8_t move_index = 0;
+	while (ai.pokemon->move.set [move_index].name != move)
+		++move_index;
+	OutMessage msg (OutMessage::BATTLE_ACTION);
+	msg.write_move (field_id, move_index);
+	msg.send (socket);
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
@@ -575,12 +580,20 @@ void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
 	std::cout << "handle_battle_victory\n";
 }
 
-void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id) {
-	std::cout << "handle_battle_use_move\n";
+void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+	Team * team;
+	if (party == party_)
+		team = &ai;
+	else
+		team = &foe;
+	log.active = team;
+	int move = move_id;
+	if (move >= SWITCH0)
+		move += 6;
+	log.log_move (static_cast <moves_list> (move));
 }
 
 void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
-	std::cout << "handle_battle_withdraw\n";
 }
 
 void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
@@ -637,7 +650,7 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 void BotClient::join_channel (std::string const & channel) {
 	OutMessage msg (OutMessage::JOIN_CHANNEL);
 	msg.write_string (channel);
-	send (msg);
+	msg.send (socket);
 }
 
 void BotClient::accept_challenge (std::string const & user) {
@@ -645,7 +658,7 @@ void BotClient::accept_challenge (std::string const & user) {
 	msg.write_string (user);
 	msg.write_byte (1);
 	msg.write_team (ai);
-	send (msg);
+	msg.send (socket);
 	std::cout << "Accepted challenge vs. " + user + "\n";
 }
 
@@ -654,7 +667,7 @@ void BotClient::reject_challenge (std::string const & user) {
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (0);
-	send (msg);
+	msg.send (socket);
 	std::cout << "Rejected challenge vs. " + user + "\n";
 }
 

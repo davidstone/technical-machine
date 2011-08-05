@@ -29,7 +29,8 @@ class OutMessage {
 		void write_int (uint32_t bytes);
 		void write_string (std::string const & string);
 		void write_team (Team const & team);
-		void finalize (boost::asio::ip::tcp::socket & socket);
+		void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);
+		void send (boost::asio::ip::tcp::socket & socket);
 		static int tm_to_pl_species (species id);
 		enum Message {
 			REQUEST_CHALLENGE = 0,

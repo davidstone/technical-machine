@@ -27,19 +27,13 @@
 
 namespace technicalmachine {
 
-Log::Log () :
-	newline2 (-1),
-	active (NULL),
-	inactive (NULL),
-	first (NULL),
-	phaze (false),
-	move_damage (false),
-	shed_skin (false) {
+Log::Log (Team & ai, Team & foe) {
+	initialize_turn (ai, foe);
 }
 
 bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
-	Log log;
+	Log log (ai, foe);
 	// Need to find a better way to signifiy end-of-turn. Currently the ~ with getline seems to remove the final line of a log, meaning I need to hit enter and then enter the ~.
 	getline (std::cin, log.input, '~');
 	std::cout << "======================\nAnalyzing...\n";
@@ -47,7 +41,6 @@ bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
 	if (log.input == "")
 		won = true;
 	else {
-		log.initialize_turn (ai, foe);
 		while (log.getline()) {
 			if (log.line == "===============") {
 				do_turn (*log.first, *log.last, weather);
@@ -205,6 +198,13 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 }
 
 void Log::pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, genders gender, Team & team, Team & other) {
+	active = &team;
+	inactive = &other;
+	if (first == NULL) {
+		first = &team;
+		last = &other;
+	}
+
 	size_t replacement = team.replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
 	
 	bool found = seen_pokemon (team, name);
@@ -213,13 +213,6 @@ void Log::pokemon_sent_out (Map const & map, species name, std::string const & n
 	if (!found)
 		add_pokemon (team, name, nickname, level, gender);
 	
-	active = &team;
-	inactive = &other;
-	if (first == NULL) {
-		first = &team;
-		last = &other;
-	}
-
 	// Special analysis when a Pokemon is brought out due to a phazing move
 	if (phaze) {
 		other.at_replacement().move->variable.index = 0;
