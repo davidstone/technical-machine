@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <vector>
+#include "../analyze_logs.h"
 #include "../evaluate.h"
 #include "../map.h"
 #include "../species.h"

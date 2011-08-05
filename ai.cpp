@@ -31,7 +31,6 @@
 
 int main (int argc, char* argv[]) {
 	using namespace technicalmachine;
-	unsigned const foe_size = 6;
 	int depth;
 	if (argc == 1)
 		depth = 2;
@@ -47,6 +46,7 @@ int main (int argc, char* argv[]) {
 		client.run();
 	}
 	else {
+		unsigned const foe_size = 6;
 		Map const map;
 		int detailed [END_SPECIES][7] = {{ 0 }};
 		detailed_stats (map, detailed);
