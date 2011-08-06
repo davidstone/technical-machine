@@ -498,9 +498,9 @@ void BotClient::handle_registry_response (uint8_t type, std::string const & deta
 		join_channel ("main");
 	}
 	else {
-		std::cout << "Authentication failed with code: " << static_cast <int> (type) << ". =(\n";
+		std::cerr << "Authentication failed with code: " << static_cast <int> (type) << ". =(\n";
 		if (details.length() > 0)
-			std::cout << details + "\n";
+			std::cerr << details + "\n";
 	}
 }
 
@@ -540,6 +540,7 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party_) {
+	std::cout << "handle_battle_begin\n";
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
@@ -548,6 +549,8 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
 	std::cout << "handle_request_action\n";
+	std::cout << log.first->pokemon->get_name () + " uses " + Move::name_to_string [log.first->pokemon->move->name] + "\n";
+	std::cout << log.last->pokemon->get_name () + " uses " + Move::name_to_string [log.last->pokemon->move->name] + "\n";
 	do_turn (*log.first, *log.last, weather);
 	Team predicted = foe;
 	std::cout << "======================\nPredicting...\n";
@@ -565,6 +568,8 @@ void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t 
 	OutMessage msg (OutMessage::BATTLE_ACTION);
 	msg.write_move (field_id, move_index);
 	msg.send (socket);
+	if (!ai.replacing and !foe.replacing)
+		log.initialize_turn (ai, foe);
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
@@ -581,6 +586,7 @@ void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
 }
 
 void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+	std::cout << "handle_battle_use_move\n";
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -592,6 +598,7 @@ void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party_, uint8
 		other = &ai;
 	}
 	log.active = team;
+	log.inactive = other;
 	if (log.first == NULL) {
 		log.first = team;
 		log.last = other;
@@ -606,6 +613,7 @@ void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_
 }
 
 void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+	std::cout << "handle_battle_send_out\n";
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -637,7 +645,6 @@ void BotClient::handle_battle_fainted (uint32_t field_id, uint8_t party, uint8_t
 }
 
 void BotClient::handle_battle_begin_turn (uint32_t field_id, uint16_t turn_count) {
-	log.initialize_turn (ai, foe);
 	std::cout << "handle_battle_begin_turn\n";
 }
 

@@ -395,7 +395,7 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 			user.pokemon.set [user.replacement].spa.stage = user.pokemon->spa.stage;
 			user.pokemon.set [user.replacement].spd.stage = user.pokemon->spd.stage;
 			user.pokemon.set [user.replacement].spe.stage = user.pokemon->spe.stage;
-			team.pass = true;
+			user.pass = true;
 			break;
 		case BELLY_DRUM:
 			if (user.pokemon->hp.stat > user.pokemon->hp.max / 2 and user.pokemon->hp.stat > 1) {

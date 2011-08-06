@@ -58,6 +58,7 @@ void endofturn0 (Team &team) {
 		team.loaf = false;
 	else
 		team.loaf = true;
+	team.replacing = false;
 }
 
 void endofturn1 (Team &team) {

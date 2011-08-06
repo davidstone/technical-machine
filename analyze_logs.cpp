@@ -431,7 +431,9 @@ void do_turn (Team & first, Team & last, Weather & weather) {
 			switchpokemon (last, first, weather);
 			last.moved = false;
 			normalize_hp (first, last);
+			last.replacing = false;
 		}
+		first.replacing = false;
 	}
 	else {
 		// Anything with recoil will mess this up
