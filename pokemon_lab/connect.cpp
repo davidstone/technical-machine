@@ -548,10 +548,8 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
-	std::cout << "handle_request_action\n";
-	std::cout << log.first->pokemon->get_name () + " uses " + Move::name_to_string [log.first->pokemon->move->name] + "\n";
-	std::cout << log.last->pokemon->get_name () + " uses " + Move::name_to_string [log.last->pokemon->move->name] + "\n";
 	do_turn (*log.first, *log.last, weather);
+	OutMessage msg (OutMessage::BATTLE_ACTION);
 	Team predicted = foe;
 	std::cout << "======================\nPredicting...\n";
 	predict_team (detailed, predicted, ai.size);
@@ -561,12 +559,14 @@ void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t 
 
 	int64_t score;
 	moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
-
-	uint8_t move_index = 0;
-	while (ai.pokemon->move.set [move_index].name != move)
-		++move_index;
-	OutMessage msg (OutMessage::BATTLE_ACTION);
-	msg.write_move (field_id, move_index);
+	if (Move::is_switch (move))
+		msg.write_switch (field_id, move);
+	else {
+		uint8_t move_index = 0;
+		while (ai.pokemon->move.set [move_index].name != move)
+			++move_index;
+		msg.write_move (field_id, move_index);
+	}
 	msg.send (socket);
 	if (!ai.replacing and !foe.replacing)
 		log.initialize_turn (ai, foe);

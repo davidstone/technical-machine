@@ -220,7 +220,10 @@ void Log::pokemon_sent_out (Map const & map, species name, std::string const & n
 			++other.at_replacement().move->variable.index;
 	}
 	else if (!active->moved) {
-		team.pokemon.set [replacement].move.index = other.size - team.pokemon.set [replacement].move.set.size() + team.replacement + 1;
+		team.pokemon.set [replacement].move.index = 0;
+		while (team.pokemon.set [replacement].move->name != SWITCH0)
+			++team.pokemon.set [replacement].move.index;
+		team.pokemon.set [replacement].move.index += team.replacement;		
 		active->moved = false;
 	}
 }

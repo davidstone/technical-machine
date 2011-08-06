@@ -102,6 +102,13 @@ void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t targ
 	write_byte (target);
 }
 
+void OutMessage::write_switch (uint32_t field_id, uint8_t move) {
+	write_int (field_id);
+	write_byte (1);
+	write_byte (move - SWITCH0);
+	write_byte (0);
+}
+
 void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
 	uint32_t length = buffer.size() - 1;
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);

@@ -54,6 +54,7 @@ class Move {
 		bool operator== (Move const &other) const;
 		bool operator!= (Move const &other) const;
 		bool is_switch () const;
+		static bool is_switch (moves_list name);
 		void get_magnitude (unsigned magnitude);
 		static bool compare_scores (Move const &first, Move const &second);
 	private:

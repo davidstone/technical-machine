@@ -1237,6 +1237,10 @@ bool Move::is_switch () const {
 	return SWITCH0 <= name and name <= SWITCH5;
 }
 
+bool Move::is_switch (moves_list name) {
+	return SWITCH0 <= name and name <= SWITCH5;
+}
+
 bool compare_scores (Move const &first, Move const &second) {
 	return first.score < second.score;
 }
