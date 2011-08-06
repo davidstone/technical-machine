@@ -37,7 +37,7 @@ int main (int argc, char* argv[]) {
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	if (true) {
+	if (false) {
 		std::string const host = "lab.pokemonexperte.de";
 		std::string const port = "8446";
 		std::string const username = "TM1.0";

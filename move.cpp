@@ -390,16 +390,12 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 				target.attract = true;
 			break;
 		case BATON_PASS:
-			if (false) {
-				user.pokemon.set [user.replacement].atk.stage = user.pokemon->atk.stage;
-				user.pokemon.set [user.replacement].def.stage = user.pokemon->def.stage;
-				user.pokemon.set [user.replacement].spa.stage = user.pokemon->spa.stage;
-				user.pokemon.set [user.replacement].spd.stage = user.pokemon->spd.stage;
-				user.pokemon.set [user.replacement].spe.stage = user.pokemon->spe.stage;
-		
-				// Change the active Pokemon to the one switching in.
-				switchpokemon (user, target, weather);
-			}
+			user.pokemon.set [user.replacement].atk.stage = user.pokemon->atk.stage;
+			user.pokemon.set [user.replacement].def.stage = user.pokemon->def.stage;
+			user.pokemon.set [user.replacement].spa.stage = user.pokemon->spa.stage;
+			user.pokemon.set [user.replacement].spd.stage = user.pokemon->spd.stage;
+			user.pokemon.set [user.replacement].spe.stage = user.pokemon->spe.stage;
+			team.pass = true;
 			break;
 		case BELLY_DRUM:
 			if (user.pokemon->hp.stat > user.pokemon->hp.max / 2 and user.pokemon->hp.stat > 1) {
@@ -1178,7 +1174,7 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case TRICK_ROOM:
 			weather.set_trick_room ();
 			break;
-		case U_TURN:		// Fix
+		case U_TURN:
 			break;
 		case UPROAR:
 			user.uproar = user.pokemon->move->variable->first;
