@@ -496,6 +496,7 @@ bool Log::search_is_first (std::string const & str) {
 }
 
 void Log::initialize_turn (Team &ai, Team &foe) {
+	std::cout << "Initializing turn\n";
 	initialize_team (ai);
 	initialize_team (foe);
 	phaze = false;

@@ -96,6 +96,7 @@ void OutMessage::write_team (Team const & team) {
 }
 
 void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {
+	std::cout << "move_index: " << static_cast <int> (move_index) << '\n';
 	write_int (field_id);
 	write_byte (0);
 	write_byte (move_index);
@@ -110,10 +111,10 @@ void OutMessage::write_switch (uint32_t field_id, uint8_t move) {
 }
 
 void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
-	uint32_t length = buffer.size() - 1;
+	uint32_t length = htonl (buffer.size() - 1);
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
-		buffer.insert (buffer.begin() + 1, *(byte + n));
+		buffer.insert (buffer.begin() + n + 1, *(byte + n));
 	boost::asio::write (socket, boost::asio::buffer (buffer));
 }
 

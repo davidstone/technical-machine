@@ -349,6 +349,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			//			 byte: shiny
 		   
 			// the bot probably doesn't need to care about this
+			std::cout << "handle_battle_pokemon\n";
 			msg.skip ();
 			break;
 		}
@@ -386,7 +387,6 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t slot = msg.read_byte ();
 			std::string nickname = msg.read_string ();
 			handle_battle_withdraw (field_id, party, slot, nickname);
-		void handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname);
 			break;
 		}
 		case InMessage::BATTLE_SEND_OUT: {
@@ -493,10 +493,8 @@ void BotClient::handle_challenge (InMessage msg) {
 }
 
 void BotClient::handle_registry_response (uint8_t type, std::string const & details) {
-	if (type == 7) {
-		std::cout << "Successfully authenticated!\n";
+	if (type == 7)
 		join_channel ("main");
-	}
 	else {
 		std::cerr << "Authentication failed with code: " << static_cast <int> (type) << ". =(\n";
 		if (details.length() > 0)
@@ -530,9 +528,8 @@ void BotClient::handle_channel_message (uint32_t channel_id, std::string const &
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
 	if (n > 1 or team_length != 6 or user != "Technical Machine")
 		reject_challenge (user);
-	else {
+	else
 		accept_challenge (user);
-	}
 }
 
 void BotClient::handle_finalize_challenge (std::string const & user, bool accepted) {
@@ -548,28 +545,36 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
-	do_turn (*log.first, *log.last, weather);
-	OutMessage msg (OutMessage::BATTLE_ACTION);
-	Team predicted = foe;
-	std::cout << "======================\nPredicting...\n";
-	predict_team (detailed, predicted, ai.size);
-	std::string out;
-	predicted.output (out);
-	std::cout << out;
+	std::cout << "handle_request_action\n";
+	if (log.first != NULL) {
+		do_turn (*log.first, *log.last, weather);
+		OutMessage msg (OutMessage::BATTLE_ACTION);
+		if (forced)
+			msg.write_move (field_id, 1);
+		else {
+			Team predicted = foe;
+			std::cout << "======================\nPredicting...\n";
+			predict_team (detailed, predicted, ai.size);
+			std::string out;
+			predicted.output (out);
+			std::cout << out;
 
-	int64_t score;
-	moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
-	if (Move::is_switch (move))
-		msg.write_switch (field_id, move);
-	else {
-		uint8_t move_index = 0;
-		while (ai.pokemon->move.set [move_index].name != move)
-			++move_index;
-		msg.write_move (field_id, move_index);
+			int64_t score;
+			moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
+			if (Move::is_switch (move))
+				msg.write_switch (field_id, move);
+			else {
+				uint8_t move_index = 0;
+				while (ai.pokemon->move.set [move_index].name != move)
+					++move_index;
+				msg.write_move (field_id, move_index, 1 - party);
+			}
+		}
+		msg.send (socket);
+		if (!ai.replacing)
+			log.initialize_turn (ai, foe);
 	}
-	msg.send (socket);
-	if (!ai.replacing and !foe.replacing)
-		log.initialize_turn (ai, foe);
+	std::cout << "end handle_request_action\n";
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
@@ -610,6 +615,7 @@ void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party_, uint8
 }
 
 void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
+	std::cout << "handle_battle_withdraw\n";
 }
 
 void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
@@ -657,9 +663,10 @@ void BotClient::handle_metagame_list (std::vector <Metagame> const & metagames) 
 }
 
 void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
+	std::cerr << "Invalid team.\n";
 	for (std::vector<int16_t>::const_iterator it = violation.begin(); it != violation.end(); ++it) {
 		int pokemon = (-(*it + 1)) % 6;
-		std::cout << "Problem at Pokemon " << pokemon << ", error code " << -(*it + pokemon + 1) / 6 << '\n';
+		std::cerr << "Problem at Pokemon " << pokemon << ", error code " << -(*it + pokemon + 1) / 6 << '\n';
 	}
 }
 
