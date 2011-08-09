@@ -10,6 +10,9 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdint>
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -53,6 +56,8 @@ BotClient::BotClient (std::string const & host, std::string const & port, std::s
 	depth (d),
 	timer (io, boost::posix_time::seconds (45)),
 	socket (io) {
+	srand (static_cast <unsigned> (time (0)));
+	load_responses ();
 	detailed_stats (map, detailed);
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
@@ -546,35 +551,38 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
 	std::cout << "handle_request_action\n";
-	if (log.first != NULL) {
-		do_turn (*log.first, *log.last, weather);
-		OutMessage msg (OutMessage::BATTLE_ACTION);
-		if (forced)
-			msg.write_move (field_id, 1);
-		else {
-			Team predicted = foe;
-			std::cout << "======================\nPredicting...\n";
-			predict_team (detailed, predicted, ai.size);
-			std::string out;
-			predicted.output (out);
-			std::cout << out;
-
-			int64_t score;
-			moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
-			if (Move::is_switch (move))
-				msg.write_switch (field_id, move);
-			else {
-				uint8_t move_index = 0;
-				while (ai.pokemon->move.set [move_index].name != move)
-					++move_index;
-				msg.write_move (field_id, move_index, 1 - party);
-			}
-		}
-		msg.send (socket);
-		if (!ai.replacing)
-			log.initialize_turn (ai, foe);
+	do_turn (*log.first, *log.last, weather);
+	if (rand () % 20 == 0) {
+		OutMessage comment (OutMessage::CHANNEL_MESSAGE);
+		comment.write_int (field_id);
+		comment.write_string (response [rand() % response.size()]);
+		comment.send (socket);
 	}
-	std::cout << "end handle_request_action\n";
+	OutMessage msg (OutMessage::BATTLE_ACTION);
+	if (forced)
+		msg.write_move (field_id, 1);
+	else {
+		Team predicted = foe;
+		std::cout << "======================\nPredicting...\n";
+		predict_team (detailed, predicted, ai.size);
+		std::string out;
+		predicted.output (out);
+		std::cout << out;
+
+		int64_t score;
+		moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
+		if (Move::is_switch (move))
+			msg.write_switch (field_id, move);
+		else {
+			uint8_t move_index = 0;
+			while (ai.pokemon->move.set [move_index].name != move)
+				++move_index;
+			msg.write_move (field_id, move_index, 1 - party);
+		}
+	}
+	msg.send (socket);
+	if (!ai.replacing)
+		log.initialize_turn (ai, foe);
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
@@ -692,6 +700,14 @@ void BotClient::reject_challenge (std::string const & user) {
 	msg.write_byte (0);
 	msg.send (socket);
 	std::cout << "Rejected challenge vs. " + user + "\n";
+}
+
+void BotClient::load_responses () {
+	std::ifstream file ("responses.txt");
+	std::string line;
+	for (getline (file, line); !file.eof(); getline (file, line))
+		response.push_back (line);
+	file.close();
 }
 
 }		// namespace pl

@@ -34,6 +34,7 @@ class BotClient {
 	private:
 		std::string const username;
 		std::string const password;
+		std::vector <std::string> response;
 	public:
 		Map map;
 		int detailed [END_SPECIES][7];
@@ -84,6 +85,7 @@ class BotClient {
 		void accept_challenge (std::string const & user);
 		void reject_challenge (std::string const & user);
 		void reset_timer (boost::system::error_code const & error);
+		void load_responses ();
 };
 
 }

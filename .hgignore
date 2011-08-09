@@ -4,4 +4,6 @@ syntax: glob
 ai
 aio
 predict
+responses.txt
 settings.txt
+battles/*
