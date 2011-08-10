@@ -32,8 +32,8 @@ class OutMessage;
 
 class BotClient {
 	private:
-		std::string const username;
-		std::string const password;
+		std::string username;
+		std::string password;
 		std::vector <std::string> response;
 	public:
 		Map map;
@@ -50,10 +50,12 @@ class BotClient {
 		boost::asio::deadline_timer timer;
 	public:
 		boost::asio::ip::tcp::socket socket;
-		BotClient (std::string const &host, std::string const & port, std::string const & user, std::string const & pswd, int d);
+		BotClient (int d);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
+		void account_info (std::string & host, std::string & port);
+		void connect (std::string const & host, std::string const & port);
 		void authenticate ();
 		std::string get_shared_secret (int secret_style, std::string const & salt);
 		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);

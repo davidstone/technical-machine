@@ -38,11 +38,7 @@ int main (int argc, char* argv[]) {
 		depth = boost::lexical_cast <int> (argv[1]);
 
 	if (true) {
-		std::string const host = "lab.pokemonexperte.de";
-		std::string const port = "8446";
-		std::string const username = "TM1.0";
-		std::string const password = "Maximum Security";
-		pl::BotClient client (host, port, username, password, depth);
+		pl::BotClient client (depth);
 		client.run();
 	}
 	else {

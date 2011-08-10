@@ -46,9 +46,7 @@
 namespace technicalmachine {
 namespace pl {
 
-BotClient::BotClient (std::string const & host, std::string const & port, std::string const & user, std::string const & pswd, int d):
-	username (user),
-	password (pswd),
+BotClient::BotClient (int d):
 	detailed ({{ 0 }}),
 	ai (true, map, 6),
 	foe (false, map, ai.size),
@@ -59,6 +57,33 @@ BotClient::BotClient (std::string const & host, std::string const & port, std::s
 	srand (static_cast <unsigned> (time (0)));
 	load_responses ();
 	detailed_stats (map, detailed);
+	std::string host;
+	std::string port;
+	account_info (host, port);
+	connect (host, port);
+	authenticate ();
+}
+
+void BotClient::account_info (std::string & host, std::string & port) {
+	std::ifstream file ("account.txt");
+	std::string line;
+	std::string delimiter = ": ";
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		size_t position = line.find (delimiter);
+		std::string data = line.substr (0, position);
+		if (data == "host")
+			host = line.substr (position + delimiter.length());
+		else if (data == "port")
+			port = line.substr (position + delimiter.length());
+		else if (data == "username")
+			username = line.substr (position + delimiter.length());
+		else if (data == "password")
+			password = line.substr (position + delimiter.length());
+	}
+	file.close();
+}
+
+void BotClient::connect (std::string const & host, std::string const & port) {
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
 	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
@@ -68,7 +93,6 @@ BotClient::BotClient (std::string const & host, std::string const & port, std::s
 		socket.close();
 		socket.connect (*endpoint_iterator++, error);
 	}
-	authenticate();
 }
 
 void BotClient::authenticate () {
@@ -78,16 +102,17 @@ void BotClient::authenticate () {
 }
 
 std::string BotClient::get_shared_secret (int secret_style, std::string const & salt) {
-	if (secret_style == 0)
-		return password;
-	else if (secret_style == 1)
-		return getMD5HexHash (password);
-	else if (secret_style == 2)
-		return getMD5HexHash (getMD5HexHash (password) + salt);
-	else {
-		std::cerr << "Unknown secret style of " << secret_style << '\n';
-		return "";
-	}	
+	switch (secret_style) {
+		case 0:
+			return password;
+		case 1:
+			return getMD5HexHash (password);
+		case 2:
+			return getMD5HexHash (getMD5HexHash (password) + salt);
+		default:
+			std::cerr << "Unknown secret style of " << secret_style << '\n';
+			return "";
+	}
 }
 
 std::string BotClient::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
