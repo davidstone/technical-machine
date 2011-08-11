@@ -112,7 +112,7 @@ class Team {
 		
 		uint8_t size;			// How big is the team?
 		
-		bool const me;				// Is this my team?
+		bool me;				// Is this my team?
 	
 		Team (bool isme, Map const &map, unsigned size);
 		bool operator== (Team const &other) const;

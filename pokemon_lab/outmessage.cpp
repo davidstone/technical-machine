@@ -96,7 +96,6 @@ void OutMessage::write_team (Team const & team) {
 }
 
 void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {
-	std::cout << "move_index: " << static_cast <int> (move_index) << '\n';
 	write_int (field_id);
 	write_byte (0);
 	write_byte (move_index);

@@ -13,6 +13,7 @@
 #define POKEMON_LAB_CONNECT_H_
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -30,27 +31,34 @@ class Channel;
 class Metagame;
 class OutMessage;
 
+class Battle {
+	public:
+		Team ai;
+		Team foe;
+		Weather weather;
+		Log log;
+		int depth;
+		uint8_t party;
+		Battle (Map const & map, std::string const & opponent, uint8_t party);
+};
+
 class BotClient {
 	private:
 		std::string username;
 		std::string password;
 		std::vector <std::string> response;
-	public:
 		Map map;
 		int detailed [END_SPECIES][7];
-		Team ai;
-		Team foe;
-		Weather weather;
 		score_variables sv;
-		Log log;
+		std::map <uint8_t, Battle> battles;
 		int depth;
-		uint8_t party;
+	public:
 		boost::asio::io_service io;
 	private:
 		boost::asio::deadline_timer timer;
 	public:
 		boost::asio::ip::tcp::socket socket;
-		BotClient (int d);
+		BotClient (int depth_);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:

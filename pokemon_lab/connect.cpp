@@ -14,6 +14,7 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -46,12 +47,19 @@
 namespace technicalmachine {
 namespace pl {
 
-BotClient::BotClient (int d):
-	detailed ({{ 0 }}),
+Battle::Battle (Map const & map, std::string const & opponent, uint8_t party_):
 	ai (true, map, 6),
 	foe (false, map, ai.size),
 	log (ai, foe),
-	depth (d),
+	party (party_) {
+	foe.player = opponent;
+	ai.replacing = true;
+	foe.replacing = true;
+}
+
+BotClient::BotClient (int depth_):
+	detailed ({{ 0 }}),
+	depth (depth_),
 	timer (io, boost::posix_time::seconds (45)),
 	socket (io) {
 	srand (static_cast <unsigned> (time (0)));
@@ -566,17 +574,16 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 	std::cout << "handle_finalize_challenge\n";
 }
 
-void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party_) {
+void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
 	std::cout << "handle_battle_begin\n";
-	foe.player = opponent;
-	ai.replacing = true;
-	foe.replacing = true;
-	party = party_;
+	Battle battle (map, opponent, party);
+	battles [field_id] = battle;
 }
 
 void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
 	std::cout << "handle_request_action\n";
-	do_turn (*log.first, *log.last, weather);
+	Battle & battle = battles.find (field_id)->second;
+	do_turn (*battle.log.first, *battle.log.last, battle.weather);
 	if (rand () % 20 == 0) {
 		OutMessage comment (OutMessage::CHANNEL_MESSAGE);
 		comment.write_int (field_id);
@@ -587,27 +594,27 @@ void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t 
 	if (forced)
 		msg.write_move (field_id, 1);
 	else {
-		Team predicted = foe;
+		Team predicted = battle.foe;
 		std::cout << "======================\nPredicting...\n";
-		predict_team (detailed, predicted, ai.size);
+		predict_team (detailed, predicted, battle.ai.size);
 		std::string out;
 		predicted.output (out);
 		std::cout << out;
 
 		int64_t score;
-		moves_list move = expectiminimax (ai, predicted, weather, depth, sv, score);
+		moves_list move = expectiminimax (battle.ai, predicted, battle.weather, depth, sv, score);
 		if (Move::is_switch (move))
 			msg.write_switch (field_id, move);
 		else {
 			uint8_t move_index = 0;
-			while (ai.pokemon->move.set [move_index].name != move)
+			while (battle.ai.pokemon->move.set [move_index].name != move)
 				++move_index;
-			msg.write_move (field_id, move_index, 1 - party);
+			msg.write_move (field_id, move_index, 1 - battle.party);
 		}
 	}
 	msg.send (socket);
-	if (!ai.replacing)
-		log.initialize_turn (ai, foe);
+	if (!battle.ai.replacing)
+		battle.log.initialize_turn (battle.ai, battle.foe);
 }
 
 void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
@@ -623,55 +630,58 @@ void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
 	std::cout << "handle_battle_victory\n";
 }
 
-void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id) {
 	std::cout << "handle_battle_use_move\n";
+	Battle & battle = battles.find (field_id)->second;
 	Team * team;
 	Team * other;
-	if (party == party_) {
-		team = &ai;
-		other = &foe;
+	if (battle.party == party) {
+		team = &battle.ai;
+		other = &battle.foe;
 	}
 	else {
-		team = &foe;
-		other = &ai;
+		team = &battle.foe;
+		other = &battle.ai;
 	}
-	log.active = team;
-	log.inactive = other;
-	if (log.first == NULL) {
-		log.first = team;
-		log.last = other;
+	battle.log.active = team;
+	battle.log.inactive = other;
+	if (battle.log.first == NULL) {
+		battle.log.first = team;
+		battle.log.last = other;
 	}
 	int move = move_id;
 	if (move >= SWITCH0)
 		move += 6;
-	log.log_move (static_cast <moves_list> (move));
+	battle.log.log_move (static_cast <moves_list> (move));
 }
 
 void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
 	std::cout << "handle_battle_withdraw\n";
 }
 
-void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
 	std::cout << "handle_battle_send_out\n";
+	Battle & battle = battles.find (field_id)->second;
 	Team * team;
 	Team * other;
-	if (party == party_) {
-		team = &ai;
-		other = &foe;
+	if (battle.party == party) {
+		team = &battle.ai;
+		other = &battle.foe;
 	}
 	else {
-		team = &foe;
-		other = &ai;
+		team = &battle.foe;
+		other = &battle.ai;
 	}
 	species name = InMessage::pl_to_tm_species (species_id);
-	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
+	battle.log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
 }
 
 void BotClient::handle_battle_health_change (uint32_t field_id, uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
 	std::cout << "handle_battle_health_change\n";
-	if (log.move_damage) {
-		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
-		log.move_damage = false;
+	Battle & battle = battles.find (field_id)->second;
+	if (battle.log.move_damage) {
+		battle.log.active->damage = battle.log.active->at_replacement().hp.max * change_in_health / denominator;
+		battle.log.move_damage = false;
 	}
 }
 
@@ -713,7 +723,7 @@ void BotClient::accept_challenge (std::string const & user) {
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (1);
-	msg.write_team (ai);
+	msg.write_team (battle.ai);
 	msg.send (socket);
 	std::cout << "Accepted challenge vs. " + user + "\n";
 }
