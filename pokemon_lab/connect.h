@@ -39,7 +39,18 @@ class Battle {
 		Log log;
 		int depth;
 		uint8_t party;
-		Battle (Map const & map, std::string const & opponent, uint8_t party);
+		Battle (Map const & map, std::string const & opponent);
+		void handle_request_action (BotClient &, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
+		void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
+		void handle_victory (uint16_t party_id);
+		void handle_use_move (uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id);
+		void handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname);
+		void handle_send_out (Map const & map, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level);
+		void handle_health_change (uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator);
+		void handle_set_pp (uint8_t party, uint8_t slot, uint8_t pp);
+		void handle_fainted (uint8_t party, uint8_t slot, std::string const & nickname);
+		void handle_begin_turn (uint16_t turn_count);
+		void handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp);
 };
 
 class BotClient {
@@ -48,9 +59,12 @@ class BotClient {
 		std::string password;
 		std::vector <std::string> response;
 		Map map;
+	public:
 		int detailed [END_SPECIES][7];
 		score_variables sv;
-		std::map <uint8_t, Battle> battles;
+	private:
+		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
+		std::map <uint8_t, Battle> battles;			// Battles currently underway
 		int depth;
 	public:
 		boost::asio::io_service io;
@@ -61,6 +75,7 @@ class BotClient {
 		BotClient (int depth_);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
+		std::string get_response () const;
 	private:
 		void account_info (std::string & host, std::string & port);
 		void connect (std::string const & host, std::string const & port);
@@ -78,17 +93,6 @@ class BotClient {
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
 		void handle_finalize_challenge (std::string const & user, bool accepted);
 		void handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party);
-		void handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
-		void handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
-		void handle_battle_victory (uint32_t field_id, uint16_t party_id);
-		void handle_battle_use_move (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id);
-		void handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname);
-		void handle_battle_send_out (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level);
-		void handle_battle_health_change (uint32_t field_id, uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator);
-		void handle_battle_set_pp (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t pp);
-		void handle_battle_fainted (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname);
-		void handle_battle_begin_turn (uint32_t field_id, uint16_t turn_count);
-		void handle_battle_set_move (uint32_t field_id, uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
 		void join_channel (std::string const & channel);

@@ -47,11 +47,10 @@
 namespace technicalmachine {
 namespace pl {
 
-Battle::Battle (Map const & map, std::string const & opponent, uint8_t party_):
+Battle::Battle (Map const & map, std::string const & opponent):
 	ai (true, map, 6),
 	foe (false, map, ai.size),
-	log (ai, foe),
-	party (party_) {
+	log (ai, foe) {
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
@@ -373,7 +372,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 				}
 			}
 			can_switch = can_switch_to;
-			handle_request_action (field_id, slot, index, replace, switches, can_switch, forced, moves);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_request_action (*this, field_id, slot, index, replace, switches, can_switch, forced, moves);
 			break;
 		}
 		case InMessage::BATTLE_POKEMON: {
@@ -401,13 +401,15 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 				std::string argument = msg.read_string ();
 				arguments.push_back (argument);
 			}
-			handle_battle_print (field_id, category, message_id, arguments);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_print (category, message_id, arguments);
 			break;
 		}
 		case InMessage::BATTLE_VICTORY: {
 			uint32_t field_id = msg.read_int ();
 			uint16_t party_id = msg.read_short ();
-			handle_battle_victory (field_id, party_id);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_victory (party_id);
 			break;
 		}
 		case InMessage::BATTLE_USE_MOVE: {
@@ -416,7 +418,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t slot = msg.read_byte ();
 			std::string nickname = msg.read_string ();
 			uint16_t move_id = msg.read_short ();
-			handle_battle_use_move (field_id, party, slot, nickname, move_id);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_use_move (party, slot, nickname, move_id);
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
@@ -424,7 +427,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t party = msg.read_byte ();
 			uint8_t slot = msg.read_byte ();
 			std::string nickname = msg.read_string ();
-			handle_battle_withdraw (field_id, party, slot, nickname);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_withdraw (party, slot, nickname);
 			break;
 		}
 		case InMessage::BATTLE_SEND_OUT: {
@@ -436,7 +440,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t species_id = msg.read_short ();
 			uint8_t gender = msg.read_byte ();
 			uint8_t level = msg.read_byte();
-			handle_battle_send_out (field_id, party, slot, index, nickname, species_id, gender, level);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_send_out (map, party, slot, index, nickname, species_id, gender, level);
 			break;
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
@@ -446,7 +451,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t change_in_health = msg.read_short ();
 			uint16_t remaining_health = msg.read_short ();
 			uint16_t denominator = msg.read_short ();
-			handle_battle_health_change (field_id, party, slot, change_in_health, remaining_health, denominator);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_health_change (party, slot, change_in_health, remaining_health, denominator);
 			break;
 		}
 		case InMessage::BATTLE_SET_PP: {
@@ -454,7 +460,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t party = msg.read_byte ();
 			uint8_t slot = msg.read_byte ();
 			uint8_t pp = msg.read_byte ();
-			handle_battle_set_pp (field_id, party, slot, pp);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_set_pp (party, slot, pp);
 			break;
 		}
 		case InMessage::BATTLE_FAINTED: {
@@ -462,13 +469,15 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t party = msg.read_byte ();
 			uint8_t slot = msg.read_byte ();
 			std::string nickname = msg.read_string ();
-			handle_battle_fainted (field_id, party, slot, nickname);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_fainted (party, slot, nickname);
 			break;
 		}
 		case InMessage::BATTLE_BEGIN_TURN: {
 			uint32_t field_id = msg.read_int ();
 			uint16_t turn_count = msg.read_short ();
-			handle_battle_begin_turn (field_id, turn_count);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_begin_turn (turn_count);
 			break;
 		}
 		case InMessage::SPECTATOR_BEGIN: {
@@ -482,7 +491,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t new_move = msg.read_short ();
 			uint8_t pp = msg.read_byte ();
 			uint8_t max_pp = msg.read_byte ();
-			handle_battle_set_move (field_id, pokemon, move_slot, new_move, pp, max_pp);
+			Battle & battle = battles.find (field_id)->second;
+			battle.handle_set_move (pokemon, move_slot, new_move, pp, max_pp);
 			break;
 		}
 		case InMessage::METAGAME_LIST: {
@@ -576,48 +586,49 @@ void BotClient::handle_finalize_challenge (std::string const & user, bool accept
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
 	std::cout << "handle_battle_begin\n";
-	Battle battle (map, opponent, party);
-	battles [field_id] = battle;
+	Battle battle = challenges.find (opponent)->second;
+	battle.party = party;
+	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
+	challenges.erase (opponent);
 }
 
-void BotClient::handle_request_action (uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
+void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
 	std::cout << "handle_request_action\n";
-	Battle & battle = battles.find (field_id)->second;
-	do_turn (*battle.log.first, *battle.log.last, battle.weather);
+	do_turn (*log.first, *log.last, weather);
 	if (rand () % 20 == 0) {
 		OutMessage comment (OutMessage::CHANNEL_MESSAGE);
 		comment.write_int (field_id);
-		comment.write_string (response [rand() % response.size()]);
-		comment.send (socket);
+		comment.write_string (botclient.get_response ());
+		comment.send (botclient.socket);
 	}
 	OutMessage msg (OutMessage::BATTLE_ACTION);
 	if (forced)
 		msg.write_move (field_id, 1);
 	else {
-		Team predicted = battle.foe;
+		Team predicted = foe;
 		std::cout << "======================\nPredicting...\n";
-		predict_team (detailed, predicted, battle.ai.size);
+		predict_team (botclient.detailed, predicted, ai.size);
 		std::string out;
 		predicted.output (out);
 		std::cout << out;
 
 		int64_t score;
-		moves_list move = expectiminimax (battle.ai, predicted, battle.weather, depth, sv, score);
+		moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
 		if (Move::is_switch (move))
 			msg.write_switch (field_id, move);
 		else {
 			uint8_t move_index = 0;
-			while (battle.ai.pokemon->move.set [move_index].name != move)
+			while (ai.pokemon->move.set [move_index].name != move)
 				++move_index;
-			msg.write_move (field_id, move_index, 1 - battle.party);
+			msg.write_move (field_id, move_index, 1 - party);
 		}
 	}
-	msg.send (socket);
-	if (!battle.ai.replacing)
-		battle.log.initialize_turn (battle.ai, battle.foe);
+	msg.send (botclient.socket);
+	if (!ai.replacing)
+		log.initialize_turn (ai, foe);
 }
 
-void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
+void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 	std::cout << "handle_battle_print\n";
 	std::cout << "category: " << static_cast <int> (category) << '\n';
 	std::cout << "message id: " << message_id << '\n';
@@ -626,78 +637,75 @@ void BotClient::handle_battle_print (uint32_t field_id, uint8_t category, uint16
 		std::cout << "\t" + *it + "\n";
 }
 
-void BotClient::handle_battle_victory (uint32_t field_id, uint16_t party_id) {
+void Battle::handle_victory (uint16_t party_id) {
 	std::cout << "handle_battle_victory\n";
 }
 
-void BotClient::handle_battle_use_move (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+void Battle::handle_use_move (uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id) {
 	std::cout << "handle_battle_use_move\n";
-	Battle & battle = battles.find (field_id)->second;
 	Team * team;
 	Team * other;
-	if (battle.party == party) {
-		team = &battle.ai;
-		other = &battle.foe;
+	if (party == party) {
+		team = &ai;
+		other = &foe;
 	}
 	else {
-		team = &battle.foe;
-		other = &battle.ai;
+		team = &foe;
+		other = &ai;
 	}
-	battle.log.active = team;
-	battle.log.inactive = other;
-	if (battle.log.first == NULL) {
-		battle.log.first = team;
-		battle.log.last = other;
+	log.active = team;
+	log.inactive = other;
+	if (log.first == NULL) {
+		log.first = team;
+		log.last = other;
 	}
 	int move = move_id;
 	if (move >= SWITCH0)
 		move += 6;
-	battle.log.log_move (static_cast <moves_list> (move));
+	log.log_move (static_cast <moves_list> (move));
 }
 
-void BotClient::handle_battle_withdraw (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
+void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
 	std::cout << "handle_battle_withdraw\n";
 }
 
-void BotClient::handle_battle_send_out (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+void Battle::handle_send_out (Map const & map, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
 	std::cout << "handle_battle_send_out\n";
-	Battle & battle = battles.find (field_id)->second;
 	Team * team;
 	Team * other;
-	if (battle.party == party) {
-		team = &battle.ai;
-		other = &battle.foe;
+	if (party == party) {
+		team = &ai;
+		other = &foe;
 	}
 	else {
-		team = &battle.foe;
-		other = &battle.ai;
+		team = &foe;
+		other = &ai;
 	}
 	species name = InMessage::pl_to_tm_species (species_id);
-	battle.log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
+	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
 }
 
-void BotClient::handle_battle_health_change (uint32_t field_id, uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
+void Battle::handle_health_change (uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
 	std::cout << "handle_battle_health_change\n";
-	Battle & battle = battles.find (field_id)->second;
-	if (battle.log.move_damage) {
-		battle.log.active->damage = battle.log.active->at_replacement().hp.max * change_in_health / denominator;
-		battle.log.move_damage = false;
+	if (log.move_damage) {
+		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
+		log.move_damage = false;
 	}
 }
 
-void BotClient::handle_battle_set_pp (uint32_t field_id, uint8_t party, uint8_t slot, uint8_t pp) {
+void Battle::handle_set_pp (uint8_t party, uint8_t slot, uint8_t pp) {
 	std::cout << "handle_battle_set_pp\n";
 }
 
-void BotClient::handle_battle_fainted (uint32_t field_id, uint8_t party, uint8_t slot, std::string const & nickname) {
+void Battle::handle_fainted (uint8_t party, uint8_t slot, std::string const & nickname) {
 	std::cout << "handle_battle_fainted\n";
 }
 
-void BotClient::handle_battle_begin_turn (uint32_t field_id, uint16_t turn_count) {
+void Battle::handle_begin_turn (uint16_t turn_count) {
 	std::cout << "handle_battle_begin_turn\n";
 }
 
-void BotClient::handle_battle_set_move (uint32_t field_id, uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
+void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
 	std::cout << "handle_battle_set_move\n";
 }
 
@@ -720,6 +728,8 @@ void BotClient::join_channel (std::string const & channel) {
 }
 
 void BotClient::accept_challenge (std::string const & user) {
+	Battle battle (map, user);
+	challenges.insert (std::pair <std::string, Battle> (user, battle));
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);
 	msg.write_byte (1);
@@ -743,6 +753,10 @@ void BotClient::load_responses () {
 	for (getline (file, line); !file.eof(); getline (file, line))
 		response.push_back (line);
 	file.close();
+}
+
+std::string BotClient::get_response () const {
+	return response [rand() % response.size()];
 }
 
 }		// namespace pl
