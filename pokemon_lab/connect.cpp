@@ -669,11 +669,11 @@ void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & n
 	std::cout << "handle_battle_withdraw\n";
 }
 
-void Battle::handle_send_out (Map const & map, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
 	std::cout << "handle_battle_send_out\n";
 	Team * team;
 	Team * other;
-	if (party == party) {
+	if (party == party_) {
 		team = &ai;
 		other = &foe;
 	}
