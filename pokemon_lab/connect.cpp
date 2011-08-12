@@ -47,10 +47,11 @@
 namespace technicalmachine {
 namespace pl {
 
-Battle::Battle (Map const & map, std::string const & opponent):
+Battle::Battle (Map const & map, std::string const & opponent, int depth_):
 	ai (true, map, 6),
 	foe (false, map, ai.size),
-	log (ai, foe) {
+	log (ai, foe),
+	depth (depth_) {
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
@@ -728,7 +729,7 @@ void BotClient::join_channel (std::string const & channel) {
 }
 
 void BotClient::accept_challenge (std::string const & user) {
-	Battle battle (map, user);
+	Battle battle (map, user, depth);
 	challenges.insert (std::pair <std::string, Battle> (user, battle));
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
 	msg.write_string (user);

@@ -39,7 +39,7 @@ class Battle {
 		Log log;
 		int depth;
 		uint8_t party;
-		Battle (Map const & map, std::string const & opponent);
+		Battle (Map const & map, std::string const & opponent, int depth_);
 		void handle_request_action (BotClient &, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
 		void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
 		void handle_victory (uint16_t party_id);

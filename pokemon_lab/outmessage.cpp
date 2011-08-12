@@ -110,7 +110,6 @@ void OutMessage::write_switch (uint32_t field_id, uint8_t move) {
 }
 
 void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
-	std::cout << "buffer.size(): " << buffer.size() << '\n';
 	uint32_t length = htonl (buffer.size() - 1);
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
