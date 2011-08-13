@@ -122,7 +122,7 @@ crypt/hex.o: crypt/hex.cpp crypt/hex.h
 crypt/md5.o: crypt/md5.c crypt/md5.h
 crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
 crypt/sha2.o: crypt/sha2.c crypt/sha2.h
-connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
+pokemon_lab/connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
  crypt/get_sha2.h crypt/rijndael.h load_stats.h map.h ability.h gender.h \
  item.h move.h active.h type.h stat.h pokemon.h \
  status.h evaluate.h species.h team.h weather.h \
@@ -130,7 +130,7 @@ connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
 pokemon_lab/file.o: pokemon_lab/file.cpp map.h ability.h gender.h item.h \
  move.h active.h type.h stat.h species.h pokemon.h status.h team.h \
  pokemon_lab/file.h
-inmessage.o: pokemon_lab/inmessage.cpp evaluate.h \
+pokemon_lab/inmessage.o: pokemon_lab/inmessage.cpp evaluate.h \
  map.h ability.h gender.h item.h move.h active.h \
  type.h stat.h species.h team.h weather.h \
  pokemon_lab/inmessage.h pokemon_lab/connect.h

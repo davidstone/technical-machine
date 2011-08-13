@@ -102,10 +102,10 @@ void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t targ
 	write_byte (target);
 }
 
-void OutMessage::write_switch (uint32_t field_id, uint8_t move) {
+void OutMessage::write_switch (uint32_t field_id, uint8_t slot) {
 	write_int (field_id);
 	write_byte (1);
-	write_byte (move - SWITCH0);
+	write_byte (slot);
 	write_byte (0);
 }
 

@@ -52,6 +52,8 @@ Battle::Battle (Map const & map, std::string const & opponent, int depth_):
 	foe (false, map, ai.size),
 	log (ai, foe),
 	depth (depth_) {
+	for (std::vector <Pokemon>::const_iterator pokemon = ai.pokemon.set.begin(); pokemon != ai.pokemon.set.end(); ++pokemon)
+		slot_memory.push_back (pokemon->name);
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
@@ -409,8 +411,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::BATTLE_VICTORY: {
 			uint32_t field_id = msg.read_int ();
 			uint16_t party_id = msg.read_short ();
-			Battle & battle = battles.find (field_id)->second;
-			battle.handle_victory (party_id);
+			handle_victory (field_id, party_id);
 			break;
 		}
 		case InMessage::BATTLE_USE_MOVE: {
@@ -616,7 +617,7 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		int64_t score;
 		moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
 		if (Move::is_switch (move))
-			msg.write_switch (field_id, move);
+			msg.write_switch (field_id, switch_slot (move));
 		else {
 			uint8_t move_index = 0;
 			while (ai.pokemon->move.set [move_index].name != move)
@@ -638,15 +639,22 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 		std::cout << "\t" + *it + "\n";
 }
 
-void Battle::handle_victory (uint16_t party_id) {
-	std::cout << "handle_battle_victory\n";
+void BotClient::handle_victory (uint32_t field_id, uint16_t party_id) {
+	std::string verb;
+	Battle & battle = battles.find (field_id)->second;
+	if (battle.party == party_id)
+		verb = "Won";
+	else
+		verb = "Lost";
+	std::cout << verb + " a battle vs. " + battle.foe.player + "\n";
+	battles.erase (field_id);
 }
 
-void Battle::handle_use_move (uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
 	std::cout << "handle_battle_use_move\n";
 	Team * team;
 	Team * other;
-	if (party == party) {
+	if (party == party_) {
 		team = &ai;
 		other = &foe;
 	}
@@ -686,7 +694,7 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
 }
 
-void Battle::handle_health_change (uint8_t party, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
+void Battle::handle_health_change (uint8_t party_, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
 	std::cout << "handle_battle_health_change\n";
 	if (log.move_damage) {
 		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
@@ -694,12 +702,23 @@ void Battle::handle_health_change (uint8_t party, uint8_t slot, uint16_t change_
 	}
 }
 
-void Battle::handle_set_pp (uint8_t party, uint8_t slot, uint8_t pp) {
+void Battle::handle_set_pp (uint8_t party_, uint8_t slot, uint8_t pp) {
 	std::cout << "handle_battle_set_pp\n";
 }
 
-void Battle::handle_fainted (uint8_t party, uint8_t slot, std::string const & nickname) {
+void Battle::handle_fainted (uint8_t party_, uint8_t slot, std::string const & nickname) {
 	std::cout << "handle_battle_fainted\n";
+	Team * team;
+	Team * other;
+	if (party == party_) {
+		team = &ai;
+		other = &foe;
+	}
+	else {
+		team = &foe;
+		other = &ai;
+	}
+	team->at_replacement().fainted = true;
 }
 
 void Battle::handle_begin_turn (uint16_t turn_count) {
@@ -708,6 +727,16 @@ void Battle::handle_begin_turn (uint16_t turn_count) {
 
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
 	std::cout << "handle_battle_set_move\n";
+}
+
+uint8_t Battle::switch_slot (moves_list move) {
+	uint8_t slot = move - SWITCH0;
+	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
+		if (slot_memory [n] == ai.pokemon.set [slot].name)
+			return n;
+	}
+	assert (false);
+	return 0;		// This should never happen
 }
 
 void BotClient::handle_metagame_list (std::vector <Metagame> const & metagames) {

@@ -30,7 +30,7 @@ class OutMessage {
 		void write_string (std::string const & string);
 		void write_team (Team const & team);
 		void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);
-		void write_switch (uint32_t field_id, uint8_t move);
+		void write_switch (uint32_t field_id, uint8_t slot);
 		void send (boost::asio::ip::tcp::socket & socket);
 		static int tm_to_pl_species (species id);
 		enum Message {
