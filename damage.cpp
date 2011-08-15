@@ -421,7 +421,7 @@ unsigned damagecalculator (Team const &attacker, Team const &defender, Weather c
 	unsigned damage = 0;
 	unsigned const type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
 	unsigned const type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
-	if ((type1 != 0 and type2 != 0) or (GROUND == attacker.pokemon->move->type and grounded (defender, weather))) {
+	if ((type1 != 0 and type2 != 0) and (GROUND != attacker.pokemon->move->type or grounded (defender, weather))) {
 		if (DRAGON_RAGE == attacker.pokemon->move->name)
 			damage = 40;
 		else if (ENDEAVOR == attacker.pokemon->move->name) {
