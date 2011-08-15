@@ -997,11 +997,13 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 				weather.set_rain (5);
 			break;
 		case RAPID_SPIN:
-			user.spikes = 0;
-			user.stealth_rock = false;
-			user.toxic_spikes = 0;
-			user.leech_seed = false;
-			user.partial_trap = false;
+			if (effectiveness [user.pokemon->move->type] [target.pokemon->type1] * effectiveness [user.pokemon->move->type] [target.pokemon->type2] > 0) {
+				user.spikes = 0;
+				user.stealth_rock = false;
+				user.toxic_spikes = 0;
+				user.leech_seed = false;
+				user.partial_trap = false;
+			}
 			break;
 		case RAZOR_WIND:	// Fix
 			break;
