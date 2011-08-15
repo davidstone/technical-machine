@@ -633,10 +633,381 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 	std::cout << "handle_battle_print\n";
 	std::cout << "category: " << static_cast <int> (category) << '\n';
-	std::cout << "message id: " << message_id << '\n';
-	std::cout << "arguments: " << '\n';
-	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
-		std::cout << "\t" + *it + "\n";
+	if (arguments.size() > 0 and arguments [0].length() == 7) {
+		if (arguments [0] [3] == party) {
+			log.active = &ai;
+			log.inactive = &foe;
+		}
+		else {
+			log.active = &foe;
+			log.inactive = &ai;
+		}
+	}
+	switch (category) {
+		case InMessage::BATTLE_MESSAGES:
+			switch (message_id) {
+				case 2:
+				case 6:
+					log.active->miss = true;
+					break;
+				case 9:
+					log.active->ch = true;
+					break;
+			}
+			break;
+		case InMessage::STATUS_EFFECTS_STAT_LEVEL:
+			break;
+		case InMessage::STATUS_EFFECTS_BURN:
+			if (message_id == 1)
+				log.inactive->at_replacement().move->variable.index = 1;
+			break;
+		case InMessage::STATUS_EFFECTS_CONFUSION:
+			switch (message_id) {
+				case 1:
+					log.inactive->at_replacement().move->variable.index = 1;
+					break;
+				case 2:	// Confusion ends
+					break;
+				case 4:
+					log.active->hitself = true;
+					break;
+			}
+			break;
+		case InMessage::STATUS_EFFECTS_FREEZE:
+			switch (message_id) {
+				case 1:
+					log.inactive->at_replacement().move->variable.index = 1;
+					break;
+				case 2:	// Defrost
+					break;
+			}
+			break;
+		case InMessage::STATUS_EFFECTS_PARALYSIS:
+			switch (message_id) {
+				case 1:
+					log.inactive->at_replacement().move->variable.index = 1;
+					break;
+				case 2:
+					log.active->fully_paralyzed = true;
+					break;
+			}
+			break;
+		case InMessage::STATUS_EFFECTS_POISON:
+			switch (message_id) {
+				case 1:
+				case 2:
+					log.inactive->at_replacement().move->variable.index = 1;
+					break;
+			}
+			break;
+		case InMessage::STATUS_EFFECTS_SLEEP:
+			case 1:
+				log.inactive->at_replacement().move->variable.index = 1;
+				break;
+			case 2:		// Woke up
+				break;
+			break;
+		case InMessage::STATUS_EFFECTS_FLINCH:
+			switch (message_id)
+				case 1:
+					log.inactive->at_replacement().move->variable.index = 1;
+					break;
+			break;
+		case InMessage::STATUS_EFFECTS_ATTRACT:
+			break;
+		// Weather messages need to be parsed in case of items that extend their effects
+		case InMessage::WEATHER_HAIL:
+			break;
+		case InMessage::WEATHER_RAIN:
+			break;
+		case InMessage::WEATHER_SANDSTORM:
+			break;
+		case InMessage::WEATHER_SUN:
+			break;
+		case InMessage::BATTLE_MESSAGES_UNIQUE:
+			switch (message_id) {
+				case 0:		// Multi-hit moves
+					break;
+				case 1:		// $1 was cured of $2!
+					break;
+				case 2:		// But nothing happened!
+					break;
+				case 7:		// Parse this message to get base attack of each Pokemon
+					break;
+				case 9:		// $1 became the $2 type!
+					break;
+				case 10:		// $1 stole $2's $3!
+					break;
+				case 11:		// Could not steal the $1 from $2!
+					break;
+				case 12:		// $1 knocked off the foe $2's $3!
+					break;
+				case 13:		// $1 obtained $2! (trick)
+					break;
+				case 14:		// Magnitude $1!
+					break;
+				case 18:		// $1 was released!
+					break;		// Determine whether Grip Claw was used
+				case 22:		// $1 is tightening its focus! Can be useful with BP and U-turn
+					break;
+				case 26:		// $1's taunt wore off
+					break;
+				case 31:		// $1 consumed $2's $3 (Bug Bite)
+				case 147:	// $1 used $2's $3 (Pluck)
+					break;
+				case 37:		// $1 learned $2!
+					break;
+				case 58:		// $1 was hit by recoil!
+					break;
+				case 70:		// $1's $2 was disabled!
+					break;
+				case 80:		// $1 wore off! (Reflect / Light Screen)
+					break;
+				case 97:		// $1 became confused due to fatigue (Thrash clones)	
+					break;
+				case 136:	// $1's substitute faded
+					break;
+				case 146:	// $1 got a $2! (Recycle)
+					break;
+				case 153:	// $1 calmed down (Uproar)
+					break;
+				case 156:	// $1's encore ended.
+					break;
+				case 157:	// $1 flung its $2!
+					break;
+			}
+			break;
+		case InMessage::ABILITY_MESSAGES:
+			switch (message_id) {
+				case 0:
+					log.inactive->at_replacement().ability = AFTERMATH;
+					break;
+				case 1:
+					log.active->at_replacement().ability = ANGER_POINT;
+					break;
+				case 2:
+					log.active->at_replacement().ability = ANTICIPATION;
+					break;
+				case 3:
+					log.inactive->at_replacement().ability = BAD_DREAMS;
+					break;
+				case 4:
+					log.active->at_replacement().ability = CLEAR_BODY;
+//					log.active->at_replacement().ability = HYPER_CUTTER;
+					break;
+				case 5:
+					log.active->at_replacement().ability = CUTE_CHARM;
+					break;
+				case 6:
+					log.active->at_replacement().ability = DAMP;
+					break;
+				case 7:
+					log.active->at_replacement().ability = DOWNLOAD;
+					break;
+				case 8:
+					log.active->at_replacement().ability = DRIZZLE;
+					break;
+				case 9:
+					log.active->at_replacement().ability = DROUGHT;
+					break;
+				case 10:
+					log.active->at_replacement().ability = DRY_SKIN;
+					break;
+				case 11:
+					log.active->at_replacement().ability = DRY_SKIN;
+//					log.active->at_replacement().ability = SOLAR_POWER;
+					break;
+				case 12:
+					log.active->at_replacement().ability = DRY_SKIN;
+					break;
+				case 14:
+					log.active->at_replacement().ability = FLAME_BODY;
+					break;
+				case 15:
+					log.active->at_replacement().ability = FLASH_FIRE;
+					break;
+				case 16:
+					log.active->at_replacement().ability = FLOWER_GIFT;
+					break;
+				case 17:		// $1 Forewarn alerted it to $2!
+					log.active->at_replacement().ability = FOREWARN;
+					break;
+				case 18:		// $1 found $2's $3!
+					log.active->at_replacement().ability = FRISK;
+					break;
+				case 19:
+					log.active->at_replacement().ability = HYDRATION;
+					break;
+				case 20:
+					log.active->at_replacement().ability = ICE_BODY;
+					break;
+				case 21:
+					log.active->at_replacement().ability = IMMUNITY;
+					break;
+				case 22:
+					log.active->at_replacement().ability = INSOMNIA;
+					break;
+				case 23:
+					log.active->at_replacement().ability = INTIMIDATE;
+					break;
+				case 24:
+					log.active->at_replacement().ability = LEAF_GUARD;
+					break;
+				case 25:
+					log.active->at_replacement().ability = LEVITATE;
+					break;
+				case 26:		// $1's $2 drew the attack!
+					log.active->at_replacement().ability = LIGHTNINGROD;
+//					log.active->at_replacement().ability = STORM_DRAIN;
+					break;
+				case 27:
+					log.active->at_replacement().ability = LIMBER;
+					break;
+				case 28:
+					log.active->at_replacement().ability = MOLD_BREAKER;
+					break;
+				case 29:
+					log.active->at_replacement().ability = MOTOR_DRIVE;
+					break;
+				case 30:
+					log.active->at_replacement().ability = OBLIVIOUS;
+					break;
+				case 31:
+					log.active->at_replacement().ability = OWN_TEMPO;
+					break;
+				case 32:
+					log.active->at_replacement().ability = POISON_HEAL;
+					break;
+				case 34:
+					log.active->at_replacement().ability = PRESSURE;
+					break;
+				case 35:
+					log.active->at_replacement().ability = QUICK_FEET;
+					break;
+				case 36:
+					log.active->at_replacement().ability = RAIN_DISH;
+					break;
+				case 37:
+					log.active->at_replacement().ability = ROUGH_SKIN;
+					break;
+				case 38:
+					log.active->at_replacement().ability = SAND_STREAM;
+					break;
+				case 39:
+					log.active->at_replacement().ability = SHED_SKIN;
+					break;
+				case 40:
+					log.active->at_replacement().ability = SLOW_START;
+					break;
+				case 41:
+					log.active->at_replacement().ability = SNOW_WARNING;
+					break;
+				case 42:
+					log.active->at_replacement().ability = SOUNDPROOF;
+					break;
+				case 43:
+					log.active->at_replacement().ability = SPEED_BOOST;
+					break;
+				case 45:
+					log.active->at_replacement().ability = STEADFAST;
+					break;
+				case 46:
+					log.active->at_replacement().ability = STICKY_HOLD;
+					break;
+				case 47:
+					log.active->at_replacement().ability = STURDY;
+					break;
+				case 48:
+					log.active->at_replacement().ability = SYNCHRONIZE;
+					break;
+				case 49:
+					log.active->at_replacement().ability = TANGLED_FEET;
+					break;
+				case 50:		// $1 traced $2's $3!
+					log.active->at_replacement().ability = TRACE;
+//					log.inactive->at_replacement().ability = ;
+					break;
+				case 51:
+					log.active->at_replacement().ability = TRUANT;
+					break;
+				case 52:
+					log.active->at_replacement().ability = UNBURDEN;
+					break;
+				case 53:
+					log.active->at_replacement().ability = WATER_VEIL;
+					break;
+				case 54:
+					log.active->at_replacement().ability = WONDER_GUARD;
+					break;
+				case 55:
+					log.inactive->at_replacement().ability = LIQUID_OOZE;
+					break;
+				case 56:
+					log.active->at_replacement().ability = ICE_BODY;
+					break;
+				case 57:
+					log.active->at_replacement().ability = DRY_SKIN;
+					break;
+				case 59:		// $1's $2 raised its $3!
+//					log.active->at_replacement().ability = 
+					break;
+				case 60:		// $1's $2 paralyzed $3!
+//					log.active->at_replacement().ability = 
+					break;
+				case 61:		// $1's $2 poisoned $3!
+//					log.active->at_replacement().ability = 
+					break;
+				case 62:		// $1's $2 made $3 fall asleep!
+//					log.active->at_replacement().ability = 
+					break;
+			}
+			break;
+		case InMessage::ITEM_MESSAGES:
+			switch (message_id) {
+				case 0:		// $1's $2 restored its health a little!
+					log.active->at_replacement().item = LEFTOVERS;
+					break;
+				case 1:		// $1's $2 cured its $3!
+//					log.active->at_replacement().item = 
+					break;
+				case 2:
+					log.active->at_replacement().item = QUICK_CLAW;
+					break;
+				case 3:		// $1's $2 raised its $3!
+//					log.active->at_replacement().item = 
+					break;
+				case 4:		// The berry was the wrong flavor for $1!
+//					log.active->at_replacement().item = 
+					break;
+				case 5:		// #1's $2 weakened $3's power!
+//					log.active->at_replacement().item = 
+					break;
+				case 6:		// $1 was hurt by $2's $3!
+//					log.active->at_replacement().item = 
+					break;
+				case 7:		// Fix this
+					log.active->at_replacement().item = STICKY_BARB;
+					break;
+				case 8:
+					log.active->at_replacement().item = BLACK_SLUDGE;
+					break;
+				case 9:		// The $1 latched on to $2!
+//					log.active->at_replacement().item = 
+					break;
+				case 10:
+					log.active->at_replacement().item = FOCUS_SASH;
+					break;
+				case 11:
+					log.active->at_replacement().item = CUSTAP_BERRY;
+					break;
+				case 12:
+					log.active->at_replacement().item = POWER_HERB;
+					break;
+			}
+			break;
+		default:
+			break;
+	}
 }
 
 void BotClient::handle_victory (uint32_t field_id, uint16_t party_id) {
