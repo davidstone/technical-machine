@@ -82,6 +82,7 @@ Team::Team (bool isme, Map const &map, unsigned size) :
 	nightmare (false),
 	pass (false),
 	power_trick (false),
+	protect (false),
 	recharging (false),
 	replacing (false),
 	roost (false),

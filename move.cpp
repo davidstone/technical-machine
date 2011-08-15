@@ -643,8 +643,9 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case DESTINY_BOND:
 			user.destiny_bond = true;
 			break;
-		case DETECT:		// Fix
+		case DETECT:
 		case PROTECT:
+			user.protect = true;
 			break;
 		case DIG:
 			if (user.vanish == LANDED)
@@ -699,7 +700,8 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case METAL_SOUND:
 			target.pokemon->spd.boost (-2);
 			break;
-		case FEINT:	// Fix
+		case FEINT:
+			target.protect = false;
 			break;
 		case FIRE_FANG:
 			if (user.pokemon->move->variable->first != 0) {
@@ -1176,7 +1178,7 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case TRICK_ROOM:
 			weather.set_trick_room ();
 			break;
-		case U_TURN:
+		case U_TURN:			// Fix
 			break;
 		case UPROAR:
 			user.uproar = user.pokemon->move->variable->first;
