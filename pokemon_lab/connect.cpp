@@ -330,8 +330,12 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::FINALIZE_CHALLENGE: {
 			std::string user = msg.read_string ();
 			bool accepted = msg.read_byte ();
-			handle_finalize_challenge (user, accepted);
+			handle_finalize_challenge (user, accepted, true);
 			break;
+		}
+		case InMessage::CHALLENGE_WITHDRAWN: {
+			std::string opponent = msg.read_string ();
+			challenges.erase (opponent);
 		}
 		case InMessage::BATTLE_BEGIN: {
 			uint32_t field_id = msg.read_int ();
@@ -507,6 +511,10 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			handle_metagame_list (metagames);
 			break;
 		}
+		case InMessage::KICK_BAN_MESSAGE: {
+			msg.skip ();
+			break;
+		}
 		case InMessage::INVALID_TEAM: {
 			std::string user = msg.read_string ();
 			uint8_t size = msg.read_byte ();
@@ -560,7 +568,6 @@ void BotClient::handle_channel_join_part (uint32_t id, std::string const & user,
 }
 
 void BotClient::handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags) {
-	std::cout << "handle_channel_status\n";
 }
 
 void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
@@ -575,15 +582,49 @@ void BotClient::handle_channel_message (uint32_t channel_id, std::string const &
 		std::cout << message + "\n"; 
 }
 
-void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	if (n > 1 or team_length != 6 or user != "Technical Machine")
-		reject_challenge (user);
-	else
-		accept_challenge (user);
+void BotClient::join_channel (std::string const & channel) {
+	OutMessage msg (OutMessage::JOIN_CHANNEL);
+	msg.write_string (channel);
+	msg.send (socket);
+
+	OutMessage challenge (OutMessage::OUTGOING_CHALLENGE);
+	std::cout << "Enter opponent's name: ";
+	std::string opponent;
+	getline (std::cin, opponent);
+	uint8_t const generation = 1;
+	uint32_t const party_size = 1;
+	uint32_t const team_length = 6;
+	challenge.write_challenge (opponent, generation, party_size, team_length);
+	challenge.send (socket);
 }
 
-void BotClient::handle_finalize_challenge (std::string const & user, bool accepted) {
-	std::cout << "handle_finalize_challenge\n";
+void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
+	std::cout << "generation: " << static_cast <int> (generation) << '\n';
+	bool accepted;
+	if (n > 1 or team_length != 6 or (user != "Technical Machine" and user != "david stone"))
+		accepted = false;
+	else
+		accepted = true;
+	handle_finalize_challenge (user, accepted, false);
+}
+
+void BotClient::handle_finalize_challenge (std::string const & user, bool accepted, bool challenger) {
+	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
+	msg.write_string (user);
+	// If I am the challenger, I don't write the accepted byte.
+	if (!challenger)
+		msg.write_byte (accepted);
+	std::string verb;
+	if (accepted) {
+		Battle battle (map, user, depth);
+		challenges.insert (std::pair <std::string, Battle> (user, battle));
+		msg.write_team (battle.ai);
+		verb = "Accepted";
+	}
+	else
+		verb = "Rejected";
+	msg.send (socket);
+	std::cout << verb + " challenge vs. " + user + "\n";
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
@@ -1120,32 +1161,6 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 		int pokemon = (-(*it + 1)) % 6;
 		std::cerr << "Problem at Pokemon " << pokemon << ", error code " << -(*it + pokemon + 1) / 6 << '\n';
 	}
-}
-
-void BotClient::join_channel (std::string const & channel) {
-	OutMessage msg (OutMessage::JOIN_CHANNEL);
-	msg.write_string (channel);
-	msg.send (socket);
-}
-
-void BotClient::accept_challenge (std::string const & user) {
-	Battle battle (map, user, depth);
-	challenges.insert (std::pair <std::string, Battle> (user, battle));
-	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
-	msg.write_string (user);
-	msg.write_byte (1);
-	msg.write_team (battle.ai);
-	msg.send (socket);
-	std::cout << "Accepted challenge vs. " + user + "\n";
-}
-
-
-void BotClient::reject_challenge (std::string const & user) {
-	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
-	msg.write_string (user);
-	msg.write_byte (0);
-	msg.send (socket);
-	std::cout << "Rejected challenge vs. " + user + "\n";
 }
 
 void BotClient::load_responses () {

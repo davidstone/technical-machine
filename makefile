@@ -123,9 +123,9 @@ crypt/md5.o: crypt/md5.c crypt/md5.h
 crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
 crypt/sha2.o: crypt/sha2.c crypt/sha2.h
 pokemon_lab/connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
- crypt/get_sha2.h crypt/rijndael.h load_stats.h map.h ability.h gender.h \
- item.h move.h active.h type.h stat.h pokemon.h \
- status.h evaluate.h species.h team.h weather.h \
+ crypt/get_sha2.h crypt/rijndael.h analyze_logs.h gender.h move.h active.h \
+ type.h species.h evaluate.h expectiminimax.h load_stats.h map.h ability.h \
+ item.h stat.h pokemon.h status.h team.h teampredictor.h weather.h \
  pokemon_lab/connect.h pokemon_lab/inmessage.h pokemon_lab/outmessage.h
 pokemon_lab/file.o: pokemon_lab/file.cpp map.h ability.h gender.h item.h \
  move.h active.h type.h stat.h species.h pokemon.h status.h team.h \

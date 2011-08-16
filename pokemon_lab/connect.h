@@ -92,14 +92,12 @@ class BotClient {
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
 		void handle_channel_list (std::vector <Channel> const & channels);
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
+		void join_channel (std::string const & channel);
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
-		void handle_finalize_challenge (std::string const & user, bool accepted);
+		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
 		void handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
-		void join_channel (std::string const & channel);
-		void accept_challenge (std::string const & user);
-		void reject_challenge (std::string const & user);
 		void handle_victory (uint32_t field_id, uint16_t party_id);
 		void reset_timer (boost::system::error_code const & error);
 		void load_responses ();

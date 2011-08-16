@@ -72,9 +72,9 @@ uint32_t InMessage::read_int () {
 }
 
 std::string InMessage::read_string () {
-	unsigned short length = read_short ();
+	uint16_t length = read_short ();
 	std::string data = "";
-	for (unsigned n = 0; n != length; ++n) {
+	for (uint16_t n = 0; n != length; ++n) {
 		data += buffer [index];
 		++index;
 	}

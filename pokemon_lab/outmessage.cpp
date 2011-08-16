@@ -109,6 +109,25 @@ void OutMessage::write_switch (uint32_t field_id, uint8_t slot) {
 	write_byte (0);
 }
 
+void OutMessage::write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame, std::vector <uint8_t> const & clauses, bool timing, uint32_t pool, uint8_t periods, uint32_t period_length) {
+	write_string (opponent);
+	write_byte (generation);
+	write_int (party_size);
+	write_int (team_length);
+	write_int (metagame);
+	if (metagame == -1u) {
+		write_byte (clauses.size());
+		for (std::vector <uint8_t>::const_iterator it = clauses.begin(); it != clauses.end(); ++it)
+			write_byte (*it);
+		write_byte (timing);
+		if (timing) {
+			write_int (pool);
+			write_byte (periods);
+			write_int (period_length);
+		}
+	}
+}
+
 void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
 	uint32_t length = htonl (buffer.size() - 1);
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
