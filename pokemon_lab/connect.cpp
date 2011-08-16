@@ -638,7 +638,7 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
 	std::cout << "handle_request_action\n";
 	do_turn (*log.first, *log.last, weather);
-	if (rand () % 20 == 0) {
+	if (rand () % 50 == 0) {
 		OutMessage comment (OutMessage::CHANNEL_MESSAGE);
 		comment.write_int (field_id);
 		comment.write_string (botclient.get_response ());
