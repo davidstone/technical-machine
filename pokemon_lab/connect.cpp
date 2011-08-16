@@ -608,23 +608,23 @@ void BotClient::handle_incoming_challenge (std::string const & user, uint8_t gen
 	handle_finalize_challenge (user, accepted, false);
 }
 
-void BotClient::handle_finalize_challenge (std::string const & user, bool accepted, bool challenger) {
+void BotClient::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
 	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
-	msg.write_string (user);
+	msg.write_string (opponent);
 	// If I am the challenger, I don't write the accepted byte.
 	if (!challenger)
 		msg.write_byte (accepted);
 	std::string verb;
 	if (accepted) {
-		Battle battle (map, user, depth);
-		challenges.insert (std::pair <std::string, Battle> (user, battle));
+		Battle battle (map, opponent, depth);
+		challenges.insert (std::pair <std::string, Battle> (opponent, battle));
 		msg.write_team (battle.ai);
 		verb = "Accepted";
 	}
 	else
 		verb = "Rejected";
 	msg.send (socket);
-	std::cout << verb + " challenge vs. " + user + "\n";
+	std::cout << verb + " challenge vs. " + opponent + "\n";
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
