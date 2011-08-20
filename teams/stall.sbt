@@ -2,7 +2,7 @@
 <shoddybattle>
 
 <pokemon species="Hippowdon">
-<nickname>D64Sdvs</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -26,7 +26,7 @@
 </pokemon>
 
 <pokemon species="Celebi">
-<nickname>OLfxghg3</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>No Gender</gender>
@@ -50,7 +50,7 @@
 </pokemon>
 
 <pokemon species="Blissey">
-<nickname>ofJKdnD</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Female</gender>
@@ -74,7 +74,7 @@
 </pokemon>
 
 <pokemon species="Skarmory">
-<nickname>124652Dss</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -98,7 +98,7 @@
 </pokemon>
 
 <pokemon species="Tentacruel">
-<nickname>Dkeos40</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -122,7 +122,7 @@
 </pokemon>
 
 <pokemon species="Rotom-w">
-<nickname>DkxndS13</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>No Gender</gender>

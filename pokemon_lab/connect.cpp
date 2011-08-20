@@ -330,7 +330,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::FINALIZE_CHALLENGE: {
 			std::string user = msg.read_string ();
 			bool accepted = msg.read_byte ();
-			handle_finalize_challenge (user, accepted, true);
+			handle_finalize_challenge (user, accepted);
 			break;
 		}
 		case InMessage::CHALLENGE_WITHDRAWN: {
@@ -551,8 +551,10 @@ void BotClient::handle_challenge (InMessage msg) {
 }
 
 void BotClient::handle_registry_response (uint8_t type, std::string const & details) {
-	if (type == 7)
+	if (type == 7) {
 		join_channel ("main");
+		send_battle_challenge ();
+	}
 	else {
 		std::cerr << "Authentication failed with code: " << static_cast <int> (type) << ". =(\n";
 		if (details.length() > 0)
@@ -586,30 +588,41 @@ void BotClient::join_channel (std::string const & channel) {
 	OutMessage msg (OutMessage::JOIN_CHANNEL);
 	msg.write_string (channel);
 	msg.send (socket);
+}
 
-	OutMessage challenge (OutMessage::OUTGOING_CHALLENGE);
-	std::cout << "Enter opponent's name: ";
+void BotClient::send_battle_challenge () {
+	OutMessage msg (OutMessage::OUTGOING_CHALLENGE);
+	std::cout << "Enter opponent's name (blank to be challenged): ";
 	std::string opponent;
 	getline (std::cin, opponent);
-	uint8_t const generation = 1;
-	uint32_t const party_size = 1;
-	uint32_t const team_length = 6;
-	challenge.write_challenge (opponent, generation, party_size, team_length);
-	challenge.send (socket);
+	if (opponent.empty ())
+		challenger = false;
+	else {
+		challenger = true;
+		uint8_t const generation = 1;
+		uint32_t const party_size = 1;
+		uint32_t const team_length = 6;
+		msg.write_challenge (opponent, generation, party_size, team_length);
+		msg.send (socket);
+	}
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	std::cout << "generation: " << static_cast <int> (generation) << '\n';
 	bool accepted;
 	if (n > 1 or team_length != 6 or (user != "Technical Machine" and user != "david stone"))
 		accepted = false;
 	else
 		accepted = true;
-	handle_finalize_challenge (user, accepted, false);
+	handle_finalize_challenge (user, accepted);
 }
 
-void BotClient::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
-	OutMessage msg (OutMessage::RESOLVE_CHALLENGE);
+void BotClient::handle_finalize_challenge (std::string const & opponent, bool accepted) {
+	OutMessage::Message code;
+	if (challenger)
+		code = OutMessage::CHALLENGE_TEAM;
+	else
+		code = OutMessage::RESOLVE_CHALLENGE;
+	OutMessage msg (code);
 	msg.write_string (opponent);
 	// If I am the challenger, I don't write the accepted byte.
 	if (!challenger)
@@ -672,7 +685,6 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 }
 
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
-	std::cout << "handle_battle_print\n";
 	std::cout << "category: " << static_cast <int> (category) << '\n';
 	if (arguments.size() > 0 and arguments [0].length() == 7) {
 		if (arguments [0] [3] == party) {

@@ -68,6 +68,7 @@ class BotClient {
 		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 		std::map <uint8_t, Battle> battles;			// Battles currently underway
 		int depth;
+		bool challenger;
 	public:
 		boost::asio::io_service io;
 	private:
@@ -93,8 +94,9 @@ class BotClient {
 		void handle_channel_list (std::vector <Channel> const & channels);
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
 		void join_channel (std::string const & channel);
+		void send_battle_challenge ();
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
-		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
+		void handle_finalize_challenge (std::string const & user, bool accepted);
 		void handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);

@@ -2,7 +2,7 @@
 <shoddybattle>
 
 <pokemon species="Jirachi">
-<nickname>Jke4Dk</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>No Gender</gender>
@@ -26,7 +26,7 @@
 </pokemon>
 
 <pokemon species="Machamp">
-<nickname>Qadk3w</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -50,7 +50,7 @@
 </pokemon>
 
 <pokemon species="Blissey">
-<nickname>Dls03Dc</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Female</gender>
@@ -74,7 +74,7 @@
 </pokemon>
 
 <pokemon species="Celebi">
-<nickname>DSkws03</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>No Gender</gender>
@@ -98,7 +98,7 @@
 </pokemon>
 
 <pokemon species="Tyranitar">
-<nickname>Dsl40dS</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -122,7 +122,7 @@
 </pokemon>
 
 <pokemon species="Starmie">
-<nickname>Dsakl03</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>No Gender</gender>

@@ -2,7 +2,7 @@
 <shoddybattle>
 
 <pokemon species="Gliscor">
-<nickname>Negaduck</nickname>
+<nickname></nickname>
 <shiny />
 <level>100</level>
 <happiness>255</happiness>
@@ -27,7 +27,7 @@
 </pokemon>
 
 <pokemon species="Vaporeon">
-<nickname>The Liquidator</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -51,7 +51,7 @@
 </pokemon>
 
 <pokemon species="Scizor">
-<nickname>Steelbeak</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -75,7 +75,7 @@
 </pokemon>
 
 <pokemon species="Mr. Mime">
-<nickname>Quackerjack</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
@@ -99,7 +99,7 @@
 </pokemon>
 
 <pokemon species="Smeargle">
-<nickname>Smeargle</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Female</gender>
@@ -123,7 +123,7 @@
 </pokemon>
 
 <pokemon species="Lucario">
-<nickname>Lucario</nickname>
+<nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>Male</gender>
