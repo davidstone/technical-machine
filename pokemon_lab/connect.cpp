@@ -642,7 +642,9 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
 	std::cout << "handle_battle_begin\n";
-	Battle battle = challenges.find (opponent)->second;
+	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(15));
+	timer.wait ();
+ 	Battle battle = challenges.find (opponent)->second;
 	battle.party = party;
 	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
 	challenges.erase (opponent);
@@ -686,6 +688,9 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 	std::cout << "category: " << static_cast <int> (category) << '\n';
+	std::cout << "message_id: " << message_id << '\n';
+	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
+		std::cout << "\t" + *it + '\n';
 	if (arguments.size() > 0 and arguments [0].length() == 7) {
 		if (arguments [0] [3] == party) {
 			log.active = &ai;
@@ -1118,8 +1123,16 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
 }
 
-void Battle::handle_health_change (uint8_t party_, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
+void Battle::handle_health_change (uint8_t party_id, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
 	std::cout << "handle_battle_health_change\n";
+	if (party == party_id) {
+		log.active = &ai;
+		log.inactive = &foe;
+	}
+	else {
+		log.active = &foe;
+		log.inactive = &ai;
+	}
 	if (log.move_damage) {
 		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
 		log.move_damage = false;
