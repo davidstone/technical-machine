@@ -38,32 +38,54 @@ void load_pokemon (Team &team, std::ifstream &file, species const pokemon_conver
 	getline (file, line);
 	Pokemon member (pokemon_converter [converter ("Num=\"", "\"", line)], team.size);
 	int forme = converter ("Forme=\"", "\"", line);
-	if (member.name == DEOXYS_A) {
-		if (forme == 0)
-			member.name = DEOXYS_M;
-		else if (forme == 2)
-			member.name = DEOXYS_D;
-		else if (forme == 3)
-			member.name = DEOXYS_S;
+	switch (member.name) {
+		case DEOXYS_A:
+			switch (forme) {
+				case 0:
+					member.name = DEOXYS_M;
+					break;
+				// case 1: is assumed
+				case 2:
+					member.name = DEOXYS_D;
+					break;
+				case 3:
+					member.name = DEOXYS_S;
+					break;
+			}
+			break;
+		case GIRATINA_A:
+			// Giratina-O has a forme value of 1
+			member.name = static_cast<species> (member.name + forme);
+			break;
+		case ROTOM:
+			switch (forme) {
+				case 1:
+					member.name = ROTOM_C;
+					break;
+				case 2:
+					member.name = ROTOM_H;
+					break;
+				case 3:
+					member.name = ROTOM_F;
+					break;
+				case 4:
+					member.name = ROTOM_W;
+					break;
+				case 5:
+					member.name = ROTOM_S;
+					break;
+			}
+			break;
+		case SHAYMIN_L:
+			// Shaymin-S has a forme value of 1
+			member.name = static_cast<species> (member.name + forme);
+			break;
+		case WORMADAM_P:
+			// Wormadam-P is 0, Wormadam-S is 1, Wormadam-T is 2
+			member.name = static_cast<species> (member.name + forme);
+		default:
+			break;
 	}
-	else if (member.name == GIRATINA_A)
-		member.name = static_cast<species> (member.name + forme);		// Giratina-O has a forme value of 1
-	else if (member.name == ROTOM) {
-		if (forme == 1)
-			member.name = ROTOM_C;
-		else if (forme == 2)
-			member.name = ROTOM_H;
-		else if (forme == 3)
-			member.name = ROTOM_F;
-		else if (forme == 4)
-			member.name = ROTOM_W;
-		else if (forme == 5)
-			member.name = ROTOM_S;
-	}
-	else if (member.name == SHAYMIN_L)
-		member.name = static_cast<species> (member.name + forme);		// Shaymin-S has a forme value of 1
-	else if (member.name == WORMADAM_P)
-		member.name = static_cast<species> (member.name + forme);		// Wormadam-P is 0, Wormadam-S is 1, Wormadam-T is 2
 
 	member.ability = ability_converter [converter ("Ability=\"", "\"", line)];
 

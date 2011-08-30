@@ -145,7 +145,8 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			attacker.pokemon->move->basepower = 102 - attacker.pokemon->happiness * 2 / 5;
 			break;
 		case FURY_CUTTER:
-			attacker.pokemon->move->basepower = 10 << attacker.pokemon->move->times_used;					// Equivalent to 10 * 2 ^ attacker.pokemon->move->times_used
+			// 10 * 2 ^ attacker.pokemon->move->times_used
+			attacker.pokemon->move->basepower = 10 << attacker.pokemon->move->times_used;
 			break;
 		case GRASS_KNOT:
 		case LOW_KICK:
@@ -158,7 +159,8 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			break;
 		case ICE_BALL:
 		case ROLLOUT:
-			attacker.pokemon->move->basepower = 30 << attacker.pokemon->move->times_used;			// Equivalent to 30 * 2 ^ attacker.pokemon->move->times_used
+			// 30 * 2 ^ attacker.pokemon->move->times_used
+			attacker.pokemon->move->basepower = 30 << attacker.pokemon->move->times_used;
 			break;
 		case HIDDEN_POWER: {
 			// The second-least significant bit of each stat determines the power of Hidden Power
@@ -176,12 +178,80 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
 			break;
 		case NATURAL_GIFT:
-			if (AGUAV_BERRY == attacker.pokemon->item or ASPEAR_BERRY == attacker.pokemon->item or BABIRI_BERRY == attacker.pokemon->item or CHARTI_BERRY == attacker.pokemon->item or CHERI_BERRY == attacker.pokemon->item or CHESTO_BERRY == attacker.pokemon->item or CHILAN_BERRY == attacker.pokemon->item or CHOPLE_BERRY == attacker.pokemon->item or COBA_BERRY == attacker.pokemon->item or COLBUR_BERRY == attacker.pokemon->item or FIGY_BERRY == attacker.pokemon->item or HABAN_BERRY == attacker.pokemon->item or IAPAPA_BERRY == attacker.pokemon->item or KASIB_BERRY == attacker.pokemon->item or KEBIA_BERRY == attacker.pokemon->item or LEPPA_BERRY == attacker.pokemon->item or LUM_BERRY == attacker.pokemon->item or MAGO_BERRY == attacker.pokemon->item or OCCA_BERRY == attacker.pokemon->item or ORAN_BERRY == attacker.pokemon->item or PASSHO_BERRY == attacker.pokemon->item or PAYAPA_BERRY == attacker.pokemon->item or PECHA_BERRY == attacker.pokemon->item or PERSIM_BERRY == attacker.pokemon->item or RAWST_BERRY == attacker.pokemon->item or RAZZ_BERRY == attacker.pokemon->item or RINDO_BERRY == attacker.pokemon->item or SHUCA_BERRY == attacker.pokemon->item or SITRUS_BERRY == attacker.pokemon->item or TANGA_BERRY == attacker.pokemon->item or WACAN_BERRY == attacker.pokemon->item or WIKI_BERRY == attacker.pokemon->item or YACHE_BERRY == attacker.pokemon->item)
-				attacker.pokemon->move->basepower = 60;
-			else if (BLUK_BERRY == attacker.pokemon->item or CORNN_BERRY == attacker.pokemon->item or GREPA_BERRY == attacker.pokemon->item or HONDEW_BERRY == attacker.pokemon->item or KELPSY_BERRY == attacker.pokemon->item or MAGOST_BERRY == attacker.pokemon->item or NANAB_BERRY == attacker.pokemon->item or NOMEL_BERRY == attacker.pokemon->item or PAMTRE_BERRY == attacker.pokemon->item or PINAP_BERRY == attacker.pokemon->item or POMEG_BERRY == attacker.pokemon->item or QUALOT_BERRY == attacker.pokemon->item or RABUTA_BERRY == attacker.pokemon->item or SPELON_BERRY == attacker.pokemon->item or TAMATO_BERRY == attacker.pokemon->item or WEPEAR_BERRY == attacker.pokemon->item)
-				attacker.pokemon->move->basepower = 70;
-			else if (APICOT_BERRY == attacker.pokemon->item or BELUE_BERRY == attacker.pokemon->item or CUSTAP_BERRY == attacker.pokemon->item or DURIN_BERRY == attacker.pokemon->item or ENIGMA_BERRY == attacker.pokemon->item or GANLON_BERRY == attacker.pokemon->item or JABOCA_BERRY == attacker.pokemon->item or LANSAT_BERRY == attacker.pokemon->item or LIECHI_BERRY == attacker.pokemon->item or MICLE_BERRY == attacker.pokemon->item or PETAYA_BERRY == attacker.pokemon->item or ROWAP_BERRY == attacker.pokemon->item or SALAC_BERRY == attacker.pokemon->item or STARF_BERRY == attacker.pokemon->item or WATMEL_BERRY == attacker.pokemon->item)
-				attacker.pokemon->move->basepower = 80;
+			switch (attacker.pokemon->item) {
+				case AGUAV_BERRY:
+				case ASPEAR_BERRY:
+				case BABIRI_BERRY:
+				case CHARTI_BERRY:
+				case CHERI_BERRY:
+				case CHESTO_BERRY:
+				case CHILAN_BERRY:
+				case CHOPLE_BERRY:
+				case COBA_BERRY:
+				case COLBUR_BERRY:
+				case FIGY_BERRY:
+				case HABAN_BERRY:
+				case IAPAPA_BERRY:
+				case KASIB_BERRY:
+				case KEBIA_BERRY:
+				case LEPPA_BERRY:
+				case LUM_BERRY:
+				case MAGO_BERRY:
+				case OCCA_BERRY:
+				case ORAN_BERRY:
+				case PASSHO_BERRY:
+				case PAYAPA_BERRY:
+				case PECHA_BERRY:
+				case PERSIM_BERRY:
+				case RAWST_BERRY:
+				case RAZZ_BERRY:
+				case RINDO_BERRY:
+				case SHUCA_BERRY:
+				case SITRUS_BERRY:
+				case TANGA_BERRY:
+				case WACAN_BERRY:
+				case WIKI_BERRY:
+				case YACHE_BERRY:
+					attacker.pokemon->move->basepower = 60;
+					break;
+				case BLUK_BERRY:
+				case CORNN_BERRY:
+				case GREPA_BERRY:
+				case HONDEW_BERRY:
+				case KELPSY_BERRY:
+				case MAGOST_BERRY:
+				case NANAB_BERRY:
+				case NOMEL_BERRY:
+				case PAMTRE_BERRY:
+				case PINAP_BERRY:
+				case POMEG_BERRY:
+				case QUALOT_BERRY:
+				case RABUTA_BERRY:
+				case SPELON_BERRY:
+				case TAMATO_BERRY:
+				case WEPEAR_BERRY:
+					attacker.pokemon->move->basepower = 70;
+					break;
+				case APICOT_BERRY:
+				case BELUE_BERRY:
+				case CUSTAP_BERRY:
+				case DURIN_BERRY:
+				case ENIGMA_BERRY:
+				case GANLON_BERRY:
+				case JABOCA_BERRY:
+				case LANSAT_BERRY:
+				case LIECHI_BERRY:
+				case MICLE_BERRY:
+				case PETAYA_BERRY:
+				case ROWAP_BERRY:
+				case SALAC_BERRY:
+				case STARF_BERRY:
+				case WATMEL_BERRY:
+					attacker.pokemon->move->basepower = 80;
+					break;
+				default:
+					break;
+			}
 			break;
 		case PRESENT:
 			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
@@ -211,82 +281,306 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			attacker.pokemon->move->basepower = 10 * attacker.pokemon->move->times_used;
 			break;
 		case TRUMP_CARD:
-			if (0 == attacker.pokemon->move->pp)
-				attacker.pokemon->move->basepower = 200;
-			else if (1 == attacker.pokemon->move->pp)
-				attacker.pokemon->move->basepower = 80;
-			else if (2 == attacker.pokemon->move->pp)
-				attacker.pokemon->move->basepower = 60;
-			else if (3 == attacker.pokemon->move->pp)
-				attacker.pokemon->move->basepower = 50;
-			else
-				attacker.pokemon->move->basepower = 40;
+			switch (attacker.pokemon->move->pp) {
+				case 0:
+					attacker.pokemon->move->basepower = 200;
+					break;
+				case 1:
+					attacker.pokemon->move->basepower = 80;
+					break;
+				case 2:
+					attacker.pokemon->move->basepower = 60;
+					break;
+				case 3:
+					attacker.pokemon->move->basepower = 50;
+					break;
+				default:
+					attacker.pokemon->move->basepower = 40;
+					break;
+			}
 			break;
 		default:
 			break;
 	}
 	attacker.pokemon->move->power = attacker.pokemon->move->basepower;
 
-	if ((ASSURANCE == attacker.pokemon->move->name and defender.damaged)
-			or ((AVALANCHE == attacker.pokemon->move->name or REVENGE == attacker.pokemon->move->name) and attacker.damaged)
-			or (BRINE == attacker.pokemon->move->name and defender.pokemon->hp.stat <= defender.pokemon->hp.max / 2)
-			or ((EARTHQUAKE == attacker.pokemon->move->name or MAGNITUDE == attacker.pokemon->move->name) and defender.vanish == DUG)
-			or (FACADE == attacker.pokemon->move->name and (BURN == attacker.pokemon->status or PARALYSIS == attacker.pokemon->status or POISON_NORMAL == attacker.pokemon->status or POISON_TOXIC == attacker.pokemon->status))
-			or (GUST == attacker.pokemon->move->name and (defender.vanish == BOUNCED or defender.vanish == FLOWN))
-			or ((ICE_BALL == attacker.pokemon->move->name or ROLLOUT == attacker.pokemon->move->name) and attacker.defense_curl)
-			or (PAYBACK == attacker.pokemon->move->name and defender.moved)
-			or (SMELLINGSALT == attacker.pokemon->move->name and PARALYSIS == defender.pokemon->status)
-			or (SOLARBEAM == attacker.pokemon->move->name and weather.rain == 0)
-			or (STOMP == attacker.pokemon->move->name and defender.minimize)
-			or (SURF == attacker.pokemon->move->name and defender.vanish == DIVED)
-			or (WAKE_UP_SLAP == attacker.pokemon->move->name and SLEEP == defender.pokemon->status)
-			or (WEATHER_BALL == attacker.pokemon->move->name and (0 != weather.hail or 0 != weather.rain or 0 != weather.sand or 0 != weather.sun)))
+	bool doubling = false;
+	switch (attacker.pokemon->move->name) {
+		case ASSURANCE:
+			if (defender.damaged)
+				doubling = true;
+			break;
+		case AVALANCHE: 
+		case REVENGE:
+			if (attacker.damaged)
+				doubling = true;
+			break;
+		case BRINE:
+			if (defender.pokemon->hp.stat <= defender.pokemon->hp.max / 2)
+				doubling = true;
+			break;
+		case EARTHQUAKE:
+		case MAGNITUDE:
+			if (defender.vanish == DUG)
+				doubling = true;
+			break;
+		case FACADE:
+			switch (attacker.pokemon->status) {
+				case BURN:
+				case PARALYSIS:
+				case POISON_NORMAL:
+				case POISON_TOXIC:
+					doubling = true;
+					break;
+				default:
+					break;
+			}
+			break;
+		case GUST:
+			if (defender.vanish == BOUNCED or defender.vanish == FLOWN)
+				doubling = true;
+			break;
+		case ICE_BALL:
+		case ROLLOUT:
+			if (attacker.defense_curl)
+				doubling = true;
+			break;
+		case PAYBACK:
+			if (defender.moved)
+				doubling = true;
+			break;
+		case SMELLINGSALT:
+			if (PARALYSIS == defender.pokemon->status)
+				doubling = true;
+			break;
+		case SOLARBEAM:
+			if (weather.rain == 0)
+				doubling = true;
+			break;
+		case STOMP:
+			if (defender.minimize)
+				doubling = true;
+			break;
+		case SURF:
+			if (defender.vanish == DIVED)
+				doubling = true;
+			break;
+		case WAKE_UP_SLAP:
+			if (defender.pokemon->status == SLEEP)
+				doubling = true;
+			break;
+		case WEATHER_BALL:
+			if (weather.hail or weather.rain or weather.sand or weather.sun)
+				doubling = true;
+			break;
+		default:
+			break;
+	}
+	if (doubling)
 		attacker.pokemon->move->power *= 2;
 
-	if ((MUSCLE_BAND == attacker.pokemon->item and attacker.pokemon->move->physical) or (WISE_GLASSES == attacker.pokemon->item and !attacker.pokemon->move->physical))
-		attacker.pokemon->move->power = attacker.pokemon->move->power * 11 / 10;
-	else if ((BUG == attacker.pokemon->move->type and (INSECT_PLATE == attacker.pokemon->item or SILVERPOWDER == attacker.pokemon->item))
-				or (DARK == attacker.pokemon->move->type and (DREAD_PLATE == attacker.pokemon->item or BLACKGLASSES == attacker.pokemon->item))
-				or (DRAGON == attacker.pokemon->move->type and (DRACO_PLATE == attacker.pokemon->item or DRAGON_FANG == attacker.pokemon->item or (ADAMANT_ORB == attacker.pokemon->item and DIALGA == attacker.pokemon->name) or (GRISEOUS_ORB == attacker.pokemon->item and GIRATINA_O == attacker.pokemon->name) or (LUSTROUS_ORB == attacker.pokemon->item and PALKIA == attacker.pokemon->name)))
-				or (ELECTRIC == attacker.pokemon->move->type and (ZAP_PLATE == attacker.pokemon->item or MAGNET == attacker.pokemon->item))
-				or (FIGHTING == attacker.pokemon->move->type and (FIST_PLATE == attacker.pokemon->item or BLACK_BELT == attacker.pokemon->item))
-				or (FIRE == attacker.pokemon->move->type and (FLAME_PLATE == attacker.pokemon->item or CHARCOAL == attacker.pokemon->item))
-				or (FLYING == attacker.pokemon->move->type and (SKY_PLATE == attacker.pokemon->item or SHARP_BEAK == attacker.pokemon->item))
-				or (GHOST == attacker.pokemon->move->type and ((SPOOKY_PLATE == attacker.pokemon->item or SPELL_TAG == attacker.pokemon->item) or (GRISEOUS_ORB == attacker.pokemon->item and GIRATINA_O == attacker.pokemon->name)))
-				or (GRASS == attacker.pokemon->move->type and (MEADOW_PLATE == attacker.pokemon->item or MIRACLE_SEED == attacker.pokemon->item or ROSE_INCENSE == attacker.pokemon->item))
-				or (GROUND == attacker.pokemon->move->type and (EARTH_PLATE == attacker.pokemon->item or SOFT_SAND == attacker.pokemon->item))
-				or (ICE == attacker.pokemon->move->type and (ICICLE_PLATE == attacker.pokemon->item or NEVERMELTICE == attacker.pokemon->item))
-				or (NORMAL == attacker.pokemon->move->type and SILK_SCARF == attacker.pokemon->item)
-				or (POISON == attacker.pokemon->move->type and (TOXIC_PLATE == attacker.pokemon->item or POISON_BARB == attacker.pokemon->item))
-				or (PSYCHIC_TYPE == attacker.pokemon->move->type and (MIND_PLATE == attacker.pokemon->item or TWISTEDSPOON == attacker.pokemon->item or ODD_INCENSE == attacker.pokemon->item))
-				or (ROCK == attacker.pokemon->move->type and (STONE_PLATE == attacker.pokemon->item or HARD_STONE == attacker.pokemon->item or ROCK_INCENSE == attacker.pokemon->item))
-				or (STEEL == attacker.pokemon->move->type and (IRON_PLATE == attacker.pokemon->item or METAL_COAT == attacker.pokemon->item or (ADAMANT_ORB == attacker.pokemon->item and DIALGA == attacker.pokemon->name)))
-				or (WATER == attacker.pokemon->move->type and (SPLASH_PLATE == attacker.pokemon->item or MYSTIC_WATER == attacker.pokemon->item or WAVE_INCENSE == attacker.pokemon->item or (LUSTROUS_ORB == attacker.pokemon->item and PALKIA == attacker.pokemon->name))))
-		attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
+	unsigned item_modifier = 10;
+	switch (attacker.pokemon->item) {
+		case MUSCLE_BAND:
+			if (attacker.pokemon->move->physical)
+				item_modifier = 11;
+			break;
+		case WISE_GLASSES:
+			if (!attacker.pokemon->move->physical)
+				item_modifier = 11;
+			break;
+		case INSECT_PLATE:
+		case SILVERPOWDER:
+			if (attacker.pokemon->move->type == BUG)
+				item_modifier = 12;
+			break;
+		case DREAD_PLATE:	
+		case BLACKGLASSES:
+			if (attacker.pokemon->move->type == DARK)
+				item_modifier = 12;
+			break;
+		case DRACO_PLATE:
+		case DRAGON_FANG:
+			if (attacker.pokemon->move->type == DRAGON)
+				item_modifier = 12;
+			break;
+		case ZAP_PLATE:
+		case MAGNET:
+			if (attacker.pokemon->move->type == ELECTRIC)
+				item_modifier = 12;
+			break;
+		case FIST_PLATE:
+		case BLACK_BELT:
+			if (attacker.pokemon->move->type == FIGHTING)
+				item_modifier = 12;
+			break;
+		case FLAME_PLATE:
+		case CHARCOAL:
+			if (attacker.pokemon->move->type == FIRE)
+				item_modifier = 12;
+			break;
+		case SKY_PLATE:
+		case SHARP_BEAK:
+			if (attacker.pokemon->move->type == FLYING)
+				item_modifier = 12;
+			break;
+		case SPOOKY_PLATE:
+		case SPELL_TAG:
+			if (attacker.pokemon->move->type == GHOST)
+ 				item_modifier = 12;
+			break;
+		case MEADOW_PLATE:
+		case MIRACLE_SEED:
+			if (attacker.pokemon->move->type == GRASS)
+				item_modifier = 12;
+			break;
+		case EARTH_PLATE:
+		case SOFT_SAND:
+			if (attacker.pokemon->move->type == GROUND)
+				item_modifier = 12;
+			break;
+		case ICICLE_PLATE:
+		case NEVERMELTICE:
+			if (attacker.pokemon->move->type == ICE)
+				item_modifier = 12;
+			break;
+		case SILK_SCARF:
+			if (attacker.pokemon->move->type == NORMAL)
+				item_modifier = 12;
+			break;
+		case TOXIC_PLATE:
+		case POISON_BARB:
+			if (attacker.pokemon->move->type == POISON)
+				item_modifier = 12;
+			break;
+		case MIND_PLATE:
+		case TWISTEDSPOON:
+		case ODD_INCENSE:
+			if (attacker.pokemon->move->type == PSYCHIC_TYPE)
+				item_modifier = 12;
+			break;
+		case STONE_PLATE:
+		case HARD_STONE:
+		case ROCK_INCENSE:
+			if (attacker.pokemon->move->type == ROCK)
+				item_modifier = 12;
+			break;
+		case IRON_PLATE:
+		case METAL_COAT:
+			if (attacker.pokemon->move->type == STEEL)
+				item_modifier = 12;
+			break;
+		case SPLASH_PLATE:
+		case MYSTIC_WATER:
+		case WAVE_INCENSE:
+			if (attacker.pokemon->move->type == WATER)
+				item_modifier = 12;
+			break;
+		case ADAMANT_ORB:
+			if (attacker.pokemon->name == DIALGA and (attacker.pokemon->move->type == DRAGON or attacker.pokemon->move->type == STEEL))
+				item_modifier = 12;
+			break;
+		case GRISEOUS_ORB:
+			if (attacker.pokemon->name == GIRATINA_O and (attacker.pokemon->move->type == DRAGON or attacker.pokemon->move->type == GHOST))
+				item_modifier = 12;
+			break;
+		case LUSTROUS_ORB:
+			if (attacker.pokemon->name == PALKIA and (attacker.pokemon->move->type == DRAGON or attacker.pokemon->move->type == WATER))
+				item_modifier = 12;
+			break;
+		default:
+			break;
+	}
+	attacker.pokemon->move->power = attacker.pokemon->move->power * item_modifier / 10;
 
-	if (attacker.charge and ELECTRIC == attacker.pokemon->move->type)
+	if (attacker.charge and attacker.pokemon->move->type == ELECTRIC)
 		attacker.pokemon->move->power *= 2;
 
-	if ((defender.mud_sport and ELECTRIC == attacker.pokemon->move->type) or (defender.water_sport and FIRE == attacker.pokemon->move->type))
+	if ((defender.mud_sport and attacker.pokemon->move->type == ELECTRIC) or (defender.water_sport and attacker.pokemon->move->type == FIRE))
 		attacker.pokemon->move->power /= 2;
 
-	if ((TECHNICIAN == attacker.pokemon->ability and attacker.pokemon->move->basepower <= 60)
-			or (BLAZE == attacker.pokemon->ability and FIRE == attacker.pokemon->move->type and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
-			or (OVERGROW == attacker.pokemon->ability and GRASS == attacker.pokemon->move->type and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
-			or (SWARM == attacker.pokemon->ability and BUG == attacker.pokemon->move->type and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
-			or (TORRENT == attacker.pokemon->ability and WATER == attacker.pokemon->move->type and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3))
-		attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
-	else if (((IRON_FIST == attacker.pokemon->ability) and (BULLET_PUNCH == attacker.pokemon->move->name or COMET_PUNCH == attacker.pokemon->move->name or DIZZY_PUNCH == attacker.pokemon->move->name or DRAIN_PUNCH == attacker.pokemon->move->name or DYNAMICPUNCH == attacker.pokemon->move->name or FIRE_PUNCH == attacker.pokemon->move->name or FOCUS_PUNCH == attacker.pokemon->move->name or HAMMER_ARM == attacker.pokemon->move->name or ICE_PUNCH == attacker.pokemon->move->name or MACH_PUNCH == attacker.pokemon->move->name or MEGA_PUNCH == attacker.pokemon->move->name or METEOR_MASH == attacker.pokemon->move->name or SHADOW_PUNCH == attacker.pokemon->move->name or SKY_UPPERCUT == attacker.pokemon->move->name or THUNDERPUNCH == attacker.pokemon->move->name))
-				or ((RECKLESS == attacker.pokemon->ability) and (attacker.pokemon->move->name == BRAVE_BIRD or attacker.pokemon->move->name == DOUBLE_EDGE or attacker.pokemon->move->name == FLARE_BLITZ or attacker.pokemon->move->name == HEAD_SMASH or attacker.pokemon->move->name == SUBMISSION or attacker.pokemon->move->name == TAKE_DOWN or attacker.pokemon->move->name == VOLT_TACKLE or attacker.pokemon->move->name == WOOD_HAMMER)))
-		attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
-	else if (RIVALRY == attacker.pokemon->ability)
-		attacker.pokemon->move->power = attacker.pokemon->move->power * (20 + 5 * attacker.pokemon->gender * defender.pokemon->gender) / 20;		// Same gender == 20 + 5, opposite gender == 20 - 5
+	switch (attacker.pokemon->ability) {
+		case TECHNICIAN:
+			if (attacker.pokemon->move->basepower <= 60)
+				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
+			break;
+		case BLAZE:
+			if (attacker.pokemon->move->type == FIRE and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
+				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
+			break;
+		case OVERGROW:
+			if (attacker.pokemon->move->type == GRASS and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
+				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
+			break;
+		case SWARM:
+			if (attacker.pokemon->move->type == BUG and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
+				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
+			break;
+		case TORRENT:
+			if (attacker.pokemon->move->type == WATER and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
+				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
+			break;
+		case IRON_FIST:
+			switch (attacker.pokemon->move->name) {
+				case BULLET_PUNCH:
+				case COMET_PUNCH:
+				case DIZZY_PUNCH:
+				case DRAIN_PUNCH:
+				case DYNAMICPUNCH:
+				case FIRE_PUNCH:
+				case FOCUS_PUNCH:
+				case HAMMER_ARM:
+				case ICE_PUNCH:
+				case MACH_PUNCH:
+				case MEGA_PUNCH:
+				case METEOR_MASH:
+				case SHADOW_PUNCH:
+				case SKY_UPPERCUT:
+				case THUNDERPUNCH:
+					attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
+					break;
+				default:
+					break;
+			}
+		case RECKLESS:
+			switch (attacker.pokemon->move->name) {
+				case BRAVE_BIRD:
+				case DOUBLE_EDGE:
+				case FLARE_BLITZ:
+				case HEAD_SMASH:
+				case SUBMISSION:
+				case TAKE_DOWN:
+				case VOLT_TACKLE:
+				case WOOD_HAMMER:
+					attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
+					break;
+				default:
+					break;
+		}
+		case RIVALRY:
+			// Same gender == 20 + 5, opposite gender == 20 - 5
+			attacker.pokemon->move->power = attacker.pokemon->move->power * (20 + 5 * attacker.pokemon->gender * defender.pokemon->gender) / 20;
+			break;
+		default:
+			break;
+	}
 
-	if ((HEATPROOF == defender.pokemon->ability and FIRE == attacker.pokemon->move->type)
-			or (THICK_FAT == defender.pokemon->ability and (FIRE == attacker.pokemon->move->type or ICE == attacker.pokemon->move->type)))
-		attacker.pokemon->move->power /= 2;
-	else if (DRY_SKIN == defender.pokemon->ability and FIRE == attacker.pokemon->move->type)
-		attacker.pokemon->move->power = attacker.pokemon->move->power * 5 / 4;
+	switch (defender.pokemon->ability) {
+		case DRY_SKIN:
+			if (FIRE == attacker.pokemon->move->type)
+				attacker.pokemon->move->power = attacker.pokemon->move->power * 5 / 4;
+			break;
+		case HEATPROOF:
+			if (FIRE == attacker.pokemon->move->type)
+				attacker.pokemon->move->power /= 2;
+			break;
+		case THICK_FAT:
+			if (FIRE == attacker.pokemon->move->type or ICE == attacker.pokemon->move->type)
+				attacker.pokemon->move->power /= 2;
+			break;
+		default:
+			break;
+	}
 
 	if (attacker.pokemon->move->power == 0)
 		attacker.pokemon->move->power = 1;
@@ -302,11 +596,11 @@ unsigned damageknown (Team const &attacker, Team const &defender, Weather const 
 	else
 		rl = 1;
 
-	if ((weather.rain != 0 and attacker.pokemon->move->type == WATER)
-			or (weather.sun != 0 and attacker.pokemon->move->type == FIRE))
+	if ((weather.rain and attacker.pokemon->move->type == WATER)
+			or (weather.sun and attacker.pokemon->move->type == FIRE))
 		weather_mod = 3;
-	else if ((weather.rain != 0 and attacker.pokemon->move->type == FIRE)
-			or (weather.sun != 0 and attacker.pokemon->move->type == WATER))
+	else if ((weather.rain and attacker.pokemon->move->type == FIRE)
+			or (weather.sun and attacker.pokemon->move->type == WATER))
 		weather_mod = 1;
 	else
 		weather_mod = 2;
@@ -347,9 +641,9 @@ unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned r
 			damage *= 2;
 	}
 
-	if (LIFE_ORB == attacker.pokemon->item)
+	if (attacker.pokemon->item == LIFE_ORB)
 		damage = damage * 13 / 10;
-	else if (METRONOME_ITEM == attacker.pokemon->item) {
+	else if (attacker.pokemon->item == METRONOME_ITEM) {
 		if (attacker.pokemon->move->times_used >= 10)
 			damage *= 2;
 		else
@@ -382,26 +676,80 @@ unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned r
 	else
 		tl = 1;
 
-	if ((defender.pokemon->item == CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
-			or (type1 * type2 > 2 and ((defender.pokemon->item == BABIRI_BERRY and attacker.pokemon->move->type == STEEL)
-			or (defender.pokemon->item == CHARTI_BERRY and attacker.pokemon->move->type == ROCK)
-			or (defender.pokemon->item == CHOPLE_BERRY and attacker.pokemon->move->type == FIGHTING)
-			or (defender.pokemon->item == COBA_BERRY and attacker.pokemon->move->type == FLYING)
-			or (defender.pokemon->item == COLBUR_BERRY and attacker.pokemon->move->type == DARK)
-			or (defender.pokemon->item == HABAN_BERRY and attacker.pokemon->move->type == DRAGON)
-			or (defender.pokemon->item == KASIB_BERRY and attacker.pokemon->move->type == GHOST)
-			or (defender.pokemon->item == KEBIA_BERRY and attacker.pokemon->move->type == POISON)
-			or (defender.pokemon->item == OCCA_BERRY and attacker.pokemon->move->type == FIRE)
-			or (defender.pokemon->item == PASSHO_BERRY and attacker.pokemon->move->type == WATER)
-			or (defender.pokemon->item == PAYAPA_BERRY and attacker.pokemon->move->type == PSYCHIC_TYPE)
-			or (defender.pokemon->item == RINDO_BERRY and attacker.pokemon->move->type == GRASS)
-			or (defender.pokemon->item == SHUCA_BERRY and attacker.pokemon->move->type == GROUND)
-			or (defender.pokemon->item == TANGA_BERRY and attacker.pokemon->move->type == BUG)
-			or (defender.pokemon->item == WACAN_BERRY and attacker.pokemon->move->type == ELECTRIC)
-			or (defender.pokemon->item == YACHE_BERRY and attacker.pokemon->move->type == ICE))))
+	rb = 1;
+	if (defender.pokemon->item == CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
 		rb = 2;
-	else
-		rb = 1;
+	else if (type1 * type2 > 2) {
+		switch (attacker.pokemon->item) {
+			case BABIRI_BERRY:
+				if (attacker.pokemon->move->type == STEEL)
+					rb = 2;
+				break;
+			case CHARTI_BERRY:
+				if (attacker.pokemon->move->type == ROCK)
+					rb = 2;
+				break;
+			case CHOPLE_BERRY:
+				if (attacker.pokemon->move->type == FIGHTING)
+					rb = 2;
+				break;
+			case COBA_BERRY:
+				if (attacker.pokemon->move->type == FLYING)
+					rb = 2;
+				break;
+			case COLBUR_BERRY:
+				if (attacker.pokemon->move->type == DARK)
+					rb = 2;
+				break;
+			case HABAN_BERRY:
+				if (attacker.pokemon->move->type == DRAGON)
+					rb = 2;
+				break;
+			case KASIB_BERRY:
+				if (attacker.pokemon->move->type == GHOST)
+					rb = 2;
+				break;
+			case KEBIA_BERRY:
+				if (attacker.pokemon->move->type == POISON)
+					rb = 2;
+				break;
+			case OCCA_BERRY:
+				if (attacker.pokemon->move->type == FIRE)
+					rb = 2;
+				break;
+			case PASSHO_BERRY:
+				if (attacker.pokemon->move->type == WATER)
+					rb = 2;
+				break;
+			case PAYAPA_BERRY:
+				if (attacker.pokemon->move->type == PSYCHIC_TYPE)
+					rb = 2;
+				break;
+			case RINDO_BERRY:
+				if (attacker.pokemon->move->type == GRASS)
+					rb = 2;
+				break;
+			case SHUCA_BERRY:
+				if (attacker.pokemon->move->type == GROUND)
+					rb = 2;
+				break;
+			case TANGA_BERRY:
+				if (attacker.pokemon->move->type == BUG)
+					rb = 2;
+				break;
+			case WACAN_BERRY:
+				if (attacker.pokemon->move->type == ELECTRIC)
+					rb = 2;
+				break;
+			case YACHE_BERRY:
+				if (attacker.pokemon->move->type == ICE)
+					rb = 2;
+				break;
+			default:
+				break;
+		}
+	}
+
 	return damage;
 }
 
@@ -422,38 +770,49 @@ unsigned damagecalculator (Team const &attacker, Team const &defender, Weather c
 	unsigned const type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
 	unsigned const type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 	if ((type1 != 0 and type2 != 0) and (GROUND != attacker.pokemon->move->type or grounded (defender, weather))) {
-		if (DRAGON_RAGE == attacker.pokemon->move->name)
-			damage = 40;
-		else if (ENDEAVOR == attacker.pokemon->move->name) {
-			if (defender.pokemon->hp.stat > attacker.pokemon->hp.stat)
-				damage = defender.pokemon->hp.stat - attacker.pokemon->hp.stat;
-			else
-				damage = 0;
-		}
-		else if (FISSURE == attacker.pokemon->move->name or GUILLOTINE == attacker.pokemon->move->name or HORN_DRILL == attacker.pokemon->move->name or SHEER_COLD == attacker.pokemon->move->name)
-			damage = defender.pokemon->hp.max;
-		else if (NIGHT_SHADE == attacker.pokemon->move->name or SEISMIC_TOSS == attacker.pokemon->move->name)
-			damage = attacker.pokemon->level;
-		else if (PSYWAVE == attacker.pokemon->move->name)
-			damage = attacker.pokemon->level * attacker.pokemon->move->variable->first / 10;
-		else if (SONICBOOM == attacker.pokemon->move->name)
-			damage = 20;
-		else if (SUPER_FANG == attacker.pokemon->move->name)
-			damage = defender.pokemon->hp.stat / 2;
+		switch (attacker.pokemon->move->name) {
+			case DRAGON_RAGE:
+				damage = 40;
+				break;
+			case ENDEAVOR:
+				if (defender.pokemon->hp.stat > attacker.pokemon->hp.stat)
+					damage = defender.pokemon->hp.stat - attacker.pokemon->hp.stat;
+				else
+					damage = 0;
+				break;
+			case FISSURE:
+			case GUILLOTINE:
+			case HORN_DRILL:
+			case SHEER_COLD:
+				damage = defender.pokemon->hp.max;
+				break;
+			case NIGHT_SHADE:
+			case SEISMIC_TOSS:
+				damage = attacker.pokemon->level;
+				break;
+			case PSYWAVE:
+				damage = attacker.pokemon->level * attacker.pokemon->move->variable->first / 10;
+				break;
+			case SONICBOOM:
+				damage = 20;
+				break;
+			case SUPER_FANG:
+				damage = defender.pokemon->hp.stat / 2;
 
-		else {
-			unsigned rl;						// Reflect / Light Screen (2)
-			unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-			unsigned ff;					// Flash Fire: 3 / 2
-			unsigned mf;					// Me First: 3 / 2
-			unsigned stab;					// Same Type Attack Bonus: 3 / 2
-			unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-			unsigned eb;					// Expert Belt: 6 / 5
-			unsigned tl;						// Tinted Lens (2)
-			unsigned rb;					// Resistance berries (2)
-			damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
-			damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, type1, type2, aem, eb, tl, rb, damage);
-			damage = damagerandom (*attacker.pokemon, defender, stab, type1, type2, aem, eb, tl, rb, damage);
+			default: {
+				unsigned rl;						// Reflect / Light Screen (2)
+				unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+				unsigned ff;						// Flash Fire: 3 / 2
+				unsigned mf;						// Me First: 3 / 2
+				unsigned stab;					// Same Type Attack Bonus: 3 / 2
+				unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+				unsigned eb;						// Expert Belt: 6 / 5
+				unsigned tl;							// Tinted Lens (2)
+				unsigned rb;						// Resistance berries (2)
+				damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
+				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, type1, type2, aem, eb, tl, rb, damage);
+				damage = damagerandom (*attacker.pokemon, defender, stab, type1, type2, aem, eb, tl, rb, damage);
+			}
 		}
 	}
 	return damage;

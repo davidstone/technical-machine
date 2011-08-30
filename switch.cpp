@@ -150,31 +150,41 @@ void entry_hazards (Team &switcher, Weather const &weather) {
 }
 
 void activate_ability (Team &switcher, Pokemon &other, Weather &weather) {
-		// Activate abilities upon switching in
+	// Activate abilities upon switching in
 
-		switcher.slow_start = 0;
-		if (switcher.pokemon->ability == SLOW_START)
+	switcher.slow_start = 0;
+	switch (switcher.pokemon->ability) {
+		case SLOW_START:
 			switcher.slow_start = 5;
-		else if (switcher.pokemon->ability == DOWNLOAD) {
+			break;
+		case DOWNLOAD:
 			if (other.def.stat >= other.spd.stat)
 				switcher.pokemon->spa.boost (1);
 			else
 				switcher.pokemon->atk.boost (1);
-		}
-		else if (switcher.pokemon->ability == DRIZZLE)
+			break;
+		case DRIZZLE:
 			weather.set_rain (-1);
-		else if (switcher.pokemon->ability == DROUGHT)
+			break;
+		case DROUGHT:
 			weather.set_sun (-1);
-		else if (switcher.pokemon->ability == FORECAST) {	// fix
-		}
-		else if (switcher.pokemon->ability == INTIMIDATE)
+			break;
+		case FORECAST:	// fix
+			break;
+		case INTIMIDATE:
 			other.atk.boost (-1);
-		else if (switcher.pokemon->ability == SAND_STREAM)
+			break;
+		case SAND_STREAM:
 			weather.set_sand (-1);
-		else if (switcher.pokemon->ability == SNOW_WARNING)
+			break;
+		case SNOW_WARNING:
 			weather.set_hail (-1);
-		else if (switcher.pokemon->ability == TRACE) {
-		}
+			break;
+		case TRACE:
+			break;
+		default:
+			break;
+	}
 }
 
 }

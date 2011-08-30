@@ -320,16 +320,23 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 			user.pokemon->def.boost (2);
 			break;
 		case ACUPRESSURE:		// fix
-			if (user.pokemon->move->variable->first == 0)
-				user.pokemon->atk.boost (2);
-			else if (user.pokemon->move->variable->first == 1)
-				user.pokemon->def.boost (2);
-			else if (user.pokemon->move->variable->first == 2)
-				user.pokemon->spa.boost (2);
-			else if (user.pokemon->move->variable->first == 3)
-				user.pokemon->spd.boost (2);
-			else
-				user.pokemon->spe.boost (2);
+			switch (user.pokemon->move->variable->first) {
+				case 0:
+					user.pokemon->atk.boost (2);
+					break;
+				case 1:
+					user.pokemon->def.boost (2);
+					break;
+				case 2:
+					user.pokemon->spa.boost (2);
+					break;
+				case 3:
+					user.pokemon->spd.boost (2);
+					break;
+				default:
+					user.pokemon->spe.boost (2);
+					break;
+			}
 			break;
 		case AGILITY:
 		case ROCK_POLISH:
@@ -908,9 +915,9 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case MOONLIGHT:
 		case MORNING_SUN:
 		case SYNTHESIS:
-			if (weather.sun != 0)
+			if (weather.sun)
 				heal (*user.pokemon, 3, 2);
-			else if (weather.hail != 0 or weather.rain != 0 or weather.sand != 0)
+			else if (weather.hail or weather.rain or weather.sand)
 				heal (*user.pokemon, 4);
 			else
 				heal (*user.pokemon, 2);
@@ -977,16 +984,25 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 			break;
 		case PSYCHO_SHIFT:
 			if (target.pokemon->status == NO_STATUS) {
-				if (user.pokemon->status == BURN)
-					burn (user, target, weather);
-				else if (user.pokemon->status == PARALYSIS)
-					paralyze (*user.pokemon, *target.pokemon, weather);
-				else if (user.pokemon->status == POISON_NORMAL)
-					poison_normal (user, target, weather);
-				else if (user.pokemon->status == POISON_TOXIC)
-					poison_toxic (user, target, weather);
-				else if (user.pokemon->status == SLEEP)
-					sleep (*user.pokemon, *target.pokemon, weather);
+				switch (user.pokemon->status) {
+					case BURN:
+						burn (user, target, weather);
+						break;
+					case PARALYSIS:
+						paralyze (*user.pokemon, *target.pokemon, weather);
+						break;
+					case POISON_NORMAL:
+						poison_normal (user, target, weather);
+						break;
+					case POISON_TOXIC:
+						poison_toxic (user, target, weather);
+						break;
+					case SLEEP:
+						sleep (*user.pokemon, *target.pokemon, weather);
+						break;
+					default:
+						break;
+				}
 				user.pokemon->status = NO_STATUS;
 			}
 			break;
@@ -1168,12 +1184,17 @@ unsigned usemove2 (Team &user, Team &target, Weather &weather, unsigned log_dama
 		case TRANSFORM:		// Fix
 			break;
 		case TRI_ATTACK:
-			if (user.pokemon->move->variable->first == 1)
-				burn (user, target, weather);
-			else if (user.pokemon->move->variable->first == 2)
-				freeze (*user.pokemon, target, weather);
-			else if (user.pokemon->move->variable->first == 3)
-				paralyze (*user.pokemon, *target.pokemon, weather);
+			switch (user.pokemon->move->variable->first) {
+				case 1:
+					burn (user, target, weather);
+					break;
+				case 2:
+					freeze (*user.pokemon, target, weather);
+					break;
+				case 3:
+					paralyze (*user.pokemon, *target.pokemon, weather);
+					break;
+			}
 			break;
 		case TRICK_ROOM:
 			weather.set_trick_room ();

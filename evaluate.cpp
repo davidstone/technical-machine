@@ -78,16 +78,28 @@ int64_t scorepokemon (Team const &team, Team const &other, Weather const &weathe
 	if (team.pokemon->hp.stat != 0) {
 		score += sv.members;
 		score += sv.hp * team.pokemon->hp.stat / team.pokemon->hp.max;
-		if (team.pokemon->status == BURN)
-			score += sv.burn;
-		else if (team.pokemon->status == FREEZE)
-			score += sv.freeze;
-		else if (team.pokemon->status == PARALYSIS)
-			score += sv.paralysis;
-		else if (team.pokemon->status == POISON_NORMAL or team.pokemon->status == POISON_TOXIC)
-			score += sv.poison;
-		else if (team.pokemon->status == SLEEP)
-			score += sv.sleep;
+		switch (team.pokemon->status) {
+			case BURN:
+				score += sv.burn;
+				break;
+			case FREEZE:
+				score += sv.freeze;
+				break;
+			case PARALYSIS:
+				score += sv.paralysis;
+				break;
+			case POISON_NORMAL:
+				score += sv.poison;
+				break;
+			case POISON_TOXIC:
+				score += sv.poison;		// fix
+				break;
+			case SLEEP:
+				score += sv.sleep;
+				break;
+			default:
+				break;
+		}
 		score += team.pokemon->atk.stage * sv.atk_stage;
 		score += team.pokemon->def.stage * sv.def_stage;
 		score += team.pokemon->spa.stage * sv.spa_stage;

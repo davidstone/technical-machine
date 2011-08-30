@@ -1134,6 +1134,7 @@ void Battle::handle_health_change (uint8_t party_id, uint8_t slot, uint16_t chan
 		log.inactive = &ai;
 	}
 	if (log.move_damage) {
+		std::cout << "=========================Yo!====================\n";
 		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
 		log.move_damage = false;
 	}
