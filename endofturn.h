@@ -28,6 +28,7 @@ void endofturn3 (Team &team, Weather const &weather);
 void endofturn5 (Team &team, Pokemon &foe, Weather &weather);
 void endofturn6 (Team &target, Weather const &weather);
 void endofturn7 (Team &team);
+void reset_variable (Team & team);
 void decrement (int8_t &n);
 
 }

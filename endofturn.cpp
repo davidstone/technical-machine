@@ -45,6 +45,8 @@ void endofturn (Team &first, Team &last, Weather &weather) {
 	endofturn7 (first);
 	endofturn7 (last);
 	decrement (weather.trick_room);
+	reset_variable (first);
+	reset_variable (last);
 }
 
 void endofturn0 (Team &team) {
@@ -190,6 +192,14 @@ void endofturn7 (Team &team) {
 	if (team.perish_song == 1)
 		team.pokemon->hp.stat = 0;
 	decrement (team.perish_song);
+}
+
+void reset_variable (Team & team) {
+	for (std::vector <Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
+		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
+			move->variable.index = 0;
+		}
+	}
 }
 
 void decrement (int8_t &n) {

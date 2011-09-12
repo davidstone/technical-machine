@@ -125,6 +125,8 @@ Team::Team (bool isme, Map const &map, unsigned size) :
 		settings.close();
 
 		load ("teams/" + team_file, map, size);
+		for (std::vector <Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
+			it->new_hp = it->hp.max;
 	}
 }
 
@@ -180,6 +182,8 @@ void Team::output (std::string &output) {
 		output += " ** " + it->nickname + '\n';
 		if (it->ability != END_ABILITY)
 			output += "\tAbility: " + ability_name [it->ability] + '\n';
+		if (it->status != NO_STATUS)
+			output += "\tStatus: " + boost::lexical_cast<std::string> (it->status) + '\n';
 		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != STRUGGLE; ++move)
 			output += "\t- " + move->get_name() + "\n";
 	}

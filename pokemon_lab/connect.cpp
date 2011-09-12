@@ -394,7 +394,6 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			//			 byte: shiny
 		   
 			// the bot probably doesn't need to care about this
-			std::cout << "handle_battle_pokemon\n";
 			msg.skip ();
 			break;
 		}
@@ -454,8 +453,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t field_id = msg.read_int ();
 			uint8_t party = msg.read_byte ();
 			uint8_t slot = msg.read_byte ();
-			uint16_t change_in_health = msg.read_short ();
-			uint16_t remaining_health = msg.read_short ();
+			int16_t change_in_health = msg.read_short ();
+			int16_t remaining_health = msg.read_short ();
 			uint16_t denominator = msg.read_short ();
 			Battle & battle = battles.find (field_id)->second;
 			battle.handle_health_change (party, slot, change_in_health, remaining_health, denominator);
@@ -534,7 +533,6 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 
 void BotClient::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) {
 	std::cout << server + '\n';
-	std::cout << message + '\n';
 }
 
 void BotClient::handle_challenge (InMessage msg) {
@@ -563,7 +561,6 @@ void BotClient::handle_registry_response (uint8_t type, std::string const & deta
 }
 
 void BotClient::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
-	std::cout << "handle_channel_info\n";
 }
 
 void BotClient::handle_channel_join_part (uint32_t id, std::string const & user, bool joining) {
@@ -573,7 +570,6 @@ void BotClient::handle_channel_status (uint32_t channel_id, std::string const & 
 }
 
 void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
-	std::cout << "handle_channel_list\n";
 }
 
 void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
@@ -641,8 +637,7 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
-	std::cout << "handle_battle_begin\n";
-	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(15));
+	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(7));
 	timer.wait ();
  	Battle battle = challenges.find (opponent)->second;
 	battle.party = party;
@@ -651,8 +646,9 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 }
 
 void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
-	std::cout << "handle_request_action\n";
 	do_turn (*log.first, *log.last, weather);
+	incorrect_hp (*log.first);
+	incorrect_hp (*log.last);
 	if (rand () % 50 == 0) {
 		OutMessage comment (OutMessage::CHANNEL_MESSAGE);
 		comment.write_int (field_id);
@@ -687,21 +683,11 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 }
 
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
-	std::cout << "category: " << static_cast <int> (category) << '\n';
+/*	std::cout << "category: " << static_cast <int> (category) << '\n';
 	std::cout << "message_id: " << message_id << '\n';
 	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
 		std::cout << "\t" + *it + '\n';
-	if (arguments.size() > 0 and arguments [0].length() == 7) {
-		if (arguments [0] [3] == party) {
-			log.active = &ai;
-			log.inactive = &foe;
-		}
-		else {
-			log.active = &foe;
-			log.inactive = &ai;
-		}
-	}
-	switch (category) {
+*/	switch (category) {
 		case InMessage::BATTLE_MESSAGES:
 			switch (message_id) {
 				case 2:
@@ -717,12 +703,12 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 			break;
 		case InMessage::STATUS_EFFECTS_BURN:
 			if (message_id == 1)
-				log.inactive->at_replacement().move->variable.index = 1;
+				log.active->at_replacement().move->variable.index = 1;
 			break;
 		case InMessage::STATUS_EFFECTS_CONFUSION:
 			switch (message_id) {
 				case 1:
-					log.inactive->at_replacement().move->variable.index = 1;
+					log.active->at_replacement().move->variable.index = 1;
 					break;
 				case 2:	// Confusion ends
 					break;
@@ -734,7 +720,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 		case InMessage::STATUS_EFFECTS_FREEZE:
 			switch (message_id) {
 				case 1:
-					log.inactive->at_replacement().move->variable.index = 1;
+					log.active->at_replacement().move->variable.index = 1;
 					break;
 				case 2:	// Defrost
 					break;
@@ -743,7 +729,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 		case InMessage::STATUS_EFFECTS_PARALYSIS:
 			switch (message_id) {
 				case 1:
-					log.inactive->at_replacement().move->variable.index = 1;
+					log.active->at_replacement().move->variable.index = 1;
+					std::cout << "Me: " << log.active->me << '\n';
 					break;
 				case 2:
 					log.active->fully_paralyzed = true;
@@ -754,13 +741,13 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 			switch (message_id) {
 				case 1:
 				case 2:
-					log.inactive->at_replacement().move->variable.index = 1;
+					log.active->at_replacement().move->variable.index = 1;
 					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_SLEEP:
 			case 1:
-				log.inactive->at_replacement().move->variable.index = 1;
+				log.active->at_replacement().move->variable.index = 1;
 				break;
 			case 2:		// Woke up
 				break;
@@ -768,7 +755,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 		case InMessage::STATUS_EFFECTS_FLINCH:
 			switch (message_id)
 				case 1:
-					log.inactive->at_replacement().move->variable.index = 1;
+					log.active->at_replacement().move->variable.index = 1;
 					break;
 			break;
 		case InMessage::STATUS_EFFECTS_ATTRACT:
@@ -790,7 +777,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					break;
 				case 2:		// But nothing happened!
 					break;
-				case 7:		// Parse this message to get base attack of each Pokemon
+				case 7:		// Parse this message to get base attack of each Pokemon (Beat Up)
 					break;
 				case 9:		// $1 became the $2 type!
 					break;
@@ -841,23 +828,24 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.inactive->at_replacement().ability = AFTERMATH;
 					break;
 				case 1:
-					log.active->at_replacement().ability = ANGER_POINT;
+					log.inactive->at_replacement().ability = ANGER_POINT;
 					break;
 				case 2:
-					log.active->at_replacement().ability = ANTICIPATION;
+					log.active->at_replacement().ability = ANTICIPATION;	// fix
 					break;
 				case 3:
-					log.inactive->at_replacement().ability = BAD_DREAMS;
+					update_active_print (log, arguments);
+					log.active->at_replacement().ability = BAD_DREAMS;
 					break;
 				case 4:
-					log.active->at_replacement().ability = CLEAR_BODY;
+					log.inactive->at_replacement().ability = CLEAR_BODY;
 //					log.active->at_replacement().ability = HYPER_CUTTER;
 					break;
 				case 5:
-					log.active->at_replacement().ability = CUTE_CHARM;
+					log.inactive->at_replacement().ability = CUTE_CHARM;
 					break;
 				case 6:
-					log.active->at_replacement().ability = DAMP;
+					log.inactive->at_replacement().ability = DAMP;
 					break;
 				case 7:
 					log.active->at_replacement().ability = DOWNLOAD;
@@ -869,22 +857,25 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.active->at_replacement().ability = DROUGHT;
 					break;
 				case 10:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = DRY_SKIN;
 					break;
 				case 11:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = DRY_SKIN;
 //					log.active->at_replacement().ability = SOLAR_POWER;
 					break;
 				case 12:
-					log.active->at_replacement().ability = DRY_SKIN;
+					log.inactive->at_replacement().ability = DRY_SKIN;
 					break;
 				case 14:
-					log.active->at_replacement().ability = FLAME_BODY;
+					log.inactive->at_replacement().ability = FLAME_BODY;
 					break;
 				case 15:
-					log.active->at_replacement().ability = FLASH_FIRE;
+					log.inactive->at_replacement().ability = FLASH_FIRE;
 					break;
 				case 16:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = FLOWER_GIFT;
 					break;
 				case 17:		// $1 Forewarn alerted it to $2!
@@ -894,46 +885,49 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.active->at_replacement().ability = FRISK;
 					break;
 				case 19:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = HYDRATION;
 					break;
 				case 20:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = ICE_BODY;
 					break;
 				case 21:
-					log.active->at_replacement().ability = IMMUNITY;
+					log.inactive->at_replacement().ability = IMMUNITY;
 					break;
 				case 22:
-					log.active->at_replacement().ability = INSOMNIA;
+					log.inactive->at_replacement().ability = INSOMNIA;
 					break;
 				case 23:
 					log.active->at_replacement().ability = INTIMIDATE;
 					break;
 				case 24:
-					log.active->at_replacement().ability = LEAF_GUARD;
+					log.inactive->at_replacement().ability = LEAF_GUARD;
 					break;
 				case 25:
-					log.active->at_replacement().ability = LEVITATE;
+					log.inactive->at_replacement().ability = LEVITATE;
 					break;
 				case 26:		// $1's $2 drew the attack!
-					log.active->at_replacement().ability = LIGHTNINGROD;
+					log.inactive->at_replacement().ability = LIGHTNINGROD;
 //					log.active->at_replacement().ability = STORM_DRAIN;
 					break;
 				case 27:
-					log.active->at_replacement().ability = LIMBER;
+					log.inactive->at_replacement().ability = LIMBER;
 					break;
 				case 28:
 					log.active->at_replacement().ability = MOLD_BREAKER;
 					break;
 				case 29:
-					log.active->at_replacement().ability = MOTOR_DRIVE;
+					log.inactive->at_replacement().ability = MOTOR_DRIVE;
 					break;
 				case 30:
-					log.active->at_replacement().ability = OBLIVIOUS;
+					log.inactive->at_replacement().ability = OBLIVIOUS;
 					break;
 				case 31:
-					log.active->at_replacement().ability = OWN_TEMPO;
+					log.inactive->at_replacement().ability = OWN_TEMPO;
 					break;
 				case 32:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = POISON_HEAL;
 					break;
 				case 34:
@@ -943,15 +937,17 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.active->at_replacement().ability = QUICK_FEET;
 					break;
 				case 36:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = RAIN_DISH;
 					break;
 				case 37:
-					log.active->at_replacement().ability = ROUGH_SKIN;
+					log.inactive->at_replacement().ability = ROUGH_SKIN;
 					break;
 				case 38:
 					log.active->at_replacement().ability = SAND_STREAM;
 					break;
 				case 39:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = SHED_SKIN;
 					break;
 				case 40:
@@ -961,25 +957,26 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.active->at_replacement().ability = SNOW_WARNING;
 					break;
 				case 42:
-					log.active->at_replacement().ability = SOUNDPROOF;
+					log.inactive->at_replacement().ability = SOUNDPROOF;
 					break;
 				case 43:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = SPEED_BOOST;
 					break;
 				case 45:
-					log.active->at_replacement().ability = STEADFAST;
+					log.inactive->at_replacement().ability = STEADFAST;
 					break;
 				case 46:
-					log.active->at_replacement().ability = STICKY_HOLD;
+					log.inactive->at_replacement().ability = STICKY_HOLD;
 					break;
 				case 47:
-					log.active->at_replacement().ability = STURDY;
+					log.inactive->at_replacement().ability = STURDY;
 					break;
 				case 48:
-					log.active->at_replacement().ability = SYNCHRONIZE;
+					log.active->at_replacement().ability = SYNCHRONIZE;		// Fix
 					break;
 				case 49:
-					log.active->at_replacement().ability = TANGLED_FEET;
+					log.inactive->at_replacement().ability = TANGLED_FEET;
 					break;
 				case 50:		// $1 traced $2's $3!
 					log.active->at_replacement().ability = TRACE;
@@ -992,18 +989,20 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.active->at_replacement().ability = UNBURDEN;
 					break;
 				case 53:
-					log.active->at_replacement().ability = WATER_VEIL;
+					log.inactive->at_replacement().ability = WATER_VEIL;
 					break;
 				case 54:
-					log.active->at_replacement().ability = WONDER_GUARD;
+					log.inactive->at_replacement().ability = WONDER_GUARD;
 					break;
 				case 55:
 					log.inactive->at_replacement().ability = LIQUID_OOZE;
 					break;
 				case 56:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = ICE_BODY;
 					break;
 				case 57:
+					update_active_print (log, arguments);
 					log.active->at_replacement().ability = DRY_SKIN;
 					break;
 				case 59:		// $1's $2 raised its $3!
@@ -1023,6 +1022,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 		case InMessage::ITEM_MESSAGES:
 			switch (message_id) {
 				case 0:		// $1's $2 restored its health a little!
+					update_active_print (log, arguments);
 					log.active->at_replacement().item = LEFTOVERS;
 					break;
 				case 1:		// $1's $2 cured its $3!
@@ -1047,13 +1047,14 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					log.active->at_replacement().item = STICKY_BARB;
 					break;
 				case 8:
+					update_active_print (log, arguments);
 					log.active->at_replacement().item = BLACK_SLUDGE;
 					break;
 				case 9:		// The $1 latched on to $2!
 //					log.active->at_replacement().item = 
 					break;
 				case 10:
-					log.active->at_replacement().item = FOCUS_SASH;
+					log.inactive->at_replacement().item = FOCUS_SASH;
 					break;
 				case 11:
 					log.active->at_replacement().item = CUSTAP_BERRY;
@@ -1065,6 +1066,19 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 			break;
 		default:
 			break;
+	}
+}
+
+void Battle::update_active_print (Log & log, std::vector <std::string> const & arguments) {
+	if (arguments.size() > 0 and arguments [0].length() == 7) {
+		if (arguments [0] [3] == party) {
+			log.active = &ai;
+			log.inactive = &foe;
+		}
+		else {
+			log.active = &foe;
+			log.inactive = &ai;
+		}
 	}
 }
 
@@ -1080,7 +1094,6 @@ void BotClient::handle_victory (uint32_t field_id, uint16_t party_id) {
 }
 
 void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
-	std::cout << "handle_battle_use_move\n";
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -1104,11 +1117,9 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 }
 
 void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
-	std::cout << "handle_battle_withdraw\n";
 }
 
 void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
-	std::cout << "handle_battle_send_out\n";
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -1123,29 +1134,33 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
 }
 
-void Battle::handle_health_change (uint8_t party_id, uint8_t slot, uint16_t change_in_health, uint16_t remaining_health, uint16_t denominator) {
-	std::cout << "handle_battle_health_change\n";
-	if (party == party_id) {
-		log.active = &ai;
-		log.inactive = &foe;
+void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator) {
+	std::cout << "change_in_health: " << change_in_health << '\n';
+	std::cout << "remaining_health: " << remaining_health << '\n';
+	if (log.move_damage) {
+		log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
+		if (log.inactive->damage > log.inactive->at_replacement().hp.stat)
+			log.inactive->damage = log.inactive->at_replacement().hp.stat;
+		log.move_damage = false;
+	}
+	
+	if (remaining_health < 0)
+		remaining_health = 0;
+	// If the message is about me, active must be me, otherwise, active must not be me
+	if ((party_id == party) == log.active->me) {
+		std::cout << "Updating active HP\n";
+		log.active->at_replacement().new_hp = remaining_health;
 	}
 	else {
-		log.active = &foe;
-		log.inactive = &ai;
-	}
-	if (log.move_damage) {
-		std::cout << "=========================Yo!====================\n";
-		log.active->damage = log.active->at_replacement().hp.max * change_in_health / denominator;
-		log.move_damage = false;
+		std::cout << "Updating inactive HP\n";
+		log.inactive->at_replacement().new_hp = remaining_health;
 	}
 }
 
 void Battle::handle_set_pp (uint8_t party_, uint8_t slot, uint8_t pp) {
-	std::cout << "handle_battle_set_pp\n";
 }
 
 void Battle::handle_fainted (uint8_t party_, uint8_t slot, std::string const & nickname) {
-	std::cout << "handle_battle_fainted\n";
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -1160,11 +1175,10 @@ void Battle::handle_fainted (uint8_t party_, uint8_t slot, std::string const & n
 }
 
 void Battle::handle_begin_turn (uint16_t turn_count) {
-	std::cout << "handle_battle_begin_turn\n";
+	std::cout << "Begin turn " << turn_count << '\n';
 }
 
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
-	std::cout << "handle_battle_set_move\n";
 }
 
 uint8_t Battle::switch_slot (moves_list move) {
@@ -1178,7 +1192,6 @@ uint8_t Battle::switch_slot (moves_list move) {
 }
 
 void BotClient::handle_metagame_list (std::vector <Metagame> const & metagames) {
-	std::cout << "handle_metagame_list\n";
 }
 
 void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
@@ -1186,6 +1199,18 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 	for (std::vector<int16_t>::const_iterator it = violation.begin(); it != violation.end(); ++it) {
 		int pokemon = (-(*it + 1)) % 6;
 		std::cerr << "Problem at Pokemon " << pokemon << ", error code " << -(*it + pokemon + 1) / 6 << '\n';
+	}
+}
+
+void Battle::incorrect_hp (Team & team) {
+	unsigned max_hp = 48;
+	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
+		if (team.me)
+			max_hp = pokemon->hp.max;
+		unsigned pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
+		if (pokemon->new_hp - 1U > pixels or pixels > pokemon->new_hp + 1U) {
+			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
+		}
 	}
 }
 

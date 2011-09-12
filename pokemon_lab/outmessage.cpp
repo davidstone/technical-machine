@@ -53,7 +53,7 @@ void OutMessage::write_team (Team const & team) {
 	for (std::vector <Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
 		write_int (tm_to_pl_species (pokemon->name));
 		write_string (pokemon->nickname);
-		write_byte (0);
+		write_byte (0);		// Don't care about shininess
 
 		uint8_t gender;
 		if (pokemon->gender == MALE)
@@ -81,17 +81,17 @@ void OutMessage::write_team (Team const & team) {
 			write_int (3);		// Replace this with real PP-ups logic later
 		}
 		write_int (pokemon->hp.iv);
-		write_int (pokemon->hp.ev);
+		write_int (pokemon->hp.ev * 4);
 		write_int (pokemon->atk.iv);
-		write_int (pokemon->atk.ev);
+		write_int (pokemon->atk.ev * 4);
 		write_int (pokemon->def.iv);
-		write_int (pokemon->def.ev);
+		write_int (pokemon->def.ev * 4);
 		write_int (pokemon->spe.iv);
-		write_int (pokemon->spe.ev);
+		write_int (pokemon->spe.ev * 4);
 		write_int (pokemon->spa.iv);
-		write_int (pokemon->spa.ev);
+		write_int (pokemon->spa.ev * 4);
 		write_int (pokemon->spd.iv);
-		write_int (pokemon->spd.ev);
+		write_int (pokemon->spd.ev * 4);
 	}
 }
 

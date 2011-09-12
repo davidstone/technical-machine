@@ -34,12 +34,14 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 	spe (name, SPE),
 
 	nature (END_NATURE),
+	new_hp (48),
 	fainted (false),
 	level (100),
 	mass (get_mass [name]),
 	sleep (0),
 
-	happiness (255) {
+	happiness (255)
+	{
 		Move struggle (STRUGGLE, 0, 0);
 		move.set.push_back (struggle);
 		// A Pokemon has a new "Switch" move for each Pokemon in the party.
