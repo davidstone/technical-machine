@@ -637,12 +637,12 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
-	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(7));
-	timer.wait ();
- 	Battle battle = challenges.find (opponent)->second;
+ 	Battle & battle = challenges.find (opponent)->second;
 	battle.party = party;
 	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
 	challenges.erase (opponent);
+	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(0));
+	timer.wait ();
 }
 
 void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
@@ -660,11 +660,11 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		msg.write_move (field_id, 1);
 	else {
 		Team predicted = foe;
-		std::cout << "======================\nPredicting...\n";
+//		std::cout << "======================\nPredicting...\n";
 		predict_team (botclient.detailed, predicted, ai.size);
-		std::string out;
-		predicted.output (out);
-		std::cout << out;
+//		std::string out;
+//		predicted.output (out);
+//		std::cout << out;
 
 		int64_t score;
 		moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
@@ -683,11 +683,12 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 }
 
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
-/*	std::cout << "category: " << static_cast <int> (category) << '\n';
+	std::cout << "party id: " << static_cast <int> (party) << '\n';
+	std::cout << "category: " << static_cast <int> (category) << '\n';
 	std::cout << "message_id: " << message_id << '\n';
 	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
 		std::cout << "\t" + *it + '\n';
-*/	switch (category) {
+	switch (category) {
 		case InMessage::BATTLE_MESSAGES:
 			switch (message_id) {
 				case 2:
@@ -1023,6 +1024,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 			switch (message_id) {
 				case 0:		// $1's $2 restored its health a little!
 					update_active_print (log, arguments);
+					std::cout << log.active->at_replacement().get_name() + " has Leftovers.\n";
 					log.active->at_replacement().item = LEFTOVERS;
 					break;
 				case 1:		// $1's $2 cured its $3!
@@ -1070,15 +1072,17 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 }
 
 void Battle::update_active_print (Log & log, std::vector <std::string> const & arguments) {
-	if (arguments.size() > 0 and arguments [0].length() == 7) {
-		if (arguments [0] [3] == party) {
-			log.active = &ai;
-			log.inactive = &foe;
-		}
-		else {
-			log.active = &foe;
-			log.inactive = &ai;
-		}
+	// This needs to be changed to the correct message parser.
+	std::cout << "arguments.size (): " << arguments.size () << '\n';
+	std::cout << "arguments [0].length (): " << arguments [0].length () << '\n';
+	assert (arguments.size() > 0);
+	if (arguments [0] [3] - '0' == party) {
+		log.active = &ai;
+		log.inactive = &foe;
+	}
+	else {
+		log.active = &foe;
+		log.inactive = &ai;
 	}
 }
 
@@ -1139,7 +1143,7 @@ void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t chang
 	std::cout << "remaining_health: " << remaining_health << '\n';
 	if (log.move_damage) {
 		log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
-		if (log.inactive->damage > log.inactive->at_replacement().hp.stat)
+		if (static_cast <unsigned> (log.inactive->damage) > log.inactive->at_replacement().hp.stat)
 			log.inactive->damage = log.inactive->at_replacement().hp.stat;
 		log.move_damage = false;
 	}

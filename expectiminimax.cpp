@@ -32,7 +32,7 @@
 namespace technicalmachine {
 
 moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, int64_t &score) {
-	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
+//	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
 	for (std::vector <Pokemon>::iterator pokemon = foe.pokemon.set.begin(); pokemon != foe.pokemon.set.end(); ++pokemon) {
 		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move)
@@ -46,7 +46,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 		score = select_move_branch (ai, foe, weather, deeper, sv, best_move, first_turn);
 	}
 
-	if (SWITCH0 <= best_move and best_move <= SWITCH5)
+/*	if (SWITCH0 <= best_move and best_move <= SWITCH5)
 		std::cout << "Switch to " << ai.pokemon.set [best_move - SWITCH0].get_name ();
 	else
 		std::cout << "Use " << Move::name_to_string [best_move];
@@ -61,7 +61,7 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 	}
 	else
 		std::cout << " for a minimum expected score of " << score << "\n";
-
+*/
 	return best_move;
 }
 
@@ -125,28 +125,28 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 		for (std::vector <std::pair <int64_t, size_t> >::const_iterator ai_move = ai_index.begin(); ai_move != ai_index.end(); ++ai_move) {
 			ai.pokemon->move.index = ai_move->second;
 			if (ai.pokemon->move->selectable) {
-				if (verbose or first_turn) {
+/*				if (verbose or first_turn) {
 					std::cout << indent + "Evaluating ";
 					if (ai.pokemon->move->is_switch())
 						std::cout << "switching to " + ai.pokemon.set [ai.pokemon->move->name - SWITCH0].get_name () + "\n";
 					else
 						std::cout << ai.pokemon->move->get_name() + "\n";
 				}
-				int64_t beta = VICTORY + 1;
+*/				int64_t beta = VICTORY + 1;
 				for (std::vector <std::pair <int64_t, size_t> >::const_iterator foe_move = foe_index.begin(); foe_move != foe_index.end(); ++foe_move) {
 					foe.pokemon->move.index = foe_move->second;
 					if (foe.pokemon->move->selectable) {
-						if (verbose or first_turn) {
+/*						if (verbose or first_turn) {
 							std::cout << indent + "\tEvaluating the foe";
 							if (foe.pokemon->move->is_switch())
 								std::cout << " switching to " + foe.pokemon.set [foe.pokemon->move->name - SWITCH0].get_name() + "\n";
 							else
 								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
 						}
-						int64_t score = order_branch (ai, foe, weather, depth, sv);
-						if (verbose or first_turn)
+*/						int64_t score = order_branch (ai, foe, weather, depth, sv);
+/*						if (verbose or first_turn)
 							std::cout << indent + "\tEstimated score is " << score << '\n';
-						if (beta > score) {
+*/						if (beta > score) {
 							beta = score;
 							foe.pokemon->move->score = beta;
 						}
@@ -159,9 +159,9 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 					alpha = beta;
 					ai.pokemon->move->score = alpha;
 					best_move = ai.pokemon->move->name;
-					if (verbose or first_turn)
+/*					if (verbose or first_turn)
 						std::cout << indent + "Estimated score is " << alpha << '\n';
-				}
+*/				}
 				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
 					break;
 			}
@@ -386,9 +386,9 @@ int64_t replace (Team &ai, Team &foe, Weather const &weather, int depth, score_v
 	int64_t alpha = -VICTORY - 1;
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
-			if (verbose or first_turn)
+/*			if (verbose or first_turn)
 				std::cout << indent + "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
-			int64_t beta = VICTORY + 1;
+*/			int64_t beta = VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
 					if (first == NULL)
@@ -404,9 +404,9 @@ int64_t replace (Team &ai, Team &foe, Weather const &weather, int depth, score_v
 			if (beta > alpha) {
 				alpha = beta;
 				best_move = static_cast<moves_list> (SWITCH0 + ai.replacement);
-				if (verbose or first_turn)
+/*				if (verbose or first_turn)
 					std::cout << indent + "Estimated score is " << alpha << '\n';
-			}
+*/			}
 			if ((ai.pokemon->hp.stat != 0 and faint) or (!ai.pass and !faint))
 				break;
 		}
