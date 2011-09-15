@@ -132,28 +132,28 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	// Decrypt the challenge in the reverse order it was encrypted.
 	rijndael_ctx ctx;
 	// First use the second half of the bits to decrypt
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
+	rijndael_set_key (& ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
 	unsigned char middle [16];
-	rijndael_decrypt (&ctx, reinterpret_cast <unsigned char const *> (challenge.c_str()), middle);
+	rijndael_decrypt (& ctx, reinterpret_cast <unsigned char const *> (challenge.c_str()), middle);
 	// Then use the first half of the bits to decrypt that decrypted value.
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
+	rijndael_set_key (& ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
 	unsigned char result [16];
-	rijndael_decrypt (&ctx, middle, result);
+	rijndael_decrypt (& ctx, middle, result);
 	
 	// Add 1 to the decrypted number, which is an int stored in the first 4 bytes (all other bytes are 0).
 	uint32_t r = (result [0] << 3 * 8) + (result [1] << 2 * 8) + (result [2] << 1 * 8) + result [3] + 1;
 	r = htonl (r);
 
 	// I write back into result instead of a new array so that TM supports a potential future improvement in the security of Pokemon Lab. This will allow the protocol to work even if the server checks all of the digits for correctness, instead of just the first four.
-	uint8_t * byte = reinterpret_cast <uint8_t *> (&r);
+	uint8_t * byte = reinterpret_cast <uint8_t *> (& r);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
 		result [n] = (*(byte + n));
 	// Encrypt that incremented value first with the first half of the bits of my hashed password.
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
-	rijndael_encrypt (&ctx, result, middle);
+	rijndael_set_key (& ctx, reinterpret_cast <unsigned char const *> (digest.substr (0, 16).c_str()), 128);
+	rijndael_encrypt (& ctx, result, middle);
 	// Then re-encrypt that encrypted value with the second half of the bits of my hashed password.
-	rijndael_set_key (&ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
-	rijndael_encrypt (&ctx, middle, result);
+	rijndael_set_key (& ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
+	rijndael_encrypt (& ctx, middle, result);
 	std::string response = "";
 	for (unsigned n = 0; n != 16; ++n)
 		response += result [n];
@@ -213,14 +213,14 @@ class Metagame {
 		uint8_t periods;
 		uint16_t period_length;
 	private:
-		void load_bans (InMessage &msg) {
+		void load_bans (InMessage & msg) {
 			uint16_t ban_list_count = msg.read_short ();
 			for (uint16_t n = 0; n != ban_list_count; ++n) {
 				uint16_t species_id = msg.read_short ();
 				bans.push_back (species_id);
 			}
 		}
-		void load_clauses (InMessage &msg) {
+		void load_clauses (InMessage & msg) {
 			uint16_t clause_count = msg.read_short ();
 			for (uint16_t b = 0; b != clause_count; ++b) {
 				std::string clause_name = msg.read_string ();
@@ -667,7 +667,7 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		std::cout << out;
 
 		int64_t score;
-		moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
+		Move::moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
 		if (Move::is_switch (move))
 			msg.write_switch (field_id, switch_slot (move));
 		else {
@@ -1077,12 +1077,12 @@ void Battle::update_active_print (Log & log, std::vector <std::string> const & a
 	std::cout << "arguments [0].length (): " << arguments [0].length () << '\n';
 	assert (arguments.size() > 0);
 	if (arguments [0] [3] - '0' == party) {
-		log.active = &ai;
-		log.inactive = &foe;
+		log.active = & ai;
+		log.inactive = & foe;
 	}
 	else {
-		log.active = &foe;
-		log.inactive = &ai;
+		log.active = & foe;
+		log.inactive = & ai;
 	}
 }
 
@@ -1101,12 +1101,12 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 	Team * team;
 	Team * other;
 	if (party == party_) {
-		team = &ai;
-		other = &foe;
+		team = & ai;
+		other = & foe;
 	}
 	else {
-		team = &foe;
-		other = &ai;
+		team = & foe;
+		other = & ai;
 	}
 	log.active = team;
 	log.inactive = other;
@@ -1115,9 +1115,9 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 		log.last = other;
 	}
 	int move = move_id;
-	if (move >= SWITCH0)
+	if (move >= Move::SWITCH0)
 		move += 6;
-	log.log_move (static_cast <moves_list> (move));
+	log.log_move (static_cast <Move::moves_list> (move));
 }
 
 void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
@@ -1127,12 +1127,12 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 	Team * team;
 	Team * other;
 	if (party == party_) {
-		team = &ai;
-		other = &foe;
+		team = & ai;
+		other = & foe;
 	}
 	else {
-		team = &foe;
-		other = &ai;
+		team = & foe;
+		other = & ai;
 	}
 	species name = InMessage::pl_to_tm_species (species_id);
 	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
@@ -1172,12 +1172,12 @@ void Battle::handle_fainted (uint8_t party_, uint8_t slot, std::string const & n
 	Team * team;
 	Team * other;
 	if (party == party_) {
-		team = &ai;
-		other = &foe;
+		team = & ai;
+		other = & foe;
 	}
 	else {
-		team = &foe;
-		other = &ai;
+		team = & foe;
+		other = & ai;
 	}
 	team->at_replacement().fainted = true;
 }
@@ -1189,8 +1189,8 @@ void Battle::handle_begin_turn (uint16_t turn_count) {
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
 }
 
-uint8_t Battle::switch_slot (moves_list move) {
-	uint8_t slot = move - SWITCH0;
+uint8_t Battle::switch_slot (Move::moves_list move) {
+	uint8_t slot = move - Move::SWITCH0;
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == ai.pokemon.set [slot].name)
 			return n;

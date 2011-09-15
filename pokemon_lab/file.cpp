@@ -57,7 +57,7 @@ void load_pokemon (Team& team, std::ifstream &file, Map const &map, unsigned siz
 		output1 = search (file, output2, "\">");
 		if ("No" == output1)
 			break;
-		moves_list name = map.move.find (output1)->second;
+		Move::moves_list name = map.move.find (output1)->second;
 		int pp_ups = boost::lexical_cast <int> (output2);
 		Move move (name, pp_ups, size);
 		member.move.set.insert (member.move.set.begin() + n, move);

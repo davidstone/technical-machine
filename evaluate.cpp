@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-int64_t evaluate (Team &ai, Team &foe, Weather const &weather, score_variables const &sv) {
+int64_t evaluate (Team & ai, Team & foe, Weather const & weather, score_variables const & sv) {
 	int64_t score = scoreteam (ai, sv) - scoreteam (foe, sv);
 
 	size_t index = ai.pokemon.index;
@@ -34,7 +34,7 @@ int64_t evaluate (Team &ai, Team &foe, Weather const &weather, score_variables c
 	return score;
 }
 
-int64_t scoreteam (Team const &team, score_variables const &sv) {
+int64_t scoreteam (Team const & team, score_variables const & sv) {
 	int64_t score = sv.lucky_chant * team.lucky_chant + sv.mist * team.mist + sv.safeguard * team.safeguard + sv.tailwind * team.tailwind + sv.wish * team.wish;
 	if (team.pokemon->hp.stat != 0) {
 		score += team.magnet_rise * sv.magnet_rise;
@@ -61,8 +61,8 @@ int64_t scoreteam (Team const &team, score_variables const &sv) {
 			score += sv.trapped;
 		if (team.focus_energy)
 			score += sv.focus_energy;
-		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
-			if (move->name == BATON_PASS) {
+		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
+			if (move->name == Move::BATON_PASS) {
 				score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.pokemon->atk.stage * sv.atk_stage + team.pokemon->def.stage * sv.def_stage + team.pokemon->spa.stage * sv.spa_stage + team.pokemon->spd.stage * sv.spd_stage + team.pokemon->spe.stage * sv.spe_stage);
 				break;
 			}
@@ -71,7 +71,7 @@ int64_t scoreteam (Team const &team, score_variables const &sv) {
 	return score;
 }
 
-int64_t scorepokemon (Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
+int64_t scorepokemon (Team const & team, Team const & other, Weather const & weather, score_variables const & sv) {
 	int64_t score = team.stealth_rock * sv.stealth_rock * static_cast <int> (effectiveness [ROCK] [team.pokemon->type1] * effectiveness [ROCK] [team.pokemon->type2]) / 4;
 	if (grounded (team, weather))
 		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
@@ -111,7 +111,7 @@ int64_t scorepokemon (Team const &team, Team const &other, Weather const &weathe
 }
 
 
-int64_t scoremove (Team const &team, Team const &other, Weather const &weather, score_variables const &sv) {
+int64_t scoremove (Team const & team, Team const & other, Weather const & weather, score_variables const & sv) {
 	int64_t score = 0;
 	for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move != team.pokemon->move.set.end(); ++move) {
 		if (move->physical)
@@ -125,7 +125,7 @@ int64_t scoremove (Team const &team, Team const &other, Weather const &weather, 
 }
 
 
-int64_t win (Team const &team) {
+int64_t win (Team const & team) {
 	if (team.pokemon.set.size() == 0) {
 		if (team.me)
 			return -VICTORY;

@@ -31,14 +31,14 @@
 
 namespace technicalmachine {
 
-moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, int64_t &score) {
+Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, int64_t & score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
 	for (std::vector <Pokemon>::iterator pokemon = foe.pokemon.set.begin(); pokemon != foe.pokemon.set.end(); ++pokemon) {
 		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move)
 			move->score = VICTORY + 1;
 	}
-	moves_list best_move;
+	Move::moves_list best_move;
 	for (int deeper = 1; deeper <= depth; ++deeper) {
 		bool first_turn = false;
 		if (deeper == depth)
@@ -46,27 +46,12 @@ moves_list expectiminimax (Team &ai, Team &foe, Weather const &weather, int dept
 		score = select_move_branch (ai, foe, weather, deeper, sv, best_move, first_turn);
 	}
 
-	if (SWITCH0 <= best_move and best_move <= SWITCH5)
-		std::cout << "Switch to " << ai.pokemon.set [best_move - SWITCH0].get_name ();
-	else
-		std::cout << "Use " << Move::name_to_string [best_move];
-	if (depth == -1) {
-		double probability = 100.0 * static_cast <double> (score + VICTORY) / static_cast <double> (2 * VICTORY);
-		std::cout << " for ";
-		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
-			std::cout << "an ";
-		else
-			std::cout << "a ";
-		std::cout << probability << "% chance to win.\n";
-	}
-	else
-		std::cout << " for a minimum expected score of " << score << "\n";
-
+	print_best_move (ai, best_move, depth, score);
 	return best_move;
 }
 
 
-int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool first_turn) {
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, Move::moves_list & best_move, bool first_turn) {
 
 	/* Working from the inside loop out:
 
@@ -125,24 +110,12 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 		for (std::vector <std::pair <int64_t, size_t> >::const_iterator ai_move = ai_index.begin(); ai_move != ai_index.end(); ++ai_move) {
 			ai.pokemon->move.index = ai_move->second;
 			if (ai.pokemon->move->selectable) {
-				if (verbose or first_turn) {
-					std::cout << indent + "Evaluating ";
-					if (ai.pokemon->move->is_switch())
-						std::cout << "switching to " + ai.pokemon.set [ai.pokemon->move->name - SWITCH0].get_name () + "\n";
-					else
-						std::cout << ai.pokemon->move->get_name() + "\n";
-				}
+				print_action (ai, verbose, first_turn, indent);
 				int64_t beta = VICTORY + 1;
 				for (std::vector <std::pair <int64_t, size_t> >::const_iterator foe_move = foe_index.begin(); foe_move != foe_index.end(); ++foe_move) {
 					foe.pokemon->move.index = foe_move->second;
 					if (foe.pokemon->move->selectable) {
-						if (verbose or first_turn) {
-							std::cout << indent + "\tEvaluating the foe";
-							if (foe.pokemon->move->is_switch())
-								std::cout << " switching to " + foe.pokemon.set [foe.pokemon->move->name - SWITCH0].get_name() + "\n";
-							else
-								std::cout << "'s " + foe.pokemon->move->get_name() + "\n";
-						}
+						print_action (foe, verbose, first_turn, indent);
 						int64_t score = order_branch (ai, foe, weather, depth, sv);
 						if (verbose or first_turn)
 							std::cout << indent + "\tEstimated score is " << score << '\n';
@@ -171,7 +144,7 @@ int64_t select_move_branch (Team &ai, Team &foe, Weather const &weather, int dep
 }
 
 
-int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv) {
+int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv) {
 	// Determine turn order
 	Team* first;
 	Team* last;
@@ -185,7 +158,7 @@ int64_t order_branch (Team &ai, Team &foe, Weather const &weather, int depth, sc
 }
 
 
-int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv) {
+int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv) {
 	int divisor = 100 * 100;
 	chance_to_hit (first, last, weather);
 	first.moved = true;
@@ -212,13 +185,13 @@ int64_t accuracy_branch (Team &first, Team &last, Weather const &weather, int de
 }
 
 
-int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv) {
+int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv) {
 	int64_t score3 = 0;
 	for (first.pokemon->move->variable.index = 0; first.pokemon->move->variable.index != first.pokemon->move->variable.set.size(); ++first.pokemon->move->variable.index) {
-		if ((first.pokemon->move->name != ROAR and first.pokemon->move->name != WHIRLWIND) or first.pokemon->move->variable->first != last.pokemon.index or last.pokemon.set.size() == 1) {
+		if ((!first.pokemon->move->is_phaze ()) or first.pokemon->move->variable->first != last.pokemon.index or last.pokemon.set.size() == 1) {
 			int64_t score2 = 0;
 			for (last.pokemon->move->variable.index = 0; last.pokemon->move->variable.index != last.pokemon->move->variable.set.size(); ++last.pokemon->move->variable.index) {
-				if ((last.pokemon->move->name != ROAR and last.pokemon->move->name != WHIRLWIND) or last.pokemon->move->variable->first != first.pokemon.index or first.pokemon.set.size() == 1) {
+				if ((!last.pokemon->move->is_phaze ()) or last.pokemon->move->variable->first != first.pokemon.index or first.pokemon.set.size() == 1) {
 					first.ch = false;
 					last.ch = false;
 					int64_t score1 = awaken_branch (first, last, weather, depth, sv);
@@ -254,7 +227,7 @@ int64_t random_move_effects_branch (Team &first, Team &last, Weather const &weat
 }
 
 
-int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int depth, score_variables const &sv) {
+int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv) {
 	int n;
 	if (first.pokemon->ability == EARLY_BIRD)
 		n = 2;
@@ -294,32 +267,20 @@ int64_t awaken_branch (Team &first, Team &last, Weather const &weather, int dept
 }
 
 
-int64_t use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
+int64_t use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const & sv) {
 	if (!last.pass) {
 		if (!first.pass) {
-			if (first.pokemon->move->name == BATON_PASS and false) {
-				first.pass = true;
-				Team* ai;
-				Team* foe;
-				deorder (first, last, ai, foe);
-				moves_list phony = END_MOVE;
-				return select_move_branch (*ai, *foe, weather, depth, sv, phony);
-			}
+			if (first.pokemon->move->name == Move::BATON_PASS and false)
+				return baton_pass_score (first, last, weather, depth, sv);
 		}
 		last.damage = usemove (first, last, weather);
 		first.pass = false;
 		// win() already corrects for whether it's the AI or the foe that is passed as first vs. last
 		if (win (first) != 0 or win (last) != 0)
 			return win (first) + win (last);
-		
-		if (last.pokemon->move->name == BATON_PASS and false) {
-			last.pass = true;
-			Team* ai;
-			Team* foe;
-			deorder (first, last, ai, foe);
-			moves_list phony = END_MOVE;
-			return select_move_branch (*ai, *foe, weather, depth, sv, phony);
-		}
+
+		if (last.pokemon->move->name == Move::BATON_PASS and false)
+			return baton_pass_score (last, first, weather, depth, sv);
 	}
 	
 	// If first uses a phazing move before last gets a chance to move, the newly brought out Pokemon would try to move without checking to see if it's already moved.
@@ -355,7 +316,7 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, scor
 }
 
 
-int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
+int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const & sv) {
 	endofturn (first, last, weather);
 	int64_t score;
 	if (win (first) != 0 or win (last) != 0)
@@ -370,13 +331,13 @@ int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, s
 	return score;
 }
 
-int64_t replace (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv, moves_list &best_move, bool faint, bool first_turn, bool verbose) {
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose) {
 
-	int64_t (*function) (Team first, Team last, Weather weather, int depth, score_variables const &sv);
+	int64_t (*function) (Team first, Team last, Weather weather, int depth, score_variables const & sv);
 	if (faint)
-		function = &fainted;
+		function = & fainted;
 	else
-		function = &use_move_branch;
+		function = & use_move_branch;
 	Team* first;
 	Team* last;
 	faster_pokemon (ai, foe, weather, first, last);
@@ -403,7 +364,7 @@ int64_t replace (Team &ai, Team &foe, Weather const &weather, int depth, score_v
 			}
 			if (beta > alpha) {
 				alpha = beta;
-				best_move = static_cast<moves_list> (SWITCH0 + ai.replacement);
+				best_move = static_cast<Move::moves_list> (Move::SWITCH0 + ai.replacement);
 				if (verbose or first_turn)
 					std::cout << indent + "Estimated score is " << alpha << '\n';
 			}
@@ -414,7 +375,7 @@ int64_t replace (Team &ai, Team &foe, Weather const &weather, int depth, score_v
 	return alpha;
 }
 
-int64_t fainted (Team first, Team last, Weather weather, int depth, score_variables const &sv) {
+int64_t fainted (Team first, Team last, Weather weather, int depth, score_variables const & sv) {
 	if (first.pokemon->hp.stat == 0) {
 		switchpokemon (first, last, weather);
 		if (win (first) != 0 or win (last) != 0)
@@ -437,14 +398,51 @@ int64_t fainted (Team first, Team last, Weather weather, int depth, score_variab
 	return score;
 }
 
-void deorder (Team &first, Team &last, Team* &ai, Team* &foe) {
+void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 	if (first.me) {
-		ai = &first;
-		foe = &last;
+		ai = & first;
+		foe = & last;
 	}
 	else {
-		foe = &first;
-		ai = &last;
+		foe = & first;
+		ai = & last;
+	}
+}
+
+int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, score_variables const & sv) {
+	team.pass = true;
+	Team* ai;
+	Team* foe;
+	deorder (team, other, ai, foe);
+	Move::moves_list phony = Move::END_MOVE;
+	return select_move_branch (*ai, *foe, weather, depth, sv, phony);
+}
+
+void print_best_move (Team const & team, Move::moves_list best_move, int depth, int64_t score) {
+	if (Move::is_switch (best_move))
+		std::cout << "Switch to " << team.pokemon.set [best_move - Move::SWITCH0].get_name ();
+	else
+		std::cout << "Use " << Move::name_to_string [best_move];
+	if (depth == -1) {
+		double probability = 100.0 * static_cast <double> (score + VICTORY) / static_cast <double> (2 * VICTORY);
+		std::cout << " for ";
+		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
+			std::cout << "an ";
+		else
+			std::cout << "a ";
+		std::cout << probability << "% chance to win.\n";
+	}
+	else
+		std::cout << " for a minimum expected score of " << score << "\n";
+}
+
+void print_action (Team const & team, bool verbose, bool first_turn, std::string const & indent) {
+	if (verbose or first_turn) {
+		std::cout << indent + "Evaluating ";
+		if (team.pokemon->move->is_switch())
+			std::cout << "switching to " + team.pokemon.set [team.pokemon->move->name - Move::SWITCH0].get_name () + "\n";
+		else
+			std::cout << team.pokemon->move->get_name() + "\n";
 	}
 }
 

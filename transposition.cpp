@@ -30,8 +30,8 @@ public:
 	int depth;
 	Hash ();
 	Hash (uint64_t ai_hash, uint64_t foe_hash, uint64_t weather_hash, int depth_current);
-	bool operator== (Hash const &other) const;
-	bool operator!= (Hash const &other) const;
+	bool operator== (Hash const & other) const;
+	bool operator!= (Hash const & other) const;
 };
 
 Hash::Hash ():
@@ -45,15 +45,15 @@ Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint64_t weather_hash, int dept
 	depth (depth_current) {
 }
 
-bool Hash::operator== (Hash const &other) const {
+bool Hash::operator== (Hash const & other) const {
 	return ai == other.ai and foe == other.foe and weather == other.weather;
 }
 
-bool Hash::operator!= (Hash const &other) const {
+bool Hash::operator!= (Hash const & other) const {
 	return !(*this == other);
 }
 
-int64_t transposition (Team &ai, Team &foe, Weather const &weather, int depth, score_variables const &sv) {
+int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv) {
 	int64_t score;
 	if (depth == 0)
 		score = evaluate (ai, foe, weather, sv);
@@ -64,12 +64,12 @@ int64_t transposition (Team &ai, Team &foe, Weather const &weather, int depth, s
 		static unsigned const foe_dimension = 256;
 		static unsigned const weather_dimension = 32;
 		static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
-		Hash * const transpose = &table [hash.ai % ai_dimension] [hash.foe % foe_dimension] [hash.weather % weather_dimension];
+		Hash * const transpose = & table [hash.ai % ai_dimension] [hash.foe % foe_dimension] [hash.weather % weather_dimension];
 		// If I can find the current state in my transposition table at a depth of at least the current depth, set the score to the stored score.
 		if (transpose->depth >= hash.depth and *transpose == hash)
 			score = transpose->score;
 		else {
-			moves_list phony = END_MOVE;
+			Move::moves_list phony = Move::END_MOVE;
 			// If I can't find it, set the score to the evaluation of the state at depth - 1.
 			hash.score = select_move_branch (ai, foe, weather, depth, sv, phony);
 		

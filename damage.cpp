@@ -21,23 +21,23 @@
 
 namespace technicalmachine {
 
-void movepower (Team &attacker, Team const &defender, Weather const weather) {
+void movepower (Team & attacker, Team const & defender, Weather const weather) {
 
 	// I account for the doubling of the base power for Pursuit in the switching function by simply multiplying the final base power by 2. Regardless of the combination of modifiers, this does not change the final base power. The exception is if the attacker's ally uses Helping Hand. The target uses U-turn and the attacker uses Pursuit with a slower Pokemon that has Rivalry and a Muscle Band and neither the attacker nor target is genderless. This will cause the base power to be 1 less than it should be.
 
 	// Variable power moves
 	
 	switch (attacker.pokemon->move->name) {
-		case CRUSH_GRIP:
-		case WRING_OUT:
+		case Move::CRUSH_GRIP:
+		case Move::WRING_OUT:
 			attacker.pokemon->move->basepower = 120 * defender.pokemon->hp.stat / defender.pokemon->hp.max + 1;
 			break;
-		case ERUPTION:
-		case WATER_SPOUT:
+		case Move::ERUPTION:
+		case Move::WATER_SPOUT:
 			attacker.pokemon->move->basepower = 150 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
 			break;
-		case FLAIL:
-		case REVERSAL: {
+		case Move::FLAIL:
+		case Move::REVERSAL: {
 			unsigned k = 64 * attacker.pokemon->hp.stat / attacker.pokemon->hp.max;
 			if (k <= 1)
 				attacker.pokemon->move->basepower = 200;
@@ -53,7 +53,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 				attacker.pokemon->move->basepower = 20;
 			break;
 		}
-		case FLING:
+		case Move::FLING:
 			switch (attacker.pokemon->item) {
 				case IRON_BALL:
 					attacker.pokemon->move->basepower = 130;
@@ -141,28 +141,28 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 					break;
 			}
 			break;
-		case FRUSTRATION:
+		case Move::FRUSTRATION:
 			attacker.pokemon->move->basepower = 102 - attacker.pokemon->happiness * 2 / 5;
 			break;
-		case FURY_CUTTER:
+		case Move::FURY_CUTTER:
 			// 10 * 2 ^ attacker.pokemon->move->times_used
 			attacker.pokemon->move->basepower = 10 << attacker.pokemon->move->times_used;
 			break;
-		case GRASS_KNOT:
-		case LOW_KICK:
+		case Move::GRASS_KNOT:
+		case Move::LOW_KICK:
 			attacker.pokemon->move->basepower = defender.pokemon->mass;
 			break;
-		case GYRO_BALL:
+		case Move::GYRO_BALL:
 			attacker.pokemon->move->basepower = 25 * defender.pokemon->spe.stat / attacker.pokemon->spe.stat + 1;
 			if (attacker.pokemon->move->basepower > 150)
 				attacker.pokemon->move->basepower = 150;
 			break;
-		case ICE_BALL:
-		case ROLLOUT:
+		case Move::ICE_BALL:
+		case Move::ROLLOUT:
 			// 30 * 2 ^ attacker.pokemon->move->times_used
 			attacker.pokemon->move->basepower = 30 << attacker.pokemon->move->times_used;
 			break;
-		case HIDDEN_POWER: {
+		case Move::HIDDEN_POWER: {
 			// The second-least significant bit of each stat determines the power of Hidden Power
 			unsigned const u = (attacker.pokemon->hp.iv >> 1) % 2;
 			unsigned const v = ((attacker.pokemon->atk.iv >> 1) % 2) * 2;
@@ -174,10 +174,10 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			attacker.pokemon->move->basepower = (u + v + w + x + y + z) * 40 / 63 + 30;
 			break;
 		}
-		case MAGNITUDE:
+		case Move::MAGNITUDE:
 			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
 			break;
-		case NATURAL_GIFT:
+		case Move::NATURAL_GIFT:
 			switch (attacker.pokemon->item) {
 				case AGUAV_BERRY:
 				case ASPEAR_BERRY:
@@ -253,10 +253,10 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 					break;
 			}
 			break;
-		case PRESENT:
+		case Move::PRESENT:
 			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
 			break;
-		case PUNISHMENT:
+		case Move::PUNISHMENT:
 			attacker.pokemon->move->basepower = 60;
 			if (defender.pokemon->atk.stage > 0)
 				attacker.pokemon->move->basepower += 20 * defender.pokemon->atk.stage;
@@ -271,16 +271,16 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			if (attacker.pokemon->move->basepower > 200)
 				attacker.pokemon->move->basepower = 200;
 			break;
-		case RETURN:
+		case Move::RETURN:
 			attacker.pokemon->move->basepower = attacker.pokemon->happiness * 2 / 5;
 			break;
-		case SPIT_UP:
+		case Move::SPIT_UP:
 			attacker.pokemon->move->basepower = attacker.stockpile * 100;
 			break;
-		case TRIPLE_KICK:
+		case Move::TRIPLE_KICK:
 			attacker.pokemon->move->basepower = 10 * attacker.pokemon->move->times_used;
 			break;
-		case TRUMP_CARD:
+		case Move::TRUMP_CARD:
 			switch (attacker.pokemon->move->pp) {
 				case 0:
 					attacker.pokemon->move->basepower = 200;
@@ -306,25 +306,25 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 
 	bool doubling = false;
 	switch (attacker.pokemon->move->name) {
-		case ASSURANCE:
+		case Move::ASSURANCE:
 			if (defender.damaged)
 				doubling = true;
 			break;
-		case AVALANCHE: 
-		case REVENGE:
+		case Move::AVALANCHE: 
+		case Move::REVENGE:
 			if (attacker.damaged)
 				doubling = true;
 			break;
-		case BRINE:
+		case Move::BRINE:
 			if (defender.pokemon->hp.stat <= defender.pokemon->hp.max / 2)
 				doubling = true;
 			break;
-		case EARTHQUAKE:
-		case MAGNITUDE:
+		case Move::EARTHQUAKE:
+		case Move::MAGNITUDE:
 			if (defender.vanish == DUG)
 				doubling = true;
 			break;
-		case FACADE:
+		case Move::FACADE:
 			switch (attacker.pokemon->status) {
 				case BURN:
 				case PARALYSIS:
@@ -336,40 +336,40 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 					break;
 			}
 			break;
-		case GUST:
+		case Move::GUST:
 			if (defender.vanish == BOUNCED or defender.vanish == FLOWN)
 				doubling = true;
 			break;
-		case ICE_BALL:
-		case ROLLOUT:
+		case Move::ICE_BALL:
+		case Move::ROLLOUT:
 			if (attacker.defense_curl)
 				doubling = true;
 			break;
-		case PAYBACK:
+		case Move::PAYBACK:
 			if (defender.moved)
 				doubling = true;
 			break;
-		case SMELLINGSALT:
+		case Move::SMELLINGSALT:
 			if (PARALYSIS == defender.pokemon->status)
 				doubling = true;
 			break;
-		case SOLARBEAM:
+		case Move::SOLARBEAM:
 			if (weather.rain == 0)
 				doubling = true;
 			break;
-		case STOMP:
+		case Move::STOMP:
 			if (defender.minimize)
 				doubling = true;
 			break;
-		case SURF:
+		case Move::SURF:
 			if (defender.vanish == DIVED)
 				doubling = true;
 			break;
-		case WAKE_UP_SLAP:
+		case Move::WAKE_UP_SLAP:
 			if (defender.pokemon->status == SLEEP)
 				doubling = true;
 			break;
-		case WEATHER_BALL:
+		case Move::WEATHER_BALL:
 			if (weather.hail or weather.rain or weather.sand or weather.sun)
 				doubling = true;
 			break;
@@ -522,21 +522,21 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			break;
 		case IRON_FIST:
 			switch (attacker.pokemon->move->name) {
-				case BULLET_PUNCH:
-				case COMET_PUNCH:
-				case DIZZY_PUNCH:
-				case DRAIN_PUNCH:
-				case DYNAMICPUNCH:
-				case FIRE_PUNCH:
-				case FOCUS_PUNCH:
-				case HAMMER_ARM:
-				case ICE_PUNCH:
-				case MACH_PUNCH:
-				case MEGA_PUNCH:
-				case METEOR_MASH:
-				case SHADOW_PUNCH:
-				case SKY_UPPERCUT:
-				case THUNDERPUNCH:
+				case Move::BULLET_PUNCH:
+				case Move::COMET_PUNCH:
+				case Move::DIZZY_PUNCH:
+				case Move::DRAIN_PUNCH:
+				case Move::DYNAMICPUNCH:
+				case Move::FIRE_PUNCH:
+				case Move::FOCUS_PUNCH:
+				case Move::HAMMER_ARM:
+				case Move::ICE_PUNCH:
+				case Move::MACH_PUNCH:
+				case Move::MEGA_PUNCH:
+				case Move::METEOR_MASH:
+				case Move::SHADOW_PUNCH:
+				case Move::SKY_UPPERCUT:
+				case Move::THUNDERPUNCH:
 					attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
 					break;
 				default:
@@ -544,14 +544,14 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 			}
 		case RECKLESS:
 			switch (attacker.pokemon->move->name) {
-				case BRAVE_BIRD:
-				case DOUBLE_EDGE:
-				case FLARE_BLITZ:
-				case HEAD_SMASH:
-				case SUBMISSION:
-				case TAKE_DOWN:
-				case VOLT_TACKLE:
-				case WOOD_HAMMER:
+				case Move::BRAVE_BIRD:
+				case Move::DOUBLE_EDGE:
+				case Move::FLARE_BLITZ:
+				case Move::HEAD_SMASH:
+				case Move::SUBMISSION:
+				case Move::TAKE_DOWN:
+				case Move::VOLT_TACKLE:
+				case Move::WOOD_HAMMER:
 					attacker.pokemon->move->power = attacker.pokemon->move->power * 6 / 5;
 					break;
 				default:
@@ -588,7 +588,7 @@ void movepower (Team &attacker, Team const &defender, Weather const weather) {
 
 // I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
 
-unsigned damageknown (Team const &attacker, Team const &defender, Weather const &weather, unsigned &rl, unsigned &weather_mod, unsigned &ff, unsigned &mf) {
+unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf) {
 	if (((defender.reflect != 0 and attacker.pokemon->move->physical)
 			or (defender.light_screen != 0 and !attacker.pokemon->move->physical))
 			and !attacker.ch)
@@ -618,7 +618,7 @@ unsigned damageknown (Team const &attacker, Team const &defender, Weather const 
 	return attacker.pokemon->level * 2 / 5 + 2;
 }
 
-unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned &stab, unsigned type1, unsigned type2, unsigned &aem, unsigned &eb, unsigned &tl, unsigned &rb, unsigned damage) {
+unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned type1, unsigned type2, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
 
 	damage *= attacker.pokemon->move->power;
 
@@ -751,50 +751,50 @@ unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned r
 	return damage;
 }
 
-unsigned damagerandom (Pokemon const &attacker, Team const &defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
+unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
 	damage = damage * attacker.move->r / 100 * stab / 2 * type1 / 2 * type2 / 2 * aem / 4 * eb / 5 * tl / rb;
 	if (damage == 0)
 		damage = 1;
 	else if (damage >= defender.pokemon->hp.stat) {
 		damage = defender.pokemon->hp.stat;
-		if (FALSE_SWIPE == attacker.move->name or defender.endure)
+		if (Move::FALSE_SWIPE == attacker.move->name or defender.endure)
 			--damage;
 	}
 	return damage;
 }
 
-unsigned damagecalculator (Team const &attacker, Team const &defender, Weather const &weather) {
+unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather) {
 	unsigned damage = 0;
 	unsigned const type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
 	unsigned const type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
 	if ((type1 != 0 and type2 != 0) and (GROUND != attacker.pokemon->move->type or grounded (defender, weather))) {
 		switch (attacker.pokemon->move->name) {
-			case DRAGON_RAGE:
+			case Move::DRAGON_RAGE:
 				damage = 40;
 				break;
-			case ENDEAVOR:
+			case Move::ENDEAVOR:
 				if (defender.pokemon->hp.stat > attacker.pokemon->hp.stat)
 					damage = defender.pokemon->hp.stat - attacker.pokemon->hp.stat;
 				else
 					damage = 0;
 				break;
-			case FISSURE:
-			case GUILLOTINE:
-			case HORN_DRILL:
-			case SHEER_COLD:
+			case Move::FISSURE:
+			case Move::GUILLOTINE:
+			case Move::HORN_DRILL:
+			case Move::SHEER_COLD:
 				damage = defender.pokemon->hp.max;
 				break;
-			case NIGHT_SHADE:
-			case SEISMIC_TOSS:
+			case Move::NIGHT_SHADE:
+			case Move::SEISMIC_TOSS:
 				damage = attacker.pokemon->level;
 				break;
-			case PSYWAVE:
+			case Move::PSYWAVE:
 				damage = attacker.pokemon->level * attacker.pokemon->move->variable->first / 10;
 				break;
-			case SONICBOOM:
+			case Move::SONICBOOM:
 				damage = 20;
 				break;
-			case SUPER_FANG:
+			case Move::SUPER_FANG:
 				damage = defender.pokemon->hp.stat / 2;
 
 			default: {
@@ -816,7 +816,7 @@ unsigned damagecalculator (Team const &attacker, Team const &defender, Weather c
 	return damage;
 }
 
-void recoil (Pokemon &user, unsigned damage, unsigned denominator) {
+void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
 	if (user.ability != MAGIC_GUARD and user.ability != ROCK_HEAD) {
 		if (damage <= 2 * denominator - 1)
 			--user.hp.stat;
@@ -825,7 +825,7 @@ void recoil (Pokemon &user, unsigned damage, unsigned denominator) {
 	}
 }
 
-void damage_side_effect (Pokemon &user, unsigned damage) {
+void damage_side_effect (Pokemon & user, unsigned damage) {
 	if (user.hp.stat > damage)
 		user.hp.stat -= damage;
 	else

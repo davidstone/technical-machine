@@ -42,12 +42,12 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 
 	happiness (255)
 	{
-		Move struggle (STRUGGLE, 0, 0);
+		Move struggle (Move::STRUGGLE, 0, 0);
 		move.set.push_back (struggle);
 		// A Pokemon has a new "Switch" move for each Pokemon in the party.
 		if (size > 1) {
-			for (size_t index = SWITCH0; index - SWITCH0 < size; ++index) {
-				Move switchn (static_cast<moves_list> (index), 0, 0);
+			for (size_t index = Move::SWITCH0; index - Move::SWITCH0 < size; ++index) {
+				Move switchn (static_cast<Move::moves_list> (index), 0, 0);
 				move.set.push_back (switchn);
 			}
 		}

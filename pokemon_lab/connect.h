@@ -42,7 +42,7 @@ class Battle {
 		int depth;
 		uint8_t party;
 		Battle (Map const & map, std::string const & opponent, int depth_);
-		void handle_request_action (BotClient &, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
+		void handle_request_action (BotClient & , uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
 		void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
 		void update_active_print (Log & log, std::vector <std::string> const & arguments);
 		void handle_use_move (uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id);
@@ -53,7 +53,7 @@ class Battle {
 		void handle_fainted (uint8_t party, uint8_t slot, std::string const & nickname);
 		void handle_begin_turn (uint16_t turn_count);
 		void handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp);
-		uint8_t switch_slot (moves_list move);
+		uint8_t switch_slot (Move::moves_list move);
 		void incorrect_hp (Team & team);
 };
 

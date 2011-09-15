@@ -70,12 +70,12 @@ void OutMessage::write_team (Team const & team) {
 		write_string (ability_name [pokemon->ability]);
 		write_int (pokemon->nature);
 		unsigned number_of_moves = 0;
-		while (pokemon->move.set [number_of_moves].name != STRUGGLE)
+		while (pokemon->move.set [number_of_moves].name != Move::STRUGGLE)
 			++number_of_moves;
 		write_int (number_of_moves);
-		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != STRUGGLE; ++move) {
+		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
 			int name = move->name;
-			if (name >= SWITCH0)
+			if (name >= Move::SWITCH0)
 				name -= 6;
 			write_int (name);
 			write_int (3);		// Replace this with real PP-ups logic later

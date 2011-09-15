@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void predict_team (int detailed [][7], Team &team, unsigned size, bool using_lead) {
+void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead) {
 	std::vector<unsigned> overall;
 	overall_stats (overall);
 	unsigned const total = 961058;	// Total number of teams
@@ -53,7 +53,7 @@ void predict_team (int detailed [][7], Team &team, unsigned size, bool using_lea
 	}
 }
 
-void predict_pokemon (Team &team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]) {
+void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]) {
 	while (team.pokemon.set.size() < team.size) {
 		float top = 0.0;
 		species name;
@@ -73,22 +73,22 @@ void predict_pokemon (Team &team, std::vector<float> estimate, float multiplier 
 	}
 }
 
-void predict_move (Pokemon &member, int detailed [][7], unsigned size) {
+void predict_move (Pokemon & member, int detailed [][7], unsigned size) {
 	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
 	unsigned n = 0;
-	while (member.move.set [n].name != STRUGGLE)
+	while (member.move.set [n].name != Move::STRUGGLE)
 		++n;
 	unsigned max_moves = 4 + member.move.set.size() - n;
-	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != END_MOVE; ++m) {
+	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != Move::END_MOVE; ++m) {
 		bool found = false;
-		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it->name != STRUGGLE; ++it) {
-			if (it->name == static_cast<moves_list> (detailed [member.name] [m])) {
+		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it->name != Move::STRUGGLE; ++it) {
+			if (it->name == static_cast<Move::moves_list> (detailed [member.name] [m])) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			Move move (static_cast<moves_list> (detailed [member.name] [m]), 3, size);
+			Move move (static_cast<Move::moves_list> (detailed [member.name] [m]), 3, size);
 
 // I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
 			member.move.set.insert (member.move.set.begin() + n, move);

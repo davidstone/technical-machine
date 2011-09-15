@@ -184,7 +184,7 @@ void Team::output (std::string &output) {
 			output += "\tAbility: " + ability_name [it->ability] + '\n';
 		if (it->status != NO_STATUS)
 			output += "\tStatus: " + boost::lexical_cast<std::string> (it->status) + '\n';
-		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != STRUGGLE; ++move)
+		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != Move::STRUGGLE; ++move)
 			output += "\t- " + move->get_name() + "\n";
 	}
 }

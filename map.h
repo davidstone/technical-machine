@@ -28,7 +28,7 @@ class Map {
 		std::map <std::string, abilities> ability;
 		std::map <std::string, genders> gender;
 		std::map <std::string, items> item;
-		std::map <std::string, moves_list> move;
+		std::map <std::string, Move::moves_list> move;
 		std::map <std::string, natures> nature;
 		std::map <std::string, species> specie;
 	

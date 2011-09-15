@@ -112,7 +112,7 @@ void defense (Team const &attacker, Team &defender, Weather const &weather) {
 		if (METAL_POWDER == defender.pokemon->item and DITTO == defender.pokemon->name)
 			defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
 		
-		if (EXPLOSION == attacker.pokemon->move->name or SELFDESTRUCT == attacker.pokemon->move->name)
+		if (Move::EXPLOSION == attacker.pokemon->move->name or Move::SELFDESTRUCT == attacker.pokemon->move->name)
 			defender.pokemon->def.stat /= 2;
 	
 		if (0 == defender.pokemon->def.stat)

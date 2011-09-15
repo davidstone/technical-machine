@@ -47,7 +47,7 @@ class Log {
 		bool getline ();
 		bool search_is_first ();
 		bool search_is_first (std::string const & str);
-		moves_list find_move_name (Map const & map) const;
+		Move::moves_list find_move_name (Map const & map) const;
 		void analyze_line (Team &ai, Team &foe, Map const &map);
 	private:
 		bool ignore_line (Team const & ai, Team const & foe);
@@ -61,7 +61,7 @@ class Log {
 	private:
 		void add_pokemon (Team & team, species name, std::string const & nickname, int level, genders gender);
 	public:
-		void log_move (moves_list name);
+		void log_move (Move::moves_list name);
 	private:
 		bool side_effect ();
 	public:

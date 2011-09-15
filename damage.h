@@ -18,19 +18,19 @@ class Pokemon;
 class Team;
 class Weather;
 
-void movepower (Team &attacker, Team const &defender, Weather const weather);
+void movepower (Team & attacker, Team const & defender, Weather const weather);
 
-unsigned damageknown (Team const &attacker, Team const &defender, Weather const &weather, unsigned &rl, unsigned &weather_mod, unsigned &ff, unsigned &mf);
+unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf);
 
-unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned &stab, unsigned type1, unsigned type2, unsigned &aem, unsigned &eb, unsigned &tl, unsigned &rb, unsigned damage);
+unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned type1, unsigned type2, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage);
 
-unsigned damagerandom (Pokemon const &attacker, Team const &defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage);
+unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage);
 
-unsigned damagecalculator (Team const &attacker, Team const &defender, Weather const &weather);
+unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather);
 
-void recoil (Pokemon &user, unsigned damage, unsigned denominator);
+void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 
-void damage_side_effect (Pokemon &user, unsigned damage);
+void damage_side_effect (Pokemon & user, unsigned damage);
 
 }
 #endif

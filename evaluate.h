@@ -76,11 +76,11 @@ class Team;
 class Weather;
 
 // ai and foe are both logically constant, but I change the active Pokemon in each of them (and then change it back before the function returns)
-int64_t evaluate (Team &ai, Team &foe, Weather const &weather, score_variables const &sv);
-int64_t scoreteam (Team const &team, score_variables const &sv);
-int64_t scorepokemon (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
-int64_t scoremove (Team const &ai, Team const &foe, Weather const &weather, score_variables const &sv);
-int64_t win (Team const &team);
+int64_t evaluate (Team & ai, Team & foe, Weather const & weather, score_variables const & sv);
+int64_t scoreteam (Team const & team, score_variables const & sv);
+int64_t scorepokemon (Team const & ai, Team const & foe, Weather const & weather, score_variables const & sv);
+int64_t scoremove (Team const & ai, Team const & foe, Weather const & weather, score_variables const & sv);
+int64_t win (Team const & team);
 
 }
 #endif

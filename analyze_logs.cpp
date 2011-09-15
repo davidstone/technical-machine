@@ -120,7 +120,7 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 				active->hitself = true;
 			else if (!side_effect ()) {
 				if (search_is_first (active->at_replacement().nickname + " used ")) {
-					moves_list move = find_move_name (map);
+					Move::moves_list move = find_move_name (map);
 					log_move (move);
 				}
 				else
@@ -221,7 +221,7 @@ void Log::pokemon_sent_out (Map const & map, species name, std::string const & n
 	}
 	else if (!active->moved) {
 		team.pokemon.set [replacement].move.index = 0;
-		while (team.pokemon.set [replacement].move->name != SWITCH0)
+		while (team.pokemon.set [replacement].move->name != Move::SWITCH0)
 			++team.pokemon.set [replacement].move.index;
 		team.pokemon.set [replacement].move.index += team.replacement;		
 		active->moved = false;
@@ -249,7 +249,7 @@ void Log::add_pokemon (Team & team, species name, std::string const & nickname, 
 	team.pokemon.set.back().load();
 }
 
-moves_list Log::find_move_name (Map const & map) const {
+Move::moves_list Log::find_move_name (Map const & map) const {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
@@ -257,7 +257,7 @@ moves_list Log::find_move_name (Map const & map) const {
 	return map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 }
 
-void Log::log_move (moves_list name) {
+void Log::log_move (Move::moves_list name) {
 	active->moved = true;
 	bool isfound = false;
 	for (active->at_replacement().move.index = 0; active->at_replacement().move.index != active->at_replacement().move.set.size(); ++active->at_replacement().move.index) {
@@ -271,7 +271,7 @@ void Log::log_move (moves_list name) {
 		active->at_replacement().move.set.insert (active->at_replacement().move.set.begin(), move);
 		active->at_replacement().move.index = 0;
 	}
-	if (active->at_replacement().move->name == ROAR or active->at_replacement().move->name == WHIRLWIND)
+	if (active->at_replacement().move->is_phaze ())
 		phaze = true;
 	active->at_replacement().move->variable.index = 0;
 	if (active->at_replacement().move->basepower != 0)
@@ -457,7 +457,7 @@ void do_turn (Team & first, Team & last, Weather & weather) {
 		while (foe->pokemon->fainted) {
 			if (!foe->pokemon->move->is_switch()) {
 				foe->pokemon->move.index = 0;
-				while (foe->pokemon->move->name != SWITCH0)
+				while (foe->pokemon->move->name != Move::SWITCH0)
 					++foe->pokemon->move.index;
 				foe->pokemon->move.index += foe->replacement;
 			}

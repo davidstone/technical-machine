@@ -96,7 +96,7 @@ void switchpokemon (Team &switcher, Team &other, Weather &weather) {
 		// Then, remove the ability to bring out that Pokemon from Roar and Whirlwind in the foe's team.
 		for (std::vector<Pokemon>::iterator pokemon = other.pokemon.set.begin(); pokemon != other.pokemon.set.end(); ++pokemon) {
 			for (std::vector<Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
-				if (move->name == ROAR or move->name == WHIRLWIND) {
+				if (move->is_phaze ()) {
 					move->variable.set.pop_back();
 					for (std::vector <std::pair <unsigned short, unsigned short> >::iterator variable = move->variable.set.begin(); variable != move->variable.set.end(); ++variable) {
 						if (switcher.size > 2)
