@@ -464,12 +464,12 @@ void do_turn (Team & first, Team & last, Weather & weather) {
 			usemove (*foe, *ai, weather, first.damage);
 		}
 	}
-/*	std::string out;
+	std::string out;
 	first.output (out);
 	std::cout << out;
 	last.output (out);
 	std::cout << out;
-*/}
+}
 
 bool Log::getline () {
 	// Returns false if there are no more non-empty newline delimited strings remaining, otherwise, gives the next non-empty newline delimited string from a multi-line string and returns true.

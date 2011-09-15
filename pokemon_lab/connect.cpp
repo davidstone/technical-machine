@@ -641,7 +641,7 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 	battle.party = party;
 	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
 	challenges.erase (opponent);
-	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(0));
+	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(15));
 	timer.wait ();
 }
 
@@ -660,11 +660,11 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		msg.write_move (field_id, 1);
 	else {
 		Team predicted = foe;
-//		std::cout << "======================\nPredicting...\n";
+		std::cout << "======================\nPredicting...\n";
 		predict_team (botclient.detailed, predicted, ai.size);
-//		std::string out;
-//		predicted.output (out);
-//		std::cout << out;
+		std::string out;
+		predicted.output (out);
+		std::cout << out;
 
 		int64_t score;
 		moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
@@ -1218,6 +1218,7 @@ void Battle::incorrect_hp (Team & team) {
 		unsigned pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
 		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1U > pixels or pixels > pokemon->new_hp + 1U)) {
 			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
+			pokemon->hp.stat = pokemon->new_hp * pokemon->hp.max / max_hp;
 		}
 	}
 }
