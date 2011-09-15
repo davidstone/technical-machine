@@ -116,7 +116,7 @@ Team::Team (bool isme, Map const &map, unsigned size) :
 		std::string team_file;
 		std::ifstream settings ("settings.txt");
 		for (getline (settings, line); !settings.eof(); getline (settings, line)) {
-			size_t found = line.find ('\t');
+			size_t found = line.find (": ");
 			if (line.substr (0, found) == "username")
 				player = line.substr (found + 1);
 			else if (line.substr (0, found) == "team")

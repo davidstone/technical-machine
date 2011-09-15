@@ -1,43 +1,43 @@
-Transposition Table	4096
+Transposition Table: 4096
 
-Light Screen	64
-Lucky Chant	4
-Mist	4
-Reflect	64
-Safeguard	32
-Tailwind	32
-Wish	300
+Light Screen: 64
+Lucky Chant: 4
+Mist: 4
+Reflect: 64
+Safeguard: 32
+Tailwind: 32
+Wish: 300
 
-Spikes	-150
-Stealth Rock	-200
-Toxic Spikes	-100
+Spikes: -150
+Stealth Rock: -200
+Toxic Spikes: -100
 
-Members	1024
-HP	1024
-Aqua Ring	24
-Curse	-80
-Imprison	-80
-Ingrain	64
-Leech Seed	-80
-Loaf	-60
-Magnet Rise	1
-Nightmare	-50
-Substitute	256
-Torment	-70
-Trapped	-70
+Members: 1024
+HP: 1024
+Aqua Ring: 24
+Curse: -80
+Imprison: -80
+Ingrain: 64
+Leech Seed: -80
+Loaf: -60
+Magnet Rise: 1
+Nightmare: -50
+Substitute: 256
+Torment: -70
+Trapped: -70
 
-Burn	-100
-Freeze	-100
-Paralysis	-100
-Poison	-100
-Sleep	-100
+Burn: -100
+Freeze: -100
+Paralysis: -100
+Poison: -100
+Sleep: -100
 
-Attack stage	50
-Defense stage	50
-Special Attack stage	50
-Special Defense stage	50
-Speed stage	60
-Focus Energy	5
+Attack stage: 50
+Defense stage: 50
+Special Attack stage: 50
+Special Defense stage: 50
+Speed stage: 60
+Focus Energy: 5
 
-Baton Pass	5
-No PP	-256
+Baton Pass: 5
+No PP: -256

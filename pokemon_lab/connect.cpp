@@ -75,7 +75,7 @@ BotClient::BotClient (int depth_):
 }
 
 void BotClient::account_info (std::string & host, std::string & port) {
-	std::ifstream file ("account.txt");
+	std::ifstream file ("settings.txt");
 	std::string line;
 	std::string delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {

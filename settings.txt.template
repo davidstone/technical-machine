@@ -1,3 +1,9 @@
-username	TM1.0
-log path	/home/david/Shoddy logs/
-team	stall.sbt
+team: stall.sbt
+
+log path: ?
+
+host: lab.pokemonexperte.de
+port: 8446
+username: ?
+password: ?
+
