@@ -1142,9 +1142,13 @@ void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t chang
 	std::cout << "change_in_health: " << change_in_health << '\n';
 	std::cout << "remaining_health: " << remaining_health << '\n';
 	if (log.move_damage) {
-		log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
-		if (static_cast <unsigned> (log.inactive->damage) > log.inactive->at_replacement().hp.stat)
-			log.inactive->damage = log.inactive->at_replacement().hp.stat;
+		int type1 = effectiveness [log.active->at_replacement().move->type] [log.inactive->at_replacement ().type1];
+		int type2 = effectiveness [log.active->at_replacement().move->type] [log.inactive->at_replacement ().type2];
+		if ((type1 * type2 > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
+			log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
+			if (static_cast <unsigned> (log.inactive->damage) > log.inactive->at_replacement().hp.stat)
+				log.inactive->damage = log.inactive->at_replacement().hp.stat;
+		}
 		log.move_damage = false;
 	}
 	
@@ -1212,7 +1216,7 @@ void Battle::incorrect_hp (Team & team) {
 		if (team.me)
 			max_hp = pokemon->hp.max;
 		unsigned pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
-		if (pokemon->new_hp - 1U > pixels or pixels > pokemon->new_hp + 1U) {
+		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1U > pixels or pixels > pokemon->new_hp + 1U)) {
 			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
 		}
 	}

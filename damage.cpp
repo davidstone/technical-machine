@@ -618,8 +618,6 @@ unsigned damageknown (Team const &attacker, Team const &defender, Weather const 
 	return attacker.pokemon->level * 2 / 5 + 2;
 }
 
-
-
 unsigned damagenonrandom (Team const &attacker, Team const &defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned &stab, unsigned type1, unsigned type2, unsigned &aem, unsigned &eb, unsigned &tl, unsigned &rb, unsigned damage) {
 
 	damage *= attacker.pokemon->move->power;
