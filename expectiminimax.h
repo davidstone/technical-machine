@@ -17,33 +17,33 @@
 
 namespace technicalmachine {
 
-class score_variables;
+class Score;
 class Team;
 class Weather;
 
-Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, int64_t & score);
+Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score);
 
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, Move::moves_list & best_move, bool first_turn = false);
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool first_turn = false);
 
-int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv);
+int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
 
-int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv);
+int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score);
 
-int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv);
+int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score);
 
-int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv);
+int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score);
 
-int64_t use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const & sv);
+int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Score const & score);
 
-int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const & sv);
+int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, Score const & score);
 
-int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose);
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose);
 
-int64_t fainted (Team ai, Team foe, Weather weather, int depth, score_variables const & sv);
+int64_t fainted (Team ai, Team foe, Weather weather, int depth, Score const & score);
 
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe);
 
-int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, score_variables const & sv);
+int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, Score const & score);
 
 void print_best_move (Team const & team, Move::moves_list best_move, int depth, int64_t score);
 

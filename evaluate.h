@@ -19,12 +19,16 @@
 
 namespace technicalmachine {
 
-int64_t const VICTORY = 65536;		// Highest score possible. 100% chance to win.
+class Pokemon;
+class Team;
+class Weather;
 
-class score_variables {
+class Score {
 	public:
+		static int64_t const VICTORY = 65536;	// Highest score. 100% chance to win.
+		
 		int transposition_table;	
-	
+	private:
 		int light_screen;
 		int lucky_chant;
 		int mist;
@@ -67,20 +71,17 @@ class score_variables {
 	
 		int baton_pass;
 		int no_pp;
-	
-		score_variables ();
+	public:
+		Score ();
+		// ai and foe are both logically constant, but I change the active Pokemon in each of them (and then change it back before the function returns)
+		int64_t evaluate (Team & ai, Team & foe, Weather const & weather) const;
+	private:
+		int64_t scoreteam (Team const & team) const;
+		int64_t scorepokemon (Team const & ai, Team const & foe, Weather const & weather) const;
+		int64_t scoremove (Team const & ai, Team const & foe, Weather const & weather) const;
+	public:
+		static int64_t win (Team const & team);
 };
-
-class Pokemon;
-class Team;
-class Weather;
-
-// ai and foe are both logically constant, but I change the active Pokemon in each of them (and then change it back before the function returns)
-int64_t evaluate (Team & ai, Team & foe, Weather const & weather, score_variables const & sv);
-int64_t scoreteam (Team const & team, score_variables const & sv);
-int64_t scorepokemon (Team const & ai, Team const & foe, Weather const & weather, score_variables const & sv);
-int64_t scoremove (Team const & ai, Team const & foe, Weather const & weather, score_variables const & sv);
-int64_t win (Team const & team);
 
 }
 #endif

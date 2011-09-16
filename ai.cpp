@@ -49,7 +49,7 @@ int main (int argc, char* argv[]) {
 		Team ai (true, map, foe_size);
 		Team foe (false, map, ai.size);
 		Weather weather;
-		score_variables sv;
+		Score score;
 		analyze_turn (ai, foe, weather, map);		// Turn 0, sending out initial Pokemon
 	
 		bool won = false;
@@ -61,8 +61,8 @@ int main (int argc, char* argv[]) {
 			predicted.output (out);
 			std::cout << out;
 
-			int64_t score;
-			expectiminimax (ai, predicted, weather, depth, sv, score);
+			int64_t min_score;
+			expectiminimax (ai, predicted, weather, depth, score, min_score);
 
 			won = analyze_turn (ai, foe, weather, map);
 		}

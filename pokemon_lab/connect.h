@@ -22,7 +22,7 @@
 namespace technicalmachine {
 class Log;
 class Map;
-class score_variables;
+class Score;
 class Team;
 class Weather;
 namespace pl {
@@ -65,7 +65,7 @@ class BotClient {
 		Map map;
 	public:
 		int detailed [END_SPECIES][7];
-		score_variables sv;
+		Score score;
 	private:
 		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 		std::map <uint8_t, Battle> battles;			// Battles currently underway

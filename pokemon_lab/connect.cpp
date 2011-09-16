@@ -666,8 +666,8 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		predicted.output (out);
 		std::cout << out;
 
-		int64_t score;
-		Move::moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.sv, score);
+		int64_t min_score;
+		Move::moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.score, min_score);
 		if (Move::is_switch (move))
 			msg.write_switch (field_id, switch_slot (move));
 		else {

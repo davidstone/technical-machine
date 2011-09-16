@@ -19,51 +19,51 @@
 
 namespace technicalmachine {
 
-int64_t evaluate (Team & ai, Team & foe, Weather const & weather, score_variables const & sv) {
-	int64_t score = scoreteam (ai, sv) - scoreteam (foe, sv);
+int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
+	int64_t score = scoreteam (ai) - scoreteam (foe);
 
 	size_t index = ai.pokemon.index;
 	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
-		score += scorepokemon (ai, foe, weather, sv);
+		score += scorepokemon (ai, foe, weather);
 	ai.pokemon.index = index;
 
 	index = foe.pokemon.index;
 	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
-		score -= scorepokemon (foe, ai, weather, sv);
+		score -= scorepokemon (foe, ai, weather);
 	foe.pokemon.index = index;
 	return score;
 }
 
-int64_t scoreteam (Team const & team, score_variables const & sv) {
-	int64_t score = sv.lucky_chant * team.lucky_chant + sv.mist * team.mist + sv.safeguard * team.safeguard + sv.tailwind * team.tailwind + sv.wish * team.wish;
+int64_t Score::scoreteam (Team const & team) const {
+	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
 	if (team.pokemon->hp.stat != 0) {
-		score += team.magnet_rise * sv.magnet_rise;
-		score += sv.substitute * team.substitute / team.pokemon->hp.max;
+		score += team.magnet_rise * magnet_rise;
+		score += substitute * team.substitute / team.pokemon->hp.max;
 		if (team.aqua_ring)
-			score += sv.aqua_ring;
+			score += aqua_ring;
 		if (team.curse)
-			score += sv.curse;
+			score += curse;
 		if (team.imprison)
-			score += sv.imprison;
+			score += imprison;
 		if (team.ingrain)
-			score += sv.ingrain;
+			score += ingrain;
 		if (team.leech_seed)
-			score += sv.leech_seed;
+			score += leech_seed;
 	//	if (other.pokemon->leech_seed)
 	//		score += 1 * other.pokemon->hp.max / member.hp.max;
 		if (team.loaf)
-			score += sv.loaf;
+			score += loaf;
 		if (team.nightmare)
-			score += sv.nightmare;
+			score += nightmare;
 		if (team.torment)
-			score += sv.torment;
+			score += torment;
 		if (team.trapped)
-			score += sv.trapped;
+			score += trapped;
 		if (team.focus_energy)
-			score += sv.focus_energy;
+			score += focus_energy;
 		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
 			if (move->name == Move::BATON_PASS) {
-				score += sv.baton_pass * (team.aqua_ring * sv.aqua_ring + team.focus_energy * sv.focus_energy + team.ingrain * sv.ingrain + team.magnet_rise * sv.magnet_rise + team.substitute * sv.substitute + team.pokemon->atk.stage * sv.atk_stage + team.pokemon->def.stage * sv.def_stage + team.pokemon->spa.stage * sv.spa_stage + team.pokemon->spd.stage * sv.spd_stage + team.pokemon->spe.stage * sv.spe_stage);
+				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.substitute * substitute + team.pokemon->atk.stage * atk_stage + team.pokemon->def.stage * def_stage + team.pokemon->spa.stage * spa_stage + team.pokemon->spd.stage * spd_stage + team.pokemon->spe.stage * spe_stage);
 				break;
 			}
 		}
@@ -71,61 +71,61 @@ int64_t scoreteam (Team const & team, score_variables const & sv) {
 	return score;
 }
 
-int64_t scorepokemon (Team const & team, Team const & other, Weather const & weather, score_variables const & sv) {
-	int64_t score = team.stealth_rock * sv.stealth_rock * static_cast <int> (get_effectiveness (ROCK, *team.pokemon)) / (2 * team.pokemon->type.size());
+int64_t Score::scorepokemon (Team const & team, Team const & other, Weather const & weather) const {
+	int64_t score = team.stealth_rock * stealth_rock * static_cast <int> (get_effectiveness (ROCK, *team.pokemon)) / (2 * team.pokemon->type.size());
 	if (grounded (team, weather))
-		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
+		score += team.spikes * spikes + team.toxic_spikes * toxic_spikes;
 	if (team.pokemon->hp.stat != 0) {
-		score += sv.members;
-		score += sv.hp * team.pokemon->hp.stat / team.pokemon->hp.max;
+		score += members;
+		score += hp * team.pokemon->hp.stat / team.pokemon->hp.max;
 		switch (team.pokemon->status) {
 			case BURN:
-				score += sv.burn;
+				score += burn;
 				break;
 			case FREEZE:
-				score += sv.freeze;
+				score += freeze;
 				break;
 			case PARALYSIS:
-				score += sv.paralysis;
+				score += paralysis;
 				break;
 			case POISON_NORMAL:
-				score += sv.poison;
+				score += poison;
 				break;
 			case POISON_TOXIC:
-				score += sv.poison;		// fix
+				score += poison;		// fix
 				break;
 			case SLEEP:
-				score += sv.sleep;
+				score += sleep;
 				break;
 			default:
 				break;
 		}
-		score += team.pokemon->atk.stage * sv.atk_stage;
-		score += team.pokemon->def.stage * sv.def_stage;
-		score += team.pokemon->spa.stage * sv.spa_stage;
-		score += team.pokemon->spd.stage * sv.spd_stage;
-		score += team.pokemon->spe.stage * sv.spe_stage;
-		score += scoremove (team, other, weather, sv);
+		score += team.pokemon->atk.stage * atk_stage;
+		score += team.pokemon->def.stage * def_stage;
+		score += team.pokemon->spa.stage * spa_stage;
+		score += team.pokemon->spd.stage * spd_stage;
+		score += team.pokemon->spe.stage * spe_stage;
+		score += scoremove (team, other, weather);
 	}
 	return score;
 }
 
 
-int64_t scoremove (Team const & team, Team const & other, Weather const & weather, score_variables const & sv) {
+int64_t Score::scoremove (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
 	for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move != team.pokemon->move.set.end(); ++move) {
 		if (move->physical)
-			score += other.reflect * sv.reflect;
+			score += other.reflect * reflect;
 		else if (move->basepower > 0)		// Non-damaging moves have physical == false
-			score += other.light_screen * sv.light_screen;
+			score += other.light_screen * light_screen;
 		if (move->pp == 0)
-			score += sv.no_pp;
+			score += no_pp;
 	}
 	return score;
 }
 
 
-int64_t win (Team const & team) {
+int64_t Score::win (Team const & team) {
 	if (team.pokemon.set.size() == 0) {
 		if (team.me)
 			return -VICTORY;
@@ -134,7 +134,7 @@ int64_t win (Team const & team) {
 	return 0;
 }
 
-score_variables::score_variables () {
+Score::Score () {
 	std::ifstream file ("evaluate.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {

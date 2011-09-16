@@ -31,43 +31,43 @@
 
 namespace technicalmachine {
 
-Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, int64_t & score) {
+Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
 	for (std::vector <Pokemon>::iterator pokemon = foe.pokemon.set.begin(); pokemon != foe.pokemon.set.end(); ++pokemon) {
 		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move)
-			move->score = VICTORY + 1;
+			move->score = Score::VICTORY + 1;
 	}
 	Move::moves_list best_move;
 	for (int deeper = 1; deeper <= depth; ++deeper) {
 		bool first_turn = false;
 		if (deeper == depth)
 			first_turn = true;
-		score = select_move_branch (ai, foe, weather, deeper, sv, best_move, first_turn);
+		min_score = select_move_branch (ai, foe, weather, deeper, score, best_move, first_turn);
 	}
 
-	print_best_move (ai, best_move, depth, score);
+	print_best_move (ai, best_move, depth, min_score);
 	return best_move;
 }
 
 
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, Move::moves_list & best_move, bool first_turn) {
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool first_turn) {
 
 	/* Working from the inside loop out:
 
-	The following begins by setting beta to the largest possible value. This is the variable that the opposing player is trying to minimize. As long as the opposing player has any move that won't guarantee their loss, that move will score lower (more negative) than VICTORY, and thus the opponent will set that as their best response to the particular move that the AI uses.
+	The following begins by setting beta to the largest possible value. This is the variable that the opposing player is trying to minimize. As long as the opposing player has any move that won't guarantee their loss, that move will score lower (more negative) than Score::VICTORY, and thus the opponent will set that as their best response to the particular move that the AI uses.
 
-	After looking at each response the opponent has to a given move, beta is finally set to whatever the score will be if the AI uses that move. alpha is initially set to the lowest possible value, so as long as the AI has any move that won't guarantee its loss, that move will score higher (more positive) than -VICTORY, and thus the AI will set that as its best response. It then replaces that move if it finds a move for which the opponent's best response is more positive than the first move found. In other words, it finds the move for the AI for which the foe's best response is the weakest.
+	After looking at each response the opponent has to a given move, beta is finally set to whatever the score will be if the AI uses that move. alpha is initially set to the lowest possible value, so as long as the AI has any move that won't guarantee its loss, that move will score higher (more positive) than -Score::VICTORY, and thus the AI will set that as its best response. It then replaces that move if it finds a move for which the opponent's best response is more positive than the first move found. In other words, it finds the move for the AI for which the foe's best response is the weakest.
 	
 	Something to consider as a potential speed up at the cost of some accuracy (but would allow a deeper, thus more accurate, search) would be to pick from all random numbers randomly, rather than seeing the outcome of all of them and averaging it. In other words, do several trials assuming a particular (but different for each trial) set of random numbers are selected, and then average that result. This would give massive reductions to the branching factor, and with a large enough number of trials should be close enough to the average to potentially speed up the program enough to justify the loss in accuracy.
 	
-	I subtract 1 from -VICTORY to make sure that even a guaranteed loss is seen as better than not returning a result. This way, I can do some things when my intermediate scores are strictly greater than alpha, rather than greater than or equal to, which can save a few calculations. This has the side-effect of limiting VICTORY to be at least one less than the greatest value representable by a long, which in practice shouldn't matter.
+	I subtract 1 from -Score::VICTORY to make sure that even a guaranteed loss is seen as better than not returning a result. This way, I can do some things when my intermediate scores are strictly greater than alpha, rather than greater than or equal to, which can save a few calculations. This has the side-effect of limiting Score::VICTORY to be at least one less than the greatest value representable by a long, which in practice shouldn't matter.
 	
-	For a similar reason, I later set beta to VICTORY + 1.
+	For a similar reason, I later set beta to Score::VICTORY + 1.
 	
 	This change also has the advantage of making sure a move is always put into best_move without any additional logic, such as pre-filling it with some result.
 	*/
-	int64_t alpha = -VICTORY - 1;
+	int64_t alpha = -Score::VICTORY - 1;
 	
 	speed (ai, weather);
 	speed (foe, weather);
@@ -78,11 +78,11 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 
 	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0) {
 		bool faint = true;
-		alpha = replace (ai, foe, weather, depth, sv, best_move, faint, first_turn, verbose);
+		alpha = replace (ai, foe, weather, depth, score, best_move, faint, first_turn, verbose);
 	}
 	else if (ai.pass or foe.pass) {
 		bool faint = false;
-		alpha = replace (ai, foe, weather, depth, sv, best_move, faint, first_turn, verbose);
+		alpha = replace (ai, foe, weather, depth, score, best_move, faint, first_turn, verbose);
 	}
 	
 	// This section is for selecting a move, including switches that aren't replacing a fainted Pokemon.
@@ -111,16 +111,16 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 			ai.pokemon->move.index = ai_move->second;
 			if (ai.pokemon->move->selectable) {
 				print_action (ai, verbose, first_turn, indent);
-				int64_t beta = VICTORY + 1;
+				int64_t beta = Score::VICTORY + 1;
 				for (std::vector <std::pair <int64_t, size_t> >::const_iterator foe_move = foe_index.begin(); foe_move != foe_index.end(); ++foe_move) {
 					foe.pokemon->move.index = foe_move->second;
 					if (foe.pokemon->move->selectable) {
 						print_action (foe, verbose, first_turn, indent);
-						int64_t score = order_branch (ai, foe, weather, depth, sv);
+						int64_t max_score = order_branch (ai, foe, weather, depth, score);
 						if (verbose or first_turn)
-							std::cout << indent + "\tEstimated score is " << score << '\n';
-						if (beta > score) {
-							beta = score;
+							std::cout << indent + "\tEstimated score is " << max_score << '\n';
+						if (beta > max_score) {
+							beta = max_score;
 							foe.pokemon->move->score = beta;
 						}
 						if (beta <= alpha)	// Alpha-Beta pruning
@@ -135,7 +135,7 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 					if (verbose or first_turn)
 						std::cout << indent + "Estimated score is " << alpha << '\n';
 				}
-				if (alpha == VICTORY)	// There is no way the AI has a better move than a guaranteed win
+				if (alpha == Score::VICTORY)	// There is no way the AI has a better move than a guaranteed win
 					break;
 			}
 		}
@@ -144,48 +144,48 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 }
 
 
-int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv) {
+int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score) {
 	// Determine turn order
 	Team* first;
 	Team* last;
 	order (ai, foe, weather, first, last);
-	int64_t score;
+	int64_t value;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
-		score = (accuracy_branch (ai, foe, weather, depth, sv) + accuracy_branch (foe, ai, weather, depth, sv)) / 2;
+		value = (accuracy_branch (ai, foe, weather, depth, score) + accuracy_branch (foe, ai, weather, depth, score)) / 2;
 	else
-		score = accuracy_branch (*first, *last, weather, depth, sv);
-	return score;
+		value = accuracy_branch (*first, *last, weather, depth, score);
+	return value;
 }
 
 
-int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv) {
+int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score) {
 	int divisor = 100 * 100;
 	chance_to_hit (first, last, weather);
 	first.moved = true;
 	chance_to_hit (last, first, weather);
 	first.moved = false;
-	int64_t score = first.chance_to_hit * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, sv);
+	int64_t average_score = first.chance_to_hit * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, score);
 	if (first.chance_to_hit != 100) {
 		first.miss = true;
-		score += (100 - first.chance_to_hit) * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, sv);
+		average_score += (100 - first.chance_to_hit) * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, score);
 		if (last.chance_to_hit != 100) {
 			last.miss = true;
-			score += (100 - first.chance_to_hit) * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, sv);
+			average_score += (100 - first.chance_to_hit) * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, score);
 			last.miss = false;
 		}
 		first.miss = false;
 	}
 	if (last.chance_to_hit != 100) {
 		last.miss = true;
-		score += first.chance_to_hit * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, sv);
+		average_score += first.chance_to_hit * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, score);
 		last.miss = false;
 	}
-	score /= divisor;
-	return score;
+	average_score /= divisor;
+	return average_score;
 }
 
 
-int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv) {
+int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score) {
 	int64_t score3 = 0;
 	for (first.pokemon->move->variable.index = 0; first.pokemon->move->variable.index != first.pokemon->move->variable.set.size(); ++first.pokemon->move->variable.index) {
 		if ((!first.pokemon->move->is_phaze ()) or first.pokemon->move->variable->first != last.pokemon.index or last.pokemon.set.size() == 1) {
@@ -194,27 +194,27 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 				if ((!last.pokemon->move->is_phaze ()) or last.pokemon->move->variable->first != first.pokemon.index or first.pokemon.set.size() == 1) {
 					first.ch = false;
 					last.ch = false;
-					int64_t score1 = awaken_branch (first, last, weather, depth, sv);
+					int64_t score1 = awaken_branch (first, last, weather, depth, score);
 					if (first.pokemon->move->basepower > 0 and last.pokemon->move->basepower <= 0) {
 						score1 *= 15;
 						first.ch = true;
-						score1 += awaken_branch (first, last, weather, depth, sv);
+						score1 += awaken_branch (first, last, weather, depth, score);
 						score1 /= 16;
 					}
 					else if (first.pokemon->move->basepower <= 0 and last.pokemon->move->basepower > 0) {
 						score1 *= 15;
 						last.ch = true;
-						score1 += awaken_branch (first, last, weather, depth, sv);
+						score1 += awaken_branch (first, last, weather, depth, score);
 						score1 /= 16;
 					}
 					else if (first.pokemon->move->basepower > 0 and last.pokemon->move->basepower > 0) {
 						score1 *= 225;
 						first.ch = true;
-						score1 += awaken_branch (first, last, weather, depth, sv) * 15;
+						score1 += awaken_branch (first, last, weather, depth, score) * 15;
 						last.ch = true;
-						score1 += awaken_branch (first, last, weather, depth, sv);
+						score1 += awaken_branch (first, last, weather, depth, score);
 						first.ch = false;
-						score1 += awaken_branch (first, last, weather, depth, sv) * 15;
+						score1 += awaken_branch (first, last, weather, depth, score) * 15;
 						score1 /= 256;
 					}
 					score2 += score1 * last.pokemon->move->variable->second;
@@ -227,7 +227,7 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 }
 
 
-int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int depth, score_variables const & sv) {
+int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score) {
 	int n;
 	if (first.pokemon->ability == EARLY_BIRD)
 		n = 2;
@@ -239,101 +239,101 @@ int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int d
 	else
 		n = 1;
 	int last_numerator = last.pokemon->sleep + n - 1;
-	int64_t score;
+	int64_t average_score;
 	first.awaken = false;
 	last.awaken = false;
-	score = use_move_branch (first, last, weather, depth, sv);
+	average_score = use_move_branch (first, last, weather, depth, score);
 	if (first_numerator > 1) {
-		score *= 4 - first_numerator;
+		average_score *= 4 - first_numerator;
 		first.awaken = true;
-		score += first_numerator * use_move_branch (first, last, weather, depth, sv);
+		average_score += first_numerator * use_move_branch (first, last, weather, depth, score);
 		if (last_numerator > 1) {
-			score *= 4 - last_numerator;
+			average_score *= 4 - last_numerator;
 			last.awaken = true;
-			score += last_numerator * (4 - first_numerator) * use_move_branch (first, last, weather, depth, sv);
+			average_score += last_numerator * (4 - first_numerator) * use_move_branch (first, last, weather, depth, score);
 			first.awaken = false;
-			score += last_numerator * first_numerator * use_move_branch (first, last, weather, depth, sv);
-			score /= 4;
+			average_score += last_numerator * first_numerator * use_move_branch (first, last, weather, depth, score);
+			average_score /= 4;
 		}
-		score /= 4;
+		average_score /= 4;
 	}
 	else if (last_numerator > 1) {
-		score *= 4 - last_numerator;
+		average_score *= 4 - last_numerator;
 		last.awaken = true;
-		score += last_numerator * use_move_branch (first, last, weather, depth, sv);
-		score /= 4;
+		average_score += last_numerator * use_move_branch (first, last, weather, depth, score);
+		average_score /= 4;
 	}
-	return score;
+	return average_score;
 }
 
 
-int64_t use_move_branch (Team first, Team last, Weather weather, int depth, score_variables const & sv) {
+int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Score const & score) {
 	if (!last.pass) {
 		if (!first.pass) {
 			if (first.pokemon->move->name == Move::BATON_PASS and false)
-				return baton_pass_score (first, last, weather, depth, sv);
+				return baton_pass_score (first, last, weather, depth, score);
 		}
 		last.damage = usemove (first, last, weather);
 		first.pass = false;
 		// win() already corrects for whether it's the AI or the foe that is passed as first vs. last
-		if (win (first) != 0 or win (last) != 0)
-			return win (first) + win (last);
+		if (Score::win (first) != 0 or Score::win (last) != 0)
+			return Score::win (first) + Score::win (last);
 
 		if (last.pokemon->move->name == Move::BATON_PASS and false)
-			return baton_pass_score (last, first, weather, depth, sv);
+			return baton_pass_score (last, first, weather, depth, score);
 	}
 	
 	// If first uses a phazing move before last gets a chance to move, the newly brought out Pokemon would try to move without checking to see if it's already moved.
 	if (!last.moved)
 		usemove (last, first, weather);
 	last.pass = false;
-	if (win (first) != 0 or win (last) != 0)
-		return win (first) + win (last);
+	if (Score::win (first) != 0 or Score::win (last) != 0)
+		return Score::win (first) + Score::win (last);
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
 	first.shed_skin = false;
 	last.shed_skin = false;
-	int64_t score = 49 * end_of_turn_branch (first, last, weather, depth, sv);
+	int64_t average_score = 49 * end_of_turn_branch (first, last, weather, depth, score);
 	int64_t divisor = 49;
 	if (first.pokemon->ability == SHED_SKIN and first.pokemon->status != NO_STATUS) {
 		first.shed_skin = true;
-		score += 21 * end_of_turn_branch (first, last, weather, depth, sv);
+		average_score += 21 * end_of_turn_branch (first, last, weather, depth, score);
 		divisor += 21;
 		if (last.pokemon->ability == SHED_SKIN and last.pokemon->status != NO_STATUS) {
 			last.shed_skin = true;
-			score += 9 * end_of_turn_branch (first, last, weather, depth, sv);
+			average_score += 9 * end_of_turn_branch (first, last, weather, depth, score);
 			divisor += 9;
 			first.shed_skin = false;
 		}
 	}
 	if (last.pokemon->ability == SHED_SKIN and last.pokemon->status != NO_STATUS) {
 		last.shed_skin = true;
-		score += 21 * end_of_turn_branch (first, last, weather, depth, sv);
+		average_score += 21 * end_of_turn_branch (first, last, weather, depth, score);
 		divisor += 21;
 	}
-	return score / divisor;
+	return average_score / divisor;
 }
 
 
-int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, score_variables const & sv) {
+int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, Score const & score) {
 	endofturn (first, last, weather);
-	int64_t score;
-	if (win (first) != 0 or win (last) != 0)
-		score = win (first) + win (last);
+	int64_t value;
+	if (Score::win (first) != 0 or Score::win (last) != 0)
+		value = Score::win (first) + Score::win (last);
 	else {
 		Team* ai;
 		Team* foe;
 		deorder (first, last, ai, foe);
 
-		score = transposition (*ai, *foe, weather, depth, sv);
+		value = transposition (*ai, *foe, weather, depth, score);
 	}
-	return score;
+	return value;
 }
 
-int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose) {
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose) {
 
-	int64_t (*function) (Team first, Team last, Weather weather, int depth, score_variables const & sv);
+	int64_t (*function) (Team first, Team last, Weather weather, int depth, Score const & score);
 	if (faint)
 		function = & fainted;
 	else
@@ -344,18 +344,18 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, scor
 	std::string indent = "";
 	if (verbose and !first_turn)
 		indent += "\t\t";
-	int64_t alpha = -VICTORY - 1;
+	int64_t alpha = -Score::VICTORY - 1;
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
 			if (verbose or first_turn)
 				std::cout << indent + "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
-			int64_t beta = VICTORY + 1;
+			int64_t beta = Score::VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
 					if (first == NULL)
-						beta = std::min (beta, ((*function) (ai, foe, weather, depth, sv) + (*function) (foe, ai, weather, depth, sv)) / 2);
+						beta = std::min (beta, ((*function) (ai, foe, weather, depth, score) + (*function) (foe, ai, weather, depth, score)) / 2);
 					else
-						beta = std::min (beta, (*function) (*first, *last, weather, depth, sv));
+						beta = std::min (beta, (*function) (*first, *last, weather, depth, score));
 					if (beta <= alpha	// Alpha-Beta pruning
 							or (foe.pokemon->hp.stat != 0 and faint)
 							or (!foe.pass and !faint))
@@ -375,27 +375,27 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, scor
 	return alpha;
 }
 
-int64_t fainted (Team first, Team last, Weather weather, int depth, score_variables const & sv) {
+int64_t fainted (Team first, Team last, Weather weather, int depth, Score const & score) {
 	if (first.pokemon->hp.stat == 0) {
 		switchpokemon (first, last, weather);
-		if (win (first) != 0 or win (last) != 0)
-			return win (first) + win (last);
+		if (Score::win (first) != 0 or Score::win (last) != 0)
+			return Score::win (first) + Score::win (last);
 	}
 	if (last.pokemon->hp.stat == 0) {
 		switchpokemon (last, first, weather);
-		if (win (first) != 0 or win (last) != 0)
-			return win (first) + win (last);
+		if (Score::win (first) != 0 or Score::win (last) != 0)
+			return Score::win (first) + Score::win (last);
 	}
 
-	int64_t score;
+	int64_t value;
 	Team* ai;
 	Team* foe;
 	deorder (first, last, ai, foe);
 	if (depth == 0)
-		score = evaluate (*ai, *foe, weather, sv);
+		value = score.evaluate (*ai, *foe, weather);
 	else
-		score = transposition (*ai, *foe, weather, depth, sv);
-	return score;
+		value = transposition (*ai, *foe, weather, depth, score);
+	return value;
 }
 
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
@@ -409,13 +409,13 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 	}
 }
 
-int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, score_variables const & sv) {
+int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, Score const & score) {
 	team.pass = true;
 	Team* ai;
 	Team* foe;
 	deorder (team, other, ai, foe);
 	Move::moves_list phony = Move::END_MOVE;
-	return select_move_branch (*ai, *foe, weather, depth, sv, phony);
+	return select_move_branch (*ai, *foe, weather, depth, score, phony);
 }
 
 void print_best_move (Team const & team, Move::moves_list best_move, int depth, int64_t score) {
@@ -424,7 +424,7 @@ void print_best_move (Team const & team, Move::moves_list best_move, int depth, 
 	else
 		std::cout << "Use " << Move::name_to_string [best_move];
 	if (depth == -1) {
-		double probability = 100.0 * static_cast <double> (score + VICTORY) / static_cast <double> (2 * VICTORY);
+		double probability = 100.0 * static_cast <double> (score + Score::VICTORY) / static_cast <double> (2 * Score::VICTORY);
 		std::cout << " for ";
 		if ((8 <= probability and probability < 9) or (11 <= probability and probability < 12) or (18 <= probability and probability < 19) or (80 <= probability and probability < 90))
 			std::cout << "an ";

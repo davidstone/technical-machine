@@ -33,7 +33,7 @@ Move::Move (moves_list move, int pp_ups, unsigned size) :
 	name (move),
 	type (move_type [name]),
 	// Guarantee moves that weren't good enough to be fully evaluated are sorted at the end:
-	score (-VICTORY - 1),
+	score (-Score::VICTORY - 1),
 	basepower (base_power [name]),
 	physical (is_physical [name]),
 	accuracy (get_accuracy [name]),

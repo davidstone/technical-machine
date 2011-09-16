@@ -18,11 +18,11 @@
 
 namespace technicalmachine {
 
-class score_variables;
+class Score;
 class Team;
 class Weather;
 
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, score_variables const & sv);
+int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
 
 }
 #endif
