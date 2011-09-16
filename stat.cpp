@@ -140,7 +140,7 @@ void defense (Team const &attacker, Team &defender, Weather const &weather) {
 		else if ((METAL_POWDER == defender.pokemon->item and DITTO == defender.pokemon->name) or (SOUL_DEW == defender.pokemon->item and (LATIAS == defender.pokemon->name or LATIOS == defender.pokemon->name)))
 			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 		
-		if (istype (defender, ROCK) and 0 != weather.sand)
+		if (is_type (defender, ROCK) and 0 != weather.sand)
 			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 		
 		if (0 == defender.pokemon->spd.stat)

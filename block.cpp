@@ -23,7 +23,7 @@ void blockselection (Team & user, Team const & target, Weather const & weather) 
 	if (user.bide and user.pokemon->move->name != Move::BIDE)
 			user.pokemon->move->selectable = false;
 	else if (user.pokemon->move->is_switch()) {
-		if ((((target.pokemon->ability == SHADOW_TAG and user.pokemon->ability != SHADOW_TAG) or (target.pokemon->ability == ARENA_TRAP and grounded (user, weather)) or (target.pokemon->ability == MAGNET_PULL and istype (user, STEEL)) or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
+		if ((((target.pokemon->ability == SHADOW_TAG and user.pokemon->ability != SHADOW_TAG) or (target.pokemon->ability == ARENA_TRAP and grounded (user, weather)) or (target.pokemon->ability == MAGNET_PULL and is_type (user, STEEL)) or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
 				or (user.pokemon.set [user.pokemon->move->name - Move::SWITCH0].name == user.pokemon->name))		// Can't switch to yourself
 			user.pokemon->move->selectable = false;
 	}

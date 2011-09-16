@@ -24,8 +24,6 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 	gender (MALE),		// No sexism here!
 	item (END_ITEM),
 	status (NO_STATUS),
-	type1 (get_type [name][0]),
-	type2 (get_type [name][1]),
 	hp (name, HP),
 	atk (name, ATK),
 	def (name, DEF),
@@ -42,6 +40,11 @@ Pokemon::Pokemon (species const &member, unsigned size) :
 
 	happiness (255)
 	{
+		for (unsigned n = 0; n != 2; ++n) {
+			Type t = get_type [name] [n];
+			if (t != TYPELESS)
+				type.push_back (t);
+		}
 		Move struggle (Move::STRUGGLE, 0, 0);
 		move.set.push_back (struggle);
 		// A Pokemon has a new "Switch" move for each Pokemon in the party.
@@ -79,7 +82,7 @@ void Pokemon::load () {
 	hp.stat = hp.max;
 }
 
-types const Pokemon::get_type [][2] = {
+Type const Pokemon::get_type [][2] = {
 	{ GRASS, ICE },				// Abomasnow
 	{ PSYCHIC_TYPE, TYPELESS },		// Abra
 	{ DARK, TYPELESS },			// Absol

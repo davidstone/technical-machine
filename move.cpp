@@ -612,7 +612,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			poison_normal (user, target, weather);
 			break;
 		case Move::CURSE:
-			if (istype (user, GHOST) and user.pokemon->ability != MAGIC_GUARD) {
+			if (is_type (user, GHOST) and user.pokemon->ability != MAGIC_GUARD) {
 				if (!target.curse) {
 					if (user.pokemon->hp.max <= 3)
 						--user.pokemon->hp.stat;
@@ -1015,7 +1015,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				weather.set_rain (5);
 			break;
 		case Move::RAPID_SPIN:
-			if (effectiveness [user.pokemon->move->type] [target.pokemon->type1] * effectiveness [user.pokemon->move->type] [target.pokemon->type2] > 0) {
+			if (get_effectiveness (user.pokemon->move->type, *target.pokemon) > 0) {
 				user.spikes = 0;
 				user.stealth_rock = false;
 				user.toxic_spikes = 0;
@@ -1362,7 +1362,7 @@ bool compare_scores (Move const & first, Move const & second) {
 	return first.score < second.score;
 }
 
-types const Move::move_type [] = {
+Type const Move::move_type [] = {
 	GRASS,		// ABSORB
 	POISON,		// ACID
 	POISON,		// ACID_ARMOR
@@ -1837,6 +1837,7 @@ types const Move::move_type [] = {
 	ELECTRIC,	// ZAP_CANNON
 	PSYCHIC_TYPE		// ZEN_HEADBUTT
 };
+
 bool const Move::is_physical [] = {
 	false,		// Absorb
 	false,		// Acid

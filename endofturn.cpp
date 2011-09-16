@@ -80,9 +80,9 @@ void endofturn2 (Team &team) {
 }
 
 void endofturn3 (Team &team, Weather const &weather) {
-	if (weather.hail != 0 and !istype (team, ICE))
+	if (weather.hail != 0 and !is_type (team, ICE))
 		heal (*team.pokemon, -16);
-	if (weather.sand != 0 and !(istype (team, GROUND) or istype (team, ROCK) or istype (team, STEEL)))
+	if (weather.sand != 0 and !(is_type (team, GROUND) or is_type (team, ROCK) or is_type (team, STEEL)))
 		heal (*team.pokemon, -16);
 	if (DRY_SKIN == team.pokemon->ability) {
 		if (0 != weather.rain)
@@ -108,7 +108,7 @@ void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
 	if (LEFTOVERS == team.pokemon->item)
 		heal (*team.pokemon, 16);
 	else if (BLACK_SLUDGE == team.pokemon->item) {
-		if (istype (team, POISON))
+		if (is_type (team, POISON))
 			heal (*team.pokemon, 16);
 		else
 			heal (*team.pokemon, -16);

@@ -72,7 +72,7 @@ int64_t scoreteam (Team const & team, score_variables const & sv) {
 }
 
 int64_t scorepokemon (Team const & team, Team const & other, Weather const & weather, score_variables const & sv) {
-	int64_t score = team.stealth_rock * sv.stealth_rock * static_cast <int> (effectiveness [ROCK] [team.pokemon->type1] * effectiveness [ROCK] [team.pokemon->type2]) / 4;
+	int64_t score = team.stealth_rock * sv.stealth_rock * static_cast <int> (get_effectiveness (ROCK, *team.pokemon)) / (2 * team.pokemon->type.size());
 	if (grounded (team, weather))
 		score += team.spikes * sv.spikes + team.toxic_spikes * sv.toxic_spikes;
 	if (team.pokemon->hp.stat != 0) {

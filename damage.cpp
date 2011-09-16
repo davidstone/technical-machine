@@ -9,6 +9,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <vector>
+
 #include "damage.h"
 #include "ability.h"
 #include "gender.h"
@@ -618,7 +620,7 @@ unsigned damageknown (Team const & attacker, Team const & defender, Weather cons
 	return attacker.pokemon->level * 2 / 5 + 2;
 }
 
-unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned type1, unsigned type2, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
+unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
 
 	damage *= attacker.pokemon->move->power;
 
@@ -650,7 +652,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 
 	damage = damage * mf / 2;
 
-	if (istype (attacker, attacker.pokemon->move->type) and attacker.pokemon->move->type != TYPELESS) {
+	if (is_type (attacker, attacker.pokemon->move->type) and attacker.pokemon->move->type != TYPELESS) {
 		if (attacker.pokemon->ability == ADAPTABILITY)
 			stab = 4;
 		else
@@ -659,17 +661,17 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	else
 		stab = 2;
 
-	if (defender.pokemon->ability == SOLID_ROCK and type1 * type2 > 2)
+	if (defender.pokemon->ability == SOLID_ROCK and effectiveness > 2)
 		aem = 3;
 	else
 		aem = 4;
 
-	if (attacker.pokemon->item == EXPERT_BELT and type1 * type2 > 2)
+	if (attacker.pokemon->item == EXPERT_BELT and effectiveness > 2)
 		eb = 6;
 	else
 		eb = 5;
 
-	if (attacker.pokemon->ability == TINTED_LENS and type1 * type2 < 2)
+	if (attacker.pokemon->ability == TINTED_LENS and effectiveness < 2)
 		tl = 2;
 	else
 		tl = 1;
@@ -677,7 +679,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	rb = 1;
 	if (defender.pokemon->item == CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
 		rb = 2;
-	else if (type1 * type2 > 2) {
+	else if (effectiveness > 2) {
 		switch (attacker.pokemon->item) {
 			case BABIRI_BERRY:
 				if (attacker.pokemon->move->type == STEEL)
@@ -751,8 +753,11 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	return damage;
 }
 
-unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, unsigned type1, unsigned type2, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
-	damage = damage * attacker.move->r / 100 * stab / 2 * type1 / 2 * type2 / 2 * aem / 4 * eb / 5 * tl / rb;
+unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
+	damage = damage * attacker.move->r / 100 * stab / 2;
+	for (std::vector <unsigned>::const_iterator it = effectiveness.begin(); it != effectiveness.end(); ++it)
+		damage = damage * *it / 2;
+	damage = damage * aem / 4 * eb / 5 * tl / rb;
 	if (damage == 0)
 		damage = 1;
 	else if (damage >= defender.pokemon->hp.stat) {
@@ -765,9 +770,8 @@ unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned
 
 unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather) {
 	unsigned damage = 0;
-	unsigned const type1 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type1];		// Effectiveness on the defender's first type (1 if NVE, 4 if SE) / 2
-	unsigned const type2 = effectiveness [attacker.pokemon->move->type] [defender.pokemon->type2];		// Effectiveness on the defender's second type (1 if NVE, 4 if SE) / 2
-	if ((type1 != 0 and type2 != 0) and (GROUND != attacker.pokemon->move->type or grounded (defender, weather))) {
+	unsigned effectiveness = get_effectiveness (attacker.pokemon->move->type, *defender.pokemon);
+	if ((effectiveness > 0) and (attacker.pokemon->move->type != GROUND or grounded (defender, weather))) {
 		switch (attacker.pokemon->move->name) {
 			case Move::DRAGON_RAGE:
 				damage = 40;
@@ -808,8 +812,9 @@ unsigned damagecalculator (Team const & attacker, Team const & defender, Weather
 				unsigned tl;							// Tinted Lens (2)
 				unsigned rb;						// Resistance berries (2)
 				damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
-				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, type1, type2, aem, eb, tl, rb, damage);
-				damage = damagerandom (*attacker.pokemon, defender, stab, type1, type2, aem, eb, tl, rb, damage);
+				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, effectiveness, aem, eb, tl, rb, damage);
+				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (attacker.pokemon->move->type, *defender.pokemon);
+				damage = damagerandom (*attacker.pokemon, defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
 			}
 		}
 	}

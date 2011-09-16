@@ -1142,9 +1142,8 @@ void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t chang
 	std::cout << "change_in_health: " << change_in_health << '\n';
 	std::cout << "remaining_health: " << remaining_health << '\n';
 	if (log.move_damage) {
-		int type1 = effectiveness [log.active->at_replacement().move->type] [log.inactive->at_replacement ().type1];
-		int type2 = effectiveness [log.active->at_replacement().move->type] [log.inactive->at_replacement ().type2];
-		if ((type1 * type2 > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
+		unsigned effectiveness = get_effectiveness (log.active->at_replacement().move->type, log.inactive->at_replacement ());
+		if ((effectiveness > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
 			log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
 			if (static_cast <unsigned> (log.inactive->damage) > log.inactive->at_replacement().hp.stat)
 				log.inactive->damage = log.inactive->at_replacement().hp.stat;

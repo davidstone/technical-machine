@@ -29,13 +29,12 @@ namespace technicalmachine {
 class Pokemon {
 	public:
 		std::string nickname;
+		std::vector <Type> type;
 		species name;
 		abilities ability;
 		genders gender;
 		items item;
 		statuses status;
-		types type1;
-		types type2;
 		Active<Move> move;
 		Stat hp;
 		Stat atk;
@@ -59,7 +58,7 @@ class Pokemon {
 		bool operator!= (Pokemon const &other) const;
 		void load ();
 	private:
-		static types const get_type [][2];
+		static Type const get_type [][2];
 		static int8_t const get_mass [];
 		static std::string const name_to_string [];
 };
