@@ -42,7 +42,7 @@ class Pokemon {
 		Stat spa;
 		Stat spd;
 		Stat spe;
-		natures nature;
+		Stat::Nature nature;
 		uint16_t new_hp;		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		bool fainted;
 		int8_t level;

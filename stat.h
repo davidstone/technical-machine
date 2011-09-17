@@ -16,10 +16,11 @@
 
 namespace technicalmachine {
 
-enum stats { HP, ATK, DEF, SPA, SPD, SPE };
-
 class Stat {
 	public:
+		enum Stats { HP, ATK, DEF, SPA, SPD, SPE };
+		enum Nature { HARDY, LONELY, BRAVE, ADAMANT, NAUGHTY, BOLD, DOCILE, RELAXED, IMPISH, LAX, TIMID, HASTY, SERIOUS, JOLLY, NAIVE, MODEST, MILD, QUIET, BASHFUL, RASH, CALM, GENTLE, SASSY, CAREFUL, QUIRKY, END_NATURE };
+
 		uint8_t base;
 		int8_t iv;			// 0 through 31
 		int8_t ev;			// 0 through 63
@@ -27,25 +28,27 @@ class Stat {
 		unsigned max;		// Max HP only
 		unsigned stat;		// Current HP or last calculated value for other stats
 	
-		Stat (species name, stats stat);
+		Stat (species name, Stats stat);
 		void boost (int n);
 	private:
-		static uint8_t const base_stat [][6];
+		uint8_t get_base_stat (species name, Stats stat) const;
 };
-
-enum natures { HARDY, LONELY, BRAVE, ADAMANT, NAUGHTY, BOLD, DOCILE, RELAXED, IMPISH, LAX, TIMID, HASTY, SERIOUS, JOLLY, NAIVE, MODEST, MILD, QUIET, BASHFUL, RASH, CALM, GENTLE, SASSY, CAREFUL, QUIRKY, END_NATURE };
 
 class Pokemon;
 class Team;
 class Weather;
 
-unsigned hitpoints (Pokemon &member);
-void attack (Team &attacker, Weather const &weather);
-void defense (Team const &attacker, Team &defender, Weather const &weather);
-void speed (Team &team, Weather const &weather);
-void order (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower);
-void faster_pokemon (Team &team1, Team &team2, Weather const &weather, Team* &faster, Team* &slower);
-void chance_to_hit (Team &user, Team const &target, Weather const &weather);
+unsigned hitpoints (Pokemon & member);
+void calculate_attacking_stat (Team & attacker, Weather const & weather);
+void calculate_attack (Team & attacker, Weather const & weather);
+void calculate_special_attack (Team & attacker, Weather const & weather);
+void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
+void calculate_defense (Team const & attacker, Team & defender, Weather const & weather);
+void calculate_special_defense (Team const & attacker, Team & defender, Weather const & weather);
+void calculate_speed (Team & team, Weather const & weather);
+void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
+void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
+void chance_to_hit (Team & user, Team const & target, Weather const & weather);
 
 }
 #endif

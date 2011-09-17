@@ -60,6 +60,7 @@ class Move {
 		bool is_blocked_by_gravity () const;
 		bool is_usable_while_sleeping () const;
 		bool is_usable_while_frozen () const;
+		bool is_self_KO () const;
 		void get_magnitude (unsigned magnitude);
 		static bool compare_scores (Move const & first, Move const & second);
 	private:

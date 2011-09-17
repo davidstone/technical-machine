@@ -69,8 +69,8 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 	*/
 	int64_t alpha = -Score::VICTORY - 1;
 	
-	speed (ai, weather);
-	speed (foe, weather);
+	calculate_speed (ai, weather);
+	calculate_speed (foe, weather);
 
 	bool const verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
 

@@ -251,8 +251,8 @@ unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_da
 }
 
 unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage) {
-	speed (user, weather);
-	speed (target, weather);
+	calculate_speed (user, weather);
+	calculate_speed (target, weather);
 	movepower (user, target, weather);
 	unsigned damage = 0;
 	
@@ -266,8 +266,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				user.pokemon->status = NO_STATUS;
 		}
 		if (log_damage == -1u) {
-			defense (user, target, weather);
-			attack (user, weather);
+			calculate_defending_stat (user, target, weather);
+			calculate_attacking_stat (user, weather);
 			damage = damagecalculator (user, target, weather);
 		}
 		else {
@@ -1356,6 +1356,16 @@ bool Move::is_usable_while_frozen () const {
 			usable = false;
 	}
 	return usable;
+}
+
+bool Move::is_self_KO () const {
+	switch (name) {
+		case EXPLOSION:
+		case SELFDESTRUCT:
+			return true;
+		default:
+			return false;
+	}
 }
 
 bool compare_scores (Move const & first, Move const & second) {

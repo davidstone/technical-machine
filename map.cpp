@@ -1614,31 +1614,31 @@ void Map::set_species  () {
 }
 
 void Map::set_nature () {
-	nature ["Adamant"] = ADAMANT;
-	nature ["Bashful"] = BASHFUL;
-	nature ["Bold"] = BOLD;
-	nature ["Brave"] = BRAVE;
-	nature ["Calm"] = CALM;
-	nature ["Careful"] = CAREFUL;
-	nature ["Docile"] = DOCILE;
-	nature ["Gentle"] = GENTLE;
-	nature ["Hardy"] = HARDY;
-	nature ["Hasty"] = HASTY;
-	nature ["Impish"] = IMPISH;
-	nature ["Jolly"] = JOLLY;
-	nature ["Lax"] = LAX;
-	nature ["Lonely"] = LONELY;
-	nature ["Mild"] = MILD;
-	nature ["Modest"] = MODEST;
-	nature ["Naive"] = NAIVE;
-	nature ["Naughty"] = NAUGHTY;
-	nature ["Quiet"] = QUIET;
-	nature ["Quirky"] = QUIRKY;
-	nature ["Rash"] = RASH;
-	nature ["Relaxed"] = RELAXED;
-	nature ["Sassy"] = SASSY;
-	nature ["Serious"] = SERIOUS;
-	nature ["Timid"] = TIMID;
+	nature ["Adamant"] = Stat::Nature::ADAMANT;
+	nature ["Bashful"] = Stat::Nature::BASHFUL;
+	nature ["Bold"] = Stat::Nature::BOLD;
+	nature ["Brave"] = Stat::Nature::BRAVE;
+	nature ["Calm"] = Stat::Nature::CALM;
+	nature ["Careful"] = Stat::Nature::CAREFUL;
+	nature ["Docile"] = Stat::Nature::DOCILE;
+	nature ["Gentle"] = Stat::Nature::GENTLE;
+	nature ["Hardy"] = Stat::Nature::HARDY;
+	nature ["Hasty"] = Stat::Nature::HASTY;
+	nature ["Impish"] = Stat::Nature::IMPISH;
+	nature ["Jolly"] = Stat::Nature::JOLLY;
+	nature ["Lax"] = Stat::Nature::LAX;
+	nature ["Lonely"] = Stat::Nature::LONELY;
+	nature ["Mild"] = Stat::Nature::MILD;
+	nature ["Modest"] = Stat::Nature::MODEST;
+	nature ["Naive"] = Stat::Nature::NAIVE;
+	nature ["Naughty"] = Stat::Nature::NAUGHTY;
+	nature ["Quiet"] = Stat::Nature::QUIET;
+	nature ["Quirky"] = Stat::Nature::QUIRKY;
+	nature ["Rash"] = Stat::Nature::RASH;
+	nature ["Relaxed"] = Stat::Nature::RELAXED;
+	nature ["Sassy"] = Stat::Nature::SASSY;
+	nature ["Serious"] = Stat::Nature::SERIOUS;
+	nature ["Timid"] = Stat::Nature::TIMID;
 }
 
 }

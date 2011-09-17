@@ -91,7 +91,7 @@ void load_pokemon (Team & team, std::ifstream & file, species const pokemon_conv
 
 	member.item = item_converter [converter ("Item=\"", "\"", line)];
 	
-	member.nature = static_cast <natures> (converter ("Nature=\"", "\"", line));
+	member.nature = static_cast <Stat::Nature> (converter ("Nature=\"", "\"", line));
 	
 	member.level = converter ("Lvl=\"", "\"", line);
 	

@@ -47,8 +47,8 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 			pokemon->ability = static_cast<abilities> (detailed [pokemon->name] [0]);
 		if (pokemon->item == END_ITEM)
 			pokemon->item = static_cast<items> (detailed [pokemon->name] [1]);
-		if (pokemon->nature == END_NATURE)
-			pokemon->nature = static_cast<natures> (detailed [pokemon->name] [2]);
+		if (pokemon->nature == Stat::Nature::END_NATURE)
+			pokemon->nature = static_cast<Stat::Nature> (detailed [pokemon->name] [2]);
 		predict_move (*pokemon, detailed, size);
 	}
 }
