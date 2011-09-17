@@ -486,13 +486,13 @@ bool Log::getline () {
 }
 
 bool Log::search_is_first () {
-	return line.substr (0, search.length()) == search;
+	return search == line.substr (0, search.length());
 }
 
 bool Log::search_is_first (std::string const & str) {
-	// I set search to str and then operate on that, rather than just checking against str so that way future operations still have str saved into class Log.
+	// I set search to the value of str and then operate on that, rather than just checking against str so that way future operations still have str saved into class Log.
 	search = str;
-	return line.substr (0, search.length()) == search;
+	return search == line.substr (0, search.length());
 }
 
 void Log::initialize_turn (Team &ai, Team &foe) {

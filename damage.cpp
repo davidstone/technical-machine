@@ -352,7 +352,7 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 				doubling = true;
 			break;
 		case Move::SMELLINGSALT:
-			if (PARALYSIS == defender.pokemon->status)
+			if (defender.pokemon->status == PARALYSIS)
 				doubling = true;
 			break;
 		case Move::SOLARBEAM:
@@ -569,15 +569,15 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 
 	switch (defender.pokemon->ability) {
 		case DRY_SKIN:
-			if (FIRE == attacker.pokemon->move->type)
+			if (attacker.pokemon->move->type == FIRE)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 5 / 4;
 			break;
 		case HEATPROOF:
-			if (FIRE == attacker.pokemon->move->type)
+			if (attacker.pokemon->move->type == FIRE)
 				attacker.pokemon->move->power /= 2;
 			break;
 		case THICK_FAT:
-			if (FIRE == attacker.pokemon->move->type or ICE == attacker.pokemon->move->type)
+			if (attacker.pokemon->move->type == FIRE or attacker.pokemon->move->type == ICE)
 				attacker.pokemon->move->power /= 2;
 			break;
 		default:
@@ -591,8 +591,8 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 // I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
 
 unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf) {
-	if (((defender.reflect != 0 and attacker.pokemon->move->physical)
-			or (defender.light_screen != 0 and !attacker.pokemon->move->physical))
+	if (((defender.reflect and attacker.pokemon->move->physical)
+			or (defender.light_screen and !attacker.pokemon->move->physical))
 			and !attacker.ch)
 		rl = 2;
 	else
@@ -762,7 +762,7 @@ unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned
 		damage = 1;
 	else if (damage >= defender.pokemon->hp.stat) {
 		damage = defender.pokemon->hp.stat;
-		if (Move::FALSE_SWIPE == attacker.move->name or defender.endure)
+		if (attacker.move->name == Move::FALSE_SWIPE or defender.endure)
 			--damage;
 	}
 	return damage;

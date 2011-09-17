@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-void endofturn (Team &first, Team &last, Weather &weather) {
+void endofturn (Team & first, Team & last, Weather & weather) {
 	endofturn0 (first);
 	endofturn0 (last);
 	endofturn1 (first);
@@ -49,7 +49,7 @@ void endofturn (Team &first, Team &last, Weather &weather) {
 	reset_variable (last);
 }
 
-void endofturn0 (Team &team) {
+void endofturn0 (Team & team) {
 	team.damage = 0;
 	team.damaged = false;
 	team.endure = false;
@@ -64,7 +64,7 @@ void endofturn0 (Team &team) {
 	team.replacing = false;
 }
 
-void endofturn1 (Team &team) {
+void endofturn1 (Team & team) {
 	decrement (team.light_screen);
 	decrement (team.lucky_chant);
 	decrement (team.mist);
@@ -73,51 +73,66 @@ void endofturn1 (Team &team) {
 	decrement (team.tailwind);
 }
 
-void endofturn2 (Team &team) {
-	if (1 == team.wish)
+void endofturn2 (Team & team) {
+	if (team.wish == 1)
 		heal (*team.pokemon, 2);
 	decrement (team.wish);
 }
 
-void endofturn3 (Team &team, Weather const &weather) {
-	if (weather.hail != 0 and !is_type (team, ICE))
+void endofturn3 (Team & team, Weather const & weather) {
+	if (weather.hail and !is_type (team, ICE))
 		heal (*team.pokemon, -16);
-	if (weather.sand != 0 and !(is_type (team, GROUND) or is_type (team, ROCK) or is_type (team, STEEL)))
+	if (weather.sand and !(is_type (team, GROUND) or is_type (team, ROCK) or is_type (team, STEEL)))
 		heal (*team.pokemon, -16);
-	if (DRY_SKIN == team.pokemon->ability) {
-		if (0 != weather.rain)
-			heal (*team.pokemon, 8);
-		else if (0 != weather.sun)
-			heal (*team.pokemon, -8);
+	switch team.pokemon->ability) {
+		case DRY_SKIN:
+			if (weather.rain)
+				heal (*team.pokemon, 8);
+			else if (weather.sun)
+				heal (*team.pokemon, -8);
+			break;
+		case HYDRATION:
+			if (weather.rain)
+				team.pokemon->status = NO_STATUS;
+			break;
+		case ICE_BODY:
+			if (weather.hail)
+				heal (*team.pokemon, 16);
+			break;
+		case RAIN_DISH:
+			if (weather.rain)
+				heal (*team.pokemon, 16);
+			break;
+		default:
+			break;
 	}
-	else if (HYDRATION == team.pokemon->ability and 0 != weather.rain)
-		team.pokemon->status = NO_STATUS;
-	else if ((ICE_BODY == team.pokemon->ability and 0 != weather.hail) or (RAIN_DISH == team.pokemon->ability and 0 != weather.rain))
-		heal (*team.pokemon, 16);
 }
 
-void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
+void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.ingrain)
 		heal (*team.pokemon, 16);
 	if (team.aqua_ring)
 		heal (*team.pokemon, 16);
-	if (SPEED_BOOST == team.pokemon->ability)
+	if (team.pokemon->ability == SPEED_BOOST)
 		team.pokemon->spe.boost (1);
 	else if (team.shed_skin)
 		team.pokemon->status = NO_STATUS;
-	if (LEFTOVERS == team.pokemon->item)
-		heal (*team.pokemon, 16);
-	else if (BLACK_SLUDGE == team.pokemon->item) {
-		if (is_type (team, POISON))
+	switch (team.pokemon->item) {
+		case LEFTOVERS:
 			heal (*team.pokemon, 16);
-		else
-			heal (*team.pokemon, -16);
+			break;
+		case BLACK_SLUDGE:
+			if (is_type (team, POISON))
+				heal (*team.pokemon, 16);
+			else
+				heal (*team.pokemon, -16);
+			break;
 	}
 	if (team.leech_seed) {
 		unsigned n = team.pokemon->hp.stat;
 		heal (*team.pokemon, -8);
 		if (foe.hp.stat != 0) {
-			if (LIQUID_OOZE == team.pokemon->ability)
+			if (team.pokemon->ability == LIQUID_OOZE)
 				damage_side_effect (foe, n - team.pokemon->hp.stat);
 			else {
 				foe.hp.stat += n - team.pokemon->hp.stat;
@@ -126,48 +141,66 @@ void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
 			}
 		}
 	}
-	if (BURN == team.pokemon->status) {
-		if (HEATPROOF == team.pokemon->ability)
-			heal (*team.pokemon, -16);
-		else
-			heal (*team.pokemon, -8);
+	switch (team.pokemon->status) {
+		case BURN:
+			if (team.pokemon->ability == HEATPROOF)
+				heal (*team.pokemon, -16);
+			else
+				heal (*team.pokemon, -8);
+			break;
+		case POISON_NORMAL:
+			if (team.pokemon->ability == POISON_HEAL)
+				heal (*team.pokemon, 8);
+			else
+				heal (*team.pokemon, -8);
+			break;
+		case POISON_TOXIC:
+			if (team.pokemon->ability == POISON_HEAL)
+				heal (*team.pokemon, 8);
+			else {
+				if (team.toxic < 15)
+					++team.toxic;
+				heal (*team.pokemon, -16, team.toxic);
+			}
+			break;
+		case SLEEP:
+			if (team.nightmare)
+				heal (*team.pokemon, -4);
+			if (foe.ability == BAD_DREAMS)
+				heal (*team.pokemon, -8);
+			break;
+		default:
+			break;
 	}
-	else if (POISON_NORMAL == team.pokemon->status or POISON_TOXIC == team.pokemon->status) {
-		if (POISON_HEAL == team.pokemon->ability)
-			heal (*team.pokemon, 8);
-		else if (POISON_NORMAL == team.pokemon->status)
-			heal (*team.pokemon, -8);
-		else {
-			if (15 != team.toxic)
-				++team.toxic;
-			heal (*team.pokemon, -16, team.toxic);
-		}
+	switch (team.pokemon->item) {
+		case FLAME_ORB:
+			burn (team, team, weather);
+			break;
+		case TOXIC_ORB:
+			poison_toxic (team, team, weather);
+			break;
+		default:
+			break;
 	}
-	else if (team.nightmare)
-		heal (*team.pokemon, -4);
-	if (FLAME_ORB == team.pokemon->item)
-		burn (team, team, weather);
-	else if (TOXIC_ORB == team.pokemon->item and NO_STATUS == team.pokemon->status)
-		poison_toxic (team, team, weather);
 	if (team.curse)
 		heal (*team.pokemon, -4);
 	if (team.partial_trap > 0) {
 		heal (*team.pokemon, -16);
 		--team.partial_trap;				// No need to use decrement here, as I already know team.partial_trap > 0
 	}
-	if (BAD_DREAMS == foe.ability and SLEEP == team.pokemon->status)
-		heal (*team.pokemon, -8);
-	if (0 != team.rampage) {			// Can't use decrement here because I only want to cause confusion when team.rampage becomes 0.
+	
+	// Can't use decrement here because I only want to cause confusion when team.rampage becomes 0.
+	if (team.rampage) {
 		--team.rampage;
-		if (0 == team.rampage)
+		if (team.rampage == 0)
 			team.confused = true;
 	}
-	else {
+	else
 		decrement (team.uproar);
-		decrement (weather.uproar);
-	}
-	for (std::vector<Move>::iterator it = team.pokemon->move.set.begin(); it != team.pokemon->move.set.end(); ++it)
-		decrement (it->disable);
+	decrement (weather.uproar);
+
+	for (std::vector<Move>::iterator move = team.pokemon->move.set.begin(); move != team.pokemon->move.set.end(); ++move)
+		decrement (move->disable);
 	decrement (team.encore);
 	decrement (team.taunt);
 	decrement (team.magnet_rise);
@@ -176,11 +209,11 @@ void endofturn5 (Team &team, Pokemon &foe, Weather &weather) {
 	if (team.yawn == 1)
 		sleep (*team.pokemon, *team.pokemon, weather);
 	decrement (team.yawn);
-	if (STICKY_BARB == team.pokemon->item)
+	if (team.pokemon->item == STICKY_BARB)
 		heal (*team.pokemon, -8);
 }
 
-void endofturn6 (Team &target, Weather const &weather) {		// Doom Desire / Future Sight
+void endofturn6 (Team & target, Weather const & weather) {		// Doom Desire / Future Sight
 /*	if (target.counter == 1) {
 		defense (target.ddfs, *target.pokemon, weather);
 		target.pokemon->hp.stat -= damagecalculator (target.ddfs, target, weather);
@@ -188,7 +221,7 @@ void endofturn6 (Team &target, Weather const &weather) {		// Doom Desire / Futur
 	decrement (target.counter);*/
 }
 
-void endofturn7 (Team &team) {
+void endofturn7 (Team & team) {
 	if (team.perish_song == 1)
 		team.pokemon->hp.stat = 0;
 	decrement (team.perish_song);
@@ -202,7 +235,7 @@ void reset_variable (Team & team) {
 	}
 }
 
-void decrement (int8_t &n) {
+void decrement (int8_t & n) {
 	if (n > 0)
 		--n;
 }

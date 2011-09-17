@@ -34,7 +34,7 @@ class Pokemon {
 		abilities ability;
 		genders gender;
 		items item;
-		statuses status;
+		Status status;
 		Active<Move> move;
 		Stat hp;
 		Stat atk;
