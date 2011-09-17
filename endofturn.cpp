@@ -84,7 +84,7 @@ void endofturn3 (Team & team, Weather const & weather) {
 		heal (*team.pokemon, -16);
 	if (weather.sand and !(is_type (team, GROUND) or is_type (team, ROCK) or is_type (team, STEEL)))
 		heal (*team.pokemon, -16);
-	switch team.pokemon->ability) {
+	switch (team.pokemon->ability) {
 		case DRY_SKIN:
 			if (weather.rain)
 				heal (*team.pokemon, 8);
@@ -126,6 +126,8 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 				heal (*team.pokemon, 16);
 			else
 				heal (*team.pokemon, -16);
+			break;
+		default:
 			break;
 	}
 	if (team.leech_seed) {
