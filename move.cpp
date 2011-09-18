@@ -287,7 +287,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::GIGA_DRAIN:
 		case Move::LEECH_LIFE:
 		case Move::MEGA_DRAIN:
-			if (LIQUID_OOZE == target.pokemon->ability) {
+			if (target.pokemon->ability.name == Ability::LIQUID_OOZE) {
 				if (damage <= 3)
 					--user.pokemon->hp.stat;
 				else
@@ -558,7 +558,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::SUPERSONIC:
 		case Move::SWEET_KISS:
 		case Move::TEETER_DANCE:
-			if (target.pokemon->ability != OWN_TEMPO and target.confused == 0)
+			if (target.pokemon->ability.name != Ability::OWN_TEMPO and target.confused == 0)
 				target.confused = user.pokemon->move->variable->first;
 			break;
 		case Move::CLOSE_COMBAT:
@@ -612,7 +612,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			poison_normal (user, target, weather);
 			break;
 		case Move::CURSE:
-			if (is_type (user, GHOST) and user.pokemon->ability != MAGIC_GUARD) {
+			if (is_type (user, GHOST) and user.pokemon->ability.name != Ability::MAGIC_GUARD) {
 				if (!target.curse) {
 					if (user.pokemon->hp.max <= 3)
 						--user.pokemon->hp.stat;
@@ -734,7 +734,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::FLATTER:
 			target.pokemon->spa.boost (1);
-			if (target.pokemon->ability != OWN_TEMPO and target.confused == 0)
+			if (target.pokemon->ability.name != Ability::OWN_TEMPO and target.confused == 0)
 				target.confused = user.pokemon->move->variable->first;
 			break;
 		case Move::FLING:
@@ -801,7 +801,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::HEAL_BELL: {
 			for (std::vector<Pokemon>::iterator it = user.pokemon.set.begin(); it != user.pokemon.set.end(); ++it) {
-				if (it->ability != SOUNDPROOF)
+				if (it->ability.name != Ability::SOUNDPROOF)
 					it->status = NO_STATUS;
 			}
 			break;
@@ -1047,7 +1047,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::ROAR:
 		case Move::WHIRLWIND:
-			if ((target.pokemon->ability != SOUNDPROOF or user.pokemon->move->name != Move::ROAR) and !target.ingrain and target.pokemon->ability != SUCTION_CUPS) {
+			if ((target.pokemon->ability.name != Ability::SOUNDPROOF or user.pokemon->move->name != Move::ROAR) and !target.ingrain and target.pokemon->ability.name != Ability::SUCTION_CUPS) {
 				if (target.pokemon.set.size() > 1) {
 					target.replacement = user.pokemon->move->variable->first;
 					switchpokemon (target, user, weather);
@@ -1134,7 +1134,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::SWAGGER:
 			target.pokemon->atk.boost (2);
-			if (target.pokemon->ability != OWN_TEMPO and target.confused == 0)
+			if (target.pokemon->ability.name != Ability::OWN_TEMPO and target.confused == 0)
 				target.confused = user.pokemon->move->variable->first;
 		case Move::SWALLOW:		// Fix
 			break;
@@ -1239,7 +1239,7 @@ void do_damage (Team & user, Team & target, unsigned damage) {
 
 void lower_pp (Team & user, Pokemon const & target) {
 	if (user.pokemon->move->pp != -1 and user.bide == 0) {
-		if (target.ability == PRESSURE and 2 <= user.pokemon->move->pp)
+		if (target.ability.name == Ability::PRESSURE and 2 <= user.pokemon->move->pp)
 			user.pokemon->move->pp -= 2;
 		else
 			--user.pokemon->move->pp;

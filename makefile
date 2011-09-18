@@ -1,14 +1,12 @@
-aiobjects = ai.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.cpp pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
+aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o heal.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.cpp pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
 
-predictobjects = predictor.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
+predictobjects = predictor.o ability.o block.o damage.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
-rdcobjects = rdc.o block.o damage.o heal.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
+rdcobjects = rdc.o ability.o block.o damage.o heal.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
 analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o type.o weather.o
 
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
-
-connectobjects = block.o damage.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.cpp pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
 
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
 fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -funsafe-loop-optimizations
@@ -20,10 +18,6 @@ ai : optimizations = -g
 aio : $(aiobjects)
 	$(CXX) -o aio $(aiobjects) -lpthread -lboost_system $(CXXFLAGS)
 aio : optimizations = $(fulloptimizations)
-
-connect : $(connectobjects)
-	$(CXX) -o connect $(connectobjects) -lpthread -lboost_system $(CXXFLAGS)
-connect : optimizations = -g -Wno-unused
 
 predict : $(predictobjects)
 	$(CXX) -o predict $(predictobjects) -l fltk $(CXXFLAGS)
@@ -52,6 +46,8 @@ analoggui : optimizations = -g
 CXXFLAGS = $(warnings) $(optimizations) -std=c++0x
 CFLAGS = $(warnings) $(optimizations) -std=c99
 
+ability.o: ability.cpp ability.h pokemon.h active.h gender.h item.h \
+ move.h type.h species.h stat.h status.h team.h weather.h
 ai.o: ai.cpp analyze_logs.h evaluate.h expectiminimax.h move.h active.h \
  type.h item.h load_stats.h species.h map.h ability.h gender.h stat.h \
  pokemon.h status.h team.h teampredictor.h weather.h

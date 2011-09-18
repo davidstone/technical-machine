@@ -67,7 +67,7 @@ void OutMessage::write_team (Team const & team) {
 		write_byte (pokemon->happiness);
 		write_int (pokemon->level);
 		write_string (item_name [pokemon->item]);
-		write_string (ability_name [pokemon->ability]);
+		write_string (pokemon->ability.get_name ());
 		write_int (pokemon->nature);
 		unsigned number_of_moves = 0;
 		while (pokemon->move.set [number_of_moves].name != Move::STRUGGLE)

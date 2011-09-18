@@ -70,7 +70,7 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 }
 
 bool grounded (Team const & team, Weather const & weather) {
-	return (!is_type (team, FLYING) and team.pokemon->ability != LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon->item == IRON_BALL or team.ingrain;
+	return (!is_type (team, FLYING) and team.pokemon->ability.name != Ability::LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon->item == IRON_BALL or team.ingrain;
 }
 
 }

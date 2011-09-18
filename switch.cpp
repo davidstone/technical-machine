@@ -117,7 +117,7 @@ void switchpokemon (Team &switcher, Team &other, Weather &weather) {
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (NATURAL_CURE == switcher.pokemon->ability)
+		if (switcher.pokemon->ability.name == Ability::NATURAL_CURE)
 			switcher.pokemon->status = NO_STATUS;
 		
 		reset_variables (switcher);
@@ -133,7 +133,7 @@ void switchpokemon (Team &switcher, Team &other, Weather &weather) {
 }
 
 void entry_hazards (Team &switcher, Weather const &weather) {
-	if (grounded (switcher, weather) and MAGIC_GUARD != switcher.pokemon->ability) {
+	if (grounded (switcher, weather) and switcher.pokemon->ability.name != Ability::MAGIC_GUARD) {
 		if (switcher.toxic_spikes != 0) {
 			if (is_type (switcher, POISON))
 				switcher.toxic_spikes = 0;
@@ -154,34 +154,34 @@ void activate_ability (Team &switcher, Pokemon &other, Weather &weather) {
 	// Activate abilities upon switching in
 
 	switcher.slow_start = 0;
-	switch (switcher.pokemon->ability) {
-		case SLOW_START:
+	switch (switcher.pokemon->ability.name) {
+		case Ability::SLOW_START:
 			switcher.slow_start = 5;
 			break;
-		case DOWNLOAD:
+		case Ability::DOWNLOAD:
 			if (other.def.stat >= other.spd.stat)
 				switcher.pokemon->spa.boost (1);
 			else
 				switcher.pokemon->atk.boost (1);
 			break;
-		case DRIZZLE:
+		case Ability::DRIZZLE:
 			weather.set_rain (-1);
 			break;
-		case DROUGHT:
+		case Ability::DROUGHT:
 			weather.set_sun (-1);
 			break;
-		case FORECAST:	// fix
+		case Ability::FORECAST:	// fix
 			break;
-		case INTIMIDATE:
+		case Ability::INTIMIDATE:
 			other.atk.boost (-1);
 			break;
-		case SAND_STREAM:
+		case Ability::SAND_STREAM:
 			weather.set_sand (-1);
 			break;
-		case SNOW_WARNING:
+		case Ability::SNOW_WARNING:
 			weather.set_hail (-1);
 			break;
-		case TRACE:
+		case Ability::TRACE:
 			break;
 		default:
 			break;

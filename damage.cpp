@@ -501,28 +501,28 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 	if ((defender.mud_sport and attacker.pokemon->move->type == ELECTRIC) or (defender.water_sport and attacker.pokemon->move->type == FIRE))
 		attacker.pokemon->move->power /= 2;
 
-	switch (attacker.pokemon->ability) {
-		case TECHNICIAN:
+	switch (attacker.pokemon->ability.name) {
+		case Ability::TECHNICIAN:
 			if (attacker.pokemon->move->basepower <= 60)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
 			break;
-		case BLAZE:
+		case Ability::BLAZE:
 			if (attacker.pokemon->move->type == FIRE and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
 			break;
-		case OVERGROW:
+		case Ability::OVERGROW:
 			if (attacker.pokemon->move->type == GRASS and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
 			break;
-		case SWARM:
+		case Ability::SWARM:
 			if (attacker.pokemon->move->type == BUG and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
 			break;
-		case TORRENT:
+		case Ability::TORRENT:
 			if (attacker.pokemon->move->type == WATER and attacker.pokemon->hp.stat <= attacker.pokemon->hp.max / 3)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 3 / 2;
 			break;
-		case IRON_FIST:
+		case Ability::IRON_FIST:
 			switch (attacker.pokemon->move->name) {
 				case Move::BULLET_PUNCH:
 				case Move::COMET_PUNCH:
@@ -544,7 +544,7 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 				default:
 					break;
 			}
-		case RECKLESS:
+		case Ability::RECKLESS:
 			switch (attacker.pokemon->move->name) {
 				case Move::BRAVE_BIRD:
 				case Move::DOUBLE_EDGE:
@@ -559,7 +559,7 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 				default:
 					break;
 		}
-		case RIVALRY:
+		case Ability::RIVALRY:
 			// Same gender == 20 + 5, opposite gender == 20 - 5
 			attacker.pokemon->move->power = attacker.pokemon->move->power * (20 + 5 * attacker.pokemon->gender * defender.pokemon->gender) / 20;
 			break;
@@ -567,16 +567,16 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 			break;
 	}
 
-	switch (defender.pokemon->ability) {
-		case DRY_SKIN:
+	switch (defender.pokemon->ability.name) {
+		case Ability::DRY_SKIN:
 			if (attacker.pokemon->move->type == FIRE)
 				attacker.pokemon->move->power = attacker.pokemon->move->power * 5 / 4;
 			break;
-		case HEATPROOF:
+		case Ability::HEATPROOF:
 			if (attacker.pokemon->move->type == FIRE)
 				attacker.pokemon->move->power /= 2;
 			break;
-		case THICK_FAT:
+		case Ability::THICK_FAT:
 			if (attacker.pokemon->move->type == FIRE or attacker.pokemon->move->type == ICE)
 				attacker.pokemon->move->power /= 2;
 			break;
@@ -626,7 +626,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 
 	if (attacker.pokemon->move->physical) {
 		damage = damage * attacker.pokemon->atk.stat / 50 / defender.pokemon->def.stat;
-		if (attacker.pokemon->status == BURN and attacker.pokemon->ability != GUTS)
+		if (attacker.pokemon->status == BURN and attacker.pokemon->ability.name != Ability::GUTS)
 			damage /= 2;
 	}
 	else
@@ -635,7 +635,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	damage = damage / rl * weather_mod / 2 * ff / 2 + 2;
 
 	if (attacker.ch) {
-		if (attacker.pokemon->ability == SNIPER)
+		if (attacker.pokemon->ability.name == Ability::SNIPER)
 			damage *= 3;
 		else
 			damage *= 2;
@@ -653,7 +653,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	damage = damage * mf / 2;
 
 	if (is_type (attacker, attacker.pokemon->move->type) and attacker.pokemon->move->type != TYPELESS) {
-		if (attacker.pokemon->ability == ADAPTABILITY)
+		if (attacker.pokemon->ability.name == Ability::ADAPTABILITY)
 			stab = 4;
 		else
 			stab = 3;
@@ -661,7 +661,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	else
 		stab = 2;
 
-	if (defender.pokemon->ability == SOLID_ROCK and effectiveness > 2)
+	if (defender.pokemon->ability.name == Ability::SOLID_ROCK and effectiveness > 2)
 		aem = 3;
 	else
 		aem = 4;
@@ -671,7 +671,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	else
 		eb = 5;
 
-	if (attacker.pokemon->ability == TINTED_LENS and effectiveness < 2)
+	if (attacker.pokemon->ability.name == Ability::TINTED_LENS and effectiveness < 2)
 		tl = 2;
 	else
 		tl = 1;
@@ -822,7 +822,7 @@ unsigned damagecalculator (Team const & attacker, Team const & defender, Weather
 }
 
 void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
-	if (user.ability != MAGIC_GUARD and user.ability != ROCK_HEAD) {
+	if (user.ability.name != Ability::MAGIC_GUARD and user.ability.name != Ability::ROCK_HEAD) {
 		if (damage <= 2 * denominator - 1)
 			--user.hp.stat;
 		else

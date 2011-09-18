@@ -298,113 +298,113 @@ bool Log::side_effect () {
 
 
 void Log::log_misc (Map const & map) {
-	if (active->at_replacement().ability == END_ABILITY) {
+	if (active->at_replacement().ability.name == Ability::END_ABILITY) {
 		if (active->at_replacement().nickname + "'s Anger Point raised its attack!" == line) {
-			active->at_replacement().ability = ANGER_POINT;
+			active->at_replacement().ability.name = Ability::ANGER_POINT;
 			active->at_replacement().atk.stage = 6;
 		}
 		else if (active->at_replacement().nickname + "'s Anticipation made it shudder!" == line)
-			active->at_replacement().ability = ANTICIPATION;
+			active->at_replacement().ability.name = Ability::ANTICIPATION;
 		else if (active->at_replacement().nickname + "'s Cute Charm infatuated " + inactive->at_replacement().nickname == line) {
-			active->at_replacement().ability = CUTE_CHARM;
+			active->at_replacement().ability.name = Ability::CUTE_CHARM;
 			inactive->attract = true;
 		}
 		else if (active->at_replacement().nickname + "'s Damp prevents explosions!" == line)
-			active->at_replacement().ability = DAMP;
+			active->at_replacement().ability.name = Ability::DAMP;
 		else if (active->at_replacement().nickname + "'s Download raised its stats!" == line)
-			active->at_replacement().ability = DOWNLOAD;
+			active->at_replacement().ability.name = Ability::DOWNLOAD;
 		else if (active->at_replacement().nickname + "'s Drizzle caused a storm!" == line)
-			active->at_replacement().ability = DRIZZLE;
+			active->at_replacement().ability.name = Ability::DRIZZLE;
 		else if (active->at_replacement().nickname + "'s Drought intensified the sun's rays!" == line)
-			active->at_replacement().ability = DROUGHT;
+			active->at_replacement().ability.name = Ability::DROUGHT;
 		else if (active->at_replacement().nickname + " soaked up rain!" == line or active->at_replacement().nickname + "'s Dry Skin absorbed damage!" == line or active->at_replacement().nickname + "'s Dry Skin restored its health a little!" == line)	// Not sure which is correct
-			active->at_replacement().ability = DRY_SKIN;
+			active->at_replacement().ability.name = Ability::DRY_SKIN;
 		else if (active->at_replacement().nickname + " was hurt by the sunlight!" == line)
 			{/* Dry Skin and Solar Power. Need a way to distinguish them. */}
 		else if (active->at_replacement().nickname + "'s Flame Body burned " + inactive->at_replacement().nickname == line)
-			active->at_replacement().ability = FLAME_BODY;
+			active->at_replacement().ability.name = Ability::FLAME_BODY;
 		else if (active->at_replacement().nickname + "'s Flash Fire raised its fire power!" == line)
-			active->at_replacement().ability = FLASH_FIRE;
+			active->at_replacement().ability.name = Ability::FLASH_FIRE;
 		else if (line.find (active->at_replacement().nickname + "Forewarn alerted it to ") != std::string::npos)	// Fix to get the full information of Forewarn
-			active->at_replacement().ability = FOREWARN;
+			active->at_replacement().ability.name = Ability::FOREWARN;
 		else if (line.find (active->at_replacement().nickname + " found " + inactive->at_replacement().nickname + "'s ") != std::string::npos)	// Fix to get full information of Frisk
-			active->at_replacement().ability = FRISK;
+			active->at_replacement().ability.name = Ability::FRISK;
 		else if (active->at_replacement().nickname + "'s status was cured!" == line)
-			active->at_replacement().ability = HYDRATION;
+			active->at_replacement().ability.name = Ability::HYDRATION;
 		else if (active->at_replacement().nickname + "absorbed the hail!" == line or active->at_replacement().nickname + "'s Ice Body restored its health a little!" == line)	// Not sure which is correct
-			active->at_replacement().ability = ICE_BODY;
+			active->at_replacement().ability.name = Ability::ICE_BODY;
 		else if (active->at_replacement().nickname + "'s Immunity prevents poisoning!" == line)
-			active->at_replacement().ability = IMMUNITY;
+			active->at_replacement().ability.name = Ability::IMMUNITY;
 		else if (active->at_replacement().nickname + "'s Insomnia kept it awake!" == line)
-			active->at_replacement().ability = INSOMNIA;
+			active->at_replacement().ability.name = Ability::INSOMNIA;
 		else if (active->at_replacement().nickname + "'s Intimidate cut " + inactive->at_replacement().nickname + "'s attack!" == line)
-			active->at_replacement().ability = INTIMIDATE;
+			active->at_replacement().ability.name = Ability::INTIMIDATE;
 		else if (active->at_replacement().nickname + " makes ground moves miss with Levitate!" == line)
-			active->at_replacement().ability = LEVITATE;
+			active->at_replacement().ability.name = Ability::LEVITATE;
 		else if (active->at_replacement().nickname + "'s Lightningrod drew the attack!" == line)
-			active->at_replacement().ability = LIGHTNINGROD;
+			active->at_replacement().ability.name = Ability::LIGHTNINGROD;
 		else if (active->at_replacement().nickname + " has Mold Breaker!" == line)
-			active->at_replacement().ability = MOLD_BREAKER;
+			active->at_replacement().ability.name = Ability::MOLD_BREAKER;
 		else if (active->at_replacement().nickname + "'s Motor Drive increased its speed!" == line)
-			active->at_replacement().ability = MOTOR_DRIVE;
+			active->at_replacement().ability.name = Ability::MOTOR_DRIVE;
 		else if (active->at_replacement().nickname + "'s Oblivious prevents attraction!" == line)
-			active->at_replacement().ability = OBLIVIOUS;
+			active->at_replacement().ability.name = Ability::OBLIVIOUS;
 		else if (active->at_replacement().nickname + "'s Poison Heal restored health!" == line)
-			active->at_replacement().ability = POISON_HEAL;
+			active->at_replacement().ability.name = Ability::POISON_HEAL;
 		else if (active->at_replacement().nickname + " is exerting its pressure!" == line)
-			active->at_replacement().ability = PRESSURE;
+			active->at_replacement().ability.name = Ability::PRESSURE;
 		else if (active->at_replacement().nickname + "'s Rain Dish restored its health a little!" == line)
-			active->at_replacement().ability = RAIN_DISH;
+			active->at_replacement().ability.name = Ability::RAIN_DISH;
 		else if (active->at_replacement().nickname + "'s Sand Stream whipped up a sandstorm!" == line)
-			active->at_replacement().ability = SAND_STREAM;
+			active->at_replacement().ability.name = Ability::SAND_STREAM;
 		else if (active->at_replacement().nickname + " shed its skin!" == line) {
-			active->at_replacement().ability = SHED_SKIN;
+			active->at_replacement().ability.name = Ability::SHED_SKIN;
 			shed_skin = true;
 		}
 		else if (active->at_replacement().nickname + " can't get going due to its Slow Start!" == line)
-			active->at_replacement().ability = SLOW_START;
+			active->at_replacement().ability.name = Ability::SLOW_START;
 		else if (active->at_replacement().nickname + "'s Snow Warning whipped up a hailstorm!" == line or active->at_replacement().nickname + "'s Snow Warning whipped up a hailstorm! " == line)
-			active->at_replacement().ability = SNOW_WARNING;
+			active->at_replacement().ability.name = Ability::SNOW_WARNING;
 		else if (line.find (active->at_replacement().nickname + "'s Soundproof blocks") != std::string::npos)
-			active->at_replacement().ability = SOUNDPROOF;
+			active->at_replacement().ability.name = Ability::SOUNDPROOF;
 		else if (active->at_replacement().nickname + "'s Speed Boost raised its speed!" == line)
-			active->at_replacement().ability = SPEED_BOOST;
+			active->at_replacement().ability.name = Ability::SPEED_BOOST;
 		else if (active->at_replacement().nickname + " held on with its Sticky Hold!" == line)
-			active->at_replacement().ability = STICKY_HOLD;
+			active->at_replacement().ability.name = Ability::STICKY_HOLD;
 		else if (active->at_replacement().nickname + "'s Storm Drain drew the attack!" == line)
-			active->at_replacement().ability = STORM_DRAIN;
+			active->at_replacement().ability.name = Ability::STORM_DRAIN;
 		else if (active->at_replacement().nickname + " held Sturdy!" == line)
-			active->at_replacement().ability = STURDY;
+			active->at_replacement().ability.name = Ability::STURDY;
 		else if (active->at_replacement().nickname + "'s Synchronize activated!" == line)
-			active->at_replacement().ability = SYNCHRONIZE;
+			active->at_replacement().ability.name = Ability::SYNCHRONIZE;
 		else if (active->at_replacement().nickname + "'s Tangled Feet raised its evasion!" == line)
-			active->at_replacement().ability = TANGLED_FEET;
+			active->at_replacement().ability.name = Ability::TANGLED_FEET;
 		else if (line.find (active->at_replacement().nickname + " traced " + inactive->at_replacement().nickname + "'s ") == 0)
-			active->at_replacement().ability = TRACE;
+			active->at_replacement().ability.name = Ability::TRACE;
 		else if (active->at_replacement().nickname + " is loafing around!" == line)
-			active->at_replacement().ability = TRUANT;
+			active->at_replacement().ability.name = Ability::TRUANT;
 		else if (active->at_replacement().nickname + " lost its burden!" == line)
-			active->at_replacement().ability = UNBURDEN;
+			active->at_replacement().ability.name = Ability::UNBURDEN;
 		else if (active->at_replacement().nickname + "'s Water Veil prevents burns!" == line)
-			active->at_replacement().ability = WATER_VEIL;
+			active->at_replacement().ability.name = Ability::WATER_VEIL;
 		else if (active->at_replacement().nickname + " avoided damage with Wonder Guard!" == line)
-			active->at_replacement().ability = WONDER_GUARD;
+			active->at_replacement().ability.name = Ability::WONDER_GUARD;
 	}
-	if (inactive->at_replacement().ability == END_ABILITY) {
+	if (inactive->at_replacement().ability.name == Ability::END_ABILITY) {
 		if (active->at_replacement().nickname + " was hurt by " + inactive->at_replacement().nickname + "'s Aftermath!" == line)
-			inactive->at_replacement().ability = AFTERMATH;
+			inactive->at_replacement().ability.name = Ability::AFTERMATH;
 		else if (active->at_replacement().nickname + "is tormented by the foe " +inactive->at_replacement().nickname + "'s Bad Dreams!" == line)
-			inactive->at_replacement().ability = BAD_DREAMS;
+			inactive->at_replacement().ability.name = Ability::BAD_DREAMS;
 		else if (active->at_replacement().nickname + " sucked up liquid ooze!" == line)
-			inactive->at_replacement().ability = LIQUID_OOZE;
+			inactive->at_replacement().ability.name = Ability::LIQUID_OOZE;
 		else if (active->at_replacement().nickname + " was hurt by " + inactive->at_replacement().nickname + "'s Rough Skin!" == line)
-			inactive->at_replacement().ability = ROUGH_SKIN;
+			inactive->at_replacement().ability.name = Ability::ROUGH_SKIN;
 		std::string search = active->at_replacement().nickname + " traced " + inactive->at_replacement().nickname + "'s ";
 		if (line.find (search) != std::string::npos) {
 			size_t n = 1;
 			if (line.find(".\r") != std::string::npos)
 				n = 2;
-			inactive->at_replacement().ability = map.ability.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+			inactive->at_replacement().ability.name = map.ability.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 		}
 	}
 	if (active->at_replacement().item == END_ITEM) {

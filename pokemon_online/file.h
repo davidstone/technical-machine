@@ -28,7 +28,7 @@ class Team;
 namespace po {
 
 void load_team (Team & team, std::string const & name, unsigned size);
-void load_pokemon (Team & team, std::ifstream & file, species const pokemon_converter [], abilities const ability_converter [], items const item_converter [], Move::moves_list const move_converter [], unsigned size);
+void load_pokemon (Team & team, std::ifstream & file, species const pokemon_converter [], Ability::Abilities const ability_converter [], items const item_converter [], Move::moves_list const move_converter [], unsigned size);
 unsigned converter (std::string const & data, std::string const & end, std::string const & line);
 
 }

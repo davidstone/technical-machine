@@ -18,12 +18,12 @@
 
 namespace technicalmachine {
 
-void blockselection (Team & user, Team const & target, Weather const & weather) {
+void blockselection (Team & user, Team const & other, Weather const & weather) {
 	user.pokemon->move->selectable = true;
 	if (user.bide and user.pokemon->move->name != Move::BIDE)
 			user.pokemon->move->selectable = false;
 	else if (user.pokemon->move->is_switch()) {
-		if ((((target.pokemon->ability == SHADOW_TAG and user.pokemon->ability != SHADOW_TAG) or (target.pokemon->ability == ARENA_TRAP and grounded (user, weather)) or (target.pokemon->ability == MAGNET_PULL and is_type (user, STEEL)) or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
+		if (((other.pokemon->ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
 				or (user.pokemon.set [user.pokemon->move->name - Move::SWITCH0].name == user.pokemon->name))		// Can't switch to yourself
 			user.pokemon->move->selectable = false;
 	}
@@ -36,7 +36,7 @@ void blockselection (Team & user, Team const & target, Weather const & weather) 
 			}
 		}
 	}
-	else if ((block1 (user, target))
+	else if ((block1 (user, other))
 			or (block2 (user, weather))
 			or (user.torment and user.pokemon->move->times_used != 0))
 		user.pokemon->move->selectable = false;
@@ -50,9 +50,9 @@ void blockselection (Team & user, Team const & target, Weather const & weather) 
 	}
 }
 
-void blockexecution (Team & user, Team const & target, Weather const & weather) {
+void blockexecution (Team & user, Team const & other, Weather const & weather) {
 	if (!user.pokemon->move->is_switch()) {
-		if (user.pokemon->hp.stat == 0 or (target.pokemon->hp.stat == 0 and false))
+		if (user.pokemon->hp.stat == 0 or (other.pokemon->hp.stat == 0 and false))
 			user.pokemon->move->execute = false;
 		else {
 			if (user.pokemon->status == FREEZE and (!user.pokemon->move->is_usable_while_frozen ()))
@@ -64,7 +64,7 @@ void blockexecution (Team & user, Team const & target, Weather const & weather) 
 					user.pokemon->status = NO_STATUS;
 				}
 				else {
-					if (user.pokemon->ability == EARLY_BIRD)
+					if (user.pokemon->ability.name == Ability::EARLY_BIRD)
 						user.pokemon->sleep += 2;
 					else
 						++user.pokemon->sleep;
@@ -73,8 +73,8 @@ void blockexecution (Team & user, Team const & target, Weather const & weather) 
 				}
 			}
 
-			if (block1 (user, target)
-					or (user.pokemon->ability == TRUANT and user.loaf))
+			if (block1 (user, other)
+					or (user.pokemon->ability.name == Ability::TRUANT and user.loaf))
 				user.pokemon->move->execute = false;
 
 			if (user.pokemon->move->execute and user.confused != 0) {
@@ -86,7 +86,7 @@ void blockexecution (Team & user, Team const & target, Weather const & weather) 
 					--user.confused;
 			}
 			if (user.pokemon->move->execute and user.flinch) {
-				if (user.pokemon->ability == STEADFAST)
+				if (user.pokemon->ability.name == Ability::STEADFAST)
 					user.pokemon->spe.boost (1);
 				user.pokemon->move->execute = false;
 			}
@@ -102,16 +102,17 @@ void blockexecution (Team & user, Team const & target, Weather const & weather) 
 	}
 }
 
-bool block1 (Team const & user, Team const & target) {		// Things that both block selection and block execution in between sleep and confusion
+// Things that both block selection and block execution in between sleep and confusion
+bool block1 (Team const & user, Team const & other) {
 	return (user.pokemon->move->pp == 0)
 			or (user.pokemon->move->disable)
 			or (user.heal_block and (user.pokemon->move->is_healing ()))
-			or (imprison (*user.pokemon->move, target));
+			or (imprison (*user.pokemon->move, other));
 }
 
-bool imprison (Move const & move, Team const & target) {
-	if (target.imprison) {
-		for (std::vector<Move>::const_iterator it = target.pokemon->move.set.begin(); it != target.pokemon->move.set.end(); ++it) {
+bool imprison (Move const & move, Team const & other) {
+	if (other.imprison) {
+		for (std::vector<Move>::const_iterator it = other.pokemon->move.set.begin(); it != other.pokemon->move.set.end(); ++it) {
 			if (move.name == it->name)
 				return true;
 		}
@@ -119,7 +120,8 @@ bool imprison (Move const & move, Team const & target) {
 	return false;
 }
 
-bool block2 (Team const & user, Weather const & weather) {		// Things that both block selection and block execution after flinching
+// Things that both block selection and block execution after flinching
+bool block2 (Team const & user, Weather const & weather) {
 	return (user.taunt and user.pokemon->move->basepower == 0)
 			or (weather.gravity and (user.pokemon->move->is_blocked_by_gravity ()));
 }

@@ -180,8 +180,8 @@ void Team::output (std::string &output) {
 		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (it->hp.stat) / static_cast<double> (it->hp.max)) + "% HP)";
 		output += " @ " + item_name [it->item];
 		output += " ** " + it->nickname + '\n';
-		if (it->ability != END_ABILITY)
-			output += "\tAbility: " + ability_name [it->ability] + '\n';
+		if (it->ability.name != Ability::END_ABILITY)
+			output += "\tAbility: " + it->ability.get_name () + '\n';
 		if (it->status != NO_STATUS)
 			output += "\tStatus: " + boost::lexical_cast<std::string> (it->status) + '\n';
 		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != Move::STRUGGLE; ++move)
