@@ -1266,6 +1266,10 @@ bool Move::is_switch (moves_list name) {
 	return SWITCH0 <= name and name <= SWITCH5;
 }
 
+bool is_struggle_or_switch () const {
+	return pp_max == -1;
+}
+
 bool Move::is_phaze () const {
 	return name == ROAR or name == WHIRLWIND;
 }

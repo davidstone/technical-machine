@@ -119,6 +119,7 @@ class Team {
 		bool operator== (Team const &other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
+		bool is_switching_to_self () const;
 		uint64_t hash () const;
 		void output (std::string &output);
 	private:

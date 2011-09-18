@@ -24,13 +24,13 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 			user.pokemon->move->selectable = false;
 	else if (user.pokemon->move->is_switch()) {
 		if (((other.pokemon->ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
-				or (user.pokemon.set [user.pokemon->move->name - Move::SWITCH0].name == user.pokemon->name))		// Can't switch to yourself
+				or (user.is_switching_to_self))
 			user.pokemon->move->selectable = false;
 	}
 	else if (user.pokemon->move->name == Move::STRUGGLE) {
 		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
-			if (it->pp_max != -1		// Don't let Struggle or Switch keep Struggle from being selectable
-					and it->selectable) {
+			if (!it->is_struggle_or_switch () and it->selectable) {
+				// Struggle is only selectable if no other move is selectable
 				user.pokemon->move->selectable = false;
 				break;
 			}
@@ -40,7 +40,7 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 			or (block2 (user, weather))
 			or (user.torment and user.pokemon->move->times_used != 0))
 		user.pokemon->move->selectable = false;
-	else if (user.encore or user.recharging or CHOICE_BAND == user.pokemon->item or CHOICE_SCARF == user.pokemon->item or CHOICE_SPECS == user.pokemon->item) {
+	else if (user.encore or user.recharging or user.pokemon->item == CHOICE_BAND or user.pokemon->item == CHOICE_SCARF or user.pokemon->item == CHOICE_SPECS) {
 		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
 			if (it->name != user.pokemon->move->name and it->times_used != 0) {
 				user.pokemon->move->selectable = false;

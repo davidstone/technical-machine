@@ -53,6 +53,7 @@ class Move {
 		bool operator!= (Move const & other) const;
 		bool is_switch () const;
 		static bool is_switch (moves_list name);
+		bool is_struggle_or_switch () const;
 		bool is_phaze () const;
 		static bool is_phaze (moves_list name);
 		bool is_healing () const;

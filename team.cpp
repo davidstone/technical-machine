@@ -130,6 +130,10 @@ Team::Team (bool isme, Map const &map, unsigned size) :
 	}
 }
 
+bool Team::is_switching_to_self () const {
+	return pokemon.set [pokemon->move->name - Move::SWITCH0].name == pokemon->name;
+}
+
 uint64_t Team::hash () const {
 	uint64_t hash = 0;
 	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
