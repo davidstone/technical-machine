@@ -16,6 +16,7 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 #include "expectiminimax.h"
+#include "ability.h"
 #include "block.h"
 #include "endofturn.h"
 #include "evaluate.h"

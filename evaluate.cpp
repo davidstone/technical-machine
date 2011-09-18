@@ -11,7 +11,11 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <fstream>
+#include <string>
+#include <boost/lexical_cast.hpp>
 #include "evaluate.h"
+#include "ability.h"
 #include "move.h"
 #include "pokemon.h"
 #include "team.h"

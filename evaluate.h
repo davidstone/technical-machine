@@ -13,9 +13,6 @@
 #define EVALUATE_H_
 
 #include <cstdint>
-#include <boost/lexical_cast.hpp>
-#include <fstream>
-#include <string>
 
 namespace technicalmachine {
 

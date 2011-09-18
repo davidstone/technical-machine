@@ -13,6 +13,7 @@
 #define TEAMPREDICTOR_H_
 
 #include <vector>
+#include "species.h"
 
 namespace technicalmachine {
 

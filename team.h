@@ -13,9 +13,7 @@
 #define TEAM_H_
 
 #include <cstdint>
-#include <fstream>
 #include <string>
-#include <vector>
 #include "active.h"
 #include "move.h"
 

@@ -11,10 +11,11 @@
 
 #include <utility>
 #include <vector>
+#include "switch.h"
+#include "ability.h"
 #include "heal.h"
 #include "pokemon.h"
 #include "status.h"
-#include "switch.h"
 #include "team.h"
 #include "type.h"
 #include "weather.h"

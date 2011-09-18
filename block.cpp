@@ -10,6 +10,7 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "block.h"
+#include "ability.h"
 #include "move.h"
 #include "pokemon.h"
 #include "team.h"
@@ -24,7 +25,7 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 			user.pokemon->move->selectable = false;
 	else if (user.pokemon->move->is_switch()) {
 		if (((other.pokemon->ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
-				or (user.is_switching_to_self))
+				or (user.is_switching_to_self ()))
 			user.pokemon->move->selectable = false;
 	}
 	else if (user.pokemon->move->name == Move::STRUGGLE) {

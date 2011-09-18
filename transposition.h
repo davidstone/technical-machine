@@ -13,8 +13,6 @@
 #define TRANSPOSITION_H_
 
 #include <cstdint>
-#include <map>
-#include <string>
 
 namespace technicalmachine {
 

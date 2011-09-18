@@ -15,7 +15,6 @@
 #include <cstdint>
 #include <string>
 #include <utility>
-#include <vector>
 #include "active.h"
 #include "type.h"
 

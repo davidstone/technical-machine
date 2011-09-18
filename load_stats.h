@@ -12,7 +12,6 @@
 #ifndef LEAD_STATS_H_
 #define LEAD_STATS_H_
 
-#include <fstream>
 #include <vector>
 #include "species.h"
 
@@ -20,13 +19,13 @@ namespace technicalmachine {
 
 class Map;
 
-void overall_stats (std::vector<unsigned> &overall);
+void overall_stats (std::vector<unsigned> & overall);
 
-void team_stats (std::vector<unsigned> const &overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]);
+void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]);
 
-void lead_stats (std::vector<float> &lead);
+void lead_stats (std::vector<float> & lead);
 
-void detailed_stats (Map const &map, int detailed [][7]);
+void detailed_stats (Map const & map, int detailed [][7]);
 
 }
 

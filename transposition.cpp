@@ -11,12 +11,13 @@
 
 #include <cstdint>
 #include <iostream>
+#include "transposition.h"
+#include "ability.h"
 #include "evaluate.h"
 #include "expectiminimax.h"
 #include "move.h"
 #include "pokemon.h"
 #include "team.h"
-#include "transposition.h"
 #include "weather.h"
 
 namespace technicalmachine {

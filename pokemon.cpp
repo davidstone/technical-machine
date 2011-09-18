@@ -11,7 +11,9 @@
 
 #include <string>
 #include <vector>
+#include "ability.h"
 #include "active.h"
+#include "move.h"
 #include "pokemon.h"
 #include "species.h"
 #include "stat.h"

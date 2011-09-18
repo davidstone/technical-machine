@@ -14,17 +14,18 @@
 
 #include <string>
 #include <vector>
-#include "ability.h"
 #include "active.h"
 #include "gender.h"
 #include "item.h"
-#include "move.h"
 #include "species.h"
 #include "stat.h"
 #include "status.h"
 #include "type.h"
 
 namespace technicalmachine {
+
+class Ability;
+class Move;
 
 class Pokemon {
 	public:

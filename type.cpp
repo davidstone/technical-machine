@@ -11,9 +11,10 @@
 
 #include <vector>
 
+#include "type.h"
+#include "ability.h"
 #include "pokemon.h"
 #include "team.h"
-#include "type.h"
 #include "weather.h"
 
 namespace technicalmachine {

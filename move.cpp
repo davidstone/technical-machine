@@ -1266,7 +1266,7 @@ bool Move::is_switch (moves_list name) {
 	return SWITCH0 <= name and name <= SWITCH5;
 }
 
-bool is_struggle_or_switch () const {
+bool Move::is_struggle_or_switch () const {
 	return pp_max == -1;
 }
 

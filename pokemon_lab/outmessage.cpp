@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <vector>
+#include "../ability.h"
 #include "../pokemon.h"
 #include "../team.h"
 #include <boost/asio.hpp>
