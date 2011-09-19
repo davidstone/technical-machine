@@ -9,7 +9,8 @@ analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o sta
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
-fulloptimizations = -O3 -march=native -ffast-math -DNDEBUG -funsafe-loop-optimizations
+fulloptimizations = -DNDEBUG -O3 -march=native -ffast-math -funsafe-loop-optimizations
+tournament = $(fulloptimizations) -flto -fwhole-program
 
 ai : $(aiobjects)
 	$(CXX) -o ai $(aiobjects) -lpthread -lboost_system $(CXXFLAGS)
