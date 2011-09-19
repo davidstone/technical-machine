@@ -18,6 +18,10 @@
 
 namespace technicalmachine {
 
+Ability::Ability ():
+	name (END_ABILITY) {
+}
+
 Ability::Ability (Abilities ability):
 	name (ability) {
 }
@@ -39,6 +43,10 @@ bool Ability::blocks_switching (Team const & switcher, Weather const weather) co
 		default:
 			return false;
 	}
+}
+
+bool Ability::is_set () const {
+	return name != END_ABILITY;
 }
 
 std::string Ability::get_name () const {

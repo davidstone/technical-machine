@@ -1,10 +1,10 @@
-aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
+aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o load_stats.o map.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
 
-predictobjects = predictor.o ability.o block.o damage.o gender.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
+predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o map.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
-rdcobjects = rdc.o ability.o block.o damage.o gender.o heal.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
+rdcobjects = rdc.o ability.o block.o damage.o gender.o heal.o item.o load_stats.o map.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
-analogobjects = analyze_logs_main.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o type.o weather.o
+analogobjects = analyze_logs_main.o analyze_logs.o damage.o item.o move.o pokemon.o stat.o status.o team.o type.o weather.o
 
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 

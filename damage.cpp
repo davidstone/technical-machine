@@ -56,92 +56,7 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 			break;
 		}
 		case Move::FLING:
-			switch (attacker.pokemon->item) {
-				case IRON_BALL:
-					attacker.pokemon->move->basepower = 130;
-					break;
-				case HARD_STONE:
-				case OTHER100:
-					attacker.pokemon->move->basepower = 100;
-					break;
-				case DEEPSEATOOTH:
-				case DRACO_PLATE:
-				case DREAD_PLATE:
-				case EARTH_PLATE:
-				case FIST_PLATE:
-				case FLAME_PLATE:
-				case GRIP_CLAW:
-				case ICICLE_PLATE:
-				case INSECT_PLATE:
-				case IRON_PLATE:
-				case MEADOW_PLATE:
-				case MIND_PLATE:
-				case SKY_PLATE:
-				case SPLASH_PLATE:
-				case SPOOKY_PLATE:
-				case STONE_PLATE:
-				case THICK_CLUB:
-				case TOXIC_PLATE:
-				case ZAP_PLATE:
-					attacker.pokemon->move->basepower = 90;
-					break;
-				case QUICK_CLAW:
-				case RAZOR_CLAW:
-				case STICKY_BARB:
-				case OTHER80:
-					attacker.pokemon->move->basepower = 80;
-					break;
-				case DRAGON_FANG:
-				case POISON_BARB:
-				case POWER_ITEMS:
-					attacker.pokemon->move->basepower = 70;
-					break;
-				case ADAMANT_ORB:
-				case DAMP_ROCK:
-				case HEAT_ROCK:
-				case LUSTROUS_ORB:
-				case MACHO_BRACE:
-				case STICK:
-					attacker.pokemon->move->basepower = 60;
-					break;
-				case SHARP_BEAK:
-				case OTHER50:
-					attacker.pokemon->move->basepower = 50;
-					break;
-				case ICY_ROCK:
-				case LUCKY_PUNCH:
-					attacker.pokemon->move->basepower = 40;
-					break;
-				case BERRY_JUICE:
-				case BLACK_BELT:
-				case BLACK_SLUDGE:
-				case BLACKGLASSES:
-				case CHARCOAL:
-				case DEEPSEASCALE:
-				case FLAME_ORB:
-				case KINGS_ROCK:
-				case LIFE_ORB:
-				case LIGHT_BALL:
-				case LIGHT_CLAY:
-				case MAGNET:
-				case METAL_COAT:
-				case METRONOME_ITEM:
-				case MIRACLE_SEED:
-				case MYSTIC_WATER:
-				case NEVERMELTICE:
-				case SCOPE_LENS:
-				case SHELL_BELL:
-				case SOUL_DEW:
-				case SPELL_TAG:
-				case TOXIC_ORB:
-				case TWISTEDSPOON:
-				case OTHER30:
-					attacker.pokemon->move->basepower = 30;
-					break;
-				default:
-					attacker.pokemon->move->basepower = 10;
-					break;
-			}
+			attacker.pokemon->move->basepower = attacker.pokemon->item.get_fling_power ();
 			break;
 		case Move::FRUSTRATION:
 			attacker.pokemon->move->basepower = 102 - attacker.pokemon->happiness * 2 / 5;
@@ -180,80 +95,7 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
 			break;
 		case Move::NATURAL_GIFT:
-			switch (attacker.pokemon->item) {
-				case AGUAV_BERRY:
-				case ASPEAR_BERRY:
-				case BABIRI_BERRY:
-				case CHARTI_BERRY:
-				case CHERI_BERRY:
-				case CHESTO_BERRY:
-				case CHILAN_BERRY:
-				case CHOPLE_BERRY:
-				case COBA_BERRY:
-				case COLBUR_BERRY:
-				case FIGY_BERRY:
-				case HABAN_BERRY:
-				case IAPAPA_BERRY:
-				case KASIB_BERRY:
-				case KEBIA_BERRY:
-				case LEPPA_BERRY:
-				case LUM_BERRY:
-				case MAGO_BERRY:
-				case OCCA_BERRY:
-				case ORAN_BERRY:
-				case PASSHO_BERRY:
-				case PAYAPA_BERRY:
-				case PECHA_BERRY:
-				case PERSIM_BERRY:
-				case RAWST_BERRY:
-				case RAZZ_BERRY:
-				case RINDO_BERRY:
-				case SHUCA_BERRY:
-				case SITRUS_BERRY:
-				case TANGA_BERRY:
-				case WACAN_BERRY:
-				case WIKI_BERRY:
-				case YACHE_BERRY:
-					attacker.pokemon->move->basepower = 60;
-					break;
-				case BLUK_BERRY:
-				case CORNN_BERRY:
-				case GREPA_BERRY:
-				case HONDEW_BERRY:
-				case KELPSY_BERRY:
-				case MAGOST_BERRY:
-				case NANAB_BERRY:
-				case NOMEL_BERRY:
-				case PAMTRE_BERRY:
-				case PINAP_BERRY:
-				case POMEG_BERRY:
-				case QUALOT_BERRY:
-				case RABUTA_BERRY:
-				case SPELON_BERRY:
-				case TAMATO_BERRY:
-				case WEPEAR_BERRY:
-					attacker.pokemon->move->basepower = 70;
-					break;
-				case APICOT_BERRY:
-				case BELUE_BERRY:
-				case CUSTAP_BERRY:
-				case DURIN_BERRY:
-				case ENIGMA_BERRY:
-				case GANLON_BERRY:
-				case JABOCA_BERRY:
-				case LANSAT_BERRY:
-				case LIECHI_BERRY:
-				case MICLE_BERRY:
-				case PETAYA_BERRY:
-				case ROWAP_BERRY:
-				case SALAC_BERRY:
-				case STARF_BERRY:
-				case WATMEL_BERRY:
-					attacker.pokemon->move->basepower = 80;
-					break;
-				default:
-					break;
-			}
+			attacker.pokemon->move->basepower = attacker.pokemon->item.get_berry_power ();
 			break;
 		case Move::PRESENT:
 			attacker.pokemon->move->basepower = attacker.pokemon->move->variable->first;
@@ -382,111 +224,111 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 		attacker.pokemon->move->power *= 2;
 
 	unsigned item_modifier = 10;
-	switch (attacker.pokemon->item) {
-		case MUSCLE_BAND:
+	switch (attacker.pokemon->item.name) {
+		case Item::MUSCLE_BAND:
 			if (attacker.pokemon->move->physical)
 				item_modifier = 11;
 			break;
-		case WISE_GLASSES:
+		case Item::WISE_GLASSES:
 			if (!attacker.pokemon->move->physical)
 				item_modifier = 11;
 			break;
-		case INSECT_PLATE:
-		case SILVERPOWDER:
+		case Item::INSECT_PLATE:
+		case Item::SILVERPOWDER:
 			if (attacker.pokemon->move->type == BUG)
 				item_modifier = 12;
 			break;
-		case DREAD_PLATE:	
-		case BLACKGLASSES:
+		case Item::DREAD_PLATE:	
+		case Item::BLACKGLASSES:
 			if (attacker.pokemon->move->type == DARK)
 				item_modifier = 12;
 			break;
-		case DRACO_PLATE:
-		case DRAGON_FANG:
+		case Item::DRACO_PLATE:
+		case Item::DRAGON_FANG:
 			if (attacker.pokemon->move->type == DRAGON)
 				item_modifier = 12;
 			break;
-		case ZAP_PLATE:
-		case MAGNET:
+		case Item::ZAP_PLATE:
+		case Item::MAGNET:
 			if (attacker.pokemon->move->type == ELECTRIC)
 				item_modifier = 12;
 			break;
-		case FIST_PLATE:
-		case BLACK_BELT:
+		case Item::FIST_PLATE:
+		case Item::BLACK_BELT:
 			if (attacker.pokemon->move->type == FIGHTING)
 				item_modifier = 12;
 			break;
-		case FLAME_PLATE:
-		case CHARCOAL:
+		case Item::FLAME_PLATE:
+		case Item::CHARCOAL:
 			if (attacker.pokemon->move->type == FIRE)
 				item_modifier = 12;
 			break;
-		case SKY_PLATE:
-		case SHARP_BEAK:
+		case Item::SKY_PLATE:
+		case Item::SHARP_BEAK:
 			if (attacker.pokemon->move->type == FLYING)
 				item_modifier = 12;
 			break;
-		case SPOOKY_PLATE:
-		case SPELL_TAG:
+		case Item::SPOOKY_PLATE:
+		case Item::SPELL_TAG:
 			if (attacker.pokemon->move->type == GHOST)
  				item_modifier = 12;
 			break;
-		case MEADOW_PLATE:
-		case MIRACLE_SEED:
+		case Item::MEADOW_PLATE:
+		case Item::MIRACLE_SEED:
 			if (attacker.pokemon->move->type == GRASS)
 				item_modifier = 12;
 			break;
-		case EARTH_PLATE:
-		case SOFT_SAND:
+		case Item::EARTH_PLATE:
+		case Item::SOFT_SAND:
 			if (attacker.pokemon->move->type == GROUND)
 				item_modifier = 12;
 			break;
-		case ICICLE_PLATE:
-		case NEVERMELTICE:
+		case Item::ICICLE_PLATE:
+		case Item::NEVERMELTICE:
 			if (attacker.pokemon->move->type == ICE)
 				item_modifier = 12;
 			break;
-		case SILK_SCARF:
+		case Item::SILK_SCARF:
 			if (attacker.pokemon->move->type == NORMAL)
 				item_modifier = 12;
 			break;
-		case TOXIC_PLATE:
-		case POISON_BARB:
+		case Item::TOXIC_PLATE:
+		case Item::POISON_BARB:
 			if (attacker.pokemon->move->type == POISON)
 				item_modifier = 12;
 			break;
-		case MIND_PLATE:
-		case TWISTEDSPOON:
-		case ODD_INCENSE:
+		case Item::MIND_PLATE:
+		case Item::TWISTEDSPOON:
+		case Item::ODD_INCENSE:
 			if (attacker.pokemon->move->type == PSYCHIC_TYPE)
 				item_modifier = 12;
 			break;
-		case STONE_PLATE:
-		case HARD_STONE:
-		case ROCK_INCENSE:
+		case Item::STONE_PLATE:
+		case Item::HARD_STONE:
+		case Item::ROCK_INCENSE:
 			if (attacker.pokemon->move->type == ROCK)
 				item_modifier = 12;
 			break;
-		case IRON_PLATE:
-		case METAL_COAT:
+		case Item::IRON_PLATE:
+		case Item::METAL_COAT:
 			if (attacker.pokemon->move->type == STEEL)
 				item_modifier = 12;
 			break;
-		case SPLASH_PLATE:
-		case MYSTIC_WATER:
-		case WAVE_INCENSE:
+		case Item::SPLASH_PLATE:
+		case Item::MYSTIC_WATER:
+		case Item::WAVE_INCENSE:
 			if (attacker.pokemon->move->type == WATER)
 				item_modifier = 12;
 			break;
-		case ADAMANT_ORB:
+		case Item::ADAMANT_ORB:
 			if (attacker.pokemon->name == DIALGA and (attacker.pokemon->move->type == DRAGON or attacker.pokemon->move->type == STEEL))
 				item_modifier = 12;
 			break;
-		case GRISEOUS_ORB:
+		case Item::GRISEOUS_ORB:
 			if (attacker.pokemon->name == GIRATINA_O and (attacker.pokemon->move->type == DRAGON or attacker.pokemon->move->type == GHOST))
 				item_modifier = 12;
 			break;
-		case LUSTROUS_ORB:
+		case Item::LUSTROUS_ORB:
 			if (attacker.pokemon->name == PALKIA and (attacker.pokemon->move->type == DRAGON or attacker.pokemon->move->type == WATER))
 				item_modifier = 12;
 			break;
@@ -640,14 +482,19 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 		else
 			damage *= 2;
 	}
-
-	if (attacker.pokemon->item == LIFE_ORB)
-		damage = damage * 13 / 10;
-	else if (attacker.pokemon->item == METRONOME_ITEM) {
-		if (attacker.pokemon->move->times_used >= 10)
-			damage *= 2;
-		else
-			damage = damage * (10 + attacker.pokemon->move->times_used) / 10;
+	
+	switch (attacker.pokemon->item.name) {
+		case Item::LIFE_ORB:
+			damage = damage * 13 / 10;
+			break;
+		case Item::METRONOME:
+			if (attacker.pokemon->move->times_used >= 10)
+				damage *= 2;
+			else
+				damage = damage * (10 + attacker.pokemon->move->times_used) / 10;
+			break;
+		default:
+			break;
 	}
 
 	damage = damage * mf / 2;
@@ -666,7 +513,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	else
 		aem = 4;
 
-	if (attacker.pokemon->item == EXPERT_BELT and effectiveness > 2)
+	if (attacker.pokemon->item.name == Item::EXPERT_BELT and effectiveness > 2)
 		eb = 6;
 	else
 		eb = 5;
@@ -677,71 +524,71 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 		tl = 1;
 
 	rb = 1;
-	if (defender.pokemon->item == CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
+	if (defender.pokemon->item.name == Item::CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
 		rb = 2;
 	else if (effectiveness > 2) {
-		switch (attacker.pokemon->item) {
-			case BABIRI_BERRY:
+		switch (attacker.pokemon->item.name) {
+			case Item::BABIRI_BERRY:
 				if (attacker.pokemon->move->type == STEEL)
 					rb = 2;
 				break;
-			case CHARTI_BERRY:
+			case Item::CHARTI_BERRY:
 				if (attacker.pokemon->move->type == ROCK)
 					rb = 2;
 				break;
-			case CHOPLE_BERRY:
+			case Item::CHOPLE_BERRY:
 				if (attacker.pokemon->move->type == FIGHTING)
 					rb = 2;
 				break;
-			case COBA_BERRY:
+			case Item::COBA_BERRY:
 				if (attacker.pokemon->move->type == FLYING)
 					rb = 2;
 				break;
-			case COLBUR_BERRY:
+			case Item::COLBUR_BERRY:
 				if (attacker.pokemon->move->type == DARK)
 					rb = 2;
 				break;
-			case HABAN_BERRY:
+			case Item::HABAN_BERRY:
 				if (attacker.pokemon->move->type == DRAGON)
 					rb = 2;
 				break;
-			case KASIB_BERRY:
+			case Item::KASIB_BERRY:
 				if (attacker.pokemon->move->type == GHOST)
 					rb = 2;
 				break;
-			case KEBIA_BERRY:
+			case Item::KEBIA_BERRY:
 				if (attacker.pokemon->move->type == POISON)
 					rb = 2;
 				break;
-			case OCCA_BERRY:
+			case Item::OCCA_BERRY:
 				if (attacker.pokemon->move->type == FIRE)
 					rb = 2;
 				break;
-			case PASSHO_BERRY:
+			case Item::PASSHO_BERRY:
 				if (attacker.pokemon->move->type == WATER)
 					rb = 2;
 				break;
-			case PAYAPA_BERRY:
+			case Item::PAYAPA_BERRY:
 				if (attacker.pokemon->move->type == PSYCHIC_TYPE)
 					rb = 2;
 				break;
-			case RINDO_BERRY:
+			case Item::RINDO_BERRY:
 				if (attacker.pokemon->move->type == GRASS)
 					rb = 2;
 				break;
-			case SHUCA_BERRY:
+			case Item::SHUCA_BERRY:
 				if (attacker.pokemon->move->type == GROUND)
 					rb = 2;
 				break;
-			case TANGA_BERRY:
+			case Item::TANGA_BERRY:
 				if (attacker.pokemon->move->type == BUG)
 					rb = 2;
 				break;
-			case WACAN_BERRY:
+			case Item::WACAN_BERRY:
 				if (attacker.pokemon->move->type == ELECTRIC)
 					rb = 2;
 				break;
-			case YACHE_BERRY:
+			case Item::YACHE_BERRY:
 				if (attacker.pokemon->move->type == ICE)
 					rb = 2;
 				break;

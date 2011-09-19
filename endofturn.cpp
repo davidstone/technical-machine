@@ -117,11 +117,11 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		team.pokemon->spe.boost (1);
 	else if (team.shed_skin)
 		team.pokemon->status = NO_STATUS;
-	switch (team.pokemon->item) {
-		case LEFTOVERS:
+	switch (team.pokemon->item.name) {
+		case Item::LEFTOVERS:
 			heal (*team.pokemon, 16);
 			break;
-		case BLACK_SLUDGE:
+		case Item::BLACK_SLUDGE:
 			if (is_type (team, POISON))
 				heal (*team.pokemon, 16);
 			else
@@ -174,11 +174,11 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		default:
 			break;
 	}
-	switch (team.pokemon->item) {
-		case FLAME_ORB:
+	switch (team.pokemon->item.name) {
+		case Item::FLAME_ORB:
 			burn (team, team, weather);
 			break;
-		case TOXIC_ORB:
+		case Item::TOXIC_ORB:
 			poison_toxic (team, team, weather);
 			break;
 		default:
@@ -211,7 +211,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.yawn == 1)
 		sleep (*team.pokemon, *team.pokemon, weather);
 	decrement (team.yawn);
-	if (team.pokemon->item == STICKY_BARB)
+	if (team.pokemon->item.name == Item::STICKY_BARB)
 		heal (*team.pokemon, -8);
 }
 

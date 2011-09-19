@@ -91,15 +91,15 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 			break;
 	}
 
-	switch (attacker.pokemon->item) {
-		case CHOICE_BAND:
+	switch (attacker.pokemon->item.name) {
+		case Item::CHOICE_BAND:
 			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
 			break;
-		case LIGHT_BALL:
+		case Item::LIGHT_BALL:
 			if (attacker.pokemon->name == PIKACHU)
 				attacker.pokemon->atk.stat *= 2;
 			break;
-		case THICK_CLUB:
+		case Item::THICK_CLUB:
 			if (attacker.pokemon->name == CUBONE or attacker.pokemon->name == MAROWAK)
 				attacker.pokemon->atk.stat *= 2;
 			break;
@@ -141,18 +141,18 @@ void calculate_special_attack (Team & attacker, Weather const &weather) {
 	if (attacker.pokemon->ability.name == Ability::SOLAR_POWER and weather.sun)
 		attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 3 / 2;
 
-	switch (attacker.pokemon->item) {
-		case SOUL_DEW:
+	switch (attacker.pokemon->item.name) {
+		case Item::SOUL_DEW:
 			if (attacker.pokemon->name != LATIAS and attacker.pokemon->name != LATIOS)
 				break;
-		case CHOICE_SPECS:
+		case Item::CHOICE_SPECS:
 			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 3 / 2;
 			break;
-		case DEEPSEATOOTH:
+		case Item::DEEPSEATOOTH:
 			if (attacker.pokemon->name == CLAMPERL)
 				attacker.pokemon->spa.stat *= 2;
 			break;
-		case LIGHT_BALL:
+		case Item::LIGHT_BALL:
 			if (attacker.pokemon->name == PIKACHU)
 				attacker.pokemon->spa.stat *= 2;
 			break;
@@ -201,7 +201,7 @@ void calculate_defense (Team const & attacker, Team & defender, Weather const & 
 	if (defender.pokemon->ability.name == Ability::MARVEL_SCALE and defender.pokemon->status)
 		defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
 	
-	if (defender.pokemon->item == METAL_POWDER and defender.pokemon->name == DITTO)
+	if (defender.pokemon->item.name == Item::METAL_POWDER and defender.pokemon->name == DITTO)
 		defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
 	
 	if (attacker.pokemon->move->is_self_KO ())
@@ -241,16 +241,16 @@ void calculate_special_defense (Team const & attacker, Team & defender, Weather 
 	if (defender.pokemon->ability.name == Ability::FLOWER_GIFT and weather.sun)
 		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 	
-	switch (defender.pokemon->item) {
-		case DEEPSEASCALE:
+	switch (defender.pokemon->item.name) {
+		case Item::DEEPSEASCALE:
 			if (defender.pokemon->name == CLAMPERL)
 				defender.pokemon->spd.stat *= 2;
 			break;
-		case METAL_POWDER:
+		case Item::METAL_POWDER:
 			if (defender.pokemon->name == DITTO)
 				defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 			break;
-		case SOUL_DEW:
+		case Item::SOUL_DEW:
 			if (defender.pokemon->name == LATIAS or defender.pokemon->name == LATIOS)
 				defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 			break;
@@ -315,16 +315,16 @@ void calculate_speed (Team & team, Weather const & weather) {
 			break;
 	}
 	
-	switch (team.pokemon->item) {
-		case QUICK_POWDER:
+	switch (team.pokemon->item.name) {
+		case Item::QUICK_POWDER:
 			if (team.pokemon->name == DITTO)
 				team.pokemon->spe.stat *= 2;
 			break;
-		case CHOICE_SCARF:
+		case Item::CHOICE_SCARF:
 			team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
 			break;
-		case MACHO_BRACE:
-		case POWER_ITEMS:
+		case Item::MACHO_BRACE:
+		case Item::POWER_ITEMS:
 			team.pokemon->spe.stat /= 2;
 			break;
 		default:
@@ -388,11 +388,11 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 		else
 			user.chance_to_hit = user.chance_to_hit * 3 / (3 + target.evasion);
 
-		switch (user.pokemon->item) {
-			case WIDE_LENS:
+		switch (user.pokemon->item.name) {
+			case Item::WIDE_LENS:
 				user.chance_to_hit = user.chance_to_hit * 11 / 10;
 				break;
-			case ZOOM_LENS:
+			case Item::ZOOM_LENS:
 				if (target.moved)
 					user.chance_to_hit = user.chance_to_hit * 6 / 5;
 				break;
@@ -410,11 +410,11 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 			default:
 				break;
 		}
-		switch (target.pokemon->item) {
-			case BRIGHTPOWDER:
+		switch (target.pokemon->item.name) {
+			case Item::BRIGHTPOWDER:
 				user.chance_to_hit = user.chance_to_hit * 9 / 10;
 				break;
-			case LAX_INCENSE:
+			case Item::LAX_INCENSE:
 				user.chance_to_hit = user.chance_to_hit * 19 / 20;
 				break;
 			default:

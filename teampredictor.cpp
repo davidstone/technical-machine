@@ -44,10 +44,10 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	}
 	predict_pokemon (team, estimate, multiplier);
 	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		if (pokemon->ability.name == Ability::END_ABILITY)
+		if (pokemon->ability.is_set ())
 			pokemon->ability.name = static_cast<Ability::Abilities> (detailed [pokemon->name] [0]);
-		if (pokemon->item == END_ITEM)
-			pokemon->item = static_cast<items> (detailed [pokemon->name] [1]);
+		if (pokemon->item.is_set ())
+			pokemon->item.name = static_cast<Item::Items> (detailed [pokemon->name] [1]);
 		if (pokemon->nature == Stat::Nature::END_NATURE)
 			pokemon->nature = static_cast<Stat::Nature> (detailed [pokemon->name] [2]);
 		predict_move (*pokemon, detailed, size);

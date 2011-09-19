@@ -594,7 +594,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::COVET:
 		case Move::THIEF:
-			if (user.pokemon->item == NO_ITEM)
+			if (user.pokemon->item.name == Item::NO_ITEM)
 				user.pokemon->item = target.pokemon->item;
 			break;
 		case Move::CROSS_POISON:
@@ -738,7 +738,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				target.confused = user.pokemon->move->variable->first;
 			break;
 		case Move::FLING:
-			user.pokemon->item = NO_ITEM;
+			user.pokemon->item.name = Item::NO_ITEM;
 			break;
 		case Move::FLY:
 			if (user.vanish == LANDED)
@@ -769,7 +769,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			std::swap (user.pokemon->spd.stage, target.pokemon->spd.stage);
 			break;
 		case Move::HAIL:
-			if (user.pokemon->item == ICY_ROCK)
+			if (user.pokemon->item.name == Item::ICY_ROCK)
 				weather.set_hail (8);
 			else
 				weather.set_hail (5);
@@ -864,7 +864,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::LIGHT_SCREEN:
 			if (user.light_screen == 0) {
-				if (user.pokemon->item == LIGHT_CLAY)
+				if (user.pokemon->item.name == Item::LIGHT_CLAY)
 					user.light_screen = 8;
 				else
 					user.light_screen = 5;
@@ -1009,7 +1009,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::RAGE:		// Fix
 			break;
 		case Move::RAIN_DANCE:
-			if (user.pokemon->item == DAMP_ROCK)
+			if (user.pokemon->item.name == Item::DAMP_ROCK)
 				weather.set_rain (8);
 			else
 				weather.set_rain (5);
@@ -1029,7 +1029,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::REFLECT:
 			if (user.reflect == 0) {
-				if (user.pokemon->item == LIGHT_CLAY)
+				if (user.pokemon->item.name == Item::LIGHT_CLAY)
 					user.reflect = 8;
 				else
 					user.reflect = 5;
@@ -1062,7 +1062,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				user.safeguard = 5;
 			break;
 		case Move::SANDSTORM:
-			if (user.pokemon->item == SMOOTH_ROCK)
+			if (user.pokemon->item.name == Item::SMOOTH_ROCK)
 				weather.set_sand (8);
 			else
 				weather.set_sand (5);
@@ -1123,7 +1123,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			}
 			break;
 		case Move::SUNNY_DAY:
-			if (user.pokemon->item == HEAT_ROCK)
+			if (user.pokemon->item.name == Item::HEAT_ROCK)
 				weather.set_sun (8);
 			else
 				weather.set_sun (5);
@@ -1229,7 +1229,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 
 void do_damage (Team & user, Team & target, unsigned damage) {
 	damage_side_effect (*target.pokemon, damage);
-	if (user.pokemon->item == LIFE_ORB)
+	if (user.pokemon->item.name == Item::LIFE_ORB)
 		heal (*user.pokemon, -10);
 	if (target.pokemon->hp.stat > 0) {
 		if (target.bide != 0)

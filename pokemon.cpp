@@ -24,8 +24,6 @@ namespace technicalmachine {
 
 Pokemon::Pokemon (species const & member, unsigned size) : 
 	name (member),
-	ability (Ability::END_ABILITY),
-	item (END_ITEM),
 	status (NO_STATUS),
 	hp (name, Stat::HP),
 	atk (name, Stat::ATK),
@@ -59,7 +57,7 @@ uint64_t Pokemon::hash () const {
 	uint64_t hash = 0;
 	for (std::vector<Move>::const_iterator it = move.set.begin(); it != move.set.end(); ++it)
 		hash ^= it->hash();
-	return name + END_SPECIES * (item + END_ITEM * (status + END_STATUS * (hp.stat + hp.max * (atk.stage + 13 * (def.stage + 13 * (spa.stage + 13 * (spd.stage + 13 * (spe.stage + 13 * (sleep + 5 * hash)))))))));
+	return name + END_SPECIES * (item.name + Item::END_ITEM * (status + END_STATUS * (hp.stat + hp.max * (atk.stage + 13 * (def.stage + 13 * (spa.stage + 13 * (spd.stage + 13 * (spe.stage + 13 * (sleep + 5 * hash)))))))));
 }
 
 bool Pokemon::operator== (Pokemon const & other) const {
@@ -69,7 +67,7 @@ bool Pokemon::operator== (Pokemon const & other) const {
 		if (move.set [n] == other.move.set [n])
 			return false;
 	}
-	return name == other.name and status == other.status and sleep == other.sleep and hp.stat == other.hp.stat and atk.stage == other.atk.stage and def.stage == other.def.stage and spa.stage == other.spa.stage and spd.stage == other.spd.stage and spe.stage == other.spe.stage and item == other.item;
+	return name == other.name and status == other.status and sleep == other.sleep and hp.stat == other.hp.stat and atk.stage == other.atk.stage and def.stage == other.def.stage and spa.stage == other.spa.stage and spd.stage == other.spd.stage and spe.stage == other.spe.stage and item.name == other.item.name;
 }
 
 bool Pokemon::operator!= (Pokemon const & other) const {

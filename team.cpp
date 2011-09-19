@@ -31,7 +31,7 @@
 
 namespace technicalmachine {
 
-Team::Team (bool isme, Map const &map, unsigned size) :
+Team::Team (bool isme, Map const & map, unsigned size) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -146,7 +146,7 @@ uint64_t Team::hash () const {
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
 
-void Team::load (std::string const &name, Map const &map, unsigned size) {
+void Team::load (std::string const & name, Map const & map, unsigned size) {
 	if (name.substr (name.length() - 3) == ".tp")
 		po::load_team (*this, name, size);
 	else			// if (name.substr (name.length() - 4) == ".sbt")
@@ -155,7 +155,7 @@ void Team::load (std::string const &name, Map const &map, unsigned size) {
 		it->load();
 }
 
-bool Team::operator== (Team const &other) const {
+bool Team::operator== (Team const & other) const {
 	if (pokemon.set.size() != other.pokemon.set.size())
 		return false;
 	for (size_t n = 0; n != pokemon.set.size(); ++n) {
@@ -172,7 +172,7 @@ Pokemon const & Team::at_replacement () const {
 	return pokemon.set [replacement];
 }
 
-void Team::output (std::string &output) {
+void Team::output (std::string & output) {
 	if (me)
 		output = "AI";
 	else
@@ -182,9 +182,9 @@ void Team::output (std::string &output) {
 	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it) {
 		output += it->get_name();
 		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (it->hp.stat) / static_cast<double> (it->hp.max)) + "% HP)";
-		output += " @ " + item_name [it->item];
+		output += " @ " + it->item.get_name ();
 		output += " ** " + it->nickname + '\n';
-		if (it->ability.name != Ability::END_ABILITY)
+		if (it->ability.is_set ())
 			output += "\tAbility: " + it->ability.get_name () + '\n';
 		if (it->status != NO_STATUS)
 			output += "\tStatus: " + boost::lexical_cast<std::string> (it->status) + '\n';

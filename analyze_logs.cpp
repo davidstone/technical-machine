@@ -297,7 +297,7 @@ bool Log::side_effect () {
 
 
 void Log::log_misc (Map const & map) {
-	if (active->at_replacement().ability.name == Ability::END_ABILITY) {
+	if (!active->at_replacement().ability.is_set ()) {
 		if (active->at_replacement().nickname + "'s Anger Point raised its attack!" == line) {
 			active->at_replacement().ability.name = Ability::ANGER_POINT;
 			active->at_replacement().atk.stage = 6;
@@ -389,7 +389,7 @@ void Log::log_misc (Map const & map) {
 		else if (active->at_replacement().nickname + " avoided damage with Wonder Guard!" == line)
 			active->at_replacement().ability.name = Ability::WONDER_GUARD;
 	}
-	if (inactive->at_replacement().ability.name == Ability::END_ABILITY) {
+	if (!inactive->at_replacement().ability.is_set ()) {
 		if (active->at_replacement().nickname + " was hurt by " + inactive->at_replacement().nickname + "'s Aftermath!" == line)
 			inactive->at_replacement().ability.name = Ability::AFTERMATH;
 		else if (active->at_replacement().nickname + "is tormented by the foe " +inactive->at_replacement().nickname + "'s Bad Dreams!" == line)
@@ -406,15 +406,15 @@ void Log::log_misc (Map const & map) {
 			inactive->at_replacement().ability.name = map.ability.find (line.substr (search.length(), line.length() - search.length() - n))->second;
 		}
 	}
-	if (active->at_replacement().item == END_ITEM) {
+	if (!active->at_replacement().item.is_set ()) {
 		if (active->at_replacement().nickname + "'s Black Sludge restored a little health!" == line)
-			active->at_replacement().item = BLACK_SLUDGE;
+			active->at_replacement().item = Item::BLACK_SLUDGE;
 		else if (active->at_replacement().nickname + "'s Leftovers restored its health a little!" == line)
-			active->at_replacement().item = LEFTOVERS;
+			active->at_replacement().item = Item::LEFTOVERS;
 		else if (active->at_replacement().nickname + "'s Quick Claw activated!" == line)
-			active->at_replacement().item = QUICK_CLAW;
+			active->at_replacement().item = Item::QUICK_CLAW;
 		else if (active->at_replacement().nickname + " became fully charged due to its Power Herb!" == line)
-			active->at_replacement().item = POWER_HERB;
+			active->at_replacement().item = Item::POWER_HERB;
 	}
 }
 

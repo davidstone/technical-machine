@@ -24,7 +24,7 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 	if (user.bide and user.pokemon->move->name != Move::BIDE)
 			user.pokemon->move->selectable = false;
 	else if (user.pokemon->move->is_switch()) {
-		if (((other.pokemon->ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and user.pokemon->item != SHED_SHELL)
+		if (((other.pokemon->ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and user.pokemon->item.name != Item::SHED_SHELL)
 				or (user.is_switching_to_self ()))
 			user.pokemon->move->selectable = false;
 	}
@@ -41,7 +41,7 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 			or (block2 (user, weather))
 			or (user.torment and user.pokemon->move->times_used != 0))
 		user.pokemon->move->selectable = false;
-	else if (user.encore or user.recharging or user.pokemon->item == CHOICE_BAND or user.pokemon->item == CHOICE_SCARF or user.pokemon->item == CHOICE_SPECS) {
+	else if (user.encore or user.recharging or user.pokemon->item.is_choice_item ()) {
 		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
 			if (it->name != user.pokemon->move->name and it->times_used != 0) {
 				user.pokemon->move->selectable = false;

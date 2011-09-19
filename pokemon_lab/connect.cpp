@@ -1025,44 +1025,44 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 0:		// $1's $2 restored its health a little!
 					update_active_print (log, arguments);
 					std::cout << log.active->at_replacement().get_name() + " has Leftovers.\n";
-					log.active->at_replacement().item = LEFTOVERS;
+					log.active->at_replacement().item.name = Item::LEFTOVERS;
 					break;
 				case 1:		// $1's $2 cured its $3!
-//					log.active->at_replacement().item = 
+//					log.active->at_replacement().item.name = Item::
 					break;
 				case 2:
-					log.active->at_replacement().item = QUICK_CLAW;
+					log.active->at_replacement().item.name = Item::QUICK_CLAW;
 					break;
 				case 3:		// $1's $2 raised its $3!
-//					log.active->at_replacement().item = 
+//					log.active->at_replacement().item.name = Item::
 					break;
 				case 4:		// The berry was the wrong flavor for $1!
-//					log.active->at_replacement().item = 
+//					log.active->at_replacement().item.name = Item::
 					break;
 				case 5:		// #1's $2 weakened $3's power!
-//					log.active->at_replacement().item = 
+//					log.active->at_replacement().item.name = Item::
 					break;
 				case 6:		// $1 was hurt by $2's $3!
-//					log.active->at_replacement().item = 
+//					log.active->at_replacement().item.name = Item::
 					break;
 				case 7:		// Fix this
-					log.active->at_replacement().item = STICKY_BARB;
+					log.active->at_replacement().item.name = Item::STICKY_BARB;
 					break;
 				case 8:
 					update_active_print (log, arguments);
-					log.active->at_replacement().item = BLACK_SLUDGE;
+					log.active->at_replacement().item.name = Item::BLACK_SLUDGE;
 					break;
 				case 9:		// The $1 latched on to $2!
-//					log.active->at_replacement().item = 
+//					log.active->at_replacement().item.name = Item::
 					break;
 				case 10:
-					log.inactive->at_replacement().item = FOCUS_SASH;
+					log.inactive->at_replacement().item.name = Item::FOCUS_SASH;
 					break;
 				case 11:
-					log.active->at_replacement().item = CUSTAP_BERRY;
+					log.active->at_replacement().item.name = Item::CUSTAP_BERRY;
 					break;
 				case 12:
-					log.active->at_replacement().item = POWER_HERB;
+					log.active->at_replacement().item.name = Item::POWER_HERB;
 					break;
 			}
 			break;
