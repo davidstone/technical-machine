@@ -34,16 +34,12 @@ using namespace technicalmachine;
 
 int main () {
 	
-	std::cout << "Begin\n";
 	Map map;
 	int detailed [END_SPECIES] [7] = {{ 0 }};
 	detailed_stats (map, detailed);
-	std::cout << "Loading AI" << std::endl;
 	Team ai (true, map, 6);
-	std::cout << "Loading foe" << std::endl;
 	Team foe (false, map, ai.size);
 
-	std::cout << "Hi\n";
 	Pokemon member (INFERNAPE, foe.size);
 	foe.pokemon.set.push_back (member);
 	foe.pokemon->level = 100;
@@ -55,7 +51,6 @@ int main () {
 	foe.pokemon.set.back().load ();
 
 	Weather weather;
-	std::cout << "Hello\n";
 	
 	ai.replacement = 0;
 	switchpokemon (ai, foe, weather);
@@ -64,7 +59,6 @@ int main () {
 	calculate_defending_stat (foe, ai, weather);
 	calculate_speed (ai, weather);
 	
-	std::cout << "Creating vector\n";
 	std::vector<Unknown> hidden;
 	unknown (hidden);
 	

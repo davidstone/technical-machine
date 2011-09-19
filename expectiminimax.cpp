@@ -62,7 +62,7 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 	
 	Something to consider as a potential speed up at the cost of some accuracy (but would allow a deeper, thus more accurate, search) would be to pick from all random numbers randomly, rather than seeing the outcome of all of them and averaging it. In other words, do several trials assuming a particular (but different for each trial) set of random numbers are selected, and then average that result. This would give massive reductions to the branching factor, and with a large enough number of trials should be close enough to the average to potentially speed up the program enough to justify the loss in accuracy.
 	
-	I subtract 1 from -Score::VICTORY to make sure that even a guaranteed loss is seen as better than not returning a result. This way, I can do some things when my intermediate scores are strictly greater than alpha, rather than greater than or equal to, which can save a few calculations. This has the side-effect of limiting Score::VICTORY to be at least one less than the greatest value representable by a long, which in practice shouldn't matter.
+	I subtract 1 from -Score::VICTORY to make sure that even a guaranteed loss is seen as better than not returning a result. This way, I can do some things when my intermediate scores are strictly greater than alpha, rather than greater than or equal to, which can save a few calculations. This has the side-effect of limiting Score::VICTORY to be at least one less than the greatest value representable by an int64_t, which in practice shouldn't matter.
 	
 	For a similar reason, I later set beta to Score::VICTORY + 1.
 	
@@ -437,7 +437,9 @@ void print_best_move (Team const & team, Move::moves_list best_move, int depth, 
 		std::cout << " for a minimum expected score of " << score << "\n";
 }
 
-void print_action (Team const & team, bool verbose, bool first_turn, std::string const & indent) {
+void print_action (Team const & team, bool verbose, bool first_turn, std::string indent) {
+	if (!team.me)
+		indent += "\t";
 	if (verbose or first_turn) {
 		std::cout << indent + "Evaluating ";
 		if (team.pokemon->move->is_switch())

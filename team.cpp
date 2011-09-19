@@ -110,17 +110,19 @@ Team::Team (bool isme, Map const & map, unsigned size) :
 
 	replacement (0),
 	size (6),
-	me (isme) {
+	me (isme)
+{
 	if (me) {
 		std::string line;
 		std::string team_file;
 		std::ifstream settings ("settings.txt");
 		for (getline (settings, line); !settings.eof(); getline (settings, line)) {
-			size_t found = line.find (": ");
+			std::string const delimiter = ": ";
+			size_t found = line.find (delimiter);
 			if (line.substr (0, found) == "username")
-				player = line.substr (found + 1);
+				player = line.substr (found + delimiter.length());
 			else if (line.substr (0, found) == "team")
-				team_file = line.substr (found + 1);
+				team_file = line.substr (found + delimiter.length());
 		}
 		settings.close();
 
@@ -149,8 +151,10 @@ uint64_t Team::hash () const {
 void Team::load (std::string const & name, Map const & map, unsigned size) {
 	if (name.substr (name.length() - 3) == ".tp")
 		po::load_team (*this, name, size);
-	else			// if (name.substr (name.length() - 4) == ".sbt")
+	else if (name.substr (name.length() - 4) == ".sbt")
 		pl::load_team (*this, name, map, size);
+	else
+		std::cerr << "Unsupported file format.\n";
 	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
 		it->load();
 }

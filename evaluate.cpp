@@ -141,83 +141,84 @@ int64_t Score::win (Team const & team) {
 Score::Score () {
 	std::ifstream file ("evaluate.txt");
 	std::string line;
+	std::string const delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t x = line.find ('\t');
+		size_t x = line.find (delimiter);
 		std::string data = line.substr (0, x);
 		if (data == "Transposition Table")
-			transposition_table = boost::lexical_cast<int> (line.substr (x + 1));
+			transposition_table = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Light Screen")
-			light_screen = boost::lexical_cast<int> (line.substr (x + 1));
+			light_screen = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Lucky Chant")
-			lucky_chant = boost::lexical_cast<int> (line.substr (x + 1));
+			lucky_chant = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Mist")
-			mist = boost::lexical_cast<int> (line.substr (x + 1));
+			mist = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Reflect")
-			reflect = boost::lexical_cast<int> (line.substr (x + 1));
+			reflect = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Safeguard")
-			safeguard = boost::lexical_cast<int> (line.substr (x + 1));
+			safeguard = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Tailwind")
-			tailwind = boost::lexical_cast<int> (line.substr (x + 1));
+			tailwind = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Wish")
-			wish = boost::lexical_cast<int> (line.substr (x + 1));
+			wish = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Spikes")
-			spikes = boost::lexical_cast<int> (line.substr (x + 1));
+			spikes = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Stealth Rock")
-			stealth_rock = boost::lexical_cast<int> (line.substr (x + 1));
+			stealth_rock = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Toxic Spikes")
-			toxic_spikes = boost::lexical_cast<int> (line.substr (x + 1));
+			toxic_spikes = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Members")
-			members = boost::lexical_cast<int> (line.substr (x + 1));
+			members = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "HP")
-			hp = boost::lexical_cast<int> (line.substr (x + 1));
+			hp = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Aqua Ring")
-			aqua_ring = boost::lexical_cast<int> (line.substr (x + 1));
+			aqua_ring = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Curse")
-			curse = boost::lexical_cast<int> (line.substr (x + 1));
+			curse = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Imprison")
-			imprison = boost::lexical_cast<int> (line.substr (x + 1));
+			imprison = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Ingrain")
-			ingrain = boost::lexical_cast<int> (line.substr (x + 1));
+			ingrain = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Leech Seed")
-			leech_seed = boost::lexical_cast<int> (line.substr (x + 1));
+			leech_seed = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Loaf")
-			loaf = boost::lexical_cast<int> (line.substr (x + 1));
+			loaf = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Magnet Rise")
-			magnet_rise = boost::lexical_cast<int> (line.substr (x + 1));
+			magnet_rise = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Nightmare")
-			nightmare = boost::lexical_cast<int> (line.substr (x + 1));
+			nightmare = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Substitute")
-			substitute = boost::lexical_cast<int> (line.substr (x + 1));
+			substitute = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Torment")
-			torment = boost::lexical_cast<int> (line.substr (x + 1));
+			torment = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Trapped")
-			trapped = boost::lexical_cast<int> (line.substr (x + 1));
+			trapped = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Burn")
-			burn = boost::lexical_cast<int> (line.substr (x + 1));
+			burn = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Freeze")
-			freeze = boost::lexical_cast<int> (line.substr (x + 1));
+			freeze = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Paralysis")
-			paralysis = boost::lexical_cast<int> (line.substr (x + 1));
+			paralysis = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Poison")
-			poison = boost::lexical_cast<int> (line.substr (x + 1));
+			poison = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Sleep")
-			sleep = boost::lexical_cast<int> (line.substr (x + 1));
+			sleep = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Attack stage")
-			atk_stage = boost::lexical_cast<int> (line.substr (x + 1));
+			atk_stage = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Defense stage")
-			def_stage = boost::lexical_cast<int> (line.substr (x + 1));
+			def_stage = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Special Attack stage")
-			spa_stage = boost::lexical_cast<int> (line.substr (x + 1));
+			spa_stage = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Special Defense stage")
-			spd_stage = boost::lexical_cast<int> (line.substr (x + 1));
+			spd_stage = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Speed stage")
-			spe_stage = boost::lexical_cast<int> (line.substr (x + 1));
+			spe_stage = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Focus Energy")
-			focus_energy = boost::lexical_cast<int> (line.substr (x + 1));
+			focus_energy = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "Baton Pass")
-			baton_pass = boost::lexical_cast<int> (line.substr (x + 1));
+			baton_pass = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		else if (data == "No PP")
-			no_pp = boost::lexical_cast<int> (line.substr (x + 1));
+			no_pp = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 	}
 	file.close();
 }

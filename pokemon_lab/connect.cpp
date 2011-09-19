@@ -77,7 +77,7 @@ BotClient::BotClient (int depth_):
 void BotClient::account_info (std::string & host, std::string & port) {
 	std::ifstream file ("settings.txt");
 	std::string line;
-	std::string delimiter = ": ";
+	std::string const delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t position = line.find (delimiter);
 		std::string data = line.substr (0, position);
@@ -641,8 +641,8 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 	battle.party = party;
 	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
 	challenges.erase (opponent);
-	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(15));
-	timer.wait ();
+//	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(15));
+//	timer.wait ();
 }
 
 void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
@@ -1024,7 +1024,6 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 			switch (message_id) {
 				case 0:		// $1's $2 restored its health a little!
 					update_active_print (log, arguments);
-					std::cout << log.active->at_replacement().get_name() + " has Leftovers.\n";
 					log.active->at_replacement().item.name = Item::LEFTOVERS;
 					break;
 				case 1:		// $1's $2 cured its $3!
@@ -1073,8 +1072,6 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 
 void Battle::update_active_print (Log & log, std::vector <std::string> const & arguments) {
 	// This needs to be changed to the correct message parser.
-	std::cout << "arguments.size (): " << arguments.size () << '\n';
-	std::cout << "arguments [0].length (): " << arguments [0].length () << '\n';
 	assert (arguments.size() > 0);
 	if (arguments [0] [3] - '0' == party) {
 		log.active = & ai;
@@ -1141,8 +1138,6 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 }
 
 void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator) {
-	std::cout << "change_in_health: " << change_in_health << '\n';
-	std::cout << "remaining_health: " << remaining_health << '\n';
 	if (log.move_damage) {
 		unsigned effectiveness = get_effectiveness (log.active->at_replacement().move->type, log.inactive->at_replacement ());
 		if ((effectiveness > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
@@ -1157,11 +1152,9 @@ void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t chang
 		remaining_health = 0;
 	// If the message is about me, active must be me, otherwise, active must not be me
 	if ((party_id == party) == log.active->me) {
-		std::cout << "Updating active HP\n";
 		log.active->at_replacement().new_hp = remaining_health;
 	}
 	else {
-		std::cout << "Updating inactive HP\n";
 		log.inactive->at_replacement().new_hp = remaining_health;
 	}
 }

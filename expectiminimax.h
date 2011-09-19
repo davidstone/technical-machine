@@ -47,7 +47,7 @@ int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, in
 
 void print_best_move (Team const & team, Move::moves_list best_move, int depth, int64_t score);
 
-void print_action (Team const & team, bool verbose, bool first_turn, std::string const & indent);
+void print_action (Team const & team, bool verbose, bool first_turn, std::string indent);
 
 }
 #endif

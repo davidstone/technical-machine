@@ -10,7 +10,6 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdint>
-#include <iostream>
 #include "transposition.h"
 #include "ability.h"
 #include "evaluate.h"
@@ -56,8 +55,9 @@ bool Hash::operator!= (Hash const & other) const {
 
 int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score) {
 	int64_t value;
-	if (depth == 0)
+	if (depth == 0) {
 		value = score.evaluate (ai, foe, weather);
+	}
 	else {
 		// First, I hash both teams and the weather. These are the long-form hashes that are each the size of a uint64_t, and should be unique within a game. I then take those hashes and divide them modulo their relevant dimension (used to determine the size of the transposition table). These short-form hashes are used as the array index. The shortened hash combinations are used to look up the full hashes, value, and depth.
 		Hash hash (ai.hash(), foe.hash(), weather.hash(), depth);
