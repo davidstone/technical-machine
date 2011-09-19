@@ -20,7 +20,7 @@ class Pokemon;
 class Team;
 class Weather;
 
-void movepower (Team & attacker, Team const & defender, Weather const weather);
+void movepower (Team & attacker, Team const & defender, Weather const & weather);
 
 unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf);
 

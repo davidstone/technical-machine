@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-void movepower (Team & attacker, Team const & defender, Weather const weather) {
+void movepower (Team & attacker, Team const & defender, Weather const & weather) {
 
 	// I account for the doubling of the base power for Pursuit in the switching function by simply multiplying the final base power by 2. Regardless of the combination of modifiers, this does not change the final base power. The exception is if the attacker's ally uses Helping Hand. The target uses U-turn and the attacker uses Pursuit with a slower Pokemon that has Rivalry and a Muscle Band and neither the attacker nor target is genderless. This will cause the base power to be 1 less than it should be.
 
