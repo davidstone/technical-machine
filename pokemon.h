@@ -55,13 +55,12 @@ class Pokemon {
 		Pokemon (species const &member, unsigned size);
 		uint64_t hash () const;
 		std::string get_name () const;
-		bool operator== (Pokemon const &other) const;
-		bool operator!= (Pokemon const &other) const;
+		bool operator== (Pokemon const & other) const;
+		bool operator!= (Pokemon const & other) const;
 		void load ();
 	private:
-		static Type const get_type [][2];
-		static int8_t const get_mass [];
-		static std::string const name_to_string [];
+		void set_type ();
+		int8_t get_mass () const;
 };
 
 }
