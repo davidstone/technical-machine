@@ -15,6 +15,7 @@
 #include "ability.h"
 #include "item.h"
 #include "load_stats.h"
+#include "map.h"
 #include "move.h"
 #include "pokemon.h"
 #include "reversedamage.h"
@@ -33,30 +34,35 @@ using namespace technicalmachine;
 
 int main () {
 	
+	std::cout << "Begin\n";
 	Map map;
-	int detailed [END_SPECIES] [7];
+	int detailed [END_SPECIES] [7] = {{ 0 }};
 	detailed_stats (map, detailed);
-	Team ai (true, map);
-	Team foe (false, map);
+	std::cout << "Loading AI" << std::endl;
+	Team ai (true, map, 6);
+	std::cout << "Loading foe" << std::endl;
+	Team foe (false, map, ai.size);
 
+	std::cout << "Hi\n";
 	Pokemon member (INFERNAPE, foe.size);
 	foe.pokemon.set.push_back (member);
 	foe.pokemon->level = 100;
-	foe.pokemon->ability = BLAZE;
+	foe.pokemon->ability.name = Ability::BLAZE;
 
-	Move move (CLOSE_COMBAT, 3);
+	Move move (Move::CLOSE_COMBAT, 3, foe.size);
 	foe.pokemon->move.set.insert (foe.pokemon->move.set.begin(), move);
 
 	foe.pokemon.set.back().load ();
 
 	Weather weather;
+	std::cout << "Hello\n";
 	
 	ai.replacement = 0;
 	switchpokemon (ai, foe, weather);
 	foe.replacement = 0;
 	switchpokemon (foe, ai, weather);
-	defense (foe, ai, weather);
-	speed (ai, weather);
+	calculate_defending_stat (foe, ai, weather);
+	calculate_speed (ai, weather);
 	
 	std::cout << "Creating vector\n";
 	std::vector<Unknown> hidden;
@@ -69,18 +75,18 @@ int main () {
 	damage = 668;
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
 	
-	items thingy = END_ITEM;
+	Item::Items thingy = Item::END_ITEM;
 	std::string output = "";
 	for (std::vector<Unknown>::iterator it = hidden.begin(); it != hidden.end(); ++it) {
 		if (it->hpev == 0 and it->speev == 0) {
 			if (thingy != it->item) {
 				output += '\n' + boost::lexical_cast <std::string> (static_cast <int> (it->item)) + ": \n";
-				thingy = static_cast <items> (it->item);
+				thingy = static_cast <Item::Items> (it->item);
 			}
 			output += boost::lexical_cast <std::string> (static_cast <int> (it->atkev) * 4);
-			if (static_cast<unsigned char> (NAUGHTY) == it->nature)
+			if (it->nature == static_cast<unsigned char> (Stat::NAUGHTY))
 				output += "(+)";
-			else if (static_cast<unsigned char> (MODEST) == it->nature)
+			else if (it->nature == static_cast<unsigned char> (Stat::MODEST))
 				output += "(-)";
 			output += ", ";
 		}

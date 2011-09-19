@@ -14,6 +14,7 @@
 
 #include <string>
 #include <vector>
+#include "ability.h"
 #include "active.h"
 #include "gender.h"
 #include "item.h"
