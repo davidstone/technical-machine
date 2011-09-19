@@ -25,6 +25,10 @@ Weather::Weather () :
 	rain (0) {
 	}
 
+bool Weather::operator == (Weather const &other) const {
+	return trick_room == other.trick_room and fog == other.fog and gravity == other.gravity and uproar == other.uproar and hail == other.hail and sun == other.sun and sand == other.sand and rain == other.rain;
+}
+
 void Weather::set_trick_room () {
 	if (trick_room == 0)
 		trick_room = 5;

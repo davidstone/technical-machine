@@ -35,10 +35,7 @@ class Weather {
 		int8_t sand;
 		int8_t rain;
 	
-		bool operator == (Weather const &other) const {
-			return this->trick_room == other.trick_room and this->fog == other.fog and this->gravity == other.gravity and this->uproar == other.uproar and this->hail == other.hail and this->sun == other.sun and this->sand == other.sand and this->rain == other.rain;
-		}
-	
+		bool operator == (Weather const &other) const;
 		Weather ();
 		void set_trick_room ();
 		void set_gravity ();
