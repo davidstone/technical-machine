@@ -26,7 +26,7 @@ namespace technicalmachine {
 class Map {
 	public:
 		std::map <std::string, Ability::Abilities> ability;
-		std::map <std::string, genders> gender;
+		std::map <std::string, Gender::Genders> gender;
 		std::map <std::string, items> item;
 		std::map <std::string, Move::moves_list> move;
 		std::map <std::string, Stat::Nature> nature;

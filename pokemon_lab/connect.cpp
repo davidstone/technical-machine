@@ -443,7 +443,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t index = msg.read_byte ();
 			std::string nickname = msg.read_string ();
 			uint16_t species_id = msg.read_short ();
-			uint8_t gender = msg.read_byte ();
+			int8_t gender = msg.read_byte ();
 			uint8_t level = msg.read_byte();
 			Battle & battle = battles.find (field_id)->second;
 			battle.handle_send_out (map, party, slot, index, nickname, species_id, gender, level);
@@ -1123,7 +1123,7 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
 }
 
-void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level) {
+void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, int8_t gender_, uint8_t level) {
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -1135,7 +1135,9 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 		other = & ai;
 	}
 	species name = InMessage::pl_to_tm_species (species_id);
-	log.pokemon_sent_out (map, name, nickname, level, static_cast <genders> (gender), *team, *other);
+	Gender gender;
+	gender.from_simulator_int (gender_);
+	log.pokemon_sent_out (map, name, nickname, level, gender, *team, *other);
 }
 
 void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator) {

@@ -14,9 +14,23 @@
 
 namespace technicalmachine {
 
-// Silly genderless Pokemon not letting me use a bool.
+class Gender {
+	public:
+		// Silly genderless Pokemon not letting me use a bool.
+		enum Genders { GENDERLESS = 0, FEMALE = -1, MALE = 1 };
+		Genders gender;
+		
+		Gender ();
+		Gender (Genders gender_);
+		Gender & operator= (Gender other);
+		Gender & operator= (Genders other);
 
-enum genders { GENDERLESS = 0, FEMALE = -1, MALE = 1 };
+		// Return 1 for same gender, -1 for opposite, and 0 if either is genderless
+		int multiplier (Gender foe) const;
+		// Pokemon Lab and Pokemon Online use a value of 2 for female, instead of -1
+		void from_simulator_int (int gender_number);
+		int to_simulator_int () const;
+};
 
 }
 #endif

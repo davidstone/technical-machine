@@ -47,7 +47,7 @@ class Battle {
 		void update_active_print (Log & log, std::vector <std::string> const & arguments);
 		void handle_use_move (uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id);
 		void handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname);
-		void handle_send_out (Map const & map, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, uint8_t gender, uint8_t level);
+		void handle_send_out (Map const & map, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, int8_t gender_, uint8_t level);
 		void handle_health_change (uint8_t party, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator);
 		void handle_set_pp (uint8_t party, uint8_t slot, uint8_t pp);
 		void handle_fainted (uint8_t party, uint8_t slot, std::string const & nickname);

@@ -33,7 +33,7 @@ class Pokemon {
 		std::vector <Type> type;
 		species name;
 		Ability ability;
-		genders gender;
+		Gender gender;
 		items item;
 		Status status;
 		Active<Move> move;

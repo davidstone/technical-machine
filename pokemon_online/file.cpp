@@ -46,6 +46,8 @@ void load_pokemon (Team & team, std::ifstream & file, species const pokemon_conv
 					member.name = DEOXYS_M;
 					break;
 				// case 1: is assumed
+				case 1:
+					break;
 				case 2:
 					member.name = DEOXYS_D;
 					break;
@@ -104,11 +106,7 @@ void load_pokemon (Team & team, std::ifstream & file, species const pokemon_conv
 	
 	member.happiness = converter ("Happiness=\"", "\"", line);
 	
-	int gender = converter ("Gender=\"", "\"", line);
-	if (gender == 2)
-		member.gender = FEMALE;
-	else
-		member.gender = static_cast<genders> (gender);
+	member.gender.from_simulator_int (converter ("Gender=\"", "\"", line));
 
 	for (unsigned n = 0; n != 4; ++n) {
 		getline (file, line);

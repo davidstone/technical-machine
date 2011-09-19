@@ -18,6 +18,7 @@
 #include "analyze_logs.h"
 #include "ability.h"
 #include "endofturn.h"
+#include "gender.h"
 #include "map.h"
 #include "move.h"
 #include "pokemon.h"
@@ -146,12 +147,12 @@ void Log::log_pokemon (Team & team, Team & other, Map const & map) {
 	species name;
 	std::string nickname;
 	int level;
-	genders gender;
+	Gender gender;
 	get_pokemon_info (map, name, nickname, level, gender);
 	pokemon_sent_out (map, name, nickname, level, gender, team, other);
 }
 
-void Log::get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, genders & gender) {
+void Log::get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, Gender & gender) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
  	nickname = line.substr (search.length(), found2 - search.length());
@@ -159,7 +160,7 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 	size_t found3 = line.find (search3, found2 + search2.length());
 	std::string search4 = " ?).";
 	size_t found4 = line.find (search4);
-	gender;
+	// gender is default initialized to male
 	if (found4 == std::string::npos) {
 		search4 = " ?)!";
 		found4 = line.find (search4);
@@ -172,9 +173,7 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 			}
 		}
 	}
-	if (found4 != std::string::npos)
-		gender = MALE;		// No sexism here!
-	else {
+	if (found4 == std::string::npos) {
 		search4 = " ♀).";
 		found4 = line.find (search4);
 		if (found4 == std::string::npos) {
@@ -182,7 +181,7 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 			found4 = line.find (search4);
 		}
 		if (found4 != std::string::npos)
-			gender = FEMALE;
+			gender = Gender::FEMALE;
 	}
 	if (found4 == std::string::npos) {
 		search4 = ").";
@@ -191,13 +190,13 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 			search4 = ")!";
 			found4 = line.find (search4);
 		}
-		gender = GENDERLESS;
+		gender = Gender::GENDERLESS;
 	}
 	name = map.specie.find (line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
 	level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 }
 
-void Log::pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, genders gender, Team & team, Team & other) {
+void Log::pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender gender, Team & team, Team & other) {
 	active = &team;
 	inactive = &other;
 	if (first == NULL) {
@@ -237,7 +236,7 @@ bool Log::seen_pokemon (Team & team, species name) {
 	return false;
 }
 
-void Log::add_pokemon (Team & team, species name, std::string const & nickname, int level, genders gender) {
+void Log::add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender gender) {
 	Pokemon member (name, team.size);
 	member.level = level;
 	member.gender = gender;

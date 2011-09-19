@@ -149,10 +149,10 @@ void Map::set_ability () {
 }
 
 void Map::set_gender () {
-	gender ["None"] = GENDERLESS;
-	gender ["No Gender"] = GENDERLESS;
-	gender ["Female"] = FEMALE;
-	gender ["Male"] = MALE;
+	gender ["None"] = Gender::GENDERLESS;
+	gender ["No Gender"] = Gender::GENDERLESS;
+	gender ["Female"] = Gender::FEMALE;
+	gender ["Male"] = Gender::MALE;
 }
 
 void Map::set_item () {

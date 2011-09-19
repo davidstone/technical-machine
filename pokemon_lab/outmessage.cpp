@@ -56,13 +56,7 @@ void OutMessage::write_team (Team const & team) {
 		write_string (pokemon->nickname);
 		write_byte (0);		// Don't care about shininess
 
-		uint8_t gender;
-		if (pokemon->gender == MALE)
-			gender = 1;
-		else if (pokemon->gender == FEMALE)
-			gender = 2;
-		else
-			gender = 0;
+		int8_t gender = pokemon->gender.to_simulator_int ();
 		write_byte (gender);
 
 		write_byte (pokemon->happiness);

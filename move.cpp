@@ -393,7 +393,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		}
 		case Move::ATTRACT:
-			if (user.pokemon->gender * target.pokemon->gender == -1)		// male * female == -1
+			if (user.pokemon->gender.multiplier (target.pokemon->gender) == -1)
 				target.attract = true;
 			break;
 		case Move::BATON_PASS:
@@ -525,7 +525,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::CAMOUFLAGE:
 			break;
 		case Move::CAPTIVATE:
-			if (user.pokemon->gender * target.pokemon->gender == -1)		// male * female == -1
+			if (user.pokemon->gender.multiplier (target.pokemon->gender) == -1)
 				target.pokemon->spd.boost (-2);
 			break;
 		case Move::CHARGE:

@@ -561,7 +561,7 @@ void movepower (Team & attacker, Team const & defender, Weather const weather) {
 		}
 		case Ability::RIVALRY:
 			// Same gender == 20 + 5, opposite gender == 20 - 5
-			attacker.pokemon->move->power = attacker.pokemon->move->power * (20 + 5 * attacker.pokemon->gender * defender.pokemon->gender) / 20;
+			attacker.pokemon->move->power = attacker.pokemon->move->power * (20 + 5 * attacker.pokemon->gender.multiplier (defender.pokemon->gender)) / 20;
 			break;
 		default:
 			break;

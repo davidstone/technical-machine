@@ -14,6 +14,7 @@
 #include <vector>
 #include "ability.h"
 #include "active.h"
+#include "gender.h"
 #include "move.h"
 #include "pokemon.h"
 #include "species.h"
@@ -24,7 +25,6 @@ namespace technicalmachine {
 Pokemon::Pokemon (species const & member, unsigned size) : 
 	name (member),
 	ability (Ability::END_ABILITY),
-	gender (MALE),		// No sexism here!
 	item (END_ITEM),
 	status (NO_STATUS),
 	hp (name, Stat::HP),

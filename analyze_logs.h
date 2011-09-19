@@ -15,12 +15,12 @@
 #include <fstream>
 #include <map>
 #include <string>
-#include "gender.h"
 #include "move.h"
 #include "species.h"
 
 namespace technicalmachine {
 
+class Gender;
 class Map;
 class Team;
 class Weather;
@@ -55,11 +55,11 @@ class Log {
 		void log_pokemon (Team &team, Team &target, Map const &map);
 		bool seen_pokemon (Team & team, species nickname);
 	private:
-		void get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, genders & gender);
+		void get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, Gender & gender);
 	public:
-		void pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, genders gender, Team & team, Team & other);
+		void pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender gender, Team & team, Team & other);
 	private:
-		void add_pokemon (Team & team, species name, std::string const & nickname, int level, genders gender);
+		void add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender gender);
 	public:
 		void log_move (Move::moves_list name);
 	private:
