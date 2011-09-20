@@ -9,11 +9,16 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include <string>
 #include "battle.h"
+#include "../analyze_logs.h"
 #include "../expectiminimax.h"
 #include "../pokemon.h"
+#include "../species.h"
+#include "../team.h"
 #include "../teampredictor.h"
+#include "../weather.h"
 #include "connect.h"
 #include "outmessage.h"
 
