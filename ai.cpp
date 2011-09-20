@@ -17,16 +17,12 @@
 #include "analyze_logs.h"
 #include "evaluate.h"
 #include "expectiminimax.h"
-#include "item.h"
 #include "load_stats.h"
 #include "map.h"
-#include "move.h"
-#include "pokemon.h"
-#include "status.h"
 #include "team.h"
 #include "teampredictor.h"
-#include "type.h"
 #include "weather.h"
+#include "pokemon.h"
 #include "pokemon_lab/connect.h"
 
 int main (int argc, char* argv[]) {

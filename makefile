@@ -118,8 +118,10 @@ crypt/hex.o: crypt/hex.cpp crypt/hex.h
 crypt/md5.o: crypt/md5.c crypt/md5.h
 crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
 crypt/sha2.o: crypt/sha2.c crypt/sha2.h
-pokemon_lab/battle.o: pokemon_lab/battle.cpp pokemon_lab/battle.h \
- team.h active.h move.h type.h weather.h
+battle.o: pokemon_lab/battle.cpp pokemon_lab/battle.h analyze_logs.h \
+ move.h active.h type.h species.h team.h weather.h expectiminimax.h \
+ pokemon.h ability.h gender.h item.h stat.h status.h teampredictor.h connect.h \
+ evaluate.h map.h pokemon_lab/inmessage.h pokemon_lab/outmessage.h
 pokemon_lab/connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
  crypt/get_sha2.h crypt/rijndael.h analyze_logs.h gender.h move.h active.h \
  type.h evaluate.h expectiminimax.h load_stats.h map.h ability.h item.h \

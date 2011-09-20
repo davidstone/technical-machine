@@ -196,7 +196,7 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 	level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 }
 
-void Log::pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender gender, Team & team, Team & other) {
+void Log::pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other) {
 	active = &team;
 	inactive = &other;
 	if (first == NULL) {
@@ -236,7 +236,7 @@ bool Log::seen_pokemon (Team & team, species name) {
 	return false;
 }
 
-void Log::add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender gender) {
+void Log::add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender const & gender) {
 	Pokemon member (name, team.size);
 	member.level = level;
 	member.gender = gender;

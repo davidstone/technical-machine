@@ -48,36 +48,36 @@ class Log {
 		bool search_is_first ();
 		bool search_is_first (std::string const & str);
 		Move::moves_list find_move_name (Map const & map) const;
-		void analyze_line (Team &ai, Team &foe, Map const &map);
+		void analyze_line (Team & ai, Team & foe, Map const & map);
 	private:
 		bool ignore_line (Team const & ai, Team const & foe);
 	public:
-		void log_pokemon (Team &team, Team &target, Map const &map);
+		void log_pokemon (Team & team, Team & target, Map const & map);
 		bool seen_pokemon (Team & team, species nickname);
 	private:
 		void get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, Gender & gender);
 	public:
-		void pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender gender, Team & team, Team & other);
+		void pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other);
 	private:
-		void add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender gender);
+		void add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender const & gender);
 	public:
 		void log_move (Move::moves_list name);
 	private:
 		bool side_effect ();
 	public:
-		void log_misc (Map const &map);
-		void initialize_turn (Team &ai, Team &foe);
+		void log_misc (Map const & map);
+		void initialize_turn (Team & ai, Team & foe);
 	private:
-		void initialize_team (Team &team);
+		void initialize_team (Team & team);
 };
 
-bool analyze_turn (Team &ai, Team &foe, Weather &weather, Map const &map);
+bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map);
 
-void do_turn (Team &first, Team &last, Weather &weather);
+void do_turn (Team & first, Team & last, Weather & weather);
 
-void normalize_hp (Team &first, Team &last);
+void normalize_hp (Team & first, Team & last);
 
-void normalize_hp_team (Team &team);
+void normalize_hp_team (Team & team);
 
 }
 #endif
