@@ -22,6 +22,7 @@
 #include "move.h"
 #include "pokemon.h"
 #include "switch.h"
+#include "status.h"
 #include "team.h"
 #include "teampredictor.h"
 #include "type.h"
@@ -190,8 +191,8 @@ void Team::output (std::string & output) {
 		output += " ** " + it->nickname + '\n';
 		if (it->ability.is_set ())
 			output += "\tAbility: " + it->ability.get_name () + '\n';
-		if (it->status != NO_STATUS)
-			output += "\tStatus: " + boost::lexical_cast<std::string> (it->status) + '\n';
+		if (it->status.name != Status::NO_STATUS)
+			output += "\tStatus: " + it->status.get_name () + "\n";
 		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != Move::STRUGGLE; ++move)
 			output += "\t- " + move->get_name() + "\n";
 	}

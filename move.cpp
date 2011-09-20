@@ -262,8 +262,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			target.light_screen = 0;
 		}
 		else if (user.pokemon->move->is_usable_while_frozen ()) {
-			if (user.pokemon->status == FREEZE)
-				user.pokemon->status = NO_STATUS;
+			if (user.pokemon->status.name == Status::FREEZE)
+				user.pokemon->status.clear ();
 		}
 		if (log_damage == -1u) {
 			calculate_defending_stat (user, target, weather);
@@ -280,7 +280,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 
 	switch (user.pokemon->move->name) {
 		case Move::DREAM_EATER:
-			if (target.pokemon->status != SLEEP)
+			if (!target.pokemon->status.is_sleeping ())
 				break;
 		case Move::ABSORB:
 		case Move::DRAIN_PUNCH:
@@ -389,7 +389,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::AROMATHERAPY: {
 			for (std::vector<Pokemon>::iterator it = user.pokemon.set.begin(); it != user.pokemon.set.end(); ++it)
-				it->status = NO_STATUS;
+				it->status.clear ();
 			break;
 		}
 		case Move::ATTRACT:
@@ -802,7 +802,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::HEAL_BELL: {
 			for (std::vector<Pokemon>::iterator it = user.pokemon.set.begin(); it != user.pokemon.set.end(); ++it) {
 				if (it->ability.name != Ability::SOUNDPROOF)
-					it->status = NO_STATUS;
+					it->status.clear ();
 			}
 			break;
 		}
@@ -983,27 +983,28 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			user.pokemon->spe.stage = target.pokemon->spe.stage;
 			break;
 		case Move::PSYCHO_SHIFT:
-			if (target.pokemon->status == NO_STATUS) {
-				switch (user.pokemon->status) {
-					case BURN:
+			if (target.pokemon->status.name == Status::NO_STATUS) {
+				switch (user.pokemon->status.name) {
+					case Status::BURN:
 						burn (user, target, weather);
 						break;
-					case PARALYSIS:
+					case Status::PARALYSIS:
 						paralyze (*user.pokemon, *target.pokemon, weather);
 						break;
-					case POISON_NORMAL:
+					case Status::POISON_NORMAL:
 						poison_normal (user, target, weather);
 						break;
-					case POISON_TOXIC:
+					case Status::POISON_TOXIC:
 						poison_toxic (user, target, weather);
 						break;
-					case SLEEP:
+					case Status::REST:		// Fix
+					case Status::SLEEP:
 						sleep (*user.pokemon, *target.pokemon, weather);
 						break;
 					default:
 						break;
 				}
-				user.pokemon->status = NO_STATUS;
+				user.pokemon->status.clear ();
 			}
 			break;
 		case Move::RAGE:		// Fix
@@ -1036,12 +1037,12 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			}
 			break;
 		case Move::REFRESH:
-			user.pokemon->status = NO_STATUS;
+			user.pokemon->status.clear ();
 			break;
 		case Move::REST:
 			if (user.pokemon->hp.stat != user.pokemon->hp.max) {
 				user.pokemon->hp.stat = user.pokemon->hp.max;
-				user.pokemon->status = SLEEP;
+				user.pokemon->status.name = Status::REST;
 				user.pokemon->sleep = 3;
 			}
 			break;
@@ -1086,8 +1087,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			if (user.pokemon->move->variable->first != 0) {}
 				break;
 		case Move::SMELLINGSALT:
-			if (target.pokemon->status == PARALYSIS)
-				target.pokemon->status = NO_STATUS;
+			if (target.pokemon->status.name == Status::PARALYSIS)
+				target.pokemon->status.clear ();
 			break;
 		case Move::SNATCH:	// Fix
 			break;
@@ -1206,8 +1207,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			weather.set_uproar (user.uproar);
 			break;
 		case Move::WAKE_UP_SLAP:
-			if (target.pokemon->status == SLEEP)
-				target.pokemon->status = NO_STATUS;
+			if (target.pokemon->status.is_sleeping ())
+				target.pokemon->status.clear ();
 			break;
 		case Move::WATER_SPORT:
 			user.water_sport = true;

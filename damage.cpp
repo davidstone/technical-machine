@@ -169,11 +169,11 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 				doubling = true;
 			break;
 		case Move::FACADE:
-			switch (attacker.pokemon->status) {
-				case BURN:
-				case PARALYSIS:
-				case POISON_NORMAL:
-				case POISON_TOXIC:
+			switch (attacker.pokemon->status.name) {
+				case Status::BURN:
+				case Status::PARALYSIS:
+				case Status::POISON_NORMAL:
+				case Status::POISON_TOXIC:
 					doubling = true;
 					break;
 				default:
@@ -194,7 +194,7 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 				doubling = true;
 			break;
 		case Move::SMELLINGSALT:
-			if (defender.pokemon->status == PARALYSIS)
+			if (defender.pokemon->status.name == Status::PARALYSIS)
 				doubling = true;
 			break;
 		case Move::SOLARBEAM:
@@ -210,7 +210,7 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 				doubling = true;
 			break;
 		case Move::WAKE_UP_SLAP:
-			if (defender.pokemon->status == SLEEP)
+			if (defender.pokemon->status.is_sleeping ())
 				doubling = true;
 			break;
 		case Move::WEATHER_BALL:
@@ -468,7 +468,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 
 	if (attacker.pokemon->move->physical) {
 		damage = damage * attacker.pokemon->atk.stat / 50 / defender.pokemon->def.stat;
-		if (attacker.pokemon->status == BURN and attacker.pokemon->ability.name != Ability::GUTS)
+		if (attacker.pokemon->status.name == Status::BURN and attacker.pokemon->ability.name != Ability::GUTS)
 			damage /= 2;
 	}
 	else

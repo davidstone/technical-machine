@@ -82,23 +82,24 @@ int64_t Score::scorepokemon (Team const & team, Team const & other, Weather cons
 	if (team.pokemon->hp.stat != 0) {
 		score += members;
 		score += hp * team.pokemon->hp.stat / team.pokemon->hp.max;
-		switch (team.pokemon->status) {
-			case BURN:
+		switch (team.pokemon->status.name) {
+			case Status::BURN:
 				score += burn;
 				break;
-			case FREEZE:
+			case Status::FREEZE:
 				score += freeze;
 				break;
-			case PARALYSIS:
+			case Status::PARALYSIS:
 				score += paralysis;
 				break;
-			case POISON_NORMAL:
+			case Status::POISON_NORMAL:
 				score += poison;
 				break;
-			case POISON_TOXIC:
+			case Status::POISON_TOXIC:
 				score += poison;		// fix
 				break;
-			case SLEEP:
+			case Status::REST:
+			case Status::SLEEP:
 				score += sleep;
 				break;
 			default:

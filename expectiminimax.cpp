@@ -297,18 +297,18 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Scor
 	last.shed_skin = false;
 	int64_t average_score = 49 * end_of_turn_branch (first, last, weather, depth, score);
 	int64_t divisor = 49;
-	if (first.pokemon->ability.name == Ability::SHED_SKIN and first.pokemon->status) {
+	if (first.pokemon->ability.name == Ability::SHED_SKIN and first.pokemon->status.name == Status::NO_STATUS) {
 		first.shed_skin = true;
 		average_score += 21 * end_of_turn_branch (first, last, weather, depth, score);
 		divisor += 21;
-		if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status) {
+		if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status.name == Status::NO_STATUS) {
 			last.shed_skin = true;
 			average_score += 9 * end_of_turn_branch (first, last, weather, depth, score);
 			divisor += 9;
 			first.shed_skin = false;
 		}
 	}
-	if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status) {
+	if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status.name == Status::NO_STATUS) {
 		last.shed_skin = true;
 		average_score += 21 * end_of_turn_branch (first, last, weather, depth, score);
 		divisor += 21;

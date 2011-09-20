@@ -12,11 +12,19 @@
 #ifndef STATUS_H_
 #define STATUS_H_
 
+#include <string>
+
 namespace technicalmachine {
 
-enum Status { NO_STATUS = 0, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, SLEEP, END_STATUS };
-
-// I'm not including pseudo-status like Leech Seed and Confusion here, because those have dramatically different effects in the game.
+class Status {
+	public:
+		enum Statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, REST, SLEEP, END_STATUS };
+		Statuses name;
+		Status ();
+		bool is_sleeping () const;
+		void clear ();
+		std::string get_name () const;
+};
 
 class Pokemon;
 class Team;

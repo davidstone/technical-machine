@@ -93,7 +93,7 @@ void endofturn3 (Team & team, Weather const & weather) {
 			break;
 		case Ability::HYDRATION:
 			if (weather.rain)
-				team.pokemon->status = NO_STATUS;
+				team.pokemon->status.clear ();
 			break;
 		case Ability::ICE_BODY:
 			if (weather.hail)
@@ -116,7 +116,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.pokemon->ability.name == Ability::SPEED_BOOST)
 		team.pokemon->spe.boost (1);
 	else if (team.shed_skin)
-		team.pokemon->status = NO_STATUS;
+		team.pokemon->status.clear ();
 	switch (team.pokemon->item.name) {
 		case Item::LEFTOVERS:
 			heal (*team.pokemon, 16);
@@ -143,20 +143,20 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 			}
 		}
 	}
-	switch (team.pokemon->status) {
-		case BURN:
+	switch (team.pokemon->status.name) {
+		case Status::BURN:
 			if (team.pokemon->ability.name == Ability::HEATPROOF)
 				heal (*team.pokemon, -16);
 			else
 				heal (*team.pokemon, -8);
 			break;
-		case POISON_NORMAL:
+		case Status::POISON_NORMAL:
 			if (team.pokemon->ability.name == Ability::POISON_HEAL)
 				heal (*team.pokemon, 8);
 			else
 				heal (*team.pokemon, -8);
 			break;
-		case POISON_TOXIC:
+		case Status::POISON_TOXIC:
 			if (team.pokemon->ability.name == Ability::POISON_HEAL)
 				heal (*team.pokemon, 8);
 			else {
@@ -165,7 +165,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 				heal (*team.pokemon, -16, team.toxic);
 			}
 			break;
-		case SLEEP:
+		case Status::SLEEP:
 			if (team.nightmare)
 				heal (*team.pokemon, -4);
 			if (foe.ability.name == Ability::BAD_DREAMS)

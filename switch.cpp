@@ -119,7 +119,7 @@ void switchpokemon (Team &switcher, Team &other, Weather &weather) {
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out
 		if (switcher.pokemon->ability.name == Ability::NATURAL_CURE)
-			switcher.pokemon->status = NO_STATUS;
+			switcher.pokemon->status.clear ();
 		
 		reset_variables (switcher);
 	

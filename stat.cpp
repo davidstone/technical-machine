@@ -74,7 +74,7 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 				attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
 			break;
 		case Ability::GUTS:
-			if (attacker.pokemon->status)
+			if (attacker.pokemon->status.name == Status::NO_STATUS)
 				attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
 			break;
 		case Ability::HUSTLE:
@@ -198,7 +198,7 @@ void calculate_defense (Team const & attacker, Team & defender, Weather const & 
 	else
 		defender.pokemon->def.stat = defender.pokemon->def.stat * 2 / (2 - defender.pokemon->def.stage);
 
-	if (defender.pokemon->ability.name == Ability::MARVEL_SCALE and defender.pokemon->status)
+	if (defender.pokemon->ability.name == Ability::MARVEL_SCALE and defender.pokemon->status.name == Status::NO_STATUS)
 		defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
 	
 	if (defender.pokemon->item.name == Item::METAL_POWDER and defender.pokemon->name == DITTO)
@@ -304,7 +304,7 @@ void calculate_speed (Team & team, Weather const & weather) {
 				team.pokemon->spe.stat *= 2;
 			break;
 		case Ability::QUICK_FEET:
-			if (team.pokemon->status)
+			if (team.pokemon->status.name == Status::NO_STATUS)
 				team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
 			break;
 		case Ability::SLOW_START:
@@ -331,7 +331,7 @@ void calculate_speed (Team & team, Weather const & weather) {
 			break;
 	}
 		
-	if (team.pokemon->status == PARALYSIS and team.pokemon->ability.name != Ability::QUICK_FEET)
+	if (team.pokemon->status.name == Status::PARALYSIS and team.pokemon->ability.name != Ability::QUICK_FEET)
 		team.pokemon->spe.stat /= 4;
 	
 	if (team.tailwind)

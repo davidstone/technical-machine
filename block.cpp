@@ -56,13 +56,13 @@ void blockexecution (Team & user, Team const & other, Weather const & weather) {
 		if (user.pokemon->hp.stat == 0 or (other.pokemon->hp.stat == 0 and false))
 			user.pokemon->move->execute = false;
 		else {
-			if (user.pokemon->status == FREEZE and (!user.pokemon->move->is_usable_while_frozen ()))
+			if (user.pokemon->status.name == Status::FREEZE and (!user.pokemon->move->is_usable_while_frozen ()))
 				user.pokemon->move->execute = false;
 
-			else if (user.pokemon->status == SLEEP) {
+			else if (user.pokemon->status.is_sleeping ()) {
 				if (user.awaken) {
 					user.pokemon->sleep = 0;
-					user.pokemon->status = NO_STATUS;
+					user.pokemon->status.clear ();
 				}
 				else {
 					if (user.pokemon->ability.name == Ability::EARLY_BIRD)
