@@ -40,7 +40,7 @@ class InMessage {
 	private:
 		uint32_t read_bytes (int bytes);
 	public:
-		static species pl_to_tm_species (int id);
+		static Species pl_to_tm_species (int id);
 		enum Message {
 			WELCOME_MESSAGE = 0,
 			PASSWORD_CHALLENGE = 1,

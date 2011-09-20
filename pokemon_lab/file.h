@@ -17,15 +17,14 @@
 
 namespace technicalmachine {
 
-class Map;
 class Team;
 
 namespace pl {
 
-unsigned team_size (std::string const &name);
-void load_team (Team &team, std::string const &name, Map const &map, unsigned size);
-void load_pokemon (Team& team, std::ifstream &file, Map const &map, unsigned size);
-std::string search (std::ifstream &file, std::string &output2, std::string const &data);
+unsigned team_size (std::string const & name);
+void load_team (Team & team, std::string const & name, unsigned size);
+void load_pokemon (Team & team, std::ifstream & file, unsigned size);
+std::string search (std::ifstream & file, std::string & output2, std::string const & data);
 
 }
 

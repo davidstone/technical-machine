@@ -13,7 +13,6 @@
 #define ANALYZE_LOGS_H_
 
 #include <fstream>
-#include <map>
 #include <string>
 #include "move.h"
 #include "species.h"
@@ -21,7 +20,6 @@
 namespace technicalmachine {
 
 class Gender;
-class Map;
 class Team;
 class Weather;
 
@@ -47,31 +45,31 @@ class Log {
 		bool getline ();
 		bool search_is_first ();
 		bool search_is_first (std::string const & str);
-		Move::moves_list find_move_name (Map const & map) const;
-		void analyze_line (Team & ai, Team & foe, Map const & map);
+		Move::Moves find_move_name () const;
+		void analyze_line (Team & ai, Team & foe);
 	private:
 		bool ignore_line (Team const & ai, Team const & foe);
 	public:
-		void log_pokemon (Team & team, Team & target, Map const & map);
-		bool seen_pokemon (Team & team, species nickname);
+		void log_pokemon (Team & team, Team & target);
+		bool seen_pokemon (Team & team, Species nickname);
 	private:
-		void get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, Gender & gender);
+		void get_pokemon_info (Species & name, std::string & nickname, int & level, Gender & gender);
 	public:
-		void pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other);
+		void pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other);
 	private:
-		void add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender const & gender);
+		void add_pokemon (Team & team, Species name, std::string const & nickname, int level, Gender const & gender);
 	public:
-		void log_move (Move::moves_list name);
+		void log_move (Move::Moves name);
 	private:
 		bool side_effect ();
 	public:
-		void log_misc (Map const & map);
+		void log_misc ();
 		void initialize_turn (Team & ai, Team & foe);
 	private:
 		void initialize_team (Team & team);
 };
 
-bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map);
+bool analyze_turn (Team & ai, Team & foe, Weather & weather);
 
 void do_turn (Team & first, Team & last, Weather & weather);
 

@@ -19,7 +19,6 @@
 
 namespace technicalmachine {
 
-class Map;
 class Pokemon;
 
 class Team {
@@ -113,7 +112,7 @@ class Team {
 		
 		bool me;				// Is this my team?
 	
-		Team (bool isme, Map const & map, unsigned size);
+		Team (bool isme, unsigned size);
 		bool operator== (Team const & other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
@@ -121,7 +120,7 @@ class Team {
 		uint64_t hash () const;
 		void output (std::string & output);
 	private:
-		void load (std::string const & name, Map const & map, unsigned size);
+		void load (std::string const & name, unsigned size);
 };
 
 }

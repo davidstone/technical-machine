@@ -14,8 +14,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "map.h"
+#include "move.h"
 #include "pokemon.h"
+#include "species.h"
 
 namespace technicalmachine {
 
@@ -84,17 +85,17 @@ void lead_stats (std::vector<float> &lead) {		// Multiplier for Pokemon after yo
 		lead.push_back (boost::lexical_cast<float> (line));
 }
 
-void detailed_stats (Map const &map, int detailed [][7]) {
+void detailed_stats (int detailed [][7]) {
 	std::ifstream file ("detailed.txt");
 	std::string line;
-	species old_member = END_SPECIES;
+	Species old_member = END_SPECIES;
 	bool ability = false;
 	bool item = false;
 	bool nature = false;
 	unsigned move = 0;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t x = line.find ('\t');
-		species new_member = map.specie.find (line.substr (0, x))->second;
+		Species new_member = Pokemon::name_from_string (line.substr (0, x));
 		if (old_member != new_member) {
 			old_member = new_member;
 			ability = false;
@@ -111,28 +112,28 @@ void detailed_stats (Map const &map, int detailed [][7]) {
 			if (!ability ) {
 				n = 0;
 				ability = true;
-				data = map.ability.find (line.substr (y + 1, z - y - 1))->second;
+				data = Ability::name_from_string (line.substr (y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Item") {
 			if (!item) {
 				n = 1;
 				item = true;
-				data = map.item.find (line.substr (y + 1, z - y - 1))->second;
+				data = Item::name_from_string (line.substr (y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Nature") {
 			if (!nature) {
 				n = 2;
 				nature = true;
-				data = map.nature.find (line.substr (y + 1, z - y - 1))->second;
+				data = Nature::name_from_string (line.substr (y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Move") {
 			if (move < 4) {
 				n = 3 + move;
 				++move;
-				data = map.move.find (line.substr (y + 1, z - y - 1))->second;
+				data = Move::name_from_string (line.substr (y + 1, z - y - 1));
 			}
 		}
 		if (n != 7)

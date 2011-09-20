@@ -9,6 +9,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <map>
+#include <string>
 #include "gender.h"
 
 namespace technicalmachine {
@@ -67,4 +69,22 @@ Gender & Gender::operator= (Genders other) {
 	return *this;
 }
 
+class Map {
+	public:
+		std::map <std::string, Gender::Genders> gender;
+		Map () {
+			gender ["None"] = Gender::GENDERLESS;
+			gender ["No Gender"] = Gender::GENDERLESS;
+			gender ["Female"] = Gender::FEMALE;
+			gender ["Male"] = Gender::MALE;
+		}
+		Gender::Genders find (std::string const & str) const {
+			return gender.find (str)->second;
+		}
+};
+
+void Gender::set_name_from_string (std::string const & str) {
+	static Map const map;
+	gender = map.find (str);
+}
 }

@@ -32,7 +32,7 @@ class Pokemon {
 	public:
 		std::string nickname;
 		std::vector <Type> type;
-		species name;
+		Species name;
 		Ability ability;
 		Gender gender;
 		Item item;
@@ -44,7 +44,7 @@ class Pokemon {
 		Stat spa;
 		Stat spd;
 		Stat spe;
-		Stat::Nature nature;
+		Nature nature;
 		uint16_t new_hp;		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		bool fainted;
 		int8_t level;
@@ -53,9 +53,11 @@ class Pokemon {
 
 		uint8_t happiness;
 	
-		Pokemon (species const &member, unsigned size);
+		Pokemon (Species const &member, unsigned size);
 		uint64_t hash () const;
 		std::string get_name () const;
+		static Species name_from_string (std::string const & str);
+		void set_name_from_string (std::string const & str);
 		bool operator== (Pokemon const & other) const;
 		bool operator!= (Pokemon const & other) const;
 		void load ();

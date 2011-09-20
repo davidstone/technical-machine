@@ -14,6 +14,7 @@
 #include "ability.h"
 #include "load_stats.h"
 #include "pokemon.h"
+#include "species.h"
 #include "team.h"
 
 #include <iostream>
@@ -44,12 +45,12 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	}
 	predict_pokemon (team, estimate, multiplier);
 	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		if (pokemon->ability.is_set ())
+		if (!pokemon->ability.is_set ())
 			pokemon->ability.name = static_cast<Ability::Abilities> (detailed [pokemon->name] [0]);
-		if (pokemon->item.is_set ())
+		if (!pokemon->item.is_set ())
 			pokemon->item.name = static_cast<Item::Items> (detailed [pokemon->name] [1]);
-		if (pokemon->nature == Stat::Nature::END_NATURE)
-			pokemon->nature = static_cast<Stat::Nature> (detailed [pokemon->name] [2]);
+		if (!pokemon->nature.is_set ())
+			pokemon->nature.name = static_cast<Nature::Natures> (detailed [pokemon->name] [2]);
 		predict_move (*pokemon, detailed, size);
 	}
 }
@@ -57,11 +58,11 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]) {
 	while (team.pokemon.set.size() < team.size) {
 		float top = 0.0;
-		species name;
+		Species name;
 		for (int n = 0; n != END_SPECIES; ++n) {
 			if (top < estimate [n]) {
 				top = estimate [n];
-				name = static_cast<species> (n);
+				name = static_cast<Species> (n);
 			}
 		}
 		Pokemon member (name, team.size);
@@ -83,13 +84,13 @@ void predict_move (Pokemon & member, int detailed [][7], unsigned size) {
 	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != Move::END_MOVE; ++m) {
 		bool found = false;
 		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it->name != Move::STRUGGLE; ++it) {
-			if (it->name == static_cast<Move::moves_list> (detailed [member.name] [m])) {
+			if (it->name == static_cast<Move::Moves> (detailed [member.name] [m])) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			Move move (static_cast<Move::moves_list> (detailed [member.name] [m]), 3, size);
+			Move move (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size);
 
 // I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
 			member.move.set.insert (member.move.set.begin() + n, move);

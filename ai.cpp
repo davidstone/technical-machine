@@ -18,7 +18,6 @@
 #include "evaluate.h"
 #include "expectiminimax.h"
 #include "load_stats.h"
-#include "map.h"
 #include "team.h"
 #include "teampredictor.h"
 #include "weather.h"
@@ -39,14 +38,13 @@ int main (int argc, char* argv[]) {
 	}
 	else {
 		unsigned const foe_size = 6;
-		Map const map;
 		int detailed [END_SPECIES][7] = {{ 0 }};
-		detailed_stats (map, detailed);
-		Team ai (true, map, foe_size);
-		Team foe (false, map, ai.size);
+		detailed_stats (detailed);
+		Team ai (true, foe_size);
+		Team foe (false, ai.size);
 		Weather weather;
 		Score score;
-		analyze_turn (ai, foe, weather, map);		// Turn 0, sending out initial Pokemon
+		analyze_turn (ai, foe, weather);		// Turn 0, sending out initial Pokemon
 	
 		bool won = false;
 		while (!won) {
@@ -60,7 +58,7 @@ int main (int argc, char* argv[]) {
 			int64_t min_score;
 			expectiminimax (ai, predicted, weather, depth, score, min_score);
 
-			won = analyze_turn (ai, foe, weather, map);
+			won = analyze_turn (ai, foe, weather);
 		}
 	}
 	return 0;

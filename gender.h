@@ -12,6 +12,8 @@
 #ifndef GENDER_H_
 #define GENDER_H_
 
+#include <string>
+
 namespace technicalmachine {
 
 class Gender {
@@ -30,6 +32,7 @@ class Gender {
 		// Pokemon Lab and Pokemon Online use a value of 2 for female, instead of -1
 		void from_simulator_int (int gender_number);
 		int to_simulator_int () const;
+		void set_name_from_string (std::string const & str);
 };
 
 }

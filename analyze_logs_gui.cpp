@@ -11,7 +11,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <string>
 #include "analyze_logs.h"
 #include "pokemon.h"
@@ -31,7 +30,6 @@ struct Data {
 	Fl_Multiline_Output* multiout;
 	std::string log_path;
 	Weather weather;
-	Map map;
 };
 
 void load_log (Fl_Widget* w, void* data) {
@@ -47,7 +45,7 @@ void load_log (Fl_Widget* w, void* data) {
 		player2.player = "";
 		Team* previous;
 		for (getline (file, line); !file.eof(); getline (file, line))
-			analyze_line (player1, player2, previous, d->weather, line, d->map);
+			analyze_line (player1, player2, previous, d->weather, line);
 		file.close ();
 		d->output = "";
 		output (d->output, player1);

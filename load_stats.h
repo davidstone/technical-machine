@@ -25,7 +25,7 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 
 void lead_stats (std::vector<float> & lead);
 
-void detailed_stats (Map const & map, int detailed [][7]);
+void detailed_stats (int detailed [][7]);
 
 }
 

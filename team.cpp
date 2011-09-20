@@ -32,7 +32,7 @@
 
 namespace technicalmachine {
 
-Team::Team (bool isme, Map const & map, unsigned size) :
+Team::Team (bool isme, unsigned size) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -127,7 +127,7 @@ Team::Team (bool isme, Map const & map, unsigned size) :
 		}
 		settings.close();
 
-		load ("teams/" + team_file, map, size);
+		load ("teams/" + team_file, size);
 		for (std::vector <Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
 			it->new_hp = it->hp.max;
 	}
@@ -149,11 +149,11 @@ uint64_t Team::hash () const {
 
 // I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
 
-void Team::load (std::string const & name, Map const & map, unsigned size) {
+void Team::load (std::string const & name, unsigned size) {
 	if (name.substr (name.length() - 3) == ".tp")
 		po::load_team (*this, name, size);
 	else if (name.substr (name.length() - 4) == ".sbt")
-		pl::load_team (*this, name, map, size);
+		pl::load_team (*this, name, size);
 	else
 		std::cerr << "Unsupported file format.\n";
 	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)

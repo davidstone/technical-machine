@@ -14,6 +14,7 @@
 #include "battle.h"
 #include "../analyze_logs.h"
 #include "../expectiminimax.h"
+#include "../move.h"
 #include "../pokemon.h"
 #include "../species.h"
 #include "../team.h"
@@ -25,9 +26,9 @@
 namespace technicalmachine {
 namespace pl {
 
-Battle::Battle (Map const & map, std::string const & opponent, int depth_):
-	ai (true, map, 6),
-	foe (false, map, ai.size),
+Battle::Battle (std::string const & opponent, int depth_):
+	ai (true, 6),
+	foe (false, ai.size),
 	log (ai, foe),
 	depth (depth_) {
 	for (std::vector <Pokemon>::const_iterator pokemon = ai.pokemon.set.begin(); pokemon != ai.pokemon.set.end(); ++pokemon)
@@ -59,7 +60,7 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		std::cout << out;
 
 		int64_t min_score;
-		Move::moves_list move = expectiminimax (ai, predicted, weather, depth, botclient.score, min_score);
+		Move::Moves move = expectiminimax (ai, predicted, weather, depth, botclient.score, min_score);
 		if (Move::is_switch (move))
 			msg.write_switch (field_id, switch_slot (move));
 		else {
@@ -495,13 +496,13 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 	int move = move_id;
 	if (move >= Move::SWITCH0)
 		move += 6;
-	log.log_move (static_cast <Move::moves_list> (move));
+	log.log_move (static_cast <Move::Moves> (move));
 }
 
 void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
 }
 
-void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, int8_t gender_, uint8_t level) {
+void Battle::handle_send_out (uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, int8_t gender_, uint8_t level) {
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -512,10 +513,10 @@ void Battle::handle_send_out (Map const & map, uint8_t party_, uint8_t slot, uin
 		team = & foe;
 		other = & ai;
 	}
-	species name = InMessage::pl_to_tm_species (species_id);
+	Species name = InMessage::pl_to_tm_species (species_id);
 	Gender gender;
 	gender.from_simulator_int (gender_);
-	log.pokemon_sent_out (map, name, nickname, level, gender, *team, *other);
+	log.pokemon_sent_out (name, nickname, level, gender, *team, *other);
 }
 
 void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator) {
@@ -564,7 +565,7 @@ void Battle::handle_begin_turn (uint16_t turn_count) {
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
 }
 
-uint8_t Battle::switch_slot (Move::moves_list move) {
+uint8_t Battle::switch_slot (Move::Moves move) {
 	uint8_t slot = move - Move::SWITCH0;
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == ai.pokemon.set [slot].name)

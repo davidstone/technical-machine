@@ -19,7 +19,6 @@ namespace technicalmachine {
 class Stat {
 	public:
 		enum Stats { HP, ATK, DEF, SPA, SPD, SPE };
-		enum Nature { HARDY, LONELY, BRAVE, ADAMANT, NAUGHTY, BOLD, DOCILE, RELAXED, IMPISH, LAX, TIMID, HASTY, SERIOUS, JOLLY, NAIVE, MODEST, MILD, QUIET, BASHFUL, RASH, CALM, GENTLE, SASSY, CAREFUL, QUIRKY, END_NATURE };
 
 		uint8_t base;
 		int8_t iv;			// 0 through 31
@@ -28,10 +27,20 @@ class Stat {
 		unsigned max;		// Max HP only
 		unsigned stat;		// Current HP or last calculated value for other stats
 	
-		Stat (species name, Stats stat);
+		Stat (Species name, Stats stat);
 		void boost (int n);
 	private:
-		uint8_t get_base_stat (species name, Stats stat) const;
+		uint8_t get_base_stat (Species name, Stats stat) const;
+};
+
+class Nature {
+	public:
+		enum Natures { HARDY, LONELY, BRAVE, ADAMANT, NAUGHTY, BOLD, DOCILE, RELAXED, IMPISH, LAX, TIMID, HASTY, SERIOUS, JOLLY, NAIVE, MODEST, MILD, QUIET, BASHFUL, RASH, CALM, GENTLE, SASSY, CAREFUL, QUIRKY, END_NATURE };
+		Natures name;
+		Nature ();
+		bool is_set () const;
+		static Natures name_from_string (std::string const & str);
+		void set_name_from_string (std::string const & str);
 };
 
 class Pokemon;

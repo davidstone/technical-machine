@@ -9,10 +9,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <map>
 #include "ability.h"
 #include "item.h"
 #include "move.h"
 #include "pokemon.h"
+#include "species.h"
 #include "stat.h"
 #include "status.h"
 #include "team.h"
@@ -20,7 +22,7 @@
 
 namespace technicalmachine {
 
-Stat::Stat (species name, Stats stat) :
+Stat::Stat (Species name, Stats stat) :
 	base (get_base_stat (name, stat)),
 	iv (31),
 	ev (21),		// Adds up to 126 points, temporary until I add in EV prediction
@@ -44,17 +46,17 @@ void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 void calculate_attack (Team & attacker, Weather const & weather) {
 	attacker.pokemon->atk.stat = (2 * attacker.pokemon->atk.base + attacker.pokemon->atk.iv + attacker.pokemon->atk.ev) * attacker.pokemon->level / 100 + 5;
 
-	switch (attacker.pokemon->nature) {
-		case Stat::Nature::ADAMANT:
-		case Stat::Nature::BRAVE:
-		case Stat::Nature::LONELY:
-		case Stat::Nature::NAUGHTY:
+	switch (attacker.pokemon->nature.name) {
+		case Nature::ADAMANT:
+		case Nature::BRAVE:
+		case Nature::LONELY:
+		case Nature::NAUGHTY:
 			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 11 / 10;
 			break;
-		case Stat::Nature::BOLD:
-		case Stat::Nature::CALM:
-		case Stat::Nature::MODEST:
-		case Stat::Nature::TIMID:
+		case Nature::BOLD:
+		case Nature::CALM:
+		case Nature::MODEST:
+		case Nature::TIMID:
 			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 9 / 10;
 			break;
 		default:
@@ -114,17 +116,17 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 void calculate_special_attack (Team & attacker, Weather const &weather) {
 	attacker.pokemon->spa.stat = (2 * attacker.pokemon->spa.base + attacker.pokemon->spa.iv + attacker.pokemon->spa.ev) * attacker.pokemon->level / 100 + 5;
 
-	switch (attacker.pokemon->nature) {
-		case Stat::Nature::MILD:
-		case Stat::Nature::MODEST:
-		case Stat::Nature::QUIET:
-		case Stat::Nature::RASH:
+	switch (attacker.pokemon->nature.name) {
+		case Nature::MILD:
+		case Nature::MODEST:
+		case Nature::QUIET:
+		case Nature::RASH:
 			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 11 / 10;
 			break;
-		case Stat::Nature::ADAMANT:
-		case Stat::Nature::CAREFUL:
-		case Stat::Nature::IMPISH:
-		case Stat::Nature::JOLLY:
+		case Nature::ADAMANT:
+		case Nature::CAREFUL:
+		case Nature::IMPISH:
+		case Nature::JOLLY:
 			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 9 / 10;
 			break;
 		default:
@@ -174,17 +176,17 @@ void calculate_defending_stat (Team const & attacker, Team & defender, Weather c
 void calculate_defense (Team const & attacker, Team & defender, Weather const & weather) {
 	defender.pokemon->def.stat = (2 * defender.pokemon->def.base + defender.pokemon->def.iv + defender.pokemon->def.ev) * defender.pokemon->level / 100 + 5;
 
-	switch (defender.pokemon->nature) {
-		case Stat::Nature::BOLD:
-		case Stat::Nature::IMPISH:
-		case Stat::Nature::LAX:
-		case Stat::Nature::RELAXED:
+	switch (defender.pokemon->nature.name) {
+		case Nature::BOLD:
+		case Nature::IMPISH:
+		case Nature::LAX:
+		case Nature::RELAXED:
 			defender.pokemon->def.stat = defender.pokemon->def.stat * 11 / 10;
 			break;
-		case Stat::Nature::GENTLE:
-		case Stat::Nature::HASTY:
-		case Stat::Nature::LONELY:
-		case Stat::Nature::MILD:
+		case Nature::GENTLE:
+		case Nature::HASTY:
+		case Nature::LONELY:
+		case Nature::MILD:
 			defender.pokemon->def.stat = defender.pokemon->def.stat * 9 / 10;
 			break;
 		default:
@@ -214,17 +216,17 @@ void calculate_defense (Team const & attacker, Team & defender, Weather const & 
 void calculate_special_defense (Team const & attacker, Team & defender, Weather const & weather) {
 	defender.pokemon->spd.stat = (2 * defender.pokemon->spd.base + defender.pokemon->spd.iv + defender.pokemon->spd.ev) * defender.pokemon->level / 100 + 5;
 
-	switch (defender.pokemon->spd.stat) {
-		case Stat::Nature::CALM:
-		case Stat::Nature::CAREFUL:
-		case Stat::Nature::GENTLE:
-		case Stat::Nature::SASSY:
+	switch (defender.pokemon->nature.name) {
+		case Nature::CALM:
+		case Nature::CAREFUL:
+		case Nature::GENTLE:
+		case Nature::SASSY:
 			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 11 / 10;
 			break;
-		case Stat::Nature::LAX:
-		case Stat::Nature::NAIVE:
-		case Stat::Nature::NAUGHTY:
-		case Stat::Nature::RASH:
+		case Nature::LAX:
+		case Nature::NAIVE:
+		case Nature::NAUGHTY:
+		case Nature::RASH:
 			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 9 / 10;
 			break;
 		default:
@@ -268,17 +270,17 @@ void calculate_special_defense (Team const & attacker, Team & defender, Weather 
 void calculate_speed (Team & team, Weather const & weather) {
 	team.pokemon->spe.stat = (2 * team.pokemon->spe.base + team.pokemon->spe.iv + team.pokemon->spe.ev) * team.pokemon->level / 100 + 5;
 
-	switch (team.pokemon->nature) {
-		case Stat::Nature::HASTY:
-		case Stat::Nature::JOLLY:
-		case Stat::Nature::NAIVE:
-		case Stat::Nature::TIMID:
+	switch (team.pokemon->nature.name) {
+		case Nature::HASTY:
+		case Nature::JOLLY:
+		case Nature::NAIVE:
+		case Nature::TIMID:
 			team.pokemon->spe.stat = team.pokemon->spe.stat * 11 / 10;
 			break;
-		case Stat::Nature::BRAVE:
-		case Stat::Nature::QUIET:
-		case Stat::Nature::RELAXED:
-		case Stat::Nature::SASSY:
+		case Nature::BRAVE:
+		case Nature::QUIET:
+		case Nature::RELAXED:
+		case Nature::SASSY:
 			team.pokemon->spe.stat = team.pokemon->spe.stat * 9 / 10;
 			break;
 		default:
@@ -451,7 +453,7 @@ void Stat::boost (int n) {
 		stage = -6;
 }
 
-uint8_t Stat::get_base_stat (species name, Stats stat) const {
+uint8_t Stat::get_base_stat (Species name, Stats stat) const {
 	static uint8_t const base_stat [][6] = {
 		{ 90, 92, 75, 92, 85, 60 },			// Abomasnow
 		{ 25, 20, 15, 105, 55, 90 },		// Abra	
@@ -960,5 +962,57 @@ uint8_t Stat::get_base_stat (species name, Stats stat) const {
 		{ 40, 45, 35, 30, 40, 55 }		// Zubat
 	};
 	return base_stat [name] [stat];
+}
+
+Nature::Nature ():
+	name (END_NATURE) {
+}
+
+bool Nature::is_set () const {
+	return name != END_NATURE;
+}
+
+class Map {
+	public:
+		std::map <std::string, Nature::Natures> nature;
+		Map () {
+			nature ["Adamant"] = Nature::ADAMANT;
+			nature ["Bashful"] = Nature::BASHFUL;
+			nature ["Bold"] = Nature::BOLD;
+			nature ["Brave"] = Nature::BRAVE;
+			nature ["Calm"] = Nature::CALM;
+			nature ["Careful"] = Nature::CAREFUL;
+			nature ["Docile"] = Nature::DOCILE;
+			nature ["Gentle"] = Nature::GENTLE;
+			nature ["Hardy"] = Nature::HARDY;
+			nature ["Hasty"] = Nature::HASTY;
+			nature ["Impish"] = Nature::IMPISH;
+			nature ["Jolly"] = Nature::JOLLY;
+			nature ["Lax"] = Nature::LAX;
+			nature ["Lonely"] = Nature::LONELY;
+			nature ["Mild"] = Nature::MILD;
+			nature ["Modest"] = Nature::MODEST;
+			nature ["Naive"] = Nature::NAIVE;
+			nature ["Naughty"] = Nature::NAUGHTY;
+			nature ["Quiet"] = Nature::QUIET;
+			nature ["Quirky"] = Nature::QUIRKY;
+			nature ["Rash"] = Nature::RASH;
+			nature ["Relaxed"] = Nature::RELAXED;
+			nature ["Sassy"] = Nature::SASSY;
+			nature ["Serious"] = Nature::SERIOUS;
+			nature ["Timid"] = Nature::TIMID;
+		}
+		Nature::Natures find (std::string const & str) const {
+			return nature.find (str)->second;
+		}
+};
+
+Nature::Natures Nature::name_from_string (std::string const & str) {
+	static Map const map;
+	return map.find (str);
+}
+
+void Nature::set_name_from_string (std::string const & str) {
+	name = name_from_string (str);
 }
 }

@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "../evaluate.h"
-#include "../map.h"
 #include "battle.h"
 #include "inmessage.h"
 
@@ -33,7 +32,6 @@ class BotClient {
 		std::string username;
 		std::string password;
 		std::vector <std::string> response;
-		Map map;
 	public:
 		int detailed [END_SPECIES][7];
 		Score score;

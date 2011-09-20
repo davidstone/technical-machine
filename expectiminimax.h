@@ -21,9 +21,9 @@ class Score;
 class Team;
 class Weather;
 
-Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score);
+Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score);
 
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool first_turn = false);
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn = false);
 
 int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
 
@@ -37,7 +37,7 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Scor
 
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, Score const & score);
 
-int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose);
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool faint, bool first_turn, bool verbose);
 
 int64_t fainted (Team ai, Team foe, Weather weather, int depth, Score const & score);
 
@@ -45,7 +45,7 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe);
 
 int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, Score const & score);
 
-void print_best_move (Team const & team, Move::moves_list best_move, int depth, int64_t score);
+void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score);
 
 void print_action (Team const & team, bool verbose, bool first_turn, std::string indent);
 

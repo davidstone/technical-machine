@@ -10,7 +10,6 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <boost/lexical_cast.hpp>
-#include "../map.h"
 #include "../pokemon.h"
 #include "../team.h"
 #include "file.h"
@@ -30,34 +29,34 @@ unsigned team_size (std::string const &name) {
 	return size;
 }
 
-void load_team (Team &team, std::string const &name, Map const &map, unsigned size) {
+void load_team (Team &team, std::string const &name, unsigned size) {
 	team.size = team_size (name);
 	std::ifstream file (name.c_str());
 	for (unsigned n = 0; n != team.size; ++n)
-		load_pokemon (team, file, map, size);
+		load_pokemon (team, file, size);
 	file.close ();
 }
 
-void load_pokemon (Team& team, std::ifstream &file, Map const &map, unsigned size) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
+void load_pokemon (Team& team, std::ifstream &file, unsigned size) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
 	std::string output2;	// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
-	Pokemon member (map.specie.find (output1)->second, team.size);
+	Pokemon member (Pokemon::name_from_string (output1), team.size);
 	member.nickname = search (file, output2, "<nickname>");
 	if (member.nickname == "")
 		member.nickname = output1;
 	member.level = boost::lexical_cast <int> (search (file, output2, "<level>"));
 	member.happiness = boost::lexical_cast <int> (search (file, output2, "<happiness>"));
-	member.gender = map.gender.find (search (file, output2, "<gender>"))->second;
-	member.nature = map.nature.find (search (file, output2, "<nature>"))->second;
-	member.item = map.item.find (search (file, output2, "<item>"))->second;
-	member.ability = map.ability.find (search (file, output2, "<ability>"))->second;
+	member.gender.set_name_from_string (search (file, output2, "<gender>"));
+	member.nature.set_name_from_string (search (file, output2, "<nature>"));
+	member.item.set_name_from_string (search (file, output2, "<item>"));
+	member.ability.set_name_from_string (search (file, output2, "<ability>"));
 	
 	
 	for (unsigned n = 0; ; ++n) {
 		output1 = search (file, output2, "\">");
 		if ("No" == output1)
 			break;
-		Move::moves_list name = map.move.find (output1)->second;
+		Move::Moves name = Move::name_from_string (output1);
 		int pp_ups = boost::lexical_cast <int> (output2);
 		Move move (name, pp_ups, size);
 		member.move.set.insert (member.move.set.begin() + n, move);

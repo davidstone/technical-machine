@@ -32,14 +32,14 @@
 
 namespace technicalmachine {
 
-Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score) {
+Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
 	for (std::vector <Pokemon>::iterator pokemon = foe.pokemon.set.begin(); pokemon != foe.pokemon.set.end(); ++pokemon) {
 		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move)
 			move->score = Score::VICTORY + 1;
 	}
-	Move::moves_list best_move;
+	Move::Moves best_move;
 	for (int deeper = 1; deeper <= depth; ++deeper) {
 		bool first_turn = false;
 		if (deeper == depth)
@@ -52,7 +52,7 @@ Move::moves_list expectiminimax (Team & ai, Team & foe, Weather const & weather,
 }
 
 
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool first_turn) {
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn) {
 
 	/* Working from the inside loop out:
 
@@ -332,7 +332,7 @@ int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, S
 	return value;
 }
 
-int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::moves_list & best_move, bool faint, bool first_turn, bool verbose) {
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool faint, bool first_turn, bool verbose) {
 
 	int64_t (*function) (Team first, Team last, Weather weather, int depth, Score const & score);
 	if (faint)
@@ -365,7 +365,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Scor
 			}
 			if (beta > alpha) {
 				alpha = beta;
-				best_move = static_cast<Move::moves_list> (Move::SWITCH0 + ai.replacement);
+				best_move = static_cast<Move::Moves> (Move::SWITCH0 + ai.replacement);
 				if (verbose or first_turn)
 					std::cout << indent + "Estimated score is " << alpha << '\n';
 			}
@@ -415,11 +415,11 @@ int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, in
 	Team* ai;
 	Team* foe;
 	deorder (team, other, ai, foe);
-	Move::moves_list phony = Move::END_MOVE;
+	Move::Moves phony = Move::END_MOVE;
 	return select_move_branch (*ai, *foe, weather, depth, score, phony);
 }
 
-void print_best_move (Team const & team, Move::moves_list best_move, int depth, int64_t score) {
+void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score) {
 	if (Move::is_switch (best_move))
 		std::cout << "Switch to " << team.pokemon.set [best_move - Move::SWITCH0].get_name ();
 	else

@@ -27,8 +27,10 @@ class Ability {
 		Ability ();
 		Ability (Abilities ability);
 		bool is_set () const;
-		std::string get_name () const;
 		bool blocks_switching (Team const & switcher, Weather const weather) const;
+		std::string get_name () const;
+		static Abilities name_from_string (std::string const & str);
+		void set_name_from_string (std::string const & str);
 };
 }
 #endif

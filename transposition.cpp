@@ -70,7 +70,7 @@ int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth
 		if (transpose->depth >= hash.depth and *transpose == hash)
 			value = transpose->value;
 		else {
-			Move::moves_list phony = Move::END_MOVE;
+			Move::Moves phony = Move::END_MOVE;
 			// If I can't find it, set the value to the evaluation of the state at depth - 1.
 			hash.value = select_move_branch (ai, foe, weather, depth, score, phony);
 		

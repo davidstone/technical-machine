@@ -12,16 +12,15 @@
 #include <boost/lexical_cast.hpp>
 #include <cstddef>
 #include <iostream>
-#include <map>
 #include <string>
 #include <vector>
 #include "analyze_logs.h"
 #include "ability.h"
 #include "endofturn.h"
 #include "gender.h"
-#include "map.h"
 #include "move.h"
 #include "pokemon.h"
+#include "species.h"
 #include "switch.h"
 #include "team.h"
 #include "weather.h"
@@ -32,7 +31,7 @@ Log::Log (Team & ai, Team & foe) {
 	initialize_turn (ai, foe);
 }
 
-bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
+bool analyze_turn (Team & ai, Team & foe, Weather & weather) {
 	std::cout << "Enter the log for the turn, followed by a ~.\n";
 	Log log (ai, foe);
 	// Need to find a better way to signifiy end-of-turn. Currently the ~ with getline seems to remove the final line of a log, meaning I need to hit enter and then enter the ~.
@@ -49,7 +48,7 @@ bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
 				std::cout << "\n";
 			}
 			else
-				log.analyze_line (ai, foe, map);
+				log.analyze_line (ai, foe);
 		}
 		if (ai.pokemon->hp.stat == 0) {
 			ai.replacing = true;
@@ -62,14 +61,14 @@ bool analyze_turn (Team & ai, Team & foe, Weather & weather, Map const & map) {
 	return won;
 }
 
-void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
+void Log::analyze_line (Team & ai, Team & foe) {
 	if (!ignore_line (ai, foe)) {
 		search = " sent out ";
 		size_t found = line.find (search);
 		if (found != std::string::npos) {
 			search = ai.player + " sent out ";
 			if (search_is_first())
-				log_pokemon (ai, foe, map);
+				log_pokemon (ai, foe);
 			else {
 				if (foe.player == "") {	// If it's the very first turn
 					foe.player = line.substr (0, found);
@@ -77,7 +76,7 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 					foe.replacing = true;
 				}
 				search = foe.player + " sent out ";
-				log_pokemon (foe, ai, map);
+				log_pokemon (foe, ai);
 			}
 		}
 		else {
@@ -121,11 +120,11 @@ void Log::analyze_line (Team & ai, Team & foe, Map const & map) {
 				active->hitself = true;
 			else if (!side_effect ()) {
 				if (search_is_first (active->at_replacement().nickname + " used ")) {
-					Move::moves_list move = find_move_name (map);
+					Move::Moves move = find_move_name ();
 					log_move (move);
 				}
 				else
-					log_misc (map);
+					log_misc ();
 			}
 		}
 	}
@@ -143,16 +142,16 @@ bool Log::ignore_line (Team const & ai, Team const & foe) {
 	return ignore;
 }
 
-void Log::log_pokemon (Team & team, Team & other, Map const & map) {
-	species name;
+void Log::log_pokemon (Team & team, Team & other) {
+	Species name;
 	std::string nickname;
 	int level;
 	Gender gender;
-	get_pokemon_info (map, name, nickname, level, gender);
-	pokemon_sent_out (map, name, nickname, level, gender, team, other);
+	get_pokemon_info (name, nickname, level, gender);
+	pokemon_sent_out (name, nickname, level, gender, team, other);
 }
 
-void Log::get_pokemon_info (Map const & map, species & name, std::string & nickname, int & level, Gender & gender) {
+void Log::get_pokemon_info (Species & name, std::string & nickname, int & level, Gender & gender) {
 	std::string search2 = " (lvl ";
 	size_t found2 = line.find (search2);
  	nickname = line.substr (search.length(), found2 - search.length());
@@ -192,11 +191,11 @@ void Log::get_pokemon_info (Map const & map, species & name, std::string & nickn
 		}
 		gender = Gender::GENDERLESS;
 	}
-	name = map.specie.find (line.substr (found3 + search3.length(), found4 - found3 - search3.length()))->second;
+	name = Pokemon::name_from_string (line.substr (found3 + search3.length(), found4 - found3 - search3.length()));
 	level = boost::lexical_cast<int> (line.substr (found2 + search2.length(), found3 - found2 - search2.length()));
 }
 
-void Log::pokemon_sent_out (Map const & map, species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other) {
+void Log::pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other) {
 	active = &team;
 	inactive = &other;
 	if (first == NULL) {
@@ -227,7 +226,7 @@ void Log::pokemon_sent_out (Map const & map, species name, std::string const & n
 	}
 }
 
-bool Log::seen_pokemon (Team & team, species name) {
+bool Log::seen_pokemon (Team & team, Species name) {
 	// Check if this Pokemon has been seen already. If it has, set team.replacement to its location.
 	for (team.replacement = 0; team.replacement != team.pokemon.set.size(); ++team.replacement) {
 		if (name == team.at_replacement().name)
@@ -236,7 +235,7 @@ bool Log::seen_pokemon (Team & team, species name) {
 	return false;
 }
 
-void Log::add_pokemon (Team & team, species name, std::string const & nickname, int level, Gender const & gender) {
+void Log::add_pokemon (Team & team, Species name, std::string const & nickname, int level, Gender const & gender) {
 	Pokemon member (name, team.size);
 	member.level = level;
 	member.gender = gender;
@@ -248,15 +247,15 @@ void Log::add_pokemon (Team & team, species name, std::string const & nickname, 
 	team.pokemon.set.back().load();
 }
 
-Move::moves_list Log::find_move_name (Map const & map) const {
+Move::Moves Log::find_move_name () const {
 	// Account for Windows / Unix line endings
 	size_t n = 1;
 	if (line.find(".\r") != std::string::npos)
 		n = 2;
-	return map.move.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+	return Move::name_from_string (line.substr (search.length(), line.length() - search.length() - n));
 }
 
-void Log::log_move (Move::moves_list name) {
+void Log::log_move (Move::Moves name) {
 	active->moved = true;
 	bool isfound = false;
 	for (active->at_replacement().move.index = 0; active->at_replacement().move.index != active->at_replacement().move.set.size(); ++active->at_replacement().move.index) {
@@ -296,7 +295,7 @@ bool Log::side_effect () {
 }
 
 
-void Log::log_misc (Map const & map) {
+void Log::log_misc () {
 	if (!active->at_replacement().ability.is_set ()) {
 		if (active->at_replacement().nickname + "'s Anger Point raised its attack!" == line) {
 			active->at_replacement().ability.name = Ability::ANGER_POINT;
@@ -403,7 +402,7 @@ void Log::log_misc (Map const & map) {
 			size_t n = 1;
 			if (line.find(".\r") != std::string::npos)
 				n = 2;
-			inactive->at_replacement().ability.name = map.ability.find (line.substr (search.length(), line.length() - search.length() - n))->second;
+			inactive->at_replacement().ability.name_from_string (line.substr (search.length(), line.length() - search.length() - n));
 		}
 	}
 	if (!active->at_replacement().item.is_set ()) {

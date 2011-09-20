@@ -14,7 +14,6 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -26,7 +25,6 @@
 #include "../evaluate.h"
 #include "../expectiminimax.h"
 #include "../load_stats.h"
-#include "../map.h"
 #include "../pokemon.h"
 #include "../species.h"
 #include "../team.h"
@@ -54,7 +52,7 @@ BotClient::BotClient (int depth_):
 	socket (io) {
 	srand (static_cast <unsigned> (time (0)));
 	load_responses ();
-	detailed_stats (map, detailed);
+	detailed_stats (detailed);
 	std::string host;
 	std::string port;
 	account_info (host, port);
@@ -434,7 +432,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			int8_t gender = msg.read_byte ();
 			uint8_t level = msg.read_byte();
 			Battle & battle = battles.find (field_id)->second;
-			battle.handle_send_out (map, party, slot, index, nickname, species_id, gender, level);
+			battle.handle_send_out (party, slot, index, nickname, species_id, gender, level);
 			break;
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
@@ -613,7 +611,7 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 		msg.write_byte (accepted);
 	std::string verb;
 	if (accepted) {
-		Battle battle (map, opponent, depth);
+		Battle battle (opponent, depth);
 		challenges.insert (std::pair <std::string, Battle> (opponent, battle));
 		msg.write_team (battle.ai);
 		verb = "Accepted";
