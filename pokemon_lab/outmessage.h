@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <boost/asio.hpp>
 
 namespace technicalmachine {
 class Team;

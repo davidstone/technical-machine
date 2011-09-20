@@ -17,45 +17,16 @@
 #include <string>
 #include <vector>
 
+#include "../evaluate.h"
+#include "../map.h"
+#include "battle.h"
 #include "inmessage.h"
 
 namespace technicalmachine {
-class Log;
-class Map;
-class Score;
-class Team;
-class Weather;
 namespace pl {
 
 class Channel;
 class Metagame;
-class OutMessage;
-
-class Battle {
-	private:
-		std::vector <species> slot_memory;
-	public:
-		Team ai;
-		Team foe;
-		Weather weather;
-		Log log;
-		int depth;
-		uint8_t party;
-		Battle (Map const & map, std::string const & opponent, int depth_);
-		void handle_request_action (BotClient & , uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
-		void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
-		void update_active_print (Log & log, std::vector <std::string> const & arguments);
-		void handle_use_move (uint8_t party, uint8_t slot, std::string const & nickname, uint16_t move_id);
-		void handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname);
-		void handle_send_out (Map const & map, uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, int8_t gender_, uint8_t level);
-		void handle_health_change (uint8_t party, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator);
-		void handle_set_pp (uint8_t party, uint8_t slot, uint8_t pp);
-		void handle_fainted (uint8_t party, uint8_t slot, std::string const & nickname);
-		void handle_begin_turn (uint16_t turn_count);
-		void handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp);
-		uint8_t switch_slot (Move::moves_list move);
-		void incorrect_hp (Team & team);
-};
 
 class BotClient {
 	private:
