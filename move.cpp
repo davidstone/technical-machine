@@ -4769,5 +4769,4 @@ Move::Moves Move::name_from_string (std::string const & str) {
 void Move::set_name_from_string (std::string const & str) {
 	name = name_from_string (str);
 }
-
 }

@@ -177,7 +177,7 @@ Pokemon const & Team::at_replacement () const {
 	return pokemon.set [replacement];
 }
 
-void Team::output (std::string & output) {
+void Team::output (std::string & output) const {
 	if (me)
 		output = "AI";
 	else
