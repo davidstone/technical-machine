@@ -71,10 +71,10 @@ std::string Ability::get_name () const {
 	return ability_name [name];
 }
 
-class Map {
+class Ability_From_String {
 	public:
 		std::map <std::string, Ability::Abilities> ability;
-		Map () {
+		Ability_From_String () {
 			ability ["Adaptability"] = Ability::ADAPTABILITY;
 			ability ["Aftermath"] = Ability::AFTERMATH;
 			ability ["Air Lock"] = Ability::AIR_LOCK;
@@ -205,8 +205,8 @@ class Map {
 };
 
 Ability::Abilities Ability::name_from_string (std::string const & str) {
-	static Map const map;
-	return map.find (str);
+	static Ability_From_String const converter;
+	return converter.find (str);
 }
 
 void Ability::set_name_from_string (std::string const & str) {

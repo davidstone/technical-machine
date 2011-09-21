@@ -214,10 +214,10 @@ std::string Item::get_name () const {
 	return item_name [name];
 }
 
-class Map {
+class Item_From_String {
 	public:
 		std::map <std::string, Item::Items> item;
-		Map () {
+		Item_From_String () {
 			item ["No Item"] = Item::NO_ITEM;
 			item ["Adamant Orb "] = Item::ADAMANT_ORB;
 			item ["Aguav Berry"] = Item::AGUAV_BERRY;
@@ -630,8 +630,8 @@ class Map {
 };
 
 Item::Items Item::name_from_string (std::string const & str) {
-	static Map const map;
-	return map.find (str);
+	static Item_From_String const converter;
+	return converter.find (str);
 }
 
 void Item::set_name_from_string (std::string const & str) {

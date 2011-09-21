@@ -4242,10 +4242,10 @@ void Move::get_magnitude (unsigned magnitude) {
 	variable.index = magnitude - 4;
 }
 
-class Map {
+class Move_From_String {
 	public:
 		std::map <std::string, Move::Moves> move;
-		Map () {
+		Move_From_String () {
 			move ["Absorb"] = Move::ABSORB;
 			move ["Acid"] = Move::ACID;
 			move ["Acid Armor"] = Move::ACID_ARMOR;
@@ -4762,8 +4762,8 @@ class Map {
 };
 
 Move::Moves Move::name_from_string (std::string const & str) {
-	static Map const map;
-	return map.find (str);
+	static Move_From_String const converter;
+	return converter.find (str);
 }
 
 void Move::set_name_from_string (std::string const & str) {

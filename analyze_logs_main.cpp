@@ -11,7 +11,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <string>
 #include "analyze_logs.h"
 #include "pokemon.h"
@@ -20,8 +19,6 @@
 using namespace technicalmachine;
 
 int main (int argc, char* argv[]) {
-
-	Map map;
 
 	std::string input = "";
 	if (argc == 1)
@@ -46,7 +43,7 @@ int main (int argc, char* argv[]) {
 	player2.player = "";
 	pokemon* previous;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		analyze_line (player1, player2, previous, line, map);
+		analyze_line (player1, player2, previous, line);
 	}
 	file.close ();
 

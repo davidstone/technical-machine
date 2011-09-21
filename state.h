@@ -23,10 +23,10 @@ struct State {
 	Weather weather;
 	int64_t score;
 	int depth;
-	bool operator== (State const &other) const {
-		return this->ai == other.ai and this->foe == other.foe and this->weather == other.weather;
+	bool operator== (State const & other) const {
+		return ai == other.ai and foe == other.foe and weather == other.weather;
 	}
-	State (Map const &map) : ai (true, map), foe (false, map) {}
+	State () : ai (true), foe (false) {}
 };
 
 }

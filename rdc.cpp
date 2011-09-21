@@ -15,7 +15,6 @@
 #include "ability.h"
 #include "item.h"
 #include "load_stats.h"
-#include "map.h"
 #include "move.h"
 #include "pokemon.h"
 #include "reversedamage.h"
@@ -34,11 +33,10 @@ using namespace technicalmachine;
 
 int main () {
 	
-	Map map;
 	int detailed [END_SPECIES] [7] = {{ 0 }};
-	detailed_stats (map, detailed);
-	Team ai (true, map, 6);
-	Team foe (false, map, ai.size);
+	detailed_stats (detailed);
+	Team ai (true, 6);
+	Team foe (false, ai.size);
 
 	Pokemon member (INFERNAPE, foe.size);
 	foe.pokemon.set.push_back (member);

@@ -13,7 +13,6 @@
 #include <fstream>
 #include <map>
 #include <vector>
-#include "map.h"
 #include "load_stats.h"
 #include "pokemon.h"
 #include "team.h"
@@ -32,14 +31,13 @@ using namespace technicalmachine;
 struct Data {
 	std::vector<Fl_Input*> input;
 	Fl_Multiline_Output* output;
-	Map map;
 	int detailed [END_SPECIES][7];
 };
 
 void function (Fl_Widget* w, void* data) {
 	Data* d = reinterpret_cast<Data*> (data);
 	
-	Team team (false, d->map, 6);
+	Team team (false, 6);
 	bool using_lead;
 	std::map<std::string, species>::const_iterator it = d->map.specie.find ((*d->input.begin())->value());
 	if (it != d->map.specie.end()) {
@@ -80,7 +78,7 @@ int main () {
 	win.end();
 
 	Data data;
-	detailed_stats (data.map, data.detailed);
+	detailed_stats (data.detailed);
 	
 	data.input.push_back (&input0);
 	data.input.push_back (&input1);

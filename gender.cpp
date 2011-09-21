@@ -69,10 +69,10 @@ Gender & Gender::operator= (Genders other) {
 	return *this;
 }
 
-class Map {
+class Gender_From_String {
 	public:
 		std::map <std::string, Gender::Genders> gender;
-		Map () {
+		Gender_From_String () {
 			gender ["None"] = Gender::GENDERLESS;
 			gender ["No Gender"] = Gender::GENDERLESS;
 			gender ["Female"] = Gender::FEMALE;
@@ -84,7 +84,7 @@ class Map {
 };
 
 void Gender::set_name_from_string (std::string const & str) {
-	static Map const map;
-	gender = map.find (str);
+	static Gender_From_String const converter;
+	gender = converter.find (str);
 }
 }

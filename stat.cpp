@@ -972,10 +972,10 @@ bool Nature::is_set () const {
 	return name != END_NATURE;
 }
 
-class Map {
+class Nature_From_String {
 	public:
 		std::map <std::string, Nature::Natures> nature;
-		Map () {
+		Nature_From_String () {
 			nature ["Adamant"] = Nature::ADAMANT;
 			nature ["Bashful"] = Nature::BASHFUL;
 			nature ["Bold"] = Nature::BOLD;
@@ -1008,8 +1008,8 @@ class Map {
 };
 
 Nature::Natures Nature::name_from_string (std::string const & str) {
-	static Map const map;
-	return map.find (str);
+	static Nature_From_String const converter;
+	return converter.find (str);
 }
 
 void Nature::set_name_from_string (std::string const & str) {
