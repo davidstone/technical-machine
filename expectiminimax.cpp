@@ -75,16 +75,14 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 
 	bool const verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
 
-	// This section is for replacing fainted Pokemon (and eventually Baton Pass and U-turn, theoretically).
+	// This section is for replacing fainted Pokemon as well as Baton Pass and U-turn replacements.
 
-	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0) {
-		bool faint = true;
-		alpha = replace (ai, foe, weather, depth, score, best_move, faint, first_turn, verbose);
-	}
-	else if (ai.pass or foe.pass) {
-		bool faint = false;
-		alpha = replace (ai, foe, weather, depth, score, best_move, faint, first_turn, verbose);
-	}
+	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0)
+		alpha = replace (ai, foe, weather, depth, score, best_move, first_turn, verbose);
+	else if (ai.pass)
+		alpha = move_then_switch_branch (ai, foe, weather, depth, score, best_move);
+	else if (foe.pass)
+		alpha = move_then_switch_branch (foe, ai, weather, depth, score, best_move);
 	
 	// This section is for selecting a move, including switches that aren't replacing a fainted Pokemon.
 
@@ -149,7 +147,7 @@ int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth,
 	// Determine turn order
 	Team* first;
 	Team* last;
-	order (ai, foe, weather, first, last);
+	order (ai, foe, weather, first, last); 
 	int64_t value;
 	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
 		value = (accuracy_branch (ai, foe, weather, depth, score) + accuracy_branch (foe, ai, weather, depth, score)) / 2;
@@ -267,55 +265,82 @@ int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int d
 	return average_score;
 }
 
-
 int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Score const & score) {
-	if (!last.pass) {
-		if (!first.pass) {
-			if (first.pokemon->move->name == Move::BATON_PASS and false)
-				return baton_pass_score (first, last, weather, depth, score);
-		}
+	if (!first.moved) {
+		Move::Moves move = first.pokemon->move->name;
 		last.damage = usemove (first, last, weather);
-		first.pass = false;
-		// win() already corrects for whether it's the AI or the foe that is passed as first vs. last
 		if (Score::win (first) != 0 or Score::win (last) != 0)
 			return Score::win (first) + Score::win (last);
-
-		if (last.pokemon->move->name == Move::BATON_PASS and false)
-			return baton_pass_score (last, first, weather, depth, score);
+		switch (move) {
+			case Move::BATON_PASS:
+			case Move::U_TURN:
+				if (first.pokemon.set.size () > 1) {
+					Move::Moves phony = Move::END_MOVE;
+					return move_then_switch_branch (first, last, weather, depth, score, phony);
+				}
+				break;
+			default:
+				break;
+		}
 	}
-	
-	// If first uses a phazing move before last gets a chance to move, the newly brought out Pokemon would try to move without checking to see if it's already moved.
-	if (!last.moved)
-		usemove (last, first, weather);
-	last.pass = false;
-	if (Score::win (first) != 0 or Score::win (last) != 0)
-		return Score::win (first) + Score::win (last);
+	// If first uses a phazing move before last gets a chance to move, the newly brought out Pokemon would try to move without checking to see if it's already moved. This check is also necessary for my Baton Pass and U-turn implementation to function.
+	if (!last.moved) {
+		Move::Moves move = last.pokemon->move->name;
+		first.damage = usemove (last, first, weather);
+		if (Score::win (first) != 0 or Score::win (last) != 0)
+			return Score::win (first) + Score::win (last);
+		switch (move) {
+			case Move::BATON_PASS:
+			case Move::U_TURN:
+				if (last.pokemon.set.size () > 1) {
+					Move::Moves phony = Move::END_MOVE;
+					return move_then_switch_branch (last, first, weather, depth, score, phony);
+				}
+				break;
+			default:
+				break;
+		}
+	}
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
+	// Need to recalculate speed because end-of-turn effects occur in a specified order based on Speed, and a that order can be changed within a turn.
+	calculate_speed (first, weather);
+	calculate_speed (last, weather);
+	Team * faster;
+	Team * slower;
+	faster_pokemon (first, last, weather, faster, slower);
 	first.shed_skin = false;
 	last.shed_skin = false;
-	int64_t average_score = 49 * end_of_turn_branch (first, last, weather, depth, score);
+	int64_t average_score = 49 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 	int64_t divisor = 49;
-	if (first.pokemon->ability.name == Ability::SHED_SKIN and first.pokemon->status.name == Status::NO_STATUS) {
+	if (first.pokemon->ability.name == Ability::SHED_SKIN and first.pokemon->status.name != Status::NO_STATUS) {
 		first.shed_skin = true;
-		average_score += 21 * end_of_turn_branch (first, last, weather, depth, score);
+		average_score += 21 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 		divisor += 21;
-		if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status.name == Status::NO_STATUS) {
+		if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status.name != Status::NO_STATUS) {
 			last.shed_skin = true;
-			average_score += 9 * end_of_turn_branch (first, last, weather, depth, score);
+			average_score += 9 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 			divisor += 9;
 			first.shed_skin = false;
 		}
 	}
-	if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status.name == Status::NO_STATUS) {
+	if (last.pokemon->ability.name == Ability::SHED_SKIN and last.pokemon->status.name != Status::NO_STATUS) {
 		last.shed_skin = true;
-		average_score += 21 * end_of_turn_branch (first, last, weather, depth, score);
+		average_score += 21 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 		divisor += 21;
 	}
 	return average_score / divisor;
 }
 
+int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, int depth, Score const & score) {
+	int64_t value;
+	if (first == NULL)		// If both Pokemon are the same speed
+		value = (end_of_turn_branch (team, other, weather, depth, score) + end_of_turn_branch (other, team, weather, depth, score)) / 2;
+	else
+		value = end_of_turn_branch (*first, *last, weather, depth, score);
+	return value;
+}
 
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, Score const & score) {
 	endofturn (first, last, weather);
@@ -332,13 +357,7 @@ int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, S
 	return value;
 }
 
-int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool faint, bool first_turn, bool verbose) {
-
-	int64_t (*function) (Team first, Team last, Weather weather, int depth, Score const & score);
-	if (faint)
-		function = & fainted;
-	else
-		function = & use_move_branch;
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn, bool verbose) {
 	Team* first;
 	Team* last;
 	faster_pokemon (ai, foe, weather, first, last);
@@ -354,12 +373,10 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Scor
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
 					if (first == NULL)
-						beta = std::min (beta, ((*function) (ai, foe, weather, depth, score) + (*function) (foe, ai, weather, depth, score)) / 2);
+						beta = std::min (beta, (fainted (ai, foe, weather, depth, score) + fainted (foe, ai, weather, depth, score)) / 2);
 					else
-						beta = std::min (beta, (*function) (*first, *last, weather, depth, score));
-					if (beta <= alpha	// Alpha-Beta pruning
-							or (foe.pokemon->hp.stat != 0 and faint)
-							or (!foe.pass and !faint))
+						beta = std::min (beta, fainted (*first, *last, weather, depth, score));
+					if (beta <= alpha	or foe.pokemon->hp.stat != 0)
 						break;
 				}
 			}
@@ -369,7 +386,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Scor
 				if (verbose or first_turn)
 					std::cout << indent + "Estimated score is " << alpha << '\n';
 			}
-			if ((ai.pokemon->hp.stat != 0 and faint) or (!ai.pass and !faint))
+			if (ai.pokemon->hp.stat != 0)
 				break;
 		}
 	}
@@ -399,6 +416,43 @@ int64_t fainted (Team first, Team last, Weather weather, int depth, Score const 
 	return value;
 }
 
+int64_t move_then_switch_branch (Team switcher, Team other, Weather weather, int depth, Score const & score, Move::Moves & best_switch) {
+	std::string indent = "\t\t";
+	int64_t alpha = -Score::VICTORY - 1;
+	if (!switcher.me) {
+		alpha = -alpha;
+		indent += "\t";
+	}
+	for (switcher.replacement = 0; switcher.replacement != switcher.pokemon.set.size(); ++switcher.replacement) {
+		if (switcher.pokemon.set [switcher.replacement].name != switcher.pokemon->name) {
+			switchpokemon (switcher, other, weather);
+			/*
+			I don't have to correct for which of the Pokemon moved first because there are only two options:
+			
+			Option 1: only the switcher has moved. Then it obviously went first and I'm passing them in the proper order.
+			
+			Option 2: Both Pokemon have moved. use_move_branch then recalculates which Pokemon is faster to properly account for end-of-turn effects. In this case, it doesn't matter what order I pass them.
+			*/
+			std::cout << indent + "Evaluating bringing in " + switcher.pokemon->get_name () + "\n";
+			int64_t value = use_move_branch (switcher, other, weather, depth, score);
+			std::cout << indent + "Estimated score is " << value << '\n';
+			if (switcher.me) {
+				if (value > alpha) {
+					alpha = value;
+					best_switch = static_cast <Move::Moves> (Move::SWITCH0 + switcher.replacement);
+				}
+			}
+			else {
+				if (value < alpha) {
+					alpha = value;
+					best_switch = static_cast <Move::Moves> (Move::SWITCH0 + switcher.replacement);
+				}
+			}
+		}
+	}
+	return alpha;
+}
+
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 	if (first.me) {
 		ai = & first;
@@ -408,15 +462,6 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 		foe = & first;
 		ai = & last;
 	}
-}
-
-int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, Score const & score) {
-	team.pass = true;
-	Team* ai;
-	Team* foe;
-	deorder (team, other, ai, foe);
-	Move::Moves phony = Move::END_MOVE;
-	return select_move_branch (*ai, *foe, weather, depth, score, phony);
 }
 
 void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score) {

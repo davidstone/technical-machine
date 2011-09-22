@@ -23,7 +23,7 @@ class Team;
 class Weather;
 
 bool is_type (Team const & team, Type type);
-bool get_effectiveness (Type type, Pokemon const & pokemon);
+unsigned get_effectiveness (Type type, Pokemon const & pokemon);
 std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & pokemon);
 bool grounded (Team const & team, Weather const & weather);
 

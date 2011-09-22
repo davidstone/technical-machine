@@ -14,12 +14,12 @@
 
 #include <cstdint>
 #include "move.h"
+#include "team.h"
+#include "weather.h"
 
 namespace technicalmachine {
 
 class Score;
-class Team;
-class Weather;
 
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score);
 
@@ -37,13 +37,15 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Scor
 
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, Score const & score);
 
-int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool faint, bool first_turn, bool verbose);
+int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, int depth, Score const & score);
+
+int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn, bool verbose);
 
 int64_t fainted (Team ai, Team foe, Weather weather, int depth, Score const & score);
 
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe);
 
-int64_t baton_pass_score (Team & team, Team & other, Weather const & weather, int depth, Score const & score);
+int64_t move_then_switch_branch (Team switcher, Team other, Weather weather, int depth, Score const & score, Move::Moves & best_switch);
 
 void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score);
 

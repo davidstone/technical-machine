@@ -1119,7 +1119,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			recoil (*user.pokemon, damage, 4);
 			break;
 		case Move::SUBSTITUTE:
-			if (user.substitute == 0 and user.pokemon->hp.stat > user.pokemon->hp.max / 4) {
+			if (!user.substitute and user.pokemon->hp.stat > user.pokemon->hp.max / 4) {
 				user.substitute = user.pokemon->hp.max / 4;
 				user.pokemon->hp.stat -= user.pokemon->hp.max / 4;
 			}

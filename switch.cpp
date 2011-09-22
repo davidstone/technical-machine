@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-void reset_variables (Team &team) {
+void reset_variables (Team & team) {
 	// Reset all variables that switches reset.
 
 	if (!team.pass) {
@@ -56,6 +56,7 @@ void reset_variables (Team &team) {
 	team.mf = false;
 	team.mud_sport = false;
 	team.nightmare = false;
+	team.pass = false;
 	team.roost = false;
 	team.torment = false;
 	team.trapped = false;
@@ -83,7 +84,7 @@ void reset_variables (Team &team) {
 	}
 }
 
-void switchpokemon (Team &switcher, Team &other, Weather &weather) {
+void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	if (switcher.pokemon->hp.stat == 0) {
 		reset_variables (switcher);
 		// First, remove the active Pokemon because it has 0 HP.
@@ -133,7 +134,7 @@ void switchpokemon (Team &switcher, Team &other, Weather &weather) {
 		activate_ability (switcher, *other.pokemon, weather);
 }
 
-void entry_hazards (Team &switcher, Weather const &weather) {
+void entry_hazards (Team & switcher, Weather const & weather) {
 	if (grounded (switcher, weather) and switcher.pokemon->ability.name != Ability::MAGIC_GUARD) {
 		if (switcher.toxic_spikes != 0) {
 			if (is_type (switcher, POISON))
@@ -151,7 +152,7 @@ void entry_hazards (Team &switcher, Weather const &weather) {
 		heal (*switcher.pokemon, -32, get_effectiveness (ROCK, *switcher.pokemon));
 }
 
-void activate_ability (Team &switcher, Pokemon &other, Weather &weather) {
+void activate_ability (Team & switcher, Pokemon & other, Weather & weather) {
 	// Activate abilities upon switching in
 
 	switcher.slow_start = 0;

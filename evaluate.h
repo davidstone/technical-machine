@@ -22,7 +22,7 @@ class Weather;
 
 class Score {
 	public:
-		static int64_t const VICTORY = 65536;	// Highest score. 100% chance to win.
+		static int64_t const VICTORY;		// Highest score. 100% chance to win.
 		
 		int transposition_table;	
 	private:

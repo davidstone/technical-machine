@@ -499,7 +499,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 
 	damage = damage * mf / 2;
 
-	if (is_type (attacker, attacker.pokemon->move->type) and attacker.pokemon->move->type != TYPELESS) {
+	if (is_type (attacker, attacker.pokemon->move->type)) {
 		if (attacker.pokemon->ability.name == Ability::ADAPTABILITY)
 			stab = 4;
 		else
@@ -508,17 +508,17 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	else
 		stab = 2;
 
-	if (defender.pokemon->ability.name == Ability::SOLID_ROCK and effectiveness > 2)
+	if (defender.pokemon->ability.name == Ability::SOLID_ROCK and effectiveness > 4)
 		aem = 3;
 	else
 		aem = 4;
 
-	if (attacker.pokemon->item.name == Item::EXPERT_BELT and effectiveness > 2)
+	if (attacker.pokemon->item.name == Item::EXPERT_BELT and effectiveness > 4)
 		eb = 6;
 	else
 		eb = 5;
 
-	if (attacker.pokemon->ability.name == Ability::TINTED_LENS and effectiveness < 2)
+	if (attacker.pokemon->ability.name == Ability::TINTED_LENS and effectiveness < 4)
 		tl = 2;
 	else
 		tl = 1;
@@ -526,7 +526,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	rb = 1;
 	if (defender.pokemon->item.name == Item::CHILAN_BERRY and attacker.pokemon->move->type == NORMAL)
 		rb = 2;
-	else if (effectiveness > 2) {
+	else if (effectiveness > 4) {
 		switch (attacker.pokemon->item.name) {
 			case Item::BABIRI_BERRY:
 				if (attacker.pokemon->move->type == STEEL)
