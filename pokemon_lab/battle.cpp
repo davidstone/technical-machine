@@ -489,7 +489,7 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 	}
 	log.active = team;
 	log.inactive = other;
-	if (log.first == NULL) {
+	if (log.first == nullptr) {
 		log.first = team;
 		log.last = other;
 	}
@@ -576,12 +576,12 @@ uint8_t Battle::switch_slot (Move::Moves move) {
 }
 
 void Battle::incorrect_hp (Team & team) {
-	unsigned max_hp = 48;
+	int max_hp = 48;
 	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
 		if (team.me)
 			max_hp = pokemon->hp.max;
-		unsigned pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
-		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1U > pixels or pixels > pokemon->new_hp + 1U)) {
+		int pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
+		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1 > pixels or pixels > pokemon->new_hp + 1)) {
 			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
 			pokemon->hp.stat = pokemon->new_hp * pokemon->hp.max / max_hp;
 		}

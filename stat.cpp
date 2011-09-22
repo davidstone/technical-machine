@@ -369,8 +369,8 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 		slower = &team1;
 	}
 	else {				// All things are equal
-		faster = NULL;
-		slower = NULL;
+		faster = nullptr;
+		slower = nullptr;
 	}
 	if (weather.trick_room)
 		std::swap (faster, slower);

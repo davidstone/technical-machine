@@ -149,7 +149,7 @@ int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth,
 	Team* last;
 	order (ai, foe, weather, first, last); 
 	int64_t value;
-	if (first == NULL)		// If both Pokemon are the same speed and moves are the same priority
+	if (first == nullptr)		// If both Pokemon are the same speed and moves are the same priority
 		value = (accuracy_branch (ai, foe, weather, depth, score) + accuracy_branch (foe, ai, weather, depth, score)) / 2;
 	else
 		value = accuracy_branch (*first, *last, weather, depth, score);
@@ -335,7 +335,7 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Scor
 
 int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, int depth, Score const & score) {
 	int64_t value;
-	if (first == NULL)		// If both Pokemon are the same speed
+	if (first == nullptr)		// If both Pokemon are the same speed
 		value = (end_of_turn_branch (team, other, weather, depth, score) + end_of_turn_branch (other, team, weather, depth, score)) / 2;
 	else
 		value = end_of_turn_branch (*first, *last, weather, depth, score);
@@ -372,7 +372,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Scor
 			int64_t beta = Score::VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
-					if (first == NULL)
+					if (first == nullptr)
 						beta = std::min (beta, (fainted (ai, foe, weather, depth, score) + fainted (foe, ai, weather, depth, score)) / 2);
 					else
 						beta = std::min (beta, fainted (*first, *last, weather, depth, score));

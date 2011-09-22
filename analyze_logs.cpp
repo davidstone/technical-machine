@@ -88,7 +88,7 @@ void Log::analyze_line (Team & ai, Team & foe) {
 				active = &foe;
 				inactive = &ai;
 			}
-			if (first == NULL) {
+			if (first == nullptr) {
 				first = active;
 				last = inactive;
 			}
@@ -198,7 +198,7 @@ void Log::get_pokemon_info (Species & name, std::string & nickname, int & level,
 void Log::pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other) {
 	active = &team;
 	inactive = &other;
-	if (first == NULL) {
+	if (first == nullptr) {
 		first = &team;
 		last = &other;
 	}
@@ -499,10 +499,10 @@ void Log::initialize_turn (Team &ai, Team &foe) {
 	phaze = false;
 	move_damage = false;
 	
-	active = NULL;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to NULL to remove this warning.
-	inactive = NULL;
-	first = NULL;
-	last = NULL;
+	active = nullptr;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to nullptr to remove this warning.
+	inactive = nullptr;
+	first = nullptr;
+	last = nullptr;
 }
 
 void Log::initialize_team (Team & team) {
