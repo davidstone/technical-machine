@@ -45,7 +45,9 @@ int64_t fainted (Team ai, Team foe, Weather weather, int depth, Score const & sc
 
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe);
 
-int64_t move_then_switch_branch (Team switcher, Team other, Weather weather, int depth, Score const & score, Move::Moves & best_switch);
+int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather const & weather, int depth, Score const & score, Move::Moves & best_switch);
+
+int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, int depth, Score const & score);
 
 void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score);
 

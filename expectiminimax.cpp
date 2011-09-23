@@ -416,7 +416,7 @@ int64_t fainted (Team first, Team last, Weather weather, int depth, Score const 
 	return value;
 }
 
-int64_t move_then_switch_branch (Team switcher, Team other, Weather weather, int depth, Score const & score, Move::Moves & best_switch) {
+int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather const & weather, int depth, Score const & score, Move::Moves & best_switch) {
 	std::string indent = "\t\t";
 	int64_t alpha = -Score::VICTORY - 1;
 	if (!switcher.me) {
@@ -425,16 +425,8 @@ int64_t move_then_switch_branch (Team switcher, Team other, Weather weather, int
 	}
 	for (switcher.replacement = 0; switcher.replacement != switcher.pokemon.set.size(); ++switcher.replacement) {
 		if (switcher.pokemon.set [switcher.replacement].name != switcher.pokemon->name) {
-			switchpokemon (switcher, other, weather);
-			/*
-			I don't have to correct for which of the Pokemon moved first because there are only two options:
-			
-			Option 1: only the switcher has moved. Then it obviously went first and I'm passing them in the proper order.
-			
-			Option 2: Both Pokemon have moved. use_move_branch then recalculates which Pokemon is faster to properly account for end-of-turn effects. In this case, it doesn't matter what order I pass them.
-			*/
-			std::cout << indent + "Evaluating bringing in " + switcher.pokemon->get_name () + "\n";
-			int64_t value = use_move_branch (switcher, other, weather, depth, score);
+			std::cout << indent + "Evaluating bringing in " + switcher.at_replacement ().get_name () + "\n";
+			int64_t value = switch_after_move_branch (switcher, other, weather, depth, score);
 			std::cout << indent + "Estimated score is " << value << '\n';
 			if (switcher.me) {
 				if (value > alpha) {
@@ -451,6 +443,23 @@ int64_t move_then_switch_branch (Team switcher, Team other, Weather weather, int
 		}
 	}
 	return alpha;
+}
+
+int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, int depth, Score const & score) {
+	switcher.at_replacement ().atk.stage = switcher.pokemon->atk.stage;
+	switcher.at_replacement ().def.stage = switcher.pokemon->def.stage;
+	switcher.at_replacement ().spa.stage = switcher.pokemon->spa.stage;
+	switcher.at_replacement ().spd.stage = switcher.pokemon->spd.stage;
+	switcher.at_replacement ().spe.stage = switcher.pokemon->spe.stage;
+	switchpokemon (switcher, other, weather);
+	/*
+	I don't have to correct for which of the Pokemon moved first because there are only two options:
+	
+	Option 1: only the switcher has moved. Then it obviously went first and I'm passing them in the proper order.
+	
+	Option 2: Both Pokemon have moved. use_move_branch then recalculates which Pokemon is faster to properly account for end-of-turn effects. In this case, it doesn't matter what order I pass them.
+	*/
+	return use_move_branch (switcher, other, weather, depth, score);
 }
 
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {

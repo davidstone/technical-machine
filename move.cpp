@@ -398,11 +398,6 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				target.attract = true;
 			break;
 		case Move::BATON_PASS:
-			user.pokemon.set [user.replacement].atk.stage = user.pokemon->atk.stage;
-			user.pokemon.set [user.replacement].def.stage = user.pokemon->def.stage;
-			user.pokemon.set [user.replacement].spa.stage = user.pokemon->spa.stage;
-			user.pokemon.set [user.replacement].spd.stage = user.pokemon->spd.stage;
-			user.pokemon.set [user.replacement].spe.stage = user.pokemon->spe.stage;
 			user.pass = true;
 			break;
 		case Move::BELLY_DRUM:
