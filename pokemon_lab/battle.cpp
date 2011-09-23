@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <string>
+#include <boost/lexical_cast.hpp>
 #include "battle.h"
 #include "../analyze_logs.h"
 #include "../expectiminimax.h"
@@ -466,7 +467,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 void Battle::update_active_print (Log & log, std::vector <std::string> const & arguments) {
 	// This needs to be changed to the correct message parser.
 	assert (arguments.size() > 0);
-	if (arguments [0] [3] - '0' == party) {
+	if (boost::lexical_cast <int> (arguments [0] [3]) == party) {
 		log.active = & ai;
 		log.inactive = & foe;
 	}
