@@ -30,4 +30,4 @@ struct State {
 };
 
 }
-#endif
+#endif		// STATE_H_

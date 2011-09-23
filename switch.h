@@ -27,4 +27,4 @@ void activate_ability (Team &switcher, Pokemon &other, Weather &weather);
 
 }
 
-#endif
+#endif		// SWITCH_H_

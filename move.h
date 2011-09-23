@@ -92,4 +92,4 @@ void lower_pp (Team & user, Pokemon const & target);
 
 }
 
-#endif
+#endif		// MOVE_H_

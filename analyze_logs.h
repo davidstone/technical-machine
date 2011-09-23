@@ -78,4 +78,4 @@ void normalize_hp (Team & first, Team & last);
 void normalize_hp_team (Team & team);
 
 }
-#endif
+#endif		// ANALYZE_LOGS_H_

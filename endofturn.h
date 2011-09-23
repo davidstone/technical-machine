@@ -33,4 +33,4 @@ void decrement (int8_t & n);
 
 }
 
-#endif
+#endif		// ENDOFTURN_H_

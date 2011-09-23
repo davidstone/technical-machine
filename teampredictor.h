@@ -27,4 +27,4 @@ void predict_pokemon (Team &team, std::vector<float> estimate, float multiplier 
 void predict_move (Pokemon &member, int detailed [][7], unsigned size);
 
 }
-#endif
+#endif		// TEAMPREDICTOR_H_

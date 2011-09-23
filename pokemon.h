@@ -67,4 +67,4 @@ class Pokemon {
 };
 
 }
-#endif
+#endif		// POKEMON_H_

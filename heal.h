@@ -20,4 +20,4 @@ void heal (Pokemon &member, int denominator, unsigned numerator = 1);
 
 }
 
-#endif
+#endif		// HEAL_H_

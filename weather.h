@@ -48,4 +48,4 @@ class Weather {
 };
 
 }
-#endif
+#endif		// WEATHER_H_

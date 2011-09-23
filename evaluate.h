@@ -82,4 +82,4 @@ class Score {
 };
 
 }
-#endif
+#endif		// EVALUATE_H_

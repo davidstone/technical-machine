@@ -23,4 +23,4 @@ class Weather;
 void reversedamagecalculator (Team &attacker, Team const &defender, Weather const &weather, unsigned damage, std::vector<Unknown> &hidden);
 
 }
-#endif
+#endif		// REVERSEDAMAGE_H_

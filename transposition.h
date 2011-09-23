@@ -23,4 +23,4 @@ class Weather;
 int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
 
 }
-#endif
+#endif		// TRANSPOSITION_H_

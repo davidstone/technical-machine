@@ -39,4 +39,4 @@ struct Unknown {
 void unknown (std::vector<Unknown> &hidden);
 
 }
-#endif
+#endif		// UNKNOWN_H_

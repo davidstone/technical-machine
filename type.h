@@ -28,4 +28,4 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 bool grounded (Team const & team, Weather const & weather);
 
 }
-#endif
+#endif		// TYPE_H_

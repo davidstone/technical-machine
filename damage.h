@@ -35,4 +35,4 @@ void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 void damage_side_effect (Pokemon & user, unsigned damage);
 
 }
-#endif
+#endif		// DAMAGE_H_

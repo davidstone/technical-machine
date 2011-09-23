@@ -26,4 +26,4 @@ bool imprison (Move const & move, Team const & other);
 
 }
 
-#endif
+#endif		// BLOCK_H_

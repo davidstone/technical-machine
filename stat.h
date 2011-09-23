@@ -60,4 +60,4 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 void chance_to_hit (Team & user, Team const & target, Weather const & weather);
 
 }
-#endif
+#endif		// STAT_H_

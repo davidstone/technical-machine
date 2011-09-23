@@ -9,8 +9,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LEAD_STATS_H_
-#define LEAD_STATS_H_
+#ifndef LOAD_STATS_H_
+#define LOAD_STATS_H_
 
 #include <vector>
 #include "species.h"
@@ -27,4 +27,4 @@ void detailed_stats (int detailed [][7]);
 
 }
 
-#endif
+#endif		// LOAD_STATS_H_

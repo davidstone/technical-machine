@@ -40,4 +40,4 @@ class Active {
 };
 
 }
-#endif
+#endif		// ACTIVE_H_

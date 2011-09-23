@@ -38,4 +38,4 @@ void poison_normal (Team &user, Team &target, Weather const &weather);
 void poison_toxic (Team &user, Team &target, Weather const &weather);
 
 }
-#endif
+#endif		// STATUS_H_

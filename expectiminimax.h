@@ -54,4 +54,4 @@ void print_best_move (Team const & team, Move::Moves best_move, int depth, int64
 void print_action (Team const & team, bool verbose, bool first_turn, std::string indent);
 
 }
-#endif
+#endif		// EXPECTIMINIMAX_H_

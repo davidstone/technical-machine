@@ -33,4 +33,4 @@ class Ability {
 		void set_name_from_string (std::string const & str);
 };
 }
-#endif
+#endif		// ABILITY_H_
