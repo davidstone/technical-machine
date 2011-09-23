@@ -100,7 +100,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			for (std::vector<Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
 				if (move->is_phaze ()) {
 					move->variable.set.pop_back();
-					for (std::vector <std::pair <unsigned short, unsigned short> >::iterator variable = move->variable.set.begin(); variable != move->variable.set.end(); ++variable) {
+					for (std::vector <std::pair <uint16_t, uint16_t> >::iterator variable = move->variable.set.begin(); variable != move->variable.set.end(); ++variable) {
 						if (switcher.size > 2)
 							variable->second = Move::max_probability / (switcher.size - 1);
 						else
