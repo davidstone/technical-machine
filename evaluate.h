@@ -50,6 +50,7 @@ class Score {
 		int magnet_rise;
 		int nightmare;
 		int substitute;
+		int substitute_hp;
 		int torment;
 		int trapped;
 

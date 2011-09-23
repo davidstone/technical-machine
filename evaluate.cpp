@@ -29,22 +29,22 @@ int64_t const Score::VICTORY = 65536;
 
 int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 	int64_t score = scoreteam (ai) - scoreteam (foe);
-	if (score > 65536 or score < -65536)
-		std::cerr << "\t\t\tScore 1: " << score << '\n';
+	if (score > VICTORY or score < -VICTORY)
+		std::cerr << "=======================Score 1: " << score << '\n';
 
 	size_t index = ai.pokemon.index;
 	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
 		score += scorepokemon (ai, foe, weather);
 	ai.pokemon.index = index;
-	if (score > 65536 or score < -65536)
-		std::cerr << "\t\t\tScore 2: " << score << '\n';
+	if (score > VICTORY or score < -VICTORY)
+		std::cerr << "=======================Score 2: " << score << '\n';
 
 	index = foe.pokemon.index;
 	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
 		score -= scorepokemon (foe, ai, weather);
 	foe.pokemon.index = index;
-	if (score > 65536 or score < -65536)
-		std::cerr << "\t\t\tScore 3: " << score << '\n';
+	if (score > VICTORY or score < -VICTORY)
+		std::cerr << "=======================Score 3: " << score << '\n';
 	return score;
 }
 
@@ -52,7 +52,8 @@ int64_t Score::scoreteam (Team const & team) const {
 	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
 	if (team.pokemon->hp.stat != 0) {
 		score += team.magnet_rise * magnet_rise;
-		score += substitute * team.substitute / team.pokemon->hp.max;
+		if (team.substitute)
+			score += substitute + substitute_hp * team.substitute / team.pokemon->hp.max;
 		if (team.aqua_ring)
 			score += aqua_ring;
 		if (team.curse)
@@ -77,7 +78,9 @@ int64_t Score::scoreteam (Team const & team) const {
 			score += focus_energy;
 		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
 			if (move->name == Move::BATON_PASS) {
-				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.substitute * substitute + team.pokemon->atk.stage * atk_stage + team.pokemon->def.stage * def_stage + team.pokemon->spa.stage * spa_stage + team.pokemon->spd.stage * spd_stage + team.pokemon->spe.stage * spe_stage);
+				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.pokemon->atk.stage * atk_stage + team.pokemon->def.stage * def_stage + team.pokemon->spa.stage * spa_stage + team.pokemon->spd.stage * spd_stage + team.pokemon->spe.stage * spe_stage);
+				if (team.substitute)
+					score += baton_pass * substitute;
 				break;
 			}
 		}
@@ -221,6 +224,9 @@ Score::Score () {
 		}
 		else if (data == "Substitute") {
 			substitute = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
+		}
+		else if (data == "Substitute HP") {
+			substitute_hp = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
 		}
 		else if (data == "Torment") {
 			torment = boost::lexical_cast<int> (line.substr (x + delimiter.length ()));
