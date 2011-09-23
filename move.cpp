@@ -4245,516 +4245,518 @@ void Move::get_magnitude (unsigned magnitude) {
 class Move_From_String {
 	public:
 		std::map <std::string, Move::Moves> move;
-		Move_From_String () {
-			move ["Absorb"] = Move::ABSORB;
-			move ["Acid"] = Move::ACID;
-			move ["Acid Armor"] = Move::ACID_ARMOR;
-			move ["Acupressure"] = Move::ACUPRESSURE;
-			move ["Aerial Ace"] = Move::AERIAL_ACE;
-			move ["Aeroblast"] = Move::AEROBLAST;
-			move ["Agility"] = Move::AGILITY;
-			move ["Air Cutter"] = Move::AIR_CUTTER;
-			move ["Air Slash"] = Move::AIR_SLASH;
-			move ["Amnesia"] = Move::AMNESIA;
-			move ["AncientPower"] = Move::ANCIENTPOWER;
-			move ["Ancientpower"] = Move::ANCIENTPOWER;
-			move ["Aqua Jet"] = Move::AQUA_JET;
-			move ["Aqua Ring"] = Move::AQUA_RING;
-			move ["Aqua Tail"] = Move::AQUA_TAIL;
-			move ["Arm Thrust"] = Move::ARM_THRUST;
-			move ["Aromatherapy"] = Move::AROMATHERAPY;
-			move ["Assist"] = Move::ASSIST;
-			move ["Assurance"] = Move::ASSURANCE;
-			move ["Astonish"] = Move::ASTONISH;
-			move ["Attack Order"] = Move::ATTACK_ORDER;
-			move ["Attract"] = Move::ATTRACT;
-			move ["Aura Sphere"] = Move::AURA_SPHERE;
-			move ["Aurora Beam"] = Move::AURORA_BEAM;
-			move ["Avalanche"] = Move::AVALANCHE;
-			move ["Barrage"] = Move::BARRAGE;
-			move ["Barrier"] = Move::BARRIER;
-			move ["Baton Pass"] = Move::BATON_PASS;
-			move ["Beat Up"] = Move::BEAT_UP;
-			move ["Belly Drum"] = Move::BELLY_DRUM;
-			move ["Bide"] = Move::BIDE;
-			move ["Bind"] = Move::BIND;
-			move ["Bite"] = Move::BITE;
-			move ["Blast Burn"] = Move::BLAST_BURN;
-			move ["Blaze Kick"] = Move::BLAZE_KICK;
-			move ["Blizzard"] = Move::BLIZZARD;
-			move ["Block"] = Move::BLOCK;
-			move ["Body Slam"] = Move::BODY_SLAM;
-			move ["Bone Club"] = Move::BONE_CLUB;
-			move ["Bone Rush"] = Move::BONE_RUSH;
-			move ["Bonemerang"] = Move::BONEMERANG;
-			move ["Bounce"] = Move::BOUNCE;
-			move ["Brave Bird"] = Move::BRAVE_BIRD;
-			move ["Brick Break"] = Move::BRICK_BREAK;
-			move ["Brine"] = Move::BRINE;
-			move ["Bubble"] = Move::BUBBLE;
-			move ["BubbleBeam"] = Move::BUBBLEBEAM;
-			move ["Bubblebeam"] = Move::BUBBLEBEAM;
-			move ["Bug Bite"] = Move::BUG_BITE;
-			move ["Bug Buzz"] = Move::BUG_BUZZ;
-			move ["Bulk Up"] = Move::BULK_UP;
-			move ["Bullet Punch"] = Move::BULLET_PUNCH;
-			move ["Bullet Seed"] = Move::BULLET_SEED;
-			move ["Calm Mind"] = Move::CALM_MIND;
-			move ["Camouflage"] = Move::CAMOUFLAGE;
-			move ["Captivate"] = Move::CAPTIVATE;
-			move ["Charge"] = Move::CHARGE;
-			move ["Charge Beam"] = Move::CHARGE_BEAM;
-			move ["Charm"] = Move::CHARM;
-			move ["Chatter"] = Move::CHATTER;
-			move ["Clamp"] = Move::CLAMP;
-			move ["Close Combat"] = Move::CLOSE_COMBAT;
-			move ["Comet Punch"] = Move::COMET_PUNCH;
-			move ["Confuse Ray"] = Move::CONFUSE_RAY;
-			move ["Confusion"] = Move::CONFUSION;
-			move ["Constrict"] = Move::CONSTRICT;
-			move ["Conversion"] = Move::CONVERSION;
-			move ["Conversion2"] = Move::CONVERSION2;
-			move ["Conversion 2"] = Move::CONVERSION2;
-			move ["Copycat"] = Move::COPYCAT;
-			move ["Cosmic Power"] = Move::COSMIC_POWER;
-			move ["Cotton Spore"] = Move::COTTON_SPORE;
-			move ["Counter"] = Move::COUNTER;
-			move ["Covet"] = Move::COVET;
-			move ["Crabhammer"] = Move::CRABHAMMER;
-			move ["Cross Chop"] = Move::CROSS_CHOP;
-			move ["Cross Poison"] = Move::CROSS_POISON;
-			move ["Crunch"] = Move::CRUNCH;
-			move ["Crush Claw"] = Move::CRUSH_CLAW;
-			move ["Crush Grip"] = Move::CRUSH_GRIP;
-			move ["Curse"] = Move::CURSE;
-			move ["Cut"] = Move::CUT;
-			move ["Dark Pulse"] = Move::DARK_PULSE;
-			move ["Dark Void"] = Move::DARK_VOID;
-			move ["Defend Order"] = Move::DEFEND_ORDER;
-			move ["Defense Curl"] = Move::DEFENSE_CURL;
-			move ["Defog"] = Move::DEFOG;
-			move ["Destiny Bond"] = Move::DESTINY_BOND;
-			move ["Detect"] = Move::DETECT;
-			move ["Dig"] = Move::DIG;
-			move ["Disable"] = Move::DISABLE;
-			move ["Discharge"] = Move::DISCHARGE;
-			move ["Dive"] = Move::DIVE;
-			move ["Dizzy Punch"] = Move::DIZZY_PUNCH;
-			move ["Doom Desire"] = Move::DOOM_DESIRE;
-			move ["Double Hit"] = Move::DOUBLE_HIT;
-			move ["Double Kick"] = Move::DOUBLE_KICK;
-			move ["Double Team"] = Move::DOUBLE_TEAM;
-			move ["Double-Edge"] = Move::DOUBLE_EDGE;
-			move ["Double-edge"] = Move::DOUBLE_EDGE;
-			move ["DoubleSlap"] = Move::DOUBLESLAP;
-			move ["Doubleslap"] = Move::DOUBLESLAP;
-			move ["Draco Meteor"] = Move::DRACO_METEOR;
-			move ["Dragon Claw"] = Move::DRAGON_CLAW;
-			move ["Dragon Dance"] = Move::DRAGON_DANCE;
-			move ["Dragon Pulse"] = Move::DRAGON_PULSE;
-			move ["Dragon Rage"] = Move::DRAGON_RAGE;
-			move ["Dragon Rush"] = Move::DRAGON_RUSH;
-			move ["DragonBreath"] = Move::DRAGONBREATH;
-			move ["Dragonbreath"] = Move::DRAGONBREATH;
-			move ["Drain Punch"] = Move::DRAIN_PUNCH;
-			move ["Dream Eater"] = Move::DREAM_EATER;
-			move ["Drill Peck"] = Move::DRILL_PECK;
-			move ["DynamicPunch"] = Move::DYNAMICPUNCH;
-			move ["Dynamicpunch"] = Move::DYNAMICPUNCH;
-			move ["Earth Power"] = Move::EARTH_POWER;
-			move ["Earthquake"] = Move::EARTHQUAKE;
-			move ["Egg Bomb"] = Move::EGG_BOMB;
-			move ["Embargo"] = Move::EMBARGO;
-			move ["Ember"] = Move::EMBER;
-			move ["Encore"] = Move::ENCORE;
-			move ["Endeavor"] = Move::ENDEAVOR;
-			move ["Endure"] = Move::ENDURE;
-			move ["Energy Ball"] = Move::ENERGY_BALL;
-			move ["Eruption"] = Move::ERUPTION;
-			move ["Explosion"] = Move::EXPLOSION;
-			move ["Extrasensory"] = Move::EXTRASENSORY;
-			move ["ExtremeSpeed"] = Move::EXTREMESPEED;
-			move ["Extremespeed"] = Move::EXTREMESPEED;
-			move ["Facade"] = Move::FACADE;
-			move ["Faint Attack"] = Move::FAINT_ATTACK;
-			move ["Fake Out"] = Move::FAKE_OUT;
-			move ["Fake Tears"] = Move::FAKE_TEARS;
-			move ["False Swipe"] = Move::FALSE_SWIPE;
-			move ["FeatherDance"] = Move::FEATHERDANCE;
-			move ["Featherdance"] = Move::FEATHERDANCE;
-			move ["Feint"] = Move::FEINT;
-			move ["Fire Blast"] = Move::FIRE_BLAST;
-			move ["Fire Fang"] = Move::FIRE_FANG;
-			move ["Fire Punch"] = Move::FIRE_PUNCH;
-			move ["Fire Spin"] = Move::FIRE_SPIN;
-			move ["Fissure"] = Move::FISSURE;
-			move ["Flail"] = Move::FLAIL;
-			move ["Flame Wheel"] = Move::FLAME_WHEEL;
-			move ["Flamethrower"] = Move::FLAMETHROWER;
-			move ["Flare Blitz"] = Move::FLARE_BLITZ;
-			move ["Flash"] = Move::FLASH;
-			move ["Flash Cannon"] = Move::FLASH_CANNON;
-			move ["Flatter"] = Move::FLATTER;
-			move ["Fling"] = Move::FLING;
-			move ["Fly"] = Move::FLY;
-			move ["Focus Blast"] = Move::FOCUS_BLAST;
-			move ["Focus Energy"] = Move::FOCUS_ENERGY;
-			move ["Focus Punch"] = Move::FOCUS_PUNCH;
-			move ["Follow Me"] = Move::FOLLOW_ME;
-			move ["Force Palm"] = Move::FORCE_PALM;
-			move ["Foresight"] = Move::FORESIGHT;
-			move ["Frenzy Plant"] = Move::FRENZY_PLANT;
-			move ["Frustration"] = Move::FRUSTRATION;
-			move ["Fury Attack"] = Move::FURY_ATTACK;
-			move ["Fury Cutter"] = Move::FURY_CUTTER;
-			move ["Fury Swipes"] = Move::FURY_SWIPES;
-			move ["Future Sight"] = Move::FUTURE_SIGHT;
-			move ["Gastro Acid"] = Move::GASTRO_ACID;
-			move ["Giga Drain"] = Move::GIGA_DRAIN;
-			move ["Giga Impact"] = Move::GIGA_IMPACT;
-			move ["Glare"] = Move::GLARE;
-			move ["Grass Knot"] = Move::GRASS_KNOT;
-			move ["GrassWhistle"] = Move::GRASSWHISTLE;
-			move ["Grasswhistle"] = Move::GRASSWHISTLE;
-			move ["Gravity"] = Move::GRAVITY;
-			move ["Growl"] = Move::GROWL;
-			move ["Growth"] = Move::GROWTH;
-			move ["Grudge"] = Move::GRUDGE;
-			move ["Guard Swap"] = Move::GUARD_SWAP;
-			move ["Guillotine"] = Move::GUILLOTINE;
-			move ["Gunk Shot"] = Move::GUNK_SHOT;
-			move ["Gust"] = Move::GUST;
-			move ["Gyro Ball"] = Move::GYRO_BALL;
-			move ["Hail"] = Move::HAIL;
-			move ["Hammer Arm"] = Move::HAMMER_ARM;
-			move ["Harden"] = Move::HARDEN;
-			move ["Haze"] = Move::HAZE;
-			move ["Head Smash"] = Move::HEAD_SMASH;
-			move ["Headbutt"] = Move::HEADBUTT;
-			move ["Heal Bell"] = Move::HEAL_BELL;
-			move ["Heal Block"] = Move::HEAL_BLOCK;
-			move ["Heal Order"] = Move::HEAL_ORDER;
-			move ["Healing Wish"] = Move::HEALING_WISH;
-			move ["Heart Swap"] = Move::HEART_SWAP;
-			move ["Heat Wave"] = Move::HEAT_WAVE;
-			move ["Helping Hand"] = Move::HELPING_HAND;
-			move ["Hi Jump Kick"] = Move::HI_JUMP_KICK;
-			move ["Hidden Power"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Bug"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Dark"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Dragon"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Electric"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Fighting"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Fire"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Flying"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Ghost"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Grass"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Ground"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Ice"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Poison"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Psychic"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Rock"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Steel"] = Move::HIDDEN_POWER;
-			move ["Hidden Power Water"] = Move::HIDDEN_POWER;
-			move ["Horn Attack"] = Move::HORN_ATTACK;
-			move ["Horn Drill"] = Move::HORN_DRILL;
-			move ["Howl"] = Move::HOWL;
-			move ["Hydro Cannon"] = Move::HYDRO_CANNON;
-			move ["Hydro Pump"] = Move::HYDRO_PUMP;
-			move ["Hyper Beam"] = Move::HYPER_BEAM;
-			move ["Hyper Fang"] = Move::HYPER_FANG;
-			move ["Hyper Voice"] = Move::HYPER_VOICE;
-			move ["Hypnosis"] = Move::HYPNOSIS;
-			move ["Ice Ball"] = Move::ICE_BALL;
-			move ["Ice Beam"] = Move::ICE_BEAM;
-			move ["Ice Fang"] = Move::ICE_FANG;
-			move ["Ice Punch"] = Move::ICE_PUNCH;
-			move ["Ice Shard"] = Move::ICE_SHARD;
-			move ["Icicle Spear"] = Move::ICICLE_SPEAR;
-			move ["Icy Wind"] = Move::ICY_WIND;
-			move ["Imprison"] = Move::IMPRISON;
-			move ["Ingrain"] = Move::INGRAIN;
-			move ["Iron Defense"] = Move::IRON_DEFENSE;
-			move ["Iron Head"] = Move::IRON_HEAD;
-			move ["Iron Tail"] = Move::IRON_TAIL;
-			move ["Judgment"] = Move::JUDGMENT;
-			move ["Jump Kick"] = Move::JUMP_KICK;
-			move ["Karate Chop"] = Move::KARATE_CHOP;
-			move ["Kinesis"] = Move::KINESIS;
-			move ["Knock Off"] = Move::KNOCK_OFF;
-			move ["Last Resort"] = Move::LAST_RESORT;
-			move ["Lava Plume"] = Move::LAVA_PLUME;
-			move ["Leaf Blade"] = Move::LEAF_BLADE;
-			move ["Leaf Storm"] = Move::LEAF_STORM;
-			move ["Leech Life"] = Move::LEECH_LIFE;
-			move ["Leech Seed"] = Move::LEECH_SEED;
-			move ["Leer"] = Move::LEER;
-			move ["Lick"] = Move::LICK;
-			move ["Light Screen"] = Move::LIGHT_SCREEN;
-			move ["Lock-On"] = Move::LOCK_ON;
-			move ["Lock-on"] = Move::LOCK_ON;
-			move ["Lovely Kiss"] = Move::LOVELY_KISS;
-			move ["Low Kick"] = Move::LOW_KICK;
-			move ["Lucky Chant"] = Move::LUCKY_CHANT;
-			move ["Lunar Dance"] = Move::LUNAR_DANCE;
-			move ["Luster Purge"] = Move::LUSTER_PURGE;
-			move ["Mach Punch"] = Move::MACH_PUNCH;
-			move ["Magic Coat"] = Move::MAGIC_COAT;
-			move ["Magical Leaf"] = Move::MAGICAL_LEAF;
-			move ["Magma Storm"] = Move::MAGMA_STORM;
-			move ["Magnet Bomb"] = Move::MAGNET_BOMB;
-			move ["Magnet Rise"] = Move::MAGNET_RISE;
-			move ["Magnitude"] = Move::MAGNITUDE;
-			move ["Me First"] = Move::ME_FIRST;
-			move ["Mean Look"] = Move::MEAN_LOOK;
-			move ["Meditate"] = Move::MEDITATE;
-			move ["Mega Drain"] = Move::MEGA_DRAIN;
-			move ["Mega Kick"] = Move::MEGA_KICK;
-			move ["Mega Punch"] = Move::MEGA_PUNCH;
-			move ["Megahorn"] = Move::MEGAHORN;
-			move ["Memento"] = Move::MEMENTO;
-			move ["Metal Burst"] = Move::METAL_BURST;
-			move ["Metal Claw"] = Move::METAL_CLAW;
-			move ["Metal Sound"] = Move::METAL_SOUND;
-			move ["Meteor Mash"] = Move::METEOR_MASH;
-			move ["Metronome"] = Move::METRONOME;
-			move ["Milk Drink"] = Move::MILK_DRINK;
-			move ["Mimic"] = Move::MIMIC;
-			move ["Mind Reader"] = Move::MIND_READER;
-			move ["Minimize"] = Move::MINIMIZE;
-			move ["Miracle Eye"] = Move::MIRACLE_EYE;
-			move ["Mirror Coat"] = Move::MIRROR_COAT;
-			move ["Mirror Move"] = Move::MIRROR_MOVE;
-			move ["Mirror Shot"] = Move::MIRROR_SHOT;
-			move ["Mist"] = Move::MIST;
-			move ["Mist Ball"] = Move::MIST_BALL;
-			move ["Moonlight"] = Move::MOONLIGHT;
-			move ["Morning Sun"] = Move::MORNING_SUN;
-			move ["Mud Bomb"] = Move::MUD_BOMB;
-			move ["Mud Shot"] = Move::MUD_SHOT;
-			move ["Mud Sport"] = Move::MUD_SPORT;
-			move ["Mud-Slap"] = Move::MUD_SLAP;
-			move ["Mud-slap"] = Move::MUD_SLAP;
-			move ["Muddy Water"] = Move::MUDDY_WATER;
-			move ["Nasty Plot"] = Move::NASTY_PLOT;
-			move ["Natural Gift"] = Move::NATURAL_GIFT;
-			move ["Nature Power"] = Move::NATURE_POWER;
-			move ["Needle Arm"] = Move::NEEDLE_ARM;
-			move ["Night Shade"] = Move::NIGHT_SHADE;
-			move ["Night Slash"] = Move::NIGHT_SLASH;
-			move ["Nightmare"] = Move::NIGHTMARE;
-			move ["Octazooka"] = Move::OCTAZOOKA;
-			move ["Odor Sleuth"] = Move::ODOR_SLEUTH;
-			move ["Ominous Wind"] = Move::OMINOUS_WIND;
-			move ["Outrage"] = Move::OUTRAGE;
-			move ["Overheat"] = Move::OVERHEAT;
-			move ["Pain Split"] = Move::PAIN_SPLIT;
-			move ["Pay Day"] = Move::PAY_DAY;
-			move ["Payback"] = Move::PAYBACK;
-			move ["Peck"] = Move::PECK;
-			move ["Perish Song"] = Move::PERISH_SONG;
-			move ["Petal Dance"] = Move::PETAL_DANCE;
-			move ["Pin Missile"] = Move::PIN_MISSILE;
-			move ["Pluck"] = Move::PLUCK;
-			move ["Poison Fang"] = Move::POISON_FANG;
-			move ["Poison Gas"] = Move::POISON_GAS;
-			move ["Poison Jab"] = Move::POISON_JAB;
-			move ["Poison Sting"] = Move::POISON_STING;
-			move ["Poison Tail"] = Move::POISON_TAIL;
-			move ["PoisonPowder"] = Move::POISONPOWDER;
-			move ["Poisonpowder"] = Move::POISONPOWDER;
-			move ["Pound"] = Move::POUND;
-			move ["Powder Snow"] = Move::POWDER_SNOW;
-			move ["Power Gem"] = Move::POWER_GEM;
-			move ["Power Swap"] = Move::POWER_SWAP;
-			move ["Power Trick"] = Move::POWER_TRICK;
-			move ["Power Whip"] = Move::POWER_WHIP;
-			move ["Present"] = Move::PRESENT;
-			move ["Protect"] = Move::PROTECT;
-			move ["Psybeam"] = Move::PSYBEAM;
-			move ["Psych Up"] = Move::PSYCH_UP;
-			move ["Psychic"] = Move::PSYCHIC;
-			move ["Psycho Boost"] = Move::PSYCHO_BOOST;
-			move ["Psycho Cut"] = Move::PSYCHO_CUT;
-			move ["Psycho Shift"] = Move::PSYCHO_SHIFT;
-			move ["Psywave"] = Move::PSYWAVE;
-			move ["Punishment"] = Move::PUNISHMENT;
-			move ["Pursuit"] = Move::PURSUIT;
-			move ["Quick Attack"] = Move::QUICK_ATTACK;
-			move ["Rage"] = Move::RAGE;
-			move ["Rain Dance"] = Move::RAIN_DANCE;
-			move ["Rapid Spin"] = Move::RAPID_SPIN;
-			move ["Razor Leaf"] = Move::RAZOR_LEAF;
-			move ["Razor Wind"] = Move::RAZOR_WIND;
-			move ["Recover"] = Move::RECOVER;
-			move ["Recycle"] = Move::RECYCLE;
-			move ["Reflect"] = Move::REFLECT;
-			move ["Refresh"] = Move::REFRESH;
-			move ["Rest"] = Move::REST;
-			move ["Return"] = Move::RETURN;
-			move ["Revenge"] = Move::REVENGE;
-			move ["Reversal"] = Move::REVERSAL;
-			move ["Roar"] = Move::ROAR;
-			move ["Roar Of Time"] = Move::ROAR_OF_TIME;
-			move ["Rock Blast"] = Move::ROCK_BLAST;
-			move ["Rock Climb"] = Move::ROCK_CLIMB;
-			move ["Rock Polish"] = Move::ROCK_POLISH;
-			move ["Rock Slide"] = Move::ROCK_SLIDE;
-			move ["Rock Smash"] = Move::ROCK_SMASH;
-			move ["Rock Throw"] = Move::ROCK_THROW;
-			move ["Rock Tomb"] = Move::ROCK_TOMB;
-			move ["Rock Wrecker"] = Move::ROCK_WRECKER;
-			move ["Role Play"] = Move::ROLE_PLAY;
-			move ["Rolling Kick"] = Move::ROLLING_KICK;
-			move ["Rollout"] = Move::ROLLOUT;
-			move ["Roost"] = Move::ROOST;
-			move ["Sacred Fire"] = Move::SACRED_FIRE;
-			move ["Safeguard"] = Move::SAFEGUARD;
-			move ["Sand Tomb"] = Move::SAND_TOMB;
-			move ["Sand-Attack"] = Move::SAND_ATTACK;
-			move ["Sand-attack"] = Move::SAND_ATTACK;
-			move ["Sandstorm"] = Move::SANDSTORM;
-			move ["Scary Face"] = Move::SCARY_FACE;
-			move ["Scratch"] = Move::SCRATCH;
-			move ["Screech"] = Move::SCREECH;
-			move ["Secret Power"] = Move::SECRET_POWER;
-			move ["Seed Bomb"] = Move::SEED_BOMB;
-			move ["Seed Flare"] = Move::SEED_FLARE;
-			move ["Seismic Toss"] = Move::SEISMIC_TOSS;
-			move ["Selfdestruct"] = Move::SELFDESTRUCT;
-			move ["Shadow Ball"] = Move::SHADOW_BALL;
-			move ["Shadow Claw"] = Move::SHADOW_CLAW;
-			move ["Shadow Force"] = Move::SHADOW_FORCE;
-			move ["Shadow Punch"] = Move::SHADOW_PUNCH;
-			move ["Shadow Sneak"] = Move::SHADOW_SNEAK;
-			move ["Sharpen"] = Move::SHARPEN;
-			move ["Sheer Cold"] = Move::SHEER_COLD;
-			move ["Shock Wave"] = Move::SHOCK_WAVE;
-			move ["Signal Beam"] = Move::SIGNAL_BEAM;
-			move ["Silver Wind"] = Move::SILVER_WIND;
-			move ["Sing"] = Move::SING;
-			move ["Sketch"] = Move::SKETCH;
-			move ["Skill Swap"] = Move::SKILL_SWAP;
-			move ["Skull Bash"] = Move::SKULL_BASH;
-			move ["Sky Attack"] = Move::SKY_ATTACK;
-			move ["Sky Uppercut"] = Move::SKY_UPPERCUT;
-			move ["Slack Off"] = Move::SLACK_OFF;
-			move ["Slam"] = Move::SLAM;
-			move ["Slash"] = Move::SLASH;
-			move ["Sleep Powder"] = Move::SLEEP_POWDER;
-			move ["Sleep Talk"] = Move::SLEEP_TALK;
-			move ["Sludge"] = Move::SLUDGE;
-			move ["Sludge Bomb"] = Move::SLUDGE_BOMB;
-			move ["SmellingSalt"] = Move::SMELLINGSALT;
-			move ["Smellingsalt"] = Move::SMELLINGSALT;
-			move ["Smog"] = Move::SMOG;
-			move ["SmokeScreen"] = Move::SMOKESCREEN;
-			move ["Smokescreen"] = Move::SMOKESCREEN;
-			move ["Snatch"] = Move::SNATCH;
-			move ["Snore"] = Move::SNORE;
-			move ["Softboiled"] = Move::SOFTBOILED;
-			move ["SolarBeam"] = Move::SOLARBEAM;
-			move ["Solarbeam"] = Move::SOLARBEAM;
-			move ["SonicBoom"] = Move::SONICBOOM;
-			move ["Sonicboom"] = Move::SONICBOOM;
-			move ["Spacial Rend"] = Move::SPACIAL_REND;
-			move ["Spark"] = Move::SPARK;
-			move ["Spider Web"] = Move::SPIDER_WEB;
-			move ["Spike Cannon"] = Move::SPIKE_CANNON;
-			move ["Spikes"] = Move::SPIKES;
-			move ["Spit Up"] = Move::SPIT_UP;
-			move ["Spite"] = Move::SPITE;
-			move ["Splash"] = Move::SPLASH;
-			move ["Spore"] = Move::SPORE;
-			move ["Stealth Rock"] = Move::STEALTH_ROCK;
-			move ["Steel Wing"] = Move::STEEL_WING;
-			move ["Stockpile"] = Move::STOCKPILE;
-			move ["Stomp"] = Move::STOMP;
-			move ["Stone Edge"] = Move::STONE_EDGE;
-			move ["Strength"] = Move::STRENGTH;
-			move ["String Shot"] = Move::STRING_SHOT;
-			move ["Struggle"] = Move::STRUGGLE;
-			move ["Stun Spore"] = Move::STUN_SPORE;
-			move ["Submission"] = Move::SUBMISSION;
-			move ["Substitute"] = Move::SUBSTITUTE;
-			move ["Sucker Punch"] = Move::SUCKER_PUNCH;
-			move ["Sunny Day"] = Move::SUNNY_DAY;
-			move ["Super Fang"] = Move::SUPER_FANG;
-			move ["Superpower"] = Move::SUPERPOWER;
-			move ["Supersonic"] = Move::SUPERSONIC;
-			move ["Surf"] = Move::SURF;
-			move ["Swagger"] = Move::SWAGGER;
-			move ["Swallow"] = Move::SWALLOW;
-			move ["Sweet Kiss"] = Move::SWEET_KISS;
-			move ["Sweet Scent"] = Move::SWEET_SCENT;
-			move ["Swift"] = Move::SWIFT;
-			move ["Switcheroo"] = Move::SWITCHEROO;
-			move ["Swords Dance"] = Move::SWORDS_DANCE;
-			move ["Synthesis"] = Move::SYNTHESIS;
-			move ["Tackle"] = Move::TACKLE;
-			move ["Tail Glow"] = Move::TAIL_GLOW;
-			move ["Tail Whip"] = Move::TAIL_WHIP;
-			move ["Tailwind"] = Move::TAILWIND;
-			move ["Take Down"] = Move::TAKE_DOWN;
-			move ["Taunt"] = Move::TAUNT;
-			move ["Teeter Dance"] = Move::TEETER_DANCE;
-			move ["Teleport"] = Move::TELEPORT;
-			move ["Thief"] = Move::THIEF;
-			move ["Thrash"] = Move::THRASH;
-			move ["Thunder"] = Move::THUNDER;
-			move ["Thunder Fang"] = Move::THUNDER_FANG;
-			move ["Thunder Wave"] = Move::THUNDER_WAVE;
-			move ["Thunderbolt"] = Move::THUNDERBOLT;
-			move ["ThunderPunch"] = Move::THUNDERPUNCH;
-			move ["Thunderpunch"] = Move::THUNDERPUNCH;
-			move ["ThunderShock"] = Move::THUNDERSHOCK;
-			move ["Thundershock"] = Move::THUNDERSHOCK;
-			move ["Tickle"] = Move::TICKLE;
-			move ["Torment"] = Move::TORMENT;
-			move ["Toxic"] = Move::TOXIC;
-			move ["Toxic Spikes"] = Move::TOXIC_SPIKES;
-			move ["Transform"] = Move::TRANSFORM;
-			move ["Tri Attack"] = Move::TRI_ATTACK;
-			move ["Trick"] = Move::TRICK;
-			move ["Trick Room"] = Move::TRICK_ROOM;
-			move ["Triple Kick"] = Move::TRIPLE_KICK;
-			move ["Trump Card"] = Move::TRUMP_CARD;
-			move ["Twineedle"] = Move::TWINEEDLE;
-			move ["Twister"] = Move::TWISTER;
-			move ["U-turn"] = Move::U_TURN;
-			move ["Uproar"] = Move::UPROAR;
-			move ["Vacuum Wave"] = Move::VACUUM_WAVE;
-			move ["ViceGrip"] = Move::VICEGRIP;
-			move ["Vicegrip"] = Move::VICEGRIP;
-			move ["Vine Whip"] = Move::VINE_WHIP;
-			move ["Vital Throw"] = Move::VITAL_THROW;
-			move ["Volt Tackle"] = Move::VOLT_TACKLE;
-			move ["Wake-Up Slap"] = Move::WAKE_UP_SLAP;
-			move ["Wake-up Slap"] = Move::WAKE_UP_SLAP;
-			move ["Water Gun"] = Move::WATER_GUN;
-			move ["Water Pulse"] = Move::WATER_PULSE;
-			move ["Water Sport"] = Move::WATER_SPORT;
-			move ["Water Spout"] = Move::WATER_SPOUT;
-			move ["Waterfall"] = Move::WATERFALL;
-			move ["Weather Ball"] = Move::WEATHER_BALL;
-			move ["Whirlpool"] = Move::WHIRLPOOL;
-			move ["Whirlwind"] = Move::WHIRLWIND;
-			move ["Will-O-Wisp"] = Move::WILL_O_WISP;
-			move ["Will-o-Wisp"] = Move::WILL_O_WISP;
-			move ["Will-o-wisp"] = Move::WILL_O_WISP;
-			move ["Wing Attack"] = Move::WING_ATTACK;
-			move ["Wish"] = Move::WISH;
-			move ["Withdraw"] = Move::WITHDRAW;
-			move ["Wood Hammer"] = Move::WOOD_HAMMER;
-			move ["Worry Seed"] = Move::WORRY_SEED;
-			move ["Wrap"] = Move::WRAP;
-			move ["Wring Out"] = Move::WRING_OUT;
-			move ["X-Scissor"] = Move::X_SCISSOR;
-			move ["X-scissor"] = Move::X_SCISSOR;
-			move ["Yawn"] = Move::YAWN;
-			move ["Zap Cannon"] = Move::ZAP_CANNON;
-			move ["Zen Headbutt"] = Move::ZEN_HEADBUTT;
-			move ["End Move"] = Move::END_MOVE;
+		Move_From_String ():
+			move {
+				{ "Absorb", Move::ABSORB },
+				{ "Acid", Move::ACID },
+				{ "Acid Armor", Move::ACID_ARMOR },
+				{ "Acupressure", Move::ACUPRESSURE },
+				{ "Aerial Ace", Move::AERIAL_ACE },
+				{ "Aeroblast", Move::AEROBLAST },
+				{ "Agility", Move::AGILITY },
+				{ "Air Cutter", Move::AIR_CUTTER },
+				{ "Air Slash", Move::AIR_SLASH },
+				{ "Amnesia", Move::AMNESIA },
+				{ "AncientPower", Move::ANCIENTPOWER },
+				{ "Ancientpower", Move::ANCIENTPOWER },
+				{ "Aqua Jet", Move::AQUA_JET },
+				{ "Aqua Ring", Move::AQUA_RING },
+				{ "Aqua Tail", Move::AQUA_TAIL },
+				{ "Arm Thrust", Move::ARM_THRUST },
+				{ "Aromatherapy", Move::AROMATHERAPY },
+				{ "Assist", Move::ASSIST },
+				{ "Assurance", Move::ASSURANCE },
+				{ "Astonish", Move::ASTONISH },
+				{ "Attack Order", Move::ATTACK_ORDER },
+				{ "Attract", Move::ATTRACT },
+				{ "Aura Sphere", Move::AURA_SPHERE },
+				{ "Aurora Beam", Move::AURORA_BEAM },
+				{ "Avalanche", Move::AVALANCHE },
+				{ "Barrage", Move::BARRAGE },
+				{ "Barrier", Move::BARRIER },
+				{ "Baton Pass", Move::BATON_PASS },
+				{ "Beat Up", Move::BEAT_UP },
+				{ "Belly Drum", Move::BELLY_DRUM },
+				{ "Bide", Move::BIDE },
+				{ "Bind", Move::BIND },
+				{ "Bite", Move::BITE },
+				{ "Blast Burn", Move::BLAST_BURN },
+				{ "Blaze Kick", Move::BLAZE_KICK },
+				{ "Blizzard", Move::BLIZZARD },
+				{ "Block", Move::BLOCK },
+				{ "Body Slam", Move::BODY_SLAM },
+				{ "Bone Club", Move::BONE_CLUB },
+				{ "Bone Rush", Move::BONE_RUSH },
+				{ "Bonemerang", Move::BONEMERANG },
+				{ "Bounce", Move::BOUNCE },
+				{ "Brave Bird", Move::BRAVE_BIRD },
+				{ "Brick Break", Move::BRICK_BREAK },
+				{ "Brine", Move::BRINE },
+				{ "Bubble", Move::BUBBLE },
+				{ "BubbleBeam", Move::BUBBLEBEAM },
+				{ "Bubblebeam", Move::BUBBLEBEAM },
+				{ "Bug Bite", Move::BUG_BITE },
+				{ "Bug Buzz", Move::BUG_BUZZ },
+				{ "Bulk Up", Move::BULK_UP },
+				{ "Bullet Punch", Move::BULLET_PUNCH },
+				{ "Bullet Seed", Move::BULLET_SEED },
+				{ "Calm Mind", Move::CALM_MIND },
+				{ "Camouflage", Move::CAMOUFLAGE },
+				{ "Captivate", Move::CAPTIVATE },
+				{ "Charge", Move::CHARGE },
+				{ "Charge Beam", Move::CHARGE_BEAM },
+				{ "Charm", Move::CHARM },
+				{ "Chatter", Move::CHATTER },
+				{ "Clamp", Move::CLAMP },
+				{ "Close Combat", Move::CLOSE_COMBAT },
+				{ "Comet Punch", Move::COMET_PUNCH },
+				{ "Confuse Ray", Move::CONFUSE_RAY },
+				{ "Confusion", Move::CONFUSION },
+				{ "Constrict", Move::CONSTRICT },
+				{ "Conversion", Move::CONVERSION },
+				{ "Conversion2", Move::CONVERSION2 },
+				{ "Conversion 2", Move::CONVERSION2 },
+				{ "Copycat", Move::COPYCAT },
+				{ "Cosmic Power", Move::COSMIC_POWER },
+				{ "Cotton Spore", Move::COTTON_SPORE },
+				{ "Counter", Move::COUNTER },
+				{ "Covet", Move::COVET },
+				{ "Crabhammer", Move::CRABHAMMER },
+				{ "Cross Chop", Move::CROSS_CHOP },
+				{ "Cross Poison", Move::CROSS_POISON },
+				{ "Crunch", Move::CRUNCH },
+				{ "Crush Claw", Move::CRUSH_CLAW },
+				{ "Crush Grip", Move::CRUSH_GRIP },
+				{ "Curse", Move::CURSE },
+				{ "Cut", Move::CUT },
+				{ "Dark Pulse", Move::DARK_PULSE },
+				{ "Dark Void", Move::DARK_VOID },
+				{ "Defend Order", Move::DEFEND_ORDER },
+				{ "Defense Curl", Move::DEFENSE_CURL },
+				{ "Defog", Move::DEFOG },
+				{ "Destiny Bond", Move::DESTINY_BOND },
+				{ "Detect", Move::DETECT },
+				{ "Dig", Move::DIG },
+				{ "Disable", Move::DISABLE },
+				{ "Discharge", Move::DISCHARGE },
+				{ "Dive", Move::DIVE },
+				{ "Dizzy Punch", Move::DIZZY_PUNCH },
+				{ "Doom Desire", Move::DOOM_DESIRE },
+				{ "Double Hit", Move::DOUBLE_HIT },
+				{ "Double Kick", Move::DOUBLE_KICK },
+				{ "Double Team", Move::DOUBLE_TEAM },
+				{ "Double-Edge", Move::DOUBLE_EDGE },
+				{ "Double-edge", Move::DOUBLE_EDGE },
+				{ "DoubleSlap", Move::DOUBLESLAP },
+				{ "Doubleslap", Move::DOUBLESLAP },
+				{ "Draco Meteor", Move::DRACO_METEOR },
+				{ "Dragon Claw", Move::DRAGON_CLAW },
+				{ "Dragon Dance", Move::DRAGON_DANCE },
+				{ "Dragon Pulse", Move::DRAGON_PULSE },
+				{ "Dragon Rage", Move::DRAGON_RAGE },
+				{ "Dragon Rush", Move::DRAGON_RUSH },
+				{ "DragonBreath", Move::DRAGONBREATH },
+				{ "Dragonbreath", Move::DRAGONBREATH },
+				{ "Drain Punch", Move::DRAIN_PUNCH },
+				{ "Dream Eater", Move::DREAM_EATER },
+				{ "Drill Peck", Move::DRILL_PECK },
+				{ "DynamicPunch", Move::DYNAMICPUNCH },
+				{ "Dynamicpunch", Move::DYNAMICPUNCH },
+				{ "Earth Power", Move::EARTH_POWER },
+				{ "Earthquake", Move::EARTHQUAKE },
+				{ "Egg Bomb", Move::EGG_BOMB },
+				{ "Embargo", Move::EMBARGO },
+				{ "Ember", Move::EMBER },
+				{ "Encore", Move::ENCORE },
+				{ "Endeavor", Move::ENDEAVOR },
+				{ "Endure", Move::ENDURE },
+				{ "Energy Ball", Move::ENERGY_BALL },
+				{ "Eruption", Move::ERUPTION },
+				{ "Explosion", Move::EXPLOSION },
+				{ "Extrasensory", Move::EXTRASENSORY },
+				{ "ExtremeSpeed", Move::EXTREMESPEED },
+				{ "Extremespeed", Move::EXTREMESPEED },
+				{ "Facade", Move::FACADE },
+				{ "Faint Attack", Move::FAINT_ATTACK },
+				{ "Fake Out", Move::FAKE_OUT },
+				{ "Fake Tears", Move::FAKE_TEARS },
+				{ "False Swipe", Move::FALSE_SWIPE },
+				{ "FeatherDance", Move::FEATHERDANCE },
+				{ "Featherdance", Move::FEATHERDANCE },
+				{ "Feint", Move::FEINT },
+				{ "Fire Blast", Move::FIRE_BLAST },
+				{ "Fire Fang", Move::FIRE_FANG },
+				{ "Fire Punch", Move::FIRE_PUNCH },
+				{ "Fire Spin", Move::FIRE_SPIN },
+				{ "Fissure", Move::FISSURE },
+				{ "Flail", Move::FLAIL },
+				{ "Flame Wheel", Move::FLAME_WHEEL },
+				{ "Flamethrower", Move::FLAMETHROWER },
+				{ "Flare Blitz", Move::FLARE_BLITZ },
+				{ "Flash", Move::FLASH },
+				{ "Flash Cannon", Move::FLASH_CANNON },
+				{ "Flatter", Move::FLATTER },
+				{ "Fling", Move::FLING },
+				{ "Fly", Move::FLY },
+				{ "Focus Blast", Move::FOCUS_BLAST },
+				{ "Focus Energy", Move::FOCUS_ENERGY },
+				{ "Focus Punch", Move::FOCUS_PUNCH },
+				{ "Follow Me", Move::FOLLOW_ME },
+				{ "Force Palm", Move::FORCE_PALM },
+				{ "Foresight", Move::FORESIGHT },
+				{ "Frenzy Plant", Move::FRENZY_PLANT },
+				{ "Frustration", Move::FRUSTRATION },
+				{ "Fury Attack", Move::FURY_ATTACK },
+				{ "Fury Cutter", Move::FURY_CUTTER },
+				{ "Fury Swipes", Move::FURY_SWIPES },
+				{ "Future Sight", Move::FUTURE_SIGHT },
+				{ "Gastro Acid", Move::GASTRO_ACID },
+				{ "Giga Drain", Move::GIGA_DRAIN },
+				{ "Giga Impact", Move::GIGA_IMPACT },
+				{ "Glare", Move::GLARE },
+				{ "Grass Knot", Move::GRASS_KNOT },
+				{ "GrassWhistle", Move::GRASSWHISTLE },
+				{ "Grasswhistle", Move::GRASSWHISTLE },
+				{ "Gravity", Move::GRAVITY },
+				{ "Growl", Move::GROWL },
+				{ "Growth", Move::GROWTH },
+				{ "Grudge", Move::GRUDGE },
+				{ "Guard Swap", Move::GUARD_SWAP },
+				{ "Guillotine", Move::GUILLOTINE },
+				{ "Gunk Shot", Move::GUNK_SHOT },
+				{ "Gust", Move::GUST },
+				{ "Gyro Ball", Move::GYRO_BALL },
+				{ "Hail", Move::HAIL },
+				{ "Hammer Arm", Move::HAMMER_ARM },
+				{ "Harden", Move::HARDEN },
+				{ "Haze", Move::HAZE },
+				{ "Head Smash", Move::HEAD_SMASH },
+				{ "Headbutt", Move::HEADBUTT },
+				{ "Heal Bell", Move::HEAL_BELL },
+				{ "Heal Block", Move::HEAL_BLOCK },
+				{ "Heal Order", Move::HEAL_ORDER },
+				{ "Healing Wish", Move::HEALING_WISH },
+				{ "Heart Swap", Move::HEART_SWAP },
+				{ "Heat Wave", Move::HEAT_WAVE },
+				{ "Helping Hand", Move::HELPING_HAND },
+				{ "Hi Jump Kick", Move::HI_JUMP_KICK },
+				{ "Hidden Power", Move::HIDDEN_POWER },
+				{ "Hidden Power Bug", Move::HIDDEN_POWER },
+				{ "Hidden Power Dark", Move::HIDDEN_POWER },
+				{ "Hidden Power Dragon", Move::HIDDEN_POWER },
+				{ "Hidden Power Electric", Move::HIDDEN_POWER },
+				{ "Hidden Power Fighting", Move::HIDDEN_POWER },
+				{ "Hidden Power Fire", Move::HIDDEN_POWER },
+				{ "Hidden Power Flying", Move::HIDDEN_POWER },
+				{ "Hidden Power Ghost", Move::HIDDEN_POWER },
+				{ "Hidden Power Grass", Move::HIDDEN_POWER },
+				{ "Hidden Power Ground", Move::HIDDEN_POWER },
+				{ "Hidden Power Ice", Move::HIDDEN_POWER },
+				{ "Hidden Power Poison", Move::HIDDEN_POWER },
+				{ "Hidden Power Psychic", Move::HIDDEN_POWER },
+				{ "Hidden Power Rock", Move::HIDDEN_POWER },
+				{ "Hidden Power Steel", Move::HIDDEN_POWER },
+				{ "Hidden Power Water", Move::HIDDEN_POWER },
+				{ "Horn Attack", Move::HORN_ATTACK },
+				{ "Horn Drill", Move::HORN_DRILL },
+				{ "Howl", Move::HOWL },
+				{ "Hydro Cannon", Move::HYDRO_CANNON },
+				{ "Hydro Pump", Move::HYDRO_PUMP },
+				{ "Hyper Beam", Move::HYPER_BEAM },
+				{ "Hyper Fang", Move::HYPER_FANG },
+				{ "Hyper Voice", Move::HYPER_VOICE },
+				{ "Hypnosis", Move::HYPNOSIS },
+				{ "Ice Ball", Move::ICE_BALL },
+				{ "Ice Beam", Move::ICE_BEAM },
+				{ "Ice Fang", Move::ICE_FANG },
+				{ "Ice Punch", Move::ICE_PUNCH },
+				{ "Ice Shard", Move::ICE_SHARD },
+				{ "Icicle Spear", Move::ICICLE_SPEAR },
+				{ "Icy Wind", Move::ICY_WIND },
+				{ "Imprison", Move::IMPRISON },
+				{ "Ingrain", Move::INGRAIN },
+				{ "Iron Defense", Move::IRON_DEFENSE },
+				{ "Iron Head", Move::IRON_HEAD },
+				{ "Iron Tail", Move::IRON_TAIL },
+				{ "Judgment", Move::JUDGMENT },
+				{ "Jump Kick", Move::JUMP_KICK },
+				{ "Karate Chop", Move::KARATE_CHOP },
+				{ "Kinesis", Move::KINESIS },
+				{ "Knock Off", Move::KNOCK_OFF },
+				{ "Last Resort", Move::LAST_RESORT },
+				{ "Lava Plume", Move::LAVA_PLUME },
+				{ "Leaf Blade", Move::LEAF_BLADE },
+				{ "Leaf Storm", Move::LEAF_STORM },
+				{ "Leech Life", Move::LEECH_LIFE },
+				{ "Leech Seed", Move::LEECH_SEED },
+				{ "Leer", Move::LEER },
+				{ "Lick", Move::LICK },
+				{ "Light Screen", Move::LIGHT_SCREEN },
+				{ "Lock-On", Move::LOCK_ON },
+				{ "Lock-on", Move::LOCK_ON },
+				{ "Lovely Kiss", Move::LOVELY_KISS },
+				{ "Low Kick", Move::LOW_KICK },
+				{ "Lucky Chant", Move::LUCKY_CHANT },
+				{ "Lunar Dance", Move::LUNAR_DANCE },
+				{ "Luster Purge", Move::LUSTER_PURGE },
+				{ "Mach Punch", Move::MACH_PUNCH },
+				{ "Magic Coat", Move::MAGIC_COAT },
+				{ "Magical Leaf", Move::MAGICAL_LEAF },
+				{ "Magma Storm", Move::MAGMA_STORM },
+				{ "Magnet Bomb", Move::MAGNET_BOMB },
+				{ "Magnet Rise", Move::MAGNET_RISE },
+				{ "Magnitude", Move::MAGNITUDE },
+				{ "Me First", Move::ME_FIRST },
+				{ "Mean Look", Move::MEAN_LOOK },
+				{ "Meditate", Move::MEDITATE },
+				{ "Mega Drain", Move::MEGA_DRAIN },
+				{ "Mega Kick", Move::MEGA_KICK },
+				{ "Mega Punch", Move::MEGA_PUNCH },
+				{ "Megahorn", Move::MEGAHORN },
+				{ "Memento", Move::MEMENTO },
+				{ "Metal Burst", Move::METAL_BURST },
+				{ "Metal Claw", Move::METAL_CLAW },
+				{ "Metal Sound", Move::METAL_SOUND },
+				{ "Meteor Mash", Move::METEOR_MASH },
+				{ "Metronome", Move::METRONOME },
+				{ "Milk Drink", Move::MILK_DRINK },
+				{ "Mimic", Move::MIMIC },
+				{ "Mind Reader", Move::MIND_READER },
+				{ "Minimize", Move::MINIMIZE },
+				{ "Miracle Eye", Move::MIRACLE_EYE },
+				{ "Mirror Coat", Move::MIRROR_COAT },
+				{ "Mirror Move", Move::MIRROR_MOVE },
+				{ "Mirror Shot", Move::MIRROR_SHOT },
+				{ "Mist", Move::MIST },
+				{ "Mist Ball", Move::MIST_BALL },
+				{ "Moonlight", Move::MOONLIGHT },
+				{ "Morning Sun", Move::MORNING_SUN },
+				{ "Mud Bomb", Move::MUD_BOMB },
+				{ "Mud Shot", Move::MUD_SHOT },
+				{ "Mud Sport", Move::MUD_SPORT },
+				{ "Mud-Slap", Move::MUD_SLAP },
+				{ "Mud-slap", Move::MUD_SLAP },
+				{ "Muddy Water", Move::MUDDY_WATER },
+				{ "Nasty Plot", Move::NASTY_PLOT },
+				{ "Natural Gift", Move::NATURAL_GIFT },
+				{ "Nature Power", Move::NATURE_POWER },
+				{ "Needle Arm", Move::NEEDLE_ARM },
+				{ "Night Shade", Move::NIGHT_SHADE },
+				{ "Night Slash", Move::NIGHT_SLASH },
+				{ "Nightmare", Move::NIGHTMARE },
+				{ "Octazooka", Move::OCTAZOOKA },
+				{ "Odor Sleuth", Move::ODOR_SLEUTH },
+				{ "Ominous Wind", Move::OMINOUS_WIND },
+				{ "Outrage", Move::OUTRAGE },
+				{ "Overheat", Move::OVERHEAT },
+				{ "Pain Split", Move::PAIN_SPLIT },
+				{ "Pay Day", Move::PAY_DAY },
+				{ "Payback", Move::PAYBACK },
+				{ "Peck", Move::PECK },
+				{ "Perish Song", Move::PERISH_SONG },
+				{ "Petal Dance", Move::PETAL_DANCE },
+				{ "Pin Missile", Move::PIN_MISSILE },
+				{ "Pluck", Move::PLUCK },
+				{ "Poison Fang", Move::POISON_FANG },
+				{ "Poison Gas", Move::POISON_GAS },
+				{ "Poison Jab", Move::POISON_JAB },
+				{ "Poison Sting", Move::POISON_STING },
+				{ "Poison Tail", Move::POISON_TAIL },
+				{ "PoisonPowder", Move::POISONPOWDER },
+				{ "Poisonpowder", Move::POISONPOWDER },
+				{ "Pound", Move::POUND },
+				{ "Powder Snow", Move::POWDER_SNOW },
+				{ "Power Gem", Move::POWER_GEM },
+				{ "Power Swap", Move::POWER_SWAP },
+				{ "Power Trick", Move::POWER_TRICK },
+				{ "Power Whip", Move::POWER_WHIP },
+				{ "Present", Move::PRESENT },
+				{ "Protect", Move::PROTECT },
+				{ "Psybeam", Move::PSYBEAM },
+				{ "Psych Up", Move::PSYCH_UP },
+				{ "Psychic", Move::PSYCHIC },
+				{ "Psycho Boost", Move::PSYCHO_BOOST },
+				{ "Psycho Cut", Move::PSYCHO_CUT },
+				{ "Psycho Shift", Move::PSYCHO_SHIFT },
+				{ "Psywave", Move::PSYWAVE },
+				{ "Punishment", Move::PUNISHMENT },
+				{ "Pursuit", Move::PURSUIT },
+				{ "Quick Attack", Move::QUICK_ATTACK },
+				{ "Rage", Move::RAGE },
+				{ "Rain Dance", Move::RAIN_DANCE },
+				{ "Rapid Spin", Move::RAPID_SPIN },
+				{ "Razor Leaf", Move::RAZOR_LEAF },
+				{ "Razor Wind", Move::RAZOR_WIND },
+				{ "Recover", Move::RECOVER },
+				{ "Recycle", Move::RECYCLE },
+				{ "Reflect", Move::REFLECT },
+				{ "Refresh", Move::REFRESH },
+				{ "Rest", Move::REST },
+				{ "Return", Move::RETURN },
+				{ "Revenge", Move::REVENGE },
+				{ "Reversal", Move::REVERSAL },
+				{ "Roar", Move::ROAR },
+				{ "Roar Of Time", Move::ROAR_OF_TIME },
+				{ "Rock Blast", Move::ROCK_BLAST },
+				{ "Rock Climb", Move::ROCK_CLIMB },
+				{ "Rock Polish", Move::ROCK_POLISH },
+				{ "Rock Slide", Move::ROCK_SLIDE },
+				{ "Rock Smash", Move::ROCK_SMASH },
+				{ "Rock Throw", Move::ROCK_THROW },
+				{ "Rock Tomb", Move::ROCK_TOMB },
+				{ "Rock Wrecker", Move::ROCK_WRECKER },
+				{ "Role Play", Move::ROLE_PLAY },
+				{ "Rolling Kick", Move::ROLLING_KICK },
+				{ "Rollout", Move::ROLLOUT },
+				{ "Roost", Move::ROOST },
+				{ "Sacred Fire", Move::SACRED_FIRE },
+				{ "Safeguard", Move::SAFEGUARD },
+				{ "Sand Tomb", Move::SAND_TOMB },
+				{ "Sand-Attack", Move::SAND_ATTACK },
+				{ "Sand-attack", Move::SAND_ATTACK },
+				{ "Sandstorm", Move::SANDSTORM },
+				{ "Scary Face", Move::SCARY_FACE },
+				{ "Scratch", Move::SCRATCH },
+				{ "Screech", Move::SCREECH },
+				{ "Secret Power", Move::SECRET_POWER },
+				{ "Seed Bomb", Move::SEED_BOMB },
+				{ "Seed Flare", Move::SEED_FLARE },
+				{ "Seismic Toss", Move::SEISMIC_TOSS },
+				{ "Selfdestruct", Move::SELFDESTRUCT },
+				{ "Shadow Ball", Move::SHADOW_BALL },
+				{ "Shadow Claw", Move::SHADOW_CLAW },
+				{ "Shadow Force", Move::SHADOW_FORCE },
+				{ "Shadow Punch", Move::SHADOW_PUNCH },
+				{ "Shadow Sneak", Move::SHADOW_SNEAK },
+				{ "Sharpen", Move::SHARPEN },
+				{ "Sheer Cold", Move::SHEER_COLD },
+				{ "Shock Wave", Move::SHOCK_WAVE },
+				{ "Signal Beam", Move::SIGNAL_BEAM },
+				{ "Silver Wind", Move::SILVER_WIND },
+				{ "Sing", Move::SING },
+				{ "Sketch", Move::SKETCH },
+				{ "Skill Swap", Move::SKILL_SWAP },
+				{ "Skull Bash", Move::SKULL_BASH },
+				{ "Sky Attack", Move::SKY_ATTACK },
+				{ "Sky Uppercut", Move::SKY_UPPERCUT },
+				{ "Slack Off", Move::SLACK_OFF },
+				{ "Slam", Move::SLAM },
+				{ "Slash", Move::SLASH },
+				{ "Sleep Powder", Move::SLEEP_POWDER },
+				{ "Sleep Talk", Move::SLEEP_TALK },
+				{ "Sludge", Move::SLUDGE },
+				{ "Sludge Bomb", Move::SLUDGE_BOMB },
+				{ "SmellingSalt", Move::SMELLINGSALT },
+				{ "Smellingsalt", Move::SMELLINGSALT },
+				{ "Smog", Move::SMOG },
+				{ "SmokeScreen", Move::SMOKESCREEN },
+				{ "Smokescreen", Move::SMOKESCREEN },
+				{ "Snatch", Move::SNATCH },
+				{ "Snore", Move::SNORE },
+				{ "Softboiled", Move::SOFTBOILED },
+				{ "SolarBeam", Move::SOLARBEAM },
+				{ "Solarbeam", Move::SOLARBEAM },
+				{ "SonicBoom", Move::SONICBOOM },
+				{ "Sonicboom", Move::SONICBOOM },
+				{ "Spacial Rend", Move::SPACIAL_REND },
+				{ "Spark", Move::SPARK },
+				{ "Spider Web", Move::SPIDER_WEB },
+				{ "Spike Cannon", Move::SPIKE_CANNON },
+				{ "Spikes", Move::SPIKES },
+				{ "Spit Up", Move::SPIT_UP },
+				{ "Spite", Move::SPITE },
+				{ "Splash", Move::SPLASH },
+				{ "Spore", Move::SPORE },
+				{ "Stealth Rock", Move::STEALTH_ROCK },
+				{ "Steel Wing", Move::STEEL_WING },
+				{ "Stockpile", Move::STOCKPILE },
+				{ "Stomp", Move::STOMP },
+				{ "Stone Edge", Move::STONE_EDGE },
+				{ "Strength", Move::STRENGTH },
+				{ "String Shot", Move::STRING_SHOT },
+				{ "Struggle", Move::STRUGGLE },
+				{ "Stun Spore", Move::STUN_SPORE },
+				{ "Submission", Move::SUBMISSION },
+				{ "Substitute", Move::SUBSTITUTE },
+				{ "Sucker Punch", Move::SUCKER_PUNCH },
+				{ "Sunny Day", Move::SUNNY_DAY },
+				{ "Super Fang", Move::SUPER_FANG },
+				{ "Superpower", Move::SUPERPOWER },
+				{ "Supersonic", Move::SUPERSONIC },
+				{ "Surf", Move::SURF },
+				{ "Swagger", Move::SWAGGER },
+				{ "Swallow", Move::SWALLOW },
+				{ "Sweet Kiss", Move::SWEET_KISS },
+				{ "Sweet Scent", Move::SWEET_SCENT },
+				{ "Swift", Move::SWIFT },
+				{ "Switcheroo", Move::SWITCHEROO },
+				{ "Swords Dance", Move::SWORDS_DANCE },
+				{ "Synthesis", Move::SYNTHESIS },
+				{ "Tackle", Move::TACKLE },
+				{ "Tail Glow", Move::TAIL_GLOW },
+				{ "Tail Whip", Move::TAIL_WHIP },
+				{ "Tailwind", Move::TAILWIND },
+				{ "Take Down", Move::TAKE_DOWN },
+				{ "Taunt", Move::TAUNT },
+				{ "Teeter Dance", Move::TEETER_DANCE },
+				{ "Teleport", Move::TELEPORT },
+				{ "Thief", Move::THIEF },
+				{ "Thrash", Move::THRASH },
+				{ "Thunder", Move::THUNDER },
+				{ "Thunder Fang", Move::THUNDER_FANG },
+				{ "Thunder Wave", Move::THUNDER_WAVE },
+				{ "Thunderbolt", Move::THUNDERBOLT },
+				{ "ThunderPunch", Move::THUNDERPUNCH },
+				{ "Thunderpunch", Move::THUNDERPUNCH },
+				{ "ThunderShock", Move::THUNDERSHOCK },
+				{ "Thundershock", Move::THUNDERSHOCK },
+				{ "Tickle", Move::TICKLE },
+				{ "Torment", Move::TORMENT },
+				{ "Toxic", Move::TOXIC },
+				{ "Toxic Spikes", Move::TOXIC_SPIKES },
+				{ "Transform", Move::TRANSFORM },
+				{ "Tri Attack", Move::TRI_ATTACK },
+				{ "Trick", Move::TRICK },
+				{ "Trick Room", Move::TRICK_ROOM },
+				{ "Triple Kick", Move::TRIPLE_KICK },
+				{ "Trump Card", Move::TRUMP_CARD },
+				{ "Twineedle", Move::TWINEEDLE },
+				{ "Twister", Move::TWISTER },
+				{ "U-turn", Move::U_TURN },
+				{ "Uproar", Move::UPROAR },
+				{ "Vacuum Wave", Move::VACUUM_WAVE },
+				{ "ViceGrip", Move::VICEGRIP },
+				{ "Vicegrip", Move::VICEGRIP },
+				{ "Vine Whip", Move::VINE_WHIP },
+				{ "Vital Throw", Move::VITAL_THROW },
+				{ "Volt Tackle", Move::VOLT_TACKLE },
+				{ "Wake-Up Slap", Move::WAKE_UP_SLAP },
+				{ "Wake-up Slap", Move::WAKE_UP_SLAP },
+				{ "Water Gun", Move::WATER_GUN },
+				{ "Water Pulse", Move::WATER_PULSE },
+				{ "Water Sport", Move::WATER_SPORT },
+				{ "Water Spout", Move::WATER_SPOUT },
+				{ "Waterfall", Move::WATERFALL },
+				{ "Weather Ball", Move::WEATHER_BALL },
+				{ "Whirlpool", Move::WHIRLPOOL },
+				{ "Whirlwind", Move::WHIRLWIND },
+				{ "Will-O-Wisp", Move::WILL_O_WISP },
+				{ "Will-o-Wisp", Move::WILL_O_WISP },
+				{ "Will-o-wisp", Move::WILL_O_WISP },
+				{ "Wing Attack", Move::WING_ATTACK },
+				{ "Wish", Move::WISH },
+				{ "Withdraw", Move::WITHDRAW },
+				{ "Wood Hammer", Move::WOOD_HAMMER },
+				{ "Worry Seed", Move::WORRY_SEED },
+				{ "Wrap", Move::WRAP },
+				{ "Wring Out", Move::WRING_OUT },
+				{ "X-Scissor", Move::X_SCISSOR },
+				{ "X-scissor", Move::X_SCISSOR },
+				{ "Yawn", Move::YAWN },
+				{ "Zap Cannon", Move::ZAP_CANNON },
+				{ "Zen Headbutt", Move::ZEN_HEADBUTT },
+				{ "End Move", Move::END_MOVE }
+			} {
 		}
 		Move::Moves find (std::string const & str) const {
 			return move.find (str)->second;

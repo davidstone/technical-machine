@@ -72,11 +72,13 @@ Gender & Gender::operator= (Genders other) {
 class Gender_From_String {
 	public:
 		std::map <std::string, Gender::Genders> gender;
-		Gender_From_String () {
-			gender ["None"] = Gender::GENDERLESS;
-			gender ["No Gender"] = Gender::GENDERLESS;
-			gender ["Female"] = Gender::FEMALE;
-			gender ["Male"] = Gender::MALE;
+		Gender_From_String ():
+			gender {
+				{ "None", Gender::GENDERLESS },
+				{ "No Gender", Gender::GENDERLESS },
+				{ "Female", Gender::FEMALE },
+				{ "Male", Gender::MALE }
+			} {
 		}
 		Gender::Genders find (std::string const & str) const {
 			return gender.find (str)->second;

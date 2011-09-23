@@ -975,32 +975,34 @@ bool Nature::is_set () const {
 class Nature_From_String {
 	public:
 		std::map <std::string, Nature::Natures> nature;
-		Nature_From_String () {
-			nature ["Adamant"] = Nature::ADAMANT;
-			nature ["Bashful"] = Nature::BASHFUL;
-			nature ["Bold"] = Nature::BOLD;
-			nature ["Brave"] = Nature::BRAVE;
-			nature ["Calm"] = Nature::CALM;
-			nature ["Careful"] = Nature::CAREFUL;
-			nature ["Docile"] = Nature::DOCILE;
-			nature ["Gentle"] = Nature::GENTLE;
-			nature ["Hardy"] = Nature::HARDY;
-			nature ["Hasty"] = Nature::HASTY;
-			nature ["Impish"] = Nature::IMPISH;
-			nature ["Jolly"] = Nature::JOLLY;
-			nature ["Lax"] = Nature::LAX;
-			nature ["Lonely"] = Nature::LONELY;
-			nature ["Mild"] = Nature::MILD;
-			nature ["Modest"] = Nature::MODEST;
-			nature ["Naive"] = Nature::NAIVE;
-			nature ["Naughty"] = Nature::NAUGHTY;
-			nature ["Quiet"] = Nature::QUIET;
-			nature ["Quirky"] = Nature::QUIRKY;
-			nature ["Rash"] = Nature::RASH;
-			nature ["Relaxed"] = Nature::RELAXED;
-			nature ["Sassy"] = Nature::SASSY;
-			nature ["Serious"] = Nature::SERIOUS;
-			nature ["Timid"] = Nature::TIMID;
+		Nature_From_String ():
+			nature {
+				{ "Adamant", Nature::ADAMANT },
+				{ "Bashful", Nature::BASHFUL },
+				{ "Bold", Nature::BOLD },
+				{ "Brave", Nature::BRAVE },
+				{ "Calm", Nature::CALM },
+				{ "Careful", Nature::CAREFUL },
+				{ "Docile", Nature::DOCILE },
+				{ "Gentle", Nature::GENTLE },
+				{ "Hardy", Nature::HARDY },
+				{ "Hasty", Nature::HASTY },
+				{ "Impish", Nature::IMPISH },
+				{ "Jolly", Nature::JOLLY },
+				{ "Lax", Nature::LAX },
+				{ "Lonely", Nature::LONELY },
+				{ "Mild", Nature::MILD },
+				{ "Modest", Nature::MODEST },
+				{ "Naive", Nature::NAIVE },
+				{ "Naughty", Nature::NAUGHTY },
+				{ "Quiet", Nature::QUIET },
+				{ "Quirky", Nature::QUIRKY },
+				{ "Rash", Nature::RASH },
+				{ "Relaxed", Nature::RELAXED },
+				{ "Sassy", Nature::SASSY },
+				{ "Serious", Nature::SERIOUS },
+				{ "Timid", Nature::TIMID }
+			} {
 		}
 		Nature::Natures find (std::string const & str) const {
 			return nature.find (str)->second;
