@@ -33,7 +33,7 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	decrement (weather.sun);
 	decrement (weather.sand);
 	decrement (weather.rain);
-	if (first.pokemon->ability.name != Ability::AIR_LOCK and last.pokemon->ability.name != Ability::AIR_LOCK) {
+	if (first.pokemon->ability.blocks_weather () or last.pokemon->ability.blocks_weather ()) {
 		endofturn3 (first, weather);
 		endofturn3 (last, weather);
 	}

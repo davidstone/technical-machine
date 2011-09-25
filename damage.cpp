@@ -316,6 +316,7 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 			break;
 		case Item::SPLASH_PLATE:
 		case Item::MYSTIC_WATER:
+		case Item::SEA_INCENSE:
 		case Item::WAVE_INCENSE:
 			if (attacker.pokemon->move->type == WATER)
 				item_modifier = 12;
@@ -508,7 +509,7 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 	else
 		stab = 2;
 
-	if (defender.pokemon->ability.name == Ability::SOLID_ROCK and effectiveness > 4)
+	if (defender.pokemon->ability.weakens_SE_attacks () and effectiveness > 4)
 		aem = 3;
 	else
 		aem = 4;

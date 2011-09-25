@@ -82,6 +82,7 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 		case Ability::HUSTLE:
 			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
 			break;
+		case Ability::HUGE_POWER:
 		case Ability::PURE_POWER:
 			attacker.pokemon->atk.stat *= 2;
 			break;
@@ -326,7 +327,12 @@ void calculate_speed (Team & team, Weather const & weather) {
 			team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
 			break;
 		case Item::MACHO_BRACE:
-		case Item::POWER_ITEMS:
+		case Item::POWER_ANKLET:
+		case Item::POWER_BAND:
+		case Item::POWER_BELT:
+		case Item::POWER_BRACER:
+		case Item::POWER_LENS:
+		case Item::POWER_WEIGHT:
 			team.pokemon->spe.stat /= 2;
 			break;
 		default:

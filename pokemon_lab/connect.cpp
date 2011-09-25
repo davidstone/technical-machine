@@ -649,7 +649,31 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 	std::cerr << "Invalid team.\n";
 	for (std::vector<int16_t>::const_iterator it = violation.begin(); it != violation.end(); ++it) {
 		int pokemon = (-(*it + 1)) % 6;
-		std::cerr << "Problem at Pokemon " << pokemon << ", error code " << -(*it + pokemon + 1) / 6 << '\n';
+		std::cerr << "Problem at Pokemon " << pokemon << ": ";
+		switch (-(*it + pokemon + 1) / 6) {
+			case 0:
+				std::cerr << "must have 1-4 unique moves.";
+				break;
+			case 1:
+				std::cerr << "cannot learn all moves.";
+				break;
+			case 2:
+				std::cerr << "illegal move combination.";
+				break;
+			case 3:
+				std::cerr << "invalid quantity of PP ups.";
+				break;
+			case 4:
+				std::cerr << "invalid item.";
+				break;
+			case 5:
+				std::cerr << "cannot learn given ability.";
+				break;
+			case 6:
+				std::cerr << "invalid gender.";
+				break;
+		}
+		std::cerr << '\n';
 	}
 }
 

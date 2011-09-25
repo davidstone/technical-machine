@@ -235,6 +235,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 4:
 					log.inactive->at_replacement().ability.name = Ability::CLEAR_BODY;
 //					log.active->at_replacement().ability.name = Ability::HYPER_CUTTER;
+//					log.active->at_replacement().ability.name = Ability::WHITE_SMOKE;
 					break;
 				case 5:
 					log.inactive->at_replacement().ability.name = Ability::CUTE_CHARM;
@@ -292,6 +293,7 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					break;
 				case 22:
 					log.inactive->at_replacement().ability.name = Ability::INSOMNIA;
+//					log.inactive->at_replacement().ability.name = Ability::VITAL_SPIRIT;
 					break;
 				case 23:
 					log.active->at_replacement().ability.name = Ability::INTIMIDATE;

@@ -335,6 +335,8 @@ void Log::log_misc () {
 			active->at_replacement().ability.name = Ability::IMMUNITY;
 		else if (active->at_replacement().nickname + "'s Insomnia kept it awake!" == line)
 			active->at_replacement().ability.name = Ability::INSOMNIA;
+		else if (active->at_replacement().nickname + "'s Vital Spirit kept it awake!" == line)
+			active->at_replacement().ability.name = Ability::VITAL_SPIRIT;
 		else if (active->at_replacement().nickname + "'s Intimidate cut " + inactive->at_replacement().nickname + "'s attack!" == line)
 			active->at_replacement().ability.name = Ability::INTIMIDATE;
 		else if (active->at_replacement().nickname + " makes ground moves miss with Levitate!" == line)

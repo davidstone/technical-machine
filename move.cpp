@@ -1146,7 +1146,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			break;
 		case Move::SWITCHEROO:
 		case Move::TRICK:
-			std::swap (user.pokemon->item, target.pokemon->item);
+			if (!user.pokemon->item.blocks_trick () and !target.pokemon->item.blocks_trick ())
+				std::swap (user.pokemon->item, target.pokemon->item);
 			break;
 		case Move::SWORDS_DANCE:
 			user.pokemon->atk.boost (2);

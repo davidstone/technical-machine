@@ -59,7 +59,7 @@ void paralyze (Pokemon & user, Pokemon & target, Weather const & weather) {
 }
 
 void sleep (Pokemon const & user, Pokemon & target, Weather const & weather) {
-	if (target.status.name == Status::NO_STATUS and weather.uproar == 0 and (user.ability.name == Ability::MOLD_BREAKER or (target.ability.name != Ability::INSOMNIA and (target.ability.name != Ability::LEAF_GUARD or weather.sun == 0))))
+	if (target.status.name == Status::NO_STATUS and weather.uproar == 0 and (user.ability.name == Ability::MOLD_BREAKER or !target.ability.blocks_sleep (weather)))
 		target.status.name = Status::SLEEP;		// Fix
 }
 

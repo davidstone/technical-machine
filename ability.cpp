@@ -46,28 +46,46 @@ bool Ability::blocks_switching (Team const & switcher, Weather const weather) co
 	}
 }
 
+bool Ability::blocks_weather () const {
+	switch (name) {
+		case AIR_LOCK:
+		case CLOUD_NINE:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Ability::blocks_sleep (Weather const & weather) const {
+	switch (name) {
+		case INSOMNIA:
+		case VITAL_SPIRIT:
+			return true;
+		case LEAF_GUARD:
+			if (weather.sun)
+				return true;
+		// fall through
+		default:
+			return false;
+	}
+}
+
+bool Ability::weakens_SE_attacks () const {
+	switch (name) {
+		case FILTER:
+		case SOLID_ROCK:
+			return true;
+		default:
+			return false;
+	}
+}
+
 bool Ability::is_set () const {
 	return name != END_ABILITY;
 }
 
 std::string Ability::get_name () const {
-	/*
-	Stench replaces Honey Gather, Illuminate, Pickup, and Run Away.
-
-	Air Lock replaces Cloud Nine.
-
-	Pure Power replaces Huge Power.
-
-	Battle Armor replaces Shell Armor.
-
-	Insomnia replaces Vital Spirit.
-
-	Clear Body replaces White Smoke.
-
-	Solid Rock replaces Filter.
-	*/
-
-	static std::string const ability_name [] = { "Adaptability", "Aftermath", "Air Lock", "Anger Point", "Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor", "Blaze", "Chlorophyll", "Clear Body", "Color Change", "Compoundeyes", "Cute Charm", "Damp", "Download", "Drizzle", "Drought", "Dry Skin", "Early Bird", "Effect Spore", "Flame Body", "Flash Fire", "Flower Gift", "Forecast", "Forewarn", "Frisk", "Gluttony", "Guts", "Heatproof", "Hustle", "Hydration", "Hyper Cutter", "Ice Body", "Immunity", "Inner Focus", "Insomnia", "Intimidate", "Iron Fist", "Keen Eye", "Klutz", "Leaf Guard", "Levitate", "Lightningrod", "Limber", "Liquid Ooze", "Magic Guard", "Magma Armor", "Magnet Pull", "Marvel Scale", "Minus", "Mold Breaker", "Motor Drive", "Multitype", "Natural Cure", "No Guard", "Normalize", "Oblivious", "Overgrow", "Own Tempo", "Plus", "Poison Heal", "Poison Point", "Pressure", "Pure Power", "Quick Feet", "Rain Dish", "Reckless", "Rivalry", "Rock Head", "Rough Skin", "Sand Stream", "Sand Veil", "Scrappy", "Serene Grace", "Shadow Tag", "Shed Skin", "Shield Dust", "Simple", "Skill Link", "Slow Start", "Sniper", "Snow Cloak", "Snow Warning", "Solar Power", "Solid Rock", "Soundproof", "Speed Boost", "Stall", "Static", "Steadfast", "Stench", "Sticky Hold", "Storm Drain", "Sturdy", "Suction Cups", "Super Luck", "Swarm", "Swift Swim", "Synchronize", "Tangled Feet", "Technician", "Thick Fat", "Tinted Lens", "Torrent", "Trace", "Truant", "Unaware", "Unburden", "Volt Absorb", "Water Absorb", "Water Veil", "Wonder Guard", "END_ABILITY" };
+	static std::string const ability_name [] = { "Adaptability", "Aftermath", "Air Lock", "Anger Point", "Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor", "Blaze", "Chlorophyll", "Clear Body", "Cloud Nine", "Color Change", "Compoundeyes", "Cute Charm", "Damp", "Download", "Drizzle", "Drought", "Dry Skin", "Early Bird", "Effect Spore", "Filter", "Flame Body", "Flash Fire", "Flower Gift", "Forecast", "Forewarn", "Frisk", "Gluttony", "Guts", "Heatproof", "Honey Gather", "Huge Power", "Hustle", "Hydration", "Hyper Cutter", "Ice Body", "Illuminate", "Immunity", "Inner Focus", "Insomnia", "Intimidate", "Iron Fist", "Keen Eye", "Klutz", "Leaf Guard", "Levitate", "Lightningrod", "Limber", "Liquid Ooze", "Magic Guard", "Magma Armor", "Magnet Pull", "Marvel Scale", "Minus", "Mold Breaker", "Motor Drive", "Multitype", "Natural Cure", "No Guard", "Normalize", "Oblivious", "Overgrow", "Own Tempo", "Pickup", "Plus", "Poison Heal", "Poison Point", "Pressure", "Pure Power", "Quick Feet", "Rain Dish", "Reckless", "Rivalry", "Rock Head", "Rough Skin", "Run Away", "Sand Stream", "Sand Veil", "Scrappy", "Serene Grace", "Shadow Tag", "Shed Skin", "Shell Armor", "Shield Dust", "Simple", "Skill Link", "Slow Start", "Sniper", "Snow Cloak", "Snow Warning", "Solar Power", "Solid Rock", "Soundproof", "Speed Boost", "Stall", "Static", "Steadfast", "Stench", "Sticky Hold", "Storm Drain", "Sturdy", "Suction Cups", "Super Luck", "Swarm", "Swift Swim", "Synchronize", "Tangled Feet", "Technician", "Thick Fat", "Tinted Lens", "Torrent", "Trace", "Truant", "Unaware", "Unburden", "Vital Spirit", "Volt Absorb", "Water Absorb", "Water Veil", "White Smoke", "Wonder Guard", "END_ABILITY" };
 	return ability_name [name];
 }
 
@@ -87,7 +105,7 @@ class Ability_From_String {
 				{ "Blaze", Ability::BLAZE },
 				{ "Chlorophyll", Ability::CHLOROPHYLL },
 				{ "Clear Body", Ability::CLEAR_BODY },
-				{ "Cloud Nine", Ability::AIR_LOCK },
+				{ "Cloud Nine", Ability::CLOUD_NINE },
 				{ "Color Change", Ability::COLOR_CHANGE },
 				{ "Compoundeyes", Ability::COMPOUNDEYES },
 				{ "Cute Charm", Ability::CUTE_CHARM },
@@ -98,7 +116,7 @@ class Ability_From_String {
 				{ "Dry Skin", Ability::DRY_SKIN },
 				{ "Early Bird", Ability::EARLY_BIRD },
 				{ "Effect Spore", Ability::EFFECT_SPORE },
-				{ "Filter", Ability::SOLID_ROCK },
+				{ "Filter", Ability::FILTER },
 				{ "Flame Body", Ability::FLAME_BODY },
 				{ "Flash Fire", Ability::FLASH_FIRE },
 				{ "Flower Gift", Ability::FLOWER_GIFT },
@@ -108,13 +126,13 @@ class Ability_From_String {
 				{ "Gluttony", Ability::GLUTTONY },
 				{ "Guts", Ability::GUTS },
 				{ "Heatproof", Ability::HEATPROOF },
-				{ "Honey Gather", Ability::STENCH },
-				{ "Huge Power", Ability::PURE_POWER },
+				{ "Honey Gather", Ability::HONEY_GATHER },
+				{ "Huge Power", Ability::HUGE_POWER },
 				{ "Hustle", Ability::HUSTLE },
 				{ "Hydration", Ability::HYDRATION },
 				{ "Hyper Cutter", Ability::HYPER_CUTTER },
 				{ "Ice Body", Ability::ICE_BODY },
-				{ "Illuminate", Ability::STENCH },
+				{ "Illuminate", Ability::ILLUMINATE },
 				{ "Immunity", Ability::IMMUNITY },
 				{ "Inner Focus", Ability::INNER_FOCUS },
 				{ "Insomnia", Ability::INSOMNIA },
@@ -141,7 +159,7 @@ class Ability_From_String {
 				{ "Oblivious", Ability::OBLIVIOUS },
 				{ "Overgrow", Ability::OVERGROW },
 				{ "Own Tempo", Ability::OWN_TEMPO },
-				{ "Pickup", Ability::STENCH },
+				{ "Pickup", Ability::PICKUP },
 				{ "Plus", Ability::PLUS },
 				{ "Poison Heal", Ability::POISON_HEAL },
 				{ "Poison Point", Ability::POISON_POINT },
@@ -153,14 +171,14 @@ class Ability_From_String {
 				{ "Rivalry", Ability::RIVALRY },
 				{ "Rock Head", Ability::ROCK_HEAD },
 				{ "Rough Skin", Ability::ROUGH_SKIN },
-				{ "Run Away", Ability::STENCH },
+				{ "Run Away", Ability::RUN_AWAY },
 				{ "Sand Stream", Ability::SAND_STREAM },
 				{ "Sand Veil", Ability::SAND_VEIL },
 				{ "Scrappy", Ability::SCRAPPY },
 				{ "Serene Grace", Ability::SERENE_GRACE },
 				{ "Shadow Tag", Ability::SHADOW_TAG },
 				{ "Shed Skin", Ability::SHED_SKIN },
-				{ "Shell Armor", Ability::BATTLE_ARMOR },
+				{ "Shell Armor", Ability::SHELL_ARMOR },
 				{ "Shield Dust", Ability::SHIELD_DUST },
 				{ "Simple", Ability::SIMPLE },
 				{ "Skill Link", Ability::SKILL_LINK },
@@ -193,11 +211,11 @@ class Ability_From_String {
 				{ "Truant", Ability::TRUANT },
 				{ "Unaware", Ability::UNAWARE },
 				{ "Unburden", Ability::UNBURDEN },
-				{ "Vital Spirit", Ability::INSOMNIA },
+				{ "Vital Spirit", Ability::VITAL_SPIRIT },
 				{ "Volt Absorb", Ability::VOLT_ABSORB },
 				{ "Water Absorb", Ability::WATER_ABSORB },
 				{ "Water Veil", Ability::WATER_VEIL },
-				{ "White Smoke", Ability::CLEAR_BODY },
+				{ "White Smoke", Ability::WHITE_SMOKE },
 				{ "Wonder Guard", Ability::WONDER_GUARD }
 			} {
 		}

@@ -157,7 +157,12 @@ int Item::get_fling_power () const {
 			break;
 		case DRAGON_FANG:
 		case POISON_BARB:
-		case POWER_ITEMS:
+		case POWER_ANKLET:
+		case POWER_BAND:
+		case POWER_BELT:
+		case POWER_BRACER:
+		case POWER_LENS:
+		case POWER_WEIGHT:
 			power = 70;
 			break;
 		case ADAMANT_ORB:
@@ -193,6 +198,7 @@ int Item::get_fling_power () const {
 		case MIRACLE_SEED:
 		case MYSTIC_WATER:
 		case NEVERMELTICE:
+		case RAZOR_FANG:
 		case SCOPE_LENS:
 		case SHELL_BELL:
 		case SOUL_DEW:
@@ -209,8 +215,28 @@ int Item::get_fling_power () const {
 	return power;
 }
 
+bool Item::blocks_trick () const {
+	switch	 (name) {
+		case AIR_MAIL:
+		case BLOOM_MAIL:
+		case BRICK_MAIL:
+		case BUBBLE_MAIL:
+		case FLAME_MAIL:
+		case GRASS_MAIL:
+		case HEART_MAIL:
+		case MOSAIC_MAIL:
+		case SNOW_MAIL:
+		case SPACE_MAIL:
+		case STEEL_MAIL:
+		case TUNNEL_MAIL:
+			return true;
+		default:
+			return false;
+	}
+}
+
 std::string Item::get_name () const {
-	static std::string const item_name [] = { "No Item", "Adamant Orb ", "Aguav Berry", "Apicot Berry", "Aspear Berry", "Babiri Berry", "Belue Berry", "Berry Juice", "Big Root", "Black Belt", "Black Sludge", "BlackGlasses", "Bluk Berry", "BrightPowder", "Charcoal", "Charti Berry", "Cheri Berry", "Chesto Berry", "Chilan Berry", "Choice Band", "Choice Scarf", "Choice Specs", "Chople Berry", "Coba Berry", "Colbur Berry", "Cornn Berry", "Custap Berry", "Damp Rock", "DeepSeaScale", "DeepSeaTooth", "Destiny Knot", "Draco Plate", "Dragon Fang", "Dread Plate", "Durin Berry", "Earth Plate", "Enigma Berry", "Expert Belt", "Figy Berry", "Fist Plate", "Flame Orb", "Flame Plate", "Focus Band", "Focus Sash", "Ganlon Berry", "Grepa Berry", "Grip Claw", "Griseous Orb", "Haban Berry", "Hard Stone", "Heat Rock", "Hondew Berry", "Iapapa Berry", "Icicle Plate", "Icy Rock", "Insect Plate", "Iron Ball", "Iron Plate", "Jaboca Berry", "Kasib Berry", "Kebia Berry", "Kelpsy Berry", "King's Rock", "Lagging Tail", "Lansat Berry", "Lax Incense", "Leftovers", "Leppa Berry", "Liechi Berry", "Life Orb", "Light Ball", "Light Clay", "Lucky Punch", "Lum Berry", "Lustrous Orb", "Macho Brace", "Magnet", "Mago Berry", "Magost Berry", "Mail", "Meadow Plate", "Mental Herb", "Metal Coat", "Metal Powder", "Metronome", "Micle Berry", "Mind Plate", "Miracle Seed", "Muscle Band", "Mystic Water", "Nanab Berry", "NeverMeltIce", "Nomel Berry", "Occa Berry", "Odd Incense", "Oran Berry", "Pamtre Berry", "Passho Berry", "Payapa Berry", "Pecha Berry", "Persim Berry", "Petaya Berry", "Pinap Berry", "Poison Barb", "Pomeg Berry", "Power Herb", "Power Item", "Qualot Berry", "Quick Claw", "Quick Powder", "Rabuta Berry", "Rawst Berry", "Razor Claw", "Razz Berry", "Rindo Berry", "Rock Incense", "Rose Incense", "Rowap Berry", "Salac Berry", "Scope Lens", "Sharp Beak", "Shed Shell", "Shell Bell", "Shuca Berry", "Silk Scarf", "SilverPowder", "Sitrus Berry", "Sky Plate", "Smooth Rock", "Soft Sand", "Soul Dew", "Spell Tag", "Spelon Berry", "Splash Plate", "Spooky Plate", "Starf Berry", "Stick", "Sticky Barb", "Stone Plate", "Tamato Berry", "Tanga Berry", "Thick Club", "Toxic Orb", "Toxic Plate", "TwistedSpoon", "Wacan Berry", "Watmel Berry", "Wave Incense", "Wepear Berry", "White Herb", "Wide Lens", "Wiki Berry", "Wise Glasses", "Yache Berry", "Zap Plate", "Zoom Lens", "Other", "Other10", "Other30", "Other50", "Other80", "Other100", "End Item" };
+	static std::string const item_name [] = { "No Item", "Adamant Orb ", "Aguav Berry", "Air Mail", "Apicot Berry", "Aspear Berry", "Babiri Berry", "Belue Berry", "Berry Juice", "Big Root", "Black Belt", "Black Sludge", "BlackGlasses", "Bloom Mail", "Bluk Berry", "Brick Mail", "BrightPowder", "Bubble Mail", "Charcoal", "Charti Berry", "Cheri Berry", "Chesto Berry", "Chilan Berry", "Choice Band", "Choice Scarf", "Choice Specs", "Chople Berry", "Coba Berry", "Colbur Berry", "Cornn Berry", "Custap Berry", "Damp Rock", "DeepSeaScale", "DeepSeaTooth", "Destiny Knot", "Draco Plate", "Dragon Fang", "Dread Plate", "Durin Berry", "Earth Plate", "Enigma Berry", "Expert Belt", "Figy Berry", "Fist Plate", "Flame Mail", "Flame Orb", "Flame Plate", "Focus Band", "Focus Sash", "Full Incense", "Ganlon Berry", "Grass Mail", "Grepa Berry", "Grip Claw", "Griseous Orb", "Haban Berry", "Hard Stone", "Heart Mail", "Heat Rock", "Hondew Berry", "Iapapa Berry", "Icicle Plate", "Icy Rock", "Insect Plate", "Iron Ball", "Iron Plate", "Jaboca Berry", "Kasib Berry", "Kebia Berry", "Kelpsy Berry", "King's Rock", "Lagging Tail", "Lansat Berry", "Lax Incense", "Leftovers", "Leppa Berry", "Liechi Berry", "Life Orb", "Light Ball", "Light Clay", "Lucky Punch", "Lum Berry", "Lustrous Orb", "Macho Brace", "Magnet", "Mago Berry", "Magost Berry", "Mail", "Meadow Plate", "Mental Herb", "Metal Coat", "Metal Powder", "Metronome", "Micle Berry", "Mind Plate", "Miracle Seed", "Mosaic Mail", "Muscle Band", "Mystic Water", "Nanab Berry", "NeverMeltIce", "Nomel Berry", "Occa Berry", "Odd Incense", "Oran Berry", "Pamtre Berry", "Passho Berry", "Payapa Berry", "Pecha Berry", "Persim Berry", "Petaya Berry", "Pinap Berry", "Poison Barb", "Pomeg Berry", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Herb", "Power Lens", "Power Weight", "Qualot Berry", "Quick Claw", "Quick Powder", "Rabuta Berry", "Rawst Berry", "Razor Claw", "Razor Fang", "Razz Berry", "Rindo Berry", "Rock Incense", "Rose Incense", "Rowap Berry", "Salac Berry", "Scope Lens", "Sea Incense", "Sharp Beak", "Shed Shell", "Shell Bell", "Shuca Berry", "Silk Scarf", "SilverPowder", "Sitrus Berry", "Sky Plate", "Smooth Rock", "Snow Mail", "Soft Sand", "Soul Dew", "Space Mail", "Spell Tag", "Spelon Berry", "Splash Plate", "Spooky Plate", "Starf Berry", "Steel Mail", "Stick", "Sticky Barb", "Stone Plate", "Tamato Berry", "Tanga Berry", "Thick Club", "Toxic Orb", "Toxic Plate", "Tunnel Mail", "TwistedSpoon", "Wacan Berry", "Watmel Berry", "Wave Incense", "Wepear Berry", "White Herb", "Wide Lens", "Wiki Berry", "Wise Glasses", "Yache Berry", "Zap Plate", "Zoom Lens", "Other", "Other10", "Other30", "Other50", "Other80", "Other100", "End Item" };
 	return item_name [name];
 }
 
@@ -282,8 +308,8 @@ class Item_From_String {
 				{ "Kebia Berry", Item::KEBIA_BERRY },
 				{ "Kelpsy Berry", Item::KELPSY_BERRY },
 				{ "King's Rock", Item::KINGS_ROCK },
-				{ "Razor Fang", Item::KINGS_ROCK },
-				{ "Full Incense", Item::LAGGING_TAIL },
+				{ "Razor Fang", Item::RAZOR_FANG },
+				{ "Full Incense", Item::FULL_INCENSE },
 				{ "Lagging Tail", Item::LAGGING_TAIL },
 				{ "Lansat Berry", Item::LANSAT_BERRY },
 				{ "Lax Incense", Item::LAX_INCENSE },
@@ -300,19 +326,18 @@ class Item_From_String {
 				{ "Magnet", Item::MAGNET },
 				{ "Mago Berry", Item::MAGO_BERRY },
 				{ "Magost Berry", Item::MAGOST_BERRY },
-				{ "Mail", Item::MAIL },
-				{ "Air Mail", Item::MAIL },
-				{ "Bloom Mail", Item::MAIL },
-				{ "Brick Mail", Item::MAIL },
-				{ "Bubble Mail", Item::MAIL },
-				{ "Flame Mail", Item::MAIL },
-				{ "Grass Mail", Item::MAIL },
-				{ "Heart Mail", Item::MAIL },
-				{ "Mosaic Mail", Item::MAIL },
-				{ "Snow Mail", Item::MAIL },
-				{ "Space Mail", Item::MAIL },
-				{ "Steel Mail", Item::MAIL },
-				{ "Tunnel Mail", Item::MAIL },
+				{ "Air Mail", Item::AIR_MAIL },
+				{ "Bloom Mail", Item::BLOOM_MAIL },
+				{ "Brick Mail", Item::BRICK_MAIL },
+				{ "Bubble Mail", Item::BUBBLE_MAIL },
+				{ "Flame Mail", Item::FLAME_MAIL },
+				{ "Grass Mail", Item::GRASS_MAIL },
+				{ "Heart Mail", Item::HEART_MAIL },
+				{ "Mosaic Mail", Item::MOSAIC_MAIL },
+				{ "Snow Mail", Item::SNOW_MAIL },
+				{ "Space Mail", Item::SPACE_MAIL },
+				{ "Steel Mail", Item::STEEL_MAIL },
+				{ "Tunnel Mail", Item::TUNNEL_MAIL },
 				{ "Meadow Plate", Item::MEADOW_PLATE },
 				{ "Mental Herb", Item::MENTAL_HERB },
 				{ "Metal Coat", Item::METAL_COAT },
@@ -339,13 +364,12 @@ class Item_From_String {
 				{ "Poison Barb", Item::POISON_BARB },
 				{ "Pomeg Berry", Item::POMEG_BERRY },
 				{ "Power Herb", Item::POWER_HERB },
-				{ "Power Item", Item::POWER_ITEMS },
-				{ "Power Anklet", Item::POWER_ITEMS },
-				{ "Power Band", Item::POWER_ITEMS },
-				{ "Power Belt", Item::POWER_ITEMS },
-				{ "Power Bracer", Item::POWER_ITEMS },
-				{ "Power Lens", Item::POWER_ITEMS },
-				{ "Power Weight", Item::POWER_ITEMS },
+				{ "Power Anklet", Item::POWER_ANKLET },
+				{ "Power Band", Item::POWER_BAND },
+				{ "Power Belt", Item::POWER_BELT },
+				{ "Power Bracer", Item::POWER_BRACER },
+				{ "Power Lens", Item::POWER_LENS },
+				{ "Power Weight", Item::POWER_WEIGHT },
 				{ "Qualot Berry", Item::QUALOT_BERRY },
 				{ "Quick Claw", Item::QUICK_CLAW },
 				{ "Quick Powder", Item::QUICK_POWDER },
@@ -386,7 +410,7 @@ class Item_From_String {
 				{ "TwistedSpoon", Item::TWISTEDSPOON },
 				{ "Wacan Berry", Item::WACAN_BERRY },
 				{ "Watmel Berry", Item::WATMEL_BERRY },
-				{ "Sea Incense", Item::WAVE_INCENSE },
+				{ "Sea Incense", Item::SEA_INCENSE },
 				{ "Wave Incense", Item::WAVE_INCENSE },
 				{ "Wepear Berry", Item::WEPEAR_BERRY },
 				{ "White Herb", Item::WHITE_HERB },
