@@ -52,7 +52,6 @@ void OutMessage::write_string (std::string const & string) {
 void OutMessage::write_team (Team const & team) {
 	write_int (team.size);
 	for (std::vector <Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		std::cout << pokemon->get_name () + ": " + pokemon->ability.get_name () + "\n";
 		write_int (tm_to_pl_species (pokemon->name));
 		write_string (pokemon->nickname);
 		write_byte (0);		// Don't care about shininess
