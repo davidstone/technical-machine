@@ -241,12 +241,23 @@ unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_da
 	blockexecution (user, target, weather);
 	if (user.pokemon->move->execute) {
 		lower_pp (user, *target.pokemon);
-//		if (ASSIST == user.pokemon->move->name or COPYCAT == user.pokemon->move->name or ME_FIRST == user.pokemon->move->name or METRONOME_MOVE == user.pokemon->move->name or MIRROR_MOVE == user.pokemon->move->name or SLEEP_TALK == user.pokemon->move->name)
-//			usemove2 (user, target, move2, weather);		// ???
-//		if (NATURE_POWER == user.pokemon->move->name)
-//		else
-		if (!user.miss)
-			damage = usemove2 (user, target, weather, log_damage);
+		size_t index = user.pokemon->move.index;
+		switch (user.pokemon->move->name) {
+//			case Move::NATURE_POWER:
+//				break;
+			case Move::ASSIST:
+			case Move::COPYCAT:
+			case Move::ME_FIRST:
+			case Move::METRONOME:
+			case Move::MIRROR_MOVE:
+			case Move::SLEEP_TALK:
+				call_other_move (user);
+				// fall through
+			default:
+				if (!user.miss)
+					damage = usemove2 (user, target, weather, log_damage);
+				user.pokemon->move.index = index;
+		}
 	}
 	return damage;
 }
@@ -1242,6 +1253,10 @@ void lower_pp (Team & user, Pokemon const & target) {
 		else
 			--user.pokemon->move->pp;
 	}
+}
+
+void call_other_move (Team & user) {
+	user.pokemon->move.index = user.called_move;
 }
 
 std::string Move::get_name() const {

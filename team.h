@@ -107,6 +107,7 @@ class Team {
 		bool stealth_rock;
 
 		uint8_t replacement;		// If a Pokemon switches / faints, what Pokemon should replace it?
+		uint8_t called_move;
 		
 		uint8_t size;			// How big is the team?
 		

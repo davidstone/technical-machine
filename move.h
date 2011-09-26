@@ -87,6 +87,7 @@ class Weather;
 
 unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_damage = -1);
 unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
+void call_other_move (Team & user);
 void do_damage (Team & user, Team & target, unsigned damage);
 void lower_pp (Team & user, Pokemon const & target);
 
