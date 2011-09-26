@@ -18,17 +18,17 @@ namespace technicalmachine {
 
 class Stat {
 	public:
-		enum Stats { HP, ATK, DEF, SPA, SPD, SPE };
+		// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
+		enum Stats { HP = -1, ATK, DEF, SPA, SPD, SPE, ACC, EVA, END_STAT };
 
 		uint8_t base;
 		int8_t iv;			// 0 through 31
 		int8_t ev;			// 0 through 63
-		int8_t stage;		// -6 though 6
 		unsigned max;		// Max HP only
 		unsigned stat;		// Current HP or last calculated value for other stats
 	
 		Stat (Species name, Stats stat);
-		void boost (int n);
+		static void boost (int8_t & stage, int n);
 	private:
 		uint8_t get_base_stat (Species name, Stats stat) const;
 };

@@ -34,11 +34,12 @@ namespace technicalmachine {
 
 Team::Team (bool isme, unsigned size) :
 	vanish (LANDED),
+	stage ({}),
 	damage (0),
 	bide_damage (0),
 	substitute (0),
-	bide (0),
 	chance_to_hit (100),
+	bide (0),
 	confused (0),
 	embargo (0),
 	encore (0),
@@ -91,8 +92,6 @@ Team::Team (bool isme, unsigned size) :
 	torment (false),
 	trapped (false),
 	water_sport (false),
-	accuracy (0),
-	evasion (0),
 	
 	counter (0),
 
@@ -141,8 +140,7 @@ uint64_t Team::hash () const {
 	uint64_t hash = 0;
 	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
 		hash ^= it->hash();
-	// Accuracy and Evasion are +6 to account for negative stat boosts
-	return size + 6 * (pokemon.index + 6 * (vanish + 6 * (bide_damage + 358 * (substitute + 178 * (bide + 3 * (confused + 5 * (embargo + 5 * (encore + 8 * (heal_block + 5 * (magnet_rise + 5 * (partial_trap + 8 * (perish_song + 3 * (rampage + 3 * (slow_start + 3 * (stockpile + 4 * (taunt + 3 * (toxic + 16 * (uproar + 5 * (yawn + 2 * (aqua_ring + 2 * (attract + 2 * (charge + 2 * (curse + 2 * (defense_curl + 2 * (destiny_bond + 2 * (ff + 2 * (focus_energy + 2 * (gastro_acid + 2 * (identified + 2 * (imprison + 2 * (ingrain + 2 * (leech_seed + 2 * (loaf + 2 * (lock_on + 2 * (minimize + 2 * (mud_sport + 2 * (nightmare + 2 * (power_trick + 2 * (recharging + 2 * (torment + 2 * (trapped + 2 * (water_sport + 2 * ((accuracy + 6) + 13 * ((evasion + 6) + 13 * (counter + 3 * (light_screen + 8 * (lucky_chant + 5 * (mist + 5 * (reflect + 8 * (safeguard + 5 * (tailwind + 3 * (wish + 2 * (spikes + 4 * (toxic_spikes + 3 * (stealth_rock + 2 * hash)))))))))))))))))))))))))))))))))))))))))))))))))))))));
+	return size + 6 * (pokemon.index + 6 * (vanish + 6 * (stage [Stat::ATK] + 13 * (stage [Stat::DEF] + 13 * (stage [Stat::SPA] + 13 * (stage [Stat::SPD] + 13 * (stage [Stat::SPE] + 13 * (stage [Stat::ACC] + 13 * (stage [Stat::EVA] + 13 * (bide_damage + 358 * (substitute + 178 * (bide + 3 * (confused + 5 * (embargo + 5 * (encore + 8 * (heal_block + 5 * (magnet_rise + 5 * (partial_trap + 8 * (perish_song + 3 * (rampage + 3 * (slow_start + 3 * (stockpile + 4 * (taunt + 3 * (toxic + 16 * (uproar + 5 * (yawn + 2 * (aqua_ring + 2 * (attract + 2 * (charge + 2 * (curse + 2 * (defense_curl + 2 * (destiny_bond + 2 * (ff + 2 * (focus_energy + 2 * (gastro_acid + 2 * (identified + 2 * (imprison + 2 * (ingrain + 2 * (leech_seed + 2 * (loaf + 2 * (lock_on + 2 * (minimize + 2 * (mud_sport + 2 * (nightmare + 2 * (power_trick + 2 * (recharging + 2 * (torment + 2 * (trapped + 2 * (water_sport + 2 * (counter + 3 * (light_screen + 8 * (lucky_chant + 5 * (mist + 5 * (reflect + 8 * (safeguard + 5 * (tailwind + 3 * (wish + 2 * (spikes + 4 * (toxic_spikes + 3 * (stealth_rock + 2 * hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 // Warning: Almost everything you see here is a hack.
@@ -167,7 +165,11 @@ bool Team::operator== (Team const & other) const {
 		if (pokemon.set [n] != other.pokemon.set [n])
 			return false;
 	}
-	return pokemon->name == other.pokemon->name and vanish == other.vanish and bide == other.bide and confused == other.confused and embargo == other.embargo and encore == other.encore and heal_block == other.heal_block and magnet_rise == other.magnet_rise and partial_trap == other.partial_trap and perish_song == other.perish_song and rampage == other.rampage and slow_start == other.slow_start and stockpile == other.stockpile and taunt == other.taunt and toxic == other.toxic and uproar == other.yawn and aqua_ring == other.aqua_ring and attract == other.attract and charge == other.charge and curse == other.curse and defense_curl == other.defense_curl and destiny_bond == other.destiny_bond and ff == other.ff and focus_energy == other.focus_energy and identified == other.identified and imprison == other.imprison and ingrain == other.ingrain and leech_seed == other.leech_seed and loaf == other.loaf and lock_on == other.lock_on and minimize == other.minimize and mud_sport == other.mud_sport and nightmare == other.nightmare and torment == other.torment and trapped == other.trapped and water_sport == other.water_sport and accuracy == other.accuracy and evasion == other.evasion and counter == other.counter and light_screen == other.light_screen and lucky_chant == other.lucky_chant and mist == other.mist and reflect == other.reflect and safeguard == other.safeguard and tailwind == other.tailwind and wish == other.wish and spikes == other.spikes and toxic_spikes == other.toxic_spikes and stealth_rock == other.stealth_rock and me == other.me;
+	for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1)) {
+		if (stage [stat] != other.stage [stat])
+			return false;
+	}
+	return pokemon->name == other.pokemon->name and vanish == other.vanish and bide == other.bide and confused == other.confused and embargo == other.embargo and encore == other.encore and heal_block == other.heal_block and magnet_rise == other.magnet_rise and partial_trap == other.partial_trap and perish_song == other.perish_song and rampage == other.rampage and slow_start == other.slow_start and stockpile == other.stockpile and taunt == other.taunt and toxic == other.toxic and uproar == other.yawn and aqua_ring == other.aqua_ring and attract == other.attract and charge == other.charge and curse == other.curse and defense_curl == other.defense_curl and destiny_bond == other.destiny_bond and ff == other.ff and focus_energy == other.focus_energy and identified == other.identified and imprison == other.imprison and ingrain == other.ingrain and leech_seed == other.leech_seed and loaf == other.loaf and lock_on == other.lock_on and minimize == other.minimize and mud_sport == other.mud_sport and nightmare == other.nightmare and torment == other.torment and trapped == other.trapped and water_sport == other.water_sport and counter == other.counter and light_screen == other.light_screen and lucky_chant == other.lucky_chant and mist == other.mist and reflect == other.reflect and safeguard == other.safeguard and tailwind == other.tailwind and wish == other.wish and spikes == other.spikes and toxic_spikes == other.toxic_spikes and stealth_rock == other.stealth_rock and me == other.me;
 }
 
 Pokemon& Team::at_replacement () {

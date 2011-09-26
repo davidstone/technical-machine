@@ -88,7 +88,7 @@ void blockexecution (Team & user, Team const & other, Weather const & weather) {
 			}
 			if (user.pokemon->move->execute and user.flinch) {
 				if (user.pokemon->ability.name == Ability::STEADFAST)
-					user.pokemon->spe.boost (1);
+					Stat::boost (user.stage [Stat::SPE], 1);
 				user.pokemon->move->execute = false;
 			}
 	

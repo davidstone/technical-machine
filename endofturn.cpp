@@ -114,7 +114,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.aqua_ring)
 		heal (*team.pokemon, 16);
 	if (team.pokemon->ability.name == Ability::SPEED_BOOST)
-		team.pokemon->spe.boost (1);
+		Stat::boost (team.stage [Stat::SPE], 1);
 	else if (team.shed_skin)
 		team.pokemon->status.clear ();
 	switch (team.pokemon->item.name) {

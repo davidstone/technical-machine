@@ -60,6 +60,14 @@ BotClient::BotClient (int depth_):
 	authenticate ();
 }
 
+void BotClient::load_responses () {
+	std::ifstream file ("responses.txt");
+	std::string line;
+	for (getline (file, line); !file.eof(); getline (file, line))
+		response.push_back (line);
+	file.close();
+}
+
 void BotClient::account_info (std::string & host, std::string & port) {
 	std::ifstream file ("settings.txt");
 	std::string line;
@@ -675,14 +683,6 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 		}
 		std::cerr << '\n';
 	}
-}
-
-void BotClient::load_responses () {
-	std::ifstream file ("responses.txt");
-	std::string line;
-	for (getline (file, line); !file.eof(); getline (file, line))
-		response.push_back (line);
-	file.close();
 }
 
 std::string BotClient::get_response () const {

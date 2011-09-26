@@ -15,6 +15,7 @@
 #include "ability.h"
 #include "heal.h"
 #include "pokemon.h"
+#include "stat.h"
 #include "status.h"
 #include "team.h"
 #include "type.h"
@@ -38,8 +39,8 @@ void reset_variables (Team & team) {
 		team.embargo = 0;
 		team.magnet_rise = 0;
 		team.perish_song = 0;
-		team.accuracy = 0;
-		team.evasion = 0;
+		for (Stat::Stats stat = Stat::ATK; stat <= Stat::SPE; stat = static_cast <Stat::Stats> (stat + 1))
+			team.stage [stat] = 0;
 		team.substitute = 0;
 	}
 	team.attract = false;
@@ -66,11 +67,6 @@ void reset_variables (Team & team) {
 	team.heal_block = 0;
 	team.partial_trap = 0;
 	team.rampage = 0;
-	team.pokemon->atk.stage = 0;
-	team.pokemon->def.stage = 0;
-	team.pokemon->spa.stage = 0;
-	team.pokemon->spd.stage = 0;
-	team.pokemon->spe.stage = 0;
 	team.stockpile = 0;
 	team.taunt = 0;
 	team.toxic = 0;
@@ -131,7 +127,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	entry_hazards (switcher, weather);
 
 	if (switcher.pokemon->hp.stat > 0)
-		activate_ability (switcher, *other.pokemon, weather);
+		activate_ability (switcher, other, weather);
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {
@@ -152,7 +148,7 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 		heal (*switcher.pokemon, -32, get_effectiveness (ROCK, *switcher.pokemon));
 }
 
-void activate_ability (Team & switcher, Pokemon & other, Weather & weather) {
+void activate_ability (Team & switcher, Team & other, Weather & weather) {
 	// Activate abilities upon switching in
 
 	switcher.slow_start = 0;
@@ -161,10 +157,12 @@ void activate_ability (Team & switcher, Pokemon & other, Weather & weather) {
 			switcher.slow_start = 5;
 			break;
 		case Ability::DOWNLOAD:
-			if (other.def.stat >= other.spd.stat)
-				switcher.pokemon->spa.boost (1);
+			calculate_defense (switcher, other, weather);
+			calculate_special_defense (switcher, other, weather);
+			if (other.pokemon->def.stat >= other.pokemon->spd.stat)
+				Stat::boost (switcher.stage [Stat::SPA], 1);
 			else
-				switcher.pokemon->atk.boost (1);
+				Stat::boost (switcher.stage [Stat::ATK], 1);
 			break;
 		case Ability::DRIZZLE:
 			weather.set_rain (-1);
@@ -175,7 +173,7 @@ void activate_ability (Team & switcher, Pokemon & other, Weather & weather) {
 		case Ability::FORECAST:	// fix
 			break;
 		case Ability::INTIMIDATE:
-			other.atk.boost (-1);
+			Stat::boost (other.stage [Stat::ATK], -1);
 			break;
 		case Ability::SAND_STREAM:
 			weather.set_sand (-1);

@@ -446,11 +446,6 @@ int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather co
 }
 
 int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, int depth, Score const & score) {
-	switcher.at_replacement ().atk.stage = switcher.pokemon->atk.stage;
-	switcher.at_replacement ().def.stage = switcher.pokemon->def.stage;
-	switcher.at_replacement ().spa.stage = switcher.pokemon->spa.stage;
-	switcher.at_replacement ().spd.stage = switcher.pokemon->spd.stage;
-	switcher.at_replacement ().spe.stage = switcher.pokemon->spe.stage;
 	switchpokemon (switcher, other, weather);
 	/*
 	I don't have to correct for which of the Pokemon moved first because there are only two options:

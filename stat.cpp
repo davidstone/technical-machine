@@ -26,7 +26,6 @@ Stat::Stat (Species name, Stats stat) :
 	base (get_base_stat (name, stat)),
 	iv (31),
 	ev (21),		// Adds up to 126 points, temporary until I add in EV prediction
-	stage (0),
 	max (-1) {
 	}
 
@@ -63,11 +62,11 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 			break;
 	}
 
-	if (attacker.pokemon->atk.stage >= 0) // >= is better than == to reduce the frequency of checking for a CH
-		attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * (2 + attacker.pokemon->atk.stage) / 2;
+	if (attacker.stage [Stat::ATK] >= 0) // >= is better than == to check for a CH less
+		attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * (2 + attacker.stage [Stat::ATK]) / 2;
 	else {
 		if (!attacker.ch)
-			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 2 / (2 - attacker.pokemon->atk.stage);
+			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 2 / (2 - attacker.stage [Stat::ATK]);
 	}
 
 	switch (attacker.pokemon->ability.name) {
@@ -134,11 +133,11 @@ void calculate_special_attack (Team & attacker, Weather const &weather) {
 			break;
 	}
 
-	if (attacker.pokemon->spa.stage >= 0)	// >= is better than == to reduce the frequency of checking for a CH
-		attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * (2 + attacker.pokemon->spa.stage) / 2;
+	if (attacker.stage [Stat::SPA] >= 0)	// >= is better than == to check for a CH less
+		attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * (2 + attacker.stage [Stat::SPA]) / 2;
 	else {
 		if (!attacker.ch)
-			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 2 / (2 - attacker.pokemon->spa.stage);
+			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 2 / (2 - attacker.stage [Stat::SPA]);
 	}
 
 	if (attacker.pokemon->ability.name == Ability::SOLAR_POWER and weather.sun)
@@ -194,12 +193,12 @@ void calculate_defense (Team const & attacker, Team & defender, Weather const & 
 			break;
 	}
 
-	if (defender.pokemon->def.stage > 0) {	// > is better than >= to reduce the frequency of checking for a CH
+	if (defender.stage [Stat::DEF] > 0) {	// > is better than >= to check for a CH less
 		if (!attacker.ch)
-			defender.pokemon->def.stat = defender.pokemon->def.stat * (2 + defender.pokemon->def.stage) / 2;
+			defender.pokemon->def.stat = defender.pokemon->def.stat * (2 + defender.stage [Stat::DEF]) / 2;
 	}
 	else
-		defender.pokemon->def.stat = defender.pokemon->def.stat * 2 / (2 - defender.pokemon->def.stage);
+		defender.pokemon->def.stat = defender.pokemon->def.stat * 2 / (2 - defender.stage [Stat::DEF]);
 
 	if (defender.pokemon->ability.name == Ability::MARVEL_SCALE and defender.pokemon->status.name == Status::NO_STATUS)
 		defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
@@ -234,12 +233,12 @@ void calculate_special_defense (Team const & attacker, Team & defender, Weather 
 			break;
 	}
 
-	if (defender.pokemon->spd.stage > 0) {	// > is better than >= to reduce the frequency of checking for a CH
+	if (defender.stage [Stat::SPD] > 0) {	// > is better than >= to check for a CH less
 		if (!attacker.ch)
-			defender.pokemon->spd.stat = defender.pokemon->spd.stat * (2 + defender.pokemon->spd.stage) / 2;
+			defender.pokemon->spd.stat = defender.pokemon->spd.stat * (2 + defender.stage [Stat::SPD]) / 2;
 	}
 	else
-		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 2 / (2 - defender.pokemon->spd.stage);
+		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 2 / (2 - defender.stage [Stat::SPD]);
 
 	if (defender.pokemon->ability.name == Ability::FLOWER_GIFT and weather.sun)
 		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
@@ -288,10 +287,10 @@ void calculate_speed (Team & team, Weather const & weather) {
 			break;
 	}
 	
-	if (team.pokemon->spe.stage >= 0)
-		team.pokemon->spe.stat = team.pokemon->spe.stat * (2 + team.pokemon->spe.stage) / 2;
+	if (team.stage [Stat::SPE] >= 0)
+		team.pokemon->spe.stat = team.pokemon->spe.stat * (2 + team.stage [Stat::SPE]) / 2;
 	else
-		team.pokemon->spe.stat = team.pokemon->spe.stat * 2 / (2 - team.pokemon->spe.stage);
+		team.pokemon->spe.stat = team.pokemon->spe.stat * 2 / (2 - team.stage [Stat::SPE]);
 
 	switch (team.pokemon->ability.name) {
 		case Ability::CHLOROPHYLL:
@@ -387,14 +386,14 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 		user.chance_to_hit = 100;
 	else {
 		user.chance_to_hit = user.pokemon->move->accuracy;
-		if (user.accuracy >= 0)
-			user.chance_to_hit = user.chance_to_hit * (3 + user.accuracy) / 3;
+		if (user.stage [Stat::ACC] >= 0)
+			user.chance_to_hit = user.chance_to_hit * (3 + user.stage [Stat::ACC]) / 3;
 		else
-			user.chance_to_hit = user.chance_to_hit * 3 / (3 - user.accuracy);
-		if (target.evasion <= 0)
-			user.chance_to_hit = user.chance_to_hit * (3 - target.evasion) / 3;
+			user.chance_to_hit = user.chance_to_hit * 3 / (3 - user.stage [Stat::ACC]);
+		if (target.stage [Stat::EVA] <= 0)
+			user.chance_to_hit = user.chance_to_hit * (3 - target.stage [Stat::EVA]) / 3;
 		else
-			user.chance_to_hit = user.chance_to_hit * 3 / (3 + target.evasion);
+			user.chance_to_hit = user.chance_to_hit * 3 / (3 + target.stage [Stat::EVA]);
 
 		switch (user.pokemon->item.name) {
 			case Item::WIDE_LENS:
@@ -451,7 +450,7 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 	}
 }
 
-void Stat::boost (int n) {
+void Stat::boost (int8_t & stage, int n) {
 	stage += n;
 	if (stage > 6)
 		stage = 6;

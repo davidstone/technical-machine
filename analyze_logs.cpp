@@ -299,7 +299,7 @@ void Log::log_misc () {
 	if (!active->at_replacement().ability.is_set ()) {
 		if (active->at_replacement().nickname + "'s Anger Point raised its attack!" == line) {
 			active->at_replacement().ability.name = Ability::ANGER_POINT;
-			active->at_replacement().atk.stage = 6;
+			active->stage [Stat::ATK] = 6;
 		}
 		else if (active->at_replacement().nickname + "'s Anticipation made it shudder!" == line)
 			active->at_replacement().ability.name = Ability::ANTICIPATION;

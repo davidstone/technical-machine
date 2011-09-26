@@ -102,16 +102,16 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 			break;
 		case Move::PUNISHMENT:
 			attacker.pokemon->move->basepower = 60;
-			if (defender.pokemon->atk.stage > 0)
-				attacker.pokemon->move->basepower += 20 * defender.pokemon->atk.stage;
-			if (defender.pokemon->def.stage > 0)
-				attacker.pokemon->move->basepower += 20 * defender.pokemon->def.stage;
-			if (defender.pokemon->spa.stage > 0)
-				attacker.pokemon->move->basepower += 20 * defender.pokemon->spa.stage;
-			if (defender.pokemon->spd.stage > 0)
-				attacker.pokemon->move->basepower += 20 * defender.pokemon->spd.stage;
-			if (defender.pokemon->spe.stage > 0)
-				attacker.pokemon->move->basepower += 20 * defender.pokemon->spe.stage;
+			if (defender.stage [Stat::ATK] > 0)
+				attacker.pokemon->move->basepower += 20 * defender.stage [Stat::ATK];
+			if (defender.stage [Stat::DEF] > 0)
+				attacker.pokemon->move->basepower += 20 * defender.stage [Stat::DEF];
+			if (defender.stage [Stat::SPA] > 0)
+				attacker.pokemon->move->basepower += 20 * defender.stage [Stat::SPA];
+			if (defender.stage [Stat::SPD] > 0)
+				attacker.pokemon->move->basepower += 20 * defender.stage [Stat::SPD];
+			if (defender.stage [Stat::SPE] > 0)
+				attacker.pokemon->move->basepower += 20 * defender.stage [Stat::SPE];
 			if (attacker.pokemon->move->basepower > 200)
 				attacker.pokemon->move->basepower = 200;
 			break;

@@ -16,6 +16,7 @@
 #include <string>
 #include "active.h"
 #include "move.h"
+#include "stat.h"
 
 namespace technicalmachine {
 
@@ -27,11 +28,12 @@ class Team {
 		Active<Pokemon> pokemon;
 
 		Vanish vanish;
+		int8_t stage [Stat::END_STAT];		// -6 though 6
 		int16_t damage;		// How much damage will this Pokemon do
 		int16_t bide_damage;
 		int16_t substitute;	// How much HP does the substitute have left?
-		int8_t bide;
 		int16_t chance_to_hit;
+		int8_t bide;
 		int8_t confused;
 		int8_t embargo;
 		int8_t encore;
@@ -84,8 +86,6 @@ class Team {
 		bool torment;
 		bool trapped;			// Block, Mean Look, Spider Web
 		bool water_sport;
-		int8_t accuracy;
-		int8_t evasion;
 	
 	//	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
 		int8_t counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active

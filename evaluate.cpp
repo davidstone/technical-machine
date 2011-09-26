@@ -51,6 +51,11 @@ int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 int64_t Score::scoreteam (Team const & team) const {
 	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
 	if (team.pokemon->hp.stat != 0) {
+		score += team.stage [Stat::ATK] * atk_stage;
+		score += team.stage [Stat::DEF] * def_stage;
+		score += team.stage [Stat::SPA] * spa_stage;
+		score += team.stage [Stat::SPD] * spd_stage;
+		score += team.stage [Stat::SPE] * spe_stage;
 		score += team.magnet_rise * magnet_rise;
 		if (team.substitute)
 			score += substitute + substitute_hp * team.substitute / team.pokemon->hp.max;
@@ -78,7 +83,7 @@ int64_t Score::scoreteam (Team const & team) const {
 			score += focus_energy;
 		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
 			if (move->name == Move::BATON_PASS) {
-				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.pokemon->atk.stage * atk_stage + team.pokemon->def.stage * def_stage + team.pokemon->spa.stage * spa_stage + team.pokemon->spd.stage * spd_stage + team.pokemon->spe.stage * spe_stage);
+				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage);
 				if (team.substitute)
 					score += baton_pass * substitute;
 				break;
@@ -118,11 +123,6 @@ int64_t Score::scorepokemon (Team const & team, Team const & other, Weather cons
 			default:
 				break;
 		}
-		score += team.pokemon->atk.stage * atk_stage;
-		score += team.pokemon->def.stage * def_stage;
-		score += team.pokemon->spa.stage * spa_stage;
-		score += team.pokemon->spd.stage * spd_stage;
-		score += team.pokemon->spe.stage * spe_stage;
 		score += scoremove (team, other, weather);
 	}
 	return score;
