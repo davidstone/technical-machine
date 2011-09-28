@@ -15,7 +15,6 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "analyze_logs.h"
-#include "evaluate.h"
 #include "expectiminimax.h"
 #include "load_stats.h"
 #include "team.h"

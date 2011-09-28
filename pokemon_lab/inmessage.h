@@ -36,7 +36,6 @@ class InMessage {
 		uint16_t read_short ();
 		uint32_t read_int ();
 		std::string read_string ();
-		void skip ();
 	private:
 		uint32_t read_bytes (int bytes);
 	public:
@@ -54,7 +53,6 @@ class InMessage {
 			INCOMING_CHALLENGE = 9,
 			FINALIZE_CHALLENGE = 10,
 			CHALLENGE_WITHDRAWN = 11,
-			/** Battery of messages related to battles */
 			BATTLE_BEGIN = 12,
 			REQUEST_ACTION = 13,
 			BATTLE_POKEMON = 14,

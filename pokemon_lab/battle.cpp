@@ -76,10 +76,33 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 		log.initialize_turn (ai, foe);
 }
 
-void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
-	std::cout << "party id: " << static_cast <int> (party) << '\n';
-	std::cout << "category: " << static_cast <int> (category) << '\n';
-	std::cout << "message_id: " << message_id << '\n';
+void Battle::incorrect_hp (Team & team) {
+	int max_hp = 48;
+	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
+		if (team.me)
+			max_hp = pokemon->hp.max;
+		int pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
+		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1 > pixels or pixels > pokemon->new_hp + 1)) {
+			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
+			pokemon->hp.stat = pokemon->new_hp * pokemon->hp.max / max_hp;
+		}
+	}
+}
+
+uint8_t Battle::switch_slot (Move::Moves move) {
+	uint8_t slot = move - Move::SWITCH0;
+	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
+		if (slot_memory [n] == ai.pokemon.set [slot].name)
+			return n;
+	}
+	assert (false);
+	return 0;		// This should never happen
+}
+
+void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments) {
+//	std::cout << "party id: " << static_cast <int> (party) << '\n';
+//	std::cout << "category: " << static_cast <int> (category) << '\n';
+//	std::cout << "message_id: " << message_id << '\n';
 	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
 		std::cout << "\t" + *it + '\n';
 	switch (category) {
@@ -479,7 +502,7 @@ void Battle::update_active_print (Log & log, std::vector <std::string> const & a
 	}
 }
 
-void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & nickname, uint16_t move_id) {
+void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & nickname, int16_t move_id) {
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -505,7 +528,7 @@ void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & 
 void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
 }
 
-void Battle::handle_send_out (uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, uint16_t species_id, int8_t gender_, uint8_t level) {
+void Battle::handle_send_out (uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, int16_t species_id, int8_t gender_, uint8_t level) {
 	Team * team;
 	Team * other;
 	if (party == party_) {
@@ -522,7 +545,7 @@ void Battle::handle_send_out (uint8_t party_, uint8_t slot, uint8_t index, std::
 	log.pokemon_sent_out (name, nickname, level, gender, *team, *other);
 }
 
-void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, uint16_t denominator) {
+void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
 	if (log.move_damage) {
 		unsigned effectiveness = get_effectiveness (log.active->at_replacement().move->type, log.inactive->at_replacement ());
 		if ((effectiveness > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
@@ -565,30 +588,7 @@ void Battle::handle_begin_turn (uint16_t turn_count) {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
-void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, uint16_t new_move, uint8_t pp, uint8_t max_pp) {
-}
-
-uint8_t Battle::switch_slot (Move::Moves move) {
-	uint8_t slot = move - Move::SWITCH0;
-	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
-		if (slot_memory [n] == ai.pokemon.set [slot].name)
-			return n;
-	}
-	assert (false);
-	return 0;		// This should never happen
-}
-
-void Battle::incorrect_hp (Team & team) {
-	int max_hp = 48;
-	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		if (team.me)
-			max_hp = pokemon->hp.max;
-		int pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
-		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1 > pixels or pixels > pokemon->new_hp + 1)) {
-			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
-			pokemon->hp.stat = pokemon->new_hp * pokemon->hp.max / max_hp;
-		}
-	}
+void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp) {
 }
 
 }
