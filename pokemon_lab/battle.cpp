@@ -43,7 +43,7 @@ void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, ui
 	do_turn (*log.first, *log.last, weather);
 	incorrect_hp (*log.first);
 	incorrect_hp (*log.last);
-	if (rand () % 50 == 0)
+	if (rand () % botclient.chattiness == 0)
 		botclient.send_channel_message (field_id, botclient.get_response ());
 	OutMessage msg (OutMessage::BATTLE_ACTION);
 	if (forced)

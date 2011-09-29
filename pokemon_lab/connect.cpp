@@ -59,6 +59,7 @@ BotClient::BotClient (int depth_):
 	std::string host;
 	std::string port;
 	account_info (host, port);
+	load_chattiness ();
 	connect (host, port);
 	authenticate ();
 }
@@ -105,6 +106,22 @@ void BotClient::account_info (std::string & host, std::string & port) {
 				username = line.substr (position + delimiter.length());
 			else if (data == "password")
 				password = line.substr (position + delimiter.length());
+		}
+	}
+	file.close();
+}
+
+void BotClient::load_chattiness () {
+	std::ifstream file ("settings.txt");
+	std::string line;
+	std::string const delimiter = ": ";
+	std::string const comment = "//";
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		if (line.substr (0, comment.length ()) != comment) {
+			size_t position = line.find (delimiter);
+			std::string data = line.substr (0, position);
+			if (data == "chattiness")
+				chattiness = boost::lexical_cast <int> (line.substr (position + delimiter.length()));
 		}
 	}
 	file.close();
@@ -974,6 +991,7 @@ void BotClient::do_request (std::string const & user, std::string const & reques
 		else if (command == "reload") {
 			load_responses ();
 			load_trusted_users ();
+			load_chattiness ();
 			score.load_evaluation_constants ();
 		}
 	}

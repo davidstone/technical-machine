@@ -47,11 +47,13 @@ class BotClient {
 		boost::asio::deadline_timer timer;
 	public:
 		boost::asio::ip::tcp::socket socket;
+		int chattiness;
 		BotClient (int depth_);
 	private:
 		void load_responses ();
 		void load_trusted_users ();
 		void account_info (std::string & host, std::string & port);
+		void load_chattiness ();
 		void connect (std::string const & host, std::string const & port);
 		void authenticate ();
 	public:

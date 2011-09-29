@@ -7,3 +7,5 @@ port: 8446
 username: ?
 password: ?
 
+// chattiness determines how often Technical Machine randomly says a line from "responses.txt". It occurs with a frequency of 1 / chattiness, so a value of 1 will have Technical Machine saying a line every time it moves.
+chattiness: 50
