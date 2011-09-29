@@ -802,7 +802,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::HEALING_WISH:		// Fix
 			break;
 		case Move::HEART_SWAP:
-			for (Stat::Stats stat = Stat::ATK; stat <= Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
 				std::swap (user.stage [stat], target.stage [stat]);
 			break;
 		case Move::HI_JUMP_KICK:		// Fix
@@ -952,7 +952,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			}
 			break;
 		case Move::PSYCH_UP:
-			for (Stat::Stats stat = Stat::ATK; stat <= Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
 				user.stage [stat] = target.stage [stat];
 			break;
 		case Move::PSYCHO_SHIFT:
