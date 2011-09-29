@@ -46,14 +46,14 @@ void Gender::from_simulator_int (int gender_number) {
 int Gender::to_simulator_int () const {
 	int output;
 	switch (gender) {
-		case GENDERLESS:
-			output = 0;
-			break;
 		case MALE:
 			output = 1;
 			break;
 		case FEMALE:
 			output = 2;
+			break;
+		default:		// GENDERLESS
+			output = 0;
 			break;
 	}
 	return output;
