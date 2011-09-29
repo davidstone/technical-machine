@@ -20,6 +20,7 @@ class Pokemon;
 class Team;
 class Weather;
 
+// All variables within Score do not change during use. I do not declare them const because the values are determined by reading a text file, so they aren't quite known at initialization time.
 class Score {
 	public:
 		static int64_t const VICTORY;		// Highest score. 100% chance to win.
@@ -71,6 +72,7 @@ class Score {
 		int no_pp;
 	public:
 		Score ();
+		void load_evaluation_constants ();
 		// ai and foe are both logically constant, but I change the active Pokemon in each of them (and then change it back before the function returns)
 		int64_t evaluate (Team & ai, Team & foe, Weather const & weather) const;
 	private:

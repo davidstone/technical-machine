@@ -153,6 +153,10 @@ int64_t Score::win (Team const & team) {
 }
 
 Score::Score () {
+	load_evaluation_constants ();
+}
+
+void Score::load_evaluation_constants () {
 	std::ifstream file ("evaluate.txt");
 	std::string line;
 	std::string const delimiter = ": ";

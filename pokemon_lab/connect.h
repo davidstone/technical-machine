@@ -32,6 +32,8 @@ class BotClient {
 		std::string username;
 		std::string password;
 		std::vector <std::string> response;
+		std::vector <std::string> trusted_users;
+		std::map <std::string, uint32_t> channels;
 	public:
 		int detailed [END_SPECIES][7];
 		Score score;
@@ -39,7 +41,6 @@ class BotClient {
 		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 		std::map <uint8_t, Battle> battles;			// Battles currently underway
 		int depth;
-		bool challenger;
 	public:
 		boost::asio::io_service io;
 	private:
@@ -49,6 +50,7 @@ class BotClient {
 		BotClient (int depth_);
 	private:
 		void load_responses ();
+		void load_trusted_users ();
 		void account_info (std::string & host, std::string & port);
 		void connect (std::string const & host, std::string const & port);
 		void authenticate ();
@@ -65,22 +67,28 @@ class BotClient {
 		std::string get_shared_secret (int secret_style, std::string const & salt);
 		void handle_registry_response (uint8_t code, std::string const & details);
 		void join_channel (std::string const & channel);
+		void part_channel (std::string const & channel);
 		void handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users);
 		void handle_channel_join_part (uint32_t id, std::string const & user, bool joining);
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
 		void handle_channel_list (std::vector <Channel> const & channels);
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
-		void send_battle_challenge ();
+		void send_battle_challenge (std::string const & opponent);
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
-		void handle_finalize_challenge (std::string const & user, bool accepted);
+		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
 		void handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party);
 		void handle_victory (uint32_t field_id, int16_t party_id);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
-		void handle_error_message (uint8_t code, std::string const & details);
+		void handle_error_message (uint8_t code, std::string const & details) const;
 		void handle_private_message (std::string const & sender, std::string const & message);
+		bool is_trusted (std::string const & user) const;
+		void do_request (std::string const & user, std::string const & request);
 		void handle_important_message (int32_t channel, std::string const & sender, std::string const & message);
 	public:
+		void send_channel_message (uint32_t channel_id, std::string const & message);
+		void send_channel_message (std::string channel, std::string const & message);
+		void send_private_message (std::string const & user, std::string const & message);
 		std::string get_response () const;
 };
 

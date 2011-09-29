@@ -4,8 +4,11 @@ syntax: glob
 ai
 aio
 predict
+rdc
+rdco
 account.txt
 responses.txt
+trusted_users.txt
 settings.txt
 battles/*
 teams/*

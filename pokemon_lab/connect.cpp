@@ -40,6 +40,7 @@
 #include "connect.h"
 #include "inmessage.h"
 #include "outmessage.h"
+#include <algorithm>
 #undef SING
 
 namespace technicalmachine {
@@ -49,9 +50,11 @@ BotClient::BotClient (int depth_):
 	detailed ({{ 0 }}),
 	depth (depth_),
 	timer (io, boost::posix_time::seconds (45)),
-	socket (io) {
+	socket (io)
+	{
 	srand (static_cast <unsigned> (time (0)));
 	load_responses ();
+	load_trusted_users ();
 	detailed_stats (detailed);
 	std::string host;
 	std::string port;
@@ -61,10 +64,27 @@ BotClient::BotClient (int depth_):
 }
 
 void BotClient::load_responses () {
+	response.clear ();
 	std::ifstream file ("responses.txt");
 	std::string line;
-	for (getline (file, line); !file.eof(); getline (file, line))
-		response.push_back (line);
+	std::string const comment = "//";
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		if (line.substr (0, comment.length ()) != comment)
+			response.push_back (line);
+	}
+	file.close();
+}
+
+void BotClient::load_trusted_users () {
+	trusted_users.clear ();
+	std::ifstream file ("trusted_users.txt");
+	std::string line;
+	std::string const comment = "//";
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		if (line.substr (0, comment.length ()) != comment)
+			trusted_users.push_back (line);
+	}
+	std::sort (trusted_users.begin(), trusted_users.end());
 	file.close();
 }
 
@@ -72,17 +92,20 @@ void BotClient::account_info (std::string & host, std::string & port) {
 	std::ifstream file ("settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
+	std::string const comment = "//";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t position = line.find (delimiter);
-		std::string data = line.substr (0, position);
-		if (data == "host")
-			host = line.substr (position + delimiter.length());
-		else if (data == "port")
-			port = line.substr (position + delimiter.length());
-		else if (data == "username")
-			username = line.substr (position + delimiter.length());
-		else if (data == "password")
-			password = line.substr (position + delimiter.length());
+		if (line.substr (0, comment.length ()) != comment) {
+			size_t position = line.find (delimiter);
+			std::string data = line.substr (0, position);
+			if (data == "host")
+				host = line.substr (position + delimiter.length());
+			else if (data == "port")
+				port = line.substr (position + delimiter.length());
+			else if (data == "username")
+				username = line.substr (position + delimiter.length());
+			else if (data == "password")
+				password = line.substr (position + delimiter.length());
+		}
 	}
 	file.close();
 }
@@ -223,7 +246,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			// Apparently unused
 			break;
 		case InMessage::CHANNEL_INFO: {
-/*			uint32_t const id = msg.read_int();
+			uint32_t const id = msg.read_int();
 			uint8_t const info = msg.read_byte();
 			std::string const channel_name = msg.read_string();
 			std::string const topic = msg.read_string();
@@ -237,7 +260,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 				users.push_back (user);
 			}
 			handle_channel_info (id, info, channel_name, topic, channel_flags, users);
-*/			break;
+			break;
 		}
 		case InMessage::CHANNEL_JOIN_PART: {
 /*			uint32_t const id = msg.read_int();
@@ -301,7 +324,8 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::FINALIZE_CHALLENGE: {
 			std::string const user = msg.read_string ();
 			bool const accepted = msg.read_byte ();
-			handle_finalize_challenge (user, accepted);
+			bool challenger = true;
+			handle_finalize_challenge (user, accepted, challenger);
 			break;
 		}
 		case InMessage::CHALLENGE_WITHDRAWN: {
@@ -668,7 +692,6 @@ void BotClient::handle_registry_response (uint8_t code, std::string const & deta
 	switch (code) {
 		case SUCCESSFUL_LOGIN:
 			join_channel ("main");
-			send_battle_challenge ();
 			break;
 		case NAME_UNAVAILABLE:
 			std::cerr << "Name unavailable.\n";
@@ -708,7 +731,18 @@ void BotClient::join_channel (std::string const & channel) {
 	msg.send (socket);
 }
 
+void BotClient::part_channel (std::string const & channel) {
+	OutMessage msg (OutMessage::PART_CHANNEL);
+	std::map <std::string, uint32_t>::iterator it = channels.find (channel);
+	if (it != channels.end()) {
+		msg.write_int (it->second);
+		channels.erase (it);
+		msg.send (socket);
+	}
+}
+
 void BotClient::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
+	channels.insert (std::pair <std::string, uint32_t> (channel_name, id));
 }
 
 void BotClient::handle_channel_join_part (uint32_t id, std::string const & user, bool joining) {
@@ -728,21 +762,13 @@ void BotClient::handle_channel_message (uint32_t channel_id, std::string const &
 		std::cout << message + "\n"; 
 }
 
-void BotClient::send_battle_challenge () {
+void BotClient::send_battle_challenge (std::string const & opponent) {
 	OutMessage msg (OutMessage::OUTGOING_CHALLENGE);
-	std::cout << "Enter opponent's name (blank to be challenged): ";
-	std::string opponent;
-	getline (std::cin, opponent);
-	if (opponent.empty ())
-		challenger = false;
-	else {
-		challenger = true;
-		uint8_t const generation = 1;
-		uint32_t const party_size = 1;
-		uint32_t const team_length = 6;
-		msg.write_challenge (opponent, generation, party_size, team_length);
-		msg.send (socket);
-	}
+	uint8_t const generation = 1;
+	uint32_t const party_size = 1;
+	uint32_t const team_length = 6;
+	msg.write_challenge (opponent, generation, party_size, team_length);
+	msg.send (socket);
 }
 
 void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
@@ -751,10 +777,11 @@ void BotClient::handle_incoming_challenge (std::string const & user, uint8_t gen
 		accepted = false;
 	else
 		accepted = true;
-	handle_finalize_challenge (user, accepted);
+	bool challenger = false;
+	handle_finalize_challenge (user, accepted, challenger);
 }
 
-void BotClient::handle_finalize_challenge (std::string const & opponent, bool accepted) {
+void BotClient::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
 	OutMessage::Message code;
 	if (challenger)
 		code = OutMessage::CHALLENGE_TEAM;
@@ -833,7 +860,7 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 	}
 }
 
-void BotClient::handle_error_message (uint8_t code, std::string const & details) {
+void BotClient::handle_error_message (uint8_t code, std::string const & details) const {
 	switch (code) {
 		case 0:
 			std::cerr << "User does not exist.\n";
@@ -856,10 +883,123 @@ void BotClient::handle_error_message (uint8_t code, std::string const & details)
 
 void BotClient::handle_private_message (std::string const & sender, std::string const & message) {
 	std::cout << "<PM> " + sender + ": " + message + "\n";
+	if (is_trusted (sender))
+		do_request (sender, message);
+}
+
+bool BotClient::is_trusted (std::string const & user) const {
+	// I sort the std::vector of trusted users as soon as I load them to make this as fast as possible.
+	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
+}
+
+size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t found, std::string & target) {
+	size_t const quote1 = request.find ("\"");
+	size_t quote2 = std::string::npos;
+	if (quote1 == found + delimiter.length())
+		quote2 = request.find ("\"", quote1 + 1);
+	size_t message_begin = std::string::npos;
+	if (quote2 != std::string::npos) {
+		target = request.substr (quote1 + 1, quote2 - quote1 - 1);
+		if (request.length() > quote2 + 1 + delimiter.length())
+			message_begin = quote2 + 1 + delimiter.length();
+	}
+	else {
+		message_begin = request.find (delimiter, found + 1);
+		target = request.substr (found + delimiter.length (), message_begin - found - delimiter.length());
+	}
+	return message_begin;
+}
+
+void BotClient::do_request (std::string const & user, std::string const & request) {
+	if (request.length() > 1 and request [0] == '!') {
+		std::string const delimiter = " ";
+		size_t const found = request.find (delimiter);
+		std::string const command = request.substr (1, found - 1);
+		if (command == "challenge") {
+			if (request.length () >= found + delimiter.length()) {
+				std::string const opponent = request.substr (found + delimiter.length ());
+				send_battle_challenge (opponent);
+			}
+		}
+		else if (command == "depth") {
+			if (request.length () >= found + delimiter.length()) {
+				int const depth_ = boost::lexical_cast <int> (request.substr (found + delimiter.length ()));
+				if (depth_ < 1) {
+					std::string const message = "Invalid depth requested. Please enter a number between 1 and 3 inclusive.";
+					std::cerr << message + "\n";
+					send_private_message (user, message);
+				}
+				else {
+					depth = depth_;
+					if (depth > 3) {
+						std::string const message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 1 and 3 inclusive or proceed at your own risk.";
+						std::cerr << message + "\n";
+						send_private_message (user, message);
+					}
+				}
+			}
+		}
+		else if (command == "join") {
+			if (request.length () >= found + delimiter.length()) {
+				std::string const channel = request.substr (found + delimiter.length ());
+				join_channel (channel);
+			}
+		}
+		else if (command == "message") {
+			if (request.length () >= found + delimiter.length()) {
+				std::string target;
+				size_t message_begin = set_target_and_find_message_begin (request, delimiter, found, target);
+				if (message_begin != std::string::npos) {
+					std::string message = request.substr (message_begin);
+					send_channel_message (target, message);
+				}
+			}
+		}
+		else if (command == "part") {
+			if (request.length () >= found + delimiter.length()) {
+				std::string const channel = request.substr (found + delimiter.length ());
+				part_channel (channel);
+			}
+		}
+		else if (command == "pm") {
+			if (request.length () >= found + delimiter.length()) {
+				std::string target;
+				size_t message_begin = set_target_and_find_message_begin (request, delimiter, found, target);
+				if (message_begin != std::string::npos) {
+					std::string message = request.substr (message_begin);
+					send_private_message (target, message);
+				}
+			}
+		}
+		else if (command == "reload") {
+			load_responses ();
+			load_trusted_users ();
+			score.load_evaluation_constants ();
+		}
+	}
 }
 
 void BotClient::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) {
 	std::cout << "<Important message from channel " << channel << "> " + sender + ": " + message + "\n";
+}
+
+void BotClient::send_channel_message (uint32_t channel_id, std::string const & message) {
+	OutMessage msg (OutMessage::CHANNEL_MESSAGE);
+	msg.write_int (channel_id);
+	msg.write_string (message);
+	msg.send (socket);
+}
+
+void BotClient::send_channel_message (std::string channel, std::string const & message) {
+	uint32_t channel_id = channels.find (channel)->second;
+	send_channel_message (channel_id, message);
+}
+
+void BotClient::send_private_message (std::string const & user, std::string const & message) {
+	OutMessage msg (OutMessage::PRIVATE_MESSAGE);
+	msg.write_string (user);
+	msg.write_string (message);
+	msg.send (socket);
 }
 
 std::string BotClient::get_response () const {
