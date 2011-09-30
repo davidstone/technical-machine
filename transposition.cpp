@@ -60,23 +60,23 @@ int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth
 	}
 	else {
 		// First, I hash both teams and the weather. These are the long-form hashes that are each the size of a uint64_t, and should be unique within a game. I then take those hashes and divide them modulo their relevant dimension (used to determine the size of the transposition table). These short-form hashes are used as the array index. The shortened hash combinations are used to look up the full hashes, value, and depth.
-		Hash hash (ai.hash(), foe.hash(), weather.hash(), depth);
+		Hash current (ai.hash(), foe.hash(), weather.hash(), depth);
 		static unsigned const ai_dimension = 256;
 		static unsigned const foe_dimension = 256;
 		static unsigned const weather_dimension = 32;
 		static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
-		Hash * const transpose = & table [hash.ai % ai_dimension] [hash.foe % foe_dimension] [hash.weather % weather_dimension];
+		Hash * const saved = & table [current.ai % ai_dimension] [current.foe % foe_dimension] [current.weather % weather_dimension];
 		// If I can find the current state in my transposition table at a depth of at least the current depth, set the value to the stored value.
-		if (transpose->depth >= hash.depth and *transpose == hash)
-			value = transpose->value;
+		if (saved->depth >= current.depth and *saved == current)
+			value = saved->value;
 		else {
 			Move::Moves phony = Move::END_MOVE;
 			// If I can't find it, set the value to the evaluation of the state at depth - 1.
-			hash.value = select_move_branch (ai, foe, weather, depth, score, phony);
+			current.value = select_move_branch (ai, foe, weather, depth, score, phony);
 		
 			// Since I didn't find any stored value at the same hash as the current state, or the value I found was for a shallower depth, add the new value to my table.
-			*transpose = hash;
-			value = hash.value;
+			*saved = current;
+			value = current.value;
 		}
 	}
 	return value;

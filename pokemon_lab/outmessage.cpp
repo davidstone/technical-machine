@@ -9,14 +9,13 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "outmessage.h"
 #include <cstdint>
 #include <vector>
+#include <boost/asio.hpp>
 #include "../ability.h"
 #include "../pokemon.h"
 #include "../team.h"
-#include <boost/asio.hpp>
-#include "outmessage.h"
-#undef SING
 
 namespace technicalmachine {
 namespace pl {

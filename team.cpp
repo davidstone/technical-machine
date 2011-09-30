@@ -91,6 +91,7 @@ Team::Team (bool isme, unsigned size) :
 	shed_skin (false),
 	torment (false),
 	trapped (false),
+	u_turning (false),
 	water_sport (false),
 	
 	counter (0),

@@ -14,9 +14,8 @@
 
 #include <cstdint>
 #include <vector>
-#include "../species.h"
 #include <boost/asio.hpp>
-#undef SING
+#include "../species.h"
 
 namespace technicalmachine {
 namespace pl {

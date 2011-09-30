@@ -39,7 +39,7 @@ void reset_variables (Team & team) {
 		team.embargo = 0;
 		team.magnet_rise = 0;
 		team.perish_song = 0;
-		for (Stat::Stats stat = Stat::ATK; stat <= Stat::SPE; stat = static_cast <Stat::Stats> (stat + 1))
+		for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
 			team.stage [stat] = 0;
 		team.substitute = 0;
 	}
@@ -61,6 +61,7 @@ void reset_variables (Team & team) {
 	team.roost = false;
 	team.torment = false;
 	team.trapped = false;
+	team.u_turning = false;
 	team.water_sport = false;
 	team.bide = 0;
 	team.encore = 0;

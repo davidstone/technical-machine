@@ -9,10 +9,10 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "battle.h"
 #include <iostream>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include "battle.h"
 #include "../analyze_logs.h"
 #include "../expectiminimax.h"
 #include "../move.h"

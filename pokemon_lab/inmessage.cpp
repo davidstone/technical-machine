@@ -9,18 +9,17 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "inmessage.h"
 #include <cstdint>
 #include <vector>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
 #include "../analyze_logs.h"
 #include "../evaluate.h"
 #include "../species.h"
 #include "../team.h"
 #include "../weather.h"
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
-#include "inmessage.h"
 #include "connect.h"
-#undef SING
 
 namespace technicalmachine {
 namespace pl {

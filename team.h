@@ -85,6 +85,7 @@ class Team {
 		bool shed_skin;
 		bool torment;
 		bool trapped;			// Block, Mean Look, Spider Web
+		bool u_turning;
 		bool water_sport;
 	
 	//	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight

@@ -1174,7 +1174,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::TRICK_ROOM:
 			weather.set_trick_room ();
 			break;
-		case Move::U_TURN:			// Fix
+		case Move::U_TURN:
+			user.u_turning = true;
 			break;
 		case Move::UPROAR:
 			user.uproar = user.pokemon->move->variable->first;

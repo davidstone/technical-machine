@@ -79,13 +79,12 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 
 	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0)
 		alpha = replace (ai, foe, weather, depth, score, best_move, first_turn, verbose);
-	else if (ai.pass)
-		alpha = move_then_switch_branch (ai, foe, weather, depth, score, best_move);
-	else if (foe.pass)
-		alpha = move_then_switch_branch (foe, ai, weather, depth, score, best_move);
-	
-	// This section is for selecting a move, including switches that aren't replacing a fainted Pokemon.
+	else if (ai.pass or ai.u_turning)
+		alpha = move_then_switch_branch (ai, foe, weather, depth, score, best_move, first_turn, verbose);
+	else if (foe.pass or foe.u_turning)
+		alpha = move_then_switch_branch (foe, ai, weather, depth, score, best_move, first_turn, verbose);
 
+	// This section is for selecting a move, including switches that aren't replacing a fainted Pokemon.
 	else {
 		if (depth > 0)
 			--depth;
@@ -366,12 +365,12 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Scor
 		indent += "\t\t";
 	int64_t alpha = -Score::VICTORY - 1;
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
-		if (ai.pokemon.set [ai.replacement].name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
+		if (ai.at_replacement ().name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
 			if (verbose or first_turn)
 				std::cout << indent + "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
 			int64_t beta = Score::VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
-				if (foe.pokemon.set [foe.replacement].name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
+				if (foe.at_replacement ().name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
 					if (first == nullptr)
 						beta = std::min (beta, (fainted (ai, foe, weather, depth, score) + fainted (foe, ai, weather, depth, score)) / 2);
 					else
@@ -416,18 +415,22 @@ int64_t fainted (Team first, Team last, Weather weather, int depth, Score const 
 	return value;
 }
 
-int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather const & weather, int depth, Score const & score, Move::Moves & best_switch) {
-	std::string indent = "\t\t";
+int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather const & weather, int depth, Score const & score, Move::Moves & best_switch, bool first_turn, bool verbose) {
+	std::string indent = "";
+	if (!first_turn)
+		indent += "\t\t";
 	int64_t alpha = -Score::VICTORY - 1;
 	if (!switcher.me) {
 		alpha = -alpha;
 		indent += "\t";
 	}
 	for (switcher.replacement = 0; switcher.replacement != switcher.pokemon.set.size(); ++switcher.replacement) {
-		if (switcher.pokemon.set [switcher.replacement].name != switcher.pokemon->name) {
-			std::cout << indent + "Evaluating bringing in " + switcher.at_replacement ().get_name () + "\n";
+		if (switcher.at_replacement ().name != switcher.pokemon->name) {
+			if (first_turn)
+				std::cout << indent + "Evaluating bringing in " + switcher.at_replacement ().get_name () + "\n";
 			int64_t value = switch_after_move_branch (switcher, other, weather, depth, score);
-			std::cout << indent + "Estimated score is " << value << '\n';
+			if (first_turn)
+				std::cout << indent + "Estimated score is " << value << '\n';
 			if (switcher.me) {
 				if (value > alpha) {
 					alpha = value;
