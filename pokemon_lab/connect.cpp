@@ -70,7 +70,7 @@ void BotClient::load_responses () {
 	std::string line;
 	std::string const comment = "//";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment)
+		if (line.substr (0, comment.length ()) != comment and !line.empty ())
 			response.push_back (line);
 	}
 	file.close();
@@ -82,8 +82,10 @@ void BotClient::load_trusted_users () {
 	std::string line;
 	std::string const comment = "//";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment)
+		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
+			boost::algorithm::trim (line);
 			trusted_users.push_back (line);
+		}
 	}
 	std::sort (trusted_users.begin(), trusted_users.end());
 	file.close();
@@ -95,9 +97,9 @@ void BotClient::account_info (std::string & host, std::string & port) {
 	std::string const delimiter = ": ";
 	std::string const comment = "//";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment) {
+		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
 			size_t position = line.find (delimiter);
-			std::string data = line.substr (0, position);
+			std::string const data = line.substr (0, position);
 			if (data == "host")
 				host = line.substr (position + delimiter.length());
 			else if (data == "port")
@@ -117,9 +119,9 @@ void BotClient::load_chattiness () {
 	std::string const delimiter = ": ";
 	std::string const comment = "//";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment) {
+		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
 			size_t position = line.find (delimiter);
-			std::string data = line.substr (0, position);
+			std::string const data = line.substr (0, position);
 			if (data == "chattiness")
 				chattiness = boost::lexical_cast <int> (line.substr (position + delimiter.length()));
 		}

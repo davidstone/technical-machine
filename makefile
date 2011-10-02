@@ -13,7 +13,7 @@ fulloptimizations = -DNDEBUG -O3 -march=native -ffast-math -funsafe-loop-optimiz
 tournament = $(fulloptimizations) -flto -fwhole-program
 
 ai : $(aiobjects)
-	$(CXX) -o ai $(aiobjects) -lpthread -lboost_system $(CXXFLAGS)
+	$(CXX) -o ai $(aiobjects) -lpthread -lboost_system -lboost_filesystem $(CXXFLAGS)
 ai : optimizations = -g
 
 aio : $(aiobjects)

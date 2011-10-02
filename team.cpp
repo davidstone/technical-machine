@@ -10,11 +10,14 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdint>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 
 #include "ability.h"
 #include "gender.h"
@@ -31,6 +34,8 @@
 #include "pokemon_online/file.h"
 
 namespace technicalmachine {
+
+void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
 
 Team::Team (bool isme, unsigned size) :
 	vanish (LANDED),
@@ -115,22 +120,43 @@ Team::Team (bool isme, unsigned size) :
 {
 	if (me) {
 		std::string line;
-		std::string team_file;
+		boost::filesystem::path team_file;
 		std::ifstream settings ("settings.txt");
+		std::string const comment = "//";
+		std::string const delimiter = ": ";
 		for (getline (settings, line); !settings.eof(); getline (settings, line)) {
-			std::string const delimiter = ": ";
-			size_t found = line.find (delimiter);
-			if (line.substr (0, found) == "username")
-				player = line.substr (found + delimiter.length());
-			else if (line.substr (0, found) == "team")
-				team_file = line.substr (found + delimiter.length());
+			if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
+				size_t found = line.find (delimiter);
+				std::string const data = line.substr (0, found);
+				if (data == "username") {
+					player = line.substr (found + delimiter.length());
+					boost::algorithm::trim (player);
+				}
+				else if (data == "team") {
+					std::string team_file_name = line.substr (found + delimiter.length());
+					boost::algorithm::trim (team_file_name);
+					team_file = team_file_name;
+				}
+			}
 		}
 		settings.close();
-
-		load ("teams/" + team_file, size);
+		std::vector <boost::filesystem::path> files;
+		open_directory_and_add_files (team_file, files);
+		srand (static_cast <unsigned> (time (0)));
+		team_file = files [(rand () % files.size ())];
+		load (team_file.string(), size);
 		for (std::vector <Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
 			it->new_hp = it->hp.max;
 	}
+}
+
+void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files) {
+	if (boost::filesystem::is_directory (team_file)) {
+		for (boost::filesystem::directory_iterator it (team_file); it != boost::filesystem::directory_iterator (); ++it)
+			open_directory_and_add_files (it->path (), files);
+	}
+	else if (boost::filesystem::is_regular_file (team_file))
+		files.push_back (team_file);
 }
 
 bool Team::is_switching_to_self () const {
