@@ -31,6 +31,7 @@ class BotClient {
 	private:
 		std::string username;
 		std::string password;
+		std::vector <std::string> highlights;
 		std::vector <std::string> response;
 		std::vector <std::string> trusted_users;
 		std::map <std::string, uint32_t> channels;
@@ -50,6 +51,7 @@ class BotClient {
 		int chattiness;
 		BotClient (int depth_);
 	private:
+		void load_highlights ();
 		void load_responses ();
 		void load_trusted_users ();
 		void account_info (std::string & host, std::string & port);
@@ -75,6 +77,7 @@ class BotClient {
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
 		void handle_channel_list (std::vector <Channel> const & channels);
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
+		bool is_highlighted (std::string const & message) const;
 		void send_battle_challenge (std::string const & opponent);
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
 		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);

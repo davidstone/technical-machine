@@ -53,6 +53,7 @@ BotClient::BotClient (int depth_):
 	socket (io)
 	{
 	srand (static_cast <unsigned> (time (0)));
+	load_highlights ();
 	load_responses ();
 	load_trusted_users ();
 	detailed_stats (detailed);
@@ -64,31 +65,44 @@ BotClient::BotClient (int depth_):
 	authenticate ();
 }
 
-void BotClient::load_responses () {
-	response.clear ();
-	std::ifstream file ("responses.txt");
-	std::string line;
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ())
-			response.push_back (line);
-	}
-	file.close();
-}
-
-void BotClient::load_trusted_users () {
-	trusted_users.clear ();
-	std::ifstream file ("trusted_users.txt");
+void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
+	// The sorted vector is used to allow std::binary_search to be used on the vector for fast searching.
+	sorted.clear ();
+	std::ifstream file (file_name);
 	std::string line;
 	std::string const comment = "//";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
 			boost::algorithm::trim (line);
-			trusted_users.push_back (line);
+			sorted.push_back (line);
 		}
 	}
-	std::sort (trusted_users.begin(), trusted_users.end());
+	std::sort (sorted.begin(), sorted.end());
 	file.close();
+}
+
+void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
+	unsorted.clear ();
+	std::ifstream file (file_name);
+	std::string line;
+	std::string const comment = "//";
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		if (line.substr (0, comment.length ()) != comment and !line.empty ())
+			unsorted.push_back (line);
+	}
+	file.close();
+}
+
+void BotClient::load_highlights () {
+	create_unsorted_vector ("highlights.txt", highlights);
+}
+
+void BotClient::load_responses () {
+	create_unsorted_vector ("responses.txt", response);
+}
+
+void BotClient::load_trusted_users () {
+	create_sorted_vector ("trusted_users.txt", trusted_users);
 }
 
 void BotClient::account_info (std::string & host, std::string & port) {
@@ -774,11 +788,18 @@ void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
 }
 
 void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
-	// Vanity mode!
 	std::string msg = message;
 	boost::to_lower (msg);
-	if (msg.find ("obi") != std::string::npos or msg.find ("david stone") != std::string::npos or msg.find ("technical machine") != std::string::npos or msg.find ("tm") != std::string::npos)
-		std::cout << message + "\n"; 
+	if (is_highlighted (msg))
+		std::cout << user + ": " + message + "\n"; 
+}
+
+bool BotClient::is_highlighted (std::string const & message) const {
+	for (std::vector<std::string>::const_iterator it = highlights.begin(); it != highlights.end(); ++it) {
+		if (message.find (*it) != std::string::npos)
+			return true;
+	}
+	return false;
 }
 
 void BotClient::send_battle_challenge (std::string const & opponent) {
@@ -907,7 +928,7 @@ void BotClient::handle_private_message (std::string const & sender, std::string 
 }
 
 bool BotClient::is_trusted (std::string const & user) const {
-	// I sort the std::vector of trusted users as soon as I load them to make this as fast as possible.
+	// I sort the std::vector of trusted users as soon as I load them to make this legal and as fast as possible.
 	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
 }
 
@@ -991,6 +1012,7 @@ void BotClient::do_request (std::string const & user, std::string const & reques
 			}
 		}
 		else if (command == "reload") {
+			load_highlights ();
 			load_responses ();
 			load_trusted_users ();
 			load_chattiness ();
