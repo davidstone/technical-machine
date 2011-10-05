@@ -9,18 +9,21 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/lexical_cast.hpp>
+#include "load_stats.h"
+
 #include <cstddef>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
+
 #include "move.h"
 #include "pokemon.h"
 #include "species.h"
 
 namespace technicalmachine {
 
-void overall_stats (std::vector<unsigned> &overall) {
+void overall_stats (std::vector<unsigned> & overall) {
 	std::ifstream file ("usage.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
@@ -28,7 +31,7 @@ void overall_stats (std::vector<unsigned> &overall) {
 	file.close ();
 }
 
-void team_stats (std::vector<unsigned> const &overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]) {
+void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]) {
 	for (unsigned n = 0; n != END_SPECIES; ++n) {
 		for (unsigned m = 0; m != END_SPECIES; ++m) {
 			if (((n == DEOXYS_A or n == DEOXYS_D or n == DEOXYS_M or n == DEOXYS_S) and (m == DEOXYS_A or m == DEOXYS_D or m == DEOXYS_M or m == DEOXYS_S))
@@ -78,7 +81,7 @@ void team_stats (std::vector<unsigned> const &overall, unsigned const total, flo
 	file.close ();
 }
 
-void lead_stats (std::vector<float> &lead) {		// Multiplier for Pokemon after you've seen the lead
+void lead_stats (std::vector<float> & lead) {		// Multiplier for Pokemon after you've seen the lead
 	std::ifstream file ("lead.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))

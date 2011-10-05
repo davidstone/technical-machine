@@ -9,12 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/lexical_cast.hpp>
+#include "analyze_logs.h"
+
 #include <cstddef>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "analyze_logs.h"
+
+#include <boost/lexical_cast.hpp>
+
 #include "ability.h"
 #include "endofturn.h"
 #include "gender.h"

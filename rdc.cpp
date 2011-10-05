@@ -9,9 +9,10 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <vector>
+#include <boost/lexical_cast.hpp>
+
 #include "ability.h"
 #include "item.h"
 #include "load_stats.h"

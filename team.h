@@ -14,6 +14,7 @@
 
 #include <cstdint>
 #include <string>
+
 #include "active.h"
 #include "move.h"
 #include "stat.h"

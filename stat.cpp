@@ -9,13 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "stat.h"
+
 #include <map>
+
 #include "ability.h"
 #include "item.h"
 #include "move.h"
 #include "pokemon.h"
 #include "species.h"
-#include "stat.h"
 #include "status.h"
 #include "team.h"
 #include "weather.h"

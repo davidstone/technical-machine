@@ -9,9 +9,10 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "damage.h"
+
 #include <vector>
 
-#include "damage.h"
 #include "ability.h"
 #include "gender.h"
 #include "item.h"

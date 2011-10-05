@@ -13,6 +13,7 @@
 #define TEAMPREDICTOR_H_
 
 #include <vector>
+
 #include "species.h"
 
 namespace technicalmachine {
@@ -22,9 +23,9 @@ class Team;
 
 void predict_team (int detailed [][7], Team &team, unsigned size, bool using_lead = true);
 
-void predict_pokemon (Team &team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]);
+void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]);
 
-void predict_move (Pokemon &member, int detailed [][7], unsigned size);
+void predict_move (Pokemon & member, int detailed [][7], unsigned size);
 
 }
 #endif		// TEAMPREDICTOR_H_

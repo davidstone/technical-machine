@@ -9,8 +9,9 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <cstdint>
 #include "weather.h"
+
+#include <cstdint>
 
 namespace technicalmachine {
 
@@ -25,7 +26,7 @@ Weather::Weather () :
 	rain (0) {
 	}
 
-bool Weather::operator == (Weather const &other) const {
+bool Weather::operator == (Weather const & other) const {
 	return trick_room == other.trick_room and fog == other.fog and gravity == other.gravity and uproar == other.uproar and hail == other.hail and sun == other.sun and sand == other.sand and rain == other.rain;
 }
 

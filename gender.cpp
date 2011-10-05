@@ -9,9 +9,10 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "gender.h"
+
 #include <map>
 #include <string>
-#include "gender.h"
 
 namespace technicalmachine {
 

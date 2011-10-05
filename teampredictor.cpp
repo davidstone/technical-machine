@@ -9,15 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <vector>
 #include "teampredictor.h"
+
+#include <vector>
+
 #include "ability.h"
 #include "load_stats.h"
 #include "pokemon.h"
 #include "species.h"
 #include "team.h"
-
-#include <iostream>
 
 namespace technicalmachine {
 

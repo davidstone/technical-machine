@@ -12,8 +12,6 @@
 #ifndef SWITCH_H_
 #define SWITCH_H_
 
-#include <vector>
-
 namespace technicalmachine {
 
 class Pokemon;

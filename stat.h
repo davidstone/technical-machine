@@ -12,6 +12,9 @@
 #ifndef STAT_H_
 #define STAT_H_
 
+#include <cstdint>
+#include <string>
+
 #include "species.h"
 
 namespace technicalmachine {

@@ -9,9 +9,11 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "switch.h"
+
 #include <utility>
 #include <vector>
-#include "switch.h"
+
 #include "ability.h"
 #include "heal.h"
 #include "pokemon.h"

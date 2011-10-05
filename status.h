@@ -30,12 +30,12 @@ class Pokemon;
 class Team;
 class Weather;
 
-void burn (Team &user, Team &target, Weather const &weather);
-void freeze (Pokemon const &user, Team &target, Weather const &weather);
-void paralyze (Pokemon &user, Pokemon &target, Weather const &weather);
-void sleep (Pokemon const &user, Pokemon &target, Weather const &weather);
-void poison_normal (Team &user, Team &target, Weather const &weather);
-void poison_toxic (Team &user, Team &target, Weather const &weather);
+void burn (Team & user, Team & target, Weather const & weather);
+void freeze (Pokemon const & user, Team & target, Weather const & weather);
+void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);
+void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
+void poison_normal (Team & user, Team & target, Weather const & weather);
+void poison_toxic (Team & user, Team & target, Weather const & weather);
 
 }
 #endif		// STATUS_H_

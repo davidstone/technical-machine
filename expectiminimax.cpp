@@ -9,13 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "expectiminimax.h"
+
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include <boost/lexical_cast.hpp>
-#include "expectiminimax.h"
+
 #include "ability.h"
 #include "block.h"
 #include "endofturn.h"

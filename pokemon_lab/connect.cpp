@@ -9,13 +9,24 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "connect.h"
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/bind.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#include "inmessage.h"
+#include "outmessage.h"
 
 #include "../crypt/get_md5.h"
 #include "../crypt/get_sha2.h"
@@ -30,18 +41,6 @@
 #include "../team.h"
 #include "../teampredictor.h"
 #include "../weather.h"
-
-#include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
-#include <boost/asio/error.hpp>
-#include <boost/bind.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
-#include "connect.h"
-#include "inmessage.h"
-#include "outmessage.h"
-#include <algorithm>
-#undef SING
 
 namespace technicalmachine {
 namespace pl {

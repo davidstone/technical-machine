@@ -12,6 +12,7 @@
 #ifndef REORDER_MOVES_H_
 #define REORDER_MOVES_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <utility>
 #include <vector>

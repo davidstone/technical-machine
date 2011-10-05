@@ -23,7 +23,7 @@ The following are my format for species:
 
 Deoxys-A(ttack), Deoxys-D(efense), Deoxys-M(ediocre), Deoxys-S(peed). All of these are standard except Deoxys-M, which is usually refered as simply Deoxys. On Shoddy Battle, A = f, D = l, S = e, and M has no letter. Pokemon Online uses my standard abbreviations, except with Deoxys-M being just Deoxys.
 
-Giratina-A(nother), Giratina-O(rigin). Both of these are somewhat standard. Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A has no letter, and Giratina-O is Giratina-o. Pokemon Online uses Giratina and Giratina-O.
+Giratina-A(ltered), Giratina-O(rigin). Both of these are somewhat standard. Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A has no letter, and Giratina-O is Giratina-o. Pokemon Online uses Giratina and Giratina-O.
 
 The weaker Rotom form is Rotom. The appliance Rotom forms use their standard one-letter abbreviation. This is the same as Shoddy Battle, except Shoddy does not capitalize the form letter. For reference: Rotom-C(ut), Rotom-F(ridge), Rotom-H(eat), Rotom-S(pin), Rotom-W(ash). Pokemon Online uses the same as I do.
 

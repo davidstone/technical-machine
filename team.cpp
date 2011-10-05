@@ -9,12 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "team.h"
+
 #include <cstdint>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
@@ -26,7 +29,6 @@
 #include "pokemon.h"
 #include "switch.h"
 #include "status.h"
-#include "team.h"
 #include "teampredictor.h"
 #include "type.h"
 

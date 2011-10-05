@@ -17,9 +17,9 @@
 #include <string>
 #include <vector>
 
-#include "../evaluate.h"
 #include "battle.h"
 #include "inmessage.h"
+#include "../evaluate.h"
 
 namespace technicalmachine {
 namespace pl {

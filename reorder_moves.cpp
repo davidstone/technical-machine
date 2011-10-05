@@ -9,16 +9,15 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "reorder_moves.h"
+
 #include <cstddef>
 #include <cstdint>
+#include <algorithm>
 #include <utility>
 #include <vector>
-#include "reorder_moves.h"
-#include "move.h"
-#include <algorithm>
-#undef SING
 
-// algorithm must be included last because it uses a macro to define SING. I use SING elsewhere in my program, so to be safe I must #include <algorithm> after all other includes.
+#include "move.h"
 
 namespace technicalmachine {
 

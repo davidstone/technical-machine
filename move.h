@@ -16,6 +16,7 @@
 #include <string>
 #include <utility>
 #undef SING
+
 #include "active.h"
 #include "type.h"
 

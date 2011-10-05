@@ -9,19 +9,20 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "evaluate.h"
+
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
 #include <string>
+
 #include <boost/lexical_cast.hpp>
-#include "evaluate.h"
+
 #include "ability.h"
 #include "move.h"
 #include "pokemon.h"
 #include "team.h"
 #include "weather.h"
-
-#include <iostream>
 
 namespace technicalmachine {
 
@@ -29,22 +30,16 @@ int64_t const Score::VICTORY = 65536;
 
 int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 	int64_t score = scoreteam (ai) - scoreteam (foe);
-	if (score > VICTORY or score < -VICTORY)
-		std::cerr << "=======================Score 1: " << score << '\n';
 
 	size_t index = ai.pokemon.index;
 	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
 		score += scorepokemon (ai, foe, weather);
 	ai.pokemon.index = index;
-	if (score > VICTORY or score < -VICTORY)
-		std::cerr << "=======================Score 2: " << score << '\n';
 
 	index = foe.pokemon.index;
 	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
 		score -= scorepokemon (foe, ai, weather);
 	foe.pokemon.index = index;
-	if (score > VICTORY or score < -VICTORY)
-		std::cerr << "=======================Score 3: " << score << '\n';
 	return score;
 }
 

@@ -9,15 +9,17 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "pokemon.h"
+
 #include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
+
 #include "ability.h"
 #include "active.h"
 #include "gender.h"
 #include "move.h"
-#include "pokemon.h"
 #include "species.h"
 #include "stat.h"
 
