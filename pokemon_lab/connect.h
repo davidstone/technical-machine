@@ -31,6 +31,7 @@ class BotClient {
 	private:
 		std::string username;
 		std::string password;
+		std::string time_format;
 		std::vector <std::string> highlights;
 		std::vector <std::string> response;
 		std::vector <std::string> trusted_users;
@@ -90,6 +91,7 @@ class BotClient {
 		bool is_trusted (std::string const & user) const;
 		void do_request (std::string const & user, std::string const & request);
 		void handle_important_message (int32_t channel, std::string const & sender, std::string const & message);
+		std::string time_stamp () const;
 	public:
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_channel_message (std::string channel, std::string const & message);

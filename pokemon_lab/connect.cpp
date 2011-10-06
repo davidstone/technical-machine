@@ -10,6 +10,7 @@
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connect.h"
+
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>
@@ -121,6 +122,8 @@ void BotClient::account_info (std::string & host, std::string & port) {
 				username = line.substr (position + delimiter.length());
 			else if (data == "password")
 				password = line.substr (position + delimiter.length());
+			else if (data == "time format")
+				time_format = line.substr (position + delimiter.length());
 		}
 	}
 	file.close();
@@ -789,8 +792,9 @@ void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
 void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
 	std::string msg = message;
 	boost::to_lower (msg);
-	if (is_highlighted (msg))
-		std::cout << user + ": " + message + "\n"; 
+	if (is_highlighted (msg)) {
+		std::cout << "[" + time_stamp () + "] " + user + ": " + message + "\n";
+	}
 }
 
 bool BotClient::is_highlighted (std::string const & message) const {
@@ -841,7 +845,7 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 	else
 		verb = "Rejected";
 	msg.send (socket);
-	std::cout << verb + " challenge vs. " + opponent + "\n";
+	std::cout << "[" + time_stamp () + "] " + verb + " challenge vs. " + opponent + "\n";
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
@@ -860,7 +864,7 @@ void BotClient::handle_victory (uint32_t field_id, int16_t party_id) {
 		verb = "Won";
 	else
 		verb = "Lost";
-	std::cout << verb + " a battle vs. " + battle.foe.player + "\n";
+	std::cout << "[" + time_stamp () + "] " + verb + " a battle vs. " + battle.foe.player + "\n";
 	battles.erase (field_id);
 }
 
@@ -921,7 +925,7 @@ void BotClient::handle_error_message (uint8_t code, std::string const & details)
 }
 
 void BotClient::handle_private_message (std::string const & sender, std::string const & message) {
-	std::cout << "<PM> " + sender + ": " + message + "\n";
+	std::cout << "[" + time_stamp () + "] <PM> " + sender + ": " + message + "\n";
 	if (is_trusted (sender))
 		do_request (sender, message);
 }
@@ -1021,7 +1025,15 @@ void BotClient::do_request (std::string const & user, std::string const & reques
 }
 
 void BotClient::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) {
-	std::cout << "<Important message from channel " << channel << "> " + sender + ": " + message + "\n";
+	std::cout << "[" + time_stamp () + "] <Important message from channel " << channel << "> " + sender + ": " + message + "\n";
+}
+
+std::string BotClient::time_stamp () const {
+	char result [20];
+	time_t timer = time (nullptr);
+	tm * timeptr = localtime (&timer);
+	strftime (result, 20, time_format.c_str(), timeptr);
+	return std::string (result);
 }
 
 void BotClient::send_channel_message (uint32_t channel_id, std::string const & message) {
