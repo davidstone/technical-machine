@@ -12,20 +12,11 @@
 #include "connect.h"
 
 #include <cstdint>
-#include <cstdlib>
-#include <ctime>
-#include <algorithm>
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
-#include <boost/asio/error.hpp>
-#include <boost/bind.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
+#include "battle.h"
 #include "inmessage.h"
 #include "outmessage.h"
 
@@ -33,138 +24,22 @@
 #include "../crypt/get_sha2.h"
 #include "../crypt/rijndael.h"
 
-#include "../analyze_logs.h"
-#include "../evaluate.h"
-#include "../expectiminimax.h"
-#include "../load_stats.h"
-#include "../pokemon.h"
-#include "../species.h"
-#include "../team.h"
-#include "../teampredictor.h"
-#include "../weather.h"
-
 namespace technicalmachine {
 namespace pl {
 
-BotClient::BotClient (int depth_):
-	detailed ({{ 0 }}),
-	depth (depth_),
-	timer (io, boost::posix_time::seconds (45)),
-	socket (io)
-	{
-	srand (static_cast <unsigned> (time (0)));
-	load_highlights ();
-	load_responses ();
-	load_trusted_users ();
-	detailed_stats (detailed);
-	std::string host;
-	std::string port;
-	account_info (host, port);
-	load_chattiness ();
-	connect (host, port);
-	authenticate ();
+BotClient::BotClient (int depth_) : network::GenericClient (depth_) {
+	request_authentication ();
 }
 
-void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
-	// The sorted vector is used to allow std::binary_search to be used on the vector for fast searching.
-	sorted.clear ();
-	std::ifstream file (file_name);
-	std::string line;
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			boost::algorithm::trim (line);
-			sorted.push_back (line);
-		}
-	}
-	std::sort (sorted.begin(), sorted.end());
-	file.close();
-}
-
-void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
-	unsorted.clear ();
-	std::ifstream file (file_name);
-	std::string line;
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ())
-			unsorted.push_back (line);
-	}
-	file.close();
-}
-
-void BotClient::load_highlights () {
-	create_unsorted_vector ("highlights.txt", highlights);
-}
-
-void BotClient::load_responses () {
-	create_unsorted_vector ("responses.txt", response);
-}
-
-void BotClient::load_trusted_users () {
-	create_sorted_vector ("trusted_users.txt", trusted_users);
-}
-
-void BotClient::account_info (std::string & host, std::string & port) {
-	std::ifstream file ("settings.txt");
-	std::string line;
-	std::string const delimiter = ": ";
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			size_t position = line.find (delimiter);
-			std::string const data = line.substr (0, position);
-			if (data == "host")
-				host = line.substr (position + delimiter.length());
-			else if (data == "port")
-				port = line.substr (position + delimiter.length());
-			else if (data == "username")
-				username = line.substr (position + delimiter.length());
-			else if (data == "password")
-				password = line.substr (position + delimiter.length());
-			else if (data == "time format")
-				time_format = line.substr (position + delimiter.length());
-		}
-	}
-	file.close();
-}
-
-void BotClient::load_chattiness () {
-	std::ifstream file ("settings.txt");
-	std::string line;
-	std::string const delimiter = ": ";
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			size_t position = line.find (delimiter);
-			std::string const data = line.substr (0, position);
-			if (data == "chattiness")
-				chattiness = boost::lexical_cast <int> (line.substr (position + delimiter.length()));
-		}
-	}
-	file.close();
-}
-
-void BotClient::connect (std::string const & host, std::string const & port) {
-	boost::asio::ip::tcp::resolver resolver (io);
-	boost::asio::ip::tcp::resolver::query query (host, port);
-	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
-	boost::asio::ip::tcp::resolver::iterator end;
-	boost::system::error_code error = boost::asio::error::host_not_found;
-	while (error and endpoint_iterator != end) {
-		socket.close();
-		socket.connect (*endpoint_iterator++, error);
-	}
-}
-
-void BotClient::authenticate () {
+void BotClient::request_authentication () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
 	message.write_string (username);
 	message.send (socket);
 }
 
 void BotClient::run () {
-	timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
+	unsigned const timer_length = 45;
+	reset_timer (timer_length);
 
 	InMessage msg;
 	msg.read_header (socket, this);
@@ -172,17 +47,9 @@ void BotClient::run () {
 	io.run();
 }
 
-void BotClient::reset_timer (boost::system::error_code const & error) {
-	if (!error) {
-		OutMessage msg (OutMessage::CLIENT_ACTIVITY);
-		msg.send (socket);
-		timer.expires_from_now (boost::posix_time::seconds (45));
-		timer.async_wait (boost::bind (& BotClient::reset_timer, this, _1));
-	}
-	else {
-		std::cerr << "An error has occured handling the keep alive timer! =o\n";
-		std::cerr << "Error code: " << error << '\n';
-	}
+void BotClient::send_keep_alive_message () {
+	OutMessage msg (OutMessage::CLIENT_ACTIVITY);
+	msg.send (socket);
 }
 
 class Channel {
@@ -269,7 +136,7 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::PASSWORD_CHALLENGE:
-			handle_challenge (msg);
+			handle_password_challenge (msg);
 			break;
 		case InMessage::REGISTRY_RESPONSE: {
 			uint8_t const type = msg.read_byte();
@@ -648,14 +515,14 @@ void BotClient::handle_welcome_message (uint32_t version, std::string const & se
 //	std::cout << message + '\n';
 }
 
-void BotClient::handle_challenge (InMessage msg) {
+void BotClient::handle_password_challenge (InMessage msg) {
 	std::string challenge = "";
 	for (unsigned n = 0; n != 16; ++n)
 		challenge += msg.read_byte();
 	int secret_style = msg.read_byte();
 	std::string salt = msg.read_string();
 	std::string response = get_challenge_response (challenge, secret_style, salt);
-	OutMessage out (1);
+	OutMessage out (OutMessage::CHALLENGE_RESPONSE);
 	for (unsigned n = 0; n != 16; ++n)
 		out.write_byte (response [n]);
 	out.send (socket);
@@ -696,13 +563,19 @@ std::string BotClient::get_challenge_response (std::string const & challenge, in
 	return response;
 }
 
+enum Secret_Style {
+	NONE = 0,
+	MD5 = 1,		// This secret style is never actually used.
+	VBULLETIN = 2
+};
+
 std::string BotClient::get_shared_secret (int secret_style, std::string const & salt) {
 	switch (secret_style) {
-		case 0:
+		case NONE:
 			return password;
-		case 1:
+		case MD5:
 			return getMD5HexHash (password);
-		case 2:
+		case VBULLETIN:
 			return getMD5HexHash (getMD5HexHash (password) + salt);
 		default:
 			std::cerr << "Unknown secret style of " << secret_style << '\n';
@@ -789,22 +662,6 @@ void BotClient::handle_channel_status (uint32_t channel_id, std::string const & 
 void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
 }
 
-void BotClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
-	std::string msg = message;
-	boost::to_lower (msg);
-	if (is_highlighted (msg)) {
-		std::cout << "[" + time_stamp () + "] " + user + ": " + message + "\n";
-	}
-}
-
-bool BotClient::is_highlighted (std::string const & message) const {
-	for (std::vector<std::string>::const_iterator it = highlights.begin(); it != highlights.end(); ++it) {
-		if (message.find (*it) != std::string::npos)
-			return true;
-	}
-	return false;
-}
-
 void BotClient::send_battle_challenge (std::string const & opponent) {
 	OutMessage msg (OutMessage::OUTGOING_CHALLENGE);
 	uint8_t const generation = 1;
@@ -845,7 +702,7 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 	else
 		verb = "Rejected";
 	msg.send (socket);
-	std::cout << "[" + time_stamp () + "] " + verb + " challenge vs. " + opponent + "\n";
+	print_with_time_stamp (verb + " challenge vs. " + opponent);
 }
 
 void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
@@ -853,8 +710,7 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 	battle.party = party;
 	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
 	challenges.erase (opponent);
-//	boost::asio::deadline_timer timer (io, boost::posix_time::seconds(15));
-//	timer.wait ();
+	pause_at_start_of_battle ();
 }
 
 void BotClient::handle_victory (uint32_t field_id, int16_t party_id) {
@@ -864,7 +720,7 @@ void BotClient::handle_victory (uint32_t field_id, int16_t party_id) {
 		verb = "Won";
 	else
 		verb = "Lost";
-	std::cout << "[" + time_stamp () + "] " + verb + " a battle vs. " + battle.foe.player + "\n";
+	print_with_time_stamp (verb + " a battle vs. " + battle.foe.player);
 	battles.erase (field_id);
 }
 
@@ -924,116 +780,8 @@ void BotClient::handle_error_message (uint8_t code, std::string const & details)
 	std::cerr << details + "\n";
 }
 
-void BotClient::handle_private_message (std::string const & sender, std::string const & message) {
-	std::cout << "[" + time_stamp () + "] <PM> " + sender + ": " + message + "\n";
-	if (is_trusted (sender))
-		do_request (sender, message);
-}
-
-bool BotClient::is_trusted (std::string const & user) const {
-	// I sort the std::vector of trusted users as soon as I load them to make this legal and as fast as possible.
-	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
-}
-
-size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t found, std::string & target) {
-	size_t const quote1 = request.find ("\"");
-	size_t quote2 = std::string::npos;
-	if (quote1 == found + delimiter.length())
-		quote2 = request.find ("\"", quote1 + 1);
-	size_t message_begin = std::string::npos;
-	if (quote2 != std::string::npos) {
-		target = request.substr (quote1 + 1, quote2 - quote1 - 1);
-		if (request.length() > quote2 + 1 + delimiter.length())
-			message_begin = quote2 + 1 + delimiter.length();
-	}
-	else {
-		message_begin = request.find (delimiter, found + 1);
-		target = request.substr (found + delimiter.length (), message_begin - found - delimiter.length());
-	}
-	return message_begin;
-}
-
-void BotClient::do_request (std::string const & user, std::string const & request) {
-	if (request.length() > 1 and request [0] == '!') {
-		std::string const delimiter = " ";
-		size_t const found = request.find (delimiter);
-		std::string const command = request.substr (1, found - 1);
-		if (command == "challenge") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string const opponent = request.substr (found + delimiter.length ());
-				send_battle_challenge (opponent);
-			}
-		}
-		else if (command == "depth") {
-			if (request.length () >= found + delimiter.length()) {
-				int const depth_ = boost::lexical_cast <int> (request.substr (found + delimiter.length ()));
-				if (depth_ < 1) {
-					std::string const message = "Invalid depth requested. Please enter a number between 1 and 3 inclusive.";
-					std::cerr << message + "\n";
-					send_private_message (user, message);
-				}
-				else {
-					depth = depth_;
-					if (depth > 3) {
-						std::string const message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 1 and 3 inclusive or proceed at your own risk.";
-						std::cerr << message + "\n";
-						send_private_message (user, message);
-					}
-				}
-			}
-		}
-		else if (command == "join") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string const channel = request.substr (found + delimiter.length ());
-				join_channel (channel);
-			}
-		}
-		else if (command == "message") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string target;
-				size_t message_begin = set_target_and_find_message_begin (request, delimiter, found, target);
-				if (message_begin != std::string::npos) {
-					std::string message = request.substr (message_begin);
-					send_channel_message (target, message);
-				}
-			}
-		}
-		else if (command == "part") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string const channel = request.substr (found + delimiter.length ());
-				part_channel (channel);
-			}
-		}
-		else if (command == "pm") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string target;
-				size_t message_begin = set_target_and_find_message_begin (request, delimiter, found, target);
-				if (message_begin != std::string::npos) {
-					std::string message = request.substr (message_begin);
-					send_private_message (target, message);
-				}
-			}
-		}
-		else if (command == "reload") {
-			load_highlights ();
-			load_responses ();
-			load_trusted_users ();
-			load_chattiness ();
-			score.load_evaluation_constants ();
-		}
-	}
-}
-
 void BotClient::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) {
-	std::cout << "[" + time_stamp () + "] <Important message from channel " << channel << "> " + sender + ": " + message + "\n";
-}
-
-std::string BotClient::time_stamp () const {
-	char result [20];
-	time_t timer = time (nullptr);
-	tm * timeptr = localtime (&timer);
-	strftime (result, 20, time_format.c_str(), timeptr);
-	return std::string (result);
+	print_with_time_stamp ("<Important message> " + sender + ": " + message);
 }
 
 void BotClient::send_channel_message (uint32_t channel_id, std::string const & message) {
@@ -1053,10 +801,6 @@ void BotClient::send_private_message (std::string const & user, std::string cons
 	msg.write_string (user);
 	msg.write_string (message);
 	msg.send (socket);
-}
-
-std::string BotClient::get_response () const {
-	return response [rand() % response.size()];
 }
 
 }		// namespace pl

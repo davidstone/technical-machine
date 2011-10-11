@@ -22,6 +22,7 @@
 #include "weather.h"
 #include "pokemon.h"
 #include "pokemon_lab/connect.h"
+#include "pokemon_online/connect.h"
 
 int main (int argc, char* argv[]) {
 	using namespace technicalmachine;

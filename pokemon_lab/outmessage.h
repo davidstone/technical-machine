@@ -18,18 +18,15 @@
 #include <boost/asio.hpp>
 
 #include "../species.h"
+#include "../network/outmessage.h"
 
 namespace technicalmachine {
 class Team;
 namespace pl {
 
-class OutMessage {
+class OutMessage : public network::OutMessage {
 	public:
-		std::vector <uint8_t> buffer;
-		OutMessage (uint8_t code);
-		void write_byte (uint8_t byte);
-		void write_short (uint16_t bytes);
-		void write_int (uint32_t bytes);
+		explicit OutMessage (uint8_t code);
 		void write_string (std::string const & string);
 		void write_team (Team const & team);
 		void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);

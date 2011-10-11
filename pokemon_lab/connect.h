@@ -19,7 +19,7 @@
 
 #include "battle.h"
 #include "inmessage.h"
-#include "../evaluate.h"
+#include "../network/connect.h"
 
 namespace technicalmachine {
 namespace pl {
@@ -27,47 +27,24 @@ namespace pl {
 class Channel;
 class Metagame;
 
-class BotClient {
+class BotClient : public network::GenericClient {
 	private:
-		std::string username;
-		std::string password;
-		std::string time_format;
-		std::vector <std::string> highlights;
-		std::vector <std::string> response;
-		std::vector <std::string> trusted_users;
 		std::map <std::string, uint32_t> channels;
-	public:
-		int detailed [END_SPECIES][7];
-		Score score;
-	private:
 		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 		std::map <uint8_t, Battle> battles;			// Battles currently underway
-		int depth;
 	public:
-		boost::asio::io_service io;
+		explicit BotClient (int depth_);
 	private:
-		boost::asio::deadline_timer timer;
-	public:
-		boost::asio::ip::tcp::socket socket;
-		int chattiness;
-		BotClient (int depth_);
-	private:
-		void load_highlights ();
-		void load_responses ();
-		void load_trusted_users ();
-		void account_info (std::string & host, std::string & port);
-		void load_chattiness ();
-		void connect (std::string const & host, std::string const & port);
-		void authenticate ();
+		void request_authentication ();
 	public:
 		void run ();
 	private:
-		void reset_timer (boost::system::error_code const & error);
+		void send_keep_alive_message ();
 	public:
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message);
-		void handle_challenge (InMessage msg);
+		void handle_password_challenge (InMessage msg);
 		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);
 		std::string get_shared_secret (int secret_style, std::string const & salt);
 		void handle_registry_response (uint8_t code, std::string const & details);
@@ -77,8 +54,6 @@ class BotClient {
 		void handle_channel_join_part (uint32_t id, std::string const & user, bool joining);
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
 		void handle_channel_list (std::vector <Channel> const & channels);
-		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
-		bool is_highlighted (std::string const & message) const;
 		void send_battle_challenge (std::string const & opponent);
 		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
 		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
@@ -87,16 +62,11 @@ class BotClient {
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
 		void handle_error_message (uint8_t code, std::string const & details) const;
-		void handle_private_message (std::string const & sender, std::string const & message);
-		bool is_trusted (std::string const & user) const;
-		void do_request (std::string const & user, std::string const & request);
 		void handle_important_message (int32_t channel, std::string const & sender, std::string const & message);
-		std::string time_stamp () const;
 	public:
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_channel_message (std::string channel, std::string const & message);
 		void send_private_message (std::string const & user, std::string const & message);
-		std::string get_response () const;
 };
 
 }

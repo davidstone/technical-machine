@@ -19,6 +19,7 @@
 #include "active.h"
 #include "gender.h"
 #include "item.h"
+#include "move.h"
 #include "species.h"
 #include "stat.h"
 #include "status.h"

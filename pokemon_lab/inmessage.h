@@ -12,9 +12,8 @@
 #ifndef POKEMON_LAB_INMESSAGE_H_
 #define POKEMON_LAB_INMESSAGE_H_
 
-#include <cstdint>
-#include <vector>
 #include <boost/asio.hpp>
+#include "../network/inmessage.h"
 #include "../species.h"
 
 namespace technicalmachine {
@@ -22,21 +21,11 @@ namespace pl {
 
 class BotClient;
 
-class InMessage {
-	private:
-		std::vector <uint8_t> buffer;
-		unsigned index;
+class InMessage : public network::InMessage::InMessage {
 	public:
 		InMessage ();
-		void reset (unsigned bytes);
 		void read_header (boost::asio::ip::tcp::socket & socket, BotClient * client);
 		void read_body (boost::asio::ip::tcp::socket & socket, BotClient * client);
-		uint8_t read_byte ();
-		uint16_t read_short ();
-		uint32_t read_int ();
-		std::string read_string ();
-	private:
-		uint32_t read_bytes (int bytes);
 	public:
 		static Species pl_to_tm_species (int id);
 		enum Message {

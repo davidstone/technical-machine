@@ -1,4 +1,4 @@
-aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o load_stats.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o pokemon_lab/battle.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/file.o
+aiobjects = ai.o ability.o analyze_logs.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o load_stats.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o network/connect.o network/inmessage.o network/outmessage.o pokemon_lab/battle.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o pokemon_online/connect.o pokemon_online/file.o pokemon_online/outmessage.o
 
 predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -116,26 +116,33 @@ crypt/hex.o: crypt/hex.cpp crypt/hex.h
 crypt/md5.o: crypt/md5.c crypt/md5.h
 crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
 crypt/sha2.o: crypt/sha2.c crypt/sha2.h
-battle.o: pokemon_lab/battle.cpp pokemon_lab/battle.h analyze_logs.h \
- move.h active.h type.h species.h team.h weather.h expectiminimax.h \
- pokemon.h ability.h gender.h item.h stat.h status.h teampredictor.h connect.h \
- evaluate.h pokemon_lab/inmessage.h pokemon_lab/outmessage.h
-pokemon_lab/connect.o: pokemon_lab/connect.cpp crypt/get_md5.h \
- crypt/get_sha2.h crypt/rijndael.h analyze_logs.h gender.h move.h active.h \
- type.h evaluate.h expectiminimax.h load_stats.h ability.h item.h \
- stat.h pokemon.h status.h species.h team.h teampredictor.h weather.h \
- pokemon_lab/connect.h pokemon_lab/inmessage.h pokemon_lab/outmessage.h
+network/connect.o: network/connect.cpp network/connect.h evaluate.h \
+ load_stats.h species.h
+network/inmessage.o: network/inmessage.cpp network/inmessage.h
+network/outmessage.o: network/outmessage.cpp network/outmessage.h
+pokemon_lab/battle.o: pokemon_lab/battle.cpp pokemon_lab/battle.h \
+ analyze_logs.h active.h type.h species.h team.h ability.h gender.h item.h \
+ stat.h status.h weather.h expectiminimax.h move.h pokemon.h \
+ teampredictor.h pokemon_lab/connect.h pokemon_lab/inmessage.h \
+ network/inmessage.h network/connect.h evaluate.h pokemon_lab/outmessage.h \
+ network/outmessage.h
 pokemon_lab/file.o: pokemon_lab/file.cpp ability.h gender.h item.h move.h \
  active.h type.h stat.h species.h pokemon.h status.h team.h pokemon_lab/file.h
-pokemon_lab/inmessage.o: pokemon_lab/inmessage.cpp analyze_logs.h \
- gender.h move.h active.h type.h evaluate.h ability.h item.h stat.h \
- species.h team.h weather.h pokemon_lab/inmessage.h pokemon_lab/connect.h
-pokemon_lab/outmessage.o: pokemon_lab/outmessage.cpp ability.h \
- pokemon.h active.h gender.h item.h species.h stat.h status.h type.h team.h \
- move.h pokemon_lab/outmessage.h
+pokemon_lab/inmessage.o: pokemon_lab/inmessage.cpp pokemon_lab/inmessage.h \
+ network/inmessage.h pokemon_lab/connect.h pokemon_lab/battle.h analyze_logs.h \
+ move.h active.h type.h species.h team.h pokemon.h ability.h gender.h item.h \
+ stat.h status.h weather.h network/connect.h evaluate.h
+pokemon_lab/outmessage.o: pokemon_lab/outmessage.cpp pokemon_lab/outmessage.h \
+ species.h network/outmessage.h ability.h active.h gender.h item.h move.h type.h \
+ stat.h status.h team.h pokemon.h
 pokemon_online/file.o: pokemon_online/file.cpp pokemon_online/file.h \
  ability.h active.h type.h species.h stat.h pokemon.h gender.h \
  item.h status.h team.h move.h
+pokemon_online/connect.o: pokemon_online/connect.cpp pokemon_online/connect.h \
+ network/connect.h evaluate.h species.h pokemon_online/outmessage.h \
+ network/outmessage.h
+pokemon_online/outmessage.o: pokemon_online/outmessage.cpp pokemon_online/outmessage.h \
+ species.h network/outmessage.h
 
 
 .PHONY: clean

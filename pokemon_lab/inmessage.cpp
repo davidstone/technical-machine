@@ -11,27 +11,15 @@
 
 #include "inmessage.h"
 #include <cstdint>
-#include <vector>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include "../analyze_logs.h"
-#include "../evaluate.h"
 #include "../species.h"
-#include "../team.h"
-#include "../weather.h"
 #include "connect.h"
 
 namespace technicalmachine {
 namespace pl {
 
-InMessage::InMessage ():
-	index (0) {
-}
-
-void InMessage::reset (unsigned bytes) {
-	buffer.clear();
-	buffer.resize (bytes);
-	index = 0;
+InMessage::InMessage (): network::InMessage::InMessage () {
 }
 
 void InMessage::read_header (boost::asio::ip::tcp::socket & socket, BotClient * client) {
@@ -46,37 +34,6 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, BotClient * cl
 
 	reset (bytes);
 	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& BotClient::handle_message, client, code, boost::ref (*this)));
-}
-
-uint32_t InMessage::read_bytes (int bytes) {
-	uint32_t data = 0;
-	for (int n = 0; n != bytes; ++n) {
-		data += buffer [index] << (8 * (bytes - n - 1));
-		++index;
-	}
-	return data;
-}
-
-uint8_t InMessage::read_byte () {
-	return read_bytes (1);
-}
-
-uint16_t InMessage::read_short () {
-	return read_bytes (2);
-}
-
-uint32_t InMessage::read_int () {
-	return read_bytes (4);
-}
-
-std::string InMessage::read_string () {
-	uint16_t length = read_short ();
-	std::string data = "";
-	for (uint16_t n = 0; n != length; ++n) {
-		data += buffer [index];
-		++index;
-	}
-	return data;
 }
 
 Species InMessage::pl_to_tm_species (int id) {

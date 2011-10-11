@@ -11,6 +11,7 @@
 
 #include "outmessage.h"
 #include <cstdint>
+#include <string>
 #include <vector>
 #include <boost/asio.hpp>
 #include "../ability.h"
@@ -20,32 +21,13 @@
 namespace technicalmachine {
 namespace pl {
 
-OutMessage::OutMessage (uint8_t code) {
-	buffer.push_back (code);
-}
-
-void OutMessage::write_byte (uint8_t byte) {
-	buffer.push_back (byte);
-}
-
-void OutMessage::write_short (uint16_t bytes) {
-	uint16_t network_byte = htons (bytes);
-	uint8_t * byte = reinterpret_cast <uint8_t *> (&network_byte);
-	for (unsigned n = 0; n != sizeof (uint16_t); ++n)
-		buffer.push_back (*(byte + n));
-}
-
-void OutMessage::write_int (uint32_t bytes) {
-	uint32_t network_byte = htonl (bytes);
-	uint8_t * byte = reinterpret_cast <uint8_t *> (&network_byte);
-	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
-		buffer.push_back (*(byte + n));
+OutMessage::OutMessage (uint8_t code) : network::OutMessage::OutMessage (code) {
 }
 
 void OutMessage::write_string (std::string const & string) {
 	write_short (string.length());
 	for (std::string::const_iterator it = string.begin(); it != string.end(); ++it)
-		buffer.push_back (*it);
+		write_byte (*it);
 }
 
 void OutMessage::write_team (Team const & team) {
@@ -53,7 +35,8 @@ void OutMessage::write_team (Team const & team) {
 	for (std::vector <Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
 		write_int (tm_to_pl_species (pokemon->name));
 		write_string (pokemon->nickname);
-		write_byte (0);		// Don't care about shininess
+		bool shiny = false;
+		write_byte (shiny);
 
 		int8_t gender = pokemon->gender.to_simulator_int ();
 		write_byte (gender);

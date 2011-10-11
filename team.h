@@ -16,7 +16,7 @@
 #include <string>
 
 #include "active.h"
-#include "move.h"
+#include "pokemon.h"
 #include "stat.h"
 
 namespace technicalmachine {
