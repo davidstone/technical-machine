@@ -27,13 +27,13 @@ namespace pl {
 class Channel;
 class Metagame;
 
-class BotClient : public network::GenericClient {
+class Client : public network::GenericClient {
 	private:
 		std::map <std::string, uint32_t> channels;
 		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 		std::map <uint8_t, Battle> battles;			// Battles currently underway
 	public:
-		explicit BotClient (int depth_);
+		explicit Client (int depth_);
 	private:
 		void request_authentication ();
 	public:

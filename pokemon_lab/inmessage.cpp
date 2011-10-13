@@ -22,18 +22,18 @@ namespace pl {
 InMessage::InMessage (): network::InMessage::InMessage () {
 }
 
-void InMessage::read_header (boost::asio::ip::tcp::socket & socket, BotClient * client) {
+void InMessage::read_header (boost::asio::ip::tcp::socket & socket, Client * client) {
 	reset (5);
 	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, boost::ref (socket), client));
 }
 
-void InMessage::read_body (boost::asio::ip::tcp::socket & socket, BotClient * client) {
+void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * client) {
 	// extract the message type and length components
 	Message code = static_cast <InMessage::Message> (read_byte ());
 	uint32_t bytes = read_int ();
 
 	reset (bytes);
-	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& BotClient::handle_message, client, code, boost::ref (*this)));
+	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, client, code, boost::ref (*this)));
 }
 
 Species InMessage::pl_to_tm_species (int id) {

@@ -19,13 +19,13 @@
 namespace technicalmachine {
 namespace pl {
 
-class BotClient;
+class Client;
 
 class InMessage : public network::InMessage::InMessage {
 	public:
 		InMessage ();
-		void read_header (boost::asio::ip::tcp::socket & socket, BotClient * client);
-		void read_body (boost::asio::ip::tcp::socket & socket, BotClient * client);
+		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
+		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
 	public:
 		static Species pl_to_tm_species (int id);
 		enum Message {

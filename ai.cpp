@@ -33,7 +33,7 @@ int main (int argc, char* argv[]) {
 		depth = boost::lexical_cast <int> (argv[1]);
 
 	if (true) {
-		pl::BotClient client (depth);
+		pl::Client client (depth);
 		client.run();
 	}
 	else {

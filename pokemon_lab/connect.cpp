@@ -27,17 +27,18 @@
 namespace technicalmachine {
 namespace pl {
 
-BotClient::BotClient (int depth_) : network::GenericClient (depth_) {
+Client::Client (int depth_):
+	network::GenericClient (depth_) {
 	request_authentication ();
 }
 
-void BotClient::request_authentication () {
+void Client::request_authentication () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
 	message.write_string (username);
 	message.send (socket);
 }
 
-void BotClient::run () {
+void Client::run () {
 	unsigned const timer_length = 45;
 	reset_timer (timer_length);
 
@@ -47,7 +48,7 @@ void BotClient::run () {
 	io.run();
 }
 
-void BotClient::send_keep_alive_message () {
+void Client::send_keep_alive_message () {
 	OutMessage msg (OutMessage::CLIENT_ACTIVITY);
 	msg.send (socket);
 }
@@ -122,7 +123,7 @@ class Metagame {
 		}
 };
 
-void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
+void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::WELCOME_MESSAGE: {
 			int32_t const version = msg.read_int();
@@ -342,11 +343,12 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			int16_t const species_id = msg.read_short ();
-			int8_t const gender = msg.read_byte ();
+			Species const species = InMessage::pl_to_tm_species (msg.read_short ());
+			Gender gender;
+			gender.from_simulator_int (msg.read_byte ());
 			uint8_t const level = msg.read_byte();
 			Battle & battle = battles.find (field_id)->second;
-			battle.handle_send_out (party, slot, index, nickname, species_id, gender, level);
+			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
 			break;
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
@@ -510,12 +512,12 @@ void BotClient::handle_message (InMessage::Message code, InMessage & msg) {
 	msg.read_header (socket, this);
 }
 
-void BotClient::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) {
+void Client::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) {
 	std::cout << server + '\n';
 //	std::cout << message + '\n';
 }
 
-void BotClient::handle_password_challenge (InMessage msg) {
+void Client::handle_password_challenge (InMessage msg) {
 	std::string challenge = "";
 	for (unsigned n = 0; n != 16; ++n)
 		challenge += msg.read_byte();
@@ -528,7 +530,7 @@ void BotClient::handle_password_challenge (InMessage msg) {
 	out.send (socket);
 }
 
-std::string BotClient::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
+std::string Client::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
 	// Hash of the password is the key to decrypting the number sent.
 	std::string digest = getSHA256Hash (get_shared_secret (secret_style, salt));
 	
@@ -569,7 +571,7 @@ enum Secret_Style {
 	VBULLETIN = 2
 };
 
-std::string BotClient::get_shared_secret (int secret_style, std::string const & salt) {
+std::string Client::get_shared_secret (int secret_style, std::string const & salt) {
 	switch (secret_style) {
 		case NONE:
 			return password;
@@ -596,7 +598,7 @@ enum Registry_Response {
 	SERVER_FULL = 9
 };
 
-void BotClient::handle_registry_response (uint8_t code, std::string const & details) {
+void Client::handle_registry_response (uint8_t code, std::string const & details) {
 	switch (code) {
 		case SUCCESSFUL_LOGIN:
 			join_channel ("main");
@@ -633,13 +635,13 @@ void BotClient::handle_registry_response (uint8_t code, std::string const & deta
 	std::cerr << details + "\n";
 }
 
-void BotClient::join_channel (std::string const & channel) {
+void Client::join_channel (std::string const & channel) {
 	OutMessage msg (OutMessage::JOIN_CHANNEL);
 	msg.write_string (channel);
 	msg.send (socket);
 }
 
-void BotClient::part_channel (std::string const & channel) {
+void Client::part_channel (std::string const & channel) {
 	OutMessage msg (OutMessage::PART_CHANNEL);
 	std::map <std::string, uint32_t>::iterator it = channels.find (channel);
 	if (it != channels.end()) {
@@ -649,20 +651,20 @@ void BotClient::part_channel (std::string const & channel) {
 	}
 }
 
-void BotClient::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
+void Client::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
 	channels.insert (std::pair <std::string, uint32_t> (channel_name, id));
 }
 
-void BotClient::handle_channel_join_part (uint32_t id, std::string const & user, bool joining) {
+void Client::handle_channel_join_part (uint32_t id, std::string const & user, bool joining) {
 }
 
-void BotClient::handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags) {
+void Client::handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags) {
 }
 
-void BotClient::handle_channel_list (std::vector <Channel> const & channels) {
+void Client::handle_channel_list (std::vector <Channel> const & channels) {
 }
 
-void BotClient::send_battle_challenge (std::string const & opponent) {
+void Client::send_battle_challenge (std::string const & opponent) {
 	OutMessage msg (OutMessage::OUTGOING_CHALLENGE);
 	uint8_t const generation = 1;
 	uint32_t const party_size = 1;
@@ -671,7 +673,7 @@ void BotClient::send_battle_challenge (std::string const & opponent) {
 	msg.send (socket);
 }
 
-void BotClient::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
+void Client::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
 	bool accepted;
 	if (n > 1 or team_length != 6 or (user != "Technical Machine" and user != "david stone"))
 		accepted = false;
@@ -681,7 +683,7 @@ void BotClient::handle_incoming_challenge (std::string const & user, uint8_t gen
 	handle_finalize_challenge (user, accepted, challenger);
 }
 
-void BotClient::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
+void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
 	OutMessage::Message code;
 	if (challenger)
 		code = OutMessage::CHALLENGE_TEAM;
@@ -705,7 +707,7 @@ void BotClient::handle_finalize_challenge (std::string const & opponent, bool ac
 	print_with_time_stamp (verb + " challenge vs. " + opponent);
 }
 
-void BotClient::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
+void Client::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
  	Battle & battle = challenges.find (opponent)->second;
 	battle.party = party;
 	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
@@ -713,7 +715,7 @@ void BotClient::handle_battle_begin (uint32_t field_id, std::string const & oppo
 	pause_at_start_of_battle ();
 }
 
-void BotClient::handle_victory (uint32_t field_id, int16_t party_id) {
+void Client::handle_victory (uint32_t field_id, int16_t party_id) {
 	std::string verb;
 	Battle & battle = battles.find (field_id)->second;
 	if (battle.party == party_id)
@@ -724,10 +726,10 @@ void BotClient::handle_victory (uint32_t field_id, int16_t party_id) {
 	battles.erase (field_id);
 }
 
-void BotClient::handle_metagame_list (std::vector <Metagame> const & metagames) {
+void Client::handle_metagame_list (std::vector <Metagame> const & metagames) {
 }
 
-void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
+void Client::handle_invalid_team (std::vector <int16_t> const & violation) {
 	std::cerr << "Invalid team.\n";
 	for (std::vector<int16_t>::const_iterator it = violation.begin(); it != violation.end(); ++it) {
 		int pokemon = (-(*it + 1)) % 6;
@@ -759,7 +761,7 @@ void BotClient::handle_invalid_team (std::vector <int16_t> const & violation) {
 	}
 }
 
-void BotClient::handle_error_message (uint8_t code, std::string const & details) const {
+void Client::handle_error_message (uint8_t code, std::string const & details) const {
 	switch (code) {
 		case 0:
 			std::cerr << "User does not exist.\n";
@@ -780,23 +782,23 @@ void BotClient::handle_error_message (uint8_t code, std::string const & details)
 	std::cerr << details + "\n";
 }
 
-void BotClient::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) {
+void Client::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) {
 	print_with_time_stamp ("<Important message> " + sender + ": " + message);
 }
 
-void BotClient::send_channel_message (uint32_t channel_id, std::string const & message) {
+void Client::send_channel_message (uint32_t channel_id, std::string const & message) {
 	OutMessage msg (OutMessage::CHANNEL_MESSAGE);
 	msg.write_int (channel_id);
 	msg.write_string (message);
 	msg.send (socket);
 }
 
-void BotClient::send_channel_message (std::string channel, std::string const & message) {
+void Client::send_channel_message (std::string channel, std::string const & message) {
 	uint32_t channel_id = channels.find (channel)->second;
 	send_channel_message (channel_id, message);
 }
 
-void BotClient::send_private_message (std::string const & user, std::string const & message) {
+void Client::send_private_message (std::string const & user, std::string const & message) {
 	OutMessage msg (OutMessage::PRIVATE_MESSAGE);
 	msg.write_string (user);
 	msg.write_string (message);

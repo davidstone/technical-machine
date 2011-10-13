@@ -14,85 +14,42 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "../analyze_logs.h"
-#include "../expectiminimax.h"
+#include "../battle.h"
 #include "../move.h"
 #include "../pokemon.h"
-#include "../species.h"
 #include "../team.h"
-#include "../teampredictor.h"
-#include "../weather.h"
 #include "connect.h"
 #include "outmessage.h"
 
 namespace technicalmachine {
 namespace pl {
 
-Battle::Battle (std::string const & opponent, int depth_):
-	ai (true, 6),
-	foe (false, ai.size),
-	log (ai, foe),
-	depth (depth_) {
+Battle::Battle (std::string const & opponent, int battle_depth):
+	GenericBattle::GenericBattle (opponent, battle_depth) {
 	for (std::vector <Pokemon>::const_iterator pokemon = ai.pokemon.set.begin(); pokemon != ai.pokemon.set.end(); ++pokemon)
 		slot_memory.push_back (pokemon->name);
-	foe.player = opponent;
-	ai.replacing = true;
-	foe.replacing = true;
 }
 
-void Battle::handle_request_action (BotClient & botclient, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
-	do_turn (*log.first, *log.last, weather);
-	incorrect_hp (*log.first);
-	incorrect_hp (*log.last);
-	if (rand () % botclient.chattiness == 0)
-		botclient.send_channel_message (field_id, botclient.get_response ());
+void Battle::handle_request_action (Client & client, uint32_t battle_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
+	update_from_previous_turn (client, battle_id);
 	OutMessage msg (OutMessage::BATTLE_ACTION);
 	if (forced)
-		msg.write_move (field_id, 1);
+		msg.write_move (battle_id, 1);
 	else {
-		Team predicted = foe;
-		std::cout << "======================\nPredicting...\n";
-		predict_team (botclient.detailed, predicted, ai.size);
-		std::string out;
-		predicted.output (out);
-		std::cout << out;
-
-		int64_t min_score;
-		Move::Moves move = expectiminimax (ai, predicted, weather, depth, botclient.score, min_score);
+		Move::Moves move = determine_action (client);
 		if (Move::is_switch (move))
-			msg.write_switch (field_id, switch_slot (move));
+			msg.write_switch (battle_id, switch_slot (move));
 		else {
 			uint8_t move_index = 0;
 			while (ai.pokemon->move.set [move_index].name != move)
 				++move_index;
-			msg.write_move (field_id, move_index, 1 - party);
+			uint8_t const target = 1 - party;
+			msg.write_move (battle_id, move_index, target);
 		}
 	}
-	msg.send (botclient.socket);
+	msg.send (client.socket);
 	if (!ai.replacing)
 		log.initialize_turn (ai, foe);
-}
-
-void Battle::incorrect_hp (Team & team) {
-	int max_hp = 48;
-	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		if (team.me)
-			max_hp = pokemon->hp.max;
-		int pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
-		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1 > pixels or pixels > pokemon->new_hp + 1)) {
-			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
-			pokemon->hp.stat = pokemon->new_hp * pokemon->hp.max / max_hp;
-		}
-	}
-}
-
-uint8_t Battle::switch_slot (Move::Moves move) {
-	uint8_t slot = move - Move::SWITCH0;
-	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
-		if (slot_memory [n] == ai.pokemon.set [slot].name)
-			return n;
-	}
-	assert (false);
-	return 0;		// This should never happen
 }
 
 void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments) {
@@ -498,90 +455,14 @@ void Battle::update_active_print (Log & log, std::vector <std::string> const & a
 	}
 }
 
-void Battle::handle_use_move (uint8_t party_, uint8_t slot, std::string const & nickname, int16_t move_id) {
-	Team * team;
-	Team * other;
-	if (party == party_) {
-		team = & ai;
-		other = & foe;
+uint8_t Battle::switch_slot (Move::Moves move) const {
+	uint8_t slot = move - Move::SWITCH0;
+	uint8_t n = 0;
+	for (; n != slot_memory.size(); ++n) {
+		if (slot_memory [n] == ai.pokemon.set [slot].name)
+			break;
 	}
-	else {
-		team = & foe;
-		other = & ai;
-	}
-	log.active = team;
-	log.inactive = other;
-	if (log.first == nullptr) {
-		log.first = team;
-		log.last = other;
-	}
-	int move = move_id;
-	if (move >= Move::SWITCH0)
-		move += 6;
-	log.log_move (static_cast <Move::Moves> (move));
-}
-
-void Battle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
-}
-
-void Battle::handle_send_out (uint8_t party_, uint8_t slot, uint8_t index, std::string const & nickname, int16_t species_id, int8_t gender_, uint8_t level) {
-	Team * team;
-	Team * other;
-	if (party == party_) {
-		team = & ai;
-		other = & foe;
-	}
-	else {
-		team = & foe;
-		other = & ai;
-	}
-	Species name = InMessage::pl_to_tm_species (species_id);
-	Gender gender;
-	gender.from_simulator_int (gender_);
-	log.pokemon_sent_out (name, nickname, level, gender, *team, *other);
-}
-
-void Battle::handle_health_change (uint8_t party_id, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
-	if (log.move_damage) {
-		unsigned effectiveness = get_effectiveness (log.active->at_replacement().move->type, log.inactive->at_replacement ());
-		if ((effectiveness > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
-			log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
-			if (static_cast <unsigned> (log.inactive->damage) > log.inactive->at_replacement().hp.stat)
-				log.inactive->damage = log.inactive->at_replacement().hp.stat;
-		}
-		log.move_damage = false;
-	}
-	
-	if (remaining_health < 0)
-		remaining_health = 0;
-	// If the message is about me, active must be me, otherwise, active must not be me
-	if ((party_id == party) == log.active->me) {
-		log.active->at_replacement().new_hp = remaining_health;
-	}
-	else {
-		log.inactive->at_replacement().new_hp = remaining_health;
-	}
-}
-
-void Battle::handle_set_pp (uint8_t party_, uint8_t slot, uint8_t pp) {
-}
-
-void Battle::handle_fainted (uint8_t party_, uint8_t slot, std::string const & nickname) {
-	Team * team;
-	Team * other;
-	if (party == party_) {
-		team = & ai;
-		other = & foe;
-	}
-	else {
-		team = & foe;
-		other = & ai;
-	}
-	team->at_replacement().fainted = true;
-}
-
-void Battle::handle_begin_turn (uint16_t turn_count) {
-	std::cout << "Begin turn " << turn_count << '\n';
+	return n;
 }
 
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp) {

@@ -78,10 +78,10 @@ class GenericClient {
 	private:
 		void do_request (std::string const & user, std::string const & request);
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
-	protected:
-		virtual void send_channel_message (std::string channel, std::string const & message) = 0;
-		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 	public:
+		virtual void send_channel_message (std::string channel, std::string const & message) = 0;
+		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
+		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string get_response () const;
 	private:
 		size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t found, std::string & target);
