@@ -26,40 +26,40 @@
 
 int main (int argc, char* argv[]) {
 	using namespace technicalmachine;
+
 	int depth;
 	if (argc == 1)
 		depth = 2;
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	if (true) {
-		pl::Client client (depth);
-		client.run();
-	}
-	else {
-		unsigned const foe_size = 6;
-		int detailed [END_SPECIES][7] = {{ 0 }};
-		detailed_stats (detailed);
-		Team ai (true, foe_size);
-		Team foe (false, ai.size);
-		Weather weather;
-		Score score;
-		analyze_turn (ai, foe, weather);		// Turn 0, sending out initial Pokemon
-	
-		bool won = false;
-		while (!won) {
-			Team predicted = foe;
-			std::cout << "======================\nPredicting...\n";
-			predict_team (detailed, predicted, ai.size);
-			std::string out;
-			predicted.output (out);
-			std::cout << out;
+	po::Client client (depth);
+	client.run();
 
-			int64_t min_score;
-			expectiminimax (ai, predicted, weather, depth, score, min_score);
 
-			won = analyze_turn (ai, foe, weather);
-		}
+/*	unsigned const foe_size = 6;
+	int detailed [END_SPECIES][7] = {{ 0 }};
+	detailed_stats (detailed);
+	Team ai (true, foe_size);
+	Team foe (false, ai.size);
+	Weather weather;
+	Score score;
+	analyze_turn (ai, foe, weather);		// Turn 0, sending out initial Pokemon
+
+	bool won = false;
+	while (!won) {
+		Team predicted = foe;
+		std::cout << "======================\nPredicting...\n";
+		predict_team (detailed, predicted, ai.size);
+		std::string out;
+		predicted.output (out);
+		std::cout << out;
+
+		int64_t min_score;
+		expectiminimax (ai, predicted, weather, depth, score, min_score);
+
+		won = analyze_turn (ai, foe, weather);
 	}
+*/
 	return 0;
 }

@@ -22,8 +22,8 @@ OutMessage::OutMessage (uint8_t code) : network::OutMessage::OutMessage (code) {
 }
 
 void OutMessage::write_string (std::string const & string) {
-	uint32_t const number_of_utf16_characters = 2 * string.length();
-	write_int (number_of_utf16_characters);
+	uint32_t const number_of_utf16_bytes = 2 * string.length();
+	write_int (number_of_utf16_bytes);
 	for (std::string::const_iterator it = string.begin(); it != string.end(); ++it)
 		write_short (*it);
 }

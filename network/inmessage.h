@@ -20,16 +20,15 @@ namespace technicalmachine {
 namespace network {
 
 class InMessage {
-	private:
-		unsigned index;
 	public:
+		unsigned index;
 		std::vector <uint8_t> buffer;
+	public:
 		InMessage ();
 		void reset (unsigned bytes);
 		uint8_t read_byte ();
 		uint16_t read_short ();
 		uint32_t read_int ();
-		std::string read_string ();
 	private:
 		uint32_t read_bytes (int bytes);
 };

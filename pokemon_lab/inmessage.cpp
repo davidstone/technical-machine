@@ -22,6 +22,14 @@ namespace pl {
 InMessage::InMessage (): network::InMessage::InMessage () {
 }
 
+std::string InMessage::read_string () {
+	uint16_t length = read_short ();
+	std::string data = "";
+	for (uint16_t n = 0; n != length; ++n)
+		data += read_byte ();
+	return data;
+}
+
 void InMessage::read_header (boost::asio::ip::tcp::socket & socket, Client * client) {
 	reset (5);
 	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, boost::ref (socket), client));

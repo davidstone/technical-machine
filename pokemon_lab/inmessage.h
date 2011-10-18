@@ -24,6 +24,7 @@ class Client;
 class InMessage : public network::InMessage::InMessage {
 	public:
 		InMessage ();
+		std::string read_string ();
 		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
 		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
 	public:

@@ -84,7 +84,7 @@ class GenericClient {
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string get_response () const;
 	private:
-		size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t found, std::string & target);
+		size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target);
 	protected:
 		void pause_at_start_of_battle ();
 };

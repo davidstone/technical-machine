@@ -16,7 +16,8 @@
 #include <map>
 #include <string>
 
-// #include "battle.h"
+//#include "battle.h"
+#include "inmessage.h"
 #include "../network/connect.h"
 
 namespace technicalmachine {
@@ -25,20 +26,34 @@ namespace po {
 class Channel;
 class Metagame;
 
-class BotClient : public network::GenericClient {
+class Client : public network::GenericClient {
 	private:
 //		std::map <std::string, uint32_t> channels;
 //		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 //		std::map <uint8_t, Battle> battles;			// Battles currently underway
 	public:
-		explicit BotClient (int depth_);
+		explicit Client (int depth_);
 	private:
 		void log_in ();
-//		void authenticate ();
+		void authenticate (std::string const & salt);
 	public:
 		void run ();
 	private:
 		void send_keep_alive_message ();
+	public:
+		void handle_message (InMessage::Message code, InMessage & msg);
+	private:
+		void join_channel (std::string const & channel);
+		void part_channel (std::string const & channel);
+		void send_battle_challenge (std::string const & opponent);
+	public:
+		void send_channel_message (std::string channel, std::string const & message);
+		void send_channel_message (uint32_t channel_id, std::string const & message);
+		void send_private_message (std::string const & user, std::string const & message);
+	private:
+		void handle_version_control (std::string const & server_version);
+		void handle_server_name (std::string const & server_name);
+		void handle_announcement (std::string const & announcement);
 };
 
 }

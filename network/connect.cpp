@@ -35,7 +35,7 @@ namespace network {
 GenericClient::GenericClient (int depth_):
 	detailed ({{ 0 }}),
 	depth (depth_),
-	timer (io, boost::posix_time::seconds (45)),
+	timer (io),
 	socket (io)
 	{
 	srand (static_cast <unsigned> (time (0)));
@@ -51,6 +51,8 @@ GenericClient::GenericClient (int depth_):
 }
 
 void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
+	// First, clear the vector so this can be used to reload an already filled vector as well.
+	// This allows the user to reload settings from a file without restarting TM.
 	unsorted.clear ();
 	std::ifstream file (file_name);
 	std::string line;
@@ -72,6 +74,10 @@ void GenericClient::load_responses () {
 
 void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
 	// The sorted vector is used to allow std::binary_search to be used on the vector for fast searching.
+	// I use a sorted std::vector instead of a std::set because it has faster performance uses less memory.
+	// My use pattern is distinct insertion period after which the entire vector can be sorted (faster than inserting into a std::set), followed by lookups (faster in a std::binary_search of a std::vector than in a std::set.find)
+	// Analysis of this can be found here: http://lafstern.org/matt/col1.pdf
+	// I don't use a sorted vector all of the time because for my other structures, I am either searching for every element in my list against some other tex, or am I just picking an element at random.
 	sorted.clear ();
 	std::ifstream file (file_name);
 	std::string line;
@@ -118,6 +124,7 @@ void GenericClient::load_account_info (std::string & host, std::string & port) {
 }
 
 void GenericClient::load_settings () {
+	// This is broken off from load_account_info so allow this to be reloaded while the program is running.
 	std::ifstream file ("settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
@@ -158,9 +165,12 @@ void GenericClient::print_with_time_stamp (std::string const & message) const {
 }
 
 std::string GenericClient::time_stamp () const {
+	// Need to find a better way than always a length of 20.
+	// This breaks with other time formats than ISO-8601.
+	// Should look into header chrono for a C++ version of strftime
 	char result [20];
-	time_t timer = time (nullptr);
-	tm * timeptr = localtime (&timer);
+	time_t current_time = time (nullptr);
+	tm * timeptr = localtime (&current_time);
 	strftime (result, 20, time_format.c_str(), timeptr);
 	return std::string (result);
 }
@@ -174,6 +184,10 @@ void GenericClient::handle_channel_message (uint32_t channel_id, std::string con
 }
 
 bool GenericClient::is_highlighted (std::string const & message) const {
+	// Best way I've thought of to see if anything in highlights is in the message is to do a search in the message on each of the elements in highlights.
+	// Problems with this approach are that most people want to search for words, not just strings of characters.
+	// For instance, if I have "tm" in highlights, I usually don't want to be alerted to someone saying "atm".
+	// Fixing this problem probably requires some sort of regex or a fancy word boundary definition.
 	for (std::vector<std::string>::const_iterator it = highlights.begin(); it != highlights.end(); ++it) {
 		if (message.find (*it) != std::string::npos)
 			return true;
@@ -182,13 +196,19 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 }
 
 std::string GenericClient::get_response () const {
+	// This has a slight bias toward earlier elements unless RAND_MAX is evenly divisible by response.size().
+	// Probably not a big issue here since RAND_MAX is guaranteed to be at least 32767, and is probably larger.
+	// This means the variation is very small, unless response.size() grows to be very, very large.
 	return response [rand() % response.size()];
 }
 
-size_t GenericClient::set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t found, std::string & target) {
+size_t GenericClient::set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target) {
+	// This function is used to determine the target of a message (such as who to PM, what channel to join, etc.).
+	// The target may be one word with or without quotes, or multiple words with quotes.
+	// After it sets target, it returns the position of the beginning of the message.
 	size_t const quote1 = request.find ("\"");
 	size_t quote2 = std::string::npos;
-	if (quote1 == found + delimiter.length())
+	if (quote1 == delimiter_position + delimiter.length())
 		quote2 = request.find ("\"", quote1 + 1);
 	size_t message_begin = std::string::npos;
 	if (quote2 != std::string::npos) {
@@ -197,8 +217,8 @@ size_t GenericClient::set_target_and_find_message_begin (std::string const & req
 			message_begin = quote2 + 1 + delimiter.length();
 	}
 	else {
-		message_begin = request.find (delimiter, found + 1);
-		target = request.substr (found + delimiter.length (), message_begin - found - delimiter.length());
+		message_begin = request.find (delimiter, delimiter_position + 1);
+		target = request.substr (delimiter_position + delimiter.length (), message_begin - delimiter_position - delimiter.length());
 	}
 	return message_begin;
 }
@@ -212,17 +232,17 @@ void GenericClient::handle_private_message (std::string const & sender, std::str
 void GenericClient::do_request (std::string const & user, std::string const & request) {
 	if (request.length() > 1 and request [0] == '!') {
 		std::string const delimiter = " ";
-		size_t const found = request.find (delimiter);
-		std::string const command = request.substr (1, found - 1);
+		size_t const delimiter_position = request.find (delimiter);
+		std::string const command = request.substr (1, delimiter_position - 1);
 		if (command == "challenge") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string const opponent = request.substr (found + delimiter.length ());
+			if (request.length () >= delimiter_position + delimiter.length()) {
+				std::string const opponent = request.substr (delimiter_position + delimiter.length ());
 				send_battle_challenge (opponent);
 			}
 		}
 		else if (command == "depth") {
-			if (request.length () >= found + delimiter.length()) {
-				int const new_depth = boost::lexical_cast <int> (request.substr (found + delimiter.length ()));
+			if (request.length () >= delimiter_position + delimiter.length()) {
+				int const new_depth = boost::lexical_cast <int> (request.substr (delimiter_position + delimiter.length ()));
 				if (new_depth < 1) {
 					std::string const message = "Invalid depth requested. Please enter a number between 1 and 3 inclusive.";
 					send_private_message (user, message);
@@ -238,15 +258,15 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 			}
 		}
 		else if (command == "join") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string const channel = request.substr (found + delimiter.length ());
+			if (request.length () >= delimiter_position + delimiter.length()) {
+				std::string const channel = request.substr (delimiter_position + delimiter.length ());
 				join_channel (channel);
 			}
 		}
 		else if (command == "message") {
-			if (request.length () >= found + delimiter.length()) {
+			if (request.length () >= delimiter_position + delimiter.length()) {
 				std::string target_channel;
-				size_t message_begin = set_target_and_find_message_begin (request, delimiter, found, target_channel);
+				size_t message_begin = set_target_and_find_message_begin (request, delimiter, delimiter_position, target_channel);
 				if (message_begin != std::string::npos) {
 					std::string message = request.substr (message_begin);
 					send_channel_message (target_channel, message);
@@ -254,15 +274,15 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 			}
 		}
 		else if (command == "part") {
-			if (request.length () >= found + delimiter.length()) {
-				std::string const channel = request.substr (found + delimiter.length ());
+			if (request.length () >= delimiter_position + delimiter.length()) {
+				std::string const channel = request.substr (delimiter_position + delimiter.length ());
 				part_channel (channel);
 			}
 		}
 		else if (command == "pm") {
-			if (request.length () >= found + delimiter.length()) {
+			if (request.length () >= delimiter_position + delimiter.length()) {
 				std::string target;
-				size_t message_begin = set_target_and_find_message_begin (request, delimiter, found, target);
+				size_t message_begin = set_target_and_find_message_begin (request, delimiter, delimiter_position, target);
 				if (message_begin != std::string::npos) {
 					std::string message = request.substr (message_begin);
 					send_private_message (target, message);
@@ -281,8 +301,8 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 
 void GenericClient::pause_at_start_of_battle () {
 	// The bot pauses before it sends actions at the start of the battle to give spectators a chance to join.
-	boost::asio::deadline_timer timer (io, boost::posix_time::seconds (10));
-	timer.wait ();
+	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
+	pause.wait ();
 }
 
 }

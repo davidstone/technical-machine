@@ -1,4 +1,4 @@
-// Pokemon Lab outgoing messages
+// Pokemon Online incoming messages
 // Copyright 2011 David Stone
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
@@ -9,31 +9,24 @@
 //
 // You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_OUTMESSAGE_H_
-#define POKEMON_LAB_OUTMESSAGE_H_
+#ifndef POKEMON_ONLINE_INMESSAGE_H_
+#define POKEMON_ONLINE_INMESSAGE_H_
 
-#include <cstdint>
-#include <string>
-#include <vector>
 #include <boost/asio.hpp>
-
-#include "../species.h"
-#include "../network/outmessage.h"
+#include "../network/inmessage.h"
 
 namespace technicalmachine {
-class Team;
 namespace po {
 
-class OutMessage : public network::OutMessage {
+class Client;
+
+class InMessage : public network::InMessage::InMessage {
 	public:
-		explicit OutMessage (uint8_t code);
-		void write_string (std::string const & string);
-//		void write_team (Team const & team);
-//		void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);
-//		void write_switch (uint32_t field_id, uint8_t slot);
-//		void write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame = 0, std::vector <uint8_t> const & clauses = std::vector <uint8_t> (), bool timing = true, uint32_t pool = 30, uint8_t periods = 3, uint32_t period_length = 30);
-		void send (boost::asio::ip::tcp::socket & socket);
-//		static int tm_to_pl_species (Species id);
+		InMessage ();
+		std::string read_string ();
+		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
+		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
+	public:
 		enum Message {
 			WHAT_ARE_YOU = 0,
 			WHO_ARE_YOU = 1,
@@ -97,6 +90,6 @@ class OutMessage : public network::OutMessage {
 		};
 };
 
-}
-}
+}		// namespace po
+}		// namespace technicalmachine
 #endif

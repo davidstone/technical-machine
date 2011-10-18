@@ -48,15 +48,5 @@ uint32_t InMessage::read_int () {
 	return read_bytes (4);
 }
 
-std::string InMessage::read_string () {
-	uint16_t length = read_short ();
-	std::string data = "";
-	for (uint16_t n = 0; n != length; ++n) {
-		data += buffer [index];
-		++index;
-	}
-	return data;
-}
-
 }		// namespace network
 }		// namespace technicalmachine
