@@ -104,7 +104,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::KEEP_ALIVE:
-			send_keep_alive_message ();
+//			send_keep_alive_message ();
 			break;
 		case InMessage::ASK_FOR_PASS: {
 			std::string const & salt = msg.read_string ();
@@ -135,10 +135,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
-		case InMessage::SEND_PM:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		case InMessage::SEND_PM: {
+			uint32_t const user_id = msg.read_int ();
+			std::string const message = msg.read_string ();
+			std::cout << "user_id: " << user_id << '\n';
+			std::cout << "message: " + message + '\n';
 			break;
+		}
 		case InMessage::AWAY:
 			// Someone has gone away.
 			break;

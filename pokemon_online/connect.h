@@ -28,6 +28,7 @@ class Metagame;
 
 class Client : public network::GenericClient {
 	private:
+		
 //		std::map <std::string, uint32_t> channels;
 //		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 //		std::map <uint8_t, Battle> battles;			// Battles currently underway

@@ -28,6 +28,8 @@ class GenericClient {
 	protected:
 		std::string username;
 		std::string password;
+		std::string host;
+		std::string port;
 	private:
 		std::string time_format;
 		std::vector <std::string> highlights;
@@ -54,11 +56,11 @@ class GenericClient {
 		void load_responses ();
 		void load_trusted_users ();
 		bool is_trusted (std::string const & user) const;
-		void load_account_info (std::string & host, std::string & port);
+		void load_account_info ();
 		void load_settings ();
-		void connect (std::string const & host, std::string const & port);
+		void connect ();
 	public:
-//		void run ();
+		void reconnect ();
 	protected:
 		void reset_timer (unsigned timer_length);
 		virtual void send_keep_alive_message () = 0;

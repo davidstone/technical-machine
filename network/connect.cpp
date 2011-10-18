@@ -43,11 +43,9 @@ GenericClient::GenericClient (int depth_):
 	load_responses ();
 	load_trusted_users ();
 	detailed_stats (detailed);
-	std::string host;
-	std::string port;
-	load_account_info (host, port);
+	load_account_info ();
 	load_settings ();
-	connect (host, port);
+	connect ();
 }
 
 void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
@@ -101,7 +99,7 @@ bool GenericClient::is_trusted (std::string const & user) const {
 	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
 }
 
-void GenericClient::load_account_info (std::string & host, std::string & port) {
+void GenericClient::load_account_info () {
 	std::ifstream file ("settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
@@ -142,16 +140,24 @@ void GenericClient::load_settings () {
 	file.close();
 }
 
-void GenericClient::connect (std::string const & host, std::string const & port) {
+void GenericClient::connect () {
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
 	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
 	boost::asio::ip::tcp::resolver::iterator end;
 	boost::system::error_code error = boost::asio::error::host_not_found;
 	while (error and endpoint_iterator != end) {
-		socket.close();
+		socket.close ();
 		socket.connect (*endpoint_iterator++, error);
 	}
+}
+
+void GenericClient::reconnect () {
+	socket.close ();
+	// Wait a few seconds before reconnecting.
+	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (5));
+	pause.wait ();
+	connect ();
 }
 
 void GenericClient::reset_timer (unsigned timer_length) {
