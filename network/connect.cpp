@@ -35,8 +35,7 @@ namespace network {
 GenericClient::GenericClient (int depth_):
 	detailed ({{ 0 }}),
 	depth (depth_),
-	timer (io),
-	socket (io)
+	timer (io)
 	{
 	srand (static_cast <unsigned> (time (0)));
 	load_highlights ();
@@ -141,19 +140,25 @@ void GenericClient::load_settings () {
 }
 
 void GenericClient::connect () {
+	socket.reset (new boost::asio::ip::tcp::socket (io));
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
 	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
+
 	boost::asio::ip::tcp::resolver::iterator end;
 	boost::system::error_code error = boost::asio::error::host_not_found;
 	while (error and endpoint_iterator != end) {
-		socket.close ();
-		socket.connect (*endpoint_iterator++, error);
+		socket->close ();
+		socket->connect (*endpoint_iterator++, error);
+	}
+
+	if (error) {
+		std::cerr << "Error connecting, code: " << error << ". Waiting a few seconds and trying again.\n";
+		reconnect ();
 	}
 }
 
 void GenericClient::reconnect () {
-	socket.close ();
 	// Wait a few seconds before reconnecting.
 	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (5));
 	pause.wait ();

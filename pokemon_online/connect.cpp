@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
+#include <utility>
 
 #include <boost/algorithm/string.hpp>
 
@@ -34,19 +35,19 @@ Client::Client (int depth_) : network::GenericClient (depth_) {
 void Client::log_in () {
 	OutMessage message (OutMessage::LOG_IN);
 	message.write_string (username);
-	message.send (socket);
+	message.send (*socket);
 }
 
 void Client::run () {
 	InMessage msg;
-	msg.read_header (socket, this);
+	msg.read_header (*socket, this);
 
 	io.run();
 }
 
 void Client::send_keep_alive_message () {
 	OutMessage msg (OutMessage::KEEP_ALIVE);
-	msg.send (socket);
+	msg.send (*socket);
 }
 
 void get_speaker_and_message (InMessage & msg, std::string & speaker, std::string & message) {
@@ -79,9 +80,12 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
-		case InMessage::PLAYERS_LIST:
-			// The entire set of players currently logged in.
+		case InMessage::PLAYERS_LIST: {
+			uint32_t const user_id = msg.read_int ();
+			std::string const user_string = msg.read_string ();
+			user_id_to_name.insert (std::pair <uint32_t, std::string> (user_id, user_string));
 			break;
+		}
 		case InMessage::SEND_TEAM:
 			// Message sent when someone else changes their team.
 			break;
@@ -138,8 +142,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::SEND_PM: {
 			uint32_t const user_id = msg.read_int ();
 			std::string const message = msg.read_string ();
-			std::cout << "user_id: " << user_id << '\n';
-			std::cout << "message: " + message + '\n';
+			handle_private_message (user_id, message);
 			break;
 		}
 		case InMessage::AWAY:
@@ -295,7 +298,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "Unknown code: " << code << '\n';
 			break;
 	}
-	msg.read_header (socket, this);
+	msg.read_header (*socket, this);
 }
 
 void Client::authenticate (std::string const & salt) {
@@ -306,7 +309,7 @@ void Client::authenticate (std::string const & salt) {
 	hash = getMD5HexHash (hash + salt);
 	boost::algorithm::to_lower (hash);
 	msg.write_string (hash);
-	msg.send (socket);
+	msg.send (*socket);
 }
  
 void Client::join_channel (std::string const & channel) {
@@ -325,6 +328,10 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
+	OutMessage msg (OutMessage::SEND_PM);
+	msg.write_string (user);
+	msg.write_string (message);
+	msg.send (*socket);
 }
 
 void Client::handle_version_control (std::string const & server_version) {
@@ -343,5 +350,10 @@ void Client::handle_announcement (std::string const & announcement) {
 	std::cout << announcement + '\n';
 }
 
-}		// namespace po
-}		// namespace technicalmachine
+void Client::handle_private_message (uint32_t user_id, std::string const & message) {
+	std::string const user = user_id_to_name.find (user_id)->second;
+	GenericClient::handle_private_message (user, message);
+}
+
+} // namespace po
+} // namespace technicalmachine

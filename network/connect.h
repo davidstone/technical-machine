@@ -47,7 +47,7 @@ class GenericClient {
 	private:
 		boost::asio::deadline_timer timer;
 	public:
-		boost::asio::ip::tcp::socket socket;
+		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 		int chattiness;
 		explicit GenericClient (int depth_);
 		virtual ~GenericClient () { }

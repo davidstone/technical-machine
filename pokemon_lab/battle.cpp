@@ -47,7 +47,7 @@ void Battle::handle_request_action (Client & client, uint32_t battle_id, uint8_t
 			msg.write_move (battle_id, move_index, target);
 		}
 	}
-	msg.send (client.socket);
+	msg.send (*client.socket);
 	if (!ai.replacing)
 		log.initialize_turn (ai, foe);
 }
