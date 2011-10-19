@@ -29,7 +29,7 @@ class Metagame;
 class Client : public network::GenericClient {
 	private:
 		std::map <uint32_t, std::string> user_id_to_name;
-//		std::map <std::string, uint32_t> user_name_to_id;
+		std::map <std::string, uint32_t> user_name_to_id;
 //		std::map <std::string, uint32_t> channels;
 //		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
 //		std::map <uint8_t, Battle> battles;			// Battles currently underway
@@ -52,6 +52,7 @@ class Client : public network::GenericClient {
 		void send_channel_message (std::string channel, std::string const & message);
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_private_message (std::string const & user, std::string const & message);
+		void send_private_message (uint32_t user_id, std::string const & message);
 	private:
 		void handle_version_control (std::string const & server_version);
 		void handle_server_name (std::string const & server_name);

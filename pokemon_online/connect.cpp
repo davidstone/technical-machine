@@ -84,6 +84,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const user_id = msg.read_int ();
 			std::string const user_string = msg.read_string ();
 			user_id_to_name.insert (std::pair <uint32_t, std::string> (user_id, user_string));
+			user_name_to_id.insert (std::pair <std::string, uint32_t> (user_string, user_id));
 			break;
 		}
 		case InMessage::SEND_TEAM:
@@ -328,8 +329,12 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
+	send_private_message (user_name_to_id.find (user)->second, message);
+}
+
+void Client::send_private_message (uint32_t user_id, std::string const & message) {
 	OutMessage msg (OutMessage::SEND_PM);
-	msg.write_string (user);
+	msg.write_int (user_id);
 	msg.write_string (message);
 	msg.send (*socket);
 }
