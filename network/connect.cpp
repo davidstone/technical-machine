@@ -143,8 +143,8 @@ void GenericClient::connect () {
 	socket.reset (new boost::asio::ip::tcp::socket (io));
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
-	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
 
+	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
 	boost::asio::ip::tcp::resolver::iterator end;
 	boost::system::error_code error = boost::asio::error::host_not_found;
 	while (error and endpoint_iterator != end) {
@@ -162,6 +162,7 @@ void GenericClient::reconnect () {
 	// Wait a few seconds before reconnecting.
 	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (5));
 	pause.wait ();
+	std::cerr << "Reconnecting.\n";
 	connect ();
 }
 

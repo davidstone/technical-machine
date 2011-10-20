@@ -21,16 +21,16 @@ namespace network {
 
 class InMessage {
 	public:
-		unsigned index;
 		std::vector <uint8_t> buffer;
+		size_t index;
 	public:
 		InMessage ();
-		void reset (unsigned bytes);
+		void reset (size_t bytes);
 		uint8_t read_byte ();
 		uint16_t read_short ();
 		uint32_t read_int ();
 	private:
-		uint32_t read_bytes (int bytes);
+		uint32_t read_bytes (size_t bytes);
 };
 
 }		// namespace network

@@ -41,7 +41,6 @@ void Client::log_in () {
 void Client::run () {
 	InMessage msg;
 	msg.read_header (*socket, this);
-
 	io.run();
 }
 
@@ -99,7 +98,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			if (flags % 8 >= 4)
 //				away = true;
 //			int16_t rating = msg.read_short ();
-//			// This should help if a user leaves and rejoins the server with a different user ID
+			// This should help if a user leaves and rejoins the server with a different user ID
 			user_id_to_name [user_id] = user_string;
 			user_name_to_id [user_string] = user_id;
 			break;

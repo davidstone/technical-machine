@@ -122,7 +122,8 @@ crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
 crypt/sha2.o: crypt/sha2.c crypt/sha2.h
 network/connect.o: network/connect.cpp network/connect.h evaluate.h \
  load_stats.h species.h
-network/inmessage.o: network/inmessage.cpp network/inmessage.h
+network/inmessage.o: network/inmessage.cpp network/inmessage.h \
+ network/buffer_overrun.h network/invalid_packet.h
 network/outmessage.o: network/outmessage.cpp network/outmessage.h
 pokemon_lab/battle.o: pokemon_lab/battle.cpp pokemon_lab/battle.h \
  analyze_logs.h active.h type.h species.h team.h ability.h gender.h item.h \
@@ -146,7 +147,8 @@ pokemon_online/connect.o: pokemon_online/connect.cpp pokemon_online/connect.h \
  network/connect.h evaluate.h species.h pokemon_online/outmessage.h \
  network/outmessage.h
 pokemon_online/inmessage.o: pokemon_online/inmessage.cpp pokemon_online/inmessage.h \
- network/inmessage.h pokemon_online/connect.h network/connect.h evaluate.h species.h
+ network/inmessage.h pokemon_online/connect.h network/connect.h evaluate.h \
+ species.h network/invalid_packet.h
 pokemon_online/outmessage.o: pokemon_online/outmessage.cpp pokemon_online/outmessage.h \
  species.h network/outmessage.h
 

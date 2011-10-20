@@ -23,6 +23,7 @@
 #include "pokemon.h"
 #include "pokemon_lab/connect.h"
 #include "pokemon_online/connect.h"
+#include "network/invalid_packet.h"
 
 int main (int argc, char* argv[]) {
 	using namespace technicalmachine;
@@ -33,9 +34,17 @@ int main (int argc, char* argv[]) {
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	po::Client client (depth);
-	client.run();
-
+	// TODO: This is not the correct solution, but it works "good enough". I'll back back to this later.
+	while (true) {
+		try {
+			po::Client client (depth);
+			client.run();
+		}
+		catch (network::InvalidPacket & error) {
+			std::cerr << error.what () << "\n";
+			// I disconnect from the server at this point and try again, because this means an unrecoverable error.
+		}
+	}
 
 /*	unsigned const foe_size = 6;
 	int detailed [END_SPECIES][7] = {{ 0 }};

@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "buffer_overrun.h"
 
 namespace technicalmachine {
 namespace network {
@@ -21,19 +22,25 @@ InMessage::InMessage ():
 	index (0) {
 }
 
-void InMessage::reset (unsigned bytes) {
+void InMessage::reset (size_t bytes) {
 	buffer.clear();
 	buffer.resize (bytes);
 	index = 0;
 }
 
-uint32_t InMessage::read_bytes (int bytes) {
-	uint32_t data = 0;
-	for (int n = 0; n != bytes; ++n) {
-		data += buffer [index] << (8 * (bytes - n - 1));
-		++index;
+uint32_t InMessage::read_bytes (size_t bytes) {
+	// Verify that I actually have enough room in my buffer to read that many bytes
+	if (buffer.size() - index >= bytes) {
+		uint32_t data = 0;
+		for (size_t n = 0; n != bytes; ++n) {
+			data += buffer [index] << (8 * (bytes - n - 1));
+			++index;
+		}
+		return data;
 	}
-	return data;
+	else {
+		throw BufferOverrun ();
+	}
 }
 
 uint8_t InMessage::read_byte () {
