@@ -47,6 +47,7 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * clien
 		std::cerr << "Error: Server sent message of length 0. Reconnecting.\n";
 		// I disconnect from the server entirely at this point and try again, because this means an unrecoverable error.
 		client->reconnect ();
+		read_header (socket, client);
 	}
 }
 
