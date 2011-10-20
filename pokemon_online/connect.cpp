@@ -70,7 +70,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::LOG_IN:
-			// Message sent when someone logs in.
+			std::cerr << "LOG_IN\n";
 			break;
 		case InMessage::LOG_OUT:
 			std::cerr << "code: " << code << '\n';
@@ -81,19 +81,42 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::PLAYERS_LIST: {
+			// The server sends this message whenever a whole bunch of stuff about a user changes or when they log in. This message is sent if a user's rating changes, for instance, so we get it at the end of the every battle.
 			uint32_t const user_id = msg.read_int ();
 			std::string const user_string = msg.read_string ();
-			user_id_to_name.insert (std::pair <uint32_t, std::string> (user_id, user_string));
-			user_name_to_id.insert (std::pair <std::string, uint32_t> (user_string, user_id));
+			
+			// If the user does not have a team loaded at all, it seems as though this can lead to an invalid read. We don't really care about this stuff right now, so I'll just ignore it.
+//			std::string const user_message = msg.read_string ();
+//			int8_t auth_level = msg.read_byte ();
+//			uint8_t flags = msg.read_byte ();
+//			bool logged_in = false;
+//			bool battling = false;
+//			bool away = false;
+//			if (flags % 2 >= 1)
+//				logged_in = true;
+//			if (flags % 4 >= 2)
+//				battling = true;
+//			if (flags % 8 >= 4)
+//				away = true;
+//			int16_t rating = msg.read_short ();
+//			// This should help if a user leaves and rejoins the server with a different user ID
+			user_id_to_name [user_id] = user_string;
+			user_name_to_id [user_string] = user_id;
 			break;
 		}
-		case InMessage::SEND_TEAM:
-			// Message sent when someone else changes their team.
+		case InMessage::SEND_TEAM: {
+			std::cerr << "SEND_TEAM size: " << msg.buffer.size () << '\n';
 			break;
-		case InMessage::CHALLENGE_STUFF:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		}
+		case InMessage::CHALLENGE_STUFF: {
+			uint8_t byte = msg.read_byte ();
+			uint32_t user_id = msg.read_int ();
+			std::string const & user = user_id_to_name.find (user_id)->second;
+			std::cerr << user + '\n';
+			for (std::vector<uint8_t>::const_iterator it = msg.buffer.begin() + msg.index; it != msg.buffer.end (); ++it)
+				std::cerr << static_cast <int> (*it) << '\n';
 			break;
+		}
 		case InMessage::ENGAGE_BATTLE:
 			// A battle started on the server.
 			break;
@@ -109,7 +132,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::KEEP_ALIVE:
-//			send_keep_alive_message ();
+			// This currently doesn't do anything on the server...
+			send_keep_alive_message ();
 			break;
 		case InMessage::ASK_FOR_PASS: {
 			std::string const & salt = msg.read_string ();
@@ -121,12 +145,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::PLAYER_KICK:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::PLAYER_BAN:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::SERV_NUM_CHANGE:
 			std::cerr << "code: " << code << '\n';
@@ -158,16 +178,10 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::GET_BANLIST:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::CP_BAN:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::CP_UNBAN:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::SPECTATE_BATTLE:
 			std::cerr << "code: " << code << '\n';
@@ -201,8 +215,6 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::TIER_SELECTION:
 			break;
 		case InMessage::SERV_MAX_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::FIND_BATTLE:
 			std::cerr << "code: " << code << '\n';
@@ -218,20 +230,12 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::CP_TBAN:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::CP_TUNBAN:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::PLAYER_TBAN:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::GET_TBAN_LIST:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::BATTLE_LIST:
 			// All battles currently in progress.
@@ -275,8 +279,6 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::HTML_MESSAGE:
 			break;
 		case InMessage::HTML_CHANNEL:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::SERVER_NAME: {
 			std::string const server_name = msg.read_string ();

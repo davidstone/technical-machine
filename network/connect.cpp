@@ -190,7 +190,7 @@ void GenericClient::handle_channel_message (uint32_t channel_id, std::string con
 	std::string msg = message;
 	boost::to_lower (msg);
 	if (is_highlighted (msg)) {
-		print_with_time_stamp (message);
+		print_with_time_stamp (user + ": " + message);
 	}
 }
 
