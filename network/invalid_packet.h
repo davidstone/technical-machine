@@ -1,4 +1,4 @@
-// Transposition header
+// Exception class for invalid packets
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRANSPOSITION_H_
-#define TRANSPOSITION_H_
+#ifndef NETWORK_INVALID_PACKET_H_
+#define NETWORK_INVALID_PACKET_H_
 
-#include <cstdint>
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
+namespace network {
 
-class Score;
-class Team;
-class Weather;
-
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
-
-}
-#endif // TRANSPOSITION_H_
+class InvalidPacket : public std::runtime_error {
+	public:
+		InvalidPacket (std::string const & reason): std::runtime_error (reason) { }
+};
+} // namespace network
+} // namespace technicalmachine
+#endif // NETWORK_INVALID_PACKET_H_

@@ -1,4 +1,4 @@
-// Transposition header
+// Exception class for improper message length
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRANSPOSITION_H_
-#define TRANSPOSITION_H_
+#ifndef NETWORK_BUFFER_OVERRUN_H_
+#define NETWORK_BUFFER_OVERRUN_H_
 
-#include <cstdint>
+#include "invalid_packet.h"
 
 namespace technicalmachine {
+namespace network {
 
-class Score;
-class Team;
-class Weather;
-
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
-
-}
-#endif // TRANSPOSITION_H_
+class BufferOverrun : public InvalidPacket {
+	public:
+		BufferOverrun (): InvalidPacket ("Read past the end of the InMessage buffer.") { }
+};
+} // namespace network
+} // namespace technicalmachine
+#endif // NETWORK_BUFFER_OVERRUN_H_
