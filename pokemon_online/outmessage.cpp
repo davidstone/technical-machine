@@ -22,81 +22,89 @@
 #include <vector>
 #include <boost/asio.hpp>
 
+#include "conversion.h"
+#include "../team.h"
+#include "../pokemon.h"
+
 namespace technicalmachine {
 namespace po {
 
 OutMessage::OutMessage (uint8_t code) : network::OutMessage::OutMessage (code) {
 }
 
-void OutMessage::write_string (std::string const & string) {
-	uint32_t const number_of_utf16_bytes = 2 * string.length();
+void OutMessage::write_string (std::string const & str) {
+	uint32_t const number_of_utf16_bytes = 2 * str.length();
 	write_int (number_of_utf16_bytes);
-	for (std::string::const_iterator it = string.begin(); it != string.end(); ++it)
+	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
 		write_short (*it);
 }
 
-/*void OutMessage::write_team (Team const & team) {
+void OutMessage::write_team (Team const & team, std::string const & username) {
 	write_string (username);
-	std::string const info = "";
+	std::string const info = "http://doublewise.net/pokemon/";
 	write_string (info);
-	std::string const lose_message = "";
+	std::string const lose_message = "http://doublewise.net/pokemon/";
 	write_string (lose_message);
-	std::string const win_message = "";
+	std::string const win_message = "http://doublewise.net/pokemon/";
 	write_string (win_message);
-	uint16_t const avatar = 117;		// Mad scientist
+	uint16_t const avatar = 117;	 // Mad scientist!
 	write_short (avatar);
-	std::string const default_tier = "";
-	write_string (default_tier);
+	std::string const tier = "All";
+	write_string (tier);
 	uint8_t const generation = 4;
 	write_byte (generation);
-	for (std::vector <Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		uint16_t species = 0;
+	for (Pokemon const & pokemon : team.pokemon.set) {
+		uint16_t const species = species_to_id (pokemon.name);
 		write_short (species);
-		uint16_t forme = 0;
-		write_short (forme);
-		write_string (pokemon->nickname);
-		uint16_t item = 0;
+		uint8_t const forme = 0;
+		write_byte (forme);
+		write_string (pokemon.nickname);
+		uint16_t const item = item_to_id (pokemon.item.name);
 		write_short (item);
-		uint16_t ability = 0;
+		uint16_t const ability = ability_to_id (pokemon.ability.name);
 		write_short (ability);
-		uint8_t nature = 0;
+		uint8_t const nature = nature_to_id (pokemon.nature.name);
 		write_byte (nature);
-		uint8_t gender = 0;
+		uint8_t const gender = pokemon.gender.to_simulator_int ();
 		write_byte (gender);
 		bool shiny = false;
 		write_byte (shiny);
-		write_byte (it->happiness);
-		write_byte (level);
+		write_byte (pokemon.happiness);
+		write_byte (pokemon.level);
 		unsigned number_of_moves = 0;
-		while (pokemon->move.set [number_of_moves].name != Move::STRUGGLE)
+		for (std::vector<Move>::const_iterator move = pokemon.move.set.begin(); move->name != Move::STRUGGLE; ++move) {
 			++number_of_moves;
-		write_int (number_of_moves);
-		for (std::vector<Move>::const_iterator move = pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
-			int name = move->name;
-			if (name >= Move::SWITCH0)
-				name -= 6;
-			write_int (name);
-			write_int (3);		// Replace this with real PP-ups logic later
+			uint32_t const move_id = move_to_id (move->name);
+			write_int (move_id);
 		}
-		write_int (pokemon->hp.iv);
-		write_int (pokemon->hp.ev * 4);
-		write_int (pokemon->atk.iv);
-		write_int (pokemon->atk.ev * 4);
-		write_int (pokemon->def.iv);
-		write_int (pokemon->def.ev * 4);
-		write_int (pokemon->spe.iv);
-		write_int (pokemon->spe.ev * 4);
-		write_int (pokemon->spa.iv);
-		write_int (pokemon->spa.ev * 4);
-		write_int (pokemon->spd.iv);
-		write_int (pokemon->spd.ev * 4);
+		while (number_of_moves < 4) {
+			write_int (0);
+			++number_of_moves;
+		}
+		write_byte (pokemon.hp.iv);
+		write_byte (pokemon.atk.iv);
+		write_byte (pokemon.def.iv);
+		write_byte (pokemon.spe.iv);
+		write_byte (pokemon.spa.iv);
+		write_byte (pokemon.spd.iv);
+
+		write_byte (pokemon.hp.ev * 4);
+		write_byte (pokemon.atk.ev * 4);
+		write_byte (pokemon.def.ev * 4);
+		write_byte (pokemon.spe.ev * 4);
+		write_byte (pokemon.spa.ev * 4);
+		write_byte (pokemon.spd.ev * 4);
 	}
 	for (unsigned n = team.pokemon.set.size (); n <= 6; ++n) {
-		// add empty Pokemon?
+		write_short (0);
 	}
+	bool const ladder_enabled = true;
+	write_byte (ladder_enabled);
+	bool const show_team = true;
+	write_byte (show_team);
 }
 
-void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {
+/*void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {
 	write_int (field_id);
 	write_byte (0);
 	write_byte (move_index);

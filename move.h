@@ -61,13 +61,13 @@ class Move {
 		void set_name_from_string (std::string const & str);
 		bool operator== (Move const & other) const;
 		bool operator!= (Move const & other) const;
-		bool is_switch () const;
 		static bool is_switch (Moves name);
+		bool is_switch () const;
 		bool is_struggle_or_switch () const;
-		bool is_phaze () const;
 		static bool is_phaze (Moves name);
-		bool is_healing () const;
+		bool is_phaze () const;
 		static bool is_healing (Moves name);
+		bool is_healing () const;
 		bool is_blocked_by_gravity () const;
 		bool is_usable_while_sleeping () const;
 		bool is_usable_while_frozen () const;

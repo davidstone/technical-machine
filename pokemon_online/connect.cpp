@@ -29,6 +29,7 @@
 #include "outmessage.h"
 
 #include "../crypt/get_md5.h"
+#include "../team.h"
 
 #include <iostream>
 
@@ -41,7 +42,9 @@ Client::Client (int depth_) : network::GenericClient (depth_) {
 
 void Client::log_in () {
 	OutMessage message (OutMessage::LOG_IN);
-	message.write_string (username);
+	Team ai (true, 6);
+	message.write_team (ai, username);
+	
 	message.send (*socket);
 }
 
@@ -75,9 +78,31 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
-		case InMessage::LOG_IN:
-			std::cerr << "LOG_IN\n";
+		case InMessage::LOG_IN: {
+			int32_t const player_id = msg.read_int ();
+			std::string const player_name = msg.read_string ();
+			std::string const info = msg.read_string ();
+			int8_t const authority = msg.read_byte ();
+			uint8_t const flags = msg.read_byte ();
+			int16_t rating = msg.read_short ();
+			std::vector <std::pair <uint16_t, uint8_t> > team;
+			team.reserve (6);
+			for (unsigned n = 0; n != 6; ++n) {
+				uint16_t const species = msg.read_short ();
+				uint8_t forme = msg.read_byte ();
+				team.push_back (std::pair <uint16_t, uint8_t> (species, forme));
+			}
+			uint16_t avatar = msg.read_short ();
+			std::string const tier = msg.read_string ();
+			uint8_t const color_spec = msg.read_byte ();
+			uint16_t const alpha = msg.read_short ();
+			uint16_t const red = msg.read_short ();
+			uint16_t const green = msg.read_short ();
+			uint16_t const blue = msg.read_short ();
+			uint16_t const pad = msg.read_short ();
+			uint8_t gen = msg.read_byte ();
 			break;
+		}
 		case InMessage::LOG_OUT:
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
@@ -116,11 +141,12 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::CHALLENGE_STUFF: {
 			uint8_t byte = msg.read_byte ();
+			std::cerr << "byte: " << static_cast <int> (byte) << '\n';
 			uint32_t user_id = msg.read_int ();
 			std::string const & user = user_id_to_name.find (user_id)->second;
 			std::cerr << user + '\n';
-			for (std::vector<uint8_t>::const_iterator it = msg.buffer.begin() + msg.index; it != msg.buffer.end (); ++it)
-				std::cerr << static_cast <int> (*it) << '\n';
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		}
 		case InMessage::ENGAGE_BATTLE:

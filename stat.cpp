@@ -468,7 +468,7 @@ void Stat::boost (int8_t & stage, int n) {
 }
 
 uint8_t Stat::get_base_stat (Species name, Stats stat) const {
-	static uint8_t const base_stat [][6] = {
+	constexpr static uint8_t base_stat [][6] = {
 		{ 90, 92, 75, 92, 85, 60 },			// Abomasnow
 		{ 25, 20, 15, 105, 55, 90 },		// Abra	
 		{ 65, 130, 60, 75, 60, 75 },		// Absol	
@@ -986,49 +986,38 @@ bool Nature::is_set () const {
 	return name != END_NATURE;
 }
 
-class Nature_From_String {
-	public:
-		std::map <std::string, Nature::Natures> nature;
-		Nature_From_String ():
-			nature {
-				{ "Adamant", Nature::ADAMANT },
-				{ "Bashful", Nature::BASHFUL },
-				{ "Bold", Nature::BOLD },
-				{ "Brave", Nature::BRAVE },
-				{ "Calm", Nature::CALM },
-				{ "Careful", Nature::CAREFUL },
-				{ "Docile", Nature::DOCILE },
-				{ "Gentle", Nature::GENTLE },
-				{ "Hardy", Nature::HARDY },
-				{ "Hasty", Nature::HASTY },
-				{ "Impish", Nature::IMPISH },
-				{ "Jolly", Nature::JOLLY },
-				{ "Lax", Nature::LAX },
-				{ "Lonely", Nature::LONELY },
-				{ "Mild", Nature::MILD },
-				{ "Modest", Nature::MODEST },
-				{ "Naive", Nature::NAIVE },
-				{ "Naughty", Nature::NAUGHTY },
-				{ "Quiet", Nature::QUIET },
-				{ "Quirky", Nature::QUIRKY },
-				{ "Rash", Nature::RASH },
-				{ "Relaxed", Nature::RELAXED },
-				{ "Sassy", Nature::SASSY },
-				{ "Serious", Nature::SERIOUS },
-				{ "Timid", Nature::TIMID }
-			} {
-		}
-		Nature::Natures find (std::string const & str) const {
-			return nature.find (str)->second;
-		}
-};
-
 Nature::Natures Nature::name_from_string (std::string const & str) {
-	static Nature_From_String const converter;
-	return converter.find (str);
+	static std::map <std::string, Natures> const converter {
+		{ "Adamant", ADAMANT },
+		{ "Bashful", BASHFUL },
+		{ "Bold", BOLD },
+		{ "Brave", BRAVE },
+		{ "Calm", CALM },
+		{ "Careful", CAREFUL },
+		{ "Docile", DOCILE },
+		{ "Gentle", GENTLE },
+		{ "Hardy", HARDY },
+		{ "Hasty", HASTY },
+		{ "Impish", IMPISH },
+		{ "Jolly", JOLLY },
+		{ "Lax", LAX },
+		{ "Lonely", LONELY },
+		{ "Mild", MILD },
+		{ "Modest", MODEST },
+		{ "Naive", NAIVE },
+		{ "Naughty", NAUGHTY },
+		{ "Quiet", QUIET },
+		{ "Quirky", QUIRKY },
+		{ "Rash", RASH },
+		{ "Relaxed", RELAXED },
+		{ "Sassy", SASSY },
+		{ "Serious", SERIOUS },
+		{ "Timid", TIMID }
+	};
+	return converter.find (str)->second;
 }
 
 void Nature::set_name_from_string (std::string const & str) {
 	name = name_from_string (str);
 }
-}
+} // namespace technicalmachine

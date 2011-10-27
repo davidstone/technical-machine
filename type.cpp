@@ -38,7 +38,7 @@ bool is_type (Team const & team, Type type) {
 // Calculate the effectiveness of attacking type on defending type. 0 is no effect, 1 is not very effective, 2 is neutral, and 4 is super effective.
 
 unsigned lookup_effectiveness (Type attacking, Type defending) {
-	static unsigned const effectiveness [18][18] = {
+	constexpr static unsigned effectiveness [18][18] = {
 		{	2,	4,	2,	2,	1,	1,	1,	1,	4,	2,	2,	2,	1,	4,	2,	1,	2,	2	},	// Bug
 		{	2,	1,	2,	2,	1,	2,	2,	4,	2,	2,	2,	2,	2,	4,	2,	1,	2,	2	},	// Dark
 		{	2,	2,	4,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	1,	2,	2	},	// Dragon

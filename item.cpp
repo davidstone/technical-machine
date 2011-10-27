@@ -133,7 +133,14 @@ int Item::get_fling_power () const {
 			power = 130;
 			break;
 		case HARD_STONE:
-		case OTHER100:
+		case ARMOR_FOSSIL:
+		case CLAW_FOSSIL:
+		case DOME_FOSSIL:
+		case HELIX_FOSSIL:
+		case OLD_AMBER:
+		case RARE_BONE:
+		case ROOT_FOSSIL:
+		case SKULL_FOSSIL:
 			power = 100;
 			break;
 		case DEEPSEATOOTH:
@@ -160,7 +167,14 @@ int Item::get_fling_power () const {
 		case QUICK_CLAW:
 		case RAZOR_CLAW:
 		case STICKY_BARB:
-		case OTHER80:
+		case DAWN_STONE:
+		case DUSK_STONE:
+		case ELECTIRIZER:
+		case MAGMARIZER:
+		case ODD_KEYSTONE:
+		case OVAL_STONE:
+		case PROTECTOR:
+		case SHINY_STONE:
 			power = 80;
 			break;
 		case DRAGON_FANG:
@@ -182,7 +196,7 @@ int Item::get_fling_power () const {
 			power = 60;
 			break;
 		case SHARP_BEAK:
-		case OTHER50:
+		case DUBIOUS_DISC:
 			power = 50;
 			break;
 		case ICY_ROCK:
@@ -213,18 +227,213 @@ int Item::get_fling_power () const {
 		case SPELL_TAG:
 		case TOXIC_ORB:
 		case TWISTEDSPOON:
-		case OTHER30:
+		case AMULET_COIN:
+		case ANTIDOTE:
+		case AWAKENING:
+		case BIG_MUSHROOM:
+		case BIG_PEARL:
+		case BLACK_FLUTE:
+		case BLUE_FLUTE:
+		case BLUE_SHARD:
+		case BURN_HEAL:
+		case CALCIUM:
+		case CARBOS:
+		case CLEANSE_TAG:
+		case DAMP_MULCH:
+		case DIRE_HIT:
+		case DRAGON_SCALE:
+		case ELIXIR:
+		case ENERGY_ROOT:
+		case ENERGYPOWDER:
+		case ESCAPE_ROPE:
+		case ETHER:
+		case EVERSTONE:
+		case EXP_SHARE:
+		case FIRE_STONE:
+		case FLUFFY_TAIL:
+		case FRESH_WATER:
+		case FULL_HEAL:
+		case FULL_RESTORE:
+		case GOOEY_MULCH:
+		case GREEN_SHARD:
+		case GROWTH_MULCH:
+		case GUARD_SPEC:
+		case HEAL_POWDER:
+		case HEART_SCALE:
+		case HONEY:
+		case HP_UP:
+		case HYPER_POTION:
+		case ICE_HEAL:
+		case IRON:
+		case LAVA_COOKIE:
+		case LEAF_STONE:
+		case LEMONADE:
+		case LUCKY_EGG:
+		case MAX_ELIXIR:
+		case MAX_ETHER:
+		case MAX_POTION:
+		case MAX_REPEL:
+		case MAX_REVIVE:
+		case MOOMOO_MILK:
+		case MOON_STONE:
+		case NUGGET:
+		case OLD_GATEAU:
+		case PARLYZ_HEAL:
+		case PEARL:
+		case POKE_DOLL:
+		case POTION:
+		case PP_MAX:
+		case PP_UP:
+		case PROTEIN:
+		case RARE_CANDY:
+		case RED_FLUTE:
+		case RED_SHARD:
+		case REPEL:
+		case REVIVAL_HERB:
+		case REVIVE:
+		case SACRED_ASH:
+		case SHOAL_SALT:
+		case SHOAL_SHELL:
+		case SMOKE_BALL:
+		case SODA_POP:
+		case STABLE_MULCH:
+		case STAR_PIECE:
+		case STARDUST:
+		case SUN_STONE:
+		case SUPER_POTION:
+		case SUPER_REPEL:
+		case THUNDERSTONE:
+		case TINYMUSHROOM:
+		case UP_GRADE:
+		case WATER_STONE:
+		case WHITE_FLUTE:
+		case X_ACCURACY:
+		case X_ATTACK:
+		case X_DEFEND:
+		case X_SP_DEF:
+		case X_SPECIAL:
+		case X_SPEED:
+		case YELLOW_FLUTE:
+		case YELLOW_SHARD:
+		case ZINC:
 			power = 30;
 			break;
-		default:
+		case BIG_ROOT:
+		case BLUE_SCARF:
+		case BRIGHTPOWDER:
+		case CHOICE_BAND:
+		case CHOICE_SCARF:
+		case CHOICE_SPECS:
+		case DESTINY_KNOT:
+		case EXPERT_BELT:
+		case FOCUS_BAND:
+		case FOCUS_SASH:
+		case FULL_INCENSE:
+		case GREEN_SCARF:
+		case LAGGING_TAIL:
+		case LAX_INCENSE:
+		case LEFTOVERS:
+		case LUCK_INCENSE:
+		case MENTAL_HERB:
+		case METAL_POWDER:
+		case MUSCLE_BAND:
+		case ODD_INCENSE:
+		case PINK_SCARF:
+		case POWER_HERB:
+		case PURE_INCENSE:
+		case QUICK_POWDER:
+		case REAPER_CLOTH:
+		case RED_SCARF:
+		case ROCK_INCENSE:
+		case ROSE_INCENSE:
+		case SEA_INCENSE:
+		case SHED_SHELL:
+		case SILK_SCARF:
+		case SILVERPOWDER:
+		case SMOOTH_ROCK:
+		case SOFT_SAND:
+		case SOOTHE_BELL:
+		case WAVE_INCENSE:
+		case WHITE_HERB:
+		case WIDE_LENS:
+		case WISE_GLASSES:
+		case YELLOW_SCARF:
+		case ZOOM_LENS:
+		case AGUAV_BERRY:
+		case ASPEAR_BERRY:
+		case BABIRI_BERRY:
+		case CHARTI_BERRY:
+		case CHERI_BERRY:
+		case CHESTO_BERRY:
+		case CHILAN_BERRY:
+		case CHOPLE_BERRY:
+		case COBA_BERRY:
+		case COLBUR_BERRY:
+		case FIGY_BERRY:
+		case HABAN_BERRY:
+		case IAPAPA_BERRY:
+		case KASIB_BERRY:
+		case KEBIA_BERRY:
+		case LEPPA_BERRY:
+		case LUM_BERRY:
+		case MAGO_BERRY:
+		case OCCA_BERRY:
+		case ORAN_BERRY:
+		case PASSHO_BERRY:
+		case PAYAPA_BERRY:
+		case PECHA_BERRY:
+		case PERSIM_BERRY:
+		case RAWST_BERRY:
+		case RAZZ_BERRY:
+		case RINDO_BERRY:
+		case SHUCA_BERRY:
+		case SITRUS_BERRY:
+		case TANGA_BERRY:
+		case WACAN_BERRY:
+		case WIKI_BERRY:
+		case YACHE_BERRY:
+		case BLUK_BERRY:
+		case CORNN_BERRY:
+		case GREPA_BERRY:
+		case HONDEW_BERRY:
+		case KELPSY_BERRY:
+		case MAGOST_BERRY:
+		case NANAB_BERRY:
+		case NOMEL_BERRY:
+		case PAMTRE_BERRY:
+		case PINAP_BERRY:
+		case POMEG_BERRY:
+		case QUALOT_BERRY:
+		case RABUTA_BERRY:
+		case SPELON_BERRY:
+		case TAMATO_BERRY:
+		case WEPEAR_BERRY:
+		case APICOT_BERRY:
+		case BELUE_BERRY:
+		case CUSTAP_BERRY:
+		case DURIN_BERRY:
+		case ENIGMA_BERRY:
+		case GANLON_BERRY:
+		case JABOCA_BERRY:
+		case LANSAT_BERRY:
+		case LIECHI_BERRY:
+		case MICLE_BERRY:
+		case PETAYA_BERRY:
+		case ROWAP_BERRY:
+		case SALAC_BERRY:
+		case STARF_BERRY:
+		case WATMEL_BERRY:
 			power = 10;
+			break;
+		default:
+			power = 0;
 			break;
 	}
 	return power;
 }
 
 bool Item::blocks_trick () const {
-	switch	 (name) {
+	switch (name) {
 		case AIR_MAIL:
 		case BLOOM_MAIL:
 		case BRICK_MAIL:
@@ -244,428 +453,411 @@ bool Item::blocks_trick () const {
 }
 
 std::string Item::get_name () const {
-	static std::string const item_name [] = { "No Item", "Adamant Orb ", "Aguav Berry", "Air Mail", "Apicot Berry", "Aspear Berry", "Babiri Berry", "Belue Berry", "Berry Juice", "Big Root", "Black Belt", "Black Sludge", "BlackGlasses", "Bloom Mail", "Bluk Berry", "Brick Mail", "BrightPowder", "Bubble Mail", "Charcoal", "Charti Berry", "Cheri Berry", "Chesto Berry", "Chilan Berry", "Choice Band", "Choice Scarf", "Choice Specs", "Chople Berry", "Coba Berry", "Colbur Berry", "Cornn Berry", "Custap Berry", "Damp Rock", "DeepSeaScale", "DeepSeaTooth", "Destiny Knot", "Draco Plate", "Dragon Fang", "Dread Plate", "Durin Berry", "Earth Plate", "Enigma Berry", "Expert Belt", "Figy Berry", "Fist Plate", "Flame Mail", "Flame Orb", "Flame Plate", "Focus Band", "Focus Sash", "Full Incense", "Ganlon Berry", "Grass Mail", "Grepa Berry", "Grip Claw", "Griseous Orb", "Haban Berry", "Hard Stone", "Heart Mail", "Heat Rock", "Hondew Berry", "Iapapa Berry", "Icicle Plate", "Icy Rock", "Insect Plate", "Iron Ball", "Iron Plate", "Jaboca Berry", "Kasib Berry", "Kebia Berry", "Kelpsy Berry", "King's Rock", "Lagging Tail", "Lansat Berry", "Lax Incense", "Leftovers", "Leppa Berry", "Liechi Berry", "Life Orb", "Light Ball", "Light Clay", "Lucky Punch", "Lum Berry", "Lustrous Orb", "Macho Brace", "Magnet", "Mago Berry", "Magost Berry", "Meadow Plate", "Mental Herb", "Metal Coat", "Metal Powder", "Metronome", "Micle Berry", "Mind Plate", "Miracle Seed", "Mosaic Mail", "Muscle Band", "Mystic Water", "Nanab Berry", "NeverMeltIce", "Nomel Berry", "Occa Berry", "Odd Incense", "Oran Berry", "Pamtre Berry", "Passho Berry", "Payapa Berry", "Pecha Berry", "Persim Berry", "Petaya Berry", "Pinap Berry", "Poison Barb", "Pomeg Berry", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Herb", "Power Lens", "Power Weight", "Qualot Berry", "Quick Claw", "Quick Powder", "Rabuta Berry", "Rawst Berry", "Razor Claw", "Razor Fang", "Razz Berry", "Rindo Berry", "Rock Incense", "Rose Incense", "Rowap Berry", "Salac Berry", "Scope Lens", "Sea Incense", "Sharp Beak", "Shed Shell", "Shell Bell", "Shuca Berry", "Silk Scarf", "SilverPowder", "Sitrus Berry", "Sky Plate", "Smooth Rock", "Snow Mail", "Soft Sand", "Soul Dew", "Space Mail", "Spell Tag", "Spelon Berry", "Splash Plate", "Spooky Plate", "Starf Berry", "Steel Mail", "Stick", "Sticky Barb", "Stone Plate", "Tamato Berry", "Tanga Berry", "Thick Club", "Toxic Orb", "Toxic Plate", "Tunnel Mail", "TwistedSpoon", "Wacan Berry", "Watmel Berry", "Wave Incense", "Wepear Berry", "White Herb", "Wide Lens", "Wiki Berry", "Wise Glasses", "Yache Berry", "Zap Plate", "Zoom Lens", "Other", "Other10", "Other30", "Other50", "Other80", "Other100", "End Item" };
+	static std::string const item_name [] = { "No Item", "Adamant Orb", "Aguav Berry", "Air Mail", "Amulet Coin", "Antidote", "Apicot Berry", "Armor Fossil", "Aspear Berry", "Awakening", "Babiri Berry", "Belue Berry", "Berry Juice", "Bicycle", "Big Mushroom", "Big Pearl", "Big Root", "Black Belt", "Black Flute", "Black Sludge", "BlackGlasses", "Bloom Mail", "Blue Flute", "Blue Scarf", "Blue Shard", "Bluk Berry", "Brick Mail", "BrightPowder", "Bubble Mail", "Burn Heal", "Calcium", "Carbos", "Charcoal", "Charti Berry", "Cheri Berry", "Cherish Ball", "Chesto Berry", "Chilan Berry", "Choice Band", "Choice Scarf", "Choice Specs", "Chople Berry", "Claw Fossil", "Cleanse Tag", "Coba Berry", "Coin Case", "Colbur Berry", "Cornn Berry", "Coupon 1", "Coupon 2", "Coupon 3", "Custap Berry", "Damp Mulch", "Damp Rock", "Dawn Stone", "DeepSeaScale", "DeepSeaTooth", "Destiny Knot", "Dire Hit", "Dive Ball", "Dome Fossil", "Draco Plate", "Dragon Fang", "Dragon Scale", "Dread Plate", "Dubious Disc", "Durin Berry", "Dusk Ball", "Dusk Stone", "Earth Plate", "Electirizer", "Elixir", "Energy Root", "EnergyPowder", "Enigma Berry", "Escape Rope", "Ether", "Everstone", "Exp. Share", "Expert Belt", "Explorer Kit", "Fashion Case", "Figy Berry", "Fire Stone", "Fist Plate", "Flame Mail", "Flame Orb", "Flame Plate", "Fluffy Tail", "Focus Band", "Focus Sash", "Fresh Water", "Full Heal", "Full Incense", "Full Restore", "Galactic Key", "Ganlon Berry", "Good Rod", "Gooey Mulch", "Grass Mail", "Great Ball", "Green Scarf", "Green Shard", "Grepa Berry", "Grip Claw", "Griseous Orb", "Growth Mulch", "Guard Spec.", "Haban Berry", "Hard Stone", "Heal Ball", "Heal Powder", "Heart Mail", "Heart Scale", "Heat Rock", "Helix Fossil", "HM01", "HM02", "HM03", "HM04", "HM05", "HM06", "HM07", "HM08", "Hondew Berry", "Honey", "HP Up", "Hyper Potion", "Iapapa Berry", "Ice Heal", "Icicle Plate", "Icy Rock", "Insect Plate", "Iron", "Iron Ball", "Iron Plate", "Jaboca Berry", "Journal", "Kasib Berry", "Kebia Berry", "Kelpsy Berry", "King's Rock", "Lagging Tail", "Lansat Berry", "Lava Cookie", "Lax Incense", "Leaf Stone", "Leftovers", "Lemonade", "Leppa Berry", "Liechi Berry", "Life Orb", "Light Ball", "Light Clay", "Loot Sack", "Luck Incense", "Lucky Egg", "Lucky Punch", "Lum Berry", "Lunar Wing", "Lustrous Orb", "Luxury Ball", "Macho Brace", "Magmarizer", "Magnet", "Mago Berry", "Magost Berry", "Master Ball", "Max Elixir", "Max Ether", "Max Potion", "Max Repel", "Max Revive", "Meadow Plate", "Member Card", "Mental Herb", "Metal Coat", "Metal Powder", "Metronome", "Micle Berry", "Mind Plate", "Miracle Seed", "MooMoo Milk", "Moon Stone", "Mosaic Mail", "Muscle Band", "Mystic Water", "Nanab Berry", "Nest Ball", "Net Ball", "NeverMeltIce", "Nomel Berry", "Nugget", "Oak's Letter", "Occa Berry", "Odd Incense", "Odd Keystone", "Old Amber", "Old Charm", "Old Gateau", "Old Rod", "Oran Berry", "Oval Stone", "Pal Pad", "Pamtre Berry", "Parcel", "Parlyz Heal", "Passho Berry", "Payapa Berry", "Pearl", "Pecha Berry", "Persim Berry", "Petaya Berry", "Pinap Berry", "Pink Scarf", "Poffin Case", "Point Card", "Poison Barb", "Poke Ball", "Poke Doll", "Poke Radar", "Pomeg Berry", "Potion", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Herb", "Power Lens", "Power Weight", "PP Max", "PP Up", "Premier Ball", "Protector", "Protein", "Pure Incense", "Qualot Berry", "Quick Ball", "Quick Claw", "Quick Powder", "Rabuta Berry", "Rare Bone", "Rare Candy", "Rawst Berry", "Razor Claw", "Razor Fang", "Razz Berry", "Reaper Cloth", "Red Flute", "Red Scarf", "Red Shard", "Repeat Ball", "Repel", "Revival Herb", "Revive", "Rindo Berry", "Rock Incense", "Root Fossil", "Rose Incense", "Rowap Berry", "Sacred Ash", "Safari Ball", "Salac Berry", "Scope Lens", "Sea Incense", "Seal Bag", "Seal Case", "SecretPotion", "Sharp Beak", "Shed Shell", "Shell Bell", "Shiny Stone", "Shoal Salt", "Shoal Shell", "Shuca Berry", "Silk Scarf", "SilverPowder", "Sitrus Berry", "Skull Fossil", "Sky Plate", "Smoke Ball", "Smooth Rock", "Snow Mail", "Soda Pop", "Soft Sand", "Soothe Bell", "Soul Dew", "Space Mail", "Spell Tag", "Spelon Berry", "Splash Plate", "Spooky Plate", "Sprayduck", "Stable Mulch", "Star Piece", "Stardust", "Starf Berry", "Steel Mail", "Stick", "Sticky Barb", "Stone Plate", "Storage Key", "Suite Key", "Sun Stone", "Super Potion", "Super Repel", "Super Rod", "Tamato Berry", "Tanga Berry", "Thick Club", "Thunderstone", "Timer Ball", "TinyMushroom", "TM01", "TM02", "TM03", "TM04", "TM05", "TM06", "TM07", "TM08", "TM09", "TM10", "TM11", "TM12", "TM13", "TM14", "TM15", "TM16", "TM17", "TM18", "TM19", "TM20", "TM21", "TM22", "TM23", "TM24", "TM25", "TM26", "TM27", "TM28", "TM29", "TM30", "TM31", "TM32", "TM33", "TM34", "TM35", "TM36", "TM37", "TM38", "TM39", "TM40", "TM41", "TM42", "TM43", "TM44", "TM45", "TM46", "TM47", "TM48", "TM49", "TM50", "TM51", "TM52", "TM53", "TM54", "TM55", "TM56", "TM57", "TM58", "TM59", "TM60", "TM61", "TM62", "TM63", "TM64", "TM65", "TM66", "TM67", "TM68", "TM69", "TM70", "TM71", "TM72", "TM73", "TM74", "TM75", "TM76", "TM77", "TM78", "TM79", "TM80", "TM81", "TM82", "TM83", "TM84", "TM85", "TM86", "TM87", "TM88", "TM89", "TM90", "TM91", "TM92", "Town Map", "Toxic Orb", "Toxic Plate", "Tunnel Mail", "TwistedSpoon", "Ultra Ball", "Up-Grade", "VS Seeker", "Wacan Berry", "Water Stone", "Watmel Berry", "Wave Incense", "Wepear Berry", "White Flute", "White Herb", "Wide Lens", "Wiki Berry", "Wise Glasses", "Works Key", "X Accuracy", "X Attack", "X Defend", "X Sp. Def", "X Special", "X Speed", "Yache Berry", "Yellow Flute", "Yellow Scarf", "Yellow Shard", "Zap Plate", "Zinc", "Zoom Lens", "END ITEM" };
 	return item_name [name];
 }
 
-class Item_From_String {
-	public:
-		std::map <std::string, Item::Items> item;
-		Item_From_String ():
-			item {
-				{ "No Item", Item::NO_ITEM },
-				{ "Adamant Orb ", Item::ADAMANT_ORB },
-				{ "Aguav Berry", Item::AGUAV_BERRY },
-				{ "Apicot Berry", Item::APICOT_BERRY },
-				{ "Aspear Berry", Item::ASPEAR_BERRY },
-				{ "Babiri Berry", Item::BABIRI_BERRY },
-				{ "Belue Berry", Item::BELUE_BERRY },
-				{ "Berry Juice", Item::BERRY_JUICE },
-				{ "Big Root", Item::BIG_ROOT },
-				{ "Black Belt", Item::BLACK_BELT },
-				{ "Black Sludge", Item::BLACK_SLUDGE },
-				{ "BlackGlasses", Item::BLACKGLASSES },
-				{ "Bluk Berry", Item::BLUK_BERRY },
-				{ "BrightPowder", Item::BRIGHTPOWDER },
-				{ "Charcoal", Item::CHARCOAL },
-				{ "Charti Berry", Item::CHARTI_BERRY },
-				{ "Cheri Berry", Item::CHERI_BERRY },
-				{ "Chesto Berry", Item::CHESTO_BERRY },
-				{ "Chilan Berry", Item::CHILAN_BERRY },
-				{ "Choice Band", Item::CHOICE_BAND },
-				{ "Choice Scarf", Item::CHOICE_SCARF },
-				{ "Choice Specs", Item::CHOICE_SPECS },
-				{ "Chople Berry", Item::CHOPLE_BERRY },
-				{ "Coba Berry", Item::COBA_BERRY },
-				{ "Colbur Berry", Item::COLBUR_BERRY },
-				{ "Cornn Berry", Item::CORNN_BERRY },
-				{ "Custap Berry", Item::CUSTAP_BERRY },
-				{ "Damp Rock", Item::DAMP_ROCK },
-				{ "DeepSeaScale", Item::DEEPSEASCALE },
-				{ "DeepSeaTooth", Item::DEEPSEATOOTH },
-				{ "Destiny Knot", Item::DESTINY_KNOT },
-				{ "Draco Plate", Item::DRACO_PLATE },
-				{ "Dragon Fang", Item::DRAGON_FANG },
-				{ "Dread Plate", Item::DREAD_PLATE },
-				{ "Durin Berry", Item::DURIN_BERRY },
-				{ "Earth Plate", Item::EARTH_PLATE },
-				{ "Enigma Berry", Item::ENIGMA_BERRY },
-				{ "Expert Belt", Item::EXPERT_BELT },
-				{ "Figy Berry", Item::FIGY_BERRY },
-				{ "Fist Plate", Item::FIST_PLATE },
-				{ "Flame Orb", Item::FLAME_ORB },
-				{ "Flame Plate", Item::FLAME_PLATE },
-				{ "Focus Band", Item::FOCUS_BAND },
-				{ "Focus Sash", Item::FOCUS_SASH },
-				{ "Ganlon Berry", Item::GANLON_BERRY },
-				{ "Grepa Berry", Item::GREPA_BERRY },
-				{ "Grip Claw", Item::GRIP_CLAW },
-				{ "Griseous Orb", Item::GRISEOUS_ORB },
-				{ "Haban Berry", Item::HABAN_BERRY },
-				{ "Hard Stone", Item::HARD_STONE },
-				{ "Heat Rock", Item::HEAT_ROCK },
-				{ "Hondew Berry", Item::HONDEW_BERRY },
-				{ "Iapapa Berry", Item::IAPAPA_BERRY },
-				{ "Icicle Plate", Item::ICICLE_PLATE },
-				{ "Icy Rock", Item::ICY_ROCK },
-				{ "Insect Plate", Item::INSECT_PLATE },
-				{ "Iron Ball", Item::IRON_BALL },
-				{ "Iron Plate", Item::IRON_PLATE },
-				{ "Jaboca Berry", Item::JABOCA_BERRY },
-				{ "Kasib Berry", Item::KASIB_BERRY },
-				{ "Kebia Berry", Item::KEBIA_BERRY },
-				{ "Kelpsy Berry", Item::KELPSY_BERRY },
-				{ "King's Rock", Item::KINGS_ROCK },
-				{ "Razor Fang", Item::RAZOR_FANG },
-				{ "Full Incense", Item::FULL_INCENSE },
-				{ "Lagging Tail", Item::LAGGING_TAIL },
-				{ "Lansat Berry", Item::LANSAT_BERRY },
-				{ "Lax Incense", Item::LAX_INCENSE },
-				{ "Leftovers", Item::LEFTOVERS },
-				{ "Leppa Berry", Item::LEPPA_BERRY },
-				{ "Liechi Berry", Item::LIECHI_BERRY },
-				{ "Life Orb", Item::LIFE_ORB },
-				{ "Light Ball", Item::LIGHT_BALL },
-				{ "Light Clay", Item::LIGHT_CLAY },
-				{ "Lucky Punch", Item::LUCKY_PUNCH },
-				{ "Lum Berry", Item::LUM_BERRY },
-				{ "Lustrous Orb", Item::LUSTROUS_ORB },
-				{ "Macho Brace", Item::MACHO_BRACE },
-				{ "Magnet", Item::MAGNET },
-				{ "Mago Berry", Item::MAGO_BERRY },
-				{ "Magost Berry", Item::MAGOST_BERRY },
-				{ "Air Mail", Item::AIR_MAIL },
-				{ "Bloom Mail", Item::BLOOM_MAIL },
-				{ "Brick Mail", Item::BRICK_MAIL },
-				{ "Bubble Mail", Item::BUBBLE_MAIL },
-				{ "Flame Mail", Item::FLAME_MAIL },
-				{ "Grass Mail", Item::GRASS_MAIL },
-				{ "Heart Mail", Item::HEART_MAIL },
-				{ "Mosaic Mail", Item::MOSAIC_MAIL },
-				{ "Snow Mail", Item::SNOW_MAIL },
-				{ "Space Mail", Item::SPACE_MAIL },
-				{ "Steel Mail", Item::STEEL_MAIL },
-				{ "Tunnel Mail", Item::TUNNEL_MAIL },
-				{ "Meadow Plate", Item::MEADOW_PLATE },
-				{ "Mental Herb", Item::MENTAL_HERB },
-				{ "Metal Coat", Item::METAL_COAT },
-				{ "Metal Powder", Item::METAL_POWDER },
-				{ "Metronome", Item::METRONOME },
-				{ "Micle Berry", Item::MICLE_BERRY },
-				{ "Mind Plate", Item::MIND_PLATE },
-				{ "Miracle Seed", Item::MIRACLE_SEED },
-				{ "Muscle Band", Item::MUSCLE_BAND },
-				{ "Mystic Water", Item::MYSTIC_WATER },
-				{ "Nanab Berry", Item::NANAB_BERRY },
-				{ "NeverMeltIce", Item::NEVERMELTICE },
-				{ "Nomel Berry", Item::NOMEL_BERRY },
-				{ "Occa Berry", Item::OCCA_BERRY },
-				{ "Odd Incense", Item::ODD_INCENSE },
-				{ "Oran Berry", Item::ORAN_BERRY },
-				{ "Pamtre Berry", Item::PAMTRE_BERRY },
-				{ "Passho Berry", Item::PASSHO_BERRY },
-				{ "Payapa Berry", Item::PAYAPA_BERRY },
-				{ "Pecha Berry", Item::PECHA_BERRY },
-				{ "Persim Berry", Item::PERSIM_BERRY },
-				{ "Petaya Berry", Item::PETAYA_BERRY },
-				{ "Pinap Berry", Item::PINAP_BERRY },
-				{ "Poison Barb", Item::POISON_BARB },
-				{ "Pomeg Berry", Item::POMEG_BERRY },
-				{ "Power Herb", Item::POWER_HERB },
-				{ "Power Anklet", Item::POWER_ANKLET },
-				{ "Power Band", Item::POWER_BAND },
-				{ "Power Belt", Item::POWER_BELT },
-				{ "Power Bracer", Item::POWER_BRACER },
-				{ "Power Lens", Item::POWER_LENS },
-				{ "Power Weight", Item::POWER_WEIGHT },
-				{ "Qualot Berry", Item::QUALOT_BERRY },
-				{ "Quick Claw", Item::QUICK_CLAW },
-				{ "Quick Powder", Item::QUICK_POWDER },
-				{ "Rabuta Berry", Item::RABUTA_BERRY },
-				{ "Rawst Berry", Item::RAWST_BERRY },
-				{ "Razor Claw", Item::RAZOR_CLAW },
-				{ "Razz Berry", Item::RAZZ_BERRY },
-				{ "Rindo Berry", Item::RINDO_BERRY },
-				{ "Rock Incense", Item::ROCK_INCENSE },
-				{ "Rose Incense", Item::ROSE_INCENSE },
-				{ "Rowap Berry", Item::ROWAP_BERRY },
-				{ "Salac Berry", Item::SALAC_BERRY },
-				{ "Scope Lens", Item::SCOPE_LENS },
-				{ "Sharp Beak", Item::SHARP_BEAK },
-				{ "Shed Shell", Item::SHED_SHELL },
-				{ "Shell Bell", Item::SHELL_BELL },
-				{ "Shuca Berry", Item::SHUCA_BERRY },
-				{ "Silk Scarf", Item::SILK_SCARF },
-				{ "SilverPowder", Item::SILVERPOWDER },
-				{ "Sitrus Berry", Item::SITRUS_BERRY },
-				{ "Sky Plate", Item::SKY_PLATE },
-				{ "Smooth Rock", Item::SMOOTH_ROCK },
-				{ "Soft Sand", Item::SOFT_SAND },
-				{ "Soul Dew", Item::SOUL_DEW },
-				{ "Spell Tag", Item::SPELL_TAG },
-				{ "Spelon Berry", Item::SPELON_BERRY },
-				{ "Splash Plate", Item::SPLASH_PLATE },
-				{ "Spooky Plate", Item::SPOOKY_PLATE },
-				{ "Starf Berry", Item::STARF_BERRY },
-				{ "Stick", Item::STICK },
-				{ "Sticky Barb", Item::STICKY_BARB },
-				{ "Stone Plate", Item::STONE_PLATE },
-				{ "Tamato Berry", Item::TAMATO_BERRY },
-				{ "Tanga Berry", Item::TANGA_BERRY },
-				{ "Thick Club", Item::THICK_CLUB },
-				{ "Toxic Orb", Item::TOXIC_ORB },
-				{ "Toxic Plate", Item::TOXIC_PLATE },
-				{ "TwistedSpoon", Item::TWISTEDSPOON },
-				{ "Wacan Berry", Item::WACAN_BERRY },
-				{ "Watmel Berry", Item::WATMEL_BERRY },
-				{ "Sea Incense", Item::SEA_INCENSE },
-				{ "Wave Incense", Item::WAVE_INCENSE },
-				{ "Wepear Berry", Item::WEPEAR_BERRY },
-				{ "White Herb", Item::WHITE_HERB },
-				{ "Wide Lens", Item::WIDE_LENS },
-				{ "Wiki Berry", Item::WIKI_BERRY },
-				{ "Wise Glasses", Item::WISE_GLASSES },
-				{ "Yache Berry", Item::YACHE_BERRY },
-				{ "Zap Plate", Item::ZAP_PLATE },
-				{ "Zoom Lens", Item::ZOOM_LENS },
-				{ "Other", Item::OTHER },
-				{ "Cherish Ball", Item::OTHER },
-				{ "Dive Ball", Item::OTHER },
-				{ "Dusk Ball", Item::OTHER },
-				{ "Great Ball", Item::OTHER },
-				{ "Heal Ball", Item::OTHER },
-				{ "Luxury Ball", Item::OTHER },
-				{ "Master Ball", Item::OTHER },
-				{ "Nest Ball", Item::OTHER },
-				{ "Net Ball", Item::OTHER },
-				{ "Poke Ball", Item::OTHER },
-				{ "Premier Ball", Item::OTHER },
-				{ "Quick Ball", Item::OTHER },
-				{ "Repeat Ball", Item::OTHER },
-				{ "Timer Ball", Item::OTHER },
-				{ "TM01", Item::OTHER },
-				{ "TM02", Item::OTHER },
-				{ "TM03", Item::OTHER },
-				{ "TM04", Item::OTHER },
-				{ "TM05", Item::OTHER },
-				{ "TM06", Item::OTHER },
-				{ "TM07", Item::OTHER },
-				{ "TM08", Item::OTHER },
-				{ "TM09", Item::OTHER },
-				{ "TM10", Item::OTHER },
-				{ "TM11", Item::OTHER },
-				{ "TM12", Item::OTHER },
-				{ "TM13", Item::OTHER },
-				{ "TM14", Item::OTHER },
-				{ "TM15", Item::OTHER },
-				{ "TM16", Item::OTHER },
-				{ "TM17", Item::OTHER },
-				{ "TM18", Item::OTHER },
-				{ "TM19", Item::OTHER },
-				{ "TM20", Item::OTHER },
-				{ "TM21", Item::OTHER },
-				{ "TM22", Item::OTHER },
-				{ "TM23", Item::OTHER },
-				{ "TM24", Item::OTHER },
-				{ "TM25", Item::OTHER },
-				{ "TM26", Item::OTHER },
-				{ "TM27", Item::OTHER },
-				{ "TM28", Item::OTHER },
-				{ "TM29", Item::OTHER },
-				{ "TM30", Item::OTHER },
-				{ "TM31", Item::OTHER },
-				{ "TM32", Item::OTHER },
-				{ "TM33", Item::OTHER },
-				{ "TM34", Item::OTHER },
-				{ "TM35", Item::OTHER },
-				{ "TM36", Item::OTHER },
-				{ "TM37", Item::OTHER },
-				{ "TM38", Item::OTHER },
-				{ "TM39", Item::OTHER },
-				{ "TM40", Item::OTHER },
-				{ "TM41", Item::OTHER },
-				{ "TM42", Item::OTHER },
-				{ "TM43", Item::OTHER },
-				{ "TM44", Item::OTHER },
-				{ "TM45", Item::OTHER },
-				{ "TM46", Item::OTHER },
-				{ "TM47", Item::OTHER },
-				{ "TM48", Item::OTHER },
-				{ "TM49", Item::OTHER },
-				{ "TM50", Item::OTHER },
-				{ "TM51", Item::OTHER },
-				{ "TM52", Item::OTHER },
-				{ "TM53", Item::OTHER },
-				{ "TM54", Item::OTHER },
-				{ "TM55", Item::OTHER },
-				{ "TM56", Item::OTHER },
-				{ "TM57", Item::OTHER },
-				{ "TM58", Item::OTHER },
-				{ "TM59", Item::OTHER },
-				{ "TM60", Item::OTHER },
-				{ "TM61", Item::OTHER },
-				{ "TM62", Item::OTHER },
-				{ "TM63", Item::OTHER },
-				{ "TM64", Item::OTHER },
-				{ "TM65", Item::OTHER },
-				{ "TM66", Item::OTHER },
-				{ "TM67", Item::OTHER },
-				{ "TM68", Item::OTHER },
-				{ "TM69", Item::OTHER },
-				{ "TM70", Item::OTHER },
-				{ "TM71", Item::OTHER },
-				{ "TM72", Item::OTHER },
-				{ "TM73", Item::OTHER },
-				{ "TM74", Item::OTHER },
-				{ "TM75", Item::OTHER },
-				{ "TM76", Item::OTHER },
-				{ "TM77", Item::OTHER },
-				{ "TM78", Item::OTHER },
-				{ "TM79", Item::OTHER },
-				{ "TM80", Item::OTHER },
-				{ "TM81", Item::OTHER },
-				{ "TM82", Item::OTHER },
-				{ "TM83", Item::OTHER },
-				{ "TM84", Item::OTHER },
-				{ "TM85", Item::OTHER },
-				{ "TM86", Item::OTHER },
-				{ "TM87", Item::OTHER },
-				{ "TM88", Item::OTHER },
-				{ "TM89", Item::OTHER },
-				{ "TM90", Item::OTHER },
-				{ "TM91", Item::OTHER },
-				{ "TM92", Item::OTHER },
-				{ "Ultra Ball", Item::OTHER },
-				{ "Other10", Item::OTHER10 },
-				{ "Blue Scarf", Item::OTHER10 },
-				{ "Green Scarf", Item::OTHER10 },
-				{ "Luck Incense", Item::OTHER10 },
-				{ "Pink Scarf", Item::OTHER10 },
-				{ "Pure Incense", Item::OTHER10 },
-				{ "Reaper Cloth", Item::OTHER10 },
-				{ "Red Scarf", Item::OTHER10 },
-				{ "Soothe Bell", Item::OTHER10 },
-				{ "Yellow Scarf", Item::OTHER10 },
-				{ "Other30", Item::OTHER30 },
-				{ "Amulet Coin", Item::OTHER30 },
-				{ "Antidote", Item::OTHER30 },
-				{ "Awakening", Item::OTHER30 },
-				{ "Big Mushroom", Item::OTHER30 },
-				{ "Big Pearl", Item::OTHER30 },
-				{ "Black Flute", Item::OTHER30 },
-				{ "Blue Flute", Item::OTHER30 },
-				{ "Blue Shard", Item::OTHER30 },
-				{ "Burn Heal", Item::OTHER30 },
-				{ "Calcium", Item::OTHER30 },
-				{ "Carbos", Item::OTHER30 },
-				{ "Cleanse Tag", Item::OTHER30 },
-				{ "Damp Mulch", Item::OTHER30 },
-				{ "Dire Hit", Item::OTHER30 },
-				{ "Dragon Scale", Item::OTHER30 },
-				{ "Elixir", Item::OTHER30 },
-				{ "Energy Root", Item::OTHER30 },
-				{ "EnergyPowder", Item::OTHER30 },
-				{ "Escape Rope", Item::OTHER30 },
-				{ "Ether", Item::OTHER30 },
-				{ "Everstone", Item::OTHER30 },
-				{ "Exp. Share", Item::OTHER30 },
-				{ "Fire Stone", Item::OTHER30 },
-				{ "Fluffy Tail", Item::OTHER30 },
-				{ "Fresh Water", Item::OTHER30 },
-				{ "Full Heal", Item::OTHER30 },
-				{ "Full Restore", Item::OTHER30 },
-				{ "Gooey Mulch", Item::OTHER30 },
-				{ "Green Shard", Item::OTHER30 },
-				{ "Growth Mulch", Item::OTHER30 },
-				{ "Guard Spec.", Item::OTHER30 },
-				{ "Heal Powder", Item::OTHER30 },
-				{ "Heart Scale", Item::OTHER30 },
-				{ "Honey", Item::OTHER30 },
-				{ "HP Up", Item::OTHER30 },
-				{ "Hyper Potion", Item::OTHER30 },
-				{ "Ice Heal", Item::OTHER30 },
-				{ "Iron", Item::OTHER30 },
-				{ "Lava Cookie", Item::OTHER30 },
-				{ "Leaf Stone", Item::OTHER30 },
-				{ "Lemonade", Item::OTHER30 },
-				{ "Lucky Egg", Item::OTHER30 },
-				{ "Max Elixir", Item::OTHER30 },
-				{ "Max Ether", Item::OTHER30 },
-				{ "Max Potion", Item::OTHER30 },
-				{ "Max Repel", Item::OTHER30 },
-				{ "Max Revive", Item::OTHER30 },
-				{ "MooMoo Milk", Item::OTHER30 },
-				{ "Moon Stone", Item::OTHER30 },
-				{ "Nugget", Item::OTHER30 },
-				{ "Old Gateau", Item::OTHER30 },
-				{ "Parlyz Heal", Item::OTHER30 },
-				{ "Pearl", Item::OTHER30 },
-				{ "Poke Doll", Item::OTHER30 },
-				{ "Potion", Item::OTHER30 },
-				{ "PP Max", Item::OTHER30 },
-				{ "PP Up", Item::OTHER30 },
-				{ "Protein", Item::OTHER30 },
-				{ "Rare Candy", Item::OTHER30 },
-				{ "Red Flute", Item::OTHER30 },
-				{ "Red Shard", Item::OTHER30 },
-				{ "Repel", Item::OTHER30 },
-				{ "Revival Herb", Item::OTHER30 },
-				{ "Revive", Item::OTHER30 },
-				{ "Sacred Ash", Item::OTHER30 },
-				{ "Shoal Salt", Item::OTHER30 },
-				{ "Shoal Shell", Item::OTHER30 },
-				{ "Smoke Ball", Item::OTHER30 },
-				{ "Soda Pop", Item::OTHER30 },
-				{ "Stable Mulch", Item::OTHER30 },
-				{ "Star Piece", Item::OTHER30 },
-				{ "Stardust", Item::OTHER30 },
-				{ "Sun Stone", Item::OTHER30 },
-				{ "Super Potion", Item::OTHER30 },
-				{ "Super Repel", Item::OTHER30 },
-				{ "Thunderstone", Item::OTHER30 },
-				{ "TinyMushroom", Item::OTHER30 },
-				{ "Up-Grade", Item::OTHER30 },
-				{ "Water Stone", Item::OTHER30 },
-				{ "White Flute", Item::OTHER30 },
-				{ "X Accuracy", Item::OTHER30 },
-				{ "X Attack", Item::OTHER30 },
-				{ "X Defend", Item::OTHER30 },
-				{ "X Sp. Def", Item::OTHER30 },
-				{ "X Special", Item::OTHER30 },
-				{ "X Speed", Item::OTHER30 },
-				{ "Yellow Flute", Item::OTHER30 },
-				{ "Yellow Shard", Item::OTHER30 },
-				{ "Zinc", Item::OTHER30 },
-				{ "Other50", Item::OTHER50 },
-				{ "Dubious Disc", Item::OTHER50 },
-				{ "Other80", Item::OTHER80 },
-				{ "Dawn Stone", Item::OTHER80 },
-				{ "Dusk Stone", Item::OTHER80 },
-				{ "Electirizer", Item::OTHER80 },
-				{ "Magmarizer", Item::OTHER80 },
-				{ "Odd Keystone", Item::OTHER80 },
-				{ "Oval Stone", Item::OTHER80 },
-				{ "Protector", Item::OTHER80 },
-				{ "Shiny Stone", Item::OTHER80 },
-				{ "Other100", Item::OTHER100 },
-				{ "Armor Fossil", Item::OTHER100 },
-				{ "Claw Fossil", Item::OTHER100 },
-				{ "Dome Fossil", Item::OTHER100 },
-				{ "Helix Fossil", Item::OTHER100 },
-				{ "Old Amber", Item::OTHER100 },
-				{ "Rare Bone", Item::OTHER100 },
-				{ "Root Fossil", Item::OTHER100 },
-				{ "Skull Fossil", Item::OTHER100 }
-			} {
-		}
-		Item::Items find (std::string const & str) const {
-			return item.find (str)->second;
-		}
-};
-
 Item::Items Item::name_from_string (std::string const & str) {
-	static Item_From_String const converter;
-	return converter.find (str);
+	static std::map <std::string, Items> const converter {
+		{ "No Item", NO_ITEM },
+		{ "Adamant Orb ", ADAMANT_ORB },
+		{ "Aguav Berry", AGUAV_BERRY },
+		{ "Apicot Berry", APICOT_BERRY },
+		{ "Aspear Berry", ASPEAR_BERRY },
+		{ "Babiri Berry", BABIRI_BERRY },
+		{ "Belue Berry", BELUE_BERRY },
+		{ "Berry Juice", BERRY_JUICE },
+		{ "Big Root", BIG_ROOT },
+		{ "Black Belt", BLACK_BELT },
+		{ "Black Sludge", BLACK_SLUDGE },
+		{ "BlackGlasses", BLACKGLASSES },
+		{ "Bluk Berry", BLUK_BERRY },
+		{ "BrightPowder", BRIGHTPOWDER },
+		{ "Charcoal", CHARCOAL },
+		{ "Charti Berry", CHARTI_BERRY },
+		{ "Cheri Berry", CHERI_BERRY },
+		{ "Chesto Berry", CHESTO_BERRY },
+		{ "Chilan Berry", CHILAN_BERRY },
+		{ "Choice Band", CHOICE_BAND },
+		{ "Choice Scarf", CHOICE_SCARF },
+		{ "Choice Specs", CHOICE_SPECS },
+		{ "Chople Berry", CHOPLE_BERRY },
+		{ "Coba Berry", COBA_BERRY },
+		{ "Colbur Berry", COLBUR_BERRY },
+		{ "Cornn Berry", CORNN_BERRY },
+		{ "Custap Berry", CUSTAP_BERRY },
+		{ "Damp Rock", DAMP_ROCK },
+		{ "DeepSeaScale", DEEPSEASCALE },
+		{ "DeepSeaTooth", DEEPSEATOOTH },
+		{ "Destiny Knot", DESTINY_KNOT },
+		{ "Draco Plate", DRACO_PLATE },
+		{ "Dragon Fang", DRAGON_FANG },
+		{ "Dread Plate", DREAD_PLATE },
+		{ "Durin Berry", DURIN_BERRY },
+		{ "Earth Plate", EARTH_PLATE },
+		{ "Enigma Berry", ENIGMA_BERRY },
+		{ "Expert Belt", EXPERT_BELT },
+		{ "Figy Berry", FIGY_BERRY },
+		{ "Fist Plate", FIST_PLATE },
+		{ "Flame Orb", FLAME_ORB },
+		{ "Flame Plate", FLAME_PLATE },
+		{ "Focus Band", FOCUS_BAND },
+		{ "Focus Sash", FOCUS_SASH },
+		{ "Ganlon Berry", GANLON_BERRY },
+		{ "Grepa Berry", GREPA_BERRY },
+		{ "Grip Claw", GRIP_CLAW },
+		{ "Griseous Orb", GRISEOUS_ORB },
+		{ "Haban Berry", HABAN_BERRY },
+		{ "Hard Stone", HARD_STONE },
+		{ "Heat Rock", HEAT_ROCK },
+		{ "Hondew Berry", HONDEW_BERRY },
+		{ "Iapapa Berry", IAPAPA_BERRY },
+		{ "Icicle Plate", ICICLE_PLATE },
+		{ "Icy Rock", ICY_ROCK },
+		{ "Insect Plate", INSECT_PLATE },
+		{ "Iron Ball", IRON_BALL },
+		{ "Iron Plate", IRON_PLATE },
+		{ "Jaboca Berry", JABOCA_BERRY },
+		{ "Kasib Berry", KASIB_BERRY },
+		{ "Kebia Berry", KEBIA_BERRY },
+		{ "Kelpsy Berry", KELPSY_BERRY },
+		{ "King's Rock", KINGS_ROCK },
+		{ "Razor Fang", RAZOR_FANG },
+		{ "Full Incense", FULL_INCENSE },
+		{ "Lagging Tail", LAGGING_TAIL },
+		{ "Lansat Berry", LANSAT_BERRY },
+		{ "Lax Incense", LAX_INCENSE },
+		{ "Leftovers", LEFTOVERS },
+		{ "Leppa Berry", LEPPA_BERRY },
+		{ "Liechi Berry", LIECHI_BERRY },
+		{ "Life Orb", LIFE_ORB },
+		{ "Light Ball", LIGHT_BALL },
+		{ "Light Clay", LIGHT_CLAY },
+		{ "Lucky Punch", LUCKY_PUNCH },
+		{ "Lum Berry", LUM_BERRY },
+		{ "Lustrous Orb", LUSTROUS_ORB },
+		{ "Macho Brace", MACHO_BRACE },
+		{ "Magnet", MAGNET },
+		{ "Mago Berry", MAGO_BERRY },
+		{ "Magost Berry", MAGOST_BERRY },
+		{ "Air Mail", AIR_MAIL },
+		{ "Bloom Mail", BLOOM_MAIL },
+		{ "Brick Mail", BRICK_MAIL },
+		{ "Bubble Mail", BUBBLE_MAIL },
+		{ "Flame Mail", FLAME_MAIL },
+		{ "Grass Mail", GRASS_MAIL },
+		{ "Heart Mail", HEART_MAIL },
+		{ "Mosaic Mail", MOSAIC_MAIL },
+		{ "Snow Mail", SNOW_MAIL },
+		{ "Space Mail", SPACE_MAIL },
+		{ "Steel Mail", STEEL_MAIL },
+		{ "Tunnel Mail", TUNNEL_MAIL },
+		{ "Meadow Plate", MEADOW_PLATE },
+		{ "Mental Herb", MENTAL_HERB },
+		{ "Metal Coat", METAL_COAT },
+		{ "Metal Powder", METAL_POWDER },
+		{ "Metronome", METRONOME },
+		{ "Micle Berry", MICLE_BERRY },
+		{ "Mind Plate", MIND_PLATE },
+		{ "Miracle Seed", MIRACLE_SEED },
+		{ "Muscle Band", MUSCLE_BAND },
+		{ "Mystic Water", MYSTIC_WATER },
+		{ "Nanab Berry", NANAB_BERRY },
+		{ "NeverMeltIce", NEVERMELTICE },
+		{ "Nomel Berry", NOMEL_BERRY },
+		{ "Occa Berry", OCCA_BERRY },
+		{ "Odd Incense", ODD_INCENSE },
+		{ "Oran Berry", ORAN_BERRY },
+		{ "Pamtre Berry", PAMTRE_BERRY },
+		{ "Passho Berry", PASSHO_BERRY },
+		{ "Payapa Berry", PAYAPA_BERRY },
+		{ "Pecha Berry", PECHA_BERRY },
+		{ "Persim Berry", PERSIM_BERRY },
+		{ "Petaya Berry", PETAYA_BERRY },
+		{ "Pinap Berry", PINAP_BERRY },
+		{ "Poison Barb", POISON_BARB },
+		{ "Pomeg Berry", POMEG_BERRY },
+		{ "Power Herb", POWER_HERB },
+		{ "Power Anklet", POWER_ANKLET },
+		{ "Power Band", POWER_BAND },
+		{ "Power Belt", POWER_BELT },
+		{ "Power Bracer", POWER_BRACER },
+		{ "Power Lens", POWER_LENS },
+		{ "Power Weight", POWER_WEIGHT },
+		{ "Qualot Berry", QUALOT_BERRY },
+		{ "Quick Claw", QUICK_CLAW },
+		{ "Quick Powder", QUICK_POWDER },
+		{ "Rabuta Berry", RABUTA_BERRY },
+		{ "Rawst Berry", RAWST_BERRY },
+		{ "Razor Claw", RAZOR_CLAW },
+		{ "Razz Berry", RAZZ_BERRY },
+		{ "Rindo Berry", RINDO_BERRY },
+		{ "Rock Incense", ROCK_INCENSE },
+		{ "Rose Incense", ROSE_INCENSE },
+		{ "Rowap Berry", ROWAP_BERRY },
+		{ "Salac Berry", SALAC_BERRY },
+		{ "Scope Lens", SCOPE_LENS },
+		{ "Sharp Beak", SHARP_BEAK },
+		{ "Shed Shell", SHED_SHELL },
+		{ "Shell Bell", SHELL_BELL },
+		{ "Shuca Berry", SHUCA_BERRY },
+		{ "Silk Scarf", SILK_SCARF },
+		{ "SilverPowder", SILVERPOWDER },
+		{ "Sitrus Berry", SITRUS_BERRY },
+		{ "Sky Plate", SKY_PLATE },
+		{ "Smooth Rock", SMOOTH_ROCK },
+		{ "Soft Sand", SOFT_SAND },
+		{ "Soul Dew", SOUL_DEW },
+		{ "Spell Tag", SPELL_TAG },
+		{ "Spelon Berry", SPELON_BERRY },
+		{ "Splash Plate", SPLASH_PLATE },
+		{ "Spooky Plate", SPOOKY_PLATE },
+		{ "Starf Berry", STARF_BERRY },
+		{ "Stick", STICK },
+		{ "Sticky Barb", STICKY_BARB },
+		{ "Stone Plate", STONE_PLATE },
+		{ "Tamato Berry", TAMATO_BERRY },
+		{ "Tanga Berry", TANGA_BERRY },
+		{ "Thick Club", THICK_CLUB },
+		{ "Toxic Orb", TOXIC_ORB },
+		{ "Toxic Plate", TOXIC_PLATE },
+		{ "TwistedSpoon", TWISTEDSPOON },
+		{ "Wacan Berry", WACAN_BERRY },
+		{ "Watmel Berry", WATMEL_BERRY },
+		{ "Sea Incense", SEA_INCENSE },
+		{ "Wave Incense", WAVE_INCENSE },
+		{ "Wepear Berry", WEPEAR_BERRY },
+		{ "White Herb", WHITE_HERB },
+		{ "Wide Lens", WIDE_LENS },
+		{ "Wiki Berry", WIKI_BERRY },
+		{ "Wise Glasses", WISE_GLASSES },
+		{ "Yache Berry", YACHE_BERRY },
+		{ "Zap Plate", ZAP_PLATE },
+		{ "Zoom Lens", ZOOM_LENS },
+		{ "Cherish Ball", CHERISH_BALL },
+		{ "Dive Ball", DIVE_BALL },
+		{ "Dusk Ball", DUSK_BALL },
+		{ "Great Ball", GREAT_BALL },
+		{ "Heal Ball", HEAL_BALL },
+		{ "Luxury Ball", LUXURY_BALL },
+		{ "Master Ball", MASTER_BALL },
+		{ "Nest Ball", NEST_BALL },
+		{ "Net Ball", NET_BALL },
+		{ "Poke Ball", POKE_BALL },
+		{ "Premier Ball", PREMIER_BALL },
+		{ "Quick Ball", QUICK_BALL },
+		{ "Repeat Ball", REPEAT_BALL },
+		{ "Timer Ball", TIMER_BALL },
+		{ "TM01", TM01 },
+		{ "TM02", TM02 },
+		{ "TM03", TM03 },
+		{ "TM04", TM04 },
+		{ "TM05", TM05 },
+		{ "TM06", TM06 },
+		{ "TM07", TM07 },
+		{ "TM08", TM08 },
+		{ "TM09", TM09 },
+		{ "TM10", TM10 },
+		{ "TM11", TM11 },
+		{ "TM12", TM12 },
+		{ "TM13", TM13 },
+		{ "TM14", TM14 },
+		{ "TM15", TM15 },
+		{ "TM16", TM16 },
+		{ "TM17", TM17 },
+		{ "TM18", TM18 },
+		{ "TM19", TM19 },
+		{ "TM20", TM20 },
+		{ "TM21", TM21 },
+		{ "TM22", TM22 },
+		{ "TM23", TM23 },
+		{ "TM24", TM24 },
+		{ "TM25", TM25 },
+		{ "TM26", TM26 },
+		{ "TM27", TM27 },
+		{ "TM28", TM28 },
+		{ "TM29", TM29 },
+		{ "TM30", TM30 },
+		{ "TM31", TM31 },
+		{ "TM32", TM32 },
+		{ "TM33", TM33 },
+		{ "TM34", TM34 },
+		{ "TM35", TM35 },
+		{ "TM36", TM36 },
+		{ "TM37", TM37 },
+		{ "TM38", TM38 },
+		{ "TM39", TM39 },
+		{ "TM40", TM40 },
+		{ "TM41", TM41 },
+		{ "TM42", TM42 },
+		{ "TM43", TM43 },
+		{ "TM44", TM44 },
+		{ "TM45", TM45 },
+		{ "TM46", TM46 },
+		{ "TM47", TM47 },
+		{ "TM48", TM48 },
+		{ "TM49", TM49 },
+		{ "TM50", TM50 },
+		{ "TM51", TM51 },
+		{ "TM52", TM52 },
+		{ "TM53", TM53 },
+		{ "TM54", TM54 },
+		{ "TM55", TM55 },
+		{ "TM56", TM56 },
+		{ "TM57", TM57 },
+		{ "TM58", TM58 },
+		{ "TM59", TM59 },
+		{ "TM60", TM60 },
+		{ "TM61", TM61 },
+		{ "TM62", TM62 },
+		{ "TM63", TM63 },
+		{ "TM64", TM64 },
+		{ "TM65", TM65 },
+		{ "TM66", TM66 },
+		{ "TM67", TM67 },
+		{ "TM68", TM68 },
+		{ "TM69", TM69 },
+		{ "TM70", TM70 },
+		{ "TM71", TM71 },
+		{ "TM72", TM72 },
+		{ "TM73", TM73 },
+		{ "TM74", TM74 },
+		{ "TM75", TM75 },
+		{ "TM76", TM76 },
+		{ "TM77", TM77 },
+		{ "TM78", TM78 },
+		{ "TM79", TM79 },
+		{ "TM80", TM80 },
+		{ "TM81", TM81 },
+		{ "TM82", TM82 },
+		{ "TM83", TM83 },
+		{ "TM84", TM84 },
+		{ "TM85", TM85 },
+		{ "TM86", TM86 },
+		{ "TM87", TM87 },
+		{ "TM88", TM88 },
+		{ "TM89", TM89 },
+		{ "TM90", TM90 },
+		{ "TM91", TM91 },
+		{ "TM92", TM92 },
+		{ "Ultra Ball", ULTRA_BALL },
+		{ "Blue Scarf", BLUE_SCARF },
+		{ "Green Scarf", GREEN_SCARF },
+		{ "Luck Incense", LUCK_INCENSE },
+		{ "Pink Scarf", PINK_SCARF },
+		{ "Pure Incense", PURE_INCENSE },
+		{ "Reaper Cloth", REAPER_CLOTH },
+		{ "Red Scarf", RED_SCARF },
+		{ "Soothe Bell", SOOTHE_BELL },
+		{ "Yellow Scarf", YELLOW_SCARF },
+		{ "Amulet Coin", AMULET_COIN },
+		{ "Antidote", ANTIDOTE },
+		{ "Awakening", AWAKENING },
+		{ "Big Mushroom", BIG_MUSHROOM },
+		{ "Big Pearl", BIG_PEARL },
+		{ "Black Flute", BLACK_FLUTE },
+		{ "Blue Flute", BLUE_FLUTE },
+		{ "Blue Shard", BLUE_SHARD },
+		{ "Burn Heal", BURN_HEAL },
+		{ "Calcium", CALCIUM },
+		{ "Carbos", CARBOS },
+		{ "Cleanse Tag", CLEANSE_TAG },
+		{ "Damp Mulch", DAMP_MULCH },
+		{ "Dire Hit", DIRE_HIT },
+		{ "Dragon Scale", DRAGON_SCALE },
+		{ "Elixir", ELIXIR },
+		{ "Energy Root", ENERGY_ROOT },
+		{ "EnergyPowder", ENERGYPOWDER },
+		{ "Escape Rope", ESCAPE_ROPE },
+		{ "Ether", ETHER },
+		{ "Everstone", EVERSTONE },
+		{ "Exp. Share", EXP_SHARE },
+		{ "Fire Stone", FIRE_STONE },
+		{ "Fluffy Tail", FLUFFY_TAIL },
+		{ "Fresh Water", FRESH_WATER },
+		{ "Full Heal", FULL_HEAL },
+		{ "Full Restore", FULL_RESTORE },
+		{ "Gooey Mulch", GOOEY_MULCH },
+		{ "Green Shard", GREEN_SHARD },
+		{ "Growth Mulch", GROWTH_MULCH },
+		{ "Guard Spec.", GUARD_SPEC },
+		{ "Heal Powder", HEAL_POWDER },
+		{ "Heart Scale", HEART_SCALE },
+		{ "Honey", HONEY },
+		{ "HP Up", HP_UP },
+		{ "Hyper Potion", HYPER_POTION },
+		{ "Ice Heal", ICE_HEAL },
+		{ "Iron", IRON },
+		{ "Lava Cookie", LAVA_COOKIE },
+		{ "Leaf Stone", LEAF_STONE },
+		{ "Lemonade", LEMONADE },
+		{ "Lucky Egg", LUCKY_EGG },
+		{ "Max Elixir", MAX_ELIXIR },
+		{ "Max Ether", MAX_ETHER },
+		{ "Max Potion", MAX_POTION },
+		{ "Max Repel", MAX_REPEL },
+		{ "Max Revive", MAX_REVIVE },
+		{ "MooMoo Milk", MOOMOO_MILK },
+		{ "Moon Stone", MOON_STONE },
+		{ "Nugget", NUGGET },
+		{ "Old Gateau", OLD_GATEAU },
+		{ "Parlyz Heal", PARLYZ_HEAL },
+		{ "Pearl", PEARL },
+		{ "Poke Doll", POKE_DOLL },
+		{ "Potion", POTION },
+		{ "PP Max", PP_MAX },
+		{ "PP Up", PP_UP },
+		{ "Protein", PROTEIN },
+		{ "Rare Candy", RARE_CANDY },
+		{ "Red Flute", RED_FLUTE },
+		{ "Red Shard", RED_SHARD },
+		{ "Repel", REPEL },
+		{ "Revival Herb", REVIVAL_HERB },
+		{ "Revive", REVIVE },
+		{ "Sacred Ash", SACRED_ASH },
+		{ "Shoal Salt", SHOAL_SALT },
+		{ "Shoal Shell", SHOAL_SHELL },
+		{ "Smoke Ball", SMOKE_BALL },
+		{ "Soda Pop", SODA_POP },
+		{ "Stable Mulch", STABLE_MULCH },
+		{ "Star Piece", STAR_PIECE },
+		{ "Stardust", STARDUST },
+		{ "Sun Stone", SUN_STONE },
+		{ "Super Potion", SUPER_POTION },
+		{ "Super Repel", SUPER_REPEL },
+		{ "Thunderstone", THUNDERSTONE },
+		{ "TinyMushroom", TINYMUSHROOM },
+		{ "Up-Grade", UP_GRADE },
+		{ "Water Stone", WATER_STONE },
+		{ "White Flute", WHITE_FLUTE },
+		{ "X Accuracy", X_ACCURACY },
+		{ "X Attack", X_ATTACK },
+		{ "X Defend", X_DEFEND },
+		{ "X Sp. Def", X_SP_DEF },
+		{ "X Special", X_SPECIAL },
+		{ "X Speed", X_SPEED },
+		{ "Yellow Flute", YELLOW_FLUTE },
+		{ "Yellow Shard", YELLOW_SHARD },
+		{ "Zinc", ZINC },
+		{ "Dubious Disc", DUBIOUS_DISC },
+		{ "Dawn Stone", DAWN_STONE },
+		{ "Dusk Stone", DUSK_STONE },
+		{ "Electirizer", ELECTIRIZER },
+		{ "Magmarizer", MAGMARIZER },
+		{ "Odd Keystone", ODD_KEYSTONE },
+		{ "Oval Stone", OVAL_STONE },
+		{ "Protector", PROTECTOR },
+		{ "Shiny Stone", SHINY_STONE },
+		{ "Armor Fossil", ARMOR_FOSSIL },
+		{ "Claw Fossil", CLAW_FOSSIL },
+		{ "Dome Fossil", DOME_FOSSIL },
+		{ "Helix Fossil", HELIX_FOSSIL },
+		{ "Old Amber", OLD_AMBER },
+		{ "Rare Bone", RARE_BONE },
+		{ "Root Fossil", ROOT_FOSSIL },
+		{ "Skull Fossil", SKULL_FOSSIL }
+	};
+	return converter.find (str)->second;
 }
 
 void Item::set_name_from_string (std::string const & str) {

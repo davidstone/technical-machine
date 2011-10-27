@@ -1,4 +1,4 @@
-// Load Pokemon Online teams
+// Convert to / from PO's format
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_FILE_H_
-#define POKEMON_ONLINE_FILE_H_
+#ifndef POKEMON_ONLINE_CONVERSION_H_
+#define POKEMON_ONLINE_CONVERSION_H_
 
-#include <fstream>
 #include <string>
+#include "../ability.h"
+#include "../item.h"
+#include "../stat.h"
+#include "../move.h"
+#include "../species.h"
 
 namespace technicalmachine {
-class Team;
 namespace po {
 
-void load_team (Team & team, std::string const & name, unsigned size);
-void load_pokemon (Team & team, std::ifstream & file, unsigned size);
-unsigned converter (std::string const & data, std::string const & end, std::string const & line);
+Species id_to_species (int id);
+int species_to_id (Species species);
+Ability::Abilities id_to_ability (int id);
+int ability_to_id (Ability::Abilities ability);
+Item::Items id_to_item (int id);
+int item_to_id (Item::Items item);
+Move::Moves id_to_move (int id);
+int move_to_id (Move::Moves move);
+Nature::Natures id_to_nature (int id);
+int nature_to_id (Nature::Natures nature);
 
 } // namespace po
 } // namespace technicalmachine
-#endif // POKEMON_ONLINE_FILE_H_
+#endif // POKEMON_ONLINE_CONVERSION_H_

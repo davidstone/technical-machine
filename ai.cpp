@@ -47,8 +47,11 @@ int main (int argc, char* argv[]) {
 			client.run();
 		}
 		catch (network::InvalidPacket & error) {
-			std::cerr << error.what () << "\n";
+			constexpr unsigned time_in_seconds = 10;
+			std::cerr << error.what () << " Disconnected. Waiting " << time_in_seconds << " seconds and trying again.\n";
 			// I disconnect from the server at this point and try again, because this means an unrecoverable error.
+			sleep (time_in_seconds);
+			std::cerr << "Reconnecting.\n";
 		}
 	}
 

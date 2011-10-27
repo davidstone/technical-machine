@@ -160,7 +160,7 @@ void GenericClient::connect () {
 	}
 
 	if (error) {
-		std::cerr << "Error connecting, code: " << error << ". Waiting a few seconds and trying again.\n";
+		print_with_time_stamp ("Error connecting, code: " + error.message () + ". Waiting a few seconds and trying again.");
 		reconnect ();
 	}
 }

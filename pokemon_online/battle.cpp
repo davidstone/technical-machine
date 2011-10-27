@@ -1,4 +1,4 @@
-// Load Pokemon Online teams
+// Pokemon Online battle logic
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_FILE_H_
-#define POKEMON_ONLINE_FILE_H_
-
-#include <fstream>
+#include "battle.h"
 #include <string>
+#include <vector>
+#include "../pokemon.h"
+#include "../team.h"
 
 namespace technicalmachine {
-class Team;
 namespace po {
 
-void load_team (Team & team, std::string const & name, unsigned size);
-void load_pokemon (Team & team, std::ifstream & file, unsigned size);
-unsigned converter (std::string const & data, std::string const & end, std::string const & line);
+Battle::Battle (std::string const & opponent, int battle_depth):
+	GenericBattle::GenericBattle (opponent, battle_depth) {
+}
 
 } // namespace po
 } // namespace technicalmachine
-#endif // POKEMON_ONLINE_FILE_H_

@@ -77,24 +77,13 @@ Gender & Gender::operator= (Genders other) {
 	return *this;
 }
 
-class Gender_From_String {
-	public:
-		std::map <std::string, Gender::Genders> gender;
-		Gender_From_String ():
-			gender {
-				{ "None", Gender::GENDERLESS },
-				{ "No Gender", Gender::GENDERLESS },
-				{ "Female", Gender::FEMALE },
-				{ "Male", Gender::MALE }
-			} {
-		}
-		Gender::Genders find (std::string const & str) const {
-			return gender.find (str)->second;
-		}
-};
-
 void Gender::set_name_from_string (std::string const & str) {
-	static Gender_From_String const converter;
-	gender = converter.find (str);
+	static std::map <std::string, Genders> const converter {
+		{ "None", GENDERLESS },
+		{ "No Gender", GENDERLESS },
+		{ "Female", FEMALE },
+		{ "Male", MALE }
+	};
+	gender = converter.find (str)->second;
 }
-}
+} // namespace technicalmachine
