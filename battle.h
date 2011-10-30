@@ -29,10 +29,9 @@
 #include "weather.h"
 
 namespace technicalmachine {
-
 namespace network {
 class GenericClient;
-}
+} // namespace network
 
 class GenericBattle {
 	public:

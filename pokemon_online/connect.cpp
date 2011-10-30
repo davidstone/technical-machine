@@ -25,6 +25,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include "battle_settings.h"
 #include "inmessage.h"
 #include "outmessage.h"
 
@@ -68,6 +69,16 @@ void get_speaker_and_message (InMessage & msg, std::string & speaker, std::strin
 	message = speaker_and_message.substr (delimiter_position + delimiter.size());
 }
 
+enum Challenge_Description {
+	SENT = 0,
+	ACCEPTED = 1,
+	CANCELED = 2,
+	BUSY = 3,
+	REFUSED = 4,
+	INVALID_TEAM = 5,
+	DIFFERENT_GENERATION = 6
+};
+
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::WHAT_ARE_YOU:
@@ -79,7 +90,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		case InMessage::LOG_IN: {
-			int32_t const player_id = msg.read_int ();
+			uint32_t const player_id = msg.read_int ();
 			std::string const player_name = msg.read_string ();
 			std::string const info = msg.read_string ();
 			int8_t const authority = msg.read_byte ();
@@ -107,12 +118,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
-		case InMessage::SEND_MESSAGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		case InMessage::SEND_MESSAGE: {
+			std::string const message = msg.read_string ();
+			print_with_time_stamp (message);
 			break;
+		}
 		case InMessage::PLAYERS_LIST: {
-			// The server sends this message whenever a whole bunch of stuff about a user changes or when they log in. This message is sent if a user's rating changes, for instance, so we get it at the end of the every battle.
+			// The server sends this message whenever a whole bunch of stuff about a user changes or when they log in. This message is sent if a user's rating changes, for instance, so we get it at the end of the every rated battle.
 			uint32_t const user_id = msg.read_int ();
 			std::string const user_string = msg.read_string ();
 			
@@ -130,6 +142,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			if (flags % 8 >= 4)
 //				away = true;
 //			int16_t rating = msg.read_short ();
+
 			// This should help if a user leaves and rejoins the server with a different user ID
 			user_id_to_name [user_id] = user_string;
 			user_name_to_id [user_string] = user_id;
@@ -140,20 +153,39 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::CHALLENGE_STUFF: {
-			uint8_t byte = msg.read_byte ();
-			std::cerr << "byte: " << static_cast <int> (byte) << '\n';
+			Challenge_Description const description = static_cast <Challenge_Description> (msg.read_byte ());
 			uint32_t user_id = msg.read_int ();
-			std::string const & user = user_id_to_name.find (user_id)->second;
-			std::cerr << user + '\n';
-			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			std::string const & user = get_user_name (user_id);
+			uint32_t const clauses = msg.read_int ();
+			uint8_t const mode = msg.read_byte ();
+			BattleSettings const settings (clauses, mode);
+			switch (description) {
+				case SENT:
+					handle_incoming_challenge (user, settings);
+					break;
+				case ACCEPTED: {
+					bool const accepted = true;
+					bool const challenger = true;
+					handle_finalize_challenge (user, accepted, challenger);
+					break;
+				}
+				default: {
+					bool const accepted = false;
+					bool const challenger = true;
+					handle_finalize_challenge (user, accepted, challenger);
+					break;
+				}
+			}
 			break;
 		}
-		case InMessage::ENGAGE_BATTLE:
-			// A battle started on the server.
+		case InMessage::ENGAGE_BATTLE: {
+			std::cerr << "ENGAGE_BATTLE\n";
+			uint32_t battle_id = msg.read_int ();
 			break;
+		}
 		case InMessage::BATTLE_FINISHED:
-			// A battle finished on the server.
+			std::cerr << "BATTLE_FINISHED\n";
+			std::cerr << "size: " << msg.buffer.size () << '\n';
 			break;
 		case InMessage::BATTLE_MESSAGE:
 			std::cerr << "code: " << code << '\n';
@@ -346,7 +378,29 @@ void Client::authenticate (std::string const & salt) {
 	msg.write_string (hash);
 	msg.send (*socket);
 }
- 
+
+void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
+	OutMessage msg (OutMessage::CHALLENGE_STUFF);
+	// If I am the challenger, I don't write the accepted byte.
+	if (!challenger)
+		msg.write_byte (accepted ? ACCEPTED : REFUSED);
+	msg.write_int (get_user_id (opponent));
+	std::string verb;
+	if (accepted) {
+//		Battle battle (opponent, depth);
+//		challenges.insert (std::pair <std::string, Battle> (opponent, battle));
+//		msg.write_team (battle.ai);
+		verb = "Accepted";
+	}
+	else
+		verb = "Rejected";
+	msg.send (*socket);
+	print_with_time_stamp (verb + " challenge vs. " + opponent);
+}
+
+void Client::handle_remove_challenge (std::string const & opponent) {
+}
+
 void Client::join_channel (std::string const & channel) {
 }
 
@@ -363,7 +417,7 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
-	send_private_message (user_name_to_id.find (user)->second, message);
+	send_private_message (get_user_id (user), message);
 }
 
 void Client::send_private_message (uint32_t user_id, std::string const & message) {
@@ -373,7 +427,7 @@ void Client::send_private_message (uint32_t user_id, std::string const & message
 	msg.send (*socket);
 }
 
-void Client::handle_version_control (std::string const & server_version) {
+void Client::handle_version_control (std::string const & server_version) const {
 //	OutMessage msg (OutMessage::VERSION_CONTROL);
 	// Pretend to be the most recent version because this is the standard I'm coding against.
 	std::string const version = "1.0.30";
@@ -381,17 +435,25 @@ void Client::handle_version_control (std::string const & server_version) {
 		std::cerr << "Server version is: " + server_version + "\nUser's 'version': " + version + "\n";
 }
 
-void Client::handle_server_name (std::string const & server_name) {
+void Client::handle_server_name (std::string const & server_name) const {
 	std::cout << "Server name: " + server_name + '\n';
 }
 
-void Client::handle_announcement (std::string const & announcement) {
+void Client::handle_announcement (std::string const & announcement) const {
 	std::cout << announcement + '\n';
 }
 
 void Client::handle_private_message (uint32_t user_id, std::string const & message) {
-	std::string const user = user_id_to_name.find (user_id)->second;
+	std::string const user = get_user_name (user_id);
 	GenericClient::handle_private_message (user, message);
+}
+
+uint32_t Client::get_user_id (std::string const & name) const {
+	return user_name_to_id.find (name)->second;
+}
+
+std::string Client::get_user_name (uint32_t id) const {
+	return user_id_to_name.find (id)->second;
 }
 
 } // namespace po

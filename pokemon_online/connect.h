@@ -23,28 +23,26 @@
 #include <map>
 #include <string>
 
-//#include "battle.h"
 #include "inmessage.h"
 #include "../network/connect.h"
 
 namespace technicalmachine {
 namespace po {
 
-class Channel;
-class Metagame;
+class Clauses;
 
 class Client : public network::GenericClient {
 	private:
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
 //		std::map <std::string, uint32_t> channels;
-//		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
-//		std::map <uint8_t, Battle> battles;			// Battles currently underway
 	public:
 		explicit Client (int depth_);
 	private:
 		void log_in ();
 		void authenticate (std::string const & salt);
+		void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger);
+		void handle_remove_challenge (std::string const & opponent);
 	public:
 		void run ();
 	private:
@@ -61,10 +59,12 @@ class Client : public network::GenericClient {
 		void send_private_message (std::string const & user, std::string const & message);
 		void send_private_message (uint32_t user_id, std::string const & message);
 	private:
-		void handle_version_control (std::string const & server_version);
-		void handle_server_name (std::string const & server_name);
-		void handle_announcement (std::string const & announcement);
+		void handle_version_control (std::string const & server_version) const;
+		void handle_server_name (std::string const & server_name) const;
+		void handle_announcement (std::string const & announcement) const;
 		void handle_private_message (uint32_t user_id, std::string const & message);
+		uint32_t get_user_id (std::string const & name) const;
+		std::string get_user_name (uint32_t id) const;
 };
 
 } // namespace po

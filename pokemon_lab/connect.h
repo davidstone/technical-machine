@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include "battle.h"
 #include "inmessage.h"
 #include "../network/connect.h"
 
@@ -37,8 +36,6 @@ class Metagame;
 class Client : public network::GenericClient {
 	private:
 		std::map <std::string, uint32_t> channels;
-		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
-		std::map <uint8_t, Battle> battles;			// Battles currently underway
 	public:
 		explicit Client (int depth_);
 	private:
@@ -62,10 +59,7 @@ class Client : public network::GenericClient {
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
 		void handle_channel_list (std::vector <Channel> const & channels);
 		void send_battle_challenge (std::string const & opponent);
-		void handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length);
 		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
-		void handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party);
-		void handle_victory (uint32_t field_id, int16_t party_id);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
 		void handle_error_message (uint8_t code, std::string const & details) const;
@@ -76,6 +70,6 @@ class Client : public network::GenericClient {
 		void send_private_message (std::string const & user, std::string const & message);
 };
 
-}
-}
-#endif
+} // namespace pl
+} // namespace technicalmachine
+#endif // POKEMON_LAB_CONNECT_H_

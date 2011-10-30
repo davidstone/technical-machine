@@ -33,6 +33,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "battle_settings.h"
+#include "../battle.h"
 #include "../evaluate.h"
 #include "../load_stats.h"
 
@@ -81,7 +83,7 @@ void create_sorted_vector (std::string const & file_name, std::vector <std::stri
 	// I use a sorted std::vector instead of a std::set because it has faster performance uses less memory.
 	// My use pattern is distinct insertion period after which the entire vector can be sorted (faster than inserting into a std::set), followed by lookups (faster in a std::binary_search of a std::vector than in a std::set.find)
 	// Analysis of this can be found here: http://lafstern.org/matt/col1.pdf
-	// I don't use a sorted vector all of the time because for my other structures, I am either searching for every element in my list against some other tex, or am I just picking an element at random.
+	// I don't use a sorted vector all of the time because for my other structures, I am either searching for every element in my list against some other text, or am I just picking an element at random.
 	sorted.clear ();
 	std::ifstream file (file_name);
 	std::string line;
@@ -202,6 +204,41 @@ void GenericClient::handle_channel_message (uint32_t channel_id, std::string con
 	}
 }
 
+void GenericClient::handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings) {
+	bool const accepted = (settings.are_acceptable () and is_trusted (opponent)) ? true : false;
+	bool const challenger = false;
+	handle_finalize_challenge (opponent, accepted, challenger);
+}
+
+void GenericClient::add_pending_challenge (GenericBattle const & battle) {
+	challenges.insert (std::pair <std::string, GenericBattle> (battle.foe.player, battle));
+}
+
+void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
+	challenges.erase (opponent);
+}
+
+void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
+ 	GenericBattle & battle = challenges.find (opponent)->second;
+	battle.party = party;
+	battles.insert (std::pair <uint32_t, GenericBattle> (battle_id, battle));
+	challenges.erase (opponent);
+	pause_at_start_of_battle ();
+}
+
+void GenericClient::pause_at_start_of_battle () {
+	// The bot pauses before it sends actions at the start of the battle to give spectators a chance to join.
+	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
+	pause.wait ();
+}
+
+void GenericClient::handle_victory (uint32_t battle_id, uint8_t party_id) {
+	GenericBattle & battle = battles.find (battle_id)->second;
+	std::string const verb = (battle.party == party_id) ? "Won" : "Lost";
+	print_with_time_stamp (verb + " a battle vs. " + battle.foe.player);
+	battles.erase (battle_id);
+}
+
 bool GenericClient::is_highlighted (std::string const & message) const {
 	// Best way I've thought of to see if anything in highlights is in the message is to do a search in the message on each of the elements in highlights.
 	// Problems with this approach are that most people want to search for words, not just strings of characters.
@@ -253,6 +290,8 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		std::string const delimiter = " ";
 		size_t const delimiter_position = request.find (delimiter);
 		std::string const command = request.substr (1, delimiter_position - 1);
+		// I may replace this with a version that hashes the command and switches instead
+		// This currently compares a lot of strings, which may grow difficult to manage with many commands.
 		if (command == "challenge") {
 			if (request.length () >= delimiter_position + delimiter.length()) {
 				std::string const opponent = request.substr (delimiter_position + delimiter.length ());
@@ -318,11 +357,5 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 	}
 }
 
-void GenericClient::pause_at_start_of_battle () {
-	// The bot pauses before it sends actions at the start of the battle to give spectators a chance to join.
-	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
-	pause.wait ();
-}
-
-}
-}
+} // namespace network
+} // namespace technicalmachine

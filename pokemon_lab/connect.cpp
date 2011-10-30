@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "battle.h"
+#include "battle_settings.h"
 #include "inmessage.h"
 #include "outmessage.h"
 
@@ -153,7 +154,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::SERVER_INFO:
-			// Apparently unused
+			// Apparently unused, maybe it's only for connecting to the registry
 			break;
 		case InMessage::CHANNEL_INFO: {
 			uint32_t const id = msg.read_int();
@@ -228,7 +229,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 					period_length = msg.read_int ();
 				}
 			}
-*/			handle_incoming_challenge (user, generation, active_party_size, max_team_length);
+*/			BattleSettings settings (generation, active_party_size, max_team_length);
+			handle_incoming_challenge (user, settings);
 			break;
 		}
 		case InMessage::FINALIZE_CHALLENGE: {
@@ -240,20 +242,20 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::CHALLENGE_WITHDRAWN: {
 			std::string const opponent = msg.read_string ();
-			challenges.erase (opponent);
+			handle_challenge_withdrawn (opponent);
 		}
 		case InMessage::BATTLE_BEGIN: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			std::string const opponent = msg.read_string ();
 			uint8_t const party = msg.read_byte ();
 /*			int16_t const metagame = msg.read_short ();
 			bool const rated = msg.read_byte ();
 			std::string const battle_id = msg.read_string ();
-*/			handle_battle_begin (field_id, opponent, party);
+*/			handle_battle_begin (battle_id, opponent, party);
 			break;
 		}
 		case InMessage::REQUEST_ACTION: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t  const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			bool const replace = msg.read_byte ();
@@ -288,8 +290,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				}
 			}
 			can_switch = can_switch_to;
-			Battle & battle = battles.find (field_id)->second;
-			battle.handle_request_action (*this, field_id, slot, index, replace, switches, can_switch, forced, moves);
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			battle.handle_request_action (*this, battle_id, slot, index, replace, switches, can_switch, forced, moves);
 			break;
 		}
 		case InMessage::BATTLE_POKEMON: {
@@ -306,7 +308,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_PRINT: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const category = msg.read_byte ();
 			int16_t const message_id = msg.read_short ();
 			uint8_t argc = msg.read_byte ();
@@ -315,37 +317,39 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				std::string const argument = msg.read_string ();
 				arguments.push_back (argument);
 			}
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_print (category, message_id, arguments);
 			break;
 		}
 		case InMessage::BATTLE_VICTORY: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
+			// I suspect the int16_t may be a typo in the PL protocol.
+			// Every other message sends uint8_t for party_id;
 			int16_t const party_id = msg.read_short ();
-			handle_victory (field_id, party_id);
+			handle_victory (battle_id, party_id);
 			break;
 		}
 		case InMessage::BATTLE_USE_MOVE: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			int16_t const move_id = msg.read_short ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_use_move (party, slot, nickname, move_id);
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
-/*			uint32_t const field_id = msg.read_int ();
+/*			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_withdraw (party, slot, nickname);
 */			break;
 		}
 		case InMessage::BATTLE_SEND_OUT: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
@@ -354,48 +358,48 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			Gender gender;
 			gender.from_simulator_int (msg.read_byte ());
 			uint8_t const level = msg.read_byte();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
 			break;
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			int16_t const change_in_health = msg.read_short ();
 			int16_t const remaining_health = msg.read_short ();
 			int16_t const denominator = msg.read_short ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_health_change (party, slot, change_in_health, remaining_health, denominator);
 			break;
 		}
 		case InMessage::BATTLE_SET_PP: {
-/*			uint32_t const field_id = msg.read_int ();
+/*			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const pp = msg.read_byte ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_set_pp (party, slot, pp);
 */			break;
 		}
 		case InMessage::BATTLE_FAINTED: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_fainted (party, slot, nickname);
 			break;
 		}
 		case InMessage::BATTLE_BEGIN_TURN: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint16_t const turn_count = msg.read_short ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_begin_turn (turn_count);
 			break;
 		}
 		case InMessage::SPECTATOR_BEGIN: {
-/*			uint32_t const field_id = msg.read_int ();
+/*			uint32_t const battle_id = msg.read_int ();
 			std::string const trainer1 = msg.read_string ();
 			std::string const trainer2 = msg.read_string ();
 			uint8_t const party_size = msg.read_byte ();
@@ -409,13 +413,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 */			break;
 		}
 		case InMessage::BATTLE_SET_MOVE: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const pokemon = msg.read_byte ();
 			uint8_t const move_slot = msg.read_byte ();
 			int16_t const new_move = msg.read_short ();
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const max_pp = msg.read_byte ();
-			Battle & battle = battles.find (field_id)->second;
+			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
 			battle.handle_set_move (pokemon, move_slot, new_move, pp, max_pp);
 			break;
 		}
@@ -463,7 +467,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_STATUS_CHANGE: {
-			uint32_t const field_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			uint8_t const type = msg.read_byte ();
@@ -680,22 +684,8 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	msg.send (*socket);
 }
 
-void Client::handle_incoming_challenge (std::string const & user, uint8_t generation, uint32_t n, uint32_t team_length) {
-	bool accepted;
-	if (n > 1 or team_length != 6 or (user != "Technical Machine" and user != "david stone"))
-		accepted = false;
-	else
-		accepted = true;
-	bool challenger = false;
-	handle_finalize_challenge (user, accepted, challenger);
-}
-
 void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
-	OutMessage::Message code;
-	if (challenger)
-		code = OutMessage::CHALLENGE_TEAM;
-	else
-		code = OutMessage::RESOLVE_CHALLENGE;
+	OutMessage::Message const code = challenger ? OutMessage::CHALLENGE_TEAM : OutMessage::RESOLVE_CHALLENGE;
 	OutMessage msg (code);
 	msg.write_string (opponent);
 	// If I am the challenger, I don't write the accepted byte.
@@ -704,7 +694,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	std::string verb;
 	if (accepted) {
 		Battle battle (opponent, depth);
-		challenges.insert (std::pair <std::string, Battle> (opponent, battle));
+		add_pending_challenge (battle);
 		msg.write_team (battle.ai);
 		verb = "Accepted";
 	}
@@ -712,25 +702,6 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 		verb = "Rejected";
 	msg.send (*socket);
 	print_with_time_stamp (verb + " challenge vs. " + opponent);
-}
-
-void Client::handle_battle_begin (uint32_t field_id, std::string const & opponent, uint8_t party) {
- 	Battle & battle = challenges.find (opponent)->second;
-	battle.party = party;
-	battles.insert (std::pair <uint32_t, Battle> (field_id, battle));
-	challenges.erase (opponent);
-	pause_at_start_of_battle ();
-}
-
-void Client::handle_victory (uint32_t field_id, int16_t party_id) {
-	std::string verb;
-	Battle & battle = battles.find (field_id)->second;
-	if (battle.party == party_id)
-		verb = "Won";
-	else
-		verb = "Lost";
-	print_with_time_stamp (verb + " a battle vs. " + battle.foe.player);
-	battles.erase (field_id);
 }
 
 void Client::handle_metagame_list (std::vector <Metagame> const & metagames) {
@@ -812,5 +783,5 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.send (*socket);
 }
 
-}		// namespace pl
-}		// namespace technicalmachine
+} // namespace pl
+} // namespace technicalmachine

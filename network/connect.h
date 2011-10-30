@@ -23,13 +23,16 @@
 #include <map>
 #include <string>
 #include <vector>
+
 #include <boost/asio.hpp>
 
+#include "../battle.h"
 #include "../evaluate.h"
 #include "../species.h"
 
 namespace technicalmachine {
 namespace network {
+class GenericBattleSettings;
 
 class GenericClient {
 	protected:
@@ -46,8 +49,8 @@ class GenericClient {
 		int detailed [END_SPECIES][7];
 		Score score;
 	protected:
-//		std::map <std::string, Battle> challenges;		// Battles that have not yet begun
-//		std::map <uint8_t, Battle> battles;			// Battles currently underway
+		std::map <std::string, GenericBattle> challenges;		// Battles that have not yet begun
+		std::map <uint8_t, GenericBattle> battles;					// Battles currently underway
 		int depth;
 	public:
 		boost::asio::io_service io;
@@ -80,6 +83,13 @@ class GenericClient {
 		std::string time_stamp () const;
 	protected:
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
+		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
+		void add_pending_challenge (GenericBattle const & battle);
+		void handle_challenge_withdrawn (std::string const & opponent);
+		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party);
+		void pause_at_start_of_battle ();
+		void handle_victory (uint32_t battle_id, uint8_t party_id);
+		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 	private:
 		bool is_highlighted (std::string const & message) const;
 	protected:
@@ -94,9 +104,7 @@ class GenericClient {
 		std::string get_response () const;
 	private:
 		size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target);
-	protected:
-		void pause_at_start_of_battle ();
 };
-}
-}
+} //namespace network
+} // namespace technicalmachine
 #endif  // NETWORK_CONNECT_H_

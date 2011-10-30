@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_OUTMESSAGE_H_
-#define POKEMON_LAB_OUTMESSAGE_H_
+#ifndef POKEMON_ONLINE_OUTMESSAGE_H_
+#define POKEMON_ONLINE_OUTMESSAGE_H_
 
 #include <cstdint>
 #include <string>
@@ -40,7 +40,6 @@ class OutMessage : public network::OutMessage {
 //		void write_switch (uint32_t field_id, uint8_t slot);
 //		void write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame = 0, std::vector <uint8_t> const & clauses = std::vector <uint8_t> (), bool timing = true, uint32_t pool = 30, uint8_t periods = 3, uint32_t period_length = 30);
 		void send (boost::asio::ip::tcp::socket & socket);
-//		static int tm_to_pl_species (Species id);
 		enum Message {
 			WHAT_ARE_YOU = 0,
 			WHO_ARE_YOU = 1,
@@ -104,6 +103,6 @@ class OutMessage : public network::OutMessage {
 		};
 };
 
-}
-}
-#endif
+} // namespace po
+} // namespace technicalmachine
+#endif // POKEMON_ONLINE_OUTMESSAGE_H_

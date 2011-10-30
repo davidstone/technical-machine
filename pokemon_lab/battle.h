@@ -42,6 +42,6 @@ class Battle : public GenericBattle {
 		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
 };
 
-} // namespace po
+} // namespace pl
 } // namespace technicalmachine
 #endif // POKEMON_LAB_BATTLE_H_

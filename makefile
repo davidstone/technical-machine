@@ -19,8 +19,8 @@ aiobjects = \
 	ai.o ability.o analyze_logs.o battle.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o load_stats.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o \
 	crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o \
 	network/connect.o network/inmessage.o network/outmessage.o \
-	pokemon_lab/battle.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
-	pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
+	pokemon_lab/battle.o pokemon_lab/battle_settings.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
+	pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
 
 predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -145,7 +145,7 @@ crypt/rijndael.o: crypt/rijndael.cpp crypt/rijndael.h
 crypt/sha2.o: crypt/sha2.c crypt/sha2.h
 
 network/connect.o: network/connect.cpp network/connect.h evaluate.h \
- load_stats.h species.h
+ species.h network/battle_settings.h load_stats.h
 network/inmessage.o: network/inmessage.cpp network/inmessage.h \
  network/buffer_overrun.h network/invalid_packet.h
 network/outmessage.o: network/outmessage.cpp network/outmessage.h
@@ -156,6 +156,15 @@ pokemon_lab/battle.o: pokemon_lab/battle.cpp pokemon_lab/battle.h \
  teampredictor.h pokemon_lab/connect.h pokemon_lab/inmessage.h \
  network/inmessage.h network/connect.h evaluate.h pokemon_lab/outmessage.h \
  network/outmessage.h
+pokemon_lab/battle_settings.o: pokemon_lab/battle_settings.cpp \
+ pokemon_lab/battle_settings.h network/battle_settings.h
+pokemon_lab/connect.o: pokemon_lab/connect.cpp pokemon_lab/connect.h \
+ pokemon_lab/battle.h battle.h analyze_logs.h move.h active.h type.h species.h \
+ gender.h team.h pokemon.h ability.h item.h stat.h status.h weather.h \
+ pokemon_lab/inmessage.h network/inmessage.h network/connect.h \
+ evaluate.h pokemon_lab/battle_settings.h network/battle_settings.h \
+ pokemon_lab/outmessage.h network/outmessage.h crypt/get_md5.h \
+ crypt/get_sha2.h crypt/rijndael.h
 pokemon_lab/file.o: pokemon_lab/file.cpp ability.h gender.h item.h move.h \
  active.h type.h stat.h species.h pokemon.h status.h team.h pokemon_lab/file.h
 pokemon_lab/inmessage.o: pokemon_lab/inmessage.cpp pokemon_lab/inmessage.h \
@@ -166,14 +175,18 @@ pokemon_lab/outmessage.o: pokemon_lab/outmessage.cpp pokemon_lab/outmessage.h \
  species.h network/outmessage.h ability.h active.h gender.h item.h move.h type.h \
  stat.h status.h team.h pokemon.h
 
+pokemon_online/battle_settings.o: pokemon_online/battle_settings.cpp \
+ pokemon_online/battle_settings.h network/battle_settings.h
+pokemon_online/connect.o: pokemon_online/connect.cpp pokemon_online/connect.h \
+ pokemon_online/inmessage.h network/inmessage.h network/connect.h evaluate.h \
+ species.h pokemon_online/battle_settings.h network/battle_settings.h \
+ pokemon_online/outmessage.h network/outmessage.h crypt/get_md5.h team.h \
+ active.h pokemon.h ability.h gender.h item.h move.h type.h stat.h status.h
 pokemon_online/conversion.o: pokemon_online/conversion.cpp pokemon_online/conversion.h \
  ability.h item.h move.h active.h type.h species.h
 pokemon_online/file.o: pokemon_online/file.cpp pokemon_online/file.h \
  ability.h active.h type.h species.h stat.h pokemon.h gender.h \
  item.h status.h team.h move.h
-pokemon_online/connect.o: pokemon_online/connect.cpp pokemon_online/connect.h \
- network/connect.h evaluate.h species.h pokemon_online/outmessage.h \
- network/outmessage.h
 pokemon_online/inmessage.o: pokemon_online/inmessage.cpp pokemon_online/inmessage.h \
  network/inmessage.h pokemon_online/connect.h network/connect.h evaluate.h \
  species.h network/invalid_packet.h
