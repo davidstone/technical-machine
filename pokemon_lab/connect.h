@@ -47,7 +47,7 @@ class Client : public network::GenericClient {
 	public:
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
-		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message);
+		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const;
 		void handle_password_challenge (InMessage msg);
 		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);
 		std::string get_shared_secret (int secret_style, std::string const & salt);
@@ -63,7 +63,7 @@ class Client : public network::GenericClient {
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violation);
 		void handle_error_message (uint8_t code, std::string const & details) const;
-		void handle_important_message (int32_t channel, std::string const & sender, std::string const & message);
+		void handle_important_message (int32_t channel, std::string const & sender, std::string const & message) const;
 	public:
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_channel_message (std::string channel, std::string const & message);

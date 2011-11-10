@@ -29,7 +29,8 @@
 namespace technicalmachine {
 namespace po {
 
-OutMessage::OutMessage (uint8_t code) : network::OutMessage::OutMessage (code) {
+OutMessage::OutMessage (uint8_t code):
+	network::OutMessage::OutMessage (code) {
 }
 
 void OutMessage::write_string (std::string const & str) {
@@ -104,21 +105,31 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	write_byte (show_team);
 }
 
-/*void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {
-	write_int (field_id);
-	write_byte (0);
+enum Choice {
+	CANCEL = 0,
+	ATTACK = 1,
+	SWITCH = 2,
+	REARRANGE = 3,
+	CENTER_MOVE = 4,
+	DRAW = 5
+};
+
+void OutMessage::write_move (uint32_t battle_id, uint8_t move_index, uint8_t target) {
+	write_int (battle_id);
+	write_byte (1);
+	write_byte (Choice::ATTACK);
 	write_byte (move_index);
 	write_byte (target);
 }
 
-void OutMessage::write_switch (uint32_t field_id, uint8_t slot) {
-	write_int (field_id);
+void OutMessage::write_switch (uint32_t battle_id, uint8_t slot) {
+	write_int (battle_id);
 	write_byte (1);
+	write_byte (Choice::SWITCH);
 	write_byte (slot);
-	write_byte (0);
 }
 
-void OutMessage::write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame, std::vector <uint8_t> const & clauses, bool timing, uint32_t pool, uint8_t periods, uint32_t period_length) {
+/*void OutMessage::write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame, std::vector <uint8_t> const & clauses, bool timing, uint32_t pool, uint8_t periods, uint32_t period_length) {
 	write_string (opponent);
 	write_byte (generation);
 	write_int (party_size);

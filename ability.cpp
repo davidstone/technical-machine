@@ -34,7 +34,7 @@ Ability::Ability (Abilities ability):
 	name (ability) {
 }
 
-bool Ability::blocks_switching (Team const & switcher, Weather const weather) const {
+bool Ability::blocks_switching (Team const & switcher, Weather const & weather) const {
 	switch (name) {
 		case SHADOW_TAG:
 			if (switcher.pokemon->ability.name != Ability::SHADOW_TAG)

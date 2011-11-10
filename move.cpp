@@ -1260,7 +1260,13 @@ bool Move::is_struggle_or_switch () const {
 }
 
 bool Move::is_phaze (Moves name) {
-	return name == ROAR or name == WHIRLWIND;
+	switch (name) {
+		case ROAR:
+		case WHIRLWIND:
+			return true;
+		default:
+			return false;
+	}
 }
 
 bool Move::is_phaze () const {
@@ -1268,7 +1274,6 @@ bool Move::is_phaze () const {
 }
 
 bool Move::is_healing (Moves name) {
-	bool healing;
 	switch (name) {
 		case HEAL_ORDER:
 		case MILK_DRINK:
@@ -1282,11 +1287,10 @@ bool Move::is_healing (Moves name) {
 		case SWALLOW:
 		case SYNTHESIS:
 		case WISH:
-			healing = true;
+			return true;
 		default:
-			healing = false;
+			return false;
 	}
-	return healing;
 }
 
 bool Move::is_healing () const {
@@ -1294,7 +1298,6 @@ bool Move::is_healing () const {
 }
 
 bool Move::is_blocked_by_gravity () const {
-	bool blocked;
 	switch (name) {
 		case BOUNCE:
 		case FLY:
@@ -1302,35 +1305,30 @@ bool Move::is_blocked_by_gravity () const {
 		case JUMP_KICK:
 		case MAGNET_RISE:
 		case SPLASH:
-			blocked = true;
+			return true;
 		default:
-			blocked = false;
+			return false;
 	}
-	return blocked;
 }
 
 bool Move::is_usable_while_sleeping () const {
-	bool usable;
 	switch (name) {
 		case SLEEP_TALK:
 		case SNORE:
-			usable = true;
+			return true;
 		default:
-			usable = false;
+			return false;
 	}
-	return usable;
 }
 
 bool Move::is_usable_while_frozen () const {
-	bool usable;
 	switch (name) {
 		case FLAME_WHEEL:
 		case SACRED_FIRE:
-			usable = true;
+			return true;
 		default:
-			usable = false;
+			return false;
 	}
-	return usable;
 }
 
 bool Move::is_self_KO () const {

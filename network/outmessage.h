@@ -36,4 +36,4 @@ class OutMessage {
 
 } // namespace technicalmachine
 } // namespace network
-#endif  // NETWORK_OUTMESSAGE_H_
+#endif // NETWORK_OUTMESSAGE_H_

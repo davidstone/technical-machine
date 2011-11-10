@@ -40,26 +40,28 @@ class GenericBattle {
 	protected:
 		Weather weather;
 		Log log;
+		std::vector <Species> slot_memory;
 		int depth;
 	public:
 		uint8_t party;
 	protected:
 		GenericBattle (std::string const & opponent, int battle_depth);
 	public:
-		void handle_begin_turn (uint16_t turn_count);
+		void handle_begin_turn (uint16_t turn_count) const;
 	protected:
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
 		Move::Moves determine_action (network::GenericClient & client);
 	public:
 		void handle_use_move (uint8_t moving_party, uint8_t slot, std::string const & nickname, int16_t move_id);
-		void handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname);
+		void handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) const; // does nothing
 		void handle_send_out (uint8_t party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
 		void handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator);
 	private:
 		void correct_hp_and_report_errors (Team & team);
 	public:
 		void handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp);
-		void handle_fainted (uint8_t fainting_party, uint8_t slot, std::string const & nickname);
+		void handle_fainted (uint8_t fainting_party, uint8_t slot);
+		uint8_t switch_slot (Move::Moves move) const;
 };
 
 } // namespace technicalmachine

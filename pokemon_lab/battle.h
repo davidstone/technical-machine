@@ -31,14 +31,11 @@ namespace pl {
 class Client;
 
 class Battle : public GenericBattle {
-	private:
-		std::vector <Species> slot_memory;
 	public:
 		Battle (std::string const & opponent, int battle_depth);
 		void handle_request_action (Client & client, uint32_t field_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves);
 		void handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments);
 		void update_active_print (Log & log, std::vector <std::string> const & arguments);
-		uint8_t switch_slot (Move::Moves move) const;
 		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
 };
 

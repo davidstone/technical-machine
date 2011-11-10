@@ -49,8 +49,8 @@ class GenericClient {
 		int detailed [END_SPECIES][7];
 		Score score;
 	protected:
-		std::map <std::string, GenericBattle> challenges;		// Battles that have not yet begun
-		std::map <uint8_t, GenericBattle> battles;					// Battles currently underway
+		std::map <std::string, std::shared_ptr <GenericBattle> > challenges;		// Battles that have not yet begun
+		std::map <uint8_t, std::shared_ptr <GenericBattle> > battles;					// Battles currently underway
 		int depth;
 	public:
 		boost::asio::io_service io;
@@ -59,7 +59,7 @@ class GenericClient {
 	public:
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 		int chattiness;
-		explicit GenericClient (int depth_);
+		explicit GenericClient (int set_depth);
 		virtual ~GenericClient () { }
 	private:
 		void load_highlights ();
@@ -81,12 +81,13 @@ class GenericClient {
 		void print_with_time_stamp (std::string const & message) const;
 	private:
 		std::string time_stamp () const;
-	protected:
+	public:
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
+	protected:
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
-		void add_pending_challenge (GenericBattle const & battle);
+		void add_pending_challenge (std::shared_ptr <GenericBattle> const & battle);
 		void handle_challenge_withdrawn (std::string const & opponent);
-		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party);
+		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0);
 		void pause_at_start_of_battle ();
 		void handle_victory (uint32_t battle_id, uint8_t party_id);
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
@@ -107,4 +108,4 @@ class GenericClient {
 };
 } //namespace network
 } // namespace technicalmachine
-#endif  // NETWORK_CONNECT_H_
+#endif // NETWORK_CONNECT_H_

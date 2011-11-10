@@ -25,6 +25,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include "battle.h"
 #include "battle_settings.h"
 #include "inmessage.h"
 #include "outmessage.h"
@@ -40,6 +41,7 @@ namespace po {
 Client::Client (int depth_) : network::GenericClient (depth_) {
 	log_in ();
 }
+
 
 void Client::log_in () {
 	OutMessage message (OutMessage::LOG_IN);
@@ -77,6 +79,15 @@ enum Challenge_Description {
 	REFUSED = 4,
 	INVALID_TEAM = 5,
 	DIFFERENT_GENERATION = 6
+};
+
+enum Action {
+	CANCEL = 0,
+	ATTACK = 1,
+	SWITCH = 2,
+	REARRANGE = 3,
+	CENTER_MOVE = 4,
+	DRAW = 5
 };
 
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
@@ -179,18 +190,41 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::ENGAGE_BATTLE: {
-			std::cerr << "ENGAGE_BATTLE\n";
-			uint32_t battle_id = msg.read_int ();
+			uint32_t const battle_id = msg.read_int ();
+			uint32_t const id1 = msg.read_int ();
+			uint32_t const id2 = msg.read_int ();
+			// Currently only care about battles I'm in. TM isn't a spectator.
+			if (id1 == 0) {
+				// I have no idea what these two are actually for.
+				uint32_t const id_first = msg.read_int ();
+				uint32_t const id_second = msg.read_int ();
+				// The server then sends me my own team.
+				// I don't need to read in my entire team; I already know my own team.
+				handle_battle_begin (battle_id, get_user_name (id2));
+			}
 			break;
 		}
-		case InMessage::BATTLE_FINISHED:
+		case InMessage::BATTLE_FINISHED: {
 			std::cerr << "BATTLE_FINISHED\n";
-			std::cerr << "size: " << msg.buffer.size () << '\n';
+			uint32_t const battle_id = msg.read_int ();
+			int8_t const description = msg.read_byte ();
+			std::cerr << "description: " << static_cast <int> (description) << '\n';
+			uint32_t const id1 = msg.read_int ();
+			std::cerr << "id1: " << static_cast <int> (id1) << '\n';
+			uint32_t const id2 = msg.read_int ();
+			std::cerr << "id2: " << static_cast <int> (id2) << '\n';
 			break;
-		case InMessage::BATTLE_MESSAGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		}
+		case InMessage::BATTLE_MESSAGE: {
+			uint32_t const battle_id = msg.read_int ();
+			uint32_t length = msg.read_int ();
+			uint8_t const command = msg.read_byte ();
+			uint8_t const player = msg.read_byte ();
+			length -= sizeof (command) + sizeof (player);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
+			battle.handle_message (*this, battle_id, command, 1 - player, msg);
 			break;
+		}
 		case InMessage::BATTLE_CHAT:
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
@@ -387,9 +421,8 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	msg.write_int (get_user_id (opponent));
 	std::string verb;
 	if (accepted) {
-//		Battle battle (opponent, depth);
-//		challenges.insert (std::pair <std::string, Battle> (opponent, battle));
-//		msg.write_team (battle.ai);
+		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
+		add_pending_challenge (battle);
 		verb = "Accepted";
 	}
 	else

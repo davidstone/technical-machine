@@ -34,7 +34,7 @@ class Ability {
 		Ability ();
 		Ability (Abilities ability);
 		bool is_set () const;
-		bool blocks_switching (Team const & switcher, Weather const weather) const;
+		bool blocks_switching (Team const & switcher, Weather const & weather) const;
 		bool blocks_weather () const;
 		bool blocks_sleep (Weather const & weather) const;
 		bool weakens_SE_attacks () const;

@@ -20,7 +20,7 @@ aiobjects = \
 	crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o \
 	network/connect.o network/inmessage.o network/outmessage.o \
 	pokemon_lab/battle.o pokemon_lab/battle_settings.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
-	pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
+	pokemon_online/battle.o pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
 
 predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -175,13 +175,17 @@ pokemon_lab/outmessage.o: pokemon_lab/outmessage.cpp pokemon_lab/outmessage.h \
  species.h network/outmessage.h ability.h active.h gender.h item.h move.h type.h \
  stat.h status.h team.h pokemon.h
 
+pokemon_online/battle.o: pokemon_online/battle.cpp pokemon_online/battle.h \
+ battle.h analyze_logs.h move.h active.h type.h species.h gender.h ability.h \
+ item.h stat.h status.h weather.h pokemon.h team.h
 pokemon_online/battle_settings.o: pokemon_online/battle_settings.cpp \
  pokemon_online/battle_settings.h network/battle_settings.h
 pokemon_online/connect.o: pokemon_online/connect.cpp pokemon_online/connect.h \
- pokemon_online/inmessage.h network/inmessage.h network/connect.h evaluate.h \
- species.h pokemon_online/battle_settings.h network/battle_settings.h \
- pokemon_online/outmessage.h network/outmessage.h crypt/get_md5.h team.h \
- active.h pokemon.h ability.h gender.h item.h move.h type.h stat.h status.h
+ pokemon_online/inmessage.h network/inmessage.h network/connect.h battle.h \
+ analyze_logs.h move.h active.h type.h species.h gender.h team.h pokemon.h \
+ ability.h item.h stat.h status.h weather.h evaluate.h pokemon_online/battle.h \
+ pokemon_online/battle_settings.h network/battle_settings.h pokemon_online/outmessage.h \
+ network/outmessage.h crypt/get_md5.h
 pokemon_online/conversion.o: pokemon_online/conversion.cpp pokemon_online/conversion.h \
  ability.h item.h move.h active.h type.h species.h
 pokemon_online/file.o: pokemon_online/file.cpp pokemon_online/file.h \

@@ -36,6 +36,7 @@ class Client : public network::GenericClient {
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
 //		std::map <std::string, uint32_t> channels;
+		uint32_t id;
 	public:
 		explicit Client (int depth_);
 	private:
@@ -64,6 +65,7 @@ class Client : public network::GenericClient {
 		void handle_announcement (std::string const & announcement) const;
 		void handle_private_message (uint32_t user_id, std::string const & message);
 		uint32_t get_user_id (std::string const & name) const;
+	public:
 		std::string get_user_name (uint32_t id) const;
 };
 

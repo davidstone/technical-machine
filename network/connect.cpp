@@ -41,9 +41,9 @@
 namespace technicalmachine {
 namespace network {
 
-GenericClient::GenericClient (int depth_):
+GenericClient::GenericClient (int set_depth):
 	detailed ({{ 0 }}),
-	depth (depth_),
+	depth (set_depth),
 	timer (io)
 	{
 	srand (static_cast <unsigned> (time (0)));
@@ -210,8 +210,8 @@ void GenericClient::handle_incoming_challenge (std::string const & opponent, Gen
 	handle_finalize_challenge (opponent, accepted, challenger);
 }
 
-void GenericClient::add_pending_challenge (GenericBattle const & battle) {
-	challenges.insert (std::pair <std::string, GenericBattle> (battle.foe.player, battle));
+void GenericClient::add_pending_challenge (std::shared_ptr <GenericBattle> const & battle) {
+	challenges.insert (std::pair <std::string, std::shared_ptr <GenericBattle> > (battle->foe.player, battle));
 }
 
 void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
@@ -219,11 +219,12 @@ void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 }
 
 void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
- 	GenericBattle & battle = challenges.find (opponent)->second;
-	battle.party = party;
-	battles.insert (std::pair <uint32_t, GenericBattle> (battle_id, battle));
+	// party defaults to 0 for servers that do not support proper host mechanics.
+ 	std::shared_ptr <GenericBattle> battle = challenges.find (opponent)->second;
+	battle->party = party;
+	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle> > (battle_id, battle));
 	challenges.erase (opponent);
-	pause_at_start_of_battle ();
+//	pause_at_start_of_battle ();
 }
 
 void GenericClient::pause_at_start_of_battle () {
@@ -233,7 +234,7 @@ void GenericClient::pause_at_start_of_battle () {
 }
 
 void GenericClient::handle_victory (uint32_t battle_id, uint8_t party_id) {
-	GenericBattle & battle = battles.find (battle_id)->second;
+	GenericBattle & battle = *battles.find (battle_id)->second;
 	std::string const verb = (battle.party == party_id) ? "Won" : "Lost";
 	print_with_time_stamp (verb + " a battle vs. " + battle.foe.player);
 	battles.erase (battle_id);

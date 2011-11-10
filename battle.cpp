@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "analyze_logs.h"
 #include "expectiminimax.h"
@@ -32,6 +33,7 @@
 #include "weather.h"
 
 #include "network/connect.h"
+#include <iostream>
 
 namespace technicalmachine {
 
@@ -39,13 +41,16 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 	ai (true, 6),
 	foe (false, ai.size),
 	log (ai, foe),
-	depth (battle_depth) {
+	depth (battle_depth),
+	party (0) {
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
+	for (Pokemon const & pokemon : ai.pokemon.set)
+		slot_memory.push_back (pokemon.name);
 }
 
-void GenericBattle::handle_begin_turn (uint16_t turn_count) {
+void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
@@ -59,7 +64,8 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 
 Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	Team predicted = foe;
-	std::cout << "======================\nPredicting...\n";
+	std::cout << "======================\n";
+	std::cout << "Predicting...\n";
 	predict_team (client.detailed, predicted, ai.size);
 	std::string out;
 	predicted.output (out);
@@ -70,39 +76,31 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 }
 
 void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, std::string const & nickname, int16_t move_id) {
-	if (party == moving_party) {
-		log.active = &ai;
-		log.inactive = &foe;
-	}
-	else {
-		log.active = &foe;
-		log.inactive = &ai;
-	}
+	bool const is_me = (party == moving_party);
+	log.active = is_me ? & ai : & foe;
+	log.inactive = is_me ? & foe : & ai;
+
 	if (log.first == nullptr) {
 		log.first = log.active;
 		log.last = log.inactive;
 	}
-	int move = move_id;
-	if (move >= Move::SWITCH0)
-		move += 6;
+
+	int const move = (move_id < Move::SWITCH0) ? move_id : move_id + 6;
 	log.log_move (static_cast <Move::Moves> (move));
 }
 
-void GenericBattle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) {
+void GenericBattle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) const {
 }
 
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
-	Team * team;
-	Team * other;
-	if (party == switching_party) {
-		team = & ai;
-		other = & foe;
-	}
-	else {
-		team = & foe;
-		other = & ai;
-	}
-	log.pokemon_sent_out (species, nickname, level, gender, *team, *other);
+	std::cerr << "party: " << static_cast<int> (party) << '\n';
+	std::cerr << "switching_party: " << static_cast <int> (switching_party) << '\n';
+	bool const is_me = (party == switching_party);
+	std::cerr << "is_me: " << is_me << '\n';
+	std::cerr << "nickname: " + nickname + "\n";
+	Team & team = is_me ? ai : foe;
+	Team & other = is_me ? foe : ai;
+	log.pokemon_sent_out (species, nickname, level, gender, team, other);
 }
 
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
@@ -127,13 +125,13 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	int max_hp = 48;
-	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
+	for (Pokemon & pokemon : team.pokemon.set) {
 		if (team.me)
-			max_hp = pokemon->hp.max;
-		int pixels = max_hp * pokemon->hp.stat / pokemon->hp.max;
-		if (pixels != pokemon->new_hp and (pokemon->new_hp - 1 > pixels or pixels > pokemon->new_hp + 1)) {
-			std::cerr << "Uh oh! " + pokemon->get_name () + " has the wrong HP! Pokemon Lab reports approximately " << pokemon->new_hp * pokemon->hp.max / max_hp << " but TM thinks it has " << pokemon->hp.stat << "\n";
-			pokemon->hp.stat = pokemon->new_hp * pokemon->hp.max / max_hp;
+			max_hp = pokemon.hp.max;
+		int pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
+		if (pixels != pokemon.new_hp and (pokemon.new_hp - 1 > pixels or pixels > pokemon.new_hp + 1)) {
+			std::cerr << "Uh oh! " + pokemon.get_name () + " has the wrong HP! The server reports approximately " << pokemon.new_hp * pokemon.hp.max / max_hp << " but TM thinks it has " << pokemon.hp.stat << "\n";
+			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
 		}
 	}
 }
@@ -141,13 +139,19 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp) {
 }
 
-void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot, std::string const & nickname) {
-	Team * fainter;
-	if (party == fainting_party)
-		fainter = & ai;
-	else
-		fainter = & foe;
-	fainter->at_replacement().fainted = true;
+void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
+	Team & fainter = (party == fainting_party) ? ai : foe;
+	fainter.at_replacement().fainted = true;
+}
+
+uint8_t GenericBattle::switch_slot (Move::Moves move) const {
+	uint8_t slot = move - Move::SWITCH0;
+	uint8_t n = 0;
+	for (; n != slot_memory.size(); ++n) {
+		if (slot_memory [n] == ai.pokemon.set [slot].name)
+			break;
+	}
+	return n;
 }
 
 } // namespace technicalmachine

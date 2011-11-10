@@ -33,8 +33,6 @@ namespace pl {
 
 Battle::Battle (std::string const & opponent, int battle_depth):
 	GenericBattle::GenericBattle (opponent, battle_depth) {
-	for (std::vector <Pokemon>::const_iterator pokemon = ai.pokemon.set.begin(); pokemon != ai.pokemon.set.end(); ++pokemon)
-		slot_memory.push_back (pokemon->name);
 }
 
 void Battle::handle_request_action (Client & client, uint32_t battle_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
@@ -124,17 +122,20 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_SLEEP:
-			case 1:
-				log.active->at_replacement().move->variable.index = 1;
-				break;
-			case 2:		// Woke up
-				break;
-			break;
-		case InMessage::STATUS_EFFECTS_FLINCH:
-			switch (message_id)
+			switch (message_id) {
 				case 1:
 					log.active->at_replacement().move->variable.index = 1;
 					break;
+				case 2:		// Woke up
+					break;
+			}
+			break;
+		case InMessage::STATUS_EFFECTS_FLINCH:
+			switch (message_id) {
+				case 1:
+					log.active->at_replacement().move->variable.index = 1;
+					break;
+			}
 			break;
 		case InMessage::STATUS_EFFECTS_ATTRACT:
 			break;
@@ -460,16 +461,6 @@ void Battle::update_active_print (Log & log, std::vector <std::string> const & a
 		log.active = & foe;
 		log.inactive = & ai;
 	}
-}
-
-uint8_t Battle::switch_slot (Move::Moves move) const {
-	uint8_t slot = move - Move::SWITCH0;
-	uint8_t n = 0;
-	for (; n != slot_memory.size(); ++n) {
-		if (slot_memory [n] == ai.pokemon.set [slot].name)
-			break;
-	}
-	return n;
 }
 
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp) {

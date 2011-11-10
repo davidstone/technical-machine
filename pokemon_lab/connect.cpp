@@ -256,7 +256,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::REQUEST_ACTION: {
 			uint32_t const battle_id = msg.read_int ();
-			uint8_t  const slot = msg.read_byte ();
+			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			bool const replace = msg.read_byte ();
 			uint8_t const request_sequences = msg.read_byte ();
@@ -290,7 +290,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				}
 			}
 			can_switch = can_switch_to;
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_request_action (*this, battle_id, slot, index, replace, switches, can_switch, forced, moves);
 			break;
 		}
@@ -303,8 +303,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			//			 byte: gender
 			//			 byte: level
 			//			 byte: shiny
-		   
-			// This is data related to visual stuff... Not needed for the bot.
+			// This appears to be data related to visual stuff... Not needed for the bot.
 			break;
 		}
 		case InMessage::BATTLE_PRINT: {
@@ -317,7 +316,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				std::string const argument = msg.read_string ();
 				arguments.push_back (argument);
 			}
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_print (category, message_id, arguments);
 			break;
 		}
@@ -335,7 +334,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			int16_t const move_id = msg.read_short ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_use_move (party, slot, nickname, move_id);
 			break;
 		}
@@ -344,7 +343,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_withdraw (party, slot, nickname);
 */			break;
 		}
@@ -358,7 +357,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			Gender gender;
 			gender.from_simulator_int (msg.read_byte ());
 			uint8_t const level = msg.read_byte();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
 			break;
 		}
@@ -369,7 +368,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			int16_t const change_in_health = msg.read_short ();
 			int16_t const remaining_health = msg.read_short ();
 			int16_t const denominator = msg.read_short ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_health_change (party, slot, change_in_health, remaining_health, denominator);
 			break;
 		}
@@ -378,7 +377,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const pp = msg.read_byte ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_set_pp (party, slot, pp);
 */			break;
 		}
@@ -386,15 +385,16 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
-			std::string const nickname = msg.read_string ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
-			battle.handle_fainted (party, slot, nickname);
+			// This isn't needed:
+			// std::string const nickname = msg.read_string ();
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
+			battle.handle_fainted (party, slot);
 			break;
 		}
 		case InMessage::BATTLE_BEGIN_TURN: {
 			uint32_t const battle_id = msg.read_int ();
 			uint16_t const turn_count = msg.read_short ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_begin_turn (turn_count);
 			break;
 		}
@@ -419,7 +419,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			int16_t const new_move = msg.read_short ();
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const max_pp = msg.read_byte ();
-			Battle & battle = static_cast <Battle &> (battles.find (battle_id)->second);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_set_move (pokemon, move_slot, new_move, pp, max_pp);
 			break;
 		}
@@ -523,7 +523,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	msg.read_header (*socket, this);
 }
 
-void Client::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) {
+void Client::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const {
 	std::cout << server + '\n';
 //	std::cout << message + '\n';
 }
@@ -693,9 +693,9 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 		msg.write_byte (accepted);
 	std::string verb;
 	if (accepted) {
-		Battle battle (opponent, depth);
+		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
 		add_pending_challenge (battle);
-		msg.write_team (battle.ai);
+		msg.write_team (battle->ai);
 		verb = "Accepted";
 	}
 	else
@@ -760,7 +760,7 @@ void Client::handle_error_message (uint8_t code, std::string const & details) co
 	std::cerr << details + "\n";
 }
 
-void Client::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) {
+void Client::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) const {
 	print_with_time_stamp ("<Important message> " + sender + ": " + message);
 }
 

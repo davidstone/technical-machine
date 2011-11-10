@@ -42,4 +42,4 @@ class InMessage {
 
 }		// namespace network
 }		// namespace technicalmachine
-#endif  // NETWORK_INMESSAGE_H_
+#endif // NETWORK_INMESSAGE_H_
