@@ -44,15 +44,13 @@ namespace technicalmachine {
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
-	for (std::vector <Pokemon>::iterator pokemon = foe.pokemon.set.begin(); pokemon != foe.pokemon.set.end(); ++pokemon) {
-		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move)
-			move->score = Score::VICTORY + 1;
+	for (Pokemon & pokemon : foe.pokemon.set) {
+		for (Move & move : pokemon.move.set)
+			move.score = Score::VICTORY + 1;
 	}
 	Move::Moves best_move;
 	for (int deeper = 1; deeper <= depth; ++deeper) {
-		bool first_turn = false;
-		if (deeper == depth)
-			first_turn = true;
+		bool const first_turn = (deeper == depth);
 		min_score = select_move_branch (ai, foe, weather, deeper, score, best_move, first_turn);
 	}
 
@@ -82,7 +80,7 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 	calculate_speed (ai, weather);
 	calculate_speed (foe, weather);
 
-	bool const verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
+	constexpr bool verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
 
 	// This section is for replacing fainted Pokemon as well as Baton Pass and U-turn replacements.
 
@@ -114,13 +112,13 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 			blockselection (foe, ai, weather);
 
 		// Iterate through each move each Pokemon has in combination with each move the other Pokemon has, and evaluate the score of each combination.
-		for (std::vector <std::pair <int64_t, size_t> >::const_iterator ai_move = ai_index.begin(); ai_move != ai_index.end(); ++ai_move) {
-			ai.pokemon->move.index = ai_move->second;
+		for (std::pair <int64_t, size_t> const & ai_move : ai_index) {
+			ai.pokemon->move.index = ai_move.second;
 			if (ai.pokemon->move->selectable) {
 				print_action (ai, verbose, first_turn, indent);
 				int64_t beta = Score::VICTORY + 1;
-				for (std::vector <std::pair <int64_t, size_t> >::const_iterator foe_move = foe_index.begin(); foe_move != foe_index.end(); ++foe_move) {
-					foe.pokemon->move.index = foe_move->second;
+				for (std::pair <int64_t, size_t> const & foe_move : foe_index) {
+					foe.pokemon->move.index = foe_move.second;
 					if (foe.pokemon->move->selectable) {
 						print_action (foe, verbose, first_turn, indent);
 						int64_t max_score = order_branch (ai, foe, weather, depth, score);

@@ -154,8 +154,8 @@ Team::Team (bool isme, unsigned size) :
 		srand (static_cast <unsigned> (time (0)));
 		team_file = files [(rand () % files.size ())];
 		load (team_file.string(), size);
-		for (std::vector <Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
-			it->new_hp = it->hp.max;
+		for (Pokemon & member : pokemon.set)
+			member.new_hp = member.hp.max;
 	}
 }
 
@@ -174,8 +174,8 @@ bool Team::is_switching_to_self () const {
 
 uint64_t Team::hash () const {
 	uint64_t hash = 0;
-	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
-		hash ^= it->hash();
+	for (Pokemon const & member : pokemon.set)
+		hash ^= member.hash();
 	return size + 6 * (pokemon.index + 6 * (vanish + 6 * (stage [Stat::ATK] + 13 * (stage [Stat::DEF] + 13 * (stage [Stat::SPA] + 13 * (stage [Stat::SPD] + 13 * (stage [Stat::SPE] + 13 * (stage [Stat::ACC] + 13 * (stage [Stat::EVA] + 13 * (bide_damage + 358 * (substitute + 178 * (bide + 3 * (confused + 5 * (embargo + 5 * (encore + 8 * (heal_block + 5 * (magnet_rise + 5 * (partial_trap + 8 * (perish_song + 3 * (rampage + 3 * (slow_start + 3 * (stockpile + 4 * (taunt + 3 * (toxic + 16 * (uproar + 5 * (yawn + 2 * (aqua_ring + 2 * (attract + 2 * (charge + 2 * (curse + 2 * (defense_curl + 2 * (destiny_bond + 2 * (ff + 2 * (focus_energy + 2 * (gastro_acid + 2 * (identified + 2 * (imprison + 2 * (ingrain + 2 * (leech_seed + 2 * (loaf + 2 * (lock_on + 2 * (minimize + 2 * (mud_sport + 2 * (nightmare + 2 * (power_trick + 2 * (recharging + 2 * (torment + 2 * (trapped + 2 * (water_sport + 2 * (counter + 3 * (light_screen + 8 * (lucky_chant + 5 * (mist + 5 * (reflect + 8 * (safeguard + 5 * (tailwind + 3 * (wish + 2 * (spikes + 4 * (toxic_spikes + 3 * (stealth_rock + 2 * hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
@@ -190,8 +190,8 @@ void Team::load (std::string const & name, unsigned size) {
 		pl::load_team (*this, name, size);
 	else
 		std::cerr << "Unsupported file format.\n";
-	for (std::vector<Pokemon>::iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it)
-		it->load();
+	for (Pokemon & member : pokemon.set)
+		member.load();
 }
 
 bool Team::operator== (Team const & other) const {
@@ -222,16 +222,16 @@ void Team::output (std::string & output) const {
 		output = "Foe";
 	output += " team:\n";
 	output += player + ":\n";
-	for (std::vector<Pokemon>::const_iterator it = pokemon.set.begin(); it != pokemon.set.end(); ++it) {
-		output += it->get_name();
-		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (it->hp.stat) / static_cast<double> (it->hp.max)) + "% HP)";
-		output += " @ " + it->item.get_name ();
-		output += " ** " + it->nickname + '\n';
-		if (it->ability.is_set ())
-			output += "\tAbility: " + it->ability.get_name () + '\n';
-		if (it->status.name != Status::NO_STATUS)
-			output += "\tStatus: " + it->status.get_name () + "\n";
-		for (std::vector<Move>::const_iterator move = it->move.set.begin(); move->name != Move::STRUGGLE; ++move)
+	for (Pokemon const & member : pokemon.set) {
+		output += member.get_name();
+		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max)) + "% HP)";
+		output += " @ " + member.item.get_name ();
+		output += " ** " + member.nickname + '\n';
+		if (member.ability.is_set ())
+			output += "\tAbility: " + member.ability.get_name () + '\n';
+		if (member.status.name != Status::NO_STATUS)
+			output += "\tStatus: " + member.status.get_name () + "\n";
+		for (std::vector<Move>::const_iterator move = member.move.set.begin(); move->name != Move::STRUGGLE; ++move)
 			output += "\t- " + move->get_name() + "\n";
 	}
 }

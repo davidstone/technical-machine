@@ -22,6 +22,7 @@
 #include "../item.h"
 #include "../move.h"
 #include "../species.h"
+#include "../stat.h"
 
 namespace technicalmachine {
 namespace po {

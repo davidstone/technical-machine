@@ -210,8 +210,8 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		decrement (team.uproar);
 	decrement (weather.uproar);
 
-	for (std::vector<Move>::iterator move = team.pokemon->move.set.begin(); move != team.pokemon->move.set.end(); ++move)
-		decrement (move->disable);
+	for (Move & move : team.pokemon->move.set)
+		decrement (move.disable);
 	decrement (team.encore);
 	decrement (team.taunt);
 	decrement (team.magnet_rise);
@@ -239,9 +239,9 @@ void endofturn7 (Team & team) {
 }
 
 void reset_variable (Team & team) {
-	for (std::vector <Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		for (std::vector <Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
-			move->variable.index = 0;
+	for (Pokemon & pokemon : team.pokemon.set) {
+		for (Move & move : pokemon.move.set) {
+			move.variable.index = 0;
 		}
 	}
 }

@@ -54,5 +54,5 @@ class Weather {
 		uint64_t hash () const;
 };
 
-}
-#endif		// WEATHER_H_
+} // namespace technicalmachine
+#endif // WEATHER_H_

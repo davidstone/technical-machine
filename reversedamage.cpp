@@ -68,12 +68,12 @@ void reversedamagecalculator (Team &attacker, Team const &defender, Weather cons
 	unsigned rb;		// Resistance berries (2)
 	unsigned nonrandom;
 
-	for (std::vector<Unknown>::const_iterator it = hidden.begin(); it != hidden.end(); ++it) {
-		attacker.pokemon->item.name = static_cast<Item::Items> (it->item);
-		attacker.pokemon->nature = static_cast<Stat::Nature> (it->nature);
-		attacker.pokemon->hp.ev = it->hpev;
-		attacker.pokemon->atk.ev = it->atkev;
-		attacker.pokemon->spe.ev = it->speev;
+	for (Unknown const & unknown : hidden) {
+		attacker.pokemon->item.name = static_cast<Item::Items> (unknown.item);
+		attacker.pokemon->nature = static_cast<Stat::Nature> (unknown.nature);
+		attacker.pokemon->hp.ev = unknown.hpev;
+		attacker.pokemon->atk.ev = unknown.atkev;
+		attacker.pokemon->spe.ev = unknown.speev;
 		if (old_spe_ev != attacker.pokemon->spe.ev or old_item.name != attacker.pokemon->item.name) {
 			calculate_speed (attacker, weather);
 			old_spe_ev = attacker.pokemon->spe.ev;

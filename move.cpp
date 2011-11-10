@@ -390,8 +390,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			Stat::boost (target.stage [Stat::ATK], -1);
 			break;
 		case Move::AROMATHERAPY: {
-			for (std::vector<Pokemon>::iterator it = user.pokemon.set.begin(); it != user.pokemon.set.end(); ++it)
-				it->status.clear ();
+			for (Pokemon & pokemon : user.pokemon.set)
+				pokemon.status.clear ();
 			break;
 		}
 		case Move::ATTRACT:
@@ -788,9 +788,9 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			recoil (*user.pokemon, damage, 2);
 			break;
 		case Move::HEAL_BELL: {
-			for (std::vector<Pokemon>::iterator it = user.pokemon.set.begin(); it != user.pokemon.set.end(); ++it) {
-				if (it->ability.name != Ability::SOUNDPROOF)
-					it->status.clear ();
+			for (Pokemon & pokemon : user.pokemon.set) {
+				if (pokemon.ability.name != Ability::SOUNDPROOF)
+					pokemon.status.clear ();
 			}
 			break;
 		}

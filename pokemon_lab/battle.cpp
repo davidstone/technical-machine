@@ -61,8 +61,8 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 //	std::cout << "party id: " << static_cast <int> (party) << '\n';
 //	std::cout << "category: " << static_cast <int> (category) << '\n';
 //	std::cout << "message_id: " << message_id << '\n';
-	for (std::vector <std::string>::const_iterator it = arguments.begin(); it != arguments.end(); ++it)
-		std::cout << "\t" + *it + '\n';
+	for (std::string const & argument : arguments)
+		std::cout << "\t" + argument + '\n';
 	switch (category) {
 		case InMessage::BATTLE_MESSAGES:
 			switch (message_id) {

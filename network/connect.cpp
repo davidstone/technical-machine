@@ -245,8 +245,8 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 	// Problems with this approach are that most people want to search for words, not just strings of characters.
 	// For instance, if I have "tm" in highlights, I usually don't want to be alerted to someone saying "atm".
 	// Fixing this problem probably requires some sort of regex or a fancy word boundary definition.
-	for (std::vector<std::string>::const_iterator it = highlights.begin(); it != highlights.end(); ++it) {
-		if (message.find (*it) != std::string::npos)
+	for (std::string const & highlight : highlights) {
+		if (message.find (highlight) != std::string::npos)
 			return true;
 	}
 	return false;

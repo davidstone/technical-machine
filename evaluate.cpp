@@ -33,8 +33,6 @@
 
 namespace technicalmachine {
 
-int64_t const Score::VICTORY = 65536;
-
 int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 	int64_t score = scoreteam (ai) - scoreteam (foe);
 
@@ -133,12 +131,12 @@ int64_t Score::scorepokemon (Team const & team, Team const & other, Weather cons
 
 int64_t Score::scoremove (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
-	for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move != team.pokemon->move.set.end(); ++move) {
-		if (move->physical)
+	for (Move const & move : team.pokemon->move.set) {
+		if (move.physical)
 			score += other.reflect * reflect;
-		else if (move->basepower > 0)		// Non-damaging moves have physical == false
+		else if (move.basepower > 0)		// Non-damaging moves have physical == false
 			score += other.light_screen * light_screen;
-		if (move->pp == 0)
+		if (move.pp == 0)
 			score += no_pp;
 	}
 	return score;

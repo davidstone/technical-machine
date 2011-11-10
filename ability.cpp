@@ -71,7 +71,7 @@ bool Ability::blocks_sleep (Weather const & weather) const {
 		case LEAF_GUARD:
 			if (weather.sun)
 				return true;
-		// fall through
+			return false;
 		default:
 			return false;
 	}

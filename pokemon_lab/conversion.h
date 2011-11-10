@@ -1,4 +1,4 @@
-// End of turn function forward declaration
+// Convert to / from PL's format
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,27 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENDOFTURN_H_
-#define ENDOFTURN_H_
+#ifndef POKEMON_LAB_CONVERSION_H_
+#define POKEMON_LAB_CONVERSION_H_
 
-#include <cstdint>
+#include "../move.h"
+#include "../species.h"
 
 namespace technicalmachine {
+namespace pl {
 
-class Pokemon;
-class Team;
-class Weather;
+Species id_to_species (int id);
+int species_to_id (Species species);
+Move::Moves id_to_move (int id);
+int move_to_id (Move::Moves move);
 
-void endofturn (Team & first, Team & last, Weather & weather);
-void endofturn0 (Team & team);
-void endofturn1 (Team & team);
-void endofturn2 (Team & team);
-void endofturn3 (Team & team, Weather const & weather);
-void endofturn5 (Team & team, Pokemon & foe, Weather & weather);
-void endofturn6 (Team & target, Weather const & weather);
-void endofturn7 (Team & team);
-void reset_variable (Team & team);
-void decrement (int8_t & n);
+// Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
 
+} // namespace pl
 } // namespace technicalmachine
-#endif // ENDOFTURN_H_
+#endif // POKEMON_LAB_CONVERSION_H_

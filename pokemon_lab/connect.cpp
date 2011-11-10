@@ -25,6 +25,7 @@
 
 #include "battle.h"
 #include "battle_settings.h"
+#include "conversion.h"
 #include "inmessage.h"
 #include "outmessage.h"
 
@@ -283,8 +284,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				}
 			}
 			bool can_switch_to = false;
-			for (std::vector <uint8_t>::const_iterator it = switches.begin(); it != switches.end(); ++it) {
-				if (*it) {
+			for (uint8_t const legal_switch : switches) {
+				if (legal_switch) {
 					can_switch_to = true;
 					break;
 				}
@@ -335,7 +336,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::string const nickname = msg.read_string ();
 			int16_t const move_id = msg.read_short ();
 			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
-			battle.handle_use_move (party, slot, nickname, move_id);
+			battle.handle_use_move (party, slot, move_id);
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
@@ -353,7 +354,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			Species const species = InMessage::pl_to_tm_species (msg.read_short ());
+			Species const species = id_to_species (msg.read_short ());
 			Gender gender;
 			gender.from_simulator_int (msg.read_byte ());
 			uint8_t const level = msg.read_byte();
@@ -707,12 +708,12 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 void Client::handle_metagame_list (std::vector <Metagame> const & metagames) {
 }
 
-void Client::handle_invalid_team (std::vector <int16_t> const & violation) {
+void Client::handle_invalid_team (std::vector <int16_t> const & violations) {
 	std::cerr << "Invalid team.\n";
-	for (std::vector<int16_t>::const_iterator it = violation.begin(); it != violation.end(); ++it) {
-		int pokemon = (-(*it + 1)) % 6;
+	for (int16_t const violation : violations) {
+		int pokemon = (-(violation + 1)) % 6;
 		std::cerr << "Problem at Pokemon " << pokemon << ": ";
-		switch (-(*it + pokemon + 1) / 6) {
+		switch (-(violation + pokemon + 1) / 6) {
 			case 0:
 				std::cerr << "must have 1-4 unique moves.";
 				break;

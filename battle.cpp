@@ -75,7 +75,7 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	return expectiminimax (ai, predicted, weather, depth, client.score, min_score);
 }
 
-void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, std::string const & nickname, int16_t move_id) {
+void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, int16_t move_id) {
 	bool const is_me = (party == moving_party);
 	log.active = is_me ? & ai : & foe;
 	log.inactive = is_me ? & foe : & ai;
@@ -93,11 +93,9 @@ void GenericBattle::handle_withdraw (uint8_t party, uint8_t slot, std::string co
 }
 
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
-	std::cerr << "party: " << static_cast<int> (party) << '\n';
 	std::cerr << "switching_party: " << static_cast <int> (switching_party) << '\n';
-	bool const is_me = (party == switching_party);
-	std::cerr << "is_me: " << is_me << '\n';
 	std::cerr << "nickname: " + nickname + "\n";
+	bool const is_me = (party == switching_party);
 	Team & team = is_me ? ai : foe;
 	Team & other = is_me ? foe : ai;
 	log.pokemon_sent_out (species, nickname, level, gender, team, other);

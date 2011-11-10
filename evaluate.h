@@ -30,7 +30,7 @@ class Weather;
 // All variables within Score do not change during use. I do not declare them const because the values are determined by reading a text file, so they aren't quite known at initialization time.
 class Score {
 	public:
-		static int64_t const VICTORY;		// Highest score. 100% chance to win.
+		constexpr static int64_t VICTORY = 65536;		// Highest score. 100% chance to win.
 		
 		int transposition_table;	
 	private:
@@ -90,5 +90,5 @@ class Score {
 		static int64_t win (Team const & team);
 };
 
-}
-#endif		// EVALUATE_H_
+} // namespace technicalmachine
+#endif // EVALUATE_H_

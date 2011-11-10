@@ -32,6 +32,5 @@ void lead_stats (std::vector<float> & lead);
 
 void detailed_stats (int detailed [][7]);
 
-}
-
-#endif		// LOAD_STATS_H_
+} // namespace technicalmachine
+#endif // LOAD_STATS_H_

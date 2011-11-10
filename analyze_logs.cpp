@@ -505,7 +505,7 @@ bool Log::search_is_first (std::string const & str) {
 	return search == line.substr (0, search.length());
 }
 
-void Log::initialize_turn (Team &ai, Team &foe) {
+void Log::initialize_turn (Team & ai, Team & foe) {
 	initialize_team (ai);
 	initialize_team (foe);
 	phaze = false;
@@ -518,8 +518,8 @@ void Log::initialize_turn (Team &ai, Team &foe) {
 }
 
 void Log::initialize_team (Team & team) {
-	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon)
-		pokemon->move.index = 0;
+	for (Pokemon & pokemon : team.pokemon.set)
+		pokemon.move.index = 0;
 	team.ch = false;
 	team.fully_paralyzed = false;
 	team.hitself = false;

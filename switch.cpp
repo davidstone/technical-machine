@@ -84,9 +84,9 @@ void reset_variables (Team & team) {
 	team.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	team.yawn = 0;
 
-	for (std::vector<Move>::iterator it = team.pokemon->move.set.begin(); it != team.pokemon->move.set.end(); ++it) {
-		it->disable = 0;
-		it->times_used = 0;
+	for (Move & move : team.pokemon->move.set) {
+		move.disable = 0;
+		move.times_used = 0;
 	}
 }
 
@@ -102,15 +102,15 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 
 		// Then, remove the ability to bring out that Pokemon from Roar and Whirlwind in the foe's team.
-		for (std::vector<Pokemon>::iterator pokemon = other.pokemon.set.begin(); pokemon != other.pokemon.set.end(); ++pokemon) {
-			for (std::vector<Move>::iterator move = pokemon->move.set.begin(); move != pokemon->move.set.end(); ++move) {
-				if (move->is_phaze ()) {
-					move->variable.set.pop_back();
-					for (std::vector <std::pair <uint16_t, uint16_t> >::iterator variable = move->variable.set.begin(); variable != move->variable.set.end(); ++variable) {
+		for (Pokemon & pokemon : other.pokemon.set) {
+			for (Move & move : pokemon.move.set) {
+				if (move.is_phaze ()) {
+					move.variable.set.pop_back();
+					for (std::pair <uint16_t, uint16_t> & variable : move.variable.set) {
 						if (switcher.size > 2)
-							variable->second = Move::max_probability / (switcher.size - 1);
+							variable.second = Move::max_probability / (switcher.size - 1);
 						else
-							variable->second = Move::max_probability;
+							variable.second = Move::max_probability;
 					}
 				}
 			}
@@ -120,8 +120,8 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 		else
 			switcher.pokemon.index = switcher.replacement - 1;
 		// Finally, remove the ability to switch to that Pokemon.
-		for (std::vector<Pokemon>::iterator pokemon = switcher.pokemon.set.begin(); pokemon != switcher.pokemon.set.end(); ++pokemon)
-			pokemon->move.set.pop_back();
+		for (Pokemon & pokemon : switcher.pokemon.set)
+			pokemon.move.set.pop_back();
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out

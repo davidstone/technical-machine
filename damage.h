@@ -41,5 +41,5 @@ void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 
 void damage_side_effect (Pokemon & user, unsigned damage);
 
-}
-#endif		// DAMAGE_H_
+} // namespace technicalmachine
+#endif // DAMAGE_H_

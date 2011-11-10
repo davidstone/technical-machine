@@ -68,6 +68,6 @@ class OutMessage : public network::OutMessage {
 		};
 };
 
-}
-}
-#endif
+} // namespace pl
+} // namespace technicalmachine
+#endif // POKEMON_LAB_OUTMESSAGE_H_

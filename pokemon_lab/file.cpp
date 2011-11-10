@@ -44,8 +44,9 @@ void load_team (Team &team, std::string const &name, unsigned size) {
 	file.close ();
 }
 
-void load_pokemon (Team& team, std::ifstream &file, unsigned size) {	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
-	std::string output2;	// Some lines have more than one data point.
+void load_pokemon (Team& team, std::ifstream &file, unsigned size) {
+	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
+	std::string output2;		// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
 	Pokemon member (Pokemon::name_from_string (output1), team.size);
 	member.nickname = search (file, output2, "<nickname>");
@@ -119,6 +120,5 @@ std::string search (std::ifstream &file, std::string &output2, std::string const
 	return output1;
 }
 
-}
-
-}
+} // namespace pl
+} // namespace technicalmachine

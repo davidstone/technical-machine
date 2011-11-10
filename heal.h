@@ -25,6 +25,5 @@ class Pokemon;
 
 void heal (Pokemon &member, int denominator, unsigned numerator = 1);
 
-}
-
-#endif		// HEAL_H_
+} // namespace technicalmachine
+#endif // HEAL_H_

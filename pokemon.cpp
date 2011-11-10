@@ -63,8 +63,8 @@ Pokemon::Pokemon (Species const & member, unsigned size) :
 
 uint64_t Pokemon::hash () const {
 	uint64_t hash = 0;
-	for (std::vector<Move>::const_iterator it = move.set.begin(); it != move.set.end(); ++it)
-		hash ^= it->hash();
+	for (Move const & next_move : move.set)
+		hash ^= next_move.hash();
 	return name + END_SPECIES * (item.name + Item::END_ITEM * (status.name + Status::END_STATUS * (hp.stat + hp.max * (sleep + 5 * hash))));
 }
 

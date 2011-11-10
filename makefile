@@ -19,7 +19,7 @@ aiobjects = \
 	ai.o ability.o analyze_logs.o battle.o block.o damage.o endofturn.o evaluate.o expectiminimax.o gender.o heal.o item.o load_stats.o move.o pokemon.o reorder_moves.o stat.o status.o switch.o team.o teampredictor.o transposition.o type.o weather.o \
 	crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o \
 	network/connect.o network/inmessage.o network/outmessage.o \
-	pokemon_lab/battle.o pokemon_lab/battle_settings.o pokemon_lab/connect.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
+	pokemon_lab/battle.o pokemon_lab/battle_settings.o pokemon_lab/connect.o pokemon_lab/conversion.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
 	pokemon_online/battle.o pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
 
 predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
@@ -164,9 +164,12 @@ pokemon_lab/connect.o: pokemon_lab/connect.cpp pokemon_lab/connect.h \
  pokemon_lab/inmessage.h network/inmessage.h network/connect.h \
  evaluate.h pokemon_lab/battle_settings.h network/battle_settings.h \
  pokemon_lab/outmessage.h network/outmessage.h crypt/get_md5.h \
- crypt/get_sha2.h crypt/rijndael.h
-pokemon_lab/file.o: pokemon_lab/file.cpp ability.h gender.h item.h move.h \
- active.h type.h stat.h species.h pokemon.h status.h team.h pokemon_lab/file.h
+ crypt/get_sha2.h crypt/rijndael.h pokemon_lab/conversion.h
+pokemon_lab/conversion.o: pokemon_lab/conversion.cpp pokemon_lab/conversion.h \
+ move.h active.h type.h species.h
+pokemon_lab/file.o: pokemon_lab/file.cpp pokemon_lab/file.h pokemon.h \
+ ability.h active.h gender.h item.h move.h type.h species.h stat.h status.h \
+ team.h
 pokemon_lab/inmessage.o: pokemon_lab/inmessage.cpp pokemon_lab/inmessage.h \
  network/inmessage.h pokemon_lab/connect.h pokemon_lab/battle.h analyze_logs.h \
  move.h active.h type.h species.h team.h pokemon.h ability.h gender.h item.h \

@@ -77,16 +77,16 @@ int main () {
 	
 	Item::Items thingy = Item::END_ITEM;
 	std::string output = "";
-	for (std::vector<Unknown>::iterator it = hidden.begin(); it != hidden.end(); ++it) {
-		if (it->hpev == 0 and it->speev == 0) {
-			if (thingy != it->item) {
-				output += '\n' + boost::lexical_cast <std::string> (static_cast <int> (it->item)) + ": \n";
-				thingy = static_cast <Item::Items> (it->item);
+	for (Unknown const & unknown : hidden) {
+		if (unknown.hpev == 0 and unknown.speev == 0) {
+			if (thingy != unknown.item) {
+				output += '\n' + boost::lexical_cast <std::string> (static_cast <int> (unknown.item)) + ": \n";
+				thingy = static_cast <Item::Items> (unknown.item);
 			}
-			output += boost::lexical_cast <std::string> (static_cast <int> (it->atkev) * 4);
-			if (it->nature == static_cast<unsigned char> (Stat::NAUGHTY))
+			output += boost::lexical_cast <std::string> (static_cast <int> (unknown.atkev) * 4);
+			if (unknown.nature == static_cast<unsigned char> (Nature::NAUGHTY))
 				output += "(+)";
-			else if (it->nature == static_cast<unsigned char> (Stat::MODEST))
+			else if (unknown.nature == static_cast<unsigned char> (Nature::MODEST))
 				output += "(-)";
 			output += ", ";
 		}

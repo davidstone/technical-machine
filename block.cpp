@@ -36,8 +36,8 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 			user.pokemon->move->selectable = false;
 	}
 	else if (user.pokemon->move->name == Move::STRUGGLE) {
-		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
-			if (!it->is_struggle_or_switch () and it->selectable) {
+		for (Move const & move : user.pokemon->move.set) {
+			if (!move.is_struggle_or_switch () and move.selectable) {
 				// Struggle is only selectable if no other move is selectable
 				user.pokemon->move->selectable = false;
 				break;
@@ -49,8 +49,8 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 			or (user.torment and user.pokemon->move->times_used != 0))
 		user.pokemon->move->selectable = false;
 	else if (user.encore or user.recharging or user.pokemon->item.is_choice_item ()) {
-		for (std::vector<Move>::const_iterator it = user.pokemon->move.set.begin(); it != user.pokemon->move.set.end(); ++it) {
-			if (it->name != user.pokemon->move->name and it->times_used != 0) {
+		for (Move const & move : user.pokemon->move.set) {
+			if (move.name != user.pokemon->move->name and move.times_used != 0) {
 				user.pokemon->move->selectable = false;
 				break;
 			}
@@ -120,8 +120,8 @@ bool block1 (Team const & user, Team const & other) {
 
 bool imprison (Move const & move, Team const & other) {
 	if (other.imprison) {
-		for (std::vector<Move>::const_iterator it = other.pokemon->move.set.begin(); it != other.pokemon->move.set.end(); ++it) {
-			if (move.name == it->name)
+		for (Move const & other_move : other.pokemon->move.set) {
+			if (move.name == other_move.name)
 				return true;
 		}
 	}

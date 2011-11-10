@@ -62,5 +62,5 @@ uint32_t InMessage::read_int () {
 	return read_bytes (4);
 }
 
-}		// namespace network
-}		// namespace technicalmachine
+} // namespace network
+} // namespace technicalmachine

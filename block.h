@@ -31,6 +31,5 @@ bool block1 (Team const & user, Team const & other);
 bool block2 (Team const & user, Weather const & weather);
 bool imprison (Move const & move, Team const & other);
 
-}
-
-#endif		// BLOCK_H_
+} // namespace technicalmachine
+#endif // BLOCK_H_

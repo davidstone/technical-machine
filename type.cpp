@@ -28,8 +28,8 @@
 namespace technicalmachine {
 
 bool is_type (Team const & team, Type type) {
-	for (std::vector <Type>::const_iterator it = team.pokemon->type.begin(); it != team.pokemon->type.end(); ++it) {
-		if (*it == type and (type != FLYING or !team.roost))
+	for (Type const check : team.pokemon->type) {
+		if (check == type and (type != FLYING or !team.roost))
 			return true;
 	}
 	return false;
@@ -65,8 +65,8 @@ unsigned lookup_effectiveness (Type attacking, Type defending) {
 unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
 	unsigned effectiveness = 1;
 	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
-	for (std::vector <Type>::const_iterator it = pokemon.type.begin(); it != pokemon.type.end(); ++it)
-		effectiveness *= lookup_effectiveness (type, *it);
+	for (Type const target_type : pokemon.type)
+		effectiveness *= lookup_effectiveness (type, target_type);
 	if (pokemon.type.size () == 1)
 		effectiveness *= 2;
 	return effectiveness;
@@ -75,8 +75,8 @@ unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
 std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & pokemon) {
 	std::vector <unsigned> effectiveness;
 	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
-	for (std::vector <Type>::const_iterator it = pokemon.type.begin(); it != pokemon.type.end(); ++it)
-		effectiveness.push_back (lookup_effectiveness (type, *it));
+	for (Type const target_type : pokemon.type)
+		effectiveness.push_back (lookup_effectiveness (type, target_type));
 	return effectiveness;
 }
 

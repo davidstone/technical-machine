@@ -46,19 +46,19 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back (lead [n] * overall [n] / total);
 
-	for (std::vector<Pokemon>::const_iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
+	for (Pokemon const & pokemon : team.pokemon.set) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
-			estimate [n] *= multiplier [pokemon->name] [n];
+			estimate [n] *= multiplier [pokemon.name] [n];
 	}
 	predict_pokemon (team, estimate, multiplier);
-	for (std::vector<Pokemon>::iterator pokemon = team.pokemon.set.begin(); pokemon != team.pokemon.set.end(); ++pokemon) {
-		if (!pokemon->ability.is_set ())
-			pokemon->ability.name = static_cast<Ability::Abilities> (detailed [pokemon->name] [0]);
-		if (!pokemon->item.is_set ())
-			pokemon->item.name = static_cast<Item::Items> (detailed [pokemon->name] [1]);
-		if (!pokemon->nature.is_set ())
-			pokemon->nature.name = static_cast<Nature::Natures> (detailed [pokemon->name] [2]);
-		predict_move (*pokemon, detailed, size);
+	for (Pokemon & pokemon : team.pokemon.set) {
+		if (!pokemon.ability.is_set ())
+			pokemon.ability.name = static_cast<Ability::Abilities> (detailed [pokemon.name] [0]);
+		if (!pokemon.item.is_set ())
+			pokemon.item.name = static_cast<Item::Items> (detailed [pokemon.name] [1]);
+		if (!pokemon.nature.is_set ())
+			pokemon.nature.name = static_cast<Nature::Natures> (detailed [pokemon.name] [2]);
+		predict_move (pokemon, detailed, size);
 	}
 }
 

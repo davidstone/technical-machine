@@ -611,8 +611,8 @@ unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned
 
 unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
 	damage = damage * attacker.move->r / 100 * stab / 2;
-	for (std::vector <unsigned>::const_iterator it = effectiveness.begin(); it != effectiveness.end(); ++it)
-		damage = damage * *it / 2;
+	for (unsigned const effective : effectiveness)
+		damage = damage * effective / 2;
 	damage = damage * aem / 4 * eb / 5 * tl / rb;
 	if (damage == 0)
 		damage = 1;
@@ -693,4 +693,4 @@ void damage_side_effect (Pokemon & user, unsigned damage) {
 		user.hp.stat = 0;
 }
 
-}
+} // namespace technicalmachine

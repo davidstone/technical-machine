@@ -106,6 +106,6 @@ class InMessage : public network::InMessage::InMessage {
 		};
 };
 
-}		// namespace pl
-}		// namespace technicalmachine
-#endif
+} // namespace pl
+} // namespace technicalmachine
+#endif // POKEMON_LAB_INMESSAGE_H_

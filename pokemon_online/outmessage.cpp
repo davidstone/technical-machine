@@ -36,8 +36,8 @@ OutMessage::OutMessage (uint8_t code):
 void OutMessage::write_string (std::string const & str) {
 	uint32_t const number_of_utf16_bytes = 2 * str.length();
 	write_int (number_of_utf16_bytes);
-	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
-		write_short (*it);
+	for (char const c : str)
+		write_short (c);
 }
 
 void OutMessage::write_team (Team const & team, std::string const & username) {
@@ -137,8 +137,8 @@ void OutMessage::write_switch (uint32_t battle_id, uint8_t slot) {
 	write_int (metagame);
 	if (metagame == -1u) {
 		write_byte (clauses.size());
-		for (std::vector <uint8_t>::const_iterator it = clauses.begin(); it != clauses.end(); ++it)
-			write_byte (*it);
+		for (uint8_t const clause : clauses)
+			write_byte (clause);
 		write_byte (timing);
 		if (timing) {
 			write_int (pool);
@@ -156,5 +156,5 @@ void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
 	boost::asio::write (socket, boost::asio::buffer (buffer));
 }
 
-}
-}
+} // namespace po
+} // namespace technicalmachine
