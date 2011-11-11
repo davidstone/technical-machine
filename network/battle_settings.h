@@ -25,6 +25,7 @@ namespace network {
 class GenericBattleSettings {
 	public:
 		virtual bool are_acceptable () const = 0;
+		virtual ~GenericBattleSettings () { }
 };
 
 } // namespace network

@@ -46,7 +46,9 @@ GenericClient::GenericClient (int set_depth):
 	depth (set_depth),
 	timer (io)
 	{
-	srand (static_cast <unsigned> (time (0)));
+	// I use srand and rand because this is only for determining when TM speaks.
+	// When I add random decisions to TM's actual play, I'll replace with a better PRNG
+	srand (static_cast <unsigned> (time (nullptr)));
 	load_highlights ();
 	load_responses ();
 	load_trusted_users ();

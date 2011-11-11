@@ -30,7 +30,7 @@ class Gender {
 		Genders gender;
 		
 		Gender ();
-		Gender (Genders gender_);
+		explicit Gender (Genders gender_);
 		Gender & operator= (Gender other);
 		Gender & operator= (Genders other);
 

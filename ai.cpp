@@ -40,7 +40,7 @@ int main (int argc, char* argv[]) {
 	else
 		depth = boost::lexical_cast <int> (argv[1]);
 
-	// TODO: This is not the correct solution, but it works "good enough". I'll back back to this later.
+	// TODO: This is not the correct solution, but it works "good enough". I'll get back to this later.
 	while (true) {
 		try {
 			po::Client client (depth);

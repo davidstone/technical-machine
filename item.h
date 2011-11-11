@@ -32,7 +32,7 @@ class Item {
 		Items name;
 	
 		Item ();
-		Item (Items item);
+		explicit Item (Items item);
 		bool is_set () const;
 		bool is_choice_item () const;
 		int get_berry_power () const;		// Returns 0 for non-berries

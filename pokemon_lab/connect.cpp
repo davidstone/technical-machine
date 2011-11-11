@@ -70,7 +70,7 @@ class Channel {
 		uint8_t type;
 		std::string topic;
 		uint32_t population;
-		Channel (InMessage & msg):
+		explicit Channel (InMessage & msg):
 			name (msg.read_string()),
 			type (msg.read_byte()),
 			topic (msg.read_string()),
@@ -118,7 +118,7 @@ class Metagame {
 			}
 		}
 	public:
-		Metagame (InMessage & msg):
+		explicit Metagame (InMessage & msg):
 			index (msg.read_byte ()),
 			name (msg.read_string ()),
 			id (msg.read_string ()),
@@ -177,29 +177,29 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::CHANNEL_JOIN_PART: {
-/*			uint32_t const id = msg.read_int();
-			std::string const user = msg.read_string();
-			bool const joining = msg.read_byte();
-			handle_channel_join_part (id, user, joining);
-*/			break;
+//			uint32_t const id = msg.read_int();
+//			std::string const user = msg.read_string();
+//			bool const joining = msg.read_byte();
+//			handle_channel_join_part (id, user, joining);
+			break;
 		}
 		case InMessage::CHANNEL_STATUS: {
-/*			uint32_t const channel_id = msg.read_int();
-			std::string const invoker = msg.read_string();
-			std::string const user = msg.read_string();
-			uint32_t const flags = msg.read_int();
-			handle_channel_status (channel_id, invoker, user, flags);
-*/			break;
+//			uint32_t const channel_id = msg.read_int();
+//			std::string const invoker = msg.read_string();
+//			std::string const user = msg.read_string();
+//			uint32_t const flags = msg.read_int();
+//			handle_channel_status (channel_id, invoker, user, flags);
+			break;
 		}
 		case InMessage::CHANNEL_LIST: {
-/*			uint32_t const number_of_channels = msg.read_int();
-			std::vector <Channel> channels;
-			for (uint32_t n = 0; n != number_of_channels; ++n) {
-				Channel channel (msg);
-				channels.push_back (channel);
-			}
-			handle_channel_list (channels);
-*/			break;
+//			uint32_t const number_of_channels = msg.read_int();
+//			std::vector <Channel> channels;
+//			for (uint32_t n = 0; n != number_of_channels; ++n) {
+//				Channel channel (msg);
+//				channels.push_back (channel);
+//			}
+//			handle_channel_list (channels);
+			break;
 		}
 		case InMessage::CHANNEL_MESSAGE: {
 			uint32_t const channel_id = msg.read_int();
@@ -213,26 +213,26 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const generation = msg.read_byte ();
 			uint32_t const active_party_size = msg.read_int ();
 			uint32_t const max_team_length = msg.read_int ();
-/*			int32_t const metagame = msg.read_int ();
-			std::vector <uint8_t> clauses;
-			bool timed;
-			int32_t pool;
-			uint8_t periods;
-			int32_t period_length;
-			if (metagame == -1) {
-				uint8_t const clauses_size = msg.read_byte ();
-				for (uint8_t n = 0; n != clauses.size(); ++n) {
-					uint8_t clause = msg.read_byte ();
-					clauses.push_back (clause);
-				}
-				timed = msg.read_byte ();
-				if (timed) {
-					pool = msg.read_int ();
-					periods = msg.read_byte ();
-					period_length = msg.read_int ();
-				}
-			}
-*/			BattleSettings settings (generation, active_party_size, max_team_length);
+//			int32_t const metagame = msg.read_int ();
+//			std::vector <uint8_t> clauses;
+//			bool timed;
+//			int32_t pool;
+//			uint8_t periods;
+//			int32_t period_length;
+//			if (metagame == -1) {
+//				uint8_t const clauses_size = msg.read_byte ();
+//				for (uint8_t n = 0; n != clauses.size(); ++n) {
+//					uint8_t clause = msg.read_byte ();
+//					clauses.push_back (clause);
+//				}
+//				timed = msg.read_byte ();
+//				if (timed) {
+//					pool = msg.read_int ();
+//					periods = msg.read_byte ();
+//					period_length = msg.read_int ();
+//				}
+//			}
+			BattleSettings settings (generation, active_party_size, max_team_length);
 			handle_incoming_challenge (user, settings);
 			break;
 		}
@@ -251,10 +251,10 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const battle_id = msg.read_int ();
 			std::string const opponent = msg.read_string ();
 			uint8_t const party = msg.read_byte ();
-/*			int16_t const metagame = msg.read_short ();
-			bool const rated = msg.read_byte ();
-			std::string const battle_id = msg.read_string ();
-*/			handle_battle_begin (battle_id, opponent, party);
+//			int16_t const metagame = msg.read_short ();
+//			bool const rated = msg.read_byte ();
+//			std::string const battle_id = msg.read_string ();
+			handle_battle_begin (battle_id, opponent, party);
 			break;
 		}
 		case InMessage::REQUEST_ACTION: {
@@ -342,13 +342,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
-/*			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
-			uint8_t const slot = msg.read_byte ();
-			std::string const nickname = msg.read_string ();
-			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
-			battle.handle_withdraw (party, slot, nickname);
-*/			break;
+//			uint32_t const battle_id = msg.read_int ();
+//			uint8_t const party = msg.read_byte ();
+//			uint8_t const slot = msg.read_byte ();
+//			std::string const nickname = msg.read_string ();
+//			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
+//			battle.handle_withdraw (party, slot, nickname);
+			break;
 		}
 		case InMessage::BATTLE_SEND_OUT: {
 			uint32_t const battle_id = msg.read_int ();
@@ -376,13 +376,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_SET_PP: {
-/*			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
-			uint8_t const slot = msg.read_byte ();
-			uint8_t const pp = msg.read_byte ();
-			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
-			battle.handle_set_pp (party, slot, pp);
-*/			break;
+//			uint32_t const battle_id = msg.read_int ();
+//			uint8_t const party = msg.read_byte ();
+//			uint8_t const slot = msg.read_byte ();
+//			uint8_t const pp = msg.read_byte ();
+//			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
+//			battle.handle_set_pp (party, slot, pp);
+			break;
 		}
 		case InMessage::BATTLE_FAINTED: {
 			uint32_t const battle_id = msg.read_int ();
@@ -402,18 +402,18 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::SPECTATOR_BEGIN: {
-/*			uint32_t const battle_id = msg.read_int ();
-			std::string const trainer1 = msg.read_string ();
-			std::string const trainer2 = msg.read_string ();
-			uint8_t const party_size = msg.read_byte ();
-			uint8_t const max_team_length () = msg.read_byte ();
-			bool const timing = msg.read_byte ();
-			int32_t periods = -1;
-			if (timing)
-				periods = msg.read_int ();
-			for (fill this in later) {
-			}
-*/			break;
+//			uint32_t const battle_id = msg.read_int ();
+//			std::string const trainer1 = msg.read_string ();
+//			std::string const trainer2 = msg.read_string ();
+//			uint8_t const party_size = msg.read_byte ();
+//			uint8_t const max_team_length () = msg.read_byte ();
+//			bool const timing = msg.read_byte ();
+//			int32_t periods = -1;
+//			if (timing)
+//				periods = msg.read_int ();
+//			for (fill this in later) {
+//			}
+			break;
 		}
 		case InMessage::BATTLE_SET_MOVE: {
 			uint32_t const battle_id = msg.read_int ();
@@ -444,19 +444,19 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::USER_DETAILS: {
-/*			std::string const name = msg.read_string ();
-			std::string const ip = msg.read_string ();
-			uint8_t const number_of_aliases = msg.read_byte ();
-			std::vector <std::string> aliases;
-			for (uint8_t n = 0; n != number_of_aliases; ++n)
-				aliases.push_back (msg.read_string ());
-			uint8_t const number_of_bans = msg.read_byte ();
-			std::vector <?> thing;
-			for (uint8_t n = 0; n != number_of_bans; ++n)
-				msg.read_int ();
-				msg.read_?? ();
-				msg.read_int ();
-*/			break;
+//			std::string const name = msg.read_string ();
+//			std::string const ip = msg.read_string ();
+//			uint8_t const number_of_aliases = msg.read_byte ();
+//			std::vector <std::string> aliases;
+//			for (uint8_t n = 0; n != number_of_aliases; ++n)
+//				aliases.push_back (msg.read_string ());
+//			uint8_t const number_of_bans = msg.read_byte ();
+//			std::vector <?> thing;
+//			for (uint8_t n = 0; n != number_of_bans; ++n)
+//				msg.read_int ();
+//				msg.read_?? ();
+//				msg.read_int ();
+			break;
 		}
 		case InMessage::USER_MESSAGE: {
 			std::string const name = msg.read_string ();
