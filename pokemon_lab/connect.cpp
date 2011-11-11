@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
+
 #include "battle.h"
 #include "battle_settings.h"
 #include "conversion.h"
@@ -518,15 +520,15 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		default:
-			std::cerr << "Unknown code: " << code << '\n';
+			print_with_time_stamp (std::cerr, "Unknown code: " + boost::lexical_cast <std::string> (code));
 			break;
 	}
 	msg.read_header (*socket, this);
 }
 
 void Client::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const {
-	std::cout << server + '\n';
-//	std::cout << message + '\n';
+	print_with_time_stamp (std::cout, server);
+	print_with_time_stamp (std::cout, message);
 }
 
 void Client::handle_password_challenge (InMessage msg) {
@@ -592,7 +594,7 @@ std::string Client::get_shared_secret (int secret_style, std::string const & sal
 		case VBULLETIN:
 			return getMD5HexHash (getMD5HexHash (password) + salt);
 		default:
-			std::cerr << "Unknown secret style of " << secret_style << '\n';
+			print_with_time_stamp (std::cerr, "Unknown secret style of " + boost::lexical_cast <std::string> (secret_style));
 			return "";
 	}
 }
@@ -616,35 +618,37 @@ void Client::handle_registry_response (uint8_t code, std::string const & details
 			join_channel ("main");
 			break;
 		case NAME_UNAVAILABLE:
-			std::cerr << "Name unavailable.\n";
+			print_with_time_stamp (std::cerr, "Name unavailable.");
 			break;
 		case REGISTER_SUCCESS:
+			print_with_time_stamp (std::cout, "Successfully registered name.");
 			break;
 		case ILLEGAL_NAME:
-			std::cerr << "Illegal name.\n";
+			print_with_time_stamp (std::cerr, "Illegal name.");
 			break;
 		case TOO_LONG_NAME:
-			std::cerr << "Name too long.\n";
+			print_with_time_stamp (std::cerr, "Name too long.");
 			break;
 		case NONEXISTENT_NAME:
-			std::cerr << "Name does not exist.\n";
+			print_with_time_stamp (std::cerr, "Name does not exist.");
 			break;
 		case INVALID_RESPONSE:
-			std::cerr << "Invalid response.\n";
+			print_with_time_stamp (std::cerr, "Invalid response.");
 			break;
 		case USER_BANNED:
-			std::cerr << "You are banned.\n";
+			print_with_time_stamp (std::cerr, "You are banned.");
 			break;
 		case USER_ALREADY_ON:
-			std::cerr << "You are already logged into this server.\n";
+			print_with_time_stamp (std::cerr, "You are already logged into this server.");
 			break;
 		case SERVER_FULL:
-			std::cerr << "The server is full.\n";
+			print_with_time_stamp (std::cerr, "The server is full.");
 			break;
 		default:
-			std::cerr << "Authentication failed with unknown code: " << static_cast <int> (code) << ". =(\n";
+			print_with_time_stamp (std::cerr, "Authentication failed with unknown code: " + boost::lexical_cast <std::string> (code) + ". =(");
 	}
-	std::cerr << details + "\n";
+	if (!details.empty ())
+		print_with_time_stamp (std::cerr, details);
 }
 
 void Client::join_channel (std::string const & channel) {
@@ -702,67 +706,68 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	else
 		verb = "Rejected";
 	msg.send (*socket);
-	print_with_time_stamp (verb + " challenge vs. " + opponent);
+	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
 }
 
 void Client::handle_metagame_list (std::vector <Metagame> const & metagames) {
 }
 
 void Client::handle_invalid_team (std::vector <int16_t> const & violations) {
-	std::cerr << "Invalid team.\n";
+	print_with_time_stamp (std::cerr, "Invalid team.");
 	for (int16_t const violation : violations) {
 		int pokemon = (-(violation + 1)) % 6;
-		std::cerr << "Problem at Pokemon " << pokemon << ": ";
+		std::string output = "Problem at Pokemon " + boost::lexical_cast <std::string> (pokemon) + ": ";
 		switch (-(violation + pokemon + 1) / 6) {
 			case 0:
-				std::cerr << "must have 1-4 unique moves.";
+				output += "must have 1-4 unique moves.";
 				break;
 			case 1:
-				std::cerr << "cannot learn all moves.";
+				output += "cannot learn all moves.";
 				break;
 			case 2:
-				std::cerr << "illegal move combination.";
+				output += "illegal move combination.";
 				break;
 			case 3:
-				std::cerr << "invalid quantity of PP ups.";
+				output += "invalid quantity of PP ups.";
 				break;
 			case 4:
-				std::cerr << "invalid item.";
+				output += "invalid item.";
 				break;
 			case 5:
-				std::cerr << "cannot learn given ability.";
+				output += "cannot learn given ability.";
 				break;
 			case 6:
-				std::cerr << "invalid gender.";
+				output += "invalid gender.";
 				break;
 		}
-		std::cerr << '\n';
+		print_with_time_stamp (std::cerr, output);
 	}
 }
 
 void Client::handle_error_message (uint8_t code, std::string const & details) const {
 	switch (code) {
 		case 0:
-			std::cerr << "User does not exist.\n";
+			print_with_time_stamp (std::cerr, "User does not exist.");
 			break;
 		case 1:
-			std::cerr << "User not online.\n";
+			print_with_time_stamp (std::cerr, "User not online.");
 			break;
 		case 2:
-			std::cerr << "Bad challenge.\n";
+			print_with_time_stamp (std::cerr, "Bad challenge.");
 			break;
 		case 3:
-			std::cerr << "Unauthorized action.\n";
+			print_with_time_stamp (std::cerr, "Unauthorized action.");
 			break;
 		default:
-			std::cerr << "Unknown error. =(\n";
+			print_with_time_stamp (std::cerr, "Unknown error. =(");
 			break;
 	}
-	std::cerr << details + "\n";
+	if (!details.empty ())
+		print_with_time_stamp (std::cerr, details);
 }
 
 void Client::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) const {
-	print_with_time_stamp ("<Important message> " + sender + ": " + message);
+	print_with_time_stamp (std::cout, "<Important message> " + sender + ": " + message);
 }
 
 void Client::send_channel_message (uint32_t channel_id, std::string const & message) {
@@ -770,11 +775,6 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 	msg.write_int (channel_id);
 	msg.write_string (message);
 	msg.send (*socket);
-}
-
-void Client::send_channel_message (std::string channel, std::string const & message) {
-	uint32_t channel_id = channels.find (channel)->second;
-	send_channel_message (channel_id, message);
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {

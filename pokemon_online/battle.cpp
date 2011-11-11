@@ -211,7 +211,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case STATUS_CHANGE: {
 			std::cerr << "STATUS_CHANGE\n";
 			int8_t const status = msg.read_byte ();
-			bool const multiple_turns = msg.read_byte ();
+//			bool const multiple_turns = msg.read_byte ();
 			// Includes things like confusion
 			break;
 		}
@@ -262,12 +262,12 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case ITEM_MESSAGE: {
 			std::cerr << "ITEM_MESSAGE\n";
-			uint16_t const item = msg.read_short ();
+/*			uint16_t const item = msg.read_short ();
 			uint8_t const part = msg.read_byte ();
 			int8_t const foe = msg.read_byte ();
 			int16_t const berry = msg.read_short ();
 			int16_t const other = msg.read_short ();
-			break;
+*/			break;
 		}
 		case MOVE_MESSAGE: {
 			std::cerr << "MOVE_MESSAGE\n";

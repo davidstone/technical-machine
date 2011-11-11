@@ -34,8 +34,6 @@ class Channel;
 class Metagame;
 
 class Client : public network::GenericClient {
-	private:
-		std::map <std::string, uint32_t> channels;
 	public:
 		explicit Client (int depth_);
 	private:
@@ -66,7 +64,6 @@ class Client : public network::GenericClient {
 		void handle_important_message (int32_t channel, std::string const & sender, std::string const & message) const;
 	public:
 		void send_channel_message (uint32_t channel_id, std::string const & message);
-		void send_channel_message (std::string channel, std::string const & message);
 		void send_private_message (std::string const & user, std::string const & message);
 };
 

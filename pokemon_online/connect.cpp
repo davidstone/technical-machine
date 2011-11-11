@@ -24,6 +24,7 @@
 #include <utility>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "battle.h"
 #include "battle_settings.h"
@@ -121,7 +122,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const red = msg.read_short ();
 			uint16_t const green = msg.read_short ();
 			uint16_t const blue = msg.read_short ();
-			uint16_t const pad = msg.read_short ();
+			uint16_t const padding = msg.read_short ();
 			uint8_t gen = msg.read_byte ();
 			break;
 		}
@@ -131,7 +132,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		case InMessage::SEND_MESSAGE: {
 			std::string const message = msg.read_string ();
-			print_with_time_stamp (message);
+			print_with_time_stamp (std::cout, message);
 			break;
 		}
 		case InMessage::PLAYERS_LIST: {
@@ -354,14 +355,22 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "code: " << code << '\n';
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
-		case InMessage::REMOVE_CHANNEL:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		case InMessage::REMOVE_CHANNEL: {
+			uint32_t const channel_id = msg.read_int ();
+			std::map <uint32_t, std::string>::iterator it = id_to_channel.find (channel_id);
+			if (it != id_to_channel.end()) {
+				channels.erase (it->second);
+				id_to_channel.erase (it);
+			}
 			break;
-		case InMessage::ADD_CHANNEL:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		}
+		case InMessage::ADD_CHANNEL: {
+			std::string const channel_name = msg.read_string ();
+			uint32_t const channel_id = msg.read_int ();
+			channels.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
+			id_to_channel.insert (std::pair <uint32_t, std::string> (channel_id, channel_name));
 			break;
+		}
 		case InMessage::CHANNEL_MESSAGE: {
 			uint32_t const channel_id = msg.read_int ();
 			std::string speaker;
@@ -396,7 +405,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::cerr << "size: " << msg.buffer.size() << '\n';
 			break;
 		default:
-			std::cerr << "Unknown code: " << code << '\n';
+			print_with_time_stamp (std::cerr, "Unknown code: " + boost::lexical_cast<std::string> (code));
 			break;
 	}
 	msg.read_header (*socket, this);
@@ -428,25 +437,35 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	else
 		verb = "Rejected";
 	msg.send (*socket);
-	print_with_time_stamp (verb + " challenge vs. " + opponent);
+	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
 }
 
 void Client::handle_remove_challenge (std::string const & opponent) {
 }
 
 void Client::join_channel (std::string const & channel) {
+	OutMessage msg (OutMessage::JOIN_CHANNEL);
+	msg.write_string (channel);
+	msg.send (*socket);
 }
 
 void Client::part_channel (std::string const & channel) {
+	std::map <std::string, uint32_t>::const_iterator it = channels.find (channel);
+	if (it != channels.end ()) {
+		OutMessage msg (OutMessage::LEAVE_CHANNEL);
+		msg.write_int (it->second);
+		msg.send (*socket);
+	}
 }
 
 void Client::send_battle_challenge (std::string const & opponent) {
 }
 
-void Client::send_channel_message (std::string channel, std::string const & message) {
-}
-
 void Client::send_channel_message (uint32_t channel_id, std::string const & message) {
+	OutMessage msg (OutMessage::CHANNEL_MESSAGE);
+	msg.write_int (channel_id);
+	msg.write_string (message);
+	msg.send (*socket);
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
@@ -464,16 +483,18 @@ void Client::handle_version_control (std::string const & server_version) const {
 //	OutMessage msg (OutMessage::VERSION_CONTROL);
 	// Pretend to be the most recent version because this is the standard I'm coding against.
 	std::string const version = "1.0.30";
-	if (version != server_version)
-		std::cerr << "Server version is: " + server_version + "\nUser's 'version': " + version + "\n";
+	if (version != server_version) {
+		print_with_time_stamp (std::cerr, "Server version is: " + server_version);
+		print_with_time_stamp (std::cerr, "User's 'version': " + version);
+	}
 }
 
 void Client::handle_server_name (std::string const & server_name) const {
-	std::cout << "Server name: " + server_name + '\n';
+	print_with_time_stamp (std::cout, "Server name: " + server_name);
 }
 
 void Client::handle_announcement (std::string const & announcement) const {
-	std::cout << announcement + '\n';
+	print_with_time_stamp (std::cout, announcement);
 }
 
 void Client::handle_private_message (uint32_t user_id, std::string const & message) {

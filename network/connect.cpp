@@ -162,7 +162,7 @@ void GenericClient::connect () {
 	}
 
 	if (error) {
-		print_with_time_stamp ("Error connecting, code: " + error.message () + ". Waiting a few seconds and trying again.");
+		print_with_time_stamp (std::cerr, "Error connecting: " + error.message () + ". Waiting a few seconds and trying again.");
 		reconnect ();
 	}
 }
@@ -181,8 +181,8 @@ void GenericClient::reset_timer (unsigned timer_length) {
 	timer.async_wait (boost::bind (& GenericClient::reset_timer, this, timer_length));
 }
 
-void GenericClient::print_with_time_stamp (std::string const & message) const {
-	std::cout << "[" + time_stamp () + "] " + message + "\n";
+void GenericClient::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
+	stream << "[" + time_stamp () + "] " + message + "\n";
 }
 
 std::string GenericClient::time_stamp () const {
@@ -200,7 +200,7 @@ void GenericClient::handle_channel_message (uint32_t channel_id, std::string con
 	std::string msg = message;
 	boost::to_lower (msg);
 	if (is_highlighted (msg)) {
-		print_with_time_stamp (user + ": " + message);
+		print_with_time_stamp (std::cout, user + ": " + message);
 	}
 }
 
@@ -236,7 +236,7 @@ void GenericClient::pause_at_start_of_battle () {
 void GenericClient::handle_victory (uint32_t battle_id, uint8_t party_id) {
 	GenericBattle & battle = *battles.find (battle_id)->second;
 	std::string const verb = (battle.party == party_id) ? "Won" : "Lost";
-	print_with_time_stamp (verb + " a battle vs. " + battle.foe.player);
+	print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
 	battles.erase (battle_id);
 }
 
@@ -257,6 +257,11 @@ std::string GenericClient::get_response () const {
 	// Probably not a big issue here since RAND_MAX is guaranteed to be at least 32767, and is probably larger.
 	// This means the variation is very small, unless response.size() grows to be very, very large.
 	return response [rand() % response.size()];
+}
+
+void GenericClient::send_channel_message (std::string channel, std::string const & message) {
+	uint32_t const channel_id = channels.find (channel)->second;
+	send_channel_message (channel_id, message);
 }
 
 size_t GenericClient::set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target) {
@@ -281,7 +286,7 @@ size_t GenericClient::set_target_and_find_message_begin (std::string const & req
 }
 
 void GenericClient::handle_private_message (std::string const & sender, std::string const & message) {
-	print_with_time_stamp ("<PM> " + sender + ": " + message);
+	print_with_time_stamp (std::cout, "<PM> " + sender + ": " + message);
 	if (is_trusted (sender))
 		do_request (sender, message);
 }
