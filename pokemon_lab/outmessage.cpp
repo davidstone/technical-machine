@@ -102,7 +102,7 @@ void OutMessage::write_challenge (std::string const & opponent, uint8_t generati
 	write_int (metagame);
 	if (metagame == -1u) {
 		write_byte (clauses.size());
-		for (uint8_t clause : clauses)
+		for (uint8_t const clause : clauses)
 			write_byte (clause);
 		write_byte (timing);
 		if (timing) {
