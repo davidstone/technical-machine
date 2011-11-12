@@ -419,13 +419,13 @@ void Log::log_misc () {
 	}
 	if (!active->at_replacement().item.is_set ()) {
 		if (active->at_replacement().nickname + "'s Black Sludge restored a little health!" == line)
-			active->at_replacement().item = Item::BLACK_SLUDGE;
+			active->at_replacement().item.name = Item::BLACK_SLUDGE;
 		else if (active->at_replacement().nickname + "'s Leftovers restored its health a little!" == line)
-			active->at_replacement().item = Item::LEFTOVERS;
+			active->at_replacement().item.name = Item::LEFTOVERS;
 		else if (active->at_replacement().nickname + "'s Quick Claw activated!" == line)
-			active->at_replacement().item = Item::QUICK_CLAW;
+			active->at_replacement().item.name = Item::QUICK_CLAW;
 		else if (active->at_replacement().nickname + " became fully charged due to its Power Herb!" == line)
-			active->at_replacement().item = Item::POWER_HERB;
+			active->at_replacement().item.name = Item::POWER_HERB;
 	}
 }
 

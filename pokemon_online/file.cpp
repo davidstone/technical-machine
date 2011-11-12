@@ -98,9 +98,9 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 			break;
 	}
 
-	member.ability = id_to_ability (converter ("Ability=\"", "\"", line));
+	member.ability.name = id_to_ability (converter ("Ability=\"", "\"", line));
 
-	member.item = id_to_item (converter ("Item=\"", "\"", line));
+	member.item.name = id_to_item (converter ("Item=\"", "\"", line));
 	
 	member.nature.name = static_cast <Nature::Natures> (converter ("Nature=\"", "\"", line));
 	

@@ -123,7 +123,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const green = msg.read_short ();
 			uint16_t const blue = msg.read_short ();
 			uint16_t const padding = msg.read_short ();
-			uint8_t gen = msg.read_byte ();
+			uint8_t const gen = msg.read_byte ();
 			break;
 		}
 		case InMessage::LOG_OUT:

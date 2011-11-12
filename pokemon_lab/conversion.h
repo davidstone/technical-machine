@@ -27,8 +27,8 @@ namespace pl {
 
 Species id_to_species (int id);
 int species_to_id (Species species);
-constexpr Move::Moves id_to_move (int id);
-constexpr int move_to_id (Move::Moves move);
+Move::Moves id_to_move (int id);
+int move_to_id (Move::Moves move);
 
 // Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
 
