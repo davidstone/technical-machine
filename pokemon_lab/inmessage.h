@@ -21,7 +21,6 @@
 
 #include <boost/asio.hpp>
 #include "../network/inmessage.h"
-#include "../species.h"
 
 namespace technicalmachine {
 namespace pl {
@@ -35,7 +34,6 @@ class InMessage : public network::InMessage::InMessage {
 		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
 		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
 	public:
-		static Species pl_to_tm_species (int id);
 		enum Message {
 			WELCOME_MESSAGE = 0,
 			PASSWORD_CHALLENGE = 1,

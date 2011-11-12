@@ -52,8 +52,8 @@ class Client : public network::GenericClient {
 		void handle_registry_response (uint8_t code, std::string const & details);
 		void join_channel (std::string const & channel);
 		void part_channel (std::string const & channel);
-		void handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users);
-		void handle_channel_join_part (uint32_t id, std::string const & user, bool joining);
+		void handle_channel_info (uint32_t channel_id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users);
+		void handle_channel_join_part (uint32_t channel_id, std::string const & user, bool joining);
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
 		void handle_channel_list (std::vector <Channel> const & channels);
 		void send_battle_challenge (std::string const & opponent);

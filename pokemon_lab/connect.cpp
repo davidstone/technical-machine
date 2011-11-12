@@ -50,8 +50,8 @@ void Client::request_authentication () {
 }
 
 void Client::run () {
-	unsigned const timer_length = 45;
-	reset_timer (timer_length);
+	constexpr unsigned timer_length_in_seconds = 45;
+	reset_timer (timer_length_in_seconds);
 
 	InMessage msg;
 	msg.read_header (*socket, this);
@@ -160,7 +160,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			// Apparently unused, maybe it's only for connecting to the registry
 			break;
 		case InMessage::CHANNEL_INFO: {
-			uint32_t const id = msg.read_int();
+			uint32_t const channel_id = msg.read_int();
 			uint8_t const info = msg.read_byte();
 			std::string const channel_name = msg.read_string();
 			std::string const topic = msg.read_string();
@@ -173,14 +173,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				std::pair <std::string, uint32_t> const user (username, flags);
 				users.push_back (user);
 			}
-			handle_channel_info (id, info, channel_name, topic, channel_flags, users);
+			handle_channel_info (channel_id, info, channel_name, topic, channel_flags, users);
 			break;
 		}
 		case InMessage::CHANNEL_JOIN_PART: {
-//			uint32_t const id = msg.read_int();
+//			uint32_t const channel_id = msg.read_int();
 //			std::string const user = msg.read_string();
 //			bool const joining = msg.read_byte();
-//			handle_channel_join_part (id, user, joining);
+//			handle_channel_join_part (channel_id, user, joining);
 			break;
 		}
 		case InMessage::CHANNEL_STATUS: {
@@ -253,7 +253,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const party = msg.read_byte ();
 //			int16_t const metagame = msg.read_short ();
 //			bool const rated = msg.read_byte ();
-//			std::string const battle_id = msg.read_string ();
+//			std::string const unique_battle_id = msg.read_string ();
 			handle_battle_begin (battle_id, opponent, party);
 			break;
 		}
@@ -280,8 +280,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				can_switch = msg.read_byte ();
 				forced = msg.read_byte ();
 				if (!forced) {
-					uint8_t num_moves = msg.read_int ();
-					for (uint8_t n = 0; n != num_moves; ++n)
+					int32_t const num_moves = msg.read_int ();
+					for (int32_t n = 0; n != num_moves; ++n)
 						moves.push_back (msg.read_byte ());
 				}
 			}
@@ -306,6 +306,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			//			 byte: gender
 			//			 byte: level
 			//			 byte: shiny
+
 			// This appears to be data related to visual stuff... Not needed for the bot.
 			break;
 		}
@@ -313,7 +314,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const category = msg.read_byte ();
 			int16_t const message_id = msg.read_short ();
-			uint8_t argc = msg.read_byte ();
+			uint8_t const argc = msg.read_byte ();
 			std::vector <std::string> arguments;
 			for (uint8_t n = 0; n != argc; ++n) {
 				std::string const argument = msg.read_string ();
@@ -475,7 +476,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const index = msg.read_byte ();
 			uint8_t const type = msg.read_byte ();
 			uint8_t const radius = msg.read_byte ();
-			std::string const id = msg.read_string ();
+			std::string const effect_id = msg.read_string ();
 			std::string const message = msg.read_string ();
 			bool const applied = msg.read_byte ();
 			break;
@@ -667,11 +668,11 @@ void Client::part_channel (std::string const & channel) {
 	}
 }
 
-void Client::handle_channel_info (uint32_t id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
-	channels.insert (std::pair <std::string, uint32_t> (channel_name, id));
+void Client::handle_channel_info (uint32_t channel_id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
+	channels.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
 }
 
-void Client::handle_channel_join_part (uint32_t id, std::string const & user, bool joining) {
+void Client::handle_channel_join_part (uint32_t channel_id, std::string const & user, bool joining) {
 }
 
 void Client::handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags) {

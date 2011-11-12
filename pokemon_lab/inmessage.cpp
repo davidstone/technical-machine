@@ -20,13 +20,13 @@
 #include <cstdint>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include "../species.h"
 #include "connect.h"
 
 namespace technicalmachine {
 namespace pl {
 
-InMessage::InMessage (): network::InMessage::InMessage () {
+InMessage::InMessage ():
+	network::InMessage::InMessage () {
 }
 
 std::string InMessage::read_string () {

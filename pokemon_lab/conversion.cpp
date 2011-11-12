@@ -33,13 +33,13 @@ int species_to_id (Species species) {
 	return species_converter [species];
 }
 
-Move::Moves id_to_move (int id) {
+constexpr Move::Moves id_to_move (int id) {
 	return (id < static_cast <int> (Move::SWITCH0)) ?
 		static_cast <Move::Moves> (id) :
 		static_cast <Move::Moves> (id + 6);
 }
 
-int move_to_id (Move::Moves move) {
+constexpr int move_to_id (Move::Moves move) {
 	return (move < Move::SWITCH0) ? move : static_cast <int> (move) - 6;
 }
 

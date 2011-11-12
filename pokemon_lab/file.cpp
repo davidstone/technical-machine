@@ -24,7 +24,7 @@
 namespace technicalmachine {
 namespace pl {
 
-unsigned team_size (std::string const &name) {
+unsigned team_size (std::string const & name) {
 	std::ifstream file (name.c_str());
 	std::string line;
 	unsigned size = 0;
@@ -36,7 +36,7 @@ unsigned team_size (std::string const &name) {
 	return size;
 }
 
-void load_team (Team &team, std::string const &name, unsigned size) {
+void load_team (Team & team, std::string const & name, unsigned size) {
 	team.size = team_size (name);
 	std::ifstream file (name.c_str());
 	for (unsigned n = 0; n != team.size; ++n)
@@ -44,7 +44,7 @@ void load_team (Team &team, std::string const &name, unsigned size) {
 	file.close ();
 }
 
-void load_pokemon (Team& team, std::ifstream &file, unsigned size) {
+void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
 	std::string output2;		// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
@@ -64,9 +64,9 @@ void load_pokemon (Team& team, std::ifstream &file, unsigned size) {
 		output1 = search (file, output2, "\">");
 		if ("No" == output1)
 			break;
-		Move::Moves name = Move::name_from_string (output1);
-		int pp_ups = boost::lexical_cast <int> (output2);
-		Move move (name, pp_ups, size);
+		Move::Moves const name = Move::name_from_string (output1);
+		int const pp_ups = boost::lexical_cast <int> (output2);
+		Move const move (name, pp_ups, size);
 		member.move.set.insert (member.move.set.begin() + n, move);
 	}
 	
@@ -86,7 +86,7 @@ void load_pokemon (Team& team, std::ifstream &file, unsigned size) {
 	team.pokemon.set.push_back (member);
 }
 
-std::string search (std::ifstream &file, std::string &output2, std::string const &data) {
+std::string search (std::ifstream & file, std::string & output2, std::string const & data) {
 	std::string output1 = "";
 	while (!file.eof() and "" == output1) {
 		std::string line;
