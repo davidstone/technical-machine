@@ -35,6 +35,8 @@
 #include "../crypt/get_sha2.h"
 #include "../crypt/rijndael.h"
 
+#include "../network/connect.h"
+
 namespace technicalmachine {
 namespace pl {
 
@@ -324,12 +326,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			battle.handle_print (category, message_id, arguments);
 			break;
 		}
-		case InMessage::BATTLE_VICTORY: {
+		case InMessage::BATTLE_END: {
 			uint32_t const battle_id = msg.read_int ();
 			// I suspect the int16_t may be a typo in the PL protocol.
 			// Every other message sends uint8_t for party_id;
 			int16_t const party_id = msg.read_short ();
-			handle_victory (battle_id, party_id);
+			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
+			Result result = get_result (battle, party_id);
+			handle_battle_end (battle, battle_id, result);
 			break;
 		}
 		case InMessage::BATTLE_USE_MOVE: {
@@ -783,6 +787,15 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.write_string (user);
 	msg.write_string (message);
 	msg.send (*socket);
+}
+
+network::GenericClient::Result Client::get_result (Battle const & battle, int16_t party_id) const {
+	Result result;
+	if (party_id != -1)
+		result = (battle.party == party_id) ? WON : LOST;
+	else
+		result = TIED;
+	return result;
 }
 
 } // namespace pl

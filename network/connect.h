@@ -90,7 +90,6 @@ class GenericClient {
 		void handle_challenge_withdrawn (std::string const & opponent);
 		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0);
 		void pause_at_start_of_battle ();
-		void handle_victory (uint32_t battle_id, uint8_t party_id);
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 	private:
 		bool is_highlighted (std::string const & message) const;
@@ -106,6 +105,13 @@ class GenericClient {
 		std::string get_response () const;
 	private:
 		size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target);
+	protected:
+		enum Result {
+			WON = 1,
+			LOST = -1,
+			TIED = 0
+		};
+		void handle_battle_end (GenericBattle & battle, uint32_t battle_id, Result result);
 };
 } //namespace network
 } // namespace technicalmachine

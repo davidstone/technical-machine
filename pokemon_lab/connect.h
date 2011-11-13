@@ -30,6 +30,7 @@
 namespace technicalmachine {
 namespace pl {
 
+class Battle;
 class Channel;
 class Metagame;
 
@@ -65,6 +66,8 @@ class Client : public network::GenericClient {
 	public:
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_private_message (std::string const & user, std::string const & message);
+	private:
+		Result get_result (Battle const & battle, int16_t party_id) const;
 };
 
 } // namespace pl

@@ -253,10 +253,10 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case ABILITY_MESSAGE: {
 			std::cerr << "ABILITY_MESSAGE\n";
 			uint16_t const ability = msg.read_short ();
-			uint8_t const part = msg.read_byte ();
-			int8_t const type = msg.read_byte ();
-			int8_t const foe = msg.read_byte ();
-			int16_t const other = msg.read_short ();
+//			uint8_t const part = msg.read_byte ();
+//			int8_t const type = msg.read_byte ();
+//			int8_t const foe = msg.read_byte ();
+//			int16_t const other = msg.read_short ();
 			std::cerr << "End of ABILITY_MESSAGE\n";
 			break;
 		}

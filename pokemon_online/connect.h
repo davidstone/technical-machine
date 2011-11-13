@@ -36,7 +36,7 @@ class Client : public network::GenericClient {
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
 		std::map <uint32_t, std::string> id_to_channel;
-		uint32_t id;
+		uint32_t my_id;
 	public:
 		explicit Client (int depth_);
 	private:
@@ -67,6 +67,8 @@ class Client : public network::GenericClient {
 		uint32_t get_user_id (std::string const & name) const;
 	public:
 		std::string get_user_name (uint32_t id) const;
+	private:
+		Result get_result (uint8_t code, uint32_t winner) const;
 };
 
 } // namespace po

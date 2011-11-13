@@ -235,9 +235,19 @@ void GenericClient::pause_at_start_of_battle () {
 	pause.wait ();
 }
 
-void GenericClient::handle_victory (uint32_t battle_id, uint8_t party_id) {
-	GenericBattle & battle = *battles.find (battle_id)->second;
-	std::string const verb = (battle.party == party_id) ? "Won" : "Lost";
+void GenericClient::handle_battle_end (GenericBattle & battle, uint32_t battle_id, Result result) {
+	std::string verb;
+	switch (result) {
+		case WON:
+			verb = "Won";
+			break;
+		case LOST:
+			verb = "Lost";
+			break;
+		case TIED:
+			verb = "Tied";
+			break;
+	}
 	print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
 	battles.erase (battle_id);
 }

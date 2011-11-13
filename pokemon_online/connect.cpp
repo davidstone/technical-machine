@@ -104,15 +104,17 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::LOG_IN: {
 			uint32_t const player_id = msg.read_int ();
 			std::string const player_name = msg.read_string ();
+			if (player_name == username)
+				my_id = player_id;
 			std::string const info = msg.read_string ();
 			int8_t const authority = msg.read_byte ();
 			uint8_t const flags = msg.read_byte ();
-			int16_t rating = msg.read_short ();
+			int16_t const rating = msg.read_short ();
 			std::vector <std::pair <uint16_t, uint8_t> > team;
 			team.reserve (6);
 			for (unsigned n = 0; n != 6; ++n) {
 				uint16_t const species = msg.read_short ();
-				uint8_t forme = msg.read_byte ();
+				uint8_t const forme = msg.read_byte ();
 				team.push_back (std::pair <uint16_t, uint8_t> (species, forme));
 			}
 			uint16_t avatar = msg.read_short ();
@@ -201,6 +203,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				uint32_t const id_second = msg.read_int ();
 				// The server then sends me my own team.
 				// I don't need to read in my entire team; I already know my own team.
+				// This will only be useful if I support Challenge Cup.
 				handle_battle_begin (battle_id, get_user_name (id2));
 			}
 			break;
@@ -208,12 +211,17 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::BATTLE_FINISHED: {
 			std::cerr << "BATTLE_FINISHED\n";
 			uint32_t const battle_id = msg.read_int ();
-			int8_t const description = msg.read_byte ();
-			std::cerr << "description: " << static_cast <int> (description) << '\n';
-			uint32_t const id1 = msg.read_int ();
-			std::cerr << "id1: " << static_cast <int> (id1) << '\n';
-			uint32_t const id2 = msg.read_int ();
-			std::cerr << "id2: " << static_cast <int> (id2) << '\n';
+			uint8_t const result_code = msg.read_byte ();
+			std::cerr << "result_code: " << static_cast <int> (result_code) << '\n';
+			if (result_code != 3) {		// Ignore messages telling me to close the window.
+				uint32_t const winner = msg.read_int ();
+				std::cerr << "winner: " << static_cast <int> (winner) << '\n';
+				uint32_t const loser = msg.read_int ();
+				std::cerr << "loser: " << static_cast <int> (loser) << '\n';
+				Result result = get_result (result_code, winner);
+				Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
+				handle_battle_end (battle, battle_id, result);
+			}
 			break;
 		}
 		case InMessage::BATTLE_MESSAGE: {
@@ -508,6 +516,17 @@ uint32_t Client::get_user_id (std::string const & name) const {
 
 std::string Client::get_user_name (uint32_t id) const {
 	return user_id_to_name.find (id)->second;
+}
+
+network::GenericClient::Result Client::get_result (uint8_t code, uint32_t winner) const {
+	// I completely ignore Close because I determine when I want to close a battle, not my foe.
+	// I also ignore Forfeit. Technical Machine never forfeits, and if the foe forfeits, then it is a win.
+	Result result;
+	if (code != 2)
+		result = (winner == my_id) ? WON : LOST;
+	else
+		result = TIED;
+	return result;
 }
 
 } // namespace po

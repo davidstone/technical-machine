@@ -51,7 +51,7 @@ class InMessage : public network::InMessage::InMessage {
 			REQUEST_ACTION = 13,
 			BATTLE_POKEMON = 14,
 			BATTLE_PRINT = 15,
-			BATTLE_VICTORY = 16,
+			BATTLE_END = 16,	// "BATTLE_VICTORY"
 			BATTLE_USE_MOVE = 17,
 			BATTLE_WITHDRAW = 18,
 			BATTLE_SEND_OUT = 19,
