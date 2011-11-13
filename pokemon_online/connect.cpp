@@ -209,15 +209,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_FINISHED: {
-			std::cerr << "BATTLE_FINISHED\n";
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const result_code = msg.read_byte ();
-			std::cerr << "result_code: " << static_cast <int> (result_code) << '\n';
-			if (result_code != 3) {		// Ignore messages telling me to close the window.
+			// I completely ignore Close because I determine when I want to close a battle, not my foe.
+			// Technical Machine never sends the Close message to allow spectators to talk as long as possible.
+			// The server automatically removes the battle when my foe closes it, but that can't be helped.
+			if (result_code != 3) {
 				uint32_t const winner = msg.read_int ();
-				std::cerr << "winner: " << static_cast <int> (winner) << '\n';
 				uint32_t const loser = msg.read_int ();
-				std::cerr << "loser: " << static_cast <int> (loser) << '\n';
 				Result result = get_result (result_code, winner);
 				Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 				handle_battle_end (battle, battle_id, result);
