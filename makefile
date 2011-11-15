@@ -28,10 +28,6 @@ predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_sta
 
 rdcobjects = rdc.o ability.o block.o damage.o gender.o heal.o item.o load_stats.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
-analogobjects = analyze_logs_main.o analyze_logs.o damage.o item.o move.o pokemon.o stat.o status.o team.o type.o weather.o
-
-analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
-
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
 fulloptimizations = -DNDEBUG -O3 -march=native -funsafe-loop-optimizations
 tournament = $(fulloptimizations) -flto -fwhole-program
@@ -60,14 +56,6 @@ rdco : $(rdcobjects)
 	$(CXX) -o rdco $(rdcobjects) $(CXXFLAGS)
 rdco : optimizations = $(fulloptimizations)
 
-analog : $(analogobjects)
-	$(CXX) -o analog $(analogobjects) $(CXXFLAGS)
-analog : optimizations = -g
-
-analoggui : $(analogguiobjects)
-	$(CXX) -o analoggui $(analogguiobjects) $(CXXFLAGS) -l fltk
-analoggui : optimizations = -g
-
 CXXFLAGS = $(warnings) $(optimizations) -std=c++0x
 CFLAGS = $(warnings) $(optimizations) -std=c99
 
@@ -77,10 +65,6 @@ ai.o: ai.cpp analyze_logs.h gender.h move.h active.h type.h species.h \
  evaluate.h expectiminimax.h item.h load_stats.h ability.h stat.h \
  pokemon.h status.h team.h teampredictor.h weather.h \
  pokemon_lab/connect.h pokemon_lab/inmessage.h
-analyze_logs_gui.o: analyze_logs_gui.cpp analyze_logs.h gender.h move.h \
- active.h type.h species.h pokemon.h item.h stat.h status.h team.h
-analyze_logs_main.o: analyze_logs_main.cpp analyze_logs.h gender.h move.h \
- active.h type.h species.h pokemon.h item.h stat.h status.h team.h
 analyze_logs.o: analyze_logs.cpp analyze_logs.h gender.h move.h active.h \
  type.h species.h ability.h endofturn.h item.h stat.h pokemon.h \
  status.h switch.h team.h weather.h
