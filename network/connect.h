@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <boost/asio.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include "../battle.h"
 #include "../evaluate.h"
