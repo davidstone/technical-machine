@@ -22,7 +22,9 @@ aiobjects = \
 	pokemon_lab/battle.o pokemon_lab/battle_settings.o pokemon_lab/connect.o pokemon_lab/conversion.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
 	pokemon_online/battle.o pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
 
-predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o pokemon_lab/file.o pokemon_online/file.o
+predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o \
+	pokemon_lab/conversion.o pokemon_lab/file.o \
+	pokemon_online/conversion.o pokemon_online/file.o
 
 rdcobjects = rdc.o ability.o block.o damage.o gender.o heal.o item.o load_stats.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
 
@@ -31,7 +33,7 @@ analogobjects = analyze_logs_main.o analyze_logs.o damage.o item.o move.o pokemo
 analogguiobjects = analyze_logs_gui.o analyze_logs.o damage.o move.o pokemon.o stat.o status.o team.o weather.o
 
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
-fulloptimizations = -DNDEBUG -O3 -march=native -ffast-math -funsafe-loop-optimizations
+fulloptimizations = -DNDEBUG -O3 -march=native -funsafe-loop-optimizations
 tournament = $(fulloptimizations) -flto -fwhole-program
 
 ai : $(aiobjects)
@@ -43,11 +45,11 @@ aio : $(aiobjects)
 aio : optimizations = $(fulloptimizations)
 
 predict : $(predictobjects)
-	$(CXX) -o predict $(predictobjects) -l fltk $(CXXFLAGS)
+	$(CXX) -o predict $(predictobjects) -lfltk -lboost_filesystem -lboost_system $(CXXFLAGS)
 predict : optimizations = -g
 
 predicto : $(predictobjects)
-	$(CXX) -o predict $(predictobjects) -l fltk $(CXXFLAGS)
+	$(CXX) -o predict $(predictobjects) -lfltk -lboost_filesystem -lboost_system $(CXXFLAGS)
 predicto : optimizations = $(fulloptimizations)
 
 rdc : $(rdcobjects)

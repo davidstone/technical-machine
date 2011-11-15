@@ -1657,7 +1657,8 @@ Species Pokemon::name_from_string (std::string const & str) {
 		{ "Zigzagoon", ZIGZAGOON },
 		{ "Zubat", ZUBAT }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	return (it != converter.end ()) ? it->second : END_SPECIES;
 }
 
 void Pokemon::set_name_from_string (std::string const & str) {

@@ -30,11 +30,13 @@ namespace technicalmachine {
 
 void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead) {
 	std::vector<unsigned> overall;
+	overall.reserve (END_SPECIES);
 	overall_stats (overall);
-	unsigned const total = 961058;	// Total number of teams
+	constexpr unsigned total = 961058;	// Total number of teams
 	float multiplier [END_SPECIES][END_SPECIES];
 	team_stats (overall, total, multiplier);
 	std::vector<float> lead;
+	lead.reserve (END_SPECIES);
 	if (using_lead)
 		lead_stats (lead);
 	else {
@@ -43,6 +45,7 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	}
 	
 	std::vector<float> estimate;
+	estimate.reserve (END_SPECIES);
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		estimate.push_back (lead [n] * overall [n] / total);
 
@@ -62,7 +65,7 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	}
 }
 
-void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]) {
+void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES] [END_SPECIES]) {
 	while (team.pokemon.set.size() < team.size) {
 		float top = 0.0;
 		Species name;

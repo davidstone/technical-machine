@@ -19,6 +19,7 @@
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <map>
+#include <string>
 #include <vector>
 #include "load_stats.h"
 #include "pokemon.h"
@@ -31,38 +32,36 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Multiline_Output.H>
 
+#include <iostream>
+
 using namespace technicalmachine;
 
 // A GUI version of the team predictor.
 
 struct Data {
-	std::vector<Fl_Input*> input;
-	Fl_Multiline_Output* output;
+	std::vector<Fl_Input *> input;
+	Fl_Multiline_Output * output;
 	int detailed [END_SPECIES][7];
 };
 
-void function (Fl_Widget* w, void* data) {
-	Data* d = reinterpret_cast<Data*> (data);
+void function (Fl_Widget * w, void * data) {
+	Data * d = reinterpret_cast <Data *> (data);
 	
 	Team team (false, 6);
 	bool using_lead;
-	std::map<std::string, species>::const_iterator it = d->map.specie.find ((*d->input.begin())->value());
-	if (it != d->map.specie.end()) {
-		using_lead = true;
-		Pokemon member (it->second, team.size);
-		team.pokemon.set.push_back (member);
-	}
-	else
-		using_lead = false;
-	for (std::vector<Fl_Input*>::const_iterator in = d->input.begin() + 1; in != d->input.end(); ++in) {
-		it = d->map.specie.find ((*in)->value());
-		if (it != d->map.specie.end()) {
-			Pokemon member (it->second, team.size);
+	for (Fl_Input * in : d->input) {
+		Species const species = Pokemon::name_from_string (in->value());
+		if (in == d->input.front ()) {
+			using_lead = species != END_SPECIES;
+		}
+		if (species != END_SPECIES) {
+			Pokemon member (species, team.size);
 			team.pokemon.set.push_back (member);
 		}
 	}
 	
 	if (team.pokemon.set.size() > 0) {
+		std::cerr << "using_lead: " << using_lead << '\n';
 		predict_team (d->detailed, team, using_lead);
 		std::string out;
 		team.output (out);
