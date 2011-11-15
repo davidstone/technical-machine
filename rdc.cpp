@@ -42,9 +42,13 @@ using namespace technicalmachine;
 int main () {
 	
 	int detailed [END_SPECIES] [7] = {{ 0 }};
+	std::cerr << "Loading detailed stats.\n";
 	detailed_stats (detailed);
+	std::cerr << "Loading ai.\n";
 	Team ai (true, 6);
+	std::cerr << "Loading foe.\n";
 	Team foe (false, ai.size);
+	std::cerr << "Teams created.\n";
 
 	Pokemon member (INFERNAPE, foe.size);
 	foe.pokemon.set.push_back (member);
@@ -53,11 +57,13 @@ int main () {
 
 	Move move (Move::CLOSE_COMBAT, 3, foe.size);
 	foe.pokemon->move.set.insert (foe.pokemon->move.set.begin(), move);
-
+	
+	std::cerr << "Loading Pokemon.\n";
 	foe.pokemon.set.back().load ();
 
 	Weather weather;
 	
+	std::cerr << "Switching in the Pokemon.\n";
 	ai.replacement = 0;
 	switchpokemon (ai, foe, weather);
 	foe.replacement = 0;
@@ -69,11 +75,14 @@ int main () {
 	unknown (hidden);
 	
 	unsigned damage = 660;
-	std::cout << "Reverse damage calculation 1\n";
+	std::cerr << "Reverse damage calculation 1\n";
+	std::cerr << "hidden.size (): " << hidden.size () << '\n';
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
-	std::cout << "Reverse damage calculation 2\n";
+	std::cerr << "Reverse damage calculation 2\n";
+	std::cerr << "hidden.size (): " << hidden.size () << '\n';
 	damage = 668;
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
+	std::cerr << "hidden.size (): " << hidden.size () << '\n';
 	
 	Item::Items thingy = Item::END_ITEM;
 	std::string output = "";
@@ -86,7 +95,7 @@ int main () {
 			output += boost::lexical_cast <std::string> (static_cast <int> (unknown.atkev) * 4);
 			if (unknown.nature == static_cast<unsigned char> (Nature::NAUGHTY))
 				output += "(+)";
-			else if (unknown.nature == static_cast<unsigned char> (Nature::MODEST))
+			else if (unknown.nature == static_cast<unsigned char> (Nature::DOCILE))
 				output += "(-)";
 			output += ", ";
 		}

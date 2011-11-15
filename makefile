@@ -26,7 +26,9 @@ predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_sta
 	pokemon_lab/conversion.o pokemon_lab/file.o \
 	pokemon_online/conversion.o pokemon_online/file.o
 
-rdcobjects = rdc.o ability.o block.o damage.o gender.o heal.o item.o load_stats.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o pokemon_lab/file.o pokemon_online/file.o
+rdcobjects = rdc.o ability.o block.o damage.o gender.o heal.o item.o load_stats.o move.o pokemon.o reversedamage.o stat.o status.o switch.o team.o teampredictor.o type.o unknown.o weather.o \
+	pokemon_lab/conversion.o pokemon_lab/file.o \
+	pokemon_online/conversion.o pokemon_online/file.o
 
 warnings = -Wall -Wextra -pedantic -Wformat=2 -Wno-unused
 fulloptimizations = -DNDEBUG -O3 -march=native -funsafe-loop-optimizations
@@ -49,11 +51,11 @@ predicto : $(predictobjects)
 predicto : optimizations = $(fulloptimizations)
 
 rdc : $(rdcobjects)
-	$(CXX) -o rdc $(rdcobjects) $(CXXFLAGS)
+	$(CXX) -o rdc $(rdcobjects) -lboost_filesystem -lboost_system $(CXXFLAGS)
 rdc : optimizations = -g
 
 rdco : $(rdcobjects)
-	$(CXX) -o rdco $(rdcobjects) $(CXXFLAGS)
+	$(CXX) -o rdco $(rdcobjects) -lboost_filesystem -lboost_system $(CXXFLAGS)
 rdco : optimizations = $(fulloptimizations)
 
 CXXFLAGS = $(warnings) $(optimizations) -std=c++0x
