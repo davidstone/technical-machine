@@ -35,11 +35,10 @@ class InMessage : public network::InMessage::InMessage {
 		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
 	public:
 		enum Message {
-			WHAT_ARE_YOU = 0,
-			WHO_ARE_YOU = 1,
+			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.
 			LOG_IN = 2,
 			LOG_OUT = 3,
-			SEND_MESSAGE = 4,
+			SERVER_MESSAGE = 4,		// "SendMessage"
 			PLAYERS_LIST = 5,
 			SEND_TEAM = 6,
 			CHALLENGE_STUFF = 7,

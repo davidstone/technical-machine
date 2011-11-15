@@ -30,10 +30,13 @@ InMessage::InMessage (): network::InMessage::InMessage () {
 }
 
 std::string InMessage::read_string () {
-	uint32_t number_of_utf16_characters = read_int () / 2;
 	std::string data = "";
-	for (uint32_t n = 0; n != number_of_utf16_characters; ++n)
-		data += static_cast <char> (read_short ());
+	uint32_t number_of_utf16_characters = read_int () / 2;
+	// QString reports a size of 0xFFFFFFFF is the string is null. I'll just call it empty.
+	if (number_of_utf16_characters != 0xFFFFFFFF / 2) {
+		for (uint32_t n = 0; n != number_of_utf16_characters; ++n)
+			data += static_cast <char> (read_short ());
+	}
 	return data;
 }
 
@@ -44,7 +47,7 @@ void InMessage::read_header (boost::asio::ip::tcp::socket & socket, Client * cli
 
 void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * client) {
 	// extract the message type and length components
-	uint16_t bytes = read_short ();
+	uint16_t const bytes = read_short ();
 	// Don't do an invalid call to new if the server says the message has a length of 0
 	if (bytes > 0) {
 		Message code = static_cast <Message> (read_byte ());

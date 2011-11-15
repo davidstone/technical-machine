@@ -41,11 +41,10 @@ class OutMessage : public network::OutMessage {
 //		void write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame = 0, std::vector <uint8_t> const & clauses = std::vector <uint8_t> (), bool timing = true, uint32_t pool = 30, uint8_t periods = 3, uint32_t period_length = 30);
 		void send (boost::asio::ip::tcp::socket & socket);
 		enum Message {
-			WHAT_ARE_YOU = 0,
-			WHO_ARE_YOU = 1,
+			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.
 			LOG_IN = 2,
 			LOG_OUT = 3,
-			SEND_MESSAGE = 4,
+			SERVER_MESSAGE = 4,		// "SendMessage"
 			PLAYERS_LIST = 5,
 			SEND_TEAM = 6,
 			CHALLENGE_STUFF = 7,

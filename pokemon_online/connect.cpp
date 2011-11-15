@@ -18,10 +18,13 @@
 
 #include "connect.h"
 
+#include <cassert>
 #include <cstdint>
+#include <iostream>
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -33,8 +36,6 @@
 
 #include "../crypt/get_md5.h"
 #include "../team.h"
-
-#include <iostream>
 
 namespace technicalmachine {
 namespace po {
@@ -91,79 +92,84 @@ enum Action {
 	DRAW = 5
 };
 
-void Client::handle_message (InMessage::Message code, InMessage & msg) {
-	switch (code) {
-		case InMessage::WHAT_ARE_YOU:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
-			break;
-		case InMessage::WHO_ARE_YOU:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
-			break;
-		case InMessage::LOG_IN: {
-			uint32_t const player_id = msg.read_int ();
-			std::string const player_name = msg.read_string ();
-			if (player_name == username)
-				my_id = player_id;
-			std::string const info = msg.read_string ();
-			int8_t const authority = msg.read_byte ();
-			uint8_t const flags = msg.read_byte ();
-			int16_t const rating = msg.read_short ();
-			std::vector <std::pair <uint16_t, uint8_t> > team;
-			team.reserve (6);
-			for (unsigned n = 0; n != 6; ++n) {
+class User {
+	public:
+		uint32_t const id;
+		std::string const name;
+		std::string const info;
+		int8_t const authority;
+		uint8_t const flags;
+		bool const logged_in;
+		bool const battling;
+		bool const away;
+		int16_t const rating;
+		std::vector <std::pair <uint16_t, uint8_t>> const team;
+		uint16_t avatar;
+		std::string const tier;
+		uint8_t const color_spec;
+		uint16_t const alpha;
+		uint16_t const red;
+		uint16_t const green;
+		uint16_t const blue;
+		uint16_t const padding;
+		uint8_t const gen;
+		std::vector <std::pair <uint16_t, uint8_t>> load_team_vector (InMessage & msg) const {
+			std::vector <std::pair <uint16_t, uint8_t>> temp_team;
+			constexpr unsigned team_size = 6;
+			temp_team.reserve (team_size);
+			for (unsigned n = 0; n != team_size; ++n) {
 				uint16_t const species = msg.read_short ();
 				uint8_t const forme = msg.read_byte ();
-				team.push_back (std::pair <uint16_t, uint8_t> (species, forme));
+				temp_team.push_back (std::pair <uint16_t, uint8_t> (species, forme));
 			}
-			uint16_t avatar = msg.read_short ();
-			std::string const tier = msg.read_string ();
-			uint8_t const color_spec = msg.read_byte ();
-			uint16_t const alpha = msg.read_short ();
-			uint16_t const red = msg.read_short ();
-			uint16_t const green = msg.read_short ();
-			uint16_t const blue = msg.read_short ();
-			uint16_t const padding = msg.read_short ();
-			uint8_t const gen = msg.read_byte ();
+			return temp_team;
+		}
+		User (InMessage & msg):
+			id (msg.read_int ()),
+			name (msg.read_string ()),
+			info (msg.read_string ()),
+			authority (msg.read_byte ()),
+			flags (msg.read_byte ()),
+			logged_in (flags % 2 >= 1),
+			battling (flags % 4 >= 2),
+			away (flags % 8 >= 4),
+			rating (msg.read_short ()),
+			team (load_team_vector (msg)),
+			avatar (msg.read_short ()),
+			tier (msg.read_string ()),
+			color_spec (msg.read_byte ()),
+			alpha (msg.read_short ()),
+			red (msg.read_short ()),
+			green (msg.read_short ()),
+			blue (msg.read_short ()),
+			padding (msg.read_short ()),
+			gen (msg.read_byte ()) {
+		}
+};
+
+void Client::handle_message (InMessage::Message code, InMessage & msg) {
+	switch (code) {
+		case InMessage::LOG_IN: {
+			User const user (msg);
+			assert (user.name == username);
+			my_id = user.id;
 			break;
 		}
-		case InMessage::LOG_OUT:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
-			break;
-		case InMessage::SEND_MESSAGE: {
-			std::string const message = msg.read_string ();
-			print_with_time_stamp (std::cout, message);
+		case InMessage::LOG_OUT: {
+			// Only sent to us if we have sent the user a PM.
+			uint32_t const user_id = msg.read_int ();
+			remove_player (user_id);
 			break;
 		}
 		case InMessage::PLAYERS_LIST: {
-			// The server sends this message whenever a whole bunch of stuff about a user changes or when they log in. This message is sent if a user's rating changes, for instance, so we get it at the end of the every rated battle.
-			uint32_t const user_id = msg.read_int ();
-			std::string const user_string = msg.read_string ();
-			
-			// If the user does not have a team loaded at all, it seems as though this can lead to an invalid read. We don't really care about this stuff right now, so I'll just ignore it.
-//			std::string const user_message = msg.read_string ();
-//			int8_t auth_level = msg.read_byte ();
-//			uint8_t flags = msg.read_byte ();
-//			bool logged_in = false;
-//			bool battling = false;
-//			bool away = false;
-//			if (flags % 2 >= 1)
-//				logged_in = true;
-//			if (flags % 4 >= 2)
-//				battling = true;
-//			if (flags % 8 >= 4)
-//				away = true;
-//			int16_t rating = msg.read_short ();
-
-			// This should help if a user leaves and rejoins the server with a different user ID
-			user_id_to_name [user_id] = user_string;
-			user_name_to_id [user_string] = user_id;
+			// We get this when a logs in or completes a rated battle.
+			User const user (msg);
+			add_player (user.id, user.name);
 			break;
 		}
 		case InMessage::SEND_TEAM: {
-			std::cerr << "SEND_TEAM size: " << msg.buffer.size () << '\n';
+			// We get this when a user changes their team.
+			User const user (msg);
 			break;
 		}
 		case InMessage::CHALLENGE_STUFF: {
@@ -217,9 +223,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			if (result_code != 3) {
 				uint32_t const winner = msg.read_int ();
 				uint32_t const loser = msg.read_int ();
-				Result result = get_result (result_code, winner);
-				Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
-				handle_battle_end (battle, battle_id, result);
+				if (winner == my_id or loser == my_id) {
+					Result result = get_result (result_code, winner);
+					auto const it = battles.find (battle_id);
+					if (it != battles.end ()) {
+						Battle & battle = static_cast <Battle &> (*it->second);
+						handle_battle_end (battle, battle_id, result);
+					}
+				}
 			}
 			break;
 		}
@@ -234,8 +245,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_CHAT:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "BATTLE_CHAT");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::KEEP_ALIVE:
 			// This currently doesn't do anything on the server...
@@ -251,20 +263,29 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::PLAYER_KICK:
+			print_with_time_stamp (std::cerr, "PLAYER_KICK");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::PLAYER_BAN:
+			print_with_time_stamp (std::cerr, "PLAYER_BAN");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SERV_NUM_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SERV_NUM_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SERV_DESC_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SERV_DESC_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SERV_NAME_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SERV_NAME_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SEND_PM: {
 			uint32_t const user_id = msg.read_int ();
@@ -276,59 +297,91 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			// Someone has gone away.
 			break;
 		case InMessage::GET_USER_INFO:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "GET_USER_INFO");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::GET_USER_ALIAS:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "GET_USER_ALIAS");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::GET_BANLIST:
+			print_with_time_stamp (std::cerr, "GET_BANLIST");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::CP_BAN:
+			print_with_time_stamp (std::cerr, "CP_BAN");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::CP_UNBAN:
+			print_with_time_stamp (std::cerr, "CP_UNBAN");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SPECTATE_BATTLE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SPECTATE_BATTLE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SPECTATING_BATTLE_MESSAGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SPECTATING_BATTLE_MESSAGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SPECTATING_BATTLE_CHAT:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SPECTATING_BATTLE_CHAT");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SPECTATING_BATTLE_FINISHED:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SPECTATING_BATTLE_FINISHED");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::LADDER_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "LADDER_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SHOW_TEAM_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SHOW_TEAM_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::VERSION_CONTROL: {
 			std::string const server_version = msg.read_string ();
 			handle_version_control (server_version);
 			break;
 		}
-		case InMessage::TIER_SELECTION:
+		case InMessage::TIER_SELECTION: {
+			uint32_t const bytes_in_tier_list = msg.read_int ();
+			// Unfortunately, the tier list contains strings, which can be variable-length.
+			// Just ignore this and read until the buffer is empty.
+			std::vector <std::pair <uint8_t, std::string>> tiers;
+			while (msg.index != msg.buffer.size ()) {
+				uint8_t const tier_level = msg.read_byte ();
+				std::string const tier_name = msg.read_string ();
+				tiers.push_back (std::pair <uint8_t, std::string> (tier_level, tier_name));
+			}
 			break;
+		}
 		case InMessage::SERV_MAX_CHANGE:
+			print_with_time_stamp (std::cerr, "SERV_MAX_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::FIND_BATTLE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "FIND_BATTLE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::SHOW_RANKINGS:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SHOW_RANKINGS");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::ANNOUNCEMENT: {
 			std::string const announcement = msg.read_string ();
@@ -336,46 +389,83 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::CP_TBAN:
+			print_with_time_stamp (std::cerr, "CP_TBAN");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		case InMessage::CP_TUNBAN:
+			print_with_time_stamp (std::cerr, "CP_TUNBAN");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
-		case InMessage::PLAYER_TBAN:
+		case InMessage::PLAYER_TBAN: {
+			print_with_time_stamp (std::cerr, "PLAYER_TBAN");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
-		case InMessage::GET_TBAN_LIST:
+		}
+		case InMessage::GET_TBAN_LIST: {
+			print_with_time_stamp (std::cerr, "GET_TBAN_LIST");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
-		case InMessage::BATTLE_LIST:
-			// All battles currently in progress.
-			break;
-		case InMessage::CHANNELS_LIST:
-			// List of all channels on the server.
-			break;
-		case InMessage::CHANNEL_PLAYERS:
-			// List of all people on each channel
-			break;
-		case InMessage::JOIN_CHANNEL:
-			// Someone has joined the channel
-			break;
-		case InMessage::LEAVE_CHANNEL:
-			// Someone has left the channel
-			break;
-		case InMessage::CHANNEL_BATTLE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
-			break;
-		case InMessage::REMOVE_CHANNEL: {
+		}
+		case InMessage::BATTLE_LIST: {
+			// For some reason, PO associates battles with channels
 			uint32_t const channel_id = msg.read_int ();
-			std::map <uint32_t, std::string>::iterator it = id_to_channel.find (channel_id);
-			if (it != id_to_channel.end()) {
-				channels.erase (it->second);
-				id_to_channel.erase (it);
+			uint32_t const number_of_battles = msg.read_int ();
+			for (unsigned n = 0; n != number_of_battles; ++n)
+				add_battle (msg);
+			break;
+		}
+		case InMessage::CHANNELS_LIST: {
+			for (uint32_t number = msg.read_int (); number != 0; --number) {
+				uint32_t const channel_id = msg.read_int ();
+				std::string const channel_name = msg.read_string ();
+				handle_add_channel (channel_name, channel_id);
 			}
 			break;
 		}
+		case InMessage::CHANNEL_PLAYERS: {
+			uint32_t const channel_id = msg.read_int ();
+			uint32_t const number_of_players = msg.read_int ();
+			std::vector <uint32_t> players;
+			players.reserve (number_of_players);
+			for (unsigned n = 0; n != number_of_players; ++n)
+				players.push_back (msg.read_int ());
+			break;
+		}
+		case InMessage::JOIN_CHANNEL: {
+			uint32_t const channel_id = msg.read_int ();
+			uint32_t const user_id = msg.read_int ();
+			break;
+		}
+		case InMessage::LEAVE_CHANNEL: {
+			uint32_t const channel_id = msg.read_int ();
+			uint32_t const user_id = msg.read_int ();
+			potentially_remove_player (channel_id, user_id);
+			break;
+		}
+		case InMessage::CHANNEL_BATTLE:
+			print_with_time_stamp (std::cerr, "CHANNEL_BATTLE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			break;
 		case InMessage::ADD_CHANNEL: {
 			std::string const channel_name = msg.read_string ();
 			uint32_t const channel_id = msg.read_int ();
-			channels.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
-			id_to_channel.insert (std::pair <uint32_t, std::string> (channel_id, channel_name));
+			handle_add_channel (channel_name, channel_id);
+			break;
+		}
+		case InMessage::REMOVE_CHANNEL: {
+			uint32_t const channel_id = msg.read_int ();
+			handle_remove_channel (channel_id);
+			break;
+		}
+		case InMessage::CHAN_NAME_CHANGE: {
+			print_with_time_stamp (std::cerr, "CHAN_NAME_CHANGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		}
 		case InMessage::CHANNEL_MESSAGE: {
@@ -386,30 +476,47 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			handle_channel_message (channel_id, speaker, message);
 			break;
 		}
-		case InMessage::CHAN_NAME_CHANGE:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		case InMessage::SERVER_MESSAGE: {
+			std::string speaker;		// by default, "~~Server~~"
+			std::string message;
+			get_speaker_and_message (msg, speaker, message);
+			handle_server_message (speaker, message);
 			break;
-		case InMessage::HTML_MESSAGE:
+		}
+		case InMessage::HTML_MESSAGE: {
+			std::string const message = msg.read_string ();
+			// Possibly do some sort of HTML parsing at some point.
+			// For now, just print it.
+			print_with_time_stamp (std::cerr, message);
 			break;
-		case InMessage::HTML_CHANNEL:
+		}
+		case InMessage::HTML_CHANNEL: {
+			print_with_time_stamp (std::cerr, "HTML_CHANNEL");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
+		}
 		case InMessage::SERVER_NAME: {
 			std::string const server_name = msg.read_string ();
 			handle_server_name (server_name);
 			break;
 		}
-		case InMessage::SPECIAL_PASS:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		case InMessage::SPECIAL_PASS: {
+			print_with_time_stamp (std::cerr, "SPECIAL_PASS");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
-		case InMessage::SERVER_LIST_END:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+		}
+		case InMessage::SERVER_LIST_END: {
+			print_with_time_stamp (std::cerr, "SERVER_LIST_END");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
+		}
 		case InMessage::SET_IP:
-			std::cerr << "code: " << code << '\n';
-			std::cerr << "size: " << msg.buffer.size() << '\n';
+			print_with_time_stamp (std::cerr, "SET_IP");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		default:
 			print_with_time_stamp (std::cerr, "Unknown code: " + boost::lexical_cast<std::string> (code));
@@ -427,6 +534,38 @@ void Client::authenticate (std::string const & salt) {
 	boost::algorithm::to_lower (hash);
 	msg.write_string (hash);
 	msg.send (*socket);
+}
+
+void Client::add_player (uint32_t user_id, std::string const & user_name) {
+	// It's safe to call this on a user that already exists. It will just rewrite the same information.
+	user_id_to_name [user_id] = user_name;
+	user_name_to_id [user_name] = user_id;
+}
+
+void Client::remove_player (uint32_t user_id) {
+	// I can get to this code when I leave a channel thanks to my quick fix below.
+	if (user_id != my_id) {
+		std::map <uint32_t, std::string>::iterator it = user_id_to_name.find (user_id);
+		if (it != user_id_to_name.end ()) {
+			std::string const user_name = it->second;
+			user_id_to_name.erase (it);
+			user_name_to_id.erase (user_name);
+		}
+		else {
+			std::string const message = "Server requested removing non-existant player: " + boost::lexical_cast <std::string> (user_id);
+			print_with_time_stamp (std::cerr, message);
+		}
+	}
+}
+
+void Client::potentially_remove_player (uint32_t channel_id, uint32_t user_id) {
+	// Due to Pokemon Online using user ids instead of user names, I have to keep a map.
+	// However, I do not receive a "player logged off" message unless I've sent them a PM.
+	// This means that I could create some complicated "hasKnowledgeOf" function like PO,
+	// but it would still be wrong and a lot more complicated. For now, I'm assuming all
+	// players are in channel 0. TODO: come back and make this slightly more accurate.
+	if (channel_id == 0)
+		remove_player (user_id);
 }
 
 void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
@@ -465,7 +604,35 @@ void Client::part_channel (std::string const & channel) {
 	}
 }
 
+void Client::handle_add_channel (std::string const & channel_name, uint32_t channel_id) {
+	channels.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
+	id_to_channel.insert (std::pair <uint32_t, std::string> (channel_id, channel_name));
+}
+
+void Client::handle_remove_channel (uint32_t channel_id) {
+	std::map <uint32_t, std::string>::iterator it = id_to_channel.find (channel_id);
+	if (it != id_to_channel.end()) {
+		channels.erase (it->second);
+		id_to_channel.erase (it);
+	}
+}
+
 void Client::send_battle_challenge (std::string const & opponent) {
+}
+
+void Client::add_battle (InMessage & msg) {
+	// Not sure if any of this is relevant. If it is, all_battles will be added to the class.
+	std::multimap <uint32_t, uint32_t> all_battles;
+	uint32_t const battle_id = msg.read_int ();
+	uint32_t const player1 = msg.read_int ();
+	uint32_t const player2 = msg.read_int ();
+	std::pair <uint32_t, uint32_t> const match1 (player1, battle_id);
+	all_battles.insert (match1);
+	std::pair <uint32_t, uint32_t> const match2 (player2, battle_id);
+	all_battles.insert (match2);
+}
+
+void Client::remove_battle (InMessage & msg) {
 }
 
 void Client::send_channel_message (uint32_t channel_id, std::string const & message) {

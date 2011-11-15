@@ -206,8 +206,13 @@ void GenericClient::handle_channel_message (uint32_t channel_id, std::string con
 	}
 }
 
+void GenericClient::handle_server_message (std::string const & sender, std::string const & message) const {
+	print_with_time_stamp (std::cout, "~~" + sender + "~~: " + message);
+}
+
+
 void GenericClient::handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings) {
-	bool const accepted = (settings.are_acceptable () and is_trusted (opponent)) ? true : false;
+	bool const accepted = settings.are_acceptable () and is_trusted (opponent);
 	bool const challenger = false;
 	handle_finalize_challenge (opponent, accepted, challenger);
 }

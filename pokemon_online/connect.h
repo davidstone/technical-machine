@@ -42,6 +42,9 @@ class Client : public network::GenericClient {
 	private:
 		void log_in ();
 		void authenticate (std::string const & salt);
+		void add_player (uint32_t user_id, std::string const & user_string);
+		void remove_player (uint32_t user_id);
+		void potentially_remove_player (uint32_t channel_id, uint32_t user_id);
 		void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger);
 		void handle_remove_challenge (std::string const & opponent);
 	public:
@@ -53,7 +56,11 @@ class Client : public network::GenericClient {
 	private:
 		void join_channel (std::string const & channel);
 		void part_channel (std::string const & channel);
+		void handle_add_channel (std::string const & channel_name, uint32_t channel_id);
+		void handle_remove_channel (uint32_t channel_id);
 		void send_battle_challenge (std::string const & opponent);
+		void add_battle (InMessage & msg);
+		void remove_battle (InMessage & msg);
 	public:
 		void send_channel_message (std::string channel, std::string const & message);
 		void send_channel_message (uint32_t channel_id, std::string const & message);

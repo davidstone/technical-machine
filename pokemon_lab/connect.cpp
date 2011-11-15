@@ -442,7 +442,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::KICK_BAN_MESSAGE: {
-			int32_t const channel = msg.read_int ();
+			uint32_t const channel_id = msg.read_int ();
 			std::string const mod = msg.read_string ();
 			std::string const target = msg.read_string ();
 			int32_t const date = msg.read_int ();
@@ -518,10 +518,10 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::IMPORTANT_MESSAGE: {
-			int const channel = msg.read_int ();
+			uint32_t const channel_id = msg.read_int ();
 			std::string const sender = msg.read_string ();
 			std::string const message = msg.read_string ();
-			handle_important_message (channel, sender, message);
+			handle_server_message (sender, message);
 			break;
 		}
 		default:
@@ -663,9 +663,9 @@ void Client::join_channel (std::string const & channel) {
 }
 
 void Client::part_channel (std::string const & channel) {
-	OutMessage msg (OutMessage::PART_CHANNEL);
 	std::map <std::string, uint32_t>::iterator it = channels.find (channel);
 	if (it != channels.end()) {
+		OutMessage msg (OutMessage::PART_CHANNEL);
 		msg.write_int (it->second);
 		channels.erase (it);
 		msg.send (*socket);
@@ -769,10 +769,6 @@ void Client::handle_error_message (uint8_t code, std::string const & details) co
 	}
 	if (!details.empty ())
 		print_with_time_stamp (std::cerr, details);
-}
-
-void Client::handle_important_message (int32_t channel, std::string const & sender, std::string const & message) const {
-	print_with_time_stamp (std::cout, "<Important message> " + sender + ": " + message);
 }
 
 void Client::send_channel_message (uint32_t channel_id, std::string const & message) {
