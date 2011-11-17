@@ -73,7 +73,7 @@ void get_speaker_and_message (InMessage & msg, std::string & speaker, std::strin
 	message = speaker_and_message.substr (delimiter_position + delimiter.size());
 }
 
-enum Challenge_Description {
+enum ChallengeDescription {
 	SENT = 0,
 	ACCEPTED = 1,
 	CANCELED = 2,
@@ -91,6 +91,8 @@ enum Action {
 	CENTER_MOVE = 4,
 	DRAW = 5
 };
+
+
 
 class User {
 	public:
@@ -173,7 +175,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::CHALLENGE_STUFF: {
-			Challenge_Description const description = static_cast <Challenge_Description> (msg.read_byte ());
+			ChallengeDescription const description = static_cast <ChallengeDescription> (msg.read_byte ());
 			uint32_t user_id = msg.read_int ();
 			std::string const & user = get_user_name (user_id);
 			uint32_t const clauses = msg.read_int ();
@@ -185,32 +187,31 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 					break;
 				case ACCEPTED: {
 					bool const accepted = true;
-					bool const challenger = true;
-					handle_finalize_challenge (user, accepted, challenger);
+					handle_finalize_challenge (user, accepted);
 					break;
 				}
 				default: {
 					bool const accepted = false;
-					bool const challenger = true;
-					handle_finalize_challenge (user, accepted, challenger);
+					handle_finalize_challenge (user, accepted);
 					break;
 				}
 			}
 			break;
 		}
-		case InMessage::ENGAGE_BATTLE: {
+		case InMessage::BATTLE_BEGIN: {
 			uint32_t const battle_id = msg.read_int ();
-			uint32_t const id1 = msg.read_int ();
-			uint32_t const id2 = msg.read_int ();
-			// Currently only care about battles I'm in. TM isn't a spectator.
-			if (id1 == 0) {
-				// I have no idea what these two are actually for.
-				uint32_t const id_first = msg.read_int ();
-				uint32_t const id_second = msg.read_int ();
+			uint32_t const user_id1 = msg.read_int ();
+			uint32_t const user_id2 = msg.read_int ();
+			constexpr uint32_t my_battle_id = 0;
+			if (user_id1 == my_battle_id) {
+				BattleConfiguration configuration (msg);
 				// The server then sends me my own team.
 				// I don't need to read in my entire team; I already know my own team.
 				// This will only be useful if I support Challenge Cup.
-				handle_battle_begin (battle_id, get_user_name (id2));
+				handle_battle_begin (battle_id, get_user_name (user_id2));
+			}
+			else {
+				// Another battle has begun on the server.
 			}
 			break;
 		}
@@ -239,7 +240,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t length = msg.read_int ();
 			uint8_t const command = msg.read_byte ();
 			uint8_t const player = msg.read_byte ();
-			length -= sizeof (command) + sizeof (player);
+			print_with_time_stamp (std::cerr, "BATTLE_MESSAGE");
+			print_with_time_stamp (std::cerr, boost::lexical_cast <std::string> (static_cast <int> (player)));
+			length -= (sizeof (command) + sizeof (player));
 			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_message (*this, battle_id, command, 1 - player, msg);
 			break;
@@ -321,11 +324,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			while (msg.index != msg.buffer.size ())
 				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
-		case InMessage::SPECTATE_BATTLE:
-			print_with_time_stamp (std::cerr, "SPECTATE_BATTLE");
-			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+		case InMessage::SPECTATE_BATTLE: {
+			uint32_t const battle_id = msg.read_int ();
+			BattleConfiguration configuration (msg);
 			break;
+		}
 		case InMessage::SPECTATING_BATTLE_MESSAGE:
 			print_with_time_stamp (std::cerr, "SPECTATING_BATTLE_MESSAGE");
 			while (msg.index != msg.buffer.size ())
@@ -568,11 +571,9 @@ void Client::potentially_remove_player (uint32_t channel_id, uint32_t user_id) {
 		remove_player (user_id);
 }
 
-void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
+void Client::handle_finalize_challenge (std::string const & opponent, bool accepted) {
 	OutMessage msg (OutMessage::CHALLENGE_STUFF);
-	// If I am the challenger, I don't write the accepted byte.
-	if (!challenger)
-		msg.write_byte (accepted ? ACCEPTED : REFUSED);
+	msg.write_byte (accepted ? ACCEPTED : REFUSED);
 	msg.write_int (get_user_id (opponent));
 	std::string verb;
 	if (accepted) {
@@ -618,6 +619,17 @@ void Client::handle_remove_channel (uint32_t channel_id) {
 }
 
 void Client::send_battle_challenge (std::string const & opponent) {
+	auto const it = user_name_to_id.find (opponent);
+	if (it != user_name_to_id.end ()) {
+		OutMessage msg (OutMessage::CHALLENGE_STUFF);
+		uint32_t const user_id = it->second;
+		uint8_t const generation = 4;		// ???
+		BattleSettings const settings (BattleSettings::SPECIES_CLAUSE, BattleSettings::SINGLES);
+		msg.write_challenge (user_id, generation, settings);
+		msg.send (*socket);
+		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
+		add_pending_challenge (battle);
+	}
 }
 
 void Client::add_battle (InMessage & msg) {

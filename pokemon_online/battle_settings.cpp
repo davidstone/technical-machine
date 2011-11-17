@@ -16,15 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <cstdint>
 #include "battle_settings.h"
+#include <cstdint>
+#include "inmessage.h"
 
 namespace technicalmachine {
 namespace po {
 
 BattleSettings::BattleSettings (uint32_t const battle_clauses, uint8_t battle_mode):
 	network::GenericBattleSettings (),
-	clauses (static_cast <Clauses> (battle_clauses)),
+	clauses (battle_clauses),
 	mode (static_cast <Mode> (battle_mode)) {
 }
 
@@ -34,6 +35,15 @@ bool BattleSettings::active (Clauses const check) const {
 
 bool BattleSettings::are_acceptable () const {
 	return active (SLEEP_CLAUSE) and active (SPECIES_CLAUSE) and !active (CHALLENGE_CUP) and !active (REARRANGE_TEAMS) and mode == SINGLES;
+}
+
+BattleConfiguration::BattleConfiguration (InMessage & msg):
+	generation (msg.read_byte ()),
+	mode (msg.read_byte ()),
+	id1 (msg.read_int ()),
+	id2 (msg.read_int ()),
+	clauses (msg.read_int ()),
+	settings (clauses, mode) {
 }
 
 } // namespace po

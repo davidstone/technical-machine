@@ -42,7 +42,7 @@ class InMessage : public network::InMessage::InMessage {
 			PLAYERS_LIST = 5,
 			SEND_TEAM = 6,
 			CHALLENGE_STUFF = 7,
-			ENGAGE_BATTLE = 8,
+			BATTLE_BEGIN = 8,			// "EngageBattle"
 			BATTLE_FINISHED = 9,
 			BATTLE_MESSAGE = 10,
 			BATTLE_CHAT = 11,

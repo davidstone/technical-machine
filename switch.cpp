@@ -120,8 +120,12 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 		else
 			switcher.pokemon.index = switcher.replacement - 1;
 		// Finally, remove the ability to switch to that Pokemon.
-		for (Pokemon & pokemon : switcher.pokemon.set)
+		for (Pokemon & pokemon : switcher.pokemon.set) {
 			pokemon.move.set.pop_back();
+			// If there is only one Pokemon, there is no switching.
+			if (switcher.pokemon.set.size () == 1)
+				pokemon.move.set.pop_back ();
+		}
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out

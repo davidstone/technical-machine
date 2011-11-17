@@ -306,13 +306,6 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			uint32_t const user_id = msg.read_int ();
 			break;
 		}
-		case SPECTATOR_CHAT: {
-			std::cerr << "SPECTATOR_CHAT\n";
-			uint32_t const user_id = msg.read_int ();
-			std::string const message = msg.read_string ();
-			client.handle_channel_message (battle_id, client.get_user_name (user_id), message);
-			break;
-		}
 		case TEMPORARY_POKEMON_CHANGE: {
 			std::cerr << "TEMPORARY_POKEMON_CHANGE\n";
 			uint8_t const code = msg.read_byte ();
@@ -393,9 +386,16 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			else
 				std::cerr << "END_MESSAGE\n";
 			std::string const message = msg.read_string ();
-			std::cerr << message + "\n";
+			std::cout << message + "\n";
 			while (msg.index != msg.buffer.size ())
 				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			break;
+		}
+		case SPECTATOR_CHAT: {
+			std::cerr << "SPECTATOR_CHAT\n";
+			uint32_t const user_id = msg.read_int ();
+			std::string const message = msg.read_string ();
+			client.handle_channel_message (battle_id, client.get_user_name (user_id), message);
 			break;
 		}
 		case POINT_ESTIMATE: {

@@ -95,7 +95,7 @@ void GenericBattle::handle_withdraw (uint8_t party, uint8_t slot, std::string co
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
 	std::cerr << "switching_party: " << static_cast <int> (switching_party) << '\n';
 	std::cerr << "nickname: " + nickname + "\n";
-	bool const is_me = (party == switching_party);
+	bool const is_me = (switching_party == 0);
 	Team & team = is_me ? ai : foe;
 	Team & other = is_me ? foe : ai;
 	log.pokemon_sent_out (species, nickname, level, gender, team, other);

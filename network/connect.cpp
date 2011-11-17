@@ -229,7 +229,7 @@ void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const &
 	// party defaults to 0 for servers that do not support proper host mechanics.
  	std::shared_ptr <GenericBattle> battle = challenges.find (opponent)->second;
 	battle->party = party;
-	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle> > (battle_id, battle));
+	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle>> (battle_id, battle));
 	challenges.erase (opponent);
 //	pause_at_start_of_battle ();
 }

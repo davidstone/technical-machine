@@ -25,8 +25,10 @@
 namespace technicalmachine {
 namespace po {
 
+class InMessage;
+
 class BattleSettings : public network::GenericBattleSettings {
-	private:
+	public:
 		enum Clauses {
 			SLEEP_CLAUSE = 1 << 0,
 			FREEZE_CLAUSE = 1 << 1,
@@ -44,14 +46,27 @@ class BattleSettings : public network::GenericBattleSettings {
 			TRIPLES = 2,
 			ROTATION = 3
 		};
-		Clauses const clauses;
+		uint32_t const clauses;
 		Mode const mode;
-	public:
 		BattleSettings (uint32_t const battle_clauses, uint8_t const battle_mode);
 	private:
 		bool active (Clauses const check) const;
 	public:
 		bool are_acceptable () const;
+};
+
+class BattleConfiguration {
+	private:
+		uint8_t const generation;
+		uint8_t const mode;
+	public:
+		uint32_t const id1;
+		uint32_t const id2;
+	private:
+		uint32_t const clauses;
+	public:
+		BattleSettings const settings;
+		BattleConfiguration (InMessage & msg);
 };
 
 } // namespace po

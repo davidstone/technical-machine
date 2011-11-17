@@ -45,7 +45,7 @@ class Client : public network::GenericClient {
 		void add_player (uint32_t user_id, std::string const & user_string);
 		void remove_player (uint32_t user_id);
 		void potentially_remove_player (uint32_t channel_id, uint32_t user_id);
-		void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger);
+		void handle_finalize_challenge (std::string const & opponent, bool accepted);
 		void handle_remove_challenge (std::string const & opponent);
 	public:
 		void run ();
