@@ -571,7 +571,7 @@ void Client::potentially_remove_player (uint32_t channel_id, uint32_t user_id) {
 		remove_player (user_id);
 }
 
-void Client::handle_finalize_challenge (std::string const & opponent, bool accepted) {
+void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
 	OutMessage msg (OutMessage::CHALLENGE_STUFF);
 	msg.write_byte (accepted ? ACCEPTED : REFUSED);
 	msg.write_int (get_user_id (opponent));
