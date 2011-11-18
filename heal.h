@@ -23,7 +23,7 @@ namespace technicalmachine {
 
 class Pokemon;
 
-void heal (Pokemon &member, int denominator, unsigned numerator = 1);
+void heal (Pokemon & member, int denominator, unsigned numerator = 1);
 
 } // namespace technicalmachine
 #endif // HEAL_H_

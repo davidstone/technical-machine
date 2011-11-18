@@ -32,6 +32,9 @@
 
 namespace technicalmachine {
 
+static void entry_hazards (Team & switcher, Weather const & weather);
+static void activate_ability (Team & switcher, Team & other, Weather & weather);
+
 void reset_variables (Team & team) {
 	// Reset all variables that switches reset.
 
@@ -150,9 +153,9 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 			if (is_type (switcher, POISON))
 				switcher.toxic_spikes = 0;
 			else if (switcher.toxic_spikes == 1)
-				poison_normal (switcher, switcher, weather);
+				Status::poison_normal (switcher, switcher, weather);
 			else
-				poison_toxic (switcher, switcher, weather);
+				Status::poison_toxic (switcher, switcher, weather);
 		}
 		if (switcher.spikes != 0)
 			heal (*switcher.pokemon, -16, switcher.spikes + 1);

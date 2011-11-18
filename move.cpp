@@ -39,6 +39,11 @@
 
 namespace technicalmachine {
 
+static unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
+static void call_other_move (Team & user);
+static void do_damage (Team & user, Team & target, unsigned damage);
+static void lower_pp (Team & user, Pokemon const & target);
+
 Move::Move (Moves move, int pp_ups, unsigned size) :
 	name (move),
 	type (move_type [name]),
@@ -451,14 +456,14 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			if (user.pokemon->move->variable->first == 0)
 				break;
 		case Move::WILL_O_WISP:
-			burn (user, target, weather);
+			Status::burn (user, target, weather);
 			break;
 		case Move::BLIZZARD:
 		case Move::ICE_BEAM:
 		case Move::ICE_PUNCH:
 		case Move::POWDER_SNOW:
 			if (user.pokemon->move->variable->first != 0)
-				freeze (*user.pokemon, target, weather);
+				Status::freeze (*user.pokemon, target, weather);
 			break;
 		case Move::BLOCK:
 		case Move::MEAN_LOOK:
@@ -484,7 +489,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::STUN_SPORE:
 		case Move::THUNDER_WAVE:
 		case Move::ZAP_CANNON:
-			paralyze (*user.pokemon, *target.pokemon, weather);
+			Status::paralyze (*user.pokemon, *target.pokemon, weather);
 			break;
 		case Move::BOUNCE:
 			if (user.vanish == LANDED)
@@ -606,7 +611,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				break;
 		case Move::POISON_GAS:
 		case Move::POISONPOWDER:
-			poison_normal (user, target, weather);
+			Status::poison_normal (user, target, weather);
 			break;
 		case Move::CURSE:
 			if (is_type (user, GHOST) and user.pokemon->ability.name != Ability::MAGIC_GUARD) {
@@ -631,7 +636,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::SING:
 		case Move::SLEEP_POWDER:
 		case Move::SPORE:
-			sleep (*user.pokemon, *target.pokemon, weather);
+			Status::sleep (*user.pokemon, *target.pokemon, weather);
 			break;
 		case Move::DEFENSE_CURL:
 			Stat::boost (user.stage [Stat::DEF], 1);
@@ -708,7 +713,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::FIRE_FANG:
 			if (user.pokemon->move->variable->first != 0) {
 				if (user.pokemon->move->variable->first != 2)
-					burn (user, target, weather);
+					Status::burn (user, target, weather);
 				if (user.pokemon->move->variable->first != 1)
 					target.flinch = true;
 			}
@@ -831,7 +836,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::ICE_FANG:
 			if (user.pokemon->move->variable->first != 0) {
 				if (user.pokemon->move->variable->first != 2)
-					freeze (*user.pokemon, target, weather);
+					Status::freeze (*user.pokemon, target, weather);
 				if (user.pokemon->move->variable->first != 1)
 					target.flinch = true;
 			}
@@ -941,7 +946,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			if (user.pokemon->move->variable->first == 0)
 				break;
 		case Move::TOXIC:
-			poison_toxic (user, target, weather);
+			Status::poison_toxic (user, target, weather);
 			break;
 		case Move::POWER_SWAP:
 			std::swap (user.stage [Stat::ATK], target.stage [Stat::ATK]);
@@ -968,20 +973,20 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			if (target.pokemon->status.name == Status::NO_STATUS) {
 				switch (user.pokemon->status.name) {
 					case Status::BURN:
-						burn (user, target, weather);
+						Status::burn (user, target, weather);
 						break;
 					case Status::PARALYSIS:
-						paralyze (*user.pokemon, *target.pokemon, weather);
+						Status::paralyze (*user.pokemon, *target.pokemon, weather);
 						break;
 					case Status::POISON_NORMAL:
-						poison_normal (user, target, weather);
+						Status::poison_normal (user, target, weather);
 						break;
 					case Status::POISON_TOXIC:
-						poison_toxic (user, target, weather);
+						Status::poison_toxic (user, target, weather);
 						break;
 					case Status::REST:		// Fix
 					case Status::SLEEP:
-						sleep (*user.pokemon, *target.pokemon, weather);
+						Status::sleep (*user.pokemon, *target.pokemon, weather);
 						break;
 					default:
 						break;
@@ -1149,7 +1154,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::THUNDER_FANG:
 			if (user.pokemon->move->variable->first != 0) {
 				if (user.pokemon->move->variable->first != 2)
-					paralyze (*user.pokemon, *target.pokemon, weather);
+					Status::paralyze (*user.pokemon, *target.pokemon, weather);
 				if (user.pokemon->move->variable->first != 1)
 					target.flinch = true;
 			}
@@ -1170,13 +1175,13 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::TRI_ATTACK:
 			switch (user.pokemon->move->variable->first) {
 				case 1:
-					burn (user, target, weather);
+					Status::burn (user, target, weather);
 					break;
 				case 2:
-					freeze (*user.pokemon, target, weather);
+					Status::freeze (*user.pokemon, target, weather);
 					break;
 				case 3:
-					paralyze (*user.pokemon, *target.pokemon, weather);
+					Status::paralyze (*user.pokemon, *target.pokemon, weather);
 					break;
 			}
 			break;

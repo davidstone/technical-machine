@@ -20,6 +20,8 @@
 #ifndef CRYPT_MD5_HPP_
 #define CRYPT_MD5_HPP_
 
+#include <string>
+
 namespace technicalmachine {
  
 std::string getMD5HexHash (std::string const & message);

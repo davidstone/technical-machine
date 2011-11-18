@@ -31,6 +31,9 @@
 
 namespace technicalmachine {
 
+static void calculate_attack (Team & attacker, Weather const & weather);
+static void calculate_special_attack (Team & attacker, Weather const & weather);
+
 Stat::Stat (Species name, Stats stat) :
 	base (get_base_stat (name, stat)),
 	iv (31),
@@ -467,7 +470,7 @@ void Stat::boost (int8_t & stage, int n) {
 		stage = -6;
 }
 
-uint8_t Stat::get_base_stat (Species name, Stats stat) const {
+uint8_t Stat::get_base_stat (Species name, Stats stat) {
 	constexpr static uint8_t base_stat [][6] = {
 		{ 90, 92, 75, 92, 85, 60 },			// Abomasnow
 		{ 25, 20, 15, 105, 55, 90 },		// Abra	

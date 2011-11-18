@@ -59,5 +59,5 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * clien
 	}
 }
 
-}		// namespace po
-}		// namespace technicalmachine
+}	// namespace po
+}	// namespace technicalmachine

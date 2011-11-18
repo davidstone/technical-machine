@@ -31,6 +31,9 @@
 namespace technicalmachine {
 namespace po {
 
+static void load_pokemon (Team & team, std::ifstream & file, unsigned size);
+static unsigned converter (std::string const & data, std::string const & end, std::string const & line);
+
 void load_team (Team & team, std::string const & name, unsigned size) {
 	std::ifstream file (name.c_str());
 	std::string line;

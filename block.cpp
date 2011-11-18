@@ -26,6 +26,8 @@
 
 namespace technicalmachine {
 
+static bool imprison (Move const & move, Team const & other);
+
 void blockselection (Team & user, Team const & other, Weather const & weather) {
 	user.pokemon->move->selectable = true;
 	if (user.bide and user.pokemon->move->name != Move::BIDE)

@@ -81,9 +81,5 @@ bool analyze_turn (Team & ai, Team & foe, Weather & weather);
 
 void do_turn (Team & first, Team & last, Weather & weather);
 
-void normalize_hp (Team & first, Team & last);
-
-void normalize_hp_team (Team & team);
-
-}
-#endif		// ANALYZE_LOGS_H_
+}	// namespace technicalmachine
+#endif	// ANALYZE_LOGS_H_

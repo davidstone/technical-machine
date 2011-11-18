@@ -28,6 +28,9 @@
 
 namespace technicalmachine {
 
+static void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]);
+static void predict_move (Pokemon & member, int detailed [][7], unsigned size);
+
 void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead) {
 	std::vector<unsigned> overall;
 	overall.reserve (END_SPECIES);

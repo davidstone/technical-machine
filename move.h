@@ -49,7 +49,7 @@ class Move {
 		int8_t r;					// The random number (85 through 100)
 		int8_t times_used;
 		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
-		Active <std::pair <uint16_t, uint16_t> > variable;
+		Active <std::pair <uint16_t, uint16_t>> variable;
 
 		static std::string const name_to_string [];
 		static uint16_t const max_probability;
@@ -90,16 +90,10 @@ class Move {
 
 enum Vanish { LANDED, BOUNCED, DUG, DIVED, FLOWN, SHADOW_FORCED };
 
-class Pokemon;
 class Team;
 class Weather;
 
 unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_damage = -1);
-unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
-void call_other_move (Team & user);
-void do_damage (Team & user, Team & target, unsigned damage);
-void lower_pp (Team & user, Pokemon const & target);
 
-}
-
-#endif		// MOVE_H_
+}	// namespace technicalmachine
+#endif	// MOVE_H_

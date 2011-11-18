@@ -21,15 +21,10 @@
 
 namespace technicalmachine {
 
-class Pokemon;
 class Team;
 class Weather;
 
-void reset_variables (Team & team);
 void switchpokemon (Team & switcher, Team & other, Weather & weather);
-void entry_hazards (Team & switcher, Weather const & weather);
-void activate_ability (Team & switcher, Team & other, Weather & weather);
 
-}
-
-#endif		// SWITCH_H_
+}	// namespace technicalmachine
+#endif	// SWITCH_H_
