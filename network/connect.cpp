@@ -226,7 +226,6 @@ void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 }
 
 void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
-	// party defaults to 0 for servers that do not support proper host mechanics.
  	std::shared_ptr <GenericBattle> battle = challenges.find (opponent)->second;
 	battle->party = party;
 	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle>> (battle_id, battle));

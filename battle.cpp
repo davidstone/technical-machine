@@ -42,7 +42,20 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 	foe (false, ai.size),
 	log (ai, foe),
 	depth (battle_depth),
-	party (0) {
+	party (-1) {
+	foe.player = opponent;
+	ai.replacing = true;
+	foe.replacing = true;
+	for (Pokemon const & pokemon : ai.pokemon.set)
+		slot_memory.push_back (pokemon.name);
+}
+
+GenericBattle::GenericBattle (std::string const & opponent, int battle_depth, Team const & team):
+	ai (team),
+	foe (false, ai.size),
+	log (ai, foe),
+	depth (battle_depth),
+	party (-1) {
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
@@ -89,13 +102,13 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, int16_t
 	log.log_move (static_cast <Move::Moves> (move));
 }
 
-void GenericBattle::handle_withdraw (uint8_t party, uint8_t slot, std::string const & nickname) const {
+void GenericBattle::handle_withdraw (uint8_t switching_party, uint8_t slot, std::string const & nickname) const {
 }
 
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
 	std::cerr << "switching_party: " << static_cast <int> (switching_party) << '\n';
 	std::cerr << "nickname: " + nickname + "\n";
-	bool const is_me = (switching_party == 0);
+	bool const is_me = (switching_party == party);
 	Team & team = is_me ? ai : foe;
 	Team & other = is_me ? foe : ai;
 	log.pokemon_sent_out (species, nickname, level, gender, team, other);

@@ -34,6 +34,11 @@ Battle::Battle (std::string const & opponent, int battle_depth):
 	attacks_allowed.reserve (4);
 }
 
+Battle::Battle (std::string const & opponent, int battle_depth, Team const & team):
+	GenericBattle::GenericBattle (opponent, battle_depth, team) {
+	attacks_allowed.reserve (4);
+}
+
 enum Command {
 	SEND_OUT = 0,
 	WITHDRAW = 1,		// "SendBack"
@@ -94,6 +99,7 @@ enum Temporary_Pokemon_Change {
 };
 
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg) {
+	std::cerr << "command: " << static_cast <int> (command) << '\n';
 	switch (command) {
 		case BEGIN_TURN: {
 			uint32_t const turn = msg.read_int ();
@@ -114,6 +120,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			bool const shiny = msg.read_byte ();
 			uint8_t const level = msg.read_byte ();
 			uint8_t const slot = 0;
+			if (party == static_cast <uint8_t> (-1))
+				party = 0;
 			handle_send_out (player, slot, index, nickname, species, gender, level);
 			if (player == 0) {
 				for (unsigned n = 0; n != slot_memory.size (); ++n) {
@@ -368,6 +376,11 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case RATED: {
+			Team new_team (true, 6);
+			client.team = new_team;
+			OutMessage team_msg (OutMessage::SEND_TEAM);
+			team_msg.write_team (client.team, client.username);
+			team_msg.send (*client.socket);
 			bool const rated = msg.read_byte ();
 			break;
 		}

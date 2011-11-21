@@ -20,7 +20,7 @@ aiobjects = \
 	crypt/get_md5.o crypt/get_sha2.o crypt/hex.o crypt/md5.o crypt/rijndael.o crypt/sha2.o \
 	network/connect.o network/inmessage.o network/outmessage.o \
 	pokemon_lab/battle.o pokemon_lab/battle_settings.o pokemon_lab/connect.o pokemon_lab/conversion.o pokemon_lab/file.o pokemon_lab/inmessage.o pokemon_lab/outmessage.o \
-	pokemon_online/battle.o pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o
+	pokemon_online/battle.o pokemon_online/battle_settings.o pokemon_online/connect.o pokemon_online/conversion.o pokemon_online/file.o pokemon_online/inmessage.o pokemon_online/outmessage.o pokemon_online/read_user_info.o
 
 predictobjects = predictor.o ability.o block.o damage.o gender.o item.o load_stats.o heal.o move.o pokemon.o stat.o status.o switch.o team.o teampredictor.o type.o weather.o \
 	pokemon_lab/conversion.o pokemon_lab/file.o \
@@ -187,7 +187,9 @@ pokemon_online/inmessage.o: pokemon_online/inmessage.cpp pokemon_online/inmessag
  species.h network/invalid_packet.h
 pokemon_online/outmessage.o: pokemon_online/outmessage.cpp pokemon_online/outmessage.h \
  species.h network/outmessage.h
-
+pokemon_online/read_user_info.o: pokemon_online/read_user_info.cpp \
+ pokemon_online/read_user_info.h pokemon_online/inmessage.h \
+ network/inmessage.h
 
 .PHONY: clean
 clean:

@@ -36,8 +36,9 @@ namespace network {
 class GenericBattleSettings;
 
 class GenericClient {
-	protected:
+	public:
 		std::string username;
+	protected:
 		std::string password;
 		std::string host;
 		std::string port;
@@ -50,8 +51,8 @@ class GenericClient {
 		int detailed [END_SPECIES][7];
 		Score score;
 	protected:
-		std::map <std::string, std::shared_ptr <GenericBattle> > challenges;		// Battles that have not yet begun
-		std::map <uint8_t, std::shared_ptr <GenericBattle> > battles;					// Battles currently underway
+		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;		// Battles that have not yet begun
+		std::map <uint8_t, std::shared_ptr <GenericBattle>> battles;					// Battles currently underway
 		std::map <std::string, uint32_t> channels;
 		int depth;
 	public:
@@ -90,7 +91,7 @@ class GenericClient {
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		void add_pending_challenge (std::shared_ptr <GenericBattle> const & battle);
 		void handle_challenge_withdrawn (std::string const & opponent);
-		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0);
+		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = -1);
 		void pause_at_start_of_battle ();
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 	private:

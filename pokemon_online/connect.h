@@ -1,4 +1,4 @@
-// Connect to Pokemon Lab
+// Connect to Pokemon Online
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -25,6 +25,7 @@
 
 #include "inmessage.h"
 #include "../network/connect.h"
+#include "../team.h"
 
 namespace technicalmachine {
 namespace po {
@@ -36,7 +37,15 @@ class Client : public network::GenericClient {
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
 		std::map <uint32_t, std::string> id_to_channel;
+	public:
+		// I cannot pick a new team when challenged. I reload this at the start
+		// of a new battle to prevent counter-teaming. It's only used when challenged.
+		Team team;
+		// I need to keep track of whether I send the challenge or received it to get my battler id
+	private:
 		uint32_t my_id;
+		// Challenges behave differently depending on whether I initiated the challenge.
+		bool challenger;
 	public:
 		explicit Client (int depth_);
 	private:
@@ -45,7 +54,13 @@ class Client : public network::GenericClient {
 		void add_player (uint32_t user_id, std::string const & user_string);
 		void remove_player (uint32_t user_id);
 		void potentially_remove_player (uint32_t channel_id, uint32_t user_id);
-		void handle_finalize_challenge (std::string const & opponent, bool accepted);
+
+		// Must return to reading messages before assuming the battle has begun
+		// Waits until it receives confirmation that the server has the new team to actually challenge.
+		void send_battle_challenge (std::string const & opponent);
+		void send_battle_challenge_with_current_team ();
+
+		void handle_finalize_challenge (std::string const & opponent, bool accepted, bool unused = false);
 		void handle_remove_challenge (std::string const & opponent);
 	public:
 		void run ();
@@ -58,7 +73,7 @@ class Client : public network::GenericClient {
 		void part_channel (std::string const & channel);
 		void handle_add_channel (std::string const & channel_name, uint32_t channel_id);
 		void handle_remove_channel (uint32_t channel_id);
-		void send_battle_challenge (std::string const & opponent);
+
 		void add_battle (InMessage & msg);
 		void remove_battle (InMessage & msg);
 	public:
@@ -78,6 +93,6 @@ class Client : public network::GenericClient {
 		Result get_result (uint8_t code, uint32_t winner) const;
 };
 
-} // namespace po
-} // namespace technicalmachine
-#endif // POKEMON_ONLINE_CONNECT_HPP_
+}	// namespace po
+}	// namespace technicalmachine
+#endif	// POKEMON_ONLINE_CONNECT_HPP_

@@ -33,6 +33,7 @@
 #include "battle_settings.h"
 #include "inmessage.h"
 #include "outmessage.h"
+#include "read_user_info.h"
 
 #include "../crypt/get_md5.h"
 #include "../team.h"
@@ -40,17 +41,22 @@
 namespace technicalmachine {
 namespace po {
 
-Client::Client (int depth_) : network::GenericClient (depth_) {
+Client::Client (int depth_):
+	network::GenericClient (depth_),
+	team (true, 6) {
 	log_in ();
 }
 
 
 void Client::log_in () {
-	OutMessage message (OutMessage::LOG_IN);
-	Team ai (true, 6);
-	message.write_team (ai, username);
+	OutMessage msg (OutMessage::LOG_IN);
+	msg.write_team (team, username);
+	bool const ladder_enabled = true;
+	msg.write_byte (ladder_enabled);
+	bool const show_team = true;
+	msg.write_byte (show_team);
 	
-	message.send (*socket);
+	msg.send (*socket);
 }
 
 void Client::run () {
@@ -92,63 +98,6 @@ enum Action {
 	DRAW = 5
 };
 
-
-
-class User {
-	public:
-		uint32_t const id;
-		std::string const name;
-		std::string const info;
-		int8_t const authority;
-		uint8_t const flags;
-		bool const logged_in;
-		bool const battling;
-		bool const away;
-		int16_t const rating;
-		std::vector <std::pair <uint16_t, uint8_t>> const team;
-		uint16_t avatar;
-		std::string const tier;
-		uint8_t const color_spec;
-		uint16_t const alpha;
-		uint16_t const red;
-		uint16_t const green;
-		uint16_t const blue;
-		uint16_t const padding;
-		uint8_t const gen;
-		std::vector <std::pair <uint16_t, uint8_t>> load_team_vector (InMessage & msg) const {
-			std::vector <std::pair <uint16_t, uint8_t>> temp_team;
-			constexpr unsigned team_size = 6;
-			temp_team.reserve (team_size);
-			for (unsigned n = 0; n != team_size; ++n) {
-				uint16_t const species = msg.read_short ();
-				uint8_t const forme = msg.read_byte ();
-				temp_team.push_back (std::pair <uint16_t, uint8_t> (species, forme));
-			}
-			return temp_team;
-		}
-		User (InMessage & msg):
-			id (msg.read_int ()),
-			name (msg.read_string ()),
-			info (msg.read_string ()),
-			authority (msg.read_byte ()),
-			flags (msg.read_byte ()),
-			logged_in (flags % 2 >= 1),
-			battling (flags % 4 >= 2),
-			away (flags % 8 >= 4),
-			rating (msg.read_short ()),
-			team (load_team_vector (msg)),
-			avatar (msg.read_short ()),
-			tier (msg.read_string ()),
-			color_spec (msg.read_byte ()),
-			alpha (msg.read_short ()),
-			red (msg.read_short ()),
-			green (msg.read_short ()),
-			blue (msg.read_short ()),
-			padding (msg.read_short ()),
-			gen (msg.read_byte ()) {
-		}
-};
-
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::LOG_IN: {
@@ -172,26 +121,34 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::SEND_TEAM: {
 			// We get this when a user changes their team.
 			User const user (msg);
+			print_with_time_stamp (std::cerr, "SEND_TEAM");
+			if (user.id == my_id) {
+				if (challenger)
+					send_battle_challenge_with_current_team ();
+				// I cannot send a new team if I've been challenged.
+			}
 			break;
 		}
 		case InMessage::CHALLENGE_STUFF: {
 			ChallengeDescription const description = static_cast <ChallengeDescription> (msg.read_byte ());
 			uint32_t user_id = msg.read_int ();
-			std::string const & user = get_user_name (user_id);
 			uint32_t const clauses = msg.read_int ();
 			uint8_t const mode = msg.read_byte ();
-			BattleSettings const settings (clauses, mode);
+			std::string const & user = get_user_name (user_id);
+			print_with_time_stamp (std::cerr, "CHALLENGE_STUFF");
 			switch (description) {
-				case SENT:
+				case SENT: {
+					print_with_time_stamp (std::cerr, "SENT");
+					// Received when they challenge me.
+					BattleSettings const settings (clauses, mode);
 					handle_incoming_challenge (user, settings);
-					break;
-				case ACCEPTED: {
-					bool const accepted = true;
-					handle_finalize_challenge (user, accepted);
 					break;
 				}
 				default: {
-					bool const accepted = false;
+					print_with_time_stamp (std::cerr, "REJECTED");
+					// Received when I challenge them and they refuse / are unable to battle.
+					// ACCEPTED is never sent to me.
+					constexpr bool accepted = false;
 					handle_finalize_challenge (user, accepted);
 					break;
 				}
@@ -202,12 +159,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const battle_id = msg.read_int ();
 			uint32_t const user_id1 = msg.read_int ();
 			uint32_t const user_id2 = msg.read_int ();
-			constexpr uint32_t my_battle_id = 0;
-			if (user_id1 == my_battle_id) {
+			if (user_id1 == 0) {
 				BattleConfiguration configuration (msg);
 				// The server then sends me my own team.
 				// I don't need to read in my entire team; I already know my own team.
-				// This will only be useful if I support Challenge Cup.
+				// I will need to read this if I support Challenge Cup.
 				handle_battle_begin (battle_id, get_user_name (user_id2));
 			}
 			else {
@@ -240,18 +196,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t length = msg.read_int ();
 			uint8_t const command = msg.read_byte ();
 			uint8_t const player = msg.read_byte ();
-			print_with_time_stamp (std::cerr, "BATTLE_MESSAGE");
-			print_with_time_stamp (std::cerr, boost::lexical_cast <std::string> (static_cast <int> (player)));
+//			print_with_time_stamp (std::cerr, "BATTLE_MESSAGE");
+//			print_with_time_stamp (std::cerr, boost::lexical_cast <std::string> (static_cast <int> (player)));
 			length -= (sizeof (command) + sizeof (player));
 			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_message (*this, battle_id, command, 1 - player, msg);
 			break;
 		}
-		case InMessage::BATTLE_CHAT:
-			print_with_time_stamp (std::cerr, "BATTLE_CHAT");
-			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
-			break;
 		case InMessage::KEEP_ALIVE:
 			// This currently doesn't do anything on the server...
 			send_keep_alive_message ();
@@ -331,6 +282,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::SPECTATING_BATTLE_MESSAGE:
 			print_with_time_stamp (std::cerr, "SPECTATING_BATTLE_MESSAGE");
+			while (msg.index != msg.buffer.size ())
+				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			break;
+		case InMessage::BATTLE_CHAT:
+			print_with_time_stamp (std::cerr, "BATTLE_CHAT");
 			while (msg.index != msg.buffer.size ())
 				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
@@ -571,18 +527,51 @@ void Client::potentially_remove_player (uint32_t channel_id, uint32_t user_id) {
 		remove_player (user_id);
 }
 
-void Client::handle_finalize_challenge (std::string const & opponent, bool accepted) {
-	OutMessage msg (OutMessage::CHALLENGE_STUFF);
-	msg.write_byte (accepted ? ACCEPTED : REFUSED);
-	msg.write_int (get_user_id (opponent));
-	std::string verb;
-	if (accepted) {
+void Client::send_battle_challenge (std::string const & opponent) {
+	// Due to Pokemon Online's team registration feature, I only support one queued challenge at a time.
+	// This seems to be a better option than removing the ability to randomly select a team.
+	// I could support multiple challenges and mostly randomized teams, but that would be much more work.
+	// It would require using a queue instead of a map.
+	if (challenges.empty () and get_user_id (opponent)) {
 		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
 		add_pending_challenge (battle);
+		challenger = true;
+		OutMessage msg (OutMessage::SEND_TEAM);
+		msg.write_team (battle->ai, username);
+		msg.send (*socket);
+	}
+}
+
+void Client::send_battle_challenge_with_current_team () {
+	if (!challenges.empty ()) {
+		OutMessage msg (OutMessage::CHALLENGE_STUFF);
+		uint32_t const user_id = get_user_id (challenges.begin ()->first);
+		uint8_t const generation = 4;		// ???
+		BattleSettings const settings (BattleSettings::SPECIES_CLAUSE, BattleSettings::SINGLES);
+		msg.write_challenge (user_id, generation, settings);
+		msg.send (*socket);
+	}
+}
+
+void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool unused) {
+	OutMessage msg (OutMessage::CHALLENGE_STUFF);
+	std::string verb;
+	// See the description of send_battle_challenge() for why I make sure challenges is empty
+	if (accepted and challenges.empty ()) {
+		// They challenged me.
+		std::shared_ptr <Battle> battle (new Battle (opponent, depth, team));
+		add_pending_challenge (battle);
+		msg.write_byte (ACCEPTED);
+		challenger = false;
 		verb = "Accepted";
 	}
-	else
+	else {
+		if (!challenges.empty ())
+			challenges.erase (challenges.begin ());
+		msg.write_byte (REFUSED);
 		verb = "Rejected";
+	}
+	msg.write_int (get_user_id (opponent));
 	msg.send (*socket);
 	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
 }
@@ -615,20 +604,6 @@ void Client::handle_remove_channel (uint32_t channel_id) {
 	if (it != id_to_channel.end()) {
 		channels.erase (it->second);
 		id_to_channel.erase (it);
-	}
-}
-
-void Client::send_battle_challenge (std::string const & opponent) {
-	auto const it = user_name_to_id.find (opponent);
-	if (it != user_name_to_id.end ()) {
-		OutMessage msg (OutMessage::CHALLENGE_STUFF);
-		uint32_t const user_id = it->second;
-		uint8_t const generation = 4;		// ???
-		BattleSettings const settings (BattleSettings::SPECIES_CLAUSE, BattleSettings::SINGLES);
-		msg.write_challenge (user_id, generation, settings);
-		msg.send (*socket);
-		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
-		add_pending_challenge (battle);
 	}
 }
 
@@ -689,7 +664,11 @@ void Client::handle_private_message (uint32_t user_id, std::string const & messa
 }
 
 uint32_t Client::get_user_id (std::string const & name) const {
-	return user_name_to_id.find (name)->second;
+	auto const it = user_name_to_id.find (name);
+	if (it != user_name_to_id.end ())
+		return it->second;
+	else
+		return 0;
 }
 
 std::string Client::get_user_name (uint32_t id) const {

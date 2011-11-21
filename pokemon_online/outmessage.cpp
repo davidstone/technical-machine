@@ -101,10 +101,6 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	for (unsigned n = team.pokemon.set.size (); n <= 6; ++n) {
 		write_short (0);
 	}
-	bool const ladder_enabled = true;
-	write_byte (ladder_enabled);
-	bool const show_team = true;
-	write_byte (show_team);
 }
 
 enum Choice {
