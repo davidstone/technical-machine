@@ -21,10 +21,8 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 #include <boost/asio.hpp>
 
-#include "../species.h"
 #include "../network/outmessage.h"
 
 namespace technicalmachine {
@@ -104,6 +102,6 @@ class OutMessage : public network::OutMessage {
 		};
 };
 
-} // namespace po
-} // namespace technicalmachine
-#endif // POKEMON_ONLINE_OUTMESSAGE_H_
+}	// namespace po
+}	// namespace technicalmachine
+#endif	// POKEMON_ONLINE_OUTMESSAGE_H_

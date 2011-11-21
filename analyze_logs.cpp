@@ -37,6 +37,9 @@
 
 namespace technicalmachine {
 
+static void normalize_hp (Team & first, Team & last);
+static void normalize_hp_team (Team & team);
+
 Log::Log (Team & ai, Team & foe) {
 	initialize_turn (ai, foe);
 }

@@ -21,7 +21,6 @@
 
 namespace technicalmachine {
 
-class Move;
 class Team;
 class Weather;
 
@@ -29,7 +28,6 @@ void blockexecution (Team & user, Team const & other, Weather const & weather);
 void blockselection (Team & user, Team const & other, Weather const & weather);
 bool block1 (Team const & user, Team const & other);
 bool block2 (Team const & user, Weather const & weather);
-bool imprison (Move const & move, Team const & other);
 
-} // namespace technicalmachine
-#endif // BLOCK_H_
+}	// namespace technicalmachine
+#endif	// BLOCK_H_

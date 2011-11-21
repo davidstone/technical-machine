@@ -23,17 +23,11 @@
 #include <string>
 
 namespace technicalmachine {
-
 class Team;
-
 namespace pl {
 
-unsigned team_size (std::string const & name);
 void load_team (Team & team, std::string const & name, unsigned size);
-void load_pokemon (Team & team, std::ifstream & file, unsigned size);
-std::string search (std::ifstream & file, std::string & output2, std::string const & data);
 
-}
-
-}
-#endif
+}	// namespace pl
+}	// namespace technicalmachine
+#endif	// POKEMON_LAB_FILE_H_

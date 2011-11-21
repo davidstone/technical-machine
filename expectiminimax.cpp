@@ -41,6 +41,21 @@
 
 namespace technicalmachine {
 
+static int64_t order_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
+static int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score);
+static int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score);
+static int64_t awaken_branch (Team & first, Team & last, Weather const & weather, int depth, Score const & score);
+static int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Score const & score);
+static int64_t end_of_turn_branch (Team first, Team last, Weather weather, int depth, Score const & score);
+static int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, int depth, Score const & score);
+static int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn, bool verbose);
+static int64_t fainted (Team ai, Team foe, Weather weather, int depth, Score const & score);
+static void deorder (Team & first, Team & last, Team* & ai, Team* & foe);
+static int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather const & weather, int depth, Score const & score, Move::Moves & best_switch, bool first_turn = false, bool verbose = false);
+static int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, int depth, Score const & score);
+static void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score);
+static void print_action (Team const & team, bool verbose, bool first_turn, std::string indent);
+
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score) {
 	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.

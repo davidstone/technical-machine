@@ -65,5 +65,5 @@ class GenericBattle {
 		uint8_t switch_slot (Move::Moves move) const;
 };
 
-} // namespace technicalmachine
-#endif // BATTLE_H_
+}	// namespace technicalmachine
+#endif	// BATTLE_H_

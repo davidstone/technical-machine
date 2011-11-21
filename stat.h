@@ -29,7 +29,17 @@ namespace technicalmachine {
 class Stat {
 	public:
 		// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
-		enum Stats { HP = -1, ATK, DEF, SPA, SPD, SPE, ACC, EVA, END_STAT };
+		enum Stats {
+			HP = -1,
+			ATK,
+			DEF,
+			SPA,
+			SPD,
+			SPE,
+			ACC,
+			EVA,
+			END_STAT
+		};
 
 		uint8_t base;
 		int8_t iv;			// 0 through 31
@@ -40,12 +50,39 @@ class Stat {
 		Stat (Species name, Stats stat);
 		static void boost (int8_t & stage, int n);
 	private:
-		uint8_t get_base_stat (Species name, Stats stat) const;
+		static uint8_t get_base_stat (Species name, Stats stat);
 };
 
 class Nature {
 	public:
-		enum Natures { HARDY, LONELY, BRAVE, ADAMANT, NAUGHTY, BOLD, DOCILE, RELAXED, IMPISH, LAX, TIMID, HASTY, SERIOUS, JOLLY, NAIVE, MODEST, MILD, QUIET, BASHFUL, RASH, CALM, GENTLE, SASSY, CAREFUL, QUIRKY, END_NATURE };
+		enum Natures {
+			HARDY,
+			LONELY,
+			BRAVE,
+			ADAMANT,
+			NAUGHTY,
+			BOLD,
+			DOCILE,
+			RELAXED,
+			IMPISH,
+			LAX,
+			TIMID,
+			HASTY,
+			SERIOUS,
+			JOLLY,
+			NAIVE,
+			MODEST,
+			MILD,
+			QUIET,
+			BASHFUL,
+			RASH,
+			CALM,
+			GENTLE,
+			SASSY,
+			CAREFUL,
+			QUIRKY,
+			END_NATURE
+		};
 		Natures name;
 		Nature ();
 		bool is_set () const;
@@ -59,11 +96,12 @@ class Weather;
 
 unsigned hitpoints (Pokemon & member);
 void calculate_attacking_stat (Team & attacker, Weather const & weather);
-void calculate_attack (Team & attacker, Weather const & weather);
-void calculate_special_attack (Team & attacker, Weather const & weather);
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
+
+// Needed in header for Download.
 void calculate_defense (Team const & attacker, Team & defender, Weather const & weather);
 void calculate_special_defense (Team const & attacker, Team & defender, Weather const & weather);
+
 void calculate_speed (Team & team, Weather const & weather);
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);

@@ -42,5 +42,5 @@ class Gender {
 		void set_name_from_string (std::string const & str);
 };
 
-}
-#endif		// GENDER_H_
+}	// namespace technicalmachine
+#endif	// GENDER_H_

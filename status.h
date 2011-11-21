@@ -23,26 +23,35 @@
 
 namespace technicalmachine {
 
+class Pokemon;
+class Team;
+class Weather;
+
 class Status {
 	public:
-		enum Statuses { NO_STATUS, BURN, FREEZE, PARALYSIS, POISON_NORMAL, POISON_TOXIC, REST, SLEEP, END_STATUS };
+		enum Statuses {
+			NO_STATUS,
+			BURN,
+			FREEZE,
+			PARALYSIS,
+			POISON_NORMAL,
+			POISON_TOXIC,
+			REST,
+			SLEEP,
+			END_STATUS
+		};
 		Statuses name;
 		Status ();
 		bool is_sleeping () const;
 		void clear ();
 		std::string get_name () const;
+		static void burn (Team & user, Team & target, Weather const & weather);
+		static void freeze (Pokemon const & user, Team & target, Weather const & weather);
+		static void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);
+		static void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
+		static void poison_normal (Team & user, Team & target, Weather const & weather);
+		static void poison_toxic (Team & user, Team & target, Weather const & weather);
 };
 
-class Pokemon;
-class Team;
-class Weather;
-
-void burn (Team & user, Team & target, Weather const & weather);
-void freeze (Pokemon const & user, Team & target, Weather const & weather);
-void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);
-void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
-void poison_normal (Team & user, Team & target, Weather const & weather);
-void poison_toxic (Team & user, Team & target, Weather const & weather);
-
-}
-#endif		// STATUS_H_
+}	// namespace technicalmachine
+#endif	// STATUS_H_

@@ -75,5 +75,5 @@ class Pokemon {
 		int8_t get_mass () const;
 };
 
-}
-#endif		// POKEMON_H_
+}	// namespace technicalmachine
+#endif	// POKEMON_H_

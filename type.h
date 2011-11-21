@@ -23,7 +23,26 @@
 
 namespace technicalmachine {
 
-enum Type { BUG, DARK, DRAGON, ELECTRIC, FIGHTING, FIRE, FLYING, GHOST, GRASS, GROUND, ICE, NORMAL, POISON, PSYCHIC_TYPE, ROCK, STEEL, WATER, TYPELESS };
+enum Type {
+	BUG,
+	DARK,
+	DRAGON,
+	ELECTRIC,
+	FIGHTING,
+	FIRE,
+	FLYING,
+	GHOST,
+	GRASS,
+	GROUND,
+	ICE,
+	NORMAL,
+	POISON,
+	PSYCHIC_TYPE,
+	ROCK,
+	STEEL,
+	WATER,
+	TYPELESS
+};
 
 class Pokemon;
 class Team;
@@ -34,5 +53,5 @@ unsigned get_effectiveness (Type type, Pokemon const & pokemon);
 std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & pokemon);
 bool grounded (Team const & team, Weather const & weather);
 
-}
-#endif		// TYPE_H_
+}	// namespace technicalmachine
+#endif	// TYPE_H_

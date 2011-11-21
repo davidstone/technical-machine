@@ -31,6 +31,16 @@
 
 namespace technicalmachine {
 
+static void endofturn0 (Team & team);
+static void endofturn1 (Team & team);
+static void endofturn2 (Team & team);
+static void endofturn3 (Team & team, Weather const & weather);
+static void endofturn5 (Team & team, Pokemon & foe, Weather & weather);
+static void endofturn6 (Team & target, Weather const & weather);
+static void endofturn7 (Team & team);
+static void reset_variable (Team & team);
+static void decrement (int8_t & n);
+
 void endofturn (Team & first, Team & last, Weather & weather) {
 	endofturn0 (first);
 	endofturn0 (last);
@@ -185,10 +195,10 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	}
 	switch (team.pokemon->item.name) {
 		case Item::FLAME_ORB:
-			burn (team, team, weather);
+			Status::burn (team, team, weather);
 			break;
 		case Item::TOXIC_ORB:
-			poison_toxic (team, team, weather);
+			Status::poison_toxic (team, team, weather);
 			break;
 		default:
 			break;
@@ -218,7 +228,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	decrement (team.heal_block);
 	decrement (team.embargo);
 	if (team.yawn == 1)
-		sleep (*team.pokemon, *team.pokemon, weather);
+		Status::sleep (*team.pokemon, *team.pokemon, weather);
 	decrement (team.yawn);
 	if (team.pokemon->item.name == Item::STICKY_BARB)
 		heal (*team.pokemon, -8);

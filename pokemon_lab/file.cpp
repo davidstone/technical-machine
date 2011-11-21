@@ -24,6 +24,10 @@
 namespace technicalmachine {
 namespace pl {
 
+static unsigned team_size (std::string const & name);
+static void load_pokemon (Team & team, std::ifstream & file, unsigned size);
+static std::string search (std::ifstream & file, std::string & output2, std::string const & data);
+
 unsigned team_size (std::string const & name) {
 	std::ifstream file (name.c_str());
 	std::string line;

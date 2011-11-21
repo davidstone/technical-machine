@@ -121,11 +121,10 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::SEND_TEAM: {
 			// We get this when a user changes their team.
 			User const user (msg);
-			print_with_time_stamp (std::cerr, "SEND_TEAM");
 			if (user.id == my_id) {
+				// I cannot send a new team if I've been challenged.
 				if (challenger)
 					send_battle_challenge_with_current_team ();
-				// I cannot send a new team if I've been challenged.
 			}
 			break;
 		}
@@ -135,17 +134,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const clauses = msg.read_int ();
 			uint8_t const mode = msg.read_byte ();
 			std::string const & user = get_user_name (user_id);
-			print_with_time_stamp (std::cerr, "CHALLENGE_STUFF");
 			switch (description) {
 				case SENT: {
-					print_with_time_stamp (std::cerr, "SENT");
 					// Received when they challenge me.
 					BattleSettings const settings (clauses, mode);
 					handle_incoming_challenge (user, settings);
 					break;
 				}
 				default: {
-					print_with_time_stamp (std::cerr, "REJECTED");
 					// Received when I challenge them and they refuse / are unable to battle.
 					// ACCEPTED is never sent to me.
 					constexpr bool accepted = false;
@@ -196,8 +192,6 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t length = msg.read_int ();
 			uint8_t const command = msg.read_byte ();
 			uint8_t const player = msg.read_byte ();
-//			print_with_time_stamp (std::cerr, "BATTLE_MESSAGE");
-//			print_with_time_stamp (std::cerr, boost::lexical_cast <std::string> (static_cast <int> (player)));
 			length -= (sizeof (command) + sizeof (player));
 			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
 			battle.handle_message (*this, battle_id, command, 1 - player, msg);

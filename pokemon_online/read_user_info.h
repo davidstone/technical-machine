@@ -1,4 +1,4 @@
-// Load Pokemon Online teams
+// Read "User" message from PO
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,43 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_FILE_H_
-#define POKEMON_ONLINE_FILE_H_
+#ifndef POKEMON_ONLINE_READ_USER_INFO_H_
+#define POKEMON_ONLINE_READ_USER_INFO_H_
 
-#include <fstream>
+#include <cstdint>
 #include <string>
+#include <vector>
+#include <utility>
 
 namespace technicalmachine {
-class Team;
 namespace po {
 
-void load_team (Team & team, std::string const & name, unsigned size);
+class InMessage;
 
-} // namespace po
-} // namespace technicalmachine
-#endif // POKEMON_ONLINE_FILE_H_
+class User {
+	public:
+		uint32_t const id;
+		std::string const name;
+		std::string const info;
+		int8_t const authority;
+		uint8_t const flags;
+		bool const logged_in;
+		bool const battling;
+		bool const away;
+		int16_t const rating;
+		std::vector <std::pair <uint16_t, uint8_t>> const team;
+		uint16_t avatar;
+		std::string const tier;
+		uint8_t const color_spec;
+		uint16_t const alpha;
+		uint16_t const red;
+		uint16_t const green;
+		uint16_t const blue;
+		uint16_t const padding;
+		uint8_t const gen;
+		User (InMessage & msg);
+};
+
+}	// namespace po
+}	// namespace technicalmachine
+#endif	// POKEMON_ONLINE_READ_USER_INFO_HPP_
