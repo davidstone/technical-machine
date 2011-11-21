@@ -1,5 +1,5 @@
 // Enter a team file. If a directory is specified instead of a file, Technical Machine will randomly use a file inside that directory recursively. For instance, if you have team files in folders based on tiers, then to use any OU team, you'd put "teams/ou/", but to use your stall team you'd put "teams/ou/stall.sbt". For directories, the terminating '/' is optional.
-team: teams/
+team: ../teams/
 
 log path: ?
 

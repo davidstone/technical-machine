@@ -30,11 +30,11 @@ using namespace technicalmachine;
 
 // This was designed to test how accurate different versions of my team prediction function were to make sure my changes actually helped. It's useless now, but the code might be the base for a future such test.
 
-void test_teams (const std::vector<double> &old_estimate, const std::vector<double> &new_estimate, unsigned old_correct[][6], unsigned new_correct [][6], const std::map<std::string, species> &species_map);
+static void test_teams (const std::vector<double> & old_estimate, const std::vector<double> & new_estimate, unsigned old_correct [][6], unsigned new_correct [][6], const std::map<std::string, species> & species_map);
 
-void combination (const std::vector<species> &team, const std::vector<species> &known, std::vector<double> estimate, double multiplier [][END_SPECIES], unsigned correct[][6]);
+static void combination (const std::vector<species> & team, const std::vector<species> & known, std::vector<double> estimate, double multiplier [][END_SPECIES], unsigned correct [][6]);
 
-void tabulate (unsigned old_correct [][6], unsigned new_correct [][6]);
+static void tabulate (unsigned old_correct [][6], unsigned new_correct [][6]);
 
 int main () {
 	std::map <std::string, species> species_map;
@@ -57,9 +57,9 @@ int main () {
 	return 0;
 }
 
-void test_teams (const std::vector<double> &old_estimate, const std::vector<double> &new_estimate, unsigned old_correct [][6], unsigned new_correct [][6], const std::map<std::string, species> &species_map) {
+void test_teams (const std::vector<double> & old_estimate, const std::vector<double> & new_estimate, unsigned old_correct [][6], unsigned new_correct [][6], const std::map<std::string, species> & species_map) {
 	// The "correct" matrices are [number of non-lead Pokemon already seen] [total Pokemon correctly predicted]
-	std::ifstream file ("teams.txt");
+	std::ifstream file ("../settings/teams.txt");
 	std::string line;
 	getline (file, line);
 	while (!file.eof()) {
@@ -128,7 +128,7 @@ void test_teams (const std::vector<double> &old_estimate, const std::vector<doub
 	}
 }
 
-void combination (const std::vector<species> &team, const std::vector<species> &known, std::vector<double> estimate, double multiplier [][END_SPECIES], unsigned correct[][6]) {
+void combination (const std::vector<species> & team, const std::vector<species> & known, std::vector<double> estimate, double multiplier [][END_SPECIES], unsigned correct [][6]) {
 	for (std::vector<species>::const_iterator it = known.begin(); it != known.end(); ++it) {
 		for (unsigned n = 0; n != END_SPECIES; ++n)
 			estimate.at (n) *= multiplier [*it] [n];

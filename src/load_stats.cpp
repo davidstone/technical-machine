@@ -31,7 +31,7 @@
 namespace technicalmachine {
 
 void overall_stats (std::vector<unsigned> & overall) {
-	std::ifstream file ("usage.txt");
+	std::ifstream file ("../settings/usage.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
 		overall.push_back (boost::lexical_cast<unsigned> (line));
@@ -58,7 +58,7 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 	for (unsigned n = 0; n != END_SPECIES; ++n)
 		unaccounted [n] = overall [n] * 5;
 
-	std::ifstream file ("teammate.txt");
+	std::ifstream file ("../settings/teammate.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t x = line.find ('\t');
@@ -89,14 +89,14 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 }
 
 void lead_stats (std::vector<float> & lead) {		// Multiplier for Pokemon after you've seen the lead
-	std::ifstream file ("lead.txt");
+	std::ifstream file ("../settings/lead.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
 		lead.push_back (boost::lexical_cast<float> (line));
 }
 
 void detailed_stats (int detailed [][7]) {
-	std::ifstream file ("detailed.txt");
+	std::ifstream file ("../settings/detailed.txt");
 	std::string line;
 	Species old_member = END_SPECIES;
 	bool ability = false;

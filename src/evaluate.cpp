@@ -153,11 +153,12 @@ int64_t Score::win (Team const & team) {
 }
 
 Score::Score () {
+	// This is a separate function instead of being stuck in directly so support reloading of the constants.
 	load_evaluation_constants ();
 }
 
 void Score::load_evaluation_constants () {
-	std::ifstream file ("evaluate.txt");
+	std::ifstream file ("../settings/evaluate.txt");
 	std::string line;
 	std::string const delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {

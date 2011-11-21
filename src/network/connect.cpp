@@ -73,11 +73,11 @@ void create_unsorted_vector (std::string const & file_name, std::vector <std::st
 }
 
 void GenericClient::load_highlights () {
-	create_unsorted_vector ("highlights.txt", highlights);
+	create_unsorted_vector ("../settings/highlights.txt", highlights);
 }
 
 void GenericClient::load_responses () {
-	create_unsorted_vector ("responses.txt", response);
+	create_unsorted_vector ("../settings/responses.txt", response);
 }
 
 void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
@@ -101,7 +101,7 @@ void create_sorted_vector (std::string const & file_name, std::vector <std::stri
 }
 
 void GenericClient::load_trusted_users () {
-	create_sorted_vector ("trusted_users.txt", trusted_users);
+	create_sorted_vector ("../settings/trusted_users.txt", trusted_users);
 }
 
 bool GenericClient::is_trusted (std::string const & user) const {
@@ -110,7 +110,7 @@ bool GenericClient::is_trusted (std::string const & user) const {
 }
 
 void GenericClient::load_account_info () {
-	std::ifstream file ("settings.txt");
+	std::ifstream file ("../settings/settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
 	std::string const comment = "//";
@@ -133,7 +133,7 @@ void GenericClient::load_account_info () {
 
 void GenericClient::load_settings () {
 	// This is broken off from load_account_info so allow this to be reloaded while the program is running.
-	std::ifstream file ("settings.txt");
+	std::ifstream file ("../settings/settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
 	std::string const comment = "//";
