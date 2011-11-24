@@ -59,7 +59,7 @@ int main () {
 
 void test_teams (const std::vector<double> & old_estimate, const std::vector<double> & new_estimate, unsigned old_correct [][6], unsigned new_correct [][6], const std::map<std::string, species> & species_map) {
 	// The "correct" matrices are [number of non-lead Pokemon already seen] [total Pokemon correctly predicted]
-	std::ifstream file ("../settings/teams.txt");
+	std::ifstream file ("settings/teams.txt");
 	std::string line;
 	getline (file, line);
 	while (!file.eof()) {

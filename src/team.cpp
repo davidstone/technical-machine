@@ -44,7 +44,7 @@
 
 namespace technicalmachine {
 
-void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
+static void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
 
 Team::Team (bool isme, unsigned size) :
 	vanish (LANDED),
@@ -130,7 +130,7 @@ Team::Team (bool isme, unsigned size) :
 	if (me) {
 		std::string line;
 		boost::filesystem::path team_file;
-		std::ifstream settings ("../settings/settings.txt");
+		std::ifstream settings ("settings/settings.txt");
 		std::string const comment = "//";
 		std::string const delimiter = ": ";
 		for (getline (settings, line); !settings.eof(); getline (settings, line)) {

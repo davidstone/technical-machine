@@ -73,11 +73,11 @@ void create_unsorted_vector (std::string const & file_name, std::vector <std::st
 }
 
 void GenericClient::load_highlights () {
-	create_unsorted_vector ("../settings/highlights.txt", highlights);
+	create_unsorted_vector ("settings/highlights.txt", highlights);
 }
 
 void GenericClient::load_responses () {
-	create_unsorted_vector ("../settings/responses.txt", response);
+	create_unsorted_vector ("settings/responses.txt", response);
 }
 
 void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
@@ -101,7 +101,7 @@ void create_sorted_vector (std::string const & file_name, std::vector <std::stri
 }
 
 void GenericClient::load_trusted_users () {
-	create_sorted_vector ("../settings/trusted_users.txt", trusted_users);
+	create_sorted_vector ("settings/trusted_users.txt", trusted_users);
 }
 
 bool GenericClient::is_trusted (std::string const & user) const {
@@ -110,7 +110,7 @@ bool GenericClient::is_trusted (std::string const & user) const {
 }
 
 void GenericClient::load_account_info () {
-	std::ifstream file ("../settings/settings.txt");
+	std::ifstream file ("settings/settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
 	std::string const comment = "//";
@@ -133,7 +133,7 @@ void GenericClient::load_account_info () {
 
 void GenericClient::load_settings () {
 	// This is broken off from load_account_info so allow this to be reloaded while the program is running.
-	std::ifstream file ("../settings/settings.txt");
+	std::ifstream file ("settings/settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
 	std::string const comment = "//";
@@ -188,14 +188,18 @@ void GenericClient::print_with_time_stamp (std::ostream & stream, std::string co
 }
 
 std::string GenericClient::time_stamp () const {
-	// Need to find a better way than always a length of 20.
-	// This breaks with other time formats than ISO-8601.
-	// Should look into header chrono for a C++ version of strftime
-	char result [20];
+	// There does not appear to be an easy way to format the current time with a format string.
+	// This seems like a major limitation of boost::date_time / boost::posix_time.
+	std::string result;
+	constexpr unsigned probably_big_enough = 30;
+	result.resize (probably_big_enough);
 	time_t current_time = time (nullptr);
 	tm * timeptr = localtime (&current_time);
-	strftime (result, 20, time_format.c_str(), timeptr);
-	return std::string (result);
+	if (!time_format.empty ()) {
+		while (strftime (&result [0], result.size (), time_format.c_str(), timeptr) == 0)
+			result.resize (result.size () * 2);
+	}
+	return result;
 }
 
 void GenericClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {

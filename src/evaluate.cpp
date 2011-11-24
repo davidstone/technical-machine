@@ -158,7 +158,7 @@ Score::Score () {
 }
 
 void Score::load_evaluation_constants () {
-	std::ifstream file ("../settings/evaluate.txt");
+	std::ifstream file ("settings/evaluate.txt");
 	std::string line;
 	std::string const delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
