@@ -1,22 +1,6 @@
 syntax: glob
 
 *.o
-*.Po
-.dirstamp
-aclocal.m4
-autoscan.log
-compile
-config.h
-config.h.in
-config.log
-config.status
-configure.scan
-depcomp
-install-sh
-missing
-stamp-h1
-
-autom4te.cache/*
 
 ai
 aio
