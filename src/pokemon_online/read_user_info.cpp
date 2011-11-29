@@ -53,12 +53,14 @@ User::User (InMessage & msg):
 	team (load_team_vector (msg)),
 	avatar (msg.read_short ()),
 	tier (msg.read_string ()),
+
 	color_spec (msg.read_byte ()),
 	alpha (msg.read_short ()),
 	red (msg.read_short ()),
 	green (msg.read_short ()),
 	blue (msg.read_short ()),
 	padding (msg.read_short ()),
+
 	gen (msg.read_byte ()) {
 }
 

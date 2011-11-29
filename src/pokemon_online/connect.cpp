@@ -51,11 +51,11 @@ Client::Client (int depth_):
 void Client::log_in () {
 	OutMessage msg (OutMessage::LOG_IN);
 	msg.write_team (team, username);
+	msg.write_color ();
 	bool const ladder_enabled = true;
 	msg.write_byte (ladder_enabled);
 	bool const show_team = true;
 	msg.write_byte (show_team);
-	
 	msg.send (*socket);
 }
 
@@ -102,8 +102,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::LOG_IN: {
 			User const user (msg);
-			assert (user.name == username);
-			my_id = user.id;
+			if (user.name == username)
+				my_id = user.id;
+			// Should probably throw an exception here
+			else
+				print_with_time_stamp (std::cerr, "Server claims my username is " + user.name);
 			break;
 		}
 		case InMessage::LOG_OUT: {
@@ -193,8 +196,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const command = msg.read_byte ();
 			uint8_t const player = msg.read_byte ();
 			length -= (sizeof (command) + sizeof (player));
-			Battle & battle = static_cast <Battle &> (*battles.find (battle_id)->second);
-			battle.handle_message (*this, battle_id, command, 1 - player, msg);
+			auto const it = battles.find (battle_id);
+			if (it != battles.end ()) {
+				Battle & battle = static_cast <Battle &> (*it->second);
+				battle.handle_message (*this, battle_id, command, 1 - player, msg);
+			}
 			break;
 		}
 		case InMessage::KEEP_ALIVE:
@@ -498,7 +504,7 @@ void Client::add_player (uint32_t user_id, std::string const & user_name) {
 void Client::remove_player (uint32_t user_id) {
 	// I can get to this code when I leave a channel thanks to my quick fix below.
 	if (user_id != my_id) {
-		std::map <uint32_t, std::string>::iterator it = user_id_to_name.find (user_id);
+		auto const it = user_id_to_name.find (user_id);
 		if (it != user_id_to_name.end ()) {
 			std::string const user_name = it->second;
 			user_id_to_name.erase (it);
@@ -580,7 +586,7 @@ void Client::join_channel (std::string const & channel) {
 }
 
 void Client::part_channel (std::string const & channel) {
-	std::map <std::string, uint32_t>::const_iterator it = channels.find (channel);
+	auto const it = channels.find (channel);
 	if (it != channels.end ()) {
 		OutMessage msg (OutMessage::LEAVE_CHANNEL);
 		msg.write_int (it->second);
@@ -594,7 +600,7 @@ void Client::handle_add_channel (std::string const & channel_name, uint32_t chan
 }
 
 void Client::handle_remove_channel (uint32_t channel_id) {
-	std::map <uint32_t, std::string>::iterator it = id_to_channel.find (channel_id);
+	auto const it = id_to_channel.find (channel_id);
 	if (it != id_to_channel.end()) {
 		channels.erase (it->second);
 		id_to_channel.erase (it);
@@ -661,12 +667,20 @@ uint32_t Client::get_user_id (std::string const & name) const {
 	auto const it = user_name_to_id.find (name);
 	if (it != user_name_to_id.end ())
 		return it->second;
-	else
+	else {
+		print_with_time_stamp (std::cerr, "User name " + name + " not in user_name_to_id.");
 		return 0;
+	}
 }
 
 std::string Client::get_user_name (uint32_t id) const {
-	return user_id_to_name.find (id)->second;
+	auto const it = user_id_to_name.find (id);
+	if (it != user_id_to_name.end ())
+		return it->second;
+	else {
+		print_with_time_stamp (std::cerr, "User id " + std::to_string (id) + " not in user_id_to_name.");
+		return "";
+	}
 }
 
 network::GenericClient::Result Client::get_result (uint8_t code, uint32_t winner) const {

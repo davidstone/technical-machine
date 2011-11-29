@@ -135,6 +135,21 @@ void OutMessage::write_challenge (uint32_t user_id, uint8_t generation, BattleSe
 	write_byte (settings.mode);
 }
 
+void OutMessage::write_color () {
+	int8_t const spec = 0;
+	uint16_t const alpha = 0;
+	uint16_t const red = 0;
+	uint16_t const green = 0;
+	uint16_t const blue = 0;
+	uint16_t const pad = 0;
+	write_byte (spec);
+	write_short (alpha);
+	write_short (red);
+	write_short (green);
+	write_short (blue);
+	write_short (pad);
+}
+
 void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
 	uint16_t length = htons (buffer.size ());
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
