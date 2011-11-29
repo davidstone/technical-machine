@@ -47,21 +47,22 @@ class GenericClient {
 		std::vector <std::string> highlights;
 		std::vector <std::string> response;
 		std::vector <std::string> trusted_users;
-	public:
-		int detailed [END_SPECIES][7];
-		Score score;
 	protected:
 		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;		// Battles that have not yet begun
 		std::map <uint8_t, std::shared_ptr <GenericBattle>> battles;					// Battles currently underway
 		std::map <std::string, uint32_t> channels;
-		int depth;
 	public:
 		boost::asio::io_service io;
+		Score score;
+		int detailed [END_SPECIES][7];
+	protected:
+		int depth;
 	private:
 		boost::asio::deadline_timer timer;
 	public:
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 		int chattiness;
+
 		explicit GenericClient (int set_depth);
 		virtual ~GenericClient () { }
 	private:

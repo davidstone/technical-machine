@@ -48,11 +48,11 @@ static void open_directory_and_add_files (boost::filesystem::path const & team_f
 
 Team::Team (bool isme, unsigned size) :
 	vanish (LANDED),
-	stage ({}),
 	damage (0),
 	bide_damage (0),
 	substitute (0),
 	chance_to_hit (100),
+	stage ({}),
 	bide (0),
 	confused (0),
 	embargo (0),

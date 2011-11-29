@@ -34,6 +34,7 @@ class Clauses;
 
 class Client : public network::GenericClient {
 	private:
+		uint32_t my_id;
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
 		std::map <uint32_t, std::string> id_to_channel;
@@ -43,7 +44,6 @@ class Client : public network::GenericClient {
 		Team team;
 		// I need to keep track of whether I send the challenge or received it to get my battler id
 	private:
-		uint32_t my_id;
 		// Challenges behave differently depending on whether I initiated the challenge.
 		bool challenger;
 	public:

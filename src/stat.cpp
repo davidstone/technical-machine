@@ -35,10 +35,10 @@ static void calculate_attack (Team & attacker, Weather const & weather);
 static void calculate_special_attack (Team & attacker, Weather const & weather);
 
 Stat::Stat (Species name, Stats stat) :
+	max (-1),
 	base (get_base_stat (name, stat)),
 	iv (31),
-	ev (21),		// Adds up to 126 points, temporary until I add in EV prediction
-	max (-1) {
+	ev (21) {		// Adds up to 126 points, temporary until I add in EV prediction
 	}
 
 unsigned hitpoints (Pokemon & member) {

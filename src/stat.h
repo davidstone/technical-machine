@@ -41,11 +41,11 @@ class Stat {
 			END_STAT
 		};
 
+		unsigned max;		// Max HP only
+		unsigned stat;		// Current HP or last calculated value for other stats
 		uint8_t base;
 		int8_t iv;			// 0 through 31
 		int8_t ev;			// 0 through 63
-		unsigned max;		// Max HP only
-		unsigned stat;		// Current HP or last calculated value for other stats
 	
 		Stat (Species name, Stats stat);
 		static void boost (int8_t & stage, int n);

@@ -35,6 +35,8 @@ class Move {
 
 		Moves name;
 		Type type;
+		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
+		Active <std::pair <uint16_t, uint16_t>> variable;
 		int64_t score;
 		int16_t basepower;
 		int16_t power;
@@ -48,8 +50,6 @@ class Move {
 		int8_t priority;
 		int8_t r;					// The random number (85 through 100)
 		int8_t times_used;
-		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
-		Active <std::pair <uint16_t, uint16_t>> variable;
 
 		static std::string const name_to_string [];
 		static uint16_t const max_probability;

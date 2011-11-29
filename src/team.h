@@ -36,11 +36,11 @@ class Team {
 		Active<Pokemon> pokemon;
 
 		Vanish vanish;
-		int8_t stage [Stat::END_STAT];		// -6 though 6
 		int16_t damage;		// How much damage will this Pokemon do
 		int16_t bide_damage;
 		int16_t substitute;	// How much HP does the substitute have left?
 		int16_t chance_to_hit;
+		int8_t stage [Stat::END_STAT];		// -6 though 6
 		int8_t bide;
 		int8_t confused;
 		int8_t embargo;

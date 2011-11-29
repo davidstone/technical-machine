@@ -8,11 +8,13 @@ predict
 rdc
 rdco
 
-account.txt
-highlights.txt
-responses.txt
-settings.txt
-trusted_users.txt
+.sconsign.dblite
+
+settings/account.txt
+settings/highlights.txt
+settings/responses.txt
+settings/settings.txt
+settings/trusted_users.txt
 
 battles/*
 teams/*
