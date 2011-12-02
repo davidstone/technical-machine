@@ -43,6 +43,8 @@ class Battle : public GenericBattle {
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg);
 //		void update_active_print (Log & log, std::vector <std::string> const & arguments);
 //		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
+	private:
+		unsigned get_max_damage_precision ();
 };
 
 }	// namespace po

@@ -64,6 +64,8 @@ class GenericBattle {
 		void handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp);
 		void handle_fainted (uint8_t fainting_party, uint8_t slot);
 		uint8_t switch_slot (Move::Moves move) const;
+	protected:
+		virtual unsigned get_max_damage_precision ();
 };
 
 }	// namespace technicalmachine

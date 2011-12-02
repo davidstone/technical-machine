@@ -134,11 +134,9 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
-	int max_hp = 48;
 	for (Pokemon & pokemon : team.pokemon.set) {
-		if (team.me)
-			max_hp = pokemon.hp.max;
-		int pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
+		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
+		int const pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
 		if (pixels != pokemon.new_hp and (pokemon.new_hp - 1 > pixels or pixels > pokemon.new_hp + 1)) {
 			std::cerr << "Uh oh! " + pokemon.get_name () + " has the wrong HP! The server reports approximately " << pokemon.new_hp * pokemon.hp.max / max_hp << " but TM thinks it has " << pokemon.hp.stat << "\n";
 			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
@@ -162,6 +160,10 @@ uint8_t GenericBattle::switch_slot (Move::Moves move) const {
 			break;
 	}
 	return n;
+}
+
+unsigned GenericBattle::get_max_damage_precision () {
+	return 48;
 }
 
 } // namespace technicalmachine

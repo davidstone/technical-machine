@@ -106,7 +106,6 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case SEND_OUT: {
-			std::cerr << "SEND_OUT\n";
 			bool const is_silent = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			Species const species = id_to_species (msg.read_short ());
@@ -150,6 +149,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case HP_CHANGE: {
 			int16_t const remaining_hp = msg.read_short ();
+			std::cerr << "Player changing HP is me: " << player == 0 << '\n';
 			int16_t const change_in_hp = (player == 0) ? ai.at_replacement ().hp.stat : foe.at_replacement ().hp.stat;
 			uint8_t const slot = 0;
 			int16_t const denominator = (player == 0) ? ai.at_replacement ().hp.max : 100;
@@ -258,9 +258,13 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case ABILITY_MESSAGE: {
 			std::cerr << "ABILITY_MESSAGE\n";
 			uint16_t const ability = msg.read_short ();
-//			uint8_t const part = msg.read_byte ();
-//			int8_t const type = msg.read_byte ();
-//			int8_t const foe = msg.read_byte ();
+			std::cerr << "reading part\n";
+			uint8_t const part = msg.read_byte ();
+			std::cerr << "reading type\n";
+			int8_t const type = msg.read_byte ();
+			std::cerr << "reading foe\n";
+			int8_t const foe = msg.read_byte ();
+//			std::cerr << "reading other\n";
 //			int16_t const other = msg.read_short ();
 			std::cerr << "End of ABILITY_MESSAGE\n";
 			break;
@@ -508,6 +512,10 @@ void Battle::handle_request_action (Client & client, uint32_t battle_id) {
 	msg.send (*client.socket);
 	if (!ai.replacing)
 		log.initialize_turn (ai, foe);
+}
+
+unsigned Battle::get_max_damage_precision () {
+	return 100;
 }
 
 } // namespace po

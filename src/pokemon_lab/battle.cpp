@@ -466,5 +466,5 @@ void Battle::update_active_print (Log & log, std::vector <std::string> const & a
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp) {
 }
 
-}
-}
+}	// namespace pl
+}	// namespace technicalmachine
