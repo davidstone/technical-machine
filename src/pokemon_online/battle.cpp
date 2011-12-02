@@ -135,11 +135,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case USE_ATTACK: {
-			std::cerr << "USE_ATTACK\n";
-			uint32_t const attack = msg.read_short ();
-			handle_use_move (player, 0, attack);
-			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			uint16_t const attack = msg.read_short ();
+			Move::Moves const move = id_to_move (attack);
+			handle_use_move (player, 0, move);
 			break;
 		}
 		case STRAIGHT_DAMAGE: {

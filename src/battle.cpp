@@ -88,7 +88,7 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	return expectiminimax (ai, predicted, weather, depth, client.score, min_score);
 }
 
-void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, int16_t move_id) {
+void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move) {
 	bool const is_me = (party == moving_party);
 	log.active = is_me ? & ai : & foe;
 	log.inactive = is_me ? & foe : & ai;
@@ -98,8 +98,7 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, int16_t
 		log.last = log.inactive;
 	}
 
-	int const move = (move_id < Move::SWITCH0) ? move_id : move_id + 6;
-	log.log_move (static_cast <Move::Moves> (move));
+	log.log_move (move);
 }
 
 void GenericBattle::handle_withdraw (uint8_t switching_party, uint8_t slot, std::string const & nickname) const {

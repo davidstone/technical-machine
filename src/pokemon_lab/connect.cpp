@@ -354,7 +354,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_use_move (party, slot, move_id);
+				Move::Moves const move = id_to_move (move_id);
+				battle.handle_use_move (party, slot, move);
 			}
 			break;
 		}
