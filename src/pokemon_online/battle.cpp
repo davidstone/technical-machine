@@ -99,7 +99,6 @@ enum Temporary_Pokemon_Change {
 };
 
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg) {
-	std::cerr << "command: " << static_cast <int> (command) << '\n';
 	switch (command) {
 		case BEGIN_TURN: {
 			uint32_t const turn = msg.read_int ();

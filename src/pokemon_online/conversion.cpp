@@ -1913,10 +1913,10 @@ int move_to_id (Move::Moves move) {
 		291,		// DIVE
 		146,		// DIZZY_PUNCH
 		353,		// DOOM_DESIRE
-		38,		// DOUBLE_EDGE
 		458,		// DOUBLE_HIT
 		24,		// DOUBLE_KICK
 		104,		// DOUBLE_TEAM
+		38,		// DOUBLE_EDGE
 		3,		// DOUBLESLAP
 		434,		// DRACO_METEOR
 		337,		// DRAGON_CLAW
@@ -2080,8 +2080,8 @@ int move_to_id (Move::Moves move) {
 		234,		// MORNING_SUN
 		426,		// MUD_BOMB
 		341,		// MUD_SHOT
-		189,		// MUD_SLAP
 		300,		// MUD_SPORT
+		189,		// MUD_SLAP
 		330,		// MUDDY_WATER
 		417,		// NASTY_PLOT
 		363,		// NATURAL_GIFT
@@ -2156,8 +2156,8 @@ int move_to_id (Move::Moves move) {
 		355,		// ROOST
 		221,		// SACRED_FIRE
 		219,		// SAFEGUARD
-		28,		// SAND_ATTACK
 		328,		// SAND_TOMB
+		28,		// SAND_ATTACK
 		201,		// SANDSTORM
 		184,		// SCARY_FACE
 		10,		// SCRATCH

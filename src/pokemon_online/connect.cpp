@@ -405,11 +405,15 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			potentially_remove_player (channel_id, user_id);
 			break;
 		}
-		case InMessage::CHANNEL_BATTLE:
+		case InMessage::CHANNEL_BATTLE: {
 			print_with_time_stamp (std::cerr, "CHANNEL_BATTLE");
+			uint32_t const battle_id = msg.read_int ();
+			uint32_t const id1 = msg.read_int ();
+			uint32_t const id2 = msg.read_int ();
 			while (msg.index != msg.buffer.size ())
 				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
+		}
 		case InMessage::ADD_CHANNEL: {
 			std::string const channel_name = msg.read_string ();
 			uint32_t const channel_id = msg.read_int ();
