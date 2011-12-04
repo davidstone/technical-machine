@@ -38,12 +38,12 @@
 
 namespace technicalmachine {
 
-static void normalize_hp_team (Team & team);
-
 GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 	ai (true, 6),
 	foe (false, ai.size),
 	depth (battle_depth),
+	active (nullptr),
+	inactive (nullptr),
 	party (-1)
 	{
 	foe.player = opponent;
@@ -209,10 +209,9 @@ unsigned GenericBattle::get_max_damage_precision () {
 void GenericBattle::initialize_turn () {
 	initialize_team (ai);
 	initialize_team (foe);
+	// Simulators might not send an HP change message if a move does 0 damage.
 	move_damage = false;
 	
-	active = nullptr;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to nullptr to remove this warning.
-	inactive = nullptr;
 	first = nullptr;
 	last = nullptr;
 }
@@ -247,9 +246,9 @@ void GenericBattle::do_turn () {
 	else {
 		// Anything with recoil will mess this up
 		usemove (*first, *last, weather, last->damage);
-		normalize_hp_team (*last);
+		last->pokemon->normalize_hp ();
 		usemove (*last, *first, weather, first->damage);
-		normalize_hp_team (*first);
+		first->pokemon->normalize_hp ();
 
 		endofturn (*first, *last, weather);
 		normalize_hp ();
@@ -272,16 +271,8 @@ void GenericBattle::do_turn () {
 }
 
 void GenericBattle::normalize_hp () {
-	normalize_hp_team (*first);
-	normalize_hp_team (*last);
-}
-
-void normalize_hp_team (Team & team) {
-	// This is to correct for rounding issues caused by only seeing the foe's HP to the nearest 48th.
-	if (team.pokemon->fainted)
-		team.pokemon->hp.stat = 0;
-	else if (team.pokemon->hp.stat == 0)
-		team.pokemon->hp.stat = 1;
+	ai.pokemon->normalize_hp ();
+	foe.pokemon->normalize_hp ();
 }
 
 } // namespace technicalmachine

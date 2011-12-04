@@ -76,6 +76,14 @@ bool Pokemon::find_move (Move::Moves name) {
 	return false;
 }
 
+void Pokemon::normalize_hp () {
+	// Correct rounding issues caused by not seeing the foe's exact HP.
+	if (fainted)
+		hp.stat = 0;
+	else if (hp.stat == 0)
+		hp.stat = 1;
+}
+
 bool Pokemon::operator== (Pokemon const & other) const {
 	if (move.set.size() != other.move.set.size())
 		return false;
