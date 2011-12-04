@@ -108,8 +108,6 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 		Move move (move_name, 3, inactive->size);
 		active->at_replacement().move.add (move);
 	}
-	if (active->at_replacement().move->is_phaze ())
-		phaze = true;
 	active->at_replacement().move->variable.index = 0;
 	if (active->at_replacement().move->basepower != 0)
 		move_damage = true;
@@ -122,61 +120,32 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	std::cerr << "switching_party: " << static_cast <int> (switching_party) << '\n';
 	std::cerr << "nickname: " + nickname + "\n";
 	bool const is_me = (switching_party == party);
-	Team & team = is_me ? ai : foe;
-	Team & other = is_me ? foe : ai;
-	pokemon_sent_out (species, nickname, level, gender, team, other);
-}
+	active = is_me ? &ai : &foe;
+	inactive = is_me ? &foe : &ai;
 
-void GenericBattle::pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other) {
-	active = &team;
-	inactive = &other;
 	if (first == nullptr) {
-		first = &team;
-		last = &other;
+		first = active;
+		last = inactive;
 	}
 
-	size_t replacement = team.replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
-	
-	bool found = seen_pokemon (team, name);
+	size_t const replacement = active->replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
 	
 	// If it hasn't been seen already, add it to the team.
-	if (!found)
-		add_pokemon (team, name, nickname, level, gender);
+	if (!active->seen_pokemon (species))
+		active->add_pokemon (species, nickname, level, gender);
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
-	if (phaze) {
-		other.at_replacement().move->variable.index = 0;
-		while (team.pokemon.set [other.at_replacement().move->variable.index].name != name)
-			++other.at_replacement().move->variable.index;
+	if (inactive->at_replacement().move->is_phaze ()) {
+		inactive->at_replacement().move->variable.index = 0;
+		while (active->pokemon.set [inactive->at_replacement().move->variable.index].name != species)
+			++inactive->at_replacement().move->variable.index;
 	}
 	else if (!active->moved) {
-		team.pokemon.set [replacement].move.index = 0;
-		while (team.pokemon.set [replacement].move->name != Move::SWITCH0)
-			++team.pokemon.set [replacement].move.index;
-		team.pokemon.set [replacement].move.index += team.replacement;		
-		active->moved = false;
+		active->pokemon.set [replacement].move.index = 0;
+		while (active->pokemon.set [replacement].move->name != Move::SWITCH0)
+			++active->pokemon.set [replacement].move.index;
+		active->pokemon.set [replacement].move.index += active->replacement;		
 	}
-}
-
-bool GenericBattle::seen_pokemon (Team & team, Species name) {
-	// Check if this Pokemon has been seen already. If it has, set team.replacement to its location.
-	for (team.replacement = 0; team.replacement != team.pokemon.set.size(); ++team.replacement) {
-		if (name == team.at_replacement().name)
-			return true;
-	}
-	return false;
-}
-
-void GenericBattle::add_pokemon (Team & team, Species name, std::string const & nickname, int level, Gender const & gender) {
-	Pokemon member (name, team.size);
-	member.level = level;
-	member.gender = gender;
-
-	member.nickname = nickname;
-
-	team.pokemon.set.push_back (member);
-	team.replacement = team.pokemon.set.size() - 1;
-	team.pokemon.set.back().load();
 }
 
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
@@ -240,7 +209,6 @@ unsigned GenericBattle::get_max_damage_precision () {
 void GenericBattle::initialize_turn () {
 	initialize_team (ai);
 	initialize_team (foe);
-	phaze = false;
 	move_damage = false;
 	
 	active = nullptr;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to nullptr to remove this warning.

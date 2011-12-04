@@ -23,12 +23,12 @@
 #include <string>
 
 #include "active.h"
+#include "gender.h"
 #include "pokemon.h"
+#include "species.h"
 #include "stat.h"
 
 namespace technicalmachine {
-
-class Pokemon;
 
 class Team {
 	public:
@@ -127,6 +127,9 @@ class Team {
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
 		bool is_switching_to_self () const;
+		// Has this Pokemon been seen already? If it has, set replacement.
+		bool seen_pokemon (Species name);
+		void add_pokemon (Species name, std::string const & nickname, int level, Gender gender);
 		uint64_t hash () const;
 		void output (std::string & output) const;
 	private:

@@ -46,7 +46,6 @@ class GenericBattle {
 		Team * inactive;
 		Team * first;
 		Team * last;
-		bool phaze;
 		bool move_damage;
 	public:
 		uint8_t party;
@@ -62,10 +61,6 @@ class GenericBattle {
 		void handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name);
 		void handle_withdraw (uint8_t switching_party, uint8_t slot, std::string const & nickname) const; // does nothing
 		void handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
-	private:
-		void pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other);
-		static bool seen_pokemon (Team & team, Species name);
-		void add_pokemon (Team & team, Species name, std::string const & nickname, int level, Gender const & gender);
 	public:
 		void handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator);
 	private:

@@ -172,6 +172,26 @@ bool Team::is_switching_to_self () const {
 	return pokemon.set [pokemon->move->name - Move::SWITCH0].name == pokemon->name;
 }
 
+bool Team::seen_pokemon (Species name) {
+	for (replacement = 0; replacement != pokemon.set.size(); ++replacement) {
+		if (name == at_replacement().name)
+			return true;
+	}
+	return false;
+}
+
+void Team::add_pokemon (Species name, std::string const & nickname, int level, Gender gender) {
+	Pokemon member (name, size);
+	member.level = level;
+	member.gender = gender;
+
+	member.nickname = nickname;
+
+	pokemon.set.push_back (member);
+	replacement = pokemon.set.size() - 1;
+	pokemon.set.back().load();
+}
+
 uint64_t Team::hash () const {
 	uint64_t hash = 0;
 	for (Pokemon const & member : pokemon.set)
@@ -179,11 +199,11 @@ uint64_t Team::hash () const {
 	return size + 6 * (pokemon.index + 6 * (vanish + 6 * (stage [Stat::ATK] + 13 * (stage [Stat::DEF] + 13 * (stage [Stat::SPA] + 13 * (stage [Stat::SPD] + 13 * (stage [Stat::SPE] + 13 * (stage [Stat::ACC] + 13 * (stage [Stat::EVA] + 13 * (bide_damage + 358 * (substitute + 178 * (bide + 3 * (confused + 5 * (embargo + 5 * (encore + 8 * (heal_block + 5 * (magnet_rise + 5 * (partial_trap + 8 * (perish_song + 3 * (rampage + 3 * (slow_start + 3 * (stockpile + 4 * (taunt + 3 * (toxic + 16 * (uproar + 5 * (yawn + 2 * (aqua_ring + 2 * (attract + 2 * (charge + 2 * (curse + 2 * (defense_curl + 2 * (destiny_bond + 2 * (ff + 2 * (focus_energy + 2 * (gastro_acid + 2 * (identified + 2 * (imprison + 2 * (ingrain + 2 * (leech_seed + 2 * (loaf + 2 * (lock_on + 2 * (minimize + 2 * (mud_sport + 2 * (nightmare + 2 * (power_trick + 2 * (recharging + 2 * (torment + 2 * (trapped + 2 * (water_sport + 2 * (counter + 3 * (light_screen + 8 * (lucky_chant + 5 * (mist + 5 * (reflect + 8 * (safeguard + 5 * (tailwind + 3 * (wish + 2 * (spikes + 4 * (toxic_spikes + 3 * (stealth_rock + 2 * hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
-// Warning: Almost everything you see here is a hack.
-
-// I do no error checking because I assume Pokelab's teams will always be in the proper format. This must be changed if I ever allow arbitary teams to be used.
-
 void Team::load (std::string const & name, unsigned size) {
+	// I do no error checking because I assume my team files will always be in
+	// the proper format. This must be changed if I ever allow arbitary teams
+	// to be used.
+
 	if (name.substr (name.length() - 3) == ".tp")
 		po::load_team (*this, name, size);
 	else if (name.substr (name.length() - 4) == ".sbt")
