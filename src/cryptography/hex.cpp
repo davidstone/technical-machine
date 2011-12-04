@@ -18,19 +18,23 @@
  */
 
 #include <string>
-#include "get_md5.h" 
 #include "hex.h"
-#include "md5.h"
 
 namespace technicalmachine {
- 
-std::string getMD5HexHash (std::string const & message) {
-	unsigned char digest [16];
-	md5_state_t pms;
-	md5_init (&pms);
-	md5_append (&pms, reinterpret_cast <unsigned char const *> (message.c_str()), message.length());
-	md5_finish (&pms, digest);
-	return getHexString (digest, 16);
+namespace cryptography {
+
+static char const * HEX_TABLE = "0123456789ABCDEF";
+
+std::string getHexString (unsigned char const * digest, int const length) {
+	std::string hex (length * 2, ' ');
+	for (int n = 0; n < length; ++n) {
+		int const high = (digest [n] & 0xf0) >> 4;
+		int const low = (digest [n] &  0x0f);
+		hex [n * 2] = HEX_TABLE [high];
+		hex [n * 2 + 1] = HEX_TABLE [low];
+	}
+	return hex;
 }
 
-}
+}	// namespace cryptography
+}	// namespace technicalmachine

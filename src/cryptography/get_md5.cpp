@@ -17,15 +17,22 @@
  * online at http://gnu.org.
  */
 
-#ifndef CRYPT_GET_SHA2_H_
-#define CRYPT_GET_SHA2_H_
-
 #include <string>
+#include "get_md5.h" 
+#include "hex.h"
+#include "md5.h"
 
 namespace technicalmachine {
- 
-std::string getSHA256Hash (std::string const & message);
+namespace cryptography {
 
+std::string getMD5HexHash (std::string const & message) {
+	unsigned char digest [16];
+	md5_state_t pms;
+	md5_init (&pms);
+	md5_append (&pms, reinterpret_cast <unsigned char const *> (message.c_str()), message.length());
+	md5_finish (&pms, digest);
+	return getHexString (digest, 16);
 }
 
-#endif
+}	// namespace cryptography
+}	// namespace technicalmachine

@@ -17,15 +17,17 @@
  * online at http://gnu.org.
  */
 
-#ifndef CRYPT_MD5_HPP_
-#define CRYPT_MD5_HPP_
+#ifndef CRYPTOGRAPHY_GET_SHA2_H_
+#define CRYPTOGRAPHY_GET_SHA2_H_
 
 #include <string>
 
 namespace technicalmachine {
+namespace cryptography {
  
-std::string getMD5HexHash (std::string const & message);
+std::string getSHA256Hash (std::string const & message);
 
-}
 
-#endif
+}	// namespace cryptography
+}	// namespace technicalmachine
+#endif	// CRYPTOGRAPHY_GET_SHA2_H_

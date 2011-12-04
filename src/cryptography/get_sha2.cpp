@@ -17,22 +17,23 @@
  * online at http://gnu.org.
  */
 
+#include <iostream>
 #include <string>
+#include "get_sha2.h"
 #include "hex.h"
+#include "sha2.h"
 
 namespace technicalmachine {
+namespace cryptography {
 
-static char const * HEX_TABLE = "0123456789ABCDEF";
-
-std::string getHexString (unsigned char const * digest, int const length) {
-	std::string hex (length * 2, ' ');
-	for (int n = 0; n < length; ++n) {
-		int const high = (digest [n] & 0xf0) >> 4;
-		int const low = (digest [n] &  0x0f);
-		hex [n * 2] = HEX_TABLE [high];
-		hex [n * 2 + 1] = HEX_TABLE [low];
-	}
-	return hex;
+std::string getSHA256Hash (std::string const & message) {
+	unsigned char digest [32];
+	sha256 (reinterpret_cast<unsigned char const *>(message.c_str()), message.length(), digest);
+	std::string str = "";
+	for (unsigned n = 0; n != 32; ++n)
+		str += digest [n];
+	return str;
 }
 
-}
+}	// namespace cryptography
+}	// namespace technicalmachine

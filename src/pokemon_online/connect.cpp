@@ -35,7 +35,7 @@
 #include "outmessage.h"
 #include "read_user_info.h"
 
-#include "../crypt/get_md5.h"
+#include "../cryptography/get_md5.h"
 #include "../team.h"
 
 namespace technicalmachine {
@@ -491,9 +491,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 void Client::authenticate (std::string const & salt) {
 	OutMessage msg (OutMessage::ASK_FOR_PASS);
 	// Pokemon Online bases its hash on lowercase a-f.
-	std::string hash = getMD5HexHash (password);
+	std::string hash = cryptography::getMD5HexHash (password);
 	boost::algorithm::to_lower (hash);
-	hash = getMD5HexHash (hash + salt);
+	hash = cryptography::getMD5HexHash (hash + salt);
 	boost::algorithm::to_lower (hash);
 	msg.write_string (hash);
 	msg.send (*socket);

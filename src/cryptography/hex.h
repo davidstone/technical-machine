@@ -17,15 +17,16 @@
  * online at http://gnu.org.
  */
 
-#ifndef CRYPT_HEX_H_
-#define CRYPT_HEX_H_
+#ifndef CRYPTOGRAPHY_HEX_H_
+#define CRYPTOGRAPHY_HEX_H_
 
 #include <string>
 
 namespace technicalmachine {
+namespace cryptography {
 
 std::string getHexString (unsigned char const * digest, int const length);
 
-}
-
-#endif
+}	// namespace cryptography
+}	// namespace technicalmachine
+#endif	// CRYPTOGRAPHY_HEX_H_

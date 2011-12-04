@@ -31,9 +31,9 @@
 #include "inmessage.h"
 #include "outmessage.h"
 
-#include "../crypt/get_md5.h"
-#include "../crypt/get_sha2.h"
-#include "../crypt/rijndael.h"
+#include "../cryptography/get_md5.h"
+#include "../cryptography/get_sha2.h"
+#include "../cryptography/rijndael.h"
 
 #include "../network/connect.h"
 
@@ -585,7 +585,7 @@ void Client::handle_password_challenge (InMessage msg) {
 
 std::string Client::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
 	// Hash of the password is the key to decrypting the number sent.
-	std::string digest = getSHA256Hash (get_shared_secret (secret_style, salt));
+	std::string digest = cryptography::getSHA256Hash (get_shared_secret (secret_style, salt));
 	
 	// Decrypt the challenge in the reverse order it was encrypted.
 	rijndael_ctx ctx;
@@ -629,9 +629,9 @@ std::string Client::get_shared_secret (int secret_style, std::string const & sal
 		case NONE:
 			return password;
 		case MD5:
-			return getMD5HexHash (password);
+			return cryptography::getMD5HexHash (password);
 		case VBULLETIN:
-			return getMD5HexHash (getMD5HexHash (password) + salt);
+			return cryptography::getMD5HexHash (cryptography::getMD5HexHash (password) + salt);
 		default:
 			print_with_time_stamp (std::cerr, "Unknown secret style of " + boost::lexical_cast <std::string> (secret_style));
 			return "";
