@@ -34,9 +34,6 @@
 
 namespace technicalmachine {
 
-class Ability;
-class Move;
-
 class Pokemon {
 	public:
 		std::string nickname;
@@ -64,6 +61,8 @@ class Pokemon {
 	
 		Pokemon (Species const &member, unsigned size);
 		uint64_t hash () const;
+		// Returns whether the move is found. Modifies move.index
+		bool find_move (Move::Moves name);
 		std::string get_name () const;
 		static Species name_from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);

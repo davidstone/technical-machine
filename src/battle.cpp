@@ -23,11 +23,12 @@
 #include <string>
 #include <vector>
 
-#include "analyze_logs.h"
+#include "endofturn.h"
 #include "expectiminimax.h"
 #include "gender.h"
 #include "move.h"
 #include "species.h"
+#include "switch.h"
 #include "team.h"
 #include "teampredictor.h"
 #include "weather.h"
@@ -37,30 +38,34 @@
 
 namespace technicalmachine {
 
+static void normalize_hp_team (Team & team);
+
 GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 	ai (true, 6),
 	foe (false, ai.size),
-	log (ai, foe),
 	depth (battle_depth),
-	party (-1) {
+	party (-1)
+	{
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
+	initialize_turn ();
 }
 
 GenericBattle::GenericBattle (std::string const & opponent, int battle_depth, Team const & team):
 	ai (team),
 	foe (false, ai.size),
-	log (ai, foe),
 	depth (battle_depth),
-	party (-1) {
+	party (-1)
+	{
 	foe.player = opponent;
 	ai.replacing = true;
 	foe.replacing = true;
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
+	initialize_turn ();
 }
 
 void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
@@ -68,9 +73,9 @@ void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
 }
 
 void GenericBattle::update_from_previous_turn (network::GenericClient & client, uint32_t battle_id) {
-	do_turn (*log.first, *log.last, weather);
-	correct_hp_and_report_errors (*log.first);
-	correct_hp_and_report_errors (*log.last);
+	do_turn ();
+	correct_hp_and_report_errors (*first);
+	correct_hp_and_report_errors (*last);
 	if (rand () % client.chattiness == 0)
 		client.send_channel_message (battle_id, client.get_response ());
 }
@@ -88,17 +93,26 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	return expectiminimax (ai, predicted, weather, depth, client.score, min_score);
 }
 
-void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move) {
+void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name) {
 	bool const is_me = (party == moving_party);
-	log.active = is_me ? & ai : & foe;
-	log.inactive = is_me ? & foe : & ai;
+	active = is_me ? & ai : & foe;
+	inactive = is_me ? & foe : & ai;
 
-	if (log.first == nullptr) {
-		log.first = log.active;
-		log.last = log.inactive;
+	if (first == nullptr) {
+		first = active;
+		last = inactive;
 	}
 
-	log.log_move (move);
+	active->moved = true;
+	if (active->at_replacement().find_move (move_name)) {
+		Move move (move_name, 3, inactive->size);
+		active->at_replacement().move.add (move);
+	}
+	if (active->at_replacement().move->is_phaze ())
+		phaze = true;
+	active->at_replacement().move->variable.index = 0;
+	if (active->at_replacement().move->basepower != 0)
+		move_damage = true;
 }
 
 void GenericBattle::handle_withdraw (uint8_t switching_party, uint8_t slot, std::string const & nickname) const {
@@ -110,27 +124,79 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	bool const is_me = (switching_party == party);
 	Team & team = is_me ? ai : foe;
 	Team & other = is_me ? foe : ai;
-	log.pokemon_sent_out (species, nickname, level, gender, team, other);
+	pokemon_sent_out (species, nickname, level, gender, team, other);
+}
+
+void GenericBattle::pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other) {
+	active = &team;
+	inactive = &other;
+	if (first == nullptr) {
+		first = &team;
+		last = &other;
+	}
+
+	size_t replacement = team.replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
+	
+	bool found = seen_pokemon (team, name);
+	
+	// If it hasn't been seen already, add it to the team.
+	if (!found)
+		add_pokemon (team, name, nickname, level, gender);
+	
+	// Special analysis when a Pokemon is brought out due to a phazing move
+	if (phaze) {
+		other.at_replacement().move->variable.index = 0;
+		while (team.pokemon.set [other.at_replacement().move->variable.index].name != name)
+			++other.at_replacement().move->variable.index;
+	}
+	else if (!active->moved) {
+		team.pokemon.set [replacement].move.index = 0;
+		while (team.pokemon.set [replacement].move->name != Move::SWITCH0)
+			++team.pokemon.set [replacement].move.index;
+		team.pokemon.set [replacement].move.index += team.replacement;		
+		active->moved = false;
+	}
+}
+
+bool GenericBattle::seen_pokemon (Team & team, Species name) {
+	// Check if this Pokemon has been seen already. If it has, set team.replacement to its location.
+	for (team.replacement = 0; team.replacement != team.pokemon.set.size(); ++team.replacement) {
+		if (name == team.at_replacement().name)
+			return true;
+	}
+	return false;
+}
+
+void GenericBattle::add_pokemon (Team & team, Species name, std::string const & nickname, int level, Gender const & gender) {
+	Pokemon member (name, team.size);
+	member.level = level;
+	member.gender = gender;
+
+	member.nickname = nickname;
+
+	team.pokemon.set.push_back (member);
+	team.replacement = team.pokemon.set.size() - 1;
+	team.pokemon.set.back().load();
 }
 
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
-	if (log.move_damage) {
-		unsigned effectiveness = get_effectiveness (log.active->at_replacement().move->type, log.inactive->at_replacement ());
-		if ((effectiveness > 0) and (GROUND != log.active->at_replacement().move->type or grounded (*log.inactive, weather))) {
-			log.inactive->damage = log.inactive->at_replacement().hp.max * change_in_health / denominator;
-			if (static_cast <unsigned> (log.inactive->damage) > log.inactive->at_replacement().hp.stat)
-				log.inactive->damage = log.inactive->at_replacement().hp.stat;
+	if (move_damage) {
+		unsigned effectiveness = get_effectiveness (active->at_replacement().move->type, inactive->at_replacement ());
+		if ((effectiveness > 0) and (GROUND != active->at_replacement().move->type or grounded (*inactive, weather))) {
+			inactive->damage = inactive->at_replacement().hp.max * change_in_health / denominator;
+			if (static_cast <unsigned> (inactive->damage) > inactive->at_replacement().hp.stat)
+				inactive->damage = inactive->at_replacement().hp.stat;
 		}
-		log.move_damage = false;
+		move_damage = false;
 	}
 	
 	if (remaining_health < 0)
 		remaining_health = 0;
 	// If the message is about me, active must be me, otherwise, active must not be me
-	if ((party_changing_health == party) == log.active->me)
-		log.active->at_replacement().new_hp = remaining_health;
+	if ((party_changing_health == party) == active->me)
+		active->at_replacement().new_hp = remaining_health;
 	else
-		log.inactive->at_replacement().new_hp = remaining_health;
+		inactive->at_replacement().new_hp = remaining_health;
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
@@ -140,6 +206,11 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 		if (pixels != pokemon.new_hp and (pokemon.new_hp - 1 > pixels or pixels > pokemon.new_hp + 1)) {
 			std::cerr << "Uh oh! " + pokemon.get_name () + " has the wrong HP! The server reports approximately " << pokemon.new_hp * pokemon.hp.max / max_hp << " but TM thinks it has " << pokemon.hp.stat << "\n";
 			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
+			std::cerr << "max_hp: " << max_hp << '\n';
+			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
+			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
+			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
+			std::cerr << "pixels: " << pixels << '\n';
 		}
 	}
 }
@@ -164,6 +235,85 @@ uint8_t GenericBattle::switch_slot (Move::Moves move) const {
 
 unsigned GenericBattle::get_max_damage_precision () {
 	return 48;
+}
+
+void GenericBattle::initialize_turn () {
+	initialize_team (ai);
+	initialize_team (foe);
+	phaze = false;
+	move_damage = false;
+	
+	active = nullptr;		// GCC reports a potential use of this unitialized only when compiling with full optimizations. Variables unnecessarily set to nullptr to remove this warning.
+	inactive = nullptr;
+	first = nullptr;
+	last = nullptr;
+}
+
+void GenericBattle::initialize_team (Team & team) {
+	for (Pokemon & pokemon : team.pokemon.set)
+		pokemon.move.index = 0;
+	team.ch = false;
+	team.fully_paralyzed = false;
+	team.hitself = false;
+	team.miss = false;
+	team.replacement = team.pokemon.index;
+	team.replacing = false;
+}
+
+void GenericBattle::do_turn () {
+	first->moved = false;
+	last->moved = false;
+	if (first->replacing) {
+		normalize_hp ();
+		switchpokemon (*first, *last, weather);
+		first->moved = false;
+		normalize_hp ();
+		if (last->replacing) {
+			switchpokemon (*last, *first, weather);
+			last->moved = false;
+			normalize_hp ();
+			last->replacing = false;
+		}
+		first->replacing = false;
+	}
+	else {
+		// Anything with recoil will mess this up
+		usemove (*first, *last, weather, last->damage);
+		normalize_hp_team (*last);
+		usemove (*last, *first, weather, first->damage);
+		normalize_hp_team (*first);
+
+		endofturn (*first, *last, weather);
+		normalize_hp ();
+
+		while (foe.pokemon->fainted) {
+			if (!foe.pokemon->move->is_switch()) {
+				foe.pokemon->move.index = 0;
+				while (foe.pokemon->move->name != Move::SWITCH0)
+					++foe.pokemon->move.index;
+				foe.pokemon->move.index += foe.replacement;
+			}
+			usemove (foe, ai, weather, first->damage);
+		}
+	}
+	std::string out;
+	first->output (out);
+	std::cout << out;
+	last->output (out);
+	std::cout << out;
+}
+
+void GenericBattle::normalize_hp () {
+	normalize_hp_team (*first);
+	normalize_hp_team (*last);
+}
+
+void normalize_hp_team (Team & team) {
+	// This is to correct for rounding issues caused by only seeing the foe's HP to the nearest 48th.
+	if (team.pokemon->fainted)
+		team.pokemon->hp.stat = 0;
+	else if (team.pokemon->hp.stat == 0)
+		team.pokemon->hp.stat = 1;
 }
 
 } // namespace technicalmachine

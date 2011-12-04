@@ -20,7 +20,6 @@
 #include <iostream>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include "../analyze_logs.h"
 #include "../battle.h"
 #include "../move.h"
 #include "../pokemon.h"
@@ -54,7 +53,7 @@ void Battle::handle_request_action (Client & client, uint32_t battle_id, uint8_t
 	}
 	msg.send (*client.socket);
 	if (!ai.replacing)
-		log.initialize_turn (ai, foe);
+		initialize_turn ();
 }
 
 void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments) {
@@ -68,10 +67,10 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 			switch (message_id) {
 				case 2:
 				case 6:
-					log.active->miss = true;
+					active->miss = true;
 					break;
 				case 9:
-					log.active->ch = true;
+					active->ch = true;
 					break;
 			}
 			break;
@@ -79,24 +78,24 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 			break;
 		case InMessage::STATUS_EFFECTS_BURN:
 			if (message_id == 1)
-				log.active->at_replacement().move->variable.index = 1;
+				active->at_replacement().move->variable.index = 1;
 			break;
 		case InMessage::STATUS_EFFECTS_CONFUSION:
 			switch (message_id) {
 				case 1:
-					log.active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move->variable.index = 1;
 					break;
 				case 2:	// Confusion ends
 					break;
 				case 4:
-					log.active->hitself = true;
+					active->hitself = true;
 					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_FREEZE:
 			switch (message_id) {
 				case 1:
-					log.active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move->variable.index = 1;
 					break;
 				case 2:	// Defrost
 					break;
@@ -105,11 +104,11 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 		case InMessage::STATUS_EFFECTS_PARALYSIS:
 			switch (message_id) {
 				case 1:
-					log.active->at_replacement().move->variable.index = 1;
-					std::cout << "Me: " << log.active->me << '\n';
+					active->at_replacement().move->variable.index = 1;
+					std::cout << "Me: " << active->me << '\n';
 					break;
 				case 2:
-					log.active->fully_paralyzed = true;
+					active->fully_paralyzed = true;
 					break;
 			}
 			break;
@@ -117,14 +116,14 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 			switch (message_id) {
 				case 1:
 				case 2:
-					log.active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move->variable.index = 1;
 					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_SLEEP:
 			switch (message_id) {
 				case 1:
-					log.active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move->variable.index = 1;
 					break;
 				case 2:		// Woke up
 					break;
@@ -133,7 +132,7 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 		case InMessage::STATUS_EFFECTS_FLINCH:
 			switch (message_id) {
 				case 1:
-					log.active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move->variable.index = 1;
 					break;
 			}
 			break;
@@ -204,244 +203,244 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 		case InMessage::ABILITY_MESSAGES:
 			switch (message_id) {
 				case 0:
-					log.inactive->at_replacement().ability.name = Ability::AFTERMATH;
+					inactive->at_replacement().ability.name = Ability::AFTERMATH;
 					break;
 				case 1:
-					log.inactive->at_replacement().ability.name = Ability::ANGER_POINT;
+					inactive->at_replacement().ability.name = Ability::ANGER_POINT;
 					break;
 				case 2:
-					log.active->at_replacement().ability.name = Ability::ANTICIPATION;	// fix
+					active->at_replacement().ability.name = Ability::ANTICIPATION;	// fix
 					break;
 				case 3:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::BAD_DREAMS;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::BAD_DREAMS;
 					break;
 				case 4:
-					log.inactive->at_replacement().ability.name = Ability::CLEAR_BODY;
-//					log.active->at_replacement().ability.name = Ability::HYPER_CUTTER;
-//					log.active->at_replacement().ability.name = Ability::WHITE_SMOKE;
+					inactive->at_replacement().ability.name = Ability::CLEAR_BODY;
+//					active->at_replacement().ability.name = Ability::HYPER_CUTTER;
+//					active->at_replacement().ability.name = Ability::WHITE_SMOKE;
 					break;
 				case 5:
-					log.inactive->at_replacement().ability.name = Ability::CUTE_CHARM;
+					inactive->at_replacement().ability.name = Ability::CUTE_CHARM;
 					break;
 				case 6:
-					log.inactive->at_replacement().ability.name = Ability::DAMP;
+					inactive->at_replacement().ability.name = Ability::DAMP;
 					break;
 				case 7:
-					log.active->at_replacement().ability.name = Ability::DOWNLOAD;
+					active->at_replacement().ability.name = Ability::DOWNLOAD;
 					break;
 				case 8:
-					log.active->at_replacement().ability.name = Ability::DRIZZLE;
+					active->at_replacement().ability.name = Ability::DRIZZLE;
 					break;
 				case 9:
-					log.active->at_replacement().ability.name = Ability::DROUGHT;
+					active->at_replacement().ability.name = Ability::DROUGHT;
 					break;
 				case 10:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::DRY_SKIN;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::DRY_SKIN;
 					break;
 				case 11:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::DRY_SKIN;
-//					log.active->at_replacement().ability.name = Ability::SOLAR_POWER;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::DRY_SKIN;
+//					active->at_replacement().ability.name = Ability::SOLAR_POWER;
 					break;
 				case 12:
-					log.inactive->at_replacement().ability.name = Ability::DRY_SKIN;
+					inactive->at_replacement().ability.name = Ability::DRY_SKIN;
 					break;
 				case 14:
-					log.inactive->at_replacement().ability.name = Ability::FLAME_BODY;
+					inactive->at_replacement().ability.name = Ability::FLAME_BODY;
 					break;
 				case 15:
-					log.inactive->at_replacement().ability.name = Ability::FLASH_FIRE;
+					inactive->at_replacement().ability.name = Ability::FLASH_FIRE;
 					break;
 				case 16:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::FLOWER_GIFT;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::FLOWER_GIFT;
 					break;
 				case 17:		// $1 Forewarn alerted it to $2!
-					log.active->at_replacement().ability.name = Ability::FOREWARN;
+					active->at_replacement().ability.name = Ability::FOREWARN;
 					break;
 				case 18:		// $1 found $2's $3!
-					log.active->at_replacement().ability.name = Ability::FRISK;
+					active->at_replacement().ability.name = Ability::FRISK;
 					break;
 				case 19:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::HYDRATION;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::HYDRATION;
 					break;
 				case 20:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::ICE_BODY;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::ICE_BODY;
 					break;
 				case 21:
-					log.inactive->at_replacement().ability.name = Ability::IMMUNITY;
+					inactive->at_replacement().ability.name = Ability::IMMUNITY;
 					break;
 				case 22:
-					log.inactive->at_replacement().ability.name = Ability::INSOMNIA;
-//					log.inactive->at_replacement().ability.name = Ability::VITAL_SPIRIT;
+					inactive->at_replacement().ability.name = Ability::INSOMNIA;
+//					inactive->at_replacement().ability.name = Ability::VITAL_SPIRIT;
 					break;
 				case 23:
-					log.active->at_replacement().ability.name = Ability::INTIMIDATE;
+					active->at_replacement().ability.name = Ability::INTIMIDATE;
 					break;
 				case 24:
-					log.inactive->at_replacement().ability.name = Ability::LEAF_GUARD;
+					inactive->at_replacement().ability.name = Ability::LEAF_GUARD;
 					break;
 				case 25:
-					log.inactive->at_replacement().ability.name = Ability::LEVITATE;
+					inactive->at_replacement().ability.name = Ability::LEVITATE;
 					break;
 				case 26:		// $1's $2 drew the attack!
-					log.inactive->at_replacement().ability.name = Ability::LIGHTNINGROD;
-//					log.active->at_replacement().ability.name = Ability::STORM_DRAIN;
+					inactive->at_replacement().ability.name = Ability::LIGHTNINGROD;
+//					active->at_replacement().ability.name = Ability::STORM_DRAIN;
 					break;
 				case 27:
-					log.inactive->at_replacement().ability.name = Ability::LIMBER;
+					inactive->at_replacement().ability.name = Ability::LIMBER;
 					break;
 				case 28:
-					log.active->at_replacement().ability.name = Ability::MOLD_BREAKER;
+					active->at_replacement().ability.name = Ability::MOLD_BREAKER;
 					break;
 				case 29:
-					log.inactive->at_replacement().ability.name = Ability::MOTOR_DRIVE;
+					inactive->at_replacement().ability.name = Ability::MOTOR_DRIVE;
 					break;
 				case 30:
-					log.inactive->at_replacement().ability.name = Ability::OBLIVIOUS;
+					inactive->at_replacement().ability.name = Ability::OBLIVIOUS;
 					break;
 				case 31:
-					log.inactive->at_replacement().ability.name = Ability::OWN_TEMPO;
+					inactive->at_replacement().ability.name = Ability::OWN_TEMPO;
 					break;
 				case 32:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::POISON_HEAL;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::POISON_HEAL;
 					break;
 				case 34:
-					log.active->at_replacement().ability.name = Ability::PRESSURE;
+					active->at_replacement().ability.name = Ability::PRESSURE;
 					break;
 				case 35:
-					log.active->at_replacement().ability.name = Ability::QUICK_FEET;
+					active->at_replacement().ability.name = Ability::QUICK_FEET;
 					break;
 				case 36:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::RAIN_DISH;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::RAIN_DISH;
 					break;
 				case 37:
-					log.inactive->at_replacement().ability.name = Ability::ROUGH_SKIN;
+					inactive->at_replacement().ability.name = Ability::ROUGH_SKIN;
 					break;
 				case 38:
-					log.active->at_replacement().ability.name = Ability::SAND_STREAM;
+					active->at_replacement().ability.name = Ability::SAND_STREAM;
 					break;
 				case 39:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::SHED_SKIN;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::SHED_SKIN;
 					break;
 				case 40:
-					log.active->at_replacement().ability.name = Ability::SLOW_START;
+					active->at_replacement().ability.name = Ability::SLOW_START;
 					break;
 				case 41:
-					log.active->at_replacement().ability.name = Ability::SNOW_WARNING;
+					active->at_replacement().ability.name = Ability::SNOW_WARNING;
 					break;
 				case 42:
-					log.inactive->at_replacement().ability.name = Ability::SOUNDPROOF;
+					inactive->at_replacement().ability.name = Ability::SOUNDPROOF;
 					break;
 				case 43:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::SPEED_BOOST;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::SPEED_BOOST;
 					break;
 				case 45:
-					log.inactive->at_replacement().ability.name = Ability::STEADFAST;
+					inactive->at_replacement().ability.name = Ability::STEADFAST;
 					break;
 				case 46:
-					log.inactive->at_replacement().ability.name = Ability::STICKY_HOLD;
+					inactive->at_replacement().ability.name = Ability::STICKY_HOLD;
 					break;
 				case 47:
-					log.inactive->at_replacement().ability.name = Ability::STURDY;
+					inactive->at_replacement().ability.name = Ability::STURDY;
 					break;
 				case 48:
-					log.active->at_replacement().ability.name = Ability::SYNCHRONIZE;		// Fix
+					active->at_replacement().ability.name = Ability::SYNCHRONIZE;		// Fix
 					break;
 				case 49:
-					log.inactive->at_replacement().ability.name = Ability::TANGLED_FEET;
+					inactive->at_replacement().ability.name = Ability::TANGLED_FEET;
 					break;
 				case 50:		// $1 traced $2's $3!
-					log.active->at_replacement().ability.name = Ability::TRACE;
-//					log.inactive->at_replacement().ability.name = Ability::;
+					active->at_replacement().ability.name = Ability::TRACE;
+//					inactive->at_replacement().ability.name = Ability::;
 					break;
 				case 51:
-					log.active->at_replacement().ability.name = Ability::TRUANT;
+					active->at_replacement().ability.name = Ability::TRUANT;
 					break;
 				case 52:
-					log.active->at_replacement().ability.name = Ability::UNBURDEN;
+					active->at_replacement().ability.name = Ability::UNBURDEN;
 					break;
 				case 53:
-					log.inactive->at_replacement().ability.name = Ability::WATER_VEIL;
+					inactive->at_replacement().ability.name = Ability::WATER_VEIL;
 					break;
 				case 54:
-					log.inactive->at_replacement().ability.name = Ability::WONDER_GUARD;
+					inactive->at_replacement().ability.name = Ability::WONDER_GUARD;
 					break;
 				case 55:
-					log.inactive->at_replacement().ability.name = Ability::LIQUID_OOZE;
+					inactive->at_replacement().ability.name = Ability::LIQUID_OOZE;
 					break;
 				case 56:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::ICE_BODY;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::ICE_BODY;
 					break;
 				case 57:
-					update_active_print (log, arguments);
-					log.active->at_replacement().ability.name = Ability::DRY_SKIN;
+					update_active_print (arguments);
+					active->at_replacement().ability.name = Ability::DRY_SKIN;
 					break;
 				case 59:		// $1's $2 raised its $3!
-//					log.active->at_replacement().ability.name = Ability::
+//					active->at_replacement().ability.name = Ability::
 					break;
 				case 60:		// $1's $2 paralyzed $3!
-//					log.active->at_replacement().ability.name = Ability::
+//					active->at_replacement().ability.name = Ability::
 					break;
 				case 61:		// $1's $2 poisoned $3!
-//					log.active->at_replacement().ability.name = Ability::
+//					active->at_replacement().ability.name = Ability::
 					break;
 				case 62:		// $1's $2 made $3 fall asleep!
-//					log.active->at_replacement().ability.name = Ability::
+//					active->at_replacement().ability.name = Ability::
 					break;
 			}
 			break;
 		case InMessage::ITEM_MESSAGES:
 			switch (message_id) {
 				case 0:		// $1's $2 restored its health a little!
-					update_active_print (log, arguments);
-					log.active->at_replacement().item.name = Item::LEFTOVERS;
+					update_active_print (arguments);
+					active->at_replacement().item.name = Item::LEFTOVERS;
 					break;
 				case 1:		// $1's $2 cured its $3!
-//					log.active->at_replacement().item.name = Item::
+//					active->at_replacement().item.name = Item::
 					break;
 				case 2:
-					log.active->at_replacement().item.name = Item::QUICK_CLAW;
+					active->at_replacement().item.name = Item::QUICK_CLAW;
 					break;
 				case 3:		// $1's $2 raised its $3!
-//					log.active->at_replacement().item.name = Item::
+//					active->at_replacement().item.name = Item::
 					break;
 				case 4:		// The berry was the wrong flavor for $1!
-//					log.active->at_replacement().item.name = Item::
+//					active->at_replacement().item.name = Item::
 					break;
 				case 5:		// #1's $2 weakened $3's power!
-//					log.active->at_replacement().item.name = Item::
+//					active->at_replacement().item.name = Item::
 					break;
 				case 6:		// $1 was hurt by $2's $3!
-//					log.active->at_replacement().item.name = Item::
+//					active->at_replacement().item.name = Item::
 					break;
 				case 7:		// Fix this
-					log.active->at_replacement().item.name = Item::STICKY_BARB;
+					active->at_replacement().item.name = Item::STICKY_BARB;
 					break;
 				case 8:
-					update_active_print (log, arguments);
-					log.active->at_replacement().item.name = Item::BLACK_SLUDGE;
+					update_active_print (arguments);
+					active->at_replacement().item.name = Item::BLACK_SLUDGE;
 					break;
 				case 9:		// The $1 latched on to $2!
-//					log.active->at_replacement().item.name = Item::
+//					active->at_replacement().item.name = Item::
 					break;
 				case 10:
-					log.inactive->at_replacement().item.name = Item::FOCUS_SASH;
+					inactive->at_replacement().item.name = Item::FOCUS_SASH;
 					break;
 				case 11:
-					log.active->at_replacement().item.name = Item::CUSTAP_BERRY;
+					active->at_replacement().item.name = Item::CUSTAP_BERRY;
 					break;
 				case 12:
-					log.active->at_replacement().item.name = Item::POWER_HERB;
+					active->at_replacement().item.name = Item::POWER_HERB;
 					break;
 			}
 			break;
@@ -450,16 +449,16 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 	}
 }
 
-void Battle::update_active_print (Log & log, std::vector <std::string> const & arguments) {
+void Battle::update_active_print (std::vector <std::string> const & arguments) {
 	// This needs to be changed to the correct message parser.
 	assert (arguments.size() > 0);
 	if (boost::lexical_cast <int> (arguments [0] [3]) == party) {
-		log.active = & ai;
-		log.inactive = & foe;
+		active = & ai;
+		inactive = & foe;
 	}
 	else {
-		log.active = & foe;
-		log.inactive = & ai;
+		active = & foe;
+		inactive = & ai;
 	}
 }
 

@@ -149,10 +149,12 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case HP_CHANGE: {
 			int16_t const remaining_hp = msg.read_short ();
-			std::cerr << "Player changing HP is me: " << player == 0 << '\n';
+			std::cerr << "Player changing HP is me: " << static_cast <int> (player == 0) << '\n';
 			int16_t const change_in_hp = (player == 0) ? ai.at_replacement ().hp.stat : foe.at_replacement ().hp.stat;
+			std::cerr << "change_in_hp: " << change_in_hp << '\n';
 			uint8_t const slot = 0;
-			int16_t const denominator = (player == 0) ? ai.at_replacement ().hp.max : 100;
+			int16_t const denominator = (player == 0) ? ai.at_replacement ().hp.max : get_max_damage_precision ();
+			std::cerr << "denominator: " << denominator << '\n';
 			handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
 			break;
 		}
@@ -180,7 +182,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				std::cerr << "AVOID\n";
 			else
 				std::cerr << "MISS\n";
-			log.active->miss = true;
+			active->miss = true;
 			break;
 		}
 		case NO_TARGET: {
@@ -193,7 +195,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case CRITICAL_HIT: {
 			std::cerr << "CH\n";
-			log.active->ch = true;
+			active->ch = true;
 			break;
 		}
 		case NUMBER_OF_HITS: {
@@ -235,7 +237,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case FLINCH: {
 			std::cerr << "FLINCH\n";
-			log.active->at_replacement().move->variable.index = 1;
+			active->at_replacement().move->variable.index = 1;
 			break;
 		}
 		case RECOIL: {
@@ -511,7 +513,7 @@ void Battle::handle_request_action (Client & client, uint32_t battle_id) {
 	}
 	msg.send (*client.socket);
 	if (!ai.replacing)
-		log.initialize_turn (ai, foe);
+		initialize_turn ();
 }
 
 unsigned Battle::get_max_damage_precision () {

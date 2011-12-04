@@ -68,6 +68,14 @@ uint64_t Pokemon::hash () const {
 	return name + END_SPECIES * (item.name + Item::END_ITEM * (status.name + Status::END_STATUS * (hp.stat + hp.max * (sleep + 5 * hash))));
 }
 
+bool Pokemon::find_move (Move::Moves name) {
+	for (move.index = 0; move->name != Move::STRUGGLE; ++move.index) {
+		if (name == move->name)
+			return true;
+	}
+	return false;
+}
+
 bool Pokemon::operator== (Pokemon const & other) const {
 	if (move.set.size() != other.move.set.size())
 		return false;

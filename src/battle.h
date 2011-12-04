@@ -22,7 +22,6 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "analyze_logs.h"
 #include "gender.h"
 #include "move.h"
 #include "species.h"
@@ -40,9 +39,15 @@ class GenericBattle {
 		Team foe;
 	protected:
 		Weather weather;
-		Log log;
 		std::vector <Species> slot_memory;
 		int depth;
+		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that message. This helps keep track of information on future messages so I can do things like assign critical hits to the right move.
+		Team * active;
+		Team * inactive;
+		Team * first;
+		Team * last;
+		bool phaze;
+		bool move_damage;
 	public:
 		uint8_t party;
 	protected:
@@ -54,18 +59,28 @@ class GenericBattle {
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
 		Move::Moves determine_action (network::GenericClient & client);
 	public:
-		void handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move);
+		void handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name);
 		void handle_withdraw (uint8_t switching_party, uint8_t slot, std::string const & nickname) const; // does nothing
 		void handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
+	private:
+		void pokemon_sent_out (Species name, std::string const & nickname, int level, Gender const & gender, Team & team, Team & other);
+		static bool seen_pokemon (Team & team, Species name);
+		void add_pokemon (Team & team, Species name, std::string const & nickname, int level, Gender const & gender);
+	public:
 		void handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator);
 	private:
 		void correct_hp_and_report_errors (Team & team);
+		void normalize_hp ();
 	public:
 		void handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp);
 		void handle_fainted (uint8_t fainting_party, uint8_t slot);
-		uint8_t switch_slot (Move::Moves move) const;
 	protected:
+		uint8_t switch_slot (Move::Moves move) const;
 		virtual unsigned get_max_damage_precision ();
+		void initialize_turn ();
+	private:
+		static void initialize_team (Team & team);
+		void do_turn ();
 };
 
 }	// namespace technicalmachine

@@ -39,7 +39,7 @@ optimized = default.Clone()
 optimized.Append(CCFLAGS = full_optimizations, CPPDEFINES = ['NDEBUG'])
 optimized.VariantDir('build/optimized', 'src', duplicate = 0)
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'analyze_logs.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
 ai_sources += ['cryptography/get_md5.cpp', 'cryptography/get_sha2.cpp', 'cryptography/hex.cpp', 'cryptography/md5.c', 'cryptography/rijndael.cpp', 'cryptography/sha2.c']
 ai_sources += ['network/connect.cpp', 'network/inmessage.cpp', 'network/outmessage.cpp']
 ai_sources += ['pokemon_lab/battle.cpp', 'pokemon_lab/battle_settings.cpp', 'pokemon_lab/connect.cpp', 'pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp', 'pokemon_lab/inmessage.cpp', 'pokemon_lab/outmessage.cpp']

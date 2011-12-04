@@ -44,7 +44,11 @@ class Active {
 		T const & operator*() const {
 			return set [index];
 		}
+		template <typename Name>
+		void add (Name name) {
+			set.insert (set.begin() + index, name);
+		}
 };
 
-}
+}	// namespace technicalmachine
 #endif		// ACTIVE_H_
