@@ -151,7 +151,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
 	if (move_damage) {
 		unsigned effectiveness = get_effectiveness (active->at_replacement().move->type, inactive->at_replacement ());
-		if ((effectiveness > 0) and (GROUND != active->at_replacement().move->type or grounded (*inactive, weather))) {
+		if ((effectiveness > 0) and (active->at_replacement().move->type != Type::GROUND or grounded (*inactive, weather))) {
 			inactive->damage = inactive->at_replacement().hp.max * change_in_health / denominator;
 			if (static_cast <unsigned> (inactive->damage) > inactive->at_replacement().hp.stat)
 				inactive->damage = inactive->at_replacement().hp.stat;

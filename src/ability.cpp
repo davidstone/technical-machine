@@ -45,7 +45,7 @@ bool Ability::blocks_switching (Team const & switcher, Weather const & weather) 
 				return true;
 			return false;
 		case MAGNET_PULL:
-			if (is_type (switcher, STEEL))
+			if (is_type (switcher, Type::STEEL))
 				return true;
 			return false;
 		default:

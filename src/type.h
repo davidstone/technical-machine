@@ -23,25 +23,40 @@
 
 namespace technicalmachine {
 
-enum Type {
-	BUG,
-	DARK,
-	DRAGON,
-	ELECTRIC,
-	FIGHTING,
-	FIRE,
-	FLYING,
-	GHOST,
-	GRASS,
-	GROUND,
-	ICE,
-	NORMAL,
-	POISON,
-	PSYCHIC_TYPE,
-	ROCK,
-	STEEL,
-	WATER,
-	TYPELESS
+class Type {
+	public:
+		enum Types {
+			BUG,
+			DARK,
+			DRAGON,
+			ELECTRIC,
+			FIGHTING,
+			FIRE,
+			FLYING,
+			GHOST,
+			GRASS,
+			GROUND,
+			ICE,
+			NORMAL,
+			POISON,
+			PSYCHIC,
+			ROCK,
+			STEEL,
+			WATER,
+			TYPELESS
+		};
+		Types type;
+		
+		Type (Types name);
+		bool operator== (Type other) const;
+		bool operator!= (Type other) const;
+};
+
+class TypeCollection {
+	public:
+		std::vector <Type> types;
+		
+		bool is_immune_to_sandstorm () const;
 };
 
 class Pokemon;
