@@ -47,7 +47,6 @@ bool Item::is_choice_item () const {
 }
 
 int Item::get_berry_power () const {
-	int power;
 	switch (name) {
 		case AGUAV_BERRY:
 		case ASPEAR_BERRY:
@@ -82,8 +81,7 @@ int Item::get_berry_power () const {
 		case WACAN_BERRY:
 		case WIKI_BERRY:
 		case YACHE_BERRY:
-			power = 60;
-			break;
+			return 60;
 		case BLUK_BERRY:
 		case CORNN_BERRY:
 		case GREPA_BERRY:
@@ -100,8 +98,7 @@ int Item::get_berry_power () const {
 		case SPELON_BERRY:
 		case TAMATO_BERRY:
 		case WEPEAR_BERRY:
-			power = 70;
-			break;
+			return 70;
 		case APICOT_BERRY:
 		case BELUE_BERRY:
 		case CUSTAP_BERRY:
@@ -117,21 +114,16 @@ int Item::get_berry_power () const {
 		case SALAC_BERRY:
 		case STARF_BERRY:
 		case WATMEL_BERRY:
-			power = 80;
-			break;
+			return 80;
 		default:
-			power = 0;
-			break;
+			return 0;
 	}
-	return power;
 }
 
 int Item::get_fling_power () const {
-	int power;
 	switch (name) {
 		case IRON_BALL:
-			power = 130;
-			break;
+			return 130;
 		case HARD_STONE:
 		case ARMOR_FOSSIL:
 		case CLAW_FOSSIL:
@@ -141,8 +133,7 @@ int Item::get_fling_power () const {
 		case RARE_BONE:
 		case ROOT_FOSSIL:
 		case SKULL_FOSSIL:
-			power = 100;
-			break;
+			return 100;
 		case DEEPSEATOOTH:
 		case DRACO_PLATE:
 		case DREAD_PLATE:
@@ -162,8 +153,7 @@ int Item::get_fling_power () const {
 		case THICK_CLUB:
 		case TOXIC_PLATE:
 		case ZAP_PLATE:
-			power = 90;
-			break;
+			return 90;
 		case QUICK_CLAW:
 		case RAZOR_CLAW:
 		case STICKY_BARB:
@@ -175,8 +165,7 @@ int Item::get_fling_power () const {
 		case OVAL_STONE:
 		case PROTECTOR:
 		case SHINY_STONE:
-			power = 80;
-			break;
+			return 80;
 		case DRAGON_FANG:
 		case POISON_BARB:
 		case POWER_ANKLET:
@@ -185,24 +174,20 @@ int Item::get_fling_power () const {
 		case POWER_BRACER:
 		case POWER_LENS:
 		case POWER_WEIGHT:
-			power = 70;
-			break;
+			return 70;
 		case ADAMANT_ORB:
 		case DAMP_ROCK:
 		case HEAT_ROCK:
 		case LUSTROUS_ORB:
 		case MACHO_BRACE:
 		case STICK:
-			power = 60;
-			break;
+			return 60;
 		case SHARP_BEAK:
 		case DUBIOUS_DISC:
-			power = 50;
-			break;
+			return 50;
 		case ICY_ROCK:
 		case LUCKY_PUNCH:
-			power = 40;
-			break;
+			return 40;
 		case BERRY_JUICE:
 		case BLACK_BELT:
 		case BLACK_SLUDGE:
@@ -316,8 +301,7 @@ int Item::get_fling_power () const {
 		case YELLOW_FLUTE:
 		case YELLOW_SHARD:
 		case ZINC:
-			power = 30;
-			break;
+			return 30;
 		case BIG_ROOT:
 		case BLUE_SCARF:
 		case BRIGHTPOWDER:
@@ -423,13 +407,10 @@ int Item::get_fling_power () const {
 		case SALAC_BERRY:
 		case STARF_BERRY:
 		case WATMEL_BERRY:
-			power = 10;
-			break;
+			return 10;
 		default:
-			power = 0;
-			break;
+			return 0;
 	}
-	return power;
 }
 
 bool Item::blocks_trick () const {

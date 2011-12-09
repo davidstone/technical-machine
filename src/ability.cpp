@@ -37,17 +37,11 @@ Ability::Ability (Abilities ability):
 bool Ability::blocks_switching (Team const & switcher, Weather const & weather) const {
 	switch (name) {
 		case SHADOW_TAG:
-			if (switcher.pokemon->ability.name != Ability::SHADOW_TAG)
-				return true;
-			return false;
+			return switcher.pokemon->ability.name != Ability::SHADOW_TAG;
 		case ARENA_TRAP:
-			if (grounded (switcher, weather))
-				return true;
-			return false;
+			return grounded (switcher, weather);
 		case MAGNET_PULL:
-			if (is_type (switcher, Type::STEEL))
-				return true;
-			return false;
+			return is_type (switcher, Type::STEEL);
 		default:
 			return false;
 	}
@@ -69,9 +63,7 @@ bool Ability::blocks_sleep (Weather const & weather) const {
 		case VITAL_SPIRIT:
 			return true;
 		case LEAF_GUARD:
-			if (weather.sun)
-				return true;
-			return false;
+			return weather.sun;
 		default:
 			return false;
 	}
