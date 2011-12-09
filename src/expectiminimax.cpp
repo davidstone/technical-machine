@@ -57,7 +57,7 @@ static void print_best_move (Team const & team, Move::Moves best_move, int depth
 static void print_action (Team const & team, bool verbose, bool first_turn, std::string indent);
 
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score) {
-	std::cout << "======================\nEvaluating to a depth of " << depth << "...\n";
+	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
 	for (Pokemon & pokemon : foe.pokemon.set) {
 		for (Move & move : pokemon.move.set)
@@ -95,8 +95,9 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 	calculate_speed (ai, weather);
 	calculate_speed (foe, weather);
 
-	constexpr bool verbose = false;		// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
-
+	// This prints out search equal to the maximum depth normally, but any deeper searches will also print out with a single tab. This is not recommended for depth greater than 2.
+	constexpr bool verbose = false;
+	
 	// This section is for replacing fainted Pokemon as well as Baton Pass and U-turn replacements.
 
 	if (ai.pokemon->hp.stat == 0 or foe.pokemon->hp.stat == 0)

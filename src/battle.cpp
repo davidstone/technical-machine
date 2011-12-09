@@ -82,7 +82,7 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 
 Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	Team predicted = foe;
-	std::cout << "======================\n";
+	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	predict_team (client.detailed, predicted, ai.size);
 	std::string out;
