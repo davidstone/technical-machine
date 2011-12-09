@@ -104,7 +104,7 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 	}
 
 	active->moved = true;
-	if (active->at_replacement().find_move (move_name)) {
+	if (!active->at_replacement().find_move (move_name)) {
 		Move move (move_name, 3, inactive->size);
 		active->at_replacement().move.add (move);
 	}
