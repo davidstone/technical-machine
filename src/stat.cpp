@@ -978,7 +978,8 @@ uint8_t Stat::get_base_stat (Species name, Stats stat) {
 		{ 38, 30, 41, 30, 41, 60 },			// Zigzagoon
 		{ 40, 45, 35, 30, 40, 55 }		// Zubat
 	};
-	return base_stat [name] [stat];
+	// I add 1 because HP is -1 to allow every other index to be easier.
+	return base_stat [name] [stat + 1];
 }
 
 Nature::Nature ():

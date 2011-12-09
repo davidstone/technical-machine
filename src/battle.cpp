@@ -128,11 +128,16 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 		last = inactive;
 	}
 
-	size_t const replacement = active->replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
+	// This is needed to make sure I don't overwrite important information in a
+	// situation in which a team switches multiple times in one turn (due to
+	// replacing fainted Pokemon).
+	size_t const replacement = active->replacement;
 	
 	// If it hasn't been seen already, add it to the team.
-	if (!active->seen_pokemon (species))
+	if (!active->seen_pokemon (species)) {
 		active->add_pokemon (species, nickname, level, gender);
+		active->at_replacement ().new_hp = get_max_damage_precision ();
+	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
 	if (inactive->at_replacement().move->is_phaze ()) {
@@ -172,14 +177,14 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
 		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
 		int const pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
-		if (pixels != pokemon.new_hp and (pokemon.new_hp - 1 > pixels or pixels > pokemon.new_hp + 1)) {
+		if (pixels != pokemon.new_hp and (pokemon.new_hp + 1 < pixels or pixels < pokemon.new_hp - 1)) {
 			std::cerr << "Uh oh! " + pokemon.get_name () + " has the wrong HP! The server reports approximately " << pokemon.new_hp * pokemon.hp.max / max_hp << " but TM thinks it has " << pokemon.hp.stat << "\n";
-			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
 			std::cerr << "max_hp: " << max_hp << '\n';
 			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
 			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
 			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
 			std::cerr << "pixels: " << pixels << '\n';
+			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
 		}
 	}
 }

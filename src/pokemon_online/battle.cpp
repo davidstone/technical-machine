@@ -148,9 +148,13 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case HP_CHANGE: {
+			std::cerr << "Player changing HP: " << static_cast <int> (player) << '\n';
 			int16_t const remaining_hp = msg.read_short ();
-			std::cerr << "Player changing HP is me: " << static_cast <int> (player == 0) << '\n';
-			int16_t const change_in_hp = (player == 0) ? ai.at_replacement ().hp.stat : foe.at_replacement ().hp.stat;
+			std::cerr << "remaining_hp: " << remaining_hp << '\n';
+			int16_t const change_in_hp = (player == 0) ?
+				ai.at_replacement ().hp.stat - remaining_hp :
+				get_max_damage_precision () - remaining_hp;
+//				foe.at_replacement ().hp.stat - remaining_hp * foe.at_replacement ().hp.max / get_max_damage_precision ();
 			std::cerr << "change_in_hp: " << change_in_hp << '\n';
 			uint8_t const slot = 0;
 			int16_t const denominator = (player == 0) ? ai.at_replacement ().hp.max : get_max_damage_precision ();

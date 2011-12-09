@@ -64,7 +64,7 @@ unsigned lookup_effectiveness (Type attacking, Type defending) {
 
 unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
 	unsigned effectiveness = 1;
-	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
+	// Effectiveness on each of the defender's types (1 if NVE, 4 if SE) / 2
 	for (Type const target_type : pokemon.type)
 		effectiveness *= lookup_effectiveness (type, target_type);
 	if (pokemon.type.size () == 1)
