@@ -27,10 +27,24 @@
 
 namespace technicalmachine {
 
+Type::Type (Types name):
+	type (name) {
+}
+
+bool Type::operator== (Type other) const {
+	return type == other.type;
+}
+
+bool Type::operator!= (Type other) const {
+	return !(*this == other);
+}
+
 bool is_type (Team const & team, Type type) {
-	for (Type const check : team.pokemon->type) {
-		if (check == type and (type != FLYING or !team.roost))
-			return true;
+	if (type != Type::FLYING or !team.roost) {
+		for (Type const check : team.pokemon->type.types) {
+			if (check == type)
+				return true;
+		}
 	}
 	return false;
 }
@@ -59,15 +73,15 @@ unsigned lookup_effectiveness (Type attacking, Type defending) {
 		{	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2	}	// Typeless
 		//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
 	};
-	return effectiveness [attacking] [defending];
+	return effectiveness [attacking.type] [defending.type];
 }
 
 unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
 	unsigned effectiveness = 1;
 	// Effectiveness on each of the defender's types (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : pokemon.type)
+	for (Type const target_type : pokemon.type.types)
 		effectiveness *= lookup_effectiveness (type, target_type);
-	if (pokemon.type.size () == 1)
+	if (pokemon.type.types.size () == 1)
 		effectiveness *= 2;
 	return effectiveness;
 }
@@ -75,13 +89,27 @@ unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
 std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & pokemon) {
 	std::vector <unsigned> effectiveness;
 	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : pokemon.type)
+	for (Type const target_type : pokemon.type.types)
 		effectiveness.push_back (lookup_effectiveness (type, target_type));
 	return effectiveness;
 }
 
 bool grounded (Team const & team, Weather const & weather) {
-	return (!is_type (team, FLYING) and team.pokemon->ability.name != Ability::LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon->item.name == Item::IRON_BALL or team.ingrain;
+	return (!is_type (team, Type::FLYING) and team.pokemon->ability.name != Ability::LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon->item.name == Item::IRON_BALL or team.ingrain;
+}
+
+bool TypeCollection::is_immune_to_sandstorm () const {
+	for (Type const type : types) {
+		switch (type.type) {
+			case Type::GROUND:
+			case Type::ROCK:
+			case Type::STEEL:
+				return true;
+			default:
+				break;
+		}
+	}
+	return false;
 }
 
 }

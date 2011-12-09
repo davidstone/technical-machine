@@ -272,7 +272,7 @@ void calculate_special_defense (Team const & attacker, Team & defender, Weather 
 			break;
 	}
 	
-	if (is_type (defender, ROCK) and weather.sand)
+	if (is_type (defender, Type::ROCK) and weather.sand)
 		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 	
 	if (defender.pokemon->spd.stat == 0)
