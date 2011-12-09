@@ -20,9 +20,9 @@
 #define POKEMON_LAB_CONNECT_H_
 
 #include <cstdint>
-#include <map>
 #include <string>
 #include <vector>
+#include <utility>
 
 #include "inmessage.h"
 #include "../network/connect.h"
@@ -35,9 +35,12 @@ class Channel;
 class Metagame;
 
 class Client : public network::GenericClient {
+	private:
+		boost::asio::deadline_timer timer;
 	public:
 		explicit Client (int depth_);
 	private:
+		void reset_timer (unsigned timer_length);
 		void request_authentication ();
 	public:
 		void run ();
@@ -64,8 +67,8 @@ class Client : public network::GenericClient {
 		void handle_error_message (uint8_t code, std::string const & details) const;
 	public:
 		void send_channel_message (uint32_t channel_id, std::string const & message);
-		void send_private_message (std::string const & user, std::string const & message);
 	private:
+		void send_private_message (std::string const & user, std::string const & message);
 		Result get_result (Battle const & battle, int16_t party_id) const;
 };
 

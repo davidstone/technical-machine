@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "battle.h"
@@ -41,7 +42,9 @@ namespace technicalmachine {
 namespace pl {
 
 Client::Client (int depth_):
-	network::GenericClient (depth_) {
+	network::GenericClient (depth_),
+	timer (io)
+	{
 	request_authentication ();
 }
 
@@ -49,6 +52,12 @@ void Client::request_authentication () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
 	message.write_string (username);
 	message.send (*socket);
+}
+
+void Client::reset_timer (unsigned timer_length) {
+	send_keep_alive_message ();
+	timer.expires_from_now (boost::posix_time::seconds (timer_length));
+	timer.async_wait (boost::bind (& Client::reset_timer, this, timer_length));
 }
 
 void Client::run () {

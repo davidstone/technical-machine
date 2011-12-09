@@ -43,8 +43,7 @@ namespace network {
 
 GenericClient::GenericClient (int set_depth):
 	detailed ({{ 0 }}),
-	depth (set_depth),
-	timer (io)
+	depth (set_depth)
 	{
 	// I use srand and rand because this is only for determining when TM speaks.
 	// When I add random decisions to TM's actual play, I'll replace with a better PRNG
@@ -58,9 +57,12 @@ GenericClient::GenericClient (int set_depth):
 	connect ();
 }
 
-void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
-	// First, clear the vector so this can be used to reload an already filled vector as well.
-	// This allows the user to reload settings from a file without restarting TM.
+namespace {
+
+static void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
+	// First, clear the vector so this can be used to reload an already filled
+	// vector as well. This allows the user to reload settings from a file
+	// without restarting TM.
 	unsorted.clear ();
 	std::ifstream file (file_name);
 	std::string line;
@@ -72,20 +74,20 @@ void create_unsorted_vector (std::string const & file_name, std::vector <std::st
 	file.close();
 }
 
-void GenericClient::load_highlights () {
-	create_unsorted_vector ("settings/highlights.txt", highlights);
-}
-
-void GenericClient::load_responses () {
-	create_unsorted_vector ("settings/responses.txt", response);
-}
-
-void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
-	// The sorted vector is used to allow std::binary_search to be used on the vector for fast searching.
-	// I use a sorted std::vector instead of a std::set because it has faster performance uses less memory.
-	// My use pattern is distinct insertion period after which the entire vector can be sorted (faster than inserting into a std::set), followed by lookups (faster in a std::binary_search of a std::vector than in a std::set.find)
+static void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
+	// The sorted vector is used to allow std::binary_search to be used on the
+	// vector for fast searching. I use a sorted std::vector instead of a
+	// std::set because it has faster performance uses less memory. My use
+	// pattern is distinct insertion period after which the entire vector can
+	// be sorted (faster than inserting into a std::set), followed by lookups
+	// (std::binary_search of a std::vector is faster than std::set.find).
 	// Analysis of this can be found here: http://lafstern.org/matt/col1.pdf
-	// I don't use a sorted vector all of the time because for my other structures, I am either searching for every element in my list against some other text, or am I just picking an element at random.
+
+	// I don't use a sorted vector all of the time because for my other
+	// structures, I am either searching for every element in my list against
+	// some other text, or am I just picking an element at random, so the
+	// sorting would add nothing.
+
 	sorted.clear ();
 	std::ifstream file (file_name);
 	std::string line;
@@ -99,13 +101,23 @@ void create_sorted_vector (std::string const & file_name, std::vector <std::stri
 	std::sort (sorted.begin(), sorted.end());
 	file.close();
 }
+}	// anonymous namespace
+
+void GenericClient::load_highlights () {
+	create_unsorted_vector ("settings/highlights.txt", highlights);
+}
+
+void GenericClient::load_responses () {
+	create_unsorted_vector ("settings/responses.txt", response);
+}
 
 void GenericClient::load_trusted_users () {
 	create_sorted_vector ("settings/trusted_users.txt", trusted_users);
 }
 
 bool GenericClient::is_trusted (std::string const & user) const {
-	// I sort the std::vector of trusted users as soon as I load them to make this legal and as fast as possible.
+	// I sort the std::vector of trusted users as soon as I load them to make
+	// this legal and as fast as possible.
 	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
 }
 
@@ -132,7 +144,8 @@ void GenericClient::load_account_info () {
 }
 
 void GenericClient::load_settings () {
-	// This is broken off from load_account_info so allow this to be reloaded while the program is running.
+	// This is broken off from load_account_info so allow this to be reloaded
+	// while the program is running.
 	std::ifstream file ("settings/settings.txt");
 	std::string line;
 	std::string const delimiter = ": ";
@@ -177,19 +190,14 @@ void GenericClient::reconnect () {
 	connect ();
 }
 
-void GenericClient::reset_timer (unsigned timer_length) {
-	send_keep_alive_message ();
-	timer.expires_from_now (boost::posix_time::seconds (timer_length));
-	timer.async_wait (boost::bind (& GenericClient::reset_timer, this, timer_length));
-}
-
 void GenericClient::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << "[" + time_stamp () + "] " + message + "\n";
 }
 
 std::string GenericClient::time_stamp () const {
-	// There does not appear to be an easy way to format the current time with a format string.
-	// This seems like a major limitation of boost::date_time / boost::posix_time.
+	// There does not appear to be an easy way to format the current time with
+	// a format string. This seems like a major limitation of boost::date_time
+	// and / or boost::posix_time, as well as the std header chrono.
 	std::string result;
 	constexpr unsigned probably_big_enough = 30;
 	result.resize (probably_big_enough);
@@ -217,7 +225,7 @@ void GenericClient::handle_server_message (std::string const & sender, std::stri
 
 void GenericClient::handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings) {
 	bool const accepted = settings.are_acceptable () and is_trusted (opponent);
-	bool const challenger = false;
+	constexpr bool challenger = false;
 	handle_finalize_challenge (opponent, accepted, challenger);
 }
 
@@ -238,7 +246,8 @@ void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const &
 }
 
 void GenericClient::pause_at_start_of_battle () {
-	// The bot pauses before it sends actions at the start of the battle to give spectators a chance to join.
+	// The bot pauses before it sends actions at the start of the battle to
+	// give spectators a chance to join.
 	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
 	pause.wait ();
 }
@@ -261,10 +270,13 @@ void GenericClient::handle_battle_end (GenericBattle & battle, uint32_t battle_i
 }
 
 bool GenericClient::is_highlighted (std::string const & message) const {
-	// Best way I've thought of to see if anything in highlights is in the message is to do a search in the message on each of the elements in highlights.
-	// Problems with this approach are that most people want to search for words, not just strings of characters.
-	// For instance, if I have "tm" in highlights, I usually don't want to be alerted to someone saying "atm".
-	// Fixing this problem probably requires some sort of regex or a fancy word boundary definition.
+	// Best way I've thought of to see if anything in highlights is in the
+	// message is to do a search in the message on each of the elements in
+	// highlights. Problems with this approach are that most people want to
+	// search for words, not just strings of characters. For instance, if I
+	// have "tm" in highlights, I usually don't want to be alerted to someone
+	// saying "atm". Fixing this problem probably requires some sort of regex
+	// or a fancy word boundary definition.
 	for (std::string const & highlight : highlights) {
 		if (message.find (highlight) != std::string::npos)
 			return true;
@@ -273,9 +285,11 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 }
 
 std::string GenericClient::get_response () const {
-	// This has a slight bias toward earlier elements unless RAND_MAX is evenly divisible by response.size().
-	// Probably not a big issue here since RAND_MAX is guaranteed to be at least 32767, and is probably larger.
-	// This means the variation is very small, unless response.size() grows to be very, very large.
+	// This has a slight bias toward earlier elements unless RAND_MAX is evenly
+	// divisible by response.size(). Probably not a big issue here since
+	// RAND_MAX is guaranteed to be at least 32767, and is probably larger.
+	// This means the variation is very small, unless response.size() grows to
+	// be very, very large.
 	return response [rand() % response.size()];
 }
 
@@ -284,10 +298,12 @@ void GenericClient::send_channel_message (std::string channel, std::string const
 	send_channel_message (channel_id, message);
 }
 
-size_t GenericClient::set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target) {
-	// This function is used to determine the target of a message (such as who to PM, what channel to join, etc.).
-	// The target may be one word with or without quotes, or multiple words with quotes.
-	// After it sets target, it returns the position of the beginning of the message.
+namespace {
+static size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target) {
+	// This function is used to determine the target of a message (such as who
+	// to PM, what channel to join, etc.). The target may be one word with or
+	// without quotes, or multiple words with quotes. After it sets target, it
+	// returns the position of the beginning of the message.
 	size_t const quote1 = request.find ("\"");
 	size_t quote2 = std::string::npos;
 	if (quote1 == delimiter_position + delimiter.length())
@@ -304,6 +320,7 @@ size_t GenericClient::set_target_and_find_message_begin (std::string const & req
 	}
 	return message_begin;
 }
+}	// anonymous namespace
 
 void GenericClient::handle_private_message (std::string const & sender, std::string const & message) {
 	print_with_time_stamp (std::cout, "<PM> " + sender + ": " + message);
@@ -316,8 +333,10 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		std::string const delimiter = " ";
 		size_t const delimiter_position = request.find (delimiter);
 		std::string const command = request.substr (1, delimiter_position - 1);
-		// I may replace this with a version that hashes the command and switches instead
-		// This currently compares a lot of strings, which may grow difficult to manage with many commands.
+		// I may replace this with a version that hashes the command and
+		// switches over the hash instead, as this currently compares a lot of
+		// strings, which could theoretically become slow with many commands.
+		// Probably not a concern, though.
 		if (command == "challenge") {
 			if (request.length () >= delimiter_position + delimiter.length()) {
 				std::string const opponent = request.substr (delimiter_position + delimiter.length ());

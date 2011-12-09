@@ -48,8 +48,10 @@ class GenericClient {
 		std::vector <std::string> response;
 		std::vector <std::string> trusted_users;
 	protected:
-		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;		// Battles that have not yet begun
-		std::map <uint8_t, std::shared_ptr <GenericBattle>> battles;					// Battles currently underway
+		// Battles that have not yet begun
+		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;
+		// Battles currently underway
+		std::map <uint8_t, std::shared_ptr <GenericBattle>> battles;
 		std::map <std::string, uint32_t> channels;
 	public:
 		boost::asio::io_service io;
@@ -57,8 +59,6 @@ class GenericClient {
 		int detailed [END_SPECIES][7];
 	protected:
 		int depth;
-	private:
-		boost::asio::deadline_timer timer;
 	public:
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 		int chattiness;
@@ -76,7 +76,6 @@ class GenericClient {
 	public:
 		void reconnect ();
 	protected:
-		void reset_timer (unsigned timer_length);
 		virtual void send_keep_alive_message () = 0;
 	private:
 		virtual void join_channel (std::string const & channel) = 0;
@@ -107,8 +106,6 @@ class GenericClient {
 		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string get_response () const;
-	private:
-		size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target);
 	protected:
 		enum Result {
 			WON = 1,
