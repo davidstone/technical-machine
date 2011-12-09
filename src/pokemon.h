@@ -20,7 +20,6 @@
 #define POKEMON_H_
 
 #include <string>
-#include <vector>
 
 #include "ability.h"
 #include "active.h"
@@ -37,7 +36,7 @@ namespace technicalmachine {
 class Pokemon {
 	public:
 		std::string nickname;
-		std::vector <Type> type;
+		TypeCollection type;
 		Species name;
 		Ability ability;
 		Gender gender;

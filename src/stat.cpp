@@ -272,7 +272,7 @@ void calculate_special_defense (Team const & attacker, Team & defender, Weather 
 			break;
 	}
 	
-	if (is_type (defender, ROCK) and weather.sand)
+	if (is_type (defender, Type::ROCK) and weather.sand)
 		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
 	
 	if (defender.pokemon->spd.stat == 0)
@@ -978,7 +978,8 @@ uint8_t Stat::get_base_stat (Species name, Stats stat) {
 		{ 38, 30, 41, 30, 41, 60 },			// Zigzagoon
 		{ 40, 45, 35, 30, 40, 55 }		// Zubat
 	};
-	return base_stat [name] [stat];
+	// I add 1 because HP is -1 to allow every other index to be easier.
+	return base_stat [name] [stat + 1];
 }
 
 Nature::Nature ():

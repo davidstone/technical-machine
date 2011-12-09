@@ -451,7 +451,7 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 
 void Battle::update_active_print (std::vector <std::string> const & arguments) {
 	// This needs to be changed to the correct message parser.
-	assert (arguments.size() > 0);
+	assert (!arguments.empty ());
 	if (boost::lexical_cast <int> (arguments [0] [3]) == party) {
 		active = & ai;
 		inactive = & foe;

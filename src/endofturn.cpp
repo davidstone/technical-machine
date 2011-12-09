@@ -52,7 +52,7 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	decrement (weather.sun);
 	decrement (weather.sand);
 	decrement (weather.rain);
-	if (first.pokemon->ability.blocks_weather () or last.pokemon->ability.blocks_weather ()) {
+	if (!first.pokemon->ability.blocks_weather () and !last.pokemon->ability.blocks_weather ()) {
 		endofturn3 (first, weather);
 		endofturn3 (last, weather);
 	}
@@ -99,9 +99,9 @@ void endofturn2 (Team & team) {
 }
 
 void endofturn3 (Team & team, Weather const & weather) {
-	if (weather.hail and !is_type (team, ICE))
+	if (weather.hail and !is_type (team, Type::ICE))
 		heal (*team.pokemon, -16);
-	if (weather.sand and !(is_type (team, GROUND) or is_type (team, ROCK) or is_type (team, STEEL)))
+	if (weather.sand and !team.pokemon->type.is_immune_to_sandstorm ())
 		heal (*team.pokemon, -16);
 	switch (team.pokemon->ability.name) {
 		case Ability::DRY_SKIN:
@@ -141,7 +141,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 			heal (*team.pokemon, 16);
 			break;
 		case Item::BLACK_SLUDGE:
-			if (is_type (team, POISON))
+			if (is_type (team, Type::POISON))
 				heal (*team.pokemon, 16);
 			else
 				heal (*team.pokemon, -16);

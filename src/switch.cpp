@@ -150,7 +150,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 void entry_hazards (Team & switcher, Weather const & weather) {
 	if (grounded (switcher, weather) and switcher.pokemon->ability.name != Ability::MAGIC_GUARD) {
 		if (switcher.toxic_spikes != 0) {
-			if (is_type (switcher, POISON))
+			if (is_type (switcher, Type::POISON))
 				switcher.toxic_spikes = 0;
 			else if (switcher.toxic_spikes == 1)
 				Status::poison_normal (switcher, switcher, weather);
@@ -162,7 +162,7 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 	}
 	// get_effectiveness () outputs a value between 0 and 16, with higher numbers being more effective. 4 * effective Stealth Rock does 16 / 32 damage.
 	if (switcher.stealth_rock)
-		heal (*switcher.pokemon, -32, get_effectiveness (ROCK, *switcher.pokemon));
+		heal (*switcher.pokemon, -32, get_effectiveness (Type::ROCK, *switcher.pokemon));
 }
 
 void activate_ability (Team & switcher, Team & other, Weather & weather) {

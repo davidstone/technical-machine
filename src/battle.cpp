@@ -104,7 +104,7 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 	}
 
 	active->moved = true;
-	if (active->at_replacement().find_move (move_name)) {
+	if (!active->at_replacement().find_move (move_name)) {
 		Move move (move_name, 3, inactive->size);
 		active->at_replacement().move.add (move);
 	}
@@ -128,11 +128,16 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 		last = inactive;
 	}
 
-	size_t const replacement = active->replacement;		// This is needed to make sure I don't overwrite important information in a situation in which a team switches multiple times in one turn (due to replacing fainted Pokemon).
+	// This is needed to make sure I don't overwrite important information in a
+	// situation in which a team switches multiple times in one turn (due to
+	// replacing fainted Pokemon).
+	size_t const replacement = active->replacement;
 	
 	// If it hasn't been seen already, add it to the team.
-	if (!active->seen_pokemon (species))
+	if (!active->seen_pokemon (species)) {
 		active->add_pokemon (species, nickname, level, gender);
+		active->at_replacement ().new_hp = get_max_damage_precision ();
+	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
 	if (inactive->at_replacement().move->is_phaze ()) {
@@ -151,7 +156,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
 	if (move_damage) {
 		unsigned effectiveness = get_effectiveness (active->at_replacement().move->type, inactive->at_replacement ());
-		if ((effectiveness > 0) and (GROUND != active->at_replacement().move->type or grounded (*inactive, weather))) {
+		if ((effectiveness > 0) and (active->at_replacement().move->type != Type::GROUND or grounded (*inactive, weather))) {
 			inactive->damage = inactive->at_replacement().hp.max * change_in_health / denominator;
 			if (static_cast <unsigned> (inactive->damage) > inactive->at_replacement().hp.stat)
 				inactive->damage = inactive->at_replacement().hp.stat;
@@ -172,14 +177,14 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
 		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
 		int const pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
-		if (pixels != pokemon.new_hp and (pokemon.new_hp - 1 > pixels or pixels > pokemon.new_hp + 1)) {
+		if (pixels != pokemon.new_hp and (pokemon.new_hp + 1 < pixels or pixels < pokemon.new_hp - 1)) {
 			std::cerr << "Uh oh! " + pokemon.get_name () + " has the wrong HP! The server reports approximately " << pokemon.new_hp * pokemon.hp.max / max_hp << " but TM thinks it has " << pokemon.hp.stat << "\n";
-			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
 			std::cerr << "max_hp: " << max_hp << '\n';
 			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
 			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
 			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
 			std::cerr << "pixels: " << pixels << '\n';
+			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
 		}
 	}
 }
