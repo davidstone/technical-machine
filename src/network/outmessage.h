@@ -32,6 +32,8 @@ class OutMessage {
 		void write_byte (uint8_t byte);
 		void write_short (uint16_t bytes);
 		void write_int (uint32_t bytes);
+		virtual void write_move (uint32_t battle_id, uint8_t move_index, uint8_t target = 1) = 0;
+		virtual void write_switch (uint32_t battle_id, uint8_t slot) = 0;
 };
 
 } // namespace technicalmachine

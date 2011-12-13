@@ -31,6 +31,7 @@
 namespace technicalmachine {
 namespace network {
 class GenericClient;
+class OutMessage;
 } // namespace network
 
 class GenericBattle {
@@ -54,6 +55,7 @@ class GenericBattle {
 		GenericBattle (std::string const & opponent, int battle_depth, Team const & team);
 	public:
 		void handle_begin_turn (uint16_t turn_count) const;
+		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 	protected:
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
 		Move::Moves determine_action (network::GenericClient & client);
@@ -76,6 +78,8 @@ class GenericBattle {
 	private:
 		static void initialize_team (Team & team);
 		void do_turn ();
+	protected:
+		virtual uint8_t get_target () const = 0;
 };
 
 }	// namespace technicalmachine

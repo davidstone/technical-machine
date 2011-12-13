@@ -688,8 +688,9 @@ std::string Client::get_user_name (uint32_t id) const {
 }
 
 network::GenericClient::Result Client::get_result (uint8_t code, uint32_t winner) const {
-	// I completely ignore Close because I determine when I want to close a battle, not my foe.
-	// I also ignore Forfeit. Technical Machine never forfeits, and if the foe forfeits, then it is a win.
+	// I completely ignore Close because I determine when I want to close a
+	// battle, not my foe. I also ignore Forfeit -- Technical Machine never
+	// forfeits; if the foe forfeits, then it is a win.
 	Result result;
 	if (code != 2)
 		result = (winner == my_id) ? WON : LOST;

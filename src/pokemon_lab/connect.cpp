@@ -276,19 +276,26 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const request_sequences = msg.read_byte ();
 			uint8_t const sequential_requests = msg.read_byte ();
 			uint32_t const number_of_pokemon = msg.read_int ();
-			// Avoiding the vector <bool> template specialization
-			std::vector <uint8_t> switches;
+			bool can_switch = false;
 			for (uint32_t n = 0; n != number_of_pokemon; ++n) {
-				// Whether it's legal to switch to this Pokemon
-				bool can_switch_to = msg.read_byte ();
-				switches.push_back (can_switch_to);
+				bool const legal_to_switch_to_this_pokemon = msg.read_byte ();
+				// Rather than the more straightforward
+				//	can_switch = msg.read_byte ();
+				//	if (can_switch)
+				//		break;
+				// I use |= so that I read the correct number of bytes but
+				// still set can_switch to true if it's legal to switch to any
+				// Pokemon.
+				can_switch |= legal_to_switch_to_this_pokemon;
 			}
 
-			bool can_switch = false;
 			bool forced = false;
 			std::vector <uint8_t> moves;
 			if (!replace) {
-				can_switch = msg.read_byte ();
+				// Not sure what this is used for.
+				bool const read_can_switch = msg.read_byte ();
+				if (read_can_switch != can_switch)
+					print_with_time_stamp (std::cerr, "Conflicting switch legalities.");
 				forced = msg.read_byte ();
 				if (!forced) {
 					int32_t const num_moves = msg.read_int ();
@@ -296,18 +303,12 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 						moves.push_back (msg.read_byte ());
 				}
 			}
-			bool can_switch_to = false;
-			for (uint8_t const legal_switch : switches) {
-				if (legal_switch) {
-					can_switch_to = true;
-					break;
-				}
-			}
-			can_switch = can_switch_to;
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_request_action (*this, battle_id, slot, index, replace, switches, can_switch, forced, moves);
+				OutMessage action (OutMessage::BATTLE_ACTION);
+				battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
+				action.send (*socket);
 			}
 			break;
 		}

@@ -21,8 +21,8 @@
 
 #include <string>
 #include <vector>
+#include "outmessage.h"
 #include "../battle.h"
-#include <iostream>
 
 namespace technicalmachine {
 namespace po {
@@ -32,19 +32,18 @@ class InMessage;
 
 class Battle : public GenericBattle {
 	private:
-		int8_t num_slot;
-		bool can_switch;
-		bool can_attack;
-		std::vector <uint8_t> attacks_allowed;
+		OutMessage action;
 	public:
-		Battle (std::string const & opponent, int battle_depth);
-		Battle (std::string const & opponent, int battle_depth, Team const & team);
-		void handle_request_action (Client & client, uint32_t battle_id);
+		Battle (std::string const & opponent, int const battle_depth);
+		Battle (std::string const & opponent, int const battle_depth, Team const & team);
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg);
 //		void update_active_print (Log & log, std::vector <std::string> const & arguments);
 //		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
 	private:
-		unsigned get_max_damage_precision ();
+		unsigned get_max_damage_precision () const;
+		uint8_t get_target () const;
+		static constexpr unsigned pokemon_per_team = 6;
+		static constexpr unsigned moves_per_pokemon = 4;
 };
 
 }	// namespace po

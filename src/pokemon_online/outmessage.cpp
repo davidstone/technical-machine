@@ -158,5 +158,15 @@ void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
 	boost::asio::write (socket, boost::asio::buffer (buffer));
 }
 
+void OutMessage::reset_action_code () {
+	// I store my chosen action to be sent to the server because the server
+	// sends me one message for move legalities and then later sends me a
+	// message saying that it's ready to receive my action decision. This means
+	// that I have to be able to reset this action decision message to a "ready
+	// to be filled with the action decision" state.
+	buffer.resize (1);
+	buffer [0] = BATTLE_MESSAGE;
+}
+
 } // namespace po
 } // namespace technicalmachine

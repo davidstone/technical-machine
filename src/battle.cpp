@@ -34,6 +34,7 @@
 #include "weather.h"
 
 #include "network/connect.h"
+#include "network/outmessage.h"
 #include <iostream>
 
 namespace technicalmachine {
@@ -70,6 +71,26 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth, Te
 
 void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
+}
+
+void GenericBattle::handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced) {
+	update_from_previous_turn (client, battle_id);
+	if (!forced) {
+		Move::Moves move = determine_action (client);
+		if (Move::is_switch (move))
+			msg.write_switch (battle_id, switch_slot (move));
+		else {
+			uint8_t move_index = 0;
+			while (ai.pokemon->move.set [move_index].name != move)
+				++move_index;
+			msg.write_move (battle_id, move_index, get_target ());
+		}
+	}
+	else {
+		msg.write_move (battle_id, 1);
+	}
+	if (!ai.replacing)
+		initialize_turn ();
 }
 
 void GenericBattle::update_from_previous_turn (network::GenericClient & client, uint32_t battle_id) {

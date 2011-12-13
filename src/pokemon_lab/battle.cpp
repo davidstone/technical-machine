@@ -34,28 +34,6 @@ Battle::Battle (std::string const & opponent, int battle_depth):
 	GenericBattle::GenericBattle (opponent, battle_depth) {
 }
 
-void Battle::handle_request_action (Client & client, uint32_t battle_id, uint8_t slot, uint8_t index, bool replace, std::vector <uint8_t> const & switches, bool can_switch, bool forced, std::vector <uint8_t> const & moves) {
-	update_from_previous_turn (client, battle_id);
-	OutMessage msg (OutMessage::BATTLE_ACTION);
-	if (forced)
-		msg.write_move (battle_id, 1);
-	else {
-		Move::Moves move = determine_action (client);
-		if (Move::is_switch (move))
-			msg.write_switch (battle_id, switch_slot (move));
-		else {
-			uint8_t move_index = 0;
-			while (ai.pokemon->move.set [move_index].name != move)
-				++move_index;
-			uint8_t const target = 1 - party;
-			msg.write_move (battle_id, move_index, target);
-		}
-	}
-	msg.send (*client.socket);
-	if (!ai.replacing)
-		initialize_turn ();
-}
-
 void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments) {
 //	std::cout << "party id: " << static_cast <int> (party) << '\n';
 //	std::cout << "category: " << static_cast <int> (category) << '\n';
@@ -463,6 +441,10 @@ void Battle::update_active_print (std::vector <std::string> const & arguments) {
 }
 
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp) {
+}
+
+uint8_t Battle::get_target () const {
+	return 1 - party;
 }
 
 }	// namespace pl

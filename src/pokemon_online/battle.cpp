@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "battle.h"
+#include <iostream>
 #include <string>
 #include <vector>
 #include "connect.h"
@@ -29,76 +30,66 @@
 namespace technicalmachine {
 namespace po {
 
-Battle::Battle (std::string const & opponent, int battle_depth):
-	GenericBattle::GenericBattle (opponent, battle_depth) {
-	attacks_allowed.reserve (4);
+Battle::Battle (std::string const & opponent, int const battle_depth):
+	GenericBattle::GenericBattle (opponent, battle_depth),
+	action (OutMessage::BATTLE_MESSAGE) {
 }
 
-Battle::Battle (std::string const & opponent, int battle_depth, Team const & team):
-	GenericBattle::GenericBattle (opponent, battle_depth, team) {
-	attacks_allowed.reserve (4);
+Battle::Battle (std::string const & opponent, int const battle_depth, Team const & team):
+	GenericBattle::GenericBattle (opponent, battle_depth, team),
+	action (OutMessage::BATTLE_MESSAGE) {
 }
-
-enum Command {
-	SEND_OUT = 0,
-	WITHDRAW = 1,		// "SendBack"
-	USE_ATTACK = 2,
-	OFFER_CHOICE = 3,
-	BEGIN_TURN = 4,
-	PP_CHANGE = 5,
-	HP_CHANGE = 6,
-	KO = 7,
-	EFFECTIVENESS = 8,
-	MISS = 9,
-	CRITICAL_HIT = 10,
-	NUMBER_OF_HITS = 11,
-	STAT_CHANGE = 12,
-	STATUS_CHANGE = 13,
-	STATUS_MESSAGE = 14,
-	FAILED = 15,
-	BATTLE_CHAT = 16,
-	MOVE_MESSAGE = 17,
-	ITEM_MESSAGE = 18,
-	NO_TARGET = 19,
-	FLINCH = 20,
-	RECOIL = 21,
-	WEATHER_MESSAGE = 22,
-	STRAIGHT_DAMAGE = 23,
-	ABILITY_MESSAGE = 24,
-	ABS_STATUS_CHANGE = 25, 
-	SUBSTITUTE = 26,
-	BATTLE_END = 27,
-	BLANK_MESSAGE = 28,
-	CANCEL_MOVE = 29,
-	CLAUSE = 30,
-	DYNAMIC_INFO = 31,
-	DYNAMIC_STATS = 32,
-	SPECTATING = 33,
-	SPECTATOR_CHAT = 34,
-	ALREADY_STATUSED = 35,
-	TEMPORARY_POKEMON_CHANGE = 36,
-	CLOCK_START = 37,
-	CLOCK_STOP = 38,
-	RATED = 39,
-	TIER_SECTION = 40,
-	END_MESSAGE = 41,
-	POINT_ESTIMATE = 42,
-	MAKE_YOUR_CHOICE = 43,
-	AVOID = 44,
-	REARRANGE_TEAM = 45,
-	SPOT_SHIFTS = 46
-};
-
-enum Temporary_Pokemon_Change {
-	TEMP_MOVE = 0,
-	DEF_MOVE = 1,
-	TEMP_PP = 2,
-	TEMP_SPRITE = 3,
-	DEFINITE_FORM = 4,
-	AESTHETIC_FORM = 5
-};
 
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg) {
+	enum {
+		SEND_OUT = 0,
+		WITHDRAW = 1,		// "SendBack"
+		USE_ATTACK = 2,
+		OFFER_CHOICE = 3,
+		BEGIN_TURN = 4,
+		PP_CHANGE = 5,
+		HP_CHANGE = 6,
+		KO = 7,
+		EFFECTIVENESS = 8,
+		MISS = 9,
+		CRITICAL_HIT = 10,
+		NUMBER_OF_HITS = 11,
+		STAT_CHANGE = 12,
+		STATUS_CHANGE = 13,
+		STATUS_MESSAGE = 14,
+		FAILED = 15,
+		BATTLE_CHAT = 16,
+		MOVE_MESSAGE = 17,
+		ITEM_MESSAGE = 18,
+		NO_TARGET = 19,
+		FLINCH = 20,
+		RECOIL = 21,
+		WEATHER_MESSAGE = 22,
+		STRAIGHT_DAMAGE = 23,
+		ABILITY_MESSAGE = 24,
+		ABS_STATUS_CHANGE = 25, 
+		SUBSTITUTE = 26,
+		BATTLE_END = 27,
+		BLANK_MESSAGE = 28,
+		CANCEL_MOVE = 29,
+		CLAUSE = 30,
+		DYNAMIC_INFO = 31,
+		DYNAMIC_STATS = 32,
+		SPECTATING = 33,
+		SPECTATOR_CHAT = 34,
+		ALREADY_STATUSED = 35,
+		TEMPORARY_POKEMON_CHANGE = 36,
+		CLOCK_START = 37,
+		CLOCK_STOP = 38,
+		RATED = 39,
+		TIER_SECTION = 40,
+		END_MESSAGE = 41,
+		POINT_ESTIMATE = 42,
+		MAKE_YOUR_CHOICE = 43,
+		AVOID = 44,
+		REARRANGE_TEAM = 45,
+		SPOT_SHIFTS = 46
+	};
 	switch (command) {
 		case BEGIN_TURN: {
 			uint32_t const turn = msg.read_int ();
@@ -228,7 +219,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case ABS_STATUS_CHANGE: {
 			uint8_t const index = msg.read_byte ();
-			if (index >= 6) {
+			if (index >= pokemon_per_team) {
 				std::cerr << "Invalid Pokemon index.\n";
 				break;
 			}
@@ -323,6 +314,14 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case TEMPORARY_POKEMON_CHANGE: {
 			std::cerr << "TEMPORARY_POKEMON_CHANGE\n";
+			enum {
+				TEMP_MOVE = 0,
+				DEF_MOVE = 1,
+				TEMP_PP = 2,
+				TEMP_SPRITE = 3,
+				DEFINITE_FORM = 4,
+				AESTHETIC_FORM = 5
+			};
 			uint8_t const code = msg.read_byte ();
 			switch (code) {
 				case TEMP_MOVE:
@@ -383,7 +382,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case RATED: {
-			Team new_team (true, 6);
+			Team new_team (true, pokemon_per_team);
 			client.team = new_team;
 			OutMessage team_msg (OutMessage::SEND_TEAM);
 			team_msg.write_team (client.team, client.username);
@@ -426,16 +425,22 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case OFFER_CHOICE: {
 			std::cerr << "OFFER_CHOICE\n";
-			num_slot = msg.read_byte ();
-			can_switch = msg.read_byte ();
-			can_attack = msg.read_byte ();
-			for (unsigned n = 0; n != 4; ++n)
+			int8_t const num_slot = msg.read_byte ();
+			std::cerr << "num_slot: " << static_cast <int> (num_slot) << '\n';
+			bool const can_switch = msg.read_byte ();
+			bool const can_attack = msg.read_byte ();
+			std::cerr << "can_attack: " << can_attack << '\n';
+			std::vector <uint8_t> attacks_allowed;
+			attacks_allowed.reserve (moves_per_pokemon);
+			for (unsigned n = 0; n != moves_per_pokemon; ++n)
 				attacks_allowed [n] = msg.read_byte ();
+			handle_request_action (client, action, battle_id, can_switch, attacks_allowed);
 			break;
 		}
 		case MAKE_YOUR_CHOICE: {
 			std::cerr << "MAKE_YOUR_CHOICE\n";
-			handle_request_action (client, battle_id);
+			action.send (*client.socket);
+			action.reset_action_code ();
 			break;
 		}
 		case CANCEL_MOVE: {
@@ -447,7 +452,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case REARRANGE_TEAM: {
 			std::cerr << "REARRANGE_TEAM\n";
-			for (unsigned n = 0; n != 6; ++n) {
+			for (unsigned n = 0; n != pokemon_per_team; ++n) {
 				int16_t const species_id = msg.read_short ();
 				int8_t const form_id = msg.read_byte ();
 				int8_t const level = msg.read_byte ();
@@ -478,50 +483,12 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 	}
 }
 
-/*
-	uint32_t const battle_id = msg.read_int ();
-	std::cerr << "battle_id: " << static_cast <int> (battle_id) << '\n';
-	uint8_t const player_slot = msg.read_byte ();
-	std::cerr << "player_slot: " << static_cast <int> (player_slot) << '\n';
-	uint8_t const command = msg.read_byte ();
-	std::cerr << "command: " << static_cast <int> (command) << '\n';
-	switch (command) {
-		case CANCEL:
-		case CENTER_MOVE:
-		case DRAW:
-			break;
-		case SWITCH:
-			break;
-		case ATTACK:
-			break;
-		case REARRANGE:
-			break;
-		default:
-			std::cerr << "Unknown battle message command.\n";
-			break;
-	}
-*/
-
-void Battle::handle_request_action (Client & client, uint32_t battle_id) {
-	update_from_previous_turn (client, battle_id);
-	OutMessage msg (OutMessage::BATTLE_MESSAGE);
-	Move::Moves move = determine_action (client);
-	if (Move::is_switch (move))
-		msg.write_switch (battle_id, switch_slot (move));
-	else {
-		uint8_t move_index = 0;
-		while (ai.pokemon->move.set [move_index].name != move)
-			++move_index;
-		uint8_t const target = 0;
-		msg.write_move (battle_id, move_index, target);
-	}
-	msg.send (*client.socket);
-	if (!ai.replacing)
-		initialize_turn ();
+unsigned Battle::get_max_damage_precision () const {
+	return 100;
 }
 
-unsigned Battle::get_max_damage_precision () {
-	return 100;
+uint8_t Battle::get_target () const {
+	return 0;
 }
 
 } // namespace po

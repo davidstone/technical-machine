@@ -41,6 +41,7 @@ class OutMessage : public network::OutMessage {
 		void write_challenge (uint32_t user_id, uint8_t generation, BattleSettings const & settings);
 		void write_color ();
 		void send (boost::asio::ip::tcp::socket & socket);
+		void reset_action_code ();
 		enum Message {
 			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.
 			LOG_IN = 2,
