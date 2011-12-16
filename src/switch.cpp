@@ -153,7 +153,7 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 			if (is_type (switcher, Type::POISON))
 				switcher.toxic_spikes = 0;
 			else if (switcher.toxic_spikes == 1)
-				Status::poison_normal (switcher, switcher, weather);
+				Status::poison (switcher, switcher, weather);
 			else
 				Status::poison_toxic (switcher, switcher, weather);
 		}

@@ -39,10 +39,14 @@
 
 namespace technicalmachine {
 
+namespace {
+
 static unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
 static void call_other_move (Team & user);
 static void do_damage (Team & user, Team & target, unsigned damage);
 static void lower_pp (Team & user, Pokemon const & target);
+
+}	// anonymous namespace
 
 Move::Move (Moves move, int pp_ups, unsigned size) :
 	name (move),
@@ -275,6 +279,8 @@ unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_da
 	}
 	return damage;
 }
+
+namespace {
 
 unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage) {
 	calculate_speed (user, weather);
@@ -611,7 +617,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				break;
 		case Move::POISON_GAS:
 		case Move::POISONPOWDER:
-			Status::poison_normal (user, target, weather);
+			Status::poison (user, target, weather);
 			break;
 		case Move::CURSE:
 			if (is_type (user, Type::GHOST) and user.pokemon->ability.name != Ability::MAGIC_GUARD) {
@@ -978,8 +984,8 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 					case Status::PARALYSIS:
 						Status::paralyze (*user.pokemon, *target.pokemon, weather);
 						break;
-					case Status::POISON_NORMAL:
-						Status::poison_normal (user, target, weather);
+					case Status::POISON:
+						Status::poison (user, target, weather);
 						break;
 					case Status::POISON_TOXIC:
 						Status::poison_toxic (user, target, weather);
@@ -1239,6 +1245,8 @@ void lower_pp (Team & user, Pokemon const & target) {
 void call_other_move (Team & user) {
 	user.pokemon->move.index = user.called_move;
 }
+
+}	// anonymous namespace
 
 std::string Move::get_name() const {
 	return name_to_string [name];

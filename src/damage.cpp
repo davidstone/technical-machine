@@ -180,7 +180,7 @@ void movepower (Team & attacker, Team const & defender, Weather const & weather)
 			switch (attacker.pokemon->status.name) {
 				case Status::BURN:
 				case Status::PARALYSIS:
-				case Status::POISON_NORMAL:
+				case Status::POISON:
 				case Status::POISON_TOXIC:
 					doubling = true;
 					break;

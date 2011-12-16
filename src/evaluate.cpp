@@ -110,7 +110,7 @@ int64_t Score::scorepokemon (Team const & team, Team const & other, Weather cons
 			case Status::PARALYSIS:
 				score += paralysis;
 				break;
-			case Status::POISON_NORMAL:
+			case Status::POISON:
 				score += poison;
 				break;
 			case Status::POISON_TOXIC:

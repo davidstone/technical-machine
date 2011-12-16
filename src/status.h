@@ -34,7 +34,7 @@ class Status {
 			BURN,
 			FREEZE,
 			PARALYSIS,
-			POISON_NORMAL,
+			POISON,
 			POISON_TOXIC,
 			REST,
 			SLEEP,
@@ -49,7 +49,7 @@ class Status {
 		static void freeze (Pokemon const & user, Team & target, Weather const & weather);
 		static void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);
 		static void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
-		static void poison_normal (Team & user, Team & target, Weather const & weather);
+		static void poison (Team & user, Team & target, Weather const & weather);
 		static void poison_toxic (Team & user, Team & target, Weather const & weather);
 };
 

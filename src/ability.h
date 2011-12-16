@@ -36,6 +36,10 @@ class Ability {
 		bool is_set () const;
 		bool blocks_switching (Team const & switcher, Weather const & weather) const;
 		bool blocks_weather () const;
+		bool blocks_burn (Weather const & weather) const;
+		bool blocks_freeze () const;
+		bool blocks_paralysis (Weather const & weather) const;
+		bool blocks_poison (Weather const & weather) const;
 		bool blocks_sleep (Weather const & weather) const;
 		bool weakens_SE_attacks () const;
 		std::string get_name () const;

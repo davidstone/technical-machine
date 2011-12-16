@@ -169,7 +169,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 			else
 				heal (*team.pokemon, -8);
 			break;
-		case Status::POISON_NORMAL:
+		case Status::POISON:
 			if (team.pokemon->ability.name == Ability::POISON_HEAL)
 				heal (*team.pokemon, 8);
 			else

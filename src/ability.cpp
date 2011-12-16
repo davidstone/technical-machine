@@ -57,6 +57,48 @@ bool Ability::blocks_weather () const {
 	}
 }
 
+bool Ability::blocks_burn (Weather const & weather) const {
+	switch (name) {
+		case LEAF_GUARD:
+			return weather.sun;
+		case WATER_VEIL:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Ability::blocks_freeze () const {
+	switch (name) {
+		case MAGMA_ARMOR:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Ability::blocks_paralysis (Weather const & weather) const {
+	switch (name) {
+		case LEAF_GUARD:
+			return weather.sun;
+		case LIMBER:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Ability::blocks_poison (Weather const & weather) const {
+	switch (name) {
+		case IMMUNITY:
+			return true;
+		case LEAF_GUARD:
+			return weather.sun;
+		default:
+			return false;
+	}
+}
+
 bool Ability::blocks_sleep (Weather const & weather) const {
 	switch (name) {
 		case INSOMNIA:
