@@ -147,11 +147,11 @@ class Move {
 		int8_t r;					// The random number (85 through 100)
 		int8_t times_used;
 
-		static std::string const name_to_string [];
 		static uint16_t const max_probability;
 
 		Move (Moves move, int pp_ups, unsigned size);
 		uint64_t hash() const;
+		static std::string to_string (Moves name);
 		std::string get_name () const;			// Gets the string version of the name.
 		static Moves name_from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
@@ -173,13 +173,6 @@ class Move {
 	private:
 		void set_priority ();
 		void set_variable (unsigned size);
-
-		static Type const move_type [];
-		static bool const is_physical [];
-		static int16_t const base_power [];
-		static int8_t const get_pp [];
-		static uint16_t const get_probability [];
-		static int16_t const get_accuracy [];
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

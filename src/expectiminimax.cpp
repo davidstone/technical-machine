@@ -498,7 +498,7 @@ void print_best_move (Team const & team, Move::Moves best_move, int depth, int64
 	if (Move::is_switch (best_move))
 		std::cout << "Switch to " << team.pokemon.set [best_move - Move::SWITCH0].get_name ();
 	else
-		std::cout << "Use " << Move::name_to_string [best_move];
+		std::cout << "Use " << Move::to_string (best_move);
 	if (depth == -1) {
 		double probability = 100.0 * static_cast <double> (score + Score::VICTORY) / static_cast <double> (2 * Score::VICTORY);
 		std::cout << " for ";
