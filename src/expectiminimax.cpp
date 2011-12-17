@@ -123,9 +123,9 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 		
 		// Determine which moves can be legally selected
 		for (ai.pokemon->move.index = 0; ai.pokemon->move.index != ai.pokemon->move.set.size(); ++ai.pokemon->move.index)
-			blockselection (ai, foe, weather);
+			block_selection (ai, foe, weather);
 		for (foe.pokemon->move.index = 0; foe.pokemon->move.index != foe.pokemon->move.set.size(); ++foe.pokemon->move.index)
-			blockselection (foe, ai, weather);
+			block_selection (foe, ai, weather);
 
 		// Iterate through each move each Pokemon has in combination with each move the other Pokemon has, and evaluate the score of each combination.
 		for (std::pair <int64_t, size_t> const & ai_move : ai_index) {

@@ -262,7 +262,7 @@ unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_da
 	user.lock_on = false;
 	user.moved = true;
 	user.pokemon->move->execute = true;
-	blockexecution (user, target, weather);
+	block_execution (user, target, weather);
 	if (user.pokemon->move->execute) {
 		lower_pp (user, *target.pokemon);
 		size_t index = user.pokemon->move.index;

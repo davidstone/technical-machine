@@ -26,9 +26,13 @@
 
 namespace technicalmachine {
 
+namespace {
 static bool imprison (Move const & move, Team const & other);
+static bool block1 (Team const & user, Team const & other);
+static bool block2 (Team const & user, Weather const & weather);
+}	// anonymous namespace
 
-void blockselection (Team & user, Team const & other, Weather const & weather) {
+void block_selection (Team & user, Team const & other, Weather const & weather) {
 	user.pokemon->move->selectable = true;
 	if (user.bide and user.pokemon->move->name != Move::BIDE)
 			user.pokemon->move->selectable = false;
@@ -60,7 +64,7 @@ void blockselection (Team & user, Team const & other, Weather const & weather) {
 	}
 }
 
-void blockexecution (Team & user, Team const & other, Weather const & weather) {
+void block_execution (Team & user, Team const & other, Weather const & weather) {
 	if (!user.pokemon->move->is_switch()) {
 		if (user.pokemon->hp.stat == 0 or (other.pokemon->hp.stat == 0 and false))
 			user.pokemon->move->execute = false;
@@ -112,6 +116,7 @@ void blockexecution (Team & user, Team const & other, Weather const & weather) {
 	}
 }
 
+namespace {
 // Things that both block selection and block execution in between sleep and confusion
 bool block1 (Team const & user, Team const & other) {
 	return (user.pokemon->move->pp == 0)
@@ -122,8 +127,8 @@ bool block1 (Team const & user, Team const & other) {
 
 bool imprison (Move const & move, Team const & other) {
 	if (other.imprison) {
-		for (Move const & other_move : other.pokemon->move.set) {
-			if (move.name == other_move.name)
+		for (auto it = other.pokemon->move.set.cbegin (); it->name != Move::STRUGGLE; ++it) {
+			if (move.name == it->name)
 				return true;
 		}
 	}
@@ -136,4 +141,5 @@ bool block2 (Team const & user, Weather const & weather) {
 			or (weather.gravity and (user.pokemon->move->is_blocked_by_gravity ()));
 }
 
+}	// anonymous namespace
 }
