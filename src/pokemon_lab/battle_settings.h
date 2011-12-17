@@ -35,6 +35,6 @@ class BattleSettings : public network::GenericBattleSettings {
 		bool are_acceptable () const;
 };
 
-} // namespace pl
-} // namespace technicalmachine
-#endif // POKEMON_LAB_BATTLE_SETTINGS_H_
+}	// namespace pl
+}	// namespace technicalmachine
+#endif	// POKEMON_LAB_BATTLE_SETTINGS_H_

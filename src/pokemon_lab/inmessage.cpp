@@ -18,6 +18,7 @@
 
 #include "inmessage.h"
 #include <cstdint>
+#include <string>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include "connect.h"
@@ -51,5 +52,5 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * clien
 	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, client, code, boost::ref (*this)));
 }
 
-} // namespace pl
-} // namespace technicalmachine
+}	// namespace pl
+}	// namespace technicalmachine

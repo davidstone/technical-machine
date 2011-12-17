@@ -40,6 +40,6 @@ class InMessage {
 		uint32_t read_bytes (size_t bytes);
 };
 
-} // namespace network
-} // namespace technicalmachine
-#endif // NETWORK_INMESSAGE_H_
+}	// namespace network
+}	// namespace technicalmachine
+#endif	// NETWORK_INMESSAGE_H_

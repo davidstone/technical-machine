@@ -28,6 +28,6 @@ class GenericBattleSettings {
 		virtual ~GenericBattleSettings () { }
 };
 
-} // namespace network
-} //namespace technicalmachine
-#endif // NETWORK_BATTLE_SETTINGS_H_
+}	// namespace network
+}	// namespace technicalmachine
+#endif	// NETWORK_BATTLE_SETTINGS_H_

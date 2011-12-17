@@ -114,6 +114,6 @@ class GenericClient {
 		};
 		void handle_battle_end (GenericBattle & battle, uint32_t battle_id, Result result);
 };
-} //namespace network
-} // namespace technicalmachine
-#endif // NETWORK_CONNECT_H_
+}	//namespace network
+}	// namespace technicalmachine
+#endif	// NETWORK_CONNECT_H_

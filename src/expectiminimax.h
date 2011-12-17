@@ -30,6 +30,7 @@ class Weather;
 
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score);
 
+// Called from the function that identifies transpositions
 int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine

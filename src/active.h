@@ -27,7 +27,8 @@ namespace technicalmachine {
 template <class T>
 class Active {
 	public:
-		std::vector<T> set;			// All Pokemon on the team, all moves on the Pokemon, etc.
+		// All Pokemon on the team, all moves on the Pokemon, etc.
+		std::vector<T> set;
 		size_t index;
 		Active () :
 			index (0) {
@@ -51,4 +52,4 @@ class Active {
 };
 
 }	// namespace technicalmachine
-#endif		// ACTIVE_H_
+#endif	// ACTIVE_H_

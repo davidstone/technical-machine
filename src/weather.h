@@ -42,7 +42,7 @@ class Weather {
 		int8_t sand;
 		int8_t rain;
 	
-		bool operator == (Weather const & other) const;
+		bool operator== (Weather const & other) const;
 		Weather ();
 		void set_trick_room ();
 		void set_gravity ();

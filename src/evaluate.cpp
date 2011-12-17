@@ -34,21 +34,21 @@
 namespace technicalmachine {
 
 int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
-	int64_t score = scoreteam (ai) - scoreteam (foe);
+	int64_t score = score_team (ai) - score_team (foe);
 
 	size_t index = ai.pokemon.index;
 	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
-		score += scorepokemon (ai, foe, weather);
+		score += score_pokemon (ai, foe, weather);
 	ai.pokemon.index = index;
 
 	index = foe.pokemon.index;
 	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
-		score -= scorepokemon (foe, ai, weather);
+		score -= score_pokemon (foe, ai, weather);
 	foe.pokemon.index = index;
 	return score;
 }
 
-int64_t Score::scoreteam (Team const & team) const {
+int64_t Score::score_team (Team const & team) const {
 	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
 	if (team.pokemon->hp.stat != 0) {
 		score += team.stage [Stat::ATK] * atk_stage;
@@ -93,7 +93,7 @@ int64_t Score::scoreteam (Team const & team) const {
 	return score;
 }
 
-int64_t Score::scorepokemon (Team const & team, Team const & other, Weather const & weather) const {
+int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = team.stealth_rock * stealth_rock * static_cast <int> (get_effectiveness (Type::ROCK, *team.pokemon)) / 4;
 	if (grounded (team, weather))
 		score += team.spikes * spikes + team.toxic_spikes * toxic_spikes;
@@ -123,13 +123,13 @@ int64_t Score::scorepokemon (Team const & team, Team const & other, Weather cons
 			default:
 				break;
 		}
-		score += scoremove (team, other, weather);
+		score += score_move (team, other, weather);
 	}
 	return score;
 }
 
 
-int64_t Score::scoremove (Team const & team, Team const & other, Weather const & weather) const {
+int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
 	for (Move const & move : team.pokemon->move.set) {
 		if (move.physical)

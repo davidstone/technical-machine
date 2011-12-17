@@ -36,6 +36,6 @@ class OutMessage {
 		virtual void write_switch (uint32_t battle_id, uint8_t slot) = 0;
 };
 
-} // namespace technicalmachine
-} // namespace network
-#endif // NETWORK_OUTMESSAGE_H_
+}	// namespace technicalmachine
+}	// namespace network
+#endif	// NETWORK_OUTMESSAGE_H_

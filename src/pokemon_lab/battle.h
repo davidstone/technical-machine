@@ -39,6 +39,6 @@ class Battle : public GenericBattle {
 		uint8_t get_target () const;
 };
 
-} // namespace pl
-} // namespace technicalmachine
-#endif // POKEMON_LAB_BATTLE_H_
+}	// namespace pl
+}	// namespace technicalmachine
+#endif	// POKEMON_LAB_BATTLE_H_

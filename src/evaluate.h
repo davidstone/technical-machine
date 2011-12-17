@@ -27,10 +27,15 @@ class Pokemon;
 class Team;
 class Weather;
 
-// All variables within Score do not change during use. I do not declare them const because the values are determined by reading a text file, so they aren't quite known at initialization time.
+// All variables within Score do not change during use. I do not declare them
+// const because the values are determined by reading a text file, so they
+// aren't quite known at initialization time. Can be updated between battles.
 class Score {
 	public:
-		constexpr static int64_t VICTORY = 65536;		// Highest score. 100% chance to win.
+		// Highest score. 100% chance to win. No particular significance to
+		// this number other than being larger than any score a non-winning
+		// position can have.
+		constexpr static int64_t VICTORY = 65536;
 		
 		int transposition_table;	
 	private:
@@ -80,12 +85,13 @@ class Score {
 	public:
 		Score ();
 		void load_evaluation_constants ();
-		// ai and foe are both logically constant, but I change the active Pokemon in each of them (and then change it back before the function returns)
+		// ai and foe are both logically constant. I change the active Pokemon
+		// in each of them, but I change it back before the function returns.
 		int64_t evaluate (Team & ai, Team & foe, Weather const & weather) const;
 	private:
-		int64_t scoreteam (Team const & team) const;
-		int64_t scorepokemon (Team const & ai, Team const & foe, Weather const & weather) const;
-		int64_t scoremove (Team const & ai, Team const & foe, Weather const & weather) const;
+		int64_t score_team (Team const & team) const;
+		int64_t score_pokemon (Team const & ai, Team const & foe, Weather const & weather) const;
+		int64_t score_move (Team const & ai, Team const & foe, Weather const & weather) const;
 	public:
 		static int64_t win (Team const & team);
 };
