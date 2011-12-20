@@ -20,7 +20,7 @@
 #define POKEMON_ONLINE_BATTLE_SETTINGS_H_
 
 #include <cstdint>
-#include "../network/battle_settings.h"
+#include "../network/battle_settings.hpp"
 
 namespace technicalmachine {
 namespace po {

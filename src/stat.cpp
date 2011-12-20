@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "stat.h"
+#include "stat.hpp"
 
 #include <map>
 
-#include "ability.h"
-#include "item.h"
-#include "move.h"
-#include "pokemon.h"
-#include "species.h"
-#include "status.h"
-#include "team.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "item.hpp"
+#include "move.hpp"
+#include "pokemon.hpp"
+#include "species.hpp"
+#include "status.hpp"
+#include "team.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 

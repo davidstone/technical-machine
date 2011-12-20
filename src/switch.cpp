@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "switch.h"
+#include "switch.hpp"
 
 #include <utility>
 #include <vector>
 
-#include "ability.h"
-#include "heal.h"
-#include "pokemon.h"
-#include "stat.h"
-#include "status.h"
-#include "team.h"
-#include "type.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "heal.hpp"
+#include "pokemon.hpp"
+#include "stat.hpp"
+#include "status.hpp"
+#include "team.hpp"
+#include "type.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 

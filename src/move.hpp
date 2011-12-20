@@ -24,8 +24,8 @@
 #include <utility>
 #undef SING
 
-#include "active.h"
-#include "type.h"
+#include "active.hpp"
+#include "type.hpp"
 
 namespace technicalmachine {
 

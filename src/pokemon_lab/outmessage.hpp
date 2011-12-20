@@ -24,7 +24,7 @@
 #include <vector>
 #include <boost/asio.hpp>
 
-#include "../network/outmessage.h"
+#include "../network/outmessage.hpp"
 
 namespace technicalmachine {
 class Team;

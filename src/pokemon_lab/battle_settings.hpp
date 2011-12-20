@@ -1,4 +1,4 @@
-// Exception class for improper message length
+// Pokemon Lab Battle settings
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_BUFFER_OVERRUN_H_
-#define NETWORK_BUFFER_OVERRUN_H_
+#ifndef POKEMON_LAB_BATTLE_SETTINGS_H_
+#define POKEMON_LAB_BATTLE_SETTINGS_H_
 
-#include "invalid_packet.h"
+#include <cstdint>
+#include "../network/battle_settings.hpp"
 
 namespace technicalmachine {
-namespace network {
+namespace pl {
 
-class BufferOverrun : public InvalidPacket {
+class BattleSettings : public network::GenericBattleSettings {
+	private:
+		uint8_t generation;
+		uint32_t active_party_size;
+		uint32_t max_team_length;
 	public:
-		BufferOverrun ():
-			InvalidPacket ("Read past the end of the InMessage buffer.") {
-		}
+		BattleSettings (uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length);
+		bool are_acceptable () const;
 };
-}	// namespace network
+
+}	// namespace pl
 }	// namespace technicalmachine
-#endif	// NETWORK_BUFFER_OVERRUN_H_
+#endif	// POKEMON_LAB_BATTLE_SETTINGS_H_

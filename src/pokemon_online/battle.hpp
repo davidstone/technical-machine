@@ -21,8 +21,8 @@
 
 #include <string>
 #include <vector>
-#include "outmessage.h"
-#include "../battle.h"
+#include "outmessage.hpp"
+#include "../battle.hpp"
 
 namespace technicalmachine {
 namespace po {

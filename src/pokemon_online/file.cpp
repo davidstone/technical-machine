@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "file.h"
+#include "file.hpp"
 #include <fstream>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include "conversion.h"
-#include "../ability.h"
-#include "../item.h"
-#include "../move.h"
-#include "../pokemon.h"
-#include "../species.h"
-#include "../team.h"
+#include "conversion.hpp"
+#include "../ability.hpp"
+#include "../item.hpp"
+#include "../move.hpp"
+#include "../pokemon.hpp"
+#include "../species.hpp"
+#include "../team.hpp"
 
 namespace technicalmachine {
 namespace po {

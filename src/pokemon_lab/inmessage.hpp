@@ -20,7 +20,7 @@
 #define POKEMON_LAB_INMESSAGE_H_
 
 #include <boost/asio.hpp>
-#include "../network/inmessage.h"
+#include "../network/inmessage.hpp"
 
 namespace technicalmachine {
 namespace pl {

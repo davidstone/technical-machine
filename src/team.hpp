@@ -22,11 +22,11 @@
 #include <cstdint>
 #include <string>
 
-#include "active.h"
-#include "gender.h"
-#include "pokemon.h"
-#include "species.h"
-#include "stat.h"
+#include "active.hpp"
+#include "gender.hpp"
+#include "pokemon.hpp"
+#include "species.hpp"
+#include "stat.hpp"
 
 namespace technicalmachine {
 

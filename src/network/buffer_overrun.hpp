@@ -1,4 +1,4 @@
-// Header for loading stats like Pokemon usages
+// Exception class for improper message length
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,21 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LOAD_STATS_H_
-#define LOAD_STATS_H_
+#ifndef NETWORK_BUFFER_OVERRUN_H_
+#define NETWORK_BUFFER_OVERRUN_H_
 
-#include <vector>
-#include "species.h"
+#include "invalid_packet.hpp"
 
 namespace technicalmachine {
+namespace network {
 
-void overall_stats (std::vector<unsigned> & overall);
-
-void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]);
-
-void lead_stats (std::vector<float> & lead);
-
-void detailed_stats (int detailed [][7]);
-
-} // namespace technicalmachine
-#endif // LOAD_STATS_H_
+class BufferOverrun : public InvalidPacket {
+	public:
+		BufferOverrun ():
+			InvalidPacket ("Read past the end of the InMessage buffer.") {
+		}
+};
+}	// namespace network
+}	// namespace technicalmachine
+#endif	// NETWORK_BUFFER_OVERRUN_H_

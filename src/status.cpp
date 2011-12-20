@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "status.h"
+#include "status.hpp"
 
 #include <string>
 
-#include "ability.h"
-#include "pokemon.h"
-#include "team.h"
-#include "type.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "pokemon.hpp"
+#include "team.hpp"
+#include "type.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 

@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "conversion.h"
+#include "conversion.hpp"
 #include <iostream>
-#include "../ability.h"
-#include "../item.h"
-#include "../move.h"
-#include "../species.h"
-#include "../stat.h"
+#include "../ability.hpp"
+#include "../item.hpp"
+#include "../move.hpp"
+#include "../species.hpp"
+#include "../stat.hpp"
 
 namespace technicalmachine {
 namespace po {

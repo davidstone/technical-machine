@@ -1,4 +1,4 @@
-// Convert to / from PL's format
+// Convert to / from PO's format
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,22 +16,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_CONVERSION_H_
-#define POKEMON_LAB_CONVERSION_H_
+#ifndef POKEMON_ONLINE_CONVERSION_H_
+#define POKEMON_ONLINE_CONVERSION_H_
 
-#include "../move.h"
-#include "../species.h"
+#include <string>
+#include "../ability.hpp"
+#include "../item.hpp"
+#include "../stat.hpp"
+#include "../move.hpp"
+#include "../species.hpp"
 
 namespace technicalmachine {
-namespace pl {
+namespace po {
 
 Species id_to_species (int id);
 int species_to_id (Species species);
+Ability::Abilities id_to_ability (int id);
+int ability_to_id (Ability::Abilities ability);
+Item::Items id_to_item (int id);
+int item_to_id (Item::Items item);
 Move::Moves id_to_move (int id);
 int move_to_id (Move::Moves move);
+Nature::Natures id_to_nature (int id);
+int nature_to_id (Nature::Natures nature);
 
-// Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
-
-} // namespace pl
+} // namespace po
 } // namespace technicalmachine
-#endif // POKEMON_LAB_CONVERSION_H_
+#endif // POKEMON_ONLINE_CONVERSION_H_

@@ -20,20 +20,20 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 
-#include "ability.h"
-#include "item.h"
-#include "load_stats.h"
-#include "move.h"
-#include "pokemon.h"
-#include "reversedamage.h"
-#include "stat.h"
-#include "status.h"
-#include "switch.h"
-#include "team.h"
-#include "teampredictor.h"
-#include "type.h"
-#include "unknown.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "item.hpp"
+#include "load_stats.hpp"
+#include "move.hpp"
+#include "pokemon.hpp"
+#include "reversedamage.hpp"
+#include "stat.hpp"
+#include "status.hpp"
+#include "switch.hpp"
+#include "team.hpp"
+#include "teampredictor.hpp"
+#include "type.hpp"
+#include "unknown.hpp"
+#include "weather.hpp"
 
 // What follows is a temporary file that initializes variables that I don't have functions to initialize yet. It also provides the interface for the reverse damage calculator.
 

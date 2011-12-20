@@ -1,4 +1,4 @@
-// Pokemon Lab outgoing messages
+// Pokemon Online incoming messages
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,32 +16,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_OUTMESSAGE_H_
-#define POKEMON_ONLINE_OUTMESSAGE_H_
+#ifndef POKEMON_ONLINE_INMESSAGE_H_
+#define POKEMON_ONLINE_INMESSAGE_H_
 
-#include <cstdint>
-#include <string>
 #include <boost/asio.hpp>
-
-#include "../network/outmessage.h"
+#include "../network/inmessage.hpp"
 
 namespace technicalmachine {
-class Team;
 namespace po {
 
-class BattleSettings;
+class Client;
 
-class OutMessage : public network::OutMessage {
+class InMessage : public network::InMessage::InMessage {
 	public:
-		explicit OutMessage (uint8_t code);
-		void write_string (std::string const & str);
-		void write_team (Team const & team, std::string const & username);
-		void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);
-		void write_switch (uint32_t field_id, uint8_t slot);
-		void write_challenge (uint32_t user_id, uint8_t generation, BattleSettings const & settings);
-		void write_color ();
-		void send (boost::asio::ip::tcp::socket & socket);
-		void reset_action_code ();
+		InMessage ();
+		std::string read_string ();
+		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
+		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
+	public:
 		enum Message {
 			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.
 			LOG_IN = 2,
@@ -106,4 +98,4 @@ class OutMessage : public network::OutMessage {
 
 }	// namespace po
 }	// namespace technicalmachine
-#endif	// POKEMON_ONLINE_OUTMESSAGE_H_
+#endif	// POKEMON_ONLINE_INMESSAGE_H_

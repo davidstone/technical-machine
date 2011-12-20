@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "team.h"
+#include "team.hpp"
 
 #include <cstdint>
 #include <ctime>
@@ -29,18 +29,18 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
-#include "ability.h"
-#include "gender.h"
-#include "item.h"
-#include "move.h"
-#include "pokemon.h"
-#include "switch.h"
-#include "status.h"
-#include "teampredictor.h"
-#include "type.h"
+#include "ability.hpp"
+#include "gender.hpp"
+#include "item.hpp"
+#include "move.hpp"
+#include "pokemon.hpp"
+#include "switch.hpp"
+#include "status.hpp"
+#include "teampredictor.hpp"
+#include "type.hpp"
 
-#include "pokemon_lab/file.h"
-#include "pokemon_online/file.h"
+#include "pokemon_lab/file.hpp"
+#include "pokemon_online/file.hpp"
 
 namespace technicalmachine {
 

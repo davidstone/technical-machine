@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "inmessage.h"
+#include "inmessage.hpp"
 #include <cstdint>
 #include <string>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include "connect.h"
+#include "connect.hpp"
 
 namespace technicalmachine {
 namespace pl {

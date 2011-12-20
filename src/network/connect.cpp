@@ -18,7 +18,7 @@
 
 // What follows are generic functions and data for connection to any Pokemon sim. Specific functions and data are found in the respective sim's folder.
 
-#include "connect.h"
+#include "connect.hpp"
 
 #include <cstdint>
 #include <ctime>
@@ -33,10 +33,10 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "battle_settings.h"
-#include "../battle.h"
-#include "../evaluate.h"
-#include "../load_stats.h"
+#include "battle_settings.hpp"
+#include "../battle.hpp"
+#include "../evaluate.hpp"
+#include "../load_stats.hpp"
 
 namespace technicalmachine {
 namespace network {

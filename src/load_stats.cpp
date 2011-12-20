@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "load_stats.h"
+#include "load_stats.hpp"
 
 #include <cstddef>
 #include <fstream>
@@ -24,9 +24,9 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 
-#include "move.h"
-#include "pokemon.h"
-#include "species.h"
+#include "move.hpp"
+#include "pokemon.hpp"
+#include "species.hpp"
 
 namespace technicalmachine {
 

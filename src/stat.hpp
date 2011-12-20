@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <string>
 
-#include "species.h"
+#include "species.hpp"
 
 namespace technicalmachine {
 

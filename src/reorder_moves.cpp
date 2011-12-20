@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "reorder_moves.h"
+#include "reorder_moves.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -24,7 +24,7 @@
 #include <utility>
 #include <vector>
 
-#include "move.h"
+#include "move.hpp"
 
 namespace technicalmachine {
 

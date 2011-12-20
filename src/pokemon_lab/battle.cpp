@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "battle.h"
+#include "battle.hpp"
 #include <iostream>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include "../battle.h"
-#include "../move.h"
-#include "../pokemon.h"
-#include "../team.h"
-#include "connect.h"
-#include "outmessage.h"
+#include "../battle.hpp"
+#include "../move.hpp"
+#include "../pokemon.hpp"
+#include "../team.hpp"
+#include "connect.hpp"
+#include "outmessage.hpp"
 
 namespace technicalmachine {
 namespace pl {

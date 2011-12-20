@@ -1,4 +1,4 @@
-// Pokemon Lab battle
+// Convert to / from PL's format
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,29 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_BATTLE_H_
-#define POKEMON_LAB_BATTLE_H_
+#ifndef POKEMON_LAB_CONVERSION_H_
+#define POKEMON_LAB_CONVERSION_H_
 
-#include <cstdint>
-#include <string>
-#include <vector>
-#include "../battle.h"
-#include "../species.h"
+#include "../move.hpp"
+#include "../species.hpp"
 
 namespace technicalmachine {
 namespace pl {
 
-class Client;
+Species id_to_species (int id);
+int species_to_id (Species species);
+Move::Moves id_to_move (int id);
+int move_to_id (Move::Moves move);
 
-class Battle : public GenericBattle {
-	public:
-		Battle (std::string const & opponent, int battle_depth);
-		void handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments);
-		void update_active_print (std::vector <std::string> const & arguments);
-		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
-		uint8_t get_target () const;
-};
+// Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
 
-}	// namespace pl
-}	// namespace technicalmachine
-#endif	// POKEMON_LAB_BATTLE_H_
+} // namespace pl
+} // namespace technicalmachine
+#endif // POKEMON_LAB_CONVERSION_H_

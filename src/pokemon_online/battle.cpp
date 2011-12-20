@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "battle.h"
+#include "battle.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
-#include "connect.h"
-#include "conversion.h"
-#include "inmessage.h"
-#include "outmessage.h"
-#include "../pokemon.h"
-#include "../team.h"
+#include "connect.hpp"
+#include "conversion.hpp"
+#include "inmessage.hpp"
+#include "outmessage.hpp"
+#include "../pokemon.hpp"
+#include "../team.hpp"
 
 namespace technicalmachine {
 namespace po {

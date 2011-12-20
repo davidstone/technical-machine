@@ -1,4 +1,4 @@
-// Pokemon Lab Battle settings
+// Header for loading stats like Pokemon usages
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,25 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_BATTLE_SETTINGS_H_
-#define POKEMON_LAB_BATTLE_SETTINGS_H_
+#ifndef LOAD_STATS_H_
+#define LOAD_STATS_H_
 
-#include <cstdint>
-#include "../network/battle_settings.h"
+#include <vector>
+#include "species.hpp"
 
 namespace technicalmachine {
-namespace pl {
 
-class BattleSettings : public network::GenericBattleSettings {
-	private:
-		uint8_t generation;
-		uint32_t active_party_size;
-		uint32_t max_team_length;
-	public:
-		BattleSettings (uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length);
-		bool are_acceptable () const;
-};
+void overall_stats (std::vector<unsigned> & overall);
 
-}	// namespace pl
-}	// namespace technicalmachine
-#endif	// POKEMON_LAB_BATTLE_SETTINGS_H_
+void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]);
+
+void lead_stats (std::vector<float> & lead);
+
+void detailed_stats (int detailed [][7]);
+
+} // namespace technicalmachine
+#endif // LOAD_STATS_H_

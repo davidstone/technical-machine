@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "expectiminimax.h"
+#include "expectiminimax.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -25,19 +25,19 @@
 #include <vector>
 #include <boost/lexical_cast.hpp>
 
-#include "ability.h"
-#include "block.h"
-#include "endofturn.h"
-#include "evaluate.h"
-#include "move.h"
-#include "reorder_moves.h"
-#include "pokemon.h"
-#include "stat.h"
-#include "switch.h"
-#include "team.h"
-#include "transposition.h"
-#include "type.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "block.hpp"
+#include "endofturn.hpp"
+#include "evaluate.hpp"
+#include "move.hpp"
+#include "reorder_moves.hpp"
+#include "pokemon.hpp"
+#include "stat.hpp"
+#include "switch.hpp"
+#include "team.hpp"
+#include "transposition.hpp"
+#include "type.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 

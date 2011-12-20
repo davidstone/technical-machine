@@ -21,10 +21,10 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "load_stats.h"
-#include "pokemon.h"
-#include "team.h"
-#include "teampredictor.h"
+#include "load_stats.hpp"
+#include "pokemon.hpp"
+#include "team.hpp"
+#include "teampredictor.hpp"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>

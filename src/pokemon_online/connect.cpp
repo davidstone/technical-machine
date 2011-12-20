@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "connect.h"
+#include "connect.hpp"
 
 #include <cassert>
 #include <cstdint>
@@ -29,14 +29,14 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "battle.h"
-#include "battle_settings.h"
-#include "inmessage.h"
-#include "outmessage.h"
-#include "read_user_info.h"
+#include "battle.hpp"
+#include "battle_settings.hpp"
+#include "inmessage.hpp"
+#include "outmessage.hpp"
+#include "read_user_info.hpp"
 
 #include "../cryptography/get_md5.h"
-#include "../team.h"
+#include "../team.hpp"
 
 namespace technicalmachine {
 namespace po {

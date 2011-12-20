@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "reversedamage.h"
+#include "reversedamage.hpp"
 
 #include <cstdint>
 #include <vector>
 
-#include "damage.h"
-#include "item.h"
-#include "pokemon.h"
-#include "stat.h"
-#include "team.h"
-#include "weather.h"
-#include "unknown.h"
+#include "damage.hpp"
+#include "item.hpp"
+#include "pokemon.hpp"
+#include "stat.hpp"
+#include "team.hpp"
+#include "weather.hpp"
+#include "unknown.hpp"
 
 namespace technicalmachine {
 

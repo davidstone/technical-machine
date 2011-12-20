@@ -20,9 +20,9 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "pokemon_lab/connect.h"
-#include "pokemon_online/connect.h"
-#include "network/invalid_packet.h"
+#include "pokemon_lab/connect.hpp"
+#include "pokemon_online/connect.hpp"
+#include "network/invalid_packet.hpp"
 
 int main (int argc, char * argv []) {
 	using namespace technicalmachine;

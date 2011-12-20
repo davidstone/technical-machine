@@ -23,9 +23,9 @@
 #include <map>
 #include <string>
 
-#include "inmessage.h"
-#include "../network/connect.h"
-#include "../team.h"
+#include "inmessage.hpp"
+#include "../network/connect.hpp"
+#include "../team.hpp"
 
 namespace technicalmachine {
 namespace po {

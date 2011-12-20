@@ -24,8 +24,8 @@
 #include <vector>
 #include <utility>
 
-#include "inmessage.h"
-#include "../network/connect.h"
+#include "inmessage.hpp"
+#include "../network/connect.hpp"
 
 namespace technicalmachine {
 namespace pl {

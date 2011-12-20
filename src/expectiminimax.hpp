@@ -1,4 +1,4 @@
-// Convert to / from PO's format
+// Expectiminimax header
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,30 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_CONVERSION_H_
-#define POKEMON_ONLINE_CONVERSION_H_
+#ifndef EXPECTIMINIMAX_H_
+#define EXPECTIMINIMAX_H_
 
-#include <string>
-#include "../ability.h"
-#include "../item.h"
-#include "../stat.h"
-#include "../move.h"
-#include "../species.h"
+#include <cstdint>
+#include "move.hpp"
 
 namespace technicalmachine {
-namespace po {
 
-Species id_to_species (int id);
-int species_to_id (Species species);
-Ability::Abilities id_to_ability (int id);
-int ability_to_id (Ability::Abilities ability);
-Item::Items id_to_item (int id);
-int item_to_id (Item::Items item);
-Move::Moves id_to_move (int id);
-int move_to_id (Move::Moves move);
-Nature::Natures id_to_nature (int id);
-int nature_to_id (Nature::Natures nature);
+class Score;
+class Team;
+class Weather;
 
-} // namespace po
-} // namespace technicalmachine
-#endif // POKEMON_ONLINE_CONVERSION_H_
+Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, int64_t & min_score);
+
+// Called from the function that identifies transpositions
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn = false);
+
+}	// namespace technicalmachine
+#endif	// EXPECTIMINIMAX_H_

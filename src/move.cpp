@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move.h"
+#include "move.hpp"
 
 #include <cstdint>
 #include <map>
@@ -24,18 +24,18 @@
 #include <utility>
 #include <vector>
 
-#include "ability.h"
-#include "block.h"
-#include "damage.h"
-#include "evaluate.h"
-#include "heal.h"
-#include "pokemon.h"
-#include "stat.h"
-#include "status.h"
-#include "switch.h"
-#include "team.h"
-#include "type.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "block.hpp"
+#include "damage.hpp"
+#include "evaluate.hpp"
+#include "heal.hpp"
+#include "pokemon.hpp"
+#include "stat.hpp"
+#include "status.hpp"
+#include "switch.hpp"
+#include "team.hpp"
+#include "type.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 

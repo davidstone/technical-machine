@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "transposition.h"
+#include "transposition.hpp"
 
 #include <cstdint>
 
-#include "ability.h"
-#include "evaluate.h"
-#include "expectiminimax.h"
-#include "move.h"
-#include "pokemon.h"
-#include "team.h"
-#include "weather.h"
+#include "ability.hpp"
+#include "evaluate.hpp"
+#include "expectiminimax.hpp"
+#include "move.hpp"
+#include "pokemon.hpp"
+#include "team.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 

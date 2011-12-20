@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "inmessage.h"
+#include "inmessage.hpp"
 #include <cstdint>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-#include "connect.h"
-#include "../network/invalid_packet.h"
+#include "connect.hpp"
+#include "../network/invalid_packet.hpp"
 
 namespace technicalmachine {
 namespace po {

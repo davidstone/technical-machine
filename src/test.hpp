@@ -20,9 +20,9 @@
 #define TEST_H_
 
 #include <iostream>
-#include "team.h"
-#include "pokemon.h"
-#include "move.h"
+#include "team.hpp"
+#include "pokemon.hpp"
+#include "move.hpp"
 
 namespace technicalmachine {
 

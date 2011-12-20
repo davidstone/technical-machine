@@ -27,9 +27,9 @@
 #include <boost/asio.hpp>
 #include <boost/scoped_ptr.hpp>
 
-#include "../battle.h"
-#include "../evaluate.h"
-#include "../species.h"
+#include "../battle.hpp"
+#include "../evaluate.hpp"
+#include "../species.hpp"
 
 namespace technicalmachine {
 namespace network {

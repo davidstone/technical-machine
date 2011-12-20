@@ -16,25 +16,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "battle.h"
+#include "battle.hpp"
 
 #include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "endofturn.h"
-#include "expectiminimax.h"
-#include "gender.h"
-#include "move.h"
-#include "species.h"
-#include "switch.h"
-#include "team.h"
-#include "teampredictor.h"
-#include "weather.h"
+#include "endofturn.hpp"
+#include "expectiminimax.hpp"
+#include "gender.hpp"
+#include "move.hpp"
+#include "species.hpp"
+#include "switch.hpp"
+#include "team.hpp"
+#include "teampredictor.hpp"
+#include "weather.hpp"
 
-#include "network/connect.h"
-#include "network/outmessage.h"
+#include "network/connect.hpp"
+#include "network/outmessage.hpp"
 #include <iostream>
 
 namespace technicalmachine {

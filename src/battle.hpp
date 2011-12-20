@@ -22,11 +22,11 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "gender.h"
-#include "move.h"
-#include "species.h"
-#include "team.h"
-#include "weather.h"
+#include "gender.hpp"
+#include "move.hpp"
+#include "species.hpp"
+#include "team.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 namespace network {

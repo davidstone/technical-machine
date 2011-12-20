@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <cstdint>
-#include "battle_settings.h"
+#include "battle_settings.hpp"
 
 namespace technicalmachine {
 namespace pl {

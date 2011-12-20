@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "pokemon.h"
+#include "pokemon.hpp"
 
 #include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
 
-#include "ability.h"
-#include "active.h"
-#include "gender.h"
-#include "move.h"
-#include "species.h"
-#include "stat.h"
+#include "ability.hpp"
+#include "active.hpp"
+#include "gender.hpp"
+#include "move.hpp"
+#include "species.hpp"
+#include "stat.hpp"
 
 namespace technicalmachine {
 

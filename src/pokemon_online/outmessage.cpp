@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "outmessage.h"
+#include "outmessage.hpp"
 
 #include <cstdint>
 #include <string>
 #include <vector>
 #include <boost/asio.hpp>
 
-#include "battle_settings.h"
-#include "conversion.h"
-#include "../team.h"
-#include "../pokemon.h"
+#include "battle_settings.hpp"
+#include "conversion.hpp"
+#include "../team.hpp"
+#include "../pokemon.hpp"
 
 namespace technicalmachine {
 namespace po {

@@ -21,15 +21,15 @@
 
 #include <string>
 
-#include "ability.h"
-#include "active.h"
-#include "gender.h"
-#include "item.h"
-#include "move.h"
-#include "species.h"
-#include "stat.h"
-#include "status.h"
-#include "type.h"
+#include "ability.hpp"
+#include "active.hpp"
+#include "gender.hpp"
+#include "item.hpp"
+#include "move.hpp"
+#include "species.hpp"
+#include "stat.hpp"
+#include "status.hpp"
+#include "type.hpp"
 
 namespace technicalmachine {
 
