@@ -1,4 +1,4 @@
-// Convert string to hex representation
+// Sha-2 implementation header
 // Copyright (C) 2011 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
@@ -14,24 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "hex.hpp"
+#ifndef CRYPTOGRAPHY_SHA2_H_
+#define CRYPTOGRAPHY_SHA2_H_
+
 #include <string>
 
 namespace technicalmachine {
 namespace cryptography {
 
-std::string get_hex_string (std::string const & digest) {
-	static constexpr char hex_table [] = "0123456789ABCDEF";
-	std::string output;
-	output.resize (2 * digest.size ());
-	for (unsigned n = 0; n < digest.size (); ++n) {
-		unsigned const high = (static_cast <uint8_t const> (digest [n]) / 16);
-		unsigned const low = (static_cast <uint8_t const> (digest [n]) % 16);
-		output [n * 2] = hex_table [high];
-		output [n * 2 + 1] = hex_table [low];
-	}
-	return output;
-}
+std::string sha224 (std::string const & message);
+std::string sha256 (std::string const & message);
+std::string sha384 (std::string const & message);
+std::string sha512 (std::string const & message);
 
 }	// namespace cryptography
 }	// namespace technicalmachine
+#endif // CRYPTOGRAPHY_SHA2_H_
