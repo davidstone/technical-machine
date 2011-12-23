@@ -98,6 +98,24 @@ enum Action {
 	DRAW = 5
 };
 
+class BattlePokemon {
+	public:
+	//	uint16_t 
+		BattlePokemon (InMessage & msg) {
+		
+		}
+};
+
+class BattleTeam {
+	public:
+		std::vector <BattlePokemon> pokemon;
+		BattleTeam (InMessage & msg) {
+			for (unsigned n = 0; n != 6; ++n) {
+				pokemon.push_back (BattlePokemon (msg));
+			}
+		}
+};
+
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::LOG_IN: {
@@ -161,8 +179,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			if (user_id1 == 0) {
 				BattleConfiguration configuration (msg);
 				// The server then sends me my own team.
-				// I don't need to read in my entire team; I already know my own team.
-				// I will need to read this if I support Challenge Cup.
+				BattleTeam battle_team (msg);
+				while (msg.index != msg.buffer.size ())
+					std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 				handle_battle_begin (battle_id, get_user_name (user_id2));
 			}
 			else {
@@ -532,10 +551,11 @@ void Client::potentially_remove_player (uint32_t channel_id, uint32_t user_id) {
 }
 
 void Client::send_battle_challenge (std::string const & opponent) {
-	// Due to Pokemon Online's team registration feature, I only support one queued challenge at a time.
-	// This seems to be a better option than removing the ability to randomly select a team.
-	// I could support multiple challenges and mostly randomized teams, but that would be much more work.
-	// It would require using a queue instead of a map.
+	// Due to Pokemon Online's team registration feature, I only support one
+	// queued challenge at a time. This seems to be a better option than
+	// removing the ability to randomly select a team. I could support multiple
+	// challenges and mostly randomized teams, but that would be much more
+	// work. It would require using a queue instead of a map.
 	if (challenges.empty () and get_user_id (opponent)) {
 		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
 		add_pending_challenge (battle);

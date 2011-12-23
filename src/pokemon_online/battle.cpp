@@ -99,8 +99,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case SEND_OUT: {
 			bool const is_silent = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
-			Species const species = id_to_species (msg.read_short ());
+			uint16_t const species_id = msg.read_short ();
 			uint8_t const forme_id = msg.read_byte ();
+			Species const species = id_to_species (species_id, forme_id);
 			std::string const nickname = msg.read_string ();
 			uint8_t const hp_percent = msg.read_byte ();
 			uint32_t const full_status = msg.read_int ();
@@ -295,11 +296,18 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case DYNAMIC_INFO: {
-			std::cerr << "Dynamic Info\n";
-//			for (unsigned n = 0; n != 7; ++n)
-//				
-			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			int8_t boosts [7];
+			for (unsigned n = 0; n != 7; ++n)
+				boosts [n] = msg.read_byte ();
+			enum DynamicFlags {
+				Spikes=1,
+				SpikesLV2=2,
+				SpikesLV3=4,
+				StealthRock=8,
+				ToxicSpikes=16,
+				ToxicSpikesLV2=32
+			};
+			uint8_t const flags = msg.read_byte ();
 			break;
 		}
 		case DYNAMIC_STATS: {

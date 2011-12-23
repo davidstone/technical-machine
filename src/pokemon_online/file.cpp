@@ -48,58 +48,9 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 	std::string line;
 	getline (file, line);
 	getline (file, line);
-	Pokemon member (id_to_species (converter ("Num=\"", "\"", line)), team.size);
-	int forme = converter ("Forme=\"", "\"", line);
-	switch (member.name) {
-		case DEOXYS_A:
-			switch (forme) {
-				case 0:
-					member.name = DEOXYS_M;
-					break;
-				// case 1: is assumed
-				case 1:
-					break;
-				case 2:
-					member.name = DEOXYS_D;
-					break;
-				case 3:
-					member.name = DEOXYS_S;
-					break;
-			}
-			break;
-		case GIRATINA_A:
-			// Giratina-O has a forme value of 1
-			member.name = static_cast<Species> (member.name + forme);
-			break;
-		case ROTOM:
-			switch (forme) {
-				case 1:
-					member.name = ROTOM_C;
-					break;
-				case 2:
-					member.name = ROTOM_H;
-					break;
-				case 3:
-					member.name = ROTOM_F;
-					break;
-				case 4:
-					member.name = ROTOM_W;
-					break;
-				case 5:
-					member.name = ROTOM_S;
-					break;
-			}
-			break;
-		case SHAYMIN_L:
-			// Shaymin-S has a forme value of 1
-			member.name = static_cast<Species> (member.name + forme);
-			break;
-		case WORMADAM_P:
-			// Wormadam-P is 0, Wormadam-S is 1, Wormadam-T is 2
-			member.name = static_cast<Species> (member.name + forme);
-		default:
-			break;
-	}
+	int const species_id = converter ("Num=\"", "\"", line);
+	int const forme = converter ("Forme=\"", "\"", line);
+	Pokemon member (id_to_species (species_id, forme), team.size);
 
 	member.ability.name = id_to_ability (converter ("Ability=\"", "\"", line));
 

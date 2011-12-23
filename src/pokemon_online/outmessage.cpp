@@ -28,6 +28,8 @@
 #include "../team.hpp"
 #include "../pokemon.hpp"
 
+#include <iostream>
+
 namespace technicalmachine {
 namespace po {
 
@@ -57,10 +59,9 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	uint8_t const generation = 4;
 	write_byte (generation);
 	for (Pokemon const & pokemon : team.pokemon.set) {
-		uint16_t const species = species_to_id (pokemon.name);
-		write_short (species);
-		uint8_t const forme = 0;
-		write_byte (forme);
+		std::pair <uint16_t, uint8_t> const species = species_to_id (pokemon.name);
+		write_short (species.first);
+		write_byte (species.second);
 		write_string (pokemon.nickname);
 		uint16_t const item = item_to_id (pokemon.item.name);
 		write_short (item);
@@ -118,6 +119,7 @@ void OutMessage::write_move (uint32_t battle_id, uint8_t move_index, uint8_t tar
 	write_byte (Choice::ATTACK);
 	write_byte (move_index);
 	write_byte (target);
+	std::cerr << "move_index: " << static_cast <unsigned> (move_index) << "\n";
 }
 
 void OutMessage::write_switch (uint32_t battle_id, uint8_t slot) {

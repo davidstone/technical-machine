@@ -19,7 +19,9 @@
 #ifndef POKEMON_ONLINE_CONVERSION_H_
 #define POKEMON_ONLINE_CONVERSION_H_
 
+#include <cstdint>
 #include <string>
+#include <utility>
 #include "../ability.hpp"
 #include "../item.hpp"
 #include "../stat.hpp"
@@ -29,8 +31,8 @@
 namespace technicalmachine {
 namespace po {
 
-Species id_to_species (int id);
-int species_to_id (Species species);
+Species id_to_species (int id, int forme);
+std::pair <uint16_t, uint8_t> species_to_id (Species species);
 Ability::Abilities id_to_ability (int id);
 int ability_to_id (Ability::Abilities ability);
 Item::Items id_to_item (int id);

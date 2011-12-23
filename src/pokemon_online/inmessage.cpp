@@ -31,9 +31,10 @@ InMessage::InMessage (): network::InMessage::InMessage () {
 
 std::string InMessage::read_string () {
 	std::string data = "";
-	uint32_t number_of_utf16_characters = read_int () / 2;
+	uint32_t const bytes = read_int ();
 	// QString reports a size of 0xFFFFFFFF is the string is null. I'll just call it empty.
-	if (number_of_utf16_characters != 0xFFFFFFFF / 2) {
+	if (bytes != 0xFFFFFFFF) {
+		uint32_t const number_of_utf16_characters = bytes / 2;
 		for (uint32_t n = 0; n != number_of_utf16_characters; ++n)
 			data += static_cast <char> (read_short ());
 	}
@@ -58,6 +59,63 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * clien
 		throw technicalmachine::network::InvalidPacket ("Server sent message of length 0.");
 	}
 }
+
+#if 0
+void OutMessage::read_team (Team const & team) {
+	std::string const username = read_string ();
+	std::string const info = read_string ();
+	std::string const lose_message = read_string ();
+	std::string const win_message = read_string ();
+	uint16_t const avatar = read_short ();
+	std::string const tier = read_string ();
+	uint8_t const generation = read_byte ();
+	for (Pokemon const & pokemon : team.pokemon.set) {
+		uint16_t const species = species_to_id (pokemon.name);
+		read_short (species);
+		uint8_t const forme = 0;
+		read_byte (forme);
+		read_string (pokemon.nickname);
+		uint16_t const item = item_to_id (pokemon.item.name);
+		read_short (item);
+		uint16_t const ability = ability_to_id (pokemon.ability.name);
+		read_short (ability);
+		uint8_t const nature = nature_to_id (pokemon.nature.name);
+		read_byte (nature);
+		uint8_t const gender = pokemon.gender.to_simulator_int ();
+		read_byte (gender);
+		bool shiny = false;
+		read_byte (shiny);
+		read_byte (pokemon.happiness);
+		read_byte (pokemon.level);
+		unsigned number_of_moves = 0;
+		for (std::vector<Move>::const_iterator move = pokemon.move.set.begin(); move->name != Move::STRUGGLE; ++move) {
+			++number_of_moves;
+			uint32_t const move_id = move_to_id (move->name);
+			read_int (move_id);
+		}
+		while (number_of_moves < 4) {
+			read_int (0);
+			++number_of_moves;
+		}
+		read_byte (pokemon.hp.iv);
+		read_byte (pokemon.atk.iv);
+		read_byte (pokemon.def.iv);
+		read_byte (pokemon.spe.iv);
+		read_byte (pokemon.spa.iv);
+		read_byte (pokemon.spd.iv);
+
+		read_byte (pokemon.hp.ev * 4);
+		read_byte (pokemon.atk.ev * 4);
+		read_byte (pokemon.def.ev * 4);
+		read_byte (pokemon.spe.ev * 4);
+		read_byte (pokemon.spa.ev * 4);
+		read_byte (pokemon.spd.ev * 4);
+	}
+	for (unsigned n = team.pokemon.set.size (); n <= 6; ++n) {
+		read_short (0);
+	}
+}
+#endif
 
 }	// namespace po
 }	// namespace technicalmachine
