@@ -31,6 +31,7 @@
 
 #include "battle.hpp"
 #include "battle_settings.hpp"
+#include "conversion.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 #include "read_user_info.hpp"
@@ -100,9 +101,46 @@ enum Action {
 
 class BattlePokemon {
 	public:
-	//	uint16_t 
-		BattlePokemon (InMessage & msg) {
-		
+		std::pair <uint16_t, uint8_t> id;
+		std::string nickname;
+		uint16_t max_hp;
+		uint16_t hp;
+		Gender gender;
+		bool shiny;
+		uint8_t level;
+		Item item;
+		Ability ability;
+		uint8_t happiness;
+		std::vector <Move::Moves> moves;
+		BattlePokemon (InMessage & msg):
+			id (msg.read_short (), msg.read_byte ()),
+			nickname (msg.read_string ()),
+			max_hp (msg.read_short ()),
+			hp (msg.read_short ())
+			{
+			gender.from_simulator_int (msg.read_byte ());
+			shiny = msg.read_byte ();
+			level = msg.read_byte ();
+			item.name = id_to_item (msg.read_short ());
+			ability.name = id_to_ability (msg.read_short ());
+			happiness = msg.read_byte ();
+			for (unsigned n = 0; n != 5; ++n) {
+				// Something to do with stats. Probably boosts.
+				uint16_t const st = msg.read_short ();
+			}
+			for (unsigned n = 0; n != 4; ++n) {
+				moves.push_back (id_to_move (msg.read_short ()));
+				uint8_t const pp = msg.read_byte ();
+				uint8_t const total_pp = msg.read_byte ();
+				std::cerr << Move::to_string (moves.back ()) << '\n';
+			}
+			for (unsigned n = 0; n != 6; ++n) {
+				// PO uses a QList of int, so hopefully their int is always 32-bit.
+				uint32_t const ev = msg.read_int ();
+			}
+			for (unsigned n = 0; n != 6; ++n) {
+				uint32_t const dv = msg.read_int ();
+			}
 		}
 };
 
@@ -173,6 +211,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_BEGIN: {
+			std::cerr << "BATTLE_BEGIN\n";
 			uint32_t const battle_id = msg.read_int ();
 			uint32_t const user_id1 = msg.read_int ();
 			uint32_t const user_id2 = msg.read_int ();
