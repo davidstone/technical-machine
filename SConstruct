@@ -56,9 +56,9 @@ rdc_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp']
 rdc_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/file.cpp']
 rdc_libraries = ['boost_filesystem', 'boost_system']
 
-test_sources = ['ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
-test_sources += ['pokemon_lab/file.cpp']
-test_sources += ['pokemon_online/test.cpp', 'pokemon_online/conversion.cpp', 'pokemon_online/file.cpp']
+test_sources = ['test.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
+test_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp', 'pokemon_lab/test.cpp']
+test_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/file.cpp', 'pokemon_online/test.cpp']
 test_libraries = ['boost_filesystem', 'boost_system']
 
 ai_debug_sources = []
