@@ -12,37 +12,60 @@
 <h2>Prerequisites</h2>
 
 <ul>
-<li>gcc version 4.6.0 or newer, with c++ support. gcc version 4.5.x and older will not work, as Technical Machine makes use of some feature in C++11 that are not supported in older versions of gcc. Listed as gcc-c++ in Fedora 15 repositories.</li>
-<li>Boost. Listed as boost-devel in Fedora repositories.</li>
-<li>fltk is needed for some non-core features, such as the stand-alone team predictor. Listed as fltk-devel.</li>
+	<li>gcc version 4.6.0 or newer, with c++ support. gcc version 4.5.x and older will not work, as Technical Machine makes use of some feature in C++11 that are not supported in older versions of gcc. Listed as gcc-c++ in Fedora 15 repositories. Unfortunately, other compilers, such as clang and MSVC++, will not work because they do not support all of the C++11 features yet.</li>
+	<li>Boost. Listed as boost-devel in Fedora repositories.</li>
+	<li>fltk is needed for some non-core features, such as the stand-alone team predictor. Listed as fltk-devel.</li>
+	<li>Scons is used for the build process.</li>
 </ul>
 
 <h2>Building</h2>
 
 <ol>
-<li>cd path/to/technical-machine</li>
-<li>Create file.txt whenever you see file.txt.template.</li>
-<li>Edit file.txt to replace ? entries with appropriate data, such as username and password.</li>
-<li>run make. The default target (by simply typing make) will make the core program. Various stand-alone parts can be made by typing make target, where target is what you want to build. See makefile for exact target options. For an optimized build instead of a debug build, type make aio.</li>
-<li>Run the program. If you made the default program, this is achieved by typing ./ai [depth], where depth is an optional value to search between 1 and 2 (higher numbers are too slow). Leaving depth blank sets depth to 2. For debugging, it is recommended to run the program through valgrind by running it as valgrind ./ai with a recommended depth of 1, but 2 is acceptable as well. If you made the optimized build (make aio), then you can set the depth to a value 1-3. The depth can be updated by sending a PM to the bot (if you are a trusted user, set in trusted_users.txt) with the command !depth #.</li>
+	<li>cd path/to/technical-machine</li>
+	<li>Create settings/file.txt whenever you see settings/file.txt.template.</li>
+	<li>Edit file.txt to replace ? entries with appropriate data, such as username and password.</li>
+	<li>Run scons. The default target (by simply typing scons) will build all versions of all programs. Various stand-alone parts can be made by typing scons target, where target is what you want to build. See SConstruct for exact target options. In general, the optimized version of any target is made by appending an 'o' to the target name. For instance, if you want to just build the core AI, you type scons ai. If you want to only build the optimized version, you type scons aio.</li>
+	<li>Run the program with ./ai [depth] or ./aio [depth], where depth is an optional value that tells Technical Machine how many turns ahead to look. The depth can be updated by sending a PM to the bot (if you are a trusted user, set in trusted_users.txt) with the command !depth #.</li>
 </ol>
 
-<h2>List of commands</h2>
+<h3>List of build targets</h3>
 
 <dl>
-<dt>challenge</dt>
-<dd>Format is !challenge username</dd>
-<dt>depth</dt>
-<dd>Format is !depth #</dd>
-<dt>join</dt>
-<dd>Format is !join channel_name (with no '#' symbol)</dd>
-<dt>message</dt>
-<dd>Sends a message to a channel. Format is !message channel_name msg where channel is a one word channel name (with no '#' symbol) and message is any number of words. For channels that may contain spaces, format is !message "channel name" msg</dd>
-<dt>part</dt>
-<dd>Format is !part channel_name (with no '#' symbol)</dd>
-<dt>pm</dt>
-<dd>Format is !pm username message where username is a one word username. For usernames that may contain spaces, format is !pm "user name" message</dd>
-<dt>reload</dt>
-<dd>Reloads all relevant text files. This allows updating TM's set of canned responses, how often it uses those responses, and evaluation constants, for instance.</dd>
+	<dt>ai</dt>
+		<dd>The AI with debugging symbols. Accepts a single, optional command-line argument, the depth to search. Higher depth means stronger play, but it also takes longer to search. If no value is entered, 2 is assumed. Recommended at 1 or 2.</dd>
+	<dt>aio</dt>
+		<dd>The AI with maximum optimizations. Accepts a single command-line argument as above. Recommended at 1 through 3.</dd>
+	<dt>predict</dt>
+		<dd>GUI team predictor. Enter in Pokemon already seen and it shows its prediction of the remaining team. If a Pokemon is put into the first slot, it is assumed to be the lead Pokemon. If no Pokemon is put in that slot, no lead stats are used.</dd>
+	<dt>rdc</dt>
+		<dd>Reverse damage calculator. Experimental, slow, and buggy.</dd>
+	<dt>rdco</dt>
+		<dd>Optimized reverse damage calculator. See above.</dd>
+	<dt>test</dt>
+		<dd>Runs some tests to verify there are no regressions. Should be run before committing anything.</dd>
+</dl>
+
+<h2>Commands</h2>
+
+<p>Commands can be sent to Technical Machine on any server it is logged in to. It only accepts commands via PMs from trusted users (determined by reading settings/trusted_users.txt).</p>
+
+<h3>List of commands</h3>
+
+<dl>
+	<dt>!challenge</dt>
+		<dd>Format is !challenge username</dd>
+	<dt>!depth</dt>
+		<dd>Format is !depth #</dd>
+	<dt>!join</dt>
+		<dd>Format is !join channel_name (with no '#' symbol)</dd>
+	<dt>!message</dt>
+		<dd>Sends a message to a channel. Format is !message channel_name msg where channel is a one word channel name (with no '#' symbol) and message is any number of words. For channels that may contain spaces, format is !message "channel name" msg</dd>
+	<dt>!part</dt>
+		<dd>Format is !part channel_name (with no '#' symbol)</dd>
+	<dt>!pm</dt>
+		<dd>Format is !pm username message where username is a one word username. For usernames that may contain spaces, format is !pm "user name" message</dd>
+	<dt>!reload</dt>
+		<dd>Reloads all relevant text files. This allows updating TM's set of canned responses, how often it uses those responses, and evaluation constants, for instance.</dd>
+</dl>
 </body>
 </html>
