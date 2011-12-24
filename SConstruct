@@ -56,6 +56,11 @@ rdc_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp']
 rdc_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/file.cpp']
 rdc_libraries = ['boost_filesystem', 'boost_system']
 
+test_sources = ['ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
+test_sources += ['pokemon_lab/file.cpp']
+test_sources += ['pokemon_online/test.cpp', 'pokemon_online/conversion.cpp', 'pokemon_online/file.cpp']
+test_libraries = ['boost_filesystem', 'boost_system']
+
 ai_debug_sources = []
 for source in ai_sources:
 	ai_debug_sources += ['build/debug/' + source]
@@ -71,6 +76,9 @@ for source in rdc_sources:
 rdc_optimized_sources = []
 for source in rdc_sources:
 	rdc_optimized_sources += ['build/optimized/' + source]
+test_debug_sources = []
+for source in test_sources:
+	test_debug_sources += ['build/debug/' + source]
 
 ai_debug = debug.Clone(LIBS = ai_libraries)
 ai_debug.Program('ai', ai_debug_sources)
@@ -86,6 +94,9 @@ rdc_debug.Program('rdc', rdc_debug_sources)
 
 rdc_optimized = optimized.Clone(LIBS = rdc_libraries)
 rdc_optimized.Program('rdco', rdc_optimized_sources)
+
+test_debug = debug.Clone(LIBS = test_libraries)
+test_debug.Program('test', test_debug_sources)
 
 num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 3))
 Decider('MD5-timestamp')

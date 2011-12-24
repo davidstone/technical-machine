@@ -19,7 +19,8 @@
 #include "conversion.hpp"
 
 #include <cstdint>
-#include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include "../ability.hpp"
 #include "../item.hpp"
@@ -29,6 +30,109 @@
 
 namespace technicalmachine {
 namespace po {
+
+namespace {
+
+class InvalidFormeId : public std::runtime_error {
+	public:
+		explicit InvalidFormeId (std::string const & species):
+			std::runtime_error ("Invalid forme ID for " + species + ".\n")
+			{
+		}
+};
+
+int get_forme_offset (int id, int forme) {
+	constexpr int deoxys = 386;
+	constexpr int giratina = 487;
+	constexpr int rotom = 479;
+	constexpr int shaymin = 492;
+	constexpr int wormadam = 413;
+	switch (id) {
+		case deoxys:
+			switch (forme) {
+				case 0:
+					return 2;
+				case 1:
+					return 0;
+				case 2:
+					return 1;
+				case 3:
+					return 3;
+				default:
+					throw (InvalidFormeId ("Deoxys"));
+			}
+		case giratina:
+			switch (forme) {
+				case 0:
+				case 1:
+					return forme;
+				default:
+					throw (InvalidFormeId ("Giratina"));
+			}
+		case rotom:
+			switch (forme) {
+				case 0:
+					return 0;
+				case 1:
+					return 1;
+				case 2:
+					return 3;
+				case 3:
+					return 2;
+				case 4:
+					return 5;
+				case 5:
+					return 4;
+				default:
+					throw (InvalidFormeId ("Rotom"));
+			}
+		case shaymin:
+			switch (forme) {
+				case 0:
+				case 1:
+					return forme;
+				default:
+					throw (InvalidFormeId ("Shaymin"));
+			}
+		case wormadam:
+			switch (forme) {
+				case 0:
+				case 1:
+				case 2:
+					return forme;
+				default:
+					throw (InvalidFormeId ("Wormadam"));
+			}
+		default:
+			return 0;
+	}
+}
+	
+int get_forme (Species species) {
+	switch (species) {
+		case DEOXYS_A:
+		case GIRATINA_O:
+		case ROTOM_C:
+		case SHAYMIN_S:
+		case WORMADAM_S:
+			return 1;
+		case DEOXYS_D:
+		case ROTOM_H:
+		case WORMADAM_T:
+			return 2;
+		case DEOXYS_S:
+		case ROTOM_F:
+			return 3;
+		case ROTOM_W:
+			return 4;
+		case ROTOM_S:
+			return 5;
+		default:
+			return 0;
+	}
+}
+
+}	// anonymous namespace
 
 Species id_to_species (int id, int forme) {
 	constexpr static Species species_converter [] = {
@@ -133,36 +237,10 @@ Species id_to_species (int id, int forme) {
 		PHIONE, MANAPHY, DARKRAI, SHAYMIN_L,
 		ARCEUS
 	};
-	return species_converter [id];
+	Species const base_species = species_converter [id];
+	int const forme_offset = get_forme_offset (id, forme);
+	return static_cast <Species> (base_species + forme_offset);
 }
-
-namespace {
-
-int get_forme (Species species) {
-	switch (species) {
-		case DEOXYS_A:
-		case GIRATINA_O:
-		case ROTOM_C:
-		case SHAYMIN_L:
-		case WORMADAM_S:
-			return 1;
-		case DEOXYS_D:
-		case ROTOM_H:
-		case WORMADAM_T:
-			return 2;
-		case DEOXYS_S:
-		case ROTOM_F:
-			return 3;
-		case ROTOM_W:
-			return 4;
-		case ROTOM_S:
-			return 5;
-		default:
-			return 0;
-	}
-}
-
-}	// anonymous namespace
 
 std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 	constexpr static int species_converter [] = {
@@ -1312,7 +1390,6 @@ Item::Items id_to_item (int id) {
 		case 226:
 			return Item::TUNNEL_MAIL;
 		default:
-			std::cerr << "Unknown item read from Pokemon Online.\n";
 			return Item::END_ITEM;
 	}
 }
@@ -1773,7 +1850,6 @@ int item_to_id (Item::Items item) {
 		case Item::TUNNEL_MAIL:
 			return 226;
 		default:
-			std::cerr << "Attempted to send unsupported item to Pokemon Online. Sending no item instead.\n";
 			return 0;
 			/*
 			AGUAV_BERRY
@@ -2624,7 +2700,7 @@ int move_to_id (Move::Moves move) {
 		428,		// ZEN_HEADBUTT
 		0		// END_MOVE
 	};
-	return move_converter [move];
+	return move_converter [(move < Move::SWITCH0) ? move : move - 6];
 }
 
 Nature::Natures id_to_nature (int id) {

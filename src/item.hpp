@@ -125,6 +125,7 @@ class Item {
 		int get_berry_power () const;		// Returns 0 for non-berries
 		int get_fling_power () const;
 		bool blocks_trick () const;
+		static std::string to_string (Items name);
 		std::string get_name () const;
 		static Items name_from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);

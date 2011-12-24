@@ -68,6 +68,7 @@ class Ability {
 		bool blocks_poison (Weather const & weather) const;
 		bool blocks_sleep (Weather const & weather) const;
 		bool weakens_SE_attacks () const;
+		static std::string to_string (Abilities name);
 		std::string get_name () const;
 		static Abilities name_from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);

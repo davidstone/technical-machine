@@ -990,6 +990,17 @@ bool Nature::is_set () const {
 	return name != END_NATURE;
 }
 
+std::string Nature::to_string (Natures name) {
+	std::string const nature_converter [] = {
+		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
+		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
+		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
+		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
+		"Timid", "End_Nature"
+	};
+	return nature_converter [name];
+}
+
 Nature::Natures Nature::name_from_string (std::string const & str) {
 	static std::map <std::string, Natures> const converter {
 		{ "Adamant", ADAMANT },

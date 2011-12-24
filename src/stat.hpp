@@ -56,36 +56,37 @@ class Stat {
 class Nature {
 	public:
 		enum Natures {
-			HARDY,
-			LONELY,
-			BRAVE,
 			ADAMANT,
-			NAUGHTY,
-			BOLD,
-			DOCILE,
-			RELAXED,
-			IMPISH,
-			LAX,
-			TIMID,
-			HASTY,
-			SERIOUS,
-			JOLLY,
-			NAIVE,
-			MODEST,
-			MILD,
-			QUIET,
 			BASHFUL,
-			RASH,
+			BOLD,
+			BRAVE,
 			CALM,
-			GENTLE,
-			SASSY,
 			CAREFUL,
+			DOCILE,
+			GENTLE,
+			HARDY,
+			HASTY,
+			IMPISH,
+			JOLLY,
+			LAX,
+			LONELY,
+			MILD,
+			MODEST,
+			NAIVE,
+			NAUGHTY,
+			QUIET,
 			QUIRKY,
+			RASH,
+			RELAXED,
+			SASSY,
+			SERIOUS,
+			TIMID,
 			END_NATURE
 		};
 		Natures name;
 		Nature ();
 		bool is_set () const;
+		static std::string to_string (Natures name);
 		static Natures name_from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
 };

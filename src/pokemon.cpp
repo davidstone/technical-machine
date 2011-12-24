@@ -1130,7 +1130,7 @@ int8_t Pokemon::get_mass () const {
 	return get_mass [name];
 }
 
-std::string Pokemon::get_name() const {
+std::string Pokemon::to_string (Species name) {
 	static std::string const name_to_string [] = {
 		"Abomasnow",
 		"Abra",
@@ -1639,6 +1639,10 @@ std::string Pokemon::get_name() const {
 		"Zubat"
 	};
 	return name_to_string [name];
+}
+
+std::string Pokemon::get_name() const {
+	return to_string (name);
 }
 
 Species Pokemon::name_from_string (std::string const & str) {
