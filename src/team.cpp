@@ -25,9 +25,10 @@
 #include <string>
 #include <vector>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
 #include "gender.hpp"
@@ -244,7 +245,8 @@ void Team::output (std::string & output) const {
 	output += player + ":\n";
 	for (Pokemon const & member : pokemon.set) {
 		output += member.get_name();
-		output += " (" + boost::lexical_cast<std::string> (100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max)) + "% HP)";
+		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % (100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max)));
+		output += " (" + per_cent_hp + "% HP)";
 		output += " @ " + member.item.get_name ();
 		output += " ** " + member.nickname + '\n';
 		if (member.ability.is_set ())
