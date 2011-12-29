@@ -52,7 +52,7 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
 	std::string output2;		// Some lines have more than one data point.
 	std::string output1 = search (file, output2, "species=\"");
-	Pokemon member (Pokemon::name_from_string (output1), team.size);
+	Pokemon member (Pokemon::from_string (output1), team.size);
 	member.nickname = search (file, output2, "<nickname>");
 	if (member.nickname == "")
 		member.nickname = output1;
@@ -68,7 +68,7 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 		output1 = search (file, output2, "\">");
 		if ("No" == output1)
 			break;
-		Move::Moves const name = Move::name_from_string (output1);
+		Move::Moves const name = Move::from_string (output1);
 		int const pp_ups = boost::lexical_cast <int> (output2);
 		Move const move (name, pp_ups, size);
 		member.move.set.insert (member.move.set.begin() + n, move);

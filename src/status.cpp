@@ -88,7 +88,7 @@ void Status::poison_toxic (Team & user, Team & target, Weather const & weather) 
 	}
 }
 
-std::string Status::get_name () const {
+std::string Status::to_string () const {
 	static std::string const status_name [] = {
 		"No status",
 		"Burn",

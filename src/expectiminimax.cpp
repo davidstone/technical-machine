@@ -390,7 +390,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, int depth, Scor
 	for (ai.replacement = 0; ai.replacement != ai.pokemon.set.size(); ++ai.replacement) {
 		if (ai.at_replacement ().name != ai.pokemon->name or ai.pokemon.set.size() == 1) {
 			if (verbose or first_turn)
-				std::cout << indent + "Evaluating switching to " + ai.at_replacement().get_name() + "\n";
+				std::cout << indent + "Evaluating switching to " + ai.at_replacement().to_string() + "\n";
 			int64_t beta = Score::VICTORY + 1;
 			for (foe.replacement = 0; foe.replacement != foe.pokemon.set.size(); ++foe.replacement) {
 				if (foe.at_replacement ().name != foe.pokemon->name or foe.pokemon.set.size() == 1) {
@@ -450,7 +450,7 @@ int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather co
 	for (switcher.replacement = 0; switcher.replacement != switcher.pokemon.set.size(); ++switcher.replacement) {
 		if (switcher.at_replacement ().name != switcher.pokemon->name) {
 			if (first_turn)
-				std::cout << indent + "Evaluating bringing in " + switcher.at_replacement ().get_name () + "\n";
+				std::cout << indent + "Evaluating bringing in " + switcher.at_replacement ().to_string () + "\n";
 			int64_t value = switch_after_move_branch (switcher, other, weather, depth, score);
 			if (first_turn)
 				std::cout << indent + "Estimated score is " << value << '\n';
@@ -496,7 +496,7 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 
 void print_best_move (Team const & team, Move::Moves best_move, int depth, int64_t score) {
 	if (Move::is_switch (best_move))
-		std::cout << "Switch to " << team.pokemon.set [best_move - Move::SWITCH0].get_name ();
+		std::cout << "Switch to " << team.pokemon.set [best_move - Move::SWITCH0].to_string ();
 	else
 		std::cout << "Use " << Move::to_string (best_move);
 	if (depth == -1) {
@@ -518,9 +518,9 @@ void print_action (Team const & team, bool verbose, bool first_turn, std::string
 	if (verbose or first_turn) {
 		std::cout << indent + "Evaluating ";
 		if (team.pokemon->move->is_switch())
-			std::cout << "switching to " + team.pokemon.set [team.pokemon->move->name - Move::SWITCH0].get_name () + "\n";
+			std::cout << "switching to " + team.pokemon.set [team.pokemon->move->name - Move::SWITCH0].to_string () + "\n";
 		else
-			std::cout << team.pokemon->move->get_name() + "\n";
+			std::cout << team.pokemon->move->to_string() + "\n";
 	}
 }
 

@@ -64,8 +64,8 @@ class Pokemon {
 		bool find_move (Move::Moves name);
 		void normalize_hp ();
 		static std::string to_string (Species name);
-		std::string get_name () const;
-		static Species name_from_string (std::string const & str);
+		std::string to_string () const;
+		static Species from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
 		bool operator== (Pokemon const & other) const;
 		bool operator!= (Pokemon const & other) const;

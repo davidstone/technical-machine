@@ -87,7 +87,7 @@ class Nature {
 		Nature ();
 		bool is_set () const;
 		static std::string to_string (Natures name);
-		static Natures name_from_string (std::string const & str);
+		static Natures from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
 };
 

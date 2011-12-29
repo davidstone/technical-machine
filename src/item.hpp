@@ -126,8 +126,8 @@ class Item {
 		int get_fling_power () const;
 		bool blocks_trick () const;
 		static std::string to_string (Items name);
-		std::string get_name () const;
-		static Items name_from_string (std::string const & str);
+		std::string to_string () const;
+		static Items from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
 };
 

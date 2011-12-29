@@ -1001,7 +1001,7 @@ std::string Nature::to_string (Natures name) {
 	return nature_converter [name];
 }
 
-Nature::Natures Nature::name_from_string (std::string const & str) {
+Nature::Natures Nature::from_string (std::string const & str) {
 	static std::map <std::string, Natures> const converter {
 		{ "Adamant", ADAMANT },
 		{ "Bashful", BASHFUL },
@@ -1033,6 +1033,6 @@ Nature::Natures Nature::name_from_string (std::string const & str) {
 }
 
 void Nature::set_name_from_string (std::string const & str) {
-	name = name_from_string (str);
+	name = from_string (str);
 }
 } // namespace technicalmachine

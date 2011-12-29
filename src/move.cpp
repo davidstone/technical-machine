@@ -4341,7 +4341,7 @@ std::string Move::to_string (Moves name) {
 	return name_to_string [name];
 }
 
-std::string Move::get_name() const {
+std::string Move::to_string() const {
 	return to_string (name);
 }
 
@@ -4349,7 +4349,7 @@ void Move::get_magnitude (unsigned magnitude) {
 	variable.index = magnitude - 4;
 }
 
-Move::Moves Move::name_from_string (std::string const & str) {
+Move::Moves Move::from_string (std::string const & str) {
 	static std::map <std::string, Moves> const converter {
 		{ "Absorb", ABSORB },
 		{ "Acid", ACID },
@@ -4865,6 +4865,6 @@ Move::Moves Move::name_from_string (std::string const & str) {
 }
 
 void Move::set_name_from_string (std::string const & str) {
-	name = name_from_string (str);
+	name = from_string (str);
 }
 }

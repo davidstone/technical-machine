@@ -1641,11 +1641,11 @@ std::string Pokemon::to_string (Species name) {
 	return name_to_string [name];
 }
 
-std::string Pokemon::get_name() const {
+std::string Pokemon::to_string() const {
 	return to_string (name);
 }
 
-Species Pokemon::name_from_string (std::string const & str) {
+Species Pokemon::from_string (std::string const & str) {
 	static std::map <std::string, Species> const converter {
 		{ "Abomasnow", ABOMASNOW },
 		{ "Abra", ABRA },
@@ -2188,6 +2188,6 @@ Species Pokemon::name_from_string (std::string const & str) {
 }
 
 void Pokemon::set_name_from_string (std::string const & str) {
-	name = name_from_string (str);
+	name = from_string (str);
 }
 }

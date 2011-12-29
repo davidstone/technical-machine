@@ -50,7 +50,7 @@ void function (Fl_Widget * w, void * data) {
 	Team team (false, 6);
 	bool using_lead;
 	for (Fl_Input * in : d->input) {
-		Species const species = Pokemon::name_from_string (in->value());
+		Species const species = Pokemon::from_string (in->value());
 		if (in == d->input.front ()) {
 			using_lead = species != END_SPECIES;
 		}

@@ -549,11 +549,11 @@ std::string Item::to_string (Items name) {
 	return item_name [name];
 }
 
-std::string Item::get_name () const {
+std::string Item::to_string () const {
 	return to_string (name);
 }
 
-Item::Items Item::name_from_string (std::string const & str) {
+Item::Items Item::from_string (std::string const & str) {
 	static std::map <std::string, Items> const converter {
 		{ "No Item", NO_ITEM },
 		{ "Adamant Orb ", ADAMANT_ORB },
@@ -957,6 +957,6 @@ Item::Items Item::name_from_string (std::string const & str) {
 }
 
 void Item::set_name_from_string (std::string const & str) {
-	name = name_from_string (str);
+	name = from_string (str);
 }
 }

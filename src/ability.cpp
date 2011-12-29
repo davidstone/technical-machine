@@ -162,11 +162,11 @@ std::string Ability::to_string (Abilities name) {
 	return ability_name [name];
 }
 
-std::string Ability::get_name () const {
+std::string Ability::to_string () const {
 	return to_string (name);
 }
 
-Ability::Abilities Ability::name_from_string (std::string const & str) {
+Ability::Abilities Ability::from_string (std::string const & str) {
 	static std::map <std::string, Abilities> const converter {
 		{ "Adaptability", ADAPTABILITY },
 		{ "Aftermath", AFTERMATH },
@@ -296,6 +296,6 @@ Ability::Abilities Ability::name_from_string (std::string const & str) {
 }
 
 void Ability::set_name_from_string (std::string const & str) {
-	name = name_from_string (str);
+	name = from_string (str);
 }
 }

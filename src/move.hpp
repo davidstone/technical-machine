@@ -152,8 +152,8 @@ class Move {
 		Move (Moves move, int pp_ups, unsigned size);
 		uint64_t hash() const;
 		static std::string to_string (Moves name);
-		std::string get_name () const;			// Gets the string version of the name.
-		static Moves name_from_string (std::string const & str);
+		std::string to_string () const;
+		static Moves from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
 		bool operator== (Move const & other) const;
 		bool operator!= (Move const & other) const;

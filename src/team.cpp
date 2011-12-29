@@ -244,17 +244,17 @@ void Team::output (std::string & output) const {
 	output += " team:\n";
 	output += player + ":\n";
 	for (Pokemon const & member : pokemon.set) {
-		output += member.get_name();
+		output += member.to_string();
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % (100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max)));
 		output += " (" + per_cent_hp + "% HP)";
-		output += " @ " + member.item.get_name ();
+		output += " @ " + member.item.to_string ();
 		output += " ** " + member.nickname + '\n';
 		if (member.ability.is_set ())
-			output += "\tAbility: " + member.ability.get_name () + '\n';
+			output += "\tAbility: " + member.ability.to_string () + '\n';
 		if (member.status.name != Status::NO_STATUS)
-			output += "\tStatus: " + member.status.get_name () + "\n";
+			output += "\tStatus: " + member.status.to_string () + "\n";
 		for (std::vector<Move>::const_iterator move = member.move.set.begin(); move->name != Move::STRUGGLE; ++move)
-			output += "\t- " + move->get_name() + "\n";
+			output += "\t- " + move->to_string() + "\n";
 	}
 }
 
