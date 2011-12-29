@@ -17,6 +17,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import glob
+import shutil
 
 # I compile the same object file for multiple executables. I want all debug objects in one folder and all optimized objects in one folder, regardless of the final executable they are used for. I also do not want to worry about whether a particular object file is used in multiple executables. Therefore, I turn off the warning about multiple environments using the same objects (which is only raised if the end result for those objects is the same).
 SetOption('warn', 'no-duplicate-environment')
@@ -101,3 +103,17 @@ test_debug.Program('test', test_debug_sources)
 num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 3))
 Decider('MD5-timestamp')
 SetOption('num_jobs', num_cpu * 3 / 2)
+
+def copy_settings(target, source, env):
+	source_str = str(source [0])
+	target_str = str(target [0])
+	shutil.copy2(source_str, target_str)
+		
+def check_if_exists (dependency, target, prev_ni):
+	return not os.path.exists(str(target))
+
+settings_builder = Builder(action = copy_settings)
+settings_env = Environment(BUILDERS = {'Update' : settings_builder })
+for settings_file in Glob('settings/*.template'):
+	NoClean(settings_env.Update(settings_file))
+settings_env.Decider(check_if_exists)
