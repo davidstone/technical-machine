@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "item.hpp"
+#include "nature.hpp"
 #include "stat.hpp"
 
 namespace technicalmachine {

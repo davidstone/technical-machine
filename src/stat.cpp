@@ -23,6 +23,7 @@
 #include "ability.hpp"
 #include "item.hpp"
 #include "move.hpp"
+#include "nature.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
 #include "status.hpp"
@@ -982,57 +983,4 @@ uint8_t Stat::get_base_stat (Species name, Stats stat) {
 	return base_stat [name] [stat + 1];
 }
 
-Nature::Nature ():
-	name (END_NATURE) {
-}
-
-bool Nature::is_set () const {
-	return name != END_NATURE;
-}
-
-std::string Nature::to_string (Natures name) {
-	std::string const nature_converter [] = {
-		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
-		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
-		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
-		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
-		"Timid", "End_Nature"
-	};
-	return nature_converter [name];
-}
-
-Nature::Natures Nature::from_string (std::string const & str) {
-	static std::map <std::string, Natures> const converter {
-		{ "Adamant", ADAMANT },
-		{ "Bashful", BASHFUL },
-		{ "Bold", BOLD },
-		{ "Brave", BRAVE },
-		{ "Calm", CALM },
-		{ "Careful", CAREFUL },
-		{ "Docile", DOCILE },
-		{ "Gentle", GENTLE },
-		{ "Hardy", HARDY },
-		{ "Hasty", HASTY },
-		{ "Impish", IMPISH },
-		{ "Jolly", JOLLY },
-		{ "Lax", LAX },
-		{ "Lonely", LONELY },
-		{ "Mild", MILD },
-		{ "Modest", MODEST },
-		{ "Naive", NAIVE },
-		{ "Naughty", NAUGHTY },
-		{ "Quiet", QUIET },
-		{ "Quirky", QUIRKY },
-		{ "Rash", RASH },
-		{ "Relaxed", RELAXED },
-		{ "Sassy", SASSY },
-		{ "Serious", SERIOUS },
-		{ "Timid", TIMID }
-	};
-	return converter.find (str)->second;
-}
-
-void Nature::set_name_from_string (std::string const & str) {
-	name = from_string (str);
-}
 } // namespace technicalmachine

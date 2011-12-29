@@ -26,6 +26,7 @@
 #include "../item.hpp"
 #include "../stat.hpp"
 #include "../move.hpp"
+#include "../nature.hpp"
 #include "../species.hpp"
 
 namespace technicalmachine {

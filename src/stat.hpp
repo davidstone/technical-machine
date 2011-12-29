@@ -53,44 +53,6 @@ class Stat {
 		static uint8_t get_base_stat (Species name, Stats stat);
 };
 
-class Nature {
-	public:
-		enum Natures {
-			ADAMANT,
-			BASHFUL,
-			BOLD,
-			BRAVE,
-			CALM,
-			CAREFUL,
-			DOCILE,
-			GENTLE,
-			HARDY,
-			HASTY,
-			IMPISH,
-			JOLLY,
-			LAX,
-			LONELY,
-			MILD,
-			MODEST,
-			NAIVE,
-			NAUGHTY,
-			QUIET,
-			QUIRKY,
-			RASH,
-			RELAXED,
-			SASSY,
-			SERIOUS,
-			TIMID,
-			END_NATURE
-		};
-		Natures name;
-		Nature ();
-		bool is_set () const;
-		static std::string to_string (Natures name);
-		static Natures from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
-};
-
 class Pokemon;
 class Team;
 class Weather;

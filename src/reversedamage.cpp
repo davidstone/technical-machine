@@ -66,7 +66,7 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 	unsigned eb;		// Expert Belt: 6 / 5
 	unsigned tl;			// Tinted Lens (2)
 	unsigned rb;		// Resistance berries (2)
-	unsigned nonrandom;
+	unsigned nonrandom = 0;
 
 	for (Unknown const & unknown : hidden) {
 		attacker.pokemon->item.name = static_cast<Item::Items> (unknown.item);
