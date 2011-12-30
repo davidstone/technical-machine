@@ -29,20 +29,6 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-bool test_species () {
-	std::cerr << "Verifying correct species.\n";
-	bool passed = true;
-	for (Species species = static_cast <Species> (0); species != END_SPECIES; species = static_cast <Species> (species + 1)) {
-		int const id = species_to_id (species);
-		Species const result = id_to_species (id);
-		if (species != result) {
-			passed = false;
-			std::cerr << "\t" + Pokemon::to_string (species) + " is seen as " + Pokemon::to_string (result) + ".\n";
-		}
-	}
-	return passed;
-}
-
 bool test_ability () {
 	// Abilities are sent as strings, so no ID conversion required.
 	return true;
@@ -54,14 +40,14 @@ bool test_item () {
 }
 
 bool test_move () {
-	std::cerr << "Verifying correct move.\n";
+	std::cerr << "\tVerifying correct move.\n";
 	bool passed = true;
 	for (Move::Moves move = static_cast <Move::Moves> (0); move != Move::END_MOVE; move = static_cast <Move::Moves> (move + 1)) {
 		int const id = move_to_id (move);
 		Move::Moves const result = id_to_move (id);
 		if (move != result and !Move::is_switch (move)) {
 			passed = false;
-			std::cerr << "\t" + Move::to_string (move) + " is seen as " + Move::to_string (result) + ".\n";
+			std::cerr << "\t\t" + Move::to_string (move) + " is seen as " + Move::to_string (result) + ".\n";
 		}
 	}
 	return passed;
@@ -70,6 +56,20 @@ bool test_move () {
 bool test_nature () {
 	// Natures are sent the same as TM, so no conversion required.
 	return true;
+}
+
+bool test_species () {
+	std::cerr << "\tVerifying correct species.\n";
+	bool passed = true;
+	for (Species species = static_cast <Species> (0); species != END_SPECIES; species = static_cast <Species> (species + 1)) {
+		int const id = species_to_id (species);
+		Species const result = id_to_species (id);
+		if (species != result) {
+			passed = false;
+			std::cerr << "\t\t" + Pokemon::to_string (species) + " is seen as " + Pokemon::to_string (result) + ".\n";
+		}
+	}
+	return passed;
 }
 
 }	// anonymous namespace

@@ -2058,7 +2058,7 @@ Species Pokemon::from_string (std::string const & str) {
 		{ "Shaymin", SHAYMIN_L },
 		{ "Shaymin-L", SHAYMIN_L },
 		{ "Shaymin-l", SHAYMIN_L },
-		{ "Shaymin-S", SHAYMIN_L },
+		{ "Shaymin-S", SHAYMIN_S },
 		{ "Shaymin-s", SHAYMIN_S },
 		{ "Shedinja", SHEDINJA },
 		{ "Shelgon", SHELGON },
