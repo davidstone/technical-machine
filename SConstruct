@@ -24,12 +24,13 @@ import shutil
 SetOption('warn', 'no-duplicate-environment')
 
 
-warnings = ['-Wall', '-Wextra', '-pedantic', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unused']
-full_optimizations = ['-O3', '-march=native', '-funsafe-loop-optimizations']
+warnings = ['-Wall', '-Wextra', '-pedantic', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unused', '-Werror']
+full_optimizations = ['-O3', '-march=native', '-funsafe-loop-optimizations', '-flto']
 cc_flags = warnings
 c_flags = ['-std=c99']
 cxx_flags = ['-std=c++0x']
 link_flags = warnings + ['-fwhole-program']
+optimized_link_flags = ['-s'] + full_optimizations
 
 default = DefaultEnvironment(CCFLAGS = cc_flags, CFLAGS = c_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
 
@@ -38,7 +39,7 @@ debug.Append(CCFLAGS = ['-g'])
 debug.VariantDir('build/debug', 'src', duplicate = 0)
 
 optimized = default.Clone()
-optimized.Append(CCFLAGS = full_optimizations, CPPDEFINES = ['NDEBUG'])
+optimized.Append(CCFLAGS = full_optimizations, CPPDEFINES = ['NDEBUG'], LINKFLAGS = optimized_link_flags)
 optimized.VariantDir('build/optimized', 'src', duplicate = 0)
 
 ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
@@ -81,6 +82,9 @@ for source in rdc_sources:
 test_debug_sources = []
 for source in test_sources:
 	test_debug_sources += ['build/debug/' + source]
+test_optimized_sources = []
+for source in test_sources:
+	test_optimized_sources += ['build/optimized/' + source]
 
 ai_debug = debug.Clone(LIBS = ai_libraries)
 ai_debug.Program('ai', ai_debug_sources)
@@ -99,6 +103,9 @@ rdc_optimized.Program('rdco', rdc_optimized_sources)
 
 test_debug = debug.Clone(LIBS = test_libraries)
 test_debug.Program('test', test_debug_sources)
+
+test_optimized = optimized.Clone(LIBS=test_libraries)
+test_optimized.Program('testo', test_optimized_sources)
 
 num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 3))
 Decider('MD5-timestamp')
