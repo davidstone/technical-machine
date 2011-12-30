@@ -72,6 +72,11 @@ bool test_species () {
 	return passed;
 }
 
+bool test_file () {
+	bool passed = true;
+	return passed;
+}
+
 }	// anonymous namespace
 
 bool test () {
@@ -82,6 +87,7 @@ bool test () {
 	passed &= test_item ();
 	passed &= test_move ();
 	passed &= test_nature ();
+	passed &= test_file ();
 	return passed;
 }
 

@@ -96,7 +96,7 @@ class Team {
 		bool u_turning;
 		bool water_sport;
 	
-	//	Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
+		// Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
 		int8_t counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
 
 		// Number of turns remaining
@@ -107,20 +107,27 @@ class Team {
 		int8_t safeguard;
 		int8_t tailwind;
 
-		int8_t wish;		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish is not in play
-	
-		// The entry hazards represent those down on this team's side of the field. Using an entry hazard puts them down on the opponent's side of the field
-		// Number of layers of Spikes / Toxic Spikes
+		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish
+		// is not in play
+		int8_t wish;
+			
+		// The entry hazards represent those down on this team's side of the
+		// field. Using an entry hazard puts them down on the opponent's side
+		// of the field.
 		int8_t spikes;
 		int8_t toxic_spikes;
 		bool stealth_rock;
 
-		uint8_t replacement;		// If a Pokemon switches / faints, what Pokemon should replace it?
+		// If a Pokemon switches / faints, what Pokemon should replace it?
+		uint8_t replacement;
+
 		uint8_t called_move;
 		
-		uint8_t size;			// How big is the team?
+		// How big is the team?
+		uint8_t size;
 		
-		bool me;				// Is this my team?
+		// Is this my team?
+		bool me;
 	
 		Team (bool isme, unsigned size);
 		bool operator== (Team const & other) const;

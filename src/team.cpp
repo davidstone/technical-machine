@@ -101,7 +101,8 @@ Team::Team (bool isme, unsigned size) :
 	power_trick (false),
 	protect (false),
 	recharging (false),
-	replacing (true),	// Initial switch mechanics are the same as replacing a fainted Pokemon
+	// Initial switch mechanics are the same as replacing a fainted Pokemon
+	replacing (true),
 	roost (false),
 	shed_skin (false),
 	torment (false),
@@ -127,7 +128,7 @@ Team::Team (bool isme, unsigned size) :
 	replacement (0),
 	size (6),
 	me (isme)
-{
+	{
 	if (me) {
 		std::string line;
 		boost::filesystem::path team_file;
