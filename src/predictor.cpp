@@ -16,11 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <boost/lexical_cast.hpp>
-#include <fstream>
-#include <map>
 #include <string>
 #include <vector>
+
 #include "load_stats.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
@@ -31,8 +29,6 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Multiline_Output.H>
-
-#include <iostream>
 
 using namespace technicalmachine;
 
@@ -61,7 +57,6 @@ void function (Fl_Widget * w, void * data) {
 	}
 	
 	if (team.pokemon.set.size() > 0) {
-		std::cerr << "using_lead: " << using_lead << '\n';
 		predict_team (d->detailed, team, using_lead);
 		std::string out;
 		team.output (out);
