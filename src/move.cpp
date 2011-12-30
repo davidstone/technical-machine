@@ -29,6 +29,7 @@
 #include "damage.hpp"
 #include "evaluate.hpp"
 #include "heal.hpp"
+#include "move_power.hpp"
 #include "pokemon.hpp"
 #include "stat.hpp"
 #include "status.hpp"
@@ -291,7 +292,7 @@ namespace {
 unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage) {
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
-	movepower (user, target, weather);
+	move_power (user, target, weather);
 	unsigned damage = 0;
 	
 	if (user.pokemon->move->basepower != 0) {

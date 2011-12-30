@@ -42,24 +42,24 @@ optimized = default.Clone()
 optimized.Append(CCFLAGS = full_optimizations, CPPDEFINES = ['NDEBUG'], LINKFLAGS = optimized_link_flags)
 optimized.VariantDir('build/optimized', 'src', duplicate = 0)
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
 ai_sources += ['cryptography/hex.cpp', 'cryptography/md5.cpp', 'cryptography/rijndael.cpp', 'cryptography/sha2.cpp']
 ai_sources += ['network/connect.cpp', 'network/inmessage.cpp', 'network/outmessage.cpp']
 ai_sources += ['pokemon_lab/battle.cpp', 'pokemon_lab/battle_settings.cpp', 'pokemon_lab/connect.cpp', 'pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp', 'pokemon_lab/inmessage.cpp', 'pokemon_lab/outmessage.cpp']
 ai_sources += ['pokemon_online/battle.cpp', 'pokemon_online/battle_settings.cpp', 'pokemon_online/connect.cpp', 'pokemon_online/conversion.cpp', 'pokemon_online/file.cpp', 'pokemon_online/inmessage.cpp', 'pokemon_online/outmessage.cpp', 'pokemon_online/read_user_info.cpp']
 ai_libraries = ['pthread', 'boost_system', 'boost_filesystem']
 
-predict_sources = ['predictor.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'item.cpp', 'load_stats.cpp', 'heal.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'weather.cpp']
+predict_sources = ['predictor.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'item.cpp', 'load_stats.cpp', 'heal.cpp', 'move.cpp', 'move_power', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'weather.cpp']
 predict_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp']
 predict_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/file.cpp']
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
 
-rdc_sources = ['rdc.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'reversedamage.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'unknown.cpp', 'weather.cpp']
+rdc_sources = ['rdc.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reversedamage.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'unknown.cpp', 'weather.cpp']
 rdc_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp']
 rdc_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/file.cpp']
 rdc_libraries = ['boost_filesystem', 'boost_system']
 
-test_sources = ['test.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
+test_sources = ['test.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
 test_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/file.cpp', 'pokemon_lab/test.cpp']
 test_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/file.cpp', 'pokemon_online/test.cpp']
 test_libraries = ['boost_filesystem', 'boost_system']

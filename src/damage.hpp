@@ -27,8 +27,6 @@ class Pokemon;
 class Team;
 class Weather;
 
-void movepower (Team & attacker, Team const & defender, Weather const & weather);
-
 unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf);
 
 unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage);

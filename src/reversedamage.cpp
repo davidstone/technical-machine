@@ -23,6 +23,7 @@
 
 #include "damage.hpp"
 #include "item.hpp"
+#include "move_power.hpp"
 #include "pokemon.hpp"
 #include "stat.hpp"
 #include "team.hpp"
@@ -80,7 +81,7 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 			old_spe_ev = attacker.pokemon->spe.ev;
 		}
 		if (different_item) {
-			movepower (attacker, defender, weather);
+			move_power (attacker, defender, weather);
 			if (!variable)
 				known = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
 			old_item.name = attacker.pokemon->item.name;
