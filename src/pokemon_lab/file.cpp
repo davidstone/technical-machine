@@ -29,7 +29,7 @@ static void load_pokemon (Team & team, std::ifstream & file, unsigned size);
 static std::string search (std::ifstream & file, std::string & output2, std::string const & data);
 
 unsigned team_size (std::string const & name) {
-	std::ifstream file (name.c_str());
+	std::ifstream file (name);
 	std::string line;
 	unsigned size = 0;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
@@ -42,7 +42,7 @@ unsigned team_size (std::string const & name) {
 
 void load_team (Team & team, std::string const & name, unsigned size) {
 	team.size = team_size (name);
-	std::ifstream file (name.c_str());
+	std::ifstream file (name);
 	for (unsigned n = 0; n != team.size; ++n)
 		load_pokemon (team, file, size);
 	file.close ();
