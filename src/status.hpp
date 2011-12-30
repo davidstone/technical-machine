@@ -44,7 +44,9 @@ class Status {
 		Status ();
 		bool is_sleeping () const;
 		void clear ();
+		static std::string to_string (Statuses name);
 		std::string to_string () const;
+		static Statuses from_string (std::string const & str);
 		static void burn (Team & user, Team & target, Weather const & weather);
 		static void freeze (Pokemon const & user, Team & target, Weather const & weather);
 		static void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);

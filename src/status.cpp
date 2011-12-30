@@ -18,6 +18,7 @@
 
 #include "status.hpp"
 
+#include <map>
 #include <string>
 
 #include "ability.hpp"
@@ -88,7 +89,7 @@ void Status::poison_toxic (Team & user, Team & target, Weather const & weather) 
 	}
 }
 
-std::string Status::to_string () const {
+std::string Status::to_string (Statuses name) {
 	static std::string const status_name [] = {
 		"No status",
 		"Burn",
@@ -102,4 +103,24 @@ std::string Status::to_string () const {
 	};
 	return status_name [name];
 }
+
+std::string Status::to_string () const {
+	return to_string (name);
 }
+
+Status::Statuses Status::from_string (std::string const & str) {
+	static std::map <std::string, Statuses> const converter {
+		{ "No status", NO_STATUS },
+		{ "Burn", BURN },
+		{ "Freeze", FREEZE },
+		{ "Paralysis", PARALYSIS },
+		{ "Poison", POISON },
+		{ "Toxic", POISON_TOXIC },
+		{ "Rest", REST },
+		{ "Sleep", SLEEP },
+		{ "END_STATUS", END_STATUS }
+	};
+	return converter.find (str)->second;
+}
+
+}	// namespace technicalmachine

@@ -105,6 +105,21 @@ bool test_species () {
 	return passed;
 }
 
+bool test_status () {
+	std::cerr << "\tVerifying correct status.\n";
+	bool passed = true;
+	for (Status::Statuses status = static_cast <Status::Statuses> (0); status != Status::END_STATUS; status = static_cast <Status::Statuses> (status + 1)) {
+		std::string const name = Status::to_string (status);
+		Status::Statuses const result = Status::from_string (name);
+		if (status != result) {
+			passed = false;
+			std::cerr << "\t\t" << status << " is seen as " << result << ".\n";
+			std::cerr << "\t\tIntermediate string: " + name + "\n";
+		}
+	}
+	return passed;
+}
+
 bool string_conversion_tests () {
 	std::cerr << "Running string conversion tests.\n";
 	bool result = true;
@@ -113,6 +128,7 @@ bool string_conversion_tests () {
 	result &= test_move ();
 	result &= test_nature ();
 	result &= test_species ();
+	result &= test_status ();
 	return result;
 }
 
