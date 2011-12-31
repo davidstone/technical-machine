@@ -233,7 +233,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case FLINCH: {
 			std::cerr << "FLINCH\n";
-			active->at_replacement().move->variable.index = 1;
+			active->at_replacement().move().variable.index = 1;
 			break;
 		}
 		case RECOIL: {

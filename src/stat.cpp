@@ -49,158 +49,158 @@ unsigned hitpoints (Pokemon & member) {
 }
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {
-	if (attacker.pokemon->move->physical)
+	if (attacker.pokemon().move().physical)
 		calculate_attack (attacker, weather);
 	else
 		calculate_special_attack (attacker, weather);
 }
 
 void calculate_attack (Team & attacker, Weather const & weather) {
-	attacker.pokemon->atk.stat = (2 * attacker.pokemon->atk.base + attacker.pokemon->atk.iv + attacker.pokemon->atk.ev) * attacker.pokemon->level / 100 + 5;
+	attacker.pokemon().atk.stat = (2 * attacker.pokemon().atk.base + attacker.pokemon().atk.iv + attacker.pokemon().atk.ev) * attacker.pokemon().level / 100 + 5;
 
-	switch (attacker.pokemon->nature.name) {
+	switch (attacker.pokemon().nature.name) {
 		case Nature::ADAMANT:
 		case Nature::BRAVE:
 		case Nature::LONELY:
 		case Nature::NAUGHTY:
-			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 11 / 10;
+			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 11 / 10;
 			break;
 		case Nature::BOLD:
 		case Nature::CALM:
 		case Nature::MODEST:
 		case Nature::TIMID:
-			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 9 / 10;
+			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 9 / 10;
 			break;
 		default:
 			break;
 	}
 
 	if (attacker.stage [Stat::ATK] >= 0) // >= is better than == to check for a CH less
-		attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * (2 + attacker.stage [Stat::ATK]) / 2;
+		attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * (2 + attacker.stage [Stat::ATK]) / 2;
 	else {
 		if (!attacker.ch)
-			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 2 / (2 - attacker.stage [Stat::ATK]);
+			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 2 / (2 - attacker.stage [Stat::ATK]);
 	}
 
-	switch (attacker.pokemon->ability.name) {
+	switch (attacker.pokemon().ability.name) {
 		case Ability::FLOWER_GIFT:
 			if (weather.sun)
-				attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
+				attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
 			break;
 		case Ability::GUTS:
-			if (attacker.pokemon->status.name == Status::NO_STATUS)
-				attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
+			if (attacker.pokemon().status.name == Status::NO_STATUS)
+				attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
 			break;
 		case Ability::HUSTLE:
-			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
+			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
 			break;
 		case Ability::HUGE_POWER:
 		case Ability::PURE_POWER:
-			attacker.pokemon->atk.stat *= 2;
+			attacker.pokemon().atk.stat *= 2;
 			break;
 		case Ability::SLOW_START:
 			if (attacker.slow_start != 0)
-				attacker.pokemon->atk.stat /= 2;
+				attacker.pokemon().atk.stat /= 2;
 			break;
 		default:
 			break;
 	}
 
-	switch (attacker.pokemon->item.name) {
+	switch (attacker.pokemon().item.name) {
 		case Item::CHOICE_BAND:
-			attacker.pokemon->atk.stat = attacker.pokemon->atk.stat * 3 / 2;
+			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
 			break;
 		case Item::LIGHT_BALL:
-			if (attacker.pokemon->name == PIKACHU)
-				attacker.pokemon->atk.stat *= 2;
+			if (attacker.pokemon().name == PIKACHU)
+				attacker.pokemon().atk.stat *= 2;
 			break;
 		case Item::THICK_CLUB:
-			if (attacker.pokemon->name == CUBONE or attacker.pokemon->name == MAROWAK)
-				attacker.pokemon->atk.stat *= 2;
+			if (attacker.pokemon().name == CUBONE or attacker.pokemon().name == MAROWAK)
+				attacker.pokemon().atk.stat *= 2;
 			break;
 		default:
 			break;
 	}
 	
-	if (attacker.pokemon->atk.stat == 0)
-		attacker.pokemon->atk.stat = 1;
+	if (attacker.pokemon().atk.stat == 0)
+		attacker.pokemon().atk.stat = 1;
 }
 
 void calculate_special_attack (Team & attacker, Weather const &weather) {
-	attacker.pokemon->spa.stat = (2 * attacker.pokemon->spa.base + attacker.pokemon->spa.iv + attacker.pokemon->spa.ev) * attacker.pokemon->level / 100 + 5;
+	attacker.pokemon().spa.stat = (2 * attacker.pokemon().spa.base + attacker.pokemon().spa.iv + attacker.pokemon().spa.ev) * attacker.pokemon().level / 100 + 5;
 
-	switch (attacker.pokemon->nature.name) {
+	switch (attacker.pokemon().nature.name) {
 		case Nature::MILD:
 		case Nature::MODEST:
 		case Nature::QUIET:
 		case Nature::RASH:
-			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 11 / 10;
+			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 11 / 10;
 			break;
 		case Nature::ADAMANT:
 		case Nature::CAREFUL:
 		case Nature::IMPISH:
 		case Nature::JOLLY:
-			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 9 / 10;
+			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 9 / 10;
 			break;
 		default:
 			break;
 	}
 
 	if (attacker.stage [Stat::SPA] >= 0)	// >= is better than == to check for a CH less
-		attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * (2 + attacker.stage [Stat::SPA]) / 2;
+		attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * (2 + attacker.stage [Stat::SPA]) / 2;
 	else {
 		if (!attacker.ch)
-			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 2 / (2 - attacker.stage [Stat::SPA]);
+			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 2 / (2 - attacker.stage [Stat::SPA]);
 	}
 
-	if (attacker.pokemon->ability.name == Ability::SOLAR_POWER and weather.sun)
-		attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 3 / 2;
+	if (attacker.pokemon().ability.name == Ability::SOLAR_POWER and weather.sun)
+		attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 3 / 2;
 
-	switch (attacker.pokemon->item.name) {
+	switch (attacker.pokemon().item.name) {
 		case Item::SOUL_DEW:
-			if (attacker.pokemon->name != LATIAS and attacker.pokemon->name != LATIOS)
+			if (attacker.pokemon().name != LATIAS and attacker.pokemon().name != LATIOS)
 				break;
 		case Item::CHOICE_SPECS:
-			attacker.pokemon->spa.stat = attacker.pokemon->spa.stat * 3 / 2;
+			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 3 / 2;
 			break;
 		case Item::DEEPSEATOOTH:
-			if (attacker.pokemon->name == CLAMPERL)
-				attacker.pokemon->spa.stat *= 2;
+			if (attacker.pokemon().name == CLAMPERL)
+				attacker.pokemon().spa.stat *= 2;
 			break;
 		case Item::LIGHT_BALL:
-			if (attacker.pokemon->name == PIKACHU)
-				attacker.pokemon->spa.stat *= 2;
+			if (attacker.pokemon().name == PIKACHU)
+				attacker.pokemon().spa.stat *= 2;
 			break;
 		default:
 			break;
 	}
 
-	if (attacker.pokemon->spa.stat == 0)
-		attacker.pokemon->spa.stat = 1;
+	if (attacker.pokemon().spa.stat == 0)
+		attacker.pokemon().spa.stat = 1;
 }
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
-	if (attacker.pokemon->move->physical)
+	if (attacker.pokemon().move().physical)
 		calculate_defense (attacker, defender, weather);
 	else
 		calculate_special_defense (attacker, defender, weather);
 }
 
 void calculate_defense (Team const & attacker, Team & defender, Weather const & weather) {
-	defender.pokemon->def.stat = (2 * defender.pokemon->def.base + defender.pokemon->def.iv + defender.pokemon->def.ev) * defender.pokemon->level / 100 + 5;
+	defender.pokemon().def.stat = (2 * defender.pokemon().def.base + defender.pokemon().def.iv + defender.pokemon().def.ev) * defender.pokemon().level / 100 + 5;
 
-	switch (defender.pokemon->nature.name) {
+	switch (defender.pokemon().nature.name) {
 		case Nature::BOLD:
 		case Nature::IMPISH:
 		case Nature::LAX:
 		case Nature::RELAXED:
-			defender.pokemon->def.stat = defender.pokemon->def.stat * 11 / 10;
+			defender.pokemon().def.stat = defender.pokemon().def.stat * 11 / 10;
 			break;
 		case Nature::GENTLE:
 		case Nature::HASTY:
 		case Nature::LONELY:
 		case Nature::MILD:
-			defender.pokemon->def.stat = defender.pokemon->def.stat * 9 / 10;
+			defender.pokemon().def.stat = defender.pokemon().def.stat * 9 / 10;
 			break;
 		default:
 			break;
@@ -208,39 +208,39 @@ void calculate_defense (Team const & attacker, Team & defender, Weather const & 
 
 	if (defender.stage [Stat::DEF] > 0) {	// > is better than >= to check for a CH less
 		if (!attacker.ch)
-			defender.pokemon->def.stat = defender.pokemon->def.stat * (2 + defender.stage [Stat::DEF]) / 2;
+			defender.pokemon().def.stat = defender.pokemon().def.stat * (2 + defender.stage [Stat::DEF]) / 2;
 	}
 	else
-		defender.pokemon->def.stat = defender.pokemon->def.stat * 2 / (2 - defender.stage [Stat::DEF]);
+		defender.pokemon().def.stat = defender.pokemon().def.stat * 2 / (2 - defender.stage [Stat::DEF]);
 
-	if (defender.pokemon->ability.name == Ability::MARVEL_SCALE and defender.pokemon->status.name == Status::NO_STATUS)
-		defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
+	if (defender.pokemon().ability.name == Ability::MARVEL_SCALE and defender.pokemon().status.name == Status::NO_STATUS)
+		defender.pokemon().def.stat = defender.pokemon().def.stat * 3 / 2;
 	
-	if (defender.pokemon->item.name == Item::METAL_POWDER and defender.pokemon->name == DITTO)
-		defender.pokemon->def.stat = defender.pokemon->def.stat * 3 / 2;
+	if (defender.pokemon().item.name == Item::METAL_POWDER and defender.pokemon().name == DITTO)
+		defender.pokemon().def.stat = defender.pokemon().def.stat * 3 / 2;
 	
-	if (attacker.pokemon->move->is_self_KO ())
-		defender.pokemon->def.stat /= 2;
+	if (attacker.pokemon().move().is_self_KO ())
+		defender.pokemon().def.stat /= 2;
 
-	if (defender.pokemon->def.stat == 0)
-		defender.pokemon->def.stat = 1;
+	if (defender.pokemon().def.stat == 0)
+		defender.pokemon().def.stat = 1;
 }
 
 void calculate_special_defense (Team const & attacker, Team & defender, Weather const & weather) {
-	defender.pokemon->spd.stat = (2 * defender.pokemon->spd.base + defender.pokemon->spd.iv + defender.pokemon->spd.ev) * defender.pokemon->level / 100 + 5;
+	defender.pokemon().spd.stat = (2 * defender.pokemon().spd.base + defender.pokemon().spd.iv + defender.pokemon().spd.ev) * defender.pokemon().level / 100 + 5;
 
-	switch (defender.pokemon->nature.name) {
+	switch (defender.pokemon().nature.name) {
 		case Nature::CALM:
 		case Nature::CAREFUL:
 		case Nature::GENTLE:
 		case Nature::SASSY:
-			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 11 / 10;
+			defender.pokemon().spd.stat = defender.pokemon().spd.stat * 11 / 10;
 			break;
 		case Nature::LAX:
 		case Nature::NAIVE:
 		case Nature::NAUGHTY:
 		case Nature::RASH:
-			defender.pokemon->spd.stat = defender.pokemon->spd.stat * 9 / 10;
+			defender.pokemon().spd.stat = defender.pokemon().spd.stat * 9 / 10;
 			break;
 		default:
 			break;
@@ -248,95 +248,95 @@ void calculate_special_defense (Team const & attacker, Team & defender, Weather 
 
 	if (defender.stage [Stat::SPD] > 0) {	// > is better than >= to check for a CH less
 		if (!attacker.ch)
-			defender.pokemon->spd.stat = defender.pokemon->spd.stat * (2 + defender.stage [Stat::SPD]) / 2;
+			defender.pokemon().spd.stat = defender.pokemon().spd.stat * (2 + defender.stage [Stat::SPD]) / 2;
 	}
 	else
-		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 2 / (2 - defender.stage [Stat::SPD]);
+		defender.pokemon().spd.stat = defender.pokemon().spd.stat * 2 / (2 - defender.stage [Stat::SPD]);
 
-	if (defender.pokemon->ability.name == Ability::FLOWER_GIFT and weather.sun)
-		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
+	if (defender.pokemon().ability.name == Ability::FLOWER_GIFT and weather.sun)
+		defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
 	
-	switch (defender.pokemon->item.name) {
+	switch (defender.pokemon().item.name) {
 		case Item::DEEPSEASCALE:
-			if (defender.pokemon->name == CLAMPERL)
-				defender.pokemon->spd.stat *= 2;
+			if (defender.pokemon().name == CLAMPERL)
+				defender.pokemon().spd.stat *= 2;
 			break;
 		case Item::METAL_POWDER:
-			if (defender.pokemon->name == DITTO)
-				defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
+			if (defender.pokemon().name == DITTO)
+				defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
 			break;
 		case Item::SOUL_DEW:
-			if (defender.pokemon->name == LATIAS or defender.pokemon->name == LATIOS)
-				defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
+			if (defender.pokemon().name == LATIAS or defender.pokemon().name == LATIOS)
+				defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
 			break;
 		default:
 			break;
 	}
 	
 	if (is_type (defender, Type::ROCK) and weather.sand)
-		defender.pokemon->spd.stat = defender.pokemon->spd.stat * 3 / 2;
+		defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
 	
-	if (defender.pokemon->spd.stat == 0)
-		defender.pokemon->spd.stat = 1;
+	if (defender.pokemon().spd.stat == 0)
+		defender.pokemon().spd.stat = 1;
 }
 
 void calculate_speed (Team & team, Weather const & weather) {
-	team.pokemon->spe.stat = (2 * team.pokemon->spe.base + team.pokemon->spe.iv + team.pokemon->spe.ev) * team.pokemon->level / 100 + 5;
+	team.pokemon().spe.stat = (2 * team.pokemon().spe.base + team.pokemon().spe.iv + team.pokemon().spe.ev) * team.pokemon().level / 100 + 5;
 
-	switch (team.pokemon->nature.name) {
+	switch (team.pokemon().nature.name) {
 		case Nature::HASTY:
 		case Nature::JOLLY:
 		case Nature::NAIVE:
 		case Nature::TIMID:
-			team.pokemon->spe.stat = team.pokemon->spe.stat * 11 / 10;
+			team.pokemon().spe.stat = team.pokemon().spe.stat * 11 / 10;
 			break;
 		case Nature::BRAVE:
 		case Nature::QUIET:
 		case Nature::RELAXED:
 		case Nature::SASSY:
-			team.pokemon->spe.stat = team.pokemon->spe.stat * 9 / 10;
+			team.pokemon().spe.stat = team.pokemon().spe.stat * 9 / 10;
 			break;
 		default:
 			break;
 	}
 	
 	if (team.stage [Stat::SPE] >= 0)
-		team.pokemon->spe.stat = team.pokemon->spe.stat * (2 + team.stage [Stat::SPE]) / 2;
+		team.pokemon().spe.stat = team.pokemon().spe.stat * (2 + team.stage [Stat::SPE]) / 2;
 	else
-		team.pokemon->spe.stat = team.pokemon->spe.stat * 2 / (2 - team.stage [Stat::SPE]);
+		team.pokemon().spe.stat = team.pokemon().spe.stat * 2 / (2 - team.stage [Stat::SPE]);
 
-	switch (team.pokemon->ability.name) {
+	switch (team.pokemon().ability.name) {
 		case Ability::CHLOROPHYLL:
 			if (weather.sun)
-				team.pokemon->spe.stat *= 2;
+				team.pokemon().spe.stat *= 2;
 			break;
 		case Ability::SWIFT_SWIM:
 			if (weather.rain)
-				team.pokemon->spe.stat *= 2;
+				team.pokemon().spe.stat *= 2;
 			break;
 		case Ability::UNBURDEN:
 			if (false)
-				team.pokemon->spe.stat *= 2;
+				team.pokemon().spe.stat *= 2;
 			break;
 		case Ability::QUICK_FEET:
-			if (team.pokemon->status.name == Status::NO_STATUS)
-				team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
+			if (team.pokemon().status.name == Status::NO_STATUS)
+				team.pokemon().spe.stat = team.pokemon().spe.stat * 3 / 2;
 			break;
 		case Ability::SLOW_START:
 			if (team.slow_start != 0)
-				team.pokemon->spe.stat /= 2;
+				team.pokemon().spe.stat /= 2;
 			break;
 		default:
 			break;
 	}
 	
-	switch (team.pokemon->item.name) {
+	switch (team.pokemon().item.name) {
 		case Item::QUICK_POWDER:
-			if (team.pokemon->name == DITTO)
-				team.pokemon->spe.stat *= 2;
+			if (team.pokemon().name == DITTO)
+				team.pokemon().spe.stat *= 2;
 			break;
 		case Item::CHOICE_SCARF:
-			team.pokemon->spe.stat = team.pokemon->spe.stat * 3 / 2;
+			team.pokemon().spe.stat = team.pokemon().spe.stat * 3 / 2;
 			break;
 		case Item::MACHO_BRACE:
 		case Item::POWER_ANKLET:
@@ -345,44 +345,44 @@ void calculate_speed (Team & team, Weather const & weather) {
 		case Item::POWER_BRACER:
 		case Item::POWER_LENS:
 		case Item::POWER_WEIGHT:
-			team.pokemon->spe.stat /= 2;
+			team.pokemon().spe.stat /= 2;
 			break;
 		default:
 			break;
 	}
 		
-	if (team.pokemon->status.name == Status::PARALYSIS and team.pokemon->ability.name != Ability::QUICK_FEET)
-		team.pokemon->spe.stat /= 4;
+	if (team.pokemon().status.name == Status::PARALYSIS and team.pokemon().ability.name != Ability::QUICK_FEET)
+		team.pokemon().spe.stat /= 4;
 	
 	if (team.tailwind)
-		team.pokemon->spe.stat *= 2;
+		team.pokemon().spe.stat *= 2;
 
-	if (team.pokemon->spe.stat == 0)
-		team.pokemon->spe.stat = 1;
+	if (team.pokemon().spe.stat == 0)
+		team.pokemon().spe.stat = 1;
 }
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	if (team1.pokemon->move->priority == team2.pokemon->move->priority) {
+	if (team1.pokemon().move().priority == team2.pokemon().move().priority) {
 		calculate_speed (team1, weather);
 		calculate_speed (team2, weather);
 		faster_pokemon (team1, team2, weather, faster, slower);
 	}
-	else if (team1.pokemon->move->priority > team2.pokemon->move->priority) {
+	else if (team1.pokemon().move().priority > team2.pokemon().move().priority) {
 		faster = &team1;
 		slower = &team2;
 	}
-	else {				// (team2.pokemon->move->priority > team1.pokemon->move->priority)
+	else {				// (team2.pokemon().move().priority > team1.pokemon().move().priority)
 		faster = &team2;
 		slower = &team1;
 	}
 }
 
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	if (team1.pokemon->spe.stat > team2.pokemon->spe.stat) {
+	if (team1.pokemon().spe.stat > team2.pokemon().spe.stat) {
 		faster = &team1;
 		slower = &team2;
 	}
-	else if (team1.pokemon->spe.stat < team2.pokemon->spe.stat) {
+	else if (team1.pokemon().spe.stat < team2.pokemon().spe.stat) {
 		faster = &team2;
 		slower = &team1;
 	}
@@ -395,10 +395,10 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 }
 
 void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
-	if (user.pokemon->move->accuracy == -1 or user.pokemon->ability.name == Ability::NO_GUARD or target.pokemon->ability.name == Ability::NO_GUARD or user.lock_on)
+	if (user.pokemon().move().accuracy == -1 or user.pokemon().ability.name == Ability::NO_GUARD or target.pokemon().ability.name == Ability::NO_GUARD or user.lock_on)
 		user.chance_to_hit = 100;
 	else {
-		user.chance_to_hit = user.pokemon->move->accuracy;
+		user.chance_to_hit = user.pokemon().move().accuracy;
 		if (user.stage [Stat::ACC] >= 0)
 			user.chance_to_hit = user.chance_to_hit * (3 + user.stage [Stat::ACC]) / 3;
 		else
@@ -408,7 +408,7 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 		else
 			user.chance_to_hit = user.chance_to_hit * 3 / (3 + target.stage [Stat::EVA]);
 
-		switch (user.pokemon->item.name) {
+		switch (user.pokemon().item.name) {
 			case Item::WIDE_LENS:
 				user.chance_to_hit = user.chance_to_hit * 11 / 10;
 				break;
@@ -419,18 +419,18 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 			default:
 				break;
 		}
-		switch (user.pokemon->ability.name) {
+		switch (user.pokemon().ability.name) {
 			case Ability::COMPOUNDEYES:
 				user.chance_to_hit = user.chance_to_hit * 13 / 10;
 				break;
 			case Ability::HUSTLE:
-				if (user.pokemon->move->physical)
+				if (user.pokemon().move().physical)
 					user.chance_to_hit = user.chance_to_hit * 4 / 5;
 				break;
 			default:
 				break;
 		}
-		switch (target.pokemon->item.name) {
+		switch (target.pokemon().item.name) {
 			case Item::BRIGHTPOWDER:
 				user.chance_to_hit = user.chance_to_hit * 9 / 10;
 				break;
@@ -440,7 +440,7 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 			default:
 				break;
 		}
-		switch (target.pokemon->ability.name) {
+		switch (target.pokemon().ability.name) {
 			case Ability::SAND_VEIL:
 				if (weather.sand)
 					user.chance_to_hit = user.chance_to_hit * 4 / 5;

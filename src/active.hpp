@@ -33,18 +33,13 @@ class Active {
 		Active () :
 			index (0) {
 		}
-		T * operator-> () {
-			return &set [index];
-		}
-		T const * operator->() const {
-			return &set [index];
-		}
-		T & operator*() {
+		T & operator() () {
 			return set [index];
 		}
-		T const & operator*() const {
+		T const & operator() () const {
 			return set [index];
 		}
+
 		template <typename Name>
 		void add (Name name) {
 			set.insert (set.begin() + index, name);

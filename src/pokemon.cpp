@@ -69,8 +69,8 @@ uint64_t Pokemon::hash () const {
 }
 
 bool Pokemon::find_move (Move::Moves name) {
-	for (move.index = 0; move->name != Move::STRUGGLE; ++move.index) {
-		if (name == move->name)
+	for (move.index = 0; move().name != Move::STRUGGLE; ++move.index) {
+		if (name == move().name)
 			return true;
 	}
 	return false;

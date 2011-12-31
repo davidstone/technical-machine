@@ -41,7 +41,7 @@ bool Type::operator!= (Type other) const {
 
 bool is_type (Team const & team, Type type) {
 	if (type != Type::FLYING or !team.roost) {
-		for (Type const check : team.pokemon->type.types) {
+		for (Type const check : team.pokemon().type.types) {
 			if (check == type)
 				return true;
 		}
@@ -95,7 +95,7 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 }
 
 bool grounded (Team const & team, Weather const & weather) {
-	return (!is_type (team, Type::FLYING) and team.pokemon->ability.name != Ability::LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon->item.name == Item::IRON_BALL or team.ingrain;
+	return (!is_type (team, Type::FLYING) and team.pokemon().ability.name != Ability::LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon().item.name == Item::IRON_BALL or team.ingrain;
 }
 
 bool TypeCollection::is_immune_to_sandstorm () const {

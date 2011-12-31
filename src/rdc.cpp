@@ -52,11 +52,11 @@ int main () {
 
 	Pokemon member (INFERNAPE, foe.size);
 	foe.pokemon.set.push_back (member);
-	foe.pokemon->level = 100;
-	foe.pokemon->ability.name = Ability::BLAZE;
+	foe.pokemon().level = 100;
+	foe.pokemon().ability.name = Ability::BLAZE;
 
 	Move move (Move::CLOSE_COMBAT, 3, foe.size);
-	foe.pokemon->move.set.insert (foe.pokemon->move.set.begin(), move);
+	foe.pokemon().move.set.insert (foe.pokemon().move.set.begin(), move);
 	
 	std::cerr << "Loading Pokemon.\n";
 	foe.pokemon.set.back().load ();

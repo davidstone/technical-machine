@@ -50,7 +50,7 @@ int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 
 int64_t Score::score_team (Team const & team) const {
 	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
-	if (team.pokemon->hp.stat != 0) {
+	if (team.pokemon().hp.stat != 0) {
 		score += team.stage [Stat::ATK] * atk_stage;
 		score += team.stage [Stat::DEF] * def_stage;
 		score += team.stage [Stat::SPA] * spa_stage;
@@ -58,7 +58,7 @@ int64_t Score::score_team (Team const & team) const {
 		score += team.stage [Stat::SPE] * spe_stage;
 		score += team.magnet_rise * magnet_rise;
 		if (team.substitute)
-			score += substitute + substitute_hp * team.substitute / team.pokemon->hp.max;
+			score += substitute + substitute_hp * team.substitute / team.pokemon().hp.max;
 		if (team.aqua_ring)
 			score += aqua_ring;
 		if (team.curse)
@@ -69,8 +69,8 @@ int64_t Score::score_team (Team const & team) const {
 			score += ingrain;
 		if (team.leech_seed)
 			score += leech_seed;
-	//	if (other.pokemon->leech_seed)
-	//		score += 1 * other.pokemon->hp.max / member.hp.max;
+	//	if (other.pokemon().leech_seed)
+	//		score += 1 * other.pokemon().hp.max / member.hp.max;
 		if (team.loaf)
 			score += loaf;
 		if (team.nightmare)
@@ -81,7 +81,7 @@ int64_t Score::score_team (Team const & team) const {
 			score += trapped;
 		if (team.focus_energy)
 			score += focus_energy;
-		for (std::vector<Move>::const_iterator move = team.pokemon->move.set.begin(); move->name != Move::STRUGGLE; ++move) {
+		for (std::vector<Move>::const_iterator move = team.pokemon().move.set.begin(); move->name != Move::STRUGGLE; ++move) {
 			if (move->name == Move::BATON_PASS) {
 				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage);
 				if (team.substitute)
@@ -94,13 +94,13 @@ int64_t Score::score_team (Team const & team) const {
 }
 
 int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
-	int64_t score = team.stealth_rock * stealth_rock * static_cast <int> (get_effectiveness (Type::ROCK, *team.pokemon)) / 4;
+	int64_t score = team.stealth_rock * stealth_rock * static_cast <int> (get_effectiveness (Type::ROCK, team.pokemon())) / 4;
 	if (grounded (team, weather))
 		score += team.spikes * spikes + team.toxic_spikes * toxic_spikes;
-	if (team.pokemon->hp.stat != 0) {
+	if (team.pokemon().hp.stat != 0) {
 		score += members;
-		score += hp * team.pokemon->hp.stat / team.pokemon->hp.max;
-		switch (team.pokemon->status.name) {
+		score += hp * team.pokemon().hp.stat / team.pokemon().hp.max;
+		switch (team.pokemon().status.name) {
 			case Status::BURN:
 				score += burn;
 				break;
@@ -131,7 +131,7 @@ int64_t Score::score_pokemon (Team const & team, Team const & other, Weather con
 
 int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
-	for (Move const & move : team.pokemon->move.set) {
+	for (Move const & move : team.pokemon().move.set) {
 		if (move.physical)
 			score += other.reflect * reflect;
 		else if (move.basepower > 0)		// Non-damaging moves have physical == false

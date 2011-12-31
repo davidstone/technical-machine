@@ -52,13 +52,13 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	decrement (weather.sun);
 	decrement (weather.sand);
 	decrement (weather.rain);
-	if (!first.pokemon->ability.blocks_weather () and !last.pokemon->ability.blocks_weather ()) {
+	if (!first.pokemon().ability.blocks_weather () and !last.pokemon().ability.blocks_weather ()) {
 		endofturn3 (first, weather);
 		endofturn3 (last, weather);
 	}
 	decrement (weather.gravity);
-	endofturn5 (first, *last.pokemon, weather);
-	endofturn5 (last, *first.pokemon, weather);
+	endofturn5 (first, last.pokemon(), weather);
+	endofturn5 (last, first.pokemon(), weather);
 	endofturn6 (first, weather);
 	endofturn6 (last, weather);
 	endofturn7 (first);
@@ -94,33 +94,33 @@ void endofturn1 (Team & team) {
 
 void endofturn2 (Team & team) {
 	if (team.wish == 1)
-		heal (*team.pokemon, 2);
+		heal (team.pokemon(), 2);
 	decrement (team.wish);
 }
 
 void endofturn3 (Team & team, Weather const & weather) {
 	if (weather.hail and !is_type (team, Type::ICE))
-		heal (*team.pokemon, -16);
-	if (weather.sand and !team.pokemon->type.is_immune_to_sandstorm ())
-		heal (*team.pokemon, -16);
-	switch (team.pokemon->ability.name) {
+		heal (team.pokemon(), -16);
+	if (weather.sand and !team.pokemon().type.is_immune_to_sandstorm ())
+		heal (team.pokemon(), -16);
+	switch (team.pokemon().ability.name) {
 		case Ability::DRY_SKIN:
 			if (weather.rain)
-				heal (*team.pokemon, 8);
+				heal (team.pokemon(), 8);
 			else if (weather.sun)
-				heal (*team.pokemon, -8);
+				heal (team.pokemon(), -8);
 			break;
 		case Ability::HYDRATION:
 			if (weather.rain)
-				team.pokemon->status.clear ();
+				team.pokemon().status.clear ();
 			break;
 		case Ability::ICE_BODY:
 			if (weather.hail)
-				heal (*team.pokemon, 16);
+				heal (team.pokemon(), 16);
 			break;
 		case Ability::RAIN_DISH:
 			if (weather.rain)
-				heal (*team.pokemon, 16);
+				heal (team.pokemon(), 16);
 			break;
 		default:
 			break;
@@ -129,71 +129,71 @@ void endofturn3 (Team & team, Weather const & weather) {
 
 void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.ingrain)
-		heal (*team.pokemon, 16);
+		heal (team.pokemon(), 16);
 	if (team.aqua_ring)
-		heal (*team.pokemon, 16);
-	if (team.pokemon->ability.name == Ability::SPEED_BOOST)
+		heal (team.pokemon(), 16);
+	if (team.pokemon().ability.name == Ability::SPEED_BOOST)
 		Stat::boost (team.stage [Stat::SPE], 1);
 	else if (team.shed_skin)
-		team.pokemon->status.clear ();
-	switch (team.pokemon->item.name) {
+		team.pokemon().status.clear ();
+	switch (team.pokemon().item.name) {
 		case Item::LEFTOVERS:
-			heal (*team.pokemon, 16);
+			heal (team.pokemon(), 16);
 			break;
 		case Item::BLACK_SLUDGE:
 			if (is_type (team, Type::POISON))
-				heal (*team.pokemon, 16);
+				heal (team.pokemon(), 16);
 			else
-				heal (*team.pokemon, -16);
+				heal (team.pokemon(), -16);
 			break;
 		default:
 			break;
 	}
 	if (team.leech_seed) {
-		unsigned n = team.pokemon->hp.stat;
-		heal (*team.pokemon, -8);
+		unsigned n = team.pokemon().hp.stat;
+		heal (team.pokemon(), -8);
 		if (foe.hp.stat != 0) {
-			if (team.pokemon->ability.name == Ability::LIQUID_OOZE)
-				damage_side_effect (foe, n - team.pokemon->hp.stat);
+			if (team.pokemon().ability.name == Ability::LIQUID_OOZE)
+				damage_side_effect (foe, n - team.pokemon().hp.stat);
 			else {
-				foe.hp.stat += n - team.pokemon->hp.stat;
+				foe.hp.stat += n - team.pokemon().hp.stat;
 				if (foe.hp.stat > foe.hp.max)
 					foe.hp.stat = foe.hp.max;
 			}
 		}
 	}
-	switch (team.pokemon->status.name) {
+	switch (team.pokemon().status.name) {
 		case Status::BURN:
-			if (team.pokemon->ability.name == Ability::HEATPROOF)
-				heal (*team.pokemon, -16);
+			if (team.pokemon().ability.name == Ability::HEATPROOF)
+				heal (team.pokemon(), -16);
 			else
-				heal (*team.pokemon, -8);
+				heal (team.pokemon(), -8);
 			break;
 		case Status::POISON:
-			if (team.pokemon->ability.name == Ability::POISON_HEAL)
-				heal (*team.pokemon, 8);
+			if (team.pokemon().ability.name == Ability::POISON_HEAL)
+				heal (team.pokemon(), 8);
 			else
-				heal (*team.pokemon, -8);
+				heal (team.pokemon(), -8);
 			break;
 		case Status::POISON_TOXIC:
-			if (team.pokemon->ability.name == Ability::POISON_HEAL)
-				heal (*team.pokemon, 8);
+			if (team.pokemon().ability.name == Ability::POISON_HEAL)
+				heal (team.pokemon(), 8);
 			else {
 				if (team.toxic < 15)
 					++team.toxic;
-				heal (*team.pokemon, -16, team.toxic);
+				heal (team.pokemon(), -16, team.toxic);
 			}
 			break;
 		case Status::SLEEP:
 			if (team.nightmare)
-				heal (*team.pokemon, -4);
+				heal (team.pokemon(), -4);
 			if (foe.ability.name == Ability::BAD_DREAMS)
-				heal (*team.pokemon, -8);
+				heal (team.pokemon(), -8);
 			break;
 		default:
 			break;
 	}
-	switch (team.pokemon->item.name) {
+	switch (team.pokemon().item.name) {
 		case Item::FLAME_ORB:
 			Status::burn (team, team, weather);
 			break;
@@ -204,9 +204,9 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 			break;
 	}
 	if (team.curse)
-		heal (*team.pokemon, -4);
+		heal (team.pokemon(), -4);
 	if (team.partial_trap > 0) {
-		heal (*team.pokemon, -16);
+		heal (team.pokemon(), -16);
 		--team.partial_trap;				// No need to use decrement here, as I already know team.partial_trap > 0
 	}
 	
@@ -220,7 +220,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		decrement (team.uproar);
 	decrement (weather.uproar);
 
-	for (Move & move : team.pokemon->move.set)
+	for (Move & move : team.pokemon().move.set)
 		decrement (move.disable);
 	decrement (team.encore);
 	decrement (team.taunt);
@@ -228,23 +228,23 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	decrement (team.heal_block);
 	decrement (team.embargo);
 	if (team.yawn == 1)
-		Status::sleep (*team.pokemon, *team.pokemon, weather);
+		Status::sleep (team.pokemon(), team.pokemon(), weather);
 	decrement (team.yawn);
-	if (team.pokemon->item.name == Item::STICKY_BARB)
-		heal (*team.pokemon, -8);
+	if (team.pokemon().item.name == Item::STICKY_BARB)
+		heal (team.pokemon(), -8);
 }
 
 void endofturn6 (Team & target, Weather const & weather) {		// Doom Desire / Future Sight
 /*	if (target.counter == 1) {
 		defense (target.ddfs, *target.pokemon, weather);
-		target.pokemon->hp.stat -= damagecalculator (target.ddfs, target, weather);
+		target.pokemon().hp.stat -= damagecalculator (target.ddfs, target, weather);
 	}
 	decrement (target.counter);*/
 }
 
 void endofturn7 (Team & team) {
 	if (team.perish_song == 1)
-		team.pokemon->hp.stat = 0;
+		team.pokemon().hp.stat = 0;
 	decrement (team.perish_song);
 }
 

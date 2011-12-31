@@ -171,7 +171,7 @@ void open_directory_and_add_files (boost::filesystem::path const & team_file, st
 }
 
 bool Team::is_switching_to_self () const {
-	return pokemon.set [pokemon->move->name - Move::SWITCH0].name == pokemon->name;
+	return pokemon.set [pokemon().move().name - Move::SWITCH0].name == pokemon().name;
 }
 
 bool Team::seen_pokemon (Species name) {
@@ -227,7 +227,7 @@ bool Team::operator== (Team const & other) const {
 		if (stage [stat] != other.stage [stat])
 			return false;
 	}
-	return pokemon->name == other.pokemon->name and vanish == other.vanish and bide == other.bide and confused == other.confused and embargo == other.embargo and encore == other.encore and heal_block == other.heal_block and magnet_rise == other.magnet_rise and partial_trap == other.partial_trap and perish_song == other.perish_song and rampage == other.rampage and slow_start == other.slow_start and stockpile == other.stockpile and taunt == other.taunt and toxic == other.toxic and uproar == other.yawn and aqua_ring == other.aqua_ring and attract == other.attract and charge == other.charge and curse == other.curse and defense_curl == other.defense_curl and destiny_bond == other.destiny_bond and ff == other.ff and focus_energy == other.focus_energy and identified == other.identified and imprison == other.imprison and ingrain == other.ingrain and leech_seed == other.leech_seed and loaf == other.loaf and lock_on == other.lock_on and minimize == other.minimize and mud_sport == other.mud_sport and nightmare == other.nightmare and torment == other.torment and trapped == other.trapped and water_sport == other.water_sport and counter == other.counter and light_screen == other.light_screen and lucky_chant == other.lucky_chant and mist == other.mist and reflect == other.reflect and safeguard == other.safeguard and tailwind == other.tailwind and wish == other.wish and spikes == other.spikes and toxic_spikes == other.toxic_spikes and stealth_rock == other.stealth_rock and me == other.me;
+	return pokemon().name == other.pokemon().name and vanish == other.vanish and bide == other.bide and confused == other.confused and embargo == other.embargo and encore == other.encore and heal_block == other.heal_block and magnet_rise == other.magnet_rise and partial_trap == other.partial_trap and perish_song == other.perish_song and rampage == other.rampage and slow_start == other.slow_start and stockpile == other.stockpile and taunt == other.taunt and toxic == other.toxic and uproar == other.yawn and aqua_ring == other.aqua_ring and attract == other.attract and charge == other.charge and curse == other.curse and defense_curl == other.defense_curl and destiny_bond == other.destiny_bond and ff == other.ff and focus_energy == other.focus_energy and identified == other.identified and imprison == other.imprison and ingrain == other.ingrain and leech_seed == other.leech_seed and loaf == other.loaf and lock_on == other.lock_on and minimize == other.minimize and mud_sport == other.mud_sport and nightmare == other.nightmare and torment == other.torment and trapped == other.trapped and water_sport == other.water_sport and counter == other.counter and light_screen == other.light_screen and lucky_chant == other.lucky_chant and mist == other.mist and reflect == other.reflect and safeguard == other.safeguard and tailwind == other.tailwind and wish == other.wish and spikes == other.spikes and toxic_spikes == other.toxic_spikes and stealth_rock == other.stealth_rock and me == other.me;
 }
 
 Pokemon& Team::at_replacement () {

@@ -48,16 +48,16 @@ void Status::clear () {
 }
 
 void Status::burn (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon->status.name == NO_STATUS and (user.pokemon->ability.name == Ability::MOLD_BREAKER or !target.pokemon->ability.blocks_burn (weather)) and !is_type (target, Type::FIRE)) {
-		target.pokemon->status.name = BURN;
-		if (target.pokemon->ability.name == Ability::SYNCHRONIZE)
+	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_burn (weather)) and !is_type (target, Type::FIRE)) {
+		target.pokemon().status.name = BURN;
+		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
 			burn (target, user, weather);
 	}
 }
 
 void Status::freeze (Pokemon const & user, Team & target, Weather const & weather) {
-	if (target.pokemon->status.name == NO_STATUS and (user.ability.name == Ability::MOLD_BREAKER or !target.pokemon->ability.blocks_freeze ()) and !weather.sun and !is_type (target, Type::ICE))
-		target.pokemon->status.name = FREEZE;
+	if (target.pokemon().status.name == NO_STATUS and (user.ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_freeze ()) and !weather.sun and !is_type (target, Type::ICE))
+		target.pokemon().status.name = FREEZE;
 }
 
 void Status::paralyze (Pokemon & user, Pokemon & target, Weather const & weather) {
@@ -74,17 +74,17 @@ void Status::sleep (Pokemon const & user, Pokemon & target, Weather const & weat
 }
 
 void Status::poison (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon->status.name == NO_STATUS and (user.pokemon->ability.name == Ability::MOLD_BREAKER or target.pokemon->ability.blocks_poison (weather)) and !is_type (target, Type::POISON) and !is_type (target, Type::STEEL)) {
-		target.pokemon->status.name = POISON;
-		if (target.pokemon->ability.name == Ability::SYNCHRONIZE)
+	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or target.pokemon().ability.blocks_poison (weather)) and !is_type (target, Type::POISON) and !is_type (target, Type::STEEL)) {
+		target.pokemon().status.name = POISON;
+		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
 			poison (target, user, weather);
 	}
 }
 
 void Status::poison_toxic (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon->status.name == NO_STATUS and (user.pokemon->ability.name == Ability::MOLD_BREAKER or target.pokemon->ability.blocks_poison (weather)) and !is_type (target, Type::POISON) and !is_type (target, Type::STEEL)) {
-		target.pokemon->status.name = POISON_TOXIC;
-		if (target.pokemon->ability.name == Ability::SYNCHRONIZE)
+	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or target.pokemon().ability.blocks_poison (weather)) and !is_type (target, Type::POISON) and !is_type (target, Type::STEEL)) {
+		target.pokemon().status.name = POISON_TOXIC;
+		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
 			poison (target, user, weather);
 	}
 }

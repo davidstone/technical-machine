@@ -87,14 +87,14 @@ void reset_variables (Team & team) {
 	team.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	team.yawn = 0;
 
-	for (Move & move : team.pokemon->move.set) {
+	for (Move & move : team.pokemon().move.set) {
 		move.disable = 0;
 		move.times_used = 0;
 	}
 }
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
-	if (switcher.pokemon->hp.stat == 0) {
+	if (switcher.pokemon().hp.stat == 0) {
 		reset_variables (switcher);
 		// First, remove the active Pokemon because it has 0 HP.
 		switcher.pokemon.set.erase (switcher.pokemon.set.begin() + switcher.pokemon.index);
@@ -132,8 +132,8 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	}
 	else {
 		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (switcher.pokemon->ability.name == Ability::NATURAL_CURE)
-			switcher.pokemon->status.clear ();
+		if (switcher.pokemon().ability.name == Ability::NATURAL_CURE)
+			switcher.pokemon().status.clear ();
 		
 		reset_variables (switcher);
 	
@@ -143,12 +143,12 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	
 	entry_hazards (switcher, weather);
 
-	if (switcher.pokemon->hp.stat > 0)
+	if (switcher.pokemon().hp.stat > 0)
 		activate_ability (switcher, other, weather);
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {
-	if (grounded (switcher, weather) and switcher.pokemon->ability.name != Ability::MAGIC_GUARD) {
+	if (grounded (switcher, weather) and switcher.pokemon().ability.name != Ability::MAGIC_GUARD) {
 		if (switcher.toxic_spikes != 0) {
 			if (is_type (switcher, Type::POISON))
 				switcher.toxic_spikes = 0;
@@ -158,25 +158,25 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 				Status::poison_toxic (switcher, switcher, weather);
 		}
 		if (switcher.spikes != 0)
-			heal (*switcher.pokemon, -16, switcher.spikes + 1);
+			heal (switcher.pokemon(), -16, switcher.spikes + 1);
 	}
 	// get_effectiveness () outputs a value between 0 and 16, with higher numbers being more effective. 4 * effective Stealth Rock does 16 / 32 damage.
 	if (switcher.stealth_rock)
-		heal (*switcher.pokemon, -32, get_effectiveness (Type::ROCK, *switcher.pokemon));
+		heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
 }
 
 void activate_ability (Team & switcher, Team & other, Weather & weather) {
 	// Activate abilities upon switching in
 
 	switcher.slow_start = 0;
-	switch (switcher.pokemon->ability.name) {
+	switch (switcher.pokemon().ability.name) {
 		case Ability::SLOW_START:
 			switcher.slow_start = 5;
 			break;
 		case Ability::DOWNLOAD:
 			calculate_defense (switcher, other, weather);
 			calculate_special_defense (switcher, other, weather);
-			if (other.pokemon->def.stat >= other.pokemon->spd.stat)
+			if (other.pokemon().def.stat >= other.pokemon().spd.stat)
 				Stat::boost (switcher.stage [Stat::SPA], 1);
 			else
 				Stat::boost (switcher.stage [Stat::ATK], 1);

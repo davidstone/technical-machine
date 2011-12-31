@@ -81,7 +81,7 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 			msg.write_switch (battle_id, switch_slot (move));
 		else {
 			uint8_t move_index = 0;
-			while (ai.pokemon->move.set [move_index].name != move)
+			while (ai.pokemon().move.set [move_index].name != move)
 				++move_index;
 			msg.write_move (battle_id, move_index, get_target ());
 		}
@@ -129,8 +129,8 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 		Move move (move_name, 3, inactive->size);
 		active->at_replacement().move.add (move);
 	}
-	active->at_replacement().move->variable.index = 0;
-	if (active->at_replacement().move->basepower != 0)
+	active->at_replacement().move().variable.index = 0;
+	if (active->at_replacement().move().basepower != 0)
 		move_damage = true;
 }
 
@@ -161,14 +161,14 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
-	if (inactive->at_replacement().move->is_phaze ()) {
-		inactive->at_replacement().move->variable.index = 0;
-		while (active->pokemon.set [inactive->at_replacement().move->variable.index].name != species)
-			++inactive->at_replacement().move->variable.index;
+	if (inactive->at_replacement().move().is_phaze ()) {
+		inactive->at_replacement().move().variable.index = 0;
+		while (active->pokemon.set [inactive->at_replacement().move().variable.index].name != species)
+			++inactive->at_replacement().move().variable.index;
 	}
 	else if (!active->moved) {
 		active->pokemon.set [replacement].move.index = 0;
-		while (active->pokemon.set [replacement].move->name != Move::SWITCH0)
+		while (active->pokemon.set [replacement].move().name != Move::SWITCH0)
 			++active->pokemon.set [replacement].move.index;
 		active->pokemon.set [replacement].move.index += active->replacement;		
 	}
@@ -176,8 +176,8 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
 	if (move_damage) {
-		unsigned effectiveness = get_effectiveness (active->at_replacement().move->type, inactive->at_replacement ());
-		if ((effectiveness > 0) and (active->at_replacement().move->type != Type::GROUND or grounded (*inactive, weather))) {
+		unsigned effectiveness = get_effectiveness (active->at_replacement().move().type, inactive->at_replacement ());
+		if ((effectiveness > 0) and (active->at_replacement().move().type != Type::GROUND or grounded (*inactive, weather))) {
 			inactive->damage = inactive->at_replacement().hp.max * change_in_health / denominator;
 			if (static_cast <unsigned> (inactive->damage) > inactive->at_replacement().hp.stat)
 				inactive->damage = inactive->at_replacement().hp.stat;
@@ -272,19 +272,19 @@ void GenericBattle::do_turn () {
 	else {
 		// Anything with recoil will mess this up
 		usemove (*first, *last, weather, last->damage);
-		last->pokemon->normalize_hp ();
+		last->pokemon().normalize_hp ();
 		usemove (*last, *first, weather, first->damage);
-		first->pokemon->normalize_hp ();
+		first->pokemon().normalize_hp ();
 
 		endofturn (*first, *last, weather);
 		normalize_hp ();
 
-		while (foe.pokemon->fainted) {
-			if (!foe.pokemon->move->is_switch()) {
-				foe.pokemon->move.index = 0;
-				while (foe.pokemon->move->name != Move::SWITCH0)
-					++foe.pokemon->move.index;
-				foe.pokemon->move.index += foe.replacement;
+		while (foe.pokemon().fainted) {
+			if (!foe.pokemon().move().is_switch()) {
+				foe.pokemon().move.index = 0;
+				while (foe.pokemon().move().name != Move::SWITCH0)
+					++foe.pokemon().move.index;
+				foe.pokemon().move.index += foe.replacement;
 			}
 			usemove (foe, ai, weather, first->damage);
 		}
@@ -297,8 +297,8 @@ void GenericBattle::do_turn () {
 }
 
 void GenericBattle::normalize_hp () {
-	ai.pokemon->normalize_hp ();
-	foe.pokemon->normalize_hp ();
+	ai.pokemon().normalize_hp ();
+	foe.pokemon().normalize_hp ();
 }
 
 } // namespace technicalmachine

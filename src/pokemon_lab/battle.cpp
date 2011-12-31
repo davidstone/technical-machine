@@ -56,12 +56,12 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 			break;
 		case InMessage::STATUS_EFFECTS_BURN:
 			if (message_id == 1)
-				active->at_replacement().move->variable.index = 1;
+				active->at_replacement().move().variable.index = 1;
 			break;
 		case InMessage::STATUS_EFFECTS_CONFUSION:
 			switch (message_id) {
 				case 1:
-					active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move().variable.index = 1;
 					break;
 				case 2:	// Confusion ends
 					break;
@@ -73,7 +73,7 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 		case InMessage::STATUS_EFFECTS_FREEZE:
 			switch (message_id) {
 				case 1:
-					active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move().variable.index = 1;
 					break;
 				case 2:	// Defrost
 					break;
@@ -82,7 +82,7 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 		case InMessage::STATUS_EFFECTS_PARALYSIS:
 			switch (message_id) {
 				case 1:
-					active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move().variable.index = 1;
 					std::cout << "Me: " << active->me << '\n';
 					break;
 				case 2:
@@ -94,14 +94,14 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 			switch (message_id) {
 				case 1:
 				case 2:
-					active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move().variable.index = 1;
 					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_SLEEP:
 			switch (message_id) {
 				case 1:
-					active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move().variable.index = 1;
 					break;
 				case 2:		// Woke up
 					break;
@@ -110,7 +110,7 @@ void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <st
 		case InMessage::STATUS_EFFECTS_FLINCH:
 			switch (message_id) {
 				case 1:
-					active->at_replacement().move->variable.index = 1;
+					active->at_replacement().move().variable.index = 1;
 					break;
 			}
 			break;
