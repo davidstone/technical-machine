@@ -18,9 +18,6 @@
 
 #include "gender.hpp"
 
-#include <map>
-#include <string>
-
 namespace technicalmachine {
 
 Gender::Gender ():
@@ -77,13 +74,4 @@ Gender & Gender::operator= (Genders other) {
 	return *this;
 }
 
-void Gender::set_name_from_string (std::string const & str) {
-	static std::map <std::string, Genders> const converter {
-		{ "None", GENDERLESS },
-		{ "No Gender", GENDERLESS },
-		{ "Female", FEMALE },
-		{ "Male", MALE }
-	};
-	gender = converter.find (str)->second;
-}
-} // namespace technicalmachine
+}	// namespace technicalmachine

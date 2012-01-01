@@ -18,9 +18,6 @@
 
 #include "status.hpp"
 
-#include <map>
-#include <string>
-
 #include "ability.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
@@ -87,40 +84,6 @@ void Status::poison_toxic (Team & user, Team & target, Weather const & weather) 
 		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
 			poison (target, user, weather);
 	}
-}
-
-std::string Status::to_string (Statuses name) {
-	static std::string const status_name [] = {
-		"No status",
-		"Burn",
-		"Freeze",
-		"Paralysis",
-		"Poison",
-		"Toxic",
-		"Rest",
-		"Sleep",
-		"END_STATUS"
-	};
-	return status_name [name];
-}
-
-std::string Status::to_string () const {
-	return to_string (name);
-}
-
-Status::Statuses Status::from_string (std::string const & str) {
-	static std::map <std::string, Statuses> const converter {
-		{ "No status", NO_STATUS },
-		{ "Burn", BURN },
-		{ "Freeze", FREEZE },
-		{ "Paralysis", PARALYSIS },
-		{ "Poison", POISON },
-		{ "Toxic", POISON_TOXIC },
-		{ "Rest", REST },
-		{ "Sleep", SLEEP },
-		{ "END_STATUS", END_STATUS }
-	};
-	return converter.find (str)->second;
 }
 
 }	// namespace technicalmachine

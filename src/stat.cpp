@@ -1,5 +1,5 @@
 // Stat formulas
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,9 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stat.hpp"
-
-#include <map>
-
 #include "ability.hpp"
 #include "item.hpp"
 #include "move.hpp"

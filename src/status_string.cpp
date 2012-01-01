@@ -1,4 +1,4 @@
-// Nature functions
+// Status string functions
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,16 +16,45 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "nature.hpp"
+#include "status.hpp"
+
+#include <map>
+#include <string>
 
 namespace technicalmachine {
 
-Nature::Nature ():
-	name (END_NATURE) {
+std::string Status::to_string (Statuses name) {
+	static std::string const status_name [] = {
+		"No status",
+		"Burn",
+		"Freeze",
+		"Paralysis",
+		"Poison",
+		"Toxic",
+		"Rest",
+		"Sleep",
+		"END_STATUS"
+	};
+	return status_name [name];
 }
 
-bool Nature::is_set () const {
-	return name != END_NATURE;
+std::string Status::to_string () const {
+	return to_string (name);
+}
+
+Status::Statuses Status::from_string (std::string const & str) {
+	static std::map <std::string, Statuses> const converter {
+		{ "No status", NO_STATUS },
+		{ "Burn", BURN },
+		{ "Freeze", FREEZE },
+		{ "Paralysis", PARALYSIS },
+		{ "Poison", POISON },
+		{ "Toxic", POISON_TOXIC },
+		{ "Rest", REST },
+		{ "Sleep", SLEEP },
+		{ "END_STATUS", END_STATUS }
+	};
+	return converter.find (str)->second;
 }
 
 }	// namespace technicalmachine

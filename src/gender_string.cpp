@@ -1,4 +1,4 @@
-// Nature functions
+// Gender string conversions
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,16 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "nature.hpp"
+#include "gender.hpp"
+
+#include <map>
+#include <string>
 
 namespace technicalmachine {
 
-Nature::Nature ():
-	name (END_NATURE) {
-}
-
-bool Nature::is_set () const {
-	return name != END_NATURE;
+void Gender::set_name_from_string (std::string const & str) {
+	static std::map <std::string, Genders> const converter {
+		{ "None", GENDERLESS },
+		{ "No Gender", GENDERLESS },
+		{ "Female", FEMALE },
+		{ "Male", MALE }
+	};
+	gender = converter.find (str)->second;
 }
 
 }	// namespace technicalmachine
