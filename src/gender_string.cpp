@@ -23,14 +23,30 @@
 
 namespace technicalmachine {
 
-void Gender::set_name_from_string (std::string const & str) {
+std::string Gender::to_string (Genders gender) {
+	static std::string const gender_name [] {
+		"Female", "Genderless", "Male"
+	};
+	return gender_name [gender + 1];
+}
+
+std::string Gender::to_string () const {
+	return to_string (gender);
+}
+
+Gender::Genders Gender::from_string (std::string const & str) {
 	static std::map <std::string, Genders> const converter {
+		{ "Genderless", GENDERLESS },
 		{ "None", GENDERLESS },
 		{ "No Gender", GENDERLESS },
 		{ "Female", FEMALE },
 		{ "Male", MALE }
 	};
-	gender = converter.find (str)->second;
+	return converter.find (str)->second;
+}
+
+void Gender::set_name_from_string (std::string const & str) {
+	gender = from_string (str);
 }
 
 }	// namespace technicalmachine

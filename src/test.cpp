@@ -45,6 +45,21 @@ bool test_ability () {
 	return passed;
 }
 
+bool test_gender () {
+	std::cerr << "\tVerifying correct gender.\n";
+	bool passed = true;
+	for (Gender::Genders gender = Gender::FEMALE; gender <= Gender::MALE; gender = static_cast <Gender::Genders> (gender + 1)) {
+		std::string const name = Gender::to_string (gender);
+		Gender::Genders const result = Gender::from_string (name);
+		if (gender != result) {
+			passed = false;
+			std::cerr << "\t\t" << gender << " is seen as " << result << ".\n";
+			std::cerr << "\t\tIntermediate string: " + name + "\n";
+		}
+	}
+	return passed;
+}
+
 bool test_item () {
 	std::cerr << "\tVerifying correct item.\n";
 	bool passed = true;
@@ -124,6 +139,7 @@ bool string_conversion_tests () {
 	std::cerr << "Running string conversion tests.\n";
 	bool result = true;
 	result &= test_ability ();
+	result &= test_gender ();
 	result &= test_item ();
 	result &= test_move ();
 	result &= test_nature ();

@@ -39,6 +39,9 @@ class Gender {
 		// Pokemon Lab and Pokemon Online use a value of 2 for female, instead of -1
 		void from_simulator_int (int gender_number);
 		int to_simulator_int () const;
+		static std::string to_string (Genders gender);
+		std::string to_string () const;
+		static Genders from_string (std::string const & str);
 		void set_name_from_string (std::string const & str);
 };
 
