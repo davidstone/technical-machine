@@ -20,19 +20,25 @@ import os
 import glob
 import shutil
 
-# I compile the same object file for multiple executables. I want all debug objects in one folder and all optimized objects in one folder, regardless of the final executable they are used for. I also do not want to worry about whether a particular object file is used in multiple executables. Therefore, I turn off the warning about multiple environments using the same objects (which is only raised if the end result for those objects is the same).
+# I compile the same object file for multiple executables. I want all debug
+# objects in one folder and all optimized objects in a different folder,
+# regardless of the final executable they are used for. I also do not want to
+# worry about whether a particular object file is used in multiple executables.
+# Therefore, I turn off the warning about multiple environments using the same
+# objects (which is only raised if the end result for those objects is the
+# same).
+
 SetOption('warn', 'no-duplicate-environment')
 
 
 warnings = ['-Wall', '-Wextra', '-pedantic', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unused', '-Werror']
 full_optimizations = ['-O3', '-march=native', '-funsafe-loop-optimizations', '-flto']
 cc_flags = warnings
-c_flags = ['-std=c99']
 cxx_flags = ['-std=c++0x']
 link_flags = warnings + ['-fwhole-program']
 optimized_link_flags = ['-s'] + full_optimizations
 
-default = DefaultEnvironment(CCFLAGS = cc_flags, CFLAGS = c_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
+default = DefaultEnvironment(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
 
 debug = default.Clone()
 debug.Append(CCFLAGS = ['-g'])
