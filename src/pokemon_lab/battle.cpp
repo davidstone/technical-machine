@@ -17,9 +17,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "battle.hpp"
+
 #include <iostream>
 #include <string>
+#include <vector>
+
 #include <boost/lexical_cast.hpp>
+
 #include "../battle.hpp"
 #include "../move.hpp"
 #include "../pokemon.hpp"

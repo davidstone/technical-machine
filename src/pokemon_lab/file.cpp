@@ -17,6 +17,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "file.hpp"
+
+#include <string>
+
 #include "../pokemon.hpp"
 #include "../team.hpp"
 
