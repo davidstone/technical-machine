@@ -17,9 +17,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "file.hpp"
+
 #include <fstream>
 #include <string>
-#include <boost/lexical_cast.hpp>
+
 #include "conversion.hpp"
 #include "../ability.hpp"
 #include "../item.hpp"
@@ -32,7 +33,7 @@ namespace technicalmachine {
 namespace po {
 
 static void load_pokemon (Team & team, std::ifstream & file, unsigned size);
-static unsigned converter (std::string const & data, std::string const & end, std::string const & line);
+static int converter (std::string const & data, std::string const & end, std::string const & line);
 
 void load_team (Team & team, std::string const & name, unsigned size) {
 	std::ifstream file (name);
@@ -103,11 +104,11 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 		team.pokemon.set.push_back (member);
 }
 
-unsigned converter (std::string const & data, std::string const & end, std::string const & line) {
+int converter (std::string const & data, std::string const & end, std::string const & line) {
 	size_t const x = data.length();
 	size_t const a = line.find (data);
 	size_t const b = line.find (end, a + x);
-	return boost::lexical_cast<unsigned> (line.substr (a + x, b - a - x));
+	return std::stoi (line.substr (a + x, b - a - x));
 }
 
 } // namespace po

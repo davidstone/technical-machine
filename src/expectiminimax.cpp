@@ -23,7 +23,6 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
 #include "block.hpp"

@@ -17,7 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "file.hpp"
-#include <boost/lexical_cast.hpp>
 #include "../pokemon.hpp"
 #include "../team.hpp"
 
@@ -56,8 +55,8 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 	member.nickname = search (file, output2, "<nickname>");
 	if (member.nickname == "")
 		member.nickname = output1;
-	member.level = boost::lexical_cast <int> (search (file, output2, "<level>"));
-	member.happiness = boost::lexical_cast <int> (search (file, output2, "<happiness>"));
+	member.level = std::stoi (search (file, output2, "<level>"));
+	member.happiness = std::stoi (search (file, output2, "<happiness>"));
 	member.gender.set_name_from_string (search (file, output2, "<gender>"));
 	member.nature.set_name_from_string (search (file, output2, "<nature>"));
 	member.item.set_name_from_string (search (file, output2, "<item>"));
@@ -69,23 +68,23 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 		if ("No" == output1)
 			break;
 		Move::Moves const name = Move::from_string (output1);
-		int const pp_ups = boost::lexical_cast <int> (output2);
+		int const pp_ups = std::stoi (output2);
 		Move const move (name, pp_ups, size);
 		member.move.set.insert (member.move.set.begin() + n, move);
 	}
 	
-	member.hp.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.hp.ev = boost::lexical_cast <int> (output2) / 4;
-	member.atk.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.atk.ev = boost::lexical_cast <int> (output2) / 4;
-	member.def.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.def.ev = boost::lexical_cast <int> (output2) / 4;
-	member.spe.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.spe.ev = boost::lexical_cast <int> (output2) / 4;
-	member.spa.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.spa.ev = boost::lexical_cast <int> (output2) / 4;
-	member.spd.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.spd.ev = boost::lexical_cast <int> (output2) / 4;
+	member.hp.iv = std::stoi (search (file, output2, "iv=\""));
+	member.hp.ev = std::stoi (output2) / 4;
+	member.atk.iv = std::stoi (search (file, output2, "iv=\""));
+	member.atk.ev = std::stoi (output2) / 4;
+	member.def.iv = std::stoi (search (file, output2, "iv=\""));
+	member.def.ev = std::stoi (output2) / 4;
+	member.spe.iv = std::stoi (search (file, output2, "iv=\""));
+	member.spe.ev = std::stoi (output2) / 4;
+	member.spa.iv = std::stoi (search (file, output2, "iv=\""));
+	member.spa.ev = std::stoi (output2) / 4;
+	member.spd.iv = std::stoi (search (file, output2, "iv=\""));
+	member.spd.ev = std::stoi (output2) / 4;
 	
 	team.pokemon.set.push_back (member);
 }

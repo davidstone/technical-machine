@@ -18,7 +18,6 @@
 
 #include <iostream>
 #include <vector>
-#include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
 #include "item.hpp"
@@ -89,10 +88,10 @@ int main () {
 	for (Unknown const & unknown : hidden) {
 		if (unknown.hpev == 0 and unknown.speev == 0) {
 			if (thingy != unknown.item) {
-				output += '\n' + boost::lexical_cast <std::string> (static_cast <int> (unknown.item)) + ": \n";
+				output += '\n' + std::to_string (static_cast <int> (unknown.item)) + ": \n";
 				thingy = static_cast <Item::Items> (unknown.item);
 			}
-			output += boost::lexical_cast <std::string> (static_cast <int> (unknown.atkev) * 4);
+			output += std::to_string (static_cast <int> (unknown.atkev) * 4);
 			if (unknown.nature == static_cast<unsigned char> (Nature::NAUGHTY))
 				output += "(+)";
 			else if (unknown.nature == static_cast<unsigned char> (Nature::DOCILE))

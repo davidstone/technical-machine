@@ -62,13 +62,13 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t x = line.find ('\t');
-		int member = boost::lexical_cast<int> (line.substr (0, x));
+		int member = std::stoi (line.substr (0, x));
 		size_t y = line.find ('\t', x + 1);
-		int ally = boost::lexical_cast<int> (line.substr (x + 1, y - x - 1));
+		int ally = std::stoi (line.substr (x + 1, y - x - 1));
 		// Subtract known usages
 		unaccounted [member] -= boost::lexical_cast<unsigned> (line.substr (y + 1));
 		// multiplier = % used with this Pokemon / % used overall, rewritten to be a proper fraction
-		multiplier [member][ally] = (boost::lexical_cast<float> (line.substr (y + 1)) * total) / (static_cast <float> (overall [member]) * overall [ally]);
+		multiplier [member][ally] = (std::stof (line.substr (y + 1)) * total) / (static_cast <float> (overall [member]) * overall [ally]);
 	}
 	for (unsigned n = 0; n != END_SPECIES; ++n) {
 		if (overall [n] == 0) {
@@ -92,7 +92,7 @@ void lead_stats (std::vector<float> & lead) {		// Multiplier for Pokemon after y
 	std::ifstream file ("settings/lead.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
-		lead.push_back (boost::lexical_cast<float> (line));
+		lead.push_back (std::stof (line));
 }
 
 void detailed_stats (int detailed [][7]) {
