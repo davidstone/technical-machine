@@ -20,12 +20,12 @@
 
 #include <iostream>
 
-#include "conversion.hpp"
-#include "../ability.hpp"
-#include "../move.hpp"
-#include "../nature.hpp"
-#include "../pokemon.hpp"
-#include "../species.hpp"
+#include "../../pokemon_online/conversion.hpp"
+#include "../../ability.hpp"
+#include "../../move.hpp"
+#include "../../nature.hpp"
+#include "../../pokemon.hpp"
+#include "../../species.hpp"
 
 namespace technicalmachine {
 namespace po {

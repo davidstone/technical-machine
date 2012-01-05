@@ -19,11 +19,11 @@
 #include <iostream>
 #include <string>
 
-#include "ability.hpp"
-#include "item.hpp"
-#include "move.hpp"
-#include "nature.hpp"
-#include "pokemon.hpp"
+#include "../ability.hpp"
+#include "../item.hpp"
+#include "../move.hpp"
+#include "../nature.hpp"
+#include "../pokemon.hpp"
 #include "pokemon_lab/test.hpp"
 #include "pokemon_online/test.hpp"
 

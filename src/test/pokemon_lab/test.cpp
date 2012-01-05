@@ -20,10 +20,10 @@
 
 #include <iostream>
 
-#include "conversion.hpp"
-#include "../ability.hpp"
-#include "../pokemon.hpp"
-#include "../species.hpp"
+#include "../../pokemon_lab/conversion.hpp"
+#include "../../ability.hpp"
+#include "../../pokemon.hpp"
+#include "../../species.hpp"
 
 namespace technicalmachine {
 namespace pl {
