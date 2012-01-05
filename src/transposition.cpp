@@ -79,7 +79,7 @@ int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth
 		if (saved->depth >= current.depth and *saved == current)
 			value = saved->value;
 		else {
-			Move::Moves phony = Move::END_MOVE;
+			Move::Moves phony = Move::END;
 			// If I can't find it, set the value to the evaluation of the state at depth - 1.
 			current.value = select_move_branch (ai, foe, weather, depth, score, phony);
 		

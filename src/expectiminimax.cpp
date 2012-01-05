@@ -297,7 +297,7 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Scor
 			case Move::BATON_PASS:
 			case Move::U_TURN:
 				if (first.pokemon.set.size () > 1) {
-					Move::Moves phony = Move::END_MOVE;
+					Move::Moves phony = Move::END;
 					return move_then_switch_branch (first, last, weather, depth, score, phony);
 				}
 				break;
@@ -315,7 +315,7 @@ int64_t use_move_branch (Team first, Team last, Weather weather, int depth, Scor
 			case Move::BATON_PASS:
 			case Move::U_TURN:
 				if (last.pokemon.set.size () > 1) {
-					Move::Moves phony = Move::END_MOVE;
+					Move::Moves phony = Move::END;
 					return move_then_switch_branch (last, first, weather, depth, score, phony);
 				}
 				break;

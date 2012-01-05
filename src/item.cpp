@@ -21,7 +21,7 @@
 namespace technicalmachine {
 
 Item::Item ():
-	name (END_ITEM) {
+	name (END) {
 }
 
 Item::Item (Items item):
@@ -29,7 +29,7 @@ Item::Item (Items item):
 }
 
 bool Item::is_set () const {
-	return name != END_ITEM;
+	return name != END;
 }
 
 bool Item::is_choice_item () const {

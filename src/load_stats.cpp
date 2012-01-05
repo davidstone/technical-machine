@@ -38,9 +38,9 @@ void overall_stats (std::vector<unsigned> & overall) {
 	file.close ();
 }
 
-void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]) {
-	for (unsigned n = 0; n != END_SPECIES; ++n) {
-		for (unsigned m = 0; m != END_SPECIES; ++m) {
+void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [Species::END][Species::END]) {
+	for (unsigned n = 0; n != Species::END; ++n) {
+		for (unsigned m = 0; m != Species::END; ++m) {
 			if (((n == DEOXYS_A or n == DEOXYS_D or n == DEOXYS_M or n == DEOXYS_S) and (m == DEOXYS_A or m == DEOXYS_D or m == DEOXYS_M or m == DEOXYS_S))
 					or ((n == GIRATINA_A or n == GIRATINA_O) and (m == GIRATINA_A or m == GIRATINA_O))
 					or ((n == ROTOM or n == ROTOM_C or n == ROTOM_F or n == ROTOM_H or n == ROTOM_S or n == ROTOM_W) and (m == ROTOM or m == ROTOM_C or m == ROTOM_F or m == ROTOM_H or m == ROTOM_S or m == ROTOM_W))
@@ -54,8 +54,8 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 	}
 
 	// There are 5 other Pokemon on a team for each individual Pokemon. Therefore, if I've seen a Pokemon with n usages, there are 5 * n other Pokemon on the team. Subtract the known number of usages from this number until all known usages are gone. Then, assume the distribution of Pokemon not on the team mate stats is equal to the relative overall distribution and divide up all remaining usages proportionally.
-	unsigned unaccounted [END_SPECIES];
-	for (unsigned n = 0; n != END_SPECIES; ++n)
+	unsigned unaccounted [Species::END];
+	for (unsigned n = 0; n != Species::END; ++n)
 		unaccounted [n] = overall [n] * 5;
 
 	std::ifstream file ("settings/teammate.txt");
@@ -70,14 +70,14 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 		// multiplier = % used with this Pokemon / % used overall, rewritten to be a proper fraction
 		multiplier [member][ally] = (std::stof (line.substr (y + 1)) * total) / (static_cast <float> (overall [member]) * overall [ally]);
 	}
-	for (unsigned n = 0; n != END_SPECIES; ++n) {
+	for (unsigned n = 0; n != Species::END; ++n) {
 		if (overall [n] == 0) {
-			for (unsigned m = 0; m != END_SPECIES; ++m)
+			for (unsigned m = 0; m != Species::END; ++m)
 				// 1 is superior to 0 because if they use an unused Pokemon, this will have no effect instead of making everything equally 0
 				multiplier [n][m] = 1;
 		}
 		else {
-			for (unsigned m = 0; m != END_SPECIES; ++m) {
+			for (unsigned m = 0; m != Species::END; ++m) {
 				if (multiplier [n][m] == -1) {
 					// New method takes the total number of remaining Pokemon not accounted for and assumes they're evenly distributed (based on overall stats) among all Pokemon not on the list. This is the same as giving all those Pokemon the same multiplier. Reality probably has very low usage Pokemon more evenly distributed and high usage Pokemon that don't appear with a much lower multiplier.
 					multiplier [n][m] = unaccounted [n] / (overall [n] * 5.0);
@@ -98,7 +98,7 @@ void lead_stats (std::vector<float> & lead) {		// Multiplier for Pokemon after y
 void detailed_stats (int detailed [][7]) {
 	std::ifstream file ("settings/detailed.txt");
 	std::string line;
-	Species old_member = END_SPECIES;
+	Species old_member = Species::END;
 	bool ability = false;
 	bool item = false;
 	bool nature = false;

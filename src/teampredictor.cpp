@@ -28,32 +28,32 @@
 
 namespace technicalmachine {
 
-static void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES][END_SPECIES]);
+static void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END][Species::END]);
 static void predict_move (Pokemon & member, int detailed [][7], unsigned size);
 
 void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead) {
 	std::vector<unsigned> overall;
-	overall.reserve (END_SPECIES);
+	overall.reserve (Species::END);
 	overall_stats (overall);
 	constexpr unsigned total = 961058;	// Total number of teams
-	float multiplier [END_SPECIES][END_SPECIES];
+	float multiplier [Species::END][Species::END];
 	team_stats (overall, total, multiplier);
 	std::vector<float> lead;
-	lead.reserve (END_SPECIES);
+	lead.reserve (Species::END);
 	if (using_lead)
 		lead_stats (lead);
 	else {
-		for (int n = 0; n != END_SPECIES; ++n)
+		for (int n = 0; n != Species::END; ++n)
 			lead.push_back (1);
 	}
 	
 	std::vector<float> estimate;
-	estimate.reserve (END_SPECIES);
-	for (unsigned n = 0; n != END_SPECIES; ++n)
+	estimate.reserve (Species::END);
+	for (unsigned n = 0; n != Species::END; ++n)
 		estimate.push_back (lead [n] * overall [n] / total);
 
 	for (Pokemon const & pokemon : team.pokemon.set) {
-		for (unsigned n = 0; n != END_SPECIES; ++n)
+		for (unsigned n = 0; n != Species::END; ++n)
 			estimate [n] *= multiplier [pokemon.name] [n];
 	}
 	predict_pokemon (team, estimate, multiplier);
@@ -68,11 +68,11 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	}
 }
 
-void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [END_SPECIES] [END_SPECIES]) {
+void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END] [Species::END]) {
 	while (team.pokemon.set.size() < team.size) {
 		float top = 0.0;
 		Species name;
-		for (int n = 0; n != END_SPECIES; ++n) {
+		for (int n = 0; n != Species::END; ++n) {
 			if (top < estimate [n]) {
 				top = estimate [n];
 				name = static_cast<Species> (n);
@@ -83,7 +83,7 @@ void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier
 		team.pokemon.set.push_back (member);
 		if (team.pokemon.set.size() == team.size)
 			break;
-		for (unsigned n = 0; n != END_SPECIES; ++n)
+		for (unsigned n = 0; n != Species::END; ++n)
 			estimate [n] *= multiplier [team.pokemon.set.back().name] [n];
 	}
 }
@@ -94,7 +94,7 @@ void predict_move (Pokemon & member, int detailed [][7], unsigned size) {
 	while (member.move.set [n].name != Move::STRUGGLE)
 		++n;
 	unsigned max_moves = 4 + member.move.set.size() - n;
-	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != Move::END_MOVE; ++m) {
+	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != Move::END; ++m) {
 		bool found = false;
 		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it->name != Move::STRUGGLE; ++it) {
 			if (it->name == static_cast<Move::Moves> (detailed [member.name] [m])) {

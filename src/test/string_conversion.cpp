@@ -30,7 +30,7 @@ namespace technicalmachine {
 namespace {
 
 template <typename Original, typename Result>
-bool verify (Original original, Result result, std::string str) {
+bool verify (Original original, Result result, std::string const & str) {
 	bool passed = true;
 	if (original != result) {
 		std::cerr << "\t\t" << original << " is seen as " << result << ".\n";
@@ -40,13 +40,14 @@ bool verify (Original original, Result result, std::string str) {
 	return passed;
 }
 
-bool test_ability () {
-	std::cerr << "\tVerifying correct ability.\n";
+template <class Class, typename Enum>
+bool test_generic (std::string const & thing) {
+	std::cerr << "\tVerifying correct " + thing + "\n";
 	bool passed = true;
-	for (Ability::Abilities ability = static_cast <Ability::Abilities> (0); ability != Ability::END_ABILITY; ability = static_cast <Ability::Abilities> (ability + 1)) {
-		std::string const name = Ability::to_string (ability);
-		Ability::Abilities const result = Ability::from_string (name);
-		passed &= verify (ability, result, name);
+	for (Enum original = static_cast <Enum> (0); original != Enum::END; original = static_cast <Enum> (original + 1)) {
+		std::string const str = Class::to_string (original);
+		Enum const result = Class::from_string (str);
+		passed &= verify (original, result, str);
 	}
 	return passed;
 }
@@ -62,73 +63,18 @@ bool test_gender () {
 	return passed;
 }
 
-bool test_item () {
-	std::cerr << "\tVerifying correct item.\n";
-	bool passed = true;
-	for (Item::Items item = static_cast <Item::Items> (0); item != Item::END_ITEM; item = static_cast <Item::Items> (item + 1)) {
-		std::string const name = Item::to_string (item);
-		Item::Items const result = Item::from_string (name);
-		passed &= verify (item, result, name);
-	}
-	return passed;
-}
-
-bool test_move () {
-	std::cerr << "\tVerifying correct move.\n";
-	bool passed = true;
-	for (Move::Moves move = static_cast <Move::Moves> (0); move != Move::END_MOVE; move = static_cast <Move::Moves> (move + 1)) {
-		std::string const name = Move::to_string (move);
-		Move::Moves const result = Move::from_string (name);
-		passed &= verify (move, result, name);
-	}
-	return passed;
-}
-
-bool test_nature () {
-	std::cerr << "\tVerifying correct nature.\n";
-	bool passed = true;
-	for (Nature::Natures nature = static_cast <Nature::Natures> (0); nature != Nature::END_NATURE; nature = static_cast <Nature::Natures> (nature + 1)) {
-		std::string const name = Nature::to_string (nature);
-		Nature::Natures const result = Nature::from_string (name);
-		passed &= verify (nature, result, name);
-	}
-	return passed;
-}
-
-bool test_species () {
-	std::cerr << "\tVerifying correct species.\n";
-	bool passed = true;
-	for (Species species = static_cast <Species> (0); species != END_SPECIES; species = static_cast <Species> (species + 1)) {
-		std::string const name = Pokemon::to_string (species);
-		Species const result = Pokemon::from_string (name);
-		passed &= verify (species, result, name);
-	}
-	return passed;
-}
-
-bool test_status () {
-	std::cerr << "\tVerifying correct status.\n";
-	bool passed = true;
-	for (Status::Statuses status = static_cast <Status::Statuses> (0); status != Status::END_STATUS; status = static_cast <Status::Statuses> (status + 1)) {
-		std::string const name = Status::to_string (status);
-		Status::Statuses const result = Status::from_string (name);
-		passed &= verify (status, result, name);
-	}
-	return passed;
-}
-
 }	// anonymous namespace
 
 bool string_conversion_tests () {
 	std::cerr << "Running string conversion tests.\n";
 	bool result = true;
-	result &= test_ability ();
+	result &= test_generic <Ability, Ability::Abilities> ("ability");
 	result &= test_gender ();
-	result &= test_item ();
-	result &= test_move ();
-	result &= test_nature ();
-	result &= test_species ();
-	result &= test_status ();
+	result &= test_generic <Item, Item::Items> ("item");
+	result &= test_generic <Move, Move::Moves> ("move");
+	result &= test_generic <Nature, Nature::Natures> ("nature");
+	result &= test_generic <Pokemon, Species> ("species");
+	result &= test_generic <Status, Status::Statuses> ("status");
 	return result;
 }
 

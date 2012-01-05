@@ -547,7 +547,7 @@ enum Species {
 	ZAPDOS,
 	ZIGZAGOON,
 	ZUBAT,
-	END_SPECIES
+	END
 };
 }	// namespace technicalmachine
 #endif	// SPECIES_H_

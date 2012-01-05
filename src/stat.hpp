@@ -38,7 +38,7 @@ class Stat {
 			SPE,
 			ACC,
 			EVA,
-			END_STAT
+			END
 		};
 
 		unsigned max;		// Max HP only

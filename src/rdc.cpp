@@ -41,7 +41,7 @@ using namespace technicalmachine;
 
 int main () {
 	
-	int detailed [END_SPECIES] [7] = {{ 0 }};
+	int detailed [Species::END] [7] = {{ 0 }};
 	std::cerr << "Loading detailed stats.\n";
 	detailed_stats (detailed);
 	std::cerr << "Loading ai.\n";
@@ -84,7 +84,7 @@ int main () {
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
 	std::cerr << "hidden.size (): " << hidden.size () << '\n';
 	
-	Item::Items thingy = Item::END_ITEM;
+	Item::Items thingy = Item::END;
 	std::string output = "";
 	for (Unknown const & unknown : hidden) {
 		if (unknown.hpev == 0 and unknown.speev == 0) {

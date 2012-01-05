@@ -38,7 +38,7 @@ class Status {
 			POISON_TOXIC,
 			REST,
 			SLEEP,
-			END_STATUS
+			END
 		};
 		Statuses name;
 		Status ();

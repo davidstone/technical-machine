@@ -42,7 +42,7 @@ bool test_item () {
 bool test_move () {
 	std::cerr << "\tVerifying correct move.\n";
 	bool passed = true;
-	for (Move::Moves move = static_cast <Move::Moves> (0); move != Move::END_MOVE; move = static_cast <Move::Moves> (move + 1)) {
+	for (Move::Moves move = static_cast <Move::Moves> (0); move != Move::END; move = static_cast <Move::Moves> (move + 1)) {
 		int const id = move_to_id (move);
 		Move::Moves const result = id_to_move (id);
 		if (move != result and !Move::is_switch (move)) {
@@ -61,7 +61,7 @@ bool test_nature () {
 bool test_species () {
 	std::cerr << "\tVerifying correct species.\n";
 	bool passed = true;
-	for (Species species = static_cast <Species> (0); species != END_SPECIES; species = static_cast <Species> (species + 1)) {
+	for (Species species = static_cast <Species> (0); species != Species::END; species = static_cast <Species> (species + 1)) {
 		int const id = species_to_id (species);
 		Species const result = id_to_species (id);
 		if (species != result) {

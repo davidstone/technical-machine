@@ -21,11 +21,11 @@
 namespace technicalmachine {
 
 Nature::Nature ():
-	name (END_NATURE) {
+	name (END) {
 }
 
 bool Nature::is_set () const {
-	return name != END_NATURE;
+	return name != END;
 }
 
 }	// namespace technicalmachine

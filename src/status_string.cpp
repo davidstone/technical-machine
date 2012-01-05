@@ -52,7 +52,7 @@ Status::Statuses Status::from_string (std::string const & str) {
 		{ "Toxic", POISON_TOXIC },
 		{ "Rest", REST },
 		{ "Sleep", SLEEP },
-		{ "END_STATUS", END_STATUS }
+		{ "END_STATUS", END }
 	};
 	return converter.find (str)->second;
 }

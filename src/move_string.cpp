@@ -118,7 +118,7 @@ std::string Move::to_string (Moves name) {
 		"Water Sport", "Water Spout", "Waterfall", "Weather Ball", "Whirlpool",
 		"Whirlwind", "Will-O-Wisp", "Wing Attack", "Wish", "Withdraw",
 		"Wood Hammer", "Worry Seed", "Wrap", "Wring Out", "X-Scissor",
-		"Yawn", "Zap Cannon", "Zen Headbutt", "End Move"
+		"Yawn", "Zap Cannon", "Zen Headbutt", "END_MOVE"
 	};
 	return name_to_string [name];
 }
@@ -643,7 +643,7 @@ Move::Moves Move::from_string (std::string const & str) {
 		{ "Yawn", YAWN },
 		{ "Zap Cannon", ZAP_CANNON },
 		{ "Zen Headbutt", ZEN_HEADBUTT },
-		{ "End Move", END_MOVE }
+		{ "END_MOVE", END }
 	};
 	return converter.find (str)->second;
 }

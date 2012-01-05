@@ -137,7 +137,7 @@ int get_forme (Species species) {
 
 Species id_to_species (int id, int forme) {
 	constexpr static Species species_converter [] = {
-		END_SPECIES, BULBASAUR, IVYSAUR, VENUSAUR, CHARMANDER,
+		END, BULBASAUR, IVYSAUR, VENUSAUR, CHARMANDER,
 		CHARMELEON, CHARIZARD, SQUIRTLE, WARTORTLE, BLASTOISE,
 		CATERPIE, METAPOD, BUTTERFREE, WEEDLE, KAKUNA,
 		BEEDRILL, PIDGEY, PIDGEOTTO, PIDGEOT, RATTATA,
@@ -750,7 +750,7 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		145,		//	ZAPDOS
 		263,		//	ZIGZAGOON
 		41,		//	ZUBAT
-		0		//	END_SPECIES
+		0		//	END
 	};
 	int const species_id = species_converter [species];
 	int const forme_id = get_forme (species);
@@ -759,7 +759,7 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 
 Ability::Abilities id_to_ability (int id) {
 	constexpr static Ability::Abilities ability_converter [] = {
-		Ability::END_ABILITY, Ability::STENCH, Ability::DRIZZLE,
+		Ability::END, Ability::STENCH, Ability::DRIZZLE,
 		Ability::SPEED_BOOST, Ability::BATTLE_ARMOR, Ability::STURDY,
 		Ability::DAMP, Ability::LIMBER, Ability::SAND_VEIL,
 		Ability::STATIC, Ability::VOLT_ABSORB, Ability::WATER_ABSORB,
@@ -930,7 +930,7 @@ int ability_to_id (Ability::Abilities ability) {
 		41,		// WATER_VEIL
 		73,		// WHITE_SMOKE
 		25,		// WONDER_GUARD
-		0		// END_ABILITY
+		0		// END
 	};
 	return ability_converter [ability];
 }
@@ -1391,7 +1391,7 @@ Item::Items id_to_item (int id) {
 		case 226:
 			return Item::TUNNEL_MAIL;
 		default:
-			return Item::END_ITEM;
+			return Item::END;
 	}
 }
 
@@ -2070,7 +2070,7 @@ int item_to_id (Item::Items item) {
 
 Move::Moves id_to_move (int id) {
 	constexpr static Move::Moves move_converter [] = {
-		Move::END_MOVE, Move::POUND, Move::KARATE_CHOP,
+		Move::END, Move::POUND, Move::KARATE_CHOP,
 		Move::DOUBLESLAP, Move::COMET_PUNCH, Move::MEGA_PUNCH,
 		Move::PAY_DAY, Move::FIRE_PUNCH, Move::ICE_PUNCH,
 		Move::THUNDERPUNCH, Move::SCRATCH, Move::VICEGRIP,
@@ -2699,7 +2699,7 @@ int move_to_id (Move::Moves move) {
 		281,		// YAWN
 		192,		// ZAP_CANNON
 		428,		// ZEN_HEADBUTT
-		0		// END_MOVE
+		0		// END
 	};
 	return move_converter [(move < Move::SWITCH0) ? move : move - 6];
 }

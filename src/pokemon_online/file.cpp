@@ -100,7 +100,7 @@ void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
 	member.spd.ev = converter ("<EV>", "</EV>", line);
 	getline (file, line);
 	member.spe.ev = converter ("<EV>", "</EV>", line);
-	if (member.name != END_SPECIES and member.move.set.size() != 0)
+	if (member.name != Species::END and member.move.set.size() != 0)
 		team.pokemon.set.push_back (member);
 }
 
