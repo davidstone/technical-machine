@@ -20,8 +20,9 @@
 
 #include <iostream>
 
+#include "../invalid_simulator_conversion.hpp"
+
 #include "../../pokemon_lab/conversion.hpp"
-#include "../../ability.hpp"
 #include "../../pokemon.hpp"
 #include "../../species.hpp"
 
@@ -29,66 +30,54 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-bool test_ability () {
+void test_ability () {
 	// Abilities are sent as strings, so no ID conversion required.
-	return true;
 }
 
-bool test_item () {
+void test_item () {
 	// Items are sent as strings, so no ID conversion required.
-	return true;
 }
 
-bool test_move () {
-	std::cerr << "\tVerifying correct move.\n";
-	bool passed = true;
-	for (Move::Moves move = static_cast <Move::Moves> (0); move != Move::END; move = static_cast <Move::Moves> (move + 1)) {
-		int const id = move_to_id (move);
-		Move::Moves const result = id_to_move (id);
-		if (move != result and !Move::is_switch (move)) {
-			passed = false;
-			std::cerr << "\t\t" + Move::to_string (move) + " is seen as " + Move::to_string (result) + ".\n";
+void test_move () {
+	std::cout << "\tVerifying correct move.\n";
+	for (Move::Moves original = static_cast <Move::Moves> (0); original != Move::END; original = static_cast <Move::Moves> (original + 1)) {
+		if (!Move::is_switch (original)) {
+			int const id = move_to_id (original);
+			Move::Moves const result = id_to_move (id);
+			if (original != result)
+				throw InvalidSimulatorConversion <Move> (original, result);
 		}
 	}
-	return passed;
 }
 
-bool test_nature () {
+void test_nature () {
 	// Natures are sent the same as TM, so no conversion required.
-	return true;
 }
 
-bool test_species () {
-	std::cerr << "\tVerifying correct species.\n";
-	bool passed = true;
-	for (Species species = static_cast <Species> (0); species != Species::END; species = static_cast <Species> (species + 1)) {
-		int const id = species_to_id (species);
+void test_species () {
+	std::cout << "\tVerifying correct species.\n";
+	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (original + 1)) {
+		int const id = species_to_id (original);
 		Species const result = id_to_species (id);
-		if (species != result) {
-			passed = false;
-			std::cerr << "\t\t" + Pokemon::to_string (species) + " is seen as " + Pokemon::to_string (result) + ".\n";
-		}
+		if (original != result)
+			throw InvalidSimulatorConversion <Pokemon> (original, result);
 	}
-	return passed;
 }
 
-bool test_file () {
-	bool passed = true;
-	return passed;
+void test_file () {
 }
 
 }	// anonymous namespace
 
-bool test () {
-	std::cerr << "Testing Pokemon Lab.\n";
-	bool passed = true;
-	passed &= test_species ();
-	passed &= test_ability ();
-	passed &= test_item ();
-	passed &= test_move ();
-	passed &= test_nature ();
-	passed &= test_file ();
-	return passed;
+void test () {
+	std::cout << "Running Pokemon Lab tests.\n";
+	test_ability ();
+	test_item ();
+	test_move ();
+	test_nature ();
+	test_species ();
+
+	test_file ();
 }
 
 }	// namespace pl

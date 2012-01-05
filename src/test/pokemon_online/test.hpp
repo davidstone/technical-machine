@@ -22,7 +22,7 @@
 namespace technicalmachine {
 namespace po {
 
-bool test ();
+void test ();
 
 }	// namespace po
 }	// namespace technicalmachine

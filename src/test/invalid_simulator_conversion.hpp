@@ -1,4 +1,4 @@
-// Test PL stuff
+// Simulator conversion exception class stuff
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,15 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_POKEMON_LAB_TEST_HPP_
-#define TEST_POKEMON_LAB_TEST_HPP_
+#ifndef TEST_INVALID_SIMULATOR_CONVERSION_HPP_
+#define TEST_INVALID_SIMULATOR_CONVERSION_HPP_
+
+#include <stdexcept>
 
 namespace technicalmachine {
-namespace pl {
 
-void test ();
+template <class Class>
+class InvalidSimulatorConversion : public std::logic_error {
+	public:
+		template <typename Test>
+		InvalidSimulatorConversion (Test original, Test result):
+			std::logic_error (Class::to_string (original) + " is seen as " + Class::to_string (result) + ".\n") {
+		}
+};
 
-}	// namespace pl
 }	// namespace technicalmachine
 
-#endif	// TEST_POKEMON_LAB_TEST_HPP_
+#endif	// TEST_INVALID_SIMULATOR_CONVERSION_HPP_

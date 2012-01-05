@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include "../ability.hpp"
@@ -29,53 +30,46 @@
 namespace technicalmachine {
 namespace {
 
-template <typename Original, typename Result>
-bool verify (Original original, Result result, std::string const & str) {
-	bool passed = true;
-	if (original != result) {
-		std::cerr << "\t\t" << original << " is seen as " << result << ".\n";
-		std::cerr << "\t\tIntermediate string: " + str + "\n";
-		passed = false;
-	}
-	return passed;
-}
+class InvalidStringConversion : public std::logic_error {
+	public:
+		template <typename Test>
+		InvalidStringConversion (Test original, Test result, std::string const & intermediate):
+			std::logic_error (std::to_string (original) + " is seen as " + std::to_string (result) + " with an intermediate string of " + intermediate + ".\n") {
+		}
+};
 
 template <class Class, typename Enum>
-bool test_generic (std::string const & thing) {
-	std::cerr << "\tVerifying correct " + thing + "\n";
-	bool passed = true;
+void test_generic (std::string const & thing) {
+	std::cout << "\tVerifying correct " + thing + ".\n";
 	for (Enum original = static_cast <Enum> (0); original != Enum::END; original = static_cast <Enum> (original + 1)) {
 		std::string const str = Class::to_string (original);
 		Enum const result = Class::from_string (str);
-		passed &= verify (original, result, str);
+		if (original != result)
+			throw InvalidStringConversion (original, result, str);
 	}
-	return passed;
 }
 
-bool test_gender () {
-	std::cerr << "\tVerifying correct gender.\n";
-	bool passed = true;
-	for (Gender::Genders gender = Gender::FEMALE; gender <= Gender::MALE; gender = static_cast <Gender::Genders> (gender + 1)) {
-		std::string const name = Gender::to_string (gender);
-		Gender::Genders const result = Gender::from_string (name);
-		passed &= verify (gender, result, name);
+void test_gender () {
+	std::cout << "\tVerifying correct gender.\n";
+	for (Gender::Genders original = Gender::FEMALE; original <= Gender::MALE; original = static_cast <Gender::Genders> (original + 1)) {
+		std::string const str = Gender::to_string (original);
+		Gender::Genders const result = Gender::from_string (str);
+		if (original != result)
+			throw InvalidStringConversion (original, result, str);
 	}
-	return passed;
 }
 
 }	// anonymous namespace
 
-bool string_conversion_tests () {
-	std::cerr << "Running string conversion tests.\n";
-	bool result = true;
-	result &= test_generic <Ability, Ability::Abilities> ("ability");
-	result &= test_gender ();
-	result &= test_generic <Item, Item::Items> ("item");
-	result &= test_generic <Move, Move::Moves> ("move");
-	result &= test_generic <Nature, Nature::Natures> ("nature");
-	result &= test_generic <Pokemon, Species> ("species");
-	result &= test_generic <Status, Status::Statuses> ("status");
-	return result;
+void string_conversion_tests () {
+	std::cout << "Running string conversion tests.\n";
+	test_generic <Ability, Ability::Abilities> ("ability");
+	test_gender ();
+	test_generic <Item, Item::Items> ("item");
+	test_generic <Move, Move::Moves> ("move");
+	test_generic <Nature, Nature::Natures> ("nature");
+	test_generic <Pokemon, Species> ("species");
+	test_generic <Status, Status::Statuses> ("status");
 }
 
 }	// namespace technicalmachine

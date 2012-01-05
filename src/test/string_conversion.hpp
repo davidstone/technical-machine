@@ -21,7 +21,7 @@
 
 namespace technicalmachine {
 
-bool string_conversion_tests ();
+void string_conversion_tests ();
 
 }	// namespace technicalmachine
 #endif	// TEST_STRING_CONVERSION_HPP_

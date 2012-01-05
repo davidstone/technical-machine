@@ -24,19 +24,15 @@
 
 int main () {
 	using namespace technicalmachine;
-	bool const string_conversion = string_conversion_tests ();
-	std::cout << "String conversion tests " << (string_conversion ? "passed." : "failed.") << "\n\n";
+	string_conversion_tests ();
+	std::cout << "String conversion tests passed.\n\n";
 
-	bool const pl = pl::test ();
-	std::cout << "Pokemon Lab tests " << (pl ? "passed." : "failed.") << "\n\n";
+	pl::test ();
+	std::cout << "Pokemon Lab tests passed.\n\n";
 
-	bool const po = po::test ();
-	std::cout << "Pokemon Online tests " << (po ? "passed." : "failed.") << "\n\n";
+	po::test ();
+	std::cout << "Pokemon Online tests passed.\n\n";
 
-	bool const passed = string_conversion and pl and po;
-	if (passed)
-		std::cout << "All tests passed.\n";
-	else
-		std::cerr << "Test failed.\n";
-	return !passed;
+	std::cout << "All tests passed.\n";
+	return 0;
 }
