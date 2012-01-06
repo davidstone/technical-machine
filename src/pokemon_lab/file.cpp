@@ -33,12 +33,11 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-static void load_move (Pokemon & pokemon, boost::property_tree::ptree const & pt, unsigned size) {
+static Move load_move (boost::property_tree::ptree const & pt, unsigned size) {
 	std::string const name_str = pt.get <std::string> ("");
 	Move::Moves const name = Move::from_string (name_str);
 	int const pp_ups = pt.get <int> ("<xmlattr>.pp-up");
-	Move const move (name, pp_ups, size);
-	pokemon.move.set.insert (pokemon.move.set.begin (), move);
+	return Move (name, pp_ups, size);
 }
 
 class InvalidStat : public std::runtime_error {
@@ -73,9 +72,9 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	stat.ev = pt.get <unsigned> ("<xmlattr>.ev");
 }
 
-static void load_pokemon (Team & team, boost::property_tree::ptree const & pt, unsigned size) {
+static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned foe_size, unsigned my_size) {
 	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
-	Pokemon pokemon (Pokemon::from_string (species_str), team.size);
+	Pokemon pokemon (Pokemon::from_string (species_str), my_size);
 	pokemon.nickname = pt.get <std::string> ("nickname");
 	if (pokemon.nickname.empty ())
 		pokemon.nickname = species_str;
@@ -90,36 +89,31 @@ static void load_pokemon (Team & team, boost::property_tree::ptree const & pt, u
 	std::string const ability_str = pt.get <std::string> ("ability");
 	pokemon.ability.set_name_from_string (ability_str);
 	
-	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
-		load_move (pokemon, value.second, size);
+	unsigned n = 0;
+	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {
+		Move const move = load_move (value.second, foe_size);
+		pokemon.move.set.insert (pokemon.move.set.begin () + n, move);
+		++n;
+	}
 	
 	for (auto const & value : pt.get_child ("stats"))
 		load_stats (pokemon, value.second);
 	
-	team.pokemon.set.push_back (pokemon);
-}
-
-static unsigned team_size (std::string const & name) {
-	std::ifstream file (name);
-	std::string line;
-	unsigned size = 0;
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.find ("<pokemon species") != std::string::npos)
-			++size;
-	}
-	file.close();
-	return size;
+	return pokemon;
 }
 
 }	// anonymous namespace
 
-void load_team (Team & team, std::string const & file_name, unsigned size) {
-	team.size = team_size (file_name);
+void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	boost::property_tree::ptree pt;
 	read_xml (file_name, pt);
-
-	for (auto const & value : pt.get_child ("shoddybattle"))
-		load_pokemon (team, value.second, size);
+	
+	auto const all_pokemon = pt.get_child ("shoddybattle");
+	team.size = all_pokemon.size ();
+	for (auto const & value : all_pokemon) {
+		Pokemon const pokemon = load_pokemon (value.second, foe_size, team.size);
+		team.pokemon.set.push_back (pokemon);
+	}
 }
 
 }	// namespace pl
