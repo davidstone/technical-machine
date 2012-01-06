@@ -17,18 +17,87 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "file.hpp"
+
+#include <stdexcept>
+#include <string>
+
 #include <boost/lexical_cast.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "../pokemon.hpp"
+#include "../stat.hpp"
 #include "../team.hpp"
 
 namespace technicalmachine {
 namespace pl {
+namespace {
 
-static unsigned team_size (std::string const & name);
-static void load_pokemon (Team & team, std::ifstream & file, unsigned size);
-static std::string search (std::ifstream & file, std::string & output2, std::string const & data);
+static void load_move (Pokemon & pokemon, boost::property_tree::ptree const & pt, unsigned size) {
+	std::string const name_str = pt.get <std::string> ("");
+	Move::Moves const name = Move::from_string (name_str);
+	int const pp_ups = pt.get <int> ("<xmlattr>.pp-up");
+	Move const move (name, pp_ups, size);
+	pokemon.move.set.insert (pokemon.move.set.begin (), move);
+}
 
-unsigned team_size (std::string const & name) {
+class InvalidStat : public std::runtime_error {
+	public:
+		explicit InvalidStat (std::string const & stat_string):
+			std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
+			{
+		}
+};
+
+static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
+	if (name == "HP")
+		return pokemon.hp;
+	else if (name == "Atk")
+		return pokemon.atk;
+	else if (name == "Def")
+		return pokemon.def;
+	else if (name == "Spd")
+		return pokemon.spe;
+	else if (name == "SpAtk")
+		return pokemon.spa;
+	else if (name == "SpDef")
+		return pokemon.spd;
+	else
+		throw InvalidStat (name);
+}
+
+static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {
+	std::string const name = pt.get <std::string> ("<xmlattr>.name");
+	Stat & stat = lookup_stat (pokemon, name);
+	stat.iv = pt.get <unsigned> ("<xmlattr>.iv");
+	stat.ev = pt.get <unsigned> ("<xmlattr>.ev");
+}
+
+static void load_pokemon (Team & team, boost::property_tree::ptree const & pt, unsigned size) {
+	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
+	Pokemon pokemon (Pokemon::from_string (species_str), team.size);
+	pokemon.nickname = pt.get <std::string> ("nickname");
+	if (pokemon.nickname.empty ())
+		pokemon.nickname = species_str;
+	pokemon.level = pt.get <int> ("level");
+	pokemon.happiness = pt.get <int> ("happiness");
+	std::string const gender_str = pt.get <std::string> ("gender");
+	pokemon.gender.set_name_from_string (gender_str);
+	std::string const nature_str = pt.get <std::string> ("nature");
+	pokemon.nature.set_name_from_string (nature_str);
+	std::string const item_str = pt.get <std::string> ("item");
+	pokemon.item.set_name_from_string (item_str);
+	std::string const ability_str = pt.get <std::string> ("ability");
+	pokemon.ability.set_name_from_string (ability_str);
+	
+	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
+		load_move (pokemon, value.second, size);
+	
+	for (auto const & value : pt.get_child ("stats"))
+		load_stats (pokemon, value.second);
+}
+
+static unsigned team_size (std::string const & name) {
 	std::ifstream file (name);
 	std::string line;
 	unsigned size = 0;
@@ -40,89 +109,16 @@ unsigned team_size (std::string const & name) {
 	return size;
 }
 
-void load_team (Team & team, std::string const & name, unsigned size) {
-	team.size = team_size (name);
-	std::ifstream file (name);
-	for (unsigned n = 0; n != team.size; ++n)
-		load_pokemon (team, file, size);
-	file.close ();
+}	// anonymous namespace
+
+void load_team (Team & team, std::string const & file_name, unsigned size) {
+	team.size = team_size (file_name);
+	boost::property_tree::ptree pt;
+	read_xml (file_name, pt);
+
+	for (auto const & value : pt.get_child ("shoddybattle"))
+		load_pokemon (team, value.second, size);
 }
 
-void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
-	// Replace this with a real XML parser. Couldn't figure out TinyXML, should try Xerces.
-	std::string output2;		// Some lines have more than one data point.
-	std::string output1 = search (file, output2, "species=\"");
-	Pokemon member (Pokemon::from_string (output1), team.size);
-	member.nickname = search (file, output2, "<nickname>");
-	if (member.nickname == "")
-		member.nickname = output1;
-	member.level = boost::lexical_cast <int> (search (file, output2, "<level>"));
-	member.happiness = boost::lexical_cast <int> (search (file, output2, "<happiness>"));
-	member.gender.set_name_from_string (search (file, output2, "<gender>"));
-	member.nature.set_name_from_string (search (file, output2, "<nature>"));
-	member.item.set_name_from_string (search (file, output2, "<item>"));
-	member.ability.set_name_from_string (search (file, output2, "<ability>"));
-	
-	
-	for (unsigned n = 0; ; ++n) {
-		output1 = search (file, output2, "\">");
-		if ("No" == output1)
-			break;
-		Move::Moves const name = Move::from_string (output1);
-		int const pp_ups = boost::lexical_cast <int> (output2);
-		Move const move (name, pp_ups, size);
-		member.move.set.insert (member.move.set.begin() + n, move);
-	}
-	
-	member.hp.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.hp.ev = boost::lexical_cast <int> (output2) / 4;
-	member.atk.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.atk.ev = boost::lexical_cast <int> (output2) / 4;
-	member.def.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.def.ev = boost::lexical_cast <int> (output2) / 4;
-	member.spe.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.spe.ev = boost::lexical_cast <int> (output2) / 4;
-	member.spa.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.spa.ev = boost::lexical_cast <int> (output2) / 4;
-	member.spd.iv = boost::lexical_cast <int> (search (file, output2, "iv=\""));
-	member.spd.ev = boost::lexical_cast <int> (output2) / 4;
-	
-	team.pokemon.set.push_back (member);
-}
-
-std::string search (std::ifstream & file, std::string & output2, std::string const & data) {
-	std::string output1 = "";
-	while (!file.eof() and "" == output1) {
-		std::string line;
-		getline (file, line);
-		size_t x = data.length();
-		size_t a = line.find (data);
-		size_t b = line.find ("</", a + x);
-		if (b == std::string::npos)
-			b = line.find ("\" ev");
-		if (b == std::string::npos)
-			b = line.find ("\">", a + x);
-		if (a != std::string::npos and b != std::string::npos) {
-			output1 = line.substr (a + x, b - a - x);			// finds the data between the tags
-			if (output1 == "")
-				break;
-			if ("iv=\"" == data) {
-				a = line.find ("ev=\"");
-				b = line.find ("\" /");
-				output2 = line.substr (a + x, b - a - x);
-			}
-			else if ("\">" == data) {
-				x = 7;
-				a = line.find ("pp-up=\"");
-				b = line.find (data);
-				output2 = line.substr (a + x, b - a - x);
-			}
-		}
-		if (line.find ("/moveset") != std::string::npos and "\">" == data)
-			output1 = "No";
-	}
-	return output1;
-}
-
-} // namespace pl
-} // namespace technicalmachine
+}	// namespace pl
+}	// namespace technicalmachine
