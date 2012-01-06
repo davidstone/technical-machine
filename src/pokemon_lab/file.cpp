@@ -95,6 +95,8 @@ static void load_pokemon (Team & team, boost::property_tree::ptree const & pt, u
 	
 	for (auto const & value : pt.get_child ("stats"))
 		load_stats (pokemon, value.second);
+	
+	team.pokemon.set.push_back (pokemon);
 }
 
 static unsigned team_size (std::string const & name) {
