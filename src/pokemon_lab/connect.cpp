@@ -22,9 +22,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
 
 #include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include "battle.hpp"
 #include "battle_settings.hpp"
@@ -569,7 +569,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		default:
-			print_with_time_stamp (std::cerr, "Unknown code: " + boost::lexical_cast <std::string> (code));
+			print_with_time_stamp (std::cerr, "Unknown code: " + std::to_string (code));
 			break;
 	}
 	msg.read_header (*socket, this);
@@ -643,7 +643,7 @@ std::string Client::get_shared_secret (int secret_style, std::string const & sal
 		case VBULLETIN:
 			return cryptography::md5 (cryptography::md5 (password) + salt);
 		default:
-			print_with_time_stamp (std::cerr, "Unknown secret style of " + boost::lexical_cast <std::string> (secret_style));
+			print_with_time_stamp (std::cerr, "Unknown secret style of " + std::to_string (secret_style));
 			return "";
 	}
 }
@@ -694,7 +694,7 @@ void Client::handle_registry_response (uint8_t code, std::string const & details
 			print_with_time_stamp (std::cerr, "The server is full.");
 			break;
 		default:
-			print_with_time_stamp (std::cerr, "Authentication failed with unknown code: " + boost::lexical_cast <std::string> (code) + ". =(");
+			print_with_time_stamp (std::cerr, "Authentication failed with unknown code: " + std::to_string (code) + ". =(");
 	}
 	if (!details.empty ())
 		print_with_time_stamp (std::cerr, details);
@@ -765,7 +765,7 @@ void Client::handle_invalid_team (std::vector <int16_t> const & violations) {
 	print_with_time_stamp (std::cerr, "Invalid team.");
 	for (int16_t const violation : violations) {
 		int pokemon = (-(violation + 1)) % 6;
-		std::string output = "Problem at Pokemon " + boost::lexical_cast <std::string> (pokemon) + ": ";
+		std::string output = "Problem at Pokemon " + std::to_string (pokemon) + ": ";
 		switch (-(violation + pokemon + 1) / 6) {
 			case 0:
 				output += "must have 1-4 unique moves.";

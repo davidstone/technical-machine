@@ -21,14 +21,14 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <utility>
+
 #include <boost/asio.hpp>
 
 #include "battle_settings.hpp"
 #include "conversion.hpp"
 #include "../team.hpp"
 #include "../pokemon.hpp"
-
-#include <iostream>
 
 namespace technicalmachine {
 namespace po {
@@ -119,7 +119,6 @@ void OutMessage::write_move (uint32_t battle_id, uint8_t move_index, uint8_t tar
 	write_byte (Choice::ATTACK);
 	write_byte (move_index);
 	write_byte (target);
-	std::cerr << "move_index: " << static_cast <unsigned> (move_index) << "\n";
 }
 
 void OutMessage::write_switch (uint32_t battle_id, uint8_t slot) {

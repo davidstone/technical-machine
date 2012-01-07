@@ -25,7 +25,7 @@
 namespace technicalmachine {
 
 Ability::Ability ():
-	name (END_ABILITY) {
+	name (END) {
 }
 
 Ability::Ability (Abilities ability):
@@ -120,7 +120,7 @@ bool Ability::weakens_SE_attacks () const {
 }
 
 bool Ability::is_set () const {
-	return name != END_ABILITY;
+	return name != END;
 }
 
 }	// namespace technicalmachine

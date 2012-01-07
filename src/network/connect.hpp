@@ -56,7 +56,7 @@ class GenericClient {
 	public:
 		boost::asio::io_service io;
 		Score score;
-		int detailed [END_SPECIES][7];
+		int detailed [Species::END][7];
 	protected:
 		int depth;
 	public:

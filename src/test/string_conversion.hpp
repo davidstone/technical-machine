@@ -1,4 +1,4 @@
-// Status string functions
+// Test string conversions
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,45 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "status.hpp"
-
-#include <map>
-#include <string>
+#ifndef TEST_STRING_CONVERSION_HPP_
+#define TEST_STRING_CONVERSION_HPP_
 
 namespace technicalmachine {
 
-std::string Status::to_string (Statuses name) {
-	static std::string const status_name [] = {
-		"No status",
-		"Burn",
-		"Freeze",
-		"Paralysis",
-		"Poison",
-		"Toxic",
-		"Rest",
-		"Sleep",
-		"END_STATUS"
-	};
-	return status_name [name];
-}
-
-std::string Status::to_string () const {
-	return to_string (name);
-}
-
-Status::Statuses Status::from_string (std::string const & str) {
-	static std::map <std::string, Statuses> const converter {
-		{ "No status", NO_STATUS },
-		{ "Burn", BURN },
-		{ "Freeze", FREEZE },
-		{ "Paralysis", PARALYSIS },
-		{ "Poison", POISON },
-		{ "Toxic", POISON_TOXIC },
-		{ "Rest", REST },
-		{ "Sleep", SLEEP },
-		{ "END_STATUS", END }
-	};
-	return converter.find (str)->second;
-}
+void string_conversion_tests ();
 
 }	// namespace technicalmachine
+#endif	// TEST_STRING_CONVERSION_HPP_

@@ -37,7 +37,7 @@ using namespace technicalmachine;
 struct Data {
 	std::vector<Fl_Input *> input;
 	Fl_Multiline_Output * output;
-	int detailed [END_SPECIES][7];
+	int detailed [Species::END][7];
 };
 
 void function (Fl_Widget * w, void * data) {
@@ -48,9 +48,9 @@ void function (Fl_Widget * w, void * data) {
 	for (Fl_Input * in : d->input) {
 		Species const species = Pokemon::from_string (in->value());
 		if (in == d->input.front ()) {
-			using_lead = species != END_SPECIES;
+			using_lead = species != Species::END;
 		}
-		if (species != END_SPECIES) {
+		if (species != Species::END) {
 			Pokemon member (species, team.size);
 			team.pokemon.set.push_back (member);
 		}

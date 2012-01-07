@@ -1,4 +1,4 @@
-// Status string functions
+// Simulator conversion exception class stuff
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,45 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "status.hpp"
+#ifndef TEST_INVALID_SIMULATOR_CONVERSION_HPP_
+#define TEST_INVALID_SIMULATOR_CONVERSION_HPP_
 
-#include <map>
-#include <string>
+#include <stdexcept>
 
 namespace technicalmachine {
 
-std::string Status::to_string (Statuses name) {
-	static std::string const status_name [] = {
-		"No status",
-		"Burn",
-		"Freeze",
-		"Paralysis",
-		"Poison",
-		"Toxic",
-		"Rest",
-		"Sleep",
-		"END_STATUS"
-	};
-	return status_name [name];
-}
-
-std::string Status::to_string () const {
-	return to_string (name);
-}
-
-Status::Statuses Status::from_string (std::string const & str) {
-	static std::map <std::string, Statuses> const converter {
-		{ "No status", NO_STATUS },
-		{ "Burn", BURN },
-		{ "Freeze", FREEZE },
-		{ "Paralysis", PARALYSIS },
-		{ "Poison", POISON },
-		{ "Toxic", POISON_TOXIC },
-		{ "Rest", REST },
-		{ "Sleep", SLEEP },
-		{ "END_STATUS", END }
-	};
-	return converter.find (str)->second;
-}
+template <class Class>
+class InvalidSimulatorConversion : public std::logic_error {
+	public:
+		template <typename Test>
+		InvalidSimulatorConversion (Test original, Test result):
+			std::logic_error (Class::to_string (original) + " is seen as " + Class::to_string (result) + ".\n") {
+		}
+};
 
 }	// namespace technicalmachine
+
+#endif	// TEST_INVALID_SIMULATOR_CONVERSION_HPP_

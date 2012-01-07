@@ -17,9 +17,14 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inmessage.hpp"
+
 #include <cstdint>
+#include <string>
+#include <vector>
+
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+
 #include "connect.hpp"
 #include "../network/invalid_packet.hpp"
 

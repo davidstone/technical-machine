@@ -27,7 +27,6 @@
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include "battle.hpp"
 #include "battle_settings.hpp"
@@ -540,7 +539,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		default:
-			print_with_time_stamp (std::cerr, "Unknown code: " + boost::lexical_cast<std::string> (code));
+			print_with_time_stamp (std::cerr, "Unknown code: " + std::to_string (code));
 			break;
 	}
 	msg.read_header (*socket, this);
@@ -573,7 +572,7 @@ void Client::remove_player (uint32_t user_id) {
 			user_name_to_id.erase (user_name);
 		}
 		else {
-			std::string const message = "Server requested removing non-existant player: " + boost::lexical_cast <std::string> (user_id);
+			std::string const message = "Server requested removing non-existant player: " + std::to_string (user_id);
 			print_with_time_stamp (std::cerr, message);
 		}
 	}

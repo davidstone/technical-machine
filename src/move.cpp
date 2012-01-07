@@ -71,7 +71,7 @@ Move::Move (Moves move, int pp_ups, unsigned size) :
 }
 
 uint64_t Move::hash () const {
-	return name + END_MOVE * (disable + 7 * (pp + pp_max * (times_used)));
+	return name + END * (disable + 7 * (pp + pp_max * (times_used)));
 }
 
 void Move::set_priority () {
@@ -795,9 +795,9 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			Stat::boost (user.stage [Stat::DEF], 1);
 			break;
 		case Move::HAZE:
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
 				user.stage [stat] = 0;
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
 				target.stage [stat] = 0;
 			break;
 		case Move::HEAD_SMASH:
@@ -827,7 +827,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		case Move::HEALING_WISH:		// Fix
 			break;
 		case Move::HEART_SWAP:
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
 				std::swap (user.stage [stat], target.stage [stat]);
 			break;
 		case Move::HI_JUMP_KICK:		// Fix
@@ -977,7 +977,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 			}
 			break;
 		case Move::PSYCH_UP:
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1))
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
 				user.stage [stat] = target.stage [stat];
 			break;
 		case Move::PSYCHO_SHIFT:

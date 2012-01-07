@@ -51,7 +51,7 @@ class Nature {
 			SASSY,
 			SERIOUS,
 			TIMID,
-			END_NATURE
+			END
 		};
 		Natures name;
 		Nature ();

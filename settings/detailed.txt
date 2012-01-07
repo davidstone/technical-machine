@@ -401,7 +401,7 @@ Arceus	Def EV	None	100.0
 Arceus	SpA EV	None	100.0
 Arceus	SpD EV	None	100.0
 Arceus	Spe EV	None	100.0
-Arceus	Move	End Move	100.0
+Arceus	Move	END_MOVE	100.0
 Ariados	Ability	Insomnia	87.9
 Ariados	Ability	Swarm	12.1
 Ariados	Item	Leftovers	28.9
@@ -2612,7 +2612,7 @@ Darkrai	Def EV	None	100.0
 Darkrai	SpA EV	None	100.0
 Darkrai	SpD EV	None	100.0
 Darkrai	Spe EV	None	100.0
-Darkrai	Move	End Move	100.0
+Darkrai	Move	END_MOVE	100.0
 Delcatty	Ability	Cute Charm	76.0
 Delcatty	Ability	Normalize	24.0
 Delcatty	Item	Leftovers	54.4
@@ -2698,7 +2698,7 @@ Deoxys-A	Def EV	None	100.0
 Deoxys-A	SpA EV	None	100.0
 Deoxys-A	SpD EV	None	100.0
 Deoxys-A	Spe EV	None	100.0
-Deoxys-A	Move	End Move	100.0
+Deoxys-A	Move	END_MOVE	100.0
 Deoxys-D	Ability	Pressure	100.0
 Deoxys-D	Item	Leftovers	100.0
 Deoxys-D	Nature	Hardy	100.0
@@ -2708,7 +2708,7 @@ Deoxys-D	Def EV	None	100.0
 Deoxys-D	SpA EV	None	100.0
 Deoxys-D	SpD EV	None	100.0
 Deoxys-D	Spe EV	None	100.0
-Deoxys-D	Move	End Move	100.0
+Deoxys-D	Move	END_MOVE	100.0
 Deoxys-M	Ability	Pressure	100.0
 Deoxys-M	Item	Leftovers	100.0
 Deoxys-M	Nature	Hardy	100.0
@@ -2718,7 +2718,7 @@ Deoxys-M	Def EV	None	100.0
 Deoxys-M	SpA EV	None	100.0
 Deoxys-M	SpD EV	None	100.0
 Deoxys-M	Spe EV	None	100.0
-Deoxys-M	Move	End Move	100.0
+Deoxys-M	Move	END_MOVE	100.0
 Deoxys-S	Ability	Pressure	100.0
 Deoxys-S	Item	Leftovers	100.0
 Deoxys-S	Nature	Hardy	100.0
@@ -2728,7 +2728,7 @@ Deoxys-S	Def EV	None	100.0
 Deoxys-S	SpA EV	None	100.0
 Deoxys-S	SpD EV	None	100.0
 Deoxys-S	Spe EV	None	100.0
-Deoxys-S	Move	End Move	100.0
+Deoxys-S	Move	END_MOVE	100.0
 Dewgong	Ability	Hydration	57.0
 Dewgong	Ability	Thick Fat	43.0
 Dewgong	Item	Leftovers	47.9
@@ -2772,7 +2772,7 @@ Dialga	Def EV	None	100.0
 Dialga	SpA EV	None	100.0
 Dialga	SpD EV	None	100.0
 Dialga	Spe EV	None	100.0
-Dialga	Move	End Move	100.0
+Dialga	Move	END_MOVE	100.0
 Diglett	Ability	Arena Trap	99.0
 Diglett	Ability	Sand Veil	1.0
 Diglett	Item	Liechi Berry	32.4
@@ -2816,7 +2816,7 @@ Ditto	SpA EV	None	100.0
 Ditto	SpD EV	None	100.0
 Ditto	Spe EV	Max	100.0
 Ditto	Move	Transform	100.0
-Ditto	Move	End Move	100.0
+Ditto	Move	END_MOVE	100.0
 Dodrio	Ability	Early Bird	99.7
 Dodrio	Ability	Run Away	0.3
 Dodrio	Item	Focus Sash	33.8
@@ -4101,7 +4101,7 @@ Garchomp	Def EV	None	100.0
 Garchomp	SpA EV	None	100.0
 Garchomp	SpD EV	None	100.0
 Garchomp	Spe EV	None	100.0
-Garchomp	Move	End Move	100.0
+Garchomp	Move	END_MOVE	100.0
 Gardevoir	Ability	Trace	78.8
 Gardevoir	Ability	Synchronize	21.2
 Gardevoir	Item	Leftovers	58.1
@@ -4330,7 +4330,7 @@ Giratina-A	Def EV	None	100.0
 Giratina-A	SpA EV	None	100.0
 Giratina-A	SpD EV	None	100.0
 Giratina-A	Spe EV	None	100.0
-Giratina-A	Move	End Move	100.0
+Giratina-A	Move	END_MOVE	100.0
 Giratina-O	Ability	Levitate	100.0
 Giratina-O	Item	Leftovers	100.0
 Giratina-O	Nature	Hardy	100.0
@@ -4340,7 +4340,7 @@ Giratina-O	Def EV	None	100.0
 Giratina-O	SpA EV	None	100.0
 Giratina-O	SpD EV	None	100.0
 Giratina-O	Spe EV	None	100.0
-Giratina-O	Move	End Move	100.0
+Giratina-O	Move	END_MOVE	100.0
 Glaceon	Ability	Snow Cloak	100.0
 Glaceon	Item	Leftovers	34.3
 Glaceon	Item	Choice Scarf	25.8
@@ -4829,7 +4829,7 @@ Groudon	Def EV	None	100.0
 Groudon	SpA EV	None	100.0
 Groudon	SpD EV	None	100.0
 Groudon	Spe EV	None	100.0
-Groudon	Move	End Move	100.0
+Groudon	Move	END_MOVE	100.0
 Grovyle	Ability	Overgrow	100.0
 Grovyle	Item	Focus Sash	71.4
 Grovyle	Item	No Item	18.8
@@ -5278,7 +5278,7 @@ Ho-Oh	Def EV	None	100.0
 Ho-Oh	SpA EV	None	100.0
 Ho-Oh	SpD EV	None	100.0
 Ho-Oh	Spe EV	None	100.0
-Ho-Oh	Move	End Move	100.0
+Ho-Oh	Move	END_MOVE	100.0
 Honchkrow	Ability	Insomnia	81.5
 Honchkrow	Ability	Super Luck	18.5
 Honchkrow	Item	Life Orb	66.5
@@ -6162,7 +6162,7 @@ Kyogre	Def EV	None	100.0
 Kyogre	SpA EV	None	100.0
 Kyogre	SpD EV	None	100.0
 Kyogre	Spe EV	None	100.0
-Kyogre	Move	End Move	100.0
+Kyogre	Move	END_MOVE	100.0
 Lairon	Ability	Rock Head	100.0
 Lairon	Item	Leftovers	60.0
 Lairon	Item	Sky Plate	40.0
@@ -6287,7 +6287,7 @@ Latias	Def EV	None	100.0
 Latias	SpA EV	None	100.0
 Latias	SpD EV	None	100.0
 Latias	Spe EV	None	100.0
-Latias	Move	End Move	100.0
+Latias	Move	END_MOVE	100.0
 Latios	Ability	Levitate	100.0
 Latios	Item	Leftovers	100.0
 Latios	Nature	Hardy	100.0
@@ -6297,7 +6297,7 @@ Latios	Def EV	None	100.0
 Latios	SpA EV	None	100.0
 Latios	SpD EV	None	100.0
 Latios	Spe EV	None	100.0
-Latios	Move	End Move	100.0
+Latios	Move	END_MOVE	100.0
 Leafeon	Ability	Leaf Guard	100.0
 Leafeon	Item	Leftovers	59.2
 Leafeon	Item	Life Orb	16.1
@@ -6674,7 +6674,7 @@ Lugia	Def EV	None	100.0
 Lugia	SpA EV	None	100.0
 Lugia	SpD EV	None	100.0
 Lugia	Spe EV	None	100.0
-Lugia	Move	End Move	100.0
+Lugia	Move	END_MOVE	100.0
 Lumineon	Ability	Swift Swim	92.9
 Lumineon	Ability	Storm Drain	7.1
 Lumineon	Item	Life Orb	45.5
@@ -7276,7 +7276,7 @@ Manaphy	Def EV	None	100.0
 Manaphy	SpA EV	None	100.0
 Manaphy	SpD EV	None	100.0
 Manaphy	Spe EV	None	100.0
-Manaphy	Move	End Move	100.0
+Manaphy	Move	END_MOVE	100.0
 Manectric	Ability	Static	84.7
 Manectric	Ability	Lightningrod	15.3
 Manectric	Item	Petaya Berry	24.0
@@ -7829,7 +7829,7 @@ Mew	Def EV	None	100.0
 Mew	SpA EV	None	100.0
 Mew	SpD EV	None	100.0
 Mew	Spe EV	None	100.0
-Mew	Move	End Move	100.0
+Mew	Move	END_MOVE	100.0
 Mewtwo	Ability	Pressure	100.0
 Mewtwo	Item	Leftovers	100.0
 Mewtwo	Nature	Hardy	100.0
@@ -7839,7 +7839,7 @@ Mewtwo	Def EV	None	100.0
 Mewtwo	SpA EV	None	100.0
 Mewtwo	SpD EV	None	100.0
 Mewtwo	Spe EV	None	100.0
-Mewtwo	Move	End Move	100.0
+Mewtwo	Move	END_MOVE	100.0
 Mightyena	Ability	Intimidate	60.4
 Mightyena	Ability	Quick Feet	39.6
 Mightyena	Item	Toxic Orb	36.1
@@ -8898,7 +8898,7 @@ Palkia	Def EV	None	100.0
 Palkia	SpA EV	None	100.0
 Palkia	SpD EV	None	100.0
 Palkia	Spe EV	None	100.0
-Palkia	Move	End Move	100.0
+Palkia	Move	END_MOVE	100.0
 Paras	Ability	Dry Skin	97.5
 Paras	Ability	Effect Spore	2.5
 Paras	Item	Focus Sash	82.5
@@ -10160,7 +10160,7 @@ Rayquaza	Def EV	None	100.0
 Rayquaza	SpA EV	None	100.0
 Rayquaza	SpD EV	None	100.0
 Rayquaza	Spe EV	None	100.0
-Rayquaza	Move	End Move	100.0
+Rayquaza	Move	END_MOVE	100.0
 Regice	Ability	Clear Body	100.0
 Regice	Item	Leftovers	83.2
 Regice	Item	Chesto Berry	8.1
@@ -10788,7 +10788,7 @@ Salamence	Def EV	None	100.0
 Salamence	SpA EV	None	100.0
 Salamence	SpD EV	None	100.0
 Salamence	Spe EV	None	100.0
-Salamence	Move	End Move	100.0
+Salamence	Move	END_MOVE	100.0
 Sandshrew	Ability	Sand Veil	100.0
 Sandshrew	Item	Life Orb	35.3
 Sandshrew	Item	No Item	23.5
@@ -11243,7 +11243,7 @@ Shaymin-S	Def EV	None	100.0
 Shaymin-S	SpA EV	None	100.0
 Shaymin-S	SpD EV	None	100.0
 Shaymin-S	Spe EV	None	100.0
-Shaymin-S	Move	End Move	100.0
+Shaymin-S	Move	END_MOVE	100.0
 Shedinja	Ability	Wonder Guard	100.0
 Shedinja	Item	Focus Sash	88.0
 Shedinja	Nature	Adamant	43.2
@@ -13687,7 +13687,7 @@ Unown	SpA EV	None	100.0
 Unown	SpD EV	None	100.0
 Unown	Spe EV	None	100.0
 Unown	Move	Hidden Power	100.0
-Unown	Move	End Move	100.0
+Unown	Move	END_MOVE	100.0
 Ursaring	Ability	Quick Feet	51.7
 Ursaring	Ability	Guts	48.3
 Ursaring	Item	Toxic Orb	67.0
@@ -14328,7 +14328,7 @@ Weedle	Spe EV	None	100.0
 Weedle	Move	Bug Bite	100.0
 Weedle	Move	Poison Sting	100.0
 Weedle	Move	String Shot	100.0
-Weedle	Move	End Move	100.0
+Weedle	Move	END_MOVE	100.0
 Weepinbell	Ability	Chlorophyll	100.0
 Weepinbell	Item	Life Orb	100.0
 Weepinbell	Nature	Modest	100.0
@@ -14494,7 +14494,7 @@ Wobbuffet	Def EV	None	100.0
 Wobbuffet	SpA EV	None	100.0
 Wobbuffet	SpD EV	None	100.0
 Wobbuffet	Spe EV	None	100.0
-Wobbuffet	Move	End Move	100.0
+Wobbuffet	Move	END_MOVE	100.0
 Wooper	Ability	Water Absorb	75.0
 Wooper	Ability	Damp	25.0
 Wooper	Item	Lucky Punch	75.0
@@ -14661,7 +14661,7 @@ Wynaut	Def EV	None	100.0
 Wynaut	SpA EV	None	100.0
 Wynaut	SpD EV	None	100.0
 Wynaut	Spe EV	None	100.0
-Wynaut	Move	End Move	100.0
+Wynaut	Move	END_MOVE	100.0
 Xatu	Ability	Synchronize	75.5
 Xatu	Ability	Early Bird	24.5
 Xatu	Item	Choice Scarf	45.8

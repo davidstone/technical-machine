@@ -31,7 +31,6 @@
 #include <boost/asio/error.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include "battle_settings.hpp"
 #include "../battle.hpp"
@@ -155,7 +154,7 @@ void GenericClient::load_settings () {
 			size_t position = line.find (delimiter);
 			std::string const data = line.substr (0, position);
 			if (data == "chattiness")
-				chattiness = boost::lexical_cast <int> (line.substr (position + delimiter.length()));
+				chattiness = std::stoi (line.substr (position + delimiter.length()));
 			else if (data == "time format")
 				time_format = line.substr (position + delimiter.length());
 		}
@@ -345,7 +344,7 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		}
 		else if (command == "depth") {
 			if (request.length () >= delimiter_position + delimiter.length()) {
-				int const new_depth = boost::lexical_cast <int> (request.substr (delimiter_position + delimiter.length ()));
+				int const new_depth = std::stoi (request.substr (delimiter_position + delimiter.length ()));
 				if (new_depth < 1) {
 					std::string const message = "Invalid depth requested. Please enter a number between 1 and 3 inclusive.";
 					send_private_message (user, message);

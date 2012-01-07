@@ -26,7 +26,7 @@ namespace technicalmachine {
 
 void overall_stats (std::vector<unsigned> & overall);
 
-void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [END_SPECIES][END_SPECIES]);
+void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [Species::END][Species::END]);
 
 void lead_stats (std::vector<float> & lead);
 

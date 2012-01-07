@@ -62,7 +62,7 @@ uint64_t Pokemon::hash () const {
 	uint64_t hash = 0;
 	for (Move const & next_move : move.set)
 		hash ^= next_move.hash();
-	return name + END_SPECIES * (item.name + Item::END_ITEM * (status.name + Status::END_STATUS * (hp.stat + hp.max * (sleep + 5 * hash))));
+	return name + END * (item.name + Item::END * (status.name + Status::END * (hp.stat + hp.max * (sleep + 5 * hash))));
 }
 
 bool Pokemon::find_move (Move::Moves name) {

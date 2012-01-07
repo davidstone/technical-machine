@@ -17,8 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <string>
 #include <vector>
-#include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
 #include "item.hpp"
@@ -41,7 +41,7 @@ using namespace technicalmachine;
 
 int main () {
 	
-	int detailed [END_SPECIES] [7] = {{ 0 }};
+	int detailed [Species::END] [7] = {{ 0 }};
 	std::cerr << "Loading detailed stats.\n";
 	detailed_stats (detailed);
 	std::cerr << "Loading ai.\n";
@@ -84,15 +84,15 @@ int main () {
 	reversedamagecalculator (foe, ai, weather, damage, hidden);
 	std::cerr << "hidden.size (): " << hidden.size () << '\n';
 	
-	Item::Items thingy = Item::END_ITEM;
+	Item::Items thingy = Item::END;
 	std::string output = "";
 	for (Unknown const & unknown : hidden) {
 		if (unknown.hpev == 0 and unknown.speev == 0) {
 			if (thingy != unknown.item) {
-				output += '\n' + boost::lexical_cast <std::string> (static_cast <int> (unknown.item)) + ": \n";
+				output += '\n' + std::to_string (static_cast <int> (unknown.item)) + ": \n";
 				thingy = static_cast <Item::Items> (unknown.item);
 			}
-			output += boost::lexical_cast <std::string> (static_cast <int> (unknown.atkev) * 4);
+			output += std::to_string (static_cast <int> (unknown.atkev) * 4);
 			if (unknown.nature == static_cast<unsigned char> (Nature::NAUGHTY))
 				output += "(+)";
 			else if (unknown.nature == static_cast<unsigned char> (Nature::DOCILE))

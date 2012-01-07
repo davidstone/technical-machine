@@ -35,7 +35,6 @@
 
 #include "network/connect.hpp"
 #include "network/outmessage.hpp"
-#include <iostream>
 
 namespace technicalmachine {
 

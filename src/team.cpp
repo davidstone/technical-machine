@@ -223,7 +223,7 @@ bool Team::operator== (Team const & other) const {
 		if (pokemon.set [n] != other.pokemon.set [n])
 			return false;
 	}
-	for (Stat::Stats stat = Stat::ATK; stat != Stat::END_STAT; stat = static_cast <Stat::Stats> (stat + 1)) {
+	for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1)) {
 		if (stage [stat] != other.stage [stat])
 			return false;
 	}

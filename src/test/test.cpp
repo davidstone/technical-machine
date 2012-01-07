@@ -1,4 +1,4 @@
-// Nature functions
+// Test stuff
 // Copyright (C) 2011 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,16 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "nature.hpp"
+#include <iostream>
 
-namespace technicalmachine {
+#include "string_conversion.hpp"
+#include "pokemon_lab/test.hpp"
+#include "pokemon_online/test.hpp"
 
-Nature::Nature ():
-	name (END) {
+int main () {
+	using namespace technicalmachine;
+	string_conversion_tests ();
+	std::cout << "String conversion tests passed.\n\n";
+
+	pl::test ();
+	std::cout << "Pokemon Lab tests passed.\n\n";
+
+	po::test ();
+	std::cout << "Pokemon Online tests passed.\n\n";
+
+	std::cout << "All tests passed.\n";
+	return 0;
 }
-
-bool Nature::is_set () const {
-	return name != END;
-}
-
-}	// namespace technicalmachine
