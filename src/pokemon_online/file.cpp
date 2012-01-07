@@ -33,11 +33,15 @@
 #include "../stat.hpp"
 #include "../team.hpp"
 
+#include <iostream>
+
 namespace technicalmachine {
 namespace po {
+namespace {
 
 static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
-	Move::Moves name = Move::Moves::ABSORB;
+	int const id = pt.get <int> ("");
+	Move::Moves name = id_to_move (id);
 	constexpr unsigned pp_ups = 3;
 	return Move (name, pp_ups, foe_size);
 }
@@ -86,15 +90,19 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 		}
 		else if (value.first == "DV") {
 			Stat & stat = lookup_stat (pokemon, n);
+			stat.iv = value.second.get <unsigned> ("");
 			n < 5 ? ++n : n = 0;
 		}
 		else if (value.first == "EV") {
 			Stat & stat = lookup_stat (pokemon, n);
+			stat.ev = value.second.get <unsigned> ("");
 			n < 5 ? ++n : n = 0;
 		}
 	}
 	return pokemon;
 }
+
+}	// anonymous namespace
 
 void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	boost::property_tree::ptree pt;
