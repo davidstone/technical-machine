@@ -18,10 +18,8 @@
 
 #include "file.hpp"
 
-#include <stdexcept>
 #include <string>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -33,20 +31,12 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-static Move load_move (boost::property_tree::ptree const & pt, unsigned size) {
+static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
 	std::string const name_str = pt.get <std::string> ("");
 	Move::Moves const name = Move::from_string (name_str);
 	int const pp_ups = pt.get <int> ("<xmlattr>.pp-up");
-	return Move (name, pp_ups, size);
+	return Move (name, pp_ups, foe_size);
 }
-
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string):
-			std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
-			{
-		}
-};
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 	if (name == "HP")

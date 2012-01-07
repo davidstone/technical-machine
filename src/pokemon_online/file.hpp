@@ -19,14 +19,13 @@
 #ifndef POKEMON_ONLINE_FILE_H_
 #define POKEMON_ONLINE_FILE_H_
 
-#include <fstream>
 #include <string>
 
 namespace technicalmachine {
 class Team;
 namespace po {
 
-void load_team (Team & team, std::string const & name, unsigned size);
+void load_team (Team & team, std::string const & file_name, unsigned foe_size);
 
 } // namespace po
 } // namespace technicalmachine

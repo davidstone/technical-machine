@@ -20,6 +20,7 @@
 #define STAT_H_
 
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 
 #include "species.hpp"
@@ -51,6 +52,14 @@ class Stat {
 		static void boost (int8_t & stage, int n);
 	private:
 		static uint8_t get_base_stat (Species name, Stats stat);
+};
+
+class InvalidStat : public std::runtime_error {
+	public:
+		explicit InvalidStat (std::string const & stat_string):
+			std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
+			{
+		}
 };
 
 class Pokemon;

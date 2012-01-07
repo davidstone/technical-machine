@@ -17,98 +17,99 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "file.hpp"
-#include <fstream>
+
+#include <stdexcept>
 #include <string>
-#include <boost/lexical_cast.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 #include "conversion.hpp"
 #include "../ability.hpp"
 #include "../item.hpp"
 #include "../move.hpp"
 #include "../pokemon.hpp"
 #include "../species.hpp"
+#include "../stat.hpp"
 #include "../team.hpp"
 
 namespace technicalmachine {
 namespace po {
 
-static void load_pokemon (Team & team, std::ifstream & file, unsigned size);
-static unsigned converter (std::string const & data, std::string const & end, std::string const & line);
+static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
+	Move::Moves name = Move::Moves::ABSORB;
+	constexpr unsigned pp_ups = 3;
+	return Move (name, pp_ups, foe_size);
+}
 
-void load_team (Team & team, std::string const & name, unsigned size) {
-	std::ifstream file (name);
-	std::string line;
-	getline (file, line);
-	for (unsigned n = 0; n != 6; ++n)
-		load_pokemon (team, file, size);
-	file.close ();
+static Stat & lookup_stat (Pokemon & pokemon, unsigned n) {
+	switch (n) {
+		case 0:
+			return pokemon.hp;
+		case 1:
+			return pokemon.atk;
+		case 2:
+			return pokemon.def;
+		case 3:
+			return pokemon.spa;
+		case 4:
+			return pokemon.spd;
+		case 5:
+			return pokemon.spe;
+		default:
+			throw InvalidStat (std::to_string (n));
+	}
+}
+
+static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned foe_size, unsigned my_size) {
+	unsigned const id = pt.get <unsigned> ("<xmlattr>.Num");
+	unsigned const forme = pt.get <unsigned> ("<xmlattr>.Forme");
+	Pokemon pokemon (id_to_species (id, forme), my_size);
+	pokemon.nickname = pt.get <std::string> ("<xmlattr>.Nickname");
+	unsigned const item = pt.get <unsigned> ("<xmlattr>.Item");
+	pokemon.item.name = id_to_item (item);
+	unsigned const ability = pt.get <unsigned> ("<xmlattr>.Ability");
+	pokemon.ability.name = id_to_ability (ability);
+	unsigned const nature = pt.get <unsigned> ("<xmlattr>.Nature");
+	pokemon.nature.name = id_to_nature (nature);
+	pokemon.happiness = pt.get <unsigned> ("<xmlattr>.Happiness");
+	pokemon.level = pt.get <unsigned> ("<xmlattr>.Lvl");
+	unsigned const gender = pt.get <unsigned> ("<xmlattr>.Gender");
+	pokemon.gender.from_simulator_int (gender);
+
+	unsigned n = 0;
+	for (auto const & value : pt.get_child ("")) {
+		if (value.first == "Move") {
+			Move const move = load_move (value.second, foe_size);
+			pokemon.move.set.insert (pokemon.move.set.begin () + n, move);
+			n < 3 ? ++n : n = 0;
+		}
+		else if (value.first == "DV") {
+			Stat & stat = lookup_stat (pokemon, n);
+			n < 5 ? ++n : n = 0;
+		}
+		else if (value.first == "EV") {
+			Stat & stat = lookup_stat (pokemon, n);
+			n < 5 ? ++n : n = 0;
+		}
+	}
+	return pokemon;
+}
+
+void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
+	boost::property_tree::ptree pt;
+	read_xml (file_name, pt);
+	
+	team.size = 6;
+	auto const all_pokemon = pt.get_child ("Team");
+	for (auto const & value : all_pokemon) {
+		if (value.first == "Pokemon") {
+			Pokemon const pokemon = load_pokemon (value.second, foe_size, team.size);
+			team.pokemon.set.push_back (pokemon);
+		}
+	}
 	team.size = team.pokemon.set.size ();
 }
 
-void load_pokemon (Team & team, std::ifstream & file, unsigned size) {
-	std::string line;
-	getline (file, line);
-	getline (file, line);
-	int const species_id = converter ("Num=\"", "\"", line);
-	int const forme = converter ("Forme=\"", "\"", line);
-	Pokemon member (id_to_species (species_id, forme), team.size);
-
-	member.ability.name = id_to_ability (converter ("Ability=\"", "\"", line));
-
-	member.item.name = id_to_item (converter ("Item=\"", "\"", line));
-	
-	member.nature.name = static_cast <Nature::Natures> (converter ("Nature=\"", "\"", line));
-	
-	member.level = converter ("Lvl=\"", "\"", line);
-	
-	std::string const data = "Nickname=\"";
-	size_t const x = data.length();
-	size_t const a = line.find (data);
-	size_t const b = line.find ("\"", a + x);
-	member.nickname = line.substr (a + x, b - a - x);
-	
-	member.happiness = converter ("Happiness=\"", "\"", line);
-	
-	member.gender.from_simulator_int (converter ("Gender=\"", "\"", line));
-
-	for (unsigned n = 0; n != 4; ++n) {
-		getline (file, line);
-		Move move (id_to_move (converter ("<Move>", "</Move>", line)), 3, size);
-		member.move.set.push_back (move);
-	}
-	getline (file, line);
-	member.hp.iv = converter ("<DV>", "</DV>", line);
-	getline (file, line);
-	member.atk.iv = converter ("<DV>", "</DV>", line);
-	getline (file, line);
-	member.def.iv = converter ("<DV>", "</DV>", line);
-	getline (file, line);
-	member.spa.iv = converter ("<DV>", "</DV>", line);
-	getline (file, line);
-	member.spd.iv = converter ("<DV>", "</DV>", line);
-	getline (file, line);
-	member.spe.iv = converter ("<DV>", "</DV>", line);
-	getline (file, line);
-	member.hp.ev = converter ("<EV>", "</EV>", line);
-	getline (file, line);
-	member.atk.ev = converter ("<EV>", "</EV>", line);
-	getline (file, line);
-	member.def.ev = converter ("<EV>", "</EV>", line);
-	getline (file, line);
-	member.spa.ev = converter ("<EV>", "</EV>", line);
-	getline (file, line);
-	member.spd.ev = converter ("<EV>", "</EV>", line);
-	getline (file, line);
-	member.spe.ev = converter ("<EV>", "</EV>", line);
-	if (member.name != END_SPECIES and member.move.set.size() != 0)
-		team.pokemon.set.push_back (member);
-}
-
-unsigned converter (std::string const & data, std::string const & end, std::string const & line) {
-	size_t const x = data.length();
-	size_t const a = line.find (data);
-	size_t const b = line.find (end, a + x);
-	return boost::lexical_cast<unsigned> (line.substr (a + x, b - a - x));
-}
-
-} // namespace po
-} // namespace technicalmachine
+}	// namespace po
+}	// namespace technicalmachine
