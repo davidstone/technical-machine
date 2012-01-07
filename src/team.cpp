@@ -40,8 +40,8 @@
 #include "teampredictor.hpp"
 #include "type.hpp"
 
-#include "pokemon_lab/file.hpp"
-#include "pokemon_online/file.hpp"
+#include "pokemon_lab/read_team_file.hpp"
+#include "pokemon_online/read_team_file.hpp"
 
 namespace technicalmachine {
 
