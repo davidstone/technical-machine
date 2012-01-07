@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 
+#include "invalid_string_conversion.hpp"
+
 namespace technicalmachine {
 
 std::string Nature::to_string (Natures name) {
@@ -62,7 +64,11 @@ Nature::Natures Nature::from_string (std::string const & str) {
 		{ "Serious", SERIOUS },
 		{ "Timid", TIMID }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Nature", str);
 }
 
 void Nature::set_name_from_string (std::string const & str) {

@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 
+#include "invalid_string_conversion.hpp"
+
 namespace technicalmachine {
 
 std::string Pokemon::to_string (Species name) {
@@ -674,7 +676,10 @@ Species Pokemon::from_string (std::string const & str) {
 		{ "Zubat", ZUBAT }
 	};
 	auto const it = converter.find (str);
-	return (it != converter.end ()) ? it->second : END;
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Species", str);
 }
 
 void Pokemon::set_name_from_string (std::string const & str) {

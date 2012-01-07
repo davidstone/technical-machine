@@ -17,8 +17,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ability.hpp"
+
 #include <map>
 #include <string>
+
+#include "invalid_string_conversion.hpp"
 
 namespace technicalmachine {
 
@@ -189,7 +192,11 @@ Ability::Abilities Ability::from_string (std::string const & str) {
 		{ "White Smoke", WHITE_SMOKE },
 		{ "Wonder Guard", WONDER_GUARD }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Ability", str);
 }
 
 void Ability::set_name_from_string (std::string const & str) {

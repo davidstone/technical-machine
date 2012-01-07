@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 
+#include "invalid_string_conversion.hpp"
+
 namespace technicalmachine {
 
 std::string Status::to_string (Statuses name) {
@@ -54,7 +56,11 @@ Status::Statuses Status::from_string (std::string const & str) {
 		{ "Sleep", SLEEP },
 		{ "END_STATUS", END }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Status", str);
 }
 
 }	// namespace technicalmachine

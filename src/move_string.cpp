@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 
+#include "invalid_string_conversion.hpp"
+
 namespace technicalmachine {
 
 std::string Move::to_string (Moves name) {
@@ -645,7 +647,11 @@ Move::Moves Move::from_string (std::string const & str) {
 		{ "Zen Headbutt", ZEN_HEADBUTT },
 		{ "END_MOVE", END }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Move", str);
 }
 
 void Move::set_name_from_string (std::string const & str) {

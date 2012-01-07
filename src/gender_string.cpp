@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 
+#include "invalid_string_conversion.hpp"
+
 namespace technicalmachine {
 
 std::string Gender::to_string (Genders gender) {
@@ -42,7 +44,11 @@ Gender::Genders Gender::from_string (std::string const & str) {
 		{ "Female", FEMALE },
 		{ "Male", MALE }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Gender", str);
 }
 
 void Gender::set_name_from_string (std::string const & str) {

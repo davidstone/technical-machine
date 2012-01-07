@@ -1845,7 +1845,7 @@ Cherrim	Move	Growth	16.1
 Cherrim	Move	Grasswhistle	12.1
 Cherrim	Move	Substitute	8.3
 Cherrim	Move	Hidden Power Rock	7.8
-Cherubi	Ability	Chlorophyll100.0
+Cherubi	Ability	Chlorophyll	100.0
 Cherubi	Item	Leftovers	100.0
 Cherubi	Nature	Hardy	100.0
 Cherubi	HP EV	None	100.0
@@ -6153,7 +6153,7 @@ Kricketune	Move	Perish Song	11.5
 Kricketune	Move	Frustration	11.5
 Kricketune	Move	Attract	7.0
 Kricketune	Move	Captivate	5.1
-Kyogre	Ability	Drizzle100.0
+Kyogre	Ability	Drizzle	100.0
 Kyogre	Item	Leftovers	100.0
 Kyogre	Nature	Hardy	100.0
 Kyogre	HP EV	None	100.0
@@ -9185,7 +9185,7 @@ Pidgeotto	Move	Sky Attack	14.0
 Pidgeotto	Move	Aerial Ace	11.6
 Pidgeotto	Move	Air Cutter	11.6
 Pidgeotto	Move	Faint Attack	11.6
-Pidgeotto	Move	Mirror	Move	11.6
+Pidgeotto	Move	Mirror Move	11.6
 Pidgey	Ability	Keen Eye	81.8
 Pidgey	Ability	Tangled Feet	18.2
 Pidgey	Item	Focus Sash	50.0
@@ -9208,7 +9208,7 @@ Pidgey	Spe EV	None	68.2
 Pidgey	Spe EV	Low (50-100)	31.8
 Pidgey	Move	Brave Bird	72.7
 Pidgey	Move	Sand-Attack	59.1
-Pidgey	Move	Mirror	Move	54.5
+Pidgey	Move	Mirror Move	54.5
 Pidgey	Move	Whirlwind	50.0
 Pidgey	Move	Double-edge	27.3
 Pidgey	Move	Air Slash	22.7
@@ -11329,7 +11329,7 @@ Shellder	Spe EV	Max	86.4
 Shellder	Spe EV	None	12.5
 Shellder	Spe EV	Low (50-100)	1.1
 Shellder	Move	Ice Shard	94.9
-Shellder	Move	Icicle	Spear	90.9
+Shellder	Move	Icicle Spear	90.9
 Shellder	Move	Rock Blast	86.4
 Shellder	Move	Dive	86.4
 Shellder	Move	Toxic	12.5

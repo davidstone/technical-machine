@@ -21,6 +21,8 @@
 #include <map>
 #include <string>
 
+#include "invalid_string_conversion.hpp"
+
 namespace technicalmachine {
 
 std::string Item::to_string (Items name) {
@@ -159,6 +161,7 @@ Item::Items Item::from_string (std::string const & str) {
 		{ "BlackGlasses", BLACKGLASSES },
 		{ "Bluk Berry", BLUK_BERRY },
 		{ "BrightPowder", BRIGHTPOWDER },
+		{ "Brightpowder", BRIGHTPOWDER },
 		{ "Charcoal", CHARCOAL },
 		{ "Charti Berry", CHARTI_BERRY },
 		{ "Cheri Berry", CHERI_BERRY },
@@ -174,7 +177,9 @@ Item::Items Item::from_string (std::string const & str) {
 		{ "Custap Berry", CUSTAP_BERRY },
 		{ "Damp Rock", DAMP_ROCK },
 		{ "DeepSeaScale", DEEPSEASCALE },
+		{ "Deepseascale", DEEPSEASCALE },
 		{ "DeepSeaTooth", DEEPSEATOOTH },
+		{ "Deepseatooth", DEEPSEATOOTH },
 		{ "Destiny Knot", DESTINY_KNOT },
 		{ "Draco Plate", DRACO_PLATE },
 		{ "Dragon Fang", DRAGON_FANG },
@@ -289,6 +294,7 @@ Item::Items Item::from_string (std::string const & str) {
 		{ "Shuca Berry", SHUCA_BERRY },
 		{ "Silk Scarf", SILK_SCARF },
 		{ "SilverPowder", SILVERPOWDER },
+		{ "Silverpowder", SILVERPOWDER },
 		{ "Sitrus Berry", SITRUS_BERRY },
 		{ "Sky Plate", SKY_PLATE },
 		{ "Smooth Rock", SMOOTH_ROCK },
@@ -308,6 +314,7 @@ Item::Items Item::from_string (std::string const & str) {
 		{ "Toxic Orb", TOXIC_ORB },
 		{ "Toxic Plate", TOXIC_PLATE },
 		{ "TwistedSpoon", TWISTEDSPOON },
+		{ "Twisted Spoon", TWISTEDSPOON },
 		{ "Wacan Berry", WACAN_BERRY },
 		{ "Watmel Berry", WATMEL_BERRY },
 		{ "Sea Incense", SEA_INCENSE },
@@ -583,7 +590,11 @@ Item::Items Item::from_string (std::string const & str) {
 		{ "VS Seeker", VS_SEEKER },
 		{ "Works Key", WORKS_KEY }
 	};
-	return converter.find (str)->second;
+	auto const it = converter.find (str);
+	if (it != converter.end ())
+		return it->second;
+	else
+		throw InvalidFromStringConversion ("Item", str);
 }
 
 void Item::set_name_from_string (std::string const & str) {

@@ -17,26 +17,18 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include <stdexcept>
 #include <string>
 
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
+#include "../invalid_string_conversion.hpp"
 #include "../move.hpp"
 #include "../nature.hpp"
 #include "../pokemon.hpp"
 
 namespace technicalmachine {
 namespace {
-
-class InvalidStringConversion : public std::logic_error {
-	public:
-		template <typename Test>
-		InvalidStringConversion (Test original, Test result, std::string const & intermediate):
-			std::logic_error (std::to_string (original) + " is seen as " + std::to_string (result) + " with an intermediate string of " + intermediate + ".\n") {
-		}
-};
 
 template <class Class, typename Enum>
 void test_generic (std::string const & thing) {
@@ -45,7 +37,7 @@ void test_generic (std::string const & thing) {
 		std::string const str = Class::to_string (original);
 		Enum const result = Class::from_string (str);
 		if (original != result)
-			throw InvalidStringConversion (original, result, str);
+			throw InvalidToStringConversion (original, result, str);
 	}
 }
 
@@ -55,7 +47,7 @@ void test_gender () {
 		std::string const str = Gender::to_string (original);
 		Gender::Genders const result = Gender::from_string (str);
 		if (original != result)
-			throw InvalidStringConversion (original, result, str);
+			throw InvalidToStringConversion (original, result, str);
 	}
 }
 
