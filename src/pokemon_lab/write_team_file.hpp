@@ -1,5 +1,5 @@
-// Nature data structure
-// Copyright (C) 2011 David Stone
+// Write Pokemon Lab teams
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,51 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NATURE_H_
-#define NATURE_H_
+#ifndef POKEMON_LAB_WRITE_TEAM_FILE_HPP_
+#define POKEMON_LAB_WRITE_TEAM_FILE_HPP_
 
 #include <string>
 
 namespace technicalmachine {
+class Team;
+namespace pl {
 
-class Nature {
-	public:
-		enum Natures {
-			ADAMANT,
-			BASHFUL,
-			BOLD,
-			BRAVE,
-			CALM,
-			CAREFUL,
-			DOCILE,
-			GENTLE,
-			HARDY,
-			HASTY,
-			IMPISH,
-			JOLLY,
-			LAX,
-			LONELY,
-			MILD,
-			MODEST,
-			NAIVE,
-			NAUGHTY,
-			QUIET,
-			QUIRKY,
-			RASH,
-			RELAXED,
-			SASSY,
-			SERIOUS,
-			TIMID,
-			END
-		};
-		Natures name;
-		Nature ();
-		bool is_set () const;
-		static std::string to_string (Natures name);
-		std::string to_string () const;
-		static Natures from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
-};
+void write_team (Team & team, std::string const & file_name);
 
+}	// namespace pl
 }	// namespace technicalmachine
-#endif	// NATURE_H_
+#endif	// POKEMON_LAB_WRITE_TEAM_FILE_HPP_

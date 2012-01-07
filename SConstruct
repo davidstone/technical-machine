@@ -1,5 +1,5 @@
 # SCons file
-# Copyright (C) 2011 David Stone
+# Copyright (C) 2012 David Stone
 #
 # This file is part of Technical Machine.
 #
@@ -51,7 +51,7 @@ optimized.VariantDir('build/optimized', 'src', duplicate = 0)
 ai_sources = ['ai.cpp', 'ability.cpp', 'ability_string.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'gender_string.cpp', 'heal.cpp', 'item.cpp', 'item_string.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'move_string.cpp', 'nature.cpp', 'nature_string.cpp', 'pokemon.cpp', 'pokemon_string.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'status_string.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
 ai_sources += ['cryptography/hex.cpp', 'cryptography/md5.cpp', 'cryptography/rijndael.cpp', 'cryptography/sha2.cpp']
 ai_sources += ['network/connect.cpp', 'network/inmessage.cpp', 'network/outmessage.cpp']
-ai_sources += ['pokemon_lab/battle.cpp', 'pokemon_lab/battle_settings.cpp', 'pokemon_lab/connect.cpp', 'pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/inmessage.cpp', 'pokemon_lab/outmessage.cpp']
+ai_sources += ['pokemon_lab/battle.cpp', 'pokemon_lab/battle_settings.cpp', 'pokemon_lab/connect.cpp', 'pokemon_lab/conversion.cpp', 'pokemon_lab/inmessage.cpp', 'pokemon_lab/outmessage.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/write_team_file.cpp']
 ai_sources += ['pokemon_online/battle.cpp', 'pokemon_online/battle_settings.cpp', 'pokemon_online/connect.cpp', 'pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp', 'pokemon_online/inmessage.cpp', 'pokemon_online/outmessage.cpp', 'pokemon_online/read_user_info.cpp']
 ai_libraries = ['pthread', 'boost_system', 'boost_filesystem']
 

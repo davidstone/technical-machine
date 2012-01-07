@@ -36,6 +36,10 @@ std::string Nature::to_string (Natures name) {
 	return nature_converter [name];
 }
 
+std::string Nature::to_string () const {
+	return to_string (name);
+}
+
 Nature::Natures Nature::from_string (std::string const & str) {
 	static std::map <std::string, Natures> const converter {
 		{ "Adamant", ADAMANT },
