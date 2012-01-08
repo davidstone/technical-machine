@@ -1,5 +1,5 @@
 // Convert to / from PL's format
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,11 +17,34 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "conversion.hpp"
+#include "../gender.hpp"
 #include "../move.hpp"
 #include "../species.hpp"
 
 namespace technicalmachine {
 namespace pl {
+
+Gender::Genders id_to_gender (int id) {
+	switch (id) {
+		case 0:
+			return Gender::GENDERLESS;
+		case 1:
+			return Gender::MALE;
+		default:	// case 2:
+			return Gender::FEMALE;
+	}
+}
+
+int gender_to_id (Gender::Genders gender) {
+	switch (gender) {
+		case Gender::MALE:
+			return 1;
+		case Gender::FEMALE:
+			return 2;
+		default:	// Gender::GENDERLESS:
+			return 0;
+	}
+}
 
 Species id_to_species (int id) {
 	constexpr static Species species_converter [] = {
@@ -132,7 +155,7 @@ Species id_to_species (int id) {
 
 int species_to_id (Species species) {
 	constexpr static int species_converter [] = {
-464,		// Abomasnow
+		464,		// Abomasnow
 		62,		// Abra
 		358,		// Absol
 		141,		// Aerodactyl
@@ -651,5 +674,5 @@ int move_to_id (Move::Moves move) {
 	return (move < Move::SWITCH0) ? move : static_cast <int> (move) - 6;
 }
 
-} // namespace pl
-} // namespace technicalmachine
+}	// namespace pl
+}	// namespace technicalmachine

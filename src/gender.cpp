@@ -1,5 +1,5 @@
 // Gender functions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,36 +32,6 @@ Gender::Gender (Genders gender_):
 int Gender::multiplier (Gender foe) const {
 	// Return 1 for same gender, -1 for opposite, and 0 if either is genderless
 	return gender * foe.gender;
-}
-
-void Gender::from_simulator_int (int gender_number) {
-	switch (gender_number) {
-		case 0:
-			gender = GENDERLESS;
-			break;
-		case 1:
-			gender = MALE;
-			break;
-		case 2:
-			gender = FEMALE;
-			break;
-	}
-}
-
-int Gender::to_simulator_int () const {
-	int output;
-	switch (gender) {
-		case MALE:
-			output = 1;
-			break;
-		case FEMALE:
-			output = 2;
-			break;
-		default:		// GENDERLESS
-			output = 0;
-			break;
-	}
-	return output;
 }
 
 Gender & Gender::operator= (Gender other) {

@@ -1,5 +1,5 @@
 // Connect to Pokemon Online
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -115,14 +115,14 @@ class BattlePokemon {
 			id (msg.read_short (), msg.read_byte ()),
 			nickname (msg.read_string ()),
 			max_hp (msg.read_short ()),
-			hp (msg.read_short ())
+			hp (msg.read_short ()),
+			gender (id_to_gender (msg.read_byte ())),
+			shiny (msg.read_byte ()),
+			level (msg.read_byte ()),
+			item (id_to_item (msg.read_short ())),
+			ability (id_to_ability (msg.read_short ())),
+			happiness (msg.read_byte ())
 			{
-			gender.from_simulator_int (msg.read_byte ());
-			shiny = msg.read_byte ();
-			level = msg.read_byte ();
-			item.name = id_to_item (msg.read_short ());
-			ability.name = id_to_ability (msg.read_short ());
-			happiness = msg.read_byte ();
 			for (unsigned n = 0; n != 5; ++n) {
 				// Something to do with stats. Probably boosts.
 				uint16_t const st = msg.read_short ();

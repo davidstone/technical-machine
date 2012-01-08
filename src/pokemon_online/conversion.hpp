@@ -1,5 +1,5 @@
 // Convert to / from PO's format
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,7 @@
 #include <string>
 #include <utility>
 #include "../ability.hpp"
+#include "../gender.hpp"
 #include "../item.hpp"
 #include "../stat.hpp"
 #include "../move.hpp"
@@ -36,6 +37,8 @@ Species id_to_species (int id, int forme);
 std::pair <uint16_t, uint8_t> species_to_id (Species species);
 Ability::Abilities id_to_ability (int id);
 int ability_to_id (Ability::Abilities ability);
+Gender::Genders id_to_gender (int id);
+int gender_to_id (Gender::Genders gender);
 Item::Items id_to_item (int id);
 int item_to_id (Item::Items item);
 Move::Moves id_to_move (int id);

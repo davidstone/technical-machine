@@ -1,5 +1,5 @@
 // Pokemon Online battle logic
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -105,8 +105,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			std::string const nickname = msg.read_string ();
 			uint8_t const hp_percent = msg.read_byte ();
 			uint32_t const full_status = msg.read_int ();
-			Gender gender;
-			gender.from_simulator_int (msg.read_byte ());
+			Gender gender (id_to_gender (msg.read_byte ()));
 			bool const shiny = msg.read_byte ();
 			uint8_t const level = msg.read_byte ();
 			uint8_t const slot = 0;

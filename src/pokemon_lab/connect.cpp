@@ -1,5 +1,5 @@
 // Connect to Pokemon Lab
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -388,8 +388,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			Species const species = id_to_species (msg.read_short ());
-			Gender gender;
-			gender.from_simulator_int (msg.read_byte ());
+			Gender gender (id_to_gender (msg.read_byte ()));
 			uint8_t const level = msg.read_byte();
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {

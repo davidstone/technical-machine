@@ -1,5 +1,5 @@
 // Convert to / from PO's format
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,7 @@
 #include <utility>
 
 #include "../ability.hpp"
+#include "../gender.hpp"
 #include "../item.hpp"
 #include "../move.hpp"
 #include "../species.hpp"
@@ -933,6 +934,28 @@ int ability_to_id (Ability::Abilities ability) {
 		0		// END
 	};
 	return ability_converter [ability];
+}
+
+Gender::Genders id_to_gender (int id) {
+	switch (id) {
+		case 0:
+			return Gender::GENDERLESS;
+		case 1:
+			return Gender::MALE;
+		default:	// case 2:
+			return Gender::FEMALE;
+	}
+}
+
+int gender_to_id (Gender::Genders gender) {
+	switch (gender) {
+		case Gender::MALE:
+			return 1;
+		case Gender::FEMALE:
+			return 2;
+		default:	// Gender::GENDERLESS:
+			return 0;
+	}
 }
 
 Item::Items id_to_item (int id) {

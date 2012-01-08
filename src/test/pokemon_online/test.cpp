@@ -43,6 +43,16 @@ void test_ability () {
 	}
 }
 
+void test_gender () {
+	std::cout << "\tVerifying correct gender.\n";
+	for (Gender::Genders original = Gender::FEMALE; original <= Gender::MALE; original = static_cast <Gender::Genders> (original + 1)) {
+		int const id = gender_to_id (original);
+		Gender::Genders const result = id_to_gender (id);
+		if (original != result)
+			throw InvalidSimulatorConversion <Gender> (original, result);
+	}
+}
+
 void test_item () {
 	std::cout << "\tVerifying correct item.\n";
 	for (Item::Items original = static_cast <Item::Items> (0); original != Item::END; original = static_cast <Item::Items> (original + 1)) {
@@ -89,11 +99,12 @@ void test_species () {
 
 void test () {
 	std::cout << "Running Pokemon Online tests.\n";
-	test_species ();
 	test_ability ();
+	test_gender ();
 	test_item ();
 	test_move ();
 	test_nature ();
+	test_species ();
 }
 
 }	// namespace po

@@ -1,5 +1,5 @@
 // Convert to / from PL's format
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,19 +19,22 @@
 #ifndef POKEMON_LAB_CONVERSION_H_
 #define POKEMON_LAB_CONVERSION_H_
 
+#include "../gender.hpp"
 #include "../move.hpp"
 #include "../species.hpp"
 
 namespace technicalmachine {
 namespace pl {
 
-Species id_to_species (int id);
-int species_to_id (Species species);
+Gender::Genders id_to_gender (int id);
+int gender_to_id (Gender::Genders gender);
 Move::Moves id_to_move (int id);
 int move_to_id (Move::Moves move);
+Species id_to_species (int id);
+int species_to_id (Species species);
 
 // Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
 
-} // namespace pl
-} // namespace technicalmachine
-#endif // POKEMON_LAB_CONVERSION_H_
+}	// namespace pl
+}	// namespace technicalmachine
+#endif	// POKEMON_LAB_CONVERSION_HPP_

@@ -78,8 +78,8 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	pokemon.nature.name = id_to_nature (nature);
 	pokemon.happiness = pt.get <unsigned> ("<xmlattr>.Happiness");
 	pokemon.level = pt.get <unsigned> ("<xmlattr>.Lvl");
-	unsigned const gender = pt.get <unsigned> ("<xmlattr>.Gender");
-	pokemon.gender.from_simulator_int (gender);
+	int const gender = pt.get <int> ("<xmlattr>.Gender");
+	pokemon.gender = id_to_gender (gender);
 
 	unsigned n = 0;
 	for (auto const & value : pt.get_child ("")) {

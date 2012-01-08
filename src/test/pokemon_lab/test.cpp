@@ -34,6 +34,16 @@ void test_ability () {
 	// Abilities are sent as strings, so no ID conversion required.
 }
 
+void test_gender () {
+	std::cout << "\tVerifying correct gender.\n";
+	for (Gender::Genders original = Gender::FEMALE; original <= Gender::MALE; original = static_cast <Gender::Genders> (original + 1)) {
+		int const id = gender_to_id (original);
+		Gender::Genders const result = id_to_gender (id);
+		if (original != result)
+			throw InvalidSimulatorConversion <Gender> (original, result);
+	}
+}
+
 void test_item () {
 	// Items are sent as strings, so no ID conversion required.
 }
@@ -72,6 +82,7 @@ void test_file () {
 void test () {
 	std::cout << "Running Pokemon Lab tests.\n";
 	test_ability ();
+	test_gender ();
 	test_item ();
 	test_move ();
 	test_nature ();

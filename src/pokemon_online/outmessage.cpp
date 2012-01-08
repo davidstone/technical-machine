@@ -1,5 +1,5 @@
 // Pokemon Online outgoing messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -69,7 +69,7 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 		write_short (ability);
 		uint8_t const nature = nature_to_id (pokemon.nature.name);
 		write_byte (nature);
-		uint8_t const gender = pokemon.gender.to_simulator_int ();
+		uint8_t const gender = gender_to_id (pokemon.gender.gender);
 		write_byte (gender);
 		bool shiny = false;
 		write_byte (shiny);
