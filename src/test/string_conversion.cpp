@@ -41,22 +41,12 @@ void test_generic (std::string const & thing) {
 	}
 }
 
-void test_gender () {
-	std::cout << "\tVerifying correct gender.\n";
-	for (Gender::Genders original = Gender::FEMALE; original <= Gender::MALE; original = static_cast <Gender::Genders> (original + 1)) {
-		std::string const str = Gender::to_string (original);
-		Gender::Genders const result = Gender::from_string (str);
-		if (original != result)
-			throw InvalidToStringConversion (original, result, str);
-	}
-}
-
 }	// anonymous namespace
 
 void string_conversion_tests () {
 	std::cout << "Running string conversion tests.\n";
 	test_generic <Ability, Ability::Abilities> ("ability");
-	test_gender ();
+	test_generic <Gender, Gender::Genders> ("gender");
 	test_generic <Item, Item::Items> ("item");
 	test_generic <Move, Move::Moves> ("move");
 	test_generic <Nature, Nature::Natures> ("nature");

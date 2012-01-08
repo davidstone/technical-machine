@@ -31,7 +31,7 @@ Gender::Gender (Genders gender_):
 
 int Gender::multiplier (Gender foe) const {
 	// Return 1 for same gender, -1 for opposite, and 0 if either is genderless
-	return gender * foe.gender;
+	return (gender - 1) * (foe.gender - 1);
 }
 
 Gender & Gender::operator= (Gender other) {

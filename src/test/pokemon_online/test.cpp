@@ -45,7 +45,7 @@ void test_ability () {
 
 void test_gender () {
 	std::cout << "\tVerifying correct gender.\n";
-	for (Gender::Genders original = Gender::FEMALE; original <= Gender::MALE; original = static_cast <Gender::Genders> (original + 1)) {
+	for (Gender::Genders original = static_cast <Gender::Genders> (0); original != Gender::END; original = static_cast <Gender::Genders> (original + 1)) {
 		int const id = gender_to_id (original);
 		Gender::Genders const result = id_to_gender (id);
 		if (original != result)

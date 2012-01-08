@@ -29,7 +29,7 @@ std::string Gender::to_string (Genders gender) {
 	static std::string const gender_name [] {
 		"Female", "Genderless", "Male"
 	};
-	return gender_name [gender + 1];
+	return gender_name [gender];
 }
 
 std::string Gender::to_string () const {

@@ -26,7 +26,7 @@ namespace technicalmachine {
 class Gender {
 	public:
 		// Silly genderless Pokemon not letting me use a bool.
-		enum Genders { GENDERLESS = 0, FEMALE = -1, MALE = 1 };
+		enum Genders { FEMALE, GENDERLESS, MALE, END };
 		Genders gender;
 		
 		Gender ();
