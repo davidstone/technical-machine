@@ -1,5 +1,5 @@
-// Test PL stuff
-// Copyright (C) 2011 David Stone
+// Test PL conversions
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "test.hpp"
+#include "conversion.hpp"
 
 #include <iostream>
 
@@ -35,7 +35,7 @@ void test_ability () {
 }
 
 void test_gender () {
-	std::cout << "\tVerifying correct gender.\n";
+	std::cout << "\t\tVerifying correct gender.\n";
 	for (Gender::Genders original = static_cast <Gender::Genders> (0); original != Gender::END; original = static_cast <Gender::Genders> (original + 1)) {
 		int const id = gender_to_id (original);
 		Gender::Genders const result = id_to_gender (id);
@@ -49,7 +49,7 @@ void test_item () {
 }
 
 void test_move () {
-	std::cout << "\tVerifying correct move.\n";
+	std::cout << "\t\tVerifying correct move.\n";
 	for (Move::Moves original = static_cast <Move::Moves> (0); original != Move::END; original = static_cast <Move::Moves> (original + 1)) {
 		if (!Move::is_switch (original)) {
 			int const id = move_to_id (original);
@@ -65,7 +65,7 @@ void test_nature () {
 }
 
 void test_species () {
-	std::cout << "\tVerifying correct species.\n";
+	std::cout << "\t\tVerifying correct species.\n";
 	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (original + 1)) {
 		int const id = species_to_id (original);
 		Species const result = id_to_species (id);
@@ -74,21 +74,16 @@ void test_species () {
 	}
 }
 
-void test_file () {
-}
-
 }	// anonymous namespace
 
-void test () {
-	std::cout << "Running Pokemon Lab tests.\n";
+void test_conversions () {
+	std::cout << "\tRunning Pokemon Lab conversion tests.\n";
 	test_ability ();
 	test_gender ();
 	test_item ();
 	test_move ();
 	test_nature ();
 	test_species ();
-
-	test_file ();
 }
 
 }	// namespace pl

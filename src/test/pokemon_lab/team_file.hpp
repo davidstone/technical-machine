@@ -1,5 +1,5 @@
-// Test PO stuff
-// Copyright (C) 2011 David Stone
+// Test PL team files
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_POKEMON_ONLINE_TEST_HPP_
-#define TEST_POKEMON_ONLINE_TEST_HPP_
+#ifndef TEST_POKEMON_LAB_TEAM_FILE_HPP_
+#define TEST_POKEMON_LAB_TEAM_FILE_HPP_
 
 namespace technicalmachine {
-namespace po {
+namespace pl {
 
-void test ();
+void test_team_file ();
 
-}	// namespace po
+}	// namespace pl
 }	// namespace technicalmachine
 
-#endif	// TEST_POKEMON_ONLINE_TEST_HPP_
+#endif	// TEST_POKEMON_LAB_TEAM_FILE_HPP_

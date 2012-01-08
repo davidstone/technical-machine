@@ -59,7 +59,7 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	std::string const name = pt.get <std::string> ("<xmlattr>.name");
 	Stat & stat = lookup_stat (pokemon, name);
 	stat.iv = pt.get <unsigned> ("<xmlattr>.iv");
-	stat.ev = pt.get <unsigned> ("<xmlattr>.ev");
+	stat.ev = pt.get <unsigned> ("<xmlattr>.ev") / 4;
 }
 
 static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned foe_size, unsigned my_size) {

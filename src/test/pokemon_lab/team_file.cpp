@@ -1,5 +1,5 @@
-// Test PL stuff
-// Copyright (C) 2011 David Stone
+// Test PL team files
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,15 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_POKEMON_LAB_TEST_HPP_
-#define TEST_POKEMON_LAB_TEST_HPP_
+#include "team_file.hpp"
+
+#include <iostream>
+
+#include "../../team.hpp"
+#include "../../pokemon_lab/read_team_file.hpp"
+#include "../../pokemon_lab/write_team_file.hpp"
 
 namespace technicalmachine {
 namespace pl {
 
-void test ();
+void test_team_file () {
+	std::cout << "\tRunning Pokemon Lab team file tests.\n";
+	Team team (false, 6);
+	load_team (team, "src/test/test1.sbt", 6);
+	write_team (team, "src/test/test2.sbt");
+}
 
 }	// namespace pl
 }	// namespace technicalmachine
-
-#endif	// TEST_POKEMON_LAB_TEST_HPP_

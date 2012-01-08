@@ -95,7 +95,7 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 		}
 		else if (value.first == "EV") {
 			Stat & stat = lookup_stat (pokemon, n);
-			stat.ev = value.second.get <unsigned> ("");
+			stat.ev = value.second.get <unsigned> ("") / 4;
 			n < 5 ? ++n : n = 0;
 		}
 	}

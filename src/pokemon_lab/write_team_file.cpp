@@ -42,7 +42,7 @@ static void write_stat (Stat const & stat, std::string const & str, boost::prope
 	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
 	s.put ("<xmlattr>.name", str);
 	s.put ("<xmlattr>.iv", stat.iv);
-	s.put ("<xmlattr>.ev", stat.ev);
+	s.put ("<xmlattr>.ev", stat.ev * 4);
 }
 
 static void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
@@ -64,18 +64,20 @@ static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree 
 	member.put ("nature", pokemon.nature.to_string ());
 	member.put ("item", pokemon.item.to_string ());
 	member.put ("ability", pokemon.ability.to_string ());
-	for (Move const & move : pokemon.move.set)
-		write_move (move, pt);
-	write_stats (pokemon, pt);
+	for (std::vector <Move>::const_iterator move = pokemon.move.set.cbegin (); move->name != Move::STRUGGLE; ++move)
+		write_move (*move, member);
+	write_stats (pokemon, member);
 }
 
 }	// anonymous namespace
 
 void write_team (Team & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;
+	boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
+	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
 	for (Pokemon const & pokemon : team.pokemon.set)
-		write_pokemon (pokemon, pt.add ("shoddybattle", ""));
-	write_xml (file_name, pt);
+		write_pokemon (pokemon, t);
+	write_xml (file_name, pt, std::locale (), settings);
 }
 
 }	// namespace pl
