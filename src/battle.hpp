@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -73,7 +73,7 @@ class GenericBattle {
 		void handle_fainted (uint8_t fainting_party, uint8_t slot);
 	protected:
 		uint8_t switch_slot (Move::Moves move) const;
-		virtual unsigned get_max_damage_precision ();
+		virtual unsigned get_max_damage_precision () const;
 		void initialize_turn ();
 	private:
 		static void initialize_team (Team & team);

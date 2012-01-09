@@ -109,10 +109,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			bool const shiny = msg.read_byte ();
 			uint8_t const level = msg.read_byte ();
 			uint8_t const slot = 0;
-			if (party == static_cast <uint8_t> (-1))
-				party = 0;
 			handle_send_out (player, slot, index, nickname, species, gender, level);
-			if (player == 0) {
+			if (player == party) {
 				for (unsigned n = 0; n != slot_memory.size (); ++n) {
 					if (ai.at_replacement ().name == slot_memory [n])
 						std::swap (slot_memory [0], slot_memory [n]);
@@ -127,7 +125,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case USE_ATTACK: {
 			uint16_t const attack = msg.read_short ();
 			Move::Moves const move = id_to_move (attack);
-			handle_use_move (player, 0, move);
+			constexpr uint8_t slot = 0;
+			handle_use_move (party, slot, move);
 			break;
 		}
 		case STRAIGHT_DAMAGE: {
@@ -142,13 +141,13 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			std::cerr << "Player changing HP: " << static_cast <int> (player) << '\n';
 			int16_t const remaining_hp = msg.read_short ();
 			std::cerr << "remaining_hp: " << remaining_hp << '\n';
-			int16_t const change_in_hp = (player == 0) ?
+			int16_t const change_in_hp = (player == party) ?
 				ai.at_replacement ().hp.stat - remaining_hp :
 				get_max_damage_precision () - remaining_hp;
 //				foe.at_replacement ().hp.stat - remaining_hp * foe.at_replacement ().hp.max / get_max_damage_precision ();
 			std::cerr << "change_in_hp: " << change_in_hp << '\n';
 			uint8_t const slot = 0;
-			int16_t const denominator = (player == 0) ? ai.at_replacement ().hp.max : get_max_damage_precision ();
+			int16_t const denominator = (player == party) ? ai.at_replacement ().hp.max : get_max_damage_precision ();
 			std::cerr << "denominator: " << denominator << '\n';
 			handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
 			break;
@@ -160,7 +159,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case KO: {
-			uint8_t const slot = 0;
+			constexpr uint8_t slot = 0;
 			handle_fainted (player, slot);
 			break;
 		}
@@ -495,7 +494,7 @@ unsigned Battle::get_max_damage_precision () const {
 }
 
 uint8_t Battle::get_target () const {
-	return 0;
+	return 1 - party;
 }
 
 } // namespace po

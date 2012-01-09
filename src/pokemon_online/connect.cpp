@@ -130,7 +130,6 @@ class BattlePokemon {
 				moves.push_back (id_to_move (msg.read_short ()));
 				uint8_t const pp = msg.read_byte ();
 				uint8_t const total_pp = msg.read_byte ();
-				std::cerr << Move::to_string (moves.back ()) << '\n';
 			}
 			for (unsigned n = 0; n != 6; ++n) {
 				// PO uses a QList of int, so hopefully their int is always 32-bit.
@@ -179,9 +178,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			// We get this when a user changes their team.
 			User const user (msg);
 			if (user.id == my_id) {
-				// I cannot send a new team if I've been challenged.
-				if (challenger)
-					send_battle_challenge_with_current_team ();
+				// If I get this message about me, it may mean that I just
+				// changed my team to the team I wish to use for my pending
+				// challenge. Once I get this message to verify that my team
+				// change went through, it is safe to send my challenge.
+				send_battle_challenge_with_current_team ();
 			}
 			break;
 		}
@@ -209,7 +210,6 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::BATTLE_BEGIN: {
-			std::cerr << "BATTLE_BEGIN\n";
 			uint32_t const battle_id = msg.read_int ();
 			uint32_t const user_id1 = msg.read_int ();
 			uint32_t const user_id2 = msg.read_int ();
@@ -217,8 +217,6 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				BattleConfiguration configuration (msg);
 				// The server then sends me my own team.
 				BattleTeam battle_team (msg);
-				while (msg.index != msg.buffer.size ())
-					std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 				handle_battle_begin (battle_id, get_user_name (user_id2));
 			}
 			else {
@@ -255,7 +253,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_message (*this, battle_id, command, 1 - player, msg);
+				battle.handle_message (*this, battle_id, command, player, msg);
 			}
 			break;
 		}
@@ -595,8 +593,8 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	// work. It would require using a queue instead of a map.
 	if (challenges.empty () and get_user_id (opponent)) {
 		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
+		battle->party = 0;
 		add_pending_challenge (battle);
-		challenger = true;
 		OutMessage msg (OutMessage::SEND_TEAM);
 		msg.write_team (battle->ai, username);
 		msg.send (*socket);
@@ -621,9 +619,9 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	if (accepted and challenges.empty ()) {
 		// They challenged me.
 		std::shared_ptr <Battle> battle (new Battle (opponent, depth, team));
+		battle->party = 1;
 		add_pending_challenge (battle);
 		msg.write_byte (ACCEPTED);
-		challenger = false;
 		verb = "Accepted";
 	}
 	else {

@@ -1,5 +1,5 @@
 // Connect to Pokemon Online
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,10 +42,7 @@ class Client : public network::GenericClient {
 		// I cannot pick a new team when challenged. I reload this at the start
 		// of a new battle to prevent counter-teaming. It's only used when challenged.
 		Team team;
-		// I need to keep track of whether I send the challenge or received it to get my battler id
 	private:
-		// Challenges behave differently depending on whether I initiated the challenge.
-		bool challenger;
 	public:
 		explicit Client (int depth_);
 	private:

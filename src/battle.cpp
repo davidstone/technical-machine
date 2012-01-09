@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -47,8 +47,6 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 	party (-1)
 	{
 	foe.player = opponent;
-	ai.replacing = true;
-	foe.replacing = true;
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
 	initialize_turn ();
@@ -61,8 +59,6 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth, Te
 	party (-1)
 	{
 	foe.player = opponent;
-	ai.replacing = true;
-	foe.replacing = true;
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
 	initialize_turn ();
@@ -160,7 +156,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
-	if (inactive->at_replacement().move().is_phaze ()) {
+	if (inactive->pokemon.set.size () != 0 and inactive->at_replacement().move().is_phaze ()) {
 		inactive->at_replacement().move().variable.index = 0;
 		while (active->pokemon.set [inactive->at_replacement().move().variable.index].name != species)
 			++inactive->at_replacement().move().variable.index;
@@ -227,7 +223,7 @@ uint8_t GenericBattle::switch_slot (Move::Moves move) const {
 	return n;
 }
 
-unsigned GenericBattle::get_max_damage_precision () {
+unsigned GenericBattle::get_max_damage_precision () const {
 	return 48;
 }
 
@@ -249,7 +245,6 @@ void GenericBattle::initialize_team (Team & team) {
 	team.hitself = false;
 	team.miss = false;
 	team.replacement = team.pokemon.index;
-	team.replacing = false;
 }
 
 void GenericBattle::do_turn () {

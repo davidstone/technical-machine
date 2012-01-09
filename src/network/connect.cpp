@@ -229,7 +229,7 @@ void GenericClient::handle_incoming_challenge (std::string const & opponent, Gen
 }
 
 void GenericClient::add_pending_challenge (std::shared_ptr <GenericBattle> const & battle) {
-	challenges.insert (std::pair <std::string, std::shared_ptr <GenericBattle> > (battle->foe.player, battle));
+	challenges.insert (std::pair <std::string, std::shared_ptr <GenericBattle>> (battle->foe.player, battle));
 }
 
 void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
@@ -238,7 +238,8 @@ void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 
 void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
  	std::shared_ptr <GenericBattle> battle = challenges.find (opponent)->second;
-	battle->party = party;
+ 	if (battle->party == static_cast <uint8_t> (-1))
+		battle->party = party;
 	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle>> (battle_id, battle));
 	challenges.erase (opponent);
 //	pause_at_start_of_battle ();
