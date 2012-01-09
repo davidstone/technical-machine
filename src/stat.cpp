@@ -17,6 +17,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stat.hpp"
+
+#include <cstdint>
+
 #include "ability.hpp"
 #include "item.hpp"
 #include "move.hpp"
@@ -29,20 +32,64 @@
 
 namespace technicalmachine {
 
-static void calculate_attack (Team & attacker, Weather const & weather);
-static void calculate_special_attack (Team & attacker, Weather const & weather);
+namespace {
+
+void calculate_attack (Team & attacker, Weather const & weather);
+void calculate_special_attack (Team & attacker, Weather const & weather);
+unsigned calculate_initial_stat (Stat const & stat, unsigned level);
+
+unsigned atk_nature_boost (Nature nature);
+unsigned def_nature_boost (Nature nature);
+unsigned spa_nature_boost (Nature nature);
+unsigned spd_nature_boost (Nature nature);
+unsigned spe_nature_boost (Nature nature);
+
+unsigned calculate_attack_before_power_trick (Pokemon const & attacker);
+unsigned calculate_defense_before_power_trick (Pokemon const & defender);
+
+unsigned attacking_stage_modifier (Stat const & stat, int stage, bool ch);
+unsigned defending_stage_modifier (Stat const & stat, int stage, bool ch);
+unsigned speed_stage_modifier (Stat const & spe, int stage);
+unsigned accuracy_stage_modifier (Team const & user);
+unsigned evasion_stage_modifier (Team const & user, int evasion_stage);
+
+unsigned attack_ability_modifier (Pokemon const & attacker, bool slow_start, Weather const & weather);
+unsigned attack_item_modifier (Pokemon const & attacker);
+
+unsigned special_attack_ability_modifier (Pokemon const & attacker, Weather const & weather);
+unsigned special_attack_item_modifier (Pokemon const & attacker);
+
+unsigned defense_ability_modifier (Pokemon const & defender);
+unsigned defense_item_modifier (Pokemon const & defender);
+
+unsigned special_defense_ability_modifier (Pokemon const & defender, Weather const & weather);
+unsigned special_defense_item_modifier (Pokemon const & defender);
+unsigned special_defense_sandstorm_boost (Team const & defender, Weather const & weather);
+
+unsigned speed_ability_modifier (Team const & team, Weather const & weather);
+unsigned speed_item_modifier (Pokemon const & pokemon);
+bool paralysis_lowers_speed (Pokemon const & pokemon);
+
+bool move_can_miss (Team const & user, Ability target_ability);
+unsigned accuracy_item_modifier (Team const & user, bool target_moved);
+unsigned accuracy_ability_modifier (Team const & user);
+unsigned evasion_item_modifier (Team const & user, Item item);
+unsigned evasion_ability_modifier (Team const & user, Team const & target, Weather const & weather);
+
+}	// anonymous namespace
 
 Stat::Stat (Species name, Stats stat) :
 	max (-1),
 	base (get_base_stat (name, stat)),
 	iv (31),
-	ev (21) {		// Adds up to 126 points, temporary until I add in EV prediction
-	}
+	ev (84 / 4)	// Adds up to 504 EVs (126 points). Temporary until I add in EV prediction
+	{
+}
 
 unsigned hitpoints (Pokemon & member) {
 	if (member.hp.base == 1)
 		return 1;
-	return (2 * member.hp.base + member.hp.iv + member.hp.ev) * member.level / 100 + member.level + 10;
+	return calculate_initial_stat (member.hp, member.level) + member.level + 5;
 }
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {
@@ -52,317 +99,91 @@ void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 		calculate_special_attack (attacker, weather);
 }
 
-static unsigned calculate_attack_1 (Team const & attacker) {
-	unsigned n = (2 * attacker.pokemon().atk.base + attacker.pokemon().atk.iv + attacker.pokemon().atk.ev) * attacker.pokemon().level / 100 + 5;
-
-	switch (attacker.pokemon().nature.name) {
-		case Nature::ADAMANT:
-		case Nature::BRAVE:
-		case Nature::LONELY:
-		case Nature::NAUGHTY:
-			n = n * 11 / 10;
-			break;
-		case Nature::BOLD:
-		case Nature::CALM:
-		case Nature::MODEST:
-		case Nature::TIMID:
-			n = n * 9 / 10;
-			break;
-		default:
-			break;
-	}
-	return n;
-}
-
-static unsigned calculate_defense_1 (Team const & defender) {
-	unsigned n = (2 * defender.pokemon().def.base + defender.pokemon().def.iv + defender.pokemon().def.ev) * defender.pokemon().level / 100 + 5;
-
-	switch (defender.pokemon().nature.name) {
-		case Nature::BOLD:
-		case Nature::IMPISH:
-		case Nature::LAX:
-		case Nature::RELAXED:
-			n = n * 11 / 10;
-			break;
-		case Nature::GENTLE:
-		case Nature::HASTY:
-		case Nature::LONELY:
-		case Nature::MILD:
-			n = n * 9 / 10;
-			break;
-		default:
-			break;
-	}
-	return n;
-}
+namespace {
 
 void calculate_attack (Team & attacker, Weather const & weather) {
-	attacker.pokemon().atk.stat = !attacker.power_trick ?
-		calculate_attack_1 (attacker) :
-		calculate_defense_1 (attacker);
+	Pokemon & pokemon = attacker.pokemon ();
+	pokemon.atk.stat = !attacker.power_trick ?
+		calculate_attack_before_power_trick (pokemon) :
+		calculate_defense_before_power_trick (pokemon);
 
-	if (attacker.stage [Stat::ATK] >= 0) // >= is better than == to check for a CH less
-		attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * (2 + attacker.stage [Stat::ATK]) / 2;
-	else {
-		if (!attacker.ch)
-			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 2 / (2 - attacker.stage [Stat::ATK]);
-	}
+	pokemon.atk.stat = attacking_stage_modifier (pokemon.atk, attacker.stage [Stat::ATK], attacker.ch);
 
-	switch (attacker.pokemon().ability.name) {
-		case Ability::FLOWER_GIFT:
-			if (weather.sun)
-				attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
-			break;
-		case Ability::GUTS:
-			if (attacker.pokemon().status.name == Status::NO_STATUS)
-				attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
-			break;
-		case Ability::HUSTLE:
-			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
-			break;
-		case Ability::HUGE_POWER:
-		case Ability::PURE_POWER:
-			attacker.pokemon().atk.stat *= 2;
-			break;
-		case Ability::SLOW_START:
-			if (attacker.slow_start != 0)
-				attacker.pokemon().atk.stat /= 2;
-			break;
-		default:
-			break;
-	}
-
-	switch (attacker.pokemon().item.name) {
-		case Item::CHOICE_BAND:
-			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 3 / 2;
-			break;
-		case Item::LIGHT_BALL:
-			if (attacker.pokemon().name == PIKACHU)
-				attacker.pokemon().atk.stat *= 2;
-			break;
-		case Item::THICK_CLUB:
-			if (attacker.pokemon().name == CUBONE or attacker.pokemon().name == MAROWAK)
-				attacker.pokemon().atk.stat *= 2;
-			break;
-		default:
-			break;
-	}
+	pokemon.atk.stat = attack_ability_modifier (pokemon, attacker.slow_start, weather);
+	pokemon.atk.stat = attack_item_modifier (pokemon);
 	
-	if (attacker.pokemon().atk.stat == 0)
-		attacker.pokemon().atk.stat = 1;
+	if (pokemon.atk.stat == 0)
+		pokemon.atk.stat = 1;
 }
 
-void calculate_special_attack (Team & attacker, Weather const &weather) {
-	attacker.pokemon().spa.stat = (2 * attacker.pokemon().spa.base + attacker.pokemon().spa.iv + attacker.pokemon().spa.ev) * attacker.pokemon().level / 100 + 5;
+void calculate_special_attack (Team & attacker, Weather const & weather) {
+	Pokemon & pokemon = attacker.pokemon ();
+	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level);
+	pokemon.spa.stat = pokemon.spa.stat * spa_nature_boost (pokemon.nature) / 10;
 
-	switch (attacker.pokemon().nature.name) {
-		case Nature::MILD:
-		case Nature::MODEST:
-		case Nature::QUIET:
-		case Nature::RASH:
-			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 11 / 10;
-			break;
-		case Nature::ADAMANT:
-		case Nature::CAREFUL:
-		case Nature::IMPISH:
-		case Nature::JOLLY:
-			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 9 / 10;
-			break;
-		default:
-			break;
-	}
+	pokemon.spa.stat = attacking_stage_modifier (pokemon.spa, attacker.stage [Stat::SPA], attacker.ch);
 
-	if (attacker.stage [Stat::SPA] >= 0)	// >= is better than == to check for a CH less
-		attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * (2 + attacker.stage [Stat::SPA]) / 2;
-	else {
-		if (!attacker.ch)
-			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 2 / (2 - attacker.stage [Stat::SPA]);
-	}
+	pokemon.spa.stat = special_attack_ability_modifier (pokemon, weather);
+	pokemon.spa.stat = special_attack_item_modifier (pokemon);
 
-	if (attacker.pokemon().ability.name == Ability::SOLAR_POWER and weather.sun)
-		attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 3 / 2;
-
-	switch (attacker.pokemon().item.name) {
-		case Item::SOUL_DEW:
-			if (attacker.pokemon().name != LATIAS and attacker.pokemon().name != LATIOS)
-				break;
-		case Item::CHOICE_SPECS:
-			attacker.pokemon().spa.stat = attacker.pokemon().spa.stat * 3 / 2;
-			break;
-		case Item::DEEPSEATOOTH:
-			if (attacker.pokemon().name == CLAMPERL)
-				attacker.pokemon().spa.stat *= 2;
-			break;
-		case Item::LIGHT_BALL:
-			if (attacker.pokemon().name == PIKACHU)
-				attacker.pokemon().spa.stat *= 2;
-			break;
-		default:
-			break;
-	}
-
-	if (attacker.pokemon().spa.stat == 0)
-		attacker.pokemon().spa.stat = 1;
+	if (pokemon.spa.stat == 0)
+		pokemon.spa.stat = 1;
 }
+
+}	// anonymous namespace
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
 	if (attacker.pokemon().move().physical)
 		calculate_defense (attacker, defender, weather);
 	else
-		calculate_special_defense (attacker, defender, weather);
+		calculate_special_defense (defender, weather, attacker.ch);
 }
 
 void calculate_defense (Team const & attacker, Team & defender, Weather const & weather) {
-	defender.pokemon().def.stat = !defender.power_trick ?
-		calculate_defense_1 (defender) :
-		calculate_attack_1 (defender);
+	Pokemon & defender_p = defender.pokemon ();
+	defender_p.def.stat = !defender.power_trick ?
+		calculate_defense_before_power_trick (defender.pokemon ()) :
+		calculate_attack_before_power_trick (defender.pokemon ());
 
-	if (defender.stage [Stat::DEF] > 0) {	// > is better than >= to check for a CH less
-		if (!attacker.ch)
-			defender.pokemon().def.stat = defender.pokemon().def.stat * (2 + defender.stage [Stat::DEF]) / 2;
-	}
-	else
-		defender.pokemon().def.stat = defender.pokemon().def.stat * 2 / (2 - defender.stage [Stat::DEF]);
-
-	if (defender.pokemon().ability.name == Ability::MARVEL_SCALE and defender.pokemon().status.name == Status::NO_STATUS)
-		defender.pokemon().def.stat = defender.pokemon().def.stat * 3 / 2;
+	defender_p.def.stat = defending_stage_modifier (defender_p.def, defender.stage [Stat::DEF], attacker.ch);
 	
-	if (defender.pokemon().item.name == Item::METAL_POWDER and defender.pokemon().name == DITTO)
-		defender.pokemon().def.stat = defender.pokemon().def.stat * 3 / 2;
+	defender_p.def.stat = defense_ability_modifier (defender.pokemon ());
+	defender_p.def.stat = defense_item_modifier (defender.pokemon ());
 	
 	if (attacker.pokemon().move().is_self_KO ())
-		defender.pokemon().def.stat /= 2;
+		defender_p.def.stat /= 2;
 
-	if (defender.pokemon().def.stat == 0)
-		defender.pokemon().def.stat = 1;
+	if (defender_p.def.stat == 0)
+		defender_p.def.stat = 1;
 }
 
-void calculate_special_defense (Team const & attacker, Team & defender, Weather const & weather) {
-	defender.pokemon().spd.stat = (2 * defender.pokemon().spd.base + defender.pokemon().spd.iv + defender.pokemon().spd.ev) * defender.pokemon().level / 100 + 5;
-
-	switch (defender.pokemon().nature.name) {
-		case Nature::CALM:
-		case Nature::CAREFUL:
-		case Nature::GENTLE:
-		case Nature::SASSY:
-			defender.pokemon().spd.stat = defender.pokemon().spd.stat * 11 / 10;
-			break;
-		case Nature::LAX:
-		case Nature::NAIVE:
-		case Nature::NAUGHTY:
-		case Nature::RASH:
-			defender.pokemon().spd.stat = defender.pokemon().spd.stat * 9 / 10;
-			break;
-		default:
-			break;
-	}
-
-	if (defender.stage [Stat::SPD] > 0) {	// > is better than >= to check for a CH less
-		if (!attacker.ch)
-			defender.pokemon().spd.stat = defender.pokemon().spd.stat * (2 + defender.stage [Stat::SPD]) / 2;
-	}
-	else
-		defender.pokemon().spd.stat = defender.pokemon().spd.stat * 2 / (2 - defender.stage [Stat::SPD]);
-
-	if (defender.pokemon().ability.name == Ability::FLOWER_GIFT and weather.sun)
-		defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
+void calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
+	Pokemon & defender_p = defender.pokemon ();
+	defender_p.spd.stat = calculate_initial_stat (defender_p.spd, defender_p.level);
+	defender_p.spd.stat = defender_p.spd.stat * spd_nature_boost (defender_p.nature) / 10;
 	
-	switch (defender.pokemon().item.name) {
-		case Item::DEEPSEASCALE:
-			if (defender.pokemon().name == CLAMPERL)
-				defender.pokemon().spd.stat *= 2;
-			break;
-		case Item::METAL_POWDER:
-			if (defender.pokemon().name == DITTO)
-				defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
-			break;
-		case Item::SOUL_DEW:
-			if (defender.pokemon().name == LATIAS or defender.pokemon().name == LATIOS)
-				defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
-			break;
-		default:
-			break;
-	}
+	defender_p.spd.stat = defending_stage_modifier (defender_p.spd, defender.stage [Stat::SPD], ch);
+
+	defender_p.spd.stat = special_defense_ability_modifier (defender_p, weather);	
+	defender_p.spd.stat = special_defense_item_modifier (defender.pokemon ());
 	
-	if (is_type (defender, Type::ROCK) and weather.sand)
-		defender.pokemon().spd.stat = defender.pokemon().spd.stat * 3 / 2;
+	defender_p.spd.stat = special_defense_sandstorm_boost (defender, weather);
 	
-	if (defender.pokemon().spd.stat == 0)
-		defender.pokemon().spd.stat = 1;
+	if (defender_p.spd.stat == 0)
+		defender_p.spd.stat = 1;
 }
 
 void calculate_speed (Team & team, Weather const & weather) {
-	team.pokemon().spe.stat = (2 * team.pokemon().spe.base + team.pokemon().spe.iv + team.pokemon().spe.ev) * team.pokemon().level / 100 + 5;
-
-	switch (team.pokemon().nature.name) {
-		case Nature::HASTY:
-		case Nature::JOLLY:
-		case Nature::NAIVE:
-		case Nature::TIMID:
-			team.pokemon().spe.stat = team.pokemon().spe.stat * 11 / 10;
-			break;
-		case Nature::BRAVE:
-		case Nature::QUIET:
-		case Nature::RELAXED:
-		case Nature::SASSY:
-			team.pokemon().spe.stat = team.pokemon().spe.stat * 9 / 10;
-			break;
-		default:
-			break;
-	}
+	team.pokemon().spe.stat = calculate_initial_stat (team.pokemon().spe, team.pokemon().level);
+	team.pokemon().spe.stat = team.pokemon().spe.stat * spe_nature_boost (team.pokemon().nature) / 10;
 	
-	if (team.stage [Stat::SPE] >= 0)
-		team.pokemon().spe.stat = team.pokemon().spe.stat * (2 + team.stage [Stat::SPE]) / 2;
-	else
-		team.pokemon().spe.stat = team.pokemon().spe.stat * 2 / (2 - team.stage [Stat::SPE]);
+	team.pokemon().spe.stat = speed_stage_modifier (team.pokemon().spe, team.stage [Stat::SPE]);
 
-	switch (team.pokemon().ability.name) {
-		case Ability::CHLOROPHYLL:
-			if (weather.sun)
-				team.pokemon().spe.stat *= 2;
-			break;
-		case Ability::SWIFT_SWIM:
-			if (weather.rain)
-				team.pokemon().spe.stat *= 2;
-			break;
-		case Ability::UNBURDEN:
-			if (false)
-				team.pokemon().spe.stat *= 2;
-			break;
-		case Ability::QUICK_FEET:
-			if (team.pokemon().status.name == Status::NO_STATUS)
-				team.pokemon().spe.stat = team.pokemon().spe.stat * 3 / 2;
-			break;
-		case Ability::SLOW_START:
-			if (team.slow_start != 0)
-				team.pokemon().spe.stat /= 2;
-			break;
-		default:
-			break;
-	}
+	team.pokemon().spe.stat = speed_ability_modifier (team, weather);
 	
-	switch (team.pokemon().item.name) {
-		case Item::QUICK_POWDER:
-			if (team.pokemon().name == DITTO)
-				team.pokemon().spe.stat *= 2;
-			break;
-		case Item::CHOICE_SCARF:
-			team.pokemon().spe.stat = team.pokemon().spe.stat * 3 / 2;
-			break;
-		case Item::MACHO_BRACE:
-		case Item::POWER_ANKLET:
-		case Item::POWER_BAND:
-		case Item::POWER_BELT:
-		case Item::POWER_BRACER:
-		case Item::POWER_LENS:
-		case Item::POWER_WEIGHT:
-			team.pokemon().spe.stat /= 2;
-			break;
-		default:
-			break;
-	}
-		
-	if (team.pokemon().status.name == Status::PARALYSIS and team.pokemon().ability.name != Ability::QUICK_FEET)
+	team.pokemon().spe.stat = speed_item_modifier (team.pokemon());
+	
+	if (paralysis_lowers_speed (team.pokemon ()))
 		team.pokemon().spe.stat /= 4;
 	
 	if (team.tailwind)
@@ -382,7 +203,7 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 		faster = &team1;
 		slower = &team2;
 	}
-	else {				// (team2.pokemon().move().priority > team1.pokemon().move().priority)
+	else {			// if (team2.pokemon().move().priority > team1.pokemon().move().priority)
 		faster = &team2;
 		slower = &team1;
 	}
@@ -406,73 +227,421 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 }
 
 void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
-	if (user.pokemon().move().accuracy == -1 or user.pokemon().ability.name == Ability::NO_GUARD or target.pokemon().ability.name == Ability::NO_GUARD or user.lock_on)
-		user.chance_to_hit = 100;
-	else {
+	if (move_can_miss (user, target.pokemon().ability)) {
 		user.chance_to_hit = user.pokemon().move().accuracy;
-		if (user.stage [Stat::ACC] >= 0)
-			user.chance_to_hit = user.chance_to_hit * (3 + user.stage [Stat::ACC]) / 3;
-		else
-			user.chance_to_hit = user.chance_to_hit * 3 / (3 - user.stage [Stat::ACC]);
-		if (target.stage [Stat::EVA] <= 0)
-			user.chance_to_hit = user.chance_to_hit * (3 - target.stage [Stat::EVA]) / 3;
-		else
-			user.chance_to_hit = user.chance_to_hit * 3 / (3 + target.stage [Stat::EVA]);
+		user.chance_to_hit = accuracy_stage_modifier (user);
+		user.chance_to_hit = evasion_stage_modifier (user, target.stage [Stat::EVA]);
 
-		switch (user.pokemon().item.name) {
-			case Item::WIDE_LENS:
-				user.chance_to_hit = user.chance_to_hit * 11 / 10;
-				break;
-			case Item::ZOOM_LENS:
-				if (target.moved)
-					user.chance_to_hit = user.chance_to_hit * 6 / 5;
-				break;
-			default:
-				break;
-		}
-		switch (user.pokemon().ability.name) {
-			case Ability::COMPOUNDEYES:
-				user.chance_to_hit = user.chance_to_hit * 13 / 10;
-				break;
-			case Ability::HUSTLE:
-				if (user.pokemon().move().physical)
-					user.chance_to_hit = user.chance_to_hit * 4 / 5;
-				break;
-			default:
-				break;
-		}
-		switch (target.pokemon().item.name) {
-			case Item::BRIGHTPOWDER:
-				user.chance_to_hit = user.chance_to_hit * 9 / 10;
-				break;
-			case Item::LAX_INCENSE:
-				user.chance_to_hit = user.chance_to_hit * 19 / 20;
-				break;
-			default:
-				break;
-		}
-		switch (target.pokemon().ability.name) {
-			case Ability::SAND_VEIL:
-				if (weather.sand)
-					user.chance_to_hit = user.chance_to_hit * 4 / 5;
-				break;
-			case Ability::SNOW_CLOAK:
-				if (weather.hail)
-					user.chance_to_hit = user.chance_to_hit * 4 / 5;
-				break;
-			case Ability::TANGLED_FEET:
-				if (target.confused)
-					user.chance_to_hit = user.chance_to_hit * 4 / 5;
-				break;
-			default:
-				break;
-		}
+		user.chance_to_hit = accuracy_item_modifier (user, target.moved);
+		user.chance_to_hit = accuracy_ability_modifier (user);
+		
+		user.chance_to_hit = evasion_item_modifier (user, target.pokemon().item);
+		user.chance_to_hit = evasion_ability_modifier (user, target, weather);
+
 		if (weather.gravity)
 			user.chance_to_hit = user.chance_to_hit * 5 / 3;
+
 		if (user.chance_to_hit > 100)
 			user.chance_to_hit = 100;
 	}
+	else {
+		user.chance_to_hit = 100;
+	}
 }
+
+namespace {
+
+unsigned calculate_initial_stat (Stat const & stat, unsigned level) {
+	return (2 * stat.base + stat.iv + stat.ev) * level / 100 + 5;
+}
+
+unsigned atk_nature_boost (Nature nature) {
+	switch (nature.name) {
+		case Nature::ADAMANT:
+		case Nature::BRAVE:
+		case Nature::LONELY:
+		case Nature::NAUGHTY:
+			return 11;
+		case Nature::BOLD:
+		case Nature::CALM:
+		case Nature::MODEST:
+		case Nature::TIMID:
+			return 9;
+		default:
+			return 10;
+	}
+}
+
+unsigned def_nature_boost (Nature nature) {
+	switch (nature.name) {
+		case Nature::BOLD:
+		case Nature::IMPISH:
+		case Nature::LAX:
+		case Nature::RELAXED:
+			return 11;
+		case Nature::GENTLE:
+		case Nature::HASTY:
+		case Nature::LONELY:
+		case Nature::MILD:
+			return 9;
+		default:
+			return 10;
+	}
+}
+
+unsigned spa_nature_boost (Nature nature) {
+	switch (nature.name) {
+		case Nature::MILD:
+		case Nature::MODEST:
+		case Nature::QUIET:
+		case Nature::RASH:
+			return 11;
+		case Nature::ADAMANT:
+		case Nature::CAREFUL:
+		case Nature::IMPISH:
+		case Nature::JOLLY:
+			return 9;
+		default:
+			return 10;
+	}
+}
+
+unsigned spd_nature_boost (Nature nature) {
+	switch (nature.name) {
+		case Nature::CALM:
+		case Nature::CAREFUL:
+		case Nature::GENTLE:
+		case Nature::SASSY:
+			return 11;
+		case Nature::LAX:
+		case Nature::NAIVE:
+		case Nature::NAUGHTY:
+		case Nature::RASH:
+			return 9;
+		default:
+			return 10;
+	}
+}
+
+unsigned spe_nature_boost (Nature nature) {
+	switch (nature.name) {
+		case Nature::HASTY:
+		case Nature::JOLLY:
+		case Nature::NAIVE:
+		case Nature::TIMID:
+			return 11;
+		case Nature::BRAVE:
+		case Nature::QUIET:
+		case Nature::RELAXED:
+		case Nature::SASSY:
+			return 9;
+		default:
+			return 10;
+	}
+}
+
+unsigned attacking_stage_modifier (Stat const & stat, int stage, bool ch) {
+	if (stage >= 0)		// >= is better than == to check for a CH less often
+		return stat.stat * (2 + stage) / 2;
+	else
+		return (!ch) ? stat.stat * 2 / (2 - stage) : stat.stat;
+}
+
+unsigned defending_stage_modifier (Stat const & stat, int stage, bool ch) {
+	if (stage > 0)		// > is better than >= to check for a CH less often
+		return (!ch) ? stat.stat * (2 + stage) / 2 : stat.stat;
+	else
+		return stat.stat * 2 / (2 - stage);
+}
+
+unsigned speed_stage_modifier (Stat const & spe, int stage) {
+	if (stage >= 0)
+		return spe.stat * (2 + stage) / 2;
+	else
+		return spe.stat * 2 / (2 - stage);
+}
+
+unsigned accuracy_stage_modifier (Team const & user) {
+	if (user.stage [Stat::ACC] >= 0)
+		return user.chance_to_hit * (3 + user.stage [Stat::ACC]) / 3;
+	else
+		return user.chance_to_hit * 3 / (3 - user.stage [Stat::ACC]);
+}
+
+unsigned evasion_stage_modifier (Team const & user, int evasion_stage) {
+	if (evasion_stage <= 0)
+		return user.chance_to_hit * (3 - evasion_stage) / 3;
+	else
+		return user.chance_to_hit * 3 / (3 + evasion_stage);
+}
+
+unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {
+	unsigned n = calculate_initial_stat (attacker.atk, attacker.level);
+	n = n * atk_nature_boost (attacker.nature) / 10;
+	return n;
+}
+
+unsigned calculate_defense_before_power_trick (Pokemon const & defender) {
+	unsigned n = calculate_initial_stat (defender.def, defender.level);
+	n = n * def_nature_boost (defender.nature) / 10;
+	return n;
+}
+
+unsigned attack_ability_modifier (Pokemon const & attacker, bool slow_start, Weather const & weather) {
+	unsigned stat = attacker.atk.stat;
+	switch (attacker.ability.name) {
+		case Ability::FLOWER_GIFT:
+			if (weather.sun)
+				stat = stat * 3 / 2;
+			break;
+		case Ability::GUTS:
+			if (attacker.status.name == Status::NO_STATUS)
+				stat = stat * 3 / 2;
+			break;
+		case Ability::HUSTLE:
+			stat = stat * 3 / 2;
+			break;
+		case Ability::HUGE_POWER:
+		case Ability::PURE_POWER:
+			stat *= 2;
+			break;
+		case Ability::SLOW_START:
+			if (slow_start != 0)
+				stat /= 2;
+			break;
+		default:
+			break;
+	}
+	return stat;
+}
+
+unsigned attack_item_modifier (Pokemon const & attacker) {
+	unsigned stat = attacker.atk.stat;
+	switch (attacker.item.name) {
+		case Item::CHOICE_BAND:
+			stat = stat * 3 / 2;
+			break;
+		case Item::LIGHT_BALL:
+			if (attacker.name == PIKACHU)
+				stat *= 2;
+			break;
+		case Item::THICK_CLUB:
+			if (attacker.name == CUBONE or attacker.name == MAROWAK)
+				stat *= 2;
+			break;
+		default:
+			break;
+	}
+	return stat;
+}
+
+unsigned special_attack_ability_modifier (Pokemon const & attacker, Weather const & weather) {
+	if (!(attacker.ability.name == Ability::SOLAR_POWER and weather.sun))
+		return attacker.spa.stat;
+	else
+		return attacker.spa.stat * 3 / 2;
+}
+
+unsigned special_attack_item_modifier (Pokemon const & attacker) {
+	unsigned stat = attacker.spa.stat;
+	switch (attacker.item.name) {
+		case Item::SOUL_DEW:
+			if (attacker.name == LATIAS or attacker.name == LATIOS)
+				stat = stat * 3 / 2;
+			break;
+		case Item::CHOICE_SPECS:
+			stat = stat * 3 / 2;
+			break;
+		case Item::DEEPSEATOOTH:
+			if (attacker.name == CLAMPERL)
+				stat *= 2;
+			break;
+		case Item::LIGHT_BALL:
+			if (attacker.name == PIKACHU)
+				stat *= 2;
+			break;
+		default:
+			break;
+	}
+	return stat;
+}
+
+unsigned defense_ability_modifier (Pokemon const & defender) {
+	if (!(defender.ability.name == Ability::MARVEL_SCALE and defender.status.name == Status::NO_STATUS))
+		return defender.def.stat;
+	else
+		return defender.def.stat * 3 / 2;
+}
+
+unsigned defense_item_modifier (Pokemon const & defender) {
+	if (!(defender.item.name == Item::METAL_POWDER and defender.name == DITTO))
+		return defender.def.stat;
+	else
+		return defender.def.stat * 3 / 2;
+}
+
+unsigned special_defense_ability_modifier (Pokemon const & defender, Weather const & weather) {
+	if (!(defender.ability.name == Ability::FLOWER_GIFT and weather.sun))
+		return defender.spd.stat;
+	else
+		return defender.spd.stat * 3 / 2;
+}
+
+unsigned special_defense_item_modifier (Pokemon const & defender) {
+	unsigned stat = defender.spd.stat;
+	switch (defender.item.name) {
+		case Item::DEEPSEASCALE:
+			if (defender.name == CLAMPERL)
+				stat *= 2;
+			break;
+		case Item::METAL_POWDER:
+			if (defender.name == DITTO)
+				stat = stat * 3 / 2;
+			break;
+		case Item::SOUL_DEW:
+			if (defender.name == LATIAS or defender.name == LATIOS)
+				stat = stat * 3 / 2;
+			break;
+		default:
+			break;
+	}
+	return stat;
+}
+
+unsigned special_defense_sandstorm_boost (Team const & defender, Weather const & weather) {
+	if (!(is_type (defender, Type::ROCK) and weather.sand))
+		return defender.pokemon().spd.stat;
+	else
+		return defender.pokemon().spd.stat * 3 / 2;
+}
+
+unsigned speed_ability_modifier (Team const & team, Weather const & weather) {
+	unsigned stat = team.pokemon().spe.stat;
+	switch (team.pokemon().ability.name) {
+		case Ability::CHLOROPHYLL:
+			if (weather.sun)
+				stat *= 2;
+			break;
+		case Ability::SWIFT_SWIM:
+			if (weather.rain)
+				stat *= 2;
+			break;
+		case Ability::UNBURDEN:
+			if (false)
+				stat *= 2;
+			break;
+		case Ability::QUICK_FEET:
+			if (team.pokemon().status.name == Status::NO_STATUS)
+				stat = stat * 3 / 2;
+			break;
+		case Ability::SLOW_START:
+			if (team.slow_start != 0)
+				stat /= 2;
+			break;
+		default:
+			break;
+	}
+	return stat;
+}
+
+unsigned speed_item_modifier (Pokemon const & pokemon) {
+	unsigned stat = pokemon.spe.stat;
+	switch (pokemon.item.name) {
+		case Item::QUICK_POWDER:
+			if (pokemon.name == DITTO)
+				stat *= 2;
+			break;
+		case Item::CHOICE_SCARF:
+			stat = stat * 3 / 2;
+			break;
+		case Item::MACHO_BRACE:
+		case Item::POWER_ANKLET:
+		case Item::POWER_BAND:
+		case Item::POWER_BELT:
+		case Item::POWER_BRACER:
+		case Item::POWER_LENS:
+		case Item::POWER_WEIGHT:
+			stat /= 2;
+			break;
+		default:
+			break;
+	}
+	return stat;
+}
+
+bool paralysis_lowers_speed (Pokemon const & pokemon) {
+	return pokemon.status.name == Status::PARALYSIS and pokemon.ability.name != Ability::QUICK_FEET;
+}
+
+bool move_can_miss (Team const & user, Ability target_ability) {
+	return user.pokemon().move().accuracy != -1 and user.pokemon().ability.name != Ability::NO_GUARD and target_ability.name != Ability::NO_GUARD and !user.lock_on;
+}
+
+unsigned accuracy_item_modifier (Team const & user, bool target_moved) {
+	unsigned chance = user.chance_to_hit;
+	switch (user.pokemon().item.name) {
+		case Item::WIDE_LENS:
+			chance = chance * 11 / 10;
+			break;
+		case Item::ZOOM_LENS:
+			if (target_moved)
+				chance = chance * 6 / 5;
+			break;
+		default:
+			break;
+	}
+	return chance;
+}
+
+unsigned accuracy_ability_modifier (Team const & user) {
+	unsigned chance = user.chance_to_hit;
+	switch (user.pokemon().ability.name) {
+		case Ability::COMPOUNDEYES:
+			chance = chance * 13 / 10;
+			break;
+		case Ability::HUSTLE:
+			if (user.pokemon().move().physical)
+				chance = chance * 4 / 5;
+			break;
+		default:
+			break;
+	}
+	return chance;
+}
+
+unsigned evasion_item_modifier (Team const & user, Item item) {
+	switch (item.name) {
+		case Item::BRIGHTPOWDER:
+			return user.chance_to_hit * 9 / 10;
+		case Item::LAX_INCENSE:
+			return user.chance_to_hit * 19 / 20;
+		default:
+			return user.chance_to_hit;
+	}
+}
+
+unsigned evasion_ability_modifier (Team const & user, Team const & target, Weather const & weather) {
+	unsigned chance = user.chance_to_hit;
+	switch (target.pokemon().ability.name) {
+		case Ability::SAND_VEIL:
+			if (weather.sand)
+				chance = chance * 4 / 5;
+			break;
+		case Ability::SNOW_CLOAK:
+			if (weather.hail)
+				chance = chance  * 4 / 5;
+			break;
+		case Ability::TANGLED_FEET:
+			if (target.confused)
+				chance = chance  * 4 / 5;
+			break;
+		default:
+			break;
+	}
+	return chance;
+}
+
+}	// anonymous namespace
 
 void Stat::boost (int8_t & stage, int n) {
 	stage += n;

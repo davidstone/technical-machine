@@ -72,7 +72,7 @@ void calculate_defending_stat (Team const & attacker, Team & defender, Weather c
 
 // Needed in header for Download.
 void calculate_defense (Team const & attacker, Team & defender, Weather const & weather);
-void calculate_special_defense (Team const & attacker, Team & defender, Weather const & weather);
+void calculate_special_defense (Team & defender, Weather const & weather, bool ch = false);
 
 void calculate_speed (Team & team, Weather const & weather);
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
