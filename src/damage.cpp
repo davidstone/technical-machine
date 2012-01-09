@@ -30,7 +30,13 @@
 
 namespace technicalmachine {
 
-// I split my damage calculator up into a function that calculates as much as possible with known data, one that calculates without the random number, and a function that does the rest of the work because in many cases, I have the damage calculator in a deep inner loop, and pre-calculating non-random numbers allows me to move much of that calculator to a shallower part of code, and pre-calculating known information moves even more out. Profiling showed this to be a sound optimization.
+// I split my damage calculator up into a function that calculates as much as
+// possible with known data, one that calculates without the random number, and
+// a function that does the rest of the work because in many cases, I have the
+// damage calculator in a deep inner loop, and pre-calculating non-random
+// numbers allows me to move much of that calculator to a shallower part of
+// code, and pre-calculating known information moves even more out. Profiling
+// showed this to be a sound optimization.
 
 unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf) {
 	if (((defender.reflect and attacker.pokemon().move().physical)

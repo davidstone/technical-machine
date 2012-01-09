@@ -1,4 +1,4 @@
-// Test stuff
+// Test damage-related functions
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,28 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#ifndef TEST_DAMAGE_HPP_
+#define TEST_DAMAGE_HPP_
 
-#include "damage.hpp"
-#include "string_conversion.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+namespace technicalmachine {
 
-int main () {
-	using namespace technicalmachine;
-	
-	damage_tests ();
-	std::cout << "Damage tests passed.\n\n";
+void damage_tests ();
 
-	string_conversion_tests ();
-	std::cout << "String conversion tests passed.\n\n";
+}	// namespace technicalmachine
 
-	pl::test ();
-	std::cout << "Pokemon Lab tests passed.\n\n";
-
-	po::test ();
-	std::cout << "Pokemon Online tests passed.\n\n";
-
-	std::cout << "All tests passed.\n";
-	return 0;
-}
+#endif	// TEST_DAMAGE_HPP_

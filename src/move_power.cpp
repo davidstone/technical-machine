@@ -74,10 +74,14 @@ void move_power (Team & attacker, Team const & defender, Weather const & weather
 		case Move::FRUSTRATION:
 			attacker.pokemon().move().basepower = 102 - attacker.pokemon().happiness * 2 / 5;
 			break;
-		case Move::FURY_CUTTER:
-			// 10 * 2 ^ attacker.pokemon().move().times_used
-			attacker.pokemon().move().basepower = 10 << attacker.pokemon().move().times_used;
+		case Move::FURY_CUTTER: {
+			unsigned n = attacker.pokemon().move().times_used;
+			if (n > 4)
+				n = 4;
+			// 10 * 2 ^ n
+			attacker.pokemon().move().basepower = 10 << n;
 			break;
+		}
 		case Move::GRASS_KNOT:
 		case Move::LOW_KICK:
 			attacker.pokemon().move().basepower = defender.pokemon().mass;
@@ -88,10 +92,14 @@ void move_power (Team & attacker, Team const & defender, Weather const & weather
 				attacker.pokemon().move().basepower = 150;
 			break;
 		case Move::ICE_BALL:
-		case Move::ROLLOUT:
-			// 30 * 2 ^ attacker.pokemon().move().times_used
-			attacker.pokemon().move().basepower = 30 << attacker.pokemon().move().times_used;
+		case Move::ROLLOUT: {
+			unsigned n = attacker.pokemon().move().times_used;
+			if (n > 4)
+				n = 4;
+			// 30 * 2 ^ n
+			attacker.pokemon().move().basepower = 30 << n;
 			break;
+		}
 		case Move::HIDDEN_POWER: {
 			// The second-least significant bit of each stat determines the power of Hidden Power
 			unsigned const u = (attacker.pokemon().hp.iv >> 1) % 2;
@@ -134,9 +142,13 @@ void move_power (Team & attacker, Team const & defender, Weather const & weather
 		case Move::SPIT_UP:
 			attacker.pokemon().move().basepower = attacker.stockpile * 100;
 			break;
-		case Move::TRIPLE_KICK:
-			attacker.pokemon().move().basepower = 10 * attacker.pokemon().move().times_used;
+		case Move::TRIPLE_KICK: {
+			unsigned n = attacker.pokemon().move().times_used + 1;
+			if (n > 3)
+				n = 3;
+			attacker.pokemon().move().basepower = 10 * n;
 			break;
+		}
 		case Move::TRUMP_CARD:
 			switch (attacker.pokemon().move().pp) {
 				case 0:

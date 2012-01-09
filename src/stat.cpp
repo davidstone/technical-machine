@@ -52,25 +52,54 @@ void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 		calculate_special_attack (attacker, weather);
 }
 
-void calculate_attack (Team & attacker, Weather const & weather) {
-	attacker.pokemon().atk.stat = (2 * attacker.pokemon().atk.base + attacker.pokemon().atk.iv + attacker.pokemon().atk.ev) * attacker.pokemon().level / 100 + 5;
+static unsigned calculate_attack_1 (Team const & attacker) {
+	unsigned n = (2 * attacker.pokemon().atk.base + attacker.pokemon().atk.iv + attacker.pokemon().atk.ev) * attacker.pokemon().level / 100 + 5;
 
 	switch (attacker.pokemon().nature.name) {
 		case Nature::ADAMANT:
 		case Nature::BRAVE:
 		case Nature::LONELY:
 		case Nature::NAUGHTY:
-			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 11 / 10;
+			n = n * 11 / 10;
 			break;
 		case Nature::BOLD:
 		case Nature::CALM:
 		case Nature::MODEST:
 		case Nature::TIMID:
-			attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * 9 / 10;
+			n = n * 9 / 10;
 			break;
 		default:
 			break;
 	}
+	return n;
+}
+
+static unsigned calculate_defense_1 (Team const & defender) {
+	unsigned n = (2 * defender.pokemon().def.base + defender.pokemon().def.iv + defender.pokemon().def.ev) * defender.pokemon().level / 100 + 5;
+
+	switch (defender.pokemon().nature.name) {
+		case Nature::BOLD:
+		case Nature::IMPISH:
+		case Nature::LAX:
+		case Nature::RELAXED:
+			n = n * 11 / 10;
+			break;
+		case Nature::GENTLE:
+		case Nature::HASTY:
+		case Nature::LONELY:
+		case Nature::MILD:
+			n = n * 9 / 10;
+			break;
+		default:
+			break;
+	}
+	return n;
+}
+
+void calculate_attack (Team & attacker, Weather const & weather) {
+	attacker.pokemon().atk.stat = !attacker.power_trick ?
+		calculate_attack_1 (attacker) :
+		calculate_defense_1 (attacker);
 
 	if (attacker.stage [Stat::ATK] >= 0) // >= is better than == to check for a CH less
 		attacker.pokemon().atk.stat = attacker.pokemon().atk.stat * (2 + attacker.stage [Stat::ATK]) / 2;
@@ -184,24 +213,9 @@ void calculate_defending_stat (Team const & attacker, Team & defender, Weather c
 }
 
 void calculate_defense (Team const & attacker, Team & defender, Weather const & weather) {
-	defender.pokemon().def.stat = (2 * defender.pokemon().def.base + defender.pokemon().def.iv + defender.pokemon().def.ev) * defender.pokemon().level / 100 + 5;
-
-	switch (defender.pokemon().nature.name) {
-		case Nature::BOLD:
-		case Nature::IMPISH:
-		case Nature::LAX:
-		case Nature::RELAXED:
-			defender.pokemon().def.stat = defender.pokemon().def.stat * 11 / 10;
-			break;
-		case Nature::GENTLE:
-		case Nature::HASTY:
-		case Nature::LONELY:
-		case Nature::MILD:
-			defender.pokemon().def.stat = defender.pokemon().def.stat * 9 / 10;
-			break;
-		default:
-			break;
-	}
+	defender.pokemon().def.stat = !defender.power_trick ?
+		calculate_defense_1 (defender) :
+		calculate_attack_1 (defender);
 
 	if (defender.stage [Stat::DEF] > 0) {	// > is better than >= to check for a CH less
 		if (!attacker.ch)
