@@ -18,7 +18,6 @@
 
 #include "connect.hpp"
 
-#include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <map>
