@@ -1,5 +1,5 @@
 // Reverse damage calculator
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -53,20 +53,20 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 	unsigned const effectiveness = get_effectiveness (attacker.pokemon().move().type, defender.pokemon());
 	std::vector <unsigned> const effectiveness_vector = get_effectiveness_variables (attacker.pokemon().move().type, defender.pokemon());
 
-	unsigned rl;						// Reflect / Light Screen (2)
-	unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-	unsigned ff;					// Flash Fire: 3 / 2
-	unsigned mf;					// Me First: 3 / 2
-	unsigned known;			// Never used unitialized. If variable is true, set before entering the loop. If variable is false, set after entering the loop but before it's used in the loop.
+	unsigned rl = 2;						// Reflect / Light Screen (2)
+	unsigned weather_mod = 2;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+	unsigned ff = 2;					// Flash Fire: 3 / 2
+	unsigned mf = 2;					// Me First: 3 / 2
+	unsigned known = 0;
 	bool const variable = attacker.pokemon().move().name != Move::HIDDEN_POWER and attacker.pokemon().move().name != Move::NATURAL_GIFT;
 	if (variable)
 		known = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
 
-	unsigned stab;		// Same Type Attack Bonus: 3 / 2
-	unsigned aem;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-	unsigned eb;		// Expert Belt: 6 / 5
-	unsigned tl;			// Tinted Lens (2)
-	unsigned rb;		// Resistance berries (2)
+	unsigned stab = 2;		// Same Type Attack Bonus: 3 / 2
+	unsigned aem = 4;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+	unsigned eb = 5;		// Expert Belt: 6 / 5
+	unsigned tl = 2;			// Tinted Lens (2)
+	unsigned rb = 2;		// Resistance berries (2)
 	unsigned nonrandom = 0;
 
 	for (Unknown const & unknown : hidden) {
