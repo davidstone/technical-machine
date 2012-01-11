@@ -237,13 +237,10 @@ Pokemon const & Team::at_replacement () const {
 	return pokemon.set [replacement];
 }
 
-void Team::output (std::string & output) const {
-	if (me)
-		output = "AI";
-	else
-		output = "Foe";
-	output += " team:\n";
-	output += player + ":\n";
+std::string Team::to_string () const {
+	std::string output = player + "'s (";
+	output += me ? "AI" : "Foe";
+	output += ") team:\n";
 	for (Pokemon const & member : pokemon.set) {
 		output += member.to_string();
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % (100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max)));
@@ -257,6 +254,7 @@ void Team::output (std::string & output) const {
 		for (std::vector<Move>::const_iterator move = member.move.set.begin(); move->name != Move::STRUGGLE; ++move)
 			output += "\t- " + move->to_string() + "\n";
 	}
+	return output;
 }
 
 }

@@ -58,9 +58,7 @@ void function (Fl_Widget * w, void * data) {
 	
 	if (team.pokemon.set.size() > 0) {
 		predict_team (d->detailed, team, using_lead);
-		std::string out;
-		team.output (out);
-		d->output->value (out.c_str());
+		d->output->value (team.to_string().c_str());
 	}
 	else
 		d->output->value ("");

@@ -101,9 +101,7 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	predict_team (client.detailed, predicted, ai.size);
-	std::string out;
-	predicted.output (out);
-	std::cout << out;
+	std::cout << predicted.to_string ();
 
 	return expectiminimax (ai, predicted, weather, depth, client.score);
 }
@@ -288,11 +286,8 @@ void GenericBattle::do_turn () {
 			usemove (foe, ai, weather, first->damage);
 		}
 	}
-	std::string out;
-	first->output (out);
-	std::cout << out;
-	last->output (out);
-	std::cout << out;
+	std::cout << first->to_string ();
+	std::cout << last->to_string ();
 }
 
 void GenericBattle::normalize_hp () {

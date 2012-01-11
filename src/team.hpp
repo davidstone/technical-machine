@@ -1,5 +1,5 @@
 // Team data structure
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -138,7 +138,7 @@ class Team {
 		bool seen_pokemon (Species name);
 		void add_pokemon (Species name, std::string const & nickname, int level, Gender gender);
 		uint64_t hash () const;
-		void output (std::string & output) const;
+		std::string to_string () const;
 	private:
 		void load (std::string const & name, unsigned size);
 };
