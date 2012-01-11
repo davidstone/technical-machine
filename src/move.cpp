@@ -40,17 +40,19 @@ namespace technicalmachine {
 
 namespace {
 
-static unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
-static void call_other_move (Team & user);
-static void do_damage (Team & user, Team & target, unsigned damage);
-static void lower_pp (Team & user, Pokemon const & target);
+unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
+void call_other_move (Team & user);
+void do_damage (Team & user, Team & target, unsigned damage);
+void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage);
+void lower_pp (Team & user, Pokemon const & target);
 
-static Type get_type (Move::Moves move);
-static bool is_physical (Move::Moves move);
-static int16_t base_power (Move::Moves move);
-static int8_t get_pp (Move::Moves move);
-static uint16_t get_probability (Move::Moves move);
-static int16_t get_accuracy (Move::Moves move);
+Type get_type (Move::Moves move);
+bool is_physical (Move::Moves move);
+int16_t base_power (Move::Moves move);
+int8_t get_pp (Move::Moves move);
+uint16_t get_probability (Move::Moves move);
+int16_t get_accuracy (Move::Moves move);
+
 }	// anonymous namespace
 
 Move::Move (Moves move, int pp_ups, unsigned size) :
@@ -315,6 +317,22 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 	}
 	++user.pokemon().move().times_used;
 
+	do_side_effects (user, target, weather, damage);
+
+	return damage;
+}
+
+void do_damage (Team & user, Team & target, unsigned damage) {
+	damage_side_effect (target.pokemon(), damage);
+	if (user.pokemon().item.name == Item::LIFE_ORB)
+		heal (user.pokemon(), -10);
+	if (target.pokemon().hp.stat > 0) {
+		if (target.bide != 0)
+			target.bide_damage += damage;
+	}
+}
+
+void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage) {
 	switch (user.pokemon().move().name) {
 		case Move::DREAM_EATER:
 			if (!target.pokemon().status.is_sleeping ())
@@ -1224,17 +1242,6 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 				target.yawn = 2;
 		default:
 			break;
-	}
-	return damage;
-}
-
-void do_damage (Team & user, Team & target, unsigned damage) {
-	damage_side_effect (target.pokemon(), damage);
-	if (user.pokemon().item.name == Item::LIFE_ORB)
-		heal (user.pokemon(), -10);
-	if (target.pokemon().hp.stat > 0) {
-		if (target.bide != 0)
-			target.bide_damage += damage;
 	}
 }
 

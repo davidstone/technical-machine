@@ -37,8 +37,6 @@ class Battle : public GenericBattle {
 		Battle (std::string const & opponent, int const battle_depth);
 		Battle (std::string const & opponent, int const battle_depth, Team const & team);
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg);
-//		void update_active_print (Log & log, std::vector <std::string> const & arguments);
-//		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
 	private:
 		unsigned get_max_damage_precision () const;
 		uint8_t get_target () const;

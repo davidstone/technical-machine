@@ -126,7 +126,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			uint16_t const attack = msg.read_short ();
 			Move::Moves const move = id_to_move (attack);
 			constexpr uint8_t slot = 0;
-			handle_use_move (party, slot, move);
+			handle_use_move (player, slot, move);
 			break;
 		}
 		case STRAIGHT_DAMAGE: {
@@ -138,17 +138,13 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case HP_CHANGE: {
-			std::cerr << "Player changing HP: " << static_cast <int> (player) << '\n';
+			bool const my_team = player == party;
 			int16_t const remaining_hp = msg.read_short ();
-			std::cerr << "remaining_hp: " << remaining_hp << '\n';
-			int16_t const change_in_hp = (player == party) ?
+			int16_t const change_in_hp = my_team ?
 				ai.at_replacement ().hp.stat - remaining_hp :
 				get_max_damage_precision () - remaining_hp;
-//				foe.at_replacement ().hp.stat - remaining_hp * foe.at_replacement ().hp.max / get_max_damage_precision ();
-			std::cerr << "change_in_hp: " << change_in_hp << '\n';
 			uint8_t const slot = 0;
-			int16_t const denominator = (player == party) ? ai.at_replacement ().hp.max : get_max_damage_precision ();
-			std::cerr << "denominator: " << denominator << '\n';
+			int16_t const denominator = my_team ? ai.at_replacement ().hp.max : get_max_damage_precision ();
 			handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
 			break;
 		}
@@ -176,7 +172,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				std::cerr << "AVOID\n";
 			else
 				std::cerr << "MISS\n";
-			active->miss = true;
+			bool const is_me = (party == player);
+			Team & team = is_me ? ai : foe;
+			team.miss = true;
 			break;
 		}
 		case NO_TARGET: {
@@ -189,7 +187,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case CRITICAL_HIT: {
 			std::cerr << "CH\n";
-			active->ch = true;
+			bool const is_me = (party == player);
+			Team & team = is_me ? ai : foe;
+			team.ch = true;
 			break;
 		}
 		case NUMBER_OF_HITS: {
@@ -231,7 +231,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case FLINCH: {
 			std::cerr << "FLINCH\n";
-			active->at_replacement().move().variable.index = 1;
+			bool const is_me = (party == player);
+			Team & team = is_me ? ai : foe;
+			team.at_replacement().move().variable.index = 1;
 			break;
 		}
 		case RECOIL: {

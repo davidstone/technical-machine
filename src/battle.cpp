@@ -132,8 +132,6 @@ void GenericBattle::handle_withdraw (uint8_t switching_party, uint8_t slot, std:
 }
 
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
-	std::cerr << "switching_party: " << static_cast <int> (switching_party) << '\n';
-	std::cerr << "nickname: " + nickname + "\n";
 	bool const is_me = (switching_party == party);
 	active = is_me ? &ai : &foe;
 	inactive = is_me ? &foe : &ai;
@@ -169,23 +167,22 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 }
 
 void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
+	bool const my_team = party_changing_health == party;
+	Team & changer = my_team ? ai : foe;
+	Team & other = my_team ? foe : ai;
 	if (move_damage) {
-		unsigned effectiveness = get_effectiveness (active->at_replacement().move().type, inactive->at_replacement ());
-		if ((effectiveness > 0) and (active->at_replacement().move().type != Type::GROUND or grounded (*inactive, weather))) {
-			inactive->damage = inactive->at_replacement().hp.max * change_in_health / denominator;
-			if (static_cast <unsigned> (inactive->damage) > inactive->at_replacement().hp.stat)
-				inactive->damage = inactive->at_replacement().hp.stat;
+		unsigned effectiveness = get_effectiveness (other.at_replacement().move().type, changer.at_replacement ());
+		if ((effectiveness > 0) and (other.at_replacement().move().type != Type::GROUND or grounded (changer, weather))) {
+			changer.damage = changer.at_replacement().hp.max * change_in_health / denominator;
+			if (static_cast <unsigned> (changer.damage) > changer.at_replacement().hp.stat)
+				changer.damage = changer.at_replacement().hp.stat;
 		}
 		move_damage = false;
 	}
 	
 	if (remaining_health < 0)
 		remaining_health = 0;
-	// If the message is about me, active must be me, otherwise, active must not be me
-	if ((party_changing_health == party) == active->me)
-		active->at_replacement().new_hp = remaining_health;
-	else
-		inactive->at_replacement().new_hp = remaining_health;
+	changer.at_replacement().new_hp = remaining_health;
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
@@ -193,13 +190,17 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
 		int const pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
 		if (pixels != pokemon.new_hp and (pokemon.new_hp + 1 < pixels or pixels < pokemon.new_hp - 1)) {
-			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports approximately " << pokemon.new_hp * pokemon.hp.max / max_hp << " but TM thinks it has " << pokemon.hp.stat << "\n";
+			int const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
+			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
+			if (!team.me)
+				std::cerr << "approximately ";
+			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
 			std::cerr << "max_hp: " << max_hp << '\n';
 			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
 			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
 			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
 			std::cerr << "pixels: " << pixels << '\n';
-			pokemon.hp.stat = pokemon.new_hp * pokemon.hp.max / max_hp;
+			pokemon.hp.stat = reported_hp;
 		}
 	}
 }
@@ -264,14 +265,19 @@ void GenericBattle::do_turn () {
 	}
 	else {
 		// Anything with recoil will mess this up
+
 		usemove (*first, *last, weather, last->damage);
 		last->pokemon().normalize_hp ();
+
 		usemove (*last, *first, weather, first->damage);
 		first->pokemon().normalize_hp ();
 
 		endofturn (*first, *last, weather);
 		normalize_hp ();
-
+		
+		// I only have to check if the foe fainted because if I fainted, I have
+		// to make a decision to replace that Pokemon. I update between each
+		// decision point so that is already taken into account.
 		while (foe.pokemon().fainted) {
 			if (!foe.pokemon().move().is_switch()) {
 				foe.pokemon().move.index = 0;
