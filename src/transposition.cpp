@@ -20,15 +20,14 @@
 
 #include <cstdint>
 
-#include "ability.hpp"
 #include "evaluate.hpp"
 #include "expectiminimax.hpp"
 #include "move.hpp"
-#include "pokemon.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
 namespace technicalmachine {
+namespace {
 
 class Hash {
 public:
@@ -62,33 +61,64 @@ bool Hash::operator!= (Hash const & other) const {
 	return !(*this == other);
 }
 
+Hash & hash_table_lookup (Hash const & current) {
+	// This creates a short-form hash that I use to look up the full hash, the
+	// score, and the depth of search used to get that score. It is later
+	// checked against the long form (which should never have collisions in a
+	// single battle). I also later check the depth to make sure it is at least
+	// as deep.
+	
+	// The dimension is used to limit the size of the table.
+	
+	// TODO: In theory, I could make this per battle. The long-form hashes are
+	// almost certain to have no collisions in a single battle (because certain
+	// things such as Pokemon species are fixed), but I haven't verified
+	// minimal collisions between battles. However, it's also possible that if
+	// TM uses the same team, the current foe could be using a similar enough
+	// team to a previous foe to where there may actually be collisions between
+	// battles. I also need to investigate to see which of these is more likely
+	// and find the relative merits of each strategy (per battle or the current
+	// static array).
+	static constexpr unsigned ai_dimension = 256;
+	static constexpr unsigned foe_dimension = 256;
+	static constexpr unsigned weather_dimension = 32;
+	static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
+	
+	unsigned const ai_position = current.ai % ai_dimension;
+	unsigned const foe_position = current.foe % foe_dimension;
+	unsigned const weather_position = current.weather % weather_dimension;
+	return table [ai_position] [foe_position] [weather_position];
+}
+
+}	// anonymous namespace
+
 int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score) {
 	int64_t value;
 	if (depth == 0) {
 		value = score.evaluate (ai, foe, weather);
 	}
 	else {
-		// First, I hash both teams and the weather. These are the long-form hashes that are each the size of a uint64_t, and should be unique within a game. I then take those hashes and divide them modulo their relevant dimension (used to determine the size of the transposition table). These short-form hashes are used as the array index. The shortened hash combinations are used to look up the full hashes, value, and depth.
+		// This long-form hash should be unique within a game.
 		Hash current (ai.hash(), foe.hash(), weather.hash(), depth);
-		static unsigned const ai_dimension = 256;
-		static unsigned const foe_dimension = 256;
-		static unsigned const weather_dimension = 32;
-		static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
-		Hash * const saved = & table [current.ai % ai_dimension] [current.foe % foe_dimension] [current.weather % weather_dimension];
-		// If I can find the current state in my transposition table at a depth of at least the current depth, set the value to the stored value.
-		if (saved->depth >= current.depth and *saved == current)
-			value = saved->value;
+		Hash & saved = hash_table_lookup (current);
+		// I verify that saved == current because hash_table_lookup only checks
+		// against shortened hashes for speed and memory reasons. I need the
+		// additional check to minimize the chances of a collision.
+		if (saved.depth >= current.depth and saved == current)
+			value = saved.value;
 		else {
 			Move::Moves phony = Move::END;
-			// If I can't find it, set the value to the evaluation of the state at depth - 1.
-			current.value = select_move_branch (ai, foe, weather, depth, score, phony);
-		
-			// Since I didn't find any stored value at the same hash as the current state, or the value I found was for a shallower depth, add the new value to my table.
-			*saved = current;
-			value = current.value;
+			// If I can't find it, continue evaluation as normal.
+			value = select_move_branch (ai, foe, weather, depth, score, phony);
+			current.value = value;
+			
+			// Since I didn't find any stored value at the same hash as the
+			// current state, or the value I found was for a shallower depth,
+			// add the new value to my table.
+			saved = current;
 		}
 	}
 	return value;
 }
 
-}
+}	// namespace technicalmachine
