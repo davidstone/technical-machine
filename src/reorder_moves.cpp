@@ -1,5 +1,5 @@
 // Reorder moves for efficient evaluation
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,18 +28,22 @@
 
 namespace technicalmachine {
 
-// reorder (...) takes all of a Pokemon's moves and sorts them based on previously evaluated scores. Moves that haven't been evaluated are sorted to the end. I do this because alpha-beta pruning is most efficient when the best moves are searched first. The reason for this is that the search then only has to prove that further moves aren't as good as the move already searched; it is not important to know how much worse they are.
-
-void reorder (std::vector<Move> const & input, std::vector <std::pair <int64_t, size_t>> & output, bool ai) {
+std::vector <std::pair <int64_t, size_t>> reorder (std::vector <Move> const & input, bool ai) {
+	// This takes all of a Pokemon's moves and 'sorts' them based on previously
+	// evaluated scores. Moves that haven't been evaluated are sorted to the
+	// end. I do this because alpha-beta pruning is most efficient when the
+	// best moves are searched first. The reason for this is that the search
+	// then only has to prove that further moves aren't as good as the move
+	// already searched; it is not important to know how much worse they are.
+	std::vector <std::pair <int64_t, size_t>> output;
 	for (size_t n = 0; n != input.size(); ++n) {
-		std::pair <int64_t, size_t> entry;
-		entry.first = input [n].score;
-		entry.second = n;
+		std::pair <int64_t, size_t> const entry { input [n].score, n };
 		output.push_back (entry);
 	}
 	std::sort (output.begin(), output.end());
 	if (ai)
 		std::reverse (output.begin(), output.end());
+	return output;
 }
 
 }	// namespace technicalmachine

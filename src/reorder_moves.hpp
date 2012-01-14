@@ -1,5 +1,5 @@
 // Reorder moves for efficient evaluation
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,7 +28,7 @@ namespace technicalmachine {
 
 class Move;
 
-void reorder (std::vector<Move> const & input, std::vector <std::pair <int64_t, size_t>> & output, bool ai);
+std::vector <std::pair <int64_t, size_t>> reorder (std::vector<Move> const & input, bool ai);
 
 }	// namespace technicalmachine
 #endif	// REORDER_MOVES_H_
