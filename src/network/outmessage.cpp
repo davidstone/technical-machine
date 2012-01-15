@@ -45,5 +45,5 @@ void OutMessage::write_int (uint32_t bytes) {
 		write_byte (*(byte + n));
 }
 
-} // namespace technicalmachine
-} // namespace network
+}	// namespace technicalmachine
+}	// namespace network

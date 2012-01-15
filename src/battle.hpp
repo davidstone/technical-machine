@@ -20,8 +20,10 @@
 #define BATTLE_H_
 
 #include <cstdint>
+#include <random>
 #include <string>
 #include <vector>
+
 #include "gender.hpp"
 #include "move.hpp"
 #include "species.hpp"
@@ -40,6 +42,7 @@ class GenericBattle {
 		Team foe;
 	protected:
 		Weather weather;
+		std::mt19937 random_engine;
 		std::vector <Species> slot_memory;
 		int depth;
 		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that message. This helps keep track of information on future messages so I can do things like assign critical hits to the right move.

@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -92,7 +93,8 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 	do_turn ();
 	correct_hp_and_report_errors (*first);
 	correct_hp_and_report_errors (*last);
-	if (rand () % client.chattiness == 0)
+	std::uniform_int_distribution <int> distribution { 0, client.chattiness - 1 };
+	if (distribution (random_engine) == 0)
 		client.send_channel_message (battle_id, client.get_response ());
 }
 
