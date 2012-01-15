@@ -33,11 +33,11 @@ class Hash {
 public:
 	uint64_t ai;
 	uint64_t foe;
-	uint64_t weather;
 	int64_t value;
+	uint32_t weather;
 	int depth;
 	Hash ();
-	Hash (uint64_t ai_hash, uint64_t foe_hash, uint64_t weather_hash, int depth_current);
+	Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, int depth_current);
 	bool operator== (Hash const & other) const;
 	bool operator!= (Hash const & other) const;
 };
@@ -46,7 +46,7 @@ Hash::Hash ():
 	depth (0) {
 }
 
-Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint64_t weather_hash, int depth_current):
+Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, int depth_current):
 	ai (ai_hash),
 	foe (foe_hash),
 	weather (weather_hash),
@@ -79,9 +79,9 @@ Hash & hash_table_lookup (Hash const & current) {
 	// battles. I also need to investigate to see which of these is more likely
 	// and find the relative merits of each strategy (per battle or the current
 	// static array).
-	static constexpr unsigned ai_dimension = 256;
-	static constexpr unsigned foe_dimension = 256;
-	static constexpr unsigned weather_dimension = 32;
+	static constexpr size_t ai_dimension = 256;
+	static constexpr size_t foe_dimension = 256;
+	static constexpr size_t weather_dimension = 32;
 	static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
 	
 	unsigned const ai_position = current.ai % ai_dimension;

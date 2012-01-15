@@ -1,5 +1,5 @@
 // Weather class
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -51,8 +51,8 @@ class Weather {
 		void set_sun (int duration);
 		void set_sand (int duration);
 		void set_rain (int duration);
-		uint64_t hash () const;
+		uint32_t hash () const;
 };
 
-} // namespace technicalmachine
-#endif // WEATHER_H_
+}	// namespace technicalmachine
+#endif	// WEATHER_H_

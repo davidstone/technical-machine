@@ -1,5 +1,5 @@
 // Weather functions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -84,9 +84,12 @@ void Weather::set_rain (int duration) {
 	}
 }
 
-uint64_t Weather::hash () const {
+uint32_t Weather::hash () const {
+	// All of weather requires fewer than 22 bits to represent exactly, so this
+	// hash has absolutely no collisions.
+	
 	// The + 1 is because they have a minimum value of -1 to represent infinite weather
 	return trick_room + 5 * (fog + 2 * ((gravity + 1) + 6 * ((uproar + 1) + 6 * ((hail + 1) + 9 * ((sun + 1) + 9 * ((sand + 1) + 9 * (rain + 1)))))));
 }
 
-} // namespace technicalmachine
+}	// namespace technicalmachine
