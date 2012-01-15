@@ -936,6 +936,107 @@ int ability_to_id (Ability::Abilities ability) {
 	return ability_converter [ability];
 }
 
+class InvalidPart : public std::runtime_error {
+	public:
+		InvalidPart (uint16_t id, uint8_t part):
+			std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (id) + " with part ID: " + std::to_string (static_cast <int> (part)) + ".\n") {
+		}
+};
+
+Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
+	// 6: BAD_DREAMS
+	// 18: %s's %a activates!
+	// 21: %s changed its type to %t!
+	// 30: %s's %a prevents its stat from being lowered!
+	// 31: %s's %a prevented its stats from being lowered!
+	// 32: %s's %a heals it!
+	// 33: %s's %a cures it!|%s didn't get paralyzed because of its %a!|%s stayed awake because of its %a!|%s didn't get frozen because of its %a!|%s didn't get burnt because of its %a!|%s didn't get poisoned because of its %a!
+	// 38: %s's %a took the attack!|%s's %a raised its special attack!|%s's %a made the attack useless!
+	// 40: %s has %a!
+	// 50: %s's %a hurts %f
+	// 68: %s's %a raised its attack!|%s's %a made the attack useless!
+	// 70: %s's %a absorbs the attack!|%s's %a made the attack useless!
+	switch (id) {
+		case 2:
+			return Ability::AFTERMATH;
+		case 3:
+			return Ability::ANGER_POINT;
+		case 4:
+			return Ability::ANTICIPATION;
+		case 6:
+			return Ability::BAD_DREAMS;
+		case 9:
+			return Ability::COLOR_CHANGE;
+		case 11:
+			return Ability::CUTE_CHARM;
+		case 12:
+			return Ability::INNER_FOCUS;
+		case 13:
+			return Ability::DOWNLOAD;
+		case 14:
+			switch (part) {
+				case 0:
+					return Ability::SNOW_WARNING;
+				case 1:
+					return Ability::DRIZZLE;
+				case 2:
+					return Ability::SAND_STREAM;
+				case 3:
+					return Ability::DROUGHT;
+				default:
+					throw InvalidPart (id, part);
+			}
+		case 15:
+			return Ability::DRY_SKIN;
+		case 16:
+			return Ability::EFFECT_SPORE;
+		case 19:
+			return Ability::FLASH_FIRE;
+		case 22:
+			return Ability::FOREWARN;
+		case 23:
+			return Ability::FRISK;
+		case 24:
+			return Ability::SHIELD_DUST;
+		case 29:
+			return Ability::HYDRATION;
+		case 34:
+			return Ability::INTIMIDATE;
+		case 37:
+			return Ability::LEAF_GUARD;
+		case 41:
+			return Ability::MOTOR_DRIVE;
+		case 44:
+			return Ability::OWN_TEMPO;
+		case 45:
+			return Ability::POISON_HEAL;
+		case 46:
+			return Ability::PRESSURE;
+		case 54:
+			return Ability::SHED_SKIN;
+		case 55:
+			return Ability::SLOW_START;
+		case 56:
+			return Ability::SOLAR_POWER;
+		case 57:
+			return Ability::SOUNDPROOF;
+		case 58:
+			return Ability::SPEED_BOOST;
+		case 60:
+			return Ability::STEADFAST;
+		case 61:
+			return Ability::SYNCHRONIZE;
+		case 66:
+			return Ability::TRACE;
+		case 67:
+			return Ability::TRUANT;
+		case 71:
+			return Ability::WONDER_GUARD;
+		default:
+			return Ability::END;
+	}
+}
+
 Gender::Genders id_to_gender (int id) {
 	switch (id) {
 		case 0:
@@ -2088,6 +2189,39 @@ int item_to_id (Item::Items item) {
 			WORKS_KEY
 			YACHE_BERRY
 			*/
+	}
+}
+
+Item::Items battle_id_to_item (uint16_t id, uint8_t part) {
+	switch (id) {
+		case 3:
+			return Item::WHITE_HERB;
+		case 4:
+			return Item::FOCUS_BAND;
+		case 5:
+			return Item::FOCUS_SASH;
+		case 7:
+			return Item::MENTAL_HERB;
+		case 11:
+			return Item::POWER_HERB;
+		case 12:
+			return Item::LEFTOVERS;
+		case 16:
+			return Item::BLACK_SLUDGE;
+		case 17:
+			return Item::QUICK_CLAW;
+		case 18:
+			return Item::BERRY_JUICE;
+		case 19:
+			return (part == 0) ? Item::FLAME_ORB : Item::TOXIC_ORB;
+		case 21:
+			return Item::LIFE_ORB;
+		case 24:
+			return Item::SHELL_BELL;
+		case 29:
+			return Item::STICKY_BARB;
+		default:
+			return Item::END;
 	}
 }
 

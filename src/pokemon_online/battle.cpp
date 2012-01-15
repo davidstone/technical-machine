@@ -268,13 +268,15 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case ITEM_MESSAGE: {
-			std::cerr << "ITEM_MESSAGE\n";
-/*			uint16_t const item = msg.read_short ();
+			uint16_t const item_id = msg.read_short ();
 			uint8_t const part = msg.read_byte ();
-			int8_t const foe = msg.read_byte ();
-			int16_t const berry = msg.read_short ();
-			int16_t const other = msg.read_short ();
-*/			break;
+			Item item (battle_id_to_item (item_id, part));
+			Team & team = (player == party) ? ai : foe;
+			team.at_replacement().item.name = item.name;
+			// int8_t const foe = msg.read_byte ();
+			// int16_t const berry = msg.read_short ();
+			// int16_t const other = msg.read_short ();
+			break;
 		}
 		case MOVE_MESSAGE: {
 			std::cerr << "MOVE_MESSAGE\n";
