@@ -51,7 +51,7 @@ class GenericClient {
 		// Battles that have not yet begun
 		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;
 		// Battles currently underway
-		std::map <uint8_t, std::shared_ptr <GenericBattle>> battles;
+		std::map <uint32_t, std::shared_ptr <GenericBattle>> battles;
 		std::map <std::string, uint32_t> channels;
 	public:
 		boost::asio::io_service io;
