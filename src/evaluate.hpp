@@ -24,6 +24,7 @@
 namespace technicalmachine {
 
 class Pokemon;
+class Status;
 class Team;
 class Weather;
 
@@ -91,6 +92,7 @@ class Score {
 	private:
 		int64_t score_team (Team const & team) const;
 		int64_t score_pokemon (Team const & ai, Team const & foe, Weather const & weather) const;
+		int64_t score_status (Team const & team) const;
 		int64_t score_move (Team const & ai, Team const & foe, Weather const & weather) const;
 	public:
 		static int64_t win (Team const & team);

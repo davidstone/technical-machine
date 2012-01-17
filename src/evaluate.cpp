@@ -99,34 +99,31 @@ int64_t Score::score_pokemon (Team const & team, Team const & other, Weather con
 	if (team.pokemon().hp.stat != 0) {
 		score += members;
 		score += hp * team.pokemon().hp.stat / team.pokemon().hp.max;
-		switch (team.pokemon().status.name) {
-			case Status::BURN:
-				score += burn;
-				break;
-			case Status::FREEZE:
-				score += freeze;
-				break;
-			case Status::PARALYSIS:
-				score += paralysis;
-				break;
-			case Status::POISON:
-				score += poison;
-				break;
-			case Status::POISON_TOXIC:
-				score += poison;		// fix
-				break;
-			case Status::REST:
-			case Status::SLEEP:
-				score += sleep;
-				break;
-			default:
-				break;
-		}
+		score += score_status (team);
 		score += score_move (team, other, weather);
 	}
 	return score;
 }
 
+int64_t Score::score_status (Team const & team) const {
+	switch (team.pokemon().status.name) {
+		case Status::BURN:
+			return burn;
+		case Status::FREEZE:
+			return freeze;
+		case Status::PARALYSIS:
+			return paralysis;
+		case Status::POISON:
+			return poison;
+		case Status::POISON_TOXIC:
+			return poison * team.toxic / 2;
+		case Status::REST:
+		case Status::SLEEP:
+			return sleep;
+		default:
+			return 0;
+	}
+}
 
 int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;

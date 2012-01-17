@@ -227,9 +227,11 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::BATTLE_FINISHED: {
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const result_code = msg.read_byte ();
-			// I completely ignore Close because I determine when I want to close a battle, not my foe.
-			// Technical Machine never sends the Close message to allow spectators to talk as long as possible.
-			// The server automatically removes the battle when my foe closes it, but that can't be helped.
+			// I completely ignore Close because I determine when I want to
+			// close a battle, not my foe. Technical Machine never sends the
+			// Close message to allow spectators to talk as long as possible.
+			// The server automatically removes the battle when my foe closes
+			// it, but that can't be helped.
 			if (result_code != 3) {
 				uint32_t const winner = msg.read_int ();
 				uint32_t const loser = msg.read_int ();
