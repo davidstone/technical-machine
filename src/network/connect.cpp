@@ -53,6 +53,12 @@ GenericClient::GenericClient (int set_depth):
 	load_trusted_users ();
 	detailed_stats (detailed);
 	load_account_info ();
+	while (username.empty()) {
+		std::string const str = "Add a username and password entry to settings/settings.txt and hit enter.\n";
+		print_with_time_stamp (std::cerr, str);
+		std::cin.get ();
+		load_account_info ();
+	}
 	load_settings ();
 	connect ();
 }

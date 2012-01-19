@@ -6,8 +6,8 @@ team: teams/
 
 host: 127.0.0.1
 port: 5080
-username: ?
-password: ?
+username: 
+password: 
 
 // time format is passed to strftime ()
 // default is ISO-8601 date followed by ISO-8601 time (2011-12-24 16:10:05)
