@@ -265,7 +265,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			break;
 		}
 		case InMessage::REGISTER: {
-			// Message telling me that I am not registered.
+			send_registration_message ();
 			break;
 		}
 		case InMessage::PLAYER_KICK:
@@ -697,8 +697,13 @@ void Client::send_private_message (uint32_t user_id, std::string const & message
 	msg.send (*socket);
 }
 
+void Client::send_registration_message () {
+	OutMessage msg (OutMessage::REGISTER);
+	msg.write_string (password);
+	msg.send (*socket);
+}
+
 void Client::handle_version_control (std::string const & server_version) const {
-//	OutMessage msg (OutMessage::VERSION_CONTROL);
 	// Pretend to be the most recent version because this is the standard I'm coding against.
 	std::string const version = "1.0.30";
 	if (version != server_version) {

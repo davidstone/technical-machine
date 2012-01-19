@@ -42,9 +42,10 @@ class Client : public network::GenericClient {
 		// I cannot pick a new team when challenged. I reload this at the start
 		// of a new battle to prevent counter-teaming. It's only used when challenged.
 		Team team;
-	private:
 	public:
 		explicit Client (int depth_);
+		void run ();
+		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
 		void log_in ();
 		void authenticate (std::string const & salt);
@@ -59,18 +60,11 @@ class Client : public network::GenericClient {
 
 		void handle_finalize_challenge (std::string const & opponent, bool accepted, bool unused = false);
 		void handle_remove_challenge (std::string const & opponent);
-	public:
-		void run ();
-	private:
 		void send_keep_alive_message ();
-	public:
-		void handle_message (InMessage::Message code, InMessage & msg);
-	private:
 		void join_channel (std::string const & channel);
 		void part_channel (std::string const & channel);
 		void handle_add_channel (std::string const & channel_name, uint32_t channel_id);
 		void handle_remove_channel (uint32_t channel_id);
-
 		void add_battle (InMessage & msg);
 		void remove_battle (InMessage & msg);
 	public:
@@ -79,6 +73,7 @@ class Client : public network::GenericClient {
 		void send_private_message (std::string const & user, std::string const & message);
 		void send_private_message (uint32_t user_id, std::string const & message);
 	private:
+		void send_registration_message ();
 		void handle_version_control (std::string const & server_version) const;
 		void handle_server_name (std::string const & server_name) const;
 		void handle_announcement (std::string const & announcement) const;
