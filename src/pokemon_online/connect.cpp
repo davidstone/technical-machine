@@ -31,6 +31,7 @@
 #include "battle_settings.hpp"
 #include "conversion.hpp"
 #include "inmessage.hpp"
+#include "invalid_user.hpp"
 #include "outmessage.hpp"
 #include "read_user_info.hpp"
 
@@ -192,20 +193,16 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const clauses = msg.read_int ();
 			uint8_t const mode = msg.read_byte ();
 			std::string const & user = get_user_name (user_id);
-			switch (description) {
-				case SENT: {
-					// Received when they challenge me.
-					BattleSettings const settings (clauses, mode);
-					handle_incoming_challenge (user, settings);
-					break;
-				}
-				default: {
-					// Received when I challenge them and they refuse / are unable to battle.
-					// ACCEPTED is never sent to me.
-					constexpr bool accepted = false;
-					handle_finalize_challenge (user, accepted);
-					break;
-				}
+			if (description == SENT) {
+				// Received when they challenge me.
+				BattleSettings const settings (clauses, mode);
+				handle_incoming_challenge (user, settings);
+			}
+			else {
+				// Received when I challenge them and they refuse / are unable to battle.
+				// ACCEPTED is never sent to me.
+				constexpr bool accepted = false;
+				handle_finalize_challenge (user, accepted);
 			}
 			break;
 		}
@@ -589,24 +586,35 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	// removing the ability to randomly select a team. I could support multiple
 	// challenges and mostly randomized teams, but that would be much more
 	// work. It would require using a queue instead of a map.
-	if (challenges.empty () and get_user_id (opponent)) {
-		std::shared_ptr <Battle> battle (new Battle (opponent, depth));
-		battle->party = 0;
-		add_pending_challenge (battle);
-		OutMessage msg (OutMessage::SEND_TEAM);
-		msg.write_team (battle->ai, username);
-		msg.send (*socket);
+	try {
+		if (challenges.empty () and get_user_id (opponent)) {
+			std::shared_ptr <Battle> battle (new Battle (opponent, depth));
+			battle->party = 0;
+			add_pending_challenge (battle);
+			OutMessage msg (OutMessage::SEND_TEAM);
+			msg.write_team (battle->ai, username);
+			msg.send (*socket);
+		}
+	}
+	catch (InvalidUser const & error) {
+		print_with_time_stamp (std::cerr, error.what ());
 	}
 }
 
 void Client::send_battle_challenge_with_current_team () {
-	if (!challenges.empty ()) {
-		OutMessage msg (OutMessage::CHALLENGE_STUFF);
-		uint32_t const user_id = get_user_id (challenges.begin ()->first);
-		uint8_t const generation = 4;		// ???
-		BattleSettings const settings (BattleSettings::SPECIES_CLAUSE, BattleSettings::SINGLES);
-		msg.write_challenge (user_id, generation, settings);
-		msg.send (*socket);
+	try {
+		if (!challenges.empty ()) {
+			OutMessage msg (OutMessage::CHALLENGE_STUFF);
+			uint32_t const user_id = get_user_id (challenges.begin ()->first);
+			uint8_t const generation = 4;		// ???
+			BattleSettings const settings (BattleSettings::SPECIES_CLAUSE, BattleSettings::SINGLES);
+			msg.write_challenge (user_id, generation, settings);
+			msg.send (*socket);
+		}
+	}
+	catch (InvalidUser const & error) {
+		print_with_time_stamp (std::cerr, challenges.begin()->first + " is no longer logged in.");
+		challenges.erase (challenges.begin ());
 	}
 }
 
@@ -628,6 +636,8 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 		msg.write_byte (REFUSED);
 		verb = "Rejected";
 	}
+	// This call to get_user_id is safe and should never throw. opponent has
+	// already been validated.
 	msg.write_int (get_user_id (opponent));
 	msg.send (*socket);
 	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
@@ -687,7 +697,12 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
-	send_private_message (get_user_id (user), message);
+	try {
+		send_private_message (get_user_id (user), message);
+	}
+	catch (InvalidUser const & error) {
+		print_with_time_stamp (std::cerr, error.what ());
+	}
 }
 
 void Client::send_private_message (uint32_t user_id, std::string const & message) {
@@ -729,32 +744,26 @@ uint32_t Client::get_user_id (std::string const & name) const {
 	auto const it = user_name_to_id.find (name);
 	if (it != user_name_to_id.end ())
 		return it->second;
-	else {
-		print_with_time_stamp (std::cerr, "User name " + name + " not in user_name_to_id.");
-		return 0;
-	}
+	else
+		throw InvalidUser (name);
 }
 
 std::string Client::get_user_name (uint32_t id) const {
 	auto const it = user_id_to_name.find (id);
 	if (it != user_id_to_name.end ())
 		return it->second;
-	else {
-		print_with_time_stamp (std::cerr, "User id " + std::to_string (id) + " not in user_id_to_name.");
-		return "";
-	}
+	else
+		throw InvalidUser (id);
 }
 
 network::GenericClient::Result Client::get_result (uint8_t code, uint32_t winner) const {
 	// I completely ignore Close because I determine when I want to close a
 	// battle, not my foe. I also ignore Forfeit -- Technical Machine never
 	// forfeits; if the foe forfeits, then it is a win.
-	Result result;
 	if (code != 2)
-		result = (winner == my_id) ? WON : LOST;
+		return (winner == my_id) ? WON : LOST;
 	else
-		result = TIED;
-	return result;
+		return TIED;
 }
 
 } // namespace po
