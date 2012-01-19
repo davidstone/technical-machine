@@ -69,7 +69,7 @@ class Client : public network::GenericClient {
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 	private:
 		void send_private_message (std::string const & user, std::string const & message);
-		Result get_result (Battle const & battle, int16_t party_id) const;
+		Result get_result (int16_t winner, int16_t party_id) const;
 };
 
 } // namespace pl

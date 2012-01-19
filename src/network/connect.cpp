@@ -33,9 +33,13 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "battle_settings.hpp"
+
 #include "../battle.hpp"
 #include "../evaluate.hpp"
 #include "../load_stats.hpp"
+#include "../teampredictor.hpp"
+
+#include "../pokemon_lab/write_team_file.hpp"
 
 namespace technicalmachine {
 namespace network {
@@ -44,9 +48,6 @@ GenericClient::GenericClient (int set_depth):
 	detailed ({{ 0 }}),
 	depth (set_depth)
 	{
-	// I use srand and rand because this is only for determining when TM speaks.
-	// When I add random decisions to TM's actual play, I'll replace with a better PRNG
-	srand (static_cast <unsigned> (time (nullptr)));
 	load_highlights ();
 	load_responses ();
 	load_trusted_users ();
@@ -198,11 +199,13 @@ std::string GenericClient::time_stamp () const {
 	// a format string. This seems like a major limitation of boost::date_time
 	// and / or boost::posix_time, as well as the std header chrono.
 	std::string result;
-	constexpr unsigned probably_big_enough = 30;
-	result.resize (probably_big_enough);
-	time_t current_time = time (nullptr);
-	tm * timeptr = localtime (&current_time);
 	if (!time_format.empty ()) {
+		// probably_big_enough is a guess at how big the time stamp will be.
+		// It is OK if it is wrong.
+		constexpr unsigned probably_big_enough = 30;
+		result.resize (probably_big_enough);
+		time_t current_time = time (nullptr);
+		tm * timeptr = localtime (&current_time);
 		while (strftime (&result [0], result.size (), time_format.c_str(), timeptr) == 0)
 			result.resize (result.size () * 2);
 	}
@@ -252,27 +255,60 @@ void GenericClient::pause_at_start_of_battle () {
 	pause.wait ();
 }
 
-void GenericClient::handle_battle_end (GenericBattle & battle, uint32_t battle_id, Result result) {
-	std::string verb;
-	switch (result) {
-		case WON:
-			verb = "Won";
-			break;
-		case LOST:
-			verb = "Lost";
-			break;
-		case TIED:
-			verb = "Tied";
-			break;
+namespace {
+
+std::string get_extension () {
+	// TODO: add support for other formats
+	return ".sbt";
+}
+
+}	// unnamed namespace
+
+void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
+	auto const it = battles.find (battle_id);
+	if (it != battles.end ()) {
+		GenericBattle & battle = *it->second;
+		std::string verb;
+		switch (result) {
+			case WON:
+				verb = "Won";
+				break;
+			case LOST:
+				verb = "Lost";
+				break;
+			case TIED:
+				verb = "Tied";
+				break;
+		}
+		print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
+		if (result == LOST) {
+			std::string foe_team_file = "teams/foe/";
+			foe_team_file += get_random_string ();
+			foe_team_file += get_extension ();
+			// TODO: add support for other formats
+			Team predicted = battle.foe;
+			predict_team (detailed, predicted, battle.ai.size);
+			pl::write_team (predicted, foe_team_file);
+		}
+		battles.erase (battle_id);
 	}
-	print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
-	battles.erase (battle_id);
+}
+
+std::string GenericClient::get_random_string () {
+	constexpr unsigned range = 36;
+	static constexpr char legal_characters [range] = "ABCDEFGHIJKLMNOPQSTUVWXYZ0123456789";
+	std::uniform_int_distribution <unsigned> distribution { 0, range - 1 };
+	std::string str;
+	str.resize (8);
+	for (unsigned n = 0; n != 8; ++n)
+		str [n] = legal_characters [distribution (random_engine)];
+	return str;
 }
 
 bool GenericClient::is_highlighted (std::string const & message) const {
-	// Best way I've thought of to see if anything in highlights is in the
+	// Easiest way I've thought of to see if anything in highlights is in the
 	// message is to do a search in the message on each of the elements in
-	// highlights. Problems with this approach are that most people want to
+	// highlights. A problem with this approach are that most people want to
 	// search for words, not just strings of characters. For instance, if I
 	// have "tm" in highlights, I usually don't want to be alerted to someone
 	// saying "atm". Fixing this problem probably requires some sort of regex
@@ -284,13 +320,9 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 	return false;
 }
 
-std::string GenericClient::get_response () const {
-	// This has a slight bias toward earlier elements unless RAND_MAX is evenly
-	// divisible by response.size(). Probably not a big issue here since
-	// RAND_MAX is guaranteed to be at least 32767, and is probably larger.
-	// This means the variation is very small, unless response.size() grows to
-	// be very, very large.
-	return response [rand() % response.size()];
+std::string GenericClient::get_response () {
+	std::uniform_int_distribution <unsigned> distribution { 0, static_cast <unsigned> (response.size() - 1) };
+	return response [distribution (random_engine)];
 }
 
 void GenericClient::send_channel_message (std::string channel, std::string const & message) {

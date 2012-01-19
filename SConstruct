@@ -131,3 +131,12 @@ settings_env = Environment(BUILDERS = {'Update' : settings_builder })
 for settings_file in Glob('settings/*.template'):
 	NoClean(settings_env.Update(settings_file))
 settings_env.Decider(check_if_exists)
+
+def create_team_directory (target, source, env):
+	dir_str = str (target [0])
+	os.makedirs(dir_str)
+
+team_dir_builder = Builder(action = create_team_directory, target_factory=Dir)
+team_dir_env = Environment(BUILDERS = { 'Create' : team_dir_builder })
+NoClean(team_dir_env.Create('teams/foe', []))
+team_dir_env.Decider(check_if_exists)

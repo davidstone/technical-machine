@@ -237,11 +237,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				uint32_t const loser = msg.read_int ();
 				if (winner == my_id or loser == my_id) {
 					Result result = get_result (result_code, winner);
-					auto const it = battles.find (battle_id);
-					if (it != battles.end ()) {
-						Battle & battle = static_cast <Battle &> (*it->second);
-						handle_battle_end (battle, battle_id, result);
-					}
+					handle_battle_end (battle_id, result);
 				}
 			}
 			break;

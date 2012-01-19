@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <map>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,7 @@ class GenericClient {
 		std::string host;
 		std::string port;
 	private:
+		std::mt19937 random_engine;
 		std::string time_format;
 		std::vector <std::string> highlights;
 		std::vector <std::string> response;
@@ -105,15 +107,17 @@ class GenericClient {
 		void send_channel_message (std::string channel, std::string const & message);
 		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
-		std::string get_response () const;
+		std::string get_response ();
 	protected:
 		enum Result {
 			WON = 1,
 			LOST = -1,
 			TIED = 0
 		};
-		void handle_battle_end (GenericBattle & battle, uint32_t battle_id, Result result);
+		void handle_battle_end (uint32_t battle_id, Result result);
+	private:
+		std::string get_random_string ();
 };
-}	//namespace network
+}	// namespace network
 }	// namespace technicalmachine
 #endif	// NETWORK_CONNECT_H_

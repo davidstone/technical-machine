@@ -350,8 +350,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
-				Result result = get_result (battle, party_id);
-				handle_battle_end (battle, battle_id, result);
+				Result result = get_result (battle.party, party_id);
+				handle_battle_end (battle_id, result);
 			}
 			break;
 		}
@@ -828,10 +828,10 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.send (*socket);
 }
 
-network::GenericClient::Result Client::get_result (Battle const & battle, int16_t party_id) const {
+network::GenericClient::Result Client::get_result (int16_t winner, int16_t party_id) const {
 	Result result;
 	if (party_id != -1)
-		result = (battle.party == party_id) ? WON : LOST;
+		result = (winner == party_id) ? WON : LOST;
 	else
 		result = TIED;
 	return result;
