@@ -444,7 +444,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth,
 			}
 			if (beta > alpha) {
 				alpha = beta;
-				best_move = static_cast<Move::Moves> (Move::SWITCH0 + ai.replacement);
+				best_move = Move::from_replacement (ai.replacement);
 				if (verbose or first_turn)
 					std::cout << indent + "Estimated score is " << alpha << '\n';
 			}
@@ -494,13 +494,13 @@ int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather co
 			if (switcher.me) {
 				if (value > alpha) {
 					alpha = value;
-					best_switch = static_cast <Move::Moves> (Move::SWITCH0 + switcher.replacement);
+					best_switch = Move::from_replacement (switcher.replacement);
 				}
 			}
 			else {
 				if (value < alpha) {
 					alpha = value;
-					best_switch = static_cast <Move::Moves> (Move::SWITCH0 + switcher.replacement);
+					best_switch = Move::from_replacement (switcher.replacement);
 				}
 			}
 		}
@@ -530,7 +530,7 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 
 void print_best_move (Team const & team, Move::Moves best_move, unsigned depth, int64_t score) {
 	if (Move::is_switch (best_move))
-		std::cout << "Switch to " + team.pokemon.set [best_move - Move::SWITCH0].to_string ();
+		std::cout << "Switch to " + team.pokemon.set [Move::to_replacement (best_move)].to_string ();
 	else
 		std::cout << "Use " + Move::to_string (best_move);
 	if (depth == static_cast <unsigned> (-1)) {
@@ -552,7 +552,7 @@ void print_action (Team const & team, bool verbose, bool first_turn, std::string
 	if (verbose or first_turn) {
 		std::cout << indent + "Evaluating ";
 		if (team.pokemon().move().is_switch())
-			std::cout << "switching to " + team.pokemon.set [team.pokemon().move().name - Move::SWITCH0].to_string () + "\n";
+			std::cout << "switching to " + team.pokemon.set [team.pokemon().move().to_replacement ()].to_string () + "\n";
 		else
 			std::cout << team.pokemon().move().to_string() + "\n";
 	}

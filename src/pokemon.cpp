@@ -51,8 +51,8 @@ Pokemon::Pokemon (Species const & member, unsigned size) :
 		move.set.push_back (struggle);
 		// A Pokemon has a new "Switch" move for each Pokemon in the party.
 		if (size > 1) {
-			for (size_t index = Move::SWITCH0; index - Move::SWITCH0 < size; ++index) {
-				Move switchn (static_cast<Move::Moves> (index), 0, 0);
+			for (size_t index = 0; index != size; ++index) {
+				Move switchn (Move::from_replacement (index), 0, 0);
 				move.set.push_back (switchn);
 			}
 		}

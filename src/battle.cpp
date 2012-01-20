@@ -214,7 +214,7 @@ void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
 }
 
 uint8_t GenericBattle::switch_slot (Move::Moves move) const {
-	uint8_t slot = move - Move::SWITCH0;
+	uint8_t slot = Move::to_replacement (move);
 	uint8_t n = 0;
 	for (; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == ai.pokemon.set [slot].name)

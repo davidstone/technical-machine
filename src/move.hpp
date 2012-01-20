@@ -158,6 +158,9 @@ class Move {
 		bool operator!= (Move const & other) const;
 		static bool is_switch (Moves name);
 		bool is_switch () const;
+		static Moves from_replacement (unsigned replacement);
+		static unsigned to_replacement (Moves name);
+		unsigned to_replacement () const;
 		bool is_struggle_or_switch () const;
 		static bool is_phaze (Moves name);
 		bool is_phaze () const;

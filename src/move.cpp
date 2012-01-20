@@ -1148,7 +1148,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::SWITCH3:
 		case Move::SWITCH4:
 		case Move::SWITCH5:
-			user.replacement = user.pokemon().move().name - Move::SWITCH0;
+			user.replacement = user.pokemon().move().to_replacement ();
 			switchpokemon (user, target, weather);
 			break;
 		case Move::SWITCHEROO:
@@ -1261,6 +1261,18 @@ bool Move::is_switch (Moves name) {
 
 bool Move::is_switch () const {
 	return is_switch (name);
+}
+
+Move::Moves Move::from_replacement (unsigned replacement) {
+	return static_cast <Moves> (replacement + SWITCH0);
+}
+
+unsigned Move::to_replacement (Moves name) {
+	return name - SWITCH0;
+}
+
+unsigned Move::to_replacement () const {
+	return to_replacement (name);
 }
 
 bool Move::is_struggle_or_switch () const {

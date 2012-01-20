@@ -170,7 +170,7 @@ void open_directory_and_add_files (boost::filesystem::path const & team_file, st
 }
 
 bool Team::is_switching_to_self () const {
-	return pokemon.set [pokemon().move().name - Move::SWITCH0].name == pokemon().name;
+	return pokemon.set [pokemon().move().to_replacement ()].name == pokemon().name;
 }
 
 bool Team::seen_pokemon (Species name) {
