@@ -19,7 +19,6 @@
 #include "team.hpp"
 
 #include <cstdint>
-#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -47,7 +46,7 @@ namespace technicalmachine {
 
 static void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
 
-Team::Team (bool isme, unsigned size) :
+Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -153,8 +152,8 @@ Team::Team (bool isme, unsigned size) :
 		settings.close();
 		std::vector <boost::filesystem::path> files;
 		open_directory_and_add_files (team_file, files);
-		srand (static_cast <unsigned> (time (0)));
-		team_file = files [(rand () % files.size ())];
+		std::uniform_int_distribution <size_t> distribution { 0, files.size () - 1 };
+		team_file = files [distribution (random_engine)];
 		load (team_file.string(), size);
 		for (Pokemon & member : pokemon.set)
 			member.new_hp = member.hp.max;
@@ -227,7 +226,54 @@ bool Team::operator== (Team const & other) const {
 		if (stage [stat] != other.stage [stat])
 			return false;
 	}
-	return pokemon().name == other.pokemon().name and vanish == other.vanish and bide == other.bide and confused == other.confused and embargo == other.embargo and encore == other.encore and heal_block == other.heal_block and magnet_rise == other.magnet_rise and partial_trap == other.partial_trap and perish_song == other.perish_song and rampage == other.rampage and slow_start == other.slow_start and stockpile == other.stockpile and taunt == other.taunt and toxic == other.toxic and uproar == other.yawn and aqua_ring == other.aqua_ring and attract == other.attract and charge == other.charge and curse == other.curse and defense_curl == other.defense_curl and destiny_bond == other.destiny_bond and ff == other.ff and focus_energy == other.focus_energy and identified == other.identified and imprison == other.imprison and ingrain == other.ingrain and leech_seed == other.leech_seed and loaf == other.loaf and lock_on == other.lock_on and minimize == other.minimize and mud_sport == other.mud_sport and nightmare == other.nightmare and torment == other.torment and trapped == other.trapped and water_sport == other.water_sport and counter == other.counter and light_screen == other.light_screen and lucky_chant == other.lucky_chant and mist == other.mist and reflect == other.reflect and safeguard == other.safeguard and tailwind == other.tailwind and wish == other.wish and spikes == other.spikes and toxic_spikes == other.toxic_spikes and stealth_rock == other.stealth_rock and me == other.me;
+	return pokemon().name == other.pokemon().name and
+			vanish == other.vanish and
+			bide == other.bide and
+			confused == other.confused and
+			embargo == other.embargo and
+			encore == other.encore and
+			heal_block == other.heal_block and
+			magnet_rise == other.magnet_rise and
+			partial_trap == other.partial_trap and
+			perish_song == other.perish_song and
+			rampage == other.rampage and
+			slow_start == other.slow_start and
+			stockpile == other.stockpile and
+			taunt == other.taunt and
+			toxic == other.toxic and
+			uproar == other.yawn and
+			aqua_ring == other.aqua_ring and
+			attract == other.attract and
+			charge == other.charge and
+			curse == other.curse and
+			defense_curl == other.defense_curl and
+			destiny_bond == other.destiny_bond and
+			ff == other.ff and
+			focus_energy == other.focus_energy and
+			identified == other.identified and
+			imprison == other.imprison and
+			ingrain == other.ingrain and
+			leech_seed == other.leech_seed and
+			loaf == other.loaf and
+			lock_on == other.lock_on and
+			minimize == other.minimize and
+			mud_sport == other.mud_sport and
+			nightmare == other.nightmare and
+			torment == other.torment and
+			trapped == other.trapped and
+			water_sport == other.water_sport and
+			counter == other.counter and
+			light_screen == other.light_screen and
+			lucky_chant == other.lucky_chant and
+			mist == other.mist and
+			reflect == other.reflect and
+			safeguard == other.safeguard and
+			tailwind == other.tailwind and
+			wish == other.wish and
+			spikes == other.spikes and
+			toxic_spikes == other.toxic_spikes and
+			stealth_rock == other.stealth_rock and
+			me == other.me;
 }
 
 Pokemon & Team::at_replacement () {
@@ -243,7 +289,8 @@ std::string Team::to_string () const {
 	output += ") team:\n";
 	for (Pokemon const & member : pokemon.set) {
 		output += member.to_string();
-		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % (100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max)));
+		double const d_per_cent_hp = 100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max);
+		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
 		output += " (" + per_cent_hp + "% HP)";
 		output += " @ " + member.item.to_string ();
 		output += " ** " + member.nickname + '\n';

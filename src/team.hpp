@@ -16,10 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_H_
-#define TEAM_H_
+#ifndef TEAM_HPP_
+#define TEAM_HPP_
 
 #include <cstdint>
+#include <random>
 #include <string>
 
 #include "active.hpp"
@@ -128,8 +129,8 @@ class Team {
 		
 		// Is this my team?
 		bool me;
-	
-		Team (bool isme, unsigned size);
+		
+		Team (bool isme, unsigned size, std::mt19937 & random_engine);
 		bool operator== (Team const & other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
@@ -144,4 +145,4 @@ class Team {
 };
 
 }
-#endif		// TEAM_H_
+#endif	// TEAM_HPP_

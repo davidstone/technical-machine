@@ -392,8 +392,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case RATED: {
-			Team new_team (true, pokemon_per_team);
-			client.team = new_team;
+			constexpr bool is_me = true;
+			client.team = Team (is_me, pokemon_per_team, random_engine);
 			OutMessage team_msg (OutMessage::SEND_TEAM);
 			team_msg.write_team (client.team, client.username);
 			team_msg.send (*client.socket);

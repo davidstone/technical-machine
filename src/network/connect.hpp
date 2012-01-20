@@ -43,8 +43,8 @@ class GenericClient {
 		std::string password;
 		std::string host;
 		std::string port;
-	private:
 		std::mt19937 random_engine;
+	private:
 		std::string time_format;
 		std::vector <std::string> highlights;
 		std::vector <std::string> response;

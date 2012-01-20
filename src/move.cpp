@@ -35,9 +35,9 @@
 #include "team.hpp"
 #include "type.hpp"
 #include "weather.hpp"
+#undef SING
 
 namespace technicalmachine {
-
 namespace {
 
 unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
