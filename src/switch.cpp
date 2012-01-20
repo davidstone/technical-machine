@@ -94,10 +94,19 @@ void reset_variables (Team & team) {
 }
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
-	if (switcher.pokemon().hp.stat == 0) {
-		reset_variables (switcher);
+	reset_variables (switcher);
+
+	if (switcher.pokemon().hp.stat > 0) {
+		// Cure the status of a Natural Cure Pokemon as it switches out
+		if (switcher.pokemon().ability.name == Ability::NATURAL_CURE)
+			switcher.pokemon().status.clear ();
+		
+		// Change the active Pokemon to the one switching in.
+		switcher.pokemon.index = switcher.replacement;
+	}
+	else {
 		// First, remove the active Pokemon because it has 0 HP.
-		switcher.pokemon.set.erase (switcher.pokemon.set.begin() + switcher.pokemon.index);
+		switcher.pokemon.remove_active ();
 		--switcher.size;
 
 		// If the last Pokemon is fainted; there is nothing left to do.
@@ -129,16 +138,6 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			if (switcher.pokemon.set.size () == 1)
 				pokemon.move.set.pop_back ();
 		}
-	}
-	else {
-		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (switcher.pokemon().ability.name == Ability::NATURAL_CURE)
-			switcher.pokemon().status.clear ();
-		
-		reset_variables (switcher);
-	
-		// Change the active Pokemon to the one switching in.
-		switcher.pokemon.index = switcher.replacement;
 	}
 	
 	entry_hazards (switcher, weather);

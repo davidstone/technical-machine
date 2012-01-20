@@ -39,10 +39,11 @@ class Active {
 		T const & operator() () const {
 			return set [index];
 		}
-
-		template <typename Name>
-		void add (Name name) {
+		void add (T name) {
 			set.insert (set.begin() + index, name);
+		}
+		void remove_active () {
+			set.erase (set.begin() + index);
 		}
 };
 
