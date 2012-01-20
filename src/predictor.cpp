@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "invalid_string_conversion.hpp"
 #include "load_stats.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
@@ -50,7 +51,13 @@ void function (Fl_Widget * w, void * d) {
 	Team team (is_me, 6, data.random_engine);
 	bool using_lead;
 	for (Fl_Input * in : data.input) {
-		Species const species = Pokemon::from_string (in->value());
+		Species species;
+		try {
+			species = Pokemon::from_string (in->value());
+		}
+		catch (InvalidFromStringConversion const & ex) {
+			species = Species::END;
+		}
 		if (in == data.input.front ()) {
 			using_lead = (species != Species::END);
 		}
