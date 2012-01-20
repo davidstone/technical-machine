@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,69 +30,108 @@
 
 namespace technicalmachine {
 
-void overall_stats (std::vector<unsigned> & overall) {
+std::vector <unsigned> overall_stats () {
+	std::vector<unsigned> overall;
+	overall.reserve (Species::END);
 	std::ifstream file ("settings/usage.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
 		overall.push_back (boost::lexical_cast<unsigned> (line));
 	file.close ();
+	return overall;
 }
 
-void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [Species::END][Species::END]) {
-	for (unsigned n = 0; n != Species::END; ++n) {
-		for (unsigned m = 0; m != Species::END; ++m) {
-			if (((n == DEOXYS_A or n == DEOXYS_D or n == DEOXYS_M or n == DEOXYS_S) and (m == DEOXYS_A or m == DEOXYS_D or m == DEOXYS_M or m == DEOXYS_S))
-					or ((n == GIRATINA_A or n == GIRATINA_O) and (m == GIRATINA_A or m == GIRATINA_O))
-					or ((n == ROTOM or n == ROTOM_C or n == ROTOM_F or n == ROTOM_H or n == ROTOM_S or n == ROTOM_W) and (m == ROTOM or m == ROTOM_C or m == ROTOM_F or m == ROTOM_H or m == ROTOM_S or m == ROTOM_W))
-					or ((n == SHAYMIN_L or n == SHAYMIN_S) and (m == SHAYMIN_L or m == SHAYMIN_S))
-					or ((n == WORMADAM_P or n == WORMADAM_S or n == WORMADAM_T) and (m == WORMADAM_P or m == WORMADAM_S or m == WORMADAM_T)))
-				multiplier [n][m] = 0;	// Species clause
+namespace {
+
+void species_clause (float multiplier [Species::END] [Species::END]) {
+	for (unsigned a = 0; a != Species::END; ++a) {
+		for (unsigned b = 0; b != Species::END; ++b) {
+			Species const first = static_cast <Species> (a);
+			Species const second = static_cast <Species> (b);
+			if (Pokemon::is_alternate_form (first, second))
+				multiplier [a] [b] = 0;	// Species clause
 			else
-				multiplier [n][m] = -1;		// Replaced with other value later
+				multiplier [a] [b] = -1;		// Replaced with other value later
 		}
-		multiplier [n][n] = 0;			// Species clause
+		multiplier [a] [a] = 0;			// Species clause
 	}
+}
 
-	// There are 5 other Pokemon on a team for each individual Pokemon. Therefore, if I've seen a Pokemon with n usages, there are 5 * n other Pokemon on the team. Subtract the known number of usages from this number until all known usages are gone. Then, assume the distribution of Pokemon not on the team mate stats is equal to the relative overall distribution and divide up all remaining usages proportionally.
-	unsigned unaccounted [Species::END];
-	for (unsigned n = 0; n != Species::END; ++n)
-		unaccounted [n] = overall [n] * 5;
-
+void load_listed_multipliers (float multiplier [Species::END] [Species::END], std::vector <unsigned> const & overall, unsigned unaccounted [Species::END], unsigned total) {
 	std::ifstream file ("settings/teammate.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t x = line.find ('\t');
-		int member = std::stoi (line.substr (0, x));
-		size_t y = line.find ('\t', x + 1);
-		int ally = std::stoi (line.substr (x + 1, y - x - 1));
-		// Subtract known usages
-		unaccounted [member] -= boost::lexical_cast<unsigned> (line.substr (y + 1));
-		// multiplier = % used with this Pokemon / % used overall, rewritten to be a proper fraction
-		multiplier [member][ally] = (std::stof (line.substr (y + 1)) * total) / (static_cast <float> (overall [member]) * overall [ally]);
-	}
-	for (unsigned n = 0; n != Species::END; ++n) {
-		if (overall [n] == 0) {
-			for (unsigned m = 0; m != Species::END; ++m)
-				// 1 is superior to 0 because if they use an unused Pokemon, this will have no effect instead of making everything equally 0
-				multiplier [n][m] = 1;
-		}
-		else {
-			for (unsigned m = 0; m != Species::END; ++m) {
-				if (multiplier [n][m] == -1) {
-					// New method takes the total number of remaining Pokemon not accounted for and assumes they're evenly distributed (based on overall stats) among all Pokemon not on the list. This is the same as giving all those Pokemon the same multiplier. Reality probably has very low usage Pokemon more evenly distributed and high usage Pokemon that don't appear with a much lower multiplier.
-					multiplier [n][m] = unaccounted [n] / (overall [n] * 5.0);
-				}
-			}
-		}
+		size_t const x = line.find ('\t');
+		int const member = std::stoi (line.substr (0, x));
+		size_t const y = line.find ('\t', x + 1);
+		int const ally = std::stoi (line.substr (x + 1, y - x - 1));
+		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
+		unaccounted [member] -= number_used_with;
+		float const per_cent_used_with = static_cast <float> (number_used_with) / overall [member];
+		float const per_cent_used = static_cast <float> (overall [ally]) / total;
+		multiplier [member] [ally] = per_cent_used_with / per_cent_used;
 	}
 	file.close ();
 }
 
-void lead_stats (std::vector<float> & lead) {		// Multiplier for Pokemon after you've seen the lead
+void estimate_remaining_multipliers (float multiplier [Species::END] [Species::END], std::vector <unsigned> const & overall, unsigned const unaccounted [Species::END]) {
+	for (unsigned a = 0; a != Species::END; ++a) {
+		if (overall [a] != 0) {
+			for (float & value : multiplier [a]) {
+				if (value == -1) {
+					// Take the total number of remaining Pokemon not accounted
+					// for and assume they're distributed the same as their
+					// overall distribution among all Pokemon not on the list
+					// of team mate stats. This is the same as giving all those
+					// Pokemon the same multiplier. Reality probably has very
+					// low usage Pokemon more evenly distributed and high usage
+					// Pokemon that don't appear with a much lower multiplier.
+					// There are probably cases where I can prove that certain
+					// Pokemon are lower than my current method would suggest,
+					// so I should look into limiting the maximum multiplier.
+					value = unaccounted [a] / (overall [a] * 5.0);
+				}
+			}
+		}
+		else {
+			for (float & value : multiplier [a])
+				// 1 is superior to 0 because if they use an unused Pokemon,
+				// this will have no effect instead of making everything
+				// equally 0
+				value = 1;
+		}
+	}
+}
+
+}	// unnamed namespace
+
+void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [Species::END][Species::END]) {
+
+	species_clause (multiplier);
+
+	// There are 5 other Pokemon on a team for each individual Pokemon.
+	// Therefore, if I've seen a Pokemon with n usages, there are 5 * n other
+	// Pokemon on the team. Subtract the known number of usages from this
+	// number until all known usages are gone. Then, assume the distribution of
+	// Pokemon not on the team mate stats is equal to the relative overall
+	// distribution and divide up all remaining usages proportionally.
+	unsigned unaccounted [Species::END];
+	for (unsigned n = 0; n != Species::END; ++n)
+		unaccounted [n] = overall [n] * 5;
+
+	load_listed_multipliers (multiplier, overall, unaccounted, total);
+	estimate_remaining_multipliers (multiplier, overall, unaccounted);
+}
+
+std::vector <float> lead_stats () {
+	std::vector <float> lead;
+	lead.reserve (Species::END);
 	std::ifstream file ("settings/lead.txt");
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
 		lead.push_back (std::stof (line));
+	file.close ();
+	return lead;
 }
 
 void detailed_stats (int detailed [][7]) {
@@ -149,6 +188,7 @@ void detailed_stats (int detailed [][7]) {
 		if (n != 7)
 			detailed [new_member] [n] = data;
 	}
+	file.close ();
 }
 
-}
+}	// namespace technicalmachine

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_H_
-#define POKEMON_H_
+#ifndef POKEMON_HPP_
+#define POKEMON_HPP_
 
 #include <string>
 
@@ -67,6 +67,12 @@ class Pokemon {
 		static std::string to_string (Species name);
 		std::string to_string () const;
 		static Species from_string (std::string const & str);
+		static bool is_alternate_form (Species first, Species second);
+		static bool is_deoxys (Species species);
+		static bool is_giratina (Species species);
+		static bool is_rotom (Species species);
+		static bool is_shaymin (Species species);
+		static bool is_wormadam (Species species);
 		bool operator== (Pokemon const & other) const;
 		bool operator!= (Pokemon const & other) const;
 		void load ();
@@ -76,4 +82,4 @@ class Pokemon {
 };
 
 }	// namespace technicalmachine
-#endif	// POKEMON_H_
+#endif	// POKEMON_HPP_

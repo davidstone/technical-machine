@@ -68,7 +68,7 @@ uint64_t Pokemon::hash () const {
 	return name + END *
 			(item.name + Item::END *
 			(status.name + Status::END *
-			((hp.stat - 1) + hp.max *
+			((hp.stat - 1) + hp.max *	// - 1 because you can't have 0 HP
 			(sleep + (Stat::max_sleep_turns + 1) *
 			hash))));
 }
@@ -87,6 +87,71 @@ void Pokemon::normalize_hp () {
 		hp.stat = 0;
 	else if (hp.stat == 0)
 		hp.stat = 1;
+}
+
+bool Pokemon::is_alternate_form (Species first, Species second) {
+	return (Pokemon::is_deoxys (first) and Pokemon::is_deoxys (second)) or
+			(Pokemon::is_giratina (first) and Pokemon::is_giratina (second)) or
+			(Pokemon::is_rotom (first) and Pokemon::is_rotom (second)) or
+			(Pokemon::is_shaymin (first) and Pokemon::is_shaymin (second)) or
+			(Pokemon::is_wormadam (first) and Pokemon::is_wormadam (second));
+}
+
+bool Pokemon::is_deoxys (Species species) {
+	switch (species) {
+		case DEOXYS_A:
+		case DEOXYS_D:
+		case DEOXYS_M:
+		case DEOXYS_S:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Pokemon::is_giratina (Species species) {
+	switch (species) {
+		case GIRATINA_A:
+		case GIRATINA_O:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Pokemon::is_rotom (Species species) {
+	switch (species) {
+		case ROTOM:
+		case ROTOM_C:
+		case ROTOM_F:
+		case ROTOM_H:
+		case ROTOM_S:
+		case ROTOM_W:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Pokemon::is_shaymin (Species species) {
+	switch (species) {
+		case SHAYMIN_L:
+		case SHAYMIN_S:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Pokemon::is_wormadam (Species species) {
+	switch (species) {
+		case WORMADAM_P:
+		case WORMADAM_S:
+		case WORMADAM_T:
+			return true;
+		default:
+			return false;
+	}
 }
 
 bool Pokemon::operator== (Pokemon const & other) const {

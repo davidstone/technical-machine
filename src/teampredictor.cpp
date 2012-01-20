@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,25 +27,20 @@
 #include "team.hpp"
 
 namespace technicalmachine {
+namespace {
 
-static void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END][Species::END]);
-static void predict_move (Pokemon & member, int detailed [][7], unsigned size);
+void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END][Species::END]);
+Species get_most_likely_pokemon (std::vector <float> const & estimate);
+void predict_move (Pokemon & member, int detailed [][7], unsigned size);
+
+}	// unnamed namespace
 
 void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead) {
-	std::vector<unsigned> overall;
-	overall.reserve (Species::END);
-	overall_stats (overall);
+	std::vector<unsigned> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	float multiplier [Species::END][Species::END];
 	team_stats (overall, total, multiplier);
-	std::vector<float> lead;
-	lead.reserve (Species::END);
-	if (using_lead)
-		lead_stats (lead);
-	else {
-		for (int n = 0; n != Species::END; ++n)
-			lead.push_back (1);
-	}
+	std::vector<float> const lead = using_lead ? lead_stats () : std::vector <float> (Species::END, 1);
 	
 	std::vector<float> estimate;
 	estimate.reserve (Species::END);
@@ -59,25 +54,20 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 	predict_pokemon (team, estimate, multiplier);
 	for (Pokemon & pokemon : team.pokemon.set) {
 		if (!pokemon.ability.is_set ())
-			pokemon.ability.name = static_cast<Ability::Abilities> (detailed [pokemon.name] [0]);
+			pokemon.ability.name = static_cast <Ability::Abilities> (detailed [pokemon.name] [0]);
 		if (!pokemon.item.is_set ())
-			pokemon.item.name = static_cast<Item::Items> (detailed [pokemon.name] [1]);
+			pokemon.item.name = static_cast <Item::Items> (detailed [pokemon.name] [1]);
 		if (!pokemon.nature.is_set ())
-			pokemon.nature.name = static_cast<Nature::Natures> (detailed [pokemon.name] [2]);
+			pokemon.nature.name = static_cast <Nature::Natures> (detailed [pokemon.name] [2]);
 		predict_move (pokemon, detailed, size);
 	}
 }
 
+namespace {
+
 void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END] [Species::END]) {
 	while (team.pokemon.set.size() < team.size) {
-		float top = 0.0;
-		Species name;
-		for (int n = 0; n != Species::END; ++n) {
-			if (top < estimate [n]) {
-				top = estimate [n];
-				name = static_cast<Species> (n);
-			}
-		}
+		Species const name = get_most_likely_pokemon (estimate);
 		Pokemon member (name, team.size);
 		member.load ();
 		team.pokemon.set.push_back (member);
@@ -88,8 +78,22 @@ void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier
 	}
 }
 
+Species get_most_likely_pokemon (std::vector <float> const & estimate) {
+	Species name = Species::END;
+	float top = -1.0;
+	for (int n = 0; n != Species::END; ++n) {
+		if (estimate [n] > top) {
+			top = estimate [n];
+			name = static_cast<Species> (n);
+		}
+	}
+	return name;
+}
+
 void predict_move (Pokemon & member, int detailed [][7], unsigned size) {
-	// Pokemon I've already seen will have their moveset filled out with Struggle and Switch# for each Pokemon still alive in their team. This makes sure that those Pokemon get all of their moves predicted.
+	// Pokemon I've already seen will have their moveset filled out with
+	// Struggle and Switch# for each Pokemon still alive in their team. This
+	// makes sure that those Pokemon get all of their moves predicted.
 	unsigned n = 0;
 	while (member.move.set [n].name != Move::STRUGGLE)
 		++n;
@@ -104,12 +108,16 @@ void predict_move (Pokemon & member, int detailed [][7], unsigned size) {
 		}
 		if (!found) {
 			Move move (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size);
-
-// I use n here so that already seen moves (guaranteed to exist) are listed earlier in the move set. I increment n so that moves are listed in the order of their probability for predicted moves as well. This also has the advantage of requiring fewer shifts of my vector.
+			// I use n here so that already seen moves (guaranteed to exist)
+			// are listed earlier in the move set. I increment n so that moves
+			// are listed in the order of their probability for predicted moves
+			// as well. This also has the advantage of requiring fewer shifts
+			// of my vector.
 			member.move.set.insert (member.move.set.begin() + n, move);
 			++n;
 		}
 	}
 }
 
-}
+}	// unnamed namespace
+}	// namespace technicalmachine
