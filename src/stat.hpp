@@ -47,6 +47,7 @@ class Stat {
 		uint8_t base;
 		int8_t iv;			// 0 through 31
 		int8_t ev;			// 0 through 63
+		static constexpr unsigned max_sleep_turns = 4;
 	
 		Stat (Species name, Stats stat);
 		static void boost (int8_t & stage, int n);

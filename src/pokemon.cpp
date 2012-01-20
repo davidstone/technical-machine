@@ -60,9 +60,17 @@ Pokemon::Pokemon (Species const & member, unsigned size) :
 
 uint64_t Pokemon::hash () const {
 	uint64_t hash = 0;
+	// Should probably think of a better way to combine Move hashes than xor
 	for (Move const & next_move : move.set)
 		hash ^= next_move.hash();
-	return name + END * (item.name + Item::END * (status.name + Status::END * (hp.stat + hp.max * (sleep + 5 * hash))));
+	// hash is in the innermost nested parentheses, so all of the arguments
+	// are promoted to uint64_t
+	return name + END *
+			(item.name + Item::END *
+			(status.name + Status::END *
+			((hp.stat - 1) + hp.max *
+			(sleep + (Stat::max_sleep_turns + 1) *
+			hash))));
 }
 
 bool Pokemon::find_move (Move::Moves name) {
@@ -88,7 +96,11 @@ bool Pokemon::operator== (Pokemon const & other) const {
 		if (move.set [n] == other.move.set [n])
 			return false;
 	}
-	return name == other.name and status.name == other.status.name and sleep == other.sleep and hp.stat == other.hp.stat and item.name == other.item.name;
+	return name == other.name and
+			status.name == other.status.name and
+			sleep == other.sleep and
+			hp.stat == other.hp.stat and
+			item.name == other.item.name;
 }
 
 bool Pokemon::operator!= (Pokemon const & other) const {

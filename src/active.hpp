@@ -1,5 +1,5 @@
 // Allows safe access to the active Pokemon / move
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_H_
-#define ACTIVE_H_
+#ifndef ACTIVE_HPP_
+#define ACTIVE_HPP_
 
 #include <cstddef>
 #include <vector>
@@ -48,4 +48,4 @@ class Active {
 };
 
 }	// namespace technicalmachine
-#endif	// ACTIVE_H_
+#endif	// ACTIVE_HPP_

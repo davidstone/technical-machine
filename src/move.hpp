@@ -1,5 +1,5 @@
 // Moves data structure
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_H_
-#define MOVE_H_
+#ifndef MOVE_HPP_
+#define MOVE_HPP_
 
 #include <cstdint>
 #include <string>
@@ -177,7 +177,7 @@ class Move {
 
 // Various states a Pokemon can be in due to vanishing moves.
 
-enum Vanish { LANDED, BOUNCED, DUG, DIVED, FLOWN, SHADOW_FORCED };
+enum Vanish { LANDED, BOUNCED, DUG, DIVED, FLOWN, SHADOW_FORCED, END_VANISH };
 
 class Team;
 class Weather;
@@ -185,4 +185,4 @@ class Weather;
 unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_damage = -1);
 
 }	// namespace technicalmachine
-#endif	// MOVE_H_
+#endif	// MOVE_HPP_

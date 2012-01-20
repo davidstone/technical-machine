@@ -195,9 +195,73 @@ void Team::add_pokemon (Species name, std::string const & nickname, int level, G
 
 uint64_t Team::hash () const {
 	uint64_t hash = 0;
+	// Should probably think of a better way to combine Pokemon hashes than xor
 	for (Pokemon const & member : pokemon.set)
 		hash ^= member.hash();
-	return size + 6 * (pokemon.index + 6 * (vanish + 6 * (stage [Stat::ATK] + 13 * (stage [Stat::DEF] + 13 * (stage [Stat::SPA] + 13 * (stage [Stat::SPD] + 13 * (stage [Stat::SPE] + 13 * (stage [Stat::ACC] + 13 * (stage [Stat::EVA] + 13 * (bide_damage + 358 * (substitute + 178 * (bide + 3 * (confused + 5 * (embargo + 5 * (encore + 8 * (heal_block + 5 * (magnet_rise + 5 * (partial_trap + 8 * (perish_song + 3 * (rampage + 3 * (slow_start + 3 * (stockpile + 4 * (taunt + 3 * (toxic + 16 * (uproar + 5 * (yawn + 2 * (aqua_ring + 2 * (attract + 2 * (charge + 2 * (curse + 2 * (defense_curl + 2 * (destiny_bond + 2 * (ff + 2 * (focus_energy + 2 * (gastro_acid + 2 * (identified + 2 * (imprison + 2 * (ingrain + 2 * (leech_seed + 2 * (loaf + 2 * (lock_on + 2 * (minimize + 2 * (mud_sport + 2 * (nightmare + 2 * (power_trick + 2 * (recharging + 2 * (torment + 2 * (trapped + 2 * (water_sport + 2 * (counter + 3 * (light_screen + 8 * (lucky_chant + 5 * (mist + 5 * (reflect + 8 * (safeguard + 5 * (tailwind + 3 * (wish + 2 * (spikes + 4 * (toxic_spikes + 3 * (stealth_rock + 2 * hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+	// hash is in the innermost nested parentheses, so all of the arguments
+	// are promoted to uint64_t
+	return size + 7 *
+			(pokemon.index + 6 *
+			(vanish + Vanish::END_VANISH *
+			((stage [Stat::ATK] + 6) + (6 + 6 + 1) *
+			((stage [Stat::DEF] + 6) + (6 + 6 + 1) *
+			((stage [Stat::SPA] + 6) + (6 + 6 + 1) *
+			((stage [Stat::SPD] + 6) + (6 + 6 + 1) *
+			((stage [Stat::SPE] + 6) + (6 + 6 + 1) *
+			((stage [Stat::ACC] + 6) + (6 + 6 + 1) *
+			((stage [Stat::EVA] + 6) + (6 + 6 + 1) *
+			(((bide_damage < 714 / 2) ? bide_damage : 714 / 2) + (714 / 2 + 1) *
+			((substitute - 1) + (714 / 4) *
+			(bide + 3 *
+			(confused + 5 *
+			(embargo + 5 *
+			(encore + 8 *
+			(heal_block + 5 *
+			(magnet_rise + 5 *
+			(partial_trap + 8 *
+			(perish_song + 3 *
+			(rampage + 3 *
+			(slow_start + 3 *
+			(stockpile + 4 *
+			(taunt + 3 *
+			(toxic + 16 *
+			(uproar + 5 *
+			(yawn + 2 *
+			(aqua_ring + 2 *
+			(attract + 2 *
+			(charge + 2 *
+			(curse + 2 *
+			(defense_curl + 2 *
+			(destiny_bond + 2 *
+			(ff + 2 *
+			(focus_energy + 2 *
+			(gastro_acid + 2 *
+			(identified + 2 *
+			(imprison + 2 *
+			(ingrain + 2 *
+			(leech_seed + 2 *
+			(loaf + 2 *
+			(lock_on + 2 *
+			(minimize + 2 *
+			(mud_sport + 2 *
+			(nightmare + 2 *
+			(power_trick + 2 *
+			(recharging + 2 *
+			(torment + 2 *
+			(trapped + 2 *
+			(water_sport + 2 *
+			(counter + 3 *
+			(light_screen + 8 *
+			(lucky_chant + 5 *
+			(mist + 5 *
+			(reflect + 8 *
+			(safeguard + 5 *
+			(tailwind + 3 *
+			(wish + 2 *
+			(spikes + 4 *
+			(toxic_spikes + 3 *
+			(stealth_rock + 2 *
+			hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 void Team::load (std::string const & name, unsigned size) {
