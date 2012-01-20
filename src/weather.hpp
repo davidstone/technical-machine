@@ -16,20 +16,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef WEATHER_H_
-#define WEATHER_H_
+#ifndef WEATHER_HPP_
+#define WEATHER_HPP_
 
 #include <cstdint>
 
 namespace technicalmachine {
 
-/*
-Weather is defined as the set of things that are not specific to either team.
+// Weather is the set of things that are not specific to either team.
 
-Weathers are represented as an int8_t due to the "acid weather" effect, which means that multiple weathers can be in effect at the same time. The order of the weathers is their order when all effects are active. Uproar is present because it can be activated without being associated with any particular Pokemon.
+// Weathers are represented as an int8_t due to the "acid weather" effect,
+// which means that multiple weathers can be in effect at the same time. The
+// order of the weathers is their order when all effects are active. Uproar is
+// present because it can be activated without being associated with any
+// particular Pokemon.
 
-The number represents the number of turns remaining on that weather. A value of -1 indicates permanent weather. Fog is a bool because it only exists as a permanent weather condition.
-*/
+// The number represents the number of turns remaining on that weather. A value
+// of -1 indicates permanent weather. Fog is a bool because it only exists as a
+// permanent weather condition.
 
 class Weather {
 	public:
@@ -46,13 +50,13 @@ class Weather {
 		Weather ();
 		void set_trick_room ();
 		void set_gravity ();
-		void set_uproar (int duration);
-		void set_hail (int duration);
-		void set_sun (int duration);
-		void set_sand (int duration);
-		void set_rain (int duration);
+		void set_uproar (int8_t duration);
+		void set_hail (int8_t duration);
+		void set_sun (int8_t duration);
+		void set_sand (int8_t duration);
+		void set_rain (int8_t duration);
 		uint32_t hash () const;
 };
 
 }	// namespace technicalmachine
-#endif	// WEATHER_H_
+#endif	// WEATHER_HPP_

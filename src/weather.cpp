@@ -30,28 +30,38 @@ Weather::Weather () :
 	hail (0),
 	sun (0),
 	sand (0),
-	rain (0) {
-	}
+	rain (0)
+	{
+}
 
 bool Weather::operator == (Weather const & other) const {
-	return trick_room == other.trick_room and fog == other.fog and gravity == other.gravity and uproar == other.uproar and hail == other.hail and sun == other.sun and sand == other.sand and rain == other.rain;
+	// I could theoretically speed this up by comparing the block of memory.
+	// Weather occupies a single 8-byte section of memory.
+	return trick_room == other.trick_room and
+			fog == other.fog and
+			gravity == other.gravity and
+			uproar == other.uproar and
+			hail == other.hail and
+			sun == other.sun and
+			sand == other.sand and
+			rain == other.rain;
 }
 
 void Weather::set_trick_room () {
-	if (trick_room == 0)
-		trick_room = 5;
-	else
-		trick_room = 0;
+	trick_room = (trick_room == 0) ? 5 : 0;
 }
+
 void Weather::set_gravity () {
 	if (gravity == 0)
 		gravity = 5;
 }
-void Weather::set_uproar (int duration) {
+
+void Weather::set_uproar (int8_t duration) {
 	if (uproar < duration)
 		uproar = duration;
 }
-void Weather::set_hail (int duration) {
+
+void Weather::set_hail (int8_t duration) {
 	if (hail == 0) {
 		sun = 0;
 		sand = 0;
@@ -59,7 +69,7 @@ void Weather::set_hail (int duration) {
 		hail = duration;
 	}
 }
-void Weather::set_sun (int duration) {
+void Weather::set_sun (int8_t duration) {
 	if (sun == 0) {
 		hail = 0;
 		sand = 0;
@@ -67,7 +77,7 @@ void Weather::set_sun (int duration) {
 		sun = duration;
 	}
 }
-void Weather::set_sand (int duration) {
+void Weather::set_sand (int8_t duration) {
 	if (sand == 0) {
 		hail = 0;
 		sun = 0;
@@ -75,7 +85,7 @@ void Weather::set_sand (int duration) {
 		sand = duration;
 	}
 }
-void Weather::set_rain (int duration) {
+void Weather::set_rain (int8_t duration) {
 	if (rain == 0) {
 		hail = 0;
 		sun = 0;
@@ -86,10 +96,21 @@ void Weather::set_rain (int duration) {
 
 uint32_t Weather::hash () const {
 	// All of weather requires fewer than 22 bits to represent exactly, so this
-	// hash has absolutely no collisions.
+	// hash has absolutely no collisions. There are a lot of illegal values
+	// (such as sun having 4 turns left and rain having 3 turns left), and so
+	// it should be possible to write a 0-collision hash for weather that needs
+	// 16 bits of information or fewer.
 	
-	// The + 1 is because they have a minimum value of -1 to represent infinite weather
-	return trick_room + 5 * (fog + 2 * ((gravity + 1) + 6 * ((uproar + 1) + 6 * ((hail + 1) + 9 * ((sun + 1) + 9 * ((sand + 1) + 9 * (rain + 1)))))));
+	// The + 1 is because they have a minimum value of -1 to represent infinite
+	// weather
+	return trick_room + 5 *
+			(fog + 2 *
+			((gravity + 1) + 6 *
+			((uproar + 1) + 6 *
+			((hail + 1) + 9 *
+			((sun + 1) + 9 *
+			((sand + 1) + 9 *
+			(rain + 1)))))));
 }
 
 }	// namespace technicalmachine
