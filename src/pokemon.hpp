@@ -67,7 +67,6 @@ class Pokemon {
 		static std::string to_string (Species name);
 		std::string to_string () const;
 		static Species from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
 		bool operator== (Pokemon const & other) const;
 		bool operator!= (Pokemon const & other) const;
 		void load ();

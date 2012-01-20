@@ -682,8 +682,4 @@ Species Pokemon::from_string (std::string const & str) {
 		throw InvalidFromStringConversion ("Species", str);
 }
 
-void Pokemon::set_name_from_string (std::string const & str) {
-	name = from_string (str);
-}
-
 }	// namespace technicalmachine

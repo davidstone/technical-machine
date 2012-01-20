@@ -1,5 +1,5 @@
 // Move string conversions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -652,10 +652,6 @@ Move::Moves Move::from_string (std::string const & str) {
 		return it->second;
 	else
 		throw InvalidFromStringConversion ("Move", str);
-}
-
-void Move::set_name_from_string (std::string const & str) {
-	name = from_string (str);
 }
 
 }	// namespace technicalmachine

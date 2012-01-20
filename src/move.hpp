@@ -154,7 +154,6 @@ class Move {
 		static std::string to_string (Moves name);
 		std::string to_string () const;
 		static Moves from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
 		bool operator== (Move const & other) const;
 		bool operator!= (Move const & other) const;
 		static bool is_switch (Moves name);
