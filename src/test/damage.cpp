@@ -19,6 +19,7 @@
 #include "damage.hpp"
 
 #include <iostream>
+#include <random>
 #include <stdexcept>
 #include <string>
 
@@ -40,7 +41,10 @@ class IncorrectCalculation : public std::logic_error {
 
 Team create_max_damage_attacker (Weather const & weather) {
 	constexpr unsigned team_size = 6;
-	Team attacker (false, team_size);
+	// Temporary until I redesign my Team constructor to not require a random
+	// engine when it's not needed.
+	std::mt19937 unused;
+	Team attacker (false, team_size, unused);
 
 	attacker.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
 	attacker.pokemon().move.set.insert (attacker.pokemon().move.set.begin (), Move (Move::ROLLOUT, 3, team_size));
@@ -66,7 +70,10 @@ Team create_max_damage_attacker (Weather const & weather) {
 
 Team create_max_damage_defender (Team const & attacker, Weather const & weather) {
 	constexpr unsigned team_size = 6;
-	Team defender (false, team_size);
+	// Temporary until I redesign my Team constructor to not require a random
+	// engine when it's not needed.
+	std::mt19937 unused;
+	Team defender (false, team_size, unused);
 	defender.pokemon.set.push_back (Pokemon (Species::COMBEE, team_size));
 
 	defender.pokemon().level = 1;

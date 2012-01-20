@@ -40,8 +40,8 @@
 namespace technicalmachine {
 
 GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
-	ai (true, 6),
-	foe (false, ai.size),
+	ai (true, 6, random_engine),
+	foe (false, ai.size, random_engine),
 	depth (battle_depth),
 	active (nullptr),
 	inactive (nullptr),
@@ -55,7 +55,7 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 
 GenericBattle::GenericBattle (std::string const & opponent, int battle_depth, Team const & team):
 	ai (team),
-	foe (false, ai.size),
+	foe (false, ai.size, random_engine),
 	depth (battle_depth),
 	party (-1)
 	{

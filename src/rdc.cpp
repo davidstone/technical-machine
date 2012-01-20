@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -35,19 +36,19 @@
 #include "unknown.hpp"
 #include "weather.hpp"
 
-// What follows is a temporary file that initializes variables that I don't have functions to initialize yet. It also provides the interface for the reverse damage calculator.
-
-using namespace technicalmachine;
+// What follows is the interface for the reverse damage calculator.
 
 int main () {
+	using namespace technicalmachine;
 	
+	std::mt19937 random_engine;
 	int detailed [Species::END] [7] = {{ 0 }};
 	std::cerr << "Loading detailed stats.\n";
 	detailed_stats (detailed);
 	std::cerr << "Loading ai.\n";
-	Team ai (true, 6);
+	Team ai (true, 6, random_engine);
 	std::cerr << "Loading foe.\n";
-	Team foe (false, ai.size);
+	Team foe (false, ai.size, random_engine);
 	std::cerr << "Teams created.\n";
 
 	Pokemon member (INFERNAPE, foe.size);

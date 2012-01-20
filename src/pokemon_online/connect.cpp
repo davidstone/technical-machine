@@ -43,7 +43,7 @@ namespace po {
 
 Client::Client (int depth_):
 	network::GenericClient (depth_),
-	team (true, 6) {
+	team (true, 6, random_engine) {
 	log_in ();
 }
 

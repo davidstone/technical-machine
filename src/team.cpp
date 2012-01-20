@@ -19,7 +19,6 @@
 #include "team.hpp"
 
 #include <cstdint>
-#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -47,7 +46,7 @@ namespace technicalmachine {
 
 static void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
 
-Team::Team (bool isme, unsigned size) :
+Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -153,8 +152,8 @@ Team::Team (bool isme, unsigned size) :
 		settings.close();
 		std::vector <boost::filesystem::path> files;
 		open_directory_and_add_files (team_file, files);
-		srand (static_cast <unsigned> (time (0)));
-		team_file = files [(rand () % files.size ())];
+		std::uniform_int_distribution <size_t> distribution { 0, files.size () - 1 };
+		team_file = files [distribution (random_engine)];
 		load (team_file.string(), size);
 		for (Pokemon & member : pokemon.set)
 			member.new_hp = member.hp.max;

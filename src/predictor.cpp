@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include <random>
 #include <string>
 #include <vector>
 
@@ -34,21 +35,24 @@ using namespace technicalmachine;
 
 // A GUI version of the team predictor.
 
-struct Data {
-	std::vector<Fl_Input *> input;
-	Fl_Multiline_Output * output;
-	int detailed [Species::END][7];
+class Data {
+	public:
+		std::vector<Fl_Input *> input;
+		Fl_Multiline_Output * output;
+		int detailed [Species::END][7];
+		std::mt19937 random_engine;
 };
 
-void function (Fl_Widget * w, void * data) {
-	Data * d = reinterpret_cast <Data *> (data);
+void function (Fl_Widget * w, void * d) {
+	Data & data = *reinterpret_cast <Data *> (d);
 	
-	Team team (false, 6);
+	constexpr bool is_me = false;
+	Team team (is_me, 6, data.random_engine);
 	bool using_lead;
-	for (Fl_Input * in : d->input) {
+	for (Fl_Input * in : data.input) {
 		Species const species = Pokemon::from_string (in->value());
-		if (in == d->input.front ()) {
-			using_lead = species != Species::END;
+		if (in == data.input.front ()) {
+			using_lead = (species != Species::END);
 		}
 		if (species != Species::END) {
 			Pokemon member (species, team.size);
@@ -57,11 +61,11 @@ void function (Fl_Widget * w, void * data) {
 	}
 	
 	if (team.pokemon.set.size() > 0) {
-		predict_team (d->detailed, team, using_lead);
-		d->output->value (team.to_string().c_str());
+		predict_team (data.detailed, team, using_lead);
+		data.output->value (team.to_string().c_str());
 	}
 	else
-		d->output->value ("");
+		data.output->value ("");
 }
 
 int main () {
