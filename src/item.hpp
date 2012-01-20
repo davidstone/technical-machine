@@ -1,5 +1,5 @@
 // Item header
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ITEM_H_
-#define ITEM_H_
+#ifndef ITEM_HPP_
+#define ITEM_HPP_
 
 #include <string>
 
@@ -120,6 +120,7 @@ class Item {
 	
 		Item ();
 		explicit Item (Items item);
+		explicit Item (std::string const & str);
 		bool is_set () const;
 		bool is_choice_item () const;
 		int get_berry_power () const;		// Returns 0 for non-berries
@@ -128,8 +129,7 @@ class Item {
 		static std::string to_string (Items name);
 		std::string to_string () const;
 		static Items from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
 };
 
 }	// namespace technicalmachine
-#endif	// ITEM_H_
+#endif	// ITEM_HPP_

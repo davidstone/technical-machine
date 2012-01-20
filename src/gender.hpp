@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GENDER_H_
-#define GENDER_H_
+#ifndef GENDER_HPP_
+#define GENDER_HPP_
 
 #include <string>
 
@@ -31,6 +31,7 @@ class Gender {
 		
 		Gender ();
 		explicit Gender (Genders gender_);
+		explicit Gender (std::string const & str);
 		Gender & operator= (Gender other);
 		Gender & operator= (Genders other);
 
@@ -39,8 +40,7 @@ class Gender {
 		static std::string to_string (Genders gender);
 		std::string to_string () const;
 		static Genders from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
 };
 
 }	// namespace technicalmachine
-#endif	// GENDER_H_
+#endif	// GENDER_HPP_

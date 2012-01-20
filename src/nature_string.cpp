@@ -75,8 +75,9 @@ Nature::Natures Nature::from_string (std::string const & str) {
 		throw InvalidFromStringConversion ("Nature", str);
 }
 
-void Nature::set_name_from_string (std::string const & str) {
-	name = from_string (str);
+Nature::Nature (std::string const & str):
+	name (from_string (str))
+	{
 }
 
 }	// namespace technicalmachine

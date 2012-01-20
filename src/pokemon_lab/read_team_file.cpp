@@ -71,13 +71,13 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	pokemon.level = pt.get <int> ("level");
 	pokemon.happiness = pt.get <int> ("happiness");
 	std::string const gender_str = pt.get <std::string> ("gender");
-	pokemon.gender.set_name_from_string (gender_str);
+	pokemon.gender = Gender (gender_str);
 	std::string const nature_str = pt.get <std::string> ("nature");
-	pokemon.nature.set_name_from_string (nature_str);
+	pokemon.nature = Nature (nature_str);
 	std::string const item_str = pt.get <std::string> ("item");
-	pokemon.item.set_name_from_string (item_str);
+	pokemon.item = Item (item_str);
 	std::string const ability_str = pt.get <std::string> ("ability");
-	pokemon.ability.set_name_from_string (ability_str);
+	pokemon.ability = Ability (ability_str);
 	
 	unsigned n = 0;
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {

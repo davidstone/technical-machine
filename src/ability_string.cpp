@@ -1,5 +1,5 @@
 // Ability string conversions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -199,8 +199,9 @@ Ability::Abilities Ability::from_string (std::string const & str) {
 		throw InvalidFromStringConversion ("Ability", str);
 }
 
-void Ability::set_name_from_string (std::string const & str) {
-	name = from_string (str);
+Ability::Ability (std::string const & str):
+	name (from_string (str))
+	{
 }
 
 }	// namespace technicalmachine

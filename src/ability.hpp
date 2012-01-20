@@ -1,5 +1,5 @@
 // Ability data structure
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ABILITY_H_
-#define ABILITY_H_
+#ifndef ABILITY_HPP_
+#define ABILITY_HPP_
 
 #include <string>
 
@@ -59,6 +59,7 @@ class Ability {
 
 		Ability ();
 		explicit Ability (Abilities ability);
+		explicit Ability (std::string const & str);
 		bool is_set () const;
 		bool blocks_switching (Team const & switcher, Weather const & weather) const;
 		bool blocks_weather () const;
@@ -71,7 +72,6 @@ class Ability {
 		static std::string to_string (Abilities name);
 		std::string to_string () const;
 		static Abilities from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
 };
 }
-#endif		// ABILITY_H_
+#endif	// ABILITY_HPP_

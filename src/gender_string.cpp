@@ -51,8 +51,9 @@ Gender::Genders Gender::from_string (std::string const & str) {
 		throw InvalidFromStringConversion ("Gender", str);
 }
 
-void Gender::set_name_from_string (std::string const & str) {
-	gender = from_string (str);
+Gender::Gender (std::string const & str):
+	gender (from_string (str))
+	{
 }
 
 }	// namespace technicalmachine

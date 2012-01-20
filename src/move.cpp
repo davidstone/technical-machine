@@ -66,9 +66,9 @@ Move::Move (Moves move, int pp_ups, unsigned size) :
 	disable (0),
 	pp_max (get_pp (name) * (5 + pp_ups) / 5),
 	pp (pp_max),
+	priority (get_priority ()),
 	r (100),
 	times_used (0) {
-		set_priority();
 		set_variable (size);
 }
 
@@ -76,7 +76,7 @@ uint64_t Move::hash () const {
 	return name + END * (disable + 7 * (pp + pp_max * (times_used)));
 }
 
-void Move::set_priority () {
+int8_t Move::get_priority () {
 	switch (name) {
 		case SWITCH0:
 		case SWITCH1:
@@ -84,24 +84,19 @@ void Move::set_priority () {
 		case SWITCH3:
 		case SWITCH4:
 		case SWITCH5:
-			priority = 6;
-			break;
+			return 6;
 		case HELPING_HAND:
-			priority = 5;
-			break;
+			return 5;
 		case MAGIC_COAT:
 		case SNATCH:
-			priority = 4;
-			break;
+			return 4;
 		case DETECT:
 		case ENDURE:
 		case FOLLOW_ME:
 		case PROTECT:
-			priority = 3;
-			break;
+			return 3;
 		case FEINT:
-			priority = 2;
-			break;
+			return 2;
 		case AQUA_JET:
 		case BIDE:
 		case BULLET_PUNCH:
@@ -113,32 +108,24 @@ void Move::set_priority () {
 		case SHADOW_SNEAK:
 		case SUCKER_PUNCH:
 		case VACUUM_WAVE:
-			priority = 1;
-			break;
+			return 1;
 		case VITAL_THROW:
-			priority = -1;
-			break;
+			return -1;
 		case FOCUS_PUNCH:
-			priority = -2;
-			break;
+			return -2;
 		case AVALANCHE:
 		case REVENGE:
-			priority = -3;
-			break;
+			return -3;
 		case COUNTER:
 		case MIRROR_COAT:
-			priority = -4;
-			break;
+			return -4;
 		case ROAR:
 		case WHIRLWIND:
-			priority = -5;
-			break;
+			return -5;
 		case TRICK_ROOM:
-			priority = -6;
-			break;
+			return -6;
 		default:
-			priority = 0;
-			break;
+			return 0;
 	}
 }
 

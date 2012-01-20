@@ -1,5 +1,5 @@
 // Item string conversions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -597,8 +597,9 @@ Item::Items Item::from_string (std::string const & str) {
 		throw InvalidFromStringConversion ("Item", str);
 }
 
-void Item::set_name_from_string (std::string const & str) {
-	name = from_string (str);
+Item::Item (std::string const & str):
+	name (from_string (str))
+	{
 }
 
 }	// namespace technicalmachine

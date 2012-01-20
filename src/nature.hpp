@@ -55,11 +55,11 @@ class Nature {
 		};
 		Natures name;
 		Nature ();
+		Nature (std::string const & str);
 		bool is_set () const;
 		static std::string to_string (Natures name);
 		std::string to_string () const;
 		static Natures from_string (std::string const & str);
-		void set_name_from_string (std::string const & str);
 };
 
 }	// namespace technicalmachine

@@ -171,7 +171,7 @@ class Move {
 		void get_magnitude (unsigned magnitude);
 		static bool compare_scores (Move const & first, Move const & second);
 	private:
-		void set_priority ();
+		int8_t get_priority ();
 		void set_variable (unsigned size);
 };
 
