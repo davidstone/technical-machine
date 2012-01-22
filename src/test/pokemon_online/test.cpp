@@ -30,6 +30,7 @@ void test () {
 	std::cout << "Running Pokemon Online tests.\n";
 	test_conversions ();
 	test_team_file ();
+	std::cout << "Pokemon Online tests passed.\n\n";
 }
 
 }	// namespace po

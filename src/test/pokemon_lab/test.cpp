@@ -30,6 +30,7 @@ void test () {
 	std::cout << "Running Pokemon Lab tests.\n";
 	test_conversions ();
 	test_team_file ();
+	std::cout << "Pokemon Lab tests passed.\n\n";
 }
 
 }	// namespace pl

@@ -87,9 +87,9 @@ Stat::Stat (Species name, Stats stat) :
 }
 
 unsigned hitpoints (Pokemon & member) {
-	if (member.hp.base == 1)
-		return 1;
-	return calculate_initial_stat (member.hp, member.level) + member.level + 5;
+	return (member.hp.base > 1) ?
+		(calculate_initial_stat (member.hp, member.level) + member.level + 5) :
+		1;
 }
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {

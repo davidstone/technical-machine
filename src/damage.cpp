@@ -38,6 +38,63 @@ namespace technicalmachine {
 // code, and pre-calculating known information moves even more out. Profiling
 // showed this to be a sound optimization.
 
+namespace {
+
+}	// unnamed namespace
+
+unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather) {
+	unsigned damage = 0;
+	unsigned effectiveness = get_effectiveness (attacker.pokemon().move().type, defender.pokemon());
+	if ((effectiveness > 0) and (attacker.pokemon().move().type != Type::GROUND or grounded (defender, weather))) {
+		switch (attacker.pokemon().move().name) {
+			case Move::DRAGON_RAGE:
+				damage = 40;
+				break;
+			case Move::ENDEAVOR:
+				if (defender.pokemon().hp.stat > attacker.pokemon().hp.stat)
+					damage = defender.pokemon().hp.stat - attacker.pokemon().hp.stat;
+				else
+					damage = 0;
+				break;
+			case Move::FISSURE:
+			case Move::GUILLOTINE:
+			case Move::HORN_DRILL:
+			case Move::SHEER_COLD:
+				damage = defender.pokemon().hp.max;
+				break;
+			case Move::NIGHT_SHADE:
+			case Move::SEISMIC_TOSS:
+				damage = attacker.pokemon().level;
+				break;
+			case Move::PSYWAVE:
+				damage = attacker.pokemon().level * attacker.pokemon().move().variable().first / 10;
+				break;
+			case Move::SONICBOOM:
+				damage = 20;
+				break;
+			case Move::SUPER_FANG:
+				damage = defender.pokemon().hp.stat / 2;
+
+			default: {
+				unsigned rl;						// Reflect / Light Screen (2)
+				unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
+				unsigned ff;						// Flash Fire: 3 / 2
+				unsigned mf;						// Me First: 3 / 2
+				unsigned stab;					// Same Type Attack Bonus: 3 / 2
+				unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
+				unsigned eb;						// Expert Belt: 6 / 5
+				unsigned tl;							// Tinted Lens (2)
+				unsigned rb;						// Resistance berries (2)
+				damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
+				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, effectiveness, aem, eb, tl, rb, damage);
+				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (attacker.pokemon().move().type, defender.pokemon());
+				damage = damagerandom (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
+			}
+		}
+	}
+	return damage;
+}
+
 unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf) {
 	if (((defender.reflect and attacker.pokemon().move().physical)
 			or (defender.light_screen and !attacker.pokemon().move().physical))
@@ -55,15 +112,9 @@ unsigned damageknown (Team const & attacker, Team const & defender, Weather cons
 	else
 		weather_mod = 2;
 
-	if (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE)
-		ff = 3;
-	else
-		ff = 2;
+	ff = (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? 3 : 2;
 
-	if (attacker.me_first)
-		mf = 3;
-	else
-		mf = 2;
+	mf = (attacker.me_first) ? 3 : 2;
 
 	return attacker.pokemon().level * 2 / 5 + 2;
 }
@@ -217,59 +268,6 @@ unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned
 		damage = defender.pokemon().hp.stat;
 		if (attacker.move().name == Move::FALSE_SWIPE or defender.endure)
 			--damage;
-	}
-	return damage;
-}
-
-unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather) {
-	unsigned damage = 0;
-	unsigned effectiveness = get_effectiveness (attacker.pokemon().move().type, defender.pokemon());
-	if ((effectiveness > 0) and (attacker.pokemon().move().type != Type::GROUND or grounded (defender, weather))) {
-		switch (attacker.pokemon().move().name) {
-			case Move::DRAGON_RAGE:
-				damage = 40;
-				break;
-			case Move::ENDEAVOR:
-				if (defender.pokemon().hp.stat > attacker.pokemon().hp.stat)
-					damage = defender.pokemon().hp.stat - attacker.pokemon().hp.stat;
-				else
-					damage = 0;
-				break;
-			case Move::FISSURE:
-			case Move::GUILLOTINE:
-			case Move::HORN_DRILL:
-			case Move::SHEER_COLD:
-				damage = defender.pokemon().hp.max;
-				break;
-			case Move::NIGHT_SHADE:
-			case Move::SEISMIC_TOSS:
-				damage = attacker.pokemon().level;
-				break;
-			case Move::PSYWAVE:
-				damage = attacker.pokemon().level * attacker.pokemon().move().variable().first / 10;
-				break;
-			case Move::SONICBOOM:
-				damage = 20;
-				break;
-			case Move::SUPER_FANG:
-				damage = defender.pokemon().hp.stat / 2;
-
-			default: {
-				unsigned rl;						// Reflect / Light Screen (2)
-				unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-				unsigned ff;						// Flash Fire: 3 / 2
-				unsigned mf;						// Me First: 3 / 2
-				unsigned stab;					// Same Type Attack Bonus: 3 / 2
-				unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-				unsigned eb;						// Expert Belt: 6 / 5
-				unsigned tl;							// Tinted Lens (2)
-				unsigned rb;						// Resistance berries (2)
-				damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
-				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, effectiveness, aem, eb, tl, rb, damage);
-				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (attacker.pokemon().move().type, defender.pokemon());
-				damage = damagerandom (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
-			}
-		}
 	}
 	return damage;
 }

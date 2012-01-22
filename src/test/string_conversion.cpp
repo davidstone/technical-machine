@@ -52,6 +52,7 @@ void string_conversion_tests () {
 	test_generic <Nature, Nature::Natures> ("nature");
 	test_generic <Pokemon, Species> ("species");
 	test_generic <Status, Status::Statuses> ("status");
+	std::cout << "String conversion tests passed.\n\n";
 }
 
 }	// namespace technicalmachine

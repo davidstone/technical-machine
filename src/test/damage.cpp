@@ -47,59 +47,131 @@ Team create_max_damage_attacker (Weather const & weather) {
 	Team attacker (false, team_size, unused);
 
 	attacker.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
-	attacker.pokemon().move.set.insert (attacker.pokemon().move.set.begin (), Move (Move::ROLLOUT, 3, team_size));
+	Pokemon & pokemon = attacker.pokemon();
+	pokemon.move.set.insert (pokemon.move.set.begin (), Move (Move::ROLLOUT, 3, team_size));
 
 	attacker.defense_curl = true;
-	attacker.pokemon().move().times_used = 10;
+	pokemon.move().times_used = 10;
 	
-	attacker.pokemon().def.iv = 31;
-	attacker.pokemon().def.ev = 252 / 4;
-	attacker.pokemon().nature.name = Nature::IMPISH;
+	pokemon.def.iv = 31;
+	pokemon.def.ev = 252 / 4;
+	pokemon.nature.name = Nature::IMPISH;
 	attacker.power_trick = true;
-	attacker.pokemon().ability.name = Ability::PURE_POWER;
+	pokemon.ability.name = Ability::PURE_POWER;
 	Stat::boost (attacker.stage [Stat::ATK], 6);
 
 	attacker.ch = true;
-	attacker.pokemon().item.name = Item::METRONOME;
-	attacker.pokemon().move().r = 100;
+	pokemon.item.name = Item::METRONOME;
+	pokemon.move().r = 100;
 	
 	calculate_attacking_stat (attacker, weather);
 
 	return attacker;
 }
 
-Team create_max_damage_defender (Team const & attacker, Weather const & weather) {
+Team create_max_damage_special_attacker (Weather const & weather, Ability::Abilities ability, Move::Moves move = Move::BLAST_BURN) {
+	constexpr unsigned team_size = 6;
+	// Temporary until I redesign my Team constructor to not require a random
+	// engine when it's not needed.
+	std::mt19937 unused;
+	Team attacker (false, team_size, unused);
+
+	attacker.pokemon.set.push_back (Pokemon (Species::DEOXYS_A, team_size));
+	Pokemon & pokemon = attacker.pokemon();
+	pokemon.move.set.insert (pokemon.move.set.begin (), Move (move, 3, team_size));
+
+	pokemon.move().times_used = 10;
+	
+	pokemon.spa.iv = 31;
+	pokemon.spa.ev = 252 / 4;
+	pokemon.nature.name = Nature::MODEST;
+	pokemon.ability.name = ability;
+	Stat::boost (attacker.stage [Stat::SPA], 6);
+	pokemon.type.types = std::vector <Type> { pokemon.move().type };
+
+	attacker.ch = true;
+	attacker.flash_fire = true;
+	pokemon.item.name = Item::METRONOME;
+	pokemon.move().r = 100;
+	pokemon.hp.stat = 1;
+	
+	calculate_attacking_stat (attacker, weather);
+
+	return attacker;
+}
+
+Team create_max_damage_physical_defender (Team const & attacker, Weather const & weather) {
 	constexpr unsigned team_size = 6;
 	// Temporary until I redesign my Team constructor to not require a random
 	// engine when it's not needed.
 	std::mt19937 unused;
 	Team defender (false, team_size, unused);
 	defender.pokemon.set.push_back (Pokemon (Species::COMBEE, team_size));
+	Pokemon & pokemon = defender.pokemon();
 
-	defender.pokemon().level = 1;
-	defender.pokemon().def.iv = 0;
-	defender.pokemon().def.ev = 0;
+	pokemon.level = 1;
+	pokemon.def.iv = 0;
+	pokemon.def.ev = 0;
 	Stat::boost (defender.stage [Stat::DEF], -6);
 	
-	defender.pokemon().hp.stat = 0xFFFFFFFF;	
+	pokemon.hp.stat = 0xFFFFFFFF;	
 	calculate_defending_stat (attacker, defender, weather);
 	
 	return defender;
 }
 
-void power_test () {
-	std::cout << "\tRunning power tests.\n";
+Team create_max_damage_special_defender (Team const & attacker, Weather const & weather) {
+	constexpr unsigned team_size = 6;
+	// Temporary until I redesign my Team constructor to not require a random
+	// engine when it's not needed.
+	std::mt19937 unused;
+	Team defender (false, team_size, unused);
+	defender.pokemon.set.push_back (Pokemon (Species::PARAS, team_size));
+	Pokemon & pokemon = defender.pokemon();
+
+	pokemon.level = 1;
+	pokemon.spd.iv = 0;
+	pokemon.spd.ev = 0;
+	Stat::boost (defender.stage [Stat::SPD], -6);
+	pokemon.ability.name = Ability::DRY_SKIN;
+	
+	pokemon.hp.stat = 0xFFFFFFFF;	
+	calculate_defending_stat (attacker, defender, weather);
+	return defender;
+}
+
+void physical_power_test () {
+	std::cout << "\t\tRunning physical power tests.\n";
 	constexpr int max_power = 960;
 	Weather weather;
 	Team attacker = create_max_damage_attacker (weather);
-	Team defender = create_max_damage_defender (attacker, weather);
+	Team defender = create_max_damage_physical_defender (attacker, weather);
 	move_power (attacker, defender, weather);
 	if (attacker.pokemon().move().power != max_power)
 		throw IncorrectCalculation (attacker.pokemon().move().power, max_power);
 }
 
+void special_power_test () {
+	std::cout << "\t\tRunning special power tests.\n";
+	constexpr int max_power = 342;
+	Weather weather;
+	Team attacker = create_max_damage_special_attacker (weather, Ability::TORRENT, Move::SURF);
+	attacker.pokemon().item = Item (Item::WAVE_INCENSE);
+	Team defender = create_max_damage_special_defender (attacker, weather);
+	defender.vanish = Vanish::DIVED;
+	move_power (attacker, defender, weather);
+	if (attacker.pokemon().move().power != max_power)
+		throw IncorrectCalculation (attacker.pokemon().move().power, max_power);
+}
+
+void power_test () {
+	std::cout << "\tRunning power tests.\n";
+	physical_power_test ();
+	special_power_test ();
+}
+
 void attack_test () {
-	std::cout << "\tRunning attack stat tests.\n";
+	std::cout << "\t\tRunning attack stat tests.\n";
 	constexpr unsigned max_attack = 4912;
 	Weather weather;
 	Team attacker = create_max_damage_attacker (weather);
@@ -107,16 +179,51 @@ void attack_test () {
 		throw IncorrectCalculation (attacker.pokemon().atk.stat, max_attack);
 }
 
-void damage_test () {
-	std::cout << "\tRunning max damage tests.\n";
+void special_attack_test () {
+	std::cout << "\t\tRunning special attack stat tests.\n";
+	constexpr unsigned max_special_attack = 3024;
+	Weather weather;
+	weather.set_sun (-1);
+	Team attacker = create_max_damage_special_attacker (weather, Ability::SOLAR_POWER);
+	if (attacker.pokemon().spa.stat != max_special_attack)
+		throw IncorrectCalculation (attacker.pokemon().spa.stat, max_special_attack);
+}
+
+void attacking_stat_test () {
+	std::cout << "\tRunning attacking stat tests.\n";
+	attack_test ();
+	special_attack_test ();
+}
+
+void physical_damage_test () {
+	std::cout << "\t\tRunning max physical damage tests.\n";
 	constexpr unsigned max_damage = 95064912;
 	Weather weather;
 	Team attacker = create_max_damage_attacker (weather);
-	Team defender = create_max_damage_defender (attacker, weather);
+	Team defender = create_max_damage_physical_defender (attacker, weather);
 	move_power (attacker, defender, weather);
 	unsigned damage = damagecalculator (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
+}
+
+void special_damage_test () {
+	std::cout << "\t\tRunning max special damage tests.\n";
+	constexpr unsigned max_damage = 25696272;
+	Weather weather;
+	weather.set_sun (-1);
+	Team attacker = create_max_damage_special_attacker (weather, Ability::BLAZE);
+	Team defender = create_max_damage_special_defender (attacker, weather);
+	move_power (attacker, defender, weather);
+	unsigned damage = damagecalculator (attacker, defender, weather);
+	if (damage != max_damage)
+		throw IncorrectCalculation (damage, max_damage);
+}
+
+void damage_test () {
+	std::cout << "\tRunning max damage tests.\n";
+	physical_damage_test ();
+	special_damage_test ();
 }
 
 }	// anonymous namespace
@@ -124,8 +231,9 @@ void damage_test () {
 void damage_tests () {
 	std::cout << "Running damage tests.\n";
 	power_test ();
-	attack_test ();
+	attacking_stat_test ();
 	damage_test ();
+	std::cout << "Damage tests passed.\n\n";
 }
 
 }	// namespace technicalmachine

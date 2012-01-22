@@ -27,16 +27,10 @@ int main () {
 	using namespace technicalmachine;
 	
 	damage_tests ();
-	std::cout << "Damage tests passed.\n\n";
-
 	string_conversion_tests ();
-	std::cout << "String conversion tests passed.\n\n";
 
 	pl::test ();
-	std::cout << "Pokemon Lab tests passed.\n\n";
-
 	po::test ();
-	std::cout << "Pokemon Online tests passed.\n\n";
 
 	std::cout << "All tests passed.\n";
 	return 0;
