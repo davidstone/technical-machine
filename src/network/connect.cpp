@@ -326,8 +326,13 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 }
 
 std::string GenericClient::get_response () {
-	std::uniform_int_distribution <unsigned> distribution { 0, static_cast <unsigned> (response.size() - 1) };
-	return response [distribution (random_engine)];
+	if (response.size() > 0) {
+		std::uniform_int_distribution <unsigned> distribution { 0, static_cast <unsigned> (response.size() - 1) };
+		return response [distribution (random_engine)];
+	}
+	else {
+		return "";
+	}
 }
 
 void GenericClient::send_channel_message (std::string channel, std::string const & message) {
