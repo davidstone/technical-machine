@@ -31,9 +31,37 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
+namespace {
 
-static void entry_hazards (Team & switcher, Weather const & weather);
-static void activate_ability (Team & switcher, Team & other, Weather & weather);
+void reset_variables (Team & team);
+void entry_hazards (Team & switcher, Weather const & weather);
+void activate_ability (Team & switcher, Team & other, Weather & weather);
+void replace_fainted_pokemon (Team & switcher, Team & other);
+
+}	// unnamed namespace
+
+void switchpokemon (Team & switcher, Team & other, Weather & weather) {
+	reset_variables (switcher);
+
+	if (switcher.pokemon().hp.stat > 0) {
+		// Cure the status of a Natural Cure Pokemon as it switches out
+		if (switcher.pokemon().ability.name == Ability::NATURAL_CURE)
+			switcher.pokemon().status.clear ();
+		
+		// Change the active Pokemon to the one switching in.
+		switcher.pokemon.index = switcher.replacement;
+	}
+	else {
+		replace_fainted_pokemon (switcher, other);
+	}
+	
+	entry_hazards (switcher, weather);
+
+	if (switcher.pokemon().hp.stat > 0)
+		activate_ability (switcher, other, weather);
+}
+
+namespace {
 
 void reset_variables (Team & team) {
 	// Reset all variables that switches reset.
@@ -64,7 +92,9 @@ void reset_variables (Team & team) {
 	team.flinch = false;
 	team.identified = false;
 	team.imprison = false;
-	team.loaf = false;			// Do I set to true or false? True makes it wrong when a fainted Pokemon is replaced; false makes it wrong otherwise
+	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
+	// replaced; false makes it wrong otherwise
+	team.loaf = false;
 	team.minimize = false;
 	team.mf = false;
 	team.mud_sport = false;
@@ -80,11 +110,13 @@ void reset_variables (Team & team) {
 	team.heal_block = 0;
 	team.partial_trap = 0;
 	team.rampage = 0;
+	team.slow_start = 0;
 	team.stockpile = 0;
 	team.taunt = 0;
 	team.toxic = 0;
 	team.uproar = 0;
-	team.vanish = LANDED;	// Whirlwind can hit Flying Pokemon, so it needs to be reset
+	// Whirlwind can hit Flying Pokemon, so it needs to be reset
+	team.vanish = LANDED;
 	team.yawn = 0;
 
 	for (Move & move : team.pokemon().move.set) {
@@ -93,81 +125,66 @@ void reset_variables (Team & team) {
 	}
 }
 
-void switchpokemon (Team & switcher, Team & other, Weather & weather) {
-	reset_variables (switcher);
+void replace_fainted_pokemon (Team & switcher, Team & other) {
+	// First, remove the active Pokemon because it has 0 HP.
+	switcher.pokemon.remove_active ();
+	--switcher.size;
 
-	if (switcher.pokemon().hp.stat > 0) {
-		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (switcher.pokemon().ability.name == Ability::NATURAL_CURE)
-			switcher.pokemon().status.clear ();
-		
-		// Change the active Pokemon to the one switching in.
-		switcher.pokemon.index = switcher.replacement;
-	}
-	else {
-		// First, remove the active Pokemon because it has 0 HP.
-		switcher.pokemon.remove_active ();
-		--switcher.size;
+	// If the last Pokemon is fainted; there is nothing left to do.
+	if (switcher.pokemon.set.size() == 0)
+		return;
 
-		// If the last Pokemon is fainted; there is nothing left to do.
-		if (switcher.pokemon.set.size() == 0)
-			return;
-
-		// Then, remove the ability to bring out that Pokemon from Roar and Whirlwind in the foe's team.
-		for (Pokemon & pokemon : other.pokemon.set) {
-			for (Move & move : pokemon.move.set) {
-				if (move.is_phaze ()) {
-					move.variable.set.pop_back();
-					for (std::pair <uint16_t, uint16_t> & variable : move.variable.set) {
-						if (switcher.size > 2)
-							variable.second = Move::max_probability / (switcher.size - 1);
-						else
-							variable.second = Move::max_probability;
-					}
+	// Roar and Whirlwind cannot bring out a fainted Pokemon
+	for (Pokemon & pokemon : other.pokemon.set) {
+		for (Move & move : pokemon.move.set) {
+			if (move.is_phaze ()) {
+				move.variable.set.pop_back();
+				for (std::pair <uint16_t, uint16_t> & variable : move.variable.set) {
+					variable.second = (switcher.size > 2) ?
+						Move::max_probability / (switcher.size - 1) :
+						Move::max_probability;
 				}
 			}
 		}
-		if (switcher.pokemon.index > switcher.replacement)
-			switcher.pokemon.index = switcher.replacement;
-		else
-			switcher.pokemon.index = switcher.replacement - 1;
-		// Finally, remove the ability to switch to that Pokemon.
-		for (Pokemon & pokemon : switcher.pokemon.set) {
-			pokemon.move.set.pop_back();
-			// If there is only one Pokemon, there is no switching.
-			if (switcher.pokemon.set.size () == 1)
-				pokemon.move.set.pop_back ();
-		}
 	}
-	
-	entry_hazards (switcher, weather);
-
-	if (switcher.pokemon().hp.stat > 0)
-		activate_ability (switcher, other, weather);
+	if (switcher.pokemon.index > switcher.replacement)
+		switcher.pokemon.index = switcher.replacement;
+	else
+		switcher.pokemon.index = switcher.replacement - 1;
+	// Finally, remove the ability to switch to that Pokemon.
+	for (Pokemon & pokemon : switcher.pokemon.set) {
+		pokemon.move.set.pop_back();
+		// If there is only one Pokemon, there is no switching.
+		if (switcher.pokemon.set.size () == 1)
+			pokemon.move.set.pop_back ();
+	}
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {
-	if (grounded (switcher, weather) and switcher.pokemon().ability.name != Ability::MAGIC_GUARD) {
-		if (switcher.toxic_spikes != 0) {
-			if (is_type (switcher, Type::POISON))
-				switcher.toxic_spikes = 0;
-			else if (switcher.toxic_spikes == 1)
-				Status::poison (switcher, switcher, weather);
-			else
-				Status::poison_toxic (switcher, switcher, weather);
+	if (switcher.pokemon().ability.name != Ability::MAGIC_GUARD) {
+		if (grounded (switcher, weather)) {
+			if (switcher.toxic_spikes != 0) {
+				if (is_type (switcher, Type::POISON))
+					switcher.toxic_spikes = 0;
+				else if (switcher.toxic_spikes == 1)
+					Status::poison (switcher, switcher, weather);
+				else
+					Status::poison_toxic (switcher, switcher, weather);
+			}
+			if (switcher.spikes != 0)
+				heal (switcher.pokemon(), -16, switcher.spikes + 1);
 		}
-		if (switcher.spikes != 0)
-			heal (switcher.pokemon(), -16, switcher.spikes + 1);
+		// get_effectiveness () outputs a value between 0 and 16, with higher
+		// numbers being more effective. 4 * effective Stealth Rock does
+		// 16 / 32 damage.
+		if (switcher.stealth_rock)
+			heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
 	}
-	// get_effectiveness () outputs a value between 0 and 16, with higher numbers being more effective. 4 * effective Stealth Rock does 16 / 32 damage.
-	if (switcher.stealth_rock)
-		heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
 }
 
 void activate_ability (Team & switcher, Team & other, Weather & weather) {
 	// Activate abilities upon switching in
 
-	switcher.slow_start = 0;
 	switch (switcher.pokemon().ability.name) {
 		case Ability::SLOW_START:
 			switcher.slow_start = 5;
@@ -186,7 +203,7 @@ void activate_ability (Team & switcher, Team & other, Weather & weather) {
 		case Ability::DROUGHT:
 			weather.set_sun (-1);
 			break;
-		case Ability::FORECAST:	// fix
+		case Ability::FORECAST:	// TODO: fix this
 			break;
 		case Ability::INTIMIDATE:
 			Stat::boost (other.stage [Stat::ATK], -1);
@@ -204,4 +221,5 @@ void activate_ability (Team & switcher, Team & other, Weather & weather) {
 	}
 }
 
-}
+}	// unnamed namespace
+}	// namespace technicalmachine
