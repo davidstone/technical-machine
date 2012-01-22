@@ -33,33 +33,43 @@ namespace technicalmachine {
 
 class Team {
 	public:
-		std::string player;						// The player's name
+		std::string player;
 		Active<Pokemon> pokemon;
 
 		Vanish vanish;
-		int16_t damage;		// How much damage will this Pokemon do
+		// How much damage will this Pokemon do
+		int16_t damage;
 		int16_t bide_damage;
-		int16_t substitute;	// How much HP does the substitute have left?
 		int16_t chance_to_hit;
-		int8_t stage [Stat::END];		// -6 though 6
+		// -6 though 6
+		int8_t stage [Stat::END];
 		int8_t bide;
 		int8_t confused;
 		int8_t embargo;
 		int8_t encore;
 		int8_t heal_block;
 		int8_t magnet_rise;
-		int8_t partial_trap;		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm, Sand Tomb, Whirlpool, and Wrap
+		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm,
+		// Sand Tomb, Whirlpool, and Wrap
+		int8_t partial_trap;
 		int8_t perish_song;
-		int8_t rampage;			// Number of turns remaining on Outrage, Petal Dance, and Thrash
+		// Number of turns remaining on Outrage, Petal Dance, and Thrash
+		int8_t rampage;
 		int8_t slow_start;
 		int8_t stockpile;
+		// How much HP does the substitute have left?
+		int8_t substitute;
 		int8_t taunt;
-		int8_t toxic;				// Number of turns this Pokemon has already taken Toxic damage (or would have if Magic Guard / Poison Heal weren't in play)
-		int8_t uproar;			// Number of turns remaining on Uproar
+		// Number of turns this Pokemon has already taken Toxic damage (or
+		// would have if Magic Guard / Poison Heal weren't in play)
+		int8_t toxic;
+		// Number of turns remaining on Uproar
+		int8_t uproar;
 		int8_t yawn;
 		bool aqua_ring;
 		bool attract;
-		bool awaken;		// Will it wake up
+		// Will it wake up
+		bool awaken;
 		bool ch;
 		bool charge;
 		bool curse;
@@ -67,19 +77,21 @@ class Team {
 		bool defense_curl;
 		bool destiny_bond;
 		bool endure;
-		bool ff;				// Flash Fire
+		bool flash_fire;
 		bool flinch;
 		bool focus_energy;
 		bool fully_paralyzed;
 		bool gastro_acid;
-		bool hitself;			// Will this Pokemon hit itself in its confusion this turn?
+		// Will this Pokemon hit itself in its confusion this turn?
+		bool hitself;
 		bool identified;
-		bool imprison;			// Has this Pokemon used Imprison?
+		// Has this Pokemon used Imprison?
+		bool imprison;
 		bool ingrain;
 		bool leech_seed;
 		bool loaf;
 		bool lock_on;
-		bool mf;				// Me First
+		bool me_first;
 		bool minimize;
 		bool miss;
 		bool moved;
@@ -89,16 +101,22 @@ class Team {
 		bool power_trick;
 		bool protect;
 		bool recharging;
-		bool replacing;	// Replacing a fainted Pokemon. Also used for initial switch-in at start of battle.
+		// Replacing a fainted Pokemon. Also used for initial switch-in at
+		// start of battle.
+		bool replacing;
 		bool roost;
 		bool shed_skin;
 		bool torment;
-		bool trapped;			// Block, Mean Look, Spider Web
+		// Block, Mean Look, Spider Web
+		bool trapped;
 		bool u_turning;
 		bool water_sport;
-	
-		// Pokemon ddfs;		// Information about the attacker at the time of using Doom Desire / Future Sight
-		int8_t counter;			// Set to 3 initially, 1 = delayed attack hits at the end of this turn, 0 = not active
+		
+		// Attacker that used Doom Desire / Future Sight
+		// Pokemon ddfs;
+		// Set to 3 initially, 1 = delayed attack hits at the end of this turn,
+		// 0 = not active
+		int8_t counter;
 
 		// Number of turns remaining
 		int8_t light_screen;
@@ -144,5 +162,5 @@ class Team {
 		void load (std::string const & name, unsigned size);
 };
 
-}
+}	// namespace technicalmachine
 #endif	// TEAM_HPP_

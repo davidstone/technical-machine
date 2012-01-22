@@ -55,12 +55,12 @@ unsigned damageknown (Team const & attacker, Team const & defender, Weather cons
 	else
 		weather_mod = 2;
 
-	if (attacker.ff and attacker.pokemon().move().type == Type::FIRE)
+	if (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE)
 		ff = 3;
 	else
 		ff = 2;
 
-	if (attacker.mf)
+	if (attacker.me_first)
 		mf = 3;
 	else
 		mf = 2;

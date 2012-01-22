@@ -88,7 +88,7 @@ void reset_variables (Team & team) {
 	team.damaged = false;
 	team.defense_curl = false;
 	team.destiny_bond = false;
-	team.ff = false;
+	team.flash_fire = false;
 	team.flinch = false;
 	team.identified = false;
 	team.imprison = false;
@@ -96,7 +96,7 @@ void reset_variables (Team & team) {
 	// replaced; false makes it wrong otherwise
 	team.loaf = false;
 	team.minimize = false;
-	team.mf = false;
+	team.me_first = false;
 	team.mud_sport = false;
 	team.nightmare = false;
 	team.pass = false;

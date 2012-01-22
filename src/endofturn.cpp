@@ -1,5 +1,5 @@
 // End of turn effects
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -74,7 +74,7 @@ void endofturn0 (Team & team) {
 	team.endure = false;
 	team.flinch = false;
 	team.moved = false;
-	team.mf = false;
+	team.me_first = false;
 	if (team.loaf)
 		team.loaf = false;
 	else

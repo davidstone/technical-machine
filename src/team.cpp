@@ -50,7 +50,6 @@ Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
-	substitute (0),
 	chance_to_hit (100),
 	stage ({}),
 	bide (0),
@@ -64,6 +63,7 @@ Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 	rampage (0),
 	slow_start (0),
 	stockpile (0),
+	substitute (0),
 	taunt (0),
 	toxic (0),
 	uproar (0),
@@ -78,7 +78,7 @@ Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 	defense_curl (false),
 	destiny_bond (false),
 	endure (false),
-	ff (false),
+	flash_fire (false),
 	flinch (false),
 	focus_energy (false),
 	fully_paralyzed (false),
@@ -90,7 +90,7 @@ Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 	leech_seed (false),
 	loaf (false),
 	lock_on (false),
-	mf (false),
+	me_first (false),
 	minimize (false),
 	miss (false),
 	moved (false),
@@ -211,7 +211,6 @@ uint64_t Team::hash () const {
 			((stage [Stat::ACC] + 6) + (6 + 6 + 1) *
 			((stage [Stat::EVA] + 6) + (6 + 6 + 1) *
 			(((bide_damage < 714 / 2) ? bide_damage : 714 / 2) + (714 / 2 + 1) *
-			((substitute - 1) + (714 / 4) *
 			(bide + 3 *
 			(confused + 5 *
 			(embargo + 5 *
@@ -223,6 +222,7 @@ uint64_t Team::hash () const {
 			(rampage + 3 *
 			(slow_start + 3 *
 			(stockpile + 4 *
+			(substitute + (714 / 4 + 1) *
 			(taunt + 3 *
 			(toxic + 16 *
 			(uproar + 5 *
@@ -233,7 +233,7 @@ uint64_t Team::hash () const {
 			(curse + 2 *
 			(defense_curl + 2 *
 			(destiny_bond + 2 *
-			(ff + 2 *
+			(flash_fire + 2 *
 			(focus_energy + 2 *
 			(gastro_acid + 2 *
 			(identified + 2 *
@@ -269,12 +269,18 @@ void Team::load (std::string const & name, unsigned size) {
 	// the proper format. This must be changed if I ever allow arbitary teams
 	// to be used.
 
-	if (name.substr (name.length() - 3) == ".tp")
+	size_t const dot = name.rfind ('.');
+	// I include '.' in the extension to protect against malformed file names.
+	// If a file does not have a '.', I don't want to try to make a substr from
+	// std::string::npos + 1.
+	std::string extension = name.substr (dot);
+	boost::algorithm::to_lower (extension);
+	if (extension == ".tp")
 		po::load_team (*this, name, size);
-	else if (name.substr (name.length() - 4) == ".sbt")
+	else if (extension == ".sbt")
 		pl::load_team (*this, name, size);
 	else
-		std::cerr << "Unsupported file format.\n";
+		std::cerr << "Unsupported file format: " + extension + ".\n";
 	for (Pokemon & member : pokemon.set)
 		member.load();
 }
@@ -312,7 +318,7 @@ bool Team::operator== (Team const & other) const {
 			curse == other.curse and
 			defense_curl == other.defense_curl and
 			destiny_bond == other.destiny_bond and
-			ff == other.ff and
+			flash_fire == other.flash_fire and
 			focus_energy == other.focus_energy and
 			identified == other.identified and
 			imprison == other.imprison and
@@ -353,7 +359,7 @@ std::string Team::to_string () const {
 	output += ") team:\n";
 	for (Pokemon const & member : pokemon.set) {
 		output += member.to_string();
-		double const d_per_cent_hp = 100.0 * static_cast<double> (member.hp.stat) / static_cast<double> (member.hp.max);
+		double const d_per_cent_hp = 100.0 * member.hp.stat / member.hp.max;
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
 		output += " (" + per_cent_hp + "% HP)";
 		output += " @ " + member.item.to_string ();
@@ -361,11 +367,11 @@ std::string Team::to_string () const {
 		if (member.ability.is_set ())
 			output += "\tAbility: " + member.ability.to_string () + '\n';
 		if (member.status.name != Status::NO_STATUS)
-			output += "\tStatus: " + member.status.to_string () + "\n";
+			output += "\tStatus: " + member.status.to_string () + '\n';
 		for (std::vector<Move>::const_iterator move = member.move.set.begin(); move->name != Move::STRUGGLE; ++move)
 			output += "\t- " + move->to_string() + "\n";
 	}
 	return output;
 }
 
-}
+}	// namespace technicalmachine
