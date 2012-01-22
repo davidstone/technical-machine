@@ -118,19 +118,14 @@ num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 3))
 Decider('MD5-timestamp')
 SetOption('num_jobs', num_cpu * 3 / 2)
 
-def copy_settings(target, source, env):
-	source_str = str(source [0])
-	target_str = str(target [0])
-	shutil.copy2(source_str, target_str)
-		
 def check_if_exists (dependency, target, prev_ni):
 	return not os.path.exists(str(target))
 
-settings_builder = Builder(action = copy_settings)
-settings_env = Environment(BUILDERS = {'Update' : settings_builder })
-for settings_file in Glob('settings/*.template'):
-	NoClean(settings_env.Update(settings_file))
+settings_env = Environment()
 settings_env.Decider(check_if_exists)
+for settings_file in Glob('src/settings/*.template', strings=True):
+	target_file = os.path.basename(settings_file) [:-9]
+	NoClean(settings_env.InstallAs('settings/' + target_file, settings_file))
 
 def create_team_directory (target, source, env):
 	dir_str = str (target [0])

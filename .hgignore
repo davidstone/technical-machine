@@ -2,11 +2,17 @@ syntax: glob
 
 *.o
 
-ai
-aio
-predict
-rdc
-rdco
+syntax: regexp
+
+^ai
+^aio
+^predict
+^rdc
+^rdco
+^test
+^testo
+
+syntax: glob
 
 .sconsign.dblite
 
