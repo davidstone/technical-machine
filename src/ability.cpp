@@ -1,5 +1,5 @@
 // Ability data structure
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -67,12 +67,7 @@ bool Ability::blocks_burn (Weather const & weather) const {
 }
 
 bool Ability::blocks_freeze () const {
-	switch (name) {
-		case MAGMA_ARMOR:
-			return true;
-		default:
-			return false;
-	}
+	return name == MAGMA_ARMOR;
 }
 
 bool Ability::blocks_paralysis (Weather const & weather) const {
