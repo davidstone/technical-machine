@@ -30,16 +30,19 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
+namespace {
 
-static void endofturn0 (Team & team);
-static void endofturn1 (Team & team);
-static void endofturn2 (Team & team);
-static void endofturn3 (Team & team, Weather const & weather);
-static void endofturn5 (Team & team, Pokemon & foe, Weather & weather);
-static void endofturn6 (Team & target, Weather const & weather);
-static void endofturn7 (Team & team);
-static void reset_variable (Team & team);
-static void decrement (int8_t & n);
+void endofturn0 (Team & team);
+void endofturn1 (Team & team);
+void endofturn2 (Team & team);
+void endofturn3 (Team & team, Weather const & weather);
+void endofturn5 (Team & team, Pokemon & foe, Weather & weather);
+void endofturn6 (Team & target, Weather const & weather);
+void endofturn7 (Team & team);
+void reset_variable (Team & team);
+void decrement (int8_t & n);
+
+}	// unnamed namespace
 
 void endofturn (Team & first, Team & last, Weather & weather) {
 	endofturn0 (first);
@@ -68,6 +71,8 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	reset_variable (last);
 }
 
+namespace {
+
 void endofturn0 (Team & team) {
 	team.damage = 0;
 	team.damaged = false;
@@ -75,10 +80,7 @@ void endofturn0 (Team & team) {
 	team.flinch = false;
 	team.moved = false;
 	team.me_first = false;
-	if (team.loaf)
-		team.loaf = false;
-	else
-		team.loaf = true;
+	team.loaf ^= 1;
 	team.protect = false;
 	team.replacing = false;
 }
@@ -207,7 +209,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		heal (team.pokemon(), -4);
 	if (team.partial_trap > 0) {
 		heal (team.pokemon(), -16);
-		--team.partial_trap;				// No need to use decrement here, as I already know team.partial_trap > 0
+		--team.partial_trap;
 	}
 	
 	// Can't use decrement here because I only want to cause confusion when team.rampage becomes 0.
@@ -261,4 +263,5 @@ void decrement (int8_t & n) {
 		--n;
 }
 
-}
+}	// unnamed namespace
+}	// namespace technicalmachine
