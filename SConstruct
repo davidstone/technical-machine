@@ -65,7 +65,7 @@ rdc_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp']
 rdc_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp']
 rdc_libraries = ['boost_filesystem', 'boost_system']
 
-test_sources = ['test/test.cpp', 'test/damage.cpp', 'test/string_conversion.cpp', 'test/pokemon_lab/conversion.cpp', 'test/pokemon_lab/team_file.cpp', 'test/pokemon_lab/test.cpp', 'test/pokemon_online/conversion.cpp', 'test/pokemon_online/team_file.cpp', 'test/pokemon_online/test.cpp']
+test_sources = ['test/test.cpp', 'test/damage.cpp', 'test/stat.cpp', 'test/string_conversion.cpp', 'test/pokemon_lab/conversion.cpp', 'test/pokemon_lab/team_file.cpp', 'test/pokemon_lab/test.cpp', 'test/pokemon_online/conversion.cpp', 'test/pokemon_online/team_file.cpp', 'test/pokemon_online/test.cpp']
 test_sources += ['ability.cpp', 'ability_string.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'gender_string.cpp', 'heal.cpp', 'item.cpp', 'item_string.cpp', 'move.cpp', 'move_power.cpp', 'move_string.cpp', 'nature.cpp', 'nature_string.cpp', 'pokemon.cpp', 'pokemon_string.cpp', 'stat.cpp', 'status.cpp', 'status_string.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
 test_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/write_team_file.cpp']
 test_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp', 'pokemon_online/write_team_file.cpp']

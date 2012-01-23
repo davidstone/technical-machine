@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT_H_
-#define STAT_H_
+#ifndef STAT_HPP_
+#define STAT_HPP_
 
 #include <cstdint>
 #include <stdexcept>
@@ -71,8 +71,9 @@ unsigned hitpoints (Pokemon & member);
 void calculate_attacking_stat (Team & attacker, Weather const & weather);
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
 
-// Needed in header for Download.
-void calculate_defense (Team const & attacker, Team & defender, Weather const & weather);
+void calculate_attack (Team & attacker, Weather const & weather);
+void calculate_special_attack (Team & attacker, Weather const & weather);
+void calculate_defense (Team & defender, bool ch = false, bool is_self_KO = false);
 void calculate_special_defense (Team & defender, Weather const & weather, bool ch = false);
 
 void calculate_speed (Team & team, Weather const & weather);
@@ -80,5 +81,5 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 void chance_to_hit (Team & user, Team const & target, Weather const & weather);
 
-}
-#endif		// STAT_H_
+}	// namespace technicalmachine
+#endif	// STAT_HPP_

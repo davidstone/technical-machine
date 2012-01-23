@@ -34,8 +34,6 @@ namespace technicalmachine {
 
 namespace {
 
-void calculate_attack (Team & attacker, Weather const & weather);
-void calculate_special_attack (Team & attacker, Weather const & weather);
 unsigned calculate_initial_stat (Stat const & stat, unsigned level);
 
 unsigned atk_nature_boost (Nature nature);
@@ -99,8 +97,6 @@ void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 		calculate_special_attack (attacker, weather);
 }
 
-namespace {
-
 void calculate_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
 	pokemon.atk.stat = !attacker.power_trick ?
@@ -130,47 +126,45 @@ void calculate_special_attack (Team & attacker, Weather const & weather) {
 		pokemon.spa.stat = 1;
 }
 
-}	// anonymous namespace
-
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
 	if (attacker.pokemon().move().physical)
-		calculate_defense (attacker, defender, weather);
+		calculate_defense (defender, attacker.ch, attacker.pokemon().move().is_self_KO());
 	else
 		calculate_special_defense (defender, weather, attacker.ch);
 }
 
-void calculate_defense (Team const & attacker, Team & defender, Weather const & weather) {
-	Pokemon & defender_p = defender.pokemon ();
-	defender_p.def.stat = !defender.power_trick ?
+void calculate_defense (Team & defender, bool ch, bool is_self_KO) {
+	Pokemon & pokemon = defender.pokemon ();
+	pokemon.def.stat = !defender.power_trick ?
 		calculate_defense_before_power_trick (defender.pokemon ()) :
 		calculate_attack_before_power_trick (defender.pokemon ());
 
-	defender_p.def.stat = defending_stage_modifier (defender_p.def, defender.stage [Stat::DEF], attacker.ch);
+	pokemon.def.stat = defending_stage_modifier (pokemon.def, defender.stage [Stat::DEF], ch);
 	
-	defender_p.def.stat = defense_ability_modifier (defender.pokemon ());
-	defender_p.def.stat = defense_item_modifier (defender.pokemon ());
+	pokemon.def.stat = defense_ability_modifier (defender.pokemon ());
+	pokemon.def.stat = defense_item_modifier (defender.pokemon ());
 	
-	if (attacker.pokemon().move().is_self_KO ())
-		defender_p.def.stat /= 2;
+	if (is_self_KO)
+		pokemon.def.stat /= 2;
 
-	if (defender_p.def.stat == 0)
-		defender_p.def.stat = 1;
+	if (pokemon.def.stat == 0)
+		pokemon.def.stat = 1;
 }
 
 void calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
-	Pokemon & defender_p = defender.pokemon ();
-	defender_p.spd.stat = calculate_initial_stat (defender_p.spd, defender_p.level);
-	defender_p.spd.stat = defender_p.spd.stat * spd_nature_boost (defender_p.nature) / 10;
+	Pokemon & pokemon = defender.pokemon ();
+	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level);
+	pokemon.spd.stat = pokemon.spd.stat * spd_nature_boost (pokemon.nature) / 10;
 	
-	defender_p.spd.stat = defending_stage_modifier (defender_p.spd, defender.stage [Stat::SPD], ch);
+	pokemon.spd.stat = defending_stage_modifier (pokemon.spd, defender.stage [Stat::SPD], ch);
 
-	defender_p.spd.stat = special_defense_ability_modifier (defender_p, weather);	
-	defender_p.spd.stat = special_defense_item_modifier (defender.pokemon ());
+	pokemon.spd.stat = special_defense_ability_modifier (pokemon, weather);	
+	pokemon.spd.stat = special_defense_item_modifier (defender.pokemon ());
 	
-	defender_p.spd.stat = special_defense_sandstorm_boost (defender, weather);
+	pokemon.spd.stat = special_defense_sandstorm_boost (defender, weather);
 	
-	if (defender_p.spd.stat == 0)
-		defender_p.spd.stat = 1;
+	if (pokemon.spd.stat == 0)
+		pokemon.spd.stat = 1;
 }
 
 void calculate_speed (Team & team, Weather const & weather) {
@@ -467,7 +461,7 @@ unsigned special_attack_item_modifier (Pokemon const & attacker) {
 }
 
 unsigned defense_ability_modifier (Pokemon const & defender) {
-	if (!(defender.ability.name == Ability::MARVEL_SCALE and defender.status.name == Status::NO_STATUS))
+	if (!(defender.ability.name == Ability::MARVEL_SCALE and defender.status.name != Status::NO_STATUS))
 		return defender.def.stat;
 	else
 		return defender.def.stat * 3 / 2;

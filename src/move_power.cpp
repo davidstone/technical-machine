@@ -1,5 +1,5 @@
 // Move power calculator
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -445,5 +445,5 @@ unsigned defender_ability_modifier (Move const & move, Ability::Abilities abilit
 	return modifier;
 }
 
-}	// anonymous namespace
+}	// unnamed namespace
 }	// namespace technicalmachine

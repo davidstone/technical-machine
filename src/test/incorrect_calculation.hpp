@@ -1,4 +1,4 @@
-// Test stuff
+// Incorrect Calculation class
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,24 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#include <stdexcept>
+#include <string>
 
-#include "damage.hpp"
-#include "stat.hpp"
-#include "string_conversion.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+namespace technicalmachine {
 
-int main () {
-	using namespace technicalmachine;
-	
-	stat_tests ();
-	damage_tests ();
-	string_conversion_tests ();
+class IncorrectCalculation : public std::logic_error {
+	public:
+		IncorrectCalculation (unsigned result, unsigned expected):
+			logic_error ("Result of " + std::to_string (result) + " instead of the expected " + std::to_string (expected) + "\n")
+			{
+		}
+};
 
-	pl::test ();
-	po::test ();
-
-	std::cout << "All tests passed.\n";
-	return 0;
-}
+}	// namespace technicalmachine

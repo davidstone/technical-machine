@@ -190,7 +190,7 @@ void activate_ability (Team & switcher, Team & other, Weather & weather) {
 			switcher.slow_start = 5;
 			break;
 		case Ability::DOWNLOAD:
-			calculate_defense (switcher, other, weather);
+			calculate_defense (other);
 			calculate_special_defense (other, weather);
 			if (other.pokemon().def.stat >= other.pokemon().spd.stat)
 				Stat::boost (switcher.stage [Stat::SPA], 1);
