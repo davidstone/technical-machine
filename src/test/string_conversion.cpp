@@ -22,10 +22,10 @@
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
-#include "../invalid_string_conversion.hpp"
 #include "../move.hpp"
 #include "../nature.hpp"
 #include "../pokemon.hpp"
+#include "../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {
 namespace {

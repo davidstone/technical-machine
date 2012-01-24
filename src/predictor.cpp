@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "invalid_string_conversion.hpp"
+#include "string_conversions/invalid_string_conversion.hpp"
 #include "load_stats.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
