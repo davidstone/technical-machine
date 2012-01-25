@@ -1,5 +1,5 @@
-// heal declaration
-// Copyright (C) 2011 David Stone
+// Function to change a Pokemon's HP by a fractional multiplier
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEAL_H_
-#define HEAL_H_
+#ifndef HEAL_HPP_
+#define HEAL_HPP_
 
 namespace technicalmachine {
 
@@ -25,5 +25,5 @@ class Pokemon;
 
 void heal (Pokemon & member, int denominator, unsigned numerator = 1);
 
-} // namespace technicalmachine
-#endif // HEAL_H_
+}	// namespace technicalmachine
+#endif	// HEAL_HPP_

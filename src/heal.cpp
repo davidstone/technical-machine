@@ -1,5 +1,5 @@
-// Function to heal Pokemon
-// Copyright (C) 2011 David Stone
+// Function to change a Pokemon's HP by a fractional multiplier
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,25 +23,25 @@
 
 namespace technicalmachine {
 
-void heal (Pokemon &member, int denominator, unsigned numerator) {
-	if (member.hp.stat != 0) {
-		if (denominator > 0) {
-			if (member.hp.max * numerator <= static_cast <unsigned> (2 * denominator - 1))
-				++member.hp.stat;
+void heal (Pokemon & member, int denominator, unsigned numerator) {
+	if (member.hp.stat == 0)
+		return;
+	if (denominator > 0) {
+		if (member.hp.max * numerator <= static_cast <unsigned> (2 * denominator - 1))
+			++member.hp.stat;
+		else
+			member.hp.stat += member.hp.max * numerator / denominator;
+		if (member.hp.stat > member.hp.max)
+			member.hp.stat = member.hp.max;
+	}
+	else {
+		if (member.ability.name != Ability::MAGIC_GUARD) {
+			if (member.hp.max * numerator <= static_cast <unsigned> (-2 * denominator - 1))
+				-- member.hp.stat;
 			else
-				member.hp.stat += member.hp.max * numerator / denominator;
-			if (member.hp.stat > member.hp.max)
-				member.hp.stat = member.hp.max;
-		}
-		else {
-			if (member.ability.name != Ability::MAGIC_GUARD) {
-				if (member.hp.max * numerator <= static_cast <unsigned> (-2 * denominator - 1))
-					-- member.hp.stat;
-				else
-					damage_side_effect (member, member.hp.max * numerator / (-denominator));
-			}
+				damage_side_effect (member, member.hp.max * numerator / (-denominator));
 		}
 	}
 }
 
-}
+}	// namespace technicalmachine
