@@ -37,12 +37,13 @@ class OutMessage;
 } // namespace network
 
 class GenericBattle {
+	protected:
+		std::mt19937 random_engine;
 	public:
 		Team ai;
 		Team foe;
 	protected:
 		Weather weather;
-		std::mt19937 random_engine;
 		std::vector <Species> slot_memory;
 		int depth;
 		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that message. This helps keep track of information on future messages so I can do things like assign critical hits to the right move.

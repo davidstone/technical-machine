@@ -189,7 +189,7 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
 		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
 		int const pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
-		if (pixels != pokemon.new_hp and (pokemon.new_hp + 1 < pixels or pixels < pokemon.new_hp - 1)) {
+		if (pixels != pokemon.new_hp) {
 			int const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
 			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
 			if (!team.me)

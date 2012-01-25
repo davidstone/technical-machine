@@ -138,6 +138,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case HP_CHANGE: {
+			std::cerr << "HP_CHANGE\n";
 			bool const my_team = player == party;
 			int16_t const remaining_hp = msg.read_short ();
 			int16_t const change_in_hp = my_team ?
