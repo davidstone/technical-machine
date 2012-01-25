@@ -1,5 +1,5 @@
 // Type information
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TYPE_H_
-#define TYPE_H_
+#ifndef TYPE_HPP_
+#define TYPE_HPP_
 
 #include <vector>
 
@@ -69,4 +69,4 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 bool grounded (Team const & team, Weather const & weather);
 
 }	// namespace technicalmachine
-#endif	// TYPE_H_
+#endif	// TYPE_HPP_

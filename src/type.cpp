@@ -1,5 +1,5 @@
 // Type function definitions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -95,7 +95,7 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 }
 
 bool grounded (Team const & team, Weather const & weather) {
-	return (!is_type (team, Type::FLYING) and team.pokemon().ability.name != Ability::LEVITATE and team.magnet_rise == 0) or weather.gravity != 0 or team.pokemon().item.name == Item::IRON_BALL or team.ingrain;
+	return !(is_type (team, Type::FLYING) or team.pokemon().ability.name == Ability::LEVITATE or team.magnet_rise) or weather.gravity or team.pokemon().item.name == Item::IRON_BALL or team.ingrain;
 }
 
 bool TypeCollection::is_immune_to_sandstorm () const {
@@ -112,4 +112,4 @@ bool TypeCollection::is_immune_to_sandstorm () const {
 	return false;
 }
 
-}
+}	// namespace technicalmachine
