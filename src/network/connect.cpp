@@ -31,6 +31,7 @@
 #include <boost/asio/error.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/filesystem.hpp>
 
 #include "battle_settings.hpp"
 
@@ -288,10 +289,13 @@ void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
 		}
 		print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
 		if (result == LOST) {
-			std::string foe_team_file = "teams/foe/";
-			foe_team_file += get_random_string ();
-			foe_team_file += get_extension ();
-			// TODO: add support for other formats
+			std::string foe_team_file;
+			do {
+				foe_team_file = "teams/foe/";
+				foe_team_file += get_random_string ();
+				foe_team_file += get_extension ();
+				// TODO: add support for other formats
+			} while (boost::filesystem::exists (foe_team_file));
 			Team predicted = battle.foe;
 			predict_team (detailed, predicted, battle.ai.size);
 			pl::write_team (predicted, foe_team_file);
