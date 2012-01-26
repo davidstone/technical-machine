@@ -1,5 +1,5 @@
 // Declaration of functions that block selection / execution
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BLOCK_H_
-#define BLOCK_H
+#ifndef BLOCK_HPP_
+#define BLOCK_HPP_
 
 namespace technicalmachine {
 
 class Team;
 class Weather;
 
-void block_execution (Team & user, Team const & other, Weather const & weather);
-void block_selection (Team & user, Team const & other, Weather const & weather);
+bool is_legal_selection (Team const & user, Team const & other, Weather const & weather);
+bool can_execute_move (Team & user, Team const & other, Weather const & weather);
 
 }	// namespace technicalmachine
-#endif	// BLOCK_H_
+#endif	// BLOCK_HPP_

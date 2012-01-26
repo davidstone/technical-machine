@@ -249,9 +249,8 @@ unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_da
 	user.destiny_bond = false;
 	user.lock_on = false;
 	user.moved = true;
-	user.pokemon().move().execute = true;
-	block_execution (user, target, weather);
-	if (user.pokemon().move().execute) {
+	bool const execute = can_execute_move (user, target, weather);
+	if (execute) {
 		lower_pp (user, target.pokemon());
 		size_t index = user.pokemon().move.index;
 		switch (user.pokemon().move().name) {
@@ -268,8 +267,9 @@ unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_da
 			default:
 				if (!user.miss)
 					damage = usemove2 (user, target, weather, log_damage);
-				user.pokemon().move.index = index;
+				break;
 		}
+		user.pokemon().move.index = index;
 	}
 	return damage;
 }

@@ -172,8 +172,9 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
 	if (move_damage) {
-		unsigned effectiveness = get_effectiveness (other.at_replacement().move().type, changer.at_replacement ());
-		if ((effectiveness > 0) and (other.at_replacement().move().type != Type::GROUND or grounded (changer, weather))) {
+		Type const type = other.at_replacement().move().type;
+		unsigned const effectiveness = get_effectiveness (type, changer.at_replacement ());
+		if ((effectiveness > 0) and (type != Type::GROUND or grounded (changer, weather))) {
 			changer.damage = changer.at_replacement().hp.max * change_in_health / denominator;
 			if (static_cast <unsigned> (changer.damage) > changer.at_replacement().hp.stat)
 				changer.damage = changer.at_replacement().hp.stat;

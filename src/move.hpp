@@ -136,8 +136,8 @@ class Move {
 		int64_t score;
 		int16_t basepower;
 		int16_t power;
-		bool execute;
 		bool physical;
+		// I maintain the selectable state to determine if Struggle is legal
 		bool selectable;
 		int8_t accuracy;		// A number between 0 (1?) and 100, according to poccil. -1 means never miss
 		int8_t disable;			// Number of turns left on this move being Disabled (4-7)
