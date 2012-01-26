@@ -19,7 +19,6 @@
 #include "stat.hpp"
 
 #include <iostream>
-#include <random>
 #include <string>
 
 #include "incorrect_calculation.hpp"
@@ -36,10 +35,7 @@ constexpr unsigned team_size = 6;
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";
 	constexpr unsigned max_attack = 7368;
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team attacker (false, team_size, unused);
+	Team attacker;
 
 	attacker.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = attacker.pokemon();
@@ -62,10 +58,7 @@ void special_attack_tests () {
 	constexpr unsigned max_special_attack = 4536;
 	Weather weather;
 	weather.set_sun (-1);
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team attacker (false, team_size, unused);
+	Team attacker;
 
 	attacker.pokemon.set.push_back (Pokemon (Species::DEOXYS_A, team_size));
 	Pokemon & pokemon = attacker.pokemon();
@@ -87,10 +80,7 @@ void defense_tests () {
 	std::cout << "\tRunning Defense tests.\n";
 	constexpr unsigned max_defense = 3684;
 
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team defender (false, team_size, unused);
+	Team defender;
 
 	defender.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = defender.pokemon();
@@ -112,10 +102,7 @@ void special_defense_tests () {
 	std::cout << "\tRunning Special Defense tests.\n";
 	constexpr unsigned max_special_defense = 3684;
 
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team defender (false, team_size, unused);
+	Team defender;
 	Weather weather;
 	weather.set_sand (-1);
 
@@ -138,10 +125,7 @@ void speed_tests () {
 	Weather weather;
 	weather.set_rain (-1);
 
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team team (false, team_size, unused);
+	Team team;
 
 	team.pokemon.set.push_back (Pokemon (Species::DEOXYS_S, team_size));
 	Pokemon & pokemon = team.pokemon();

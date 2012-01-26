@@ -45,6 +45,7 @@ namespace technicalmachine {
 namespace network {
 
 GenericClient::GenericClient (int set_depth):
+	random_engine (rd ()),
 	detailed ({{ 0 }}),
 	depth (set_depth)
 	{

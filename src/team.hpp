@@ -148,7 +148,8 @@ class Team {
 		// Is this my team?
 		bool me;
 		
-		Team (bool isme, unsigned size, std::mt19937 & random_engine);
+		Team ();
+		Team (unsigned foe_size, std::mt19937 & random_engine);
 		bool operator== (Team const & other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;

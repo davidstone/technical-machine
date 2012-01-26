@@ -16,9 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_BATTLE_H_
-#define POKEMON_ONLINE_BATTLE_H_
+#ifndef POKEMON_ONLINE_BATTLE_HPP_
+#define POKEMON_ONLINE_BATTLE_HPP_
 
+#include <random>
 #include <string>
 #include <vector>
 #include "outmessage.hpp"
@@ -34,8 +35,8 @@ class Battle : public GenericBattle {
 	private:
 		OutMessage action;
 	public:
-		Battle (std::string const & opponent, int const battle_depth);
-		Battle (std::string const & opponent, int const battle_depth, Team const & team);
+		Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth);
+		Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth, Team const & team);
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg);
 	private:
 		unsigned get_max_damage_precision () const;
@@ -46,4 +47,4 @@ class Battle : public GenericBattle {
 
 }	// namespace po
 }	// namespace technicalmachine
-#endif	// POKEMON_ONLINE_BATTLE_H_
+#endif	// POKEMON_ONLINE_BATTLE_HPP_

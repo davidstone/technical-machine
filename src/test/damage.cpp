@@ -19,7 +19,6 @@
 #include "damage.hpp"
 
 #include <iostream>
-#include <random>
 
 #include "incorrect_calculation.hpp"
 
@@ -34,10 +33,7 @@ namespace {
 constexpr unsigned team_size = 6;
 
 Team create_max_damage_physical_attacker () {
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team attacker (false, team_size, unused);
+	Team attacker;
 
 	attacker.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = attacker.pokemon();
@@ -50,10 +46,7 @@ Team create_max_damage_physical_attacker () {
 }
 
 Team create_max_damage_special_attacker () {
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team attacker (false, team_size, unused);
+	Team attacker;
 
 	attacker.pokemon.set.push_back (Pokemon (Species::DEOXYS_A, team_size));
 	attacker.pokemon().hp.stat = 1;
@@ -62,20 +55,14 @@ Team create_max_damage_special_attacker () {
 }
 
 Team create_max_damage_physical_defender () {
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team defender (false, team_size, unused);
+	Team defender;
 	defender.pokemon.set.push_back (Pokemon (Species::COMBEE, team_size));
 
 	return defender;
 }
 
 Team create_max_damage_special_defender () {
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team defender (false, team_size, unused);
+	Team defender;
 	defender.pokemon.set.push_back (Pokemon (Species::PARAS, team_size));
 
 	return defender;

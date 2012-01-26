@@ -32,7 +32,7 @@ class Client;
 
 class Battle : public GenericBattle {
 	public:
-		Battle (std::string const & opponent, int battle_depth);
+		Battle (std::random_device::result_type seed, std::string const & opponent, int battle_depth);
 		void handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments);
 		void update_active_print (std::vector <std::string> const & arguments);
 		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);

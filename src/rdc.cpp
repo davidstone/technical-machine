@@ -46,9 +46,9 @@ int main () {
 	std::cerr << "Loading detailed stats.\n";
 	detailed_stats (detailed);
 	std::cerr << "Loading ai.\n";
-	Team ai (true, 6, random_engine);
+	Team ai (6, random_engine);
 	std::cerr << "Loading foe.\n";
-	Team foe (false, ai.size, random_engine);
+	Team foe;
 	std::cerr << "Teams created.\n";
 
 	Pokemon member (INFERNAPE, foe.size);

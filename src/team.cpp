@@ -20,7 +20,6 @@
 
 #include <cstdint>
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -42,11 +41,18 @@
 #include "pokemon_lab/read_team_file.hpp"
 #include "pokemon_online/read_team_file.hpp"
 
+#include <iostream>
+
 namespace technicalmachine {
 
 static void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
 
-Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
+// I copy + pasted this constructor as a temporary measure. When GCC 4.7 is
+// released and there is support for delegating constructors and non-static
+// data member initializers, I will replace this with one of (or both of) those
+// facilities.
+
+Team::Team () :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -126,38 +132,120 @@ Team::Team (bool isme, unsigned size, std::mt19937 & random_engine) :
 
 	replacement (0),
 	size (6),
-	me (isme)
+	me (false)
 	{
-	if (me) {
-		std::string line;
-		boost::filesystem::path team_file;
-		std::ifstream settings ("settings/settings.txt");
-		std::string const comment = "//";
-		std::string const delimiter = ": ";
-		for (getline (settings, line); !settings.eof(); getline (settings, line)) {
-			if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-				size_t found = line.find (delimiter);
-				std::string const data = line.substr (0, found);
-				if (data == "username") {
-					player = line.substr (found + delimiter.length());
-					boost::algorithm::trim (player);
-				}
-				else if (data == "team") {
-					std::string team_file_name = line.substr (found + delimiter.length());
-					boost::algorithm::trim (team_file_name);
-					team_file = team_file_name;
-				}
+}
+
+Team::Team (unsigned foe_size, std::mt19937 & random_engine) :
+	vanish (LANDED),
+	damage (0),
+	bide_damage (0),
+	chance_to_hit (100),
+	stage ({}),
+	bide (0),
+	confused (0),
+	embargo (0),
+	encore (0),
+	heal_block (0),
+	magnet_rise (0),
+	partial_trap (0),
+	perish_song (0),
+	rampage (0),
+	slow_start (0),
+	stockpile (0),
+	substitute (0),
+	taunt (0),
+	toxic (0),
+	uproar (0),
+	yawn (0),
+	aqua_ring (false),
+	attract (false),
+	awaken (false),
+	ch (false),
+	charge (false),
+	curse (false),
+	damaged (false),
+	defense_curl (false),
+	destiny_bond (false),
+	endure (false),
+	flash_fire (false),
+	flinch (false),
+	focus_energy (false),
+	fully_paralyzed (false),
+	gastro_acid (false),
+	hitself (false),
+	identified (false),
+	imprison (false),
+	ingrain (false),
+	leech_seed (false),
+	loaf (false),
+	lock_on (false),
+	me_first (false),
+	minimize (false),
+	miss (false),
+	moved (false),
+	mud_sport (false),
+	nightmare (false),
+	pass (false),
+	power_trick (false),
+	protect (false),
+	recharging (false),
+	// Initial switch mechanics are the same as replacing a fainted Pokemon
+	replacing (true),
+	roost (false),
+	shed_skin (false),
+	torment (false),
+	trapped (false),
+	u_turning (false),
+	water_sport (false),
+	
+	counter (0),
+
+	light_screen (0),
+	lucky_chant (0),
+	mist (0),
+	reflect (0),
+	safeguard (0),
+	tailwind (0),
+
+	wish (0),
+
+	spikes (0),
+	toxic_spikes (0),
+	stealth_rock (false),
+
+	replacement (0),
+	size (6),
+	me (true)
+	{
+	std::string line;
+	boost::filesystem::path team_file;
+	std::ifstream settings ("settings/settings.txt");
+	std::string const comment = "//";
+	std::string const delimiter = ": ";
+	for (getline (settings, line); !settings.eof(); getline (settings, line)) {
+		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
+			size_t found = line.find (delimiter);
+			std::string const data = line.substr (0, found);
+			if (data == "username") {
+				player = line.substr (found + delimiter.length());
+				boost::algorithm::trim (player);
+			}
+			else if (data == "team") {
+				std::string team_file_name = line.substr (found + delimiter.length());
+				boost::algorithm::trim (team_file_name);
+				team_file = team_file_name;
 			}
 		}
-		settings.close();
-		std::vector <boost::filesystem::path> files;
-		open_directory_and_add_files (team_file, files);
-		std::uniform_int_distribution <size_t> distribution { 0, files.size () - 1 };
-		team_file = files [distribution (random_engine)];
-		load (team_file.string(), size);
-		for (Pokemon & member : pokemon.set)
-			member.new_hp = member.hp.max;
 	}
+	settings.close();
+	std::vector <boost::filesystem::path> files;
+	open_directory_and_add_files (team_file, files);
+	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
+	team_file = files [distribution (random_engine)];
+	load (team_file.string(), foe_size);
+	for (Pokemon & member : pokemon.set)
+		member.new_hp = member.hp.max;
 }
 
 void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files) {

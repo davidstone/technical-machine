@@ -41,14 +41,12 @@ class Data {
 		std::vector<Fl_Input *> input;
 		Fl_Multiline_Output * output;
 		int detailed [Species::END][7];
-		std::mt19937 random_engine;
 };
 
 void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	
-	constexpr bool is_me = false;
-	Team team (is_me, 6, data.random_engine);
+	Team team;
 	bool using_lead;
 	for (Fl_Input * in : data.input) {
 		Species species;

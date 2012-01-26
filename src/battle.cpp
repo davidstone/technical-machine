@@ -19,6 +19,7 @@
 #include "battle.hpp"
 
 #include <cstdint>
+#include <ctime>
 #include <iostream>
 #include <random>
 #include <string>
@@ -39,9 +40,9 @@
 
 namespace technicalmachine {
 
-GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
-	ai (true, 6, random_engine),
-	foe (false, ai.size, random_engine),
+GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth):
+	random_engine (seed),
+	ai (6, random_engine),
 	depth (battle_depth),
 	active (nullptr),
 	inactive (nullptr),
@@ -53,9 +54,9 @@ GenericBattle::GenericBattle (std::string const & opponent, int battle_depth):
 	initialize_turn ();
 }
 
-GenericBattle::GenericBattle (std::string const & opponent, int battle_depth, Team const & team):
+GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth, Team const & team):
+	random_engine (seed),
 	ai (team),
-	foe (false, ai.size, random_engine),
 	depth (battle_depth),
 	party (-1)
 	{

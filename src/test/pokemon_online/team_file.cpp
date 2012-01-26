@@ -19,7 +19,6 @@
 #include "team_file.hpp"
 
 #include <iostream>
-#include <random>
 
 #include "../../team.hpp"
 #include "../../pokemon_online/read_team_file.hpp"
@@ -30,10 +29,7 @@ namespace po {
 
 void test_team_file () {
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
-	// Temporary until I redesign my Team constructor to not require a random
-	// engine when it's not needed.
-	std::mt19937 unused;
-	Team team (false, 6, unused);
+	Team team;
 	load_team (team, "src/test/test1.tp", 6);
 	write_team (team, "src/test/test2.tp");
 }

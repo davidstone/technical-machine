@@ -55,8 +55,8 @@ class GenericBattle {
 	public:
 		uint8_t party;
 	protected:
-		GenericBattle (std::string const & opponent, int battle_depth);
-		GenericBattle (std::string const & opponent, int battle_depth, Team const & team);
+		GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth);
+		GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth, Team const & team);
 	public:
 		void handle_begin_turn (uint16_t turn_count) const;
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);

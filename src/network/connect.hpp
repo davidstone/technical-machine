@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_CONNECT_H_
-#define NETWORK_CONNECT_H_
+#ifndef NETWORK_CONNECT_HPP_
+#define NETWORK_CONNECT_HPP_
 
 #include <cstdint>
 #include <map>
@@ -43,6 +43,7 @@ class GenericClient {
 		std::string password;
 		std::string host;
 		std::string port;
+		std::random_device rd;
 		std::mt19937 random_engine;
 	private:
 		std::string time_format;
@@ -120,4 +121,4 @@ class GenericClient {
 };
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_CONNECT_H_
+#endif	// NETWORK_CONNECT_HPP_

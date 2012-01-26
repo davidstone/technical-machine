@@ -43,7 +43,7 @@ namespace po {
 
 Client::Client (int depth_):
 	network::GenericClient (depth_),
-	team (true, 6, random_engine) {
+	team (6, random_engine) {
 	log_in ();
 }
 
@@ -588,7 +588,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	// work. It would require using a queue instead of a map.
 	try {
 		if (challenges.empty () and get_user_id (opponent)) {
-			std::shared_ptr <Battle> battle (new Battle (opponent, depth));
+			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth));
 			battle->party = 0;
 			add_pending_challenge (battle);
 			OutMessage msg (OutMessage::SEND_TEAM);
@@ -624,7 +624,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	// See the description of send_battle_challenge() for why I make sure challenges is empty
 	if (accepted and challenges.empty ()) {
 		// They challenged me.
-		std::shared_ptr <Battle> battle (new Battle (opponent, depth, team));
+		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team));
 		battle->party = 1;
 		add_pending_challenge (battle);
 		msg.write_byte (ACCEPTED);
