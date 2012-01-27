@@ -29,7 +29,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (Species const & member, unsigned size) : 
+Pokemon::Pokemon (Species member, unsigned size) : 
 	name (member),
 	hp (name, Stat::HP),
 	atk (name, Stat::ATK),
@@ -46,16 +46,16 @@ Pokemon::Pokemon (Species const & member, unsigned size) :
 
 	happiness (255)
 	{
-		set_type ();
-		Move struggle (Move::STRUGGLE, 0, 0);
-		move.set.push_back (struggle);
-		// A Pokemon has a new "Switch" move for each Pokemon in the party.
-		if (size > 1) {
-			for (size_t index = 0; index != size; ++index) {
-				Move switchn (Move::from_replacement (index), 0, 0);
-				move.set.push_back (switchn);
-			}
+	set_type ();
+	Move struggle (Move::STRUGGLE, 0, 0);
+	move.set.push_back (struggle);
+	// A Pokemon has a new "Switch" move for each Pokemon in the party.
+	if (size > 1) {
+		for (size_t index = 0; index != size; ++index) {
+			Move switchn (Move::from_replacement (index), 0, 0);
+			move.set.push_back (switchn);
 		}
+	}
 }
 
 uint64_t Pokemon::hash () const {

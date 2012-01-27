@@ -59,7 +59,7 @@ class Pokemon {
 
 		uint8_t happiness;
 	
-		Pokemon (Species const &member, unsigned size);
+		Pokemon (Species member, unsigned size);
 		uint64_t hash () const;
 		// Returns whether the move is found. Modifies move.index
 		bool find_move (Move::Moves name);

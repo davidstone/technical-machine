@@ -42,6 +42,7 @@ namespace {
 
 unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_damage);
 void call_other_move (Team & user);
+void do_effects_before_moving (Pokemon & user, Team & target);
 void do_damage (Team & user, Team & target, unsigned damage);
 void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage);
 void lower_pp (Team & user, Pokemon const & target);
@@ -245,7 +246,7 @@ void Move::set_variable (unsigned size) {
 }
 
 unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_damage) {
-	unsigned damage = 0;
+	unsigned damage = (log_damage == -1u) ? 0 : log_damage;
 	user.destiny_bond = false;
 	user.lock_on = false;
 	user.moved = true;
@@ -283,14 +284,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 	unsigned damage = 0;
 	
 	if (user.pokemon().move().basepower != 0) {
-		if (user.pokemon().move().name == Move::BRICK_BREAK) {
-			target.reflect = 0;
-			target.light_screen = 0;
-		}
-		else if (user.pokemon().move().is_usable_while_frozen ()) {
-			if (user.pokemon().status.name == Status::FREEZE)
-				user.pokemon().status.clear ();
-		}
+		do_effects_before_moving (user.pokemon(), target);
 		if (log_damage == -1u) {
 			calculate_defending_stat (user, target, weather);
 			calculate_attacking_stat (user, weather);
@@ -307,6 +301,17 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 	do_side_effects (user, target, weather, damage);
 
 	return damage;
+}
+
+void do_effects_before_moving (Pokemon & user, Team & target) {
+	if (user.move().name == Move::BRICK_BREAK) {
+		target.reflect = 0;
+		target.light_screen = 0;
+	}
+	else if (user.move().is_usable_while_frozen ()) {
+		if (user.status.name == Status::FREEZE)
+			user.status.clear ();
+	}
 }
 
 void do_damage (Team & user, Team & target, unsigned damage) {

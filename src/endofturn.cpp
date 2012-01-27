@@ -237,11 +237,9 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 }
 
 void endofturn6 (Team & target, Weather const & weather) {		// Doom Desire / Future Sight
-/*	if (target.counter == 1) {
-		defense (target.ddfs, *target.pokemon, weather);
-		target.pokemon().hp.stat -= damagecalculator (target.ddfs, target, weather);
+	if (target.counter == 1) {
 	}
-	decrement (target.counter);*/
+	decrement (target.counter);
 }
 
 void endofturn7 (Team & team) {
