@@ -40,41 +40,39 @@ namespace technicalmachine {
 
 namespace {
 
+unsigned calculate_screen_multiplier (Team const & attacker, Team const & defender);
+bool screen_is_active (Team const & attacker, Team const & defender);
+constexpr bool reflect_is_active (Move const & move, Team const & defender);
+constexpr bool light_screen_is_active (Move const & move, Team const & defender);
+unsigned calculate_flash_fire_multiplier (Team const & attacker);
+constexpr unsigned calculate_me_first (Team const & attacker);
+unsigned calculate_weather_multiplier (Type const type, Weather const & weather);
+
 }	// unnamed namespace
 
 unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather) {
-	unsigned damage = 0;
-	unsigned effectiveness = get_effectiveness (attacker.pokemon().move().type, defender.pokemon());
-	if ((effectiveness > 0) and (attacker.pokemon().move().type != Type::GROUND or grounded (defender, weather))) {
-		switch (attacker.pokemon().move().name) {
+	Pokemon const & pokemon = attacker.pokemon();
+	unsigned effectiveness = get_effectiveness (pokemon.move().type, defender.pokemon());
+	if ((effectiveness > 0) and (pokemon.move().type != Type::GROUND or grounded (defender, weather))) {
+		switch (pokemon.move().name) {
 			case Move::DRAGON_RAGE:
-				damage = 40;
-				break;
+				return 40;
 			case Move::ENDEAVOR:
-				if (defender.pokemon().hp.stat > attacker.pokemon().hp.stat)
-					damage = defender.pokemon().hp.stat - attacker.pokemon().hp.stat;
-				else
-					damage = 0;
-				break;
+				return (defender.pokemon().hp.stat > pokemon.hp.stat) ? defender.pokemon().hp.stat - pokemon.hp.stat : 0;
 			case Move::FISSURE:
 			case Move::GUILLOTINE:
 			case Move::HORN_DRILL:
 			case Move::SHEER_COLD:
-				damage = defender.pokemon().hp.max;
-				break;
+				return defender.pokemon().hp.max;
 			case Move::NIGHT_SHADE:
 			case Move::SEISMIC_TOSS:
-				damage = attacker.pokemon().level;
-				break;
+				return pokemon.level;
 			case Move::PSYWAVE:
-				damage = attacker.pokemon().level * attacker.pokemon().move().variable().first / 10;
-				break;
+				return pokemon.level * pokemon.move().variable().first / 10;
 			case Move::SONICBOOM:
-				damage = 20;
-				break;
+				return 20;
 			case Move::SUPER_FANG:
-				damage = defender.pokemon().hp.stat / 2;
-
+				return defender.pokemon().hp.stat / 2;
 			default: {
 				unsigned rl;						// Reflect / Light Screen (2)
 				unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
@@ -85,39 +83,66 @@ unsigned damagecalculator (Team const & attacker, Team const & defender, Weather
 				unsigned eb;						// Expert Belt: 6 / 5
 				unsigned tl;							// Tinted Lens (2)
 				unsigned rb;						// Resistance berries (2)
-				damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
+				unsigned damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
 				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, effectiveness, aem, eb, tl, rb, damage);
-				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (attacker.pokemon().move().type, defender.pokemon());
-				damage = damagerandom (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
+				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (pokemon.move().type, defender.pokemon());
+				return damagerandom (pokemon, defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
 			}
 		}
 	}
-	return damage;
+	return 0;
 }
 
 unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf) {
-	if (((defender.reflect and attacker.pokemon().move().physical)
-			or (defender.light_screen and !attacker.pokemon().move().physical))
-			and !attacker.ch)
-		rl = 2;
-	else
-		rl = 1;
 
-	if ((weather.rain and attacker.pokemon().move().type == Type::WATER)
-			or (weather.sun and attacker.pokemon().move().type == Type::FIRE))
-		weather_mod = 3;
-	else if ((weather.rain and attacker.pokemon().move().type == Type::FIRE)
-			or (weather.sun and attacker.pokemon().move().type == Type::WATER))
-		weather_mod = 1;
-	else
-		weather_mod = 2;
+	rl = calculate_screen_multiplier (attacker, defender);
 
-	ff = (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? 3 : 2;
+	weather_mod = calculate_weather_multiplier (attacker.pokemon().move().type, weather);
 
-	mf = (attacker.me_first) ? 3 : 2;
+	ff = calculate_flash_fire_multiplier (attacker);
+
+	mf = calculate_me_first (attacker);
 
 	return attacker.pokemon().level * 2 / 5 + 2;
 }
+
+namespace {
+
+unsigned calculate_screen_multiplier (Team const & attacker, Team const & defender) {
+	return screen_is_active (attacker, defender) ? 2 : 1;
+}
+
+bool screen_is_active (Team const & attacker, Team const & defender) {
+	Move const & move = attacker.pokemon().move();
+	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.ch;
+}
+
+constexpr bool reflect_is_active (Move const & move, Team const & defender) {
+	return defender.reflect and move.physical;
+}
+
+constexpr bool light_screen_is_active (Move const & move, Team const & defender) {
+	return defender.light_screen and !move.physical;
+}
+
+unsigned calculate_flash_fire_multiplier (Team const & attacker) {
+	return (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? 3 : 2;
+}
+
+constexpr unsigned calculate_me_first (Team const & attacker) {
+	return (attacker.me_first) ? 3 : 2;
+}
+
+unsigned calculate_weather_multiplier (Type const type, Weather const & weather) {
+	if ((weather.rain and type == Type::WATER) or (weather.sun and type == Type::FIRE))
+		return 3;
+	else if ((weather.rain and type == Type::FIRE) or (weather.sun and type == Type::WATER))
+		return 1;
+	else
+		return 2;
+}
+
+}	// unnamed namespace
 
 unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
 
