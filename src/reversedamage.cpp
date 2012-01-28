@@ -56,11 +56,10 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 	unsigned rl = 2;						// Reflect / Light Screen (2)
 	unsigned weather_mod = 2;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
 	unsigned ff = 2;					// Flash Fire: 3 / 2
-	unsigned mf = 2;					// Me First: 3 / 2
 	unsigned known = 0;
 	bool const variable = attacker.pokemon().move().name != Move::HIDDEN_POWER and attacker.pokemon().move().name != Move::NATURAL_GIFT;
 	if (variable)
-		known = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
+		known = damage_known (attacker, defender, weather, rl, weather_mod);
 
 	unsigned stab = 2;		// Same Type Attack Bonus: 3 / 2
 	unsigned aem = 4;		// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
@@ -83,27 +82,27 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 		if (different_item) {
 			move_power (attacker, defender, weather);
 			if (!variable)
-				known = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
+				known = damage_known (attacker, defender, weather, rl, weather_mod);
 			old_item.name = attacker.pokemon().item.name;
 		}
 		if (old_offense_ev != attacker.pokemon().atk.ev or different_item) {
 			calculate_attacking_stat (attacker, weather);
 			old_offense_ev = attacker.pokemon().atk.ev;
-			nonrandom = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, effectiveness, aem, eb, tl, rb, known);
+			nonrandom = damage_non_random (attacker, defender, rl, weather_mod, stab, effectiveness, aem, eb, tl, rb, known);
 		}
 
 		
 		// First check to see if the damage is higher than it can possibly be, then check to see if it's lower than it can possibly be, then binary search the remainder. Profiling showed the removal of the "too high" and "too low" damage points to be valid optimizations.
 		
 		attacker.pokemon().move().r = 85;
-		unsigned estimate = damagerandom (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, nonrandom);
+		unsigned estimate = damage_random (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, nonrandom);
 		if (estimate >= damage) {
 			if (estimate == damage)
 				refined_hidden.push_back (unknown);
 			continue;
 		}
 		attacker.pokemon().move().r = 100;
-		estimate = damagerandom (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, nonrandom);
+		estimate = damage_random (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, nonrandom);
 		if (estimate <= damage) {
 			if (estimate == damage)
 				refined_hidden.push_back (unknown);
@@ -117,7 +116,7 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 		// Mathematical analysis shows that checking r == 93 first has an average case of 3.09 calculations (based on the probability distribution of various values for r in the damage formula), as opposed to 3.23 for r == 91, r == 92, or r == 94. The worst case for r == 93 is 4 calculations, which happens 34% of the time, compared to r == 91 which has a worst case of 5 calculations 5.7% of the time and 4 calculations 43% if the time. r == 92 or r == 94 also have worst case scenarios more likely than r == 93. The average time reduction for r == 93 over its best competitor is 4.3%, assuming an r value generates a legal damage. If it does not, it has the best worst-case performance, so it is still the fastest.
 		attacker.pokemon().move().r = 93;
 		while (low <= high) {
-			estimate = damagerandom (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, nonrandom);
+			estimate = damage_random (attacker.pokemon(), defender, stab, effectiveness_vector, aem, eb, tl, rb, nonrandom);
 			if (estimate > damage)
 				high = attacker.pokemon().move().r - 1;
 			else if (estimate < damage)

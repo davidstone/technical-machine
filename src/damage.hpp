@@ -1,5 +1,5 @@
 // Damage calculator forward declarations
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DAMAGE_H_
-#define DAMAGE_H_
+#ifndef DAMAGE_HPP_
+#define DAMAGE_HPP_
 
 #include <vector>
 
@@ -27,17 +27,17 @@ class Pokemon;
 class Team;
 class Weather;
 
-unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf);
+unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather);
 
-unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage);
+unsigned damage_known (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod);
 
-unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage);
+unsigned damage_non_random (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage);
 
-unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather);
+unsigned damage_random (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage);
 
 void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 
 void damage_side_effect (Pokemon & user, unsigned damage);
 
 }	// namespace technicalmachine
-#endif	// DAMAGE_H_
+#endif	// DAMAGE_HPP_

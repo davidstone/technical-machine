@@ -288,7 +288,7 @@ unsigned usemove2 (Team & user, Team & target, Weather & weather, unsigned log_d
 		if (log_damage == -1u) {
 			calculate_defending_stat (user, target, weather);
 			calculate_attacking_stat (user, weather);
-			damage = damagecalculator (user, target, weather);
+			damage = damage_calculator (user, target, weather);
 		}
 		else {
 			damage = log_damage;

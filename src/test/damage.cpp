@@ -136,7 +136,7 @@ void physical_damage_test () {
 
 	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;
-	unsigned damage = damagecalculator (attacker, defender, weather);
+	unsigned damage = damage_calculator (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }
@@ -179,7 +179,7 @@ void special_damage_test () {
 
 	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;
-	unsigned damage = damagecalculator (attacker, defender, weather);
+	unsigned damage = damage_calculator (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }

@@ -1,5 +1,5 @@
 // Damage calculator
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -44,13 +44,24 @@ unsigned calculate_screen_multiplier (Team const & attacker, Team const & defend
 bool screen_is_active (Team const & attacker, Team const & defender);
 constexpr bool reflect_is_active (Move const & move, Team const & defender);
 constexpr bool light_screen_is_active (Move const & move, Team const & defender);
-unsigned calculate_flash_fire_multiplier (Team const & attacker);
-constexpr unsigned calculate_me_first (Team const & attacker);
 unsigned calculate_weather_multiplier (Type const type, Weather const & weather);
+
+unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned const damage);
+unsigned weakening_from_burn (Pokemon const & attacker);
+unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned damage);
+unsigned calculate_critical_hit_multiplier (Team const & attacker);
+unsigned calculate_item_modifier (Pokemon const & attacker, unsigned damage);
+unsigned calculate_me_first_modifier (Team const & attacker, unsigned damage);
+unsigned calculate_stab_multiplier (Team const & attacker);
+unsigned calculate_ability_effectiveness_multiplier (Ability ability, unsigned effectiveness);
+unsigned calculate_expert_belt_multiplier (Item item, unsigned effectiveness);
+unsigned calculate_tinted_lens_multiplier (Ability ability, unsigned effectiveness);
+unsigned calculate_resistance_berry_multiplier (Item item, Type type, unsigned effectiveness);
+bool resistance_berry_activates (Item item, Type type, unsigned effectiveness);
 
 }	// unnamed namespace
 
-unsigned damagecalculator (Team const & attacker, Team const & defender, Weather const & weather) {
+unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather) {
 	Pokemon const & pokemon = attacker.pokemon();
 	unsigned effectiveness = get_effectiveness (pokemon.move().type, defender.pokemon());
 	if ((effectiveness > 0) and (pokemon.move().type != Type::GROUND or grounded (defender, weather))) {
@@ -76,32 +87,25 @@ unsigned damagecalculator (Team const & attacker, Team const & defender, Weather
 			default: {
 				unsigned rl;						// Reflect / Light Screen (2)
 				unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-				unsigned ff;						// Flash Fire: 3 / 2
-				unsigned mf;						// Me First: 3 / 2
 				unsigned stab;					// Same Type Attack Bonus: 3 / 2
 				unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
 				unsigned eb;						// Expert Belt: 6 / 5
 				unsigned tl;							// Tinted Lens (2)
 				unsigned rb;						// Resistance berries (2)
-				unsigned damage = damageknown (attacker, defender, weather, rl, weather_mod, ff, mf);
-				damage = damagenonrandom (attacker, defender, rl, weather_mod, ff, mf, stab, effectiveness, aem, eb, tl, rb, damage);
+				unsigned damage = damage_known (attacker, defender, weather, rl, weather_mod);
+				damage = damage_non_random (attacker, defender, rl, weather_mod, stab, effectiveness, aem, eb, tl, rb, damage);
 				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (pokemon.move().type, defender.pokemon());
-				return damagerandom (pokemon, defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
+				return damage_random (pokemon, defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
 			}
 		}
 	}
 	return 0;
 }
 
-unsigned damageknown (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod, unsigned & ff, unsigned & mf) {
+unsigned damage_known (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod) {
 
 	rl = calculate_screen_multiplier (attacker, defender);
-
 	weather_mod = calculate_weather_multiplier (attacker.pokemon().move().type, weather);
-
-	ff = calculate_flash_fire_multiplier (attacker);
-
-	mf = calculate_me_first (attacker);
 
 	return attacker.pokemon().level * 2 / 5 + 2;
 }
@@ -125,14 +129,6 @@ constexpr bool light_screen_is_active (Move const & move, Team const & defender)
 	return defender.light_screen and !move.physical;
 }
 
-unsigned calculate_flash_fire_multiplier (Team const & attacker) {
-	return (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? 3 : 2;
-}
-
-constexpr unsigned calculate_me_first (Team const & attacker) {
-	return (attacker.me_first) ? 3 : 2;
-}
-
 unsigned calculate_weather_multiplier (Type const type, Weather const & weather) {
 	if ((weather.rain and type == Type::WATER) or (weather.sun and type == Type::FIRE))
 		return 3;
@@ -144,145 +140,141 @@ unsigned calculate_weather_multiplier (Type const type, Weather const & weather)
 
 }	// unnamed namespace
 
-unsigned damagenonrandom (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned ff, unsigned mf, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
+unsigned damage_non_random (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
 
 	damage *= attacker.pokemon().move().power;
+	damage = physical_vs_special_modifier (attacker.pokemon(), defender.pokemon(), damage);
 
-	if (attacker.pokemon().move().physical) {
-		damage = damage * attacker.pokemon().atk.stat / 50 / defender.pokemon().def.stat;
-		if (attacker.pokemon().status.name == Status::BURN and attacker.pokemon().ability.name != Ability::GUTS)
-			damage /= 2;
-	}
-	else
-		damage = damage * attacker.pokemon().spa.stat / 50 / defender.pokemon().spd.stat;
+	damage = damage / rl * weather_mod / 2;
+	damage = calculate_flash_fire_modifier (attacker, damage);
+	damage += 2;
 
-	damage = damage / rl * weather_mod / 2 * ff / 2 + 2;
+	damage *= calculate_critical_hit_multiplier (attacker);
+	damage = calculate_item_modifier (attacker.pokemon(), damage);
+	damage = calculate_me_first_modifier (attacker, damage);
 
-	if (attacker.ch) {
-		if (attacker.pokemon().ability.name == Ability::SNIPER)
-			damage *= 3;
-		else
-			damage *= 2;
-	}
+	stab = calculate_stab_multiplier (attacker);
+
+	aem = calculate_ability_effectiveness_multiplier (defender.pokemon().ability, effectiveness);
 	
-	switch (attacker.pokemon().item.name) {
-		case Item::LIFE_ORB:
-			damage = damage * 13 / 10;
-			break;
-		case Item::METRONOME:
-			if (attacker.pokemon().move().times_used >= 10)
-				damage *= 2;
-			else
-				damage = damage * (10 + attacker.pokemon().move().times_used) / 10;
-			break;
-		default:
-			break;
-	}
-
-	damage = damage * mf / 2;
-
-	if (is_type (attacker, attacker.pokemon().move().type)) {
-		if (attacker.pokemon().ability.name == Ability::ADAPTABILITY)
-			stab = 4;
-		else
-			stab = 3;
-	}
-	else
-		stab = 2;
-
-	if (defender.pokemon().ability.weakens_SE_attacks () and effectiveness > 4)
-		aem = 3;
-	else
-		aem = 4;
-
-	if (attacker.pokemon().item.name == Item::EXPERT_BELT and effectiveness > 4)
-		eb = 6;
-	else
-		eb = 5;
-
-	if (attacker.pokemon().ability.name == Ability::TINTED_LENS and effectiveness < 4)
-		tl = 2;
-	else
-		tl = 1;
-
-	rb = 1;
-	if (defender.pokemon().item.name == Item::CHILAN_BERRY and attacker.pokemon().move().type == Type::NORMAL)
-		rb = 2;
-	else if (effectiveness > 4) {
-		switch (attacker.pokemon().item.name) {
-			case Item::BABIRI_BERRY:
-				if (attacker.pokemon().move().type == Type::STEEL)
-					rb = 2;
-				break;
-			case Item::CHARTI_BERRY:
-				if (attacker.pokemon().move().type == Type::ROCK)
-					rb = 2;
-				break;
-			case Item::CHOPLE_BERRY:
-				if (attacker.pokemon().move().type == Type::FIGHTING)
-					rb = 2;
-				break;
-			case Item::COBA_BERRY:
-				if (attacker.pokemon().move().type == Type::FLYING)
-					rb = 2;
-				break;
-			case Item::COLBUR_BERRY:
-				if (attacker.pokemon().move().type == Type::DARK)
-					rb = 2;
-				break;
-			case Item::HABAN_BERRY:
-				if (attacker.pokemon().move().type == Type::DRAGON)
-					rb = 2;
-				break;
-			case Item::KASIB_BERRY:
-				if (attacker.pokemon().move().type == Type::GHOST)
-					rb = 2;
-				break;
-			case Item::KEBIA_BERRY:
-				if (attacker.pokemon().move().type == Type::POISON)
-					rb = 2;
-				break;
-			case Item::OCCA_BERRY:
-				if (attacker.pokemon().move().type == Type::FIRE)
-					rb = 2;
-				break;
-			case Item::PASSHO_BERRY:
-				if (attacker.pokemon().move().type == Type::WATER)
-					rb = 2;
-				break;
-			case Item::PAYAPA_BERRY:
-				if (attacker.pokemon().move().type == Type::PSYCHIC)
-					rb = 2;
-				break;
-			case Item::RINDO_BERRY:
-				if (attacker.pokemon().move().type == Type::GRASS)
-					rb = 2;
-				break;
-			case Item::SHUCA_BERRY:
-				if (attacker.pokemon().move().type == Type::GROUND)
-					rb = 2;
-				break;
-			case Item::TANGA_BERRY:
-				if (attacker.pokemon().move().type == Type::BUG)
-					rb = 2;
-				break;
-			case Item::WACAN_BERRY:
-				if (attacker.pokemon().move().type == Type::ELECTRIC)
-					rb = 2;
-				break;
-			case Item::YACHE_BERRY:
-				if (attacker.pokemon().move().type == Type::ICE)
-					rb = 2;
-				break;
-			default:
-				break;
-		}
-	}
+	eb = calculate_expert_belt_multiplier (attacker.pokemon().item, effectiveness);
+	
+	tl = calculate_tinted_lens_multiplier (attacker.pokemon().ability, effectiveness);
+	
+	rb = calculate_resistance_berry_multiplier (defender.pokemon().item, attacker.pokemon().move().type, effectiveness);
 
 	return damage;
 }
 
-unsigned damagerandom (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
+namespace {
+
+unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned const damage) {
+	if (attacker.move().physical)
+		return damage * attacker.atk.stat / 50 / defender.def.stat / weakening_from_burn (attacker);
+	else
+		return damage * attacker.spa.stat / 50 / defender.spd.stat;
+}
+
+unsigned weakening_from_burn (Pokemon const & attacker) {
+	return (attacker.status.name == Status::BURN and attacker.ability.name != Ability::GUTS) ? 2 : 1;
+}
+
+unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned const damage) {
+	return damage * ((attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? 3 : 2) / 2;
+}
+
+unsigned calculate_critical_hit_multiplier (Team const & attacker) {
+	if (attacker.ch)
+		return (attacker.pokemon().ability.name == Ability::SNIPER) ? 3 : 2;
+	return 1;
+}
+
+unsigned calculate_item_modifier (Pokemon const & attacker, unsigned const damage) {
+	switch (attacker.item.name) {
+		case Item::LIFE_ORB:
+			return damage * 13 / 10;
+		case Item::METRONOME:
+			return damage * ((attacker.move().times_used >= 10) ? 2 : (10 + attacker.move().times_used) / 10);
+		default:
+			return damage;
+	}
+}
+
+unsigned calculate_me_first_modifier (Team const & attacker, unsigned const damage) {
+	if (attacker.me_first)
+		return damage * 3 / 2;
+	return damage;
+}
+
+unsigned calculate_stab_multiplier (Team const & attacker) {
+	if (is_type (attacker, attacker.pokemon().move().type))
+		return (attacker.pokemon().ability.name == Ability::ADAPTABILITY) ? 4 : 3;
+	return 2;
+}
+
+unsigned calculate_ability_effectiveness_multiplier (Ability const ability, unsigned const effectiveness) {
+	return (ability.weakens_SE_attacks () and effectiveness > 4) ? 3 : 4;
+}
+
+unsigned calculate_expert_belt_multiplier (Item const item, unsigned const effectiveness) {
+	return (item.name == Item::EXPERT_BELT and effectiveness > 4) ? 6 : 5;
+}
+
+unsigned calculate_tinted_lens_multiplier (Ability const ability, unsigned const effectiveness) {
+	return (ability.name == Ability::TINTED_LENS and effectiveness < 4) ? 2 : 1;
+}
+
+unsigned calculate_resistance_berry_multiplier (Item const item, Type const type, unsigned const effectiveness) {
+	return resistance_berry_activates (item, type, effectiveness) ? 2 : 1;
+}
+
+bool resistance_berry_activates (Item const item, Type const type, unsigned const effectiveness) {
+	if (item.name == Item::CHILAN_BERRY)
+		return type == Type::NORMAL;
+	else if (effectiveness > 4) {
+		switch (item.name) {
+			case Item::BABIRI_BERRY:
+				return type == Type::STEEL;
+			case Item::CHARTI_BERRY:
+				return type == Type::ROCK;
+			case Item::CHOPLE_BERRY:
+				return type == Type::FIGHTING;
+			case Item::COBA_BERRY:
+				return type == Type::FLYING;
+			case Item::COLBUR_BERRY:
+				return type == Type::DARK;
+			case Item::HABAN_BERRY:
+				return type == Type::DRAGON;
+			case Item::KASIB_BERRY:
+				return type == Type::GHOST;
+			case Item::KEBIA_BERRY:
+				return type == Type::POISON;
+			case Item::OCCA_BERRY:
+				return type == Type::FIRE;
+			case Item::PASSHO_BERRY:
+				return type == Type::WATER;
+			case Item::PAYAPA_BERRY:
+				return type == Type::PSYCHIC;
+			case Item::RINDO_BERRY:
+				return type == Type::GRASS;
+			case Item::SHUCA_BERRY:
+				return type == Type::GROUND;
+			case Item::TANGA_BERRY:
+				return type == Type::BUG;
+			case Item::WACAN_BERRY:
+				return type == Type::ELECTRIC;
+			case Item::YACHE_BERRY:
+				return type == Type::ICE;
+			default:
+				return false;
+		}
+	}
+	return false;
+}
+
+}	// unnamed namespace
+
+unsigned damage_random (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
 	damage = damage * attacker.move().r / 100 * stab / 2;
 	for (unsigned const effective : effectiveness)
 		damage = damage * effective / 2;
@@ -313,4 +305,4 @@ void damage_side_effect (Pokemon & user, unsigned damage) {
 		user.hp.stat = 0;
 }
 
-} // namespace technicalmachine
+}	// namespace technicalmachine
