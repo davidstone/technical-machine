@@ -38,6 +38,7 @@
 #include "team.hpp"
 #include "transposition.hpp"
 #include "type.hpp"
+#include "use_move.hpp"
 #include "weather.hpp"
 
 namespace technicalmachine {
@@ -328,7 +329,7 @@ int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsig
 
 int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score) {
 	if (!user.moved) {
-		other.damage = usemove (user, other, weather);
+		other.damage = call_move (user, other, weather);
 		int64_t const user_win = Score::win (user);
 		int64_t const other_win = Score::win (other);
 		if (user_win or other_win) {

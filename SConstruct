@@ -53,7 +53,7 @@ def prepend_str_conversion_dir (source):
 string_conversion_sources = ['ability_string.cpp', 'gender_string.cpp', 'item_string.cpp', 'move_string.cpp', 'nature_string.cpp', 'pokemon_string.cpp', 'status_string.cpp']
 string_conversion_sources = map(prepend_str_conversion_dir, string_conversion_sources)
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'transposition.cpp', 'type.cpp', 'use_move.cpp', 'weather.cpp']
 ai_sources += ['cryptography/hex.cpp', 'cryptography/md5.cpp', 'cryptography/rijndael.cpp', 'cryptography/sha2.cpp']
 ai_sources += ['network/connect.cpp', 'network/inmessage.cpp', 'network/outmessage.cpp']
 ai_sources += ['pokemon_lab/battle.cpp', 'pokemon_lab/battle_settings.cpp', 'pokemon_lab/connect.cpp', 'pokemon_lab/conversion.cpp', 'pokemon_lab/inmessage.cpp', 'pokemon_lab/outmessage.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/write_team_file.cpp']
@@ -61,8 +61,8 @@ ai_sources += ['pokemon_online/battle.cpp', 'pokemon_online/battle_settings.cpp'
 ai_sources += string_conversion_sources
 ai_libraries = ['pthread', 'boost_system', 'boost_filesystem']
 
-predict_sources = ['predictor.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'item.cpp', 'load_stats.cpp', 'heal.cpp', 'move.cpp', 'move_power', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'weather.cpp']
-predict_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp']
+predict_sources = ['predictor.cpp', 'ability.cpp', 'gender.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp']
+predict_sources += ['pokemon_lab/read_team_file.cpp']
 predict_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp']
 predict_sources += string_conversion_sources
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
@@ -74,7 +74,7 @@ predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
 #rdc_libraries = ['boost_filesystem', 'boost_system']
 
 test_sources = ['test/test.cpp', 'test/damage.cpp', 'test/stat.cpp', 'test/string_conversion.cpp', 'test/pokemon_lab/conversion.cpp', 'test/pokemon_lab/team_file.cpp', 'test/pokemon_lab/test.cpp', 'test/pokemon_online/conversion.cpp', 'test/pokemon_online/team_file.cpp', 'test/pokemon_online/test.cpp']
-test_sources += ['ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
+test_sources += ['ability.cpp', 'damage.cpp', 'gender.cpp', 'item.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
 test_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/write_team_file.cpp']
 test_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp', 'pokemon_online/write_team_file.cpp']
 test_sources += string_conversion_sources

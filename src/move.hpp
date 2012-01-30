@@ -181,10 +181,5 @@ class Move {
 
 enum Vanish { LANDED, BOUNCED, DUG, DIVED, FLOWN, SHADOW_FORCED, END_VANISH };
 
-class Team;
-class Weather;
-
-unsigned usemove (Team & user, Team & target, Weather & weather, unsigned log_damage = -1);
-
 }	// namespace technicalmachine
 #endif	// MOVE_HPP_

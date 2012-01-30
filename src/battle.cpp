@@ -33,6 +33,7 @@
 #include "switch.hpp"
 #include "team.hpp"
 #include "teampredictor.hpp"
+#include "use_move.hpp"
 #include "weather.hpp"
 
 #include "network/connect.hpp"
@@ -268,10 +269,10 @@ void GenericBattle::do_turn () {
 	else {
 		// Anything with recoil will mess this up
 
-		usemove (*first, *last, weather, last->damage);
+		call_move (*first, *last, weather, last->damage);
 		last->pokemon().normalize_hp ();
 
-		usemove (*last, *first, weather, first->damage);
+		call_move (*last, *first, weather, first->damage);
 		first->pokemon().normalize_hp ();
 
 		endofturn (*first, *last, weather);
@@ -287,7 +288,7 @@ void GenericBattle::do_turn () {
 					++foe.pokemon().move.index;
 				foe.pokemon().move.index += foe.replacement;
 			}
-			usemove (foe, ai, weather, first->damage);
+			call_move (foe, ai, weather, first->damage);
 		}
 	}
 	std::cout << first->to_string ();
