@@ -227,7 +227,10 @@ void Move::set_variable (unsigned size) {
 }
 
 bool Move::operator== (Move const & other) const {
-	return pp == other.pp and times_used == other.times_used;
+	return name == other.name and
+			disable == other.disable and
+			pp == other.pp and
+			times_used == other.times_used;
 }
 
 bool Move::operator!= (Move const & other) const {
