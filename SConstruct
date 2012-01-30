@@ -67,11 +67,11 @@ predict_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_f
 predict_sources += string_conversion_sources
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
 
-rdc_sources = ['rdc.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reversedamage.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'unknown.cpp', 'weather.cpp']
-rdc_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp']
-rdc_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp']
-rdc_sources += string_conversion_sources
-rdc_libraries = ['boost_filesystem', 'boost_system']
+#rdc_sources = ['rdc.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reversedamage.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'teampredictor.cpp', 'type.cpp', 'unknown.cpp', 'weather.cpp']
+#rdc_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp']
+#rdc_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp']
+#rdc_sources += string_conversion_sources
+#rdc_libraries = ['boost_filesystem', 'boost_system']
 
 test_sources = ['test/test.cpp', 'test/damage.cpp', 'test/stat.cpp', 'test/string_conversion.cpp', 'test/pokemon_lab/conversion.cpp', 'test/pokemon_lab/team_file.cpp', 'test/pokemon_lab/test.cpp', 'test/pokemon_online/conversion.cpp', 'test/pokemon_online/team_file.cpp', 'test/pokemon_online/test.cpp']
 test_sources += ['ability.cpp', 'block.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'type.cpp', 'weather.cpp']
@@ -89,12 +89,12 @@ for source in ai_sources:
 predict_debug_sources = []
 for source in predict_sources:
 	predict_debug_sources += ['build/debug/' + source]
-rdc_debug_sources = []
-for source in rdc_sources:
-	rdc_debug_sources += ['build/debug/' + source]
-rdc_optimized_sources = []
-for source in rdc_sources:
-	rdc_optimized_sources += ['build/optimized/' + source]
+#rdc_debug_sources = []
+#for source in rdc_sources:
+#	rdc_debug_sources += ['build/debug/' + source]
+#rdc_optimized_sources = []
+#for source in rdc_sources:
+#	rdc_optimized_sources += ['build/optimized/' + source]
 test_debug_sources = []
 for source in test_sources:
 	test_debug_sources += ['build/debug/' + source]
@@ -111,11 +111,11 @@ ai_optimized.Program('aio', ai_optimized_sources)
 predict = debug.Clone(LIBS = predict_libraries)
 predict.Program('predict', predict_debug_sources)
 
-rdc_debug = debug.Clone(LIBS = rdc_libraries)
-rdc_debug.Program('rdc', rdc_debug_sources)
+#rdc_debug = debug.Clone(LIBS = rdc_libraries)
+#rdc_debug.Program('rdc', rdc_debug_sources)
 
-rdc_optimized = optimized.Clone(LIBS = rdc_libraries)
-rdc_optimized.Program('rdco', rdc_optimized_sources)
+#rdc_optimized = optimized.Clone(LIBS = rdc_libraries)
+#rdc_optimized.Program('rdco', rdc_optimized_sources)
 
 test_debug = debug.Clone(LIBS = test_libraries)
 test_debug.Program('test', test_debug_sources)

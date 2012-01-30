@@ -29,34 +29,31 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
-
-// I split my damage calculator up into a function that calculates as much as
-// possible with known data, one that calculates without the random number, and
-// a function that does the rest of the work because in many cases, I have the
-// damage calculator in a deep inner loop, and pre-calculating non-random
-// numbers allows me to move much of that calculator to a shallower part of
-// code, and pre-calculating known information moves even more out. Profiling
-// showed this to be a sound optimization.
-
 namespace {
 
-unsigned calculate_screen_multiplier (Team const & attacker, Team const & defender);
+unsigned calculate_level_multiplier (Pokemon const & attacker);
+unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned damage);
+unsigned calculate_screen_divisor (Team const & attacker, Team const & defender);
 bool screen_is_active (Team const & attacker, Team const & defender);
-constexpr bool reflect_is_active (Move const & move, Team const & defender);
-constexpr bool light_screen_is_active (Move const & move, Team const & defender);
-unsigned calculate_weather_multiplier (Type const type, Weather const & weather);
-
-unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned const damage);
+bool reflect_is_active (Move const & move, Team const & defender);
+bool light_screen_is_active (Move const & move, Team const & defender);
 unsigned weakening_from_burn (Pokemon const & attacker);
+unsigned calculate_weather_modifier (Type type, Weather const & weather, unsigned damage);
+bool weather_strengthens_type (Type type, Weather const & weather);
+bool weather_weakens_type (Type type, Weather const & weather);
 unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned damage);
 unsigned calculate_critical_hit_multiplier (Team const & attacker);
 unsigned calculate_item_modifier (Pokemon const & attacker, unsigned damage);
 unsigned calculate_me_first_modifier (Team const & attacker, unsigned damage);
-unsigned calculate_stab_multiplier (Team const & attacker);
-unsigned calculate_ability_effectiveness_multiplier (Ability ability, unsigned effectiveness);
-unsigned calculate_expert_belt_multiplier (Item item, unsigned effectiveness);
+
+unsigned calculate_random_modifier (Move const & move, unsigned damage);
+unsigned calculate_stab_modifier (Team const & attacker, unsigned damage);
+unsigned calculate_stab_boost (Ability ability, unsigned damage);
+unsigned calculate_effectiveness_modifier (Move const & move, Pokemon const & defender, unsigned damage);
+unsigned calculate_ability_effectiveness_modifier (Ability ability, unsigned effectiveness, unsigned damage);
+unsigned calculate_expert_belt_modifier (Item item, unsigned effectiveness, unsigned damage);
 unsigned calculate_tinted_lens_multiplier (Ability ability, unsigned effectiveness);
-unsigned calculate_resistance_berry_multiplier (Item item, Type type, unsigned effectiveness);
+unsigned calculate_resistance_berry_divisor (Item item, Type type, unsigned effectiveness);
 bool resistance_berry_activates (Item item, Type type, unsigned effectiveness);
 
 }	// unnamed namespace
@@ -85,88 +82,77 @@ unsigned damage_calculator (Team const & attacker, Team const & defender, Weathe
 			case Move::SUPER_FANG:
 				return defender.pokemon().hp.stat / 2;
 			default: {
-				unsigned rl;						// Reflect / Light Screen (2)
-				unsigned weather_mod;		// Sunny Day / Rain Dance (1 if weakened, 3 if strengthened) / 2
-				unsigned stab;					// Same Type Attack Bonus: 3 / 2
-				unsigned aem;					// Ability Effectiveness Multiplier: Solid Rock (3), Filter (3) / 4
-				unsigned eb;						// Expert Belt: 6 / 5
-				unsigned tl;							// Tinted Lens (2)
-				unsigned rb;						// Resistance berries (2)
-				unsigned damage = damage_known (attacker, defender, weather, rl, weather_mod);
-				damage = damage_non_random (attacker, defender, rl, weather_mod, stab, effectiveness, aem, eb, tl, rb, damage);
-				std::vector <unsigned> effectiveness_vector = get_effectiveness_variables (pokemon.move().type, defender.pokemon());
-				return damage_random (pokemon, defender, stab, effectiveness_vector, aem, eb, tl, rb, damage);
+				unsigned damage = damage_non_random (attacker, defender, weather);
+				return damage_random (attacker, defender, effectiveness, damage);
 			}
 		}
 	}
 	return 0;
 }
 
-unsigned damage_known (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod) {
+unsigned damage_non_random (Team const & attacker, Team const & defender, Weather const & weather) {
+	Pokemon const & pokemon = attacker.pokemon();
 
-	rl = calculate_screen_multiplier (attacker, defender);
-	weather_mod = calculate_weather_multiplier (attacker.pokemon().move().type, weather);
+	unsigned damage = calculate_level_multiplier (pokemon);
+	damage += 2;
 
-	return attacker.pokemon().level * 2 / 5 + 2;
-}
-
-namespace {
-
-unsigned calculate_screen_multiplier (Team const & attacker, Team const & defender) {
-	return screen_is_active (attacker, defender) ? 2 : 1;
-}
-
-bool screen_is_active (Team const & attacker, Team const & defender) {
-	Move const & move = attacker.pokemon().move();
-	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.ch;
-}
-
-constexpr bool reflect_is_active (Move const & move, Team const & defender) {
-	return defender.reflect and move.physical;
-}
-
-constexpr bool light_screen_is_active (Move const & move, Team const & defender) {
-	return defender.light_screen and !move.physical;
-}
-
-unsigned calculate_weather_multiplier (Type const type, Weather const & weather) {
-	if ((weather.rain and type == Type::WATER) or (weather.sun and type == Type::FIRE))
-		return 3;
-	else if ((weather.rain and type == Type::FIRE) or (weather.sun and type == Type::WATER))
-		return 1;
-	else
-		return 2;
-}
-
-}	// unnamed namespace
-
-unsigned damage_non_random (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage) {
-
-	damage *= attacker.pokemon().move().power;
-	damage = physical_vs_special_modifier (attacker.pokemon(), defender.pokemon(), damage);
-
-	damage = damage / rl * weather_mod / 2;
+	damage *= pokemon.move().power;
+	damage = physical_vs_special_modifier (pokemon, defender.pokemon(), damage);
+	damage /= calculate_screen_divisor (attacker, defender);
+	damage = calculate_weather_modifier (pokemon.move().type, weather, damage);
 	damage = calculate_flash_fire_modifier (attacker, damage);
 	damage += 2;
 
 	damage *= calculate_critical_hit_multiplier (attacker);
-	damage = calculate_item_modifier (attacker.pokemon(), damage);
+	damage = calculate_item_modifier (pokemon, damage);
 	damage = calculate_me_first_modifier (attacker, damage);
-
-	stab = calculate_stab_multiplier (attacker);
-
-	aem = calculate_ability_effectiveness_multiplier (defender.pokemon().ability, effectiveness);
-	
-	eb = calculate_expert_belt_multiplier (attacker.pokemon().item, effectiveness);
-	
-	tl = calculate_tinted_lens_multiplier (attacker.pokemon().ability, effectiveness);
-	
-	rb = calculate_resistance_berry_multiplier (defender.pokemon().item, attacker.pokemon().move().type, effectiveness);
 
 	return damage;
 }
 
+unsigned damage_random (Team const & attacker, Team const & defender, unsigned const effectiveness, unsigned damage) {
+	Pokemon const & pokemon = attacker.pokemon();
+	damage = calculate_random_modifier (pokemon.move(), damage);
+	damage = calculate_stab_modifier (attacker, damage);
+	damage = calculate_effectiveness_modifier (pokemon.move(), defender.pokemon(), damage);
+	damage = calculate_ability_effectiveness_modifier (defender.pokemon().ability, effectiveness, damage);
+	damage = calculate_expert_belt_modifier (pokemon.item, effectiveness, damage);
+	damage *= calculate_tinted_lens_multiplier (pokemon.ability, effectiveness);
+	damage /= calculate_resistance_berry_divisor (defender.pokemon().item, pokemon.move().type, effectiveness);
+	if (damage == 0)
+		damage = 1;
+	else if (damage >= defender.pokemon().hp.stat) {
+		damage = defender.pokemon().hp.stat;
+		if (pokemon.move().name == Move::FALSE_SWIPE or defender.endure)
+			--damage;
+	}
+	return damage;
+}
+
+
+void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
+	if (user.ability.name != Ability::MAGIC_GUARD and user.ability.name != Ability::ROCK_HEAD) {
+		if (damage <= 2 * denominator - 1)
+			--user.hp.stat;
+		else
+			damage_side_effect (user, damage / denominator);
+	}
+}
+
+void damage_side_effect (Pokemon & user, unsigned damage) {
+	if (user.hp.stat > damage)
+		user.hp.stat -= damage;
+	else
+		user.hp.stat = 0;
+}
+
+
+
 namespace {
+
+unsigned calculate_level_multiplier (Pokemon const & attacker) {
+	return attacker.level * 2 / 5;
+}
 
 unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned const damage) {
 	if (attacker.move().physical)
@@ -179,8 +165,42 @@ unsigned weakening_from_burn (Pokemon const & attacker) {
 	return (attacker.status.name == Status::BURN and attacker.ability.name != Ability::GUTS) ? 2 : 1;
 }
 
+unsigned calculate_screen_divisor (Team const & attacker, Team const & defender) {
+	return screen_is_active (attacker, defender) ? 2 : 1;
+}
+
+bool screen_is_active (Team const & attacker, Team const & defender) {
+	Move const & move = attacker.pokemon().move();
+	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.ch;
+}
+
+bool reflect_is_active (Move const & move, Team const & defender) {
+	return defender.reflect and move.physical;
+}
+
+bool light_screen_is_active (Move const & move, Team const & defender) {
+	return defender.light_screen and !move.physical;
+}
+
+unsigned calculate_weather_modifier (Type const type, Weather const & weather, unsigned const damage) {
+	if (weather_strengthens_type (type, weather))
+		return damage * 3 / 2;
+	else if (weather_weakens_type (type, weather))
+		return damage / 2;
+	else
+		return damage;
+}
+
+bool weather_strengthens_type (Type const type, Weather const & weather) {
+	return (weather.rain and type == Type::WATER) or (weather.sun and type == Type::FIRE);
+}
+
+bool weather_weakens_type (Type const type, Weather const & weather) {
+	return (weather.rain and type == Type::FIRE) or (weather.sun and type == Type::WATER);
+}
+
 unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned const damage) {
-	return damage * ((attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? 3 : 2) / 2;
+	return (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? damage * 3 / 2 : damage;
 }
 
 unsigned calculate_critical_hit_multiplier (Team const & attacker) {
@@ -201,30 +221,46 @@ unsigned calculate_item_modifier (Pokemon const & attacker, unsigned const damag
 }
 
 unsigned calculate_me_first_modifier (Team const & attacker, unsigned const damage) {
-	if (attacker.me_first)
-		return damage * 3 / 2;
+	return (attacker.me_first) ? damage * 3 / 2 : damage;
+}
+
+
+
+
+unsigned calculate_random_modifier (Move const & move, unsigned const damage) {
+	return damage * move.r / 100;
+}
+
+unsigned calculate_stab_modifier (Team const & attacker, unsigned const damage) {
+	return is_type (attacker, attacker.pokemon().move().type) ?
+		calculate_stab_boost (attacker.pokemon().ability, damage) :
+		damage;
+}
+
+unsigned calculate_stab_boost (Ability const ability, unsigned const damage) {
+	return (ability.name == Ability::ADAPTABILITY) ? damage * 2 : damage * 3 / 2;
+}
+
+unsigned calculate_effectiveness_modifier (Move const & move, Pokemon const & defender, unsigned damage) {
+	std::vector <unsigned> const effectiveness = get_effectiveness_variables (move.type, defender);
+	for (unsigned const effective : effectiveness)
+		damage = damage * effective / 2;
 	return damage;
 }
 
-unsigned calculate_stab_multiplier (Team const & attacker) {
-	if (is_type (attacker, attacker.pokemon().move().type))
-		return (attacker.pokemon().ability.name == Ability::ADAPTABILITY) ? 4 : 3;
-	return 2;
+unsigned calculate_ability_effectiveness_modifier (Ability const ability, unsigned const effectiveness, unsigned const damage) {
+	return (ability.weakens_SE_attacks () and effectiveness > 4) ? 3 * damage / 4 : damage;
 }
 
-unsigned calculate_ability_effectiveness_multiplier (Ability const ability, unsigned const effectiveness) {
-	return (ability.weakens_SE_attacks () and effectiveness > 4) ? 3 : 4;
-}
-
-unsigned calculate_expert_belt_multiplier (Item const item, unsigned const effectiveness) {
-	return (item.name == Item::EXPERT_BELT and effectiveness > 4) ? 6 : 5;
+unsigned calculate_expert_belt_modifier (Item const item, unsigned const effectiveness, unsigned const damage) {
+	return (item.name == Item::EXPERT_BELT and effectiveness > 4) ? damage * 6 / 5 : damage;
 }
 
 unsigned calculate_tinted_lens_multiplier (Ability const ability, unsigned const effectiveness) {
 	return (ability.name == Ability::TINTED_LENS and effectiveness < 4) ? 2 : 1;
 }
 
-unsigned calculate_resistance_berry_multiplier (Item const item, Type const type, unsigned const effectiveness) {
+unsigned calculate_resistance_berry_divisor (Item const item, Type const type, unsigned const effectiveness) {
 	return resistance_berry_activates (item, type, effectiveness) ? 2 : 1;
 }
 
@@ -273,36 +309,4 @@ bool resistance_berry_activates (Item const item, Type const type, unsigned cons
 }
 
 }	// unnamed namespace
-
-unsigned damage_random (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage) {
-	damage = damage * attacker.move().r / 100 * stab / 2;
-	for (unsigned const effective : effectiveness)
-		damage = damage * effective / 2;
-	damage = damage * aem / 4 * eb / 5 * tl / rb;
-	if (damage == 0)
-		damage = 1;
-	else if (damage >= defender.pokemon().hp.stat) {
-		damage = defender.pokemon().hp.stat;
-		if (attacker.move().name == Move::FALSE_SWIPE or defender.endure)
-			--damage;
-	}
-	return damage;
-}
-
-void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
-	if (user.ability.name != Ability::MAGIC_GUARD and user.ability.name != Ability::ROCK_HEAD) {
-		if (damage <= 2 * denominator - 1)
-			--user.hp.stat;
-		else
-			damage_side_effect (user, damage / denominator);
-	}
-}
-
-void damage_side_effect (Pokemon & user, unsigned damage) {
-	if (user.hp.stat > damage)
-		user.hp.stat -= damage;
-	else
-		user.hp.stat = 0;
-}
-
 }	// namespace technicalmachine

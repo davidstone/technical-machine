@@ -29,11 +29,9 @@ class Weather;
 
 unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather);
 
-unsigned damage_known (Team const & attacker, Team const & defender, Weather const & weather, unsigned & rl, unsigned & weather_mod);
+unsigned damage_non_random (Team const & attacker, Team const & defender, Weather const & weather);
 
-unsigned damage_non_random (Team const & attacker, Team const & defender, unsigned rl, unsigned weather_mod, unsigned & stab, unsigned effectiveness, unsigned & aem, unsigned & eb, unsigned & tl, unsigned & rb, unsigned damage);
-
-unsigned damage_random (Pokemon const & attacker, Team const & defender, unsigned stab, std::vector <unsigned> const & effectiveness, unsigned aem, unsigned eb, unsigned tl, unsigned rb, unsigned damage);
+unsigned damage_random (Team const & attacker, Team const & defender, unsigned effectiveness, unsigned damage);
 
 void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 
