@@ -27,9 +27,9 @@
 int main () {
 	using namespace technicalmachine;
 	
+	string_conversion_tests ();
 	stat_tests ();
 	damage_tests ();
-	string_conversion_tests ();
 
 	pl::test ();
 	po::test ();

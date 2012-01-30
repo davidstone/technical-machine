@@ -25,6 +25,7 @@
 #include "../move.hpp"
 #include "../nature.hpp"
 #include "../pokemon.hpp"
+#include "../status.hpp"
 #include "../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {
