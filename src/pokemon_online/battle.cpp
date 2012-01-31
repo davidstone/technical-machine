@@ -142,8 +142,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			bool const my_team = player == party;
 			int16_t const remaining_hp = msg.read_short ();
 			int16_t const change_in_hp = my_team ?
-				ai.at_replacement ().hp.stat - remaining_hp :
-				get_max_damage_precision () - remaining_hp;
+				ai_change_in_hp (remaining_hp) :
+				foe_change_in_hp (remaining_hp);
 			uint8_t const slot = 0;
 			int16_t const denominator = my_team ? ai.at_replacement ().hp.max : get_max_damage_precision ();
 			handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
@@ -500,6 +500,15 @@ unsigned Battle::get_max_damage_precision () const {
 
 uint8_t Battle::get_target () const {
 	return 1 - party;
+}
+
+int16_t Battle::ai_change_in_hp (int16_t remaining_hp) const {
+	return ai.at_replacement ().hp.stat - remaining_hp;
+}
+
+int16_t Battle::foe_change_in_hp (int16_t remaining_hp) const {
+	Pokemon const & pokemon = foe.at_replacement();
+	return get_max_damage_precision () * pokemon.hp.stat / pokemon.hp.max - remaining_hp;
 }
 
 } // namespace po

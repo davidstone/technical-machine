@@ -191,18 +191,20 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
 		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
-		int const pixels = max_hp * pokemon.hp.stat / pokemon.hp.max;
-		if (pixels != pokemon.new_hp) {
+		int const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
+		if (tm_estimate != pokemon.new_hp) {
 			int const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
-			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
-			if (!team.me)
-				std::cerr << "approximately ";
-			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
-			std::cerr << "max_hp: " << max_hp << '\n';
-			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
-			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
-			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
-			std::cerr << "pixels: " << pixels << '\n';
+			if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
+				std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
+				if (!team.me)
+					std::cerr << "approximately ";
+				std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
+				std::cerr << "max_hp: " << max_hp << '\n';
+				std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
+				std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
+				std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
+				std::cerr << "tm_estimate: " << tm_estimate << '\n';
+			}
 			pokemon.hp.stat = reported_hp;
 		}
 	}

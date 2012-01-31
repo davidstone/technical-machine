@@ -41,6 +41,8 @@ class Battle : public GenericBattle {
 	private:
 		unsigned get_max_damage_precision () const;
 		uint8_t get_target () const;
+		int16_t ai_change_in_hp (int16_t remaining_hp) const;
+		int16_t foe_change_in_hp (int16_t remaining_hp) const;
 		static constexpr unsigned pokemon_per_team = 6;
 		static constexpr unsigned moves_per_pokemon = 4;
 };
