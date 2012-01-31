@@ -132,11 +132,9 @@ void physical_damage_test () {
 	Stat::boost (defender.stage [Stat::DEF], -6);
 	calculate_defending_stat (attacker, defender, weather);
 	
-	d.hp.stat = 0xFFFFFFFF;	
-
 	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;
-	unsigned damage = damage_calculator (attacker, defender, weather);
+	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }
@@ -173,13 +171,11 @@ void special_damage_test () {
 	Stat::boost (defender.stage [Stat::SPD], -6);
 	calculate_defending_stat (attacker, defender, weather);
 
-	d.hp.stat = 0xFFFFFFFF;
-
 	d.ability.name = Ability::DRY_SKIN;
 
 	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;
-	unsigned damage = damage_calculator (attacker, defender, weather);
+	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }

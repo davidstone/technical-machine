@@ -42,8 +42,8 @@ class Stat {
 			END
 		};
 
-		unsigned max;		// Max HP only
-		unsigned stat;		// Current HP or last calculated value for other stats
+		uint16_t max;		// Max HP only
+		uint16_t stat;		// Current HP or last calculated value for other stats
 		uint8_t base;
 		int8_t iv;			// 0 through 31
 		int8_t ev;			// 0 through 63

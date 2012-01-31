@@ -19,8 +19,6 @@
 #ifndef DAMAGE_HPP_
 #define DAMAGE_HPP_
 
-#include <vector>
-
 namespace technicalmachine {
 
 class Pokemon;
@@ -28,13 +26,8 @@ class Team;
 class Weather;
 
 unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather);
-
-unsigned damage_non_random (Team const & attacker, Team const & defender, Weather const & weather);
-
-unsigned damage_random (Team const & attacker, Team const & defender, unsigned effectiveness, unsigned damage);
-
+unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather const & weather);
 void recoil (Pokemon & user, unsigned damage, unsigned denominator);
-
 void damage_side_effect (Pokemon & user, unsigned damage);
 
 }	// namespace technicalmachine

@@ -31,6 +31,10 @@
 namespace technicalmachine {
 namespace {
 
+bool move_affects_target (Pokemon const & attacker, Team const & defender, Weather const & weather);
+unsigned capped_damage (Team const & attacker, Team const & defender, Weather const & weather);
+unsigned regular_damage (Team const & attacker, Team const & defender, Weather const & weather);
+
 unsigned calculate_level_multiplier (Pokemon const & attacker);
 unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned damage);
 unsigned calculate_screen_divisor (Team const & attacker, Team const & defender);
@@ -59,38 +63,60 @@ bool resistance_berry_activates (Item item, Type type, unsigned effectiveness);
 }	// unnamed namespace
 
 unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather) {
-	Pokemon const & pokemon = attacker.pokemon();
-	unsigned effectiveness = get_effectiveness (pokemon.move().type, defender.pokemon());
-	if ((effectiveness > 0) and (pokemon.move().type != Type::GROUND or grounded (defender, weather))) {
-		switch (pokemon.move().name) {
-			case Move::DRAGON_RAGE:
-				return 40;
-			case Move::ENDEAVOR:
-				return (defender.pokemon().hp.stat > pokemon.hp.stat) ? defender.pokemon().hp.stat - pokemon.hp.stat : 0;
-			case Move::FISSURE:
-			case Move::GUILLOTINE:
-			case Move::HORN_DRILL:
-			case Move::SHEER_COLD:
-				return defender.pokemon().hp.max;
-			case Move::NIGHT_SHADE:
-			case Move::SEISMIC_TOSS:
-				return pokemon.level;
-			case Move::PSYWAVE:
-				return pokemon.level * pokemon.move().variable().first / 10;
-			case Move::SONICBOOM:
-				return 20;
-			case Move::SUPER_FANG:
-				return defender.pokemon().hp.stat / 2;
-			default: {
-				unsigned damage = damage_non_random (attacker, defender, weather);
-				return damage_random (attacker, defender, effectiveness, damage);
-			}
-		}
-	}
-	return 0;
+	return move_affects_target (attacker.pokemon(), defender, weather) ?
+		capped_damage (attacker, defender, weather) :
+		0;
 }
 
-unsigned damage_non_random (Team const & attacker, Team const & defender, Weather const & weather) {
+namespace {
+
+bool move_affects_target (Pokemon const & attacker, Team const & defender, Weather const & weather) {
+	unsigned const effectiveness = get_effectiveness (attacker.move().type, defender.pokemon());
+	return (effectiveness > 0) and (attacker.move().type != Type::GROUND or grounded (defender, weather));
+}
+
+unsigned capped_damage (Team const & attacker, Team const & defender, Weather const & weather) {
+	unsigned damage = uncapped_damage (attacker, defender, weather);
+	if (damage >= defender.pokemon().hp.stat) {
+		damage = defender.pokemon().hp.stat;
+		if (attacker.pokemon().move().name == Move::FALSE_SWIPE or defender.endure)
+			--damage;
+	}
+	return damage;
+}
+
+}	// unnamed namespace
+
+unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather const & weather) {
+	Pokemon const & pokemon = attacker.pokemon();
+	switch (pokemon.move().name) {
+		case Move::DRAGON_RAGE:
+			return 40;
+		case Move::ENDEAVOR:
+			return (defender.pokemon().hp.stat > pokemon.hp.stat) ? defender.pokemon().hp.stat - pokemon.hp.stat : 0;
+		case Move::FISSURE:
+		case Move::GUILLOTINE:
+		case Move::HORN_DRILL:
+		case Move::SHEER_COLD:
+			return defender.pokemon().hp.max;
+		case Move::NIGHT_SHADE:
+		case Move::SEISMIC_TOSS:
+			return pokemon.level;
+		case Move::PSYWAVE:
+			return pokemon.level * pokemon.move().variable().first / 10;
+		case Move::SONICBOOM:
+			return 20;
+		case Move::SUPER_FANG:
+			return defender.pokemon().hp.stat / 2;
+		default: {
+			return regular_damage (attacker, defender, weather);
+		}
+	}
+}
+
+namespace {
+
+unsigned regular_damage (Team const & attacker, Team const & defender, Weather const & weather) {
 	Pokemon const & pokemon = attacker.pokemon();
 
 	unsigned damage = calculate_level_multiplier (pokemon);
@@ -107,27 +133,20 @@ unsigned damage_non_random (Team const & attacker, Team const & defender, Weathe
 	damage = calculate_item_modifier (pokemon, damage);
 	damage = calculate_me_first_modifier (attacker, damage);
 
-	return damage;
-}
-
-unsigned damage_random (Team const & attacker, Team const & defender, unsigned const effectiveness, unsigned damage) {
-	Pokemon const & pokemon = attacker.pokemon();
 	damage = calculate_random_modifier (pokemon.move(), damage);
 	damage = calculate_stab_modifier (attacker, damage);
 	damage = calculate_effectiveness_modifier (pokemon.move(), defender.pokemon(), damage);
+
+	unsigned const effectiveness = get_effectiveness (pokemon.move().type, defender.pokemon());
 	damage = calculate_ability_effectiveness_modifier (defender.pokemon().ability, effectiveness, damage);
 	damage = calculate_expert_belt_modifier (pokemon.item, effectiveness, damage);
 	damage *= calculate_tinted_lens_multiplier (pokemon.ability, effectiveness);
 	damage /= calculate_resistance_berry_divisor (defender.pokemon().item, pokemon.move().type, effectiveness);
-	if (damage == 0)
-		damage = 1;
-	else if (damage >= defender.pokemon().hp.stat) {
-		damage = defender.pokemon().hp.stat;
-		if (pokemon.move().name == Move::FALSE_SWIPE or defender.endure)
-			--damage;
-	}
-	return damage;
+
+	return (damage > 0) ? damage : 1;
 }
+
+}	// unnamed namespace
 
 
 void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
