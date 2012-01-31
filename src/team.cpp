@@ -35,7 +35,7 @@
 #include "pokemon.hpp"
 #include "switch.hpp"
 #include "status.hpp"
-#include "teampredictor.hpp"
+#include "team_predictor.hpp"
 #include "type.hpp"
 
 #include "pokemon_lab/read_team_file.hpp"

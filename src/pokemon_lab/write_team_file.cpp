@@ -71,7 +71,7 @@ static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree 
 
 }	// anonymous namespace
 
-void write_team (Team & team, std::string const & file_name) {
+void write_team (Team const & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;
 	boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
 	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");

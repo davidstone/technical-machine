@@ -24,7 +24,7 @@
 #include "load_stats.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
-#include "teampredictor.hpp"
+#include "team_predictor.hpp"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -66,7 +66,7 @@ void function (Fl_Widget * w, void * d) {
 	}
 	
 	if (team.pokemon.set.size() > 0) {
-		predict_team (data.detailed, team, using_lead);
+		team = predict_team (data.detailed, team, using_lead);
 		data.output->value (team.to_string().c_str());
 	}
 	else

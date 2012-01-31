@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "teampredictor.hpp"
+#include "team_predictor.hpp"
 
 #include <vector>
 
@@ -35,7 +35,7 @@ void predict_move (Pokemon & member, int detailed [][7], unsigned size);
 
 }	// unnamed namespace
 
-void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead) {
+Team predict_team (int detailed [][7], Team team, unsigned size, bool using_lead) {
 	std::vector<unsigned> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	float multiplier [Species::END][Species::END];
@@ -61,6 +61,7 @@ void predict_team (int detailed [][7], Team & team, unsigned size, bool using_le
 			pokemon.nature.name = static_cast <Nature::Natures> (detailed [pokemon.name] [2]);
 		predict_move (pokemon, detailed, size);
 	}
+	return team;
 }
 
 namespace {

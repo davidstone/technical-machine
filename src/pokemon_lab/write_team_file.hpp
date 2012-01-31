@@ -25,7 +25,7 @@ namespace technicalmachine {
 class Team;
 namespace pl {
 
-void write_team (Team & team, std::string const & file_name);
+void write_team (Team const & team, std::string const & file_name);
 
 }	// namespace pl
 }	// namespace technicalmachine

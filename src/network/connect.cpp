@@ -38,7 +38,7 @@
 #include "../battle.hpp"
 #include "../evaluate.hpp"
 #include "../load_stats.hpp"
-#include "../teampredictor.hpp"
+#include "../team_predictor.hpp"
 
 #include "../pokemon_lab/write_team_file.hpp"
 
@@ -296,8 +296,7 @@ void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
 				foe_team_file += get_extension ();
 				// TODO: add support for other formats
 			} while (boost::filesystem::exists (foe_team_file));
-			Team predicted = battle.foe;
-			predict_team (detailed, predicted, battle.ai.size);
+			Team const predicted = predict_team (detailed, battle.foe, battle.ai.size);
 			pl::write_team (predicted, foe_team_file);
 		}
 		battles.erase (battle_id);

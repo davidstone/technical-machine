@@ -1,5 +1,5 @@
 // Predict foe's team header
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAMPREDICTOR_H_
-#define TEAMPREDICTOR_H_
+#ifndef TEAM_PREDICTOR_HPP_
+#define TEAM_PREDICTOR_HPP_
 
 #include <vector>
 
+#include "team.hpp"
+
 namespace technicalmachine {
 
-class Team;
-
-void predict_team (int detailed [][7], Team & team, unsigned size, bool using_lead = true);
+Team predict_team (int detailed [][7], Team team, unsigned size, bool using_lead = true);
 
 }	// namespace technicalmachine
-#endif	// TEAMPREDICTOR_H_
+#endif	// TEAM_PREDICTOR_HPP_

@@ -32,7 +32,7 @@
 #include "species.hpp"
 #include "switch.hpp"
 #include "team.hpp"
-#include "teampredictor.hpp"
+#include "team_predictor.hpp"
 #include "use_move.hpp"
 #include "weather.hpp"
 
@@ -101,10 +101,9 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 }
 
 Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
-	Team predicted = foe;
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	predict_team (client.detailed, predicted, ai.size);
+	Team predicted = predict_team (client.detailed, foe, ai.size);
 	std::cout << predicted.to_string ();
 
 	return expectiminimax (ai, predicted, weather, depth, client.score);
