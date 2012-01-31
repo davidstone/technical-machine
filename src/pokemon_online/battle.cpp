@@ -134,7 +134,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case STRAIGHT_DAMAGE: {
+			std::cerr << "STRAIGHT_DAMAGE\n";
 			damage = msg.read_short ();
+			std::cerr << "damage: " << damage << '\n';
 			break;
 		}
 		case HP_CHANGE: {
@@ -259,17 +261,13 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case ABILITY_MESSAGE: {
-			std::cerr << "ABILITY_MESSAGE\n";
 			uint16_t const ability = msg.read_short ();
-			std::cerr << "reading part\n";
 			uint8_t const part = msg.read_byte ();
-			std::cerr << "reading type\n";
-			int8_t const type = msg.read_byte ();
-			std::cerr << "reading foe\n";
-			int8_t const foe = msg.read_byte ();
-//			std::cerr << "reading other\n";
+			Team & team = (player == party) ? ai : foe;
+			team.at_replacement().ability.name = battle_id_to_ability (ability, part);
+//			int8_t const type = msg.read_byte ();
+//			int8_t const foe = msg.read_byte ();
 //			int16_t const other = msg.read_short ();
-			std::cerr << "End of ABILITY_MESSAGE\n";
 			break;
 		}
 		case ITEM_MESSAGE: {

@@ -1380,7 +1380,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// COPYCAT
 		0,		// COSMIC_POWER
 		0,		// COTTON_SPORE
-		0,		// COUNTER
+		-1,		// COUNTER
 		40,		// COVET
 		90,		// CRABHAMMER
 		100,		// CROSS_CHOP
@@ -1444,14 +1444,14 @@ int16_t base_power (Move::Moves move) {
 		75,		// FIRE_PUNCH
 		15,		// FIRE_SPIN
 		-1,		// FISSURE
-		0,		// FLAIL
+		1,		// FLAIL
 		60,		// FLAME_WHEEL
 		95,		// FLAMETHROWER
 		120,		// FLARE_BLITZ
 		0,		// FLASH
 		80,		// FLASH_CANNON
 		0,		// FLATTER
-		0,		// FLING
+		1,		// FLING
 		90,		// FLY
 		120,		// FOCUS_BLAST
 		0,		// FOCUS_ENERGY
@@ -1460,7 +1460,7 @@ int16_t base_power (Move::Moves move) {
 		60,		// FORCE_PALM
 		0,		// FORESIGHT
 		150,		// FRENZY_PLANT
-		0,		// FRUSTRATION
+		1,		// FRUSTRATION
 		15,		// FURY_ATTACK
 		10,		// FURY_CUTTER
 		18,		// FURY_SWIPES
@@ -1469,7 +1469,7 @@ int16_t base_power (Move::Moves move) {
 		60,		// GIGA_DRAIN
 		150,		// GIGA_IMPACT
 		0,		// GLARE
-		0,		// GRASS_KNOT
+		1,		// GRASS_KNOT
 		0,		// GRASSWHISTLE
 		0,		// GRAVITY
 		0,		// GROWL
@@ -1479,7 +1479,7 @@ int16_t base_power (Move::Moves move) {
 		-1,		// GUILLOTINE
 		120,		// GUNK_SHOT
 		40,		// GUST
-		0,		// GYRO_BALL
+		1,		// GYRO_BALL
 		0,		// HAIL
 		100,		// HAMMER_ARM
 		0,		// HARDEN
@@ -1494,7 +1494,7 @@ int16_t base_power (Move::Moves move) {
 		100,		// HEAT_WAVE
 		0,		// HELPING_HAND
 		100,		// HI_JUMP_KICK
-		0,		// HIDDEN_POWER
+		1,		// HIDDEN_POWER
 		65,		// HORN_ATTACK
 		-1,		// HORN_DRILL
 		0,		// HOWL
@@ -1532,7 +1532,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// LIGHT_SCREEN
 		0,		// LOCK_ON
 		0,		// LOVELY_KISS
-		0,		// LOW_KICK
+		1,		// LOW_KICK
 		0,		// LUCKY_CHANT
 		0,		// LUNAR_DANCE
 		70,		// LUSTER_PURGE
@@ -1542,7 +1542,7 @@ int16_t base_power (Move::Moves move) {
 		120,		// MAGMA_STORM
 		60,		// MAGNET_BOMB
 		0,		// MAGNET_RISE
-		0,		// MAGNITUDE
+		1,		// MAGNITUDE
 		0,		// ME_FIRST
 		0,		// MEAN_LOOK
 		0,		// MEDITATE
@@ -1551,17 +1551,17 @@ int16_t base_power (Move::Moves move) {
 		80,		// MEGA_PUNCH
 		120,		// MEGAHORN
 		0,		// MEMENTO
-		0,		// METAL_BURST
+		-1,		// METAL_BURST
 		50,		// METAL_CLAW
 		0,		// METAL_SOUND
 		100,		// METEOR_MASH
-		0,		// METRONOME_MOVE
+		0,		// METRONOME
 		0,		// MILK_DRINK
 		0,		// MIMIC
 		0,		// MIND_READER
 		0,		// MINIMIZE
 		0,		// MIRACLE_EYE
-		0,		// MIRROR_COAT
+		-1,		// MIRROR_COAT
 		0,		// MIRROR_MOVE
 		65,		// MIRROR_SHOT
 		0,		// MIST
@@ -1574,7 +1574,7 @@ int16_t base_power (Move::Moves move) {
 		20,		// MUD_SLAP
 		95,		// MUDDY_WATER
 		0,		// NASTY_PLOT
-		0,		// NATURAL_GIFT
+		1,		// NATURAL_GIFT
 		0,		// NATURE_POWER
 		60,		// NEEDLE_ARM
 		-1,		// NIGHT_SHADE
@@ -1585,7 +1585,7 @@ int16_t base_power (Move::Moves move) {
 		60,		// OMINOUS_WIND
 		120,		// OUTRAGE
 		140,		// OVERHEAT
-		0,		// PAIN_SPLIT
+		0,		// PAIN_SPLIT TODO: ???
 		40,		// PAY_DAY
 		50,		// PAYBACK
 		35,		// PECK
@@ -1605,7 +1605,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// POWER_SWAP
 		0,		// POWER_TRICK
 		120,		// POWER_WHIP
-		0,		// PRESENT
+		1,		// PRESENT
 		0,		// PROTECT
 		65,		// PSYBEAM
 		0,		// PSYCH_UP
@@ -1614,7 +1614,7 @@ int16_t base_power (Move::Moves move) {
 		70,		// PSYCHO_CUT
 		0,		// PSYCHO_SHIFT
 		-1,		// PSYWAVE
-		0,		// PUNISHMENT
+		1,		// PUNISHMENT
 		40,		// PURSUIT
 		40,		// QUICK_ATTACK
 		20,		// RAGE
@@ -1627,9 +1627,9 @@ int16_t base_power (Move::Moves move) {
 		0,		// REFLECT
 		0,		// REFRESH
 		0,		// REST
-		0,		// RETURN
+		1,		// RETURN
 		60,		// REVENGE
-		0,		// REVERSAL
+		1,		// REVERSAL
 		0,		// ROAR
 		150,		// ROAR_OF_TIME
 		25,		// ROCK_BLAST
@@ -1693,7 +1693,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// SPIDER_WEB
 		20,		// SPIKE_CANNON
 		0,		// SPIKES
-		0,		// SPIT_UP
+		1,		// SPIT_UP
 		0,		// SPITE
 		0,		// SPLASH
 		0,		// SPORE
@@ -1753,7 +1753,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// TRICK
 		0,		// TRICK_ROOM
 		10,		// TRIPLE_KICK
-		0,		// TRUMP_CARD
+		1,		// TRUMP_CARD
 		25,		// TWINEEDLE
 		40,		// TWISTER
 		70,		// U_TURN
