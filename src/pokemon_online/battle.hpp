@@ -34,6 +34,7 @@ class InMessage;
 class Battle : public GenericBattle {
 	private:
 		OutMessage action;
+		int16_t damage;
 	public:
 		Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth);
 		Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth, Team const & team);

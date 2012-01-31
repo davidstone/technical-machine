@@ -32,12 +32,16 @@ namespace po {
 
 Battle::Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth):
 	GenericBattle::GenericBattle (seed, opponent, battle_depth),
-	action (OutMessage::BATTLE_MESSAGE) {
+	action (OutMessage::BATTLE_MESSAGE),
+	damage (0)
+	{
 }
 
 Battle::Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth, Team const & team):
 	GenericBattle::GenericBattle (seed, opponent, battle_depth, team),
-	action (OutMessage::BATTLE_MESSAGE) {
+	action (OutMessage::BATTLE_MESSAGE),
+	damage (0)
+	{
 }
 
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg) {
@@ -130,20 +134,20 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		}
 		case STRAIGHT_DAMAGE: {
-			std::cerr << "STRAIGHT_DAMAGE\n";
-			int16_t damage = msg.read_short ();
-			std::cerr << "damage: " << damage << '\n';
-			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
+			damage = msg.read_short ();
 			break;
 		}
 		case HP_CHANGE: {
 			std::cerr << "HP_CHANGE\n";
 			bool const my_team = player == party;
 			int16_t const remaining_hp = msg.read_short ();
-			int16_t const change_in_hp = my_team ?
-				ai_change_in_hp (remaining_hp) :
-				foe_change_in_hp (remaining_hp);
+			int16_t change_in_hp;
+			if (damage == 0)
+				change_in_hp = my_team ? ai_change_in_hp (remaining_hp) : foe_change_in_hp (remaining_hp);
+			else {
+				change_in_hp = damage;
+				damage = 0;
+			}
 			uint8_t const slot = 0;
 			int16_t const denominator = my_team ? ai.at_replacement ().hp.max : get_max_damage_precision ();
 			handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
@@ -511,5 +515,5 @@ int16_t Battle::foe_change_in_hp (int16_t remaining_hp) const {
 	return get_max_damage_precision () * pokemon.hp.stat / pokemon.hp.max - remaining_hp;
 }
 
-} // namespace po
-} // namespace technicalmachine
+}	// namespace po
+}	// namespace technicalmachine
