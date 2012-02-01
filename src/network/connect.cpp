@@ -305,7 +305,7 @@ void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
 
 std::string GenericClient::get_random_string () {
 	constexpr unsigned range = 36;
-	static constexpr char legal_characters [range] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	static constexpr char legal_characters [] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	std::uniform_int_distribution <unsigned> distribution { 0, range - 1 };
 	std::string str;
 	str.resize (8);
