@@ -124,6 +124,8 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsi
 	// into best_move without any additional logic, such as pre-filling it with
 	// some result.
 	
+	if (depth > 0)
+		--depth;
 	int64_t alpha = -Score::VICTORY - 1;
 	
 	calculate_speed (ai, weather);
@@ -147,9 +149,6 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsi
 	// This section is for selecting a move, including switches that aren't
 	// replacing a fainted Pokemon.
 	else {
-		if (depth > 0)
-			--depth;
-		
 		std::string indent = "";
 		if (verbose and !first_turn)
 			indent += "\t\t";
