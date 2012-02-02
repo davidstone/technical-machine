@@ -53,6 +53,9 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	}
 	else {
 		replace_fainted_pokemon (switcher, other);
+		// If the last Pokemon is fainted; there is nothing left to do.
+		if (switcher.pokemon.set.size() == 0)
+			return;
 	}
 	
 	entry_hazards (switcher, weather);
@@ -161,25 +164,26 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {
-	if (switcher.pokemon().ability.name != Ability::MAGIC_GUARD) {
-		if (grounded (switcher, weather)) {
-			if (switcher.toxic_spikes != 0) {
-				if (is_type (switcher, Type::POISON))
-					switcher.toxic_spikes = 0;
-				else if (switcher.toxic_spikes == 1)
-					Status::poison (switcher, switcher, weather);
-				else
-					Status::poison_toxic (switcher, switcher, weather);
-			}
-			if (switcher.spikes != 0)
-				heal (switcher.pokemon(), -16, switcher.spikes + 1);
+	if (switcher.pokemon().ability.name == Ability::MAGIC_GUARD)
+		return;
+
+	if (grounded (switcher, weather)) {
+		if (switcher.toxic_spikes != 0) {
+			if (is_type (switcher, Type::POISON))
+				switcher.toxic_spikes = 0;
+			else if (switcher.toxic_spikes == 1)
+				Status::poison (switcher, switcher, weather);
+			else
+				Status::poison_toxic (switcher, switcher, weather);
 		}
-		// get_effectiveness () outputs a value between 0 and 16, with higher
-		// numbers being more effective. 4 * effective Stealth Rock does
-		// 16 / 32 damage.
-		if (switcher.stealth_rock)
-			heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
+		if (switcher.spikes != 0)
+			heal (switcher.pokemon(), -16, switcher.spikes + 1);
 	}
+	// get_effectiveness () outputs a value between 0 and 16, with higher
+	// numbers being more effective. 4 * effective Stealth Rock does
+	// 16 / 32 damage.
+	if (switcher.stealth_rock)
+		heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
 }
 
 void activate_ability (Team & switcher, Team & other, Weather & weather) {
