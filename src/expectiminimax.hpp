@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EXPECTIMINIMAX_H_
-#define EXPECTIMINIMAX_H_
+#ifndef EXPECTIMINIMAX_HPP_
+#define EXPECTIMINIMAX_HPP_
 
 #include <cstdint>
 #include "move.hpp"
@@ -31,7 +31,7 @@ class Weather;
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score);
 
 // Called from the function that identifies transpositions
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn = false);
+int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
-#endif	// EXPECTIMINIMAX_H_
+#endif	// EXPECTIMINIMAX_HPP_

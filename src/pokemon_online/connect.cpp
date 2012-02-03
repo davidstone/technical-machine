@@ -720,7 +720,7 @@ void Client::send_registration_message () {
 
 void Client::handle_version_control (std::string const & server_version) const {
 	// Pretend to be the most recent version because this is the standard I'm coding against.
-	std::string const version = "1.0.30";
+	std::string const version = "1.0.53";
 	if (version != server_version) {
 		print_with_time_stamp (std::cerr, "Server version is: " + server_version);
 		print_with_time_stamp (std::cerr, "User's 'version': " + version);

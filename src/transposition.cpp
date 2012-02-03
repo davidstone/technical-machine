@@ -109,7 +109,7 @@ int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth
 		else {
 			Move::Moves phony = Move::END;
 			// If I can't find it, continue evaluation as normal.
-			value = select_move_branch (ai, foe, weather, depth, score, phony);
+			value = select_type_of_move_branch (ai, foe, weather, depth, score, phony);
 			current.value = value;
 			
 			// Since I didn't find any stored value at the same hash as the
