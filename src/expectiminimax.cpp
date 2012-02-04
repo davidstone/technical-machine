@@ -55,6 +55,7 @@ int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, uns
 int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score);
 int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score);
 int64_t use_move_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score);
+int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score);
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score);
 int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, unsigned depth, Score const & score);
 int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn);
@@ -328,28 +329,6 @@ int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsig
 	return average_score;
 }
 
-int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score) {
-	if (!user.moved) {
-		other.damage = call_move (user, other, weather);
-		int64_t const user_win = Score::win (user);
-		int64_t const other_win = Score::win (other);
-		if (user_win or other_win)
-			return user_win + other_win;
-		switch (user.pokemon().move().name) {
-			case Move::BATON_PASS:
-			case Move::U_TURN:
-				if (user.pokemon.set.size () > 1) {
-					Move::Moves phony = Move::END;
-					return move_then_switch_branch (user, other, weather, depth, score, phony);
-				}
-				break;
-			default:
-				break;
-		}
-	}
-	return Score::VICTORY + 1;		// return an illegal value
-}
-
 int64_t use_move_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score) {
 	int64_t value = use_move_and_follow_up (first, last, weather, depth, score);
 	if (value != Score::VICTORY + 1)	// illegal value
@@ -393,6 +372,28 @@ int64_t use_move_branch (Team first, Team last, Weather weather, unsigned depth,
 		divisor += 21;
 	}
 	return average_score / divisor;
+}
+
+int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score) {
+	if (!user.moved) {
+		other.damage = call_move (user, other, weather);
+		int64_t const user_win = Score::win (user);
+		int64_t const other_win = Score::win (other);
+		if (user_win or other_win)
+			return user_win + other_win;
+		switch (user.pokemon().move().name) {
+			case Move::BATON_PASS:
+			case Move::U_TURN:
+				if (user.pokemon.set.size () > 1) {
+					Move::Moves phony = Move::END;
+					return move_then_switch_branch (user, other, weather, depth, score, phony);
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	return Score::VICTORY + 1;		// return an illegal value
 }
 
 int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, unsigned depth, Score const & score) {
