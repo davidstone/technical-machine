@@ -25,6 +25,11 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
+namespace {
+
+void apply_poison_status (Team & user, Team & target, Weather const & weather, Status::Statuses status);
+
+}	// unnamed namespace
 
 Status::Status ():
 	name (NO_STATUS) {
@@ -45,7 +50,7 @@ void Status::clear () {
 }
 
 void Status::burn (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_burn (weather)) and !is_type (target, Type::FIRE)) {
+	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_burn (weather)) and !target.pokemon().type.blocks_burn ()) {
 		target.pokemon().status.name = BURN;
 		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
 			burn (target, user, weather);
@@ -53,7 +58,7 @@ void Status::burn (Team & user, Team & target, Weather const & weather) {
 }
 
 void Status::freeze (Pokemon const & user, Team & target, Weather const & weather) {
-	if (target.pokemon().status.name == NO_STATUS and (user.ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_freeze ()) and !weather.sun and !is_type (target, Type::ICE))
+	if (target.pokemon().status.name == NO_STATUS and (user.ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_freeze ()) and !weather.sun and !target.pokemon().type.blocks_freeze ())
 		target.pokemon().status.name = FREEZE;
 }
 
@@ -71,19 +76,22 @@ void Status::sleep (Pokemon const & user, Pokemon & target, Weather const & weat
 }
 
 void Status::poison (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or target.pokemon().ability.blocks_poison (weather)) and !is_type (target, Type::POISON) and !is_type (target, Type::STEEL)) {
-		target.pokemon().status.name = POISON;
-		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
-			poison (target, user, weather);
-	}
+	apply_poison_status (user, target, weather, POISON);
 }
 
 void Status::poison_toxic (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or target.pokemon().ability.blocks_poison (weather)) and !is_type (target, Type::POISON) and !is_type (target, Type::STEEL)) {
-		target.pokemon().status.name = POISON_TOXIC;
+	apply_poison_status (user, target, weather, POISON_TOXIC);
+}
+
+namespace {
+
+void apply_poison_status (Team & user, Team & target, Weather const & weather, Status::Statuses const status) {
+	if (target.pokemon().status.name == Status::NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_poison (weather)) and !target.pokemon().type.blocks_poison ()) {
+		target.pokemon().status.name = status;
 		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
-			poison (target, user, weather);
+			Status::poison (target, user, weather);
 	}
 }
 
+}	// unnamed namespace
 }	// namespace technicalmachine

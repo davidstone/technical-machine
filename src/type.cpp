@@ -39,6 +39,35 @@ bool Type::operator!= (Type other) const {
 	return !(*this == other);
 }
 
+bool Type::is_immune_to_sandstorm () const {
+	switch (type) {
+		case GROUND:
+		case ROCK:
+		case STEEL:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Type::blocks_burn () const {
+	return type == FIRE;
+}
+
+bool Type::blocks_freeze () const {
+	return type == ICE;
+}
+
+bool Type::blocks_poison () const {
+	switch (type) {
+		case POISON:
+		case STEEL:
+			return true;
+		default:
+			return false;
+	}
+}
+
 bool is_type (Team const & team, Type type) {
 	if (type != Type::FLYING or !team.roost) {
 		for (Type const check : team.pokemon().type.types) {
@@ -100,14 +129,32 @@ bool grounded (Team const & team, Weather const & weather) {
 
 bool TypeCollection::is_immune_to_sandstorm () const {
 	for (Type const type : types) {
-		switch (type.type) {
-			case Type::GROUND:
-			case Type::ROCK:
-			case Type::STEEL:
-				return true;
-			default:
-				break;
-		}
+		if (type.is_immune_to_sandstorm ())
+			return true;
+	}
+	return false;
+}
+
+bool TypeCollection::blocks_burn () const {
+	for (Type const type : types) {
+		if (type.blocks_burn ())
+			return true;
+	}
+	return false;
+}
+
+bool TypeCollection::blocks_freeze () const {
+	for (Type const type : types) {
+		if (type.blocks_freeze ())
+			return true;
+	}
+	return false;
+}
+
+bool TypeCollection::blocks_poison () const {
+	for (Type const type : types) {
+		if (type.blocks_poison ())
+			return true;
 	}
 	return false;
 }

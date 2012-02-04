@@ -50,6 +50,10 @@ class Type {
 		Type (Types name);
 		bool operator== (Type other) const;
 		bool operator!= (Type other) const;
+		bool is_immune_to_sandstorm () const;
+		bool blocks_burn () const;
+		bool blocks_freeze () const;
+		bool blocks_poison () const;
 };
 
 class TypeCollection {
@@ -57,6 +61,9 @@ class TypeCollection {
 		std::vector <Type> types;
 		
 		bool is_immune_to_sandstorm () const;
+		bool blocks_burn () const;
+		bool blocks_freeze () const;
+		bool blocks_poison () const;
 };
 
 class Pokemon;
