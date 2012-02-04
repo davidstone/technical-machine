@@ -141,6 +141,8 @@ bool block2 (Team const & user, Weather const & weather) {
 }
 
 bool is_blocked_due_to_lock_in (Team const & user) {
+	if (user.pokemon().move().is_struggle_or_switch() and !user.recharging)
+		return false;
 	if (is_locked_in (user)) {
 		for (auto it = user.pokemon().move.set.cbegin(); it->name != Move::STRUGGLE; ++it) {
 			if (it->name != user.pokemon().move().name and it->times_used != 0)
