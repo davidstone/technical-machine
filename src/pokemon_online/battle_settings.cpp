@@ -1,5 +1,5 @@
 // Pokemon Online battle settings
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,17 +17,42 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "battle_settings.hpp"
+
 #include <cstdint>
+#include <vector>
+
 #include "inmessage.hpp"
 
 namespace technicalmachine {
 namespace po {
+namespace {
 
-BattleSettings::BattleSettings (uint32_t const battle_clauses, uint8_t battle_mode):
+uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses);
+
+}	// unnamed namespace
+
+BattleSettings::BattleSettings (uint32_t const battle_clauses, uint8_t const battle_mode):
 	network::GenericBattleSettings (),
 	clauses (battle_clauses),
 	mode (static_cast <Mode> (battle_mode)) {
 }
+
+BattleSettings::BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t const battle_mode):
+	network::GenericBattleSettings (),
+	clauses (vector_to_clauses (battle_clauses)),
+	mode (static_cast <Mode> (battle_mode)) {
+}
+
+namespace {
+
+uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses) {
+	uint32_t clause = 0;
+	for (uint32_t const value : clauses)
+		clause |= value;
+	return clause;
+}
+
+}	// unnamed namespace
 
 bool BattleSettings::active (Clauses const check) const {
 	return clauses & check;
@@ -46,5 +71,5 @@ BattleConfiguration::BattleConfiguration (InMessage & msg):
 	settings (clauses, mode) {
 }
 
-} // namespace po
-} // namespace technicalmachine
+}	// namespace po
+}	// namespace technicalmachine

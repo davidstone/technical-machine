@@ -1,5 +1,5 @@
 // Pokemon Online battle settings
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,10 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_BATTLE_SETTINGS_H_
-#define POKEMON_ONLINE_BATTLE_SETTINGS_H_
+#ifndef POKEMON_ONLINE_BATTLE_SETTINGS_HPP_
+#define POKEMON_ONLINE_BATTLE_SETTINGS_HPP_
 
 #include <cstdint>
+#include <vector>
 #include "../network/battle_settings.hpp"
 
 namespace technicalmachine {
@@ -48,7 +49,8 @@ class BattleSettings : public network::GenericBattleSettings {
 		};
 		uint32_t const clauses;
 		Mode const mode;
-		BattleSettings (uint32_t const battle_clauses, uint8_t const battle_mode);
+		BattleSettings (uint32_t battle_clauses, uint8_t battle_mode);
+		BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t battle_mode);
 	private:
 		bool active (Clauses const check) const;
 	public:
@@ -69,6 +71,6 @@ class BattleConfiguration {
 		BattleConfiguration (InMessage & msg);
 };
 
-} // namespace po
-} // namespace technicalmachine
-#endif // POKEMON_ONLINE_BATTLE_SETTINGS_H_
+}	// namespace po
+}	// namespace technicalmachine
+#endif	// POKEMON_ONLINE_BATTLE_SETTINGS_HPP_

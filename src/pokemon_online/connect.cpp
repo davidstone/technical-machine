@@ -607,7 +607,12 @@ void Client::send_battle_challenge_with_current_team () {
 			OutMessage msg (OutMessage::CHALLENGE_STUFF);
 			uint32_t const user_id = get_user_id (challenges.begin ()->first);
 			uint8_t const generation = 4;		// ???
-			BattleSettings const settings (BattleSettings::SPECIES_CLAUSE, BattleSettings::SINGLES);
+			std::vector <uint32_t> clauses {
+				BattleSettings::FREEZE_CLAUSE,
+				BattleSettings::SLEEP_CLAUSE,
+				BattleSettings::SPECIES_CLAUSE,
+			};
+			BattleSettings const settings (clauses, BattleSettings::SINGLES);
 			msg.write_challenge (user_id, generation, settings);
 			msg.send (*socket);
 		}
