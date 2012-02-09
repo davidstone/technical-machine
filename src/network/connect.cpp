@@ -392,8 +392,8 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		else if (command == "depth") {
 			if (request.length () >= delimiter_position + delimiter.length()) {
 				int const new_depth = std::stoi (request.substr (delimiter_position + delimiter.length ()));
-				if (new_depth < 1) {
-					std::string const message = "Invalid depth requested. Please enter a number between 1 and 3 inclusive.";
+				if (new_depth < 0) {
+					std::string const message = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
 					send_private_message (user, message);
 				}
 				else {

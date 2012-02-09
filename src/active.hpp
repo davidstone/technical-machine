@@ -20,9 +20,14 @@
 #define ACTIVE_HPP_
 
 #include <cstddef>
+#include <stdexcept>
+#include <string>
+#include <typeinfo>
 #include <vector>
 
 namespace technicalmachine {
+
+class InvalidActiveIndex;
 
 template <class T>
 class Active {
@@ -34,16 +39,30 @@ class Active {
 			index (0) {
 		}
 		T & operator() () {
-			return set [index];
+			if (index < set.size())
+				return set [index];
+			else
+				throw InvalidActiveIndex (index, set.size(), typeid(T).name());
 		}
 		T const & operator() () const {
-			return set [index];
+			if (index < set.size())
+				return set [index];
+			else
+				throw InvalidActiveIndex (index, set.size(), typeid(T).name());
 		}
 		void add (T name) {
 			set.insert (set.begin() + index, name);
 		}
 		void remove_active () {
 			set.erase (set.begin() + index);
+		}
+};
+
+class InvalidActiveIndex : public std::logic_error {
+	public:
+		InvalidActiveIndex (size_t index, size_t size, std::string const & name):
+			logic_error ("Attempted to access element " + std::to_string (index) + " in a set of size " + std::to_string (size) + " with elements of type " + name + "\n")
+			{
 		}
 };
 

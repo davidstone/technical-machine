@@ -106,7 +106,7 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	Team predicted = predict_team (client.detailed, foe, ai.size);
 	std::cout << predicted.to_string ();
 
-	return expectiminimax (ai, predicted, weather, depth, client.score);
+	return expectiminimax (ai, predicted, weather, depth, client.score, random_engine);
 }
 
 void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name) {

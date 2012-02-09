@@ -39,7 +39,7 @@ int main (int argc, char * argv []) {
 			po::Client client (depth);
 			client.run();
 		}
-		catch (network::InvalidPacket & error) {
+		catch (network::InvalidPacket const & error) {
 			constexpr unsigned time_in_seconds = 10;
 			std::cerr << error.what () << " Disconnected. Waiting " << time_in_seconds << " seconds and trying again.\n";
 			// I disconnect from the server at this point and try again, because this means an unrecoverable error.

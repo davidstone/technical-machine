@@ -136,8 +136,9 @@ bool imprison (Move const & move, Team const & other) {
 
 // Things that both block selection and block execution after flinching
 bool block2 (Team const & user, Weather const & weather) {
-	return (user.taunt and user.pokemon().move().basepower == 0)
-			or (weather.gravity and user.pokemon().move().is_blocked_by_gravity ());
+	return !user.pokemon().move().is_switch () and
+			((user.taunt and user.pokemon().move().basepower == 0) or
+			(weather.gravity and user.pokemon().move().is_blocked_by_gravity ()));
 }
 
 bool is_blocked_due_to_lock_in (Team const & user) {
