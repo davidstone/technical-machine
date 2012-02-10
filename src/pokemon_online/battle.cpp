@@ -439,10 +439,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case OFFER_CHOICE: {
 			std::cerr << "OFFER_CHOICE\n";
 			int8_t const num_slot = msg.read_byte ();
-			std::cerr << "num_slot: " << static_cast <int> (num_slot) << '\n';
 			bool const can_switch = msg.read_byte ();
 			bool const can_attack = msg.read_byte ();
-			std::cerr << "can_attack: " << can_attack << '\n';
 			std::vector <uint8_t> attacks_allowed;
 			attacks_allowed.reserve (moves_per_pokemon);
 			for (unsigned n = 0; n != moves_per_pokemon; ++n)
