@@ -555,13 +555,13 @@ Move::Moves random_switch (Team & ai, Team const & foe, Weather const & weather,
 
 	std::vector <Move::Moves> switches;
 	for (; ai.pokemon().move.index != ai.pokemon().move.set.size(); ++ai.pokemon().move.index) {
-		ai.pokemon().move().selectable = is_legal_selection (ai, foe, weather);
-		if (ai.pokemon().move().selectable) {
+		if (!ai.is_switching_to_self ()) {
 			switches.push_back (ai.pokemon().move().name);
 		}
 	}
 	std::uniform_int_distribution <size_t> distribution { 0, switches.size() - 1 };
-	return switches [distribution (random_engine)];
+	size_t const index = distribution (random_engine);
+	return switches [index];
 }
 
 Move::Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
@@ -573,7 +573,8 @@ Move::Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & 
 		}
 	}
 	std::uniform_int_distribution <size_t> distribution { 0, moves.size() - 1 };
-	return moves [distribution (random_engine)];
+	size_t const index = distribution (random_engine);
+	return moves [index];
 }
 
 
