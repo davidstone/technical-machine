@@ -216,7 +216,7 @@ void update_best_move (Team & ai, int64_t & alpha, int64_t beta, bool first_turn
 	// previous AI's best move
 	if (beta > alpha) {
 		alpha = beta;
-		ai.pokemon().move().score = alpha;
+		ai.at_replacement().move().score = alpha;
 		best_move = new_move;
 		constexpr bool is_me = true;
 		print_estimated_score (first_turn, is_me, alpha);
@@ -466,6 +466,8 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth,
 }
 
 int64_t fainted (Team first, Team last, Weather weather, unsigned depth, Score const & score) {
+	// Use pokemon() instead of at_replacement() because it checks whether the
+	// current Pokemon needs to be replaced because it fainted.
 	if (first.pokemon().hp.stat == 0) {
 		switchpokemon (first, last, weather);
 		if (Score::win (first) != 0 or Score::win (last) != 0)
