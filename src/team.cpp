@@ -434,12 +434,41 @@ bool Team::operator== (Team const & other) const {
 			me == other.me;
 }
 
+#ifndef NDEBUG
 Pokemon & Team::at_replacement () {
+	if (replacement >= pokemon.set.size()) {
+		std::cout << "replacement: " << static_cast <int> (replacement) << '\n';
+		std::cout << "set.size(): " << pokemon.set.size() << '\n';
+		std::cout << "type: Pokemon replacement\n";
+	}
 	return pokemon.set [replacement];
 }
 Pokemon const & Team::at_replacement () const {
+	if (replacement >= pokemon.set.size()) {
+		std::cout << "replacement: " << static_cast <int> (replacement) << '\n';
+		std::cout << "set.size(): " << pokemon.set.size() << '\n';
+		std::cout << "type: Pokemon replacement\n";
+	}
 	return pokemon.set [replacement];
 }
+
+#else	// NDEBUG
+
+Pokemon & Team::at_replacement () {
+	if (replacement < pokemon.set.size())
+		return pokemon.set [replacement];
+	else
+		throw InvalidActiveIndex (replacement, pokemon.set.size(), "Pokemon replacement");
+}
+
+Pokemon const & Team::at_replacement () const {
+	if (replacement < pokemon.set.size())
+		return pokemon.set [replacement];
+	else
+		throw InvalidActiveIndex (replacement, pokemon.set.size(), "Pokemon replacement");
+}
+
+#endif	// NDEBUG
 
 std::string Team::to_string () const {
 	std::string output = player + "'s (";

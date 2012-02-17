@@ -25,6 +25,8 @@
 #include <typeinfo>
 #include <vector>
 
+#include <iostream>
+
 namespace technicalmachine {
 
 class InvalidActiveIndex;
@@ -38,6 +40,24 @@ class Active {
 		Active () :
 			index (0) {
 		}
+		#ifndef NDEBUG
+		T & operator() () {
+			if (index >= set.size()) {
+				std::cout << "index: " << index << '\n';
+				std::cout << "set.size(): " << set.size() << '\n';
+				std::cout << "type: " << typeid(T).name() << '\n';
+			}
+			return set [index];
+		}
+		T const & operator() () const {
+			if (index >= set.size()) {
+				std::cout << "index: " << index << '\n';
+				std::cout << "set.size(): " << set.size() << '\n';
+				std::cout << "type: " << typeid(T).name() << '\n';
+			}
+			return set [index];
+		}
+		#else	// NDEBUG
 		T & operator() () {
 			if (index < set.size())
 				return set [index];
@@ -50,6 +70,7 @@ class Active {
 			else
 				throw InvalidActiveIndex (index, set.size(), typeid(T).name());
 		}
+		#endif	// NDEBUG
 		void add (T name) {
 			set.insert (set.begin() + index, name);
 		}

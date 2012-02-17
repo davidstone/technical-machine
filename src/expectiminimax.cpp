@@ -74,7 +74,7 @@ Move::Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & 
 void print_best_move (Team const & team, Move::Moves best_move, unsigned depth, int64_t score);
 void print_action (Team const & team, bool first_turn);
 void print_estimated_score (bool first_turn, bool is_me, int64_t estimate);
-void update_best_move (Team & ai, int64_t & alpha, int64_t beta, bool first_turn, Move::Moves new_move, Move::Moves & best_move);
+void update_best_move (int64_t & alpha, int64_t beta, bool first_turn, Move::Moves new_move, Move::Moves & best_move);
 void update_foe_best_move (Team & foe, int64_t & beta, int64_t max_score, bool first_turn);
 
 }	// unnamed namespace
@@ -202,7 +202,8 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 			if (beta <= alpha)
 				break;
 		}
-		update_best_move (ai, alpha, beta, first_turn, ai.pokemon().move().name, best_move);
+		ai.pokemon().move().score = beta;
+		update_best_move (alpha, beta, first_turn, ai.pokemon().move().name, best_move);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == Score::VICTORY)
 			break;
@@ -210,13 +211,12 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int 
 	return alpha;
 }
 
-void update_best_move (Team & ai, int64_t & alpha, int64_t beta, bool first_turn, Move::Moves new_move, Move::Moves & best_move) {
+void update_best_move (int64_t & alpha, int64_t beta, bool first_turn, Move::Moves new_move, Move::Moves & best_move) {
 	// If their best response isn't as good as their previous best
 	// response, then this new move must be better than the
 	// previous AI's best move
 	if (beta > alpha) {
 		alpha = beta;
-		ai.at_replacement().move().score = alpha;
 		best_move = new_move;
 		constexpr bool is_me = true;
 		print_estimated_score (first_turn, is_me, alpha);
@@ -458,7 +458,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth,
 			if (beta <= alpha or foe.pokemon().hp.stat != 0)
 				break;
 		}
-		update_best_move (ai, alpha, beta, first_turn, Move::from_replacement (ai.replacement), best_move);
+		update_best_move (alpha, beta, first_turn, Move::from_replacement (ai.replacement), best_move);
 		if (ai.pokemon().hp.stat != 0)
 			break;
 	}
@@ -503,7 +503,7 @@ int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather co
 			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + switcher.at_replacement ().to_string () + "\n";
 		int64_t const value = switch_after_move_branch (switcher, other, weather, depth, score);
 		if (switcher.me)
-			update_best_move (switcher, alpha, value, first_turn, Move::from_replacement (switcher.replacement), best_switch);
+			update_best_move (alpha, value, first_turn, Move::from_replacement (switcher.replacement), best_switch);
 		else
 			update_foe_best_move (switcher, alpha, value, first_turn);
 	}
