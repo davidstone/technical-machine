@@ -108,7 +108,7 @@ static void create_sorted_vector (std::string const & file_name, std::vector <st
 	std::sort (sorted.begin(), sorted.end());
 	file.close();
 }
-}	// anonymous namespace
+}	// unnamed namespace
 
 void GenericClient::load_highlights () {
 	create_unsorted_vector ("settings/highlights.txt", highlights);
@@ -275,37 +275,37 @@ void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
 	auto const it = battles.find (battle_id);
 	if (it != battles.end ()) {
 		GenericBattle & battle = *it->second;
-		std::string verb;
-		switch (result) {
-			case WON:
-				verb = "Won";
-				break;
-			case LOST:
-				verb = "Lost";
-				break;
-			case TIED:
-				verb = "Tied";
-				break;
-		}
+		std::string const verb = to_string (result);
 		print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
 		if (result == LOST) {
-			std::string foe_team_file;
-			do {
-				foe_team_file = "teams/foe/";
-				foe_team_file += get_random_string ();
-				foe_team_file += get_extension ();
-				// TODO: add support for other formats
-			} while (boost::filesystem::exists (foe_team_file));
 			Team const predicted = predict_team (detailed, battle.foe, battle.ai.size);
-			pl::write_team (predicted, foe_team_file);
+			pl::write_team (predicted, generate_team_file_name ());
 		}
-		battles.erase (battle_id);
+		battles.erase (it);
 	}
+}
+
+std::string GenericClient::generate_team_file_name () {
+	// Randomly generates a file name in 8.3 format. It then checks to see if
+	// that file name already exists. If it does, it randomly generates a new
+	// file name, and continues until it generates a name that does not exist.
+	// This limits the potential for a race condition down to a 1 / 36^8 chance
+	// (about 1 / 2 ^ 41), assuming that another process / thread is also
+	// trying to save an 8 character file name with an identical extension at
+	// the same time. The result of this is that a team file would not be saved
+	// when it should have been, which is not a major issue.
+	std::string foe_team_file;
+	do {
+		foe_team_file = "teams/foe/";
+		foe_team_file += get_random_string ();
+		foe_team_file += get_extension ();
+	} while (boost::filesystem::exists (foe_team_file));
+	return foe_team_file;
 }
 
 std::string GenericClient::get_random_string () {
 	constexpr unsigned range = 36;
-	static constexpr char legal_characters [] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	static constexpr char legal_characters [] = "abcdefghijklmnopqrstuvwxyz0123456789";
 	std::uniform_int_distribution <unsigned> distribution { 0, range - 1 };
 	std::string str;
 	str.resize (8);
@@ -345,28 +345,35 @@ void GenericClient::send_channel_message (std::string channel, std::string const
 }
 
 namespace {
-static size_t set_target_and_find_message_begin (std::string const & request, std::string const & delimiter, size_t delimiter_position, std::string & target) {
+
+bool is_valid_command_structure (std::string const & request) {
+	constexpr char command_character = '!';
+	return request.length() > 1 and request.front () == command_character;
+}
+
+size_t set_target_and_find_message_begin (std::string const & request, size_t start, std::string & target) {
 	// This function is used to determine the target of a message (such as who
 	// to PM, what channel to join, etc.). The target may be one word with or
 	// without quotes, or multiple words with quotes. After it sets target, it
 	// returns the position of the beginning of the message.
 	size_t const quote1 = request.find ("\"");
-	size_t quote2 = std::string::npos;
-	if (quote1 == delimiter_position + delimiter.length())
-		quote2 = request.find ("\"", quote1 + 1);
+	size_t const quote2 = (quote1 == start) ?
+		request.find ("\"", quote1 + 1) :
+		std::string::npos;
 	size_t message_begin = std::string::npos;
 	if (quote2 != std::string::npos) {
 		target = request.substr (quote1 + 1, quote2 - quote1 - 1);
-		if (request.length() > quote2 + 1 + delimiter.length())
-			message_begin = quote2 + 1 + delimiter.length();
+		if (request.length() > quote2 + 1 + 1)
+			message_begin = quote2 + 1 + 1;
 	}
 	else {
-		message_begin = request.find (delimiter, delimiter_position + 1);
-		target = request.substr (delimiter_position + delimiter.length (), message_begin - delimiter_position - delimiter.length());
+		message_begin = request.find (' ', start);
+		target = request.substr (start, message_begin - start);
 	}
 	return message_begin;
 }
-}	// anonymous namespace
+
+}	// unnamed namespace
 
 void GenericClient::handle_private_message (std::string const & sender, std::string const & message) {
 	print_with_time_stamp (std::cout, "<PM> " + sender + ": " + message);
@@ -375,78 +382,98 @@ void GenericClient::handle_private_message (std::string const & sender, std::str
 }
 
 void GenericClient::do_request (std::string const & user, std::string const & request) {
-	if (request.length() > 1 and request [0] == '!') {
-		std::string const delimiter = " ";
-		size_t const delimiter_position = request.find (delimiter);
-		std::string const command = request.substr (1, delimiter_position - 1);
-		// I may replace this with a version that hashes the command and
-		// switches over the hash instead, as this currently compares a lot of
-		// strings, which could theoretically become slow with many commands.
-		// Probably not a concern, though.
-		if (command == "challenge") {
-			if (request.length () >= delimiter_position + delimiter.length()) {
-				std::string const opponent = request.substr (delimiter_position + delimiter.length ());
-				send_battle_challenge (opponent);
-			}
-		}
-		else if (command == "depth") {
-			if (request.length () >= delimiter_position + delimiter.length()) {
-				int const new_depth = std::stoi (request.substr (delimiter_position + delimiter.length ()));
-				if (new_depth < 0) {
-					std::string const message = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
-					send_private_message (user, message);
-				}
-				else {
-					depth = new_depth;
-					if (new_depth > 3) {
-						std::string const message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 1 and 3 inclusive or proceed at your own risk.";
-						std::cerr << message + "\n";
-						send_private_message (user, message);
-					}
-				}
-			}
-		}
-		else if (command == "join") {
-			if (request.length () >= delimiter_position + delimiter.length()) {
-				std::string const channel = request.substr (delimiter_position + delimiter.length ());
-				join_channel (channel);
-			}
-		}
-		else if (command == "message") {
-			if (request.length () >= delimiter_position + delimiter.length()) {
-				std::string target_channel;
-				size_t message_begin = set_target_and_find_message_begin (request, delimiter, delimiter_position, target_channel);
-				if (message_begin != std::string::npos) {
-					std::string message = request.substr (message_begin);
-					send_channel_message (target_channel, message);
-				}
-			}
-		}
-		else if (command == "part") {
-			if (request.length () >= delimiter_position + delimiter.length()) {
-				std::string const channel = request.substr (delimiter_position + delimiter.length ());
-				part_channel (channel);
-			}
-		}
-		else if (command == "pm") {
-			if (request.length () >= delimiter_position + delimiter.length()) {
-				std::string target;
-				size_t message_begin = set_target_and_find_message_begin (request, delimiter, delimiter_position, target);
-				if (message_begin != std::string::npos) {
-					std::string message = request.substr (message_begin);
-					send_private_message (target, message);
-				}
-			}
-		}
-		else if (command == "reload") {
-			load_highlights ();
-			load_responses ();
-			load_trusted_users ();
-			load_settings ();
-			score.load_evaluation_constants ();
+	if (!is_valid_command_structure (request))
+		return;
+	size_t const delimiter_position = request.find (' ');
+	std::string const command = request.substr (1, delimiter_position - 1);
+	// I may replace this with a version that hashes the command and switches
+	// over the hash instead, as this currently compares a lot of strings,
+	// which could theoretically become slow with many commands. Probably not a
+	// concern, though.
+	if (command == "challenge")
+		handle_challenge_command (request, delimiter_position + 1);
+	else if (command == "depth")
+		handle_depth_change_command (user, request, delimiter_position + 1);
+	else if (command == "join")
+		handle_join_channel_command (request, delimiter_position + 1);
+	else if (command == "message")
+		handle_send_message_command (request, delimiter_position + 1);
+	else if (command == "part")
+		handle_part_channel_command (request, delimiter_position + 1);
+	else if (command == "pm")
+		handle_send_pm_command (request, delimiter_position + 1);
+	else if (command == "reload")
+		handle_reload_settings_command ();
+}
+
+void GenericClient::handle_challenge_command (std::string const & request, size_t start) {
+	if (request.length () <= start)
+		return;
+	std::string const opponent = request.substr (start);
+	send_battle_challenge (opponent);
+}
+
+void GenericClient::handle_depth_change_command (std::string const & user, std::string const & request, size_t start) {
+	if (request.length () <= start)
+		return;
+	int const new_depth = std::stoi (request.substr (start));
+	if (new_depth < 0) {
+		std::string const message = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
+		send_private_message (user, message);
+	}
+	else {
+		depth = new_depth;
+		if (new_depth > 3) {
+			std::string const message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 0 and 3 inclusive or proceed at your own risk.";
+			std::cerr << message + "\n";
+			send_private_message (user, message);
 		}
 	}
 }
 
-} // namespace network
-} // namespace technicalmachine
+void GenericClient::handle_join_channel_command (std::string const & request, size_t start) {
+	if (request.length () <= start)
+		return;
+	std::string const channel = request.substr (start);
+	join_channel (channel);
+}
+
+void GenericClient::handle_send_message_command (std::string const & request, size_t start) {
+	if (request.length () <= start)
+		return;
+	std::string target_channel;
+	size_t message_begin = set_target_and_find_message_begin (request, start, target_channel);
+	if (message_begin != std::string::npos) {
+		std::string message = request.substr (message_begin);
+		send_channel_message (target_channel, message);
+	}
+}
+
+void GenericClient::handle_part_channel_command (std::string const & request, size_t start) {
+	if (request.length () <= start)
+		return;
+	std::string const channel = request.substr (start);
+	part_channel (channel);
+}
+
+void GenericClient::handle_send_pm_command (std::string const & request, size_t start) {
+	if (request.length () <= start)
+		return;
+	std::string target;
+	size_t message_begin = set_target_and_find_message_begin (request, start, target);
+	if (message_begin != std::string::npos) {
+		std::string message = request.substr (message_begin);
+		send_private_message (target, message);
+	}
+}
+
+void GenericClient::handle_reload_settings_command () {
+	load_highlights ();
+	load_responses ();
+	load_trusted_users ();
+	load_settings ();
+	score.load_evaluation_constants ();
+}
+
+}	// namespace network
+}	// namespace technicalmachine

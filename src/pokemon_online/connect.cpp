@@ -761,7 +761,7 @@ std::string Client::get_user_name (uint32_t id) const {
 		throw InvalidUser (id);
 }
 
-network::GenericClient::Result Client::get_result (uint8_t code, uint32_t winner) const {
+Result Client::get_result (uint8_t code, uint32_t winner) const {
 	// I completely ignore Close because I determine when I want to close a
 	// battle, not my foe. I also ignore Forfeit -- Technical Machine never
 	// forfeits; if the foe forfeits, then it is a win.

@@ -29,6 +29,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "../battle.hpp"
+#include "../battle_result.hpp"
 #include "../evaluate.hpp"
 #include "../species.hpp"
 
@@ -99,26 +100,30 @@ class GenericClient {
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 	private:
 		bool is_highlighted (std::string const & message) const;
-	protected:
-		void handle_private_message (std::string const & sender, std::string const & message);
-	private:
-		void do_request (std::string const & user, std::string const & request);
-		virtual void send_battle_challenge (std::string const & opponent) = 0;
 	public:
 		void send_channel_message (std::string channel, std::string const & message);
 		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string get_response ();
 	protected:
-		enum Result {
-			WON = 1,
-			LOST = -1,
-			TIED = 0
-		};
 		void handle_battle_end (uint32_t battle_id, Result result);
 	private:
+		std::string generate_team_file_name ();
 		std::string get_random_string ();
+	protected:
+		void handle_private_message (std::string const & sender, std::string const & message);
+	private:
+		void do_request (std::string const & user, std::string const & request);
+		void handle_challenge_command (std::string const & request, size_t start);
+		void handle_depth_change_command (std::string const & user, std::string const & request, size_t start);
+		void handle_join_channel_command (std::string const & request, size_t start);
+		void handle_send_message_command (std::string const & request, size_t start);
+		void handle_part_channel_command (std::string const & request, size_t start);
+		void handle_send_pm_command (std::string const & request, size_t start);
+		void handle_reload_settings_command ();
+		virtual void send_battle_challenge (std::string const & opponent) = 0;
 };
+
 }	// namespace network
 }	// namespace technicalmachine
 #endif	// NETWORK_CONNECT_HPP_

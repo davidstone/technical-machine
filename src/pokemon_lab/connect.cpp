@@ -32,6 +32,8 @@
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 
+#include "../battle_result.hpp"
+
 #include "../cryptography/md5.hpp"
 #include "../cryptography/sha2.hpp"
 #include "../cryptography/rijndael.h"
@@ -828,13 +830,11 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.send (*socket);
 }
 
-network::GenericClient::Result Client::get_result (int16_t winner, int16_t party_id) const {
-	Result result;
+Result Client::get_result (int16_t winner, int16_t party_id) const {
 	if (party_id != -1)
-		result = (winner == party_id) ? WON : LOST;
+		return (winner == party_id) ? WON : LOST;
 	else
-		result = TIED;
-	return result;
+		return TIED;
 }
 
 } // namespace pl
