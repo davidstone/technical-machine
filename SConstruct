@@ -31,8 +31,8 @@ import shutil
 SetOption('warn', 'no-duplicate-environment')
 
 
-warnings = ['-Wall', '-Wextra', '-pedantic', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unused', '-Werror']
-full_optimizations = ['-O3', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-flto']
+warnings = ['-Wall', '-Wextra', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unused', '-Werror']
+full_optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto']
 cc_flags = warnings
 cxx_flags = ['-std=c++0x']
 link_flags = warnings + ['-fwhole-program']
@@ -41,7 +41,7 @@ optimized_link_flags = ['-s'] + full_optimizations
 default = DefaultEnvironment(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
 
 debug = default.Clone()
-debug.Append(CCFLAGS = ['-g'])
+debug.Append(CCFLAGS = ['-g', '-pedantic'])
 debug.VariantDir('build/debug', 'src', duplicate = 0)
 
 optimized = default.Clone()
