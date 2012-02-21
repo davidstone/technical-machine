@@ -35,8 +35,8 @@ warnings = ['-Wall', '-Wextra', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unuse
 full_optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto']
 cc_flags = warnings
 cxx_flags = ['-std=c++0x']
-link_flags = warnings + ['-fwhole-program']
-optimized_link_flags = ['-s'] + full_optimizations
+link_flags = warnings
+optimized_link_flags = ['-s', '-fwhole-program'] + full_optimizations
 
 default = DefaultEnvironment(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
 
