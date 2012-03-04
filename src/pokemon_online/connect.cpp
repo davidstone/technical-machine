@@ -43,7 +43,7 @@ namespace po {
 
 Client::Client (int depth_):
 	network::GenericClient (depth_),
-	team (6, random_engine) {
+	team (6, random_engine, team_file_name) {
 	log_in ();
 }
 
@@ -588,7 +588,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	// work. It would require using a queue instead of a map.
 	try {
 		if (challenges.empty () and get_user_id (opponent)) {
-			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth));
+			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name));
 			battle->party = 0;
 			add_pending_challenge (battle);
 			OutMessage msg (OutMessage::SEND_TEAM);

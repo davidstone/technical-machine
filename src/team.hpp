@@ -33,7 +33,6 @@ namespace technicalmachine {
 
 class Team {
 	public:
-		std::string player;
 		Active<Pokemon> pokemon;
 
 		Vanish vanish;
@@ -149,7 +148,7 @@ class Team {
 		bool me;
 		
 		Team ();
-		Team (unsigned foe_size, std::mt19937 & random_engine);
+		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
 		bool operator== (Team const & other) const;
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;

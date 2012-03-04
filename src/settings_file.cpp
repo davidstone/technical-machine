@@ -41,6 +41,7 @@ Settings::Settings () {
 }
 
 Server::Server (boost::property_tree::ptree const & server):
+	server_name (server.get <std::string> ("<xmlattr>.name")),
 	host (server.get <std::string> ("host")),
 	port (server.get <std::string> ("port")),
 	username (server.get <std::string> ("username")),
@@ -66,6 +67,7 @@ void Settings::write () const {
 
 void Server::add (boost::property_tree::ptree & root) const {
 	boost::property_tree::ptree & server_tree = root.add ("server", "");
+	server_tree.add ("<xmlattr>.name", server_name);
 	server_tree.add ("host", host);
 	server_tree.add ("port", port);
 	server_tree.add ("username", username);

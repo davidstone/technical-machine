@@ -40,6 +40,7 @@ class GenericBattle {
 	protected:
 		std::mt19937 random_engine;
 	public:
+		std::string opponent;
 		Team ai;
 		Team foe;
 	protected:
@@ -55,8 +56,8 @@ class GenericBattle {
 	public:
 		uint8_t party;
 	protected:
-		GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth);
-		GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth, Team const & team);
+		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, std::string const & team_file_name);
+		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, Team const & team);
 	public:
 		void handle_begin_turn (uint16_t turn_count) const;
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);

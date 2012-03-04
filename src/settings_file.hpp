@@ -30,6 +30,8 @@ class GenericClient;
 }	// namespace network
 
 class Server {
+private:
+	std::string server_name;
 public:
 	std::string host;
 	std::string port;

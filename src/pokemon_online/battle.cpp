@@ -30,8 +30,8 @@
 namespace technicalmachine {
 namespace po {
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth):
-	GenericBattle::GenericBattle (seed, opponent, battle_depth),
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth, std::string const & team_file_name):
+	GenericBattle::GenericBattle (seed, opponent, battle_depth, team_file_name),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
@@ -396,7 +396,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case RATED: {
 			constexpr unsigned foe_team_size = pokemon_per_team;
-			client.team = Team (foe_team_size, random_engine);
+			client.team = Team (foe_team_size, random_engine, client.team_file_name);
 			OutMessage team_msg (OutMessage::SEND_TEAM);
 			team_msg.write_team (client.team, client.username);
 			team_msg.send (*client.socket);

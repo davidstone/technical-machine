@@ -130,14 +130,19 @@ bool GenericClient::is_trusted (std::string const & user) const {
 
 void GenericClient::load_settings (bool const reloading) {
 	Settings settings;
+	team_file_name = settings.team_file;
 	chattiness = settings.chattiness;
 	time_format = settings.time_format;
 	
 	if (!reloading) {
-		Server const & server = settings.servers.front();
+		Server & server = settings.servers.front();
 		host = server.host;
 		port = server.port;
 		username = server.username;
+		if (server.password.empty()) {
+			server.password = get_random_string (31);
+			settings.write();
+		}
 		password = server.password;
 	}
 }
@@ -211,7 +216,7 @@ void GenericClient::handle_incoming_challenge (std::string const & opponent, Gen
 }
 
 void GenericClient::add_pending_challenge (std::shared_ptr <GenericBattle> const & battle) {
-	challenges.insert (std::pair <std::string, std::shared_ptr <GenericBattle>> (battle->foe.player, battle));
+	challenges.insert (std::pair <std::string, std::shared_ptr <GenericBattle>> (battle->opponent, battle));
 }
 
 void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
@@ -248,7 +253,7 @@ void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
 	if (it != battles.end ()) {
 		GenericBattle & battle = *it->second;
 		std::string const verb = to_string (result);
-		print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.foe.player);
+		print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.opponent);
 		if (result == LOST) {
 			Team const predicted = predict_team (detailed, battle.foe, battle.ai.size);
 			pl::write_team (predicted, generate_team_file_name ());
@@ -269,19 +274,19 @@ std::string GenericClient::generate_team_file_name () {
 	std::string foe_team_file;
 	do {
 		foe_team_file = "teams/foe/";
-		foe_team_file += get_random_string ();
+		foe_team_file += get_random_string (8);
 		foe_team_file += get_extension ();
 	} while (boost::filesystem::exists (foe_team_file));
 	return foe_team_file;
 }
 
-std::string GenericClient::get_random_string () {
+std::string GenericClient::get_random_string (unsigned size) {
 	constexpr unsigned range = 36;
 	static constexpr char legal_characters [] = "abcdefghijklmnopqrstuvwxyz0123456789";
 	std::uniform_int_distribution <unsigned> distribution { 0, range - 1 };
 	std::string str;
-	str.resize (8);
-	for (unsigned n = 0; n != 8; ++n)
+	str.resize (size);
+	for (unsigned n = 0; n != size; ++n)
 		str [n] = legal_characters [distribution (random_engine)];
 	return str;
 }

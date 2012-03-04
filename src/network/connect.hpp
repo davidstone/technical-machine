@@ -40,6 +40,7 @@ class GenericBattleSettings;
 class GenericClient {
 	public:
 		std::string username;
+		std::string team_file_name;
 	protected:
 		std::string password;
 		std::string host;
@@ -108,7 +109,7 @@ class GenericClient {
 		void handle_battle_end (uint32_t battle_id, Result result);
 	private:
 		std::string generate_team_file_name ();
-		std::string get_random_string ();
+		std::string get_random_string (unsigned size);
 	protected:
 		void handle_private_message (std::string const & sender, std::string const & message);
 	private:

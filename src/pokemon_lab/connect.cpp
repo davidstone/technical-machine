@@ -748,7 +748,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 		msg.write_byte (accepted);
 	std::string verb;
 	if (accepted) {
-		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth));
+		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name));
 		add_pending_challenge (battle);
 		msg.write_team (battle->ai);
 		verb = "Accepted";

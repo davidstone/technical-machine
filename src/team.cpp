@@ -45,7 +45,11 @@
 
 namespace technicalmachine {
 
-static void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files);
+namespace {
+
+std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file);
+
+}	// unnamed namespace
 
 // I copy + pasted this constructor as a temporary measure. When GCC 4.7 is
 // released and there is support for delegating constructors and non-static
@@ -136,7 +140,7 @@ Team::Team () :
 	{
 }
 
-Team::Team (unsigned foe_size, std::mt19937 & random_engine) :
+Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name) :
 	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
@@ -218,29 +222,8 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine) :
 	size (6),
 	me (true)
 	{
-	std::string line;
-	boost::filesystem::path team_file;
-	std::ifstream settings ("settings/settings.txt");
-	std::string const comment = "//";
-	std::string const delimiter = ": ";
-	for (getline (settings, line); !settings.eof(); getline (settings, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			size_t found = line.find (delimiter);
-			std::string const data = line.substr (0, found);
-			if (data == "username") {
-				player = line.substr (found + delimiter.length());
-				boost::algorithm::trim (player);
-			}
-			else if (data == "team") {
-				std::string team_file_name = line.substr (found + delimiter.length());
-				boost::algorithm::trim (team_file_name);
-				team_file = team_file_name;
-			}
-		}
-	}
-	settings.close();
-	std::vector <boost::filesystem::path> files;
-	open_directory_and_add_files (team_file, files);
+	boost::filesystem::path team_file = team_file_name;
+	std::vector <boost::filesystem::path> const files = open_directory_and_add_files (team_file);
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
 	load (team_file.string(), foe_size);
@@ -248,14 +231,22 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine) :
 		member.new_hp = member.hp.max;
 }
 
-void open_directory_and_add_files (boost::filesystem::path const & team_file, std::vector<boost::filesystem::path> & files) {
+namespace {
+
+std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file) {
+	std::vector<boost::filesystem::path> files;
 	if (boost::filesystem::is_directory (team_file)) {
-		for (boost::filesystem::directory_iterator it (team_file); it != boost::filesystem::directory_iterator (); ++it)
-			open_directory_and_add_files (it->path (), files);
+		for (boost::filesystem::directory_iterator it (team_file); it != boost::filesystem::directory_iterator (); ++it) {
+			auto const temp = open_directory_and_add_files (it->path ());
+			files.insert (files.end(), temp.begin(), temp.end());
+		}
 	}
 	else if (boost::filesystem::is_regular_file (team_file))
 		files.push_back (team_file);
+	return files;
 }
+
+}	// unnamed namespace
 
 bool Team::is_switching_to_self () const {
 	return pokemon.set [pokemon().move().to_replacement ()].name == pokemon().name;
@@ -471,9 +462,8 @@ Pokemon const & Team::at_replacement () const {
 #endif	// NDEBUG
 
 std::string Team::to_string () const {
-	std::string output = player + "'s (";
-	output += me ? "AI" : "Foe";
-	output += ") team:\n";
+	std::string output = me ? "AI" : "Foe";
+	output += "'s team:\n";
 	for (Pokemon const & member : pokemon.set) {
 		output += member.to_string();
 		double const d_per_cent_hp = 100.0 * member.hp.stat / member.hp.max;

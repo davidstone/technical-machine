@@ -41,27 +41,27 @@
 
 namespace technicalmachine {
 
-GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth):
+GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, std::string const & team_file_name):
 	random_engine (seed),
-	ai (6, random_engine),
+	opponent (_opponent),
+	ai (6, random_engine, team_file_name),
 	depth (battle_depth),
 	active (nullptr),
 	inactive (nullptr),
 	party (-1)
 	{
-	foe.player = opponent;
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
 	initialize_turn ();
 }
 
-GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & opponent, int battle_depth, Team const & team):
+GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, Team const & team):
 	random_engine (seed),
+	opponent (_opponent),
 	ai (team),
 	depth (battle_depth),
 	party (-1)
 	{
-	foe.player = opponent;
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
 	initialize_turn ();
