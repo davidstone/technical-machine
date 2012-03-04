@@ -20,6 +20,7 @@ settings/account.txt
 settings/highlights.txt
 settings/responses.txt
 settings/settings.txt
+settings/settings.xml
 settings/trusted_users.txt
 
 battles/*

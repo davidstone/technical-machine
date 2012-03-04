@@ -38,6 +38,7 @@
 #include "../battle.hpp"
 #include "../evaluate.hpp"
 #include "../load_stats.hpp"
+#include "../settings_file.hpp"
 #include "../team_predictor.hpp"
 
 #include "../pokemon_lab/write_team_file.hpp"
@@ -54,13 +55,12 @@ GenericClient::GenericClient (int set_depth):
 	load_responses ();
 	load_trusted_users ();
 	detailed_stats (detailed);
-	load_account_info ();
+	load_settings (false);
 	while (username.empty()) {
-		std::cerr << "Add a username and password entry to settings/settings.txt and hit enter.";
+		std::cerr << "Add a username and password entry to " + Settings::file_name + " and hit enter.";
 		std::cin.get ();
-		load_account_info ();
+		load_settings (false);
 	}
-	load_settings ();
 	connect ();
 }
 
@@ -128,46 +128,18 @@ bool GenericClient::is_trusted (std::string const & user) const {
 	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
 }
 
-void GenericClient::load_account_info () {
-	std::ifstream file ("settings/settings.txt");
-	std::string line;
-	std::string const delimiter = ": ";
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			size_t position = line.find (delimiter);
-			std::string const data = line.substr (0, position);
-			if (data == "host")
-				host = line.substr (position + delimiter.length());
-			else if (data == "port")
-				port = line.substr (position + delimiter.length());
-			else if (data == "username")
-				username = line.substr (position + delimiter.length());
-			else if (data == "password")
-				password = line.substr (position + delimiter.length());
-		}
+void GenericClient::load_settings (bool const reloading) {
+	Settings settings;
+	chattiness = settings.chattiness;
+	time_format = settings.time_format;
+	
+	if (!reloading) {
+		Server const & server = settings.servers.front();
+		host = server.host;
+		port = server.port;
+		username = server.username;
+		password = server.password;
 	}
-	file.close();
-}
-
-void GenericClient::load_settings () {
-	// This is broken off from load_account_info so allow this to be reloaded
-	// while the program is running.
-	std::ifstream file ("settings/settings.txt");
-	std::string line;
-	std::string const delimiter = ": ";
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			size_t position = line.find (delimiter);
-			std::string const data = line.substr (0, position);
-			if (data == "chattiness")
-				chattiness = std::stoi (line.substr (position + delimiter.length()));
-			else if (data == "time format")
-				time_format = line.substr (position + delimiter.length());
-		}
-	}
-	file.close();
 }
 
 void GenericClient::connect () {
@@ -471,7 +443,7 @@ void GenericClient::handle_reload_settings_command () {
 	load_highlights ();
 	load_responses ();
 	load_trusted_users ();
-	load_settings ();
+	load_settings (true);
 	score.load_evaluation_constants ();
 }
 

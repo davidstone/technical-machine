@@ -74,8 +74,7 @@ class GenericClient {
 		void load_responses ();
 		void load_trusted_users ();
 		bool is_trusted (std::string const & user) const;
-		void load_account_info ();
-		void load_settings ();
+		void load_settings (bool reloading);
 		void connect ();
 	public:
 		void reconnect ();

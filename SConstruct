@@ -53,7 +53,7 @@ def prepend_str_conversion_dir (source):
 string_conversion_sources = ['ability_string.cpp', 'gender_string.cpp', 'item_string.cpp', 'move_string.cpp', 'nature_string.cpp', 'pokemon_string.cpp', 'status_string.cpp']
 string_conversion_sources = map(prepend_str_conversion_dir, string_conversion_sources)
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'battle_result.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'team_predictor.cpp', 'transposition.cpp', 'type.cpp', 'use_move.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'battle.cpp', 'battle_result.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'reorder_moves.cpp', 'settings_file.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'team_predictor.cpp', 'transposition.cpp', 'type.cpp', 'use_move.cpp', 'weather.cpp']
 ai_sources += ['cryptography/hex.cpp', 'cryptography/md5.cpp', 'cryptography/rijndael.cpp', 'cryptography/sha2.cpp']
 ai_sources += ['network/connect.cpp', 'network/inmessage.cpp', 'network/outmessage.cpp']
 ai_sources += ['pokemon_lab/battle.cpp', 'pokemon_lab/battle_settings.cpp', 'pokemon_lab/connect.cpp', 'pokemon_lab/conversion.cpp', 'pokemon_lab/inmessage.cpp', 'pokemon_lab/outmessage.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/write_team_file.cpp']
