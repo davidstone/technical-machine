@@ -193,7 +193,7 @@ std::string GenericClient::time_stamp () const {
 	return result;
 }
 
-void GenericClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) {
+void GenericClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
 	std::string msg = message;
 	boost::to_lower (msg);
 	if (is_highlighted (msg)) {

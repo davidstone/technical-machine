@@ -86,7 +86,7 @@ class GenericClient {
 	private:
 		std::string time_stamp () const;
 	public:
-		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message);
+		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
 	protected:
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
