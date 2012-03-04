@@ -45,15 +45,22 @@
 
 namespace technicalmachine {
 namespace network {
+namespace {
+
+std::vector<std::string> load_highlights ();
+std::vector<std::string> load_responses ();
+std::vector<std::string> load_trusted_users ();
+
+}	// unnamed namespace
 
 GenericClient::GenericClient (int set_depth):
 	random_engine (rd ()),
+	highlights (load_highlights ()),
+	responses (load_responses ()),
+	trusted_users (load_trusted_users ()),
 	detailed ({{ 0 }}),
 	depth (set_depth)
 	{
-	load_highlights ();
-	load_responses ();
-	load_trusted_users ();
 	detailed_stats (detailed);
 	load_settings (false);
 	while (username.empty()) {
@@ -66,11 +73,8 @@ GenericClient::GenericClient (int set_depth):
 
 namespace {
 
-static void create_unsorted_vector (std::string const & file_name, std::vector <std::string> & unsorted) {
-	// First, clear the vector so this can be used to reload an already filled
-	// vector as well. This allows the user to reload settings from a file
-	// without restarting TM.
-	unsorted.clear ();
+std::vector<std::string> create_unsorted_vector (std::string const & file_name) {
+	std::vector <std::string> unsorted;
 	std::ifstream file (file_name);
 	std::string line;
 	std::string const comment = "//";
@@ -79,9 +83,10 @@ static void create_unsorted_vector (std::string const & file_name, std::vector <
 			unsorted.push_back (line);
 	}
 	file.close();
+	return unsorted;
 }
 
-static void create_sorted_vector (std::string const & file_name, std::vector <std::string> & sorted) {
+std::vector<std::string> create_sorted_vector (std::string const & file_name) {
 	// The sorted vector is used to allow std::binary_search to be used on the
 	// vector for fast searching. I use a sorted std::vector instead of a
 	// std::set because it has faster performance uses less memory. My use
@@ -95,32 +100,24 @@ static void create_sorted_vector (std::string const & file_name, std::vector <st
 	// some other text, or am I just picking an element at random, so the
 	// sorting would add nothing.
 
-	sorted.clear ();
-	std::ifstream file (file_name);
-	std::string line;
-	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ()) {
-			boost::algorithm::trim (line);
-			sorted.push_back (line);
-		}
-	}
+	std::vector<std::string> sorted = create_unsorted_vector (file_name);
 	std::sort (sorted.begin(), sorted.end());
-	file.close();
+	return sorted;
 }
+
+std::vector<std::string> load_highlights () {
+	return create_unsorted_vector ("settings/highlights.txt");
+}
+
+std::vector<std::string> load_responses () {
+	return create_unsorted_vector ("settings/responses.txt");
+}
+
+std::vector<std::string> load_trusted_users () {
+	return create_sorted_vector ("settings/trusted_users.txt");
+}
+
 }	// unnamed namespace
-
-void GenericClient::load_highlights () {
-	create_unsorted_vector ("settings/highlights.txt", highlights);
-}
-
-void GenericClient::load_responses () {
-	create_unsorted_vector ("settings/responses.txt", response);
-}
-
-void GenericClient::load_trusted_users () {
-	create_sorted_vector ("settings/trusted_users.txt", trusted_users);
-}
 
 bool GenericClient::is_trusted (std::string const & user) const {
 	// I sort the std::vector of trusted users as soon as I load them to make
@@ -307,9 +304,9 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 }
 
 std::string GenericClient::get_response () {
-	if (response.size() > 0) {
-		std::uniform_int_distribution <unsigned> distribution { 0, static_cast <unsigned> (response.size() - 1) };
-		return response [distribution (random_engine)];
+	if (!responses.empty()) {
+		std::uniform_int_distribution <unsigned> distribution { 0, static_cast <unsigned> (responses.size() - 1) };
+		return responses [distribution (random_engine)];
 	}
 	else {
 		return "";
@@ -445,9 +442,9 @@ void GenericClient::handle_send_pm_command (std::string const & request, size_t 
 }
 
 void GenericClient::handle_reload_settings_command () {
-	load_highlights ();
-	load_responses ();
-	load_trusted_users ();
+	highlights = load_highlights ();
+	responses = load_responses ();
+	trusted_users = load_trusted_users ();
 	load_settings (true);
 	score.load_evaluation_constants ();
 }

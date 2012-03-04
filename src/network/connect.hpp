@@ -50,7 +50,7 @@ class GenericClient {
 	private:
 		std::string time_format;
 		std::vector <std::string> highlights;
-		std::vector <std::string> response;
+		std::vector <std::string> responses;
 		std::vector <std::string> trusted_users;
 	protected:
 		// Battles that have not yet begun
@@ -71,9 +71,6 @@ class GenericClient {
 		explicit GenericClient (int set_depth);
 		virtual ~GenericClient () { }
 	private:
-		void load_highlights ();
-		void load_responses ();
-		void load_trusted_users ();
 		bool is_trusted (std::string const & user) const;
 		void load_settings (bool reloading);
 		void connect ();
