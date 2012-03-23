@@ -32,6 +32,7 @@ class InMessage {
 		size_t index;
 	public:
 		InMessage ();
+		virtual ~InMessage() {}
 		void reset (size_t bytes);
 		uint8_t read_byte ();
 		uint16_t read_short ();

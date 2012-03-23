@@ -40,6 +40,10 @@ class Active {
 		Active () :
 			index (0) {
 		}
+		Active (std::vector<T> const & pre_set) :
+			set (pre_set),
+			index (0) {
+		}
 		#ifndef NDEBUG
 		T & operator() () {
 			if (index >= set.size()) {

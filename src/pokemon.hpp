@@ -62,7 +62,7 @@ class Pokemon {
 		Pokemon (Species member, unsigned size);
 		uint64_t hash () const;
 		// Returns whether the move is found. Modifies move.index
-		bool find_move (Move::Moves name);
+		bool find_move (Move::Moves move_name);
 		void normalize_hp ();
 		static std::string to_string (Species name);
 		std::string to_string () const;

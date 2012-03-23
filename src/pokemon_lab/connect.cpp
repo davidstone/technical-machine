@@ -181,9 +181,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const number_of_users = msg.read_int();
 			std::vector <std::pair <std::string, uint32_t> > users;
 			for (uint32_t n = 0; n != number_of_users; ++n) {
-				std::string const username = msg.read_string();
+				std::string const name_of_user = msg.read_string();
 				uint32_t const flags = msg.read_int();
-				std::pair <std::string, uint32_t> const user (username, flags);
+				std::pair <std::string, uint32_t> const user (name_of_user, flags);
 				users.push_back (user);
 			}
 			handle_channel_info (channel_id, info, channel_name, topic, channel_flags, users);
@@ -727,7 +727,7 @@ void Client::handle_channel_join_part (uint32_t channel_id, std::string const & 
 void Client::handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags) {
 }
 
-void Client::handle_channel_list (std::vector <Channel> const & channels) {
+void Client::handle_channel_list (std::vector <Channel> const & channel_list) {
 }
 
 void Client::send_battle_challenge (std::string const & opponent) {

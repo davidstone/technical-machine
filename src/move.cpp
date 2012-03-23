@@ -40,6 +40,7 @@ int16_t get_accuracy (Move::Moves move);
 Move::Move (Moves move, int pp_ups, unsigned size) :
 	name (move),
 	type (get_type (name)),
+	variable (set_variable (name, size)),
 	// Guarantee moves that weren't good enough to be fully evaluated are sorted at the end:
 	score (-Score::VICTORY - 1),
 	basepower (base_power (name)),
@@ -51,7 +52,6 @@ Move::Move (Moves move, int pp_ups, unsigned size) :
 	priority (get_priority ()),
 	r (100),
 	times_used (0) {
-		set_variable (size);
 }
 
 uint64_t Move::hash () const {
@@ -111,7 +111,8 @@ int8_t Move::get_priority () {
 	}
 }
 
-void Move::set_variable (unsigned size) {
+std::vector<std::pair <uint16_t, uint16_t>> Move::set_variable (Moves name, unsigned size) {
+	std::vector<std::pair <uint16_t, uint16_t>> set;
 	std::pair <uint16_t, uint16_t> effect;
 	effect.first = 0;
 	unsigned increment = 1;
@@ -133,7 +134,7 @@ void Move::set_variable (unsigned size) {
 			for (effect.first = 2; effect.first <= 5; ++effect.first) {
 				if (effect.first == 4)
 					effect.second /= 3;
-				variable.set.push_back (effect);
+				set.push_back (effect);
 			}
 			break;
 		case ENCORE:
@@ -144,40 +145,40 @@ void Move::set_variable (unsigned size) {
 		case ICE_FANG:
 		case THUNDER_FANG:
 			simple_range = false;
-			effect.second = max_probability - 2 * max_probability / 10 + max_probability / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability - 2u * max_probability / 10u + max_probability / 100u;
+			set.push_back (effect);
 			effect.first = 1;
 			effect.second = max_probability / 10;
-			variable.set.push_back (effect);
+			set.push_back (effect);
 			effect.first = 2;
-			variable.set.push_back (effect);
+			set.push_back (effect);
 			effect.first = 3;
 			effect.second = effect.second / 10;
-			variable.set.push_back (effect);
+			set.push_back (effect);
 			break;
 		case MAGNITUDE:
 			simple_range = false;
 			effect.first = 10;
-			effect.second = max_probability * 5 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 5u / 100u;
+			set.push_back (effect);
 			effect.first = 30;
-			effect.second = max_probability * 10 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 10u / 100u;
+			set.push_back (effect);
 			effect.first = 50;
-			effect.second = max_probability * 20 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 20u / 100u;
+			set.push_back (effect);
 			effect.first = 70;
-			effect.second = max_probability * 30 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 30u / 100u;
+			set.push_back (effect);
 			effect.first = 90;
-			effect.second = max_probability * 20 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 20u / 100u;
+			set.push_back (effect);
 			effect.first = 110;
-			effect.second = max_probability * 10 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 10u / 100u;
+			set.push_back (effect);
 			effect.first = 150;
-			effect.second = max_probability * 5 / 100;
-			variable.set.push_back (effect);
+			effect.second = max_probability * 5u / 100u;
+			set.push_back (effect);
 			break;
 		case OUTRAGE:
 		case PETAL_DANCE:
@@ -213,17 +214,18 @@ void Move::set_variable (unsigned size) {
 			while (effect.first <= 1) {
 				effect.second = max_probability - effect.second;
 				if (effect.second != 0)
-					variable.set.push_back (effect);
+					set.push_back (effect);
 				++effect.first;
 			}
 			break;
 	}
 	if (simple_range) {
 		while (effect.first <= last) {
-			variable.set.push_back (effect);
+			set.push_back (effect);
 			effect.first += increment;
 		}
 	}
+	return set;
 }
 
 bool Move::operator== (Move const & other) const {

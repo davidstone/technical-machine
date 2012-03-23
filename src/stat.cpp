@@ -78,9 +78,9 @@ unsigned evasion_ability_modifier (Team const & user, Team const & target, Weath
 
 }	// anonymous namespace
 
-Stat::Stat (Species name, Stats stat) :
+Stat::Stat (Species name, Stats stat_name) :
 	max (-1),
-	base (get_base_stat (name, stat)),
+	base (get_base_stat (name, stat_name)),
 	iv (31),
 	ev (84 / 4)	// Adds up to 504 EVs (126 points). Temporary until I add in EV prediction
 	{

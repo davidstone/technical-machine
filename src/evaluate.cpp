@@ -148,7 +148,52 @@ int64_t Score::win (Team const & team) {
 	return 0;
 }
 
-Score::Score () {
+Score::Score ():
+	transposition_table (1),	
+	light_screen (0),
+	lucky_chant (0),
+	mist (0),
+	reflect (0),
+	safeguard (0),
+	tailwind (0),
+
+	wish (0),
+
+	spikes (0),
+	stealth_rock (0),
+	toxic_spikes (0),
+
+	members (0),
+	hp (0),
+	aqua_ring (0),
+	curse (0),
+	imprison (0),
+	ingrain (0),
+	leech_seed (0),
+	loaf (0),
+	magnet_rise (0),
+	nightmare (0),
+	substitute (0),
+	substitute_hp (0),
+	torment (0),
+	trapped (0),
+
+	burn (0),
+	freeze (0),
+	paralysis (0),
+	poison (0),
+	sleep (0),
+	
+	atk_stage (0),
+	def_stage (0),
+	spa_stage (0),
+	spd_stage (0),
+	spe_stage (0),
+	focus_energy (0),
+
+	baton_pass (0),
+	no_pp (0)
+ {
 	// This is a separate function instead of being stuck in directly so support reloading of the constants.
 	load_evaluation_constants ();
 }

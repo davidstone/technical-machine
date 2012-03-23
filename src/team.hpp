@@ -159,7 +159,7 @@ class Team {
 		uint64_t hash () const;
 		std::string to_string () const;
 	private:
-		void load (std::string const & name, unsigned size);
+		void load (std::string const & name, unsigned other_size);
 };
 
 }	// namespace technicalmachine

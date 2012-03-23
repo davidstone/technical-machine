@@ -30,15 +30,15 @@
 namespace technicalmachine {
 namespace po {
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth, std::string const & team_file_name):
-	GenericBattle::GenericBattle (seed, opponent, battle_depth, team_file_name),
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, int const battle_depth, std::string const & team_file_name):
+	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team_file_name),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
 }
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent, int const battle_depth, Team const & team):
-	GenericBattle::GenericBattle (seed, opponent, battle_depth, team),
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, int const battle_depth, Team const & team):
+	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
@@ -257,7 +257,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case WEATHER_MESSAGE: {
 			std::cerr << "WEATHER_MESSAGE\n";
 			int8_t const wstatus = msg.read_byte ();
-			int8_t const weather = msg.read_byte ();
+			int8_t const weather_var = msg.read_byte ();
 			break;
 		}
 		case ABILITY_MESSAGE: {

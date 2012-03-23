@@ -59,23 +59,23 @@ Pokemon::Pokemon (Species member, unsigned size) :
 }
 
 uint64_t Pokemon::hash () const {
-	uint64_t hash = 0;
+	uint64_t current_hash = 0;
 	// Should probably think of a better way to combine Move hashes than xor
 	for (Move const & next_move : move.set)
-		hash ^= next_move.hash();
-	// hash is in the innermost nested parentheses, so all of the arguments
+		current_hash ^= next_move.hash();
+	// current_hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
 	return name + END *
 			(item.name + Item::END *
 			(status.name + Status::END *
 			((hp.stat - 1) + hp.max *	// - 1 because you can't have 0 HP
 			(sleep + (Stat::max_sleep_turns + 1) *
-			hash))));
+			current_hash))));
 }
 
-bool Pokemon::find_move (Move::Moves name) {
+bool Pokemon::find_move (Move::Moves move_name) {
 	for (move.index = 0; move().name != Move::STRUGGLE; ++move.index) {
-		if (name == move().name)
+		if (move_name == move().name)
 			return true;
 	}
 	return false;
@@ -694,7 +694,7 @@ void Pokemon::set_type () {
 }
 
 int8_t Pokemon::get_mass () const {
-	constexpr static int8_t get_mass [] = {
+	constexpr static int8_t mass_array [] = {
 		100,	// Abomasnow
 		40,	// Abra
 		60,	// Absol
@@ -1201,7 +1201,7 @@ int8_t Pokemon::get_mass () const {
 		40,	// Zigzagoon
 		20	// Zubat
 	};
-	return get_mass [name];
+	return mass_array [name];
 }
 
 }	// namespace technicalmachine

@@ -58,6 +58,7 @@ class GenericBattle {
 	protected:
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, std::string const & team_file_name);
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, Team const & team);
+		virtual ~GenericBattle() {}
 	public:
 		void handle_begin_turn (uint16_t turn_count) const;
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
@@ -85,6 +86,8 @@ class GenericBattle {
 		void do_turn ();
 	protected:
 		virtual uint8_t get_target () const = 0;
+		GenericBattle (GenericBattle const &) = delete;
+		GenericBattle & operator= (GenericBattle const &) = delete;
 };
 
 }	// namespace technicalmachine

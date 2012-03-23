@@ -52,7 +52,7 @@ class Stat {
 		Stat (Species name, Stats stat);
 		static void boost (int8_t & stage, int n);
 	private:
-		static uint8_t get_base_stat (Species name, Stats stat);
+		static uint8_t get_base_stat (Species name, Stats stat_name);
 };
 
 class InvalidStat : public std::runtime_error {

@@ -273,10 +273,10 @@ void Team::add_pokemon (Species name, std::string const & nickname, int level, G
 }
 
 uint64_t Team::hash () const {
-	uint64_t hash = 0;
+	uint64_t current_hash = 0;
 	// Should probably think of a better way to combine Pokemon hashes than xor
 	for (Pokemon const & member : pokemon.set)
-		hash ^= member.hash();
+		current_hash ^= member.hash();
 	// hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
 	return size + 7 *
@@ -340,10 +340,10 @@ uint64_t Team::hash () const {
 			(spikes + 4 *
 			(toxic_spikes + 3 *
 			(stealth_rock + 2 *
-			hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
-void Team::load (std::string const & name, unsigned size) {
+void Team::load (std::string const & name, unsigned other_size) {
 	// I do no error checking because I assume my team files will always be in
 	// the proper format. This must be changed if I ever allow arbitary teams
 	// to be used.
@@ -355,9 +355,9 @@ void Team::load (std::string const & name, unsigned size) {
 	std::string extension = name.substr (dot);
 	boost::algorithm::to_lower (extension);
 	if (extension == ".tp")
-		po::load_team (*this, name, size);
+		po::load_team (*this, name, other_size);
 	else if (extension == ".sbt")
-		pl::load_team (*this, name, size);
+		pl::load_team (*this, name, other_size);
 	else
 		std::cerr << "Unsupported file format: " + extension + ".\n";
 	for (Pokemon & member : pokemon.set)

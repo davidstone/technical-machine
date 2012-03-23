@@ -59,7 +59,7 @@ class Client : public network::GenericClient {
 		void handle_channel_info (uint32_t channel_id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users);
 		void handle_channel_join_part (uint32_t channel_id, std::string const & user, bool joining);
 		void handle_channel_status (uint32_t channel_id, std::string const & invoker, std::string const & user, uint32_t flags);
-		void handle_channel_list (std::vector <Channel> const & channels);
+		void handle_channel_list (std::vector <Channel> const & channel_list);
 		void send_battle_challenge (std::string const & opponent);
 		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);

@@ -174,7 +174,7 @@ class Move {
 		static bool compare_scores (Move const & first, Move const & second);
 	private:
 		int8_t get_priority ();
-		void set_variable (unsigned size);
+		static std::vector<std::pair <uint16_t, uint16_t>> set_variable (Moves name, unsigned size);
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

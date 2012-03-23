@@ -60,6 +60,8 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	opponent (_opponent),
 	ai (team),
 	depth (battle_depth),
+	active (nullptr),
+	inactive (nullptr),
 	party (-1)
 	{
 	for (Pokemon const & pokemon : ai.pokemon.set)

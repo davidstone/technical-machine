@@ -30,9 +30,74 @@ import shutil
 
 SetOption('warn', 'no-duplicate-environment')
 
+# -Waggregate-return is not something that I consider an error. For instance,
+# it triggers when using a range-based for loop. Return value optimization
+# should take care of any negative effects of this.
+#
+# -Wconversion triggers on this code: `short n = 0; n += 2;` The implicit
+# conversion to int causes a warning when it's then converted back to its
+# target type.
+#
+# -Weffc++ includes a warning if all data members are not initialized in the
+# initializer list. I intentionally do not do this in many cases, so the set of
+# warnings is too cluttered to be useful. It's helpful to turn on every once in
+# a while and scan for other warnings, though (such as non-virtual
+# destructors).
+#
+# -Wfloat-equal warns for safe equality comparisons (in particular, comparison
+# with a non-computed value of -1). An example in my code where I use this is
+# that I have a vector of float. I go through this vector, and there are some
+# elements I cannot evaluate yet what they should be, so I set them to -1.0f
+# (since my problem only uses positive numbers, -1 is out of the domain). I
+# later go through and update -1.0f values. However, my problem may have better
+# time performance (at a cost to memory, but other parts of my program use more
+# memory so that's not such a big deal) to store a reference to the elements
+# and then just iterate over them. That would eliminate the need to later
+# compare directly to -1.0f. Regardless, -1.0f can be represented exactly in
+# floating point, and I did not compute that value through a computation like
+# `-0.2f + -0.8f`.
+#
+# -Winline is absent because I don't use the inline keyword for optimization
+# purposes, just to define functions inline in headers. I don't care if the
+# optimizer actually inlines it. This warning also complains if it can't inline
+# a function declared in a class body (such as an empty virtual destructor).
+#
+# -Winvalid-pch is missing because I don't use precompiled headers.
+#
+# -Wmissing-format-attribute is not used because I do not use gnu extensions.
+# Same for -Wsuggest-attribute and several others.
+#
+# -Wpadded is turned on occasionally to optimize the layout of classes, but it
+# is not left on because not all classes have enough elements to remove padding
+# at the end. In theory I could get some extra variables for 'free', but it's
+# not worth the extra effort of maintaining that (if my class size changes,
+# it's not easy to remove those previously free variables).
+#
+# -Wstack-protector is not used because I do not use -fstack-protector.
+#
+# -Wstrict-aliasing=3 is turned on by -Wall and is the most accurate, but it
+# looks like level 1 and 2 give more warnings. In theory a lower level is a
+# 'stronger' warning, but it's at the cost of more false positives.
+#
+# -Wswitch-default seems pointless (I don't always want a default case if I've
+# enumerated all possibilities explicitly). I suppose some people may have need
+# of it, but I do not. I could see turning on this warning and putting
+# something like assert (false) into the default case, which I may try.
+#
+# -Wswitch-enum isn't behavior that I want. I don't want to handle every switch
+# statement explicitly. It would be useful if the language had some mechanism
+# to activate this on specified switch statements (to ensure that future
+# changes to the enum are handled everywhere that they need to be), but it's
+# overkill for an "all-or-nothing" setting.
+#
+# -Wunsafe-loop-optimizations causes too many spurious warnings. It may be
+# useful to apply this one periodically and manually verify the results. As an
+# example, it generated this warning in my code when I looped over all elements
+# in a vector to apply a set of functions to them (using the range-based for
+# loop).
 
-warnings = ['-Wall', '-Wextra', '-Wformat=2', '-Wstrict-overflow=3', '-Wno-unused', '-Werror']
-full_optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto']
+warnings = ['-Wall', '-Wextra', '-Wformat=2', '-Wstrict-overflow=5', '-Wcast-align', '-Wcast-qual', '-Winit-self', '-Wmissing-include-dirs', '-Wredundant-decls', '-Wshadow', '-Wno-unused', '-Werror']
+full_optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto', '-Wdisabled-optimization']
 cc_flags = warnings
 cxx_flags = ['-std=c++0x']
 link_flags = warnings
