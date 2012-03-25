@@ -24,7 +24,7 @@ namespace technicalmachine {
 class Team;
 class Weather;
 
-unsigned call_move (Team & user, Team & target, Weather & weather, unsigned log_damage = -1);
+unsigned call_move (Team & user, Team & target, Weather & weather, unsigned log_damage = -1u);
 
 }	// namespace technicalmachine
 #endif	// USE_MOVE_HPP_

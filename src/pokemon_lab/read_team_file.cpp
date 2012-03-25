@@ -68,7 +68,7 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	pokemon.nickname = pt.get <std::string> ("nickname");
 	if (pokemon.nickname.empty ())
 		pokemon.nickname = species_str;
-	pokemon.level = pt.get <int> ("level");
+	pokemon.level = pt.get <uint8_t> ("level");
 	pokemon.happiness = pt.get <int> ("happiness");
 	std::string const gender_str = pt.get <std::string> ("gender");
 	pokemon.gender = Gender (gender_str);

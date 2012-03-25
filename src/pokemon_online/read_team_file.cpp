@@ -40,7 +40,7 @@ namespace po {
 namespace {
 
 static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
-	int const id = pt.get <int> ("");
+	unsigned const id = pt.get <unsigned> ("");
 	Move::Moves name = id_to_move (id);
 	constexpr unsigned pp_ups = 3;
 	return Move (name, pp_ups, foe_size);
@@ -78,7 +78,7 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	pokemon.nature.name = id_to_nature (nature);
 	pokemon.happiness = pt.get <unsigned> ("<xmlattr>.Happiness");
 	pokemon.level = pt.get <unsigned> ("<xmlattr>.Lvl");
-	int const gender = pt.get <int> ("<xmlattr>.Gender");
+	unsigned const gender = pt.get <unsigned> ("<xmlattr>.Gender");
 	pokemon.gender = id_to_gender (gender);
 
 	unsigned n = 0;

@@ -37,34 +37,34 @@ class Team {
 
 		Vanish vanish;
 		// How much damage will this Pokemon do
-		int16_t damage;
-		int16_t bide_damage;
-		int16_t chance_to_hit;
+		uint16_t damage;
+		uint16_t bide_damage;
+		uint16_t chance_to_hit;
 		// -6 though 6
 		int8_t stage [Stat::END];
-		int8_t bide;
-		int8_t confused;
-		int8_t embargo;
-		int8_t encore;
-		int8_t heal_block;
-		int8_t magnet_rise;
+		uint8_t bide;
+		uint8_t confused;
+		uint8_t embargo;
+		uint8_t encore;
+		uint8_t heal_block;
+		uint8_t magnet_rise;
 		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm,
 		// Sand Tomb, Whirlpool, and Wrap
-		int8_t partial_trap;
-		int8_t perish_song;
+		uint8_t partial_trap;
+		uint8_t perish_song;
 		// Number of turns remaining on Outrage, Petal Dance, and Thrash
-		int8_t rampage;
-		int8_t slow_start;
-		int8_t stockpile;
+		uint8_t rampage;
+		uint8_t slow_start;
+		uint8_t stockpile;
 		// How much HP does the substitute have left?
-		int8_t substitute;
-		int8_t taunt;
+		uint8_t substitute;
+		uint8_t taunt;
 		// Number of turns this Pokemon has already taken Toxic damage (or
 		// would have if Magic Guard / Poison Heal weren't in play)
-		int8_t toxic;
+		uint8_t toxic;
 		// Number of turns remaining on Uproar
-		int8_t uproar;
-		int8_t yawn;
+		uint8_t uproar;
+		uint8_t yawn;
 		bool aqua_ring;
 		bool attract;
 		// Will it wake up
@@ -115,25 +115,25 @@ class Team {
 		// Pokemon ddfs;
 		// Set to 3 initially, 1 = delayed attack hits at the end of this turn,
 		// 0 = not active
-		int8_t counter;
+		uint8_t counter;
 
 		// Number of turns remaining
-		int8_t light_screen;
-		int8_t lucky_chant;
-		int8_t mist;
-		int8_t reflect;
-		int8_t safeguard;
-		int8_t tailwind;
+		uint8_t light_screen;
+		uint8_t lucky_chant;
+		uint8_t mist;
+		uint8_t reflect;
+		uint8_t safeguard;
+		uint8_t tailwind;
 
 		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish
 		// is not in play
-		int8_t wish;
+		uint8_t wish;
 			
 		// The entry hazards represent those down on this team's side of the
 		// field. Using an entry hazard puts them down on the opponent's side
 		// of the field.
-		int8_t spikes;
-		int8_t toxic_spikes;
+		uint8_t spikes;
+		uint8_t toxic_spikes;
 		bool stealth_rock;
 
 		// If a Pokemon switches / faints, what Pokemon should replace it?
@@ -155,7 +155,7 @@ class Team {
 		bool is_switching_to_self () const;
 		// Has this Pokemon been seen already? If it has, set replacement.
 		bool seen_pokemon (Species name);
-		void add_pokemon (Species name, std::string const & nickname, int level, Gender gender);
+		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender);
 		uint64_t hash () const;
 		std::string to_string () const;
 	private:

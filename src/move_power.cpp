@@ -32,11 +32,13 @@
 namespace technicalmachine {
 namespace {
 
-int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, int stockpile);
+uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, int stockpile);
+uint8_t second_lowest_bit (Stat const & stat);
 bool doubling (Team const & attacker, Team const & defender, Weather const & weather);
 unsigned item_modifier (Pokemon const & attacker);
 bool mud_or_water_sport (Team const & attacker, Team const & defender);
 unsigned attacker_ability_modifier (Pokemon const & attacker, Pokemon const & defender);
+bool pinch_ability_activates (Pokemon const & attacker, Type::Types type);
 unsigned defender_ability_modifier (Move const & move, Ability::Abilities ability);
 
 }	// anonymous namespace
@@ -67,7 +69,7 @@ void move_power (Team & attacker, Team const & defender, Weather const & weather
 
 namespace {
 
-int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, int stockpile) {
+uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, int stockpile) {
 	switch (attacker.move().name) {
 		case Move::CRUSH_GRIP:
 		case Move::WRING_OUT:
@@ -77,7 +79,7 @@ int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, i
 			return 150 * attacker.hp.stat / attacker.hp.max;
 		case Move::FLAIL:
 		case Move::REVERSAL: {
-			unsigned k = 64 * attacker.hp.stat / attacker.hp.max;
+			unsigned k = 64u * attacker.hp.stat / attacker.hp.max;
 			if (k <= 1)
 				return 200;
 			else if (k <= 5)
@@ -106,7 +108,7 @@ int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, i
 		case Move::LOW_KICK:
 			return defender.pokemon().mass;
 		case Move::GYRO_BALL: {
-			int16_t base_power = 25 * defender.pokemon().spe.stat / attacker.spe.stat + 1;
+			uint16_t const base_power = 25 * defender.pokemon().spe.stat / attacker.spe.stat + 1;
 			return (base_power <= 150) ? base_power : 150;
 		}
 		case Move::ICE_BALL:
@@ -118,14 +120,12 @@ int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, i
 			return 30 << n;
 		}
 		case Move::HIDDEN_POWER: {
-			// The second-least significant bit of each stat determines the power of Hidden Power
-			unsigned const u = (attacker.hp.iv >> 1) % 2;
-			unsigned const v = ((attacker.atk.iv >> 1) % 2) * 2;
-			unsigned const w = ((attacker.def.iv >> 1) % 2) * 4;
-			unsigned const x = ((attacker.spe.iv >> 1) % 2) * 8;
-			unsigned const y = ((attacker.spa.iv >> 1) % 2) * 16;
-			unsigned const z = ((attacker.spd.iv >> 1) % 2) * 32;
-	
+			uint8_t const u = second_lowest_bit (attacker.hp) * (1 << 0);	// 1
+			uint8_t const v = second_lowest_bit (attacker.atk) * (1 << 1);	// 2
+			uint8_t const w = second_lowest_bit (attacker.def) * (1 << 2);	// 4
+			uint8_t const x = second_lowest_bit (attacker.spe) * (1 << 3);	// 8
+			uint8_t const y = second_lowest_bit (attacker.spa) * (1 << 4);	// 16
+			uint8_t const z = second_lowest_bit (attacker.spd) * (1 << 5);	// 32
 			return (u + v + w + x + y + z) * 40 / 63 + 30;
 		}
 		case Move::MAGNITUDE:
@@ -135,7 +135,7 @@ int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, i
 		case Move::PRESENT:
 			return attacker.move().variable().first;
 		case Move::PUNISHMENT: {
-			int16_t base_power = 60;
+			uint16_t base_power = 60;
 			if (defender.stage [Stat::ATK] > 0)
 				base_power += 20 * defender.stage [Stat::ATK];
 			if (defender.stage [Stat::DEF] > 0)
@@ -153,7 +153,7 @@ int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, i
 		case Move::SPIT_UP:
 			return stockpile * 100;
 		case Move::TRIPLE_KICK: {
-			unsigned n = attacker.move().times_used + 1;
+			unsigned n = attacker.move().times_used + 1u;
 			if (n > 3)
 				n = 3;
 			return 10 * n;
@@ -174,6 +174,10 @@ int16_t calculate_base_power (Pokemon const & attacker, Team const & defender, i
 		default:
 			return attacker.move().basepower;
 	}
+}
+
+uint8_t second_lowest_bit (Stat const & stat) {
+	return (stat.iv >> 1) % 2;
 }
 
 bool doubling (Team const & attacker, Team const & defender, Weather const & weather) {
@@ -232,120 +236,119 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 }
 
 unsigned item_modifier (Pokemon const & attacker) {
-	unsigned modifier = 10;
 	switch (attacker.item.name) {
 		case Item::MUSCLE_BAND:
 			if (attacker.move().physical)
-				modifier = 11;
+				return 11;
 			break;
 		case Item::WISE_GLASSES:
 			if (!attacker.move().physical)
-				modifier = 11;
+				return 11;
 			break;
 		case Item::INSECT_PLATE:
 		case Item::SILVERPOWDER:
 			if (attacker.move().type == Type::BUG)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::DREAD_PLATE:	
 		case Item::BLACKGLASSES:
 			if (attacker.move().type == Type::DARK)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::DRACO_PLATE:
 		case Item::DRAGON_FANG:
 			if (attacker.move().type == Type::DRAGON)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::ZAP_PLATE:
 		case Item::MAGNET:
 			if (attacker.move().type == Type::ELECTRIC)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::FIST_PLATE:
 		case Item::BLACK_BELT:
 			if (attacker.move().type == Type::FIGHTING)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::FLAME_PLATE:
 		case Item::CHARCOAL:
 			if (attacker.move().type == Type::FIRE)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::SKY_PLATE:
 		case Item::SHARP_BEAK:
 			if (attacker.move().type == Type::FLYING)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::SPOOKY_PLATE:
 		case Item::SPELL_TAG:
 			if (attacker.move().type == Type::GHOST)
- 				modifier = 12;
+ 				return 12;
 			break;
 		case Item::MEADOW_PLATE:
 		case Item::MIRACLE_SEED:
 			if (attacker.move().type == Type::GRASS)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::EARTH_PLATE:
 		case Item::SOFT_SAND:
 			if (attacker.move().type == Type::GROUND)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::ICICLE_PLATE:
 		case Item::NEVERMELTICE:
 			if (attacker.move().type == Type::ICE)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::SILK_SCARF:
 			if (attacker.move().type == Type::NORMAL)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::TOXIC_PLATE:
 		case Item::POISON_BARB:
 			if (attacker.move().type == Type::POISON)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::MIND_PLATE:
 		case Item::TWISTEDSPOON:
 		case Item::ODD_INCENSE:
 			if (attacker.move().type == Type::PSYCHIC)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::STONE_PLATE:
 		case Item::HARD_STONE:
 		case Item::ROCK_INCENSE:
 			if (attacker.move().type == Type::ROCK)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::IRON_PLATE:
 		case Item::METAL_COAT:
 			if (attacker.move().type == Type::STEEL)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::SPLASH_PLATE:
 		case Item::MYSTIC_WATER:
 		case Item::SEA_INCENSE:
 		case Item::WAVE_INCENSE:
 			if (attacker.move().type == Type::WATER)
-				modifier = 12;
+				return 12;
 			break;
 		case Item::ADAMANT_ORB:
 			if (attacker.name == DIALGA and (attacker.move().type == Type::DRAGON or attacker.move().type == Type::STEEL))
-				modifier = 12;
+				return 12;
 			break;
 		case Item::GRISEOUS_ORB:
 			if (attacker.name == GIRATINA_O and (attacker.move().type == Type::DRAGON or attacker.move().type == Type::GHOST))
-				modifier = 12;
+				return 12;
 			break;
 		case Item::LUSTROUS_ORB:
 			if (attacker.name == PALKIA and (attacker.move().type == Type::DRAGON or attacker.move().type == Type::WATER))
-				modifier = 12;
+				return 12;
 			break;
 		default:
 			break;
 	}
-	return modifier;
+	return 10;
 }
 
 bool mud_or_water_sport (Team const & attacker, Team const & defender) {
@@ -355,27 +358,26 @@ bool mud_or_water_sport (Team const & attacker, Team const & defender) {
 }
 
 unsigned attacker_ability_modifier (Pokemon const & attacker, Pokemon const & defender) {
-	unsigned new_power = attacker.move().power;
 	switch (attacker.ability.name) {
 		case Ability::TECHNICIAN:
 			if (attacker.move().basepower <= 60)
-				new_power = attacker.move().power * 3 / 2;
+				return attacker.move().power * 3u / 2;
 			break;
 		case Ability::BLAZE:
-			if (attacker.move().type == Type::FIRE and attacker.hp.stat <= attacker.hp.max / 3)
-				new_power = attacker.move().power * 3 / 2;
+			if (pinch_ability_activates (attacker, Type::FIRE))
+				return attacker.move().power * 3u / 2;
 			break;
 		case Ability::OVERGROW:
-			if (attacker.move().type == Type::GRASS and attacker.hp.stat <= attacker.hp.max / 3)
-				new_power = attacker.move().power * 3 / 2;
+			if (pinch_ability_activates (attacker, Type::GRASS))
+				return attacker.move().power * 3u / 2;
 			break;
 		case Ability::SWARM:
-			if (attacker.move().type == Type::BUG and attacker.hp.stat <= attacker.hp.max / 3)
-				new_power = attacker.move().power * 3 / 2;
+			if (pinch_ability_activates (attacker, Type::BUG))
+				return attacker.move().power * 3u / 2;
 			break;
 		case Ability::TORRENT:
-			if (attacker.move().type == Type::WATER and attacker.hp.stat <= attacker.hp.max / 3)
-				new_power = attacker.move().power * 3 / 2;
+			if (pinch_ability_activates (attacker, Type::WATER))
+				return attacker.move().power * 3u / 2;
 			break;
 		case Ability::IRON_FIST:
 			switch (attacker.move().name) {
@@ -394,11 +396,11 @@ unsigned attacker_ability_modifier (Pokemon const & attacker, Pokemon const & de
 				case Move::SHADOW_PUNCH:
 				case Move::SKY_UPPERCUT:
 				case Move::THUNDERPUNCH:
-					new_power = attacker.move().power * 6 / 5;
-					break;
+					return attacker.move().power * 6u / 5;
 				default:
 					break;
 			}
+			break;
 		case Ability::RECKLESS:
 			switch (attacker.move().name) {
 				case Move::BRAVE_BIRD:
@@ -409,40 +411,42 @@ unsigned attacker_ability_modifier (Pokemon const & attacker, Pokemon const & de
 				case Move::TAKE_DOWN:
 				case Move::VOLT_TACKLE:
 				case Move::WOOD_HAMMER:
-					new_power = attacker.move().power * 6 / 5;
-					break;
+					return attacker.move().power * 6u / 5;
 				default:
 					break;
-		}
+			}
+			break;
 		case Ability::RIVALRY:
 			// Same gender == 20 + 5, opposite gender == 20 - 5
-			new_power = attacker.move().power * (20 + 5 * attacker.gender.multiplier (defender.gender)) / 20;
-			break;
+			return attacker.move().power * static_cast<unsigned>(20 + 5 * attacker.gender.multiplier (defender.gender)) / 20;
 		default:
 			break;
 	}
-	return new_power;
+	return attacker.move().power;
+}
+
+bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) {
+	return attacker.move().type == type and attacker.hp.stat <= attacker.hp.max / 3;
 }
 
 unsigned defender_ability_modifier (Move const & move, Ability::Abilities ability) {
-	unsigned modifier = move.power;
 	switch (ability) {
 		case Ability::DRY_SKIN:
 			if (move.type == Type::FIRE)
-				modifier = move.power * 5 / 4;
+				return move.power * 5u / 4;
 			break;
 		case Ability::HEATPROOF:
 			if (move.type == Type::FIRE)
-				modifier = move.power / 2;
+				return move.power / 2u;
 			break;
 		case Ability::THICK_FAT:
 			if (move.type == Type::FIRE or move.type == Type::ICE)
-				modifier = move.power / 2;
+				return move.power / 2u;
 			break;
 		default:
 			break;
 	}
-	return modifier;
+	return move.power;
 }
 
 }	// unnamed namespace

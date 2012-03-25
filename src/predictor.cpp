@@ -36,6 +36,8 @@ using namespace technicalmachine;
 
 // A GUI version of the team predictor.
 
+namespace {
+
 class Data {
 	public:
 		std::vector<Fl_Input *> input;
@@ -72,6 +74,7 @@ void function (Fl_Widget * w, void * d) {
 	else
 		data.output->value ("");
 }
+}	// unnamed namespace
 
 int main () {
 	Fl_Window win (520, 730, "Team Predictor");

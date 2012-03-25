@@ -37,7 +37,6 @@ std::vector <unsigned> overall_stats () {
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
 		overall.push_back (boost::lexical_cast<unsigned> (line));
-	file.close ();
 	return overall;
 }
 
@@ -62,16 +61,15 @@ void load_listed_multipliers (float multiplier [Species::END] [Species::END], st
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t const x = line.find ('\t');
-		int const member = std::stoi (line.substr (0, x));
+		unsigned const member = boost::lexical_cast<unsigned> (line.substr (0, x));
 		size_t const y = line.find ('\t', x + 1);
-		int const ally = std::stoi (line.substr (x + 1, y - x - 1));
+		unsigned const ally = boost::lexical_cast<unsigned> (line.substr (x + 1, y - x - 1));
 		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
 		unaccounted [member] -= number_used_with;
 		float const per_cent_used_with = static_cast <float> (number_used_with) / overall [member];
 		float const per_cent_used = static_cast <float> (overall [ally]) / total;
 		multiplier [member] [ally] = per_cent_used_with / per_cent_used;
 	}
-	file.close ();
 }
 
 void estimate_remaining_multipliers (float multiplier [Species::END] [Species::END], std::vector <unsigned> const & overall, unsigned const unaccounted [Species::END]) {
@@ -130,7 +128,6 @@ std::vector <float> lead_stats () {
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line))
 		lead.push_back (std::stof (line));
-	file.close ();
 	return lead;
 }
 
@@ -188,7 +185,6 @@ void detailed_stats (int detailed [][7]) {
 		if (n != 7)
 			detailed [new_member] [n] = data;
 	}
-	file.close ();
 }
 
 }	// namespace technicalmachine

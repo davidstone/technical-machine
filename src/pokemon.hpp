@@ -51,11 +51,11 @@ class Pokemon {
 		Stat spd;
 		Stat spe;
 		Nature nature;
-		int16_t new_hp;		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
+		uint16_t new_hp;		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		bool fainted;
-		int8_t level;
-		int8_t mass;		// power of Grass Knot / Low Kick, not the actual mass stat
-		int8_t sleep;				// wakes up when this number is 2 through 5
+		uint8_t level;
+		uint8_t mass;		// power of Grass Knot / Low Kick, not the actual mass stat
+		uint8_t sleep;				// wakes up when this number is 2 through 5
 
 		uint8_t happiness;
 	
@@ -78,7 +78,7 @@ class Pokemon {
 		void load ();
 	private:
 		void set_type ();
-		int8_t get_mass () const;
+		uint8_t get_mass () const;
 };
 
 }	// namespace technicalmachine

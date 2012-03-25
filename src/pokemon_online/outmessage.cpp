@@ -41,7 +41,7 @@ void OutMessage::write_string (std::string const & str) {
 	uint32_t const number_of_utf16_bytes = 2 * str.length();
 	write_int (number_of_utf16_bytes);
 	for (char const c : str)
-		write_short (c);
+		write_short (static_cast<uint16_t> (c));
 }
 
 void OutMessage::write_team (Team const & team, std::string const & username) {

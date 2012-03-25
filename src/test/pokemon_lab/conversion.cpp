@@ -37,7 +37,7 @@ void test_ability () {
 void test_gender () {
 	std::cout << "\t\tVerifying correct gender.\n";
 	for (Gender::Genders original = static_cast <Gender::Genders> (0); original != Gender::END; original = static_cast <Gender::Genders> (original + 1)) {
-		int const id = gender_to_id (original);
+		unsigned const id = gender_to_id (original);
 		Gender::Genders const result = id_to_gender (id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Gender> (original, result);
@@ -52,7 +52,7 @@ void test_move () {
 	std::cout << "\t\tVerifying correct move.\n";
 	for (Move::Moves original = static_cast <Move::Moves> (0); original != Move::END; original = static_cast <Move::Moves> (original + 1)) {
 		if (!Move::is_switch (original)) {
-			int const id = move_to_id (original);
+			unsigned const id = move_to_id (original);
 			Move::Moves const result = id_to_move (id);
 			if (original != result)
 				throw InvalidSimulatorConversion <Move> (original, result);
@@ -67,7 +67,7 @@ void test_nature () {
 void test_species () {
 	std::cout << "\t\tVerifying correct species.\n";
 	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (original + 1)) {
-		int const id = species_to_id (original);
+		unsigned const id = species_to_id (original);
 		Species const result = id_to_species (id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Pokemon> (original, result);

@@ -33,20 +33,20 @@
 namespace technicalmachine {
 namespace po {
 
-Species id_to_species (int id, int forme);
+Species id_to_species (unsigned id, unsigned forme);
 std::pair <uint16_t, uint8_t> species_to_id (Species species);
-Ability::Abilities id_to_ability (int id);
-int ability_to_id (Ability::Abilities ability);
+Ability::Abilities id_to_ability (unsigned id);
+unsigned ability_to_id (Ability::Abilities ability);
 Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part);
-Gender::Genders id_to_gender (int id);
-int gender_to_id (Gender::Genders gender);
-Item::Items id_to_item (int id);
-int item_to_id (Item::Items item);
+Gender::Genders id_to_gender (unsigned id);
+unsigned gender_to_id (Gender::Genders gender);
+Item::Items id_to_item (unsigned id);
+unsigned item_to_id (Item::Items item);
 Item::Items battle_id_to_item (uint16_t id, uint8_t part);
-Move::Moves id_to_move (int id);
-int move_to_id (Move::Moves move);
-Nature::Natures id_to_nature (int id);
-int nature_to_id (Nature::Natures nature);
+Move::Moves id_to_move (unsigned id);
+unsigned move_to_id (Move::Moves move);
+Nature::Natures id_to_nature (unsigned id);
+unsigned nature_to_id (Nature::Natures nature);
 
 } // namespace po
 } // namespace technicalmachine

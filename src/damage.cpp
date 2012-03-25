@@ -18,6 +18,7 @@
 
 #include "damage.hpp"
 
+#include <algorithm>
 #include <vector>
 
 #include "ability.hpp"
@@ -93,7 +94,7 @@ unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather 
 		case Move::DRAGON_RAGE:
 			return 40;
 		case Move::ENDEAVOR:
-			return (defender.pokemon().hp.stat > pokemon.hp.stat) ? defender.pokemon().hp.stat - pokemon.hp.stat : 0;
+			return static_cast<unsigned> ((std::max) (defender.pokemon().hp.stat - pokemon.hp.stat, 0));
 		case Move::FISSURE:
 		case Move::GUILLOTINE:
 		case Move::HORN_DRILL:
@@ -103,7 +104,7 @@ unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather 
 		case Move::SEISMIC_TOSS:
 			return pokemon.level;
 		case Move::PSYWAVE:
-			return pokemon.level * pokemon.move().variable().first / 10;
+			return static_cast<unsigned> (pokemon.level) * pokemon.move().variable().first / 10;
 		case Move::SONICBOOM:
 			return 20;
 		case Move::SUPER_FANG:
@@ -159,10 +160,8 @@ void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
 }
 
 void damage_side_effect (Pokemon & user, unsigned damage) {
-	if (user.hp.stat > damage)
-		user.hp.stat -= damage;
-	else
-		user.hp.stat = 0;
+	damage = (std::min) (damage, static_cast<unsigned> (user.hp.stat));
+	user.hp.stat -= damage;
 }
 
 
@@ -170,7 +169,7 @@ void damage_side_effect (Pokemon & user, unsigned damage) {
 namespace {
 
 unsigned calculate_level_multiplier (Pokemon const & attacker) {
-	return attacker.level * 2 / 5;
+	return attacker.level * 2u / 5;
 }
 
 unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned const damage) {
@@ -233,7 +232,7 @@ unsigned calculate_item_modifier (Pokemon const & attacker, unsigned const damag
 		case Item::LIFE_ORB:
 			return damage * 13 / 10;
 		case Item::METRONOME:
-			return damage * ((attacker.move().times_used >= 10) ? 2 : (10 + attacker.move().times_used) / 10);
+			return damage * ((attacker.move().times_used >= 10) ? 2 : (10u + attacker.move().times_used) / 10);
 		default:
 			return damage;
 	}

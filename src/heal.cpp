@@ -30,7 +30,7 @@ void heal (Pokemon & member, int denominator, unsigned numerator) {
 		if (member.hp.max * numerator <= static_cast <unsigned> (2 * denominator - 1))
 			++member.hp.stat;
 		else
-			member.hp.stat += member.hp.max * numerator / denominator;
+			member.hp.stat += member.hp.max * numerator / static_cast<unsigned> (denominator);
 		if (member.hp.stat > member.hp.max)
 			member.hp.stat = member.hp.max;
 	}
@@ -39,7 +39,7 @@ void heal (Pokemon & member, int denominator, unsigned numerator) {
 			if (member.hp.max * numerator <= static_cast <unsigned> (-2 * denominator - 1))
 				-- member.hp.stat;
 			else
-				damage_side_effect (member, member.hp.max * numerator / (-denominator));
+				damage_side_effect (member, member.hp.max * numerator / static_cast<unsigned>(-denominator));
 		}
 	}
 }

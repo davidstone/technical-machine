@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "read_team_file.hpp"
+#include "write_team_file.hpp"
 
 #include <string>
 
@@ -32,20 +32,20 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-static void write_move (Move const & move, boost::property_tree::ptree & pt) {
+void write_move (Move const & move, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & m = pt.add ("moveset.move", move.to_string ());
 	// TODO: replace with real PP ups logic
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-static void write_stat (Stat const & stat, std::string const & str, boost::property_tree::ptree & pt) {
+void write_stat (Stat const & stat, std::string const & str, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
 	s.put ("<xmlattr>.name", str);
 	s.put ("<xmlattr>.iv", stat.iv);
 	s.put ("<xmlattr>.ev", stat.ev * 4);
 }
 
-static void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	write_stat (pokemon.hp, "HP", pt);
 	write_stat (pokemon.atk, "Atk", pt);
 	write_stat (pokemon.def, "Def", pt);
@@ -54,7 +54,7 @@ static void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & 
 	write_stat (pokemon.spd, "SpDef", pt);
 }
 
-static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
 	member.put ("<xmlattr>.species", pokemon.to_string ());
 	member.put ("nickname", pokemon.nickname);

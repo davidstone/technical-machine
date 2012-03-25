@@ -30,7 +30,7 @@ class InMessage;
 
 class BattleSettings : public network::GenericBattleSettings {
 	public:
-		enum Clauses {
+		enum Clauses : uint32_t {
 			SLEEP_CLAUSE = 1 << 0,
 			FREEZE_CLAUSE = 1 << 1,
 			DISALLOW_SPECTATORS = 1 << 2,

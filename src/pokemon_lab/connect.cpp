@@ -42,9 +42,12 @@
 
 namespace technicalmachine {
 namespace pl {
+namespace {
+Result get_result (uint8_t winner, uint16_t party_id);
+}	// unnamed namespace
 
-Client::Client (int depth_):
-	network::GenericClient (depth_),
+Client::Client (unsigned set_depth):
+	network::GenericClient (set_depth),
 	timer (io)
 	{
 	request_authentication ();
@@ -138,9 +141,9 @@ class Metagame {
 			description (msg.read_string ()),
 			party_size (msg.read_byte ()),
 			max_team_length (msg.read_byte ()),
-			pool_length (-1),
-			periods (-1),
-			period_length (-1) {
+			pool_length (0xFFFF),
+			periods (0xFF),
+			period_length (0xFFFF) {
 			load_bans (msg);
 			load_clauses (msg);
 			load_battle_timer (msg);
@@ -150,7 +153,7 @@ class Metagame {
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
 		case InMessage::WELCOME_MESSAGE: {
-			int32_t const version = msg.read_int();
+			uint32_t const version = msg.read_int();
 			std::string const server_name = msg.read_string();
 			std::string const message = msg.read_string();
 //			 Apparently these are not needed.
@@ -300,8 +303,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 					print_with_time_stamp (std::cerr, "Conflicting switch legalities.");
 				forced = msg.read_byte ();
 				if (!forced) {
-					int32_t const num_moves = msg.read_int ();
-					for (int32_t n = 0; n != num_moves; ++n)
+					uint32_t const num_moves = msg.read_int ();
+					for (uint32_t n = 0; n != num_moves; ++n)
 						moves.push_back (msg.read_byte ());
 				}
 			}
@@ -330,7 +333,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::BATTLE_PRINT: {
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const category = msg.read_byte ();
-			int16_t const message_id = msg.read_short ();
+			uint16_t const message_id = msg.read_short ();
 			uint8_t const argc = msg.read_byte ();
 			std::vector <std::string> arguments;
 			for (uint8_t n = 0; n != argc; ++n) {
@@ -346,9 +349,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_END: {
 			uint32_t const battle_id = msg.read_int ();
-			// I suspect the int16_t may be a typo in the PL protocol.
-			// Every other message sends uint8_t for party_id;
-			int16_t const party_id = msg.read_short ();
+			// I'm interpreting party_id as uint16_t instead of int16_t.
+			uint16_t const party_id = msg.read_short ();
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
@@ -362,7 +364,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			int16_t const move_id = msg.read_short ();
+			uint16_t const move_id = msg.read_short ();
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
@@ -403,9 +405,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
-			int16_t const change_in_health = msg.read_short ();
-			int16_t const remaining_health = msg.read_short ();
-			int16_t const denominator = msg.read_short ();
+			int16_t const change_in_health = static_cast<int16_t> (msg.read_short ());
+			int16_t const remaining_health = static_cast<int16_t> (msg.read_short ());
+			int16_t const denominator = static_cast<int16_t> (msg.read_short ());
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
@@ -466,7 +468,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const battle_id = msg.read_int ();
 			uint8_t const pokemon = msg.read_byte ();
 			uint8_t const move_slot = msg.read_byte ();
-			int16_t const new_move = msg.read_short ();
+			int16_t const new_move = static_cast<int16_t> (msg.read_short ());
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const max_pp = msg.read_byte ();
 			auto const it = battles.find (battle_id);
@@ -490,7 +492,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint32_t const channel_id = msg.read_int ();
 			std::string const mod = msg.read_string ();
 			std::string const target = msg.read_string ();
-			int32_t const date = msg.read_int ();
+			int32_t const date = static_cast<int32_t> (msg.read_int ());
 			break;
 		}
 		case InMessage::USER_DETAILS: {
@@ -545,7 +547,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const violation_size = msg.read_short ();
 			std::vector <int16_t> violation;
 			for (unsigned n = 0; n != violation_size; ++n)
-				violation.push_back (msg.read_short());
+				violation.push_back (static_cast<int16_t> (msg.read_short()));
 			handle_invalid_team (violation);
 			break;
 		}
@@ -584,17 +586,17 @@ void Client::handle_welcome_message (uint32_t version, std::string const & serve
 void Client::handle_password_challenge (InMessage msg) {
 	std::string challenge = "";
 	for (unsigned n = 0; n != 16; ++n)
-		challenge += msg.read_byte();
-	int secret_style = msg.read_byte();
+		challenge += static_cast<char> (msg.read_byte());
+	SecretStyle secret_style = static_cast<SecretStyle> (msg.read_byte());
 	std::string salt = msg.read_string();
 	std::string response = get_challenge_response (challenge, secret_style, salt);
 	OutMessage out (OutMessage::CHALLENGE_RESPONSE);
 	for (unsigned n = 0; n != 16; ++n)
-		out.write_byte (response [n]);
+		out.write_byte (static_cast<uint8_t> (response [n]));
 	out.send (*socket);
 }
 
-std::string Client::get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt) {
+std::string Client::get_challenge_response (std::string const & challenge, SecretStyle secret_style, std::string const & salt) {
 	// Hash of the password is the key to decrypting the number sent.
 	std::string digest = cryptography::sha256 (get_shared_secret (secret_style, salt));
 	
@@ -610,7 +612,9 @@ std::string Client::get_challenge_response (std::string const & challenge, int s
 	rijndael_decrypt (& ctx, middle, result);
 	
 	// Add 1 to the decrypted number, which is an int stored in the first 4 bytes (all other bytes are 0).
-	uint32_t r = (result [0] << 3 * 8) + (result [1] << 2 * 8) + (result [2] << 1 * 8) + result [3] + 1;
+	uint32_t r = 1;
+	for (unsigned n = 0; n != 4; ++n)
+		r += static_cast<unsigned> (result [n]) << ((3 - n) * 8);
 	r = htonl (r);
 
 	// I write back into result instead of a new array so that TM supports a potential future improvement in the security of Pokemon Lab. This will allow the protocol to work even if the server checks all of the digits for correctness, instead of just the first four.
@@ -623,19 +627,10 @@ std::string Client::get_challenge_response (std::string const & challenge, int s
 	// Then re-encrypt that encrypted value with the second half of the bits of my hashed password.
 	rijndael_set_key (& ctx, reinterpret_cast <unsigned char const *> (digest.substr (16, 16).c_str()), 128);
 	rijndael_encrypt (& ctx, middle, result);
-	std::string response = "";
-	for (unsigned n = 0; n != 16; ++n)
-		response += result [n];
-	return response;
+	return std::string (reinterpret_cast<char *> (result), 16);
 }
 
-enum Secret_Style {
-	NONE = 0,
-	MD5 = 1,		// This secret style is never actually used.
-	VBULLETIN = 2
-};
-
-std::string Client::get_shared_secret (int secret_style, std::string const & salt) {
+std::string Client::get_shared_secret (SecretStyle secret_style, std::string const & salt) {
 	switch (secret_style) {
 		case NONE:
 			return password;
@@ -830,12 +825,13 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.send (*socket);
 }
 
-Result Client::get_result (int16_t winner, int16_t party_id) const {
-	if (party_id != -1)
+namespace {
+Result get_result (uint8_t winner, uint16_t party_id) {
+	if (party_id != 0xFFFF)
 		return (winner == party_id) ? WON : LOST;
 	else
 		return TIED;
 }
-
+}	// unnamed namespace
 } // namespace pl
 } // namespace technicalmachine

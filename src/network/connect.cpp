@@ -32,6 +32,7 @@
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "battle_settings.hpp"
 
@@ -53,7 +54,7 @@ std::vector<std::string> load_trusted_users ();
 
 }	// unnamed namespace
 
-GenericClient::GenericClient (int set_depth):
+GenericClient::GenericClient (unsigned set_depth):
 	random_engine (rd ()),
 	highlights (load_highlights ()),
 	responses (load_responses ()),
@@ -390,18 +391,21 @@ void GenericClient::handle_challenge_command (std::string const & request, size_
 void GenericClient::handle_depth_change_command (std::string const & user, std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
-	int const new_depth = std::stoi (request.substr (start));
-	if (new_depth < 0) {
-		std::string const message = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
-		send_private_message (user, message);
-	}
-	else {
-		depth = new_depth;
-		if (new_depth > 3) {
-			std::string const message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 0 and 3 inclusive or proceed at your own risk.";
-			std::cerr << message + "\n";
-			send_private_message (user, message);
+	try {
+		depth = boost::lexical_cast<unsigned> (request.substr (start));
+		if (depth > 3) {
+			// Hopefully this will happen rarely enough that declaring
+			// big_message static would be a pessimization. There is no need to
+			// store that extra memory for a non-performance critical section
+			// of code.
+			std::string const big_message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 0 and 3 inclusive or proceed at your own risk.";
+			std::cerr << big_message + "\n";
+			send_private_message (user, big_message);
 		}
+	}
+	catch (boost::bad_lexical_cast const & ex) {
+		std::string const invalid_depth = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
+		send_private_message (user, invalid_depth);
 	}
 }
 

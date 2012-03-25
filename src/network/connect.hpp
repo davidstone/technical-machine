@@ -63,12 +63,12 @@ class GenericClient {
 		Score score;
 		int detailed [Species::END][7];
 	protected:
-		int depth;
+		unsigned depth;
 	public:
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
-		int chattiness;
+		unsigned chattiness;
 
-		explicit GenericClient (int set_depth);
+		explicit GenericClient (unsigned set_depth);
 		virtual ~GenericClient () { }
 	private:
 		bool is_trusted (std::string const & user) const;
@@ -92,7 +92,7 @@ class GenericClient {
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		void add_pending_challenge (std::shared_ptr <GenericBattle> const & battle);
 		void handle_challenge_withdrawn (std::string const & opponent);
-		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = -1);
+		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
 		void pause_at_start_of_battle ();
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 	private:

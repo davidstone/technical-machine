@@ -41,28 +41,28 @@
 
 namespace technicalmachine {
 
-GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, std::string const & team_file_name):
+GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	random_engine (seed),
 	opponent (_opponent),
 	ai (6, random_engine, team_file_name),
 	depth (battle_depth),
 	active (nullptr),
 	inactive (nullptr),
-	party (-1)
+	party (unknown_party)
 	{
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
 	initialize_turn ();
 }
 
-GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, Team const & team):
+GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
 	random_engine (seed),
 	opponent (_opponent),
 	ai (team),
 	depth (battle_depth),
 	active (nullptr),
 	inactive (nullptr),
-	party (-1)
+	party (unknown_party)
 	{
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
@@ -97,7 +97,7 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 	do_turn ();
 	correct_hp_and_report_errors (*first);
 	correct_hp_and_report_errors (*last);
-	std::uniform_int_distribution <int> distribution { 0, client.chattiness - 1 };
+	std::uniform_int_distribution <unsigned> distribution { 0, client.chattiness - 1 };
 	if (distribution (random_engine) == 0)
 		client.send_channel_message (battle_id, client.get_response ());
 }
@@ -178,7 +178,7 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 		unsigned const effectiveness = get_effectiveness (type, changer.at_replacement ());
 		if ((effectiveness > 0) and (type != Type::GROUND or grounded (changer, weather))) {
 			changer.damage = changer.at_replacement().hp.max * change_in_health / denominator;
-			if (static_cast <unsigned> (changer.damage) > changer.at_replacement().hp.stat)
+			if (changer.damage > changer.at_replacement().hp.stat)
 				changer.damage = changer.at_replacement().hp.stat;
 		}
 		move_damage = false;
@@ -186,15 +186,15 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 	
 	if (remaining_health < 0)
 		remaining_health = 0;
-	changer.at_replacement().new_hp = remaining_health;
+	changer.at_replacement().new_hp = static_cast<uint16_t> (remaining_health);
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
-		int const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
-		int const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
+		unsigned const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
+		unsigned const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
 		if (tm_estimate != pokemon.new_hp) {
-			int const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
+			unsigned const reported_hp = static_cast<unsigned> (pokemon.new_hp) * pokemon.hp.max / max_hp;
 			if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
 				std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
 				if (!team.me)

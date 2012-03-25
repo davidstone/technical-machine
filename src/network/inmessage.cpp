@@ -46,7 +46,7 @@ uint32_t InMessage::read_bytes (size_t bytes) {
 		// uint32_t because doing otherwise would break alignment requirements
 		// for memory access.
 		for (size_t n = 0; n != bytes; ++n) {
-			data += buffer [index] << (8 * (bytes - n - 1));
+			data += static_cast<uint32_t> (buffer [index]) << (8 * (bytes - n - 1));
 			++index;
 		}
 		return data;

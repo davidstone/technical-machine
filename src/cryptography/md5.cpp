@@ -1,5 +1,5 @@
 // MD5 implementation
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
 // it under the terms of the GNU Affero General Public License as
@@ -33,7 +33,7 @@ namespace {
 
 constexpr unsigned block_size = 64;
 
-constexpr uint32_t rotate_left (uint32_t x, int n) {
+constexpr uint32_t rotate_left (uint32_t x, unsigned n) {
 	return (x << n) | (x >> (32 - n));
 }
 
@@ -180,6 +180,5 @@ std::string md5 (std::string message) {
 	process (message, digest_buffer);
 	return std::string (reinterpret_cast <char *> (digest_buffer), 16);
 }
-
-}	// namespace technicalmachine
 }	// namespace cryptography
+}	// namespace technicalmachine

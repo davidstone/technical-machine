@@ -25,7 +25,7 @@ namespace technicalmachine {
 
 class Item {
 	public:
-		enum Items {
+		enum Items : unsigned {
 			NO_ITEM, ADAMANT_ORB, AGUAV_BERRY, AIR_MAIL, AMULET_COIN,
 			ANTIDOTE, APICOT_BERRY, ARMOR_FOSSIL, ASPEAR_BERRY, AWAKENING,
 			BABIRI_BERRY, BELUE_BERRY, BERRY_JUICE, BICYCLE, BIG_MUSHROOM,

@@ -43,12 +43,12 @@ class InvalidFormeId : public std::runtime_error {
 		}
 };
 
-int get_forme_offset (int id, int forme) {
-	constexpr int deoxys = 386;
-	constexpr int giratina = 487;
-	constexpr int rotom = 479;
-	constexpr int shaymin = 492;
-	constexpr int wormadam = 413;
+unsigned get_forme_offset (unsigned id, unsigned forme) {
+	constexpr unsigned deoxys = 386;
+	constexpr unsigned giratina = 487;
+	constexpr unsigned rotom = 479;
+	constexpr unsigned shaymin = 492;
+	constexpr unsigned wormadam = 413;
 	switch (id) {
 		case deoxys:
 			switch (forme) {
@@ -110,7 +110,7 @@ int get_forme_offset (int id, int forme) {
 	}
 }
 	
-int get_forme (Species species) {
+unsigned get_forme (Species species) {
 	switch (species) {
 		case DEOXYS_A:
 		case GIRATINA_O:
@@ -136,7 +136,7 @@ int get_forme (Species species) {
 
 }	// anonymous namespace
 
-Species id_to_species (int id, int forme) {
+Species id_to_species (unsigned id, unsigned forme) {
 	constexpr static Species species_converter [] = {
 		END, BULBASAUR, IVYSAUR, VENUSAUR, CHARMANDER,
 		CHARMELEON, CHARIZARD, SQUIRTLE, WARTORTLE, BLASTOISE,
@@ -240,12 +240,12 @@ Species id_to_species (int id, int forme) {
 		ARCEUS
 	};
 	Species const base_species = species_converter [id];
-	int const forme_offset = get_forme_offset (id, forme);
+	unsigned const forme_offset = get_forme_offset (id, forme);
 	return static_cast <Species> (base_species + forme_offset);
 }
 
 std::pair <uint16_t, uint8_t> species_to_id (Species species) {
-	constexpr static int species_converter [] = {
+	constexpr static unsigned species_converter [] = {
 		460,		//	ABOMASNOW
 		63,		//	ABRA
 		359,		//	ABSOL
@@ -753,12 +753,12 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		41,		//	ZUBAT
 		0		//	END
 	};
-	int const species_id = species_converter [species];
-	int const forme_id = get_forme (species);
-	return std::pair <int, int> (species_id, forme_id);
+	unsigned const species_id = species_converter [species];
+	unsigned const forme_id = get_forme (species);
+	return std::pair <unsigned, unsigned> (species_id, forme_id);
 }
 
-Ability::Abilities id_to_ability (int id) {
+Ability::Abilities id_to_ability (unsigned id) {
 	constexpr static Ability::Abilities ability_converter [] = {
 		Ability::END, Ability::STENCH, Ability::DRIZZLE,
 		Ability::SPEED_BOOST, Ability::BATTLE_ARMOR, Ability::STURDY,
@@ -806,8 +806,8 @@ Ability::Abilities id_to_ability (int id) {
 	return ability_converter [id];
 }
 
-int ability_to_id (Ability::Abilities ability) {
-	constexpr static int ability_converter [] = {
+unsigned ability_to_id (Ability::Abilities ability) {
+	constexpr static unsigned ability_converter [] = {
 		91,		// ADAPTABILITY
 		106,		// AFTERMATH
 		76,		// AIR_LOCK
@@ -939,7 +939,7 @@ int ability_to_id (Ability::Abilities ability) {
 class InvalidPart : public std::runtime_error {
 	public:
 		InvalidPart (uint16_t id, uint8_t part):
-			std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (id) + " with part ID: " + std::to_string (static_cast <int> (part)) + ".\n") {
+			std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (id) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
 		}
 };
 
@@ -1037,7 +1037,7 @@ Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
 	}
 }
 
-Gender::Genders id_to_gender (int id) {
+Gender::Genders id_to_gender (unsigned id) {
 	switch (id) {
 		case 0:
 			return Gender::GENDERLESS;
@@ -1048,7 +1048,7 @@ Gender::Genders id_to_gender (int id) {
 	}
 }
 
-int gender_to_id (Gender::Genders gender) {
+unsigned gender_to_id (Gender::Genders gender) {
 	switch (gender) {
 		case Gender::MALE:
 			return 1;
@@ -1059,7 +1059,7 @@ int gender_to_id (Gender::Genders gender) {
 	}
 }
 
-Item::Items id_to_item (int id) {
+Item::Items id_to_item (unsigned id) {
 	switch (id) {
 		case 0:
 			return Item::NO_ITEM;
@@ -1519,7 +1519,7 @@ Item::Items id_to_item (int id) {
 	}
 }
 
-int item_to_id (Item::Items item) {
+unsigned item_to_id (Item::Items item) {
 	switch (item) {
 		case Item::NO_ITEM:
 			return 0;
@@ -2225,7 +2225,7 @@ Item::Items battle_id_to_item (uint16_t id, uint8_t part) {
 	}
 }
 
-Move::Moves id_to_move (int id) {
+Move::Moves id_to_move (unsigned id) {
 	constexpr static Move::Moves move_converter [] = {
 		Move::END, Move::POUND, Move::KARATE_CHOP,
 		Move::DOUBLESLAP, Move::COMET_PUNCH, Move::MEGA_PUNCH,
@@ -2387,8 +2387,8 @@ Move::Moves id_to_move (int id) {
 	return move_converter [id];
 }
 
-int move_to_id (Move::Moves move) {
-	constexpr static int move_converter [] = {
+unsigned move_to_id (Move::Moves move) {
+	constexpr static unsigned move_converter [] = {
 		71,		// ABSORB
 		51,		// ACID
 		151,		// ACID_ARMOR
@@ -2861,7 +2861,7 @@ int move_to_id (Move::Moves move) {
 	return move_converter [(move < Move::SWITCH0) ? move : move - 6];
 }
 
-Nature::Natures id_to_nature (int id) {
+Nature::Natures id_to_nature (unsigned id) {
 	constexpr static Nature::Natures nature_converter [] = {
 		Nature::HARDY,
 		Nature::LONELY,
@@ -2892,8 +2892,8 @@ Nature::Natures id_to_nature (int id) {
 	return nature_converter [id];
 }
 
-int nature_to_id (Nature::Natures nature) {
-	constexpr static int nature_converter [] = {
+unsigned nature_to_id (Nature::Natures nature) {
+	constexpr static unsigned nature_converter [] = {
 		3,		// Adamant
 		18,		// Bashful
 		5,		// Bold

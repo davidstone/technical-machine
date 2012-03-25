@@ -28,12 +28,15 @@
 namespace technicalmachine {
 namespace {
 
+constexpr uint8_t unlimited_pp = 255;
+constexpr uint16_t indeterminate_power = 65535;
+constexpr uint16_t perfect_accuracy = 65535;
 Type get_type (Move::Moves move);
 bool is_physical (Move::Moves move);
-int16_t base_power (Move::Moves move);
-int8_t get_pp (Move::Moves move);
+uint16_t base_power (Move::Moves move);
+uint8_t get_pp (Move::Moves move);
 uint16_t get_probability (Move::Moves move);
-int16_t get_accuracy (Move::Moves move);
+uint16_t get_accuracy (Move::Moves move);
 
 }	// anonymous namespace
 
@@ -55,7 +58,11 @@ Move::Move (Moves move, int pp_ups, unsigned size) :
 }
 
 uint64_t Move::hash () const {
-	return name + END * (disable + 7 * (pp + pp_max * (times_used)));
+	return static_cast<uint64_t> (
+			name + END *
+			(disable + 7 *
+			(pp + pp_max *
+			times_used)));
 }
 
 int8_t Move::get_priority () {
@@ -252,7 +259,7 @@ Move::Moves Move::from_replacement (unsigned replacement) {
 }
 
 unsigned Move::to_replacement (Moves name) {
-	return name - SWITCH0;
+	return static_cast<unsigned> (name - SWITCH0);
 }
 
 unsigned Move::to_replacement () const {
@@ -260,7 +267,7 @@ unsigned Move::to_replacement () const {
 }
 
 bool Move::is_struggle_or_switch () const {
-	return pp_max == -1;
+	return pp_max == unlimited_pp;
 }
 
 bool Move::is_phaze (Moves name) {
@@ -345,8 +352,8 @@ bool Move::is_self_KO () const {
 	}
 }
 
-bool compare_scores (Move const & first, Move const & second) {
-	return first.score < second.score;
+bool Move::cannot_miss () const {
+	return get_accuracy (name) == perfect_accuracy;
 }
 
 uint16_t const Move::max_probability = 840;
@@ -1311,8 +1318,8 @@ bool is_physical (Move::Moves move) {
 	return is_physical [move];
 }
 
-int16_t base_power (Move::Moves move) {
-	static constexpr int16_t get_power [] = {
+uint16_t base_power (Move::Moves move) {
+	static constexpr uint16_t get_power [] = {
 		20,		// ABSORB
 		40,		// ACID
 		0,		// ACID_ARMOR
@@ -1382,7 +1389,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// COPYCAT
 		0,		// COSMIC_POWER
 		0,		// COTTON_SPORE
-		-1,		// COUNTER
+		indeterminate_power,		// COUNTER
 		40,		// COVET
 		90,		// CRABHAMMER
 		100,		// CROSS_CHOP
@@ -1414,7 +1421,7 @@ int16_t base_power (Move::Moves move) {
 		80,		// DRAGON_CLAW
 		0,		// DRAGON_DANCE
 		90,		// DRAGON_PULSE
-		-1,		// DRAGON_RAGE
+		indeterminate_power,		// DRAGON_RAGE
 		100,		// DRAGON_RUSH
 		60,		// DRAGONBREATH
 		60,		// DRAIN_PUNCH
@@ -1427,7 +1434,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// EMBARGO
 		40,		// EMBER
 		0,		// ENCORE
-		-1,		// ENDEAVOR
+		indeterminate_power,		// ENDEAVOR
 		0,		// ENDURE
 		80,		// ENERGY_BALL
 		150,		// ERUPTION
@@ -1445,7 +1452,7 @@ int16_t base_power (Move::Moves move) {
 		65,		// FIRE_FANG
 		75,		// FIRE_PUNCH
 		15,		// FIRE_SPIN
-		-1,		// FISSURE
+		indeterminate_power,		// FISSURE
 		1,		// FLAIL
 		60,		// FLAME_WHEEL
 		95,		// FLAMETHROWER
@@ -1478,7 +1485,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// GROWTH
 		0,		// GRUDGE
 		0,		// GUARD_SWAP
-		-1,		// GUILLOTINE
+		indeterminate_power,		// GUILLOTINE
 		120,		// GUNK_SHOT
 		40,		// GUST
 		1,		// GYRO_BALL
@@ -1498,7 +1505,7 @@ int16_t base_power (Move::Moves move) {
 		100,		// HI_JUMP_KICK
 		1,		// HIDDEN_POWER
 		65,		// HORN_ATTACK
-		-1,		// HORN_DRILL
+		indeterminate_power,		// HORN_DRILL
 		0,		// HOWL
 		150,		// HYDRO_CANNON
 		120,		// HYDRO_PUMP
@@ -1553,7 +1560,7 @@ int16_t base_power (Move::Moves move) {
 		80,		// MEGA_PUNCH
 		120,		// MEGAHORN
 		0,		// MEMENTO
-		-1,		// METAL_BURST
+		indeterminate_power,		// METAL_BURST
 		50,		// METAL_CLAW
 		0,		// METAL_SOUND
 		100,		// METEOR_MASH
@@ -1563,7 +1570,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// MIND_READER
 		0,		// MINIMIZE
 		0,		// MIRACLE_EYE
-		-1,		// MIRROR_COAT
+		indeterminate_power,		// MIRROR_COAT
 		0,		// MIRROR_MOVE
 		65,		// MIRROR_SHOT
 		0,		// MIST
@@ -1579,7 +1586,7 @@ int16_t base_power (Move::Moves move) {
 		1,		// NATURAL_GIFT
 		0,		// NATURE_POWER
 		60,		// NEEDLE_ARM
-		-1,		// NIGHT_SHADE
+		indeterminate_power,		// NIGHT_SHADE
 		70,		// NIGHT_SLASH
 		0,		// NIGHTMARE
 		65,		// OCTAZOOKA
@@ -1615,7 +1622,7 @@ int16_t base_power (Move::Moves move) {
 		140,		// PSYCHO_BOOST
 		70,		// PSYCHO_CUT
 		0,		// PSYCHO_SHIFT
-		-1,		// PSYWAVE
+		indeterminate_power,		// PSYWAVE
 		1,		// PUNISHMENT
 		40,		// PURSUIT
 		40,		// QUICK_ATTACK
@@ -1657,7 +1664,7 @@ int16_t base_power (Move::Moves move) {
 		70,		// SECRET_POWER
 		80,		// SEED_BOMB
 		120,		// SEED_FLARE
-		-1,		// SEISMIC_TOSS
+		indeterminate_power,		// SEISMIC_TOSS
 		200,		// SELFDESTRUCT
 		80,		// SHADOW_BALL
 		70,		// SHADOW_CLAW
@@ -1665,7 +1672,7 @@ int16_t base_power (Move::Moves move) {
 		60,		// SHADOW_PUNCH
 		40,		// SHADOW_SNEAK
 		0,		// SHARPEN
-		-1,		// SHEER_COLD
+		indeterminate_power,		// SHEER_COLD
 		60,		// SHOCK_WAVE
 		75,		// SIGNAL_BEAM
 		60,		// SILVER_WIND
@@ -1689,7 +1696,7 @@ int16_t base_power (Move::Moves move) {
 		40,		// SNORE
 		0,		// SOFTBOILED
 		60,		// SOLARBEAM	(I double the power if it's not raining, rather than halve it if it is)
-		-1,		// SONICBOOM
+		indeterminate_power,		// SONICBOOM
 		100,		// SPACIAL_REND
 		65,		// SPARK
 		0,		// SPIDER_WEB
@@ -1712,7 +1719,7 @@ int16_t base_power (Move::Moves move) {
 		0,		// SUBSTITUTE
 		80,		// SUCKER_PUNCH
 		0,		// SUNNY_DAY
-		-1,		// SUPER_FANG
+		indeterminate_power,		// SUPER_FANG
 		120,		// SUPERPOWER
 		0,		// SUPERSONIC
 		95,		// SURF
@@ -1790,8 +1797,8 @@ int16_t base_power (Move::Moves move) {
 	return get_power [move];
 }
 
-int8_t get_pp (Move::Moves move) {
-	static constexpr int8_t get_pp [] = {
+uint8_t get_pp (Move::Moves move) {
+	static constexpr uint8_t get_pp [] = {
 		25,		// Absorb
 		30,		// Acid
 		40,		// Acid Armor
@@ -2185,7 +2192,7 @@ int8_t get_pp (Move::Moves move) {
 		5,		// Stone Edge
 		15,		// Strength
 		40,		// String Shot
-		-1,		// Struggle
+		unlimited_pp,		// Struggle
 		30,		// Stun Spore
 		25,		// Submission
 		10,		// Substitute
@@ -2200,12 +2207,12 @@ int8_t get_pp (Move::Moves move) {
 		10,		// Sweet Kiss
 		20,		// Sweet Scent
 		20,		// Swift
-		-1,		// Switch0
-		-1,		// Switch1
-		-1,		// Switch2
-		-1,		// Switch3
-		-1,		// Switch4
-		-1,		// Switch5
+		unlimited_pp,		// Switch0
+		unlimited_pp,		// Switch1
+		unlimited_pp,		// Switch2
+		unlimited_pp,		// Switch3
+		unlimited_pp,		// Switch4
+		unlimited_pp,		// Switch5
 		10,		// Switcheroo
 		30,		// Swords Dance
 		5,		// Synthesis
@@ -2749,44 +2756,44 @@ uint16_t get_probability (Move::Moves move) {
 	return get_probability [move];
 }
 
-int16_t get_accuracy (Move::Moves move) {
-	static constexpr int16_t get_accuracy [] = {
+uint16_t get_accuracy (Move::Moves move) {
+	static constexpr uint16_t get_accuracy [] = {
 		100,		// Absorb
 		100,		// Acid
-		-1,		// Acid Armor
-		-1,		// Acupressure
-		-1,		// Aerial Ace
+		perfect_accuracy,		// Acid Armor
+		perfect_accuracy,		// Acupressure
+		perfect_accuracy,		// Aerial Ace
 		95,		// Aeroblast
-		-1,		// Agility
+		perfect_accuracy,		// Agility
 		95,		// Air Cutter
 		95,		// Air Slash
-		-1,		// Amnesia
+		perfect_accuracy,		// Amnesia
 		100,		// AncientPower
 		100,		// Aqua Jet
-		-1,		// Aqua Ring
+		perfect_accuracy,		// Aqua Ring
 		90,		// Aqua Tail
 		100,		// Arm Thrust
-		-1,		// Aromatherapy
-		-1,		// Assist
+		perfect_accuracy,		// Aromatherapy
+		perfect_accuracy,		// Assist
 		100,		// Assurance
 		100,		// Astonish
 		100,		// Attack Order
 		100,		// Attract
-		-1,		// Aura Sphere
+		perfect_accuracy,		// Aura Sphere
 		100,		// Aurora Beam
 		100,		// Avalanche
 		85,		// Barrage
-		-1,		// Barrier
-		-1,		// Baton Pass
+		perfect_accuracy,		// Barrier
+		perfect_accuracy,		// Baton Pass
 		100,		// Beat Up
-		-1,		// Belly Drum
-		-1,		// Bide
+		perfect_accuracy,		// Belly Drum
+		perfect_accuracy,		// Bide
 		75,		// Bind
 		100,		// Bite
 		90,		// Blast Burn
 		90,		// Blaze Kick
 		70,		// Blizzard
-		-1,		// Block
+		perfect_accuracy,		// Block
 		100,		// Body Slam
 		85,		// Bone Club
 		80,		// Bone Rush
@@ -2799,13 +2806,13 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// BubbleBeam
 		100,		// Bug Bite
 		100,		// Bug Buzz
-		-1,		// Bulk Up
+		perfect_accuracy,		// Bulk Up
 		100,		// Bullet Punch
 		100,		// Bullet Seed
-		-1,		// Calm Mind
-		-1,		// Camouflage
+		perfect_accuracy,		// Calm Mind
+		perfect_accuracy,		// Camouflage
 		100,		// Captivate
-		-1,		// Charge
+		perfect_accuracy,		// Charge
 		90,		// Charge Beam
 		100,		// Charm
 		100,		// Chatter
@@ -2815,10 +2822,10 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Confuse Ray
 		100,		// Confusion
 		100,		// Constrict
-		-1,		// Conversion
-		-1,		// Conversion2
-		-1,		// Copycat
-		-1,		// Cosmic Power
+		perfect_accuracy,		// Conversion
+		perfect_accuracy,		// Conversion2
+		perfect_accuracy,		// Copycat
+		perfect_accuracy,		// Cosmic Power
 		85,		// Cotton Spore
 		100,		// Counter
 		100,		// Covet
@@ -2828,15 +2835,15 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Crunch
 		95,		// Crush Claw
 		100,		// Crush Grip
-		-1,		// Curse
+		perfect_accuracy,		// Curse
 		95,		// Cut
 		100,		// Dark Pulse
 		80,		// Dark Void
-		-1,		// Defend Order
-		-1,		// Defense Curl
-		-1,		// Defog
-		-1,		// Destiny Bond
-		-1,		// Detect
+		perfect_accuracy,		// Defend Order
+		perfect_accuracy,		// Defense Curl
+		perfect_accuracy,		// Defog
+		perfect_accuracy,		// Destiny Bond
+		perfect_accuracy,		// Detect
 		100,		// Dig
 		80,		// Disable
 		100,		// Discharge
@@ -2845,12 +2852,12 @@ int16_t get_accuracy (Move::Moves move) {
 		85,		// Doom Desire
 		90,		// Double Hit
 		100,		// Double Kick
-		-1,		// Double Team
+		perfect_accuracy,		// Double Team
 		100,		// Double-Edge
 		85,		// DoubleSlap
 		90,		// Draco Meteor
 		100,		// Dragon Claw
-		-1,		// Dragon Dance
+		perfect_accuracy,		// Dragon Dance
 		100,		// Dragon Pulse
 		100,		// Dragon Rage
 		75,		// Dragon Rush
@@ -2866,14 +2873,14 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Ember
 		100,		// Encore
 		100,		// Endeavor
-		-1,		// Endure
+		perfect_accuracy,		// Endure
 		100,		// Energy Ball
 		100,		// Eruption
 		100,		// Explosion
 		100,		// Extrasensory
 		100,		// ExtremeSpeed
 		100,		// Facade
-		-1,		// Faint Attack
+		perfect_accuracy,		// Faint Attack
 		100,		// Fake Out
 		100,		// Fake Tears
 		100,		// False Swipe
@@ -2894,11 +2901,11 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Fling
 		95,		// Fly
 		70,		// Focus Blast
-		-1,		// Focus Energy
+		perfect_accuracy,		// Focus Energy
 		100,		// Focus Punch
-		-1,		// Follow Me
+		perfect_accuracy,		// Follow Me
 		100,		// Force Palm
-		-1,		// Foresight
+		perfect_accuracy,		// Foresight
 		90,		// Frenzy Plant
 		100,		// Frustration
 		85,		// Fury Attack
@@ -2911,33 +2918,33 @@ int16_t get_accuracy (Move::Moves move) {
 		75,		// Glare
 		100,		// Grass Knot
 		55,		// GrassWhistle
-		-1,		// Gravity
+		perfect_accuracy,		// Gravity
 		100,		// Growl
-		-1,		// Growth
-		-1,		// Grudge
-		-1,		// Guard Swap
+		perfect_accuracy,		// Growth
+		perfect_accuracy,		// Grudge
+		perfect_accuracy,		// Guard Swap
 		30,		// Guillotine
 		70,		// Gunk Shot
 		100,		// Gust
 		100,		// Gyro Ball
-		-1,		// Hail
+		perfect_accuracy,		// Hail
 		90,		// Hammer Arm
-		-1,		// Harden
-		-1,		// Haze
+		perfect_accuracy,		// Harden
+		perfect_accuracy,		// Haze
 		80,		// Head Smash
 		100,		// Headbutt
-		-1,		// Heal Bell
+		perfect_accuracy,		// Heal Bell
 		100,		// Heal Block
-		-1,		// Heal Order
-		-1,		// Healing Wish
-		-1,		// Heart Swap
+		perfect_accuracy,		// Heal Order
+		perfect_accuracy,		// Healing Wish
+		perfect_accuracy,		// Heart Swap
 		90,		// Heat Wave
-		-1,		// Helping Hand
+		perfect_accuracy,		// Helping Hand
 		90,		// Hi Jump Kick
 		100,		// Hidden Power
 		100,		// Horn Attack
 		30,		// Horn Drill
-		-1,		// Howl
+		perfect_accuracy,		// Howl
 		90,		// Hydro Cannon
 		80,		// Hydro Pump
 		90,		// Hyper Beam
@@ -2951,9 +2958,9 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Ice Shard
 		100,		// Icicle Spear
 		95,		// Icy Wind
-		-1,		// Imprison
-		-1,		// Ingrain
-		-1,		// Iron Defense
+		perfect_accuracy,		// Imprison
+		perfect_accuracy,		// Ingrain
+		perfect_accuracy,		// Iron Defense
 		100,		// Iron Head
 		75,		// Iron Tail
 		100,		// Judgment
@@ -2969,23 +2976,23 @@ int16_t get_accuracy (Move::Moves move) {
 		90,		// Leech Seed
 		100,		// Leer
 		100,		// Lick
-		-1,		// Light Screen
-		-1,		// Lock-On
+		perfect_accuracy,		// Light Screen
+		perfect_accuracy,		// Lock-On
 		75,		// Lovely Kiss
 		100,		// Low Kick
-		-1,		// Lucky Chant
-		-1,		// Lunar Dance
+		perfect_accuracy,		// Lucky Chant
+		perfect_accuracy,		// Lunar Dance
 		100,		// Luster Purge
 		100,		// Mach Punch
-		-1,		// Magic Coat
-		-1,		// Magical Leaf
+		perfect_accuracy,		// Magic Coat
+		perfect_accuracy,		// Magical Leaf
 		70,		// Magma Storm
-		-1,		// Magnet Bomb
-		-1,		// Magnet Rise
+		perfect_accuracy,		// Magnet Bomb
+		perfect_accuracy,		// Magnet Rise
 		100,		// Magnitude
-		-1,		// Me First
-		-1,		// Mean Look
-		-1,		// Meditate
+		perfect_accuracy,		// Me First
+		perfect_accuracy,		// Mean Look
+		perfect_accuracy,		// Meditate
 		100,		// Mega Drain
 		75,		// Mega Kick
 		85,		// Mega Punch
@@ -2995,41 +3002,41 @@ int16_t get_accuracy (Move::Moves move) {
 		95,		// Metal Claw
 		85,		// Metal Sound
 		85,		// Meteor Mash
-		-1,		// Metronome
-		-1,		// Milk Drink
-		-1,		// Mimic
-		-1,		// Mind Reader
-		-1,		// Minimize
-		-1,		// Miracle Eye
+		perfect_accuracy,		// Metronome
+		perfect_accuracy,		// Milk Drink
+		perfect_accuracy,		// Mimic
+		perfect_accuracy,		// Mind Reader
+		perfect_accuracy,		// Minimize
+		perfect_accuracy,		// Miracle Eye
 		100,		// Mirror Coat
-		-1,		// Mirror Move
+		perfect_accuracy,		// Mirror Move
 		85,		// Mirror Shot
-		-1,		// Mist
+		perfect_accuracy,		// Mist
 		100,		// Mist Ball
-		-1,		// Moonlight
-		-1,		// Morning Sun
+		perfect_accuracy,		// Moonlight
+		perfect_accuracy,		// Morning Sun
 		85,		// Mud Bomb
 		95,		// Mud Shot
-		-1,		// Mud Sport
+		perfect_accuracy,		// Mud Sport
 		100,		// Mud-Slap
 		85,		// Muddy Water
-		-1,		// Nasty Plot
+		perfect_accuracy,		// Nasty Plot
 		100,		// Natural Gift
-		-1,		// Nature Power
+		perfect_accuracy,		// Nature Power
 		100,		// Needle Arm
 		100,		// Night Shade
 		100,		// Night Slash
 		100,		// Nightmare
 		85,		// Octazooka
-		-1,		// Odor Sleuth
+		perfect_accuracy,		// Odor Sleuth
 		100,		// Ominous Wind
 		100,		// Outrage
 		90,		// Overheat
-		-1,		// Pain Split
+		perfect_accuracy,		// Pain Split
 		100,		// Pay Day
 		100,		// Payback
 		100,		// Peck
-		-1,		// Perish Song
+		perfect_accuracy,		// Perish Song
 		100,		// Petal Dance
 		85,		// Pin Missile
 		100,		// Pluck
@@ -3042,13 +3049,13 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Pound
 		100,		// Powder Snow
 		100,		// Power Gem
-		-1,		// Power Swap
-		-1,		// Power Trick
+		perfect_accuracy,		// Power Swap
+		perfect_accuracy,		// Power Trick
 		85,		// Power Whip
 		90,		// Present
-		-1,		// Protect
+		perfect_accuracy,		// Protect
 		100,		// Psybeam
-		-1,		// Psych Up
+		perfect_accuracy,		// Psych Up
 		100,		// Psychic
 		90,		// Psycho Boost
 		100,		// Psycho Cut
@@ -3058,15 +3065,15 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Pursuit
 		100,		// Quick Attack
 		100,		// Rage
-		-1,		// Rain Dance
+		perfect_accuracy,		// Rain Dance
 		100,		// Rapid Spin
 		95,		// Razor Leaf
 		100,		// Razor Wind
-		-1,		// Recover
-		-1,		// Recycle
-		-1,		// Reflect
-		-1,		// Refresh
-		-1,		// Rest
+		perfect_accuracy,		// Recover
+		perfect_accuracy,		// Recycle
+		perfect_accuracy,		// Reflect
+		perfect_accuracy,		// Refresh
+		perfect_accuracy,		// Rest
 		100,		// Return
 		100,		// Revenge
 		100,		// Reversal
@@ -3074,21 +3081,21 @@ int16_t get_accuracy (Move::Moves move) {
 		90,		// Roar Of Time
 		80,		// Rock Blast
 		85,		// Rock Climb
-		-1,		// Rock Polish
+		perfect_accuracy,		// Rock Polish
 		90,		// Rock Slide
 		100,		// Rock Smash
 		90,		// Rock Throw
 		80,		// Rock Tomb
 		90,		// Rock Wrecker
-		-1,		// Role Play
+		perfect_accuracy,		// Role Play
 		85,		// Rolling Kick
 		90,		// Rollout
-		-1,		// Roost
+		perfect_accuracy,		// Roost
 		95,		// Sacred Fire
-		-1,		// Safeguard
+		perfect_accuracy,		// Safeguard
 		70,		// Sand Tomb
 		100,		// Sand-Attack
-		-1,		// Sandstorm
+		perfect_accuracy,		// Sandstorm
 		90,		// Scary Face
 		100,		// Scratch
 		85,		// Screech
@@ -3100,82 +3107,82 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Shadow Ball
 		100,		// Shadow Claw
 		100,		// Shadow Force
-		-1,		// Shadow Punch
+		perfect_accuracy,		// Shadow Punch
 		100,		// Shadow Sneak
-		-1,		// Sharpen
+		perfect_accuracy,		// Sharpen
 		30,		// Sheer Cold
-		-1,		// Shock Wave
+		perfect_accuracy,		// Shock Wave
 		100,		// Signal Beam
 		100,		// Silver Wind
 		55,		// Sing
-		-1,		// Sketch
-		-1,		// Skill Swap
+		perfect_accuracy,		// Sketch
+		perfect_accuracy,		// Skill Swap
 		100,		// Skull Bash
 		90,		// Sky Attack
 		90,		// Sky Uppercut
-		-1,		// Slack Off
+		perfect_accuracy,		// Slack Off
 		75,		// Slam
 		100,		// Slash
 		75,		// Sleep Powder
-		-1,		// Sleep Talk
+		perfect_accuracy,		// Sleep Talk
 		100,		// Sludge
 		100,		// Sludge Bomb
 		100,		// SmellingSalt
 		70,		// Smog
 		100,		// SmokeScreen
-		-1,		// Snatch
+		perfect_accuracy,		// Snatch
 		100,		// Snore
-		-1,		// Softboiled
+		perfect_accuracy,		// Softboiled
 		100,		// SolarBeam
 		90,		// SonicBoom
 		95,		// Spacial Rend
 		100,		// Spark
-		-1,		// Spider Web
+		perfect_accuracy,		// Spider Web
 		100,		// Spike Cannon
-		-1,		// Spikes
+		perfect_accuracy,		// Spikes
 		100,		// Spit Up
 		100,		// Spite
-		-1,		// Splash
+		perfect_accuracy,		// Splash
 		100,		// Spore
-		-1,		// Stealth Rock
+		perfect_accuracy,		// Stealth Rock
 		90,		// Steel Wing
-		-1,		// Stockpile
+		perfect_accuracy,		// Stockpile
 		100,		// Stomp
 		80,		// Stone Edge
 		100,		// Strength
 		95,		// String Shot
-		-1,		// Struggle
+		perfect_accuracy,		// Struggle
 		75,		// Stun Spore
 		80,		// Submission
-		-1,		// Substitute
+		perfect_accuracy,		// Substitute
 		100,		// Sucker Punch
-		-1,		// Sunny Day
+		perfect_accuracy,		// Sunny Day
 		90,		// Super Fang
 		100,		// Superpower
 		55,		// Supersonic
 		100,		// Surf
 		90,		// Swagger
-		-1,		// Swallow
+		perfect_accuracy,		// Swallow
 		75,		// Sweet Kiss
 		100,		// Sweet Scent
-		-1,		// Swift
-		-1,		// Switch0
-		-1,		// Switch1
-		-1,		// Switch2
-		-1,		// Switch3
-		-1,		// Switch4
-		-1,		// Switch5
+		perfect_accuracy,		// Swift
+		perfect_accuracy,		// Switch0
+		perfect_accuracy,		// Switch1
+		perfect_accuracy,		// Switch2
+		perfect_accuracy,		// Switch3
+		perfect_accuracy,		// Switch4
+		perfect_accuracy,		// Switch5
 		100,		// Switcheroo
-		-1,		// Swords Dance
-		-1,		// Synthesis
+		perfect_accuracy,		// Swords Dance
+		perfect_accuracy,		// Synthesis
 		95,		// Tackle
-		-1,		// Tail Glow
+		perfect_accuracy,		// Tail Glow
 		100,		// Tail Whip
-		-1,		// Tailwind
+		perfect_accuracy,		// Tailwind
 		85,		// Take Down
 		100,		// Taunt
 		100,		// Teeter Dance
-		-1,		// Teleport
+		perfect_accuracy,		// Teleport
 		100,		// Thief
 		100,		// Thrash
 		70,		// Thunder
@@ -3187,13 +3194,13 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Tickle
 		100,		// Torment
 		85,		// Toxic
-		-1,		// Toxic Spikes
-		-1,		// Transform
+		perfect_accuracy,		// Toxic Spikes
+		perfect_accuracy,		// Transform
 		100,		// Tri Attack
 		100,		// Trick
-		-1,		// Trick Room
+		perfect_accuracy,		// Trick Room
 		90,		// Triple Kick
-		-1,		// Trump Card
+		perfect_accuracy,		// Trump Card
 		100,		// Twineedle
 		100,		// Twister
 		100,		// U-turn
@@ -3201,12 +3208,12 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Vacuum Wave
 		100,		// ViceGrip
 		100,		// Vine Whip
-		-1,		// Vital Throw
+		perfect_accuracy,		// Vital Throw
 		100,		// Volt Tackle
 		100,		// Wake-Up Slap
 		100,		// Water Gun
 		100,		// Water Pulse
-		-1,		// Water Sport
+		perfect_accuracy,		// Water Sport
 		100,		// Water Spout
 		100,		// Waterfall
 		100,		// Weather Ball
@@ -3214,14 +3221,14 @@ int16_t get_accuracy (Move::Moves move) {
 		100,		// Whirlwind
 		75,		// Will-O-Wisp
 		100,		// Wing Attack
-		-1,		// Wish
-		-1,		// Withdraw
+		perfect_accuracy,		// Wish
+		perfect_accuracy,		// Withdraw
 		100,		// Wood Hammer
 		100,		// Worry Seed
 		85,		// Wrap
 		100,		// Wring Out
 		100,		// X-Scissor
-		-1,		// Yawn
+		perfect_accuracy,		// Yawn
 		50,		// Zap Cannon
 		90		// Zen Headbutt
 	};

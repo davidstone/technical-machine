@@ -35,9 +35,9 @@ public:
 	uint64_t foe;
 	int64_t value;
 	uint32_t weather;
-	int depth;
+	unsigned depth;
 	Hash ();
-	Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, int depth_current);
+	Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned depth_current);
 	bool operator== (Hash const & other) const;
 	bool operator!= (Hash const & other) const;
 };
@@ -46,7 +46,7 @@ Hash::Hash ():
 	depth (0) {
 }
 
-Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, int depth_current):
+Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned depth_current):
 	ai (ai_hash),
 	foe (foe_hash),
 	weather (weather_hash),
@@ -92,7 +92,7 @@ Hash & hash_table_lookup (Hash const & current) {
 
 }	// anonymous namespace
 
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score) {
+int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score) {
 	int64_t value;
 	if (depth == 0) {
 		value = score.evaluate (ai, foe, weather);

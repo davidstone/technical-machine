@@ -260,7 +260,7 @@ bool Team::seen_pokemon (Species name) {
 	return false;
 }
 
-void Team::add_pokemon (Species name, std::string const & nickname, int level, Gender gender) {
+void Team::add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender) {
 	Pokemon member (name, size);
 	member.level = level;
 	member.gender = gender;
@@ -282,14 +282,14 @@ uint64_t Team::hash () const {
 	return size + 7 *
 			(pokemon.index + 6 *
 			(vanish + Vanish::END_VANISH *
-			((stage [Stat::ATK] + 6) + (6 + 6 + 1) *
-			((stage [Stat::DEF] + 6) + (6 + 6 + 1) *
-			((stage [Stat::SPA] + 6) + (6 + 6 + 1) *
-			((stage [Stat::SPD] + 6) + (6 + 6 + 1) *
-			((stage [Stat::SPE] + 6) + (6 + 6 + 1) *
-			((stage [Stat::ACC] + 6) + (6 + 6 + 1) *
-			((stage [Stat::EVA] + 6) + (6 + 6 + 1) *
-			(((bide_damage < 714 / 2) ? bide_damage : 714 / 2) + (714 / 2 + 1) *
+			(static_cast<unsigned> ((stage [Stat::ATK] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> ((stage [Stat::DEF] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> ((stage [Stat::SPA] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> ((stage [Stat::SPD] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> ((stage [Stat::SPE] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> ((stage [Stat::ACC] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> ((stage [Stat::EVA] + 6)) + (6 + 6 + 1) *
+			(((bide_damage < 714 / 2) ? bide_damage : 714u / 2) + (714 / 2 + 1) *
 			(bide + 3 *
 			(confused + 5 *
 			(embargo + 5 *

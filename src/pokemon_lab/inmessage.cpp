@@ -34,7 +34,7 @@ std::string InMessage::read_string () {
 	uint16_t length = read_short ();
 	std::string data = "";
 	for (uint16_t n = 0; n != length; ++n)
-		data += read_byte ();
+		data += static_cast<char> (read_byte ());
 	return data;
 }
 

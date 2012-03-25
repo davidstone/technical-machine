@@ -49,13 +49,8 @@ SetOption('warn', 'no-duplicate-environment')
 # that I have a vector of float. I go through this vector, and there are some
 # elements I cannot evaluate yet what they should be, so I set them to -1.0f
 # (since my problem only uses positive numbers, -1 is out of the domain). I
-# later go through and update -1.0f values. However, my problem may have better
-# time performance (at a cost to memory, but other parts of my program use more
-# memory so that's not such a big deal) to store a reference to the elements
-# and then just iterate over them. That would eliminate the need to later
-# compare directly to -1.0f. Regardless, -1.0f can be represented exactly in
-# floating point, and I did not compute that value through a computation like
-# `-0.2f + -0.8f`.
+# later go through and update -1.0f values. It does not easily lend itself to a
+# different method of operation.
 #
 # -Winline is absent because I don't use the inline keyword for optimization
 # purposes, just to define functions inline in headers. I don't care if the
@@ -66,6 +61,8 @@ SetOption('warn', 'no-duplicate-environment')
 #
 # -Wmissing-format-attribute is not used because I do not use gnu extensions.
 # Same for -Wsuggest-attribute and several others.
+#
+# -Wnormalized=nfc is already the default option, and looks to be the best.
 #
 # -Wpadded is turned on occasionally to optimize the layout of classes, but it
 # is not left on because not all classes have enough elements to remove padding
@@ -95,8 +92,11 @@ SetOption('warn', 'no-duplicate-environment')
 # example, it generated this warning in my code when I looped over all elements
 # in a vector to apply a set of functions to them (using the range-based for
 # loop).
+#
+# -Wzero-as-null-pointer-constant and -Wuseless-cast are GCC-4.7-only warnings,
+# which I will add when I transition to GCC 4.7.
 
-warnings = ['-Wall', '-Wextra', '-Wformat=2', '-Wstrict-overflow=5', '-Wcast-align', '-Wcast-qual', '-Winit-self', '-Wmissing-include-dirs', '-Wredundant-decls', '-Wshadow', '-Wno-unused', '-Werror']
+warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wformat=2', '-Winit-self', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wstrict-overflow=5', '-Wundef', '-Werror', '-Wno-unused']
 full_optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto', '-Wdisabled-optimization']
 cc_flags = warnings
 cxx_flags = ['-std=c++0x']

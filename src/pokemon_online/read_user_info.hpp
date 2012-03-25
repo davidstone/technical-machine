@@ -50,7 +50,7 @@ class User {
 		uint16_t const blue;
 		uint16_t const padding;
 		uint8_t const gen;
-		User (InMessage & msg);
+		explicit User (InMessage & msg);
 };
 
 }	// namespace po

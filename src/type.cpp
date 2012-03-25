@@ -78,6 +78,8 @@ bool is_type (Team const & team, Type type) {
 	return false;
 }
 
+namespace {
+
 // Calculate the effectiveness of attacking type on defending type. 0 is no effect, 1 is not very effective, 2 is neutral, and 4 is super effective.
 
 unsigned lookup_effectiveness (Type attacking, Type defending) {
@@ -104,6 +106,8 @@ unsigned lookup_effectiveness (Type attacking, Type defending) {
 	};
 	return effectiveness [attacking.type] [defending.type];
 }
+
+}	// unnamed namespace
 
 unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
 	unsigned effectiveness = 1;

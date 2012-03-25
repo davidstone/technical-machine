@@ -41,7 +41,7 @@ Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) 
 Pokemon Online refers to Porygon2 as Porygon 2.
 */
 
-enum Species {
+enum Species : unsigned {
 	ABOMASNOW,
 	ABRA,
 	ABSOL,

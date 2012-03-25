@@ -1,5 +1,5 @@
 // Sha-2 implementation
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
 // it under the terms of the GNU Affero General Public License as
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// This file was inspired by C implementation by Oliver Gay.
+// This file was inspired by a C implementation by Oliver Gay.
 // Original source can be found in src/sha.c
 
 // This version runs faster than the unrolled version while almost having an
@@ -40,163 +40,60 @@ namespace cryptography {
 namespace {
 
 template <typename T>
-constexpr T inline rotate_right (T x, unsigned n) {
-	return ((x >> n) | (x << ((sizeof (T) << 3) - n)));
+constexpr T rotate_right (T const x, unsigned const n) {
+	return (x >> n) | (x << ((sizeof (T) * 8) - n));
 }
 
-constexpr uint32_t inline f1 (uint32_t x) {
+constexpr uint32_t f1 (uint32_t const x) {
 	return rotate_right (x, 2) ^ rotate_right (x, 13) ^ rotate_right (x, 22);
 }
-constexpr uint64_t inline f1 (uint64_t x) {
+constexpr uint64_t f1 (uint64_t const x) {
 	return rotate_right (x, 28) ^ rotate_right (x, 34) ^ rotate_right (x, 39);
 }
 
-constexpr uint32_t inline f2 (uint32_t x) {
+constexpr uint32_t f2 (uint32_t const x) {
 	return rotate_right (x, 6) ^ rotate_right (x, 11) ^ rotate_right (x, 25);
 }
-constexpr uint64_t inline f2 (uint64_t x) {
+constexpr uint64_t f2 (uint64_t const x) {
 	return rotate_right (x, 14) ^ rotate_right (x, 18) ^ rotate_right (x, 41);
 }
 
-constexpr uint32_t inline f3 (uint32_t x) {
+constexpr uint32_t f3 (uint32_t const x) {
 	return rotate_right (x, 7) ^ rotate_right (x, 18) ^ (x >> 3);
 }
-constexpr uint64_t inline f3 (uint64_t x) {
+constexpr uint64_t f3 (uint64_t const x) {
 	return rotate_right (x, 1) ^ rotate_right (x, 8) ^ (x >> 7);
 }
 
-constexpr uint32_t inline f4 (uint32_t x) {
+constexpr uint32_t f4 (uint32_t const x) {
 	return rotate_right (x, 17) ^ rotate_right (x, 19) ^ (x >> 10);
 }
-constexpr uint64_t inline f4 (uint64_t x) {
+constexpr uint64_t f4 (uint64_t const x) {
 	return rotate_right (x, 19) ^ rotate_right (x, 61) ^ (x >> 6);
 }
 
 template <typename T>
-constexpr T inline ch (T x, T y, T z) {
+constexpr T ch (T const x, T const y, T const z) {
 	return (x & (y ^ z)) ^ z;
 }
 
 template <typename T>
-constexpr T inline maj (T x, T y, T z) {
+constexpr T maj (T const x, T const y, T const z) {
 	return (x & y) | ((x | y) & z);
 }
 
 template <typename T>
-constexpr void inline scr (T * w) {
+constexpr void scr (T * w) {
 	*w = f4 (*(w - 2)) + *(w - 7) + f3 (*(w - 15)) + *(w - 16);
 }
 
-template <typename T>
-static void exp (T a, T b, T c, T & d, T e, T f, T g, T & h, int j, T const k [], T const w []) {
-	T t1 = h + f2 (e) + ch (e, f, g) + k [j] + w [j];
-	T t2 = f1 (a) + maj (a, b, c);
-	d += t1;
-	h = t1 + t2;
+template<typename T>
+T get_k (unsigned const n) {
+	return n;
 }
-
-template <unsigned block_size, unsigned array_size, typename T>
-static void transform (std::string const & message, unsigned const number_of_blocks, T h [8], T const k []) {
-	T w [array_size];
-	T wv [8];
-	for (unsigned i = 0; i < number_of_blocks; ++i) {
-		
-		// Cannot work in larger chunks due to endian issues.
-		T const * sub_message = reinterpret_cast <T const *> (&message [i * block_size]);
-		for (unsigned j = 0; j < 16; ++j)
-			w [j] = h_to_be (*(sub_message + j));
-
-		for (unsigned j = 16; j < array_size; ++j)
-			scr (&w [j]);
-
-		memcpy (wv, h, 8 * sizeof (T));
-
-		for (unsigned j = 0; j < array_size;) {
-			exp (wv [0], wv [1], wv [2], wv [3], wv [4], wv [5], wv [6], wv [7], j, k, w);
-			++j;
-			exp (wv [7], wv [0], wv [1], wv [2], wv [3], wv [4], wv [5], wv [6], j, k, w);
-			++j;
-			exp (wv [6], wv [7], wv [0], wv [1], wv [2], wv [3], wv [4], wv [5], j, k, w);
-			++j;
-			exp (wv [5], wv [6], wv [7], wv [0], wv [1], wv [2], wv [3], wv [4], j, k, w);
-			++j;
-			exp (wv [4], wv [5], wv [6], wv [7], wv [0], wv [1], wv [2], wv [3], j, k, w);
-			++j;
-			exp (wv [3], wv [4], wv [5], wv [6], wv [7], wv [0], wv [1], wv [2], j, k, w);
-			++j;
-			exp (wv [2], wv [3], wv [4], wv [5], wv [6], wv [7], wv [0], wv [1], j, k, w);
-			++j;
-			exp (wv [1], wv [2], wv [3], wv [4], wv [5], wv [6], wv [7], wv [0], j, k, w);
-			++j;
-		}
-
-		// Cannot work in larger chunks due to requiring addition modulo T.
-		for (unsigned j = 0; j < 8; ++j)
-			h [j] += wv [j];
-	}
-}
-
-static void add_length (std::string & message, unsigned const original_size) {
-	// I'm supposed to support up to 128-bits for the message length for SHA-384 / 512.
-	unsigned const position_of_length = message.size () - sizeof (uint64_t);
-	uint64_t * const length_ptr = reinterpret_cast <uint64_t *> (&message [position_of_length]);
-	uint64_t const bit_length = (original_size) * 8;
-	*length_ptr = be_to_h (bit_length);
-}
-
-template <unsigned block_size, typename T>
-static void format_digest (unsigned const words, T h [8], std::string & digest) {
-	digest.resize (words * (block_size / 16));
-	for (unsigned i = 0 ; i < words; ++i) {
-		T * ptr_T = reinterpret_cast <T *> (&digest [i * (block_size / 16)]);
-		*ptr_T = h_to_be (h [i]);
-	}
-}
-
-template <unsigned block_size, unsigned array_size, typename T>
-class Sha {
-	public:
-		static void update (std::string message, T h [8], T const k [], unsigned const words, std::string & digest) {
-			unsigned const original_size = message.size ();
-			unsigned const number_of_full_blocks = original_size / block_size;
-
-			unsigned const size_of_full_blocks = number_of_full_blocks * block_size;
-			message.append (1, static_cast <char> (0x80));
-	
-			unsigned const remaining_length = original_size - size_of_full_blocks;
-			// Not the length of the message, but the bytes in the integer used to give the length of the message
-			constexpr unsigned bytes_in_message_length = block_size / 8;
-			// Subtract 1 for the byte set at the end of the message
-			constexpr unsigned block_sizer = block_size - bytes_in_message_length - 1;
-			// I have to do the comparison instead of just adding 1 because the
-			// message might be long enough to where the addition of the byte
-			// 0x80 and the length of the original message pushes it above the
-			// size of one other block, but the message starts out not evenly
-			// divisible by the block_size.
-			unsigned const number_of_extra_blocks = 1 + (block_sizer < remaining_length);
-			unsigned const size_of_extra_blocks = number_of_extra_blocks * block_size;
-			message.resize (size_of_full_blocks + size_of_extra_blocks, 0);
-
-			add_length (message, original_size);
-
-			transform <block_size, array_size> (message, number_of_full_blocks + number_of_extra_blocks, h, k);
-	
-			format_digest <block_size> (words, h, digest);
-		}
-};
-
-class Sha_224_256 : public Sha <512 / 8, 64, uint32_t> {
-	public:
-		static uint32_t const k [64];
-};
-
-class Sha_384_512 : public Sha <1024 / 8, 80, uint64_t> {
-	public:
-		static uint64_t const k [80];
-};
 
 // First 32 bits of fractional part of the cube roots of the first 64 primes.
-uint32_t const Sha_224_256::k [] = {
+constexpr uint32_t k_32 [] = {
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 	0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 	0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -215,8 +112,13 @@ uint32_t const Sha_224_256::k [] = {
 	0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
+template<>
+constexpr uint32_t get_k (unsigned const n) {
+	return k_32 [n];
+}
+
 // First 64 bits of the fractional part of the cube roots of the first 64 primes.
-uint64_t const Sha_384_512::k [] = {
+constexpr uint64_t k_64 [] = {
 	0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL,
 	0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
 	0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
@@ -258,41 +160,144 @@ uint64_t const Sha_384_512::k [] = {
 	0x4cc5d4becb3e42b6ULL, 0x597f299cfc657e2aULL,
 	0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL
 };
-
-template <class Sha_t, typename T>
-static void sha (std::string const & message, T h [8], unsigned words, std::string & digest) {
-	Sha_t ctx;
-	ctx.update (message, h, ctx.k, words, digest);
+template<>
+constexpr uint64_t get_k (unsigned const n) {
+	return k_64 [n];
 }
+
+template <typename T>
+static void exp (T a, T b, T c, T & d, T e, T f, T g, T & h, unsigned j, T const w []) {
+	T t1 = h + f2 (e) + ch (e, f, g) + get_k<T> (j) + w [j];
+	T t2 = f1 (a) + maj (a, b, c);
+	d += t1;
+	h = t1 + t2;
+}
+
+template <unsigned block_size, unsigned array_size, typename T>
+static void transform (std::string const & message, unsigned const number_of_blocks, T h [8]) {
+	T w [array_size];
+	T wv [8];
+	for (unsigned i = 0; i < number_of_blocks; ++i) {
+		
+		// Cannot work in larger chunks due to endian issues.
+		T const * sub_message = reinterpret_cast <T const *> (&message [i * block_size]);
+		for (unsigned j = 0; j < 16; ++j)
+			w [j] = h_to_be (*(sub_message + j));
+
+		for (unsigned j = 16; j < array_size; ++j)
+			scr (&w [j]);
+
+		memcpy (wv, h, 8 * sizeof (T));
+
+		for (unsigned j = 0; j < array_size;) {
+			exp (wv [0], wv [1], wv [2], wv [3], wv [4], wv [5], wv [6], wv [7], j++, w);
+			exp (wv [7], wv [0], wv [1], wv [2], wv [3], wv [4], wv [5], wv [6], j++, w);
+			exp (wv [6], wv [7], wv [0], wv [1], wv [2], wv [3], wv [4], wv [5], j++, w);
+			exp (wv [5], wv [6], wv [7], wv [0], wv [1], wv [2], wv [3], wv [4], j++, w);
+			exp (wv [4], wv [5], wv [6], wv [7], wv [0], wv [1], wv [2], wv [3], j++, w);
+			exp (wv [3], wv [4], wv [5], wv [6], wv [7], wv [0], wv [1], wv [2], j++, w);
+			exp (wv [2], wv [3], wv [4], wv [5], wv [6], wv [7], wv [0], wv [1], j++, w);
+			exp (wv [1], wv [2], wv [3], wv [4], wv [5], wv [6], wv [7], wv [0], j++, w);
+			// Manually unrolling this once more (copy and paste the above 8
+			// lines) is safe (leads to 4 loops for Sha 224 / 256 and 5 loops
+			// for Sha 384 / 512) and on my computer, leads to about a 1%
+			// increase in speed at the cost of 5.4% increase in binary size.
+			// Not sure if that combined with the extra code duplication is
+			// worth it. Not unrolling at all or unrolling only 4 times instead
+			// of 8 gives a huge performance penalty, though (gcc 4.6.2).
+			// Hopefully future compiler versions will be more aggressive with
+			// loop unrolling when optimizing for speed.
+		}
+
+		// Cannot work in larger chunks due to requiring addition modulo T.
+		for (unsigned j = 0; j < 8; ++j)
+			h [j] += wv [j];
+	}
+}
+
+static void add_length (std::string & message, unsigned const original_size) {
+	// I'm supposed to support up to 128-bits for the message length for SHA-384 / 512.
+	unsigned const position_of_length = message.size () - sizeof (uint64_t);
+	uint64_t * const length_ptr = reinterpret_cast <uint64_t *> (&message [position_of_length]);
+	uint64_t const bit_length = (original_size) * 8;
+	*length_ptr = be_to_h (bit_length);
+}
+
+template <unsigned block_size, typename T>
+static void format_digest (unsigned const words, T h [8], std::string & digest) {
+	digest.resize (words * (block_size / 16));
+	for (unsigned i = 0 ; i < words; ++i) {
+		T * ptr_T = reinterpret_cast <T *> (&digest [i * (block_size / 16)]);
+		*ptr_T = h_to_be (h [i]);
+	}
+}
+
+template <unsigned block_size, unsigned array_size, typename T>
+static void sha (std::string message, T h [8], unsigned const words, std::string & digest) {
+	unsigned const original_size = message.size ();
+	unsigned const number_of_full_blocks = original_size / block_size;
+
+	unsigned const size_of_full_blocks = number_of_full_blocks * block_size;
+	message.append (1, static_cast <char> (0x80));
+
+	unsigned const remaining_length = original_size - size_of_full_blocks;
+	// Not the length of the message, but the bytes in the integer used to give the length of the message
+	constexpr unsigned bytes_in_message_length = block_size / 8;
+	// Subtract 1 for the byte set at the end of the message
+	constexpr unsigned block_sizer = block_size - bytes_in_message_length - 1;
+	// I have to do the comparison instead of just adding 1 because the
+	// message might be long enough to where the addition of the byte
+	// 0x80 and the length of the original message pushes it above the
+	// size of one other block, but the message starts out not evenly
+	// divisible by the block_size.
+	unsigned const number_of_extra_blocks = 1 + (block_sizer < remaining_length);
+	unsigned const size_of_extra_blocks = number_of_extra_blocks * block_size;
+	message.resize (size_of_full_blocks + size_of_extra_blocks, 0);
+
+	add_length (message, original_size);
+
+	transform <block_size, array_size> (message, number_of_full_blocks + number_of_extra_blocks, h);
+
+	format_digest <block_size> (words, h, digest);
+}
+
+constexpr unsigned rounds_224 = 64;
+constexpr unsigned rounds_256 = 64;
+constexpr unsigned rounds_384 = 80;
+constexpr unsigned rounds_512 = 80;
+constexpr unsigned block_bytes_224 = 512 / 8;
+constexpr unsigned block_bytes_256 = 512 / 8;
+constexpr unsigned block_bytes_384 = 1024 / 8;
+constexpr unsigned block_bytes_512 = 1024 / 8;
 
 }	// anonymous namespace
 
 std::string sha224 (std::string const & message) {
-	constexpr static unsigned words = 224 / 8 / sizeof (uint32_t);	// 7
+	constexpr unsigned words = 224 / 8 / sizeof (uint32_t);	// 7
 	// Second 32 bits of the fractional parts of the square root of the 9th through 16th primes.
 	uint32_t h [8] = {
 		0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939,
 		0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4
 	};
 	std::string digest;
-	sha <Sha_224_256> (message, h, words, digest);
+	sha <block_bytes_224, rounds_224, uint32_t> (message, h, words, digest);
 	return digest;
 }
 
 std::string sha256 (std::string const & message) {
-	constexpr static unsigned words = 256 / 8 / sizeof (uint32_t);	// 8
+	constexpr unsigned words = 256 / 8 / sizeof (uint32_t);	// 8
 	// First 32 bits of the fractional part of the square root of the first 8 primes.
 	uint32_t h [8] = {
 		0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
 		0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
 	};
 	std::string digest;
-	sha <Sha_224_256> (message, h, words, digest);
+	sha <block_bytes_256, rounds_256, uint32_t> (message, h, words, digest);
 	return digest;
 }
 
 std::string sha384 (std::string const & message) {
-	constexpr static unsigned words = 384 / 8 / sizeof (uint64_t);	// 6
+	constexpr unsigned words = 384 / 8 / sizeof (uint64_t);	// 6
 	// First 64 bits of the fractional parts of the square root of the 9th through 16th primes.
 	uint64_t h [8] = {
 		0xcbbb9d5dc1059ed8ULL, 0x629a292a367cd507ULL,
@@ -301,12 +306,12 @@ std::string sha384 (std::string const & message) {
 		0xdb0c2e0d64f98fa7ULL, 0x47b5481dbefa4fa4ULL
 	};
 	std::string digest;
-	sha <Sha_384_512> (message, h, words, digest);
+	sha <block_bytes_384, rounds_384, uint64_t> (message, h, words, digest);
 	return digest;
 }
 
 std::string sha512 (std::string const & message) {
-	constexpr static unsigned words = 512 / 8 / sizeof (uint64_t);	// 8
+	constexpr unsigned words = 512 / 8 / sizeof (uint64_t);	// 8
 	// First 64 bits of the square root of the first 8 primes.
 	uint64_t h [8] = {
 		0x6a09e667f3bcc908ULL, 0xbb67ae8584caa73bULL,
@@ -315,9 +320,8 @@ std::string sha512 (std::string const & message) {
 		0x1f83d9abfb41bd6bULL, 0x5be0cd19137e2179ULL
 	};
 	std::string digest;
-	sha <Sha_384_512> (message, h, words, digest);
+	sha <block_bytes_512, rounds_512, uint64_t> (message, h, words, digest);
 	return digest;
 }
-
 }	// namespace cryptography
 }	// namespace technicalmachine

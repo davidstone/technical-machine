@@ -29,7 +29,7 @@ class Weather;
 
 class Status {
 	public:
-		enum Statuses {
+		enum Statuses : unsigned {
 			NO_STATUS,
 			BURN,
 			FREEZE,

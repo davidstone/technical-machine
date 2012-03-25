@@ -38,7 +38,7 @@ OutMessage::OutMessage (uint8_t code) : network::OutMessage::OutMessage (code) {
 void OutMessage::write_string (std::string const & str) {
 	write_short (str.length());
 	for (char const c : str)
-		write_byte (c);
+		write_byte (static_cast<uint8_t> (c));
 }
 
 void OutMessage::write_team (Team const & team) {
@@ -49,7 +49,7 @@ void OutMessage::write_team (Team const & team) {
 		constexpr bool shiny = false;
 		write_byte (shiny);
 
-		int8_t const gender = gender_to_id (pokemon.gender.gender);
+		uint8_t const gender = gender_to_id (pokemon.gender.gender);
 		write_byte (gender);
 
 		write_byte (pokemon.happiness);
@@ -66,17 +66,17 @@ void OutMessage::write_team (Team const & team) {
 			write_int (3);		// Replace this with real PP-ups logic later
 		}
 		write_int (pokemon.hp.iv);
-		write_int (pokemon.hp.ev * 4);
+		write_int (pokemon.hp.ev * 4u);
 		write_int (pokemon.atk.iv);
-		write_int (pokemon.atk.ev * 4);
+		write_int (pokemon.atk.ev * 4u);
 		write_int (pokemon.def.iv);
-		write_int (pokemon.def.ev * 4);
+		write_int (pokemon.def.ev * 4u);
 		write_int (pokemon.spe.iv);
-		write_int (pokemon.spe.ev * 4);
+		write_int (pokemon.spe.ev * 4u);
 		write_int (pokemon.spa.iv);
-		write_int (pokemon.spa.ev * 4);
+		write_int (pokemon.spa.ev * 4u);
 		write_int (pokemon.spd.iv);
-		write_int (pokemon.spd.ev * 4);
+		write_int (pokemon.spd.ev * 4u);
 	}
 }
 

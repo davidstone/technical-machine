@@ -38,7 +38,7 @@ class Client : public network::GenericClient {
 	private:
 		boost::asio::deadline_timer timer;
 	public:
-		explicit Client (int depth_);
+		explicit Client (unsigned set_depth);
 	private:
 		void reset_timer (unsigned timer_length);
 		void request_authentication ();
@@ -51,8 +51,13 @@ class Client : public network::GenericClient {
 	private:
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const;
 		void handle_password_challenge (InMessage msg);
-		std::string get_challenge_response (std::string const & challenge, int secret_style, std::string const & salt);
-		std::string get_shared_secret (int secret_style, std::string const & salt);
+		enum SecretStyle {
+			NONE = 0,
+			MD5 = 1,		// This secret style is never actually used.
+			VBULLETIN = 2
+		};
+		std::string get_challenge_response (std::string const & challenge, SecretStyle secret_style, std::string const & salt);
+		std::string get_shared_secret (SecretStyle secret_style, std::string const & salt);
 		void handle_registry_response (uint8_t code, std::string const & details);
 		void join_channel (std::string const & channel);
 		void part_channel (std::string const & channel);
@@ -69,7 +74,6 @@ class Client : public network::GenericClient {
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 	private:
 		void send_private_message (std::string const & user, std::string const & message);
-		Result get_result (int16_t winner, int16_t party_id) const;
 };
 
 } // namespace pl

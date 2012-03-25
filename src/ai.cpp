@@ -27,11 +27,7 @@
 int main (int argc, char * argv []) {
 	using namespace technicalmachine;
 
-	int depth;
-	if (argc == 1)
-		depth = 2;
-	else
-		depth = boost::lexical_cast <int> (argv [1]);
+	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 
 	// TODO: This is not the correct solution, but it works "good enough". I'll get back to this later.
 	while (true) {

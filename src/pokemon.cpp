@@ -68,7 +68,7 @@ uint64_t Pokemon::hash () const {
 	return name + END *
 			(item.name + Item::END *
 			(status.name + Status::END *
-			((hp.stat - 1) + hp.max *	// - 1 because you can't have 0 HP
+			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
 			(sleep + (Stat::max_sleep_turns + 1) *
 			current_hash))));
 }
@@ -693,8 +693,8 @@ void Pokemon::set_type () {
 	}
 }
 
-int8_t Pokemon::get_mass () const {
-	constexpr static int8_t mass_array [] = {
+uint8_t Pokemon::get_mass () const {
+	constexpr static uint8_t mass_array [] = {
 		100,	// Abomasnow
 		40,	// Abra
 		60,	// Absol

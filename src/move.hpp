@@ -134,18 +134,18 @@ class Move {
 		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
 		Active <std::pair <uint16_t, uint16_t>> variable;
 		int64_t score;
-		int16_t basepower;
-		int16_t power;
+		uint16_t basepower;
+		uint16_t power;
 		bool physical;
 		// I maintain the selectable state to determine if Struggle is legal
 		bool selectable;
-		int8_t accuracy;		// A number between 0 (1?) and 100, according to poccil. -1 means never miss
-		int8_t disable;			// Number of turns left on this move being Disabled (4-7)
-		int8_t pp_max;			// PP after all PP ups are applied
-		int8_t pp;
+		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
+		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
+		uint8_t pp_max;			// PP after all PP ups are applied
+		uint8_t pp;
 		int8_t priority;
-		int8_t r;					// The random number (85 through 100)
-		int8_t times_used;
+		uint8_t r;					// The random number (85 through 100)
+		uint8_t times_used;
 
 		static uint16_t const max_probability;
 
@@ -170,8 +170,8 @@ class Move {
 		bool is_usable_while_sleeping () const;
 		bool is_usable_while_frozen () const;
 		bool is_self_KO () const;
+		bool cannot_miss () const;
 		void get_magnitude (unsigned magnitude);
-		static bool compare_scores (Move const & first, Move const & second);
 	private:
 		int8_t get_priority ();
 		static std::vector<std::pair <uint16_t, uint16_t>> set_variable (Moves name, unsigned size);
@@ -179,7 +179,10 @@ class Move {
 
 // Various states a Pokemon can be in due to vanishing moves.
 
-enum Vanish { LANDED, BOUNCED, DUG, DIVED, FLOWN, SHADOW_FORCED, END_VANISH };
+enum Vanish : unsigned {
+	LANDED, BOUNCED, DUG, DIVED,
+	FLOWN, SHADOW_FORCED, END_VANISH
+};
 
 }	// namespace technicalmachine
 #endif	// MOVE_HPP_

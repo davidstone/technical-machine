@@ -26,12 +26,12 @@
 namespace technicalmachine {
 namespace pl {
 
-Gender::Genders id_to_gender (int id);
-int gender_to_id (Gender::Genders gender);
-Move::Moves id_to_move (int id);
-int move_to_id (Move::Moves move);
-Species id_to_species (int id);
-int species_to_id (Species species);
+Gender::Genders id_to_gender (unsigned id);
+unsigned gender_to_id (Gender::Genders gender);
+Move::Moves id_to_move (unsigned id);
+unsigned move_to_id (Move::Moves move);
+Species id_to_species (unsigned id);
+unsigned species_to_id (Species species);
 
 // Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
 

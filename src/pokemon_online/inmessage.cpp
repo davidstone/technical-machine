@@ -57,7 +57,7 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * clien
 	// Don't do an invalid call to new if the server says the message has a length of 0
 	if (bytes > 0) {
 		Message code = static_cast <Message> (read_byte ());
-		reset (bytes - 1);
+		reset (bytes - 1u);
 		boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, client, code, boost::ref (*this)));
 	}
 	else {

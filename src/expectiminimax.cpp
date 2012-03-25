@@ -50,7 +50,7 @@ namespace {
 // recommended for depth greater than 2.
 constexpr bool verbose = false;
 
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn);
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn);
 int64_t order_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score);
 int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score);
 int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score);
@@ -170,7 +170,7 @@ int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weath
 
 namespace {
 
-int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score, Move::Moves & best_move, bool first_turn) {
+int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn) {
 	int64_t alpha = -Score::VICTORY - 1;
 
 	std::vector <std::pair <int64_t, size_t>> const ai_index = reorder (ai.pokemon().move.set, true);

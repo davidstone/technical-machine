@@ -30,14 +30,14 @@
 namespace technicalmachine {
 namespace po {
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, int const battle_depth, std::string const & team_file_name):
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name):
 	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team_file_name),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
 }
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, int const battle_depth, Team const & team):
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team):
 	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
@@ -135,14 +135,18 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case STRAIGHT_DAMAGE: {
 			std::cerr << "STRAIGHT_DAMAGE\n";
-			damage = msg.read_short ();
+			// I'm not sure if this actually needs an int16_t or if it's never
+			// negative.
+			damage = static_cast<int16_t> (msg.read_short ());
 			std::cerr << "damage: " << damage << '\n';
 			break;
 		}
 		case HP_CHANGE: {
 			std::cerr << "HP_CHANGE\n";
 			bool const my_team = player == party;
-			int16_t const remaining_hp = msg.read_short ();
+			// Is remaining_hp ever negative? I think PO may ignore strict
+			// damage clause.
+			int16_t const remaining_hp = static_cast<int16_t> (msg.read_short ());
 			int16_t change_in_hp;
 			if (damage == 0)
 				change_in_hp = my_team ? ai_change_in_hp (remaining_hp) : foe_change_in_hp (remaining_hp);
@@ -150,6 +154,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				change_in_hp = damage;
 				damage = 0;
 			}
+			if (change_in_hp < 0)
+				std::cerr << "change_in_hp is negative. change_in_hp == " << change_in_hp << '\n';
 			uint8_t const slot = 0;
 			int16_t const denominator = my_team ? ai.at_replacement ().hp.max : get_max_damage_precision ();
 			handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
@@ -205,20 +211,21 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case STAT_CHANGE: {
 			std::cerr << "STAT_CHANGE\n";
-			int8_t const stat = msg.read_byte ();
-			int8_t const boost = msg.read_byte ();
+			// I think stat may work just as well unsigned.
+			int8_t const stat = static_cast<int8_t> (msg.read_byte ());
+			int8_t const boost = static_cast<int8_t> (msg.read_byte ());
 			break;
 		}
 		case STATUS_MESSAGE: {
 			std::cerr << "STATUS_MESSAGE\n";
-			int8_t const status = msg.read_byte ();
+			int8_t const status = static_cast<int8_t> (msg.read_byte ());
 			while (msg.index != msg.buffer.size ())
 				std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 			break;
 		}
 		case STATUS_CHANGE: {
 			std::cerr << "STATUS_CHANGE\n";
-			int8_t const status = msg.read_byte ();
+			int8_t const status = static_cast<int8_t> (msg.read_byte ());
 //			bool const multiple_turns = msg.read_byte ();
 			// Includes things like confusion
 			break;
@@ -229,7 +236,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				std::cerr << "Invalid Pokemon index.\n";
 				break;
 			}
-			int8_t const status = msg.read_byte ();
+			int8_t const status = static_cast<int8_t> (msg.read_byte ());
 			break;
 		}
 		case ALREADY_STATUSED: {
@@ -256,8 +263,8 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case WEATHER_MESSAGE: {
 			std::cerr << "WEATHER_MESSAGE\n";
-			int8_t const wstatus = msg.read_byte ();
-			int8_t const weather_var = msg.read_byte ();
+			int8_t const wstatus = static_cast<int8_t> (msg.read_byte ());
+			int8_t const weather_var = static_cast<int8_t> (msg.read_byte ());
 			break;
 		}
 		case ABILITY_MESSAGE: {
@@ -303,7 +310,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case DYNAMIC_INFO: {
 			int8_t boosts [7];
 			for (unsigned n = 0; n != 7; ++n)
-				boosts [n] = msg.read_byte ();
+				boosts [n] = static_cast<int8_t> (msg.read_byte ());
 			enum DynamicFlags {
 				Spikes=1,
 				SpikesLV2=2,
@@ -317,7 +324,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case DYNAMIC_STATS: {
 			for (unsigned n = 0; n != 5; ++n)
-				int16_t const something = msg.read_short ();
+				int16_t const something = static_cast<int16_t> (msg.read_short ());
 			break;
 		}
 		case SPECTATING: {
@@ -340,15 +347,15 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				case TEMP_MOVE:
 				case DEF_MOVE: {
 					std::cerr << "MOVE\n";
-					int8_t const slot = msg.read_byte ();
+					int8_t const slot = static_cast<int8_t> (msg.read_byte ());
 					while (msg.index != msg.buffer.size ())
 						std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 					break;
 				}
 				case TEMP_PP: {
 					std::cerr << "TEMP_PP\n";
-					int8_t const slot = msg.read_byte ();
-					int8_t const pp = msg.read_byte ();
+					int8_t const slot = static_cast<int8_t> (msg.read_byte ());
+					int8_t const pp = static_cast<int8_t> (msg.read_byte ());
 					while (msg.index != msg.buffer.size ())
 						std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 					break;
@@ -362,15 +369,15 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				}
 				case DEFINITE_FORM: {
 					std::cerr << "DEFINITE_FORM\n";
-					int8_t const pokemon = msg.read_byte ();
-					int16_t const form =msg.read_short ();
+					int8_t const pokemon = static_cast<int8_t> (msg.read_byte ());
+					int16_t const form = static_cast<int16_t> (msg.read_short ());
 					while (msg.index != msg.buffer.size ())
 						std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 					break;
 				}
 				case AESTHETIC_FORM: {
 					std::cerr << "AESTHETIC_FORM\n";
-					int16_t form = msg.read_short ();
+					int16_t form = static_cast<int16_t> (msg.read_short ());
 					while (msg.index != msg.buffer.size ())
 						std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
 					break;
@@ -438,7 +445,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case OFFER_CHOICE: {
 			std::cerr << "OFFER_CHOICE\n";
-			int8_t const num_slot = msg.read_byte ();
+			int8_t const num_slot = static_cast<int8_t> (msg.read_byte ());
 			bool const can_switch = msg.read_byte ();
 			bool const can_attack = msg.read_byte ();
 			std::vector <uint8_t> attacks_allowed;
@@ -464,10 +471,10 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case REARRANGE_TEAM: {
 			std::cerr << "REARRANGE_TEAM\n";
 			for (unsigned n = 0; n != pokemon_per_team; ++n) {
-				int16_t const species_id = msg.read_short ();
-				int8_t const form_id = msg.read_byte ();
-				int8_t const level = msg.read_byte ();
-				int8_t const gender = msg.read_byte ();
+				uint16_t const species_id = msg.read_short ();
+				uint8_t const form_id = msg.read_byte ();
+				uint8_t const level = msg.read_byte ();
+				uint8_t const gender = msg.read_byte ();
 				bool const item = msg.read_byte ();
 			}
 			while (msg.index != msg.buffer.size ())
@@ -477,15 +484,15 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case SPOT_SHIFTS: {
 			std::cerr << "SPOT_SHIFTS\n";
 			// Spinda is quite the Pokemon!
-			int8_t s1 = msg.read_byte ();
-			int8_t s2 = msg.read_byte ();
+			int8_t s1 = static_cast<int8_t> (msg.read_byte ());
+			int8_t s2 = static_cast<int8_t> (msg.read_byte ());
 			bool silent = msg.read_byte ();
 			break;
 		}
 		case BATTLE_END: {
 			std::cerr << "BATTLE_END\n";
 			// Forfeit, Win, Tie, Close seems to be the four options in order
-			int8_t const result = msg.read_byte ();
+			uint8_t const result = msg.read_byte ();
 			break;
 		}
 		default:
@@ -508,7 +515,7 @@ int16_t Battle::ai_change_in_hp (int16_t remaining_hp) const {
 
 int16_t Battle::foe_change_in_hp (int16_t remaining_hp) const {
 	Pokemon const & pokemon = foe.at_replacement();
-	return get_max_damage_precision () * pokemon.hp.stat / pokemon.hp.max - remaining_hp;
+	return static_cast<int16_t> (get_max_damage_precision () * pokemon.hp.stat / pokemon.hp.max) - remaining_hp;
 }
 
 }	// namespace po

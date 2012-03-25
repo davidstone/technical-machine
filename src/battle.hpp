@@ -46,7 +46,7 @@ class GenericBattle {
 	protected:
 		Weather weather;
 		std::vector <Species> slot_memory;
-		int depth;
+		unsigned depth;
 		// active and inactive keep track of the Pokemon that are the "major" Pokemon of that message. This helps keep track of information on future messages so I can do things like assign critical hits to the right move.
 		Team * active;
 		Team * inactive;
@@ -56,8 +56,8 @@ class GenericBattle {
 	public:
 		uint8_t party;
 	protected:
-		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, std::string const & team_file_name);
-		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, int battle_depth, Team const & team);
+		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
+		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
 		virtual ~GenericBattle() {}
 	public:
 		void handle_begin_turn (uint16_t turn_count) const;
@@ -88,6 +88,7 @@ class GenericBattle {
 		virtual uint8_t get_target () const = 0;
 		GenericBattle (GenericBattle const &) = delete;
 		GenericBattle & operator= (GenericBattle const &) = delete;
+		static constexpr uint8_t unknown_party = 255;
 };
 
 }	// namespace technicalmachine

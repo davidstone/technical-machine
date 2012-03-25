@@ -34,11 +34,11 @@
 namespace technicalmachine {
 namespace pl {
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, int battle_depth, std::string const & team_file_name):
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, std::string const & team_file_name):
 	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team_file_name) {
 }
 
-void Battle::handle_print (uint8_t category, int16_t message_id, std::vector <std::string> const & arguments) {
+void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 //	std::cout << "party id: " << static_cast <int> (party) << '\n';
 //	std::cout << "category: " << static_cast <int> (category) << '\n';
 //	std::cout << "message_id: " << message_id << '\n';

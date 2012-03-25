@@ -24,7 +24,7 @@
 namespace technicalmachine {
 namespace pl {
 
-Gender::Genders id_to_gender (int id) {
+Gender::Genders id_to_gender (unsigned id) {
 	switch (id) {
 		case 0:
 			return Gender::GENDERLESS;
@@ -35,7 +35,7 @@ Gender::Genders id_to_gender (int id) {
 	}
 }
 
-int gender_to_id (Gender::Genders gender) {
+unsigned gender_to_id (Gender::Genders gender) {
 	switch (gender) {
 		case Gender::MALE:
 			return 1;
@@ -46,7 +46,7 @@ int gender_to_id (Gender::Genders gender) {
 	}
 }
 
-Species id_to_species (int id) {
+Species id_to_species (unsigned id) {
 	constexpr static Species species_converter [] = {
 		BULBASAUR, IVYSAUR, VENUSAUR, CHARMANDER, CHARMELEON,
 		CHARIZARD, SQUIRTLE, WARTORTLE, BLASTOISE, CATERPIE,
@@ -153,8 +153,8 @@ Species id_to_species (int id) {
 	return species_converter [id];
 }
 
-int species_to_id (Species species) {
-	constexpr static int species_converter [] = {
+unsigned species_to_id (Species species) {
+	constexpr static unsigned species_converter [] = {
 		464,		// Abomasnow
 		62,		// Abra
 		358,		// Absol
@@ -664,14 +664,14 @@ int species_to_id (Species species) {
 	return species_converter [species];
 }
 
-Move::Moves id_to_move (int id) {
-	return (id < static_cast <int> (Move::SWITCH0)) ?
+Move::Moves id_to_move (unsigned id) {
+	return (id < static_cast <unsigned> (Move::SWITCH0)) ?
 		static_cast <Move::Moves> (id) :
 		static_cast <Move::Moves> (id + 6);
 }
 
-int move_to_id (Move::Moves move) {
-	return (move < Move::SWITCH0) ? move : static_cast <int> (move) - 6;
+unsigned move_to_id (Move::Moves move) {
+	return (move < Move::SWITCH0) ? static_cast <unsigned> (move) : static_cast <unsigned> (move) - 6;
 }
 
 }	// namespace pl

@@ -82,7 +82,7 @@ void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier
 Species get_most_likely_pokemon (std::vector <float> const & estimate) {
 	Species name = Species::END;
 	float top = -1.0;
-	for (int n = 0; n != Species::END; ++n) {
+	for (unsigned n = 0; n != Species::END; ++n) {
 		if (estimate [n] > top) {
 			top = estimate [n];
 			name = static_cast<Species> (n);

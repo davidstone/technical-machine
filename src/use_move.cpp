@@ -240,7 +240,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			}
 			else {
 				if (user.bide == 1)
-					damage_side_effect (target.pokemon(), user.bide_damage * 2);
+					damage_side_effect (target.pokemon(), user.bide_damage * 2u);
 				--user.bide;
 			}
 			break;
@@ -413,7 +413,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::COUNTER:
 			if (target.pokemon().move().physical)
-				damage_side_effect (target.pokemon(), user.damage * 2);
+				damage_side_effect (target.pokemon(), user.damage * 2u);
 			break;
 		case Move::COVET:
 		case Move::THIEF:
@@ -705,7 +705,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.pokemon().hp.stat = 0;
 			break;
 		case Move::METAL_BURST:
-			damage_side_effect (target.pokemon(), user.damage * 3 / 2);
+			damage_side_effect (target.pokemon(), user.damage * 3u / 2);
 			break;
 		case Move::METAL_CLAW:
 		case Move::MIMIC:		// Fix
@@ -714,7 +714,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::MIRROR_COAT:
 			if (!target.pokemon().move().physical)
-				damage_side_effect (target.pokemon(), user.damage * 2);
+				damage_side_effect (target.pokemon(), user.damage * 2u);
 			break;
 		case Move::MIST:
 			user.mist = 5;
@@ -1014,7 +1014,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::UPROAR:
 			user.uproar = user.pokemon().move().variable().first;
-			weather.set_uproar (user.uproar);
+			weather.set_uproar (static_cast<int8_t> (user.uproar));
 			break;
 		case Move::WAKE_UP_SLAP:
 			if (target.pokemon().status.is_sleeping ())
@@ -1038,7 +1038,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 }
 
 void lower_pp (Team & user, Pokemon const & target) {
-	if (user.pokemon().move().pp != -1 and user.bide == 0) {
+	if (!user.pokemon().move().is_struggle_or_switch() and user.bide == 0) {
 		if (target.ability.name == Ability::PRESSURE and 2 <= user.pokemon().move().pp)
 			user.pokemon().move().pp -= 2;
 		else

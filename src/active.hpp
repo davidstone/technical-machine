@@ -19,7 +19,7 @@
 #ifndef ACTIVE_HPP_
 #define ACTIVE_HPP_
 
-#include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
@@ -36,7 +36,7 @@ class Active {
 	public:
 		// All Pokemon on the team, all moves on the Pokemon, etc.
 		std::vector<T> set;
-		size_t index;
+		uint8_t index;
 		Active () :
 			index (0) {
 		}
@@ -85,7 +85,7 @@ class Active {
 
 class InvalidActiveIndex : public std::logic_error {
 	public:
-		InvalidActiveIndex (size_t index, size_t size, std::string const & name):
+		InvalidActiveIndex (unsigned index, size_t size, std::string const & name):
 			logic_error ("Attempted to access element " + std::to_string (index) + " in a set of size " + std::to_string (size) + " with elements of type " + name + "\n")
 			{
 		}

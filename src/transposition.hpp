@@ -27,7 +27,7 @@ class Score;
 class Team;
 class Weather;
 
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, int depth, Score const & score);
+int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score);
 
 }	// namespace technicalmachine
 #endif	// TRANSPOSITION_H_

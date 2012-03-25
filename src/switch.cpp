@@ -177,7 +177,7 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 				Status::poison_toxic (switcher, switcher, weather);
 		}
 		if (switcher.spikes != 0)
-			heal (switcher.pokemon(), -16, switcher.spikes + 1);
+			heal (switcher.pokemon(), -16, switcher.spikes + 1u);
 	}
 	// get_effectiveness () outputs a value between 0 and 16, with higher
 	// numbers being more effective. 4 * effective Stealth Rock does

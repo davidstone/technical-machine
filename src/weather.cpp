@@ -103,14 +103,14 @@ uint32_t Weather::hash () const {
 	
 	// The + 1 is because they have a minimum value of -1 to represent infinite
 	// weather
-	return trick_room + 5 *
-			(fog + 2 *
-			((gravity + 1) + 6 *
-			((uproar + 1) + 6 *
-			((hail + 1) + 9 *
-			((sun + 1) + 9 *
-			((sand + 1) + 9 *
-			(rain + 1)))))));
+	return static_cast<unsigned> (trick_room) + 5 *
+			(static_cast<unsigned> (fog) + 2 *
+			(static_cast<unsigned> (gravity + 1) + 6 *
+			(static_cast<unsigned> (uproar + 1) + 6 *
+			(static_cast<unsigned> (hail + 1) + 9 *
+			(static_cast<unsigned> (sun + 1) + 9 *
+			(static_cast<unsigned> (sand + 1) + 9 *
+			static_cast<unsigned> (rain + 1)))))));
 }
 
 }	// namespace technicalmachine

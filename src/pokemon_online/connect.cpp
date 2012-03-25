@@ -41,8 +41,8 @@
 namespace technicalmachine {
 namespace po {
 
-Client::Client (int depth_):
-	network::GenericClient (depth_),
+Client::Client (unsigned set_depth):
+	network::GenericClient (set_depth),
 	team (6, random_engine, team_file_name) {
 	log_in ();
 }
@@ -70,25 +70,8 @@ void Client::send_keep_alive_message () {
 	msg.send (*socket);
 }
 
-void get_speaker_and_message (InMessage & msg, std::string & speaker, std::string & message) {
-	// The server sends one string of the form "speaker: message" rather than sending the speaker and the message separately.
-	std::string const speaker_and_message = msg.read_string ();
-	std::string const delimiter = ": ";
-	size_t delimiter_position = speaker_and_message.find (delimiter);
-	speaker = speaker_and_message.substr (0, delimiter_position);
-	message = speaker_and_message.substr (delimiter_position + delimiter.size());
-}
-
-enum ChallengeDescription {
-	SENT = 0,
-	ACCEPTED = 1,
-	CANCELED = 2,
-	BUSY = 3,
-	REFUSED = 4,
-	INVALID_TEAM = 5,
-	DIFFERENT_GENERATION = 6
-};
-
+namespace {
+// Apparently unused in this file...
 enum Action {
 	CANCEL = 0,
 	ATTACK = 1,
@@ -97,60 +80,7 @@ enum Action {
 	CENTER_MOVE = 4,
 	DRAW = 5
 };
-
-class BattlePokemon {
-	public:
-		std::pair <uint16_t, uint8_t> id;
-		std::string nickname;
-		uint16_t max_hp;
-		uint16_t hp;
-		Gender gender;
-		bool shiny;
-		uint8_t level;
-		Item item;
-		Ability ability;
-		uint8_t happiness;
-		std::vector <Move::Moves> moves;
-		BattlePokemon (InMessage & msg):
-			id (msg.read_short (), msg.read_byte ()),
-			nickname (msg.read_string ()),
-			max_hp (msg.read_short ()),
-			hp (msg.read_short ()),
-			gender (id_to_gender (msg.read_byte ())),
-			shiny (msg.read_byte ()),
-			level (msg.read_byte ()),
-			item (id_to_item (msg.read_short ())),
-			ability (id_to_ability (msg.read_short ())),
-			happiness (msg.read_byte ())
-			{
-			for (unsigned n = 0; n != 5; ++n) {
-				// Something to do with stats. Probably boosts.
-				uint16_t const st = msg.read_short ();
-			}
-			for (unsigned n = 0; n != 4; ++n) {
-				moves.push_back (id_to_move (msg.read_short ()));
-				uint8_t const pp = msg.read_byte ();
-				uint8_t const total_pp = msg.read_byte ();
-			}
-			for (unsigned n = 0; n != 6; ++n) {
-				// PO uses a QList of int, so hopefully their int is always 32-bit.
-				uint32_t const ev = msg.read_int ();
-			}
-			for (unsigned n = 0; n != 6; ++n) {
-				uint32_t const dv = msg.read_int ();
-			}
-		}
-};
-
-class BattleTeam {
-	public:
-		std::vector <BattlePokemon> pokemon;
-		BattleTeam (InMessage & msg) {
-			for (unsigned n = 0; n != 6; ++n) {
-				pokemon.push_back (BattlePokemon (msg));
-			}
-		}
-};
+}	// unnamed namespace
 
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	switch (code) {
@@ -374,6 +304,18 @@ void Client::handle_send_team (InMessage & msg) {
 	}
 }
 
+namespace {
+enum ChallengeDescription {
+	SENT = 0,
+	ACCEPTED = 1,
+	CANCELED = 2,
+	BUSY = 3,
+	REFUSED = 4,
+	INVALID_TEAM = 5,
+	DIFFERENT_GENERATION = 6
+};
+}	// unnamed namespace
+
 void Client::handle_challenge_stuff (InMessage & msg) {
 	ChallengeDescription const description = static_cast <ChallengeDescription> (msg.read_byte ());
 	uint32_t user_id = msg.read_int ();
@@ -392,6 +334,62 @@ void Client::handle_challenge_stuff (InMessage & msg) {
 		handle_finalize_challenge (user, accepted);
 	}
 }
+
+namespace {
+class BattlePokemon {
+	public:
+		std::pair <uint16_t, uint8_t> id;
+		std::string nickname;
+		uint16_t max_hp;
+		uint16_t hp;
+		Gender gender;
+		bool shiny;
+		uint8_t level;
+		Item item;
+		Ability ability;
+		uint8_t happiness;
+		std::vector <Move::Moves> moves;
+		BattlePokemon (InMessage & msg):
+			id (msg.read_short (), msg.read_byte ()),
+			nickname (msg.read_string ()),
+			max_hp (msg.read_short ()),
+			hp (msg.read_short ()),
+			gender (id_to_gender (msg.read_byte ())),
+			shiny (msg.read_byte ()),
+			level (msg.read_byte ()),
+			item (id_to_item (msg.read_short ())),
+			ability (id_to_ability (msg.read_short ())),
+			happiness (msg.read_byte ())
+			{
+			for (unsigned n = 0; n != 5; ++n) {
+				// Something to do with stats. Probably boosts.
+				uint16_t const st = msg.read_short ();
+			}
+			for (unsigned n = 0; n != 4; ++n) {
+				moves.push_back (id_to_move (msg.read_short ()));
+				uint8_t const pp = msg.read_byte ();
+				uint8_t const total_pp = msg.read_byte ();
+			}
+			for (unsigned n = 0; n != 6; ++n) {
+				// PO uses a QList of int, so hopefully their int is always 32-bit.
+				uint32_t const ev = msg.read_int ();
+			}
+			for (unsigned n = 0; n != 6; ++n) {
+				uint32_t const dv = msg.read_int ();
+			}
+		}
+};
+
+class BattleTeam {
+	public:
+		std::vector <BattlePokemon> pokemon;
+		BattleTeam (InMessage & msg) {
+			for (unsigned n = 0; n != 6; ++n) {
+				pokemon.push_back (BattlePokemon (msg));
+			}
+		}
+};
+}	// unnamed namespace
 
 void Client::parse_battle_begin (InMessage & msg) {
 	uint32_t const battle_id = msg.read_int ();
@@ -627,6 +625,17 @@ void Client::parse_remove_channel (InMessage & msg) {
 void Client::handle_channel_name_change (InMessage & msg) const {
 	handle_unimplemented_message (msg, "CHANNEL_NAME_CHANGE");
 }
+
+namespace {
+void get_speaker_and_message (InMessage & msg, std::string & speaker, std::string & message) {
+	// The server sends one string of the form "speaker: message" rather than sending the speaker and the message separately.
+	std::string const speaker_and_message = msg.read_string ();
+	std::string const delimiter = ": ";
+	size_t delimiter_position = speaker_and_message.find (delimiter);
+	speaker = speaker_and_message.substr (0, delimiter_position);
+	message = speaker_and_message.substr (delimiter_position + delimiter.size());
+}
+}	// unnamed namespace
 
 void Client::parse_channel_message (InMessage & msg) const {
 	uint32_t const channel_id = msg.read_int ();

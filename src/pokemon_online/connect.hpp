@@ -43,7 +43,7 @@ class Client : public network::GenericClient {
 		// of a new battle to prevent counter-teaming. It's only used when challenged.
 		Team team;
 	public:
-		explicit Client (int depth_);
+		explicit Client (unsigned set_depth);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
