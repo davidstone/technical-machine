@@ -681,7 +681,7 @@ void Client::handle_set_ip (InMessage & msg) const {
 }
 
 void Client::handle_unknown_message_code (InMessage::Message const code) const {
-	print_with_time_stamp (std::cerr, "Unknown code: " + std::to_string (code));
+	print_with_time_stamp (std::cerr, "Unknown code: " + std::to_string (static_cast<unsigned> (code)));
 }
 
 void Client::handle_unimplemented_message (InMessage & msg, std::string const & message_name) const {

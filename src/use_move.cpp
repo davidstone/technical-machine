@@ -18,6 +18,8 @@
 
 #include "use_move.hpp"
 
+#include <cassert>
+
 #include "ability.hpp"
 #include "block.hpp"
 #include "damage.hpp"
@@ -1003,6 +1005,9 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 					break;
 				case 3:
 					Status::paralyze (user.pokemon(), target.pokemon(), weather);
+					break;
+				default:
+					assert (false);
 					break;
 			}
 			break;

@@ -939,7 +939,7 @@ unsigned ability_to_id (Ability::Abilities ability) {
 class InvalidPart : public std::runtime_error {
 	public:
 		InvalidPart (uint16_t id, uint8_t part):
-			std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (id) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
+			std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (static_cast<unsigned> (id)) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
 		}
 };
 

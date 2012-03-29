@@ -54,6 +54,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 9:
 					active->ch = true;
 					break;
+				default:
+					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_STAT_LEVEL:
@@ -72,6 +74,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 4:
 					active->hitself = true;
 					break;
+				default:
+					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_FREEZE:
@@ -80,6 +84,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					active->at_replacement().move().variable.index = 1;
 					break;
 				case 2:	// Defrost
+					break;
+				default:
 					break;
 			}
 			break;
@@ -92,6 +98,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 2:
 					active->fully_paralyzed = true;
 					break;
+				default:
+					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_POISON:
@@ -99,6 +107,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 1:
 				case 2:
 					active->at_replacement().move().variable.index = 1;
+					break;
+				default:
 					break;
 			}
 			break;
@@ -109,12 +119,16 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					break;
 				case 2:		// Woke up
 					break;
+				default:
+					break;
 			}
 			break;
 		case InMessage::STATUS_EFFECTS_FLINCH:
 			switch (message_id) {
 				case 1:
 					active->at_replacement().move().variable.index = 1;
+					break;
+				default:
 					break;
 			}
 			break;
@@ -179,6 +193,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 156:	// $1's encore ended.
 					break;
 				case 157:	// $1 flung its $2!
+					break;
+				default:
 					break;
 			}
 			break;
@@ -379,6 +395,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 				case 62:		// $1's $2 made $3 fall asleep!
 //					active->at_replacement().ability.name = Ability::
 					break;
+				default:
+					break;
 			}
 			break;
 		case InMessage::ITEM_MESSAGES:
@@ -423,6 +441,8 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 					break;
 				case 12:
 					active->at_replacement().item.name = Item::POWER_HERB;
+					break;
+				default:
 					break;
 			}
 			break;

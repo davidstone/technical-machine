@@ -30,9 +30,12 @@ import shutil
 
 SetOption('warn', 'no-duplicate-environment')
 
+# -Wabi is not needed because I'm not combining binaries from different
+# compilers.
+#
 # -Waggregate-return is not something that I consider an error. For instance,
-# it triggers when using a range-based for loop. Return value optimization
-# should take care of any negative effects of this.
+# it triggers when using a range-based for loop on a vector of classes. Return
+# value optimization should take care of any negative effects of this.
 #
 # -Wconversion triggers on this code: `short n = 0; n += 2;` The implicit
 # conversion to int causes a warning when it's then converted back to its
@@ -41,8 +44,9 @@ SetOption('warn', 'no-duplicate-environment')
 # -Weffc++ includes a warning if all data members are not initialized in the
 # initializer list. I intentionally do not do this in many cases, so the set of
 # warnings is too cluttered to be useful. It's helpful to turn on every once in
-# a while and scan for other warnings, though (such as non-virtual
-# destructors).
+# a while and scan for other warnings, though (such as non-virtual destructors
+# of base classes). This would be more useful as a collection of warnings (like
+# -Wall) instead of a single warning on its own.
 #
 # -Wfloat-equal warns for safe equality comparisons (in particular, comparison
 # with a non-computed value of -1). An example in my code where I use this is
@@ -91,12 +95,17 @@ SetOption('warn', 'no-duplicate-environment')
 # useful to apply this one periodically and manually verify the results. As an
 # example, it generated this warning in my code when I looped over all elements
 # in a vector to apply a set of functions to them (using the range-based for
-# loop).
+# loop).  It is also warning for the constructor of a const array of const
+# std::string (where this is no loop in user code).
 #
 # -Wzero-as-null-pointer-constant and -Wuseless-cast are GCC-4.7-only warnings,
 # which I will add when I transition to GCC 4.7.
 
-warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wformat=2', '-Winit-self', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wstrict-overflow=5', '-Wundef', '-Werror', '-Wno-unused']
+# Add -Wold-style cast when I transition to my byte swapping library and
+# rewrite the Rijndael implementation to use modern C++ techniques, rather than
+# just being a C program with .cpp as the extension.
+
+warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wformat=2', '-Winit-self', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wstrict-overflow=5', '-Wswitch-default', '-Wundef', '-Werror', '-Wno-unused']
 full_optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto', '-Wdisabled-optimization']
 cc_flags = warnings
 cxx_flags = ['-std=c++0x']
@@ -188,7 +197,7 @@ test_debug.Program('test', test_debug_sources)
 test_optimized = optimized.Clone(LIBS=test_libraries)
 test_optimized.Program('testo', test_optimized_sources)
 
-num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 3))
+num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 4))
 Decider('MD5-timestamp')
 SetOption('num_jobs', num_cpu * 3 / 2)
 

@@ -32,7 +32,7 @@ class InvalidToStringConversion : public std::logic_error {
 	public:
 		template <typename Test>
 		InvalidToStringConversion (Test original, Test result, std::string const & intermediate):
-			std::logic_error (std::to_string (original) + " is seen as " + std::to_string (result) + " with an intermediate string of " + intermediate + ".\n") {
+			std::logic_error (std::to_string (static_cast<unsigned> (original)) + " is seen as " + std::to_string (static_cast<unsigned> (result)) + " with an intermediate string of " + intermediate + ".\n") {
 		}
 };
 
