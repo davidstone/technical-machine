@@ -1,6 +1,7 @@
 syntax: glob
 
 *.o
+*.pyc
 
 syntax: regexp
 
