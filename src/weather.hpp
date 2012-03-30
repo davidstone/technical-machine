@@ -20,6 +20,7 @@
 #define WEATHER_HPP_
 
 #include <cstdint>
+#include "status.hpp"
 
 namespace technicalmachine {
 
@@ -55,6 +56,10 @@ class Weather {
 		void set_sun (int8_t duration);
 		void set_sand (int8_t duration);
 		void set_rain (int8_t duration);
+		template<Status::Statuses status>
+		bool blocks_status () const {
+			return false;
+		}
 		uint32_t hash () const;
 };
 

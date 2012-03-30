@@ -35,7 +35,6 @@ namespace {
 
 void reset_variables (Team & team);
 void entry_hazards (Team & switcher, Weather const & weather);
-void activate_ability (Team & switcher, Team & other, Weather & weather);
 void replace_fainted_pokemon (Team & switcher, Team & other);
 
 }	// unnamed namespace
@@ -45,7 +44,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 
 	if (switcher.pokemon().hp.stat > 0) {
 		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (switcher.pokemon().ability.name == Ability::NATURAL_CURE)
+		if (switcher.pokemon().ability.clears_status_on_switch ())
 			switcher.pokemon().status.clear ();
 		
 		// Change the active Pokemon to the one switching in.
@@ -61,7 +60,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	entry_hazards (switcher, weather);
 
 	if (switcher.pokemon().hp.stat > 0)
-		activate_ability (switcher, other, weather);
+		Ability::activate_on_switch (switcher, other, weather);
 }
 
 namespace {
@@ -164,7 +163,7 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {
-	if (switcher.pokemon().ability.name == Ability::MAGIC_GUARD)
+	if (switcher.pokemon().ability.blocks_secondary_damage())
 		return;
 
 	if (grounded (switcher, weather)) {
@@ -172,9 +171,9 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 			if (is_type (switcher, Type::POISON))
 				switcher.toxic_spikes = 0;
 			else if (switcher.toxic_spikes == 1)
-				Status::poison (switcher, switcher, weather);
+				Status::poison (switcher.pokemon(), switcher.pokemon(), weather);
 			else
-				Status::poison_toxic (switcher, switcher, weather);
+				Status::poison_toxic (switcher.pokemon(), switcher.pokemon(), weather);
 		}
 		if (switcher.spikes != 0)
 			heal (switcher.pokemon(), -16, switcher.spikes + 1u);
@@ -184,45 +183,6 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 	// 16 / 32 damage.
 	if (switcher.stealth_rock)
 		heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
-}
-
-void activate_ability (Team & switcher, Team & other, Weather & weather) {
-	// Activate abilities upon switching in
-
-	switch (switcher.pokemon().ability.name) {
-		case Ability::SLOW_START:
-			switcher.slow_start = 5;
-			break;
-		case Ability::DOWNLOAD:
-			calculate_defense (other);
-			calculate_special_defense (other, weather);
-			if (other.pokemon().def.stat >= other.pokemon().spd.stat)
-				Stat::boost (switcher.stage [Stat::SPA], 1);
-			else
-				Stat::boost (switcher.stage [Stat::ATK], 1);
-			break;
-		case Ability::DRIZZLE:
-			weather.set_rain (-1);
-			break;
-		case Ability::DROUGHT:
-			weather.set_sun (-1);
-			break;
-		case Ability::FORECAST:	// TODO: fix this
-			break;
-		case Ability::INTIMIDATE:
-			Stat::boost (other.stage [Stat::ATK], -1);
-			break;
-		case Ability::SAND_STREAM:
-			weather.set_sand (-1);
-			break;
-		case Ability::SNOW_WARNING:
-			weather.set_hail (-1);
-			break;
-		case Ability::TRACE:
-			break;
-		default:
-			break;
-	}
 }
 
 }	// unnamed namespace

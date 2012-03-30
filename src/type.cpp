@@ -22,6 +22,7 @@
 
 #include "ability.hpp"
 #include "pokemon.hpp"
+#include "status.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
@@ -50,15 +51,18 @@ bool Type::is_immune_to_sandstorm () const {
 	}
 }
 
-bool Type::blocks_burn () const {
+template<>
+bool Type::blocks_status<Status::BURN> () const {
 	return type == FIRE;
 }
 
-bool Type::blocks_freeze () const {
+template<>
+bool Type::blocks_status<Status::FREEZE> () const {
 	return type == ICE;
 }
 
-bool Type::blocks_poison () const {
+template<>
+bool Type::blocks_status<Status::POISON> () const {
 	switch (type) {
 		case POISON:
 		case STEEL:
@@ -66,6 +70,11 @@ bool Type::blocks_poison () const {
 		default:
 			return false;
 	}
+}
+
+template<>
+bool Type::blocks_status<Status::POISON_TOXIC> () const {
+	return blocks_status<Status::POISON> ();
 }
 
 bool is_type (Team const & team, Type type) {
@@ -128,36 +137,12 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 }
 
 bool grounded (Team const & team, Weather const & weather) {
-	return !(is_type (team, Type::FLYING) or team.pokemon().ability.name == Ability::LEVITATE or team.magnet_rise) or weather.gravity or team.pokemon().item.name == Item::IRON_BALL or team.ingrain;
+	return !(is_type (team, Type::FLYING) or team.pokemon().ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity or team.pokemon().item.name == Item::IRON_BALL or team.ingrain;
 }
 
 bool TypeCollection::is_immune_to_sandstorm () const {
 	for (Type const type : types) {
 		if (type.is_immune_to_sandstorm ())
-			return true;
-	}
-	return false;
-}
-
-bool TypeCollection::blocks_burn () const {
-	for (Type const type : types) {
-		if (type.blocks_burn ())
-			return true;
-	}
-	return false;
-}
-
-bool TypeCollection::blocks_freeze () const {
-	for (Type const type : types) {
-		if (type.blocks_freeze ())
-			return true;
-	}
-	return false;
-}
-
-bool TypeCollection::blocks_poison () const {
-	for (Type const type : types) {
-		if (type.blocks_poison ())
 			return true;
 	}
 	return false;

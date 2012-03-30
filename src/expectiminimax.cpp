@@ -369,18 +369,18 @@ int64_t use_move_branch (Team first, Team last, Weather weather, unsigned depth,
 	last.shed_skin = false;
 	int64_t average_score = 49 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 	int64_t divisor = 49;
-	if (first.pokemon().ability.name == Ability::SHED_SKIN and first.pokemon().status.name != Status::NO_STATUS) {
+	if (first.pokemon().ability.can_clear_status (first.pokemon().status)) {
 		first.shed_skin = true;
 		average_score += 21 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 		divisor += 21;
-		if (last.pokemon().ability.name == Ability::SHED_SKIN and last.pokemon().status.name != Status::NO_STATUS) {
+		if (last.pokemon().ability.can_clear_status (last.pokemon().status)) {
 			last.shed_skin = true;
 			average_score += 9 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 			divisor += 9;
 			first.shed_skin = false;
 		}
 	}
-	if (last.pokemon().ability.name == Ability::SHED_SKIN and last.pokemon().status.name != Status::NO_STATUS) {
+	if (last.pokemon().ability.can_clear_status (last.pokemon().status)) {
 		last.shed_skin = true;
 		average_score += 21 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 		divisor += 21;
@@ -537,7 +537,7 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 }
 
 int get_awaken_numerator (Pokemon const & pokemon) {
-	return pokemon.sleep + (pokemon.ability.name == Ability::EARLY_BIRD);
+	return pokemon.sleep + pokemon.ability.wakes_up_early();
 }
 
 

@@ -151,7 +151,7 @@ unsigned regular_damage (Team const & attacker, Team const & defender, Weather c
 
 
 void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
-	if (user.ability.name != Ability::MAGIC_GUARD and user.ability.name != Ability::ROCK_HEAD) {
+	if (!user.ability.blocks_recoil()) {
 		if (damage <= 2 * denominator - 1)
 			--user.hp.stat;
 		else
@@ -180,7 +180,7 @@ unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const &
 }
 
 unsigned weakening_from_burn (Pokemon const & attacker) {
-	return (attacker.status.name == Status::BURN and attacker.ability.name != Ability::GUTS) ? 2 : 1;
+	return (attacker.status.name == Status::BURN and attacker.ability.blocks_burn_damage_penalty()) ? 2 : 1;
 }
 
 unsigned calculate_screen_divisor (Team const & attacker, Team const & defender) {
@@ -223,7 +223,7 @@ unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned const da
 
 unsigned calculate_critical_hit_multiplier (Team const & attacker) {
 	if (attacker.ch)
-		return (attacker.pokemon().ability.name == Ability::SNIPER) ? 3 : 2;
+		return (attacker.pokemon().ability.boosts_critical_hits ()) ? 3 : 2;
 	return 1;
 }
 
@@ -256,7 +256,7 @@ unsigned calculate_stab_modifier (Team const & attacker, unsigned const damage) 
 }
 
 unsigned calculate_stab_boost (Ability const ability, unsigned const damage) {
-	return (ability.name == Ability::ADAPTABILITY) ? damage * 2 : damage * 3 / 2;
+	return ability.boosts_stab() ? damage * 2 : damage * 3 / 2;
 }
 
 unsigned calculate_effectiveness_modifier (Move const & move, Pokemon const & defender, unsigned damage) {
@@ -267,7 +267,7 @@ unsigned calculate_effectiveness_modifier (Move const & move, Pokemon const & de
 }
 
 unsigned calculate_ability_effectiveness_modifier (Ability const ability, unsigned const effectiveness, unsigned const damage) {
-	return (ability.weakens_SE_attacks () and effectiveness > 4) ? 3 * damage / 4 : damage;
+	return (ability.weakens_se_attacks () and effectiveness > 4) ? 3 * damage / 4 : damage;
 }
 
 unsigned calculate_expert_belt_modifier (Item const item, unsigned const effectiveness, unsigned const damage) {
@@ -275,7 +275,7 @@ unsigned calculate_expert_belt_modifier (Item const item, unsigned const effecti
 }
 
 unsigned calculate_tinted_lens_multiplier (Ability const ability, unsigned const effectiveness) {
-	return (ability.name == Ability::TINTED_LENS and effectiveness < 4) ? 2 : 1;
+	return (ability.strengthens_nve_attacks() and effectiveness < 4) ? 2 : 1;
 }
 
 unsigned calculate_resistance_berry_divisor (Item const item, Type const type, unsigned const effectiveness) {

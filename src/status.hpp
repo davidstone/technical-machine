@@ -1,5 +1,5 @@
 // Status class
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,15 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATUS_H_
-#define STATUS_H_
+#ifndef STATUS_HPP_
+#define STATUS_HPP_
 
 #include <string>
 
 namespace technicalmachine {
 
 class Pokemon;
-class Team;
 class Weather;
 
 class Status {
@@ -42,18 +41,19 @@ class Status {
 		};
 		Statuses name;
 		Status ();
-		bool is_sleeping () const;
 		void clear ();
+		bool is_clear() const;
+		bool is_sleeping () const;
 		static std::string to_string (Statuses name);
 		std::string to_string () const;
 		static Statuses from_string (std::string const & str);
-		static void burn (Team & user, Team & target, Weather const & weather);
-		static void freeze (Pokemon const & user, Team & target, Weather const & weather);
+		static void burn (Pokemon & user, Pokemon & target, Weather const & weather);
+		static void freeze (Pokemon const & user, Pokemon & target, Weather const & weather);
 		static void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);
 		static void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
-		static void poison (Team & user, Team & target, Weather const & weather);
-		static void poison_toxic (Team & user, Team & target, Weather const & weather);
+		static void poison (Pokemon & user, Pokemon & target, Weather const & weather);
+		static void poison_toxic (Pokemon & user, Pokemon & target, Weather const & weather);
 };
 
 }	// namespace technicalmachine
-#endif	// STATUS_H_
+#endif	// STATUS_HPP_

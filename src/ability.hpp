@@ -20,6 +20,7 @@
 #define ABILITY_HPP_
 
 #include <string>
+#include "status.hpp"
 
 namespace technicalmachine {
 
@@ -56,22 +57,51 @@ class Ability {
 			WATER_VEIL, WHITE_SMOKE, WONDER_GUARD, END
 		};
 		Abilities name;
-
 		Ability ();
 		explicit Ability (Abilities ability);
 		explicit Ability (std::string const & str);
 		bool is_set () const;
+		void set_if_unknown (Abilities ability);
 		bool blocks_switching (Team const & switcher, Weather const & weather) const;
 		bool blocks_weather () const;
-		bool blocks_burn (Weather const & weather) const;
-		bool blocks_freeze () const;
-		bool blocks_paralysis (Weather const & weather) const;
-		bool blocks_poison (Weather const & weather) const;
-		bool blocks_sleep (Weather const & weather) const;
-		bool weakens_SE_attacks () const;
+
+		template<Status::Statuses status>
+		bool blocks_status (Weather const & weather) const;
+		bool reflects_status () const;
+		bool absorbs_poison_damage () const;
+		bool blocks_burn_damage_penalty () const;
+		bool blocks_paralysis_speed_penalty () const;
+		bool can_clear_status (Status status) const;
+		bool clears_status_on_switch () const;
+		bool is_immune_to_ground () const;
+		bool wakes_up_early () const;
+		bool weakens_burn () const;
+		
+		bool harms_sleepers () const;
+
+		bool blocks_recoil () const;
+		bool blocks_secondary_damage () const;
+		bool cannot_miss () const;
+		bool damages_leechers () const;
+		bool weakens_se_attacks () const;
+		bool strengthens_nve_attacks () const;
+		
+		bool ignores_blockers () const;
+		
+		bool boosts_critical_hits () const;
+		bool boosts_defense (Status status) const;
+		bool boosts_special_attack (Weather const & weather) const;
+		bool boosts_special_defense (Weather const & weather) const;
+		bool boosts_speed () const;
+		bool boosts_speed_when_flinched () const;
+		bool boosts_stab () const;
+		
+		bool is_loafing (bool loaf) const;
 		static std::string to_string (Abilities name);
 		std::string to_string () const;
 		static Abilities from_string (std::string const & str);
+		
+		static void activate_on_switch (Team & switcher, Team & other, Weather & weather);
 };
 }
 #endif	// ABILITY_HPP_

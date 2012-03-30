@@ -39,7 +39,7 @@ unsigned item_modifier (Pokemon const & attacker);
 bool mud_or_water_sport (Team const & attacker, Team const & defender);
 unsigned attacker_ability_modifier (Pokemon const & attacker, Pokemon const & defender);
 bool pinch_ability_activates (Pokemon const & attacker, Type::Types type);
-unsigned defender_ability_modifier (Move const & move, Ability::Abilities ability);
+unsigned defender_ability_modifier (Move const & move, Ability ability);
 
 }	// anonymous namespace
 
@@ -61,7 +61,7 @@ void move_power (Team & attacker, Team const & defender, Weather const & weather
 
 	attacker.pokemon().move().power = attacker_ability_modifier (attacker.pokemon (), defender.pokemon ());
 	
-	attacker.pokemon().move().power = defender_ability_modifier (attacker.pokemon().move(), defender.pokemon().ability.name);
+	attacker.pokemon().move().power = defender_ability_modifier (attacker.pokemon().move(), defender.pokemon().ability);
 	
 	if (attacker.pokemon().move().power == 0)
 		attacker.pokemon().move().power = 1;
@@ -429,8 +429,8 @@ bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) 
 	return attacker.move().type == type and attacker.hp.stat <= attacker.hp.max / 3;
 }
 
-unsigned defender_ability_modifier (Move const & move, Ability::Abilities ability) {
-	switch (ability) {
+unsigned defender_ability_modifier (Move const & move, Ability const ability) {
+	switch (ability.name) {
 		case Ability::DRY_SKIN:
 			if (move.type == Type::FIRE)
 				return move.power * 5u / 4;

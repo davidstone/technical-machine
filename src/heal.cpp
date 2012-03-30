@@ -35,7 +35,7 @@ void heal (Pokemon & member, int denominator, unsigned numerator) {
 			member.hp.stat = member.hp.max;
 	}
 	else {
-		if (member.ability.name != Ability::MAGIC_GUARD) {
+		if (!member.ability.blocks_secondary_damage ()) {
 			if (member.hp.max * numerator <= static_cast <unsigned> (-2 * denominator - 1))
 				-- member.hp.stat;
 			else

@@ -1,5 +1,5 @@
 // Status functions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,19 +20,45 @@
 
 #include "ability.hpp"
 #include "pokemon.hpp"
-#include "team.hpp"
 #include "type.hpp"
 #include "weather.hpp"
 
 namespace technicalmachine {
 namespace {
 
-void apply_poison_status (Team & user, Team & target, Weather const & weather, Status::Statuses status);
+template<Status::Statuses status>
+bool status_can_apply (Ability const ability, Pokemon const & target, Weather const & weather) {
+	return target.status.is_clear() and
+			(ability.ignores_blockers() or !target.ability.blocks_status<status> (weather)) and
+			!target.type.blocks_status<status>() and
+			!weather.blocks_status<status>();
+}
+
+constexpr bool status_is_reflectable (Status::Statuses const status) {
+	return status == Status::BURN or status == Status::PARALYSIS or status == Status::POISON or status == Status::POISON_TOXIC;
+}
+
+template<Status::Statuses status>
+void apply_status (Pokemon & user, Pokemon & target, Weather const & weather) {
+	if (status_can_apply<status> (user.ability, target, weather)) {
+		target.status.name = status;
+		if (status_is_reflectable (status) and target.ability.reflects_status())
+			apply_status<status> (target, user, weather);
+	}
+}
 
 }	// unnamed namespace
 
 Status::Status ():
 	name (NO_STATUS) {
+}
+
+void Status::clear () {
+	name = NO_STATUS;
+}
+
+bool Status::is_clear() const {
+	return name == NO_STATUS;
 }
 
 bool Status::is_sleeping () const {
@@ -45,53 +71,35 @@ bool Status::is_sleeping () const {
 	}
 }
 
-void Status::clear () {
-	name = NO_STATUS;
+void Status::burn (Pokemon & user, Pokemon & target, Weather const & weather) {
+	apply_status<BURN> (user, target, weather);
 }
 
-void Status::burn (Team & user, Team & target, Weather const & weather) {
-	if (target.pokemon().status.name == NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_burn (weather)) and !target.pokemon().type.blocks_burn ()) {
-		target.pokemon().status.name = BURN;
-		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
-			burn (target, user, weather);
-	}
-}
-
-void Status::freeze (Pokemon const & user, Team & target, Weather const & weather) {
-	if (target.pokemon().status.name == NO_STATUS and (user.ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_freeze ()) and !weather.sun and !target.pokemon().type.blocks_freeze ())
-		target.pokemon().status.name = FREEZE;
+void Status::freeze (Pokemon const & user, Pokemon & target, Weather const & weather) {
+	// apply_status will not modify user because freeze is not reflectable.
+	apply_status<FREEZE> (const_cast<Pokemon &> (user), target, weather);
 }
 
 void Status::paralyze (Pokemon & user, Pokemon & target, Weather const & weather) {
-	if (target.status.name == NO_STATUS and (user.ability.name == Ability::MOLD_BREAKER or !target.ability.blocks_paralysis (weather))) {
-		target.status.name = PARALYSIS;
-		if (target.ability.name == Ability::SYNCHRONIZE)
-			paralyze (target, user, weather);
-	}
+	apply_status<PARALYSIS> (user, target, weather);
 }
 
 void Status::sleep (Pokemon const & user, Pokemon & target, Weather const & weather) {
-	if (target.status.name == NO_STATUS and !weather.uproar and (user.ability.name == Ability::MOLD_BREAKER or !target.ability.blocks_sleep (weather)))
-		target.status.name = SLEEP;		// Fix
+	constexpr Statuses status = SLEEP;
+	if (status_can_apply<status> (user.ability, target, weather))
+		target.status.name = status;		// Fix
 }
 
-void Status::poison (Team & user, Team & target, Weather const & weather) {
-	apply_poison_status (user, target, weather, POISON);
+void Status::poison (Pokemon & user, Pokemon & target, Weather const & weather) {
+	apply_status<POISON> (user, target, weather);
 }
 
-void Status::poison_toxic (Team & user, Team & target, Weather const & weather) {
-	apply_poison_status (user, target, weather, POISON_TOXIC);
-}
-
-namespace {
-
-void apply_poison_status (Team & user, Team & target, Weather const & weather, Status::Statuses const status) {
-	if (target.pokemon().status.name == Status::NO_STATUS and (user.pokemon().ability.name == Ability::MOLD_BREAKER or !target.pokemon().ability.blocks_poison (weather)) and !target.pokemon().type.blocks_poison ()) {
-		target.pokemon().status.name = status;
-		if (target.pokemon().ability.name == Ability::SYNCHRONIZE)
-			Status::poison (target, user, weather);
+void Status::poison_toxic (Pokemon & user, Pokemon & target, Weather const & weather) {
+	if (status_can_apply<POISON> (user.ability, target, weather)) {
+		target.status.name = POISON_TOXIC;
+		if (target.ability.reflects_status())
+			poison (target, user, weather);
 	}
 }
 
-}	// unnamed namespace
 }	// namespace technicalmachine

@@ -53,8 +53,7 @@ Team predict_team (int detailed [][7], Team team, unsigned size, bool using_lead
 	}
 	predict_pokemon (team, estimate, multiplier);
 	for (Pokemon & pokemon : team.pokemon.set) {
-		if (!pokemon.ability.is_set ())
-			pokemon.ability.name = static_cast <Ability::Abilities> (detailed [pokemon.name] [0]);
+		pokemon.ability.set_if_unknown (static_cast <Ability::Abilities> (detailed [pokemon.name] [0]));
 		if (!pokemon.item.is_set ())
 			pokemon.item.name = static_cast <Item::Items> (detailed [pokemon.name] [1]);
 		if (!pokemon.nature.is_set ())

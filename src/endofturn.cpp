@@ -139,7 +139,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		heal (team.pokemon(), 16);
 	if (team.aqua_ring)
 		heal (team.pokemon(), 16);
-	if (team.pokemon().ability.name == Ability::SPEED_BOOST)
+	if (team.pokemon().ability.boosts_speed())
 		Stat::boost (team.stage [Stat::SPE], 1);
 	else if (team.shed_skin)
 		team.pokemon().status.clear ();
@@ -160,7 +160,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		unsigned n = team.pokemon().hp.stat;
 		heal (team.pokemon(), -8);
 		if (foe.hp.stat != 0) {
-			if (team.pokemon().ability.name == Ability::LIQUID_OOZE)
+			if (team.pokemon().ability.damages_leechers ())
 				damage_side_effect (foe, n - team.pokemon().hp.stat);
 			else {
 				foe.hp.stat += n - team.pokemon().hp.stat;
@@ -171,19 +171,19 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	}
 	switch (team.pokemon().status.name) {
 		case Status::BURN:
-			if (team.pokemon().ability.name == Ability::HEATPROOF)
+			if (team.pokemon().ability.weakens_burn ())
 				heal (team.pokemon(), -16);
 			else
 				heal (team.pokemon(), -8);
 			break;
 		case Status::POISON:
-			if (team.pokemon().ability.name == Ability::POISON_HEAL)
+			if (team.pokemon().ability.absorbs_poison_damage ())
 				heal (team.pokemon(), 8);
 			else
 				heal (team.pokemon(), -8);
 			break;
 		case Status::POISON_TOXIC:
-			if (team.pokemon().ability.name == Ability::POISON_HEAL)
+			if (team.pokemon().ability.absorbs_poison_damage ())
 				heal (team.pokemon(), 8);
 			else {
 				if (team.toxic < 15)
@@ -194,7 +194,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		case Status::SLEEP:
 			if (team.nightmare)
 				heal (team.pokemon(), -4);
-			if (foe.ability.name == Ability::BAD_DREAMS)
+			if (foe.ability.harms_sleepers())
 				heal (team.pokemon(), -8);
 			break;
 		default:
@@ -202,10 +202,10 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	}
 	switch (team.pokemon().item.name) {
 		case Item::FLAME_ORB:
-			Status::burn (team, team, weather);
+			Status::burn (team.pokemon(), team.pokemon(), weather);
 			break;
 		case Item::TOXIC_ORB:
-			Status::poison_toxic (team, team, weather);
+			Status::poison_toxic (team.pokemon(), team.pokemon(), weather);
 			break;
 		default:
 			break;

@@ -135,7 +135,7 @@ ai_sources += ['pokemon_online/battle.cpp', 'pokemon_online/battle_settings.cpp'
 ai_sources += string_conversion_sources
 ai_libraries = ['pthread', 'boost_system', 'boost_filesystem']
 
-predict_sources = ['predictor.cpp', 'ability.cpp', 'gender.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'team.cpp', 'team_predictor.cpp', 'type.cpp']
+predict_sources = ['predictor.cpp', 'ability.cpp', 'gender.cpp', 'item.cpp', 'load_stats.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'stat.cpp', 'status.cpp', 'team.cpp', 'team_predictor.cpp', 'type.cpp', 'weather.cpp']
 predict_sources += ['pokemon_lab/read_team_file.cpp']
 predict_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp']
 predict_sources += string_conversion_sources

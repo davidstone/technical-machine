@@ -65,7 +65,7 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 		execute = handle_sleep_counter (user.pokemon());
 	}
 
-	if (block1 (user, other) or (user.pokemon().ability.name == Ability::TRUANT and user.loaf))
+	if (block1 (user, other) or user.pokemon().ability.is_loafing (user.loaf))
 		execute = false;
 
 	if (execute and user.confused)
@@ -73,7 +73,7 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 
 	if (execute) {
 		if (user.flinch) {
-			if (user.pokemon().ability.name == Ability::STEADFAST)
+			if (user.pokemon().ability.boosts_speed_when_flinched ())
 				Stat::boost (user.stage [Stat::SPE], 1);
 			execute = false;
 		}
@@ -167,7 +167,7 @@ void increase_sleep_counter (Team & user) {
 		user.pokemon().status.clear ();
 	}
 	else {
-		if (user.pokemon().ability.name == Ability::EARLY_BIRD)
+		if (user.pokemon().ability.wakes_up_early())
 			user.pokemon().sleep += 2;
 		else
 			++user.pokemon().sleep;

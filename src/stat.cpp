@@ -431,10 +431,7 @@ unsigned attack_item_modifier (Pokemon const & attacker) {
 }
 
 unsigned special_attack_ability_modifier (Pokemon const & attacker, Weather const & weather) {
-	if (!(attacker.ability.name == Ability::SOLAR_POWER and weather.sun))
-		return attacker.spa.stat;
-	else
-		return attacker.spa.stat * 3u / 2;
+	return !attacker.ability.boosts_special_attack (weather) ? attacker.spa.stat : attacker.spa.stat * 3u / 2;
 }
 
 unsigned special_attack_item_modifier (Pokemon const & attacker) {
@@ -460,10 +457,7 @@ unsigned special_attack_item_modifier (Pokemon const & attacker) {
 }
 
 unsigned defense_ability_modifier (Pokemon const & defender) {
-	if (!(defender.ability.name == Ability::MARVEL_SCALE and defender.status.name != Status::NO_STATUS))
-		return defender.def.stat;
-	else
-		return defender.def.stat * 3u / 2;
+	return !defender.ability.boosts_defense (defender.status) ? defender.def.stat : defender.def.stat * 3u / 2;
 }
 
 unsigned defense_item_modifier (Pokemon const & defender) {
@@ -474,10 +468,7 @@ unsigned defense_item_modifier (Pokemon const & defender) {
 }
 
 unsigned special_defense_ability_modifier (Pokemon const & defender, Weather const & weather) {
-	if (!(defender.ability.name == Ability::FLOWER_GIFT and weather.sun))
-		return defender.spd.stat;
-	else
-		return defender.spd.stat * 3u / 2;
+	return !defender.ability.boosts_special_defense (weather) ? defender.spd.stat : defender.spd.stat * 3u / 2;
 }
 
 unsigned special_defense_item_modifier (Pokemon const & defender) {
@@ -562,7 +553,7 @@ unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
 }
 
 bool paralysis_lowers_speed (Pokemon const & pokemon) {
-	return pokemon.status.name == Status::PARALYSIS and pokemon.ability.name != Ability::QUICK_FEET;
+	return pokemon.status.name == Status::PARALYSIS and !pokemon.ability.blocks_paralysis_speed_penalty();
 }
 
 unsigned tailwind_speed_multiplier (Team const & team) {
@@ -570,7 +561,7 @@ unsigned tailwind_speed_multiplier (Team const & team) {
 }
 
 bool move_can_miss (Team const & user, Ability target_ability) {
-	return !user.pokemon().move().cannot_miss() and user.pokemon().ability.name != Ability::NO_GUARD and target_ability.name != Ability::NO_GUARD and !user.lock_on;
+	return !user.pokemon().move().cannot_miss() and !user.pokemon().ability.cannot_miss() and !target_ability.cannot_miss() and !user.lock_on;
 }
 
 unsigned accuracy_item_modifier (Team const & user, bool target_moved) {

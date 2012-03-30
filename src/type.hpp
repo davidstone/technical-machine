@@ -20,6 +20,7 @@
 #define TYPE_HPP_
 
 #include <vector>
+#include "status.hpp"
 
 namespace technicalmachine {
 
@@ -51,9 +52,10 @@ class Type {
 		bool operator== (Type other) const;
 		bool operator!= (Type other) const;
 		bool is_immune_to_sandstorm () const;
-		bool blocks_burn () const;
-		bool blocks_freeze () const;
-		bool blocks_poison () const;
+		template<Status::Statuses status>
+		bool blocks_status () const {
+			return false;
+		}
 };
 
 class TypeCollection {
@@ -61,9 +63,14 @@ class TypeCollection {
 		std::vector <Type> types;
 		
 		bool is_immune_to_sandstorm () const;
-		bool blocks_burn () const;
-		bool blocks_freeze () const;
-		bool blocks_poison () const;
+		template<Status::Statuses status>
+		bool blocks_status () const {
+			for (Type const type : types) {
+				if (type.blocks_status<status> ())
+					return true;
+			}
+			return false;
+		}
 };
 
 class Pokemon;

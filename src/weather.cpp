@@ -17,8 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "weather.hpp"
-
 #include <cstdint>
+#include "status.hpp"
 
 namespace technicalmachine {
 
@@ -92,6 +92,21 @@ void Weather::set_rain (int8_t duration) {
 		sand = 0;
 		rain = duration;
 	}
+}
+
+template<>
+bool Weather::blocks_status<Status::FREEZE> () const {
+	return sun;
+}
+
+template<>
+bool Weather::blocks_status<Status::SLEEP> () const {
+	return uproar;
+}
+
+template<>
+bool Weather::blocks_status<Status::REST> () const {
+	return blocks_status<Status::SLEEP>();
 }
 
 uint32_t Weather::hash () const {
