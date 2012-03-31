@@ -11,10 +11,9 @@
 // terms of be_to_le. Because this function reverses the order of the bytes, it
 // is the same as a le_to_be function.
 //
-// For similar reasons, big-endian <-> PDP-endian will be defined in terms of
-// big-endian to PDP-endian and little-endian <-> PDP-endian converions will be
-// defined in terms of little-endian to PDP-endian. PDP-endian conversions are
-// not yet supported, other than the trivial one-byte integer conversions.
+// For similar reasons, big-endian <-> PDP-endian are defined in terms of
+// big-endian to PDP-endian and little-endian <-> PDP-endian converions are
+// defined in terms of little-endian to PDP-endian.
 //
 // Where no built-in byte swapping function can be found, I fall back on manual
 // bit shifting. The manual shifts are defined recursively, with the one-byte
