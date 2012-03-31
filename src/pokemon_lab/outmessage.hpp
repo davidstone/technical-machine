@@ -1,5 +1,5 @@
 // Pokemon Lab outgoing messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_OUTMESSAGE_H_
-#define POKEMON_LAB_OUTMESSAGE_H_
+#ifndef POKEMON_LAB_OUTMESSAGE_HPP_
+#define POKEMON_LAB_OUTMESSAGE_HPP_
 
 #include <cstdint>
 #include <string>
@@ -68,4 +68,4 @@ class OutMessage : public network::OutMessage {
 
 } // namespace pl
 } // namespace technicalmachine
-#endif // POKEMON_LAB_OUTMESSAGE_H_
+#endif // POKEMON_LAB_OUTMESSAGE_HPP_

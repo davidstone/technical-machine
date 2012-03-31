@@ -1,5 +1,5 @@
 // Exception class for improper message length
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_BUFFER_OVERRUN_H_
-#define NETWORK_BUFFER_OVERRUN_H_
+#ifndef NETWORK_BUFFER_OVERRUN_HPP_
+#define NETWORK_BUFFER_OVERRUN_HPP_
 
 #include "invalid_packet.hpp"
 
@@ -32,4 +32,4 @@ class BufferOverrun : public InvalidPacket {
 };
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_BUFFER_OVERRUN_H_
+#endif	// NETWORK_BUFFER_OVERRUN_HPP_

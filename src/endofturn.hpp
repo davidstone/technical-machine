@@ -1,5 +1,5 @@
 // End of turn function forward declaration
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENDOFTURN_H_
-#define ENDOFTURN_H_
+#ifndef ENDOFTURN_HPP_
+#define ENDOFTURN_HPP_
 
 namespace technicalmachine {
 
@@ -27,4 +27,4 @@ class Weather;
 void endofturn (Team & first, Team & last, Weather & weather);
 
 }	// namespace technicalmachine
-#endif	// ENDOFTURN_H_
+#endif	// ENDOFTURN_HPP_

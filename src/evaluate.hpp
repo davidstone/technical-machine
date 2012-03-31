@@ -1,5 +1,5 @@
 // Evaluate header
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE_H_
-#define EVALUATE_H_
+#ifndef EVALUATE_HPP_
+#define EVALUATE_HPP_
 
 #include <cstdint>
 
@@ -99,4 +99,4 @@ class Score {
 };
 
 } // namespace technicalmachine
-#endif // EVALUATE_H_
+#endif // EVALUATE_HPP_

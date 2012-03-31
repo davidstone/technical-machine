@@ -1,5 +1,5 @@
 // Move power calculator forward declarations
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_POWER_H_
-#define MOVE_POWER_H_
+#ifndef MOVE_POWER_HPP_
+#define MOVE_POWER_HPP_
 
 namespace technicalmachine {
 
@@ -28,4 +28,4 @@ class Weather;
 void move_power (Team & attacker, Team const & defender, Weather const & weather);
 
 }	// namespace technicalmachine
-#endif	// MOVE_POWER_H_
+#endif	// MOVE_POWER_HPP_

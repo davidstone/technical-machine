@@ -1,5 +1,5 @@
 // Convert string to hex representation
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
 // it under the terms of the GNU Affero General Public License as
@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CRYPTOGRAPHY_HEX_H_
-#define CRYPTOGRAPHY_HEX_H_
+#ifndef CRYPTOGRAPHY_HEX_HPP_
+#define CRYPTOGRAPHY_HEX_HPP_
 
 #include <string>
 
@@ -26,4 +26,4 @@ std::string get_hex_string (std::string const & digest);
 
 }	// namespace cryptography
 }	// namespace technicalmachine
-#endif	// CRYPTOGRAPHY_HEX_H_
+#endif	// CRYPTOGRAPHY_HEX_HPP_

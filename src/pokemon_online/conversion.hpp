@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_CONVERSION_H_
-#define POKEMON_ONLINE_CONVERSION_H_
+#ifndef POKEMON_ONLINE_CONVERSION_HPP_
+#define POKEMON_ONLINE_CONVERSION_HPP_
 
 #include <cstdint>
 #include <string>
@@ -50,4 +50,4 @@ unsigned nature_to_id (Nature::Natures nature);
 
 } // namespace po
 } // namespace technicalmachine
-#endif // POKEMON_ONLINE_CONVERSION_H_
+#endif // POKEMON_ONLINE_CONVERSION_HPP_

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BATTLE_H_
-#define BATTLE_H_
+#ifndef BATTLE_HPP_
+#define BATTLE_HPP_
 
 #include <cstdint>
 #include <random>
@@ -92,4 +92,4 @@ class GenericBattle {
 };
 
 }	// namespace technicalmachine
-#endif	// BATTLE_H_
+#endif	// BATTLE_HPP_

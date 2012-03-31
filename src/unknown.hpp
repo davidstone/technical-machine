@@ -1,5 +1,5 @@
 // Data structure for unknowns
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef UNKNOWN_H_
-#define UNKNOWN_H_
+#ifndef UNKNOWN_HPP_
+#define UNKNOWN_HPP_
 
 #include <cstdint>
 #include <vector>
@@ -46,4 +46,4 @@ struct Unknown {
 void unknown (std::vector<Unknown> &hidden);
 
 }
-#endif		// UNKNOWN_H_
+#endif	// UNKNOWN_HPP_

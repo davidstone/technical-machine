@@ -1,5 +1,5 @@
 // Pokemon Lab incoming messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_INMESSAGE_H_
-#define POKEMON_LAB_INMESSAGE_H_
+#ifndef POKEMON_LAB_INMESSAGE_HPP_
+#define POKEMON_LAB_INMESSAGE_HPP_
 
 #include <boost/asio.hpp>
 #include "../network/inmessage.hpp"
@@ -106,4 +106,4 @@ class InMessage : public network::InMessage::InMessage {
 
 }	// namespace pl
 }	// namespace technicalmachine
-#endif	// POKEMON_LAB_INMESSAGE_H_
+#endif	// POKEMON_LAB_INMESSAGE_HPP_

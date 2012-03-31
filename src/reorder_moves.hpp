@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef REORDER_MOVES_H_
-#define REORDER_MOVES_H_
+#ifndef REORDER_MOVES_HPP_
+#define REORDER_MOVES_HPP_
 
 #include <cstddef>
 #include <cstdint>
@@ -31,4 +31,4 @@ class Move;
 std::vector <std::pair <int64_t, size_t>> reorder (std::vector<Move> const & input, bool ai);
 
 }	// namespace technicalmachine
-#endif	// REORDER_MOVES_H_
+#endif	// REORDER_MOVES_HPP_

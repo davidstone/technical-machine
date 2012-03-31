@@ -1,5 +1,5 @@
 // Generic incoming messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_INMESSAGE_H_
-#define NETWORK_INMESSAGE_H_
+#ifndef NETWORK_INMESSAGE_HPP_
+#define NETWORK_INMESSAGE_HPP_
 
 #include <cstdint>
 #include <string>
@@ -43,4 +43,4 @@ class InMessage {
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_INMESSAGE_H_
+#endif	// NETWORK_INMESSAGE_HPP_

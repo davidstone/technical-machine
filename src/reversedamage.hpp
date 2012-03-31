@@ -1,5 +1,5 @@
 // Reverse damage calculator function definitions
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef REVERSEDAMAGE_H_
-#define REVERSEDAMAGE_H_
+#ifndef REVERSEDAMAGE_HPP_
+#define REVERSEDAMAGE_HPP_
 
 #include <vector>
 
@@ -30,4 +30,4 @@ class Weather;
 void reversedamagecalculator (Team & attacker, Team const & defender, Weather const & weather, unsigned damage, std::vector<Unknown> & hidden);
 
 }	// namespace technicalmachine
-#endif	// REVERSEDAMAGE_H_
+#endif	// REVERSEDAMAGE_HPP_

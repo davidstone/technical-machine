@@ -1,5 +1,5 @@
 // Sha-2 implementation header
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
 // it under the terms of the GNU Affero General Public License as
@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CRYPTOGRAPHY_SHA2_H_
-#define CRYPTOGRAPHY_SHA2_H_
+#ifndef CRYPTOGRAPHY_SHA2_HPP_
+#define CRYPTOGRAPHY_SHA2_HPP_
 
 #include <string>
 
@@ -29,4 +29,4 @@ std::string sha512 (std::string const & message);
 
 }	// namespace cryptography
 }	// namespace technicalmachine
-#endif // CRYPTOGRAPHY_SHA2_H_
+#endif // CRYPTOGRAPHY_SHA2_HPP_

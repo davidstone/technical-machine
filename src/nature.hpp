@@ -1,5 +1,5 @@
 // Nature data structure
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NATURE_H_
-#define NATURE_H_
+#ifndef NATURE_HPP_
+#define NATURE_HPP_
 
 #include <string>
 
@@ -63,4 +63,4 @@ class Nature {
 };
 
 }	// namespace technicalmachine
-#endif	// NATURE_H_
+#endif	// NATURE_HPP_

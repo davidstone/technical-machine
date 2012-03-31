@@ -1,5 +1,5 @@
 // Transposition header
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRANSPOSITION_H_
-#define TRANSPOSITION_H_
+#ifndef TRANSPOSITION_HPP_
+#define TRANSPOSITION_HPP_
 
 #include <cstdint>
 
@@ -30,4 +30,4 @@ class Weather;
 int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score);
 
 }	// namespace technicalmachine
-#endif	// TRANSPOSITION_H_
+#endif	// TRANSPOSITION_HPP_

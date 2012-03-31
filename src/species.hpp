@@ -1,5 +1,5 @@
 // Species enum
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SPECIES_H_
-#define SPECIES_H_
+#ifndef SPECIES_HPP_
+#define SPECIES_HPP_
 
 namespace technicalmachine {
 
@@ -550,4 +550,4 @@ enum Species : unsigned {
 	END
 };
 }	// namespace technicalmachine
-#endif	// SPECIES_H_
+#endif	// SPECIES_HPP_
