@@ -45,7 +45,7 @@ debug.Append(CCFLAGS = ['-g'] + warnings_debug)
 debug.VariantDir('build/debug', 'src', duplicate = 0)
 
 optimized = default.Clone()
-optimized.Append(CCFLAGS = optimizations + warnings_optimized, CPPDEFINES = preprocessor_optimizations, LINKFLAGS = linker_optimizations)
+optimized.Append(CCFLAGS = optimizations + warnings_optimized, CPPDEFINES = preprocessor_optimizations, LINKFLAGS = linker_optimizations + warnings_optimized)
 optimized.VariantDir('build/optimized', 'src', duplicate = 0)
 
 def create_program (base, versions):

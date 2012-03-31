@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <utility>
+#include <vector>
 #undef SING
 
 #include "evaluate.hpp"

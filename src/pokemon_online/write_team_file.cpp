@@ -19,6 +19,7 @@
 #include "write_team_file.hpp"
 
 #include <string>
+#include <utility>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

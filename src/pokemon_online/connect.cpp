@@ -349,7 +349,7 @@ class BattlePokemon {
 		Ability ability;
 		uint8_t happiness;
 		std::vector <Move::Moves> moves;
-		BattlePokemon (InMessage & msg):
+		explicit BattlePokemon (InMessage & msg):
 			id (msg.read_short (), msg.read_byte ()),
 			nickname (msg.read_string ()),
 			max_hp (msg.read_short ()),
@@ -383,7 +383,7 @@ class BattlePokemon {
 class BattleTeam {
 	public:
 		std::vector <BattlePokemon> pokemon;
-		BattleTeam (InMessage & msg) {
+		explicit BattleTeam (InMessage & msg) {
 			for (unsigned n = 0; n != 6; ++n) {
 				pokemon.push_back (BattlePokemon (msg));
 			}

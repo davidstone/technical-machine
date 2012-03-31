@@ -19,6 +19,7 @@
 #include "damage.hpp"
 
 #include <iostream>
+#include <vector>
 
 #include "incorrect_calculation.hpp"
 
