@@ -35,6 +35,8 @@
 #include <string>
 #include "byte_order.hpp"
 
+using namespace boost::endian;
+
 namespace technicalmachine {
 namespace cryptography {
 namespace {

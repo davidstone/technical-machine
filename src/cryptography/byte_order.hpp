@@ -1,179 +1,424 @@
 // Byte reordering functions
-// Copyright (C) 2011 David Stone
 //
-// This program is free software: you can redistribute it and / or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
+// Copyright (C) 2012 David Stone
+// Distributed under the Boost Software License, Version 1.0.
+// See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt
 //
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Affero General Public License for more details.
+// See http://www.boost.org/libs/endian/ for documentation.
 //
-// You should have received a copy of the GNU Affero General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+// All functions for big-endian <-> little-endian conversions are defined in
+// terms of be_to_le. Because this function reverses the order of the bytes, it
+// is the same as a le_to_be function.
+//
+// For similar reasons, big-endian <-> PDP-endian will be defined in terms of
+// big-endian to PDP-endian and little-endian <-> PDP-endian converions will be
+// defined in terms of little-endian to PDP-endian. PDP-endian conversions are
+// not yet supported, other than the trivial one-byte integer conversions.
+//
+// Where no built-in byte swapping function can be found, I fall back on manual
+// bit shifting. The manual shifts are defined recursively, with the one-byte
+// integer being the base case that simply returns itself.
 
-#ifndef CRYPTOGRAPHY_BYTE_ORDER_H_
-#define CRYPTOGRAPHY_BYTE_ORDER_H_
+#ifndef BOOST_ENDIAN_BYTE_ORDER_HPP_
+#define BOOST_ENDIAN_BYTE_ORDER_HPP_
 
-#include <cstdint>
+#include <climits>
+#include <boost/cstdint.hpp>
 #include <boost/detail/endian.hpp>
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/utility/enable_if.hpp>
 
-namespace technicalmachine {
-namespace cryptography {
+#include "unsigned.hpp"
 
-constexpr uint8_t inline be_to_le (uint8_t x) {
-	return x;
+// The built-in versions are much faster than the generic versions (at least for GCC they are).
+
+#ifndef __has_builtin
+    #define __has_builtin(x) 0
+#endif
+
+// I'm not sure if this is the best test. I want to make sure the header
+// byteswap.h contains the builtins with the names listed below. I currently
+// use clang's feature test of __has_builtin for clang, which should always
+// work. If __has_builtin doesn't find the funcitons, then I check for the
+// definition of __GNUC__ in the hopes that the compiler actually is GCC, and
+// exclude verions of clang that fail the builtin test.
+
+#undef BOOST_ENDIAN_NO_INTRINSICS
+#undef BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_2
+#undef BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_4
+#undef BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_8
+
+#if (__has_builtin (bswap_16) && __has_builtin (bswap_32) && __has_builtin (bswap_64)) || (defined __GNUC__ && !defined __clang__)
+    #include <byteswap.h>
+    #define BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_2 bswap_16
+    #define BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_4 bswap_32
+    #define BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_8 bswap_64
+#elif defined _MSC_VER
+    #include <cstdlib>
+    #define BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_2 _byteswap_ushort
+    #define BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_4 _byteswap_ulong
+    #define BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_8 _byteswap_uint64
+#else
+    #define BOOST_ENDIAN_NO_INTRINSICS
+#endif
+
+namespace boost {
+namespace endian {
+
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) == 1, T>::type
+manual_byte_swap (T x) {
+    return x;
 }
 
-}	// namespace technicalmachine
-}	// namespace cryptography
-
-#if defined __GNUC__
-#include <byteswap.h>
-
-namespace technicalmachine {
-namespace cryptography {
-
-// The built-in versions are much faster than the generic versions.
-
-uint16_t inline be_to_le (uint16_t x) {
-	return bswap_16 (x);
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) != 1, T>::type
+manual_byte_swap (T x) {
+    // I break the number into halves, and swap the order of those halves, and then
+    // swap their overall order. So UNIX becomes (UN)(IX)->(NU)(XI)->XINU
+    typedef typename detail::Unsigned<T>::equal_t equal_t;
+    typedef typename detail::Unsigned<T>::half_t half_t;
+    size_t const shift = sizeof (T) / 2 * CHAR_BIT;
+    // I static_cast to an unsigned type of the same size prior to shifting
+    // because of the vague behavior of a left-shift of a signed value. In
+    // C++11 (5.8/2), shifting a signed negative value to the left is undefined
+    // behavior. In C++98 / C++03 (5.8/2), the result is not explicitly stated
+    // for signed negative values.
+    equal_t const left = static_cast<equal_t> (manual_byte_swap (static_cast<half_t> (x))) << shift;
+    // I static_cast to an unsigned type to avoid implementation-defined right
+    // shift of signed integer.
+    equal_t const right = manual_byte_swap (static_cast<half_t> (static_cast<equal_t> (x) >> shift));
+    return static_cast<T> (left | right);
 }
 
-uint32_t inline be_to_le (uint32_t x) {
-	return bswap_32 (x);
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) == 1, T>::type
+intrinsic_byte_swap (T x) {
+    return x;
 }
 
-uint64_t inline be_to_le (uint64_t x) {
-	return bswap_64 (x);
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) == 2, T>::type
+intrinsic_byte_swap (T x) {
+    typedef typename detail::Unsigned<T>::equal_t equal_t;
+    return static_cast<T> (BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_2 (static_cast<equal_t> (x)));
 }
 
-}	// namespace cryptography
-}	// namespace technicalmachine
-
-#else	// !defined __GNUC__
-// Should probably add support for other compiler's built-ins.
-
-namespace technicalmachine {
-namespace cryptography {
-
-constexpr uint16_t inline be_to_le (uint16_t x) {
-	return (x << 8) | (x >> 8);
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) == 4, T>::type
+intrinsic_byte_swap (T x) {
+    typedef typename detail::Unsigned<T>::equal_t equal_t;
+    return static_cast<T> (BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_4 (static_cast<equal_t> (x)));
 }
 
-constexpr uint32_t inline be_to_le (uint32_t x) {
-	// The static_cast <uint32_t> is there because there is only an implicit
-	// conversion to int, which is only guaranteed to be a 16-bit integer. On
-	// systems with 16-bit integers, there would not be enough width to shift
-	// 16 bits.
-	return (static_cast <uint32_t> (be_to_le (static_cast <uint16_t> (x))) << 16) | static_cast <uint32_t> (be_to_le (static_cast <uint16_t> (x >> 16)));
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) == 8, T>::type
+intrinsic_byte_swap (T x) {
+    typedef typename detail::Unsigned<T>::equal_t equal_t;
+    return static_cast<T> (BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_8 (static_cast<equal_t> (x)));
 }
 
-constexpr uint64_t inline be_to_le (uint64_t x) {
-	return (static_cast <uint64_t> (be_to_le (static_cast <uint32_t> (x))) << 32) | static_cast <uint64_t> (be_to_le (static_cast <uint32_t> (x >> 32)));
-
-	#if 0
-	Profiling showed the above to be much faster than this:
-	return ((x << 56) |
-		((x << 40) & (0xffULL << 48)) |
-		((x << 24) & (0xffULL << 40)) |
-		((x << 8)  & (0xffULL << 32)) |
-		((x >> 8)  & (0xffULL << 24)) |
-		((x >> 24) & (0xffULL << 16)) |
-		((x >> 40) & (0xffULL << 8)) |
-		(x  >> 56));
-	#endif
+template<typename T>
+T be_to_le (T x) {
+    #if defined BOOST_ENDIAN_NO_INTRINSICS
+        return manual_byte_swap (x);
+    #else
+        return intrinsic_byte_swap (x);
+    #endif
 }
 
-}	// namespace cryptography
-}	// namespace technicalmachine
+#undef BOOST_ENDIAN_NO_INTRINSICS
+#undef BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_2
+#undef BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_4
+#undef BOOST_ENDIAN_INTRINSIC_BYTE_SWAP_8
 
-#endif	// defined __GNUC__
-
-namespace technicalmachine {
-namespace cryptography {
-
-// Little endian to big endian
-
-template <typename T>
-T inline le_to_be (T x) {
-	return be_to_le (x);
+template<typename T>
+T le_to_be (T x) {
+    return be_to_le (x);
 }
 
-#ifdef BOOST_BIG_ENDIAN
-// Host to big endian
 
-template <typename T>
-constexpr T inline h_to_be (T x) {
-	return x;
-}
-// Big endian to host
-
-template <typename T>
-constexpr T inline be_to_h (T x) {
-	return x;
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) < 4, T>::type
+be_to_pdp (T x) {
+    return be_to_le (x);
 }
 
-// Host to little endian
 
-template <typename T>
-T inline h_to_le (T x) {
-	return be_to_le (x);
+// I have to make the check be >= 4 to allow dynamic endian conversion
+// routines. PDP Endianness isn't well defined for 8-byte numbers, so I'll just
+// define it as one possible extension of the 4-byte version, which flows
+// naturally from my template: DCBAHGFE
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) >= 4, T>::type
+be_to_pdp (T x) {
+    typedef typename detail::Unsigned<T>::equal_t equal_t;
+    typedef typename detail::Unsigned<T>::half_t half_t;
+    size_t const shift = sizeof (T) / 2 * CHAR_BIT;
+    half_t const unordered = static_cast<half_t> (static_cast<equal_t> (x) >> shift);
+    equal_t const left = static_cast<equal_t> (be_to_le (unordered)) << shift;
+    equal_t const right = be_to_le (static_cast<half_t> (x));
+    return static_cast<T> (left | right);
 }
 
-// Little endian to host
 
-template <typename T>
-T inline le_to_h (T x) {
-	return le_to_be (x);
+
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) < 4, T>::type
+le_to_pdp (T x) {
+    return x;
+}
+
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value && sizeof (T) >= 4, T>::type
+le_to_pdp (T x) {
+    typedef typename detail::Unsigned<T>::equal_t equal_t;
+    typedef typename detail::Unsigned<T>::half_t half_t;
+    size_t const shift = sizeof (T) / 2 * CHAR_BIT;
+    equal_t const left = static_cast<equal_t> (x) << shift;
+    equal_t const right = static_cast<equal_t> (x) >> shift;
+    return static_cast<T> (left | right);
+}
+
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value, T>::type
+pdp_to_be (T x) {
+    return be_to_pdp (x);
+}
+
+template<typename T>
+typename boost::enable_if_c< ::boost::is_integral<T>::value, T>::type
+pdp_to_le (T x) {
+    return le_to_pdp (x);
+}
+
+
+// In general, the h_to_format functions are not the same as the format_to_h
+// functions. Put another way, x == h_to_format (h_to_format (x)) will not
+// always be true. That they are for the three known endians is chance. For
+// instance, consider a new byte order, "Example-Endian", the byte order 2314.
+// If h_to_be (or any other host function defined below) were defined as simply
+// be_to_h, then calling h_to_be (be_to_h (x)) would not give x, as it should,
+// but rather, a number with bytes ordered 3124 relative to the original (so
+// they would be 1234 on this architecture). Instead, we'd need an extra call:
+// x == h_to_be (h_to_be (h_to_be (x))). If I ever need to add a new byte order
+// such as my Example-Endian, I'll have to rewrite the format_to_h functions to
+// not be defined as their inverse for dynamic byte ordering.
+
+namespace detail {
+
+enum ByteOrder { big_endian, little_endian, pdp_endian };
+
+inline ByteOrder determine_byte_order () {
+    boost::uint32_t const n = 0xAABBCCDD;
+    switch (*reinterpret_cast<boost::uint8_t const *> (&n)) {
+        case 0xDD:
+            return little_endian;
+        case 0xAA:
+            return big_endian;
+        default:    // 0xBB
+            return pdp_endian;
+    }
+}
+
+}    // namespace detail
+
+
+#if defined BOOST_BIG_ENDIAN
+
+template<typename T>
+T h_to_be (T x) {
+    return x;
+}
+
+template<typename T>
+T be_to_h (T x) {
+    return x;
+}
+
+template<typename T>
+T h_to_le (T x) {
+    return be_to_le (x);
+}
+
+template<typename T>
+T le_to_h (T x) {
+    return le_to_be (x);
+}
+
+template<typename T>
+T h_to_pdp (T x) {
+    return be_to_pdp (x);
+}
+
+template<typename T>
+T pdp_to_h (T x) {
+    return pdp_to_be (x);
 }
 
 #elif defined BOOST_LITTLE_ENDIAN
-// Host to big endian
 
-template <typename T>
-T inline h_to_be (T x) {
-	return le_to_be (x);
+template<typename T>
+T h_to_be (T x) {
+    return le_to_be (x);
 }
 
-// Big endian to host
-
-template <typename T>
-T inline be_to_h (T x) {
-	return be_to_le (x);
+template<typename T>
+T be_to_h (T x) {
+    return be_to_le (x);
 }
 
-// Host to little endian
-
-template <typename T>
-constexpr T inline h_to_le (T x) {
-	return x;
+template<typename T>
+T h_to_le (T x) {
+    return x;
 }
 
-// Little endian to host
-
-template <typename T>
-constexpr T inline le_to_h (T x) {
-	return x;
+template<typename T>
+T le_to_h (T x) {
+    return x;
 }
 
-#else
-// Should probably support PDP-Endian at some point
-#error Unknown byte order
+template<typename T>
+T h_to_pdp (T x) {
+    return le_to_pdp (x);
+}
+
+template<typename T>
+T pdp_to_h (T x) {
+    return pdp_to_le (x);
+}
+
+#elif defined BOOST_PDP_ENDIAN
+
+template<typename T>
+T h_to_be (T x) {
+    return pdp_to_be (x);
+}
+
+template<typename T>
+T be_to_h (T x) {
+    return be_to_pdp (x);
+}
+
+template<typename T>
+T h_to_le (T x) {
+    return pdp_to_le (x);
+}
+
+template<typename T>
+T le_to_h (T x) {
+    return le_to_pdp (x);
+}
+
+template<typename T>
+T h_to_pdp (T x) {
+    return x;
+}
+
+template<typename T>
+T pdp_to_h (T x) {
+    return x;
+}
+
+#else    // Determine byte order dynamically.
+
+// I could assign the result of detail::determine_byte_order () to a bool const
+// to avoid recalculating it on every run. I'm not sure of the best way to do
+// this so that dynamic byte ordering can be tested and the most common
+// implementation (where static byte ordering is possible) doesn't have any
+// performance penalty at all.
+
+namespace detail {
+
+ByteOrder const byte_order = detail::determine_byte_order ();
+
+template<typename T>
+T dynamic_h_to_be (T x) {
+    switch (byte_order) {
+        case little_endian:
+            return le_to_be (x);
+        case big_endian:
+            return x;
+        case pdp_endian:
+            return pdp_to_be (x);
+        default:
+            break;
+    }
+}
+
+template<typename T>
+T dynamic_h_to_le (T x) {
+    switch (byte_order) {
+        case little_endian:
+            return x;
+        case big_endian:
+            return be_to_le (x);
+        case pdp_endian:
+            return pdp_to_le (x);
+        default:
+            break;
+    }
+}
+
+template<typename T>
+T dynamic_h_to_pdp (T x) {
+    switch (byte_order) {
+        case little_endian:
+            return le_to_pdp (x);
+        case big_endian:
+            return be_to_pdp (x);
+        case pdp_endian:
+            return x;
+        default:
+            break;
+    }
+}
+}    // namespace detail
+
+template<typename T>
+T h_to_be (T x) {
+    return detail::dynamic_h_to_be (x);
+}
+
+template<typename T>
+T h_to_le (T x) {
+    return detail::dynamic_h_to_le (x);
+}
+
+template<typename T>
+T h_to_pdp (T x) {
+    return detail::dynamic_h_to_to_pdp (x);
+}
+
+template<typename T>
+T be_to_h (T x) {
+    return h_to_be (x);
+}
+
+template<typename T>
+T le_to_h (T x) {
+    return h_to_le (x);
+}
+
+template<typename T>
+T pdp_to_h (T x) {
+    return h_to_pdp (x);
+}
+
 #endif
 
-template <typename T>
-T inline h_to_n (T x) {
-	return h_to_be (x);
+template<typename T>
+T h_to_n (T x) {
+    return h_to_be (x);
 }
 
-template <typename T>
-T inline n_to_h (T x) {
-	return be_to_h (x);
+template<typename T>
+T n_to_h (T x) {
+    return be_to_h (x);
 }
 
-}	// namespace cryptography
-}	// namespace technicalmachine
-#endif	// CRYPTOGRAPHY_BYTE_ORDER_H_
+}    // namespace endian
+}    // namespace boost
+#endif    // BOOST_ENDIAN_BYTE_ORDER_HPP_
+
