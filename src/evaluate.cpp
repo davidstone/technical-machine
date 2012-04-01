@@ -194,7 +194,8 @@ Score::Score ():
 	baton_pass (0),
 	no_pp (0)
  {
-	// This is a separate function instead of being stuck in directly so support reloading of the constants.
+	// This is a separate function instead of being stuck in directly to support
+	// reloading of the constants.
 	load_evaluation_constants ();
 }
 
@@ -203,7 +204,7 @@ void Score::load_evaluation_constants () {
 	std::string line;
 	std::string const delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t x = line.find (delimiter);
+		size_t const x = line.find (delimiter);
 		std::string data = line.substr (0, x);
 		if (data == "Transposition Table") {
 			transposition_table = std::stoi (line.substr (x + delimiter.length ()));
@@ -320,7 +321,6 @@ void Score::load_evaluation_constants () {
 			no_pp = std::stoi (line.substr (x + delimiter.length ()));
 		}
 	}
-	file.close();
 }
 
 }
