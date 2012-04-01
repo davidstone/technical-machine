@@ -271,7 +271,7 @@ unsigned calculate_ability_effectiveness_modifier (Ability const ability, unsign
 }
 
 unsigned calculate_expert_belt_modifier (Item const item, unsigned const effectiveness, unsigned const damage) {
-	return (item.name == Item::EXPERT_BELT and effectiveness > 4) ? damage * 6 / 5 : damage;
+	return (item.boosts_super_effective_moves() and effectiveness > 4) ? damage * 6 / 5 : damage;
 }
 
 unsigned calculate_tinted_lens_multiplier (Ability const ability, unsigned const effectiveness) {

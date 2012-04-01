@@ -25,7 +25,6 @@ namespace technicalmachine {
 
 class Gender {
 	public:
-		// Silly genderless Pokemon not letting me use a bool.
 		enum Genders { FEMALE, GENDERLESS, MALE, END };
 		Genders gender;
 		
@@ -35,7 +34,7 @@ class Gender {
 		Gender & operator= (Gender other);
 		Gender & operator= (Genders other);
 
-		// Return 1 for same gender, -1 for opposite, and 0 if either is genderless
+		// Return 1 if the same, -1 if opposite, and 0 if either is genderless
 		int multiplier (Gender foe) const;
 		static std::string to_string (Genders gender);
 		std::string to_string () const;

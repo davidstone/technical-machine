@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "item.hpp"
+#include <algorithm>
 
 namespace technicalmachine {
 
@@ -32,6 +33,31 @@ bool Item::is_set () const {
 	return name != END;
 }
 
+void Item::set_if_unknown (Item::Items const item) {
+	if (!is_set ())
+		name = item;
+}
+
+bool Item::allows_switching () const {
+	return name == SHED_SHELL;
+}
+
+bool Item::boosts_defense_of_ditto () const {
+	return name == METAL_POWDER;
+}
+
+bool Item::boosts_super_effective_moves () const {
+	return name == EXPERT_BELT;
+}
+
+bool Item::causes_recoil () const {
+	return name == LIFE_ORB;
+}
+
+bool Item::grounds () const {
+	return name == IRON_BALL;
+}
+
 bool Item::is_choice_item () const {
 	switch (name) {
 		case CHOICE_BAND:
@@ -41,6 +67,44 @@ bool Item::is_choice_item () const {
 		default:
 			return false;
 	}
+}
+
+bool Item::is_gone () const {
+	return name == NO_ITEM;
+}
+
+void Item::remove () {
+	name = NO_ITEM;
+}
+
+bool Item::extends_hail () const {
+	return name == ICY_ROCK;
+}
+
+bool Item::extends_rain () const {
+	return name == DAMP_ROCK;
+}
+
+bool Item::extends_sand () const {
+	return name == SMOOTH_ROCK;
+}
+
+bool Item::extends_sun () const {
+	return name == HEAT_ROCK;
+}
+
+bool Item::extends_light_screen () const {
+	return name == LIGHT_CLAY;
+}
+
+bool Item::extends_reflect () const {
+	return name == LIGHT_CLAY;
+}
+
+void Item::steal (Item & other) {
+	using std::swap;
+	if (is_gone() and !other.blocks_trick())
+		swap (name, other.name);
 }
 
 int Item::get_berry_power () const {
@@ -428,6 +492,14 @@ bool Item::blocks_trick () const {
 		default:
 			return false;
 	}
+}
+
+bool operator== (Item const & lhs, Item const & rhs) {
+	return lhs.name == rhs.name;
+}
+
+bool operator!= (Item const & lhs, Item const & rhs) {
+	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

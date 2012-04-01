@@ -461,10 +461,9 @@ unsigned defense_ability_modifier (Pokemon const & defender) {
 }
 
 unsigned defense_item_modifier (Pokemon const & defender) {
-	if (!(defender.item.name == Item::METAL_POWDER and defender.name == DITTO))
-		return defender.def.stat;
-	else
-		return defender.def.stat * 3u / 2;
+	return (!(defender.item.boosts_defense_of_ditto() and defender.name == DITTO)) ?
+		defender.def.stat :
+		defender.def.stat * 3u / 2;
 }
 
 unsigned special_defense_ability_modifier (Pokemon const & defender, Weather const & weather) {
@@ -592,7 +591,7 @@ unsigned accuracy_ability_modifier (Team const & user) {
 	return user.chance_to_hit;
 }
 
-unsigned evasion_item_modifier (Team const & user, Item item) {
+unsigned evasion_item_modifier (Team const & user, Item const item) {
 	switch (item.name) {
 		case Item::BRIGHTPOWDER:
 			return user.chance_to_hit * 9u / 10;

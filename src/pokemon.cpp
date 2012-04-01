@@ -165,7 +165,7 @@ bool Pokemon::operator== (Pokemon const & other) const {
 			status.name == other.status.name and
 			sleep == other.sleep and
 			hp.stat == other.hp.stat and
-			item.name == other.item.name;
+			item == other.item;
 }
 
 bool Pokemon::operator!= (Pokemon const & other) const {

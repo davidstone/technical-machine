@@ -115,21 +115,36 @@ class Item {
 			YACHE_BERRY, YELLOW_FLUTE, YELLOW_SCARF, YELLOW_SHARD, ZAP_PLATE,
 			ZINC, ZOOM_LENS, END
 		};
-	
 		Items name;
-	
 		Item ();
 		explicit Item (Items item);
 		explicit Item (std::string const & str);
 		bool is_set () const;
+		void set_if_unknown (Items item);
+		bool allows_switching () const;
+		bool boosts_defense_of_ditto () const;
+		bool boosts_super_effective_moves () const;
+		bool causes_recoil () const;
+		bool grounds () const;
 		bool is_choice_item () const;
+		bool is_gone () const;
+		void remove ();
 		int get_berry_power () const;		// Returns 0 for non-berries
 		int get_fling_power () const;
 		bool blocks_trick () const;
+		bool extends_hail () const;
+		bool extends_rain () const;
+		bool extends_sand () const;
+		bool extends_sun () const;
+		bool extends_light_screen () const;
+		bool extends_reflect () const;
+		void steal (Item & other);
 		static std::string to_string (Items name);
 		std::string to_string () const;
 		static Items from_string (std::string const & str);
+		friend bool operator== (Item const & lhs, Item const & rhs);
 };
+bool operator!= (Item const & lhs, Item const & rhs);
 
 }	// namespace technicalmachine
 #endif	// ITEM_HPP_

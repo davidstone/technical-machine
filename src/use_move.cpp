@@ -118,7 +118,7 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 
 void do_damage (Team & user, Team & target, unsigned damage) {
 	damage_side_effect (target.pokemon(), damage);
-	if (user.pokemon().item.name == Item::LIFE_ORB)
+	if (user.pokemon().item.causes_recoil())
 		heal (user.pokemon(), -10);
 	if (target.pokemon().hp.stat > 0) {
 		if (target.bide != 0)
@@ -419,8 +419,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::COVET:
 		case Move::THIEF:
-			if (user.pokemon().item.name == Item::NO_ITEM)
-				user.pokemon().item = target.pokemon().item;
+			user.pokemon().item.steal (target.pokemon().item);
 			break;
 		case Move::CROSS_POISON:
 		case Move::GUNK_SHOT:
@@ -560,7 +559,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				target.confused = user.pokemon().move().variable().first;
 			break;
 		case Move::FLING:
-			user.pokemon().item.name = Item::NO_ITEM;
+			user.pokemon().item.remove();
 			break;
 		case Move::FLY:
 			if (user.vanish == LANDED)
@@ -591,7 +590,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			std::swap (user.stage [Stat::SPD], target.stage [Stat::SPD]);
 			break;
 		case Move::HAIL:
-			if (user.pokemon().item.name == Item::ICY_ROCK)
+			if (user.pokemon().item.extends_hail())
 				weather.set_hail (8);
 			else
 				weather.set_hail (5);
@@ -677,7 +676,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::LIGHT_SCREEN:
 			if (user.light_screen == 0) {
-				if (user.pokemon().item.name == Item::LIGHT_CLAY)
+				if (user.pokemon().item.extends_light_screen())
 					user.light_screen = 8;
 				else
 					user.light_screen = 5;
@@ -820,7 +819,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::RAGE:		// Fix
 			break;
 		case Move::RAIN_DANCE:
-			if (user.pokemon().item.name == Item::DAMP_ROCK)
+			if (user.pokemon().item.extends_rain())
 				weather.set_rain (8);
 			else
 				weather.set_rain (5);
@@ -840,7 +839,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::REFLECT:
 			if (user.reflect == 0) {
-				if (user.pokemon().item.name == Item::LIGHT_CLAY)
+				if (user.pokemon().item.extends_reflect())
 					user.reflect = 8;
 				else
 					user.reflect = 5;
@@ -873,7 +872,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				user.safeguard = 5;
 			break;
 		case Move::SANDSTORM:
-			if (user.pokemon().item.name == Item::SMOOTH_ROCK)
+			if (user.pokemon().item.extends_sand())
 				weather.set_sand (8);
 			else
 				weather.set_sand (5);
@@ -934,7 +933,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			}
 			break;
 		case Move::SUNNY_DAY:
-			if (user.pokemon().item.name == Item::HEAT_ROCK)
+			if (user.pokemon().item.extends_sun())
 				weather.set_sun (8);
 			else
 				weather.set_sun (5);

@@ -102,7 +102,7 @@ bool is_not_illegal_switch (Team const & user, Team const & other, Weather const
 }
 
 bool is_blocked_from_switching (Team const & user, Team const & other, Weather const & weather) {
-	return (other.pokemon().ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and user.pokemon().item.name != Item::SHED_SHELL;
+	return (other.pokemon().ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and !user.pokemon().item.allows_switching();
 }
 
 bool not_illegal_struggle (Pokemon const & user) {
