@@ -39,6 +39,7 @@ class GenericBattleSettings;
 
 class GenericClient {
 	public:
+		typedef std::map<uint32_t, std::shared_ptr<GenericBattle>> Battles;
 		std::string username;
 		std::string team_file_name;
 	protected:
@@ -56,7 +57,7 @@ class GenericClient {
 		// Battles that have not yet begun
 		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;
 		// Battles currently underway
-		std::map <uint32_t, std::shared_ptr <GenericBattle>> battles;
+		Battles battles;
 		std::map <std::string, uint32_t> channels;
 	public:
 		boost::asio::io_service io;
@@ -76,14 +77,12 @@ class GenericClient {
 		void connect ();
 	public:
 		void reconnect ();
+		void print_with_time_stamp (std::ostream & stream, std::string const & message) const;
 	protected:
 		virtual void send_keep_alive_message () = 0;
 	private:
 		virtual void join_channel (std::string const & channel) = 0;
 		virtual void part_channel (std::string const & channel) = 0;
-	protected:
-		void print_with_time_stamp (std::ostream & stream, std::string const & message) const;
-	private:
 		std::string time_stamp () const;
 	public:
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
@@ -102,10 +101,10 @@ class GenericClient {
 		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string get_response ();
-	protected:
-		void handle_battle_end (uint32_t battle_id, Result result);
-	private:
 		std::string generate_team_file_name ();
+	protected:
+		void handle_battle_end (Battles::iterator it, Result result);
+	private:
 		std::string get_random_string (unsigned size);
 	protected:
 		void handle_private_message (std::string const & sender, std::string const & message);

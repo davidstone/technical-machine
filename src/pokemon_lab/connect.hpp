@@ -26,6 +26,7 @@
 
 #include "inmessage.hpp"
 #include "../network/connect.hpp"
+#include "../battle_result.hpp"
 
 namespace technicalmachine {
 namespace pl {
@@ -74,6 +75,7 @@ class Client : public network::GenericClient {
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 	private:
 		void send_private_message (std::string const & user, std::string const & message);
+		Result get_result (Battles::iterator it, uint16_t winner);
 };
 
 } // namespace pl

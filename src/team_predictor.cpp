@@ -31,11 +31,11 @@ namespace {
 
 void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END][Species::END]);
 Species get_most_likely_pokemon (std::vector <float> const & estimate);
-void predict_move (Pokemon & member, int detailed [][7], unsigned size);
+void predict_move (Pokemon & member, int const detailed [][7], unsigned size);
 
 }	// unnamed namespace
 
-Team predict_team (int detailed [][7], Team team, unsigned size, bool using_lead) {
+Team predict_team (int const detailed [][7], Team team, unsigned size, bool using_lead) {
 	std::vector<unsigned> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	float multiplier [Species::END][Species::END];
@@ -90,7 +90,7 @@ Species get_most_likely_pokemon (std::vector <float> const & estimate) {
 	return name;
 }
 
-void predict_move (Pokemon & member, int detailed [][7], unsigned size) {
+void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
 	// Pokemon I've already seen will have their moveset filled out with
 	// Struggle and Switch# for each Pokemon still alive in their team. This
 	// makes sure that those Pokemon get all of their moves predicted.

@@ -41,7 +41,7 @@ void OutMessage::write_string (std::string const & str) {
 		write_byte (static_cast<uint8_t> (c));
 }
 
-void OutMessage::write_team (Team const & team) {
+void OutMessage::write_team (Team const & team, std::string const &) {
 	write_int (team.size);
 	for (Pokemon const & pokemon : team.pokemon.set) {
 		write_int (species_to_id (pokemon.name));

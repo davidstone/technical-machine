@@ -43,9 +43,6 @@
 
 namespace technicalmachine {
 namespace pl {
-namespace {
-Result get_result (uint8_t winner, uint16_t party_id);
-}	// unnamed namespace
 
 Client::Client (unsigned set_depth):
 	network::GenericClient (set_depth),
@@ -351,13 +348,9 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::BATTLE_END: {
 			uint32_t const battle_id = msg.read_int ();
 			// I'm interpreting party_id as uint16_t instead of int16_t.
-			uint16_t const party_id = msg.read_short ();
+			uint16_t const winner = msg.read_short ();
 			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				Result result = get_result (battle.party, party_id);
-				handle_battle_end (battle_id, result);
-			}
+			handle_battle_end (it, get_result (it, winner));
 			break;
 		}
 		case InMessage::BATTLE_USE_MOVE: {
@@ -746,7 +739,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	if (accepted) {
 		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name));
 		add_pending_challenge (battle);
-		msg.write_team (battle->ai);
+		battle->write_team (msg);
 		verb = "Accepted";
 	}
 	else
@@ -828,13 +821,12 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.send (*socket);
 }
 
-namespace {
-Result get_result (uint8_t winner, uint16_t party_id) {
-	if (party_id != 0xFFFF)
-		return (winner == party_id) ? WON : LOST;
+Result Client::get_result (Battles::iterator const it, uint16_t const winner) {
+	if (winner != 0xFFFF and it != battles.end())
+		return it->second->is_me (winner) ? WON : LOST;
 	else
 		return TIED;
 }
-}	// unnamed namespace
+
 } // namespace pl
 } // namespace technicalmachine

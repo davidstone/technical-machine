@@ -43,8 +43,6 @@
 #include "../settings_file.hpp"
 #include "../team_predictor.hpp"
 
-#include "../pokemon_lab/write_team_file.hpp"
-
 namespace technicalmachine {
 namespace network {
 namespace {
@@ -224,8 +222,7 @@ void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 
 void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
  	std::shared_ptr <GenericBattle> battle = challenges.find (opponent)->second;
- 	if (battle->party == static_cast <uint8_t> (-1))
-		battle->party = party;
+ 	battle->set_if_party_unknown (party);
 	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle>> (battle_id, battle));
 	challenges.erase (opponent);
 //	pause_at_start_of_battle ();
@@ -247,16 +244,10 @@ std::string get_extension () {
 
 }	// unnamed namespace
 
-void GenericClient::handle_battle_end (uint32_t battle_id, Result result) {
-	auto const it = battles.find (battle_id);
+void GenericClient::handle_battle_end (Battles::iterator const it, Result const result) {
 	if (it != battles.end ()) {
-		GenericBattle & battle = *it->second;
-		std::string const verb = to_string (result);
-		print_with_time_stamp (std::cout, verb + " a battle vs. " + battle.opponent);
-		if (result == LOST) {
-			Team const predicted = predict_team (detailed, battle.foe, battle.ai.size);
-			pl::write_team (predicted, generate_team_file_name ());
-		}
+		GenericBattle const & battle = *it->second;
+		battle.handle_end (*this, result);
 		battles.erase (it);
 	}
 }

@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-Team predict_team (int detailed [][7], Team team, unsigned size, bool using_lead = true);
+Team predict_team (int const detailed [][7], Team team, unsigned size, bool using_lead = true);
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR_HPP_

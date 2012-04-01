@@ -30,18 +30,20 @@
 namespace technicalmachine {
 namespace po {
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name):
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name, bool const challenger):
 	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team_file_name),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
+	party = challenger ? 0 : 1;
 }
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team):
+Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team, bool const challenger):
 	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
+	party = challenger ? 0 : 1;
 }
 
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg) {
@@ -115,9 +117,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			uint8_t const slot = 0;
 			handle_send_out (player, slot, index, nickname, species, gender, level);
 			if (player == party) {
-				for (unsigned n = 0; n != slot_memory.size (); ++n) {
-					if (ai.at_replacement ().name == slot_memory [n])
-						std::swap (slot_memory [0], slot_memory [n]);
+				for (Species name : slot_memory) {
+					if (ai.at_replacement ().name == name)
+						std::swap (slot_memory.front(), name);
 				}
 			}
 			break;
@@ -185,8 +187,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 				std::cerr << "AVOID\n";
 			else
 				std::cerr << "MISS\n";
-			bool const is_me = (party == player);
-			Team & team = is_me ? ai : foe;
+			Team & team = is_me (player) ? ai : foe;
 			team.miss = true;
 			break;
 		}
@@ -200,8 +201,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case CRITICAL_HIT: {
 			std::cerr << "CH\n";
-			bool const is_me = (party == player);
-			Team & team = is_me ? ai : foe;
+			Team & team = is_me (player) ? ai : foe;
 			team.ch = true;
 			break;
 		}
@@ -245,8 +245,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		}
 		case FLINCH: {
 			std::cerr << "FLINCH\n";
-			bool const is_me = (party == player);
-			Team & team = is_me ? ai : foe;
+			Team & team = is_me (player) ? ai : foe;
 			team.at_replacement().move().variable.index = 1;
 			break;
 		}

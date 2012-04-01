@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "battle_result.hpp"
 #include "endofturn.hpp"
 #include "expectiminimax.hpp"
 #include "gender.hpp"
@@ -39,15 +40,15 @@
 #include "network/connect.hpp"
 #include "network/outmessage.hpp"
 
+#include "pokemon_lab/write_team_file.hpp"
+
 namespace technicalmachine {
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
-	random_engine (seed),
 	opponent (_opponent),
+	random_engine (seed),
 	ai (6, random_engine, team_file_name),
 	depth (battle_depth),
-	active (nullptr),
-	inactive (nullptr),
 	party (unknown_party)
 	{
 	for (Pokemon const & pokemon : ai.pokemon.set)
@@ -56,17 +57,32 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 }
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
-	random_engine (seed),
 	opponent (_opponent),
+	random_engine (seed),
 	ai (team),
 	depth (battle_depth),
-	active (nullptr),
-	inactive (nullptr),
 	party (unknown_party)
 	{
 	for (Pokemon const & pokemon : ai.pokemon.set)
 		slot_memory.push_back (pokemon.name);
 	initialize_turn ();
+}
+
+bool GenericBattle::is_me (uint32_t const other_party) const {
+	return party == other_party;
+}
+
+void GenericBattle::set_if_party_unknown (uint8_t const new_party) {
+ 	if (party == 0xFF)
+		party = new_party;
+}
+
+void GenericBattle::write_team (network::OutMessage & msg, std::string const & username) {
+	msg.write_team (ai, username);
+}
+
+Team GenericBattle::predict_foe_team (int const detailed [Species::END][7]) const {
+	return predict_team (detailed, foe, ai.size);
 }
 
 void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
@@ -112,60 +128,55 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 }
 
 void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name) {
-	bool const is_me = (party == moving_party);
-	active = is_me ? & ai : & foe;
-	inactive = is_me ? & foe : & ai;
+	Team & active = is_me (moving_party) ? ai : foe;
+	Team & inactive = is_me (moving_party) ? foe : ai;
 
 	if (first == nullptr) {
-		first = active;
-		last = inactive;
+		first = &active;
+		last = &inactive;
 	}
 
-	active->moved = true;
-	if (!active->at_replacement().find_move (move_name)) {
-		Move move (move_name, 3, inactive->size);
-		active->at_replacement().move.add (move);
+	active.moved = true;
+	if (!active.at_replacement().find_move (move_name)) {
+		Move move (move_name, 3, inactive.size);
+		active.at_replacement().move.add (move);
 	}
-	active->at_replacement().move().variable.index = 0;
-	if (active->at_replacement().move().basepower != 0)
+	active.at_replacement().move().variable.index = 0;
+	if (active.at_replacement().move().basepower != 0)
 		move_damage = true;
 }
 
-void GenericBattle::handle_withdraw (uint8_t switching_party, uint8_t slot, std::string const & nickname) const {
-}
-
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
-	bool const is_me = (switching_party == party);
-	active = is_me ? &ai : &foe;
-	inactive = is_me ? &foe : &ai;
+	Team & active = is_me (switching_party) ? ai : foe;
+	Team & inactive = is_me (switching_party) ? foe : ai;
 
 	if (first == nullptr) {
-		first = active;
-		last = inactive;
+		first = &active;
+		last = &inactive;
 	}
 
 	// This is needed to make sure I don't overwrite important information in a
 	// situation in which a team switches multiple times in one turn (due to
 	// replacing fainted Pokemon).
-	size_t const replacement = active->replacement;
+	size_t const replacement = active.replacement;
 	
 	// If it hasn't been seen already, add it to the team.
-	if (!active->seen_pokemon (species)) {
-		active->add_pokemon (species, nickname, level, gender);
-		active->at_replacement ().new_hp = get_max_damage_precision ();
+	if (!active.seen_pokemon (species)) {
+		active.add_pokemon (species, nickname, level, gender);
+		active.at_replacement ().new_hp = get_max_damage_precision ();
 	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
-	if (inactive->pokemon.set.size () != 0 and inactive->at_replacement().move().is_phaze ()) {
-		inactive->at_replacement().move().variable.index = 0;
-		while (active->pokemon.set [inactive->at_replacement().move().variable.index].name != species)
-			++inactive->at_replacement().move().variable.index;
+	if (inactive.pokemon.set.size () != 0 and inactive.at_replacement().move().is_phaze ()) {
+		inactive.at_replacement().move().variable.index = 0;
+		while (active.pokemon.set [inactive.at_replacement().move().variable.index].name != species)
+			++inactive.at_replacement().move().variable.index;
 	}
-	else if (!active->moved) {
-		active->pokemon.set [replacement].move.index = 0;
-		while (active->pokemon.set [replacement].move().name != Move::SWITCH0)
-			++active->pokemon.set [replacement].move.index;
-		active->pokemon.set [replacement].move.index += active->replacement;		
+	else if (!active.moved) {
+		active.pokemon.set [replacement].move.index = 0;
+		while (active.pokemon.set [replacement].move().name != Move::SWITCH0)
+			++active.pokemon.set [replacement].move.index;
+		active.pokemon.set [replacement].move.index += active.replacement;		
 	}
 }
 
@@ -217,6 +228,14 @@ void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint
 void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
 	Team & fainter = (party == fainting_party) ? ai : foe;
 	fainter.at_replacement().fainted = true;
+}
+
+void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
+	std::string const verb = to_string (result);
+	client.print_with_time_stamp (std::cout, verb + " a battle vs. " + opponent);
+	if (result == LOST) {
+		pl::write_team (predict_foe_team (client.detailed), client.generate_team_file_name ());
+	}
 }
 
 uint8_t GenericBattle::switch_slot (Move::Moves move) const {

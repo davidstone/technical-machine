@@ -39,6 +39,8 @@ Battle::Battle (std::random_device::result_type seed, std::string const & oppone
 }
 
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
+#if 0
+// This needs a re-write
 //	std::cout << "party id: " << static_cast <int> (party) << '\n';
 //	std::cout << "category: " << static_cast <int> (category) << '\n';
 //	std::cout << "message_id: " << message_id << '\n';
@@ -449,9 +451,11 @@ void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <s
 		default:
 			break;
 	}
+#endif
 }
 
 void Battle::update_active_print (std::vector <std::string> const & arguments) {
+#if 0
 	// This needs to be changed to the correct message parser.
 	assert (!arguments.empty ());
 	if (boost::lexical_cast <int> (arguments [0] [3]) == party) {
@@ -462,6 +466,7 @@ void Battle::update_active_print (std::vector <std::string> const & arguments) {
 		active = & foe;
 		inactive = & ai;
 	}
+#endif
 }
 
 void Battle::handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp) {

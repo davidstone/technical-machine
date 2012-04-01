@@ -36,8 +36,8 @@ class Battle : public GenericBattle {
 		OutMessage action;
 		int16_t damage;
 	public:
-		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name);
-		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team);
+		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name, bool challenger);
+		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team, bool challenger);
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg);
 	private:
 		unsigned get_max_damage_precision () const;

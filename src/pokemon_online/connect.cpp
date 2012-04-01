@@ -418,8 +418,8 @@ void Client::parse_battle_finished (InMessage & msg) {
 		uint32_t const winner = msg.read_int ();
 		uint32_t const loser = msg.read_int ();
 		if (winner == my_id or loser == my_id) {
-			Result result = get_result (result_code, winner);
-			handle_battle_end (battle_id, result);
+			auto const it = battles.find (battle_id);
+			handle_battle_end (it, get_result (result_code, winner));
 		}
 	}
 }
@@ -740,11 +740,11 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	// work. It would require using a queue instead of a map.
 	try {
 		if (challenges.empty () and get_user_id (opponent)) {
-			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name));
-			battle->party = 0;
+			constexpr bool challenger = true;
+			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name, challenger));
 			add_pending_challenge (battle);
 			OutMessage msg (OutMessage::SEND_TEAM);
-			msg.write_team (battle->ai, username);
+			battle->write_team (msg, username);
 			msg.send (*socket);
 		}
 	}
@@ -781,8 +781,8 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	// See the description of send_battle_challenge() for why I make sure challenges is empty
 	if (accepted and challenges.empty ()) {
 		// They challenged me.
-		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team));
-		battle->party = 1;
+		constexpr bool challenger = false;
+		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team, challenger));
 		add_pending_challenge (battle);
 		msg.write_byte (ACCEPTED);
 		verb = "Accepted";
