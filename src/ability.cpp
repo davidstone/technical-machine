@@ -73,7 +73,7 @@ template<>
 bool Ability::blocks_status<Status::BURN> (Weather const & weather) const {
 	switch (name) {
 		case LEAF_GUARD:
-			return weather.sun;
+			return weather.sun();
 		case WATER_VEIL:
 			return true;
 		default:
@@ -90,7 +90,7 @@ template<>
 bool Ability::blocks_status<Status::PARALYSIS> (Weather const & weather) const {
 	switch (name) {
 		case LEAF_GUARD:
-			return weather.sun;
+			return weather.sun();
 		case LIMBER:
 			return true;
 		default:
@@ -104,7 +104,7 @@ bool Ability::blocks_status<Status::POISON> (Weather const & weather) const {
 		case IMMUNITY:
 			return true;
 		case LEAF_GUARD:
-			return weather.sun;
+			return weather.sun();
 		default:
 			return false;
 	}
@@ -122,7 +122,7 @@ bool Ability::blocks_status<Status::SLEEP> (Weather const & weather) const {
 		case VITAL_SPIRIT:
 			return true;
 		case LEAF_GUARD:
-			return weather.sun;
+			return weather.sun();
 		default:
 			return false;
 	}
@@ -222,11 +222,11 @@ bool Ability::boosts_defense (Status const status) const {
 }
 
 bool Ability::boosts_special_attack (Weather const & weather) const {
-	return name == SOLAR_POWER and weather.sun;
+	return name == SOLAR_POWER and weather.sun();
 }
 
 bool Ability::boosts_special_defense (Weather const & weather) const {
-	return name == FLOWER_GIFT and weather.sun;
+	return name == FLOWER_GIFT and weather.sun();
 }
 
 bool Ability::boosts_speed () const {
@@ -259,10 +259,10 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 				Stat::boost (switcher.stage [Stat::ATK], 1);
 			break;
 		case DRIZZLE:
-			weather.set_rain (-1);
+			weather.set_rain (Weather::Duration::permanent);
 			break;
 		case DROUGHT:
-			weather.set_sun (-1);
+			weather.set_sun (Weather::Duration::permanent);
 			break;
 		case FORECAST:	// TODO: fix this
 			break;
@@ -270,10 +270,10 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 			Stat::boost (other.stage [Stat::ATK], -1);
 			break;
 		case SAND_STREAM:
-			weather.set_sand (-1);
+			weather.set_sand (Weather::Duration::permanent);
 			break;
 		case SNOW_WARNING:
-			weather.set_hail (-1);
+			weather.set_hail (Weather::Duration::permanent);
 			break;
 		case TRACE:
 			break;

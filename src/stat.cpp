@@ -217,7 +217,7 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 		faster = nullptr;
 		slower = nullptr;
 	}
-	if (weather.trick_room)
+	if (weather.trick_room())
 		std::swap (faster, slower);
 }
 
@@ -233,7 +233,7 @@ void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 		user.chance_to_hit = evasion_item_modifier (user, target.pokemon().item);
 		user.chance_to_hit = evasion_ability_modifier (user, target, weather);
 
-		if (weather.gravity)
+		if (weather.gravity())
 			user.chance_to_hit = user.chance_to_hit * 5 / 3;
 
 		if (user.chance_to_hit > 100)
@@ -390,7 +390,7 @@ unsigned calculate_defense_before_power_trick (Pokemon const & defender) {
 unsigned attack_ability_modifier (Pokemon const & attacker, bool slow_start, Weather const & weather) {
 	switch (attacker.ability.name) {
 		case Ability::FLOWER_GIFT:
-			if (weather.sun)
+			if (weather.sun())
 				return attacker.atk.stat * 3u / 2;
 			break;
 		case Ability::GUTS:
@@ -491,20 +491,19 @@ unsigned special_defense_item_modifier (Pokemon const & defender) {
 }
 
 unsigned special_defense_sandstorm_boost (Team const & defender, Weather const & weather) {
-	if (!(is_type (defender, Type::ROCK) and weather.sand))
-		return defender.pokemon().spd.stat;
-	else
-		return defender.pokemon().spd.stat * 3u / 2;
+	return !(is_type (defender, Type::ROCK) and weather.sand()) ?
+		defender.pokemon().spd.stat :
+		defender.pokemon().spd.stat * 3u / 2;
 }
 
 unsigned speed_ability_modifier (Team const & team, Weather const & weather) {
 	switch (team.pokemon().ability.name) {
 		case Ability::CHLOROPHYLL:
-			if (weather.sun)
+			if (weather.sun())
 				return team.pokemon().spe.stat * 2u;
 			break;
 		case Ability::SWIFT_SWIM:
-			if (weather.rain)
+			if (weather.rain())
 				return team.pokemon().spe.stat * 2u;
 			break;
 		case Ability::UNBURDEN:
@@ -605,11 +604,11 @@ unsigned evasion_item_modifier (Team const & user, Item const item) {
 unsigned evasion_ability_modifier (Team const & user, Team const & target, Weather const & weather) {
 	switch (target.pokemon().ability.name) {
 		case Ability::SAND_VEIL:
-			if (weather.sand)
+			if (weather.sand())
 				return user.chance_to_hit * 4u / 5;
 			break;
 		case Ability::SNOW_CLOAK:
-			if (weather.hail)
+			if (weather.hail())
 				return user.chance_to_hit * 4u / 5;
 			break;
 		case Ability::TANGLED_FEET:

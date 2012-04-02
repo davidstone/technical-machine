@@ -210,11 +210,11 @@ unsigned calculate_weather_modifier (Type const type, Weather const & weather, u
 }
 
 bool weather_strengthens_type (Type const type, Weather const & weather) {
-	return (weather.rain and type == Type::WATER) or (weather.sun and type == Type::FIRE);
+	return (weather.rain() and type == Type::WATER) or (weather.sun() and type == Type::FIRE);
 }
 
 bool weather_weakens_type (Type const type, Weather const & weather) {
-	return (weather.rain and type == Type::FIRE) or (weather.sun and type == Type::WATER);
+	return (weather.rain() and type == Type::FIRE) or (weather.sun() and type == Type::WATER);
 }
 
 unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned const damage) {

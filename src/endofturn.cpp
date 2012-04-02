@@ -56,22 +56,17 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	endofturn1 (last);
 	endofturn2 (first);
 	endofturn2 (last);
-	decrement (weather.hail);
-	decrement (weather.sun);
-	decrement (weather.sand);
-	decrement (weather.rain);
+	weather.decrement();	// The order doesn't matter here.
 	if (!first.pokemon().ability.blocks_weather () and !last.pokemon().ability.blocks_weather ()) {
 		endofturn3 (first, weather);
 		endofturn3 (last, weather);
 	}
-	decrement (weather.gravity);
 	endofturn5 (first, last.pokemon(), weather);
 	endofturn5 (last, first.pokemon(), weather);
 	endofturn6 (first, weather);
 	endofturn6 (last, weather);
 	endofturn7 (first);
 	endofturn7 (last);
-	decrement (weather.trick_room);
 	reset_variable (first);
 	reset_variable (last);
 }
@@ -106,27 +101,27 @@ void endofturn2 (Team & team) {
 }
 
 void endofturn3 (Team & team, Weather const & weather) {
-	if (weather.hail and !is_type (team, Type::ICE))
+	if (weather.hail() and !is_type (team, Type::ICE))
 		heal (team.pokemon(), -16);
-	if (weather.sand and !team.pokemon().type.is_immune_to_sandstorm ())
+	if (weather.sand() and !team.pokemon().type.is_immune_to_sandstorm ())
 		heal (team.pokemon(), -16);
 	switch (team.pokemon().ability.name) {
 		case Ability::DRY_SKIN:
-			if (weather.rain)
+			if (weather.rain())
 				heal (team.pokemon(), 8);
-			else if (weather.sun)
+			else if (weather.sun())
 				heal (team.pokemon(), -8);
 			break;
 		case Ability::HYDRATION:
-			if (weather.rain)
+			if (weather.rain())
 				team.pokemon().status.clear ();
 			break;
 		case Ability::ICE_BODY:
-			if (weather.hail)
+			if (weather.hail())
 				heal (team.pokemon(), 16);
 			break;
 		case Ability::RAIN_DISH:
-			if (weather.rain)
+			if (weather.rain())
 				heal (team.pokemon(), 16);
 			break;
 		default:
@@ -225,7 +220,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	}
 	else
 		decrement (team.uproar);
-	decrement (weather.uproar);
+		// weather.uproar is already decremented
 
 	for (Move & move : team.pokemon().move.set)
 		decrement (move.disable);

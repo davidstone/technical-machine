@@ -221,7 +221,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Move::SMELLINGSALT:
 			return defender.pokemon().status.name == Status::PARALYSIS;
 		case Move::SOLARBEAM:
-			return !weather.rain;
+			return !weather.rain();
 		case Move::STOMP:
 			return defender.minimize;
 		case Move::SURF:
@@ -229,7 +229,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Move::WAKE_UP_SLAP:
 			return defender.pokemon().status.is_sleeping ();
 		case Move::WEATHER_BALL:
-			return weather.hail or weather.rain or weather.sand or weather.sun;
+			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:
 			return false;
 	}

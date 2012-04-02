@@ -137,7 +137,7 @@ std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & p
 }
 
 bool grounded (Team const & team, Weather const & weather) {
-	return !(is_type (team, Type::FLYING) or team.pokemon().ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity or team.pokemon().item.grounds() or team.ingrain;
+	return !(is_type (team, Type::FLYING) or team.pokemon().ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity() or team.pokemon().item.grounds() or team.ingrain;
 }
 
 bool TypeCollection::is_immune_to_sandstorm () const {

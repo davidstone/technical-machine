@@ -590,10 +590,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			std::swap (user.stage [Stat::SPD], target.stage [Stat::SPD]);
 			break;
 		case Move::HAIL:
-			if (user.pokemon().item.extends_hail())
-				weather.set_hail (8);
-			else
-				weather.set_hail (5);
+			weather.set_hail (user.pokemon().item.extends_hail());
 			break;
 		case Move::HAMMER_ARM:
 			Stat::boost (user.stage [Stat::SPE], -1);
@@ -727,9 +724,9 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::MOONLIGHT:
 		case Move::MORNING_SUN:
 		case Move::SYNTHESIS:
-			if (weather.sun)
+			if (weather.sun())
 				heal (user.pokemon(), 3, 2);
-			else if (weather.hail or weather.rain or weather.sand)
+			else if (weather.hail() or weather.rain() or weather.sand())
 				heal (user.pokemon(), 4);
 			else
 				heal (user.pokemon(), 2);
