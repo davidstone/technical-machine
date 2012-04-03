@@ -144,7 +144,7 @@ void special_damage_test () {
 	std::cout << "\t\tRunning max special damage tests.\n";
 	constexpr unsigned max_damage = 25696272;
 	Weather weather;
-	weather.set_sun (-1);
+	weather.set_sun (Weather::Duration::permanent);
 
 	Team attacker = create_max_damage_special_attacker ();
 	Pokemon & a = attacker.pokemon();

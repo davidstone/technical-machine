@@ -42,11 +42,11 @@ class Weather {
 		class Duration {
 			public:
 				enum Value : int8_t { standard = 5, extended = 8, permanent = -1 };
-				explicit Duration (Value const new_value):
+				// intentionally implicit
+				Duration (Value const new_value):
 					value (new_value) {
 				}
-				// Intentionally implicit
-				Duration (bool const is_extended):
+				explicit Duration (bool const is_extended):
 					value (is_extended ? extended : standard) {
 				}
 			private:
@@ -72,6 +72,10 @@ class Weather {
 		void set_sun (Duration duration);
 		void set_sand (Duration duration);
 		void set_rain (Duration duration);
+		void set_hail (bool is_extended);
+		void set_sun (bool is_extended);
+		void set_sand (bool is_extended);
+		void set_rain (bool is_extended);
 
 		template<Status::Statuses status>
 		bool blocks_status () const {

@@ -816,10 +816,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::RAGE:		// Fix
 			break;
 		case Move::RAIN_DANCE:
-			if (user.pokemon().item.extends_rain())
-				weather.set_rain (8);
-			else
-				weather.set_rain (5);
+			weather.set_rain (user.pokemon().item.extends_rain());
 			break;
 		case Move::RAPID_SPIN:
 			if (get_effectiveness (user.pokemon().move().type, target.pokemon()) > 0) {
@@ -869,10 +866,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				user.safeguard = 5;
 			break;
 		case Move::SANDSTORM:
-			if (user.pokemon().item.extends_sand())
-				weather.set_sand (8);
-			else
-				weather.set_sand (5);
+			weather.set_sand (user.pokemon().item.extends_sand());
 			break;
 		case Move::SCREECH:
 			Stat::boost (target.stage [Stat::DEF], -2);
@@ -930,10 +924,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			}
 			break;
 		case Move::SUNNY_DAY:
-			if (user.pokemon().item.extends_sun())
-				weather.set_sun (8);
-			else
-				weather.set_sun (5);
+			weather.set_sun (user.pokemon().item.extends_sun());
 			break;
 		case Move::SUPERPOWER:
 			Stat::boost (user.stage [Stat::ATK], -1);

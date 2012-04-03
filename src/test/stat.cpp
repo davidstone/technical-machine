@@ -57,7 +57,7 @@ void special_attack_tests () {
 	std::cout << "\tRunning Special Attack tests.\n";
 	constexpr unsigned max_special_attack = 4536;
 	Weather weather;
-	weather.set_sun (-1);
+	weather.set_sun (Weather::Duration::permanent);
 	Team attacker;
 
 	attacker.pokemon.set.push_back (Pokemon (Species::DEOXYS_A, team_size));
@@ -104,7 +104,7 @@ void special_defense_tests () {
 
 	Team defender;
 	Weather weather;
-	weather.set_sand (-1);
+	weather.set_sand (Weather::Duration::permanent);
 
 	defender.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = defender.pokemon();
@@ -123,7 +123,7 @@ void speed_tests () {
 	std::cout << "\tRunning Speed tests.\n";
 	constexpr unsigned max_speed = 12096;
 	Weather weather;
-	weather.set_rain (-1);
+	weather.set_rain (Weather::Duration::permanent);
 
 	Team team;
 

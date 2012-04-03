@@ -111,6 +111,18 @@ void Weather::set_sand (Duration const duration) {
 void Weather::set_rain (Duration const duration) {
 	set_weather (rain_duration, duration);
 }
+void Weather::set_hail (bool const is_extended) {
+	set_weather (hail_duration, Duration (is_extended));
+}
+void Weather::set_sun (bool const is_extended) {
+	set_weather (sun_duration, Duration (is_extended));
+}
+void Weather::set_sand (bool const is_extended) {
+	set_weather (sand_duration, Duration (is_extended));
+}
+void Weather::set_rain (bool const is_extended) {
+	set_weather (rain_duration, Duration (is_extended));
+}
 
 void Weather::set_weather (int8_t & primary, Duration const duration) {
 	if (primary == 0 or duration.value == Duration::permanent) {
