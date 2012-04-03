@@ -18,10 +18,11 @@
 
 #include "load_stats.hpp"
 
+#include <array>
 #include <cstddef>
 #include <fstream>
+#include <stdexcept>
 #include <string>
-#include <vector>
 #include <boost/lexical_cast.hpp>
 
 #include "move.hpp"
@@ -30,17 +31,44 @@
 
 namespace technicalmachine {
 
-std::vector <unsigned> overall_stats () {
-	std::vector<unsigned> overall;
-	overall.reserve (Species::END);
-	std::ifstream file ("settings/usage.txt");
+namespace {
+
+class InvalidSettingsFile : public std::runtime_error {
+	public:
+		enum Problem {
+			too_long,
+			too_short,
+			invalid_data
+		};
+		static std::string to_string (Problem const problem) {
+			static const std::string text [] = {
+				"is too long",
+				"is too short",
+				"contains invalid data"
+			};
+			return text [problem];
+		}
+		InvalidSettingsFile (std::string const & file_name, Problem const problem):
+			std::runtime_error (file_name + " " + to_string (problem) + ".") {
+		}
+};
+
+template<typename T>
+std::array<T, Species::END> load_stats_from_file (std::string const & file_name) {
+	std::array<T, Species::END> overall;
+	std::ifstream file (file_name);
 	std::string line;
-	for (getline (file, line); !file.eof(); getline (file, line))
-		overall.push_back (boost::lexical_cast<unsigned> (line));
+	unsigned n = 0;
+	for (getline (file, line); !file.eof(); getline (file, line)) {
+		if (n >= Species::END)
+			throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_long);
+		overall [n] = boost::lexical_cast<T> (line);
+		++n;
+	}
+	if (n != Species::END)
+		throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_short);
 	return overall;
 }
-
-namespace {
 
 void species_clause (float multiplier [Species::END] [Species::END]) {
 	for (unsigned a = 0; a != Species::END; ++a) {
@@ -56,14 +84,17 @@ void species_clause (float multiplier [Species::END] [Species::END]) {
 	}
 }
 
-void load_listed_multipliers (float multiplier [Species::END] [Species::END], std::vector <unsigned> const & overall, unsigned unaccounted [Species::END], unsigned total) {
-	std::ifstream file ("settings/teammate.txt");
+void load_listed_multipliers (float multiplier [Species::END] [Species::END], std::array<unsigned, Species::END> const & overall, std::array<unsigned, Species::END> & unaccounted, unsigned total) {
+	std::string const file_name = "settings/teammate.txt";
+	std::ifstream file (file_name);
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t const x = line.find ('\t');
 		unsigned const member = boost::lexical_cast<unsigned> (line.substr (0, x));
 		size_t const y = line.find ('\t', x + 1);
 		unsigned const ally = boost::lexical_cast<unsigned> (line.substr (x + 1, y - x - 1));
+		if (member >= Species::END or ally >= Species::END)
+			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
 		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
 		unaccounted [member] -= number_used_with;
 		float const per_cent_used_with = static_cast <float> (number_used_with) / overall [member];
@@ -72,7 +103,7 @@ void load_listed_multipliers (float multiplier [Species::END] [Species::END], st
 	}
 }
 
-void estimate_remaining_multipliers (float multiplier [Species::END] [Species::END], std::vector <unsigned> const & overall, unsigned const unaccounted [Species::END]) {
+void estimate_remaining_multipliers (float multiplier [Species::END] [Species::END], std::array<unsigned, Species::END> const & overall, std::array<unsigned, Species::END> const & unaccounted) {
 	for (unsigned a = 0; a != Species::END; ++a) {
 		if (overall [a] != 0) {
 			for (float & value : multiplier [a]) {
@@ -103,7 +134,15 @@ void estimate_remaining_multipliers (float multiplier [Species::END] [Species::E
 
 }	// unnamed namespace
 
-void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [Species::END][Species::END]) {
+std::array<unsigned, Species::END> overall_stats () {
+	return load_stats_from_file<unsigned> ("settings/usage.txt");
+}
+
+std::array<float, Species::END> lead_stats () {
+	return load_stats_from_file<float> ("settings/lead.txt");
+}
+
+void team_stats (std::array<unsigned, Species::END> const & overall, unsigned const total, float multiplier [Species::END][Species::END]) {
 
 	species_clause (multiplier);
 
@@ -113,7 +152,7 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 	// number until all known usages are gone. Then, assume the distribution of
 	// Pokemon not on the team mate stats is equal to the relative overall
 	// distribution and divide up all remaining usages proportionally.
-	unsigned unaccounted [Species::END];
+	std::array<unsigned, Species::END> unaccounted;
 	for (unsigned n = 0; n != Species::END; ++n)
 		unaccounted [n] = overall [n] * 5;
 
@@ -121,18 +160,9 @@ void team_stats (std::vector<unsigned> const & overall, unsigned const total, fl
 	estimate_remaining_multipliers (multiplier, overall, unaccounted);
 }
 
-std::vector <float> lead_stats () {
-	std::vector <float> lead;
-	lead.reserve (Species::END);
-	std::ifstream file ("settings/lead.txt");
-	std::string line;
-	for (getline (file, line); !file.eof(); getline (file, line))
-		lead.push_back (std::stof (line));
-	return lead;
-}
-
 void detailed_stats (int detailed [][7]) {
-	std::ifstream file ("settings/detailed.txt");
+	std::string const file_name = "settings/detailed.txt";
+	std::ifstream file (file_name);
 	std::string line;
 	Species old_member = Species::END;
 	bool ability = false;
@@ -140,8 +170,10 @@ void detailed_stats (int detailed [][7]) {
 	bool nature = false;
 	unsigned move = 0;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t x = line.find ('\t');
+		size_t const x = line.find ('\t');
 		Species new_member = Pokemon::from_string (line.substr (0, x));
+		if (new_member >= Species::END)
+			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
 		if (old_member != new_member) {
 			old_member = new_member;
 			ability = false;
@@ -149,8 +181,8 @@ void detailed_stats (int detailed [][7]) {
 			nature = false;
 			move = 0;
 		}
-		size_t y = line.find ('\t', x + 1);
-		size_t z = line.find ('\t', y + 1);
+		size_t const y = line.find ('\t', x + 1);
+		size_t const z = line.find ('\t', y + 1);
 		unsigned n = 7;
 		int data;
 		std::string sub = line.substr (x + 1, y - x - 1);

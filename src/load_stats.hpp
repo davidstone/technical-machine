@@ -19,17 +19,17 @@
 #ifndef LOAD_STATS_HPP_
 #define LOAD_STATS_HPP_
 
-#include <vector>
+#include <array>
 #include "species.hpp"
 
 namespace technicalmachine {
 
-std::vector <unsigned> overall_stats ();
+std::array<unsigned, Species::END> overall_stats ();
 
-void team_stats (std::vector<unsigned> const & overall, unsigned const total, float multiplier [Species::END][Species::END]);
+void team_stats (std::array<unsigned, Species::END> const & overall, unsigned total, float multiplier [Species::END][Species::END]);
 
 // Multiplier for Pokemon after you've seen the lead
-std::vector <float> lead_stats ();
+std::array<float, Species::END> lead_stats ();
 
 void detailed_stats (int detailed [][7]);
 

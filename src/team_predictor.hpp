@@ -19,8 +19,6 @@
 #ifndef TEAM_PREDICTOR_HPP_
 #define TEAM_PREDICTOR_HPP_
 
-#include <vector>
-
 #include "team.hpp"
 
 namespace technicalmachine {

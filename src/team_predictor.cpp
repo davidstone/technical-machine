@@ -18,7 +18,7 @@
 
 #include "team_predictor.hpp"
 
-#include <vector>
+#include <array>
 
 #include "ability.hpp"
 #include "load_stats.hpp"
@@ -29,23 +29,28 @@
 namespace technicalmachine {
 namespace {
 
-void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END][Species::END]);
-Species get_most_likely_pokemon (std::vector <float> const & estimate);
+template<typename T>
+std::array<T, Species::END> all_ones_array () {
+	std::array<T, Species::END> all_ones;
+	all_ones.fill (1);
+	return all_ones;
+}
+void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END][Species::END]);
+Species get_most_likely_pokemon (std::array<float, Species::END> const & estimate);
 void predict_move (Pokemon & member, int const detailed [][7], unsigned size);
 
 }	// unnamed namespace
 
 Team predict_team (int const detailed [][7], Team team, unsigned size, bool using_lead) {
-	std::vector<unsigned> const overall = overall_stats ();
+	std::array<unsigned, Species::END> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	float multiplier [Species::END][Species::END];
 	team_stats (overall, total, multiplier);
-	std::vector<float> const lead = using_lead ? lead_stats () : std::vector <float> (Species::END, 1);
+	std::array<float, Species::END> const lead = using_lead ? lead_stats () : all_ones_array<float>();
 	
-	std::vector<float> estimate;
-	estimate.reserve (Species::END);
+	std::array<float, Species::END> estimate;
 	for (unsigned n = 0; n != Species::END; ++n)
-		estimate.push_back (lead [n] * overall [n] / total);
+		estimate [n] = lead [n] * overall [n] / total;
 
 	for (Pokemon const & pokemon : team.pokemon.set) {
 		for (unsigned n = 0; n != Species::END; ++n)
@@ -64,7 +69,7 @@ Team predict_team (int const detailed [][7], Team team, unsigned size, bool usin
 
 namespace {
 
-void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier [Species::END] [Species::END]) {
+void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END] [Species::END]) {
 	while (team.pokemon.set.size() < team.size) {
 		Species const name = get_most_likely_pokemon (estimate);
 		Pokemon member (name, team.size);
@@ -77,7 +82,7 @@ void predict_pokemon (Team & team, std::vector<float> estimate, float multiplier
 	}
 }
 
-Species get_most_likely_pokemon (std::vector <float> const & estimate) {
+Species get_most_likely_pokemon (std::array<float, Species::END> const & estimate) {
 	Species name = Species::END;
 	float top = -1.0;
 	for (unsigned n = 0; n != Species::END; ++n) {
