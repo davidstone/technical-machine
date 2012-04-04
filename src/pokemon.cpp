@@ -41,7 +41,6 @@ Pokemon::Pokemon (Species member, unsigned size) :
 	new_hp (48),
 	fainted (false),
 	level (100),
-	mass (get_mass ()),
 	sleep (0),
 
 	happiness (255)
@@ -689,7 +688,7 @@ void Pokemon::set_type () {
 	}
 }
 
-uint8_t Pokemon::get_mass () const {
+uint8_t Pokemon::mass () const {
 	constexpr static uint8_t mass_array [] = {
 		100,	// Abomasnow
 		40,	// Abra

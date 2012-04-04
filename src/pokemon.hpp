@@ -54,7 +54,6 @@ class Pokemon {
 		uint16_t new_hp;		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		bool fainted;
 		uint8_t level;
-		uint8_t mass;		// power of Grass Knot / Low Kick, not the actual mass stat
 		uint8_t sleep;				// wakes up when this number is 2 through 5
 
 		uint8_t happiness;
@@ -64,6 +63,8 @@ class Pokemon {
 		// Returns whether the move is found. Modifies move.index
 		bool find_move (Move::Moves move_name);
 		void normalize_hp ();
+		// power of Grass Knot / Low Kick, not the actual mass stat
+		uint8_t mass () const;
 		static std::string to_string (Species name);
 		std::string to_string () const;
 		static Species from_string (std::string const & str);
@@ -77,7 +78,6 @@ class Pokemon {
 		bool operator!= (Pokemon const & other) const;
 	private:
 		void set_type ();
-		uint8_t get_mass () const;
 };
 
 }	// namespace technicalmachine

@@ -103,7 +103,7 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return 10 << std::min (static_cast<unsigned> (attacker.move().times_used), 4u);
 		case Move::GRASS_KNOT:
 		case Move::LOW_KICK:
-			return defender.pokemon().mass;
+			return defender.pokemon().mass();
 		case Move::GYRO_BALL: {
 			uint16_t const base_power = 25 * defender.pokemon().spe.stat / attacker.spe.stat + 1;
 			return (base_power <= 150) ? base_power : 150;
