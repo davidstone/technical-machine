@@ -36,7 +36,9 @@ namespace technicalmachine {
 
 class Pokemon {
 	public:
+		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
+		#endif
 		TypeCollection type;
 		Species name;
 		Ability ability;
@@ -69,6 +71,8 @@ class Pokemon {
 		uint8_t mass () const;
 		static std::string to_string (Species name);
 		std::string to_string () const;
+		std::string get_nickname () const;
+		void set_nickname (std::string const & nick);
 		static Species from_string (std::string const & str);
 		static bool is_alternate_form (Species first, Species second);
 		static bool is_deoxys (Species species);

@@ -45,7 +45,7 @@ void OutMessage::write_team (Team const & team, std::string const &) {
 	write_int (team.size);
 	for (Pokemon const & pokemon : team.pokemon.set) {
 		write_int (species_to_id (pokemon.name));
-		write_string (pokemon.nickname);
+		write_string (pokemon.get_nickname());
 		constexpr bool shiny = false;
 		write_byte (shiny);
 

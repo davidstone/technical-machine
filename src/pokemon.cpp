@@ -19,6 +19,7 @@
 #include "pokemon.hpp"
 
 #include <cstdint>
+#include <string>
 
 #include "ability.hpp"
 #include "active.hpp"
@@ -170,6 +171,20 @@ bool Pokemon::operator== (Pokemon const & other) const {
 
 bool Pokemon::operator!= (Pokemon const & other) const {
 	return !(*this == other);
+}
+
+std::string Pokemon::get_nickname () const {
+	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+		return nickname;
+	#else
+		return to_string();
+	#endif
+}
+
+void Pokemon::set_nickname (std::string const & nick) {
+	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+		nickname = nick;
+	#endif
 }
 
 void Pokemon::set_type () {

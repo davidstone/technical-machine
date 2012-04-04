@@ -65,9 +65,8 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned foe_size, unsigned my_size) {
 	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
 	Pokemon pokemon (Pokemon::from_string (species_str), my_size);
-	pokemon.nickname = pt.get <std::string> ("nickname");
-	if (pokemon.nickname.empty ())
-		pokemon.nickname = species_str;
+	std::string const nickname = pt.get <std::string> ("nickname");
+	pokemon.set_nickname (!nickname.empty() ? nickname : species_str);
 	pokemon.level = pt.get <uint8_t> ("level");
 	pokemon.happiness = pt.get <int> ("happiness");
 	std::string const gender_str = pt.get <std::string> ("gender");

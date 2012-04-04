@@ -265,7 +265,7 @@ void Team::add_pokemon (Species name, std::string const & nickname, unsigned lev
 	member.level = level;
 	member.gender = gender;
 
-	member.nickname = nickname;
+	// member.nickname = nickname;
 
 	pokemon.set.push_back (member);
 	replacement = pokemon.set.size() - 1;
@@ -467,7 +467,7 @@ std::string Team::to_string () const {
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
 		output += " (" + per_cent_hp + "% HP)";
 		output += " @ " + member.item.to_string ();
-		output += " ** " + member.nickname + '\n';
+		output += " ** " + member.get_nickname() + '\n';
 		if (member.ability.is_set ())
 			output += "\tAbility: " + member.ability.to_string () + '\n';
 		if (member.status.name != Status::NO_STATUS)

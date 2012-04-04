@@ -69,7 +69,7 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	unsigned const id = pt.get <unsigned> ("<xmlattr>.Num");
 	unsigned const forme = pt.get <unsigned> ("<xmlattr>.Forme");
 	Pokemon pokemon (id_to_species (id, forme), my_size);
-	pokemon.nickname = pt.get <std::string> ("<xmlattr>.Nickname");
+	pokemon.set_nickname (pt.get <std::string> ("<xmlattr>.Nickname"));
 	unsigned const item = pt.get <unsigned> ("<xmlattr>.Item");
 	pokemon.item.name = id_to_item (item);
 	unsigned const ability = pt.get <unsigned> ("<xmlattr>.Ability");
