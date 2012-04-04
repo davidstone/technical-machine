@@ -36,12 +36,6 @@ namespace {
 
 unsigned calculate_initial_stat (Stat const & stat, unsigned level);
 
-unsigned atk_nature_boost (Nature nature);
-unsigned def_nature_boost (Nature nature);
-unsigned spa_nature_boost (Nature nature);
-unsigned spd_nature_boost (Nature nature);
-unsigned spe_nature_boost (Nature nature);
-
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker);
 unsigned calculate_defense_before_power_trick (Pokemon const & defender);
 
@@ -116,7 +110,7 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 void calculate_special_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
 	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level);
-	pokemon.spa.stat = pokemon.spa.stat * spa_nature_boost (pokemon.nature) / 10;
+	pokemon.spa.stat = pokemon.spa.stat * pokemon.nature.boost<Stat::SPA>() / 10;
 
 	pokemon.spa.stat = attacking_stage_modifier (pokemon.spa, attacker.stage [Stat::SPA], attacker.ch);
 
@@ -155,7 +149,7 @@ void calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 void calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
 	Pokemon & pokemon = defender.pokemon ();
 	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level);
-	pokemon.spd.stat = pokemon.spd.stat * spd_nature_boost (pokemon.nature) / 10;
+	pokemon.spd.stat = pokemon.spd.stat * pokemon.nature.boost<Stat::SPD>() / 10;
 	
 	pokemon.spd.stat = defending_stage_modifier (pokemon.spd, defender.stage [Stat::SPD], ch);
 
@@ -171,7 +165,7 @@ void calculate_special_defense (Team & defender, Weather const & weather, bool c
 void calculate_speed (Team & team, Weather const & weather) {
 	Pokemon & pokemon = team.pokemon();
 	pokemon.spe.stat = calculate_initial_stat (pokemon.spe, pokemon.level);
-	pokemon.spe.stat = pokemon.spe.stat * spe_nature_boost (pokemon.nature) / 10;
+	pokemon.spe.stat = pokemon.spe.stat * pokemon.nature.boost<Stat::SPE>() / 10;
 	
 	pokemon.spe.stat = speed_stage_modifier (pokemon.spe, team.stage [Stat::SPE]);
 
@@ -248,91 +242,6 @@ unsigned calculate_initial_stat (Stat const & stat, unsigned level) {
 	return (2u * stat.base + stat.iv + stat.ev) * level / 100 + 5;
 }
 
-unsigned atk_nature_boost (Nature nature) {
-	switch (nature.name) {
-		case Nature::ADAMANT:
-		case Nature::BRAVE:
-		case Nature::LONELY:
-		case Nature::NAUGHTY:
-			return 11;
-		case Nature::BOLD:
-		case Nature::CALM:
-		case Nature::MODEST:
-		case Nature::TIMID:
-			return 9;
-		default:
-			return 10;
-	}
-}
-
-unsigned def_nature_boost (Nature nature) {
-	switch (nature.name) {
-		case Nature::BOLD:
-		case Nature::IMPISH:
-		case Nature::LAX:
-		case Nature::RELAXED:
-			return 11;
-		case Nature::GENTLE:
-		case Nature::HASTY:
-		case Nature::LONELY:
-		case Nature::MILD:
-			return 9;
-		default:
-			return 10;
-	}
-}
-
-unsigned spa_nature_boost (Nature nature) {
-	switch (nature.name) {
-		case Nature::MILD:
-		case Nature::MODEST:
-		case Nature::QUIET:
-		case Nature::RASH:
-			return 11;
-		case Nature::ADAMANT:
-		case Nature::CAREFUL:
-		case Nature::IMPISH:
-		case Nature::JOLLY:
-			return 9;
-		default:
-			return 10;
-	}
-}
-
-unsigned spd_nature_boost (Nature nature) {
-	switch (nature.name) {
-		case Nature::CALM:
-		case Nature::CAREFUL:
-		case Nature::GENTLE:
-		case Nature::SASSY:
-			return 11;
-		case Nature::LAX:
-		case Nature::NAIVE:
-		case Nature::NAUGHTY:
-		case Nature::RASH:
-			return 9;
-		default:
-			return 10;
-	}
-}
-
-unsigned spe_nature_boost (Nature nature) {
-	switch (nature.name) {
-		case Nature::HASTY:
-		case Nature::JOLLY:
-		case Nature::NAIVE:
-		case Nature::TIMID:
-			return 11;
-		case Nature::BRAVE:
-		case Nature::QUIET:
-		case Nature::RELAXED:
-		case Nature::SASSY:
-			return 9;
-		default:
-			return 10;
-	}
-}
-
 template<typename Integer>
 unsigned positive_stage_boost (Integer const stat, int const stage, unsigned const base) {
 	return stat * (base + static_cast<unsigned> (stage)) / base;
@@ -377,12 +286,12 @@ unsigned evasion_stage_modifier (Team const & user, int evasion_stage) {
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {
 	unsigned const n = calculate_initial_stat (attacker.atk, attacker.level);
-	return n * atk_nature_boost (attacker.nature) / 10;
+	return n * attacker.nature.boost<Stat::ATK>() / 10;
 }
 
 unsigned calculate_defense_before_power_trick (Pokemon const & defender) {
 	unsigned const n = calculate_initial_stat (defender.def, defender.level);
-	return n * def_nature_boost (defender.nature) / 10;
+	return n * defender.nature.boost<Stat::DEF>() / 10;
 }
 
 unsigned attack_ability_modifier (Pokemon const & attacker, bool slow_start, Weather const & weather) {

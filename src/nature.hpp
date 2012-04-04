@@ -20,6 +20,7 @@
 #define NATURE_HPP_
 
 #include <string>
+#include "stat.hpp"
 
 namespace technicalmachine {
 
@@ -57,6 +58,9 @@ class Nature {
 		Nature ();
 		Nature (std::string const & str);
 		bool is_set () const;
+		void set_if_unknown (Natures nature);
+		template<Stat::Stats>
+		unsigned boost () const;
 		static std::string to_string (Natures name);
 		std::string to_string () const;
 		static Natures from_string (std::string const & str);

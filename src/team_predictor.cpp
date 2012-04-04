@@ -60,8 +60,7 @@ Team predict_team (int const detailed [][7], Team team, unsigned size, bool usin
 	for (Pokemon & pokemon : team.pokemon.set) {
 		pokemon.ability.set_if_unknown (static_cast <Ability::Abilities> (detailed [pokemon.name] [0]));
 		pokemon.item.set_if_unknown (static_cast <Item::Items> (detailed [pokemon.name] [1]));
-		if (!pokemon.nature.is_set ())
-			pokemon.nature.name = static_cast <Nature::Natures> (detailed [pokemon.name] [2]);
+		pokemon.nature.set_if_unknown (static_cast <Nature::Natures> (detailed [pokemon.name] [2]));
 		predict_move (pokemon, detailed, size);
 	}
 	return team;
