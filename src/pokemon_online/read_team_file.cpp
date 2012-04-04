@@ -69,6 +69,8 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	unsigned const id = pt.get <unsigned> ("<xmlattr>.Num");
 	unsigned const forme = pt.get <unsigned> ("<xmlattr>.Forme");
 	Pokemon pokemon (id_to_species (id, forme), my_size);
+	if (id == 0)
+		return pokemon;
 	pokemon.set_nickname (pt.get <std::string> ("<xmlattr>.Nickname"));
 	unsigned const item = pt.get <unsigned> ("<xmlattr>.Item");
 	pokemon.item.name = id_to_item (item);
@@ -113,7 +115,8 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	for (auto const & value : all_pokemon) {
 		if (value.first == "Pokemon") {
 			Pokemon const pokemon = load_pokemon (value.second, foe_size, team.size);
-			team.pokemon.set.push_back (pokemon);
+			if (pokemon.name != Species::END)
+				team.pokemon.set.push_back (pokemon);
 		}
 	}
 	team.size = team.pokemon.set.size ();

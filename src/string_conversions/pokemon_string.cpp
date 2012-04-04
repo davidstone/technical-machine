@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-std::string Pokemon::to_string (Species name) {
+std::string Pokemon::to_string (Species const name) {
 	static std::string const name_to_string [] = {
 		"Abomasnow", "Abra", "Absol", "Aerodactyl", "Aggron",
 		"Aipom", "Alakazam", "Altaria", "Ambipom", "Ampharos",
