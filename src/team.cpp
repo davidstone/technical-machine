@@ -475,7 +475,7 @@ std::string Team::to_string () const {
 			output += "\tAbility: " + member.ability.to_string () + '\n';
 		if (member.status.name != Status::NO_STATUS)
 			output += "\tStatus: " + member.status.to_string () + '\n';
-		for (std::vector<Move>::const_iterator move = member.move.set.begin(); move->name != Move::STRUGGLE; ++move)
+		for (std::vector<Move>::const_iterator move = member.move.set.cbegin(); move->name != Move::STRUGGLE; ++move)
 			output += "\t- " + move->to_string() + "\n";
 	}
 	return output;

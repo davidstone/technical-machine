@@ -18,6 +18,7 @@
 
 #include "battle.hpp"
 
+#include <cassert>
 #include <cstdint>
 #include <ctime>
 #include <iostream>
@@ -239,13 +240,13 @@ void GenericBattle::handle_end (network::GenericClient & client, Result const re
 }
 
 uint8_t GenericBattle::switch_slot (Move::Moves move) const {
-	uint8_t slot = Move::to_replacement (move);
-	uint8_t n = 0;
-	for (; n != slot_memory.size(); ++n) {
+	uint8_t const slot = Move::to_replacement (move);
+	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == ai.pokemon.set [slot].name)
-			break;
+			return n;
 	}
-	return n;
+	assert (false);
+	return 0;
 }
 
 unsigned GenericBattle::get_max_damage_precision () const {

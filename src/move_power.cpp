@@ -18,6 +18,7 @@
 
 #include "move_power.hpp"
 
+#include <algorithm>
 #include <cstdint>
 
 #include "ability.hpp"
@@ -79,7 +80,7 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return 150 * attacker.hp.stat / attacker.hp.max;
 		case Move::FLAIL:
 		case Move::REVERSAL: {
-			unsigned k = 64u * attacker.hp.stat / attacker.hp.max;
+			unsigned const k = 64u * attacker.hp.stat / attacker.hp.max;
 			if (k <= 1)
 				return 200;
 			else if (k <= 5)
@@ -97,13 +98,9 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return attacker.item.get_fling_power ();
 		case Move::FRUSTRATION:
 			return 102 - attacker.happiness * 2 / 5;
-		case Move::FURY_CUTTER: {
-			unsigned n = attacker.move().times_used;
-			if (n > 4)
-				n = 4;
+		case Move::FURY_CUTTER:
 			// 10 * 2 ^ n
-			return 10 << n;
-		}
+			return 10 << std::min (static_cast<unsigned> (attacker.move().times_used), 4u);
 		case Move::GRASS_KNOT:
 		case Move::LOW_KICK:
 			return defender.pokemon().mass;
@@ -112,13 +109,9 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return (base_power <= 150) ? base_power : 150;
 		}
 		case Move::ICE_BALL:
-		case Move::ROLLOUT: {
-			unsigned n = attacker.move().times_used;
-			if (n > 4)
-				n = 4;
+		case Move::ROLLOUT:
 			// 30 * 2 ^ n
-			return 30 << n;
-		}
+			return 30 << std::min (static_cast<unsigned> (attacker.move().times_used), 4u);
 		case Move::HIDDEN_POWER: {
 			uint8_t const u = second_lowest_bit (attacker.hp) * (1 << 0);	// 1
 			uint8_t const v = second_lowest_bit (attacker.atk) * (1 << 1);	// 2
@@ -136,6 +129,7 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return attacker.move().variable().first;
 		case Move::PUNISHMENT: {
 			uint16_t base_power = 60;
+			// TODO: some kind of loop
 			if (defender.stage [Stat::ATK] > 0)
 				base_power += 20 * defender.stage [Stat::ATK];
 			if (defender.stage [Stat::DEF] > 0)
@@ -152,12 +146,8 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return attacker.happiness * 2 / 5;
 		case Move::SPIT_UP:
 			return stockpile * 100;
-		case Move::TRIPLE_KICK: {
-			unsigned n = attacker.move().times_used + 1u;
-			if (n > 3)
-				n = 3;
-			return 10 * n;
-		}
+		case Move::TRIPLE_KICK:
+			return 10 * std::min (static_cast<unsigned> (attacker.move().times_used), 3u);
 		case Move::TRUMP_CARD:
 			switch (attacker.move().pp) {
 				case 0:
@@ -380,41 +370,12 @@ unsigned attacker_ability_modifier (Pokemon const & attacker, Pokemon const & de
 				return attacker.move().power * 3u / 2;
 			break;
 		case Ability::IRON_FIST:
-			switch (attacker.move().name) {
-				case Move::BULLET_PUNCH:
-				case Move::COMET_PUNCH:
-				case Move::DIZZY_PUNCH:
-				case Move::DRAIN_PUNCH:
-				case Move::DYNAMICPUNCH:
-				case Move::FIRE_PUNCH:
-				case Move::FOCUS_PUNCH:
-				case Move::HAMMER_ARM:
-				case Move::ICE_PUNCH:
-				case Move::MACH_PUNCH:
-				case Move::MEGA_PUNCH:
-				case Move::METEOR_MASH:
-				case Move::SHADOW_PUNCH:
-				case Move::SKY_UPPERCUT:
-				case Move::THUNDERPUNCH:
-					return attacker.move().power * 6u / 5;
-				default:
-					break;
-			}
+			if (attacker.move().is_boosted_by_iron_fist())
+				return attacker.move().power * 6u / 5;
 			break;
 		case Ability::RECKLESS:
-			switch (attacker.move().name) {
-				case Move::BRAVE_BIRD:
-				case Move::DOUBLE_EDGE:
-				case Move::FLARE_BLITZ:
-				case Move::HEAD_SMASH:
-				case Move::SUBMISSION:
-				case Move::TAKE_DOWN:
-				case Move::VOLT_TACKLE:
-				case Move::WOOD_HAMMER:
-					return attacker.move().power * 6u / 5;
-				default:
-					break;
-			}
+			if (attacker.move().is_boosted_by_reckless())
+				return attacker.move().power * 6u / 5;
 			break;
 		case Ability::RIVALRY:
 			// Same gender == 20 + 5, opposite gender == 20 - 5

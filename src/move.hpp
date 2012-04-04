@@ -150,6 +150,7 @@ class Move {
 		static uint16_t const max_probability;
 
 		Move (Moves move, int pp_ups, unsigned size);
+		void reset ();
 		uint64_t hash() const;
 		static std::string to_string (Moves name);
 		std::string to_string () const;
@@ -161,12 +162,20 @@ class Move {
 		static Moves from_replacement (unsigned replacement);
 		static unsigned to_replacement (Moves name);
 		unsigned to_replacement () const;
+		bool has_follow_up_decision () const;
+		bool calls_other_move () const;
+		bool was_used_last () const;
+		bool cannot_ko () const;
+		bool is_out_of_pp () const;
+		bool breaks_screens () const;
 		bool is_struggle_or_switch () const;
 		static bool is_phaze (Moves name);
 		bool is_phaze () const;
 		static bool is_healing (Moves name);
 		bool is_healing () const;
 		bool is_blocked_by_gravity () const;
+		bool is_boosted_by_iron_fist () const;
+		bool is_boosted_by_reckless() const;
 		bool is_usable_while_sleeping () const;
 		bool is_usable_while_frozen () const;
 		bool is_self_KO () const;

@@ -395,16 +395,9 @@ int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, un
 		int64_t const other_win = Score::win (other);
 		if (user_win or other_win)
 			return user_win + other_win;
-		switch (user.pokemon().move().name) {
-			case Move::BATON_PASS:
-			case Move::U_TURN:
-				if (user.pokemon.set.size () > 1) {
-					Move::Moves phony = Move::END;
-					return move_then_switch_branch (user, other, weather, depth, score, phony);
-				}
-				break;
-			default:
-				break;
+		if (user.pokemon().move().has_follow_up_decision() and user.pokemon.set.size () > 1) {
+			Move::Moves phony = Move::END;
+			return move_then_switch_branch (user, other, weather, depth, score, phony);
 		}
 	}
 	return Score::VICTORY + 1;		// return an illegal value

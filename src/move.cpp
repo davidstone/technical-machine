@@ -58,6 +58,11 @@ Move::Move (Moves move, int pp_ups, unsigned size) :
 	times_used (0) {
 }
 
+void Move::reset () {
+	disable = 0;
+	times_used = 0;
+}
+
 uint64_t Move::hash () const {
 	return static_cast<uint64_t> (
 			name + END *
@@ -267,6 +272,47 @@ unsigned Move::to_replacement () const {
 	return to_replacement (name);
 }
 
+bool Move::has_follow_up_decision () const {
+	switch (name) {
+		case BATON_PASS:
+		case U_TURN:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Move::calls_other_move () const {
+	switch (name) {
+//		case Move::NATURE_POWER:
+		case Move::ASSIST:
+		case Move::COPYCAT:
+		case Move::ME_FIRST:
+		case Move::METRONOME:
+		case Move::MIRROR_MOVE:
+		case Move::SLEEP_TALK:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Move::is_out_of_pp () const {
+	return pp == 0;
+}
+
+bool Move::cannot_ko () const {
+	return name == FALSE_SWIPE;
+}
+
+bool Move::breaks_screens () const {
+	return name == BRICK_BREAK;
+}
+
+bool Move::was_used_last () const {
+	return times_used != 0;
+}
+
 bool Move::is_struggle_or_switch () const {
 	return pp_max == unlimited_pp;
 }
@@ -317,6 +363,45 @@ bool Move::is_blocked_by_gravity () const {
 		case JUMP_KICK:
 		case MAGNET_RISE:
 		case SPLASH:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Move::is_boosted_by_iron_fist () const {
+	switch (name) {
+		case BULLET_PUNCH:
+		case COMET_PUNCH:
+		case DIZZY_PUNCH:
+		case DRAIN_PUNCH:
+		case DYNAMICPUNCH:
+		case FIRE_PUNCH:
+		case FOCUS_PUNCH:
+		case HAMMER_ARM:
+		case ICE_PUNCH:
+		case MACH_PUNCH:
+		case MEGA_PUNCH:
+		case METEOR_MASH:
+		case SHADOW_PUNCH:
+		case SKY_UPPERCUT:
+		case THUNDERPUNCH:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool Move::is_boosted_by_reckless() const {
+	switch (name) {
+		case BRAVE_BIRD:
+		case DOUBLE_EDGE:
+		case FLARE_BLITZ:
+		case HEAD_SMASH:
+		case SUBMISSION:
+		case TAKE_DOWN:
+		case VOLT_TACKLE:
+		case WOOD_HAMMER:
 			return true;
 		default:
 			return false;

@@ -80,7 +80,7 @@ unsigned capped_damage (Team const & attacker, Team const & defender, Weather co
 	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage >= defender.pokemon().hp.stat) {
 		damage = defender.pokemon().hp.stat;
-		if (attacker.pokemon().move().name == Move::FALSE_SWIPE or defender.endure)
+		if (attacker.pokemon().move().cannot_ko() or defender.endure)
 			--damage;
 	}
 	return damage;
@@ -109,9 +109,8 @@ unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather 
 			return 20;
 		case Move::SUPER_FANG:
 			return defender.pokemon().hp.stat / 2;
-		default: {
+		default:
 			return regular_damage (attacker, defender, weather);
-		}
 	}
 }
 

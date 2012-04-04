@@ -121,10 +121,8 @@ void reset_variables (Team & team) {
 	team.vanish = LANDED;
 	team.yawn = 0;
 
-	for (Move & move : team.pokemon().move.set) {
-		move.disable = 0;
-		move.times_used = 0;
-	}
+	for (Move & move : team.pokemon().move.set)
+		move.reset();
 }
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {

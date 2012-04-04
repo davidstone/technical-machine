@@ -18,6 +18,7 @@
 
 #include "use_move.hpp"
 
+#include <algorithm>
 #include <cassert>
 
 #include "ability.hpp"
@@ -45,41 +46,43 @@ void do_damage (Team & user, Team & target, unsigned damage);
 void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage);
 void lower_pp (Team & user, Pokemon const & target);
 
+class ResetIndex {
+	public:
+		ResetIndex (Pokemon & pokemon):
+			reset (pokemon),
+			index (pokemon.move.index) {
+		}
+		~ResetIndex () {
+			reset.move.index = index;
+		}
+	private:
+		Pokemon & reset;
+		uint8_t const index;
+};
+
 }	// unnamed namespace
 
-unsigned call_move (Team & user, Team & target, Weather & weather, unsigned log_damage) {
-	unsigned damage = (log_damage == -1u) ? 0 : log_damage;
+unsigned call_move (Team & user, Team & target, Weather & weather, unsigned const log_damage) {
 	user.destiny_bond = false;
 	user.lock_on = false;
 	user.moved = true;
-	bool const execute = can_execute_move (user, target, weather);
-	if (execute) {
+	if (can_execute_move (user, target, weather)) {
 		lower_pp (user, target.pokemon());
-		size_t index = user.pokemon().move.index;
-		switch (user.pokemon().move().name) {
-//			case Move::NATURE_POWER:
-//				break;
-			case Move::ASSIST:
-			case Move::COPYCAT:
-			case Move::ME_FIRST:
-			case Move::METRONOME:
-			case Move::MIRROR_MOVE:
-			case Move::SLEEP_TALK:
-				call_other_move (user);
-				// fall through
-			default:
-				if (!user.miss)
-					damage = use_move (user, target, weather, log_damage);
-				break;
-		}
-		user.pokemon().move.index = index;
+		ResetIndex reset_index (user.pokemon());
+		if (user.pokemon().move().calls_other_move())
+			call_other_move (user);
+		if (!user.miss)
+			return use_move (user, target, weather, log_damage);
 	}
-	return damage;
+	// I'm not sure if this is actually correct behavior, but it's what I get
+	// from slightly rearranging my code to retain the same functionality. I
+	// suspect that correct behavior here is to just return 0.
+	return (log_damage == -1u) ? 0 : log_damage;
 }
 
 namespace {
 
-unsigned use_move (Team & user, Team & target, Weather & weather, unsigned log_damage) {
+unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const log_damage) {
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
 	move_power (user, target, weather);
@@ -106,7 +109,7 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned log_d
 }
 
 void do_effects_before_moving (Pokemon & user, Team & target) {
-	if (user.move().name == Move::BRICK_BREAK) {
+	if (user.move().breaks_screens()) {
 		target.reflect = 0;
 		target.light_screen = 0;
 	}
@@ -136,7 +139,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::GIGA_DRAIN:
 		case Move::LEECH_LIFE:
 		case Move::MEGA_DRAIN:
-			if (target.pokemon().ability.name == Ability::LIQUID_OOZE) {
+			if (target.pokemon().ability.damages_leechers()) {
 				if (damage <= 3)
 					--user.pokemon().hp.stat;
 				else
@@ -168,7 +171,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::IRON_DEFENSE:
 			Stat::boost (user.stage [Stat::DEF], 2);
 			break;
-		case Move::ACUPRESSURE:		// fix
+		case Move::ACUPRESSURE:
+			// TODO: this doesn't properly account for stats maxing out
 			Stat::boost (user.stage [user.pokemon().move().variable().first], 2);
 			break;
 		case Move::AGILITY:
@@ -253,7 +257,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::SAND_TOMB:
 		case Move::WHIRLPOOL:
 		case Move::WRAP:
-			if (target.partial_trap == 0)
+			if (!target.partial_trap)
 				target.partial_trap = user.pokemon().move().variable().first;
 			break;
 		case Move::BLAST_BURN:
@@ -315,10 +319,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Status::paralyze (user.pokemon(), target.pokemon(), weather);
 			break;
 		case Move::BOUNCE:
-			if (user.vanish == LANDED)
-				user.vanish = BOUNCED;
-			else
-				user.vanish = LANDED;
+			user.vanish = (user.vanish == LANDED) ? BOUNCED : LANDED;
 			break;
 		case Move::BRAVE_BIRD:
 		case Move::DOUBLE_EDGE:
@@ -383,7 +384,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::SUPERSONIC:
 		case Move::SWEET_KISS:
 		case Move::TEETER_DANCE:
-			if (target.pokemon().ability.name != Ability::OWN_TEMPO and target.confused == 0)
+			if (!target.pokemon().ability.blocks_confusion() and target.confused == 0)
 				target.confused = user.pokemon().move().variable().first;
 			break;
 		case Move::CLOSE_COMBAT:
@@ -436,7 +437,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Status::poison (user.pokemon(), target.pokemon(), weather);
 			break;
 		case Move::CURSE:
-			if (is_type (user, Type::GHOST) and user.pokemon().ability.name != Ability::MAGIC_GUARD) {
+			if (is_type (user, Type::GHOST) and !user.pokemon().ability.blocks_secondary_damage()) {
 				if (!target.curse) {
 					if (user.pokemon().hp.max <= 3)
 						--user.pokemon().hp.stat;
@@ -478,18 +479,12 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.protect = true;
 			break;
 		case Move::DIG:
-			if (user.vanish == LANDED)
-				user.vanish = DUG;
-			else
-				user.vanish = LANDED;
+			user.vanish = (user.vanish == LANDED) ? DUG : LANDED;
 			break;
 		case Move::DISABLE:		// Fix
 			break;
 		case Move::DIVE:
-			if (user.vanish == LANDED)
-				user.vanish = DIVED;
-			else
-				user.vanish = LANDED;
+			user.vanish = (user.vanish == LANDED) ? DIVED : LANDED;
 			break;
 		case Move::DOOM_DESIRE:	// Fix
 		case Move::FUTURE_SIGHT:
@@ -555,17 +550,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::FLATTER:
 			Stat::boost (target.stage [Stat::SPA], 1);
-			if (target.pokemon().ability.name != Ability::OWN_TEMPO and target.confused == 0)
+			if (!target.pokemon().ability.blocks_confusion() and target.confused == 0)
 				target.confused = user.pokemon().move().variable().first;
 			break;
 		case Move::FLING:
 			user.pokemon().item.remove();
 			break;
 		case Move::FLY:
-			if (user.vanish == LANDED)
-				user.vanish = FLOWN;
-			else
-				user.vanish = LANDED;
+			user.vanish = (user.vanish == LANDED) ? FLOWN : LANDED;
 			break;
 		case Move::FOCUS_ENERGY:
 			user.focus_energy = true;
@@ -603,17 +595,18 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Stat::boost (user.stage [Stat::DEF], 1);
 			break;
 		case Move::HAZE:
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
+			// TODO: replace with std::fill, I think
+			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1)) {
 				user.stage [stat] = 0;
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
 				target.stage [stat] = 0;
+			}
 			break;
 		case Move::HEAD_SMASH:
 			recoil (user.pokemon(), damage, 2);
 			break;
 		case Move::HEAL_BELL: {
 			for (Pokemon & pokemon : user.pokemon.set) {
-				if (pokemon.ability.name != Ability::SOUNDPROOF)
+				if (!pokemon.ability.blocks_sound_moves())
 					pokemon.status.clear ();
 			}
 			break;
@@ -672,12 +665,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.leech_seed = true;
 			break;
 		case Move::LIGHT_SCREEN:
-			if (user.light_screen == 0) {
-				if (user.pokemon().item.extends_light_screen())
-					user.light_screen = 8;
-				else
-					user.light_screen = 5;
-			}
+			if (user.light_screen == 0)
+				user.light_screen = user.pokemon().item.extends_light_screen() ? 8 : 5;
 			break;
 		case Move::LOCK_ON:
 		case Move::MIND_READER:
@@ -747,14 +736,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			if (user.rampage == 0)
 				user.rampage = user.pokemon().move().variable().first;
 			break;
-		case Move::PAIN_SPLIT:
-			user.pokemon().hp.stat = (user.pokemon().hp.stat + target.pokemon().hp.stat) / 2;
-			target.pokemon().hp.stat = user.pokemon().hp.stat;
-			if (user.pokemon().hp.stat > user.pokemon().hp.max)
-				user.pokemon().hp.stat = user.pokemon().hp.max;
-			if (target.pokemon().hp.stat > target.pokemon().hp.max)
-				target.pokemon().hp.stat = target.pokemon().hp.max;
+		case Move::PAIN_SPLIT: {
+			auto & user_hp = user.pokemon().hp;
+			auto & target_hp = target.pokemon().hp;
+			user_hp.stat = (user_hp.stat + target_hp.stat) / 2;
+			target_hp.stat = std::min (user_hp.stat, target_hp.max);
+			user_hp.stat = std::min (user_hp.stat, user_hp.max);
 			break;
+		}
 		case Move::PERISH_SONG:
 			if (user.perish_song == 0)
 				user.perish_song = 3;
@@ -772,24 +761,21 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			std::swap (user.stage [Stat::SPA], target.stage [Stat::SPA]);
 			break;
 		case Move::POWER_TRICK:
-			if (user.power_trick)
-				user.power_trick = false;
-			else
-				user.power_trick = true;
+			user.power_trick = !user.power_trick;
 			break;
 		case Move::PRESENT:
 			if (user.pokemon().move().variable().first == 0) {
 				target.pokemon().hp.stat += 80;
-				if (target.pokemon().hp.stat > target.pokemon().hp.max)
-					target.pokemon().hp.stat = target.pokemon().hp.max;
+				target.pokemon().hp.stat = std::min (target.pokemon().hp.stat, target.pokemon().hp.max);
 			}
 			break;
 		case Move::PSYCH_UP:
+			// TODO: replace with std::copy or something
 			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
 				user.stage [stat] = target.stage [stat];
 			break;
 		case Move::PSYCHO_SHIFT:
-			if (target.pokemon().status.name == Status::NO_STATUS) {
+			if (target.pokemon().status.is_clear()) {
 				switch (user.pokemon().status.name) {
 					case Status::BURN:
 						Status::burn (user.pokemon(), target.pokemon(), weather);
@@ -810,7 +796,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 					default:
 						break;
 				}
-				user.pokemon().status.clear ();
+				user.pokemon().status.clear();
 			}
 			break;
 		case Move::RAGE:		// Fix
@@ -832,12 +818,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::RECYCLE:		// Fix
 			break;
 		case Move::REFLECT:
-			if (user.reflect == 0) {
-				if (user.pokemon().item.extends_reflect())
-					user.reflect = 8;
-				else
-					user.reflect = 5;
-			}
+			if (user.reflect == 0)
+				user.reflect = user.pokemon().item.extends_reflect() ? 8 : 5;
 			break;
 		case Move::REFRESH:
 			user.pokemon().status.clear ();
@@ -851,7 +833,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::ROAR:
 		case Move::WHIRLWIND:
-			if ((target.pokemon().ability.name != Ability::SOUNDPROOF or user.pokemon().move().name != Move::ROAR) and !target.ingrain and target.pokemon().ability.name != Ability::SUCTION_CUPS) {
+			if ((target.pokemon().ability.blocks_sound_moves() or user.pokemon().move().name != Move::ROAR) and !target.ingrain and !target.pokemon().ability.blocks_phazing()) {
 				if (target.pokemon.set.size() > 1) {
 					target.replacement = user.pokemon().move().variable().first;
 					switchpokemon (target, user, weather);
@@ -872,10 +854,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Stat::boost (target.stage [Stat::DEF], -2);
 			break;
 		case Move::SHADOW_FORCE:
-			if (user.vanish == LANDED)
-				user.vanish = SHADOW_FORCED;
-			else
-				user.vanish = LANDED;
+			user.vanish = (user.vanish == LANDED) ? SHADOW_FORCED : LANDED;
 			break;
 		case Move::SKETCH:		// Fix
 			break;

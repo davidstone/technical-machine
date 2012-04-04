@@ -67,6 +67,7 @@ class Ability {
 
 		template<Status::Statuses status>
 		bool blocks_status (Weather const & weather) const;
+		bool blocks_confusion () const;
 		bool reflects_status () const;
 		bool absorbs_poison_damage () const;
 		bool blocks_burn_damage_penalty () const;
@@ -79,8 +80,10 @@ class Ability {
 		
 		bool harms_sleepers () const;
 
+		bool blocks_phazing () const;
 		bool blocks_recoil () const;
 		bool blocks_secondary_damage () const;
+		bool blocks_sound_moves () const;
 		bool cannot_miss () const;
 		bool damages_leechers () const;
 		bool weakens_se_attacks () const;

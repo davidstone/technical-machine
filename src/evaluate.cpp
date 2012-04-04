@@ -31,20 +31,26 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
+namespace {
+class ResetIndex {
+	public:
+		ResetIndex (Team & team):
+			reset (team),
+			index (team.pokemon.index) {
+		}
+		~ResetIndex () {
+			reset.pokemon.index = index;
+		}
+	private:
+		Team & reset;
+		uint8_t const index;
+};
+
+}	// unnamed namespace
 
 int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 	int64_t score = score_team (ai) - score_team (foe);
-
-	size_t index = ai.pokemon.index;
-	for (ai.pokemon.index = 0; ai.pokemon.index != ai.pokemon.set.size(); ++ai.pokemon.index)
-		score += score_pokemon (ai, foe, weather);
-	ai.pokemon.index = index;
-
-	index = foe.pokemon.index;
-	for (foe.pokemon.index = 0; foe.pokemon.index != foe.pokemon.set.size(); ++foe.pokemon.index)
-		score -= score_pokemon (foe, ai, weather);
-	foe.pokemon.index = index;
-	return score;
+	return score + score_all_pokemon (ai, foe, weather) - score_all_pokemon (foe, ai, weather);
 }
 
 int64_t Score::score_team (Team const & team) const {
@@ -80,7 +86,7 @@ int64_t Score::score_team (Team const & team) const {
 			score += trapped;
 		if (team.focus_energy)
 			score += focus_energy;
-		for (std::vector<Move>::const_iterator move = team.pokemon().move.set.begin(); move->name != Move::STRUGGLE; ++move) {
+		for (std::vector<Move>::const_iterator move = team.pokemon().move.set.cbegin(); move->name != Move::STRUGGLE; ++move) {
 			if (move->name == Move::BATON_PASS) {
 				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage);
 				if (team.substitute)
@@ -89,6 +95,14 @@ int64_t Score::score_team (Team const & team) const {
 			}
 		}
 	}
+	return score;
+}
+
+int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
+	ResetIndex index (team);
+	int64_t score = 0;
+	for (team.pokemon.index = 0; team.pokemon.index != team.pokemon.set.size(); ++team.pokemon.index)
+		score += score_pokemon (team, other, weather);
 	return score;
 }
 
@@ -132,7 +146,7 @@ int64_t Score::score_move (Team const & team, Team const & other, Weather const 
 			score += other.reflect * reflect;
 		else if (move.basepower > 0)		// Non-damaging moves have physical == false
 			score += other.light_screen * light_screen;
-		if (move.pp == 0)
+		if (move.is_out_of_pp())
 			score += no_pp;
 	}
 	return score;

@@ -91,9 +91,10 @@ class Score {
 		int64_t evaluate (Team & ai, Team & foe, Weather const & weather) const;
 	private:
 		int64_t score_team (Team const & team) const;
-		int64_t score_pokemon (Team const & ai, Team const & foe, Weather const & weather) const;
+		int64_t score_all_pokemon (Team & team, Team const & other, Weather const & weather) const;
+		int64_t score_pokemon (Team const & team, Team const & other, Weather const & weather) const;
 		int64_t score_status (Team const & team) const;
-		int64_t score_move (Team const & ai, Team const & foe, Weather const & weather) const;
+		int64_t score_move (Team const & team, Team const & other, Weather const & weather) const;
 	public:
 		static int64_t win (Team const & team);
 };

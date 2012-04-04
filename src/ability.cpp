@@ -133,6 +133,10 @@ bool Ability::blocks_status<Status::REST> (Weather const & weather) const {
 	return blocks_status<Status::SLEEP> (weather);
 }
 
+bool Ability::blocks_confusion () const {
+	return name == OWN_TEMPO;
+}
+
 bool Ability::reflects_status () const {
 	return name == SYNCHRONIZE;
 }
@@ -147,6 +151,10 @@ bool Ability::blocks_burn_damage_penalty () const {
 
 bool Ability::blocks_paralysis_speed_penalty () const {
 	return name == QUICK_FEET;
+}
+
+bool Ability::blocks_sound_moves () const {
+	return name == SOUNDPROOF;
 }
 
 bool Ability::can_clear_status (Status const status) const {
@@ -171,6 +179,10 @@ bool Ability::weakens_burn () const {
 
 bool Ability::harms_sleepers () const {
 	return name == BAD_DREAMS;
+}
+
+bool Ability::blocks_phazing () const {
+	return name == SUCTION_CUPS;
 }
 
 bool Ability::blocks_recoil () const {
