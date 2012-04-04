@@ -595,11 +595,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Stat::boost (user.stage [Stat::DEF], 1);
 			break;
 		case Move::HAZE:
-			// TODO: replace with std::fill, I think
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1)) {
-				user.stage [stat] = 0;
-				target.stage [stat] = 0;
-			}
+			std::fill (user.stage.begin(), user.stage.end(), 0);
+			std::fill (target.stage.begin(), target.stage.end(), 0);
 			break;
 		case Move::HEAD_SMASH:
 			recoil (user.pokemon(), damage, 2);
@@ -770,9 +767,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			}
 			break;
 		case Move::PSYCH_UP:
-			// TODO: replace with std::copy or something
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
-				user.stage [stat] = target.stage [stat];
+			user.stage = target.stage;
 			break;
 		case Move::PSYCHO_SHIFT:
 			if (target.pokemon().status.is_clear()) {

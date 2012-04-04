@@ -129,17 +129,10 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return attacker.move().variable().first;
 		case Move::PUNISHMENT: {
 			uint16_t base_power = 60;
-			// TODO: some kind of loop
-			if (defender.stage [Stat::ATK] > 0)
-				base_power += 20 * defender.stage [Stat::ATK];
-			if (defender.stage [Stat::DEF] > 0)
-				base_power += 20 * defender.stage [Stat::DEF];
-			if (defender.stage [Stat::SPA] > 0)
-				base_power += 20 * defender.stage [Stat::SPA];
-			if (defender.stage [Stat::SPD] > 0)
-				base_power += 20 * defender.stage [Stat::SPD];
-			if (defender.stage [Stat::SPE] > 0)
-				base_power += 20 * defender.stage [Stat::SPE];
+			for (auto stage : defender.stage) {
+				if (stage > 0)
+					base_power += 20 * stage;
+			}
 			return (base_power <= 200) ? base_power : 200;
 		}
 		case Move::RETURN:

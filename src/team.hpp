@@ -19,6 +19,7 @@
 #ifndef TEAM_HPP_
 #define TEAM_HPP_
 
+#include <array>
 #include <cstdint>
 #include <random>
 #include <string>
@@ -41,7 +42,7 @@ class Team {
 		uint16_t bide_damage;
 		uint16_t chance_to_hit;
 		// -6 though 6
-		int8_t stage [Stat::END];
+		std::array<int8_t, Stat::END> stage;
 		uint8_t bide;
 		uint8_t confused;
 		uint8_t embargo;
