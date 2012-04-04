@@ -27,6 +27,8 @@
 #include <utility>
 #include <vector>
 
+#include <boost/timer.hpp>
+
 #include "ability.hpp"
 #include "block.hpp"
 #include "endofturn.hpp"
@@ -87,7 +89,7 @@ Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsi
 			move.score = Score::VICTORY + 1;
 	}
 	int64_t min_score = 0;
-	
+	boost::timer timer;	
 	Move::Moves best_move = random_action (ai, foe, weather, random_engine);
 	try {
 		for (unsigned deeper = 1; deeper <= depth; ++deeper) {
@@ -102,7 +104,7 @@ Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsi
 		std::cerr << ex.what ();
 		std::cerr << std::string (20, '=') + '\n';
 	}
-
+	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
 	print_best_move (ai, best_move, depth, min_score);
 	return best_move;
 }
