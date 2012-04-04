@@ -73,7 +73,6 @@ void predict_pokemon (Team & team, std::array<float, Species::END> estimate, flo
 	while (team.pokemon.set.size() < team.size) {
 		Species const name = get_most_likely_pokemon (estimate);
 		Pokemon member (name, team.size);
-		member.load ();
 		team.pokemon.set.push_back (member);
 		if (team.pokemon.set.size() == team.size)
 			break;

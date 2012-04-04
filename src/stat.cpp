@@ -86,10 +86,9 @@ Stat::Stat (Species name, Stats stat_name) :
 	{
 }
 
-unsigned hitpoints (Pokemon & member) {
-	return (member.hp.base > 1) ?
-		(calculate_initial_stat (member.hp, member.level) + member.level + 5) :
-		1;
+void Stat::calculate_initial_hp (uint8_t const level) {
+	max = (base > 1) ? (calculate_initial_stat (*this, level) + level + 5) : 1;
+	stat = max;
 }
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {
@@ -177,7 +176,6 @@ void calculate_speed (Team & team, Weather const & weather) {
 	pokemon.spe.stat = speed_stage_modifier (pokemon.spe, team.stage [Stat::SPE]);
 
 	pokemon.spe.stat = speed_ability_modifier (team, weather);
-	
 	pokemon.spe.stat = speed_item_modifier (pokemon);
 	
 	pokemon.spe.stat /= paralysis_speed_divisor (pokemon);

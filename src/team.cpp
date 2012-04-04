@@ -269,7 +269,6 @@ void Team::add_pokemon (Species name, std::string const & nickname, unsigned lev
 
 	pokemon.set.push_back (member);
 	replacement = pokemon.set.size() - 1;
-	pokemon.set.back().load();
 }
 
 uint64_t Team::hash () const {
@@ -360,8 +359,6 @@ void Team::load (std::string const & name, unsigned other_size) {
 		pl::load_team (*this, name, other_size);
 	else
 		std::cerr << "Unsupported file format: " + extension + ".\n";
-	for (Pokemon & member : pokemon.set)
-		member.load();
 }
 
 bool Team::operator== (Team const & other) const {

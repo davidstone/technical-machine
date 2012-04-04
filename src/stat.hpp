@@ -50,6 +50,7 @@ class Stat {
 		static constexpr unsigned max_sleep_turns = 4;
 	
 		Stat (Species name, Stats stat);
+		void calculate_initial_hp (uint8_t const level);
 		static void boost (int8_t & stage, int n);
 	private:
 		static uint8_t get_base_stat (Species name, Stats stat_name);
@@ -67,7 +68,6 @@ class Pokemon;
 class Team;
 class Weather;
 
-unsigned hitpoints (Pokemon & member);
 void calculate_attacking_stat (Team & attacker, Weather const & weather);
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
 

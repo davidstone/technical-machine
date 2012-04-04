@@ -46,6 +46,7 @@ Pokemon::Pokemon (Species member, unsigned size) :
 
 	happiness (255)
 	{
+	hp.calculate_initial_hp (level);
 	set_type ();
 	Move struggle (Move::STRUGGLE, 0, 0);
 	move.set.push_back (struggle);
@@ -170,11 +171,6 @@ bool Pokemon::operator== (Pokemon const & other) const {
 
 bool Pokemon::operator!= (Pokemon const & other) const {
 	return !(*this == other);
-}
-
-void Pokemon::load () {
-	hp.max = hitpoints (*this);
-	hp.stat = hp.max;
 }
 
 void Pokemon::set_type () {

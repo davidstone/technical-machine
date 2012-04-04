@@ -75,7 +75,6 @@ class Pokemon {
 		static bool is_wormadam (Species species);
 		bool operator== (Pokemon const & other) const;
 		bool operator!= (Pokemon const & other) const;
-		void load ();
 	private:
 		void set_type ();
 		uint8_t get_mass () const;
