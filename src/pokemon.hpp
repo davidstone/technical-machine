@@ -51,10 +51,12 @@ class Pokemon {
 		Stat spd;
 		Stat spe;
 		Nature nature;
-		uint16_t new_hp;		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
+		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
+		uint16_t new_hp;
 		bool fainted;
 		uint8_t level;
-		uint8_t sleep;				// wakes up when this number is 2 through 5
+		// wakes up when this number is 2 through 5
+		uint8_t sleep;
 
 		uint8_t happiness;
 	
