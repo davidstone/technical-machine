@@ -416,19 +416,21 @@ int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team 
 
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score) {
 	endofturn (first, last, weather);
-	int64_t value;
+
+	int64_t const last_violated = Score::sleep_clause (first);
+	int64_t const first_violated = Score::sleep_clause (last);
+	if (last_violated or first_violated)
+		return last_violated + first_violated;
+
 	int64_t const first_win = Score::win (first);
 	int64_t const last_win = Score::win (last);
 	if (first_win or last_win)
-		value = first_win + last_win;
-	else {
-		Team* ai;
-		Team* foe;
-		deorder (first, last, ai, foe);
+		return first_win + last_win;
 
-		value = transposition (*ai, *foe, weather, depth, score);
-	}
-	return value;
+	Team* ai;
+	Team* foe;
+	deorder (first, last, ai, foe);
+	return transposition (*ai, *foe, weather, depth, score);
 }
 
 

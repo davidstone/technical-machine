@@ -97,6 +97,7 @@ class Score {
 		int64_t score_move (Team const & team, Team const & other, Weather const & weather) const;
 	public:
 		static int64_t win (Team const & team);
+		static int64_t sleep_clause (Team const & team);
 };
 
 } // namespace technicalmachine

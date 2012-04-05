@@ -162,6 +162,19 @@ int64_t Score::win (Team const & team) {
 	return 0;
 }
 
+int64_t Score::sleep_clause (Team const & team) {
+	bool sleep_clause = false;
+	for (Pokemon const & pokemon : team.pokemon.set) {
+		if (pokemon.status.name == Status::SLEEP) {
+			if (sleep_clause == false)
+				sleep_clause = true;
+			else
+				return team.me ? VICTORY : -VICTORY;
+		}
+	}
+	return 0;
+}
+
 Score::Score ():
 	transposition_table (1),	
 	light_screen (0),
