@@ -19,13 +19,14 @@
 #ifndef ITEM_HPP_
 #define ITEM_HPP_
 
+#include <cstdint>
 #include <string>
 
 namespace technicalmachine {
 
 class Item {
 	public:
-		enum Items : unsigned {
+		enum Items : uint16_t {
 			NO_ITEM, ADAMANT_ORB, AGUAV_BERRY, AIR_MAIL, AMULET_COIN,
 			ANTIDOTE, APICOT_BERRY, ARMOR_FOSSIL, ASPEAR_BERRY, AWAKENING,
 			BABIRI_BERRY, BELUE_BERRY, BERRY_JUICE, BICYCLE, BIG_MUSHROOM,

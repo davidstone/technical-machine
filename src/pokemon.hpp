@@ -33,28 +33,32 @@
 #include "type.hpp"
 
 namespace technicalmachine {
+//#define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 class Pokemon {
 	public:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
 		#endif
-		TypeCollection type;
-		Species name;
-		Ability ability;
-		Gender gender;
-		Item item;
 		Active<Move> move;
-		Status status;
+		TypeCollection type;
+
 		Stat hp;
 		Stat atk;
 		Stat def;
 		Stat spa;
 		Stat spd;
 		Stat spe;
-		Nature nature;
+
 		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		uint16_t new_hp;
+
+		Species name;
+		Item item;
+		Ability ability;
+		Gender gender;
+		Status status;
+		Nature nature;
 		bool fainted;
 		uint8_t level;
 		// wakes up when this number is 2 through 5

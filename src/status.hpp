@@ -19,6 +19,7 @@
 #ifndef STATUS_HPP_
 #define STATUS_HPP_
 
+#include <cstdint>
 #include <string>
 
 namespace technicalmachine {
@@ -28,7 +29,7 @@ class Weather;
 
 class Status {
 	public:
-		enum Statuses : unsigned {
+		enum Statuses : uint8_t {
 			NO_STATUS,
 			BURN,
 			FREEZE,

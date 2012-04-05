@@ -26,7 +26,7 @@ namespace technicalmachine {
 
 class Type {
 	public:
-		enum Types {
+		enum Types : uint8_t {
 			BUG,
 			DARK,
 			DRAGON,

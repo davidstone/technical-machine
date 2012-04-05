@@ -42,16 +42,15 @@ uint16_t get_accuracy (Move::Moves move);
 }	// anonymous namespace
 
 Move::Move (Moves move, int pp_ups, unsigned size) :
-	name (move),
-	type (get_type (name)),
-	variable (set_variable (name, size)),
-	// Guarantee moves that weren't good enough to be fully evaluated are sorted at the end:
 	score (-Score::VICTORY - 1),
-	basepower (base_power (name)),
-	physical (is_physical (name)),
-	accuracy (get_accuracy (name)),
+	variable (set_variable (move, size)),
+	name (move),
+	basepower (base_power (move)),
+	type (get_type (move)),
+	physical (is_physical (move)),
+	accuracy (get_accuracy (move)),
 	disable (0),
-	pp_max (get_pp (name) * (5 + pp_ups) / 5),
+	pp_max (get_pp (move) * (5 + pp_ups) / 5),
 	pp (pp_max),
 	priority (get_priority ()),
 	r (100),

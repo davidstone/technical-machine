@@ -30,8 +30,8 @@ bool Nature::is_set () const {
 	return name != END;
 }
 
-void Nature::set_if_unknown (Natures nature) {
-	assert (0 <= nature and nature < END);
+void Nature::set_if_unknown (Natures const nature) {
+	assert (nature < END);
 	if (!is_set())
 		name = nature;
 }

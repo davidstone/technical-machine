@@ -31,15 +31,17 @@
 namespace technicalmachine {
 
 Pokemon::Pokemon (Species member, unsigned size) : 
-	name (member),
-	hp (name, Stat::HP),
-	atk (name, Stat::ATK),
-	def (name, Stat::DEF),
-	spa (name, Stat::SPA),
-	spd (name, Stat::SPD),
-	spe (name, Stat::SPE),
+	hp (member, Stat::HP),
+	atk (member, Stat::ATK),
+	def (member, Stat::DEF),
+	spa (member, Stat::SPA),
+	spd (member, Stat::SPD),
+	spe (member, Stat::SPE),
 
 	new_hp (48),
+
+	name (member),
+
 	fainted (false),
 	level (100),
 	sleep (0),

@@ -19,13 +19,14 @@
 #ifndef GENDER_HPP_
 #define GENDER_HPP_
 
+#include <cstdint>
 #include <string>
 
 namespace technicalmachine {
 
 class Gender {
 	public:
-		enum Genders { FEMALE, GENDERLESS, MALE, END };
+		enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 		Genders gender;
 		
 		Gender ();

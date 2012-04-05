@@ -41,7 +41,7 @@ bool Ability::is_set () const {
 }
 
 void Ability::set_if_unknown (Abilities const ability) {
-	assert (0 <= ability and ability < END);
+	assert (ability < END);
 	if (!is_set())
 		name = ability;
 }

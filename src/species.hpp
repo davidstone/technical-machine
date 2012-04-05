@@ -19,6 +19,8 @@
 #ifndef SPECIES_HPP_
 #define SPECIES_HPP_
 
+#include <cstdint>
+
 namespace technicalmachine {
 
 /*
@@ -41,7 +43,7 @@ Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) 
 Pokemon Online refers to Porygon2 as Porygon 2.
 */
 
-enum Species : unsigned {
+enum Species : uint16_t {
 	ABOMASNOW,
 	ABRA,
 	ABSOL,

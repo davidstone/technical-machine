@@ -19,6 +19,7 @@
 #ifndef NATURE_HPP_
 #define NATURE_HPP_
 
+#include <cstdint>
 #include <string>
 #include "stat.hpp"
 
@@ -26,7 +27,7 @@ namespace technicalmachine {
 
 class Nature {
 	public:
-		enum Natures {
+		enum Natures : uint8_t {
 			ADAMANT,
 			BASHFUL,
 			BOLD,

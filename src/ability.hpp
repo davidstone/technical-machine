@@ -19,6 +19,7 @@
 #ifndef ABILITY_HPP_
 #define ABILITY_HPP_
 
+#include <cstdint>
 #include <string>
 #include "status.hpp"
 
@@ -29,7 +30,7 @@ class Weather;
 
 class Ability {
 	public:
-		enum Abilities {
+		enum Abilities : uint8_t {
 			ADAPTABILITY, AFTERMATH, AIR_LOCK, ANGER_POINT, ANTICIPATION,
 			ARENA_TRAP, BAD_DREAMS, BATTLE_ARMOR, BLAZE, CHLOROPHYLL,
 			CLEAR_BODY, CLOUD_NINE, COLOR_CHANGE, COMPOUNDEYES, CUTE_CHARM,

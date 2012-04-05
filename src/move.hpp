@@ -31,7 +31,7 @@ namespace technicalmachine {
 
 class Move {
 	public:
-		enum Moves {
+		enum Moves : uint16_t {
 			ABSORB, ACID, ACID_ARMOR, ACUPRESSURE, AERIAL_ACE,
 			AEROBLAST, AGILITY, AIR_CUTTER, AIR_SLASH, AMNESIA,
 			ANCIENTPOWER, AQUA_JET, AQUA_RING, AQUA_TAIL, ARM_THRUST,
@@ -128,22 +128,37 @@ class Move {
 			WOOD_HAMMER, WORRY_SEED, WRAP, WRING_OUT, X_SCISSOR,
 			YAWN, ZAP_CANNON, ZEN_HEADBUTT, END
 		};
-
-		Moves name;
-		Type type;
-		// variable is used for moves with a variable power / length / other integer range. Moves of variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal). It is also used to determine whether random effects activate. First value is the magnitude of the effect, second value is the probability.
-		Active <std::pair <uint16_t, uint16_t>> variable;
+		// I suspect I can get rid of the score variable entirely.
 		int64_t score;
+		// variable is used for moves with a variable power / length / other
+		// integer range. Moves of variable power: Magnitude = 4-10, Psywave =
+		// 5-15, Present = 0-4 (0 = heal). It is also used to determine whether
+		// random effects activate. First value is the magnitude of the effect,
+		// second value is the probability.
+		Active <std::pair <uint16_t, uint16_t>> variable;
+		Moves name;
+		// Can replace this with uint8_t when it will help by just using a
+		// temporary variable in the move power calculator, rather than
+		// assigning to this. Alternatively, it can be replaced entirely by a
+		// function call.
 		uint16_t basepower;
 		uint16_t power;
+		
+		// Replace these with functions when it will reduce the size of Move.
+		Type type;
 		bool physical;
+
 		// I maintain the selectable state to determine if Struggle is legal
 		bool selectable;
 		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
 		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
 		uint8_t pp_max;			// PP after all PP ups are applied
 		uint8_t pp;
+		
+		// Replace this with a function when it will reduce the size of Move.
 		int8_t priority;
+
+		// Move both of these up to team when it will reduce the size of Move.
 		uint8_t r;					// The random number (85 through 100)
 		uint8_t times_used;
 

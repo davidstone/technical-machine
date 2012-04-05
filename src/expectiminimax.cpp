@@ -83,7 +83,9 @@ void update_foe_best_move (Team & foe, int64_t & beta, int64_t max_score, bool f
 
 Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, std::mt19937 & random_engine) {
 	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
-	// Set the score of all foe moves to an illegally high value, so that they get sorted last. If they didn't even need to be checked for their complete value before, they probably still don't need to be.
+	// Set the score of all foe moves to an illegally high value, so that they
+	// get sorted last. If they didn't even need to be checked for their
+	// complete value before, they probably still don't need to be.
 	for (Pokemon & pokemon : foe.pokemon.set) {
 		for (Move & move : pokemon.move.set)
 			move.score = Score::VICTORY + 1;
