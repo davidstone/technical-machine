@@ -117,7 +117,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			uint8_t const slot = 0;
 			handle_send_out (player, slot, index, nickname, species, gender, level);
 			if (player == party) {
-				for (Species name : slot_memory) {
+				for (Species & name : slot_memory) {
 					if (ai.at_replacement ().name == name)
 						std::swap (slot_memory.front(), name);
 				}
