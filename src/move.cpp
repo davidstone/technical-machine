@@ -41,9 +41,9 @@ uint16_t get_accuracy (Move::Moves move);
 
 }	// anonymous namespace
 
-Move::Move (Moves move, int pp_ups, unsigned size) :
+Move::Move (Moves const move, int const pp_ups, unsigned const size) :
 	score (-Score::VICTORY - 1),
-	variable (set_variable (move, size)),
+	variable (get_variable (move, size)),
 	name (move),
 	basepower (base_power (move)),
 	type (get_type (move)),
@@ -123,7 +123,7 @@ int8_t Move::get_priority () {
 	}
 }
 
-std::vector<std::pair <uint16_t, uint16_t>> Move::set_variable (Moves name, unsigned size) {
+std::vector<std::pair <uint16_t, uint16_t>> Move::get_variable (Moves name, unsigned size) {
 	std::vector<std::pair <uint16_t, uint16_t>> set;
 	std::pair <uint16_t, uint16_t> effect;
 	effect.first = 0;

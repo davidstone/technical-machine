@@ -66,7 +66,7 @@ class Pokemon {
 
 		uint8_t happiness;
 	
-		Pokemon (Species member, unsigned size);
+		Pokemon (Species species, unsigned size);
 		uint64_t hash () const;
 		// Returns whether the move is found. Modifies move.index
 		bool find_move (Move::Moves move_name);
@@ -86,8 +86,10 @@ class Pokemon {
 		static bool is_wormadam (Species species);
 		bool operator== (Pokemon const & other) const;
 		bool operator!= (Pokemon const & other) const;
+		void set_hidden_power_type ();
 	private:
-		void set_type ();
+		static TypeCollection get_type (Species name);
+		Type::Types calculate_hidden_power_type () const;
 };
 
 }	// namespace technicalmachine

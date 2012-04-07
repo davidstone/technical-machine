@@ -57,11 +57,11 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 // facilities.
 
 Team::Team () :
-	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
 	chance_to_hit (100),
 	stage ({{}}),
+	vanish (LANDED),
 	bide (0),
 	confused (0),
 	embargo (0),
@@ -141,11 +141,11 @@ Team::Team () :
 }
 
 Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name) :
-	vanish (LANDED),
 	damage (0),
 	bide_damage (0),
 	chance_to_hit (100),
 	stage ({{}}),
+	vanish (LANDED),
 	bide (0),
 	confused (0),
 	embargo (0),
@@ -227,8 +227,10 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
 	load (team_file.string(), foe_size);
-	for (Pokemon & member : pokemon.set)
+	for (Pokemon & member : pokemon.set) {
+		member.set_hidden_power_type();
 		member.new_hp = member.hp.max;
+	}
 }
 
 namespace {
@@ -425,17 +427,15 @@ bool Team::operator== (Team const & other) const {
 #ifndef NDEBUG
 Pokemon & Team::at_replacement () {
 	if (replacement >= pokemon.set.size()) {
-		std::cout << "replacement: " << static_cast <int> (replacement) << '\n';
-		std::cout << "set.size(): " << pokemon.set.size() << '\n';
-		std::cout << "type: Pokemon replacement\n";
+		InvalidActiveIndex const ex (replacement, pokemon.set.size(), "Pokemon replacement");
+		std::cerr << ex.what();
 	}
 	return pokemon.set [replacement];
 }
 Pokemon const & Team::at_replacement () const {
 	if (replacement >= pokemon.set.size()) {
-		std::cout << "replacement: " << static_cast <int> (replacement) << '\n';
-		std::cout << "set.size(): " << pokemon.set.size() << '\n';
-		std::cout << "type: Pokemon replacement\n";
+		InvalidActiveIndex const ex (replacement, pokemon.set.size(), "Pokemon replacement");
+		std::cerr << ex.what();
 	}
 	return pokemon.set [replacement];
 }

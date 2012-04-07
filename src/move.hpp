@@ -198,12 +198,12 @@ class Move {
 		void get_magnitude (unsigned magnitude);
 	private:
 		int8_t get_priority ();
-		static std::vector<std::pair <uint16_t, uint16_t>> set_variable (Moves name, unsigned size);
+		static std::vector<std::pair <uint16_t, uint16_t>> get_variable (Moves name, unsigned size);
 };
 
 // Various states a Pokemon can be in due to vanishing moves.
 
-enum Vanish : unsigned {
+enum Vanish : uint8_t {
 	LANDED, BOUNCED, DUG, DIVED,
 	FLOWN, SHADOW_FORCED, END_VANISH
 };

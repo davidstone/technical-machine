@@ -29,7 +29,13 @@
 
 namespace technicalmachine {
 
-class InvalidActiveIndex;
+class InvalidActiveIndex : public std::logic_error {
+	public:
+		InvalidActiveIndex (unsigned index, size_t size, std::string const & name):
+			logic_error ("Attempted to access element " + std::to_string (index) + " in a set of size " + std::to_string (size) + " with elements of type " + name + "\n")
+			{
+		}
+};
 
 template <class T>
 class Active {
@@ -47,17 +53,15 @@ class Active {
 		#ifndef NDEBUG
 		T & operator() () {
 			if (index >= set.size()) {
-				std::cout << "index: " << index << '\n';
-				std::cout << "set.size(): " << set.size() << '\n';
-				std::cout << "type: " << typeid(T).name() << '\n';
+				InvalidActiveIndex ex (index, set.size(), typeid(T).name());
+				std::cerr << ex.what();
 			}
 			return set [index];
 		}
 		T const & operator() () const {
 			if (index >= set.size()) {
-				std::cout << "index: " << index << '\n';
-				std::cout << "set.size(): " << set.size() << '\n';
-				std::cout << "type: " << typeid(T).name() << '\n';
+				InvalidActiveIndex ex (index, set.size(), typeid(T).name());
+				std::cerr << ex.what();
 			}
 			return set [index];
 		}
@@ -80,14 +84,6 @@ class Active {
 		}
 		void remove_active () {
 			set.erase (set.begin() + index);
-		}
-};
-
-class InvalidActiveIndex : public std::logic_error {
-	public:
-		InvalidActiveIndex (unsigned index, size_t size, std::string const & name):
-			logic_error ("Attempted to access element " + std::to_string (index) + " in a set of size " + std::to_string (size) + " with elements of type " + name + "\n")
-			{
 		}
 };
 

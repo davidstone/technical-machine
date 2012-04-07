@@ -18,6 +18,7 @@
 
 #include "pokemon.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <string>
 
@@ -30,17 +31,18 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (Species member, unsigned size) : 
-	hp (member, Stat::HP),
-	atk (member, Stat::ATK),
-	def (member, Stat::DEF),
-	spa (member, Stat::SPA),
-	spd (member, Stat::SPD),
-	spe (member, Stat::SPE),
+Pokemon::Pokemon (Species const species, unsigned const size) : 
+	type (get_type (species)),
+	hp (species, Stat::HP),
+	atk (species, Stat::ATK),
+	def (species, Stat::DEF),
+	spa (species, Stat::SPA),
+	spd (species, Stat::SPD),
+	spe (species, Stat::SPE),
 
 	new_hp (48),
 
-	name (member),
+	name (species),
 
 	fainted (false),
 	level (100),
@@ -49,7 +51,6 @@ Pokemon::Pokemon (Species member, unsigned size) :
 	happiness (255)
 	{
 	hp.calculate_initial_hp (level);
-	set_type ();
 	Move struggle (Move::STRUGGLE, 0, 0);
 	move.set.push_back (struggle);
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
@@ -189,7 +190,44 @@ void Pokemon::set_nickname (std::string const & nick) {
 	#endif
 }
 
-void Pokemon::set_type () {
+void Pokemon::set_hidden_power_type() {
+	auto const it = std::find_if (move.set.begin(), move.set.end(), [] (Move const & move)->bool {
+		return move.name == Move::HIDDEN_POWER;
+	});
+	if (it != move.set.end())
+		it->type = calculate_hidden_power_type();
+}
+
+Type::Types Pokemon::calculate_hidden_power_type () const {
+	unsigned const a = static_cast<unsigned> (hp.iv % 2) * (1 << 0);	// 1
+	unsigned const b = static_cast<unsigned> (atk.iv % 2) * (1 << 1);	// 2
+	unsigned const c = static_cast<unsigned> (def.iv % 2) * (1 << 2);	// 4
+	unsigned const d = static_cast<unsigned> (spe.iv % 2) * (1 << 3);	// 8
+	unsigned const e = static_cast<unsigned> (spa.iv % 2) * (1 << 4);	// 16
+	unsigned const f = static_cast<unsigned> (spd.iv % 2) * (1 << 5);	// 32
+	unsigned const index = (a + b + c + d + e + f) * 15 / 63;
+	constexpr static Type::Types lookup [] = {
+		Type::FIGHTING,
+		Type::FLYING,
+		Type::POISON,
+		Type::GROUND,
+		Type::ROCK,
+		Type::BUG,
+		Type::GHOST,
+		Type::STEEL,
+		Type::FIRE,
+		Type::WATER,
+		Type::GRASS,
+		Type::ELECTRIC,
+		Type::PSYCHIC,
+		Type::ICE,
+		Type::DRAGON,
+		Type::DARK
+	};
+	return lookup [index];
+}
+
+TypeCollection Pokemon::get_type (Species const name) {
 	constexpr static Type::Types get_type [][2] = {
 		{ Type::GRASS, Type::ICE },				// Abomasnow
 		{ Type::PSYCHIC, Type::TYPELESS },		// Abra
@@ -698,11 +736,13 @@ void Pokemon::set_type () {
 		{ Type::POISON, Type::FLYING }			// Zubat
 	};
 
+	TypeCollection type;
 	for (unsigned n = 0; n != 2; ++n) {
 		Type t = get_type [name] [n];
 		if (t != Type::TYPELESS)
 			type.types.push_back (t);
 	}
+	return type;
 }
 
 uint8_t Pokemon::mass () const {

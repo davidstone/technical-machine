@@ -36,13 +36,13 @@ class Team {
 	public:
 		Active<Pokemon> pokemon;
 
-		Vanish vanish;
 		// How much damage will this Pokemon do
 		uint16_t damage;
 		uint16_t bide_damage;
 		uint16_t chance_to_hit;
 		// -6 though 6
 		std::array<int8_t, Stat::END> stage;
+		Vanish vanish;
 		uint8_t bide;
 		uint8_t confused;
 		uint8_t embargo;
