@@ -3322,8 +3322,8 @@ uint16_t get_accuracy (Move::Moves move) {
 
 }	// anonymous namespace
 
-void Move::get_magnitude (unsigned magnitude) {
-	variable.index = magnitude - 4;
+void Move::get_magnitude (unsigned const magnitude) {
+	variable.set_index (magnitude - 4);
 }
 
 }	// namespace technicalmachine

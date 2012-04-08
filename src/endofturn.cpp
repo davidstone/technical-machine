@@ -251,7 +251,7 @@ void endofturn7 (Team & team) {
 void reset_variable (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
 		for (Move & move : pokemon.move.set) {
-			move.variable.index = 0;
+			move.variable.reset_index();
 		}
 	}
 }

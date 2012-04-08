@@ -19,6 +19,7 @@
 #ifndef ACTIVE_HPP_
 #define ACTIVE_HPP_
 
+#include <cassert>
 #include <cstdint>
 #include <stdexcept>
 #include <string>
@@ -40,51 +41,68 @@ class InvalidActiveIndex : public std::logic_error {
 template <class T>
 class Active {
 	public:
-		// All Pokemon on the team, all moves on the Pokemon, etc.
-		std::vector<T> set;
-		uint8_t index;
 		Active () :
-			index (0) {
+			current_index (0) {
 		}
 		Active (std::vector<T> const & pre_set) :
 			set (pre_set),
-			index (0) {
+			current_index (0) {
 		}
 		#ifndef NDEBUG
-		T & operator() () {
-			if (index >= set.size()) {
-				InvalidActiveIndex ex (index, set.size(), typeid(T).name());
+		T & operator() (uint8_t const specified_index) {
+			if (specified_index >= set.size()) {
+				InvalidActiveIndex ex (specified_index, set.size(), typeid(T).name());
 				std::cerr << ex.what();
 			}
-			return set [index];
+			return set [specified_index];
 		}
-		T const & operator() () const {
-			if (index >= set.size()) {
-				InvalidActiveIndex ex (index, set.size(), typeid(T).name());
+		T const & operator() (uint8_t const specified_index) const {
+			if (specified_index >= set.size()) {
+				InvalidActiveIndex ex (specified_index, set.size(), typeid(T).name());
 				std::cerr << ex.what();
 			}
-			return set [index];
+			return set [specified_index];
 		}
 		#else	// NDEBUG
-		T & operator() () {
-			if (index < set.size())
-				return set [index];
+		T & operator() (uint8_t const specified_index) {
+			if (specified_index < set.size())
+				return set [specified_index];
 			else
-				throw InvalidActiveIndex (index, set.size(), typeid(T).name());
+				throw InvalidActiveIndex (specified_index, set.size(), typeid(T).name());
 		}
-		T const & operator() () const {
-			if (index < set.size())
-				return set [index];
+		T const & operator() (uint8_t const specified_index) const {
+			if (specified_index < set.size())
+				return set [specified_index];
 			else
-				throw InvalidActiveIndex (index, set.size(), typeid(T).name());
+				throw InvalidActiveIndex (specified_index, set.size(), typeid(T).name());
 		}
 		#endif	// NDEBUG
-		void add (T name) {
-			set.insert (set.begin() + index, name);
+		T & operator() () {
+			return operator() (current_index);
+		}
+		T const & operator() () const {
+			return operator() (current_index);
+		}
+		void add (T const & name) {
+			set.insert (set.begin() + current_index, name);
 		}
 		void remove_active () {
-			set.erase (set.begin() + index);
+			set.erase (set.begin() + current_index);
 		}
+		void set_index (uint8_t const new_index) {
+			assert (new_index < set.size());
+			current_index = new_index;
+		}
+		void reset_index () {
+			current_index = 0;
+		}
+		uint8_t index() const {
+			return current_index;
+		}
+		// All Pokemon on the team, all moves on the Pokemon, etc.
+		std::vector<T> set;
+	private:
+		uint8_t current_index;
 };
 
 }	// namespace technicalmachine

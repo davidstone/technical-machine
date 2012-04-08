@@ -87,7 +87,7 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	for (auto const & value : pt.get_child ("")) {
 		if (value.first == "Move") {
 			Move const move = load_move (value.second, foe_size);
-			pokemon.move.set.insert (pokemon.move.set.begin () + n, move);
+			pokemon.move.set.insert (pokemon.move.set.begin() + n, move);
 			n < 3 ? ++n : n = 0;
 		}
 		else if (value.first == "DV") {

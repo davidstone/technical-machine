@@ -50,10 +50,10 @@ class ResetIndex {
 	public:
 		ResetIndex (Pokemon & pokemon):
 			reset (pokemon),
-			index (pokemon.move.index) {
+			index (pokemon.move.index()) {
 		}
 		~ResetIndex () {
-			reset.move.index = index;
+			reset.move.set_index(index);
 		}
 	private:
 		Pokemon & reset;
@@ -1013,7 +1013,7 @@ void lower_pp (Team & user, Pokemon const & target) {
 }
 
 void call_other_move (Team & user) {
-	user.pokemon().move.index = user.called_move;
+	user.pokemon().move.set_index(user.called_move);
 }
 
 }	// unnamed namespace

@@ -71,8 +71,7 @@ namespace {
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END] [Species::END]) {
 	while (team.pokemon.set.size() < team.size) {
 		Species const name = get_most_likely_pokemon (estimate);
-		Pokemon member (name, team.size);
-		team.pokemon.set.push_back (member);
+		team.pokemon.set.push_back (Pokemon (name, team.size));
 		if (team.pokemon.set.size() == team.size)
 			break;
 		for (unsigned n = 0; n != Species::END; ++n)
@@ -97,7 +96,7 @@ void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
 	// Struggle and Switch# for each Pokemon still alive in their team. This
 	// makes sure that those Pokemon get all of their moves predicted.
 	unsigned n = 0;
-	while (member.move.set [n].name != Move::STRUGGLE)
+	while (member.move(n).name != Move::STRUGGLE)
 		++n;
 	unsigned max_moves = 4 + member.move.set.size() - n;
 	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != Move::END; ++m) {

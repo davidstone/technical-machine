@@ -48,7 +48,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			switcher.pokemon().status.clear ();
 		
 		// Change the active Pokemon to the one switching in.
-		switcher.pokemon.index = switcher.replacement;
+		switcher.pokemon.set_index(switcher.replacement);
 	}
 	else {
 		replace_fainted_pokemon (switcher, other);
@@ -147,10 +147,10 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 			}
 		}
 	}
-	if (switcher.pokemon.index > switcher.replacement)
-		switcher.pokemon.index = switcher.replacement;
-	else
-		switcher.pokemon.index = switcher.replacement - 1;
+	uint8_t const new_index = (switcher.pokemon.index() > switcher.replacement) ?
+		switcher.replacement :
+		switcher.replacement - 1;
+	switcher.pokemon.set_index(new_index);
 	// Finally, remove the ability to switch to that Pokemon.
 	for (Pokemon & pokemon : switcher.pokemon.set) {
 		pokemon.move.set.pop_back();

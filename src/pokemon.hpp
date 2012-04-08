@@ -36,10 +36,11 @@ namespace technicalmachine {
 //#define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 class Pokemon {
-	public:
+	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
 		#endif
+	public:
 		Active<Move> move;
 		TypeCollection type;
 
@@ -70,6 +71,7 @@ class Pokemon {
 		uint64_t hash () const;
 		// Returns whether the move is found. Modifies move.index
 		bool find_move (Move::Moves move_name);
+		uint8_t index_of_first_switch () const;
 		void normalize_hp ();
 		// power of Grass Knot / Low Kick, not the actual mass stat
 		uint8_t mass () const;

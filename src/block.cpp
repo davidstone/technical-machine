@@ -30,6 +30,7 @@
 namespace technicalmachine {
 namespace {
 
+bool is_legal_selection (Team const & user, Team const & other, Weather const & weather);
 bool is_blocked_by_bide (Team const & user);
 bool is_not_illegal_switch (Team const & user, Team const & other, Weather const & weather);
 bool is_blocked_from_switching (Team const & user, Team const & other, Weather const & weather);
@@ -48,6 +49,15 @@ bool handle_confusion (Team & user);
 
 }	// unnamed namespace
 
+void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather) {
+	for (uint8_t index = 0; index != user.pokemon().move.set.size(); ++index) {
+		user.pokemon().move.set_index (index);
+		user.pokemon().move().selectable = is_legal_selection (user, other, weather);
+	}
+}
+
+namespace {
+
 bool is_legal_selection (Team const & user, Team const & other, Weather const & weather) {
 	return !is_blocked_by_bide (user) and
 			is_not_illegal_switch (user, other, weather) and
@@ -55,9 +65,10 @@ bool is_legal_selection (Team const & user, Team const & other, Weather const & 
 			!((block1 (user, other)) or (block2 (user, weather)) or blocked_by_torment (user)) and
 			!is_blocked_due_to_lock_in (user);
 }
+}	// unnamed namespace
 
 bool can_execute_move (Team & user, Team const & other, Weather const & weather) {
-	assert (!user.pokemon().move().is_switch() or ! user.recharging);
+	assert (!user.pokemon().move().is_switch() or !user.recharging);
 	if (user.pokemon().move().is_switch())
 		return true;
 	if (user.pokemon().hp.stat == 0 or (other.pokemon().hp.stat == 0 and false))
@@ -103,7 +114,7 @@ bool is_blocked_by_bide (Team const & user) {
 
 bool is_not_illegal_switch (Team const & user, Team const & other, Weather const & weather) {
 	return user.pokemon().move().is_switch() ?
-		!is_blocked_from_switching (user, other, weather) and !user.is_switching_to_self () :
+		!is_blocked_from_switching (user, other, weather) and !user.is_switching_to_self (user.pokemon().move()) :
 		true;
 }
 
@@ -132,7 +143,7 @@ bool block1 (Team const & user, Team const & other) {
 
 bool imprison (Move const & move, Team const & other) {
 	if (other.imprison) {
-		for (auto it = other.pokemon().move.set.cbegin (); it->name != Move::STRUGGLE; ++it) {
+		for (auto it = other.pokemon().move.set.cbegin(); it->name != Move::STRUGGLE; ++it) {
 			if (move.name == it->name)
 				return true;
 		}

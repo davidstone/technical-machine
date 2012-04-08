@@ -24,7 +24,7 @@ namespace technicalmachine {
 class Team;
 class Weather;
 
-bool is_legal_selection (Team const & user, Team const & other, Weather const & weather);
+void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather);
 bool can_execute_move (Team & user, Team const & other, Weather const & weather);
 
 }	// namespace technicalmachine

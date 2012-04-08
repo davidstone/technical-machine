@@ -32,7 +32,8 @@ int main (int argc, char * argv []) {
 
 	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 
-	// TODO: This is not the correct solution, but it works "good enough". I'll get back to this later.
+	// TODO: This is not the correct solution, but it works "good enough". I'll
+	// get back to this later.
 	while (true) {
 		try {
 			po::Client client (depth);
@@ -41,7 +42,8 @@ int main (int argc, char * argv []) {
 		catch (network::InvalidPacket const & error) {
 			constexpr unsigned time_in_seconds = 10;
 			std::cerr << error.what () << " Disconnected. Waiting " << time_in_seconds << " seconds and trying again.\n";
-			// I disconnect from the server at this point and try again, because this means an unrecoverable error.
+			// I disconnect from the server at this point and try again, because
+			// this means an unrecoverable error.
 			sleep (time_in_seconds);
 			std::cerr << "Reconnecting.\n";
 		}

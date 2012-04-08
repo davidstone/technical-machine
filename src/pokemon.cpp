@@ -78,11 +78,22 @@ uint64_t Pokemon::hash () const {
 }
 
 bool Pokemon::find_move (Move::Moves move_name) {
-	for (move.index = 0; move().name != Move::STRUGGLE; ++move.index) {
-		if (move_name == move().name)
+	uint8_t index = 0;
+	for (; move(index).name != Move::STRUGGLE; ++index) {
+		if (move_name == move(index).name) {
+			move.set_index(index);
 			return true;
+		}
 	}
+	move.set_index(index);
 	return false;
+}
+
+uint8_t Pokemon::index_of_first_switch () const {
+	uint8_t index = 0;
+	while (!move(index).is_switch())
+		++index;
+	return index;
 }
 
 void Pokemon::normalize_hp () {
@@ -159,13 +170,8 @@ bool Pokemon::is_wormadam (Species species) {
 }
 
 bool Pokemon::operator== (Pokemon const & other) const {
-	if (move.set.size() != other.move.set.size())
-		return false;
-	for (size_t n = 0; n != move.set.size(); ++n) {
-		if (move.set [n] == other.move.set [n])
-			return false;
-	}
-	return name == other.name and
+	return move.set == other.move.set and
+			name == other.name and
 			status.name == other.status.name and
 			sleep == other.sleep and
 			hp.stat == other.hp.stat and

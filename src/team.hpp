@@ -154,6 +154,7 @@ class Team {
 		Pokemon& at_replacement ();
 		Pokemon const & at_replacement () const;
 		bool is_switching_to_self () const;
+		bool is_switching_to_self (Move const & move) const;
 		// Has this Pokemon been seen already? If it has, set replacement.
 		bool seen_pokemon (Species name);
 		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender);

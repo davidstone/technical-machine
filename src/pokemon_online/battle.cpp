@@ -246,7 +246,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case FLINCH: {
 			std::cerr << "FLINCH\n";
 			Team & team = is_me (player) ? ai : foe;
-			team.at_replacement().move().variable.index = 1;
+			team.at_replacement().move().variable.set_index(1);
 			break;
 		}
 		case RECOIL: {

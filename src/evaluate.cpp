@@ -36,10 +36,10 @@ class ResetIndex {
 	public:
 		ResetIndex (Team & team):
 			reset (team),
-			index (team.pokemon.index) {
+			index (team.pokemon.index()) {
 		}
 		~ResetIndex () {
-			reset.pokemon.index = index;
+			reset.pokemon.set_index(index);
 		}
 	private:
 		Team & reset;
@@ -86,7 +86,7 @@ int64_t Score::score_team (Team const & team) const {
 			score += trapped;
 		if (team.focus_energy)
 			score += focus_energy;
-		for (std::vector<Move>::const_iterator move = team.pokemon().move.set.cbegin(); move->name != Move::STRUGGLE; ++move) {
+		for (auto move = team.pokemon().move.set.cbegin(); move->name != Move::STRUGGLE; ++move) {
 			if (move->name == Move::BATON_PASS) {
 				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage);
 				if (team.substitute)
@@ -99,10 +99,12 @@ int64_t Score::score_team (Team const & team) const {
 }
 
 int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
-	ResetIndex index (team);
+	ResetIndex const reset_index (team);
 	int64_t score = 0;
-	for (team.pokemon.index = 0; team.pokemon.index != team.pokemon.set.size(); ++team.pokemon.index)
+	for (uint8_t index = 0; index != team.pokemon.set.size(); ++index) {
+		team.pokemon.set_index(index);
 		score += score_pokemon (team, other, weather);
+	}
 	return score;
 }
 

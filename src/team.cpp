@@ -251,10 +251,14 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 }	// unnamed namespace
 
 bool Team::is_switching_to_self () const {
-	return pokemon.set [pokemon().move().to_replacement ()].name == pokemon().name;
+	return replacement == pokemon.index();
 }
 
-bool Team::seen_pokemon (Species name) {
+bool Team::is_switching_to_self (Move const & move) const {
+	return move.to_replacement() == pokemon.index();
+}
+
+bool Team::seen_pokemon (Species const name) {
 	for (replacement = 0; replacement != pokemon.set.size(); ++replacement) {
 		if (name == at_replacement().name)
 			return true;
@@ -267,7 +271,7 @@ void Team::add_pokemon (Species name, std::string const & nickname, unsigned lev
 	member.level = level;
 	member.gender = gender;
 
-	// member.nickname = nickname;
+	member.set_nickname(nickname);
 
 	pokemon.set.push_back (member);
 	replacement = pokemon.set.size() - 1;
@@ -280,16 +284,17 @@ uint64_t Team::hash () const {
 		current_hash ^= member.hash();
 	// hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
-	return size + 7 *
-			(pokemon.index + 6 *
+	constexpr unsigned max_size = 6;
+	return static_cast<unsigned> (size - 1) + max_size *
+			(pokemon.index() + pokemon.set.size() *
 			(vanish + Vanish::END_VANISH *
-			(static_cast<unsigned> ((stage [Stat::ATK] + 6)) + (6 + 6 + 1) *
-			(static_cast<unsigned> ((stage [Stat::DEF] + 6)) + (6 + 6 + 1) *
-			(static_cast<unsigned> ((stage [Stat::SPA] + 6)) + (6 + 6 + 1) *
-			(static_cast<unsigned> ((stage [Stat::SPD] + 6)) + (6 + 6 + 1) *
-			(static_cast<unsigned> ((stage [Stat::SPE] + 6)) + (6 + 6 + 1) *
-			(static_cast<unsigned> ((stage [Stat::ACC] + 6)) + (6 + 6 + 1) *
-			(static_cast<unsigned> ((stage [Stat::EVA] + 6)) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::ATK] + 6) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::DEF] + 6) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::SPA] + 6) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::SPD] + 6) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::SPE] + 6) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::ACC] + 6) + (6 + 6 + 1) *
+			(static_cast<unsigned> (stage [Stat::EVA] + 6) + (6 + 6 + 1) *
 			(((bide_damage < 714 / 2) ? bide_damage : 714u / 2) + (714 / 2 + 1) *
 			(bide + 3 *
 			(confused + 5 *
@@ -364,17 +369,9 @@ void Team::load (std::string const & name, unsigned other_size) {
 }
 
 bool Team::operator== (Team const & other) const {
-	if (pokemon.set.size() != other.pokemon.set.size())
-		return false;
-	for (size_t n = 0; n != pokemon.set.size(); ++n) {
-		if (pokemon.set [n] != other.pokemon.set [n])
-			return false;
-	}
-	for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1)) {
-		if (stage [stat] != other.stage [stat])
-			return false;
-	}
 	return pokemon().name == other.pokemon().name and
+			pokemon.set == other.pokemon.set and
+			stage == other.stage and
 			vanish == other.vanish and
 			bide == other.bide and
 			confused == other.confused and
@@ -424,39 +421,13 @@ bool Team::operator== (Team const & other) const {
 			me == other.me;
 }
 
-#ifndef NDEBUG
 Pokemon & Team::at_replacement () {
-	if (replacement >= pokemon.set.size()) {
-		InvalidActiveIndex const ex (replacement, pokemon.set.size(), "Pokemon replacement");
-		std::cerr << ex.what();
-	}
-	return pokemon.set [replacement];
-}
-Pokemon const & Team::at_replacement () const {
-	if (replacement >= pokemon.set.size()) {
-		InvalidActiveIndex const ex (replacement, pokemon.set.size(), "Pokemon replacement");
-		std::cerr << ex.what();
-	}
-	return pokemon.set [replacement];
-}
-
-#else	// NDEBUG
-
-Pokemon & Team::at_replacement () {
-	if (replacement < pokemon.set.size())
-		return pokemon.set [replacement];
-	else
-		throw InvalidActiveIndex (replacement, pokemon.set.size(), "Pokemon replacement");
+	return pokemon(replacement);
 }
 
 Pokemon const & Team::at_replacement () const {
-	if (replacement < pokemon.set.size())
-		return pokemon.set [replacement];
-	else
-		throw InvalidActiveIndex (replacement, pokemon.set.size(), "Pokemon replacement");
+	return pokemon(replacement);
 }
-
-#endif	// NDEBUG
 
 std::string Team::to_string () const {
 	std::string output = me ? "AI" : "Foe";

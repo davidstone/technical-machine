@@ -81,7 +81,10 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	unsigned n = 0;
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {
 		Move const move = load_move (value.second, foe_size);
-		pokemon.move.set.insert (pokemon.move.set.begin () + n, move);
+		// I insert so that the moves show up in the order they are listed in
+		// the team file. Struggle and the Switches are already in it, so I
+		// can't push_back.
+		pokemon.move.set.insert (pokemon.move.set.begin() + n, move);
 		++n;
 	}
 	
