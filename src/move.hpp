@@ -193,6 +193,7 @@ class Move {
 		bool is_boosted_by_reckless() const;
 		bool is_usable_while_sleeping () const;
 		bool is_usable_while_frozen () const;
+		bool is_sound_based () const;
 		bool is_self_KO () const;
 		bool cannot_miss () const;
 		void get_magnitude (unsigned magnitude);

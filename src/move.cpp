@@ -427,6 +427,28 @@ bool Move::is_usable_while_frozen () const {
 	}
 }
 
+bool Move::is_sound_based () const {
+	switch (name) {
+		case BUG_BUZZ:
+		case CHATTER:
+		case GRASSWHISTLE:
+		case GROWL:
+		case HEAL_BELL:
+		case HYPER_VOICE:
+		case METAL_SOUND:
+		case PERISH_SONG:
+		case ROAR:
+		case SCREECH:
+		case SING:
+		case SNORE:
+		case SUPERSONIC:
+		case UPROAR:
+			return true;
+		default:
+			return false;
+	}
+}
+
 bool Move::is_self_KO () const {
 	switch (name) {
 		case EXPLOSION:

@@ -74,15 +74,22 @@ unsigned call_move (Team & user, Team & target, Weather & weather, unsigned cons
 		if (!user.miss)
 			return use_move (user, target, weather, log_damage);
 	}
+	assert (log_damage == 0 or log_damage == -1u);
+	return 0;
 	// I'm not sure if this is actually correct behavior, but it's what I get
 	// from slightly rearranging my code to retain the same functionality. I
 	// suspect that correct behavior here is to just return 0.
-	return (log_damage == -1u) ? 0 : log_damage;
+//	return (log_damage == -1u) ? 0 : log_damage;
 }
 
 namespace {
 
 unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const log_damage) {
+	// TODO: Add targeting information and only block the move if the target is
+	// immune.
+	if (target.pokemon().ability.blocks_sound_moves() and user.pokemon().move().is_sound_based() and
+			!(user.pokemon().move().name == Move::HEAL_BELL or user.pokemon().move().name == Move::PERISH_SONG))
+		return 0;
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
 	move_power (user, target, weather);
@@ -828,7 +835,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::ROAR:
 		case Move::WHIRLWIND:
-			if ((target.pokemon().ability.blocks_sound_moves() or user.pokemon().move().name != Move::ROAR) and !target.ingrain and !target.pokemon().ability.blocks_phazing()) {
+			if (!target.ingrain and !target.pokemon().ability.blocks_phazing()) {
 				if (target.pokemon.set.size() > 1) {
 					target.replacement = user.pokemon().move().variable().first;
 					switchpokemon (target, user, weather);
