@@ -400,12 +400,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const party = msg.read_byte ();
 			uint8_t const slot = msg.read_byte ();
 			int16_t const change_in_health = static_cast<int16_t> (msg.read_short ());
-			int16_t const remaining_health = static_cast<int16_t> (msg.read_short ());
+			uint16_t const remaining_hp = msg.read_short ();
 			int16_t const denominator = static_cast<int16_t> (msg.read_short ());
+			assert(denominator > 0);
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
 				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_health_change (party, slot, change_in_health, remaining_health, denominator);
+				battle.handle_health_change (party, slot, change_in_health, remaining_hp, static_cast<uint16_t>(denominator));
 			}
 			break;
 		}

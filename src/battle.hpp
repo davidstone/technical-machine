@@ -65,7 +65,7 @@ class GenericBattle {
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 		void handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name);
 		void handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
-		void handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator);
+		void handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, uint16_t remaining_hp, uint16_t denominator);
 		void handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp);
 		void handle_fainted (uint8_t fainting_party, uint8_t slot);
 		void handle_end (network::GenericClient & client, Result const result) const;
@@ -73,7 +73,7 @@ class GenericBattle {
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
 		Move::Moves determine_action (network::GenericClient & client);
 		uint8_t switch_slot (Move::Moves move) const;
-		virtual unsigned get_max_damage_precision () const;
+		virtual uint16_t max_damage_precision () const;
 		void initialize_turn ();
 		virtual uint8_t get_target () const = 0;
 		static constexpr uint8_t unknown_party = 255;

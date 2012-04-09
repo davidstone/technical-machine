@@ -50,7 +50,7 @@ Pokemon::Pokemon (Species const species, unsigned const size) :
 
 	happiness (255)
 	{
-	hp.calculate_initial_hp (level);
+	calculate_initial_hp();
 	Move struggle (Move::STRUGGLE, 0, 0);
 	move.set.push_back (struggle);
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
@@ -60,6 +60,10 @@ Pokemon::Pokemon (Species const species, unsigned const size) :
 			move.set.push_back (switchn);
 		}
 	}
+}
+
+void Pokemon::calculate_initial_hp () {
+	hp.calculate_initial_hp (level);
 }
 
 uint64_t Pokemon::hash () const {

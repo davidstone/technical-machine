@@ -45,6 +45,7 @@ class Battle : public GenericBattle {
 		void parse_use_attack (InMessage & msg, uint8_t player);
 		void parse_straight_damage (InMessage & msg);
 		void parse_hp_change (InMessage & msg, uint8_t player);
+		int16_t calculate_change_in_hp (bool my_team, uint16_t remaining_hp) const;
 		void parse_pp_change (InMessage & msg);
 		void parse_effectiveness (InMessage & msg);
 		void handle_miss (uint8_t player);
@@ -79,10 +80,10 @@ class Battle : public GenericBattle {
 		void parse_rearrange_team (InMessage & msg);
 		void parse_spot_shifts (InMessage & msg);
 		void parse_battle_end (InMessage & msg);
-		unsigned get_max_damage_precision () const;
+		uint16_t max_damage_precision () const;
 		uint8_t get_target () const;
-		int16_t ai_change_in_hp (int16_t remaining_hp) const;
-		int16_t foe_change_in_hp (int16_t remaining_hp) const;
+		int16_t ai_change_in_hp (uint16_t remaining_hp) const;
+		int16_t foe_change_in_hp (uint16_t remaining_hp) const;
 		static constexpr unsigned pokemon_per_team = 6;
 		static constexpr unsigned moves_per_pokemon = 4;
 };

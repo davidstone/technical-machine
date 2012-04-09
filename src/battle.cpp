@@ -165,7 +165,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	// If it hasn't been seen already, add it to the team.
 	if (!active.seen_pokemon (species)) {
 		active.add_pokemon (species, nickname, level, gender);
-		active.at_replacement ().new_hp = get_max_damage_precision ();
+		active.at_replacement ().new_hp = max_damage_precision ();
 	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
@@ -183,7 +183,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	}
 }
 
-void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, int16_t remaining_health, int16_t denominator) {
+void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t slot, int16_t change_in_health, uint16_t remaining_hp, uint16_t denominator) {
 	bool const my_team = party_changing_health == party;
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
@@ -197,20 +197,17 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 			std::cerr << "change_in_health: " << static_cast<int> (change_in_health) << '\n';
 			std::cerr << "denominator: " << static_cast<int> (denominator) << '\n';
 			std::cerr << "pokemon.hp.stat: " << static_cast<int> (pokemon.hp.stat) << '\n';
-			changer.damage = std::min (pokemon.hp.max * change_in_health / denominator, static_cast<int> (pokemon.hp.stat));
+			changer.damage = std::min (pokemon.hp.max * change_in_health / static_cast<int>(denominator), static_cast<int> (pokemon.hp.stat));
 			std::cerr << "changer.damage: " << static_cast<int> (changer.damage) << '\n';
 		}
 		move_damage = false;
 	}
-	
-	if (remaining_health < 0)
-		remaining_health = 0;
-	pokemon.new_hp = static_cast<uint16_t> (remaining_health);
+	pokemon.new_hp = remaining_hp;
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	for (Pokemon & pokemon : team.pokemon.set) {
-		unsigned const max_hp = (team.me) ? pokemon.hp.max : get_max_damage_precision ();
+		unsigned const max_hp = (team.me) ? pokemon.hp.max : max_damage_precision ();
 		unsigned const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
 		if (tm_estimate != pokemon.new_hp) {
 			unsigned const reported_hp = static_cast<unsigned> (pokemon.new_hp) * pokemon.hp.max / max_hp;
@@ -256,7 +253,7 @@ uint8_t GenericBattle::switch_slot (Move::Moves move) const {
 	return 0;
 }
 
-unsigned GenericBattle::get_max_damage_precision () const {
+uint16_t GenericBattle::max_damage_precision () const {
 	return 48;
 }
 

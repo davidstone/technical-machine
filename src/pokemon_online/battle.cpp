@@ -17,15 +17,20 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "battle.hpp"
+
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include "connect.hpp"
 #include "conversion.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
+
 #include "../pokemon.hpp"
 #include "../team.hpp"
+
+#include "../network/invalid_simulator_data.hpp"
 
 namespace technicalmachine {
 namespace po {
@@ -300,28 +305,27 @@ void Battle::parse_straight_damage (InMessage & msg) {
 	std::cerr << "STRAIGHT_DAMAGE\n";
 	// I'm not sure if this actually needs an int16_t or if it's never negative.
 	damage = static_cast<int16_t> (msg.read_short ());
+	assert (damage > 0);
 	std::cerr << "damage: " << damage << '\n';
 }
 
 void Battle::parse_hp_change (InMessage & msg, uint8_t const player) {
 	std::cerr << "HP_CHANGE\n";
 	bool const my_team = player == party;
-	// Is remaining_hp ever negative? I think PO may ignore strict damage clause
-	int16_t const remaining_hp = static_cast<int16_t> (msg.read_short ());
-	int16_t change_in_hp;
-	if (damage == 0)
-		change_in_hp = my_team ? ai_change_in_hp (remaining_hp) : foe_change_in_hp (remaining_hp);
-	else {
-		damage = 0;
-		change_in_hp = damage;
-	}
+	uint16_t const remaining_hp = msg.read_short ();
+	int16_t const change_in_hp = calculate_change_in_hp (my_team, remaining_hp);
+	damage = 0;
 	if (change_in_hp < 0)
 		std::cerr << "change_in_hp is negative. change_in_hp == " << change_in_hp << '\n';
-	if (remaining_hp < 0)
-		std::cerr << "remaining_hp is negative. remaining_hp == " << remaining_hp << '\n';
 	uint8_t const slot = 0;
-	int16_t const denominator = my_team ? ai.at_replacement ().hp.max : get_max_damage_precision ();
+	uint16_t const denominator = my_team ? ai.at_replacement ().hp.max : max_damage_precision ();
 	handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
+}
+
+int16_t Battle::calculate_change_in_hp (bool const my_team, uint16_t const remaining_hp) const {
+	return (damage == 0) ?
+		(my_team ? ai_change_in_hp (remaining_hp) : foe_change_in_hp (remaining_hp)) :
+		damage;
 }
 
 void Battle::parse_pp_change (InMessage & msg) {
@@ -601,7 +605,7 @@ void Battle::parse_battle_end (InMessage & msg) {
 	uint8_t const result = msg.read_byte ();
 }
 
-unsigned Battle::get_max_damage_precision () const {
+uint16_t Battle::max_damage_precision () const {
 	return 100;
 }
 
@@ -609,13 +613,18 @@ uint8_t Battle::get_target () const {
 	return 1 - party;
 }
 
-int16_t Battle::ai_change_in_hp (int16_t remaining_hp) const {
+int16_t Battle::ai_change_in_hp (uint16_t const remaining_hp) const {
+	if (ai.at_replacement().hp.max < remaining_hp)
+		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), ai.at_replacement().hp.max, "AI's remaining_hp");
 	return ai.at_replacement ().hp.stat - remaining_hp;
 }
 
-int16_t Battle::foe_change_in_hp (int16_t remaining_hp) const {
+int16_t Battle::foe_change_in_hp (uint16_t const remaining_hp) const {
+	if (max_damage_precision() < remaining_hp)
+		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), max_damage_precision(), "Foe's remaining_hp");
 	Pokemon const & pokemon = foe.at_replacement();
-	return static_cast<int16_t> (get_max_damage_precision () * pokemon.hp.stat / pokemon.hp.max) - remaining_hp;
+	uint16_t const pixel_hp = max_damage_precision() * pokemon.hp.stat / pokemon.hp.max;
+	return pixel_hp - remaining_hp;
 }
 
 }	// namespace po

@@ -31,7 +31,6 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
-
 namespace {
 
 unsigned calculate_initial_stat (Stat const & stat, unsigned level);

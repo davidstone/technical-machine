@@ -229,6 +229,7 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	load (team_file.string(), foe_size);
 	for (Pokemon & member : pokemon.set) {
 		member.set_hidden_power_type();
+		member.calculate_initial_hp();
 		member.new_hp = member.hp.max;
 	}
 }
