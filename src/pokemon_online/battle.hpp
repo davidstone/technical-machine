@@ -32,9 +32,6 @@ class Client;
 class InMessage;
 
 class Battle : public GenericBattle {
-	private:
-		OutMessage action;
-		int16_t damage;
 	public:
 		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, std::string const & team_file_name, bool challenger);
 		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, Team const & team, bool challenger);
@@ -86,6 +83,8 @@ class Battle : public GenericBattle {
 		int16_t foe_change_in_hp (uint16_t remaining_hp) const;
 		static constexpr unsigned pokemon_per_team = 6;
 		static constexpr unsigned moves_per_pokemon = 4;
+		OutMessage action;
+		uint16_t damage;
 };
 
 }	// namespace po

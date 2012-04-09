@@ -302,24 +302,19 @@ void Battle::parse_use_attack (InMessage & msg, uint8_t const player) {
 }
 
 void Battle::parse_straight_damage (InMessage & msg) {
-	std::cerr << "STRAIGHT_DAMAGE\n";
-	// I'm not sure if this actually needs an int16_t or if it's never negative.
-	damage = static_cast<int16_t> (msg.read_short ());
-	assert (damage > 0);
-	std::cerr << "damage: " << damage << '\n';
+	damage = msg.read_short ();
 }
 
 void Battle::parse_hp_change (InMessage & msg, uint8_t const player) {
-	std::cerr << "HP_CHANGE\n";
 	bool const my_team = player == party;
 	uint16_t const remaining_hp = msg.read_short ();
 	int16_t const change_in_hp = calculate_change_in_hp (my_team, remaining_hp);
 	damage = 0;
 	if (change_in_hp < 0)
-		std::cerr << "change_in_hp is negative. change_in_hp == " << change_in_hp << '\n';
+		return;
 	uint8_t const slot = 0;
 	uint16_t const denominator = my_team ? ai.at_replacement ().hp.max : max_damage_precision ();
-	handle_health_change (player, slot, change_in_hp, remaining_hp, denominator);
+	handle_hp_change (player, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, denominator);
 }
 
 int16_t Battle::calculate_change_in_hp (bool const my_team, uint16_t const remaining_hp) const {
@@ -329,7 +324,6 @@ int16_t Battle::calculate_change_in_hp (bool const my_team, uint16_t const remai
 }
 
 void Battle::parse_pp_change (InMessage & msg) {
-	std::cerr << "PP_CHANGE\n";
 	uint8_t const move = msg.read_byte ();
 	uint8_t const new_pp = msg.read_byte ();
 }
@@ -346,7 +340,6 @@ void Battle::handle_miss (uint8_t const player) {
 }
 
 void Battle::handle_critical_hit (uint8_t const player) {
-	std::cerr << "CH\n";
 	Team & team = is_me (player) ? ai : foe;
 	team.ch = true;
 }
