@@ -80,7 +80,7 @@ void endofturn0 (Team & team) {
 	team.flinch = false;
 	team.moved = false;
 	team.me_first = false;
-	team.loaf ^= 1;
+	team.loaf = !team.loaf;
 	team.protect = false;
 	team.replacing = false;
 }

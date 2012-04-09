@@ -364,7 +364,7 @@ void Team::load (std::string const & name, unsigned other_size) {
 		po::load_team (*this, name, other_size);
 	else if (extension == ".sbt")
 		pl::load_team (*this, name, other_size);
-	else
+	else	// TODO: throw
 		std::cerr << "Unsupported file format: " + extension + ".\n";
 }
 

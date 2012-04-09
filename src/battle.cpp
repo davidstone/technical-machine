@@ -18,6 +18,7 @@
 
 #include "battle.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <ctime>
@@ -186,20 +187,25 @@ void GenericBattle::handle_health_change (uint8_t party_changing_health, uint8_t
 	bool const my_team = party_changing_health == party;
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
+	Pokemon & pokemon = changer.at_replacement();
 	if (move_damage) {
 		Type const type = other.at_replacement().move().type;
-		unsigned const effectiveness = get_effectiveness (type, changer.at_replacement ());
-		if ((effectiveness > 0) and (type != Type::GROUND or grounded (changer, weather))) {
-			changer.damage = changer.at_replacement().hp.max * change_in_health / denominator;
-			if (changer.damage > changer.at_replacement().hp.stat)
-				changer.damage = changer.at_replacement().hp.stat;
+		unsigned const effectiveness = get_effectiveness (type, pokemon);
+		if (effectiveness > 0 and (type != Type::GROUND or grounded (changer, weather))) {
+			std::cerr << pokemon.to_string() << '\n';
+			std::cerr << "pokemon.hp.max: " << static_cast<int> (pokemon.hp.max) << '\n';
+			std::cerr << "change_in_health: " << static_cast<int> (change_in_health) << '\n';
+			std::cerr << "denominator: " << static_cast<int> (denominator) << '\n';
+			std::cerr << "pokemon.hp.stat: " << static_cast<int> (pokemon.hp.stat) << '\n';
+			changer.damage = std::min (pokemon.hp.max * change_in_health / denominator, static_cast<int> (pokemon.hp.stat));
+			std::cerr << "changer.damage: " << static_cast<int> (changer.damage) << '\n';
 		}
 		move_damage = false;
 	}
 	
 	if (remaining_health < 0)
 		remaining_health = 0;
-	changer.at_replacement().new_hp = static_cast<uint16_t> (remaining_health);
+	pokemon.new_hp = static_cast<uint16_t> (remaining_health);
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {

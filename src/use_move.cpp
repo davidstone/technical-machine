@@ -68,7 +68,7 @@ unsigned call_move (Team & user, Team & target, Weather & weather, unsigned cons
 	user.moved = true;
 	if (can_execute_move (user, target, weather)) {
 		lower_pp (user, target.pokemon());
-		ResetIndex reset_index (user.pokemon());
+		ResetIndex const reset_index (user.pokemon());
 		if (user.pokemon().move().calls_other_move())
 			call_other_move (user);
 		if (!user.miss)

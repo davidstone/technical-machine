@@ -36,7 +36,7 @@ class Team {
 	public:
 		Active<Pokemon> pokemon;
 
-		// How much damage will this Pokemon do
+		// How much damage has been done to this Pokemon this turn
 		uint16_t damage;
 		uint16_t bide_damage;
 		uint16_t chance_to_hit;
