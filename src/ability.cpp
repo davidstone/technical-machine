@@ -51,7 +51,7 @@ bool Ability::blocks_switching (Team const & switcher, Weather const & weather) 
 		case SHADOW_TAG:
 			return switcher.pokemon().ability.name != Ability::SHADOW_TAG;
 		case ARENA_TRAP:
-			return grounded (switcher, weather);
+			return grounded (switcher, switcher.pokemon(), weather);
 		case MAGNET_PULL:
 			return is_type (switcher, Type::STEEL);
 		default:

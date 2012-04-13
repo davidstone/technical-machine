@@ -184,14 +184,12 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 }
 
 void GenericBattle::handle_hp_change (uint8_t party_changing_hp, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator) {
-	bool const my_team = party_changing_hp == party;
+	bool const my_team = is_me (party_changing_hp);
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
 	Pokemon & pokemon = changer.at_replacement();
 	if (move_damage) {
-		Type const type = other.at_replacement().move().type;
-		unsigned const effectiveness = get_effectiveness (type, pokemon);
-		if (effectiveness > 0 and (type != Type::GROUND or grounded (changer, weather)))
+		if (other.at_replacement().move().affects_replacement(changer, weather))
 			changer.damage = std::min (static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat);
 		move_damage = false;
 	}
@@ -224,7 +222,7 @@ void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint
 }
 
 void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
-	Team & fainter = (party == fainting_party) ? ai : foe;
+	Team & fainter = is_me (fainting_party) ? ai : foe;
 	fainter.at_replacement().fainted = true;
 }
 

@@ -24,14 +24,16 @@
 #undef SING
 
 #include "evaluate.hpp"
+#include "team.hpp"
 #include "type.hpp"
+#include "weather.hpp"
 
 namespace technicalmachine {
 namespace {
 
-constexpr uint8_t unlimited_pp = 255;
-constexpr uint16_t indeterminate_power = 65535;
-constexpr uint16_t perfect_accuracy = 65535;
+constexpr uint8_t unlimited_pp = 0xFF;
+constexpr uint16_t indeterminate_power = 0xFFFF;
+constexpr uint16_t perfect_accuracy = 0xFFFF;
 Type get_type (Move::Moves move);
 bool is_physical (Move::Moves move);
 uint16_t base_power (Move::Moves move);
@@ -269,6 +271,18 @@ unsigned Move::to_replacement (Moves name) {
 
 unsigned Move::to_replacement () const {
 	return to_replacement (name);
+}
+
+bool Move::affects_target (Team const & target, Weather const & weather) const {
+	return affects_pokemon (target, target.pokemon(), weather);
+}
+
+bool Move::affects_replacement (Team const & target, Weather const & weather) const {
+	return affects_pokemon (target, target.at_replacement(), weather);
+}
+
+bool Move::affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const {
+	return type.get_effectiveness(pokemon) > 0 and (type != Type::GROUND or grounded (target, pokemon, weather));
 }
 
 bool Move::has_follow_up_decision () const {

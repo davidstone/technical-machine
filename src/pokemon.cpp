@@ -748,7 +748,7 @@ TypeCollection Pokemon::get_type (Species const name) {
 
 	TypeCollection type;
 	for (unsigned n = 0; n != 2; ++n) {
-		Type t = get_type [name] [n];
+		Type::Types const t = get_type [name] [n];
 		if (t != Type::TYPELESS)
 			type.types.push_back (t);
 	}

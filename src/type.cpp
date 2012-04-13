@@ -32,12 +32,20 @@ Type::Type (Types name):
 	type (name) {
 }
 
-bool Type::operator== (Type other) const {
+bool Type::operator== (Type const other) const {
 	return type == other.type;
 }
 
-bool Type::operator!= (Type other) const {
+bool Type::operator!= (Type const other) const {
 	return !(*this == other);
+}
+
+bool Type::is_boosted_by_flash_fire () const {
+	return type == FIRE;
+}
+
+bool Type::is_immune_to_hail () const {
+	return type == ICE;
 }
 
 bool Type::is_immune_to_sandstorm () const {
@@ -49,6 +57,14 @@ bool Type::is_immune_to_sandstorm () const {
 		default:
 			return false;
 	}
+}
+
+bool Type::is_strengthened_by_weather (Weather const & weather) const {
+	return (weather.rain() and type == WATER) or (weather.sun() and type == FIRE);
+}
+
+bool Type::is_weakened_by_weather (Weather const & weather) const {
+	return (weather.rain() and type == FIRE) or (weather.sun() and type == WATER);
 }
 
 template<>
@@ -77,7 +93,7 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 	return blocks_status<Status::POISON> ();
 }
 
-bool is_type (Team const & team, Type type) {
+bool is_type (Team const & team, Type const type) {
 	if (type != Type::FLYING or !team.roost) {
 		for (Type const check : team.pokemon().type.types) {
 			if (check == type)
@@ -87,11 +103,7 @@ bool is_type (Team const & team, Type type) {
 	return false;
 }
 
-namespace {
-
-// Calculate the effectiveness of attacking type on defending type. 0 is no effect, 1 is not very effective, 2 is neutral, and 4 is super effective.
-
-unsigned lookup_effectiveness (Type attacking, Type defending) {
+unsigned Type::lookup_effectiveness (Type::Types const attacking, Type const defending) {
 	constexpr static unsigned effectiveness [18][18] = {
 		{	2,	4,	2,	2,	1,	1,	1,	1,	4,	2,	2,	2,	1,	4,	2,	1,	2,	2	},	// Bug
 		{	2,	1,	2,	2,	1,	2,	2,	4,	2,	2,	2,	2,	2,	4,	2,	1,	2,	2	},	// Dark
@@ -113,36 +125,54 @@ unsigned lookup_effectiveness (Type attacking, Type defending) {
 		{	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2	}	// Typeless
 		//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
 	};
-	return effectiveness [attacking.type] [defending.type];
+	return effectiveness [attacking] [defending.type];
 }
 
-}	// unnamed namespace
-
-unsigned get_effectiveness (Type type, Pokemon const & pokemon) {
+unsigned Type::get_effectiveness (Type::Types const type, Pokemon const & defender) {
 	unsigned effectiveness = 1;
 	// Effectiveness on each of the defender's types (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : pokemon.type.types)
+	for (Type const target_type : defender.type.types)
 		effectiveness *= lookup_effectiveness (type, target_type);
-	if (pokemon.type.types.size () == 1)
+	if (defender.type.types.size () == 1)
 		effectiveness *= 2;
 	return effectiveness;
 }
 
-std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & pokemon) {
+unsigned Type::lookup_effectiveness (Type const defending) const {
+	return lookup_effectiveness (type, defending);
+}
+
+unsigned Type::get_effectiveness (Pokemon const & defender) const {
+	return get_effectiveness (type, defender);
+}
+
+std::vector <unsigned> Type::get_effectiveness_variables (Pokemon const & pokemon) const {
 	std::vector <unsigned> effectiveness;
 	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
 	for (Type const target_type : pokemon.type.types)
-		effectiveness.push_back (lookup_effectiveness (type, target_type));
+		effectiveness.push_back (lookup_effectiveness (target_type));
 	return effectiveness;
 }
 
-bool grounded (Team const & team, Weather const & weather) {
-	return !(is_type (team, Type::FLYING) or team.pokemon().ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity() or team.pokemon().item.grounds() or team.ingrain;
+unsigned Type::stealth_rock_effectiveness (Pokemon const & pokemon) {
+	return get_effectiveness (ROCK, pokemon);
+}
+
+bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather) {
+	return !(is_type (team, Type::FLYING) or pokemon.ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity() or pokemon.item.grounds() or team.ingrain;
 }
 
 bool TypeCollection::is_immune_to_sandstorm () const {
 	for (Type const type : types) {
 		if (type.is_immune_to_sandstorm ())
+			return true;
+	}
+	return false;
+}
+
+bool TypeCollection::is_immune_to_hail () const {
+	for (Type const type : types) {
+		if (type.is_immune_to_hail())
 			return true;
 	}
 	return false;

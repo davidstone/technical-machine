@@ -46,22 +46,37 @@ class Type {
 			WATER,
 			TYPELESS
 		};
-		Types type;
-		
 		Type (Types name);
 		bool operator== (Type other) const;
 		bool operator!= (Type other) const;
+		bool is_boosted_by_flash_fire () const;
+		bool is_immune_to_hail () const;
 		bool is_immune_to_sandstorm () const;
+		bool is_strengthened_by_weather (Weather const & weather) const;
+		bool is_weakened_by_weather (Weather const & weather) const;
 		template<Status::Statuses status>
 		bool blocks_status () const {
 			return false;
 		}
+		// 0, 1, 2, 4, 8, or 16
+		unsigned get_effectiveness (Pokemon const & defender) const;
+		std::vector <unsigned> get_effectiveness_variables (Pokemon const & pokemon) const;
+		static unsigned stealth_rock_effectiveness (Pokemon const & pokemon);
+	private:
+		// Calculate the effectiveness of attacking type on defending type. 0 is
+		// no effect, 1 is not very effective, 2 is neutral, and 4 is super
+		// effective.
+		static unsigned lookup_effectiveness (Type::Types attacking, Type defending);
+		unsigned lookup_effectiveness (Type defending) const;
+		static unsigned get_effectiveness (Type::Types type, Pokemon const & defender);
+		Types type;
 };
 
 class TypeCollection {
 	public:
 		std::vector <Type> types;
 		
+		bool is_immune_to_hail () const;
 		bool is_immune_to_sandstorm () const;
 		template<Status::Statuses status>
 		bool blocks_status () const {
@@ -78,9 +93,7 @@ class Team;
 class Weather;
 
 bool is_type (Team const & team, Type type);
-unsigned get_effectiveness (Type type, Pokemon const & pokemon);
-std::vector <unsigned> get_effectiveness_variables (Type type, Pokemon const & pokemon);
-bool grounded (Team const & team, Weather const & weather);
+bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather);
 
 }	// namespace technicalmachine
 #endif	// TYPE_HPP_

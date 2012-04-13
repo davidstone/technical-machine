@@ -29,6 +29,7 @@ int main (int argc, char * argv []) {
 	std::cerr << "sizeof (Team): " << sizeof (Team) << '\n';
 	std::cerr << "sizeof (Pokemon): " << sizeof (Pokemon) << '\n';
 	std::cerr << "sizeof (Move): " << sizeof (Move) << '\n';
+	std::cerr << "sizeof (Weather): " << sizeof (Weather) << '\n';
 
 	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 

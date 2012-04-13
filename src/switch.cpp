@@ -164,7 +164,7 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 	if (switcher.pokemon().ability.blocks_secondary_damage())
 		return;
 
-	if (grounded (switcher, weather)) {
+	if (grounded (switcher, switcher.pokemon(), weather)) {
 		if (switcher.toxic_spikes != 0) {
 			if (is_type (switcher, Type::POISON))
 				switcher.toxic_spikes = 0;
@@ -180,7 +180,7 @@ void entry_hazards (Team & switcher, Weather const & weather) {
 	// numbers being more effective. 4 * effective Stealth Rock does
 	// 16 / 32 damage.
 	if (switcher.stealth_rock)
-		heal (switcher.pokemon(), -32, get_effectiveness (Type::ROCK, switcher.pokemon()));
+		heal (switcher.pokemon(), -32, Type::stealth_rock_effectiveness(switcher.pokemon()));
 }
 
 }	// unnamed namespace

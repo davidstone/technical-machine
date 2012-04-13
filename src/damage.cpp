@@ -32,7 +32,6 @@
 namespace technicalmachine {
 namespace {
 
-bool move_affects_target (Pokemon const & attacker, Team const & defender, Weather const & weather);
 unsigned capped_damage (Team const & attacker, Team const & defender, Weather const & weather);
 unsigned regular_damage (Team const & attacker, Team const & defender, Weather const & weather);
 
@@ -44,8 +43,6 @@ bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
 unsigned weakening_from_burn (Pokemon const & attacker);
 unsigned calculate_weather_modifier (Type type, Weather const & weather, unsigned damage);
-bool weather_strengthens_type (Type type, Weather const & weather);
-bool weather_weakens_type (Type type, Weather const & weather);
 unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned damage);
 unsigned calculate_critical_hit_multiplier (Team const & attacker);
 unsigned calculate_item_modifier (Pokemon const & attacker, unsigned damage);
@@ -64,17 +61,12 @@ bool resistance_berry_activates (Item item, Type type, unsigned effectiveness);
 }	// unnamed namespace
 
 unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather) {
-	return move_affects_target (attacker.pokemon(), defender, weather) ?
+	return attacker.pokemon().move().affects_target (defender, weather) ?
 		capped_damage (attacker, defender, weather) :
 		0;
 }
 
 namespace {
-
-bool move_affects_target (Pokemon const & attacker, Team const & defender, Weather const & weather) {
-	unsigned const effectiveness = get_effectiveness (attacker.move().type, defender.pokemon());
-	return (effectiveness > 0) and (attacker.move().type != Type::GROUND or grounded (defender, weather));
-}
 
 unsigned capped_damage (Team const & attacker, Team const & defender, Weather const & weather) {
 	unsigned damage = uncapped_damage (attacker, defender, weather);
@@ -137,7 +129,7 @@ unsigned regular_damage (Team const & attacker, Team const & defender, Weather c
 	damage = calculate_stab_modifier (attacker, damage);
 	damage = calculate_effectiveness_modifier (pokemon.move(), defender.pokemon(), damage);
 
-	unsigned const effectiveness = get_effectiveness (pokemon.move().type, defender.pokemon());
+	unsigned const effectiveness = pokemon.move().type.get_effectiveness (defender.pokemon());
 	damage = calculate_ability_effectiveness_modifier (defender.pokemon().ability, effectiveness, damage);
 	damage = calculate_expert_belt_modifier (pokemon.item, effectiveness, damage);
 	damage *= calculate_tinted_lens_multiplier (pokemon.ability, effectiveness);
@@ -200,24 +192,16 @@ bool light_screen_is_active (Move const & move, Team const & defender) {
 }
 
 unsigned calculate_weather_modifier (Type const type, Weather const & weather, unsigned const damage) {
-	if (weather_strengthens_type (type, weather))
+	if (type.is_strengthened_by_weather(weather))
 		return damage * 3 / 2;
-	else if (weather_weakens_type (type, weather))
+	else if (type.is_weakened_by_weather(weather))
 		return damage / 2;
 	else
 		return damage;
 }
 
-bool weather_strengthens_type (Type const type, Weather const & weather) {
-	return (weather.rain() and type == Type::WATER) or (weather.sun() and type == Type::FIRE);
-}
-
-bool weather_weakens_type (Type const type, Weather const & weather) {
-	return (weather.rain() and type == Type::FIRE) or (weather.sun() and type == Type::WATER);
-}
-
 unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned const damage) {
-	return (attacker.flash_fire and attacker.pokemon().move().type == Type::FIRE) ? damage * 3 / 2 : damage;
+	return (attacker.flash_fire and attacker.pokemon().move().type.is_boosted_by_flash_fire()) ? damage * 3 / 2 : damage;
 }
 
 unsigned calculate_critical_hit_multiplier (Team const & attacker) {
@@ -259,7 +243,7 @@ unsigned calculate_stab_boost (Ability const ability, unsigned const damage) {
 }
 
 unsigned calculate_effectiveness_modifier (Move const & move, Pokemon const & defender, unsigned damage) {
-	std::vector <unsigned> const effectiveness = get_effectiveness_variables (move.type, defender);
+	std::vector <unsigned> const effectiveness = move.type.get_effectiveness_variables (defender);
 	for (unsigned const effective : effectiveness)
 		damage = damage * effective / 2;
 	return damage;
@@ -282,6 +266,10 @@ unsigned calculate_resistance_berry_divisor (Item const item, Type const type, u
 }
 
 bool resistance_berry_activates (Item const item, Type const type, unsigned const effectiveness) {
+	// Perhaps I should create some sort of item function that returns the type
+	// that the item grants resistance toward (and some sort of guard type to
+	// indicate that the item does not grant resistance). Then I can
+	// `return type == returned_type;`
 	if (item.name == Item::CHILAN_BERRY)
 		return type == Type::NORMAL;
 	else if (effectiveness > 4) {

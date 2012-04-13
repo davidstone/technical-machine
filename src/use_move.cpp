@@ -808,7 +808,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			weather.set_rain (user.pokemon().item.extends_rain());
 			break;
 		case Move::RAPID_SPIN:
-			if (get_effectiveness (user.pokemon().move().type, target.pokemon()) > 0) {
+			if (user.pokemon().move().type.get_effectiveness(target.pokemon()) > 0) {
 				user.spikes = 0;
 				user.stealth_rock = false;
 				user.toxic_spikes = 0;

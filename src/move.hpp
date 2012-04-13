@@ -28,6 +28,8 @@
 #include "type.hpp"
 
 namespace technicalmachine {
+class Team;
+class Weather;
 
 class Move {
 	public:
@@ -177,6 +179,8 @@ class Move {
 		static Moves from_replacement (unsigned replacement);
 		static unsigned to_replacement (Moves name);
 		unsigned to_replacement () const;
+		bool affects_target (Team const & target, Weather const & weather) const;
+		bool affects_replacement (Team const & target, Weather const & weather) const;
 		bool has_follow_up_decision () const;
 		bool calls_other_move () const;
 		bool was_used_last () const;
@@ -198,6 +202,7 @@ class Move {
 		bool cannot_miss () const;
 		void get_magnitude (unsigned magnitude);
 	private:
+		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
 		int8_t get_priority ();
 		static std::vector<std::pair <uint16_t, uint16_t>> get_variable (Moves name, unsigned size);
 };
