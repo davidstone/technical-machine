@@ -28,7 +28,7 @@ namespace technicalmachine {
 
 class Move;
 
-std::vector <std::pair <int64_t, size_t>> reorder (std::vector<Move> const & input, bool ai);
+std::vector<std::pair<int64_t, size_t>> reorder (std::vector<Move> const & input, bool ai);
 
 }	// namespace technicalmachine
 #endif	// REORDER_MOVES_HPP_

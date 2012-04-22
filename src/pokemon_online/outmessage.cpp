@@ -58,50 +58,54 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	write_string (tier);
 	uint8_t const generation = 4;
 	write_byte (generation);
-	for (Pokemon const & pokemon : team.pokemon.set) {
-		std::pair <uint16_t, uint8_t> const species = species_to_id (pokemon.name);
-		write_short (species.first);
-		write_byte (species.second);
-		write_string (pokemon.get_nickname());
-		uint16_t const item = item_to_id (pokemon.item.name);
-		write_short (item);
-		uint16_t const ability = ability_to_id (pokemon.ability.name);
-		write_short (ability);
-		uint8_t const nature = nature_to_id (pokemon.nature.name);
-		write_byte (nature);
-		uint8_t const gender = gender_to_id (pokemon.gender.gender);
-		write_byte (gender);
-		bool shiny = false;
-		write_byte (shiny);
-		write_byte (pokemon.happiness);
-		write_byte (pokemon.level);
-		unsigned number_of_moves = 0;
-		for (std::vector<Move>::const_iterator move = pokemon.move.set.begin(); move->name != Move::STRUGGLE; ++move) {
-			++number_of_moves;
-			uint32_t const move_id = move_to_id (move->name);
-			write_int (move_id);
-		}
-		while (number_of_moves < 4) {
-			write_int (0);
-			++number_of_moves;
-		}
-		write_byte (pokemon.hp.iv);
-		write_byte (pokemon.atk.iv);
-		write_byte (pokemon.def.iv);
-		write_byte (pokemon.spe.iv);
-		write_byte (pokemon.spa.iv);
-		write_byte (pokemon.spd.iv);
-
-		write_byte (pokemon.hp.ev * 4);
-		write_byte (pokemon.atk.ev * 4);
-		write_byte (pokemon.def.ev * 4);
-		write_byte (pokemon.spe.ev * 4);
-		write_byte (pokemon.spa.ev * 4);
-		write_byte (pokemon.spd.ev * 4);
-	}
-	for (unsigned n = team.pokemon.set.size (); n <= 6; ++n) {
+	team.pokemon.for_each([&](Pokemon const & pokemon) {
+		write_pokemon (pokemon);
+	});
+	for (unsigned n = team.pokemon.size(); n <= 6; ++n) {
 		write_short (0);
 	}
+}
+
+void OutMessage::write_pokemon (Pokemon const & pokemon) {
+	std::pair <uint16_t, uint8_t> const species = species_to_id (pokemon.name);
+	write_short (species.first);
+	write_byte (species.second);
+	write_string (pokemon.get_nickname());
+	uint16_t const item = item_to_id (pokemon.item.name);
+	write_short (item);
+	uint16_t const ability = ability_to_id (pokemon.ability.name);
+	write_short (ability);
+	uint8_t const nature = nature_to_id (pokemon.nature.name);
+	write_byte (nature);
+	uint8_t const gender = gender_to_id (pokemon.gender.gender);
+	write_byte (gender);
+	bool shiny = false;
+	write_byte (shiny);
+	write_byte (pokemon.happiness);
+	write_byte (pokemon.level);
+	unsigned number_of_moves = 0;
+	pokemon.move.for_each_regular_move([&](Move const & move) {
+		++number_of_moves;
+		uint32_t const move_id = move_to_id (move.name);
+		write_int (move_id);
+	});
+	while (number_of_moves < 4) {
+		write_int (0);
+		++number_of_moves;
+	}
+	write_byte (pokemon.hp.iv);
+	write_byte (pokemon.atk.iv);
+	write_byte (pokemon.def.iv);
+	write_byte (pokemon.spe.iv);
+	write_byte (pokemon.spa.iv);
+	write_byte (pokemon.spd.iv);
+
+	write_byte (pokemon.hp.ev * 4);
+	write_byte (pokemon.atk.ev * 4);
+	write_byte (pokemon.def.ev * 4);
+	write_byte (pokemon.spe.ev * 4);
+	write_byte (pokemon.spa.ev * 4);
+	write_byte (pokemon.spd.ev * 4);
 }
 
 enum Choice {

@@ -22,10 +22,10 @@
 #include <cstdint>
 #include <string>
 #include <utility>
-#undef SING
 
 #include "active.hpp"
 #include "type.hpp"
+#undef SING
 
 namespace technicalmachine {
 class Team;

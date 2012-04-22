@@ -43,41 +43,45 @@ void OutMessage::write_string (std::string const & str) {
 
 void OutMessage::write_team (Team const & team, std::string const &) {
 	write_int (team.size);
-	for (Pokemon const & pokemon : team.pokemon.set) {
-		write_int (species_to_id (pokemon.name));
-		write_string (pokemon.get_nickname());
-		constexpr bool shiny = false;
-		write_byte (shiny);
+	team.pokemon.for_each([&](Pokemon const & pokemon) {
+		write_pokemon (pokemon);
+	});
+}
 
-		uint8_t const gender = gender_to_id (pokemon.gender.gender);
-		write_byte (gender);
+void OutMessage::write_pokemon (Pokemon const & pokemon) {
+	write_int (species_to_id (pokemon.name));
+	write_string (pokemon.get_nickname());
+	constexpr bool shiny = false;
+	write_byte (shiny);
 
-		write_byte (pokemon.happiness);
-		write_int (pokemon.level);
-		write_string (pokemon.item.to_string ());
-		write_string (pokemon.ability.to_string ());
-		write_int (pokemon.nature.name);
-		unsigned number_of_moves = 0;
-		while (pokemon.move(number_of_moves).name != Move::STRUGGLE)
-			++number_of_moves;
-		write_int (number_of_moves);
-		for (std::vector<Move>::const_iterator move = pokemon.move.set.begin(); move->name != Move::STRUGGLE; ++move) {
-			write_int (move_to_id (move->name));
-			write_int (3);		// Replace this with real PP-ups logic later
-		}
-		write_int (pokemon.hp.iv);
-		write_int (pokemon.hp.ev * 4u);
-		write_int (pokemon.atk.iv);
-		write_int (pokemon.atk.ev * 4u);
-		write_int (pokemon.def.iv);
-		write_int (pokemon.def.ev * 4u);
-		write_int (pokemon.spe.iv);
-		write_int (pokemon.spe.ev * 4u);
-		write_int (pokemon.spa.iv);
-		write_int (pokemon.spa.ev * 4u);
-		write_int (pokemon.spd.iv);
-		write_int (pokemon.spd.ev * 4u);
-	}
+	uint8_t const gender = gender_to_id (pokemon.gender.gender);
+	write_byte (gender);
+
+	write_byte (pokemon.happiness);
+	write_int (pokemon.level);
+	write_string (pokemon.item.to_string ());
+	write_string (pokemon.ability.to_string ());
+	write_int (pokemon.nature.name);
+	unsigned number_of_moves = 0;
+	while (pokemon.move(number_of_moves).name != Move::STRUGGLE)
+		++number_of_moves;
+	write_int (number_of_moves);
+	pokemon.move.for_each_regular_move([&](Move const & move) {
+		write_int (move_to_id (move.name));
+		write_int (3);		// Replace this with real PP-ups logic later
+	});
+	write_int (pokemon.hp.iv);
+	write_int (pokemon.hp.ev * 4u);
+	write_int (pokemon.atk.iv);
+	write_int (pokemon.atk.ev * 4u);
+	write_int (pokemon.def.iv);
+	write_int (pokemon.def.ev * 4u);
+	write_int (pokemon.spe.iv);
+	write_int (pokemon.spe.ev * 4u);
+	write_int (pokemon.spa.iv);
+	write_int (pokemon.spa.ev * 4u);
+	write_int (pokemon.spd.iv);
+	write_int (pokemon.spd.ev * 4u);
 }
 
 void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {

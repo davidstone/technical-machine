@@ -23,14 +23,6 @@ from gcc_warnings import warnings, warnings_debug, warnings_optimized
 from gcc_optimizations import optimizations, preprocessor_optimizations, linker_optimizations
 from sources import ai, predict, test, generate_sources
 
-# I compile the same object file for multiple executables. I want all debug
-# objects in one folder and all optimized objects in a different folder,
-# regardless of the final executable they are used for. I also do not want to
-# worry about whether a particular object file is used in multiple executables.
-# Therefore, I turn off the warning about multiple environments using the same
-# objects (which is only raised if the end result for those objects is the
-# same).
-
 SetOption('warn', 'no-duplicate-environment')
 
 version_flags = ['-std=c++0x']

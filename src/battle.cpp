@@ -53,8 +53,9 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	depth (battle_depth),
 	party (unknown_party)
 	{
-	for (Pokemon const & pokemon : ai.pokemon.set)
+	ai.pokemon.for_each ([& slot_memory] (Pokemon const & pokemon)->void {
 		slot_memory.push_back (pokemon.name);
+	});
 	initialize_turn ();
 }
 
@@ -65,8 +66,9 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	depth (battle_depth),
 	party (unknown_party)
 	{
-	for (Pokemon const & pokemon : ai.pokemon.set)
+	ai.pokemon.for_each ([& slot_memory] (Pokemon const & pokemon)->void {
 		slot_memory.push_back (pokemon.name);
+	});
 	initialize_turn ();
 }
 
@@ -141,7 +143,7 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 	active.moved = true;
 	if (!active.at_replacement().find_move (move_name)) {
 		Move move (move_name, 3, inactive.size);
-		active.at_replacement().move.add (move);
+		active.at_replacement().move.insert (move);
 	}
 	active.at_replacement().move().variable.reset_index();
 	if (active.at_replacement().move().basepower != 0)
@@ -169,9 +171,9 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	}
 	
 	// Special analysis when a Pokemon is brought out due to a phazing move
-	if (inactive.pokemon.set.size() == 0)
+	if (inactive.pokemon.is_empty())
 		std::cerr << is_me (switching_party) ? "The foe has no Pokemon.\n" : "TM has no Pokemon.\n";
-	if (inactive.pokemon.set.size() != 0 and inactive.at_replacement().move().is_phaze()) {
+	if (inactive.pokemon.is_empty() and inactive.at_replacement().move().is_phaze()) {
 		uint8_t variable_index = 0;
 		while (active.pokemon(variable_index).name != species)
 			++variable_index;
@@ -197,25 +199,25 @@ void GenericBattle::handle_hp_change (uint8_t party_changing_hp, uint8_t slot, u
 }
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
-	for (Pokemon & pokemon : team.pokemon.set) {
+	team.pokemon.for_each ([this, & team] (Pokemon & pokemon)->void {
 		unsigned const max_hp = (team.me) ? pokemon.hp.max : max_damage_precision ();
 		unsigned const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
-		if (tm_estimate != pokemon.new_hp) {
-			unsigned const reported_hp = static_cast<unsigned> (pokemon.new_hp) * pokemon.hp.max / max_hp;
-			if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
-				std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
-				if (!team.me)
-					std::cerr << "approximately ";
-				std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
-				std::cerr << "max_hp: " << max_hp << '\n';
-				std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
-				std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
-				std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
-				std::cerr << "tm_estimate: " << tm_estimate << '\n';
-			}
-			pokemon.hp.stat = reported_hp;
+		if (tm_estimate == pokemon.new_hp)
+			return;
+		unsigned const reported_hp = static_cast<unsigned> (pokemon.new_hp) * pokemon.hp.max / max_hp;
+		if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
+			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
+			if (!team.me)
+				std::cerr << "approximately ";
+			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
+			std::cerr << "max_hp: " << max_hp << '\n';
+			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
+			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
+			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
+			std::cerr << "tm_estimate: " << tm_estimate << '\n';
 		}
-	}
+		pokemon.hp.stat = reported_hp;
+	});
 }
 
 void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp) {
@@ -259,8 +261,9 @@ void GenericBattle::initialize_turn () {
 }
 
 void GenericBattle::initialize_team (Team & team) {
-	for (Pokemon & pokemon : team.pokemon.set)
+	team.pokemon.for_each ([](Pokemon & pokemon)->void {
 		pokemon.move.reset_index();
+	});
 	team.ch = false;
 	team.fully_paralyzed = false;
 	team.hitself = false;

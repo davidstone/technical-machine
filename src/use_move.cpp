@@ -230,8 +230,9 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Stat::boost (target.stage [Stat::ATK], -1);
 			break;
 		case Move::AROMATHERAPY: {
-			for (Pokemon & pokemon : user.pokemon.set)
+			user.pokemon.for_each ([](Pokemon & pokemon) {
 				pokemon.status.clear ();
+			});
 			break;
 		}
 		case Move::ATTRACT:
@@ -610,10 +611,10 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			recoil (user.pokemon(), damage, 2);
 			break;
 		case Move::HEAL_BELL: {
-			for (Pokemon & pokemon : user.pokemon.set) {
+			user.pokemon.for_each([](Pokemon & pokemon) {
 				if (!pokemon.ability.blocks_sound_moves())
 					pokemon.status.clear ();
-			}
+			});
 			break;
 		}
 		case Move::HEAL_BLOCK:
@@ -837,7 +838,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::ROAR:
 		case Move::WHIRLWIND:
 			if (!target.ingrain and !target.pokemon().ability.blocks_phazing()) {
-				if (target.pokemon.set.size() > 1) {
+				if (target.pokemon.size() > 1) {
 					target.replacement = user.pokemon().move().variable().first;
 					switchpokemon (target, user, weather);
 					target.moved = true;

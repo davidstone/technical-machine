@@ -37,7 +37,7 @@ void attack_tests () {
 	constexpr unsigned max_attack = 7368;
 	Team attacker;
 
-	attacker.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
+	attacker.pokemon.add (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = attacker.pokemon();
 
 	pokemon.def.ev = 252 / 4;
@@ -60,7 +60,7 @@ void special_attack_tests () {
 	weather.set_sun (Weather::Duration::permanent);
 	Team attacker;
 
-	attacker.pokemon.set.push_back (Pokemon (Species::DEOXYS_A, team_size));
+	attacker.pokemon.add (Pokemon (Species::DEOXYS_A, team_size));
 	Pokemon & pokemon = attacker.pokemon();
 
 	pokemon.spa.ev = 252 / 4;
@@ -82,7 +82,7 @@ void defense_tests () {
 
 	Team defender;
 
-	defender.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
+	defender.pokemon.add (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = defender.pokemon();
 	pokemon.def.ev = 252 / 4;
 	pokemon.nature.name = Nature::BOLD;
@@ -106,7 +106,7 @@ void special_defense_tests () {
 	Weather weather;
 	weather.set_sand (Weather::Duration::permanent);
 
-	defender.pokemon.set.push_back (Pokemon (Species::SHUCKLE, team_size));
+	defender.pokemon.add (Pokemon (Species::SHUCKLE, team_size));
 	Pokemon & pokemon = defender.pokemon();
 	pokemon.spd.ev = 252 / 4;
 	pokemon.nature.name = Nature::CALM;
@@ -127,7 +127,7 @@ void speed_tests () {
 
 	Team team;
 
-	team.pokemon.set.push_back (Pokemon (Species::DEOXYS_S, team_size));
+	team.pokemon.add (Pokemon (Species::DEOXYS_S, team_size));
 	Pokemon & pokemon = team.pokemon();
 	pokemon.spe.ev = 252 / 4;
 	pokemon.nature.name = Nature::TIMID;

@@ -22,7 +22,7 @@
 #include <string>
 
 #include "ability.hpp"
-#include "active.hpp"
+#include "active_move.hpp"
 #include "gender.hpp"
 #include "item.hpp"
 #include "move.hpp"

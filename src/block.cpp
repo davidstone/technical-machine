@@ -50,7 +50,7 @@ bool handle_confusion (Team & user);
 }	// unnamed namespace
 
 void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather) {
-	for (uint8_t index = 0; index != user.pokemon().move.set.size(); ++index) {
+	for (uint8_t index = 0; index != user.pokemon().move.size(); ++index) {
 		user.pokemon().move.set_index (index);
 		user.pokemon().move().selectable = is_legal_selection (user, other, weather);
 	}
@@ -123,14 +123,7 @@ bool is_blocked_from_switching (Team const & user, Team const & other, Weather c
 }
 
 bool not_illegal_struggle (Pokemon const & user) {
-	if (user.move().name == Move::STRUGGLE) {
-		for (auto it = user.move.set.cbegin(); it->name != Move::STRUGGLE; ++it) {
-			// Struggle is only selectable if no other move is selectable
-			if (it->selectable)
-				return false;
-		}
-	}
-	return true;
+	return user.move().name != Move::STRUGGLE or !user.move.a_regular_move_is_selectable();
 }
 
 // Things that both block selection and block execution in between sleep and confusion
@@ -142,13 +135,9 @@ bool block1 (Team const & user, Team const & other) {
 }
 
 bool imprison (Move const & move, Team const & other) {
-	if (other.imprison) {
-		for (auto it = other.pokemon().move.set.cbegin(); it->name != Move::STRUGGLE; ++it) {
-			if (move.name == it->name)
-				return true;
-		}
-	}
-	return false;
+	return other.imprison and other.pokemon().move.regular_move_exists ([& move](Move const & element) {
+		return move.name == element.name;
+	});
 }
 
 // Things that both block selection and block execution after flinching
@@ -171,11 +160,7 @@ bool is_locked_in (Team const & user) {
 }
 
 bool is_locked_in_to_different_move (Pokemon const & user) {
-	for (auto move = user.move.set.cbegin(); move->name != Move::STRUGGLE; ++move) {
-		if (move->was_used_last())
-			return move->name != user.move().name;
-	}
-	return false;
+	return user.move.name_of_last_used_move() == user.move().name;
 }
 
 bool blocked_by_torment (Team const & user) {

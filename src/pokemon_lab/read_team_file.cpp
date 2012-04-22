@@ -80,11 +80,10 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	
 	unsigned n = 0;
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {
-		Move const move = load_move (value.second, foe_size);
 		// I insert so that the moves show up in the order they are listed in
 		// the team file. Struggle and the Switches are already in it, so I
 		// can't push_back.
-		pokemon.move.set.insert (pokemon.move.set.begin() + n, move);
+		pokemon.move.insert (n, load_move (value.second, foe_size));
 		++n;
 	}
 	
@@ -103,8 +102,7 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	auto const all_pokemon = pt.get_child ("shoddybattle");
 	team.size = all_pokemon.size ();
 	for (auto const & value : all_pokemon) {
-		Pokemon const pokemon = load_pokemon (value.second, foe_size, team.size);
-		team.pokemon.set.push_back (pokemon);
+		team.pokemon.add (load_pokemon (value.second, foe_size, team.size));
 	}
 }
 

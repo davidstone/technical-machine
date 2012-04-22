@@ -86,8 +86,7 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	unsigned n = 0;
 	for (auto const & value : pt.get_child ("")) {
 		if (value.first == "Move") {
-			Move const move = load_move (value.second, foe_size);
-			pokemon.move.set.insert (pokemon.move.set.begin() + n, move);
+			pokemon.move.insert(n, load_move (value.second, foe_size));
 			n < 3 ? ++n : n = 0;
 		}
 		else if (value.first == "DV") {
@@ -116,10 +115,10 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 		if (value.first == "Pokemon") {
 			Pokemon const pokemon = load_pokemon (value.second, foe_size, team.size);
 			if (pokemon.name != Species::END)
-				team.pokemon.set.push_back (pokemon);
+				team.pokemon.add (pokemon);
 		}
 	}
-	team.size = team.pokemon.set.size ();
+	team.size = team.pokemon.size ();
 }
 
 }	// namespace po

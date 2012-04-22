@@ -75,7 +75,7 @@ static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree 
 	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
 	member.put ("<xmlattr>.Item", item_to_id (pokemon.item.name));
 	member.put ("<xmlattr>.Ability", ability_to_id (pokemon.ability.name));
-	std::pair <unsigned, unsigned> ids = species_to_id (pokemon.name);
+	std::pair<unsigned, unsigned> const ids = species_to_id (pokemon.name);
 	member.put ("<xmlattr>.Num", ids.first);
 	member.put ("<xmlattr>.Nature", nature_to_id (pokemon.nature.name));
 	member.put ("<xmlattr>.Shiny", 0);
@@ -87,10 +87,10 @@ static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree 
 	member.put ("<xmlattr>.Gender", gender_to_id (pokemon.gender.gender));
 
 	unsigned n = 0;
-	for (std::vector <Move>::const_iterator move = pokemon.move.set.cbegin (); move->name != Move::STRUGGLE; ++move) {
-		write_move (*move, member);
+	pokemon.move.for_each_regular_move([&](Move const & move) {
+		write_move (move, member);
 		++n;
-	}
+	});
 	for (; n < 4; ++n)
 		write_blank_move (member);
 
@@ -131,9 +131,10 @@ void write_team (Team & team, std::string const & file_name) {
 	trainer.put ("<xmlattr>.avatar", 1);
 	trainer.put ("<xmlattr>.winMsg", "");
 	trainer.put ("<xmlattr>.infoMsg", "");
-	for (Pokemon const & pokemon : team.pokemon.set)
+	team.pokemon.for_each([&](Pokemon const & pokemon) {
 		write_pokemon (pokemon, t);
-	for (unsigned n = team.pokemon.set.size (); n < 6; ++n)
+	});
+	for (unsigned n = team.pokemon.size (); n < 6; ++n)
 		write_blank_pokemon (t);
 	write_xml (file_name, pt, std::locale (), settings);
 }

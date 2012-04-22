@@ -227,11 +227,11 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
 	load (team_file.string(), foe_size);
-	for (Pokemon & member : pokemon.set) {
+	pokemon.for_each([](Pokemon & member) {
 		member.set_hidden_power_type();
 		member.calculate_initial_hp();
 		member.new_hp = member.hp.max;
-	}
+	});
 }
 
 namespace {
@@ -260,7 +260,7 @@ bool Team::is_switching_to_self (Move const & move) const {
 }
 
 bool Team::seen_pokemon (Species const name) {
-	for (replacement = 0; replacement != pokemon.set.size(); ++replacement) {
+	for (replacement = 0; replacement != pokemon.size(); ++replacement) {
 		if (name == at_replacement().name)
 			return true;
 	}
@@ -274,20 +274,21 @@ void Team::add_pokemon (Species name, std::string const & nickname, unsigned lev
 
 	member.set_nickname(nickname);
 
-	pokemon.set.push_back (member);
-	replacement = pokemon.set.size() - 1;
+	pokemon.add (member);
+	replacement = pokemon.size() - 1;
 }
 
 uint64_t Team::hash () const {
 	uint64_t current_hash = 0;
 	// Should probably think of a better way to combine Pokemon hashes than xor
-	for (Pokemon const & member : pokemon.set)
+	pokemon.for_each([& current_hash](Pokemon const & member) {
 		current_hash ^= member.hash();
+	});
 	// hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
 	constexpr unsigned max_size = 6;
 	return static_cast<unsigned> (size - 1) + max_size *
-			(pokemon.index() + pokemon.set.size() *
+			(pokemon.index() + pokemon.size() *
 			(vanish + Vanish::END_VANISH *
 			(static_cast<unsigned> (stage [Stat::ATK] + 6) + (6 + 6 + 1) *
 			(static_cast<unsigned> (stage [Stat::DEF] + 6) + (6 + 6 + 1) *
@@ -371,7 +372,7 @@ void Team::load (std::string const & name, unsigned other_size) {
 
 bool Team::operator== (Team const & other) const {
 	return pokemon().name == other.pokemon().name and
-			pokemon.set == other.pokemon.set and
+			pokemon == other.pokemon and
 			stage == other.stage and
 			vanish == other.vanish and
 			bide == other.bide and
@@ -433,7 +434,7 @@ Pokemon const & Team::at_replacement () const {
 std::string Team::to_string () const {
 	std::string output = me ? "AI" : "Foe";
 	output += "'s team:\n";
-	for (Pokemon const & member : pokemon.set) {
+	pokemon.for_each([& output](Pokemon const & member) {
 		output += member.to_string();
 		double const d_per_cent_hp = 100.0 * member.hp.stat / member.hp.max;
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
@@ -444,9 +445,10 @@ std::string Team::to_string () const {
 			output += "\tAbility: " + member.ability.to_string () + '\n';
 		if (member.status.name != Status::NO_STATUS)
 			output += "\tStatus: " + member.status.to_string () + '\n';
-		for (std::vector<Move>::const_iterator move = member.move.set.cbegin(); move->name != Move::STRUGGLE; ++move)
-			output += "\t- " + move->to_string() + "\n";
-	}
+		member.move.for_each_regular_move([& output](Move const & move) {
+			output += "\t- " + move.to_string() + "\n";
+		});
+	});
 	return output;
 }
 

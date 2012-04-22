@@ -86,13 +86,14 @@ int64_t Score::score_team (Team const & team) const {
 			score += trapped;
 		if (team.focus_energy)
 			score += focus_energy;
-		for (auto move = team.pokemon().move.set.cbegin(); move->name != Move::STRUGGLE; ++move) {
-			if (move->name == Move::BATON_PASS) {
-				score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage);
-				if (team.substitute)
-					score += baton_pass * substitute;
-				break;
-			}
+		Move const * move_ptr = team.pokemon().move.find_if ([&](Move const & move) {
+			return (move.name == Move::BATON_PASS);
+		});
+		if (move_ptr != nullptr) {
+			int64_t const stat_stages = team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage;
+			score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + stat_stages);
+			if (team.substitute)
+				score += baton_pass * substitute;
 		}
 	}
 	return score;
@@ -101,7 +102,7 @@ int64_t Score::score_team (Team const & team) const {
 int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
 	ResetIndex const reset_index (team);
 	int64_t score = 0;
-	for (uint8_t index = 0; index != team.pokemon.set.size(); ++index) {
+	for (uint8_t index = 0; index != team.pokemon.size(); ++index) {
 		team.pokemon.set_index(index);
 		score += score_pokemon (team, other, weather);
 	}
@@ -143,37 +144,30 @@ int64_t Score::score_status (Team const & team) const {
 
 int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
-	for (Move const & move : team.pokemon().move.set) {
+	team.pokemon().move.for_each([&](Move const & move) {
 		if (move.physical)
 			score += other.reflect * reflect;
 		else if (move.basepower > 0)		// Non-damaging moves have physical == false
 			score += other.light_screen * light_screen;
 		if (move.is_out_of_pp())
 			score += no_pp;
-	}
+	});
 	return score;
 }
 
 
 int64_t Score::win (Team const & team) {
-	if (team.pokemon.set.size() == 0) {
-		if (team.me)
-			return -VICTORY;
-		return VICTORY;
-	}
+	if (team.pokemon.size() == 0)
+		return team.me ? -VICTORY : VICTORY;
 	return 0;
 }
 
 int64_t Score::sleep_clause (Team const & team) {
-	bool sleep_clause = false;
-	for (Pokemon const & pokemon : team.pokemon.set) {
-		if (pokemon.status.name == Status::SLEEP) {
-			if (sleep_clause == false)
-				sleep_clause = true;
-			else
-				return team.me ? VICTORY : -VICTORY;
-		}
-	}
+	unsigned const sleeper_count = team.pokemon.count_if([](Pokemon const & pokemon) {
+		return (pokemon.status.name == Status::SLEEP);
+	});
+	if (sleeper_count > 1)
+		return team.me ? VICTORY : -VICTORY;
 	return 0;
 }
 

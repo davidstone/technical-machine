@@ -36,6 +36,8 @@ namespace {
 void reset_variables (Team & team);
 void entry_hazards (Team & switcher, Weather const & weather);
 void replace_fainted_pokemon (Team & switcher, Team & other);
+void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
+void remove_ability_to_switch_to_fainted (Team & switcher);
 
 }	// unnamed namespace
 
@@ -53,7 +55,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	else {
 		replace_fainted_pokemon (switcher, other);
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (switcher.pokemon.set.size() == 0)
+		if (switcher.pokemon.is_empty())
 			return;
 	}
 	
@@ -121,8 +123,9 @@ void reset_variables (Team & team) {
 	team.vanish = LANDED;
 	team.yawn = 0;
 
-	for (Move & move : team.pokemon().move.set)
+	team.pokemon().move.for_each([](Move & move) {
 		move.reset();
+	});
 }
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {
@@ -131,33 +134,41 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 	--switcher.size;
 
 	// If the last Pokemon is fainted; there is nothing left to do.
-	if (switcher.pokemon.set.size() == 0)
+	if (switcher.pokemon.is_empty())
 		return;
 
-	// Roar and Whirlwind cannot bring out a fainted Pokemon
-	for (Pokemon & pokemon : other.pokemon.set) {
-		for (Move & move : pokemon.move.set) {
-			if (move.is_phaze ()) {
-				move.variable.set.pop_back();
-				for (std::pair <uint16_t, uint16_t> & variable : move.variable.set) {
-					variable.second = (switcher.size > 2) ?
-						Move::max_probability / (switcher.size - 1) :
-						Move::max_probability;
-				}
-			}
-		}
-	}
+	remove_fainted_from_phazing_moves(switcher, other);
+
 	uint8_t const new_index = (switcher.pokemon.index() > switcher.replacement) ?
 		switcher.replacement :
 		switcher.replacement - 1;
 	switcher.pokemon.set_index(new_index);
-	// Finally, remove the ability to switch to that Pokemon.
-	for (Pokemon & pokemon : switcher.pokemon.set) {
-		pokemon.move.set.pop_back();
+
+	remove_ability_to_switch_to_fainted(switcher);
+}
+
+void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
+	other.pokemon.for_each([& switcher](Pokemon & pokemon) {
+		pokemon.move.for_each([& switcher](Move & move) {
+			if (move.is_phaze ()) {
+				move.variable.pop_back();
+				move.variable.for_each([& switcher](std::pair<uint16_t, uint16_t> & variable) {
+					variable.second = (switcher.size > 2) ?
+						Move::max_probability / (switcher.size - 1) :
+						Move::max_probability;
+				});
+			}
+		});
+	});
+}
+
+void remove_ability_to_switch_to_fainted (Team & switcher) {
+	switcher.pokemon.for_each([& switcher](Pokemon & pokemon) {
+		pokemon.move.pop_back();
 		// If there is only one Pokemon, there is no switching.
-		if (switcher.pokemon.set.size () == 1)
-			pokemon.move.set.pop_back ();
-	}
+		if (switcher.pokemon.size() == 1)
+			pokemon.move.pop_back();
+	});
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {

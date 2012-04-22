@@ -19,6 +19,7 @@
 #include "pokemon.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 #include <string>
 
@@ -32,6 +33,7 @@
 namespace technicalmachine {
 
 Pokemon::Pokemon (Species const species, unsigned const size) : 
+	move (size),
 	type (get_type (species)),
 	hp (species, Stat::HP),
 	atk (species, Stat::ATK),
@@ -50,16 +52,8 @@ Pokemon::Pokemon (Species const species, unsigned const size) :
 
 	happiness (255)
 	{
+	assert (size != 0);
 	calculate_initial_hp();
-	Move struggle (Move::STRUGGLE, 0, 0);
-	move.set.push_back (struggle);
-	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (size > 1) {
-		for (size_t index = 0; index != size; ++index) {
-			Move switchn (Move::from_replacement (index), 0, 0);
-			move.set.push_back (switchn);
-		}
-	}
 }
 
 void Pokemon::calculate_initial_hp () {
@@ -69,11 +63,12 @@ void Pokemon::calculate_initial_hp () {
 uint64_t Pokemon::hash () const {
 	uint64_t current_hash = 0;
 	// Should probably think of a better way to combine Move hashes than xor
-	for (Move const & next_move : move.set)
+	move.for_each_regular_move([& current_hash](Move const & next_move) {
 		current_hash ^= next_move.hash();
+	});
 	// current_hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
-	return name + END *
+	return name + Species::END *
 			(item.name + Item::END *
 			(status.name + Status::END *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
@@ -174,7 +169,7 @@ bool Pokemon::is_wormadam (Species species) {
 }
 
 bool Pokemon::operator== (Pokemon const & other) const {
-	return move.set == other.move.set and
+	return move == other.move and
 			name == other.name and
 			status.name == other.status.name and
 			sleep == other.sleep and
@@ -201,11 +196,11 @@ void Pokemon::set_nickname (std::string const & nick) {
 }
 
 void Pokemon::set_hidden_power_type() {
-	auto const it = std::find_if (move.set.begin(), move.set.end(), [] (Move const & move)->bool {
+	Move * const move_ptr = move.find_if ([] (Move const & move) {
 		return move.name == Move::HIDDEN_POWER;
 	});
-	if (it != move.set.end())
-		it->type = calculate_hidden_power_type();
+	if (move_ptr != nullptr)
+		move_ptr->type = calculate_hidden_power_type();
 }
 
 Type::Types Pokemon::calculate_hidden_power_type () const {

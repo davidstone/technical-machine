@@ -88,7 +88,7 @@
 # -Wzero-as-null-pointer-constant and -Wuseless-cast are GCC-4.7-only warnings,
 # which I will add when I transition to GCC 4.7.
 
-# Add -Wold-style cast when I transition to my byte swapping library and
+# Add -Wold-style-cast when I transition to my byte swapping library and
 # rewrite the Rijndael implementation to use modern C++ techniques, rather than
 # just being a C program with .cpp as the extension.
 

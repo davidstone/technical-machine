@@ -52,30 +52,30 @@ Team predict_team (int const detailed [][7], Team team, unsigned size, bool usin
 	for (unsigned n = 0; n != Species::END; ++n)
 		estimate [n] = lead [n] * overall [n] / total;
 
-	for (Pokemon const & pokemon : team.pokemon.set) {
+	team.pokemon.for_each([& estimate, & multiplier](Pokemon const & pokemon) {
 		for (unsigned n = 0; n != Species::END; ++n)
 			estimate [n] *= multiplier [pokemon.name] [n];
-	}
+	});
 	predict_pokemon (team, estimate, multiplier);
-	for (Pokemon & pokemon : team.pokemon.set) {
+	team.pokemon.for_each([& detailed, size](Pokemon & pokemon) {
 		pokemon.ability.set_if_unknown (static_cast <Ability::Abilities> (detailed [pokemon.name] [0]));
 		pokemon.item.set_if_unknown (static_cast <Item::Items> (detailed [pokemon.name] [1]));
 		pokemon.nature.set_if_unknown (static_cast <Nature::Natures> (detailed [pokemon.name] [2]));
 		predict_move (pokemon, detailed, size);
-	}
+	});
 	return team;
 }
 
 namespace {
 
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END] [Species::END]) {
-	while (team.pokemon.set.size() < team.size) {
+	while (team.pokemon.size() < team.size) {
 		Species const name = get_most_likely_pokemon (estimate);
-		team.pokemon.set.push_back (Pokemon (name, team.size));
-		if (team.pokemon.set.size() == team.size)
+		team.pokemon.add (Pokemon (name, team.size));
+		if (team.pokemon.size() == team.size)
 			break;
 		for (unsigned n = 0; n != Species::END; ++n)
-			estimate [n] *= multiplier [team.pokemon.set.back().name] [n];
+			estimate [n] *= multiplier [team.pokemon(team.pokemon.size() - 1).name] [n];
 	}
 }
 
@@ -98,23 +98,18 @@ void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
 	unsigned n = 0;
 	while (member.move(n).name != Move::STRUGGLE)
 		++n;
-	unsigned max_moves = 4 + member.move.set.size() - n;
-	for (unsigned m = 3; member.move.set.size() < max_moves and detailed [member.name] [m] != Move::END; ++m) {
-		bool found = false;
-		for (std::vector<Move>::const_iterator it = member.move.set.begin(); it->name != Move::STRUGGLE; ++it) {
-			if (it->name == static_cast<Move::Moves> (detailed [member.name] [m])) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) {
-			Move move (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size);
+	unsigned const max_moves = 4u + member.move.size() - n;
+	for (unsigned m = 3; member.move.size() < max_moves and detailed [member.name] [m] != Move::END; ++m) {
+		Move const * const move_ptr = member.move.find_if([& detailed, & member, m](Move const & move) {
+			return move.name == static_cast<Move::Moves> (detailed [member.name] [m]);
+		});
+		if (move_ptr == nullptr) {
 			// I use n here so that already seen moves (guaranteed to exist)
 			// are listed earlier in the move set. I increment n so that moves
 			// are listed in the order of their probability for predicted moves
 			// as well. This also has the advantage of requiring fewer shifts
 			// of my vector.
-			member.move.set.insert (member.move.set.begin() + n, move);
+			member.move.insert (n, Move (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size));
 			++n;
 		}
 	}

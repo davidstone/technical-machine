@@ -26,6 +26,7 @@
 #include "../network/outmessage.hpp"
 
 namespace technicalmachine {
+class Pokemon;
 class Team;
 namespace po {
 
@@ -36,6 +37,7 @@ class OutMessage : public network::OutMessage {
 		explicit OutMessage (uint8_t code);
 		void write_string (std::string const & str);
 		void write_team (Team const & team, std::string const & username);
+		void write_pokemon (Pokemon const & pokemon);
 		void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);
 		void write_switch (uint32_t field_id, uint8_t slot);
 		void write_challenge (uint32_t user_id, uint8_t generation, BattleSettings const & settings);

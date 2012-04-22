@@ -218,9 +218,10 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	else
 		decrement (team.uproar);
 		// weather.uproar is already decremented
-
-	for (Move & move : team.pokemon().move.set)
+	
+	team.pokemon().move.for_each_regular_move([](Move & move) {
 		decrement (move.disable);
+	});
 	decrement (team.encore);
 	decrement (team.taunt);
 	decrement (team.magnet_rise);
@@ -246,11 +247,11 @@ void endofturn7 (Team & team) {
 }
 
 void reset_variable (Team & team) {
-	for (Pokemon & pokemon : team.pokemon.set) {
-		for (Move & move : pokemon.move.set) {
+	team.pokemon.for_each([](Pokemon & pokemon) {
+		pokemon.move.for_each([](Move & move) {
 			move.variable.reset_index();
-		}
-	}
+		});
+	});
 }
 
 }	// unnamed namespace

@@ -54,6 +54,7 @@ void function (Fl_Widget * w, void * d) {
 		Species species;
 		try {
 			species = Pokemon::from_string (in->value());
+			team.pokemon.add (Pokemon (species, team.size));
 		}
 		catch (InvalidFromStringConversion const & ex) {
 			species = Species::END;
@@ -61,13 +62,9 @@ void function (Fl_Widget * w, void * d) {
 		if (in == data.input.front ()) {
 			using_lead = (species != Species::END);
 		}
-		if (species != Species::END) {
-			Pokemon member (species, team.size);
-			team.pokemon.set.push_back (member);
-		}
 	}
 	
-	if (team.pokemon.set.size() > 0) {
+	if (!team.pokemon.is_empty() > 0) {
 		team = predict_team (data.detailed, team, using_lead);
 		data.output->value (team.to_string().c_str());
 	}
