@@ -66,14 +66,10 @@ class BaseActive {
 			container (pre_set),
 			current_index (0) {
 		}
+		// In debug mode, I intentionally access the invalid value so I can get
+		// a Valgrind stack trace. This will eventually be replaced with a smart
+		// assert.
 		#ifndef NDEBUG
-		T & operator() (uint8_t const specified_index) {
-			if (specified_index >= container.size()) {
-				InvalidActiveIndex ex (specified_index, container.size(), typeid(T).name());
-				std::cerr << ex.what();
-			}
-			return container [specified_index];
-		}
 		T const & operator() (uint8_t const specified_index) const {
 			if (specified_index >= container.size()) {
 				InvalidActiveIndex ex (specified_index, container.size(), typeid(T).name());
@@ -82,12 +78,6 @@ class BaseActive {
 			return container [specified_index];
 		}
 		#else	// NDEBUG
-		T & operator() (uint8_t const specified_index) {
-			if (specified_index < container.size())
-				return container [specified_index];
-			else
-				throw InvalidActiveIndex (specified_index, container.size(), typeid(T).name());
-		}
 		T const & operator() (uint8_t const specified_index) const {
 			if (specified_index < container.size())
 				return container [specified_index];
@@ -95,6 +85,9 @@ class BaseActive {
 				throw InvalidActiveIndex (specified_index, container.size(), typeid(T).name());
 		}
 		#endif	// NDEBUG
+		T & operator() (uint8_t const specified_index) {
+			return const_cast<T &>(const_cast<BaseActive const *>(this)->operator()(specified_index));
+		}
 		T & operator() () {
 			return operator() (current_index);
 		}
