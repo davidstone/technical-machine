@@ -130,7 +130,7 @@ void reset_variables (Team & team) {
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {
 	// First, remove the active Pokemon because it has 0 HP.
-	switcher.pokemon.remove_active ();
+	switcher.pokemon.remove_active (switcher.replacement);
 	--switcher.size;
 
 	// If the last Pokemon is fainted; there is nothing left to do.
@@ -138,12 +138,6 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 		return;
 
 	remove_fainted_from_phazing_moves(switcher, other);
-
-	uint8_t const new_index = (switcher.pokemon.index() > switcher.replacement) ?
-		switcher.replacement :
-		switcher.replacement - 1;
-	switcher.pokemon.set_index(new_index);
-
 	remove_ability_to_switch_to_fainted(switcher);
 }
 

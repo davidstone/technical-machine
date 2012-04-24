@@ -20,7 +20,6 @@
 #define ACTIVE_HPP_
 
 #include <algorithm>
-#include <cassert>
 #include <cstdint>
 #include <functional>
 #include <stdexcept>
@@ -59,45 +58,29 @@ class BaseActive {
 	public:
 		typedef std::vector<T> container_type;
 		typedef T value_type;
-		BaseActive () :
+		constexpr BaseActive () :
 			current_index (0) {
 		}
-		BaseActive (container_type const & pre_set) :
+		constexpr BaseActive (container_type const & pre_set) :
 			container (pre_set),
 			current_index (0) {
 		}
-		// In debug mode, I intentionally access the invalid value so I can get
-		// a Valgrind stack trace. This will eventually be replaced with a smart
-		// assert.
-		#ifndef NDEBUG
-		T const & operator() (uint8_t const specified_index) const {
-			if (specified_index >= container.size()) {
-				InvalidActiveIndex ex (specified_index, container.size(), typeid(T).name());
-				std::cerr << ex.what();
-			}
+		constexpr T const & operator() (uint8_t const specified_index) const {
 			return container [specified_index];
 		}
-		#else	// NDEBUG
-		T const & operator() (uint8_t const specified_index) const {
-			if (specified_index < container.size())
-				return container [specified_index];
-			else
-				throw InvalidActiveIndex (specified_index, container.size(), typeid(T).name());
-		}
-		#endif	// NDEBUG
 		T & operator() (uint8_t const specified_index) {
-			return const_cast<T &>(const_cast<BaseActive const *>(this)->operator()(specified_index));
+			return container [specified_index];
+		}
+		constexpr T const & operator() () const {
+			return operator() (current_index);
 		}
 		T & operator() () {
 			return operator() (current_index);
 		}
-		T const & operator() () const {
-			return operator() (current_index);
-		}
-		bool is_empty() const {
+		constexpr bool is_empty() const {
 			return container.empty();
 		}
-		uint8_t size () const {
+		constexpr uint8_t size () const {
 			return container.size();
 		}
 		void add (T const & element) {
@@ -109,21 +92,37 @@ class BaseActive {
 		void insert (T const & element) {
 			insert (current_index, element);
 		}
-		void remove_active () {
+		void remove_active (uint8_t const replacement) {
 			container.erase (container.begin() + current_index);
+			set_index((index() > replacement) ? replacement : replacement - 1);
 		}
 		void pop_back () {
 			container.pop_back();
 			reset_index();
 		}
+		// In debug mode, I intentionally access the invalid value so I can get
+		// a Valgrind stack trace. This will eventually be replaced with a smart
+		// assert.
+		#ifndef NDEBUG
 		void set_index (uint8_t const new_index) {
-			assert (new_index < container.size());
+			if (new_index >= container.size()) {
+				InvalidActiveIndex ex (new_index, container.size(), typeid(T).name());
+				std::cerr << ex.what();
+			}
 			current_index = new_index;
 		}
+		#else	// NDEBUG
+		void set_index (uint8_t const new_index) {
+			if (new_index < container.size())
+				current_index = new_index;
+			else
+				throw InvalidActiveIndex (new_index, container.size(), typeid(T).name());
+		}
+		#endif	// NDEBUG
 		void reset_index () {
 			current_index = 0;
 		}
-		uint8_t index() const {
+		constexpr uint8_t index() const {
 			return current_index;
 		}
 		void for_each (typename std::function<void(T &)> const & f) {
@@ -154,8 +153,8 @@ class BaseActive {
 template<typename T>
 class Active : public detail::BaseActive<T> {
 	public:
-		Active () = default;
-		Active (typename detail::BaseActive<T>::container_type const & pre_set):
+		constexpr Active () = default;
+		constexpr Active (typename detail::BaseActive<T>::container_type const & pre_set):
 			detail::BaseActive<T>(pre_set) {
 		}
 };

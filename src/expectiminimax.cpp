@@ -18,6 +18,7 @@
 
 #include "expectiminimax.hpp"
 
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <ctime>

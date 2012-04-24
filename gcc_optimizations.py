@@ -16,6 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto']
+optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto=4']
 preprocessor_optimizations = ['NDEBUG']
 linker_optimizations = ['-s', '-fwhole-program'] + optimizations
