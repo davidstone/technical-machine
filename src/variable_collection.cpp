@@ -16,21 +16,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
-
-#include "collection.hpp"
+#include "variable_collection.hpp"
+#include <cassert>
 #include <cstdint>
 #include <utility>
 
 namespace technicalmachine {
 
-class VariableCollection : public detail::BaseCollection<std::pair<uint16_t, uint16_t>> {
-	public:
-		VariableCollection ();
-		VariableCollection (detail::BaseCollection<std::pair<uint16_t, uint16_t>>::container_type const & pre_set);
-		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-};
+VariableCollection::VariableCollection () = default;
+
+VariableCollection::VariableCollection (detail::BaseCollection<std::pair<uint16_t, uint16_t>>::container_type const & pre_set):
+	detail::BaseCollection<std::pair<uint16_t, uint16_t>>(pre_set) {
+}
+
+void VariableCollection::set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index) {
+	if (container.size() == 1) {
+		assert (new_index == 0);
+		reset_index();
+	}
+	else
+		set_index ((new_index < pokemon_index) ? new_index : new_index - 1);
+}
+
+uint8_t VariableCollection::phaze_index (uint8_t const pokemon_index) const {
+	if (container.size() <= 1)
+		throw InvalidCollectionIndex (pokemon_index, container.size(), "phaze variable");
+	return (operator()().first < pokemon_index) ? operator()().first : operator()().first + 1;
+}
+
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_
