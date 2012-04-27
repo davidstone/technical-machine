@@ -102,7 +102,7 @@ Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsi
 			min_score = select_type_of_move_branch (ai, foe, weather, deeper, score, best_move, first_turn);
 		}
 	}
-	catch (InvalidActiveIndex const & ex) {
+	catch (InvalidCollectionIndex const & ex) {
 		// If there was an error, I just use the data from the deepest search I
 		// could do that did not encounter that error.
 		std::cerr << std::string (20, '=') + '\n';

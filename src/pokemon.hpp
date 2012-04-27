@@ -22,7 +22,7 @@
 #include <string>
 
 #include "ability.hpp"
-#include "active_move.hpp"
+#include "move_collection.hpp"
 #include "gender.hpp"
 #include "item.hpp"
 #include "move.hpp"
@@ -41,7 +41,7 @@ class Pokemon {
 		std::string nickname;
 		#endif
 	public:
-		Active<Move> move;
+		MoveCollection move;
 		TypeCollection type;
 
 		Stat hp;

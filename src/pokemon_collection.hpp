@@ -1,4 +1,4 @@
-// Template specialization for Active
+// Collection of Pokemon with index indicating current Pokemon
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_POKEMON_HPP_
-#define ACTIVE_POKEMON_HPP_
+#ifndef POKEMON_COLLECTION_HPP_
+#define POKEMON_COLLECTION_HPP_
 
-#include "active.hpp"
+#include "collection.hpp"
 #include <cassert>
 #include <functional>
 #include <string>
@@ -28,15 +28,14 @@
 
 namespace technicalmachine {
 
-template<>
-class Active<Pokemon> : public detail::BaseActive<Pokemon> {
+class PokemonCollection : public detail::BaseCollection<Pokemon> {
 	public:
-		Active ():
+		PokemonCollection ():
 			current_replacement(0),
 			true_size(6) {
 		}
-		Active (typename detail::BaseActive<Pokemon>::container_type const & pre_set):
-			detail::BaseActive<Pokemon>(pre_set),
+		PokemonCollection (detail::BaseCollection<Pokemon>::container_type const & pre_set):
+			detail::BaseCollection<Pokemon>(pre_set),
 			current_replacement(0),
 			true_size(6) {
 		}
@@ -90,7 +89,7 @@ class Active<Pokemon> : public detail::BaseActive<Pokemon> {
 			return false;
 		}
 		void add (Pokemon const & pokemon) {
-			BaseActive<Pokemon>::add(pokemon);
+			BaseCollection<Pokemon>::add(pokemon);
 		}
 		void add (Species name, std::string const & nickname, unsigned level, Gender gender) {
 			Pokemon pokemon (name, real_size());
@@ -133,4 +132,4 @@ class Active<Pokemon> : public detail::BaseActive<Pokemon> {
 };
 
 }	// namespace technicalmachine
-#endif	// ACTIVE_POKEMON_HPP_
+#endif	// POKEMON_COLLECTION_HPP_

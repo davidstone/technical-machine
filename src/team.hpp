@@ -24,7 +24,7 @@
 #include <random>
 #include <string>
 
-#include "active_pokemon.hpp"
+#include "pokemon_collection.hpp"
 #include "gender.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
@@ -34,7 +34,7 @@ namespace technicalmachine {
 
 class Team {
 	public:
-		Active<Pokemon> pokemon;
+		PokemonCollection pokemon;
 
 		// How much damage has been done to this Pokemon this turn
 		uint16_t damage;

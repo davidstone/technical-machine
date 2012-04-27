@@ -24,7 +24,6 @@
 #include <string>
 
 #include "ability.hpp"
-#include "active.hpp"
 #include "gender.hpp"
 #include "move.hpp"
 #include "species.hpp"

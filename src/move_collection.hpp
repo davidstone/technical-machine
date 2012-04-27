@@ -1,4 +1,4 @@
-// Template specialization for Active
+// Collection of moves with index indicating current move
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_MOVE_HPP_
-#define ACTIVE_MOVE_HPP_
+#ifndef MOVE_COLLECTION_HPP_
+#define MOVE_COLLECTION_HPP_
 
-#include "active.hpp"
+#include "collection.hpp"
 #include <cstdint>
 #include <functional>
 #include <utility>
@@ -29,10 +29,9 @@
 
 namespace technicalmachine {
 
-template<>
-class Active<Move> : public detail::BaseActive<Move> {
+class MoveCollection : public detail::BaseCollection<Move> {
 	public:
-		Active (unsigned const team_size) {
+		MoveCollection (unsigned const team_size) {
 			container.reserve ((team_size > 1) ? team_size + 1 : 1);
 			add (Move (Move::STRUGGLE, 0, 0));
 			// A Pokemon has a new "Switch" move for each Pokemon in the party.
@@ -42,8 +41,8 @@ class Active<Move> : public detail::BaseActive<Move> {
 				}
 			}
 		}
-		Active (typename detail::BaseActive<Move>::container_type const & pre_set):
-			detail::BaseActive<Move>(pre_set) {
+		MoveCollection (detail::BaseCollection<Move>::container_type const & pre_set):
+			detail::BaseCollection<Move>(pre_set) {
 		}
 		unsigned number_of_regular_moves () const {
 			unsigned n = 0;
@@ -109,4 +108,4 @@ class Active<Move> : public detail::BaseActive<Move> {
 		}
 };
 }	// namespace technicalmachine
-#endif	// ACTIVE_MOVE_HPP_
+#endif	// MOVE_COLLECTION_HPP_

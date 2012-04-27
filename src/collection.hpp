@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_HPP_
-#define ACTIVE_HPP_
+#ifndef COLLECTION_HPP_
+#define COLLECTION_HPP_
 
 #include <algorithm>
 #include <cstdint>
@@ -29,35 +29,35 @@
 
 namespace technicalmachine {
 
-class InvalidActiveIndex : public std::logic_error {
+class InvalidCollectionIndex : public std::logic_error {
 	public:
-		InvalidActiveIndex (unsigned index, unsigned size, std::string const & name):
+		InvalidCollectionIndex (unsigned index, unsigned size, std::string const & name):
 			logic_error ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
 			{
 		}
 };
 
 namespace detail {
-template<typename T> class BaseActive;
+template<typename T> class BaseCollection;
 }	// namespace detail
 
 template<typename T>
-bool operator==(detail::BaseActive<T> const & lhs, detail::BaseActive<T> const & rhs) {
+bool operator==(detail::BaseCollection<T> const & lhs, detail::BaseCollection<T> const & rhs) {
 	return lhs.container == rhs.container;
 }
 
-// BaseActive is defined to allow the addition of a member function to the
-// template specialization where T == Move. Do not use outside this header.
+// BaseCollection is defined only as a base class to Pokemon, Move, and Variable
+// collections. Do not use directly.
 namespace detail {
 template<typename T>
-class BaseActive {
+class BaseCollection {
 	public:
 		typedef std::vector<T> container_type;
 		typedef T value_type;
-		constexpr BaseActive () :
+		constexpr BaseCollection () :
 			current_index (0) {
 		}
-		constexpr BaseActive (container_type const & pre_set) :
+		constexpr BaseCollection (container_type const & pre_set) :
 			container (pre_set),
 			current_index (0) {
 		}
@@ -98,7 +98,7 @@ class BaseActive {
 				return new_index;
 			else {
 				T const & valgrind_stack_trace_variable = container[new_index];
-				throw InvalidActiveIndex (new_index, container.size(), typeid(T).name());
+				throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
 			}
 		}
 		#else	// NDEBUG
@@ -106,7 +106,7 @@ class BaseActive {
 			if (new_index < container.size())
 				return new_index;
 			else
-				throw InvalidActiveIndex (new_index, container.size(), typeid(T).name());
+				throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
 		}
 		#endif	// NDEBUG
 		void set_index (uint8_t const new_index) {
@@ -136,7 +136,7 @@ class BaseActive {
 		unsigned count_if (typename std::function<bool(T const &)> const & f) const {
 			return std::count_if(container.begin(), container.end(), f);
 		}
-		friend bool operator==<T>(BaseActive<T> const & lhs, BaseActive<T> const & rhs);
+		friend bool operator==<T>(BaseCollection<T> const & lhs, BaseCollection<T> const & rhs);
 	protected:
 		// All Pokemon on the team, all moves on the Pokemon, etc.
 		container_type container;
@@ -145,7 +145,5 @@ class BaseActive {
 };
 }	// namespace detail
 
-template<typename T> class Active;
-
 }	// namespace technicalmachine
-#endif	// ACTIVE_HPP_
+#endif	// COLLECTION_HPP_

@@ -1,4 +1,4 @@
-// Template specialization for Active
+// Collection of move random effects with index indicating current effect
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_VARIABLE_HPP_
-#define ACTIVE_VARIABLE_HPP_
+#ifndef VARIABLE_COLLECTION_HPP_
+#define VARIABLE_COLLECTION_HPP_
 
-#include "active.hpp"
+#include "collection.hpp"
 #include <cassert>
 #include <cstdint>
 #include <functional>
@@ -27,12 +27,11 @@
 
 namespace technicalmachine {
 
-template<>
-class Active<std::pair<uint16_t, uint16_t>> : public detail::BaseActive<std::pair<uint16_t, uint16_t>> {
+class VariableCollection : public detail::BaseCollection<std::pair<uint16_t, uint16_t>> {
 	public:
-		Active () = default;
-		Active (detail::BaseActive<std::pair<uint16_t, uint16_t>>::container_type const & pre_set):
-			detail::BaseActive<std::pair<uint16_t, uint16_t>>(pre_set) {
+		VariableCollection () = default;
+		VariableCollection (detail::BaseCollection<std::pair<uint16_t, uint16_t>>::container_type const & pre_set):
+			detail::BaseCollection<std::pair<uint16_t, uint16_t>>(pre_set) {
 		}
 		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index) {
 			if (container.size() == 1) {
@@ -44,9 +43,9 @@ class Active<std::pair<uint16_t, uint16_t>> : public detail::BaseActive<std::pai
 		}
 		uint8_t phaze_index (uint8_t const pokemon_index) const {
 			if (container.size() <= 1)
-				throw InvalidActiveIndex (pokemon_index, container.size(), "phaze variable");
+				throw InvalidCollectionIndex (pokemon_index, container.size(), "phaze variable");
 			return (operator()().first < pokemon_index) ? operator()().first : operator()().first + 1;
 		}
 };
 }	// namespace technicalmachine
-#endif	// ACTIVE_VARIABLE_HPP_
+#endif	// VARIABLE_COLLECTION_HPP_

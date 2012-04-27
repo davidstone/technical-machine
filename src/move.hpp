@@ -23,7 +23,7 @@
 #include <string>
 #include <utility>
 
-#include "active_variable.hpp"
+#include "variable_collection.hpp"
 #include "type.hpp"
 #undef SING
 
@@ -137,7 +137,7 @@ class Move {
 		// 5-15, Present = 0-4 (0 = heal). It is also used to determine whether
 		// random effects activate. First value is the magnitude of the effect,
 		// second value is the probability.
-		Active <std::pair <uint16_t, uint16_t>> variable;
+		VariableCollection variable;
 		Moves name;
 		// Can replace this with uint8_t when it will help by just using a
 		// temporary variable in the move power calculator, rather than
