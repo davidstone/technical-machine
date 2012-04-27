@@ -107,6 +107,7 @@ void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
 			// are listed in the order of their probability for predicted moves
 			// as well. This also has the advantage of requiring fewer shifts
 			// of my vector.
+			Move cool (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size);
 			member.move.insert (n, Move (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size));
 			++n;
 		}

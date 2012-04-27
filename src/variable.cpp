@@ -1,4 +1,4 @@
-// Collection of move random effects with index indicating current effect
+// Random effects of moves
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,23 +16,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
-
-#include "collection.hpp"
-#include <cstdint>
 #include "variable.hpp"
 
 namespace technicalmachine {
 
-class VariableCollection : public detail::BaseCollection<Variable> {
-	public:
-		// Has to be uint16_t instead of Move::Moves to prevent a circular
-		// dependency
-		VariableCollection (uint16_t move, unsigned foe_size);
-		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-		void set_magnitude (unsigned const magnitude);
-};
+Variable::Variable (uint16_t v, uint16_t p):
+	m_value (v),
+	m_probability (p) {
+}
+
+uint16_t Variable::value () const {
+	return m_value;
+}
+
+uint16_t Variable::probability () const {
+	return m_probability;
+}
+
+bool Variable::effect_activates () const {
+	return value() != 0;
+}
+
+bool Variable::present_heals () const {
+	return value() != 0;
+}
+
+unsigned Variable::psywave_damage (unsigned level) const {
+	return level * value() / 10;
+}
+
+void Variable::reset_phaze_probabilities (uint8_t size) {
+	m_probability = (size > 2) ? max_probability / (size - 1) : max_probability;
+}
+
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_

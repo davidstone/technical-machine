@@ -19,6 +19,7 @@
 #include "move_power.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 
 #include "ability.hpp"
@@ -122,11 +123,12 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			return (u + v + w + x + y + z) * 40 / 63 + 30;
 		}
 		case Move::MAGNITUDE:
-			return attacker.move().variable().first;
+			return attacker.move().variable().value();
 		case Move::NATURAL_GIFT:
 			return attacker.item.get_berry_power ();
 		case Move::PRESENT:
-			return attacker.move().variable().first;
+			assert (!attacker.move().variable().present_heals());
+			return attacker.move().variable().value();
 		case Move::PUNISHMENT: {
 			uint16_t base_power = 60;
 			for (auto stage : defender.stage) {

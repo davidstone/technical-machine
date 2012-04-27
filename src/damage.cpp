@@ -96,7 +96,7 @@ unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather 
 		case Move::SEISMIC_TOSS:
 			return pokemon.level;
 		case Move::PSYWAVE:
-			return static_cast<unsigned> (pokemon.level) * pokemon.move().variable().first / 10;
+			return pokemon.move().variable().psywave_damage(pokemon.level);
 		case Move::SONICBOOM:
 			return 20;
 		case Move::SUPER_FANG:

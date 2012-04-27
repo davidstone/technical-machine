@@ -304,11 +304,11 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 				score1 += awaken_branch (first, last, weather, depth, score) * 15;
 				score1 /= 256;
 			}
-			score2 += score1 * last.pokemon().move().variable().second;
+			score2 += score1 * last.pokemon().move().variable().probability();
 		});
-		score3 += score2 * first.pokemon().move().variable().second / Move::max_probability;
+		score3 += score2 * first.pokemon().move().variable().probability() / Variable::max_probability;
 	});
-	return score3 / Move::max_probability;
+	return score3 / Variable::max_probability;
 }
 
 

@@ -141,10 +141,8 @@ void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
 		pokemon.move.for_each([& switcher](Move & move) {
 			if (move.is_phaze()) {
 				move.variable.pop_back();
-				move.variable.for_each([& switcher](std::pair<uint16_t, uint16_t> & variable) {
-					variable.second = (switcher.pokemon.real_size() > 2) ?
-						Move::max_probability / (switcher.pokemon.real_size() - 1) :
-						Move::max_probability;
+				move.variable.for_each([& switcher](Variable & variable) {
+					variable.reset_phaze_probabilities(switcher.pokemon.real_size());
 				});
 			}
 		});

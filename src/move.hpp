@@ -23,6 +23,7 @@
 #include <string>
 #include <utility>
 
+#include "variable.hpp"
 #include "variable_collection.hpp"
 #include "type.hpp"
 #undef SING
@@ -132,11 +133,6 @@ class Move {
 		};
 		// I suspect I can get rid of the score variable entirely.
 		int64_t score;
-		// variable is used for moves with a variable power / length / other
-		// integer range. Moves of variable power: Magnitude = 4-10, Psywave =
-		// 5-15, Present = 0-4 (0 = heal). It is also used to determine whether
-		// random effects activate. First value is the magnitude of the effect,
-		// second value is the probability.
 		VariableCollection variable;
 		Moves name;
 		// Can replace this with uint8_t when it will help by just using a
@@ -163,8 +159,6 @@ class Move {
 		// Move both of these up to team when it will reduce the size of Move.
 		uint8_t r;					// The random number (85 through 100)
 		uint8_t times_used;
-
-		static uint16_t const max_probability;
 
 		Move (Moves move, int pp_ups, unsigned size);
 		void reset ();
@@ -207,7 +201,6 @@ class Move {
 	private:
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
 		int8_t get_priority ();
-		static std::vector<std::pair<uint16_t, uint16_t>> get_variable (Moves name, unsigned size);
 };
 
 // Various states a Pokemon can be in due to vanishing moves.
