@@ -42,7 +42,7 @@ void OutMessage::write_string (std::string const & str) {
 }
 
 void OutMessage::write_team (Team const & team, std::string const &) {
-	write_int (team.size);
+	write_int (team.pokemon.size());
 	team.pokemon.for_each([&](Pokemon const & pokemon) {
 		write_pokemon (pokemon);
 	});

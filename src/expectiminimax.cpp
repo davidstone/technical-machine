@@ -71,7 +71,6 @@ int get_awaken_numerator (Pokemon const & pokemon);
 Move::Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 bool is_replacing (Team const & team);
 Move::Moves random_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
-std::vector<Move::Moves> all_legal_switches (Team const & ai, Team const & foe, Weather const & weather);
 uint8_t index_of_first_switch (Pokemon const & pokemon);
 Move::Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 std::vector<Move::Moves> all_legal_selections (Team & ai, Team const & foe, Weather const & weather);
@@ -277,15 +276,9 @@ int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, uns
 
 int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score) {
 	int64_t score3 = 0;
-	for (uint8_t first_index = 0; first_index != first.pokemon().move().variable.size(); ++first_index) {
-		first.pokemon().move().variable.set_index(first_index);
-		if (first.pokemon().move().is_phaze () and first.pokemon().move().variable().first == last.pokemon.index() and last.pokemon.size() > 1)
-			continue;
+	first.pokemon().move().variable.for_each_index([&]() {
 		int64_t score2 = 0;
-		for (uint8_t last_index = 0; last_index != last.pokemon().move().variable.size(); ++last_index) {
-			last.pokemon().move().variable.set_index(last_index);
-			if (last.pokemon().move().is_phaze () and last.pokemon().move().variable().first == first.pokemon.index() and first.pokemon.size() > 1)
-				continue;
+		last.pokemon().move().variable.for_each_index([&]() {
 			first.ch = false;
 			last.ch = false;
 			int64_t score1 = awaken_branch (first, last, weather, depth, score);
@@ -312,9 +305,9 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 				score1 /= 256;
 			}
 			score2 += score1 * last.pokemon().move().variable().second;
-		}
+		});
 		score3 += score2 * first.pokemon().move().variable().second / Move::max_probability;
-	}
+	});
 	return score3 / Move::max_probability;
 }
 
@@ -438,31 +431,27 @@ int64_t end_of_turn_branch (Team first, Team last, Weather weather, unsigned dep
 
 
 int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn) {
-	Team* first;
-	Team* last;
+	Team * first;
+	Team * last;
 	faster_pokemon (ai, foe, weather, first, last);
+	bool const speed_tie = (first == nullptr);
 	unsigned const tabs = first_turn ? 0 : 2;
 	int64_t alpha = -Score::VICTORY - 1;
-	for (ai.replacement = 0; ai.replacement != ai.pokemon.size(); ++ai.replacement) {
-		if (ai.is_switching_to_self() and ai.pokemon.size() > 1)
-			continue;
+	auto const ai_break_out = [& ai]() { return ai.pokemon().hp.stat != 0; };
+	ai.pokemon.for_each_replacement(ai_break_out, [&]() {
 		if (verbose or first_turn)
-			std::cout << std::string (tabs, '\t') + "Evaluating switching to " + ai.at_replacement().to_string() + "\n";
+			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + ai.pokemon.at_replacement().to_string() + "\n";
 		int64_t beta = Score::VICTORY + 1;
-		for (foe.replacement = 0; foe.replacement != foe.pokemon.size(); ++foe.replacement) {
-			if (foe.is_switching_to_self() and foe.pokemon.size() > 1)
-				continue;
-			bool const speed_tie = (first == nullptr);
+		auto const foe_break_out = [& foe, & alpha, & beta]() {
+			return beta <= alpha or foe.pokemon().hp.stat != 0;
+		};
+		foe.pokemon.for_each_replacement(foe_break_out, [&]() {
 			beta = (speed_tie) ?
 				std::min (beta, (fainted (ai, foe, weather, depth, score) + fainted (foe, ai, weather, depth, score)) / 2) :
 				std::min (beta, fainted (*first, *last, weather, depth, score));
-			if (beta <= alpha or foe.pokemon().hp.stat != 0)
-				break;
-		}
-		update_best_move (alpha, beta, first_turn, Move::from_replacement (ai.replacement), best_move);
-		if (ai.pokemon().hp.stat != 0)
-			break;
-	}
+		});
+		update_best_move (alpha, beta, first_turn, ai.pokemon.replacement_to_switch(), best_move);
+	});
 	return alpha;
 }
 
@@ -497,22 +486,22 @@ int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather co
 		alpha = -alpha;
 		++tabs;
 	}
-	for (switcher.replacement = 0; switcher.replacement != switcher.pokemon.size(); ++switcher.replacement) {
-		if (switcher.is_switching_to_self())
-			continue;
+	switcher.pokemon.for_each_replacement([&]() {
 		if (first_turn)
-			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + switcher.at_replacement ().to_string () + "\n";
+			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + switcher.pokemon.at_replacement ().to_string () + "\n";
 		int64_t const value = switch_after_move_branch (switcher, other, weather, depth, score);
 		if (switcher.me)
-			update_best_move (alpha, value, first_turn, Move::from_replacement (switcher.replacement), best_switch);
+			update_best_move (alpha, value, first_turn, switcher.pokemon.replacement_to_switch(), best_switch);
 		else
 			update_foe_best_move (switcher, alpha, value, first_turn);
-	}
+	});
 	return alpha;
 }
 
 int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, unsigned depth, Score const & score) {
 	switchpokemon (switcher, other, weather);
+	assert(!switcher.pokemon.is_empty());
+	assert(!other.pokemon.is_empty());
 	// I don't have to correct for which of the Pokemon moved first because
 	// there are only two options:
 	
@@ -552,21 +541,10 @@ bool is_replacing (Team const & team) {
 }
 
 Move::Moves random_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
-	std::vector<Move::Moves> const switches = all_legal_switches (ai, foe, weather);
+	std::vector<Move::Moves> const switches = ai.pokemon().move.legal_switches (ai.pokemon.index());
 	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
 	size_t const index = distribution (random_engine);
 	return switches [index];
-}
-
-std::vector<Move::Moves> all_legal_switches (Team const & ai, Team const & foe, Weather const & weather) {
-	Pokemon const & pokemon = ai.pokemon();
-	std::vector<Move::Moves> switches;
-	for (uint8_t index = index_of_first_switch (pokemon); index != pokemon.move.size(); ++index) {
-		if (index != ai.pokemon.index()) {
-			switches.push_back (pokemon.move(index).name);
-		}
-	}
-	return switches;
 }
 
 uint8_t index_of_first_switch (Pokemon const & pokemon) {

@@ -23,7 +23,7 @@
 #include <string>
 #include <utility>
 
-#include "active.hpp"
+#include "active_variable.hpp"
 #include "type.hpp"
 #undef SING
 
@@ -201,10 +201,13 @@ class Move {
 		bool is_self_KO () const;
 		bool cannot_miss () const;
 		void get_magnitude (unsigned magnitude);
+		static constexpr unsigned max_regular_moves () {
+			return 4;
+		}
 	private:
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
 		int8_t get_priority ();
-		static std::vector<std::pair <uint16_t, uint16_t>> get_variable (Moves name, unsigned size);
+		static std::vector<std::pair<uint16_t, uint16_t>> get_variable (Moves name, unsigned size);
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

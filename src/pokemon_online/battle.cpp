@@ -288,7 +288,7 @@ void Battle::parse_send_out (InMessage & msg, uint8_t const player) {
 	handle_send_out (player, slot, index, nickname, species, gender, level);
 	if (player == party) {
 		for (Species & name : slot_memory) {
-			if (ai.at_replacement ().name == name)
+			if (ai.pokemon.at_replacement ().name == name)
 				std::swap (slot_memory.front(), name);
 		}
 	}
@@ -313,7 +313,7 @@ void Battle::parse_hp_change (InMessage & msg, uint8_t const player) {
 	if (change_in_hp < 0)
 		return;
 	uint8_t const slot = 0;
-	uint16_t const denominator = my_team ? ai.at_replacement ().hp.max : max_damage_precision ();
+	uint16_t const denominator = my_team ? ai.pokemon.at_replacement().hp.max : max_damage_precision ();
 	handle_hp_change (player, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, denominator);
 }
 
@@ -383,7 +383,7 @@ void Battle::parse_already_statused (InMessage & msg) {
 void Battle::handle_flinch (uint8_t const player) {
 	std::cerr << "FLINCH\n";
 	Team & team = is_me (player) ? ai : foe;
-	team.at_replacement().move().variable.set_index(1);
+	team.pokemon.at_replacement().move().variable.set_index(1);
 }
 
 void Battle::parse_recoil (InMessage & msg) {
@@ -407,7 +407,7 @@ void Battle::parse_ability_message (InMessage & msg, uint8_t const player) {
 	uint16_t const ability = msg.read_short ();
 	uint8_t const part = msg.read_byte ();
 	Team & team = (player == party) ? ai : foe;
-	team.at_replacement().ability.name = battle_id_to_ability (ability, part);
+	team.pokemon.at_replacement().ability.name = battle_id_to_ability (ability, part);
 	#if 0
 	int8_t const type = msg.read_byte ();
 	int8_t const foe = msg.read_byte ();
@@ -420,7 +420,7 @@ void Battle::parse_item_message (InMessage & msg, uint8_t const player) {
 	uint8_t const part = msg.read_byte ();
 	Item item (battle_id_to_item (item_id, part));
 	Team & team = (player == party) ? ai : foe;
-	team.at_replacement().item.name = item.name;
+	team.pokemon.at_replacement().item.name = item.name;
 	// int8_t const foe = msg.read_byte ();
 	// int16_t const berry = msg.read_short ();
 	// int16_t const other = msg.read_short ();
@@ -607,16 +607,17 @@ uint8_t Battle::get_target () const {
 }
 
 int16_t Battle::ai_change_in_hp (uint16_t const remaining_hp) const {
-	if (ai.at_replacement().hp.max < remaining_hp)
-		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), ai.at_replacement().hp.max, "AI's remaining_hp");
-	return ai.at_replacement ().hp.stat - remaining_hp;
+	Stat const & hp = ai.pokemon.at_replacement().hp;
+	if (hp.max < remaining_hp)
+		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), hp.max, "AI's remaining_hp");
+	return hp.stat - remaining_hp;
 }
 
 int16_t Battle::foe_change_in_hp (uint16_t const remaining_hp) const {
 	if (max_damage_precision() < remaining_hp)
 		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), max_damage_precision(), "Foe's remaining_hp");
-	Pokemon const & pokemon = foe.at_replacement();
-	uint16_t const pixel_hp = max_damage_precision() * pokemon.hp.stat / pokemon.hp.max;
+	Stat const & hp = foe.pokemon.at_replacement().hp;
+	uint16_t const pixel_hp = max_damage_precision() * hp.stat / hp.max;
 	return pixel_hp - remaining_hp;
 }
 

@@ -18,6 +18,7 @@
 
 #include "move.hpp"
 
+#include <cassert>
 #include <cstdint>
 #include <utility>
 #include <vector>
@@ -125,11 +126,10 @@ int8_t Move::get_priority () {
 	}
 }
 
-std::vector<std::pair <uint16_t, uint16_t>> Move::get_variable (Moves name, unsigned size) {
-	std::vector<std::pair <uint16_t, uint16_t>> set;
-	std::pair <uint16_t, uint16_t> effect;
+std::vector<std::pair<uint16_t, uint16_t>> Move::get_variable (Moves name, unsigned size) {
+	std::vector<std::pair<uint16_t, uint16_t>> set;
+	std::pair<uint16_t, uint16_t> effect;
 	effect.first = 0;
-	unsigned increment = 1;
 	unsigned last = 0;
 	bool simple_range = true;
 	effect.second = get_probability (name);
@@ -201,8 +201,11 @@ std::vector<std::pair <uint16_t, uint16_t>> Move::get_variable (Moves name, unsi
 			last = 3;
 			break;
 		case PRESENT:
-			increment = 40;
-			last = 120;
+			simple_range = false;
+			while (effect.first <= 120) {
+				set.push_back (effect);
+				effect.first += 40;
+			}
 			break;
 		case PSYWAVE:
 			effect.first = 5;
@@ -210,11 +213,8 @@ std::vector<std::pair <uint16_t, uint16_t>> Move::get_variable (Moves name, unsi
 			break;
 		case ROAR:
 		case WHIRLWIND:
-			if (size > 2)
-				effect.second = max_probability / (size - 1);
-			else
-				effect.second = max_probability;
-			last = size - 1;
+			effect.second = (size > 2) ? max_probability / (size - 1) : max_probability;
+			last = size - 2;
 			break;
 		case TAUNT:
 			effect.first = 2;
@@ -236,7 +236,7 @@ std::vector<std::pair <uint16_t, uint16_t>> Move::get_variable (Moves name, unsi
 	if (simple_range) {
 		while (effect.first <= last) {
 			set.push_back (effect);
-			effect.first += increment;
+			++effect.first;
 		}
 	}
 	return set;
@@ -266,6 +266,7 @@ Move::Moves Move::from_replacement (unsigned replacement) {
 }
 
 unsigned Move::to_replacement (Moves name) {
+	assert (SWITCH0 <= name and name <= SWITCH5);
 	return static_cast<unsigned> (name - SWITCH0);
 }
 
@@ -278,7 +279,7 @@ bool Move::affects_target (Team const & target, Weather const & weather) const {
 }
 
 bool Move::affects_replacement (Team const & target, Weather const & weather) const {
-	return affects_pokemon (target, target.at_replacement(), weather);
+	return affects_pokemon (target, target.pokemon.at_replacement(), weather);
 }
 
 bool Move::affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const {

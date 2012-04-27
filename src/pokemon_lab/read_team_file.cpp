@@ -100,9 +100,9 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	read_xml (file_name, pt);
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
-	team.size = all_pokemon.size ();
+	team.pokemon.initialize_size (all_pokemon.size());
 	for (auto const & value : all_pokemon) {
-		team.pokemon.add (load_pokemon (value.second, foe_size, team.size));
+		team.pokemon.add (load_pokemon (value.second, foe_size, team.pokemon.real_size()));
 	}
 }
 

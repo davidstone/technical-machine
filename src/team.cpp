@@ -134,8 +134,6 @@ Team::Team () :
 	toxic_spikes (0),
 	stealth_rock (false),
 
-	replacement (0),
-	size (6),
 	me (false)
 	{
 }
@@ -218,8 +216,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	toxic_spikes (0),
 	stealth_rock (false),
 
-	replacement (0),
-	size (6),
 	me (true)
 	{
 	boost::filesystem::path team_file = team_file_name;
@@ -251,33 +247,6 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 }	// unnamed namespace
 
-bool Team::is_switching_to_self () const {
-	return replacement == pokemon.index();
-}
-
-bool Team::is_switching_to_self (Move const & move) const {
-	return move.to_replacement() == pokemon.index();
-}
-
-bool Team::seen_pokemon (Species const name) {
-	for (replacement = 0; replacement != pokemon.size(); ++replacement) {
-		if (name == at_replacement().name)
-			return true;
-	}
-	return false;
-}
-
-void Team::add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender) {
-	Pokemon member (name, size);
-	member.level = level;
-	member.gender = gender;
-
-	member.set_nickname(nickname);
-
-	pokemon.add (member);
-	replacement = pokemon.size() - 1;
-}
-
 uint64_t Team::hash () const {
 	uint64_t current_hash = 0;
 	// Should probably think of a better way to combine Pokemon hashes than xor
@@ -287,8 +256,8 @@ uint64_t Team::hash () const {
 	// hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
 	constexpr unsigned max_size = 6;
-	return static_cast<unsigned> (size - 1) + max_size *
-			(pokemon.index() + pokemon.size() *
+	return static_cast<unsigned> (pokemon.real_size() - 1) + max_size *
+			(pokemon.index() + pokemon.real_size() *
 			(vanish + Vanish::END_VANISH *
 			(static_cast<unsigned> (stage [Stat::ATK] + 6) + (6 + 6 + 1) *
 			(static_cast<unsigned> (stage [Stat::DEF] + 6) + (6 + 6 + 1) *
@@ -421,14 +390,6 @@ bool Team::operator== (Team const & other) const {
 			toxic_spikes == other.toxic_spikes and
 			stealth_rock == other.stealth_rock and
 			me == other.me;
-}
-
-Pokemon & Team::at_replacement () {
-	return pokemon(replacement);
-}
-
-Pokemon const & Team::at_replacement () const {
-	return pokemon(replacement);
 }
 
 std::string Team::to_string () const {

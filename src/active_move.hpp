@@ -34,29 +34,35 @@ class Active<Move> : public detail::BaseActive<Move> {
 	public:
 		Active (unsigned const team_size) {
 			container.reserve ((team_size > 1) ? team_size + 1 : 1);
-			container.push_back (Move (Move::STRUGGLE, 0, 0));
+			add (Move (Move::STRUGGLE, 0, 0));
 			// A Pokemon has a new "Switch" move for each Pokemon in the party.
 			if (team_size > 1) {
 				for (unsigned count = 0; count != team_size; ++count) {
-					container.push_back (Move (Move::from_replacement (count), 0, 0));
+					add (Move (Move::from_replacement (count), 0, 0));
 				}
 			}
 		}
 		Active (typename detail::BaseActive<Move>::container_type const & pre_set):
 			detail::BaseActive<Move>(pre_set) {
 		}
+		unsigned number_of_regular_moves () const {
+			unsigned n = 0;
+			while (operator()(n).name != Move::STRUGGLE)
+				++n;
+			return n;
+		}
 		// Skips Struggle and switches
-		void for_each_regular_move (typename std::function<void(Move &)> const & f) {
+		void for_each_regular_move (std::function<void(Move &)> const & f) {
 			for (auto move = container.begin(); move->name != Move::STRUGGLE; ++move) {
 				f (*move);
 			}
 		}
-		void for_each_regular_move (typename std::function<void(Move const &)> const & f) const {
+		void for_each_regular_move (std::function<void(Move const &)> const & f) const {
 			for (auto move = container.cbegin(); move->name != Move::STRUGGLE; ++move) {
 				f (*move);
 			}
 		}
-		bool regular_move_exists (typename std::function<bool(Move const &)> const & condition) const {
+		bool regular_move_exists (std::function<bool(Move const &)> const & condition) const {
 			return find_if(condition) != nullptr;
 		}
 		bool a_regular_move_is_selectable () const {
@@ -72,14 +78,14 @@ class Active<Move> : public detail::BaseActive<Move> {
 			return (move_ptr != nullptr) ? move_ptr->name : Move::END;
 		}
 		// nullptr if not found
-		Move * find_if (typename std::function<bool(Move &)> const & condition) {
+		Move * find_if (std::function<bool(Move &)> const & condition) {
 			for (auto move = container.begin(); move->name != Move::STRUGGLE; ++move) {
 				if (condition (*move))
 					return &*move;
 			}
 			return nullptr;
 		}
-		Move const * find_if (typename std::function<bool(Move const &)> const & condition) const {
+		Move const * find_if (std::function<bool(Move const &)> const & condition) const {
 			for (auto move = container.cbegin(); move->name != Move::STRUGGLE; ++move) {
 				if (condition (*move))
 					return &*move;
@@ -89,7 +95,18 @@ class Active<Move> : public detail::BaseActive<Move> {
 		std::vector<std::pair<int64_t, size_t>> create_ordered_container (bool const ai) const {
 			return reorder (container, ai);
 		}
+		std::vector<Move::Moves> legal_switches (uint8_t const pokemon_index) const {
+			std::vector<Move::Moves> switches;
+			for (unsigned n = 0; n != container.size(); ++n) {
+				if (n != pokemon_index)
+					switches.push_back (Move::from_replacement(n));
+			}
+			return switches;
+		}
+		// Temporary function until I rework my detailed stats data structures
+		uint8_t size () const {
+			return container.size();
+		}
 };
-
 }	// namespace technicalmachine
 #endif	// ACTIVE_MOVE_HPP_

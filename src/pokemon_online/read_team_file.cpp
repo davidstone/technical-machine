@@ -65,6 +65,12 @@ static Stat & lookup_stat (Pokemon & pokemon, unsigned n) {
 	}
 }
 
+bool is_real_pokemon (boost::property_tree::ptree const & pt) {
+	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
+	// empty slots in teams smaller than 6 Pokemon.
+	return pt.get<unsigned> ("<xmlattr>.Num");
+}
+
 static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned foe_size, unsigned my_size) {
 	unsigned const id = pt.get <unsigned> ("<xmlattr>.Num");
 	unsigned const forme = pt.get <unsigned> ("<xmlattr>.Forme");
@@ -109,16 +115,20 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	boost::property_tree::ptree pt;
 	read_xml (file_name, pt);
 	
-	team.size = 6;
 	auto const all_pokemon = pt.get_child ("Team");
+	unsigned pokemon_count = 0;
+	for (auto const & value : all_pokemon) {
+		if (value.first == "Pokemon" and is_real_pokemon (value.second))
+			++pokemon_count;
+	}
+	team.pokemon.initialize_size(pokemon_count);
 	for (auto const & value : all_pokemon) {
 		if (value.first == "Pokemon") {
-			Pokemon const pokemon = load_pokemon (value.second, foe_size, team.size);
+			Pokemon const pokemon = load_pokemon (value.second, foe_size, team.pokemon.real_size());
 			if (pokemon.name != Species::END)
 				team.pokemon.add (pokemon);
 		}
 	}
-	team.size = team.pokemon.size ();
 }
 
 }	// namespace po

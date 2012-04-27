@@ -24,7 +24,7 @@
 #include <random>
 #include <string>
 
-#include "active.hpp"
+#include "active_pokemon.hpp"
 #include "gender.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
@@ -137,13 +137,7 @@ class Team {
 		uint8_t toxic_spikes;
 		bool stealth_rock;
 
-		// If a Pokemon switches / faints, what Pokemon should replace it?
-		uint8_t replacement;
-
 		uint8_t called_move;
-		
-		// How big is the team?
-		uint8_t size;
 		
 		// Is this my team?
 		bool me;
@@ -151,13 +145,6 @@ class Team {
 		Team ();
 		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
 		bool operator== (Team const & other) const;
-		Pokemon& at_replacement ();
-		Pokemon const & at_replacement () const;
-		bool is_switching_to_self () const;
-		bool is_switching_to_self (Move const & move) const;
-		// Has this Pokemon been seen already? If it has, set replacement.
-		bool seen_pokemon (Species name);
-		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender);
 		uint64_t hash () const;
 		std::string to_string () const;
 	private:

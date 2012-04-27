@@ -69,10 +69,10 @@ Team predict_team (int const detailed [][7], Team team, unsigned size, bool usin
 namespace {
 
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END] [Species::END]) {
-	while (team.pokemon.size() < team.size) {
+	while (team.pokemon.size() < team.pokemon.real_size()) {
 		Species const name = get_most_likely_pokemon (estimate);
-		team.pokemon.add (Pokemon (name, team.size));
-		if (team.pokemon.size() == team.size)
+		team.pokemon.add (Pokemon (name, team.pokemon.real_size()));
+		if (team.pokemon.size() == team.pokemon.real_size())
 			break;
 		for (unsigned n = 0; n != Species::END; ++n)
 			estimate [n] *= multiplier [team.pokemon(team.pokemon.size() - 1).name] [n];
@@ -95,10 +95,8 @@ void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
 	// Pokemon I've already seen will have their moveset filled out with
 	// Struggle and Switch# for each Pokemon still alive in their team. This
 	// makes sure that those Pokemon get all of their moves predicted.
-	unsigned n = 0;
-	while (member.move(n).name != Move::STRUGGLE)
-		++n;
-	unsigned const max_moves = 4u + member.move.size() - n;
+	unsigned n = member.move.number_of_regular_moves();
+	unsigned const max_moves = Move::max_regular_moves() + member.move.size() - n;
 	for (unsigned m = 3; member.move.size() < max_moves and detailed [member.name] [m] != Move::END; ++m) {
 		Move const * const move_ptr = member.move.find_if([& detailed, & member, m](Move const & move) {
 			return move.name == static_cast<Move::Moves> (detailed [member.name] [m]);

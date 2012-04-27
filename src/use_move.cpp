@@ -837,12 +837,11 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::ROAR:
 		case Move::WHIRLWIND:
-			if (!target.ingrain and !target.pokemon().ability.blocks_phazing()) {
-				if (target.pokemon.size() > 1) {
-					target.replacement = user.pokemon().move().variable().first;
-					switchpokemon (target, user, weather);
-					target.moved = true;
-				}
+			if (!target.ingrain and !target.pokemon().ability.blocks_phazing() and target.pokemon.size() > 1) {
+				uint8_t const index = user.pokemon().move().variable.phaze_index(target.pokemon.index());
+				target.pokemon.set_replacement(index);
+				switchpokemon (target, user, weather);
+				target.moved = true;
 			}
 			break;
 		case Move::ROLE_PLAY:		// Fix
@@ -925,7 +924,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::SWITCH3:
 		case Move::SWITCH4:
 		case Move::SWITCH5:
-			user.replacement = user.pokemon().move().to_replacement ();
+			user.pokemon.replacement_from_switch();
 			switchpokemon (user, target, weather);
 			break;
 		case Move::SWITCHEROO:

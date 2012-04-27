@@ -27,15 +27,11 @@
 #include <typeinfo>
 #include <vector>
 
-#include <iostream>
-
-#include <boost/utility/enable_if.hpp>
-
 namespace technicalmachine {
 
 class InvalidActiveIndex : public std::logic_error {
 	public:
-		InvalidActiveIndex (unsigned index, size_t size, std::string const & name):
+		InvalidActiveIndex (unsigned index, unsigned size, std::string const & name):
 			logic_error ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
 			{
 		}
@@ -72,16 +68,13 @@ class BaseActive {
 			return container [specified_index];
 		}
 		constexpr T const & operator() () const {
-			return operator() (current_index);
+			return operator() (index());
 		}
 		T & operator() () {
-			return operator() (current_index);
+			return operator() (index());
 		}
 		constexpr bool is_empty() const {
 			return container.empty();
-		}
-		constexpr uint8_t size () const {
-			return container.size();
 		}
 		void add (T const & element) {
 			container.push_back (element);
@@ -90,11 +83,7 @@ class BaseActive {
 			container.insert (container.begin() + position, element);
 		}
 		void insert (T const & element) {
-			insert (current_index, element);
-		}
-		void remove_active (uint8_t const replacement) {
-			container.erase (container.begin() + current_index);
-			set_index((index() > replacement) ? replacement : replacement - 1);
+			insert (index(), element);
 		}
 		void pop_back () {
 			container.pop_back();
@@ -104,21 +93,25 @@ class BaseActive {
 		// a Valgrind stack trace. This will eventually be replaced with a smart
 		// assert.
 		#ifndef NDEBUG
-		void set_index (uint8_t const new_index) {
-			if (new_index >= container.size()) {
-				InvalidActiveIndex ex (new_index, container.size(), typeid(T).name());
-				std::cerr << ex.what();
+		uint8_t check_range (uint8_t const new_index) {
+			if (new_index < container.size())
+				return new_index;
+			else {
+				T const & valgrind_stack_trace_variable = container[new_index];
+				throw InvalidActiveIndex (new_index, container.size(), typeid(T).name());
 			}
-			current_index = new_index;
 		}
 		#else	// NDEBUG
-		void set_index (uint8_t const new_index) {
+		uint8_t check_range (uint8_t const new_index) {
 			if (new_index < container.size())
-				current_index = new_index;
+				return new_index;
 			else
 				throw InvalidActiveIndex (new_index, container.size(), typeid(T).name());
 		}
 		#endif	// NDEBUG
+		void set_index (uint8_t const new_index) {
+			current_index = check_range (new_index);
+		}
 		void reset_index () {
 			current_index = 0;
 		}
@@ -135,6 +128,11 @@ class BaseActive {
 				f (element);
 			}
 		}
+		void for_each_index (std::function<void(void)> const & f) {
+			for (current_index = 0; current_index != container.size(); ++current_index) {
+				f ();
+			}
+		}
 		unsigned count_if (typename std::function<bool(T const &)> const & f) const {
 			return std::count_if(container.begin(), container.end(), f);
 		}
@@ -142,22 +140,12 @@ class BaseActive {
 	protected:
 		// All Pokemon on the team, all moves on the Pokemon, etc.
 		container_type container;
+	private:
 		uint8_t current_index;
 };
 }	// namespace detail
 
-// The general form is just the above functions. I'm not sure how to disable
-// this for specialized versions (in case I forget to include their specialized
-// header), because I cannot include the specialized type in this header or I
-// get circular dependencies.
-template<typename T>
-class Active : public detail::BaseActive<T> {
-	public:
-		constexpr Active () = default;
-		constexpr Active (typename detail::BaseActive<T>::container_type const & pre_set):
-			detail::BaseActive<T>(pre_set) {
-		}
-};
+template<typename T> class Active;
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_HPP_

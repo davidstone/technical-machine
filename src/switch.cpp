@@ -50,7 +50,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			switcher.pokemon().status.clear ();
 		
 		// Change the active Pokemon to the one switching in.
-		switcher.pokemon.set_index(switcher.replacement);
+		switcher.pokemon.to_replacement();
 	}
 	else {
 		replace_fainted_pokemon (switcher, other);
@@ -129,14 +129,9 @@ void reset_variables (Team & team) {
 }
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {
-	// First, remove the active Pokemon because it has 0 HP.
-	switcher.pokemon.remove_active (switcher.replacement);
-	--switcher.size;
-
-	// If the last Pokemon is fainted; there is nothing left to do.
+	switcher.pokemon.remove_active();
 	if (switcher.pokemon.is_empty())
 		return;
-
 	remove_fainted_from_phazing_moves(switcher, other);
 	remove_ability_to_switch_to_fainted(switcher);
 }
@@ -144,11 +139,11 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
 	other.pokemon.for_each([& switcher](Pokemon & pokemon) {
 		pokemon.move.for_each([& switcher](Move & move) {
-			if (move.is_phaze ()) {
+			if (move.is_phaze()) {
 				move.variable.pop_back();
 				move.variable.for_each([& switcher](std::pair<uint16_t, uint16_t> & variable) {
-					variable.second = (switcher.size > 2) ?
-						Move::max_probability / (switcher.size - 1) :
+					variable.second = (switcher.pokemon.real_size() > 2) ?
+						Move::max_probability / (switcher.pokemon.real_size() - 1) :
 						Move::max_probability;
 				});
 			}
@@ -157,12 +152,13 @@ void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
 }
 
 void remove_ability_to_switch_to_fainted (Team & switcher) {
-	switcher.pokemon.for_each([& switcher](Pokemon & pokemon) {
+	auto const remove_switch = [& switcher](Pokemon & pokemon) {
 		pokemon.move.pop_back();
-		// If there is only one Pokemon, there is no switching.
-		if (switcher.pokemon.size() == 1)
-			pokemon.move.pop_back();
-	});
+	};
+	switcher.pokemon.for_each(remove_switch);
+	// If there is only one Pokemon, there is no switching.
+	if (switcher.pokemon.size() == 1)
+		switcher.pokemon.for_each(remove_switch);
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {

@@ -50,10 +50,9 @@ bool handle_confusion (Team & user);
 }	// unnamed namespace
 
 void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather) {
-	for (uint8_t index = 0; index != user.pokemon().move.size(); ++index) {
-		user.pokemon().move.set_index (index);
+	user.pokemon().move.for_each_index([& user, & other, & weather]() {
 		user.pokemon().move().selectable = is_legal_selection (user, other, weather);
-	}
+	});
 }
 
 namespace {
@@ -114,7 +113,7 @@ bool is_blocked_by_bide (Team const & user) {
 
 bool is_not_illegal_switch (Team const & user, Team const & other, Weather const & weather) {
 	return user.pokemon().move().is_switch() ?
-		!is_blocked_from_switching (user, other, weather) and !user.is_switching_to_self (user.pokemon().move()) :
+		!is_blocked_from_switching (user, other, weather) and !user.pokemon.is_switching_to_self (user.pokemon().move()) :
 		true;
 }
 

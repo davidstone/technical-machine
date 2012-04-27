@@ -86,7 +86,7 @@ void GenericBattle::write_team (network::OutMessage & msg, std::string const & u
 }
 
 Team GenericBattle::predict_foe_team (int const detailed [Species::END][7]) const {
-	return predict_team (detailed, foe, ai.size);
+	return predict_team (detailed, foe, ai.pokemon.size());
 }
 
 void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
@@ -125,7 +125,7 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	Team predicted = predict_team (client.detailed, foe, ai.size);
+	Team predicted = predict_team (client.detailed, foe, ai.pokemon.size());
 	std::cout << predicted.to_string ();
 
 	return expectiminimax (ai, predicted, weather, depth, client.score, random_engine);
@@ -141,12 +141,12 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 	}
 
 	active.moved = true;
-	if (!active.at_replacement().find_move (move_name)) {
-		Move move (move_name, 3, inactive.size);
-		active.at_replacement().move.insert (move);
+	if (!active.pokemon.at_replacement().find_move (move_name)) {
+		Move move (move_name, 3, inactive.pokemon.real_size());
+		active.pokemon.at_replacement().move.insert (move);
 	}
-	active.at_replacement().move().variable.reset_index();
-	if (active.at_replacement().move().basepower != 0)
+	active.pokemon.at_replacement().move().variable.reset_index();
+	if (active.pokemon.at_replacement().move().basepower != 0)
 		move_damage = true;
 }
 
@@ -162,26 +162,23 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	// This is needed to make sure I don't overwrite important information in a
 	// situation in which a team switches multiple times in one turn (due to
 	// replacing fainted Pokemon).
-	size_t const replacement = active.replacement;
+	uint8_t const replacement = active.pokemon.replacement();
 	
-	// If it hasn't been seen already, add it to the team.
-	if (!active.seen_pokemon (species)) {
-		active.add_pokemon (species, nickname, level, gender);
-		active.at_replacement ().new_hp = max_damage_precision ();
+	if (!active.pokemon.seen (species)) {
+		active.pokemon.add (species, nickname, level, gender);
+		active.pokemon.at_replacement ().new_hp = max_damage_precision ();
 	}
-	
-	// Special analysis when a Pokemon is brought out due to a phazing move
-	if (inactive.pokemon.is_empty())
-		std::cerr << is_me (switching_party) ? "The foe has no Pokemon.\n" : "TM has no Pokemon.\n";
-	if (inactive.pokemon.is_empty() and inactive.at_replacement().move().is_phaze()) {
-		uint8_t variable_index = 0;
-		while (active.pokemon(variable_index).name != species)
-			++variable_index;
-		inactive.at_replacement().move().variable.set_index(variable_index);
+
+	Pokemon & phazer = inactive.pokemon.at_replacement();
+	if (phazer.move().is_phaze()) {
+		uint8_t new_pokemon_index = 0;
+		while (active.pokemon(new_pokemon_index).name != species)
+			++new_pokemon_index;
+		phazer.move().variable.set_phaze_index(active.pokemon.index(), new_pokemon_index);
 	}
 	else if (!active.moved) {
 		uint8_t const move_index = active.pokemon(replacement).index_of_first_switch();
-		active.pokemon(replacement).move.set_index (move_index + active.replacement);
+		active.pokemon(replacement).move.set_index (move_index + active.pokemon.replacement());
 	}
 }
 
@@ -189,9 +186,9 @@ void GenericBattle::handle_hp_change (uint8_t party_changing_hp, uint8_t slot, u
 	bool const my_team = is_me (party_changing_hp);
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
-	Pokemon & pokemon = changer.at_replacement();
+	Pokemon & pokemon = changer.pokemon.at_replacement();
 	if (move_damage) {
-		if (other.at_replacement().move().affects_replacement(changer, weather))
+		if (other.pokemon.at_replacement().move().affects_replacement(changer, weather))
 			changer.damage = std::min (static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat);
 		move_damage = false;
 	}
@@ -225,7 +222,7 @@ void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint
 
 void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
 	Team & fainter = is_me (fainting_party) ? ai : foe;
-	fainter.at_replacement().fainted = true;
+	fainter.pokemon.at_replacement().fainted = true;
 }
 
 void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
@@ -268,7 +265,7 @@ void GenericBattle::initialize_team (Team & team) {
 	team.fully_paralyzed = false;
 	team.hitself = false;
 	team.miss = false;
-	team.replacement = team.pokemon.index();
+	team.pokemon.initialize_replacement();
 }
 
 void GenericBattle::do_turn () {
@@ -306,7 +303,7 @@ void GenericBattle::do_turn () {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!foe.pokemon().move().is_switch())
-				foe.pokemon().move.set_index (foe.pokemon().index_of_first_switch() + foe.replacement);
+				foe.pokemon().move.set_index (foe.pokemon().index_of_first_switch() + foe.pokemon.replacement());
 			call_move (foe, ai, weather, first->damage);
 		}
 	}
