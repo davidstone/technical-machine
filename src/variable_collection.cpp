@@ -59,8 +59,7 @@ void VariableCollection::set_magnitude (unsigned const magnitude) {
 
 namespace {
 
-detail::BaseCollection<Variable>::container_type create_container (Move::Moves const move_name, unsigned const foe_size) {
-	Move::Moves const & move = static_cast<Move::Moves>(move_name);
+detail::BaseCollection<Variable>::container_type create_container (Move::Moves const move, unsigned const foe_size) {
 	switch (move) {
 		case Move::ACUPRESSURE:
 			return simple_range(0, 6, move);

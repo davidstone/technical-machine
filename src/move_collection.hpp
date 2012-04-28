@@ -31,7 +31,6 @@ namespace technicalmachine {
 class MoveCollection : public detail::BaseCollection<Move> {
 	public:
 		MoveCollection (unsigned const team_size);
-		MoveCollection (detail::BaseCollection<Move>::container_type const & pre_set);
 		unsigned number_of_regular_moves () const;
 		// Skips Struggle and switches
 		void for_each_regular_move (std::function<void(Move &)> const & f);

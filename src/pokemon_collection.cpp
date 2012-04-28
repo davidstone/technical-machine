@@ -30,12 +30,6 @@ PokemonCollection::PokemonCollection ():
 	true_size(6) {
 }
 
-PokemonCollection::PokemonCollection (detail::BaseCollection<Pokemon>::container_type const & pre_set):
-	detail::BaseCollection<Pokemon>(pre_set),
-	current_replacement(0),
-	true_size(6) {
-}
-
 void PokemonCollection::initialize_size (uint8_t const new_size) {
 	true_size = new_size;
 }

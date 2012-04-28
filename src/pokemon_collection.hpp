@@ -30,7 +30,6 @@ namespace technicalmachine {
 class PokemonCollection : public detail::BaseCollection<Pokemon> {
 	public:
 		PokemonCollection ();
-		PokemonCollection (detail::BaseCollection<Pokemon>::container_type const & pre_set);
 		// Need to rework my constructors or something so that this is not
 		// needed. This should only be called once, in team intialization
 		void initialize_size (uint8_t const new_size);

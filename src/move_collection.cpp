@@ -37,10 +37,6 @@ MoveCollection::MoveCollection (unsigned const team_size) {
 	}
 }
 
-MoveCollection::MoveCollection (detail::BaseCollection<Move>::container_type const & pre_set):
-	detail::BaseCollection<Move>(pre_set) {
-}
-
 unsigned MoveCollection::number_of_regular_moves () const {
 	unsigned n = 0;
 	while (operator()(n).name != Move::STRUGGLE)
