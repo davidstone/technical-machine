@@ -29,10 +29,10 @@
 
 namespace technicalmachine {
 
-class InvalidCollectionIndex : public std::logic_error {
+class InvalidCollectionIndex : public std::out_of_range {
 	public:
 		InvalidCollectionIndex (unsigned index, unsigned size, std::string const & name):
-			logic_error ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
+			out_of_range ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
 			{
 		}
 };
