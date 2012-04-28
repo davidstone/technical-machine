@@ -25,11 +25,11 @@
 namespace technicalmachine {
 namespace {
 
-// typedef detail::BaseCollection<Variable>::container_type container_type;
-detail::BaseCollection<Variable>::container_type create_container (Move::Moves move, unsigned foe_size);
-detail::BaseCollection<Variable>::container_type simple_range (uint16_t first, uint16_t last, Move::Moves move);
-detail::BaseCollection<Variable>::container_type simple_range (uint16_t first, uint16_t last, uint16_t probability);
-detail::BaseCollection<Variable>::container_type default_effects (Move::Moves move);
+typedef detail::BaseCollection<Variable>::container_type container_type;
+container_type create_container (Move::Moves move, unsigned foe_size);
+container_type simple_range (uint16_t first, uint16_t last, Move::Moves move);
+container_type simple_range (uint16_t first, uint16_t last, uint16_t probability);
+container_type default_effects (Move::Moves move);
 uint16_t get_probability (Move::Moves move);
 
 }	// unnamed namespace
@@ -59,7 +59,7 @@ void VariableCollection::set_magnitude (unsigned const magnitude) {
 
 namespace {
 
-detail::BaseCollection<Variable>::container_type create_container (Move::Moves const move, unsigned const foe_size) {
+container_type create_container (Move::Moves const move, unsigned const foe_size) {
 	switch (move) {
 		case Move::ACUPRESSURE:
 			return simple_range(0, 6, move);
@@ -71,7 +71,7 @@ detail::BaseCollection<Variable>::container_type create_container (Move::Moves c
 		case Move::WHIRLPOOL:
 		case Move::WRAP: {
 			uint16_t const probability = get_probability (move);
-			return detail::BaseCollection<Variable>::container_type ({
+			return container_type ({
 				Variable(2, probability),
 				Variable(2, probability),
 				Variable(4, probability / 3),
@@ -87,7 +87,7 @@ detail::BaseCollection<Variable>::container_type create_container (Move::Moves c
 			constexpr uint16_t only_flinch = Variable::max_probability / 10u - flinch_and_status;
 			constexpr uint16_t only_status = Variable::max_probability / 10u - flinch_and_status;
 			constexpr uint16_t no_effect = Variable::max_probability - only_flinch - only_status - flinch_and_status;
-			return detail::BaseCollection<Variable>::container_type ({
+			return container_type ({
 				Variable(0, no_effect),
 				Variable(1, only_status),
 				Variable(2, only_flinch),
@@ -95,7 +95,7 @@ detail::BaseCollection<Variable>::container_type create_container (Move::Moves c
 			});
 		}
 		case Move::MAGNITUDE:
-			return detail::BaseCollection<Variable>::container_type ({
+			return container_type ({
 				Variable(10, Variable::max_probability * 5u / 100u),
 				Variable(30, Variable::max_probability * 10u / 100u),
 				Variable(50, Variable::max_probability * 20u / 100u),
@@ -110,7 +110,7 @@ detail::BaseCollection<Variable>::container_type create_container (Move::Moves c
 			return simple_range(2, 3, move);
 		case Move::PRESENT: {
 			uint16_t const probability = get_probability (move);
-			return detail::BaseCollection<Variable>::container_type ({
+			return container_type ({
 				Variable(0, probability),
 				Variable(40, probability),
 				Variable(80, probability),
@@ -126,7 +126,7 @@ detail::BaseCollection<Variable>::container_type create_container (Move::Moves c
 				return simple_range(0, foe_size - 2, probability);
 			}
 			else {
-				return detail::BaseCollection<Variable>::container_type ({
+				return container_type ({
 					Variable(0, Variable::max_probability)
 				});
 			}
@@ -140,19 +140,19 @@ detail::BaseCollection<Variable>::container_type create_container (Move::Moves c
 	}
 }
 
-detail::BaseCollection<Variable>::container_type simple_range (uint16_t const first, uint16_t const last, Move::Moves const move) {
+container_type simple_range (uint16_t const first, uint16_t const last, Move::Moves const move) {
 	return simple_range(first, last, get_probability (move));
 }
 
-detail::BaseCollection<Variable>::container_type simple_range (uint16_t const first, uint16_t const last, uint16_t const probability) {
-	detail::BaseCollection<Variable>::container_type collection;
+container_type simple_range (uint16_t const first, uint16_t const last, uint16_t const probability) {
+	container_type collection;
 	for (uint16_t value = first; value <= last; ++value)
 		collection.push_back(Variable(first, probability));
 	return collection;
 }
 
-detail::BaseCollection<Variable>::container_type default_effects (Move::Moves move) {
-	detail::BaseCollection<Variable>::container_type collection;
+container_type default_effects (Move::Moves move) {
+	container_type collection;
 	uint16_t const probability = get_probability(move);
 	if (probability != Variable::max_probability)
 		collection.push_back(Variable(0, Variable::max_probability - probability));
