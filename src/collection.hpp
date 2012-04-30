@@ -89,6 +89,30 @@ class BaseCollection {
 			container.pop_back();
 			reset_index();
 		}
+		void set_index (uint8_t const new_index) {
+			current_index = check_range (new_index);
+		}
+		void reset_index () {
+			current_index = 0;
+		}
+		constexpr uint8_t index() const {
+			return current_index;
+		}
+		void for_each (typename std::function<void(T &)> const & f) {
+			for (T & element : container) {
+				f (element);
+			}
+		}
+		void for_each (typename std::function<void(T const &)> const & f) const {
+			for (T const & element : container) {
+				f (element);
+			}
+		}
+		unsigned count_if (typename std::function<bool(T const &)> const & f) const {
+			return std::count_if(container.begin(), container.end(), f);
+		}
+		friend bool operator==<T>(BaseCollection<T> const & lhs, BaseCollection<T> const & rhs);
+	protected:
 		// In debug mode, I intentionally access the invalid value so I can get
 		// a Valgrind stack trace. This will eventually be replaced with a smart
 		// assert.
@@ -109,38 +133,8 @@ class BaseCollection {
 				throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
 		}
 		#endif	// NDEBUG
-		void set_index (uint8_t const new_index) {
-			current_index = check_range (new_index);
-		}
-		void reset_index () {
-			current_index = 0;
-		}
-		constexpr uint8_t index() const {
-			return current_index;
-		}
-		void for_each (typename std::function<void(T &)> const & f) {
-			for (T & element : container) {
-				f (element);
-			}
-		}
-		void for_each (typename std::function<void(T const &)> const & f) const {
-			for (T const & element : container) {
-				f (element);
-			}
-		}
-		void for_each_index (std::function<void(void)> const & f) {
-			for (current_index = 0; current_index != container.size(); ++current_index) {
-				f ();
-			}
-		}
-		unsigned count_if (typename std::function<bool(T const &)> const & f) const {
-			return std::count_if(container.begin(), container.end(), f);
-		}
-		friend bool operator==<T>(BaseCollection<T> const & lhs, BaseCollection<T> const & rhs);
-	protected:
 		// All Pokemon on the team, all moves on the Pokemon, etc.
 		container_type container;
-	private:
 		uint8_t current_index;
 };
 }	// namespace detail

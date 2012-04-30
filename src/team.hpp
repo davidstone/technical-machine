@@ -144,6 +144,7 @@ class Team {
 		
 		Team ();
 		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
+		bool can_be_phazed () const;
 		bool operator== (Team const & other) const;
 		uint64_t hash () const;
 		std::string to_string () const;

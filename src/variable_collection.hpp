@@ -21,6 +21,7 @@
 
 #include "collection.hpp"
 #include <cstdint>
+#include <functional>
 #include "variable.hpp"
 
 namespace technicalmachine {
@@ -32,6 +33,7 @@ class VariableCollection : public detail::BaseCollection<Variable> {
 		VariableCollection (uint16_t move, unsigned foe_size);
 		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
 		uint8_t phaze_index (uint8_t const pokemon_index) const;
+		void for_each_index (std::function<void(void)> const & f);
 		void set_magnitude (unsigned const magnitude);
 };
 }	// namespace technicalmachine

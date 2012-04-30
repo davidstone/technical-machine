@@ -27,8 +27,11 @@
 int main (int argc, char * argv []) {
 	using namespace technicalmachine;
 	std::cerr << "sizeof (Team): " << sizeof (Team) << '\n';
+	std::cerr << "sizeof (PokemonCollection): " << sizeof (PokemonCollection) << '\n';
 	std::cerr << "sizeof (Pokemon): " << sizeof (Pokemon) << '\n';
+	std::cerr << "sizeof (MoveCollection): " << sizeof (MoveCollection) << '\n';
 	std::cerr << "sizeof (Move): " << sizeof (Move) << '\n';
+	std::cerr << "sizeof (VariableCollection): " << sizeof (VariableCollection) << '\n';
 	std::cerr << "sizeof (Weather): " << sizeof (Weather) << '\n';
 
 	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);

@@ -53,6 +53,12 @@ uint8_t VariableCollection::phaze_index (uint8_t const pokemon_index) const {
 	return (operator()().value() < pokemon_index) ? operator()().value() : operator()().value() + 1;
 }
 
+void VariableCollection::for_each_index (std::function<void(void)> const & f) {
+	for (current_index = 0; current_index != container.size(); ++current_index) {
+		f ();
+	}
+}
+
 void VariableCollection::set_magnitude (unsigned const magnitude) {
 	set_index (magnitude - 4);
 }

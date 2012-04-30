@@ -861,7 +861,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::ROAR:
 		case Move::WHIRLWIND:
-			if (!target.ingrain and !target.pokemon().ability.blocks_phazing() and target.pokemon.size() > 1) {
+			if (target.can_be_phazed()) {
 				uint8_t const index = move.variable.phaze_index(target.pokemon.index());
 				target.pokemon.set_replacement(index);
 				switchpokemon (target, user, weather);

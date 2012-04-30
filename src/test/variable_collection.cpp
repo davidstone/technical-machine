@@ -1,4 +1,4 @@
-// Test stuff
+// Test checked collections of random move effects
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,26 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include "variable_collection.hpp"
 #include <iostream>
 
-#include "collection.hpp"
-#include "damage.hpp"
-#include "stat.hpp"
-#include "string_conversion.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+namespace technicalmachine {
 
-int main() {
-	using namespace technicalmachine;
-	
-	string_conversion_tests();
-	stat_tests();
-	damage_tests();
-	collection_tests();
-
-	pl::test ();
-	po::test ();
-
-	std::cout << "All tests passed.\n";
-	return 0;
+void variable_collection_tests () {
+	std::cout << "\tRunning variable collection tests.\n";
 }
+
+}	// namespace technicalmachine
