@@ -43,15 +43,18 @@ bool is_blocked_due_to_lock_in (Team const & user, Move const & move);
 bool standard_move_lock_in (Team const & user, Move const & move);
 bool is_locked_in (Team const & user);
 bool is_locked_in_to_different_move (Pokemon const & user, Move const & move);
+bool is_blocked_due_to_status (Team & user, Move const & move);
+bool is_blocked_by_freeze (Pokemon const & user, Move const & move);
+bool handle_sleep_counter (Team & user, Move const & move);
 void increase_sleep_counter (Team & user);
-bool handle_sleep_counter (Pokemon const & user);
+bool is_blocked_by_sleep (Pokemon const & user, Move const & move);
 bool handle_confusion (Team & user);
 
 }	// unnamed namespace
 
 void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather) {
 	user.pokemon().move.for_each([& user, & other, & weather](Move & move) {
-		move.selectable = is_legal_selection (user, move, other, weather);
+		move.selectable = is_legal_selection(user, move, other, weather);
 	});
 }
 
@@ -75,16 +78,9 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 	if (user.pokemon().hp.stat == 0 or (other.pokemon().hp.stat == 0 and false))
 		return false;
 
-	bool execute = true;
-	if (user.pokemon().status.name == Status::FREEZE and !move.is_usable_while_frozen ())
-		execute = false;
-	else if (user.pokemon().status.is_sleeping ()) {
-		increase_sleep_counter (user);
-		execute = handle_sleep_counter (user.pokemon());
-	}
-
-	if (block1 (user, move, other) or user.pokemon().ability.is_loafing (user.loaf))
-		execute = false;
+	bool execute = !(is_blocked_due_to_status (user, move) or
+			block1 (user, move, other) or
+			user.pokemon().ability.is_loafing (user.loaf));
 
 	if (execute and user.confused)
 		execute = handle_confusion (user);
@@ -131,7 +127,7 @@ bool not_illegal_struggle (Pokemon const & user, Move const & move) {
 bool block1 (Team const & user, Move const & move, Team const & other) {
 	return (move.is_out_of_pp())
 			or (move.disable)
-			or (user.heal_block and (move.is_healing ()))
+			or (user.heal_block and (move.is_healing()))
 			or (imprison (move, other));
 }
 
@@ -145,7 +141,7 @@ bool imprison (Move const & move, Team const & other) {
 bool block2 (Team const & user, Move const & move, Weather const & weather) {
 	return !move.is_switch() and
 			((user.taunt and move.basepower == 0) or
-			(weather.gravity() and move.is_blocked_by_gravity ()));
+			(weather.gravity() and move.is_blocked_by_gravity()));
 }
 
 bool is_blocked_due_to_lock_in (Team const & user, Move const & move) {
@@ -168,21 +164,31 @@ bool blocked_by_torment (Team const & user, Move const & move) {
 	return user.torment and move.was_used_last();
 }
 
+bool is_blocked_due_to_status (Team & user, Move const & move) {
+	return is_blocked_by_freeze(user.pokemon(), move) or handle_sleep_counter(user, move);
+}
+
+bool is_blocked_by_freeze (Pokemon const & user, Move const & move) {
+	return user.status.name == Status::FREEZE and !move.is_usable_while_frozen();
+}
+
+bool handle_sleep_counter (Team & user, Move const & move) {
+	increase_sleep_counter(user);
+	return is_blocked_by_sleep(user.pokemon(), move);
+}
+
 void increase_sleep_counter (Team & user) {
 	if (user.awaken) {
 		user.pokemon().sleep = 0;
-		user.pokemon().status.clear ();
+		user.pokemon().status.clear();
 	}
 	else {
-		if (user.pokemon().ability.wakes_up_early())
-			user.pokemon().sleep += 2;
-		else
-			++user.pokemon().sleep;
+		user.pokemon().sleep += user.pokemon().ability.wakes_up_early() ? 2 : 1;
 	}
 }
 
-bool handle_sleep_counter (Pokemon const & user) {
-	return !user.sleep or user.move().is_usable_while_sleeping ();
+bool is_blocked_by_sleep (Pokemon const & user, Move const & move) {
+	return user.status.is_sleeping() and !move.is_usable_while_sleeping();
 }
 
 bool handle_confusion (Team & user) {
