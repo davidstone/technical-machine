@@ -76,6 +76,7 @@ uint64_t Pokemon::hash () const {
 }
 
 bool Pokemon::find_move (Move::Moves move_name) {
+	// TODO: fix when I improve regular vs. irregular moves
 	uint8_t index = 0;
 	for (; move(index).name != Move::STRUGGLE; ++index) {
 		if (move_name == move(index).name) {
@@ -168,6 +169,7 @@ bool Pokemon::is_wormadam (Species species) {
 }
 
 bool Pokemon::operator== (Pokemon const & other) const {
+	// TODO: max into friend function
 	return move == other.move and
 			name == other.name and
 			status.name == other.status.name and

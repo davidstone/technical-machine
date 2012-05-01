@@ -18,27 +18,35 @@
 
 #include "collection.hpp"
 #include <iostream>
+#include "invalid_collection.hpp"
 #include "variable_collection.hpp"
-#include "../collection.hpp"
+#include "../../collection.hpp"
 
 namespace technicalmachine {
 namespace {
-void generic_collection_tests() {
-	detail::BaseCollection<int> base ({ 2, 3, 5, 7, 11, 13, 17 });
-	base.set_index(6);
+void collection_range_tests() {
+	std::vector<int> const v ({ 2, 3, 5, 7, 11, 13, 17 });
+	detail::BaseCollection<int> base (v);
+	base.set_index(v.size() - 1);
+	if (base.index() != v.size() - 1)
+		throw InvalidCollection("Cannot set Collection index properly.");
+	if (base() != v.back())
+		throw InvalidCollection("Indexing Collection does not return proper value.");
 	try {
-		base.set_index(7);
-		throw 0;
+		base.set_index(v.size());
+		throw InvalidCollection("Out of range index not caught.");
 	}
 	catch (InvalidCollectionIndex const & ex) {
 		// Do nothing; the above operation should throw.
 	}
+	if (base() != v.back())
+		throw InvalidCollection("Collection modified by setting an invalid index.");
 }
 }
 
 void collection_tests () {
 	std::cout << "Running collection tests.\n";
-	generic_collection_tests();
+	collection_range_tests();
 	variable_collection_tests();
 	std::cout << "Collection tests passed.\n\n";
 }

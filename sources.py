@@ -36,7 +36,8 @@ predict_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_f
 predict_sources += string_conversion_sources
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
 
-test_sources = ['test/test.cpp', 'test/collection.cpp', 'test/damage.cpp', 'test/stat.cpp', 'test/string_conversion.cpp', 'test/pokemon_lab/conversion.cpp', 'test/pokemon_lab/team_file.cpp', 'test/pokemon_lab/test.cpp', 'test/pokemon_online/conversion.cpp', 'test/pokemon_online/team_file.cpp', 'test/pokemon_online/test.cpp', 'test/variable_collection.cpp']
+test_sources = ['test/test.cpp', 'test/damage.cpp', 'test/stat.cpp', 'test/string_conversion.cpp', 'test/pokemon_lab/conversion.cpp', 'test/pokemon_lab/team_file.cpp', 'test/pokemon_lab/test.cpp', 'test/pokemon_online/conversion.cpp', 'test/pokemon_online/team_file.cpp', 'test/pokemon_online/test.cpp']
+test_sources += ['test/collections/collection.cpp', 'test/collections/variable_collection.cpp']
 test_sources += ['ability.cpp', 'damage.cpp', 'gender.cpp', 'item.cpp', 'move.cpp', 'move_collection.cpp', 'move_power.cpp', 'nature.cpp', 'pokemon.cpp', 'pokemon_collection.cpp', 'reorder_moves.cpp', 'stat.cpp', 'status.cpp', 'team.cpp', 'type.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 test_sources += ['pokemon_lab/conversion.cpp', 'pokemon_lab/read_team_file.cpp', 'pokemon_lab/write_team_file.cpp']
 test_sources += ['pokemon_online/conversion.cpp', 'pokemon_online/read_team_file.cpp', 'pokemon_online/write_team_file.cpp']

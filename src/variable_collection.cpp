@@ -19,7 +19,9 @@
 #include "variable_collection.hpp"
 #include <cassert>
 #include <cstdint>
+#include "empty_team.hpp"
 #include "move.hpp"
+#include "phazing_in_same_pokemon.hpp"
 #include "variable.hpp"
 
 namespace technicalmachine {
@@ -34,7 +36,7 @@ uint16_t get_probability (Move::Moves move);
 
 }	// unnamed namespace
 
-VariableCollection::VariableCollection (uint16_t move, unsigned foe_size):
+VariableCollection::VariableCollection (uint16_t const move, unsigned const foe_size):
 	detail::BaseCollection<Variable>(create_container(static_cast<Move::Moves>(move), foe_size)) {
 }
 
@@ -43,8 +45,11 @@ void VariableCollection::set_phaze_index (uint8_t const pokemon_index, uint8_t c
 		assert (new_index == 0);
 		reset_index();
 	}
-	else
+	else {
+		if (new_index == pokemon_index)
+			throw PhazingInSamePokemon(new_index);
 		set_index ((new_index < pokemon_index) ? new_index : new_index - 1);
+	}
 }
 
 uint8_t VariableCollection::phaze_index (uint8_t const pokemon_index) const {
@@ -66,6 +71,8 @@ void VariableCollection::set_magnitude (unsigned const magnitude) {
 namespace {
 
 container_type create_container (Move::Moves const move, unsigned const foe_size) {
+	if (foe_size == 0)
+		throw EmptyTeam(__FILE__, __LINE__);
 	switch (move) {
 		case Move::ACUPRESSURE:
 			return simple_range(0, 6, move);
@@ -153,11 +160,11 @@ container_type simple_range (uint16_t const first, uint16_t const last, Move::Mo
 container_type simple_range (uint16_t const first, uint16_t const last, uint16_t const probability) {
 	container_type collection;
 	for (uint16_t value = first; value <= last; ++value)
-		collection.push_back(Variable(first, probability));
+		collection.push_back(Variable(value, probability));
 	return collection;
 }
 
-container_type default_effects (Move::Moves move) {
+container_type default_effects (Move::Moves const move) {
 	container_type collection;
 	uint16_t const probability = get_probability(move);
 	if (probability != Variable::max_probability)
@@ -167,8 +174,8 @@ container_type default_effects (Move::Moves move) {
 	return collection;
 }
 
-uint16_t get_probability (Move::Moves move) {
-// Chance (out of max_probability) to activate side-effect
+uint16_t get_probability (Move::Moves const move) {
+	// Chance (out of max_probability) to activate side-effect
 	static constexpr uint16_t get_probability [] = {
 		0,		// Absorb
 		84,		// Acid

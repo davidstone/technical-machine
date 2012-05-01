@@ -1,4 +1,4 @@
-// Test checked collections of random move effects
+// Exception if operations are performed on an empty team
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,13 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "variable_collection.hpp"
-#include <iostream>
+#ifndef EMPTY_TEAM_HPP_
+#define EMPTY_TEAM_HPP_
+
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 
-void variable_collection_tests () {
-	std::cout << "\tRunning variable collection tests.\n";
-}
-
+class EmptyTeam : public std::logic_error {
+	public:
+		EmptyTeam(std::string const & file, unsigned const line):
+			std::logic_error("Attempted operation on a team of size 0 at: " + file + ": " + std::to_string(line) + ".") {
+		}
+};
 }	// namespace technicalmachine
+#endif	// EMPTY_TEAM_HPP_

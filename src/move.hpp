@@ -160,7 +160,7 @@ class Move {
 		uint8_t r;					// The random number (85 through 100)
 		uint8_t times_used;
 
-		Move (Moves move, int pp_ups, unsigned size);
+		Move (Moves move, unsigned pp_ups, unsigned size = 1);
 		void reset ();
 		uint64_t hash() const;
 		static std::string to_string (Moves name);

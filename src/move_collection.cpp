@@ -28,11 +28,11 @@ namespace technicalmachine {
 
 MoveCollection::MoveCollection (unsigned const team_size) {
 	container.reserve ((team_size > 1) ? team_size + 1 : 1);
-	add (Move (Move::STRUGGLE, 0, 0));
+	add (Move (Move::STRUGGLE, 0));
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
 	if (team_size > 1) {
 		for (unsigned count = 0; count != team_size; ++count) {
-			add (Move (Move::from_replacement (count), 0, 0));
+			add (Move (Move::from_replacement (count), 0));
 		}
 	}
 }

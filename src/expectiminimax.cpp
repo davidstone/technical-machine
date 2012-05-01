@@ -279,30 +279,33 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 	first.pokemon().move().variable.for_each_index([&]() {
 		int64_t score2 = 0;
 		last.pokemon().move().variable.for_each_index([&]() {
+			constexpr unsigned ch_denominator = 16;
+			constexpr unsigned ch_numerator = 1;
+			constexpr unsigned non_ch_numerator = ch_denominator - ch_numerator;
 			first.ch = false;
 			last.ch = false;
 			int64_t score1 = awaken_branch (first, last, weather, depth, score);
 			if (first.pokemon().move().basepower > 0 and last.pokemon().move().basepower <= 0) {
-				score1 *= 15;
+				score1 *= non_ch_numerator;
 				first.ch = true;
 				score1 += awaken_branch (first, last, weather, depth, score);
-				score1 /= 16;
+				score1 /= ch_denominator;
 			}
 			else if (first.pokemon().move().basepower <= 0 and last.pokemon().move().basepower > 0) {
-				score1 *= 15;
+				score1 *= non_ch_numerator;
 				last.ch = true;
 				score1 += awaken_branch (first, last, weather, depth, score);
-				score1 /= 16;
+				score1 /= ch_denominator;
 			}
 			else if (first.pokemon().move().basepower > 0 and last.pokemon().move().basepower > 0) {
-				score1 *= 225;
+				score1 *= non_ch_numerator * non_ch_numerator;
 				first.ch = true;
-				score1 += awaken_branch (first, last, weather, depth, score) * 15;
+				score1 += awaken_branch (first, last, weather, depth, score) * non_ch_numerator;
 				last.ch = true;
-				score1 += awaken_branch (first, last, weather, depth, score);
+				score1 += awaken_branch (first, last, weather, depth, score) * ch_numerator;
 				first.ch = false;
-				score1 += awaken_branch (first, last, weather, depth, score) * 15;
-				score1 /= 256;
+				score1 += awaken_branch (first, last, weather, depth, score) * non_ch_numerator;
+				score1 /= ch_denominator * ch_denominator;
 			}
 			score2 += score1 * last.pokemon().move().variable().probability();
 		});

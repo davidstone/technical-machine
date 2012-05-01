@@ -1,4 +1,4 @@
-// Test stuff
+// Exception class if phazing attempts to bring in the currently active Pokemon
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,26 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#ifndef PHAZING_IN_SAME_POKEMON_HPP_
+#define PHAZING_IN_SAME_POKEMON_HPP_
 
-#include "collections/collection.hpp"
-#include "damage.hpp"
-#include "stat.hpp"
-#include "string_conversion.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+#include <stdexcept>
+#include <string>
 
-int main() {
-	using namespace technicalmachine;
-	
-	string_conversion_tests();
-	stat_tests();
-	damage_tests();
-	collection_tests();
+namespace technicalmachine {
 
-	pl::test ();
-	po::test ();
+class PhazingInSamePokemon : public std::logic_error {
+	public:
+		PhazingInSamePokemon (unsigned index):
+			std::logic_error ("Attempted to phaze in the currently active Pokemon at index " + std::to_string(index) + ".")
+			{
+		}
+};
 
-	std::cout << "All tests passed.\n";
-	return 0;
-}
+}	// namespace technicalmachine
+#endif	// PHAZING_IN_SAME_POKEMON_HPP_

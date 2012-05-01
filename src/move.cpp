@@ -42,7 +42,7 @@ uint16_t get_accuracy (Move::Moves move);
 
 }	// unnamed namespace
 
-Move::Move (Moves const move, int const pp_ups, unsigned const size) :
+Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 	score (-Score::VICTORY - 1),
 	variable (move, size),
 	name (move),

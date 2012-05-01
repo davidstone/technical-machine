@@ -62,16 +62,16 @@ class BaseCollection {
 			current_index (0) {
 		}
 		constexpr T const & operator() (uint8_t const specified_index) const {
-			return container [specified_index];
+			return unchecked_value (check_range(specified_index));
 		}
 		T & operator() (uint8_t const specified_index) {
-			return container [specified_index];
+			return unchecked_value (check_range(specified_index));
 		}
 		constexpr T const & operator() () const {
-			return operator() (index());
+			return unchecked_value (index());
 		}
 		T & operator() () {
-			return operator() (index());
+			return unchecked_value (index());
 		}
 		constexpr bool is_empty() const {
 			return container.empty();
@@ -113,27 +113,18 @@ class BaseCollection {
 		}
 		friend bool operator==<T>(BaseCollection<T> const & lhs, BaseCollection<T> const & rhs);
 	protected:
-		// In debug mode, I intentionally access the invalid value so I can get
-		// a Valgrind stack trace. This will eventually be replaced with a smart
-		// assert.
-		#ifndef NDEBUG
-		uint8_t check_range (uint8_t const new_index) {
-			if (new_index < container.size())
-				return new_index;
-			else {
-				T const & valgrind_stack_trace_variable = container[new_index];
-				throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
-			}
-		}
-		#else	// NDEBUG
-		uint8_t check_range (uint8_t const new_index) {
+		uint8_t check_range (uint8_t const new_index) const {
 			if (new_index < container.size())
 				return new_index;
 			else
 				throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
 		}
-		#endif	// NDEBUG
-		// All Pokemon on the team, all moves on the Pokemon, etc.
+		constexpr T const & unchecked_value (uint8_t const specified_index) const {
+			return container [specified_index];
+		}
+		T & unchecked_value (uint8_t const specified_index) {
+			return container [specified_index];
+		}
 		container_type container;
 		uint8_t current_index;
 };

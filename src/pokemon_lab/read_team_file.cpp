@@ -34,7 +34,7 @@ namespace {
 static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
 	std::string const name_str = pt.get <std::string> ("");
 	Move::Moves const name = Move::from_string (name_str);
-	int const pp_ups = pt.get <int> ("<xmlattr>.pp-up");
+	unsigned const pp_ups = pt.get <unsigned> ("<xmlattr>.pp-up");
 	return Move (name, pp_ups, foe_size);
 }
 
