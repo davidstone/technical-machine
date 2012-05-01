@@ -102,4 +102,12 @@ void Status::poison_toxic (Pokemon & user, Pokemon & target, Weather const & wea
 	}
 }
 
+bool operator== (Status const lhs, Status const rhs) {
+	return lhs.name == rhs.name;
+}
+
+bool operator!= (Status const lhs, Status const rhs) {
+	return !(lhs == rhs);
+}
+
 }	// namespace technicalmachine

@@ -54,6 +54,8 @@ class Status {
 		static void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
 		static void poison (Pokemon & user, Pokemon & target, Weather const & weather);
 		static void poison_toxic (Pokemon & user, Pokemon & target, Weather const & weather);
+		friend bool operator== (Status lhs, Status rhs);
+		friend bool operator!= (Status lhs, Status rhs);
 };
 
 }	// namespace technicalmachine

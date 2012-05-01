@@ -168,18 +168,17 @@ bool Pokemon::is_wormadam (Species species) {
 	}
 }
 
-bool Pokemon::operator== (Pokemon const & other) const {
-	// TODO: max into friend function
-	return move == other.move and
-			name == other.name and
-			status.name == other.status.name and
-			sleep == other.sleep and
-			hp.stat == other.hp.stat and
-			item == other.item;
+bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
+	return lhs.move == rhs.move and
+			lhs.name == rhs.name and
+			lhs.status == rhs.status and
+			lhs.sleep == rhs.sleep and
+			lhs.hp.stat == rhs.hp.stat and
+			lhs.item == rhs.item;
 }
 
-bool Pokemon::operator!= (Pokemon const & other) const {
-	return !(*this == other);
+bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
+	return !(lhs == rhs);
 }
 
 std::string Pokemon::get_nickname () const {
