@@ -36,6 +36,30 @@ namespace technicalmachine {
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 class Pokemon {
+	public:
+		Pokemon (Species species, unsigned size);
+		void calculate_initial_hp ();
+		uint64_t hash () const;
+		// Returns whether the move is found. Modifies move.index
+		bool find_move (Move::Moves move_name);
+		uint8_t index_of_first_switch () const;
+		void normalize_hp ();
+		// power of Grass Knot / Low Kick, not the actual mass stat
+		uint8_t mass () const;
+		static std::string to_string (Species name);
+		std::string to_string () const;
+		std::string get_nickname () const;
+		void set_nickname (std::string const & nick);
+		static Species from_string (std::string const & str);
+		static bool is_alternate_form (Species first, Species second);
+		static bool is_deoxys (Species species);
+		static bool is_giratina (Species species);
+		static bool is_rotom (Species species);
+		static bool is_shaymin (Species species);
+		static bool is_wormadam (Species species);
+		void set_hidden_power_type ();
+		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
+		friend bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
@@ -63,34 +87,7 @@ class Pokemon {
 		bool fainted;
 		bool hidden;
 		uint8_t level;
-		// wakes up when this number is 2 through 5
-		uint8_t sleep;
-
 		uint8_t happiness;
-	
-		Pokemon (Species species, unsigned size);
-		void calculate_initial_hp ();
-		uint64_t hash () const;
-		// Returns whether the move is found. Modifies move.index
-		bool find_move (Move::Moves move_name);
-		uint8_t index_of_first_switch () const;
-		void normalize_hp ();
-		// power of Grass Knot / Low Kick, not the actual mass stat
-		uint8_t mass () const;
-		static std::string to_string (Species name);
-		std::string to_string () const;
-		std::string get_nickname () const;
-		void set_nickname (std::string const & nick);
-		static Species from_string (std::string const & str);
-		static bool is_alternate_form (Species first, Species second);
-		static bool is_deoxys (Species species);
-		static bool is_giratina (Species species);
-		static bool is_rotom (Species species);
-		static bool is_shaymin (Species species);
-		static bool is_wormadam (Species species);
-		void set_hidden_power_type ();
-		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
-		friend bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 	private:
 		Type::Types calculate_hidden_power_type () const;
 };

@@ -41,7 +41,7 @@ unsigned calculate_screen_divisor (Team const & attacker, Team const & defender)
 bool screen_is_active (Team const & attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
-unsigned weakening_from_burn (Pokemon const & attacker);
+unsigned weakening_from_status (Pokemon const & attacker);
 unsigned calculate_weather_modifier (Type type, Weather const & weather, unsigned damage);
 unsigned calculate_flash_fire_modifier (Team const & attacker, unsigned damage);
 unsigned calculate_critical_hit_multiplier (Team const & attacker);
@@ -165,13 +165,13 @@ unsigned calculate_level_multiplier (Pokemon const & attacker) {
 
 unsigned physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned const damage) {
 	if (attacker.move().physical)
-		return damage * attacker.atk.stat / 50 / defender.def.stat / weakening_from_burn (attacker);
+		return damage * attacker.atk.stat / 50 / defender.def.stat / weakening_from_status (attacker);
 	else
 		return damage * attacker.spa.stat / 50 / defender.spd.stat;
 }
 
-unsigned weakening_from_burn (Pokemon const & attacker) {
-	return (attacker.status.name == Status::BURN and attacker.ability.blocks_burn_damage_penalty()) ? 2 : 1;
+unsigned weakening_from_status (Pokemon const & attacker) {
+	return (attacker.status.weakens_physical_attacks() and attacker.ability.blocks_burn_damage_penalty()) ? 2 : 1;
 }
 
 unsigned calculate_screen_divisor (Team const & attacker, Team const & defender) {

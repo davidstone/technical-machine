@@ -408,7 +408,7 @@ std::string Team::to_string () const {
 		output += " ** " + member.get_nickname() + '\n';
 		if (member.ability.is_set ())
 			output += "\tAbility: " + member.ability.to_string () + '\n';
-		if (member.status.name != Status::NO_STATUS)
+		if (!member.status.is_clear())
 			output += "\tStatus: " + member.status.to_string () + '\n';
 		member.move.for_each_regular_move([& output](Move const & move) {
 			output += "\t- " + move.to_string() + "\n";

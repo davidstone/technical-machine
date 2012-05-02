@@ -122,8 +122,8 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 		target.reflect = 0;
 		target.light_screen = 0;
 	}
-	else if (user.move().is_usable_while_frozen ()) {
-		if (user.status.name == Status::FREEZE)
+	else if (user.move().is_usable_while_frozen()) {
+		if (user.status.is_frozen())
 			user.status.clear ();
 	}
 }
@@ -803,29 +803,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.stage = target.stage;
 			break;
 		case Move::PSYCHO_SHIFT:
-			if (target.pokemon().status.is_clear()) {
-				switch (user.pokemon().status.name) {
-					case Status::BURN:
-						Status::burn (user.pokemon(), target.pokemon(), weather);
-						break;
-					case Status::PARALYSIS:
-						Status::paralyze (user.pokemon(), target.pokemon(), weather);
-						break;
-					case Status::POISON:
-						Status::poison (user.pokemon(), target.pokemon(), weather);
-						break;
-					case Status::POISON_TOXIC:
-						Status::poison_toxic (user.pokemon(), target.pokemon(), weather);
-						break;
-					case Status::REST:		// Fix
-					case Status::SLEEP:
-						Status::sleep (user.pokemon(), target.pokemon(), weather);
-						break;
-					default:
-						break;
-				}
-				user.pokemon().status.clear();
-			}
+			if (target.pokemon().status.is_clear())
+				Status::shift(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Move::RAGE:		// Fix
 			break;
@@ -855,8 +834,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::REST:
 			if (user.pokemon().hp.stat != user.pokemon().hp.max) {
 				user.pokemon().hp.stat = user.pokemon().hp.max;
-				user.pokemon().status.name = Status::REST;
-				user.pokemon().sleep = 3;
+				user.pokemon().status.rest();
 			}
 			break;
 		case Move::ROAR:
@@ -893,8 +871,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			if (move.variable().effect_activates()) {}
 			break;
 		case Move::SMELLINGSALT:
-			if (target.pokemon().status.name == Status::PARALYSIS)
-				target.pokemon().status.clear ();
+			if (target.pokemon().status.boosts_smellingsalt())
+				target.pokemon().status.clear();
 			break;
 		case Move::SNATCH:	// Fix
 			break;

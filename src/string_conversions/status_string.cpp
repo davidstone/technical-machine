@@ -41,7 +41,7 @@ std::string Status::to_string (Statuses name) {
 }
 
 std::string Status::to_string () const {
-	return to_string (name);
+	return to_string (name());
 }
 
 Status::Statuses Status::from_string (std::string const & str) {

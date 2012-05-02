@@ -47,7 +47,6 @@ class Stat {
 		uint8_t base;
 		uint8_t iv;			// 0 through 31
 		uint8_t ev;			// 0 through 63
-		static constexpr unsigned max_sleep_turns = 4;
 	
 		Stat (Species name, Stats stat);
 		void calculate_initial_hp (uint8_t const level);

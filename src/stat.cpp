@@ -60,7 +60,6 @@ unsigned special_defense_sandstorm_boost (Team const & defender, Weather const &
 unsigned speed_ability_modifier (Team const & team, Weather const & weather);
 unsigned speed_item_modifier (Pokemon const & pokemon);
 unsigned paralysis_speed_divisor (Pokemon const & pokemon);
-bool paralysis_lowers_speed (Pokemon const & pokemon);
 unsigned tailwind_speed_multiplier (Team const & team);
 
 bool move_can_miss (Team const & user, Ability target_ability);
@@ -300,7 +299,7 @@ unsigned attack_ability_modifier (Pokemon const & attacker, bool slow_start, Wea
 				return attacker.atk.stat * 3u / 2;
 			break;
 		case Ability::GUTS:
-			if (attacker.status.name == Status::NO_STATUS)
+			if (!attacker.status.is_clear())
 				return attacker.atk.stat * 3u / 2;
 			break;
 		case Ability::HUSTLE:
@@ -417,7 +416,7 @@ unsigned speed_ability_modifier (Team const & team, Weather const & weather) {
 				return team.pokemon().spe.stat * 2u;
 			break;
 		case Ability::QUICK_FEET:
-			if (team.pokemon().status.name == Status::NO_STATUS)
+			if (!team.pokemon().status.is_clear())
 				return team.pokemon().spe.stat * 3u / 2;
 			break;
 		case Ability::SLOW_START:
@@ -453,11 +452,7 @@ unsigned speed_item_modifier (Pokemon const & pokemon) {
 }
 
 unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
-	return paralysis_lowers_speed (pokemon) ? 4 : 1;
-}
-
-bool paralysis_lowers_speed (Pokemon const & pokemon) {
-	return pokemon.status.name == Status::PARALYSIS and !pokemon.ability.blocks_paralysis_speed_penalty();
+	return pokemon.status.lowers_speed (pokemon.ability) ? 4 : 1;
 }
 
 unsigned tailwind_speed_multiplier (Team const & team) {

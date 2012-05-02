@@ -48,7 +48,6 @@ Pokemon::Pokemon (Species const species, unsigned const size) :
 	fainted (false),
 	hidden (true),
 	level (100),
-	sleep (0),
 
 	happiness (255)
 	{
@@ -70,10 +69,9 @@ uint64_t Pokemon::hash () const {
 	// are promoted to uint64_t
 	return name + Species::END *
 			(item.name + Item::END *
-			(status.name + Status::END *
+			(status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
-			(sleep + (Stat::max_sleep_turns + 1) *
-			current_hash))));
+			current_hash)));
 }
 
 bool Pokemon::find_move (Move::Moves move_name) {
@@ -173,7 +171,6 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.move == rhs.move and
 			lhs.name == rhs.name and
 			lhs.status == rhs.status and
-			lhs.sleep == rhs.sleep and
 			lhs.hp.stat == rhs.hp.stat and
 			lhs.item == rhs.item;
 }

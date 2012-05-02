@@ -317,31 +317,31 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 
 
 int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score) {
-	int const first_numerator = get_awaken_numerator (first.pokemon());
-	int const last_numerator = get_awaken_numerator (last.pokemon());
-
 	first.awaken = false;
 	last.awaken = false;
 	int64_t average_score = use_move_branch (first, last, weather, depth, score);
-	if (first_numerator > 1) {
-		average_score *= 4 - first_numerator;
+	if (first.pokemon().status.can_awaken(first.pokemon().ability)) {
+		unsigned const first_numerator = first.pokemon().status.awaken_numerator(first.pokemon().ability);
+		average_score *= Status::max_sleep_turns() - first_numerator;
 		first.awaken = true;
 		average_score += first_numerator * use_move_branch (first, last, weather, depth, score);
-		if (last_numerator > 1) {
-			average_score *= 4 - last_numerator;
+		if (last.pokemon().status.can_awaken(last.pokemon().ability)) {
+			unsigned const last_numerator = last.pokemon().status.awaken_numerator(last.pokemon().ability);
+			average_score *= Status::max_sleep_turns() - last_numerator;
 			last.awaken = true;
-			average_score += last_numerator * (4 - first_numerator) * use_move_branch (first, last, weather, depth, score);
+			average_score += last_numerator * (Status::max_sleep_turns() - first_numerator) * use_move_branch (first, last, weather, depth, score);
 			first.awaken = false;
 			average_score += last_numerator * first_numerator * use_move_branch (first, last, weather, depth, score);
-			average_score /= 4;
+			average_score /= Status::max_sleep_turns();
 		}
-		average_score /= 4;
+		average_score /= Status::max_sleep_turns();
 	}
-	else if (last_numerator > 1) {
-		average_score *= 4 - last_numerator;
+	else if (last.pokemon().status.can_awaken(last.pokemon().ability)) {
+		unsigned const last_numerator = last.pokemon().status.awaken_numerator(last.pokemon().ability);
+		average_score *= Status::max_sleep_turns() - last_numerator;
 		last.awaken = true;
 		average_score += last_numerator * use_move_branch (first, last, weather, depth, score);
-		average_score /= 4;
+		average_score /= Status::max_sleep_turns();
 	}
 	return average_score;
 }
@@ -533,11 +533,6 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 	ai = (first.me) ? & first : & last;
 	foe = (!first.me) ? & first : & last;
 }
-
-int get_awaken_numerator (Pokemon const & pokemon) {
-	return pokemon.sleep + pokemon.ability.wakes_up_early();
-}
-
 
 
 Move::Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {

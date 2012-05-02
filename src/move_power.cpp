@@ -187,15 +187,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Move::MAGNITUDE:
 			return defender.vanish == DUG;
 		case Move::FACADE:
-			switch (attacker.pokemon().status.name) {
-				case Status::BURN:
-				case Status::PARALYSIS:
-				case Status::POISON:
-				case Status::POISON_TOXIC:
-					return true;
-				default:
-					return false;
-			}
+			return attacker.pokemon().status.boosts_facade();
 		case Move::GUST:
 			return defender.vanish == BOUNCED or defender.vanish == FLOWN;
 		case Move::ICE_BALL:
@@ -204,7 +196,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Move::PAYBACK:
 			return defender.moved;
 		case Move::SMELLINGSALT:
-			return defender.pokemon().status.name == Status::PARALYSIS;
+			return defender.pokemon().status.boosts_smellingsalt();
 		case Move::SOLARBEAM:
 			return !weather.rain();
 		case Move::STOMP:
@@ -212,7 +204,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Move::SURF:
 			return defender.vanish == DIVED;
 		case Move::WAKE_UP_SLAP:
-			return defender.pokemon().status.is_sleeping ();
+			return defender.pokemon().status.is_sleeping();
 		case Move::WEATHER_BALL:
 			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:

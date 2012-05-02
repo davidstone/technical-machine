@@ -129,7 +129,7 @@ int64_t Score::score_pokemon (Team const & team, Team const & other, Weather con
 }
 
 int64_t Score::score_status (Team const & team) const {
-	switch (team.pokemon().status.name) {
+	switch (team.pokemon().status.name()) {
 		case Status::BURN:
 			return burn;
 		case Status::FREEZE:
@@ -170,7 +170,7 @@ int64_t Score::win (Team const & team) {
 
 int64_t Score::sleep_clause (Team const & team) {
 	unsigned const sleeper_count = team.pokemon.count_if([](Pokemon const & pokemon) {
-		return (pokemon.status.name == Status::SLEEP);
+		return (pokemon.status.is_sleeping_due_to_other());
 	});
 	if (sleeper_count > 1)
 		return team.me ? VICTORY : -VICTORY;

@@ -46,7 +46,6 @@ bool is_locked_in_to_different_move (Pokemon const & user, Move const & move);
 bool is_blocked_due_to_status (Team & user, Move const & move);
 bool is_blocked_by_freeze (Pokemon const & user, Move const & move);
 bool handle_sleep_counter (Team & user, Move const & move);
-void increase_sleep_counter (Team & user);
 bool handle_confusion (Team & user);
 
 }	// unnamed namespace
@@ -168,24 +167,14 @@ bool is_blocked_due_to_status (Team & user, Move const & move) {
 }
 
 bool is_blocked_by_freeze (Pokemon const & user, Move const & move) {
-	return user.status.name == Status::FREEZE and !move.is_usable_while_frozen();
+	return user.status.is_frozen() and !move.is_usable_while_frozen();
 }
 
 bool handle_sleep_counter (Team & user, Move const & move) {
 	if (!user.pokemon().status.is_sleeping())
 		return false;
-	increase_sleep_counter(user);
+	user.pokemon().status.increase_sleep_counter(user.pokemon().ability, user.awaken);
 	return !move.is_usable_while_sleeping();
-}
-
-void increase_sleep_counter (Team & user) {
-	if (user.awaken) {
-		user.pokemon().sleep = 0;
-		user.pokemon().status.clear();
-	}
-	else {
-		user.pokemon().sleep += user.pokemon().ability.wakes_up_early() ? 2 : 1;
-	}
 }
 
 bool handle_confusion (Team & user) {

@@ -158,7 +158,7 @@ bool Ability::blocks_sound_moves () const {
 }
 
 bool Ability::can_clear_status (Status const status) const {
-	return name == SHED_SKIN and status.name != Status::NO_STATUS;
+	return name == SHED_SKIN and !status.is_clear();
 }
 
 bool Ability::clears_status_on_switch () const {
@@ -230,7 +230,7 @@ bool Ability::boosts_critical_hits () const {
 }
 
 bool Ability::boosts_defense (Status const status) const {
-	return name == MARVEL_SCALE and status.name != Status::NO_STATUS;
+	return name == MARVEL_SCALE and !status.is_clear();
 }
 
 bool Ability::boosts_special_attack (Weather const & weather) const {

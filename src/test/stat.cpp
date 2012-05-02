@@ -90,7 +90,7 @@ void defense_tests () {
 	Stat::boost (defender.stage [Stat::DEF], 6);
 
 	pokemon.ability.name = Ability::MARVEL_SCALE;
-	pokemon.status.name = Status::BURN;
+	Status::burn(pokemon, pokemon, Weather());
 
 	calculate_defense (defender);
 
