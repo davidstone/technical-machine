@@ -48,8 +48,8 @@ class Type {
 			TYPELESS
 		};
 		Type (Types name);
-		bool operator== (Type other) const;
-		bool operator!= (Type other) const;
+		friend bool operator== (Type lhs, Type rhs);
+		friend bool operator!= (Type lhs, Type rhs);
 		bool is_boosted_by_flash_fire () const;
 		bool is_immune_to_hail () const;
 		bool is_immune_to_sandstorm () const;

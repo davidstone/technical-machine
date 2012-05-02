@@ -32,12 +32,12 @@ Type::Type (Types name):
 	type (name) {
 }
 
-bool Type::operator== (Type const other) const {
-	return type == other.type;
+bool operator== (Type const lhs, Type const rhs) {
+	return lhs.type == rhs.type;
 }
 
-bool Type::operator!= (Type const other) const {
-	return !(*this == other);
+bool operator!= (Type const lhs, Type const rhs) {
+	return !(lhs == rhs);
 }
 
 bool Type::is_boosted_by_flash_fire () const {
