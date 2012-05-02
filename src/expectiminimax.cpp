@@ -58,6 +58,7 @@ int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, uns
 int64_t random_move_effects_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score);
 int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score);
 int64_t use_move_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score);
+int64_t use_move_no_copy_branch (Team & first, Team & last, Weather & weather, unsigned depth, Score const & score);
 int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score);
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score);
 int64_t end_of_turn_order_branch (Team & team, Team & other, Team * first, Team * last, Weather const & weather, unsigned depth, Score const & score);
@@ -346,6 +347,10 @@ int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsig
 }
 
 int64_t use_move_branch (Team first, Team last, Weather weather, unsigned depth, Score const & score) {
+	return use_move_no_copy_branch (first, last, weather, depth, score);
+}
+
+int64_t use_move_no_copy_branch (Team & first, Team & last, Weather & weather, unsigned depth, Score const & score) {
 	int64_t value = use_move_and_follow_up (first, last, weather, depth, score);
 	if (value != Score::VICTORY + 1)	// illegal value
 		return value;
@@ -511,15 +516,15 @@ int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, un
 	// Option 1: only the switcher has moved. Then it obviously went first and
 	// I'm passing them in the proper order.
 	
-	// Option 2: Both Pokemon have moved. use_move_branch then recalculates
-	// which Pokemon is faster to properly account for end-of-turn effects. In
-	// this case, it doesn't matter what order I pass them.
+	// Option 2: Both Pokemon have moved. use_move_no_copy_branch then
+	// recalculates which Pokemon is faster to properly account for end-of-turn
+	// effects. In this case, it doesn't matter what order I pass them.
 	
 	// I also do not need to worry about the game ending due to entry hazards,
 	// because at the very least the Pokemon that used Baton Pass / U-turn is
 	// still alive.
 
-	return use_move_branch (switcher, other, weather, depth, score);
+	return use_move_no_copy_branch (switcher, other, weather, depth, score);
 }
 
 

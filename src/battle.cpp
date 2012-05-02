@@ -177,13 +177,9 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 		phazer.move().variable.set_phaze_index(active.pokemon.index(), new_pokemon_index);
 	}
 	else if (!active.moved) {
-		std::cout << "A\n";
 		Pokemon & pokemon = active.pokemon(replacement);
-		std::cout << "B\n";
 		uint8_t const move_index = pokemon.index_of_first_switch();
-		std::cout << "C\n";
 		pokemon.move.set_index (move_index + active.pokemon.replacement());
-		std::cout << "D\n";
 	}
 }
 
