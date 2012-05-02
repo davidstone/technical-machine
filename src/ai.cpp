@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/lexical_cast.hpp>
 
@@ -25,32 +26,42 @@
 #include "network/invalid_packet.hpp"
 
 int main (int argc, char * argv []) {
-	using namespace technicalmachine;
-	std::cerr << "sizeof (Team): " << sizeof (Team) << '\n';
-	std::cerr << "sizeof (PokemonCollection): " << sizeof (PokemonCollection) << '\n';
-	std::cerr << "sizeof (Pokemon): " << sizeof (Pokemon) << '\n';
-	std::cerr << "sizeof (MoveCollection): " << sizeof (MoveCollection) << '\n';
-	std::cerr << "sizeof (Move): " << sizeof (Move) << '\n';
-	std::cerr << "sizeof (VariableCollection): " << sizeof (VariableCollection) << '\n';
-	std::cerr << "sizeof (Weather): " << sizeof (Weather) << '\n';
+	try {
+		using namespace technicalmachine;
+		std::cerr << "sizeof (Team): " << sizeof (Team) << '\n';
+		std::cerr << "sizeof (PokemonCollection): " << sizeof (PokemonCollection) << '\n';
+		std::cerr << "sizeof (Pokemon): " << sizeof (Pokemon) << '\n';
+		std::cerr << "sizeof (MoveCollection): " << sizeof (MoveCollection) << '\n';
+		std::cerr << "sizeof (Move): " << sizeof (Move) << '\n';
+		std::cerr << "sizeof (VariableCollection): " << sizeof (VariableCollection) << '\n';
+		std::cerr << "sizeof (Weather): " << sizeof (Weather) << '\n';
 
-	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
+		unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 
-	// TODO: This is not the correct solution, but it works "good enough". I'll
-	// get back to this later.
-	while (true) {
-		try {
-			po::Client client (depth);
-			client.run();
+		// TODO: This is not the correct solution, but it works "good enough". I'll
+		// get back to this later.
+		while (true) {
+			try {
+				po::Client client (depth);
+				client.run();
+			}
+			catch (network::InvalidPacket const & error) {
+				constexpr unsigned time_in_seconds = 10;
+				std::cerr << error.what () << " Disconnected. Waiting " << time_in_seconds << " seconds and trying again.\n";
+				// I disconnect from the server at this point and try again, because
+				// this means an unrecoverable error.
+				sleep (time_in_seconds);
+				std::cerr << "Reconnecting.\n";
+			}
 		}
-		catch (network::InvalidPacket const & error) {
-			constexpr unsigned time_in_seconds = 10;
-			std::cerr << error.what () << " Disconnected. Waiting " << time_in_seconds << " seconds and trying again.\n";
-			// I disconnect from the server at this point and try again, because
-			// this means an unrecoverable error.
-			sleep (time_in_seconds);
-			std::cerr << "Reconnecting.\n";
-		}
+	}
+	catch (std::exception const & ex) {
+		std::cerr << ex.what() << '\n';
+		return -1;
+	}
+	catch (...) {
+		std::cerr << "Unknown exception thrown. Exiting.\n";
+		return -1;
 	}
 	return 0;
 }
