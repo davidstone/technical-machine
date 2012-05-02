@@ -20,6 +20,7 @@
 #define TYPE_HPP_
 
 #include <vector>
+#include "species.hpp"
 #include "status.hpp"
 
 namespace technicalmachine {
@@ -74,6 +75,7 @@ class Type {
 
 class TypeCollection {
 	public:
+		TypeCollection (Species name);
 		std::vector <Type> types;
 		
 		bool is_immune_to_hail () const;

@@ -92,7 +92,6 @@ class Pokemon {
 		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
 		friend bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 	private:
-		static TypeCollection get_type (Species name);
 		Type::Types calculate_hidden_power_type () const;
 };
 
