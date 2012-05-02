@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<score>
+	<transposition_table>4096</transposition_table>
+
+	<light_screen>64</light_screen>
+	<lucky_chant>4</lucky_chant>
+	<mist>4</mist>
+	<reflect>64</reflect>
+	<safeguard>32</safeguard>
+	<tailwind>32</tailwind>
+	<wish>300</wish>
+
+	<spikes>-150</spikes>
+	<stealth_rock>-200</stealth_rock>
+	<toxic_spikes>-100</toxic_spikes>
+
+	<members>1024</members>
+	<hp>1024</hp>
+	<hidden>80</hidden>
+	<aqua_ring>24</aqua_ring>
+	<curse>-80</curse>
+	<imprison>-80</imprison>
+	<ingrain>80</ingrain>
+	<leech_seed>-80</leech_seed>
+	<loaf>-60</loaf>
+	<magnet_rise>1</magnet_rise>
+	<nightmare>-50</nightmare>
+	<substitute>150</substitute>
+	<substitute_hp>1024</substitute_hp>
+	<torment>-70</torment>
+	<trapped>-70</trapped>
+
+	<burn>-100</burn>
+	<freeze>-100</freeze>
+	<paralysis>-100</paralysis>
+	<poison>-100</poison>
+	<sleep>-120</sleep>
+
+	<attack_stage>50</attack_stage>
+	<defense_stage>50</defense_stage>
+	<special_attack_stage>50</special_attack_stage>
+	<special_defense_stage>50</special_defense_stage>
+	<speed_stage>60</speed_stage>
+	<focus_energy>5</focus_energy>
+
+	<baton_pass>5</baton_pass>
+	<no_pp>-256</no_pp>
+</score>

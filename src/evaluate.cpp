@@ -20,15 +20,19 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <fstream>
 #include <string>
 #include <vector>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 #include "ability.hpp"
 #include "move.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
 #include "weather.hpp"
+
+#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -226,95 +230,48 @@ Score::Score ():
 }
 
 void Score::load_evaluation_constants () {
-	std::ifstream file ("settings/evaluate.txt");
-	std::string line;
-	std::string const delimiter = ": ";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t const x = line.find (delimiter);
-		size_t const value_position = x + delimiter.length();
-		if (value_position >= line.length())
-			continue;
-		std::string const data = line.substr (0, x);
-		int const value = std::stoi(line.substr(x + delimiter.length()));
-		if (data == "Transposition Table")
-			transposition_table = value;
-		else if (data == "Light Screen")
-			light_screen = value;
-		else if (data == "Lucky Chant")
-			lucky_chant = value;
-		else if (data == "Mist")
-			mist = value;
-		else if (data == "Reflect")
-			reflect = value;
-		else if (data == "Safeguard")
-			safeguard = value;
-		else if (data == "Tailwind")
-			tailwind = value;
-		else if (data == "Wish")
-			wish = value;
-		else if (data == "Spikes")
-			spikes = value;
-		else if (data == "Stealth Rock")
-			stealth_rock = value;
-		else if (data == "Toxic Spikes")
-			toxic_spikes = value;
-		else if (data == "Members")
-			members = value;
-		else if (data == "HP")
-			hp = value;
-		else if (data == "Hidden")
-			hidden = value;
-		else if (data == "Aqua Ring")
-			aqua_ring = value;
-		else if (data == "Curse")
-			curse = value;
-		else if (data == "Imprison")
-			imprison = value;
-		else if (data == "Ingrain")
-			ingrain = value;
-		else if (data == "Leech Seed")
-			leech_seed = value;
-		else if (data == "Loaf")
-			loaf = value;
-		else if (data == "Magnet Rise")
-			magnet_rise = value;
-		else if (data == "Nightmare")
-			nightmare = value;
-		else if (data == "Substitute")
-			substitute = value;
-		else if (data == "Substitute HP")
-			substitute_hp = value;
-		else if (data == "Torment")
-			torment = value;
-		else if (data == "Trapped")
-			trapped = value;
-		else if (data == "Burn")
-			burn = value;
-		else if (data == "Freeze")
-			freeze = value;
-		else if (data == "Paralysis")
-			paralysis = value;
-		else if (data == "Poison")
-			poison = value;
-		else if (data == "Sleep")
-			sleep = value;
-		else if (data == "Attack stage")
-			atk_stage = value;
-		else if (data == "Defense stage")
-			def_stage = value;
-		else if (data == "Special Attack stage")
-			spa_stage = value;
-		else if (data == "Special Defense stage")
-			spd_stage = value;
-		else if (data == "Speed stage")
-			spe_stage = value;
-		else if (data == "Focus Energy")
-			focus_energy = value;
-		else if (data == "Baton Pass")
-			baton_pass = value;
-		else if (data == "No PP")
-			no_pp = value;
-	}
+	boost::property_tree::ptree file;
+	read_xml ("settings/evaluate.xml", file);
+	boost::property_tree::ptree const pt = file.get_child("score");
+	transposition_table = pt.get<int>("transposition_table", 0);
+	light_screen = pt.get<int>("light_screen", 0);
+	lucky_chant = pt.get<int>("lucky_chant", 0);
+	mist = pt.get<int>("mist", 0);
+	reflect = pt.get<int>("reflect", 0);
+	safeguard = pt.get<int>("safeguard", 0);
+	tailwind = pt.get<int>("tailwind", 0);
+	wish = pt.get<int>("wish", 0);
+	spikes = pt.get<int>("spikes", 0);
+	stealth_rock = pt.get<int>("stealth_rock", 0);
+	toxic_spikes = pt.get<int>("toxic_spikes", 0);
+	members = pt.get<int>("members", 0);
+	hp = pt.get<int>("hp", 0);
+	hidden = pt.get<int>("hidden", 0);
+	aqua_ring = pt.get<int>("aqua_ring", 0);
+	curse = pt.get<int>("curse", 0);
+	imprison = pt.get<int>("imprison", 0);
+	ingrain = pt.get<int>("ingrain", 0);
+	leech_seed = pt.get<int>("leech_seed", 0);
+	loaf = pt.get<int>("loaf", 0);
+	magnet_rise = pt.get<int>("magnet_rise", 0);
+	nightmare = pt.get<int>("nightmare", 0);
+	substitute = pt.get<int>("substitute", 0);
+	substitute_hp = pt.get<int>("substitute_hp", 0);
+	torment = pt.get<int>("torment", 0);
+	trapped = pt.get<int>("trapped", 0);
+	burn = pt.get<int>("burn", 0);
+	freeze = pt.get<int>("freeze", 0);
+	paralysis = pt.get<int>("paralysis", 0);
+	poison = pt.get<int>("poison", 0);
+	sleep = pt.get<int>("sleep", 0);
+	atk_stage = pt.get<int>("attack_stage", 0);
+	def_stage = pt.get<int>("defense_stage", 0);
+	spa_stage = pt.get<int>("special_attack_stage", 0);
+	spd_stage = pt.get<int>("special_defense_stage", 0);
+	spe_stage = pt.get<int>("speed_stage", 0);
+	focus_energy = pt.get<int>("focus_energy", 0);
+	baton_pass = pt.get<int>("baton_pass", 0);
+	no_pp = pt.get<int>("no_pp", 0);
 }
 
 }	// namespace technicalmachine
