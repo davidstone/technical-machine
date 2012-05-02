@@ -47,7 +47,6 @@ bool is_blocked_due_to_status (Team & user, Move const & move);
 bool is_blocked_by_freeze (Pokemon const & user, Move const & move);
 bool handle_sleep_counter (Team & user, Move const & move);
 void increase_sleep_counter (Team & user);
-bool is_blocked_by_sleep (Pokemon const & user, Move const & move);
 bool handle_confusion (Team & user);
 
 }	// unnamed namespace
@@ -173,8 +172,10 @@ bool is_blocked_by_freeze (Pokemon const & user, Move const & move) {
 }
 
 bool handle_sleep_counter (Team & user, Move const & move) {
+	if (!user.pokemon().status.is_sleeping())
+		return false;
 	increase_sleep_counter(user);
-	return is_blocked_by_sleep(user.pokemon(), move);
+	return !move.is_usable_while_sleeping();
 }
 
 void increase_sleep_counter (Team & user) {
@@ -185,10 +186,6 @@ void increase_sleep_counter (Team & user) {
 	else {
 		user.pokemon().sleep += user.pokemon().ability.wakes_up_early() ? 2 : 1;
 	}
-}
-
-bool is_blocked_by_sleep (Pokemon const & user, Move const & move) {
-	return user.status.is_sleeping() and !move.is_usable_while_sleeping();
 }
 
 bool handle_confusion (Team & user) {
