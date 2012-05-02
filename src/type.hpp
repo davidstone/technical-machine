@@ -24,6 +24,8 @@
 #include "status.hpp"
 
 namespace technicalmachine {
+class Pokemon;
+class Weather;
 
 class Type {
 	public:
@@ -67,35 +69,11 @@ class Type {
 		// Calculate the effectiveness of attacking type on defending type. 0 is
 		// no effect, 1 is not very effective, 2 is neutral, and 4 is super
 		// effective.
-		static unsigned lookup_effectiveness (Type::Types attacking, Type defending);
+		static unsigned lookup_effectiveness (Types attacking, Type defending);
 		unsigned lookup_effectiveness (Type defending) const;
 		static unsigned get_effectiveness (Type::Types type, Pokemon const & defender);
 		Types type;
 };
-
-class TypeCollection {
-	public:
-		TypeCollection (Species name);
-		std::vector <Type> types;
-		
-		bool is_immune_to_hail () const;
-		bool is_immune_to_sandstorm () const;
-		template<Status::Statuses status>
-		bool blocks_status () const {
-			for (Type const type : types) {
-				if (type.blocks_status<status> ())
-					return true;
-			}
-			return false;
-		}
-};
-
-class Pokemon;
-class Team;
-class Weather;
-
-bool is_type (Team const & team, Type type);
-bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather);
 
 }	// namespace technicalmachine
 #endif	// TYPE_HPP_

@@ -30,10 +30,10 @@
 #include "species.hpp"
 #include "stat.hpp"
 #include "status.hpp"
-#include "type.hpp"
+#include "type_collection.hpp"
 
 namespace technicalmachine {
-//#define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+// #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 class Pokemon {
 	private:
