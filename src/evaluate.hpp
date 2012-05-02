@@ -55,6 +55,7 @@ class Score {
 
 		int members;
 		int hp;
+		int hidden;
 		int aqua_ring;
 		int curse;
 		int imprison;

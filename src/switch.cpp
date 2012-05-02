@@ -63,6 +63,8 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 
 	if (switcher.pokemon().hp.stat > 0)
 		Ability::activate_on_switch (switcher, other, weather);
+	
+	switcher.pokemon().hidden = false;
 }
 
 namespace {

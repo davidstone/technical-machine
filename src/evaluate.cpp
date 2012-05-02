@@ -110,12 +110,14 @@ int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const
 }
 
 int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
-	int64_t score = team.stealth_rock * stealth_rock * static_cast<int>(Type::stealth_rock_effectiveness(team.pokemon())) / 4;
-	if (grounded (team, team.pokemon(), weather))
+	Pokemon const & pokemon = team.pokemon();
+	int64_t score = team.stealth_rock * stealth_rock * static_cast<int>(Type::stealth_rock_effectiveness(pokemon)) / 4;
+	if (grounded (team, pokemon, weather))
 		score += team.spikes * spikes + team.toxic_spikes * toxic_spikes;
-	if (team.pokemon().hp.stat != 0) {
+	if (pokemon.hp.stat != 0) {
 		score += members;
-		score += hp * team.pokemon().hp.stat / team.pokemon().hp.max;
+		score += hp * pokemon.hp.stat / pokemon.hp.max;
+		score += hidden * pokemon.hidden;
 		score += score_status (team);
 		score += score_move (team, other, weather);
 	}
@@ -188,6 +190,7 @@ Score::Score ():
 
 	members (0),
 	hp (0),
+	hidden (0),
 	aqua_ring (0),
 	curse (0),
 	imprison (0),
@@ -228,122 +231,90 @@ void Score::load_evaluation_constants () {
 	std::string const delimiter = ": ";
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		size_t const x = line.find (delimiter);
-		std::string data = line.substr (0, x);
-		if (data == "Transposition Table") {
-			transposition_table = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Light Screen") {
-			light_screen = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Lucky Chant") {
-			lucky_chant = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Mist") {
-			mist = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Reflect") {
-			reflect = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Safeguard") {
-			safeguard = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Tailwind") {
-			tailwind = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Wish") {
-			wish = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Spikes") {
-			spikes = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Stealth Rock") {
-			stealth_rock = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Toxic Spikes") {
-			toxic_spikes = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Members") {
-			members = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "HP") {
-			hp = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Aqua Ring") {
-			aqua_ring = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Curse") {
-			curse = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Imprison") {
-			imprison = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Ingrain") {
-			ingrain = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Leech Seed") {
-			leech_seed = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Loaf") {
-			loaf = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Magnet Rise") {
-			magnet_rise = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Nightmare") {
-			nightmare = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Substitute") {
-			substitute = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Substitute HP") {
-			substitute_hp = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Torment") {
-			torment = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Trapped") {
-			trapped = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Burn") {
-			burn = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Freeze") {
-			freeze = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Paralysis") {
-			paralysis = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Poison") {
-			poison = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Sleep") {
-			sleep = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Attack stage") {
-			atk_stage = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Defense stage") {
-			def_stage = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Special Attack stage") {
-			spa_stage = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Special Defense stage") {
-			spd_stage = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Speed stage") {
-			spe_stage = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Focus Energy") {
-			focus_energy = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "Baton Pass") {
-			baton_pass = std::stoi (line.substr (x + delimiter.length ()));
-		}
-		else if (data == "No PP") {
-			no_pp = std::stoi (line.substr (x + delimiter.length ()));
-		}
+		size_t const value_position = x + delimiter.length();
+		if (value_position >= line.length())
+			continue;
+		std::string const data = line.substr (0, x);
+		int const value = std::stoi(line.substr(x + delimiter.length()));
+		if (data == "Transposition Table")
+			transposition_table = value;
+		else if (data == "Light Screen")
+			light_screen = value;
+		else if (data == "Lucky Chant")
+			lucky_chant = value;
+		else if (data == "Mist")
+			mist = value;
+		else if (data == "Reflect")
+			reflect = value;
+		else if (data == "Safeguard")
+			safeguard = value;
+		else if (data == "Tailwind")
+			tailwind = value;
+		else if (data == "Wish")
+			wish = value;
+		else if (data == "Spikes")
+			spikes = value;
+		else if (data == "Stealth Rock")
+			stealth_rock = value;
+		else if (data == "Toxic Spikes")
+			toxic_spikes = value;
+		else if (data == "Members")
+			members = value;
+		else if (data == "HP")
+			hp = value;
+		else if (data == "Hidden")
+			hidden = value;
+		else if (data == "Aqua Ring")
+			aqua_ring = value;
+		else if (data == "Curse")
+			curse = value;
+		else if (data == "Imprison")
+			imprison = value;
+		else if (data == "Ingrain")
+			ingrain = value;
+		else if (data == "Leech Seed")
+			leech_seed = value;
+		else if (data == "Loaf")
+			loaf = value;
+		else if (data == "Magnet Rise")
+			magnet_rise = value;
+		else if (data == "Nightmare")
+			nightmare = value;
+		else if (data == "Substitute")
+			substitute = value;
+		else if (data == "Substitute HP")
+			substitute_hp = value;
+		else if (data == "Torment")
+			torment = value;
+		else if (data == "Trapped")
+			trapped = value;
+		else if (data == "Burn")
+			burn = value;
+		else if (data == "Freeze")
+			freeze = value;
+		else if (data == "Paralysis")
+			paralysis = value;
+		else if (data == "Poison")
+			poison = value;
+		else if (data == "Sleep")
+			sleep = value;
+		else if (data == "Attack stage")
+			atk_stage = value;
+		else if (data == "Defense stage")
+			def_stage = value;
+		else if (data == "Special Attack stage")
+			spa_stage = value;
+		else if (data == "Special Defense stage")
+			spd_stage = value;
+		else if (data == "Speed stage")
+			spe_stage = value;
+		else if (data == "Focus Energy")
+			focus_energy = value;
+		else if (data == "Baton Pass")
+			baton_pass = value;
+		else if (data == "No PP")
+			no_pp = value;
 	}
 }
 
-}
+}	// namespace technicalmachine

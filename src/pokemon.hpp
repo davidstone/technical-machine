@@ -61,6 +61,7 @@ class Pokemon {
 		Status status;
 		Nature nature;
 		bool fainted;
+		bool hidden;
 		uint8_t level;
 		// wakes up when this number is 2 through 5
 		uint8_t sleep;

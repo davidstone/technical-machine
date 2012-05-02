@@ -17,7 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include <stdexcept>
 
 #include <boost/lexical_cast.hpp>
 
@@ -38,8 +37,8 @@ int main (int argc, char * argv []) {
 
 		unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 
-		// TODO: This is not the correct solution, but it works "good enough". I'll
-		// get back to this later.
+		// TODO: This is not the correct solution, but it works "good enough".
+		// I'll get back to this later.
 		while (true) {
 			try {
 				po::Client client (depth);
@@ -55,13 +54,8 @@ int main (int argc, char * argv []) {
 			}
 		}
 	}
-	catch (std::exception const & ex) {
-		std::cerr << ex.what() << '\n';
-		return -1;
-	}
 	catch (...) {
-		std::cerr << "Unknown exception thrown. Exiting.\n";
-		return -1;
+		throw;
 	}
 	return 0;
 }

@@ -46,6 +46,7 @@ Pokemon::Pokemon (Species const species, unsigned const size) :
 	name (species),
 
 	fainted (false),
+	hidden (true),
 	level (100),
 	sleep (0),
 
