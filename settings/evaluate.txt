@@ -17,7 +17,7 @@ HP: 1024
 Aqua Ring: 24
 Curse: -80
 Imprison: -80
-Ingrain: 64
+Ingrain: 80
 Leech Seed: -80
 Loaf: -60
 Magnet Rise: 1
