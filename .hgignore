@@ -22,7 +22,11 @@ settings/highlights.txt
 settings/responses.txt
 settings/settings.txt
 settings/settings.xml
+settings/settings.xml.backup
 settings/trusted_users.txt
+
+src/test/test2.sbt
+src/test/test2.tp
 
 battles/*
 teams/*
