@@ -19,8 +19,10 @@
 #include "team_predictor.hpp"
 
 #include <array>
+#include <vector>
 
 #include "ability.hpp"
+#include "detailed_stats.hpp"
 #include "load_stats.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
@@ -37,11 +39,11 @@ std::array<T, Species::END> all_ones_array () {
 }
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END][Species::END]);
 Species get_most_likely_pokemon (std::array<float, Species::END> const & estimate);
-void predict_move (Pokemon & member, int const detailed [][7], unsigned size);
+void predict_move (Pokemon & member, std::vector<Move::Moves> const & detailed, unsigned size);
 
 }	// unnamed namespace
 
-Team predict_team (int const detailed [][7], Team team, unsigned size, bool using_lead) {
+Team predict_team (DetailedStats const & detailed, Team team, unsigned size, bool using_lead) {
 	std::array<unsigned, Species::END> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	float multiplier [Species::END][Species::END];
@@ -58,10 +60,10 @@ Team predict_team (int const detailed [][7], Team team, unsigned size, bool usin
 	});
 	predict_pokemon (team, estimate, multiplier);
 	team.pokemon.for_each([& detailed, size](Pokemon & pokemon) {
-		pokemon.ability.set_if_unknown (static_cast <Ability::Abilities> (detailed [pokemon.name] [0]));
-		pokemon.item.set_if_unknown (static_cast <Item::Items> (detailed [pokemon.name] [1]));
-		pokemon.nature.set_if_unknown (static_cast <Nature::Natures> (detailed [pokemon.name] [2]));
-		predict_move (pokemon, detailed, size);
+		pokemon.ability.set_if_unknown (static_cast <Ability::Abilities> (detailed.ability [pokemon.name]));
+		pokemon.item.set_if_unknown (static_cast <Item::Items> (detailed.item [pokemon.name]));
+		pokemon.nature.set_if_unknown (static_cast <Nature::Natures> (detailed.nature [pokemon.name]));
+		predict_move (pokemon, detailed.move[pokemon.name], size);
 	});
 	return team;
 }
@@ -91,15 +93,15 @@ Species get_most_likely_pokemon (std::array<float, Species::END> const & estimat
 	return name;
 }
 
-void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
+void predict_move (Pokemon & member, std::vector<Move::Moves> const & detailed, unsigned size) {
 	// Pokemon I've already seen will have their moveset filled out with
 	// Struggle and Switch# for each Pokemon still alive in their team. This
 	// makes sure that those Pokemon get all of their moves predicted.
 	unsigned n = member.move.number_of_regular_moves();
 	unsigned const max_moves = Move::max_regular_moves() + member.move.size() - n;
-	for (unsigned m = 3; member.move.size() < max_moves and detailed [member.name] [m] != Move::END; ++m) {
-		Move const * const move_ptr = member.move.find_if([& detailed, & member, m](Move const & move) {
-			return move.name == static_cast<Move::Moves> (detailed [member.name] [m]);
+	for (Move::Moves const name : detailed) {
+		Move const * const move_ptr = member.move.find_if([name](Move const & move) {
+			return move.name == name;
 		});
 		if (move_ptr == nullptr) {
 			// I use n here so that already seen moves (guaranteed to exist)
@@ -107,8 +109,9 @@ void predict_move (Pokemon & member, int const detailed [][7], unsigned size) {
 			// are listed in the order of their probability for predicted moves
 			// as well. This also has the advantage of requiring fewer shifts
 			// of my vector.
-			Move cool (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size);
-			member.move.insert (n, Move (static_cast<Move::Moves> (detailed [member.name] [m]), 3, size));
+			member.move.insert (n, Move (name, 3, size));
+			if (member.move.size() == max_moves)
+				break;
 			++n;
 		}
 	}

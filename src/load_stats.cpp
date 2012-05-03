@@ -21,10 +21,10 @@
 #include <array>
 #include <cstddef>
 #include <fstream>
-#include <stdexcept>
 #include <string>
 #include <boost/lexical_cast.hpp>
 
+#include "invalid_settings_file.hpp"
 #include "move.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
@@ -32,26 +32,6 @@
 namespace technicalmachine {
 
 namespace {
-
-class InvalidSettingsFile : public std::runtime_error {
-	public:
-		enum Problem {
-			too_long,
-			too_short,
-			invalid_data
-		};
-		static std::string to_string (Problem const problem) {
-			static const std::string text [] = {
-				"is too long",
-				"is too short",
-				"contains invalid data"
-			};
-			return text [problem];
-		}
-		InvalidSettingsFile (std::string const & file_name, Problem const problem):
-			std::runtime_error (file_name + " " + to_string (problem) + ".") {
-		}
-};
 
 template<typename T>
 std::array<T, Species::END> load_stats_from_file (std::string const & file_name) {
@@ -75,10 +55,8 @@ void species_clause (float multiplier [Species::END] [Species::END]) {
 		for (unsigned b = 0; b != Species::END; ++b) {
 			Species const first = static_cast <Species> (a);
 			Species const second = static_cast <Species> (b);
-			if (Pokemon::is_alternate_form (first, second))
-				multiplier [a] [b] = 0;	// Species clause
-			else
-				multiplier [a] [b] = -1;		// Replaced with other value later
+			// Species clause or replaced with other value later
+			multiplier [a][b] = Pokemon::is_alternate_form (first, second) ? 0 : -1;
 		}
 		multiplier [a] [a] = 0;			// Species clause
 	}
@@ -89,9 +67,10 @@ void load_listed_multipliers (float multiplier [Species::END] [Species::END], st
 	std::ifstream file (file_name);
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t const x = line.find ('\t');
+		constexpr char delimiter = '\t';
+		size_t const x = line.find (delimiter);
 		unsigned const member = boost::lexical_cast<unsigned> (line.substr (0, x));
-		size_t const y = line.find ('\t', x + 1);
+		size_t const y = line.find (delimiter, x + 1);
 		unsigned const ally = boost::lexical_cast<unsigned> (line.substr (x + 1, y - x - 1));
 		if (member >= Species::END or ally >= Species::END)
 			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
@@ -158,65 +137,6 @@ void team_stats (std::array<unsigned, Species::END> const & overall, unsigned co
 
 	load_listed_multipliers (multiplier, overall, unaccounted, total);
 	estimate_remaining_multipliers (multiplier, overall, unaccounted);
-}
-
-void detailed_stats (int detailed [][7]) {
-	std::string const file_name = "settings/detailed.txt";
-	std::ifstream file (file_name);
-	std::string line;
-	Species old_member = Species::END;
-	bool ability = false;
-	bool item = false;
-	bool nature = false;
-	unsigned move = 0;
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		size_t const x = line.find ('\t');
-		Species new_member = Pokemon::from_string (line.substr (0, x));
-		if (new_member >= Species::END)
-			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
-		if (old_member != new_member) {
-			old_member = new_member;
-			ability = false;
-			item = false;
-			nature = false;
-			move = 0;
-		}
-		size_t const y = line.find ('\t', x + 1);
-		size_t const z = line.find ('\t', y + 1);
-		unsigned n = 7;
-		int data;
-		std::string sub = line.substr (x + 1, y - x - 1);
-		if (sub == "Ability") {
-			if (!ability ) {
-				n = 0;
-				ability = true;
-				data = Ability::from_string (line.substr (y + 1, z - y - 1));
-			}
-		}
-		else if (sub == "Item") {
-			if (!item) {
-				n = 1;
-				item = true;
-				data = Item::from_string (line.substr (y + 1, z - y - 1));
-			}
-		}
-		else if (sub == "Nature") {
-			if (!nature) {
-				n = 2;
-				nature = true;
-				data = Nature::from_string (line.substr (y + 1, z - y - 1));
-			}
-		}
-		else if (sub == "Move") {
-			if (move < 4) {
-				n = 3 + move;
-				++move;
-				data = Move::from_string (line.substr (y + 1, z - y - 1));
-			}
-		}
-		if (n != 7)
-			detailed [new_member] [n] = data;
-	}
 }
 
 }	// namespace technicalmachine

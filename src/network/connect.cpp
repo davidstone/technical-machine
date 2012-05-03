@@ -58,10 +58,8 @@ GenericClient::GenericClient (unsigned set_depth):
 	highlights (load_highlights ()),
 	responses (load_responses ()),
 	trusted_users (load_trusted_users ()),
-	detailed ({{ 0 }}),
 	depth (set_depth)
 	{
-	detailed_stats (detailed);
 	load_settings (false);
 	while (username.empty()) {
 		std::cerr << "Add a username and password entry to " + Settings::file_name + " and hit enter.";

@@ -44,7 +44,6 @@ class MoveCollection : public detail::BaseCollection<Move> {
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
 		std::vector<std::pair<int64_t, size_t>> create_ordered_container (bool const ai) const;
 		std::vector<Move::Moves> legal_switches (uint8_t const pokemon_index) const;
-		// Temporary function until I rework my detailed stats data structures
 		uint8_t size () const;
 };
 }	// namespace technicalmachine

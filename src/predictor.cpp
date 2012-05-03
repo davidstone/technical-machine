@@ -42,7 +42,7 @@ class Data {
 	public:
 		std::vector<Fl_Input *> input;
 		Fl_Multiline_Output * output;
-		int detailed [Species::END][7];
+		DetailedStats detailed;
 };
 
 void function (Fl_Widget * w, void * d) {
@@ -86,7 +86,6 @@ int main () {
 	win.end();
 
 	Data data;
-	detailed_stats (data.detailed);
 	
 	data.input.push_back (&input0);
 	data.input.push_back (&input1);

@@ -1,4 +1,4 @@
-// Header for loading stats like Pokemon usages
+// Detailed Pokemon stats
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LOAD_STATS_HPP_
-#define LOAD_STATS_HPP_
+#ifndef DETAILED_STATS_HPP_
+#define DETAILED_STATS_HPP_
 
 #include <array>
+#include <vector>
+#include "ability.hpp"
+#include "item.hpp"
+#include "move.hpp"
+#include "nature.hpp"
 #include "species.hpp"
 
 namespace technicalmachine {
 
-std::array<unsigned, Species::END> overall_stats ();
-
-void team_stats (std::array<unsigned, Species::END> const & overall, unsigned total, float multiplier [Species::END][Species::END]);
-
-// Multiplier for Pokemon after you've seen the lead
-std::array<float, Species::END> lead_stats ();
+class DetailedStats {
+	public:
+		DetailedStats();
+		std::array<Ability::Abilities, Species::END> ability;
+		std::array<Item::Items, Species::END> item;
+		std::array<Nature::Natures, Species::END> nature;
+		std::array<std::vector<Move::Moves>, Species::END> move;
+};
 
 }	// namespace technicalmachine
-#endif	// LOAD_STATS_HPP_
+#endif	// DETAILED_STATS_HPP_

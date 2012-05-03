@@ -32,6 +32,7 @@
 #include "weather.hpp"
 
 namespace technicalmachine {
+class DetailedStats;
 namespace network {
 class GenericClient;
 class OutMessage;
@@ -60,7 +61,7 @@ class GenericBattle {
 		bool is_me (uint32_t other_party) const;
 		void set_if_party_unknown (uint8_t new_party);
 		void write_team (network::OutMessage & msg, std::string const & username = std::string());
-		Team predict_foe_team (int const detailed [Species::END][7]) const;
+		Team predict_foe_team (DetailedStats const & detailed) const;
 		void handle_begin_turn (uint16_t turn_count) const;
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 		void handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name);

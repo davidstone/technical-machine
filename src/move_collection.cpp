@@ -101,7 +101,6 @@ std::vector<Move::Moves> MoveCollection::legal_switches (uint8_t const pokemon_i
 	return switches;
 }
 
-// Temporary function until I rework my detailed stats data structures
 uint8_t MoveCollection::size () const {
 	return container.size();
 }

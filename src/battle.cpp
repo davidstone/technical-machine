@@ -28,6 +28,7 @@
 #include <vector>
 
 #include "battle_result.hpp"
+#include "detailed_stats.hpp"
 #include "endofturn.hpp"
 #include "expectiminimax.hpp"
 #include "gender.hpp"
@@ -85,7 +86,7 @@ void GenericBattle::write_team (network::OutMessage & msg, std::string const & u
 	msg.write_team (ai, username);
 }
 
-Team GenericBattle::predict_foe_team (int const detailed [Species::END][7]) const {
+Team GenericBattle::predict_foe_team (DetailedStats const & detailed) const {
 	return predict_team (detailed, foe, ai.pokemon.size());
 }
 

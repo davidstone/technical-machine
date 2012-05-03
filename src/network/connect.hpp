@@ -30,8 +30,8 @@
 
 #include "../battle.hpp"
 #include "../battle_result.hpp"
+#include "../detailed_stats.hpp"
 #include "../evaluate.hpp"
-#include "../species.hpp"
 
 namespace technicalmachine {
 namespace network {
@@ -62,7 +62,7 @@ class GenericClient {
 	public:
 		boost::asio::io_service io;
 		Score score;
-		int detailed [Species::END][7];
+		DetailedStats detailed;
 	protected:
 		unsigned depth;
 	public:

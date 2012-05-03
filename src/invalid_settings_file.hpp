@@ -1,4 +1,4 @@
-// Header for loading stats like Pokemon usages
+// Exception class for settings files that are incorrect
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LOAD_STATS_HPP_
-#define LOAD_STATS_HPP_
+#ifndef INVALID_SETTINGS_FILE_HPP_
+#define INVALID_SETTINGS_FILE_HPP_
 
-#include <array>
-#include "species.hpp"
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 
-std::array<unsigned, Species::END> overall_stats ();
-
-void team_stats (std::array<unsigned, Species::END> const & overall, unsigned total, float multiplier [Species::END][Species::END]);
-
-// Multiplier for Pokemon after you've seen the lead
-std::array<float, Species::END> lead_stats ();
+class InvalidSettingsFile : public std::runtime_error {
+	public:
+		enum Problem {
+			too_long,
+			too_short,
+			invalid_data
+		};
+		static std::string to_string (Problem const problem) {
+			static const std::string text [] = {
+				"is too long",
+				"is too short",
+				"contains invalid data"
+			};
+			return text [problem];
+		}
+		InvalidSettingsFile (std::string const & file_name, Problem const problem):
+			std::runtime_error (file_name + " " + to_string (problem) + ".") {
+		}
+};
 
 }	// namespace technicalmachine
-#endif	// LOAD_STATS_HPP_
+#endif	// INVALID_SETTINGS_FILE_HPP_
