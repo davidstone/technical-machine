@@ -1,26 +1,21 @@
-syntax: glob
-
-*.o
-*.pyc
-
 syntax: regexp
 
 ^ai
 ^aio
 ^predict
-^rdc
-^rdco
 ^test
 ^testo
 
 syntax: glob
+
+*.o
+*.pyc
 
 .sconsign.dblite
 
 settings/account.txt
 settings/highlights.txt
 settings/responses.txt
-settings/settings.txt
 settings/settings.xml
 settings/settings.xml.backup
 settings/trusted_users.txt
