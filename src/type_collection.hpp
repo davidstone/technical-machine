@@ -25,12 +25,13 @@
 #include "type.hpp"
 
 namespace technicalmachine {
+class Pokemon;
+class Team;
+class Weather;
 
 class TypeCollection {
 	public:
 		TypeCollection (Species name);
-		std::vector <Type> types;
-		
 		bool is_immune_to_hail () const;
 		bool is_immune_to_sandstorm () const;
 		template<Status::Statuses status>
@@ -41,11 +42,12 @@ class TypeCollection {
 			}
 			return false;
 		}
+		void change_type(Type const type);
+	private:
+		friend bool is_type (Team const & team, Type type);
+		friend class Type;
+		std::vector<Type> types;
 };
-
-class Pokemon;
-class Team;
-class Weather;
 
 bool is_type (Team const & team, Type type);
 bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather);

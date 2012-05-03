@@ -54,6 +54,10 @@ bool TypeCollection::is_immune_to_hail () const {
 	return false;
 }
 
+void TypeCollection::change_type(Type const type) {
+	types = std::vector<Type>({Type::FIRE});
+}
+
 bool is_type (Team const & team, Type const type) {
 	if (type != Type::FLYING or !team.roost) {
 		for (Type const check : team.pokemon().type.types) {

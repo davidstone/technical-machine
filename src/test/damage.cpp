@@ -149,7 +149,7 @@ void special_damage_test () {
 	Team attacker = create_max_damage_special_attacker ();
 	Pokemon & a = attacker.pokemon();
 	a.move.insert (0, Move (Move::BLAST_BURN, 3, team_size));
-	a.type.types = std::vector <Type> { Type::FIRE };
+	a.type.change_type(Type::FIRE);
 
 	a.spa.ev = 252 / 4;
 	a.nature.name = Nature::MODEST;
