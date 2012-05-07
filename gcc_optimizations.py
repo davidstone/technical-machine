@@ -18,4 +18,4 @@
 
 optimizations = ['-Ofast', '-march=native', '-funsafe-loop-optimizations', '-flto=4']
 preprocessor_optimizations = ['NDEBUG']
-linker_optimizations = ['-s', '-fwhole-program'] + optimizations
+linker_optimizations = ['-fwhole-program'] + optimizations

@@ -26,14 +26,14 @@ from sources import ai, predict, test, generate_sources
 SetOption('warn', 'no-duplicate-environment')
 
 version_flags = ['-std=c++0x']
-cc_flags = warnings
+cc_flags = warnings + ['-g']
 cxx_flags = version_flags
 link_flags = warnings
 
 default = DefaultEnvironment(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
 
 debug = default.Clone()
-debug.Append(CCFLAGS = ['-g'] + warnings_debug)
+debug.Append(CCFLAGS = warnings_debug)
 debug.VariantDir('build/debug', 'src', duplicate = 0)
 
 optimized = default.Clone()
