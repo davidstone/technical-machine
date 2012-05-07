@@ -9,7 +9,7 @@
 <gender>Male</gender>
 <nature>Impish</nature>
 <item>Leftovers</item>
-<ability>Hyper Cutter</ability>
+<ability>Sand Veil</ability>
 <moveset>
 	<move pp-up="3">Rock Polish</move>
 	<move pp-up="3">Roost</move>
@@ -30,7 +30,7 @@
 <nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>Male</gender>
+<gender>Female</gender>
 <nature>Calm</nature>
 <item>Leftovers</item>
 <ability>Water Absorb</ability>
@@ -122,27 +122,27 @@
 </stats>
 </pokemon>
 
-<pokemon species="Lucario">
+<pokemon species="Drifblim">
 <nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
-<gender>Male</gender>
-<nature>Modest</nature>
-<item>Wise Glasses</item>
-<ability>Inner Focus</ability>
+<gender>Female</gender>
+<nature>Bold</nature>
+<item>Leftovers</item>
+<ability>Aftermath</ability>
 <moveset>
-	<move pp-up="3">Aura Sphere</move>
-	<move pp-up="3">Dark Pulse</move>
-	<move pp-up="3">Psychic</move>
-	<move pp-up="3">Vacuum Wave</move>
+	<move pp-up="3">Baton Pass</move>
+	<move pp-up="3">Calm Mind</move>
+	<move pp-up="3">Shadow Ball</move>
+	<move pp-up="3">Hidden Power</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="120" />
+	<stat name="HP" iv="31" ev="0" />
 	<stat name="Atk" iv="31" ev="0" />
-	<stat name="Def" iv="31" ev="0" />
-	<stat name="Spd" iv="31" ev="136" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="0" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="16" />
+	<stat name="SpAtk" iv="30" ev="0" />
+	<stat name="SpDef" iv="30" ev="240" />
 </stats>
 </pokemon>
 
