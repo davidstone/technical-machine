@@ -19,7 +19,6 @@
 #ifndef COLLECTION_HPP_
 #define COLLECTION_HPP_
 
-#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <stdexcept>
@@ -38,21 +37,21 @@ class InvalidCollectionIndex : public std::out_of_range {
 };
 
 namespace detail {
-template<typename T> class BaseCollection;
+template<typename T, typename ContainerType = std::vector<T>> class BaseCollection;
 }	// namespace detail
 
-template<typename T>
-bool operator==(detail::BaseCollection<T> const & lhs, detail::BaseCollection<T> const & rhs) {
+template<typename T, typename ContainerType>
+bool operator==(detail::BaseCollection<T, ContainerType> const & lhs, detail::BaseCollection<T, ContainerType> const & rhs) {
 	return lhs.container == rhs.container;
 }
 
 // BaseCollection is defined only as a base class to Pokemon, Move, and Variable
 // collections. Do not use directly.
 namespace detail {
-template<typename T>
+template<typename T, typename ContainerType>
 class BaseCollection {
 	public:
-		typedef std::vector<T> container_type;
+		typedef ContainerType container_type;
 		typedef T value_type;
 		constexpr BaseCollection () :
 			current_index (0) {
@@ -79,16 +78,6 @@ class BaseCollection {
 		void add (T const & element) {
 			container.push_back (element);
 		}
-		void insert (uint8_t const position, T const & element) {
-			container.insert (container.begin() + position, element);
-		}
-		void insert (T const & element) {
-			insert (index(), element);
-		}
-		void pop_back () {
-			container.pop_back();
-			reset_index();
-		}
 		void set_index (uint8_t const new_index) {
 			current_index = check_range (new_index);
 		}
@@ -108,16 +97,10 @@ class BaseCollection {
 				f (element);
 			}
 		}
-		unsigned count_if (typename std::function<bool(T const &)> const & f) const {
-			return std::count_if(container.begin(), container.end(), f);
-		}
-		friend bool operator==<T>(BaseCollection<T> const & lhs, BaseCollection<T> const & rhs);
+		friend bool operator==<T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
 	protected:
-		uint8_t check_range (uint8_t const new_index) const {
-			if (new_index < container.size())
-				return new_index;
-			else
-				throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
+		constexpr uint8_t check_range (uint8_t const new_index) const {
+			return (new_index < container.size()) ? new_index : throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
 		}
 		constexpr T const & unchecked_value (uint8_t const specified_index) const {
 			return container [specified_index];

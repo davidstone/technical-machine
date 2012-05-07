@@ -26,13 +26,14 @@
 #include "ability.hpp"
 #include "gender.hpp"
 #include "move.hpp"
+#include "shared_moves.hpp"
 #include "species.hpp"
 #include "stat.hpp"
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (Species const species, unsigned const size) : 
-	move (size),
+Pokemon::Pokemon (Species const species, SharedMoves & shared) : 
+	move (shared),
 	type (species),
 	hp (species, Stat::HP),
 	atk (species, Stat::ATK),
@@ -51,7 +52,6 @@ Pokemon::Pokemon (Species const species, unsigned const size) :
 
 	happiness (255)
 	{
-	assert (size != 0);
 	calculate_initial_hp();
 }
 
@@ -72,19 +72,6 @@ uint64_t Pokemon::hash () const {
 			(status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
 			current_hash)));
-}
-
-bool Pokemon::find_move (Move::Moves move_name) {
-	// TODO: fix when I improve regular vs. irregular moves
-	uint8_t index = 0;
-	for (; move(index).name != Move::STRUGGLE; ++index) {
-		if (move_name == move(index).name) {
-			move.set_index(index);
-			return true;
-		}
-	}
-	move.set_index(index);
-	return false;
 }
 
 uint8_t Pokemon::index_of_first_switch () const {

@@ -24,9 +24,11 @@
 #include <random>
 #include <string>
 
-#include "pokemon_collection.hpp"
 #include "gender.hpp"
+#include "move.hpp"
 #include "pokemon.hpp"
+#include "pokemon_collection.hpp"
+#include "shared_moves.hpp"
 #include "species.hpp"
 #include "stat.hpp"
 
@@ -34,8 +36,23 @@ namespace technicalmachine {
 
 class Team {
 	public:
-		PokemonCollection pokemon;
+		Team ();
+		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
+		Team (Team const & other);
+		Team (Team && other);
+		void add_pokemon (Species name);
+		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender);
+		void remove_pokemon ();
+		bool can_be_phazed () const;
+		bool operator== (Team const & other) const;
+		uint64_t hash () const;
+		std::string to_string () const;
 
+		PokemonCollection pokemon;
+	private:
+		void load (std::string const & name, unsigned other_size);
+		SharedMoves shared_moves;
+	public:
 		// How much damage has been done to this Pokemon this turn
 		uint16_t damage;
 		uint16_t bide_damage;
@@ -141,15 +158,6 @@ class Team {
 		
 		// Is this my team?
 		bool me;
-		
-		Team ();
-		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
-		bool can_be_phazed () const;
-		bool operator== (Team const & other) const;
-		uint64_t hash () const;
-		std::string to_string () const;
-	private:
-		void load (std::string const & name, unsigned other_size);
 };
 
 }	// namespace technicalmachine

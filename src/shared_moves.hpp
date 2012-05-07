@@ -1,4 +1,4 @@
-// Collection of move random effects with index indicating current effect
+// Shared moves
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,26 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
+#ifndef SHARED_MOVES_HPP_
+#define SHARED_MOVES_HPP_
 
-#include "collection.hpp"
-#include <cstdint>
-#include <functional>
-#include "variable.hpp"
+#include <vector>
+#include "move.hpp"
 
 namespace technicalmachine {
 
-class VariableCollection : public detail::BaseCollection<Variable> {
+class SharedMoves {
 	public:
-		// Has to be uint16_t instead of Move::Moves to prevent a circular
-		// dependency
-		VariableCollection (uint16_t move, unsigned foe_size);
-		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-		void for_each_index (std::function<void(void)> const & f);
-		void remove_phazing (uint8_t foe_size);
-		void set_magnitude (unsigned const magnitude);
+		explicit SharedMoves (unsigned team_size = 6);
+		void remove_switch();
+	private:
+		std::vector<Move> moves;
+		friend class MoveContainer;
 };
+
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_
+#endif	// SHARED_MOVES_HPP_

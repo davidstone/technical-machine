@@ -19,6 +19,8 @@
 #include "collection.hpp"
 #include <iostream>
 #include "invalid_collection.hpp"
+#include "move_collection.hpp"
+#include "move_container.hpp"
 #include "variable_collection.hpp"
 #include "../../collection.hpp"
 
@@ -31,7 +33,11 @@ void collection_range_tests() {
 	if (base.index() != v.size() - 1)
 		throw InvalidCollection("Cannot set Collection index properly.");
 	if (base() != v.back())
-		throw InvalidCollection("Indexing Collection does not return proper value.");
+		throw InvalidCollection("Stored index in Collection does not return proper value.");
+	for (unsigned n = 0; n != v.size(); ++n) {
+		if (v[n] != base(n))
+			throw InvalidCollection("Specified index in Collection does not return proper value.");
+	}
 	try {
 		base.set_index(v.size());
 		throw InvalidCollection("Out of range index not caught.");
@@ -42,11 +48,13 @@ void collection_range_tests() {
 	if (base() != v.back())
 		throw InvalidCollection("Collection modified by setting an invalid index.");
 }
-}
+}	// unnamed namespace
 
 void collection_tests () {
 	std::cout << "Running collection tests.\n";
 	collection_range_tests();
+	move_collection_tests();
+	move_container_tests();
 	variable_collection_tests();
 	std::cout << "Collection tests passed.\n\n";
 }

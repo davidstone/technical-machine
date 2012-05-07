@@ -64,6 +64,13 @@ void VariableCollection::for_each_index (std::function<void(void)> const & f) {
 	}
 }
 
+void VariableCollection::remove_phazing (uint8_t const foe_size) {
+	container.pop_back();
+	for_each([foe_size](Variable & variable) {
+		variable.reset_phaze_probabilities(foe_size);
+	});
+}
+
 void VariableCollection::set_magnitude (unsigned const magnitude) {
 	set_index (magnitude - 4);
 }

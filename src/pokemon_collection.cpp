@@ -17,10 +17,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pokemon_collection.hpp"
+#include <algorithm>
 #include <cassert>
 #include <functional>
 #include <string>
 #include "pokemon.hpp"
+#include "shared_moves.hpp"
 #include "species.hpp"
 
 namespace technicalmachine {
@@ -90,8 +92,8 @@ bool PokemonCollection::seen (Species const name) {
 void PokemonCollection::add (Pokemon const & pokemon) {
 	BaseCollection<Pokemon>::add(pokemon);
 }
-void PokemonCollection::add (Species name, std::string const & nickname, unsigned level, Gender gender) {
-	Pokemon pokemon (name, real_size());
+void PokemonCollection::add (Species name, std::string const & nickname, unsigned level, Gender gender, SharedMoves & shared_moves) {
+	Pokemon pokemon (name, shared_moves);
 	pokemon.level = level;
 	pokemon.gender = gender;
 
@@ -123,6 +125,10 @@ void PokemonCollection::for_each_replacement (std::function<void(void)> const & 
 	// Most versions of the loop do not require the ability to break out early.
 	// This passes in a function that always returns false for when to break out
 	for_each_replacement([]() { return false; }, f);
+}
+
+unsigned PokemonCollection::count_if (std::function<bool(Pokemon const &)> const & f) const {
+	return std::count_if(container.begin(), container.end(), f);
 }
 
 void PokemonCollection::decrement_real_size () {

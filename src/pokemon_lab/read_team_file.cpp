@@ -32,7 +32,7 @@ namespace pl {
 namespace {
 
 static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
-	std::string const name_str = pt.get <std::string> ("");
+	std::string const name_str = pt.get_value<std::string>();
 	Move::Moves const name = Move::from_string (name_str);
 	unsigned const pp_ups = pt.get <unsigned> ("<xmlattr>.pp-up");
 	return Move (name, pp_ups, foe_size);
@@ -62,15 +62,15 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	stat.ev = pt.get <unsigned> ("<xmlattr>.ev") / 4;
 }
 
-static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned foe_size, unsigned my_size) {
+void load_pokemon (boost::property_tree::ptree const & pt, Team & team, unsigned foe_size) {
 	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
-	Pokemon pokemon (Pokemon::from_string (species_str), my_size);
-	std::string const nickname = pt.get <std::string> ("nickname");
-	pokemon.set_nickname (!nickname.empty() ? nickname : species_str);
-	pokemon.level = pt.get <uint8_t> ("level");
-	pokemon.happiness = pt.get <int> ("happiness");
+	std::string const nickname_temp = pt.get <std::string> ("nickname");
+	std::string const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
+	uint8_t const level = pt.get <uint8_t> ("level");
 	std::string const gender_str = pt.get <std::string> ("gender");
-	pokemon.gender = Gender (gender_str);
+	team.add_pokemon(Pokemon::from_string(species_str), nickname, level, Gender(gender_str));
+	Pokemon & pokemon = team.pokemon.at_replacement();
+	pokemon.happiness = pt.get <int> ("happiness");
 	std::string const nature_str = pt.get <std::string> ("nature");
 	pokemon.nature = Nature (nature_str);
 	std::string const item_str = pt.get <std::string> ("item");
@@ -78,19 +78,11 @@ static Pokemon load_pokemon (boost::property_tree::ptree const & pt, unsigned fo
 	std::string const ability_str = pt.get <std::string> ("ability");
 	pokemon.ability = Ability (ability_str);
 	
-	unsigned n = 0;
-	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {
-		// I insert so that the moves show up in the order they are listed in
-		// the team file. Struggle and the Switches are already in it, so I
-		// can't push_back.
-		pokemon.move.insert (n, load_move (value.second, foe_size));
-		++n;
-	}
+	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
+		pokemon.move.add (load_move (value.second, foe_size));
 	
 	for (auto const & value : pt.get_child ("stats"))
 		load_stats (pokemon, value.second);
-	
-	return pokemon;
 }
 
 }	// anonymous namespace
@@ -101,9 +93,9 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
 	team.pokemon.initialize_size (all_pokemon.size());
-	for (auto const & value : all_pokemon) {
-		team.pokemon.add (load_pokemon (value.second, foe_size, team.pokemon.real_size()));
-	}
+	for (auto const & value : all_pokemon)
+		load_pokemon (value.second, team, foe_size);
+	team.pokemon.reset_index();
 }
 
 }	// namespace pl

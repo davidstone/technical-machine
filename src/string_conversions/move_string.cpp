@@ -18,6 +18,7 @@
 
 #include "../move.hpp"
 
+#include <cassert>
 #include <map>
 #include <string>
 
@@ -26,6 +27,7 @@
 namespace technicalmachine {
 
 std::string Move::to_string (Moves name) {
+	assert(name <= END);
 	std::string const name_to_string [] = {
 		"Absorb", "Acid", "Acid Armor", "Acupressure", "Aerial Ace",
 		"Aeroblast", "Agility", "Air Cutter", "Air Slash", "Amnesia",

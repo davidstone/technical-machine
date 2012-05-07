@@ -37,7 +37,6 @@ void reset_variables (Team & team);
 void entry_hazards (Team & switcher, Weather const & weather);
 void replace_fainted_pokemon (Team & switcher, Team & other);
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
-void remove_ability_to_switch_to_fainted (Team & switcher);
 
 }	// unnamed namespace
 
@@ -131,34 +130,19 @@ void reset_variables (Team & team) {
 }
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {
-	switcher.pokemon.remove_active();
+	switcher.remove_pokemon();
 	if (switcher.pokemon.is_empty())
 		return;
 	remove_fainted_from_phazing_moves(switcher, other);
-	remove_ability_to_switch_to_fainted(switcher);
 }
 
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
 	other.pokemon.for_each([& switcher](Pokemon & pokemon) {
 		pokemon.move.for_each([& switcher](Move & move) {
-			if (move.is_phaze()) {
-				move.variable.pop_back();
-				move.variable.for_each([& switcher](Variable & variable) {
-					variable.reset_phaze_probabilities(switcher.pokemon.real_size());
-				});
-			}
+			if (move.is_phaze())
+				move.variable.remove_phazing(switcher.pokemon.real_size());
 		});
 	});
-}
-
-void remove_ability_to_switch_to_fainted (Team & switcher) {
-	auto const remove_switch = [& switcher](Pokemon & pokemon) {
-		pokemon.move.pop_back();
-	};
-	switcher.pokemon.for_each(remove_switch);
-	// If there is only one Pokemon, there is no switching.
-	if (switcher.pokemon.size() == 1)
-		switcher.pokemon.for_each(remove_switch);
 }
 
 void entry_hazards (Team & switcher, Weather const & weather) {

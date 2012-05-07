@@ -1,4 +1,4 @@
-// Collection of move random effects with index indicating current effect
+// Test collections of moves
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,26 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
-
-#include "collection.hpp"
-#include <cstdint>
-#include <functional>
-#include "variable.hpp"
+#ifndef TEST_MOVE_COLLECTION_HPP_
+#define TEST_MOVE_COLLECTION_HPP_
 
 namespace technicalmachine {
 
-class VariableCollection : public detail::BaseCollection<Variable> {
-	public:
-		// Has to be uint16_t instead of Move::Moves to prevent a circular
-		// dependency
-		VariableCollection (uint16_t move, unsigned foe_size);
-		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-		void for_each_index (std::function<void(void)> const & f);
-		void remove_phazing (uint8_t foe_size);
-		void set_magnitude (unsigned const magnitude);
-};
+void move_collection_tests();
+
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_
+#endif	// TEST_MOVE_COLLECTION_HPP_

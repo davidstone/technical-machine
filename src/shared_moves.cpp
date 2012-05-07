@@ -1,4 +1,4 @@
-// Collection of move random effects with index indicating current effect
+// Load teams
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,26 +16,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
-
-#include "collection.hpp"
-#include <cstdint>
-#include <functional>
-#include "variable.hpp"
+#include "shared_moves.hpp"
+#include <cassert>
+#include "move.hpp"
 
 namespace technicalmachine {
 
-class VariableCollection : public detail::BaseCollection<Variable> {
-	public:
-		// Has to be uint16_t instead of Move::Moves to prevent a circular
-		// dependency
-		VariableCollection (uint16_t move, unsigned foe_size);
-		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-		void for_each_index (std::function<void(void)> const & f);
-		void remove_phazing (uint8_t foe_size);
-		void set_magnitude (unsigned const magnitude);
-};
+SharedMoves::SharedMoves(unsigned const team_size) {
+	moves.reserve ((team_size > 1) ? team_size + 1 : 1);
+	moves.push_back(Move(Move::STRUGGLE, 0));
+	// A Pokemon has a new "Switch" move for each Pokemon in the party.
+	if (team_size > 1) {
+		for (unsigned count = 0; count != team_size; ++count) {
+			moves.push_back(Move(Move::from_replacement (count), 0));
+		}
+	}
+}
+
+void SharedMoves::remove_switch() {
+	assert(moves.back().is_switch());
+	moves.pop_back();
+	if (moves.back().name == Move::SWITCH0)
+		moves.pop_back();
+}
+
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_

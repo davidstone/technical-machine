@@ -230,6 +230,183 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	});
 }
 
+Team::Team(Team const & other):
+	pokemon (other.pokemon),
+	shared_moves(other.shared_moves),
+	damage(other.damage),
+	bide_damage(other.bide_damage),
+	chance_to_hit(other.chance_to_hit),
+	stage(other.stage),
+	vanish(other.vanish),
+	bide(other.bide),
+	confused(other.confused),
+	embargo(other.embargo),
+	encore(other.encore),
+	heal_block(other.heal_block),
+	magnet_rise(other.magnet_rise),
+	partial_trap(other.partial_trap),
+	perish_song(other.perish_song),
+	rampage(other.rampage),
+	slow_start(other.slow_start),
+	stockpile(other.stockpile),
+	substitute(other.substitute),
+	taunt(other.taunt),
+	toxic(other.toxic),
+	uproar(other.uproar),
+	yawn(other.yawn),
+	aqua_ring(other.aqua_ring),
+	attract(other.attract),
+	awaken(other.awaken),
+	ch(other.ch),
+	charge(other.charge),
+	curse(other.curse),
+	damaged(other.damaged),
+	defense_curl(other.defense_curl),
+	destiny_bond(other.destiny_bond),
+	endure(other.endure),
+	flash_fire(other.flash_fire),
+	flinch(other.flinch),
+	focus_energy(other.focus_energy),
+	fully_paralyzed(other.fully_paralyzed),
+	gastro_acid(other.gastro_acid),
+	hitself(other.hitself),
+	identified(other.identified),
+	imprison(other.imprison),
+	ingrain(other.ingrain),
+	leech_seed(other.leech_seed),
+	loaf(other.loaf),
+	lock_on(other.lock_on),
+	me_first(other.me_first),
+	minimize(other.minimize),
+	miss(other.miss),
+	moved(other.moved),
+	mud_sport(other.mud_sport),
+	nightmare(other.nightmare),
+	pass(other.pass),
+	power_trick(other.power_trick),
+	protect(other.protect),
+	recharging(other.recharging),
+	replacing(other.replacing),
+	roost(other.roost),
+	shed_skin(other.shed_skin),
+	torment(other.torment),
+	trapped(other.trapped),
+	u_turning(other.u_turning),
+	water_sport(other.water_sport),
+	counter(other.counter),
+	light_screen(other.light_screen),
+	lucky_chant(other.lucky_chant),
+	mist(other.mist),
+	reflect(other.reflect),
+	safeguard(other.safeguard),
+	tailwind(other.tailwind),
+	wish(other.wish),
+	spikes(other.spikes),
+	toxic_spikes(other.toxic_spikes),
+	stealth_rock(other.stealth_rock),
+	called_move(other.called_move),
+	me(other.me) {
+	pokemon.for_each([& shared_moves](Pokemon & p) {
+		p.move.update_shared_moves(shared_moves);
+	});
+}
+
+Team::Team(Team && other):
+	pokemon(std::move(other.pokemon)),
+	shared_moves(std::move(other.shared_moves)),
+	damage(std::move(other.damage)),
+	bide_damage(std::move(other.bide_damage)),
+	chance_to_hit(std::move(other.chance_to_hit)),
+	stage(std::move(other.stage)),
+	vanish(std::move(other.vanish)),
+	bide(std::move(other.bide)),
+	confused(std::move(other.confused)),
+	embargo(std::move(other.embargo)),
+	encore(std::move(other.encore)),
+	heal_block(std::move(other.heal_block)),
+	magnet_rise(std::move(other.magnet_rise)),
+	partial_trap(std::move(other.partial_trap)),
+	perish_song(std::move(other.perish_song)),
+	rampage(std::move(other.rampage)),
+	slow_start(std::move(other.slow_start)),
+	stockpile(std::move(other.stockpile)),
+	substitute(std::move(other.substitute)),
+	taunt(std::move(other.taunt)),
+	toxic(std::move(other.toxic)),
+	uproar(std::move(other.uproar)),
+	yawn(std::move(other.yawn)),
+	aqua_ring(std::move(other.aqua_ring)),
+	attract(std::move(other.attract)),
+	awaken(std::move(other.awaken)),
+	ch(std::move(other.ch)),
+	charge(std::move(other.charge)),
+	curse(std::move(other.curse)),
+	damaged(std::move(other.damaged)),
+	defense_curl(std::move(other.defense_curl)),
+	destiny_bond(std::move(other.destiny_bond)),
+	endure(std::move(other.endure)),
+	flash_fire(std::move(other.flash_fire)),
+	flinch(std::move(other.flinch)),
+	focus_energy(std::move(other.focus_energy)),
+	fully_paralyzed(std::move(other.fully_paralyzed)),
+	gastro_acid(std::move(other.gastro_acid)),
+	hitself(std::move(other.hitself)),
+	identified(std::move(other.identified)),
+	imprison(std::move(other.imprison)),
+	ingrain(std::move(other.ingrain)),
+	leech_seed(std::move(other.leech_seed)),
+	loaf(std::move(other.loaf)),
+	lock_on(std::move(other.lock_on)),
+	me_first(std::move(other.me_first)),
+	minimize(std::move(other.minimize)),
+	miss(std::move(other.miss)),
+	moved(std::move(other.moved)),
+	mud_sport(std::move(other.mud_sport)),
+	nightmare(std::move(other.nightmare)),
+	pass(std::move(other.pass)),
+	power_trick(std::move(other.power_trick)),
+	protect(std::move(other.protect)),
+	recharging(std::move(other.recharging)),
+	replacing(std::move(other.replacing)),
+	roost(std::move(other.roost)),
+	shed_skin(std::move(other.shed_skin)),
+	torment(std::move(other.torment)),
+	trapped(std::move(other.trapped)),
+	u_turning(std::move(other.u_turning)),
+	water_sport(std::move(other.water_sport)),
+	counter(std::move(other.counter)),
+	light_screen(std::move(other.light_screen)),
+	lucky_chant(std::move(other.lucky_chant)),
+	mist(std::move(other.mist)),
+	reflect(std::move(other.reflect)),
+	safeguard(std::move(other.safeguard)),
+	tailwind(std::move(other.tailwind)),
+	wish(std::move(other.wish)),
+	spikes(std::move(other.spikes)),
+	toxic_spikes(std::move(other.toxic_spikes)),
+	stealth_rock(std::move(other.stealth_rock)),
+	called_move(std::move(other.called_move)),
+	me(std::move(other.me)) {
+	pokemon.for_each([& shared_moves](Pokemon & p) {
+		p.move.update_shared_moves(shared_moves);
+	});
+}
+
+void Team::add_pokemon (Species name) {
+	pokemon.add(Pokemon(name, shared_moves));
+}
+
+void Team::add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender) {
+	pokemon.add(name, nickname, level, gender, shared_moves);
+}
+
+void Team::remove_pokemon () {
+	pokemon.remove_active();
+	if (pokemon.is_empty())
+		return;
+	shared_moves.remove_switch();
+}
+
 bool Team::can_be_phazed () const {
 	return !ingrain and !pokemon().ability.blocks_phazing() and pokemon.size() > 1;
 }

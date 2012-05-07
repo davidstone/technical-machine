@@ -26,6 +26,7 @@
 #include "species.hpp"
 
 namespace technicalmachine {
+class SharedMoves;
 
 class PokemonCollection : public detail::BaseCollection<Pokemon> {
 	public:
@@ -47,10 +48,11 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		uint8_t real_size () const;
 		bool seen (Species const name);
 		void add (Pokemon const & pokemon);
-		void add (Species name, std::string const & nickname, unsigned level, Gender gender);
+		void add (Species name, std::string const & nickname, unsigned level, Gender gender, SharedMoves & shared_moves);
 		void remove_active ();
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
 		void for_each_replacement (std::function<void(void)> const & f);
+		unsigned count_if (std::function<bool(Pokemon const &)> const & f) const;
 	private:
 		void decrement_real_size ();
 		// If a Pokemon switches / faints, what Pokemon should replace it?

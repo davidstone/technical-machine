@@ -23,41 +23,57 @@
 #include <vector>
 #include "move.hpp"
 #include "reorder_moves.hpp"
+#include "shared_moves.hpp"
 
 namespace technicalmachine {
 
-MoveCollection::MoveCollection (unsigned const team_size) {
-	container.reserve ((team_size > 1) ? team_size + 1 : 1);
-	add (Move (Move::STRUGGLE, 0));
-	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team_size > 1) {
-		for (unsigned count = 0; count != team_size; ++count) {
-			add (Move (Move::from_replacement (count), 0));
-		}
-	}
+MoveCollection::MoveCollection (SharedMoves & s):
+	detail::BaseCollection<Move, MoveContainer>(MoveContainer (s)) {
 }
 
 unsigned MoveCollection::number_of_regular_moves () const {
-	unsigned n = 0;
-	while (operator()(n).name != Move::STRUGGLE)
-		++n;
-	return n;
+	return container.number_of_regular_moves();
 }
 
+void MoveCollection::for_each (std::function<void(Move const &)> const & f) const {
+	container.for_each_regular_move(f);
+	container.for_each_shared(f);
+}
+void MoveCollection::for_each (std::function<void(Move &)> const & f) {
+	container.for_each_regular_move(f);
+	container.for_each_shared(f);
+}
 // Skips Struggle and switches
 void MoveCollection::for_each_regular_move (std::function<void(Move const &)> const & f) const {
-	for (auto move = container.cbegin(); move->name != Move::STRUGGLE; ++move) {
-		f (*move);
-	}
+	container.for_each_regular_move(f);
 }
 void MoveCollection::for_each_regular_move (std::function<void(Move &)> const & f) {
-	for (auto move = container.begin(); move->name != Move::STRUGGLE; ++move) {
-		f (*move);
+	container.for_each_regular_move(f);
+}
+
+bool MoveCollection::set_index_if_found(Move::Moves name) {
+	for (uint8_t new_index = 0; new_index != number_of_regular_moves(); ++new_index) {
+		if (unchecked_value(new_index).name == name) {
+			set_index(new_index);
+			return true;
+		}
 	}
+	return false;
+}
+
+Move const * MoveCollection::find_if (std::function<bool(Move const &)> const & condition) const {
+	return container.find_if(condition);
+}
+Move * MoveCollection::find_if (std::function<bool(Move &)> const & condition) {
+	return container.find_if(condition);
 }
 
 bool MoveCollection::regular_move_exists (std::function<bool(Move const &)> const & condition) const {
 	return find_if(condition) != nullptr;
+}
+
+bool MoveCollection::regular_move_exists (Move::Moves name) const {
+	return regular_move_exists([name](Move const & move){ return move.name == name; });
 }
 
 bool MoveCollection::a_regular_move_is_selectable () const {
@@ -73,36 +89,16 @@ Move::Moves MoveCollection::name_of_last_used_move () const {
 	return (move_ptr != nullptr) ? move_ptr->name : Move::END;
 }
 
-Move const * MoveCollection::find_if (std::function<bool(Move const &)> const & condition) const {
-	for (auto move = container.cbegin(); move->name != Move::STRUGGLE; ++move) {
-		if (condition (*move))
-			return &*move;
-	}
-	return nullptr;
-}
-Move * MoveCollection::find_if (std::function<bool(Move &)> const & condition) {
-	for (auto move = container.begin(); move->name != Move::STRUGGLE; ++move) {
-		if (condition (*move))
-			return &*move;
-	}
-	return nullptr;
-}
-
 std::vector<std::pair<int64_t, size_t>> MoveCollection::create_ordered_container (bool const ai) const {
-	return reorder (container, ai);
-}
-
-std::vector<Move::Moves> MoveCollection::legal_switches (uint8_t const pokemon_index) const {
-	std::vector<Move::Moves> switches;
-	for (unsigned n = 0; n != container.size(); ++n) {
-		if (n != pokemon_index)
-			switches.push_back (Move::from_replacement(n));
-	}
-	return switches;
+	return reorder (container.concatenate(), ai);
 }
 
 uint8_t MoveCollection::size () const {
 	return container.size();
+}
+
+void MoveCollection::update_shared_moves(SharedMoves & s) {
+	container.update_shared_moves(s);
 }
 
 }	// namespace technicalmachine

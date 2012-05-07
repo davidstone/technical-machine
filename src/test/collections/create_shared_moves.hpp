@@ -1,4 +1,4 @@
-// Collection of move random effects with index indicating current effect
+// Basis for some move tests
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,26 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
+#ifndef TEST_CREATE_SHARED_MOVES_HPP_
+#define TEST_CREATE_SHARED_MOVES_HPP_
 
-#include "collection.hpp"
-#include <cstdint>
-#include <functional>
-#include "variable.hpp"
+#include <vector>
+#include "../../move.hpp"
 
 namespace technicalmachine {
 
-class VariableCollection : public detail::BaseCollection<Variable> {
-	public:
-		// Has to be uint16_t instead of Move::Moves to prevent a circular
-		// dependency
-		VariableCollection (uint16_t move, unsigned foe_size);
-		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-		void for_each_index (std::function<void(void)> const & f);
-		void remove_phazing (uint8_t foe_size);
-		void set_magnitude (unsigned const magnitude);
-};
+inline std::vector<Move> create_shared_moves(unsigned const team_size) {
+	std::vector<Move> shared ({ Move(Move::STRUGGLE, 0) });
+	if (team_size != 1) {
+		for (unsigned n = 0; n != team_size; ++n)
+			shared.push_back(Move(Move::from_replacement(n), 0));
+	}
+	return shared;
+}
+
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_
+#endif	// TEST_CREATE_SHARED_MOVES_HPP_

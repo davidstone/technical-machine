@@ -1,4 +1,4 @@
-// Collection of moves with index indicating current move
+// Moves specific to one Pokemon and shared moves (Struggle and switches)
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,42 +16,44 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_COLLECTION_HPP_
-#define MOVE_COLLECTION_HPP_
+#ifndef MOVE_CONTAINER_HPP_
+#define MOVE_CONTAINER_HPP_
 
-#include "collection.hpp"
 #include <cstdint>
 #include <functional>
-#include <utility>
 #include <vector>
 #include "move.hpp"
-#include "move_container.hpp"
 
 namespace technicalmachine {
 class SharedMoves;
 
-class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
+class MoveContainer {
 	public:
-		MoveCollection (SharedMoves & s);
-		unsigned number_of_regular_moves () const;
-		void for_each (std::function<void(Move const &)> const & f) const;
-		void for_each (std::function<void(Move &)> const & f);
+		MoveContainer(SharedMoves & s);
+		MoveContainer(MoveContainer const & other);
+		MoveContainer(MoveContainer && other);
+		MoveContainer & operator=(MoveContainer const & other);
+		MoveContainer & operator=(MoveContainer && other);
+		Move const & operator[](uint8_t index) const;
+		Move & operator[](uint8_t index);
+		bool empty() const;
+		void push_back(Move const & move);
 		// Skips Struggle and switches
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);
-		bool set_index_if_found(Move::Moves name);
-		// nullptr if not found
+		void for_each_shared (std::function<void(Move const &)> const & f) const;
+		void for_each_shared (std::function<void(Move &)> const & f);
+		uint8_t size() const;
+		uint8_t number_of_regular_moves() const;
+		std::vector<Move> concatenate() const;
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
 		Move * find_if (std::function<bool(Move &)> const & condition);
-		bool regular_move_exists (std::function<bool(Move const &)> const & condition) const;
-		bool regular_move_exists (Move::Moves name) const;
-		bool a_regular_move_is_selectable () const;
-		// Move::END if none
-		Move::Moves name_of_last_used_move () const;
-		std::vector<std::pair<int64_t, size_t>> create_ordered_container (bool ai) const;
-		uint8_t size () const;
-		uint8_t regular_size () const;
 		void update_shared_moves(SharedMoves & s);
+		friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
+	private:
+		std::vector<Move> regular;
+		std::vector<Move> * shared;
 };
+
 }	// namespace technicalmachine
-#endif	// MOVE_COLLECTION_HPP_
+#endif	// MOVE_CONTAINER_HPP_

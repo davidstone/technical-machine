@@ -73,7 +73,7 @@ namespace {
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END] [Species::END]) {
 	while (team.pokemon.size() < team.pokemon.real_size()) {
 		Species const name = get_most_likely_pokemon (estimate);
-		team.pokemon.add (Pokemon (name, team.pokemon.real_size()));
+		team.add_pokemon (name);
 		if (team.pokemon.size() == team.pokemon.real_size())
 			break;
 		for (unsigned n = 0; n != Species::END; ++n)
@@ -94,25 +94,14 @@ Species get_most_likely_pokemon (std::array<float, Species::END> const & estimat
 }
 
 void predict_move (Pokemon & member, std::vector<Move::Moves> const & detailed, unsigned size) {
-	// Pokemon I've already seen will have their moveset filled out with
-	// Struggle and Switch# for each Pokemon still alive in their team. This
-	// makes sure that those Pokemon get all of their moves predicted.
-	unsigned n = member.move.number_of_regular_moves();
-	unsigned const max_moves = Move::max_regular_moves() + member.move.size() - n;
 	for (Move::Moves const name : detailed) {
 		Move const * const move_ptr = member.move.find_if([name](Move const & move) {
 			return move.name == name;
 		});
 		if (move_ptr == nullptr) {
-			// I use n here so that already seen moves (guaranteed to exist)
-			// are listed earlier in the move set. I increment n so that moves
-			// are listed in the order of their probability for predicted moves
-			// as well. This also has the advantage of requiring fewer shifts
-			// of my vector.
-			member.move.insert (n, Move (name, 3, size));
-			if (member.move.size() == max_moves)
+			member.move.add (Move (name, 3, size));
+			if (member.move.number_of_regular_moves() == Move::max_regular_moves())
 				break;
-			++n;
 		}
 	}
 }

@@ -62,10 +62,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_string (pokemon.item.to_string ());
 	write_string (pokemon.ability.to_string ());
 	write_int (pokemon.nature.name);
-	unsigned number_of_moves = 0;
-	while (pokemon.move(number_of_moves).name != Move::STRUGGLE)
-		++number_of_moves;
-	write_int (number_of_moves);
+	write_int (pokemon.move.number_of_regular_moves());
 	pokemon.move.for_each_regular_move([&](Move const & move) {
 		write_int (move_to_id (move.name));
 		write_int (3);		// Replace this with real PP-ups logic later

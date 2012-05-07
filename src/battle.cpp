@@ -142,9 +142,9 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 	}
 
 	active.moved = true;
-	if (!active.pokemon.at_replacement().find_move (move_name)) {
+	if (!active.pokemon.at_replacement().move.set_index_if_found(move_name)) {
 		Move move (move_name, 3, inactive.pokemon.real_size());
-		active.pokemon.at_replacement().move.insert (move);
+		active.pokemon.at_replacement().move.add(move);
 	}
 	active.pokemon.at_replacement().move().variable.reset_index();
 	if (active.pokemon.at_replacement().move().basepower != 0)
@@ -166,7 +166,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	uint8_t const replacement = active.pokemon.replacement();
 	
 	if (!active.pokemon.seen (species)) {
-		active.pokemon.add (species, nickname, level, gender);
+		active.add_pokemon (species, nickname, level, gender);
 		active.pokemon.at_replacement ().new_hp = max_damage_precision ();
 	}
 
