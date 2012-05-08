@@ -86,7 +86,7 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 	if (execute) {
 		if (user.flinch) {
 			if (user.pokemon().ability.boosts_speed_when_flinched ())
-				Stat::boost (user.stage [Stat::SPE], 1);
+				user.stage.boost(Stat::SPE, 1);
 			execute = false;
 		}
 		else if (block2 (user, move, weather) or user.fully_paralyzed) {

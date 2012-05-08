@@ -60,7 +60,6 @@ Team::Team () :
 	damage (0),
 	bide_damage (0),
 	chance_to_hit (100),
-	stage ({{}}),
 	vanish (LANDED),
 	bide (0),
 	confused (0),
@@ -142,7 +141,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	damage (0),
 	bide_damage (0),
 	chance_to_hit (100),
-	stage ({{}}),
 	vanish (LANDED),
 	bide (0),
 	confused (0),
@@ -437,16 +435,10 @@ uint64_t Team::hash () const {
 	// hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
 	constexpr unsigned max_size = 6;
-	return static_cast<unsigned> (pokemon.real_size() - 1) + max_size *
+	return static_cast<uint64_t> (pokemon.real_size() - 1) + max_size *
 			(pokemon.index() + pokemon.real_size() *
 			(vanish + Vanish::END_VANISH *
-			(static_cast<unsigned> (stage [Stat::ATK] + 6) + (6 + 6 + 1) *
-			(static_cast<unsigned> (stage [Stat::DEF] + 6) + (6 + 6 + 1) *
-			(static_cast<unsigned> (stage [Stat::SPA] + 6) + (6 + 6 + 1) *
-			(static_cast<unsigned> (stage [Stat::SPD] + 6) + (6 + 6 + 1) *
-			(static_cast<unsigned> (stage [Stat::SPE] + 6) + (6 + 6 + 1) *
-			(static_cast<unsigned> (stage [Stat::ACC] + 6) + (6 + 6 + 1) *
-			(static_cast<unsigned> (stage [Stat::EVA] + 6) + (6 + 6 + 1) *
+			(stage.hash() + Stage::max_hash() *
 			(((bide_damage < 714 / 2) ? bide_damage : 714u / 2) + (714 / 2 + 1) *
 			(bide + 3 *
 			(confused + 5 *
@@ -498,7 +490,7 @@ uint64_t Team::hash () const {
 			(spikes + 4 *
 			(toxic_spikes + 3 *
 			(stealth_rock + 2 *
-			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 void Team::load (std::string const & name, unsigned other_size) {

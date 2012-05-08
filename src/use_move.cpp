@@ -92,8 +92,8 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const
 	if (target.pokemon().ability.blocks_sound_moves() and move.is_sound_based() and
 			!(move.name == Move::HEAL_BELL or move.name == Move::PERISH_SONG))
 		return 0;
-	calculate_speed (user, weather);
-	calculate_speed (target, weather);
+	Stat::calculate_speed (user, weather);
+	Stat::calculate_speed (target, weather);
 	move_power (user, target, weather);
 	unsigned damage = 0;
 	
@@ -174,20 +174,20 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::PSYCHIC:
 		case Move::SHADOW_BALL:
 			if (move.variable().effect_activates())
-				Stat::boost (target.stage [Stat::SPD], -1);
+				target.stage.boost(Stat::SPD, -1);
 			break;
 		case Move::ACID_ARMOR:
 		case Move::BARRIER:
 		case Move::IRON_DEFENSE:
-			Stat::boost (user.stage [Stat::DEF], 2);
+			user.stage.boost(Stat::DEF, 2);
 			break;
 		case Move::ACUPRESSURE:
 			// TODO: this doesn't properly account for stats maxing out
-			Stat::boost (user.stage [move.variable().value()], 2);
+			user.stage.boost(static_cast<Stat::Stats>(move.variable().value()), 2);
 			break;
 		case Move::AGILITY:
 		case Move::ROCK_POLISH:
-			Stat::boost (user.stage [Stat::SPE], 2);
+			user.stage.boost(Stat::SPE, 2);
 			break;
 		case Move::AIR_SLASH:
 		case Move::ASTONISH:
@@ -212,15 +212,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				target.flinch = true;
 			break;
 		case Move::AMNESIA:
-			Stat::boost (user.stage [Stat::SPD], 2);
+			user.stage.boost(Stat::SPD, 2);
 			break;
 		case Move::ANCIENTPOWER:
 		case Move::OMINOUS_WIND:
 		case Move::SILVER_WIND:
-			if (move.variable().effect_activates()) {
-				for (Stat::Stats stat = Stat::ATK; stat <= Stat::SPE; stat = static_cast <Stat::Stats> (stat + 1))
-					Stat::boost (user.stage [stat], 1);
-			}
+			if (move.variable().effect_activates())
+				user.stage.boost_regular(1);
 			break;
 		case Move::AQUA_RING:
 			user.aqua_ring = true;
@@ -229,7 +227,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			if (!move.variable().effect_activates())
 				break;
 		case Move::GROWL:
-			Stat::boost (target.stage [Stat::ATK], -1);
+			target.stage.boost(Stat::ATK, -1);
 			break;
 		case Move::AROMATHERAPY: {
 			user.pokemon.for_each ([](Pokemon & pokemon) {
@@ -247,7 +245,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::BELLY_DRUM:
 			if (user.pokemon().hp.stat > user.pokemon().hp.max / 2 and user.pokemon().hp.stat > 1) {
 				user.pokemon().hp.stat -= user.pokemon().hp.max / 2;
-				user.stage [Stat::ATK] = 6;
+				user.stage.maximize_attack();
 			}
 			break;
 		case Move::BIDE:
@@ -346,38 +344,36 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::MUD_SHOT:
 		case Move::ROCK_TOMB:
 		case Move::STRING_SHOT:
-			Stat::boost (target.stage [Stat::SPE], -1);
+			target.stage.boost(Stat::SPE, -1);
 			break;
 		case Move::BUG_BITE:			// Fix
 		case Move::PLUCK:
 			break;
 		case Move::BULK_UP:
-			Stat::boost (user.stage [Stat::ATK], 1);
-			Stat::boost (user.stage [Stat::DEF], 1);
+			user.stage.boost_physical(1);
 			break;
 		case Move::CALM_MIND:
-			Stat::boost (user.stage [Stat::SPA], 1);
-			Stat::boost (user.stage [Stat::SPD], 1);
+			user.stage.boost_special(1);
 			break;
 		case Move::CAMOUFLAGE:
 			break;
 		case Move::CAPTIVATE:
 			if (user.pokemon().gender.multiplier (target.pokemon().gender) == -1)
-				Stat::boost (target.stage [Stat::SPD], -2);
+				target.stage.boost(Stat::SPD, -2);
 			break;
 		case Move::CHARGE:
 			user.charge = true;
-			Stat::boost (user.stage [Stat::SPD], 1);
+			user.stage.boost(Stat::SPD, 1);
 			break;
 		case Move::CHARGE_BEAM:
 			if (!move.variable().effect_activates())
 				break;
 		case Move::GROWTH:
-			Stat::boost (user.stage [Stat::SPA], 1);
+			user.stage.boost(Stat::SPA, 1);
 			break;
 		case Move::CHARM:
 		case Move::FEATHERDANCE:
-			Stat::boost (target.stage [Stat::ATK], -2);
+			target.stage.boost(Stat::ATK, -2);
 			break;
 		case Move::CHATTER:
 			if (user.pokemon().name != CHATOT)
@@ -399,8 +395,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				target.confused = move.variable().value();
 			break;
 		case Move::CLOSE_COMBAT:
-			Stat::boost (user.stage [Stat::ATK], -1);
-			Stat::boost (user.stage [Stat::DEF], -1);
+			user.stage.boost_physical(-1);
 			break;
 		case Move::CONVERSION:		// Fix
 			break;
@@ -408,8 +403,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::COSMIC_POWER:
 		case Move::DEFEND_ORDER:
-			Stat::boost (user.stage [Stat::DEF], 1);
-			Stat::boost (user.stage [Stat::SPD], 1);
+			user.stage.boost_defensive(1);
 			break;
 		case Move::CRUNCH:
 		case Move::CRUSH_CLAW:
@@ -419,11 +413,11 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				break;
 		case Move::LEER:
 		case Move::TAIL_WHIP:
-			Stat::boost (target.stage [Stat::DEF], -1);
+			target.stage.boost(Stat::DEF, -1);
 			break;
 		case Move::COTTON_SPORE:
 		case Move::SCARY_FACE:
-			Stat::boost (target.stage [Stat::SPE], -2);
+			target.stage.boost(Stat::SPE, -2);
 			break;
 		case Move::COUNTER:
 			if (target.pokemon().move().physical)
@@ -458,9 +452,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				}
 			}
 			else {
-				Stat::boost (user.stage [Stat::ATK], 1);
-				Stat::boost (user.stage [Stat::DEF], 1);
-				Stat::boost (user.stage [Stat::SPE], -1);
+				user.stage.boost_physical(1);
+				user.stage.boost(Stat::SPE, -1);
 			}
 			break;
 		case Move::DARK_VOID:
@@ -473,14 +466,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Status::sleep (user.pokemon(), target.pokemon(), weather);
 			break;
 		case Move::DEFENSE_CURL:
-			Stat::boost (user.stage [Stat::DEF], 1);
+			user.stage.boost(Stat::DEF, 1);
 			user.defense_curl = true;
 			break;
 		case Move::DEFOG:
 			weather.fog = false;
 		// Fall through
 		case Move::SWEET_SCENT:
-			Stat::boost (target.stage [Stat::EVA], -1);
+			target.stage.boost(Stat::EVA, -1);
 			break;
 		case Move::DESTINY_BOND:
 			user.destiny_bond = true;
@@ -502,17 +495,17 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::DOUBLE_TEAM:
 		case Move::MINIMIZE:
-			Stat::boost (user.stage [Stat::EVA], 1);
+			user.stage.boost(Stat::EVA, 1);
 			break;
 		case Move::DRACO_METEOR:
 		case Move::LEAF_STORM:
 		case Move::OVERHEAT:
 		case Move::PSYCHO_BOOST:
-			Stat::boost (user.stage [Stat::SPA], -2);
+			user.stage.boost(Stat::SPA, -2);
 			break;
 		case Move::DRAGON_DANCE:
-			Stat::boost (user.stage [Stat::ATK], 1);
-			Stat::boost (user.stage [Stat::SPE], 1);
+			user.stage.boost(Stat::ATK, 1);
+			user.stage.boost(Stat::SPE, 1);
 			break;
 		case Move::EMBARGO:
 			target.embargo = 5;
@@ -533,7 +526,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				break;
 		case Move::FAKE_TEARS:
 		case Move::METAL_SOUND:
-			Stat::boost (target.stage [Stat::SPD], -2);
+			target.stage.boost(Stat::SPD, -2);
 			break;
 		case Move::FEINT:
 			target.protect = false;
@@ -568,10 +561,10 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::MUD_SLAP:
 		case Move::SAND_ATTACK:
 		case Move::SMOKESCREEN:
-			Stat::boost (target.stage [Stat::ACC], -1);
+			target.stage.boost(Stat::ACC, -1);
 			break;
 		case Move::FLATTER:
-			Stat::boost (target.stage [Stat::SPA], 1);
+			target.stage.boost(Stat::SPA, 1);
 			if (!target.pokemon().ability.blocks_confusion() and !target.confused)
 				target.confused = move.variable().value();
 			break;
@@ -600,25 +593,24 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::GRUDGE:		// Fix
 			break;
 		case Move::GUARD_SWAP:
-			std::swap (user.stage [Stat::DEF], target.stage [Stat::DEF]);
-			std::swap (user.stage [Stat::SPD], target.stage [Stat::SPD]);
+			Stage::swap_defensive(user.stage, target.stage);
 			break;
 		case Move::HAIL:
 			weather.set_hail (user.pokemon().item.extends_hail());
 			break;
 		case Move::HAMMER_ARM:
-			Stat::boost (user.stage [Stat::SPE], -1);
+			user.stage.boost(Stat::SPE, -1);
 			break;
 		case Move::STEEL_WING:
 			if (!move.variable().effect_activates())
 				break;
 		case Move::HARDEN:
 		case Move::WITHDRAW:
-			Stat::boost (user.stage [Stat::DEF], 1);
+			user.stage.boost(Stat::DEF, 1);
 			break;
 		case Move::HAZE:
-			std::fill (user.stage.begin(), user.stage.end(), 0);
-			std::fill (target.stage.begin(), target.stage.end(), 0);
+			user.stage.reset();
+			target.stage.reset();
 			break;
 		case Move::HEAD_SMASH:
 			recoil (user.pokemon(), damage, 2);
@@ -647,8 +639,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::HEALING_WISH:		// Fix
 			break;
 		case Move::HEART_SWAP:
-			for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
-				std::swap (user.stage [stat], target.stage [stat]);
+			using std::swap;
+			swap(user.stage, target.stage);
 			break;
 		case Move::HI_JUMP_KICK:		// Fix
 		case Move::JUMP_KICK:
@@ -659,7 +651,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			if (!move.variable().effect_activates())
 				break;
 		case Move::SHARPEN:
-			Stat::boost (user.stage [Stat::ATK], 1);
+			user.stage.boost(Stat::ATK, 1);
 			break;
 		case Move::ICE_BALL:		// Fix
 		case Move::ROLLOUT:
@@ -717,8 +709,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::ME_FIRST:		// Fix
 			break;
 		case Move::MEMENTO:
-			Stat::boost (target.stage [Stat::ATK], -2);
-			Stat::boost (target.stage [Stat::SPA], -2);
+			target.stage.boost_offensive(-2);
 			user.pokemon().hp.stat = 0;
 			break;
 		case Move::METAL_BURST:
@@ -738,7 +729,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::MIST_BALL:
 			if (move.variable().effect_activates())
-				Stat::boost (target.stage [Stat::SPA], -1);
+				target.stage.boost(Stat::SPA, -1);
 			break;
 		case Move::MOONLIGHT:
 		case Move::MORNING_SUN:
@@ -755,7 +746,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::NASTY_PLOT:
 		case Move::TAIL_GLOW:
-			Stat::boost (user.stage [Stat::SPA], 2);
+			user.stage.boost(Stat::SPA, 2);
 			break;
 		case Move::NIGHTMARE:
 			target.nightmare = true;
@@ -787,8 +778,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Status::poison_toxic (user.pokemon(), target.pokemon(), weather);
 			break;
 		case Move::POWER_SWAP:
-			std::swap (user.stage [Stat::ATK], target.stage [Stat::ATK]);
-			std::swap (user.stage [Stat::SPA], target.stage [Stat::SPA]);
+			Stage::swap_offensive(user.stage, target.stage);
 			break;
 		case Move::POWER_TRICK:
 			user.power_trick = !user.power_trick;
@@ -856,7 +846,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			weather.set_sand (user.pokemon().item.extends_sand());
 			break;
 		case Move::SCREECH:
-			Stat::boost (target.stage [Stat::DEF], -2);
+			target.stage.boost(Stat::DEF, -2);
 			break;
 		case Move::SHADOW_FORCE:
 			user.vanish = (user.vanish == LANDED) ? SHADOW_FORCED : LANDED;
@@ -911,11 +901,10 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			weather.set_sun (user.pokemon().item.extends_sun());
 			break;
 		case Move::SUPERPOWER:
-			Stat::boost (user.stage [Stat::ATK], -1);
-			Stat::boost (user.stage [Stat::DEF], -1);
+			user.stage.boost_physical(-1);
 			break;
 		case Move::SWAGGER:
-			Stat::boost (target.stage [Stat::ATK], 2);
+			target.stage.boost(Stat::ATK, 2);
 			if (target.pokemon().ability.name != Ability::OWN_TEMPO and !target.confused)
 				target.confused = move.variable().value();
 		case Move::SWALLOW:		// Fix
@@ -931,11 +920,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::SWITCHEROO:
 		case Move::TRICK:
-			if (!user.pokemon().item.blocks_trick () and !target.pokemon().item.blocks_trick())
-				std::swap (user.pokemon().item, target.pokemon().item);
+			if (!user.pokemon().item.blocks_trick () and !target.pokemon().item.blocks_trick()) {
+				using std::swap;
+				swap (user.pokemon().item, target.pokemon().item);
+			}
 			break;
 		case Move::SWORDS_DANCE:
-			Stat::boost (user.stage [Stat::ATK], 2);
+			user.stage.boost(Stat::ATK, 2);
 			break;
 		case Move::TAILWIND:
 			if (!user.tailwind)
@@ -965,8 +956,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			}
 			break;
 		case Move::TICKLE:
-			Stat::boost (target.stage [Stat::ATK], -1);
-			Stat::boost (target.stage [Stat::DEF], -1);
+			target.stage.boost_physical(-1);
 			break;
 		case Move::TORMENT:
 			target.torment = true;

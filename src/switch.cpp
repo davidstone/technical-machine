@@ -18,6 +18,7 @@
 
 #include "switch.hpp"
 
+#include <algorithm>
 #include <utility>
 #include <vector>
 
@@ -84,8 +85,7 @@ void reset_variables (Team & team) {
 		team.embargo = 0;
 		team.magnet_rise = 0;
 		team.perish_song = 0;
-		for (Stat::Stats stat = Stat::ATK; stat != Stat::END; stat = static_cast <Stat::Stats> (stat + 1))
-			team.stage [stat] = 0;
+		team.stage.reset();
 		team.substitute = 0;
 	}
 	team.attract = false;

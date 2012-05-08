@@ -58,13 +58,24 @@ Team create_max_damage_special_attacker () {
 Team create_max_damage_physical_defender () {
 	Team defender;
 	defender.add_pokemon(Species::COMBEE);
-
+	Pokemon & d = defender.pokemon();
+	d.level = 1;
+	d.def.iv = 0;
+	d.def.ev = 0;
+	defender.stage.boost(Stat::DEF, -6);
 	return defender;
 }
 
 Team create_max_damage_special_defender () {
 	Team defender;
 	defender.add_pokemon(Species::PARAS);
+	Pokemon & d = defender.pokemon();
+	d.ability.name = Ability::DRY_SKIN;
+
+	d.level = 1;
+	d.spd.iv = 0;
+	d.spd.ev = 0;
+	defender.stage.boost(Stat::SPD, -6);
 
 	return defender;
 }
@@ -118,7 +129,7 @@ void physical_damage_test () {
 	a.nature.name = Nature::IMPISH;
 	attacker.power_trick = true;
 	a.ability.name = Ability::PURE_POWER;
-	Stat::boost (attacker.stage [Stat::ATK], 6);
+	attacker.stage.maximize_attack();
 	calculate_attacking_stat (attacker, weather);
 
 	a.item.name = Item::METRONOME;
@@ -126,11 +137,6 @@ void physical_damage_test () {
 	attacker.ch = true;
 
 	Team defender = create_max_damage_physical_defender ();
-	Pokemon & d = defender.pokemon();
-	d.level = 1;
-	d.def.iv = 0;
-	d.def.ev = 0;
-	Stat::boost (defender.stage [Stat::DEF], -6);
 	calculate_defending_stat (attacker, defender, weather);
 	
 	move_power (attacker, defender, weather);
@@ -153,7 +159,7 @@ void special_damage_test () {
 
 	a.spa.ev = 252 / 4;
 	a.nature.name = Nature::MODEST;
-	Stat::boost (attacker.stage [Stat::SPA], 6);
+	attacker.stage.boost(Stat::SPA, 6);
 	calculate_attacking_stat (attacker, weather);
 	
 	a.item.name = Item::METRONOME;
@@ -164,15 +170,7 @@ void special_damage_test () {
 	attacker.flash_fire = true;
 
 	Team defender = create_max_damage_special_defender ();
-	Pokemon & d = defender.pokemon();
-
-	d.level = 1;
-	d.spd.iv = 0;
-	d.spd.ev = 0;
-	Stat::boost (defender.stage [Stat::SPD], -6);
 	calculate_defending_stat (attacker, defender, weather);
-
-	d.ability.name = Ability::DRY_SKIN;
 
 	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;

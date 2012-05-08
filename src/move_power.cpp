@@ -130,12 +130,9 @@ uint16_t calculate_base_power (Pokemon const & attacker, Team const & defender, 
 			assert (!attacker.move().variable().present_heals());
 			return attacker.move().variable().value();
 		case Move::PUNISHMENT: {
-			uint16_t base_power = 60;
-			for (auto stage : defender.stage) {
-				if (stage > 0)
-					base_power += 20 * stage;
-			}
-			return (base_power <= 200) ? base_power : 200;
+			auto const positive_values = [](int const stage) { return std::max(stage, 0); };
+			uint16_t const base_power = 60 + 20 * defender.stage.accumulate(positive_values);
+			return std::min(base_power, static_cast<uint16_t>(200));
 		}
 		case Move::RETURN:
 			return attacker.happiness * 2 / 5;

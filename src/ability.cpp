@@ -262,14 +262,13 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 		case SLOW_START:
 			switcher.slow_start = 5;
 			break;
-		case DOWNLOAD:
-			calculate_defense (other);
-			calculate_special_defense (other, weather);
-			if (other.pokemon().def.stat >= other.pokemon().spd.stat)
-				Stat::boost (switcher.stage [Stat::SPA], 1);
-			else
-				Stat::boost (switcher.stage [Stat::ATK], 1);
+		case DOWNLOAD: {
+			Pokemon const & pokemon = other.pokemon();
+			Stat::calculate_defense (other);
+			Stat::calculate_special_defense (other, weather);
+			switcher.stage.boost((pokemon.def.stat >= pokemon.spd.stat) ? Stat::SPA : Stat::ATK, 1);
 			break;
+		}
 		case DRIZZLE:
 			weather.set_rain (Weather::Duration::permanent);
 			break;
@@ -279,7 +278,7 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 		case FORECAST:	// TODO: fix this
 			break;
 		case INTIMIDATE:
-			Stat::boost (other.stage [Stat::ATK], -1);
+			other.stage.boost(Stat::ATK, -1);
 			break;
 		case SAND_STREAM:
 			weather.set_sand (Weather::Duration::permanent);

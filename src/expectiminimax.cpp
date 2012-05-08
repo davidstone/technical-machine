@@ -164,8 +164,8 @@ int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weath
 	if (depth > 0)
 		--depth;
 	
-	calculate_speed (ai, weather);
-	calculate_speed (foe, weather);
+	Stat::calculate_speed (ai, weather);
+	Stat::calculate_speed (foe, weather);
 
 	if (ai.pokemon().hp.stat == 0 or foe.pokemon().hp.stat == 0)
 		return replace (ai, foe, weather, depth, score, best_move, first_turn);
@@ -246,9 +246,9 @@ int64_t order_branch (Team & ai, Team & foe, Weather const & weather, unsigned d
 
 int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score) {
 	constexpr int divisor = 100 * 100;
-	chance_to_hit (first, last, weather);
+	Stat::chance_to_hit (first, last, weather);
 	first.moved = true;
-	chance_to_hit (last, first, weather);
+	Stat::chance_to_hit (last, first, weather);
 	first.moved = false;
 	int64_t average_score = first.chance_to_hit * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, score);
 	if (first.chance_to_hit != 100) {
@@ -363,8 +363,8 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, Weather & weather, u
 	// Need to recalculate speed because end-of-turn effects occur in a
 	// specified order based on Speed, and a that order can be changed within a
 	// turn.
-	calculate_speed (first, weather);
-	calculate_speed (last, weather);
+	Stat::calculate_speed (first, weather);
+	Stat::calculate_speed (last, weather);
 	Team * faster;
 	Team * slower;
 	faster_pokemon (first, last, weather, faster, slower);

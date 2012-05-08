@@ -19,7 +19,9 @@
 #ifndef EVALUATE_HPP_
 #define EVALUATE_HPP_
 
+#include <array>
 #include <cstdint>
+#include "stat.hpp"
 
 namespace technicalmachine {
 
@@ -75,11 +77,7 @@ class Score {
 		int poison;
 		int sleep;
 		
-		int atk_stage;
-		int def_stage;
-		int spa_stage;
-		int spd_stage;
-		int spe_stage;
+		std::array<int, Stat::END> stage;
 		int focus_energy;
 	
 		int baton_pass;

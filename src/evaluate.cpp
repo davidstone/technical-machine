@@ -60,11 +60,7 @@ int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 int64_t Score::score_team (Team const & team) const {
 	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
 	if (team.pokemon().hp.stat != 0) {
-		score += team.stage [Stat::ATK] * atk_stage;
-		score += team.stage [Stat::DEF] * def_stage;
-		score += team.stage [Stat::SPA] * spa_stage;
-		score += team.stage [Stat::SPD] * spd_stage;
-		score += team.stage [Stat::SPE] * spe_stage;
+		score += Stage::dot_product(team.stage, stage);
 		score += team.magnet_rise * magnet_rise;
 		if (team.substitute)
 			score += substitute + substitute_hp * team.substitute / team.pokemon().hp.max;
@@ -94,7 +90,7 @@ int64_t Score::score_team (Team const & team) const {
 			return (move.name == Move::BATON_PASS);
 		});
 		if (move_ptr != nullptr) {
-			int64_t const stat_stages = team.stage [Stat::ATK] * atk_stage + team.stage [Stat::DEF] * def_stage + team.stage [Stat::SPA] * spa_stage + team.stage [Stat::SPD] * spd_stage + team.stage [Stat::SPE] * spe_stage;
+			int64_t const stat_stages = Stage::dot_product(team.stage, stage);
 			score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + stat_stages);
 			if (team.substitute)
 				score += baton_pass * substitute;
@@ -214,16 +210,11 @@ Score::Score ():
 	poison (0),
 	sleep (0),
 	
-	atk_stage (0),
-	def_stage (0),
-	spa_stage (0),
-	spd_stage (0),
-	spe_stage (0),
+	stage ({{}}),
 	focus_energy (0),
 
 	baton_pass (0),
-	no_pp (0)
- {
+	no_pp (0) {
 	// This is a separate function instead of being stuck in directly to support
 	// reloading of the constants.
 	load_evaluation_constants ();
@@ -264,11 +255,11 @@ void Score::load_evaluation_constants () {
 	paralysis = pt.get<int>("paralysis", 0);
 	poison = pt.get<int>("poison", 0);
 	sleep = pt.get<int>("sleep", 0);
-	atk_stage = pt.get<int>("attack_stage", 0);
-	def_stage = pt.get<int>("defense_stage", 0);
-	spa_stage = pt.get<int>("special_attack_stage", 0);
-	spd_stage = pt.get<int>("special_defense_stage", 0);
-	spe_stage = pt.get<int>("speed_stage", 0);
+	stage[Stat::ATK] = pt.get<int>("attack_stage", 0);
+	stage[Stat::DEF] = pt.get<int>("defense_stage", 0);
+	stage[Stat::SPA] = pt.get<int>("special_attack_stage", 0);
+	stage[Stat::SPD] = pt.get<int>("special_defense_stage", 0);
+	stage[Stat::SPE] = pt.get<int>("speed_stage", 0);
 	focus_energy = pt.get<int>("focus_energy", 0);
 	baton_pass = pt.get<int>("baton_pass", 0);
 	no_pp = pt.get<int>("no_pp", 0);

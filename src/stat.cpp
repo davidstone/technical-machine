@@ -41,7 +41,7 @@ unsigned calculate_defense_before_power_trick (Pokemon const & defender);
 unsigned attacking_stage_modifier (Stat const & stat, int stage, bool ch);
 unsigned defending_stage_modifier (Stat const & stat, int stage, bool ch);
 unsigned speed_stage_modifier (Stat const & spe, int stage);
-unsigned accuracy_stage_modifier (Team const & user);
+unsigned accuracy_stage_modifier (Team const & user, int stage);
 unsigned evasion_stage_modifier (Team const & user, int evasion_stage);
 
 unsigned attack_ability_modifier (Pokemon const & attacker, bool slow_start, Weather const & weather);
@@ -85,18 +85,18 @@ void Stat::calculate_initial_hp (uint8_t const level) {
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 	if (attacker.pokemon().move().physical)
-		calculate_attack (attacker, weather);
+		Stat::calculate_attack (attacker, weather);
 	else
-		calculate_special_attack (attacker, weather);
+		Stat::calculate_special_attack (attacker, weather);
 }
 
-void calculate_attack (Team & attacker, Weather const & weather) {
+void Stat::calculate_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
 	pokemon.atk.stat = !attacker.power_trick ?
 		calculate_attack_before_power_trick (pokemon) :
 		calculate_defense_before_power_trick (pokemon);
 
-	pokemon.atk.stat = attacking_stage_modifier (pokemon.atk, attacker.stage [Stat::ATK], attacker.ch);
+	pokemon.atk.stat = attacking_stage_modifier (pokemon.atk, attacker.stage [ATK], attacker.ch);
 
 	pokemon.atk.stat = attack_ability_modifier (pokemon, attacker.slow_start, weather);
 	pokemon.atk.stat = attack_item_modifier (pokemon);
@@ -105,12 +105,12 @@ void calculate_attack (Team & attacker, Weather const & weather) {
 		pokemon.atk.stat = 1;
 }
 
-void calculate_special_attack (Team & attacker, Weather const & weather) {
+void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
 	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level);
-	pokemon.spa.stat = pokemon.spa.stat * pokemon.nature.boost<Stat::SPA>() / 10;
+	pokemon.spa.stat = pokemon.spa.stat * pokemon.nature.boost<SPA>() / 10;
 
-	pokemon.spa.stat = attacking_stage_modifier (pokemon.spa, attacker.stage [Stat::SPA], attacker.ch);
+	pokemon.spa.stat = attacking_stage_modifier (pokemon.spa, attacker.stage [SPA], attacker.ch);
 
 	pokemon.spa.stat = special_attack_ability_modifier (pokemon, weather);
 	pokemon.spa.stat = special_attack_item_modifier (pokemon);
@@ -121,18 +121,18 @@ void calculate_special_attack (Team & attacker, Weather const & weather) {
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
 	if (attacker.pokemon().move().physical)
-		calculate_defense (defender, attacker.ch, attacker.pokemon().move().is_self_KO());
+		Stat::calculate_defense (defender, attacker.ch, attacker.pokemon().move().is_self_KO());
 	else
-		calculate_special_defense (defender, weather, attacker.ch);
+		Stat::calculate_special_defense (defender, weather, attacker.ch);
 }
 
-void calculate_defense (Team & defender, bool ch, bool is_self_KO) {
+void Stat::calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 	Pokemon & pokemon = defender.pokemon ();
 	pokemon.def.stat = !defender.power_trick ?
 		calculate_defense_before_power_trick (pokemon) :
 		calculate_attack_before_power_trick (pokemon);
 
-	pokemon.def.stat = defending_stage_modifier (pokemon.def, defender.stage [Stat::DEF], ch);
+	pokemon.def.stat = defending_stage_modifier (pokemon.def, defender.stage [DEF], ch);
 	
 	pokemon.def.stat = defense_ability_modifier (pokemon);
 	pokemon.def.stat = defense_item_modifier (pokemon);
@@ -144,12 +144,12 @@ void calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 		pokemon.def.stat = 1;
 }
 
-void calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
+void Stat::calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
 	Pokemon & pokemon = defender.pokemon ();
 	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level);
-	pokemon.spd.stat = pokemon.spd.stat * pokemon.nature.boost<Stat::SPD>() / 10;
+	pokemon.spd.stat = pokemon.spd.stat * pokemon.nature.boost<SPD>() / 10;
 	
-	pokemon.spd.stat = defending_stage_modifier (pokemon.spd, defender.stage [Stat::SPD], ch);
+	pokemon.spd.stat = defending_stage_modifier (pokemon.spd, defender.stage [SPD], ch);
 
 	pokemon.spd.stat = special_defense_ability_modifier (pokemon, weather);	
 	pokemon.spd.stat = special_defense_item_modifier (pokemon);
@@ -160,12 +160,12 @@ void calculate_special_defense (Team & defender, Weather const & weather, bool c
 		pokemon.spd.stat = 1;
 }
 
-void calculate_speed (Team & team, Weather const & weather) {
+void Stat::calculate_speed (Team & team, Weather const & weather) {
 	Pokemon & pokemon = team.pokemon();
 	pokemon.spe.stat = calculate_initial_stat (pokemon.spe, pokemon.level);
-	pokemon.spe.stat = pokemon.spe.stat * pokemon.nature.boost<Stat::SPE>() / 10;
+	pokemon.spe.stat = pokemon.spe.stat * pokemon.nature.boost<SPE>() / 10;
 	
-	pokemon.spe.stat = speed_stage_modifier (pokemon.spe, team.stage [Stat::SPE]);
+	pokemon.spe.stat = speed_stage_modifier (pokemon.spe, team.stage [SPE]);
 
 	pokemon.spe.stat = speed_ability_modifier (team, weather);
 	pokemon.spe.stat = speed_item_modifier (pokemon);
@@ -180,8 +180,8 @@ void calculate_speed (Team & team, Weather const & weather) {
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
 	if (team1.pokemon().move().priority == team2.pokemon().move().priority) {
-		calculate_speed (team1, weather);
-		calculate_speed (team2, weather);
+		Stat::calculate_speed (team1, weather);
+		Stat::calculate_speed (team2, weather);
 		faster_pokemon (team1, team2, weather, faster, slower);
 	}
 	else if (team1.pokemon().move().priority > team2.pokemon().move().priority) {
@@ -211,11 +211,11 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 		std::swap (faster, slower);
 }
 
-void chance_to_hit (Team & user, Team const & target, Weather const & weather) {
+void Stat::chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 	if (move_can_miss (user, target.pokemon().ability)) {
 		user.chance_to_hit = user.pokemon().move().accuracy;
-		user.chance_to_hit = accuracy_stage_modifier (user);
-		user.chance_to_hit = evasion_stage_modifier (user, target.stage [Stat::EVA]);
+		user.chance_to_hit = accuracy_stage_modifier (user, target.stage [ACC]);
+		user.chance_to_hit = evasion_stage_modifier (user, target.stage [EVA]);
 
 		user.chance_to_hit = accuracy_item_modifier (user, target.moved);
 		user.chance_to_hit = accuracy_ability_modifier (user);
@@ -270,10 +270,10 @@ unsigned speed_stage_modifier (Stat const & spe, int stage) {
 		negative_stage_boost (spe.stat, stage, 2);
 }
 
-unsigned accuracy_stage_modifier (Team const & user) {
-	return (user.stage [Stat::ACC] >= 0) ?
-		positive_stage_boost (user.chance_to_hit, user.stage [Stat::ACC], 3) :
-		negative_stage_boost (user.chance_to_hit, user.stage [Stat::ACC], 3);
+unsigned accuracy_stage_modifier (Team const & user, int const stage) {
+	return (stage >= 0) ?
+		positive_stage_boost (user.chance_to_hit, stage, 3) :
+		negative_stage_boost (user.chance_to_hit, stage, 3);
 }
 
 unsigned evasion_stage_modifier (Team const & user, int evasion_stage) {
@@ -523,14 +523,6 @@ unsigned evasion_ability_modifier (Team const & user, Team const & target, Weath
 }
 
 }	// anonymous namespace
-
-void Stat::boost (int8_t & stage, int n) {
-	stage += n;
-	if (stage > 6)
-		stage = 6;
-	else if (stage < -6)
-		stage = -6;
-}
 
 uint8_t Stat::get_base_stat (Species name, Stats stat) {
 	constexpr static uint8_t base_stat [][6] = {
