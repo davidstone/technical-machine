@@ -28,6 +28,7 @@
 #include "move.hpp"
 #include "pokemon.hpp"
 #include "pokemon_collection.hpp"
+#include "screen.hpp"
 #include "shared_moves.hpp"
 #include "species.hpp"
 #include "stage.hpp"
@@ -135,13 +136,12 @@ class Team {
 		// 0 = not active
 		uint8_t counter;
 
-		// Number of turns remaining
-		uint8_t light_screen;
-		uint8_t lucky_chant;
-		uint8_t mist;
-		uint8_t reflect;
-		uint8_t safeguard;
-		uint8_t tailwind;
+		ReflectLightScreen light_screen;
+		Screen lucky_chant;
+		Screen mist;
+		ReflectLightScreen reflect;
+		Screen safeguard;
+		Tailwind tailwind;
 
 		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish
 		// is not in play

@@ -58,7 +58,7 @@ int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 }
 
 int64_t Score::score_team (Team const & team) const {
-	int64_t score = lucky_chant * team.lucky_chant + mist * team.mist + safeguard * team.safeguard + tailwind * team.tailwind + wish * team.wish;
+	int64_t score = lucky_chant * team.lucky_chant.turns_remaining + mist * team.mist.turns_remaining + safeguard * team.safeguard.turns_remaining + tailwind * team.tailwind.turns_remaining + wish * team.wish;
 	if (team.pokemon().hp.stat != 0) {
 		score += Stage::dot_product(team.stage, stage);
 		score += team.magnet_rise * magnet_rise;
@@ -148,9 +148,9 @@ int64_t Score::score_move (Team const & team, Team const & other, Weather const 
 	int64_t score = 0;
 	team.pokemon().move.for_each([&](Move const & move) {
 		if (move.physical)
-			score += other.reflect * reflect;
+			score += other.reflect.turns_remaining * reflect;
 		else if (move.basepower > 0)		// Non-damaging moves have physical == false
-			score += other.light_screen * light_screen;
+			score += other.light_screen.turns_remaining * light_screen;
 		if (move.is_out_of_pp())
 			score += no_pp;
 	});

@@ -86,12 +86,12 @@ void endofturn0 (Team & team) {
 }
 
 void endofturn1 (Team & team) {
-	decrement (team.light_screen);
-	decrement (team.lucky_chant);
-	decrement (team.mist);
-	decrement (team.reflect);
-	decrement (team.safeguard);
-	decrement (team.tailwind);
+	team.light_screen.decrement();
+	team.lucky_chant.decrement();
+	team.mist.decrement();
+	team.reflect.decrement();
+	team.safeguard.decrement();
+	team.tailwind.decrement();
 }
 
 void endofturn2 (Team & team) {

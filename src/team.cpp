@@ -120,13 +120,6 @@ Team::Team () :
 	
 	counter (0),
 
-	light_screen (0),
-	lucky_chant (0),
-	mist (0),
-	reflect (0),
-	safeguard (0),
-	tailwind (0),
-
 	wish (0),
 
 	spikes (0),
@@ -200,13 +193,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	water_sport (false),
 	
 	counter (0),
-
-	light_screen (0),
-	lucky_chant (0),
-	mist (0),
-	reflect (0),
-	safeguard (0),
-	tailwind (0),
 
 	wish (0),
 
@@ -480,12 +466,12 @@ uint64_t Team::hash () const {
 			(trapped + 2 *
 			(water_sport + 2 *
 			(counter + 3 *
-			(light_screen + 8 *
-			(lucky_chant + 5 *
-			(mist + 5 *
-			(reflect + 8 *
-			(safeguard + 5 *
-			(tailwind + 3 *
+			(light_screen.hash() + light_screen.max_hash() *
+			(lucky_chant.hash() + lucky_chant.max_hash() *
+			(mist.hash() + mist.max_hash() *
+			(reflect.hash() + reflect.max_hash() *
+			(safeguard.hash() + safeguard.max_hash() *
+			(tailwind.hash() + tailwind.max_hash() *
 			(wish + 2 *
 			(spikes + 4 *
 			(toxic_spikes + 3 *

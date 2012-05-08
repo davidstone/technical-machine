@@ -119,12 +119,12 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const
 
 void do_effects_before_moving (Pokemon & user, Team & target) {
 	if (user.move().breaks_screens()) {
-		target.reflect = 0;
-		target.light_screen = 0;
+		target.reflect.clear();
+		target.light_screen.clear();
 	}
 	else if (user.move().is_usable_while_frozen()) {
 		if (user.status.is_frozen())
-			user.status.clear ();
+			user.status.clear();
 	}
 }
 
@@ -687,16 +687,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.leech_seed = true;
 			break;
 		case Move::LIGHT_SCREEN:
-			if (!user.light_screen)
-				user.light_screen = user.pokemon().item.extends_light_screen() ? 8 : 5;
+			user.light_screen.activate(user.pokemon().item.extends_light_screen());
 			break;
 		case Move::LOCK_ON:
 		case Move::MIND_READER:
 			user.lock_on = true;
 			break;
 		case Move::LUCKY_CHANT:
-			if (!user.lucky_chant)
-				user.lucky_chant = 5;
+			user.lucky_chant.activate();
 			break;
 		case Move::LUNAR_DANCE:		// Fix
 			break;
@@ -725,7 +723,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				damage_side_effect (target.pokemon(), user.damage * 2u);
 			break;
 		case Move::MIST:
-			user.mist = 5;
+			user.mist.activate();
 			break;
 		case Move::MIST_BALL:
 			if (move.variable().effect_activates())
@@ -815,8 +813,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::RECYCLE:		// Fix
 			break;
 		case Move::REFLECT:
-			if (!user.reflect)
-				user.reflect = user.pokemon().item.extends_reflect() ? 8 : 5;
+			user.reflect.activate(user.pokemon().item.extends_reflect());
 			break;
 		case Move::REFRESH:
 			user.pokemon().status.clear ();
@@ -839,8 +836,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::ROLE_PLAY:		// Fix
 			break;
 		case Move::SAFEGUARD:
-			if (!user.safeguard)
-				user.safeguard = 5;
+			user.safeguard.activate();
 			break;
 		case Move::SANDSTORM:
 			weather.set_sand (user.pokemon().item.extends_sand());
@@ -857,7 +853,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Move::SKULL_BASH: // Fix
 			break;
-		case Move::SKY_ATTACK:
+		case Move::SKY_ATTACK:	// Fix
 			if (move.variable().effect_activates()) {}
 			break;
 		case Move::SMELLINGSALT:
@@ -929,8 +925,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.stage.boost(Stat::ATK, 2);
 			break;
 		case Move::TAILWIND:
-			if (!user.tailwind)
-				user.tailwind = 3;
+			user.tailwind.activate();
 			break;
 		case Move::TAUNT:
 			if (!target.taunt)
