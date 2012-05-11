@@ -19,16 +19,15 @@
 #ifndef REORDER_MOVES_HPP_
 #define REORDER_MOVES_HPP_
 
-#include <cstddef>
-#include <cstdint>
-#include <utility>
 #include <vector>
+
+#include "ranked_move.hpp"
 
 namespace technicalmachine {
 
 class Move;
 
-std::vector<std::pair<int64_t, size_t>> reorder (std::vector<Move> const & input, bool ai);
+std::vector<RankedMove> reorder(std::vector<Move> const & input, bool ai);
 
 }	// namespace technicalmachine
 #endif	// REORDER_MOVES_HPP_

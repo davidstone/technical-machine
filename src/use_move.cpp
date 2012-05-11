@@ -94,15 +94,14 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const
 		return 0;
 	Stat::calculate_speed (user, weather);
 	Stat::calculate_speed (target, weather);
-	move_power (user, target, weather);
 	unsigned damage = 0;
 	
-	if (move.basepower != 0) {
+	if (move.is_damaging()) {
 		do_effects_before_moving (user.pokemon(), target);
 		if (log_damage == -1u) {
 			calculate_defending_stat (user, target, weather);
 			calculate_attacking_stat (user, weather);
-			damage = damage_calculator (user, target, weather);
+			damage = damage_calculator (user, target, weather, move_power(user, target, weather));
 		}
 		else {
 			damage = log_damage;
@@ -420,7 +419,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.stage.boost(Stat::SPE, -2);
 			break;
 		case Move::COUNTER:
-			if (target.pokemon().move().physical)
+			if (target.pokemon().move().is_physical())
 				damage_side_effect (target.pokemon(), user.damage * 2u);
 			break;
 		case Move::COVET:
@@ -719,7 +718,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Move::MIRACLE_EYE:		// Fix
 			break;
 		case Move::MIRROR_COAT:
-			if (!target.pokemon().move().physical)
+			if (target.pokemon().move().is_special())
 				damage_side_effect (target.pokemon(), user.damage * 2u);
 			break;
 		case Move::MIST:
@@ -800,7 +799,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			weather.set_rain (user.pokemon().item.extends_rain());
 			break;
 		case Move::RAPID_SPIN:
-			if (move.type.get_effectiveness(target.pokemon()) > 0) {
+			if (move.type().get_effectiveness(target.pokemon()) > 0) {
 				user.spikes = 0;
 				user.stealth_rock = false;
 				user.toxic_spikes = 0;

@@ -84,7 +84,7 @@ void Stat::calculate_initial_hp (uint8_t const level) {
 }
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {
-	if (attacker.pokemon().move().physical)
+	if (attacker.pokemon().move().is_physical())
 		Stat::calculate_attack (attacker, weather);
 	else
 		Stat::calculate_special_attack (attacker, weather);
@@ -120,7 +120,7 @@ void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
 }
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
-	if (attacker.pokemon().move().physical)
+	if (attacker.pokemon().move().is_physical())
 		Stat::calculate_defense (defender, attacker.ch, attacker.pokemon().move().is_self_KO());
 	else
 		Stat::calculate_special_defense (defender, weather, attacker.ch);
@@ -179,12 +179,12 @@ void Stat::calculate_speed (Team & team, Weather const & weather) {
 }
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	if (team1.pokemon().move().priority == team2.pokemon().move().priority) {
+	if (team1.pokemon().move().priority() == team2.pokemon().move().priority()) {
 		Stat::calculate_speed (team1, weather);
 		Stat::calculate_speed (team2, weather);
 		faster_pokemon (team1, team2, weather, faster, slower);
 	}
-	else if (team1.pokemon().move().priority > team2.pokemon().move().priority) {
+	else if (team1.pokemon().move().priority() > team2.pokemon().move().priority()) {
 		faster = &team1;
 		slower = &team2;
 	}
@@ -482,7 +482,7 @@ unsigned accuracy_ability_modifier (Team const & user) {
 		case Ability::COMPOUNDEYES:
 			return user.chance_to_hit * 13u / 10;
 		case Ability::HUSTLE:
-			if (user.pokemon().move().physical)
+			if (user.pokemon().move().is_physical())
 				return user.chance_to_hit * 4u / 5;
 			break;
 		default:

@@ -1,4 +1,4 @@
-// Damage calculator forward declarations
+// Class to order moves to improve alpha-beta pruning
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,19 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DAMAGE_HPP_
-#define DAMAGE_HPP_
+#ifndef RANKED_MOVE_HPP_
+#define RANKED_MOVE_HPP_
+
+#include <cstdint>
 
 namespace technicalmachine {
 
-class Pokemon;
-class Team;
-class Weather;
-
-unsigned damage_calculator (Team const & attacker, Team const & defender, Weather const & weather, unsigned power);
-unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather const & weather, unsigned power);
-void recoil (Pokemon & user, unsigned damage, unsigned denominator);
-void damage_side_effect (Pokemon & user, unsigned damage);
+class RankedMove {
+	public:
+		explicit RankedMove(uint8_t const i, uint16_t const s = 0);
+		friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
+		uint16_t score;
+		uint8_t index;
+};
 
 }	// namespace technicalmachine
-#endif	// DAMAGE_HPP_
+#endif	// RANKED_MOVE_HPP_

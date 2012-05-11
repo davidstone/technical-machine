@@ -147,7 +147,7 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 		active.pokemon.at_replacement().move.add(move);
 	}
 	active.pokemon.at_replacement().move().variable.reset_index();
-	if (active.pokemon.at_replacement().move().basepower != 0)
+	if (active.pokemon.at_replacement().move().is_damaging())
 		move_damage = true;
 }
 

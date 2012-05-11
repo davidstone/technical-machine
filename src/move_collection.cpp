@@ -19,9 +19,9 @@
 #include "move_collection.hpp"
 #include <cstdint>
 #include <functional>
-#include <utility>
 #include <vector>
 #include "move.hpp"
+#include "ranked_move.hpp"
 #include "reorder_moves.hpp"
 #include "shared_moves.hpp"
 
@@ -89,8 +89,8 @@ Move::Moves MoveCollection::name_of_last_used_move () const {
 	return (move_ptr != nullptr) ? move_ptr->name : Move::END;
 }
 
-std::vector<std::pair<int64_t, size_t>> MoveCollection::create_ordered_container (bool const ai) const {
-	return reorder (container.concatenate(), ai);
+std::vector<RankedMove> MoveCollection::create_ordered_container (bool const ai) const {
+	return reorder(container.concatenate(), ai);
 }
 
 uint8_t MoveCollection::size () const {

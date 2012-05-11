@@ -22,10 +22,10 @@
 #include "collection.hpp"
 #include <cstdint>
 #include <functional>
-#include <utility>
 #include <vector>
 #include "move.hpp"
 #include "move_container.hpp"
+#include "ranked_move.hpp"
 
 namespace technicalmachine {
 class SharedMoves;
@@ -48,7 +48,7 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		bool a_regular_move_is_selectable () const;
 		// Move::END if none
 		Move::Moves name_of_last_used_move () const;
-		std::vector<std::pair<int64_t, size_t>> create_ordered_container (bool ai) const;
+		std::vector<RankedMove> create_ordered_container (bool ai) const;
 		uint8_t size () const;
 		uint8_t regular_size () const;
 		void update_shared_moves(SharedMoves & s);
