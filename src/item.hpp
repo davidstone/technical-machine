@@ -130,8 +130,8 @@ class Item {
 		bool is_choice_item () const;
 		bool is_gone () const;
 		void remove ();
-		int get_berry_power () const;		// Returns 0 for non-berries
-		int get_fling_power () const;
+		unsigned get_berry_power () const;		// Returns 0 for non-berries
+		unsigned get_fling_power () const;
 		bool blocks_trick () const;
 		bool extends_hail () const;
 		bool extends_rain () const;

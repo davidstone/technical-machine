@@ -82,20 +82,20 @@ Team create_max_damage_special_defender () {
 
 void physical_power_test () {
 	std::cout << "\t\tRunning physical power tests.\n";
-	constexpr int max_power = 1440;
+	constexpr unsigned max_power = 1440;
 
 	Team attacker = create_max_damage_physical_attacker ();
 	attacker.pokemon().item.name = Item::ROCK_INCENSE;
 	attacker.pokemon().ability.name = Ability::RIVALRY;
 
-	move_power (attacker, create_max_damage_physical_defender (), Weather ());
-	if (attacker.pokemon().move().power != max_power)
-		throw IncorrectCalculation (attacker.pokemon().move().power, max_power);
+	unsigned const power = move_power(attacker, create_max_damage_physical_defender(), Weather());
+	if (power != max_power)
+		throw IncorrectCalculation (power, max_power);
 }
 
 void special_power_test () {
 	std::cout << "\t\tRunning special power tests.\n";
-	constexpr int max_power = 342;
+	constexpr unsigned max_power = 342;
 
 	Team attacker = create_max_damage_special_attacker ();
 	Pokemon & pokemon = attacker.pokemon();
@@ -106,9 +106,9 @@ void special_power_test () {
 	Team defender = create_max_damage_special_defender ();
 	defender.vanish = Vanish::DIVED;
 
-	move_power (attacker, defender, Weather());
-	if (pokemon.move().power != max_power)
-		throw IncorrectCalculation (pokemon.move().power, max_power);
+	unsigned const power = move_power(attacker, defender, Weather());
+	if (power != max_power)
+		throw IncorrectCalculation (power, max_power);
 }
 
 void power_test () {
@@ -139,7 +139,6 @@ void physical_damage_test () {
 	Team defender = create_max_damage_physical_defender ();
 	calculate_defending_stat (attacker, defender, weather);
 	
-	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;
 	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage != max_damage)
@@ -172,7 +171,6 @@ void special_damage_test () {
 	Team defender = create_max_damage_special_defender ();
 	calculate_defending_stat (attacker, defender, weather);
 
-	move_power (attacker, defender, weather);
 	attacker.pokemon().move().r = 100;
 	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage != max_damage)

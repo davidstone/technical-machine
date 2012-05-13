@@ -185,7 +185,7 @@ void Pokemon::set_hidden_power_type() {
 		return move.name == Move::HIDDEN_POWER;
 	});
 	if (move_ptr != nullptr)
-		move_ptr->type = calculate_hidden_power_type();
+		move_ptr->set_type(calculate_hidden_power_type());
 }
 
 Type::Types Pokemon::calculate_hidden_power_type () const {

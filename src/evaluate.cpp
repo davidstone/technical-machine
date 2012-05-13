@@ -147,9 +147,9 @@ int64_t Score::score_status (Team const & team) const {
 int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
 	team.pokemon().move.for_each([&](Move const & move) {
-		if (move.physical)
+		if (move.is_physical())
 			score += other.reflect.turns_remaining * reflect;
-		else if (move.basepower > 0)		// Non-damaging moves have physical == false
+		else if (move.is_special())
 			score += other.light_screen.turns_remaining * light_screen;
 		if (move.is_out_of_pp())
 			score += no_pp;

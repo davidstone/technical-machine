@@ -32,35 +32,58 @@ namespace technicalmachine {
 namespace {
 
 constexpr uint8_t unlimited_pp = 0xFF;
-constexpr uint16_t indeterminate_power = 0xFFFF;
+constexpr uint8_t indeterminate_power = 0xFF;
+constexpr uint8_t variable_power = indeterminate_power - 1;
 constexpr uint16_t perfect_accuracy = 0xFFFF;
 Type get_type (Move::Moves move);
-bool is_physical (Move::Moves move);
-uint16_t base_power (Move::Moves move);
+uint8_t get_base_power (Move::Moves move);
 uint8_t get_pp (Move::Moves move);
 uint16_t get_accuracy (Move::Moves move);
+int8_t get_priority(Move::Moves move);
 
 }	// unnamed namespace
 
 Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
-	score (-Score::VICTORY - 1),
 	variable (move, size),
+	score (-Score::VICTORY - 1),
 	name (move),
-	basepower (base_power (move)),
-	type (get_type (move)),
-	physical (is_physical (move)),
 	accuracy (get_accuracy (move)),
 	disable (0),
 	pp_max (get_pp (move) * (5 + pp_ups) / 5),
 	pp (pp_max),
-	priority (get_priority ()),
 	r (100),
-	times_used (0) {
+	times_used (0),
+	cached_base_power(get_base_power(move)),
+	cached_type(get_type(move)),
+	cached_priority(get_priority(move)),
+	cached_classification(classification(move)) {
 }
 
 void Move::reset () {
 	disable = 0;
 	times_used = 0;
+}
+
+bool Move::is_damaging() const {
+	return base_power() != 0;
+}
+
+bool Move::is_physical() const {
+	return cached_classification == physical;
+}
+
+bool Move::is_special() const {
+	return cached_classification == special;
+}
+
+bool Move::can_critical_hit() const {
+	switch (base_power()) {
+		case 0:
+		case indeterminate_power:
+			return false;
+		default:
+			return true;
+	}
 }
 
 uint64_t Move::hash () const {
@@ -69,59 +92,6 @@ uint64_t Move::hash () const {
 			(disable + 7 *
 			(pp + pp_max *
 			times_used)));
-}
-
-int8_t Move::get_priority () {
-	switch (name) {
-		case SWITCH0:
-		case SWITCH1:
-		case SWITCH2:
-		case SWITCH3:
-		case SWITCH4:
-		case SWITCH5:
-			return 6;
-		case HELPING_HAND:
-			return 5;
-		case MAGIC_COAT:
-		case SNATCH:
-			return 4;
-		case DETECT:
-		case ENDURE:
-		case FOLLOW_ME:
-		case PROTECT:
-			return 3;
-		case FEINT:
-			return 2;
-		case AQUA_JET:
-		case BIDE:
-		case BULLET_PUNCH:
-		case EXTREMESPEED:
-		case FAKE_OUT:
-		case ICE_SHARD:
-		case MACH_PUNCH:
-		case QUICK_ATTACK:
-		case SHADOW_SNEAK:
-		case SUCKER_PUNCH:
-		case VACUUM_WAVE:
-			return 1;
-		case VITAL_THROW:
-			return -1;
-		case FOCUS_PUNCH:
-			return -2;
-		case AVALANCHE:
-		case REVENGE:
-			return -3;
-		case COUNTER:
-		case MIRROR_COAT:
-			return -4;
-		case ROAR:
-		case WHIRLWIND:
-			return -5;
-		case TRICK_ROOM:
-			return -6;
-		default:
-			return 0;
-	}
 }
 
 bool Move::operator== (Move const & other) const {
@@ -133,6 +103,23 @@ bool Move::operator== (Move const & other) const {
 
 bool Move::operator!= (Move const & other) const {
 	return !(*this == other);
+}
+
+Type Move::type() const {
+	return cached_type;
+}
+
+void Move::set_type(Type::Types const t) {
+	assert(name == HIDDEN_POWER);
+	cached_type = t;
+}
+
+uint8_t Move::base_power() const {
+	return cached_base_power;
+}
+
+int8_t Move::priority() const {
+	return cached_priority;
 }
 
 bool Move::is_switch (Moves name) {
@@ -165,7 +152,7 @@ bool Move::affects_replacement (Team const & target, Weather const & weather) co
 }
 
 bool Move::affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const {
-	return type.get_effectiveness(pokemon) > 0 and (type != Type::GROUND or grounded (target, pokemon, weather));
+	return type().get_effectiveness(pokemon) > 0 and (type() != Type::GROUND or grounded (target, pokemon, weather));
 }
 
 bool Move::has_follow_up_decision () const {
@@ -360,7 +347,533 @@ bool Move::cannot_miss () const {
 	return get_accuracy (name) == perfect_accuracy;
 }
 
+Move::Classification Move::classification (Moves const move) {
+	static constexpr Classification lookup [] = {
+		special,	// Absorb 
+		special,	// Acid 
+		neither,	// Acid Armor 
+		neither,	// Acupressure 
+		physical,	// Aerial Ace 
+		special,	// Aeroblast 
+		neither,	// Agility 
+		special,	// Air Cutter 
+		special,	// Air Slash 
+		neither,	// Amnesia 
+		special,	// AncientPower 
+		physical,	// Aqua Jet 
+		neither,	// Aqua Ring 
+		physical,	// Aqua Tail 
+		physical,	// Arm Thrust 
+		neither,	// Aromatherapy 
+		neither,	// Assist 
+		physical,	// Assurance 
+		physical,	// Astonish 
+		physical,	// Attack Order 
+		neither,	// Attract 
+		special,	// Aura Sphere 
+		special,	// Aurora Beam 
+		physical,	// Avalanche 
+		physical,	// Barrage 
+		neither,	// Barrier 
+		neither,	// Baton Pass 
+		physical,	// Beat Up 
+		neither,	// Belly Drum 
+		physical,	// Bide 
+		physical,	// Bind 
+		physical,	// Bite 
+		special,	// Blast Burn 
+		physical,	// Blaze Kick 
+		special,	// Blizzard 
+		neither,	// Block 
+		physical,	// Body Slam 
+		physical,	// Bone Club 
+		physical,	// Bonemerang 
+		physical,	// Bone Rush 
+		physical,	// Bounce 
+		physical,	// Brave Bird 
+		physical,	// Brick Break 
+		special,	// Brine 
+		special,	// Bubble 
+		special,	// BubbleBeam 
+		physical,	// Bug Bite 
+		special,	// Bug Buzz 
+		neither,	// Bulk Up 
+		physical,	// Bullet Punch 
+		physical,	// Bullet Seed 
+		neither,	// Calm Mind 
+		neither,	// Camouflage 
+		neither,	// Captivate 
+		neither,	// Charge 
+		special,	// Charge Beam 
+		neither,	// Charm 
+		special,	// Chatter 
+		physical,	// Clamp 
+		physical,	// Close Combat 
+		physical,	// Comet Punch 
+		neither,	// Confuse Ray 
+		special,	// Confusion 
+		physical,	// Constrict 
+		neither,	// Conversion 
+		neither,	// Conversion 2 
+		neither,	// Copycat 
+		neither,	// Cosmic Power 
+		neither,	// Cotton Spore 
+		physical,	// Counter 
+		physical,	// Covet 
+		physical,	// Crabhammer 
+		physical,	// Cross Chop 
+		physical,	// Cross Poison 
+		physical,	// Crunch 
+		physical,	// Crush Claw 
+		physical,	// Crush Grip 
+		neither,	// Curse 
+		physical,	// Cut 
+		special,	// Dark Pulse 
+		neither,	// Dark Void 
+		neither,	// Defend Order 
+		neither,	// Defense Curl 
+		neither,	// Defog 
+		neither,	// Destiny Bond 
+		neither,	// Detect 
+		physical,	// Dig 
+		neither,	// Disable 
+		special,	// Discharge 
+		physical,	// Dive 
+		physical,	// Dizzy Punch 
+		special,	// Doom Desire 
+		physical,	// Double-Edge 
+		physical,	// Double Hit 
+		physical,	// Double Kick 
+		physical,	// DoubleSlap 
+		neither,	// Double Team 
+		special,	// Draco Meteor 
+		special,	// DragonBreath 
+		physical,	// Dragon Claw 
+		neither,	// Dragon Dance 
+		special,	// Dragon Pulse 
+		special,	// Dragon Rage 
+		physical,	// Dragon Rush 
+		physical,	// Drain Punch 
+		special,	// Dream Eater 
+		physical,	// Drill Peck 
+		physical,	// DynamicPunch 
+		special,	// Earth Power 
+		physical,	// Earthquake 
+		physical,	// Egg Bomb 
+		neither,	// Embargo 
+		special,	// Ember 
+		neither,	// Encore 
+		physical,	// Endeavor 
+		neither,	// Endure 
+		special,	// Energy Ball 
+		special,	// Eruption 
+		physical,	// Explosion 
+		special,	// Extrasensory 
+		physical,	// ExtremeSpeed 
+		physical,	// Facade 
+		physical,	// Faint Attack 
+		physical,	// Fake Out 
+		neither,	// Fake Tears 
+		physical,	// False Swipe 
+		neither,	// FeatherDance 
+		physical,	// Feint 
+		special,	// Fire Blast 
+		physical,	// Fire Fang 
+		physical,	// Fire Punch 
+		special,	// Fire Spin 
+		physical,	// Fissure 
+		physical,	// Flail 
+		special,	// Flamethrower 
+		physical,	// Flame Wheel 
+		physical,	// Flare Blitz 
+		neither,	// Flash 
+		special,	// Flash Cannon 
+		neither,	// Flatter 
+		physical,	// Fling 
+		physical,	// Fly 
+		special,	// Focus Blast 
+		neither,	// Focus Energy 
+		physical,	// Focus Punch 
+		neither,	// Follow Me 
+		physical,	// Force Palm 
+		neither,	// Foresight 
+		special,	// Frenzy Plant 
+		physical,	// Frustration 
+		physical,	// Fury Attack 
+		physical,	// Fury Cutter 
+		physical,	// Fury Swipes 
+		special,	// Future Sight 
+		neither,	// Gastro Acid 
+		special,	// Giga Drain 
+		physical,	// Giga Impact 
+		neither,	// Glare 
+		special,	// Grass Knot 
+		neither,	// GrassWhistle 
+		neither,	// Gravity 
+		neither,	// Growl 
+		neither,	// Growth 
+		neither,	// Grudge 
+		neither,	// Guard Swap 
+		physical,	// Guillotine 
+		physical,	// Gunk Shot 
+		special,	// Gust 
+		physical,	// Gyro Ball 
+		neither,	// Hail 
+		physical,	// Hammer Arm 
+		neither,	// Harden 
+		neither,	// Haze 
+		physical,	// Headbutt 
+		physical,	// Head Smash 
+		neither,	// Heal Bell 
+		neither,	// Heal Block 
+		neither,	// Healing Wish 
+		neither,	// Heal Order 
+		neither,	// Heart Swap 
+		special,	// Heat Wave 
+		neither,	// Helping Hand 
+		special,	// Hidden Power 
+		physical,	// Hi Jump Kick 
+		physical,	// Horn Attack 
+		physical,	// Horn Drill 
+		neither,	// Howl 
+		special,	// Hydro Cannon 
+		special,	// Hydro Pump 
+		special,	// Hyper Beam 
+		physical,	// Hyper Fang 
+		special,	// Hyper Voice 
+		neither,	// Hypnosis 
+		physical,	// Ice Ball 
+		special,	// Ice Beam 
+		physical,	// Ice Fang 
+		physical,	// Ice Punch 
+		physical,	// Ice Shard 
+		physical,	// Icicle Spear 
+		special,	// Icy Wind 
+		neither,	// Imprison 
+		neither,	// Ingrain 
+		neither,	// Iron Defense 
+		physical,	// Iron Head 
+		physical,	// Iron Tail 
+		special,	// Judgment 
+		physical,	// Jump Kick 
+		physical,	// Karate Chop 
+		neither,	// Kinesis 
+		physical,	// Knock Off 
+		physical,	// Last Resort 
+		special,	// Lava Plume 
+		physical,	// Leaf Blade 
+		special,	// Leaf Storm 
+		physical,	// Leech Life 
+		neither,	// Leech Seed 
+		neither,	// Leer 
+		physical,	// Lick 
+		neither,	// Light Screen 
+		neither,	// Lock-On 
+		neither,	// Lovely Kiss 
+		physical,	// Low Kick 
+		neither,	// Lucky Chant 
+		neither,	// Lunar Dance 
+		special,	// Luster Purge 
+		physical,	// Mach Punch 
+		special,	// Magical Leaf 
+		neither,	// Magic Coat 
+		special,	// Magma Storm 
+		physical,	// Magnet Bomb 
+		neither,	// Magnet Rise 
+		physical,	// Magnitude 
+		neither,	// Mean Look 
+		neither,	// Meditate 
+		neither,	// Me First 
+		special,	// Mega Drain 
+		physical,	// Megahorn 
+		physical,	// Mega Kick 
+		physical,	// Mega Punch 
+		neither,	// Memento 
+		physical,	// Metal Burst 
+		physical,	// Metal Claw 
+		neither,	// Metal Sound 
+		physical,	// Meteor Mash 
+		neither,	// Metronome 
+		neither,	// Milk Drink 
+		neither,	// Mimic 
+		neither,	// Mind Reader 
+		neither,	// Minimize 
+		neither,	// Miracle Eye 
+		special,	// Mirror Coat 
+		neither,	// Mirror Move 
+		special,	// Mirror Shot 
+		neither,	// Mist 
+		special,	// Mist Ball 
+		neither,	// Moonlight 
+		neither,	// Morning Sun 
+		special,	// Mud Bomb 
+		special,	// Muddy Water 
+		special,	// Mud Shot 
+		special,	// Mud-Slap 
+		neither,	// Mud Sport 
+		neither,	// Nasty Plot 
+		physical,	// Natural Gift 
+		neither,	// Nature Power 
+		physical,	// Needle Arm 
+		neither,	// Nightmare 
+		special,	// Night Shade 
+		physical,	// Night Slash 
+		special,	// Octazooka 
+		neither,	// Odor Sleuth 
+		special,	// Ominous Wind 
+		physical,	// Outrage 
+		special,	// Overheat 
+		neither,	// Pain Split 
+		physical,	// Payback 
+		physical,	// Pay Day 
+		physical,	// Peck 
+		neither,	// Perish Song 
+		special,	// Petal Dance 
+		physical,	// Pin Missile 
+		physical,	// Pluck 
+		physical,	// Poison Fang 
+		neither,	// Poison Gas 
+		physical,	// Poison Jab 
+		neither,	// PoisonPowder 
+		physical,	// Poison Sting 
+		physical,	// Poison Tail 
+		physical,	// Pound 
+		special,	// Powder Snow 
+		special,	// Power Gem 
+		neither,	// Power Swap 
+		neither,	// Power Trick 
+		physical,	// Power Whip 
+		physical,	// Present 
+		neither,	// Protect 
+		special,	// Psybeam 
+		special,	// Psychic 
+		special,	// Psycho Boost 
+		physical,	// Psycho Cut 
+		neither,	// Psycho Shift 
+		neither,	// Psych Up 
+		special,	// Psywave 
+		physical,	// Punishment 
+		physical,	// Pursuit 
+		physical,	// Quick Attack 
+		physical,	// Rage 
+		neither,	// Rain Dance 
+		physical,	// Rapid Spin 
+		physical,	// Razor Leaf 
+		special,	// Razor Wind 
+		neither,	// Recover 
+		neither,	// Recycle 
+		neither,	// Reflect 
+		neither,	// Refresh 
+		neither,	// Rest 
+		physical,	// Return 
+		physical,	// Revenge 
+		physical,	// Reversal 
+		neither,	// Roar 
+		special,	// Roar of Time 
+		physical,	// Rock Blast 
+		physical,	// Rock Climb 
+		neither,	// Rock Polish 
+		physical,	// Rock Slide 
+		physical,	// Rock Smash 
+		physical,	// Rock Throw 
+		physical,	// Rock Tomb 
+		physical,	// Rock Wrecker 
+		neither,	// Role Play 
+		physical,	// Rolling Kick 
+		physical,	// Rollout 
+		neither,	// Roost 
+		physical,	// Sacred Fire 
+		neither,	// Safeguard 
+		neither,	// Sand-Attack 
+		neither,	// Sandstorm 
+		physical,	// Sand Tomb 
+		neither,	// Scary Face 
+		physical,	// Scratch 
+		neither,	// Screech 
+		physical,	// Secret Power 
+		physical,	// Seed Bomb 
+		special,	// Seed Flare 
+		physical,	// Seismic Toss 
+		physical,	// Selfdestruct 
+		special,	// Shadow Ball 
+		physical,	// Shadow Claw 
+		physical,	// Shadow Force 
+		physical,	// Shadow Punch 
+		physical,	// Shadow Sneak 
+		neither,	// Sharpen 
+		special,	// Sheer Cold 
+		special,	// Shock Wave 
+		special,	// Signal Beam 
+		special,	// Silver Wind 
+		neither,	// Sing 
+		neither,	// Sketch 
+		neither,	// Skill Swap 
+		physical,	// Skull Bash 
+		physical,	// Sky Attack 
+		physical,	// Sky Uppercut 
+		neither,	// Slack Off 
+		physical,	// Slam 
+		physical,	// Slash 
+		neither,	// Sleep Powder 
+		neither,	// Sleep Talk 
+		special,	// Sludge 
+		special,	// Sludge Bomb 
+		physical,	// SmellingSalt 
+		special,	// Smog 
+		neither,	// SmokeScreen 
+		neither,	// Snatch 
+		special,	// Snore 
+		neither,	// Softboiled 
+		special,	// SolarBeam 
+		special,	// SonicBoom 
+		special,	// Spacial Rend 
+		physical,	// Spark 
+		neither,	// Spider Web 
+		physical,	// Spike Cannon 
+		neither,	// Spikes 
+		neither,	// Spite 
+		special,	// Spit Up 
+		neither,	// Splash 
+		neither,	// Spore 
+		neither,	// Stealth Rock 
+		physical,	// Steel Wing 
+		neither,	// Stockpile 
+		physical,	// Stomp 
+		physical,	// Stone Edge 
+		physical,	// Strength 
+		neither,	// String Shot 
+		physical,	// Struggle 
+		neither,	// Stun Spore 
+		physical,	// Submission 
+		neither,	// Substitute 
+		physical,	// Sucker Punch 
+		neither,	// Sunny Day 
+		physical,	// Super Fang 
+		physical,	// Superpower 
+		neither,	// Supersonic 
+		special,	// Surf 
+		neither,	// Swagger 
+		neither,	// Swallow 
+		neither,	// Sweet Kiss 
+		neither,	// Sweet Scent 
+		special,	// Swift 
+		neither,	// Switcheroo 
+		neither,	// Swords Dance 
+		neither,	// Synthesis 
+		physical,	// Tackle 
+		neither,	// Tail Glow 
+		neither,	// Tail Whip 
+		neither,	// Tailwind 
+		physical,	// Take Down 
+		neither,	// Taunt 
+		neither,	// Teeter Dance 
+		neither,	// Teleport 
+		physical,	// Thief 
+		physical,	// Thrash 
+		special,	// Thunder 
+		special,	// Thunderbolt 
+		physical,	// Thunder Fang 
+		physical,	// ThunderPunch 
+		special,	// ThunderShock 
+		neither,	// Thunder Wave 
+		neither,	// Tickle 
+		neither,	// Torment 
+		neither,	// Toxic 
+		neither,	// Toxic Spikes 
+		neither,	// Transform 
+		special,	// Tri Attack 
+		neither,	// Trick 
+		neither,	// Trick Room 
+		physical,	// Triple Kick 
+		special,	// Trump Card 
+		physical,	// Twineedle 
+		special,	// Twister 
+		special,	// Uproar 
+		physical,	// U-turn 
+		special,	// Vacuum Wave 
+		physical,	// ViceGrip 
+		physical,	// Vine Whip 
+		physical,	// Vital Throw 
+		physical,	// Volt Tackle 
+		physical,	// Wake-Up Slap 
+		physical,	// Waterfall 
+		special,	// Water Gun 
+		special,	// Water Pulse 
+		neither,	// Water Sport 
+		special,	// Water Spout 
+		special,	// Weather Ball 
+		special,	// Whirlpool 
+		neither,	// Whirlwind 
+		neither,	// Will-O-Wisp 
+		physical,	// Wing Attack 
+		neither,	// Wish 
+		neither,	// Withdraw 
+		physical,	// Wood Hammer 
+		neither,	// Worry Seed 
+		physical,	// Wrap 
+		special,	// Wring Out 
+		physical,	// X-Scissor 
+		neither,	// Yawn 
+		special,	// Zap Cannon 
+		physical,	// Zen Headbutt 
+	};
+	return lookup[move];
+}
+
 namespace {
+
+int8_t get_priority(Move::Moves move) {
+	switch (move) {
+		case Move::SWITCH0:
+		case Move::SWITCH1:
+		case Move::SWITCH2:
+		case Move::SWITCH3:
+		case Move::SWITCH4:
+		case Move::SWITCH5:
+			return 6;
+		case Move::HELPING_HAND:
+			return 5;
+		case Move::MAGIC_COAT:
+		case Move::SNATCH:
+			return 4;
+		case Move::DETECT:
+		case Move::ENDURE:
+		case Move::FOLLOW_ME:
+		case Move::PROTECT:
+			return 3;
+		case Move::FEINT:
+			return 2;
+		case Move::AQUA_JET:
+		case Move::BIDE:
+		case Move::BULLET_PUNCH:
+		case Move::EXTREMESPEED:
+		case Move::FAKE_OUT:
+		case Move::ICE_SHARD:
+		case Move::MACH_PUNCH:
+		case Move::QUICK_ATTACK:
+		case Move::SHADOW_SNEAK:
+		case Move::SUCKER_PUNCH:
+		case Move::VACUUM_WAVE:
+			return 1;
+		case Move::VITAL_THROW:
+			return -1;
+		case Move::FOCUS_PUNCH:
+			return -2;
+		case Move::AVALANCHE:
+		case Move::REVENGE:
+			return -3;
+		case Move::COUNTER:
+		case Move::MIRROR_COAT:
+			return -4;
+		case Move::ROAR:
+		case Move::WHIRLWIND:
+			return -5;
+		case Move::TRICK_ROOM:
+			return -6;
+		default:
+			return 0;
+	}
+}
 
 Type get_type (Move::Moves move) {
 	static constexpr Type::Types move_type [] = {
@@ -1320,8 +1833,8 @@ bool is_physical (Move::Moves move) {
 	return is_physical [move];
 }
 
-uint16_t base_power (Move::Moves move) {
-	static constexpr uint16_t get_power [] = {
+uint8_t get_base_power (Move::Moves move) {
+	static constexpr uint8_t get_power [] = {
 		20,		// ABSORB
 		40,		// ACID
 		0,		// ACID_ARMOR
@@ -1455,14 +1968,14 @@ uint16_t base_power (Move::Moves move) {
 		75,		// FIRE_PUNCH
 		15,		// FIRE_SPIN
 		indeterminate_power,		// FISSURE
-		1,		// FLAIL
+		variable_power,		// FLAIL
 		60,		// FLAME_WHEEL
 		95,		// FLAMETHROWER
 		120,		// FLARE_BLITZ
 		0,		// FLASH
 		80,		// FLASH_CANNON
 		0,		// FLATTER
-		1,		// FLING
+		variable_power,		// FLING
 		90,		// FLY
 		120,		// FOCUS_BLAST
 		0,		// FOCUS_ENERGY
@@ -1471,7 +1984,7 @@ uint16_t base_power (Move::Moves move) {
 		60,		// FORCE_PALM
 		0,		// FORESIGHT
 		150,		// FRENZY_PLANT
-		1,		// FRUSTRATION
+		variable_power,		// FRUSTRATION
 		15,		// FURY_ATTACK
 		10,		// FURY_CUTTER
 		18,		// FURY_SWIPES
@@ -1480,7 +1993,7 @@ uint16_t base_power (Move::Moves move) {
 		60,		// GIGA_DRAIN
 		150,		// GIGA_IMPACT
 		0,		// GLARE
-		1,		// GRASS_KNOT
+		variable_power,		// GRASS_KNOT
 		0,		// GRASSWHISTLE
 		0,		// GRAVITY
 		0,		// GROWL
@@ -1490,7 +2003,7 @@ uint16_t base_power (Move::Moves move) {
 		indeterminate_power,		// GUILLOTINE
 		120,		// GUNK_SHOT
 		40,		// GUST
-		1,		// GYRO_BALL
+		variable_power,		// GYRO_BALL
 		0,		// HAIL
 		100,		// HAMMER_ARM
 		0,		// HARDEN
@@ -1505,7 +2018,7 @@ uint16_t base_power (Move::Moves move) {
 		100,		// HEAT_WAVE
 		0,		// HELPING_HAND
 		100,		// HI_JUMP_KICK
-		1,		// HIDDEN_POWER
+		variable_power,		// HIDDEN_POWER
 		65,		// HORN_ATTACK
 		indeterminate_power,		// HORN_DRILL
 		0,		// HOWL
@@ -1543,7 +2056,7 @@ uint16_t base_power (Move::Moves move) {
 		0,		// LIGHT_SCREEN
 		0,		// LOCK_ON
 		0,		// LOVELY_KISS
-		1,		// LOW_KICK
+		variable_power,		// LOW_KICK
 		0,		// LUCKY_CHANT
 		0,		// LUNAR_DANCE
 		70,		// LUSTER_PURGE
@@ -1553,7 +2066,7 @@ uint16_t base_power (Move::Moves move) {
 		120,		// MAGMA_STORM
 		60,		// MAGNET_BOMB
 		0,		// MAGNET_RISE
-		1,		// MAGNITUDE
+		variable_power,		// MAGNITUDE
 		0,		// ME_FIRST
 		0,		// MEAN_LOOK
 		0,		// MEDITATE
@@ -1585,7 +2098,7 @@ uint16_t base_power (Move::Moves move) {
 		20,		// MUD_SLAP
 		95,		// MUDDY_WATER
 		0,		// NASTY_PLOT
-		1,		// NATURAL_GIFT
+		variable_power,		// NATURAL_GIFT
 		0,		// NATURE_POWER
 		60,		// NEEDLE_ARM
 		indeterminate_power,		// NIGHT_SHADE
@@ -1616,7 +2129,7 @@ uint16_t base_power (Move::Moves move) {
 		0,		// POWER_SWAP
 		0,		// POWER_TRICK
 		120,		// POWER_WHIP
-		1,		// PRESENT
+		variable_power,		// PRESENT
 		0,		// PROTECT
 		65,		// PSYBEAM
 		0,		// PSYCH_UP
@@ -1625,7 +2138,7 @@ uint16_t base_power (Move::Moves move) {
 		70,		// PSYCHO_CUT
 		0,		// PSYCHO_SHIFT
 		indeterminate_power,		// PSYWAVE
-		1,		// PUNISHMENT
+		variable_power,		// PUNISHMENT
 		40,		// PURSUIT
 		40,		// QUICK_ATTACK
 		20,		// RAGE
@@ -1638,9 +2151,9 @@ uint16_t base_power (Move::Moves move) {
 		0,		// REFLECT
 		0,		// REFRESH
 		0,		// REST
-		1,		// RETURN
+		variable_power,		// RETURN
 		60,		// REVENGE
-		1,		// REVERSAL
+		variable_power,		// REVERSAL
 		0,		// ROAR
 		150,		// ROAR_OF_TIME
 		25,		// ROCK_BLAST
@@ -1704,7 +2217,7 @@ uint16_t base_power (Move::Moves move) {
 		0,		// SPIDER_WEB
 		20,		// SPIKE_CANNON
 		0,		// SPIKES
-		1,		// SPIT_UP
+		variable_power,		// SPIT_UP
 		0,		// SPITE
 		0,		// SPLASH
 		0,		// SPORE
@@ -1764,7 +2277,7 @@ uint16_t base_power (Move::Moves move) {
 		0,		// TRICK
 		0,		// TRICK_ROOM
 		10,		// TRIPLE_KICK
-		1,		// TRUMP_CARD
+		variable_power,		// TRUMP_CARD
 		25,		// TWINEEDLE
 		40,		// TWISTER
 		70,		// U_TURN

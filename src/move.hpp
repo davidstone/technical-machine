@@ -131,35 +131,6 @@ class Move {
 			WOOD_HAMMER, WORRY_SEED, WRAP, WRING_OUT, X_SCISSOR,
 			YAWN, ZAP_CANNON, ZEN_HEADBUTT, END
 		};
-		// I suspect I can get rid of the score variable entirely.
-		int64_t score;
-		VariableCollection variable;
-		Moves name;
-		// Can replace this with uint8_t when it will help by just using a
-		// temporary variable in the move power calculator, rather than
-		// assigning to this. Alternatively, it can be replaced entirely by a
-		// function call.
-		uint16_t basepower;
-		uint16_t power;
-		
-		// Replace these with functions when it will reduce the size of Move.
-		Type type;
-		bool physical;
-
-		// I maintain the selectable state to determine if Struggle is legal
-		bool selectable;
-		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
-		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
-		uint8_t pp_max;			// PP after all PP ups are applied
-		uint8_t pp;
-		
-		// Replace this with a function when it will reduce the size of Move.
-		int8_t priority;
-
-		// Move both of these up to team when it will reduce the size of Move.
-		uint8_t r;					// The random number (85 through 100)
-		uint8_t times_used;
-
 		Move (Moves move, unsigned pp_ups, unsigned size = 1);
 		void reset ();
 		uint64_t hash() const;
@@ -168,6 +139,14 @@ class Move {
 		static Moves from_string (std::string const & str);
 		bool operator== (Move const & other) const;
 		bool operator!= (Move const & other) const;
+		bool is_damaging() const;
+		bool is_physical() const;
+		bool is_special() const;
+		Type type() const;
+		void set_type(Type::Types t);	// for Hidden Power only.
+		uint8_t base_power() const;
+		bool can_critical_hit() const;
+		int8_t priority() const;
 		static bool is_switch (Moves name);
 		bool is_switch () const;
 		static Moves from_replacement (unsigned replacement);
@@ -198,9 +177,33 @@ class Move {
 		static constexpr unsigned max_regular_moves () {
 			return 4;
 		}
+
+		VariableCollection variable;
+		int16_t score;
+		Moves name;
+		// I maintain the selectable state to determine if Struggle is legal
+		bool selectable;
+		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
+		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
+		uint8_t pp_max;			// PP after all PP ups are applied
+		uint8_t pp;
+		// Move both of these up to team when it will reduce the size of Move.
+		uint8_t r;					// The random number (85 through 100)
+		uint8_t times_used;
 	private:
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
-		int8_t get_priority ();
+
+		// Hidden Power makes this hard to replace with just a function
+		uint8_t cached_base_power;
+		Type cached_type;
+
+		// Replace this with a function when it will reduce the size of Move.
+		int8_t cached_priority;
+
+		// Replace this with a function when it will reduce the size of Move.
+		enum Classification : int8_t { special = -1, neither = 0, physical = 1 };
+		static Classification classification (Moves move);
+		Classification cached_classification;
 };
 
 // Various states a Pokemon can be in due to vanishing moves.

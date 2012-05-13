@@ -107,7 +107,7 @@ void Item::steal (Item & other) {
 		swap (name, other.name);
 }
 
-int Item::get_berry_power () const {
+unsigned Item::get_berry_power () const {
 	switch (name) {
 		case AGUAV_BERRY:
 		case ASPEAR_BERRY:
@@ -181,7 +181,7 @@ int Item::get_berry_power () const {
 	}
 }
 
-int Item::get_fling_power () const {
+unsigned Item::get_fling_power () const {
 	switch (name) {
 		case IRON_BALL:
 			return 130;

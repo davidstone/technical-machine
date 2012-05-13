@@ -1,4 +1,4 @@
-// Move power calculator forward declarations
+// Class to order moves to improve alpha-beta pruning
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,16 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_POWER_HPP_
-#define MOVE_POWER_HPP_
+#ifndef RANKED_MOVE_HPP_
+#define RANKED_MOVE_HPP_
+
+#include <cstdint>
 
 namespace technicalmachine {
 
-class Pokemon;
-class Team;
-class Weather;
-
-unsigned move_power (Team const & attacker, Team const & defender, Weather const & weather);
+class RankedMove {
+	public:
+		explicit RankedMove(uint8_t const new_index, int16_t const new_score = 0);
+		friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
+		int16_t score;
+		uint8_t index;
+};
 
 }	// namespace technicalmachine
-#endif	// MOVE_POWER_HPP_
+#endif	// RANKED_MOVE_HPP_

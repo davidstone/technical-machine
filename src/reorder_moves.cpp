@@ -18,17 +18,14 @@
 
 #include "reorder_moves.hpp"
 
-#include <cstddef>
-#include <cstdint>
 #include <algorithm>
-#include <utility>
 #include <vector>
 
 #include "move.hpp"
 
 namespace technicalmachine {
 
-std::vector<std::pair<int64_t, size_t>> reorder (std::vector<Move> const & input, bool ai) {
+std::vector<RankedMove> reorder(std::vector<Move> const & input, bool ai) {
 	// This takes all of a Pokemon's moves and sorts them based on previously
 	// evaluated scores. Moves that haven't been evaluated are sorted to the
 	// end. I do this because alpha-beta pruning is most efficient when the
@@ -36,10 +33,10 @@ std::vector<std::pair<int64_t, size_t>> reorder (std::vector<Move> const & input
 	// then only has to prove that further moves aren't as good as the move
 	// already searched; it is not important to know how much worse they are.
 	// Moves that cannot be selected are excluded.
-	std::vector<std::pair<int64_t, size_t>> output;
-	for (size_t n = 0; n != input.size(); ++n) {
+	std::vector<RankedMove> output;
+	for (uint8_t n = 0; n != input.size(); ++n) {
 		if (input[n].selectable)
-			output.push_back ({ input[n].score, n });
+			output.emplace_back(n, input[n].score);
 	}
 	std::sort(output.begin(), output.end());
 	if (ai)

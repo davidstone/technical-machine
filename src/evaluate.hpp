@@ -38,7 +38,7 @@ class Score {
 		// Highest score. 100% chance to win. No particular significance to
 		// this number other than being larger than any score a non-winning
 		// position can have.
-		constexpr static int64_t VICTORY = 65536;
+		constexpr static int64_t VICTORY = 30240;
 		
 		int transposition_table;	
 	private:

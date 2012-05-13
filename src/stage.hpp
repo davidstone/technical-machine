@@ -32,7 +32,7 @@ class Stage {
 		Stage();
 		void reset();
 		void boost(Stat::Stats stat, int n);
-		int accumulate(std::function<int(int)> const & f) const;
+		unsigned accumulate(std::function<unsigned(int)> const & f) const;
 		static int dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier);
 		static int dot_product(std::array<int, Stat::END> const & multiplier, Stage const & stage);
 		void boost_regular(int n);

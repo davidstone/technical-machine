@@ -46,8 +46,8 @@ void Stage::boost(std::initializer_list<Stat::Stats> const & stats, int n) {
 		boost(stat, n);
 }
 
-int Stage::accumulate(std::function<int(int)> const & f) const {
-	return std::accumulate(stages.begin(), stages.end(), 0,[& f](int const initial, int const stage) {
+unsigned Stage::accumulate(std::function<unsigned(int)> const & f) const {
+	return std::accumulate(stages.begin(), stages.end(), 0u,[& f](unsigned const initial, int const stage) {
 		return initial + f(stage);
 	});
 }
