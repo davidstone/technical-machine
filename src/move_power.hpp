@@ -21,7 +21,6 @@
 
 namespace technicalmachine {
 
-class Pokemon;
 class Team;
 class Weather;
 

@@ -21,6 +21,7 @@
 #include <functional>
 #include <vector>
 #include "move.hpp"
+#include "ranked_move.hpp"
 #include "reorder_moves.hpp"
 #include "shared_moves.hpp"
 
@@ -89,7 +90,7 @@ Move::Moves MoveCollection::name_of_last_used_move () const {
 }
 
 std::vector<RankedMove> MoveCollection::create_ordered_container (bool const ai) const {
-	return reorder (container.concatenate(), ai);
+	return reorder(container.concatenate(), ai);
 }
 
 uint8_t MoveCollection::size () const {
