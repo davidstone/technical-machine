@@ -40,6 +40,7 @@
 #include "../battle.hpp"
 #include "../evaluate.hpp"
 #include "../load_stats.hpp"
+#include "../exit_program.hpp"
 #include "../settings_file.hpp"
 #include "../team_predictor.hpp"
 
@@ -50,6 +51,7 @@ namespace {
 std::vector<std::string> load_highlights ();
 std::vector<std::string> load_responses ();
 std::vector<std::string> load_trusted_users ();
+void handle_exit_command();
 
 }	// unnamed namespace
 
@@ -340,15 +342,13 @@ size_t set_target_and_find_message_begin (std::string const & request, size_t st
 
 }	// unnamed namespace
 
-void GenericClient::handle_private_message (std::string const & sender, std::string const & message) {
-	print_with_time_stamp (std::cout, "<PM> " + sender + ": " + message);
-	if (is_trusted (sender))
-		do_request (sender, message);
+void GenericClient::handle_private_message(std::string const & sender, std::string const & message) {
+	print_with_time_stamp(std::cout, "<PM> " + sender + ": " + message);
+	if (is_trusted(sender) and is_valid_command_structure(message))
+		do_request(sender, message);
 }
 
 void GenericClient::do_request (std::string const & user, std::string const & request) {
-	if (!is_valid_command_structure (request))
-		return;
 	size_t const delimiter_position = request.find (' ');
 	std::string const command = request.substr (1, delimiter_position - 1);
 	// I may replace this with a version that hashes the command and switches
@@ -359,6 +359,8 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		handle_challenge_command (request, delimiter_position + 1);
 	else if (command == "depth")
 		handle_depth_change_command (user, request, delimiter_position + 1);
+	else if (command == "exit")
+		handle_exit_command();
 	else if (command == "join")
 		handle_join_channel_command (request, delimiter_position + 1);
 	else if (command == "message")
@@ -367,6 +369,8 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		handle_part_channel_command (request, delimiter_position + 1);
 	else if (command == "pm")
 		handle_send_pm_command (request, delimiter_position + 1);
+	else if (command == "quit")
+		handle_exit_command();
 	else if (command == "reload")
 		handle_reload_settings_command ();
 }
@@ -434,6 +438,13 @@ void GenericClient::handle_send_pm_command (std::string const & request, size_t 
 		send_private_message (target, message);
 	}
 }
+
+namespace {
+void handle_exit_command() {
+	throw ExitProgram();
+}
+
+}	// unnamed namespace
 
 void GenericClient::handle_reload_settings_command () {
 	highlights = load_highlights ();

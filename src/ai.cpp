@@ -20,20 +20,22 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "exit_program.hpp"
 #include "pokemon_lab/connect.hpp"
 #include "pokemon_online/connect.hpp"
 #include "network/invalid_packet.hpp"
 
 int main (int argc, char * argv []) {
+	using namespace technicalmachine;
 	try {
-		using namespace technicalmachine;
-		std::cerr << "sizeof (Team): " << sizeof (Team) << '\n';
-		std::cerr << "sizeof (PokemonCollection): " << sizeof (PokemonCollection) << '\n';
-		std::cerr << "sizeof (Pokemon): " << sizeof (Pokemon) << '\n';
-		std::cerr << "sizeof (MoveCollection): " << sizeof (MoveCollection) << '\n';
-		std::cerr << "sizeof (Move): " << sizeof (Move) << '\n';
-		std::cerr << "sizeof (VariableCollection): " << sizeof (VariableCollection) << '\n';
-		std::cerr << "sizeof (Weather): " << sizeof (Weather) << '\n';
+		std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
+		std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
+		std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
+		constexpr unsigned average_number_of_variables = 2;
+		constexpr auto heap_allocated_size = 6 * (sizeof(Pokemon) + sizeof(MoveCollection) + 6 * (sizeof(Move) + sizeof(VariableCollection) + average_number_of_variables * sizeof(Variable)));
+		constexpr auto full_team_size = sizeof(Team) + sizeof(PokemonCollection) + heap_allocated_size;
+		std::cout << "size of full team: " << full_team_size << '\n';
+		std::cout << "heap allocated_size: " << heap_allocated_size << '\n';
 
 		unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 
@@ -53,6 +55,9 @@ int main (int argc, char * argv []) {
 				std::cerr << "Reconnecting.\n";
 			}
 		}
+	}
+	catch (ExitProgram const & ex) {
+		return 0;
 	}
 	catch (...) {
 		throw;
