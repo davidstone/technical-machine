@@ -94,7 +94,9 @@ void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
-void GenericBattle::handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced) {
+void GenericBattle::handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
+	// At some point, I will create a fail-safe that actually checks that the
+	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn (client, battle_id);
 	if (!forced) {
 		Move::Moves move = determine_action (client);
@@ -133,6 +135,9 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 }
 
 void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name) {
+	// "slot" is only useful in situations other than 1v1, which TM does not yet
+	// support.
+
 	Team & active = is_me (moving_party) ? ai : foe;
 	Team & inactive = is_me (moving_party) ? foe : ai;
 
@@ -152,6 +157,9 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::M
 }
 
 void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
+	// "slot" is only useful in situations other than 1v1, which TM does not yet
+	// support.
+
 	Team & active = is_me (switching_party) ? ai : foe;
 	Team & inactive = is_me (switching_party) ? foe : ai;
 
@@ -185,6 +193,8 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 }
 
 void GenericBattle::handle_hp_change (uint8_t party_changing_hp, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator) {
+	// "slot" is only useful in situations other than 1v1, which TM does not yet
+	// support.
 	bool const my_team = is_me (party_changing_hp);
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
@@ -220,9 +230,13 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 }
 
 void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp) {
+	// This function may actually be useless. I believe that any PP change is
+	// already handled by other mechanisms.
 }
 
 void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
+	// "slot" is only useful in situations other than 1v1, which TM does not yet
+	// support.
 	Team & fainter = is_me (fainting_party) ? ai : foe;
 	fainter.pokemon.at_replacement().fainted = true;
 }

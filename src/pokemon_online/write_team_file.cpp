@@ -34,22 +34,15 @@ namespace technicalmachine {
 namespace po {
 namespace {
 
-static void write_move (Move const & move, boost::property_tree::ptree & pt) {
+void write_move (Move const & move, boost::property_tree::ptree & pt) {
 	pt.add ("Move", move_to_id (move.name));
 }
 
-static void write_blank_move (boost::property_tree::ptree & pt) {
+void write_blank_move (boost::property_tree::ptree & pt) {
 	pt.add ("Move", 0);
 }
 
-static void write_stat (Stat const & stat, std::string const & str, boost::property_tree::ptree & pt) {
-	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
-	s.put ("<xmlattr>.name", str);
-	s.put ("<xmlattr>.iv", stat.iv);
-	s.put ("<xmlattr>.ev", stat.ev * 4);
-}
-
-static void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	pt.add ("DV", pokemon.hp.iv);
 	pt.add ("DV", pokemon.atk.iv);
 	pt.add ("DV", pokemon.def.iv);
@@ -64,14 +57,14 @@ static void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & 
 	pt.add ("EV", pokemon.spe.ev * 4);
 }
 
-static void write_blank_stats (boost::property_tree::ptree & pt) {
+void write_blank_stats (boost::property_tree::ptree & pt) {
 	for (unsigned n = 0; n != 6; ++n)
 		pt.add ("DV", 31);
 	for (unsigned n = 0; n != 6; ++n)
 		pt.add ("EV", 0);
 }
 
-static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
 	member.put ("<xmlattr>.Item", item_to_id (pokemon.item.name));
 	member.put ("<xmlattr>.Ability", ability_to_id (pokemon.ability.name));
@@ -97,7 +90,7 @@ static void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree 
 	write_stats (pokemon, member);
 }
 
-static void write_blank_pokemon (boost::property_tree::ptree & pt) {
+void write_blank_pokemon (boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
 	member.put ("<xmlattr>.Item", 0);
 	member.put ("<xmlattr>.Ability", 0);

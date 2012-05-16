@@ -55,7 +55,7 @@ bool TypeCollection::is_immune_to_hail () const {
 }
 
 void TypeCollection::change_type(Type const type) {
-	types = std::vector<Type>({Type::FIRE});
+	types = std::vector<Type>({ type });
 }
 
 bool is_type (Team const & team, Type const type) {

@@ -177,6 +177,8 @@ std::string Pokemon::get_nickname () const {
 void Pokemon::set_nickname (std::string const & nick) {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		nickname = nick;
+	#else
+		static_cast<void>(nick);
 	#endif
 }
 

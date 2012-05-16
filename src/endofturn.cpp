@@ -229,7 +229,8 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		heal (pokemon, -8);
 }
 
-void endofturn6 (Team & target, Weather const & weather) {		// Doom Desire / Future Sight
+void endofturn6 (Team & target, Weather const & weather) {
+	// TODO: Doom Desire / Future Sight
 	if (target.counter == 1) {
 	}
 	decrement (target.counter);

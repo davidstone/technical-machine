@@ -18,6 +18,7 @@
 
 #include "battle.hpp"
 
+#include <array>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -35,6 +36,7 @@
 namespace technicalmachine {
 namespace po {
 namespace {
+
 class Todo {
 	public:
 		explicit Todo (InMessage & in_msg, std::string const & str):
@@ -51,6 +53,9 @@ class Todo {
 	private:
 		InMessage & msg;
 };
+
+std::array<int8_t, 7> parse_boosts(InMessage & msg);
+
 }	// unnamed namespace
 
 Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name, bool const challenger):
@@ -151,7 +156,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		case AVOID:
 		case MISS:
-			std::cerr << (command == AVOID) ? "AVOID\n" : "MISS\n";
+			std::cerr << ((command == AVOID) ? "AVOID\n" : "MISS\n");
 			handle_miss(player);
 			break;
 		case NO_TARGET:
@@ -234,7 +239,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			break;
 		case BATTLE_CHAT:
 		case END_MESSAGE:
-			std::cerr << (command == BATTLE_CHAT) ? "BATTLE_CHAT\n" : "END_MESSAGE\n";
+			std::cerr << ((command == BATTLE_CHAT) ? "BATTLE_CHAT\n" : "END_MESSAGE\n");
 			parse_battle_chat(client, msg);
 			break;
 		case SPECTATOR_CHAT:
@@ -444,9 +449,7 @@ void Battle::parse_substitute (InMessage & msg) {
 }
 
 void Battle::parse_dynamic_info (InMessage & msg) {
-	int8_t boosts [7];
-	for (unsigned n = 0; n != 7; ++n)
-		boosts [n] = static_cast<int8_t> (msg.read_byte ());
+	std::array<int8_t, 7> const boosts = parse_boosts(msg);
 	enum DynamicFlags {
 		Spikes=1,
 		SpikesLV2=2,
@@ -457,6 +460,17 @@ void Battle::parse_dynamic_info (InMessage & msg) {
 	};
 	uint8_t const flags = msg.read_byte ();
 }
+
+namespace {
+
+std::array<int8_t, 7> parse_boosts(InMessage & msg) {
+	std::array<int8_t, 7> boosts;
+	for (int8_t & boost : boosts)
+		boost = static_cast<int8_t>(msg.read_byte());
+	return boosts;
+}
+
+}	// unnamed namespace
 
 void Battle::parse_dynamic_stats (InMessage & msg) {
 	for (unsigned n = 0; n != 5; ++n)

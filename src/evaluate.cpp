@@ -145,6 +145,7 @@ int64_t Score::score_status (Team const & team) const {
 }
 
 int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
+	// TODO: alter the score of a move based on the weather
 	int64_t score = 0;
 	team.pokemon().move.for_each([&](Move const & move) {
 		if (move.is_physical())

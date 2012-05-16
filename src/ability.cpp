@@ -83,6 +83,9 @@ bool Ability::blocks_status<Status::BURN> (Weather const & weather) const {
 
 template<>
 bool Ability::blocks_status<Status::FREEZE> (Weather const & weather) const {
+	// Pass in weather to take advantage of template specialization, but I don't
+	// want to be warned about unused variables.
+	static_cast<void>(weather);
 	return name == MAGMA_ARMOR;
 }
 

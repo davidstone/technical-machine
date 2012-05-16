@@ -70,7 +70,7 @@ int get_awaken_numerator (Pokemon const & pokemon);
 
 Move::Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 bool is_replacing (Team const & team);
-Move::Moves random_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
+Move::Moves random_switch (Team const & ai, std::mt19937 & random_engine);
 std::vector<Move::Moves> all_switches (uint8_t team_size, uint8_t pokemon_index);
 Move::Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 std::vector<Move::Moves> all_legal_selections (Team & ai, Team const & foe, Weather const & weather);
@@ -529,14 +529,14 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 
 
 Move::Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
-	return is_replacing (ai) ? random_switch (ai, foe, weather, random_engine) : random_move_or_switch (ai, foe, weather, random_engine);
+	return is_replacing (ai) ? random_switch (ai, random_engine) : random_move_or_switch (ai, foe, weather, random_engine);
 }
 
 bool is_replacing (Team const & team) {
 	return team.pokemon().hp.stat == 0 or team.pass or team.u_turning;
 }
 
-Move::Moves random_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
+Move::Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
 	std::vector<Move::Moves> const switches = all_switches (ai.pokemon.size(), ai.pokemon.index());
 	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
 	size_t const index = distribution (random_engine);
