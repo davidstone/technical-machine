@@ -24,13 +24,25 @@ from gcc_optimizations import optimizations, preprocessor_optimizations, linker_
 from sources import ai, predict, test, generate_sources
 
 SetOption('warn', 'no-duplicate-environment')
+SetOption('max_drift', 2)
+SetOption('implicit_cache', 1)
+num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 4))
+SetOption('num_jobs', num_cpu * 3 / 2)
+AddOption('--verbose', dest = 'verbose', action = "store_true", help = 'Print the full compiler command output.')
+Decider('MD5-timestamp')
+
 
 version_flags = ['-std=c++0x']
 cc_flags = warnings + ['-g']
 cxx_flags = version_flags
 link_flags = warnings
 
-default = DefaultEnvironment(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
+default = DefaultEnvironment()
+default.Append(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
+
+if not GetOption('verbose'):
+	default['CXXCOMSTR'] = 'Compiling $TARGET'
+	default['LINKCOMSTR'] = 'Linking $TARGET'
 
 debug = default.Clone()
 debug.Append(CCFLAGS = warnings_debug)
@@ -52,10 +64,6 @@ def create_program (base, versions):
 create_program (ai, ['debug', 'optimized'])
 create_program (predict, ['debug'])
 create_program (test, ['debug', 'optimized'])
-
-num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 4))
-Decider('MD5-timestamp')
-SetOption('num_jobs', num_cpu * 3 / 2)
 
 def check_if_exists (dependency, target, prev_ni):
 	return not os.path.exists(str(target))
