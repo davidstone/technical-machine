@@ -86,10 +86,7 @@ int64_t Score::score_team (Team const & team) const {
 			score += trapped;
 		if (team.focus_energy)
 			score += focus_energy;
-		Move const * move_ptr = team.pokemon().move.find_if ([&](Move const & move) {
-			return (move.name == Moves::BATON_PASS);
-		});
-		if (move_ptr != nullptr) {
+		if (team.pokemon().move.exists(Moves::BATON_PASS)) {
 			int64_t const stat_stages = Stage::dot_product(team.stage, stage);
 			score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + stat_stages);
 			if (team.substitute)

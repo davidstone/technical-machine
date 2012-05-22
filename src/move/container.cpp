@@ -97,7 +97,7 @@ Move const * MoveContainer::find_if (std::function<bool(Move const &)> const & c
 	}
 	return nullptr;
 }
-Move * MoveContainer::find_if (std::function<bool(Move &)> const & condition) {
+Move * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) {
 	for (Move & move : regular) {
 		if (condition (move))
 			return & move;

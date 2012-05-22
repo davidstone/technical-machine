@@ -64,29 +64,28 @@ bool MoveCollection::set_index_if_found(Moves name) {
 	return false;
 }
 
-Move const * MoveCollection::find_if (std::function<bool(Move const &)> const & condition) const {
-	return container.find_if(condition);
+Move const * MoveCollection::find (Moves name) const {
+	return container.find_if([name](Move const & move) { return move.name == name; });
 }
-Move * MoveCollection::find_if (std::function<bool(Move &)> const & condition) {
-	return container.find_if(condition);
+
+Move * MoveCollection::find (Moves name) {
+	return container.find_if([name](Move const & move) { return move.name == name; });
 }
 
 bool MoveCollection::regular_move_exists (std::function<bool(Move const &)> const & condition) const {
-	return find_if(condition) != nullptr;
+	return container.find_if(condition) != nullptr;
 }
 
-bool MoveCollection::regular_move_exists (Moves name) const {
-	return regular_move_exists([name](Move const & move){ return move.name == name; });
+bool MoveCollection::exists (Moves name) const {
+	return find(name) != nullptr;
 }
 
 bool MoveCollection::a_regular_move_is_selectable () const {
-	return regular_move_exists ([](Move const & move) {
-		return move.selectable;
-	});
+	return regular_move_exists ([](Move const & move) { return move.selectable; });
 }
 
 Moves MoveCollection::name_of_last_used_move () const {
-	Move const * move_ptr = find_if ([] (Move const & move) {
+	Move const * move_ptr = container.find_if([] (Move const & move) {
 		return move.was_used_last();
 	});
 	return (move_ptr != nullptr) ? move_ptr->name : Moves::END;

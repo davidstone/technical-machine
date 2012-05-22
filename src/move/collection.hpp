@@ -44,10 +44,10 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		void for_each_regular_move (std::function<void(Move &)> const & f);
 		bool set_index_if_found(Moves name);
 		// nullptr if not found
-		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
-		Move * find_if (std::function<bool(Move &)> const & condition);
+		Move const * find (Moves name) const;
+		Move * find (Moves name);
 		bool regular_move_exists (std::function<bool(Move const &)> const & condition) const;
-		bool regular_move_exists (Moves name) const;
+		bool exists (Moves name) const;
 		bool a_regular_move_is_selectable () const;
 		// Move::END if none
 		Moves name_of_last_used_move () const;
