@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_BUFFER_OVERRUN_HPP_
-#define NETWORK_BUFFER_OVERRUN_HPP_
+#ifndef NETWORK__BUFFER_OVERRUN_HPP_
+#define NETWORK__BUFFER_OVERRUN_HPP_
 
 #include "invalid_packet.hpp"
 
@@ -32,4 +32,4 @@ class BufferOverrun : public InvalidPacket {
 };
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_BUFFER_OVERRUN_HPP_
+#endif	// NETWORK__BUFFER_OVERRUN_HPP_

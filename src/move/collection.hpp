@@ -16,16 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_COLLECTION_HPP_
-#define MOVE_COLLECTION_HPP_
+#ifndef MOVE__COLLECTION_HPP_
+#define MOVE__COLLECTION_HPP_
 
-#include "collection.hpp"
+#include "../collection.hpp"
+
 #include <cstdint>
 #include <functional>
 #include <vector>
+
+#include "container.hpp"
 #include "move.hpp"
-#include "move_container.hpp"
-#include "ranked_move.hpp"
+#include "ranked.hpp"
 
 namespace technicalmachine {
 class SharedMoves;
@@ -54,4 +56,4 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		void update_shared_moves(SharedMoves & s);
 };
 }	// namespace technicalmachine
-#endif	// MOVE_COLLECTION_HPP_
+#endif	// MOVE__COLLECTION_HPP_

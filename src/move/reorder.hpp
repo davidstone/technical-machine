@@ -1,4 +1,4 @@
-// Use moves
+// Reorder moves for efficient evaluation
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,15 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef USE_MOVE_HPP_
-#define USE_MOVE_HPP_
+#ifndef MOVE__REORDER_HPP_
+#define MOVE__REORDER_HPP_
+
+#include <vector>
+#include "move.hpp"
+#include "ranked.hpp"
 
 namespace technicalmachine {
 
-class Team;
-class Weather;
+class Move;
 
-unsigned call_move (Team & user, Team & target, Weather & weather, unsigned log_damage = -1u);
+std::vector<RankedMove> reorder(std::vector<Move> const & input, bool ai);
 
 }	// namespace technicalmachine
-#endif	// USE_MOVE_HPP_
+#endif	// MOVE__REORDER_HPP_

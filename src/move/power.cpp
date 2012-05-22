@@ -16,21 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move_power.hpp"
+#include "power.hpp"
 
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
 
-#include "ability.hpp"
-#include "gender.hpp"
-#include "item.hpp"
 #include "move.hpp"
-#include "pokemon.hpp"
-#include "rational.hpp"
-#include "status.hpp"
-#include "team.hpp"
-#include "weather.hpp"
+
+#include "../ability.hpp"
+#include "../gender.hpp"
+#include "../item.hpp"
+#include "../pokemon.hpp"
+#include "../rational.hpp"
+#include "../status.hpp"
+#include "../team.hpp"
+#include "../weather.hpp"
 
 namespace technicalmachine {
 namespace {

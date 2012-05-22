@@ -25,10 +25,11 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "conversion.hpp"
-#include "../move.hpp"
 #include "../pokemon.hpp"
 #include "../stat.hpp"
 #include "../team.hpp"
+
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 namespace po {

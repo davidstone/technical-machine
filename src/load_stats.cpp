@@ -25,9 +25,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include "invalid_settings_file.hpp"
-#include "move.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
+
+#include "move/move.hpp"
 
 namespace technicalmachine {
 

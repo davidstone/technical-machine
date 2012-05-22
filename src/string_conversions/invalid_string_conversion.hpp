@@ -19,8 +19,8 @@
 #include <stdexcept>
 #include <string>
 
-#ifndef INVALID_STRING_CONVERSION_HPP_
-#define INVALID_STRING_CONVERSION_HPP_
+#ifndef STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_
+#define STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_
 
 namespace technicalmachine {
 
@@ -50,4 +50,4 @@ class InvalidFromStringConversion : public std::runtime_error {
 
 }	// namespace technicalmachine
 
-#endif	// INVALID_STRING_CONVERSION_HPP_
+#endif	// STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_READ_TEAM_FILE_HPP_
-#define POKEMON_ONLINE_READ_TEAM_FILE_HPP_
+#ifndef POKEMON_ONLINE__READ_TEAM_FILE_HPP_
+#define POKEMON_ONLINE__READ_TEAM_FILE_HPP_
 
 #include <string>
 
@@ -29,4 +29,4 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size);
 
 } // namespace po
 } // namespace technicalmachine
-#endif // POKEMON_ONLINE_READ_TEAM_FILE_HPP_
+#endif // POKEMON_ONLINE__READ_TEAM_FILE_HPP_

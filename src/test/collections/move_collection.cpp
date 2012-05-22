@@ -17,14 +17,17 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "move_collection.hpp"
+
 #include <iostream>
 #include <string>
+
 #include "create_shared_moves.hpp"
 #include "invalid_collection.hpp"
-#include "../../move.hpp"
-#include "../../move_collection.hpp"
-#include "../../move_container.hpp"
-#include "../../shared_moves.hpp"
+
+#include "../../move/move.hpp"
+#include "../../move/collection.hpp"
+#include "../../move/container.hpp"
+#include "../../move/shared.hpp"
 
 namespace technicalmachine {
 

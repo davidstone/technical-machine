@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_BATTLE_HPP_
-#define POKEMON_ONLINE_BATTLE_HPP_
+#ifndef POKEMON_ONLINE__BATTLE_HPP_
+#define POKEMON_ONLINE__BATTLE_HPP_
 
 #include <random>
 #include <string>
@@ -89,4 +89,4 @@ class Battle : public GenericBattle {
 
 }	// namespace po
 }	// namespace technicalmachine
-#endif	// POKEMON_ONLINE_BATTLE_HPP_
+#endif	// POKEMON_ONLINE__BATTLE_HPP_

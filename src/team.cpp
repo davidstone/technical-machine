@@ -31,12 +31,13 @@
 #include "ability.hpp"
 #include "gender.hpp"
 #include "item.hpp"
-#include "move.hpp"
 #include "pokemon.hpp"
 #include "switch.hpp"
 #include "status.hpp"
 #include "team_predictor.hpp"
 #include "type.hpp"
+
+#include "move/move.hpp"
 
 #include "pokemon_lab/read_team_file.hpp"
 #include "pokemon_online/read_team_file.hpp"

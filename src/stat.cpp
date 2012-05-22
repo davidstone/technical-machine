@@ -22,13 +22,14 @@
 
 #include "ability.hpp"
 #include "item.hpp"
-#include "move.hpp"
 #include "nature.hpp"
 #include "pokemon.hpp"
 #include "species.hpp"
 #include "status.hpp"
 #include "team.hpp"
 #include "weather.hpp"
+
+#include "move/move.hpp"
 
 namespace technicalmachine {
 namespace {

@@ -22,12 +22,14 @@
 
 #include "../invalid_simulator_conversion.hpp"
 
-#include "../../pokemon_online/conversion.hpp"
 #include "../../ability.hpp"
-#include "../../move.hpp"
 #include "../../nature.hpp"
 #include "../../pokemon.hpp"
 #include "../../species.hpp"
+
+#include "../../move/move.hpp"
+
+#include "../../pokemon_online/conversion.hpp"
 
 namespace technicalmachine {
 namespace po {

@@ -21,18 +21,19 @@
 #include <algorithm>
 #include <cassert>
 
-#include "ability.hpp"
-#include "block.hpp"
-#include "damage.hpp"
-#include "heal.hpp"
 #include "move.hpp"
-#include "pokemon.hpp"
-#include "stat.hpp"
-#include "status.hpp"
-#include "switch.hpp"
-#include "team.hpp"
-#include "type.hpp"
-#include "weather.hpp"
+
+#include "../ability.hpp"
+#include "../block.hpp"
+#include "../damage.hpp"
+#include "../heal.hpp"
+#include "../pokemon.hpp"
+#include "../stat.hpp"
+#include "../status.hpp"
+#include "../switch.hpp"
+#include "../team.hpp"
+#include "../type.hpp"
+#include "../weather.hpp"
 #undef SING
 
 namespace technicalmachine {

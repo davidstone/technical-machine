@@ -25,14 +25,15 @@
 #include <string>
 
 #include "gender.hpp"
-#include "move.hpp"
 #include "pokemon.hpp"
 #include "pokemon_collection.hpp"
 #include "screen.hpp"
-#include "shared_moves.hpp"
 #include "species.hpp"
 #include "stage.hpp"
 #include "stat.hpp"
+
+#include "move/move.hpp"
+#include "move/shared.hpp"
 
 namespace technicalmachine {
 

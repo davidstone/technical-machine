@@ -21,11 +21,13 @@
 
 #include <array>
 #include <vector>
+
 #include "ability.hpp"
 #include "item.hpp"
-#include "move.hpp"
 #include "nature.hpp"
 #include "species.hpp"
+
+#include "move/move.hpp"
 
 namespace technicalmachine {
 

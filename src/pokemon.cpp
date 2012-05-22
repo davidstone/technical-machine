@@ -25,10 +25,11 @@
 
 #include "ability.hpp"
 #include "gender.hpp"
-#include "move.hpp"
-#include "shared_moves.hpp"
 #include "species.hpp"
 #include "stat.hpp"
+
+#include "move/move.hpp"
+#include "move/shared.hpp"
 
 namespace technicalmachine {
 

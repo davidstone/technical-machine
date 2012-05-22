@@ -24,9 +24,10 @@
 #include "incorrect_calculation.hpp"
 
 #include "../damage.hpp"
-#include "../move_power.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
+
+#include "../move/power.hpp"
 
 namespace technicalmachine {
 namespace {

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_CONNECT_HPP_
-#define NETWORK_CONNECT_HPP_
+#ifndef NETWORK__CONNECT_HPP_
+#define NETWORK__CONNECT_HPP_
 
 #include <cstdint>
 #include <map>
@@ -122,4 +122,4 @@ class GenericClient {
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_CONNECT_HPP_
+#endif	// NETWORK__CONNECT_HPP_

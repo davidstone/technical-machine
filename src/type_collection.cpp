@@ -20,13 +20,10 @@
 
 #include <vector>
 
-#include "species.hpp"
-#include "type.hpp"
-
-#include "ability.hpp"
 #include "pokemon.hpp"
-#include "status.hpp"
+#include "species.hpp"
 #include "team.hpp"
+#include "type.hpp"
 #include "weather.hpp"
 
 namespace technicalmachine {

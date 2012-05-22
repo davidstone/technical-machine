@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_BATTLE_SETTINGS_HPP_
-#define POKEMON_LAB_BATTLE_SETTINGS_HPP_
+#ifndef POKEMON_LAB__BATTLE_SETTINGS_HPP_
+#define POKEMON_LAB__BATTLE_SETTINGS_HPP_
 
 #include <cstdint>
 #include "../network/battle_settings.hpp"
@@ -37,4 +37,4 @@ class BattleSettings : public network::GenericBattleSettings {
 
 }	// namespace pl
 }	// namespace technicalmachine
-#endif	// POKEMON_LAB_BATTLE_SETTINGS_HPP_
+#endif	// POKEMON_LAB__BATTLE_SETTINGS_HPP_

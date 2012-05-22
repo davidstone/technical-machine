@@ -22,15 +22,16 @@
 #include <string>
 
 #include "ability.hpp"
-#include "move_collection.hpp"
 #include "gender.hpp"
 #include "item.hpp"
-#include "move.hpp"
 #include "nature.hpp"
 #include "species.hpp"
 #include "stat.hpp"
 #include "status.hpp"
 #include "type_collection.hpp"
+
+#include "move/collection.hpp"
+#include "move/move.hpp"
 
 namespace technicalmachine {
 class SharedMoves;

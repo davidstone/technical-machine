@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "reorder_moves.hpp"
+#include "reorder.hpp"
 
 #include <algorithm>
 #include <vector>

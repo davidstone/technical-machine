@@ -23,11 +23,12 @@
 #include "ability.hpp"
 #include "damage.hpp"
 #include "heal.hpp"
-#include "move.hpp"
 #include "pokemon.hpp"
 #include "status.hpp"
 #include "team.hpp"
 #include "weather.hpp"
+
+#include "move/move.hpp"
 
 namespace technicalmachine {
 namespace {

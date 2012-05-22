@@ -18,8 +18,8 @@
 
 #include "conversion.hpp"
 #include "../gender.hpp"
-#include "../move.hpp"
 #include "../species.hpp"
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 namespace pl {

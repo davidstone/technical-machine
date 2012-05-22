@@ -17,13 +17,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pokemon_collection.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <functional>
 #include <string>
+
 #include "pokemon.hpp"
-#include "shared_moves.hpp"
 #include "species.hpp"
+
+#include "move/shared.hpp"
 
 namespace technicalmachine {
 

@@ -27,12 +27,11 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "ability.hpp"
-#include "move.hpp"
 #include "pokemon.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
-#include <iostream>
+#include "move/move.hpp"
 
 namespace technicalmachine {
 namespace {

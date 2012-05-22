@@ -1,4 +1,4 @@
-// Shared moves
+// Use moves
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,22 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SHARED_MOVES_HPP_
-#define SHARED_MOVES_HPP_
-
-#include <vector>
-#include "move.hpp"
+#ifndef MOVE__USE_MOVE_HPP_
+#define MOVE__USE_MOVE_HPP_
 
 namespace technicalmachine {
 
-class SharedMoves {
-	public:
-		explicit SharedMoves (unsigned team_size = 6);
-		void remove_switch();
-	private:
-		std::vector<Move> moves;
-		friend class MoveContainer;
-};
+class Team;
+class Weather;
+
+unsigned call_move (Team & user, Team & target, Weather & weather, unsigned log_damage = -1u);
 
 }	// namespace technicalmachine
-#endif	// SHARED_MOVES_HPP_
+#endif	// MOVE__USE_MOVE_HPP_

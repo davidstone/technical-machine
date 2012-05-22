@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_INVALID_PACKET_HPP_
-#define NETWORK_INVALID_PACKET_HPP_
+#ifndef NETWORK__INVALID_PACKET_HPP_
+#define NETWORK__INVALID_PACKET_HPP_
 
 #include <stdexcept>
 #include <string>
@@ -33,4 +33,4 @@ class InvalidPacket : public std::runtime_error {
 };
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_INVALID_PACKET_HPP_
+#endif	// NETWORK__INVALID_PACKET_HPP_

@@ -24,10 +24,12 @@
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
-#include "../move.hpp"
 #include "../nature.hpp"
 #include "../pokemon.hpp"
 #include "../status.hpp"
+
+#include "../move/move.hpp"
+
 #include "../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_CONTAINER_HPP_
-#define MOVE_CONTAINER_HPP_
+#ifndef MOVE__CONTAINER_HPP_
+#define MOVE__CONTAINER_HPP_
 
 #include <cstdint>
 #include <functional>
@@ -56,4 +56,4 @@ class MoveContainer {
 };
 
 }	// namespace technicalmachine
-#endif	// MOVE_CONTAINER_HPP_
+#endif	// MOVE__CONTAINER_HPP_

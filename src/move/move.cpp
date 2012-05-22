@@ -23,10 +23,10 @@
 #include <vector>
 #undef SING
 
-#include "evaluate.hpp"
-#include "team.hpp"
-#include "type.hpp"
-#include "weather.hpp"
+#include "../evaluate.hpp"
+#include "../team.hpp"
+#include "../type.hpp"
+#include "../weather.hpp"
 
 namespace technicalmachine {
 namespace {

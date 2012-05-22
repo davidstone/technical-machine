@@ -22,9 +22,10 @@
 
 #include "evaluate.hpp"
 #include "expectiminimax.hpp"
-#include "move.hpp"
 #include "team.hpp"
 #include "weather.hpp"
+
+#include "move/move.hpp"
 
 namespace technicalmachine {
 namespace {

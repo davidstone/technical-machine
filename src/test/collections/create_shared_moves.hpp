@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_CREATE_SHARED_MOVES_HPP_
-#define TEST_CREATE_SHARED_MOVES_HPP_
+#ifndef TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
+#define TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
 
 #include <vector>
-#include "../../move.hpp"
+#include "../../move/move.hpp"
 
 namespace technicalmachine {
 
@@ -34,4 +34,4 @@ inline std::vector<Move> create_shared_moves(unsigned const team_size) {
 }
 
 }	// namespace technicalmachine
-#endif	// TEST_CREATE_SHARED_MOVES_HPP_
+#endif	// TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_

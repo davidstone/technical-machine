@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_READ_USER_INFO_HPP_
-#define POKEMON_ONLINE_READ_USER_INFO_HPP_
+#ifndef POKEMON_ONLINE__READ_USER_INFO_HPP_
+#define POKEMON_ONLINE__READ_USER_INFO_HPP_
 
 #include <cstdint>
 #include <string>
@@ -55,4 +55,4 @@ class User {
 
 }	// namespace po
 }	// namespace technicalmachine
-#endif	// POKEMON_ONLINE_READ_USER_INFO_HPP_
+#endif	// POKEMON_ONLINE__READ_USER_INFO_HPP_

@@ -26,9 +26,10 @@
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
-#include "../move.hpp"
 #include "../species.hpp"
 #include "../stat.hpp"
+
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 namespace po {

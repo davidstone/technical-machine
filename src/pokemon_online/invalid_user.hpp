@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE_INVALID_USER_HPP_
-#define POKEMON_ONLINE_INVALID_USER_HPP_
+#ifndef POKEMON_ONLINE__INVALID_USER_HPP_
+#define POKEMON_ONLINE__INVALID_USER_HPP_
 
 #include <cstdint>
 #include <stdexcept>
@@ -40,4 +40,4 @@ class InvalidUser : public std::runtime_error {
 
 }	// namespace po
 }	// namespace technicalmachine
-#endif	// POKEMON_ONLINE_INVALID_USER_HPP_
+#endif	// POKEMON_ONLINE__INVALID_USER_HPP_

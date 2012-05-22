@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_INVALID_SIMULATOR_CONVERSION_HPP_
-#define TEST_INVALID_SIMULATOR_CONVERSION_HPP_
+#ifndef TEST__INVALID_SIMULATOR_CONVERSION_HPP_
+#define TEST__INVALID_SIMULATOR_CONVERSION_HPP_
 
 #include <stdexcept>
 
@@ -34,4 +34,4 @@ class InvalidSimulatorConversion : public std::logic_error {
 
 }	// namespace technicalmachine
 
-#endif	// TEST_INVALID_SIMULATOR_CONVERSION_HPP_
+#endif	// TEST__INVALID_SIMULATOR_CONVERSION_HPP_

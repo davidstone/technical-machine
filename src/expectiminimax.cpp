@@ -33,15 +33,16 @@
 #include "block.hpp"
 #include "endofturn.hpp"
 #include "evaluate.hpp"
-#include "move.hpp"
 #include "pokemon.hpp"
 #include "stat.hpp"
 #include "switch.hpp"
 #include "team.hpp"
 #include "transposition.hpp"
 #include "type.hpp"
-#include "use_move.hpp"
 #include "weather.hpp"
+
+#include "move/move.hpp"
+#include "move/use_move.hpp"
 
 namespace technicalmachine {
 namespace {

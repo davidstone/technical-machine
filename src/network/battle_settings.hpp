@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK_BATTLE_SETTINGS_HPP_
-#define NETWORK_BATTLE_SETTINGS_HPP_
+#ifndef NETWORK__BATTLE_SETTINGS_HPP_
+#define NETWORK__BATTLE_SETTINGS_HPP_
 
 namespace technicalmachine {
 namespace network {
@@ -30,4 +30,4 @@ class GenericBattleSettings {
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK_BATTLE_SETTINGS_HPP_
+#endif	// NETWORK__BATTLE_SETTINGS_HPP_

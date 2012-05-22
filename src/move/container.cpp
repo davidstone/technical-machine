@@ -16,14 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move_container.hpp"
+#include "container.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <functional>
 #include <vector>
+
 #include "move.hpp"
-#include "shared_moves.hpp"
+#include "shared.hpp"
 
 namespace technicalmachine {
 

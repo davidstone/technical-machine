@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_DAMAGE_HPP_
-#define TEST_DAMAGE_HPP_
+#ifndef TEST__DAMAGE_HPP_
+#define TEST__DAMAGE_HPP_
 
 namespace technicalmachine {
 
@@ -25,4 +25,4 @@ void damage_tests ();
 
 }	// namespace technicalmachine
 
-#endif	// TEST_DAMAGE_HPP_
+#endif	// TEST__DAMAGE_HPP_

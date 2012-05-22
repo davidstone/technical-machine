@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_STRING_CONVERSION_HPP_
-#define TEST_STRING_CONVERSION_HPP_
+#ifndef TEST__STRING_CONVERSION_HPP_
+#define TEST__STRING_CONVERSION_HPP_
 
 namespace technicalmachine {
 
 void string_conversion_tests ();
 
 }	// namespace technicalmachine
-#endif	// TEST_STRING_CONVERSION_HPP_
+#endif	// TEST__STRING_CONVERSION_HPP_

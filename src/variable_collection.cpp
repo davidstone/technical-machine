@@ -17,12 +17,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "variable_collection.hpp"
+
 #include <cassert>
 #include <cstdint>
+
 #include "empty_team.hpp"
-#include "move.hpp"
 #include "phazing_in_same_pokemon.hpp"
 #include "variable.hpp"
+
+#include "move/move.hpp"
 
 namespace technicalmachine {
 namespace {

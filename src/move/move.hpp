@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_HPP_
-#define MOVE_HPP_
+#ifndef MOVE__MOVE_HPP_
+#define MOVE__MOVE_HPP_
 
 #include <cstdint>
 #include <string>
 #include <utility>
 
-#include "variable.hpp"
-#include "variable_collection.hpp"
-#include "type.hpp"
+#include "../variable.hpp"
+#include "../variable_collection.hpp"
+#include "../type.hpp"
 #undef SING
 
 namespace technicalmachine {
@@ -214,4 +214,4 @@ enum Vanish : uint8_t {
 };
 
 }	// namespace technicalmachine
-#endif	// MOVE_HPP_
+#endif	// MOVE__MOVE_HPP_

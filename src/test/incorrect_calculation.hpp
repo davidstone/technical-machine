@@ -16,6 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef TEST__INCORRECT_CALCULATION_HPP_
+#define TEST__INCORRECT_CALCULATION_HPP_
+
 #include <stdexcept>
 #include <string>
 
@@ -30,3 +33,5 @@ class IncorrectCalculation : public std::logic_error {
 };
 
 }	// namespace technicalmachine
+
+#endif	// TEST__INCORRECT_CALCULATION_HPP_

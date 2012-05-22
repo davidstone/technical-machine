@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST_MOVE_COLLECTION_HPP_
-#define TEST_MOVE_COLLECTION_HPP_
+#ifndef TEST__COLLECTIONS__MOVE_COLLECTION_HPP_
+#define TEST__COLLECTIONS__MOVE_COLLECTION_HPP_
 
 namespace technicalmachine {
 
 void move_collection_tests();
 
 }	// namespace technicalmachine
-#endif	// TEST_MOVE_COLLECTION_HPP_
+#endif	// TEST__COLLECTIONS__MOVE_COLLECTION_HPP_

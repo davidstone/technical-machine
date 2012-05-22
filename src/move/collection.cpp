@@ -16,14 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move_collection.hpp"
+#include "collection.hpp"
+
 #include <cstdint>
 #include <functional>
 #include <vector>
+
 #include "move.hpp"
-#include "ranked_move.hpp"
-#include "reorder_moves.hpp"
-#include "shared_moves.hpp"
+#include "ranked.hpp"
+#include "reorder.hpp"
+#include "shared.hpp"
 
 namespace technicalmachine {
 

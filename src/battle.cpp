@@ -32,13 +32,14 @@
 #include "endofturn.hpp"
 #include "expectiminimax.hpp"
 #include "gender.hpp"
-#include "move.hpp"
 #include "species.hpp"
 #include "switch.hpp"
 #include "team.hpp"
 #include "team_predictor.hpp"
-#include "use_move.hpp"
 #include "weather.hpp"
+
+#include "move/move.hpp"
+#include "move/use_move.hpp"
 
 #include "network/connect.hpp"
 #include "network/outmessage.hpp"

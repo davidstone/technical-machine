@@ -21,7 +21,7 @@
 
 #include <cstdint>
 #include <random>
-#include "move.hpp"
+#include "move/move.hpp"
 
 namespace technicalmachine {
 

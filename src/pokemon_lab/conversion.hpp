@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB_CONVERSION_HPP_
-#define POKEMON_LAB_CONVERSION_HPP_
+#ifndef POKEMON_LAB__CONVERSION_HPP_
+#define POKEMON_LAB__CONVERSION_HPP_
 
 #include "../gender.hpp"
-#include "../move.hpp"
 #include "../species.hpp"
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 namespace pl {
@@ -37,4 +37,4 @@ unsigned species_to_id (Species species);
 
 }	// namespace pl
 }	// namespace technicalmachine
-#endif	// POKEMON_LAB_CONVERSION_HPP_
+#endif	// POKEMON_LAB__CONVERSION_HPP_

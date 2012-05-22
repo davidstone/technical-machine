@@ -1,4 +1,4 @@
-// Load teams
+// Class to order moves to improve alpha-beta pruning
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,28 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "shared_moves.hpp"
-#include <cassert>
-#include "move.hpp"
+#ifndef MOVE__RANKED_HPP_
+#define MOVE__RANKED_HPP_
+
+#include <cstdint>
 
 namespace technicalmachine {
 
-SharedMoves::SharedMoves(unsigned const team_size) {
-	moves.reserve ((team_size > 1) ? team_size + 1 : 1);
-	moves.push_back(Move(Move::STRUGGLE, 0));
-	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team_size > 1) {
-		for (unsigned count = 0; count != team_size; ++count) {
-			moves.push_back(Move(Move::from_replacement (count), 0));
-		}
-	}
-}
-
-void SharedMoves::remove_switch() {
-	assert(moves.back().is_switch());
-	moves.pop_back();
-	if (moves.back().name == Move::SWITCH0)
-		moves.pop_back();
-}
+class RankedMove {
+	public:
+		explicit RankedMove(uint8_t const new_index, int16_t const new_score = 0);
+		friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
+		int16_t score;
+		uint8_t index;
+};
 
 }	// namespace technicalmachine
+#endif	// MOVE__RANKED_HPP_

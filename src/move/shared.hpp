@@ -1,4 +1,4 @@
-// Move power calculator forward declarations
+// Shared moves
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,15 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE_POWER_HPP_
-#define MOVE_POWER_HPP_
+#ifndef MOVE__SHARED_HPP_
+#define MOVE__SHARED_HPP_
+
+#include <vector>
+#include "move.hpp"
 
 namespace technicalmachine {
 
-class Team;
-class Weather;
-
-unsigned move_power (Team const & attacker, Team const & defender, Weather const & weather);
+class SharedMoves {
+	public:
+		explicit SharedMoves (unsigned team_size = 6);
+		void remove_switch();
+	private:
+		std::vector<Move> moves;
+		friend class MoveContainer;
+};
 
 }	// namespace technicalmachine
-#endif	// MOVE_POWER_HPP_
+#endif	// MOVE__SHARED_HPP_

@@ -1,4 +1,4 @@
-// Reorder moves for efficient evaluation
+// Move power calculator forward declarations
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,17 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef REORDER_MOVES_HPP_
-#define REORDER_MOVES_HPP_
-
-#include <vector>
-#include "ranked_move.hpp"
+#ifndef MOVE__POWER_HPP_
+#define MOVE__POWER_HPP_
 
 namespace technicalmachine {
 
-class Move;
+class Team;
+class Weather;
 
-std::vector<RankedMove> reorder(std::vector<Move> const & input, bool ai);
+unsigned move_power (Team const & attacker, Team const & defender, Weather const & weather);
 
 }	// namespace technicalmachine
-#endif	// REORDER_MOVES_HPP_
+#endif	// MOVE__POWER_HPP_

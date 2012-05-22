@@ -27,11 +27,12 @@
 #include "conversion.hpp"
 #include "../ability.hpp"
 #include "../item.hpp"
-#include "../move.hpp"
 #include "../pokemon.hpp"
 #include "../species.hpp"
 #include "../stat.hpp"
 #include "../team.hpp"
+
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 namespace po {
