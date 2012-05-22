@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdexcept>
-#include <string>
-
 #ifndef STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_
 #define STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_
+
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 
