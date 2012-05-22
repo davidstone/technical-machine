@@ -27,36 +27,13 @@
 #include "item.hpp"
 #include "move.hpp"
 #include "pokemon.hpp"
+#include "rational.hpp"
 #include "status.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
 namespace technicalmachine {
 namespace {
-class Rational {
-	public:
-		explicit Rational(unsigned const n = 1, unsigned const d = 1):
-			numerator(n),
-			denominator(d) {
-		}
-		template<typename Integer>
-		friend Integer operator*=(Integer & number, Rational const rational) {
-			number *= rational.numerator;
-			number /= rational.denominator;
-			return number;
-		}
-		template<typename Integer>
-		friend Integer operator*(Integer const number, Rational const rational) {
-			return number *= rational;
-		}
-		template<typename Integer>
-		friend Integer operator*(Rational rational, Integer const number) {
-			return rational * number;
-		}
-	private:
-		unsigned numerator;
-		unsigned denominator;
-};
 
 unsigned calculate_base_power (Team const & attacker, Team const & defender);
 unsigned second_lowest_bit (Stat const & stat);
@@ -358,23 +335,23 @@ bool mud_or_water_sport (Team const & attacker, Team const & defender) {
 Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
 	switch (attacker.ability.name) {
 		case Ability::TECHNICIAN:
-			return (base_power <= 60) ? Rational(3, 2) : Rational();
+			return (base_power <= 60) ? Rational(3, 2) : 1;
 		case Ability::BLAZE:
-			return pinch_ability_activates (attacker, Type::FIRE) ? Rational(3, 2) : Rational();
+			return pinch_ability_activates (attacker, Type::FIRE) ? Rational(3, 2) : 1;
 		case Ability::OVERGROW:
-			return pinch_ability_activates (attacker, Type::GRASS) ? Rational(3, 2) : Rational();
+			return pinch_ability_activates (attacker, Type::GRASS) ? Rational(3, 2) : 1;
 		case Ability::SWARM:
-			return pinch_ability_activates (attacker, Type::BUG) ? Rational(3, 2) : Rational();
+			return pinch_ability_activates (attacker, Type::BUG) ? Rational(3, 2) : 1;
 		case Ability::TORRENT:
-			return pinch_ability_activates (attacker, Type::WATER) ? Rational(3, 2) : Rational();
+			return pinch_ability_activates (attacker, Type::WATER) ? Rational(3, 2) : 1;
 		case Ability::IRON_FIST:
-			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : Rational();
+			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : 1;
 		case Ability::RECKLESS:
-			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : Rational();
+			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : 1;
 		case Ability::RIVALRY:
 			return Rational(static_cast<unsigned>(4 + attacker.gender.multiplier(defender.gender)), 4);
 		default:
-			return Rational();
+			return 1;
 	}
 }
 
@@ -385,13 +362,13 @@ bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) 
 Rational defender_ability_modifier(Move const & move, Ability const ability) {
 	switch (ability.name) {
 		case Ability::DRY_SKIN:
-			return (move.type() == Type::FIRE) ? Rational(5, 4) : Rational();
+			return (move.type() == Type::FIRE) ? Rational(5, 4) : 1;
 		case Ability::HEATPROOF:
-			return (move.type() == Type::FIRE) ? Rational(1, 2) : Rational();
+			return (move.type() == Type::FIRE) ? Rational(1, 2) : 1;
 		case Ability::THICK_FAT:
-			return (move.type() == Type::FIRE or move.type() == Type::ICE) ? Rational(1, 2) : Rational();
+			return (move.type() == Type::FIRE or move.type() == Type::ICE) ? Rational(1, 2) : 1;
 		default:
-			return Rational();
+			return 1;
 	}
 }
 
