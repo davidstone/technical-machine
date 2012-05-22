@@ -224,6 +224,10 @@ bool Ability::strengthens_nve_attacks () const {
 	return name == TINTED_LENS;
 }
 
+bool Ability::uses_extra_pp() const {
+	return name == PRESSURE;
+}
+
 bool Ability::ignores_blockers () const {
 	return name == MOLD_BREAKER;
 }

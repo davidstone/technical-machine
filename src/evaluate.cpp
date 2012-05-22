@@ -149,7 +149,7 @@ int64_t Score::score_move (Team const & team, Team const & other, Weather const 
 			score += other.reflect.turns_remaining * reflect;
 		else if (move.is_special())
 			score += other.light_screen.turns_remaining * light_screen;
-		if (move.is_out_of_pp())
+		if (move.pp.is_empty())
 			score += no_pp;
 	});
 	return score;

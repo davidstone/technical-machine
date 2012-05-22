@@ -125,7 +125,7 @@ bool not_illegal_struggle (Pokemon const & user, Move const & move) {
 
 // Things that both block selection and block execution in between sleep and confusion
 bool block1 (Team const & user, Move const & move, Team const & other) {
-	return (move.is_out_of_pp())
+	return (move.pp.is_empty())
 			or (move.disable)
 			or (user.heal_block and (move.is_healing()))
 			or (imprison (move, other));

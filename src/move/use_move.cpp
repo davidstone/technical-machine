@@ -1010,13 +1010,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 }
 
 void lower_pp (Team & user, Pokemon const & target) {
-	Move & move = user.pokemon().move();
-	if (!move.is_struggle_or_switch() and !user.bide) {
-		if (target.ability.name == Ability::PRESSURE and 2 <= move.pp)
-			move.pp -= 2;
-		else
-			--move.pp;
-	}
+	if (!user.bide)
+		user.pokemon().move().pp.decrement(target.ability);
 }
 
 void call_other_move (Team & user) {

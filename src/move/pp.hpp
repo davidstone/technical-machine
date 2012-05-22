@@ -1,4 +1,4 @@
-// Class to properly do integer multiplication / division
+// PP class
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,37 +16,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RATIONAL_HPP_
-#define RATIONAL_HPP_
+#ifndef MOVE__PP_HPP_
+#define MOVE__PP_HPP_
+
+#include <cstdint>
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
+class Ability;
 
-class Rational {
+class Pp {
 	public:
-		// Intentionally implicit
-		Rational(unsigned const n = 1, unsigned const d = 1):
-			numerator(n),
-			denominator(d) {
-		}
-		template<typename Integer>
-		friend Integer operator*=(Integer & number, Rational const rational) {
-			number *= rational.numerator;
-			number /= rational.denominator;
-			return number;
-		}
-		template<typename Integer>
-		friend Integer operator*(Integer number, Rational const rational) {
-			return number *= rational;
-		}
-		template<typename Integer>
-		friend Integer operator*(Rational const rational, Integer number) {
-			return rational * number;
-		}
+		Pp(Moves move, unsigned pp_ups);
+		uint64_t hash () const;
+		uint64_t max_hash () const;
+		bool is_empty() const;
+		bool has_unlimited_pp() const;
+		void decrement(Ability const & foe_ability);
+		unsigned trump_card_power() const;
+		friend bool operator== (Pp const & lhs, Pp const & rhs);
 	private:
-		unsigned numerator;
-		unsigned denominator;
+		uint8_t max;
+		uint8_t current;
 };
+bool operator!= (Pp const & lhs, Pp const & rhs);
 
 }	// namespace technicalmachine
-
-#endif	// RATIONAL_HPP_
+#endif	// MOVE__PP_HPP_

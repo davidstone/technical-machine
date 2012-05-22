@@ -23,6 +23,8 @@
 #include <string>
 #include <utility>
 
+#include "pp.hpp"
+
 #include "../variable.hpp"
 #include "../variable_collection.hpp"
 #include "../type.hpp"
@@ -61,7 +63,6 @@ class Move {
 		bool calls_other_move () const;
 		bool was_used_last () const;
 		bool cannot_ko () const;
-		bool is_out_of_pp () const;
 		bool breaks_screens () const;
 		bool is_struggle_or_switch () const;
 		static bool is_phaze (Moves name);
@@ -82,14 +83,13 @@ class Move {
 		}
 
 		VariableCollection variable;
-		int16_t score;
 		Moves name;
+		Pp pp;
+		int16_t score;
 		// I maintain the selectable state to determine if Struggle is legal
 		bool selectable;
 		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
 		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
-		uint8_t pp_max;			// PP after all PP ups are applied
-		uint8_t pp;
 		// Move both of these up to team when it will reduce the size of Move.
 		uint8_t r;					// The random number (85 through 100)
 		uint8_t times_used;

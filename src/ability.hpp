@@ -89,7 +89,7 @@ class Ability {
 		bool damages_leechers () const;
 		bool weakens_se_attacks () const;
 		bool strengthens_nve_attacks () const;
-		
+		bool uses_extra_pp() const;
 		bool ignores_blockers () const;
 		
 		bool boosts_critical_hits () const;

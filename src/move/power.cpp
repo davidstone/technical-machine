@@ -144,18 +144,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 		case Moves::TRIPLE_KICK:
 			return 10 * std::min (static_cast<unsigned> (pokemon.move().times_used), 3u);
 		case Moves::TRUMP_CARD:
-			switch (pokemon.move().pp) {
-				case 0:
-					return 200;
-				case 1:
-					return 80;
-				case 2:
-					return 60;
-				case 3:
-					return 50;
-				default:
-					return 40;
-			}
+			return pokemon.move().pp.trump_card_power();
 		default:
 			return pokemon.move().base_power();
 	}
