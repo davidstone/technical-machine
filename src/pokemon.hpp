@@ -31,7 +31,6 @@
 #include "type_collection.hpp"
 
 #include "move/collection.hpp"
-#include "move/move.hpp"
 
 namespace technicalmachine {
 class SharedMoves;

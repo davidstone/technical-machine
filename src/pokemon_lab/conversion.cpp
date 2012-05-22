@@ -19,7 +19,7 @@
 #include "conversion.hpp"
 #include "../gender.hpp"
 #include "../species.hpp"
-#include "../move/move.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 namespace pl {
@@ -664,14 +664,14 @@ unsigned species_to_id (Species species) {
 	return species_converter [species];
 }
 
-Move::Moves id_to_move (unsigned id) {
-	return (id < static_cast <unsigned> (Move::SWITCH0)) ?
-		static_cast <Move::Moves> (id) :
-		static_cast <Move::Moves> (id + 6);
+Moves id_to_move (unsigned const id) {
+	return (id < static_cast<unsigned>(Moves::SWITCH0)) ?
+		static_cast<Moves>(id) :
+		static_cast<Moves>(id + 6);
 }
 
-unsigned move_to_id (Move::Moves move) {
-	return (move < Move::SWITCH0) ? static_cast <unsigned> (move) : static_cast <unsigned> (move) - 6;
+unsigned move_to_id (Moves move) {
+	return (move < Moves::SWITCH0) ? static_cast<unsigned>(move) : static_cast<unsigned>(move) - 6;
 }
 
 }	// namespace pl

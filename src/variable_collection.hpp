@@ -25,12 +25,11 @@
 #include "variable.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 
 class VariableCollection : public detail::BaseCollection<Variable> {
 	public:
-		// Has to be uint16_t instead of Move::Moves to prevent a circular
-		// dependency
-		VariableCollection (uint16_t move, unsigned foe_size);
+		VariableCollection (Moves move, unsigned foe_size);
 		void set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index);
 		uint8_t phaze_index (uint8_t const pokemon_index) const;
 		void for_each_index (std::function<void(void)> const & f);

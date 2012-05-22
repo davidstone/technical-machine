@@ -42,14 +42,14 @@ void move_collection_tests() {
 		if (c.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + std::to_string(size));
 		for (unsigned n = 1; n <= move_additions; ++n) {
-			c.add(Move(static_cast<Move::Moves>(n), 0));
+			c.add(Move(static_cast<Moves>(n), 0));
 			if (c.size() != shared_moves_size + n or c.size() != c.number_of_regular_moves() + shared_moves_size)
 				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + std::to_string(size));
 		}
 		
 		std::vector<Move> expected;
 		for (unsigned n = 1; n <= move_additions; ++n)
-			expected.push_back(Move(static_cast<Move::Moves>(n), 0));
+			expected.emplace_back(static_cast<Moves>(n), 0);
 		std::vector<Move> const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
 		for (unsigned n = 0; n != expected.size(); ++n) {

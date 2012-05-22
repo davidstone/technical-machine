@@ -26,6 +26,8 @@
 #include "../../pokemon.hpp"
 #include "../../species.hpp"
 
+#include "../../move/moves.hpp"
+
 namespace technicalmachine {
 namespace pl {
 namespace {
@@ -50,10 +52,10 @@ void test_item () {
 
 void test_move () {
 	std::cout << "\t\tVerifying correct move.\n";
-	for (Move::Moves original = static_cast <Move::Moves> (0); original != Move::END; original = static_cast <Move::Moves> (original + 1)) {
+	for (auto original = static_cast<Moves>(0); original != Moves::END; original = static_cast<Moves>(static_cast<unsigned>(original) + 1)) {
 		if (!Move::is_switch (original)) {
 			unsigned const id = move_to_id (original);
-			Move::Moves const result = id_to_move (id);
+			Moves const result = id_to_move (id);
 			if (original != result)
 				throw InvalidSimulatorConversion <Move> (original, result);
 		}

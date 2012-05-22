@@ -29,6 +29,7 @@
 #include "../../move/shared.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 namespace {
 class Comparator : public std::unary_function<void, Move> {
 	public:
@@ -57,13 +58,13 @@ void move_container_tests() {
 	if (c.size() != shared_moves_size)
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves.");
 	for (unsigned n = 1; n <= move_additions; ++n) {
-		c.push_back(Move(static_cast<Move::Moves>(n), 0));
+		c.push_back(Move(static_cast<Moves>(n), 0));
 		if (c.size() != shared_moves_size + n or c.size() != c.number_of_regular_moves() + shared_moves_size)
 			throw InvalidCollection("MoveContainer has the wrong number of moves.");
 	}
 	std::vector<Move> expected_regular;
 	for (unsigned n = 1; n <= move_additions; ++n)
-		expected_regular.push_back(Move(static_cast<Move::Moves>(n), 0));
+		expected_regular.emplace_back(static_cast<Moves>(n), 0);
 	c.for_each_regular_move(Comparator(expected_regular));
 	std::vector<Move> const expected_shared = create_shared_moves(team_size);
 	c.for_each_shared(Comparator(expected_shared));

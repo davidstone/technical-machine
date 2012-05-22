@@ -23,6 +23,7 @@
 #include <cstdint>
 
 #include "move.hpp"
+#include "moves.hpp"
 
 #include "../ability.hpp"
 #include "../gender.hpp"
@@ -75,14 +76,14 @@ namespace {
 unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 	Pokemon const & pokemon = attacker.pokemon();
 	switch (pokemon.move().name) {
-		case Move::CRUSH_GRIP:
-		case Move::WRING_OUT:
+		case Moves::CRUSH_GRIP:
+		case Moves::WRING_OUT:
 			return 120u * defender.pokemon().hp.stat / defender.pokemon().hp.max + 1;
-		case Move::ERUPTION:
-		case Move::WATER_SPOUT:
+		case Moves::ERUPTION:
+		case Moves::WATER_SPOUT:
 			return 150u * pokemon.hp.stat / pokemon.hp.max;
-		case Move::FLAIL:
-		case Move::REVERSAL: {
+		case Moves::FLAIL:
+		case Moves::REVERSAL: {
 			unsigned const k = 64u * pokemon.hp.stat / pokemon.hp.max;
 			if (k <= 1)
 				return 200;
@@ -97,25 +98,25 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 			else
 				return 20;
 		}
-		case Move::FLING:
+		case Moves::FLING:
 			return pokemon.item.get_fling_power();
-		case Move::FRUSTRATION:
+		case Moves::FRUSTRATION:
 			return 102 - pokemon.happiness * 2u / 5;
-		case Move::FURY_CUTTER:
+		case Moves::FURY_CUTTER:
 			// 10 * 2 ^ n
 			return 10u << std::min (static_cast<unsigned> (pokemon.move().times_used), 4u);
-		case Move::GRASS_KNOT:
-		case Move::LOW_KICK:
+		case Moves::GRASS_KNOT:
+		case Moves::LOW_KICK:
 			return defender.pokemon().mass();
-		case Move::GYRO_BALL: {
+		case Moves::GYRO_BALL: {
 			unsigned const uncapped_power = 25u * defender.pokemon().spe.stat / pokemon.spe.stat + 1;
 			return std::min(uncapped_power, 150u);
 		}
-		case Move::ICE_BALL:
-		case Move::ROLLOUT:
+		case Moves::ICE_BALL:
+		case Moves::ROLLOUT:
 			// 30 * 2 ^ n
 			return 30u << std::min (static_cast<unsigned> (pokemon.move().times_used), 4u);
-		case Move::HIDDEN_POWER: {
+		case Moves::HIDDEN_POWER: {
 			unsigned const u = second_lowest_bit (pokemon.hp) * (1 << 0);	// 1
 			unsigned const v = second_lowest_bit (pokemon.atk) * (1 << 1);	// 2
 			unsigned const w = second_lowest_bit (pokemon.def) * (1 << 2);	// 4
@@ -124,25 +125,25 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 			unsigned const z = second_lowest_bit (pokemon.spd) * (1 << 5);	// 32
 			return (u + v + w + x + y + z) * 40 / 63 + 30;
 		}
-		case Move::MAGNITUDE:
+		case Moves::MAGNITUDE:
 			return pokemon.move().variable().value();
-		case Move::NATURAL_GIFT:
+		case Moves::NATURAL_GIFT:
 			return pokemon.item.get_berry_power ();
-		case Move::PRESENT:
+		case Moves::PRESENT:
 			assert (!pokemon.move().variable().present_heals());
 			return pokemon.move().variable().value();
-		case Move::PUNISHMENT: {
+		case Moves::PUNISHMENT: {
 			auto const positive_values = [](int const stage) { return static_cast<unsigned>(std::max(stage, 0)); };
 			unsigned const uncapped_power = 60 + 20 * defender.stage.accumulate(positive_values);
 			return std::min(uncapped_power, 200u);
 		}
-		case Move::RETURN:
+		case Moves::RETURN:
 			return pokemon.happiness * 2u / 5;
-		case Move::SPIT_UP:
+		case Moves::SPIT_UP:
 			return attacker.stockpile * 100u;
-		case Move::TRIPLE_KICK:
+		case Moves::TRIPLE_KICK:
 			return 10 * std::min (static_cast<unsigned> (pokemon.move().times_used), 3u);
-		case Move::TRUMP_CARD:
+		case Moves::TRUMP_CARD:
 			switch (pokemon.move().pp) {
 				case 0:
 					return 200;
@@ -175,36 +176,36 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 	// 1 less than it should be.
 
 	switch (attacker.pokemon().move().name) {
-		case Move::ASSURANCE:
+		case Moves::ASSURANCE:
 			return defender.damaged;
-		case Move::AVALANCHE: 
-		case Move::REVENGE:
+		case Moves::AVALANCHE: 
+		case Moves::REVENGE:
 			return attacker.damaged;
-		case Move::BRINE:
+		case Moves::BRINE:
 			return defender.pokemon().hp.stat <= defender.pokemon().hp.max / 2;
-		case Move::EARTHQUAKE:
-		case Move::MAGNITUDE:
+		case Moves::EARTHQUAKE:
+		case Moves::MAGNITUDE:
 			return defender.vanish == DUG;
-		case Move::FACADE:
+		case Moves::FACADE:
 			return attacker.pokemon().status.boosts_facade();
-		case Move::GUST:
+		case Moves::GUST:
 			return defender.vanish == BOUNCED or defender.vanish == FLOWN;
-		case Move::ICE_BALL:
-		case Move::ROLLOUT:
+		case Moves::ICE_BALL:
+		case Moves::ROLLOUT:
 			return attacker.defense_curl;
-		case Move::PAYBACK:
+		case Moves::PAYBACK:
 			return defender.moved;
-		case Move::SMELLINGSALT:
+		case Moves::SMELLINGSALT:
 			return defender.pokemon().status.boosts_smellingsalt();
-		case Move::SOLARBEAM:
+		case Moves::SOLARBEAM:
 			return !weather.rain();
-		case Move::STOMP:
+		case Moves::STOMP:
 			return defender.minimize;
-		case Move::SURF:
+		case Moves::SURF:
 			return defender.vanish == DIVED;
-		case Move::WAKE_UP_SLAP:
+		case Moves::WAKE_UP_SLAP:
 			return defender.pokemon().status.is_sleeping();
-		case Move::WEATHER_BALL:
+		case Moves::WEATHER_BALL:
 			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:
 			return false;

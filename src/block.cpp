@@ -27,6 +27,7 @@
 #include "weather.hpp"
 
 #include "move/move.hpp"
+#include "move/moves.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -105,7 +106,7 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 namespace {
 
 bool is_blocked_by_bide (Team const & user, Move const & move) {
-	return user.bide and move.name != Move::BIDE;
+	return user.bide and move.name != Moves::BIDE;
 }
 
 bool is_not_illegal_switch (Team const & user, Move const & move, Team const & other, Weather const & weather) {
@@ -119,7 +120,7 @@ bool is_blocked_from_switching (Team const & user, Team const & other, Weather c
 }
 
 bool not_illegal_struggle (Pokemon const & user, Move const & move) {
-	return move.name != Move::STRUGGLE or !user.move.a_regular_move_is_selectable();
+	return move.name != Moves::STRUGGLE or !user.move.a_regular_move_is_selectable();
 }
 
 // Things that both block selection and block execution in between sleep and confusion

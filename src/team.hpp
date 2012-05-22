@@ -32,7 +32,6 @@
 #include "stage.hpp"
 #include "stat.hpp"
 
-#include "move/move.hpp"
 #include "move/shared.hpp"
 
 namespace technicalmachine {

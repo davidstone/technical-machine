@@ -21,15 +21,15 @@
 
 #include "../gender.hpp"
 #include "../species.hpp"
-#include "../move/move.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 namespace pl {
 
 Gender::Genders id_to_gender (unsigned id);
 unsigned gender_to_id (Gender::Genders gender);
-Move::Moves id_to_move (unsigned id);
-unsigned move_to_id (Move::Moves move);
+Moves id_to_move (unsigned id);
+unsigned move_to_id (Moves move);
 Species id_to_species (unsigned id);
 unsigned species_to_id (Species species);
 

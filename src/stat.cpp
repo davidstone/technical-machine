@@ -29,8 +29,6 @@
 #include "team.hpp"
 #include "weather.hpp"
 
-#include "move/move.hpp"
-
 namespace technicalmachine {
 namespace {
 

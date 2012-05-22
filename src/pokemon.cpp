@@ -29,6 +29,7 @@
 #include "stat.hpp"
 
 #include "move/move.hpp"
+#include "move/moves.hpp"
 #include "move/shared.hpp"
 
 namespace technicalmachine {
@@ -185,7 +186,7 @@ void Pokemon::set_nickname (std::string const & nick) {
 
 void Pokemon::set_hidden_power_type() {
 	Move * const move_ptr = move.find_if ([] (Move const & move) {
-		return move.name == Move::HIDDEN_POWER;
+		return move.name == Moves::HIDDEN_POWER;
 	});
 	if (move_ptr != nullptr)
 		move_ptr->set_type(calculate_hidden_power_type());

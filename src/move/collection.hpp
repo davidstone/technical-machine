@@ -30,6 +30,7 @@
 #include "ranked.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 class SharedMoves;
 
 class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
@@ -41,15 +42,15 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		// Skips Struggle and switches
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);
-		bool set_index_if_found(Move::Moves name);
+		bool set_index_if_found(Moves name);
 		// nullptr if not found
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
 		Move * find_if (std::function<bool(Move &)> const & condition);
 		bool regular_move_exists (std::function<bool(Move const &)> const & condition) const;
-		bool regular_move_exists (Move::Moves name) const;
+		bool regular_move_exists (Moves name) const;
 		bool a_regular_move_is_selectable () const;
 		// Move::END if none
-		Move::Moves name_of_last_used_move () const;
+		Moves name_of_last_used_move () const;
 		std::vector<RankedMove> create_ordered_container (bool ai) const;
 		uint8_t size () const;
 		uint8_t regular_size () const;

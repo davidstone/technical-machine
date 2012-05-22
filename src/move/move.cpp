@@ -21,12 +21,14 @@
 #include <cassert>
 #include <cstdint>
 #include <vector>
-#undef SING
+
+#include "moves.hpp"
 
 #include "../evaluate.hpp"
 #include "../team.hpp"
 #include "../type.hpp"
 #include "../weather.hpp"
+#undef SING
 
 namespace technicalmachine {
 namespace {
@@ -35,11 +37,11 @@ constexpr uint8_t unlimited_pp = 0xFF;
 constexpr uint8_t indeterminate_power = 0xFF;
 constexpr uint8_t variable_power = indeterminate_power - 1;
 constexpr uint16_t perfect_accuracy = 0xFFFF;
-Type get_type (Move::Moves move);
-uint8_t get_base_power (Move::Moves move);
-uint8_t get_pp (Move::Moves move);
-uint16_t get_accuracy (Move::Moves move);
-int8_t get_priority(Move::Moves move);
+Type get_type (Moves move);
+uint8_t get_base_power (Moves move);
+uint8_t get_pp (Moves move);
+uint16_t get_accuracy (Moves move);
+int8_t get_priority(Moves move);
 
 }	// unnamed namespace
 
@@ -87,11 +89,10 @@ bool Move::can_critical_hit() const {
 }
 
 uint64_t Move::hash () const {
-	return static_cast<uint64_t> (
-			name + END *
-			(disable + 7 *
+	return static_cast<uint64_t>(name) + static_cast<uint64_t>(Moves::END) *
+			static_cast<uint64_t>(disable + 7 *
 			(pp + pp_max *
-			times_used)));
+			times_used));
 }
 
 bool Move::operator== (Move const & other) const {
@@ -110,7 +111,7 @@ Type Move::type() const {
 }
 
 void Move::set_type(Type::Types const t) {
-	assert(name == HIDDEN_POWER);
+	assert(name == Moves::HIDDEN_POWER);
 	cached_type = t;
 }
 
@@ -122,21 +123,21 @@ int8_t Move::priority() const {
 	return cached_priority;
 }
 
-bool Move::is_switch (Moves name) {
-	return SWITCH0 <= name and name <= SWITCH5;
+bool Move::is_switch (Moves const name) {
+	return Moves::SWITCH0 <= name and name <= Moves::SWITCH5;
 }
 
 bool Move::is_switch () const {
 	return is_switch (name);
 }
 
-Move::Moves Move::from_replacement (unsigned replacement) {
-	return static_cast <Moves> (replacement + SWITCH0);
+Moves Move::from_replacement (unsigned const replacement) {
+	return static_cast<Moves>(replacement + static_cast<unsigned>(Moves::SWITCH0));
 }
 
-unsigned Move::to_replacement (Moves name) {
-	assert (SWITCH0 <= name and name <= SWITCH5);
-	return static_cast<unsigned> (name - SWITCH0);
+unsigned Move::to_replacement (Moves const name) {
+	assert (is_switch(name));
+	return static_cast<unsigned>(name) - static_cast<unsigned>(Moves::SWITCH0);
 }
 
 unsigned Move::to_replacement () const {
@@ -157,8 +158,8 @@ bool Move::affects_pokemon (Team const & target, Pokemon const & pokemon, Weathe
 
 bool Move::has_follow_up_decision () const {
 	switch (name) {
-		case BATON_PASS:
-		case U_TURN:
+		case Moves::BATON_PASS:
+		case Moves::U_TURN:
 			return true;
 		default:
 			return false;
@@ -168,12 +169,12 @@ bool Move::has_follow_up_decision () const {
 bool Move::calls_other_move () const {
 	switch (name) {
 //		case Move::NATURE_POWER:
-		case Move::ASSIST:
-		case Move::COPYCAT:
-		case Move::ME_FIRST:
-		case Move::METRONOME:
-		case Move::MIRROR_MOVE:
-		case Move::SLEEP_TALK:
+		case Moves::ASSIST:
+		case Moves::COPYCAT:
+		case Moves::ME_FIRST:
+		case Moves::METRONOME:
+		case Moves::MIRROR_MOVE:
+		case Moves::SLEEP_TALK:
 			return true;
 		default:
 			return false;
@@ -185,11 +186,11 @@ bool Move::is_out_of_pp () const {
 }
 
 bool Move::cannot_ko () const {
-	return name == FALSE_SWIPE;
+	return name == Moves::FALSE_SWIPE;
 }
 
 bool Move::breaks_screens () const {
-	return name == BRICK_BREAK;
+	return name == Moves::BRICK_BREAK;
 }
 
 bool Move::was_used_last () const {
@@ -202,8 +203,8 @@ bool Move::is_struggle_or_switch () const {
 
 bool Move::is_phaze (Moves name) {
 	switch (name) {
-		case ROAR:
-		case WHIRLWIND:
+		case Moves::ROAR:
+		case Moves::WHIRLWIND:
 			return true;
 		default:
 			return false;
@@ -216,18 +217,18 @@ bool Move::is_phaze () const {
 
 bool Move::is_healing (Moves name) {
 	switch (name) {
-		case HEAL_ORDER:
-		case MILK_DRINK:
-		case MOONLIGHT:
-		case MORNING_SUN:
-		case RECOVER:
-		case REST:
-		case ROOST:
-		case SLACK_OFF:
-		case SOFTBOILED:
-		case SWALLOW:
-		case SYNTHESIS:
-		case WISH:
+		case Moves::HEAL_ORDER:
+		case Moves::MILK_DRINK:
+		case Moves::MOONLIGHT:
+		case Moves::MORNING_SUN:
+		case Moves::RECOVER:
+		case Moves::REST:
+		case Moves::ROOST:
+		case Moves::SLACK_OFF:
+		case Moves::SOFTBOILED:
+		case Moves::SWALLOW:
+		case Moves::SYNTHESIS:
+		case Moves::WISH:
 			return true;
 		default:
 			return false;
@@ -240,12 +241,12 @@ bool Move::is_healing () const {
 
 bool Move::is_blocked_by_gravity () const {
 	switch (name) {
-		case BOUNCE:
-		case FLY:
-		case HI_JUMP_KICK:
-		case JUMP_KICK:
-		case MAGNET_RISE:
-		case SPLASH:
+		case Moves::BOUNCE:
+		case Moves::FLY:
+		case Moves::HI_JUMP_KICK:
+		case Moves::JUMP_KICK:
+		case Moves::MAGNET_RISE:
+		case Moves::SPLASH:
 			return true;
 		default:
 			return false;
@@ -254,21 +255,21 @@ bool Move::is_blocked_by_gravity () const {
 
 bool Move::is_boosted_by_iron_fist () const {
 	switch (name) {
-		case BULLET_PUNCH:
-		case COMET_PUNCH:
-		case DIZZY_PUNCH:
-		case DRAIN_PUNCH:
-		case DYNAMICPUNCH:
-		case FIRE_PUNCH:
-		case FOCUS_PUNCH:
-		case HAMMER_ARM:
-		case ICE_PUNCH:
-		case MACH_PUNCH:
-		case MEGA_PUNCH:
-		case METEOR_MASH:
-		case SHADOW_PUNCH:
-		case SKY_UPPERCUT:
-		case THUNDERPUNCH:
+		case Moves::BULLET_PUNCH:
+		case Moves::COMET_PUNCH:
+		case Moves::DIZZY_PUNCH:
+		case Moves::DRAIN_PUNCH:
+		case Moves::DYNAMICPUNCH:
+		case Moves::FIRE_PUNCH:
+		case Moves::FOCUS_PUNCH:
+		case Moves::HAMMER_ARM:
+		case Moves::ICE_PUNCH:
+		case Moves::MACH_PUNCH:
+		case Moves::MEGA_PUNCH:
+		case Moves::METEOR_MASH:
+		case Moves::SHADOW_PUNCH:
+		case Moves::SKY_UPPERCUT:
+		case Moves::THUNDERPUNCH:
 			return true;
 		default:
 			return false;
@@ -277,14 +278,14 @@ bool Move::is_boosted_by_iron_fist () const {
 
 bool Move::is_boosted_by_reckless() const {
 	switch (name) {
-		case BRAVE_BIRD:
-		case DOUBLE_EDGE:
-		case FLARE_BLITZ:
-		case HEAD_SMASH:
-		case SUBMISSION:
-		case TAKE_DOWN:
-		case VOLT_TACKLE:
-		case WOOD_HAMMER:
+		case Moves::BRAVE_BIRD:
+		case Moves::DOUBLE_EDGE:
+		case Moves::FLARE_BLITZ:
+		case Moves::HEAD_SMASH:
+		case Moves::SUBMISSION:
+		case Moves::TAKE_DOWN:
+		case Moves::VOLT_TACKLE:
+		case Moves::WOOD_HAMMER:
 			return true;
 		default:
 			return false;
@@ -293,8 +294,8 @@ bool Move::is_boosted_by_reckless() const {
 
 bool Move::is_usable_while_sleeping () const {
 	switch (name) {
-		case SLEEP_TALK:
-		case SNORE:
+		case Moves::SLEEP_TALK:
+		case Moves::SNORE:
 			return true;
 		default:
 			return false;
@@ -303,8 +304,8 @@ bool Move::is_usable_while_sleeping () const {
 
 bool Move::is_usable_while_frozen () const {
 	switch (name) {
-		case FLAME_WHEEL:
-		case SACRED_FIRE:
+		case Moves::FLAME_WHEEL:
+		case Moves::SACRED_FIRE:
 			return true;
 		default:
 			return false;
@@ -313,20 +314,20 @@ bool Move::is_usable_while_frozen () const {
 
 bool Move::is_sound_based () const {
 	switch (name) {
-		case BUG_BUZZ:
-		case CHATTER:
-		case GRASSWHISTLE:
-		case GROWL:
-		case HEAL_BELL:
-		case HYPER_VOICE:
-		case METAL_SOUND:
-		case PERISH_SONG:
-		case ROAR:
-		case SCREECH:
-		case SING:
-		case SNORE:
-		case SUPERSONIC:
-		case UPROAR:
+		case Moves::BUG_BUZZ:
+		case Moves::CHATTER:
+		case Moves::GRASSWHISTLE:
+		case Moves::GROWL:
+		case Moves::HEAL_BELL:
+		case Moves::HYPER_VOICE:
+		case Moves::METAL_SOUND:
+		case Moves::PERISH_SONG:
+		case Moves::ROAR:
+		case Moves::SCREECH:
+		case Moves::SING:
+		case Moves::SNORE:
+		case Moves::SUPERSONIC:
+		case Moves::UPROAR:
 			return true;
 		default:
 			return false;
@@ -335,8 +336,8 @@ bool Move::is_sound_based () const {
 
 bool Move::is_self_KO () const {
 	switch (name) {
-		case EXPLOSION:
-		case SELFDESTRUCT:
+		case Moves::EXPLOSION:
+		case Moves::SELFDESTRUCT:
 			return true;
 		default:
 			return false;
@@ -817,65 +818,65 @@ Move::Classification Move::classification (Moves const move) {
 		special,	// Zap Cannon 
 		physical,	// Zen Headbutt 
 	};
-	return lookup[move];
+	return lookup[static_cast<unsigned>(move)];
 }
 
 namespace {
 
-int8_t get_priority(Move::Moves move) {
+int8_t get_priority(Moves const move) {
 	switch (move) {
-		case Move::SWITCH0:
-		case Move::SWITCH1:
-		case Move::SWITCH2:
-		case Move::SWITCH3:
-		case Move::SWITCH4:
-		case Move::SWITCH5:
+		case Moves::SWITCH0:
+		case Moves::SWITCH1:
+		case Moves::SWITCH2:
+		case Moves::SWITCH3:
+		case Moves::SWITCH4:
+		case Moves::SWITCH5:
 			return 6;
-		case Move::HELPING_HAND:
+		case Moves::HELPING_HAND:
 			return 5;
-		case Move::MAGIC_COAT:
-		case Move::SNATCH:
+		case Moves::MAGIC_COAT:
+		case Moves::SNATCH:
 			return 4;
-		case Move::DETECT:
-		case Move::ENDURE:
-		case Move::FOLLOW_ME:
-		case Move::PROTECT:
+		case Moves::DETECT:
+		case Moves::ENDURE:
+		case Moves::FOLLOW_ME:
+		case Moves::PROTECT:
 			return 3;
-		case Move::FEINT:
+		case Moves::FEINT:
 			return 2;
-		case Move::AQUA_JET:
-		case Move::BIDE:
-		case Move::BULLET_PUNCH:
-		case Move::EXTREMESPEED:
-		case Move::FAKE_OUT:
-		case Move::ICE_SHARD:
-		case Move::MACH_PUNCH:
-		case Move::QUICK_ATTACK:
-		case Move::SHADOW_SNEAK:
-		case Move::SUCKER_PUNCH:
-		case Move::VACUUM_WAVE:
+		case Moves::AQUA_JET:
+		case Moves::BIDE:
+		case Moves::BULLET_PUNCH:
+		case Moves::EXTREMESPEED:
+		case Moves::FAKE_OUT:
+		case Moves::ICE_SHARD:
+		case Moves::MACH_PUNCH:
+		case Moves::QUICK_ATTACK:
+		case Moves::SHADOW_SNEAK:
+		case Moves::SUCKER_PUNCH:
+		case Moves::VACUUM_WAVE:
 			return 1;
-		case Move::VITAL_THROW:
+		case Moves::VITAL_THROW:
 			return -1;
-		case Move::FOCUS_PUNCH:
+		case Moves::FOCUS_PUNCH:
 			return -2;
-		case Move::AVALANCHE:
-		case Move::REVENGE:
+		case Moves::AVALANCHE:
+		case Moves::REVENGE:
 			return -3;
-		case Move::COUNTER:
-		case Move::MIRROR_COAT:
+		case Moves::COUNTER:
+		case Moves::MIRROR_COAT:
 			return -4;
-		case Move::ROAR:
-		case Move::WHIRLWIND:
+		case Moves::ROAR:
+		case Moves::WHIRLWIND:
 			return -5;
-		case Move::TRICK_ROOM:
+		case Moves::TRICK_ROOM:
 			return -6;
 		default:
 			return 0;
 	}
 }
 
-Type get_type (Move::Moves move) {
+Type get_type (Moves const move) {
 	static constexpr Type::Types move_type [] = {
 		Type::GRASS,		// ABSORB
 		Type::POISON,		// ACID
@@ -1351,10 +1352,10 @@ Type get_type (Move::Moves move) {
 		Type::ELECTRIC,	// ZAP_CANNON
 		Type::PSYCHIC		// ZEN_HEADBUTT
 	};
-	return Type (move_type [move]);
+	return Type(move_type[static_cast<unsigned>(move)]);
 }
 
-bool is_physical (Move::Moves move) {
+bool is_physical (Moves const move) {
 	static constexpr bool is_physical [] = {
 		false,		// Absorb
 		false,		// Acid
@@ -1830,10 +1831,10 @@ bool is_physical (Move::Moves move) {
 		false,		// Zap Cannon
 		true		// Zen Headbutt
 	};
-	return is_physical [move];
+	return is_physical[static_cast<unsigned>(move)];
 }
 
-uint8_t get_base_power (Move::Moves move) {
+uint8_t get_base_power (Moves const move) {
 	static constexpr uint8_t get_power [] = {
 		20,		// ABSORB
 		40,		// ACID
@@ -2309,10 +2310,10 @@ uint8_t get_base_power (Move::Moves move) {
 		120,		// ZAP_CANNON
 		80		// ZEN_HEADBUTT
 	};
-	return get_power [move];
+	return get_power [static_cast<unsigned>(move)];
 }
 
-uint8_t get_pp (Move::Moves move) {
+uint8_t get_pp (Moves const move) {
 	static constexpr uint8_t get_pp [] = {
 		25,		// Absorb
 		30,		// Acid
@@ -2788,10 +2789,10 @@ uint8_t get_pp (Move::Moves move) {
 		5,		// Zap Cannon
 		15		// Zen Headbutt
 	};
-	return get_pp [move];
+	return get_pp[static_cast<unsigned>(move)];
 }
 
-uint16_t get_accuracy (Move::Moves move) {
+uint16_t get_accuracy (Moves const move) {
 	static constexpr uint16_t get_accuracy [] = {
 		100,		// Absorb
 		100,		// Acid
@@ -3267,7 +3268,7 @@ uint16_t get_accuracy (Move::Moves move) {
 		50,		// Zap Cannon
 		90		// Zen Headbutt
 	};
-	return get_accuracy [move];
+	return get_accuracy [static_cast<unsigned>(move)];
 }
 
 }	// unnamed namespace

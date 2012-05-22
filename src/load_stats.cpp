@@ -28,8 +28,6 @@
 #include "pokemon.hpp"
 #include "species.hpp"
 
-#include "move/move.hpp"
-
 namespace technicalmachine {
 
 namespace {

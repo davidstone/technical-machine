@@ -20,12 +20,17 @@
 #define POKEMON_COLLECTION_HPP_
 
 #include "collection.hpp"
+
+#include <cstdint>
 #include <functional>
 #include <string>
+
 #include "pokemon.hpp"
 #include "species.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
+class Move;
 class SharedMoves;
 
 class PokemonCollection : public detail::BaseCollection<Pokemon> {
@@ -40,7 +45,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		Pokemon const & at_replacement () const;
 		Pokemon & at_replacement ();
 		void to_replacement();
-		Move::Moves replacement_to_switch () const;
+		Moves replacement_to_switch () const;
 		void replacement_from_switch ();
 		bool is_switching_to_self () const;
 		bool is_switching_to_self (Move const & move) const;

@@ -26,9 +26,11 @@
 #include "pokemon.hpp"
 #include "species.hpp"
 
+#include "move/move.hpp"
 #include "move/shared.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 
 PokemonCollection::PokemonCollection ():
 	current_replacement(0),
@@ -63,7 +65,7 @@ void PokemonCollection::to_replacement() {
 	set_index (replacement());
 }
 
-Move::Moves PokemonCollection::replacement_to_switch () const {
+Moves PokemonCollection::replacement_to_switch () const {
 	return Move::from_replacement (replacement());
 }
 void PokemonCollection::replacement_from_switch () {

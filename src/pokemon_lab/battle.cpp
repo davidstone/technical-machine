@@ -31,8 +31,6 @@
 #include "../pokemon.hpp"
 #include "../team.hpp"
 
-#include "../move/move.hpp"
-
 namespace technicalmachine {
 namespace pl {
 

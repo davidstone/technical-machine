@@ -27,15 +27,18 @@
 #include "../stat.hpp"
 #include "../team.hpp"
 
+#include "../move/move.hpp"
+
 namespace technicalmachine {
+enum class Moves : uint16_t;
 namespace pl {
 namespace {
 
 static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
 	std::string const name_str = pt.get_value<std::string>();
-	Move::Moves const name = Move::from_string (name_str);
+	Moves const name = Move::from_string (name_str);
 	unsigned const pp_ups = pt.get <unsigned> ("<xmlattr>.pp-up");
-	return Move (name, pp_ups, foe_size);
+	return Move(name, pp_ups, foe_size);
 }
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {

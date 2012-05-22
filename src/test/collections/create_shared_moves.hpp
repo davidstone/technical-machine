@@ -21,14 +21,15 @@
 
 #include <vector>
 #include "../../move/move.hpp"
+#include "../../move/moves.hpp"
 
 namespace technicalmachine {
 
 inline std::vector<Move> create_shared_moves(unsigned const team_size) {
-	std::vector<Move> shared ({ Move(Move::STRUGGLE, 0) });
+	std::vector<Move> shared ({ Move(Moves::STRUGGLE, 0) });
 	if (team_size != 1) {
 		for (unsigned n = 0; n != team_size; ++n)
-			shared.push_back(Move(Move::from_replacement(n), 0));
+			shared.emplace_back(Move::from_replacement(n), 0);
 	}
 	return shared;
 }

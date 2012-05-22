@@ -19,6 +19,7 @@
 #include "conversion.hpp"
 
 #include <iostream>
+#include <functional>
 
 #include "../invalid_simulator_conversion.hpp"
 
@@ -28,73 +29,79 @@
 #include "../../species.hpp"
 
 #include "../../move/move.hpp"
+#include "../../move/moves.hpp"
 
 #include "../../pokemon_online/conversion.hpp"
 
 namespace technicalmachine {
 namespace po {
 namespace {
+template<typename Enum>
+void for_each(typename std::function<void(Enum)> const & f) {
+	for (Enum original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1))
+		f(original);
+}
 
 void test_ability () {
 	std::cout << "\t\tVerifying correct ability.\n";
-	for (Ability::Abilities original = static_cast <Ability::Abilities> (0); original != Ability::END; original = static_cast <Ability::Abilities> (original + 1)) {
+	for_each<Ability::Abilities>([](Ability::Abilities const original) {
 		unsigned const id = ability_to_id (original);
 		Ability::Abilities const result = id_to_ability (id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Ability> (original, result);
-	}
+	});
 }
 
 void test_gender () {
 	std::cout << "\t\tVerifying correct gender.\n";
-	for (Gender::Genders original = static_cast <Gender::Genders> (0); original != Gender::END; original = static_cast <Gender::Genders> (original + 1)) {
+	for_each<Gender::Genders>([](Gender::Genders const original) {
 		unsigned const id = gender_to_id (original);
 		Gender::Genders const result = id_to_gender (id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Gender> (original, result);
-	}
+	});
 }
 
 void test_item () {
 	std::cout << "\t\tVerifying correct item.\n";
-	for (Item::Items original = static_cast <Item::Items> (0); original != Item::END; original = static_cast <Item::Items> (original + 1)) {
+	for_each<Item::Items>([](Item::Items const original) {
 		unsigned const id = item_to_id (original);
 		Item::Items const result = id_to_item (id);
 		if (original != result and id != 0)
 			throw InvalidSimulatorConversion <Item> (original, result);
-	}
+	});
 }
 
 void test_move () {
 	std::cout << "\t\tVerifying correct move.\n";
-	for (Move::Moves original = static_cast <Move::Moves> (0); original != Move::END; original = static_cast <Move::Moves> (original + 1)) {
+	for_each<Moves>([](Moves const original) {
 		if (!Move::is_switch (original)) {
 			unsigned const id = move_to_id (original);
-			Move::Moves const result = id_to_move (id);
+			Moves const result = id_to_move (id);
 			if (original != result)
 				throw InvalidSimulatorConversion <Move> (original, result);
 		}
-	}
+	});
 }
 
 void test_nature () {
 	std::cout << "\t\tVerifying correct nature.\n";
-	for (Nature::Natures original = static_cast <Nature::Natures> (0); original != Nature::END; original = static_cast <Nature::Natures> (original + 1)) {
+	for_each<Nature::Natures>([](Nature::Natures const original) {
 		unsigned const id = nature_to_id (original);
 		Nature::Natures const result = id_to_nature (id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Nature> (original, result);
-	}
+	});
 }
 
 void test_species () {
 	std::cout << "\t\tVerifying correct species.\n";
-	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (original + 1)) {
+	for_each<Species>([](Species const original) {
 		std::pair <uint16_t, uint8_t> const ids = species_to_id (original);
 		Species const result = id_to_species (ids.first, ids.second);
 		if (original != result)
 			throw InvalidSimulatorConversion <Pokemon> (original, result);
-	}
+	});
 }
 
 }	// anonymous namespace

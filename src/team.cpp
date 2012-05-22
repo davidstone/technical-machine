@@ -37,8 +37,6 @@
 #include "team_predictor.hpp"
 #include "type.hpp"
 
-#include "move/move.hpp"
-
 #include "pokemon_lab/read_team_file.hpp"
 #include "pokemon_online/read_team_file.hpp"
 

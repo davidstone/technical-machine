@@ -32,6 +32,7 @@
 #include "weather.hpp"
 
 #include "move/move.hpp"
+#include "move/moves.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -86,7 +87,7 @@ int64_t Score::score_team (Team const & team) const {
 		if (team.focus_energy)
 			score += focus_energy;
 		Move const * move_ptr = team.pokemon().move.find_if ([&](Move const & move) {
-			return (move.name == Move::BATON_PASS);
+			return (move.name == Moves::BATON_PASS);
 		});
 		if (move_ptr != nullptr) {
 			int64_t const stat_stages = Stage::dot_product(team.stage, stage);

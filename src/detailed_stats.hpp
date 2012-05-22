@@ -20,6 +20,7 @@
 #define DETAILED_STATS_HPP_
 
 #include <array>
+#include <cstdint>
 #include <vector>
 
 #include "ability.hpp"
@@ -27,9 +28,8 @@
 #include "nature.hpp"
 #include "species.hpp"
 
-#include "move/move.hpp"
-
 namespace technicalmachine {
+enum class Moves : uint16_t;
 
 class DetailedStats {
 	public:
@@ -37,7 +37,7 @@ class DetailedStats {
 		std::array<Ability::Abilities, Species::END> ability;
 		std::array<Item::Items, Species::END> item;
 		std::array<Nature::Natures, Species::END> nature;
-		std::array<std::vector<Move::Moves>, Species::END> move;
+		std::array<std::vector<Moves>, Species::END> move;
 };
 
 }	// namespace technicalmachine

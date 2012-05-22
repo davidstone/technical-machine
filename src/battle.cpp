@@ -47,6 +47,7 @@
 #include "pokemon_lab/write_team_file.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	opponent (_opponent),
@@ -100,7 +101,7 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn (client, battle_id);
 	if (!forced) {
-		Move::Moves move = determine_action (client);
+		Moves move = determine_action (client);
 		if (Move::is_switch (move))
 			msg.write_switch (battle_id, switch_slot (move));
 		else {
@@ -126,7 +127,7 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 		client.send_channel_message (battle_id, client.get_response ());
 }
 
-Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
+Moves GenericBattle::determine_action (network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	Team predicted = predict_team (client.detailed, foe, ai.pokemon.size());
@@ -135,7 +136,7 @@ Move::Moves GenericBattle::determine_action (network::GenericClient & client) {
 	return expectiminimax (ai, predicted, weather, depth, client.score, random_engine);
 }
 
-void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name) {
+void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Moves move_name) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
@@ -250,7 +251,7 @@ void GenericBattle::handle_end (network::GenericClient & client, Result const re
 	}
 }
 
-uint8_t GenericBattle::switch_slot (Move::Moves move) const {
+uint8_t GenericBattle::switch_slot (Moves move) const {
 	uint8_t const slot = Move::to_replacement (move);
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == ai.pokemon(slot).name)

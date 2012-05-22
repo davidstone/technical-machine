@@ -25,7 +25,7 @@
 #include "team.hpp"
 #include "weather.hpp"
 
-#include "move/move.hpp"
+#include "move/moves.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -108,7 +108,7 @@ int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned 
 		if (saved.depth >= current.depth and saved == current)
 			value = saved.value;
 		else {
-			Move::Moves phony = Move::END;
+			Moves phony = Moves::END;
 			// If I can't find it, continue evaluation as normal.
 			value = select_type_of_move_branch (ai, foe, weather, depth, score, phony);
 			current.value = value;

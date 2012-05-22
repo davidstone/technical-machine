@@ -29,9 +29,8 @@
 #include "../nature.hpp"
 #include "../species.hpp"
 
-#include "../move/move.hpp"
-
 namespace technicalmachine {
+enum class Moves : uint16_t;
 namespace po {
 
 Species id_to_species (unsigned id, unsigned forme);
@@ -44,8 +43,8 @@ unsigned gender_to_id (Gender::Genders gender);
 Item::Items id_to_item (unsigned id);
 unsigned item_to_id (Item::Items item);
 Item::Items battle_id_to_item (uint16_t id, uint8_t part);
-Move::Moves id_to_move (unsigned id);
-unsigned move_to_id (Move::Moves move);
+Moves id_to_move (unsigned id);
+unsigned move_to_id (Moves move);
 Nature::Natures id_to_nature (unsigned id);
 unsigned nature_to_id (Nature::Natures nature);
 

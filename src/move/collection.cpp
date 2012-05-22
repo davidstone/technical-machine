@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "move.hpp"
+#include "moves.hpp"
 #include "ranked.hpp"
 #include "reorder.hpp"
 #include "shared.hpp"
@@ -53,7 +54,7 @@ void MoveCollection::for_each_regular_move (std::function<void(Move &)> const & 
 	container.for_each_regular_move(f);
 }
 
-bool MoveCollection::set_index_if_found(Move::Moves name) {
+bool MoveCollection::set_index_if_found(Moves name) {
 	for (uint8_t new_index = 0; new_index != number_of_regular_moves(); ++new_index) {
 		if (unchecked_value(new_index).name == name) {
 			set_index(new_index);
@@ -74,7 +75,7 @@ bool MoveCollection::regular_move_exists (std::function<bool(Move const &)> cons
 	return find_if(condition) != nullptr;
 }
 
-bool MoveCollection::regular_move_exists (Move::Moves name) const {
+bool MoveCollection::regular_move_exists (Moves name) const {
 	return regular_move_exists([name](Move const & move){ return move.name == name; });
 }
 
@@ -84,11 +85,11 @@ bool MoveCollection::a_regular_move_is_selectable () const {
 	});
 }
 
-Move::Moves MoveCollection::name_of_last_used_move () const {
+Moves MoveCollection::name_of_last_used_move () const {
 	Move const * move_ptr = find_if ([] (Move const & move) {
 		return move.was_used_last();
 	});
-	return (move_ptr != nullptr) ? move_ptr->name : Move::END;
+	return (move_ptr != nullptr) ? move_ptr->name : Moves::END;
 }
 
 std::vector<RankedMove> MoveCollection::create_ordered_container (bool const ai) const {

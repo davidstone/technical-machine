@@ -21,18 +21,18 @@
 
 #include <cstdint>
 #include <random>
-#include "move/move.hpp"
 
 namespace technicalmachine {
 
+enum class Moves : uint16_t;
 class Score;
 class Team;
 class Weather;
 
-Move::Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, std::mt19937 & random_engine);
+Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
-int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Move::Moves & best_move, bool first_turn = false);
+int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
 #endif	// EXPECTIMINIMAX_HPP_

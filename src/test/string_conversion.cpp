@@ -29,6 +29,7 @@
 #include "../status.hpp"
 
 #include "../move/move.hpp"
+#include "../move/moves.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
 
@@ -38,7 +39,7 @@ namespace {
 template <class Class, typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
-	for (Enum original = static_cast <Enum> (0); original != Enum::END; original = static_cast <Enum> (original + 1)) {
+	for (Enum original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
 		std::string const str = Class::to_string (original);
 		Enum const result = Class::from_string (str);
 		if (original != result)
@@ -53,7 +54,7 @@ void string_conversion_tests () {
 	test_generic <Ability, Ability::Abilities> ("ability");
 	test_generic <Gender, Gender::Genders> ("gender");
 	test_generic <Item, Item::Items> ("item");
-	test_generic <Move, Move::Moves> ("move");
+	test_generic <Move, Moves> ("move");
 	test_generic <Nature, Nature::Natures> ("nature");
 	test_generic <Pokemon, Species> ("species");
 	test_generic <Status, Status::Statuses> ("status");

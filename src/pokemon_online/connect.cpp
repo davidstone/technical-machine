@@ -39,6 +39,7 @@
 #include "../team.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 namespace po {
 
 Client::Client (unsigned set_depth):
@@ -348,7 +349,7 @@ class BattlePokemon {
 		Item item;
 		Ability ability;
 		uint8_t happiness;
-		std::vector <Move::Moves> moves;
+		std::vector<Moves> moves;
 		explicit BattlePokemon (InMessage & msg):
 			id (msg.read_short (), msg.read_byte ()),
 			nickname (msg.read_string ()),
@@ -366,7 +367,7 @@ class BattlePokemon {
 				uint16_t const st = msg.read_short ();
 			}
 			for (unsigned n = 0; n != 4; ++n) {
-				moves.push_back (id_to_move (msg.read_short ()));
+				moves.push_back(id_to_move(msg.read_short ()));
 				uint8_t const pp = msg.read_byte ();
 				uint8_t const total_pp = msg.read_byte ();
 			}

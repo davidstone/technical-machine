@@ -25,22 +25,22 @@
 #include "phazing_in_same_pokemon.hpp"
 #include "variable.hpp"
 
-#include "move/move.hpp"
+#include "move/moves.hpp"
 
 namespace technicalmachine {
 namespace {
 
 typedef detail::BaseCollection<Variable>::container_type container_type;
-container_type create_container (Move::Moves move, unsigned foe_size);
-container_type simple_range (uint16_t first, uint16_t last, Move::Moves move);
+container_type create_container (Moves move, unsigned foe_size);
+container_type simple_range (uint16_t first, uint16_t last, Moves move);
 container_type simple_range (uint16_t first, uint16_t last, uint16_t probability);
-container_type default_effects (Move::Moves move);
-uint16_t get_probability (Move::Moves move);
+container_type default_effects (Moves move);
+uint16_t get_probability (Moves move);
 
 }	// unnamed namespace
 
-VariableCollection::VariableCollection (uint16_t const move, unsigned const foe_size):
-	detail::BaseCollection<Variable>(create_container(static_cast<Move::Moves>(move), foe_size)) {
+VariableCollection::VariableCollection (Moves const move, unsigned const foe_size):
+	detail::BaseCollection<Variable>(create_container(move, foe_size)) {
 }
 
 void VariableCollection::set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index) {
@@ -80,19 +80,19 @@ void VariableCollection::set_magnitude (unsigned const magnitude) {
 
 namespace {
 
-container_type create_container (Move::Moves const move, unsigned const foe_size) {
+container_type create_container (Moves const move, unsigned const foe_size) {
 	if (foe_size == 0)
 		throw EmptyTeam(__FILE__, __LINE__);
 	switch (move) {
-		case Move::ACUPRESSURE:
+		case Moves::ACUPRESSURE:
 			return simple_range(0, 6, move);
-		case Move::BIND:
-		case Move::CLAMP:
-		case Move::FIRE_SPIN:
-		case Move::MAGMA_STORM:
-		case Move::SAND_TOMB:
-		case Move::WHIRLPOOL:
-		case Move::WRAP: {
+		case Moves::BIND:
+		case Moves::CLAMP:
+		case Moves::FIRE_SPIN:
+		case Moves::MAGMA_STORM:
+		case Moves::SAND_TOMB:
+		case Moves::WHIRLPOOL:
+		case Moves::WRAP: {
 			uint16_t const probability = get_probability (move);
 			return container_type ({
 				Variable(2, probability),
@@ -101,11 +101,11 @@ container_type create_container (Move::Moves const move, unsigned const foe_size
 				Variable(5, probability / 3)
 			});
 		}
-		case Move::ENCORE:
+		case Moves::ENCORE:
 			return simple_range(4, 8, move);
-		case Move::FIRE_FANG:
-		case Move::ICE_FANG:
-		case Move::THUNDER_FANG: {
+		case Moves::FIRE_FANG:
+		case Moves::ICE_FANG:
+		case Moves::THUNDER_FANG: {
 			constexpr uint16_t flinch_and_status = Variable::max_probability / (10u * 10u);
 			constexpr uint16_t only_flinch = Variable::max_probability / 10u - flinch_and_status;
 			constexpr uint16_t only_status = Variable::max_probability / 10u - flinch_and_status;
@@ -117,7 +117,7 @@ container_type create_container (Move::Moves const move, unsigned const foe_size
 				Variable(3, flinch_and_status)
 			});
 		}
-		case Move::MAGNITUDE:
+		case Moves::MAGNITUDE:
 			return container_type ({
 				Variable(10, Variable::max_probability * 5u / 100u),
 				Variable(30, Variable::max_probability * 10u / 100u),
@@ -127,11 +127,11 @@ container_type create_container (Move::Moves const move, unsigned const foe_size
 				Variable(110, Variable::max_probability * 10u / 100u),
 				Variable(150, Variable::max_probability * 5u / 100u)
 			});
-		case Move::OUTRAGE:
-		case Move::PETAL_DANCE:
-		case Move::THRASH:
+		case Moves::OUTRAGE:
+		case Moves::PETAL_DANCE:
+		case Moves::THRASH:
 			return simple_range(2, 3, move);
-		case Move::PRESENT: {
+		case Moves::PRESENT: {
 			uint16_t const probability = get_probability (move);
 			return container_type ({
 				Variable(0, probability),
@@ -140,10 +140,10 @@ container_type create_container (Move::Moves const move, unsigned const foe_size
 				Variable(120, probability)
 			});
 		}
-		case Move::PSYWAVE:
+		case Moves::PSYWAVE:
 			return simple_range(5, 15, move);
-		case Move::ROAR:
-		case Move::WHIRLWIND: {
+		case Moves::ROAR:
+		case Moves::WHIRLWIND: {
 			if (foe_size > 2) {
 				uint16_t const probability = Variable::max_probability / (foe_size - 1);
 				return simple_range(0, foe_size - 2, probability);
@@ -154,16 +154,16 @@ container_type create_container (Move::Moves const move, unsigned const foe_size
 				});
 			}
 		}
-		case Move::TAUNT:
+		case Moves::TAUNT:
 			return simple_range(2, 3, move);
-		case Move::TRI_ATTACK:
+		case Moves::TRI_ATTACK:
 			return simple_range(0, 3, move);
 		default:
 			return default_effects(move);
 	}
 }
 
-container_type simple_range (uint16_t const first, uint16_t const last, Move::Moves const move) {
+container_type simple_range (uint16_t const first, uint16_t const last, Moves const move) {
 	return simple_range(first, last, get_probability (move));
 }
 
@@ -174,7 +174,7 @@ container_type simple_range (uint16_t const first, uint16_t const last, uint16_t
 	return collection;
 }
 
-container_type default_effects (Move::Moves const move) {
+container_type default_effects (Moves const move) {
 	container_type collection;
 	uint16_t const probability = get_probability(move);
 	if (probability != Variable::max_probability)
@@ -184,7 +184,8 @@ container_type default_effects (Move::Moves const move) {
 	return collection;
 }
 
-uint16_t get_probability (Move::Moves const move) {
+uint16_t get_probability (Moves const move) {
+	auto const index = static_cast<unsigned>(move);
 	// Chance (out of max_probability) to activate side-effect
 	static constexpr uint16_t get_probability [] = {
 		0,		// Absorb
@@ -661,7 +662,7 @@ uint16_t get_probability (Move::Moves const move) {
 		0,		// Zap Cannon
 		168		// Zen Headbut
 	};
-	return get_probability [move];
+	return get_probability[index];
 }
 }	// unnamed namespace
 }	// namespace technicalmachine

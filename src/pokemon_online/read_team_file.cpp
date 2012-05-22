@@ -33,6 +33,7 @@
 #include "../team.hpp"
 
 #include "../move/move.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 namespace po {
@@ -40,9 +41,8 @@ namespace {
 
 Move load_move(boost::property_tree::ptree const & pt, unsigned foe_size) {
 	unsigned const id = pt.get_value<unsigned>();
-	Move::Moves name = id_to_move(id);
 	constexpr unsigned pp_ups = 3;
-	return Move(name, pp_ups, foe_size);
+	return Move(id_to_move(id), pp_ups, foe_size);
 }
 
 Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
@@ -101,7 +101,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 	for (auto const & value : pt.get_child("")) {
 		if (value.first == "Move") {
 			Move const move (load_move(value.second, foe_size));
-			if (move.name != Move::END)
+			if (move.name != Moves::END)
 				pokemon.move.add(load_move(value.second, foe_size));
 		}
 		else if (value.first == "DV") {

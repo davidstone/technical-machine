@@ -30,9 +30,8 @@
 #include "team.hpp"
 #include "weather.hpp"
 
-#include "move/move.hpp"
-
 namespace technicalmachine {
+enum class Moves : uint16_t;
 class DetailedStats;
 namespace network {
 class GenericClient;
@@ -65,7 +64,7 @@ class GenericBattle {
 		Team predict_foe_team (DetailedStats const & detailed) const;
 		void handle_begin_turn (uint16_t turn_count) const;
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
-		void handle_use_move (uint8_t moving_party, uint8_t slot, Move::Moves move_name);
+		void handle_use_move (uint8_t moving_party, uint8_t slot, Moves move_name);
 		void handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
 		void handle_hp_change (uint8_t party_changing_hp, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator);
 		void handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp);
@@ -73,8 +72,8 @@ class GenericBattle {
 		void handle_end (network::GenericClient & client, Result const result) const;
 	protected:
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
-		Move::Moves determine_action (network::GenericClient & client);
-		uint8_t switch_slot (Move::Moves move) const;
+		Moves determine_action (network::GenericClient & client);
+		uint8_t switch_slot (Moves move) const;
 		virtual uint16_t max_damage_precision () const;
 		void initialize_turn ();
 		virtual uint8_t get_target () const = 0;

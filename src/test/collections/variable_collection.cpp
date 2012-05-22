@@ -27,6 +27,7 @@
 #include "../../phazing_in_same_pokemon.hpp"
 
 #include "../../move/move.hpp"
+#include "../../move/moves.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -54,7 +55,7 @@ namespace {
 
 void test_zero_size_team() {
 	try {
-		VariableCollection collection(Move::WHIRLWIND, 0);
+		VariableCollection collection(Moves::WHIRLWIND, 0);
 		throw InvalidCollection("Can construct a variable collection from a team of size 0.");
 	}
 	catch (EmptyTeam const & ex) {
@@ -66,7 +67,7 @@ void test_small_size_team() {
 	for (unsigned const foe_size : { 1u, 2u }) {
 		unsigned const current_index = 0;
 		unsigned const new_index = 0;
-		VariableCollection collection (Move::WHIRLWIND, foe_size);
+		VariableCollection collection (Moves::WHIRLWIND, foe_size);
 		collection.set_phaze_index(current_index, new_index);
 		if (collection.index() != 0)
 			throw InvalidCollection("Phazing index is not always 0 when the team size is " + std::to_string(foe_size) + ".");
@@ -75,7 +76,7 @@ void test_small_size_team() {
 
 void test_other_combinations(unsigned const max_foe_size) {
 	for (unsigned foe_size = 3; foe_size <= max_foe_size; ++foe_size) {
-		VariableCollection collection (Move::WHIRLWIND, foe_size);
+		VariableCollection collection (Moves::WHIRLWIND, foe_size);
 		for (unsigned new_index = 0; new_index <= foe_size; ++new_index) {
 			for (unsigned current_index = 0; current_index != foe_size; ++current_index) {
 				if (current_index == new_index)

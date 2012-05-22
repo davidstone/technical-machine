@@ -28,7 +28,10 @@
 #include "species.hpp"
 #include "team.hpp"
 
+#include "move/move.hpp"
+
 namespace technicalmachine {
+enum class Moves : uint16_t;
 namespace {
 
 template<typename T>
@@ -39,7 +42,7 @@ std::array<T, Species::END> all_ones_array () {
 }
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END][Species::END]);
 Species get_most_likely_pokemon (std::array<float, Species::END> const & estimate);
-void predict_move (Pokemon & member, std::vector<Move::Moves> const & detailed, unsigned size);
+void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size);
 
 }	// unnamed namespace
 
@@ -93,8 +96,8 @@ Species get_most_likely_pokemon (std::array<float, Species::END> const & estimat
 	return name;
 }
 
-void predict_move (Pokemon & member, std::vector<Move::Moves> const & detailed, unsigned size) {
-	for (Move::Moves const name : detailed) {
+void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size) {
+	for (Moves const name : detailed) {
 		Move const * const move_ptr = member.move.find_if([name](Move const & move) {
 			return move.name == name;
 		});

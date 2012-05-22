@@ -30,6 +30,7 @@
 #include "weather.hpp"
 
 #include "move/move.hpp"
+#include "move/moves.hpp"
 #include "move/power.hpp"
 
 namespace technicalmachine {
@@ -86,23 +87,23 @@ unsigned capped_damage (Team const & attacker, Team const & defender, Weather co
 unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather const & weather) {
 	Pokemon const & pokemon = attacker.pokemon();
 	switch (pokemon.move().name) {
-		case Move::DRAGON_RAGE:
+		case Moves::DRAGON_RAGE:
 			return 40;
-		case Move::ENDEAVOR:
-			return static_cast<unsigned> ((std::max) (defender.pokemon().hp.stat - pokemon.hp.stat, 0));
-		case Move::FISSURE:
-		case Move::GUILLOTINE:
-		case Move::HORN_DRILL:
-		case Move::SHEER_COLD:
+		case Moves::ENDEAVOR:
+			return static_cast<unsigned> (std::max(defender.pokemon().hp.stat - pokemon.hp.stat, 0));
+		case Moves::FISSURE:
+		case Moves::GUILLOTINE:
+		case Moves::HORN_DRILL:
+		case Moves::SHEER_COLD:
 			return defender.pokemon().hp.max;
-		case Move::NIGHT_SHADE:
-		case Move::SEISMIC_TOSS:
+		case Moves::NIGHT_SHADE:
+		case Moves::SEISMIC_TOSS:
 			return pokemon.level;
-		case Move::PSYWAVE:
+		case Moves::PSYWAVE:
 			return pokemon.move().variable().psywave_damage(pokemon.level);
-		case Move::SONICBOOM:
+		case Moves::SONICBOOM:
 			return 20;
-		case Move::SUPER_FANG:
+		case Moves::SUPER_FANG:
 			return defender.pokemon().hp.stat / 2;
 		default:
 			return regular_damage (attacker, defender, weather);

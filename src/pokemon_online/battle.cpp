@@ -301,9 +301,8 @@ void Battle::parse_send_out (InMessage & msg, uint8_t const player) {
 
 void Battle::parse_use_attack (InMessage & msg, uint8_t const player) {
 	uint16_t const attack = msg.read_short ();
-	Move::Moves const move = id_to_move (attack);
 	constexpr uint8_t slot = 0;
-	handle_use_move (player, slot, move);
+	handle_use_move (player, slot, id_to_move(attack));
 }
 
 void Battle::parse_straight_damage (InMessage & msg) {
