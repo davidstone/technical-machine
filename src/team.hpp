@@ -24,6 +24,7 @@
 #include <random>
 #include <string>
 
+#include "entry_hazards.hpp"
 #include "gender.hpp"
 #include "pokemon.hpp"
 #include "pokemon_collection.hpp"
@@ -148,12 +149,7 @@ class Team {
 		// is not in play
 		uint8_t wish;
 			
-		// The entry hazards represent those down on this team's side of the
-		// field. Using an entry hazard puts them down on the opponent's side
-		// of the field.
-		uint8_t spikes;
-		uint8_t toxic_spikes;
-		bool stealth_rock;
+		EntryHazards entry_hazards;
 
 		uint8_t called_move;
 		

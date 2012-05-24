@@ -108,9 +108,9 @@ int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const
 
 int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	Pokemon const & pokemon = team.pokemon();
-	int64_t score = team.stealth_rock * stealth_rock * static_cast<int>(Type::stealth_rock_effectiveness(pokemon)) / 4;
+	int64_t score = team.entry_hazards.stealth_rock * stealth_rock * static_cast<int>(Type::stealth_rock_effectiveness(pokemon)) / 4;
 	if (grounded (team, pokemon, weather))
-		score += team.spikes * spikes + team.toxic_spikes * toxic_spikes;
+		score += team.entry_hazards.spikes * spikes + team.entry_hazards.toxic_spikes * toxic_spikes;
 	if (pokemon.hp.stat != 0) {
 		score += members;
 		score += hp * pokemon.hp.stat / pokemon.hp.max;

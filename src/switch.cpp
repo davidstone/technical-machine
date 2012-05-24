@@ -18,12 +18,8 @@
 
 #include "switch.hpp"
 
-#include <algorithm>
-#include <utility>
-#include <vector>
-
 #include "ability.hpp"
-#include "heal.hpp"
+#include "entry_hazards.hpp"
 #include "pokemon.hpp"
 #include "stat.hpp"
 #include "status.hpp"
@@ -35,7 +31,6 @@ namespace technicalmachine {
 namespace {
 
 void reset_variables (Team & team);
-void entry_hazards (Team & switcher, Weather const & weather);
 void replace_fainted_pokemon (Team & switcher, Team & other);
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
 
@@ -59,7 +54,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 	}
 	
-	entry_hazards (switcher, weather);
+	EntryHazards::apply(switcher, weather);
 
 	if (switcher.pokemon().hp.stat > 0)
 		Ability::activate_on_switch (switcher, other, weather);
@@ -143,29 +138,6 @@ void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
 				move.variable.remove_phazing(switcher.pokemon.real_size());
 		});
 	});
-}
-
-void entry_hazards (Team & switcher, Weather const & weather) {
-	if (switcher.pokemon().ability.blocks_secondary_damage())
-		return;
-
-	if (grounded (switcher, switcher.pokemon(), weather)) {
-		if (switcher.toxic_spikes != 0) {
-			if (is_type (switcher, Type::POISON))
-				switcher.toxic_spikes = 0;
-			else if (switcher.toxic_spikes == 1)
-				Status::poison (switcher.pokemon(), switcher.pokemon(), weather);
-			else
-				Status::poison_toxic (switcher.pokemon(), switcher.pokemon(), weather);
-		}
-		if (switcher.spikes != 0)
-			heal (switcher.pokemon(), -16, switcher.spikes + 1u);
-	}
-	// get_effectiveness () outputs a value between 0 and 16, with higher
-	// numbers being more effective. 4 * effective Stealth Rock does
-	// 16 / 32 damage.
-	if (switcher.stealth_rock)
-		heal (switcher.pokemon(), -32, Type::stealth_rock_effectiveness(switcher.pokemon()));
 }
 
 }	// unnamed namespace

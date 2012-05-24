@@ -801,9 +801,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::RAPID_SPIN:
 			if (move.type().get_effectiveness(target.pokemon()) > 0) {
-				user.spikes = 0;
-				user.stealth_rock = false;
-				user.toxic_spikes = 0;
+				user.entry_hazards.clear();
 				user.leech_seed = false;
 				user.partial_trap = false;
 			}
@@ -865,15 +863,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::SOLARBEAM:		// Fix
 			break;
 		case Moves::SPIKES:
-			if (target.spikes < 3)
-				++target.spikes;
+			target.entry_hazards.add_spikes();
 			break;
 		case Moves::SPIT_UP:		// Fix
 			break;
 		case Moves::SPITE:		// Fix
 			break;
 		case Moves::STEALTH_ROCK:
-			target.stealth_rock = true;
+			target.entry_hazards.add_stealth_rock();
 			break;
 		case Moves::STOCKPILE:		// Fix
 			break;
@@ -957,8 +954,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.torment = true;
 			break;
 		case Moves::TOXIC_SPIKES:
-			if (target.toxic_spikes < 2)
-				++target.toxic_spikes;
+			target.entry_hazards.add_toxic_spikes();
 			break;
 		case Moves::TRANSFORM:		// Fix
 			break;

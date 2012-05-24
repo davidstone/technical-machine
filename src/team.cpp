@@ -120,10 +120,6 @@ Team::Team () :
 
 	wish (0),
 
-	spikes (0),
-	toxic_spikes (0),
-	stealth_rock (false),
-
 	me (false)
 	{
 }
@@ -192,10 +188,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	counter (0),
 
 	wish (0),
-
-	spikes (0),
-	toxic_spikes (0),
-	stealth_rock (false),
 
 	me (true)
 	{
@@ -282,9 +274,7 @@ Team::Team(Team const & other):
 	safeguard(other.safeguard),
 	tailwind(other.tailwind),
 	wish(other.wish),
-	spikes(other.spikes),
-	toxic_spikes(other.toxic_spikes),
-	stealth_rock(other.stealth_rock),
+	entry_hazards(other.entry_hazards),
 	called_move(other.called_move),
 	me(other.me) {
 	pokemon.for_each([& shared_moves](Pokemon & p) {
@@ -363,9 +353,7 @@ Team::Team(Team && other):
 	safeguard(std::move(other.safeguard)),
 	tailwind(std::move(other.tailwind)),
 	wish(std::move(other.wish)),
-	spikes(std::move(other.spikes)),
-	toxic_spikes(std::move(other.toxic_spikes)),
-	stealth_rock(std::move(other.stealth_rock)),
+	entry_hazards(std::move(other.entry_hazards)),
 	called_move(std::move(other.called_move)),
 	me(std::move(other.me)) {
 	pokemon.for_each([& shared_moves](Pokemon & p) {
@@ -470,10 +458,8 @@ uint64_t Team::hash () const {
 			(safeguard.hash() + safeguard.max_hash() *
 			(tailwind.hash() + tailwind.max_hash() *
 			(wish + 2 *
-			(spikes + 4 *
-			(toxic_spikes + 3 *
-			(stealth_rock + 2 *
-			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))))));
+			(entry_hazards.hash() + entry_hazards.max_hash() *
+			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 void Team::load (std::string const & name, unsigned other_size) {
@@ -542,9 +528,7 @@ bool Team::operator== (Team const & other) const {
 			safeguard == other.safeguard and
 			tailwind == other.tailwind and
 			wish == other.wish and
-			spikes == other.spikes and
-			toxic_spikes == other.toxic_spikes and
-			stealth_rock == other.stealth_rock and
+			entry_hazards == other.entry_hazards and
 			me == other.me;
 }
 
