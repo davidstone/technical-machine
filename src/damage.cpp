@@ -203,12 +203,12 @@ Rational calculate_weather_modifier (Type const type, Weather const & weather) {
 	else if (type.is_weakened_by_weather(weather))
 		return Rational(1, 2);
 	else
-		return 1;
+		return Rational(1);
 }
 
 Rational calculate_flash_fire_modifier (Team const & attacker) {
 	Type const & type = attacker.pokemon().move().type();
-	return (attacker.flash_fire and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : 1;
+	return (attacker.flash_fire and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : Rational(1);
 }
 
 unsigned calculate_critical_hit_multiplier (Team const & attacker) {
@@ -222,16 +222,15 @@ Rational calculate_item_modifier (Pokemon const & attacker) {
 		case Item::LIFE_ORB:
 			return Rational(13, 10);
 		case Item::METRONOME:
-			return (attacker.move().times_used >= 10) ? 2 : Rational(10u + attacker.move().times_used, 10);
+			return attacker.move().metronome_boost();
 		default:
-			return 1;
+			return Rational(1);
 	}
 }
 
 Rational calculate_me_first_modifier (Team const & attacker) {
-	return attacker.me_first ? Rational(3, 2) : 1;
+	return attacker.me_first ? Rational(3, 2) : Rational(1);
 }
-
 
 
 Rational calculate_random_modifier (Move const & move) {
@@ -240,11 +239,11 @@ Rational calculate_random_modifier (Move const & move) {
 
 Rational calculate_stab_modifier (Team const & attacker) {
 	Pokemon const & pokemon = attacker.pokemon();
-	return is_type(attacker, pokemon.move().type()) ? calculate_stab_boost(pokemon.ability) : 1;
+	return is_type(attacker, pokemon.move().type()) ? calculate_stab_boost(pokemon.ability) : Rational(1);
 }
 
 Rational calculate_stab_boost (Ability const ability) {
-	return ability.boosts_stab() ? 2 : Rational(3, 2);
+	return ability.boosts_stab() ? Rational(2) : Rational(3, 2);
 }
 
 std::vector<Rational> calculate_effectiveness_modifier (Move const & move, Pokemon const & defender) {
@@ -255,11 +254,11 @@ std::vector<Rational> calculate_effectiveness_modifier (Move const & move, Pokem
 }
 
 Rational calculate_ability_effectiveness_modifier (Ability const ability, unsigned const effectiveness) {
-	return (ability.weakens_se_attacks() and effectiveness > 4) ? Rational(3, 4) : 1;
+	return (ability.weakens_se_attacks() and effectiveness > 4) ? Rational(3, 4) : Rational(1);
 }
 
 Rational calculate_expert_belt_modifier (Item const item, unsigned const effectiveness) {
-	return (item.boosts_super_effective_moves() and effectiveness > 4) ? Rational(6, 5) : 1;
+	return (item.boosts_super_effective_moves() and effectiveness > 4) ? Rational(6, 5) : Rational(1);
 }
 
 unsigned calculate_tinted_lens_multiplier (Ability const ability, unsigned const effectiveness) {

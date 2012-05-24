@@ -43,7 +43,8 @@ Team create_max_damage_physical_attacker () {
 	pokemon.move.add(Move(Moves::ROLLOUT, 3, team_size));
 
 	attacker.defense_curl = true;
-	pokemon.move().times_used = 10;
+	for (unsigned n = 0; n != 10; ++n)
+		pokemon.move().increment_use_counter();
 	
 	return attacker;
 }
@@ -164,7 +165,8 @@ void special_damage_test () {
 	calculate_attacking_stat (attacker, weather);
 	
 	a.item.name = Item::METRONOME;
-	a.move().times_used = 10;
+	for (unsigned n = 0; n != 10; ++n)
+		a.move().increment_use_counter();
 
 	a.ability.name = Ability::BLAZE;
 	attacker.ch = true;

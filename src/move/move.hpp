@@ -21,11 +21,11 @@
 
 #include <cstdint>
 #include <string>
-#include <utility>
 
 #include "pp.hpp"
+#include "times_used.hpp"
 
-#include "../variable.hpp"
+#include "../rational.hpp"
 #include "../variable_collection.hpp"
 #include "../type.hpp"
 
@@ -61,7 +61,12 @@ class Move {
 		bool affects_replacement (Team const & target, Weather const & weather) const;
 		bool has_follow_up_decision () const;
 		bool calls_other_move () const;
+		void increment_use_counter();
 		bool was_used_last () const;
+		unsigned fury_cutter_power() const;
+		unsigned momentum_move_power() const;
+		unsigned triple_kick_power() const;
+		Rational metronome_boost() const;
 		bool cannot_ko () const;
 		bool breaks_screens () const;
 		bool is_struggle_or_switch () const;
@@ -92,8 +97,8 @@ class Move {
 		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
 		// Move both of these up to team when it will reduce the size of Move.
 		uint8_t r;					// The random number (85 through 100)
-		uint8_t times_used;
 	private:
+		TimesUsed times_used;
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
 
 		// Hidden Power makes this hard to replace with just a function

@@ -110,7 +110,7 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const
 		if (damage != 0)
 			do_damage (user, target, damage);
 	}
-	++move.times_used;
+	move.increment_use_counter();
 
 	do_side_effects (user, target, weather, damage);
 

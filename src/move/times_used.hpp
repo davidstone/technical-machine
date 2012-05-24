@@ -1,4 +1,4 @@
-// Class to properly do integer multiplication / division
+// Moves data structure
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,37 +16,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RATIONAL_HPP_
-#define RATIONAL_HPP_
+#ifndef MOVE__TIMES_USED_HPP_
+#define MOVE__TIMES_USED_HPP_
+
+#include <cstdint>
+#include "../rational.hpp"
 
 namespace technicalmachine {
 
-class Rational {
+class TimesUsed {
 	public:
-		// Intentionally implicit
-		explicit Rational(unsigned const n, unsigned const d = 1):
-			numerator(n),
-			denominator(d) {
-		}
-		template<typename Integer>
-		friend Integer operator*=(Integer & number, Rational const rational) {
-			number *= rational.numerator;
-			number /= rational.denominator;
-			return number;
-		}
-		template<typename Integer>
-		friend Integer operator*(Integer number, Rational const rational) {
-			return number *= rational;
-		}
-		template<typename Integer>
-		friend Integer operator*(Rational const rational, Integer number) {
-			return rational * number;
-		}
+		TimesUsed();
+		void reset ();
+		uint64_t hash() const;
+		uint64_t max_hash() const;
+		void increment();
+		bool was_used_last () const;
+		unsigned fury_cutter_power() const;
+		unsigned momentum_move_power() const;
+		unsigned triple_kick_power() const;
+		Rational metronome_boost() const;
+		friend bool operator== (TimesUsed lhs, TimesUsed rhs);
 	private:
-		unsigned numerator;
-		unsigned denominator;
+		uint8_t counter;
 };
 
-}	// namespace technicalmachine
+bool operator!= (TimesUsed lhs, TimesUsed rhs);
 
-#endif	// RATIONAL_HPP_
+}	// namespace technicalmachine
+#endif	// MOVE__TIMES_USED_HPP_

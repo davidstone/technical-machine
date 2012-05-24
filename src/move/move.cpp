@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <cstdint>
-#include <vector>
 
 #include "moves.hpp"
 
@@ -53,7 +52,6 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 	accuracy (get_accuracy (move)),
 	disable (0),
 	r (100),
-	times_used (0),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)),
 	cached_priority(get_priority(move)),
@@ -62,7 +60,7 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 
 void Move::reset () {
 	disable = 0;
-	times_used = 0;
+	times_used.reset();
 }
 
 bool Move::is_damaging() const {
@@ -90,8 +88,8 @@ bool Move::can_critical_hit() const {
 uint64_t Move::hash () const {
 	return static_cast<uint64_t>(name) + static_cast<uint64_t>(Moves::END) *
 			(pp.hash() + pp.max_hash() *
-			static_cast<uint64_t>(disable + 7 *
-			times_used));
+			disable + 7 *
+			times_used.hash());
 }
 
 bool Move::operator== (Move const & other) const {
@@ -188,8 +186,28 @@ bool Move::breaks_screens () const {
 	return name == Moves::BRICK_BREAK;
 }
 
+void Move::increment_use_counter() {
+	times_used.increment();
+}
+
 bool Move::was_used_last () const {
-	return times_used != 0;
+	return times_used.was_used_last();
+}
+
+unsigned Move::fury_cutter_power() const {
+	return times_used.fury_cutter_power();
+}
+
+unsigned Move::momentum_move_power() const {
+	return times_used.momentum_move_power();
+}
+
+unsigned Move::triple_kick_power() const {
+	return times_used.triple_kick_power();
+}
+
+Rational Move::metronome_boost() const {
+	return times_used.metronome_boost();
 }
 
 bool Move::is_struggle_or_switch () const {

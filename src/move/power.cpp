@@ -103,8 +103,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 		case Moves::FRUSTRATION:
 			return 102 - pokemon.happiness * 2u / 5;
 		case Moves::FURY_CUTTER:
-			// 10 * 2 ^ n
-			return 10u << std::min (static_cast<unsigned> (pokemon.move().times_used), 4u);
+			return pokemon.move().fury_cutter_power();
 		case Moves::GRASS_KNOT:
 		case Moves::LOW_KICK:
 			return defender.pokemon().mass();
@@ -114,8 +113,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 		}
 		case Moves::ICE_BALL:
 		case Moves::ROLLOUT:
-			// 30 * 2 ^ n
-			return 30u << std::min (static_cast<unsigned> (pokemon.move().times_used), 4u);
+			return pokemon.move().momentum_move_power();
 		case Moves::HIDDEN_POWER: {
 			unsigned const u = second_lowest_bit (pokemon.hp) * (1 << 0);	// 1
 			unsigned const v = second_lowest_bit (pokemon.atk) * (1 << 1);	// 2
@@ -142,7 +140,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 		case Moves::SPIT_UP:
 			return attacker.stockpile * 100u;
 		case Moves::TRIPLE_KICK:
-			return 10 * std::min (static_cast<unsigned> (pokemon.move().times_used), 3u);
+			return pokemon.move().triple_kick_power();
 		case Moves::TRUMP_CARD:
 			return pokemon.move().pp.trump_card_power();
 		default:
@@ -326,23 +324,23 @@ bool mud_or_water_sport (Team const & attacker, Team const & defender) {
 Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
 	switch (attacker.ability.name) {
 		case Ability::TECHNICIAN:
-			return (base_power <= 60) ? Rational(3, 2) : 1;
+			return (base_power <= 60) ? Rational(3, 2) : Rational(1);
 		case Ability::BLAZE:
-			return pinch_ability_activates (attacker, Type::FIRE) ? Rational(3, 2) : 1;
+			return pinch_ability_activates (attacker, Type::FIRE) ? Rational(3, 2) : Rational(1);
 		case Ability::OVERGROW:
-			return pinch_ability_activates (attacker, Type::GRASS) ? Rational(3, 2) : 1;
+			return pinch_ability_activates (attacker, Type::GRASS) ? Rational(3, 2) : Rational(1);
 		case Ability::SWARM:
-			return pinch_ability_activates (attacker, Type::BUG) ? Rational(3, 2) : 1;
+			return pinch_ability_activates (attacker, Type::BUG) ? Rational(3, 2) : Rational(1);
 		case Ability::TORRENT:
-			return pinch_ability_activates (attacker, Type::WATER) ? Rational(3, 2) : 1;
+			return pinch_ability_activates (attacker, Type::WATER) ? Rational(3, 2) : Rational(1);
 		case Ability::IRON_FIST:
-			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : 1;
+			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : Rational(1);
 		case Ability::RECKLESS:
-			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : 1;
+			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : Rational(1);
 		case Ability::RIVALRY:
 			return Rational(static_cast<unsigned>(4 + attacker.gender.multiplier(defender.gender)), 4);
 		default:
-			return 1;
+			return Rational(1);
 	}
 }
 
@@ -353,13 +351,13 @@ bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) 
 Rational defender_ability_modifier(Move const & move, Ability const ability) {
 	switch (ability.name) {
 		case Ability::DRY_SKIN:
-			return (move.type() == Type::FIRE) ? Rational(5, 4) : 1;
+			return (move.type() == Type::FIRE) ? Rational(5, 4) : Rational(1);
 		case Ability::HEATPROOF:
-			return (move.type() == Type::FIRE) ? Rational(1, 2) : 1;
+			return (move.type() == Type::FIRE) ? Rational(1, 2) : Rational(1);
 		case Ability::THICK_FAT:
-			return (move.type() == Type::FIRE or move.type() == Type::ICE) ? Rational(1, 2) : 1;
+			return (move.type() == Type::FIRE or move.type() == Type::ICE) ? Rational(1, 2) : Rational(1);
 		default:
-			return 1;
+			return Rational(1);
 	}
 }
 
