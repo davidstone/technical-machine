@@ -86,8 +86,8 @@ bool Move::can_critical_hit() const {
 uint64_t Move::hash () const {
 	return static_cast<uint64_t>(name) + static_cast<uint64_t>(Moves::END) *
 			(pp.hash() + pp.max_hash() *
-			disable + 7 *
-			times_used.hash());
+			(disable + 7 *
+			times_used.hash()));
 }
 
 bool operator== (Move const & lhs, Move const & rhs) {
