@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <string>
 
+#include "classification.hpp"
 #include "disable.hpp"
 #include "pp.hpp"
 #include "times_used.hpp"
@@ -94,24 +95,21 @@ class Move {
 		int16_t score;
 		// I maintain the selectable state to determine if Struggle is legal
 		bool selectable;
-		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
+		// A number between 0 (1?) and 100, according to poccil.
+		uint8_t accuracy;
 		Disable disable;
-		// Move both of these up to team when it will reduce the size of Move.
-		uint8_t r;					// The random number (85 through 100)
+		// Move r and times_used up to team when it will reduce the size of Move.
+		// The random number (85 through 100)
+		uint8_t r;
 	private:
 		TimesUsed times_used;
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
-
 		// Hidden Power makes this hard to replace with just a function
 		uint8_t cached_base_power;
 		Type cached_type;
-
 		// Replace this with a function when it will reduce the size of Move.
 		int8_t cached_priority;
-
 		// Replace this with a function when it will reduce the size of Move.
-		enum Classification : int8_t { special = -1, neither = 0, physical = 1 };
-		static Classification classification (Moves move);
 		Classification cached_classification;
 };
 
