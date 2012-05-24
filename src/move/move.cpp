@@ -89,6 +89,10 @@ uint64_t Move::hash () const {
 			times_used.hash()));
 }
 
+uint64_t Move::max_hash() const {
+	return times_used.hash() * disable.max_hash() * pp.max_hash() * static_cast<uint64_t>(Moves::END);
+}
+
 bool operator== (Move const & lhs, Move const & rhs) {
 	return lhs.name == rhs.name and
 			lhs.disable == rhs.disable and

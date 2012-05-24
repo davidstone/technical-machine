@@ -40,6 +40,7 @@ class Move {
 		Move (Moves move, unsigned pp_ups, unsigned size = 1);
 		void reset ();
 		uint64_t hash() const;
+		uint64_t max_hash() const;
 		static std::string to_string (Moves name);
 		std::string to_string () const;
 		static Moves from_string (std::string const & str);

@@ -63,9 +63,9 @@ void Pokemon::calculate_initial_hp () {
 
 uint64_t Pokemon::hash () const {
 	uint64_t current_hash = 0;
-	// Should probably think of a better way to combine Move hashes than xor
 	move.for_each_regular_move([& current_hash](Move const & next_move) {
-		current_hash ^= next_move.hash();
+		current_hash *= next_move.max_hash();
+		current_hash += next_move.hash();
 	});
 	// current_hash is in the innermost nested parentheses, so all of the arguments
 	// are promoted to uint64_t
