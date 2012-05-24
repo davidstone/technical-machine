@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <string>
 
+#include "disable.hpp"
 #include "pp.hpp"
 #include "times_used.hpp"
 
@@ -93,7 +94,7 @@ class Move {
 		// I maintain the selectable state to determine if Struggle is legal
 		bool selectable;
 		uint8_t accuracy;		// A number between 0 (1?) and 100, according to poccil.
-		uint8_t disable;			// Number of turns left on this move being Disabled (4-7)
+		Disable disable;
 		// Move both of these up to team when it will reduce the size of Move.
 		uint8_t r;					// The random number (85 through 100)
 	private:

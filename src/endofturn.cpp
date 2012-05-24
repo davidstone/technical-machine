@@ -216,7 +216,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		// weather.uproar is already decremented
 	
 	pokemon.move.for_each_regular_move([](Move & move) {
-		decrement (move.disable);
+		move.disable.advance_one_turn();
 	});
 	decrement (team.encore);
 	decrement (team.taunt);

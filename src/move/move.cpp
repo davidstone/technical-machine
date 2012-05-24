@@ -48,7 +48,6 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 	pp(move, pp_ups),
 	score (-Score::VICTORY - 1),
 	accuracy (get_accuracy (move)),
-	disable (0),
 	r (100),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)),
@@ -57,7 +56,7 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 }
 
 void Move::reset () {
-	disable = 0;
+	disable.reset();
 	times_used.reset();
 }
 
@@ -86,7 +85,7 @@ bool Move::can_critical_hit() const {
 uint64_t Move::hash () const {
 	return static_cast<uint64_t>(name) + static_cast<uint64_t>(Moves::END) *
 			(pp.hash() + pp.max_hash() *
-			(disable + 7 *
+			(disable.hash() + disable.max_hash() *
 			times_used.hash()));
 }
 
