@@ -59,7 +59,6 @@ Team::Team () :
 	damage (0),
 	bide_damage (0),
 	chance_to_hit (100),
-	vanish (LANDED),
 	bide (0),
 	confused (0),
 	embargo (0),
@@ -133,7 +132,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	damage (0),
 	bide_damage (0),
 	chance_to_hit (100),
-	vanish (LANDED),
 	bide (0),
 	confused (0),
 	embargo (0),
@@ -422,7 +420,7 @@ uint64_t Team::hash () const {
 	constexpr unsigned max_size = 6;
 	return static_cast<uint64_t> (pokemon.real_size() - 1) + max_size *
 			(pokemon.index() + pokemon.real_size() *
-			(vanish + Vanish::END_VANISH *
+			(vanish.hash() + vanish.max_hash() *
 			(stage.hash() + Stage::max_hash() *
 			(((bide_damage < 714 / 2) ? bide_damage : 714u / 2) + (714 / 2 + 1) *
 			(bide + 3 *

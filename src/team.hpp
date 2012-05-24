@@ -31,6 +31,7 @@
 #include "species.hpp"
 #include "stage.hpp"
 #include "stat.hpp"
+#include "vanish.hpp"
 
 #include "move/shared.hpp"
 

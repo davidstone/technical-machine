@@ -115,12 +115,5 @@ class Move {
 
 bool operator!= (Move const & lhs, Move const & rhs);
 
-// Various states a Pokemon can be in due to vanishing moves.
-
-enum Vanish : uint8_t {
-	LANDED, BOUNCED, DUG, DIVED,
-	FLOWN, SHADOW_FORCED, END_VANISH
-};
-
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

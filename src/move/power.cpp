@@ -172,11 +172,11 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 			return defender.pokemon().hp.stat <= defender.pokemon().hp.max / 2;
 		case Moves::EARTHQUAKE:
 		case Moves::MAGNITUDE:
-			return defender.vanish == DUG;
+			return defender.vanish.doubles_ground_power();
 		case Moves::FACADE:
 			return attacker.pokemon().status.boosts_facade();
 		case Moves::GUST:
-			return defender.vanish == BOUNCED or defender.vanish == FLOWN;
+			return defender.vanish.doubles_gust_power();
 		case Moves::ICE_BALL:
 		case Moves::ROLLOUT:
 			return attacker.defense_curl;
@@ -189,7 +189,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Moves::STOMP:
 			return defender.minimize;
 		case Moves::SURF:
-			return defender.vanish == DIVED;
+			return defender.vanish.doubles_surf_power();
 		case Moves::WAKE_UP_SLAP:
 			return defender.pokemon().status.is_sleeping();
 		case Moves::WEATHER_BALL:

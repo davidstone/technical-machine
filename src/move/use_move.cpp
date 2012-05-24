@@ -328,7 +328,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			Status::paralyze (user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::BOUNCE:
-			user.vanish = (user.vanish == LANDED) ? BOUNCED : LANDED;
+			user.vanish.bounce();
 			break;
 		case Moves::BRAVE_BIRD:
 		case Moves::DOUBLE_EDGE:
@@ -483,12 +483,12 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.protect = true;
 			break;
 		case Moves::DIG:
-			user.vanish = (user.vanish == LANDED) ? DUG : LANDED;
+			user.vanish.dig();
 			break;
 		case Moves::DISABLE:		// Fix
 			break;
 		case Moves::DIVE:
-			user.vanish = (user.vanish == LANDED) ? DIVED : LANDED;
+			user.vanish.dive();
 			break;
 		case Moves::DOOM_DESIRE:	// Fix
 		case Moves::FUTURE_SIGHT:
@@ -572,7 +572,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.pokemon().item.remove();
 			break;
 		case Moves::FLY:
-			user.vanish = (user.vanish == LANDED) ? FLOWN : LANDED;
+			user.vanish.fly();
 			break;
 		case Moves::FOCUS_ENERGY:
 			user.focus_energy = true;
@@ -845,7 +845,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.stage.boost(Stat::DEF, -2);
 			break;
 		case Moves::SHADOW_FORCE:
-			user.vanish = (user.vanish == LANDED) ? SHADOW_FORCED : LANDED;
+			user.vanish.shadow_force();
 			break;
 		case Moves::SKETCH:		// Fix
 			break;

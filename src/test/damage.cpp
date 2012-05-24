@@ -107,7 +107,7 @@ void special_power_test () {
 	pokemon.ability.name = Ability::TORRENT;
 
 	Team defender = create_max_damage_special_defender ();
-	defender.vanish = Vanish::DIVED;
+	defender.vanish.dive();
 
 	unsigned const power = move_power(attacker, defender, Weather());
 	if (power != max_power)

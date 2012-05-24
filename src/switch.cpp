@@ -121,7 +121,7 @@ void reset_variables (Team & team) {
 	team.toxic = 0;
 	team.uproar = 0;
 	// Whirlwind can hit Flying Pokemon, so it needs to be reset
-	team.vanish = LANDED;
+	team.vanish.reset();
 	team.yawn = 0;
 
 	team.pokemon().move.for_each([](Move & move) {
