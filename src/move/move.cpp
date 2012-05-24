@@ -90,15 +90,15 @@ uint64_t Move::hash () const {
 			times_used.hash());
 }
 
-bool Move::operator== (Move const & other) const {
-	return name == other.name and
-			disable == other.disable and
-			pp == other.pp and
-			times_used == other.times_used;
+bool operator== (Move const & lhs, Move const & rhs) {
+	return lhs.name == rhs.name and
+			lhs.disable == rhs.disable and
+			lhs.pp == rhs.pp and
+			lhs.times_used == rhs.times_used;
 }
 
-bool Move::operator!= (Move const & other) const {
-	return !(*this == other);
+bool operator!= (Move const & lhs, Move const & rhs) {
+	return !(lhs == rhs);
 }
 
 Type Move::type() const {
@@ -163,7 +163,7 @@ bool Move::has_follow_up_decision () const {
 
 bool Move::calls_other_move () const {
 	switch (name) {
-//		case Move::NATURE_POWER:
+//		case Moves::NATURE_POWER:
 		case Moves::ASSIST:
 		case Moves::COPYCAT:
 		case Moves::ME_FIRST:

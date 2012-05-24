@@ -42,8 +42,7 @@ class Move {
 		static std::string to_string (Moves name);
 		std::string to_string () const;
 		static Moves from_string (std::string const & str);
-		bool operator== (Move const & other) const;
-		bool operator!= (Move const & other) const;
+		friend bool operator== (Move const & lhs, Move const & rhs);
 		bool is_damaging() const;
 		bool is_physical() const;
 		bool is_special() const;
@@ -113,6 +112,8 @@ class Move {
 		static Classification classification (Moves move);
 		Classification cached_classification;
 };
+
+bool operator!= (Move const & lhs, Move const & rhs);
 
 // Various states a Pokemon can be in due to vanishing moves.
 
