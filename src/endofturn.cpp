@@ -190,10 +190,10 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	}
 	switch (pokemon.item.name) {
 		case Item::FLAME_ORB:
-			Status::burn (pokemon, pokemon, weather);
+			Status::apply<Status::BURN>(pokemon, weather);
 			break;
 		case Item::TOXIC_ORB:
-			Status::poison_toxic (pokemon, pokemon, weather);
+			Status::apply<Status::POISON_TOXIC>(pokemon, weather);
 			break;
 		default:
 			break;
@@ -224,7 +224,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	decrement (team.heal_block);
 	decrement (team.embargo);
 	if (team.yawn == 1)
-		Status::sleep (pokemon, pokemon, weather);
+		Status::apply<Status::SLEEP>(pokemon, weather);
 	decrement (team.yawn);
 	if (pokemon.item.name == Item::STICKY_BARB)
 		heal (pokemon, -8);

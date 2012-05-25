@@ -108,8 +108,10 @@ bool operator!= (EntryHazards const lhs, EntryHazards const rhs) {
 }
 
 void EntryHazards::apply_toxic_spikes(Team & switcher, Weather const & weather) {
-	auto const status = (switcher.entry_hazards.toxic_spikes == 1) ? Status::poison : Status::poison_toxic;
-	status(switcher.pokemon(), switcher.pokemon(), weather);
+	if (switcher.entry_hazards.toxic_spikes == 1)
+		Status::apply<Status::POISON>(switcher.pokemon(), weather);
+	else
+		Status::apply<Status::POISON_TOXIC>(switcher.pokemon(), weather);
 }
 
 namespace {

@@ -107,54 +107,62 @@ void Status::rest() {
 	turns_already_slept = 3;	// TODO: count up instead of down
 }
 
-void Status::burn (Pokemon & user, Pokemon & target, Weather const & weather) {
-	apply_status<BURN> (user, target, weather);
+template<Status::Statuses base_status, Status::Statuses real_status>
+void Status::apply (Pokemon & user, Pokemon & target, Weather const & weather) {
+	if (status_can_apply<base_status>(user.ability, target, weather)) {
+		target.status.status = real_status;
+		if (status_is_reflectable(base_status) and target.ability.reflects_status())
+			apply<base_status>(target, user, weather);
+	}
 }
 
-void Status::freeze (Pokemon const & user, Pokemon & target, Weather const & weather) {
-	// apply_status will not modify user because freeze is not reflectable.
-	apply_status<FREEZE> (const_cast<Pokemon &> (user), target, weather);
+template<Status::Statuses base_status>
+void Status::apply (Pokemon & target, Weather const & weather) {
+	apply<base_status>(target, target, weather);
 }
 
-void Status::paralyze (Pokemon & user, Pokemon & target, Weather const & weather) {
-	apply_status<PARALYSIS> (user, target, weather);
+template void Status::apply<Status::BURN>(Pokemon & user, Pokemon & target, Weather const & weather);
+template void Status::apply<Status::FREEZE>(Pokemon & user, Pokemon & target, Weather const & weather);
+template void Status::apply<Status::PARALYSIS>(Pokemon & user, Pokemon & target, Weather const & weather);
+template void Status::apply<Status::POISON>(Pokemon & user, Pokemon & target, Weather const & weather);
+
+template<>
+void Status::apply<Status::POISON_TOXIC>(Pokemon & user, Pokemon & target, Weather const & weather) {
+	apply<Status::POISON_TOXIC, Status::POISON>(user, target, weather);
 }
 
-void Status::sleep (Pokemon const & user, Pokemon & target, Weather const & weather) {
+template<>
+void Status::apply<Status::SLEEP>(Pokemon & user, Pokemon & target, Weather const & weather) {
 	constexpr Statuses status = SLEEP;
 	if (status_can_apply<status> (user.ability, target, weather))
 		target.status.status = status;		// Fix
 }
 
-void Status::poison (Pokemon & user, Pokemon & target, Weather const & weather) {
-	apply_status<POISON> (user, target, weather);
-}
+template void Status::apply<Status::BURN>(Pokemon & target, Weather const & weather);
+template void Status::apply<Status::FREEZE>(Pokemon & target, Weather const & weather);
+template void Status::apply<Status::PARALYSIS>(Pokemon & target, Weather const & weather);
+template void Status::apply<Status::POISON>(Pokemon & target, Weather const & weather);
+template void Status::apply<Status::POISON_TOXIC>(Pokemon & target, Weather const & weather);
+template void Status::apply<Status::SLEEP>(Pokemon & target, Weather const & weather);
 
-void Status::poison_toxic (Pokemon & user, Pokemon & target, Weather const & weather) {
-	if (status_can_apply<POISON> (user.ability, target, weather)) {
-		target.status.status = POISON_TOXIC;
-		if (target.ability.reflects_status())
-			poison (target, user, weather);
-	}
-}
 
 void Status::shift (Pokemon & user, Pokemon & target, Weather const & weather) {
 	switch (user.status.name()) {
 		case Status::BURN:
-			Status::burn (user, target, weather);
+			apply<BURN>(user, target, weather);
 			break;
 		case Status::PARALYSIS:
-			Status::paralyze (user, target, weather);
+			apply<PARALYSIS>(user, target, weather);
 			break;
 		case Status::POISON:
-			Status::poison (user, target, weather);
+			apply<POISON>(user, target, weather);
 			break;
 		case Status::POISON_TOXIC:
-			Status::poison_toxic (user, target, weather);
+			apply<POISON_TOXIC>(user, target, weather);
 			break;
 		case Status::REST:		// Fix
 		case Status::SLEEP:
-			Status::sleep (user, target, weather);
+			apply<SLEEP>(user, target, weather);
 			break;
 		default:
 			break;
@@ -206,15 +214,6 @@ uint64_t Status::hash() const {
 
 uint64_t Status::max_hash() {
 	return END + (max_sleep_turns() + 1);
-}
-
-template<Status::Statuses status>
-void apply_status (Pokemon & user, Pokemon & target, Weather const & weather) {
-	if (status_can_apply<status> (user.ability, target, weather)) {
-		target.status.status = status;
-		if (status_is_reflectable (status) and target.ability.reflects_status())
-			apply_status<status> (target, user, weather);
-	}
 }
 
 }	// namespace technicalmachine

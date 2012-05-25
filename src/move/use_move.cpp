@@ -292,14 +292,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			if (!move.variable().effect_activates())
 				break;
 		case Moves::WILL_O_WISP:
-			Status::burn (user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::BLIZZARD:
 		case Moves::ICE_BEAM:
 		case Moves::ICE_PUNCH:
 		case Moves::POWDER_SNOW:
 			if (move.variable().effect_activates())
-				Status::freeze (user.pokemon(), target.pokemon(), weather);
+				Status::apply<Status::FREEZE>(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::BLOCK:
 		case Moves::MEAN_LOOK:
@@ -325,7 +325,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::STUN_SPORE:
 		case Moves::THUNDER_WAVE:
 		case Moves::ZAP_CANNON:
-			Status::paralyze (user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::BOUNCE:
 			user.vanish.bounce();
@@ -439,7 +439,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				break;
 		case Moves::POISON_GAS:
 		case Moves::POISONPOWDER:
-			Status::poison (user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::POISON>(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::CURSE:
 			if (is_type (user, Type::GHOST) and !user.pokemon().ability.blocks_secondary_damage()) {
@@ -463,7 +463,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::SING:
 		case Moves::SLEEP_POWDER:
 		case Moves::SPORE:
-			Status::sleep (user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::SLEEP>(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::DEFENSE_CURL:
 			user.stage.boost(Stat::DEF, 1);
@@ -536,13 +536,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				case 0:
 					break;
 				case 1:
-					Status::burn (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
 					break;
 				case 2:
 					target.flinch = true;
 					break;
 				case 3:	
-					Status::burn (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
 					target.flinch = true;
 					break;
 				default:
@@ -661,13 +661,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				case 0:
 					break;
 				case 1:
-					Status::freeze (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::FREEZE>(user.pokemon(), target.pokemon(), weather);
 					break;
 				case 2:
 					target.flinch = true;
 					break;
 				case 3:	
-					Status::freeze (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::FREEZE>(user.pokemon(), target.pokemon(), weather);
 					target.flinch = true;
 					break;
 				default:
@@ -773,7 +773,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			if (!move.variable().effect_activates())
 				break;
 		case Moves::TOXIC:
-			Status::poison_toxic (user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::POISON_TOXIC>(user.pokemon(), target.pokemon(), weather);
 			break;
 		case Moves::POWER_SWAP:
 			Stage::swap_offensive(user.stage, target.stage);
@@ -933,13 +933,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				case 0:
 					break;
 				case 1:
-					Status::paralyze (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
 					break;
 				case 2:
 					target.flinch = true;
 					break;
 				case 3:	
-					Status::paralyze (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
 					target.flinch = true;
 					break;
 				default:
@@ -961,13 +961,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::TRI_ATTACK:
 			switch (move.variable().value()) {
 				case 1:
-					Status::burn (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
 					break;
 				case 2:
-					Status::freeze (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::FREEZE>(user.pokemon(), target.pokemon(), weather);
 					break;
 				case 3:
-					Status::paralyze (user.pokemon(), target.pokemon(), weather);
+					Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
 					break;
 				default:
 					assert (false);

@@ -58,12 +58,10 @@ class Status {
 		static Statuses from_string (std::string const & str);
 
 		void rest ();
-		static void burn (Pokemon & user, Pokemon & target, Weather const & weather);
-		static void freeze (Pokemon const & user, Pokemon & target, Weather const & weather);
-		static void paralyze (Pokemon & user, Pokemon & target, Weather const & weather);
-		static void sleep (Pokemon const & user, Pokemon & target, Weather const & weather);
-		static void poison (Pokemon & user, Pokemon & target, Weather const & weather);
-		static void poison_toxic (Pokemon & user, Pokemon & target, Weather const & weather);
+		template<Statuses real_status, Statuses base_status = real_status>
+		static void apply(Pokemon & user, Pokemon & target, Weather const & weather);
+		template<Statuses real_status>
+		static void apply(Pokemon & target, Weather const & weather);
 		static void shift (Pokemon & user, Pokemon & target, Weather const & weather);
 
 		friend bool operator== (Status lhs, Status rhs);
@@ -78,8 +76,6 @@ class Status {
 		uint64_t hash() const;
 		static uint64_t max_hash();
 	private:
-		template<Status::Statuses status>
-		friend void apply_status (Pokemon & user, Pokemon & target, Weather const & weather);
 		Statuses status;
 		uint8_t turns_already_slept;
 };
