@@ -190,13 +190,25 @@ void Pokemon::set_hidden_power_type() {
 		move_ptr->set_type(calculate_hidden_power_type());
 }
 
-Type::Types Pokemon::calculate_hidden_power_type () const {
-	unsigned const a = static_cast<unsigned> (hp.iv % 2) * (1 << 0);	// 1
-	unsigned const b = static_cast<unsigned> (atk.iv % 2) * (1 << 1);	// 2
-	unsigned const c = static_cast<unsigned> (def.iv % 2) * (1 << 2);	// 4
-	unsigned const d = static_cast<unsigned> (spe.iv % 2) * (1 << 3);	// 8
-	unsigned const e = static_cast<unsigned> (spa.iv % 2) * (1 << 4);	// 16
-	unsigned const f = static_cast<unsigned> (spd.iv % 2) * (1 << 5);	// 32
+namespace {
+
+constexpr unsigned lowest_bit(unsigned const iv) {
+	return iv % 2;
+}
+
+constexpr unsigned hidden_power_type_helper(unsigned const iv, unsigned const n) {
+	return lowest_bit(iv) << n;
+}
+
+}	// unnamed namespace
+
+Type::Types Pokemon::calculate_hidden_power_type() const {
+	unsigned const a = hidden_power_type_helper(hp.iv, 0);
+	unsigned const b = hidden_power_type_helper(atk.iv, 1);
+	unsigned const c = hidden_power_type_helper(def.iv, 2);
+	unsigned const d = hidden_power_type_helper(spe.iv, 3);
+	unsigned const e = hidden_power_type_helper(spa.iv, 4);
+	unsigned const f = hidden_power_type_helper(spd.iv, 5);
 	unsigned const index = (a + b + c + d + e + f) * 15 / 63;
 	constexpr static Type::Types lookup [] = {
 		Type::FIGHTING,
