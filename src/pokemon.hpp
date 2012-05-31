@@ -43,8 +43,7 @@ class Pokemon {
 		uint64_t hash () const;
 		uint8_t index_of_first_switch () const;
 		void normalize_hp ();
-		// power of Grass Knot / Low Kick, not the actual mass stat
-		uint8_t mass () const;
+		uint8_t power_of_mass_based_moves() const;
 		static std::string to_string (Species name);
 		std::string to_string () const;
 		std::string get_nickname () const;

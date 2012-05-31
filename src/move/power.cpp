@@ -106,7 +106,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 			return pokemon.move().fury_cutter_power();
 		case Moves::GRASS_KNOT:
 		case Moves::LOW_KICK:
-			return defender.pokemon().mass();
+			return defender.pokemon().power_of_mass_based_moves();
 		case Moves::GYRO_BALL: {
 			unsigned const uncapped_power = 25u * defender.pokemon().spe.stat / pokemon.spe.stat + 1;
 			return std::min(uncapped_power, 150u);
