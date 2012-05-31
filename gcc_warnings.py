@@ -48,8 +48,6 @@
 # optimizer actually inlines it. This warning also complains if it can't inline
 # a function declared in a class body (such as an empty virtual destructor).
 #
-# -Winvalid-pch is missing because I don't use precompiled headers.
-#
 # -Wmissing-format-attribute is not used because I do not use gnu extensions.
 # Same for -Wsuggest-attribute and several others.
 #
@@ -87,12 +85,14 @@
 #
 # -Wzero-as-null-pointer-constant and -Wuseless-cast are GCC-4.7-only warnings,
 # which I will add when I transition to GCC 4.7.
+#
+# -Wvector-operation-performance is a GCC 4.7 warning that I may enable
 
 # Add -Wold-style-cast when I transition to my byte swapping library and
 # rewrite the Rijndael implementation to use modern C++ techniques, rather than
 # just being a C program with .cpp as the extension.
 
-warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wformat=2', '-Winit-self', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wstrict-overflow=5', '-Wswitch-default', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
+warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wstrict-overflow=5', '-Wswitch-default', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
 # I have to set -pedantic to be a "debug" warning because it conflicts with
 # -ffast-math on my system.
 warnings_debug = ['-pedantic']
