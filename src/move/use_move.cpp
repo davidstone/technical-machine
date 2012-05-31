@@ -992,8 +992,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.water_sport = true;
 			break;
 		case Moves::WISH:
-			if (!user.wish)
-				user.wish = 2;
+			user.wish.activate();
 			break;
 		case Moves::WORRY_SEED:		// Fix
 			break;

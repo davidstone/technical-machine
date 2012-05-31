@@ -96,9 +96,7 @@ void endofturn1 (Team & team) {
 }
 
 void endofturn2 (Team & team) {
-	if (team.wish == 1)
-		heal (team.pokemon(), 2);
-	decrement (team.wish);
+	team.wish.decrement(team.pokemon());
 }
 
 void endofturn3 (Team & team, Weather const & weather) {

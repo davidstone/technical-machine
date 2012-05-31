@@ -58,7 +58,11 @@ int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 }
 
 int64_t Score::score_team (Team const & team) const {
-	int64_t score = lucky_chant * team.lucky_chant.turns_remaining + mist * team.mist.turns_remaining + safeguard * team.safeguard.turns_remaining + tailwind * team.tailwind.turns_remaining + wish * team.wish;
+	int64_t score = lucky_chant * team.lucky_chant.turns_remaining;
+	score += mist * team.mist.turns_remaining;
+	score += safeguard * team.safeguard.turns_remaining;
+	score += tailwind * team.tailwind.turns_remaining;
+	score += wish * team.wish.is_active();
 	if (team.pokemon().hp.stat != 0) {
 		score += Stage::dot_product(team.stage, stage);
 		score += team.magnet_rise * magnet_rise;

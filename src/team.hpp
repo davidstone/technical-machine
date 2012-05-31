@@ -33,6 +33,7 @@
 #include "stage.hpp"
 #include "stat.hpp"
 #include "vanish.hpp"
+#include "wish.hpp"
 
 #include "move/shared.hpp"
 
@@ -145,10 +146,8 @@ class Team {
 		Screen safeguard;
 		Tailwind tailwind;
 
-		// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish
-		// is not in play
-		uint8_t wish;
-			
+		Wish wish;
+		
 		EntryHazards entry_hazards;
 
 		uint8_t called_move;

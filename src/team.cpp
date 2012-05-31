@@ -118,8 +118,6 @@ Team::Team () :
 	
 	counter (0),
 
-	wish (0),
-
 	me (false)
 	{
 }
@@ -186,8 +184,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	water_sport (false),
 	
 	counter (0),
-
-	wish (0),
 
 	me (true)
 	{
@@ -457,7 +453,7 @@ uint64_t Team::hash () const {
 			(reflect.hash() + reflect.max_hash() *
 			(safeguard.hash() + safeguard.max_hash() *
 			(tailwind.hash() + tailwind.max_hash() *
-			(wish + 2 *
+			(wish.hash() + wish.max_hash() *
 			(entry_hazards.hash() + entry_hazards.max_hash() *
 			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
