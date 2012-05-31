@@ -49,7 +49,6 @@ Pokemon::Pokemon (Species const species, uint8_t set_level, SharedMoves & shared
 	name (species),
 
 	fainted (false),
-	hidden (true),
 	m_level(set_level),
 
 	m_happiness(set_happiness)
@@ -57,23 +56,18 @@ Pokemon::Pokemon (Species const species, uint8_t set_level, SharedMoves & shared
 	calculate_initial_hp();
 }
 
-void Pokemon::calculate_initial_hp () {
-	hp.calculate_initial_hp(level());
+void Pokemon::switch_in() {
+	seen.make_visible();
 }
 
-uint64_t Pokemon::hash () const {
-	uint64_t current_hash = 0;
-	move.for_each_regular_move([& current_hash](Move const & next_move) {
-		current_hash *= next_move.max_hash();
-		current_hash += next_move.hash();
-	});
-	// current_hash is in the innermost nested parentheses, so all of the arguments
-	// are promoted to uint64_t
-	return name + Species::END *
-			(item.name + Item::END *
-			(status.hash() + Status::max_hash() *
-			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
-			current_hash)));
+void Pokemon::switch_out() {
+	// Cure the status of a Natural Cure Pokemon
+	if (ability.clears_status_on_switch())
+		status.clear();
+}
+
+void Pokemon::calculate_initial_hp () {
+	hp.calculate_initial_hp(level());
 }
 
 uint8_t Pokemon::index_of_first_switch () const {
@@ -156,18 +150,6 @@ bool Pokemon::is_wormadam (Species species) {
 	}
 }
 
-bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
-	return lhs.move == rhs.move and
-			lhs.name == rhs.name and
-			lhs.status == rhs.status and
-			lhs.hp.stat == rhs.hp.stat and
-			lhs.item == rhs.item;
-}
-
-bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
-	return !(lhs == rhs);
-}
-
 std::string Pokemon::get_nickname () const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
@@ -196,6 +178,39 @@ unsigned Pokemon::level() const {
 
 unsigned Pokemon::happiness() const {
 	return m_happiness;
+}
+
+bool Pokemon::has_been_seen() const {
+	return true;
+}
+
+Pokemon::hash_type Pokemon::hash () const {
+	hash_type current_hash = 0;
+	move.for_each_regular_move([& current_hash](Move const & next_move) {
+		current_hash *= next_move.max_hash();
+		current_hash += next_move.hash();
+	});
+	// current_hash is in the innermost nested parentheses, so all of the arguments
+	// are promoted to uint64_t
+	return name + Species::END *
+			(item.name + Item::END *
+			(status.hash() + Status::max_hash() *
+			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
+			(seen.hash() + seen.max_hash() *
+			current_hash))));
+}
+
+bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
+	return lhs.move == rhs.move and
+			lhs.name == rhs.name and
+			lhs.status == rhs.status and
+			lhs.hp.stat == rhs.hp.stat and
+			lhs.item == rhs.item and
+			lhs.seen == rhs.seen;
+}
+
+bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
+	return !(lhs == rhs);
 }
 
 namespace {

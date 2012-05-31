@@ -118,7 +118,7 @@ int64_t Score::score_pokemon (Team const & team, Team const & other, Weather con
 	if (pokemon.hp.stat != 0) {
 		score += members;
 		score += hp * pokemon.hp.stat / pokemon.hp.max;
-		score += hidden * pokemon.hidden;
+		score += hidden * !pokemon.seen();
 		score += score_status (team);
 		score += score_move (team, other, weather);
 	}

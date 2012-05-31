@@ -25,6 +25,7 @@
 #include "gender.hpp"
 #include "item.hpp"
 #include "nature.hpp"
+#include "seen_pokemon.hpp"
 #include "species.hpp"
 #include "stat.hpp"
 #include "status.hpp"
@@ -39,8 +40,9 @@ class SharedMoves;
 class Pokemon {
 	public:
 		Pokemon (Species species, uint8_t set_level, SharedMoves & shared, uint8_t set_happiness = 255);
+		void switch_in();
+		void switch_out();
 		void calculate_initial_hp ();
-		uint64_t hash () const;
 		uint8_t index_of_first_switch () const;
 		void normalize_hp ();
 		uint8_t power_of_mass_based_moves() const;
@@ -58,6 +60,9 @@ class Pokemon {
 		void set_hidden_power_type ();
 		unsigned level() const;
 		unsigned happiness() const;
+		bool has_been_seen() const;
+		typedef uint64_t hash_type;
+		hash_type hash () const;
 		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
 	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
@@ -84,11 +89,12 @@ class Pokemon {
 		Status status;
 		Nature nature;
 		bool fainted;
-		bool hidden;
 	private:
+		Seen seen;
 		uint8_t m_level;
 		uint8_t m_happiness;
 		Type::Types calculate_hidden_power_type () const;
+		friend class Score;
 };
 
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);

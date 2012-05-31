@@ -73,7 +73,7 @@ Team create_max_damage_physical_defender () {
 
 Team create_max_damage_special_defender () {
 	Team defender;
-	constexpr unsigned level = 100;
+	constexpr unsigned level = 1;
 	defender.add_pokemon(Species::PARAS, level);
 	Pokemon & d = defender.pokemon();
 	d.ability.name = Ability::DRY_SKIN;

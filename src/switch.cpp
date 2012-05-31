@@ -40,10 +40,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	reset_variables (switcher);
 
 	if (switcher.pokemon().hp.stat > 0) {
-		// Cure the status of a Natural Cure Pokemon as it switches out
-		if (switcher.pokemon().ability.clears_status_on_switch ())
-			switcher.pokemon().status.clear ();
-		
+		switcher.pokemon().switch_out();
 		// Change the active Pokemon to the one switching in.
 		switcher.pokemon.to_replacement();
 	}
@@ -53,13 +50,10 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 		if (switcher.pokemon.is_empty())
 			return;
 	}
-	
 	EntryHazards::apply(switcher, weather);
-
 	if (switcher.pokemon().hp.stat > 0)
 		Ability::activate_on_switch (switcher, other, weather);
-	
-	switcher.pokemon().hidden = false;
+	switcher.pokemon().switch_in();
 }
 
 namespace {
