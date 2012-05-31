@@ -455,7 +455,7 @@ unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
 }
 
 unsigned tailwind_speed_multiplier (Team const & team) {
-	return team.tailwind ? 2 : 1;
+	return team.screens.tailwind() ? 2 : 1;
 }
 
 bool move_can_miss (Team const & user, Ability target_ability) {

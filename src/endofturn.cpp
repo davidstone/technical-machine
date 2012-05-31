@@ -87,12 +87,7 @@ void endofturn0 (Team & team) {
 }
 
 void endofturn1 (Team & team) {
-	team.light_screen.decrement();
-	team.lucky_chant.decrement();
-	team.mist.decrement();
-	team.reflect.decrement();
-	team.safeguard.decrement();
-	team.tailwind.decrement();
+	team.screens.decrement();
 }
 
 void endofturn2 (Team & team) {

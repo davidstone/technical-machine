@@ -263,12 +263,7 @@ Team::Team(Team const & other):
 	u_turning(other.u_turning),
 	water_sport(other.water_sport),
 	counter(other.counter),
-	light_screen(other.light_screen),
-	lucky_chant(other.lucky_chant),
-	mist(other.mist),
-	reflect(other.reflect),
-	safeguard(other.safeguard),
-	tailwind(other.tailwind),
+	screens(other.screens),
 	wish(other.wish),
 	entry_hazards(other.entry_hazards),
 	called_move(other.called_move),
@@ -342,12 +337,7 @@ Team::Team(Team && other):
 	u_turning(std::move(other.u_turning)),
 	water_sport(std::move(other.water_sport)),
 	counter(std::move(other.counter)),
-	light_screen(std::move(other.light_screen)),
-	lucky_chant(std::move(other.lucky_chant)),
-	mist(std::move(other.mist)),
-	reflect(std::move(other.reflect)),
-	safeguard(std::move(other.safeguard)),
-	tailwind(std::move(other.tailwind)),
+	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
 	entry_hazards(std::move(other.entry_hazards)),
 	called_move(std::move(other.called_move)),
@@ -447,15 +437,10 @@ uint64_t Team::hash () const {
 			(trapped + 2 *
 			(water_sport + 2 *
 			(counter + 3 *
-			(light_screen.hash() + light_screen.max_hash() *
-			(lucky_chant.hash() + lucky_chant.max_hash() *
-			(mist.hash() + mist.max_hash() *
-			(reflect.hash() + reflect.max_hash() *
-			(safeguard.hash() + safeguard.max_hash() *
-			(tailwind.hash() + tailwind.max_hash() *
+			(screens.hash() + screens.max_hash() *
 			(wish.hash() + wish.max_hash() *
 			(entry_hazards.hash() + entry_hazards.max_hash() *
-			current_hash))))))))))))))))))))))))))))))))))))))))))))))))))));
+			current_hash)))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 void Team::load (std::string const & name, unsigned other_size) {
@@ -517,12 +502,7 @@ bool Team::operator== (Team const & other) const {
 			trapped == other.trapped and
 			water_sport == other.water_sport and
 			counter == other.counter and
-			light_screen == other.light_screen and
-			lucky_chant == other.lucky_chant and
-			mist == other.mist and
-			reflect == other.reflect and
-			safeguard == other.safeguard and
-			tailwind == other.tailwind and
+			screens == other.screens and
 			wish == other.wish and
 			entry_hazards == other.entry_hazards and
 			me == other.me;

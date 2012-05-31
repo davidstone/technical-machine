@@ -190,11 +190,11 @@ bool screen_is_active (Team const & attacker, Team const & defender) {
 }
 
 bool reflect_is_active (Move const & move, Team const & defender) {
-	return defender.reflect and move.is_physical();
+	return defender.screens.reflect() and move.is_physical();
 }
 
 bool light_screen_is_active (Move const & move, Team const & defender) {
-	return defender.light_screen and move.is_special();
+	return defender.screens.light_screen() and move.is_special();
 }
 
 Rational calculate_weather_modifier (Type const type, Weather const & weather) {

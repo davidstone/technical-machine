@@ -119,8 +119,7 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const
 
 void do_effects_before_moving (Pokemon & user, Team & target) {
 	if (user.move().breaks_screens()) {
-		target.reflect.clear();
-		target.light_screen.clear();
+		target.screens.shatter();
 	}
 	else if (user.move().is_usable_while_frozen()) {
 		if (user.status.is_frozen())
@@ -687,14 +686,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.leech_seed = true;
 			break;
 		case Moves::LIGHT_SCREEN:
-			user.light_screen.activate(user.pokemon().item.extends_light_screen());
+			user.screens.activate_light_screen(user.pokemon().item.extends_light_screen());
 			break;
 		case Moves::LOCK_ON:
 		case Moves::MIND_READER:
 			user.lock_on = true;
 			break;
 		case Moves::LUCKY_CHANT:
-			user.lucky_chant.activate();
+			user.screens.activate_lucky_chant();
 			break;
 		case Moves::LUNAR_DANCE:		// Fix
 			break;
@@ -723,7 +722,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 				damage_side_effect (target.pokemon(), user.damage * 2u);
 			break;
 		case Moves::MIST:
-			user.mist.activate();
+			user.screens.activate_mist();
 			break;
 		case Moves::MIST_BALL:
 			if (move.variable().effect_activates())
@@ -811,7 +810,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::RECYCLE:		// Fix
 			break;
 		case Moves::REFLECT:
-			user.reflect.activate(user.pokemon().item.extends_reflect());
+			user.screens.activate_reflect(user.pokemon().item.extends_reflect());
 			break;
 		case Moves::REFRESH:
 			user.pokemon().status.clear ();
@@ -834,7 +833,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::ROLE_PLAY:		// Fix
 			break;
 		case Moves::SAFEGUARD:
-			user.safeguard.activate();
+			user.screens.activate_safeguard();
 			break;
 		case Moves::SANDSTORM:
 			weather.set_sand (user.pokemon().item.extends_sand());
@@ -922,7 +921,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.stage.boost(Stat::ATK, 2);
 			break;
 		case Moves::TAILWIND:
-			user.tailwind.activate();
+			user.screens.activate_tailwind();
 			break;
 		case Moves::TAUNT:
 			if (!target.taunt)

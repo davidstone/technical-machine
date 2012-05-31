@@ -138,7 +138,7 @@ void speed_tests () {
 
 	pokemon.item.name = Item::CHOICE_SCARF;
 	
-	team.tailwind.activate();
+	team.screens.activate_tailwind();
 	
 	Stat::calculate_speed (team, weather);
 

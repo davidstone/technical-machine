@@ -58,10 +58,10 @@ int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
 }
 
 int64_t Score::score_team (Team const & team) const {
-	int64_t score = lucky_chant * team.lucky_chant.turns_remaining;
-	score += mist * team.mist.turns_remaining;
-	score += safeguard * team.safeguard.turns_remaining;
-	score += tailwind * team.tailwind.turns_remaining;
+	int64_t score = lucky_chant * team.screens.m_lucky_chant.turns_remaining;
+	score += mist * team.screens.m_mist.turns_remaining;
+	score += safeguard * team.screens.m_safeguard.turns_remaining;
+	score += tailwind * team.screens.m_tailwind.turns_remaining;
 	score += wish * team.wish.is_active();
 	if (team.pokemon().hp.stat != 0) {
 		score += Stage::dot_product(team.stage, stage);
@@ -150,9 +150,9 @@ int64_t Score::score_move (Team const & team, Team const & other, Weather const 
 	int64_t score = 0;
 	team.pokemon().move.for_each([&](Move const & move) {
 		if (move.is_physical())
-			score += other.reflect.turns_remaining * reflect;
+			score += other.screens.m_reflect.turns_remaining * reflect;
 		else if (move.is_special())
-			score += other.light_screen.turns_remaining * light_screen;
+			score += other.screens.m_light_screen.turns_remaining * light_screen;
 		if (move.pp.is_empty())
 			score += no_pp;
 	});

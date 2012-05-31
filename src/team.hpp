@@ -28,7 +28,7 @@
 #include "gender.hpp"
 #include "pokemon.hpp"
 #include "pokemon_collection.hpp"
-#include "screen.hpp"
+#include "screens.hpp"
 #include "species.hpp"
 #include "stage.hpp"
 #include "stat.hpp"
@@ -139,13 +139,7 @@ class Team {
 		// 0 = not active
 		uint8_t counter;
 
-		ReflectLightScreen light_screen;
-		Screen lucky_chant;
-		Screen mist;
-		ReflectLightScreen reflect;
-		Screen safeguard;
-		Tailwind tailwind;
-
+		Screens screens;
 		Wish wish;
 		
 		EntryHazards entry_hazards;

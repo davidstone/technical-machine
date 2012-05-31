@@ -1,4 +1,4 @@
-// Screens
+// All Screens a team can set up
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,49 +16,47 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCREEN_HPP_
-#define SCREEN_HPP_
+#ifndef SCREENS_HPP_
+#define SCREENS_HPP_
 
 #include <cstdint>
-#include "evaluate.hpp"
+#include "screen.hpp"
 
 namespace technicalmachine {
 
-// Lucky Chant, Mist, and Safeguard use the base class
-class Screen {
+class Screens {
 	public:
-		Screen();
-		void activate();
 		void decrement();
-		explicit operator bool() const;
+
+		bool light_screen() const;
+		bool reflect() const;
+		bool lucky_chant() const;
+		bool mist() const;
+		bool safeguard() const;
+		bool tailwind() const;
+
+		void activate_light_screen(bool is_extended = false);
+		void activate_reflect(bool is_extended = false);
+		void activate_lucky_chant();
+		void activate_mist();
+		void activate_safeguard();
+		void activate_tailwind();
+
+		void shatter();
+		typedef uint64_t hash_type;
 		uint64_t hash() const;
 		static uint64_t max_hash();
-		friend bool operator==(Screen const & lhs, Screen const & rhs);
-	protected:
-		void set_duration(uint8_t duration);
+		friend bool operator==(Screens const & lhs, Screens const & rhs);
 	private:
-		uint8_t turns_remaining;
-		static uint8_t max_length();
+		ReflectLightScreen m_light_screen;
+		ReflectLightScreen m_reflect;
+		Screen m_lucky_chant;
+		Screen m_mist;
+		Screen m_safeguard;
+		Tailwind m_tailwind;
 		friend class Score;
 };
-bool operator!=(Screen const & lhs, Screen const & rhs);
-
-class ReflectLightScreen : public Screen {
-	public:
-		void activate(bool is_extended);
-		void clear();
-		static uint64_t max_hash();
-	private:
-		static uint8_t max_length();
-};
-
-class Tailwind : public Screen {
-	public:
-		void activate();
-		static uint64_t max_hash();
-	private:
-		static uint8_t max_length();
-};
+bool operator!=(Screens const & lhs, Screens const & rhs);
 
 }	// namespace technicalmachine
-#endif	// SCREEN_HPP_
+#endif	// SCREENS_HPP_
