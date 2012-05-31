@@ -38,7 +38,7 @@ class SharedMoves;
 
 class Pokemon {
 	public:
-		Pokemon (Species species, SharedMoves & shared, uint8_t set_happiness = 255);
+		Pokemon (Species species, uint8_t set_level, SharedMoves & shared, uint8_t set_happiness = 255);
 		void calculate_initial_hp ();
 		uint64_t hash () const;
 		uint8_t index_of_first_switch () const;
@@ -56,6 +56,7 @@ class Pokemon {
 		static bool is_shaymin (Species species);
 		static bool is_wormadam (Species species);
 		void set_hidden_power_type ();
+		unsigned level() const;
 		unsigned happiness() const;
 		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
 	private:
@@ -84,8 +85,8 @@ class Pokemon {
 		Nature nature;
 		bool fainted;
 		bool hidden;
-		uint8_t level;
 	private:
+		uint8_t m_level;
 		uint8_t m_happiness;
 		Type::Types calculate_hidden_power_type () const;
 };

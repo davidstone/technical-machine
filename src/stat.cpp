@@ -106,7 +106,7 @@ void Stat::calculate_attack (Team & attacker, Weather const & weather) {
 
 void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
-	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level);
+	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level());
 	pokemon.spa.stat = pokemon.spa.stat * pokemon.nature.boost<SPA>() / 10;
 
 	pokemon.spa.stat = attacking_stage_modifier (pokemon.spa, attacker.stage [SPA], attacker.ch);
@@ -145,7 +145,7 @@ void Stat::calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 
 void Stat::calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
 	Pokemon & pokemon = defender.pokemon ();
-	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level);
+	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level());
 	pokemon.spd.stat = pokemon.spd.stat * pokemon.nature.boost<SPD>() / 10;
 	
 	pokemon.spd.stat = defending_stage_modifier (pokemon.spd, defender.stage [SPD], ch);
@@ -161,7 +161,7 @@ void Stat::calculate_special_defense (Team & defender, Weather const & weather, 
 
 void Stat::calculate_speed (Team & team, Weather const & weather) {
 	Pokemon & pokemon = team.pokemon();
-	pokemon.spe.stat = calculate_initial_stat (pokemon.spe, pokemon.level);
+	pokemon.spe.stat = calculate_initial_stat (pokemon.spe, pokemon.level());
 	pokemon.spe.stat = pokemon.spe.stat * pokemon.nature.boost<SPE>() / 10;
 	
 	pokemon.spe.stat = speed_stage_modifier (pokemon.spe, team.stage [SPE]);
@@ -282,12 +282,12 @@ unsigned evasion_stage_modifier (Team const & user, int evasion_stage) {
 }
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {
-	unsigned const n = calculate_initial_stat (attacker.atk, attacker.level);
+	unsigned const n = calculate_initial_stat (attacker.atk, attacker.level());
 	return n * attacker.nature.boost<Stat::ATK>() / 10;
 }
 
 unsigned calculate_defense_before_power_trick (Pokemon const & defender) {
-	unsigned const n = calculate_initial_stat (defender.def, defender.level);
+	unsigned const n = calculate_initial_stat (defender.def, defender.level());
 	return n * defender.nature.boost<Stat::DEF>() / 10;
 }
 

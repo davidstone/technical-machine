@@ -45,7 +45,7 @@ class Team {
 		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
 		Team (Team const & other);
 		Team (Team && other);
-		void add_pokemon (Species name);
+		void add_pokemon (Species name, unsigned level);
 		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness = 255);
 		void remove_pokemon ();
 		bool can_be_phazed () const;

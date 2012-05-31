@@ -76,7 +76,8 @@ namespace {
 void predict_pokemon (Team & team, std::array<float, Species::END> estimate, float multiplier [Species::END] [Species::END]) {
 	while (team.pokemon.size() < team.pokemon.real_size()) {
 		Species const name = get_most_likely_pokemon (estimate);
-		team.add_pokemon (name);
+		constexpr unsigned level = 100;
+		team.add_pokemon(name, level);
 		if (team.pokemon.size() == team.pokemon.real_size())
 			break;
 		for (unsigned n = 0; n != Species::END; ++n)

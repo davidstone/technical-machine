@@ -98,9 +98,9 @@ unsigned uncapped_damage (Team const & attacker, Team const & defender, Weather 
 			return defender.pokemon().hp.max;
 		case Moves::NIGHT_SHADE:
 		case Moves::SEISMIC_TOSS:
-			return pokemon.level;
+			return pokemon.level();
 		case Moves::PSYWAVE:
-			return pokemon.move().variable().psywave_damage(pokemon.level);
+			return pokemon.move().variable().psywave_damage(pokemon.level());
 		case Moves::SONICBOOM:
 			return 20;
 		case Moves::SUPER_FANG:
@@ -164,7 +164,7 @@ void damage_side_effect (Pokemon & user, unsigned damage) {
 namespace {
 
 unsigned calculate_level_multiplier (Pokemon const & attacker) {
-	return attacker.level * 2u / 5;
+	return attacker.level() * 2u / 5;
 }
 
 Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender) {

@@ -54,7 +54,8 @@ void function (Fl_Widget * w, void * d) {
 		Species species;
 		try {
 			species = Pokemon::from_string (in->value());
-			team.add_pokemon(species);
+			constexpr unsigned level = 100;
+			team.add_pokemon(species, level);
 		}
 		catch (InvalidFromStringConversion const & ex) {
 			species = Species::END;

@@ -82,7 +82,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	bool shiny = false;
 	write_byte (shiny);
 	write_byte(pokemon.happiness());
-	write_byte (pokemon.level);
+	write_byte(pokemon.level());
 	unsigned number_of_moves = 0;
 	pokemon.move.for_each_regular_move([&](Move const & move) {
 		++number_of_moves;
