@@ -61,7 +61,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("<xmlattr>.species", pokemon.to_string ());
 	member.put ("nickname", pokemon.get_nickname());
 	member.put ("level", pokemon.level);
-	member.put ("happiness", pokemon.happiness);
+	member.put ("happiness", pokemon.happiness());
 	member.put ("gender", pokemon.gender.to_string ());
 	member.put ("nature", pokemon.nature.to_string ());
 	member.put ("item", pokemon.item.to_string ());

@@ -351,8 +351,8 @@ void Team::add_pokemon (Species name) {
 	pokemon.add(Pokemon(name, shared_moves));
 }
 
-void Team::add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender) {
-	pokemon.add(name, nickname, level, gender, shared_moves);
+void Team::add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness) {
+	pokemon.add(name, nickname, level, gender, happiness, shared_moves);
 }
 
 void Team::remove_pokemon () {

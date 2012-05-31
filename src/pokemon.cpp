@@ -34,7 +34,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (Species const species, SharedMoves & shared) : 
+Pokemon::Pokemon (Species const species, SharedMoves & shared, uint8_t set_happiness) : 
 	move (shared),
 	type (species),
 	hp (species, Stat::HP),
@@ -52,7 +52,7 @@ Pokemon::Pokemon (Species const species, SharedMoves & shared) :
 	hidden (true),
 	level (100),
 
-	happiness (255)
+	m_happiness(set_happiness)
 	{
 	calculate_initial_hp();
 }
@@ -188,6 +188,10 @@ void Pokemon::set_hidden_power_type() {
 	Move * const move_ptr = move.find(Moves::HIDDEN_POWER);
 	if (move_ptr != nullptr)
 		move_ptr->set_type(calculate_hidden_power_type());
+}
+
+unsigned Pokemon::happiness() const {
+	return m_happiness;
 }
 
 namespace {

@@ -97,8 +97,8 @@ bool PokemonCollection::seen (Species const name) {
 void PokemonCollection::add (Pokemon const & pokemon) {
 	BaseCollection<Pokemon>::add(pokemon);
 }
-void PokemonCollection::add (Species name, std::string const & nickname, unsigned level, Gender gender, SharedMoves & shared_moves) {
-	Pokemon pokemon (name, shared_moves);
+void PokemonCollection::add (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness, SharedMoves & shared_moves) {
+	Pokemon pokemon (name, shared_moves, happiness);
 	pokemon.level = level;
 	pokemon.gender = gender;
 

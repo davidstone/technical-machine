@@ -57,7 +57,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	uint8_t const gender = gender_to_id (pokemon.gender.gender);
 	write_byte (gender);
 
-	write_byte (pokemon.happiness);
+	write_byte (pokemon.happiness());
 	write_int (pokemon.level);
 	write_string (pokemon.item.to_string ());
 	write_string (pokemon.ability.to_string ());

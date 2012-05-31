@@ -46,7 +46,7 @@ class Team {
 		Team (Team const & other);
 		Team (Team && other);
 		void add_pokemon (Species name);
-		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender);
+		void add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness = 255);
 		void remove_pokemon ();
 		bool can_be_phazed () const;
 		bool operator== (Team const & other) const;

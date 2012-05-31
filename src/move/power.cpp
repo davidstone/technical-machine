@@ -73,6 +73,10 @@ unsigned move_power (Team const & attacker, Team const & defender, Weather const
 
 namespace {
 
+unsigned return_power(Pokemon const & pokemon) {
+	return pokemon.happiness() * 2u / 5;
+}
+
 unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 	Pokemon const & pokemon = attacker.pokemon();
 	switch (pokemon.move().name) {
@@ -101,7 +105,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 		case Moves::FLING:
 			return pokemon.item.get_fling_power();
 		case Moves::FRUSTRATION:
-			return 102 - pokemon.happiness * 2u / 5;
+			return 102 - return_power(pokemon);
 		case Moves::FURY_CUTTER:
 			return pokemon.move().fury_cutter_power();
 		case Moves::GRASS_KNOT:
@@ -136,7 +140,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 			return std::min(uncapped_power, 200u);
 		}
 		case Moves::RETURN:
-			return pokemon.happiness * 2u / 5;
+			return return_power(pokemon);
 		case Moves::SPIT_UP:
 			return attacker.stockpile * 100u;
 		case Moves::TRIPLE_KICK:

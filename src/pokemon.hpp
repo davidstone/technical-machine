@@ -38,7 +38,7 @@ class SharedMoves;
 
 class Pokemon {
 	public:
-		Pokemon (Species species, SharedMoves & shared);
+		Pokemon (Species species, SharedMoves & shared, uint8_t set_happiness = 255);
 		void calculate_initial_hp ();
 		uint64_t hash () const;
 		uint8_t index_of_first_switch () const;
@@ -56,8 +56,8 @@ class Pokemon {
 		static bool is_shaymin (Species species);
 		static bool is_wormadam (Species species);
 		void set_hidden_power_type ();
+		unsigned happiness() const;
 		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
-		friend bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
@@ -85,10 +85,12 @@ class Pokemon {
 		bool fainted;
 		bool hidden;
 		uint8_t level;
-		uint8_t happiness;
 	private:
+		uint8_t m_happiness;
 		Type::Types calculate_hidden_power_type () const;
 };
+
+bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 }	// namespace technicalmachine
 #endif	// POKEMON_HPP_

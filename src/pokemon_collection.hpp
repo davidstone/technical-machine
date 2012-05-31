@@ -53,7 +53,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		uint8_t real_size () const;
 		bool seen (Species const name);
 		void add (Pokemon const & pokemon);
-		void add (Species name, std::string const & nickname, unsigned level, Gender gender, SharedMoves & shared_moves);
+		void add (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness, SharedMoves & shared_moves);
 		void remove_active ();
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
 		void for_each_replacement (std::function<void(void)> const & f);

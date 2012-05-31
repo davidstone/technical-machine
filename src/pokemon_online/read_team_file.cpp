@@ -86,7 +86,8 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 	std::string const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	unsigned const gender = pt.get<unsigned>("<xmlattr>.Gender");
 	uint8_t const level = pt.get<uint8_t>("<xmlattr>.Lvl");
-	team.add_pokemon(species, nickname, level, Gender(id_to_gender(gender)));
+	uint8_t const happiness = pt.get<uint8_t>("<xmlattr>.Happiness");
+	team.add_pokemon(species, nickname, level, Gender(id_to_gender(gender)), happiness);
 	Pokemon & pokemon = team.pokemon.at_replacement();
 
 	unsigned const item = pt.get<unsigned>("<xmlattr>.Item");
@@ -95,7 +96,6 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 	pokemon.ability.name = id_to_ability(ability);
 	unsigned const nature = pt.get<unsigned>("<xmlattr>.Nature");
 	pokemon.nature.name = id_to_nature(nature);
-	pokemon.happiness = pt.get<unsigned>("<xmlattr>.Happiness");
 
 	unsigned n = 0;
 	for (auto const & value : pt.get_child("")) {
