@@ -35,7 +35,7 @@ std::vector<RankedMove> reorder(std::vector<Move> const & input, bool ai) {
 	// Moves that cannot be selected are excluded.
 	std::vector<RankedMove> output;
 	for (uint8_t n = 0; n != input.size(); ++n) {
-		if (input[n].selectable)
+		if (input[n].selectable())
 			output.emplace_back(n, input[n].score);
 	}
 	std::sort(output.begin(), output.end());

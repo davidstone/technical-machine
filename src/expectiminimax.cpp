@@ -565,7 +565,7 @@ std::vector<Moves> all_legal_selections (Team & ai, Team const & foe, Weather co
 	determine_all_legal_selections (ai, foe, weather);
 	std::vector <Moves> moves;
 	ai.pokemon().move.for_each([& moves](Move const & move) {
-		if (move.selectable)
+		if (move.selectable())
 			moves.push_back (move.name);
 	});
 	assert (!moves.empty());

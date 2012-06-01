@@ -70,13 +70,14 @@ class Pokemon {
 		typedef uint64_t hash_type;
 		hash_type hash () const;
 		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
+
+		MoveCollection move;
+		TypeCollection type;
 	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
 		#endif
 	public:
-		MoveCollection move;
-		TypeCollection type;
 
 		Stat hp;
 		Stat atk;

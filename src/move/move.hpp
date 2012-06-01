@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <string>
 
+#include "accuracy.hpp"
 #include "classification.hpp"
 #include "disable.hpp"
 #include "pp.hpp"
@@ -40,18 +41,19 @@ class Move {
 	public:
 		Move (Moves move, unsigned pp_ups, unsigned size = 1);
 		void reset ();
-		uint64_t hash() const;
-		uint64_t max_hash() const;
 		static std::string to_string (Moves name);
 		std::string to_string () const;
 		static Moves from_string (std::string const & str);
-		friend bool operator== (Move const & lhs, Move const & rhs);
+		bool selectable() const;
+		void selectable(bool b);
 		bool is_damaging() const;
 		bool is_physical() const;
 		bool is_special() const;
 		Type type() const;
 		void set_type(Type::Types t);	// for Hidden Power only.
 		uint8_t base_power() const;
+		uint8_t accuracy() const;
+		bool can_miss () const;
 		bool can_critical_hit() const;
 		int8_t priority() const;
 		static bool is_switch (Moves name);
@@ -83,27 +85,29 @@ class Move {
 		bool is_usable_while_frozen () const;
 		bool is_sound_based () const;
 		bool is_self_KO () const;
-		bool cannot_miss () const;
 		void get_magnitude (unsigned magnitude);
 		static constexpr unsigned max_regular_moves () {
 			return 4;
 		}
+		typedef uint64_t hash_type;
+		hash_type hash() const;
+		hash_type max_hash() const;
+		friend bool operator== (Move const & lhs, Move const & rhs);
 
 		VariableCollection variable;
 		Moves name;
 		Pp pp;
 		int16_t score;
-		// I maintain the selectable state to determine if Struggle is legal
-		bool selectable;
-		// A number between 0 (1?) and 100, according to poccil.
-		uint8_t accuracy;
 		Disable disable;
 		// Move r and times_used up to team when it will reduce the size of Move.
 		// The random number (85 through 100)
 		uint8_t r;
 	private:
-		TimesUsed times_used;
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
+		TimesUsed times_used;
+		Accuracy cached_accuracy;
+		// I maintain the selectable state to determine if Struggle is legal
+		bool cached_selectable;
 		// Hidden Power makes this hard to replace with just a function
 		uint8_t cached_base_power;
 		Type cached_type;
@@ -111,6 +115,7 @@ class Move {
 		int8_t cached_priority;
 		// Replace this with a function when it will reduce the size of Move.
 		Classification cached_classification;
+		friend void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather);
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);

@@ -81,7 +81,7 @@ bool MoveCollection::exists (Moves name) const {
 }
 
 bool MoveCollection::a_regular_move_is_selectable () const {
-	return regular_move_exists ([](Move const & move) { return move.selectable; });
+	return regular_move_exists ([](Move const & move) { return move.selectable(); });
 }
 
 Moves MoveCollection::name_of_last_used_move () const {

@@ -54,7 +54,7 @@ bool handle_confusion (Team & user);
 
 void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather) {
 	user.pokemon().move.for_each([& user, & other, & weather](Move & move) {
-		move.selectable = is_legal_selection(user, move, other, weather);
+		move.cached_selectable = is_legal_selection(user, move, other, weather);
 	});
 }
 

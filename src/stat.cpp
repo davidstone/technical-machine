@@ -212,7 +212,7 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 
 void Stat::chance_to_hit (Team & user, Team const & target, Weather const & weather) {
 	if (move_can_miss (user, target.pokemon().ability)) {
-		user.chance_to_hit = user.pokemon().move().accuracy;
+		user.chance_to_hit = user.pokemon().move().accuracy();
 		user.chance_to_hit = accuracy_stage_modifier (user, target.stage [ACC]);
 		user.chance_to_hit = evasion_stage_modifier (user, target.stage [EVA]);
 
@@ -459,7 +459,7 @@ unsigned tailwind_speed_multiplier (Team const & team) {
 }
 
 bool move_can_miss (Team const & user, Ability target_ability) {
-	return !user.pokemon().move().cannot_miss() and !user.pokemon().ability.cannot_miss() and !target_ability.cannot_miss() and !user.lock_on;
+	return user.pokemon().move().can_miss() and !user.pokemon().ability.cannot_miss() and !target_ability.cannot_miss() and !user.lock_on;
 }
 
 unsigned accuracy_item_modifier (Team const & user, bool target_moved) {
