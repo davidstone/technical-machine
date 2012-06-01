@@ -240,7 +240,7 @@ void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	Team & fainter = is_me (fainting_party) ? ai : foe;
-	fainter.pokemon.at_replacement().fainted = true;
+	fainter.pokemon.at_replacement().faint();
 }
 
 void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
@@ -317,7 +317,7 @@ void GenericBattle::do_turn () {
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
-		while (foe.pokemon().fainted) {
+		while (foe.pokemon().will_be_replaced()) {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!foe.pokemon().move().is_switch())

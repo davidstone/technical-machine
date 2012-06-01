@@ -61,6 +61,12 @@ class Pokemon {
 		unsigned level() const;
 		unsigned happiness() const;
 		bool has_been_seen() const;
+		// This function should be used instead of checking if hp == 0 to handle
+		// messages being sent about multiple Pokemon fainting in one turn.
+		// Using this function will allow TM to correctly update an entire turn
+		// from a message.
+		bool will_be_replaced() const;
+		void faint();
 		typedef uint64_t hash_type;
 		hash_type hash () const;
 		friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
@@ -88,8 +94,8 @@ class Pokemon {
 		Gender gender;
 		Status status;
 		Nature nature;
-		bool fainted;
 	private:
+		bool m_will_be_replaced;
 		Seen seen;
 		uint8_t m_level;
 		uint8_t m_happiness;

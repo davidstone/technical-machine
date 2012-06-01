@@ -48,7 +48,7 @@ Pokemon::Pokemon (Species const species, uint8_t set_level, SharedMoves & shared
 
 	name (species),
 
-	fainted (false),
+	m_will_be_replaced(false),
 	m_level(set_level),
 
 	m_happiness(set_happiness)
@@ -79,7 +79,7 @@ uint8_t Pokemon::index_of_first_switch () const {
 
 void Pokemon::normalize_hp () {
 	// Correct rounding issues caused by not seeing the foe's exact HP.
-	if (fainted)
+	if (will_be_replaced())
 		hp.stat = 0;
 	else if (hp.stat == 0)
 		hp.stat = 1;
@@ -182,6 +182,14 @@ unsigned Pokemon::happiness() const {
 
 bool Pokemon::has_been_seen() const {
 	return true;
+}
+
+bool Pokemon::will_be_replaced() const {
+	return m_will_be_replaced;
+}
+
+void Pokemon::faint() {
+	m_will_be_replaced = true;
 }
 
 Pokemon::hash_type Pokemon::hash () const {
