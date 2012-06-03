@@ -52,7 +52,6 @@ unsigned calculate_critical_hit_multiplier (Team const & attacker);
 Rational calculate_item_modifier (Pokemon const & attacker);
 Rational calculate_me_first_modifier (Team const & attacker);
 
-Rational calculate_random_modifier (Move const & move);
 Rational calculate_stab_modifier (Team const & attacker);
 Rational calculate_stab_boost (Ability ability);
 std::vector<Rational> calculate_effectiveness_modifier (Move const & move, Pokemon const & defender);
@@ -129,7 +128,7 @@ unsigned regular_damage (Team const & attacker, Team const & defender, Weather c
 	damage *= calculate_item_modifier(pokemon);
 	damage *= calculate_me_first_modifier(attacker);
 
-	damage *= calculate_random_modifier(pokemon.move());
+	damage *= pokemon.move().r();
 	damage *= calculate_stab_modifier(attacker);
 	for (Rational const r : calculate_effectiveness_modifier(pokemon.move(), defender.pokemon()))
 		damage *= r;
@@ -230,11 +229,6 @@ Rational calculate_item_modifier (Pokemon const & attacker) {
 
 Rational calculate_me_first_modifier (Team const & attacker) {
 	return attacker.me_first ? Rational(3, 2) : Rational(1);
-}
-
-
-Rational calculate_random_modifier (Move const & move) {
-	return Rational(move.r, 100);
 }
 
 Rational calculate_stab_modifier (Team const & attacker) {

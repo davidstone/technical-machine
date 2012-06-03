@@ -26,6 +26,7 @@
 #include "classification.hpp"
 #include "disable.hpp"
 #include "pp.hpp"
+#include "random.hpp"
 #include "times_used.hpp"
 
 #include "../rational.hpp"
@@ -101,7 +102,7 @@ class Move {
 		Disable disable;
 		// Move r and times_used up to team when it will reduce the size of Move.
 		// The random number (85 through 100)
-		uint8_t r;
+		Random r;
 	private:
 		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
 		TimesUsed times_used;

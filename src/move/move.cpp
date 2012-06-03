@@ -45,7 +45,6 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 	name (move),
 	pp(move, pp_ups),
 	score (-Score::VICTORY - 1),
-	r (100),
 	cached_accuracy(move),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)),

@@ -144,7 +144,6 @@ void physical_damage_test () {
 	Team defender = create_max_damage_physical_defender ();
 	calculate_defending_stat (attacker, defender, weather);
 	
-	attacker.pokemon().move().r = 100;
 	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
@@ -177,7 +176,6 @@ void special_damage_test () {
 	Team defender = create_max_damage_special_defender ();
 	calculate_defending_stat (attacker, defender, weather);
 
-	attacker.pokemon().move().r = 100;
 	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
