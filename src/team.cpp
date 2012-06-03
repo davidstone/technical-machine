@@ -460,50 +460,54 @@ void Team::load (std::string const & name, unsigned other_size) {
 		throw InvalidTeamFileFormat(name);
 }
 
-bool Team::operator== (Team const & other) const {
-	return pokemon().name == other.pokemon().name and
-			pokemon == other.pokemon and
-			stage == other.stage and
-			vanish == other.vanish and
-			bide == other.bide and
-			confused == other.confused and
-			embargo == other.embargo and
-			encore == other.encore and
-			heal_block == other.heal_block and
-			magnet_rise == other.magnet_rise and
-			partial_trap == other.partial_trap and
-			perish_song == other.perish_song and
-			rampage == other.rampage and
-			slow_start == other.slow_start and
-			stockpile == other.stockpile and
-			taunt == other.taunt and
-			toxic == other.toxic and
-			uproar == other.yawn and
-			aqua_ring == other.aqua_ring and
-			attract == other.attract and
-			charge == other.charge and
-			curse == other.curse and
-			defense_curl == other.defense_curl and
-			destiny_bond == other.destiny_bond and
-			flash_fire == other.flash_fire and
-			focus_energy == other.focus_energy and
-			identified == other.identified and
-			imprison == other.imprison and
-			ingrain == other.ingrain and
-			leech_seed == other.leech_seed and
-			loaf == other.loaf and
-			lock_on == other.lock_on and
-			minimize == other.minimize and
-			mud_sport == other.mud_sport and
-			nightmare == other.nightmare and
-			torment == other.torment and
-			trapped == other.trapped and
-			water_sport == other.water_sport and
-			counter == other.counter and
-			screens == other.screens and
-			wish == other.wish and
-			entry_hazards == other.entry_hazards and
-			me == other.me;
+bool operator== (Team const & lhs, Team const & rhs) {
+	return lhs.pokemon().name == rhs.pokemon().name and
+			lhs.pokemon == rhs.pokemon and
+			lhs.stage == rhs.stage and
+			lhs.vanish == rhs.vanish and
+			lhs.bide == rhs.bide and
+			lhs.confused == rhs.confused and
+			lhs.embargo == rhs.embargo and
+			lhs.encore == rhs.encore and
+			lhs.heal_block == rhs.heal_block and
+			lhs.magnet_rise == rhs.magnet_rise and
+			lhs.partial_trap == rhs.partial_trap and
+			lhs.perish_song == rhs.perish_song and
+			lhs.rampage == rhs.rampage and
+			lhs.slow_start == rhs.slow_start and
+			lhs.stockpile == rhs.stockpile and
+			lhs.taunt == rhs.taunt and
+			lhs.toxic == rhs.toxic and
+			lhs.uproar == rhs.yawn and
+			lhs.aqua_ring == rhs.aqua_ring and
+			lhs.attract == rhs.attract and
+			lhs.charge == rhs.charge and
+			lhs.curse == rhs.curse and
+			lhs.defense_curl == rhs.defense_curl and
+			lhs.destiny_bond == rhs.destiny_bond and
+			lhs.flash_fire == rhs.flash_fire and
+			lhs.focus_energy == rhs.focus_energy and
+			lhs.identified == rhs.identified and
+			lhs.imprison == rhs.imprison and
+			lhs.ingrain == rhs.ingrain and
+			lhs.leech_seed == rhs.leech_seed and
+			lhs.loaf == rhs.loaf and
+			lhs.lock_on == rhs.lock_on and
+			lhs.minimize == rhs.minimize and
+			lhs.mud_sport == rhs.mud_sport and
+			lhs.nightmare == rhs.nightmare and
+			lhs.torment == rhs.torment and
+			lhs.trapped == rhs.trapped and
+			lhs.water_sport == rhs.water_sport and
+			lhs.counter == rhs.counter and
+			lhs.screens == rhs.screens and
+			lhs.wish == rhs.wish and
+			lhs.entry_hazards == rhs.entry_hazards and
+			lhs.me == rhs.me;
+}
+
+bool operator!= (Team const & lhs, Team const & rhs) {
+	return !(lhs == rhs);
 }
 
 std::string Team::to_string () const {
