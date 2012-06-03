@@ -192,13 +192,17 @@ void Pokemon::faint() {
 	m_will_be_replaced = true;
 }
 
-Pokemon::hash_type Pokemon::hash () const {
+Pokemon::hash_type Pokemon::hash() const {
 	return name + Species::END *
 			(item.name + Item::END *
 			(status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
+}
+
+Pokemon::hash_type Pokemon::max_hash() const {
+	return Species::END * Item::END * Status::max_hash() * hp.max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {

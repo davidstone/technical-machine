@@ -385,12 +385,10 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 uint64_t Team::hash () const {
 	uint64_t current_hash = 0;
-	// Should probably think of a better way to combine Pokemon hashes than xor
 	pokemon.for_each([& current_hash](Pokemon const & member) {
-		current_hash ^= member.hash();
+		current_hash *= member.max_hash();
+		current_hash += member.hash();
 	});
-	// hash is in the innermost nested parentheses, so all of the arguments
-	// are promoted to uint64_t
 	constexpr unsigned max_size = 6;
 	return static_cast<uint64_t> (pokemon.real_size() - 1) + max_size *
 			(pokemon.index() + pokemon.real_size() *
