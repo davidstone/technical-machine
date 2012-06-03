@@ -1,4 +1,4 @@
-// Header for loading stats like Pokemon usages
+// Predict foe's team header
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LOAD_STATS_HPP_
-#define LOAD_STATS_HPP_
+#ifndef TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_
+#define TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_
 
-#include <array>
-#include "species.hpp"
+#include "detailed_stats.hpp"
+#include "../team.hpp"
 
 namespace technicalmachine {
 
-std::array<unsigned, Species::END> overall_stats ();
-
-void team_stats (std::array<unsigned, Species::END> const & overall, unsigned total, float multiplier [Species::END][Species::END]);
-
-// Multiplier for Pokemon after you've seen the lead
-std::array<float, Species::END> lead_stats ();
+Team predict_team (DetailedStats const & detailed, Team team, unsigned size, bool using_lead = true);
 
 }	// namespace technicalmachine
-#endif	// LOAD_STATS_HPP_
+#endif	// TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_

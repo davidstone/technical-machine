@@ -39,10 +39,11 @@
 
 #include "../battle.hpp"
 #include "../evaluate.hpp"
-#include "../load_stats.hpp"
 #include "../exit_program.hpp"
 #include "../settings_file.hpp"
-#include "../team_predictor.hpp"
+
+#include "../team_predictor/load_stats.hpp"
+#include "../team_predictor/team_predictor.hpp"
 
 namespace technicalmachine {
 namespace network {

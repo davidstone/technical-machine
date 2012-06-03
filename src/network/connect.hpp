@@ -30,8 +30,9 @@
 
 #include "../battle.hpp"
 #include "../battle_result.hpp"
-#include "../detailed_stats.hpp"
 #include "../evaluate.hpp"
+
+#include "../team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
 namespace network {

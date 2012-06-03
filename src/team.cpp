@@ -34,11 +34,12 @@
 #include "pokemon.hpp"
 #include "switch.hpp"
 #include "status.hpp"
-#include "team_predictor.hpp"
 #include "type.hpp"
 
 #include "pokemon_lab/read_team_file.hpp"
 #include "pokemon_online/read_team_file.hpp"
+
+#include "team_predictor/team_predictor.hpp"
 
 #include <iostream>
 

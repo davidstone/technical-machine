@@ -24,9 +24,9 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 
-#include "invalid_settings_file.hpp"
-#include "pokemon.hpp"
-#include "species.hpp"
+#include "../invalid_settings_file.hpp"
+#include "../pokemon.hpp"
+#include "../species.hpp"
 
 namespace technicalmachine {
 

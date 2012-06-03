@@ -1,4 +1,4 @@
-// Predict foe's team header
+// Detailed Pokemon stats
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,15 +16,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR_HPP_
-#define TEAM_PREDICTOR_HPP_
+#ifndef TEAM_PREDICTOR__DETAILED_STATS_HPP_
+#define TEAM_PREDICTOR__DETAILED_STATS_HPP_
 
-#include "detailed_stats.hpp"
-#include "team.hpp"
+#include <array>
+#include <cstdint>
+#include <vector>
+
+#include "../ability.hpp"
+#include "../item.hpp"
+#include "../nature.hpp"
+#include "../species.hpp"
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 
-Team predict_team (DetailedStats const & detailed, Team team, unsigned size, bool using_lead = true);
+class DetailedStats {
+	public:
+		DetailedStats();
+		std::array<Ability::Abilities, Species::END> ability;
+		std::array<Item::Items, Species::END> item;
+		std::array<Nature::Natures, Species::END> nature;
+		std::array<std::vector<Moves>, Species::END> move;
+};
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR_HPP_
+#endif	// TEAM_PREDICTOR__DETAILED_STATS_HPP_

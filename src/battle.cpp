@@ -28,14 +28,12 @@
 #include <vector>
 
 #include "battle_result.hpp"
-#include "detailed_stats.hpp"
 #include "endofturn.hpp"
 #include "expectiminimax.hpp"
 #include "gender.hpp"
 #include "species.hpp"
 #include "switch.hpp"
 #include "team.hpp"
-#include "team_predictor.hpp"
 #include "weather.hpp"
 
 #include "move/move.hpp"
@@ -45,6 +43,9 @@
 #include "network/outmessage.hpp"
 
 #include "pokemon_lab/write_team_file.hpp"
+
+#include "team_predictor/team_predictor.hpp"
+#include "team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

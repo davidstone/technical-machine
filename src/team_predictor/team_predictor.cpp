@@ -21,14 +21,15 @@
 #include <array>
 #include <vector>
 
-#include "ability.hpp"
 #include "detailed_stats.hpp"
 #include "load_stats.hpp"
-#include "pokemon.hpp"
-#include "species.hpp"
-#include "team.hpp"
 
-#include "move/move.hpp"
+#include "../ability.hpp"
+#include "../pokemon.hpp"
+#include "../species.hpp"
+#include "../team.hpp"
+
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
