@@ -20,7 +20,6 @@
 #define EXIT_PROGRAM_HPP_
 
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
