@@ -55,6 +55,9 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		uint8_t size () const;
 		uint8_t regular_size () const;
 		void update_shared_moves(SharedMoves & s);
+		typedef uint64_t hash_type;
+		hash_type hash() const;
+		hash_type max_hash() const;
 };
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

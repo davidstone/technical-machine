@@ -103,4 +103,21 @@ void MoveCollection::update_shared_moves(SharedMoves & s) {
 	container.update_shared_moves(s);
 }
 
+MoveCollection::hash_type MoveCollection::hash() const {
+	hash_type current_hash = 0;
+	for_each_regular_move([& current_hash](Move const & next_move) {
+		current_hash *= next_move.max_hash();
+		current_hash += next_move.hash();
+	});
+	return current_hash;
+}
+
+MoveCollection::hash_type MoveCollection::max_hash() const {
+	hash_type current_max = 0;
+	for_each_regular_move([& current_max](Move const & next_move) {
+		current_max += next_move.max_hash();
+	});
+	return current_max;
+}
+
 }	// namespace technicalmachine

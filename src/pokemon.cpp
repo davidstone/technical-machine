@@ -193,19 +193,12 @@ void Pokemon::faint() {
 }
 
 Pokemon::hash_type Pokemon::hash () const {
-	hash_type current_hash = 0;
-	move.for_each_regular_move([& current_hash](Move const & next_move) {
-		current_hash *= next_move.max_hash();
-		current_hash += next_move.hash();
-	});
-	// current_hash is in the innermost nested parentheses, so all of the arguments
-	// are promoted to uint64_t
 	return name + Species::END *
 			(item.name + Item::END *
 			(status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
-			current_hash))));
+			move.hash()))));
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
