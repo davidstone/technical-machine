@@ -26,6 +26,7 @@
 #include "classification.hpp"
 #include "disable.hpp"
 #include "pp.hpp"
+#include "priority.hpp"
 #include "random.hpp"
 #include "times_used.hpp"
 
@@ -52,11 +53,11 @@ class Move {
 		bool is_special() const;
 		Type type() const;
 		void set_type(Type::Types t);	// for Hidden Power only.
-		uint8_t base_power() const;
+		unsigned base_power() const;
 		uint8_t accuracy() const;
 		bool can_miss () const;
 		bool can_critical_hit() const;
-		int8_t priority() const;
+		Priority priority() const;
 		static bool is_switch (Moves name);
 		bool is_switch () const;
 		static Moves from_replacement (unsigned replacement);
@@ -113,7 +114,7 @@ class Move {
 		uint8_t cached_base_power;
 		Type cached_type;
 		// Replace this with a function when it will reduce the size of Move.
-		int8_t cached_priority;
+		Priority cached_priority;
 		// Replace this with a function when it will reduce the size of Move.
 		Classification cached_classification;
 		friend void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather);

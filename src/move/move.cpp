@@ -36,7 +36,6 @@ constexpr uint8_t indeterminate_power = 0xFF;
 constexpr uint8_t variable_power = indeterminate_power - 1;
 Type get_type (Moves move);
 uint8_t get_base_power (Moves move);
-int8_t get_priority(Moves move);
 
 }	// unnamed namespace
 
@@ -48,7 +47,7 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 	cached_accuracy(move),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)),
-	cached_priority(get_priority(move)),
+	cached_priority(move),
 	cached_classification(move) {
 }
 
@@ -118,11 +117,11 @@ void Move::set_type(Type::Types const t) {
 	cached_type = t;
 }
 
-uint8_t Move::base_power() const {
+unsigned Move::base_power() const {
 	return cached_base_power;
 }
 
-int8_t Move::priority() const {
+Priority Move::priority() const {
 	return cached_priority;
 }
 
@@ -372,59 +371,6 @@ bool Move::can_miss () const {
 }
 
 namespace {
-
-int8_t get_priority(Moves const move) {
-	switch (move) {
-		case Moves::SWITCH0:
-		case Moves::SWITCH1:
-		case Moves::SWITCH2:
-		case Moves::SWITCH3:
-		case Moves::SWITCH4:
-		case Moves::SWITCH5:
-			return 6;
-		case Moves::HELPING_HAND:
-			return 5;
-		case Moves::MAGIC_COAT:
-		case Moves::SNATCH:
-			return 4;
-		case Moves::DETECT:
-		case Moves::ENDURE:
-		case Moves::FOLLOW_ME:
-		case Moves::PROTECT:
-			return 3;
-		case Moves::FEINT:
-			return 2;
-		case Moves::AQUA_JET:
-		case Moves::BIDE:
-		case Moves::BULLET_PUNCH:
-		case Moves::EXTREMESPEED:
-		case Moves::FAKE_OUT:
-		case Moves::ICE_SHARD:
-		case Moves::MACH_PUNCH:
-		case Moves::QUICK_ATTACK:
-		case Moves::SHADOW_SNEAK:
-		case Moves::SUCKER_PUNCH:
-		case Moves::VACUUM_WAVE:
-			return 1;
-		case Moves::VITAL_THROW:
-			return -1;
-		case Moves::FOCUS_PUNCH:
-			return -2;
-		case Moves::AVALANCHE:
-		case Moves::REVENGE:
-			return -3;
-		case Moves::COUNTER:
-		case Moves::MIRROR_COAT:
-			return -4;
-		case Moves::ROAR:
-		case Moves::WHIRLWIND:
-			return -5;
-		case Moves::TRICK_ROOM:
-			return -6;
-		default:
-			return 0;
-	}
-}
 
 Type get_type (Moves const move) {
 	static constexpr Type::Types move_type [] = {
