@@ -31,6 +31,7 @@
 #include "ability.hpp"
 #include "gender.hpp"
 #include "item.hpp"
+#include "invalid_team_file_format.hpp"
 #include "pokemon.hpp"
 #include "switch.hpp"
 #include "status.hpp"
@@ -40,8 +41,6 @@
 #include "pokemon_online/read_team_file.hpp"
 
 #include "team_predictor/team_predictor.hpp"
-
-#include <iostream>
 
 namespace technicalmachine {
 
@@ -459,8 +458,8 @@ void Team::load (std::string const & name, unsigned other_size) {
 		po::load_team (*this, name, other_size);
 	else if (extension == ".sbt")
 		pl::load_team (*this, name, other_size);
-	else	// TODO: throw
-		std::cerr << "Unsupported file format: " + extension + ".\n";
+	else
+		throw InvalidTeamFileFormat(name);
 }
 
 bool Team::operator== (Team const & other) const {
