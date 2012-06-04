@@ -1,5 +1,5 @@
 // Evaluate the state of the game
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,12 +27,13 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "ability.hpp"
-#include "pokemon.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
 #include "move/move.hpp"
 #include "move/moves.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {

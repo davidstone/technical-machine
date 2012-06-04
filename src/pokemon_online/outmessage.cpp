@@ -27,8 +27,10 @@
 
 #include "battle_settings.hpp"
 #include "conversion.hpp"
+
 #include "../team.hpp"
-#include "../pokemon.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace po {

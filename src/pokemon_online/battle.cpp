@@ -28,10 +28,11 @@
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 
-#include "../pokemon.hpp"
 #include "../team.hpp"
 
 #include "../network/invalid_simulator_data.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace po {

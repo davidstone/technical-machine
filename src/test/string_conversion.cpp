@@ -25,11 +25,13 @@
 #include "../gender.hpp"
 #include "../item.hpp"
 #include "../nature.hpp"
-#include "../pokemon.hpp"
 #include "../status.hpp"
 
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
+
+#include "../pokemon/pokemon.hpp"
+#include "../pokemon/species.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
 

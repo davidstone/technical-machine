@@ -25,9 +25,11 @@
 #include <boost/asio.hpp>
 
 #include "conversion.hpp"
+
 #include "../ability.hpp"
-#include "../pokemon.hpp"
 #include "../team.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace pl {

@@ -21,9 +21,10 @@
 #include <algorithm>
 
 #include "ability.hpp"
-#include "pokemon.hpp"
 #include "type.hpp"
 #include "weather.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {

@@ -23,10 +23,11 @@
 #include "../invalid_simulator_conversion.hpp"
 
 #include "../../pokemon_lab/conversion.hpp"
-#include "../../pokemon.hpp"
-#include "../../species.hpp"
 
 #include "../../move/moves.hpp"
+
+#include "../../pokemon/pokemon.hpp"
+#include "../../pokemon/species.hpp"
 
 namespace technicalmachine {
 namespace pl {
@@ -68,7 +69,7 @@ void test_nature () {
 
 void test_species () {
 	std::cout << "\t\tVerifying correct species.\n";
-	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (original + 1)) {
+	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (static_cast<unsigned>(original) + 1)) {
 		unsigned const id = species_to_id (original);
 		Species const result = id_to_species (id);
 		if (original != result)

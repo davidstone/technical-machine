@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SPECIES_HPP_
-#define SPECIES_HPP_
+#ifndef POKEMON__SPECIES_HPP_
+#define POKEMON__SPECIES_HPP_
 
 #include <cstdint>
 
@@ -43,7 +43,7 @@ Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) 
 Pokemon Online refers to Porygon2 as Porygon 2.
 */
 
-enum Species : uint16_t {
+enum class Species : uint16_t {
 	ABOMASNOW,
 	ABRA,
 	ABSOL,
@@ -551,5 +551,7 @@ enum Species : uint16_t {
 	ZUBAT,
 	END
 };
+
+constexpr unsigned max_species = static_cast<unsigned>(Species::END);
 }	// namespace technicalmachine
-#endif	// SPECIES_HPP_
+#endif	// POKEMON__SPECIES_HPP_

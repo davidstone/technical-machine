@@ -17,9 +17,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "heal.hpp"
+
 #include "ability.hpp"
 #include "damage.hpp"
-#include "pokemon.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 

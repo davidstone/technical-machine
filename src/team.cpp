@@ -32,10 +32,11 @@
 #include "gender.hpp"
 #include "item.hpp"
 #include "invalid_team_file_format.hpp"
-#include "pokemon.hpp"
 #include "switch.hpp"
 #include "status.hpp"
 #include "type.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 #include "pokemon_lab/read_team_file.hpp"
 #include "pokemon_online/read_team_file.hpp"

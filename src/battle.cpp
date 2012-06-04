@@ -31,7 +31,6 @@
 #include "endofturn.hpp"
 #include "expectiminimax.hpp"
 #include "gender.hpp"
-#include "species.hpp"
 #include "switch.hpp"
 #include "team.hpp"
 #include "weather.hpp"
@@ -49,6 +48,7 @@
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
+enum class Species : uint16_t;
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	opponent (_opponent),

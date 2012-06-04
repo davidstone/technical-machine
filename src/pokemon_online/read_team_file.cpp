@@ -27,15 +27,16 @@
 #include "conversion.hpp"
 #include "../ability.hpp"
 #include "../item.hpp"
-#include "../pokemon.hpp"
-#include "../species.hpp"
 #include "../stat.hpp"
 #include "../team.hpp"
 
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
 
+#include "../pokemon/pokemon.hpp"
+
 namespace technicalmachine {
+enum class Species : uint16_t;
 namespace po {
 namespace {
 

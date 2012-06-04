@@ -16,20 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_COLLECTION_HPP_
-#define POKEMON_COLLECTION_HPP_
+#ifndef POKEMON__COLLECTION_HPP_
+#define POKEMON__COLLECTION_HPP_
 
-#include "collection.hpp"
+#include "../collection.hpp"
 
 #include <cstdint>
 #include <functional>
 #include <string>
 
 #include "pokemon.hpp"
-#include "species.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
+enum class Species : uint16_t;
 class Move;
 class SharedMoves;
 
@@ -67,4 +67,4 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 };
 
 }	// namespace technicalmachine
-#endif	// POKEMON_COLLECTION_HPP_
+#endif	// POKEMON__COLLECTION_HPP_

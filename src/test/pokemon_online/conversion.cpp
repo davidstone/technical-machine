@@ -25,11 +25,12 @@
 
 #include "../../ability.hpp"
 #include "../../nature.hpp"
-#include "../../pokemon.hpp"
-#include "../../species.hpp"
 
 #include "../../move/move.hpp"
 #include "../../move/moves.hpp"
+
+#include "../../pokemon/pokemon.hpp"
+#include "../../pokemon/species.hpp"
 
 #include "../../pokemon_online/conversion.hpp"
 

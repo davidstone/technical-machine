@@ -23,13 +23,14 @@
 #include "ability.hpp"
 #include "item.hpp"
 #include "nature.hpp"
-#include "pokemon.hpp"
-#include "species.hpp"
 #include "status.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
+#include "pokemon/pokemon.hpp"
+
 namespace technicalmachine {
+enum class Species : uint16_t;
 namespace {
 
 unsigned calculate_initial_stat (Stat const & stat, unsigned level);
@@ -321,11 +322,11 @@ unsigned attack_item_modifier (Pokemon const & attacker) {
 		case Item::CHOICE_BAND:
 			return attacker.atk.stat * 3u / 2;
 		case Item::LIGHT_BALL:
-			if (attacker.name == PIKACHU)
+			if (attacker.is_boosted_by_light_ball())
 				return attacker.atk.stat * 2u;
 			break;
 		case Item::THICK_CLUB:
-			if (attacker.name == CUBONE or attacker.name == MAROWAK)
+			if (attacker.is_boosted_by_thick_club())
 				return attacker.atk.stat * 2u;
 			break;
 		default:
@@ -341,17 +342,17 @@ unsigned special_attack_ability_modifier (Pokemon const & attacker, Weather cons
 unsigned special_attack_item_modifier (Pokemon const & attacker) {
 	switch (attacker.item.name) {
 		case Item::SOUL_DEW:
-			if (attacker.name == LATIAS or attacker.name == LATIOS)
+			if (attacker.is_boosted_by_soul_dew())
 				return attacker.spa.stat * 3u / 2;
 			break;
 		case Item::CHOICE_SPECS:
 			return attacker.spa.stat * 3u / 2;
 		case Item::DEEPSEATOOTH:
-			if (attacker.name == CLAMPERL)
+			if (attacker.is_boosted_by_deepseatooth())
 				return attacker.spa.stat * 2u;
 			break;
 		case Item::LIGHT_BALL:
-			if (attacker.name == PIKACHU)
+			if (attacker.is_boosted_by_light_ball())
 				return attacker.spa.stat * 2u;
 			break;
 		default:
@@ -365,7 +366,7 @@ unsigned defense_ability_modifier (Pokemon const & defender) {
 }
 
 unsigned defense_item_modifier (Pokemon const & defender) {
-	return (!(defender.item.boosts_defense_of_ditto() and defender.name == DITTO)) ?
+	return (!(defender.item.name == Item::METAL_POWDER and defender.is_boosted_by_metal_powder())) ?
 		defender.def.stat :
 		defender.def.stat * 3u / 2;
 }
@@ -377,15 +378,15 @@ unsigned special_defense_ability_modifier (Pokemon const & defender, Weather con
 unsigned special_defense_item_modifier (Pokemon const & defender) {
 	switch (defender.item.name) {
 		case Item::DEEPSEASCALE:
-			if (defender.name == CLAMPERL)
+			if (defender.is_boosted_by_deepseascale())
 				return defender.spd.stat * 2u;
 			break;
 		case Item::METAL_POWDER:
-			if (defender.name == DITTO)
+			if (defender.is_boosted_by_metal_powder())
 				return defender.spd.stat * 3u / 2;
 			break;
 		case Item::SOUL_DEW:
-			if (defender.name == LATIAS or defender.name == LATIOS)
+			if (defender.is_boosted_by_soul_dew())
 				return defender.spd.stat * 3u / 2;
 			break;
 		default:
@@ -431,7 +432,7 @@ unsigned speed_ability_modifier (Team const & team, Weather const & weather) {
 unsigned speed_item_modifier (Pokemon const & pokemon) {
 	switch (pokemon.item.name) {
 		case Item::QUICK_POWDER:
-			if (pokemon.name == DITTO)
+			if (pokemon.is_boosted_by_quick_powder())
 				return pokemon.spe.stat * 2u;
 			break;
 		case Item::CHOICE_SCARF:
@@ -1032,7 +1033,7 @@ uint8_t Stat::get_base_stat (Species name, Stats stat) {
 		{ 40, 45, 35, 30, 40, 55 }		// Zubat
 	};
 	// I add 1 because HP is -1 to allow every other index to be easier.
-	return base_stat [name] [stat + 1];
+	return base_stat [static_cast<unsigned>(name)] [stat + 1];
 }
 
 } // namespace technicalmachine

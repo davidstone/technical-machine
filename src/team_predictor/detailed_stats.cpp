@@ -27,10 +27,11 @@
 #include "../item.hpp"
 #include "../invalid_settings_file.hpp"
 #include "../nature.hpp"
-#include "../pokemon.hpp"
-#include "../species.hpp"
 
 #include "../move/move.hpp"
+
+#include "../pokemon/pokemon.hpp"
+#include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 
@@ -60,25 +61,25 @@ DetailedStats::DetailedStats() {
 		if (sub == "Ability") {
 			if (!ability_found) {
 				ability_found = true;
-				ability[new_member] = Ability::from_string(line.substr(y + 1, z - y - 1));
+				ability[static_cast<size_t>(new_member)] = Ability::from_string(line.substr(y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Item") {
 			if (!item_found) {
 				item_found = true;
-				item[new_member] = Item::from_string(line.substr(y + 1, z - y - 1));
+				item[static_cast<size_t>(new_member)] = Item::from_string(line.substr(y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Nature") {
 			if (!nature_found) {
 				nature_found = true;
-				nature[new_member] = Nature::from_string(line.substr(y + 1, z - y - 1));
+				nature[static_cast<size_t>(new_member)] = Nature::from_string(line.substr(y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Move") {
 			// When I get smarter move statistics, I won't want to cap this at 4
-			if (move[new_member].size() < 4)
-				move[new_member].push_back(Move::from_string(line.substr(y + 1, z - y - 1)));
+			if (move[static_cast<size_t>(new_member)].size() < 4)
+				move[static_cast<size_t>(new_member)].push_back(Move::from_string(line.substr(y + 1, z - y - 1)));
 		}
 	}
 }

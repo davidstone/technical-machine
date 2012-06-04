@@ -28,13 +28,14 @@
 #include "../block.hpp"
 #include "../damage.hpp"
 #include "../heal.hpp"
-#include "../pokemon.hpp"
 #include "../stat.hpp"
 #include "../status.hpp"
 #include "../switch.hpp"
 #include "../team.hpp"
 #include "../type.hpp"
 #include "../weather.hpp"
+
+#include "../pokemon/pokemon.hpp"
 #undef SING
 
 namespace technicalmachine {
@@ -375,7 +376,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.stage.boost(Stat::ATK, -2);
 			break;
 		case Moves::CHATTER:
-			if (user.pokemon().name != CHATOT)
+			if (!user.pokemon().can_use_chatter())
 				break;
 		case Moves::CONFUSION:
 		case Moves::DIZZY_PUNCH:

@@ -20,7 +20,6 @@
 #define TYPE_COLLECTION_HPP_
 
 #include <vector>
-#include "species.hpp"
 #include "status.hpp"
 #include "type.hpp"
 
@@ -28,6 +27,7 @@ namespace technicalmachine {
 class Pokemon;
 class Team;
 class Weather;
+enum class Species : uint16_t;
 
 class TypeCollection {
 	public:

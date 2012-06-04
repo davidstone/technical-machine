@@ -20,13 +20,14 @@
 
 #include <vector>
 
-#include "pokemon.hpp"
-#include "species.hpp"
 #include "team.hpp"
 #include "type.hpp"
 #include "weather.hpp"
 
+#include "pokemon/pokemon.hpp"
+
 namespace technicalmachine {
+enum class Species : uint16_t;
 namespace {
 std::vector<Type> get_type(Species const name);
 }	// unnamed namespace
@@ -579,7 +580,7 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::NORMAL },		// Zigzagoon
 		{ Type::POISON, Type::FLYING }			// Zubat
 	};
-	return type_array [name];
+	return type_array [static_cast<unsigned>(name)];
 }
 
 }	// unnamed namespace

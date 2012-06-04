@@ -33,7 +33,6 @@
 #include "block.hpp"
 #include "endofturn.hpp"
 #include "evaluate.hpp"
-#include "pokemon.hpp"
 #include "stat.hpp"
 #include "switch.hpp"
 #include "team.hpp"
@@ -44,6 +43,8 @@
 #include "move/move.hpp"
 #include "move/moves.hpp"
 #include "move/use_move.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {

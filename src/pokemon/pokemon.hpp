@@ -16,24 +16,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_HPP_
-#define POKEMON_HPP_
+#ifndef POKEMON__POKEMON_HPP_
+#define POKEMON__POKEMON_HPP_
 
 #include <string>
 
-#include "ability.hpp"
-#include "gender.hpp"
-#include "item.hpp"
-#include "nature.hpp"
-#include "seen_pokemon.hpp"
-#include "species.hpp"
-#include "stat.hpp"
-#include "status.hpp"
-#include "type_collection.hpp"
+#include "seen.hpp"
 
-#include "move/collection.hpp"
+#include "../ability.hpp"
+#include "../gender.hpp"
+#include "../item.hpp"
+#include "../nature.hpp"
+#include "../stat.hpp"
+#include "../status.hpp"
+#include "../type_collection.hpp"
+
+#include "../move/collection.hpp"
 
 namespace technicalmachine {
+enum class Species : uint16_t;
 class SharedMoves;
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
@@ -51,12 +52,23 @@ class Pokemon {
 		std::string get_nickname () const;
 		void set_nickname (std::string const & nick);
 		static Species from_string (std::string const & str);
+		bool can_use_chatter() const;
 		static bool is_alternate_form (Species first, Species second);
 		static bool is_deoxys (Species species);
 		static bool is_giratina (Species species);
 		static bool is_rotom (Species species);
 		static bool is_shaymin (Species species);
 		static bool is_wormadam (Species species);
+		bool is_boosted_by_adamant_orb() const;
+		bool is_boosted_by_deepseascale() const;
+		bool is_boosted_by_deepseatooth() const;
+		bool is_boosted_by_griseous_orb() const;
+		bool is_boosted_by_light_ball() const;
+		bool is_boosted_by_lustrous_orb() const;
+		bool is_boosted_by_metal_powder() const;
+		bool is_boosted_by_quick_powder() const;
+		bool is_boosted_by_soul_dew() const;
+		bool is_boosted_by_thick_club() const;
 		void set_hidden_power_type ();
 		unsigned level() const;
 		unsigned happiness() const;
@@ -108,4 +120,4 @@ class Pokemon {
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 }	// namespace technicalmachine
-#endif	// POKEMON_HPP_
+#endif	// POKEMON__POKEMON_HPP_

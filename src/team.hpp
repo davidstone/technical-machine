@@ -26,10 +26,7 @@
 
 #include "entry_hazards.hpp"
 #include "gender.hpp"
-#include "pokemon.hpp"
-#include "pokemon_collection.hpp"
 #include "screens.hpp"
-#include "species.hpp"
 #include "stage.hpp"
 #include "stat.hpp"
 #include "vanish.hpp"
@@ -37,7 +34,11 @@
 
 #include "move/shared.hpp"
 
+#include "pokemon/pokemon.hpp"
+#include "pokemon/collection.hpp"
+
 namespace technicalmachine {
+enum class Species : uint16_t;
 
 class Team {
 	public:

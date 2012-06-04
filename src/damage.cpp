@@ -23,7 +23,6 @@
 
 #include "ability.hpp"
 #include "item.hpp"
-#include "pokemon.hpp"
 #include "status.hpp"
 #include "rational.hpp"
 #include "team.hpp"
@@ -32,6 +31,8 @@
 #include "move/move.hpp"
 #include "move/moves.hpp"
 #include "move/power.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {

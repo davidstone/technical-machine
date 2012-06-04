@@ -27,10 +27,10 @@
 #include "../item.hpp"
 #include "../stat.hpp"
 #include "../nature.hpp"
-#include "../species.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
+enum class Species : uint16_t;
 namespace po {
 
 Species id_to_species (unsigned id, unsigned forme);

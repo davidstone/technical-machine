@@ -20,7 +20,6 @@
 #define TYPE_HPP_
 
 #include <vector>
-#include "species.hpp"
 #include "status.hpp"
 
 namespace technicalmachine {

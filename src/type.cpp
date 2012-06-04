@@ -21,9 +21,10 @@
 #include <vector>
 
 #include "ability.hpp"
-#include "pokemon.hpp"
 #include "status.hpp"
 #include "weather.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 

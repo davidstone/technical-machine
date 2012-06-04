@@ -23,12 +23,11 @@
 #include <stdexcept>
 #include <string>
 
-#include "species.hpp"
-
 namespace technicalmachine {
 class Pokemon;
 class Team;
 class Weather;
+enum class Species : uint16_t;
 
 class Stat {
 	public:

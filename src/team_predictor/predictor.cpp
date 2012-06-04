@@ -24,8 +24,9 @@
 #include "team_predictor.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
-#include "../pokemon.hpp"
 #include "../team.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>

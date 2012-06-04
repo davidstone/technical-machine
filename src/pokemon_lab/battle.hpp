@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 #include "../battle.hpp"
-#include "../species.hpp"
 
 namespace technicalmachine {
 namespace pl {

@@ -21,13 +21,14 @@
 #include <cassert>
 
 #include "ability.hpp"
-#include "pokemon.hpp"
 #include "team.hpp"
 #include "type.hpp"
 #include "weather.hpp"
 
 #include "move/move.hpp"
 #include "move/moves.hpp"
+
+#include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {

@@ -28,11 +28,12 @@
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
-#include "../pokemon.hpp"
 #include "../rational.hpp"
 #include "../status.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -302,15 +303,15 @@ unsigned item_modifier (Pokemon const & attacker) {
 				return 12;
 			break;
 		case Item::ADAMANT_ORB:
-			if (attacker.name == DIALGA and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::STEEL))
+			if (attacker.is_boosted_by_adamant_orb() and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::STEEL))
 				return 12;
 			break;
 		case Item::GRISEOUS_ORB:
-			if (attacker.name == GIRATINA_O and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::GHOST))
+			if (attacker.is_boosted_by_griseous_orb() and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::GHOST))
 				return 12;
 			break;
 		case Item::LUSTROUS_ORB:
-			if (attacker.name == PALKIA and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::WATER))
+			if (attacker.is_boosted_by_lustrous_orb() and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::WATER))
 				return 12;
 			break;
 		default:

@@ -20,16 +20,16 @@
 #define TEAM_PREDICTOR__LOAD_STATS_HPP_
 
 #include <array>
-#include "../species.hpp"
+#include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 
-std::array<unsigned, Species::END> overall_stats ();
+std::array<unsigned, max_species> overall_stats ();
 
-void team_stats (std::array<unsigned, Species::END> const & overall, unsigned total, float multiplier [Species::END][Species::END]);
+void team_stats (std::array<unsigned, max_species> const & overall, unsigned total, float multiplier [max_species][max_species]);
 
 // Multiplier for Pokemon after you've seen the lead
-std::array<float, Species::END> lead_stats ();
+std::array<float, max_species> lead_stats ();
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__LOAD_STATS_HPP_

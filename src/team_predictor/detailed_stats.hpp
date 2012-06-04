@@ -26,7 +26,8 @@
 #include "../ability.hpp"
 #include "../item.hpp"
 #include "../nature.hpp"
-#include "../species.hpp"
+
+#include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
@@ -34,10 +35,10 @@ enum class Moves : uint16_t;
 class DetailedStats {
 	public:
 		DetailedStats();
-		std::array<Ability::Abilities, Species::END> ability;
-		std::array<Item::Items, Species::END> item;
-		std::array<Nature::Natures, Species::END> nature;
-		std::array<std::vector<Moves>, Species::END> move;
+		std::array<Ability::Abilities, static_cast<unsigned>(Species::END)> ability;
+		std::array<Item::Items, static_cast<unsigned>(Species::END)> item;
+		std::array<Nature::Natures, static_cast<unsigned>(Species::END)> nature;
+		std::array<std::vector<Moves>, static_cast<unsigned>(Species::END)> move;
 };
 
 }	// namespace technicalmachine

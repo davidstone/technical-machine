@@ -23,14 +23,15 @@
 #include <cstdint>
 #include <string>
 
-#include "ability.hpp"
-#include "gender.hpp"
 #include "species.hpp"
-#include "stat.hpp"
 
-#include "move/move.hpp"
-#include "move/moves.hpp"
-#include "move/shared.hpp"
+#include "../ability.hpp"
+#include "../gender.hpp"
+#include "../stat.hpp"
+
+#include "../move/move.hpp"
+#include "../move/moves.hpp"
+#include "../move/shared.hpp"
 
 namespace technicalmachine {
 
@@ -85,20 +86,24 @@ void Pokemon::normalize_hp () {
 		hp.stat = 1;
 }
 
+bool Pokemon::can_use_chatter() const {
+	return name == Species::CHATOT;
+}
+
 bool Pokemon::is_alternate_form (Species first, Species second) {
-	return (Pokemon::is_deoxys (first) and Pokemon::is_deoxys (second)) or
-			(Pokemon::is_giratina (first) and Pokemon::is_giratina (second)) or
-			(Pokemon::is_rotom (first) and Pokemon::is_rotom (second)) or
-			(Pokemon::is_shaymin (first) and Pokemon::is_shaymin (second)) or
-			(Pokemon::is_wormadam (first) and Pokemon::is_wormadam (second));
+	return (is_deoxys (first) and is_deoxys (second)) or
+			(is_giratina (first) and is_giratina (second)) or
+			(is_rotom (first) and is_rotom (second)) or
+			(is_shaymin (first) and is_shaymin (second)) or
+			(is_wormadam (first) and is_wormadam (second));
 }
 
 bool Pokemon::is_deoxys (Species species) {
 	switch (species) {
-		case DEOXYS_A:
-		case DEOXYS_D:
-		case DEOXYS_M:
-		case DEOXYS_S:
+		case Species::DEOXYS_A:
+		case Species::DEOXYS_D:
+		case Species::DEOXYS_M:
+		case Species::DEOXYS_S:
 			return true;
 		default:
 			return false;
@@ -107,8 +112,8 @@ bool Pokemon::is_deoxys (Species species) {
 
 bool Pokemon::is_giratina (Species species) {
 	switch (species) {
-		case GIRATINA_A:
-		case GIRATINA_O:
+		case Species::GIRATINA_A:
+		case Species::GIRATINA_O:
 			return true;
 		default:
 			return false;
@@ -117,12 +122,12 @@ bool Pokemon::is_giratina (Species species) {
 
 bool Pokemon::is_rotom (Species species) {
 	switch (species) {
-		case ROTOM:
-		case ROTOM_C:
-		case ROTOM_F:
-		case ROTOM_H:
-		case ROTOM_S:
-		case ROTOM_W:
+		case Species::ROTOM:
+		case Species::ROTOM_C:
+		case Species::ROTOM_F:
+		case Species::ROTOM_H:
+		case Species::ROTOM_S:
+		case Species::ROTOM_W:
 			return true;
 		default:
 			return false;
@@ -131,8 +136,8 @@ bool Pokemon::is_rotom (Species species) {
 
 bool Pokemon::is_shaymin (Species species) {
 	switch (species) {
-		case SHAYMIN_L:
-		case SHAYMIN_S:
+		case Species::SHAYMIN_L:
+		case Species::SHAYMIN_S:
 			return true;
 		default:
 			return false;
@@ -141,13 +146,53 @@ bool Pokemon::is_shaymin (Species species) {
 
 bool Pokemon::is_wormadam (Species species) {
 	switch (species) {
-		case WORMADAM_P:
-		case WORMADAM_S:
-		case WORMADAM_T:
+		case Species::WORMADAM_P:
+		case Species::WORMADAM_S:
+		case Species::WORMADAM_T:
 			return true;
 		default:
 			return false;
 	}
+}
+
+bool Pokemon::is_boosted_by_adamant_orb() const {
+	return name == Species::DIALGA;
+}
+
+bool Pokemon::is_boosted_by_deepseascale() const {
+	return name == Species::CLAMPERL;
+}
+
+bool Pokemon::is_boosted_by_deepseatooth() const {
+	return name == Species::CLAMPERL;
+}
+
+bool Pokemon::is_boosted_by_griseous_orb() const {
+	return name == Species::PALKIA;
+}
+
+bool Pokemon::is_boosted_by_light_ball() const {
+	return name == Species::PIKACHU;
+}
+
+bool Pokemon::is_boosted_by_lustrous_orb() const {
+	return name == Species::GIRATINA_O;
+}
+
+bool Pokemon::is_boosted_by_metal_powder() const {
+	return name == Species::DITTO;
+}
+
+bool Pokemon::is_boosted_by_quick_powder() const {
+	return name == Species::DITTO;
+}
+
+bool Pokemon::is_boosted_by_soul_dew() const {
+	return name == Species::LATIAS or name == Species::LATIOS;
+}
+
+bool Pokemon::is_boosted_by_thick_club() const {
+	return name == Species::CUBONE or name == Species::MAROWAK;
 }
 
 std::string Pokemon::get_nickname () const {
@@ -187,13 +232,12 @@ bool Pokemon::has_been_seen() const {
 bool Pokemon::will_be_replaced() const {
 	return m_will_be_replaced;
 }
-
 void Pokemon::faint() {
 	m_will_be_replaced = true;
 }
 
 Pokemon::hash_type Pokemon::hash() const {
-	return name + Species::END *
+	return static_cast<hash_type>(name) + max_species *
 			(item.name + Item::END *
 			(status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
@@ -202,7 +246,7 @@ Pokemon::hash_type Pokemon::hash() const {
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return Species::END * Item::END * Status::max_hash() * hp.max * seen.max_hash() * move.max_hash();
+	return max_species * Item::END * Status::max_hash() * hp.max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -767,7 +811,7 @@ uint8_t Pokemon::power_of_mass_based_moves() const {
 		40,	// Zigzagoon
 		20	// Zubat
 	};
-	return mass_array [name];
+	return mass_array[static_cast<unsigned>(name)];
 }
 
 }	// namespace technicalmachine

@@ -30,6 +30,8 @@
 #include "../move/power.hpp"
 #include "../move/moves.hpp"
 
+#include "../pokemon/species.hpp"
+
 namespace technicalmachine {
 namespace {
 

@@ -1,5 +1,5 @@
 // Pokemon Lab battle
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,8 +28,9 @@
 #include "outmessage.hpp"
 
 #include "../battle.hpp"
-#include "../pokemon.hpp"
 #include "../team.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace pl {

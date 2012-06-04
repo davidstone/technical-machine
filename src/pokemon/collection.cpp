@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "pokemon_collection.hpp"
+#include "collection.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -24,13 +24,13 @@
 #include <string>
 
 #include "pokemon.hpp"
-#include "species.hpp"
 
-#include "move/move.hpp"
-#include "move/shared.hpp"
+#include "../move/move.hpp"
+#include "../move/shared.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
+enum class Species : uint16_t;
 
 PokemonCollection::PokemonCollection ():
 	current_replacement(0),

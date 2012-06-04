@@ -27,6 +27,8 @@
 #include "../team.hpp"
 #include "../weather.hpp"
 
+#include "../pokemon/species.hpp"
+
 namespace technicalmachine {
 namespace {
 

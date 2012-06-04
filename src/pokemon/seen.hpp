@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SEEN_POKEMON_HPP_
-#define SEEN_POKEMON_HPP_
+#ifndef POKEMON__SEEN_HPP_
+#define POKEMON__SEEN_HPP_
 
 #include <cstdint>
 
@@ -40,4 +40,4 @@ class Seen {
 bool operator!= (Seen lhs, Seen rhs);
 
 }	// namespace technicalmachine
-#endif	// SEEN_POKEMON_HPP_
+#endif	// POKEMON__SEEN_HPP_
