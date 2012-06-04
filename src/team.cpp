@@ -385,11 +385,6 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 }	// unnamed namespace
 
 uint64_t Team::hash () const {
-	uint64_t current_hash = 0;
-	pokemon.for_each([& current_hash](Pokemon const & member) {
-		current_hash *= member.max_hash();
-		current_hash += member.hash();
-	});
 	constexpr unsigned max_size = 6;
 	return static_cast<uint64_t> (pokemon.real_size() - 1) + max_size *
 			(pokemon.index() + pokemon.real_size() *
@@ -439,7 +434,7 @@ uint64_t Team::hash () const {
 			(screens.hash() + screens.max_hash() *
 			(wish.hash() + wish.max_hash() *
 			(entry_hazards.hash() + entry_hazards.max_hash() *
-			current_hash)))))))))))))))))))))))))))))))))))))))))))))));
+			pokemon.hash())))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 void Team::load (std::string const & name, unsigned other_size) {

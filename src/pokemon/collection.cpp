@@ -139,4 +139,21 @@ void PokemonCollection::decrement_real_size () {
 	--true_size;
 }
 
+PokemonCollection::hash_type PokemonCollection::hash() const {
+	hash_type current_hash = 0;
+	for_each([& current_hash](Pokemon const & next_pokemon) {
+		current_hash *= next_pokemon.max_hash();
+		current_hash += next_pokemon.hash();
+	});
+	return current_hash;
+}
+
+PokemonCollection::hash_type PokemonCollection::max_hash() const {
+	hash_type current_max = 0;
+	for_each([& current_max](Pokemon const & next_pokemon) {
+		current_max += next_pokemon.max_hash();
+	});
+	return current_max;
+}
+
 }	// namespace technicalmachine
