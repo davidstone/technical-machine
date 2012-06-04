@@ -19,8 +19,10 @@
 #ifndef POKEMON__POKEMON_HPP_
 #define POKEMON__POKEMON_HPP_
 
+#include <cstdint>
 #include <string>
 
+#include "level.hpp"
 #include "seen.hpp"
 
 #include "../ability.hpp"
@@ -111,7 +113,7 @@ class Pokemon {
 	private:
 		bool m_will_be_replaced;
 		Seen seen;
-		uint8_t m_level;
+		Level m_level;
 		uint8_t m_happiness;
 		Type::Types calculate_hidden_power_type () const;
 		friend class Score;

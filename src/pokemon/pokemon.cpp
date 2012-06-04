@@ -218,7 +218,7 @@ void Pokemon::set_hidden_power_type() {
 }
 
 unsigned Pokemon::level() const {
-	return m_level;
+	return m_level();
 }
 
 unsigned Pokemon::happiness() const {
@@ -250,6 +250,8 @@ Pokemon::hash_type Pokemon::max_hash() const {
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
+	// Species clause is assumed, and Pokemon will only be compared for equality
+	// on the same team, so the same name implies many other things are the same
 	return lhs.move == rhs.move and
 			lhs.name == rhs.name and
 			lhs.status == rhs.status and
