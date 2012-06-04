@@ -55,7 +55,6 @@ class Nature {
 			TIMID,
 			END
 		};
-		Natures name;
 		Nature ();
 		Nature (std::string const & str);
 		bool is_set () const;
@@ -65,7 +64,11 @@ class Nature {
 		static std::string to_string (Natures name);
 		std::string to_string () const;
 		static Natures from_string (std::string const & str);
+		friend bool operator== (Nature lhs, Nature rhs);
+
+		Natures name;
 };
+bool operator!= (Nature lhs, Nature rhs);
 
 }	// namespace technicalmachine
 #endif	// NATURE_HPP_

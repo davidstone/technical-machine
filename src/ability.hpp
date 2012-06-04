@@ -57,7 +57,6 @@ class Ability {
 			UNAWARE, UNBURDEN, VITAL_SPIRIT, VOLT_ABSORB, WATER_ABSORB,
 			WATER_VEIL, WHITE_SMOKE, WONDER_GUARD, END
 		};
-		Abilities name;
 		Ability ();
 		explicit Ability (Abilities ability);
 		explicit Ability (std::string const & str);
@@ -106,6 +105,10 @@ class Ability {
 		static Abilities from_string (std::string const & str);
 		
 		static void activate_on_switch (Team & switcher, Team & other, Weather & weather);
+		friend bool operator== (Ability lhs, Ability rhs);
+		Abilities name;
 };
+bool operator!= (Ability lhs, Ability rhs);
+
 }
 #endif	// ABILITY_HPP_

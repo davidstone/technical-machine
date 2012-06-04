@@ -27,7 +27,6 @@ namespace technicalmachine {
 class Gender {
 	public:
 		enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
-		Genders gender;
 		
 		Gender ();
 		explicit Gender (Genders gender_);
@@ -40,7 +39,11 @@ class Gender {
 		static std::string to_string (Genders gender);
 		std::string to_string () const;
 		static Genders from_string (std::string const & str);
+		friend bool operator== (Gender lhs, Gender rhs);
+
+		Genders gender;
 };
+bool operator!= (Gender lhs, Gender rhs);
 
 }	// namespace technicalmachine
 #endif	// GENDER_HPP_

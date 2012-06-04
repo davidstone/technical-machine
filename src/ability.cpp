@@ -301,4 +301,12 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 	}
 }
 
+bool operator== (Ability const lhs, Ability const rhs) {
+	return lhs.name == rhs.name;
+}
+
+bool operator!= (Ability const lhs, Ability const rhs) {
+	return !(lhs == rhs);
+}
+
 }	// namespace technicalmachine

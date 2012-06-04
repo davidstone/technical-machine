@@ -126,4 +126,12 @@ unsigned Nature::boost<Stat::SPE> () const {
 	}
 }
 
+bool operator== (Nature const lhs, Nature const rhs) {
+	return lhs.name == rhs.name;
+}
+
+bool operator!= (Nature const lhs, Nature const rhs) {
+	return !(lhs == rhs);
+}
+
 }	// namespace technicalmachine

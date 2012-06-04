@@ -44,4 +44,12 @@ Gender & Gender::operator= (Genders other) {
 	return *this;
 }
 
+bool operator== (Gender const lhs, Gender const rhs) {
+	return lhs.gender == rhs.gender;
+}
+
+bool operator!= (Gender const lhs, Gender const rhs) {
+	return !(lhs == rhs);
+}
+
 }	// namespace technicalmachine

@@ -251,13 +251,26 @@ Pokemon::hash_type Pokemon::max_hash() const {
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	// Species clause is assumed, and Pokemon will only be compared for equality
-	// on the same team, so the same name implies many other things are the same
+	// on the same team, so the same species implies many other things are the
+	// same
+	assert(illegal_inequality_check(lhs, rhs));
 	return lhs.move == rhs.move and
 			lhs.name == rhs.name and
 			lhs.status == rhs.status and
 			lhs.hp.stat == rhs.hp.stat and
 			lhs.item == rhs.item and
 			lhs.seen == rhs.seen;
+}
+
+bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
+	if (lhs.name != rhs.name)
+		return true;
+	return lhs.ability == rhs.ability and
+			lhs.gender == rhs.gender and
+			lhs.nature == rhs.nature and
+			lhs.will_be_replaced() == rhs.will_be_replaced() and
+			lhs.level() == rhs.level() and
+			lhs.happiness() == rhs.happiness();
 }
 
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
