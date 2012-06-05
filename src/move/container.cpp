@@ -63,12 +63,6 @@ bool MoveContainer::empty() const {
 	return false;
 }
 
-void MoveContainer::push_back(Move const & move) {
-	// The only moves that are ever added are regular moves. Shared moves are
-	// just a reference to a collection at the Team level.
-	regular.push_back(move);
-}
-
 // Skips Struggle and switches
 void MoveContainer::for_each_regular_move (std::function<void(Move const &)> const & f) const {
 	std::for_each(regular.cbegin(), regular.cend(), f);

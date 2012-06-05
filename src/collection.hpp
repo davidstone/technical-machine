@@ -75,8 +75,9 @@ class BaseCollection {
 		constexpr bool is_empty() const {
 			return container.empty();
 		}
-		void add (T const & element) {
-			container.push_back (element);
+		template<class... Args>
+		void add(Args&&... args) {
+			container.emplace_back(std::forward<Args>(args)...);
 		}
 		void set_index (uint8_t const new_index) {
 			current_index = check_range (new_index);

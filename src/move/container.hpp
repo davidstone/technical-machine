@@ -37,7 +37,12 @@ class MoveContainer {
 		Move const & operator[](uint8_t index) const;
 		Move & operator[](uint8_t index);
 		bool empty() const;
-		void push_back(Move const & move);
+		template<class... Args>
+		void emplace_back(Args&&... args) {
+			// The only moves that are ever added are regular moves. Shared
+			// moves are just a reference to a collection at the Team level.
+			regular.emplace_back(std::forward<Args>(args)...);
+		}
 		// Skips Struggle and switches
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);

@@ -58,7 +58,7 @@ void move_container_tests() {
 	if (c.size() != shared_moves_size)
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves.");
 	for (unsigned n = 1; n <= move_additions; ++n) {
-		c.push_back(Move(static_cast<Moves>(n), 0));
+		c.emplace_back(static_cast<Moves>(n), 0);
 		if (c.size() != shared_moves_size + n or c.size() != c.number_of_regular_moves() + shared_moves_size)
 			throw InvalidCollection("MoveContainer has the wrong number of moves.");
 	}
