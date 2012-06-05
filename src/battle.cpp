@@ -151,8 +151,7 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Moves m
 
 	active.moved = true;
 	if (!active.pokemon.at_replacement().move.set_index_if_found(move_name)) {
-		Move move (move_name, 3, inactive.pokemon.real_size());
-		active.pokemon.at_replacement().move.add(move);
+		active.pokemon.at_replacement().move.add(move_name, 3, inactive.pokemon.real_size());
 	}
 	active.pokemon.at_replacement().move().variable.reset_index();
 	if (active.pokemon.at_replacement().move().is_damaging())

@@ -43,7 +43,7 @@ Team create_max_damage_physical_attacker () {
 	constexpr unsigned level = 100;
 	attacker.add_pokemon(Species::SHUCKLE, level);
 	Pokemon & pokemon = attacker.pokemon();
-	pokemon.move.add(Move(Moves::ROLLOUT, 3, team_size));
+	pokemon.move.add(Moves::ROLLOUT, 3, team_size);
 
 	attacker.defense_curl = true;
 	for (unsigned n = 0; n != 10; ++n)
@@ -106,7 +106,7 @@ void special_power_test () {
 
 	Team attacker = create_max_damage_special_attacker ();
 	Pokemon & pokemon = attacker.pokemon();
-	pokemon.move.add (Move (Moves::SURF, 3, team_size));
+	pokemon.move.add(Moves::SURF, 3, team_size);
 	pokemon.item.name = Item::WAVE_INCENSE;
 	pokemon.ability.name = Ability::TORRENT;
 
@@ -159,7 +159,7 @@ void special_damage_test () {
 
 	Team attacker = create_max_damage_special_attacker ();
 	Pokemon & a = attacker.pokemon();
-	a.move.add(Move (Moves::BLAST_BURN, 3, team_size));
+	a.move.add(Moves::BLAST_BURN, 3, team_size);
 	a.type.change_type(Type::FIRE);
 
 	a.spa.ev = 252 / 4;

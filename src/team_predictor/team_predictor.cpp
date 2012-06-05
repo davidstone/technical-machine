@@ -102,7 +102,7 @@ Species get_most_likely_pokemon (std::array<float, max_species> const & estimate
 void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size) {
 	for (Moves const name : detailed) {
 		if (!member.move.exists(name)) {
-			member.move.add (Move (name, 3, size));
+			member.move.add(name, 3, size);
 			if (member.move.number_of_regular_moves() == Move::max_regular_moves())
 				break;
 		}
