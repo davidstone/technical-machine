@@ -41,7 +41,8 @@ Team create_max_damage_physical_attacker () {
 	Team attacker;
 	
 	constexpr unsigned level = 100;
-	attacker.add_pokemon(Species::SHUCKLE, level);
+	Gender const gender(Gender::MALE);
+	attacker.add_pokemon(Species::SHUCKLE, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::ROLLOUT, 3, team_size);
 
@@ -56,7 +57,8 @@ Team create_max_damage_special_attacker () {
 	Team attacker;
 
 	constexpr unsigned level = 100;
-	attacker.add_pokemon(Species::DEOXYS_A, level);
+	Gender const gender(Gender::GENDERLESS);
+	attacker.add_pokemon(Species::DEOXYS_A, level, gender);
 	attacker.pokemon().hp.stat = 1;
 	
 	return attacker;
@@ -65,7 +67,8 @@ Team create_max_damage_special_attacker () {
 Team create_max_damage_physical_defender () {
 	Team defender;
 	constexpr unsigned level = 1;
-	defender.add_pokemon(Species::COMBEE, level);
+	Gender const gender(Gender::MALE);
+	defender.add_pokemon(Species::COMBEE, level, gender);
 	Pokemon & d = defender.pokemon();
 	d.def.iv = 0;
 	d.def.ev = 0;
@@ -76,7 +79,8 @@ Team create_max_damage_physical_defender () {
 Team create_max_damage_special_defender () {
 	Team defender;
 	constexpr unsigned level = 1;
-	defender.add_pokemon(Species::PARAS, level);
+	Gender const gender(Gender::MALE);
+	defender.add_pokemon(Species::PARAS, level, gender);
 	Pokemon & d = defender.pokemon();
 	d.ability.name = Ability::DRY_SKIN;
 

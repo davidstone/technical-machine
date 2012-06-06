@@ -73,7 +73,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team, unsigned
 	uint8_t const level = pt.get <uint8_t> ("level");
 	std::string const gender_str = pt.get <std::string> ("gender");
 	uint8_t const happiness = pt.get<uint8_t>("happiness");
-	team.add_pokemon(Pokemon::from_string(species_str), nickname, level, Gender(gender_str), happiness);
+	team.add_pokemon(Pokemon::from_string(species_str), level, Gender(gender_str), nickname, happiness);
 	Pokemon & pokemon = team.pokemon.at_replacement();
 	std::string const nature_str = pt.get <std::string> ("nature");
 	pokemon.nature = Nature (nature_str);

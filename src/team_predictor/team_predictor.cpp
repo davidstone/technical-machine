@@ -76,15 +76,18 @@ Team predict_team (DetailedStats const & detailed, Team team, unsigned size, boo
 namespace {
 
 void predict_pokemon (Team & team, std::array<float, max_species> estimate, float multiplier [max_species] [max_species]) {
+	auto const index = team.pokemon.index();
 	while (team.pokemon.size() < team.pokemon.real_size()) {
 		Species const name = get_most_likely_pokemon (estimate);
 		constexpr unsigned level = 100;
-		team.add_pokemon(name, level);
+		Gender const gender(Gender::MALE);
+		team.add_pokemon(name, level, gender);
 		if (team.pokemon.size() == team.pokemon.real_size())
 			break;
 		for (unsigned n = 0; n != max_species; ++n)
 			estimate [n] *= multiplier[static_cast<size_t>(team.pokemon(team.pokemon.size() - 1).name)][n];
 	}
+	team.pokemon.set_index(index);
 }
 
 Species get_most_likely_pokemon (std::array<float, max_species> const & estimate) {

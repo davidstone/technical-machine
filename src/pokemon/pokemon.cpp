@@ -35,9 +35,12 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (Species const species, uint8_t set_level, SharedMoves & shared, uint8_t set_happiness) : 
+Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level, Gender set_gender, std::string const & set_nickname, uint8_t set_happiness) : 
 	move (shared),
 	type (species),
+	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+	nickname(set_nickname);
+	#endif
 	hp (species, Stat::HP),
 	atk (species, Stat::ATK),
 	def (species, Stat::DEF),
@@ -48,6 +51,7 @@ Pokemon::Pokemon (Species const species, uint8_t set_level, SharedMoves & shared
 	new_hp (48),
 
 	name (species),
+	gender(set_gender),
 
 	m_will_be_replaced(false),
 	m_level(set_level),
@@ -200,14 +204,6 @@ std::string Pokemon::get_nickname () const {
 		return nickname;
 	#else
 		return to_string();
-	#endif
-}
-
-void Pokemon::set_nickname (std::string const & nick) {
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
-		nickname = nick;
-	#else
-		static_cast<void>(nick);
 	#endif
 }
 

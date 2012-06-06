@@ -176,7 +176,7 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	uint8_t const replacement = active.pokemon.replacement();
 	
 	if (!active.pokemon.seen (species)) {
-		active.add_pokemon (species, nickname, level, gender);
+		active.add_pokemon (species, level, gender, nickname);
 		active.pokemon.at_replacement ().new_hp = max_damage_precision ();
 	}
 

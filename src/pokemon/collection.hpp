@@ -52,8 +52,13 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		uint8_t size () const;
 		uint8_t real_size () const;
 		bool seen (Species const name);
-		void add (Pokemon const & pokemon);
-		void add (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness, SharedMoves & shared_moves);
+
+		template<class... Args>
+		void add(Args&&... args) {
+			BaseCollection<Pokemon>::add(std::forward<Args>(args)...);
+			// Guaranteed to be a valid index
+			current_replacement = container.size() - 1;
+		}
 		void remove_active ();
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
 		void for_each_replacement (std::function<void(void)> const & f);

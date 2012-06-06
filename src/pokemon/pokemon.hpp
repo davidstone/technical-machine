@@ -42,7 +42,7 @@ class SharedMoves;
 
 class Pokemon {
 	public:
-		Pokemon (Species species, uint8_t set_level, SharedMoves & shared, uint8_t set_happiness = 255);
+		Pokemon (SharedMoves & shared, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
 		void switch_in();
 		void switch_out();
 		void calculate_initial_hp ();
@@ -52,7 +52,6 @@ class Pokemon {
 		static std::string to_string (Species name);
 		std::string to_string () const;
 		std::string get_nickname () const;
-		void set_nickname (std::string const & nick);
 		static Species from_string (std::string const & str);
 		bool can_use_chatter() const;
 		static bool is_alternate_form (Species first, Species second);

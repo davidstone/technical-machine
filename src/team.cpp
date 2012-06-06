@@ -348,14 +348,6 @@ Team::Team(Team && other):
 	});
 }
 
-void Team::add_pokemon (Species name, unsigned level) {
-	pokemon.add(Pokemon(name, level, shared_moves));
-}
-
-void Team::add_pokemon (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness) {
-	pokemon.add(name, nickname, level, gender, happiness, shared_moves);
-}
-
 void Team::remove_pokemon () {
 	pokemon.remove_active();
 	if (pokemon.is_empty())

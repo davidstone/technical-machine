@@ -94,20 +94,6 @@ bool PokemonCollection::seen (Species const name) {
 	return false;
 }
 
-void PokemonCollection::add (Pokemon const & pokemon) {
-	BaseCollection<Pokemon>::add(pokemon);
-}
-void PokemonCollection::add (Species name, std::string const & nickname, unsigned level, Gender gender, uint8_t happiness, SharedMoves & shared_moves) {
-	Pokemon pokemon (name, level, shared_moves, happiness);
-	pokemon.gender = gender;
-
-	pokemon.set_nickname(nickname);
-
-	add(pokemon);
-	// Guaranteed to be a valid index
-	current_replacement = container.size() - 1;
-}
-
 void PokemonCollection::remove_active () {
 	assert(index() != replacement());
 	container.erase (container.begin() + index());
