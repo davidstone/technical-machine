@@ -81,19 +81,18 @@
 # example, it generated this warning in my code when I looped over all elements
 # in a vector to apply a set of functions to them (using the range-based for
 # loop).  It is also warning for the constructor of a const array of const
-# std::string (where this is no loop in user code).
+# std::string (where there is no loop in user code).
 #
-# -Wzero-as-null-pointer-constant and -Wuseless-cast are GCC-4.7-only warnings,
-# which I will add when I transition to GCC 4.7.
+# -Wzero-as-null-pointer-constant triggers for a few boost libraries.
 #
-# -Wvector-operation-performance is a GCC 4.7 warning that I may enable
+# -Wuseless-cast is a GCC-4.8-only warning, which I will add when I transition.
 
 # Add -Wold-style-cast when I transition to my byte swapping library and
 # rewrite the Rijndael implementation to use modern C++ techniques, rather than
 # just being a C program with .cpp as the extension.
 
-warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wswitch-default', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
-# I have to set -pedantic to be a "debug" warning because it conflicts with
-# -ffast-math on my system.
-warnings_debug = ['-pedantic']
-warnings_optimized = ['-Wdisabled-optimization']
+warnings = ['-Wall', '-Wextra', '-pedantic', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wswitch-default', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
+# I have to set -Wstrict-overflow=5 to be a "debug" warning because it conflicts
+# with a boost library when link-time optimization is turned on.
+warnings_debug = ['-Wstrict-overflow=5']
+warnings_optimized = ['-Wdisabled-optimization', '-Wvector-operation-performance']
