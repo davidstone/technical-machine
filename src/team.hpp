@@ -46,6 +46,8 @@ class Team {
 		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
 		Team (Team const & other);
 		Team (Team && other);
+		Team & operator= (Team const & other);
+		Team & operator= (Team && other);
 		template<class... Args>
 		void add_pokemon(Args&&... args) {
 			pokemon.add(shared_moves, std::forward<Args>(args)...);

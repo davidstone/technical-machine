@@ -269,7 +269,7 @@ Team::Team(Team const & other):
 	entry_hazards(other.entry_hazards),
 	called_move(other.called_move),
 	me(other.me) {
-	pokemon.for_each([& shared_moves](Pokemon & p) {
+	pokemon.for_each([this](Pokemon & p) {
 		p.move.update_shared_moves(shared_moves);
 	});
 }
@@ -343,10 +343,13 @@ Team::Team(Team && other):
 	entry_hazards(std::move(other.entry_hazards)),
 	called_move(std::move(other.called_move)),
 	me(std::move(other.me)) {
-	pokemon.for_each([& shared_moves](Pokemon & p) {
+	pokemon.for_each([this](Pokemon & p) {
 		p.move.update_shared_moves(shared_moves);
 	});
 }
+
+Team & Team::operator= (Team const & other) = default;
+Team & Team::operator= (Team && other) = default;
 
 void Team::remove_pokemon () {
 	pokemon.remove_active();

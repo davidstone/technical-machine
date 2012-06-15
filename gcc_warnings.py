@@ -92,7 +92,7 @@
 # rewrite the Rijndael implementation to use modern C++ techniques, rather than
 # just being a C program with .cpp as the extension.
 
-warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wstrict-overflow=5', '-Wswitch-default', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
+warnings = ['-Wall', '-Wextra', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wswitch-default', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
 # I have to set -pedantic to be a "debug" warning because it conflicts with
 # -ffast-math on my system.
 warnings_debug = ['-pedantic']

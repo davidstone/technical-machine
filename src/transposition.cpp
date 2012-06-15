@@ -80,9 +80,14 @@ Hash & hash_table_lookup (Hash const & current) {
 	// battles. I also need to investigate to see which of these is more likely
 	// and find the relative merits of each strategy (per battle or the current
 	// static array).
-	static constexpr size_t ai_dimension = 256;
-	static constexpr size_t foe_dimension = 256;
-	static constexpr size_t weather_dimension = 32;
+//	static constexpr size_t ai_dimension = 256;
+//	static constexpr size_t foe_dimension = 256;
+//	static constexpr size_t weather_dimension = 7;
+	// GCC has a memory hog bug that prevents me from making the array much
+	// larger than this. http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53650
+	static constexpr size_t ai_dimension = 32;
+	static constexpr size_t foe_dimension = 32;
+	static constexpr size_t weather_dimension = 7;
 	static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
 	
 	unsigned const ai_position = current.ai % ai_dimension;
