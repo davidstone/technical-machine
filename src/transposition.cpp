@@ -37,15 +37,17 @@ public:
 	int64_t value;
 	uint32_t weather;
 	unsigned depth;
-	Hash ();
+	constexpr Hash ():
+		ai(0),
+		foe(0),
+		value(0),
+		weather(0),
+		depth (0) {
+	}
 	Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned depth_current);
 	bool operator== (Hash const & other) const;
 	bool operator!= (Hash const & other) const;
 };
-
-Hash::Hash ():
-	depth (0) {
-}
 
 Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned depth_current):
 	ai (ai_hash),
@@ -80,14 +82,13 @@ Hash & hash_table_lookup (Hash const & current) {
 	// battles. I also need to investigate to see which of these is more likely
 	// and find the relative merits of each strategy (per battle or the current
 	// static array).
-//	static constexpr size_t ai_dimension = 256;
-//	static constexpr size_t foe_dimension = 256;
-//	static constexpr size_t weather_dimension = 7;
+
 	// GCC has a memory hog bug that prevents me from making the array much
 	// larger than this. http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53650
-	static constexpr size_t ai_dimension = 32;
-	static constexpr size_t foe_dimension = 32;
-	static constexpr size_t weather_dimension = 7;
+	// However, this is about the size that I want.
+	static constexpr size_t ai_dimension = 256;
+	static constexpr size_t foe_dimension = 256;
+	static constexpr size_t weather_dimension = 16;
 	static Hash table [ai_dimension][foe_dimension][weather_dimension] = {};
 	
 	unsigned const ai_position = current.ai % ai_dimension;
