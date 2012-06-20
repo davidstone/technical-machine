@@ -19,7 +19,6 @@
 #include "battle.hpp"
 
 #include <algorithm>
-#include <cassert>
 #include <cstdint>
 #include <ctime>
 #include <iostream>
@@ -40,6 +39,8 @@
 
 #include "network/connect.hpp"
 #include "network/outmessage.hpp"
+
+#include "pokemon/pokemon_not_found.hpp"
 
 #include "pokemon_lab/write_team_file.hpp"
 
@@ -182,15 +183,11 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 
 	Pokemon & phazer = inactive.pokemon.at_replacement();
 	if (phazer.move().is_phaze()) {
-		uint8_t new_pokemon_index = 0;
-		while (active.pokemon(new_pokemon_index).name != species)
-			++new_pokemon_index;
-		phazer.move().variable.set_phaze_index(active.pokemon.index(), new_pokemon_index);
+		phazer.move().variable.set_phaze_index(active, species);
 	}
 	else if (!active.moved) {
 		Pokemon & pokemon = active.pokemon(replacement);
-		uint8_t const move_index = pokemon.index_of_first_switch();
-		pokemon.move.set_index (move_index + active.pokemon.replacement());
+		pokemon.move.set_index(pokemon.index_of_first_switch() + active.pokemon.replacement());
 	}
 }
 
@@ -252,13 +249,13 @@ void GenericBattle::handle_end (network::GenericClient & client, Result const re
 }
 
 uint8_t GenericBattle::switch_slot (Moves move) const {
-	uint8_t const slot = Move::to_replacement (move);
+	uint8_t const slot = Move::to_replacement(move);
+	Species const name = ai.pokemon(slot).name;
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
-		if (slot_memory [n] == ai.pokemon(slot).name)
+		if (slot_memory [n] == name)
 			return n;
 	}
-	assert (false);
-	return 0;
+	throw PokemonNotFound(name);
 }
 
 uint16_t GenericBattle::max_damage_precision () const {
@@ -303,6 +300,8 @@ void GenericBattle::do_turn () {
 		first->replacing = false;
 	}
 	else {
+		std::cout << "First move: " + first->pokemon().to_string() + " uses " + first->pokemon().move().to_string() + '\n';
+		std::cout << "Last move: " + last->pokemon().to_string() + " uses " + last->pokemon().move().to_string() + '\n';
 		// Anything with recoil will mess this up
 
 		call_move (*first, *last, weather, last->damage);

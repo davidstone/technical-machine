@@ -23,6 +23,7 @@
 
 #include "empty_team.hpp"
 #include "phazing_in_same_pokemon.hpp"
+#include "team.hpp"
 #include "variable.hpp"
 
 #include "move/moves.hpp"
@@ -43,15 +44,17 @@ VariableCollection::VariableCollection (Moves const move, unsigned const foe_siz
 	detail::BaseCollection<Variable>(create_container(move, foe_size)) {
 }
 
-void VariableCollection::set_phaze_index (uint8_t const pokemon_index, uint8_t const new_index) {
+void VariableCollection::set_phaze_index (Team const & other, Species const species) {
 	if (container.size() == 1) {
-		assert (new_index == 0);
+		assert(other.pokemon.size() == 1 or other.pokemon.size() == 2);
 		reset_index();
 	}
 	else {
+		auto const pokemon_index = other.has_switched() ? other.pokemon.replacement() : other.pokemon.index();
+		auto const new_index = other.pokemon.find_index(species);
 		if (new_index == pokemon_index)
 			throw PhazingInSamePokemon(new_index);
-		set_index ((new_index < pokemon_index) ? new_index : new_index - 1);
+		set_index((new_index < pokemon_index) ? new_index : new_index - 1);
 	}
 }
 

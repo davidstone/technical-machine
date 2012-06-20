@@ -1,4 +1,4 @@
-// Collection of move random effects with index indicating current effect
+// Exception if unable to find a Pokemon that should exist
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,27 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_COLLECTION_HPP_
-#define VARIABLE_COLLECTION_HPP_
+#ifndef POKEMON__POKEMON_NOT_FOUND_HPP_
+#define POKEMON__POKEMON_NOT_FOUND_HPP_
 
-#include "collection.hpp"
-#include <cstdint>
-#include <functional>
-#include "variable.hpp"
+#include <stdexcept>
+#include "pokemon.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 enum class Species : uint16_t;
-class Team;
 
-class VariableCollection : public detail::BaseCollection<Variable> {
+class PokemonNotFound : public std::logic_error {
 	public:
-		VariableCollection (Moves move, unsigned foe_size);
-		void set_phaze_index (Team const & other, Species species);
-		uint8_t phaze_index (uint8_t const pokemon_index) const;
-		void for_each_index (std::function<void(void)> const & f);
-		void remove_phazing (uint8_t foe_size);
-		void set_magnitude (unsigned const magnitude);
+		PokemonNotFound(Species const species):
+			std::logic_error("Unable to find " + Pokemon::to_string(species) + ".") {
+		}
 };
 }	// namespace technicalmachine
-#endif	// VARIABLE_COLLECTION_HPP_
+#endif	// POKEMON__POKEMON_NOT_FOUND_HPP_

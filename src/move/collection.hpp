@@ -37,6 +37,11 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 	public:
 		MoveCollection (SharedMoves & s);
 		unsigned number_of_regular_moves () const;
+		template<class... Args>
+		void add(Args&&... args) {
+			detail::BaseCollection<Move, MoveContainer>::add(std::forward<Args>(args)...);
+			current_index = number_of_regular_moves() - 1;
+		}
 		void for_each (std::function<void(Move const &)> const & f) const;
 		void for_each (std::function<void(Move &)> const & f);
 		// Skips Struggle and switches

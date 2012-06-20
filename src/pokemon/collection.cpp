@@ -24,6 +24,7 @@
 #include <string>
 
 #include "pokemon.hpp"
+#include "pokemon_not_found.hpp"
 
 #include "../move/move.hpp"
 #include "../move/shared.hpp"
@@ -37,7 +38,7 @@ PokemonCollection::PokemonCollection ():
 	true_size(6) {
 }
 
-void PokemonCollection::initialize_size (uint8_t const new_size) {
+void PokemonCollection::initialize_size (index_type const new_size) {
 	true_size = new_size;
 }
 
@@ -46,11 +47,11 @@ void PokemonCollection::initialize_replacement () {
 	current_replacement = index();
 }
 
-uint8_t PokemonCollection::replacement() const {
+PokemonCollection::index_type PokemonCollection::replacement() const {
 	return current_replacement;
 }
 
-void PokemonCollection::set_replacement (uint8_t const new_index) {
+void PokemonCollection::set_replacement (index_type const new_index) {
 	current_replacement = check_range (new_index);
 }
 
@@ -79,11 +80,19 @@ bool PokemonCollection::is_switching_to_self (Move const & move) const {
 	return move.to_replacement() == index();
 }
 
-uint8_t PokemonCollection::size () const {
+PokemonCollection::index_type PokemonCollection::size () const {
 	return container.size();
 }
-uint8_t PokemonCollection::real_size () const {
+PokemonCollection::index_type PokemonCollection::real_size () const {
 	return true_size;
+}
+
+PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
+	for (index_type found_index = 0; found_index != size(); ++found_index) {
+		if (operator()(found_index).name == name)
+			return found_index;
+	}
+	throw PokemonNotFound(name);
 }
 
 bool PokemonCollection::seen (Species const name) {

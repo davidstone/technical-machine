@@ -54,6 +54,7 @@ class Team {
 		}
 		void remove_pokemon ();
 		bool can_be_phazed () const;
+		bool has_switched() const;
 		friend bool operator== (Team const & lhs, Team const & rhs);
 		uint64_t hash () const;
 		std::string to_string () const;

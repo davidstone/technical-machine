@@ -52,6 +52,7 @@ template<typename T, typename ContainerType>
 class BaseCollection {
 	public:
 		typedef ContainerType container_type;
+		typedef uint8_t index_type;
 		typedef T value_type;
 		constexpr BaseCollection () :
 			current_index (0) {
@@ -60,10 +61,10 @@ class BaseCollection {
 			container (pre_set),
 			current_index (0) {
 		}
-		constexpr T const & operator() (uint8_t const specified_index) const {
+		constexpr T const & operator() (index_type const specified_index) const {
 			return unchecked_value (check_range(specified_index));
 		}
-		T & operator() (uint8_t const specified_index) {
+		T & operator() (index_type const specified_index) {
 			return unchecked_value (check_range(specified_index));
 		}
 		constexpr T const & operator() () const {
@@ -79,13 +80,13 @@ class BaseCollection {
 		void add(Args&&... args) {
 			container.emplace_back(std::forward<Args>(args)...);
 		}
-		void set_index (uint8_t const new_index) {
+		void set_index (index_type const new_index) {
 			current_index = check_range (new_index);
 		}
 		void reset_index () {
 			current_index = 0;
 		}
-		constexpr uint8_t index() const {
+		constexpr index_type index() const {
 			return current_index;
 		}
 		void for_each (typename std::function<void(T &)> const & f) {
@@ -100,17 +101,17 @@ class BaseCollection {
 		}
 		friend bool operator==<T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
 	protected:
-		constexpr uint8_t check_range (uint8_t const new_index) const {
+		constexpr index_type check_range (index_type const new_index) const {
 			return (new_index < container.size()) ? new_index : throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());
 		}
-		constexpr T const & unchecked_value (uint8_t const specified_index) const {
+		constexpr T const & unchecked_value (index_type const specified_index) const {
 			return container [specified_index];
 		}
-		T & unchecked_value (uint8_t const specified_index) {
+		T & unchecked_value (index_type const specified_index) {
 			return container [specified_index];
 		}
 		container_type container;
-		uint8_t current_index;
+		index_type current_index;
 };
 }	// namespace detail
 

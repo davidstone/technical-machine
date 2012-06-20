@@ -35,13 +35,14 @@ class SharedMoves;
 
 class PokemonCollection : public detail::BaseCollection<Pokemon> {
 	public:
+		using detail::BaseCollection<Pokemon>::index_type;
 		PokemonCollection ();
 		// Need to rework my constructors or something so that this is not
 		// needed. This should only be called once, in team intialization
-		void initialize_size (uint8_t const new_size);
+		void initialize_size (index_type const new_size);
 		void initialize_replacement ();
-		uint8_t replacement() const;
-		void set_replacement (uint8_t const new_index);
+		index_type replacement() const;
+		void set_replacement (index_type const new_index);
 		Pokemon const & at_replacement () const;
 		Pokemon & at_replacement ();
 		void to_replacement();
@@ -49,8 +50,9 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		void replacement_from_switch ();
 		bool is_switching_to_self () const;
 		bool is_switching_to_self (Move const & move) const;
-		uint8_t size () const;
-		uint8_t real_size () const;
+		index_type size () const;
+		index_type real_size () const;
+		index_type find_index(Species name) const;
 		bool seen (Species const name);
 
 		template<class... Args>
@@ -69,9 +71,9 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 	private:
 		void decrement_real_size ();
 		// If a Pokemon switches / faints, what Pokemon should replace it?
-		uint8_t current_replacement;
+		index_type current_replacement;
 		// The actual size of the foe's team, not just the Pokemon I've seen
-		uint8_t true_size;
+		index_type true_size;
 };
 
 }	// namespace technicalmachine

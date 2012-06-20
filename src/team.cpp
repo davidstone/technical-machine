@@ -362,6 +362,10 @@ bool Team::can_be_phazed () const {
 	return !ingrain and !pokemon().ability.blocks_phazing() and pokemon.size() > 1;
 }
 
+bool Team::has_switched() const {
+	return moved and pokemon().move().is_switch();
+}
+
 namespace {
 
 std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file) {
