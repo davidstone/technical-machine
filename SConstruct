@@ -35,7 +35,7 @@ Decider('MD5-timestamp')
 version_flags = ['-std=c++0x']
 cc_flags = warnings + ['-g']
 cxx_flags = version_flags
-link_flags = warnings
+link_flags = warnings + version_flags
 
 default = DefaultEnvironment()
 default.Append(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
