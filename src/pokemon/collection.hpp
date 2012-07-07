@@ -34,8 +34,9 @@ class Move;
 class SharedMoves;
 
 class PokemonCollection : public detail::BaseCollection<Pokemon> {
+		typedef detail::BaseCollection<Pokemon> Base;
 	public:
-		using detail::BaseCollection<Pokemon>::index_type;
+		using Base::index_type;
 		PokemonCollection ();
 		// Need to rework my constructors or something so that this is not
 		// needed. This should only be called once, in team intialization
@@ -57,7 +58,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 
 		template<class... Args>
 		void add(Args&&... args) {
-			BaseCollection<Pokemon>::add(std::forward<Args>(args)...);
+			Base::add(std::forward<Args>(args)...);
 			// Guaranteed to be a valid index
 			current_replacement = container.size() - 1;
 		}

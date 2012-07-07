@@ -34,12 +34,13 @@ enum class Moves : uint16_t;
 class SharedMoves;
 
 class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
+		typedef detail::BaseCollection<Move, MoveContainer> Base;
 	public:
 		MoveCollection (SharedMoves & s);
 		unsigned number_of_regular_moves () const;
 		template<class... Args>
 		void add(Args&&... args) {
-			detail::BaseCollection<Move, MoveContainer>::add(std::forward<Args>(args)...);
+			Base::add(std::forward<Args>(args)...);
 			current_index = number_of_regular_moves() - 1;
 		}
 		void for_each (std::function<void(Move const &)> const & f) const;

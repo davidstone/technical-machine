@@ -31,7 +31,7 @@
 namespace technicalmachine {
 
 MoveCollection::MoveCollection (SharedMoves & s):
-	detail::BaseCollection<Move, MoveContainer>(MoveContainer (s)) {
+	Base(MoveContainer (s)) {
 }
 
 unsigned MoveCollection::number_of_regular_moves () const {
