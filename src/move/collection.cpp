@@ -34,7 +34,7 @@ MoveCollection::MoveCollection (SharedMoves & s):
 	Base(MoveContainer (s)) {
 }
 
-unsigned MoveCollection::number_of_regular_moves () const {
+MoveCollection::index_type MoveCollection::number_of_regular_moves () const {
 	return container.number_of_regular_moves();
 }
 
@@ -55,7 +55,7 @@ void MoveCollection::for_each_regular_move (std::function<void(Move &)> const & 
 }
 
 bool MoveCollection::set_index_if_found(Moves name) {
-	for (uint8_t new_index = 0; new_index != number_of_regular_moves(); ++new_index) {
+	for (index_type new_index = 0; new_index != number_of_regular_moves(); ++new_index) {
 		if (unchecked_value(new_index).name == name) {
 			set_index(new_index);
 			return true;
@@ -95,7 +95,7 @@ std::vector<RankedMove> MoveCollection::create_ordered_container (bool const ai)
 	return reorder(container.concatenate(), ai);
 }
 
-uint8_t MoveCollection::size () const {
+MoveCollection::index_type MoveCollection::size () const {
 	return container.size();
 }
 

@@ -36,8 +36,9 @@ class SharedMoves;
 class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		typedef detail::BaseCollection<Move, MoveContainer> Base;
 	public:
+		using Base::index_type;
 		MoveCollection (SharedMoves & s);
-		unsigned number_of_regular_moves () const;
+		index_type number_of_regular_moves () const;
 		template<class... Args>
 		void add(Args&&... args) {
 			Base::add(std::forward<Args>(args)...);
@@ -58,8 +59,8 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		// Move::END if none
 		Moves name_of_last_used_move () const;
 		std::vector<RankedMove> create_ordered_container (bool ai) const;
-		uint8_t size () const;
-		uint8_t regular_size () const;
+		index_type size () const;
+		index_type regular_size () const;
 		void update_shared_moves(SharedMoves & s);
 		typedef uint64_t hash_type;
 		hash_type hash() const;
