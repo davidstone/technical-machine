@@ -43,9 +43,9 @@ class Stat {
 			EVA,
 			END
 		};
-
-		uint16_t max;		// Max HP only
-		uint16_t stat;		// Current HP or last calculated value for other stats
+		typedef uint16_t stat_type;
+		stat_type max;		// Max HP only
+		stat_type stat;		// Current HP or last calculated value for other stats
 		uint8_t base;
 		uint8_t iv;			// 0 through 31
 		uint8_t ev;			// 0 through 63

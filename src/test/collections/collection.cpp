@@ -42,7 +42,7 @@ void collection_range_tests() {
 		base.set_index(v.size());
 		throw InvalidCollection("Out of range index not caught.");
 	}
-	catch (InvalidCollectionIndex const & ex) {
+	catch (InvalidCollectionIndex const &) {
 		// Do nothing; the above operation should throw.
 	}
 	if (base() != v.back())

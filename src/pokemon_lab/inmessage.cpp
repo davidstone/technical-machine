@@ -45,6 +45,8 @@ void InMessage::read_header (boost::asio::ip::tcp::socket & socket, Client * cli
 
 void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * client) {
 	// extract the message type and length components
+	// TODO: store in the underlying type instead of the enum so the compiler
+	// can assume all enums are within their range.
 	Message code = static_cast <InMessage::Message> (read_byte ());
 	uint32_t bytes = read_int ();
 

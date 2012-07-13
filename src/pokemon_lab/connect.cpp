@@ -260,6 +260,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::CHALLENGE_WITHDRAWN: {
 			std::string const opponent = msg.read_string ();
 			handle_challenge_withdrawn (opponent);
+			break;
 		}
 		case InMessage::BATTLE_BEGIN: {
 			uint32_t const battle_id = msg.read_int ();

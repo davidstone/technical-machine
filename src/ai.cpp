@@ -56,11 +56,10 @@ int main (int argc, char * argv []) {
 			}
 		}
 	}
-	catch (ExitProgram const & ex) {
+	catch (ExitProgram const &) {
 		return 0;
 	}
 	catch (...) {
 		throw;
 	}
-	return 0;
 }

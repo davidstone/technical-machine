@@ -73,6 +73,10 @@ bool Item::is_gone () const {
 	return name == NO_ITEM;
 }
 
+bool Item::was_lost() const {
+	return false;
+}
+
 void Item::remove () {
 	name = NO_ITEM;
 }

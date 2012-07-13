@@ -45,8 +45,7 @@ public:
 		depth (0) {
 	}
 	Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned depth_current);
-	bool operator== (Hash const & other) const;
-	bool operator!= (Hash const & other) const;
+	friend bool operator== (Hash const & lhs, Hash const & rhs);
 };
 
 Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned depth_current):
@@ -56,12 +55,8 @@ Hash::Hash (uint64_t ai_hash, uint64_t foe_hash, uint32_t weather_hash, unsigned
 	depth (depth_current) {
 }
 
-bool Hash::operator== (Hash const & other) const {
-	return ai == other.ai and foe == other.foe and weather == other.weather;
-}
-
-bool Hash::operator!= (Hash const & other) const {
-	return !(*this == other);
+bool operator== (Hash const & lhs, Hash const & rhs) {
+	return lhs.ai == rhs.ai and lhs.foe == rhs.foe and lhs.weather == rhs.weather;
 }
 
 Hash & hash_table_lookup (Hash const & current) {

@@ -48,22 +48,6 @@ void do_damage (Team & user, Team & target, unsigned damage);
 void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage);
 void lower_pp (Team & user, Pokemon const & target);
 
-class ResetIndex {
-	public:
-		ResetIndex (Pokemon & pokemon):
-			reset (pokemon),
-			index (pokemon.move.index()) {
-		}
-		~ResetIndex () {
-			reset.move.set_index(index);
-		}
-		ResetIndex (ResetIndex const & r) = delete;
-		ResetIndex & operator= (ResetIndex const & r) = delete;
-	private:
-		Pokemon & reset;
-		uint8_t const index;
-};
-
 }	// unnamed namespace
 
 unsigned call_move (Team & user, Team & target, Weather & weather, unsigned const log_damage) {
@@ -72,7 +56,6 @@ unsigned call_move (Team & user, Team & target, Weather & weather, unsigned cons
 	user.moved = true;
 	if (can_execute_move (user, target, weather)) {
 		lower_pp (user, target.pokemon());
-//		ResetIndex const reset_index (user.pokemon());
 		if (user.pokemon().move().calls_other_move())
 			call_other_move (user);
 		if (!user.miss)
@@ -164,6 +147,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 						user.pokemon().hp.stat = user.pokemon().hp.max;
 				}
 			}
+			break;
 		case Moves::ACID:
 		case Moves::BUG_BUZZ:
 		case Moves::EARTH_POWER:
@@ -226,6 +210,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::AURORA_BEAM:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::GROWL:
 			target.stage.boost(Stat::ATK, -1);
 			break;
@@ -280,6 +265,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::FLARE_BLITZ:
 			recoil (user.pokemon(), damage, 3);
+			// Intentional fall-through
 		case Moves::BLAZE_KICK:
 		case Moves::EMBER:
 		case Moves::FIRE_BLAST:
@@ -291,6 +277,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::SACRED_FIRE:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::WILL_O_WISP:
 			Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
 			break;
@@ -308,6 +295,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::VOLT_TACKLE:
 			recoil (user.pokemon(), damage, 3);
+			// Intentional fall-through
 		case Moves::BODY_SLAM:
 		case Moves::DISCHARGE:
 		case Moves::DRAGONBREATH:
@@ -321,6 +309,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::THUNDERSHOCK:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::GLARE:
 		case Moves::STUN_SPORE:
 		case Moves::THUNDER_WAVE:
@@ -340,6 +329,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::CONSTRICT:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::ICY_WIND:
 		case Moves::MUD_SHOT:
 		case Moves::ROCK_TOMB:
@@ -368,6 +358,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::CHARGE_BEAM:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::GROWTH:
 			user.stage.boost(Stat::SPA, 1);
 			break;
@@ -378,6 +369,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::CHATTER:
 			if (!user.pokemon().can_use_chatter())
 				break;
+			// Intentional fall-through
 		case Moves::CONFUSION:
 		case Moves::DIZZY_PUNCH:
 		case Moves::DYNAMICPUNCH:
@@ -387,6 +379,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::WATER_PULSE:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::CONFUSE_RAY:
 		case Moves::SUPERSONIC:
 		case Moves::SWEET_KISS:
@@ -411,6 +404,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::ROCK_SMASH:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::LEER:
 		case Moves::TAIL_WHIP:
 			target.stage.boost(Stat::DEF, -1);
@@ -437,6 +431,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::SMOG:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::POISON_GAS:
 		case Moves::POISONPOWDER:
 			Status::apply<Status::POISON>(user.pokemon(), target.pokemon(), weather);
@@ -471,7 +466,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::DEFOG:
 			weather.fog = false;
-		// Fall through
+			// Intentional fall-through
 		case Moves::SWEET_SCENT:
 			target.stage.boost(Stat::EVA, -1);
 			break;
@@ -524,6 +519,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::SEED_FLARE:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::FAKE_TEARS:
 		case Moves::METAL_SOUND:
 			target.stage.boost(Stat::SPD, -2);
@@ -556,6 +552,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::OCTAZOOKA:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::FLASH:
 		case Moves::KINESIS:
 		case Moves::MUD_SLAP:
@@ -604,6 +601,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::STEEL_WING:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::HARDEN:
 		case Moves::WITHDRAW:
 			user.stage.boost(Stat::DEF, 1);
@@ -628,7 +626,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::ROOST:
 			user.roost = true;
-		// Fall through
+			// Intentional fall-through
 		case Moves::HEAL_ORDER:
 		case Moves::MILK_DRINK:
 		case Moves::RECOVER:
@@ -650,6 +648,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::METEOR_MASH:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::SHARPEN:
 			user.stage.boost(Stat::ATK, 1);
 			break;
@@ -772,6 +771,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::POISON_FANG:
 			if (!move.variable().effect_activates())
 				break;
+			// Intentional fall-through
 		case Moves::TOXIC:
 			Status::apply<Status::POISON_TOXIC>(user.pokemon(), target.pokemon(), weather);
 			break;
@@ -900,6 +900,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			target.stage.boost(Stat::ATK, 2);
 			if (target.pokemon().ability.name != Ability::OWN_TEMPO and !target.confused)
 				target.confused = move.variable().value();
+			break;
 		case Moves::SWALLOW:		// Fix
 			break;
 		case Moves::SWITCH0:
@@ -999,6 +1000,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		case Moves::YAWN:
 			if (!target.yawn)
 				target.yawn = 2;
+			break;
 		default:
 			break;
 	}

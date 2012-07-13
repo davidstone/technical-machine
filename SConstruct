@@ -19,37 +19,39 @@
 import os
 import glob
 import shutil
-from gcc_warnings import warnings, warnings_debug, warnings_optimized
-from gcc_optimizations import optimizations, preprocessor_optimizations, linker_optimizations
-from sources import ai, predict, test, generate_sources
+
+from build_scripts.sources import ai, predict, test, generate_sources
 
 SetOption('warn', 'no-duplicate-environment')
 SetOption('max_drift', 2)
 SetOption('implicit_cache', 1)
 num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 4))
 SetOption('num_jobs', num_cpu * 3 / 2)
+
+AddOption('--compiler', dest = 'compiler', type = 'string', action = 'store', help = 'Name of the compiler to use.')
+AddOption('--compiler-command', dest = 'compiler_command', type = 'string', action = 'store', help = 'Command to launch the compiler.')
 AddOption('--verbose', dest = 'verbose', action = "store_true", help = 'Print the full compiler command output.')
+
 Decider('MD5-timestamp')
 
-
-version_flags = ['-std=c++0x']
-cc_flags = warnings + ['-g']
-cxx_flags = version_flags
-link_flags = warnings + version_flags
+SConscript('build_scripts/compiler_settings.py')
+Import('flags', 'compiler_command')
 
 default = DefaultEnvironment()
-default.Append(CCFLAGS = cc_flags, CXXFLAGS = cxx_flags, LINKFLAGS = link_flags)
 
 if not GetOption('verbose'):
 	default['CXXCOMSTR'] = 'Compiling $TARGET'
 	default['LINKCOMSTR'] = 'Linking $TARGET'
 
+default.Append(CCFLAGS = flags['cc']['default'], CXXFLAGS = flags['cxx']['default'], LINKFLAGS = flags['link']['default'], CPPDEFINES = flags['cpp']['default'])
+default.Replace(CXX = compiler_command)
+
 debug = default.Clone()
-debug.Append(CCFLAGS = warnings_debug)
+debug.Append(CCFLAGS = flags['cc']['debug'], CXXFLAGS = flags['cxx']['debug'], LINKFLAGS = flags['link']['debug'], CPPDEFINES = flags['cpp']['debug'])
 debug.VariantDir('build/debug', 'src', duplicate = 0)
 
 optimized = default.Clone()
-optimized.Append(CCFLAGS = optimizations + warnings_optimized, CPPDEFINES = preprocessor_optimizations, LINKFLAGS = linker_optimizations + warnings_optimized)
+optimized.Append(CCFLAGS = flags['cc']['optimized'], CXXFLAGS = flags['cxx']['optimized'], LINKFLAGS = flags['link']['optimized'], CPPDEFINES = flags['cpp']['optimized'])
 optimized.VariantDir('build/optimized', 'src', duplicate = 0)
 
 def create_program (base, versions):

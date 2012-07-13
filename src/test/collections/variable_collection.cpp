@@ -39,7 +39,6 @@ void test_small_size_team(Team & team);
 void test_other_combinations(Team & team, unsigned max_foe_size);
 void phaze_in_same_pokemon(VariableCollection & collection, Team const & team);
 void phaze_in_different_pokemon(VariableCollection & collection, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size);
-void test_invalid_combinations(unsigned max_foe_size);
 unsigned expected_index(unsigned current_index, unsigned new_index);
 
 }	// unnamed namespace
@@ -63,7 +62,7 @@ void test_zero_size_team() {
 		VariableCollection collection(Moves::WHIRLWIND, 0);
 		throw InvalidCollection("Can construct a variable collection from a team of size 0.");
 	}
-	catch (EmptyTeam const & ex) {
+	catch (EmptyTeam const &) {
 		// Do nothing; the above operation should throw.
 	}
 }
@@ -105,7 +104,7 @@ void phaze_in_same_pokemon(VariableCollection & collection, Team const & team) {
 		collection.set_phaze_index(team, team.pokemon().name);
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	}
-	catch (PhazingInSamePokemon const & ex) {
+	catch (PhazingInSamePokemon const &) {
 		// Do nothing; the above operation should throw.
 	}
 }
@@ -119,7 +118,7 @@ void phaze_in_different_pokemon(VariableCollection & collection, Team const & te
 		if (new_index == foe_size)
 			throw InvalidCollection("Phazing supports too many elements when the foe's size is " + std::to_string(foe_size) + ".");
 	}
-	catch(InvalidCollectionIndex const & ex) {
+	catch(InvalidCollectionIndex const &) {
 		if (new_index != foe_size)
 			throw InvalidCollection("Phazing does not support " + std::to_string(new_index) + " elements when the foe's size is " + std::to_string(foe_size) + ".");
 		// otherwise, everything is good

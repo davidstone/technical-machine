@@ -60,7 +60,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		void add(Args&&... args) {
 			Base::add(std::forward<Args>(args)...);
 			// Guaranteed to be a valid index
-			current_replacement = container.size() - 1;
+			current_replacement = static_cast<index_type>(container.size() - 1);
 		}
 		void remove_active ();
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);

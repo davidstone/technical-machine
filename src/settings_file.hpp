@@ -47,9 +47,9 @@ public:
 	std::vector <Server> servers;
 	std::string time_format;
 	unsigned chattiness;
-	static std::string const file_name;
 	Settings ();
 	void write () const;
+	static std::string file_name();
 };
 
 }	// namespace technicalmachine

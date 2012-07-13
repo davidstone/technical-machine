@@ -65,7 +65,7 @@ GenericClient::GenericClient (unsigned set_depth):
 	{
 	load_settings (false);
 	while (username.empty()) {
-		std::cerr << "Add a username and password entry to " + Settings::file_name + " and hit enter.";
+		std::cerr << "Add a username and password entry to " + Settings::file_name() + " and hit enter.";
 		std::cin.get ();
 		load_settings (false);
 	}
@@ -398,7 +398,7 @@ void GenericClient::handle_depth_change_command (std::string const & user, std::
 			send_private_message (user, big_message);
 		}
 	}
-	catch (boost::bad_lexical_cast const & ex) {
+	catch (boost::bad_lexical_cast const &) {
 		std::string const invalid_depth = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
 		send_private_message (user, invalid_depth);
 	}

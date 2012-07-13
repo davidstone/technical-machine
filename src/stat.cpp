@@ -412,7 +412,7 @@ unsigned speed_ability_modifier (Team const & team, Weather const & weather) {
 				return team.pokemon().spe.stat * 2u;
 			break;
 		case Ability::UNBURDEN:
-			if (false)
+			if (team.pokemon().item.was_lost())
 				return team.pokemon().spe.stat * 2u;
 			break;
 		case Ability::QUICK_FEET:

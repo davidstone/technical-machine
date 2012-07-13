@@ -129,6 +129,7 @@ class Item {
 		bool grounds () const;
 		bool is_choice_item () const;
 		bool is_gone () const;
+		bool was_lost() const;
 		void remove ();
 		unsigned get_berry_power () const;		// Returns 0 for non-berries
 		unsigned get_fling_power () const;

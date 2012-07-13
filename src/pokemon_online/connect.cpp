@@ -771,7 +771,9 @@ void Client::send_battle_challenge_with_current_team () {
 		}
 	}
 	catch (InvalidUser const & error) {
-		print_with_time_stamp (std::cerr, challenges.begin()->first + " is no longer logged in.");
+		std::string message = error.what();
+		message += " They may have logged out.";
+		print_with_time_stamp(std::cerr, message);
 		challenges.erase (challenges.begin ());
 	}
 }

@@ -208,11 +208,11 @@ void GenericBattle::handle_hp_change (uint8_t party_changing_hp, uint8_t slot, u
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	team.pokemon.for_each ([this, & team] (Pokemon & pokemon)->void {
-		unsigned const max_hp = (team.me) ? pokemon.hp.max : max_damage_precision ();
-		unsigned const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
+		Stat::stat_type const max_hp = (team.me) ? pokemon.hp.max : max_damage_precision ();
+		Stat::stat_type const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
 		if (tm_estimate == pokemon.new_hp)
 			return;
-		unsigned const reported_hp = static_cast<unsigned> (pokemon.new_hp) * pokemon.hp.max / max_hp;
+		Stat::stat_type const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
 		if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
 			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
 			if (!team.me)
@@ -249,7 +249,7 @@ void GenericBattle::handle_end (network::GenericClient & client, Result const re
 }
 
 uint8_t GenericBattle::switch_slot (Moves move) const {
-	uint8_t const slot = Move::to_replacement(move);
+	uint8_t const slot = static_cast<uint8_t>(Move::to_replacement(move));
 	Species const name = ai.pokemon(slot).name;
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == name)

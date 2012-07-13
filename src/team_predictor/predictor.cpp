@@ -51,7 +51,7 @@ void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	
 	Team team;
-	bool using_lead;
+	bool using_lead = false;
 	for (Fl_Input * in : data.input) {
 		Species species;
 		try {
@@ -60,7 +60,7 @@ void function (Fl_Widget * w, void * d) {
 			Gender const gender(Gender::MALE);
 			team.add_pokemon(species, level, gender);
 		}
-		catch (InvalidFromStringConversion const & ex) {
+		catch (InvalidFromStringConversion const &) {
 			species = Species::END;
 		}
 		if (in == data.input.front ()) {
