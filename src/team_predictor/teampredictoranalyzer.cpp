@@ -1,5 +1,5 @@
 // Check the accuracy of my team prediction function
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -47,7 +47,7 @@ int main () {
 	
 	std::vector<double> old_estimate;
 	for (unsigned n = 0; n != END_SPECIES; ++n)
-		old_estimate.push_back ((overall.at (n) / total) * lead.at (n));
+		old_estimate.emplace_back((overall.at (n) / total) * lead.at (n));
 	std::vector<double> new_estimate = old_estimate;
 
 	unsigned old_correct [5][6] = {{ 0 }};
@@ -68,7 +68,7 @@ void test_teams (const std::vector<double> & old_estimate, const std::vector<dou
 		unsigned end = 0;
 		while (end != std::string::npos) {
 			end = line.find (", ", end + 1);
-			team.push_back (species_map.find (line.substr (begin, end - begin))->second);
+			team.emplace_back(species_map.find (line.substr (begin, end - begin))->second);
 			begin = end + 2;
 		}
 		if (team.size() != 6) {
@@ -79,16 +79,16 @@ void test_teams (const std::vector<double> & old_estimate, const std::vector<dou
 			std::cout << pokemon_name [*it] << ", ";
 		std::cout << "is the correct team\n";
 */		std::vector<species> known;
-		known.push_back (team.front());
+		known.emplace_back(team.front());
 		combination (team, known, old_estimate, old_multiplier, old_correct);
 		combination (team, known, new_estimate, new_multiplier, new_correct);
-		known.push_back (ABRA);
+		known.emplace_back(ABRA);
 		for (int a = 1; a != 6; ++a) {
 			known.at (1) = team.at (a);
 			combination (team, known, old_estimate, old_multiplier, old_correct);
 			combination (team, known, new_estimate, new_multiplier, new_correct);
 		}
-		known.push_back (ABRA);
+		known.emplace_back(ABRA);
 		for (int a = 1; a != 5; ++a) {
 			for (int b = a + 1; b != 6; ++b) {
 				known.at (1) = team.at (a);
@@ -97,7 +97,7 @@ void test_teams (const std::vector<double> & old_estimate, const std::vector<dou
 				combination (team, known, new_estimate, new_multiplier, new_correct);
 			}
 		}
-		known.push_back (ABRA);
+		known.emplace_back(ABRA);
 		for (int a = 1; a != 4; ++a) {
 			for (int b = a + 1; b != 5; ++b) {
 				for (int c = b + 1; c != 6; ++c) {
@@ -109,7 +109,7 @@ void test_teams (const std::vector<double> & old_estimate, const std::vector<dou
 				}
 			}
 		}
-		known.push_back (ABRA);
+		known.emplace_back(ABRA);
 		for (int a = 1; a != 3; ++a) {
 			for (int b = a + 1; b != 4; ++b) {
 				for (int c = b + 1; c != 5; ++c) {

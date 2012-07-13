@@ -81,14 +81,14 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 		unsigned estimate = damage_random (attacker, defender, effectiveness_vector, effectiveness, rb, nonrandom);
 		if (estimate >= damage) {
 			if (estimate == damage)
-				refined_hidden.push_back (unknown);
+				refined_hidden.emplace_back(unknown);
 			continue;
 		}
 		attacker.pokemon().move().r = 100;
 		estimate = damage_random (attacker, defender, effectiveness_vector, effectiveness, rb, nonrandom);
 		if (estimate <= damage) {
 			if (estimate == damage)
-				refined_hidden.push_back (unknown);
+				refined_hidden.emplace_back(unknown);
 			continue;
 		}
 		
@@ -121,7 +121,7 @@ void reversedamagecalculator (Team & attacker, Team const & defender, Weather co
 			attacker.pokemon().move().r = (high + low) / 2;
 		}
 		if (found)
-			refined_hidden.push_back (unknown);
+			refined_hidden.emplace_back(unknown);
 	}
 	hidden = refined_hidden;
 }

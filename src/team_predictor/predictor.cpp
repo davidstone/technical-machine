@@ -91,12 +91,12 @@ int main () {
 
 	Data data;
 	
-	data.input.push_back (&input0);
-	data.input.push_back (&input1);
-	data.input.push_back (&input2);
-	data.input.push_back (&input3);
-	data.input.push_back (&input4);
-	data.input.push_back (&input5);
+	data.input.emplace_back(&input0);
+	data.input.emplace_back(&input1);
+	data.input.emplace_back(&input2);
+	data.input.emplace_back(&input3);
+	data.input.emplace_back(&input4);
+	data.input.emplace_back(&input5);
 	data.output = &output;
 
 	calculate.callback (function, &data);

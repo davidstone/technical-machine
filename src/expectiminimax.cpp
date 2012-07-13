@@ -550,7 +550,7 @@ std::vector<Moves> all_switches (uint8_t const team_size, uint8_t const pokemon_
 	std::vector<Moves> switches;
 	for (unsigned n = 0; n != team_size; ++n) {
 		if (n != pokemon_index)
-			switches.push_back (Move::from_replacement(n));
+			switches.emplace_back(Move::from_replacement(n));
 	}
 	return switches;
 }
@@ -567,7 +567,7 @@ std::vector<Moves> all_legal_selections (Team & ai, Team const & foe, Weather co
 	std::vector <Moves> moves;
 	ai.pokemon().move.for_each([& moves](Move const & move) {
 		if (move.selectable())
-			moves.push_back (move.name);
+			moves.emplace_back(move.name);
 	});
 	assert (!moves.empty());
 	return moves;

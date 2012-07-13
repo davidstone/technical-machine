@@ -377,7 +377,7 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 		}
 	}
 	else if (boost::filesystem::is_regular_file (team_file))
-		files.push_back (team_file);
+		files.emplace_back(team_file);
 	return files;
 }
 

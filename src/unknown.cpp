@@ -1,5 +1,5 @@
 // List of unknowns
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,7 +49,7 @@ void unknown (std::vector<Unknown> &hidden) {
 					for (unknown.hpev = 0; unknown.hpev <= 63; ++unknown.hpev) {
 						if (unknown.hpev + unknown.atkev + unknown.speev > 127)
 							break;
-						hidden.push_back (unknown);
+						hidden.emplace_back(unknown);
 					}
 				}
 			}

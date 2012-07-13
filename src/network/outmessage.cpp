@@ -1,5 +1,5 @@
 // Generic outgoing messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,7 +28,7 @@ OutMessage::OutMessage (uint8_t code) {
 }
 
 void OutMessage::write_byte (uint8_t byte) {
-	buffer.push_back (byte);
+	buffer.emplace_back(byte);
 }
 
 void OutMessage::write_short (uint16_t bytes) {

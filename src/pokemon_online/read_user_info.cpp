@@ -1,5 +1,5 @@
 // Read "User" message from PO
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,7 +35,7 @@ static std::vector <std::pair <uint16_t, uint8_t>> load_team_vector (InMessage &
 	for (unsigned n = 0; n != team_size; ++n) {
 		uint16_t const species = msg.read_short ();
 		uint8_t const forme = msg.read_byte ();
-		temp_team.push_back (std::pair <uint16_t, uint8_t> (species, forme));
+		temp_team.emplace_back(species, forme);
 	}
 	return temp_team;
 }

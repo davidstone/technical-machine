@@ -113,14 +113,14 @@ class Metagame {
 			uint16_t ban_list_count = msg.read_short ();
 			for (uint16_t n = 0; n != ban_list_count; ++n) {
 				uint16_t species_id = msg.read_short ();
-				bans.push_back (species_id);
+				bans.emplace_back(species_id);
 			}
 		}
 		void load_clauses (InMessage & msg) {
 			uint16_t clause_count = msg.read_short ();
 			for (uint16_t b = 0; b != clause_count; ++b) {
 				std::string clause_name = msg.read_string ();
-				clauses.push_back (clause_name);
+				clauses.emplace_back(clause_name);
 			}
 		}
 		void load_battle_timer (InMessage & msg) {
@@ -184,8 +184,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			for (uint32_t n = 0; n != number_of_users; ++n) {
 				std::string const name_of_user = msg.read_string();
 				uint32_t const flags = msg.read_int();
-				std::pair <std::string, uint32_t> const user (name_of_user, flags);
-				users.push_back (user);
+				users.emplace_back(name_of_user, flags);
 			}
 			handle_channel_info (channel_id, info, channel_name, topic, channel_flags, users);
 			break;
@@ -209,8 +208,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			uint32_t const number_of_channels = msg.read_int();
 //			std::vector <Channel> channels;
 //			for (uint32_t n = 0; n != number_of_channels; ++n) {
-//				Channel channel (msg);
-//				channels.push_back (channel);
+//				channels.emplace_back(msg);
 //			}
 //			handle_channel_list (channels);
 			break;
@@ -236,8 +234,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			if (metagame == -1) {
 //				uint8_t const clauses_size = msg.read_byte ();
 //				for (uint8_t n = 0; n != clauses.size(); ++n) {
-//					uint8_t clause = msg.read_byte ();
-//					clauses.push_back (clause);
+//					clauses.emplace_back(msg.read_byte());
 //				}
 //				timed = msg.read_byte ();
 //				if (timed) {
@@ -304,7 +301,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 				if (!forced) {
 					uint32_t const num_moves = msg.read_int ();
 					for (uint32_t n = 0; n != num_moves; ++n)
-						moves.push_back (msg.read_byte ());
+						moves.emplace_back(msg.read_byte ());
 				}
 			}
 			auto const it = battles.find (battle_id);
@@ -336,8 +333,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const argc = msg.read_byte ();
 			std::vector <std::string> arguments;
 			for (uint8_t n = 0; n != argc; ++n) {
-				std::string const argument = msg.read_string ();
-				arguments.push_back (argument);
+				arguments.emplace_back(msg.read_string());
 			}
 			auto const it = battles.find (battle_id);
 			if (it != battles.end ()) {
@@ -478,8 +474,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const metagame_count = msg.read_short ();
 			std::vector <Metagame> metagames;
 			for (uint16_t n = 0; n != metagame_count; ++n) {
-				Metagame metagame (msg);
-				metagames.push_back (metagame);
+				metagames.emplace_back(msg);
 			}
 			handle_metagame_list (metagames);
 			break;
@@ -497,7 +492,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			uint8_t const number_of_aliases = msg.read_byte ();
 //			std::vector <std::string> aliases;
 //			for (uint8_t n = 0; n != number_of_aliases; ++n)
-//				aliases.push_back (msg.read_string ());
+//				aliases.emplace_back(msg.read_string ());
 //			uint8_t const number_of_bans = msg.read_byte ();
 //			std::vector <?> thing;
 //			for (uint8_t n = 0; n != number_of_bans; ++n)
@@ -512,8 +507,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const size = msg.read_byte ();
 			std::vector <std::pair <uint8_t, int32_t> > estimates;
 			for (uint8_t n = 0; n != size; ++n) {
-				std::pair <uint8_t, int32_t> estimate = { msg.read_byte (), msg.read_int () };
-				estimates.push_back (estimate);
+				estimates.emplace_back(msg.read_byte(), msg.read_int());
 			}
 			break;
 		}
@@ -532,8 +526,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const clause_size = msg.read_short ();
 			std::vector <std::pair <std::string, std::string> > clauses;
 			for (uint16_t n = 0; n != clause_size; ++n) {
-				std::pair <std::string, std::string> clause = { msg.read_string(), msg.read_string () };
-				clauses.push_back (clause);
+				clauses.emplace_back(msg.read_string(), msg.read_string());
 			}
 			break;
 		}
@@ -543,7 +536,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const violation_size = msg.read_short ();
 			std::vector <int16_t> violation;
 			for (unsigned n = 0; n != violation_size; ++n)
-				violation.push_back (static_cast<int16_t> (msg.read_short()));
+				violation.emplace_back(static_cast<int16_t> (msg.read_short()));
 			handle_invalid_team (violation);
 			break;
 		}

@@ -173,7 +173,7 @@ container_type simple_range (uint16_t const first, uint16_t const last, Moves co
 container_type simple_range (uint16_t const first, uint16_t const last, uint16_t const probability) {
 	container_type collection;
 	for (uint16_t value = first; value <= last; ++value)
-		collection.push_back(Variable(value, probability));
+		collection.emplace_back(value, probability);
 	return collection;
 }
 
@@ -181,9 +181,9 @@ container_type default_effects (Moves const move) {
 	container_type collection;
 	uint16_t const probability = get_probability(move);
 	if (probability != Variable::max_probability)
-		collection.push_back(Variable(0, Variable::max_probability - probability));
+		collection.emplace_back(0, Variable::max_probability - probability);
 	if (probability != 0)
-		collection.push_back(Variable(0, probability));
+		collection.emplace_back(0, probability);
 	return collection;
 }
 

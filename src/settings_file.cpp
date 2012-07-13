@@ -33,7 +33,7 @@ Settings::Settings () {
 
 	team_file = root.get <std::string> ("team");
 	for (boost::property_tree::ptree::value_type const & server_tree : root.get_child ("servers"))
-		servers.push_back (Server (server_tree.second));
+		servers.emplace_back(server_tree.second);
 	time_format = root.get <std::string> ("time");
 	chattiness = root.get <unsigned> ("chattiness");
 }

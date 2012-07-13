@@ -140,7 +140,7 @@ std::vector <unsigned> Type::get_effectiveness_variables (Pokemon const & target
 	std::vector <unsigned> effectiveness;
 	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
 	for (Type const target_type : target.type.types)
-		effectiveness.push_back (lookup_effectiveness (target_type));
+		effectiveness.emplace_back(lookup_effectiveness (target_type));
 	return effectiveness;
 }
 

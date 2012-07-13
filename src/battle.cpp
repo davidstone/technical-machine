@@ -59,7 +59,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	party (unknown_party)
 	{
 	ai.pokemon.for_each ([this] (Pokemon const & pokemon)->void {
-		slot_memory.push_back (pokemon.name);
+		slot_memory.emplace_back(pokemon.name);
 	});
 	initialize_turn ();
 }
@@ -72,7 +72,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	party (unknown_party)
 	{
 	ai.pokemon.for_each ([this] (Pokemon const & pokemon)->void {
-		slot_memory.push_back (pokemon.name);
+		slot_memory.emplace_back(pokemon.name);
 	});
 	initialize_turn ();
 }

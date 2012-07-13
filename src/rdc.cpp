@@ -1,5 +1,5 @@
 // Reverse damage calculator interface
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -51,8 +51,7 @@ int main () {
 	Team foe;
 	std::cerr << "Teams created.\n";
 
-	Pokemon member (INFERNAPE, foe.size);
-	foe.pokemon.set.push_back (member);
+	foe.pokemon.set.emplace_back(INFERNAPE, foe.size);
 	foe.pokemon().level = 100;
 	foe.pokemon().ability.name = Ability::BLAZE;
 

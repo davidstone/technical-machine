@@ -367,7 +367,7 @@ class BattlePokemon {
 				uint16_t const st = msg.read_short ();
 			}
 			for (unsigned n = 0; n != 4; ++n) {
-				moves.push_back(id_to_move(msg.read_short ()));
+				moves.emplace_back(id_to_move(msg.read_short()));
 				uint8_t const pp = msg.read_byte ();
 				uint8_t const total_pp = msg.read_byte ();
 			}
@@ -386,7 +386,7 @@ class BattleTeam {
 		std::vector <BattlePokemon> pokemon;
 		explicit BattleTeam (InMessage & msg) {
 			for (unsigned n = 0; n != 6; ++n) {
-				pokemon.push_back (BattlePokemon (msg));
+				pokemon.emplace_back(msg);
 			}
 		}
 };
@@ -524,14 +524,14 @@ void Client::parse_version_control (InMessage & msg) const {
 }
 
 void Client::handle_tier_selection (InMessage & msg) const {
-	uint32_t const bytes_in_tier_list = msg.read_int ();
 	// Unfortunately, the tier list contains strings, which can be variable-length.
 	// Just ignore this and read until the buffer is empty.
+	uint32_t const bytes_in_tier_list = msg.read_int ();
 	std::vector <std::pair <uint8_t, std::string>> tiers;
 	while (msg.index != msg.buffer.size ()) {
 		uint8_t const tier_level = msg.read_byte ();
 		std::string const tier_name = msg.read_string ();
-		tiers.push_back (std::pair <uint8_t, std::string> (tier_level, tier_name));
+		tiers.emplace_back(tier_level, tier_name);
 	}
 }
 
@@ -590,7 +590,7 @@ void Client::handle_channel_players (InMessage & msg) {
 	std::vector <uint32_t> players;
 	players.reserve (number_of_players);
 	for (unsigned n = 0; n != number_of_players; ++n)
-		players.push_back (msg.read_int ());
+		players.emplace_back(msg.read_int());
 }
 
 void Client::handle_join_channel (InMessage & msg) {
