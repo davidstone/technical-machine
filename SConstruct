@@ -18,6 +18,7 @@
 
 import os
 import glob
+import multiprocessing
 import shutil
 
 from build_scripts.sources import ai, predict, test, generate_sources
@@ -25,8 +26,7 @@ from build_scripts.sources import ai, predict, test, generate_sources
 SetOption('warn', 'no-duplicate-environment')
 SetOption('max_drift', 2)
 SetOption('implicit_cache', 1)
-num_cpu = int(os.environ.get('NUMBER_OF_PROCESSORS', 4))
-SetOption('num_jobs', num_cpu * 3 / 2)
+SetOption('num_jobs', multiprocessing.cpu_count() * 3 / 2)
 
 AddOption('--compiler', dest = 'compiler', type = 'string', action = 'store', help = 'Name of the compiler to use.')
 AddOption('--compiler-command', dest = 'compiler_command', type = 'string', action = 'store', help = 'Command to launch the compiler.')
