@@ -57,8 +57,8 @@ ai = ('ai', ai_sources, ai_libraries)
 predict = ('predict', predict_sources, predict_libraries)
 test = ('test', test_sources, test_libraries)
 
-def generate_sources (sources, version):
+def generate_sources (sources, version, compiler_name):
 	temp = []
 	for source in sources:
-		temp += ['build/' + version + '/' + source]
+		temp += ['build/' + compiler_name + '/' + version + '/' + source]
 	return temp

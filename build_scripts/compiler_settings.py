@@ -20,23 +20,44 @@ import os
 
 compiler_name = GetOption('compiler')
 compiler_command = GetOption('compiler_command')
-if compiler_name == None and compiler_command != None:
-	compiler_name = os.path.basename(compiler_command)
-elif compiler_command == None:
-	compiler_command = compiler_name
-if compiler_name == None:
-	compiler_name = DefaultEnvironment()['CXX']
-	compiler_command = compiler_name
+
 # should probably add some extra stuff here to account for things like g++-4.7
+
+# extract_info tries to get the compiler name from the command used to compile,
+# and tries to get the command used to compile from the name given. This allows
+# a user to specify that their compiler is named 'clang', and have SCons search
+# in the normal directories for it, or the user can specify that their compiler
+# is located at 'arbitrary/path/gcc' and SCons will assume that they are
+# actually compiling with gcc. However, if the user has clang installed at
+# 'path/g++', then the user must specify both the real name of the compiler and
+# the path.
+def extract_info(name, command):
+	if name == None and command != None:
+		name = os.path.basename(command)
+	elif command == None:
+		command = name
+	if name == None:
+		name = DefaultEnvironment()['CXX']
+		command = name
+	return (name, command)
+
+def normalize_name(compiler):
+	lookup = {}
+	lookup['gcc'] = lookup['g++'] = 'gcc'
+	lookup['clang'] = lookup['clang++'] = 'clang'
+	return lookup[compiler]
+
+compiler_name, compiler_command = extract_info(compiler_name, compiler_command)
+compiler_name = normalize_name(compiler_name)
 
 def is_compiler (compiler):
 	return compiler_name == compiler
 
-if is_compiler('g++') or is_compiler('gcc'):
+if is_compiler('gcc'):
 	from build_scripts.gcc.std import cxx_std
 	from build_scripts.gcc.warnings import warnings, warnings_debug, warnings_optimized
 	from build_scripts.gcc.optimizations import optimizations, preprocessor_optimizations, linker_optimizations
-elif is_compiler('clang++') or is_compiler('clang'):
+elif is_compiler('clang'):
 	from build_scripts.clang.std import cxx_std
 	from build_scripts.clang.warnings import warnings, warnings_debug, warnings_optimized
 	from build_scripts.clang.optimizations import optimizations, preprocessor_optimizations, linker_optimizations
@@ -48,4 +69,4 @@ cpp_flags = { 'default': [], 'debug': [], 'optimized': preprocessor_optimization
 
 flags = { 'cc': cc_flags, 'cxx': cxx_flags, 'link': link_flags, 'cpp': cpp_flags }
 
-Export('flags', 'compiler_command')
+Export('flags', 'compiler_command', 'compiler_name')

@@ -35,7 +35,7 @@ AddOption('--verbose', dest = 'verbose', action = "store_true", help = 'Print th
 Decider('MD5-timestamp')
 
 SConscript('build_scripts/compiler_settings.py')
-Import('flags', 'compiler_command')
+Import('flags', 'compiler_command', 'compiler_name')
 
 default = DefaultEnvironment()
 
@@ -46,20 +46,21 @@ if not GetOption('verbose'):
 default.Append(CCFLAGS = flags['cc']['default'], CXXFLAGS = flags['cxx']['default'], LINKFLAGS = flags['link']['default'], CPPDEFINES = flags['cpp']['default'])
 default.Replace(CXX = compiler_command)
 
+build_root = 'build/' + compiler_name + '/'
 debug = default.Clone()
 debug.Append(CCFLAGS = flags['cc']['debug'], CXXFLAGS = flags['cxx']['debug'], LINKFLAGS = flags['link']['debug'], CPPDEFINES = flags['cpp']['debug'])
-debug.VariantDir('build/debug', 'src', duplicate = 0)
+debug.VariantDir(build_root + 'debug/', 'src', duplicate = 0)
 
 optimized = default.Clone()
 optimized.Append(CCFLAGS = flags['cc']['optimized'], CXXFLAGS = flags['cxx']['optimized'], LINKFLAGS = flags['link']['optimized'], CPPDEFINES = flags['cpp']['optimized'])
-optimized.VariantDir('build/optimized', 'src', duplicate = 0)
+optimized.VariantDir(build_root + 'optimized/', 'src', duplicate = 0)
 
 def create_program (base, versions):
 	env = { 'debug':debug, 'optimized':optimized }
 	suffix = { 'debug':'', 'optimized':'o' }
 	name, base_sources, libraries = base
 	for version in versions:
-		sources = generate_sources (base_sources, version)
+		sources = generate_sources (base_sources, version, compiler_name)
 		executable_name = name + suffix [version]
 		env[version].Clone(LIBS = libraries).Program(executable_name, sources)
 
