@@ -34,7 +34,6 @@
 #include "invalid_team_file_format.hpp"
 #include "switch.hpp"
 #include "status.hpp"
-#include "type.hpp"
 
 #include "pokemon/pokemon.hpp"
 
@@ -42,6 +41,8 @@
 #include "pokemon_online/read_team_file.hpp"
 
 #include "team_predictor/team_predictor.hpp"
+
+#include "type/type.hpp"
 
 namespace technicalmachine {
 

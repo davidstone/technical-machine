@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TYPE_HPP_
-#define TYPE_HPP_
+#ifndef TYPE__TYPE_HPP_
+#define TYPE__TYPE_HPP_
 
 #include <vector>
-#include "status.hpp"
+#include "../status.hpp"
 
 namespace technicalmachine {
 class Pokemon;
@@ -75,4 +75,4 @@ class Type {
 };
 
 }	// namespace technicalmachine
-#endif	// TYPE_HPP_
+#endif	// TYPE__TYPE_HPP_

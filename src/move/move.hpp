@@ -32,7 +32,7 @@
 
 #include "../rational.hpp"
 #include "../variable_collection.hpp"
-#include "../type.hpp"
+#include "../type/type.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

@@ -37,7 +37,6 @@
 #include "switch.hpp"
 #include "team.hpp"
 #include "transposition.hpp"
-#include "type.hpp"
 #include "weather.hpp"
 
 #include "move/move.hpp"
@@ -45,6 +44,8 @@
 #include "move/use_move.hpp"
 
 #include "pokemon/pokemon.hpp"
+
+#include "type/type.hpp"
 
 namespace technicalmachine {
 namespace {

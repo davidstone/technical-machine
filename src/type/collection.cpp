@@ -16,15 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "type.hpp"
+#include "collection.hpp"
 
 #include <vector>
 
-#include "team.hpp"
 #include "type.hpp"
-#include "weather.hpp"
 
-#include "pokemon/pokemon.hpp"
+#include "../team.hpp"
+#include "../weather.hpp"
+
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 enum class Species : uint16_t;

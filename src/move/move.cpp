@@ -25,8 +25,9 @@
 
 #include "../evaluate.hpp"
 #include "../team.hpp"
-#include "../type.hpp"
 #include "../weather.hpp"
+
+#include "../type/type.hpp"
 #undef SING
 
 namespace technicalmachine {

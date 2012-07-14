@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TYPE_COLLECTION_HPP_
-#define TYPE_COLLECTION_HPP_
+#ifndef TYPE__COLLECTION_HPP_
+#define TYPE__COLLECTION_HPP_
 
 #include <vector>
-#include "status.hpp"
 #include "type.hpp"
+#include "../status.hpp"
 
 namespace technicalmachine {
 class Pokemon;
@@ -53,4 +53,4 @@ bool is_type (Team const & team, Type type);
 bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather);
 
 }	// namespace technicalmachine
-#endif	// TYPE_COLLECTION_HPP_
+#endif	// TYPE__COLLECTION_HPP_

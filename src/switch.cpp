@@ -23,10 +23,11 @@
 #include "stat.hpp"
 #include "status.hpp"
 #include "team.hpp"
-#include "type.hpp"
 #include "weather.hpp"
 
 #include "pokemon/pokemon.hpp"
+
+#include "type/type.hpp"
 
 namespace technicalmachine {
 namespace {

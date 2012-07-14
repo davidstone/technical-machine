@@ -31,9 +31,10 @@
 #include "../nature.hpp"
 #include "../stat.hpp"
 #include "../status.hpp"
-#include "../type_collection.hpp"
 
 #include "../move/collection.hpp"
+
+#include "../type/collection.hpp"
 
 namespace technicalmachine {
 enum class Species : uint16_t;
