@@ -23,12 +23,16 @@
 #include <vector>
 #include <utility>
 
-#include <boost/asio.hpp>
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/write.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 #include "battle_settings.hpp"
 #include "conversion.hpp"
 
 #include "../team.hpp"
+
+#include "../cryptography/byte_order.hpp"
 
 #include "../pokemon/pokemon.hpp"
 
@@ -159,9 +163,10 @@ void OutMessage::write_color () {
 }
 
 void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
-	uint16_t length = htons (buffer.size ());
+	typedef uint16_t length_type;
+	length_type length = boost::endian::h_to_n(static_cast<length_type>(buffer.size()));
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
-	for (unsigned n = 0; n != sizeof (uint16_t); ++n)
+	for (unsigned n = 0; n != sizeof (length_type); ++n)
 		buffer.insert (buffer.begin() + n, *(byte + n));
 	boost::asio::write (socket, boost::asio::buffer (buffer));
 }

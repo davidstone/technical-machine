@@ -16,11 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <random>
-#include <string>
 #include <vector>
 
-#include "load_stats.hpp"
+#include "detailed_stats.hpp"
 #include "team_predictor.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"

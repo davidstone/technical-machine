@@ -32,6 +32,9 @@ class OutMessage {
 		std::vector <uint8_t> buffer;
 		explicit OutMessage (uint8_t code);
 		virtual ~OutMessage () {}
+		template<typename Integer>
+		void write_bytes(Integer bytes);
+		// The next three are the same as above for sizeof(Integer) = 1, 2, 4
 		void write_byte (uint8_t byte);
 		void write_short (uint16_t bytes);
 		void write_int (uint32_t bytes);

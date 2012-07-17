@@ -18,7 +18,6 @@
 
 #include "read_team_file.hpp"
 
-#include <stdexcept>
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
@@ -27,6 +26,7 @@
 #include "conversion.hpp"
 #include "../ability.hpp"
 #include "../item.hpp"
+#include "../invalid_stat.hpp"
 #include "../stat.hpp"
 #include "../team.hpp"
 

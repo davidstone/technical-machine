@@ -26,7 +26,6 @@
 #include "status.hpp"
 #include "rational.hpp"
 #include "team.hpp"
-#include "weather.hpp"
 
 #include "move/move.hpp"
 #include "move/moves.hpp"

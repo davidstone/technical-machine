@@ -921,9 +921,9 @@ Result Client::get_result (uint8_t code, uint32_t winner) const {
 	// battle, not my foe. I also ignore Forfeit -- Technical Machine never
 	// forfeits; if the foe forfeits, then it is a win.
 	if (code != 2)
-		return (winner == my_id) ? WON : LOST;
+		return (winner == my_id) ? Result::won : Result::lost;
 	else
-		return TIED;
+		return Result::tied;
 }
 
 }	// namespace po

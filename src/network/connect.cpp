@@ -16,7 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-// What follows are generic functions and data for connection to any Pokemon sim. Specific functions and data are found in the respective sim's folder.
+// What follows are generic functions and data for connection to any Pokemon
+// sim. Specific functions and data are found in the respective sim's folder.
 
 #include "connect.hpp"
 
@@ -27,10 +28,9 @@
 #include <utility>
 #include <vector>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/bind.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
@@ -41,9 +41,6 @@
 #include "../evaluate.hpp"
 #include "../exit_program.hpp"
 #include "../settings_file.hpp"
-
-#include "../team_predictor/load_stats.hpp"
-#include "../team_predictor/team_predictor.hpp"
 
 namespace technicalmachine {
 namespace network {

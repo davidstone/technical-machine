@@ -19,7 +19,6 @@
 #include "team.hpp"
 
 #include <cstdint>
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -29,20 +28,14 @@
 #include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
-#include "gender.hpp"
 #include "item.hpp"
 #include "invalid_team_file_format.hpp"
-#include "switch.hpp"
 #include "status.hpp"
 
 #include "pokemon/pokemon.hpp"
 
 #include "pokemon_lab/read_team_file.hpp"
 #include "pokemon_online/read_team_file.hpp"
-
-#include "team_predictor/team_predictor.hpp"
-
-#include "type/type.hpp"
 
 namespace technicalmachine {
 

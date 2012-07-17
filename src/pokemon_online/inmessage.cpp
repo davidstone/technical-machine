@@ -1,5 +1,5 @@
 // Pokemon Online incoming messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,9 +20,10 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 
-#include <boost/asio.hpp>
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/read.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/bind.hpp>
 
 #include "connect.hpp"
@@ -37,7 +38,7 @@ InMessage::InMessage (): network::InMessage::InMessage () {
 std::string InMessage::read_string () {
 	std::string data = "";
 	uint32_t const bytes = read_int ();
-	// QString reports a size of 0xFFFFFFFF is the string is null. I'll just call it empty.
+	// QString reports a size of 0xFFFFFFFF if the string is null. I'll just call it empty.
 	if (bytes != 0xFFFFFFFF) {
 		uint32_t const number_of_utf16_characters = bytes / 2;
 		for (uint32_t n = 0; n != number_of_utf16_characters; ++n)

@@ -18,7 +18,6 @@
 
 #include "pokemon.hpp"
 
-#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <string>
@@ -31,7 +30,6 @@
 
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
-#include "../move/shared.hpp"
 
 namespace technicalmachine {
 

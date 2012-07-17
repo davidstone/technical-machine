@@ -18,7 +18,6 @@
 
 #include "detailed_stats.hpp"
 
-#include <array>
 #include <cstddef>
 #include <fstream>
 #include <string>

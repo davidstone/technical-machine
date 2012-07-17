@@ -19,6 +19,7 @@
 #ifndef NETWORK__INMESSAGE_HPP_
 #define NETWORK__INMESSAGE_HPP_
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>

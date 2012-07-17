@@ -35,6 +35,7 @@
 
 #include "../battle_result.hpp"
 
+#include "../cryptography/byte_order.hpp"
 #include "../cryptography/md5.hpp"
 #include "../cryptography/sha2.hpp"
 #include "../cryptography/rijndael.h"
@@ -572,7 +573,7 @@ void Client::handle_welcome_message (uint32_t version, std::string const & serve
 	print_with_time_stamp (std::cout, message);
 }
 
-void Client::handle_password_challenge (InMessage msg) {
+void Client::handle_password_challenge (InMessage & msg) {
 	std::string challenge = "";
 	for (unsigned n = 0; n != 16; ++n)
 		challenge += static_cast<char> (msg.read_byte());
@@ -603,8 +604,8 @@ std::string Client::get_challenge_response (std::string const & challenge, Secre
 	// Add 1 to the decrypted number, which is an int stored in the first 4 bytes (all other bytes are 0).
 	uint32_t r = 1;
 	for (unsigned n = 0; n != 4; ++n)
-		r += static_cast<unsigned> (result [n]) << ((3 - n) * 8);
-	r = htonl (r);
+		r += static_cast<uint32_t> (result [n]) << ((3 - n) * 8);
+	r = boost::endian::h_to_n(r);
 
 	// I write back into result instead of a new array so that TM supports a potential future improvement in the security of Pokemon Lab. This will allow the protocol to work even if the server checks all of the digits for correctness, instead of just the first four.
 	uint8_t * byte = reinterpret_cast <uint8_t *> (& r);
@@ -818,9 +819,9 @@ void Client::send_private_message (std::string const & user, std::string const &
 
 Result Client::get_result (Battles::iterator const it, uint16_t const winner) {
 	if (winner != 0xFFFF and it != battles.end())
-		return it->second->is_me (winner) ? WON : LOST;
+		return it->second->is_me (winner) ? Result::won : Result::lost;
 	else
-		return TIED;
+		return Result::tied;
 }
 
 } // namespace pl

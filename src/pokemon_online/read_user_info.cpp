@@ -19,7 +19,6 @@
 #include "read_user_info.hpp"
 
 #include <cstdint>
-#include <string>
 #include <vector>
 #include <utility>
 

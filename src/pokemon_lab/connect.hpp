@@ -24,11 +24,13 @@
 #include <vector>
 #include <utility>
 
+#include <boost/asio/deadline_timer.hpp>
+
 #include "inmessage.hpp"
 #include "../network/connect.hpp"
-#include "../battle_result.hpp"
 
 namespace technicalmachine {
+enum class Result;
 namespace pl {
 
 class Battle;
@@ -51,7 +53,7 @@ class Client : public network::GenericClient {
 		void handle_message (InMessage::Message code, InMessage & msg);
 	private:
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const;
-		void handle_password_challenge (InMessage msg);
+		void handle_password_challenge (InMessage & msg);
 		enum SecretStyle {
 			NONE = 0,
 			MD5 = 1,		// This secret style is never actually used.

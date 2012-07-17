@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cstdint>
 
 #include "move.hpp"
 #include "moves.hpp"

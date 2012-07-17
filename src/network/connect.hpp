@@ -25,16 +25,17 @@
 #include <string>
 #include <vector>
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/scoped_ptr.hpp>
 
 #include "../battle.hpp"
-#include "../battle_result.hpp"
 #include "../evaluate.hpp"
 
 #include "../team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
+enum class Result;
 namespace network {
 class GenericBattleSettings;
 

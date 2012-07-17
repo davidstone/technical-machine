@@ -19,22 +19,18 @@
 #ifndef TEAM_HPP_
 #define TEAM_HPP_
 
-#include <array>
 #include <cstdint>
 #include <random>
 #include <string>
 
 #include "entry_hazards.hpp"
-#include "gender.hpp"
 #include "screens.hpp"
 #include "stage.hpp"
-#include "stat.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
 
 #include "move/shared.hpp"
 
-#include "pokemon/pokemon.hpp"
 #include "pokemon/collection.hpp"
 
 namespace technicalmachine {

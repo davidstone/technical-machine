@@ -21,7 +21,6 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
-#include <ctime>
 #include <iostream>
 #include <random>
 #include <string>
@@ -44,8 +43,6 @@
 #include "move/use_move.hpp"
 
 #include "pokemon/pokemon.hpp"
-
-#include "type/type.hpp"
 
 namespace technicalmachine {
 namespace {

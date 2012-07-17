@@ -21,7 +21,6 @@
 
 #include <random>
 #include <string>
-#include <vector>
 #include "outmessage.hpp"
 #include "../battle.hpp"
 

@@ -1,4 +1,4 @@
-// Battle's result
+// Invalid stat exception class
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BATTLE_RESULT_HPP_
-#define BATTLE_RESULT_HPP_
+#ifndef INVALID_STAT_HPP_
+#define INVALID_STAT_HPP_
 
+#include <stdexcept>
 #include <string>
 
 namespace technicalmachine {
 
-enum class Result {
-	won = 1,
-	lost = -1,
-	tied = 0
+class InvalidStat : public std::runtime_error {
+	public:
+		explicit InvalidStat (std::string const & stat_string):
+			std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
+			{
+		}
 };
 
-std::string to_string (Result result);
-
 }	// namespace technicalmachine
-#endif	// BATTLE_RESULT_HPP_
+#endif	// INVALID_STAT_HPP_

@@ -19,7 +19,8 @@
 #ifndef POKEMON_ONLINE__INMESSAGE_HPP_
 #define POKEMON_ONLINE__INMESSAGE_HPP_
 
-#include <boost/asio.hpp>
+#include <string>
+#include <boost/asio/ip/tcp.hpp>
 #include "../network/inmessage.hpp"
 
 namespace technicalmachine {

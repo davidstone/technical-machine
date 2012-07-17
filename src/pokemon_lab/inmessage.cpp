@@ -1,5 +1,5 @@
 // Pokemon Lab incoming messages
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,10 +17,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inmessage.hpp"
+
 #include <cstdint>
 #include <string>
-#include <boost/asio.hpp>
+
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/read.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/bind.hpp>
+
 #include "connect.hpp"
 
 namespace technicalmachine {

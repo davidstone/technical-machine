@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <ctime>
 #include <iostream>
 #include <random>
 #include <string>
@@ -29,7 +28,6 @@
 #include "battle_result.hpp"
 #include "endofturn.hpp"
 #include "expectiminimax.hpp"
-#include "gender.hpp"
 #include "switch.hpp"
 #include "team.hpp"
 #include "weather.hpp"
@@ -45,9 +43,9 @@
 #include "pokemon_lab/write_team_file.hpp"
 
 #include "team_predictor/team_predictor.hpp"
-#include "team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
+class DetailedStats;
 enum class Moves : uint16_t;
 enum class Species : uint16_t;
 
@@ -243,7 +241,7 @@ void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
 void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
 	std::string const verb = to_string (result);
 	client.print_with_time_stamp (std::cout, verb + " a battle vs. " + opponent);
-	if (result == LOST) {
+	if (result == Result::lost) {
 		pl::write_team (predict_foe_team (client.detailed), client.generate_team_file_name ());
 	}
 }

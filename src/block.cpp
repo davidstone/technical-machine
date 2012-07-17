@@ -29,8 +29,6 @@
 
 #include "pokemon/pokemon.hpp"
 
-#include "type/type.hpp"
-
 namespace technicalmachine {
 namespace {
 

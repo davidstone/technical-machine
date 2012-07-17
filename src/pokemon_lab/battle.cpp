@@ -18,26 +18,13 @@
 
 #include "battle.hpp"
 
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include <boost/lexical_cast.hpp>
 
-#include "connect.hpp"
-#include "outmessage.hpp"
-
-#include "../battle.hpp"
-#include "../team.hpp"
-
-#include "../pokemon/pokemon.hpp"
-
 namespace technicalmachine {
 namespace pl {
-
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, std::string const & team_file_name):
-	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team_file_name) {
-}
 
 void Battle::handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments) {
 #if 0

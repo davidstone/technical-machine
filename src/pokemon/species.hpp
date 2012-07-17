@@ -23,25 +23,44 @@
 
 namespace technicalmachine {
 
-/*
-I decided to go with alphabetical listing over Pokedex listing due to the issue of alternate forms. Alternate forms (like Deoxys-A vs. Deoxys-S) mean that I have two choices: I can have one be in the middle of the list, and the other be at the other end, or I can stick the forms together. Either way, it ruins the idea of referencing Pokemon by #, so to avoid any mistakes, I just went alphabetical.
+// I decided to go with alphabetical listing over Pokedex listing due to the
+// issue of alternate forms. Alternate forms (like Deoxys-A vs. Deoxys-S) mean
+// that I have two choices: I can have one be in the middle of the list, and the
+// other be at the other end, or I can stick the forms together. Either way, it
+// ruins the idea of referencing Pokemon by #, so to avoid any mistakes, I just
+// went alphabetical.
+//
+// Hyphens and spaces were replaced by underscores. Dots and apostrophes were
+// removed.
+//
+// The following are my formats for species:
+//
+// Deoxys-A(ttack), Deoxys-D(efense), Deoxys-M(ediocre), Deoxys-S(peed). All of
+// these are standard except Deoxys-M, which is usually refered as simply
+// Deoxys. On Shoddy Battle, A = f, D = l, S = e, and M has no letter. Pokemon
+// Online uses my standard abbreviations, except with Deoxys-M being just
+// Deoxys.
+//
+// Giratina-A(ltered), Giratina-O(rigin). Both of these are somewhat standard.
+// Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A
+// has no letter, and Giratina-O is Giratina-o. Pokemon Online uses Giratina and
+// Giratina-O.
+//
+// The weaker Rotom form is Rotom. The appliance Rotom forms use their standard
+// one-letter abbreviation. This is the same as Shoddy Battle, except Shoddy
+// does not capitalize the form letter. For reference: Rotom-C(ut),
+// Rotom-F(ridge), Rotom-H(eat), Rotom-S(pin), Rotom-W(ash). Pokemon Online uses
+// the same as I do.
+//
+// Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon
+// Online uses Shaymin and Shaymin-S.
 
-Hyphens and spaces were replaced by underscores. Dots and apostrophes were removed.
-
-The following are my format for species:
-
-Deoxys-A(ttack), Deoxys-D(efense), Deoxys-M(ediocre), Deoxys-S(peed). All of these are standard except Deoxys-M, which is usually refered as simply Deoxys. On Shoddy Battle, A = f, D = l, S = e, and M has no letter. Pokemon Online uses my standard abbreviations, except with Deoxys-M being just Deoxys.
-
-Giratina-A(ltered), Giratina-O(rigin). Both of these are somewhat standard. Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A has no letter, and Giratina-O is Giratina-o. Pokemon Online uses Giratina and Giratina-O.
-
-The weaker Rotom form is Rotom. The appliance Rotom forms use their standard one-letter abbreviation. This is the same as Shoddy Battle, except Shoddy does not capitalize the form letter. For reference: Rotom-C(ut), Rotom-F(ridge), Rotom-H(eat), Rotom-S(pin), Rotom-W(ash). Pokemon Online uses the same as I do.
-
-Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon Online uses Shaymin and Shaymin-S.
-
-Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type, Wormadam-T(rash) = Steel-type. These names are based on the in-game Pokedex descriptions of the forms. On Shoddy Battle, P = no letter, S = g, T = s. Pokemon Online uses Wormadam, Wormadam-G, and Wormadam-S.
-
-Pokemon Online refers to Porygon2 as Porygon 2.
-*/
+// Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type,
+// Wormadam-T(rash) = Steel-type. These names are based on the in-game Pokedex
+// descriptions of the forms. On Shoddy Battle, P = no letter, S = g, T = s.
+// Pokemon Online uses Wormadam, Wormadam-G, and Wormadam-S.
+//
+// Pokemon Online refers to Porygon2 as Porygon 2.
 
 enum class Species : uint16_t {
 	ABOMASNOW,

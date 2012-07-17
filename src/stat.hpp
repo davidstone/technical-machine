@@ -20,7 +20,6 @@
 #define STAT_HPP_
 
 #include <cstdint>
-#include <stdexcept>
 #include <string>
 
 namespace technicalmachine {
@@ -60,14 +59,6 @@ class Stat {
 		static void chance_to_hit (Team & user, Team const & target, Weather const & weather);
 	private:
 		static uint8_t get_base_stat (Species name, Stats stat_name);
-};
-
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string):
-			std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
-			{
-		}
 };
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather);

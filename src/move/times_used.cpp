@@ -22,6 +22,8 @@
 #include <cassert>
 #include <cstdint>
 
+#include "../rational.hpp"
+
 namespace technicalmachine {
 namespace {
 constexpr unsigned max_relevant_counter_value = 10;

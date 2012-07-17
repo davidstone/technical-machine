@@ -18,21 +18,17 @@
 
 #include "evaluate.hpp"
 
-#include <cstddef>
 #include <cstdint>
-#include <string>
-#include <vector>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "ability.hpp"
 #include "team.hpp"
-#include "weather.hpp"
 
 #include "move/move.hpp"
 #include "move/moves.hpp"
 
+#include "pokemon/collection.hpp"
 #include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
@@ -48,7 +44,7 @@ class ResetIndex {
 		}
 	private:
 		Team & reset;
-		uint8_t const index;
+		PokemonCollection::index_type const index;
 };
 
 }	// unnamed namespace

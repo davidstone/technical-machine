@@ -56,6 +56,7 @@ class Type {
 		bool is_immune_to_sandstorm () const;
 		bool is_strengthened_by_weather (Weather const & weather) const;
 		bool is_weakened_by_weather (Weather const & weather) const;
+		// Template specializations are defined in cpp
 		template<Status::Statuses status>
 		bool blocks_status () const {
 			return false;

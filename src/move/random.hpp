@@ -21,9 +21,8 @@
 
 #include <cstdint>
 
-#include "../rational.hpp"
-
 namespace technicalmachine {
+class Rational;
 
 class Random {
 	public:

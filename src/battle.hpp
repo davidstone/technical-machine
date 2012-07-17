@@ -25,7 +25,6 @@
 #include <vector>
 
 #include "battle_result.hpp"
-#include "gender.hpp"
 #include "team.hpp"
 #include "weather.hpp"
 
@@ -33,6 +32,7 @@ namespace technicalmachine {
 enum class Moves : uint16_t;
 enum class Species : uint16_t;
 class DetailedStats;
+class Gender;
 namespace network {
 class GenericClient;
 class OutMessage;

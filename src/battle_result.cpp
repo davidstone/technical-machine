@@ -24,9 +24,9 @@ namespace technicalmachine {
 
 std::string to_string (Result const result) {
 	switch (result) {
-		case WON:
+		case Result::won:
 			return "Won";
-		case LOST:
+		case Result::lost:
 			return "Lost";
 		default:
 			return "Tied";

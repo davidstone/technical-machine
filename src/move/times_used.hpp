@@ -20,9 +20,9 @@
 #define MOVE__TIMES_USED_HPP_
 
 #include <cstdint>
-#include "../rational.hpp"
 
 namespace technicalmachine {
+class Rational;
 
 class TimesUsed {
 	public:

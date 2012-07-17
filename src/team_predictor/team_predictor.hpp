@@ -19,10 +19,9 @@
 #ifndef TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_
 #define TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_
 
-#include "detailed_stats.hpp"
-#include "../team.hpp"
-
 namespace technicalmachine {
+class DetailedStats;
+class Team;
 
 Team predict_team (DetailedStats const & detailed, Team team, unsigned size, bool using_lead = true);
 

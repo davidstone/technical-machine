@@ -26,9 +26,9 @@
 #include "moves.hpp"
 #include "ranked.hpp"
 #include "reorder.hpp"
-#include "shared.hpp"
 
 namespace technicalmachine {
+class SharedMoves;
 
 MoveCollection::MoveCollection (SharedMoves & s):
 	Base(MoveContainer (s)) {

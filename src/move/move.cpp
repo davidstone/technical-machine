@@ -24,8 +24,8 @@
 #include "moves.hpp"
 
 #include "../evaluate.hpp"
+#include "../rational.hpp"
 #include "../team.hpp"
-#include "../weather.hpp"
 
 #include "../type/type.hpp"
 #undef SING

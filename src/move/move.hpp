@@ -30,7 +30,6 @@
 #include "random.hpp"
 #include "times_used.hpp"
 
-#include "../rational.hpp"
 #include "../variable_collection.hpp"
 #include "../type/type.hpp"
 

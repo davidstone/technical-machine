@@ -1,5 +1,5 @@
 // Pokemon Lab Battle settings
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <cstdint>
 #include "battle_settings.hpp"
+#include <cstdint>
 
 namespace technicalmachine {
 namespace pl {

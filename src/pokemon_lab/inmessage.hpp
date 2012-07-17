@@ -19,7 +19,7 @@
 #ifndef POKEMON_LAB__INMESSAGE_HPP_
 #define POKEMON_LAB__INMESSAGE_HPP_
 
-#include <boost/asio.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include "../network/inmessage.hpp"
 
 namespace technicalmachine {

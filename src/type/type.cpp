@@ -20,7 +20,6 @@
 
 #include <vector>
 
-#include "../ability.hpp"
 #include "../status.hpp"
 #include "../weather.hpp"
 

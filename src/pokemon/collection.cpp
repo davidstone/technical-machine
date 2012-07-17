@@ -21,13 +21,11 @@
 #include <algorithm>
 #include <cassert>
 #include <functional>
-#include <string>
 
 #include "pokemon.hpp"
 #include "pokemon_not_found.hpp"
 
 #include "../move/move.hpp"
-#include "../move/shared.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

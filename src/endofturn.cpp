@@ -18,8 +18,6 @@
 
 #include "endofturn.hpp"
 
-#include <cstdint>
-
 #include "ability.hpp"
 #include "damage.hpp"
 #include "heal.hpp"

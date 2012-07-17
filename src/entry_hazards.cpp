@@ -22,7 +22,6 @@
 
 #include "heal.hpp"
 #include "team.hpp"
-#include "weather.hpp"
 
 namespace technicalmachine {
 namespace {

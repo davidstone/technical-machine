@@ -18,31 +18,33 @@
 
 #include "outmessage.hpp"
 #include <cstdint>
-#include <arpa/inet.h>
+#include "../cryptography/byte_order.hpp"
 
 namespace technicalmachine {
 namespace network {
 
-OutMessage::OutMessage (uint8_t code) {
+OutMessage::OutMessage (uint8_t const code) {
 	write_byte (code);
 }
 
+template<typename Integer>
+void OutMessage::write_bytes(Integer const bytes) {
+	Integer const network_byte = boost::endian::h_to_n(bytes);
+	uint8_t const * byte = reinterpret_cast<uint8_t const *>(&network_byte);
+	for (unsigned n = 0; n != sizeof(Integer); ++n)
+		buffer.emplace_back(*(byte + n));
+}
+
 void OutMessage::write_byte (uint8_t byte) {
-	buffer.emplace_back(byte);
+	write_bytes(byte);
 }
 
 void OutMessage::write_short (uint16_t bytes) {
-	uint16_t network_byte = htons (bytes);
-	uint8_t * byte = reinterpret_cast <uint8_t *> (&network_byte);
-	for (unsigned n = 0; n != sizeof (uint16_t); ++n)
-		write_byte (*(byte + n));
+	write_bytes(bytes);
 }
 
 void OutMessage::write_int (uint32_t bytes) {
-	uint32_t network_byte = htonl (bytes);
-	uint8_t * byte = reinterpret_cast <uint8_t *> (&network_byte);
-	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
-		write_byte (*(byte + n));
+	write_bytes(bytes);
 }
 
 }	// namespace technicalmachine

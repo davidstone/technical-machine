@@ -23,7 +23,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <string>
 
 #include "pokemon.hpp"
 

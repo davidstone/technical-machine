@@ -21,13 +21,9 @@
 #include "ability.hpp"
 #include "entry_hazards.hpp"
 #include "stat.hpp"
-#include "status.hpp"
 #include "team.hpp"
-#include "weather.hpp"
 
 #include "pokemon/pokemon.hpp"
-
-#include "type/type.hpp"
 
 namespace technicalmachine {
 namespace {

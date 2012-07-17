@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <boost/asio.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 #include "../network/outmessage.hpp"
 
