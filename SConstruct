@@ -26,7 +26,7 @@ from build_scripts.sources import ai, predict, test, generate_sources
 SetOption('warn', 'no-duplicate-environment')
 SetOption('max_drift', 2)
 SetOption('implicit_cache', 1)
-SetOption('num_jobs', multiprocessing.cpu_count() * 3 / 2)
+SetOption('num_jobs', multiprocessing.cpu_count())
 
 AddOption('--compiler', dest = 'compiler', type = 'string', action = 'store', help = 'Name of the compiler to use.')
 AddOption('--compiler-command', dest = 'compiler_command', type = 'string', action = 'store', help = 'Command to launch the compiler.')
@@ -47,6 +47,7 @@ default.Append(CCFLAGS = flags['cc']['default'], CXXFLAGS = flags['cxx']['defaul
 default.Replace(CXX = compiler_command)
 
 build_root = 'build/' + compiler_name + '/'
+
 debug = default.Clone()
 debug.Append(CCFLAGS = flags['cc']['debug'], CXXFLAGS = flags['cxx']['debug'], LINKFLAGS = flags['link']['debug'], CPPDEFINES = flags['cpp']['debug'])
 debug.VariantDir(build_root + 'debug/', 'src', duplicate = 0)
