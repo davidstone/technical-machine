@@ -43,18 +43,22 @@ if not GetOption('verbose'):
 	default['CXXCOMSTR'] = 'Compiling $TARGET'
 	default['LINKCOMSTR'] = 'Linking $TARGET'
 
-default.Append(CCFLAGS = flags['cc']['default'], CXXFLAGS = flags['cxx']['default'], LINKFLAGS = flags['link']['default'], CPPDEFINES = flags['cpp']['default'])
 default.Replace(CXX = compiler_command)
 
-build_root = 'build/' + compiler_name + '/'
+def setup_environment_flags(version):
+	environment = default.Clone()
+	environment.Append(CCFLAGS = flags['cc'][version])
+	environment.Append(CXXFLAGS = flags['cxx'][version])
+	environment.Append(LINKFLAGS = flags['link'][version])
+	environment.Append(CPPDEFINES = flags['cpp'][version])
+	if version != 'default':
+		build_root = 'build/' + compiler_name + '/'
+		environment.VariantDir(build_root + version, 'src', duplicate = 0)
+	return environment
 
-debug = default.Clone()
-debug.Append(CCFLAGS = flags['cc']['debug'], CXXFLAGS = flags['cxx']['debug'], LINKFLAGS = flags['link']['debug'], CPPDEFINES = flags['cpp']['debug'])
-debug.VariantDir(build_root + 'debug/', 'src', duplicate = 0)
-
-optimized = default.Clone()
-optimized.Append(CCFLAGS = flags['cc']['optimized'], CXXFLAGS = flags['cxx']['optimized'], LINKFLAGS = flags['link']['optimized'], CPPDEFINES = flags['cpp']['optimized'])
-optimized.VariantDir(build_root + 'optimized/', 'src', duplicate = 0)
+default = setup_environment_flags('default')
+debug = setup_environment_flags('debug')
+optimized = setup_environment_flags('optimized')
 
 def create_program (base, versions):
 	env = { 'debug':debug, 'optimized':optimized }
