@@ -290,16 +290,6 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 	return false;
 }
 
-std::string GenericClient::get_response () {
-	if (!responses.empty()) {
-		std::uniform_int_distribution <unsigned> distribution { 0, static_cast <unsigned> (responses.size() - 1) };
-		return responses [distribution (random_engine)];
-	}
-	else {
-		return "";
-	}
-}
-
 void GenericClient::send_channel_message (std::string channel, std::string const & message) {
 	uint32_t const channel_id = channels.find (channel)->second;
 	send_channel_message (channel_id, message);
@@ -353,7 +343,7 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		handle_challenge_command (request, delimiter_position + 1);
 	else if (command == "depth")
 		handle_depth_change_command (user, request, delimiter_position + 1);
-	else if (command == "exit")
+	else if (command == "exit" or command == "quit")
 		handle_exit_command();
 	else if (command == "join")
 		handle_join_channel_command (request, delimiter_position + 1);
@@ -363,8 +353,6 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		handle_part_channel_command (request, delimiter_position + 1);
 	else if (command == "pm")
 		handle_send_pm_command (request, delimiter_position + 1);
-	else if (command == "quit")
-		handle_exit_command();
 	else if (command == "reload")
 		handle_reload_settings_command ();
 }
@@ -446,6 +434,22 @@ void GenericClient::handle_reload_settings_command () {
 	trusted_users = load_trusted_users ();
 	load_settings (true);
 	score.load_evaluation_constants ();
+}
+
+void GenericClient::taunt_foe(uint32_t const battle_id) {
+	std::uniform_int_distribution<unsigned> distribution { 0, chattiness - 1 };
+	if (distribution(random_engine) == 0)
+		send_channel_message(battle_id, get_response());
+}
+
+std::string GenericClient::get_response () {
+	if (!responses.empty()) {
+		std::uniform_int_distribution<unsigned> distribution { 0, static_cast<unsigned>(responses.size() - 1) };
+		return responses[distribution(random_engine)];
+	}
+	else {
+		return "";
+	}
 }
 
 }	// namespace network

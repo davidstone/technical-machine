@@ -43,50 +43,18 @@ class GenericBattleSettings;
 
 class GenericClient {
 	public:
-		std::string username;
-		std::string team_file_name;
-	protected:
-		std::string password;
-		std::string host;
-		std::string port;
-		std::random_device rd;
-		std::mt19937 random_engine;
-	private:
-		std::string time_format;
-		std::vector <std::string> highlights;
-		std::vector <std::string> responses;
-		std::vector <std::string> trusted_users;
-	protected:
-		Battles battles;
-		std::map <std::string, uint32_t> channels;
-	public:
-		boost::asio::io_service io;
-		Score score;
-		DetailedStats detailed;
-	protected:
-		unsigned depth;
-	public:
-		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
-		unsigned chattiness;
-
 		explicit GenericClient (unsigned set_depth);
 		virtual ~GenericClient () { }
-	private:
-		bool is_trusted (std::string const & user) const;
-		void load_settings (bool reloading);
-		void connect ();
-	public:
 		void reconnect ();
 		void print_with_time_stamp (std::ostream & stream, std::string const & message) const;
+		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
+		void send_channel_message (std::string channel, std::string const & message);
+		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
+		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
+		std::string generate_team_file_name ();
+		void taunt_foe(uint32_t battle_id);
 	protected:
 		virtual void send_keep_alive_message () = 0;
-	private:
-		virtual void join_channel (std::string const & channel) = 0;
-		virtual void part_channel (std::string const & channel) = 0;
-		std::string time_stamp () const;
-	public:
-		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
-	protected:
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		void add_pending_challenge (std::shared_ptr <GenericBattle> const & battle);
@@ -94,21 +62,17 @@ class GenericClient {
 		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
 		void pause_at_start_of_battle ();
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
-	private:
-		bool is_highlighted (std::string const & message) const;
-	public:
-		void send_channel_message (std::string channel, std::string const & message);
-		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
-		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
-		std::string get_response ();
-		std::string generate_team_file_name ();
-	protected:
 		void handle_battle_end(uint32_t battle_id, Result result);
-	private:
-		std::string get_random_string (unsigned size);
-	protected:
 		void handle_private_message (std::string const & sender, std::string const & message);
 	private:
+		bool is_trusted (std::string const & user) const;
+		void load_settings (bool reloading);
+		void connect ();
+		virtual void join_channel (std::string const & channel) = 0;
+		virtual void part_channel (std::string const & channel) = 0;
+		std::string time_stamp () const;
+		bool is_highlighted (std::string const & message) const;
+		std::string get_random_string (unsigned size);
 		void do_request (std::string const & user, std::string const & request);
 		void handle_challenge_command (std::string const & request, size_t start);
 		void handle_depth_change_command (std::string const & user, std::string const & request, size_t start);
@@ -118,6 +82,30 @@ class GenericClient {
 		void handle_send_pm_command (std::string const & request, size_t start);
 		void handle_reload_settings_command ();
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
+		std::string get_response ();
+	public:
+		std::string username;
+		std::string team_file_name;
+		boost::asio::io_service io;
+		Score score;
+		DetailedStats detailed;
+		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
+	protected:
+		std::string password;
+		std::string host;
+		std::string port;
+		std::random_device rd;
+		std::mt19937 random_engine;
+		Battles battles;
+		std::map <std::string, uint32_t> channels;
+	private:
+		std::string time_format;
+		std::vector <std::string> highlights;
+		std::vector <std::string> responses;
+		std::vector <std::string> trusted_users;
+		unsigned chattiness;
+	protected:
+		unsigned depth;
 };
 
 }	// namespace network

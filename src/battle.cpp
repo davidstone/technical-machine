@@ -122,9 +122,7 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 	do_turn ();
 	correct_hp_and_report_errors (*first);
 	correct_hp_and_report_errors (*last);
-	std::uniform_int_distribution <unsigned> distribution { 0, client.chattiness - 1 };
-	if (distribution (random_engine) == 0)
-		client.send_channel_message (battle_id, client.get_response ());
+	client.taunt_foe(battle_id);
 }
 
 Moves GenericBattle::determine_action (network::GenericClient & client) {
