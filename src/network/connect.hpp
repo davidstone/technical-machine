@@ -57,7 +57,8 @@ class GenericClient {
 		virtual void send_keep_alive_message () = 0;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
-		void add_pending_challenge (std::shared_ptr <GenericBattle> const & battle);
+		// Takes ownership of the battle
+		void add_pending_challenge (GenericBattle * battle);
 		void handle_challenge_withdrawn (std::string const & opponent);
 		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
 		void pause_at_start_of_battle ();

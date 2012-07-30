@@ -30,7 +30,8 @@ namespace network {
 
 class Battles {
 	public:
-		void add_pending_challenge(std::shared_ptr<GenericBattle> const & battle);
+		// Takes ownership of the battle
+		void add_pending_challenge(GenericBattle * battle);
 		void handle_challenge_withdrawn();
 		void handle_challenge_withdrawn(std::string const & opponent);
 		GenericBattle & handle_begin(uint32_t battle_id, std::string const & opponent);
@@ -40,7 +41,7 @@ class Battles {
 		bool challenges_are_queued() const;
 		std::string first_challenger() const;
 	private:
-		typedef std::shared_ptr<GenericBattle> Pointer;
+		typedef std::unique_ptr<GenericBattle> Pointer;
 		// Battles that have not yet begun
 		typedef std::map<std::string, Pointer> Challenges;
 		// Battles currently underway

@@ -738,8 +738,8 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	try {
 		if (!battles.challenges_are_queued() and get_user_id (opponent)) {
 			constexpr bool challenger = true;
-			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name, challenger));
-			add_pending_challenge (battle);
+			Battle * battle = new Battle(rd(), opponent, depth, team_file_name, challenger);
+			add_pending_challenge(battle);
 			OutMessage msg (OutMessage::SEND_TEAM);
 			battle->write_team (msg, username);
 			msg.send (*socket);
@@ -781,8 +781,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	if (accepted and !battles.challenges_are_queued()) {
 		// They challenged me.
 		constexpr bool challenger = false;
-		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team, challenger));
-		add_pending_challenge (battle);
+		add_pending_challenge(new Battle(rd(), opponent, depth, team, challenger));
 		msg.write_byte (ACCEPTED);
 		verb = "Accepted";
 	}

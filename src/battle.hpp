@@ -56,8 +56,8 @@ class GenericBattle {
 		uint8_t party;
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
-		virtual ~GenericBattle() {}
 	public:
+		virtual ~GenericBattle() {}
 		bool is_me (uint32_t other_party) const;
 		void set_if_party_unknown (uint8_t new_party);
 		void write_team (network::OutMessage & msg, std::string const & username = std::string());

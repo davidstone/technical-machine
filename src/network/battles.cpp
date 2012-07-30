@@ -28,8 +28,8 @@
 namespace technicalmachine {
 namespace network {
 
-void Battles::add_pending_challenge(std::shared_ptr<GenericBattle> const & battle) {
-	challenges.insert(std::make_pair(battle->opponent, battle));
+void Battles::add_pending_challenge(GenericBattle * battle) {
+	challenges.insert(std::make_pair(battle->opponent, Pointer(battle)));
 }
 
 void Battles::handle_challenge_withdrawn() {
@@ -44,10 +44,10 @@ GenericBattle & Battles::handle_begin(uint32_t const battle_id, std::string cons
 	auto const it = challenges.find(opponent);
 	if (it == challenges.end())
 		throw InvalidUser(opponent);
- 	Pointer battle = it->second;
-	active.insert(std::make_pair(battle_id, battle));
+	GenericBattle & battle = *it->second;
+	active.insert(std::make_pair(battle_id, std::move(it->second)));
 	challenges.erase(opponent);
-	return *battle;
+	return battle;
 }
 
 void Battles::handle_end(uint32_t const battle_id) {
