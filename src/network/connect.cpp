@@ -211,18 +211,16 @@ void GenericClient::handle_incoming_challenge (std::string const & opponent, Gen
 }
 
 void GenericClient::add_pending_challenge (std::shared_ptr <GenericBattle> const & battle) {
-	challenges.insert (std::pair <std::string, std::shared_ptr <GenericBattle>> (battle->opponent, battle));
+	battles.add_pending_challenge(battle);
 }
 
 void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
-	challenges.erase (opponent);
+	battles.handle_challenge_withdrawn(opponent);
 }
 
 void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
- 	std::shared_ptr <GenericBattle> battle = challenges.find (opponent)->second;
- 	battle->set_if_party_unknown (party);
-	battles.insert (std::pair <uint32_t, std::shared_ptr <GenericBattle>> (battle_id, battle));
-	challenges.erase (opponent);
+	GenericBattle & battle = battles.handle_begin(battle_id, opponent);
+	battle.set_if_party_unknown (party);
 //	pause_at_start_of_battle ();
 }
 
@@ -242,12 +240,10 @@ std::string get_extension () {
 
 }	// unnamed namespace
 
-void GenericClient::handle_battle_end (Battles::iterator const it, Result const result) {
-	if (it != battles.end ()) {
-		GenericBattle const & battle = *it->second;
-		battle.handle_end (*this, result);
-		battles.erase (it);
-	}
+void GenericClient::handle_battle_end (uint32_t const battle_id, Result const result) {
+	GenericBattle const & battle = battles.find(battle_id);
+	battle.handle_end (*this, result);
+	battles.handle_end(battle_id);
 }
 
 std::string GenericClient::generate_team_file_name () {

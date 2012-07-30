@@ -419,8 +419,7 @@ void Client::parse_battle_finished (InMessage & msg) {
 		uint32_t const winner = msg.read_int ();
 		uint32_t const loser = msg.read_int ();
 		if (winner == my_id or loser == my_id) {
-			auto const it = battles.find (battle_id);
-			handle_battle_end (it, get_result (result_code, winner));
+			handle_battle_end(battle_id, get_result(result_code, winner));
 		}
 	}
 }
@@ -431,11 +430,8 @@ void Client::handle_battle_message (InMessage & msg) {
 	uint8_t const command = msg.read_byte ();
 	uint8_t const player = msg.read_byte ();
 	length -= (sizeof (command) + sizeof (player));
-	auto const it = battles.find (battle_id);
-	if (it != battles.end ()) {
-		Battle & battle = static_cast <Battle &> (*it->second);
-		battle.handle_message (*this, battle_id, command, player, msg);
-	}
+	auto & battle = static_cast<Battle &>(battles.find (battle_id));
+	battle.handle_message (*this, battle_id, command, player, msg);
 }
 
 void Client::parse_ask_for_pass (InMessage & msg) {
@@ -740,7 +736,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	// challenges and mostly randomized teams, but that would be much more
 	// work. It would require using a queue instead of a map.
 	try {
-		if (challenges.empty () and get_user_id (opponent)) {
+		if (!battles.challenges_are_queued() and get_user_id (opponent)) {
 			constexpr bool challenger = true;
 			std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team_file_name, challenger));
 			add_pending_challenge (battle);
@@ -756,9 +752,9 @@ void Client::send_battle_challenge (std::string const & opponent) {
 
 void Client::send_battle_challenge_with_current_team () {
 	try {
-		if (!challenges.empty ()) {
+		if (battles.challenges_are_queued()) {
 			OutMessage msg (OutMessage::CHALLENGE_STUFF);
-			uint32_t const user_id = get_user_id (challenges.begin ()->first);
+			uint32_t const user_id = get_user_id(battles.first_challenger());
 			uint8_t const generation = 4;		// ???
 			std::vector <uint32_t> clauses {
 				BattleSettings::FREEZE_CLAUSE,
@@ -774,7 +770,7 @@ void Client::send_battle_challenge_with_current_team () {
 		std::string message = error.what();
 		message += " They may have logged out.";
 		print_with_time_stamp(std::cerr, message);
-		challenges.erase (challenges.begin ());
+		battles.handle_challenge_withdrawn();
 	}
 }
 
@@ -782,7 +778,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	OutMessage msg (OutMessage::CHALLENGE_STUFF);
 	std::string verb;
 	// See the description of send_battle_challenge() for why I make sure challenges is empty
-	if (accepted and challenges.empty ()) {
+	if (accepted and !battles.challenges_are_queued()) {
 		// They challenged me.
 		constexpr bool challenger = false;
 		std::shared_ptr <Battle> battle (new Battle (rd (), opponent, depth, team, challenger));
@@ -791,8 +787,8 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 		verb = "Accepted";
 	}
 	else {
-		if (!challenges.empty ())
-			challenges.erase (challenges.begin ());
+		if (battles.challenges_are_queued())
+			battles.handle_challenge_withdrawn();
 		msg.write_byte (REFUSED);
 		verb = "Rejected";
 	}

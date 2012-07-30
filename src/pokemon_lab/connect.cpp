@@ -305,13 +305,10 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 						moves.emplace_back(msg.read_byte ());
 				}
 			}
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				OutMessage action (OutMessage::BATTLE_ACTION);
-				battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
-				action.send (*socket);
-			}
+			auto & battle = static_cast<Battle &>(battles.find(battle_id));
+			OutMessage action (OutMessage::BATTLE_ACTION);
+			battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
+			action.send (*socket);
 			break;
 		}
 		case InMessage::BATTLE_POKEMON: {
@@ -336,19 +333,15 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			for (uint8_t n = 0; n != argc; ++n) {
 				arguments.emplace_back(msg.read_string());
 			}
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_print (category, message_id, arguments);
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_print (category, message_id, arguments);
 			break;
 		}
 		case InMessage::BATTLE_END: {
 			uint32_t const battle_id = msg.read_int ();
 			// I'm interpreting party_id as uint16_t instead of int16_t.
 			uint16_t const winner = msg.read_short ();
-			auto const it = battles.find (battle_id);
-			handle_battle_end (it, get_result (it, winner));
+			handle_battle_end(battle_id, get_result(battle_id, winner));
 			break;
 		}
 		case InMessage::BATTLE_USE_MOVE: {
@@ -357,11 +350,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			uint16_t const move_id = msg.read_short ();
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_use_move (party, slot, id_to_move(move_id));
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_use_move (party, slot, id_to_move(move_id));
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
@@ -385,11 +375,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			Species const species = id_to_species (msg.read_short ());
 			Gender gender (id_to_gender (msg.read_byte ()));
 			uint8_t const level = msg.read_byte();
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_send_out (party, slot, index, nickname, species, gender, level);
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
 			break;
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
@@ -401,11 +388,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const remaining_hp = msg.read_short ();
 			int16_t const denominator = static_cast<int16_t> (msg.read_short ());
 			assert(denominator > 0);
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, static_cast<uint16_t>(denominator));
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, static_cast<uint16_t>(denominator));
 			break;
 		}
 		case InMessage::BATTLE_SET_PP: {
@@ -413,11 +397,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			uint8_t const party = msg.read_byte ();
 //			uint8_t const slot = msg.read_byte ();
 //			uint8_t const pp = msg.read_byte ();
-//			auto const it = battles.find (battle_id);
-//			if (it != battles.end ()) {
-//				Battle & battle = static_cast <Battle &> (*it->second);
-//				battle.handle_set_pp (party, slot, pp);
-//			}
+//			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+//			battle.handle_set_pp (party, slot, pp);
 			break;
 		}
 		case InMessage::BATTLE_FAINTED: {
@@ -426,21 +407,15 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			// This isn't needed:
 			// std::string const nickname = msg.read_string ();
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_fainted (party, slot);
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_fainted (party, slot);
 			break;
 		}
 		case InMessage::BATTLE_BEGIN_TURN: {
 			uint32_t const battle_id = msg.read_int ();
 			uint16_t const turn_count = msg.read_short ();
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_begin_turn (turn_count);
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_begin_turn (turn_count);
 			break;
 		}
 		case InMessage::SPECTATOR_BEGIN: {
@@ -464,11 +439,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			int16_t const new_move = static_cast<int16_t> (msg.read_short ());
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const max_pp = msg.read_byte ();
-			auto const it = battles.find (battle_id);
-			if (it != battles.end ()) {
-				Battle & battle = static_cast <Battle &> (*it->second);
-				battle.handle_set_move (pokemon, move_slot, new_move, pp, max_pp);
-			}
+			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			battle.handle_set_move (pokemon, move_slot, new_move, pp, max_pp);
 			break;
 		}
 		case InMessage::METAGAME_LIST: {
@@ -817,9 +789,9 @@ void Client::send_private_message (std::string const & user, std::string const &
 	msg.send (*socket);
 }
 
-Result Client::get_result (Battles::iterator const it, uint16_t const winner) {
-	if (winner != 0xFFFF and it != battles.end())
-		return it->second->is_me (winner) ? Result::won : Result::lost;
+Result Client::get_result (uint32_t const battle_id, uint16_t const winner) {
+	if (winner != 0xFFFF)
+		return battles.find(battle_id).is_me (winner) ? Result::won : Result::lost;
 	else
 		return Result::tied;
 }

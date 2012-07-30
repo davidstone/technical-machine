@@ -29,6 +29,8 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/scoped_ptr.hpp>
 
+#include "battles.hpp"
+
 #include "../battle.hpp"
 #include "../evaluate.hpp"
 
@@ -41,7 +43,6 @@ class GenericBattleSettings;
 
 class GenericClient {
 	public:
-		typedef std::map<uint32_t, std::shared_ptr<GenericBattle>> Battles;
 		std::string username;
 		std::string team_file_name;
 	protected:
@@ -56,9 +57,6 @@ class GenericClient {
 		std::vector <std::string> responses;
 		std::vector <std::string> trusted_users;
 	protected:
-		// Battles that have not yet begun
-		std::map <std::string, std::shared_ptr <GenericBattle>> challenges;
-		// Battles currently underway
 		Battles battles;
 		std::map <std::string, uint32_t> channels;
 	public:
@@ -105,7 +103,7 @@ class GenericClient {
 		std::string get_response ();
 		std::string generate_team_file_name ();
 	protected:
-		void handle_battle_end (Battles::iterator it, Result result);
+		void handle_battle_end(uint32_t battle_id, Result result);
 	private:
 		std::string get_random_string (unsigned size);
 	protected:
