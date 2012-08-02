@@ -33,19 +33,15 @@ namespace po {
 class Clauses;
 
 class Client : public network::GenericClient {
-	private:
-		uint32_t my_id;
-		std::map <uint32_t, std::string> user_id_to_name;
-		std::map <std::string, uint32_t> user_name_to_id;
-		std::map <uint32_t, std::string> id_to_channel;
-	public:
-		// I cannot pick a new team when challenged. I reload this at the start
-		// of a new battle to prevent counter-teaming. It's only used when challenged.
-		Team team;
 	public:
 		explicit Client (unsigned set_depth);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
+		void send_channel_message (std::string channel, std::string const & message);
+		void send_channel_message (uint32_t channel_id, std::string const & message);
+		void send_private_message (std::string const & user, std::string const & message);
+		void send_private_message (uint32_t user_id, std::string const & message);
+		std::string get_user_name (uint32_t id) const;
 	private:
 		void handle_log_in (InMessage & msg);
 		void handle_log_out (InMessage & msg);
@@ -123,22 +119,23 @@ class Client : public network::GenericClient {
 		void handle_remove_channel (uint32_t channel_id);
 		void add_battle (InMessage & msg);
 		void remove_battle (InMessage & msg);
-	public:
-		void send_channel_message (std::string channel, std::string const & message);
-		void send_channel_message (uint32_t channel_id, std::string const & message);
-		void send_private_message (std::string const & user, std::string const & message);
-		void send_private_message (uint32_t user_id, std::string const & message);
-	private:
 		void send_registration_message ();
 		void handle_version_control (std::string const & server_version) const;
 		void handle_server_name (std::string const & server_name) const;
 		void handle_announcement (std::string const & announcement) const;
 		void handle_private_message (uint32_t user_id, std::string const & message);
 		uint32_t get_user_id (std::string const & name) const;
-	public:
-		std::string get_user_name (uint32_t id) const;
-	private:
 		Result get_result (uint8_t code, uint32_t winner) const;
+
+	public:
+		// I cannot pick a new team when challenged. I reload this at the start
+		// of a new battle to prevent counter-teaming. It's only used when challenged.
+		Team team;
+	private:
+		uint32_t my_id;
+		std::map <uint32_t, std::string> user_id_to_name;
+		std::map <std::string, uint32_t> user_name_to_id;
+		std::map <uint32_t, std::string> id_to_channel;
 };
 
 }	// namespace po

@@ -38,20 +38,15 @@ class Channel;
 class Metagame;
 
 class Client : public network::GenericClient {
-	private:
-		boost::asio::deadline_timer timer;
 	public:
 		explicit Client (unsigned set_depth);
+		void run ();
+		void handle_message (InMessage::Message code, InMessage & msg);
+		void send_channel_message (uint32_t channel_id, std::string const & message);
 	private:
 		void reset_timer (unsigned timer_length);
 		void request_authentication ();
-	public:
-		void run ();
-	private:
 		void send_keep_alive_message ();
-	public:
-		void handle_message (InMessage::Message code, InMessage & msg);
-	private:
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const;
 		void handle_password_challenge (InMessage & msg);
 		enum SecretStyle {
@@ -73,11 +68,10 @@ class Client : public network::GenericClient {
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
 		void handle_invalid_team (std::vector <int16_t> const & violations);
 		void handle_error_message (uint8_t code, std::string const & details) const;
-	public:
-		void send_channel_message (uint32_t channel_id, std::string const & message);
-	private:
 		void send_private_message (std::string const & user, std::string const & message);
 		Result get_result (uint32_t battle_id, uint16_t winner);
+
+		boost::asio::deadline_timer timer;
 };
 
 } // namespace pl
