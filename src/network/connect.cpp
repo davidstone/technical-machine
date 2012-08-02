@@ -210,10 +210,6 @@ void GenericClient::handle_incoming_challenge (std::string const & opponent, Gen
 	handle_finalize_challenge (opponent, accepted, challenger);
 }
 
-void GenericClient::add_pending_challenge (GenericBattle * battle) {
-	battles.add_pending_challenge(battle);
-}
-
 void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 	battles.handle_challenge_withdrawn(opponent);
 }

@@ -28,10 +28,6 @@
 namespace technicalmachine {
 namespace network {
 
-void Battles::add_pending_challenge(GenericBattle * battle) {
-	challenges.insert(std::make_pair(battle->opponent, Pointer(battle)));
-}
-
 void Battles::handle_challenge_withdrawn() {
 	challenges.erase(challenges.begin());
 }

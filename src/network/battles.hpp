@@ -30,8 +30,12 @@ namespace network {
 
 class Battles {
 	public:
-		// Takes ownership of the battle
-		void add_pending_challenge(GenericBattle * battle);
+		template<typename Battle, typename ... Args>
+		Battle const & add_pending_challenge (Args && ... args) {
+			auto * battle = new Battle(std::forward<Args>(args)...);
+			challenges.insert(std::make_pair(battle->opponent, Pointer(battle)));
+			return *battle;
+		}
 		void handle_challenge_withdrawn();
 		void handle_challenge_withdrawn(std::string const & opponent);
 		GenericBattle & handle_begin(uint32_t battle_id, std::string const & opponent);

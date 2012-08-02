@@ -705,9 +705,8 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 		msg.write_byte (accepted);
 	std::string verb;
 	if (accepted) {
-		Battle * battle = new Battle(rd(), opponent, depth, team_file_name);
-		add_pending_challenge(battle);
-		battle->write_team (msg);
+		auto const & battle = add_pending_challenge<Battle>(opponent);
+		battle.write_team(msg);
 		verb = "Accepted";
 	}
 	else

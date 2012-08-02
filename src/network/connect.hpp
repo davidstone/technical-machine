@@ -57,8 +57,14 @@ class GenericClient {
 		virtual void send_keep_alive_message () = 0;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
-		// Takes ownership of the battle
-		void add_pending_challenge (GenericBattle * battle);
+		template<typename Battle, typename ... Args>
+		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
+			return battles.add_pending_challenge<Battle>(rd(), opponent, depth, team, std::forward<Args>(args)...);
+		}
+		template<typename Battle, typename ... Args>
+		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
+			return battles.add_pending_challenge<Battle>(rd(), opponent, depth, team_file_name, std::forward<Args>(args)...);
+		}
 		void handle_challenge_withdrawn (std::string const & opponent);
 		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
 		void pause_at_start_of_battle ();
@@ -105,7 +111,6 @@ class GenericClient {
 		std::vector <std::string> responses;
 		std::vector <std::string> trusted_users;
 		unsigned chattiness;
-	protected:
 		unsigned depth;
 };
 

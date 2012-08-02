@@ -60,7 +60,7 @@ class GenericBattle {
 		virtual ~GenericBattle() {}
 		bool is_me (uint32_t other_party) const;
 		void set_if_party_unknown (uint8_t new_party);
-		void write_team (network::OutMessage & msg, std::string const & username = std::string());
+		void write_team (network::OutMessage & msg, std::string const & username = std::string()) const;
 		Team predict_foe_team (DetailedStats const & detailed) const;
 		void handle_begin_turn (uint16_t turn_count) const;
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);

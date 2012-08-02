@@ -84,7 +84,7 @@ void GenericBattle::set_if_party_unknown (uint8_t const new_party) {
 		party = new_party;
 }
 
-void GenericBattle::write_team (network::OutMessage & msg, std::string const & username) {
+void GenericBattle::write_team (network::OutMessage & msg, std::string const & username) const {
 	msg.write_team (ai, username);
 }
 
