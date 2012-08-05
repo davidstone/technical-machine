@@ -54,7 +54,7 @@ Client::Client (unsigned set_depth):
 
 void Client::request_authentication () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
-	message.write_string (username);
+	message.write_string (username());
 	message.send (*socket);
 }
 

@@ -55,6 +55,7 @@ class GenericClient {
 		void taunt_foe(uint32_t battle_id);
 	protected:
 		virtual void send_keep_alive_message () = 0;
+		std::string const & username() const;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		template<typename Battle, typename ... Args>
@@ -90,8 +91,9 @@ class GenericClient {
 		void handle_reload_settings_command ();
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
 		std::string get_response ();
+
+		std::string current_username;
 	public:
-		std::string username;
 		std::string team_file_name;
 		boost::asio::io_service io;
 		Score score;

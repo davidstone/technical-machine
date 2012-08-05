@@ -42,6 +42,7 @@ class Client : public network::GenericClient {
 		void send_private_message (std::string const & user, std::string const & message);
 		void send_private_message (uint32_t user_id, std::string const & message);
 		std::string get_user_name (uint32_t id) const;
+		void write_team();
 	private:
 		void handle_log_in (InMessage & msg);
 		void handle_log_out (InMessage & msg);

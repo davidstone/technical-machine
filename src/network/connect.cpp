@@ -61,7 +61,7 @@ GenericClient::GenericClient (unsigned set_depth):
 	depth (set_depth)
 	{
 	load_settings (false);
-	while (username.empty()) {
+	while (username().empty()) {
 		std::cerr << "Add a username and password entry to " + Settings::file_name() + " and hit enter.";
 		std::cin.get ();
 		load_settings (false);
@@ -133,7 +133,7 @@ void GenericClient::load_settings (bool const reloading) {
 		Server & server = settings.servers.front();
 		host = server.host;
 		port = server.port;
-		username = server.username;
+		current_username = server.username;
 		if (server.password.empty()) {
 			server.password = get_random_string (31);
 			settings.write();
@@ -225,6 +225,10 @@ void GenericClient::pause_at_start_of_battle () {
 	// give spectators a chance to join.
 	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
 	pause.wait ();
+}
+
+std::string const & GenericClient::username() const {
+	return current_username;
 }
 
 namespace {

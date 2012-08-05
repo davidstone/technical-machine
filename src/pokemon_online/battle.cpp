@@ -374,7 +374,7 @@ void Battle::parse_status_change (InMessage & msg) {
 
 void Battle::parse_abs_status_change (InMessage & msg) {
 	uint8_t const index = msg.read_byte();
-	if (index >= pokemon_per_team) {
+	if (index >= pokemon_per_team()) {
 		std::cerr << "Invalid Pokemon index.\n";
 		return;
 	}
@@ -538,11 +538,7 @@ void Battle::parse_clock_stop (InMessage & msg) {
 }
 
 void Battle::handle_rated (Client & client, InMessage & msg) {
-	constexpr unsigned foe_team_size = pokemon_per_team;
-	client.team = Team (foe_team_size, random_engine, client.team_file_name);
-	OutMessage team_msg (OutMessage::SEND_TEAM);
-	team_msg.write_team (client.team, client.username);
-	team_msg.send (*client.socket);
+	client.write_team();
 	bool const rated = msg.read_byte ();
 }
 
@@ -572,8 +568,8 @@ void Battle::parse_offer_choice (Client & client, InMessage & msg, uint32_t cons
 	bool const can_switch = msg.read_byte();
 	bool const can_attack = msg.read_byte();
 	std::vector<uint8_t> attacks_allowed;
-	attacks_allowed.reserve (moves_per_pokemon);
-	for (unsigned n = 0; n != moves_per_pokemon; ++n)
+	attacks_allowed.reserve(moves_per_pokemon());
+	for (unsigned n = 0; n != moves_per_pokemon(); ++n)
 		attacks_allowed [n] = msg.read_byte();
 	handle_request_action (client, action, battle_id, can_switch, attacks_allowed);
 }
@@ -590,7 +586,7 @@ void Battle::handle_cancel_move () {
 
 void Battle::parse_rearrange_team (InMessage & msg) {
 	Todo const t (msg, "REARRANGE_TEAM");
-	for (unsigned n = 0; n != pokemon_per_team; ++n) {
+	for (unsigned n = 0; n != pokemon_per_team(); ++n) {
 		uint16_t const species_id = msg.read_short ();
 		uint8_t const form_id = msg.read_byte ();
 		uint8_t const level = msg.read_byte ();

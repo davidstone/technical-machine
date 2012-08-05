@@ -51,7 +51,7 @@ Client::Client (unsigned set_depth):
 
 void Client::log_in () {
 	OutMessage msg (OutMessage::LOG_IN);
-	msg.write_team (team, username);
+	msg.write_team(team, username());
 	msg.write_color ();
 	bool const ladder_enabled = true;
 	msg.write_byte (ladder_enabled);
@@ -275,7 +275,7 @@ void print_message_bytes (InMessage & msg) {
 
 void Client::handle_log_in (InMessage & msg) {
 	User const user (msg);
-	if (user.name == username)
+	if (user.name == username())
 		my_id = user.id;
 	else
 		print_with_time_stamp (std::cerr, "Server claims my username is " + user.name);
@@ -740,7 +740,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 			constexpr bool challenger = true;
 			auto const & battle = add_pending_challenge<Battle>(opponent, challenger);
 			OutMessage msg (OutMessage::SEND_TEAM);
-			battle.write_team (msg, username);
+			battle.write_team(msg, username());
 			msg.send (*socket);
 		}
 	}
@@ -908,6 +908,14 @@ std::string Client::get_user_name (uint32_t id) const {
 		return it->second;
 	else
 		throw InvalidUser (id);
+}
+
+void Client::write_team() {
+	constexpr unsigned foe_team_size = Battle::pokemon_per_team();
+	team = Team(foe_team_size, random_engine, team_file_name);
+	OutMessage team_msg(OutMessage::SEND_TEAM);
+	team_msg.write_team(team, username());
+	team_msg.send(*socket);
 }
 
 Result Client::get_result (uint8_t code, uint32_t winner) const {
