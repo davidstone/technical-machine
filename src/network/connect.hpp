@@ -51,9 +51,10 @@ class GenericClient {
 		void send_channel_message (std::string channel, std::string const & message);
 		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
-		std::string generate_team_file_name ();
+		std::string generate_team_file_name();
 		void taunt_foe(uint32_t battle_id);
 	protected:
+		Team generate_team(unsigned foe_team_size);
 		virtual void send_keep_alive_message () = 0;
 		std::string const & username() const;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
@@ -93,8 +94,8 @@ class GenericClient {
 		std::string get_response ();
 
 		std::string current_username;
-	public:
 		std::string team_file_name;
+	public:
 		boost::asio::io_service io;
 		Score score;
 		DetailedStats detailed;

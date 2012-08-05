@@ -246,6 +246,10 @@ void GenericClient::handle_battle_end (uint32_t const battle_id, Result const re
 	battles.handle_end(battle_id);
 }
 
+Team GenericClient::generate_team(unsigned const foe_team_size) {
+	return Team(foe_team_size, random_engine, team_file_name);
+}
+
 std::string GenericClient::generate_team_file_name () {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new

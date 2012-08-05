@@ -44,7 +44,7 @@ namespace po {
 
 Client::Client (unsigned set_depth):
 	network::GenericClient (set_depth),
-	team (6, random_engine, team_file_name) {
+	team(generate_team(Battle::pokemon_per_team())) {
 	log_in ();
 }
 
@@ -911,8 +911,7 @@ std::string Client::get_user_name (uint32_t id) const {
 }
 
 void Client::write_team() {
-	constexpr unsigned foe_team_size = Battle::pokemon_per_team();
-	team = Team(foe_team_size, random_engine, team_file_name);
+	team = generate_team(Battle::pokemon_per_team());
 	OutMessage team_msg(OutMessage::SEND_TEAM);
 	team_msg.write_team(team, username());
 	team_msg.send(*socket);
