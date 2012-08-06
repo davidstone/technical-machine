@@ -101,7 +101,7 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn (client, battle_id);
 	if (!forced) {
-		Moves move = determine_action (client);
+		Moves const move = determine_action(client);
 		if (Move::is_switch (move))
 			msg.write_switch (battle_id, switch_slot (move));
 		else {
@@ -125,13 +125,13 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 	client.taunt_foe(battle_id);
 }
 
-Moves GenericBattle::determine_action (network::GenericClient & client) {
+Moves GenericBattle::determine_action(network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	Team predicted = predict_team (client.detailed, foe, ai.pokemon.size());
+	Team predicted = predict_team(client.detailed, foe, ai.pokemon.size());
 	std::cout << predicted.to_string ();
 
-	return expectiminimax (ai, predicted, weather, depth, client.score, random_engine);
+	return expectiminimax(ai, predicted, weather, depth, client.score(), random_engine);
 }
 
 void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Moves move_name) {

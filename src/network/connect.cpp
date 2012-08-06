@@ -169,6 +169,10 @@ void GenericClient::reconnect () {
 	connect ();
 }
 
+Score const & GenericClient::score() const {
+	return score_variables;
+}
+
 void GenericClient::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << "[" + time_stamp () + "] " + message + "\n";
 }
@@ -437,7 +441,7 @@ void GenericClient::handle_reload_settings_command () {
 	responses = load_responses ();
 	trusted_users = load_trusted_users ();
 	load_settings (true);
-	score.load_evaluation_constants ();
+	score_variables.load_evaluation_constants();
 }
 
 void GenericClient::taunt_foe(uint32_t const battle_id) {

@@ -72,13 +72,13 @@ class GenericBattle {
 		void handle_end (network::GenericClient & client, Result const result) const;
 	protected:
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
-		Moves determine_action (network::GenericClient & client);
 		uint8_t switch_slot (Moves move) const;
 		virtual uint16_t max_damage_precision () const;
 		void initialize_turn ();
 		virtual uint8_t get_target () const = 0;
 		static constexpr uint8_t unknown_party = 255;
 	private:
+		Moves determine_action(network::GenericClient & client);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();
 		static void initialize_team (Team & team);
