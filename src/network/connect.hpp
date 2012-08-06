@@ -54,6 +54,7 @@ class GenericClient {
 		std::string generate_team_file_name();
 		void taunt_foe(uint32_t battle_id);
 		Score const & score() const;
+		DetailedStats const & detailed() const;
 	protected:
 		Team generate_team(unsigned foe_team_size);
 		virtual void send_keep_alive_message () = 0;
@@ -96,7 +97,6 @@ class GenericClient {
 
 	public:
 		boost::asio::io_service io;
-		DetailedStats detailed;
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 	protected:
 		std::string password;
@@ -107,6 +107,7 @@ class GenericClient {
 		Battles battles;
 		std::map <std::string, uint32_t> channels;
 	private:
+		DetailedStats detailed_stats;
 		Score score_variables;
 		std::string current_username;
 		std::string team_file_name;

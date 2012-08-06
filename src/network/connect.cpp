@@ -173,6 +173,10 @@ Score const & GenericClient::score() const {
 	return score_variables;
 }
 
+DetailedStats const & GenericClient::detailed() const {
+	return detailed_stats;
+}
+
 void GenericClient::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << "[" + time_stamp () + "] " + message + "\n";
 }

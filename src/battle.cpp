@@ -128,7 +128,7 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 Moves GenericBattle::determine_action(network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	Team predicted = predict_team(client.detailed, foe, ai.pokemon.size());
+	Team predicted = predict_team(client.detailed(), foe, ai.pokemon.size());
 	std::cout << predicted.to_string ();
 
 	return expectiminimax(ai, predicted, weather, depth, client.score(), random_engine);
@@ -240,7 +240,7 @@ void GenericBattle::handle_end (network::GenericClient & client, Result const re
 	std::string const verb = to_string (result);
 	client.print_with_time_stamp (std::cout, verb + " a battle vs. " + opponent);
 	if (result == Result::lost) {
-		pl::write_team (predict_foe_team (client.detailed), client.generate_team_file_name ());
+		pl::write_team(predict_foe_team(client.detailed()), client.generate_team_file_name());
 	}
 }
 
