@@ -104,11 +104,11 @@ class GenericClient {
 		std::string password;
 		std::string host;
 		std::string port;
-		std::random_device rd;
-		std::mt19937 random_engine;
 		Battles battles;
 		std::map <std::string, uint32_t> channels;
 	private:
+		std::random_device rd;
+		std::mt19937 random_engine;
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 		DetailedStats detailed_stats;
 		Score score_variables;
