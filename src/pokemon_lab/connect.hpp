@@ -42,6 +42,7 @@ class Client : public network::GenericClient {
 		explicit Client (unsigned set_depth);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
+		void send_channel_message(std::string const & channel, std::string const & message);
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 	private:
 		void reset_timer (unsigned timer_length);
@@ -72,6 +73,7 @@ class Client : public network::GenericClient {
 		Result get_result (uint32_t battle_id, uint16_t winner);
 
 		boost::asio::deadline_timer timer;
+		std::map <std::string, uint32_t> channel_to_id;
 };
 
 } // namespace pl

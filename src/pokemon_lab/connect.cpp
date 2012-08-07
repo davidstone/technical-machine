@@ -41,6 +41,8 @@
 #include "../cryptography/rijndael.h"
 
 #include "../network/connect.hpp"
+#include "../network/invalid_channel.hpp"
+
 
 namespace technicalmachine {
 namespace pl {
@@ -665,17 +667,17 @@ void Client::join_channel (std::string const & channel) {
 }
 
 void Client::part_channel (std::string const & channel) {
-	auto const it = channels.find (channel);
-	if (it != channels.end()) {
+	auto const it = channel_to_id.find (channel);
+	if (it != channel_to_id.end()) {
 		OutMessage msg (OutMessage::PART_CHANNEL);
 		msg.write_int (it->second);
-		channels.erase (it);
+		channel_to_id.erase (it);
 		send_message(msg);
 	}
 }
 
 void Client::handle_channel_info (uint32_t channel_id, uint8_t info, std::string const & channel_name, std::string const & topic, uint32_t channel_flags, std::vector <std::pair <std::string, uint32_t> > const & users) {
-	channels.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
+	channel_to_id.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
 }
 
 void Client::handle_channel_join_part (uint32_t channel_id, std::string const & user, bool joining) {
@@ -772,6 +774,14 @@ void Client::handle_error_message (uint8_t code, std::string const & details) co
 	}
 	if (!details.empty ())
 		print_with_time_stamp (std::cerr, details);
+}
+
+void Client::send_channel_message(std::string const & channel, std::string const & message) {
+	auto const it = channel_to_id.find(channel);
+	if (it == channel_to_id.end())
+		throw network::InvalidChannel(channel);
+	uint32_t const channel_id = it->second;
+	send_channel_message(channel_id, message);
 }
 
 void Client::send_channel_message (uint32_t channel_id, std::string const & message) {

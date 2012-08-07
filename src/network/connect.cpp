@@ -316,11 +316,6 @@ bool GenericClient::is_highlighted (std::string const & message) const {
 	return false;
 }
 
-void GenericClient::send_channel_message (std::string channel, std::string const & message) {
-	uint32_t const channel_id = channels.find (channel)->second;
-	send_channel_message (channel_id, message);
-}
-
 namespace {
 
 bool is_valid_command_structure (std::string const & request) {

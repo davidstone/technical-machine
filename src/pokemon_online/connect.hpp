@@ -38,6 +38,7 @@ class Client : public network::GenericClient {
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
 		void send_channel_message (std::string channel, std::string const & message);
+		void send_channel_message(std::string const & channel, std::string const & message);
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_private_message (std::string const & user, std::string const & message);
 		void send_private_message (uint32_t user_id, std::string const & message);
@@ -136,6 +137,7 @@ class Client : public network::GenericClient {
 		uint32_t my_id;
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
+		std::map <std::string, uint32_t> channel_to_id;
 		std::map <uint32_t, std::string> id_to_channel;
 };
 

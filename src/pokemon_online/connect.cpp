@@ -35,8 +35,11 @@
 #include "outmessage.hpp"
 #include "read_user_info.hpp"
 
-#include "../cryptography/md5.hpp"
 #include "../team.hpp"
+
+#include "../cryptography/md5.hpp"
+
+#include "../network/invalid_channel.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
@@ -807,8 +810,8 @@ void Client::join_channel (std::string const & channel) {
 }
 
 void Client::part_channel (std::string const & channel) {
-	auto const it = channels.find (channel);
-	if (it != channels.end ()) {
+	auto const it = channel_to_id.find (channel);
+	if (it != channel_to_id.end ()) {
 		OutMessage msg (OutMessage::LEAVE_CHANNEL);
 		msg.write_int (it->second);
 		send_message(msg);
@@ -816,14 +819,14 @@ void Client::part_channel (std::string const & channel) {
 }
 
 void Client::handle_add_channel (std::string const & channel_name, uint32_t channel_id) {
-	channels.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
+	channel_to_id.insert (std::pair <std::string, uint32_t> (channel_name, channel_id));
 	id_to_channel.insert (std::pair <uint32_t, std::string> (channel_id, channel_name));
 }
 
 void Client::handle_remove_channel (uint32_t channel_id) {
 	auto const it = id_to_channel.find (channel_id);
 	if (it != id_to_channel.end()) {
-		channels.erase (it->second);
+		channel_to_id.erase (it->second);
 		id_to_channel.erase (it);
 	}
 }
@@ -841,6 +844,14 @@ void Client::add_battle (InMessage & msg) {
 }
 
 void Client::remove_battle (InMessage & msg) {
+}
+
+void Client::send_channel_message(std::string const & channel, std::string const & message) {
+	auto const it = channel_to_id.find(channel);
+	if (it == channel_to_id.end())
+		throw network::InvalidChannel(channel);
+	uint32_t const channel_id = it->second;
+	send_channel_message(channel_id, message);
 }
 
 void Client::send_channel_message (uint32_t channel_id, std::string const & message) {

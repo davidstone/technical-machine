@@ -50,7 +50,7 @@ class GenericClient {
 		void reconnect ();
 		void print_with_time_stamp (std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
-		void send_channel_message (std::string channel, std::string const & message);
+		virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
 		virtual void send_channel_message (uint32_t channel_id, std::string const & message) = 0;
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string generate_team_file_name();
@@ -103,7 +103,6 @@ class GenericClient {
 	protected:
 		boost::asio::io_service io;
 		Battles battles;
-		std::map <std::string, uint32_t> channels;
 	private:
 		std::string host;
 		std::string port;
