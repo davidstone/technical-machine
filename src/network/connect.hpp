@@ -102,11 +102,11 @@ class GenericClient {
 
 	protected:
 		boost::asio::io_service io;
-		std::string host;
-		std::string port;
 		Battles battles;
 		std::map <std::string, uint32_t> channels;
 	private:
+		std::string host;
+		std::string port;
 		std::random_device rd;
 		std::mt19937 random_engine;
 		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
