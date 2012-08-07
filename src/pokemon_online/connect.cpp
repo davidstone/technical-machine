@@ -62,7 +62,7 @@ void Client::log_in () {
 
 void Client::run () {
 	InMessage msg;
-	msg.read_header (*socket, this);
+	read_header(msg);
 	io.run();
 }
 
@@ -261,7 +261,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			handle_unknown_message_code (code);
 			break;
 	}
-	msg.read_header (*socket, this);
+	read_header(msg);
 }
 
 namespace {

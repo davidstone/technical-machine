@@ -69,7 +69,7 @@ void Client::run () {
 	reset_timer (timer_length_in_seconds);
 
 	InMessage msg;
-	msg.read_header (*socket, this);
+	read_header(msg);
 
 	io.run();
 }
@@ -537,7 +537,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			print_with_time_stamp (std::cerr, "Unknown code: " + std::to_string (static_cast<unsigned> (code)));
 			break;
 	}
-	msg.read_header (*socket, this);
+	read_header(msg);
 }
 
 void Client::handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const {

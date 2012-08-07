@@ -36,6 +36,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "battle_settings.hpp"
+#include "inmessage.hpp"
 #include "outmessage.hpp"
 
 #include "../battle.hpp"
@@ -145,6 +146,10 @@ void GenericClient::load_settings (bool const reloading) {
 
 void GenericClient::send_message(OutMessage & msg) {
 	msg.send(*socket);
+}
+
+void GenericClient::read_header(InMessage & msg) {
+	msg.read_header(*socket, this);
 }
 
 void GenericClient::connect () {

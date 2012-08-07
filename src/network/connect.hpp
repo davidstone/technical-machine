@@ -40,6 +40,8 @@ namespace technicalmachine {
 enum class Result;
 namespace network {
 class GenericBattleSettings;
+class InMessage;
+class OutMessage;
 
 class GenericClient {
 	public:
@@ -56,7 +58,7 @@ class GenericClient {
 		Score const & score() const;
 		DetailedStats const & detailed() const;
 		void send_message(OutMessage & msg);
-//		void read_message(
+		void read_header(InMessage & msg);
 	protected:
 		Team generate_team(unsigned foe_team_size);
 		virtual void send_keep_alive_message () = 0;
@@ -106,8 +108,8 @@ class GenericClient {
 		std::mt19937 random_engine;
 		Battles battles;
 		std::map <std::string, uint32_t> channels;
-		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 	private:
+		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 		DetailedStats detailed_stats;
 		Score score_variables;
 		std::string current_username;
