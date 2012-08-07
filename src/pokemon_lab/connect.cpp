@@ -305,7 +305,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 						moves.emplace_back(msg.read_byte ());
 				}
 			}
-			auto & battle = static_cast<Battle &>(battles.find(battle_id));
+			auto & battle = battles.find(battle_id);
 			OutMessage action (OutMessage::BATTLE_ACTION);
 			battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
 			send_message(action);
@@ -350,7 +350,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			uint16_t const move_id = msg.read_short ();
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = battles.find(battle_id);
 			battle.handle_use_move (party, slot, id_to_move(move_id));
 			break;
 		}
@@ -375,7 +375,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			Species const species = id_to_species (msg.read_short ());
 			Gender gender (id_to_gender (msg.read_byte ()));
 			uint8_t const level = msg.read_byte();
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = battles.find (battle_id);
 			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
 			break;
 		}
@@ -388,7 +388,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const remaining_hp = msg.read_short ();
 			int16_t const denominator = static_cast<int16_t> (msg.read_short ());
 			assert(denominator > 0);
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = battles.find(battle_id);
 			battle.handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, static_cast<uint16_t>(denominator));
 			break;
 		}
@@ -397,7 +397,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			uint8_t const party = msg.read_byte ();
 //			uint8_t const slot = msg.read_byte ();
 //			uint8_t const pp = msg.read_byte ();
-//			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+//			auto & battle = battles.find(battle_id);
 //			battle.handle_set_pp (party, slot, pp);
 			break;
 		}
@@ -407,14 +407,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			// This isn't needed:
 			// std::string const nickname = msg.read_string ();
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = battles.find(battle_id);
 			battle.handle_fainted (party, slot);
 			break;
 		}
 		case InMessage::BATTLE_BEGIN_TURN: {
 			uint32_t const battle_id = msg.read_int ();
 			uint16_t const turn_count = msg.read_short ();
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = battles.find(battle_id);
 			battle.handle_begin_turn (turn_count);
 			break;
 		}
