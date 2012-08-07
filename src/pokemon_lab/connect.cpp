@@ -595,11 +595,11 @@ std::string Client::get_challenge_response (std::string const & challenge, Secre
 std::string Client::get_shared_secret (SecretStyle secret_style, std::string const & salt) {
 	switch (secret_style) {
 		case NONE:
-			return password;
+			return password();
 		case MD5:
-			return cryptography::md5 (password);
+			return cryptography::md5(password());
 		case VBULLETIN:
-			return cryptography::md5 (cryptography::md5 (password) + salt);
+			return cryptography::md5(cryptography::md5(password()) + salt);
 		default:
 			print_with_time_stamp (std::cerr, "Unknown secret style of " + std::to_string (static_cast<unsigned> (secret_style)));
 			return "";

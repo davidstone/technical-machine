@@ -689,7 +689,7 @@ void Client::handle_unimplemented_message (InMessage & msg, std::string const & 
 void Client::authenticate (std::string const & salt) {
 	OutMessage msg (OutMessage::ASK_FOR_PASS);
 	// Pokemon Online bases its hash on lowercase a-f.
-	std::string hash = cryptography::md5 (password);
+	std::string hash = cryptography::md5(password());
 	boost::algorithm::to_lower (hash);
 	hash = cryptography::md5 (hash + salt);
 	boost::algorithm::to_lower (hash);
@@ -868,7 +868,7 @@ void Client::send_private_message (uint32_t user_id, std::string const & message
 
 void Client::send_registration_message () {
 	OutMessage msg (OutMessage::REGISTER);
-	msg.write_string (password);
+	msg.write_string(password());
 	send_message(msg);
 }
 

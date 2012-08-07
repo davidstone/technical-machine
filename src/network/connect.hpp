@@ -63,6 +63,7 @@ class GenericClient {
 		Team generate_team(unsigned foe_team_size);
 		virtual void send_keep_alive_message () = 0;
 		std::string const & username() const;
+		std::string const & password() const;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		template<typename Battle, typename ... Args>
@@ -101,7 +102,6 @@ class GenericClient {
 
 	protected:
 		boost::asio::io_service io;
-		std::string password;
 		std::string host;
 		std::string port;
 		Battles battles;
@@ -113,6 +113,7 @@ class GenericClient {
 		DetailedStats detailed_stats;
 		Score score_variables;
 		std::string current_username;
+		std::string current_password;
 		std::string team_file_name;
 		std::string time_format;
 		std::vector <std::string> highlights;

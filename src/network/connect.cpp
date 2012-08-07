@@ -140,7 +140,7 @@ void GenericClient::load_settings (bool const reloading) {
 			server.password = get_random_string (31);
 			settings.write();
 		}
-		password = server.password;
+		current_password = server.password;
 	}
 }
 
@@ -247,6 +247,10 @@ void GenericClient::pause_at_start_of_battle () {
 
 std::string const & GenericClient::username() const {
 	return current_username;
+}
+
+std::string const & GenericClient::password() const {
+	return current_password;
 }
 
 namespace {
