@@ -57,7 +57,7 @@ void Client::log_in () {
 	msg.write_byte (ladder_enabled);
 	bool const show_team = true;
 	msg.write_byte (show_team);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::run () {
@@ -68,7 +68,7 @@ void Client::run () {
 
 void Client::send_keep_alive_message () {
 	OutMessage msg (OutMessage::KEEP_ALIVE);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 namespace {
@@ -694,7 +694,7 @@ void Client::authenticate (std::string const & salt) {
 	hash = cryptography::md5 (hash + salt);
 	boost::algorithm::to_lower (hash);
 	msg.write_string (hash);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::add_player (uint32_t user_id, std::string const & user_name) {
@@ -741,7 +741,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 			auto const & battle = add_pending_challenge<Battle>(opponent, challenger);
 			OutMessage msg (OutMessage::SEND_TEAM);
 			battle.write_team(msg, username());
-			msg.send (*socket);
+			send_message(msg);
 		}
 	}
 	catch (InvalidUser const & error) {
@@ -762,7 +762,7 @@ void Client::send_battle_challenge_with_current_team () {
 			};
 			BattleSettings const settings (clauses, BattleSettings::SINGLES);
 			msg.write_challenge (user_id, generation, settings);
-			msg.send (*socket);
+			send_message(msg);
 		}
 	}
 	catch (InvalidUser const & error) {
@@ -793,7 +793,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	// This call to get_user_id is safe and should never throw. opponent has
 	// already been validated.
 	msg.write_int (get_user_id (opponent));
-	msg.send (*socket);
+	send_message(msg);
 	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
 }
 
@@ -803,7 +803,7 @@ void Client::handle_remove_challenge (std::string const & opponent) {
 void Client::join_channel (std::string const & channel) {
 	OutMessage msg (OutMessage::JOIN_CHANNEL);
 	msg.write_string (channel);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::part_channel (std::string const & channel) {
@@ -811,7 +811,7 @@ void Client::part_channel (std::string const & channel) {
 	if (it != channels.end ()) {
 		OutMessage msg (OutMessage::LEAVE_CHANNEL);
 		msg.write_int (it->second);
-		msg.send (*socket);
+		send_message(msg);
 	}
 }
 
@@ -847,7 +847,7 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 	OutMessage msg (OutMessage::CHANNEL_MESSAGE);
 	msg.write_int (channel_id);
 	msg.write_string (message);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
@@ -863,13 +863,13 @@ void Client::send_private_message (uint32_t user_id, std::string const & message
 	OutMessage msg (OutMessage::SEND_PM);
 	msg.write_int (user_id);
 	msg.write_string (message);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::send_registration_message () {
 	OutMessage msg (OutMessage::REGISTER);
 	msg.write_string (password);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::handle_version_control (std::string const & server_version) const {
@@ -914,7 +914,7 @@ void Client::write_team() {
 	team = generate_team(Battle::pokemon_per_team());
 	OutMessage team_msg(OutMessage::SEND_TEAM);
 	team_msg.write_team(team, username());
-	team_msg.send(*socket);
+	send_message(team_msg);
 }
 
 Result Client::get_result (uint8_t code, uint32_t winner) const {

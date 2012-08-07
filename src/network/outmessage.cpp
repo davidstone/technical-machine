@@ -17,7 +17,13 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "outmessage.hpp"
+
 #include <cstdint>
+
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/write.hpp>
+#include <boost/asio/ip/tcp.hpp>
+
 #include "../cryptography/byte_order.hpp"
 
 namespace technicalmachine {
@@ -45,6 +51,11 @@ void OutMessage::write_short (uint16_t bytes) {
 
 void OutMessage::write_int (uint32_t bytes) {
 	write_bytes(bytes);
+}
+
+void OutMessage::send(boost::asio::ip::tcp::socket & socket) {
+	finalize();
+	boost::asio::write(socket, boost::asio::buffer(buffer));
 }
 
 }	// namespace technicalmachine

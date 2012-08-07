@@ -36,6 +36,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "battle_settings.hpp"
+#include "outmessage.hpp"
 
 #include "../battle.hpp"
 #include "../evaluate.hpp"
@@ -140,6 +141,10 @@ void GenericClient::load_settings (bool const reloading) {
 		}
 		password = server.password;
 	}
+}
+
+void GenericClient::send_message(OutMessage & msg) {
+	msg.send(*socket);
 }
 
 void GenericClient::connect () {

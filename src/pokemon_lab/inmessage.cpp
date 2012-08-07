@@ -29,6 +29,9 @@
 #include "connect.hpp"
 
 namespace technicalmachine {
+namespace network {
+class GenericClient;
+}	// namespace network
 namespace pl {
 
 InMessage::InMessage ():
@@ -43,12 +46,7 @@ std::string InMessage::read_string () {
 	return data;
 }
 
-void InMessage::read_header (boost::asio::ip::tcp::socket & socket, Client * client) {
-	reset (5);
-	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, boost::ref (socket), client));
-}
-
-void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * client) {
+void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client) {
 	// extract the message type and length components
 	// TODO: store in the underlying type instead of the enum so the compiler
 	// can assume all enums are within their range.
@@ -56,7 +54,7 @@ void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * clien
 	uint32_t bytes = read_int ();
 
 	reset (bytes);
-	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, client, code, boost::ref (*this)));
+	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, static_cast<Client *>(client), code, boost::ref (*this)));
 }
 
 }	// namespace pl

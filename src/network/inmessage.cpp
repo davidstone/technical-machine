@@ -17,8 +17,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inmessage.hpp"
+
 #include <cstddef>
 #include <cstdint>
+
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/read.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/bind.hpp>
+
 #include "buffer_overrun.hpp"
 
 namespace technicalmachine {
@@ -65,6 +72,11 @@ uint16_t InMessage::read_short () {
 
 uint32_t InMessage::read_int () {
 	return read_bytes (4);
+}
+
+void InMessage::read_header(boost::asio::ip::tcp::socket & socket, GenericClient * client) {
+	reset(header_size());
+	boost::asio::async_read(socket, boost::asio::buffer(buffer), boost::bind(& InMessage::read_body, this, boost::ref(socket), client));
 }
 
 }	// namespace network

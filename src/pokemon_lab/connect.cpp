@@ -55,7 +55,7 @@ Client::Client (unsigned set_depth):
 void Client::request_authentication () {
 	OutMessage message (OutMessage::REQUEST_CHALLENGE);
 	message.write_string (username());
-	message.send (*socket);
+	send_message(message);
 }
 
 void Client::reset_timer (unsigned timer_length) {
@@ -76,7 +76,7 @@ void Client::run () {
 
 void Client::send_keep_alive_message () {
 	OutMessage msg (OutMessage::CLIENT_ACTIVITY);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 class Channel {
@@ -308,7 +308,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			auto & battle = static_cast<Battle &>(battles.find(battle_id));
 			OutMessage action (OutMessage::BATTLE_ACTION);
 			battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
-			action.send (*socket);
+			send_message(action);
 			break;
 		}
 		case InMessage::BATTLE_POKEMON: {
@@ -555,7 +555,7 @@ void Client::handle_password_challenge (InMessage & msg) {
 	OutMessage out (OutMessage::CHALLENGE_RESPONSE);
 	for (unsigned n = 0; n != 16; ++n)
 		out.write_byte (static_cast<uint8_t> (response [n]));
-	out.send (*socket);
+	send_message(out);
 }
 
 std::string Client::get_challenge_response (std::string const & challenge, SecretStyle secret_style, std::string const & salt) {
@@ -661,7 +661,7 @@ void Client::handle_registry_response (uint8_t code, std::string const & details
 void Client::join_channel (std::string const & channel) {
 	OutMessage msg (OutMessage::JOIN_CHANNEL);
 	msg.write_string (channel);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::part_channel (std::string const & channel) {
@@ -670,7 +670,7 @@ void Client::part_channel (std::string const & channel) {
 		OutMessage msg (OutMessage::PART_CHANNEL);
 		msg.write_int (it->second);
 		channels.erase (it);
-		msg.send (*socket);
+		send_message(msg);
 	}
 }
 
@@ -693,7 +693,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	uint32_t const party_size = 1;
 	uint32_t const team_length = 6;
 	msg.write_challenge (opponent, generation, party_size, team_length);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) {
@@ -711,7 +711,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	}
 	else
 		verb = "Rejected";
-	msg.send (*socket);
+	send_message(msg);
 	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
 }
 
@@ -778,14 +778,14 @@ void Client::send_channel_message (uint32_t channel_id, std::string const & mess
 	OutMessage msg (OutMessage::CHANNEL_MESSAGE);
 	msg.write_int (channel_id);
 	msg.write_string (message);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 void Client::send_private_message (std::string const & user, std::string const & message) {
 	OutMessage msg (OutMessage::PRIVATE_MESSAGE);
 	msg.write_string (user);
 	msg.write_string (message);
-	msg.send (*socket);
+	send_message(msg);
 }
 
 Result Client::get_result (uint32_t const battle_id, uint16_t const winner) {

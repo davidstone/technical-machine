@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <boost/asio/ip/tcp.hpp>
 
 namespace technicalmachine {
 class Team;
@@ -42,6 +43,8 @@ class OutMessage {
 		virtual void write_move (uint32_t battle_id, uint8_t move_index, uint8_t target = 1) = 0;
 		virtual void write_switch (uint32_t battle_id, uint8_t slot) = 0;
 		virtual void write_team (Team const & team, std::string const & = std::string()) = 0;
+		virtual void finalize() = 0;
+		void send(boost::asio::ip::tcp::socket & socket);
 };
 
 }	// namespace technicalmachine

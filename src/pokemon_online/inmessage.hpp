@@ -20,21 +20,20 @@
 #define POKEMON_ONLINE__INMESSAGE_HPP_
 
 #include <string>
-#include <boost/asio/ip/tcp.hpp>
 #include "../network/inmessage.hpp"
 
 namespace technicalmachine {
+namespace network {
+class GenericClient;
+}	// namespace network
 namespace po {
-
-class Client;
 
 class InMessage : public network::InMessage::InMessage {
 	public:
 		InMessage ();
 		std::string read_string ();
-		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
-		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
-	public:
+		void read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client);
+
 		enum Message {
 			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.
 			LOG_IN = 2,
@@ -95,6 +94,9 @@ class InMessage : public network::InMessage::InMessage {
 			SERVER_LIST_END = 57,
 			SET_IP = 58
 		};
+
+	private:
+		size_t header_size() const { return 3; }
 };
 
 }	// namespace po

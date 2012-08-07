@@ -19,21 +19,22 @@
 #ifndef POKEMON_LAB__INMESSAGE_HPP_
 #define POKEMON_LAB__INMESSAGE_HPP_
 
-#include <boost/asio/ip/tcp.hpp>
+#include <string>
 #include "../network/inmessage.hpp"
 
 namespace technicalmachine {
+namespace network {
+class GenericClient;
+}	// namespace network
 namespace pl {
 
-class Client;
 
 class InMessage : public network::InMessage::InMessage {
 	public:
 		InMessage ();
 		std::string read_string ();
-		void read_header (boost::asio::ip::tcp::socket & socket, Client * client);
-		void read_body (boost::asio::ip::tcp::socket & socket, Client * client);
-	public:
+		void read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client);
+
 		enum Message {
 			WELCOME_MESSAGE = 0,
 			PASSWORD_CHALLENGE = 1,
@@ -102,6 +103,8 @@ class InMessage : public network::InMessage::InMessage {
 			ITEM_MESSAGES = 26,
 			CLIENT_MESSAGES = 27
 		};
+	private:
+		size_t header_size() const { return 5; }
 };
 
 }	// namespace pl

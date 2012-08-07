@@ -575,8 +575,8 @@ void Battle::parse_offer_choice (Client & client, InMessage & msg, uint32_t cons
 }
 
 void Battle::handle_make_your_choice (Client & client) {
-	action.send (*client.socket);
-	action.reset_action_code ();
+	client.send_message(action);
+	action.reset_action_code();
 }
 
 void Battle::handle_cancel_move () {

@@ -21,7 +21,6 @@
 
 #include <cstdint>
 #include <string>
-#include <boost/asio/ip/tcp.hpp>
 
 #include "../network/outmessage.hpp"
 
@@ -42,8 +41,8 @@ class OutMessage : public network::OutMessage {
 		void write_switch (uint32_t field_id, uint8_t slot);
 		void write_challenge (uint32_t user_id, uint8_t generation, BattleSettings const & settings);
 		void write_color ();
-		void send (boost::asio::ip::tcp::socket & socket);
 		void reset_action_code ();
+		void finalize();
 		enum Message {
 			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.
 			LOG_IN = 2,

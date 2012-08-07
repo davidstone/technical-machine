@@ -55,6 +55,8 @@ class GenericClient {
 		void taunt_foe(uint32_t battle_id);
 		Score const & score() const;
 		DetailedStats const & detailed() const;
+		void send_message(OutMessage & msg);
+//		void read_message(
 	protected:
 		Team generate_team(unsigned foe_team_size);
 		virtual void send_keep_alive_message () = 0;
@@ -95,10 +97,8 @@ class GenericClient {
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
 		std::string get_response ();
 
-	public:
-		boost::asio::io_service io;
-		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 	protected:
+		boost::asio::io_service io;
 		std::string password;
 		std::string host;
 		std::string port;
@@ -106,6 +106,7 @@ class GenericClient {
 		std::mt19937 random_engine;
 		Battles battles;
 		std::map <std::string, uint32_t> channels;
+		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
 	private:
 		DetailedStats detailed_stats;
 		Score score_variables;

@@ -30,6 +30,9 @@
 #include "../network/invalid_packet.hpp"
 
 namespace technicalmachine {
+namespace network {
+class GenericClient;
+}	// namespace network
 namespace po {
 
 InMessage::InMessage (): network::InMessage::InMessage () {
@@ -47,19 +50,14 @@ std::string InMessage::read_string () {
 	return data;
 }
 
-void InMessage::read_header (boost::asio::ip::tcp::socket & socket, Client * client) {
-	reset (3);
-	boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& InMessage::read_body, this, boost::ref (socket), client));
-}
-
-void InMessage::read_body (boost::asio::ip::tcp::socket & socket, Client * client) {
+void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client) {
 	// extract the message type and length components
 	uint16_t const bytes = read_short ();
 	// Don't do an invalid call to new if the server says the message has a length of 0
 	if (bytes > 0) {
 		Message code = static_cast <Message> (read_byte ());
 		reset (bytes - 1u);
-		boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, client, code, boost::ref (*this)));
+		boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, static_cast<Client *>(client), code, boost::ref (*this)));
 	}
 	else {
 		throw technicalmachine::network::InvalidPacket ("Server sent message of length 0.");

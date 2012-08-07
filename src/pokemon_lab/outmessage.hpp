@@ -22,7 +22,6 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <boost/asio/ip/tcp.hpp>
 
 #include "../network/outmessage.hpp"
 
@@ -40,7 +39,7 @@ class OutMessage : public network::OutMessage {
 		void write_move (uint32_t battle_id, uint8_t move_index, uint8_t target = 1);
 		void write_switch (uint32_t battle_id, uint8_t slot);
 		void write_challenge (std::string const & opponent, uint8_t generation, uint32_t party_size, uint32_t team_length, uint32_t metagame = 0, std::vector <uint8_t> const & clauses = std::vector <uint8_t> (), bool timing = true, uint32_t pool = 30, uint8_t periods = 3, uint32_t period_length = 30);
-		void send (boost::asio::ip::tcp::socket & socket);
+		void finalize();
 		enum Message {
 			REQUEST_CHALLENGE = 0,
 			CHALLENGE_RESPONSE = 1,

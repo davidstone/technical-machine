@@ -22,10 +22,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/asio/buffer.hpp>
-#include <boost/asio/write.hpp>
-#include <boost/asio/ip/tcp.hpp>
-
 #include "conversion.hpp"
 
 #include "../ability.hpp"
@@ -120,12 +116,11 @@ void OutMessage::write_challenge (std::string const & opponent, uint8_t generati
 	}
 }
 
-void OutMessage::send (boost::asio::ip::tcp::socket & socket) {
+void OutMessage::finalize() {
 	uint32_t const length = boost::endian::h_to_n(static_cast<uint32_t>(buffer.size() - 1));
 	uint8_t const * byte = reinterpret_cast <uint8_t const *> (&length);
 	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
 		buffer.insert (buffer.begin() + n + 1, *(byte + n));
-	boost::asio::write (socket, boost::asio::buffer (buffer));
 }
 
 } // namespace pl
