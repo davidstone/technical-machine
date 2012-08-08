@@ -60,14 +60,14 @@ void Client::request_authentication () {
 	send_message(message);
 }
 
-void Client::reset_timer (unsigned timer_length) {
+void Client::reset_timer(long timer_length) {
 	send_keep_alive_message ();
-	timer.expires_from_now (boost::posix_time::seconds (timer_length));
+	timer.expires_from_now(boost::posix_time::seconds(timer_length));
 	timer.async_wait (boost::bind (& Client::reset_timer, this, timer_length));
 }
 
 void Client::run () {
-	constexpr unsigned timer_length_in_seconds = 45;
+	constexpr long timer_length_in_seconds = 45;
 	reset_timer (timer_length_in_seconds);
 
 	InMessage msg;

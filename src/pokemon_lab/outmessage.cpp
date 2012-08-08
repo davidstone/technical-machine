@@ -119,7 +119,7 @@ void OutMessage::write_challenge (std::string const & opponent, uint8_t generati
 void OutMessage::finalize() {
 	uint32_t const length = boost::endian::h_to_n(static_cast<uint32_t>(buffer.size() - 1));
 	uint8_t const * byte = reinterpret_cast <uint8_t const *> (&length);
-	for (unsigned n = 0; n != sizeof (uint32_t); ++n)
+	for (int n = 0; n != sizeof (uint32_t); ++n)
 		buffer.insert (buffer.begin() + n + 1, *(byte + n));
 }
 

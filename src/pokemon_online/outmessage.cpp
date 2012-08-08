@@ -162,7 +162,7 @@ void OutMessage::finalize() {
 	typedef uint16_t length_type;
 	length_type length = boost::endian::h_to_n(static_cast<length_type>(buffer.size()));
 	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
-	for (unsigned n = 0; n != sizeof (length_type); ++n)
+	for (int n = 0; n != sizeof (length_type); ++n)
 		buffer.insert (buffer.begin() + n, *(byte + n));
 }
 

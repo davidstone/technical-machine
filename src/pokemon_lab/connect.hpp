@@ -45,7 +45,7 @@ class Client : public network::GenericClient {
 		void send_channel_message(std::string const & channel, std::string const & message);
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 	private:
-		void reset_timer (unsigned timer_length);
+		void reset_timer(long timer_length);
 		void request_authentication ();
 		void send_keep_alive_message ();
 		void handle_welcome_message (uint32_t version, std::string const & server, std::string const & message) const;
