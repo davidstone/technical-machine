@@ -17,9 +17,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import glob
 import multiprocessing
-import shutil
 
 from build_scripts.sources import ai, predict, test, generate_sources
 
@@ -73,20 +71,4 @@ create_program (ai, ['debug', 'optimized'])
 create_program (predict, ['debug'])
 create_program (test, ['debug', 'optimized'])
 
-def check_if_exists (dependency, target, prev_ni):
-	return not os.path.exists(str(target))
-
-settings_env = Environment()
-settings_env.Decider(check_if_exists)
-for settings_file in Glob('src/settings/*.template', strings=True):
-	target_file = os.path.basename(settings_file) [:-9]
-	NoClean(settings_env.InstallAs('settings/' + target_file, settings_file))
-
-def create_team_directory (target, source, env):
-	dir_str = str (target [0])
-	os.makedirs(dir_str)
-
-team_dir_builder = Builder(action = create_team_directory, target_factory=Dir)
-team_dir_env = Environment(BUILDERS = { 'Create' : team_dir_builder })
-NoClean(team_dir_env.Create('teams/foe', []))
-team_dir_env.Decider(check_if_exists)
+SConscript('build_scripts/settings_file.py')
