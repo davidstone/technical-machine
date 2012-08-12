@@ -60,7 +60,7 @@ optimized = setup_environment_flags('optimized')
 
 def create_program (base, versions):
 	env = { 'debug':debug, 'optimized':optimized }
-	suffix = { 'debug':'', 'optimized':'o' }
+	suffix = { 'debug':'-debug', 'optimized':'' }
 	name, base_sources, libraries = base
 	for version in versions:
 		sources = generate_sources (base_sources, version, compiler_name)
