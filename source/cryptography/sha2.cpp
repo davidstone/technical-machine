@@ -15,7 +15,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 // This file was inspired by a C implementation by Oliver Gay.
-// Original source can be found in src/sha.c
+// Original source can be found in source/sha.c
 
 // This version runs faster than the unrolled version while almost having an
 // executable smaller than the non-unrolled version. This size increase comes

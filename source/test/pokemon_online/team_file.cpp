@@ -30,8 +30,9 @@ namespace po {
 void test_team_file () {
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
 	Team team;
-	load_team (team, "src/test/test1.tp", 6);
-	write_team (team, "src/test/test2.tp");
+	std::string const directory = "source/test/";
+	load_team (team, directory + "test1.tp", 6);
+	write_team (team, directory + "test2.tp");
 }
 
 }	// namespace po

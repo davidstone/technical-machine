@@ -27,7 +27,7 @@ def check_if_exists (dependency, target, prev_ni):
 
 settings_env.Decider(check_if_exists)
 source_settings_file_suffix = '.template'
-for settings_file in Glob('../src/settings/*' + source_settings_file_suffix, strings=True):
+for settings_file in Glob('../source/settings/*' + source_settings_file_suffix, strings=True):
 	target_file = os.path.basename(settings_file) [:-len(source_settings_file_suffix)]
 	NoClean(settings_env.InstallAs('../settings/' + target_file, settings_file))
 
