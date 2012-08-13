@@ -25,18 +25,15 @@
 #include "pokemon_online/connect.hpp"
 #include "network/invalid_packet.hpp"
 
-int main (int argc, char * argv []) {
-	using namespace technicalmachine;
-	try {
-		std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
-		std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
-		std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-		constexpr unsigned average_number_of_variables = 2;
-		constexpr auto heap_allocated_size = 6 * (sizeof(Pokemon) + sizeof(MoveCollection) + 6 * (sizeof(Move) + sizeof(VariableCollection) + average_number_of_variables * sizeof(Variable)));
-		constexpr auto full_team_size = sizeof(Team) + sizeof(PokemonCollection) + heap_allocated_size;
-		std::cout << "size of full team: " << full_team_size << '\n';
-		std::cout << "heap allocated_size: " << heap_allocated_size << '\n';
+using namespace technicalmachine;
 
+namespace {
+void print_debug_statements();
+}	// unnamed namespace
+
+int main (int argc, char * argv []) {
+	try {
+		print_debug_statements();
 		unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
 
 		// TODO: This is not the correct solution, but it works "good enough".
@@ -63,3 +60,16 @@ int main (int argc, char * argv []) {
 		throw;
 	}
 }
+
+namespace {
+void print_debug_statements() {
+	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
+	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
+	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
+	constexpr unsigned average_number_of_variables = 2;
+	constexpr auto heap_allocated_size = 6 * (sizeof(Pokemon) + sizeof(MoveCollection) + 6 * (sizeof(Move) + sizeof(VariableCollection) + average_number_of_variables * sizeof(Variable)));
+	constexpr auto full_team_size = sizeof(Team) + sizeof(PokemonCollection) + heap_allocated_size;
+	std::cout << "size of full team: " << full_team_size << '\n';
+	std::cout << "heap allocated_size: " << heap_allocated_size << '\n';
+}
+}	// unnamed namespace

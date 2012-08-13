@@ -29,7 +29,8 @@ namespace technicalmachine {
 namespace network {
 
 void Battles::handle_challenge_withdrawn() {
-	challenges.erase(challenges.begin());
+	if (challenges_are_queued())
+		challenges.erase(challenges.begin());
 }
 
 void Battles::handle_challenge_withdrawn (std::string const & opponent) {
@@ -68,7 +69,7 @@ bool Battles::challenges_are_queued() const {
 	return !challenges.empty();
 }
 
-std::string Battles::first_challenger() const {
+std::string const & Battles::first_challenger() const {
 	if (!challenges_are_queued())
 		throw InvalidUser();
 	return challenges.begin()->first;

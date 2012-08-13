@@ -43,7 +43,7 @@ class Battles {
 		GenericBattle const & find(uint32_t battle_id) const;
 		GenericBattle & find(uint32_t battle_id);
 		bool challenges_are_queued() const;
-		std::string first_challenger() const;
+		std::string const & first_challenger() const;
 	private:
 		typedef std::unique_ptr<GenericBattle> Pointer;
 		// Battles that have not yet begun

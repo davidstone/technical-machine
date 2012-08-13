@@ -74,6 +74,21 @@ class GenericClient {
 		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
 			return battles.add_pending_challenge<Battle>(rd(), opponent, depth, team_file_name, std::forward<Args>(args)...);
 		}
+		template<typename ... Args>
+		GenericBattle const & find_battle(Args && ... args) const {
+			return battles.find(std::forward<Args>(args)...);
+		}
+		template<typename ... Args>
+		GenericBattle & find_battle(Args && ... args) {
+			return battles.find(std::forward<Args>(args)...);
+		}
+		template<typename ... Args>
+		void handle_challenge_withdrawn(Args && ... args) {
+			return battles.handle_challenge_withdrawn(std::forward<Args>(args)...);
+		}
+		bool challenges_are_queued() const;
+		std::string const & first_challenger() const;
+		
 		void handle_challenge_withdrawn (std::string const & opponent);
 		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
 		void pause_at_start_of_battle ();
@@ -102,8 +117,8 @@ class GenericClient {
 
 	protected:
 		boost::asio::io_service io;
-		Battles battles;
 	private:
+		Battles battles;
 		std::string host;
 		std::string port;
 		std::random_device rd;

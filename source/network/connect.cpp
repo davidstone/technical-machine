@@ -473,5 +473,13 @@ std::string GenericClient::get_response () {
 	}
 }
 
+bool GenericClient::challenges_are_queued() const {
+	return battles.challenges_are_queued();
+}
+
+std::string const & GenericClient::first_challenger() const {
+	return battles.first_challenger();
+}
+
 }	// namespace network
 }	// namespace technicalmachine

@@ -307,7 +307,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 						moves.emplace_back(msg.read_byte ());
 				}
 			}
-			auto & battle = battles.find(battle_id);
+			auto & battle = find_battle(battle_id);
 			OutMessage action (OutMessage::BATTLE_ACTION);
 			battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
 			send_message(action);
@@ -335,7 +335,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			for (uint8_t n = 0; n != argc; ++n) {
 				arguments.emplace_back(msg.read_string());
 			}
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = static_cast<Battle &>(find_battle (battle_id));
 			battle.handle_print (category, message_id, arguments);
 			break;
 		}
@@ -352,7 +352,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			uint16_t const move_id = msg.read_short ();
-			auto & battle = battles.find(battle_id);
+			auto & battle = find_battle(battle_id);
 			battle.handle_use_move (party, slot, id_to_move(move_id));
 			break;
 		}
@@ -361,7 +361,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			uint8_t const party = msg.read_byte ();
 //			uint8_t const slot = msg.read_byte ();
 //			std::string const nickname = msg.read_string ();
-//			auto const it = battles.find (battle_id);
+//			auto const it = find_battle (battle_id);
 //			if (it != battles.end ()) {
 //				Battle & battle = static_cast <Battle &> (*it->second);
 //				battle.handle_withdraw (party, slot, nickname);
@@ -377,7 +377,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			Species const species = id_to_species (msg.read_short ());
 			Gender gender (id_to_gender (msg.read_byte ()));
 			uint8_t const level = msg.read_byte();
-			auto & battle = battles.find (battle_id);
+			auto & battle = find_battle (battle_id);
 			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
 			break;
 		}
@@ -390,7 +390,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint16_t const remaining_hp = msg.read_short ();
 			int16_t const denominator = static_cast<int16_t> (msg.read_short ());
 			assert(denominator > 0);
-			auto & battle = battles.find(battle_id);
+			auto & battle = find_battle(battle_id);
 			battle.handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, static_cast<uint16_t>(denominator));
 			break;
 		}
@@ -399,7 +399,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 //			uint8_t const party = msg.read_byte ();
 //			uint8_t const slot = msg.read_byte ();
 //			uint8_t const pp = msg.read_byte ();
-//			auto & battle = battles.find(battle_id);
+//			auto & battle = find_battle(battle_id);
 //			battle.handle_set_pp (party, slot, pp);
 			break;
 		}
@@ -409,14 +409,14 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			// This isn't needed:
 			// std::string const nickname = msg.read_string ();
-			auto & battle = battles.find(battle_id);
+			auto & battle = find_battle(battle_id);
 			battle.handle_fainted (party, slot);
 			break;
 		}
 		case InMessage::BATTLE_BEGIN_TURN: {
 			uint32_t const battle_id = msg.read_int ();
 			uint16_t const turn_count = msg.read_short ();
-			auto & battle = battles.find(battle_id);
+			auto & battle = find_battle(battle_id);
 			battle.handle_begin_turn (turn_count);
 			break;
 		}
@@ -441,7 +441,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			int16_t const new_move = static_cast<int16_t> (msg.read_short ());
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const max_pp = msg.read_byte ();
-			auto & battle = static_cast<Battle &>(battles.find (battle_id));
+			auto & battle = static_cast<Battle &>(find_battle (battle_id));
 			battle.handle_set_move (pokemon, move_slot, new_move, pp, max_pp);
 			break;
 		}
@@ -800,7 +800,7 @@ void Client::send_private_message (std::string const & user, std::string const &
 
 Result Client::get_result (uint32_t const battle_id, uint16_t const winner) {
 	if (winner != 0xFFFF)
-		return battles.find(battle_id).is_me (winner) ? Result::won : Result::lost;
+		return find_battle(battle_id).is_me (winner) ? Result::won : Result::lost;
 	else
 		return Result::tied;
 }
