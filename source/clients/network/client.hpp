@@ -37,6 +37,7 @@
 #include "../../team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
+class Party;
 enum class Result;
 namespace network {
 class GenericBattleSettings;
@@ -99,7 +100,7 @@ class GenericClient {
 			return std::unique_ptr<Timer>(new Timer(io));
 		}
 		void handle_challenge_withdrawn (std::string const & opponent);
-		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
+		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party party = Party());
 		void pause_at_start_of_battle ();
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 		void handle_battle_end(uint32_t battle_id, Result result);

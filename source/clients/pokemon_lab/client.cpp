@@ -261,7 +261,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		case InMessage::BATTLE_BEGIN: {
 			uint32_t const battle_id = msg.read_int ();
 			std::string const opponent = msg.read_string ();
-			uint8_t const party = msg.read_byte ();
+			auto const party = Party(msg.read_byte());
 //			int16_t const metagame = msg.read_short ();
 //			bool const rated = msg.read_byte ();
 //			std::string const unique_battle_id = msg.read_string ();
@@ -344,17 +344,17 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_USE_MOVE: {
 			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
+			auto const party = Party(msg.read_byte());
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			uint16_t const move_id = msg.read_short ();
 			auto & battle = find_battle(battle_id);
-			battle.handle_use_move (party, slot, id_to_move(move_id));
+			battle.handle_use_move(party, slot, id_to_move(move_id));
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
 //			uint32_t const battle_id = msg.read_int ();
-//			uint8_t const party = msg.read_byte ();
+//			auto const party = Party(msg.read_byte());
 //			uint8_t const slot = msg.read_byte ();
 //			std::string const nickname = msg.read_string ();
 //			auto const it = find_battle (battle_id);
@@ -366,7 +366,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_SEND_OUT: {
 			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
+			auto const party = Party(msg.read_byte());
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
@@ -379,7 +379,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
 			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
+			auto const party = Party(msg.read_byte());
 			uint8_t const slot = msg.read_byte ();
 			int16_t const change_in_hp = static_cast<int16_t> (msg.read_short ());
 			assert (change_in_hp > 0);
@@ -392,7 +392,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_SET_PP: {
 //			uint32_t const battle_id = msg.read_int ();
-//			uint8_t const party = msg.read_byte ();
+//			auto const party = Party(msg.read_byte());
 //			uint8_t const slot = msg.read_byte ();
 //			uint8_t const pp = msg.read_byte ();
 //			auto & battle = find_battle(battle_id);
@@ -401,7 +401,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_FAINTED: {
 			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
+			auto const party = Party(msg.read_byte());
 			uint8_t const slot = msg.read_byte ();
 			// This isn't needed:
 			// std::string const nickname = msg.read_string ();
@@ -484,7 +484,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_STATUS_CHANGE: {
 			uint32_t const battle_id = msg.read_int ();
-			uint8_t const party = msg.read_byte ();
+			auto const party = Party(msg.read_byte());
 			uint8_t const index = msg.read_byte ();
 			uint8_t const type = msg.read_byte ();
 			uint8_t const radius = msg.read_byte ();
@@ -796,7 +796,7 @@ void Client::send_private_message (std::string const & user, std::string const &
 
 Result Client::get_result (uint32_t const battle_id, uint16_t const winner) {
 	if (winner != 0xFFFF)
-		return find_battle(battle_id).is_me (winner) ? Result::won : Result::lost;
+		return find_battle(battle_id).is_me(Party(winner)) ? Result::won : Result::lost;
 	else
 		return Result::tied;
 }

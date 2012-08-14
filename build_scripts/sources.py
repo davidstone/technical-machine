@@ -24,7 +24,7 @@ string_conversion_sources = prepend_dir('string_conversions', ['ability_string.c
 network = prepend_dir('network', ['battles.cpp', 'client.cpp', 'inmessage.cpp', 'outmessage.cpp'])
 pokemon_lab = prepend_dir('pokemon_lab', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'inmessage.cpp', 'outmessage.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
 pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'read_team_file.cpp', 'inmessage.cpp', 'outmessage.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
-clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp'] + network + pokemon_lab + pokemon_online)
+clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'party.cpp'] + network + pokemon_lab + pokemon_online)
 
 ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'entry_hazards.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'nature.cpp', 'screen.cpp', 'screens.cpp', 'settings_file.cpp', 'stage.cpp', 'stat.cpp', 'status.cpp', 'switch.cpp', 'team.cpp', 'transposition.cpp', 'vanish.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp', 'wish.cpp']
 ai_sources += clients

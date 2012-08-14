@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "battle_result.hpp"
+#include "party.hpp"
 
 #include "../team.hpp"
 #include "../weather.hpp"
@@ -41,6 +42,37 @@ class OutMessage;
 
 class GenericBattle {
 	public:
+		bool is_me (Party other_party) const;
+		void set_party_if_unknown(Party new_party);
+		void write_team (network::OutMessage & msg, std::string const & username = std::string()) const;
+		Team predict_foe_team (DetailedStats const & detailed) const;
+		void handle_begin_turn (uint16_t turn_count) const;
+		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
+		void handle_use_move (Party user, uint8_t slot, Moves move_name);
+		void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
+		void handle_hp_change (Party changer, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator);
+		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
+		void handle_fainted (Party fainter, uint8_t slot);
+		void handle_end (network::GenericClient & client, Result const result) const;
+		virtual ~GenericBattle() {}
+		GenericBattle (GenericBattle const &) = delete;
+		GenericBattle & operator= (GenericBattle const &) = delete;
+	protected:
+		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
+		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
+		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
+		uint8_t switch_slot (Moves move) const;
+		virtual uint16_t max_damage_precision () const;
+		void initialize_turn ();
+		virtual uint8_t get_target () const = 0;
+	private:
+		Moves determine_action(network::GenericClient & client);
+		void correct_hp_and_report_errors (Team & team);
+		void normalize_hp ();
+		static void initialize_team (Team & team);
+		void do_turn ();
+
+	public:
 		std::string opponent;
 	protected:
 		std::mt19937 random_engine;
@@ -54,38 +86,7 @@ class GenericBattle {
 		unsigned depth;
 		bool move_damage;
 	protected:
-		uint8_t party;
-		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
-		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
-	public:
-		virtual ~GenericBattle() {}
-		bool is_me (uint32_t other_party) const;
-		void set_if_party_unknown (uint8_t new_party);
-		void write_team (network::OutMessage & msg, std::string const & username = std::string()) const;
-		Team predict_foe_team (DetailedStats const & detailed) const;
-		void handle_begin_turn (uint16_t turn_count) const;
-		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
-		void handle_use_move (uint8_t moving_party, uint8_t slot, Moves move_name);
-		void handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
-		void handle_hp_change (uint8_t party_changing_hp, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator);
-		void handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp);
-		void handle_fainted (uint8_t fainting_party, uint8_t slot);
-		void handle_end (network::GenericClient & client, Result const result) const;
-	protected:
-		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
-		uint8_t switch_slot (Moves move) const;
-		virtual uint16_t max_damage_precision () const;
-		void initialize_turn ();
-		virtual uint8_t get_target () const = 0;
-		static constexpr uint8_t unknown_party = 255;
-	private:
-		Moves determine_action(network::GenericClient & client);
-		void correct_hp_and_report_errors (Team & team);
-		void normalize_hp ();
-		static void initialize_team (Team & team);
-		void do_turn ();
-		GenericBattle (GenericBattle const &) = delete;
-		GenericBattle & operator= (GenericBattle const &) = delete;
+		Party my_party;
 };
 
 }	// namespace technicalmachine

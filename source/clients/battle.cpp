@@ -54,8 +54,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	opponent (_opponent),
 	random_engine (seed),
 	ai (6, random_engine, team_file_name),
-	depth (battle_depth),
-	party (unknown_party)
+	depth (battle_depth)
 	{
 	ai.pokemon.for_each ([this] (Pokemon const & pokemon)->void {
 		slot_memory.emplace_back(pokemon.name);
@@ -67,8 +66,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	opponent (_opponent),
 	random_engine (seed),
 	ai (team),
-	depth (battle_depth),
-	party (unknown_party)
+	depth (battle_depth)
 	{
 	ai.pokemon.for_each ([this] (Pokemon const & pokemon)->void {
 		slot_memory.emplace_back(pokemon.name);
@@ -76,13 +74,12 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	initialize_turn ();
 }
 
-bool GenericBattle::is_me (uint32_t const other_party) const {
-	return party == other_party;
+bool GenericBattle::is_me (Party const other_party) const {
+	return my_party == other_party;
 }
 
-void GenericBattle::set_if_party_unknown (uint8_t const new_party) {
- 	if (party == 0xFF)
-		party = new_party;
+void GenericBattle::set_party_if_unknown(Party const new_party) {
+	my_party.set_if_unknown(new_party);
 }
 
 void GenericBattle::write_team (network::OutMessage & msg, std::string const & username) const {
@@ -135,12 +132,12 @@ Moves GenericBattle::determine_action(network::GenericClient & client) {
 	return expectiminimax(ai, predicted, weather, depth, client.score(), random_engine);
 }
 
-void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Moves move_name) {
+void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
-	Team & active = is_me (moving_party) ? ai : foe;
-	Team & inactive = is_me (moving_party) ? foe : ai;
+	Team & active = (my_party == user) ? ai : foe;
+	Team & inactive = (my_party == user) ? foe : ai;
 
 	if (first == nullptr) {
 		first = &active;
@@ -156,12 +153,12 @@ void GenericBattle::handle_use_move (uint8_t moving_party, uint8_t slot, Moves m
 		move_damage = true;
 }
 
-void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
+void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
-	Team & active = is_me (switching_party) ? ai : foe;
-	Team & inactive = is_me (switching_party) ? foe : ai;
+	Team & active = (my_party == switcher) ? ai : foe;
+	Team & inactive = (my_party == switcher) ? foe : ai;
 
 	if (first == nullptr) {
 		first = &active;
@@ -188,10 +185,10 @@ void GenericBattle::handle_send_out (uint8_t switching_party, uint8_t slot, uint
 	}
 }
 
-void GenericBattle::handle_hp_change (uint8_t party_changing_hp, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator) {
+void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
-	bool const my_team = is_me (party_changing_hp);
+	bool const my_team = (my_party == changing);
 	Team & changer = my_team ? ai : foe;
 	Team & other = my_team ? foe : ai;
 	Pokemon & pokemon = changer.pokemon.at_replacement();
@@ -225,15 +222,15 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	});
 }
 
-void GenericBattle::handle_set_pp (uint8_t party_changing_pp, uint8_t slot, uint8_t pp) {
+void GenericBattle::handle_set_pp (Party const changer, uint8_t slot, uint8_t pp) {
 	// This function may actually be useless. I believe that any PP change is
 	// already handled by other mechanisms.
 }
 
-void GenericBattle::handle_fainted (uint8_t fainting_party, uint8_t slot) {
+void GenericBattle::handle_fainted (Party const fainting, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
-	Team & fainter = is_me (fainting_party) ? ai : foe;
+	Team & fainter = (my_party == fainting) ? ai : foe;
 	fainter.pokemon.at_replacement().faint();
 }
 

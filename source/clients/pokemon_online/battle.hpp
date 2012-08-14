@@ -34,7 +34,7 @@ class Battle : public GenericBattle {
 	public:
 		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, std::string const & team_file_name, bool challenger);
 		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, Team const & team, bool challenger);
-		void handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg);
+		void handle_message (Client & client, uint32_t battle_id, uint8_t command, Party party, InMessage & msg);
 		static constexpr unsigned pokemon_per_team() {
 			return 6;
 		}
@@ -43,26 +43,26 @@ class Battle : public GenericBattle {
 		}
 	private:
 		void parse_begin_turn (InMessage & msg);
-		void parse_send_out (InMessage & msg, uint8_t player);
-		void parse_use_attack (InMessage & msg, uint8_t player);
+		void parse_send_out (InMessage & msg, Party party);
+		void parse_use_attack (InMessage & msg, Party party);
 		void parse_straight_damage (InMessage & msg);
-		void parse_hp_change (InMessage & msg, uint8_t player);
+		void parse_hp_change (InMessage & msg, Party party);
 		int16_t calculate_change_in_hp (bool my_team, uint16_t remaining_hp) const;
 		void parse_pp_change (InMessage & msg);
 		void parse_effectiveness (InMessage & msg);
-		void handle_miss (uint8_t player);
-		void handle_critical_hit (uint8_t player);
+		void handle_miss (Party party);
+		void handle_critical_hit (Party party);
 		void parse_number_of_hits (InMessage & msg);
 		void parse_stat_change (InMessage & msg);
 		void parse_status_message (InMessage & msg);
 		void parse_status_change (InMessage & msg);
 		void parse_abs_status_change (InMessage & msg);
 		void parse_already_statused (InMessage & msg);
-		void handle_flinch (uint8_t player);
+		void handle_flinch (Party party);
 		void parse_recoil (InMessage & msg);
 		void parse_weather_message (InMessage & msg);
-		void parse_ability_message (InMessage & msg, uint8_t player);
-		void parse_item_message (InMessage & msg, uint8_t player);
+		void parse_ability_message (InMessage & msg, Party party);
+		void parse_item_message (InMessage & msg, Party party);
 		void parse_move_message (InMessage & msg);
 		void parse_substitute (InMessage & msg);
 		void parse_dynamic_info (InMessage & msg);

@@ -233,9 +233,9 @@ void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 	battles.handle_challenge_withdrawn(opponent);
 }
 
-void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party) {
+void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party const party) {
 	GenericBattle & battle = battles.handle_begin(battle_id, opponent);
-	battle.set_if_party_unknown (party);
+	battle.set_party_if_unknown(party);
 //	pause_at_start_of_battle ();
 }
 

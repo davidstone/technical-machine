@@ -64,7 +64,7 @@ Battle::Battle (std::random_device::result_type seed, std::string const & oppone
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
-	party = challenger ? 0 : 1;
+	my_party.set_if_unknown(Party(challenger ? 0 : 1));
 }
 
 Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team, bool const challenger):
@@ -72,10 +72,10 @@ Battle::Battle (std::random_device::result_type seed, std::string const & oppone
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
-	party = challenger ? 0 : 1;
+	my_party.set_if_unknown(Party(challenger ? 0 : 1));
 }
 
-void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, uint8_t player, InMessage & msg) {
+void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, Party const party, InMessage & msg) {
 	enum {
 		SEND_OUT = 0,
 		WITHDRAW = 1,		// "SendBack"
@@ -130,26 +130,26 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			parse_begin_turn(msg);
 			break;
 		case SEND_OUT:
-			parse_send_out(msg, player);
+			parse_send_out(msg, party);
 			break;
 		case WITHDRAW:
 			// Do nothing.
 			break;
 		case USE_ATTACK:
-			parse_use_attack(msg, player);
+			parse_use_attack(msg, party);
 			break;
 		case STRAIGHT_DAMAGE:
 			parse_straight_damage(msg);
 			break;
 		case HP_CHANGE:
-			parse_hp_change(msg, player);
+			parse_hp_change(msg, party);
 			break;
 		case PP_CHANGE:
 			parse_pp_change(msg);
 			break;
 		case KO: {
 			constexpr uint8_t slot = 0;
-			handle_fainted (player, slot);
+			handle_fainted (party, slot);
 			break;
 		}
 		case EFFECTIVENESS:
@@ -158,7 +158,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case AVOID:
 		case MISS:
 			std::cerr << ((command == AVOID) ? "AVOID\n" : "MISS\n");
-			handle_miss(player);
+			handle_miss(party);
 			break;
 		case NO_TARGET:
 			// "But there was no target..."
@@ -167,7 +167,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			// "But it failed!"
 			break;
 		case CRITICAL_HIT:
-			handle_critical_hit(player);
+			handle_critical_hit(party);
 			break;
 		case NUMBER_OF_HITS:
 			parse_number_of_hits(msg);
@@ -188,7 +188,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			parse_already_statused(msg);
 			break;
 		case FLINCH:
-			handle_flinch(player);
+			handle_flinch(party);
 			break;
 		case RECOIL:
 			parse_recoil(msg);
@@ -197,10 +197,10 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 			parse_weather_message(msg);
 			break;
 		case ABILITY_MESSAGE:
-			parse_ability_message(msg, player);
+			parse_ability_message(msg, party);
 			break;
 		case ITEM_MESSAGE:
-			parse_item_message(msg, player);
+			parse_item_message(msg, party);
 			break;
 		case MOVE_MESSAGE:
 			parse_move_message(msg);
@@ -278,7 +278,7 @@ void Battle::parse_begin_turn (InMessage & msg) {
 	handle_begin_turn (turn);
 }
 
-void Battle::parse_send_out (InMessage & msg, uint8_t const player) {
+void Battle::parse_send_out (InMessage & msg, Party const party) {
 	bool const is_silent = msg.read_byte ();
 	uint8_t const index = msg.read_byte ();
 	uint16_t const species_id = msg.read_short ();
@@ -291,8 +291,8 @@ void Battle::parse_send_out (InMessage & msg, uint8_t const player) {
 	bool const shiny = msg.read_byte ();
 	uint8_t const level = msg.read_byte ();
 	uint8_t const slot = 0;
-	handle_send_out (player, slot, index, nickname, species, gender, level);
-	if (player == party) {
+	handle_send_out (party, slot, index, nickname, species, gender, level);
+	if (party == my_party) {
 		for (Species & name : slot_memory) {
 			if (ai.pokemon.at_replacement ().name == name)
 				std::swap (slot_memory.front(), name);
@@ -300,18 +300,18 @@ void Battle::parse_send_out (InMessage & msg, uint8_t const player) {
 	}
 }
 
-void Battle::parse_use_attack (InMessage & msg, uint8_t const player) {
+void Battle::parse_use_attack (InMessage & msg, Party const party) {
 	uint16_t const attack = msg.read_short ();
 	constexpr uint8_t slot = 0;
-	handle_use_move (player, slot, id_to_move(attack));
+	handle_use_move (party, slot, id_to_move(attack));
 }
 
 void Battle::parse_straight_damage (InMessage & msg) {
 	damage = msg.read_short ();
 }
 
-void Battle::parse_hp_change (InMessage & msg, uint8_t const player) {
-	bool const my_team = player == party;
+void Battle::parse_hp_change (InMessage & msg, Party const party) {
+	bool const my_team = party == my_party;
 	uint16_t const remaining_hp = msg.read_short ();
 	int16_t const change_in_hp = calculate_change_in_hp (my_team, remaining_hp);
 	damage = 0;
@@ -319,7 +319,7 @@ void Battle::parse_hp_change (InMessage & msg, uint8_t const player) {
 		return;
 	uint8_t const slot = 0;
 	uint16_t const denominator = my_team ? ai.pokemon.at_replacement().hp.max : max_damage_precision ();
-	handle_hp_change (player, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, denominator);
+	handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, denominator);
 }
 
 int16_t Battle::calculate_change_in_hp (bool const my_team, uint16_t const remaining_hp) const {
@@ -339,13 +339,13 @@ void Battle::parse_effectiveness (InMessage & msg) {
 	// 0, 1, 2, 4, 8, 16
 }
 
-void Battle::handle_miss (uint8_t const player) {
-	Team & team = is_me (player) ? ai : foe;
+void Battle::handle_miss (Party const party) {
+	Team & team = is_me (party) ? ai : foe;
 	team.miss = true;
 }
 
-void Battle::handle_critical_hit (uint8_t const player) {
-	Team & team = is_me (player) ? ai : foe;
+void Battle::handle_critical_hit (Party const party) {
+	Team & team = is_me (party) ? ai : foe;
 	team.ch = true;
 }
 
@@ -385,9 +385,9 @@ void Battle::parse_already_statused (InMessage & msg) {
 	uint8_t const status = msg.read_byte ();
 }
 
-void Battle::handle_flinch (uint8_t const player) {
+void Battle::handle_flinch (Party const party) {
 	std::cerr << "FLINCH\n";
-	Team & team = is_me (player) ? ai : foe;
+	Team & team = is_me (party) ? ai : foe;
 	team.pokemon.at_replacement().move().variable.set_index(1);
 }
 
@@ -408,10 +408,10 @@ void Battle::parse_weather_message (InMessage & msg) {
 	int8_t const weather_var = static_cast<int8_t> (msg.read_byte());
 }
 
-void Battle::parse_ability_message (InMessage & msg, uint8_t const player) {
+void Battle::parse_ability_message (InMessage & msg, Party const party) {
 	uint16_t const ability = msg.read_short ();
 	uint8_t const part = msg.read_byte ();
-	Team & team = (player == party) ? ai : foe;
+	Team & team = (party == my_party) ? ai : foe;
 	team.pokemon.at_replacement().ability.name = battle_id_to_ability (ability, part);
 	#if 0
 	int8_t const type = msg.read_byte ();
@@ -420,11 +420,11 @@ void Battle::parse_ability_message (InMessage & msg, uint8_t const player) {
 	#endif
 }
 
-void Battle::parse_item_message (InMessage & msg, uint8_t const player) {
+void Battle::parse_item_message (InMessage & msg, Party const party) {
 	uint16_t const item_id = msg.read_short ();
 	uint8_t const part = msg.read_byte ();
 	Item item (battle_id_to_item (item_id, part));
-	Team & team = (player == party) ? ai : foe;
+	Team & team = (party == my_party) ? ai : foe;
 	team.pokemon.at_replacement().item.name = item.name;
 	// int8_t const foe = msg.read_byte ();
 	// int16_t const berry = msg.read_short ();
@@ -613,7 +613,7 @@ uint16_t Battle::max_damage_precision () const {
 }
 
 uint8_t Battle::get_target () const {
-	return 1 - party;
+	return 1 - my_party();
 }
 
 int16_t Battle::ai_change_in_hp (uint16_t const remaining_hp) const {

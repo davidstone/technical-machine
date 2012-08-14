@@ -429,10 +429,11 @@ void Client::handle_battle_message (InMessage & msg) {
 	uint32_t const battle_id = msg.read_int ();
 	uint32_t length = msg.read_int ();
 	uint8_t const command = msg.read_byte ();
-	uint8_t const player = msg.read_byte ();
+	uint8_t const player = msg.read_byte();
+	auto const party = Party(player);
 	length -= (sizeof (command) + sizeof (player));
 	auto & battle = static_cast<Battle &>(find_battle (battle_id));
-	battle.handle_message (*this, battle_id, command, player, msg);
+	battle.handle_message (*this, battle_id, command, party, msg);
 }
 
 void Client::parse_ask_for_pass (InMessage & msg) {
