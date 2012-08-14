@@ -49,7 +49,7 @@ namespace pl {
 
 Client::Client (unsigned set_depth):
 	network::GenericClient (set_depth),
-	timer (io)
+	timer(make_timer<boost::asio::deadline_timer>())
 	{
 	request_authentication ();
 }
@@ -62,18 +62,14 @@ void Client::request_authentication () {
 
 void Client::reset_timer(long timer_length) {
 	send_keep_alive_message ();
-	timer.expires_from_now(boost::posix_time::seconds(timer_length));
-	timer.async_wait (boost::bind (& Client::reset_timer, this, timer_length));
+	timer->expires_from_now(boost::posix_time::seconds(timer_length));
+	timer->async_wait(boost::bind(& Client::reset_timer, this, timer_length));
 }
 
 void Client::run () {
 	constexpr long timer_length_in_seconds = 45;
 	reset_timer (timer_length_in_seconds);
-
-	InMessage msg;
-	read_header(msg);
-
-	io.run();
+	run_main_service<InMessage>();
 }
 
 void Client::send_keep_alive_message () {

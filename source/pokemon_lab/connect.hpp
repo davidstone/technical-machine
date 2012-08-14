@@ -72,7 +72,7 @@ class Client : public network::GenericClient {
 		void send_private_message (std::string const & user, std::string const & message);
 		Result get_result (uint32_t battle_id, uint16_t winner);
 
-		boost::asio::deadline_timer timer;
+		std::unique_ptr<boost::asio::deadline_timer> timer;
 		std::map <std::string, uint32_t> channel_to_id;
 };
 

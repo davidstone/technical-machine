@@ -60,6 +60,12 @@ class GenericClient {
 		void send_message(OutMessage & msg);
 		void read_header(InMessage & msg);
 	protected:
+		template<typename SimulatorInMessage>
+		void run_main_service() {
+			SimulatorInMessage msg;
+			read_header(msg);
+			io.run();
+		}
 		Team generate_team(unsigned foe_team_size);
 		virtual void send_keep_alive_message () = 0;
 		std::string const & username() const;
@@ -88,7 +94,10 @@ class GenericClient {
 		}
 		bool challenges_are_queued() const;
 		std::string const & first_challenger() const;
-		
+		template<typename Timer>
+		std::unique_ptr<Timer> make_timer() {
+			return std::unique_ptr<Timer>(new Timer(io));
+		}
 		void handle_challenge_withdrawn (std::string const & opponent);
 		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, uint8_t party = 0xFF);
 		void pause_at_start_of_battle ();
@@ -115,9 +124,7 @@ class GenericClient {
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
 		std::string get_response ();
 
-	protected:
 		boost::asio::io_service io;
-	private:
 		Battles battles;
 		std::string host;
 		std::string port;

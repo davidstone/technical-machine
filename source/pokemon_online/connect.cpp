@@ -64,10 +64,7 @@ void Client::log_in () {
 }
 
 void Client::run() {
-	InMessage msg;
-	read_header(msg);
-
-	io.run();
+	run_main_service<InMessage>();
 }
 
 void Client::send_keep_alive_message () {
