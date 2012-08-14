@@ -32,9 +32,9 @@
 #include "battles.hpp"
 
 #include "../battle.hpp"
-#include "../evaluate.hpp"
+#include "../../evaluate.hpp"
 
-#include "../team_predictor/detailed_stats.hpp"
+#include "../../team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
 enum class Result;

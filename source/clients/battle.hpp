@@ -25,8 +25,9 @@
 #include <vector>
 
 #include "battle_result.hpp"
-#include "team.hpp"
-#include "weather.hpp"
+
+#include "../team.hpp"
+#include "../weather.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

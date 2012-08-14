@@ -23,16 +23,16 @@
 #include <string>
 #include <vector>
 
-#include "connect.hpp"
+#include "client.hpp"
 #include "conversion.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 
-#include "../team.hpp"
-
 #include "../network/invalid_simulator_data.hpp"
 
-#include "../pokemon/pokemon.hpp"
+#include "../../team.hpp"
+
+#include "../../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace po {

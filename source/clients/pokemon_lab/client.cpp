@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "connect.hpp"
+#include "client.hpp"
 
 #include <cassert>
 #include <cstdint>
@@ -35,13 +35,13 @@
 
 #include "../battle_result.hpp"
 
-#include "../cryptography/byte_order.hpp"
-#include "../cryptography/md5.hpp"
-#include "../cryptography/sha2.hpp"
-#include "../cryptography/rijndael.h"
-
-#include "../network/connect.hpp"
+#include "../network/client.hpp"
 #include "../network/invalid_channel.hpp"
+
+#include "../../cryptography/byte_order.hpp"
+#include "../../cryptography/md5.hpp"
+#include "../../cryptography/sha2.hpp"
+#include "../../cryptography/rijndael.h"
 
 
 namespace technicalmachine {

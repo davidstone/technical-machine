@@ -24,7 +24,7 @@
 #include <boost/asio/write.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "../cryptography/byte_order.hpp"
+#include "../../cryptography/byte_order.hpp"
 
 namespace technicalmachine {
 namespace network {

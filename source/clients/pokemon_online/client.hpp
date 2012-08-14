@@ -24,8 +24,8 @@
 #include <string>
 
 #include "inmessage.hpp"
-#include "../network/connect.hpp"
-#include "../team.hpp"
+#include "../network/client.hpp"
+#include "../../team.hpp"
 
 namespace technicalmachine {
 namespace po {

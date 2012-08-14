@@ -22,7 +22,7 @@
 
 #include "../invalid_simulator_conversion.hpp"
 
-#include "../../pokemon_lab/conversion.hpp"
+#include "../../clients/pokemon_lab/conversion.hpp"
 
 #include "../../move/moves.hpp"
 

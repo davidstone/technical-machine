@@ -29,13 +29,14 @@
 
 #include "ability.hpp"
 #include "item.hpp"
-#include "invalid_team_file_format.hpp"
 #include "status.hpp"
 
 #include "pokemon/pokemon.hpp"
 
-#include "pokemon_lab/read_team_file.hpp"
-#include "pokemon_online/read_team_file.hpp"
+#include "clients/invalid_team_file_format.hpp"
+
+#include "clients/pokemon_lab/read_team_file.hpp"
+#include "clients/pokemon_online/read_team_file.hpp"
 
 namespace technicalmachine {
 

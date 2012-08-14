@@ -21,9 +21,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include "exit_program.hpp"
-#include "pokemon_lab/connect.hpp"
-#include "pokemon_online/connect.hpp"
-#include "network/invalid_packet.hpp"
+
+#include "clients/network/invalid_packet.hpp"
+#include "clients/pokemon_lab/client.hpp"
+#include "clients/pokemon_online/client.hpp"
 
 using namespace technicalmachine;
 

@@ -22,11 +22,11 @@
 #include <cstdint>
 #include <string>
 #include <utility>
-#include "../ability.hpp"
-#include "../gender.hpp"
-#include "../item.hpp"
-#include "../stat.hpp"
-#include "../nature.hpp"
+#include "../../ability.hpp"
+#include "../../gender.hpp"
+#include "../../item.hpp"
+#include "../../stat.hpp"
+#include "../../nature.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

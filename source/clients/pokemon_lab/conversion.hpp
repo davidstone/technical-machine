@@ -19,7 +19,7 @@
 #ifndef POKEMON_LAB__CONVERSION_HPP_
 #define POKEMON_LAB__CONVERSION_HPP_
 
-#include "../gender.hpp"
+#include "../../gender.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

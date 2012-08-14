@@ -23,13 +23,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "../invalid_stat.hpp"
-#include "../stat.hpp"
-#include "../team.hpp"
+#include "../../invalid_stat.hpp"
+#include "../../stat.hpp"
+#include "../../team.hpp"
 
-#include "../move/move.hpp"
+#include "../../move/move.hpp"
 
-#include "../pokemon/pokemon.hpp"
+#include "../../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

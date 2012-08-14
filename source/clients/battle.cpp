@@ -26,23 +26,24 @@
 #include <vector>
 
 #include "battle_result.hpp"
-#include "endofturn.hpp"
-#include "expectiminimax.hpp"
-#include "switch.hpp"
-#include "team.hpp"
-#include "weather.hpp"
 
-#include "move/move.hpp"
-#include "move/use_move.hpp"
-
-#include "network/connect.hpp"
+#include "network/client.hpp"
 #include "network/outmessage.hpp"
-
-#include "pokemon/pokemon_not_found.hpp"
 
 #include "pokemon_lab/write_team_file.hpp"
 
-#include "team_predictor/team_predictor.hpp"
+#include "../endofturn.hpp"
+#include "../expectiminimax.hpp"
+#include "../switch.hpp"
+#include "../team.hpp"
+#include "../weather.hpp"
+
+#include "../move/move.hpp"
+#include "../move/use_move.hpp"
+
+#include "../pokemon/pokemon_not_found.hpp"
+
+#include "../team_predictor/team_predictor.hpp"
 
 namespace technicalmachine {
 class DetailedStats;

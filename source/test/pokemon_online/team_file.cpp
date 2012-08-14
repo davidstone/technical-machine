@@ -21,8 +21,8 @@
 #include <iostream>
 
 #include "../../team.hpp"
-#include "../../pokemon_online/read_team_file.hpp"
-#include "../../pokemon_online/write_team_file.hpp"
+#include "../../clients/pokemon_online/read_team_file.hpp"
+#include "../../clients/pokemon_online/write_team_file.hpp"
 
 namespace technicalmachine {
 namespace po {

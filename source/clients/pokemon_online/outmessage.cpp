@@ -26,11 +26,11 @@
 #include "battle_settings.hpp"
 #include "conversion.hpp"
 
-#include "../team.hpp"
+#include "../../team.hpp"
 
-#include "../cryptography/byte_order.hpp"
+#include "../../cryptography/byte_order.hpp"
 
-#include "../pokemon/pokemon.hpp"
+#include "../../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace po {

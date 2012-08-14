@@ -27,7 +27,7 @@
 #include <boost/asio/deadline_timer.hpp>
 
 #include "inmessage.hpp"
-#include "../network/connect.hpp"
+#include "../network/client.hpp"
 
 namespace technicalmachine {
 enum class Result;

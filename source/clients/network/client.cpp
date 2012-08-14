@@ -19,7 +19,7 @@
 // What follows are generic functions and data for connection to any Pokemon
 // sim. Specific functions and data are found in the respective sim's folder.
 
-#include "connect.hpp"
+#include "client.hpp"
 
 #include <cstdint>
 #include <ctime>
@@ -40,9 +40,10 @@
 #include "outmessage.hpp"
 
 #include "../battle.hpp"
-#include "../evaluate.hpp"
-#include "../exit_program.hpp"
-#include "../settings_file.hpp"
+
+#include "../../evaluate.hpp"
+#include "../../exit_program.hpp"
+#include "../../settings_file.hpp"
 
 namespace technicalmachine {
 namespace network {

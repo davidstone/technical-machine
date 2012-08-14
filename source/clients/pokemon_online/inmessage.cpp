@@ -26,7 +26,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/bind.hpp>
 
-#include "connect.hpp"
+#include "client.hpp"
 #include "../network/invalid_packet.hpp"
 
 namespace technicalmachine {

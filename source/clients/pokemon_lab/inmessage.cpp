@@ -26,7 +26,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/bind.hpp>
 
-#include "connect.hpp"
+#include "client.hpp"
 
 namespace technicalmachine {
 namespace network {

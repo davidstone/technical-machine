@@ -23,14 +23,14 @@
 #include <string>
 #include <utility>
 
-#include "../ability.hpp"
-#include "../gender.hpp"
-#include "../item.hpp"
-#include "../stat.hpp"
+#include "../../ability.hpp"
+#include "../../gender.hpp"
+#include "../../item.hpp"
+#include "../../stat.hpp"
 
-#include "../move/moves.hpp"
+#include "../../move/moves.hpp"
 
-#include "../pokemon/species.hpp"
+#include "../../pokemon/species.hpp"
 
 namespace technicalmachine {
 namespace po {

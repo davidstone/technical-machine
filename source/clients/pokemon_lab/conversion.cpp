@@ -18,10 +18,11 @@
 
 #include "conversion.hpp"
 
-#include "../gender.hpp"
-#include "../move/moves.hpp"
+#include "../../gender.hpp"
 
-#include "../pokemon/species.hpp"
+#include "../../move/moves.hpp"
+
+#include "../../pokemon/species.hpp"
 
 namespace technicalmachine {
 namespace pl {

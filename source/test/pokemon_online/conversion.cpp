@@ -32,7 +32,7 @@
 #include "../../pokemon/pokemon.hpp"
 #include "../../pokemon/species.hpp"
 
-#include "../../pokemon_online/conversion.hpp"
+#include "../../clients/pokemon_online/conversion.hpp"
 
 namespace technicalmachine {
 namespace po {
