@@ -33,7 +33,7 @@ class Battles {
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (Args && ... args) {
 			auto * battle = new Battle(std::forward<Args>(args)...);
-			challenges.insert(std::make_pair(battle->opponent, Pointer(battle)));
+			challenges.insert(std::make_pair(battle->opponent(), Pointer(battle)));
 			return *battle;
 		}
 		void handle_challenge_withdrawn();

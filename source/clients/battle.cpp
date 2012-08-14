@@ -51,7 +51,7 @@ enum class Moves : uint16_t;
 enum class Species : uint16_t;
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
-	opponent (_opponent),
+	opponent_name (_opponent),
 	random_engine (seed),
 	ai (6, random_engine, team_file_name),
 	depth (battle_depth)
@@ -63,7 +63,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 }
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
-	opponent (_opponent),
+	opponent_name(_opponent),
 	random_engine (seed),
 	ai (team),
 	depth (battle_depth)
@@ -236,7 +236,7 @@ void GenericBattle::handle_fainted (Party const fainting, uint8_t slot) {
 
 void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
 	std::string const verb = to_string (result);
-	client.print_with_time_stamp (std::cout, verb + " a battle vs. " + opponent);
+	client.print_with_time_stamp(std::cout, verb + " a battle vs. " + opponent());
 	if (result == Result::lost) {
 		pl::write_team(predict_foe_team(client.detailed()), client.generate_team_file_name());
 	}
@@ -326,5 +326,10 @@ void GenericBattle::normalize_hp () {
 	ai.pokemon().normalize_hp ();
 	foe.pokemon().normalize_hp ();
 }
+
+std::string const & GenericBattle::opponent() const {
+	return opponent_name;
+}
+
 
 } // namespace technicalmachine

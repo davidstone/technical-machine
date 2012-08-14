@@ -54,6 +54,7 @@ class GenericBattle {
 		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
 		void handle_fainted (Party fainter, uint8_t slot);
 		void handle_end (network::GenericClient & client, Result const result) const;
+		std::string const & opponent() const;
 		virtual ~GenericBattle() {}
 		GenericBattle (GenericBattle const &) = delete;
 		GenericBattle & operator= (GenericBattle const &) = delete;
@@ -72,9 +73,8 @@ class GenericBattle {
 		static void initialize_team (Team & team);
 		void do_turn ();
 
-	public:
-		std::string opponent;
 	protected:
+		std::string opponent_name;
 		std::mt19937 random_engine;
 		Team ai;
 		Team foe;

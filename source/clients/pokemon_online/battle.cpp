@@ -59,16 +59,16 @@ std::array<int8_t, 7> parse_boosts(InMessage & msg);
 
 }	// unnamed namespace
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, std::string const & team_file_name, bool const challenger):
-	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team_file_name),
+Battle::Battle (std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, std::string const & team_file_name, bool const challenger):
+	GenericBattle::GenericBattle (seed, foe_name, battle_depth, team_file_name),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
 	my_party.set_if_unknown(Party(challenger ? 0 : 1));
 }
 
-Battle::Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned const battle_depth, Team const & team, bool const challenger):
-	GenericBattle::GenericBattle (seed, opponent_name, battle_depth, team),
+Battle::Battle (std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, Team const & team, bool const challenger):
+	GenericBattle::GenericBattle (seed, foe_name, battle_depth, team),
 	action (OutMessage::BATTLE_MESSAGE),
 	damage (0)
 	{
