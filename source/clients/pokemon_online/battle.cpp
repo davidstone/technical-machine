@@ -59,22 +59,6 @@ std::array<int8_t, 7> parse_boosts(InMessage & msg);
 
 }	// unnamed namespace
 
-Battle::Battle (std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, std::string const & team_file_name, bool const challenger):
-	GenericBattle::GenericBattle (seed, foe_name, battle_depth, team_file_name),
-	action (OutMessage::BATTLE_MESSAGE),
-	damage (0)
-	{
-	my_party.set_if_unknown(Party(challenger ? 0 : 1));
-}
-
-Battle::Battle (std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, Team const & team, bool const challenger):
-	GenericBattle::GenericBattle (seed, foe_name, battle_depth, team),
-	action (OutMessage::BATTLE_MESSAGE),
-	damage (0)
-	{
-	my_party.set_if_unknown(Party(challenger ? 0 : 1));
-}
-
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, Party const party, InMessage & msg) {
 	enum {
 		SEND_OUT = 0,

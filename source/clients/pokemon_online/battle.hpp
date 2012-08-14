@@ -32,8 +32,14 @@ class InMessage;
 
 class Battle : public GenericBattle {
 	public:
-		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, std::string const & team_file_name, bool challenger);
-		Battle (std::random_device::result_type seed, std::string const & opponent_name, unsigned battle_depth, Team const & team, bool challenger);
+		template<typename ... Args>
+		Battle(std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, bool const challenger, Args && ... args):
+			GenericBattle::GenericBattle(seed, foe_name, battle_depth, std::forward<Args>(args)...),
+			action (OutMessage::BATTLE_MESSAGE),
+			damage (0)
+			{
+			my_party.set_if_unknown(Party(challenger ? 0 : 1));
+		}
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, Party party, InMessage & msg);
 		static constexpr unsigned pokemon_per_team() {
 			return 6;
