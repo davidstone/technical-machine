@@ -46,142 +46,13 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 }	// unnamed namespace
 
-// I copy + pasted this constructor as a temporary measure. When GCC 4.7 is
-// released and there is support for delegating constructors and non-static
-// data member initializers, I will replace this with one of (or both of) those
-// facilities.
-
 Team::Team () :
-	damage (0),
-	bide_damage (0),
-	chance_to_hit (100),
-	bide (0),
-	confused (0),
-	embargo (0),
-	encore (0),
-	heal_block (0),
-	magnet_rise (0),
-	partial_trap (0),
-	perish_song (0),
-	rampage (0),
-	slow_start (0),
-	stockpile (0),
-	substitute (0),
-	taunt (0),
-	toxic (0),
-	uproar (0),
-	yawn (0),
-	aqua_ring (false),
-	attract (false),
-	awaken (false),
-	ch (false),
-	charge (false),
-	curse (false),
-	damaged (false),
-	defense_curl (false),
-	destiny_bond (false),
-	endure (false),
-	flash_fire (false),
-	flinch (false),
-	focus_energy (false),
-	fully_paralyzed (false),
-	gastro_acid (false),
-	hitself (false),
-	identified (false),
-	imprison (false),
-	ingrain (false),
-	leech_seed (false),
-	loaf (false),
-	lock_on (false),
-	me_first (false),
-	minimize (false),
-	miss (false),
-	moved (false),
-	mud_sport (false),
-	nightmare (false),
-	pass (false),
-	power_trick (false),
-	protect (false),
-	recharging (false),
-	// Initial switch mechanics are the same as replacing a fainted Pokemon
-	replacing (true),
-	roost (false),
-	shed_skin (false),
-	torment (false),
-	trapped (false),
-	u_turning (false),
-	water_sport (false),
-	
-	counter (0),
-
-	me (false)
+	me(false)
 	{
 }
 
 Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name) :
-	damage (0),
-	bide_damage (0),
-	chance_to_hit (100),
-	bide (0),
-	confused (0),
-	embargo (0),
-	encore (0),
-	heal_block (0),
-	magnet_rise (0),
-	partial_trap (0),
-	perish_song (0),
-	rampage (0),
-	slow_start (0),
-	stockpile (0),
-	substitute (0),
-	taunt (0),
-	toxic (0),
-	uproar (0),
-	yawn (0),
-	aqua_ring (false),
-	attract (false),
-	awaken (false),
-	ch (false),
-	charge (false),
-	curse (false),
-	damaged (false),
-	defense_curl (false),
-	destiny_bond (false),
-	endure (false),
-	flash_fire (false),
-	flinch (false),
-	focus_energy (false),
-	fully_paralyzed (false),
-	gastro_acid (false),
-	hitself (false),
-	identified (false),
-	imprison (false),
-	ingrain (false),
-	leech_seed (false),
-	loaf (false),
-	lock_on (false),
-	me_first (false),
-	minimize (false),
-	miss (false),
-	moved (false),
-	mud_sport (false),
-	nightmare (false),
-	pass (false),
-	power_trick (false),
-	protect (false),
-	recharging (false),
-	// Initial switch mechanics are the same as replacing a fainted Pokemon
-	replacing (true),
-	roost (false),
-	shed_skin (false),
-	torment (false),
-	trapped (false),
-	u_turning (false),
-	water_sport (false),
-	
-	counter (0),
-
-	me (true)
+	me(true)
 	{
 	boost::filesystem::path team_file = team_file_name;
 	std::vector <boost::filesystem::path> const files = open_directory_and_add_files (team_file);
@@ -200,9 +71,9 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	damage(other.damage),
 	bide_damage(other.bide_damage),
-	chance_to_hit(other.chance_to_hit),
 	stage(other.stage),
 	vanish(other.vanish),
+	cached_chance_to_hit(other.cached_chance_to_hit),
 	bide(other.bide),
 	confused(other.confused),
 	embargo(other.embargo),
@@ -274,9 +145,9 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	damage(std::move(other.damage)),
 	bide_damage(std::move(other.bide_damage)),
-	chance_to_hit(std::move(other.chance_to_hit)),
 	stage(std::move(other.stage)),
 	vanish(std::move(other.vanish)),
+	cached_chance_to_hit(std::move(other.cached_chance_to_hit)),
 	bide(std::move(other.bide)),
 	confused(std::move(other.confused)),
 	embargo(std::move(other.embargo)),
@@ -359,6 +230,22 @@ bool Team::can_be_phazed () const {
 
 bool Team::has_switched() const {
 	return moved and pokemon().move().is_switch();
+}
+
+void Team::update_chance_to_hit(Team const & target, Weather const & weather) {
+	cached_chance_to_hit.update(*this, target, weather);
+}
+
+ChanceToHit::value_type Team::chance_to_hit() const {
+	return cached_chance_to_hit();
+}
+
+ChanceToHit::value_type Team::chance_to_miss() const {
+	return cached_chance_to_hit.inverse();
+}
+
+bool Team::can_miss() const {
+	return cached_chance_to_hit.can_miss();
 }
 
 namespace {

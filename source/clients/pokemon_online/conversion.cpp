@@ -26,11 +26,12 @@
 #include "../../ability.hpp"
 #include "../../gender.hpp"
 #include "../../item.hpp"
-#include "../../stat.hpp"
 
 #include "../../move/moves.hpp"
 
 #include "../../pokemon/species.hpp"
+
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 namespace po {

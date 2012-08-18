@@ -26,12 +26,13 @@
 
 #include "conversion.hpp"
 
-#include "../../stat.hpp"
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 namespace po {

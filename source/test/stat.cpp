@@ -23,11 +23,12 @@
 
 #include "incorrect_calculation.hpp"
 
-#include "../stat.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
 
 #include "../pokemon/species.hpp"
+
+#include "../stat/stat.hpp"
 
 namespace technicalmachine {
 namespace {

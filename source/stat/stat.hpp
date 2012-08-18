@@ -16,11 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT_HPP_
-#define STAT_HPP_
+#ifndef STAT__STAT_HPP_
+#define STAT__STAT_HPP_
 
 #include <cstdint>
 #include <string>
+
+#include "../rational.hpp"
 
 namespace technicalmachine {
 class Pokemon;
@@ -56,10 +58,21 @@ class Stat {
 		static void calculate_defense (Team & defender, bool ch = false, bool is_self_KO = false);
 		static void calculate_special_defense (Team & defender, Weather const & weather, bool ch = false);
 		static void calculate_speed (Team & team, Weather const & weather);
-		static void chance_to_hit (Team & user, Team const & target, Weather const & weather);
 	private:
 		static uint8_t get_base_stat (Species name, Stats stat_name);
 };
+
+// stage is the magnitude of the stat boost.
+template<unsigned base>
+constexpr Rational positive_stage_boost(unsigned const stage) {
+	static_assert(base == 2 or base == 3, "Most stats use a divisor of 2, but accuracy and evasion use 3.");
+	return Rational(base + stage, base);
+}
+template<unsigned base>
+constexpr Rational negative_stage_boost(unsigned const stage) {
+	static_assert(base == 2 or base == 3, "Most stats use a numerator of 2, but accuracy and evasion use 3.");
+	return Rational(base, base + stage);
+}
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather);
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
@@ -68,4 +81,4 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 
 }	// namespace technicalmachine
-#endif	// STAT_HPP_
+#endif	// STAT__STAT_HPP_

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef INVALID_STAT_HPP_
-#define INVALID_STAT_HPP_
+#ifndef STAT__INVALID_STAT_HPP_
+#define STAT__INVALID_STAT_HPP_
 
 #include <stdexcept>
 #include <string>
@@ -33,4 +33,4 @@ class InvalidStat : public std::runtime_error {
 };
 
 }	// namespace technicalmachine
-#endif	// INVALID_STAT_HPP_
+#endif	// STAT__INVALID_STAT_HPP_

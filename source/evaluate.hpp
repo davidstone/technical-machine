@@ -21,7 +21,8 @@
 
 #include <array>
 #include <cstdint>
-#include "stat.hpp"
+
+#include "stat/stat.hpp"
 
 namespace technicalmachine {
 

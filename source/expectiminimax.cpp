@@ -32,7 +32,6 @@
 #include "block.hpp"
 #include "endofturn.hpp"
 #include "evaluate.hpp"
-#include "stat.hpp"
 #include "switch.hpp"
 #include "team.hpp"
 #include "transposition.hpp"
@@ -43,6 +42,9 @@
 #include "move/use_move.hpp"
 
 #include "pokemon/pokemon.hpp"
+
+#include "stat/chance_to_hit.hpp"
+#include "stat/stat.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -244,24 +246,24 @@ int64_t order_branch (Team & ai, Team & foe, Weather const & weather, unsigned d
 
 int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score) {
 	constexpr int divisor = 100 * 100;
-	Stat::chance_to_hit (first, last, weather);
+	first.update_chance_to_hit(last, weather);
 	first.moved = true;
-	Stat::chance_to_hit (last, first, weather);
+	last.update_chance_to_hit(first, weather);
 	first.moved = false;
-	int64_t average_score = first.chance_to_hit * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, score);
-	if (first.chance_to_hit != 100) {
+	int64_t average_score = first.chance_to_hit() * last.chance_to_hit() * random_move_effects_branch(first, last, weather, depth, score);
+	if (first.can_miss()) {
 		first.miss = true;
-		average_score += (100 - first.chance_to_hit) * last.chance_to_hit * random_move_effects_branch (first, last, weather, depth, score);
-		if (last.chance_to_hit != 100) {
+		average_score += first.chance_to_miss() * last.chance_to_hit() * random_move_effects_branch(first, last, weather, depth, score);
+		if (last.can_miss()) {
 			last.miss = true;
-			average_score += (100 - first.chance_to_hit) * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, score);
+			average_score += first.chance_to_miss() * last.chance_to_miss() * random_move_effects_branch(first, last, weather, depth, score);
 			last.miss = false;
 		}
 		first.miss = false;
 	}
-	if (last.chance_to_hit != 100) {
+	if (last.can_miss()) {
 		last.miss = true;
-		average_score += first.chance_to_hit * (100 - last.chance_to_hit) * random_move_effects_branch (first, last, weather, depth, score);
+		average_score += first.chance_to_hit() * last.chance_to_miss() * random_move_effects_branch(first, last, weather, depth, score);
 		last.miss = false;
 	}
 	average_score /= divisor;

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAGE_HPP_
-#define STAGE_HPP_
+#ifndef STAT__STAGE_HPP_
+#define STAT__STAGE_HPP_
 
 #include <array>
 #include <cstddef>
@@ -49,6 +49,7 @@ class Stage {
 		friend bool operator!=(Stage const & lhs, Stage const & rhs);
 	private:
 		friend class Stat;
+		friend class ChanceToHit;
 		static void boost(int8_t & stage, int n);
 		void boost(std::initializer_list<Stat::Stats> const & stats, int n);
 		static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<Stat::Stats> const & stats);
@@ -58,4 +59,4 @@ class Stage {
 };
 
 }	// namespace technicalmachine
-#endif	// STAGE_HPP_
+#endif	// STAT__STAGE_HPP_

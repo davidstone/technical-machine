@@ -25,12 +25,13 @@
 #include "../ability.hpp"
 #include "../item.hpp"
 #include "../invalid_settings_file.hpp"
-#include "../nature.hpp"
 
 #include "../move/move.hpp"
 
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
+
+#include "../stat/nature.hpp"
 
 namespace technicalmachine {
 

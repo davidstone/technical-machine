@@ -1,4 +1,4 @@
-// Nature data structure
+// Chance to hit calculations
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,59 +16,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NATURE_HPP_
-#define NATURE_HPP_
+#ifndef STAT__CHANCE_TO_HIT_HPP_
+#define STAT__CHANCE_TO_HIT_HPP_
 
 #include <cstdint>
-#include <string>
-#include "stat.hpp"
 
 namespace technicalmachine {
+class Team;
+class Weather;
 
-class Nature {
+class ChanceToHit {
 	public:
-		enum Natures : uint8_t {
-			ADAMANT,
-			BASHFUL,
-			BOLD,
-			BRAVE,
-			CALM,
-			CAREFUL,
-			DOCILE,
-			GENTLE,
-			HARDY,
-			HASTY,
-			IMPISH,
-			JOLLY,
-			LAX,
-			LONELY,
-			MILD,
-			MODEST,
-			NAIVE,
-			NAUGHTY,
-			QUIET,
-			QUIRKY,
-			RASH,
-			RELAXED,
-			SASSY,
-			SERIOUS,
-			TIMID,
-			END
-		};
-		Nature ();
-		Nature (std::string const & str);
-		bool is_set () const;
-		void set_if_unknown (Natures nature);
-		template<Stat::Stats>
-		unsigned boost () const;
-		static std::string to_string (Natures name);
-		std::string to_string () const;
-		static Natures from_string (std::string const & str);
-		friend bool operator== (Nature lhs, Nature rhs);
-
-		Natures name;
+		typedef uint8_t value_type;
+		ChanceToHit();
+		value_type operator()() const;
+		value_type inverse() const;
+		bool can_miss() const;
+		void update(Team const & user, Team const & target, Weather const & weather);
+	private:
+		value_type probability;
 };
-bool operator!= (Nature lhs, Nature rhs);
 
 }	// namespace technicalmachine
-#endif	// NATURE_HPP_
+#endif	// STAT__CHANCE_TO_HIT_HPP_

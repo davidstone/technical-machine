@@ -20,10 +20,11 @@
 
 #include "ability.hpp"
 #include "entry_hazards.hpp"
-#include "stat.hpp"
 #include "team.hpp"
 
 #include "pokemon/pokemon.hpp"
+
+#include "stat/stat.hpp"
 
 namespace technicalmachine {
 namespace {

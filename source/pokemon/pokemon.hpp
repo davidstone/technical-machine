@@ -28,11 +28,12 @@
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
-#include "../nature.hpp"
-#include "../stat.hpp"
 #include "../status.hpp"
 
 #include "../move/collection.hpp"
+
+#include "../stat/nature.hpp"
+#include "../stat/stat.hpp"
 
 #include "../type/collection.hpp"
 

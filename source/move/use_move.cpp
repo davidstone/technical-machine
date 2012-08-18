@@ -28,13 +28,14 @@
 #include "../block.hpp"
 #include "../damage.hpp"
 #include "../heal.hpp"
-#include "../stat.hpp"
 #include "../status.hpp"
 #include "../switch.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
 
 #include "../pokemon/pokemon.hpp"
+
+#include "../stat/stat.hpp"
 
 #include "../type/type.hpp"
 

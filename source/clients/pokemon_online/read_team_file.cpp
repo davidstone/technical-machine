@@ -27,14 +27,15 @@
 
 #include "../../ability.hpp"
 #include "../../item.hpp"
-#include "../../invalid_stat.hpp"
-#include "../../stat.hpp"
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
 #include "../../move/moves.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+
+#include "../../stat/invalid_stat.hpp"
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 enum class Species : uint16_t;

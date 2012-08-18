@@ -24,12 +24,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "../../stat.hpp"
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 namespace pl {

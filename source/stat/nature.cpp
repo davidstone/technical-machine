@@ -17,7 +17,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "nature.hpp"
+
 #include <cassert>
+
 #include "stat.hpp"
 
 namespace technicalmachine {

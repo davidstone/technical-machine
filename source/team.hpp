@@ -25,7 +25,6 @@
 
 #include "entry_hazards.hpp"
 #include "screens.hpp"
-#include "stage.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
 
@@ -33,8 +32,12 @@
 
 #include "pokemon/collection.hpp"
 
+#include "stat/chance_to_hit.hpp"
+#include "stat/stage.hpp"
+
 namespace technicalmachine {
 enum class Species : uint16_t;
+class Weather;
 
 class Team {
 	public:
@@ -54,99 +57,104 @@ class Team {
 		friend bool operator== (Team const & lhs, Team const & rhs);
 		uint64_t hash () const;
 		std::string to_string () const;
-
+		void update_chance_to_hit(Team const & target, Weather const & weather);
+		ChanceToHit::value_type chance_to_hit() const;
+		ChanceToHit::value_type chance_to_miss() const;
+		bool can_miss() const;
 		PokemonCollection pokemon;
 	private:
 		void load (std::string const & name, unsigned other_size);
 		SharedMoves shared_moves;
 	public:
 		// How much damage has been done to this Pokemon this turn
-		uint16_t damage;
-		uint16_t bide_damage;
-		uint16_t chance_to_hit;
+		uint16_t damage = 0;
+		uint16_t bide_damage = 0;
 		Stage stage;
 		Vanish vanish;
-		uint8_t bide;
-		uint8_t confused;
-		uint8_t embargo;
-		uint8_t encore;
-		uint8_t heal_block;
-		uint8_t magnet_rise;
+	private:
+		ChanceToHit cached_chance_to_hit;
+	public:
+		uint8_t bide = 0;
+		uint8_t confused = 0;
+		uint8_t embargo = 0;
+		uint8_t encore = 0;
+		uint8_t heal_block = 0;
+		uint8_t magnet_rise = 0;
 		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm,
 		// Sand Tomb, Whirlpool, and Wrap
-		uint8_t partial_trap;
-		uint8_t perish_song;
+		uint8_t partial_trap = 0;
+		uint8_t perish_song = 0;
 		// Number of turns remaining on Outrage, Petal Dance, and Thrash
-		uint8_t rampage;
-		uint8_t slow_start;
-		uint8_t stockpile;
+		uint8_t rampage = 0;
+		uint8_t slow_start = 0;
+		uint8_t stockpile = 0;
 		// How much HP does the substitute have left?
-		uint8_t substitute;
-		uint8_t taunt;
+		uint8_t substitute = 0;
+		uint8_t taunt = 0;
 		// Number of turns this Pokemon has already taken Toxic damage (or
 		// would have if Magic Guard / Poison Heal weren't in play)
-		uint8_t toxic;
+		uint8_t toxic = 0;
 		// Number of turns remaining on Uproar
-		uint8_t uproar;
-		uint8_t yawn;
-		bool aqua_ring;
-		bool attract;
+		uint8_t uproar = 0;
+		uint8_t yawn = 0;
+		bool aqua_ring = false;
+		bool attract = false;
 		// Will it wake up
-		bool awaken;
-		bool ch;
-		bool charge;
-		bool curse;
-		bool damaged;
-		bool defense_curl;
-		bool destiny_bond;
-		bool endure;
-		bool flash_fire;
-		bool flinch;
-		bool focus_energy;
-		bool fully_paralyzed;
-		bool gastro_acid;
+		bool awaken = false;
+		bool ch = false;
+		bool charge = false;
+		bool curse = false;
+		bool damaged = false;
+		bool defense_curl = false;
+		bool destiny_bond = false;
+		bool endure = false;
+		bool flash_fire = false;
+		bool flinch = false;
+		bool focus_energy = false;
+		bool fully_paralyzed = false;
+		bool gastro_acid = false;
 		// Will this Pokemon hit itself in its confusion this turn?
-		bool hitself;
-		bool identified;
+		bool hitself = false;
+		bool identified = false;
 		// Has this Pokemon used Imprison?
-		bool imprison;
-		bool ingrain;
-		bool leech_seed;
-		bool loaf;
-		bool lock_on;
-		bool me_first;
-		bool minimize;
-		bool miss;
-		bool moved;
-		bool mud_sport;
-		bool nightmare;
-		bool pass;
-		bool power_trick;
-		bool protect;
-		bool recharging;
+		bool imprison = false;
+		bool ingrain = false;
+		bool leech_seed = false;
+		bool loaf = false;
+		bool lock_on = false;
+		bool me_first = false;
+		bool minimize = false;
+		bool miss = false;
+		bool moved = false;
+		bool mud_sport = false;
+		bool nightmare = false;
+		bool pass = false;
+		bool power_trick = false;
+		bool protect = false;
+		bool recharging = false;
 		// Replacing a fainted Pokemon. Also used for initial switch-in at
 		// start of battle.
-		bool replacing;
-		bool roost;
-		bool shed_skin;
-		bool torment;
+		bool replacing = false;
+		bool roost = false;
+		bool shed_skin = false;
+		bool torment = false;
 		// Block, Mean Look, Spider Web
-		bool trapped;
-		bool u_turning;
-		bool water_sport;
+		bool trapped = false;
+		bool u_turning = false;
+		bool water_sport = false;
 		
 		// Attacker that used Doom Desire / Future Sight
 		// Pokemon ddfs;
 		// Set to 3 initially, 1 = delayed attack hits at the end of this turn,
 		// 0 = not active
-		uint8_t counter;
+		uint8_t counter = 0;
 
 		Screens screens;
 		Wish wish;
 		
 		EntryHazards entry_hazards;
 
-		uint8_t called_move;
+		uint8_t called_move = 0;
 		
 		// Is this my team?
 		bool me;
