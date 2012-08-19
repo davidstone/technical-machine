@@ -28,6 +28,8 @@
 #include "vanish.hpp"
 #include "wish.hpp"
 
+#include "bide/bide.hpp"
+
 #include "move/shared.hpp"
 
 #include "pokemon/collection.hpp"
@@ -37,6 +39,7 @@
 
 namespace technicalmachine {
 enum class Species : uint16_t;
+class Ability;
 class Weather;
 
 class Team {
@@ -52,29 +55,39 @@ class Team {
 			pokemon.add(shared_moves, std::forward<Args>(args)...);
 		}
 		void remove_pokemon ();
+		
+		void reset_switch();
+		void lower_pp(Ability const & target);
+		void use_bide(Pokemon & target);
+		bool is_locked_in_to_bide() const;
+		void add_bide_damage(unsigned add_damage);
 		bool can_be_phazed () const;
 		bool has_switched() const;
-		friend bool operator== (Team const & lhs, Team const & rhs);
-		uint64_t hash () const;
-		std::string to_string () const;
 		void update_chance_to_hit(Team const & target, Weather const & weather);
 		ChanceToHit::value_type chance_to_hit() const;
 		ChanceToHit::value_type chance_to_miss() const;
 		bool can_miss() const;
-		PokemonCollection pokemon;
+
+		friend bool operator== (Team const & lhs, Team const & rhs);
+		uint64_t hash () const;
+		std::string to_string () const;
 	private:
 		void load (std::string const & name, unsigned other_size);
+	public:
+		PokemonCollection pokemon;
+	private:
 		SharedMoves shared_moves;
 	public:
 		// How much damage has been done to this Pokemon this turn
 		uint16_t damage = 0;
-		uint16_t bide_damage = 0;
+	private:
+		Bide bide;
+	public:
 		Stage stage;
 		Vanish vanish;
 	private:
 		ChanceToHit cached_chance_to_hit;
 	public:
-		uint8_t bide = 0;
 		uint8_t confused = 0;
 		uint8_t embargo = 0;
 		uint8_t encore = 0;

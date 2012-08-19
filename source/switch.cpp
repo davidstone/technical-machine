@@ -29,14 +29,13 @@
 namespace technicalmachine {
 namespace {
 
-void reset_variables (Team & team);
 void replace_fainted_pokemon (Team & switcher, Team & other);
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
 
 }	// unnamed namespace
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
-	reset_variables (switcher);
+	switcher.reset_switch();
 
 	if (switcher.pokemon().hp.stat > 0) {
 		switcher.pokemon().switch_out();
@@ -56,66 +55,6 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 }
 
 namespace {
-
-void reset_variables (Team & team) {
-	// Reset all variables that switches reset.
-
-	if (!team.pass) {
-		team.aqua_ring = false;
-		team.curse = false;
-		team.focus_energy = false;
-		team.gastro_acid = false;
-		team.ingrain = false;
-		team.leech_seed = false;
-		team.lock_on = false;
-		team.power_trick = false;
-		team.confused = 0;
-		team.embargo = 0;
-		team.magnet_rise = 0;
-		team.perish_song = 0;
-		team.stage.reset();
-		team.substitute = 0;
-	}
-	team.attract = false;
-	team.charge = false;
-	team.damaged = false;
-	team.defense_curl = false;
-	team.destiny_bond = false;
-	team.flash_fire = false;
-	team.flinch = false;
-	team.identified = false;
-	team.imprison = false;
-	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
-	// replaced; false makes it wrong otherwise
-	team.loaf = false;
-	team.minimize = false;
-	team.me_first = false;
-	team.mud_sport = false;
-	team.nightmare = false;
-	team.pass = false;
-	team.roost = false;
-	team.torment = false;
-	team.trapped = false;
-	team.u_turning = false;
-	team.water_sport = false;
-	team.bide = 0;
-	team.encore = 0;
-	team.heal_block = 0;
-	team.partial_trap = 0;
-	team.rampage = 0;
-	team.slow_start = 0;
-	team.stockpile = 0;
-	team.taunt = 0;
-	team.toxic = 0;
-	team.uproar = 0;
-	// Whirlwind can hit Flying Pokemon, so it needs to be reset
-	team.vanish.reset();
-	team.yawn = 0;
-
-	team.pokemon().move.for_each([](Move & move) {
-		move.reset();
-	});
-}
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {
 	switcher.remove_pokemon();

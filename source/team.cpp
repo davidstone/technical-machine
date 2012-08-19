@@ -28,6 +28,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
+#include "damage.hpp"
 #include "item.hpp"
 #include "status.hpp"
 
@@ -70,11 +71,10 @@ Team::Team(Team const & other):
 	pokemon (other.pokemon),
 	shared_moves(other.shared_moves),
 	damage(other.damage),
-	bide_damage(other.bide_damage),
+	bide(other.bide),
 	stage(other.stage),
 	vanish(other.vanish),
 	cached_chance_to_hit(other.cached_chance_to_hit),
-	bide(other.bide),
 	confused(other.confused),
 	embargo(other.embargo),
 	encore(other.encore),
@@ -144,11 +144,10 @@ Team::Team(Team && other):
 	pokemon(std::move(other.pokemon)),
 	shared_moves(std::move(other.shared_moves)),
 	damage(std::move(other.damage)),
-	bide_damage(std::move(other.bide_damage)),
+	bide(std::move(other.bide)),
 	stage(std::move(other.stage)),
 	vanish(std::move(other.vanish)),
 	cached_chance_to_hit(std::move(other.cached_chance_to_hit)),
-	bide(std::move(other.bide)),
 	confused(std::move(other.confused)),
 	embargo(std::move(other.embargo)),
 	encore(std::move(other.encore)),
@@ -224,6 +223,88 @@ void Team::remove_pokemon () {
 	shared_moves.remove_switch();
 }
 
+void Team::reset_switch() {
+	if (!pass) {
+		aqua_ring = false;
+		curse = false;
+		focus_energy = false;
+		gastro_acid = false;
+		ingrain = false;
+		leech_seed = false;
+		lock_on = false;
+		power_trick = false;
+		confused = 0;
+		embargo = 0;
+		magnet_rise = 0;
+		perish_song = 0;
+		stage.reset();
+		substitute = 0;
+	}
+	attract = false;
+	charge = false;
+	damaged = false;
+	defense_curl = false;
+	destiny_bond = false;
+	flash_fire = false;
+	flinch = false;
+	identified = false;
+	imprison = false;
+	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
+	// replaced; false makes it wrong otherwise
+	loaf = false;
+	minimize = false;
+	me_first = false;
+	mud_sport = false;
+	nightmare = false;
+	pass = false;
+	roost = false;
+	torment = false;
+	trapped = false;
+	u_turning = false;
+	water_sport = false;
+	bide.reset();
+	encore = 0;
+	heal_block = 0;
+	partial_trap = 0;
+	rampage = 0;
+	slow_start = 0;
+	stockpile = 0;
+	taunt = 0;
+	toxic = 0;
+	uproar = 0;
+	// Whirlwind can hit Flying Pokemon, so it needs to be reset
+	vanish.reset();
+	yawn = 0;
+
+	pokemon().move.for_each([](Move & move) {
+		move.reset();
+	});
+}
+
+void Team::use_bide(Pokemon & target) {
+	if (!bide.is_active()) {
+		bide.activate();
+	}
+	else {
+		unsigned const bide_damage = bide.decrement();
+		if (bide_damage != 0)
+			damage_side_effect(target, bide_damage * 2);
+	}
+}
+
+bool Team::is_locked_in_to_bide() const {
+	return bide.is_active();
+}
+
+void Team::lower_pp(Ability const & target) {
+	if (!is_locked_in_to_bide())
+		pokemon().move().pp.decrement(target);
+}
+
+void Team::add_bide_damage(unsigned const added_damage) {
+	bide.add_damage(added_damage);
+}
+
 bool Team::can_be_phazed () const {
 	return !ingrain and !pokemon().ability.blocks_phazing() and pokemon.size() > 1;
 }
@@ -267,12 +348,11 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 uint64_t Team::hash () const {
 	constexpr unsigned max_size = 6;
-	return static_cast<uint64_t> (pokemon.real_size() - 1) + max_size *
+	return static_cast<uint64_t>(pokemon.real_size() - 1) + max_size *
 			(pokemon.index() + pokemon.real_size() *
 			(vanish.hash() + vanish.max_hash() *
 			(stage.hash() + Stage::max_hash() *
-			(((bide_damage < 714 / 2) ? bide_damage : 714u / 2) + (714 / 2 + 1) *
-			(bide + 3 *
+			(bide.hash() + bide.max_hash() *
 			(confused + 5 *
 			(embargo + 5 *
 			(encore + 8 *
@@ -315,7 +395,7 @@ uint64_t Team::hash () const {
 			(screens.hash() + screens.max_hash() *
 			(wish.hash() + wish.max_hash() *
 			(entry_hazards.hash() + entry_hazards.max_hash() *
-			pokemon.hash())))))))))))))))))))))))))))))))))))))))))))))));
+			pokemon.hash()))))))))))))))))))))))))))))))))))))))))))))));
 }
 
 void Team::load (std::string const & name, unsigned other_size) {

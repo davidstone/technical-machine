@@ -49,7 +49,6 @@ void call_other_move (Team & user);
 void do_effects_before_moving (Pokemon & user, Team & target);
 void do_damage (Team & user, Team & target, unsigned damage);
 void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage);
-void lower_pp (Team & user, Pokemon const & target);
 
 }	// unnamed namespace
 
@@ -58,7 +57,7 @@ unsigned call_move (Team & user, Team & target, Weather & weather, unsigned cons
 	user.lock_on = false;
 	user.moved = true;
 	if (can_execute_move (user, target, weather)) {
-		lower_pp (user, target.pokemon());
+		user.lower_pp(target.pokemon().ability);
 		if (user.pokemon().move().calls_other_move())
 			call_other_move (user);
 		if (!user.miss)
@@ -118,10 +117,7 @@ void do_damage (Team & user, Team & target, unsigned damage) {
 	damage_side_effect (target.pokemon(), damage);
 	if (user.pokemon().item.causes_recoil())
 		heal (user.pokemon(), -10);
-	if (target.pokemon().hp.stat > 0) {
-		if (target.bide)
-			target.bide_damage += damage;
-	}
+	target.add_bide_damage(damage);
 }
 
 void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage) {
@@ -237,15 +233,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			}
 			break;
 		case Moves::BIDE:
-			if (!user.bide) {
-				user.bide = 2;
-				user.bide_damage = 0;
-			}
-			else {
-				if (user.bide == 1)
-					damage_side_effect (target.pokemon(), user.bide_damage * 2u);
-				--user.bide;
-			}
+			user.use_bide(target.pokemon());
 			break;
 		case Moves::BIND:
 		case Moves::CLAMP:
@@ -1007,11 +995,6 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 		default:
 			break;
 	}
-}
-
-void lower_pp (Team & user, Pokemon const & target) {
-	if (!user.bide)
-		user.pokemon().move().pp.decrement(target.ability);
 }
 
 void call_other_move (Team & user) {

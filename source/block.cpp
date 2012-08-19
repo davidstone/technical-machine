@@ -106,7 +106,7 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 namespace {
 
 bool is_blocked_by_bide (Team const & user, Move const & move) {
-	return user.bide and move.name != Moves::BIDE;
+	return user.is_locked_in_to_bide() and move.name != Moves::BIDE;
 }
 
 bool is_not_illegal_switch (Team const & user, Move const & move, Team const & other, Weather const & weather) {

@@ -18,7 +18,7 @@
 
 #include "chance_to_hit.hpp"
 
-#include <cmath>
+#include <algorithm>
 
 #include "stat.hpp"
 
