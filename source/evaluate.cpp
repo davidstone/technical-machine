@@ -63,8 +63,8 @@ int64_t Score::score_team (Team const & team) const {
 	if (team.pokemon().hp.stat != 0) {
 		score += Stage::dot_product(team.stage, stage);
 		score += team.magnet_rise * magnet_rise;
-		if (team.substitute)
-			score += substitute + substitute_hp * team.substitute / team.pokemon().hp.max;
+		if (team.active_substitute)
+			score += substitute + substitute_hp * team.active_substitute.hp / team.pokemon().hp.max;
 		if (team.aqua_ring)
 			score += aqua_ring;
 		if (team.curse)
@@ -90,7 +90,7 @@ int64_t Score::score_team (Team const & team) const {
 		if (team.pokemon().move.exists(Moves::BATON_PASS)) {
 			int64_t const stat_stages = Stage::dot_product(team.stage, stage);
 			score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + stat_stages);
-			if (team.substitute)
+			if (team.active_substitute)
 				score += baton_pass * substitute;
 		}
 	}

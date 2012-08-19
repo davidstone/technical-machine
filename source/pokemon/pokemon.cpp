@@ -93,6 +93,10 @@ bool Pokemon::can_use_chatter() const {
 	return name == Species::CHATOT;
 }
 
+bool Pokemon::can_use_substitute() const {
+	return hp.stat > hp.max / 4;
+}
+
 bool Pokemon::is_alternate_form (Species first, Species second) {
 	return (is_deoxys (first) and is_deoxys (second)) or
 			(is_giratina (first) and is_giratina (second)) or

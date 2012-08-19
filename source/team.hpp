@@ -25,6 +25,7 @@
 
 #include "entry_hazards.hpp"
 #include "screens.hpp"
+#include "substitute.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
 
@@ -57,6 +58,7 @@ class Team {
 		void remove_pokemon ();
 		
 		void reset_switch();
+		void substitute();
 		void lower_pp(Ability const & target);
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
@@ -72,6 +74,7 @@ class Team {
 		uint64_t hash () const;
 		std::string to_string () const;
 	private:
+		friend class Score;
 		void load (std::string const & name, unsigned other_size);
 	public:
 		PokemonCollection pokemon;
@@ -101,8 +104,9 @@ class Team {
 		uint8_t rampage = 0;
 		uint8_t slow_start = 0;
 		uint8_t stockpile = 0;
-		// How much HP does the substitute have left?
-		uint8_t substitute = 0;
+	private:
+		Substitute active_substitute;
+	public:
 		uint8_t taunt = 0;
 		// Number of turns this Pokemon has already taken Toxic damage (or
 		// would have if Magic Guard / Poison Heal weren't in play)

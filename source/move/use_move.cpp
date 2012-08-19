@@ -876,10 +876,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			recoil (user.pokemon(), damage, 4);
 			break;
 		case Moves::SUBSTITUTE:
-			if (!user.substitute and user.pokemon().hp.stat > user.pokemon().hp.max / 4) {
-				user.substitute = user.pokemon().hp.max / 4;
-				user.pokemon().hp.stat -= user.pokemon().hp.max / 4;
-			}
+			user.substitute();		
 			break;
 		case Moves::SUNNY_DAY:
 			weather.set_sun (user.pokemon().item.extends_sun());

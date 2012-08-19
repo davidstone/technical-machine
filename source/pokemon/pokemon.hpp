@@ -56,6 +56,7 @@ class Pokemon {
 		std::string get_nickname () const;
 		static Species from_string (std::string const & str);
 		bool can_use_chatter() const;
+		bool can_use_substitute() const;
 		static bool is_alternate_form (Species first, Species second);
 		static bool is_deoxys (Species species);
 		static bool is_giratina (Species species);

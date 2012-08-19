@@ -85,7 +85,7 @@ Team::Team(Team const & other):
 	rampage(other.rampage),
 	slow_start(other.slow_start),
 	stockpile(other.stockpile),
-	substitute(other.substitute),
+	active_substitute(other.active_substitute),
 	taunt(other.taunt),
 	toxic(other.toxic),
 	uproar(other.uproar),
@@ -158,7 +158,7 @@ Team::Team(Team && other):
 	rampage(std::move(other.rampage)),
 	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
-	substitute(std::move(other.substitute)),
+	active_substitute(std::move(other.active_substitute)),
 	taunt(std::move(other.taunt)),
 	toxic(std::move(other.toxic)),
 	uproar(std::move(other.uproar)),
@@ -238,7 +238,7 @@ void Team::reset_switch() {
 		magnet_rise = 0;
 		perish_song = 0;
 		stage.reset();
-		substitute = 0;
+		active_substitute.destroy();
 	}
 	attract = false;
 	charge = false;
@@ -289,6 +289,13 @@ void Team::use_bide(Pokemon & target) {
 		unsigned const bide_damage = bide.decrement();
 		if (bide_damage != 0)
 			damage_side_effect(target, bide_damage * 2);
+	}
+}
+
+void Team::substitute() {
+	if (!active_substitute and pokemon().can_use_substitute()) {
+		active_substitute.create(pokemon().hp.max);
+		pokemon().hp.stat -= pokemon().hp.max / 4;
 	}
 }
 
@@ -363,7 +370,7 @@ uint64_t Team::hash () const {
 			(rampage + 3 *
 			(slow_start + 3 *
 			(stockpile + 4 *
-			(substitute + (714 / 4 + 1) *
+			(active_substitute.hash() + active_substitute.max_hash() *
 			(taunt + 3 *
 			(toxic + 16 *
 			(uproar + 5 *
