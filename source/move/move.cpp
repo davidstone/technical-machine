@@ -77,6 +77,10 @@ bool Move::is_special() const {
 	return cached_classification.is_special();
 }
 
+bool Move::is_blocked_by_taunt() const {
+	return !is_damaging();
+}
+
 bool Move::can_critical_hit() const {
 	switch (base_power()) {
 		case 0:

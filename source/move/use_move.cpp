@@ -914,8 +914,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.screens.activate_tailwind();
 			break;
 		case Moves::TAUNT:
-			if (!target.taunt)
-				target.taunt = move.variable().value();
+			target.taunt();
 			break;
 		case Moves::THUNDER_FANG:
 			switch (move.variable().value()) {

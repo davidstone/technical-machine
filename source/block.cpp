@@ -140,7 +140,7 @@ bool imprison (Move const & move, Team const & other) {
 // Things that both block selection and block execution after flinching
 bool block2 (Team const & user, Move const & move, Weather const & weather) {
 	return !move.is_switch() and
-			((user.taunt and !move.is_damaging()) or
+			((user.is_taunted() and move.is_blocked_by_taunt()) or
 			(weather.gravity() and move.is_blocked_by_gravity()));
 }
 

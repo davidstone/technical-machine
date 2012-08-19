@@ -50,6 +50,7 @@ class Move {
 		bool is_damaging() const;
 		bool is_physical() const;
 		bool is_special() const;
+		bool is_blocked_by_taunt() const;
 		Type type() const;
 		void set_type(Type::Types t);	// for Hidden Power only.
 		unsigned base_power() const;

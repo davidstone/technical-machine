@@ -26,6 +26,7 @@
 #include "entry_hazards.hpp"
 #include "screens.hpp"
 #include "substitute.hpp"
+#include "taunt.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
 
@@ -60,6 +61,9 @@ class Team {
 		void reset_switch();
 		void substitute();
 		void lower_pp(Ability const & target);
+		void taunt();
+		bool is_taunted() const;
+		void increment_taunt();
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		void add_bide_damage(unsigned add_damage);
@@ -106,8 +110,8 @@ class Team {
 		uint8_t stockpile = 0;
 	private:
 		Substitute active_substitute;
+		Taunt m_taunt;
 	public:
-		uint8_t taunt = 0;
 		// Number of turns this Pokemon has already taken Toxic damage (or
 		// would have if Magic Guard / Poison Heal weren't in play)
 		uint8_t toxic = 0;

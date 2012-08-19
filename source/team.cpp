@@ -86,7 +86,7 @@ Team::Team(Team const & other):
 	slow_start(other.slow_start),
 	stockpile(other.stockpile),
 	active_substitute(other.active_substitute),
-	taunt(other.taunt),
+	m_taunt(other.m_taunt),
 	toxic(other.toxic),
 	uproar(other.uproar),
 	yawn(other.yawn),
@@ -159,7 +159,7 @@ Team::Team(Team && other):
 	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
 	active_substitute(std::move(other.active_substitute)),
-	taunt(std::move(other.taunt)),
+	m_taunt(std::move(other.m_taunt)),
 	toxic(std::move(other.toxic)),
 	uproar(std::move(other.uproar)),
 	yawn(std::move(other.yawn)),
@@ -269,7 +269,7 @@ void Team::reset_switch() {
 	rampage = 0;
 	slow_start = 0;
 	stockpile = 0;
-	taunt = 0;
+	m_taunt.reset();
 	toxic = 0;
 	uproar = 0;
 	// Whirlwind can hit Flying Pokemon, so it needs to be reset
@@ -279,6 +279,18 @@ void Team::reset_switch() {
 	pokemon().move.for_each([](Move & move) {
 		move.reset();
 	});
+}
+
+void Team::taunt() {
+	m_taunt.activate();
+}
+
+bool Team::is_taunted() const {
+	return m_taunt.is_active();
+}
+
+void Team::increment_taunt() {
+	m_taunt.increment();
 }
 
 void Team::use_bide(Pokemon & target) {
@@ -371,7 +383,7 @@ uint64_t Team::hash () const {
 			(slow_start + 3 *
 			(stockpile + 4 *
 			(active_substitute.hash() + active_substitute.max_hash() *
-			(taunt + 3 *
+			(m_taunt.hash() + m_taunt.max_hash() *
 			(toxic + 16 *
 			(uproar + 5 *
 			(yawn + 2 *
@@ -440,7 +452,7 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
 			lhs.stockpile == rhs.stockpile and
-			lhs.taunt == rhs.taunt and
+			lhs.m_taunt == rhs.m_taunt and
 			lhs.toxic == rhs.toxic and
 			lhs.uproar == rhs.yawn and
 			lhs.aqua_ring == rhs.aqua_ring and
