@@ -32,7 +32,6 @@
 namespace technicalmachine {
 namespace {
 
-void endofturn0 (Team & team);
 void endofturn1 (Team & team);
 void endofturn2 (Team & team);
 void endofturn3 (Team & team, Weather const & weather);
@@ -50,8 +49,8 @@ void decrement (Integer & n) {
 }	// unnamed namespace
 
 void endofturn (Team & first, Team & last, Weather & weather) {
-	endofturn0 (first);
-	endofturn0 (last);
+	first.reset_end_of_turn();
+	last.reset_end_of_turn();
 	endofturn1 (first);
 	endofturn1 (last);
 	endofturn2 (first);
@@ -72,18 +71,6 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 }
 
 namespace {
-
-void endofturn0 (Team & team) {
-	team.damage = 0;
-	team.damaged = false;
-	team.endure = false;
-	team.flinch = false;
-	team.moved = false;
-	team.me_first = false;
-	team.loaf = !team.loaf;
-	team.protect = false;
-	team.replacing = false;
-}
 
 void endofturn1 (Team & team) {
 	team.screens.decrement();

@@ -194,7 +194,7 @@ void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16
 	Pokemon & pokemon = changer.pokemon.at_replacement();
 	if (move_damage) {
 		if (other.pokemon.at_replacement().move().affects_replacement(changer, weather))
-			changer.damage = std::min (static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat);
+			changer.do_damage(std::min(static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat));
 		move_damage = false;
 	}
 	pokemon.new_hp = remaining_hp;
@@ -297,11 +297,12 @@ void GenericBattle::do_turn () {
 		std::cout << "First move: " + first->pokemon().to_string() + " uses " + first->pokemon().move().to_string() + '\n';
 		std::cout << "Last move: " + last->pokemon().to_string() + " uses " + last->pokemon().move().to_string() + '\n';
 		// Anything with recoil will mess this up
-
-		call_move (*first, *last, weather, last->damage);
+		
+		constexpr bool damage_is_known = true;
+		call_move(*first, *last, weather, damage_is_known);
 		last->pokemon().normalize_hp ();
 
-		call_move (*last, *first, weather, first->damage);
+		call_move(*last, *first, weather, damage_is_known);
 		first->pokemon().normalize_hp ();
 
 		endofturn (*first, *last, weather);
@@ -315,7 +316,7 @@ void GenericBattle::do_turn () {
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!foe.pokemon().move().is_switch())
 				foe.pokemon().move.set_index (foe.pokemon().index_of_first_switch() + foe.pokemon.replacement());
-			call_move (foe, ai, weather, first->damage);
+			call_move(foe, ai, weather, damage_is_known);
 		}
 	}
 	std::cout << first->to_string ();

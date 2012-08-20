@@ -70,7 +70,7 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 Team::Team(Team const & other):
 	pokemon (other.pokemon),
 	shared_moves(other.shared_moves),
-	damage(other.damage),
+	damage_done_to_active(other.damage_done_to_active),
 	bide(other.bide),
 	stage(other.stage),
 	vanish(other.vanish),
@@ -96,7 +96,6 @@ Team::Team(Team const & other):
 	ch(other.ch),
 	charge(other.charge),
 	curse(other.curse),
-	damaged(other.damaged),
 	defense_curl(other.defense_curl),
 	destiny_bond(other.destiny_bond),
 	endure(other.endure),
@@ -143,7 +142,7 @@ Team::Team(Team const & other):
 Team::Team(Team && other):
 	pokemon(std::move(other.pokemon)),
 	shared_moves(std::move(other.shared_moves)),
-	damage(std::move(other.damage)),
+	damage_done_to_active(std::move(other.damage_done_to_active)),
 	bide(std::move(other.bide)),
 	stage(std::move(other.stage)),
 	vanish(std::move(other.vanish)),
@@ -169,7 +168,6 @@ Team::Team(Team && other):
 	ch(std::move(other.ch)),
 	charge(std::move(other.charge)),
 	curse(std::move(other.curse)),
-	damaged(std::move(other.damaged)),
 	defense_curl(std::move(other.defense_curl)),
 	destiny_bond(std::move(other.destiny_bond)),
 	endure(std::move(other.endure)),
@@ -223,6 +221,17 @@ void Team::remove_pokemon () {
 	shared_moves.remove_switch();
 }
 
+void Team::reset_end_of_turn() {
+	damage_done_to_active = 0;
+	endure = false;
+	flinch = false;
+	moved = false;
+	me_first = false;
+	loaf = !loaf;
+	protect = false;
+	replacing = false;
+}
+
 void Team::reset_switch() {
 	if (!pass) {
 		aqua_ring = false;
@@ -242,7 +251,6 @@ void Team::reset_switch() {
 	}
 	attract = false;
 	charge = false;
-	damaged = false;
 	defense_curl = false;
 	destiny_bond = false;
 	flash_fire = false;
@@ -263,6 +271,7 @@ void Team::reset_switch() {
 	u_turning = false;
 	water_sport = false;
 	bide.reset();
+	damage_done_to_active = 0;
 	encore = 0;
 	heal_block = 0;
 	partial_trap = 0;
@@ -320,12 +329,17 @@ void Team::lower_pp(Ability const & target) {
 		pokemon().move().pp.decrement(target);
 }
 
-void Team::add_bide_damage(unsigned const added_damage) {
-	bide.add_damage(added_damage);
-}
-
 bool Team::can_be_phazed () const {
 	return !ingrain and !pokemon().ability.blocks_phazing() and pokemon.size() > 1;
+}
+
+unsigned Team::damaged() const {
+	return damage_done_to_active;
+}
+
+void Team::do_damage(unsigned const damage) {
+	damage_done_to_active = damage;
+	bide.add_damage(damage);
 }
 
 bool Team::has_switched() const {

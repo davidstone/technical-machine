@@ -168,10 +168,10 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 
 	switch (attacker.pokemon().move().name) {
 		case Moves::ASSURANCE:
-			return defender.damaged;
+			return defender.damaged();
 		case Moves::AVALANCHE: 
 		case Moves::REVENGE:
-			return attacker.damaged;
+			return attacker.damaged();
 		case Moves::BRINE:
 			return defender.pokemon().hp.stat <= defender.pokemon().hp.max / 2;
 		case Moves::EARTHQUAKE:

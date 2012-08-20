@@ -44,7 +44,8 @@
 namespace technicalmachine {
 namespace {
 
-unsigned use_move (Team & user, Team & target, Weather & weather, unsigned log_damage);
+unsigned use_move (Team & user, Team & target, Weather & weather, bool damage_is_known);
+unsigned calculate_real_damage(Team & user, Team & target, Weather const & weather, bool const damage_is_known);
 void call_other_move (Team & user);
 void do_effects_before_moving (Pokemon & user, Team & target);
 void do_damage (Team & user, Team & target, unsigned damage);
@@ -52,7 +53,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 
 }	// unnamed namespace
 
-unsigned call_move (Team & user, Team & target, Weather & weather, unsigned const log_damage) {
+unsigned call_move (Team & user, Team & target, Weather & weather, bool const damage_is_known) {
 	user.destiny_bond = false;
 	user.lock_on = false;
 	user.moved = true;
@@ -61,18 +62,14 @@ unsigned call_move (Team & user, Team & target, Weather & weather, unsigned cons
 		if (user.pokemon().move().calls_other_move())
 			call_other_move (user);
 		if (!user.miss)
-			return use_move (user, target, weather, log_damage);
+			return use_move (user, target, weather, damage_is_known);
 	}
-	// There seems to be some sort of bug related to moves that do damage not
-	// hitting the target that causes some old damage amount to remain. Should
-	// look into this later.
-	// assert (log_damage == 0 or log_damage == -1u);
 	return 0;
 }
 
 namespace {
 
-unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const log_damage) {
+unsigned use_move (Team & user, Team & target, Weather & weather, bool const damage_is_known) {
 	Move & move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
@@ -81,21 +78,11 @@ unsigned use_move (Team & user, Team & target, Weather & weather, unsigned const
 		return 0;
 	Stat::calculate_speed (user, weather);
 	Stat::calculate_speed (target, weather);
-	unsigned damage = 0;
-	
-	if (move.is_damaging()) {
-		do_effects_before_moving (user.pokemon(), target);
-		if (log_damage == -1u) {
-			calculate_defending_stat (user, target, weather);
-			calculate_attacking_stat (user, weather);
-			damage = damage_calculator (user, target, weather);
-		}
-		else {
-			damage = log_damage;
-		}
-		if (damage != 0)
-			do_damage (user, target, damage);
-	}
+
+	do_effects_before_moving (user.pokemon(), target);
+
+	unsigned const damage = calculate_real_damage(user, target, weather, damage_is_known);
+	do_damage (user, target, damage);
 	move.increment_use_counter();
 
 	do_side_effects (user, target, weather, damage);
@@ -113,11 +100,24 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 	}
 }
 
-void do_damage (Team & user, Team & target, unsigned damage) {
+unsigned calculate_real_damage(Team & user, Team & target, Weather const & weather, bool const damage_is_known) {
+	if (!user.pokemon().move().is_damaging())
+		return 0;
+	if (damage_is_known)
+		return target.damaged();
+
+	calculate_defending_stat (user, target, weather);
+	calculate_attacking_stat (user, weather);
+	return damage_calculator(user, target, weather);
+}
+
+void do_damage(Team & user, Team & target, unsigned const damage) {
+	if (damage == 0)
+		return;
 	damage_side_effect (target.pokemon(), damage);
 	if (user.pokemon().item.causes_recoil())
 		heal (user.pokemon(), -10);
-	target.add_bide_damage(damage);
+	target.do_damage(damage);
 }
 
 void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage) {
@@ -406,7 +406,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::COUNTER:
 			if (target.pokemon().move().is_physical())
-				damage_side_effect (target.pokemon(), user.damage * 2u);
+				damage_side_effect (target.pokemon(), user.damaged() * 2u);
 			break;
 		case Moves::COVET:
 		case Moves::THIEF:
@@ -701,7 +701,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			user.pokemon().hp.stat = 0;
 			break;
 		case Moves::METAL_BURST:
-			damage_side_effect (target.pokemon(), user.damage * 3u / 2);
+			damage_side_effect (target.pokemon(), user.damaged() * 3u / 2);
 			break;
 		case Moves::METAL_CLAW:
 		case Moves::MIMIC:		// Fix
@@ -710,7 +710,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned da
 			break;
 		case Moves::MIRROR_COAT:
 			if (target.pokemon().move().is_special())
-				damage_side_effect (target.pokemon(), user.damage * 2u);
+				damage_side_effect (target.pokemon(), user.damaged() * 2u);
 			break;
 		case Moves::MIST:
 			user.screens.activate_mist();

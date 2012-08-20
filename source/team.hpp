@@ -58,6 +58,9 @@ class Team {
 		}
 		void remove_pokemon ();
 		
+		// Not for variables that give a message at the end of the turn, this is
+		// just for some book-keeping variables.
+		void reset_end_of_turn();
 		void reset_switch();
 		void substitute();
 		void lower_pp(Ability const & target);
@@ -66,8 +69,9 @@ class Team {
 		void increment_taunt();
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
-		void add_bide_damage(unsigned add_damage);
 		bool can_be_phazed () const;
+		unsigned damaged() const;
+		void do_damage(unsigned damage);
 		bool has_switched() const;
 		void update_chance_to_hit(Team const & target, Weather const & weather);
 		ChanceToHit::value_type chance_to_hit() const;
@@ -77,17 +81,15 @@ class Team {
 		friend bool operator== (Team const & lhs, Team const & rhs);
 		uint64_t hash () const;
 		std::string to_string () const;
-	private:
-		friend class Score;
-		void load (std::string const & name, unsigned other_size);
+
 	public:
 		PokemonCollection pokemon;
 	private:
+		friend class Score;
+		void load (std::string const & name, unsigned other_size);
+
 		SharedMoves shared_moves;
-	public:
-		// How much damage has been done to this Pokemon this turn
-		uint16_t damage = 0;
-	private:
+		uint16_t damage_done_to_active = 0;
 		Bide bide;
 	public:
 		Stage stage;
@@ -125,7 +127,6 @@ class Team {
 		bool ch = false;
 		bool charge = false;
 		bool curse = false;
-		bool damaged = false;
 		bool defense_curl = false;
 		bool destiny_bond = false;
 		bool endure = false;
