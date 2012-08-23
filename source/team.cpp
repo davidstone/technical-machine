@@ -329,6 +329,11 @@ void Team::lower_pp(Ability const & target) {
 		pokemon().move().pp.decrement(target);
 }
 
+void Team::activate_perish_song() {
+	if (!perish_song)
+		perish_song = 3;
+}
+
 bool Team::can_be_phazed () const {
 	return !ingrain and !pokemon().ability.blocks_phazing() and pokemon.size() > 1;
 }

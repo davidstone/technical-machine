@@ -64,6 +64,7 @@ class Team {
 		void reset_switch();
 		void substitute();
 		void lower_pp(Ability const & target);
+		void activate_perish_song();
 		void taunt();
 		bool is_taunted() const;
 		void increment_taunt();
