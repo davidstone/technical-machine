@@ -31,6 +31,7 @@
 #include "uproar.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
+#include "yawn.hpp"
 
 #include "bide/bide.hpp"
 
@@ -75,6 +76,8 @@ class Team {
 		void increment_toxic();
 		void use_uproar();
 		void increment_uproar();
+		void hit_with_yawn();
+		bool decrement_yawn();
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		bool can_be_phazed () const;
@@ -123,8 +126,8 @@ class Team {
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;
+		Yawn yawn;
 	public:
-		uint8_t yawn = 0;
 		bool aqua_ring = false;
 		bool attract = false;
 		// Will it wake up

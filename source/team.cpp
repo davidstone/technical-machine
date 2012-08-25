@@ -284,7 +284,7 @@ void Team::reset_switch() {
 	uproar.reset();
 	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	vanish.reset();
-	yawn = 0;
+	yawn.reset();
 
 	pokemon().move.for_each([](Move & move) {
 		move.reset();
@@ -317,6 +317,14 @@ void Team::increment_uproar() {
 
 void Team::use_uproar() {
 	uproar.increment();
+}
+
+bool Team::decrement_yawn() {
+	return yawn.decrement();
+}
+
+void Team::hit_with_yawn() {
+	yawn.activate();
 }
 
 void Team::use_bide(Pokemon & target) {
@@ -422,7 +430,7 @@ uint64_t Team::hash () const {
 			(m_taunt.hash() + m_taunt.max_hash() *
 			(toxic.hash() + toxic.max_hash() *
 			(uproar.hash() + uproar.max_hash() *
-			(yawn + 2 *
+			(yawn.hash() + yawn.max_hash() *
 			(aqua_ring + 2 *
 			(attract + 2 *
 			(charge + 2 *

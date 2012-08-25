@@ -911,8 +911,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::WORRY_SEED:		// Fix
 			break;
 		case Moves::YAWN:
-			if (!target.yawn)
-				target.yawn = 2;
+			target.hit_with_yawn();
 			break;
 		default:
 			break;

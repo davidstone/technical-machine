@@ -201,9 +201,8 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	decrement (team.magnet_rise);
 	decrement (team.heal_block);
 	decrement (team.embargo);
-	if (team.yawn == 1)
+	if (team.decrement_yawn())
 		Status::apply<Status::SLEEP>(pokemon, weather);
-	decrement (team.yawn);
 	if (pokemon.item.name == Item::STICKY_BARB)
 		heal (pokemon, -8);
 }
