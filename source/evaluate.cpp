@@ -133,7 +133,7 @@ int64_t Score::score_status (Team const & team) const {
 		case Status::POISON:
 			return poison;
 		case Status::POISON_TOXIC:
-			return poison * team.toxic / 2;
+			return poison * team.toxic.counter / 2;
 		case Status::REST:
 		case Status::SLEEP:
 			return sleep;

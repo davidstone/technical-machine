@@ -20,6 +20,7 @@
 #define RATIONAL_HPP_
 
 namespace technicalmachine {
+class Pokemon;
 
 class Rational {
 	public:
@@ -43,6 +44,8 @@ class Rational {
 			return rational * number;
 		}
 	private:
+		// TODO: temporary measure while I clean up some code
+		friend void heal(Pokemon & member, Rational const & rational, bool positive);
 		unsigned numerator;
 		unsigned denominator;
 };

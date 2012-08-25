@@ -150,13 +150,11 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 			heal(pokemon, pokemon.ability.absorbs_poison_damage() ? 8 : -8);
 			break;
 		case Status::POISON_TOXIC:
-			if (pokemon.ability.absorbs_poison_damage ())
-				heal (pokemon, 8);
-			else {
-				if (team.toxic < 15)
-					++team.toxic;
-				heal (pokemon, -16, team.toxic);
-			}
+			team.increment_toxic();
+			if (pokemon.ability.absorbs_poison_damage())
+				heal(pokemon, 8);
+			else
+				drain(pokemon, team.toxic_ratio());
 			break;
 		case Status::SLEEP:
 			if (team.nightmare)

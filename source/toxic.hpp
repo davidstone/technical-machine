@@ -1,4 +1,4 @@
-// Function to change a Pokemon's HP by a fractional multiplier
+// Class to represent Toxic's counter
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,17 +16,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEAL_HPP_
-#define HEAL_HPP_
+#ifndef TOXIC_HPP_
+#define TOXIC_HPP_
+
+#include <cstdint>
 
 namespace technicalmachine {
-
-class Pokemon;
 class Rational;
 
-void heal (Pokemon & member, int denominator, unsigned numerator = 1);
-void heal(Pokemon & member, Rational const & rational, bool positive);
-void drain(Pokemon & member, Rational const & rational);
+class Toxic {
+	public:
+		Toxic();
+		void reset();
+		void increment();
+		Rational ratio_drained() const;
+		friend bool operator== (Toxic const & lhs, Toxic const & rhs);
+		typedef uint64_t hash_type;
+		hash_type hash() const;
+		static hash_type max_hash();
+	private:
+		friend class Score;
+		// Number of turns this Pokemon has already taken Toxic damage (or
+		// would have if Magic Guard / Poison Heal weren't in play)
+		uint8_t counter = 0;
+};
+bool operator!= (Toxic const & lhs, Toxic const & rhs);
 
 }	// namespace technicalmachine
-#endif	// HEAL_HPP_
+#endif	// TOXIC_HPP_

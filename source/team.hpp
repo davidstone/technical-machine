@@ -27,6 +27,7 @@
 #include "screens.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
+#include "toxic.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
 
@@ -42,6 +43,7 @@
 namespace technicalmachine {
 enum class Species : uint16_t;
 class Ability;
+class Rational;
 class Weather;
 
 class Team {
@@ -68,6 +70,8 @@ class Team {
 		void taunt();
 		bool is_taunted() const;
 		void increment_taunt();
+		Rational toxic_ratio() const;
+		void increment_toxic();
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		bool can_be_phazed () const;
@@ -114,10 +118,10 @@ class Team {
 	private:
 		Substitute active_substitute;
 		Taunt m_taunt;
-	public:
 		// Number of turns this Pokemon has already taken Toxic damage (or
 		// would have if Magic Guard / Poison Heal weren't in play)
-		uint8_t toxic = 0;
+		Toxic toxic;
+	public:
 		// Number of turns remaining on Uproar
 		uint8_t uproar = 0;
 		uint8_t yawn = 0;

@@ -25,25 +25,33 @@
 
 namespace technicalmachine {
 
-void heal (Pokemon & member, int denominator, unsigned numerator) {
+void heal(Pokemon & member, Rational const & rational, bool positive) {
 	if (member.hp.stat == 0)
 		return;
-	if (denominator > 0) {
-		if (member.hp.max * numerator <= static_cast <unsigned> (2 * denominator - 1))
+	if (positive) {
+		if (member.hp.max * rational.numerator <= 2 * rational.denominator - 1)
 			++member.hp.stat;
 		else
-			member.hp.stat += member.hp.max * numerator / static_cast<unsigned> (denominator);
+			member.hp.stat += member.hp.max * rational;
 		if (member.hp.stat > member.hp.max)
 			member.hp.stat = member.hp.max;
 	}
 	else {
-		if (!member.ability.blocks_secondary_damage ()) {
-			if (member.hp.max * numerator <= static_cast <unsigned> (-2 * denominator - 1))
+		if (!member.ability.blocks_secondary_damage()) {
+			if (member.hp.max * rational.numerator <= 2 * rational.denominator - 1)
 				-- member.hp.stat;
 			else
-				damage_side_effect (member, member.hp.max * numerator / static_cast<unsigned>(-denominator));
+				damage_side_effect(member, member.hp.max * rational);
 		}
 	}
+}
+
+void heal (Pokemon & member, int const denominator, unsigned const numerator) {
+	heal(member, Rational(numerator, static_cast<unsigned>(denominator)), (denominator > 0));
+}
+
+void drain(Pokemon & member, Rational const & rational) {
+	heal(member, rational, false);
 }
 
 }	// namespace technicalmachine

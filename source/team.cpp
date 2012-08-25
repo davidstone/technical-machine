@@ -30,6 +30,7 @@
 #include "ability.hpp"
 #include "damage.hpp"
 #include "item.hpp"
+#include "rational.hpp"
 #include "status.hpp"
 
 #include "pokemon/pokemon.hpp"
@@ -279,7 +280,7 @@ void Team::reset_switch() {
 	slow_start = 0;
 	stockpile = 0;
 	m_taunt.reset();
-	toxic = 0;
+	toxic.reset();
 	uproar = 0;
 	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	vanish.reset();
@@ -300,6 +301,14 @@ bool Team::is_taunted() const {
 
 void Team::increment_taunt() {
 	m_taunt.increment();
+}
+
+Rational Team::toxic_ratio() const {
+	return toxic.ratio_drained();
+}
+
+void Team::increment_toxic() {
+	toxic.increment();
 }
 
 void Team::use_bide(Pokemon & target) {
@@ -403,7 +412,7 @@ uint64_t Team::hash () const {
 			(stockpile + 4 *
 			(active_substitute.hash() + active_substitute.max_hash() *
 			(m_taunt.hash() + m_taunt.max_hash() *
-			(toxic + 16 *
+			(toxic.hash() + toxic.max_hash() *
 			(uproar + 5 *
 			(yawn + 2 *
 			(aqua_ring + 2 *
