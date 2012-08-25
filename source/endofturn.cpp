@@ -188,9 +188,10 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		if (team.rampage == 0)
 			team.confused = true;
 	}
-	else
-		decrement (team.uproar);
+	else {
+		team.increment_uproar();
 		// weather.uproar is already decremented
+	}
 	
 	pokemon.move.for_each_regular_move([](Move & move) {
 		move.disable.advance_one_turn();

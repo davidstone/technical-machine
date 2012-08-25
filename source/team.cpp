@@ -281,7 +281,7 @@ void Team::reset_switch() {
 	stockpile = 0;
 	m_taunt.reset();
 	toxic.reset();
-	uproar = 0;
+	uproar.reset();
 	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	vanish.reset();
 	yawn = 0;
@@ -309,6 +309,14 @@ Rational Team::toxic_ratio() const {
 
 void Team::increment_toxic() {
 	toxic.increment();
+}
+
+void Team::increment_uproar() {
+	uproar.increment();
+}
+
+void Team::use_uproar() {
+	uproar.increment();
 }
 
 void Team::use_bide(Pokemon & target) {
@@ -413,7 +421,7 @@ uint64_t Team::hash () const {
 			(active_substitute.hash() + active_substitute.max_hash() *
 			(m_taunt.hash() + m_taunt.max_hash() *
 			(toxic.hash() + toxic.max_hash() *
-			(uproar + 5 *
+			(uproar.hash() + uproar.max_hash() *
 			(yawn + 2 *
 			(aqua_ring + 2 *
 			(attract + 2 *
@@ -482,7 +490,8 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.stockpile == rhs.stockpile and
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.toxic == rhs.toxic and
-			lhs.uproar == rhs.yawn and
+			lhs.uproar == rhs.uproar and
+			lhs.yawn == rhs.yawn and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attract == rhs.attract and
 			lhs.charge == rhs.charge and

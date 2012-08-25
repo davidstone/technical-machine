@@ -888,8 +888,9 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.u_turning = true;
 			break;
 		case Moves::UPROAR:
+			// TODO: make this make sense
 			weather.set_uproar (static_cast<int8_t> (move.variable().value()));
-			user.uproar = move.variable().value();
+			user.use_uproar();
 			break;
 		case Moves::VOLT_TACKLE:
 			recoil_status<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather, damage);

@@ -28,6 +28,7 @@
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
+#include "uproar.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
 
@@ -72,6 +73,8 @@ class Team {
 		void increment_taunt();
 		Rational toxic_ratio() const;
 		void increment_toxic();
+		void use_uproar();
+		void increment_uproar();
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		bool can_be_phazed () const;
@@ -118,12 +121,9 @@ class Team {
 	private:
 		Substitute active_substitute;
 		Taunt m_taunt;
-		// Number of turns this Pokemon has already taken Toxic damage (or
-		// would have if Magic Guard / Poison Heal weren't in play)
 		Toxic toxic;
+		Uproar uproar;
 	public:
-		// Number of turns remaining on Uproar
-		uint8_t uproar = 0;
 		uint8_t yawn = 0;
 		bool aqua_ring = false;
 		bool attract = false;
