@@ -70,7 +70,6 @@ class GenericBattle {
 		Moves determine_action(network::GenericClient & client);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();
-		static void initialize_team (Team & team);
 		void do_turn ();
 
 	protected:

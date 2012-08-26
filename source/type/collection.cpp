@@ -58,7 +58,7 @@ void TypeCollection::change_type(Type const type) {
 }
 
 bool is_type (Team const & team, Type const type) {
-	if (type != Type::FLYING or !team.roost) {
+	if (type != Type::FLYING or !team.is_roosting()) {
 		for (Type const check : team.pokemon().type.types) {
 			if (check == type)
 				return true;
@@ -68,7 +68,7 @@ bool is_type (Team const & team, Type const type) {
 }
 
 bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather) {
-	return !(is_type (team, Type::FLYING) or pokemon.ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity() or pokemon.item.grounds() or team.ingrain;
+	return !(is_type (team, Type::FLYING) or pokemon.ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity() or pokemon.item.grounds() or team.ingrained();
 }
 
 namespace {

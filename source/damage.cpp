@@ -75,7 +75,7 @@ unsigned capped_damage (Team const & attacker, Team const & defender, Weather co
 	unsigned damage = uncapped_damage (attacker, defender, weather);
 	if (damage >= defender.pokemon().hp.stat) {
 		damage = defender.pokemon().hp.stat;
-		if (attacker.pokemon().move().cannot_ko() or defender.endure)
+		if (attacker.pokemon().move().cannot_ko() or defender.cannot_be_koed())
 			--damage;
 	}
 	return damage;
@@ -185,7 +185,7 @@ unsigned calculate_screen_divisor (Team const & attacker, Team const & defender)
 
 bool screen_is_active (Team const & attacker, Team const & defender) {
 	Move const & move = attacker.pokemon().move();
-	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.ch;
+	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.critical_hit();
 }
 
 bool reflect_is_active (Move const & move, Team const & defender) {
@@ -207,13 +207,13 @@ Rational calculate_weather_modifier (Type const type, Weather const & weather) {
 
 Rational calculate_flash_fire_modifier (Team const & attacker) {
 	Type const & type = attacker.pokemon().move().type();
-	return (attacker.flash_fire and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : Rational(1);
+	return (attacker.flash_fire_is_active() and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : Rational(1);
 }
 
 unsigned calculate_critical_hit_multiplier (Team const & attacker) {
-	if (attacker.ch)
-		return (attacker.pokemon().ability.boosts_critical_hits ()) ? 3 : 2;
-	return 1;
+	if (!attacker.critical_hit())
+		return 1;
+	return (attacker.pokemon().ability.boosts_critical_hits()) ? 3 : 2;
 }
 
 Rational calculate_item_modifier (Pokemon const & attacker) {
@@ -228,7 +228,7 @@ Rational calculate_item_modifier (Pokemon const & attacker) {
 }
 
 Rational calculate_me_first_modifier (Team const & attacker) {
-	return attacker.me_first ? Rational(3, 2) : Rational(1);
+	return attacker.me_first_is_active() ? Rational(3, 2) : Rational(1);
 }
 
 Rational calculate_stab_modifier (Team const & attacker) {

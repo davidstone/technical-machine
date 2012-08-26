@@ -57,13 +57,13 @@ bool ChanceToHit::can_miss() const {
 	return probability < max;
 }
 
-void ChanceToHit::update(Team const & user, Team const & target, Weather const & weather) {
+void ChanceToHit::update(Team const & user, Team const & target, Weather const & weather, bool const target_moved) {
 	if (move_can_miss(user, target.pokemon().ability)) {
 		value_type accuracy = user.pokemon().move().accuracy();
 		accuracy *= accuracy_stage_modifier(target.stage[Stat::ACC]);
 		accuracy *= evasion_stage_modifier(target.stage[Stat::EVA]);
 
-		accuracy *= accuracy_item_modifier(user.pokemon().item, target.moved);
+		accuracy *= accuracy_item_modifier(user.pokemon().item, target_moved);
 		accuracy *= accuracy_ability_modifier(user.pokemon());
 		
 		accuracy *= evasion_item_modifier(target.pokemon().item);
@@ -82,7 +82,7 @@ void ChanceToHit::update(Team const & user, Team const & target, Weather const &
 namespace {
 
 bool move_can_miss(Team const & user, Ability target_ability) {
-	return user.pokemon().move().can_miss() and !user.pokemon().ability.cannot_miss() and !target_ability.cannot_miss() and !user.lock_on;
+	return user.pokemon().move().can_miss() and !user.pokemon().ability.cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
 Rational accuracy_stage_modifier(int const stage) {

@@ -36,6 +36,13 @@ class Weather;
 // aren't quite known at initialization time. Can be updated between battles.
 class Score {
 	public:
+		Score ();
+		void load_evaluation_constants();
+		// ai and foe are both logically constant. I change the active Pokemon
+		// in each of them, but I change it back before the function returns.
+		int64_t evaluate(Team & ai, Team & foe, Weather const & weather) const;
+		static int64_t win(Team const & team);
+		static int64_t sleep_clause(Team const & team);
 		// Highest score. 100% chance to win. No particular significance to
 		// this number other than being larger than any score a non-winning
 		// position can have.
@@ -43,6 +50,13 @@ class Score {
 		
 		int transposition_table;	
 	private:
+		int64_t score_team(Team const & team) const;
+		int64_t score_all_pokemon(Team & team, Team const & other, Weather const & weather) const;
+		int64_t score_pokemon(Team const & team, Team const & other, Weather const & weather) const;
+		int64_t baton_passable_score(Team const & team) const;
+		int64_t score_status(Team const & team) const;
+		int64_t score_move (Team const & team, Team const & other, Weather const & weather) const;
+
 		int light_screen;
 		int lucky_chant;
 		int mist;
@@ -83,21 +97,6 @@ class Score {
 	
 		int baton_pass;
 		int no_pp;
-	public:
-		Score ();
-		void load_evaluation_constants ();
-		// ai and foe are both logically constant. I change the active Pokemon
-		// in each of them, but I change it back before the function returns.
-		int64_t evaluate (Team & ai, Team & foe, Weather const & weather) const;
-	private:
-		int64_t score_team (Team const & team) const;
-		int64_t score_all_pokemon (Team & team, Team const & other, Weather const & weather) const;
-		int64_t score_pokemon (Team const & team, Team const & other, Weather const & weather) const;
-		int64_t score_status (Team const & team) const;
-		int64_t score_move (Team const & team, Team const & other, Weather const & weather) const;
-	public:
-		static int64_t win (Team const & team);
-		static int64_t sleep_clause (Team const & team);
 };
 
 } // namespace technicalmachine

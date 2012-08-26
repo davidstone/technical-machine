@@ -61,39 +61,48 @@ int64_t Score::score_team (Team const & team) const {
 	score += tailwind * team.screens.m_tailwind.turns_remaining;
 	score += wish * team.wish.is_active();
 	if (team.pokemon().hp.stat != 0) {
-		score += Stage::dot_product(team.stage, stage);
-		score += team.magnet_rise * magnet_rise;
 		if (team.active_substitute)
 			score += substitute + substitute_hp * team.active_substitute.hp / team.pokemon().hp.max;
 		if (team.aqua_ring)
 			score += aqua_ring;
-		if (team.curse)
+		if (team.is_cursed())
 			score += curse;
-		if (team.imprison)
+		if (team.imprisoned())
 			score += imprison;
-		if (team.ingrain)
-			score += ingrain;
 		if (team.leech_seed)
 			score += leech_seed;
 	//	if (other.pokemon().leech_seed)
 	//		score += 1 * other.pokemon().hp.max / member.hp.max;
 		if (team.loaf)
 			score += loaf;
-		if (team.nightmare)
+		if (team.nightmare())
 			score += nightmare;
-		if (team.torment)
+		if (team.tormented())
 			score += torment;
-		if (team.trapped)
+		if (team.fully_trapped)
 			score += trapped;
-		if (team.focus_energy)
-			score += focus_energy;
-		if (team.pokemon().move.exists(Moves::BATON_PASS)) {
-			int64_t const stat_stages = Stage::dot_product(team.stage, stage);
-			score += baton_pass * (team.aqua_ring * aqua_ring + team.focus_energy * focus_energy + team.ingrain * ingrain + team.magnet_rise * magnet_rise + stat_stages);
-			if (team.active_substitute)
-				score += baton_pass * substitute;
-		}
+
+		if (team.pokemon().move.exists(Moves::BATON_PASS))
+			score += baton_passable_score(team) * 2;
+		else
+			score += baton_passable_score(team);
+		
 	}
+	return score;
+}
+
+int64_t Score::baton_passable_score(Team const & team) const {
+	int64_t score = 0;
+	if (team.aqua_ring)
+		score += aqua_ring;
+	if (team.focusing_energy)
+		score += focus_energy;
+	if (team.ingrained())
+		score += ingrain;
+	score += team.magnet_rise * magnet_rise;
+	if (team.active_substitute)
+		score += substitute + substitute_hp * team.active_substitute.hp / team.pokemon().hp.max;
+	score += Stage::dot_product(team.stage, stage);
 	return score;
 }
 

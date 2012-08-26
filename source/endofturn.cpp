@@ -111,13 +111,13 @@ void endofturn3 (Team & team, Weather const & weather) {
 
 void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	Pokemon & pokemon = team.pokemon();
-	if (team.ingrain)
+	if (team.ingrained())
 		heal (pokemon, 16);
-	if (team.aqua_ring)
+	if (team.aqua_ring_is_active())
 		heal (pokemon, 16);
 	if (pokemon.ability.boosts_speed())
 		team.stage.boost(Stat::SPE, 1);
-	else if (team.shed_skin)
+	else if (team.shed_skin_activated())
 		pokemon.status.clear ();
 	switch (pokemon.item.name) {
 		case Item::LEFTOVERS:
@@ -129,8 +129,8 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		default:
 			break;
 	}
-	if (team.leech_seed) {
-		unsigned n = pokemon.hp.stat;
+	if (team.leech_seeded()) {
+		unsigned const n = pokemon.hp.stat;
 		heal (pokemon, -8);
 		if (foe.hp.stat != 0) {
 			if (pokemon.ability.damages_leechers ())
@@ -157,7 +157,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 				drain(pokemon, team.toxic_ratio());
 			break;
 		case Status::SLEEP:
-			if (team.nightmare)
+			if (team.nightmare())
 				heal (pokemon, -4);
 			if (foe.ability.harms_sleepers())
 				heal (pokemon, -8);
@@ -175,7 +175,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		default:
 			break;
 	}
-	if (team.curse)
+	if (team.is_cursed())
 		heal (pokemon, -4);
 	if (team.partial_trap > 0) {
 		heal (pokemon, -16);

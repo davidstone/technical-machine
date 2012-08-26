@@ -41,7 +41,6 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender);
 unsigned second_lowest_bit (Stat const & stat);
 bool doubling (Team const & attacker, Team const & defender, Weather const & weather);
 unsigned item_modifier (Pokemon const & attacker);
-bool mud_or_water_sport (Team const & attacker, Team const & defender);
 Rational attacker_ability_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
 bool pinch_ability_activates (Pokemon const & attacker, Type::Types type);
 Rational defender_ability_modifier (Move const & move, Ability ability);
@@ -58,10 +57,10 @@ unsigned move_power (Team const & attacker, Team const & defender, Weather const
 
 	power = power * item_modifier (attacker.pokemon()) / 10;
 
-	if (attacker.charge and move.type() == Type::ELECTRIC)
+	if (attacker.charge_boosted())
 		power *= 2;
 
-	if (mud_or_water_sport (attacker, defender))
+	if (defender.sport_is_active(attacker.pokemon().move()))
 		power /= 2;
 
 	power *= attacker_ability_modifier(attacker.pokemon(), defender.pokemon(), base_power);
@@ -183,15 +182,15 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 			return defender.vanish.doubles_gust_power();
 		case Moves::ICE_BALL:
 		case Moves::ROLLOUT:
-			return attacker.defense_curl;
+			return attacker.defense_curled();
 		case Moves::PAYBACK:
-			return defender.moved;
+			return defender.moved();
 		case Moves::SMELLINGSALT:
 			return defender.pokemon().status.boosts_smellingsalt();
 		case Moves::SOLARBEAM:
 			return !weather.rain();
 		case Moves::STOMP:
-			return defender.minimize;
+			return defender.minimized();
 		case Moves::SURF:
 			return defender.vanish.doubles_surf_power();
 		case Moves::WAKE_UP_SLAP:
@@ -317,12 +316,6 @@ unsigned item_modifier (Pokemon const & attacker) {
 			break;
 	}
 	return 10;
-}
-
-bool mud_or_water_sport (Team const & attacker, Team const & defender) {
-	bool const mud_sport = defender.mud_sport and attacker.pokemon().move().type() == Type::ELECTRIC;
-	bool const water_sport = defender.water_sport and attacker.pokemon().move().type() == Type::FIRE;
-	return mud_sport or water_sport;
 }
 
 Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {

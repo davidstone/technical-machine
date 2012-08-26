@@ -46,7 +46,7 @@ Team create_max_damage_physical_attacker () {
 	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::ROLLOUT, 3, team_size);
 
-	attacker.defense_curl = true;
+	attacker.defense_curl();
 	for (unsigned n = 0; n != 10; ++n)
 		pokemon.move().increment_use_counter();
 	
@@ -138,14 +138,14 @@ void physical_damage_test () {
 	Pokemon & a = attacker.pokemon();
 	a.def.ev = 252 / 4;
 	a.nature.name = Nature::IMPISH;
-	attacker.power_trick = true;
+	attacker.activate_power_trick();
 	a.ability.name = Ability::PURE_POWER;
 	attacker.stage.maximize_attack();
 	calculate_attacking_stat (attacker, weather);
 
 	a.item.name = Item::METRONOME;
 
-	attacker.ch = true;
+	attacker.set_critical_hit(true);
 
 	Team defender = create_max_damage_physical_defender ();
 	calculate_defending_stat (attacker, defender, weather);
@@ -176,8 +176,8 @@ void special_damage_test () {
 		a.move().increment_use_counter();
 
 	a.ability.name = Ability::BLAZE;
-	attacker.ch = true;
-	attacker.flash_fire = true;
+	attacker.set_critical_hit(true);
+	attacker.activate_flash_fire();
 
 	Team defender = create_max_damage_special_defender ();
 	calculate_defending_stat (attacker, defender, weather);

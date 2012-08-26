@@ -86,11 +86,11 @@ void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 
 void Stat::calculate_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
-	pokemon.atk.stat = !attacker.power_trick ?
+	pokemon.atk.stat = !attacker.power_trick_is_active() ?
 		calculate_attack_before_power_trick (pokemon) :
 		calculate_defense_before_power_trick (pokemon);
 
-	pokemon.atk.stat *= attacking_stage_modifier(attacker.stage[ATK], attacker.ch);
+	pokemon.atk.stat *= attacking_stage_modifier(attacker.stage[ATK], attacker.critical_hit());
 
 	pokemon.atk.stat *= attack_ability_modifier(pokemon, attacker.slow_start, weather);
 	pokemon.atk.stat *= attack_item_modifier(pokemon);
@@ -104,7 +104,7 @@ void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
 	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level());
 	pokemon.spa.stat *= Rational(pokemon.nature.boost<SPA>(), 10);
 
-	pokemon.spa.stat *= attacking_stage_modifier(attacker.stage[SPA], attacker.ch);
+	pokemon.spa.stat *= attacking_stage_modifier(attacker.stage[SPA], attacker.critical_hit());
 
 	pokemon.spa.stat *= special_attack_ability_modifier(pokemon.ability, weather);
 	pokemon.spa.stat *= special_attack_item_modifier(pokemon);
@@ -115,14 +115,14 @@ void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
 	if (attacker.pokemon().move().is_physical())
-		Stat::calculate_defense (defender, attacker.ch, attacker.pokemon().move().is_self_KO());
+		Stat::calculate_defense (defender, attacker.critical_hit(), attacker.pokemon().move().is_self_KO());
 	else
-		Stat::calculate_special_defense (defender, weather, attacker.ch);
+		Stat::calculate_special_defense (defender, weather, attacker.critical_hit());
 }
 
 void Stat::calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 	Pokemon & pokemon = defender.pokemon ();
-	pokemon.def.stat = !defender.power_trick ?
+	pokemon.def.stat = !defender.power_trick_is_active() ?
 		calculate_defense_before_power_trick (pokemon) :
 		calculate_attack_before_power_trick (pokemon);
 

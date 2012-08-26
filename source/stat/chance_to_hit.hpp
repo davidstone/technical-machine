@@ -32,7 +32,7 @@ class ChanceToHit {
 		value_type operator()() const;
 		value_type inverse() const;
 		bool can_miss() const;
-		void update(Team const & user, Team const & target, Weather const & weather);
+		void update(Team const & user, Team const & target, Weather const & weather, bool target_moved);
 	private:
 		value_type probability;
 };

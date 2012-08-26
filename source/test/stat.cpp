@@ -47,7 +47,7 @@ void attack_tests () {
 
 	pokemon.def.ev = 252 / 4;
 	pokemon.nature.name = Nature::IMPISH;
-	attacker.power_trick = true;
+	attacker.activate_power_trick();
 	pokemon.ability.name = Ability::PURE_POWER;
 	attacker.stage.maximize_attack();
 

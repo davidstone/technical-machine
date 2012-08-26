@@ -126,9 +126,9 @@ int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weath
 
 	if (ai.pokemon().hp.stat == 0 or foe.pokemon().hp.stat == 0)
 		return replace (ai, foe, weather, depth, score, best_move, first_turn);
-	else if (ai.pass or ai.u_turning)
+	else if (ai.switch_decision_required())
 		return move_then_switch_branch (ai, foe, weather, depth, score, best_move, first_turn);
-	else if (foe.pass or foe.u_turning)
+	else if (foe.switch_decision_required())
 		return move_then_switch_branch (foe, ai, weather, depth, score, best_move, first_turn);
 	else
 		return select_move_branch (ai, foe, weather, depth, score, best_move, first_turn);
@@ -246,25 +246,25 @@ int64_t order_branch (Team & ai, Team & foe, Weather const & weather, unsigned d
 
 int64_t accuracy_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score) {
 	constexpr int divisor = 100 * 100;
-	first.update_chance_to_hit(last, weather);
-	first.moved = true;
-	last.update_chance_to_hit(first, weather);
-	first.moved = false;
+	constexpr bool first_moved = true;
+	constexpr bool last_moved = false;
+	first.update_chance_to_hit(last, weather, last_moved);
+	last.update_chance_to_hit(first, weather, first_moved);
 	int64_t average_score = first.chance_to_hit() * last.chance_to_hit() * random_move_effects_branch(first, last, weather, depth, score);
 	if (first.can_miss()) {
-		first.miss = true;
+		first.set_miss(true);
 		average_score += first.chance_to_miss() * last.chance_to_hit() * random_move_effects_branch(first, last, weather, depth, score);
 		if (last.can_miss()) {
-			last.miss = true;
+			last.set_miss(true);
 			average_score += first.chance_to_miss() * last.chance_to_miss() * random_move_effects_branch(first, last, weather, depth, score);
-			last.miss = false;
+			last.set_miss(false);
 		}
-		first.miss = false;
+		first.set_miss(false);
 	}
 	if (last.can_miss()) {
-		last.miss = true;
+		last.set_miss(true);
 		average_score += first.chance_to_hit() * last.chance_to_miss() * random_move_effects_branch(first, last, weather, depth, score);
-		last.miss = false;
+		last.set_miss(false);
 	}
 	average_score /= divisor;
 	return average_score;
@@ -279,28 +279,28 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 			constexpr unsigned ch_denominator = 16;
 			constexpr unsigned ch_numerator = 1;
 			constexpr unsigned non_ch_numerator = ch_denominator - ch_numerator;
-			first.ch = false;
-			last.ch = false;
+			first.set_critical_hit(false);
+			last.set_critical_hit(false);
 			int64_t score1 = awaken_branch (first, last, weather, depth, score);
 			if (first.pokemon().move().can_critical_hit() and !last.pokemon().move().can_critical_hit()) {
 				score1 *= non_ch_numerator;
-				first.ch = true;
+				first.set_critical_hit(true);
 				score1 += awaken_branch (first, last, weather, depth, score);
 				score1 /= ch_denominator;
 			}
 			else if (!first.pokemon().move().can_critical_hit() and last.pokemon().move().can_critical_hit()) {
 				score1 *= non_ch_numerator;
-				last.ch = true;
+				last.set_critical_hit(true);
 				score1 += awaken_branch (first, last, weather, depth, score);
 				score1 /= ch_denominator;
 			}
 			else if (first.pokemon().move().can_critical_hit() and last.pokemon().move().can_critical_hit()) {
 				score1 *= non_ch_numerator * non_ch_numerator;
-				first.ch = true;
+				first.set_critical_hit(true);
 				score1 += awaken_branch (first, last, weather, depth, score) * non_ch_numerator;
-				last.ch = true;
+				last.set_critical_hit(true);
 				score1 += awaken_branch (first, last, weather, depth, score) * ch_numerator;
-				first.ch = false;
+				first.set_critical_hit(false);
 				score1 += awaken_branch (first, last, weather, depth, score) * non_ch_numerator;
 				score1 /= ch_denominator * ch_denominator;
 			}
@@ -313,20 +313,20 @@ int64_t random_move_effects_branch (Team & first, Team & last, Weather const & w
 
 
 int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsigned depth, Score const & score) {
-	first.awaken = false;
-	last.awaken = false;
+	first.awaken(false);
+	last.awaken(false);
 	int64_t average_score = use_move_branch (first, last, weather, depth, score);
 	if (first.pokemon().status.can_awaken(first.pokemon().ability)) {
 		unsigned const first_numerator = first.pokemon().status.awaken_numerator(first.pokemon().ability);
 		average_score *= Status::max_sleep_turns() - first_numerator;
-		first.awaken = true;
+		first.awaken(true);
 		average_score += first_numerator * use_move_branch (first, last, weather, depth, score);
 		if (last.pokemon().status.can_awaken(last.pokemon().ability)) {
 			unsigned const last_numerator = last.pokemon().status.awaken_numerator(last.pokemon().ability);
 			average_score *= Status::max_sleep_turns() - last_numerator;
-			last.awaken = true;
+			last.awaken(true);
 			average_score += last_numerator * (Status::max_sleep_turns() - first_numerator) * use_move_branch (first, last, weather, depth, score);
-			first.awaken = false;
+			first.awaken(false);
 			average_score += last_numerator * first_numerator * use_move_branch (first, last, weather, depth, score);
 			average_score /= Status::max_sleep_turns();
 		}
@@ -335,7 +335,7 @@ int64_t awaken_branch (Team & first, Team & last, Weather const & weather, unsig
 	else if (last.pokemon().status.can_awaken(last.pokemon().ability)) {
 		unsigned const last_numerator = last.pokemon().status.awaken_numerator(last.pokemon().ability);
 		average_score *= Status::max_sleep_turns() - last_numerator;
-		last.awaken = true;
+		last.awaken(true);
 		average_score += last_numerator * use_move_branch (first, last, weather, depth, score);
 		average_score /= Status::max_sleep_turns();
 	}
@@ -368,23 +368,23 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, Weather & weather, u
 	Team * faster;
 	Team * slower;
 	faster_pokemon (first, last, weather, faster, slower);
-	first.shed_skin = false;
-	last.shed_skin = false;
+	first.shed_skin(false);
+	last.shed_skin(false);
 	int64_t average_score = 49 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 	int64_t divisor = 49;
 	if (first.pokemon().ability.can_clear_status (first.pokemon().status)) {
-		first.shed_skin = true;
+		first.shed_skin(true);
 		average_score += 21 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 		divisor += 21;
 		if (last.pokemon().ability.can_clear_status (last.pokemon().status)) {
-			last.shed_skin = true;
+			last.shed_skin(true);
 			average_score += 9 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 			divisor += 9;
-			first.shed_skin = false;
+			first.shed_skin(false);
 		}
 	}
 	if (last.pokemon().ability.can_clear_status (last.pokemon().status)) {
-		last.shed_skin = true;
+		last.shed_skin(true);
 		average_score += 21 * end_of_turn_order_branch (first, last, faster, slower, weather, depth, score);
 		divisor += 21;
 	}
@@ -392,7 +392,7 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, Weather & weather, u
 }
 
 int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score) {
-	if (!user.moved) {
+	if (!user.moved()) {
 		unsigned const damage = call_move(user, other, weather);
 		other.do_damage(damage);
 		int64_t const user_win = Score::win (user);
@@ -537,7 +537,7 @@ Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::
 }
 
 bool is_replacing (Team const & team) {
-	return team.pokemon().hp.stat == 0 or team.pass or team.u_turning;
+	return team.pokemon().hp.stat == 0 or team.switch_decision_required();
 }
 
 Moves random_switch (Team const & ai, std::mt19937 & random_engine) {

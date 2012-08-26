@@ -71,7 +71,7 @@ bool is_legal_selection (Team const & user, Move const & move, Team const & othe
 
 bool can_execute_move (Team & user, Team const & other, Weather const & weather) {
 	Move const & move = user.pokemon().move();
-	assert (!move.is_switch() or !user.recharging);
+	assert(!move.is_switch() or !user.recharging());
 	
 	if (move.is_switch())
 		return true;
@@ -80,26 +80,24 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 
 	bool execute = !(is_blocked_due_to_status (user, move) or
 			block1 (user, move, other) or
-			user.pokemon().ability.is_loafing (user.loaf));
+			user.is_loafing());
 
 	if (execute and user.confused)
 		execute = handle_confusion (user);
 
 	if (execute) {
-		if (user.flinch) {
+		if (user.flinched()) {
 			if (user.pokemon().ability.boosts_speed_when_flinched ())
 				user.stage.boost(Stat::SPE, 1);
 			execute = false;
 		}
-		else if (block2 (user, move, weather) or user.fully_paralyzed) {
+		else if (block2 (user, move, weather) or user.is_fully_paralyzed()) {
 			execute = false;
 		}
 	}
 
-	if (user.recharging) {
-		user.recharging = false;
+	if (user.recharge())
 		execute = false;
-	}
 	return execute;
 }
 
@@ -116,7 +114,8 @@ bool is_not_illegal_switch (Team const & user, Move const & move, Team const & o
 }
 
 bool is_blocked_from_switching (Team const & user, Team const & other, Weather const & weather) {
-	return (other.pokemon().ability.blocks_switching (user, weather) or user.ingrain or user.trapped or user.partial_trap) and !user.pokemon().item.allows_switching();
+	return (other.pokemon().ability.blocks_switching(user, weather) or user.trapped()) and
+			!user.pokemon().item.allows_switching();
 }
 
 bool not_illegal_struggle (Pokemon const & user, Move const & move) {
@@ -132,7 +131,7 @@ bool block1 (Team const & user, Move const & move, Team const & other) {
 }
 
 bool imprison (Move const & move, Team const & other) {
-	return other.imprison and other.pokemon().move.regular_move_exists ([& move](Move const & element) {
+	return other.imprisoned() and other.pokemon().move.regular_move_exists ([& move](Move const & element) {
 		return move.name == element.name;
 	});
 }
@@ -145,7 +144,7 @@ bool block2 (Team const & user, Move const & move, Weather const & weather) {
 }
 
 bool is_blocked_due_to_lock_in (Team const & user, Move const & move) {
-	return move.is_struggle_or_switch() ? user.recharging : standard_move_lock_in (user, move);
+	return move.is_struggle_or_switch() ? user.recharging() : standard_move_lock_in (user, move);
 }
 
 bool standard_move_lock_in (Team const & user, Move const & move) {
@@ -153,7 +152,7 @@ bool standard_move_lock_in (Team const & user, Move const & move) {
 }
 
 bool is_locked_in (Team const & user) {
-	return user.encore or user.recharging or user.pokemon().item.is_choice_item();
+	return user.encore or user.recharging() or user.pokemon().item.is_choice_item();
 }
 
 bool is_locked_in_to_different_move (Pokemon const & user, Move const & move) {
@@ -161,7 +160,7 @@ bool is_locked_in_to_different_move (Pokemon const & user, Move const & move) {
 }
 
 bool blocked_by_torment (Team const & user, Move const & move) {
-	return user.torment and move.was_used_last();
+	return user.tormented() and move.was_used_last();
 }
 
 bool is_blocked_due_to_status (Team & user, Move const & move) {
@@ -175,12 +174,12 @@ bool is_blocked_by_freeze (Pokemon const & user, Move const & move) {
 bool handle_sleep_counter (Team & user, Move const & move) {
 	if (!user.pokemon().status.is_sleeping())
 		return false;
-	user.pokemon().status.increase_sleep_counter(user.pokemon().ability, user.awaken);
+	user.increase_sleep_counter();
 	return !move.is_usable_while_sleeping();
 }
 
 bool handle_confusion (Team & user) {
-	if (user.hitself) {
+	if (user.is_hitting_self()) {
 		// TODO: make user hit self in confusion
 		return false;
 	}

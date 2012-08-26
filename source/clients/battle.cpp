@@ -112,7 +112,7 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 	else {
 		msg.write_move (battle_id, 1);
 	}
-	if (!ai.replacing)
+	if (!ai.replacing())
 		initialize_turn ();
 }
 
@@ -144,7 +144,7 @@ void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_
 		last = &inactive;
 	}
 
-	active.moved = true;
+	active.move();
 	if (!active.pokemon.at_replacement().move.set_index_if_found(move_name)) {
 		active.pokemon.at_replacement().move.add(move_name, 3, inactive.pokemon.real_size());
 	}
@@ -179,7 +179,7 @@ void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t
 	if (phazer.move().is_phaze()) {
 		phazer.move().variable.set_phaze_index(active, species);
 	}
-	else if (!active.moved) {
+	else if (!active.moved()) {
 		Pokemon & pokemon = active.pokemon(replacement);
 		pokemon.move.set_index(pokemon.index_of_first_switch() + active.pokemon.replacement());
 	}
@@ -257,8 +257,8 @@ uint16_t GenericBattle::max_damage_precision () const {
 }
 
 void GenericBattle::initialize_turn () {
-	initialize_team (ai);
-	initialize_team (foe);
+	ai.reset_between_turns();
+	foe.reset_between_turns();
 	// Simulators might not send an HP change message if a move does 0 damage.
 	move_damage = false;
 	
@@ -266,32 +266,21 @@ void GenericBattle::initialize_turn () {
 	last = nullptr;
 }
 
-void GenericBattle::initialize_team (Team & team) {
-	team.pokemon.for_each ([](Pokemon & pokemon)->void {
-		pokemon.move.reset_index();
-	});
-	team.ch = false;
-	team.fully_paralyzed = false;
-	team.hitself = false;
-	team.miss = false;
-	team.pokemon.initialize_replacement();
-}
-
 void GenericBattle::do_turn () {
-	first->moved = false;
-	last->moved = false;
-	if (first->replacing) {
+	first->move(false);
+	last->move(false);
+	if (first->replacing()) {
 		normalize_hp ();
 		switchpokemon (*first, *last, weather);
-		first->moved = false;
+		first->move(false);
 		normalize_hp ();
-		if (last->replacing) {
+		if (last->replacing()) {
 			switchpokemon (*last, *first, weather);
-			last->moved = false;
+			last->move(false);
 			normalize_hp ();
-			last->replacing = false;
+			last->not_replacing();
 		}
-		first->replacing = false;
+		first->not_replacing();
 	}
 	else {
 		std::cout << "First move: " + first->pokemon().to_string() + " uses " + first->pokemon().move().to_string() + '\n';
