@@ -30,9 +30,13 @@ namespace {
 constexpr unsigned max_hp = 714;
 }	// unnamed namespace
 
-void Substitute::create(unsigned const total_hp) {
+bool Substitute::create(unsigned const total_hp) {
 	assert(total_hp <= max_hp / 4);
+	// Cannot create a new substitute if one already exists
+	if (exists())
+		return false;
 	hp = total_hp;
+	return true;
 }
 
 void Substitute::damage(unsigned const damage_taken) {
@@ -43,8 +47,12 @@ void Substitute::destroy() {
 	hp = 0;
 }
 
-Substitute::operator bool() const {
+bool Substitute::exists() const {
 	return hp != 0;
+}
+
+Substitute::operator bool() const {
+	return exists();
 }
 
 Substitute::hash_type Substitute::hash() const {

@@ -46,7 +46,7 @@ Uproar::hash_type Uproar::hash() const {
 
 Uproar::hash_type Uproar::max_hash() {
 	// I think this is correct
-	return 5;
+	return max;
 }
 
 bool operator== (Uproar const & lhs, Uproar const & rhs) {

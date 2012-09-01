@@ -71,11 +71,9 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 Team::Team(Team const & other):
 	pokemon (other.pokemon),
 	shared_moves(other.shared_moves),
-	damage_done_to_active(other.damage_done_to_active),
-	bide(other.bide),
+	active_pokemon(other.active_pokemon),
 	stage(other.stage),
 	vanish(other.vanish),
-	cached_chance_to_hit(other.cached_chance_to_hit),
 	confused(other.confused),
 	embargo(other.embargo),
 	encore(other.encore),
@@ -86,49 +84,6 @@ Team::Team(Team const & other):
 	rampage(other.rampage),
 	slow_start(other.slow_start),
 	stockpile(other.stockpile),
-	active_substitute(other.active_substitute),
-	m_taunt(other.m_taunt),
-	toxic(other.toxic),
-	uproar(other.uproar),
-	yawn(other.yawn),
-	aqua_ring(other.aqua_ring),
-	attracted(other.attracted),
-	awakening(other.awakening),
-	ch(other.ch),
-	charge(other.charge),
-	cursed(other.cursed),
-	used_defense_curl(other.used_defense_curl),
-	destiny_bond(other.destiny_bond),
-	enduring(other.enduring),
-	flash_fire(other.flash_fire),
-	flinched_this_turn(other.flinched_this_turn),
-	focusing_energy(other.focusing_energy),
-	fully_paralyzed(other.fully_paralyzed),
-	fully_trapped(other.fully_trapped),
-	gastro_acid(other.gastro_acid),
-	hitself(other.hitself),
-	identified(other.identified),
-	is_imprisoned(other.is_imprisoned),
-	ingrain_active(other.ingrain_active),
-	leech_seed(other.leech_seed),
-	loaf(other.loaf),
-	lock_on(other.lock_on),
-	me_first(other.me_first),
-	minimize(other.minimize),
-	miss(other.miss),
-	has_moved(other.has_moved),
-	mud_sport(other.mud_sport),
-	nightmares(other.nightmares),
-	pass(other.pass),
-	power_trick(other.power_trick),
-	protecting(other.protecting),
-	recharge_lock_in(other.recharge_lock_in),
-	is_replacing(other.is_replacing),
-	roosting(other.roosting),
-	shedding_skin(other.shedding_skin),
-	is_tormented(other.is_tormented),
-	u_turning(other.u_turning),
-	water_sport(other.water_sport),
 	counter(other.counter),
 	screens(other.screens),
 	wish(other.wish),
@@ -143,11 +98,9 @@ Team::Team(Team const & other):
 Team::Team(Team && other):
 	pokemon(std::move(other.pokemon)),
 	shared_moves(std::move(other.shared_moves)),
-	damage_done_to_active(std::move(other.damage_done_to_active)),
-	bide(std::move(other.bide)),
+	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
 	vanish(std::move(other.vanish)),
-	cached_chance_to_hit(std::move(other.cached_chance_to_hit)),
 	confused(std::move(other.confused)),
 	embargo(std::move(other.embargo)),
 	encore(std::move(other.encore)),
@@ -158,49 +111,6 @@ Team::Team(Team && other):
 	rampage(std::move(other.rampage)),
 	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
-	active_substitute(std::move(other.active_substitute)),
-	m_taunt(std::move(other.m_taunt)),
-	toxic(std::move(other.toxic)),
-	uproar(std::move(other.uproar)),
-	yawn(std::move(other.yawn)),
-	aqua_ring(std::move(other.aqua_ring)),
-	attracted(std::move(other.attracted)),
-	awakening(std::move(other.awakening)),
-	ch(std::move(other.ch)),
-	charge(std::move(other.charge)),
-	cursed(std::move(other.cursed)),
-	used_defense_curl(std::move(other.used_defense_curl)),
-	destiny_bond(std::move(other.destiny_bond)),
-	enduring(std::move(other.enduring)),
-	flash_fire(std::move(other.flash_fire)),
-	flinched_this_turn(std::move(other.flinched_this_turn)),
-	focusing_energy(std::move(other.focusing_energy)),
-	fully_paralyzed(std::move(other.fully_paralyzed)),
-	fully_trapped(std::move(other.fully_trapped)),
-	gastro_acid(std::move(other.gastro_acid)),
-	hitself(std::move(other.hitself)),
-	identified(std::move(other.identified)),
-	is_imprisoned(std::move(other.is_imprisoned)),
-	ingrain_active(std::move(other.ingrain_active)),
-	leech_seed(std::move(other.leech_seed)),
-	loaf(std::move(other.loaf)),
-	lock_on(std::move(other.lock_on)),
-	me_first(std::move(other.me_first)),
-	minimize(std::move(other.minimize)),
-	miss(std::move(other.miss)),
-	has_moved(std::move(other.has_moved)),
-	mud_sport(std::move(other.mud_sport)),
-	nightmares(std::move(other.nightmares)),
-	pass(std::move(other.pass)),
-	power_trick(std::move(other.power_trick)),
-	protecting(std::move(other.protecting)),
-	recharge_lock_in(std::move(other.recharge_lock_in)),
-	is_replacing(std::move(other.is_replacing)),
-	roosting(std::move(other.roosting)),
-	shedding_skin(std::move(other.shedding_skin)),
-	is_tormented(std::move(other.is_tormented)),
-	u_turning(std::move(other.u_turning)),
-	water_sport(std::move(other.water_sport)),
 	counter(std::move(other.counter)),
 	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
@@ -223,68 +133,26 @@ void Team::remove_pokemon () {
 }
 
 void Team::reset_end_of_turn() {
-	damage_done_to_active = 0;
-	enduring = false;
-	flinched_this_turn = false;
-	has_moved = false;
-	me_first = false;
-	loaf = !loaf;
-	protecting = false;
-	is_replacing = false;
+	active_pokemon.reset_end_of_turn();
 }
 
 void Team::reset_switch() {
-	if (!pass) {
-		aqua_ring = false;
-		cursed = false;
-		focusing_energy = false;
-		gastro_acid = false;
-		ingrain_active = false;
-		leech_seed = false;
-		lock_on = false;
-		power_trick = false;
+	if (!active_pokemon.is_baton_passing()) {
 		confused = 0;
 		embargo = 0;
 		magnet_rise = 0;
 		perish_song = 0;
 		stage.reset();
-		active_substitute.destroy();
 	}
-	attracted = false;
-	charge = false;
-	used_defense_curl = false;
-	destiny_bond = false;
-	flash_fire = false;
-	flinched_this_turn = false;
-	fully_trapped = false;
-	identified = false;
-	is_imprisoned = false;
-	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
-	// replaced; false makes it wrong otherwise
-	loaf = false;
-	minimize = false;
-	me_first = false;
-	mud_sport = false;
-	nightmares = false;
-	pass = false;
-	roosting = false;
-	is_tormented = false;
-	u_turning = false;
-	water_sport = false;
-	bide.reset();
-	damage_done_to_active = 0;
 	encore = 0;
 	heal_block = 0;
 	partial_trap = 0;
 	rampage = 0;
 	slow_start = 0;
 	stockpile = 0;
-	m_taunt.reset();
-	toxic.reset();
-	uproar.reset();
 	// Whirlwind can hit Flying Pokemon, so it needs to be reset
 	vanish.reset();
-	yawn.reset();
+	active_pokemon.reset_switch();
 
 	pokemon().move.for_each([](Move & move) {
 		move.reset();
@@ -292,344 +160,325 @@ void Team::reset_switch() {
 }
 
 void Team::reset_between_turns() {
+	active_pokemon.reset_between_turns();
 	pokemon.for_each ([](Pokemon & pokemon)->void {
 		pokemon.move.reset_index();
 	});
-	ch = false;
-	fully_paralyzed = false;
-	hitself = false;
-	miss = false;
 	pokemon.initialize_replacement();
 }
 
 void Team::update_before_move() {
-	destiny_bond = false;
-	lock_on = false;
-	has_moved = true;
+	active_pokemon.update_before_move();
 }
 
 void Team::clear_field() {
+	active_pokemon.clear_leech_seed();
 	entry_hazards.clear();
-	leech_seed = false;
 	partial_trap = false;
 }
 
 bool Team::is_loafing() const {
-	return pokemon().ability.is_loafing(loaf);
+	return active_pokemon.is_loafing(pokemon().ability);
 }
 
 bool Team::aqua_ring_is_active() const {
-	return aqua_ring;
+	return active_pokemon.aqua_ring_is_active();
 }
 
 void Team::activate_aqua_ring() {
-	aqua_ring = true;
+	active_pokemon.activate_aqua_ring();
 }
 
 void Team::attract() {
-	attracted = true;
+	active_pokemon.attract();
 }
 
 void Team::awaken(bool const value) {
-	awakening = value;
+	active_pokemon.awaken(value);
 }
 
 void Team::baton_pass() {
-	pass = true;
+	active_pokemon.baton_pass();
 }
 
 bool Team::cannot_be_koed() const {
-	return enduring;
+	return active_pokemon.cannot_be_koed();
 }
 
 void Team::charged() {
-	charge = true;
+	active_pokemon.charge();
 }
 
 bool Team::charge_boosted() const {
-	return charge and pokemon().move().type() == Type::ELECTRIC;
+	return active_pokemon.charge_boosted() and pokemon().move().type() == Type::ELECTRIC;
 }
 
 bool Team::critical_hit() const {
-	return ch;
+	return active_pokemon.critical_hit();
 }
 
 void Team::set_critical_hit(bool const value) {
-	ch = value;
+	active_pokemon.set_critical_hit(value);
 }
 
 void Team::curse() {
-	cursed = true;
+	active_pokemon.curse();
 }
 
 bool Team::is_cursed() const {
-	return cursed;
+	return active_pokemon.is_cursed();
 }
 
 void Team::defense_curl() {
-	used_defense_curl = true;
+	active_pokemon.defense_curl();
 }
 
 void Team::use_destiny_bond() {
-	destiny_bond = true;
+	active_pokemon.use_destiny_bond();
 }
 
 bool Team::defense_curled() const {
-	return used_defense_curl;
+	return active_pokemon.defense_curled();
 }
 
 void Team::endure() {
-	enduring = true;
+	active_pokemon.endure();
 }
 
 bool Team::flash_fire_is_active() const {
-	return flash_fire;
+	return active_pokemon.flash_fire_is_active();
 }
 
 void Team::activate_flash_fire() {
-	flash_fire = true;
+	active_pokemon.activate_flash_fire();
 }
 
 bool Team::flinched() const {
-	return flinched_this_turn;
+	return active_pokemon.flinched();
 }
 
 void Team::flinch() {
-	flinched_this_turn = true;
+	active_pokemon.flinch();
 }
 
 void Team::focus_energy() {
-	focusing_energy = true;
+	active_pokemon.focus_energy();
 }
 
 void Team::fully_trap() {
-	fully_trapped = true;
+	active_pokemon.fully_trap();
 }
 
 void Team::identify() {
-	identified = true;
+	active_pokemon.identify();
 }
 
 bool Team::imprisoned() const {
-	return is_imprisoned;
+	return active_pokemon.imprisoned();
 }
 
 void Team::imprison() {
-	is_imprisoned = true;
+	active_pokemon.imprison();
 }
 
 bool Team::ingrained() const {
-	return ingrain_active;
+	return active_pokemon.ingrained();
 }
 
 void Team::ingrain() {
-	ingrain_active = true;
+	active_pokemon.ingrain();
 }
 
 bool Team::is_fully_paralyzed() const {
-	return fully_paralyzed;
+	return active_pokemon.is_fully_paralyzed();
 }
 
 bool Team::leech_seeded() const {
-	return leech_seed;
+	return active_pokemon.leech_seeded();
 }
 
 void Team::hit_with_leech_seed() {
-	leech_seed = true;
+	active_pokemon.hit_with_leech_seed();
 }
 
 bool Team::locked_on() const {
-	return lock_on;
+	return active_pokemon.locked_on();
 }
 
 void Team::lock_on_to() {
-	lock_on = true;
+	active_pokemon.lock_on_to();
 }
 
 bool Team::me_first_is_active() const {
-	return me_first;
+	return active_pokemon.me_first_is_active();
 }
 
 bool Team::minimized() const {
-	return minimize;
+	return active_pokemon.minimized();
 }
 
 bool Team::missed() const {
-	return miss;
+	return active_pokemon.missed();
 }
 
 void Team::set_miss(bool const value) {
-	miss = value;
+	active_pokemon.set_miss(value);
 }
 
 void Team::move(bool const value) {
-	has_moved = value;
+	active_pokemon.move(value);
 }
 
 bool Team::moved() const {
-	return has_moved;
+	return active_pokemon.moved();
 }
 
 void Team::activate_mud_sport() {
-	mud_sport = true;
+	active_pokemon.activate_mud_sport();
 }
 
 bool Team::nightmare() const {
-	return nightmares;
+	return active_pokemon.nightmare();
 }
 
 void Team::give_nightmares() {
-	nightmares = true;
+	active_pokemon.give_nightmares();
 }
 
 bool Team::power_trick_is_active() const {
-	return power_trick;
+	return active_pokemon.power_trick_is_active();
 }
 
 void Team::activate_power_trick() {
-	power_trick = !power_trick;
+	active_pokemon.activate_power_trick();
 }
 
 void Team::protect() {
-	protecting = true;
+	active_pokemon.protect();
 }
 
 void Team::break_protect() {
-	protecting = false;
+	active_pokemon.break_protect();
 }
 
 bool Team::recharging() const {
-	return recharge_lock_in;
+	return active_pokemon.recharging();
 }
 
 bool Team::recharge() {
-	bool const return_value = recharging();
-	recharge_lock_in = false;
-	return return_value;
+	return active_pokemon.recharge();
 }
 
 void Team::use_recharge_move() {
-	recharge_lock_in = true;
+	active_pokemon.use_recharge_move();
 }
 
 bool Team::replacing() const {
-	return is_replacing;
+	return active_pokemon.replacing();
 }
 
 void Team::not_replacing() {
-	is_replacing = false;
+	active_pokemon.not_replacing();
 }
 
 bool Team::is_roosting() const {
-	return roosting;
+	return active_pokemon.is_roosting();
 }
 
 void Team::roost() {
-	roosting = true;
+	active_pokemon.roost();
 }
 
 bool Team::shed_skin_activated() const {
-	return shedding_skin;
+	return active_pokemon.shed_skin_activated();
 }
 
 void Team::shed_skin(bool const value) {
-	shedding_skin = value;
+	active_pokemon.shed_skin(value);
 }
 
 bool Team::sport_is_active(Move const & foe_move) const {
-	Type const & type = foe_move.type();
-	if (type == Type::ELECTRIC)
-		return mud_sport;
-	else if (type == Type::FIRE)
-		return water_sport;
-	else
-		return false;
+	return active_pokemon.sport_is_active(foe_move);
 }
 
 bool Team::switch_decision_required() const {
-	return pass or u_turning;
+	return active_pokemon.switch_decision_required();
 }
 
 bool Team::trapped() const {
-	return !fully_trapped and !partial_trap and !ingrained();
+	return !active_pokemon.trapped() and !partial_trap;
 }
 
 bool Team::tormented() const {
-	return is_tormented;
+	return active_pokemon.tormented();
 }
 
 void Team::torment() {
-	is_tormented = true;
+	active_pokemon.torment();
 }
 
 void Team::taunt() {
-	m_taunt.activate();
+	active_pokemon.taunt();
 }
 
 bool Team::is_taunted() const {
-	return m_taunt.is_active();
+	return active_pokemon.is_taunted();
 }
 
 void Team::increment_taunt() {
-	m_taunt.increment();
+	active_pokemon.increment_taunt();
 }
 
 Rational Team::toxic_ratio() const {
-	return toxic.ratio_drained();
+	return active_pokemon.toxic_ratio();
 }
 
 void Team::increment_toxic() {
-	toxic.increment();
+	active_pokemon.increment_toxic();
 }
 
 void Team::u_turn() {
-	u_turning = true;
+	active_pokemon.u_turn();
 }
 
 void Team::increment_uproar() {
-	uproar.increment();
+	active_pokemon.increment_uproar();
 }
 
 void Team::use_uproar() {
-	uproar.increment();
+	active_pokemon.use_uproar();
 }
 
 void Team::activate_water_sport() {
-	water_sport = true;
+	active_pokemon.activate_water_sport();
 }
 
 bool Team::decrement_yawn() {
-	return yawn.decrement();
+	return active_pokemon.decrement_yawn();
 }
 
 void Team::hit_with_yawn() {
-	yawn.activate();
+	active_pokemon.hit_with_yawn();
 }
 
 void Team::use_bide(Pokemon & target) {
-	if (!bide.is_active()) {
-		bide.activate();
-	}
-	else {
-		unsigned const bide_damage = bide.decrement();
-		if (bide_damage != 0)
-			damage_side_effect(target, bide_damage * 2);
-	}
+	active_pokemon.use_bide(target);
 }
 
 void Team::substitute() {
-	if (!active_substitute and pokemon().can_use_substitute()) {
-		active_substitute.create(pokemon().hp.max);
-		pokemon().hp.stat -= pokemon().hp.max / 4;
+	if (pokemon().can_use_substitute()) {
+		bool const created = active_pokemon.substitute(pokemon().hp.max);
+		if (created)
+			pokemon().hp.stat -= pokemon().hp.max / 4;
 	}
 }
 
 bool Team::is_hitting_self() const {
-	return hitself;
+	return active_pokemon.is_hitting_self();
 }
 
 bool Team::is_locked_in_to_bide() const {
-	return bide.is_active();
+	return active_pokemon.is_locked_in_to_bide();
 }
 
 void Team::lower_pp(Ability const & target) {
@@ -643,7 +492,7 @@ void Team::activate_perish_song() {
 }
 
 void Team::increase_sleep_counter() {
-	pokemon().status.increase_sleep_counter(pokemon().ability, awakening);
+	active_pokemon.increase_sleep_counter(pokemon());
 }
 
 bool Team::can_be_phazed () const {
@@ -651,12 +500,11 @@ bool Team::can_be_phazed () const {
 }
 
 unsigned Team::damaged() const {
-	return damage_done_to_active;
+	return active_pokemon.damaged();
 }
 
 void Team::do_damage(unsigned const damage) {
-	damage_done_to_active = damage;
-	bide.add_damage(damage);
+	active_pokemon.do_damage(damage);
 }
 
 bool Team::has_switched() const {
@@ -664,19 +512,19 @@ bool Team::has_switched() const {
 }
 
 void Team::update_chance_to_hit(Team const & target, Weather const & weather, bool const target_moved) {
-	cached_chance_to_hit.update(*this, target, weather, target_moved);
+	active_pokemon.update_chance_to_hit(*this, target, weather, target_moved);
 }
 
 ChanceToHit::value_type Team::chance_to_hit() const {
-	return cached_chance_to_hit();
+	return active_pokemon.chance_to_hit();
 }
 
 ChanceToHit::value_type Team::chance_to_miss() const {
-	return cached_chance_to_hit.inverse();
+	return active_pokemon.chance_to_miss();
 }
 
 bool Team::can_miss() const {
-	return cached_chance_to_hit.can_miss();
+	return active_pokemon.can_miss();
 }
 
 namespace {
@@ -698,24 +546,14 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 uint64_t Team::hash () const {
 	uint64_t current_hash = pokemon.hash();
+	current_hash *= active_pokemon.max_hash();
+	current_hash += active_pokemon.hash();
 	current_hash *= entry_hazards.max_hash();
 	current_hash += entry_hazards.hash();
 	current_hash *= wish.max_hash();
 	current_hash += wish.hash();
 	current_hash *= screens.max_hash();
 	current_hash += screens.hash();
-	current_hash *= active_substitute.max_hash();
-	current_hash += active_substitute.hash();
-	current_hash *= m_taunt.max_hash();
-	current_hash += m_taunt.hash();
-	current_hash *= toxic.max_hash();
-	current_hash += toxic.hash();
-	current_hash *= uproar.max_hash();
-	current_hash += uproar.hash();
-	current_hash *= yawn.max_hash();
-	current_hash += yawn.hash();
-	current_hash *= bide.max_hash();
-	current_hash += bide.hash();
 	current_hash *= stage.max_hash();
 	current_hash += stage.hash();
 	current_hash *= vanish.max_hash();
@@ -742,52 +580,6 @@ uint64_t Team::hash () const {
 	current_hash += rampage;
 	current_hash *= 3;
 	current_hash += slow_start;
-	current_hash *= 2;
-	current_hash += aqua_ring;
-	current_hash *= 2;
-	current_hash += attracted;
-	current_hash *= 2;
-	current_hash += charge;
-	current_hash *= 2;
-	current_hash += cursed;
-	current_hash *= 2;
-	current_hash += used_defense_curl;
-	current_hash *= 2;
-	current_hash += destiny_bond;
-	current_hash *= 2;
-	current_hash += flash_fire;
-	current_hash *= 2;
-	current_hash += focusing_energy;
-	current_hash *= 2;
-	current_hash += fully_trapped;
-	current_hash *= 2;
-	current_hash += gastro_acid;
-	current_hash *= 2;
-	current_hash += identified;
-	current_hash *= 2;
-	current_hash += is_imprisoned;
-	current_hash *= 2;
-	current_hash += ingrain_active;
-	current_hash *= 2;
-	current_hash += leech_seed;
-	current_hash *= 2;
-	current_hash += loaf;
-	current_hash *= 2;
-	current_hash += lock_on;
-	current_hash *= 2;
-	current_hash += minimize;
-	current_hash *= 2;
-	current_hash += mud_sport;
-	current_hash *= 2;
-	current_hash += nightmares;
-	current_hash *= 2;
-	current_hash += power_trick;
-	current_hash *= 2;
-	current_hash += recharge_lock_in;
-	current_hash *= 2;
-	current_hash += is_tormented;
-	current_hash *= 2;
-	current_hash += water_sport;
 	current_hash *= pokemon.real_size();
 	current_hash += pokemon.index();
 	constexpr unsigned max_size = 6;
@@ -818,9 +610,9 @@ void Team::load (std::string const & name, unsigned other_size) {
 bool operator== (Team const & lhs, Team const & rhs) {
 	return lhs.pokemon().name == rhs.pokemon().name and
 			lhs.pokemon == rhs.pokemon and
+			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
 			lhs.vanish == rhs.vanish and
-			lhs.bide == rhs.bide and
 			lhs.confused == rhs.confused and
 			lhs.embargo == rhs.embargo and
 			lhs.encore == rhs.encore and
@@ -831,30 +623,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
 			lhs.stockpile == rhs.stockpile and
-			lhs.m_taunt == rhs.m_taunt and
-			lhs.toxic == rhs.toxic and
-			lhs.uproar == rhs.uproar and
-			lhs.yawn == rhs.yawn and
-			lhs.aqua_ring == rhs.aqua_ring and
-			lhs.attracted == rhs.attracted and
-			lhs.charge == rhs.charge and
-			lhs.cursed == rhs.cursed and
-			lhs.used_defense_curl == rhs.used_defense_curl and
-			lhs.destiny_bond == rhs.destiny_bond and
-			lhs.flash_fire == rhs.flash_fire and
-			lhs.focusing_energy == rhs.focusing_energy and
-			lhs.identified == rhs.identified and
-			lhs.is_imprisoned == rhs.is_imprisoned and
-			lhs.ingrain_active == rhs.ingrain_active and
-			lhs.leech_seed == rhs.leech_seed and
-			lhs.loaf == rhs.loaf and
-			lhs.lock_on == rhs.lock_on and
-			lhs.minimize == rhs.minimize and
-			lhs.mud_sport == rhs.mud_sport and
-			lhs.nightmares == rhs.nightmares and
-			lhs.is_tormented == rhs.is_tormented and
-			lhs.fully_trapped == rhs.fully_trapped and
-			lhs.water_sport == rhs.water_sport and
 			lhs.counter == rhs.counter and
 			lhs.screens == rhs.screens and
 			lhs.wish == rhs.wish and

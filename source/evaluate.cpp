@@ -61,26 +61,9 @@ int64_t Score::score_team (Team const & team) const {
 	score += tailwind * team.screens.m_tailwind.turns_remaining;
 	score += wish * team.wish.is_active();
 	if (team.pokemon().hp.stat != 0) {
-		if (team.active_substitute)
-			score += substitute + substitute_hp * team.active_substitute.hp / team.pokemon().hp.max;
-		if (team.aqua_ring)
-			score += aqua_ring;
-		if (team.is_cursed())
-			score += curse;
-		if (team.imprisoned())
-			score += imprison;
-		if (team.leech_seed)
-			score += leech_seed;
+		score += score_active_pokemon(team.active_pokemon, team.pokemon());
 	//	if (other.pokemon().leech_seed)
 	//		score += 1 * other.pokemon().hp.max / member.hp.max;
-		if (team.loaf)
-			score += loaf;
-		if (team.nightmare())
-			score += nightmare;
-		if (team.tormented())
-			score += torment;
-		if (team.fully_trapped)
-			score += trapped;
 
 		if (team.pokemon().move.exists(Moves::BATON_PASS))
 			score += baton_passable_score(team) * 2;
@@ -91,17 +74,37 @@ int64_t Score::score_team (Team const & team) const {
 	return score;
 }
 
-int64_t Score::baton_passable_score(Team const & team) const {
+int64_t Score::score_active_pokemon(ActivePokemon const & active, Pokemon const & pokemon) const {
 	int64_t score = 0;
-	if (team.aqua_ring)
+	if (active.is_cursed())
+		score += curse;
+	if (active.imprisoned())
+		score += imprison;
+	if (active.leech_seed)
+		score += leech_seed;
+	if (active.loaf)
+		score += loaf;
+	if (active.fully_trapped)
+		score += trapped;
+	if (active.nightmare())
+		score += nightmare;
+	if (active.tormented())
+		score += torment;
+	return score;
+}
+
+int64_t Score::baton_passable_score(Team const & team) const {
+	ActivePokemon const & active = team.active_pokemon;
+	int64_t score = 0;
+	if (active.aqua_ring)
 		score += aqua_ring;
-	if (team.focusing_energy)
+	if (active.focusing_energy)
 		score += focus_energy;
-	if (team.ingrained())
+	if (active.ingrained())
 		score += ingrain;
 	score += team.magnet_rise * magnet_rise;
-	if (team.active_substitute)
-		score += substitute + substitute_hp * team.active_substitute.hp / team.pokemon().hp.max;
+	if (active.active_substitute)
+		score += substitute + substitute_hp * active.active_substitute.hp / team.pokemon().hp.max;
 	score += Stage::dot_product(team.stage, stage);
 	return score;
 }
@@ -142,7 +145,7 @@ int64_t Score::score_status (Team const & team) const {
 		case Status::POISON:
 			return poison;
 		case Status::POISON_TOXIC:
-			return poison * team.toxic.counter / 2;
+			return poison * team.active_pokemon.toxic.counter / 2;
 		case Status::REST:
 		case Status::SLEEP:
 			return sleep;

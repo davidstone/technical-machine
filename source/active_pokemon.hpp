@@ -16,16 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_HPP_
-#define TEAM_HPP_
+#ifndef ACTIVE_POKEMON_HPP_
+#define ACTIVE_POKEMON_HPP_
 
 #include <cstdint>
-#include <random>
-#include <string>
 
-#include "active_pokemon.hpp"
-#include "entry_hazards.hpp"
-#include "screens.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
@@ -44,45 +39,30 @@
 #include "stat/stage.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 class Ability;
+class Pokemon;
 class Rational;
+class Team;
 class Weather;
 
-class Team {
+class ActivePokemon {
 	public:
-		Team ();
-		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
-		Team (Team const & other);
-		Team (Team && other);
-		Team & operator= (Team const & other);
-		Team & operator= (Team && other);
-		template<class... Args>
-		void add_pokemon(Args&&... args) {
-			pokemon.add(shared_moves, std::forward<Args>(args)...);
-		}
-		void remove_pokemon ();
-		
 		// Not for variables that give a message at the end of the turn, this is
 		// just for some book-keeping variables.
 		void reset_end_of_turn();
 		void reset_switch();
 		void reset_between_turns();
 		void update_before_move();
-		void clear_field();
-		void substitute();
-		void lower_pp(Ability const & target);
-		void activate_perish_song();
+		bool substitute(unsigned max_hp);
 		void attract();
 		void awaken(bool value);
-		void increase_sleep_counter();
-		bool is_loafing() const;
 		bool aqua_ring_is_active() const;
 		void activate_aqua_ring();
+		bool is_baton_passing() const;
 		void baton_pass();
 		bool cannot_be_koed() const;
-		void charged();
 		bool charge_boosted() const;
+		void charge();
 		bool critical_hit() const;
 		void set_critical_hit(bool value);
 		void curse();
@@ -99,9 +79,13 @@ class Team {
 		void fully_trap();
 		bool leech_seeded() const;
 		void hit_with_leech_seed();
+		void clear_leech_seed();
+		bool is_loafing(Ability const & ability) const;
 		bool locked_on() const;
 		void lock_on_to();
 		void identify();
+		bool imprisoned() const;
+		void imprison();
 		bool ingrained() const;
 		void ingrain();
 		bool is_fully_paralyzed() const;
@@ -127,11 +111,10 @@ class Team {
 		void roost();
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
+		void increase_sleep_counter(Pokemon & pokemon);
 		bool sport_is_active(Move const & foe_move) const;
 		bool switch_decision_required() const;
 		bool trapped() const;
-		bool imprisoned() const;
-		void imprison();
 		bool tormented() const;
 		void taunt();
 		bool is_taunted() const;
@@ -148,61 +131,73 @@ class Team {
 		bool is_hitting_self() const;
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
-		bool can_be_phazed () const;
 		unsigned damaged() const;
 		void do_damage(unsigned damage);
-		bool has_switched() const;
-		void update_chance_to_hit(Team const & target, Weather const & weather, bool target_moved);
+		void update_chance_to_hit(Team const & user, Team const & target, Weather const & weather, bool target_moved);
 		ChanceToHit::value_type chance_to_hit() const;
 		ChanceToHit::value_type chance_to_miss() const;
 		bool can_miss() const;
 
-		friend bool operator== (Team const & lhs, Team const & rhs);
-		uint64_t hash () const;
-		std::string to_string () const;
+		friend bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs);
+		typedef uint64_t hash_type;
+		hash_type hash() const;
+		hash_type max_hash() const;
 
-	public:
-		PokemonCollection pokemon;
 	private:
 		friend class Score;
-		void load (std::string const & name, unsigned other_size);
-
-		SharedMoves shared_moves;
-		ActivePokemon active_pokemon;
-	public:
-		Stage stage;
-		Vanish vanish;
-		uint8_t confused = 0;
-		uint8_t embargo = 0;
-		uint8_t encore = 0;
-		uint8_t heal_block = 0;
-		uint8_t magnet_rise = 0;
-		// Number of turns remaining on Bind, Clamp, Fire Spin, Magma Storm,
-		// Sand Tomb, Whirlpool, and Wrap
-		uint8_t partial_trap = 0;
-		uint8_t perish_song = 0;
-		// Number of turns remaining on Outrage, Petal Dance, and Thrash
-		uint8_t rampage = 0;
-		uint8_t slow_start = 0;
-		uint8_t stockpile = 0;
-		
-		// Attacker that used Doom Desire / Future Sight
-		// Pokemon ddfs;
-		// Set to 3 initially, 1 = delayed attack hits at the end of this turn,
-		// 0 = not active
-		uint8_t counter = 0;
-
-		Screens screens;
-		Wish wish;
-		
-		EntryHazards entry_hazards;
-
-		uint8_t called_move = 0;
-		
-		// Is this my team?
-		bool me;
+		uint16_t damage_done_to_active = 0;
+		Bide bide;
+		ChanceToHit cached_chance_to_hit;
+		Substitute active_substitute;
+		Taunt m_taunt;
+		Toxic toxic;
+		Uproar uproar;
+		Yawn yawn;
+		bool aqua_ring = false;
+		bool attracted = false;
+		// Will it wake up
+		bool awakening = false;
+		bool ch = false;
+		bool charged = false;
+		bool cursed = false;
+		bool used_defense_curl = false;
+		bool destiny_bond = false;
+		bool enduring = false;
+		bool flash_fire = false;
+		bool flinched_this_turn = false;
+		bool focusing_energy = false;
+		bool fully_paralyzed = false;
+		// Block, Mean Look, Spider Web
+		bool fully_trapped = false;
+		bool gastro_acid = false;
+		// Will this Pokemon hit itself in its confusion this turn?
+		bool hitself = false;
+		bool identified = false;
+		bool used_imprison = false;
+		bool ingrain_active = false;
+		bool leech_seed = false;
+		bool loaf = false;
+		bool lock_on = false;
+		bool me_first = false;
+		bool minimize = false;
+		bool miss = false;
+		bool has_moved = false;
+		bool mud_sport = false;
+		bool nightmares = false;
+		bool pass = false;
+		bool power_trick = false;
+		bool protecting = false;
+		bool recharge_lock_in = false;
+		// Replacing a fainted Pokemon. Also used for initial switch-in at
+		// start of battle.
+		bool is_replacing = false;
+		bool roosting = false;
+		bool shedding_skin = false;
+		bool is_tormented = false;
+		bool u_turning = false;
+		bool water_sport = false;
 };
-bool operator!= (Team const & lhs, Team const & rhs);
+bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);
 
 }	// namespace technicalmachine
-#endif	// TEAM_HPP_
+#endif	// ACTIVE_POKEMON_HPP_

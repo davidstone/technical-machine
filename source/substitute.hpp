@@ -26,7 +26,7 @@ namespace technicalmachine {
 class Substitute {
 	public:
 		Substitute();
-		void create(unsigned total_hp);
+		bool create(unsigned total_hp);
 		void damage(unsigned damage_taken);
 		void destroy();
 		explicit operator bool() const;
@@ -36,6 +36,7 @@ class Substitute {
 		static hash_type max_hash();
 	private:
 		friend class Score;
+		bool exists() const;
 		uint8_t hp;
 };
 bool operator!= (Substitute const & lhs, Substitute const & rhs);
