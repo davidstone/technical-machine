@@ -24,8 +24,7 @@ class Pokemon;
 
 class Rational {
 	public:
-		// Intentionally implicit
-		explicit Rational(unsigned const n, unsigned const d = 1):
+		constexpr explicit Rational(unsigned const n, unsigned const d = 1):
 			numerator(n),
 			denominator(d) {
 		}
