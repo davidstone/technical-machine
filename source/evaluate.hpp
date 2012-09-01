@@ -48,8 +48,6 @@ class Score {
 		// this number other than being larger than any score a non-winning
 		// position can have.
 		constexpr static int64_t VICTORY = 30240;
-		
-		int transposition_table;	
 	private:
 		int64_t score_team(Team const & team) const;
 		int64_t score_active_pokemon(ActivePokemon const & active, Pokemon const & pokemon) const;

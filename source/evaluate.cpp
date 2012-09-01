@@ -185,7 +185,6 @@ int64_t Score::sleep_clause (Team const & team) {
 }
 
 Score::Score ():
-	transposition_table (1),	
 	light_screen (0),
 	lucky_chant (0),
 	mist (0),
@@ -235,7 +234,6 @@ void Score::load_evaluation_constants () {
 	boost::property_tree::ptree file;
 	read_xml ("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
-	transposition_table = pt.get<int>("transposition_table", 0);
 	light_screen = pt.get<int>("light_screen", 0);
 	lucky_chant = pt.get<int>("lucky_chant", 0);
 	mist = pt.get<int>("mist", 0);

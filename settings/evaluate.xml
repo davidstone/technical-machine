@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <score>
-	<transposition_table>4096</transposition_table>
-
 	<light_screen>64</light_screen>
 	<lucky_chant>4</lucky_chant>
 	<mist>4</mist>
