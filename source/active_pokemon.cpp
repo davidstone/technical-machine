@@ -36,6 +36,7 @@ void ActivePokemon::reset_end_of_turn() {
 }
 
 void ActivePokemon::reset_switch() {
+	// TODO: remove some of these when the foe switches, too
 	if (!pass) {
 		aqua_ring = false;
 		cursed = false;
@@ -63,6 +64,7 @@ void ActivePokemon::reset_switch() {
 	me_first = false;
 	mud_sport = false;
 	nightmares = false;
+	partial_trap.reset();
 	pass = false;
 	roosting = false;
 	is_tormented = false;
@@ -81,6 +83,11 @@ void ActivePokemon::reset_between_turns() {
 	fully_paralyzed = false;
 	hitself = false;
 	miss = false;
+}
+
+void ActivePokemon::clear_field() {
+	clear_leech_seed();
+	partial_trap.reset();
 }
 
 void ActivePokemon::update_before_move() {
@@ -265,6 +272,14 @@ void ActivePokemon::give_nightmares() {
 	nightmares = true;
 }
 
+void ActivePokemon::partially_trap(bool const extended) {
+	partial_trap.activate(extended);
+}
+
+void ActivePokemon::partial_trap_damage(Pokemon & pokemon) {
+	partial_trap.damage(pokemon);
+}
+
 bool ActivePokemon::power_trick_is_active() const {
 	return power_trick;
 }
@@ -338,7 +353,7 @@ bool ActivePokemon::switch_decision_required() const {
 }
 
 bool ActivePokemon::trapped() const {
-	return !fully_trapped and !ingrained();
+	return !fully_trapped and !ingrained()  and !partial_trap;
 }
 
 bool ActivePokemon::tormented() const {
@@ -493,6 +508,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += mud_sport;
 	current_hash *= 2;
 	current_hash += nightmares;
+	current_hash *= partial_trap.max_hash();
+	current_hash += partial_trap.hash();
 	current_hash *= 2;
 	current_hash += power_trick;
 	current_hash *= 2;
@@ -507,6 +524,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = active_substitute.max_hash();
 	current_hash *= m_taunt.max_hash();
+	current_hash *= partial_trap.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
 	current_hash *= yawn.max_hash();
@@ -530,6 +548,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.destiny_bond == rhs.destiny_bond and
 			lhs.flash_fire == rhs.flash_fire and
 			lhs.focusing_energy == rhs.focusing_energy and
+			lhs.fully_trapped == rhs.fully_trapped and
 			lhs.identified == rhs.identified and
 			lhs.used_imprison == rhs.used_imprison and
 			lhs.ingrain_active == rhs.ingrain_active and
@@ -539,8 +558,8 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.minimize == rhs.minimize and
 			lhs.mud_sport == rhs.mud_sport and
 			lhs.nightmares == rhs.nightmares and
+			lhs.partial_trap == rhs.partial_trap and
 			lhs.is_tormented == rhs.is_tormented and
-			lhs.fully_trapped == rhs.fully_trapped and
 			lhs.water_sport == rhs.water_sport;
 }
 

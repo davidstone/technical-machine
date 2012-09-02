@@ -177,10 +177,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	}
 	if (team.is_cursed())
 		heal (pokemon, -4);
-	if (team.partial_trap > 0) {
-		heal (pokemon, -16);
-		--team.partial_trap;
-	}
+	team.partial_trap_damage();
 	
 	// Can't use decrement here because I only want to cause confusion when team.rampage becomes 0.
 	if (team.rampage) {

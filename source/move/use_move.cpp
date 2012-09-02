@@ -255,8 +255,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SAND_TOMB:
 		case Moves::WHIRLPOOL:
 		case Moves::WRAP:
-			if (!target.partial_trap)
-				target.partial_trap = move.variable().value();
+			target.partially_trap(move.variable().value());
 			break;
 		case Moves::BLAST_BURN:
 		case Moves::FRENZY_PLANT:

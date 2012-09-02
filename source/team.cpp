@@ -79,7 +79,6 @@ Team::Team(Team const & other):
 	encore(other.encore),
 	heal_block(other.heal_block),
 	magnet_rise(other.magnet_rise),
-	partial_trap(other.partial_trap),
 	perish_song(other.perish_song),
 	rampage(other.rampage),
 	slow_start(other.slow_start),
@@ -106,7 +105,6 @@ Team::Team(Team && other):
 	encore(std::move(other.encore)),
 	heal_block(std::move(other.heal_block)),
 	magnet_rise(std::move(other.magnet_rise)),
-	partial_trap(std::move(other.partial_trap)),
 	perish_song(std::move(other.perish_song)),
 	rampage(std::move(other.rampage)),
 	slow_start(std::move(other.slow_start)),
@@ -146,7 +144,6 @@ void Team::reset_switch() {
 	}
 	encore = 0;
 	heal_block = 0;
-	partial_trap = 0;
 	rampage = 0;
 	slow_start = 0;
 	stockpile = 0;
@@ -172,9 +169,8 @@ void Team::update_before_move() {
 }
 
 void Team::clear_field() {
-	active_pokemon.clear_leech_seed();
+	active_pokemon.clear_field();
 	entry_hazards.clear();
-	partial_trap = false;
 }
 
 bool Team::is_loafing() const {
@@ -345,6 +341,14 @@ void Team::give_nightmares() {
 	active_pokemon.give_nightmares();
 }
 
+void Team::partially_trap(bool const extended) {
+	active_pokemon.partially_trap(extended);
+}
+
+void Team::partial_trap_damage() {
+	active_pokemon.partial_trap_damage(pokemon());
+}
+
 bool Team::power_trick_is_active() const {
 	return active_pokemon.power_trick_is_active();
 }
@@ -406,7 +410,7 @@ bool Team::switch_decision_required() const {
 }
 
 bool Team::trapped() const {
-	return !active_pokemon.trapped() and !partial_trap;
+	return !active_pokemon.trapped();
 }
 
 bool Team::tormented() const {
@@ -560,8 +564,6 @@ uint64_t Team::hash () const {
 	current_hash += vanish.hash();
 	current_hash *= 8;
 	current_hash += encore;
-	current_hash *= 8;
-	current_hash += partial_trap;
 	current_hash *= 5;
 	current_hash += confused;
 	current_hash *= 5;
@@ -618,7 +620,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.encore == rhs.encore and
 			lhs.heal_block == rhs.heal_block and
 			lhs.magnet_rise == rhs.magnet_rise and
-			lhs.partial_trap == rhs.partial_trap and
 			lhs.perish_song == rhs.perish_song and
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and

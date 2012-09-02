@@ -21,6 +21,7 @@
 
 #include <cstdint>
 
+#include "partial_trap.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
@@ -52,6 +53,7 @@ class ActivePokemon {
 		void reset_end_of_turn();
 		void reset_switch();
 		void reset_between_turns();
+		void clear_field();
 		void update_before_move();
 		bool substitute(unsigned max_hp);
 		void attract();
@@ -98,6 +100,8 @@ class ActivePokemon {
 		void activate_mud_sport();
 		bool nightmare() const;
 		void give_nightmares();
+		void partially_trap(bool extended);
+		void partial_trap_damage(Pokemon & pokemon);
 		bool power_trick_is_active() const;
 		void activate_power_trick();
 		void protect();
@@ -149,6 +153,7 @@ class ActivePokemon {
 		Bide bide;
 		ChanceToHit cached_chance_to_hit;
 		Substitute active_substitute;
+		PartialTrap partial_trap;
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;
