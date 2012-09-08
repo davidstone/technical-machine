@@ -116,6 +116,7 @@ class Team {
 		void give_nightmares();
 		void partially_trap(bool extended = false);
 		void partial_trap_damage();
+		void perish_song_turn();
 		bool power_trick_is_active() const;
 		void activate_power_trick();
 		void protect();
@@ -179,8 +180,6 @@ class Team {
 		uint8_t encore = 0;
 		uint8_t heal_block = 0;
 		uint8_t magnet_rise = 0;
-	public:
-		uint8_t perish_song = 0;
 		// Number of turns remaining on Outrage, Petal Dance, and Thrash
 		uint8_t rampage = 0;
 		uint8_t slow_start = 0;

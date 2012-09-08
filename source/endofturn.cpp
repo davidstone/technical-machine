@@ -212,9 +212,7 @@ void endofturn6 (Team & target, Weather const & weather) {
 }
 
 void endofturn7 (Team & team) {
-	if (team.perish_song == 1)
-		team.pokemon().hp.stat = 0;
-	decrement (team.perish_song);
+	team.perish_song_turn();
 }
 
 void reset_variable (Team & team) {

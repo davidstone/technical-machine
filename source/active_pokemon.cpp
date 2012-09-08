@@ -37,7 +37,7 @@ void ActivePokemon::reset_end_of_turn() {
 
 void ActivePokemon::reset_switch() {
 	// TODO: remove some of these when the foe switches, too
-	if (!pass) {
+	if (!is_baton_passing()) {
 		aqua_ring = false;
 		cursed = false;
 		focusing_energy = false;
@@ -45,6 +45,7 @@ void ActivePokemon::reset_switch() {
 		ingrain_active = false;
 		leech_seed = false;
 		lock_on = false;
+		perish_song.reset();
 		power_trick = false;
 		active_substitute.destroy();
 	}
@@ -280,6 +281,14 @@ void ActivePokemon::partial_trap_damage(Pokemon & pokemon) {
 	partial_trap.damage(pokemon);
 }
 
+void ActivePokemon::activate_perish_song() {
+	perish_song.activate();
+}
+
+bool ActivePokemon::perish_song_turn() {
+	return perish_song.next_turn();
+}
+
 bool ActivePokemon::power_trick_is_active() const {
 	return power_trick;
 }
@@ -460,6 +469,10 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
 	current_hash *= active_substitute.max_hash();
 	current_hash += active_substitute.hash();
+	current_hash *= partial_trap.max_hash();
+	current_hash += partial_trap.hash();
+	current_hash *= perish_song.max_hash();
+	current_hash += perish_song.hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
@@ -508,8 +521,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += mud_sport;
 	current_hash *= 2;
 	current_hash += nightmares;
-	current_hash *= partial_trap.max_hash();
-	current_hash += partial_trap.hash();
 	current_hash *= 2;
 	current_hash += power_trick;
 	current_hash *= 2;
@@ -525,6 +536,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = active_substitute.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= partial_trap.max_hash();
+	current_hash *= perish_song.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
 	current_hash *= yawn.max_hash();
@@ -559,6 +571,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.mud_sport == rhs.mud_sport and
 			lhs.nightmares == rhs.nightmares and
 			lhs.partial_trap == rhs.partial_trap and
+			lhs.perish_song == rhs.perish_song and
 			lhs.is_tormented == rhs.is_tormented and
 			lhs.water_sport == rhs.water_sport;
 }

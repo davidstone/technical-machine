@@ -22,6 +22,7 @@
 #include <cstdint>
 
 #include "partial_trap.hpp"
+#include "perish_song.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
@@ -102,6 +103,8 @@ class ActivePokemon {
 		void give_nightmares();
 		void partially_trap(bool extended);
 		void partial_trap_damage(Pokemon & pokemon);
+		void activate_perish_song();
+		bool perish_song_turn();
 		bool power_trick_is_active() const;
 		void activate_power_trick();
 		void protect();
@@ -154,6 +157,7 @@ class ActivePokemon {
 		ChanceToHit cached_chance_to_hit;
 		Substitute active_substitute;
 		PartialTrap partial_trap;
+		PerishSong perish_song;
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;

@@ -79,7 +79,6 @@ Team::Team(Team const & other):
 	encore(other.encore),
 	heal_block(other.heal_block),
 	magnet_rise(other.magnet_rise),
-	perish_song(other.perish_song),
 	rampage(other.rampage),
 	slow_start(other.slow_start),
 	stockpile(other.stockpile),
@@ -105,7 +104,6 @@ Team::Team(Team && other):
 	encore(std::move(other.encore)),
 	heal_block(std::move(other.heal_block)),
 	magnet_rise(std::move(other.magnet_rise)),
-	perish_song(std::move(other.perish_song)),
 	rampage(std::move(other.rampage)),
 	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
@@ -139,7 +137,6 @@ void Team::reset_switch() {
 		confused = 0;
 		embargo = 0;
 		magnet_rise = 0;
-		perish_song = 0;
 		stage.reset();
 	}
 	encore = 0;
@@ -349,6 +346,13 @@ void Team::partial_trap_damage() {
 	active_pokemon.partial_trap_damage(pokemon());
 }
 
+void Team::perish_song_turn() {
+	bool const faint = active_pokemon.perish_song_turn();
+	if (faint) {
+		pokemon().hp.stat = 0;
+	}
+}
+
 bool Team::power_trick_is_active() const {
 	return active_pokemon.power_trick_is_active();
 }
@@ -491,8 +495,7 @@ void Team::lower_pp(Ability const & target) {
 }
 
 void Team::activate_perish_song() {
-	if (!perish_song)
-		perish_song = 3;
+	active_pokemon.activate_perish_song();
 }
 
 void Team::increase_sleep_counter() {
@@ -577,8 +580,6 @@ uint64_t Team::hash () const {
 	current_hash *= 3;
 	current_hash += counter;
 	current_hash *= 3;
-	current_hash += perish_song;
-	current_hash *= 3;
 	current_hash += rampage;
 	current_hash *= 3;
 	current_hash += slow_start;
@@ -620,7 +621,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.encore == rhs.encore and
 			lhs.heal_block == rhs.heal_block and
 			lhs.magnet_rise == rhs.magnet_rise and
-			lhs.perish_song == rhs.perish_song and
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
 			lhs.stockpile == rhs.stockpile and
