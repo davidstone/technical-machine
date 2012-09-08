@@ -28,20 +28,16 @@
 #include "toxic.hpp"
 #include "uproar.hpp"
 #include "vanish.hpp"
-#include "wish.hpp"
 #include "yawn.hpp"
 
 #include "bide/bide.hpp"
-
-#include "move/shared.hpp"
-
-#include "pokemon/collection.hpp"
 
 #include "stat/chance_to_hit.hpp"
 #include "stat/stage.hpp"
 
 namespace technicalmachine {
 class Ability;
+class Move;
 class Pokemon;
 class Rational;
 class Team;

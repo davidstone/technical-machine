@@ -26,15 +26,8 @@
 #include "active_pokemon.hpp"
 #include "entry_hazards.hpp"
 #include "screens.hpp"
-#include "substitute.hpp"
-#include "taunt.hpp"
-#include "toxic.hpp"
-#include "uproar.hpp"
 #include "vanish.hpp"
 #include "wish.hpp"
-#include "yawn.hpp"
-
-#include "bide/bide.hpp"
 
 #include "move/shared.hpp"
 

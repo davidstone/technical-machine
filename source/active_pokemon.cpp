@@ -22,6 +22,10 @@
 #include "damage.hpp"
 #include "rational.hpp"
 
+#include "move/move.hpp"
+
+#include "pokemon/pokemon.hpp"
+
 namespace technicalmachine {
 
 void ActivePokemon::reset_end_of_turn() {
