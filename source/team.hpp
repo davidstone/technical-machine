@@ -162,9 +162,10 @@ class Team {
 		ChanceToHit::value_type chance_to_miss() const;
 		bool can_miss() const;
 
-		friend bool operator== (Team const & lhs, Team const & rhs);
-		uint64_t hash () const;
+		typedef uint64_t hash_type;
+		hash_type hash () const;
 		std::string to_string () const;
+		friend bool operator== (Team const & lhs, Team const & rhs);
 
 		PokemonCollection pokemon;
 	private:
