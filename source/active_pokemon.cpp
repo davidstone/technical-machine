@@ -80,6 +80,9 @@ void ActivePokemon::reset_switch() {
 	m_taunt.reset();
 	toxic.reset();
 	uproar.reset();
+	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
+	// vanished. Therefore, we need to reset it.
+	vanish.reset();
 	yawn.reset();
 }
 
@@ -129,6 +132,10 @@ void ActivePokemon::baton_pass() {
 	pass = true;
 }
 
+void ActivePokemon::bounce() {
+	vanish.bounce();
+}
+
 bool ActivePokemon::cannot_be_koed() const {
 	return enduring;
 }
@@ -169,6 +176,14 @@ bool ActivePokemon::defense_curled() const {
 	return used_defense_curl;
 }
 
+void ActivePokemon::dig() {
+	vanish.dig();
+}
+
+void ActivePokemon::dive() {
+	vanish.dive();
+}
+
 void ActivePokemon::endure() {
 	enduring = true;
 }
@@ -187,6 +202,10 @@ bool ActivePokemon::flinched() const {
 
 void ActivePokemon::flinch() {
 	flinched_this_turn = true;
+}
+
+void ActivePokemon::fly() {
+	vanish.fly();
 }
 
 void ActivePokemon::focus_energy() {
@@ -339,6 +358,10 @@ void ActivePokemon::roost() {
 	roosting = true;
 }
 
+void ActivePokemon::shadow_force() {
+	vanish.shadow_force();
+}
+
 bool ActivePokemon::shed_skin_activated() const {
 	return shedding_skin;
 }
@@ -407,6 +430,10 @@ void ActivePokemon::increment_uproar() {
 
 void ActivePokemon::use_uproar() {
 	uproar.increment();
+}
+
+bool ActivePokemon::vanish_doubles_power(Moves const move_name) const {
+	return vanish.doubles_move_power(move_name);
 }
 
 void ActivePokemon::activate_water_sport() {
@@ -483,6 +510,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += toxic.hash();
 	current_hash *= uproar.max_hash();
 	current_hash += uproar.hash();
+	current_hash *= vanish.max_hash();
+	current_hash += vanish.hash();
 	current_hash *= yawn.max_hash();
 	current_hash += yawn.hash();
 	current_hash *= bide.max_hash();
@@ -543,6 +572,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= perish_song.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
+	current_hash *= vanish.max_hash();
 	current_hash *= yawn.max_hash();
 	current_hash *= bide.max_hash();
 	current_hash *= 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
@@ -555,6 +585,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.toxic == rhs.toxic and
 			lhs.uproar == rhs.uproar and
+			lhs.vanish == rhs.vanish and
 			lhs.yawn == rhs.yawn and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and

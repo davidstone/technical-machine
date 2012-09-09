@@ -59,6 +59,7 @@ class ActivePokemon {
 		void activate_aqua_ring();
 		bool is_baton_passing() const;
 		void baton_pass();
+		void bounce();
 		bool cannot_be_koed() const;
 		bool charge_boosted() const;
 		void charge();
@@ -69,11 +70,14 @@ class ActivePokemon {
 		bool defense_curled() const;
 		void defense_curl();
 		void use_destiny_bond();
+		void dig();
+		void dive();
 		void endure();
 		bool flash_fire_is_active() const;
 		void activate_flash_fire();
 		bool flinched() const;
 		void flinch();
+		void fly();
 		void focus_energy();
 		void fully_trap();
 		bool leech_seeded() const;
@@ -112,6 +116,7 @@ class ActivePokemon {
 		void not_replacing();
 		bool is_roosting() const;
 		void roost();
+		void shadow_force();
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
 		void increase_sleep_counter(Pokemon & pokemon);
@@ -128,6 +133,7 @@ class ActivePokemon {
 		void u_turn();
 		void use_uproar();
 		void increment_uproar();
+		bool vanish_doubles_power(Moves move_name) const;
 		void activate_water_sport();
 		void hit_with_yawn();
 		bool decrement_yawn();
@@ -157,6 +163,7 @@ class ActivePokemon {
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;
+		Vanish vanish;
 		Yawn yawn;
 		bool aqua_ring = false;
 		bool attracted = false;

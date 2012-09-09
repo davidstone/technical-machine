@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	vanish(other.vanish),
 	confused(other.confused),
 	embargo(other.embargo),
 	encore(other.encore),
@@ -98,7 +97,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	vanish(std::move(other.vanish)),
 	confused(std::move(other.confused)),
 	embargo(std::move(other.embargo)),
 	encore(std::move(other.encore)),
@@ -144,8 +142,6 @@ void Team::reset_switch() {
 	rampage = 0;
 	slow_start = 0;
 	stockpile = 0;
-	// Whirlwind can hit Flying Pokemon, so it needs to be reset
-	vanish.reset();
 	active_pokemon.reset_switch();
 
 	pokemon().move.for_each([](Move & move) {
@@ -194,6 +190,10 @@ void Team::baton_pass() {
 	active_pokemon.baton_pass();
 }
 
+void Team::bounce() {
+	active_pokemon.bounce();
+}
+
 bool Team::cannot_be_koed() const {
 	return active_pokemon.cannot_be_koed();
 }
@@ -234,6 +234,14 @@ bool Team::defense_curled() const {
 	return active_pokemon.defense_curled();
 }
 
+void Team::dig() {
+	active_pokemon.dig();
+}
+
+void Team::dive() {
+	active_pokemon.dive();
+}
+
 void Team::endure() {
 	active_pokemon.endure();
 }
@@ -252,6 +260,10 @@ bool Team::flinched() const {
 
 void Team::flinch() {
 	active_pokemon.flinch();
+}
+
+void Team::fly() {
+	active_pokemon.fly();
 }
 
 void Team::focus_energy() {
@@ -397,6 +409,10 @@ void Team::roost() {
 	active_pokemon.roost();
 }
 
+void Team::shadow_force() {
+	active_pokemon.shadow_force();
+}
+
 bool Team::shed_skin_activated() const {
 	return active_pokemon.shed_skin_activated();
 }
@@ -455,6 +471,10 @@ void Team::increment_uproar() {
 
 void Team::use_uproar() {
 	active_pokemon.use_uproar();
+}
+
+bool Team::vanish_doubles_power(Moves const move_name) const {
+	return active_pokemon.vanish_doubles_power(move_name);
 }
 
 void Team::activate_water_sport() {
@@ -563,8 +583,6 @@ uint64_t Team::hash () const {
 	current_hash += screens.hash();
 	current_hash *= stage.max_hash();
 	current_hash += stage.hash();
-	current_hash *= vanish.max_hash();
-	current_hash += vanish.hash();
 	current_hash *= 8;
 	current_hash += encore;
 	current_hash *= 5;
@@ -615,7 +633,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.vanish == rhs.vanish and
 			lhs.confused == rhs.confused and
 			lhs.embargo == rhs.embargo and
 			lhs.encore == rhs.encore and

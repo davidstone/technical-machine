@@ -22,6 +22,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
+enum class Moves : uint16_t;
 
 // Various states a Pokemon can be in due to vanishing moves.
 
@@ -34,14 +35,15 @@ class Vanish {
 		void dive();
 		void fly();
 		void shadow_force();
-		bool doubles_ground_power() const;
-		bool doubles_gust_power() const;
-		bool doubles_surf_power() const;
+		bool doubles_move_power(Moves move) const;
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		static hash_type max_hash();
 		friend bool operator== (Vanish const lhs, Vanish const rhs);
 	private:
+		bool doubles_ground_power() const;
+		bool doubles_surf_power() const;
+		bool doubles_wind_power() const;
 		enum class VanishTypes : uint8_t;
 		void flip(VanishTypes const flipped);
 		VanishTypes vanish;

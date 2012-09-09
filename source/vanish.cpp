@@ -17,8 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "vanish.hpp"
-
 #include <cstdint>
+#include "move/moves.hpp"
 
 namespace technicalmachine {
 
@@ -62,11 +62,30 @@ void Vanish::shadow_force() {
 	flip(VanishTypes::shadow_force);
 }
 
+bool Vanish::doubles_move_power(Moves const move) const {
+	switch (move) {
+		case Moves::EARTHQUAKE:
+		case Moves::MAGNITUDE:
+			return doubles_ground_power();
+		case Moves::GUST:
+		case Moves::TWISTER:
+			return doubles_wind_power();
+		case Moves::SURF:
+			return doubles_surf_power();
+		default:
+			return false;
+	}
+}
+
 bool Vanish::doubles_ground_power() const {
 	return vanish == VanishTypes::dig;
 }
 
-bool Vanish::doubles_gust_power() const {
+bool Vanish::doubles_surf_power() const {
+	return vanish == VanishTypes::dive;
+}
+
+bool Vanish::doubles_wind_power() const {
 	switch (vanish) {
 		case VanishTypes::bounce:
 		case VanishTypes::fly:
@@ -74,10 +93,6 @@ bool Vanish::doubles_gust_power() const {
 		default:
 			return false;
 	}
-}
-
-bool Vanish::doubles_surf_power() const {
-	return vanish == VanishTypes::dive;
 }
 
 Vanish::hash_type Vanish::hash() const {

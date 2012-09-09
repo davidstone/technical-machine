@@ -304,8 +304,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			if (move.variable().effect_activates())
 				Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
 			break;
-		case Moves::BOUNCE:		// Fix
-			user.vanish.bounce();
+		case Moves::BOUNCE:		// TODO: add paralysis
+			user.bounce();
 			break;
 		case Moves::BRAVE_BIRD:
 		case Moves::DOUBLE_EDGE:
@@ -439,12 +439,12 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.protect();
 			break;
 		case Moves::DIG:
-			user.vanish.dig();
+			user.dig();
 			break;
 		case Moves::DISABLE:		// Fix
 			break;
 		case Moves::DIVE:
-			user.vanish.dive();
+			user.dive();
 			break;
 		case Moves::DOOM_DESIRE:	// Fix
 		case Moves::FUTURE_SIGHT:
@@ -508,7 +508,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.pokemon().item.remove();
 			break;
 		case Moves::FLY:
-			user.vanish.fly();
+			user.fly();
 			break;
 		case Moves::FOCUS_ENERGY:
 			user.focus_energy();
@@ -774,7 +774,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 				target.stage.boost(Stat::SPD, -2);
 			break;
 		case Moves::SHADOW_FORCE:
-			user.vanish.shadow_force();
+			user.shadow_force();
 			break;
 		case Moves::SHARPEN:
 			user.stage.boost(Stat::ATK, 1);

@@ -165,7 +165,10 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 
-	switch (attacker.pokemon().move().name) {
+	auto const move = attacker.pokemon().move().name;
+	if (defender.vanish_doubles_power(move))
+		return true;
+	switch (move) {
 		case Moves::ASSURANCE:
 			return defender.damaged();
 		case Moves::AVALANCHE: 
@@ -173,13 +176,8 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 			return attacker.damaged();
 		case Moves::BRINE:
 			return defender.pokemon().hp.stat <= defender.pokemon().hp.max / 2;
-		case Moves::EARTHQUAKE:
-		case Moves::MAGNITUDE:
-			return defender.vanish.doubles_ground_power();
 		case Moves::FACADE:
 			return attacker.pokemon().status.boosts_facade();
-		case Moves::GUST:
-			return defender.vanish.doubles_gust_power();
 		case Moves::ICE_BALL:
 		case Moves::ROLLOUT:
 			return attacker.defense_curled();
@@ -191,8 +189,6 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 			return !weather.rain();
 		case Moves::STOMP:
 			return defender.minimized();
-		case Moves::SURF:
-			return defender.vanish.doubles_surf_power();
 		case Moves::WAKE_UP_SLAP:
 			return defender.pokemon().status.is_sleeping();
 		case Moves::WEATHER_BALL:
