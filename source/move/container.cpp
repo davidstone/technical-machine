@@ -37,15 +37,15 @@ MoveContainer::MoveContainer(MoveContainer const & other) = default;
 MoveContainer::MoveContainer(MoveContainer && other) = default;
 
 MoveContainer & MoveContainer::operator=(MoveContainer const & other) {
-	regular = other.regular;
-	assert(shared == other.shared);
 	// shared should never change in assignment
+	assert(shared == other.shared);
+	regular = other.regular;
 	return *this;
 }
 
 MoveContainer & MoveContainer::operator=(MoveContainer && other) {
-	regular = std::move(other.regular);
 	assert(shared == other.shared);
+	regular = std::move(other.regular);
 	return *this;
 }
 
