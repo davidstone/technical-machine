@@ -466,8 +466,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.activate_embargo();
 			break;
 		case Moves::ENCORE:
-			if (!target.encore)
-				target.encore = move.variable().value();
+			target.activate_encore();
 			break;
 		case Moves::ENDURE:
 			user.endure();

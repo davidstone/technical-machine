@@ -193,7 +193,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	pokemon.move.for_each_regular_move([](Move & move) {
 		move.disable.advance_one_turn();
 	});
-	decrement (team.encore);
+	team.increment_encore();
 	team.increment_taunt();
 	decrement (team.magnet_rise);
 	decrement (team.heal_block);

@@ -59,6 +59,7 @@ void ActivePokemon::reset_switch() {
 	charged = false;
 	used_defense_curl = false;
 	destiny_bond = false;
+	encore.reset();
 	flash_fire = false;
 	flinched_this_turn = false;
 	fully_trapped = false;
@@ -204,6 +205,18 @@ void ActivePokemon::activate_embargo() {
 
 void ActivePokemon::decrement_embargo() {
 	embargo.decrement();
+}
+
+bool ActivePokemon::is_encored() const {
+	return encore.is_active();
+}
+
+void ActivePokemon::activate_encore() {
+	encore.activate();
+}
+
+void ActivePokemon::increment_encore() {
+	encore.increment();
 }
 
 void ActivePokemon::endure() {
@@ -524,6 +537,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += confusion.hash();
 	current_hash *= embargo.max_hash();
 	current_hash += embargo.hash();
+	current_hash *= encore.max_hash();
+	current_hash += encore.hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
@@ -592,6 +607,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= bide.max_hash();
 	current_hash *= confusion.max_hash();
 	current_hash *= embargo.max_hash();
+	current_hash *= encore.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
@@ -605,20 +621,16 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return 
-			lhs.bide == rhs.bide and
-			lhs.m_taunt == rhs.m_taunt and
-			lhs.toxic == rhs.toxic and
-			lhs.uproar == rhs.uproar and
-			lhs.vanish == rhs.vanish and
-			lhs.yawn == rhs.yawn and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and
+			lhs.bide == rhs.bide and
 			lhs.charged == rhs.charged and
 			lhs.confusion == rhs.confusion and
 			lhs.cursed == rhs.cursed and
 			lhs.used_defense_curl == rhs.used_defense_curl and
 			lhs.destiny_bond == rhs.destiny_bond and
 			lhs.embargo == rhs.embargo and
+			lhs.encore == rhs.encore and
 			lhs.flash_fire == rhs.flash_fire and
 			lhs.focusing_energy == rhs.focusing_energy and
 			lhs.fully_trapped == rhs.fully_trapped and
@@ -633,8 +645,13 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.nightmares == rhs.nightmares and
 			lhs.partial_trap == rhs.partial_trap and
 			lhs.perish_song == rhs.perish_song and
+			lhs.m_taunt == rhs.m_taunt and
 			lhs.is_tormented == rhs.is_tormented and
-			lhs.water_sport == rhs.water_sport;
+			lhs.toxic == rhs.toxic and
+			lhs.uproar == rhs.uproar and
+			lhs.vanish == rhs.vanish and
+			lhs.water_sport == rhs.water_sport and
+			lhs.yawn == rhs.yawn;
 }
 
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs) {

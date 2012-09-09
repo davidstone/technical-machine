@@ -90,6 +90,9 @@ class Team {
 		void dive();
 		void activate_embargo();
 		void decrement_embargo();
+		bool is_encored() const;
+		void activate_encore();
+		void increment_encore();
 		void endure();
 		bool flash_fire_is_active() const;
 		void activate_flash_fire();
@@ -176,7 +179,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		uint8_t encore = 0;
 		uint8_t heal_block = 0;
 		uint8_t magnet_rise = 0;
 		// Number of turns remaining on Outrage, Petal Dance, and Thrash

@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	encore(other.encore),
 	heal_block(other.heal_block),
 	magnet_rise(other.magnet_rise),
 	rampage(other.rampage),
@@ -95,7 +94,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	encore(std::move(other.encore)),
 	heal_block(std::move(other.heal_block)),
 	magnet_rise(std::move(other.magnet_rise)),
 	rampage(std::move(other.rampage)),
@@ -131,7 +129,6 @@ void Team::reset_switch() {
 		magnet_rise = 0;
 		stage.reset();
 	}
-	encore = 0;
 	heal_block = 0;
 	rampage = 0;
 	slow_start = 0;
@@ -255,6 +252,18 @@ void Team::activate_embargo() {
 
 void Team::decrement_embargo() {
 	active_pokemon.decrement_embargo();
+}
+
+bool Team::is_encored() const {
+	return active_pokemon.is_encored();
+}
+
+void Team::activate_encore() {
+	active_pokemon.activate_encore();
+}
+
+void Team::increment_encore() {
+	active_pokemon.increment_encore();
 }
 
 void Team::endure() {
@@ -594,8 +603,6 @@ Team::hash_type Team::hash () const {
 	current_hash += screens.hash();
 	current_hash *= stage.max_hash();
 	current_hash += stage.hash();
-	current_hash *= 8;
-	current_hash += encore;
 	current_hash *= 5;
 	current_hash += heal_block;
 	current_hash *= 5;
@@ -635,7 +642,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.encore == rhs.encore and
 			lhs.heal_block == rhs.heal_block and
 			lhs.magnet_rise == rhs.magnet_rise and
 			lhs.rampage == rhs.rampage and

@@ -151,7 +151,7 @@ bool standard_move_lock_in (Team const & user, Move const & move) {
 }
 
 bool is_locked_in (Team const & user) {
-	return user.encore or user.recharging() or user.pokemon().item.is_choice_item();
+	return user.is_encored() or user.recharging() or user.pokemon().item.is_choice_item();
 }
 
 bool is_locked_in_to_different_move (Pokemon const & user, Move const & move) {
