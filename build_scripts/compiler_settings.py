@@ -16,12 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+import re
 import os
 
 compiler_name = GetOption('compiler')
 compiler_command = GetOption('compiler_command')
-
-# should probably add some extra stuff here to account for things like g++-4.7
 
 # extract_info tries to get the compiler name from the command used to compile,
 # and tries to get the command used to compile from the name given. This allows
@@ -42,6 +41,8 @@ def extract_info(name, command):
 	return (name, command)
 
 def normalize_name(compiler):
+	search = re.match('[a-z+]+', compiler.lower())
+	compiler = search.group(0)
 	lookup = {}
 	lookup['gcc'] = lookup['g++'] = 'gcc'
 	lookup['clang'] = lookup['clang++'] = 'clang'
