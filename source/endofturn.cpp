@@ -197,7 +197,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	team.increment_taunt();
 	decrement (team.magnet_rise);
 	decrement (team.heal_block);
-	decrement (team.embargo);
+	team.decrement_embargo();
 	if (team.decrement_yawn())
 		Status::apply<Status::SLEEP>(pokemon, weather);
 	if (pokemon.item.name == Item::STICKY_BARB)

@@ -463,7 +463,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 				absorb_hp(user.pokemon(), target.pokemon(), damage);
 			break;
 		case Moves::EMBARGO:
-			target.embargo = 5;
+			target.activate_embargo();
 			break;
 		case Moves::ENCORE:
 			if (!target.encore)

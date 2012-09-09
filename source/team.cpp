@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	embargo(other.embargo),
 	encore(other.encore),
 	heal_block(other.heal_block),
 	magnet_rise(other.magnet_rise),
@@ -96,7 +95,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	embargo(std::move(other.embargo)),
 	encore(std::move(other.encore)),
 	heal_block(std::move(other.heal_block)),
 	magnet_rise(std::move(other.magnet_rise)),
@@ -130,7 +128,6 @@ void Team::reset_end_of_turn() {
 
 void Team::reset_switch() {
 	if (!active_pokemon.is_baton_passing()) {
-		embargo = 0;
 		magnet_rise = 0;
 		stage.reset();
 	}
@@ -250,6 +247,14 @@ void Team::dig() {
 
 void Team::dive() {
 	active_pokemon.dive();
+}
+
+void Team::activate_embargo() {
+	active_pokemon.activate_embargo();
+}
+
+void Team::decrement_embargo() {
+	active_pokemon.decrement_embargo();
 }
 
 void Team::endure() {
@@ -592,8 +597,6 @@ uint64_t Team::hash () const {
 	current_hash *= 8;
 	current_hash += encore;
 	current_hash *= 5;
-	current_hash += embargo;
-	current_hash *= 5;
 	current_hash += heal_block;
 	current_hash *= 5;
 	current_hash += magnet_rise;
@@ -637,7 +640,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.embargo == rhs.embargo and
 			lhs.encore == rhs.encore and
 			lhs.heal_block == rhs.heal_block and
 			lhs.magnet_rise == rhs.magnet_rise and

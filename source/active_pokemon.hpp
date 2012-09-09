@@ -22,6 +22,7 @@
 #include <cstdint>
 
 #include "confusion.hpp"
+#include "embargo.hpp"
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "substitute.hpp"
@@ -76,6 +77,8 @@ class ActivePokemon {
 		void use_destiny_bond();
 		void dig();
 		void dive();
+		void activate_embargo();
+		void decrement_embargo();
 		void endure();
 		bool flash_fire_is_active() const;
 		void activate_flash_fire();
@@ -161,6 +164,7 @@ class ActivePokemon {
 		Bide bide;
 		ChanceToHit cached_chance_to_hit;
 		Confusion confusion;
+		Embargo embargo;
 		Substitute active_substitute;
 		PartialTrap partial_trap;
 		PerishSong perish_song;

@@ -45,6 +45,7 @@ void ActivePokemon::reset_switch() {
 		aqua_ring = false;
 		confusion.reset();
 		cursed = false;
+		embargo.reset();
 		focusing_energy = false;
 		gastro_acid = false;
 		ingrain_active = false;
@@ -195,6 +196,14 @@ void ActivePokemon::dig() {
 
 void ActivePokemon::dive() {
 	vanish.dive();
+}
+
+void ActivePokemon::activate_embargo() {
+	embargo.activate();
+}
+
+void ActivePokemon::decrement_embargo() {
+	embargo.decrement();
 }
 
 void ActivePokemon::endure() {
@@ -509,8 +518,12 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
 	current_hash *= active_substitute.max_hash();
 	current_hash += active_substitute.hash();
+	current_hash *= bide.max_hash();
+	current_hash += bide.hash();
 	current_hash *= confusion.max_hash();
 	current_hash += confusion.hash();
+	current_hash *= embargo.max_hash();
+	current_hash += embargo.hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
@@ -525,8 +538,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += vanish.hash();
 	current_hash *= yawn.max_hash();
 	current_hash += yawn.hash();
-	current_hash *= bide.max_hash();
-	current_hash += bide.hash();
 	current_hash *= 2;
 	current_hash += aqua_ring;
 	current_hash *= 2;
@@ -578,7 +589,9 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = active_substitute.max_hash();
+	current_hash *= bide.max_hash();
 	current_hash *= confusion.max_hash();
+	current_hash *= embargo.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
@@ -586,7 +599,6 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= uproar.max_hash();
 	current_hash *= vanish.max_hash();
 	current_hash *= yawn.max_hash();
-	current_hash *= bide.max_hash();
 	current_hash *= 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
 	return current_hash;
 }
@@ -606,6 +618,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.cursed == rhs.cursed and
 			lhs.used_defense_curl == rhs.used_defense_curl and
 			lhs.destiny_bond == rhs.destiny_bond and
+			lhs.embargo == rhs.embargo and
 			lhs.flash_fire == rhs.flash_fire and
 			lhs.focusing_energy == rhs.focusing_energy and
 			lhs.fully_trapped == rhs.fully_trapped and
