@@ -21,6 +21,7 @@
 
 #include <cstdint>
 
+#include "confusion.hpp"
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "substitute.hpp"
@@ -63,6 +64,9 @@ class ActivePokemon {
 		bool cannot_be_koed() const;
 		bool charge_boosted() const;
 		void charge();
+		bool is_confused() const;
+		void confuse();
+		void handle_confusion(Pokemon & pokemon);
 		bool critical_hit() const;
 		void set_critical_hit(bool value);
 		void curse();
@@ -137,7 +141,6 @@ class ActivePokemon {
 		void activate_water_sport();
 		void hit_with_yawn();
 		bool decrement_yawn();
-		bool is_hitting_self() const;
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		unsigned damaged() const;
@@ -157,6 +160,7 @@ class ActivePokemon {
 		uint16_t damage_done_to_active = 0;
 		Bide bide;
 		ChanceToHit cached_chance_to_hit;
+		Confusion confusion;
 		Substitute active_substitute;
 		PartialTrap partial_trap;
 		PerishSong perish_song;
@@ -182,8 +186,6 @@ class ActivePokemon {
 		// Block, Mean Look, Spider Web
 		bool fully_trapped = false;
 		bool gastro_acid = false;
-		// Will this Pokemon hit itself in its confusion this turn?
-		bool hitself = false;
 		bool identified = false;
 		bool used_imprison = false;
 		bool ingrain_active = false;

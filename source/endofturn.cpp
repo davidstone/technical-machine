@@ -183,7 +183,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.rampage) {
 		--team.rampage;
 		if (team.rampage == 0)
-			team.confused = true;
+			team.confuse();
 	}
 	else {
 		team.increment_uproar();

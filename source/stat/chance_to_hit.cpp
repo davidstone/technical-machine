@@ -137,7 +137,7 @@ Rational evasion_ability_modifier(Team const & target, Weather const & weather) 
 		case Ability::SNOW_CLOAK:
 			return weather.hail() ? Rational(4, 5) : Rational(1, 1);
 		case Ability::TANGLED_FEET:
-			return target.confused ? Rational(4, 5) : Rational(1, 1);
+			return target.is_confused() ? Rational(4, 5) : Rational(1, 1);
 		default:
 			return Rational(1, 1);
 	}

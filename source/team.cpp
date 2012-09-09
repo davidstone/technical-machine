@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	confused(other.confused),
 	embargo(other.embargo),
 	encore(other.encore),
 	heal_block(other.heal_block),
@@ -97,7 +96,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	confused(std::move(other.confused)),
 	embargo(std::move(other.embargo)),
 	encore(std::move(other.encore)),
 	heal_block(std::move(other.heal_block)),
@@ -132,7 +130,6 @@ void Team::reset_end_of_turn() {
 
 void Team::reset_switch() {
 	if (!active_pokemon.is_baton_passing()) {
-		confused = 0;
 		embargo = 0;
 		magnet_rise = 0;
 		stage.reset();
@@ -204,6 +201,19 @@ void Team::charged() {
 
 bool Team::charge_boosted() const {
 	return active_pokemon.charge_boosted() and pokemon().move().type() == Type::ELECTRIC;
+}
+
+bool Team::is_confused() const {
+	return active_pokemon.is_confused();
+}
+
+void Team::confuse() {
+	if (!pokemon().ability.blocks_confusion())
+		active_pokemon.confuse();
+}
+
+void Team::handle_confusion() {
+	active_pokemon.handle_confusion(pokemon());
 }
 
 bool Team::critical_hit() const {
@@ -501,10 +511,6 @@ void Team::substitute() {
 	}
 }
 
-bool Team::is_hitting_self() const {
-	return active_pokemon.is_hitting_self();
-}
-
 bool Team::is_locked_in_to_bide() const {
 	return active_pokemon.is_locked_in_to_bide();
 }
@@ -586,8 +592,6 @@ uint64_t Team::hash () const {
 	current_hash *= 8;
 	current_hash += encore;
 	current_hash *= 5;
-	current_hash += confused;
-	current_hash *= 5;
 	current_hash += embargo;
 	current_hash *= 5;
 	current_hash += heal_block;
@@ -633,7 +637,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.confused == rhs.confused and
 			lhs.embargo == rhs.embargo and
 			lhs.encore == rhs.encore and
 			lhs.heal_block == rhs.heal_block and

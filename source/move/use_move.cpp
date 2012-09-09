@@ -346,10 +346,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.stage.boost(Stat::ATK, -2);
 			break;
 		case Moves::CHATTER:
-			if (user.pokemon().can_use_chatter() and move.variable().effect_activates()) {
-				if (!target.pokemon().ability.blocks_confusion() and !target.confused)
-					target.confused = move.variable().value();
-			}
+			if (user.pokemon().can_use_chatter() and move.variable().effect_activates())
+				target.confuse();
 			break;
 		case Moves::CLOSE_COMBAT:
 			user.stage.boost_physical(-1);
@@ -358,8 +356,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SUPERSONIC:
 		case Moves::SWEET_KISS:
 		case Moves::TEETER_DANCE:
-			if (!target.pokemon().ability.blocks_confusion() and !target.confused)
-				target.confused = move.variable().value();
+			target.confuse();
 			break;
 		case Moves::CONFUSION:
 		case Moves::DIZZY_PUNCH:
@@ -368,10 +365,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::ROCK_CLIMB:
 		case Moves::SIGNAL_BEAM:
 		case Moves::WATER_PULSE:
-			if (!move.variable().effect_activates()) {
-				if (!target.pokemon().ability.blocks_confusion() and !target.confused)
-					target.confused = move.variable().value();
-			}
+			if (move.variable().effect_activates())
+				target.confuse();
 			break;
 		case Moves::CONVERSION:		// Fix
 			break;
@@ -949,8 +944,7 @@ void clear_field(Team & user, Team const & target) {
 
 void confusing_stat_boost(Move const & move, Team & target, Stat::Stats const stat, int const stages) {
 	target.stage.boost(stat, stages);
-	if (!target.pokemon().ability.blocks_confusion() and !target.confused)
-		target.confused = move.variable().value();
+	target.confuse();
 }
 
 void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & predicate) {

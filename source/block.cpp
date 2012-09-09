@@ -48,7 +48,6 @@ bool is_locked_in_to_different_move (Pokemon const & user, Move const & move);
 bool is_blocked_due_to_status (Team & user, Move const & move);
 bool is_blocked_by_freeze (Pokemon const & user, Move const & move);
 bool handle_sleep_counter (Team & user, Move const & move);
-bool handle_confusion (Team & user);
 
 }	// unnamed namespace
 
@@ -82,10 +81,10 @@ bool can_execute_move (Team & user, Team const & other, Weather const & weather)
 			block1 (user, move, other) or
 			user.is_loafing());
 
-	if (execute and user.confused)
-		execute = handle_confusion (user);
-
 	if (execute) {
+		// Confusion doesn't block execution, it just changes the move that will
+		// execute
+		user.handle_confusion();
 		if (user.flinched()) {
 			if (user.pokemon().ability.boosts_speed_when_flinched ())
 				user.stage.boost(Stat::SPE, 1);
@@ -176,17 +175,6 @@ bool handle_sleep_counter (Team & user, Move const & move) {
 		return false;
 	user.increase_sleep_counter();
 	return !move.is_usable_while_sleeping();
-}
-
-bool handle_confusion (Team & user) {
-	if (user.is_hitting_self()) {
-		// TODO: make user hit self in confusion
-		return false;
-	}
-	else {
-		--user.confused;
-		return true;
-	}
 }
 
 }	// unnamed namespace

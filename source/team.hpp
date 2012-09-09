@@ -76,6 +76,9 @@ class Team {
 		bool cannot_be_koed() const;
 		void charged();
 		bool charge_boosted() const;
+		bool is_confused() const;
+		void confuse();
+		void handle_confusion();
 		bool critical_hit() const;
 		void set_critical_hit(bool value);
 		void curse();
@@ -146,7 +149,6 @@ class Team {
 		void activate_water_sport();
 		void hit_with_yawn();
 		bool decrement_yawn();
-		bool is_hitting_self() const;
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		bool can_be_phazed () const;
@@ -162,7 +164,6 @@ class Team {
 		uint64_t hash () const;
 		std::string to_string () const;
 
-	public:
 		PokemonCollection pokemon;
 	private:
 		friend class Score;
@@ -172,7 +173,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		uint8_t confused = 0;
 		uint8_t embargo = 0;
 		uint8_t encore = 0;
 		uint8_t heal_block = 0;

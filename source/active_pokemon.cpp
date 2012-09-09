@@ -43,6 +43,7 @@ void ActivePokemon::reset_switch() {
 	// TODO: remove some of these when the foe switches, too
 	if (!is_baton_passing()) {
 		aqua_ring = false;
+		confusion.reset();
 		cursed = false;
 		focusing_energy = false;
 		gastro_acid = false;
@@ -89,7 +90,7 @@ void ActivePokemon::reset_switch() {
 void ActivePokemon::reset_between_turns() {
 	ch = false;
 	fully_paralyzed = false;
-	hitself = false;
+	confusion.end_of_turn_reset();
 	miss = false;
 }
 
@@ -146,6 +147,18 @@ bool ActivePokemon::charge_boosted() const {
 
 void ActivePokemon::charge() {
 	charged = true;
+}
+
+bool ActivePokemon::is_confused() const {
+	return confusion.is_active();
+}
+
+void ActivePokemon::confuse() {
+	confusion.activate();
+}
+
+void ActivePokemon::handle_confusion(Pokemon & pokemon) {
+	confusion.do_turn(pokemon);
 }
 
 bool ActivePokemon::critical_hit() const {
@@ -463,10 +476,6 @@ bool ActivePokemon::substitute(unsigned const max_hp) {
 	return active_substitute.create(max_hp);
 }
 
-bool ActivePokemon::is_hitting_self() const {
-	return hitself;
-}
-
 bool ActivePokemon::is_locked_in_to_bide() const {
 	return bide.is_active();
 }
@@ -500,6 +509,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
 	current_hash *= active_substitute.max_hash();
 	current_hash += active_substitute.hash();
+	current_hash *= confusion.max_hash();
+	current_hash += confusion.hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
@@ -567,6 +578,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = active_substitute.max_hash();
+	current_hash *= confusion.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
@@ -590,6 +602,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and
 			lhs.charged == rhs.charged and
+			lhs.confusion == rhs.confusion and
 			lhs.cursed == rhs.cursed and
 			lhs.used_defense_curl == rhs.used_defense_curl and
 			lhs.destiny_bond == rhs.destiny_bond and
