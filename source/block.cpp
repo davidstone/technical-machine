@@ -125,7 +125,7 @@ bool not_illegal_struggle (Pokemon const & user, Move const & move) {
 bool block1 (Team const & user, Move const & move, Team const & other) {
 	return (move.pp.is_empty())
 			or (move.disable)
-			or (user.heal_block and (move.is_healing()))
+			or (user.heal_block_is_active() and (move.is_healing()))
 			or (imprison (move, other));
 }
 

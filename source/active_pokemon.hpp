@@ -24,6 +24,7 @@
 #include "confusion.hpp"
 #include "embargo.hpp"
 #include "encore.hpp"
+#include "heal_block.hpp"
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "substitute.hpp"
@@ -91,6 +92,9 @@ class ActivePokemon {
 		void fly();
 		void focus_energy();
 		void fully_trap();
+		bool heal_block_is_active() const;
+		void activate_heal_block();
+		void decrement_heal_block();
 		bool leech_seeded() const;
 		void hit_with_leech_seed();
 		void clear_leech_seed();
@@ -170,6 +174,7 @@ class ActivePokemon {
 		Confusion confusion;
 		Embargo embargo;
 		Encore encore;
+		HealBlock heal_block;
 		Substitute active_substitute;
 		PartialTrap partial_trap;
 		PerishSong perish_song;

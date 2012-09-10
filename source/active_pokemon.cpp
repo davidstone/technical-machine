@@ -63,6 +63,7 @@ void ActivePokemon::reset_switch() {
 	flash_fire = false;
 	flinched_this_turn = false;
 	fully_trapped = false;
+	heal_block.reset();
 	identified = false;
 	used_imprison = false;
 	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
@@ -269,6 +270,18 @@ bool ActivePokemon::ingrained() const {
 
 void ActivePokemon::ingrain() {
 	ingrain_active = true;
+}
+
+bool ActivePokemon::heal_block_is_active() const {
+	return heal_block.is_active();
+}
+
+void ActivePokemon::activate_heal_block() {
+	heal_block.activate();
+}
+
+void ActivePokemon::decrement_heal_block() {
+	heal_block.decrement();
 }
 
 bool ActivePokemon::is_fully_paralyzed() const {
@@ -539,6 +552,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += embargo.hash();
 	current_hash *= encore.max_hash();
 	current_hash += encore.hash();
+	current_hash *= heal_block.max_hash();
+	current_hash += heal_block.hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
@@ -608,9 +623,10 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= confusion.max_hash();
 	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();
-	current_hash *= m_taunt.max_hash();
+	current_hash *= heal_block.max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
+	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
 	current_hash *= vanish.max_hash();
@@ -634,6 +650,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.flash_fire == rhs.flash_fire and
 			lhs.focusing_energy == rhs.focusing_energy and
 			lhs.fully_trapped == rhs.fully_trapped and
+			lhs.heal_block == rhs.heal_block and
 			lhs.identified == rhs.identified and
 			lhs.used_imprison == rhs.used_imprison and
 			lhs.ingrain_active == rhs.ingrain_active and

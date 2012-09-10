@@ -23,7 +23,7 @@ string_conversion_sources = prepend_dir('string_conversions', ['ability_string.c
 
 bide_sources = prepend_dir('bide', ['bide.cpp', 'damage.cpp', 'duration.cpp'])
 
-active_pokemon_sources = ['active_pokemon.cpp', 'confusion.cpp', 'embargo.cpp', 'encore.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'] + bide_sources
+active_pokemon_sources = ['active_pokemon.cpp', 'confusion.cpp', 'embargo.cpp', 'encore.cpp', 'heal_block.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'] + bide_sources
 active_pokemon_sources += prepend_dir('stat', ['chance_to_hit.cpp', 'stage.cpp'])
 
 team_sources = ['entry_hazards.cpp', 'screen.cpp', 'screens.cpp', 'team.cpp', 'wish.cpp'] + active_pokemon_sources

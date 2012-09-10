@@ -102,6 +102,9 @@ class Team {
 		void focus_energy();
 		void fully_trap();
 		bool leech_seeded() const;
+		bool heal_block_is_active() const;
+		void activate_heal_block();
+		void decrement_heal_block();
 		void hit_with_leech_seed();
 		bool locked_on() const;
 		void lock_on_to();
@@ -179,7 +182,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		uint8_t heal_block = 0;
 		uint8_t magnet_rise = 0;
 		// Number of turns remaining on Outrage, Petal Dance, and Thrash
 		uint8_t rampage = 0;

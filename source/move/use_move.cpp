@@ -560,8 +560,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			});
 			break;
 		case Moves::HEAL_BLOCK:
-			if (!target.heal_block)
-				target.heal_block = 5;
+			target.activate_heal_block();
 			break;
 		case Moves::HEAL_ORDER:
 		case Moves::MILK_DRINK:
