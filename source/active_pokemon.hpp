@@ -28,6 +28,7 @@
 #include "magnet_rise.hpp"
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
+#include "rampage.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
@@ -69,7 +70,7 @@ class ActivePokemon {
 		bool charge_boosted() const;
 		void charge();
 		bool is_confused() const;
-		void confuse();
+		void confuse(Pokemon const & pokemon);
 		void handle_confusion(Pokemon & pokemon);
 		bool critical_hit() const;
 		void set_critical_hit(bool value);
@@ -100,6 +101,7 @@ class ActivePokemon {
 		void hit_with_leech_seed();
 		void clear_leech_seed();
 		bool is_loafing(Ability const & ability) const;
+		void decrement_lock_in(Pokemon const & pokemon);
 		bool locked_on() const;
 		void lock_on_to();
 		void identify();
@@ -128,6 +130,7 @@ class ActivePokemon {
 		void activate_power_trick();
 		void protect();
 		void break_protect();
+		void activate_rampage();
 		bool recharging() const;
 		bool recharge();
 		void use_recharge_move();
@@ -151,7 +154,6 @@ class ActivePokemon {
 		void increment_toxic();
 		void u_turn();
 		void use_uproar();
-		void increment_uproar();
 		bool vanish_doubles_power(Moves move_name) const;
 		void activate_water_sport();
 		void hit_with_yawn();
@@ -183,6 +185,7 @@ class ActivePokemon {
 		Substitute active_substitute;
 		PartialTrap partial_trap;
 		PerishSong perish_song;
+		Rampage rampage;
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;

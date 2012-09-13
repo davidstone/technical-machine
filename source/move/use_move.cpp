@@ -683,8 +683,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::OUTRAGE:
 		case Moves::PETAL_DANCE:
 		case Moves::THRASH:
-			if (!user.rampage)
-				user.rampage = move.variable().value();
+			user.activate_rampage();
 			break;
 		case Moves::PAIN_SPLIT:
 			equalize(user.pokemon().hp, target.pokemon().hp);

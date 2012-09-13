@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	rampage(other.rampage),
 	slow_start(other.slow_start),
 	stockpile(other.stockpile),
 	counter(other.counter),
@@ -92,7 +91,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	rampage(std::move(other.rampage)),
 	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
 	counter(std::move(other.counter)),
@@ -124,7 +122,6 @@ void Team::reset_switch() {
 	if (!active_pokemon.is_baton_passing()) {
 		stage.reset();
 	}
-	rampage = 0;
 	slow_start = 0;
 	stockpile = 0;
 	active_pokemon.reset_switch();
@@ -196,8 +193,7 @@ bool Team::is_confused() const {
 }
 
 void Team::confuse() {
-	if (!pokemon().ability.blocks_confusion())
-		active_pokemon.confuse();
+	active_pokemon.confuse(pokemon());
 }
 
 void Team::handle_confusion() {
@@ -336,6 +332,10 @@ void Team::hit_with_leech_seed() {
 	active_pokemon.hit_with_leech_seed();
 }
 
+void Team::decrement_lock_in() {
+	active_pokemon.decrement_lock_in(pokemon());
+}
+
 bool Team::locked_on() const {
 	return active_pokemon.locked_on();
 }
@@ -423,6 +423,10 @@ void Team::break_protect() {
 	active_pokemon.break_protect();
 }
 
+void Team::activate_rampage() {
+	active_pokemon.activate_rampage();
+}
+
 bool Team::recharging() const {
 	return active_pokemon.recharging();
 }
@@ -505,10 +509,6 @@ void Team::increment_toxic() {
 
 void Team::u_turn() {
 	active_pokemon.u_turn();
-}
-
-void Team::increment_uproar() {
-	active_pokemon.increment_uproar();
 }
 
 void Team::use_uproar() {
@@ -626,8 +626,6 @@ Team::hash_type Team::hash () const {
 	current_hash *= 3;
 	current_hash += counter;
 	current_hash *= 3;
-	current_hash += rampage;
-	current_hash *= 3;
 	current_hash += slow_start;
 	return current_hash;
 }
@@ -656,7 +654,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
 			lhs.stockpile == rhs.stockpile and
 			lhs.counter == rhs.counter and

@@ -106,6 +106,7 @@ class Team {
 		void activate_heal_block();
 		void decrement_heal_block();
 		void hit_with_leech_seed();
+		void decrement_lock_in();
 		bool locked_on() const;
 		void lock_on_to();
 		void identify();
@@ -131,6 +132,7 @@ class Team {
 		void activate_power_trick();
 		void protect();
 		void break_protect();
+		void activate_rampage();
 		bool recharging() const;
 		bool recharge();
 		void use_recharge_move();
@@ -155,7 +157,6 @@ class Team {
 		void increment_toxic();
 		void u_turn();
 		void use_uproar();
-		void increment_uproar();
 		bool vanish_doubles_power(Moves move_name) const;
 		void activate_water_sport();
 		void hit_with_yawn();
@@ -185,8 +186,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		// Number of turns remaining on Outrage, Petal Dance, and Thrash
-		uint8_t rampage = 0;
 		uint8_t slow_start = 0;
 		uint8_t stockpile = 0;
 		

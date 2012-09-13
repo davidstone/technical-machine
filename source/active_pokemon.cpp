@@ -76,6 +76,7 @@ void ActivePokemon::reset_switch() {
 	nightmares = false;
 	partial_trap.reset();
 	pass = false;
+	rampage.reset();
 	roosting = false;
 	is_tormented = false;
 	u_turning = false;
@@ -157,8 +158,9 @@ bool ActivePokemon::is_confused() const {
 	return confusion.is_active();
 }
 
-void ActivePokemon::confuse() {
-	confusion.activate();
+void ActivePokemon::confuse(Pokemon const & pokemon) {
+	if (!pokemon.ability.blocks_confusion())
+		confusion.activate();
 }
 
 void ActivePokemon::handle_confusion(Pokemon & pokemon) {
@@ -301,6 +303,14 @@ bool ActivePokemon::is_loafing(Ability const & ability) const {
 	return ability.is_loafing(loaf);
 }
 
+void ActivePokemon::decrement_lock_in(Pokemon const & pokemon) {
+	// Cannot be locked into Rampage and Uproar at the same time
+	if (rampage.decrement())
+		confuse(pokemon);
+	else
+		uproar.increment();
+}
+
 bool ActivePokemon::locked_on() const {
 	return lock_on;
 }
@@ -387,6 +397,10 @@ void ActivePokemon::protect() {
 
 void ActivePokemon::break_protect() {
 	protecting = false;
+}
+
+void ActivePokemon::activate_rampage() {
+	rampage.activate();
 }
 
 bool ActivePokemon::recharging() const {
@@ -485,10 +499,6 @@ void ActivePokemon::u_turn() {
 	u_turning = true;
 }
 
-void ActivePokemon::increment_uproar() {
-	uproar.increment();
-}
-
 void ActivePokemon::use_uproar() {
 	uproar.increment();
 }
@@ -573,6 +583,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
 	current_hash += perish_song.hash();
+	current_hash *= rampage.max_hash();
+	current_hash += rampage.hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
@@ -642,6 +654,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= magnet_rise.max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
+	current_hash *= rampage.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
@@ -679,6 +692,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.nightmares == rhs.nightmares and
 			lhs.partial_trap == rhs.partial_trap and
 			lhs.perish_song == rhs.perish_song and
+			lhs.rampage == rhs.rampage and
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.is_tormented == rhs.is_tormented and
 			lhs.toxic == rhs.toxic and

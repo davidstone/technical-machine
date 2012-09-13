@@ -179,16 +179,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		heal (pokemon, -4);
 	team.partial_trap_damage();
 	
-	// Can't use decrement here because I only want to cause confusion when team.rampage becomes 0.
-	if (team.rampage) {
-		--team.rampage;
-		if (team.rampage == 0)
-			team.confuse();
-	}
-	else {
-		team.increment_uproar();
-		// weather.uproar is already decremented
-	}
+	team.decrement_lock_in();
 	
 	pokemon.move.for_each_regular_move([](Move & move) {
 		move.disable.advance_one_turn();
