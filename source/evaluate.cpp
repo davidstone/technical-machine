@@ -102,7 +102,7 @@ int64_t Score::baton_passable_score(Team const & team) const {
 		score += focus_energy;
 	if (active.ingrained())
 		score += ingrain;
-	score += team.magnet_rise * magnet_rise;
+	score += active.magnet_rise.turns_remaining * magnet_rise;
 	if (active.active_substitute)
 		score += substitute + substitute_hp * active.active_substitute.hp / team.pokemon().hp.max;
 	score += Stage::dot_product(team.stage, stage);

@@ -627,8 +627,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::MAGIC_COAT:		// Fix
 			break;
 		case Moves::MAGNET_RISE:
-			if (!user.magnet_rise)
-				user.magnet_rise = 5;
+			user.activate_magnet_rise();
 			break;
 		case Moves::ME_FIRST:		// Fix
 			break;

@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	magnet_rise(other.magnet_rise),
 	rampage(other.rampage),
 	slow_start(other.slow_start),
 	stockpile(other.stockpile),
@@ -93,7 +92,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	magnet_rise(std::move(other.magnet_rise)),
 	rampage(std::move(other.rampage)),
 	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
@@ -124,7 +122,6 @@ void Team::reset_end_of_turn() {
 
 void Team::reset_switch() {
 	if (!active_pokemon.is_baton_passing()) {
-		magnet_rise = 0;
 		stage.reset();
 	}
 	rampage = 0;
@@ -345,6 +342,18 @@ bool Team::locked_on() const {
 
 void Team::lock_on_to() {
 	active_pokemon.lock_on_to();
+}
+
+bool Team::magnet_rise_is_active() const {
+	return active_pokemon.magnet_rise_is_active();
+}
+
+void Team::activate_magnet_rise() {
+	active_pokemon.activate_magnet_rise();
+}
+
+void Team::decrement_magnet_rise() {
+	active_pokemon.decrement_magnet_rise();
 }
 
 bool Team::me_first_is_active() const {
@@ -612,8 +621,6 @@ Team::hash_type Team::hash () const {
 	current_hash += screens.hash();
 	current_hash *= stage.max_hash();
 	current_hash += stage.hash();
-	current_hash *= 5;
-	current_hash += magnet_rise;
 	current_hash *= 4;
 	current_hash += stockpile;
 	current_hash *= 3;
@@ -649,7 +656,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.magnet_rise == rhs.magnet_rise and
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
 			lhs.stockpile == rhs.stockpile and

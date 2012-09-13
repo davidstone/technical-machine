@@ -25,6 +25,7 @@
 #include "embargo.hpp"
 #include "encore.hpp"
 #include "heal_block.hpp"
+#include "magnet_rise.hpp"
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "substitute.hpp"
@@ -107,6 +108,9 @@ class ActivePokemon {
 		bool ingrained() const;
 		void ingrain();
 		bool is_fully_paralyzed() const;
+		bool magnet_rise_is_active() const;
+		void activate_magnet_rise();
+		void decrement_magnet_rise();
 		bool me_first_is_active() const;
 		bool minimized() const;
 		bool missed() const;
@@ -175,6 +179,7 @@ class ActivePokemon {
 		Embargo embargo;
 		Encore encore;
 		HealBlock heal_block;
+		MagnetRise magnet_rise;
 		Substitute active_substitute;
 		PartialTrap partial_trap;
 		PerishSong perish_song;

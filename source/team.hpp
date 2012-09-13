@@ -112,6 +112,9 @@ class Team {
 		bool ingrained() const;
 		void ingrain();
 		bool is_fully_paralyzed() const;
+		bool magnet_rise_is_active() const;
+		void activate_magnet_rise();
+		void decrement_magnet_rise();
 		bool me_first_is_active() const;
 		bool minimized() const;
 		bool missed() const;
@@ -182,7 +185,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		uint8_t magnet_rise = 0;
 		// Number of turns remaining on Outrage, Petal Dance, and Thrash
 		uint8_t rampage = 0;
 		uint8_t slow_start = 0;

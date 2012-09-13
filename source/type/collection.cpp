@@ -68,7 +68,7 @@ bool is_type (Team const & team, Type const type) {
 }
 
 bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather) {
-	return !(is_type (team, Type::FLYING) or pokemon.ability.is_immune_to_ground() or team.magnet_rise) or weather.gravity() or pokemon.item.grounds() or team.ingrained();
+	return !(is_type(team, Type::FLYING) or pokemon.ability.is_immune_to_ground() or team.magnet_rise_is_active()) or weather.gravity() or pokemon.item.grounds() or team.ingrained();
 }
 
 namespace {
