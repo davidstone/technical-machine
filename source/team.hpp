@@ -72,6 +72,7 @@ class Team {
 		bool aqua_ring_is_active() const;
 		void activate_aqua_ring();
 		void baton_pass();
+		bool slow_start_is_active() const;
 		void bounce();
 		bool cannot_be_koed() const;
 		void charged();
@@ -186,7 +187,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		uint8_t slow_start = 0;
 		uint8_t stockpile = 0;
 		
 		// Attacker that used Doom Desire / Future Sight

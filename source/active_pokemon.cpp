@@ -78,6 +78,7 @@ void ActivePokemon::reset_switch() {
 	pass = false;
 	rampage.reset();
 	roosting = false;
+	slow_start.reset();
 	is_tormented = false;
 	u_turning = false;
 	water_sport = false;
@@ -449,6 +450,10 @@ void ActivePokemon::increase_sleep_counter(Pokemon & pokemon) {
 	pokemon.status.increase_sleep_counter(pokemon.ability, awakening);
 }
 
+bool ActivePokemon::slow_start_is_active() const {
+	return slow_start.is_active();
+}
+
 bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 	Type const & type = foe_move.type();
 	if (type == Type::ELECTRIC)
@@ -585,6 +590,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += perish_song.hash();
 	current_hash *= rampage.max_hash();
 	current_hash += rampage.hash();
+	current_hash *= slow_start.max_hash();
+	current_hash += slow_start.hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
@@ -655,6 +662,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
+	current_hash *= slow_start.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
@@ -693,6 +701,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.partial_trap == rhs.partial_trap and
 			lhs.perish_song == rhs.perish_song and
 			lhs.rampage == rhs.rampage and
+			lhs.slow_start == rhs.slow_start and
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.is_tormented == rhs.is_tormented and
 			lhs.toxic == rhs.toxic and

@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	slow_start(other.slow_start),
 	stockpile(other.stockpile),
 	counter(other.counter),
 	screens(other.screens),
@@ -91,7 +90,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	slow_start(std::move(other.slow_start)),
 	stockpile(std::move(other.stockpile)),
 	counter(std::move(other.counter)),
 	screens(std::move(other.screens)),
@@ -122,7 +120,6 @@ void Team::reset_switch() {
 	if (!active_pokemon.is_baton_passing()) {
 		stage.reset();
 	}
-	slow_start = 0;
 	stockpile = 0;
 	active_pokemon.reset_switch();
 
@@ -467,6 +464,10 @@ void Team::shed_skin(bool const value) {
 	active_pokemon.shed_skin(value);
 }
 
+bool Team::slow_start_is_active() const {
+	return active_pokemon.slow_start_is_active();
+}
+
 bool Team::sport_is_active(Move const & foe_move) const {
 	return active_pokemon.sport_is_active(foe_move);
 }
@@ -625,8 +626,6 @@ Team::hash_type Team::hash () const {
 	current_hash += stockpile;
 	current_hash *= 3;
 	current_hash += counter;
-	current_hash *= 3;
-	current_hash += slow_start;
 	return current_hash;
 }
 
@@ -654,7 +653,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.slow_start == rhs.slow_start and
 			lhs.stockpile == rhs.stockpile and
 			lhs.counter == rhs.counter and
 			lhs.screens == rhs.screens and

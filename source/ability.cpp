@@ -268,9 +268,6 @@ bool Ability::is_loafing (bool const loaf) const {
 
 void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weather) {
 	switch (switcher.pokemon().ability.name) {
-		case SLOW_START:
-			switcher.slow_start = 5;
-			break;
 		case DOWNLOAD: {
 			Pokemon const & pokemon = other.pokemon();
 			Stat::calculate_defense (other);

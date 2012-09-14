@@ -29,6 +29,7 @@
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "rampage.hpp"
+#include "slow_start.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
@@ -142,6 +143,7 @@ class ActivePokemon {
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
 		void increase_sleep_counter(Pokemon & pokemon);
+		bool slow_start_is_active() const;
 		bool sport_is_active(Move const & foe_move) const;
 		bool switch_decision_required() const;
 		bool trapped() const;
@@ -186,6 +188,7 @@ class ActivePokemon {
 		PartialTrap partial_trap;
 		PerishSong perish_song;
 		Rampage rampage;
+		SlowStart slow_start;
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;

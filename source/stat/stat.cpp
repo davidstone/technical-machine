@@ -92,7 +92,7 @@ void Stat::calculate_attack (Team & attacker, Weather const & weather) {
 
 	pokemon.atk.stat *= attacking_stage_modifier(attacker.stage[ATK], attacker.critical_hit());
 
-	pokemon.atk.stat *= attack_ability_modifier(pokemon, attacker.slow_start, weather);
+	pokemon.atk.stat *= attack_ability_modifier(pokemon, attacker.slow_start_is_active(), weather);
 	pokemon.atk.stat *= attack_item_modifier(pokemon);
 	
 	if (pokemon.atk.stat == 0)
@@ -253,7 +253,7 @@ Rational attack_ability_modifier(Pokemon const & attacker, bool slow_start, Weat
 		case Ability::PURE_POWER:
 			return Rational(2);
 		case Ability::SLOW_START:
-			return (slow_start != 0) ? Rational(1, 2) : Rational(1);
+			return slow_start ? Rational(1, 2) : Rational(1);
 		default:
 			return Rational(1);
 	}
@@ -333,7 +333,7 @@ Rational speed_ability_modifier(Team const & team, Weather const & weather) {
 		case Ability::QUICK_FEET:
 			return (!team.pokemon().status.is_clear()) ? Rational(3, 2) : Rational(1);
 		case Ability::SLOW_START:
-			return team.slow_start ? Rational(1, 2) : Rational(1);
+			return team.slow_start_is_active() ? Rational(1, 2) : Rational(1);
 		default:
 			return Rational(1);
 	}
