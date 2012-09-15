@@ -77,7 +77,6 @@ Team::Team(Team const & other):
 	screens(other.screens),
 	wish(other.wish),
 	entry_hazards(other.entry_hazards),
-	called_move(other.called_move),
 	me(other.me) {
 	pokemon.for_each([this](Pokemon & p) {
 		p.move.update_shared_moves(shared_moves);
@@ -93,7 +92,6 @@ Team::Team(Team && other):
 	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
 	entry_hazards(std::move(other.entry_hazards)),
-	called_move(std::move(other.called_move)),
 	me(std::move(other.me)) {
 	pokemon.for_each([this](Pokemon & p) {
 		p.move.update_shared_moves(shared_moves);

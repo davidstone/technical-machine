@@ -202,8 +202,6 @@ class Team {
 		
 		EntryHazards entry_hazards;
 
-		uint8_t called_move = 0;
-		
 		// Is this my team?
 		bool me;
 };

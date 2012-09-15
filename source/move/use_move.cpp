@@ -1036,7 +1036,7 @@ void use_swallow(Team & user) {
 }
 
 void call_other_move (Team & user) {
-	user.pokemon().move.set_index(user.called_move);
+	// TODO: implement
 }
 
 }	// unnamed namespace
