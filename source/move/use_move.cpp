@@ -63,6 +63,7 @@ void rest(Pokemon & user);
 void struggle(Pokemon & user);
 void swap_items(Pokemon & user, Pokemon & target);
 void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather);
+void use_swallow(Team & user);
 
 template<Status::Statuses status>
 void fang_side_effects(Pokemon & user, Team & target, Weather const & weather) {
@@ -790,7 +791,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SPIKES:
 			target.entry_hazards.add_spikes();
 			break;
-		case Moves::SPIT_UP:		// Fix
+		case Moves::SPIT_UP:
+			user.release_stockpile();
 			break;
 		case Moves::SPITE:		// Fix
 			break;
@@ -801,7 +803,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			if (move.variable().effect_activates())
 				user.stage.boost(Stat::DEF, 1);
 			break;
-		case Moves::STOCKPILE:		// Fix
+		case Moves::STOCKPILE:
+			user.increment_stockpile();
 			break;
 		case Moves::STRUGGLE:
 			struggle(user.pokemon());
@@ -822,7 +825,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SWAGGER:
 			confusing_stat_boost(move, target, Stat::ATK, 2);
 			break;
-		case Moves::SWALLOW:		// Fix
+		case Moves::SWALLOW:
+			use_swallow(user);
 			break;
 		case Moves::SWEET_SCENT:
 			target.stage.boost(Stat::EVA, -1);
@@ -1020,6 +1024,15 @@ void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather
 			assert(false);
 			break;
 	}
+}
+
+void use_swallow(Team & user) {
+	auto const stockpiles = user.release_stockpile();
+	if (stockpiles == 0)
+		return;
+	Rational const healing = Stockpile::swallow_healing(stockpiles);
+	constexpr bool positive = true;
+	heal(user.pokemon(), healing, positive);
 }
 
 void call_other_move (Team & user) {

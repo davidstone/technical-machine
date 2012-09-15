@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	stockpile(other.stockpile),
 	counter(other.counter),
 	screens(other.screens),
 	wish(other.wish),
@@ -90,7 +89,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	stockpile(std::move(other.stockpile)),
 	counter(std::move(other.counter)),
 	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
@@ -120,7 +118,6 @@ void Team::reset_switch() {
 	if (!active_pokemon.is_baton_passing()) {
 		stage.reset();
 	}
-	stockpile = 0;
 	active_pokemon.reset_switch();
 
 	pokemon().move.for_each([](Move & move) {
@@ -472,6 +469,22 @@ bool Team::sport_is_active(Move const & foe_move) const {
 	return active_pokemon.sport_is_active(foe_move);
 }
 
+unsigned Team::spit_up_power() const {
+	return active_pokemon.spit_up_power();
+}
+
+void Team::increment_stockpile() {
+	bool const increased = active_pokemon.increment_stockpile();
+	if (increased)
+		stage.boost_defensive(1);
+}
+
+int Team::release_stockpile() {
+	int const stages = active_pokemon.release_stockpile();
+	stage.boost_defensive(-stages);
+	return stages;
+}
+
 bool Team::switch_decision_required() const {
 	return active_pokemon.switch_decision_required();
 }
@@ -622,8 +635,6 @@ Team::hash_type Team::hash () const {
 	current_hash += screens.hash();
 	current_hash *= stage.max_hash();
 	current_hash += stage.hash();
-	current_hash *= 4;
-	current_hash += stockpile;
 	current_hash *= 3;
 	current_hash += counter;
 	return current_hash;
@@ -653,7 +664,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.stockpile == rhs.stockpile and
 			lhs.counter == rhs.counter and
 			lhs.screens == rhs.screens and
 			lhs.wish == rhs.wish and

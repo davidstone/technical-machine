@@ -30,6 +30,7 @@
 #include "perish_song.hpp"
 #include "rampage.hpp"
 #include "slow_start.hpp"
+#include "stockpile.hpp"
 #include "substitute.hpp"
 #include "taunt.hpp"
 #include "toxic.hpp"
@@ -145,6 +146,9 @@ class ActivePokemon {
 		void increase_sleep_counter(Pokemon & pokemon);
 		bool slow_start_is_active() const;
 		bool sport_is_active(Move const & foe_move) const;
+		unsigned spit_up_power() const;
+		bool increment_stockpile();
+		int release_stockpile();
 		bool switch_decision_required() const;
 		bool trapped() const;
 		bool tormented() const;
@@ -189,6 +193,7 @@ class ActivePokemon {
 		PerishSong perish_song;
 		Rampage rampage;
 		SlowStart slow_start;
+		Stockpile stockpile;
 		Taunt m_taunt;
 		Toxic toxic;
 		Uproar uproar;

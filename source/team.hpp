@@ -145,6 +145,9 @@ class Team {
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
 		bool sport_is_active(Move const & foe_move) const;
+		unsigned spit_up_power() const;
+		void increment_stockpile();
+		int release_stockpile();
 		bool switch_decision_required() const;
 		bool trapped() const;
 		bool imprisoned() const;
@@ -187,7 +190,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		uint8_t stockpile = 0;
 		
 		// Attacker that used Doom Desire / Future Sight
 		// Pokemon ddfs;

@@ -1,4 +1,4 @@
-// Function to change a Pokemon's HP by a fractional multiplier
+// Exception if the user uses Swallow with an invalid number of Stockpiles
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEAL_HPP_
-#define HEAL_HPP_
+#ifndef INVALID_SWALLOW_HPP_
+#define INVALID_SWALLOW_HPP_
+
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 
-class Pokemon;
-class Rational;
-
-void heal(Pokemon & member, Rational const & rational, bool positive);
-void drain(Pokemon & member, Rational const & rational);
-
-// Deprecated, use the above version taking a Rational
-void heal (Pokemon & member, int denominator, unsigned numerator = 1);
-
+class InvalidSwallow : public std::logic_error {
+	public:
+		InvalidSwallow(int const stockpiles):
+			std::logic_error("Attempted to Swallow " + std::to_string(stockpiles) + " Stockpiles.") {
+		}
+};
 }	// namespace technicalmachine
-#endif	// HEAL_HPP_
+#endif	// EMPTY_TEAM_HPP_

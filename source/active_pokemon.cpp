@@ -79,6 +79,7 @@ void ActivePokemon::reset_switch() {
 	rampage.reset();
 	roosting = false;
 	slow_start.reset();
+	stockpile.reset();
 	is_tormented = false;
 	u_turning = false;
 	water_sport = false;
@@ -464,6 +465,18 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 		return false;
 }
 
+unsigned ActivePokemon::spit_up_power() const {
+	return stockpile.spit_up_power();
+}
+
+bool ActivePokemon::increment_stockpile() {
+	return stockpile.increment();
+}
+
+int ActivePokemon::release_stockpile() {
+	return stockpile.release();
+}
+
 bool ActivePokemon::switch_decision_required() const {
 	return pass or u_turning;
 }
@@ -592,6 +605,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
+	current_hash *= stockpile.max_hash();
+	current_hash += stockpile.hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
@@ -663,6 +678,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
+	current_hash *= stockpile.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
@@ -702,6 +718,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.perish_song == rhs.perish_song and
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
+			lhs.stockpile == rhs.stockpile and
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.is_tormented == rhs.is_tormented and
 			lhs.toxic == rhs.toxic and

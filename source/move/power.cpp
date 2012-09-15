@@ -141,7 +141,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 		case Moves::RETURN:
 			return return_power(pokemon);
 		case Moves::SPIT_UP:
-			return attacker.stockpile * 100u;
+			return attacker.spit_up_power();
 		case Moves::TRIPLE_KICK:
 			return pokemon.move().triple_kick_power();
 		case Moves::TRUMP_CARD:
