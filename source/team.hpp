@@ -190,13 +190,6 @@ class Team {
 		ActivePokemon active_pokemon;
 	public:
 		Stage stage;
-		
-		// Attacker that used Doom Desire / Future Sight
-		// Pokemon ddfs;
-		// Set to 3 initially, 1 = delayed attack hits at the end of this turn,
-		// 0 = not active
-		uint8_t counter = 0;
-
 		Screens screens;
 		Wish wish;
 		

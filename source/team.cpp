@@ -73,7 +73,6 @@ Team::Team(Team const & other):
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	stage(other.stage),
-	counter(other.counter),
 	screens(other.screens),
 	wish(other.wish),
 	entry_hazards(other.entry_hazards),
@@ -88,7 +87,6 @@ Team::Team(Team && other):
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	stage(std::move(other.stage)),
-	counter(std::move(other.counter)),
 	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
 	entry_hazards(std::move(other.entry_hazards)),
@@ -633,8 +631,6 @@ Team::hash_type Team::hash () const {
 	current_hash += screens.hash();
 	current_hash *= stage.max_hash();
 	current_hash += stage.hash();
-	current_hash *= 3;
-	current_hash += counter;
 	return current_hash;
 }
 
@@ -662,7 +658,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.stage == rhs.stage and
-			lhs.counter == rhs.counter and
 			lhs.screens == rhs.screens and
 			lhs.wish == rhs.wish and
 			lhs.entry_hazards == rhs.entry_hazards and
