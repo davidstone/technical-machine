@@ -21,6 +21,7 @@
 #include "ability.hpp"
 #include "damage.hpp"
 #include "heal.hpp"
+#include "rational.hpp"
 #include "status.hpp"
 #include "team.hpp"
 #include "weather.hpp"
@@ -116,7 +117,7 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 	if (team.aqua_ring_is_active())
 		heal (pokemon, 16);
 	if (pokemon.ability.boosts_speed())
-		team.stage.boost(Stat::SPE, 1);
+		team.stat_boost(Stat::SPE, 1);
 	else if (team.shed_skin_activated())
 		pokemon.status.clear ();
 	switch (pokemon.item.name) {

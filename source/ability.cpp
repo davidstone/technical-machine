@@ -270,9 +270,9 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 	switch (switcher.pokemon().ability.name) {
 		case DOWNLOAD: {
 			Pokemon const & pokemon = other.pokemon();
-			Stat::calculate_defense (other);
-			Stat::calculate_special_defense (other, weather);
-			switcher.stage.boost((pokemon.def.stat >= pokemon.spd.stat) ? Stat::SPA : Stat::ATK, 1);
+			calculate_defense (other);
+			calculate_special_defense (other, weather);
+			switcher.stat_boost((pokemon.def.stat >= pokemon.spd.stat) ? Stat::SPA : Stat::ATK, 1);
 			break;
 		}
 		case DRIZZLE:
@@ -284,7 +284,7 @@ void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weath
 		case FORECAST:	// TODO: fix this
 			break;
 		case INTIMIDATE:
-			other.stage.boost(Stat::ATK, -1);
+			other.stat_boost(Stat::ATK, -1);
 			break;
 		case SAND_STREAM:
 			weather.set_sand (Weather::Duration::permanent);

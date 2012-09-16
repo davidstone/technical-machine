@@ -20,6 +20,8 @@
 
 #include <algorithm>
 
+#include "../rational.hpp"
+
 namespace technicalmachine {
 namespace {
 constexpr int max_stage = 6;
@@ -81,10 +83,6 @@ void Stage::boost_offensive(int n) {
 	boost({ Stat::ATK, Stat::SPA }, n);
 }
 
-void Stage::maximize_attack() {
-	stages[Stat::ATK] = max_stage;
-}
-
 void Stage::swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<Stat::Stats> const & stats) {
 	using std::swap;
 	for (auto const stat : stats)
@@ -95,6 +93,88 @@ void Stage::swap_defensive(Stage & lhs, Stage & rhs) {
 }
 void Stage::swap_offensive(Stage & lhs, Stage & rhs) {
 	swap_specified(lhs, rhs, { Stat::ATK, Stat::SPA });
+}
+
+namespace {
+// stage is the magnitude of the stat boost.
+template<unsigned base>
+constexpr Rational positive_stage_boost(unsigned const stage) {
+	static_assert(base == 2 or base == 3, "Most stats use a divisor of 2, but accuracy and evasion use 3.");
+	return Rational(base + stage, base);
+}
+template<unsigned base>
+constexpr Rational negative_stage_boost(unsigned const stage) {
+	static_assert(base == 2 or base == 3, "Most stats use a numerator of 2, but accuracy and evasion use 3.");
+	return Rational(base, base + stage);
+}
+
+Rational attacking_stage_modifier(int const stage, bool const ch) {
+	if (stage >= 0)		// >= is better than > to check for a CH less often
+		return positive_stage_boost<2>(static_cast<unsigned>(stage));
+	else
+		return (!ch) ? negative_stage_boost<2>(static_cast<unsigned>(-stage)) : Rational(1, 1);
+}
+
+Rational defending_stage_modifier(int const stage, bool const ch) {
+	if (stage > 0)		// > is better than >= to check for a CH less often
+		return (!ch) ? positive_stage_boost<2>(static_cast<unsigned>(stage)) : Rational(1, 1);
+	else
+		return negative_stage_boost<2>(static_cast<unsigned>(-stage));
+}
+
+Rational speed_stage_modifier(int const stage) {
+	return (stage >= 0) ?
+		positive_stage_boost<2>(static_cast<unsigned>(stage)) :
+		negative_stage_boost<2>(static_cast<unsigned>(-stage));
+}
+
+Rational accuracy_stage_modifier(int const stage) {
+	return (stage >= 0) ?
+		positive_stage_boost<3>(static_cast<unsigned>(stage)) :
+		negative_stage_boost<3>(static_cast<unsigned>(-stage));
+}
+
+Rational evasion_stage_modifier(int const stage) {
+	return (stage < 0) ?
+		positive_stage_boost<3>(static_cast<unsigned>(-stage)) :
+		negative_stage_boost<3>(static_cast<unsigned>(stage));
+}
+
+}	// unnamed namespace
+
+template<>
+Rational Stage::modifier<Stat::ATK>(bool const ch) const {
+	return attacking_stage_modifier(stages[Stat::ATK], ch);
+}
+
+template<>
+Rational Stage::modifier<Stat::SPA>(bool const ch) const {
+	return attacking_stage_modifier(stages[Stat::SPA], ch);
+}
+
+template<>
+Rational Stage::modifier<Stat::DEF>(bool const ch) const {
+	return defending_stage_modifier(stages[Stat::DEF], ch);
+}
+
+template<>
+Rational Stage::modifier<Stat::SPD>(bool const ch) const {
+	return defending_stage_modifier(stages[Stat::SPD], ch);
+}
+
+template<>
+Rational Stage::modifier<Stat::SPE>() const {
+	return speed_stage_modifier(stages[Stat::SPE]);
+}
+
+template<>
+Rational Stage::modifier<Stat::ACC>() const {
+	return accuracy_stage_modifier(stages[Stat::ACC]);
+}
+
+template<>
+Rational Stage::modifier<Stat::EVA>() const {
+	return evasion_stage_modifier(stages[Stat::EVA]);
 }
 
 namespace {

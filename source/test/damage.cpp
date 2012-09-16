@@ -72,7 +72,7 @@ Team create_max_damage_physical_defender () {
 	Pokemon & d = defender.pokemon();
 	d.def.iv = 0;
 	d.def.ev = 0;
-	defender.stage.boost(Stat::DEF, -6);
+	defender.stat_boost(Stat::DEF, -6);
 	return defender;
 }
 
@@ -86,7 +86,7 @@ Team create_max_damage_special_defender () {
 
 	d.spd.iv = 0;
 	d.spd.ev = 0;
-	defender.stage.boost(Stat::SPD, -6);
+	defender.stat_boost(Stat::SPD, -6);
 
 	return defender;
 }
@@ -140,7 +140,7 @@ void physical_damage_test () {
 	a.nature.name = Nature::IMPISH;
 	attacker.activate_power_trick();
 	a.ability.name = Ability::PURE_POWER;
-	attacker.stage.maximize_attack();
+	attacker.stat_boost(Stat::ATK, 6);
 	calculate_attacking_stat (attacker, weather);
 
 	a.item.name = Item::METRONOME;
@@ -168,7 +168,7 @@ void special_damage_test () {
 
 	a.spa.ev = 252 / 4;
 	a.nature.name = Nature::MODEST;
-	attacker.stage.boost(Stat::SPA, 6);
+	attacker.stat_boost(Stat::SPA, 6);
 	calculate_attacking_stat (attacker, weather);
 	
 	a.item.name = Item::METRONOME;

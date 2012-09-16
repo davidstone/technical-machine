@@ -20,6 +20,7 @@
 
 #include "ability.hpp"
 #include "damage.hpp"
+#include "rational.hpp"
 
 #include "pokemon/pokemon.hpp"
 

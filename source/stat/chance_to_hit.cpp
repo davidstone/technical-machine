@@ -20,23 +20,23 @@
 
 #include <algorithm>
 
+#include "stage.hpp"
 #include "stat.hpp"
 
+#include "../active_pokemon.hpp"
+#include "../pokemon/pokemon.hpp"
 #include "../rational.hpp"
-#include "../team.hpp"
 #include "../weather.hpp"
 
 namespace technicalmachine {
 namespace {
 constexpr ChanceToHit::value_type max = 100;
 
-bool move_can_miss (Team const & user, Ability target_ability);
-Rational accuracy_stage_modifier (int stage);
-Rational evasion_stage_modifier (int stage);
+bool move_can_miss(Pokemon const & user, bool locked_on, Ability target_ability);
 Rational accuracy_item_modifier (Item const & item, bool target_moved);
 Rational accuracy_ability_modifier (Pokemon const & pokemon);
 Rational evasion_item_modifier (Item const & item);
-Rational evasion_ability_modifier (Team const & target, Weather const & weather);
+Rational evasion_ability_modifier(Pokemon const & target, ActivePokemon const & active_target, Weather const & weather);
 
 }	// unnamed namespace
 
@@ -57,17 +57,17 @@ bool ChanceToHit::can_miss() const {
 	return probability < max;
 }
 
-void ChanceToHit::update(Team const & user, Team const & target, Weather const & weather, bool const target_moved) {
-	if (move_can_miss(user, target.pokemon().ability)) {
-		value_type accuracy = user.pokemon().move().accuracy();
-		accuracy *= accuracy_stage_modifier(target.stage[Stat::ACC]);
-		accuracy *= evasion_stage_modifier(target.stage[Stat::EVA]);
+void ChanceToHit::update(Pokemon const & user, ActivePokemon const & active_user, Pokemon const & target, ActivePokemon const & active_target, Weather const & weather, bool const target_moved) {
+	if (move_can_miss(user, active_user.locked_on(), target.ability)) {
+		value_type accuracy = user.move().accuracy();
+		accuracy *= active_user.stage_modifier<Stat::ACC>();
+		accuracy *= active_target.stage_modifier<Stat::EVA>();
 
-		accuracy *= accuracy_item_modifier(user.pokemon().item, target_moved);
-		accuracy *= accuracy_ability_modifier(user.pokemon());
+		accuracy *= accuracy_item_modifier(user.item, target_moved);
+		accuracy *= accuracy_ability_modifier(user);
 		
-		accuracy *= evasion_item_modifier(target.pokemon().item);
-		accuracy *= evasion_ability_modifier (target, weather);
+		accuracy *= evasion_item_modifier(target.item);
+		accuracy *= evasion_ability_modifier (target, active_target, weather);
 
 		if (weather.gravity())
 			accuracy *= Rational(5, 3);
@@ -81,20 +81,8 @@ void ChanceToHit::update(Team const & user, Team const & target, Weather const &
 
 namespace {
 
-bool move_can_miss(Team const & user, Ability target_ability) {
-	return user.pokemon().move().can_miss() and !user.pokemon().ability.cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
-}
-
-Rational accuracy_stage_modifier(int const stage) {
-	return (stage >= 0) ?
-		positive_stage_boost<3>(static_cast<unsigned>(stage)) :
-		negative_stage_boost<3>(static_cast<unsigned>(-stage));
-}
-
-Rational evasion_stage_modifier(int const stage) {
-	return (stage < 0) ?
-		positive_stage_boost<3>(static_cast<unsigned>(-stage)) :
-		negative_stage_boost<3>(static_cast<unsigned>(stage));
+bool move_can_miss(Pokemon const & user, bool const locked_on, Ability target_ability) {
+	return user.move().can_miss() and !user.ability.cannot_miss() and !target_ability.cannot_miss() and !locked_on;
 }
 
 Rational accuracy_item_modifier(Item const & item, bool target_moved) {
@@ -130,14 +118,14 @@ Rational evasion_item_modifier(Item const & item) {
 	}
 }
 
-Rational evasion_ability_modifier(Team const & target, Weather const & weather) {
-	switch (target.pokemon().ability.name) {
+Rational evasion_ability_modifier(Pokemon const & target, ActivePokemon const & active_target, Weather const & weather) {
+	switch (target.ability.name) {
 		case Ability::SAND_VEIL:
 			return weather.sand() ? Rational(4, 5) : Rational(1, 1);
 		case Ability::SNOW_CLOAK:
 			return weather.hail() ? Rational(4, 5) : Rational(1, 1);
 		case Ability::TANGLED_FEET:
-			return target.is_confused() ? Rational(4, 5) : Rational(1, 1);
+			return active_target.is_confused() ? Rational(4, 5) : Rational(1, 1);
 		default:
 			return Rational(1, 1);
 	}

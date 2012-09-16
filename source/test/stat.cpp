@@ -49,11 +49,11 @@ void attack_tests () {
 	pokemon.nature.name = Nature::IMPISH;
 	attacker.activate_power_trick();
 	pokemon.ability.name = Ability::PURE_POWER;
-	attacker.stage.maximize_attack();
+	attacker.stat_boost(Stat::ATK, 6);
 
 	pokemon.item.name = Item::CHOICE_BAND;
 	
-	Stat::calculate_attack (attacker, Weather ());
+	calculate_attack(attacker, Weather ());
 	if (attacker.pokemon().atk.stat != max_attack)
 		throw IncorrectCalculation (attacker.pokemon().atk.stat, max_attack);
 }
@@ -72,13 +72,13 @@ void special_attack_tests () {
 
 	pokemon.spa.ev = 252 / 4;
 	pokemon.nature.name = Nature::MODEST;
-	attacker.stage.boost(Stat::SPA, 6);
+	attacker.stat_boost(Stat::SPA, 6);
 
 	pokemon.ability.name = Ability::SOLAR_POWER;
 
 	pokemon.item.name = Item::CHOICE_SPECS;
 	
-	Stat::calculate_special_attack (attacker, weather);
+	calculate_special_attack(attacker, weather);
 	if (attacker.pokemon().spa.stat != max_special_attack)
 		throw IncorrectCalculation (attacker.pokemon().spa.stat, max_special_attack);
 }
@@ -96,12 +96,12 @@ void defense_tests () {
 	pokemon.def.ev = 252 / 4;
 	pokemon.nature.name = Nature::BOLD;
 
-	defender.stage.boost(Stat::DEF, 6);
+	defender.stat_boost(Stat::DEF, 6);
 
 	pokemon.ability.name = Ability::MARVEL_SCALE;
 	Status::apply<Status::BURN>(pokemon, Weather());
 
-	Stat::calculate_defense (defender);
+	calculate_defense(defender);
 
 	if (pokemon.def.stat != max_defense)
 		throw IncorrectCalculation (pokemon.def.stat, max_defense);
@@ -122,9 +122,9 @@ void special_defense_tests () {
 	pokemon.spd.ev = 252 / 4;
 	pokemon.nature.name = Nature::CALM;
 
-	defender.stage.boost(Stat::SPD, 6);
+	defender.stat_boost(Stat::SPD, 6);
 
-	Stat::calculate_special_defense (defender, weather);
+	calculate_special_defense(defender, weather);
 
 	if (pokemon.spd.stat != max_special_defense)
 		throw IncorrectCalculation (pokemon.spd.stat, max_special_defense);
@@ -145,7 +145,7 @@ void speed_tests () {
 	pokemon.spe.ev = 252 / 4;
 	pokemon.nature.name = Nature::TIMID;
 
-	team.stage.boost(Stat::SPE, 6);
+	team.stat_boost(Stat::SPE, 6);
 
 	pokemon.ability.name = Ability::SWIFT_SWIM;
 
@@ -153,7 +153,7 @@ void speed_tests () {
 	
 	team.screens.activate_tailwind();
 	
-	Stat::calculate_speed (team, weather);
+	calculate_speed(team, weather);
 
 	if (pokemon.spe.stat != max_speed)
 		throw IncorrectCalculation (pokemon.spe.stat, max_speed);

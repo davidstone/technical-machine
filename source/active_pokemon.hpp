@@ -1,4 +1,4 @@
-// Team data structure
+// Flags for the active Pokemon
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -29,6 +29,7 @@
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "rampage.hpp"
+#include "rational.hpp"
 #include "slow_start.hpp"
 #include "stockpile.hpp"
 #include "substitute.hpp"
@@ -48,7 +49,6 @@ class Ability;
 class Move;
 class Pokemon;
 class Rational;
-class Team;
 class Weather;
 
 class ActivePokemon {
@@ -146,9 +146,29 @@ class ActivePokemon {
 		void increase_sleep_counter(Pokemon & pokemon);
 		bool slow_start_is_active() const;
 		bool sport_is_active(Move const & foe_move) const;
+
+		int current_stage(Stat::Stats stat) const;
+		unsigned positive_stat_boosts() const;
+		template<Stat::Stats stat, typename... Args>
+		Rational stage_modifier(Args&&... args) const {
+			return stage.modifier<stat>(std::forward<Args>(args)...);
+		}
+		void stat_boost(Stat::Stats stat, int n);
+		void stat_boost_physical(int n);
+		void stat_boost_special(int n);
+		void stat_boost_regular(int n);
+		void stat_boost_defensive(int n);
+		void stat_boost_offensive(int n);
+		void reset_stats();
+		void copy_stat_boosts(ActivePokemon const & other);
+		static void swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
+		static void swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
+		static void swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs);
+
 		unsigned spit_up_power() const;
 		bool increment_stockpile();
 		int release_stockpile();
+
 		bool switch_decision_required() const;
 		bool trapped() const;
 		bool tormented() const;
@@ -168,7 +188,7 @@ class ActivePokemon {
 		bool is_locked_in_to_bide() const;
 		unsigned damaged() const;
 		void do_damage(unsigned damage);
-		void update_chance_to_hit(Team const & user, Team const & target, Weather const & weather, bool target_moved);
+		void update_chance_to_hit(Pokemon const & user, Pokemon const & target, ActivePokemon const & active_target, Weather const & weather, bool target_moved);
 		ChanceToHit::value_type chance_to_hit() const;
 		ChanceToHit::value_type chance_to_miss() const;
 		bool can_miss() const;
@@ -192,6 +212,7 @@ class ActivePokemon {
 		PartialTrap partial_trap;
 		PerishSong perish_song;
 		Rampage rampage;
+		Stage stage;
 		SlowStart slow_start;
 		Stockpile stockpile;
 		Taunt m_taunt;

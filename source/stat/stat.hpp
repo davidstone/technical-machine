@@ -20,9 +20,6 @@
 #define STAT__STAT_HPP_
 
 #include <cstdint>
-#include <string>
-
-#include "../rational.hpp"
 
 namespace technicalmachine {
 class Pokemon;
@@ -53,29 +50,15 @@ class Stat {
 	
 		Stat (Species name, Stats stat);
 		void calculate_initial_hp (uint8_t const level);
-		static void calculate_attack (Team & attacker, Weather const & weather);
-		static void calculate_special_attack (Team & attacker, Weather const & weather);
-		static void calculate_defense (Team & defender, bool ch = false, bool is_self_KO = false);
-		static void calculate_special_defense (Team & defender, Weather const & weather, bool ch = false);
-		static void calculate_speed (Team & team, Weather const & weather);
-	private:
-		static uint8_t get_base_stat (Species name, Stats stat_name);
 };
-
-// stage is the magnitude of the stat boost.
-template<unsigned base>
-constexpr Rational positive_stage_boost(unsigned const stage) {
-	static_assert(base == 2 or base == 3, "Most stats use a divisor of 2, but accuracy and evasion use 3.");
-	return Rational(base + stage, base);
-}
-template<unsigned base>
-constexpr Rational negative_stage_boost(unsigned const stage) {
-	static_assert(base == 2 or base == 3, "Most stats use a numerator of 2, but accuracy and evasion use 3.");
-	return Rational(base, base + stage);
-}
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather);
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
+void calculate_attack(Team & attacker, Weather const & weather);
+void calculate_special_attack(Team & attacker, Weather const & weather);
+void calculate_defense (Team & defender, bool ch = false, bool is_self_KO = false);
+void calculate_special_defense (Team & defender, Weather const & weather, bool ch = false);
+void calculate_speed (Team & team, Weather const & weather);
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);

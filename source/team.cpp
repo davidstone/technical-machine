@@ -72,7 +72,6 @@ Team::Team(Team const & other):
 	pokemon (other.pokemon),
 	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
-	stage(other.stage),
 	screens(other.screens),
 	wish(other.wish),
 	entry_hazards(other.entry_hazards),
@@ -86,7 +85,6 @@ Team::Team(Team && other):
 	pokemon(std::move(other.pokemon)),
 	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
-	stage(std::move(other.stage)),
 	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
 	entry_hazards(std::move(other.entry_hazards)),
@@ -111,9 +109,6 @@ void Team::reset_end_of_turn() {
 }
 
 void Team::reset_switch() {
-	if (!active_pokemon.is_baton_passing()) {
-		stage.reset();
-	}
 	active_pokemon.reset_switch();
 
 	pokemon().move.for_each([](Move & move) {
@@ -469,15 +464,63 @@ unsigned Team::spit_up_power() const {
 	return active_pokemon.spit_up_power();
 }
 
+unsigned Team::positive_stat_boosts() const {
+	return active_pokemon.positive_stat_boosts();
+}
+
+void Team::stat_boost(Stat::Stats const stat, int const n) {
+	active_pokemon.stat_boost(stat, n);
+}
+
+void Team::stat_boost_physical(int n) {
+	active_pokemon.stat_boost_physical(n);
+}
+
+void Team::stat_boost_special(int n) {
+	active_pokemon.stat_boost_special(n);
+}
+
+void Team::stat_boost_defensive(int n) {
+	active_pokemon.stat_boost_defensive(n);
+}
+
+void Team::stat_boost_offensive(int n) {
+	active_pokemon.stat_boost_offensive(n);
+}
+
+void Team::stat_boost_regular(int n) {
+	active_pokemon.stat_boost_regular(n);
+}
+
+void Team::reset_stats() {
+	active_pokemon.reset_stats();
+}
+
+void Team::copy_stat_boosts(Team const & other) {
+	active_pokemon.copy_stat_boosts(other.active_pokemon);
+}
+
+void Team::swap_defensive_stages(Team & lhs, Team & rhs) {
+	ActivePokemon::swap_defensive_stages(lhs.active_pokemon, rhs.active_pokemon);
+}
+
+void Team::swap_offensive_stages(Team & lhs, Team & rhs) {
+	ActivePokemon::swap_offensive_stages(lhs.active_pokemon, rhs.active_pokemon);
+}
+
+void Team::swap_stat_boosts(Team & lhs, Team & rhs) {
+	ActivePokemon::swap_stat_boosts(lhs.active_pokemon, rhs.active_pokemon);
+}
+
 void Team::increment_stockpile() {
 	bool const increased = active_pokemon.increment_stockpile();
 	if (increased)
-		stage.boost_defensive(1);
+		active_pokemon.stat_boost_defensive(1);
 }
 
 int Team::release_stockpile() {
 	int const stages = active_pokemon.release_stockpile();
-	stage.boost_defensive(-stages);
+	active_pokemon.stat_boost_defensive(-stages);
 	return stages;
 }
 
@@ -587,7 +630,7 @@ bool Team::has_switched() const {
 }
 
 void Team::update_chance_to_hit(Team const & target, Weather const & weather, bool const target_moved) {
-	active_pokemon.update_chance_to_hit(*this, target, weather, target_moved);
+	active_pokemon.update_chance_to_hit(pokemon(), target.pokemon(), target.active_pokemon, weather, target_moved);
 }
 
 ChanceToHit::value_type Team::chance_to_hit() const {
@@ -629,8 +672,6 @@ Team::hash_type Team::hash () const {
 	current_hash += wish.hash();
 	current_hash *= screens.max_hash();
 	current_hash += screens.hash();
-	current_hash *= stage.max_hash();
-	current_hash += stage.hash();
 	return current_hash;
 }
 
@@ -657,7 +698,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 	return lhs.pokemon().name == rhs.pokemon().name and
 			lhs.pokemon == rhs.pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
-			lhs.stage == rhs.stage and
 			lhs.screens == rhs.screens and
 			lhs.wish == rhs.wish and
 			lhs.entry_hazards == rhs.entry_hazards and

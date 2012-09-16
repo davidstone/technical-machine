@@ -134,8 +134,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 			assert (!pokemon.move().variable().present_heals());
 			return pokemon.move().variable().value();
 		case Moves::PUNISHMENT: {
-			auto const positive_values = [](int const stage) { return static_cast<unsigned>(std::max(stage, 0)); };
-			unsigned const uncapped_power = 60 + 20 * defender.stage.accumulate(positive_values);
+			unsigned const uncapped_power = 60 + 20 * defender.positive_stat_boosts();
 			return std::min(uncapped_power, 200u);
 		}
 		case Moves::RETURN:

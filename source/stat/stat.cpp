@@ -35,14 +35,12 @@ namespace technicalmachine {
 enum class Species : uint16_t;
 namespace {
 
+uint8_t get_base_stat(Species name, Stat::Stats stat_name);
+
 unsigned calculate_initial_stat (Stat const & stat, unsigned level);
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker);
 unsigned calculate_defense_before_power_trick (Pokemon const & defender);
-
-Rational attacking_stage_modifier(int stage, bool ch);
-Rational defending_stage_modifier(int stage, bool ch);
-Rational speed_stage_modifier(int stage);
 
 Rational attack_ability_modifier(Pokemon const & attacker, bool slow_start, Weather const & weather);
 Rational attack_item_modifier(Pokemon const & attacker);
@@ -79,18 +77,18 @@ void Stat::calculate_initial_hp (uint8_t const level) {
 
 void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 	if (attacker.pokemon().move().is_physical())
-		Stat::calculate_attack (attacker, weather);
+		calculate_attack(attacker, weather);
 	else
-		Stat::calculate_special_attack (attacker, weather);
+		calculate_special_attack(attacker, weather);
 }
 
-void Stat::calculate_attack (Team & attacker, Weather const & weather) {
+void calculate_attack(Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
 	pokemon.atk.stat = !attacker.power_trick_is_active() ?
 		calculate_attack_before_power_trick (pokemon) :
 		calculate_defense_before_power_trick (pokemon);
 
-	pokemon.atk.stat *= attacking_stage_modifier(attacker.stage[ATK], attacker.critical_hit());
+	pokemon.atk.stat *= attacker.stage_modifier<Stat::ATK>(attacker.critical_hit());
 
 	pokemon.atk.stat *= attack_ability_modifier(pokemon, attacker.slow_start_is_active(), weather);
 	pokemon.atk.stat *= attack_item_modifier(pokemon);
@@ -99,12 +97,12 @@ void Stat::calculate_attack (Team & attacker, Weather const & weather) {
 		pokemon.atk.stat = 1;
 }
 
-void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
+void calculate_special_attack (Team & attacker, Weather const & weather) {
 	Pokemon & pokemon = attacker.pokemon ();
 	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level());
-	pokemon.spa.stat *= Rational(pokemon.nature.boost<SPA>(), 10);
+	pokemon.spa.stat *= Rational(pokemon.nature.boost<Stat::SPA>(), 10);
 
-	pokemon.spa.stat *= attacking_stage_modifier(attacker.stage[SPA], attacker.critical_hit());
+	pokemon.spa.stat *= attacker.stage_modifier<Stat::SPA>(attacker.critical_hit());
 
 	pokemon.spa.stat *= special_attack_ability_modifier(pokemon.ability, weather);
 	pokemon.spa.stat *= special_attack_item_modifier(pokemon);
@@ -115,18 +113,18 @@ void Stat::calculate_special_attack (Team & attacker, Weather const & weather) {
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
 	if (attacker.pokemon().move().is_physical())
-		Stat::calculate_defense (defender, attacker.critical_hit(), attacker.pokemon().move().is_self_KO());
+		calculate_defense(defender, attacker.critical_hit(), attacker.pokemon().move().is_self_KO());
 	else
-		Stat::calculate_special_defense (defender, weather, attacker.critical_hit());
+		calculate_special_defense(defender, weather, attacker.critical_hit());
 }
 
-void Stat::calculate_defense (Team & defender, bool ch, bool is_self_KO) {
+void calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 	Pokemon & pokemon = defender.pokemon ();
 	pokemon.def.stat = !defender.power_trick_is_active() ?
 		calculate_defense_before_power_trick (pokemon) :
 		calculate_attack_before_power_trick (pokemon);
 
-	pokemon.def.stat *= defending_stage_modifier(defender.stage[DEF], ch);
+	pokemon.def.stat *= defender.stage_modifier<Stat::DEF>(ch);
 	
 	pokemon.def.stat *= defense_ability_modifier(pokemon);
 	pokemon.def.stat *= defense_item_modifier(pokemon);
@@ -138,12 +136,12 @@ void Stat::calculate_defense (Team & defender, bool ch, bool is_self_KO) {
 		pokemon.def.stat = 1;
 }
 
-void Stat::calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
+void calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
 	Pokemon & pokemon = defender.pokemon ();
 	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level());
-	pokemon.spd.stat *= Rational(pokemon.nature.boost<SPD>(), 10);
+	pokemon.spd.stat *= Rational(pokemon.nature.boost<Stat::SPD>(), 10);
 	
-	pokemon.spd.stat *= defending_stage_modifier(defender.stage[SPD], ch);
+	pokemon.spd.stat *= defender.stage_modifier<Stat::SPD>(ch);
 
 	pokemon.spd.stat *= special_defense_ability_modifier(pokemon.ability, weather);	
 	pokemon.spd.stat *= special_defense_item_modifier(pokemon);
@@ -154,12 +152,12 @@ void Stat::calculate_special_defense (Team & defender, Weather const & weather, 
 		pokemon.spd.stat = 1;
 }
 
-void Stat::calculate_speed (Team & team, Weather const & weather) {
+void calculate_speed (Team & team, Weather const & weather) {
 	Pokemon & pokemon = team.pokemon();
 	pokemon.spe.stat = calculate_initial_stat (pokemon.spe, pokemon.level());
-	pokemon.spe.stat *= Rational(pokemon.nature.boost<SPE>(), 10);
+	pokemon.spe.stat *= Rational(pokemon.nature.boost<Stat::SPE>(), 10);
 	
-	pokemon.spe.stat *= speed_stage_modifier(team.stage[SPE]);
+	pokemon.spe.stat *= team.stage_modifier<Stat::SPE>();
 
 	pokemon.spe.stat *= speed_ability_modifier(team, weather);
 	pokemon.spe.stat *= speed_item_modifier(pokemon);
@@ -174,8 +172,8 @@ void Stat::calculate_speed (Team & team, Weather const & weather) {
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
 	if (team1.pokemon().move().priority() == team2.pokemon().move().priority()) {
-		Stat::calculate_speed (team1, weather);
-		Stat::calculate_speed (team2, weather);
+		calculate_speed(team1, weather);
+		calculate_speed(team2, weather);
 		faster_pokemon (team1, team2, weather, faster, slower);
 	}
 	else if (team1.pokemon().move().priority() > team2.pokemon().move().priority()) {
@@ -209,26 +207,6 @@ namespace {
 
 unsigned calculate_initial_stat (Stat const & stat, unsigned level) {
 	return (2u * stat.base + stat.iv + stat.ev) * level / 100 + 5;
-}
-
-Rational attacking_stage_modifier(int const stage, bool const ch) {
-	if (stage >= 0)		// >= is better than > to check for a CH less often
-		return positive_stage_boost<2>(static_cast<unsigned>(stage));
-	else
-		return (!ch) ? negative_stage_boost<2>(static_cast<unsigned>(-stage)) : Rational(1, 1);
-}
-
-Rational defending_stage_modifier(int const stage, bool const ch) {
-	if (stage > 0)		// > is better than >= to check for a CH less often
-		return (!ch) ? positive_stage_boost<2>(static_cast<unsigned>(stage)) : Rational(1, 1);
-	else
-		return negative_stage_boost<2>(static_cast<unsigned>(-stage));
-}
-
-Rational speed_stage_modifier(int const stage) {
-	return (stage >= 0) ?
-		positive_stage_boost<2>(static_cast<unsigned>(stage)) :
-		negative_stage_boost<2>(static_cast<unsigned>(-stage));
 }
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {
@@ -366,9 +344,7 @@ unsigned tailwind_speed_multiplier (Team const & team) {
 	return team.screens.tailwind() ? 2 : 1;
 }
 
-}	// unnamed namespace
-
-uint8_t Stat::get_base_stat (Species name, Stats stat) {
+uint8_t get_base_stat (Species name, Stat::Stats stat) {
 	constexpr static uint8_t base_stat [][6] = {
 		{ 90, 92, 75, 92, 85, 60 },			// Abomasnow
 		{ 25, 20, 15, 105, 55, 90 },		// Abra	
@@ -880,4 +856,5 @@ uint8_t Stat::get_base_stat (Species name, Stats stat) {
 	return base_stat [static_cast<unsigned>(name)] [stat + 1];
 }
 
-} // namespace technicalmachine
+}	// unnamed namespace
+}	// namespace technicalmachine

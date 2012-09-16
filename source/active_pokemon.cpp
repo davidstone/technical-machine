@@ -1,4 +1,4 @@
-// Load teams
+// Flags for the active Pokemon
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -54,6 +54,7 @@ void ActivePokemon::reset_switch() {
 		magnet_rise.reset();
 		perish_song.reset();
 		power_trick = false;
+		stage.reset();
 		active_substitute.destroy();
 	}
 	attracted = false;
@@ -465,6 +466,60 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 		return false;
 }
 
+int ActivePokemon::current_stage(Stat::Stats const stat) const {
+	return stage[stat];
+}
+
+unsigned ActivePokemon::positive_stat_boosts() const {
+	auto const positive_values = [](int const stage) { return static_cast<unsigned>(std::max(stage, 0)); };
+	return stage.accumulate(positive_values);
+}
+
+void ActivePokemon::stat_boost(Stat::Stats const stat, int const n) {
+	stage.boost(stat, n);
+}
+
+void ActivePokemon::stat_boost_physical(int n) {
+	stage.boost_physical(n);
+}
+
+void ActivePokemon::stat_boost_special(int n) {
+	stage.boost_special(n);
+}
+
+void ActivePokemon::stat_boost_regular(int n) {
+	stage.boost_regular(n);
+}
+
+void ActivePokemon::stat_boost_defensive(int const n) {
+	stage.boost_defensive(n);
+}
+
+void ActivePokemon::stat_boost_offensive(int const n) {
+	stage.boost_offensive(n);
+}
+
+void ActivePokemon::reset_stats() {
+	stage.reset();
+}
+
+void ActivePokemon::copy_stat_boosts(ActivePokemon const & other) {
+	stage = other.stage;
+}
+
+void ActivePokemon::swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs) {
+	Stage::swap_defensive(lhs.stage, rhs.stage);
+}
+
+void ActivePokemon::swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs) {
+	Stage::swap_offensive(lhs.stage, rhs.stage);
+}
+
+void ActivePokemon::swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs) {
+	using std::swap;
+	swap(lhs.stage, rhs.stage);
+}
+
 unsigned ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }
@@ -565,8 +620,8 @@ void ActivePokemon::do_damage(unsigned const damage) {
 	bide.add_damage(damage);
 }
 
-void ActivePokemon::update_chance_to_hit(Team const & user, Team const & target, Weather const & weather, bool const target_moved) {
-	cached_chance_to_hit.update(user, target, weather, target_moved);
+void ActivePokemon::update_chance_to_hit(Pokemon const & user, Pokemon const & target, ActivePokemon const & active_target, Weather const & weather, bool target_moved) {
+	cached_chance_to_hit.update(user, *this, target, active_target, weather, target_moved);
 }
 
 ChanceToHit::value_type ActivePokemon::chance_to_hit() const {
@@ -605,6 +660,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
+	current_hash *= stage.max_hash();
+	current_hash += stage.hash();
 	current_hash *= stockpile.max_hash();
 	current_hash += stockpile.hash();
 	current_hash *= m_taunt.max_hash();
@@ -678,6 +735,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
+	current_hash *= stage.max_hash();
 	current_hash *= stockpile.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
@@ -718,6 +776,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.perish_song == rhs.perish_song and
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
+			lhs.stage == rhs.stage and
 			lhs.stockpile == rhs.stockpile and
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.is_tormented == rhs.is_tormented and

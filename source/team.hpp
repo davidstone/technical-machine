@@ -25,15 +25,13 @@
 
 #include "active_pokemon.hpp"
 #include "entry_hazards.hpp"
+#include "rational.hpp"
 #include "screens.hpp"
 #include "wish.hpp"
 
 #include "move/shared.hpp"
 
 #include "pokemon/collection.hpp"
-
-#include "stat/chance_to_hit.hpp"
-#include "stat/stage.hpp"
 
 namespace technicalmachine {
 enum class Species : uint16_t;
@@ -49,7 +47,7 @@ class Team {
 		Team (Team && other);
 		Team & operator= (Team const & other);
 		Team & operator= (Team && other);
-		template<class... Args>
+		template<typename... Args>
 		void add_pokemon(Args&&... args) {
 			pokemon.add(shared_moves, std::forward<Args>(args)...);
 		}
@@ -145,6 +143,24 @@ class Team {
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
 		bool sport_is_active(Move const & foe_move) const;
+
+		unsigned positive_stat_boosts() const;
+		template<Stat::Stats stat, typename... Args>
+		Rational stage_modifier(Args&&... args) const {
+			return active_pokemon.stage_modifier<stat>(std::forward<Args>(args)...);
+		}
+		void stat_boost(Stat::Stats stat, int n);
+		void stat_boost_physical(int n);
+		void stat_boost_special(int n);
+		void stat_boost_defensive(int n);
+		void stat_boost_offensive(int n);
+		void stat_boost_regular(int n);
+		void reset_stats();
+		void copy_stat_boosts(Team const & other);
+		static void swap_defensive_stages(Team & lhs, Team & rhs);
+		static void swap_offensive_stages(Team & lhs, Team & rhs);
+		static void swap_stat_boosts(Team & lhs, Team & rhs);
+
 		unsigned spit_up_power() const;
 		void increment_stockpile();
 		int release_stockpile();
@@ -189,7 +205,6 @@ class Team {
 		SharedMoves shared_moves;
 		ActivePokemon active_pokemon;
 	public:
-		Stage stage;
 		Screens screens;
 		Wish wish;
 		

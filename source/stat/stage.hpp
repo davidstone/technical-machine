@@ -26,11 +26,20 @@
 #include "stat.hpp"
 
 namespace technicalmachine {
+class Rational;
 
 class Stage {
 	public:
 		Stage();
 		void reset();
+
+		// Used for attacking / defending stats
+		template<Stat::Stats stat>
+		Rational modifier(bool ch) const;
+		// Used for all other stats
+		template<Stat::Stats stat>
+		Rational modifier() const;
+
 		void boost(Stat::Stats stat, int n);
 		unsigned accumulate(std::function<unsigned(int)> const & f) const;
 		static int dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier);
@@ -40,7 +49,6 @@ class Stage {
 		void boost_special(int n);
 		void boost_defensive(int n);
 		void boost_offensive(int n);
-		void maximize_attack();
 		static void swap_defensive(Stage & lhs, Stage & rhs);
 		static void swap_offensive(Stage & lhs, Stage & rhs);
 		uint64_t hash() const;
@@ -49,7 +57,7 @@ class Stage {
 		friend bool operator!=(Stage const & lhs, Stage const & rhs);
 	private:
 		friend class Stat;
-		friend class ChanceToHit;
+		friend class ActivePokemon;
 		static void boost(int8_t & stage, int n);
 		void boost(std::initializer_list<Stat::Stats> const & stats, int n);
 		static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<Stat::Stats> const & stats);

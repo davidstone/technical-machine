@@ -22,7 +22,8 @@
 #include <cstdint>
 
 namespace technicalmachine {
-class Team;
+class ActivePokemon;
+class Pokemon;
 class Weather;
 
 class ChanceToHit {
@@ -32,7 +33,7 @@ class ChanceToHit {
 		value_type operator()() const;
 		value_type inverse() const;
 		bool can_miss() const;
-		void update(Team const & user, Team const & target, Weather const & weather, bool target_moved);
+		void update(Pokemon const & user, ActivePokemon const & active, Pokemon const & target, ActivePokemon const & active_target, Weather const & weather, bool target_moved);
 	private:
 		value_type probability;
 };
