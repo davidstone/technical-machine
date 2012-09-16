@@ -104,6 +104,10 @@ void Team::remove_pokemon () {
 	shared_moves.remove_switch();
 }
 
+bool Team::is_me() const {
+	return me;
+}
+
 void Team::reset_end_of_turn() {
 	active_pokemon.reset_end_of_turn();
 }

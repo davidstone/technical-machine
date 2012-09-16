@@ -53,6 +53,7 @@ class Team {
 		}
 		void remove_pokemon ();
 		
+		bool is_me() const;
 		// Not for variables that give a message at the end of the turn, this is
 		// just for some book-keeping variables.
 		void reset_end_of_turn();
@@ -207,10 +208,8 @@ class Team {
 	public:
 		Screens screens;
 		Wish wish;
-		
 		EntryHazards entry_hazards;
-
-		// Is this my team?
+	private:
 		bool me;
 };
 bool operator!= (Team const & lhs, Team const & rhs);

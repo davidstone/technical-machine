@@ -487,7 +487,7 @@ int64_t fainted (Team first, Team last, Weather weather, unsigned depth, Score c
 int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather const & weather, unsigned depth, Score const & score, Moves & best_switch, bool first_turn) {
 	unsigned tabs = first_turn ? 0 : 2;
 	int64_t alpha = -Score::VICTORY - 1;
-	if (!switcher.me) {
+	if (!switcher.is_me()) {
 		alpha = -alpha;
 		++tabs;
 	}
@@ -495,7 +495,7 @@ int64_t move_then_switch_branch (Team & switcher, Team const & other, Weather co
 		if (first_turn)
 			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + switcher.pokemon.at_replacement ().to_string () + "\n";
 		int64_t const value = switch_after_move_branch (switcher, other, weather, depth, score);
-		if (switcher.me)
+		if (switcher.is_me())
 			update_best_move (alpha, value, first_turn, switcher.pokemon.replacement_to_switch(), best_switch);
 		else
 			update_foe_best_move (switcher, alpha, value, first_turn);
@@ -527,8 +527,9 @@ int64_t switch_after_move_branch (Team switcher, Team other, Weather weather, un
 
 
 void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
-	ai = (first.me) ? & first : & last;
-	foe = (!first.me) ? & first : & last;
+	assert(first.is_me() or last.is_me());
+	ai = (first.is_me()) ? & first : & last;
+	foe = (!first.is_me()) ? & first : & last;
 }
 
 
@@ -585,7 +586,7 @@ void print_best_move (Team const & team, Moves const best_move, int64_t score) {
 void print_action (Team const & team, bool first_turn) {
 	if (verbose or first_turn) {
 		unsigned tabs = first_turn ? 0 : 2;
-		if (!team.me)
+		if (!team.is_me())
 			++tabs;
 		std::cout << std::string (tabs, '\t') + "Evaluating ";
 		if (team.pokemon().move().is_switch())

@@ -202,14 +202,14 @@ void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	team.pokemon.for_each ([this, & team] (Pokemon & pokemon)->void {
-		Stat::stat_type const max_hp = (team.me) ? pokemon.hp.max : max_damage_precision ();
+		Stat::stat_type const max_hp = team.is_me() ? pokemon.hp.max : max_damage_precision();
 		Stat::stat_type const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
 		if (tm_estimate == pokemon.new_hp)
 			return;
 		Stat::stat_type const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
 		if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
 			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
-			if (!team.me)
+			if (!team.is_me())
 				std::cerr << "approximately ";
 			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
 			std::cerr << "max_hp: " << max_hp << '\n';
