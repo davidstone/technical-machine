@@ -20,36 +20,53 @@
 #define TEST__INVALID_SIMULATOR_CONVERSION_HPP_
 
 #include <stdexcept>
-#include "../string_conversions/pokemon.hpp"
 #include "../string_conversions/gender.hpp"
+#include "../string_conversions/nature.hpp"
+#include "../string_conversions/pokemon.hpp"
+
+#include "../ability.hpp"
+#include "../item.hpp"
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 class Pokemon;
 
-template <class Class>
+template<class Class>
 class InvalidSimulatorConversion : public std::logic_error {
 	public:
-		template <typename Test>
-		InvalidSimulatorConversion (Test original, Test result):
-			std::logic_error (Class::to_string (original) + " is seen as " + Class::to_string (result) + ".\n") {
+		template<typename Test>
+		InvalidSimulatorConversion(Test original, Test result):
+			std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
 		}
 };
 
 template<>
-class InvalidSimulatorConversion<Pokemon> : public std::logic_error {
+class InvalidSimulatorConversion<Ability> : public std::logic_error {
+	typedef Ability Class;
 	public:
-		template <typename Test>
+		template<typename Test>
 		InvalidSimulatorConversion (Test original, Test result):
-			std::logic_error (to_string(original) + " is seen as " + to_string(result) + ".\n") {
+			std::logic_error(Class::to_string(original) + " is seen as " + Class::to_string(result) + ".\n") {
 		}
 };
 
 template<>
-class InvalidSimulatorConversion<Gender> : public std::logic_error {
+class InvalidSimulatorConversion<Item> : public std::logic_error {
+	typedef Item Class;
 	public:
-		template <typename Test>
+		template<typename Test>
 		InvalidSimulatorConversion (Test original, Test result):
-			std::logic_error (to_string(original) + " is seen as " + to_string(result) + ".\n") {
+			std::logic_error(Class::to_string(original) + " is seen as " + Class::to_string(result) + ".\n") {
+		}
+};
+
+template<>
+class InvalidSimulatorConversion<Move> : public std::logic_error {
+	typedef Move Class;
+	public:
+		template<typename Test>
+		InvalidSimulatorConversion (Test original, Test result):
+			std::logic_error(Class::to_string(original) + " is seen as " + Class::to_string(result) + ".\n") {
 		}
 };
 

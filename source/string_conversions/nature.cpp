@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../stat/nature.hpp"
+#include "nature.hpp"
 
 #include <map>
 #include <string>
@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-std::string Nature::to_string (Natures name) {
+std::string to_string(Nature::Natures const name) {
 	std::string const nature_converter [] = {
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
 		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
@@ -36,48 +36,40 @@ std::string Nature::to_string (Natures name) {
 	return nature_converter [name];
 }
 
-std::string Nature::to_string () const {
-	return to_string (name);
-}
-
-Nature::Natures Nature::from_string (std::string const & str) {
-	static std::map <std::string, Natures> const converter {
-		{ "Adamant", ADAMANT },
-		{ "Bashful", BASHFUL },
-		{ "Bold", BOLD },
-		{ "Brave", BRAVE },
-		{ "Calm", CALM },
-		{ "Careful", CAREFUL },
-		{ "Docile", DOCILE },
-		{ "Gentle", GENTLE },
-		{ "Hardy", HARDY },
-		{ "Hasty", HASTY },
-		{ "Impish", IMPISH },
-		{ "Jolly", JOLLY },
-		{ "Lax", LAX },
-		{ "Lonely", LONELY },
-		{ "Mild", MILD },
-		{ "Modest", MODEST },
-		{ "Naive", NAIVE },
-		{ "Naughty", NAUGHTY },
-		{ "Quiet", QUIET },
-		{ "Quirky", QUIRKY },
-		{ "Rash", RASH },
-		{ "Relaxed", RELAXED },
-		{ "Sassy", SASSY },
-		{ "Serious", SERIOUS },
-		{ "Timid", TIMID }
+template<>
+Nature::Natures from_string<Nature::Natures>(std::string const & str) {
+	static std::map <std::string, Nature::Natures> const converter {
+		{ "Adamant", Nature::ADAMANT },
+		{ "Bashful", Nature::BASHFUL },
+		{ "Bold", Nature::BOLD },
+		{ "Brave", Nature::BRAVE },
+		{ "Calm", Nature::CALM },
+		{ "Careful", Nature::CAREFUL },
+		{ "Docile", Nature::DOCILE },
+		{ "Gentle", Nature::GENTLE },
+		{ "Hardy", Nature::HARDY },
+		{ "Hasty", Nature::HASTY },
+		{ "Impish", Nature::IMPISH },
+		{ "Jolly", Nature::JOLLY },
+		{ "Lax", Nature::LAX },
+		{ "Lonely", Nature::LONELY },
+		{ "Mild", Nature::MILD },
+		{ "Modest", Nature::MODEST },
+		{ "Naive", Nature::NAIVE },
+		{ "Naughty", Nature::NAUGHTY },
+		{ "Quiet", Nature::QUIET },
+		{ "Quirky", Nature::QUIRKY },
+		{ "Rash", Nature::RASH },
+		{ "Relaxed", Nature::RELAXED },
+		{ "Sassy", Nature::SASSY },
+		{ "Serious", Nature::SERIOUS },
+		{ "Timid", Nature::TIMID }
 	};
 	auto const it = converter.find (str);
 	if (it != converter.end ())
 		return it->second;
 	else
 		throw InvalidFromStringConversion ("Nature", str);
-}
-
-Nature::Nature (std::string const & str):
-	name (from_string (str))
-	{
 }
 
 }	// namespace technicalmachine

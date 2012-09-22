@@ -75,7 +75,7 @@ DetailedStats::DetailedStats() {
 		else if (sub == "Nature") {
 			if (!nature_found) {
 				nature_found = true;
-				nature[static_cast<size_t>(new_member)] = Nature::from_string(line.substr(y + 1, z - y - 1));
+				nature[static_cast<size_t>(new_member)] = from_string<Nature::Natures>(line.substr(y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Move") {

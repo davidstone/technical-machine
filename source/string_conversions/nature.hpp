@@ -1,4 +1,4 @@
-// Nature data structure
+// Nature string conversions
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,37 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__NATURE_HPP_
-#define STAT__NATURE_HPP_
+#ifndef STRING_CONVERSIONS__NATURE_HPP_
+#define STRING_CONVERSIONS__NATURE_HPP_
 
 #include <cstdint>
 #include <string>
 
-#include "stat.hpp"
+// 'import' the declaration of from_string
+#include "from_string.hpp"
+
+#include "../stat/nature.hpp"
 
 namespace technicalmachine {
 
-class Nature {
-	public:
-		enum Natures : uint8_t {
-			ADAMANT, BASHFUL, BOLD, BRAVE, CALM,
-			CAREFUL, DOCILE, GENTLE, HARDY, HASTY,
-			IMPISH, JOLLY, LAX, LONELY, MILD, MODEST,
-			NAIVE, NAUGHTY, QUIET, QUIRKY, RASH,
-			RELAXED, SASSY, SERIOUS, TIMID, END
-		};
-		Nature ();
-		Nature (std::string const & str);
-		bool is_set () const;
-		void set_if_unknown (Natures nature);
-		template<Stat::Stats>
-		unsigned boost () const;
-		std::string to_string () const;
-		friend bool operator== (Nature lhs, Nature rhs);
-
-		Natures name;
-};
-bool operator!= (Nature lhs, Nature rhs);
+std::string to_string(Nature::Natures name);
 
 }	// namespace technicalmachine
-#endif	// STAT__NATURE_HPP_
+#endif	// STRING_CONVERSIONS__NATURE_HPP_

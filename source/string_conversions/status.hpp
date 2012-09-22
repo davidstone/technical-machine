@@ -28,7 +28,6 @@
 #include "../status.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 
 std::string to_string(Status::Statuses name);
 

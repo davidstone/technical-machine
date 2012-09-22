@@ -21,11 +21,17 @@
 #include <cassert>
 
 #include "stat.hpp"
+#include "../string_conversions/nature.hpp"
 
 namespace technicalmachine {
 
 Nature::Nature ():
 	name (END) {
+}
+
+Nature::Nature(std::string const & str):
+	name(from_string<Natures>(str))
+	{
 }
 
 bool Nature::is_set () const {
@@ -134,6 +140,10 @@ bool operator== (Nature const lhs, Nature const rhs) {
 
 bool operator!= (Nature const lhs, Nature const rhs) {
 	return !(lhs == rhs);
+}
+
+std::string Nature::to_string() const {
+	return ::technicalmachine::to_string(name);
 }
 
 }	// namespace technicalmachine
