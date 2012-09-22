@@ -53,9 +53,7 @@ class Status {
 		bool boosts_facade() const;
 		bool boosts_smellingsalt() const;
 
-		static std::string to_string (Statuses name);
 		std::string to_string () const;
-		static Statuses from_string (std::string const & str);
 
 		void rest ();
 		template<Statuses real_status, Statuses base_status = real_status>

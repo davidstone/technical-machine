@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../status.hpp"
+#include "status.hpp"
 
 #include <map>
 #include <string>
@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-std::string Status::to_string (Statuses name) {
+std::string to_string(Status::Statuses const name) {
 	static std::string const status_name [] = {
 		"No status",
 		"Burn",
@@ -40,21 +40,18 @@ std::string Status::to_string (Statuses name) {
 	return status_name [name];
 }
 
-std::string Status::to_string () const {
-	return to_string (name());
-}
-
-Status::Statuses Status::from_string (std::string const & str) {
-	static std::map <std::string, Statuses> const converter {
-		{ "No status", NO_STATUS },
-		{ "Burn", BURN },
-		{ "Freeze", FREEZE },
-		{ "Paralysis", PARALYSIS },
-		{ "Poison", POISON },
-		{ "Toxic", POISON_TOXIC },
-		{ "Rest", REST },
-		{ "Sleep", SLEEP },
-		{ "END_STATUS", END }
+template<>
+Status::Statuses from_string(std::string const & str) {
+	static std::map <std::string, Status::Statuses> const converter {
+		{ "No status", Status::NO_STATUS },
+		{ "Burn", Status::BURN },
+		{ "Freeze", Status::FREEZE },
+		{ "Paralysis", Status::PARALYSIS },
+		{ "Poison", Status::POISON },
+		{ "Toxic", Status::POISON_TOXIC },
+		{ "Rest", Status::REST },
+		{ "Sleep", Status::SLEEP },
+		{ "END_STATUS", Status::END }
 	};
 	auto const it = converter.find (str);
 	if (it != converter.end ())

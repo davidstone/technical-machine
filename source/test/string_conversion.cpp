@@ -37,6 +37,7 @@
 #include "../string_conversions/invalid_string_conversion.hpp"
 #include "../string_conversions/gender.hpp"
 #include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/status.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -69,6 +70,19 @@ template<>
 void test_generic<Gender, Gender::Genders>(std::string const & thing) {
 	typedef Gender Class;
 	typedef Gender::Genders Enum;
+	std::cout << "\tVerifying correct " + thing + ".\n";
+	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
+		std::string const str = to_string(original);
+		auto const result = from_string<Enum>(str);
+		if (original != result)
+			throw InvalidToStringConversion (original, result, str);
+	}
+}
+
+template<>
+void test_generic<Status, Status::Statuses>(std::string const & thing) {
+	typedef Status Class;
+	typedef Status::Statuses Enum;
 	std::cout << "\tVerifying correct " + thing + ".\n";
 	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
 		std::string const str = to_string(original);

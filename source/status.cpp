@@ -25,6 +25,8 @@
 
 #include "pokemon/pokemon.hpp"
 
+#include "string_conversions/status.hpp"
+
 #include "type/type.hpp"
 
 namespace technicalmachine {
@@ -216,6 +218,10 @@ uint64_t Status::hash() const {
 
 uint64_t Status::max_hash() {
 	return END + (max_sleep_turns() + 1);
+}
+
+std::string Status::to_string() const {
+	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine
