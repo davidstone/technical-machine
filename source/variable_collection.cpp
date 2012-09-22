@@ -21,7 +21,6 @@
 #include <cassert>
 #include <cstdint>
 
-#include "empty_team.hpp"
 #include "phazing_in_same_pokemon.hpp"
 #include "team.hpp"
 #include "variable.hpp"
@@ -84,8 +83,6 @@ void VariableCollection::set_magnitude (unsigned const magnitude) {
 namespace {
 
 container_type create_container (Moves const move, unsigned const foe_size) {
-	if (foe_size == 0)
-		throw EmptyTeam(__FILE__, __LINE__);
 	switch (move) {
 		case Moves::ACUPRESSURE:
 			return simple_range(0, 6, move);

@@ -58,13 +58,6 @@ void variable_collection_tests() {
 namespace {
 
 void test_zero_size_team() {
-	try {
-		VariableCollection collection(Moves::WHIRLWIND, 0);
-		throw InvalidCollection("Can construct a variable collection from a team of size 0.");
-	}
-	catch (EmptyTeam const &) {
-		// Do nothing; the above operation should throw.
-	}
 }
 
 void test_small_size_team(Team & team) {
