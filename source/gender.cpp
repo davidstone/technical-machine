@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "gender.hpp"
-#include "string_conversions/gender.hpp"
+#include "string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 

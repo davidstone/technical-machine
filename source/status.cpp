@@ -25,7 +25,7 @@
 
 #include "pokemon/pokemon.hpp"
 
-#include "string_conversions/status.hpp"
+#include "string_conversions/conversion.hpp"
 
 #include "type/type.hpp"
 

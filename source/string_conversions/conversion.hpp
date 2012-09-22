@@ -1,4 +1,4 @@
-// Pokemon string conversions
+// String conversions template
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,19 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STRING_CONVERSIONS__POKEMON_HPP_
-#define STRING_CONVERSIONS__POKEMON_HPP_
+#ifndef STRING_CONVERSIONS__CONVERSION_HPP_
+#define STRING_CONVERSIONS__CONVERSION_HPP_
 
-#include <cstdint>
 #include <string>
 
-// 'import' the declaration of from_string
-#include "from_string.hpp"
-
 namespace technicalmachine {
-enum class Species : uint16_t;
 
-std::string to_string(Species name);
+template<typename T>
+T from_string(std::string const & str);
+
+template<typename T>
+std::string to_string(T name);
 
 }	// namespace technicalmachine
-#endif	// STRING_CONVERSIONS__POKEMON_HPP_
+#endif	// STRING_CONVERSIONS__CONVERSION_HPP_

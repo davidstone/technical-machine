@@ -16,15 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "nature.hpp"
+#include "conversion.hpp"
 
 #include <map>
 #include <string>
 
 #include "invalid_string_conversion.hpp"
 
+#include "../stat/nature.hpp"
+
 namespace technicalmachine {
 
+template<>
 std::string to_string(Nature::Natures const name) {
 	std::string const nature_converter [] = {
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",

@@ -16,15 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "status.hpp"
+#include "conversion.hpp"
+#include "invalid_string_conversion.hpp"
 
 #include <map>
 #include <string>
 
-#include "invalid_string_conversion.hpp"
+#include "../status.hpp"
 
 namespace technicalmachine {
 
+template<>
 std::string to_string(Status::Statuses const name) {
 	static std::string const status_name [] = {
 		"No status",

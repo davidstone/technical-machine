@@ -20,11 +20,8 @@
 #define TEST__INVALID_SIMULATOR_CONVERSION_HPP_
 
 #include <stdexcept>
-#include "../string_conversions/gender.hpp"
-#include "../string_conversions/nature.hpp"
-#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/conversion.hpp"
 
-#include "../ability.hpp"
 #include "../item.hpp"
 #include "../move/move.hpp"
 
@@ -37,16 +34,6 @@ class InvalidSimulatorConversion : public std::logic_error {
 		template<typename Test>
 		InvalidSimulatorConversion(Test original, Test result):
 			std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
-		}
-};
-
-template<>
-class InvalidSimulatorConversion<Ability> : public std::logic_error {
-	typedef Ability Class;
-	public:
-		template<typename Test>
-		InvalidSimulatorConversion (Test original, Test result):
-			std::logic_error(Class::to_string(original) + " is seen as " + Class::to_string(result) + ".\n") {
 		}
 };
 

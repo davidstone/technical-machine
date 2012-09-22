@@ -26,6 +26,8 @@
 
 #include "pokemon/pokemon.hpp"
 
+#include "string_conversions/conversion.hpp"
+
 #include "type/type.hpp"
 
 namespace technicalmachine {
@@ -36,6 +38,11 @@ Ability::Ability ():
 
 Ability::Ability (Abilities ability):
 	name (ability) {
+}
+
+Ability::Ability (std::string const & str):
+	name(::technicalmachine::from_string<Ability::Abilities>(str))
+	{
 }
 
 bool Ability::is_set () const {
@@ -305,6 +312,10 @@ bool operator== (Ability const lhs, Ability const rhs) {
 
 bool operator!= (Ability const lhs, Ability const rhs) {
 	return !(lhs == rhs);
+}
+
+std::string Ability::to_string() const {
+	return ::technicalmachine::to_string (name);
 }
 
 }	// namespace technicalmachine

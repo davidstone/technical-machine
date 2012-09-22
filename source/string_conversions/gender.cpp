@@ -16,15 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "gender.hpp"
+#include "conversion.hpp"
 
 #include <map>
 #include <string>
 
 #include "invalid_string_conversion.hpp"
 
+#include "../gender.hpp"
+
 namespace technicalmachine {
 
+template<>
 std::string to_string(Gender::Genders const gender) {
 	static std::string const gender_name [] {
 		"Female", "Genderless", "Male"

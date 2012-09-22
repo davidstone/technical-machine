@@ -21,7 +21,7 @@
 #include <cassert>
 
 #include "stat.hpp"
-#include "../string_conversions/nature.hpp"
+#include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 

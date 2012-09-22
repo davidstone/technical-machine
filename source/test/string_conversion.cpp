@@ -34,11 +34,8 @@
 
 #include "../stat/nature.hpp"
 
+#include "../string_conversions/conversion.hpp"
 #include "../string_conversions/invalid_string_conversion.hpp"
-#include "../string_conversions/gender.hpp"
-#include "../string_conversions/nature.hpp"
-#include "../string_conversions/pokemon.hpp"
-#include "../string_conversions/status.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -49,19 +46,6 @@ void test_generic (std::string const & thing) {
 	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
 		std::string const str = to_string(original);
 		auto const result = from_string<Enum>(str);
-		if (original != result)
-			throw InvalidToStringConversion (original, result, str);
-	}
-}
-
-template <>
-void test_generic<Ability, Ability::Abilities> (std::string const & thing) {
-	typedef Ability Class;
-	typedef Class::Abilities Enum;
-	std::cout << "\tVerifying correct " + thing + ".\n";
-	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
-		std::string const str = Class::to_string (original);
-		Enum const result = Class::from_string (str);
 		if (original != result)
 			throw InvalidToStringConversion (original, result, str);
 	}

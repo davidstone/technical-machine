@@ -16,17 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "pokemon.hpp"
+#include "conversion.hpp"
 
 #include <map>
 #include <string>
 
 #include "invalid_string_conversion.hpp"
 
+#include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 
+template<>
 std::string to_string(Species const name) {
 	static std::string const name_to_string [] = {
 		"Abomasnow", "Abra", "Absol", "Aerodactyl", "Aggron",

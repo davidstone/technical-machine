@@ -100,9 +100,7 @@ class Ability {
 		bool boosts_stab () const;
 		
 		bool is_loafing (bool loaf) const;
-		static std::string to_string (Abilities name);
 		std::string to_string () const;
-		static Abilities from_string (std::string const & str);
 		
 		static void activate_on_switch (Team & switcher, Team & other, Weather & weather);
 		friend bool operator== (Ability lhs, Ability rhs);

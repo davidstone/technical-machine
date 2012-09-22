@@ -33,7 +33,7 @@
 
 #include "../stat/nature.hpp"
 
-#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
@@ -63,7 +63,7 @@ DetailedStats::DetailedStats() {
 		if (sub == "Ability") {
 			if (!ability_found) {
 				ability_found = true;
-				ability[static_cast<size_t>(new_member)] = Ability::from_string(line.substr(y + 1, z - y - 1));
+				ability[static_cast<size_t>(new_member)] = from_string<Ability::Abilities>(line.substr(y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Item") {

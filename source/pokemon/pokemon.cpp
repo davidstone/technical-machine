@@ -32,7 +32,7 @@
 
 #include "../stat/stat.hpp"
 
-#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 namespace {

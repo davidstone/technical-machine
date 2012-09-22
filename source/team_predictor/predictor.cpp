@@ -22,7 +22,7 @@
 #include "team_predictor.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
-#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/conversion.hpp"
 #include "../team.hpp"
 
 #include "../pokemon/pokemon.hpp"
