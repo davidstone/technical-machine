@@ -1,4 +1,4 @@
-// Gender header
+// Pokemon string conversions
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,29 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GENDER_HPP_
-#define GENDER_HPP_
+#ifndef STRING_CONVERSIONS__GENDER_HPP_
+#define STRING_CONVERSIONS__GENDER_HPP_
 
-#include <cstdint>
 #include <string>
+
+// 'import' the declaration of from_string
+#include "from_string.hpp"
+
+#include "../gender.hpp"
 
 namespace technicalmachine {
 
-class Gender {
-	public:
-		enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
-		
-		Gender ();
-		explicit Gender (Genders gender_);
-
-		// Return 1 if the same, -1 if opposite, and 0 if either is genderless
-		int multiplier (Gender foe) const;
-		std::string to_string() const;
-		friend bool operator== (Gender lhs, Gender rhs);
-
-		Genders gender;
-};
-bool operator!= (Gender lhs, Gender rhs);
+std::string to_string(Gender::Genders gender);
 
 }	// namespace technicalmachine
-#endif	// GENDER_HPP_
+#endif	// STRING_CONVERSIONS__GENDER_HPP_

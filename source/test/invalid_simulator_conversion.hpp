@@ -21,6 +21,7 @@
 
 #include <stdexcept>
 #include "../string_conversions/pokemon_string.hpp"
+#include "../string_conversions/gender_string.hpp"
 
 namespace technicalmachine {
 class Pokemon;
@@ -36,6 +37,15 @@ class InvalidSimulatorConversion : public std::logic_error {
 
 template<>
 class InvalidSimulatorConversion<Pokemon> : public std::logic_error {
+	public:
+		template <typename Test>
+		InvalidSimulatorConversion (Test original, Test result):
+			std::logic_error (to_string(original) + " is seen as " + to_string(result) + ".\n") {
+		}
+};
+
+template<>
+class InvalidSimulatorConversion<Gender> : public std::logic_error {
 	public:
 		template <typename Test>
 		InvalidSimulatorConversion (Test original, Test result):

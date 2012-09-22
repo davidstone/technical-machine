@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "gender.hpp"
+#include "string_conversions/gender_string.hpp"
 
 namespace technicalmachine {
 
@@ -34,14 +35,8 @@ int Gender::multiplier (Gender foe) const {
 	return (gender - 1) * (foe.gender - 1);
 }
 
-Gender & Gender::operator= (Gender other) {
-	gender = other.gender;
-	return *this;
-}
-
-Gender & Gender::operator= (Genders other) {
-	gender = other;
-	return *this;
+std::string Gender::to_string() const {
+	return ::technicalmachine::to_string(gender);
 }
 
 bool operator== (Gender const lhs, Gender const rhs) {

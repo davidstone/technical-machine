@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../gender.hpp"
+#include "gender_string.hpp"
 
 #include <map>
 #include <string>
@@ -25,35 +25,27 @@
 
 namespace technicalmachine {
 
-std::string Gender::to_string (Genders gender) {
+std::string to_string(Gender::Genders const gender) {
 	static std::string const gender_name [] {
 		"Female", "Genderless", "Male"
 	};
 	return gender_name [gender];
 }
 
-std::string Gender::to_string () const {
-	return to_string (gender);
-}
-
-Gender::Genders Gender::from_string (std::string const & str) {
-	static std::map <std::string, Genders> const converter {
-		{ "Genderless", GENDERLESS },
-		{ "None", GENDERLESS },
-		{ "No Gender", GENDERLESS },
-		{ "Female", FEMALE },
-		{ "Male", MALE }
+template<>
+Gender::Genders from_string(std::string const & str) {
+	static std::map <std::string, Gender::Genders> const converter {
+		{ "Genderless", Gender::GENDERLESS },
+		{ "None", Gender::GENDERLESS },
+		{ "No Gender", Gender::GENDERLESS },
+		{ "Female", Gender::FEMALE },
+		{ "Male", Gender::MALE }
 	};
 	auto const it = converter.find (str);
 	if (it != converter.end ())
 		return it->second;
 	else
 		throw InvalidFromStringConversion ("Gender", str);
-}
-
-Gender::Gender (std::string const & str):
-	gender (from_string (str))
-	{
 }
 
 }	// namespace technicalmachine
