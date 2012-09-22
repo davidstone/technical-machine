@@ -80,7 +80,7 @@ void predict_pokemon (Team & team, std::array<float, max_species> estimate, floa
 	while (team.pokemon.size() < team.pokemon.real_size()) {
 		Species const name = get_most_likely_pokemon (estimate);
 		constexpr unsigned level = 100;
-		Gender const gender(Gender::MALE);
+		Gender const gender;
 		team.add_pokemon(name, level, gender);
 		if (team.pokemon.size() == team.pokemon.real_size())
 			break;
