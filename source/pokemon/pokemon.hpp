@@ -55,7 +55,6 @@ class Pokemon {
 		std::string get_nickname () const;
 		bool can_use_chatter() const;
 		bool can_use_substitute() const;
-		static bool is_alternate_form (Species first, Species second);
 		bool is_boosted_by_adamant_orb() const;
 		bool is_boosted_by_deepseascale() const;
 		bool is_boosted_by_deepseatooth() const;
@@ -114,8 +113,9 @@ class Pokemon {
 		Type::Types calculate_hidden_power_type () const;
 		friend class Score;
 };
-
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
+
+bool is_alternate_form(Species first, Species second);
 
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_HPP_

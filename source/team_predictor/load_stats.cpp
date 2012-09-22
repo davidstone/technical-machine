@@ -56,7 +56,7 @@ void species_clause (float multiplier [max_species] [max_species]) {
 			Species const first = static_cast <Species> (a);
 			Species const second = static_cast <Species> (b);
 			// Species clause or replaced with other value later
-			multiplier [a][b] = Pokemon::is_alternate_form (first, second) ? 0 : -1;
+			multiplier [a][b] = is_alternate_form(first, second) ? 0 : -1;
 		}
 		multiplier [a] [a] = 0;			// Species clause
 	}
