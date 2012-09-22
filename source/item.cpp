@@ -18,6 +18,7 @@
 
 #include "item.hpp"
 #include <algorithm>
+#include "string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
@@ -27,6 +28,11 @@ Item::Item ():
 
 Item::Item (Items item):
 	name (item) {
+}
+
+Item::Item(std::string const & str):
+	name(::technicalmachine::from_string<Items>(str))
+	{
 }
 
 bool Item::is_set () const {
@@ -504,6 +510,10 @@ bool operator== (Item const & lhs, Item const & rhs) {
 
 bool operator!= (Item const & lhs, Item const & rhs) {
 	return !(lhs == rhs);
+}
+
+std::string Item::to_string () const {
+	return ::technicalmachine::to_string (name);
 }
 
 }	// namespace technicalmachine

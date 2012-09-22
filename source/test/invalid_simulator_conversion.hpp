@@ -22,7 +22,6 @@
 #include <stdexcept>
 #include "../string_conversions/conversion.hpp"
 
-#include "../item.hpp"
 #include "../move/move.hpp"
 
 namespace technicalmachine {
@@ -34,16 +33,6 @@ class InvalidSimulatorConversion : public std::logic_error {
 		template<typename Test>
 		InvalidSimulatorConversion(Test original, Test result):
 			std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
-		}
-};
-
-template<>
-class InvalidSimulatorConversion<Item> : public std::logic_error {
-	typedef Item Class;
-	public:
-		template<typename Test>
-		InvalidSimulatorConversion (Test original, Test result):
-			std::logic_error(Class::to_string(original) + " is seen as " + Class::to_string(result) + ".\n") {
 		}
 };
 

@@ -69,7 +69,7 @@ DetailedStats::DetailedStats() {
 		else if (sub == "Item") {
 			if (!item_found) {
 				item_found = true;
-				item[static_cast<size_t>(new_member)] = Item::from_string(line.substr(y + 1, z - y - 1));
+				item[static_cast<size_t>(new_member)] = from_string<Item::Items>(line.substr(y + 1, z - y - 1));
 			}
 		}
 		else if (sub == "Nature") {

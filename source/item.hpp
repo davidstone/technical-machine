@@ -141,9 +141,7 @@ class Item {
 		bool extends_light_screen () const;
 		bool extends_reflect () const;
 		void steal (Item & other);
-		static std::string to_string (Items name);
 		std::string to_string () const;
-		static Items from_string (std::string const & str);
 		friend bool operator== (Item const & lhs, Item const & rhs);
 };
 bool operator!= (Item const & lhs, Item const & rhs);
