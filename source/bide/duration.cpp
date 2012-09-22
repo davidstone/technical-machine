@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "bide.hpp"
+#include "duration.hpp"
 
 #include <cassert>
 
@@ -28,7 +28,7 @@ BideDuration::BideDuration():
 }
 
 namespace {
-constexpr Bide::hash_type max_duration = 2;
+constexpr BideDuration::hash_type max_duration = 2;
 }	// unnamed namespace
 
 void BideDuration::activate() {

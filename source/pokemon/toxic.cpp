@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "toxic.hpp"
-#include "rational.hpp"
+#include "../rational.hpp"
 
 namespace technicalmachine {
 namespace {

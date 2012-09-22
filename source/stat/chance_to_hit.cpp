@@ -23,10 +23,11 @@
 #include "stage.hpp"
 #include "stat.hpp"
 
-#include "../active_pokemon.hpp"
-#include "../pokemon/pokemon.hpp"
 #include "../rational.hpp"
 #include "../weather.hpp"
+
+#include "../pokemon/active_pokemon.hpp"
+#include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {

@@ -18,13 +18,13 @@
 
 #include "active_pokemon.hpp"
 
-#include "ability.hpp"
-#include "damage.hpp"
-#include "rational.hpp"
+#include "pokemon.hpp"
 
-#include "move/move.hpp"
+#include "../ability.hpp"
+#include "../damage.hpp"
+#include "../rational.hpp"
 
-#include "pokemon/pokemon.hpp"
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 

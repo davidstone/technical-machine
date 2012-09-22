@@ -23,7 +23,6 @@
 #include <random>
 #include <string>
 
-#include "active_pokemon.hpp"
 #include "entry_hazards.hpp"
 #include "rational.hpp"
 #include "screens.hpp"
@@ -31,6 +30,7 @@
 
 #include "move/shared.hpp"
 
+#include "pokemon/active_pokemon.hpp"
 #include "pokemon/collection.hpp"
 
 namespace technicalmachine {

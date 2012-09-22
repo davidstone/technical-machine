@@ -18,7 +18,7 @@
 
 #include "vanish.hpp"
 #include <cstdint>
-#include "move/moves.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 

@@ -18,7 +18,7 @@
 
 #include "stockpile.hpp"
 #include "invalid_swallow.hpp"
-#include "rational.hpp"
+#include "../rational.hpp"
 
 namespace technicalmachine {
 namespace {

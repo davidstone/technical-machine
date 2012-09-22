@@ -17,8 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "partial_trap.hpp"
-#include "heal.hpp"
-#include "pokemon/pokemon.hpp"
+#include "pokemon.hpp"
+#include "../heal.hpp"
 
 namespace technicalmachine {
 namespace {

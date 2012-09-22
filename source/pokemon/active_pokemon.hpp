@@ -21,6 +21,7 @@
 
 #include <cstdint>
 
+#include "collection.hpp"
 #include "confusion.hpp"
 #include "embargo.hpp"
 #include "encore.hpp"
@@ -29,7 +30,6 @@
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
 #include "rampage.hpp"
-#include "rational.hpp"
 #include "slow_start.hpp"
 #include "stockpile.hpp"
 #include "substitute.hpp"
@@ -39,12 +39,12 @@
 #include "vanish.hpp"
 #include "yawn.hpp"
 
-#include "bide/bide.hpp"
+#include "../rational.hpp"
 
-#include "pokemon/collection.hpp"
+#include "../bide/bide.hpp"
 
-#include "stat/chance_to_hit.hpp"
-#include "stat/stage.hpp"
+#include "../stat/chance_to_hit.hpp"
+#include "../stat/stage.hpp"
 
 namespace technicalmachine {
 class Ability;

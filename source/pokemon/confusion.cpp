@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "confusion.hpp"
-#include "pokemon/pokemon.hpp"
+#include "pokemon.hpp"
 
 namespace technicalmachine {
 namespace {
