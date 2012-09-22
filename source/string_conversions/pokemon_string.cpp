@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../pokemon/pokemon.hpp"
+#include "pokemon_string.hpp"
 
 #include <map>
 #include <string>
@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 
-std::string Pokemon::to_string (Species const name) {
+std::string to_string(Species const name) {
 	static std::string const name_to_string [] = {
 		"Abomasnow", "Abra", "Absol", "Aerodactyl", "Aggron",
 		"Aipom", "Alakazam", "Altaria", "Ambipom", "Ampharos",
@@ -135,11 +135,8 @@ std::string Pokemon::to_string (Species const name) {
 	return name_to_string[static_cast<size_t>(name)];
 }
 
-std::string Pokemon::to_string () const {
-	return to_string (name);
-}
-
-Species Pokemon::from_string (std::string const & str) {
+template<>
+Species from_string(std::string const & str) {
 	static std::map <std::string, Species> const converter {
 		{ "Abomasnow", Species::ABOMASNOW },
 		{ "Abra", Species::ABRA },

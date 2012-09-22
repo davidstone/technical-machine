@@ -32,7 +32,16 @@
 
 #include "../stat/stat.hpp"
 
+#include "../string_conversions/pokemon_string.hpp"
+
 namespace technicalmachine {
+namespace {
+bool is_deoxys (Species species);
+bool is_giratina (Species species);
+bool is_rotom (Species species);
+bool is_shaymin (Species species);
+bool is_wormadam (Species species);
+}	// unnamed namespace
 
 Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level, Gender set_gender, std::string const & set_nickname, uint8_t set_happiness) : 
 	move (shared),
@@ -105,7 +114,9 @@ bool Pokemon::is_alternate_form (Species first, Species second) {
 			(is_wormadam (first) and is_wormadam (second));
 }
 
-bool Pokemon::is_deoxys (Species species) {
+namespace {
+
+bool is_deoxys (Species species) {
 	switch (species) {
 		case Species::DEOXYS_A:
 		case Species::DEOXYS_D:
@@ -117,7 +128,7 @@ bool Pokemon::is_deoxys (Species species) {
 	}
 }
 
-bool Pokemon::is_giratina (Species species) {
+bool is_giratina (Species species) {
 	switch (species) {
 		case Species::GIRATINA_A:
 		case Species::GIRATINA_O:
@@ -127,7 +138,7 @@ bool Pokemon::is_giratina (Species species) {
 	}
 }
 
-bool Pokemon::is_rotom (Species species) {
+bool is_rotom (Species species) {
 	switch (species) {
 		case Species::ROTOM:
 		case Species::ROTOM_C:
@@ -141,7 +152,7 @@ bool Pokemon::is_rotom (Species species) {
 	}
 }
 
-bool Pokemon::is_shaymin (Species species) {
+bool is_shaymin (Species species) {
 	switch (species) {
 		case Species::SHAYMIN_L:
 		case Species::SHAYMIN_S:
@@ -151,7 +162,7 @@ bool Pokemon::is_shaymin (Species species) {
 	}
 }
 
-bool Pokemon::is_wormadam (Species species) {
+bool is_wormadam (Species species) {
 	switch (species) {
 		case Species::WORMADAM_P:
 		case Species::WORMADAM_S:
@@ -161,6 +172,8 @@ bool Pokemon::is_wormadam (Species species) {
 			return false;
 	}
 }
+
+}	// unnamed namespace
 
 bool Pokemon::is_boosted_by_adamant_orb() const {
 	return name == Species::DIALGA;
@@ -826,6 +839,10 @@ uint8_t Pokemon::power_of_mass_based_moves() const {
 		20	// Zubat
 	};
 	return mass_array[static_cast<unsigned>(name)];
+}
+
+std::string Pokemon::to_string() const {
+	return ::technicalmachine::to_string(name);
 }
 
 }	// namespace technicalmachine

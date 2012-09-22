@@ -22,6 +22,7 @@
 #include "team_predictor.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
+#include "../string_conversions/pokemon_string.hpp"
 #include "../team.hpp"
 
 #include "../pokemon/pokemon.hpp"
@@ -53,7 +54,7 @@ void function (Fl_Widget * w, void * d) {
 	for (Fl_Input * in : data.input) {
 		Species species;
 		try {
-			species = Pokemon::from_string (in->value());
+			species = from_string<Species>(in->value());
 			constexpr unsigned level = 100;
 			Gender const gender(Gender::MALE);
 			team.add_pokemon(species, level, gender);

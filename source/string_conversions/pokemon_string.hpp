@@ -1,4 +1,4 @@
-// Exception if unable to find a Pokemon that should exist
+// Pokemon string conversions
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__POKEMON_NOT_FOUND_HPP_
-#define POKEMON__POKEMON_NOT_FOUND_HPP_
+#ifndef STRING_CONVERSIONS__POKEMON_HPP_
+#define STRING_CONVERSIONS__POKEMON_HPP_
 
-#include <stdexcept>
-#include "../string_conversions/pokemon_string.hpp"
+#include <cstdint>
+#include <string>
+
+// 'import' the declaration of from_string
+#include "from_string.hpp"
 
 namespace technicalmachine {
 enum class Species : uint16_t;
 
-class PokemonNotFound : public std::logic_error {
-	public:
-		PokemonNotFound(Species const species):
-			std::logic_error("Unable to find " + to_string(species) + ".") {
-		}
-};
+std::string to_string(Species name);
+
 }	// namespace technicalmachine
-#endif	// POKEMON__POKEMON_NOT_FOUND_HPP_
+#endif	// STRING_CONVERSIONS__POKEMON_HPP_

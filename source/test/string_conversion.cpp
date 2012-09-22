@@ -35,6 +35,7 @@
 #include "../stat/nature.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
+#include "../string_conversions/pokemon_string.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -42,9 +43,22 @@ namespace {
 template <class Class, typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
-	for (Enum original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
+	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
 		std::string const str = Class::to_string (original);
 		Enum const result = Class::from_string (str);
+		if (original != result)
+			throw InvalidToStringConversion (original, result, str);
+	}
+}
+
+template<>
+void test_generic<Pokemon, Species>(std::string const & thing) {
+	typedef Pokemon Class;
+	typedef Species Enum;
+	std::cout << "\tVerifying correct " + thing + ".\n";
+	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
+		std::string const str = to_string(original);
+		auto const result = from_string<Enum>(str);
 		if (original != result)
 			throw InvalidToStringConversion (original, result, str);
 	}

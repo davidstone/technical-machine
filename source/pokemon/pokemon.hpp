@@ -51,18 +51,11 @@ class Pokemon {
 		uint8_t index_of_first_switch () const;
 		void normalize_hp ();
 		uint8_t power_of_mass_based_moves() const;
-		static std::string to_string (Species name);
 		std::string to_string () const;
 		std::string get_nickname () const;
-		static Species from_string (std::string const & str);
 		bool can_use_chatter() const;
 		bool can_use_substitute() const;
 		static bool is_alternate_form (Species first, Species second);
-		static bool is_deoxys (Species species);
-		static bool is_giratina (Species species);
-		static bool is_rotom (Species species);
-		static bool is_shaymin (Species species);
-		static bool is_wormadam (Species species);
 		bool is_boosted_by_adamant_orb() const;
 		bool is_boosted_by_deepseascale() const;
 		bool is_boosted_by_deepseatooth() const;

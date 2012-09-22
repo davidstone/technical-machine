@@ -41,6 +41,8 @@
 
 #include "bide/bide.hpp"
 
+#include "pokemon/collection.hpp"
+
 #include "stat/chance_to_hit.hpp"
 #include "stat/stage.hpp"
 
@@ -200,6 +202,8 @@ class ActivePokemon {
 
 	private:
 		friend class Score;
+//		PokemonCollection & all_pokemon;
+//		PokemonCollection::index_type active_pokemon;
 		uint16_t damage_done_to_active = 0;
 		Bide bide;
 		ChanceToHit cached_chance_to_hit;

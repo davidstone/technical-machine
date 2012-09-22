@@ -33,6 +33,8 @@
 
 #include "../stat/nature.hpp"
 
+#include "../string_conversions/pokemon_string.hpp"
+
 namespace technicalmachine {
 
 DetailedStats::DetailedStats() {
@@ -46,7 +48,7 @@ DetailedStats::DetailedStats() {
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		constexpr char delimiter = '\t';
 		size_t const x = line.find (delimiter);
-		Species new_member = Pokemon::from_string (line.substr (0, x));
+		Species new_member = from_string<Species>(line.substr (0, x));
 		if (new_member >= Species::END)
 			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
 		if (old_member != new_member) {
