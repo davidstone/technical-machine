@@ -42,9 +42,7 @@ class Move {
 	public:
 		Move (Moves move, unsigned pp_ups, unsigned size = 1);
 		void reset ();
-		static std::string to_string (Moves name);
 		std::string to_string () const;
-		static Moves from_string (std::string const & str);
 		bool selectable() const;
 		void selectable(bool b);
 		bool is_damaging() const;

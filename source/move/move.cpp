@@ -27,6 +27,8 @@
 #include "../rational.hpp"
 #include "../team.hpp"
 
+#include "../string_conversions/conversion.hpp"
+
 #include "../type/type.hpp"
 #undef SING
 
@@ -1336,5 +1338,9 @@ uint8_t get_base_power (Moves const move) {
 }
 
 }	// unnamed namespace
+
+std::string Move::to_string() const {
+	return ::technicalmachine::to_string(name);
+}
 
 }	// namespace technicalmachine

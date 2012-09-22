@@ -46,6 +46,8 @@
 #include "stat/chance_to_hit.hpp"
 #include "stat/stat.hpp"
 
+#include "string_conversions/conversion.hpp"
+
 namespace technicalmachine {
 namespace {
 
@@ -579,7 +581,7 @@ void print_best_move (Team const & team, Moves const best_move, int64_t score) {
 	if (Move::is_switch (best_move))
 		std::cout << "Switch to " + team.pokemon(Move::to_replacement (best_move)).to_string ();
 	else
-		std::cout << "Use " + Move::to_string (best_move);
+		std::cout << "Use " + to_string(best_move);
 	std::cout << " for a minimum expected score of " << score << "\n";
 }
 

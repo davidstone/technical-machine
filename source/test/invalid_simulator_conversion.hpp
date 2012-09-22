@@ -1,5 +1,5 @@
 // Simulator conversion exception class stuff
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,8 +22,6 @@
 #include <stdexcept>
 #include "../string_conversions/conversion.hpp"
 
-#include "../move/move.hpp"
-
 namespace technicalmachine {
 class Pokemon;
 
@@ -33,16 +31,6 @@ class InvalidSimulatorConversion : public std::logic_error {
 		template<typename Test>
 		InvalidSimulatorConversion(Test original, Test result):
 			std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
-		}
-};
-
-template<>
-class InvalidSimulatorConversion<Move> : public std::logic_error {
-	typedef Move Class;
-	public:
-		template<typename Test>
-		InvalidSimulatorConversion (Test original, Test result):
-			std::logic_error(Class::to_string(original) + " is seen as " + Class::to_string(result) + ".\n") {
 		}
 };
 

@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "../move/move.hpp"
+#include "conversion.hpp"
 
 #include <cassert>
 #include <map>
@@ -24,11 +24,13 @@
 
 #include "invalid_string_conversion.hpp"
 
+#include "../move/move.hpp"
 #include "../move/moves.hpp"
 
 namespace technicalmachine {
 
-std::string Move::to_string (Moves name) {
+template<>
+std::string to_string(Moves const name) {
 	assert(name <= Moves::END);
 	static std::string const name_to_string [] = {
 		"Absorb", "Acid", "Acid Armor", "Acupressure", "Aerial Ace",
@@ -129,11 +131,8 @@ std::string Move::to_string (Moves name) {
 	return name_to_string[static_cast<unsigned>(name)];
 }
 
-std::string Move::to_string() const {
-	return to_string (name);
-}
-
-Moves Move::from_string (std::string const & str) {
+template<>
+Moves from_string(std::string const & str) {
 	static std::map<std::string, Moves> const converter {
 		{ "Absorb", Moves::ABSORB },
 		{ "Acid", Moves::ACID },

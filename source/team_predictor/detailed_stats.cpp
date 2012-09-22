@@ -81,7 +81,7 @@ DetailedStats::DetailedStats() {
 		else if (sub == "Move") {
 			// When I get smarter move statistics, I won't want to cap this at 4
 			if (move[static_cast<size_t>(new_member)].size() < 4)
-				move[static_cast<size_t>(new_member)].emplace_back(Move::from_string(line.substr(y + 1, z - y - 1)));
+				move[static_cast<size_t>(new_member)].emplace_back(from_string<Moves>(line.substr(y + 1, z - y - 1)));
 		}
 	}
 }

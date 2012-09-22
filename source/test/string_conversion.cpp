@@ -51,20 +51,6 @@ void test_generic (std::string const & thing) {
 	}
 }
 
-template <>
-void test_generic<Move, Moves> (std::string const & thing) {
-	typedef Move Class;
-	typedef Moves Enum;
-	std::cout << "\tVerifying correct " + thing + ".\n";
-	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
-		std::string const str = Class::to_string (original);
-		Enum const result = Class::from_string (str);
-		if (original != result)
-			throw InvalidToStringConversion (original, result, str);
-	}
-}
-
-
 }	// anonymous namespace
 
 void string_conversion_tests () {
