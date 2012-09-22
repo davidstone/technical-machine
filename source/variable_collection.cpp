@@ -86,23 +86,6 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 	switch (move) {
 		case Moves::ACUPRESSURE:
 			return simple_range(0, 6, move);
-		case Moves::BIND:
-		case Moves::CLAMP:
-		case Moves::FIRE_SPIN:
-		case Moves::MAGMA_STORM:
-		case Moves::SAND_TOMB:
-		case Moves::WHIRLPOOL:
-		case Moves::WRAP: {
-			uint16_t const probability = get_probability (move);
-			return container_type ({
-				Variable(2, probability),
-				Variable(2, probability),
-				Variable(4, probability / 3),
-				Variable(5, probability / 3)
-			});
-		}
-		case Moves::ENCORE:
-			return simple_range(4, 8, move);
 		case Moves::FIRE_FANG:
 		case Moves::ICE_FANG:
 		case Moves::THUNDER_FANG: {
@@ -127,10 +110,6 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 				Variable(110, Variable::max_probability * 10u / 100u),
 				Variable(150, Variable::max_probability * 5u / 100u)
 			});
-		case Moves::OUTRAGE:
-		case Moves::PETAL_DANCE:
-		case Moves::THRASH:
-			return simple_range(2, 3, move);
 		case Moves::PRESENT: {
 			uint16_t const probability = get_probability (move);
 			return container_type ({
@@ -154,8 +133,6 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 				});
 			}
 		}
-		case Moves::TAUNT:
-			return simple_range(2, 3, move);
 		case Moves::TRI_ATTACK:
 			return simple_range(0, 3, move);
 		default:
