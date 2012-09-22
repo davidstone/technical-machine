@@ -20,8 +20,8 @@
 #define TEST__INVALID_SIMULATOR_CONVERSION_HPP_
 
 #include <stdexcept>
-#include "../string_conversions/pokemon_string.hpp"
-#include "../string_conversions/gender_string.hpp"
+#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/gender.hpp"
 
 namespace technicalmachine {
 class Pokemon;

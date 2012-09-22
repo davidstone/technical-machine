@@ -33,7 +33,7 @@
 
 #include "../stat/nature.hpp"
 
-#include "../string_conversions/pokemon_string.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 

@@ -20,7 +20,7 @@
 #define POKEMON__POKEMON_NOT_FOUND_HPP_
 
 #include <stdexcept>
-#include "../string_conversions/pokemon_string.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 enum class Species : uint16_t;

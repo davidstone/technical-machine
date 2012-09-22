@@ -32,7 +32,7 @@
 #include "../../stat/invalid_stat.hpp"
 #include "../../stat/stat.hpp"
 
-#include "../../string_conversions/pokemon_string.hpp"
+#include "../../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;

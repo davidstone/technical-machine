@@ -19,7 +19,7 @@
 def prepend_dir(directory, sources):
 	return map(lambda source: directory + '/' + source, sources)
 
-string_conversion_sources = prepend_dir('string_conversions', ['ability_string.cpp', 'gender_string.cpp', 'item_string.cpp', 'move_string.cpp', 'nature_string.cpp', 'pokemon_string.cpp', 'status_string.cpp'])
+string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'gender.cpp', 'item.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'status.cpp'])
 
 bide_sources = prepend_dir('bide', ['bide.cpp', 'damage.cpp', 'duration.cpp'])
 
