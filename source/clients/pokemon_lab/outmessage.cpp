@@ -34,7 +34,8 @@
 namespace technicalmachine {
 namespace pl {
 
-OutMessage::OutMessage (uint8_t code) : network::OutMessage::OutMessage (code) {
+OutMessage::OutMessage (uint8_t code) :
+	network::OutMessage::OutMessage (code) {
 }
 
 void OutMessage::write_string (std::string const & str) {
