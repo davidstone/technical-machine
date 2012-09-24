@@ -70,18 +70,18 @@ void write_blank_stats (boost::property_tree::ptree & pt) {
 
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
-	member.put ("<xmlattr>.Item", item_to_id (pokemon.item.name));
-	member.put ("<xmlattr>.Ability", ability_to_id (pokemon.ability.name));
-	std::pair<unsigned, unsigned> const ids = species_to_id (pokemon.name);
+	member.put ("<xmlattr>.Item", item_to_id (pokemon.item().name));
+	member.put ("<xmlattr>.Ability", ability_to_id (pokemon.ability().name));
+	std::pair<unsigned, unsigned> const ids = species_to_id (pokemon.name());
 	member.put ("<xmlattr>.Num", ids.first);
-	member.put ("<xmlattr>.Nature", nature_to_id (pokemon.nature.name));
+	member.put ("<xmlattr>.Nature", nature_to_id (pokemon.nature().name));
 	member.put ("<xmlattr>.Shiny", 0);
 	member.put ("<xmlattr>.Nickname", pokemon.get_nickname());
 	member.put ("<xmlattr>.Gen", 4);
 	member.put ("<xmlattr>.Forme", ids.second);
 	member.put ("<xmlattr>.Happiness", pokemon.happiness());
 	member.put ("<xmlattr>.Lvl", pokemon.level());
-	member.put ("<xmlattr>.Gender", gender_to_id (pokemon.gender.gender));
+	member.put ("<xmlattr>.Gender", gender_to_id (pokemon.gender().gender));
 
 	unsigned n = 0;
 	pokemon.move.for_each_regular_move([&](Move const & move) {
@@ -128,10 +128,10 @@ void write_team (Team & team, std::string const & file_name) {
 	trainer.put ("<xmlattr>.avatar", 1);
 	trainer.put ("<xmlattr>.winMsg", "");
 	trainer.put ("<xmlattr>.infoMsg", "");
-	team.pokemon.for_each([&](Pokemon const & pokemon) {
+	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
 		write_pokemon (pokemon, t);
 	});
-	for (unsigned n = team.pokemon.size (); n < 6; ++n)
+	for (unsigned n = team.all_pokemon().size (); n < 6; ++n)
 		write_blank_pokemon (t);
 	write_xml (file_name, pt, std::locale (), settings);
 }

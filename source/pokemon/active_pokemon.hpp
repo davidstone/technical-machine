@@ -55,6 +55,18 @@ class Weather;
 
 class ActivePokemon {
 	public:
+		ActivePokemon(PokemonCollection & all);
+		Pokemon const & get_pokemon() const {
+			return (*all_pokemon)();
+		}
+		Pokemon & get_pokemon() {
+			return (*all_pokemon)();
+		}
+		template<typename... Args>
+		Move const & move(Args&&... args) const {
+			return get_pokemon().move(std::forward<Args>(args)...);
+		}
+		Move & move();
 		// Not for variables that give a message at the end of the turn, this is
 		// just for some book-keeping variables.
 		void reset_end_of_turn();
@@ -63,6 +75,8 @@ class ActivePokemon {
 		void clear_field();
 		void update_before_move();
 		bool substitute(unsigned max_hp);
+		void use_substitute();
+		Ability const & ability() const;
 		void attract();
 		void awaken(bool value);
 		bool aqua_ring_is_active() const;
@@ -74,8 +88,8 @@ class ActivePokemon {
 		bool charge_boosted() const;
 		void charge();
 		bool is_confused() const;
-		void confuse(Pokemon const & pokemon);
-		void handle_confusion(Pokemon & pokemon);
+		void confuse();
+		void handle_confusion();
 		bool critical_hit() const;
 		void set_critical_hit(bool value);
 		void curse();
@@ -98,22 +112,27 @@ class ActivePokemon {
 		void fly();
 		void focus_energy();
 		void fully_trap();
+		Gender const & gender() const;
 		bool heal_block_is_active() const;
 		void activate_heal_block();
 		void decrement_heal_block();
 		bool leech_seeded() const;
 		void hit_with_leech_seed();
 		void clear_leech_seed();
-		bool is_loafing(Ability const & ability) const;
-		void decrement_lock_in(Pokemon const & pokemon);
+		bool is_loafing() const;
+		void decrement_lock_in();
 		bool locked_on() const;
 		void lock_on_to();
 		void identify();
 		bool imprisoned() const;
 		void imprison();
+		PokemonCollection::index_type index() const;
 		bool ingrained() const;
 		void ingrain();
+		Item const & item() const;
+		Item & item();
 		bool is_fully_paralyzed() const;
+		unsigned level() const;
 		bool magnet_rise_is_active() const;
 		void activate_magnet_rise();
 		void decrement_magnet_rise();
@@ -121,13 +140,15 @@ class ActivePokemon {
 		bool minimized() const;
 		bool missed() const;
 		void set_miss(bool value);
-		void move(bool value = true);
+		void set_moved(bool value = true);
 		bool moved() const;
 		void activate_mud_sport();
+		Species name() const;
+		Nature const & nature() const;
 		bool nightmare() const;
 		void give_nightmares();
 		void partially_trap(bool extended);
-		void partial_trap_damage(Pokemon & pokemon);
+		void partial_trap_damage();
 		void activate_perish_song();
 		bool perish_song_turn();
 		bool power_trick_is_active() const;
@@ -145,10 +166,22 @@ class ActivePokemon {
 		void shadow_force();
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
-		void increase_sleep_counter(Pokemon & pokemon);
+		void increase_sleep_counter();
 		bool slow_start_is_active() const;
 		bool sport_is_active(Move const & foe_move) const;
 
+		Stat const & hp() const;
+		Stat & hp();
+		Stat const & atk() const;
+		Stat & atk();
+		Stat const & def() const;
+		Stat & def();
+		Stat const & spa() const;
+		Stat & spa();
+		Stat const & spd() const;
+		Stat & spd();
+		Stat const & spe() const;
+		Stat & spe();
 		int current_stage(Stat::Stats stat) const;
 		unsigned positive_stat_boosts() const;
 		template<Stat::Stats stat, typename... Args>
@@ -166,12 +199,21 @@ class ActivePokemon {
 		static void swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
 		static void swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
 		static void swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs);
+		
+		Status const & status() const;
+		Status & status();
 
 		unsigned spit_up_power() const;
 		bool increment_stockpile();
 		int release_stockpile();
 
+		bool is_switching_to_self () const;
+		bool is_switching_to_self (Move const & switch_move) const;
 		bool switch_decision_required() const;
+		void switch_pokemon();
+		void switch_in();
+		void update_to_correct_switch();
+		
 		bool trapped() const;
 		bool tormented() const;
 		void taunt();
@@ -180,6 +222,7 @@ class ActivePokemon {
 		void increment_taunt();
 		Rational toxic_ratio() const;
 		void increment_toxic();
+		TypeCollection const & type() const;
 		void u_turn();
 		void use_uproar();
 		bool vanish_doubles_power(Moves move_name) const;
@@ -190,20 +233,28 @@ class ActivePokemon {
 		bool is_locked_in_to_bide() const;
 		unsigned damaged() const;
 		void do_damage(unsigned damage);
-		void update_chance_to_hit(Pokemon const & user, Pokemon const & target, ActivePokemon const & active_target, Weather const & weather, bool target_moved);
+		void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 		ChanceToHit::value_type chance_to_hit() const;
 		ChanceToHit::value_type chance_to_miss() const;
 		bool can_miss() const;
+		
+		bool will_be_replaced() const;
+		
+		void normalize_hp();
 
 		friend bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs);
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		hash_type max_hash() const;
+		
+		std::string to_string() const;
 
 	private:
 		friend class Score;
-//		PokemonCollection & all_pokemon;
-//		PokemonCollection::index_type active_pokemon;
+		// I'd make this a reference but I don't want to manually define a copy
+		// and move assignment operator to simply verify that the referents are
+		// the same.
+		PokemonCollection * all_pokemon;
 		uint16_t damage_done_to_active = 0;
 		Bide bide;
 		ChanceToHit cached_chance_to_hit;

@@ -58,9 +58,9 @@ void Ability::set_if_unknown (Abilities const ability) {
 bool Ability::blocks_switching (Team const & switcher, Weather const & weather) const {
 	switch (name) {
 		case SHADOW_TAG:
-			return switcher.pokemon().ability.name != Ability::SHADOW_TAG;
+			return switcher.pokemon().ability().name != Ability::SHADOW_TAG;
 		case ARENA_TRAP:
-			return grounded (switcher, switcher.pokemon(), weather);
+			return grounded (switcher, switcher.pokemon().get_pokemon(), weather);
 		case MAGNET_PULL:
 			return is_type (switcher, Type::STEEL);
 		default:
@@ -274,12 +274,12 @@ bool Ability::is_loafing (bool const loaf) const {
 }
 
 void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weather) {
-	switch (switcher.pokemon().ability.name) {
+	switch (switcher.pokemon().ability().name) {
 		case DOWNLOAD: {
-			Pokemon const & pokemon = other.pokemon();
+			auto const & pokemon = other.pokemon();
 			calculate_defense (other);
 			calculate_special_defense (other, weather);
-			switcher.stat_boost((pokemon.def.stat >= pokemon.spd.stat) ? Stat::SPA : Stat::ATK, 1);
+			switcher.stat_boost((pokemon.def().stat >= pokemon.spd().stat) ? Stat::SPA : Stat::ATK, 1);
 			break;
 		}
 		case DRIZZLE:

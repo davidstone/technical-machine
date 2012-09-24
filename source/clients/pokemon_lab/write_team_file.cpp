@@ -64,10 +64,10 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("nickname", pokemon.get_nickname());
 	member.put ("level", pokemon.level());
 	member.put ("happiness", pokemon.happiness());
-	member.put ("gender", pokemon.gender.to_string ());
-	member.put ("nature", pokemon.nature.to_string ());
-	member.put ("item", pokemon.item.to_string ());
-	member.put ("ability", pokemon.ability.to_string ());
+	member.put ("gender", pokemon.gender().to_string ());
+	member.put ("nature", pokemon.nature().to_string ());
+	member.put ("item", pokemon.item().to_string ());
+	member.put ("ability", pokemon.ability().to_string ());
 	pokemon.move.for_each_regular_move ([&](Move const & move) {
 		write_move (move, member);
 	});
@@ -80,7 +80,7 @@ void write_team (Team const & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;
 	boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
 	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
-	team.pokemon.for_each([&](Pokemon const & pokemon) {
+	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
 		write_pokemon (pokemon, t);
 	});
 	write_xml (file_name, pt, std::locale (), settings);

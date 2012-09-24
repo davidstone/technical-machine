@@ -83,32 +83,32 @@ void calculate_attacking_stat (Team & attacker, Weather const & weather) {
 }
 
 void calculate_attack(Team & attacker, Weather const & weather) {
-	Pokemon & pokemon = attacker.pokemon ();
-	pokemon.atk.stat = !attacker.power_trick_is_active() ?
-		calculate_attack_before_power_trick (pokemon) :
-		calculate_defense_before_power_trick (pokemon);
+	auto & pokemon = attacker.pokemon();
+	pokemon.atk().stat = !attacker.power_trick_is_active() ?
+		calculate_attack_before_power_trick(pokemon.get_pokemon()) :
+		calculate_defense_before_power_trick(pokemon.get_pokemon());
 
-	pokemon.atk.stat *= attacker.stage_modifier<Stat::ATK>(attacker.critical_hit());
+	pokemon.atk().stat *= attacker.stage_modifier<Stat::ATK>(attacker.critical_hit());
 
-	pokemon.atk.stat *= attack_ability_modifier(pokemon, attacker.slow_start_is_active(), weather);
-	pokemon.atk.stat *= attack_item_modifier(pokemon);
+	pokemon.atk().stat *= attack_ability_modifier(pokemon.get_pokemon(), attacker.slow_start_is_active(), weather);
+	pokemon.atk().stat *= attack_item_modifier(pokemon.get_pokemon());
 	
-	if (pokemon.atk.stat == 0)
-		pokemon.atk.stat = 1;
+	if (pokemon.atk().stat == 0)
+		pokemon.atk().stat = 1;
 }
 
 void calculate_special_attack (Team & attacker, Weather const & weather) {
-	Pokemon & pokemon = attacker.pokemon ();
-	pokemon.spa.stat = calculate_initial_stat (pokemon.spa, pokemon.level());
-	pokemon.spa.stat *= Rational(pokemon.nature.boost<Stat::SPA>(), 10);
+	auto & pokemon = attacker.pokemon ();
+	pokemon.spa().stat = calculate_initial_stat (pokemon.spa(), pokemon.level());
+	pokemon.spa().stat *= Rational(pokemon.nature().boost<Stat::SPA>(), 10);
 
-	pokemon.spa.stat *= attacker.stage_modifier<Stat::SPA>(attacker.critical_hit());
+	pokemon.spa().stat *= attacker.stage_modifier<Stat::SPA>(attacker.critical_hit());
 
-	pokemon.spa.stat *= special_attack_ability_modifier(pokemon.ability, weather);
-	pokemon.spa.stat *= special_attack_item_modifier(pokemon);
+	pokemon.spa().stat *= special_attack_ability_modifier(pokemon.ability(), weather);
+	pokemon.spa().stat *= special_attack_item_modifier(pokemon.get_pokemon());
 
-	if (pokemon.spa.stat == 0)
-		pokemon.spa.stat = 1;
+	if (pokemon.spa().stat == 0)
+		pokemon.spa().stat = 1;
 }
 
 void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather) {
@@ -119,55 +119,55 @@ void calculate_defending_stat (Team const & attacker, Team & defender, Weather c
 }
 
 void calculate_defense (Team & defender, bool ch, bool is_self_KO) {
-	Pokemon & pokemon = defender.pokemon ();
-	pokemon.def.stat = !defender.power_trick_is_active() ?
-		calculate_defense_before_power_trick (pokemon) :
-		calculate_attack_before_power_trick (pokemon);
+	auto & pokemon = defender.pokemon ();
+	pokemon.def().stat = !defender.power_trick_is_active() ?
+		calculate_defense_before_power_trick (pokemon.get_pokemon()) :
+		calculate_attack_before_power_trick (pokemon.get_pokemon());
 
-	pokemon.def.stat *= defender.stage_modifier<Stat::DEF>(ch);
+	pokemon.def().stat *= defender.stage_modifier<Stat::DEF>(ch);
 	
-	pokemon.def.stat *= defense_ability_modifier(pokemon);
-	pokemon.def.stat *= defense_item_modifier(pokemon);
+	pokemon.def().stat *= defense_ability_modifier(pokemon.get_pokemon());
+	pokemon.def().stat *= defense_item_modifier(pokemon.get_pokemon());
 	
 	if (is_self_KO)
-		pokemon.def.stat /= 2;
+		pokemon.def().stat /= 2;
 
-	if (pokemon.def.stat == 0)
-		pokemon.def.stat = 1;
+	if (pokemon.def().stat == 0)
+		pokemon.def().stat = 1;
 }
 
 void calculate_special_defense (Team & defender, Weather const & weather, bool ch) {
-	Pokemon & pokemon = defender.pokemon ();
-	pokemon.spd.stat = calculate_initial_stat (pokemon.spd, pokemon.level());
-	pokemon.spd.stat *= Rational(pokemon.nature.boost<Stat::SPD>(), 10);
+	auto & pokemon = defender.pokemon ();
+	pokemon.spd().stat = calculate_initial_stat (pokemon.spd(), pokemon.level());
+	pokemon.spd().stat *= Rational(pokemon.nature().boost<Stat::SPD>(), 10);
 	
-	pokemon.spd.stat *= defender.stage_modifier<Stat::SPD>(ch);
+	pokemon.spd().stat *= defender.stage_modifier<Stat::SPD>(ch);
 
-	pokemon.spd.stat *= special_defense_ability_modifier(pokemon.ability, weather);	
-	pokemon.spd.stat *= special_defense_item_modifier(pokemon);
+	pokemon.spd().stat *= special_defense_ability_modifier(pokemon.ability(), weather);	
+	pokemon.spd().stat *= special_defense_item_modifier(pokemon.get_pokemon());
 	
-	pokemon.spd.stat *= special_defense_sandstorm_boost(defender, weather);
+	pokemon.spd().stat *= special_defense_sandstorm_boost(defender, weather);
 	
-	if (pokemon.spd.stat == 0)
-		pokemon.spd.stat = 1;
+	if (pokemon.spd().stat == 0)
+		pokemon.spd().stat = 1;
 }
 
 void calculate_speed (Team & team, Weather const & weather) {
-	Pokemon & pokemon = team.pokemon();
-	pokemon.spe.stat = calculate_initial_stat (pokemon.spe, pokemon.level());
-	pokemon.spe.stat *= Rational(pokemon.nature.boost<Stat::SPE>(), 10);
+	auto & pokemon = team.pokemon();
+	pokemon.spe().stat = calculate_initial_stat (pokemon.spe(), pokemon.level());
+	pokemon.spe().stat *= Rational(pokemon.nature().boost<Stat::SPE>(), 10);
 	
-	pokemon.spe.stat *= team.stage_modifier<Stat::SPE>();
+	pokemon.spe().stat *= team.stage_modifier<Stat::SPE>();
 
-	pokemon.spe.stat *= speed_ability_modifier(team, weather);
-	pokemon.spe.stat *= speed_item_modifier(pokemon);
+	pokemon.spe().stat *= speed_ability_modifier(team, weather);
+	pokemon.spe().stat *= speed_item_modifier(pokemon.get_pokemon());
 	
-	pokemon.spe.stat /= paralysis_speed_divisor (pokemon);
+	pokemon.spe().stat /= paralysis_speed_divisor (pokemon.get_pokemon());
 	
-	pokemon.spe.stat *= tailwind_speed_multiplier (team);
+	pokemon.spe().stat *= tailwind_speed_multiplier (team);
 
-	if (pokemon.spe.stat == 0)
-		pokemon.spe.stat = 1;
+	if (pokemon.spe().stat == 0)
+		pokemon.spe().stat = 1;
 }
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
@@ -187,11 +187,11 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 }
 
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	if (team1.pokemon().spe.stat > team2.pokemon().spe.stat) {
+	if (team1.pokemon().spe().stat > team2.pokemon().spe().stat) {
 		faster = &team1;
 		slower = &team2;
 	}
-	else if (team1.pokemon().spe.stat < team2.pokemon().spe.stat) {
+	else if (team1.pokemon().spe().stat < team2.pokemon().spe().stat) {
 		faster = &team2;
 		slower = &team1;
 	}
@@ -211,20 +211,20 @@ unsigned calculate_initial_stat (Stat const & stat, unsigned level) {
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {
 	unsigned const n = calculate_initial_stat (attacker.atk, attacker.level());
-	return n * attacker.nature.boost<Stat::ATK>() / 10;
+	return n * attacker.nature().boost<Stat::ATK>() / 10;
 }
 
 unsigned calculate_defense_before_power_trick (Pokemon const & defender) {
 	unsigned const n = calculate_initial_stat (defender.def, defender.level());
-	return n * defender.nature.boost<Stat::DEF>() / 10;
+	return n * defender.nature().boost<Stat::DEF>() / 10;
 }
 
 Rational attack_ability_modifier(Pokemon const & attacker, bool slow_start, Weather const & weather) {
-	switch (attacker.ability.name) {
+	switch (attacker.ability().name) {
 		case Ability::FLOWER_GIFT:
 			return weather.sun() ? Rational(3, 2) : Rational(1);
 		case Ability::GUTS:
-			return (!attacker.status.is_clear()) ? Rational(3, 2) : Rational(1);
+			return (!attacker.status().is_clear()) ? Rational(3, 2) : Rational(1);
 		case Ability::HUSTLE:
 			return Rational(3, 2);
 		case Ability::HUGE_POWER:
@@ -238,7 +238,7 @@ Rational attack_ability_modifier(Pokemon const & attacker, bool slow_start, Weat
 }
 
 Rational attack_item_modifier(Pokemon const & attacker) {
-	switch (attacker.item.name) {
+	switch (attacker.item().name) {
 		case Item::CHOICE_BAND:
 			return Rational(3, 2);
 		case Item::LIGHT_BALL:
@@ -255,7 +255,7 @@ Rational special_attack_ability_modifier(Ability const & ability, Weather const 
 }
 
 Rational special_attack_item_modifier(Pokemon const & attacker) {
-	switch (attacker.item.name) {
+	switch (attacker.item().name) {
 		case Item::SOUL_DEW:
 			return attacker.is_boosted_by_soul_dew() ? Rational(3, 2) : Rational(1);
 		case Item::CHOICE_SPECS:
@@ -270,11 +270,11 @@ Rational special_attack_item_modifier(Pokemon const & attacker) {
 }
 
 Rational defense_ability_modifier(Pokemon const & defender) {
-	return defender.ability.boosts_defense(defender.status) ? Rational(3, 2) : Rational(1);
+	return defender.ability().boosts_defense(defender.status()) ? Rational(3, 2) : Rational(1);
 }
 
 Rational defense_item_modifier(Pokemon const & defender) {
-	return (defender.item.name == Item::METAL_POWDER and defender.is_boosted_by_metal_powder()) ?
+	return (defender.item().name == Item::METAL_POWDER and defender.is_boosted_by_metal_powder()) ?
 		Rational(3, 2) :
 		Rational(1);
 }
@@ -284,7 +284,7 @@ Rational special_defense_ability_modifier(Ability const & ability, Weather const
 }
 
 Rational special_defense_item_modifier(Pokemon const & defender) {
-	switch (defender.item.name) {
+	switch (defender.item().name) {
 		case Item::DEEPSEASCALE:
 			return defender.is_boosted_by_deepseascale() ? Rational(2) : Rational(1);
 		case Item::METAL_POWDER:
@@ -301,15 +301,15 @@ Rational special_defense_sandstorm_boost(Team const & defender, Weather const & 
 }
 
 Rational speed_ability_modifier(Team const & team, Weather const & weather) {
-	switch (team.pokemon().ability.name) {
+	switch (team.pokemon().ability().name) {
 		case Ability::CHLOROPHYLL:
 			return weather.sun() ? Rational(2) : Rational(1);
 		case Ability::SWIFT_SWIM:
 			return weather.rain() ? Rational(2) : Rational(1);
 		case Ability::UNBURDEN:
-			return team.pokemon().item.was_lost() ? Rational(2) : Rational(1);
+			return team.pokemon().item().was_lost() ? Rational(2) : Rational(1);
 		case Ability::QUICK_FEET:
-			return (!team.pokemon().status.is_clear()) ? Rational(3, 2) : Rational(1);
+			return (!team.pokemon().status().is_clear()) ? Rational(3, 2) : Rational(1);
 		case Ability::SLOW_START:
 			return team.slow_start_is_active() ? Rational(1, 2) : Rational(1);
 		default:
@@ -318,7 +318,7 @@ Rational speed_ability_modifier(Team const & team, Weather const & weather) {
 }
 
 Rational speed_item_modifier(Pokemon const & pokemon) {
-	switch (pokemon.item.name) {
+	switch (pokemon.item().name) {
 		case Item::QUICK_POWDER:
 			return pokemon.is_boosted_by_quick_powder() ? Rational(2) : Rational(1);
 		case Item::CHOICE_SCARF:
@@ -337,7 +337,7 @@ Rational speed_item_modifier(Pokemon const & pokemon) {
 }
 
 unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
-	return pokemon.status.lowers_speed (pokemon.ability) ? 4 : 1;
+	return pokemon.status().lowers_speed(pokemon.ability()) ? 4 : 1;
 }
 
 unsigned tailwind_speed_multiplier (Team const & team) {

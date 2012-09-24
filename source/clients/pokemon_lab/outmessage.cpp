@@ -45,26 +45,26 @@ void OutMessage::write_string (std::string const & str) {
 }
 
 void OutMessage::write_team (Team const & team, std::string const &) {
-	write_int (team.pokemon.size());
-	team.pokemon.for_each([&](Pokemon const & pokemon) {
+	write_int(team.all_pokemon().size());
+	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
 		write_pokemon (pokemon);
 	});
 }
 
 void OutMessage::write_pokemon (Pokemon const & pokemon) {
-	write_int (species_to_id (pokemon.name));
+	write_int(species_to_id(pokemon.name()));
 	write_string (pokemon.get_nickname());
 	constexpr bool shiny = false;
 	write_byte (shiny);
 
-	uint8_t const gender = gender_to_id (pokemon.gender.gender);
+	uint8_t const gender = gender_to_id(pokemon.gender().gender);
 	write_byte (gender);
 
 	write_byte (pokemon.happiness());
 	write_int(pokemon.level());
-	write_string (pokemon.item.to_string ());
-	write_string (pokemon.ability.to_string ());
-	write_int (pokemon.nature.name);
+	write_string(pokemon.item().to_string());
+	write_string(pokemon.ability().to_string());
+	write_int(pokemon.nature().name);
 	write_int (pokemon.move.number_of_regular_moves());
 	pokemon.move.for_each_regular_move([&](Move const & move) {
 		write_int (move_to_id (move.name));

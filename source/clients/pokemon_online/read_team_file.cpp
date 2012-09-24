@@ -91,14 +91,14 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 	uint8_t const level = pt.get<uint8_t>("<xmlattr>.Lvl");
 	uint8_t const happiness = pt.get<uint8_t>("<xmlattr>.Happiness");
 	team.add_pokemon(species, level, Gender(id_to_gender(gender)), nickname, happiness);
-	Pokemon & pokemon = team.pokemon.at_replacement();
+	Pokemon & pokemon = team.replacement();
 
 	unsigned const item = pt.get<unsigned>("<xmlattr>.Item");
-	pokemon.item.name = id_to_item(item);
+	pokemon.item().name = id_to_item(item);
 	unsigned const ability = pt.get<unsigned>("<xmlattr>.Ability");
-	pokemon.ability.name = id_to_ability(ability);
+	pokemon.ability().name = id_to_ability(ability);
 	unsigned const nature = pt.get<unsigned>("<xmlattr>.Nature");
-	pokemon.nature.name = id_to_nature(nature);
+	pokemon.nature().name = id_to_nature(nature);
 
 	unsigned n = 0;
 	for (auto const & value : pt.get_child("")) {
@@ -127,12 +127,12 @@ void load_team(Team & team, std::string const & file_name, unsigned foe_size) {
 	read_xml(file_name, pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
-	team.pokemon.initialize_size(number_of_pokemon(all_pokemon));
+	team.all_pokemon().initialize_size(number_of_pokemon(all_pokemon));
 	for (auto const & value : all_pokemon) {
 		if (value.first == "Pokemon" and is_real_pokemon(value.second))
 			load_pokemon(value.second, team, foe_size);
 	}
-	team.pokemon.reset_index();
+	team.all_pokemon().reset_index();
 }
 
 }	// namespace po

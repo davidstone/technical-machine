@@ -59,16 +59,16 @@ Team predict_team (DetailedStats const & detailed, Team team, unsigned size, boo
 	for (unsigned n = 0; n != max_species; ++n)
 		estimate [n] = lead [n] * overall [n] / total;
 
-	team.pokemon.for_each([& estimate, & multiplier](Pokemon const & pokemon) {
+	team.all_pokemon().for_each([& estimate, & multiplier](Pokemon const & pokemon) {
 		for (unsigned n = 0; n != max_species; ++n)
-			estimate [n] *= multiplier[static_cast<size_t>(pokemon.name)] [n];
+			estimate [n] *= multiplier[static_cast<size_t>(pokemon.name())] [n];
 	});
 	predict_pokemon (team, estimate, multiplier);
-	team.pokemon.for_each([& detailed, size](Pokemon & pokemon) {
-		pokemon.ability.set_if_unknown (static_cast <Ability::Abilities> (detailed.ability[static_cast<size_t>(pokemon.name)]));
-		pokemon.item.set_if_unknown (static_cast <Item::Items> (detailed.item[static_cast<size_t>(pokemon.name)]));
-		pokemon.nature.set_if_unknown (static_cast <Nature::Natures> (detailed.nature[static_cast<size_t>(pokemon.name)]));
-		predict_move (pokemon, detailed.move[static_cast<size_t>(pokemon.name)], size);
+	team.all_pokemon().for_each([& detailed, size](Pokemon & pokemon) {
+		pokemon.ability().set_if_unknown (static_cast <Ability::Abilities> (detailed.ability[static_cast<size_t>(pokemon.name())]));
+		pokemon.item().set_if_unknown (static_cast <Item::Items> (detailed.item[static_cast<size_t>(pokemon.name())]));
+		pokemon.nature().set_if_unknown (static_cast <Nature::Natures> (detailed.nature[static_cast<size_t>(pokemon.name())]));
+		predict_move (pokemon, detailed.move[static_cast<size_t>(pokemon.name())], size);
 	});
 	return team;
 }
@@ -76,18 +76,18 @@ Team predict_team (DetailedStats const & detailed, Team team, unsigned size, boo
 namespace {
 
 void predict_pokemon (Team & team, std::array<float, max_species> estimate, float multiplier [max_species] [max_species]) {
-	auto const index = team.pokemon.index();
-	while (team.pokemon.size() < team.pokemon.real_size()) {
+	auto const index = team.pokemon().index();
+	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = get_most_likely_pokemon (estimate);
 		constexpr unsigned level = 100;
 		Gender const gender;
 		team.add_pokemon(name, level, gender);
-		if (team.pokemon.size() == team.pokemon.real_size())
+		if (team.number_of_seen_pokemon() == team.size())
 			break;
 		for (unsigned n = 0; n != max_species; ++n)
-			estimate [n] *= multiplier[static_cast<size_t>(team.pokemon(team.pokemon.size() - 1).name)][n];
+			estimate [n] *= multiplier[static_cast<size_t>(team.pokemon(team.all_pokemon().size() - 1).name())][n];
 	}
-	team.pokemon.set_index(index);
+	team.all_pokemon().set_index(index);
 }
 
 Species get_most_likely_pokemon (std::array<float, max_species> const & estimate) {

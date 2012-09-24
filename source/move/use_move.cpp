@@ -72,13 +72,13 @@ void fang_side_effects(Pokemon & user, Team & target, Weather const & weather) {
 		case 0:
 			break;
 		case 1:
-			Status::apply<status>(user, target.pokemon(), weather);
+			Status::apply<status>(user, target.pokemon().get_pokemon(), weather);
 			break;
 		case 2:
 			target.flinch();
 			break;
 		case 3:	
-			Status::apply<status>(user, target.pokemon(), weather);
+			Status::apply<status>(user, target.pokemon().get_pokemon(), weather);
 			target.flinch();
 			break;
 		default:
@@ -99,7 +99,7 @@ void recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, un
 unsigned call_move (Team & user, Team & target, Weather & weather, bool const damage_is_known) {
 	user.update_before_move();
 	if (can_execute_move (user, target, weather)) {
-		user.lower_pp(target.pokemon().ability);
+		user.lower_pp(target.pokemon().ability());
 		if (user.pokemon().move().calls_other_move())
 			call_other_move (user);
 		if (!user.missed())
@@ -114,13 +114,13 @@ unsigned use_move (Team & user, Team & target, Weather & weather, bool const dam
 	Move & move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
-	if (target.pokemon().ability.blocks_sound_moves() and move.is_sound_based() and
+	if (target.pokemon().ability().blocks_sound_moves() and move.is_sound_based() and
 			!(move.name == Moves::HEAL_BELL or move.name == Moves::PERISH_SONG))
 		return 0;
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
 
-	do_effects_before_moving (user.pokemon(), target);
+	do_effects_before_moving (user.pokemon().get_pokemon(), target);
 
 	unsigned const damage = calculate_real_damage(user, target, weather, damage_is_known);
 	do_damage (user, target, damage);
@@ -136,8 +136,8 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 		target.screens.shatter();
 	}
 	else if (user.move().is_usable_while_frozen()) {
-		if (user.status.is_frozen())
-			user.status.clear();
+		if (user.status().is_frozen())
+			user.status().clear();
 	}
 }
 
@@ -155,9 +155,9 @@ unsigned calculate_real_damage(Team & user, Team & target, Weather const & weath
 void do_damage(Team & user, Team & target, unsigned const damage) {
 	if (damage == 0)
 		return;
-	damage_side_effect (target.pokemon(), damage);
-	if (user.pokemon().item.causes_recoil())
-		heal (user.pokemon(), -10);
+	damage_side_effect(target.pokemon().get_pokemon(), damage);
+	if (user.pokemon().item().causes_recoil())
+		heal (user.pokemon().get_pokemon(), -10);
 	target.do_damage(damage);
 }
 
@@ -169,7 +169,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::GIGA_DRAIN:
 		case Moves::LEECH_LIFE:
 		case Moves::MEGA_DRAIN:
-			absorb_hp(user.pokemon(), target.pokemon(), damage);
+			absorb_hp(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), damage);
 			break;
 		case Moves::ACID:
 		case Moves::BUG_BUZZ:
@@ -238,7 +238,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			cure_all_status(user, [](Pokemon const & pokemon) { return true; });
 			break;
 		case Moves::ATTRACT:
-			if (user.pokemon().gender.multiplier (target.pokemon().gender) == -1)
+			if (user.pokemon().gender().multiplier(target.pokemon().gender()) == -1)
 				target.attract();
 			break;
 		case Moves::BATON_PASS:
@@ -248,7 +248,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			belly_drum(user);
 			break;
 		case Moves::BIDE:
-			user.use_bide(target.pokemon());
+			user.use_bide(target.pokemon().get_pokemon());
 			break;
 		case Moves::BIND:
 		case Moves::CLAMP:
@@ -278,14 +278,14 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::LAVA_PLUME:
 		case Moves::SACRED_FIRE:
 			if (move.variable().effect_activates())
-				Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
+				Status::apply<Status::BURN>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::BLIZZARD:
 		case Moves::ICE_BEAM:
 		case Moves::ICE_PUNCH:
 		case Moves::POWDER_SNOW:
 			if (move.variable().effect_activates())
-				Status::apply<Status::FREEZE>(user.pokemon(), target.pokemon(), weather);
+				Status::apply<Status::FREEZE>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::BLOCK:
 		case Moves::MEAN_LOOK:
@@ -304,7 +304,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::THUNDERPUNCH:
 		case Moves::THUNDERSHOCK:
 			if (move.variable().effect_activates())
-				Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
+				Status::apply<Status::PARALYSIS>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::BOUNCE:		// TODO: add paralysis
 			user.bounce();
@@ -312,7 +312,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::BRAVE_BIRD:
 		case Moves::DOUBLE_EDGE:
 		case Moves::WOOD_HAMMER:
-			recoil (user.pokemon(), damage, 3);
+			recoil (user.pokemon().get_pokemon(), damage, 3);
 			break;
 		case Moves::BUBBLE:
 		case Moves::BUBBLEBEAM:
@@ -332,7 +332,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::CAMOUFLAGE:
 			break;
 		case Moves::CAPTIVATE:
-			if (user.pokemon().gender.multiplier (target.pokemon().gender) == -1)
+			if (user.pokemon().gender().multiplier(target.pokemon().gender()) == -1)
 				target.stat_boost(Stat::SPD, -2);
 			break;
 		case Moves::CHARGE:
@@ -348,7 +348,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.stat_boost(Stat::ATK, -2);
 			break;
 		case Moves::CHATTER:
-			if (user.pokemon().can_use_chatter() and move.variable().effect_activates())
+			if (user.pokemon().get_pokemon().can_use_chatter() and move.variable().effect_activates())
 				target.confuse();
 			break;
 		case Moves::CLOSE_COMBAT:
@@ -391,11 +391,11 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::COUNTER:
 			if (target.pokemon().move().is_physical())
-				damage_side_effect (target.pokemon(), user.damaged() * 2u);
+				damage_side_effect(target.pokemon().get_pokemon(), user.damaged() * 2u);
 			break;
 		case Moves::COVET:
 		case Moves::THIEF:
-			user.pokemon().item.steal (target.pokemon().item);
+			user.pokemon().item().steal(target.pokemon().item());
 			break;
 		case Moves::CROSS_POISON:
 		case Moves::GUNK_SHOT:
@@ -406,7 +406,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SLUDGE_BOMB:
 		case Moves::SMOG:
 			if (move.variable().effect_activates())
-				Status::apply<Status::POISON>(user.pokemon(), target.pokemon(), weather);
+				Status::apply<Status::POISON>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::CURSE:
 			curse(user, target);
@@ -418,7 +418,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SING:
 		case Moves::SLEEP_POWDER:
 		case Moves::SPORE:
-			Status::apply<Status::SLEEP>(user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::SLEEP>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::DEFENSE_CURL:
 			user.stat_boost(Stat::DEF, 1);
@@ -461,8 +461,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.stat_boost(Stat::SPE, 1);
 			break;
 		case Moves::DREAM_EATER:
-			if (target.pokemon().status.is_sleeping ())
-				absorb_hp(user.pokemon(), target.pokemon(), damage);
+			if (target.pokemon().status().is_sleeping ())
+				absorb_hp(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), damage);
 			break;
 		case Moves::EMBARGO:
 			target.activate_embargo();
@@ -475,7 +475,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::EXPLOSION:
 		case Moves::SELFDESTRUCT:
-			user.pokemon().hp.stat = 0;
+			user.pokemon().hp().stat = 0;
 			break;
 		case Moves::FAKE_TEARS:
 		case Moves::METAL_SOUND:
@@ -485,10 +485,10 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.break_protect();
 			break;
 		case Moves::FIRE_FANG:
-			fang_side_effects<Status::BURN>(user.pokemon(), target, weather);
+			fang_side_effects<Status::BURN>(user.pokemon().get_pokemon(), target, weather);
 			break;
 		case Moves::FLARE_BLITZ:
-			recoil_status<Status::BURN>(user.pokemon(), target.pokemon(), weather, damage);
+			recoil_status<Status::BURN>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather, damage);
 			break;
 		case Moves::FLASH:
 		case Moves::KINESIS:
@@ -501,7 +501,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			confusing_stat_boost(move, target, Stat::SPA, 1);
 			break;
 		case Moves::FLING:
-			user.pokemon().item.remove();
+			user.pokemon().item().remove();
 			break;
 		case Moves::FLY:
 			user.fly();
@@ -523,7 +523,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::STUN_SPORE:
 		case Moves::THUNDER_WAVE:
 		case Moves::ZAP_CANNON:
-			Status::apply<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::PARALYSIS>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::GRAVITY:
 			weather.set_gravity();
@@ -540,7 +540,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			Team::swap_defensive_stages(user, target);
 			break;
 		case Moves::HAIL:
-			weather.set_hail (user.pokemon().item.extends_hail());
+			weather.set_hail (user.pokemon().item().extends_hail());
 			break;
 		case Moves::HAMMER_ARM:
 			user.stat_boost(Stat::SPE, -1);
@@ -554,11 +554,11 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.reset_stats();
 			break;
 		case Moves::HEAD_SMASH:
-			recoil (user.pokemon(), damage, 2);
+			recoil (user.pokemon().get_pokemon(), damage, 2);
 			break;
 		case Moves::HEAL_BELL:
 			cure_all_status(user, [](Pokemon const & pokemon) {
-				return !pokemon.ability.blocks_sound_moves();
+				return !pokemon.ability().blocks_sound_moves();
 			});
 			break;
 		case Moves::HEAL_BLOCK:
@@ -569,7 +569,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::RECOVER:
 		case Moves::SLACK_OFF:
 		case Moves::SOFTBOILED:
-			heal (user.pokemon(), 2);
+			heal (user.pokemon().get_pokemon(), 2);
 			break;
 		case Moves::HEALING_WISH:		// Fix
 			break;
@@ -590,7 +590,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::ROLLOUT:
 			break;
 		case Moves::ICE_FANG:
-			fang_side_effects<Status::FREEZE>(user.pokemon(), target, weather);
+			fang_side_effects<Status::FREEZE>(user.pokemon().get_pokemon(), target, weather);
 			break;
 		case Moves::ICY_WIND:
 		case Moves::MUD_SHOT:
@@ -614,7 +614,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.stat_boost(Stat::DEF, -1);
 			break;
 		case Moves::LIGHT_SCREEN:
-			user.screens.activate_light_screen(user.pokemon().item.extends_light_screen());
+			user.screens.activate_light_screen(user.pokemon().item().extends_light_screen());
 			break;
 		case Moves::LOCK_ON:
 		case Moves::MIND_READER:
@@ -634,10 +634,10 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::MEMENTO:
 			target.stat_boost_offensive(-2);
-			user.pokemon().hp.stat = 0;
+			user.pokemon().hp().stat = 0;
 			break;
 		case Moves::METAL_BURST:
-			damage_side_effect (target.pokemon(), user.damaged() * 3u / 2);
+			damage_side_effect(target.pokemon().get_pokemon(), user.damaged() * 3u / 2);
 			break;
 		case Moves::MIMIC:		// Fix
 			break;
@@ -645,7 +645,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::MIRROR_COAT:
 			if (target.pokemon().move().is_special())
-				damage_side_effect (target.pokemon(), user.damaged() * 2u);
+				damage_side_effect(target.pokemon().get_pokemon(), user.damaged() * 2u);
 			break;
 		case Moves::MIRROR_SHOT:
 		case Moves::MUD_BOMB:
@@ -665,11 +665,11 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::MORNING_SUN:
 		case Moves::SYNTHESIS:
 			if (weather.sun())
-				heal (user.pokemon(), 3, 2);
+				heal (user.pokemon().get_pokemon(), 3, 2);
 			else if (weather.hail() or weather.rain() or weather.sand())
-				heal (user.pokemon(), 4);
+				heal (user.pokemon().get_pokemon(), 4);
 			else
-				heal (user.pokemon(), 2);
+				heal (user.pokemon().get_pokemon(), 2);
 			break;
 		case Moves::MUD_SPORT:
 			user.activate_mud_sport();
@@ -687,7 +687,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.activate_rampage();
 			break;
 		case Moves::PAIN_SPLIT:
-			equalize(user.pokemon().hp, target.pokemon().hp);
+			equalize(user.pokemon().hp(), target.pokemon().hp());
 			break;
 		case Moves::PERISH_SONG:
 			user.activate_perish_song();
@@ -695,11 +695,11 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::POISON_FANG:
 			if (move.variable().effect_activates())
-				Status::apply<Status::POISON_TOXIC>(user.pokemon(), target.pokemon(), weather);
+				Status::apply<Status::POISON_TOXIC>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::POISON_GAS:
 		case Moves::POISONPOWDER:
-			Status::apply<Status::POISON>(user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::POISON>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::POWER_SWAP:
 			user.swap_offensive_stages(user, target);
@@ -709,7 +709,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::PRESENT:
 			if (move.variable().present_heals()) {
-				Stat & hp = target.pokemon().hp;
+				Stat & hp = target.pokemon().hp();
 				hp.stat += 80;
 				hp.stat = std::min(hp.stat, hp.max);
 			}
@@ -718,13 +718,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.copy_stat_boosts(target);
 			break;
 		case Moves::PSYCHO_SHIFT:
-			if (target.pokemon().status.is_clear())
-				Status::shift(user.pokemon(), target.pokemon(), weather);
+			if (target.pokemon().status().is_clear())
+				Status::shift(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::RAGE:		// Fix
 			break;
 		case Moves::RAIN_DANCE:
-			weather.set_rain (user.pokemon().item.extends_rain());
+			weather.set_rain (user.pokemon().item().extends_rain());
 			break;
 		case Moves::RAPID_SPIN:
 			clear_field(user, target);
@@ -734,13 +734,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::RECYCLE:		// Fix
 			break;
 		case Moves::REFLECT:
-			user.screens.activate_reflect(user.pokemon().item.extends_reflect());
+			user.screens.activate_reflect(user.pokemon().item().extends_reflect());
 			break;
 		case Moves::REFRESH:
-			user.pokemon().status.clear ();
+			user.pokemon().status().clear();
 			break;
 		case Moves::REST:
-			rest(user.pokemon());
+			rest(user.pokemon().get_pokemon());
 			break;
 		case Moves::ROAR:
 		case Moves::WHIRLWIND:
@@ -750,13 +750,13 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			break;
 		case Moves::ROOST:
 			user.roost();
-			heal (user.pokemon(), 2);
+			heal (user.pokemon().get_pokemon(), 2);
 			break;
 		case Moves::SAFEGUARD:
 			user.screens.activate_safeguard();
 			break;
 		case Moves::SANDSTORM:
-			weather.set_sand (user.pokemon().item.extends_sand());
+			weather.set_sand (user.pokemon().item().extends_sand());
 			break;
 		case Moves::SCREECH:
 			target.stat_boost(Stat::DEF, -2);
@@ -781,8 +781,8 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			if (move.variable().effect_activates()) {}
 			break;
 		case Moves::SMELLINGSALT:
-			if (target.pokemon().status.boosts_smellingsalt())
-				target.pokemon().status.clear();
+			if (target.pokemon().status().boosts_smellingsalt())
+				target.pokemon().status().clear();
 			break;
 		case Moves::SNATCH:	// Fix
 			break;
@@ -807,17 +807,17 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.increment_stockpile();
 			break;
 		case Moves::STRUGGLE:
-			struggle(user.pokemon());
+			struggle(user.pokemon().get_pokemon());
 			break;
 		case Moves::SUBMISSION:
 		case Moves::TAKE_DOWN:
-			recoil (user.pokemon(), damage, 4);
+			recoil (user.pokemon().get_pokemon(), damage, 4);
 			break;
 		case Moves::SUBSTITUTE:
 			user.substitute();		
 			break;
 		case Moves::SUNNY_DAY:
-			weather.set_sun (user.pokemon().item.extends_sun());
+			weather.set_sun (user.pokemon().item().extends_sun());
 			break;
 		case Moves::SUPERPOWER:
 			user.stat_boost_physical(-1);
@@ -837,12 +837,12 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::SWITCH3:
 		case Moves::SWITCH4:
 		case Moves::SWITCH5:
-			user.pokemon.replacement_from_switch();
+			user.all_pokemon().replacement_from_switch();
 			switchpokemon (user, target, weather);
 			break;
 		case Moves::SWITCHEROO:
 		case Moves::TRICK:
-			swap_items(user.pokemon(), target.pokemon());
+			swap_items(user.pokemon().get_pokemon(), target.pokemon().get_pokemon());
 			break;
 		case Moves::SWORDS_DANCE:
 			user.stat_boost(Stat::ATK, 2);
@@ -854,7 +854,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.taunt();
 			break;
 		case Moves::THUNDER_FANG:
-			fang_side_effects<Status::PARALYSIS>(user.pokemon(), target, weather);
+			fang_side_effects<Status::PARALYSIS>(user.pokemon().get_pokemon(), target, weather);
 			break;
 		case Moves::TICKLE:
 			target.stat_boost_physical(-1);
@@ -863,7 +863,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			target.torment();
 			break;
 		case Moves::TOXIC:
-			Status::apply<Status::POISON_TOXIC>(user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::POISON_TOXIC>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::TOXIC_SPIKES:
 			target.entry_hazards.add_toxic_spikes();
@@ -871,7 +871,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 		case Moves::TRANSFORM:		// Fix
 			break;
 		case Moves::TRI_ATTACK:
-			tri_attack_status(user.pokemon(), target.pokemon(), weather);
+			tri_attack_status(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::TRICK_ROOM:
 			weather.set_trick_room ();
@@ -885,17 +885,17 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 			user.use_uproar();
 			break;
 		case Moves::VOLT_TACKLE:
-			recoil_status<Status::PARALYSIS>(user.pokemon(), target.pokemon(), weather, damage);
+			recoil_status<Status::PARALYSIS>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather, damage);
 			break;
 		case Moves::WAKE_UP_SLAP:
-			if (target.pokemon().status.is_sleeping ())
-				target.pokemon().status.clear ();
+			if (target.pokemon().status().is_sleeping ())
+				target.pokemon().status().clear ();
 			break;
 		case Moves::WATER_SPORT:
 			user.activate_water_sport();
 			break;
 		case Moves::WILL_O_WISP:
-			Status::apply<Status::BURN>(user.pokemon(), target.pokemon(), weather);
+			Status::apply<Status::BURN>(user.pokemon().get_pokemon(), target.pokemon().get_pokemon(), weather);
 			break;
 		case Moves::WISH:
 			user.wish.activate();
@@ -912,7 +912,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, unsigned co
 
 // I could potentially treat this as negative recoil
 void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
-	if (target.ability.damages_leechers()) {
+	if (target.ability().damages_leechers()) {
 		if (damage <= 3)
 			--user.hp.stat;
 		else
@@ -930,7 +930,7 @@ void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
 }
 
 void belly_drum(Team & user) {
-	Stat & hp = user.pokemon().hp;
+	Stat & hp = user.pokemon().hp();
 	if (hp.stat > hp.max / 2 and hp.stat > 1) {
 		hp.stat -= hp.max / 2;
 		user.stat_boost(Stat::ATK, 12);
@@ -938,7 +938,7 @@ void belly_drum(Team & user) {
 }
 
 void clear_field(Team & user, Team const & target) {
-	if (user.pokemon().move().type().get_effectiveness(target.pokemon()) > 0)
+	if (user.pokemon().move().type().get_effectiveness(target.pokemon().get_pokemon()) > 0)
 		user.clear_field();
 }
 
@@ -948,20 +948,20 @@ void confusing_stat_boost(Move const & move, Team & target, Stat::Stats const st
 }
 
 void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & predicate) {
-	user.pokemon.for_each([& predicate](Pokemon & pokemon) {
+	user.all_pokemon().for_each([& predicate](Pokemon & pokemon) {
 		if (predicate(pokemon))
-			pokemon.status.clear ();
+			pokemon.status().clear();
 	});
 }
 
 void curse(Team & user, Team & target) {
-	Pokemon & pokemon = user.pokemon();
-	if (is_type(user, Type::GHOST) and !pokemon.ability.blocks_secondary_damage()) {
+	auto & pokemon = user.pokemon();
+	if (is_type(user, Type::GHOST) and !pokemon.ability().blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
-			if (pokemon.hp.max <= 3)
-				--pokemon.hp.stat;
+			if (pokemon.hp().max <= 3)
+				--pokemon.hp().stat;
 			else
-				damage_side_effect(pokemon, pokemon.hp.max / 2);
+				damage_side_effect(pokemon.get_pokemon(), pokemon.hp().max / 2);
 			target.curse();
 		}
 	}
@@ -979,8 +979,8 @@ void equalize(Stat & hp1, Stat & hp2) {
 
 void phaze(Team & user, Team & target, Weather & weather) {
 	if (target.can_be_phazed()) {
-		uint8_t const index = user.pokemon().move().variable.phaze_index(target.pokemon.index());
-		target.pokemon.set_replacement(index);
+		uint8_t const index = user.pokemon().move().variable.phaze_index(target.pokemon().index());
+		target.all_pokemon().set_replacement(index);
 		switchpokemon(target, user, weather);
 		target.move();
 	}
@@ -990,7 +990,7 @@ void rest(Pokemon & user) {
 	Stat & hp = user.hp;
 	if (hp.stat != hp.max) {
 		hp.stat = hp.max;
-		user.status.rest();
+		user.status().rest();
 	}
 }
 
@@ -1003,9 +1003,9 @@ void struggle(Pokemon & user) {
 
 void swap_items(Pokemon & user, Pokemon & target) {
 	// Add support for abilities that block Trick / Switcheroo
-	if (!user.item.blocks_trick () and !target.item.blocks_trick()) {
+	if (!user.item().blocks_trick () and !target.item().blocks_trick()) {
 		using std::swap;
-		swap (user.item, target.item);
+		swap(user.item(), target.item());
 	}
 }
 
@@ -1032,7 +1032,7 @@ void use_swallow(Team & user) {
 		return;
 	Rational const healing = Stockpile::swallow_healing(stockpiles);
 	constexpr bool positive = true;
-	heal(user.pokemon(), healing, positive);
+	heal(user.pokemon().get_pokemon(), healing, positive);
 }
 
 void call_other_move (Team & user) {

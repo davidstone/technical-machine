@@ -45,7 +45,7 @@ bool is_wormadam (Species species);
 
 Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level, Gender set_gender, std::string const & set_nickname, uint8_t set_happiness) : 
 	move (shared),
-	type (species),
+	current_type(species),
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
 	#endif
@@ -58,8 +58,8 @@ Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level
 
 	new_hp (48),
 
-	name (species),
-	gender(set_gender),
+	m_name(species),
+	m_gender(set_gender),
 
 	m_will_be_replaced(false),
 	m_level(set_level),
@@ -69,14 +69,22 @@ Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level
 	calculate_initial_hp();
 }
 
+Pokemon::Pokemon(SharedMoves & shared, Species const species, uint8_t const set_level, Gender const set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname, uint8_t set_happiness):
+	Pokemon::Pokemon(shared, species, set_level, set_gender, set_nickname, set_happiness)
+	{
+	m_item = set_item;
+	m_ability = set_ability;
+	m_nature = set_nature;
+}
+
 void Pokemon::switch_in() {
 	seen.make_visible();
 }
 
 void Pokemon::switch_out() {
 	// Cure the status of a Natural Cure Pokemon
-	if (ability.clears_status_on_switch())
-		status.clear();
+	if (ability().clears_status_on_switch())
+		status().clear();
 }
 
 void Pokemon::calculate_initial_hp () {
@@ -91,7 +99,6 @@ uint8_t Pokemon::index_of_first_switch () const {
 }
 
 void Pokemon::normalize_hp () {
-	// Correct rounding issues caused by not seeing the foe's exact HP.
 	if (will_be_replaced())
 		hp.stat = 0;
 	else if (hp.stat == 0)
@@ -99,7 +106,7 @@ void Pokemon::normalize_hp () {
 }
 
 bool Pokemon::can_use_chatter() const {
-	return name == Species::CHATOT;
+	return name() == Species::CHATOT;
 }
 
 bool Pokemon::can_use_substitute() const {
@@ -176,43 +183,43 @@ bool is_wormadam (Species species) {
 }	// unnamed namespace
 
 bool Pokemon::is_boosted_by_adamant_orb() const {
-	return name == Species::DIALGA;
+	return name() == Species::DIALGA;
 }
 
 bool Pokemon::is_boosted_by_deepseascale() const {
-	return name == Species::CLAMPERL;
+	return name() == Species::CLAMPERL;
 }
 
 bool Pokemon::is_boosted_by_deepseatooth() const {
-	return name == Species::CLAMPERL;
+	return name() == Species::CLAMPERL;
 }
 
 bool Pokemon::is_boosted_by_griseous_orb() const {
-	return name == Species::PALKIA;
+	return name() == Species::PALKIA;
 }
 
 bool Pokemon::is_boosted_by_light_ball() const {
-	return name == Species::PIKACHU;
+	return name() == Species::PIKACHU;
 }
 
 bool Pokemon::is_boosted_by_lustrous_orb() const {
-	return name == Species::GIRATINA_O;
+	return name() == Species::GIRATINA_O;
 }
 
 bool Pokemon::is_boosted_by_metal_powder() const {
-	return name == Species::DITTO;
+	return name() == Species::DITTO;
 }
 
 bool Pokemon::is_boosted_by_quick_powder() const {
-	return name == Species::DITTO;
+	return name() == Species::DITTO;
 }
 
 bool Pokemon::is_boosted_by_soul_dew() const {
-	return name == Species::LATIAS or name == Species::LATIOS;
+	return name() == Species::LATIAS or name() == Species::LATIOS;
 }
 
 bool Pokemon::is_boosted_by_thick_club() const {
-	return name == Species::CUBONE or name == Species::MAROWAK;
+	return name() == Species::CUBONE or name() == Species::MAROWAK;
 }
 
 std::string Pokemon::get_nickname () const {
@@ -227,6 +234,53 @@ void Pokemon::set_hidden_power_type() {
 	Move * const move_ptr = move.find(Moves::HIDDEN_POWER);
 	if (move_ptr != nullptr)
 		move_ptr->set_type(calculate_hidden_power_type());
+}
+
+Species Pokemon::name() const {
+	return m_name;
+}
+
+Ability const & Pokemon::ability() const {
+	return m_ability;
+}
+Ability & Pokemon::ability() {
+	return m_ability;
+}
+
+Gender const & Pokemon::gender() const {
+	return m_gender;
+}
+Gender & Pokemon::gender() {
+	return m_gender;
+}
+
+Item const & Pokemon::item() const {
+	return m_item;
+}
+Item & Pokemon::item() {
+	return m_item;
+}
+
+Nature const & Pokemon::nature() const {
+	return m_nature;
+}
+Nature & Pokemon::nature() {
+	return m_nature;
+}
+
+Status const & Pokemon::status() const {
+	return m_status;
+}
+Status & Pokemon::status() {
+	return m_status;
+}
+
+TypeCollection const & Pokemon::type() const {
+	return current_type;
+}
+
+void Pokemon::change_type(Type::Types const new_type) {
+	current_type.change_type(new_type);
 }
 
 unsigned Pokemon::level() const {
@@ -249,9 +303,9 @@ void Pokemon::faint() {
 }
 
 Pokemon::hash_type Pokemon::hash() const {
-	return static_cast<hash_type>(name) + max_species *
-			(item.name + Item::END *
-			(status.hash() + Status::max_hash() *
+	return static_cast<hash_type>(m_name) + max_species *
+			(m_item.name + Item::END *
+			(m_status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
@@ -267,19 +321,19 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	// same
 	assert(illegal_inequality_check(lhs, rhs));
 	return lhs.move == rhs.move and
-			lhs.name == rhs.name and
-			lhs.status == rhs.status and
+			lhs.m_name == rhs.m_name and
+			lhs.m_status == rhs.m_status and
 			lhs.hp.stat == rhs.hp.stat and
-			lhs.item == rhs.item and
+			lhs.m_item == rhs.m_item and
 			lhs.seen == rhs.seen;
 }
 
 bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
-	if (lhs.name != rhs.name)
+	if (lhs.name() != rhs.name())
 		return true;
-	return lhs.ability == rhs.ability and
-			lhs.gender == rhs.gender and
-			lhs.nature == rhs.nature and
+	return lhs.m_ability == rhs.m_ability and
+			lhs.m_gender == rhs.m_gender and
+			lhs.m_nature == rhs.m_nature and
 			lhs.will_be_replaced() == rhs.will_be_replaced() and
 			lhs.level() == rhs.level() and
 			lhs.happiness() == rhs.happiness();
@@ -838,11 +892,11 @@ uint8_t Pokemon::power_of_mass_based_moves() const {
 		40,	// Zigzagoon
 		20	// Zubat
 	};
-	return mass_array[static_cast<unsigned>(name)];
+	return mass_array[static_cast<unsigned>(name())];
 }
 
 std::string Pokemon::to_string() const {
-	return ::technicalmachine::to_string(name);
+	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine

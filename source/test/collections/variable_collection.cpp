@@ -82,7 +82,7 @@ void test_other_combinations(Team & team, unsigned const max_foe_size) {
 		VariableCollection collection (Moves::WHIRLWIND, foe_size);
 		for (unsigned new_index = 0; new_index <= foe_size; ++new_index) {
 			for (unsigned current_index = 0; current_index != foe_size; ++current_index) {
-				team.pokemon.set_index(current_index);
+				team.all_pokemon().set_index(current_index);
 				if (current_index == new_index)
 					phaze_in_same_pokemon(collection, team);
 				else
@@ -94,7 +94,7 @@ void test_other_combinations(Team & team, unsigned const max_foe_size) {
 
 void phaze_in_same_pokemon(VariableCollection & collection, Team const & team) {
 	try {
-		collection.set_phaze_index(team, team.pokemon().name);
+		collection.set_phaze_index(team, team.pokemon().name());
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	}
 	catch (PhazingInSamePokemon const &) {
@@ -104,7 +104,7 @@ void phaze_in_same_pokemon(VariableCollection & collection, Team const & team) {
 
 void phaze_in_different_pokemon(VariableCollection & collection, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size) {
 	try {
-		collection.set_phaze_index(team, team.pokemon(new_index).name);
+		collection.set_phaze_index(team, team.pokemon(new_index).name());
 		unsigned const expected = expected_index(current_index, new_index);
 		if (collection().value() != expected)
 			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + std::to_string(expected) + " but got a result of " + std::to_string(static_cast<unsigned>(collection().value())) + ".");

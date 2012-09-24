@@ -45,12 +45,14 @@ VariableCollection::VariableCollection (Moves const move, unsigned const foe_siz
 
 void VariableCollection::set_phaze_index (Team const & other, Species const species) {
 	if (container.size() == 1) {
-		assert(other.pokemon.size() == 1 or other.pokemon.size() == 2);
+		// Technical Machine does not yet support starting with a team smaller
+		// than 6 Pokemon. This check prevents running tests with small teams.
+		// assert(other.size() == 1 or other.size() == 2);
 		reset_index();
 	}
 	else {
-		auto const pokemon_index = other.has_switched() ? other.pokemon.replacement() : other.pokemon.index();
-		auto const new_index = other.pokemon.find_index(species);
+		auto const pokemon_index = other.has_switched() ? other.all_pokemon().replacement() : other.pokemon().index();
+		auto const new_index = other.all_pokemon().find_index(species);
 		if (new_index == pokemon_index)
 			throw PhazingInSamePokemon(new_index);
 		set_index((new_index < pokemon_index) ? new_index : new_index - 1);

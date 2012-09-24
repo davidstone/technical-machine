@@ -120,9 +120,9 @@ unsigned Type::lookup_effectiveness (Types const attacking, Type const defending
 unsigned Type::get_effectiveness (Type::Types const type, Pokemon const & defender) {
 	unsigned effectiveness = 1;
 	// Effectiveness on each of the defender's types (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : defender.type.types)
+	for (Type const target_type : defender.type().types)
 		effectiveness *= lookup_effectiveness (type, target_type);
-	if (defender.type.types.size () == 1)
+	if (defender.type().types.size () == 1)
 		effectiveness *= 2;
 	return effectiveness;
 }
@@ -138,7 +138,7 @@ unsigned Type::get_effectiveness (Pokemon const & defender) const {
 std::vector <unsigned> Type::get_effectiveness_variables (Pokemon const & target) const {
 	std::vector <unsigned> effectiveness;
 	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : target.type.types)
+	for (Type const target_type : target.type().types)
 		effectiveness.emplace_back(lookup_effectiveness (target_type));
 	return effectiveness;
 }

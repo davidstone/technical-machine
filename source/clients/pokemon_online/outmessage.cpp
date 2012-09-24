@@ -60,26 +60,26 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	write_string (tier);
 	uint8_t const generation = 4;
 	write_byte (generation);
-	team.pokemon.for_each([&](Pokemon const & pokemon) {
+	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
 		write_pokemon (pokemon);
 	});
-	for (unsigned n = team.pokemon.size(); n <= 6; ++n) {
+	for (unsigned n = team.all_pokemon().size(); n <= 6; ++n) {
 		write_short (0);
 	}
 }
 
 void OutMessage::write_pokemon (Pokemon const & pokemon) {
-	std::pair <uint16_t, uint8_t> const species = species_to_id (pokemon.name);
+	std::pair <uint16_t, uint8_t> const species = species_to_id (pokemon.name());
 	write_short (species.first);
 	write_byte (species.second);
 	write_string (pokemon.get_nickname());
-	uint16_t const item = item_to_id (pokemon.item.name);
+	uint16_t const item = item_to_id (pokemon.item().name);
 	write_short (item);
-	uint16_t const ability = ability_to_id (pokemon.ability.name);
+	uint16_t const ability = ability_to_id (pokemon.ability().name);
 	write_short (ability);
-	uint8_t const nature = nature_to_id (pokemon.nature.name);
+	uint8_t const nature = nature_to_id (pokemon.nature().name);
 	write_byte (nature);
-	uint8_t const gender = gender_to_id (pokemon.gender.gender);
+	uint8_t const gender = gender_to_id (pokemon.gender().gender);
 	write_byte (gender);
 	bool shiny = false;
 	write_byte (shiny);

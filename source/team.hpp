@@ -36,6 +36,7 @@
 namespace technicalmachine {
 enum class Species : uint16_t;
 class Ability;
+class Pokemon;
 class Rational;
 class Weather;
 
@@ -47,11 +48,23 @@ class Team {
 		Team (Team && other);
 		Team & operator= (Team const & other);
 		Team & operator= (Team && other);
+		
+		ActivePokemon const & pokemon() const;
+		ActivePokemon & pokemon();
+		Pokemon const & pokemon(PokemonCollection::index_type index) const;
+		Pokemon & pokemon(PokemonCollection::index_type index);
+		Pokemon const & replacement() const;
+		Pokemon & replacement();
 		template<typename... Args>
 		void add_pokemon(Args&&... args) {
-			pokemon.add(shared_moves, std::forward<Args>(args)...);
+			m_all_pokemon.add(shared_moves, std::forward<Args>(args)...);
 		}
 		void remove_pokemon ();
+		PokemonCollection const & all_pokemon() const;
+		PokemonCollection & all_pokemon();
+		
+		unsigned number_of_seen_pokemon() const;
+		unsigned size() const;
 		
 		bool is_me() const;
 		// Not for variables that give a message at the end of the turn, this is
@@ -198,11 +211,11 @@ class Team {
 		std::string to_string () const;
 		friend bool operator== (Team const & lhs, Team const & rhs);
 
-		PokemonCollection pokemon;
 	private:
 		friend class Score;
 		void load (std::string const & name, unsigned other_size);
 
+		PokemonCollection m_all_pokemon;
 		SharedMoves shared_moves;
 		ActivePokemon active_pokemon;
 	public:

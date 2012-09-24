@@ -44,11 +44,13 @@ class SharedMoves;
 
 class Pokemon {
 	public:
-		Pokemon (SharedMoves & shared, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
+		Pokemon(SharedMoves & shared, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
+		Pokemon(SharedMoves & shared, Species species, uint8_t set_level, Gender set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
 		void switch_in();
 		void switch_out();
 		void calculate_initial_hp ();
 		uint8_t index_of_first_switch () const;
+		// Fix any rounding issues caused by not seeing the foe's exact HP.
 		void normalize_hp ();
 		uint8_t power_of_mass_based_moves() const;
 		std::string to_string () const;
@@ -66,6 +68,19 @@ class Pokemon {
 		bool is_boosted_by_soul_dew() const;
 		bool is_boosted_by_thick_club() const;
 		void set_hidden_power_type ();
+		Species name() const;
+		Ability const & ability() const;
+		Ability & ability();
+		Gender const & gender() const;
+		Gender & gender();
+		Item const & item() const;
+		Item & item();
+		Nature const & nature() const;
+		Nature & nature();
+		Status const & status() const;
+		Status & status();
+		TypeCollection const & type() const;
+		void change_type(Type::Types new_type);
 		unsigned level() const;
 		unsigned happiness() const;
 		bool has_been_seen() const;
@@ -82,12 +97,11 @@ class Pokemon {
 		friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
 
 		MoveCollection move;
-		TypeCollection type;
-	private:
+		TypeCollection current_type;
+//	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
 		#endif
-	public:
 
 		Stat hp;
 		Stat atk;
@@ -99,13 +113,13 @@ class Pokemon {
 		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		uint16_t new_hp;
 
-		Species name;
-		Item item;
-		Ability ability;
-		Gender gender;
-		Status status;
-		Nature nature;
-	private:
+		Species m_name;
+		Item m_item;
+		Ability m_ability;
+		Gender m_gender;
+		Status m_status;
+		Nature m_nature;
+
 		bool m_will_be_replaced;
 		Seen seen;
 		Level m_level;

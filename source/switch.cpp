@@ -37,19 +37,17 @@ void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	switcher.reset_switch();
 
-	if (switcher.pokemon().hp.stat > 0) {
-		switcher.pokemon().switch_out();
-		// Change the active Pokemon to the one switching in.
-		switcher.pokemon.to_replacement();
+	if (switcher.pokemon().hp().stat > 0) {
+		switcher.pokemon().switch_pokemon();
 	}
 	else {
 		replace_fainted_pokemon (switcher, other);
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (switcher.pokemon.is_empty())
+		if (switcher.all_pokemon().is_empty())
 			return;
 	}
 	EntryHazards::apply(switcher, weather);
-	if (switcher.pokemon().hp.stat > 0)
+	if (switcher.pokemon().hp().stat > 0)
 		Ability::activate_on_switch (switcher, other, weather);
 	switcher.pokemon().switch_in();
 }
@@ -58,16 +56,16 @@ namespace {
 
 void replace_fainted_pokemon (Team & switcher, Team & other) {
 	switcher.remove_pokemon();
-	if (switcher.pokemon.is_empty())
+	if (switcher.all_pokemon().is_empty())
 		return;
 	remove_fainted_from_phazing_moves(switcher, other);
 }
 
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
-	other.pokemon.for_each([& switcher](Pokemon & pokemon) {
+	other.all_pokemon().for_each([& switcher](Pokemon & pokemon) {
 		pokemon.move.for_each([& switcher](Move & move) {
 			if (move.is_phaze())
-				move.variable.remove_phazing(switcher.pokemon.real_size());
+				move.variable.remove_phazing(switcher.all_pokemon().real_size());
 		});
 	});
 }

@@ -77,10 +77,10 @@ EntryHazards::hash_type EntryHazards::max_hash() {
 
 void EntryHazards::apply(Team & switcher, Weather const & weather) {
 	EntryHazards & entry_hazards = switcher.entry_hazards;
-	if (switcher.pokemon().ability.blocks_secondary_damage())
+	if (switcher.pokemon().ability().blocks_secondary_damage())
 		return;
 
-	if (grounded (switcher, switcher.pokemon(), weather)) {
+	if (grounded (switcher, switcher.pokemon().get_pokemon(), weather)) {
 		if (entry_hazards.toxic_spikes) {
 			if (removes_toxic_spikes(switcher))
 				entry_hazards.toxic_spikes = 0;
@@ -88,13 +88,13 @@ void EntryHazards::apply(Team & switcher, Weather const & weather) {
 				apply_toxic_spikes(switcher, weather);
 		}
 		if (entry_hazards.spikes)
-			heal (switcher.pokemon(), -16, entry_hazards.spikes + 1u);
+			heal (switcher.pokemon().get_pokemon(), -16, entry_hazards.spikes + 1u);
 	}
 	// get_effectiveness () outputs a value between 0 and 16, with higher
 	// numbers being more effective. 4 * effective Stealth Rock does
 	// 16 / 32 damage.
 	if (entry_hazards.stealth_rock)
-		heal (switcher.pokemon(), -32, Type::stealth_rock_effectiveness(switcher.pokemon()));
+		heal (switcher.pokemon().get_pokemon(), -32, Type::stealth_rock_effectiveness(switcher.pokemon().get_pokemon()));
 }
 
 bool operator== (EntryHazards const lhs, EntryHazards const rhs) {
@@ -108,9 +108,9 @@ bool operator!= (EntryHazards const lhs, EntryHazards const rhs) {
 
 void EntryHazards::apply_toxic_spikes(Team & switcher, Weather const & weather) {
 	if (switcher.entry_hazards.toxic_spikes == 1)
-		Status::apply<Status::POISON>(switcher.pokemon(), weather);
+		Status::apply<Status::POISON>(switcher.pokemon().get_pokemon(), weather);
 	else
-		Status::apply<Status::POISON_TOXIC>(switcher.pokemon(), weather);
+		Status::apply<Status::POISON_TOXIC>(switcher.pokemon().get_pokemon(), weather);
 }
 
 namespace {

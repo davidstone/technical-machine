@@ -43,19 +43,19 @@ void attack_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::SHUCKLE, level, gender);
-	Pokemon & pokemon = attacker.pokemon();
+	Pokemon & pokemon = attacker.pokemon().get_pokemon();
 
 	pokemon.def.ev = 252 / 4;
-	pokemon.nature.name = Nature::IMPISH;
+	pokemon.nature().name = Nature::IMPISH;
 	attacker.activate_power_trick();
-	pokemon.ability.name = Ability::PURE_POWER;
+	pokemon.ability().name = Ability::PURE_POWER;
 	attacker.stat_boost(Stat::ATK, 6);
 
-	pokemon.item.name = Item::CHOICE_BAND;
+	pokemon.item().name = Item::CHOICE_BAND;
 	
 	calculate_attack(attacker, Weather ());
-	if (attacker.pokemon().atk.stat != max_attack)
-		throw IncorrectCalculation (attacker.pokemon().atk.stat, max_attack);
+	if (attacker.pokemon().atk().stat != max_attack)
+		throw IncorrectCalculation (attacker.pokemon().atk().stat, max_attack);
 }
 
 void special_attack_tests () {
@@ -68,19 +68,19 @@ void special_attack_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
 	attacker.add_pokemon(Species::DEOXYS_A, 100, gender);
-	Pokemon & pokemon = attacker.pokemon();
+	Pokemon & pokemon = attacker.pokemon().get_pokemon();
 
 	pokemon.spa.ev = 252 / 4;
-	pokemon.nature.name = Nature::MODEST;
+	pokemon.nature().name = Nature::MODEST;
 	attacker.stat_boost(Stat::SPA, 6);
 
-	pokemon.ability.name = Ability::SOLAR_POWER;
+	pokemon.ability().name = Ability::SOLAR_POWER;
 
-	pokemon.item.name = Item::CHOICE_SPECS;
+	pokemon.item().name = Item::CHOICE_SPECS;
 	
 	calculate_special_attack(attacker, weather);
-	if (attacker.pokemon().spa.stat != max_special_attack)
-		throw IncorrectCalculation (attacker.pokemon().spa.stat, max_special_attack);
+	if (attacker.pokemon().spa().stat != max_special_attack)
+		throw IncorrectCalculation (attacker.pokemon().spa().stat, max_special_attack);
 }
 
 void defense_tests () {
@@ -92,13 +92,13 @@ void defense_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::SHUCKLE, 100, gender);
-	Pokemon & pokemon = defender.pokemon();
+	Pokemon & pokemon = defender.pokemon().get_pokemon();
 	pokemon.def.ev = 252 / 4;
-	pokemon.nature.name = Nature::BOLD;
+	pokemon.nature().name = Nature::BOLD;
 
 	defender.stat_boost(Stat::DEF, 6);
 
-	pokemon.ability.name = Ability::MARVEL_SCALE;
+	pokemon.ability().name = Ability::MARVEL_SCALE;
 	Status::apply<Status::BURN>(pokemon, Weather());
 
 	calculate_defense(defender);
@@ -118,9 +118,9 @@ void special_defense_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::SHUCKLE, level, gender);
-	Pokemon & pokemon = defender.pokemon();
+	Pokemon & pokemon = defender.pokemon().get_pokemon();
 	pokemon.spd.ev = 252 / 4;
-	pokemon.nature.name = Nature::CALM;
+	pokemon.nature().name = Nature::CALM;
 
 	defender.stat_boost(Stat::SPD, 6);
 
@@ -141,15 +141,15 @@ void speed_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::DEOXYS_S, level, gender);
-	Pokemon & pokemon = team.pokemon();
+	Pokemon & pokemon = team.pokemon().get_pokemon();
 	pokemon.spe.ev = 252 / 4;
-	pokemon.nature.name = Nature::TIMID;
+	pokemon.nature().name = Nature::TIMID;
 
 	team.stat_boost(Stat::SPE, 6);
 
-	pokemon.ability.name = Ability::SWIFT_SWIM;
+	pokemon.ability().name = Ability::SWIFT_SWIM;
 
-	pokemon.item.name = Item::CHOICE_SCARF;
+	pokemon.item().name = Item::CHOICE_SCARF;
 	
 	team.screens.activate_tailwind();
 	

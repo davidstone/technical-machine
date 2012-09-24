@@ -34,9 +34,9 @@ namespace {
 
 template<Status::Statuses status>
 bool status_can_apply (Ability const ability, Pokemon const & target, Weather const & weather) {
-	return target.status.is_clear() and
-			(ability.ignores_blockers() or !target.ability.blocks_status<status> (weather)) and
-			!target.type.blocks_status<status>() and
+	return target.status().is_clear() and
+			(ability.ignores_blockers() or !target.ability().blocks_status<status>(weather)) and
+			!target.type().blocks_status<status>() and
 			!weather.blocks_status<status>();
 }
 
@@ -113,9 +113,9 @@ void Status::rest() {
 
 template<Status::Statuses base_status, Status::Statuses real_status>
 void Status::apply (Pokemon & user, Pokemon & target, Weather const & weather) {
-	if (status_can_apply<base_status>(user.ability, target, weather)) {
-		target.status.status = real_status;
-		if (status_is_reflectable(base_status) and target.ability.reflects_status())
+	if (status_can_apply<base_status>(user.ability(), target, weather)) {
+		target.status().status = real_status;
+		if (status_is_reflectable(base_status) and target.ability().reflects_status())
 			apply<base_status>(target, user, weather);
 	}
 }
@@ -138,8 +138,8 @@ void Status::apply<Status::POISON_TOXIC>(Pokemon & user, Pokemon & target, Weath
 template<>
 void Status::apply<Status::SLEEP>(Pokemon & user, Pokemon & target, Weather const & weather) {
 	constexpr Statuses status = SLEEP;
-	if (status_can_apply<status> (user.ability, target, weather))
-		target.status.status = status;		// Fix
+	if (status_can_apply<status> (user.ability(), target, weather))
+		target.status().status = status;		// Fix
 }
 
 template void Status::apply<Status::BURN>(Pokemon & target, Weather const & weather);
@@ -151,7 +151,7 @@ template void Status::apply<Status::SLEEP>(Pokemon & target, Weather const & wea
 
 
 void Status::shift (Pokemon & user, Pokemon & target, Weather const & weather) {
-	switch (user.status.name()) {
+	switch (user.status().name()) {
 		case Status::BURN:
 			apply<BURN>(user, target, weather);
 			break;
@@ -172,8 +172,8 @@ void Status::shift (Pokemon & user, Pokemon & target, Weather const & weather) {
 			break;
 	}
 	using std::swap;
-	swap(user.status.turns_already_slept, user.status.turns_already_slept);
-	user.status.clear();
+	swap(user.status().turns_already_slept, user.status().turns_already_slept);
+	user.status().clear();
 }
 
 void Status::increase_sleep_counter (Ability const & ability, bool awaken) {

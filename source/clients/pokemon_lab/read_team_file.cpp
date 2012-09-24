@@ -77,14 +77,11 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team, unsigned
 	uint8_t const level = pt.get <uint8_t> ("level");
 	Gender const gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
 	uint8_t const happiness = pt.get<uint8_t>("happiness");
-	team.add_pokemon(from_string<Species>(species_str), level, gender, nickname, happiness);
-	Pokemon & pokemon = team.pokemon.at_replacement();
-	std::string const nature_str = pt.get <std::string> ("nature");
-	pokemon.nature = Nature (nature_str);
-	std::string const item_str = pt.get <std::string> ("item");
-	pokemon.item = Item (item_str);
-	std::string const ability_str = pt.get <std::string> ("ability");
-	pokemon.ability = Ability (ability_str);
+	Nature const nature(pt.get<std::string>("nature"));
+	Item const item(pt.get<std::string>("item"));
+	Ability const ability(pt.get<std::string>("ability"));
+	team.add_pokemon(from_string<Species>(species_str), level, gender, item, ability, nature, nickname, happiness);
+	Pokemon & pokemon = team.all_pokemon().at_replacement();
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
 		pokemon.move.add (load_move (value.second, foe_size));
@@ -100,10 +97,10 @@ void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
 	read_xml (file_name, pt);
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
-	team.pokemon.initialize_size (all_pokemon.size());
+	team.all_pokemon().initialize_size(all_pokemon.size());
 	for (auto const & value : all_pokemon)
 		load_pokemon (value.second, team, foe_size);
-	team.pokemon.reset_index();
+	team.all_pokemon().reset_index();
 }
 
 }	// namespace pl

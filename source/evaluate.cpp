@@ -37,10 +37,10 @@ class ResetIndex {
 	public:
 		ResetIndex (Team & team):
 			reset (team),
-			index (team.pokemon.index()) {
+			index (team.all_pokemon().index()) {
 		}
 		~ResetIndex () {
-			reset.pokemon.set_index(index);
+			reset.all_pokemon().set_index(index);
 		}
 	private:
 		Team & reset;
@@ -60,12 +60,12 @@ int64_t Score::score_team (Team const & team) const {
 	score += safeguard * team.screens.m_safeguard.turns_remaining;
 	score += tailwind * team.screens.m_tailwind.turns_remaining;
 	score += wish * team.wish.is_active();
-	if (team.pokemon().hp.stat != 0) {
-		score += score_active_pokemon(team.active_pokemon, team.pokemon());
+	if (team.pokemon().hp().stat != 0) {
+		score += score_active_pokemon(team.pokemon());
 	//	if (other.pokemon().leech_seed)
 	//		score += 1 * other.pokemon().hp.max / member.hp.max;
 
-		if (team.pokemon().move.exists(Moves::BATON_PASS))
+		if (team.pokemon().get_pokemon().move.exists(Moves::BATON_PASS))
 			score += baton_passable_score(team) * 2;
 		else
 			score += baton_passable_score(team);
@@ -74,53 +74,53 @@ int64_t Score::score_team (Team const & team) const {
 	return score;
 }
 
-int64_t Score::score_active_pokemon(ActivePokemon const & active, Pokemon const & pokemon) const {
+int64_t Score::score_active_pokemon(ActivePokemon const & pokemon) const {
 	int64_t score = 0;
-	if (active.is_cursed())
+	if (pokemon.is_cursed())
 		score += curse;
-	if (active.imprisoned())
+	if (pokemon.imprisoned())
 		score += imprison;
-	if (active.leech_seed)
+	if (pokemon.leech_seed)
 		score += leech_seed;
-	if (active.loaf)
+	if (pokemon.loaf)
 		score += loaf;
-	if (active.fully_trapped)
+	if (pokemon.fully_trapped)
 		score += trapped;
-	if (active.nightmare())
+	if (pokemon.nightmare())
 		score += nightmare;
-	if (active.tormented())
+	if (pokemon.tormented())
 		score += torment;
 	return score;
 }
 
 int64_t Score::baton_passable_score(Team const & team) const {
-	ActivePokemon const & active = team.active_pokemon;
+	auto const & pokemon = team.pokemon();
 	int64_t score = 0;
-	if (active.aqua_ring)
+	if (pokemon.aqua_ring)
 		score += aqua_ring;
-	if (active.focusing_energy)
+	if (pokemon.focusing_energy)
 		score += focus_energy;
-	if (active.ingrained())
+	if (pokemon.ingrained())
 		score += ingrain;
-	score += active.magnet_rise.turns_remaining * magnet_rise;
-	if (active.active_substitute)
-		score += substitute + substitute_hp * active.active_substitute.hp / team.pokemon().hp.max;
-	score += Stage::dot_product(active.stage, stage);
+	score += pokemon.magnet_rise.turns_remaining * magnet_rise;
+	if (pokemon.active_substitute)
+		score += substitute + substitute_hp * pokemon.active_substitute.hp / pokemon.hp().max;
+	score += Stage::dot_product(pokemon.stage, stage);
 	return score;
 }
 
 int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
 	ResetIndex const reset_index (team);
 	int64_t score = 0;
-	for (uint8_t index = 0; index != team.pokemon.size(); ++index) {
-		team.pokemon.set_index(index);
+	for (uint8_t index = 0; index != team.all_pokemon().size(); ++index) {
+		team.all_pokemon().set_index(index);
 		score += score_pokemon (team, other, weather);
 	}
 	return score;
 }
 
 int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
-	Pokemon const & pokemon = team.pokemon();
+	auto const & pokemon = team.pokemon().get_pokemon();
 	int64_t score = team.entry_hazards.stealth_rock * stealth_rock * static_cast<int>(Type::stealth_rock_effectiveness(pokemon)) / 4;
 	if (grounded (team, pokemon, weather))
 		score += team.entry_hazards.spikes * spikes + team.entry_hazards.toxic_spikes * toxic_spikes;
@@ -135,7 +135,7 @@ int64_t Score::score_pokemon (Team const & team, Team const & other, Weather con
 }
 
 int64_t Score::score_status (Team const & team) const {
-	switch (team.pokemon().status.name()) {
+	switch (team.pokemon().status().name()) {
 		case Status::BURN:
 			return burn;
 		case Status::FREEZE:
@@ -157,7 +157,7 @@ int64_t Score::score_status (Team const & team) const {
 int64_t Score::score_move (Team const & team, Team const & other, Weather const & weather) const {
 	// TODO: alter the score of a move based on the weather
 	int64_t score = 0;
-	team.pokemon().move.for_each([&](Move const & move) {
+	team.pokemon().get_pokemon().move.for_each([&](Move const & move) {
 		if (move.is_physical())
 			score += other.screens.m_reflect.turns_remaining * reflect;
 		else if (move.is_special())
@@ -170,17 +170,17 @@ int64_t Score::score_move (Team const & team, Team const & other, Weather const 
 
 
 int64_t Score::win (Team const & team) {
-	if (team.pokemon.size() == 0)
-		return team.me ? -VICTORY : VICTORY;
+	if (team.all_pokemon().size() == 0)
+		return team.is_me() ? -VICTORY : VICTORY;
 	return 0;
 }
 
 int64_t Score::sleep_clause (Team const & team) {
-	unsigned const sleeper_count = team.pokemon.count_if([](Pokemon const & pokemon) {
-		return (pokemon.status.is_sleeping_due_to_other());
+	unsigned const sleeper_count = team.all_pokemon().count_if([](Pokemon const & pokemon) {
+		return (pokemon.status().is_sleeping_due_to_other());
 	});
 	if (sleeper_count > 1)
-		return team.me ? VICTORY : -VICTORY;
+		return team.is_me() ? VICTORY : -VICTORY;
 	return 0;
 }
 

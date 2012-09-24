@@ -28,6 +28,11 @@
 
 namespace technicalmachine {
 
+ActivePokemon::ActivePokemon(PokemonCollection & all):
+	all_pokemon(&all)
+	{
+}
+
 void ActivePokemon::reset_end_of_turn() {
 	damage_done_to_active = 0;
 	enduring = false;
@@ -117,6 +122,10 @@ void ActivePokemon::clear_leech_seed() {
 	leech_seed = false;
 }
 
+Ability const & ActivePokemon::ability() const {
+	return get_pokemon().ability();
+}
+
 bool ActivePokemon::aqua_ring_is_active() const {
 	return aqua_ring;
 }
@@ -161,13 +170,13 @@ bool ActivePokemon::is_confused() const {
 	return confusion.is_active();
 }
 
-void ActivePokemon::confuse(Pokemon const & pokemon) {
-	if (!pokemon.ability.blocks_confusion())
+void ActivePokemon::confuse() {
+	if (!get_pokemon().ability().blocks_confusion())
 		confusion.activate();
 }
 
-void ActivePokemon::handle_confusion(Pokemon & pokemon) {
-	confusion.do_turn(pokemon);
+void ActivePokemon::handle_confusion() {
+	confusion.do_turn(get_pokemon());
 }
 
 bool ActivePokemon::critical_hit() const {
@@ -270,6 +279,10 @@ void ActivePokemon::imprison() {
 	used_imprison = true;
 }
 
+PokemonCollection::index_type ActivePokemon::index() const {
+	return all_pokemon->index();
+}
+
 bool ActivePokemon::ingrained() const {
 	return ingrain_active;
 }
@@ -290,8 +303,20 @@ void ActivePokemon::decrement_heal_block() {
 	heal_block.decrement();
 }
 
+Item const & ActivePokemon::item() const {
+	return get_pokemon().item();
+}
+
+Item & ActivePokemon::item() {
+	return get_pokemon().item();
+}
+
 bool ActivePokemon::is_fully_paralyzed() const {
 	return fully_paralyzed;
+}
+
+Gender const & ActivePokemon::gender() const {
+	return get_pokemon().gender();
 }
 
 bool ActivePokemon::leech_seeded() const {
@@ -302,14 +327,18 @@ void ActivePokemon::hit_with_leech_seed() {
 	leech_seed = true;
 }
 
-bool ActivePokemon::is_loafing(Ability const & ability) const {
-	return ability.is_loafing(loaf);
+unsigned ActivePokemon::level() const {
+	return get_pokemon().level();
 }
 
-void ActivePokemon::decrement_lock_in(Pokemon const & pokemon) {
+bool ActivePokemon::is_loafing() const {
+	return ability().is_loafing(loaf);
+}
+
+void ActivePokemon::decrement_lock_in() {
 	// Cannot be locked into Rampage and Uproar at the same time
 	if (rampage.decrement())
-		confuse(pokemon);
+		confuse();
 	else
 		uproar.increment();
 }
@@ -350,7 +379,11 @@ void ActivePokemon::set_miss(bool const value) {
 	miss = value;
 }
 
-void ActivePokemon::move(bool const value) {
+Move & ActivePokemon::move() {
+	return get_pokemon().move();
+}
+
+void ActivePokemon::set_moved(bool const value) {
 	has_moved = value;
 }
 
@@ -360,6 +393,14 @@ bool ActivePokemon::moved() const {
 
 void ActivePokemon::activate_mud_sport() {
 	mud_sport = true;
+}
+
+Species ActivePokemon::name() const {
+	return get_pokemon().name();
+}
+
+Nature const & ActivePokemon::nature() const {
+	return get_pokemon().nature();
 }
 
 bool ActivePokemon::nightmare() const {
@@ -374,8 +415,8 @@ void ActivePokemon::partially_trap(bool const extended) {
 	partial_trap.activate(extended);
 }
 
-void ActivePokemon::partial_trap_damage(Pokemon & pokemon) {
-	partial_trap.damage(pokemon);
+void ActivePokemon::partial_trap_damage() {
+	partial_trap.damage(get_pokemon());
 }
 
 void ActivePokemon::activate_perish_song() {
@@ -448,8 +489,8 @@ void ActivePokemon::shed_skin(bool const value) {
 	shedding_skin = value;
 }
 
-void ActivePokemon::increase_sleep_counter(Pokemon & pokemon) {
-	pokemon.status.increase_sleep_counter(pokemon.ability, awakening);
+void ActivePokemon::increase_sleep_counter() {
+	status().increase_sleep_counter(ability(), awakening);
 }
 
 bool ActivePokemon::slow_start_is_active() const {
@@ -457,13 +498,54 @@ bool ActivePokemon::slow_start_is_active() const {
 }
 
 bool ActivePokemon::sport_is_active(Move const & foe_move) const {
-	Type const & type = foe_move.type();
-	if (type == Type::ELECTRIC)
+	if (foe_move.type() == Type::ELECTRIC)
 		return mud_sport;
-	else if (type == Type::FIRE)
+	else if (foe_move.type() == Type::FIRE)
 		return water_sport;
 	else
 		return false;
+}
+
+Stat const & ActivePokemon::hp() const {
+	return get_pokemon().hp;
+}
+Stat & ActivePokemon::hp() {
+	return get_pokemon().hp;
+}
+
+Stat const & ActivePokemon::atk() const {
+	return get_pokemon().atk;
+}
+Stat & ActivePokemon::atk() {
+	return get_pokemon().atk;
+}
+
+Stat const & ActivePokemon::def() const {
+	return get_pokemon().def;
+}
+Stat & ActivePokemon::def() {
+	return get_pokemon().def;
+}
+
+Stat const & ActivePokemon::spa() const {
+	return get_pokemon().spa;
+}
+Stat & ActivePokemon::spa() {
+	return get_pokemon().spa;
+}
+
+Stat const & ActivePokemon::spd() const {
+	return get_pokemon().spd;
+}
+Stat & ActivePokemon::spd() {
+	return get_pokemon().spd;
+}
+
+Stat const & ActivePokemon::spe() const {
+	return get_pokemon().spe;
+}
+Stat & ActivePokemon::spe() {
+	return get_pokemon().spe;
 }
 
 int ActivePokemon::current_stage(Stat::Stats const stat) const {
@@ -520,6 +602,14 @@ void ActivePokemon::swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs) {
 	swap(lhs.stage, rhs.stage);
 }
 
+Status const & ActivePokemon::status() const {
+	return get_pokemon().status();
+}
+
+Status & ActivePokemon::status() {
+	return get_pokemon().status();
+}
+
 unsigned ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }
@@ -532,8 +622,30 @@ int ActivePokemon::release_stockpile() {
 	return stockpile.release();
 }
 
+bool ActivePokemon::is_switching_to_self () const {
+	return all_pokemon->is_switching_to_self();
+}
+
+bool ActivePokemon::is_switching_to_self (Move const & switch_move) const {
+	return all_pokemon->is_switching_to_self(switch_move);
+}
+
 bool ActivePokemon::switch_decision_required() const {
 	return pass or u_turning;
+}
+
+void ActivePokemon::switch_pokemon() {
+	get_pokemon().switch_out();
+	all_pokemon->to_replacement();
+}
+
+void ActivePokemon::switch_in() {
+	get_pokemon().switch_in();
+}
+
+void ActivePokemon::update_to_correct_switch() {
+	auto const index_of_switch = get_pokemon().index_of_first_switch() + all_pokemon->replacement();
+	get_pokemon().move.set_index(index_of_switch);
 }
 
 bool ActivePokemon::trapped() const {
@@ -566,6 +678,10 @@ Rational ActivePokemon::toxic_ratio() const {
 
 void ActivePokemon::increment_toxic() {
 	toxic.increment();
+}
+
+TypeCollection const & ActivePokemon::type() const {
+	return get_pokemon().type();
 }
 
 void ActivePokemon::u_turn() {
@@ -607,6 +723,14 @@ bool ActivePokemon::substitute(unsigned const max_hp) {
 	return active_substitute.create(max_hp);
 }
 
+void ActivePokemon::use_substitute() {
+	if (!get_pokemon().can_use_substitute())
+		return;
+	bool const created = substitute(hp().max);
+	if (created)
+		hp().stat -= hp().max / 4;
+}
+
 bool ActivePokemon::is_locked_in_to_bide() const {
 	return bide.is_active();
 }
@@ -620,8 +744,8 @@ void ActivePokemon::do_damage(unsigned const damage) {
 	bide.add_damage(damage);
 }
 
-void ActivePokemon::update_chance_to_hit(Pokemon const & user, Pokemon const & target, ActivePokemon const & active_target, Weather const & weather, bool target_moved) {
-	cached_chance_to_hit.update(user, *this, target, active_target, weather, target_moved);
+void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
+	cached_chance_to_hit.update(*this, target, weather, target_moved);
 }
 
 ChanceToHit::value_type ActivePokemon::chance_to_hit() const {
@@ -634,6 +758,14 @@ ChanceToHit::value_type ActivePokemon::chance_to_miss() const {
 
 bool ActivePokemon::can_miss() const {
 	return cached_chance_to_hit.can_miss();
+}
+
+bool ActivePokemon::will_be_replaced() const {
+	return get_pokemon().will_be_replaced();
+}
+
+void ActivePokemon::normalize_hp() {
+	get_pokemon().normalize_hp();
 }
 
 ActivePokemon::hash_type ActivePokemon::hash() const {
@@ -747,7 +879,8 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 }
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
-	return 
+	return
+			lhs.all_pokemon->index() == rhs.all_pokemon->index() and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and
 			lhs.bide == rhs.bide and
@@ -789,6 +922,10 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return !(lhs == rhs);
+}
+
+std::string ActivePokemon::to_string() const {
+	return get_pokemon().to_string();
 }
 
 }	// namespace technicalmachine

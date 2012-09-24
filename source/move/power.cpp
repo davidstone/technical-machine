@@ -55,7 +55,7 @@ unsigned move_power (Team const & attacker, Team const & defender, Weather const
 	if (doubling (attacker, defender, weather))
 		power *= 2;
 
-	power = power * item_modifier (attacker.pokemon()) / 10;
+	power *= Rational(item_modifier(attacker.pokemon().get_pokemon()), 10);
 
 	if (attacker.charge_boosted())
 		power *= 2;
@@ -63,9 +63,9 @@ unsigned move_power (Team const & attacker, Team const & defender, Weather const
 	if (defender.sport_is_active(attacker.pokemon().move()))
 		power /= 2;
 
-	power *= attacker_ability_modifier(attacker.pokemon(), defender.pokemon(), base_power);
+	power *= attacker_ability_modifier(attacker.pokemon().get_pokemon(), defender.pokemon().get_pokemon(), base_power);
 	
-	power *= defender_ability_modifier (move, defender.pokemon().ability);
+	power *= defender_ability_modifier(move, defender.pokemon().ability());
 	
 	return std::max(power, 1u);
 }
@@ -77,17 +77,17 @@ unsigned return_power(Pokemon const & pokemon) {
 }
 
 unsigned calculate_base_power (Team const & attacker, Team const & defender) {
-	Pokemon const & pokemon = attacker.pokemon();
+	auto const & pokemon = attacker.pokemon();
 	switch (pokemon.move().name) {
 		case Moves::CRUSH_GRIP:
 		case Moves::WRING_OUT:
-			return 120u * defender.pokemon().hp.stat / defender.pokemon().hp.max + 1;
+			return 120u * defender.pokemon().hp().stat / defender.pokemon().hp().max + 1;
 		case Moves::ERUPTION:
 		case Moves::WATER_SPOUT:
-			return 150u * pokemon.hp.stat / pokemon.hp.max;
+			return 150u * pokemon.hp().stat / pokemon.hp().max;
 		case Moves::FLAIL:
 		case Moves::REVERSAL: {
-			unsigned const k = 64u * pokemon.hp.stat / pokemon.hp.max;
+			unsigned const k = 64u * pokemon.hp().stat / pokemon.hp().max;
 			if (k <= 1)
 				return 200;
 			else if (k <= 5)
@@ -102,34 +102,34 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 				return 20;
 		}
 		case Moves::FLING:
-			return pokemon.item.get_fling_power();
+			return pokemon.item().get_fling_power();
 		case Moves::FRUSTRATION:
-			return 102 - return_power(pokemon);
+			return 102 - return_power(pokemon.get_pokemon());
 		case Moves::FURY_CUTTER:
 			return pokemon.move().fury_cutter_power();
 		case Moves::GRASS_KNOT:
 		case Moves::LOW_KICK:
-			return defender.pokemon().power_of_mass_based_moves();
+			return defender.pokemon().get_pokemon().power_of_mass_based_moves();
 		case Moves::GYRO_BALL: {
-			unsigned const uncapped_power = 25u * defender.pokemon().spe.stat / pokemon.spe.stat + 1;
+			unsigned const uncapped_power = 25u * defender.pokemon().spe().stat / pokemon.spe().stat + 1;
 			return std::min(uncapped_power, 150u);
 		}
 		case Moves::ICE_BALL:
 		case Moves::ROLLOUT:
 			return pokemon.move().momentum_move_power();
 		case Moves::HIDDEN_POWER: {
-			unsigned const u = second_lowest_bit (pokemon.hp) * (1 << 0);	// 1
-			unsigned const v = second_lowest_bit (pokemon.atk) * (1 << 1);	// 2
-			unsigned const w = second_lowest_bit (pokemon.def) * (1 << 2);	// 4
-			unsigned const x = second_lowest_bit (pokemon.spe) * (1 << 3);	// 8
-			unsigned const y = second_lowest_bit (pokemon.spa) * (1 << 4);	// 16
-			unsigned const z = second_lowest_bit (pokemon.spd) * (1 << 5);	// 32
+			unsigned const u = second_lowest_bit (pokemon.hp()) * (1 << 0);	// 1
+			unsigned const v = second_lowest_bit (pokemon.atk()) * (1 << 1);	// 2
+			unsigned const w = second_lowest_bit (pokemon.def()) * (1 << 2);	// 4
+			unsigned const x = second_lowest_bit (pokemon.spe()) * (1 << 3);	// 8
+			unsigned const y = second_lowest_bit (pokemon.spa()) * (1 << 4);	// 16
+			unsigned const z = second_lowest_bit (pokemon.spd()) * (1 << 5);	// 32
 			return (u + v + w + x + y + z) * 40 / 63 + 30;
 		}
 		case Moves::MAGNITUDE:
 			return pokemon.move().variable().value();
 		case Moves::NATURAL_GIFT:
-			return pokemon.item.get_berry_power ();
+			return pokemon.item().get_berry_power ();
 		case Moves::PRESENT:
 			assert (!pokemon.move().variable().present_heals());
 			return pokemon.move().variable().value();
@@ -138,7 +138,7 @@ unsigned calculate_base_power (Team const & attacker, Team const & defender) {
 			return std::min(uncapped_power, 200u);
 		}
 		case Moves::RETURN:
-			return return_power(pokemon);
+			return return_power(pokemon.get_pokemon());
 		case Moves::SPIT_UP:
 			return attacker.spit_up_power();
 		case Moves::TRIPLE_KICK:
@@ -174,22 +174,22 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 		case Moves::REVENGE:
 			return attacker.damaged();
 		case Moves::BRINE:
-			return defender.pokemon().hp.stat <= defender.pokemon().hp.max / 2;
+			return defender.pokemon().hp().stat <= defender.pokemon().hp().max / 2;
 		case Moves::FACADE:
-			return attacker.pokemon().status.boosts_facade();
+			return attacker.pokemon().status().boosts_facade();
 		case Moves::ICE_BALL:
 		case Moves::ROLLOUT:
 			return attacker.defense_curled();
 		case Moves::PAYBACK:
 			return defender.moved();
 		case Moves::SMELLINGSALT:
-			return defender.pokemon().status.boosts_smellingsalt();
+			return defender.pokemon().status().boosts_smellingsalt();
 		case Moves::SOLARBEAM:
 			return !weather.rain();
 		case Moves::STOMP:
 			return defender.minimized();
 		case Moves::WAKE_UP_SLAP:
-			return defender.pokemon().status.is_sleeping();
+			return defender.pokemon().status().is_sleeping();
 		case Moves::WEATHER_BALL:
 			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:
@@ -198,7 +198,7 @@ bool doubling (Team const & attacker, Team const & defender, Weather const & wea
 }
 
 unsigned item_modifier (Pokemon const & attacker) {
-	switch (attacker.item.name) {
+	switch (attacker.item().name) {
 		case Item::MUSCLE_BAND:
 			if (attacker.move().is_physical())
 				return 11;
@@ -314,7 +314,7 @@ unsigned item_modifier (Pokemon const & attacker) {
 }
 
 Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
-	switch (attacker.ability.name) {
+	switch (attacker.ability().name) {
 		case Ability::TECHNICIAN:
 			return (base_power <= 60) ? Rational(3, 2) : Rational(1);
 		case Ability::BLAZE:
@@ -330,7 +330,7 @@ Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & def
 		case Ability::RECKLESS:
 			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : Rational(1);
 		case Ability::RIVALRY:
-			return Rational(static_cast<unsigned>(4 + attacker.gender.multiplier(defender.gender)), 4);
+			return Rational(static_cast<unsigned>(4 + attacker.gender().multiplier(defender.gender())), 4);
 		default:
 			return Rational(1);
 	}

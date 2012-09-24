@@ -38,7 +38,7 @@ void heal(Pokemon & member, Rational const & rational, bool positive) {
 			member.hp.stat = member.hp.max;
 	}
 	else {
-		if (!member.ability.blocks_secondary_damage()) {
+		if (!member.ability().blocks_secondary_damage()) {
 			if (member.hp.max * rational.numerator <= 2 * rational.denominator - 1)
 				-- member.hp.stat;
 			else

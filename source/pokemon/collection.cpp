@@ -87,7 +87,7 @@ PokemonCollection::index_type PokemonCollection::real_size () const {
 
 PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
 	for (index_type found_index = 0; found_index != size(); ++found_index) {
-		if (operator()(found_index).name == name)
+		if (operator()(found_index).name() == name)
 			return found_index;
 	}
 	throw PokemonNotFound(name);
@@ -95,7 +95,7 @@ PokemonCollection::index_type PokemonCollection::find_index(Species const name) 
 
 bool PokemonCollection::seen (Species const name) {
 	for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
-		if (name == at_replacement().name)
+		if (name == at_replacement().name())
 			return true;
 	}
 	return false;

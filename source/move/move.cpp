@@ -154,11 +154,11 @@ unsigned Move::to_replacement () const {
 }
 
 bool Move::affects_target (Team const & target, Weather const & weather) const {
-	return affects_pokemon (target, target.pokemon(), weather);
+	return affects_pokemon (target, target.pokemon().get_pokemon(), weather);
 }
 
 bool Move::affects_replacement (Team const & target, Weather const & weather) const {
-	return affects_pokemon (target, target.pokemon.at_replacement(), weather);
+	return affects_pokemon (target, target.all_pokemon().at_replacement(), weather);
 }
 
 bool Move::affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const {
