@@ -56,6 +56,8 @@ class Weather;
 class ActivePokemon {
 	public:
 		ActivePokemon(PokemonCollection & all);
+		// this should only be called in Team's copy / move constructors
+		void update_collection(PokemonCollection & all);
 		Pokemon const & get_pokemon() const {
 			return (*all_pokemon)();
 		}
@@ -74,7 +76,6 @@ class ActivePokemon {
 		void reset_between_turns();
 		void clear_field();
 		void update_before_move();
-		bool substitute(unsigned max_hp);
 		void use_substitute();
 		Ability const & ability() const;
 		void attract();

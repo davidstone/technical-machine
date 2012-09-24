@@ -33,6 +33,10 @@ ActivePokemon::ActivePokemon(PokemonCollection & all):
 	{
 }
 
+void ActivePokemon::update_collection(PokemonCollection & all) {
+	all_pokemon = &all;
+}
+
 void ActivePokemon::reset_end_of_turn() {
 	damage_done_to_active = 0;
 	enduring = false;
@@ -742,14 +746,10 @@ void ActivePokemon::use_bide(Pokemon & target) {
 	}
 }
 
-bool ActivePokemon::substitute(unsigned const max_hp) {
-	return active_substitute.create(max_hp);
-}
-
 void ActivePokemon::use_substitute() {
 	if (!get_pokemon().can_use_substitute())
 		return;
-	bool const created = substitute(hp().max);
+	bool const created = active_substitute.create(hp().max);
 	if (created)
 		hp().stat -= hp().max / 4;
 }

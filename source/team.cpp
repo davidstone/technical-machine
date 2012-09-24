@@ -77,6 +77,7 @@ Team::Team(Team const & other):
 	wish(other.wish),
 	entry_hazards(other.entry_hazards),
 	me(other.me) {
+	pokemon().update_collection(m_all_pokemon);
 	all_pokemon().for_each([this](Pokemon & p) {
 		p.move.update_shared_moves(shared_moves);
 	});
@@ -90,6 +91,7 @@ Team::Team(Team && other):
 	wish(std::move(other.wish)),
 	entry_hazards(std::move(other.entry_hazards)),
 	me(std::move(other.me)) {
+	pokemon().update_collection(m_all_pokemon);
 	all_pokemon().for_each([this](Pokemon & p) {
 		p.move.update_shared_moves(shared_moves);
 	});

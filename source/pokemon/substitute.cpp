@@ -17,7 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "substitute.hpp"
-#include <cassert>
+#include <string>
+#include "invalid_substitute_hp.hpp"
 
 namespace technicalmachine {
 
@@ -27,15 +28,18 @@ Substitute::Substitute():
 }
 
 namespace {
-constexpr unsigned max_hp = 714;
+constexpr unsigned max_pokemon_hp = 714;
+constexpr unsigned max_substitute_hp = 714 / 4;
 }	// unnamed namespace
 
 bool Substitute::create(unsigned const total_hp) {
-	assert(total_hp <= max_hp / 4);
+	unsigned const new_hp = total_hp / 4;
+	if (new_hp > max_substitute_hp)
+		throw InvalidSubstituteHP(new_hp);
 	// Cannot create a new substitute if one already exists
 	if (exists())
 		return false;
-	hp = total_hp;
+	hp = new_hp;
 	return true;
 }
 
@@ -60,7 +64,7 @@ Substitute::hash_type Substitute::hash() const {
 }
 
 Substitute::hash_type Substitute::max_hash() {
-	return max_hp / 4 + 1;
+	return max_substitute_hp + 1;
 }
 
 bool operator== (Substitute const & lhs, Substitute const & rhs) {
@@ -69,5 +73,10 @@ bool operator== (Substitute const & lhs, Substitute const & rhs) {
 bool operator!= (Substitute const & lhs, Substitute const & rhs) {
 	return !(lhs == rhs);
 }
+
+InvalidSubstituteHP::InvalidSubstituteHP(unsigned const hp):
+	std::logic_error("Attempted to create a substitute with " + std::to_string(hp) + " HP. The largest possible substitute is " + std::to_string(max_substitute_hp) + " HP.") {
+}
+
 
 }	// namespace technicalmachine
