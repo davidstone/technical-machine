@@ -112,7 +112,7 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 	else {
 		msg.write_move (battle_id, 1);
 	}
-	if (!ai.replacing())
+	if (!ai.pokemon().replacing())
 		initialize_turn ();
 }
 
@@ -181,7 +181,7 @@ void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t
 	if (phazer.move().is_phaze()) {
 		phazer.move().variable.set_phaze_index(active, species);
 	}
-	else if (!active.moved()) {
+	else if (!active.pokemon().moved()) {
 		Pokemon & pokemon = active.pokemon(replacement);
 		pokemon.move.set_index(pokemon.index_of_first_switch() + active.all_pokemon().replacement());
 	}
@@ -195,8 +195,8 @@ void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16
 	Team & other = my_team ? foe : ai;
 	Pokemon & pokemon = changer.all_pokemon().at_replacement();
 	if (move_damage) {
-		if (other.all_pokemon().at_replacement().move().affects_replacement(changer, weather))
-			changer.do_damage(std::min(static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat));
+		if (other.all_pokemon().at_replacement().move().affects_target(changer.pokemon(), weather))
+			changer.pokemon().do_damage(std::min(static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat));
 		move_damage = false;
 	}
 	pokemon.new_hp = remaining_hp;
@@ -271,18 +271,18 @@ void GenericBattle::initialize_turn () {
 void GenericBattle::do_turn () {
 	first->move(false);
 	last->move(false);
-	if (first->replacing()) {
+	if (first->pokemon().replacing()) {
 		normalize_hp ();
 		switchpokemon (*first, *last, weather);
 		first->move(false);
 		normalize_hp ();
-		if (last->replacing()) {
+		if (last->pokemon().replacing()) {
 			switchpokemon (*last, *first, weather);
 			last->move(false);
 			normalize_hp ();
-			last->not_replacing();
+			last->pokemon().not_replacing();
 		}
-		first->not_replacing();
+		first->pokemon().not_replacing();
 	}
 	else {
 		std::cout << "First move: " + first->pokemon().to_string() + " uses " + first->pokemon().move().to_string() + '\n';

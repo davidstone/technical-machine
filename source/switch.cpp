@@ -35,10 +35,11 @@ void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
 }	// unnamed namespace
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
-	switcher.reset_switch();
+	auto & pokemon = switcher.pokemon();
+	pokemon.reset_switch();
 
-	if (switcher.pokemon().hp().stat > 0) {
-		switcher.pokemon().switch_pokemon();
+	if (pokemon.hp().stat > 0) {
+		pokemon.switch_pokemon();
 	}
 	else {
 		replace_fainted_pokemon (switcher, other);
@@ -47,9 +48,9 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 	}
 	EntryHazards::apply(switcher, weather);
-	if (switcher.pokemon().hp().stat > 0)
-		Ability::activate_on_switch (switcher, other, weather);
-	switcher.pokemon().switch_in();
+	if (pokemon.hp().stat > 0)
+		Ability::activate_on_switch (pokemon, other.pokemon(), weather);
+	pokemon.switch_in();
 }
 
 namespace {

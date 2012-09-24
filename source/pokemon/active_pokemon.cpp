@@ -98,6 +98,9 @@ void ActivePokemon::reset_switch() {
 	// vanished. Therefore, we need to reset it.
 	vanish.reset();
 	yawn.reset();
+	get_pokemon().move.for_each([](Move & move) {
+		move.reset();
+	});
 }
 
 void ActivePokemon::reset_between_turns() {
@@ -159,7 +162,7 @@ bool ActivePokemon::cannot_be_koed() const {
 }
 
 bool ActivePokemon::charge_boosted() const {
-	return charged;
+	return charged and move().type() == Type::ELECTRIC;
 }
 
 void ActivePokemon::charge() {
@@ -351,6 +354,11 @@ void ActivePokemon::lock_on_to() {
 	lock_on = true;
 }
 
+void ActivePokemon::lower_pp(Ability const & target) {
+	if (!is_locked_in_to_bide())
+		move().pp.decrement(target);
+}
+
 bool ActivePokemon::magnet_rise_is_active() const {
 	return magnet_rise.is_active();
 }
@@ -423,8 +431,15 @@ void ActivePokemon::activate_perish_song() {
 	perish_song.activate();
 }
 
-bool ActivePokemon::perish_song_turn() {
-	return perish_song.next_turn();
+void ActivePokemon::perish_song_turn() {
+	bool const faint = perish_song.next_turn();
+	if (faint) {
+		hp().stat = 0;
+	}
+}
+
+bool ActivePokemon::can_be_phazed() const {
+	return !ingrained() and !ability().blocks_phazing() and all_pokemon->size() > 1;
 }
 
 bool ActivePokemon::power_trick_is_active() const {
@@ -614,12 +629,16 @@ unsigned ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }
 
-bool ActivePokemon::increment_stockpile() {
-	return stockpile.increment();
+void ActivePokemon::increment_stockpile() {
+	bool const increased = stockpile.increment();
+	if (increased)
+		stat_boost_defensive(1);
 }
 
 int ActivePokemon::release_stockpile() {
-	return stockpile.release();
+	int const stages = stockpile.release();
+	stat_boost_defensive(-stages);
+	return stages;
 }
 
 bool ActivePokemon::is_switching_to_self () const {
@@ -628,6 +647,10 @@ bool ActivePokemon::is_switching_to_self () const {
 
 bool ActivePokemon::is_switching_to_self (Move const & switch_move) const {
 	return all_pokemon->is_switching_to_self(switch_move);
+}
+
+bool ActivePokemon::has_switched() const {
+	return moved() and move().is_switch();
 }
 
 bool ActivePokemon::switch_decision_required() const {

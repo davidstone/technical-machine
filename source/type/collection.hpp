@@ -24,8 +24,7 @@
 #include "../status.hpp"
 
 namespace technicalmachine {
-class Pokemon;
-class Team;
+class ActivePokemon;
 class Weather;
 enum class Species : uint16_t;
 
@@ -44,13 +43,13 @@ class TypeCollection {
 		}
 		void change_type(Type const type);
 	private:
-		friend bool is_type (Team const & team, Type type);
+		friend bool is_type (ActivePokemon const & pokemon, Type type);
 		friend class Type;
 		std::vector<Type> types;
 };
 
-bool is_type (Team const & team, Type type);
-bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather);
+bool is_type (ActivePokemon const & pokemon, Type type);
+bool grounded (ActivePokemon const & pokemon, Weather const & weather);
 
 }	// namespace technicalmachine
 #endif	// TYPE__COLLECTION_HPP_

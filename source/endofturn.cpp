@@ -28,6 +28,7 @@
 
 #include "move/move.hpp"
 
+#include "pokemon/active_pokemon.hpp"
 #include "pokemon/pokemon.hpp"
 
 namespace technicalmachine {
@@ -35,10 +36,10 @@ namespace {
 
 void endofturn1 (Team & team);
 void endofturn2 (Team & team);
-void endofturn3 (Team & team, Weather const & weather);
-void endofturn5 (Team & team, Pokemon & foe, Weather & weather);
+void endofturn3 (ActivePokemon & pokemon, Weather const & weather);
+void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather);
 void endofturn6 (Team & target, Weather const & weather);
-void endofturn7 (Team & team);
+void endofturn7 (ActivePokemon & pokemon);
 void reset_variable (Team & team);
 
 template<typename Integer>
@@ -50,23 +51,23 @@ void decrement (Integer & n) {
 }	// unnamed namespace
 
 void endofturn (Team & first, Team & last, Weather & weather) {
-	first.reset_end_of_turn();
-	last.reset_end_of_turn();
+	first.pokemon().reset_end_of_turn();
+	last.pokemon().reset_end_of_turn();
 	endofturn1 (first);
 	endofturn1 (last);
 	endofturn2 (first);
 	endofturn2 (last);
 	weather.decrement();	// The order doesn't matter here.
 	if (!first.pokemon().ability().blocks_weather() and !last.pokemon().ability().blocks_weather()) {
-		endofturn3 (first, weather);
-		endofturn3 (last, weather);
+		endofturn3 (first.pokemon(), weather);
+		endofturn3 (last.pokemon(), weather);
 	}
-	endofturn5 (first, last.pokemon().get_pokemon(), weather);
-	endofturn5 (last, first.pokemon().get_pokemon(), weather);
+	endofturn5 (first.pokemon(), last.pokemon().get_pokemon(), weather);
+	endofturn5 (last.pokemon(), first.pokemon().get_pokemon(), weather);
 	endofturn6 (first, weather);
 	endofturn6 (last, weather);
-	endofturn7 (first);
-	endofturn7 (last);
+	endofturn7 (first.pokemon());
+	endofturn7 (last.pokemon());
 	reset_variable (first);
 	reset_variable (last);
 }
@@ -81,56 +82,55 @@ void endofturn2 (Team & team) {
 	team.wish.decrement(team.pokemon().get_pokemon());
 }
 
-void endofturn3 (Team & team, Weather const & weather) {
-	if (weather.hail() and !team.pokemon().type().is_immune_to_hail())
-		heal (team.pokemon().get_pokemon(), -16);
-	if (weather.sand() and !team.pokemon().type().is_immune_to_sandstorm())
-		heal (team.pokemon().get_pokemon(), -16);
-	switch (team.pokemon().ability().name) {
+void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
+	if (weather.hail() and !pokemon.type().is_immune_to_hail())
+		heal (pokemon.get_pokemon(), -16);
+	if (weather.sand() and !pokemon.type().is_immune_to_sandstorm())
+		heal (pokemon.get_pokemon(), -16);
+	switch (pokemon.ability().name) {
 		case Ability::DRY_SKIN:
 			if (weather.rain())
-				heal (team.pokemon().get_pokemon(), 8);
+				heal (pokemon.get_pokemon(), 8);
 			else if (weather.sun())
-				heal (team.pokemon().get_pokemon(), -8);
+				heal (pokemon.get_pokemon(), -8);
 			break;
 		case Ability::HYDRATION:
 			if (weather.rain())
-				team.pokemon().status().clear ();
+				pokemon.status().clear ();
 			break;
 		case Ability::ICE_BODY:
 			if (weather.hail())
-				heal (team.pokemon().get_pokemon(), 16);
+				heal (pokemon.get_pokemon(), 16);
 			break;
 		case Ability::RAIN_DISH:
 			if (weather.rain())
-				heal (team.pokemon().get_pokemon(), 16);
+				heal (pokemon.get_pokemon(), 16);
 			break;
 		default:
 			break;
 	}
 }
 
-void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
-	auto & pokemon = team.pokemon();
-	if (team.ingrained())
+void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
+	if (pokemon.ingrained())
 		heal (pokemon.get_pokemon(), 16);
-	if (team.aqua_ring_is_active())
+	if (pokemon.aqua_ring_is_active())
 		heal (pokemon.get_pokemon(), 16);
 	if (pokemon.ability().boosts_speed())
-		team.stat_boost(Stat::SPE, 1);
-	else if (team.shed_skin_activated())
+		pokemon.stat_boost(Stat::SPE, 1);
+	else if (pokemon.shed_skin_activated())
 		pokemon.status().clear();
 	switch (pokemon.item().name) {
 		case Item::LEFTOVERS:
 			heal (pokemon.get_pokemon(), 16);
 			break;
 		case Item::BLACK_SLUDGE:
-			heal (pokemon.get_pokemon(), (is_type (team, Type::POISON)) ? 16 : -16);
+			heal (pokemon.get_pokemon(), (is_type(pokemon, Type::POISON)) ? 16 : -16);
 			break;
 		default:
 			break;
 	}
-	if (team.leech_seeded()) {
+	if (pokemon.leech_seeded()) {
 		unsigned const n = pokemon.hp().stat;
 		heal(pokemon.get_pokemon(), -8);
 		if (foe.hp.stat != 0) {
@@ -151,14 +151,14 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 			heal(pokemon.get_pokemon(), pokemon.ability().absorbs_poison_damage() ? 8 : -8);
 			break;
 		case Status::POISON_TOXIC:
-			team.increment_toxic();
+			pokemon.increment_toxic();
 			if (pokemon.ability().absorbs_poison_damage())
 				heal(pokemon.get_pokemon(), 8);
 			else
-				drain(pokemon.get_pokemon(), team.toxic_ratio());
+				drain(pokemon.get_pokemon(), pokemon.toxic_ratio());
 			break;
 		case Status::SLEEP:
-			if (team.nightmare())
+			if (pokemon.nightmare())
 				heal(pokemon.get_pokemon(), -4);
 			if (foe.ability().harms_sleepers())
 				heal(pokemon.get_pokemon(), -8);
@@ -176,21 +176,21 @@ void endofturn5 (Team & team, Pokemon & foe, Weather & weather) {
 		default:
 			break;
 	}
-	if (team.is_cursed())
+	if (pokemon.is_cursed())
 		heal(pokemon.get_pokemon(), -4);
-	team.partial_trap_damage();
+	pokemon.partial_trap_damage();
 	
-	team.decrement_lock_in();
+	pokemon.decrement_lock_in();
 	
 	pokemon.get_pokemon().move.for_each_regular_move([](Move & move) {
 		move.disable.advance_one_turn();
 	});
-	team.increment_encore();
-	team.increment_taunt();
-	team.decrement_magnet_rise();
-	team.decrement_heal_block();
-	team.decrement_embargo();
-	if (team.decrement_yawn())
+	pokemon.increment_encore();
+	pokemon.increment_taunt();
+	pokemon.decrement_magnet_rise();
+	pokemon.decrement_heal_block();
+	pokemon.decrement_embargo();
+	if (pokemon.decrement_yawn())
 		Status::apply<Status::SLEEP>(pokemon.get_pokemon(), weather);
 	if (pokemon.item().name == Item::STICKY_BARB)
 		heal(pokemon.get_pokemon(), -8);
@@ -200,8 +200,8 @@ void endofturn6 (Team & target, Weather const & weather) {
 	// TODO: Doom Desire / Future Sight
 }
 
-void endofturn7 (Team & team) {
-	team.perish_song_turn();
+void endofturn7 (ActivePokemon & pokemon) {
+	pokemon.perish_song_turn();
 }
 
 void reset_variable (Team & team) {

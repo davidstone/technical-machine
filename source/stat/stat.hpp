@@ -22,6 +22,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
+class ActivePokemon;
 class Pokemon;
 class Team;
 class Weather;
@@ -52,14 +53,14 @@ class Stat {
 		void calculate_initial_hp (uint8_t const level);
 };
 
-void calculate_attacking_stat (Team & attacker, Weather const & weather);
-void calculate_defending_stat (Team const & attacker, Team & defender, Weather const & weather);
-void calculate_attack(Team & attacker, Weather const & weather);
-void calculate_special_attack(Team & attacker, Weather const & weather);
-void calculate_defense (Team & defender, bool ch = false, bool is_self_KO = false);
-void calculate_special_defense (Team & defender, Weather const & weather, bool ch = false);
-void calculate_speed (Team & team, Weather const & weather);
+void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);
+void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather);
+void calculate_attack(ActivePokemon & attacker, Weather const & weather);
+void calculate_special_attack(ActivePokemon & attacker, Weather const & weather);
+void calculate_defense (ActivePokemon & defender, bool ch = false, bool is_self_KO = false);
+void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch = false);
 
+void calculate_speed (Team & team, Weather const & weather);
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 

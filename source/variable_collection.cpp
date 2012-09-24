@@ -51,7 +51,7 @@ void VariableCollection::set_phaze_index (Team const & other, Species const spec
 		reset_index();
 	}
 	else {
-		auto const pokemon_index = other.has_switched() ? other.all_pokemon().replacement() : other.pokemon().index();
+		auto const pokemon_index = other.pokemon().has_switched() ? other.all_pokemon().replacement() : other.pokemon().index();
 		auto const new_index = other.all_pokemon().find_index(species);
 		if (new_index == pokemon_index)
 			throw PhazingInSamePokemon(new_index);

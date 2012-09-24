@@ -25,7 +25,8 @@
 
 #include "../evaluate.hpp"
 #include "../rational.hpp"
-#include "../team.hpp"
+
+#include "../pokemon/active_pokemon.hpp"
 
 #include "../string_conversions/conversion.hpp"
 
@@ -153,16 +154,8 @@ unsigned Move::to_replacement () const {
 	return to_replacement (name);
 }
 
-bool Move::affects_target (Team const & target, Weather const & weather) const {
-	return affects_pokemon (target, target.pokemon().get_pokemon(), weather);
-}
-
-bool Move::affects_replacement (Team const & target, Weather const & weather) const {
-	return affects_pokemon (target, target.all_pokemon().at_replacement(), weather);
-}
-
-bool Move::affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const {
-	return type().get_effectiveness(pokemon) > 0 and (type() != Type::GROUND or grounded (target, pokemon, weather));
+bool Move::affects_target(ActivePokemon const & target, Weather const & weather) const {
+	return type().get_effectiveness(target.get_pokemon()) > 0 and (type() != Type::GROUND or grounded (target, weather));
 }
 
 bool Move::has_follow_up_decision () const {

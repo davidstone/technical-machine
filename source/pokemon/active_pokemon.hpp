@@ -133,6 +133,7 @@ class ActivePokemon {
 		Item & item();
 		bool is_fully_paralyzed() const;
 		unsigned level() const;
+		void lower_pp(Ability const & target);
 		bool magnet_rise_is_active() const;
 		void activate_magnet_rise();
 		void decrement_magnet_rise();
@@ -150,7 +151,8 @@ class ActivePokemon {
 		void partially_trap(bool extended);
 		void partial_trap_damage();
 		void activate_perish_song();
-		bool perish_song_turn();
+		void perish_song_turn();
+		bool can_be_phazed() const;
 		bool power_trick_is_active() const;
 		void activate_power_trick();
 		void protect();
@@ -204,11 +206,12 @@ class ActivePokemon {
 		Status & status();
 
 		unsigned spit_up_power() const;
-		bool increment_stockpile();
+		void increment_stockpile();
 		int release_stockpile();
 
 		bool is_switching_to_self () const;
 		bool is_switching_to_self (Move const & switch_move) const;
+		bool has_switched() const;
 		bool switch_decision_required() const;
 		void switch_pokemon();
 		void switch_in();

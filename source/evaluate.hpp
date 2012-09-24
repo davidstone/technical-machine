@@ -53,9 +53,9 @@ class Score {
 		int64_t score_active_pokemon(ActivePokemon const & active) const;
 		int64_t score_all_pokemon(Team & team, Team const & other, Weather const & weather) const;
 		int64_t score_pokemon(Team const & team, Team const & other, Weather const & weather) const;
-		int64_t baton_passable_score(Team const & team) const;
-		int64_t score_status(Team const & team) const;
-		int64_t score_move (Team const & team, Team const & other, Weather const & weather) const;
+		int64_t baton_passable_score(ActivePokemon const & pokemon) const;
+		int64_t score_status(ActivePokemon const & pokemon) const;
+		int64_t score_move (ActivePokemon const & pokemon, Team const & other, Weather const & weather) const;
 
 		int light_screen;
 		int lucky_chant;

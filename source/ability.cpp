@@ -21,10 +21,9 @@
 #include <cassert>
 
 #include "status.hpp"
-#include "team.hpp"
 #include "weather.hpp"
 
-#include "pokemon/pokemon.hpp"
+#include "pokemon/active_pokemon.hpp"
 
 #include "string_conversions/conversion.hpp"
 
@@ -55,12 +54,12 @@ void Ability::set_if_unknown (Abilities const ability) {
 		name = ability;
 }
 
-bool Ability::blocks_switching (Team const & switcher, Weather const & weather) const {
+bool Ability::blocks_switching (ActivePokemon const & switcher, Weather const & weather) const {
 	switch (name) {
 		case SHADOW_TAG:
-			return switcher.pokemon().ability().name != Ability::SHADOW_TAG;
+			return switcher.ability().name != Ability::SHADOW_TAG;
 		case ARENA_TRAP:
-			return grounded (switcher, switcher.pokemon().get_pokemon(), weather);
+			return grounded (switcher, weather);
 		case MAGNET_PULL:
 			return is_type (switcher, Type::STEEL);
 		default:
@@ -273,13 +272,12 @@ bool Ability::is_loafing (bool const loaf) const {
 	return name == TRUANT and loaf;
 }
 
-void Ability::activate_on_switch (Team & switcher, Team & other, Weather & weather) {
-	switch (switcher.pokemon().ability().name) {
+void Ability::activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
+	switch (switcher.ability().name) {
 		case DOWNLOAD: {
-			auto const & pokemon = other.pokemon();
 			calculate_defense (other);
 			calculate_special_defense (other, weather);
-			switcher.stat_boost((pokemon.def().stat >= pokemon.spd().stat) ? Stat::SPA : Stat::ATK, 1);
+			switcher.stat_boost((other.def().stat >= other.spd().stat) ? Stat::SPA : Stat::ATK, 1);
 			break;
 		}
 		case DRIZZLE:

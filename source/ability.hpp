@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-class Team;
+class ActivePokemon;
 class Weather;
 
 class Ability {
@@ -62,7 +62,7 @@ class Ability {
 		explicit Ability (std::string const & str);
 		bool is_set () const;
 		void set_if_unknown (Abilities ability);
-		bool blocks_switching (Team const & switcher, Weather const & weather) const;
+		bool blocks_switching (ActivePokemon const & switcher, Weather const & weather) const;
 		bool blocks_weather () const;
 
 		template<Status::Statuses status>
@@ -102,7 +102,7 @@ class Ability {
 		bool is_loafing (bool loaf) const;
 		std::string to_string () const;
 		
-		static void activate_on_switch (Team & switcher, Team & other, Weather & weather);
+		static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
 		friend bool operator== (Ability lhs, Ability rhs);
 		Abilities name;
 };

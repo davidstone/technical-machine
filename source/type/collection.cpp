@@ -22,9 +22,9 @@
 
 #include "type.hpp"
 
-#include "../team.hpp"
 #include "../weather.hpp"
 
+#include "../pokemon/active_pokemon.hpp"
 #include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
@@ -57,9 +57,9 @@ void TypeCollection::change_type(Type const type) {
 	types = std::vector<Type>({ type });
 }
 
-bool is_type (Team const & team, Type const type) {
-	if (type != Type::FLYING or !team.is_roosting()) {
-		for (Type const check : team.pokemon().type().types) {
+bool is_type (ActivePokemon const & pokemon, Type const type) {
+	if (type != Type::FLYING or !pokemon.is_roosting()) {
+		for (Type const check : pokemon.type().types) {
 			if (check == type)
 				return true;
 		}
@@ -67,8 +67,8 @@ bool is_type (Team const & team, Type const type) {
 	return false;
 }
 
-bool grounded (Team const & team, Pokemon const & pokemon, Weather const & weather) {
-	return !(is_type(team, Type::FLYING) or pokemon.ability().is_immune_to_ground() or team.magnet_rise_is_active()) or weather.gravity() or pokemon.item().grounds() or team.ingrained();
+bool grounded (ActivePokemon const & pokemon, Weather const & weather) {
+	return !(is_type(pokemon, Type::FLYING) or pokemon.ability().is_immune_to_ground() or pokemon.magnet_rise_is_active()) or weather.gravity() or pokemon.item().grounds() or pokemon.ingrained();
 }
 
 namespace {

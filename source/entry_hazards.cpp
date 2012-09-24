@@ -23,6 +23,8 @@
 #include "heal.hpp"
 #include "team.hpp"
 
+#include "pokemon/active_pokemon.hpp"
+
 namespace technicalmachine {
 namespace {
 
@@ -33,7 +35,7 @@ constexpr EntryHazards::hash_type max_spikes = max_spikes_layers + 1;
 constexpr EntryHazards::hash_type max_toxic_spikes = max_toxic_spikes_layers + 1;
 constexpr EntryHazards::hash_type max_stealth_rock = max_stealth_rock_layers + 1;
 
-bool removes_toxic_spikes(Team const & switcher);
+bool removes_toxic_spikes(ActivePokemon const & switcher);
 
 }	// unnamed namespace
 
@@ -80,9 +82,9 @@ void EntryHazards::apply(Team & switcher, Weather const & weather) {
 	if (switcher.pokemon().ability().blocks_secondary_damage())
 		return;
 
-	if (grounded (switcher, switcher.pokemon().get_pokemon(), weather)) {
+	if (grounded(switcher.pokemon(), weather)) {
 		if (entry_hazards.toxic_spikes) {
-			if (removes_toxic_spikes(switcher))
+			if (removes_toxic_spikes(switcher.pokemon()))
 				entry_hazards.toxic_spikes = 0;
 			else
 				apply_toxic_spikes(switcher, weather);
@@ -115,7 +117,7 @@ void EntryHazards::apply_toxic_spikes(Team & switcher, Weather const & weather) 
 
 namespace {
 
-bool removes_toxic_spikes(Team const & switcher) {
+bool removes_toxic_spikes(ActivePokemon const & switcher) {
 	return is_type(switcher, Type::POISON);
 }
 }	// unnamed namespace

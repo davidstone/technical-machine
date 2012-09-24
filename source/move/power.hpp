@@ -21,10 +21,10 @@
 
 namespace technicalmachine {
 
-class Team;
+class ActivePokemon;
 class Weather;
 
-unsigned move_power (Team const & attacker, Team const & defender, Weather const & weather);
+unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 
 }	// namespace technicalmachine
 #endif	// MOVE__POWER_HPP_

@@ -35,7 +35,7 @@
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
-class Team;
+class ActivePokemon;
 class Weather;
 
 class Move {
@@ -61,8 +61,7 @@ class Move {
 		static Moves from_replacement (unsigned replacement);
 		static unsigned to_replacement (Moves name);
 		unsigned to_replacement () const;
-		bool affects_target (Team const & target, Weather const & weather) const;
-		bool affects_replacement (Team const & target, Weather const & weather) const;
+		bool affects_target (ActivePokemon const & target, Weather const & weather) const;
 		bool has_follow_up_decision () const;
 		bool calls_other_move () const;
 		void increment_use_counter();
@@ -103,7 +102,6 @@ class Move {
 		// The random number (85 through 100)
 		Random r;
 	private:
-		bool affects_pokemon (Team const & target, Pokemon const & pokemon, Weather const & weather) const;
 		TimesUsed times_used;
 		Accuracy cached_accuracy;
 		// I maintain the selectable state to determine if Struggle is legal
@@ -115,7 +113,7 @@ class Move {
 		Priority cached_priority;
 		// Replace this with a function when it will reduce the size of Move.
 		Classification cached_classification;
-		friend void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather);
+		friend void determine_all_legal_selections (ActivePokemon & user, ActivePokemon const & other, Weather const & weather);
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);

@@ -37,7 +37,7 @@ namespace {
 
 constexpr unsigned team_size = 6;
 
-Team create_max_damage_physical_attacker () {
+Team max_damage_physical_attacker () {
 	Team attacker;
 	
 	constexpr unsigned level = 100;
@@ -46,14 +46,14 @@ Team create_max_damage_physical_attacker () {
 	Pokemon & pokemon = attacker.pokemon().get_pokemon();
 	pokemon.move.add(Moves::ROLLOUT, 3, team_size);
 
-	attacker.defense_curl();
+	attacker.pokemon().defense_curl();
 	for (unsigned n = 0; n != 10; ++n)
 		pokemon.move().increment_use_counter();
 	
 	return attacker;
 }
 
-Team create_max_damage_special_attacker () {
+Team max_damage_special_attacker () {
 	Team attacker;
 
 	constexpr unsigned level = 100;
@@ -64,7 +64,7 @@ Team create_max_damage_special_attacker () {
 	return attacker;
 }
 
-Team create_max_damage_physical_defender () {
+Team max_damage_physical_defender () {
 	Team defender;
 	constexpr unsigned level = 1;
 	Gender const gender(Gender::MALE);
@@ -72,11 +72,11 @@ Team create_max_damage_physical_defender () {
 	auto & d = defender.pokemon();
 	d.def().iv = 0;
 	d.def().ev = 0;
-	defender.stat_boost(Stat::DEF, -6);
+	d.stat_boost(Stat::DEF, -6);
 	return defender;
 }
 
-Team create_max_damage_special_defender () {
+Team max_damage_special_defender () {
 	Team defender;
 	constexpr unsigned level = 1;
 	Gender const gender(Gender::MALE);
@@ -86,7 +86,7 @@ Team create_max_damage_special_defender () {
 
 	d.spd().iv = 0;
 	d.spd().ev = 0;
-	defender.stat_boost(Stat::SPD, -6);
+	d.stat_boost(Stat::SPD, -6);
 
 	return defender;
 }
@@ -95,11 +95,11 @@ void physical_power_test () {
 	std::cout << "\t\tRunning physical power tests.\n";
 	constexpr unsigned max_power = 1440;
 
-	Team attacker = create_max_damage_physical_attacker ();
+	Team attacker = max_damage_physical_attacker ();
 	attacker.pokemon().item().name = Item::ROCK_INCENSE;
 	attacker.pokemon().get_pokemon().ability().name = Ability::RIVALRY;
 
-	unsigned const power = move_power(attacker, create_max_damage_physical_defender(), Weather());
+	unsigned const power = move_power(attacker.pokemon(), max_damage_physical_defender().pokemon(), Weather());
 	if (power != max_power)
 		throw IncorrectCalculation (power, max_power);
 }
@@ -108,16 +108,16 @@ void special_power_test () {
 	std::cout << "\t\tRunning special power tests.\n";
 	constexpr unsigned max_power = 342;
 
-	Team attacker = create_max_damage_special_attacker ();
+	Team attacker = max_damage_special_attacker ();
 	Pokemon & pokemon = attacker.pokemon().get_pokemon();
 	pokemon.move.add(Moves::SURF, 3, team_size);
 	pokemon.item().name = Item::WAVE_INCENSE;
 	pokemon.ability().name = Ability::TORRENT;
 
-	Team defender = create_max_damage_special_defender ();
-	defender.dive();
+	Team defender = max_damage_special_defender ();
+	defender.pokemon().dive();
 
-	unsigned const power = move_power(attacker, defender, Weather());
+	unsigned const power = move_power(attacker.pokemon(), defender.pokemon(), Weather());
 	if (power != max_power)
 		throw IncorrectCalculation (power, max_power);
 }
@@ -133,24 +133,24 @@ void physical_damage_test () {
 	constexpr unsigned max_damage = 95064912;
 	Weather const weather;
 
-	Team attacker = create_max_damage_physical_attacker ();
+	Team attacker = max_damage_physical_attacker ();
 	
 	Pokemon & a = attacker.pokemon().get_pokemon();
 	a.def.ev = 252 / 4;
 	a.nature().name = Nature::IMPISH;
-	attacker.activate_power_trick();
+	attacker.pokemon().activate_power_trick();
 	a.ability().name = Ability::PURE_POWER;
-	attacker.stat_boost(Stat::ATK, 6);
-	calculate_attacking_stat (attacker, weather);
+	attacker.pokemon().stat_boost(Stat::ATK, 6);
+	calculate_attacking_stat (attacker.pokemon(), weather);
 
 	a.item().name = Item::METRONOME;
 
-	attacker.set_critical_hit(true);
+	attacker.pokemon().set_critical_hit(true);
 
-	Team defender = create_max_damage_physical_defender ();
-	calculate_defending_stat (attacker, defender, weather);
+	Team defender = max_damage_physical_defender();
+	calculate_defending_stat(attacker.pokemon(), defender.pokemon(), weather);
 	
-	unsigned damage = uncapped_damage (attacker, defender, weather);
+	unsigned const damage = uncapped_damage(attacker.pokemon(), defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }
@@ -161,28 +161,28 @@ void special_damage_test () {
 	Weather weather;
 	weather.set_sun (Weather::Duration::permanent);
 
-	Team attacker = create_max_damage_special_attacker ();
+	Team attacker = max_damage_special_attacker();
 	Pokemon & a = attacker.pokemon().get_pokemon();
 	a.move.add(Moves::BLAST_BURN, 3, team_size);
 	a.change_type(Type::FIRE);
 
 	a.spa.ev = 252 / 4;
 	a.nature().name = Nature::MODEST;
-	attacker.stat_boost(Stat::SPA, 6);
-	calculate_attacking_stat (attacker, weather);
+	attacker.pokemon().stat_boost(Stat::SPA, 6);
+	calculate_attacking_stat(attacker.pokemon(), weather);
 	
 	a.item().name = Item::METRONOME;
 	for (unsigned n = 0; n != 10; ++n)
 		a.move().increment_use_counter();
 
 	a.ability().name = Ability::BLAZE;
-	attacker.set_critical_hit(true);
-	attacker.activate_flash_fire();
+	attacker.pokemon().set_critical_hit(true);
+	attacker.pokemon().activate_flash_fire();
 
-	Team defender = create_max_damage_special_defender ();
-	calculate_defending_stat (attacker, defender, weather);
+	Team defender = max_damage_special_defender();
+	calculate_defending_stat(attacker.pokemon(), defender.pokemon(), weather);
 
-	unsigned damage = uncapped_damage (attacker, defender, weather);
+	unsigned const damage = uncapped_damage(attacker.pokemon(), defender, weather);
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }

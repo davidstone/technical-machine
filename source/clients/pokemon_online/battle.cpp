@@ -325,12 +325,12 @@ void Battle::parse_effectiveness (InMessage & msg) {
 
 void Battle::handle_miss (Party const party) {
 	Team & team = is_me (party) ? ai : foe;
-	team.set_miss(true);
+	team.pokemon().set_miss(true);
 }
 
 void Battle::handle_critical_hit (Party const party) {
 	Team & team = is_me (party) ? ai : foe;
-	team.set_critical_hit(true);
+	team.pokemon().set_critical_hit(true);
 }
 
 void Battle::parse_number_of_hits (InMessage & msg) {

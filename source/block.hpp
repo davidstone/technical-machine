@@ -21,11 +21,11 @@
 
 namespace technicalmachine {
 
-class Team;
+class ActivePokemon;
 class Weather;
 
-void determine_all_legal_selections (Team & user, Team const & other, Weather const & weather);
-bool can_execute_move (Team & user, Team const & other, Weather const & weather);
+void determine_all_legal_selections (ActivePokemon & user, ActivePokemon const & other, Weather const & weather);
+bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const & weather);
 
 }	// namespace technicalmachine
 #endif	// BLOCK_HPP_
