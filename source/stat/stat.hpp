@@ -20,13 +20,13 @@
 #define STAT__STAT_HPP_
 
 #include <cstdint>
+#include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
 class Pokemon;
 class Team;
 class Weather;
-enum class Species : uint16_t;
 
 class Stat {
 	public:

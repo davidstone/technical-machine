@@ -48,7 +48,6 @@
 namespace technicalmachine {
 class DetailedStats;
 enum class Moves : uint16_t;
-enum class Species : uint16_t;
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	opponent_name (_opponent),

@@ -21,12 +21,12 @@
 
 #include <vector>
 #include "type.hpp"
+#include "../pokemon/species_forward.hpp"
 #include "../status.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
 class Weather;
-enum class Species : uint16_t;
 
 class TypeCollection {
 	public:

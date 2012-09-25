@@ -25,10 +25,10 @@
 #include <functional>
 
 #include "pokemon.hpp"
+#include "species.hpp"
 
 namespace technicalmachine {
 enum class Moves : uint16_t;
-enum class Species : uint16_t;
 class Move;
 class SharedMoves;
 

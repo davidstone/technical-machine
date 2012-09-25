@@ -33,12 +33,12 @@
 #include "../../move/moves.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+#include "../../pokemon/species_forward.hpp"
 
 #include "../../stat/invalid_stat.hpp"
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 namespace po {
 namespace {
 

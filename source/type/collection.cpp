@@ -28,7 +28,6 @@
 #include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 namespace {
 std::vector<Type> get_type(Species const name);
 }	// unnamed namespace

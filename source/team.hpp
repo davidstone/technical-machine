@@ -31,9 +31,9 @@
 
 #include "pokemon/active_pokemon.hpp"
 #include "pokemon/collection.hpp"
+#include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 class Ability;
 class Pokemon;
 class Weather;

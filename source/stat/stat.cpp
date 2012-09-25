@@ -32,7 +32,6 @@
 #include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 namespace {
 
 uint8_t get_base_stat(Species name, Stat::Stats stat_name);

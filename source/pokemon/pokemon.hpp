@@ -24,6 +24,7 @@
 
 #include "level.hpp"
 #include "seen.hpp"
+#include "species_forward.hpp"
 
 #include "../ability.hpp"
 #include "../gender.hpp"
@@ -38,7 +39,6 @@
 #include "../type/collection.hpp"
 
 namespace technicalmachine {
-enum class Species : uint16_t;
 class SharedMoves;
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 

@@ -30,9 +30,10 @@
 #include "../team.hpp"
 #include "../weather.hpp"
 
+#include "../pokemon/species_forward.hpp"
+
 namespace technicalmachine {
 enum class Moves : uint16_t;
-enum class Species : uint16_t;
 class DetailedStats;
 class Gender;
 namespace network {

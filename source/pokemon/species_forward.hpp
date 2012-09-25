@@ -1,4 +1,4 @@
-// Exception if unable to find a Pokemon that should exist
+// Species enum forward declaration
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__POKEMON_NOT_FOUND_HPP_
-#define POKEMON__POKEMON_NOT_FOUND_HPP_
+#ifndef POKEMON__SPECIES_FORWARD_HPP_
+#define POKEMON__SPECIES_FORWARD_HPP_
 
-#include <stdexcept>
-#include "species_forward.hpp"
-#include "../string_conversions/conversion.hpp"
+#include <cstdint>
 
 namespace technicalmachine {
 
-class PokemonNotFound : public std::logic_error {
-	public:
-		PokemonNotFound(Species const species):
-			std::logic_error("Unable to find " + to_string(species) + ".") {
-		}
-};
+enum class Species : uint16_t;
+
 }	// namespace technicalmachine
-#endif	// POKEMON__POKEMON_NOT_FOUND_HPP_
+#endif	// POKEMON__SPECIES_FORWARD_HPP_

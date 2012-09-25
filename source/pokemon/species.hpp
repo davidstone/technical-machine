@@ -19,6 +19,7 @@
 #ifndef POKEMON__SPECIES_HPP_
 #define POKEMON__SPECIES_HPP_
 
+#include "species_forward.hpp"
 #include <cstdint>
 
 namespace technicalmachine {
