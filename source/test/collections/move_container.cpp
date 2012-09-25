@@ -25,11 +25,11 @@
 #include "invalid_collection.hpp"
 
 #include "../../move/move.hpp"
+#include "../../move/moves_forward.hpp"
 #include "../../move/container.hpp"
 #include "../../move/shared.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 namespace {
 class Comparator : public std::unary_function<void, Move> {
 	public:

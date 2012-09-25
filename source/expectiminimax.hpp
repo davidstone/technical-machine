@@ -21,10 +21,10 @@
 
 #include <cstdint>
 #include <random>
+#include "move/moves_forward.hpp"
 
 namespace technicalmachine {
 
-enum class Moves : uint16_t;
 class Score;
 class Team;
 class Weather;

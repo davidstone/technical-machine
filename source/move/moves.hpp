@@ -21,6 +21,8 @@
 
 #undef SING
 
+#include "moves_forward.hpp"
+
 namespace technicalmachine {
 
 enum class Moves : uint16_t {

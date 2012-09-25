@@ -20,9 +20,9 @@
 #define VANISH_HPP_
 
 #include <cstdint>
+#include "../move/moves_forward.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 
 // Various states a Pokemon can be in due to vanishing moves.
 

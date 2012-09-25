@@ -20,10 +20,10 @@
 #define POKEMON_LAB__CONVERSION_HPP_
 
 #include "../../gender.hpp"
+#include "../../move/moves_forward.hpp"
 #include "../../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 namespace pl {
 
 Gender::Genders id_to_gender (unsigned id);

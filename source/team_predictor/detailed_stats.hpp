@@ -26,12 +26,13 @@
 #include "../ability.hpp"
 #include "../item.hpp"
 
+#include "../move/moves_forward.hpp"
+
 #include "../pokemon/species.hpp"
 
 #include "../stat/nature.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 
 class DetailedStats {
 	public:

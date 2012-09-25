@@ -23,10 +23,10 @@
 #include <cstdint>
 #include <functional>
 #include "variable.hpp"
+#include "move/moves_forward.hpp"
 #include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 class Team;
 
 class VariableCollection : public detail::BaseCollection<Variable> {

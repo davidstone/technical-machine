@@ -27,10 +27,10 @@
 
 #include "container.hpp"
 #include "move.hpp"
+#include "moves_forward.hpp"
 #include "ranked.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 class SharedMoves;
 
 class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {

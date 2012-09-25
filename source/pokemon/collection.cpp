@@ -27,9 +27,9 @@
 #include "species.hpp"
 
 #include "../move/move.hpp"
+#include "../move/moves_forward.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 
 PokemonCollection::PokemonCollection ():
 	current_replacement(0),

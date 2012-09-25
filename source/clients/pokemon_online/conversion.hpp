@@ -27,13 +27,14 @@
 #include "../../gender.hpp"
 #include "../../item.hpp"
 
+#include "../../move/moves_forward.hpp"
+
 #include "../../pokemon/species_forward.hpp"
 
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 namespace po {
 
 Species id_to_species (unsigned id, unsigned forme);

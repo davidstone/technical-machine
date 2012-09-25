@@ -25,6 +25,7 @@
 #include "accuracy.hpp"
 #include "classification.hpp"
 #include "disable.hpp"
+#include "moves_forward.hpp"
 #include "pp.hpp"
 #include "priority.hpp"
 #include "random.hpp"
@@ -34,7 +35,6 @@
 #include "../type/type.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 class ActivePokemon;
 class Weather;
 

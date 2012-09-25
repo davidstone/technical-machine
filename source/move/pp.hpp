@@ -20,9 +20,9 @@
 #define MOVE__PP_HPP_
 
 #include <cstdint>
+#include "moves_forward.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 class Ability;
 
 class Pp {

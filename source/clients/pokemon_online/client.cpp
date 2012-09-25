@@ -37,12 +37,13 @@
 
 #include "../network/invalid_channel.hpp"
 
+#include "../../move/moves_forward.hpp"
+
 #include "../../team.hpp"
 
 #include "../../cryptography/md5.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 namespace po {
 
 Client::Client (unsigned set_depth):

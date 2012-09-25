@@ -20,9 +20,9 @@
 #define MOVE__PRIORITY_HPP_
 
 #include <cstdint>
+#include "moves_forward.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 
 class Priority {
 	public:

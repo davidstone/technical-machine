@@ -17,13 +17,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pp.hpp"
+
 #include <algorithm>
 #include <cassert>
+
+#include "moves_forward.hpp"
+
 #include "../ability.hpp"
 #include "../rational.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 namespace {
 
 constexpr uint8_t unlimited_pp = 0xFF;

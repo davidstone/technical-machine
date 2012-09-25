@@ -1,4 +1,4 @@
-// Moves classification (physical, special, or other)
+// Moves enum forward declaration
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,24 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__CLASSIFICATION_HPP_
-#define MOVE__CLASSIFICATION_HPP_
+#ifndef MOVE__MOVES_FORWARD_HPP_
+#define MOVE__MOVES_FORWARD_HPP_
 
 #include <cstdint>
-#include "moves_forward.hpp"
 
 namespace technicalmachine {
 
-class Classification {
-	public:
-		Classification(Moves move);
-		bool is_physical() const;
-		bool is_special() const;
-	private:
-		enum class Cached : int8_t;
-		static Cached classification (Moves move);
-		Cached cached;
-};
+enum class Moves : uint16_t;
 
 }	// namespace technicalmachine
-#endif	// MOVE__CLASSIFICATION_HPP_
+#endif	// MOVE__MOVES_FORWARD_HPP_

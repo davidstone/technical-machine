@@ -26,6 +26,7 @@
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
+#include "../../move/moves_forward.hpp"
 
 #include "../../pokemon/pokemon.hpp"
 
@@ -35,7 +36,6 @@
 #include "../../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
-enum class Moves : uint16_t;
 namespace pl {
 namespace {
 

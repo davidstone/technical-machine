@@ -39,6 +39,7 @@
 #include "../weather.hpp"
 
 #include "../move/move.hpp"
+#include "../move/moves_forward.hpp"
 #include "../move/use_move.hpp"
 
 #include "../pokemon/pokemon_not_found.hpp"
@@ -47,7 +48,6 @@
 
 namespace technicalmachine {
 class DetailedStats;
-enum class Moves : uint16_t;
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	opponent_name (_opponent),

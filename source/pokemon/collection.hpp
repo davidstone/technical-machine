@@ -27,8 +27,9 @@
 #include "pokemon.hpp"
 #include "species.hpp"
 
+#include "../move/moves_forward.hpp"
+
 namespace technicalmachine {
-enum class Moves : uint16_t;
 class Move;
 class SharedMoves;
 
