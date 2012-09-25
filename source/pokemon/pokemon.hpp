@@ -52,10 +52,10 @@ class Pokemon {
 		uint8_t index_of_first_switch () const;
 		// Fix any rounding issues caused by not seeing the foe's exact HP.
 		void normalize_hp ();
-		uint8_t power_of_mass_based_moves() const;
+		unsigned power_of_mass_based_moves() const;
 		std::string to_string () const;
 		std::string get_nickname () const;
-		bool can_use_chatter() const;
+		bool can_confuse_with_chatter() const;
 		bool can_use_substitute() const;
 		bool is_boosted_by_adamant_orb() const;
 		bool is_boosted_by_deepseascale() const;

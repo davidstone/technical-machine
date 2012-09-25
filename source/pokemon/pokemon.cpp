@@ -105,7 +105,7 @@ void Pokemon::normalize_hp () {
 		hp.stat = 1;
 }
 
-bool Pokemon::can_use_chatter() const {
+bool Pokemon::can_confuse_with_chatter() const {
 	return name() == Species::CHATOT;
 }
 
@@ -384,7 +384,7 @@ Type::Types Pokemon::calculate_hidden_power_type() const {
 	return lookup [index];
 }
 
-uint8_t Pokemon::power_of_mass_based_moves() const {
+unsigned Pokemon::power_of_mass_based_moves() const {
 	constexpr static uint8_t mass_array [] = {
 		100,	// Abomasnow
 		40,	// Abra

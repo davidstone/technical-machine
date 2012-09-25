@@ -37,6 +37,22 @@ void ActivePokemon::update_collection(PokemonCollection & all) {
 	all_pokemon = &all;
 }
 
+ActivePokemon::operator Pokemon const & () const {
+	return get_pokemon();
+}
+
+ActivePokemon::operator Pokemon & () {
+	return get_pokemon();
+}
+
+MoveCollection const & ActivePokemon::all_moves() const {
+	return get_pokemon().move;
+}
+
+MoveCollection & ActivePokemon::all_moves() {
+	return get_pokemon().move;
+}
+
 void ActivePokemon::reset_end_of_turn() {
 	damage_done_to_active = 0;
 	enduring = false;
@@ -133,6 +149,10 @@ Ability const & ActivePokemon::ability() const {
 	return get_pokemon().ability();
 }
 
+void ActivePokemon::ability(Ability::Abilities const update) {
+	get_pokemon().ability().name = update;
+}
+
 bool ActivePokemon::aqua_ring_is_active() const {
 	return aqua_ring;
 }
@@ -171,6 +191,10 @@ bool ActivePokemon::charge_boosted() const {
 
 void ActivePokemon::charge() {
 	charged = true;
+}
+
+bool ActivePokemon::can_confuse_with_chatter() const {
+	return get_pokemon().can_confuse_with_chatter();
 }
 
 bool ActivePokemon::is_confused() const {
@@ -444,6 +468,10 @@ void ActivePokemon::perish_song_turn() {
 
 bool ActivePokemon::can_be_phazed() const {
 	return !ingrained() and !ability().blocks_phazing() and all_pokemon->size() > 1;
+}
+
+unsigned ActivePokemon::power_of_mass_based_moves() const {
+	return get_pokemon().power_of_mass_based_moves();
 }
 
 bool ActivePokemon::power_trick_is_active() const {

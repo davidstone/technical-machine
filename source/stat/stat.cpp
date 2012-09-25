@@ -84,13 +84,13 @@ void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather
 
 void calculate_attack(ActivePokemon & attacker, Weather const & weather) {
 	attacker.atk().stat = !attacker.power_trick_is_active() ?
-		calculate_attack_before_power_trick(attacker.get_pokemon()) :
-		calculate_defense_before_power_trick(attacker.get_pokemon());
+		calculate_attack_before_power_trick(attacker) :
+		calculate_defense_before_power_trick(attacker);
 
 	attacker.atk().stat *= attacker.stage_modifier<Stat::ATK>(attacker.critical_hit());
 
-	attacker.atk().stat *= attack_ability_modifier(attacker.get_pokemon(), attacker.slow_start_is_active(), weather);
-	attacker.atk().stat *= attack_item_modifier(attacker.get_pokemon());
+	attacker.atk().stat *= attack_ability_modifier(attacker, attacker.slow_start_is_active(), weather);
+	attacker.atk().stat *= attack_item_modifier(attacker);
 	
 	if (attacker.atk().stat == 0)
 		attacker.atk().stat = 1;
@@ -103,7 +103,7 @@ void calculate_special_attack (ActivePokemon & attacker, Weather const & weather
 	attacker.spa().stat *= attacker.stage_modifier<Stat::SPA>(attacker.critical_hit());
 
 	attacker.spa().stat *= special_attack_ability_modifier(attacker.ability(), weather);
-	attacker.spa().stat *= special_attack_item_modifier(attacker.get_pokemon());
+	attacker.spa().stat *= special_attack_item_modifier(attacker);
 
 	if (attacker.spa().stat == 0)
 		attacker.spa().stat = 1;
@@ -118,13 +118,13 @@ void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & d
 
 void calculate_defense (ActivePokemon & defender, bool ch, bool is_self_KO) {
 	defender.def().stat = !defender.power_trick_is_active() ?
-		calculate_defense_before_power_trick (defender.get_pokemon()) :
-		calculate_attack_before_power_trick (defender.get_pokemon());
+		calculate_defense_before_power_trick (defender) :
+		calculate_attack_before_power_trick (defender);
 
 	defender.def().stat *= defender.stage_modifier<Stat::DEF>(ch);
 	
-	defender.def().stat *= defense_ability_modifier(defender.get_pokemon());
-	defender.def().stat *= defense_item_modifier(defender.get_pokemon());
+	defender.def().stat *= defense_ability_modifier(defender);
+	defender.def().stat *= defense_item_modifier(defender);
 	
 	if (is_self_KO)
 		defender.def().stat /= 2;
@@ -140,7 +140,7 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 	defender.spd().stat *= defender.stage_modifier<Stat::SPD>(ch);
 
 	defender.spd().stat *= special_defense_ability_modifier(defender.ability(), weather);	
-	defender.spd().stat *= special_defense_item_modifier(defender.get_pokemon());
+	defender.spd().stat *= special_defense_item_modifier(defender);
 	
 	defender.spd().stat *= special_defense_sandstorm_boost(defender, weather);
 	
@@ -156,9 +156,9 @@ void calculate_speed (Team & team, Weather const & weather) {
 	pokemon.spe().stat *= pokemon.stage_modifier<Stat::SPE>();
 
 	pokemon.spe().stat *= speed_ability_modifier(pokemon, weather);
-	pokemon.spe().stat *= speed_item_modifier(pokemon.get_pokemon());
+	pokemon.spe().stat *= speed_item_modifier(pokemon);
 	
-	pokemon.spe().stat /= paralysis_speed_divisor (pokemon.get_pokemon());
+	pokemon.spe().stat /= paralysis_speed_divisor (pokemon);
 	
 	pokemon.spe().stat *= tailwind_speed_multiplier (team);
 

@@ -155,7 +155,7 @@ unsigned Move::to_replacement () const {
 }
 
 bool Move::affects_target(ActivePokemon const & target, Weather const & weather) const {
-	return type().get_effectiveness(target.get_pokemon()) > 0 and (type() != Type::GROUND or grounded (target, weather));
+	return type().get_effectiveness(target) > 0 and (type() != Type::GROUND or grounded (target, weather));
 }
 
 bool Move::has_follow_up_decision () const {

@@ -184,19 +184,19 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsi
 	
 	determine_all_legal_selections(ai.pokemon(), foe.pokemon(), weather);
 	determine_all_legal_selections(foe.pokemon(), ai.pokemon(), weather);
-	auto const ai_index = ai.pokemon().get_pokemon().move.create_ordered_container(true);
-	auto const foe_index = foe.pokemon().get_pokemon().move.create_ordered_container(false);
+	auto const ai_index = ai.pokemon().all_moves().create_ordered_container(true);
+	auto const foe_index = foe.pokemon().all_moves().create_ordered_container(false);
 
 	// Iterate through each move each Pokemon has in combination with each
 	// move the other Pokemon has, and evaluate the score of each
 	// combination.
 	int64_t alpha = -Score::VICTORY - 1;
 	for (RankedMove const & ai_move : ai_index) {
-		ai.pokemon().get_pokemon().move.set_index(ai_move.index);
+		ai.pokemon().all_moves().set_index(ai_move.index);
 		print_action (ai, first_turn);
 		int64_t beta = Score::VICTORY + 1;
 		for (RankedMove const & foe_move : foe_index) {
-			foe.pokemon().get_pokemon().move.set_index(foe_move.index);
+			foe.pokemon().all_moves().set_index(foe_move.index);
 			print_action (foe, first_turn);
 			int64_t const max_score = order_branch (ai, foe, weather, depth, score);
 			update_foe_best_move (foe, beta, max_score, first_turn);
@@ -569,7 +569,7 @@ Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & weathe
 std::vector<Moves> all_legal_selections (Team & ai, Team const & foe, Weather const & weather) {
 	determine_all_legal_selections (ai.pokemon(), foe.pokemon(), weather);
 	std::vector <Moves> moves;
-	ai.pokemon().get_pokemon().move.for_each([& moves](Move const & move) {
+	ai.pokemon().all_moves().for_each([& moves](Move const & move) {
 		if (move.selectable())
 			moves.emplace_back(move.name);
 	});

@@ -58,17 +58,15 @@ class ActivePokemon {
 		ActivePokemon(PokemonCollection & all);
 		// this should only be called in Team's copy / move constructors
 		void update_collection(PokemonCollection & all);
-		Pokemon const & get_pokemon() const {
-			return (*all_pokemon)();
-		}
-		Pokemon & get_pokemon() {
-			return (*all_pokemon)();
-		}
+		operator Pokemon const & () const;
+		operator Pokemon & ();
 		template<typename... Args>
 		Move const & move(Args&&... args) const {
 			return get_pokemon().move(std::forward<Args>(args)...);
 		}
 		Move & move();
+		MoveCollection const & all_moves() const;
+		MoveCollection & all_moves();
 		// Not for variables that give a message at the end of the turn, this is
 		// just for some book-keeping variables.
 		void reset_end_of_turn();
@@ -78,6 +76,7 @@ class ActivePokemon {
 		void update_before_move();
 		void use_substitute();
 		Ability const & ability() const;
+		void ability(Ability::Abilities update);
 		void attract();
 		void awaken(bool value);
 		bool aqua_ring_is_active() const;
@@ -88,6 +87,7 @@ class ActivePokemon {
 		bool cannot_be_koed() const;
 		bool charge_boosted() const;
 		void charge();
+		bool can_confuse_with_chatter() const;
 		bool is_confused() const;
 		void confuse();
 		void handle_confusion();
@@ -154,6 +154,7 @@ class ActivePokemon {
 		void activate_perish_song();
 		void perish_song_turn();
 		bool can_be_phazed() const;
+		unsigned power_of_mass_based_moves() const;
 		bool power_trick_is_active() const;
 		void activate_power_trick();
 		void protect();
@@ -254,6 +255,12 @@ class ActivePokemon {
 		std::string to_string() const;
 
 	private:
+		Pokemon const & get_pokemon() const {
+			return (*all_pokemon)();
+		}
+		Pokemon & get_pokemon() {
+			return (*all_pokemon)();
+		}
 		friend class Score;
 		// I'd make this a reference but I don't want to manually define a copy
 		// and move assignment operator to simply verify that the referents are

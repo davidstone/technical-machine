@@ -55,7 +55,7 @@ unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defen
 	if (doubling (attacker, defender, weather))
 		power *= 2;
 
-	power *= Rational(item_modifier(attacker.get_pokemon()), 10);
+	power *= Rational(item_modifier(attacker), 10);
 
 	if (attacker.charge_boosted())
 		power *= 2;
@@ -63,7 +63,7 @@ unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defen
 	if (defender.sport_is_active(attacker.move()))
 		power /= 2;
 
-	power *= attacker_ability_modifier(attacker.get_pokemon(), defender.get_pokemon(), base_power);
+	power *= attacker_ability_modifier(attacker, defender, base_power);
 	
 	power *= defender_ability_modifier(move, defender.ability());
 	
@@ -103,12 +103,12 @@ unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon con
 		case Moves::FLING:
 			return attacker.item().get_fling_power();
 		case Moves::FRUSTRATION:
-			return 102 - return_power(attacker.get_pokemon());
+			return 102 - return_power(attacker);
 		case Moves::FURY_CUTTER:
 			return attacker.move().fury_cutter_power();
 		case Moves::GRASS_KNOT:
 		case Moves::LOW_KICK:
-			return defender.get_pokemon().power_of_mass_based_moves();
+			return defender.power_of_mass_based_moves();
 		case Moves::GYRO_BALL: {
 			unsigned const uncapped_power = 25u * defender.spe().stat / attacker.spe().stat + 1;
 			return std::min(uncapped_power, 150u);
@@ -137,7 +137,7 @@ unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon con
 			return std::min(uncapped_power, 200u);
 		}
 		case Moves::RETURN:
-			return return_power(attacker.get_pokemon());
+			return return_power(attacker);
 		case Moves::SPIT_UP:
 			return attacker.spit_up_power();
 		case Moves::TRIPLE_KICK:

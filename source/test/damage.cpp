@@ -43,7 +43,7 @@ Team max_damage_physical_attacker () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::SHUCKLE, level, gender);
-	Pokemon & pokemon = attacker.pokemon().get_pokemon();
+	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::ROLLOUT, 3, team_size);
 
 	attacker.pokemon().defense_curl();
@@ -82,7 +82,7 @@ Team max_damage_special_defender () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::PARAS, level, gender);
 	auto & d = defender.pokemon();
-	d.get_pokemon().ability().name = Ability::DRY_SKIN;
+	d.ability(Ability::DRY_SKIN);
 
 	d.spd().iv = 0;
 	d.spd().ev = 0;
@@ -97,7 +97,7 @@ void physical_power_test () {
 
 	Team attacker = max_damage_physical_attacker ();
 	attacker.pokemon().item().name = Item::ROCK_INCENSE;
-	attacker.pokemon().get_pokemon().ability().name = Ability::RIVALRY;
+	attacker.pokemon().ability(Ability::RIVALRY);
 
 	unsigned const power = move_power(attacker.pokemon(), max_damage_physical_defender().pokemon(), Weather());
 	if (power != max_power)
@@ -109,7 +109,7 @@ void special_power_test () {
 	constexpr unsigned max_power = 342;
 
 	Team attacker = max_damage_special_attacker ();
-	Pokemon & pokemon = attacker.pokemon().get_pokemon();
+	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::SURF, 3, team_size);
 	pokemon.item().name = Item::WAVE_INCENSE;
 	pokemon.ability().name = Ability::TORRENT;
@@ -135,7 +135,7 @@ void physical_damage_test () {
 
 	Team attacker = max_damage_physical_attacker ();
 	
-	Pokemon & a = attacker.pokemon().get_pokemon();
+	Pokemon & a = attacker.pokemon();
 	a.def.ev = 252 / 4;
 	a.nature().name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
@@ -162,7 +162,7 @@ void special_damage_test () {
 	weather.set_sun (Weather::Duration::permanent);
 
 	Team attacker = max_damage_special_attacker();
-	Pokemon & a = attacker.pokemon().get_pokemon();
+	Pokemon & a = attacker.pokemon();
 	a.move.add(Moves::BLAST_BURN, 3, team_size);
 	a.change_type(Type::FIRE);
 

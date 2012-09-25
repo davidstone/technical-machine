@@ -52,7 +52,7 @@ bool handle_sleep_counter (ActivePokemon & user, Move const & move);
 }	// unnamed namespace
 
 void determine_all_legal_selections (ActivePokemon & user, ActivePokemon const & other, Weather const & weather) {
-	user.get_pokemon().move.for_each([& user, & other, & weather](Move & move) {
+	user.all_moves().for_each([& user, & other, & weather](Move & move) {
 		move.cached_selectable = is_legal_selection(user, move, other, weather);
 	});
 }
@@ -62,7 +62,7 @@ namespace {
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
 	return !is_blocked_by_bide (user, move) and
 			is_not_illegal_switch (user, move, other, weather) and
-			not_illegal_struggle (user.get_pokemon(), move) and
+			not_illegal_struggle(user, move) and
 			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment (user, move)) and
 			!is_blocked_due_to_lock_in (user, move);
 }
@@ -130,7 +130,7 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 }
 
 bool imprison (Move const & move, ActivePokemon const & other) {
-	return other.imprisoned() and other.get_pokemon().move.regular_move_exists ([& move](Move const & element) {
+	return other.imprisoned() and other.all_moves().regular_move_exists ([& move](Move const & element) {
 		return move.name == element.name;
 	});
 }
@@ -147,7 +147,7 @@ bool is_blocked_due_to_lock_in (ActivePokemon const & user, Move const & move) {
 }
 
 bool standard_move_lock_in (ActivePokemon const & user, Move const & move) {
-	return is_locked_in (user) ? is_locked_in_to_different_move (user.get_pokemon(), move) : false;
+	return is_locked_in (user) ? is_locked_in_to_different_move (user, move) : false;
 }
 
 bool is_locked_in (ActivePokemon const & user) {
@@ -163,7 +163,7 @@ bool blocked_by_torment (ActivePokemon const & user, Move const & move) {
 }
 
 bool is_blocked_due_to_status (ActivePokemon & user, Move const & move) {
-	return is_blocked_by_freeze(user.get_pokemon(), move) or handle_sleep_counter(user, move);
+	return is_blocked_by_freeze(user, move) or handle_sleep_counter(user, move);
 }
 
 bool is_blocked_by_freeze (Pokemon const & user, Move const & move) {

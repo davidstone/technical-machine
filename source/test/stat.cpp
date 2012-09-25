@@ -43,7 +43,7 @@ void attack_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::SHUCKLE, level, gender);
-	Pokemon & pokemon = attacker.pokemon().get_pokemon();
+	Pokemon & pokemon = attacker.pokemon();
 
 	pokemon.def.ev = 252 / 4;
 	pokemon.nature().name = Nature::IMPISH;
@@ -68,7 +68,7 @@ void special_attack_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
 	attacker.add_pokemon(Species::DEOXYS_A, 100, gender);
-	Pokemon & pokemon = attacker.pokemon().get_pokemon();
+	Pokemon & pokemon = attacker.pokemon();
 
 	pokemon.spa.ev = 252 / 4;
 	pokemon.nature().name = Nature::MODEST;
@@ -92,7 +92,7 @@ void defense_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::SHUCKLE, 100, gender);
-	Pokemon & pokemon = defender.pokemon().get_pokemon();
+	Pokemon & pokemon = defender.pokemon();
 	pokemon.def.ev = 252 / 4;
 	pokemon.nature().name = Nature::BOLD;
 
@@ -118,7 +118,7 @@ void special_defense_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::SHUCKLE, level, gender);
-	Pokemon & pokemon = defender.pokemon().get_pokemon();
+	Pokemon & pokemon = defender.pokemon();
 	pokemon.spd.ev = 252 / 4;
 	pokemon.nature().name = Nature::CALM;
 
@@ -141,7 +141,7 @@ void speed_tests () {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::DEOXYS_S, level, gender);
-	Pokemon & pokemon = team.pokemon().get_pokemon();
+	Pokemon & pokemon = team.pokemon();
 	pokemon.spe.ev = 252 / 4;
 	pokemon.nature().name = Nature::TIMID;
 

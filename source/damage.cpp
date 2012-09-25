@@ -112,25 +112,25 @@ unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender,
 namespace {
 
 unsigned regular_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather) {
-	unsigned damage = calculate_level_multiplier(attacker.get_pokemon());
+	unsigned damage = calculate_level_multiplier(attacker);
 	damage += 2;
 
 	damage *= move_power(attacker, defender.pokemon(), weather);
-	damage *= physical_vs_special_modifier(attacker.get_pokemon(), defender.pokemon().get_pokemon());
+	damage *= physical_vs_special_modifier(attacker, defender.pokemon());
 	damage /= calculate_screen_divisor(attacker, defender);
 	damage *= calculate_weather_modifier(attacker.move().type(), weather);
 	damage *= calculate_flash_fire_modifier(attacker);
 	damage += 2;
 
 	damage *= calculate_critical_hit_multiplier(attacker);
-	damage *= calculate_item_modifier(attacker.get_pokemon());
+	damage *= calculate_item_modifier(attacker);
 	damage *= calculate_me_first_modifier(attacker);
 
 	damage *= attacker.move().r();
 	damage *= calculate_stab_modifier(attacker);
-	for (Rational const r : calculate_effectiveness_modifier(attacker.move(), defender.pokemon().get_pokemon()))
+	for (Rational const r : calculate_effectiveness_modifier(attacker.move(), defender.pokemon()))
 		damage *= r;
-	unsigned const effectiveness = attacker.move().type().get_effectiveness(defender.pokemon().get_pokemon());
+	unsigned const effectiveness = attacker.move().type().get_effectiveness(defender.pokemon());
 	damage *= calculate_ability_effectiveness_modifier (defender.pokemon().ability(), effectiveness);
 	damage *= calculate_expert_belt_modifier (attacker.item(), effectiveness);
 	damage *= calculate_tinted_lens_multiplier (attacker.ability(), effectiveness);
