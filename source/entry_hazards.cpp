@@ -118,7 +118,7 @@ void EntryHazards::apply_toxic_spikes(Team & switcher, Weather const & weather) 
 namespace {
 
 bool removes_toxic_spikes(ActivePokemon const & switcher) {
-	return is_type(switcher, Type::POISON);
+	return is_type(switcher, Type::Poison);
 }
 }	// unnamed namespace
 }	// namespace technicalmachine

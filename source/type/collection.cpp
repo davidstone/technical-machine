@@ -57,7 +57,7 @@ void TypeCollection::change_type(Type const type) {
 }
 
 bool is_type (ActivePokemon const & pokemon, Type const type) {
-	if (type != Type::FLYING or !pokemon.is_roosting()) {
+	if (type != Type::Flying or !pokemon.is_roosting()) {
 		for (Type const check : pokemon.type().types) {
 			if (check == type)
 				return true;
@@ -67,520 +67,696 @@ bool is_type (ActivePokemon const & pokemon, Type const type) {
 }
 
 bool grounded (ActivePokemon const & pokemon, Weather const & weather) {
-	return !(is_type(pokemon, Type::FLYING) or pokemon.ability().is_immune_to_ground() or pokemon.magnet_rise_is_active()) or weather.gravity() or pokemon.item().grounds() or pokemon.ingrained();
+	return !(is_type(pokemon, Type::Flying) or pokemon.ability().is_immune_to_ground() or pokemon.magnet_rise_is_active()) or weather.gravity() or pokemon.item().grounds() or pokemon.ingrained();
 }
 
 namespace {
 
 std::vector<Type> get_type (Species const name) {
 	static std::vector<Type> const type_array [] = {
-		{ Type::GRASS, Type::ICE },				// Abomasnow
-		{ Type::PSYCHIC },		// Abra
-		{ Type::DARK },			// Absol
-		{ Type::ROCK, Type::FLYING },			// Aerodactyl
-		{ Type::STEEL, Type::ROCK },			// Aggron
-		{ Type::NORMAL },		// Aipom
-		{ Type::PSYCHIC },		// Alakazam
-		{ Type::DRAGON, Type::FLYING },			// Altaria
-		{ Type::NORMAL },		// Ambipom
-		{ Type::ELECTRIC },		// Ampharos
-		{ Type::ROCK, Type::BUG },				// Anorith
-		{ Type::POISON },		// Arbok
-		{ Type::FIRE },			// Arcanine
-		{ Type::NORMAL },		// Arceus
-		{ Type::BUG, Type::POISON },			// Ariados
-		{ Type::ROCK, Type::BUG },				// Armaldo
-		{ Type::STEEL, Type::ROCK },			// Aron
-		{ Type::ICE, Type::FLYING },			// Articuno
-		{ Type::PSYCHIC },		// Azelf
-		{ Type::WATER },		// Azumarill
-		{ Type::NORMAL },		// Azurill
-		{ Type::DRAGON },		// Bagon
-		{ Type::GROUND, Type::PSYCHIC },		// Baltoy
-		{ Type::GHOST },		// Banette
-		{ Type::WATER, Type::GROUND },			// Barboach
-		{ Type::ROCK, Type::STEEL },			// Bastiodon
-		{ Type::GRASS },		// Bayleef
-		{ Type::BUG, Type::FLYING },			// Beautifly
-		{ Type::BUG, Type::POISON },			// Beedrill
-		{ Type::STEEL, Type::PSYCHIC },			// Beldum
-		{ Type::GRASS },		// Bellossom
-		{ Type::GRASS, Type::POISON },			// Bellsprout
-		{ Type::NORMAL, Type::WATER },			// Bibarel
-		{ Type::NORMAL },		// Bidoof
-		{ Type::WATER },		// Blastoise
-		{ Type::FIRE, Type::FIGHTING },			// Blaziken
-		{ Type::NORMAL },		// Blissey
-		{ Type::ROCK },			// Bonsly
-		{ Type::GRASS, Type::FIGHTING },		// Breloom
-		{ Type::STEEL, Type::PSYCHIC },			// Bronzong
-		{ Type::STEEL, Type::PSYCHIC },			// Bronzor
-		{ Type::GRASS, Type::POISON },			// Budew
-		{ Type::WATER },		// Buizel
-		{ Type::GRASS, Type::POISON },			// Bulbasaur
-		{ Type::NORMAL },		// Buneary
-		{ Type::BUG },			// Burmy
-		{ Type::BUG, Type::FLYING },			// Butterfree
-		{ Type::GRASS },		// Cacnea
-		{ Type::GRASS, Type::DARK },			// Cacturne
-		{ Type::FIRE, Type::GROUND },			// Camerupt
-		{ Type::GRASS },		// Carnivine
-		{ Type::WATER, Type::DARK },			// Carvanha
-		{ Type::BUG },			// Cascoon
-		{ Type::NORMAL },		// Castform
-		{ Type::BUG },			// Caterpie
-		{ Type::PSYCHIC, Type::GRASS },			// Celebi
-		{ Type::NORMAL },		// Chansey
-		{ Type::FIRE, Type::FLYING },			// Charizard
-		{ Type::FIRE },			// Charmander
-		{ Type::FIRE },			// Charmeleon
-		{ Type::NORMAL, Type::FLYING },			// Chatot
-		{ Type::GRASS },		// Cherrim
-		{ Type::GRASS },		// Cherubi
-		{ Type::GRASS },		// Chikorita
-		{ Type::FIRE },			// Chimchar
-		{ Type::PSYCHIC },		// Chimecho
-		{ Type::WATER, Type::ELECTRIC },		// Chinchou
-		{ Type::PSYCHIC },		// Chingling
-		{ Type::WATER },		// Clamperl
-		{ Type::GROUND, Type::PSYCHIC },		// Claydol
-		{ Type::NORMAL },		// Clefable
-		{ Type::NORMAL },		// Clefairy
-		{ Type::NORMAL },		// Cleffa
-		{ Type::WATER, Type::ICE },				// Cloyster
-		{ Type::BUG, Type::FLYING },			// Combee
-		{ Type::FIRE, Type::FIGHTING },			// Combusken
-		{ Type::WATER },		// Corphish
-		{ Type::WATER, Type::ROCK },			// Corsola
-		{ Type::ROCK, Type::GRASS },			// Cradily
-		{ Type::ROCK },			// Cranidos
-		{ Type::WATER, Type::DARK },			// Crawdaunt
-		{ Type::PSYCHIC },		// Cresselia
-		{ Type::POISON, Type::FIGHTING },		// Croagunk
-		{ Type::POISON, Type::FLYING },			// Crobat
-		{ Type::WATER },		// Croconaw
-		{ Type::GROUND },		// Cubone
-		{ Type::FIRE },			// Cyndaquil
-		{ Type::DARK },			// Darkrai
-		{ Type::NORMAL },		// Delcatty
-		{ Type::ICE, Type::FLYING },			// Delibird
-		{ Type::PSYCHIC },		// Deoxys-A
-		{ Type::PSYCHIC },		// Deoxys-D
-		{ Type::PSYCHIC },		// Deoxys-M
-		{ Type::PSYCHIC },		// Deoxys-S
-		{ Type::WATER, Type::ICE },				// Dewgong
-		{ Type::STEEL, Type::DRAGON },			// Dialga
-		{ Type::GROUND },		// Diglett
-		{ Type::NORMAL },		// Ditto
-		{ Type::NORMAL, Type::FLYING },			// Dodrio
-		{ Type::NORMAL, Type::FLYING },			// Doduo
-		{ Type::GROUND },		// Donphan
-		{ Type::DRAGON },		// Dragonair
-		{ Type::DRAGON, Type::FLYING },			// Dragonite
-		{ Type::POISON, Type::DARK },			// Drapion
-		{ Type::DRAGON },		// Dratini
-		{ Type::GHOST, Type::FLYING },			// Drifblim
-		{ Type::GHOST, Type::FLYING },			// Drifloon
-		{ Type::PSYCHIC },		// Drowzee
-		{ Type::GROUND },		// Dugtrio
-		{ Type::NORMAL },		// Dunsparce
-		{ Type::GHOST },		// Dusclops
-		{ Type::GHOST },		// Dusknoir
-		{ Type::GHOST },		// Duskull
-		{ Type::BUG, Type::POISON },			// Dustox
-		{ Type::NORMAL },		// Eevee
-		{ Type::POISON },		// Ekans
-		{ Type::ELECTRIC },		// Electabuzz
-		{ Type::ELECTRIC },		// Electivire
-		{ Type::ELECTRIC },		// Electrike
-		{ Type::ELECTRIC },		// Electrode
-		{ Type::ELECTRIC },		// Elekid
-		{ Type::WATER, Type::STEEL },			// Empoleon
-		{ Type::FIRE },			// Entei
-		{ Type::PSYCHIC },		// Espeon
-		{ Type::GRASS, Type::PSYCHIC },			// Exeggcute
-		{ Type::GRASS, Type::PSYCHIC },			// Exeggutor
-		{ Type::NORMAL },		// Exploud
-		{ Type::NORMAL, Type::FLYING },			// Farfetch'd
-		{ Type::NORMAL, Type::FLYING },			// Fearow
-		{ Type::WATER },		// Feebas
-		{ Type::WATER },		// Feraligatr
-		{ Type::WATER },		// Finneon
-		{ Type::ELECTRIC },		// Flaaffy
-		{ Type::FIRE },			// Flareon
-		{ Type::WATER },		// Floatzel
-		{ Type::GROUND, Type::DRAGON },			// Flygon
-		{ Type::BUG, Type::STEEL },				// Forretress
-		{ Type::ICE, Type::GHOST },				// Froslass
-		{ Type::NORMAL },		// Furret
-		{ Type::DRAGON, Type::GROUND },			// Gabite
-		{ Type::PSYCHIC, Type::FIGHTING },		// Gallade
-		{ Type::DRAGON, Type::GROUND },			// Garchomp
-		{ Type::PSYCHIC },		// Gardevoir
-		{ Type::GHOST, Type::POISON },			// Gastly
-		{ Type::WATER, Type::GROUND },			// Gastrodon
-		{ Type::GHOST, Type::POISON },			// Gengar
-		{ Type::ROCK, Type::GROUND },			// Geodude
-		{ Type::DRAGON, Type::GROUND },			// Gible
-		{ Type::NORMAL, Type::PSYCHIC },		// Girafarig
-		{ Type::GHOST, Type::DRAGON },			// Giratina-A
-		{ Type::GHOST, Type::DRAGON },			// Giratina-O
-		{ Type::ICE },			// Glaceon
-		{ Type::ICE },			// Glalie
-		{ Type::NORMAL },		// Glameow
-		{ Type::GROUND, Type::FLYING },			// Gligar
-		{ Type::GROUND, Type::FLYING },			// Gliscor
-		{ Type::GRASS, Type::POISON },			// Gloom
-		{ Type::POISON, Type::FLYING },			// Golbat
-		{ Type::WATER },		// Goldeen
-		{ Type::WATER },		// Golduck
-		{ Type::ROCK, Type::GROUND },			// Golem
-		{ Type::WATER },		// Gorebyss
-		{ Type::NORMAL },		// Granbull
-		{ Type::ROCK, Type::GROUND },			// Graveler
-		{ Type::POISON },		// Grimer
-		{ Type::GRASS },		// Grotle
-		{ Type::GROUND },		// Groudon
-		{ Type::GRASS },		// Grovyle
-		{ Type::FIRE },			// Growlithe
-		{ Type::PSYCHIC },		// Grumpig
-		{ Type::POISON },		// Gulpin
-		{ Type::WATER, Type::FLYING },			// Gyarados
-		{ Type::NORMAL },		// Happiny
-		{ Type::FIGHTING },		// Hariyama
-		{ Type::GHOST, Type::POISON },			// Haunter
-		{ Type::FIRE, Type::STEEL },			// Heatran
-		{ Type::BUG, Type::FIGHTING },			// Heracross
-		{ Type::GROUND },		// Hippopotas
-		{ Type::GROUND },		// Hippowdon
-		{ Type::FIGHTING },		// Hitmonchan
-		{ Type::FIGHTING },		// Hitmonlee
-		{ Type::FIGHTING },		// Hitmontop
-		{ Type::FIRE, Type::FLYING },			// Ho-Oh
-		{ Type::DARK, Type::FLYING },			// Honchkrow
-		{ Type::NORMAL, Type::FLYING },			// Hoothoot
-		{ Type::GRASS, Type::FLYING },			// Hoppip
-		{ Type::WATER },		// Horsea
-		{ Type::DARK, Type::FIRE },				// Houndoom
-		{ Type::DARK, Type::FIRE },				// Houndour
-		{ Type::WATER },		// Huntail
-		{ Type::PSYCHIC },		// Hypno
-		{ Type::NORMAL },		// Igglybuff
-		{ Type::BUG },			// Illumise
-		{ Type::FIRE, Type::FIGHTING },			// Infernape
-		{ Type::GRASS, Type::POISON },			// Ivysaur
-		{ Type::NORMAL },		// Jigglypuff
-		{ Type::STEEL, Type::PSYCHIC },			// Jirachi
-		{ Type::ELECTRIC },		// Jolteon
-		{ Type::GRASS, Type::FLYING },			// Jumpluff
-		{ Type::ICE, Type::PSYCHIC },			// Jynx
-		{ Type::ROCK, Type::WATER },			// Kabuto
-		{ Type::ROCK, Type::WATER },			// Kabutops
-		{ Type::PSYCHIC },		// Kadabra
-		{ Type::BUG, Type::POISON },			// Kakuna
-		{ Type::NORMAL },		// Kangaskhan
-		{ Type::NORMAL },		// Kecleon
-		{ Type::WATER, Type::DRAGON },			// Kingdra
-		{ Type::WATER },		// Kingler
-		{ Type::PSYCHIC },		// Kirlia
-		{ Type::POISON },		// Koffing
-		{ Type::WATER },		// Krabby
-		{ Type::BUG },			// Kricketot
-		{ Type::BUG },			// Kricketune
-		{ Type::WATER },		// Kyogre
-		{ Type::STEEL, Type::ROCK },			// Lairon
-		{ Type::WATER, Type::ELECTRIC },		// Lanturn
-		{ Type::WATER, Type::ICE },				// Lapras
-		{ Type::ROCK, Type::GROUND },			// Larvitar
-		{ Type::DRAGON, Type::PSYCHIC },		// Latias
-		{ Type::DRAGON, Type::PSYCHIC },		// Latios
-		{ Type::GRASS },		// Leafeon
-		{ Type::BUG, Type::FLYING },			// Ledian
-		{ Type::BUG, Type::FLYING },			// Ledyba
-		{ Type::NORMAL },		// Lickilicky
-		{ Type::NORMAL },		// Lickitung
-		{ Type::ROCK, Type::GRASS },			// Lileep
-		{ Type::NORMAL },		// Linoone
-		{ Type::WATER, Type::GRASS },			// Lombre
-		{ Type::NORMAL },		// Lopunny
-		{ Type::WATER, Type::GRASS },			// Lotad
-		{ Type::NORMAL },		// Loudred
-		{ Type::FIGHTING, Type::STEEL },		// Lucario
-		{ Type::WATER, Type::GRASS },			// Ludicolo
-		{ Type::PSYCHIC, Type::FLYING },		// Lugia
-		{ Type::WATER },		// Lumineon
-		{ Type::ROCK, Type::PSYCHIC },			// Lunatone
-		{ Type::WATER },		// Luvdisc
-		{ Type::ELECTRIC },		// Luxio
-		{ Type::ELECTRIC },		// Luxray
-		{ Type::FIGHTING },		// Machamp
-		{ Type::FIGHTING },		// Machoke
-		{ Type::FIGHTING },		// Machop
-		{ Type::FIRE },			// Magby
-		{ Type::FIRE, Type::ROCK },				// Magcargo
-		{ Type::WATER },		// Magikarp
-		{ Type::FIRE },			// Magmar
-		{ Type::FIRE },			// Magmortar
-		{ Type::ELECTRIC, Type::STEEL },		// Magnemite
-		{ Type::ELECTRIC, Type::STEEL },		// Magneton
-		{ Type::ELECTRIC, Type::STEEL },		// Magnezone
-		{ Type::FIGHTING },		// Makuhita
-		{ Type::ICE, Type::GROUND },			// Mamoswine
-		{ Type::WATER },		// Manaphy
-		{ Type::ELECTRIC },		// Manectric
-		{ Type::FIGHTING },		// Mankey
-		{ Type::WATER, Type::FLYING },			// Mantine
-		{ Type::WATER, Type::FLYING },			// Mantyke
-		{ Type::ELECTRIC },		// Mareep
-		{ Type::WATER },		// Marill
-		{ Type::GROUND },		// Marowak
-		{ Type::WATER, Type::GROUND },			// Marshtomp
-		{ Type::BUG, Type::FLYING },			// Masquerain
-		{ Type::STEEL },		// Mawile
-		{ Type::FIGHTING, Type::PSYCHIC },		// Medicham
-		{ Type::FIGHTING, Type::PSYCHIC },		// Meditite
-		{ Type::GRASS },		// Meganium
-		{ Type::NORMAL },		// Meowth
-		{ Type::PSYCHIC },		// Mesprit
-		{ Type::STEEL, Type::PSYCHIC },			// Metagross
-		{ Type::STEEL, Type::PSYCHIC },			// Metang
-		{ Type::BUG },			// Metapod
-		{ Type::PSYCHIC },		// Mew
-		{ Type::PSYCHIC },		// Mewtwo
-		{ Type::DARK },			// Mightyena
-		{ Type::WATER },		// Milotic
-		{ Type::NORMAL },		// Miltank
-		{ Type::PSYCHIC },		// Mime Jr.
-		{ Type::ELECTRIC },		// Minun
-		{ Type::GHOST },		// Misdreavus
-		{ Type::GHOST },		// Mismagius
-		{ Type::FIRE, Type::FLYING },			// Moltres
-		{ Type::FIRE, Type::FIGHTING },			// Monferno
-		{ Type::BUG, Type::FLYING },			// Mothim
-		{ Type::PSYCHIC },		// Mr. Mime
-		{ Type::WATER },		// Mudkip
-		{ Type::POISON },		// Muk
-		{ Type::NORMAL },		// Munchlax
-		{ Type::DARK, Type::FLYING },			// Murkrow
-		{ Type::PSYCHIC, Type::FLYING },		// Natu
-		{ Type::POISON, Type::GROUND },			// Nidoking
-		{ Type::POISON, Type::GROUND },			// Nidoqueen
-		{ Type::POISON },		// Nidoran-F
-		{ Type::POISON },		// Nidoran-M
-		{ Type::POISON },		// Nidorina
-		{ Type::POISON },		// Nidorino
-		{ Type::BUG, Type::GROUND },			// Nincada
-		{ Type::FIRE },			// Ninetales
-		{ Type::BUG, Type::FLYING },			// Ninjask
-		{ Type::NORMAL, Type::FLYING },			// Noctowl
-		{ Type::ROCK },			// Nosepass
-		{ Type::FIRE, Type::GROUND },			// Numel
-		{ Type::GRASS, Type::DARK },			// Nuzleaf
-		{ Type::WATER },		// Octillery
-		{ Type::GRASS, Type::POISON },			// Oddish
-		{ Type::ROCK, Type::WATER },			// Omanyte
-		{ Type::ROCK, Type::WATER },			// Omastar
-		{ Type::ROCK, Type::GROUND },			// Onix
-		{ Type::ELECTRIC },		// Pachirisu
-		{ Type::WATER, Type::DRAGON },			// Palkia
-		{ Type::BUG, Type::GRASS },				// Paras
-		{ Type::BUG, Type::GRASS },				// Parasect
-		{ Type::WATER, Type::FLYING },			// Pelipper
-		{ Type::NORMAL },		// Persian
-		{ Type::GROUND },		// Phanpy
-		{ Type::WATER },		// Phione
-		{ Type::ELECTRIC },		// Pichu
-		{ Type::NORMAL, Type::FLYING },			// Pidgeot
-		{ Type::NORMAL, Type::FLYING },			// Pidgeotto
-		{ Type::NORMAL, Type::FLYING },			// Pidgey
-		{ Type::ELECTRIC },		// Pikachu
-		{ Type::ICE, Type::GROUND },			// Piloswine
-		{ Type::BUG },			// Pineco
-		{ Type::BUG },			// Pinsir
-		{ Type::WATER },		// Piplup
-		{ Type::ELECTRIC },		// Plusle
-		{ Type::WATER },		// Politoed
-		{ Type::WATER },		// Poliwag
-		{ Type::WATER },		// Poliwhirl
-		{ Type::WATER, Type::FIGHTING },		// Poliwrath
-		{ Type::FIRE },			// Ponyta
-		{ Type::DARK },			// Poochyena
-		{ Type::NORMAL },		// Porygon
-		{ Type::NORMAL },		// Porygon-Z
-		{ Type::NORMAL },		// Porygon2
-		{ Type::FIGHTING },		// Primeape
-		{ Type::WATER },		// Prinplup
-		{ Type::ROCK, Type::STEEL },			// Probopass
-		{ Type::WATER },		// Psyduck
-		{ Type::ROCK, Type::GROUND },			// Pupitar
-		{ Type::NORMAL },		// Purugly
-		{ Type::WATER, Type::GROUND },			// Quagsire
-		{ Type::FIRE },			// Quilava
-		{ Type::WATER, Type::POISON },			// Qwilfish
-		{ Type::ELECTRIC },		// Raichu
-		{ Type::ELECTRIC },		// Raikou
-		{ Type::PSYCHIC },		// Ralts
-		{ Type::ROCK },			// Rampardos
-		{ Type::FIRE },			// Rapidash
-		{ Type::NORMAL },		// Raticate
-		{ Type::NORMAL },		// Rattata
-		{ Type::DRAGON, Type::FLYING },			// Rayquaza
-		{ Type::ICE },			// Regice
-		{ Type::NORMAL },		// Regigigas
-		{ Type::ROCK },			// Regirock
-		{ Type::STEEL },		// Registeel
-		{ Type::WATER, Type::ROCK },			// Relicanth
-		{ Type::WATER },		// Remoraid
-		{ Type::GROUND, Type::ROCK },			// Rhydon
-		{ Type::GROUND, Type::ROCK },			// Rhyhorn
-		{ Type::GROUND, Type::ROCK },			// Rhyperior
-		{ Type::FIGHTING },		// Riolu
-		{ Type::GRASS, Type::POISON },			// Roselia
-		{ Type::GRASS, Type::POISON },			// Roserade
-		{ Type::ELECTRIC, Type::GHOST },		// Rotom
-		{ Type::ELECTRIC, Type::GHOST },		// Rotom-C
-		{ Type::ELECTRIC, Type::GHOST },		// Rotom-F
-		{ Type::ELECTRIC, Type::GHOST },		// Rotom-H
-		{ Type::ELECTRIC, Type::GHOST },		// Rotom-S
-		{ Type::ELECTRIC, Type::GHOST },		// Rotom-W
-		{ Type::DARK, Type::GHOST },			// Sableye
-		{ Type::DRAGON, Type::FLYING },			// Salamence
-		{ Type::GROUND },		// Sandshrew
-		{ Type::GROUND },		// Sandslash
-		{ Type::GRASS },		// Sceptile
-		{ Type::BUG, Type::STEEL },				// Scizor
-		{ Type::BUG, Type::FLYING },			// Scyther
-		{ Type::WATER },		// Seadra
-		{ Type::WATER },		// Seaking
-		{ Type::ICE, Type::WATER },				// Sealeo
-		{ Type::GRASS },		// Seedot
-		{ Type::WATER },		// Seel
-		{ Type::NORMAL },		// Sentret
-		{ Type::POISON },		// Seviper
-		{ Type::WATER, Type::DARK },			// Sharpedo
-		{ Type::GRASS },		// Shaymin-L
-		{ Type::GRASS, Type::FLYING },			// Shaymin-S
-		{ Type::BUG, Type::GHOST },				// Shedinja
-		{ Type::DRAGON },		// Shelgon
-		{ Type::WATER },		// Shellder
-		{ Type::WATER },		// Shellos
-		{ Type::ROCK, Type::STEEL },			// Shieldon
-		{ Type::GRASS, Type::DARK },			// Shiftry
-		{ Type::ELECTRIC },		// Shinx
-		{ Type::GRASS },		// Shroomish
-		{ Type::BUG, Type::ROCK },				// Shuckle
-		{ Type::GHOST },		// Shuppet
-		{ Type::BUG },			// Silcoon
-		{ Type::STEEL, Type::FLYING },			// Skarmory
-		{ Type::GRASS, Type::FLYING },			// Skiploom
-		{ Type::NORMAL },		// Skitty
-		{ Type::POISON, Type::BUG },			// Skorupi
-		{ Type::POISON, Type::DARK },			// Skuntank
-		{ Type::NORMAL },		// Slaking
-		{ Type::NORMAL },		// Slakoth
-		{ Type::WATER, Type::PSYCHIC },			// Slowbro
-		{ Type::WATER, Type::PSYCHIC },			// Slowking
-		{ Type::WATER, Type::PSYCHIC },			// Slowpoke
-		{ Type::FIRE },			// Slugma
-		{ Type::NORMAL },		// Smeargle
-		{ Type::ICE, Type::PSYCHIC },			// Smoochum
-		{ Type::DARK, Type::ICE },				// Sneasel
-		{ Type::NORMAL },		// Snorlax
-		{ Type::ICE },			// Snorunt
-		{ Type::GRASS, Type::ICE },				// Snover
-		{ Type::NORMAL },		// Snubbull
-		{ Type::ROCK, Type::PSYCHIC },			// Solrock
-		{ Type::NORMAL, Type::FLYING },			// Spearow
-		{ Type::ICE, Type::WATER },				// Spheal
-		{ Type::BUG, Type::POISON },			// Spinarak
-		{ Type::NORMAL },		// Spinda
-		{ Type::GHOST, Type::DARK },			// Spiritomb
-		{ Type::PSYCHIC },		// Spoink
-		{ Type::WATER },		// Squirtle
-		{ Type::NORMAL },		// Stantler
-		{ Type::NORMAL, Type::FLYING },			// Staraptor
-		{ Type::NORMAL, Type::FLYING },			// Staravia
-		{ Type::NORMAL, Type::FLYING },			// Starly
-		{ Type::WATER, Type::PSYCHIC },			// Starmie
-		{ Type::WATER },		// Staryu
-		{ Type::STEEL, Type::GROUND },			// Steelix
-		{ Type::POISON, Type::DARK },			// Stunky
-		{ Type::ROCK },			// Sudowoodo
-		{ Type::WATER },		// Suicune
-		{ Type::GRASS },		// Sunflora
-		{ Type::GRASS },		// Sunkern
-		{ Type::BUG, Type::WATER },				// Surskit
-		{ Type::NORMAL, Type::FLYING },			// Swablu
-		{ Type::POISON },		// Swalot
-		{ Type::WATER, Type::GROUND },			// Swampert
-		{ Type::NORMAL, Type::FLYING },			// Swellow
-		{ Type::ICE, Type::GROUND },			// Swinub
-		{ Type::NORMAL, Type::FLYING },			// Taillow
-		{ Type::GRASS },		// Tangela
-		{ Type::GRASS },		// Tangrowth
-		{ Type::NORMAL },		// Tauros
-		{ Type::NORMAL },		// Teddiursa
-		{ Type::WATER, Type::POISON },			// Tentacool
-		{ Type::WATER, Type::POISON },			// Tentacruel
-		{ Type::NORMAL, Type::FLYING },			// Togekiss
-		{ Type::NORMAL },		// Togepi
-		{ Type::NORMAL, Type::FLYING },			// Togetic
-		{ Type::FIRE },			// Torchic
-		{ Type::FIRE },			// Torkoal
-		{ Type::GRASS, Type::GROUND },			// Torterra
-		{ Type::WATER },		// Totodile
-		{ Type::POISON, Type::FIGHTING },		// Toxicroak
-		{ Type::GROUND },		// Trapinch
-		{ Type::GRASS },		// Treecko
-		{ Type::GRASS, Type::FLYING },			// Tropius
-		{ Type::GRASS },		// Turtwig
-		{ Type::FIRE },			// Typhlosion
-		{ Type::ROCK, Type::DARK },				// Tyranitar
-		{ Type::FIGHTING },		// Tyrogue
-		{ Type::DARK },			// Umbreon
-		{ Type::PSYCHIC },		// Unown
-		{ Type::NORMAL },		// Ursaring
-		{ Type::PSYCHIC },		// Uxie
-		{ Type::WATER },		// Vaporeon
-		{ Type::BUG, Type::POISON },			// Venomoth
-		{ Type::BUG, Type::POISON },			// Venonat
-		{ Type::GRASS, Type::POISON },			// Venusaur
-		{ Type::BUG, Type::FLYING },			// Vespiquen
-		{ Type::GROUND, Type::DRAGON },			// Vibrava
-		{ Type::GRASS, Type::POISON },			// Victreebel
-		{ Type::NORMAL },		// Vigoroth
-		{ Type::GRASS, Type::POISON },			// Vileplume
-		{ Type::BUG },			// Volbeat
-		{ Type::ELECTRIC },		// Voltorb
-		{ Type::FIRE },			// Vulpix
-		{ Type::WATER },		// Wailmer
-		{ Type::WATER },		// Wailord
-		{ Type::ICE, Type::WATER },				// Walrein
-		{ Type::WATER },		// Wartortle
-		{ Type::DARK, Type::ICE },				// Weavile
-		{ Type::BUG, Type::POISON },			// Weedle
-		{ Type::GRASS, Type::POISON },			// Weepinbell
-		{ Type::POISON },		// Weezing
-		{ Type::WATER, Type::GROUND },			// Whiscash
-		{ Type::NORMAL },		// Whismur
-		{ Type::NORMAL },		// Wigglytuff
-		{ Type::WATER, Type::FLYING },			// Wingull
-		{ Type::PSYCHIC },		// Wobbuffet
-		{ Type::WATER, Type::GROUND },			// Wooper
-		{ Type::BUG, Type::GRASS },				// Wormadam-P
-		{ Type::BUG, Type::GROUND },			// Wormadam-S
-		{ Type::BUG, Type::STEEL },				// Wormadam-T
-		{ Type::BUG },			// Wurmple
-		{ Type::PSYCHIC },		// Wynaut
-		{ Type::PSYCHIC, Type::FLYING },		// Xatu
-		{ Type::BUG, Type::FLYING },			// Yanma
-		{ Type::BUG, Type::FLYING },			// Yanmega
-		{ Type::NORMAL },		// Zangoose
-		{ Type::ELECTRIC, Type::FLYING },		// Zapdos
-		{ Type::NORMAL },		// Zigzagoon
-		{ Type::POISON, Type::FLYING }			// Zubat
+		// Generation 1
+		{ Type::Grass, Type::Poison },			// Bulbasaur
+		{ Type::Grass, Type::Poison },			// Ivysaur
+		{ Type::Grass, Type::Poison },			// Venusaur
+		{ Type::Fire },			// Charmander
+		{ Type::Fire },			// Charmeleon
+		{ Type::Fire, Type::Flying },			// Charizard
+		{ Type::Water },			// Squirtle
+		{ Type::Water },			// Wartortle
+		{ Type::Water },			// Blastoise
+		{ Type::Bug },			// Caterpie
+		{ Type::Bug },			// Metapod
+		{ Type::Bug, Type::Flying },			// Butterfree
+		{ Type::Bug, Type::Poison },			// Weedle
+		{ Type::Bug, Type::Poison },			// Kakuna
+		{ Type::Bug, Type::Poison },			// Beedrill
+		{ Type::Normal, Type::Flying },			// Pidgey
+		{ Type::Normal, Type::Flying },			// Pidgeotto
+		{ Type::Normal, Type::Flying },			// Pidgeot
+		{ Type::Normal },			// Rattata
+		{ Type::Normal },			// Raticate
+		{ Type::Normal, Type::Flying },			// Spearow
+		{ Type::Normal, Type::Flying },			// Fearow
+		{ Type::Poison },			// Ekans
+		{ Type::Poison },			// Arbok
+		{ Type::Electric },			// Pikachu
+		{ Type::Electric },			// Raichu
+		{ Type::Ground },			// Sandshrew
+		{ Type::Ground },			// Sandslash
+		{ Type::Poison },			// Nidoran-F
+		{ Type::Poison },			// Nidorina
+		{ Type::Poison, Type::Ground },			// Nidoqueen
+		{ Type::Poison },			// Nidoran-M
+		{ Type::Poison },			// Nidorino
+		{ Type::Poison, Type::Ground },			// Nidoking
+		{ Type::Normal },			// Clefairy
+		{ Type::Normal },			// Clefable
+		{ Type::Fire },			// Vulpix
+		{ Type::Fire },			// Ninetales
+		{ Type::Normal },			// Jigglypuff
+		{ Type::Normal },			// Wigglytuff
+		{ Type::Poison, Type::Flying },			// Zubat
+		{ Type::Poison, Type::Flying },			// Golbat
+		{ Type::Grass, Type::Poison },			// Oddish
+		{ Type::Grass, Type::Poison },			// Gloom
+		{ Type::Grass, Type::Poison },			// Vileplume
+		{ Type::Bug, Type::Grass },			// Paras
+		{ Type::Bug, Type::Grass },			// Parasect
+		{ Type::Bug, Type::Poison },			// Venonat
+		{ Type::Bug, Type::Poison },			// Venomoth
+		{ Type::Ground },			// Diglett
+		{ Type::Ground },			// Dugtrio
+		{ Type::Normal },			// Meowth
+		{ Type::Normal },			// Persian
+		{ Type::Water },			// Psyduck
+		{ Type::Water },			// Golduck
+		{ Type::Fighting },			// Mankey
+		{ Type::Fighting },			// Primeape
+		{ Type::Fire },			// Growlithe
+		{ Type::Fire },			// Arcanine
+		{ Type::Water },			// Poliwag
+		{ Type::Water },			// Poliwhirl
+		{ Type::Water, Type::Fighting },			// Poliwrath
+		{ Type::Psychic },			// Abra
+		{ Type::Psychic },			// Kadabra
+		{ Type::Psychic },			// Alakazam
+		{ Type::Fighting },			// Machop
+		{ Type::Fighting },			// Machoke
+		{ Type::Fighting },			// Machamp
+		{ Type::Grass, Type::Poison },			// Bellsprout
+		{ Type::Grass, Type::Poison },			// Weepinbell
+		{ Type::Grass, Type::Poison },			// Victreebel
+		{ Type::Water, Type::Poison },			// Tentacool
+		{ Type::Water, Type::Poison },			// Tentacruel
+		{ Type::Rock, Type::Ground },			// Geodude
+		{ Type::Rock, Type::Ground },			// Graveler
+		{ Type::Rock, Type::Ground },			// Golem
+		{ Type::Fire },			// Ponyta
+		{ Type::Fire },			// Rapidash
+		{ Type::Water, Type::Psychic },			// Slowpoke
+		{ Type::Water, Type::Psychic },			// Slowbro
+		{ Type::Electric, Type::Steel },			// Magnemite
+		{ Type::Electric, Type::Steel },			// Magneton
+		{ Type::Normal, Type::Flying },			// Farfetch'd
+		{ Type::Normal, Type::Flying },			// Doduo
+		{ Type::Normal, Type::Flying },			// Dodrio
+		{ Type::Water },			// Seel
+		{ Type::Water, Type::Ice },			// Dewgong
+		{ Type::Poison },			// Grimer
+		{ Type::Poison },			// Muk
+		{ Type::Water },			// Shellder
+		{ Type::Water, Type::Ice },			// Cloyster
+		{ Type::Ghost, Type::Poison },			// Gastly
+		{ Type::Ghost, Type::Poison },			// Haunter
+		{ Type::Ghost, Type::Poison },			// Gengar
+		{ Type::Rock, Type::Ground },			// Onix
+		{ Type::Psychic },			// Drowzee
+		{ Type::Psychic },			// Hypno
+		{ Type::Water },			// Krabby
+		{ Type::Water },			// Kingler
+		{ Type::Electric },			// Voltorb
+		{ Type::Electric },			// Electrode
+		{ Type::Grass, Type::Psychic },			// Exeggcute
+		{ Type::Grass, Type::Psychic },			// Exeggutor
+		{ Type::Ground },			// Cubone
+		{ Type::Ground },			// Marowak
+		{ Type::Fighting },			// Hitmonlee
+		{ Type::Fighting },			// Hitmonchan
+		{ Type::Normal },			// Lickitung
+		{ Type::Poison },			// Koffing
+		{ Type::Poison },			// Weezing
+		{ Type::Ground, Type::Rock },			// Rhyhorn
+		{ Type::Ground, Type::Rock },			// Rhydon
+		{ Type::Normal },			// Chansey
+		{ Type::Grass },			// Tangela
+		{ Type::Normal },			// Kangaskhan
+		{ Type::Water },			// Horsea
+		{ Type::Water },			// Seadra
+		{ Type::Water },			// Goldeen
+		{ Type::Water },			// Seaking
+		{ Type::Water },			// Staryu
+		{ Type::Water, Type::Psychic },			// Starmie
+		{ Type::Psychic },			// Mr. Mime
+		{ Type::Bug, Type::Flying },			// Scyther
+		{ Type::Ice, Type::Psychic },			// Jynx
+		{ Type::Electric },			// Electabuzz
+		{ Type::Fire },			// Magmar
+		{ Type::Bug },			// Pinsir
+		{ Type::Normal },			// Tauros
+		{ Type::Water },			// Magikarp
+		{ Type::Water, Type::Flying },			// Gyarados
+		{ Type::Water, Type::Ice },			// Lapras
+		{ Type::Normal },			// Ditto
+		{ Type::Normal },			// Eevee
+		{ Type::Water },			// Vaporeon
+		{ Type::Electric },			// Jolteon
+		{ Type::Fire },			// Flareon
+		{ Type::Normal },			// Porygon
+		{ Type::Rock, Type::Water },			// Omanyte
+		{ Type::Rock, Type::Water },			// Omastar
+		{ Type::Rock, Type::Water },			// Kabuto
+		{ Type::Rock, Type::Water },			// Kabutops
+		{ Type::Rock, Type::Flying },			// Aerodactyl
+		{ Type::Normal },			// Snorlax
+		{ Type::Ice, Type::Flying },			// Articuno
+		{ Type::Electric, Type::Flying },			// Zapdos
+		{ Type::Fire, Type::Flying },			// Moltres
+		{ Type::Dragon },			// Dratini
+		{ Type::Dragon },			// Dragonair
+		{ Type::Dragon, Type::Flying },			// Dragonite
+		{ Type::Psychic },			// Mewtwo
+		{ Type::Psychic },			// Mew
+		
+		// Generation 2
+		{ Type::Grass },			// Chikorita
+		{ Type::Grass },			// Bayleef
+		{ Type::Grass },			// Meganium
+		{ Type::Fire },			// Cyndaquil
+		{ Type::Fire },			// Quilava
+		{ Type::Fire },			// Typhlosion
+		{ Type::Water },			// Totodile
+		{ Type::Water },			// Croconaw
+		{ Type::Water },			// Feraligatr
+		{ Type::Normal },			// Sentret
+		{ Type::Normal },			// Furret
+		{ Type::Normal, Type::Flying },			// Hoothoot
+		{ Type::Normal, Type::Flying },			// Noctowl
+		{ Type::Bug, Type::Flying },			// Ledyba
+		{ Type::Bug, Type::Flying },			// Ledian
+		{ Type::Bug, Type::Poison },			// Spinarak
+		{ Type::Bug, Type::Poison },			// Ariados
+		{ Type::Poison, Type::Flying },			// Crobat
+		{ Type::Water, Type::Electric },			// Chinchou
+		{ Type::Water, Type::Electric },			// Lanturn
+		{ Type::Electric },			// Pichu
+		{ Type::Normal },			// Cleffa
+		{ Type::Normal },			// Igglybuff
+		{ Type::Normal },			// Togepi
+		{ Type::Normal, Type::Flying },			// Togetic
+		{ Type::Psychic, Type::Flying },			// Natu
+		{ Type::Psychic, Type::Flying },			// Xatu
+		{ Type::Electric },			// Mareep
+		{ Type::Electric },			// Flaaffy
+		{ Type::Electric },			// Ampharos
+		{ Type::Grass },			// Bellossom
+		{ Type::Water },			// Marill
+		{ Type::Water },			// Azumarill
+		{ Type::Rock },			// Sudowoodo
+		{ Type::Water },			// Politoed
+		{ Type::Grass, Type::Flying },			// Hoppip
+		{ Type::Grass, Type::Flying },			// Skiploom
+		{ Type::Grass, Type::Flying },			// Jumpluff
+		{ Type::Normal },			// Aipom
+		{ Type::Grass },			// Sunkern
+		{ Type::Grass },			// Sunflora
+		{ Type::Bug, Type::Flying },			// Yanma
+		{ Type::Water, Type::Ground },			// Wooper
+		{ Type::Water, Type::Ground },			// Quagsire
+		{ Type::Psychic },			// Espeon
+		{ Type::Dark },			// Umbreon
+		{ Type::Dark, Type::Flying },			// Murkrow
+		{ Type::Water, Type::Psychic },			// Slowking
+		{ Type::Ghost },			// Misdreavus
+		{ Type::Psychic },			// Unown
+		{ Type::Psychic },			// Wobbuffet
+		{ Type::Normal, Type::Psychic },			// Girafarig
+		{ Type::Bug },			// Pineco
+		{ Type::Bug, Type::Steel },			// Forretress
+		{ Type::Normal },			// Dunsparce
+		{ Type::Ground, Type::Flying },			// Gligar
+		{ Type::Steel, Type::Ground },			// Steelix
+		{ Type::Normal },			// Snubbull
+		{ Type::Normal },			// Granbull
+		{ Type::Water, Type::Poison },			// Qwilfish
+		{ Type::Bug, Type::Steel },			// Scizor
+		{ Type::Bug, Type::Rock },			// Shuckle
+		{ Type::Bug, Type::Fighting },			// Heracross
+		{ Type::Dark, Type::Ice },			// Sneasel
+		{ Type::Normal },			// Teddiursa
+		{ Type::Normal },			// Ursaring
+		{ Type::Fire },			// Slugma
+		{ Type::Fire, Type::Rock },			// Magcargo
+		{ Type::Ice, Type::Ground },			// Swinub
+		{ Type::Ice, Type::Ground },			// Piloswine
+		{ Type::Water, Type::Rock },			// Corsola
+		{ Type::Water },			// Remoraid
+		{ Type::Water },			// Octillery
+		{ Type::Ice, Type::Flying },			// Delibird
+		{ Type::Water, Type::Flying },			// Mantine
+		{ Type::Steel, Type::Flying },			// Skarmory
+		{ Type::Dark, Type::Fire },			// Houndour
+		{ Type::Dark, Type::Fire },			// Houndoom
+		{ Type::Water, Type::Dragon },			// Kingdra
+		{ Type::Ground },			// Phanpy
+		{ Type::Ground },			// Donphan
+		{ Type::Normal },			// Porygon2
+		{ Type::Normal },			// Stantler
+		{ Type::Normal },			// Smeargle
+		{ Type::Fighting },			// Tyrogue
+		{ Type::Fighting },			// Hitmontop
+		{ Type::Ice, Type::Psychic },			// Smoochum
+		{ Type::Electric },			// Elekid
+		{ Type::Fire },			// Magby
+		{ Type::Normal },			// Miltank
+		{ Type::Normal },			// Blissey
+		{ Type::Electric },			// Raikou
+		{ Type::Fire },			// Entei
+		{ Type::Water },			// Suicune
+		{ Type::Rock, Type::Ground },			// Larvitar
+		{ Type::Rock, Type::Ground },			// Pupitar
+		{ Type::Rock, Type::Dark },			// Tyranitar
+		{ Type::Psychic, Type::Flying },			// Lugia
+		{ Type::Fire, Type::Flying },			// Ho-Oh
+		{ Type::Psychic, Type::Grass },			// Celebi
+		
+		// Generation 3
+		{ Type::Grass },			// Treecko
+		{ Type::Grass },			// Grovyle
+		{ Type::Grass },			// Sceptile
+		{ Type::Fire },			// Torchic
+		{ Type::Fire, Type::Fighting },			// Combusken
+		{ Type::Fire, Type::Fighting },			// Blaziken
+		{ Type::Water },			// Mudkip
+		{ Type::Water, Type::Ground },			// Marshtomp
+		{ Type::Water, Type::Ground },			// Swampert
+		{ Type::Dark },			// Poochyena
+		{ Type::Dark },			// Mightyena
+		{ Type::Normal },			// Zigzagoon
+		{ Type::Normal },			// Linoone
+		{ Type::Bug },			// Wurmple
+		{ Type::Bug },			// Silcoon
+		{ Type::Bug, Type::Flying },			// Beautifly
+		{ Type::Bug },			// Cascoon
+		{ Type::Bug, Type::Poison },			// Dustox
+		{ Type::Water, Type::Grass },			// Lotad
+		{ Type::Water, Type::Grass },			// Lombre
+		{ Type::Water, Type::Grass },			// Ludicolo
+		{ Type::Grass },			// Seedot
+		{ Type::Grass, Type::Dark },			// Nuzleaf
+		{ Type::Grass, Type::Dark },			// Shiftry
+		{ Type::Normal, Type::Flying },			// Taillow
+		{ Type::Normal, Type::Flying },			// Swellow
+		{ Type::Water, Type::Flying },			// Wingull
+		{ Type::Water, Type::Flying },			// Pelipper
+		{ Type::Psychic },			// Ralts
+		{ Type::Psychic },			// Kirlia
+		{ Type::Psychic },			// Gardevoir
+		{ Type::Bug, Type::Water },			// Surskit
+		{ Type::Bug, Type::Flying },			// Masquerain
+		{ Type::Grass },			// Shroomish
+		{ Type::Grass, Type::Fighting },			// Breloom
+		{ Type::Normal },			// Slakoth
+		{ Type::Normal },			// Vigoroth
+		{ Type::Normal },			// Slaking
+		{ Type::Bug, Type::Ground },			// Nincada
+		{ Type::Bug, Type::Flying },			// Ninjask
+		{ Type::Bug, Type::Ghost },			// Shedinja
+		{ Type::Normal },			// Whismur
+		{ Type::Normal },			// Loudred
+		{ Type::Normal },			// Exploud
+		{ Type::Fighting },			// Makuhita
+		{ Type::Fighting },			// Hariyama
+		{ Type::Normal },			// Azurill
+		{ Type::Rock },			// Nosepass
+		{ Type::Normal },			// Skitty
+		{ Type::Normal },			// Delcatty
+		{ Type::Dark, Type::Ghost },			// Sableye
+		{ Type::Steel },			// Mawile
+		{ Type::Steel, Type::Rock },			// Aron
+		{ Type::Steel, Type::Rock },			// Lairon
+		{ Type::Steel, Type::Rock },			// Aggron
+		{ Type::Fighting, Type::Psychic },			// Meditite
+		{ Type::Fighting, Type::Psychic },			// Medicham
+		{ Type::Electric },			// Electrike
+		{ Type::Electric },			// Manectric
+		{ Type::Electric },			// Plusle
+		{ Type::Electric },			// Minun
+		{ Type::Bug },			// Volbeat
+		{ Type::Bug },			// Illumise
+		{ Type::Grass, Type::Poison },			// Roselia
+		{ Type::Poison },			// Gulpin
+		{ Type::Poison },			// Swalot
+		{ Type::Water, Type::Dark },			// Carvanha
+		{ Type::Water, Type::Dark },			// Sharpedo
+		{ Type::Water },			// Wailmer
+		{ Type::Water },			// Wailord
+		{ Type::Fire, Type::Ground },			// Numel
+		{ Type::Fire, Type::Ground },			// Camerupt
+		{ Type::Fire },			// Torkoal
+		{ Type::Psychic },			// Spoink
+		{ Type::Psychic },			// Grumpig
+		{ Type::Normal },			// Spinda
+		{ Type::Ground },			// Trapinch
+		{ Type::Ground, Type::Dragon },			// Vibrava
+		{ Type::Ground, Type::Dragon },			// Flygon
+		{ Type::Grass },			// Cacnea
+		{ Type::Grass, Type::Dark },			// Cacturne
+		{ Type::Normal, Type::Flying },			// Swablu
+		{ Type::Dragon, Type::Flying },			// Altaria
+		{ Type::Normal },			// Zangoose
+		{ Type::Poison },			// Seviper
+		{ Type::Rock, Type::Psychic },			// Lunatone
+		{ Type::Rock, Type::Psychic },			// Solrock
+		{ Type::Water, Type::Ground },			// Barboach
+		{ Type::Water, Type::Ground },			// Whiscash
+		{ Type::Water },			// Corphish
+		{ Type::Water, Type::Dark },			// Crawdaunt
+		{ Type::Ground, Type::Psychic },			// Baltoy
+		{ Type::Ground, Type::Psychic },			// Claydol
+		{ Type::Rock, Type::Grass },			// Lileep
+		{ Type::Rock, Type::Grass },			// Cradily
+		{ Type::Rock, Type::Bug },			// Anorith
+		{ Type::Rock, Type::Bug },			// Armaldo
+		{ Type::Water },			// Feebas
+		{ Type::Water },			// Milotic
+		{ Type::Normal },			// Castform
+	//	{ Type::Fire },			// --------------------
+	//	{ Type::Water },			// --------------------
+	//	{ Type::Ice },			// --------------------
+		{ Type::Normal },			// Kecleon
+		{ Type::Ghost },			// Shuppet
+		{ Type::Ghost },			// Banette
+		{ Type::Ghost },			// Duskull
+		{ Type::Ghost },			// Dusclops
+		{ Type::Grass, Type::Flying },			// Tropius
+		{ Type::Psychic },			// Chimecho
+		{ Type::Dark },			// Absol
+		{ Type::Psychic },			// Wynaut
+		{ Type::Ice },			// Snorunt
+		{ Type::Ice },			// Glalie
+		{ Type::Ice, Type::Water },			// Spheal
+		{ Type::Ice, Type::Water },			// Sealeo
+		{ Type::Ice, Type::Water },			// Walrein
+		{ Type::Water },			// Clamperl
+		{ Type::Water },			// Huntail
+		{ Type::Water },			// Gorebyss
+		{ Type::Water, Type::Rock },			// Relicanth
+		{ Type::Water },			// Luvdisc
+		{ Type::Dragon },			// Bagon
+		{ Type::Dragon },			// Shelgon
+		{ Type::Dragon, Type::Flying },			// Salamence
+		{ Type::Steel, Type::Psychic },			// Beldum
+		{ Type::Steel, Type::Psychic },			// Metang
+		{ Type::Steel, Type::Psychic },			// Metagross
+		{ Type::Rock },			// Regirock
+		{ Type::Ice },			// Regice
+		{ Type::Steel },			// Registeel
+		{ Type::Dragon, Type::Psychic },			// Latias
+		{ Type::Dragon, Type::Psychic },			// Latios
+		{ Type::Water },			// Kyogre
+		{ Type::Ground },			// Groudon
+		{ Type::Dragon, Type::Flying },			// Rayquaza
+		{ Type::Steel, Type::Psychic },			// Jirachi
+		{ Type::Psychic },			// Deoxys-M
+		{ Type::Psychic },			// Deoxys-A
+		{ Type::Psychic },			// Deoxys-D
+		{ Type::Psychic },			// Deoxys-S
+		
+		// Generation 4
+		{ Type::Grass },			// Turtwig
+		{ Type::Grass },			// Grotle
+		{ Type::Grass, Type::Ground },			// Torterra
+		{ Type::Fire },			// Chimchar
+		{ Type::Fire, Type::Fighting },			// Monferno
+		{ Type::Fire, Type::Fighting },			// Infernape
+		{ Type::Water },			// Piplup
+		{ Type::Water },			// Prinplup
+		{ Type::Water, Type::Steel },			// Empoleon
+		{ Type::Normal, Type::Flying },			// Starly
+		{ Type::Normal, Type::Flying },			// Staravia
+		{ Type::Normal, Type::Flying },			// Staraptor
+		{ Type::Normal },			// Bidoof
+		{ Type::Normal, Type::Water },			// Bibarel
+		{ Type::Bug },			// Kricketot
+		{ Type::Bug },			// Kricketune
+		{ Type::Electric },			// Shinx
+		{ Type::Electric },			// Luxio
+		{ Type::Electric },			// Luxray
+		{ Type::Grass, Type::Poison },			// Budew
+		{ Type::Grass, Type::Poison },			// Roserade
+		{ Type::Rock },			// Cranidos
+		{ Type::Rock },			// Rampardos
+		{ Type::Rock, Type::Steel },			// Shieldon
+		{ Type::Rock, Type::Steel },			// Bastiodon
+		{ Type::Bug },			// Burmy
+		{ Type::Bug, Type::Grass },			// Wormadam-P
+		{ Type::Bug, Type::Ground },			// Wormadam-S
+		{ Type::Bug, Type::Steel },			// Wormadam-T
+		{ Type::Bug, Type::Flying },			// Mothim
+		{ Type::Bug, Type::Flying },			// Combee
+		{ Type::Bug, Type::Flying },			// Vespiquen
+		{ Type::Electric },			// Pachirisu
+		{ Type::Water },			// Buizel
+		{ Type::Water },			// Floatzel
+		{ Type::Grass },			// Cherubi
+		{ Type::Grass },			// Cherrim
+		{ Type::Water },			// Shellos
+		{ Type::Water, Type::Ground },			// Gastrodon
+		{ Type::Normal },			// Ambipom
+		{ Type::Ghost, Type::Flying },			// Drifloon
+		{ Type::Ghost, Type::Flying },			// Drifblim
+		{ Type::Normal },			// Buneary
+		{ Type::Normal },			// Lopunny
+		{ Type::Ghost },			// Mismagius
+		{ Type::Dark, Type::Flying },			// Honchkrow
+		{ Type::Normal },			// Glameow
+		{ Type::Normal },			// Purugly
+		{ Type::Psychic },			// Chingling
+		{ Type::Poison, Type::Dark },			// Stunky
+		{ Type::Poison, Type::Dark },			// Skuntank
+		{ Type::Steel, Type::Psychic },			// Bronzor
+		{ Type::Steel, Type::Psychic },			// Bronzong
+		{ Type::Rock },			// Bonsly
+		{ Type::Psychic },			// Mime Jr.
+		{ Type::Normal },			// Happiny
+		{ Type::Normal, Type::Flying },			// Chatot
+		{ Type::Ghost, Type::Dark },			// Spiritomb
+		{ Type::Dragon, Type::Ground },			// Gible
+		{ Type::Dragon, Type::Ground },			// Gabite
+		{ Type::Dragon, Type::Ground },			// Garchomp
+		{ Type::Normal },			// Munchlax
+		{ Type::Fighting },			// Riolu
+		{ Type::Fighting, Type::Steel },			// Lucario
+		{ Type::Ground },			// Hippopotas
+		{ Type::Ground },			// Hippowdon
+		{ Type::Poison, Type::Bug },			// Skorupi
+		{ Type::Poison, Type::Dark },			// Drapion
+		{ Type::Poison, Type::Fighting },			// Croagunk
+		{ Type::Poison, Type::Fighting },			// Toxicroak
+		{ Type::Grass },			// Carnivine
+		{ Type::Water },			// Finneon
+		{ Type::Water },			// Lumineon
+		{ Type::Water, Type::Flying },			// Mantyke
+		{ Type::Grass, Type::Ice },			// Snover
+		{ Type::Grass, Type::Ice },			// Abomasnow
+		{ Type::Dark, Type::Ice },			// Weavile
+		{ Type::Electric, Type::Steel },			// Magnezone
+		{ Type::Normal },			// Lickilicky
+		{ Type::Ground, Type::Rock },			// Rhyperior
+		{ Type::Grass },			// Tangrowth
+		{ Type::Electric },			// Electivire
+		{ Type::Fire },			// Magmortar
+		{ Type::Normal, Type::Flying },			// Togekiss
+		{ Type::Bug, Type::Flying },			// Yanmega
+		{ Type::Grass },			// Leafeon
+		{ Type::Ice },			// Glaceon
+		{ Type::Ground, Type::Flying },			// Gliscor
+		{ Type::Ice, Type::Ground },			// Mamoswine
+		{ Type::Normal },			// Porygon-Z
+		{ Type::Psychic, Type::Fighting },			// Gallade
+		{ Type::Rock, Type::Steel },			// Probopass
+		{ Type::Ghost },			// Dusknoir
+		{ Type::Ice, Type::Ghost },			// Froslass
+		{ Type::Electric, Type::Ghost },			// Rotom
+		{ Type::Electric, Type::Fire },			// Rotom-H
+		{ Type::Electric, Type::Water },			// Rotom-W
+		{ Type::Electric, Type::Ice },			// Rotom-F
+		{ Type::Electric, Type::Flying },			// Rotom-S
+		{ Type::Electric, Type::Grass },			// Rotom-C
+		{ Type::Psychic },			// Uxie
+		{ Type::Psychic },			// Mesprit
+		{ Type::Psychic },			// Azelf
+		{ Type::Steel, Type::Dragon },			// Dialga
+		{ Type::Water, Type::Dragon },			// Palkia
+		{ Type::Fire, Type::Steel },			// Heatran
+		{ Type::Normal },			// Regigigas
+		{ Type::Ghost, Type::Dragon },			// Giratina-A
+		{ Type::Ghost, Type::Dragon },			// Giratina-O
+		{ Type::Psychic },			// Cresselia
+		{ Type::Water },			// Phione
+		{ Type::Water },			// Manaphy
+		{ Type::Dark },			// Darkrai
+		{ Type::Grass },			// Shaymin-L
+		{ Type::Grass, Type::Flying },			// Shaymin-S
+		{ Type::Normal },			// Arceus
+		
+		// Generation 5
+		{ Type::Psychic, Type::Fire },			// Victini
+		{ Type::Grass },			// Snivy
+		{ Type::Grass },			// Servine
+		{ Type::Grass },			// Serperior
+		{ Type::Fire },			// Tepig
+		{ Type::Fire, Type::Fighting },			// Pignite
+		{ Type::Fire, Type::Fighting },			// Emboar
+		{ Type::Water },			// Oshawott
+		{ Type::Water },			// Dewott
+		{ Type::Water },			// Samurott
+		{ Type::Normal },			// Patrat
+		{ Type::Normal },			// Watchog
+		{ Type::Normal },			// Lillipup
+		{ Type::Normal },			// Herdier
+		{ Type::Normal },			// Stoutland
+		{ Type::Dark },			// Purrloin
+		{ Type::Dark },			// Liepard
+		{ Type::Grass },			// Pansage
+		{ Type::Grass },			// Simisage
+		{ Type::Fire },			// Pansear
+		{ Type::Fire },			// Simisear
+		{ Type::Water },			// Panpour
+		{ Type::Water },			// Simipour
+		{ Type::Psychic },			// Munna
+		{ Type::Psychic },			// Musharna
+		{ Type::Normal, Type::Flying },			// Pidove
+		{ Type::Normal, Type::Flying },			// Tranquill
+		{ Type::Normal, Type::Flying },			// Unfezant
+		{ Type::Electric },			// Blitzle
+		{ Type::Electric },			// Zebstrika
+		{ Type::Rock },			// Roggenrola
+		{ Type::Rock },			// Boldore
+		{ Type::Rock },			// Gigalith
+		{ Type::Psychic, Type::Flying },			// Woobat
+		{ Type::Psychic, Type::Flying },			// Swoobat
+		{ Type::Ground },			// Drilbur
+		{ Type::Ground, Type::Steel },			// Excadrill
+		{ Type::Normal },			// Audino
+		{ Type::Fighting },			// Timburr
+		{ Type::Fighting },			// Gurdurr
+		{ Type::Fighting },			// Conkeldurr
+		{ Type::Water },			// Tympole
+		{ Type::Water, Type::Ground },			// Palpitoad
+		{ Type::Water, Type::Ground },			// Seismitoad
+		{ Type::Fighting },			// Throh
+		{ Type::Fighting },			// Sawk
+		{ Type::Bug, Type::Grass },			// Sewaddle
+		{ Type::Bug, Type::Grass },			// Swadloon
+		{ Type::Bug, Type::Grass },			// Leavanny
+		{ Type::Bug, Type::Poison },			// Venipede
+		{ Type::Bug, Type::Poison },			// Whirlipede
+		{ Type::Bug, Type::Poison },			// Scolipede
+		{ Type::Grass },			// Cottonee
+		{ Type::Grass },			// Whimsicott
+		{ Type::Grass },			// Petilil
+		{ Type::Grass },			// Lilligant
+		{ Type::Water },			// Basculin-R
+		{ Type::Water },			// Basculin-B
+		{ Type::Ground, Type::Dark },			// Sandile
+		{ Type::Ground, Type::Dark },			// Krokorok
+		{ Type::Ground, Type::Dark },			// Krookodile
+		{ Type::Fire },			// Darumaka
+		{ Type::Fire },			// Darmanitan
+	//	{ Type::Fire, Type::Psychic },			// Darmanitan (Zen Mode)
+		{ Type::Grass },			// Maractus
+		{ Type::Bug, Type::Rock },			// Dwebble
+		{ Type::Bug, Type::Rock },			// Crustle
+		{ Type::Dark, Type::Fighting },			// Scraggy
+		{ Type::Dark, Type::Fighting },			// Scrafty
+		{ Type::Psychic, Type::Flying },			// Sigilyph
+		{ Type::Ghost },			// Yamask
+		{ Type::Ghost },			// Cofagrigus
+		{ Type::Water, Type::Rock },			// Tirtouga
+		{ Type::Water, Type::Rock },			// Carracosta
+		{ Type::Rock, Type::Flying },			// Archen
+		{ Type::Rock, Type::Flying },			// Archeops
+		{ Type::Poison },			// Trubbish
+		{ Type::Poison },			// Garbodor
+		{ Type::Dark },			// Zorua
+		{ Type::Dark },			// Zoroark
+		{ Type::Normal },			// Minccino
+		{ Type::Normal },			// Cinccino
+		{ Type::Psychic },			// Gothita
+		{ Type::Psychic },			// Gothorita
+		{ Type::Psychic },			// Gothitelle
+		{ Type::Psychic },			// Solosis
+		{ Type::Psychic },			// Duosion
+		{ Type::Psychic },			// Reuniclus
+		{ Type::Water, Type::Flying },			// Ducklett
+		{ Type::Water, Type::Flying },			// Swanna
+		{ Type::Ice },			// Vanillite
+		{ Type::Ice },			// Vanillish
+		{ Type::Ice },			// Vanilluxe
+		{ Type::Normal, Type::Grass },			// Deerling
+		{ Type::Normal, Type::Grass },			// Sawsbuck
+		{ Type::Electric, Type::Flying },			// Emolga
+		{ Type::Bug },			// Karrablast
+		{ Type::Bug, Type::Steel },			// Escavalier
+		{ Type::Grass, Type::Poison },			// Foongus
+		{ Type::Grass, Type::Poison },			// Amoonguss
+		{ Type::Water, Type::Ghost },			// Frillish
+		{ Type::Water, Type::Ghost },			// Jellicent
+		{ Type::Water },			// Alomomola
+		{ Type::Bug, Type::Electric },			// Joltik
+		{ Type::Bug, Type::Electric },			// Galvantula
+		{ Type::Grass, Type::Steel },			// Ferroseed
+		{ Type::Grass, Type::Steel },			// Ferrothorn
+		{ Type::Steel },			// Klink
+		{ Type::Steel },			// Klang
+		{ Type::Steel },			// Klinklang
+		{ Type::Electric },			// Tynamo
+		{ Type::Electric },			// Eelektrik
+		{ Type::Electric },			// Eelektross
+		{ Type::Psychic },			// Elgyem
+		{ Type::Psychic },			// Beheeyem
+		{ Type::Ghost, Type::Fire },			// Litwick
+		{ Type::Ghost, Type::Fire },			// Lampent
+		{ Type::Ghost, Type::Fire },			// Chandelure
+		{ Type::Dragon },			// Axew
+		{ Type::Dragon },			// Fraxure
+		{ Type::Dragon },			// Haxorus
+		{ Type::Ice },			// Cubchoo
+		{ Type::Ice },			// Beartic
+		{ Type::Ice },			// Cryogonal
+		{ Type::Bug },			// Shelmet
+		{ Type::Bug },			// Accelgor
+		{ Type::Ground, Type::Electric },			// Stunfisk
+		{ Type::Fighting },			// Mienfoo
+		{ Type::Fighting },			// Mienshao
+		{ Type::Dragon },			// Druddigon
+		{ Type::Ground, Type::Ghost },			// Golett
+		{ Type::Ground, Type::Ghost },			// Golurk
+		{ Type::Dark, Type::Steel },			// Pawniard
+		{ Type::Dark, Type::Steel },			// Bisharp
+		{ Type::Normal },			// Bouffalant
+		{ Type::Normal, Type::Flying },			// Rufflet
+		{ Type::Normal, Type::Flying },			// Braviary
+		{ Type::Dark, Type::Flying },			// Vullaby
+		{ Type::Dark, Type::Flying },			// Mandibuzz
+		{ Type::Fire },			// Heatmor
+		{ Type::Bug, Type::Steel },			// Durant
+		{ Type::Dark, Type::Dragon },			// Deino
+		{ Type::Dark, Type::Dragon },			// Zweilous
+		{ Type::Dark, Type::Dragon },			// Hydreigon
+		{ Type::Bug, Type::Fire },			// Larvesta
+		{ Type::Bug, Type::Fire },			// Volcarona
+		{ Type::Steel, Type::Fighting },			// Cobalion
+		{ Type::Rock, Type::Fighting },			// Terrakion
+		{ Type::Grass, Type::Fighting },			// Virizion
+		{ Type::Flying },			// Tornadus-I
+		{ Type::Flying },			// Tornadus-T
+		{ Type::Electric, Type::Flying },			// Thundurus-I
+		{ Type::Electric, Type::Flying },			// Thundurus-T
+		{ Type::Dragon, Type::Fire },			// Reshiram
+		{ Type::Dragon, Type::Electric },			// Zekrom
+		{ Type::Ground, Type::Flying },			// Landorus-I
+		{ Type::Ground, Type::Flying },			// Landorus-T
+		{ Type::Dragon, Type::Ice },			// Kyurem
+		{ Type::Dragon, Type::Ice },			// Kyurem-B
+		{ Type::Dragon, Type::Ice },			// Kyurem-W
+		{ Type::Water, Type::Fighting },			// Keldeo
+		{ Type::Normal, Type::Psychic },			// Meloetta
+	//	{ Type::Normal, Type::Fighting },			// Meloetta (Pirouette form)
+		{ Type::Bug, Type::Steel }				// Genesect 
 	};
-	return type_array [static_cast<unsigned>(name)];
+	return type_array [static_cast<size_t>(name)];
 }
 
 }	// unnamed namespace

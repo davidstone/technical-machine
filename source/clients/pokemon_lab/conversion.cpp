@@ -59,1025 +59,1031 @@ unsigned move_to_id (Moves move) {
 	return (move < Moves::SWITCH0) ? static_cast<unsigned>(move) : static_cast<unsigned>(move) - 6;
 }
 
-Species id_to_species (unsigned id) {
+Species id_to_species (unsigned const id) {
 	constexpr static Species species_converter [] = {
-		Species::BULBASAUR,
-		Species::IVYSAUR,
-		Species::VENUSAUR,
-		Species::CHARMANDER,
-		Species::CHARMELEON,
-		Species::CHARIZARD,
-		Species::SQUIRTLE,
-		Species::WARTORTLE,
-		Species::BLASTOISE,
-		Species::CATERPIE,
-		Species::METAPOD,
-		Species::BUTTERFREE,
-		Species::WEEDLE,
-		Species::KAKUNA,
-		Species::BEEDRILL,
-		Species::PIDGEY,
-		Species::PIDGEOTTO,
-		Species::PIDGEOT,
-		Species::RATTATA,
-		Species::RATICATE,
-		Species::SPEAROW,
-		Species::FEAROW,
-		Species::EKANS,
-		Species::ARBOK,
-		Species::PIKACHU,
-		Species::RAICHU,
-		Species::SANDSHREW,
-		Species::SANDSLASH,
-		Species::NIDORAN_F,
-		Species::NIDORINA,
-		Species::NIDOQUEEN,
-		Species::NIDORAN_M,
-		Species::NIDORINO,
-		Species::NIDOKING,
-		Species::CLEFAIRY,
-		Species::CLEFABLE,
-		Species::VULPIX,
-		Species::NINETALES,
-		Species::JIGGLYPUFF,
-		Species::WIGGLYTUFF,
-		Species::ZUBAT,
-		Species::GOLBAT,
-		Species::ODDISH,
-		Species::GLOOM,
-		Species::VILEPLUME,
-		Species::PARAS,
-		Species::PARASECT,
-		Species::VENONAT,
-		Species::VENOMOTH,
-		Species::DIGLETT,
-		Species::DUGTRIO,
-		Species::MEOWTH,
-		Species::PERSIAN,
-		Species::PSYDUCK,
-		Species::GOLDUCK,
-		Species::MANKEY,
-		Species::PRIMEAPE,
-		Species::GROWLITHE,
-		Species::ARCANINE,
-		Species::POLIWAG,
-		Species::POLIWHIRL,
-		Species::POLIWRATH,
-		Species::ABRA,
-		Species::KADABRA,
-		Species::ALAKAZAM,
-		Species::MACHOP,
-		Species::MACHOKE,
-		Species::MACHAMP,
-		Species::BELLSPROUT,
-		Species::WEEPINBELL,
-		Species::VICTREEBEL,
-		Species::TENTACOOL,
-		Species::TENTACRUEL,
-		Species::GEODUDE,
-		Species::GRAVELER,
-		Species::GOLEM,
-		Species::PONYTA,
-		Species::RAPIDASH,
-		Species::SLOWPOKE,
-		Species::SLOWBRO,
-		Species::MAGNEMITE,
-		Species::MAGNETON,
-		Species::FARFETCHD,
-		Species::DODUO,
-		Species::DODRIO,
-		Species::SEEL,
-		Species::DEWGONG,
-		Species::GRIMER,
-		Species::MUK,
-		Species::SHELLDER,
-		Species::CLOYSTER,
-		Species::GASTLY,
-		Species::HAUNTER,
-		Species::GENGAR,
-		Species::ONIX,
-		Species::DROWZEE,
-		Species::HYPNO,
-		Species::KRABBY,
-		Species::KINGLER,
-		Species::VOLTORB,
-		Species::ELECTRODE,
-		Species::EXEGGCUTE,
-		Species::EXEGGUTOR,
-		Species::CUBONE,
-		Species::MAROWAK,
-		Species::HITMONLEE,
-		Species::HITMONCHAN,
-		Species::LICKITUNG,
-		Species::KOFFING,
-		Species::WEEZING,
-		Species::RHYHORN,
-		Species::RHYDON,
-		Species::CHANSEY,
-		Species::TANGELA,
-		Species::KANGASKHAN,
-		Species::HORSEA,
-		Species::SEADRA,
-		Species::GOLDEEN,
-		Species::SEAKING,
-		Species::STARYU,
-		Species::STARMIE,
-		Species::MR_MIME,
-		Species::SCYTHER,
-		Species::JYNX,
-		Species::ELECTABUZZ,
-		Species::MAGMAR,
-		Species::PINSIR,
-		Species::TAUROS,
-		Species::MAGIKARP,
-		Species::GYARADOS,
-		Species::LAPRAS,
-		Species::DITTO,
-		Species::EEVEE,
-		Species::VAPOREON,
-		Species::JOLTEON,
-		Species::FLAREON,
-		Species::PORYGON,
-		Species::OMANYTE,
-		Species::OMASTAR,
-		Species::KABUTO,
-		Species::KABUTOPS,
-		Species::AERODACTYL,
-		Species::SNORLAX,
-		Species::ARTICUNO,
-		Species::ZAPDOS,
-		Species::MOLTRES,
-		Species::DRATINI,
-		Species::DRAGONAIR,
-		Species::DRAGONITE,
-		Species::MEWTWO,
-		Species::MEW,
-		Species::CHIKORITA,
-		Species::BAYLEEF,
-		Species::MEGANIUM,
-		Species::CYNDAQUIL,
-		Species::QUILAVA,
-		Species::TYPHLOSION,
-		Species::TOTODILE,
-		Species::CROCONAW,
-		Species::FERALIGATR,
-		Species::SENTRET,
-		Species::FURRET,
-		Species::HOOTHOOT,
-		Species::NOCTOWL,
-		Species::LEDYBA,
-		Species::LEDIAN,
-		Species::SPINARAK,
-		Species::ARIADOS,
-		Species::CROBAT,
-		Species::CHINCHOU,
-		Species::LANTURN,
-		Species::PICHU,
-		Species::CLEFFA,
-		Species::IGGLYBUFF,
-		Species::TOGEPI,
-		Species::TOGETIC,
-		Species::NATU,
-		Species::XATU,
-		Species::MAREEP,
-		Species::FLAAFFY,
-		Species::AMPHAROS,
-		Species::BELLOSSOM,
-		Species::MARILL,
-		Species::AZUMARILL,
-		Species::SUDOWOODO,
-		Species::POLITOED,
-		Species::HOPPIP,
-		Species::SKIPLOOM,
-		Species::JUMPLUFF,
-		Species::AIPOM,
-		Species::SUNKERN,
-		Species::SUNFLORA,
-		Species::YANMA,
-		Species::WOOPER,
-		Species::QUAGSIRE,
-		Species::ESPEON,
-		Species::UMBREON,
-		Species::MURKROW,
-		Species::SLOWKING,
-		Species::MISDREAVUS,
-		Species::UNOWN,
-		Species::WOBBUFFET,
-		Species::GIRAFARIG,
-		Species::PINECO,
-		Species::FORRETRESS,
-		Species::DUNSPARCE,
-		Species::GLIGAR,
-		Species::STEELIX,
-		Species::SNUBBULL,
-		Species::GRANBULL,
-		Species::QWILFISH,
-		Species::SCIZOR,
-		Species::SHUCKLE,
-		Species::HERACROSS,
-		Species::SNEASEL,
-		Species::TEDDIURSA,
-		Species::URSARING,
-		Species::SLUGMA,
-		Species::MAGCARGO,
-		Species::SWINUB,
-		Species::PILOSWINE,
-		Species::CORSOLA,
-		Species::REMORAID,
-		Species::OCTILLERY,
-		Species::DELIBIRD,
-		Species::MANTINE,
-		Species::SKARMORY,
-		Species::HOUNDOUR,
-		Species::HOUNDOOM,
-		Species::KINGDRA,
-		Species::PHANPY,
-		Species::DONPHAN,
-		Species::PORYGON2,
-		Species::STANTLER,
-		Species::SMEARGLE,
-		Species::TYROGUE,
-		Species::HITMONTOP,
-		Species::SMOOCHUM,
-		Species::ELEKID,
-		Species::MAGBY,
-		Species::MILTANK,
-		Species::BLISSEY,
-		Species::RAIKOU,
-		Species::ENTEI,
-		Species::SUICUNE,
-		Species::LARVITAR,
-		Species::PUPITAR,
-		Species::TYRANITAR,
-		Species::LUGIA,
-		Species::HO_OH,
-		Species::CELEBI,
-		Species::TREECKO,
-		Species::GROVYLE,
-		Species::SCEPTILE,
-		Species::TORCHIC,
-		Species::COMBUSKEN,
-		Species::BLAZIKEN,
-		Species::MUDKIP,
-		Species::MARSHTOMP,
-		Species::SWAMPERT,
-		Species::POOCHYENA,
-		Species::MIGHTYENA,
-		Species::ZIGZAGOON,
-		Species::LINOONE,
-		Species::WURMPLE,
-		Species::SILCOON,
-		Species::BEAUTIFLY,
-		Species::CASCOON,
-		Species::DUSTOX,
-		Species::LOTAD,
-		Species::LOMBRE,
-		Species::LUDICOLO,
-		Species::SEEDOT,
-		Species::NUZLEAF,
-		Species::SHIFTRY,
-		Species::TAILLOW,
-		Species::SWELLOW,
-		Species::WINGULL,
-		Species::PELIPPER,
-		Species::RALTS,
-		Species::KIRLIA,
-		Species::GARDEVOIR,
-		Species::SURSKIT,
-		Species::MASQUERAIN,
-		Species::SHROOMISH,
-		Species::BRELOOM,
-		Species::SLAKOTH,
-		Species::VIGOROTH,
-		Species::SLAKING,
-		Species::NINCADA,
-		Species::NINJASK,
-		Species::SHEDINJA,
-		Species::WHISMUR,
-		Species::LOUDRED,
-		Species::EXPLOUD,
-		Species::MAKUHITA,
-		Species::HARIYAMA,
-		Species::AZURILL,
-		Species::NOSEPASS,
-		Species::SKITTY,
-		Species::DELCATTY,
-		Species::SABLEYE,
-		Species::MAWILE,
-		Species::ARON,
-		Species::LAIRON,
-		Species::AGGRON,
-		Species::MEDITITE,
-		Species::MEDICHAM,
-		Species::ELECTRIKE,
-		Species::MANECTRIC,
-		Species::PLUSLE,
-		Species::MINUN,
-		Species::VOLBEAT,
-		Species::ILLUMISE,
-		Species::ROSELIA,
-		Species::GULPIN,
-		Species::SWALOT,
-		Species::CARVANHA,
-		Species::SHARPEDO,
-		Species::WAILMER,
-		Species::WAILORD,
-		Species::NUMEL,
-		Species::CAMERUPT,
-		Species::TORKOAL,
-		Species::SPOINK,
-		Species::GRUMPIG,
-		Species::SPINDA,
-		Species::TRAPINCH,
-		Species::VIBRAVA,
-		Species::FLYGON,
-		Species::CACNEA,
-		Species::CACTURNE,
-		Species::SWABLU,
-		Species::ALTARIA,
-		Species::ZANGOOSE,
-		Species::SEVIPER,
-		Species::LUNATONE,
-		Species::SOLROCK,
-		Species::BARBOACH,
-		Species::WHISCASH,
-		Species::CORPHISH,
-		Species::CRAWDAUNT,
-		Species::BALTOY,
-		Species::CLAYDOL,
-		Species::LILEEP,
-		Species::CRADILY,
-		Species::ANORITH,
-		Species::ARMALDO,
-		Species::FEEBAS,
-		Species::MILOTIC,
-		Species::CASTFORM,
-		Species::KECLEON,
-		Species::SHUPPET,
-		Species::BANETTE,
-		Species::DUSKULL,
-		Species::DUSCLOPS,
-		Species::TROPIUS,
-		Species::CHIMECHO,
-		Species::ABSOL,
-		Species::WYNAUT,
-		Species::SNORUNT,
-		Species::GLALIE,
-		Species::SPHEAL,
-		Species::SEALEO,
-		Species::WALREIN,
-		Species::CLAMPERL,
-		Species::HUNTAIL,
-		Species::GOREBYSS,
-		Species::RELICANTH,
-		Species::LUVDISC,
-		Species::BAGON,
-		Species::SHELGON,
-		Species::SALAMENCE,
-		Species::BELDUM,
-		Species::METANG,
-		Species::METAGROSS,
-		Species::REGIROCK,
-		Species::REGICE,
-		Species::REGISTEEL,
-		Species::LATIAS,
-		Species::LATIOS,
-		Species::KYOGRE,
-		Species::GROUDON,
-		Species::RAYQUAZA,
-		Species::JIRACHI,
-		Species::DEOXYS_M,
-		Species::DEOXYS_A,
-		Species::DEOXYS_D,
-		Species::DEOXYS_S,
-		Species::TURTWIG,
-		Species::GROTLE,
-		Species::TORTERRA,
-		Species::CHIMCHAR,
-		Species::MONFERNO,
-		Species::INFERNAPE,
-		Species::PIPLUP,
-		Species::PRINPLUP,
-		Species::EMPOLEON,
-		Species::STARLY,
-		Species::STARAVIA,
-		Species::STARAPTOR,
-		Species::BIDOOF,
-		Species::BIBAREL,
-		Species::KRICKETOT,
-		Species::KRICKETUNE,
-		Species::SHINX,
-		Species::LUXIO,
-		Species::LUXRAY,
-		Species::BUDEW,
-		Species::ROSERADE,
-		Species::CRANIDOS,
-		Species::RAMPARDOS,
-		Species::SHIELDON,
-		Species::BASTIODON,
-		Species::BURMY,
-		Species::WORMADAM_P,
-		Species::WORMADAM_S,
-		Species::WORMADAM_T,
-		Species::MOTHIM,
-		Species::COMBEE,
-		Species::VESPIQUEN,
-		Species::PACHIRISU,
-		Species::BUIZEL,
-		Species::FLOATZEL,
-		Species::CHERUBI,
-		Species::CHERRIM,
-		Species::SHELLOS,
-		Species::GASTRODON,
-		Species::AMBIPOM,
-		Species::DRIFLOON,
-		Species::DRIFBLIM,
-		Species::BUNEARY,
-		Species::LOPUNNY,
-		Species::MISMAGIUS,
-		Species::HONCHKROW,
-		Species::GLAMEOW,
-		Species::PURUGLY,
-		Species::CHINGLING,
-		Species::STUNKY,
-		Species::SKUNTANK,
-		Species::BRONZOR,
-		Species::BRONZONG,
-		Species::BONSLY,
-		Species::MIME_JR,
-		Species::HAPPINY,
-		Species::CHATOT,
-		Species::SPIRITOMB,
-		Species::GIBLE,
-		Species::GABITE,
-		Species::GARCHOMP,
-		Species::MUNCHLAX,
-		Species::RIOLU,
-		Species::LUCARIO,
-		Species::HIPPOPOTAS,
-		Species::HIPPOWDON,
-		Species::SKORUPI,
-		Species::DRAPION,
-		Species::CROAGUNK,
-		Species::TOXICROAK,
-		Species::CARNIVINE,
-		Species::FINNEON,
-		Species::LUMINEON,
-		Species::MANTYKE,
-		Species::SNOVER,
-		Species::ABOMASNOW,
-		Species::WEAVILE,
-		Species::MAGNEZONE,
-		Species::LICKILICKY,
-		Species::RHYPERIOR,
-		Species::TANGROWTH,
-		Species::ELECTIVIRE,
-		Species::MAGMORTAR,
-		Species::TOGEKISS,
-		Species::YANMEGA,
-		Species::LEAFEON,
-		Species::GLACEON,
-		Species::GLISCOR,
-		Species::MAMOSWINE,
-		Species::PORYGON_Z,
-		Species::GALLADE,
-		Species::PROBOPASS,
-		Species::DUSKNOIR,
-		Species::FROSLASS,
-		Species::ROTOM,
-		Species::UXIE,
-		Species::MESPRIT,
-		Species::AZELF,
-		Species::DIALGA,
-		Species::PALKIA,
-		Species::HEATRAN,
-		Species::REGIGIGAS,
-		Species::GIRATINA_A,
-		Species::CRESSELIA,
-		Species::PHIONE,
-		Species::MANAPHY,
-		Species::DARKRAI,
-		Species::SHAYMIN_L,
-		Species::ARCEUS,
-		Species::ROTOM_F,
-		Species::ROTOM_C,
-		Species::ROTOM_H,
-		Species::ROTOM_S,
-		Species::ROTOM_W,
-		Species::GIRATINA_O,
-		Species::SHAYMIN_S,
-		Species::END
+		// Generation 1
+		Species::Bulbasaur,
+		Species::Ivysaur,
+		Species::Venusaur,
+		Species::Charmander,
+		Species::Charmeleon,
+		Species::Charizard,
+		Species::Squirtle,
+		Species::Wartortle,
+		Species::Blastoise,
+		Species::Caterpie,
+		Species::Metapod,
+		Species::Butterfree,
+		Species::Weedle,
+		Species::Kakuna,
+		Species::Beedrill,
+		Species::Pidgey,
+		Species::Pidgeotto,
+		Species::Pidgeot,
+		Species::Rattata,
+		Species::Raticate,
+		Species::Spearow,
+		Species::Fearow,
+		Species::Ekans,
+		Species::Arbok,
+		Species::Pikachu,
+		Species::Raichu,
+		Species::Sandshrew,
+		Species::Sandslash,
+		Species::Nidoran_F,
+		Species::Nidorina,
+		Species::Nidoqueen,
+		Species::Nidoran_M,
+		Species::Nidorino,
+		Species::Nidoking,
+		Species::Clefairy,
+		Species::Clefable,
+		Species::Vulpix,
+		Species::Ninetales,
+		Species::Jigglypuff,
+		Species::Wigglytuff,
+		Species::Zubat,
+		Species::Golbat,
+		Species::Oddish,
+		Species::Gloom,
+		Species::Vileplume,
+		Species::Paras,
+		Species::Parasect,
+		Species::Venonat,
+		Species::Venomoth,
+		Species::Diglett,
+		Species::Dugtrio,
+		Species::Meowth,
+		Species::Persian,
+		Species::Psyduck,
+		Species::Golduck,
+		Species::Mankey,
+		Species::Primeape,
+		Species::Growlithe,
+		Species::Arcanine,
+		Species::Poliwag,
+		Species::Poliwhirl,
+		Species::Poliwrath,
+		Species::Abra,
+		Species::Kadabra,
+		Species::Alakazam,
+		Species::Machop,
+		Species::Machoke,
+		Species::Machamp,
+		Species::Bellsprout,
+		Species::Weepinbell,
+		Species::Victreebel,
+		Species::Tentacool,
+		Species::Tentacruel,
+		Species::Geodude,
+		Species::Graveler,
+		Species::Golem,
+		Species::Ponyta,
+		Species::Rapidash,
+		Species::Slowpoke,
+		Species::Slowbro,
+		Species::Magnemite,
+		Species::Magneton,
+		Species::Farfetchd,
+		Species::Doduo,
+		Species::Dodrio,
+		Species::Seel,
+		Species::Dewgong,
+		Species::Grimer,
+		Species::Muk,
+		Species::Shellder,
+		Species::Cloyster,
+		Species::Gastly,
+		Species::Haunter,
+		Species::Gengar,
+		Species::Onix,
+		Species::Drowzee,
+		Species::Hypno,
+		Species::Krabby,
+		Species::Kingler,
+		Species::Voltorb,
+		Species::Electrode,
+		Species::Exeggcute,
+		Species::Exeggutor,
+		Species::Cubone,
+		Species::Marowak,
+		Species::Hitmonlee,
+		Species::Hitmonchan,
+		Species::Lickitung,
+		Species::Koffing,
+		Species::Weezing,
+		Species::Rhyhorn,
+		Species::Rhydon,
+		Species::Chansey,
+		Species::Tangela,
+		Species::Kangaskhan,
+		Species::Horsea,
+		Species::Seadra,
+		Species::Goldeen,
+		Species::Seaking,
+		Species::Staryu,
+		Species::Starmie,
+		Species::Mr_Mime,
+		Species::Scyther,
+		Species::Jynx,
+		Species::Electabuzz,
+		Species::Magmar,
+		Species::Pinsir,
+		Species::Tauros,
+		Species::Magikarp,
+		Species::Gyarados,
+		Species::Lapras,
+		Species::Ditto,
+		Species::Eevee,
+		Species::Vaporeon,
+		Species::Jolteon,
+		Species::Flareon,
+		Species::Porygon,
+		Species::Omanyte,
+		Species::Omastar,
+		Species::Kabuto,
+		Species::Kabutops,
+		Species::Aerodactyl,
+		Species::Snorlax,
+		Species::Articuno,
+		Species::Zapdos,
+		Species::Moltres,
+		Species::Dratini,
+		Species::Dragonair,
+		Species::Dragonite,
+		Species::Mewtwo,
+		Species::Mew,
+		
+		// Generation 2
+		Species::Chikorita,
+		Species::Bayleef,
+		Species::Meganium,
+		Species::Cyndaquil,
+		Species::Quilava,
+		Species::Typhlosion,
+		Species::Totodile,
+		Species::Croconaw,
+		Species::Feraligatr,
+		Species::Sentret,
+		Species::Furret,
+		Species::Hoothoot,
+		Species::Noctowl,
+		Species::Ledyba,
+		Species::Ledian,
+		Species::Spinarak,
+		Species::Ariados,
+		Species::Crobat,
+		Species::Chinchou,
+		Species::Lanturn,
+		Species::Pichu,
+		Species::Cleffa,
+		Species::Igglybuff,
+		Species::Togepi,
+		Species::Togetic,
+		Species::Natu,
+		Species::Xatu,
+		Species::Mareep,
+		Species::Flaaffy,
+		Species::Ampharos,
+		Species::Bellossom,
+		Species::Marill,
+		Species::Azumarill,
+		Species::Sudowoodo,
+		Species::Politoed,
+		Species::Hoppip,
+		Species::Skiploom,
+		Species::Jumpluff,
+		Species::Aipom,
+		Species::Sunkern,
+		Species::Sunflora,
+		Species::Yanma,
+		Species::Wooper,
+		Species::Quagsire,
+		Species::Espeon,
+		Species::Umbreon,
+		Species::Murkrow,
+		Species::Slowking,
+		Species::Misdreavus,
+		Species::Unown,
+		Species::Wobbuffet,
+		Species::Girafarig,
+		Species::Pineco,
+		Species::Forretress,
+		Species::Dunsparce,
+		Species::Gligar,
+		Species::Steelix,
+		Species::Snubbull,
+		Species::Granbull,
+		Species::Qwilfish,
+		Species::Scizor,
+		Species::Shuckle,
+		Species::Heracross,
+		Species::Sneasel,
+		Species::Teddiursa,
+		Species::Ursaring,
+		Species::Slugma,
+		Species::Magcargo,
+		Species::Swinub,
+		Species::Piloswine,
+		Species::Corsola,
+		Species::Remoraid,
+		Species::Octillery,
+		Species::Delibird,
+		Species::Mantine,
+		Species::Skarmory,
+		Species::Houndour,
+		Species::Houndoom,
+		Species::Kingdra,
+		Species::Phanpy,
+		Species::Donphan,
+		Species::Porygon2,
+		Species::Stantler,
+		Species::Smeargle,
+		Species::Tyrogue,
+		Species::Hitmontop,
+		Species::Smoochum,
+		Species::Elekid,
+		Species::Magby,
+		Species::Miltank,
+		Species::Blissey,
+		Species::Raikou,
+		Species::Entei,
+		Species::Suicune,
+		Species::Larvitar,
+		Species::Pupitar,
+		Species::Tyranitar,
+		Species::Lugia,
+		Species::Ho_Oh,
+		Species::Celebi,
+		
+		// Generation 3
+		Species::Treecko,
+		Species::Grovyle,
+		Species::Sceptile,
+		Species::Torchic,
+		Species::Combusken,
+		Species::Blaziken,
+		Species::Mudkip,
+		Species::Marshtomp,
+		Species::Swampert,
+		Species::Poochyena,
+		Species::Mightyena,
+		Species::Zigzagoon,
+		Species::Linoone,
+		Species::Wurmple,
+		Species::Silcoon,
+		Species::Beautifly,
+		Species::Cascoon,
+		Species::Dustox,
+		Species::Lotad,
+		Species::Lombre,
+		Species::Ludicolo,
+		Species::Seedot,
+		Species::Nuzleaf,
+		Species::Shiftry,
+		Species::Taillow,
+		Species::Swellow,
+		Species::Wingull,
+		Species::Pelipper,
+		Species::Ralts,
+		Species::Kirlia,
+		Species::Gardevoir,
+		Species::Surskit,
+		Species::Masquerain,
+		Species::Shroomish,
+		Species::Breloom,
+		Species::Slakoth,
+		Species::Vigoroth,
+		Species::Slaking,
+		Species::Nincada,
+		Species::Ninjask,
+		Species::Shedinja,
+		Species::Whismur,
+		Species::Loudred,
+		Species::Exploud,
+		Species::Makuhita,
+		Species::Hariyama,
+		Species::Azurill,
+		Species::Nosepass,
+		Species::Skitty,
+		Species::Delcatty,
+		Species::Sableye,
+		Species::Mawile,
+		Species::Aron,
+		Species::Lairon,
+		Species::Aggron,
+		Species::Meditite,
+		Species::Medicham,
+		Species::Electrike,
+		Species::Manectric,
+		Species::Plusle,
+		Species::Minun,
+		Species::Volbeat,
+		Species::Illumise,
+		Species::Roselia,
+		Species::Gulpin,
+		Species::Swalot,
+		Species::Carvanha,
+		Species::Sharpedo,
+		Species::Wailmer,
+		Species::Wailord,
+		Species::Numel,
+		Species::Camerupt,
+		Species::Torkoal,
+		Species::Spoink,
+		Species::Grumpig,
+		Species::Spinda,
+		Species::Trapinch,
+		Species::Vibrava,
+		Species::Flygon,
+		Species::Cacnea,
+		Species::Cacturne,
+		Species::Swablu,
+		Species::Altaria,
+		Species::Zangoose,
+		Species::Seviper,
+		Species::Lunatone,
+		Species::Solrock,
+		Species::Barboach,
+		Species::Whiscash,
+		Species::Corphish,
+		Species::Crawdaunt,
+		Species::Baltoy,
+		Species::Claydol,
+		Species::Lileep,
+		Species::Cradily,
+		Species::Anorith,
+		Species::Armaldo,
+		Species::Feebas,
+		Species::Milotic,
+		Species::Castform,
+		Species::Kecleon,
+		Species::Shuppet,
+		Species::Banette,
+		Species::Duskull,
+		Species::Dusclops,
+		Species::Tropius,
+		Species::Chimecho,
+		Species::Absol,
+		Species::Wynaut,
+		Species::Snorunt,
+		Species::Glalie,
+		Species::Spheal,
+		Species::Sealeo,
+		Species::Walrein,
+		Species::Clamperl,
+		Species::Huntail,
+		Species::Gorebyss,
+		Species::Relicanth,
+		Species::Luvdisc,
+		Species::Bagon,
+		Species::Shelgon,
+		Species::Salamence,
+		Species::Beldum,
+		Species::Metang,
+		Species::Metagross,
+		Species::Regirock,
+		Species::Regice,
+		Species::Registeel,
+		Species::Latias,
+		Species::Latios,
+		Species::Kyogre,
+		Species::Groudon,
+		Species::Rayquaza,
+		Species::Jirachi,
+		Species::Deoxys_M,
+		Species::Deoxys_A,
+		Species::Deoxys_D,
+		Species::Deoxys_S,
+		
+		// Generation 4
+		Species::Turtwig,
+		Species::Grotle,
+		Species::Torterra,
+		Species::Chimchar,
+		Species::Monferno,
+		Species::Infernape,
+		Species::Piplup,
+		Species::Prinplup,
+		Species::Empoleon,
+		Species::Starly,
+		Species::Staravia,
+		Species::Staraptor,
+		Species::Bidoof,
+		Species::Bibarel,
+		Species::Kricketot,
+		Species::Kricketune,
+		Species::Shinx,
+		Species::Luxio,
+		Species::Luxray,
+		Species::Budew,
+		Species::Roserade,
+		Species::Cranidos,
+		Species::Rampardos,
+		Species::Shieldon,
+		Species::Bastiodon,
+		Species::Burmy,
+		Species::Wormadam_P,
+		Species::Wormadam_S,
+		Species::Wormadam_T,
+		Species::Mothim,
+		Species::Combee,
+		Species::Vespiquen,
+		Species::Pachirisu,
+		Species::Buizel,
+		Species::Floatzel,
+		Species::Cherubi,
+		Species::Cherrim,
+		Species::Shellos,
+		Species::Gastrodon,
+		Species::Ambipom,
+		Species::Drifloon,
+		Species::Drifblim,
+		Species::Buneary,
+		Species::Lopunny,
+		Species::Mismagius,
+		Species::Honchkrow,
+		Species::Glameow,
+		Species::Purugly,
+		Species::Chingling,
+		Species::Stunky,
+		Species::Skuntank,
+		Species::Bronzor,
+		Species::Bronzong,
+		Species::Bonsly,
+		Species::Mime_Jr,
+		Species::Happiny,
+		Species::Chatot,
+		Species::Spiritomb,
+		Species::Gible,
+		Species::Gabite,
+		Species::Garchomp,
+		Species::Munchlax,
+		Species::Riolu,
+		Species::Lucario,
+		Species::Hippopotas,
+		Species::Hippowdon,
+		Species::Skorupi,
+		Species::Drapion,
+		Species::Croagunk,
+		Species::Toxicroak,
+		Species::Carnivine,
+		Species::Finneon,
+		Species::Lumineon,
+		Species::Mantyke,
+		Species::Snover,
+		Species::Abomasnow,
+		Species::Weavile,
+		Species::Magnezone,
+		Species::Lickilicky,
+		Species::Rhyperior,
+		Species::Tangrowth,
+		Species::Electivire,
+		Species::Magmortar,
+		Species::Togekiss,
+		Species::Yanmega,
+		Species::Leafeon,
+		Species::Glaceon,
+		Species::Gliscor,
+		Species::Mamoswine,
+		Species::Porygon_Z,
+		Species::Gallade,
+		Species::Probopass,
+		Species::Dusknoir,
+		Species::Froslass,
+		Species::Rotom,
+		Species::Uxie,
+		Species::Mesprit,
+		Species::Azelf,
+		Species::Dialga,
+		Species::Palkia,
+		Species::Heatran,
+		Species::Regigigas,
+		Species::Giratina_A,
+		Species::Cresselia,
+		Species::Phione,
+		Species::Manaphy,
+		Species::Darkrai,
+		Species::Shaymin_L,
+		Species::Arceus,
+		Species::Rotom_F,
+		Species::Rotom_C,
+		Species::Rotom_H,
+		Species::Rotom_S,
+		Species::Rotom_W,
+		Species::Giratina_O,
+		Species::Shaymin_S,
 	};
-	return species_converter [id];
+	return (id < sizeof(species_converter)) ? species_converter [id] : Species::END;
 }
 
 unsigned species_to_id (Species species) {
 	constexpr static unsigned species_converter [] = {
-		464,		// Abomasnow
-		62,		// Abra
-		358,		// Absol
-		141,		// Aerodactyl
-		305,		// Aggron
-		189,		// Aipom
-		64,		// Alakazam
-		333,		// Altaria
-		428,		// Ambipom
-		180,		// Ampharos
-		346,		// Anorith
-		23,		// Arbok
-		58,		// Arcanine
-		497,		// Arceus
-		167,		// Ariados
-		347,		// Armaldo
-		303,		// Aron
-		143,		// Articuno
-		486,		// Azelf
-		183,		// Azumarill
-		297,		// Azurill
-		370,		// Bagon
-		342,		// Baltoy
-		353,		// Banette
-		338,		// Barboach
-		413,		// Bastiodon
-		152,		// Bayleef
-		266,		// Beautifly
-		14,		// Beedrill
-		373,		// Beldum
-		181,		// Bellossom
-		68,		// Bellsprout
-		402,		// Bibarel
-		401,		// Bidoof
-		8,		// Blastoise
-		256,		// Blaziken
-		241,		// Blissey
-		442,		// Bonsly
-		285,		// Breloom
-		441,		// Bronzong
-		440,		// Bronzor
-		408,		// Budew
-		422,		// Buizel
-		0,		// Bulbasaur
-		431,		// Buneary
-		414,		// Burmy
-		11,		// Butterfree
-		330,		// Cacnea
-		331,		// Cacturne
-		322,		// Camerupt
-		459,		// Carnivine
-		317,		// Carvanha
-		267,		// Cascoon
-		350,		// Castform
-		9,		// Caterpie
-		250,		// Celebi
-		112,		// Chansey
-		5,		// Charizard
-		3,		// Charmander
-		4,		// Charmeleon
-		445,		// Chatot
-		425,		// Cherrim
-		424,		// Cherubi
-		151,		// Chikorita
-		392,		// Chimchar
-		357,		// Chimecho
-		169,		// Chinchou
-		437,		// Chingling
-		365,		// Clamperl
-		343,		// Claydol
-		35,		// Clefable
-		34,		// Clefairy
-		172,		// Cleffa
-		90,		// Cloyster
-		419,		// Combee
-		255,		// Combusken
-		340,		// Corphish
-		221,		// Corsola
-		345,		// Cradily
-		410,		// Cranidos
-		341,		// Crawdaunt
-		492,		// Cresselia
-		457,		// Croagunk
-		168,		// Crobat
-		158,		// Croconaw
-		103,		// Cubone
-		154,		// Cyndaquil
-		495,		// Darkrai
-		300,		// Delcatty
-		224,		// Delibird
-		386,		// Deoxys-A
-		387,		// Deoxys-D
-		385,		// Deoxys-M
-		388,		// Deoxys-S
-		86,		// Dewgong
-		487,		// Dialga
-		49,		// Diglett
-		131,		// Ditto
-		84,		// Dodrio
-		83,		// Doduo
-		231,		// Donphan
-		147,		// Dragonair
-		148,		// Dragonite
-		456,		// Drapion
-		146,		// Dratini
-		430,		// Drifblim
-		429,		// Drifloon
-		95,		// Drowzee
-		50,		// Dugtrio
-		205,		// Dunsparce
-		355,		// Dusclops
-		481,		// Dusknoir
-		354,		// Duskull
-		268,		// Dustox
-		132,		// Eevee
-		22,		// Ekans
-		124,		// Electabuzz
-		470,		// Electivire
-		308,		// Electrike
-		100,		// Electrode
-		238,		// Elekid
-		397,		// Empoleon
-		243,		// Entei
-		195,		// Espeon
-		101,		// Exeggcute
-		102,		// Exeggutor
-		294,		// Exploud
-		82,		// Farfetch'd
-		21,		// Fearow
-		348,		// Feebas
-		159,		// Feraligatr
-		460,		// Finneon
-		179,		// Flaaffy
-		135,		// Flareon
-		423,		// Floatzel
-		329,		// Flygon
-		204,		// Forretress
-		482,		// Froslass
-		161,		// Furret
-		448,		// Gabite
-		479,		// Gallade
-		449,		// Garchomp
-		281,		// Gardevoir
-		91,		// Gastly
-		427,		// Gastrodon
-		93,		// Gengar
-		73,		// Geodude
-		447,		// Gible
-		202,		// Girafarig
-		491,		// Giratina-A
-		503,		// Giratina-O
-		475,		// Glaceon
-		361,		// Glalie
-		435,		// Glameow
-		206,		// Gligar
-		476,		// Gliscor
-		43,		// Gloom
-		41,		// Golbat
-		117,		// Goldeen
-		54,		// Golduck
-		75,		// Golem
-		367,		// Gorebyss
-		209,		// Granbull
-		74,		// Graveler
-		87,		// Grimer
-		390,		// Grotle
-		382,		// Groudon
-		252,		// Grovyle
-		57,		// Growlithe
-		325,		// Grumpig
-		315,		// Gulpin
-		129,		// Gyarados
-		444,		// Happiny
-		296,		// Hariyama
-		92,		// Haunter
-		489,		// Heatran
-		213,		// Heracross
-		453,		// Hippopotas
-		454,		// Hippowdon
-		106,		// Hitmonchan
-		105,		// Hitmonlee
-		236,		// Hitmontop
-		249,		// Ho-Oh
-		434,		// Honchkrow
-		162,		// Hoothoot
-		186,		// Hoppip
-		115,		// Horsea
-		228,		// Houndoom
-		227,		// Houndour
-		366,		// Huntail
-		96,		// Hypno
-		173,		// Igglybuff
-		313,		// Illumise
-		394,		// Infernape
-		1,		// Ivysaur
-		38,		// Jigglypuff
-		384,		// Jirachi
-		134,		// Jolteon
-		188,		// Jumpluff
-		123,		// Jynx
-		139,		// Kabuto
-		140,		// Kabutops
-		63,		// Kadabra
-		13,		// Kakuna
-		114,		// Kangaskhan
-		351,		// Kecleon
-		229,		// Kingdra
-		98,		// Kingler
-		280,		// Kirlia
-		108,		// Koffing
-		97,		// Krabby
-		403,		// Kricketot
-		404,		// Kricketune
-		381,		// Kyogre
-		304,		// Lairon
-		170,		// Lanturn
-		130,		// Lapras
-		245,		// Larvitar
-		379,		// Latias
-		380,		// Latios
-		474,		// Leafeon
-		165,		// Ledian
-		164,		// Ledyba
-		467,		// Lickilicky
-		107,		// Lickitung
-		344,		// Lileep
-		263,		// Linoone
-		270,		// Lombre
-		432,		// Lopunny
-		269,		// Lotad
-		293,		// Loudred
-		452,		// Lucario
-		271,		// Ludicolo
-		248,		// Lugia
-		461,		// Lumineon
-		336,		// Lunatone
-		369,		// Luvdisc
-		406,		// Luxio
-		407,		// Luxray
-		67,		// Machamp
-		66,		// Machoke
-		65,		// Machop
-		239,		// Magby
-		218,		// Magcargo
-		128,		// Magikarp
-		125,		// Magmar
-		471,		// Magmortar
-		80,		// Magnemite
-		81,		// Magneton
-		466,		// Magnezone
-		295,		// Makuhita
-		477,		// Mamoswine
-		494,		// Manaphy
-		309,		// Manectric
-		55,		// Mankey
-		225,		// Mantine
-		462,		// Mantyke
-		178,		// Mareep
-		182,		// Marill
-		104,		// Marowak
-		258,		// Marshtomp
-		283,		// Masquerain
-		302,		// Mawile
-		307,		// Medicham
-		306,		// Meditite
-		153,		// Meganium
-		51,		// Meowth
-		485,		// Mesprit
-		375,		// Metagross
-		374,		// Metang
-		10,		// Metapod
-		150,		// Mew
-		149,		// Mewtwo
-		261,		// Mightyena
-		349,		// Milotic
-		240,		// Miltank
-		443,		// Mime Jr.
-		311,		// Minun
-		199,		// Misdreavus
-		433,		// Mismagius
-		145,		// Moltres
-		393,		// Monferno
-		418,		// Mothim
-		121,		// Mr. Mime
-		257,		// Mudkip
-		88,		// Muk
-		450,		// Munchlax
-		197,		// Murkrow
-		176,		// Natu
-		33,		// Nidoking
-		30,		// Nidoqueen
-		28,		// Nidoran-F
-		31,		// Nidoran-M
-		29,		// Nidorina
-		32,		// Nidorino
-		289,		// Nincada
-		37,		// Ninetales
-		290,		// Ninjask
-		163,		// Noctowl
-		298,		// Nosepass
-		321,		// Numel
-		273,		// Nuzleaf
-		223,		// Octillery
-		42,		// Oddish
-		137,		// Omanyte
-		138,		// Omastar
-		94,		// Onix
-		421,		// Pachirisu
-		488,		// Palkia
-		45,		// Paras
-		46,		// Parasect
-		278,		// Pelipper
-		52,		// Persian
-		230,		// Phanpy
-		493,		// Phione
-		171,		// Pichu
-		17,		// Pidgeot
-		16,		// Pidgeotto
-		15,		// Pidgey
-		24,		// Pikachu
-		220,		// Piloswine
-		203,		// Pineco
-		126,		// Pinsir
-		395,		// Piplup
-		310,		// Plusle
-		185,		// Politoed
-		59,		// Poliwag
-		60,		// Poliwhirl
-		61,		// Poliwrath
-		76,		// Ponyta
-		260,		// Poochyena
-		136,		// Porygon
-		478,		// Porygon-Z
-		232,		// Porygon2
-		56,		// Primeape
-		396,		// Prinplup
-		480,		// Probopass
-		53,		// Psyduck
-		246,		// Pupitar
-		436,		// Purugly
-		194,		// Quagsire
-		155,		// Quilava
-		210,		// Qwilfish
-		25,		// Raichu
-		242,		// Raikou
-		279,		// Ralts
-		411,		// Rampardos
-		77,		// Rapidash
-		19,		// Raticate
-		18,		// Rattata
-		383,		// Rayquaza
-		377,		// Regice
-		490,		// Regigigas
-		376,		// Regirock
-		378,		// Registeel
-		368,		// Relicanth
-		222,		// Remoraid
-		111,		// Rhydon
-		110,		// Rhyhorn
-		468,		// Rhyperior
-		451,		// Riolu
-		314,		// Roselia
-		409,		// Roserade
-		483,		// Rotom
-		499,		// Rotom-C
-		498,		// Rotom-F
-		500,		// Rotom-H
-		501,		// Rotom-S
-		502,		// Rotom-W
-		301,		// Sableye
-		372,		// Salamence
-		26,		// Sandshrew
-		27,		// Sandslash
-		253,		// Sceptile
-		211,		// Scizor
-		122,		// Scyther
-		116,		// Seadra
-		118,		// Seaking
-		363,		// Sealeo
-		272,		// Seedot
-		85,		// Seel
-		160,		// Sentret
-		335,		// Seviper
-		318,		// Sharpedo
-		496,		// Shaymin-L
-		504,		// Shaymin-S
-		291,		// Shedinja
-		371,		// Shelgon
-		89,		// Shellder
-		426,		// Shellos
-		412,		// Shieldon
-		274,		// Shiftry
-		405,		// Shinx
-		284,		// Shroomish
-		212,		// Shuckle
-		352,		// Shuppet
-		265,		// Silcoon
-		226,		// Skarmory
-		187,		// Skiploom
-		299,		// Skitty
-		455,		// Skorupi
-		439,		// Skuntank
-		288,		// Slaking
-		286,		// Slakoth
-		79,		// Slowbro
-		198,		// Slowking
-		78,		// Slowpoke
-		217,		// Slugma
-		234,		// Smeargle
-		237,		// Smoochum
-		214,		// Sneasel
-		142,		// Snorlax
-		360,		// Snorunt
-		463,		// Snover
-		208,		// Snubbull
-		337,		// Solrock
-		20,		// Spearow
-		362,		// Spheal
-		166,		// Spinarak
-		326,		// Spinda
-		446,		// Spiritomb
-		324,		// Spoink
-		6,		// Squirtle
-		233,		// Stantler
-		400,		// Staraptor
-		399,		// Staravia
-		398,		// Starly
-		120,		// Starmie
-		119,		// Staryu
-		207,		// Steelix
-		438,		// Stunky
-		184,		// Sudowoodo
-		244,		// Suicune
-		191,		// Sunflora
-		190,		// Sunkern
-		282,		// Surskit
-		332,		// Swablu
-		316,		// Swalot
-		259,		// Swampert
-		276,		// Swellow
-		219,		// Swinub
-		275,		// Taillow
-		113,		// Tangela
-		469,		// Tangrowth
-		127,		// Tauros
-		215,		// Teddiursa
-		71,		// Tentacool
-		72,		// Tentacruel
-		472,		// Togekiss
-		174,		// Togepi
-		175,		// Togetic
-		254,		// Torchic
-		323,		// Torkoal
-		391,		// Torterra
-		157,		// Totodile
-		458,		// Toxicroak
-		327,		// Trapinch
-		251,		// Treecko
-		356,		// Tropius
-		389,		// Turtwig
-		156,		// Typhlosion
-		247,		// Tyranitar
-		235,		// Tyrogue
-		196,		// Umbreon
-		200,		// Unown
-		216,		// Ursaring
-		484,		// Uxie
-		133,		// Vaporeon
-		48,		// Venomoth
-		47,		// Venonat
-		2,		// Venusaur
-		420,		// Vespiquen
-		328,		// Vibrava
-		70,		// Victreebel
-		287,		// Vigoroth
-		44,		// Vileplume
-		312,		// Volbeat
-		99,		// Voltorb
-		36,		// Vulpix
-		319,		// Wailmer
-		320,		// Wailord
-		364,		// Walrein
-		7,		// Wartortle
-		465,		// Weavile
-		12,		// Weedle
-		69,		// Weepinbell
-		109,		// Weezing
-		339,		// Whiscash
-		292,		// Whismur
-		39,		// Wigglytuff
-		277,		// Wingull
-		201,		// Wobbuffet
-		193,		// Wooper
-		415,		// Wormadam-P
-		416,		// Wormadam-S
-		417,		// Wormadam-T
-		264,		// Wurmple
-		359,		// Wynaut
-		177,		// Xatu
-		192,		// Yanma
-		473,		// Yanmega
-		334,		// Zangoose
-		144,		// Zapdos
-		262,		// Zigzagoon
-		40		// Zubat
+		0,			//  Bulbasaur
+		1,			//  Ivysaur
+		2,			//  Venusaur
+		3,			//  Charmander
+		4,			//  Charmeleon
+		5,			//  Charizard
+		6,			//  Squirtle
+		7,			//  Wartortle
+		8,			//  Blastoise
+		9,			//  Caterpie
+		10,		//  Metapod
+		11,		//  Butterfree
+		12,		//  Weedle
+		13,		//  Kakuna
+		14,		//  Beedrill
+		15,		//  Pidgey
+		16,		//  Pidgeotto
+		17,		//  Pidgeot
+		18,		//  Rattata
+		19,		//  Raticate
+		20,		//  Spearow
+		21,		//  Fearow
+		22,		//  Ekans
+		23,		//  Arbok
+		24,		//  Pikachu
+		25,		//  Raichu
+		26,		//  Sandshrew
+		27,		//  Sandslash
+		28,		//  Nidoran-F
+		29,		//  Nidorina
+		30,		//  Nidoqueen
+		31,		//  Nidoran-M
+		32,		//  Nidorino
+		33,		//  Nidoking
+		34,		//  Clefairy
+		35,		//  Clefable
+		36,		//  Vulpix
+		37,		//  Ninetales
+		38,		//  Jigglypuff
+		39,		//  Wigglytuff
+		40,		//  Zubat
+		41,		//  Golbat
+		42,		//  Oddish
+		43,		//  Gloom
+		44,		//  Vileplume
+		45,		//  Paras
+		46,		//  Parasect
+		47,		//  Venonat
+		48,		//  Venomoth
+		49,		//  Diglett
+		50,		//  Dugtrio
+		51,		//  Meowth
+		52,		//  Persian
+		53,		//  Psyduck
+		54,		//  Golduck
+		55,		//  Mankey
+		56,		//  Primeape
+		57,		//  Growlithe
+		58,		//  Arcanine
+		59,		//  Poliwag
+		60,		//  Poliwhirl
+		61,		//  Poliwrath
+		62,		//  Abra
+		63,		//  Kadabra
+		64,		//  Alakazam
+		65,		//  Machop
+		66,		//  Machoke
+		67,		//  Machamp
+		68,		//  Bellsprout
+		69,		//  Weepinbell
+		70,		//  Victreebel
+		71,		//  Tentacool
+		72,		//  Tentacruel
+		73,		//  Geodude
+		74,		//  Graveler
+		75,		//  Golem
+		76,		//  Ponyta
+		77,		//  Rapidash
+		78,		//  Slowpoke
+		79,		//  Slowbro
+		80,		//  Magnemite
+		81,		//  Magneton
+		82,		//  Farfetchd
+		83,		//  Doduo
+		84,		//  Dodrio
+		85,		//  Seel
+		86,		//  Dewgong
+		87,		//  Grimer
+		88,		//  Muk
+		89,		//  Shellder
+		90,		//  Cloyster
+		91,		//  Gastly
+		92,		//  Haunter
+		93,		//  Gengar
+		94,		//  Onix
+		95,		//  Drowzee
+		96,		//  Hypno
+		97,		//  Krabby
+		98,		//  Kingler
+		99,		//  Voltorb
+		100,		//  Electrode
+		101,		//  Exeggcute
+		102,		//  Exeggutor
+		103,		//  Cubone
+		104,		//  Marowak
+		105,		//  Hitmonlee
+		106,		//  Hitmonchan
+		107,		//  Lickitung
+		108,		//  Koffing
+		109,		//  Weezing
+		110,		//  Rhyhorn
+		111,		//  Rhydon
+		112,		//  Chansey
+		113,		//  Tangela
+		114,		//  Kangaskhan
+		115,		//  Horsea
+		116,		//  Seadra
+		117,		//  Goldeen
+		118,		//  Seaking
+		119,		//  Staryu
+		120,		//  Starmie
+		121,		//  Mr. Mime
+		122,		//  Scyther
+		123,		//  Jynx
+		124,		//  Electabuzz
+		125,		//  Magmar
+		126,		//  Pinsir
+		127,		//  Tauros
+		128,		//  Magikarp
+		129,		//  Gyarados
+		130,		//  Lapras
+		131,		//  Ditto
+		132,		//  Eevee
+		133,		//  Vaporeon
+		134,		//  Jolteon
+		135,		//  Flareon
+		136,		//  Porygon
+		137,		//  Omanyte
+		138,		//  Omastar
+		139,		//  Kabuto
+		140,		//  Kabutops
+		141,		//  Aerodactyl
+		142,		//  Snorlax
+		143,		//  Articuno
+		144,		//  Zapdos
+		145,		//  Moltres
+		146,		//  Dratini
+		147,		//  Dragonair
+		148,		//  Dragonite
+		149,		//  Mewtwo
+		150,		//  Mew
+		151,		//  Chikorita
+		152,		//  Bayleef
+		153,		//  Meganium
+		154,		//  Cyndaquil
+		155,		//  Quilava
+		156,		//  Typhlosion
+		157,		//  Totodile
+		158,		//  Croconaw
+		159,		//  Feraligatr
+		160,		//  Sentret
+		161,		//  Furret
+		162,		//  Hoothoot
+		163,		//  Noctowl
+		164,		//  Ledyba
+		165,		//  Ledian
+		166,		//  Spinarak
+		167,		//  Ariados
+		168,		//  Crobat
+		169,		//  Chinchou
+		170,		//  Lanturn
+		171,		//  Pichu
+		172,		//  Cleffa
+		173,		//  Igglybuff
+		174,		//  Togepi
+		175,		//  Togetic
+		176,		//  Natu
+		177,		//  Xatu
+		178,		//  Mareep
+		179,		//  Flaaffy
+		180,		//  Ampharos
+		181,		//  Bellossom
+		182,		//  Marill
+		183,		//  Azumarill
+		184,		//  Sudowoodo
+		185,		//  Politoed
+		186,		//  Hoppip
+		187,		//  Skiploom
+		188,		//  Jumpluff
+		189,		//  Aipom
+		190,		//  Sunkern
+		191,		//  Sunflora
+		192,		//  Yanma
+		193,		//  Wooper
+		194,		//  Quagsire
+		195,		//  Espeon
+		196,		//  Umbreon
+		197,		//  Murkrow
+		198,		//  Slowking
+		199,		//  Misdreavus
+		200,		//  Unown
+		201,		//  Wobbuffet
+		202,		//  Girafarig
+		203,		//  Pineco
+		204,		//  Forretress
+		205,		//  Dunsparce
+		206,		//  Gligar
+		207,		//  Steelix
+		208,		//  Snubbull
+		209,		//  Granbull
+		210,		//  Qwilfish
+		211,		//  Scizor
+		212,		//  Shuckle
+		213,		//  Heracross
+		214,		//  Sneasel
+		215,		//  Teddiursa
+		216,		//  Ursaring
+		217,		//  Slugma
+		218,		//  Magcargo
+		219,		//  Swinub
+		220,		//  Piloswine
+		221,		//  Corsola
+		222,		//  Remoraid
+		223,		//  Octillery
+		224,		//  Delibird
+		225,		//  Mantine
+		226,		//  Skarmory
+		227,		//  Houndour
+		228,		//  Houndoom
+		229,		//  Kingdra
+		230,		//  Phanpy
+		231,		//  Donphan
+		232,		//  Porygon2
+		233,		//  Stantler
+		234,		//  Smeargle
+		235,		//  Tyrogue
+		236,		//  Hitmontop
+		237,		//  Smoochum
+		238,		//  Elekid
+		239,		//  Magby
+		240,		//  Miltank
+		241,		//  Blissey
+		242,		//  Raikou
+		243,		//  Entei
+		244,		//  Suicune
+		245,		//  Larvitar
+		246,		//  Pupitar
+		247,		//  Tyranitar
+		248,		//  Lugia
+		249,		//  Ho-Oh
+		250,		//  Celebi
+		251,		//  Treecko
+		252,		//  Grovyle
+		253,		//  Sceptile
+		254,		//  Torchic
+		255,		//  Combusken
+		256,		//  Blaziken
+		257,		//  Mudkip
+		258,		//  Marshtomp
+		259,		//  Swampert
+		260,		//  Poochyena
+		261,		//  Mightyena
+		262,		//  Zigzagoon
+		263,		//  Linoone
+		264,		//  Wurmple
+		265,		//  Silcoon
+		266,		//  Beautifly
+		267,		//  Cascoon
+		268,		//  Dustox
+		269,		//  Lotad
+		270,		//  Lombre
+		271,		//  Ludicolo
+		272,		//  Seedot
+		273,		//  Nuzleaf
+		274,		//  Shiftry
+		275,		//  Taillow
+		276,		//  Swellow
+		277,		//  Wingull
+		278,		//  Pelipper
+		279,		//  Ralts
+		280,		//  Kirlia
+		281,		//  Gardevoir
+		282,		//  Surskit
+		283,		//  Masquerain
+		284,		//  Shroomish
+		285,		//  Breloom
+		286,		//  Slakoth
+		287,		//  Vigoroth
+		288,		//  Slaking
+		289,		//  Nincada
+		290,		//  Ninjask
+		291,		//  Shedinja
+		292,		//  Whismur
+		293,		//  Loudred
+		294,		//  Exploud
+		295,		//  Makuhita
+		296,		//  Hariyama
+		297,		//  Azurill
+		298,		//  Nosepass
+		299,		//  Skitty
+		300,		//  Delcatty
+		301,		//  Sableye
+		302,		//  Mawile
+		303,		//  Aron
+		304,		//  Lairon
+		305,		//  Aggron
+		306,		//  Meditite
+		307,		//  Medicham
+		308,		//  Electrike
+		309,		//  Manectric
+		310,		//  Plusle
+		311,		//  Minun
+		312,		//  Volbeat
+		313,		//  Illumise
+		314,		//  Roselia
+		315,		//  Gulpin
+		316,		//  Swalot
+		317,		//  Carvanha
+		318,		//  Sharpedo
+		319,		//  Wailmer
+		320,		//  Wailord
+		321,		//  Numel
+		322,		//  Camerupt
+		323,		//  Torkoal
+		324,		//  Spoink
+		325,		//  Grumpig
+		326,		//  Spinda
+		327,		//  Trapinch
+		328,		//  Vibrava
+		329,		//  Flygon
+		330,		//  Cacnea
+		331,		//  Cacturne
+		332,		//  Swablu
+		333,		//  Altaria
+		334,		//  Zangoose
+		335,		//  Seviper
+		336,		//  Lunatone
+		337,		//  Solrock
+		338,		//  Barboach
+		339,		//  Whiscash
+		340,		//  Corphish
+		341,		//  Crawdaunt
+		342,		//  Baltoy
+		343,		//  Claydol
+		344,		//  Lileep
+		345,		//  Cradily
+		346,		//  Anorith
+		347,		//  Armaldo
+		348,		//  Feebas
+		349,		//  Milotic
+		350,		//  Castform
+		351,		//  Kecleon
+		352,		//  Shuppet
+		353,		//  Banette
+		354,		//  Duskull
+		355,		//  Dusclops
+		356,		//  Tropius
+		357,		//  Chimecho
+		358,		//  Absol
+		359,		//  Wynaut
+		360,		//  Snorunt
+		361,		//  Glalie
+		362,		//  Spheal
+		363,		//  Sealeo
+		364,		//  Walrein
+		365,		//  Clamperl
+		366,		//  Huntail
+		367,		//  Gorebyss
+		368,		//  Relicanth
+		369,		//  Luvdisc
+		370,		//  Bagon
+		371,		//  Shelgon
+		372,		//  Salamence
+		373,		//  Beldum
+		374,		//  Metang
+		375,		//  Metagross
+		376,		//  Regirock
+		377,		//  Regice
+		378,		//  Registeel
+		379,		//  Latias
+		380,		//  Latios
+		381,		//  Kyogre
+		382,		//  Groudon
+		383,		//  Rayquaza
+		384,		//  Jirachi
+		385,		//  Deoxys-M
+		386,		//  Deoxys-A
+		387,		//  Deoxys-D
+		388,		//  Deoxys-S
+		389,		//  Turtwig
+		390,		//  Grotle
+		391,		//  Torterra
+		392,		//  Chimchar
+		393,		//  Monferno
+		394,		//  Infernape
+		395,		//  Piplup
+		396,		//  Prinplup
+		397,		//  Empoleon
+		398,		//  Starly
+		399,		//  Staravia
+		400,		//  Staraptor
+		401,		//  Bidoof
+		402,		//  Bibarel
+		403,		//  Kricketot
+		404,		//  Kricketune
+		405,		//  Shinx
+		406,		//  Luxio
+		407,		//  Luxray
+		408,		//  Budew
+		409,		//  Roserade
+		410,		//  Cranidos
+		411,		//  Rampardos
+		412,		//  Shieldon
+		413,		//  Bastiodon
+		414,		//  Burmy
+		415,		//  Wormadam-P
+		416,		//  Wormadam-S
+		417,		//  Wormadam-T
+		418,		//  Mothim
+		419,		//  Combee
+		420,		//  Vespiquen
+		421,		//  Pachirisu
+		422,		//  Buizel
+		423,		//  Floatzel
+		424,		//  Cherubi
+		425,		//  Cherrim
+		426,		//  Shellos
+		427,		//  Gastrodon
+		428,		//  Ambipom
+		429,		//  Drifloon
+		430,		//  Drifblim
+		431,		//  Buneary
+		432,		//  Lopunny
+		433,		//  Mismagius
+		434,		//  Honchkrow
+		435,		//  Glameow
+		436,		//  Purugly
+		437,		//  Chingling
+		438,		//  Stunky
+		439,		//  Skuntank
+		440,		//  Bronzor
+		441,		//  Bronzong
+		442,		//  Bonsly
+		443,		//  Mime Jr.
+		444,		//  Happiny
+		445,		//  Chatot
+		446,		//  Spiritomb
+		447,		//  Gible
+		448,		//  Gabite
+		449,		//  Garchomp
+		450,		//  Munchlax
+		451,		//  Riolu
+		452,		//  Lucario
+		453,		//  Hippopotas
+		454,		//  Hippowdon
+		455,		//  Skorupi
+		456,		//  Drapion
+		457,		//  Croagunk
+		458,		//  Toxicroak
+		459,		//  Carnivine
+		460,		//  Finneon
+		461,		//  Lumineon
+		462,		//  Mantyke
+		463,		//  Snover
+		464,		//  Abomasnow
+		465,		//  Weavile
+		466,		//  Magnezone
+		467,		//  Lickilicky
+		468,		//  Rhyperior
+		469,		//  Tangrowth
+		470,		//  Electivire
+		471,		//  Magmortar
+		472,		//  Togekiss
+		473,		//  Yanmega
+		474,		//  Leafeon
+		475,		//  Glaceon
+		476,		//  Gliscor
+		477,		//  Mamoswine
+		478,		//  Porygon-Z
+		479,		//  Gallade
+		480,		//  Probopass
+		481,		//  Dusknoir
+		482,		//  Froslass
+		483,		//  Rotom
+		500,		//  Rotom-H
+		502,		//  Rotom-W
+		498,		//  Rotom-F
+		501,		//  Rotom-S
+		499,		//  Rotom-C
+		484,		//  Uxie
+		485,		//  Mesprit
+		486,		//  Azelf
+		487,		//  Dialga
+		488,		//  Palkia
+		489,		//  Heatran
+		490,		//  Regigigas
+		491,		//  Giratina-A
+		503,		//  Giratina-O
+		492,		//  Cresselia
+		493,		//  Phione
+		494,		//  Manaphy
+		495,		//  Darkrai
+		496,		//  Shaymin-L
+		504,		//  Shaymin-S
+		497		// Arceus
 	};
 	return species_converter[static_cast<unsigned>(species)];
 }

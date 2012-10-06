@@ -960,7 +960,7 @@ void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & p
 }
 
 void curse(ActivePokemon & user, ActivePokemon & target) {
-	if (is_type(user, Type::GHOST) and !user.ability().blocks_secondary_damage()) {
+	if (is_type(user, Type::Ghost) and !user.ability().blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
 			if (user.hp().max <= 3)
 				--user.hp().stat;

@@ -25,7 +25,7 @@
 #include <functional>
 
 #include "pokemon.hpp"
-#include "species.hpp"
+#include "species_forward.hpp"
 
 #include "../move/moves_forward.hpp"
 
@@ -54,7 +54,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		index_type size () const;
 		index_type real_size () const;
 		index_type find_index(Species name) const;
-		bool seen (Species const name);
+		bool seen (Species name);
 
 		template<class... Args>
 		void add(Args&&... args) {

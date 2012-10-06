@@ -39,8 +39,8 @@ namespace technicalmachine {
 namespace po {
 namespace {
 template<typename Enum>
-void for_each(typename std::function<void(Enum)> const & f) {
-	for (Enum original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1))
+void for_each(typename std::function<void(Enum)> const & f, Enum const last = Enum::END) {
+	for (Enum original = static_cast<Enum>(0); original != last; original = static_cast<Enum>(static_cast<unsigned>(original) + 1))
 		f(original);
 }
 
@@ -98,12 +98,13 @@ void test_nature () {
 
 void test_species () {
 	std::cout << "\t\tVerifying correct species.\n";
-	for_each<Species>([](Species const original) {
+	auto const f = [](Species const original) {
 		std::pair <uint16_t, uint8_t> const ids = species_to_id (original);
 		Species const result = id_to_species (ids.first, ids.second);
 		if (original != result)
 			throw InvalidSimulatorConversion <Pokemon> (original, result);
-	});
+	};
+	for_each<Species>(f, Species::Generation_4_End);
 }
 
 }	// anonymous namespace

@@ -37,10 +37,10 @@ namespace technicalmachine {
 class DetailedStats {
 	public:
 		DetailedStats();
-		std::array<Ability::Abilities, static_cast<unsigned>(Species::END)> ability;
-		std::array<Item::Items, static_cast<unsigned>(Species::END)> item;
-		std::array<Nature::Natures, static_cast<unsigned>(Species::END)> nature;
-		std::array<std::vector<Moves>, static_cast<unsigned>(Species::END)> move;
+		std::array<Ability::Abilities, number_of_species> ability;
+		std::array<Item::Items, number_of_species> item;
+		std::array<Nature::Natures, number_of_species> nature;
+		std::array<std::vector<Moves>, number_of_species> move;
 };
 
 }	// namespace technicalmachine

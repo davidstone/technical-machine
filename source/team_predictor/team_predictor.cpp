@@ -37,30 +37,30 @@ namespace technicalmachine {
 namespace {
 
 template<typename T>
-std::array<T, max_species> all_ones_array () {
-	std::array<T, max_species> all_ones;
+std::array<T, number_of_species> all_ones_array () {
+	std::array<T, number_of_species> all_ones;
 	all_ones.fill (1);
 	return all_ones;
 }
-void predict_pokemon (Team & team, std::array<float, max_species> estimate, float multiplier [max_species][max_species]);
-Species get_most_likely_pokemon (std::array<float, max_species> const & estimate);
+void predict_pokemon (Team & team, std::array<float, number_of_species> estimate, float multiplier [number_of_species][number_of_species]);
+Species get_most_likely_pokemon (std::array<float, number_of_species> const & estimate);
 void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size);
 
 }	// unnamed namespace
 
 Team predict_team (DetailedStats const & detailed, Team team, unsigned size, bool using_lead) {
-	std::array<unsigned, max_species> const overall = overall_stats ();
+	std::array<unsigned, number_of_species> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
-	float multiplier [max_species][max_species];
+	float multiplier [number_of_species][number_of_species];
 	team_stats (overall, total, multiplier);
-	std::array<float, max_species> const lead = using_lead ? lead_stats () : all_ones_array<float>();
+	std::array<float, number_of_species> const lead = using_lead ? lead_stats () : all_ones_array<float>();
 	
-	std::array<float, max_species> estimate;
-	for (unsigned n = 0; n != max_species; ++n)
+	std::array<float, number_of_species> estimate;
+	for (unsigned n = 0; n != number_of_species; ++n)
 		estimate [n] = lead [n] * overall [n] / total;
 
 	team.all_pokemon().for_each([& estimate, & multiplier](Pokemon const & pokemon) {
-		for (unsigned n = 0; n != max_species; ++n)
+		for (unsigned n = 0; n != number_of_species; ++n)
 			estimate [n] *= multiplier[static_cast<size_t>(pokemon.name())] [n];
 	});
 	predict_pokemon (team, estimate, multiplier);
@@ -75,7 +75,7 @@ Team predict_team (DetailedStats const & detailed, Team team, unsigned size, boo
 
 namespace {
 
-void predict_pokemon (Team & team, std::array<float, max_species> estimate, float multiplier [max_species] [max_species]) {
+void predict_pokemon (Team & team, std::array<float, number_of_species> estimate, float multiplier [number_of_species] [number_of_species]) {
 	auto const index = team.pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = get_most_likely_pokemon (estimate);
@@ -84,16 +84,16 @@ void predict_pokemon (Team & team, std::array<float, max_species> estimate, floa
 		team.add_pokemon(name, level, gender);
 		if (team.number_of_seen_pokemon() == team.size())
 			break;
-		for (unsigned n = 0; n != max_species; ++n)
+		for (unsigned n = 0; n != number_of_species; ++n)
 			estimate [n] *= multiplier[static_cast<size_t>(team.pokemon(team.all_pokemon().size() - 1).name())][n];
 	}
 	team.all_pokemon().set_index(index);
 }
 
-Species get_most_likely_pokemon (std::array<float, max_species> const & estimate) {
+Species get_most_likely_pokemon (std::array<float, number_of_species> const & estimate) {
 	Species name = Species::END;
 	float top = -1.0;
-	for (unsigned n = 0; n != max_species; ++n) {
+	for (unsigned n = 0; n != number_of_species; ++n) {
 		if (estimate [n] > top) {
 			top = estimate [n];
 			name = static_cast<Species> (n);

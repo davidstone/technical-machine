@@ -29,32 +29,34 @@
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
+#include "../string_conversions/conversion.hpp"
+
 namespace technicalmachine {
 
 namespace {
 
 template<typename T>
-std::array<T, max_species> load_stats_from_file (std::string const & file_name) {
-	std::array<T, max_species> overall;
+std::array<T, number_of_species> load_stats_from_file (std::string const & file_name) {
+	std::array<T, number_of_species> overall;
 	std::ifstream file (file_name);
 	std::string line;
 	unsigned n = 0;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
-		if (n >= max_species)
+		if (n >= number_of_species)
 			throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_long);
 		overall [n] = boost::lexical_cast<T> (line);
 		++n;
 	}
-	if (n != max_species)
+	if (n != number_of_species)
 		throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_short);
 	return overall;
 }
 
-void species_clause (float multiplier [max_species] [max_species]) {
-	for (unsigned a = 0; a != max_species; ++a) {
-		for (unsigned b = 0; b != max_species; ++b) {
-			Species const first = static_cast <Species> (a);
-			Species const second = static_cast <Species> (b);
+void species_clause (float multiplier [number_of_species] [number_of_species]) {
+	for (unsigned a = 0; a != number_of_species; ++a) {
+		for (unsigned b = 0; b != number_of_species; ++b) {
+			auto const first = static_cast<Species>(a);
+			auto const second = static_cast<Species>(b);
 			// Species clause or replaced with other value later
 			multiplier [a][b] = is_alternate_form(first, second) ? 0 : -1;
 		}
@@ -62,17 +64,17 @@ void species_clause (float multiplier [max_species] [max_species]) {
 	}
 }
 
-void load_listed_multipliers (float multiplier [max_species] [max_species], std::array<unsigned, max_species> const & overall, std::array<unsigned, max_species> & unaccounted, unsigned total) {
+void load_listed_multipliers (float multiplier [number_of_species] [number_of_species], std::array<unsigned, number_of_species> const & overall, std::array<unsigned, number_of_species> & unaccounted, unsigned total) {
 	std::string const file_name = "settings/teammate.txt";
 	std::ifstream file (file_name);
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {
 		constexpr char delimiter = '\t';
 		size_t const x = line.find (delimiter);
-		unsigned const member = boost::lexical_cast<unsigned> (line.substr (0, x));
+		auto const member = static_cast<size_t>(from_string<Species>(line.substr (0, x)));
 		size_t const y = line.find (delimiter, x + 1);
-		unsigned const ally = boost::lexical_cast<unsigned> (line.substr (x + 1, y - x - 1));
-		if (member >= max_species or ally >= max_species)
+		auto const ally = static_cast<size_t>(from_string<Species>(line.substr(x + 1, y - x - 1)));
+		if (member >= number_of_species or ally >= number_of_species)
 			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
 		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
 		unaccounted [member] -= number_used_with;
@@ -82,8 +84,8 @@ void load_listed_multipliers (float multiplier [max_species] [max_species], std:
 	}
 }
 
-void estimate_remaining_multipliers (float multiplier [max_species] [max_species], std::array<unsigned, max_species> const & overall, std::array<unsigned, max_species> const & unaccounted) {
-	for (unsigned a = 0; a != max_species; ++a) {
+void estimate_remaining_multipliers (float multiplier [number_of_species] [number_of_species], std::array<unsigned, number_of_species> const & overall, std::array<unsigned, number_of_species> const & unaccounted) {
+	for (unsigned a = 0; a != number_of_species; ++a) {
 		if (overall [a] != 0) {
 			for (float & value : multiplier [a]) {
 				if (value == -1) {
@@ -113,16 +115,15 @@ void estimate_remaining_multipliers (float multiplier [max_species] [max_species
 
 }	// unnamed namespace
 
-std::array<unsigned, max_species> overall_stats () {
+std::array<unsigned, number_of_species> overall_stats () {
 	return load_stats_from_file<unsigned> ("settings/usage.txt");
 }
 
-std::array<float, max_species> lead_stats () {
+std::array<float, number_of_species> lead_stats () {
 	return load_stats_from_file<float> ("settings/lead.txt");
 }
 
-void team_stats (std::array<unsigned, max_species> const & overall, unsigned const total, float multiplier [max_species][max_species]) {
-
+void team_stats (std::array<unsigned, number_of_species> const & overall, unsigned const total, float multiplier [number_of_species][number_of_species]) {
 	species_clause (multiplier);
 
 	// There are 5 other Pokemon on a team for each individual Pokemon.
@@ -131,8 +132,8 @@ void team_stats (std::array<unsigned, max_species> const & overall, unsigned con
 	// number until all known usages are gone. Then, assume the distribution of
 	// Pokemon not on the team mate stats is equal to the relative overall
 	// distribution and divide up all remaining usages proportionally.
-	std::array<unsigned, max_species> unaccounted;
-	for (unsigned n = 0; n != max_species; ++n)
+	std::array<unsigned, number_of_species> unaccounted;
+	for (unsigned n = 0; n != number_of_species; ++n)
 		unaccounted [n] = overall [n] * 5;
 
 	load_listed_multipliers (multiplier, overall, unaccounted, total);

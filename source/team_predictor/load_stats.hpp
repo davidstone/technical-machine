@@ -24,12 +24,12 @@
 
 namespace technicalmachine {
 
-std::array<unsigned, max_species> overall_stats ();
+std::array<unsigned, number_of_species> overall_stats ();
 
-void team_stats (std::array<unsigned, max_species> const & overall, unsigned total, float multiplier [max_species][max_species]);
+void team_stats (std::array<unsigned, number_of_species> const & overall, unsigned total, float multiplier [number_of_species][number_of_species]);
 
 // Multiplier for Pokemon after you've seen the lead
-std::array<float, max_species> lead_stats ();
+std::array<float, number_of_species> lead_stats ();
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__LOAD_STATS_HPP_

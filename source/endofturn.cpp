@@ -125,7 +125,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			heal (pokemon, 16);
 			break;
 		case Item::BLACK_SLUDGE:
-			heal (pokemon, (is_type(pokemon, Type::POISON)) ? 16 : -16);
+			heal (pokemon, (is_type(pokemon, Type::Poison)) ? 16 : -16);
 			break;
 		default:
 			break;

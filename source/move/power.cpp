@@ -208,102 +208,102 @@ unsigned item_modifier (Pokemon const & attacker) {
 			break;
 		case Item::INSECT_PLATE:
 		case Item::SILVERPOWDER:
-			if (attacker.move().type() == Type::BUG)
+			if (attacker.move().type() == Type::Bug)
 				return 12;
 			break;
 		case Item::DREAD_PLATE:	
 		case Item::BLACKGLASSES:
-			if (attacker.move().type() == Type::DARK)
+			if (attacker.move().type() == Type::Dark)
 				return 12;
 			break;
 		case Item::DRACO_PLATE:
 		case Item::DRAGON_FANG:
-			if (attacker.move().type() == Type::DRAGON)
+			if (attacker.move().type() == Type::Dragon)
 				return 12;
 			break;
 		case Item::ZAP_PLATE:
 		case Item::MAGNET:
-			if (attacker.move().type() == Type::ELECTRIC)
+			if (attacker.move().type() == Type::Electric)
 				return 12;
 			break;
 		case Item::FIST_PLATE:
 		case Item::BLACK_BELT:
-			if (attacker.move().type() == Type::FIGHTING)
+			if (attacker.move().type() == Type::Fighting)
 				return 12;
 			break;
 		case Item::FLAME_PLATE:
 		case Item::CHARCOAL:
-			if (attacker.move().type() == Type::FIRE)
+			if (attacker.move().type() == Type::Fire)
 				return 12;
 			break;
 		case Item::SKY_PLATE:
 		case Item::SHARP_BEAK:
-			if (attacker.move().type() == Type::FLYING)
+			if (attacker.move().type() == Type::Flying)
 				return 12;
 			break;
 		case Item::SPOOKY_PLATE:
 		case Item::SPELL_TAG:
-			if (attacker.move().type() == Type::GHOST)
+			if (attacker.move().type() == Type::Ghost)
  				return 12;
 			break;
 		case Item::MEADOW_PLATE:
 		case Item::MIRACLE_SEED:
-			if (attacker.move().type() == Type::GRASS)
+			if (attacker.move().type() == Type::Grass)
 				return 12;
 			break;
 		case Item::EARTH_PLATE:
 		case Item::SOFT_SAND:
-			if (attacker.move().type() == Type::GROUND)
+			if (attacker.move().type() == Type::Ground)
 				return 12;
 			break;
 		case Item::ICICLE_PLATE:
 		case Item::NEVERMELTICE:
-			if (attacker.move().type() == Type::ICE)
+			if (attacker.move().type() == Type::Ice)
 				return 12;
 			break;
 		case Item::SILK_SCARF:
-			if (attacker.move().type() == Type::NORMAL)
+			if (attacker.move().type() == Type::Normal)
 				return 12;
 			break;
 		case Item::TOXIC_PLATE:
 		case Item::POISON_BARB:
-			if (attacker.move().type() == Type::POISON)
+			if (attacker.move().type() == Type::Poison)
 				return 12;
 			break;
 		case Item::MIND_PLATE:
 		case Item::TWISTEDSPOON:
 		case Item::ODD_INCENSE:
-			if (attacker.move().type() == Type::PSYCHIC)
+			if (attacker.move().type() == Type::Psychic)
 				return 12;
 			break;
 		case Item::STONE_PLATE:
 		case Item::HARD_STONE:
 		case Item::ROCK_INCENSE:
-			if (attacker.move().type() == Type::ROCK)
+			if (attacker.move().type() == Type::Rock)
 				return 12;
 			break;
 		case Item::IRON_PLATE:
 		case Item::METAL_COAT:
-			if (attacker.move().type() == Type::STEEL)
+			if (attacker.move().type() == Type::Steel)
 				return 12;
 			break;
 		case Item::SPLASH_PLATE:
 		case Item::MYSTIC_WATER:
 		case Item::SEA_INCENSE:
 		case Item::WAVE_INCENSE:
-			if (attacker.move().type() == Type::WATER)
+			if (attacker.move().type() == Type::Water)
 				return 12;
 			break;
 		case Item::ADAMANT_ORB:
-			if (attacker.is_boosted_by_adamant_orb() and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::STEEL))
+			if (attacker.is_boosted_by_adamant_orb() and (attacker.move().type() == Type::Dragon or attacker.move().type() == Type::Steel))
 				return 12;
 			break;
 		case Item::GRISEOUS_ORB:
-			if (attacker.is_boosted_by_griseous_orb() and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::GHOST))
+			if (attacker.is_boosted_by_griseous_orb() and (attacker.move().type() == Type::Dragon or attacker.move().type() == Type::Ghost))
 				return 12;
 			break;
 		case Item::LUSTROUS_ORB:
-			if (attacker.is_boosted_by_lustrous_orb() and (attacker.move().type() == Type::DRAGON or attacker.move().type() == Type::WATER))
+			if (attacker.is_boosted_by_lustrous_orb() and (attacker.move().type() == Type::Dragon or attacker.move().type() == Type::Water))
 				return 12;
 			break;
 		default:
@@ -317,13 +317,13 @@ Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & def
 		case Ability::TECHNICIAN:
 			return (base_power <= 60) ? Rational(3, 2) : Rational(1);
 		case Ability::BLAZE:
-			return pinch_ability_activates (attacker, Type::FIRE) ? Rational(3, 2) : Rational(1);
+			return pinch_ability_activates (attacker, Type::Fire) ? Rational(3, 2) : Rational(1);
 		case Ability::OVERGROW:
-			return pinch_ability_activates (attacker, Type::GRASS) ? Rational(3, 2) : Rational(1);
+			return pinch_ability_activates (attacker, Type::Grass) ? Rational(3, 2) : Rational(1);
 		case Ability::SWARM:
-			return pinch_ability_activates (attacker, Type::BUG) ? Rational(3, 2) : Rational(1);
+			return pinch_ability_activates (attacker, Type::Bug) ? Rational(3, 2) : Rational(1);
 		case Ability::TORRENT:
-			return pinch_ability_activates (attacker, Type::WATER) ? Rational(3, 2) : Rational(1);
+			return pinch_ability_activates (attacker, Type::Water) ? Rational(3, 2) : Rational(1);
 		case Ability::IRON_FIST:
 			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : Rational(1);
 		case Ability::RECKLESS:
@@ -342,11 +342,11 @@ bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) 
 Rational defender_ability_modifier(Move const & move, Ability const ability) {
 	switch (ability.name) {
 		case Ability::DRY_SKIN:
-			return (move.type() == Type::FIRE) ? Rational(5, 4) : Rational(1);
+			return (move.type() == Type::Fire) ? Rational(5, 4) : Rational(1);
 		case Ability::HEATPROOF:
-			return (move.type() == Type::FIRE) ? Rational(1, 2) : Rational(1);
+			return (move.type() == Type::Fire) ? Rational(1, 2) : Rational(1);
 		case Ability::THICK_FAT:
-			return (move.type() == Type::FIRE or move.type() == Type::ICE) ? Rational(1, 2) : Rational(1);
+			return (move.type() == Type::Fire or move.type() == Type::Ice) ? Rational(1, 2) : Rational(1);
 		default:
 			return Rational(1);
 	}

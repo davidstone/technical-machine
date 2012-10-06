@@ -42,7 +42,7 @@ Team max_damage_physical_attacker () {
 	
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
-	attacker.add_pokemon(Species::SHUCKLE, level, gender);
+	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::ROLLOUT, 3, team_size);
 
@@ -58,7 +58,7 @@ Team max_damage_special_attacker () {
 
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
-	attacker.add_pokemon(Species::DEOXYS_A, level, gender);
+	attacker.add_pokemon(Species::Deoxys_A, level, gender);
 	attacker.pokemon().hp().stat = 1;
 	
 	return attacker;
@@ -68,7 +68,7 @@ Team max_damage_physical_defender () {
 	Team defender;
 	constexpr unsigned level = 1;
 	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::COMBEE, level, gender);
+	defender.add_pokemon(Species::Combee, level, gender);
 	auto & d = defender.pokemon();
 	d.def().iv = 0;
 	d.def().ev = 0;
@@ -80,7 +80,7 @@ Team max_damage_special_defender () {
 	Team defender;
 	constexpr unsigned level = 1;
 	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::PARAS, level, gender);
+	defender.add_pokemon(Species::Paras, level, gender);
 	auto & d = defender.pokemon();
 	d.ability(Ability::DRY_SKIN);
 
@@ -164,7 +164,7 @@ void special_damage_test () {
 	Team attacker = max_damage_special_attacker();
 	Pokemon & a = attacker.pokemon();
 	a.move.add(Moves::BLAST_BURN, 3, team_size);
-	a.change_type(Type::FIRE);
+	a.change_type(Type::Fire);
 
 	a.spa.ev = 252 / 4;
 	a.nature().name = Nature::MODEST;

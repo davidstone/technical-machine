@@ -69,7 +69,7 @@ void test_nature () {
 
 void test_species () {
 	std::cout << "\t\tVerifying correct species.\n";
-	for (Species original = static_cast <Species> (0); original != Species::END; original = static_cast <Species> (static_cast<unsigned>(original) + 1)) {
+	for (auto original = static_cast<Species>(0); original != Species::Generation_4_End; original = static_cast<Species>(static_cast<unsigned>(original) + 1)) {
 		unsigned const id = species_to_id (original);
 		Species const result = id_to_species (id);
 		if (original != result)

@@ -266,41 +266,41 @@ bool resistance_berry_activates (Item const item, Type const type, unsigned cons
 	// indicate that the item does not grant resistance). Then I can
 	// `return type == returned_type;`
 	if (item.name == Item::CHILAN_BERRY)
-		return type == Type::NORMAL;
+		return type == Type::Normal;
 	else if (effectiveness > 4) {
 		switch (item.name) {
 			case Item::BABIRI_BERRY:
-				return type == Type::STEEL;
+				return type == Type::Steel;
 			case Item::CHARTI_BERRY:
-				return type == Type::ROCK;
+				return type == Type::Rock;
 			case Item::CHOPLE_BERRY:
-				return type == Type::FIGHTING;
+				return type == Type::Fighting;
 			case Item::COBA_BERRY:
-				return type == Type::FLYING;
+				return type == Type::Flying;
 			case Item::COLBUR_BERRY:
-				return type == Type::DARK;
+				return type == Type::Dark;
 			case Item::HABAN_BERRY:
-				return type == Type::DRAGON;
+				return type == Type::Dragon;
 			case Item::KASIB_BERRY:
-				return type == Type::GHOST;
+				return type == Type::Ghost;
 			case Item::KEBIA_BERRY:
-				return type == Type::POISON;
+				return type == Type::Poison;
 			case Item::OCCA_BERRY:
-				return type == Type::FIRE;
+				return type == Type::Fire;
 			case Item::PASSHO_BERRY:
-				return type == Type::WATER;
+				return type == Type::Water;
 			case Item::PAYAPA_BERRY:
-				return type == Type::PSYCHIC;
+				return type == Type::Psychic;
 			case Item::RINDO_BERRY:
-				return type == Type::GRASS;
+				return type == Type::Grass;
 			case Item::SHUCA_BERRY:
-				return type == Type::GROUND;
+				return type == Type::Ground;
 			case Item::TANGA_BERRY:
-				return type == Type::BUG;
+				return type == Type::Bug;
 			case Item::WACAN_BERRY:
-				return type == Type::ELECTRIC;
+				return type == Type::Electric;
 			case Item::YACHE_BERRY:
-				return type == Type::ICE;
+				return type == Type::Ice;
 			default:
 				return false;
 		}

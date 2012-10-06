@@ -61,7 +61,7 @@ bool Ability::blocks_switching (ActivePokemon const & switcher, Weather const & 
 		case ARENA_TRAP:
 			return grounded (switcher, weather);
 		case MAGNET_PULL:
-			return is_type (switcher, Type::STEEL);
+			return is_type (switcher, Type::Steel);
 		default:
 			return false;
 	}

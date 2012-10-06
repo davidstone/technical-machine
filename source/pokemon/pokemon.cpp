@@ -106,7 +106,7 @@ void Pokemon::normalize_hp () {
 }
 
 bool Pokemon::can_confuse_with_chatter() const {
-	return name() == Species::CHATOT;
+	return name() == Species::Chatot;
 }
 
 bool Pokemon::can_use_substitute() const {
@@ -125,10 +125,10 @@ namespace {
 
 bool is_deoxys (Species species) {
 	switch (species) {
-		case Species::DEOXYS_A:
-		case Species::DEOXYS_D:
-		case Species::DEOXYS_M:
-		case Species::DEOXYS_S:
+		case Species::Deoxys_A:
+		case Species::Deoxys_D:
+		case Species::Deoxys_M:
+		case Species::Deoxys_S:
 			return true;
 		default:
 			return false;
@@ -137,8 +137,8 @@ bool is_deoxys (Species species) {
 
 bool is_giratina (Species species) {
 	switch (species) {
-		case Species::GIRATINA_A:
-		case Species::GIRATINA_O:
+		case Species::Giratina_A:
+		case Species::Giratina_O:
 			return true;
 		default:
 			return false;
@@ -147,12 +147,12 @@ bool is_giratina (Species species) {
 
 bool is_rotom (Species species) {
 	switch (species) {
-		case Species::ROTOM:
-		case Species::ROTOM_C:
-		case Species::ROTOM_F:
-		case Species::ROTOM_H:
-		case Species::ROTOM_S:
-		case Species::ROTOM_W:
+		case Species::Rotom:
+		case Species::Rotom_C:
+		case Species::Rotom_F:
+		case Species::Rotom_H:
+		case Species::Rotom_S:
+		case Species::Rotom_W:
 			return true;
 		default:
 			return false;
@@ -161,8 +161,8 @@ bool is_rotom (Species species) {
 
 bool is_shaymin (Species species) {
 	switch (species) {
-		case Species::SHAYMIN_L:
-		case Species::SHAYMIN_S:
+		case Species::Shaymin_L:
+		case Species::Shaymin_S:
 			return true;
 		default:
 			return false;
@@ -171,9 +171,9 @@ bool is_shaymin (Species species) {
 
 bool is_wormadam (Species species) {
 	switch (species) {
-		case Species::WORMADAM_P:
-		case Species::WORMADAM_S:
-		case Species::WORMADAM_T:
+		case Species::Wormadam_P:
+		case Species::Wormadam_S:
+		case Species::Wormadam_T:
 			return true;
 		default:
 			return false;
@@ -183,43 +183,43 @@ bool is_wormadam (Species species) {
 }	// unnamed namespace
 
 bool Pokemon::is_boosted_by_adamant_orb() const {
-	return name() == Species::DIALGA;
+	return name() == Species::Dialga;
 }
 
 bool Pokemon::is_boosted_by_deepseascale() const {
-	return name() == Species::CLAMPERL;
+	return name() == Species::Clamperl;
 }
 
 bool Pokemon::is_boosted_by_deepseatooth() const {
-	return name() == Species::CLAMPERL;
+	return name() == Species::Clamperl;
 }
 
 bool Pokemon::is_boosted_by_griseous_orb() const {
-	return name() == Species::PALKIA;
+	return name() == Species::Palkia;
 }
 
 bool Pokemon::is_boosted_by_light_ball() const {
-	return name() == Species::PIKACHU;
+	return name() == Species::Pikachu;
 }
 
 bool Pokemon::is_boosted_by_lustrous_orb() const {
-	return name() == Species::GIRATINA_O;
+	return name() == Species::Giratina_O;
 }
 
 bool Pokemon::is_boosted_by_metal_powder() const {
-	return name() == Species::DITTO;
+	return name() == Species::Ditto;
 }
 
 bool Pokemon::is_boosted_by_quick_powder() const {
-	return name() == Species::DITTO;
+	return name() == Species::Ditto;
 }
 
 bool Pokemon::is_boosted_by_soul_dew() const {
-	return name() == Species::LATIAS or name() == Species::LATIOS;
+	return name() == Species::Latias or name() == Species::Latios;
 }
 
 bool Pokemon::is_boosted_by_thick_club() const {
-	return name() == Species::CUBONE or name() == Species::MAROWAK;
+	return name() == Species::Cubone or name() == Species::Marowak;
 }
 
 std::string Pokemon::get_nickname () const {
@@ -303,7 +303,7 @@ void Pokemon::faint() {
 }
 
 Pokemon::hash_type Pokemon::hash() const {
-	return static_cast<hash_type>(m_name) + max_species *
+	return static_cast<hash_type>(m_name) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
@@ -312,7 +312,7 @@ Pokemon::hash_type Pokemon::hash() const {
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return max_species * Item::END * Status::max_hash() * hp.max * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * hp.max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -364,533 +364,704 @@ Type::Types Pokemon::calculate_hidden_power_type() const {
 	unsigned const f = hidden_power_type_helper(spd.iv, 5);
 	unsigned const index = (a + b + c + d + e + f) * 15 / 63;
 	constexpr static Type::Types lookup [] = {
-		Type::FIGHTING,
-		Type::FLYING,
-		Type::POISON,
-		Type::GROUND,
-		Type::ROCK,
-		Type::BUG,
-		Type::GHOST,
-		Type::STEEL,
-		Type::FIRE,
-		Type::WATER,
-		Type::GRASS,
-		Type::ELECTRIC,
-		Type::PSYCHIC,
-		Type::ICE,
-		Type::DRAGON,
-		Type::DARK
+		Type::Fighting,
+		Type::Flying,
+		Type::Poison,
+		Type::Ground,
+		Type::Rock,
+		Type::Bug,
+		Type::Ghost,
+		Type::Steel,
+		Type::Fire,
+		Type::Water,
+		Type::Grass,
+		Type::Electric,
+		Type::Psychic,
+		Type::Ice,
+		Type::Dragon,
+		Type::Dark
 	};
 	return lookup [index];
 }
 
 unsigned Pokemon::power_of_mass_based_moves() const {
 	constexpr static uint8_t mass_array [] = {
-		100,	// Abomasnow
-		40,	// Abra
-		60,	// Absol
-		80,	// Aerodactyl
-		120,	// Aggron
-		40,	// Aipom
-		60,	// Alakazam
-		40,	// Altaria
-		40,	// Ambipom
-		80,	// Ampharos
-		40,	// Anorith
-		80,	// Arbok
-		100,	// Arcanine
-		120,	// Arceus
-		60,	// Ariados
-		80,	// Armaldo
-		80,	// Aron
-		80,	// Articuno
-		20,	// Azelf
-		60,	// Azumarill
-		20,	// Azurill
-		60,	// Bagon
-		40,	// Baltoy
-		40,	// Banette
-		20,	// Barboach
-		100,	// Bastiodon
-		40,	// Bayleef
-		60,	// Beautifly
-		60,	// Beedrill
-		80,	// Beldum
-		20,	// Bellossom
-		20,	// Bellsprout
-		60,	// Bibarel
-		40,	// Bidoof
-		80,	// Blastoise
-		80,	// Blaziken
-		60,	// Blissey
-		40,	// Bonsly
-		60,	// Breloom
-		100,	// Bronzong
-		80,	// Bronzor
-		20,	// Budew
-		60,	// Buizel
-		20,	// Bulbasaur
-		20,	// Buneary
-		20,	// Burmy
-		60,	// Butterfree
-		80,	// Cacnea
-		80,	// Cacturne
-		120,	// Camerupt
-		60,	// Carnivine
-		40,	// Carvanha
-		40,	// Cascoon
-		20,	// Castform
-		20,	// Caterpie
-		20,	// Celebi
-		60,	// Chansey
-		80,	// Charizard
-		20,	// Charmander
-		40,	// Charmeleon
-		20,	// Chatot
-		20,	// Cherrim
-		20,	// Cherubi
-		20,	// Chikorita
-		20,	// Chimchar
-		20,	// Chimecho
-		40,	// Chinchou
-		20,	// Chingling
-		80,	// Clamperl
-		100,	// Claydol
-		60,	// Clefable
-		20,	// Clefairy
-		20,	// Cleffa
-		100,	// Cloyster
-		20,	// Combee
-		40,	// Combusken
-		40,	// Corphish
-		20,	// Corsola
-		80,	// Cradily
-		60,	// Cranidos
-		60,	// Crawdaunt
-		80,	// Cresselia
-		40,	// Croagunk
-		80,	// Crobat
-		40,	// Croconaw
-		20,	// Cubone
-		20,	// Cyndaquil
-		80,	// Darkrai
-		60,	// Delcatty
-		40,	// Delibird
-		80,	// Deoxys-A
-		80,	// Deoxys-D
-		80,	// Deoxys-M
-		80,	// Deoxys-S
-		100,	// Dewgong
-		120,	// Dialga
-		20,	// Diglett
-		20,	// Ditto
-		80,	// Dodrio
-		60,	// Doduo
-		100,	// Donphan
-		40,	// Dragonair
-		120,	// Dragonite
-		80,	// Drapion
-		20,	// Dratini
-		40,	// Drifblim
-		20,	// Drifloon
-		60,	// Drowzee
-		60,	// Dugtrio
-		40,	// Dunsparce
-		60,	// Dusclops
-		100,	// Dusknoir
-		40,	// Duskull
-		60,	// Dustox
-		20,	// Eevee
-		20,	// Ekans
-		60,	// Electabuzz
-		100,	// Electivire
-		40,	// Electrike
-		80,	// Electrode
-		40,	// Elekid
-		80,	// Empoleon
-		100,	// Entei
-		60,	// Espeon
-		20,	// Exeggcute
-		100,	// Exeggutor
-		80,	// Exploud
-		40,	// Farfetch'd
-		60,	// Fearow
-		20,	// Feebas
-		80,	// Feraligatr
-		20,	// Finneon
-		40,	// Flaaffy
-		40,	// Flareon
-		60,	// Floatzel
-		80,	// Flygon
-		100,	// Forretress
-		60,	// Froslass
-		60,	// Furret
-		80,	// Gabite
-		80,	// Gallade
-		80,	// Garchomp
-		60,	// Gardevoir
-		20,	// Gastly
-		60,	// Gastrodon
-		60,	// Gengar
-		40,	// Geodude
-		40,	// Gible
-		60,	// Girafarig
-		120,	// Giratina-A
-		120,	// Giratina-O
-		60,	// Glaceon
-		120,	// Glalie
-		20,	// Glameow
-		80,	// Gligar
-		60,	// Gliscor
-		20,	// Gloom
-		80,	// Golbat
-		40,	// Goldeen
-		80,	// Golduck
-		120,	// Golem
-		40,	// Gorebyss
-		60,	// Granbull
-		100,	// Graveler
-		60,	// Grimer
-		80,	// Grotle
-		120,	// Groudon
-		40,	// Grovyle
-		40,	// Growlithe
-		80,	// Grumpig
-		40,	// Gulpin
-		120,	// Gyarados
-		40,	// Happiny
-		120,	// Hariyama
-		20,	// Haunter
-		120,	// Heatran
-		80,	// Heracross
-		60,	// Hippopotas
-		120,	// Hippowdon
-		80,	// Hitmonchan
-		60,	// Hitmonlee
-		60,	// Hitmontop
-		100,	// Ho-Oh
-		60,	// Honchkrow
-		40,	// Hoothoot
-		20,	// Hoppip
-		20,	// Horsea
-		60,	// Houndoom
-		40,	// Houndour
-		60,	// Huntail
-		80,	// Hypno
-		20,	// Igglybuff
-		40,	// Illumise
-		80,	// Infernape
-		40,	// Ivysaur
-		20,	// Jigglypuff
-		20,	// Jirachi
-		40,	// Jolteon
-		20,	// Jumpluff
-		60,	// Jynx
-		40,	// Kabuto
-		60,	// Kabutops
-		80,	// Kadabra
-		20,	// Kakuna
-		80,	// Kangaskhan
-		40,	// Kecleon
-		100,	// Kingdra
-		80,	// Kingler
-		40,	// Kirlia
-		20,	// Koffing
-		20,	// Krabby
-		20,	// Kricketot
-		60,	// Kricketune
-		120,	// Kyogre
-		100,	// Lairon
-		40,	// Lanturn
-		120,	// Lapras
-		80,	// Larvitar
-		60,	// Latias
-		80,	// Latios
-		60,	// Leafeon
-		60,	// Ledian
-		40,	// Ledyba
-		100,	// Lickilicky
-		80,	// Lickitung
-		40,	// Lileep
-		60,	// Linoone
-		60,	// Lombre
-		60,	// Lopunny
-		20,	// Lotad
-		60,	// Loudred
-		80,	// Lucario
-		80,	// Ludicolo
-		120,	// Lugia
-		40,	// Lumineon
-		100,	// Lunatone
-		20,	// Luvdisc
-		60,	// Luxio
-		60,	// Luxray
-		100,	// Machamp
-		80,	// Machoke
-		40,	// Machop
-		40,	// Magby
-		80,	// Magcargo
-		20,	// Magikarp
-		60,	// Magmar
-		80,	// Magmortar
-		20,	// Magnemite
-		80,	// Magneton
-		100,	// Magnezone
-		80,	// Makuhita
-		120,	// Mamoswine
-		20,	// Manaphy
-		60,	// Manectric
-		60,	// Mankey
-		120,	// Mantine
-		80,	// Mantyke
-		20,	// Mareep
-		20,	// Marill
-		60,	// Marowak
-		60,	// Marshtomp
-		20,	// Masquerain
-		40,	// Mawile
-		60,	// Medicham
-		40,	// Meditite
-		100,	// Meganium
-		20,	// Meowth
-		20,	// Mesprit
-		120,	// Metagross
-		120,	// Metang
-		20,	// Metapod
-		20,	// Mew
-		100,	// Mewtwo
-		60,	// Mightyena
-		100,	// Milotic
-		80,	// Miltank
-		40,	// Mime Jr.
-		20,	// Minun
-		20,	// Misdreavus
-		20,	// Mismagius
-		80,	// Moltres
-		40,	// Monferno
-		40,	// Mothim
-		80,	// Mr. Mime
-		20,	// Mudkip
-		60,	// Muk
-		100,	// Munchlax
-		20,	// Murkrow
-		20,	// Natu
-		80,	// Nidoking
-		80,	// Nidoqueen
-		20,	// Nidoran♀
-		20,	// Nidoran♂
-		40,	// Nidorina
-		40,	// Nidorino
-		20,	// Nincada
-		40,	// Ninetales
-		40,	// Ninjask
-		60,	// Noctowl
-		80,	// Nosepass
-		40,	// Numel
-		60,	// Nuzleaf
-		60,	// Octillery
-		20,	// Oddish
-		20,	// Omanyte
-		60,	// Omastar
-		120,	// Onix
-		20,	// Pachirisu
-		120,	// Palkia
-		20,	// Paras
-		60,	// Parasect
-		60,	// Pelipper
-		60,	// Persian
-		60,	// Phanpy
-		20,	// Phione
-		20,	// Pichu
-		60,	// Pidgeot
-		60,	// Pidgeotto
-		20,	// Pidgey
-		20,	// Pikachu
-		80,	// Piloswine
-		20,	// Pineco
-		80,	// Pinsir
-		20,	// Piplup
-		20,	// Plusle
-		60,	// Politoed
-		40,	// Poliwag
-		40,	// Poliwhirl
-		80,	// Poliwrath
-		60,	// Ponyta
-		40,	// Poochyena
-		60,	// Porygon
-		60,	// Porygon-Z
-		60,	// Porygon2
-		60,	// Primeape
-		40,	// Prinplup
-		120,	// Probopass
-		40,	// Psyduck
-		100,	// Pupitar
-		60,	// Purugly
-		80,	// Quagsire
-		40,	// Quilava
-		20,	// Qwilfish
-		60,	// Raichu
-		100,	// Raikou
-		20,	// Ralts
-		100,	// Rampardos
-		80,	// Rapidash
-		40,	// Raticate
-		20,	// Rattata
-		120,	// Rayquaza
-		100,	// Regice
-		120,	// Regigigas
-		120,	// Regirock
-		120,	// Registeel
-		40,	// Relicanth
-		40,	// Remoraid
-		100,	// Rhydon
-		100,	// Rhyhorn
-		120,	// Rhyperior
-		40,	// Riolu
-		20,	// Roselia
-		40,	// Roserade
-		20,	// Rotom
-		20,	// Rotom-C
-		20,	// Rotom-F
-		20,	// Rotom-H
-		20,	// Rotom-S
-		20,	// Rotom-W
-		40,	// Sableye
-		100,	// Salamence
-		40,	// Sandshrew
-		60,	// Sandslash
-		80,	// Sceptile
-		100,	// Scizor
-		80,	// Scyther
-		40,	// Seadra
-		60,	// Seaking
-		80,	// Sealeo
-		20,	// Seedot
-		80,	// Seel
-		20,	// Sentret
-		80,	// Seviper
-		80,	// Sharpedo
-		20,	// Shaymin-L
-		20,	// Shaymin-S
-		20,	// Shedinja
-		100,	// Shelgon
-		20,	// Shellder
-		20,	// Shellos
-		80,	// Shieldon
-		80,	// Shiftry
-		20,	// Shinx
-		20,	// Shroomish
-		40,	// Shuckle
-		20,	// Shuppet
-		20,	// Silcoon
-		80,	// Skarmory
-		20,	// Skiploom
-		40,	// Skitty
-		40,	// Skorupi
-		60,	// Skuntank
-		100,	// Slaking
-		40,	// Slakoth
-		80,	// Slowbro
-		80,	// Slowking
-		60,	// Slowpoke
-		60,	// Slugma
-		80,	// Smeargle
-		20,	// Smoochum
-		60,	// Sneasel
-		120,	// Snorlax
-		40,	// Snorunt
-		80,	// Snover
-		20,	// Snubbull
-		100,	// Solrock
-		20,	// Spearow
-		60,	// Spheal
-		20,	// Spinarak
-		20,	// Spinda
-		100,	// Spiritomb
-		60,	// Spoink
-		20,	// Squirtle
-		80,	// Stantler
-		40,	// Staraptor
-		40,	// Staravia
-		20,	// Starly
-		80,	// Starmie
-		60,	// Staryu
-		120,	// Steelix
-		40,	// Stunky
-		60,	// Sudowoodo
-		100,	// Suicune
-		20,	// Sunflora
-		20,	// Sunkern
-		20,	// Surskit
-		20,	// Swablu
-		80,	// Swalot
-		80,	// Swampert
-		40,	// Swellow
-		20,	// Swinub
-		20,	// Taillow
-		60,	// Tangela
-		100,	// Tangrowth
-		80,	// Tauros
-		20,	// Teddiursa
-		60,	// Tentacool
-		80,	// Tentacruel
-		60,	// Togekiss
-		20,	// Togepi
-		20,	// Togetic
-		20,	// Torchic
-		80,	// Torkoal
-		120,	// Torterra
-		20,	// Totodile
-		60,	// Toxicroak
-		40,	// Trapinch
-		20,	// Treecko
-		80,	// Tropius
-		40,	// Turtwig
-		80,	// Typhlosion
-		120,	// Tyranitar
-		40,	// Tyrogue
-		60,	// Umbreon
-		20,	// Unown
-		100,	// Ursaring
-		20,	// Uxie
-		60,	// Vaporeon
-		40,	// Venomoth
-		60,	// Venonat
-		80,	// Venusaur
-		60,	// Vespiquen
-		40,	// Vibrava
-		40,	// Victreebel
-		60,	// Vigoroth
-		40,	// Vileplume
-		40,	// Volbeat
-		40,	// Voltorb
-		20,	// Vulpix
-		100,	// Wailmer
-		120,	// Wailord
-		100,	// Walrein
-		40,	// Wartortle
-		60,	// Weavile
-		20,	// Weedle
-		20,	// Weepinbell
-		20,	// Weezing
-		40,	// Whiscash
-		40,	// Whismur
-		40,	// Wigglytuff
-		20,	// Wingull
-		60,	// Wobbuffet
-		20,	// Wooper
-		20,	// Wormadam-P
-		20,	// Wormadam-S
-		20,	// Wormadam-T
-		20,	// Wurmple
-		40,	// Wynaut
-		40,	// Xatu
-		60,	// Yanma
-		80,	// Yanmega
-		60,	// Zangoose
-		80,	// Zapdos
-		40,	// Zigzagoon
-		20	// Zubat
+		// Generation 1
+		20,		// Bulbasaur
+		40,		// Ivysaur
+		80,		// Venusaur
+		20,		// Charmander
+		40,		// Charmeleon
+		80,		// Charizard
+		20,		// Squirtle
+		40,		// Wartortle
+		80,		// Blastoise
+		20,		// Caterpie
+		20,		// Metapod
+		60,		// Butterfree
+		20,		// Weedle
+		20,		// Kakuna
+		60,		// Beedrill
+		20,		// Pidgey
+		60,		// Pidgeotto
+		60,		// Pidgeot
+		20,		// Rattata
+		40,		// Raticate
+		20,		// Spearow
+		60,		// Fearow
+		20,		// Ekans
+		80,		// Arbok
+		20,		// Pikachu
+		60,		// Raichu
+		40,		// Sandshrew
+		60,		// Sandslash
+		20,		// Nidoran-F
+		40,		// Nidorina
+		80,		// Nidoqueen
+		20,		// Nidoran-M
+		40,		// Nidorino
+		80,		// Nidoking
+		20,		// Clefairy
+		60,		// Clefable
+		20,		// Vulpix
+		40,		// Ninetales
+		20,		// Jigglypuff
+		40,		// Wigglytuff
+		20,		// Zubat
+		80,		// Golbat
+		20,		// Oddish
+		20,		// Gloom
+		40,		// Vileplume
+		20,		// Paras
+		60,		// Parasect
+		60,		// Venonat
+		40,		// Venomoth
+		20,		// Diglett
+		60,		// Dugtrio
+		20,		// Meowth
+		60,		// Persian
+		40,		// Psyduck
+		80,		// Golduck
+		60,		// Mankey
+		60,		// Primeape
+		40,		// Growlithe
+		100,		// Arcanine
+		40,		// Poliwag
+		40,		// Poliwhirl
+		80,		// Poliwrath
+		40,		// Abra
+		80,		// Kadabra
+		60,		// Alakazam
+		40,		// Machop
+		80,		// Machoke
+		100,		// Machamp
+		20,		// Bellsprout
+		20,		// Weepinbell
+		40,		// Victreebel
+		60,		// Tentacool
+		80,		// Tentacruel
+		40,		// Geodude
+		100,		// Graveler
+		120,		// Golem
+		60,		// Ponyta
+		80,		// Rapidash
+		60,		// Slowpoke
+		80,		// Slowbro
+		20,		// Magnemite
+		80,		// Magneton
+		40,		// Farfetch'd
+		60,		// Doduo
+		80,		// Dodrio
+		80,		// Seel
+		100,		// Dewgong
+		60,		// Grimer
+		60,		// Muk
+		20,		// Shellder
+		100,		// Cloyster
+		20,		// Gastly
+		20,		// Haunter
+		60,		// Gengar
+		120,		// Onix
+		60,		// Drowzee
+		80,		// Hypno
+		20,		// Krabby
+		80,		// Kingler
+		40,		// Voltorb
+		80,		// Electrode
+		20,		// Exeggcute
+		100,		// Exeggutor
+		20,		// Cubone
+		60,		// Marowak
+		60,		// Hitmonlee
+		80,		// Hitmonchan
+		80,		// Lickitung
+		20,		// Koffing
+		20,		// Weezing
+		100,		// Rhyhorn
+		100,		// Rhydon
+		60,		// Chansey
+		60,		// Tangela
+		80,		// Kangaskhan
+		20,		// Horsea
+		40,		// Seadra
+		40,		// Goldeen
+		60,		// Seaking
+		60,		// Staryu
+		80,		// Starmie
+		80,		// Mr. Mime
+		80,		// Scyther
+		60,		// Jynx
+		60,		// Electabuzz
+		60,		// Magmar
+		80,		// Pinsir
+		80,		// Tauros
+		20,		// Magikarp
+		120,		// Gyarados
+		120,		// Lapras
+		20,		// Ditto
+		20,		// Eevee
+		60,		// Vaporeon
+		40,		// Jolteon
+		40,		// Flareon
+		60,		// Porygon
+		20,		// Omanyte
+		60,		// Omastar
+		40,		// Kabuto
+		60,		// Kabutops
+		80,		// Aerodactyl
+		120,		// Snorlax
+		80,		// Articuno
+		80,		// Zapdos
+		80,		// Moltres
+		20,		// Dratini
+		40,		// Dragonair
+		120,		// Dragonite
+		100,		// Mewtwo
+		20,		// Mew
+
+		// Generation 2
+		20,		// Chikorita
+		40,		// Bayleef
+		100,		// Meganium
+		20,		// Cyndaquil
+		40,		// Quilava
+		80,		// Typhlosion
+		20,		// Totodile
+		40,		// Croconaw
+		80,		// Feraligatr
+		20,		// Sentret
+		60,		// Furret
+		40,		// Hoothoot
+		60,		// Noctowl
+		40,		// Ledyba
+		60,		// Ledian
+		20,		// Spinarak
+		60,		// Ariados
+		80,		// Crobat
+		40,		// Chinchou
+		40,		// Lanturn
+		20,		// Pichu
+		20,		// Cleffa
+		20,		// Igglybuff
+		20,		// Togepi
+		20,		// Togetic
+		20,		// Natu
+		40,		// Xatu
+		20,		// Mareep
+		40,		// Flaaffy
+		80,		// Ampharos
+		20,		// Bellossom
+		20,		// Marill
+		60,		// Azumarill
+		60,		// Sudowoodo
+		60,		// Politoed
+		20,		// Hoppip
+		20,		// Skiploom
+		20,		// Jumpluff
+		40,		// Aipom
+		20,		// Sunkern
+		20,		// Sunflora
+		60,		// Yanma
+		20,		// Wooper
+		80,		// Quagsire
+		60,		// Espeon
+		60,		// Umbreon
+		20,		// Murkrow
+		80,		// Slowking
+		20,		// Misdreavus
+		20,		// Unown
+		60,		// Wobbuffet
+		60,		// Girafarig
+		20,		// Pineco
+		100,		// Forretress
+		40,		// Dunsparce
+		80,		// Gligar
+		120,		// Steelix
+		20,		// Snubbull
+		60,		// Granbull
+		20,		// Qwilfish
+		100,		// Scizor
+		40,		// Shuckle
+		80,		// Heracross
+		60,		// Sneasel
+		20,		// Teddiursa
+		100,		// Ursaring
+		60,		// Slugma
+		80,		// Magcargo
+		20,		// Swinub
+		80,		// Piloswine
+		20,		// Corsola
+		40,		// Remoraid
+		60,		// Octillery
+		40,		// Delibird
+		120,		// Mantine
+		80,		// Skarmory
+		40,		// Houndour
+		60,		// Houndoom
+		100,		// Kingdra
+		60,		// Phanpy
+		100,		// Donphan
+		60,		// Porygon2
+		80,		// Stantler
+		80,		// Smeargle
+		40,		// Tyrogue
+		60,		// Hitmontop
+		20,		// Smoochum
+		40,		// Elekid
+		40,		// Magby
+		80,		// Miltank
+		60,		// Blissey
+		100,		// Raikou
+		100,		// Entei
+		100,		// Suicune
+		80,		// Larvitar
+		100,		// Pupitar
+		120,		// Tyranitar
+		120,		// Lugia
+		100,		// Ho-Oh
+		20,		// Celebi
+
+		// Generation 3
+		20,		// Treecko
+		40,		// Grovyle
+		80,		// Sceptile
+		20,		// Torchic
+		40,		// Combusken
+		80,		// Blaziken
+		20,		// Mudkip
+		60,		// Marshtomp
+		80,		// Swampert
+		40,		// Poochyena
+		60,		// Mightyena
+		40,		// Zigzagoon
+		60,		// Linoone
+		20,		// Wurmple
+		20,		// Silcoon
+		60,		// Beautifly
+		40,		// Cascoon
+		60,		// Dustox
+		20,		// Lotad
+		60,		// Lombre
+		80,		// Ludicolo
+		20,		// Seedot
+		60,		// Nuzleaf
+		80,		// Shiftry
+		20,		// Taillow
+		40,		// Swellow
+		20,		// Wingull
+		60,		// Pelipper
+		20,		// Ralts
+		40,		// Kirlia
+		60,		// Gardevoir
+		20,		// Surskit
+		20,		// Masquerain
+		20,		// Shroomish
+		60,		// Breloom
+		40,		// Slakoth
+		60,		// Vigoroth
+		100,		// Slaking
+		20,		// Nincada
+		40,		// Ninjask
+		20,		// Shedinja
+		40,		// Whismur
+		60,		// Loudred
+		80,		// Exploud
+		80,		// Makuhita
+		120,		// Hariyama
+		20,		// Azurill
+		80,		// Nosepass
+		40,		// Skitty
+		60,		// Delcatty
+		40,		// Sableye
+		40,		// Mawile
+		80,		// Aron
+		100,		// Lairon
+		120,		// Aggron
+		40,		// Meditite
+		60,		// Medicham
+		40,		// Electrike
+		60,		// Manectric
+		20,		// Plusle
+		20,		// Minun
+		40,		// Volbeat
+		40,		// Illumise
+		20,		// Roselia
+		40,		// Gulpin
+		80,		// Swalot
+		40,		// Carvanha
+		80,		// Sharpedo
+		100,		// Wailmer
+		120,		// Wailord
+		40,		// Numel
+		120,		// Camerupt
+		80,		// Torkoal
+		60,		// Spoink
+		80,		// Grumpig
+		20,		// Spinda
+		40,		// Trapinch
+		40,		// Vibrava
+		80,		// Flygon
+		80,		// Cacnea
+		80,		// Cacturne
+		20,		// Swablu
+		40,		// Altaria
+		60,		// Zangoose
+		80,		// Seviper
+		100,		// Lunatone
+		100,		// Solrock
+		20,		// Barboach
+		40,		// Whiscash
+		40,		// Corphish
+		60,		// Crawdaunt
+		40,		// Baltoy
+		100,		// Claydol
+		40,		// Lileep
+		80,		// Cradily
+		40,		// Anorith
+		80,		// Armaldo
+		20,		// Feebas
+		100,		// Milotic
+		20,		// Castform
+		40,		// Kecleon
+		20,		// Shuppet
+		40,		// Banette
+		40,		// Duskull
+		60,		// Dusclops
+		80,		// Tropius
+		20,		// Chimecho
+		60,		// Absol
+		40,		// Wynaut
+		40,		// Snorunt
+		120,		// Glalie
+		60,		// Spheal
+		80,		// Sealeo
+		100,		// Walrein
+		80,		// Clamperl
+		60,		// Huntail
+		40,		// Gorebyss
+		40,		// Relicanth
+		20,		// Luvdisc
+		60,		// Bagon
+		100,		// Shelgon
+		100,		// Salamence
+		80,		// Beldum
+		120,		// Metang
+		120,		// Metagross
+		120,		// Regirock
+		100,		// Regice
+		120,		// Registeel
+		60,		// Latias
+		80,		// Latios
+		120,		// Kyogre
+		120,		// Groudon
+		120,		// Rayquaza
+		20,		// Jirachi
+		80,		// Deoxys-M
+		80,		// Deoxys-A
+		80,		// Deoxys-D
+		80,		// Deoxys-S
+
+		// Generation 4
+		40,		// Turtwig
+		80,		// Grotle
+		120,		// Torterra
+		20,		// Chimchar
+		40,		// Monferno
+		80,		// Infernape
+		20,		// Piplup
+		40,		// Prinplup
+		80,		// Empoleon
+		20,		// Starly
+		40,		// Staravia
+		40,		// Staraptor
+		40,		// Bidoof
+		60,		// Bibarel
+		20,		// Kricketot
+		60,		// Kricketune
+		20,		// Shinx
+		60,		// Luxio
+		60,		// Luxray
+		20,		// Budew
+		40,		// Roserade
+		60,		// Cranidos
+		100,		// Rampardos
+		80,		// Shieldon
+		100,		// Bastiodon
+		20,		// Burmy
+		20,		// Wormadam-P
+		20,		// Wormadam-S
+		20,		// Wormadam-T
+		40,		// Mothim
+		20,		// Combee
+		60,		// Vespiquen
+		20,		// Pachirisu
+		60,		// Buizel
+		60,		// Floatzel
+		20,		// Cherubi
+		20,		// Cherrim
+		20,		// Shellos
+		60,		// Gastrodon
+		40,		// Ambipom
+		20,		// Drifloon
+		40,		// Drifblim
+		20,		// Buneary
+		60,		// Lopunny
+		20,		// Mismagius
+		60,		// Honchkrow
+		20,		// Glameow
+		60,		// Purugly
+		20,		// Chingling
+		40,		// Stunky
+		60,		// Skuntank
+		80,		// Bronzor
+		100,		// Bronzong
+		40,		// Bonsly
+		40,		// Mime Jr.
+		40,		// Happiny
+		20,		// Chatot
+		100,		// Spiritomb
+		40,		// Gible
+		80,		// Gabite
+		80,		// Garchomp
+		100,		// Munchlax
+		40,		// Riolu
+		80,		// Lucario
+		60,		// Hippopotas
+		120,		// Hippowdon
+		40,		// Skorupi
+		80,		// Drapion
+		40,		// Croagunk
+		60,		// Toxicroak
+		60,		// Carnivine
+		20,		// Finneon
+		40,		// Lumineon
+		80,		// Mantyke
+		80,		// Snover
+		100,		// Abomasnow
+		60,		// Weavile
+		100,		// Magnezone
+		100,		// Lickilicky
+		120,		// Rhyperior
+		100,		// Tangrowth
+		100,		// Electivire
+		80,		// Magmortar
+		60,		// Togekiss
+		80,		// Yanmega
+		60,		// Leafeon
+		60,		// Glaceon
+		60,		// Gliscor
+		120,		// Mamoswine
+		60,		// Porygon-Z
+		80,		// Gallade
+		120,		// Probopass
+		100,		// Dusknoir
+		60,		// Froslass
+		20,		// Rotom
+		20,		// Rotom-H
+		20,		// Rotom-W
+		20,		// Rotom-F
+		20,		// Rotom-S
+		20,		// Rotom-C
+		20,		// Uxie
+		20,		// Mesprit
+		20,		// Azelf
+		120,		// Dialga
+		120,		// Palkia
+		120,		// Heatran
+		120,		// Regigigas
+		120,		// Giratina-A
+		120,		// Giratina-O
+		80,		// Cresselia
+		20,		// Phione
+		20,		// Manaphy
+		80,		// Darkrai
+		20,		// Shaymin-L
+		20,		// Shaymin-S
+		120,		// Arceus
+
+		// Generation 5
+		20,		// Victini
+		20,		// Snivy
+		40,		// Servine
+		80,		// Serperior
+		20,		// Tepig
+		80,		// Pignite
+		100,		// Emboar
+		20,		// Oshawott
+		40,		// Dewott
+		80,		// Samurott
+		40,		// Patrat
+		60,		// Watchog
+		20,		// Lillipup
+		40,		// Herdier
+		80,		// Stoutland
+		40,		// Purrloin
+		60,		// Liepard
+		40,		// Pansage
+		60,		// Simisage
+		40,		// Pansear
+		60,		// Simisear
+		40,		// Panpour
+		60,		// Simipour
+		40,		// Munna
+		80,		// Musharna
+		20,		// Pidove
+		40,		// Tranquill
+		60,		// Unfezant
+		60,		// Blitzle
+		80,		// Zebstrika
+		40,		// Roggenrola
+		100,		// Boldore
+		120,		// Gigalith
+		20,		// Woobat
+		40,		// Swoobat
+		20,		// Drilbur
+		60,		// Excadrill
+		60,		// Audino
+		40,		// Timburr
+		60,		// Gurdurr
+		80,		// Conkeldurr
+		20,		// Tympole
+		40,		// Palpitoad
+		80,		// Seismitoad
+		80,		// Throh
+		80,		// Sawk
+		20,		// Sewaddle
+		20,		// Swadloon
+		40,		// Leavanny
+		20,		// Venipede
+		80,		// Whirlipede
+		120,		// Scolipede
+		20,		// Cottonee
+		20,		// Whimsicott
+		20,		// Petilil
+		40,		// Lilligant
+		40,		// Basculin-R
+		40,		// Basculin-B
+		40,		// Sandile
+		60,		// Krokorok
+		80,		// Krookodile
+		60,		// Darumaka
+		80,		// Darmanitan
+		60,		// Maractus
+		40,		// Dwebble
+		100,		// Crustle
+		40,		// Scraggy
+		60,		// Scrafty
+		40,		// Sigilyph
+		20,		// Yamask
+		80,		// Cofagrigus
+		40,		// Tirtouga
+		80,		// Carracosta
+		20,		// Archen
+		60,		// Archeops
+		60,		// Trubbish
+		100,		// Garbodor
+		40,		// Zorua
+		80,		// Zoroark
+		20,		// Minccino
+		20,		// Cinccino
+		20,		// Gothita
+		40,		// Gothorita
+		60,		// Gothitelle
+		20,		// Solosis
+		20,		// Duosion
+		40,		// Reuniclus
+		20,		// Ducklett
+		40,		// Swanna
+		20,		// Vanillite
+		60,		// Vanillish
+		80,		// Vanilluxe
+		40,		// Deerling
+		80,		// Sawsbuck
+		20,		// Emolga
+		20,		// Karrablast
+		60,		// Escavalier
+		20,		// Foongus
+		40,		// Amoonguss
+		60,		// Frillish
+		100,		// Jellicent
+		60,		// Alomomola
+		20,		// Joltik
+		40,		// Galvantula
+		40,		// Ferroseed
+		100,		// Ferrothorn
+		40,		// Klink
+		80,		// Klang
+		80,		// Klinklang
+		20,		// Tynamo
+		40,		// Eelektrik
+		80,		// Eelektross
+		20,		// Elgyem
+		60,		// Beheeyem
+		20,		// Litwick
+		40,		// Lampent
+		60,		// Chandelure
+		40,		// Axew
+		60,		// Fraxure
+		100,		// Haxorus
+		20,		// Cubchoo
+		120,		// Beartic
+		100,		// Cryogonal
+		20,		// Shelmet
+		60,		// Accelgor
+		40,		// Stunfisk
+		40,		// Mienfoo
+		60,		// Mienshao
+		100,		// Druddigon
+		80,		// Golett
+		120,		// Golurk
+		40,		// Pawniard
+		80,		// Bisharp
+		80,		// Bouffalant
+		40,		// Rufflet
+		60,		// Braviary
+		20,		// Vullaby
+		60,		// Mandibuzz
+		80,		// Heatmor
+		60,		// Durant
+		40,		// Deino
+		60,		// Zweilous
+		100,		// Hydreigon
+		60,		// Larvesta
+		60,		// Volcarona
+		120,		// Cobalion
+		120,		// Terrakion
+		100,		// Virizion
+		80,		// Tornadus-I
+		80,		// Tornadus-T
+		80,		// Thundurus-I
+		80,		// Thundurus-T
+		120,		// Reshiram
+		120,		// Zekrom
+		80,		// Landorus-I
+		80,		// Landorus-T
+		120,		// Kyurem
+		120,		// Kyurem-B
+		120,		// Kyurem-W
+		60,		// Keldeo
+		20,		// Meloetta
+		80,		// Genesect 
 	};
 	return mass_array[static_cast<unsigned>(name())];
 }

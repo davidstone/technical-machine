@@ -64,7 +64,7 @@ void test_small_size_team(Team & team) {
 	for (unsigned const foe_size : { 1u, 2u }) {
 		constexpr unsigned level = 100;
 		Gender const gender(Gender::MALE);
-		Species const species = static_cast<Species>(foe_size);
+		auto const species = static_cast<Species>(foe_size);
 		team.add_pokemon(species, level, gender);
 		VariableCollection collection (Moves::WHIRLWIND, foe_size);
 		collection.set_phaze_index(team, species);
@@ -77,7 +77,7 @@ void test_other_combinations(Team & team, unsigned const max_foe_size) {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
 	for (unsigned foe_size = 3; foe_size <= max_foe_size; ++foe_size) {
-		Species const species = static_cast<Species>(foe_size);
+		auto const species = static_cast<Species>(foe_size);
 		team.add_pokemon(species, level, gender);
 		VariableCollection collection (Moves::WHIRLWIND, foe_size);
 		for (unsigned new_index = 0; new_index <= foe_size; ++new_index) {

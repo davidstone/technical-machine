@@ -40,18 +40,18 @@ bool operator!= (Type const lhs, Type const rhs) {
 }
 
 bool Type::is_boosted_by_flash_fire () const {
-	return type == FIRE;
+	return type == Fire;
 }
 
 bool Type::is_immune_to_hail () const {
-	return type == ICE;
+	return type == Ice;
 }
 
 bool Type::is_immune_to_sandstorm () const {
 	switch (type) {
-		case GROUND:
-		case ROCK:
-		case STEEL:
+		case Ground:
+		case Rock:
+		case Steel:
 			return true;
 		default:
 			return false;
@@ -59,28 +59,28 @@ bool Type::is_immune_to_sandstorm () const {
 }
 
 bool Type::is_strengthened_by_weather (Weather const & weather) const {
-	return (weather.rain() and type == WATER) or (weather.sun() and type == FIRE);
+	return (weather.rain() and type == Water) or (weather.sun() and type == Fire);
 }
 
 bool Type::is_weakened_by_weather (Weather const & weather) const {
-	return (weather.rain() and type == FIRE) or (weather.sun() and type == WATER);
+	return (weather.rain() and type == Fire) or (weather.sun() and type == Water);
 }
 
 template<>
 bool Type::blocks_status<Status::BURN> () const {
-	return type == FIRE;
+	return type == Fire;
 }
 
 template<>
 bool Type::blocks_status<Status::FREEZE> () const {
-	return type == ICE;
+	return type == Ice;
 }
 
 template<>
 bool Type::blocks_status<Status::POISON> () const {
 	switch (type) {
-		case POISON:
-		case STEEL:
+		case Poison:
+		case Steel:
 			return true;
 		default:
 			return false;
@@ -144,7 +144,7 @@ std::vector <unsigned> Type::get_effectiveness_variables (Pokemon const & target
 }
 
 unsigned Type::stealth_rock_effectiveness (Pokemon const & pokemon) {
-	return get_effectiveness (ROCK, pokemon);
+	return get_effectiveness (Rock, pokemon);
 }
 
 }	// namespace technicalmachine

@@ -29,24 +29,24 @@ class Weather;
 class Type {
 	public:
 		enum Types : uint8_t {
-			BUG,
-			DARK,
-			DRAGON,
-			ELECTRIC,
-			FIGHTING,
-			FIRE,
-			FLYING,
-			GHOST,
-			GRASS,
-			GROUND,
-			ICE,
-			NORMAL,
-			POISON,
-			PSYCHIC,
-			ROCK,
-			STEEL,
-			WATER,
-			TYPELESS
+			Bug,
+			Dark,
+			Dragon,
+			Electric,
+			Fighting,
+			Fire,
+			Flying,
+			Ghost,
+			Grass,
+			Ground,
+			Ice,
+			Normal,
+			Poison,
+			Psychic,
+			Rock,
+			Steel,
+			Water,
+			Typeless
 		};
 		Type (Types name);
 		friend bool operator== (Type lhs, Type rhs);
