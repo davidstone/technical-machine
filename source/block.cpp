@@ -107,20 +107,21 @@ bool is_blocked_by_bide (ActivePokemon const & user, Move const & move) {
 
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
 	return move.is_switch() ?
-		!is_blocked_from_switching (user, other, weather) and !user.is_switching_to_self (move) :
+		!user.is_switching_to_self (move) and !is_blocked_from_switching (user, other, weather) :
 		true;
 }
 
 bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather) {
-	return (other.ability().blocks_switching(user, weather) or user.trapped()) and
-			!user.item().allows_switching();
+	bool const block_attempted = other.ability().blocks_switching(user, weather) or user.trapped();
+	bool const result = block_attempted and !user.item().allows_switching();
+	return result;
 }
 
 bool not_illegal_struggle (Pokemon const & user, Move const & move) {
-	// If the move is not Struggle, then I can't be using an illegal Struggle.
-	// Otherwise, check to see if any regular move is selectable. If it is, then
-	// Struggle is not a valid selection.
-	return !move.is_struggle() or !user.move.a_regular_move_is_selectable();
+	if (!move.is_struggle())
+		return true;
+	bool const struggle_can_be_selected = !user.move.a_regular_move_is_selectable();
+	return struggle_can_be_selected;
 }
 
 // Things that both block selection and block execution in between sleep and confusion

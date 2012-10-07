@@ -704,7 +704,7 @@ void ActivePokemon::update_to_correct_switch() {
 }
 
 bool ActivePokemon::trapped() const {
-	return !fully_trapped and !ingrained()  and !partial_trap;
+	return fully_trapped or ingrained() or partial_trap;
 }
 
 bool ActivePokemon::tormented() const {
