@@ -77,15 +77,39 @@ void function (Fl_Widget * w, void * d) {
 }	// unnamed namespace
 
 int main () {
-	Fl_Window win (520, 730, "Team Predictor");
-		Fl_Input input0 (50, 10, 120, 30, "Input");
-		Fl_Input input1 (50, 50, 120, 30);
-		Fl_Input input2 (50, 90, 120, 30);
-		Fl_Input input3 (50, 130, 120, 30);
-		Fl_Input input4 (50, 170, 120, 30);
-		Fl_Input input5 (50, 210, 120, 30);
-		Fl_Return_Button calculate (50, 250, 120, 30, "Calculate");
-		Fl_Multiline_Output output (250, 10, 260, 710, "Output");
+	constexpr int left_padding = 50;
+	constexpr int padding = 10;
+	constexpr int input_width = 120;
+	constexpr int input_height = 30;
+	constexpr int button_width = input_width;
+	constexpr int button_height = input_height;
+	auto const y_position = [](int const button_number) {
+		return (1 + button_number) * padding + button_number * input_height;
+	};
+	
+	constexpr int output_width = 320;
+	constexpr int height_per_line = 16;
+	constexpr int lines_for_ability = 1;
+	constexpr int lines_for_moves = 4;
+	constexpr int lines_per_pokemon = 1 + lines_for_ability + lines_for_moves;
+	constexpr int pokemon_per_team = 6;
+	constexpr int lines_per_team = 1 + pokemon_per_team * lines_per_pokemon;
+	constexpr int team_padding = 10;
+	constexpr int team_height = lines_per_team * height_per_line + team_padding;
+	constexpr int output_height = team_height;
+	constexpr int output_x_position = left_padding + input_width + left_padding;
+	
+	constexpr int window_width = output_x_position + output_width + padding;
+	constexpr int window_height = padding + output_height + padding;
+	Fl_Window win (window_width, window_height, "Team Predictor");
+		Fl_Input input0 (left_padding, y_position(0), input_width, input_height, "Input");
+		Fl_Input input1 (left_padding, y_position(1), input_width, input_height);
+		Fl_Input input2 (left_padding, y_position(2), input_width, input_height);
+		Fl_Input input3 (left_padding, y_position(3), input_width, input_height);
+		Fl_Input input4 (left_padding, y_position(4), input_width, input_height);
+		Fl_Input input5 (left_padding, y_position(5), input_width, input_height);
+		Fl_Return_Button calculate (left_padding, y_position(6), button_width, button_height, "Calculate");
+		Fl_Multiline_Output output (output_x_position, padding, output_width, output_height);
 	win.end();
 
 	Data data;
