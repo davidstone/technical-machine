@@ -77,7 +77,7 @@ class Team {
 
 		typedef uint64_t hash_type;
 		hash_type hash () const;
-		std::string to_string () const;
+		std::string to_string(bool include_owner = true) const;
 		friend bool operator== (Team const & lhs, Team const & rhs);
 
 	private:

@@ -69,7 +69,7 @@ void function (Fl_Widget * w, void * d) {
 	
 	if (!team.all_pokemon().is_empty()) {
 		team = predict_team (data.detailed, team, using_lead);
-		data.output->value (team.to_string().c_str());
+		data.output->value (team.to_string(false).c_str());
 	}
 	else
 		data.output->value ("");
@@ -93,7 +93,7 @@ int main () {
 	constexpr int lines_for_moves = 4;
 	constexpr int lines_per_pokemon = 1 + lines_for_ability + lines_for_moves;
 	constexpr int pokemon_per_team = 6;
-	constexpr int lines_per_team = 1 + pokemon_per_team * lines_per_pokemon;
+	constexpr int lines_per_team = pokemon_per_team * lines_per_pokemon;
 	constexpr int team_padding = 10;
 	constexpr int team_height = lines_per_team * height_per_line + team_padding;
 	constexpr int output_height = team_height;

@@ -236,9 +236,12 @@ bool operator!= (Team const & lhs, Team const & rhs) {
 	return !(lhs == rhs);
 }
 
-std::string Team::to_string() const {
-	std::string output = me ? "AI" : "Foe";
-	output += "'s team:\n";
+std::string Team::to_string(bool const include_owner) const {
+	std::string output;
+	if (include_owner) {
+		output += me ? "AI" : "Foe";
+		output += "'s team:\n";
+	}
 	all_pokemon().for_each([& output](Pokemon const & member) {
 		output += member.to_string();
 		double const d_per_cent_hp = 100.0 * member.hp.stat / member.hp.max;
