@@ -58,6 +58,7 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		bool a_regular_move_is_selectable () const;
 		// Move::END if none
 		Moves name_of_last_used_move () const;
+		bool moved_since_switch() const;
 		std::vector<RankedMove> create_ordered_container (bool ai) const;
 		index_type size () const;
 		index_type regular_size () const;

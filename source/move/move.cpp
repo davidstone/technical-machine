@@ -132,6 +132,10 @@ Priority Move::priority() const {
 	return cached_priority;
 }
 
+bool Move::is_struggle_or_switch () const {
+	return is_struggle() or is_switch();
+}
+
 bool Move::is_struggle() const {
 	return name == Moves::Struggle;
 }
@@ -221,10 +225,6 @@ unsigned Move::triple_kick_power() const {
 
 Rational Move::metronome_boost() const {
 	return times_used.metronome_boost();
-}
-
-bool Move::is_struggle_or_switch () const {
-	return pp.has_unlimited_pp();
 }
 
 bool Move::is_phaze (Moves name) {

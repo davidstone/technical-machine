@@ -427,6 +427,10 @@ bool ActivePokemon::moved() const {
 	return has_moved;
 }
 
+bool ActivePokemon::moved_since_switch() const {
+	return get_pokemon().move.moved_since_switch();
+}
+
 void ActivePokemon::activate_mud_sport() {
 	mud_sport = true;
 }

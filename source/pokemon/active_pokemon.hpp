@@ -144,6 +144,7 @@ class ActivePokemon {
 		void set_miss(bool value);
 		void set_moved(bool value = true);
 		bool moved() const;
+		bool moved_since_switch() const;
 		void activate_mud_sport();
 		Species name() const;
 		Nature const & nature() const;

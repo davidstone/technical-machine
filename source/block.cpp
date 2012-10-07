@@ -43,6 +43,7 @@ bool block2 (ActivePokemon const & user, Move const & move, Weather const & weat
 bool is_blocked_due_to_lock_in (ActivePokemon const & user, Move const & move);
 bool standard_move_lock_in (ActivePokemon const & user, Move const & move);
 bool is_locked_in (ActivePokemon const & user);
+bool is_locked_in_by_choice_item(ActivePokemon const & user);
 bool is_locked_in_to_different_move (Pokemon const & user, Move const & move);
 bool is_blocked_due_to_status (ActivePokemon & user, Move const & move);
 bool is_blocked_by_freeze (Pokemon const & user, Move const & move);
@@ -154,11 +155,15 @@ bool standard_move_lock_in (ActivePokemon const & user, Move const & move) {
 }
 
 bool is_locked_in (ActivePokemon const & user) {
-	return user.is_encored() or user.recharging() or user.item().is_choice_item();
+	return user.is_encored() or user.recharging() or is_locked_in_by_choice_item(user);
+}
+
+bool is_locked_in_by_choice_item(ActivePokemon const & user) {
+	return user.item().is_choice_item() and user.moved_since_switch();
 }
 
 bool is_locked_in_to_different_move (Pokemon const & user, Move const & move) {
-	return user.move.name_of_last_used_move() == move.name;
+	return user.move.name_of_last_used_move() != move.name;
 }
 
 bool blocked_by_torment (ActivePokemon const & user, Move const & move) {
