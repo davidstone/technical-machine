@@ -77,7 +77,7 @@ void test_item () {
 void test_move () {
 	std::cout << "\t\tVerifying correct move.\n";
 	for_each<Moves>([](Moves const original) {
-		if (!Move::is_switch (original)) {
+		if (!Move::is_switch (original) and original != Moves::Hit_Self) {
 			unsigned const id = move_to_id (original);
 			Moves const result = id_to_move (id);
 			if (original != result)

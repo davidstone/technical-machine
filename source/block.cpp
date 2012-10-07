@@ -24,7 +24,6 @@
 #include "weather.hpp"
 
 #include "move/move.hpp"
-#include "move/moves.hpp"
 
 #include "pokemon/pokemon.hpp"
 #include "pokemon/active_pokemon.hpp"
@@ -53,7 +52,7 @@ bool handle_sleep_counter (ActivePokemon & user, Move const & move);
 
 void determine_all_legal_selections (ActivePokemon & user, ActivePokemon const & other, Weather const & weather) {
 	user.all_moves().for_each([& user, & other, & weather](Move & move) {
-		move.cached_selectable = is_legal_selection(user, move, other, weather);
+		move.set_selectable(is_legal_selection(user, move, other, weather));
 	});
 }
 
@@ -103,7 +102,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 namespace {
 
 bool is_blocked_by_bide (ActivePokemon const & user, Move const & move) {
-	return user.is_locked_in_to_bide() and move.name != Moves::BIDE;
+	return user.is_locked_in_to_bide() and move.is_bide();
 }
 
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
@@ -118,7 +117,10 @@ bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const 
 }
 
 bool not_illegal_struggle (Pokemon const & user, Move const & move) {
-	return move.name != Moves::STRUGGLE or !user.move.a_regular_move_is_selectable();
+	// If the move is not Struggle, then I can't be using an illegal Struggle.
+	// Otherwise, check to see if any regular move is selectable. If it is, then
+	// Struggle is not a valid selection.
+	return !move.is_struggle() or !user.move.a_regular_move_is_selectable();
 }
 
 // Things that both block selection and block execution in between sleep and confusion

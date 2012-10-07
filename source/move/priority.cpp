@@ -56,51 +56,51 @@ namespace {
 
 int8_t get_priority(Moves const move) {
 	switch (move) {
-		case Moves::SWITCH0:
-		case Moves::SWITCH1:
-		case Moves::SWITCH2:
-		case Moves::SWITCH3:
-		case Moves::SWITCH4:
-		case Moves::SWITCH5:
+		case Moves::Switch0:
+		case Moves::Switch1:
+		case Moves::Switch2:
+		case Moves::Switch3:
+		case Moves::Switch4:
+		case Moves::Switch5:
 			return 6;
-		case Moves::HELPING_HAND:
+		case Moves::Helping_Hand:
 			return 5;
-		case Moves::MAGIC_COAT:
-		case Moves::SNATCH:
+		case Moves::Magic_Coat:
+		case Moves::Snatch:
 			return 4;
-		case Moves::DETECT:
-		case Moves::ENDURE:
-		case Moves::FOLLOW_ME:
-		case Moves::PROTECT:
+		case Moves::Detect:
+		case Moves::Endure:
+		case Moves::Follow_Me:
+		case Moves::Protect:
 			return 3;
-		case Moves::FEINT:
+		case Moves::Feint:
 			return 2;
-		case Moves::AQUA_JET:
-		case Moves::BIDE:
-		case Moves::BULLET_PUNCH:
-		case Moves::EXTREMESPEED:
-		case Moves::FAKE_OUT:
-		case Moves::ICE_SHARD:
-		case Moves::MACH_PUNCH:
-		case Moves::QUICK_ATTACK:
-		case Moves::SHADOW_SNEAK:
-		case Moves::SUCKER_PUNCH:
-		case Moves::VACUUM_WAVE:
+		case Moves::Aqua_Jet:
+		case Moves::Bide:
+		case Moves::Bullet_Punch:
+		case Moves::ExtremeSpeed:
+		case Moves::Fake_Out:
+		case Moves::Ice_Shard:
+		case Moves::Mach_Punch:
+		case Moves::Quick_Attack:
+		case Moves::Shadow_Sneak:
+		case Moves::Sucker_Punch:
+		case Moves::Vacuum_Wave:
 			return 1;
-		case Moves::VITAL_THROW:
+		case Moves::Vital_Throw:
 			return -1;
-		case Moves::FOCUS_PUNCH:
+		case Moves::Focus_Punch:
 			return -2;
-		case Moves::AVALANCHE:
-		case Moves::REVENGE:
+		case Moves::Avalanche:
+		case Moves::Revenge:
 			return -3;
-		case Moves::COUNTER:
-		case Moves::MIRROR_COAT:
+		case Moves::Counter:
+		case Moves::Mirror_Coat:
 			return -4;
-		case Moves::ROAR:
-		case Moves::WHIRLWIND:
+		case Moves::Roar:
+		case Moves::Whirlwind:
 			return -5;
-		case Moves::TRICK_ROOM:
+		case Moves::Trick_Room:
 			return -6;
 		default:
 			return 0;

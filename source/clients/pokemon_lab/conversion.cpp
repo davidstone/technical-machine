@@ -50,13 +50,11 @@ unsigned gender_to_id (Gender::Genders gender) {
 }
 
 Moves id_to_move (unsigned const id) {
-	return (id < static_cast<unsigned>(Moves::SWITCH0)) ?
-		static_cast<Moves>(id) :
-		static_cast<Moves>(id + 6);
+	return static_cast<Moves>(id);
 }
 
 unsigned move_to_id (Moves move) {
-	return (move < Moves::SWITCH0) ? static_cast<unsigned>(move) : static_cast<unsigned>(move) - 6;
+	return static_cast<unsigned>(move);
 }
 
 Species id_to_species (unsigned const id) {

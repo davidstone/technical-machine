@@ -86,11 +86,11 @@ namespace {
 
 container_type create_container (Moves const move, unsigned const foe_size) {
 	switch (move) {
-		case Moves::ACUPRESSURE:
+		case Moves::Acupressure:
 			return simple_range(0, 6, move);
-		case Moves::FIRE_FANG:
-		case Moves::ICE_FANG:
-		case Moves::THUNDER_FANG: {
+		case Moves::Fire_Fang:
+		case Moves::Ice_Fang:
+		case Moves::Thunder_Fang: {
 			constexpr uint16_t flinch_and_status = Variable::max_probability / (10u * 10u);
 			constexpr uint16_t only_flinch = Variable::max_probability / 10u - flinch_and_status;
 			constexpr uint16_t only_status = Variable::max_probability / 10u - flinch_and_status;
@@ -102,7 +102,7 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 				Variable(3, flinch_and_status)
 			});
 		}
-		case Moves::MAGNITUDE:
+		case Moves::Magnitude:
 			return container_type ({
 				Variable(10, Variable::max_probability * 5u / 100u),
 				Variable(30, Variable::max_probability * 10u / 100u),
@@ -112,7 +112,7 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 				Variable(110, Variable::max_probability * 10u / 100u),
 				Variable(150, Variable::max_probability * 5u / 100u)
 			});
-		case Moves::PRESENT: {
+		case Moves::Present: {
 			uint16_t const probability = get_probability (move);
 			return container_type ({
 				Variable(0, probability),
@@ -121,10 +121,10 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 				Variable(120, probability)
 			});
 		}
-		case Moves::PSYWAVE:
+		case Moves::Psywave:
 			return simple_range(5, 15, move);
-		case Moves::ROAR:
-		case Moves::WHIRLWIND: {
+		case Moves::Roar:
+		case Moves::Whirlwind: {
 			if (foe_size > 2) {
 				uint16_t const probability = Variable::max_probability / (foe_size - 1);
 				return simple_range(0, foe_size - 2, probability);
@@ -135,7 +135,7 @@ container_type create_container (Moves const move, unsigned const foe_size) {
 				});
 			}
 		}
-		case Moves::TRI_ATTACK:
+		case Moves::Tri_Attack:
 			return simple_range(0, 3, move);
 		default:
 			return default_effects(move);

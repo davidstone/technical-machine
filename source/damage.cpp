@@ -86,23 +86,23 @@ unsigned capped_damage (ActivePokemon const & attacker, Team const & defender, W
 
 unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather) {
 	switch (attacker.move().name) {
-		case Moves::DRAGON_RAGE:
+		case Moves::Dragon_Rage:
 			return 40;
-		case Moves::ENDEAVOR:
+		case Moves::Endeavor:
 			return static_cast<unsigned> (std::max(defender.pokemon().hp().stat - attacker.hp().stat, 0));
-		case Moves::FISSURE:
-		case Moves::GUILLOTINE:
-		case Moves::HORN_DRILL:
-		case Moves::SHEER_COLD:
+		case Moves::Fissure:
+		case Moves::Guillotine:
+		case Moves::Horn_Drill:
+		case Moves::Sheer_Cold:
 			return defender.pokemon().hp().max;
-		case Moves::NIGHT_SHADE:
-		case Moves::SEISMIC_TOSS:
+		case Moves::Night_Shade:
+		case Moves::Seismic_Toss:
 			return attacker.level();
-		case Moves::PSYWAVE:
+		case Moves::Psywave:
 			return attacker.move().variable().psywave_damage(attacker.level());
-		case Moves::SONICBOOM:
+		case Moves::SonicBoom:
 			return 20;
-		case Moves::SUPER_FANG:
+		case Moves::Super_Fang:
 			return defender.pokemon().hp().stat / 2;
 		default:
 			return regular_damage (attacker, defender, weather);

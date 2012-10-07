@@ -78,14 +78,14 @@ unsigned return_power(Pokemon const & pokemon) {
 
 unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon const & defender) {
 	switch (attacker.move().name) {
-		case Moves::CRUSH_GRIP:
-		case Moves::WRING_OUT:
+		case Moves::Crush_Grip:
+		case Moves::Wring_Out:
 			return 120u * defender.hp().stat / defender.hp().max + 1;
-		case Moves::ERUPTION:
-		case Moves::WATER_SPOUT:
+		case Moves::Eruption:
+		case Moves::Water_Spout:
 			return 150u * attacker.hp().stat / attacker.hp().max;
-		case Moves::FLAIL:
-		case Moves::REVERSAL: {
+		case Moves::Flail:
+		case Moves::Reversal: {
 			unsigned const k = 64u * attacker.hp().stat / attacker.hp().max;
 			if (k <= 1)
 				return 200;
@@ -100,23 +100,23 @@ unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon con
 			else
 				return 20;
 		}
-		case Moves::FLING:
+		case Moves::Fling:
 			return attacker.item().get_fling_power();
-		case Moves::FRUSTRATION:
+		case Moves::Frustration:
 			return 102 - return_power(attacker);
-		case Moves::FURY_CUTTER:
+		case Moves::Fury_Cutter:
 			return attacker.move().fury_cutter_power();
-		case Moves::GRASS_KNOT:
-		case Moves::LOW_KICK:
+		case Moves::Grass_Knot:
+		case Moves::Low_Kick:
 			return defender.power_of_mass_based_moves();
-		case Moves::GYRO_BALL: {
+		case Moves::Gyro_Ball: {
 			unsigned const uncapped_power = 25u * defender.spe().stat / attacker.spe().stat + 1;
 			return std::min(uncapped_power, 150u);
 		}
-		case Moves::ICE_BALL:
-		case Moves::ROLLOUT:
+		case Moves::Ice_Ball:
+		case Moves::Rollout:
 			return attacker.move().momentum_move_power();
-		case Moves::HIDDEN_POWER: {
+		case Moves::Hidden_Power: {
 			unsigned const u = second_lowest_bit (attacker.hp()) * (1 << 0);	// 1
 			unsigned const v = second_lowest_bit (attacker.atk()) * (1 << 1);	// 2
 			unsigned const w = second_lowest_bit (attacker.def()) * (1 << 2);	// 4
@@ -125,24 +125,24 @@ unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon con
 			unsigned const z = second_lowest_bit (attacker.spd()) * (1 << 5);	// 32
 			return (u + v + w + x + y + z) * 40 / 63 + 30;
 		}
-		case Moves::MAGNITUDE:
+		case Moves::Magnitude:
 			return attacker.move().variable().value();
-		case Moves::NATURAL_GIFT:
+		case Moves::Natural_Gift:
 			return attacker.item().get_berry_power ();
-		case Moves::PRESENT:
+		case Moves::Present:
 			assert (!attacker.move().variable().present_heals());
 			return attacker.move().variable().value();
-		case Moves::PUNISHMENT: {
+		case Moves::Punishment: {
 			unsigned const uncapped_power = 60 + 20 * defender.positive_stat_boosts();
 			return std::min(uncapped_power, 200u);
 		}
-		case Moves::RETURN:
+		case Moves::Return:
 			return return_power(attacker);
-		case Moves::SPIT_UP:
+		case Moves::Spit_Up:
 			return attacker.spit_up_power();
-		case Moves::TRIPLE_KICK:
+		case Moves::Triple_Kick:
 			return attacker.move().triple_kick_power();
-		case Moves::TRUMP_CARD:
+		case Moves::Trump_Card:
 			return attacker.move().pp.trump_card_power();
 		default:
 			return attacker.move().base_power();
@@ -167,29 +167,29 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 	if (defender.vanish_doubles_power(move))
 		return true;
 	switch (move) {
-		case Moves::ASSURANCE:
+		case Moves::Assurance:
 			return defender.damaged();
-		case Moves::AVALANCHE: 
-		case Moves::REVENGE:
+		case Moves::Avalanche: 
+		case Moves::Revenge:
 			return attacker.damaged();
-		case Moves::BRINE:
+		case Moves::Brine:
 			return defender.hp().stat <= defender.hp().max / 2;
-		case Moves::FACADE:
+		case Moves::Facade:
 			return attacker.status().boosts_facade();
-		case Moves::ICE_BALL:
-		case Moves::ROLLOUT:
+		case Moves::Ice_Ball:
+		case Moves::Rollout:
 			return attacker.defense_curled();
-		case Moves::PAYBACK:
+		case Moves::Payback:
 			return defender.moved();
-		case Moves::SMELLINGSALT:
+		case Moves::SmellingSalt:
 			return defender.status().boosts_smellingsalt();
-		case Moves::SOLARBEAM:
+		case Moves::SolarBeam:
 			return !weather.rain();
-		case Moves::STOMP:
+		case Moves::Stomp:
 			return defender.minimized();
-		case Moves::WAKE_UP_SLAP:
+		case Moves::Wake_Up_Slap:
 			return defender.status().is_sleeping();
-		case Moves::WEATHER_BALL:
+		case Moves::Weather_Ball:
 			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:
 			return false;

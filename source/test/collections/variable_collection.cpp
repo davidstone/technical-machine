@@ -66,7 +66,7 @@ void test_small_size_team(Team & team) {
 		Gender const gender(Gender::MALE);
 		auto const species = static_cast<Species>(foe_size);
 		team.add_pokemon(species, level, gender);
-		VariableCollection collection (Moves::WHIRLWIND, foe_size);
+		VariableCollection collection (Moves::Whirlwind, foe_size);
 		collection.set_phaze_index(team, species);
 		if (collection.index() != 0)
 			throw InvalidCollection("Phazing index is not always 0 when the team size is " + std::to_string(foe_size) + ".");
@@ -79,7 +79,7 @@ void test_other_combinations(Team & team, unsigned const max_foe_size) {
 	for (unsigned foe_size = 3; foe_size <= max_foe_size; ++foe_size) {
 		auto const species = static_cast<Species>(foe_size);
 		team.add_pokemon(species, level, gender);
-		VariableCollection collection (Moves::WHIRLWIND, foe_size);
+		VariableCollection collection (Moves::Whirlwind, foe_size);
 		for (unsigned new_index = 0; new_index <= foe_size; ++new_index) {
 			for (unsigned current_index = 0; current_index != foe_size; ++current_index) {
 				team.all_pokemon().set_index(current_index);

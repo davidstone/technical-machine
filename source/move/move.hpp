@@ -44,7 +44,7 @@ class Move {
 		void reset ();
 		std::string to_string () const;
 		bool selectable() const;
-		void selectable(bool b);
+		void set_selectable(bool b);
 		bool is_damaging() const;
 		bool is_physical() const;
 		bool is_special() const;
@@ -56,6 +56,7 @@ class Move {
 		bool can_miss () const;
 		bool can_critical_hit() const;
 		Priority priority() const;
+		bool is_struggle() const;
 		static bool is_switch (Moves name);
 		bool is_switch () const;
 		static Moves from_replacement (unsigned replacement);
@@ -66,6 +67,7 @@ class Move {
 		bool calls_other_move () const;
 		void increment_use_counter();
 		bool was_used_last () const;
+		bool is_bide() const;
 		unsigned fury_cutter_power() const;
 		unsigned momentum_move_power() const;
 		unsigned triple_kick_power() const;
@@ -113,7 +115,6 @@ class Move {
 		Priority cached_priority;
 		// Replace this with a function when it will reduce the size of Move.
 		Classification cached_classification;
-		friend void determine_all_legal_selections (ActivePokemon & user, ActivePokemon const & other, Weather const & weather);
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);

@@ -26,7 +26,7 @@ namespace technicalmachine {
 
 SharedMoves::SharedMoves(unsigned const team_size) {
 	moves.reserve ((team_size > 1) ? team_size + 1 : 1);
-	moves.emplace_back(Moves::STRUGGLE, 0);
+	moves.emplace_back(Moves::Struggle, 0);
 	// A Pokemon has a new "Switch" move for each Pokemon in the party.
 	if (team_size > 1) {
 		for (unsigned count = 0; count != team_size; ++count) {
@@ -38,7 +38,7 @@ SharedMoves::SharedMoves(unsigned const team_size) {
 void SharedMoves::remove_switch() {
 	assert(moves.back().is_switch());
 	moves.pop_back();
-	if (moves.back().name == Moves::SWITCH0)
+	if (moves.back().name == Moves::Switch0)
 		moves.pop_back();
 }
 

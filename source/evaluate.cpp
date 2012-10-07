@@ -65,7 +65,7 @@ int64_t Score::score_team (Team const & team) const {
 	//	if (other.pokemon().leech_seed)
 	//		score += 1 * other.pokemon().hp.max / member.hp.max;
 
-		if (team.pokemon().get_pokemon().move.exists(Moves::BATON_PASS))
+		if (team.pokemon().get_pokemon().move.exists(Moves::Baton_Pass))
 			score += baton_passable_score(team.pokemon()) * 2;
 		else
 			score += baton_passable_score(team.pokemon());

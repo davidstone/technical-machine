@@ -48,7 +48,7 @@ void heal(Pokemon & member, Rational const & rational, bool positive) {
 }
 
 void heal (Pokemon & member, int const denominator, unsigned const numerator) {
-	heal(member, Rational(numerator, static_cast<unsigned>(denominator)), (denominator > 0));
+	heal(member, Rational(numerator, static_cast<unsigned>((denominator >= 0) ? denominator : -denominator)), (denominator > 0));
 }
 
 void drain(Pokemon & member, Rational const & rational) {

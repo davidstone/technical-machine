@@ -64,13 +64,13 @@ void Vanish::shadow_force() {
 
 bool Vanish::doubles_move_power(Moves const move) const {
 	switch (move) {
-		case Moves::EARTHQUAKE:
-		case Moves::MAGNITUDE:
+		case Moves::Earthquake:
+		case Moves::Magnitude:
 			return doubles_ground_power();
-		case Moves::GUST:
-		case Moves::TWISTER:
+		case Moves::Gust:
+		case Moves::Twister:
 			return doubles_wind_power();
-		case Moves::SURF:
+		case Moves::Surf:
 			return doubles_surf_power();
 		default:
 			return false;

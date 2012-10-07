@@ -42,8 +42,6 @@
 
 #include "../type/type.hpp"
 
-#undef SING
-
 namespace technicalmachine {
 namespace {
 
@@ -118,7 +116,7 @@ unsigned use_move (Team & user, Team & target, Weather & weather, bool const dam
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (target.pokemon().ability().blocks_sound_moves() and move.is_sound_based() and
-			!(move.name == Moves::HEAL_BELL or move.name == Moves::PERISH_SONG))
+			!(move.name == Moves::Heal_Bell or move.name == Moves::Perish_Song))
 		return 0;
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
@@ -169,745 +167,750 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 	auto & user = user_team.pokemon();
 	Move & move = user.move();
 	switch (move.name) {
-		case Moves::ABSORB:
-		case Moves::DRAIN_PUNCH:
-		case Moves::GIGA_DRAIN:
-		case Moves::LEECH_LIFE:
-		case Moves::MEGA_DRAIN:
+		case Moves::Absorb:
+		case Moves::Drain_Punch:
+		case Moves::Giga_Drain:
+		case Moves::Leech_Life:
+		case Moves::Mega_Drain:
 			absorb_hp(user, target, damage);
 			break;
-		case Moves::ACID:
-		case Moves::BUG_BUZZ:
-		case Moves::EARTH_POWER:
-		case Moves::ENERGY_BALL:
-		case Moves::FLASH_CANNON:
-		case Moves::FOCUS_BLAST:
-		case Moves::LUSTER_PURGE:
-		case Moves::PSYCHIC:
-		case Moves::SHADOW_BALL:
+		case Moves::Acid:
+		case Moves::Bug_Buzz:
+		case Moves::Earth_Power:
+		case Moves::Energy_Ball:
+		case Moves::Flash_Cannon:
+		case Moves::Focus_Blast:
+		case Moves::Luster_Purge:
+		case Moves::Psychic:
+		case Moves::Shadow_Ball:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::SPD, -1);
 			break;
-		case Moves::ACID_ARMOR:
-		case Moves::BARRIER:
-		case Moves::IRON_DEFENSE:
+		case Moves::Acid_Armor:
+		case Moves::Barrier:
+		case Moves::Iron_Defense:
 			user.stat_boost(Stat::DEF, 2);
 			break;
-		case Moves::ACUPRESSURE:
+		case Moves::Acupressure:
 			// TODO: this doesn't properly account for stats maxing out
 			user.stat_boost(static_cast<Stat::Stats>(move.variable().value()), 2);
 			break;
-		case Moves::AGILITY:
-		case Moves::ROCK_POLISH:
+		case Moves::Agility:
+		case Moves::Rock_Polish:
 			user.stat_boost(Stat::SPE, 2);
 			break;
-		case Moves::AIR_SLASH:
-		case Moves::ASTONISH:
-		case Moves::BITE:
-		case Moves::BONE_CLUB:
-		case Moves::DARK_PULSE:
-		case Moves::DRAGON_RUSH:
-		case Moves::EXTRASENSORY:
-		case Moves::FAKE_OUT:
-		case Moves::HEADBUTT:
-		case Moves::HYPER_FANG:
-		case Moves::IRON_HEAD:
-		case Moves::NEEDLE_ARM:
-		case Moves::ROCK_SLIDE:
-		case Moves::ROLLING_KICK:
-		case Moves::SNORE:
-		case Moves::STOMP:
-		case Moves::TWISTER:
-		case Moves::WATERFALL:
-		case Moves::ZEN_HEADBUTT:
+		case Moves::Air_Slash:
+		case Moves::Astonish:
+		case Moves::Bite:
+		case Moves::Bone_Club:
+		case Moves::Dark_Pulse:
+		case Moves::Dragon_Rush:
+		case Moves::Extrasensory:
+		case Moves::Fake_Out:
+		case Moves::Headbutt:
+		case Moves::Hyper_Fang:
+		case Moves::Iron_Head:
+		case Moves::Needle_Arm:
+		case Moves::Rock_Slide:
+		case Moves::Rolling_Kick:
+		case Moves::Snore:
+		case Moves::Stomp:
+		case Moves::Twister:
+		case Moves::Waterfall:
+		case Moves::Zen_Headbutt:
 			if (move.variable().effect_activates())
 				target.flinch();
 			break;
-		case Moves::AMNESIA:
+		case Moves::Amnesia:
 			user.stat_boost(Stat::SPD, 2);
 			break;
-		case Moves::ANCIENTPOWER:
-		case Moves::OMINOUS_WIND:
-		case Moves::SILVER_WIND:
+		case Moves::AncientPower:
+		case Moves::Ominous_Wind:
+		case Moves::Silver_Wind:
 			if (move.variable().effect_activates())
 				user.stat_boost_regular(1);
 			break;
-		case Moves::AQUA_RING:
+		case Moves::Aqua_Ring:
 			user.activate_aqua_ring();
 			break;
-		case Moves::AURORA_BEAM:
+		case Moves::Aurora_Beam:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::ATK, -1);
 			break;
-		case Moves::AROMATHERAPY:
+		case Moves::Aromatherapy:
 			cure_all_status(user_team, [](Pokemon const & pokemon) { return true; });
 			break;
-		case Moves::ATTRACT:
+		case Moves::Attract:
 			if (user.gender().multiplier(target.gender()) == -1)
 				target.attract();
 			break;
-		case Moves::BATON_PASS:
+		case Moves::Baton_Pass:
 			user.baton_pass();
 			break;
-		case Moves::BELLY_DRUM:
+		case Moves::Belly_Drum:
 			belly_drum(user);
 			break;
-		case Moves::BIDE:
+		case Moves::Bide:
 			user.use_bide(target);
 			break;
-		case Moves::BIND:
-		case Moves::CLAMP:
-		case Moves::FIRE_SPIN:
-		case Moves::MAGMA_STORM:
-		case Moves::SAND_TOMB:
-		case Moves::WHIRLPOOL:
-		case Moves::WRAP:
+		case Moves::Bind:
+		case Moves::Clamp:
+		case Moves::Fire_Spin:
+		case Moves::Magma_Storm:
+		case Moves::Sand_Tomb:
+		case Moves::Whirlpool:
+		case Moves::Wrap:
 			target.partially_trap(move.variable().value());
 			break;
-		case Moves::BLAST_BURN:
-		case Moves::FRENZY_PLANT:
-		case Moves::GIGA_IMPACT:
-		case Moves::HYDRO_CANNON:
-		case Moves::HYPER_BEAM:
-		case Moves::ROAR_OF_TIME:
-		case Moves::ROCK_WRECKER:
+		case Moves::Blast_Burn:
+		case Moves::Frenzy_Plant:
+		case Moves::Giga_Impact:
+		case Moves::Hydro_Cannon:
+		case Moves::Hyper_Beam:
+		case Moves::Roar_of_Time:
+		case Moves::Rock_Wrecker:
 			user.use_recharge_move();
 			break;
-		case Moves::BLAZE_KICK:
-		case Moves::EMBER:
-		case Moves::FIRE_BLAST:
-		case Moves::FIRE_PUNCH:
-		case Moves::FLAME_WHEEL:
-		case Moves::FLAMETHROWER:
-		case Moves::HEAT_WAVE:
-		case Moves::LAVA_PLUME:
-		case Moves::SACRED_FIRE:
+		case Moves::Blaze_Kick:
+		case Moves::Ember:
+		case Moves::Fire_Blast:
+		case Moves::Fire_Punch:
+		case Moves::Flame_Wheel:
+		case Moves::Flamethrower:
+		case Moves::Heat_Wave:
+		case Moves::Lava_Plume:
+		case Moves::Sacred_Fire:
 			if (move.variable().effect_activates())
 				Status::apply<Status::BURN>(user, target, weather);
 			break;
-		case Moves::BLIZZARD:
-		case Moves::ICE_BEAM:
-		case Moves::ICE_PUNCH:
-		case Moves::POWDER_SNOW:
+		case Moves::Blizzard:
+		case Moves::Ice_Beam:
+		case Moves::Ice_Punch:
+		case Moves::Powder_Snow:
 			if (move.variable().effect_activates())
 				Status::apply<Status::FREEZE>(user, target, weather);
 			break;
-		case Moves::BLOCK:
-		case Moves::MEAN_LOOK:
-		case Moves::SPIDER_WEB:
+		case Moves::Block:
+		case Moves::Mean_Look:
+		case Moves::Spider_Web:
 			target.fully_trap();
 			break;
-		case Moves::BODY_SLAM:
-		case Moves::DISCHARGE:
-		case Moves::DRAGONBREATH:
-		case Moves::FORCE_PALM:
-		case Moves::LICK:
-		case Moves::SECRET_POWER:
-		case Moves::SPARK:
-		case Moves::THUNDER:
-		case Moves::THUNDERBOLT:
-		case Moves::THUNDERPUNCH:
-		case Moves::THUNDERSHOCK:
+		case Moves::Body_Slam:
+		case Moves::Discharge:
+		case Moves::DragonBreath:
+		case Moves::Force_Palm:
+		case Moves::Lick:
+		case Moves::Secret_Power:
+		case Moves::Spark:
+		case Moves::Thunder:
+		case Moves::Thunderbolt:
+		case Moves::ThunderPunch:
+		case Moves::ThunderShock:
 			if (move.variable().effect_activates())
 				Status::apply<Status::PARALYSIS>(user, target, weather);
 			break;
-		case Moves::BOUNCE:		// TODO: add paralysis
+		case Moves::Bounce:		// Todo: Add Paralysis
 			user.bounce();
 			break;
-		case Moves::BRAVE_BIRD:
-		case Moves::DOUBLE_EDGE:
-		case Moves::WOOD_HAMMER:
+		case Moves::Brave_Bird:
+		case Moves::Double_Edge:
+		case Moves::Wood_Hammer:
 			recoil (user, damage, 3);
 			break;
-		case Moves::BUBBLE:
-		case Moves::BUBBLEBEAM:
-		case Moves::CONSTRICT:
+		case Moves::Bubble:
+		case Moves::BubbleBeam:
+		case Moves::Constrict:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::SPE, -1);
 			break;
-		case Moves::BUG_BITE:			// Fix
-		case Moves::PLUCK:
+		case Moves::Bug_Bite:			// Fix
+		case Moves::Pluck:
 			break;
-		case Moves::BULK_UP:
+		case Moves::Bulk_Up:
 			user.stat_boost_physical(1);
 			break;
-		case Moves::CALM_MIND:
+		case Moves::Calm_Mind:
 			user.stat_boost_special(1);
 			break;
-		case Moves::CAMOUFLAGE:
+		case Moves::Camouflage:
 			break;
-		case Moves::CAPTIVATE:
+		case Moves::Captivate:
 			if (user.gender().multiplier(target.gender()) == -1)
 				target.stat_boost(Stat::SPD, -2);
 			break;
-		case Moves::CHARGE:
+		case Moves::Charge:
 			user.charge();
 			user.stat_boost(Stat::SPD, 1);
 			break;
-		case Moves::CHARGE_BEAM:
+		case Moves::Charge_Beam:
 			if (move.variable().effect_activates())
 				user.stat_boost(Stat::SPA, 1);
 			break;
-		case Moves::CHARM:
-		case Moves::FEATHERDANCE:
+		case Moves::Charm:
+		case Moves::FeatherDance:
 			target.stat_boost(Stat::ATK, -2);
 			break;
-		case Moves::CHATTER:
+		case Moves::Chatter:
 			if (user.can_confuse_with_chatter() and move.variable().effect_activates())
 				target.confuse();
 			break;
-		case Moves::CLOSE_COMBAT:
+		case Moves::Close_Combat:
 			user.stat_boost_physical(-1);
 			break;
-		case Moves::CONFUSE_RAY:
-		case Moves::SUPERSONIC:
-		case Moves::SWEET_KISS:
-		case Moves::TEETER_DANCE:
+		case Moves::Confuse_Ray:
+		case Moves::Supersonic:
+		case Moves::Sweet_Kiss:
+		case Moves::Teeter_Dance:
 			target.confuse();
 			break;
-		case Moves::CONFUSION:
-		case Moves::DIZZY_PUNCH:
-		case Moves::DYNAMICPUNCH:
-		case Moves::PSYBEAM:
-		case Moves::ROCK_CLIMB:
-		case Moves::SIGNAL_BEAM:
-		case Moves::WATER_PULSE:
+		case Moves::Confusion:
+		case Moves::Dizzy_Punch:
+		case Moves::DynamicPunch:
+		case Moves::Psybeam:
+		case Moves::Rock_Climb:
+		case Moves::Signal_Beam:
+		case Moves::Water_Pulse:
 			if (move.variable().effect_activates())
 				target.confuse();
 			break;
-		case Moves::CONVERSION:		// Fix
+		case Moves::Conversion:		// Fix
 			break;
-		case Moves::CONVERSION2:	// Fix
+		case Moves::Conversion_2:	// Fix
 			break;
-		case Moves::COSMIC_POWER:
-		case Moves::DEFEND_ORDER:
+		case Moves::Cosmic_Power:
+		case Moves::Defend_Order:
 			user.stat_boost_defensive(1);
 			break;
-		case Moves::CRUNCH:
-		case Moves::CRUSH_CLAW:
-		case Moves::IRON_TAIL:
-		case Moves::ROCK_SMASH:
+		case Moves::Crunch:
+		case Moves::Crush_Claw:
+		case Moves::Iron_Tail:
+		case Moves::Rock_Smash:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::DEF, -1);
 			break;
-		case Moves::COTTON_SPORE:
-		case Moves::SCARY_FACE:
+		case Moves::Cotton_Spore:
+		case Moves::Scary_Face:
 			target.stat_boost(Stat::SPE, -2);
 			break;
-		case Moves::COUNTER:
+		case Moves::Counter:
 			if (target.move().is_physical())
 				damage_side_effect(target, user.damaged() * 2u);
 			break;
-		case Moves::COVET:
-		case Moves::THIEF:
+		case Moves::Covet:
+		case Moves::Thief:
 			user.item().steal(target.item());
 			break;
-		case Moves::CROSS_POISON:
-		case Moves::GUNK_SHOT:
-		case Moves::POISON_JAB:
-		case Moves::POISON_STING:
-		case Moves::POISON_TAIL:
-		case Moves::SLUDGE:
-		case Moves::SLUDGE_BOMB:
-		case Moves::SMOG:
+		case Moves::Cross_Poison:
+		case Moves::Gunk_Shot:
+		case Moves::Poison_Jab:
+		case Moves::Poison_Sting:
+		case Moves::Poison_Tail:
+		case Moves::Sludge:
+		case Moves::Sludge_Bomb:
+		case Moves::Smog:
 			if (move.variable().effect_activates())
 				Status::apply<Status::POISON>(user, target, weather);
 			break;
-		case Moves::CURSE:
+		case Moves::Curse:
 			curse(user, target);
 			break;
-		case Moves::DARK_VOID:
-		case Moves::GRASSWHISTLE:
-		case Moves::HYPNOSIS:
-		case Moves::LOVELY_KISS:
-		case Moves::SING:
-		case Moves::SLEEP_POWDER:
-		case Moves::SPORE:
+		case Moves::Dark_Void:
+		case Moves::GrassWhistle:
+		case Moves::Hypnosis:
+		case Moves::Lovely_Kiss:
+		case Moves::Sing:
+		case Moves::Sleep_Powder:
+		case Moves::Spore:
 			Status::apply<Status::SLEEP>(user, target, weather);
 			break;
-		case Moves::DEFENSE_CURL:
+		case Moves::Defense_Curl:
 			user.stat_boost(Stat::DEF, 1);
 			user.defense_curl();
 			break;
-		case Moves::DEFOG:
+		case Moves::Defog:
 			weather.fog = false;
 			target.stat_boost(Stat::EVA, -1);
 			break;
-		case Moves::DESTINY_BOND:
+		case Moves::Destiny_Bond:
 			user.use_destiny_bond();
 			break;
-		case Moves::DETECT:
-		case Moves::PROTECT:
+		case Moves::Detect:
+		case Moves::Protect:
 			user.protect();
 			break;
-		case Moves::DIG:
+		case Moves::Dig:
 			user.dig();
 			break;
-		case Moves::DISABLE:		// Fix
+		case Moves::Disable:		// Fix
 			break;
-		case Moves::DIVE:
+		case Moves::Dive:
 			user.dive();
 			break;
-		case Moves::DOOM_DESIRE:	// Fix
-		case Moves::FUTURE_SIGHT:
+		case Moves::Doom_Desire:	// Fix
+		case Moves::Future_Sight:
 			break;
-		case Moves::DOUBLE_TEAM:
-		case Moves::MINIMIZE:
+		case Moves::Double_Team:
+		case Moves::Minimize:
 			user.stat_boost(Stat::EVA, 1);
 			break;
-		case Moves::DRACO_METEOR:
-		case Moves::LEAF_STORM:
-		case Moves::OVERHEAT:
-		case Moves::PSYCHO_BOOST:
+		case Moves::Draco_Meteor:
+		case Moves::Leaf_Storm:
+		case Moves::Overheat:
+		case Moves::Psycho_Boost:
 			user.stat_boost(Stat::SPA, -2);
 			break;
-		case Moves::DRAGON_DANCE:
+		case Moves::Dragon_Dance:
 			user.stat_boost(Stat::ATK, 1);
 			user.stat_boost(Stat::SPE, 1);
 			break;
-		case Moves::DREAM_EATER:
+		case Moves::Dream_Eater:
 			if (target.status().is_sleeping ())
 				absorb_hp(user, target, damage);
 			break;
-		case Moves::EMBARGO:
+		case Moves::Embargo:
 			target.activate_embargo();
 			break;
-		case Moves::ENCORE:
+		case Moves::Encore:
 			target.activate_encore();
 			break;
-		case Moves::ENDURE:
+		case Moves::Endure:
 			user.endure();
 			break;
-		case Moves::EXPLOSION:
-		case Moves::SELFDESTRUCT:
+		case Moves::Explosion:
+		case Moves::Selfdestruct:
 			user.hp().stat = 0;
 			break;
-		case Moves::FAKE_TEARS:
-		case Moves::METAL_SOUND:
+		case Moves::Fake_Tears:
+		case Moves::Metal_Sound:
 			target.stat_boost(Stat::SPD, -2);
 			break;
-		case Moves::FEINT:
+		case Moves::Feint:
 			target.break_protect();
 			break;
-		case Moves::FIRE_FANG:
+		case Moves::Fire_Fang:
 			fang_side_effects<Status::BURN>(user, target, weather);
 			break;
-		case Moves::FLARE_BLITZ:
+		case Moves::Flare_Blitz:
 			recoil_status<Status::BURN>(user, target, weather, damage);
 			break;
-		case Moves::FLASH:
-		case Moves::KINESIS:
-		case Moves::MUD_SLAP:
-		case Moves::SAND_ATTACK:
-		case Moves::SMOKESCREEN:
+		case Moves::Flash:
+		case Moves::Kinesis:
+		case Moves::Mud_Slap:
+		case Moves::Sand_Attack:
+		case Moves::SmokeScreen:
 			target.stat_boost(Stat::ACC, -1);
 			break;
-		case Moves::FLATTER:
+		case Moves::Flatter:
 			confusing_stat_boost(move, target, Stat::SPA, 1);
 			break;
-		case Moves::FLING:
+		case Moves::Fling:
 			user.item().remove();
 			break;
-		case Moves::FLY:
+		case Moves::Fly:
 			user.fly();
 			break;
-		case Moves::FOCUS_ENERGY:
+		case Moves::Focus_Energy:
 			user.focus_energy();
 			break;
-		case Moves::FOCUS_PUNCH:		// Fix
+		case Moves::Focus_Punch:		// Fix
 			break;
-		case Moves::FOLLOW_ME:		// Fix
+		case Moves::Follow_Me:		// Fix
 			break;
-		case Moves::FORESIGHT:
-		case Moves::ODOR_SLEUTH:
+		case Moves::Foresight:
+		case Moves::Odor_Sleuth:
 			target.identify();
 			break;
-		case Moves::GASTRO_ACID:		// Fix
+		case Moves::Gastro_Acid:		// Fix
 			break;
-		case Moves::GLARE:
-		case Moves::STUN_SPORE:
-		case Moves::THUNDER_WAVE:
-		case Moves::ZAP_CANNON:
+		case Moves::Glare:
+		case Moves::Stun_Spore:
+		case Moves::Thunder_Wave:
+		case Moves::Zap_Cannon:
 			Status::apply<Status::PARALYSIS>(user, target, weather);
 			break;
-		case Moves::GRAVITY:
+		case Moves::Gravity:
 			weather.set_gravity();
 			break;
-		case Moves::GROWL:
+		case Moves::Growl:
 			target.stat_boost(Stat::ATK, -1);
 			break;
-		case Moves::GROWTH:
+		case Moves::Growth:
 			user.stat_boost(Stat::SPA, 1);
 			break;
-		case Moves::GRUDGE:		// Fix
+		case Moves::Grudge:		// Fix
 			break;
-		case Moves::GUARD_SWAP:
+		case Moves::Guard_Swap:
 			ActivePokemon::swap_defensive_stages(user, target);
 			break;
-		case Moves::HAIL:
+		case Moves::Hail:
 			weather.set_hail (user.item().extends_hail());
 			break;
-		case Moves::HAMMER_ARM:
+		case Moves::Hammer_Arm:
 			user.stat_boost(Stat::SPE, -1);
 			break;
-		case Moves::HARDEN:
-		case Moves::WITHDRAW:
+		case Moves::Harden:
+		case Moves::Withdraw:
 			user.stat_boost(Stat::DEF, 1);
 			break;
-		case Moves::HAZE:
+		case Moves::Haze:
 			user.reset_stats();
 			target.reset_stats();
 			break;
-		case Moves::HEAD_SMASH:
+		case Moves::Head_Smash:
 			recoil (user, damage, 2);
 			break;
-		case Moves::HEAL_BELL:
+		case Moves::Heal_Bell:
 			cure_all_status(user_team, [](Pokemon const & pokemon) {
 				return !pokemon.ability().blocks_sound_moves();
 			});
 			break;
-		case Moves::HEAL_BLOCK:
+		case Moves::Heal_Block:
 			target.activate_heal_block();
 			break;
-		case Moves::HEAL_ORDER:
-		case Moves::MILK_DRINK:
-		case Moves::RECOVER:
-		case Moves::SLACK_OFF:
-		case Moves::SOFTBOILED:
+		case Moves::Heal_Order:
+		case Moves::Milk_Drink:
+		case Moves::Recover:
+		case Moves::Slack_Off:
+		case Moves::Softboiled:
 			heal (user, 2);
 			break;
-		case Moves::HEALING_WISH:		// Fix
+		case Moves::Healing_Wish:		// Fix
 			break;
-		case Moves::HEART_SWAP:
+		case Moves::Heart_Swap:
 			ActivePokemon::swap_stat_boosts(user, target);
 			break;
-		case Moves::HI_JUMP_KICK:		// Fix
-		case Moves::JUMP_KICK:
+		case Moves::Hi_Jump_Kick:		// Fix
+		case Moves::Jump_Kick:
 			break;
-		case Moves::HOWL:
-		case Moves::METAL_CLAW:
-		case Moves::MEDITATE:
-		case Moves::METEOR_MASH:
+		case Moves::Howl:
+		case Moves::Metal_Claw:
+		case Moves::Meditate:
+		case Moves::Meteor_Mash:
 			if (move.variable().effect_activates())
 				user.stat_boost(Stat::ATK, 1);
 			break;
-		case Moves::ICE_BALL:		// Fix
-		case Moves::ROLLOUT:
+		case Moves::Ice_Ball:		// Fix
+		case Moves::Rollout:
 			break;
-		case Moves::ICE_FANG:
+		case Moves::Ice_Fang:
 			fang_side_effects<Status::FREEZE>(user, target, weather);
 			break;
-		case Moves::ICY_WIND:
-		case Moves::MUD_SHOT:
-		case Moves::ROCK_TOMB:
-		case Moves::STRING_SHOT:
+		case Moves::Icy_Wind:
+		case Moves::Mud_Shot:
+		case Moves::Rock_Tomb:
+		case Moves::String_Shot:
 			target.stat_boost(Stat::SPE, -1);
 			break;
-		case Moves::IMPRISON:
+		case Moves::Imprison:
 			user.imprison();
 			break;
-		case Moves::INGRAIN:
+		case Moves::Ingrain:
 			user.ingrain();
 			break;
-		case Moves::KNOCK_OFF:		// Fix
+		case Moves::Knock_Off:		// Fix
 			break;
-		case Moves::LEECH_SEED:
+		case Moves::Leech_Seed:
 			target.hit_with_leech_seed();
 			break;
-		case Moves::LEER:
-		case Moves::TAIL_WHIP:
+		case Moves::Leer:
+		case Moves::Tail_Whip:
 			target.stat_boost(Stat::DEF, -1);
 			break;
-		case Moves::LIGHT_SCREEN:
+		case Moves::Light_Screen:
 			user_team.screens.activate_light_screen(user.item().extends_light_screen());
 			break;
-		case Moves::LOCK_ON:
-		case Moves::MIND_READER:
+		case Moves::Lock_On:
+		case Moves::Mind_Reader:
 			user.lock_on_to();
 			break;
-		case Moves::LUCKY_CHANT:
+		case Moves::Lucky_Chant:
 			user_team.screens.activate_lucky_chant();
 			break;
-		case Moves::LUNAR_DANCE:		// Fix
+		case Moves::Lunar_Dance:		// Fix
 			break;
-		case Moves::MAGIC_COAT:		// Fix
+		case Moves::Magic_Coat:		// Fix
 			break;
-		case Moves::MAGNET_RISE:
+		case Moves::Magnet_Rise:
 			user.activate_magnet_rise();
 			break;
-		case Moves::ME_FIRST:		// Fix
+		case Moves::Me_First:		// Fix
 			break;
-		case Moves::MEMENTO:
+		case Moves::Memento:
 			target.stat_boost_offensive(-2);
 			user.hp().stat = 0;
 			break;
-		case Moves::METAL_BURST:
+		case Moves::Metal_Burst:
 			damage_side_effect(target, user.damaged() * 3u / 2);
 			break;
-		case Moves::MIMIC:		// Fix
+		case Moves::Mimic:		// Fix
 			break;
-		case Moves::MIRACLE_EYE:		// Fix
+		case Moves::Miracle_Eye:		// Fix
 			break;
-		case Moves::MIRROR_COAT:
+		case Moves::Mirror_Coat:
 			if (target.move().is_special())
 				damage_side_effect(target, user.damaged() * 2u);
 			break;
-		case Moves::MIRROR_SHOT:
-		case Moves::MUD_BOMB:
-		case Moves::MUDDY_WATER:
-		case Moves::OCTAZOOKA:
+		case Moves::Mirror_Shot:
+		case Moves::Mud_Bomb:
+		case Moves::Muddy_Water:
+		case Moves::Octazooka:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::ACC, -1);
 			break;
-		case Moves::MIST:
+		case Moves::Mist:
 			user_team.screens.activate_mist();
 			break;
-		case Moves::MIST_BALL:
+		case Moves::Mist_Ball:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::SPA, -1);
 			break;
-		case Moves::MOONLIGHT:
-		case Moves::MORNING_SUN:
-		case Moves::SYNTHESIS:
-			if (weather.sun())
-				heal (user, 3, 2);
-			else if (weather.hail() or weather.rain() or weather.sand())
-				heal (user, 4);
-			else
-				heal (user, 2);
+		case Moves::Moonlight:
+		case Moves::Morning_Sun:
+		case Moves::Synthesis: {
+			auto const amount = [& weather]() {
+				if (weather.sun())
+					return Rational(2, 3);
+				else if (weather.hail() or weather.rain() or weather.sand())
+					return Rational(1, 4);
+				else
+					return Rational(1, 2);
+			};
+			heal(user, amount(), true);
 			break;
-		case Moves::MUD_SPORT:
+		}
+		case Moves::Mud_Sport:
 			user.activate_mud_sport();
 			break;
-		case Moves::NASTY_PLOT:
-		case Moves::TAIL_GLOW:
+		case Moves::Nasty_Plot:
+		case Moves::Tail_Glow:
 			user.stat_boost(Stat::SPA, 2);
 			break;
-		case Moves::NIGHTMARE:
+		case Moves::Nightmare:
 			target.give_nightmares();
 			break;
-		case Moves::OUTRAGE:
-		case Moves::PETAL_DANCE:
-		case Moves::THRASH:
+		case Moves::Outrage:
+		case Moves::Petal_Dance:
+		case Moves::Thrash:
 			user.activate_rampage();
 			break;
-		case Moves::PAIN_SPLIT:
+		case Moves::Pain_Split:
 			equalize(user.hp(), target.hp());
 			break;
-		case Moves::PERISH_SONG:
+		case Moves::Perish_Song:
 			user.activate_perish_song();
 			target.activate_perish_song();
 			break;
-		case Moves::POISON_FANG:
+		case Moves::Poison_Fang:
 			if (move.variable().effect_activates())
 				Status::apply<Status::POISON_TOXIC>(user, target, weather);
 			break;
-		case Moves::POISON_GAS:
-		case Moves::POISONPOWDER:
+		case Moves::Poison_Gas:
+		case Moves::PoisonPowder:
 			Status::apply<Status::POISON>(user, target, weather);
 			break;
-		case Moves::POWER_SWAP:
+		case Moves::Power_Swap:
 			user.swap_offensive_stages(user, target);
 			break;
-		case Moves::POWER_TRICK:
+		case Moves::Power_Trick:
 			user.activate_power_trick();
 			break;
-		case Moves::PRESENT:
+		case Moves::Present:
 			if (move.variable().present_heals()) {
 				Stat & hp = target.hp();
 				hp.stat += 80;
 				hp.stat = std::min(hp.stat, hp.max);
 			}
 			break;
-		case Moves::PSYCH_UP:
+		case Moves::Psych_Up:
 			user.copy_stat_boosts(target);
 			break;
-		case Moves::PSYCHO_SHIFT:
+		case Moves::Psycho_Shift:
 			if (target.status().is_clear())
 				Status::shift(user, target, weather);
 			break;
-		case Moves::RAGE:		// Fix
+		case Moves::Rage:		// Fix
 			break;
-		case Moves::RAIN_DANCE:
+		case Moves::Rain_Dance:
 			weather.set_rain (user.item().extends_rain());
 			break;
-		case Moves::RAPID_SPIN:
+		case Moves::Rapid_Spin:
 			clear_field(user_team, target);
 			break;
-		case Moves::RAZOR_WIND:	// Fix
+		case Moves::Razor_Wind:	// Fix
 			break;
-		case Moves::RECYCLE:		// Fix
+		case Moves::Recycle:		// Fix
 			break;
-		case Moves::REFLECT:
+		case Moves::Reflect:
 			user_team.screens.activate_reflect(user.item().extends_reflect());
 			break;
-		case Moves::REFRESH:
+		case Moves::Refresh:
 			user.status().clear();
 			break;
-		case Moves::REST:
+		case Moves::Rest:
 			rest(user);
 			break;
-		case Moves::ROAR:
-		case Moves::WHIRLWIND:
+		case Moves::Roar:
+		case Moves::Whirlwind:
 			phaze(user_team, target_team, weather);
 			break;
-		case Moves::ROLE_PLAY:		// Fix
+		case Moves::Role_Play:		// Fix
 			break;
-		case Moves::ROOST:
+		case Moves::Roost:
 			user.roost();
 			heal (user, 2);
 			break;
-		case Moves::SAFEGUARD:
+		case Moves::Safeguard:
 			user_team.screens.activate_safeguard();
 			break;
-		case Moves::SANDSTORM:
+		case Moves::Sandstorm:
 			weather.set_sand (user.item().extends_sand());
 			break;
-		case Moves::SCREECH:
+		case Moves::Screech:
 			target.stat_boost(Stat::DEF, -2);
 			break;
-		case Moves::SEED_FLARE:
+		case Moves::Seed_Flare:
 			if (move.variable().effect_activates())
 				target.stat_boost(Stat::SPD, -2);
 			break;
-		case Moves::SHADOW_FORCE:
+		case Moves::Shadow_Force:
 			user.shadow_force();
 			break;
-		case Moves::SHARPEN:
+		case Moves::Sharpen:
 			user.stat_boost(Stat::ATK, 1);
 			break;
-		case Moves::SKETCH:		// Fix
+		case Moves::Sketch:		// Fix
 			break;
-		case Moves::SKILL_SWAP:		// Fix
+		case Moves::Skill_Swap:		// Fix
 			break;
-		case Moves::SKULL_BASH: // Fix
+		case Moves::Skull_Bash: // Fix
 			break;
-		case Moves::SKY_ATTACK:	// Fix
-			if (move.variable().effect_activates()) {}
+		case Moves::Sky_Attack:	// Fix
+			if (move.variable().effect_activates()) {
+			}
 			break;
-		case Moves::SMELLINGSALT:
+		case Moves::SmellingSalt:
 			if (target.status().boosts_smellingsalt())
 				target.status().clear();
 			break;
-		case Moves::SNATCH:	// Fix
+		case Moves::Snatch:	// Fix
 			break;
-		case Moves::SOLARBEAM:		// Fix
+		case Moves::SolarBeam:		// Fix
 			break;
-		case Moves::SPIKES:
+		case Moves::Spikes:
 			target_team.entry_hazards.add_spikes();
 			break;
-		case Moves::SPIT_UP:
+		case Moves::Spit_Up:
 			user.release_stockpile();
 			break;
-		case Moves::SPITE:		// Fix
+		case Moves::Spite:		// Fix
 			break;
-		case Moves::STEALTH_ROCK:
+		case Moves::Stealth_Rock:
 			target_team.entry_hazards.add_stealth_rock();
 			break;
-		case Moves::STEEL_WING:
+		case Moves::Steel_Wing:
 			if (move.variable().effect_activates())
 				user.stat_boost(Stat::DEF, 1);
 			break;
-		case Moves::STOCKPILE:
+		case Moves::Stockpile:
 			user.increment_stockpile();
 			break;
-		case Moves::STRUGGLE:
+		case Moves::Struggle:
 			struggle(user);
 			break;
-		case Moves::SUBMISSION:
-		case Moves::TAKE_DOWN:
+		case Moves::Submission:
+		case Moves::Take_Down:
 			recoil (user, damage, 4);
 			break;
-		case Moves::SUBSTITUTE:
+		case Moves::Substitute:
 			user.use_substitute();		
 			break;
-		case Moves::SUNNY_DAY:
+		case Moves::Sunny_Day:
 			weather.set_sun (user.item().extends_sun());
 			break;
-		case Moves::SUPERPOWER:
+		case Moves::Superpower:
 			user.stat_boost_physical(-1);
 			break;
-		case Moves::SWAGGER:
+		case Moves::Swagger:
 			confusing_stat_boost(move, target, Stat::ATK, 2);
 			break;
-		case Moves::SWALLOW:
+		case Moves::Swallow:
 			use_swallow(user);
 			break;
-		case Moves::SWEET_SCENT:
+		case Moves::Sweet_Scent:
 			target.stat_boost(Stat::EVA, -1);
 			break;
-		case Moves::SWITCH0:
-		case Moves::SWITCH1:
-		case Moves::SWITCH2:
-		case Moves::SWITCH3:
-		case Moves::SWITCH4:
-		case Moves::SWITCH5:
+		case Moves::Switch0:
+		case Moves::Switch1:
+		case Moves::Switch2:
+		case Moves::Switch3:
+		case Moves::Switch4:
+		case Moves::Switch5:
 			user_team.all_pokemon().replacement_from_switch();
 			switchpokemon (user_team, target_team, weather);
 			break;
-		case Moves::SWITCHEROO:
-		case Moves::TRICK:
+		case Moves::Switcheroo:
+		case Moves::Trick:
 			swap_items(user, target);
 			break;
-		case Moves::SWORDS_DANCE:
+		case Moves::Swords_Dance:
 			user.stat_boost(Stat::ATK, 2);
 			break;
-		case Moves::TAILWIND:
+		case Moves::Tailwind:
 			user_team.screens.activate_tailwind();
 			break;
-		case Moves::TAUNT:
+		case Moves::Taunt:
 			target.taunt();
 			break;
-		case Moves::THUNDER_FANG:
+		case Moves::Thunder_Fang:
 			fang_side_effects<Status::PARALYSIS>(user, target, weather);
 			break;
-		case Moves::TICKLE:
+		case Moves::Tickle:
 			target.stat_boost_physical(-1);
 			break;
-		case Moves::TORMENT:
+		case Moves::Torment:
 			target.torment();
 			break;
-		case Moves::TOXIC:
+		case Moves::Toxic:
 			Status::apply<Status::POISON_TOXIC>(user, target, weather);
 			break;
-		case Moves::TOXIC_SPIKES:
+		case Moves::Toxic_Spikes:
 			target_team.entry_hazards.add_toxic_spikes();
 			break;
-		case Moves::TRANSFORM:		// Fix
+		case Moves::Transform:		// Fix
 			break;
-		case Moves::TRI_ATTACK:
+		case Moves::Tri_Attack:
 			tri_attack_status(user, target, weather);
 			break;
-		case Moves::TRICK_ROOM:
+		case Moves::Trick_Room:
 			weather.set_trick_room ();
 			break;
-		case Moves::U_TURN:
+		case Moves::U_turn:
 			user.u_turn();
 			break;
-		case Moves::UPROAR:
+		case Moves::Uproar:
 			// TODO: make this make sense
 			weather.set_uproar (static_cast<int8_t> (move.variable().value()));
 			user.use_uproar();
 			break;
-		case Moves::VOLT_TACKLE:
+		case Moves::Volt_Tackle:
 			recoil_status<Status::PARALYSIS>(user, target, weather, damage);
 			break;
-		case Moves::WAKE_UP_SLAP:
+		case Moves::Wake_Up_Slap:
 			if (target.status().is_sleeping ())
 				target.status().clear ();
 			break;
-		case Moves::WATER_SPORT:
+		case Moves::Water_Sport:
 			user.activate_water_sport();
 			break;
-		case Moves::WILL_O_WISP:
+		case Moves::Will_O_Wisp:
 			Status::apply<Status::BURN>(user, target, weather);
 			break;
-		case Moves::WISH:
+		case Moves::Wish:
 			user_team.wish.activate();
 			break;
-		case Moves::WORRY_SEED:		// Fix
+		case Moves::Worry_Seed:		// Fix
 			break;
-		case Moves::YAWN:
+		case Moves::Yawn:
 			target.hit_with_yawn();
 			break;
 		default:

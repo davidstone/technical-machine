@@ -231,7 +231,7 @@ std::string Pokemon::get_nickname () const {
 }
 
 void Pokemon::set_hidden_power_type() {
-	Move * const move_ptr = move.find(Moves::HIDDEN_POWER);
+	Move * const move_ptr = move.find(Moves::Hidden_Power);
 	if (move_ptr != nullptr)
 		move_ptr->set_type(calculate_hidden_power_type());
 }
