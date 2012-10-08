@@ -16,9 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include <random>
 #include <vector>
 
 #include "detailed_stats.hpp"
+#include "random_team.hpp"
 #include "team_predictor.hpp"
 
 #include "../string_conversions/invalid_string_conversion.hpp"
@@ -44,20 +46,23 @@ class Data {
 		std::vector<Fl_Input *> input;
 		Fl_Multiline_Output * output;
 		DetailedStats detailed;
+		Team team;
 };
 
 void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	
-	Team team;
 	bool using_lead = false;
 	for (Fl_Input * in : data.input) {
+		constexpr unsigned pokemon_per_team = 6;
+		if (data.team.all_pokemon().size() >= pokemon_per_team)
+			break;
 		Species species;
 		try {
 			species = from_string<Species>(in->value());
 			constexpr unsigned level = 100;
 			Gender const gender(Gender::MALE);
-			team.add_pokemon(species, level, gender);
+			data.team.add_pokemon(species, level, gender);
 		}
 		catch (InvalidFromStringConversion const &) {
 			species = Species::END;
@@ -67,12 +72,21 @@ void function (Fl_Widget * w, void * d) {
 		}
 	}
 	
-	if (!team.all_pokemon().is_empty()) {
-		team = predict_team (data.detailed, team, using_lead);
-		data.output->value (team.to_string(false).c_str());
+	if (!data.team.all_pokemon().is_empty()) {
+		data.team = predict_team (data.detailed, data.team, using_lead);
+		data.output->value (data.team.to_string(false).c_str());
 	}
 	else
 		data.output->value ("");
+	data.team = Team();
+}
+
+void generate_random_team(Fl_Widget * w, void * d) {
+	static std::random_device rd;
+	static std::mt19937 random_engine(rd());
+	Data * data = reinterpret_cast<Data *>(d);
+	data->team = random_team(random_engine);
+	function(w, data);
 }
 }	// unnamed namespace
 
@@ -109,6 +123,7 @@ int main () {
 		Fl_Input input4 (left_padding, y_position(4), input_width, input_height);
 		Fl_Input input5 (left_padding, y_position(5), input_width, input_height);
 		Fl_Return_Button calculate (left_padding, y_position(6), button_width, button_height, "Calculate");
+		Fl_Button random(left_padding, y_position(7), button_width, button_height, "Random");
 		Fl_Multiline_Output output (output_x_position, padding, output_width, output_height);
 	win.end();
 
@@ -123,6 +138,7 @@ int main () {
 	data.output = &output;
 
 	calculate.callback (function, &data);
+	random.callback(generate_random_team, &data);
 	win.show();
 
 	return Fl::run();
