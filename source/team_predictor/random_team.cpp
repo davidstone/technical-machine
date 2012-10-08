@@ -60,15 +60,16 @@ class InvalidRandomSpecies : public std::logic_error {
 			{
 		}
 };
-std::vector<Species> random_species(std::mt19937 & random_engine);
-unsigned pokemon_to_generate(std::mt19937 & random_engine);
+std::vector<Species> random_species(std::mt19937 & random_engine, unsigned max_random_pokemon);
+unsigned pokemon_to_generate(std::mt19937 & random_engine, unsigned max_random_pokemon);
 Species find_random_species(Usages const & usages, unsigned usage_threshold, std::vector<Species> const & current);
 bool species_already_on_team(std::vector<Species> const & current, Species const species);
 }	// unnamed namespace
 
-Team random_team(std::mt19937 & random_engine) {
+
+Team random_team(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
 	Team team;
-	for (Species const species : random_species(random_engine)) {
+	for (Species const species : random_species(random_engine, max_random_pokemon)) {
 		constexpr uint8_t level = 100;
 		team.add_pokemon(species, level, Gender());
 	}
@@ -77,10 +78,10 @@ Team random_team(std::mt19937 & random_engine) {
 
 namespace {
 
-std::vector<Species> random_species(std::mt19937 & random_engine) {
+std::vector<Species> random_species(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
 	Usages usages;
 	std::vector<Species> current;
-	auto const random_pokemon = pokemon_to_generate(random_engine);
+	auto const random_pokemon = pokemon_to_generate(random_engine, max_random_pokemon);
 	for (unsigned generated = 0; generated != random_pokemon; ++generated) {
 		std::uniform_int_distribution<unsigned> pokemon_distribution(0, usages.total() - 1);
 		Species const species = find_random_species(usages, pokemon_distribution(random_engine), current);
@@ -90,8 +91,7 @@ std::vector<Species> random_species(std::mt19937 & random_engine) {
 	return current;
 }
 
-unsigned pokemon_to_generate(std::mt19937 & random_engine) {
-	constexpr unsigned max_random_pokemon = 6;
+unsigned pokemon_to_generate(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
 	std::uniform_int_distribution<unsigned> team_distribution(1, max_random_pokemon);
 	return team_distribution(random_engine);
 }

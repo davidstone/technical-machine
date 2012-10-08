@@ -25,7 +25,7 @@ namespace technicalmachine {
 
 class Team;
 
-Team random_team(std::mt19937 & random_engine);
+Team random_team(std::mt19937 & random_engine, unsigned max_random_pokemon);
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__RANDOM_TEAM_HPP_

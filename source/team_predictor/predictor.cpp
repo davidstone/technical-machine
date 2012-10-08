@@ -85,7 +85,8 @@ void generate_random_team(Fl_Widget * w, void * d) {
 	static std::random_device rd;
 	static std::mt19937 random_engine(rd());
 	Data * data = reinterpret_cast<Data *>(d);
-	data->team = random_team(random_engine);
+	constexpr unsigned max_random_pokemon = 5;
+	data->team = random_team(random_engine, max_random_pokemon);
 	function(w, data);
 }
 }	// unnamed namespace
