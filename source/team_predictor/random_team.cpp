@@ -92,7 +92,7 @@ std::vector<Species> random_species(std::mt19937 & random_engine, unsigned const
 }
 
 unsigned pokemon_to_generate(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
-	std::uniform_int_distribution<unsigned> team_distribution(1, max_random_pokemon);
+	std::uniform_int_distribution<unsigned> team_distribution(0, max_random_pokemon);
 	return team_distribution(random_engine);
 }
 

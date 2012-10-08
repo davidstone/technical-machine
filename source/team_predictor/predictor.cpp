@@ -16,8 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include <algorithm>
 #include <random>
 #include <vector>
+
+#include <boost/lexical_cast.hpp>
 
 #include "detailed_stats.hpp"
 #include "random_team.hpp"
@@ -33,6 +36,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Multiline_Output.H>
 
 using namespace technicalmachine;
@@ -44,13 +48,22 @@ namespace {
 class Data {
 	public:
 		std::vector<Fl_Input *> input;
+		Fl_Int_Input * random_input;
 		Fl_Multiline_Output * output;
 		DetailedStats detailed;
 		Team team;
 };
 
+void generate_random_team(Data & data) {
+	static std::random_device rd;
+	static std::mt19937 random_engine(rd());
+	unsigned const max_random = std::min(boost::lexical_cast<unsigned>(data.random_input->value()), 6u);
+	data.team = random_team(random_engine, max_random);
+}
+
 void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
+	generate_random_team(data);
 	
 	bool using_lead = false;
 	for (Fl_Input * in : data.input) {
@@ -81,14 +94,6 @@ void function (Fl_Widget * w, void * d) {
 	data.team = Team();
 }
 
-void generate_random_team(Fl_Widget * w, void * d) {
-	static std::random_device rd;
-	static std::mt19937 random_engine(rd());
-	Data * data = reinterpret_cast<Data *>(d);
-	constexpr unsigned max_random_pokemon = 5;
-	data->team = random_team(random_engine, max_random_pokemon);
-	function(w, data);
-}
 }	// unnamed namespace
 
 int main () {
@@ -117,14 +122,25 @@ int main () {
 	constexpr int window_width = output_x_position + output_width + padding;
 	constexpr int window_height = padding + output_height + padding;
 	Fl_Window win (window_width, window_height, "Team Predictor");
-		Fl_Input input0 (left_padding, y_position(0), input_width, input_height, "Input");
-		Fl_Input input1 (left_padding, y_position(1), input_width, input_height);
-		Fl_Input input2 (left_padding, y_position(2), input_width, input_height);
-		Fl_Input input3 (left_padding, y_position(3), input_width, input_height);
-		Fl_Input input4 (left_padding, y_position(4), input_width, input_height);
-		Fl_Input input5 (left_padding, y_position(5), input_width, input_height);
-		Fl_Return_Button calculate (left_padding, y_position(6), button_width, button_height, "Calculate");
-		Fl_Button random(left_padding, y_position(7), button_width, button_height, "Random");
+		int button_number = 0;
+		Fl_Input input0 (left_padding, y_position(button_number), input_width, input_height, "Input");
+		++button_number;
+		Fl_Input input1 (left_padding, y_position(button_number), input_width, input_height);
+		++button_number;
+		Fl_Input input2 (left_padding, y_position(button_number), input_width, input_height);
+		++button_number;
+		Fl_Input input3 (left_padding, y_position(button_number), input_width, input_height);
+		++button_number;
+		Fl_Input input4 (left_padding, y_position(button_number), input_width, input_height);
+		++button_number;
+		Fl_Input input5 (left_padding, y_position(button_number), input_width, input_height);
+		button_number += 2;
+		Fl_Int_Input random_input(left_padding, y_position(button_number), input_width, input_height, "Max random Pokemon");
+		random_input.align(FL_ALIGN_TOP);
+		random_input.value("5");
+		++button_number;
+		Fl_Return_Button calculate (left_padding, y_position(button_number), button_width, button_height, "Calculate");
+		++button_number;
 		Fl_Multiline_Output output (output_x_position, padding, output_width, output_height);
 	win.end();
 
@@ -136,10 +152,10 @@ int main () {
 	data.input.emplace_back(&input3);
 	data.input.emplace_back(&input4);
 	data.input.emplace_back(&input5);
+	data.random_input = &random_input;
 	data.output = &output;
 
 	calculate.callback (function, &data);
-	random.callback(generate_random_team, &data);
 	win.show();
 
 	return Fl::run();
