@@ -95,9 +95,6 @@ void function (Fl_Widget * w, void * d) {
 		}
 	}
 	generate_random_team(data);
-	data.team.all_pokemon().for_each([](Pokemon const & pokemon) {
-		std::cerr << pokemon.to_string() << '\n';
-	});
 	data.output->value(predict_team(data.detailed, data.team, using_lead).to_string(false).c_str());
 	data.reset();
 }
