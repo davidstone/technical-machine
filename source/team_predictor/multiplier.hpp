@@ -1,4 +1,4 @@
-// Header for loading stats like Pokemon usages
+// Teammate stat multipliers
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__LOAD_STATS_HPP_
-#define TEAM_PREDICTOR__LOAD_STATS_HPP_
+#ifndef TEAM_PREDICTOR__MULTIPLIER_HPP_
+#define TEAM_PREDICTOR__MULTIPLIER_HPP_
 
 #include <array>
 #include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 
-std::array<unsigned, number_of_species> overall_stats ();
-
-// Multiplier for Pokemon after you've seen the lead
-std::array<float, number_of_species> lead_stats ();
+class Multiplier {
+	public:
+		typedef std::array<unsigned, number_of_species> Overall;
+		typedef float value_type;
+		Multiplier(Overall const & overall);
+		value_type operator() (Species species1, Species species2) const;
+	private:
+		typedef std::array<std::array<value_type, number_of_species>, number_of_species> Container;
+		static constexpr unsigned pokemon_per_team = 6;
+		static constexpr unsigned other_pokemon_per_team = pokemon_per_team - 1;
+		static Container species_clause();
+		void load_listed_multipliers(Overall const & overall, Overall & unaccounted);
+		void estimate_remaining(Overall const & overall, Overall const & unaccounted);
+		Container multiplier;
+};
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__LOAD_STATS_HPP_
+#endif	// TEAM_PREDICTOR__MULTIPLIER_HPP_

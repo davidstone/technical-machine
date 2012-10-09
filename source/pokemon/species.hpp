@@ -742,6 +742,10 @@ enum class Species : uint16_t {
 };
 
 constexpr auto number_of_species = static_cast<unsigned>(Species::END);
+inline Species & operator++(Species & species) {
+	species = static_cast<Species>(static_cast<unsigned>(species) + 1);
+	return species;
+}
 
 }	// namespace technicalmachine
 #endif	// POKEMON__SPECIES_HPP_

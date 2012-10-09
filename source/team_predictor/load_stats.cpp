@@ -52,67 +52,6 @@ std::array<T, number_of_species> load_stats_from_file (std::string const & file_
 	return overall;
 }
 
-void species_clause (float multiplier [number_of_species] [number_of_species]) {
-	for (unsigned a = 0; a != number_of_species; ++a) {
-		for (unsigned b = 0; b != number_of_species; ++b) {
-			auto const first = static_cast<Species>(a);
-			auto const second = static_cast<Species>(b);
-			// Species clause or replaced with other value later
-			multiplier [a][b] = is_alternate_form(first, second) ? 0 : -1;
-		}
-		multiplier [a] [a] = 0;			// Species clause
-	}
-}
-
-void load_listed_multipliers (float multiplier [number_of_species] [number_of_species], std::array<unsigned, number_of_species> const & overall, std::array<unsigned, number_of_species> & unaccounted, unsigned total) {
-	std::string const file_name = "settings/teammate.txt";
-	std::ifstream file (file_name);
-	std::string line;
-	for (getline (file, line); !file.eof(); getline (file, line)) {
-		constexpr char delimiter = '\t';
-		size_t const x = line.find (delimiter);
-		auto const member = static_cast<size_t>(from_string<Species>(line.substr (0, x)));
-		size_t const y = line.find (delimiter, x + 1);
-		auto const ally = static_cast<size_t>(from_string<Species>(line.substr(x + 1, y - x - 1)));
-		if (member >= number_of_species or ally >= number_of_species)
-			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
-		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
-		unaccounted [member] -= number_used_with;
-		float const per_cent_used_with = static_cast <float> (number_used_with) / overall [member];
-		float const per_cent_used = static_cast <float> (overall [ally]) / total;
-		multiplier [member] [ally] = per_cent_used_with / per_cent_used;
-	}
-}
-
-void estimate_remaining_multipliers (float multiplier [number_of_species] [number_of_species], std::array<unsigned, number_of_species> const & overall, std::array<unsigned, number_of_species> const & unaccounted) {
-	for (unsigned a = 0; a != number_of_species; ++a) {
-		if (overall [a] != 0) {
-			for (float & value : multiplier [a]) {
-				if (value == -1) {
-					// Take the total number of remaining Pokemon not accounted
-					// for and assume they're distributed the same as their
-					// overall distribution among all Pokemon not on the list
-					// of team mate stats. This is the same as giving all those
-					// Pokemon the same multiplier. Reality probably has very
-					// low usage Pokemon more evenly distributed and high usage
-					// Pokemon that don't appear with a much lower multiplier.
-					// There are probably cases where I can prove that certain
-					// Pokemon are lower than my current method would suggest,
-					// so I should look into limiting the maximum multiplier.
-					value = unaccounted [a] / (overall [a] * 5.0);
-				}
-			}
-		}
-		else {
-			for (float & value : multiplier [a])
-				// 1 is superior to 0 because if they use an unused Pokemon,
-				// this will have no effect instead of making everything
-				// equally 0
-				value = 1;
-		}
-	}
-}
-
 }	// unnamed namespace
 
 std::array<unsigned, number_of_species> overall_stats () {
@@ -121,23 +60,6 @@ std::array<unsigned, number_of_species> overall_stats () {
 
 std::array<float, number_of_species> lead_stats () {
 	return load_stats_from_file<float> ("settings/lead.txt");
-}
-
-void team_stats (std::array<unsigned, number_of_species> const & overall, unsigned const total, float multiplier [number_of_species][number_of_species]) {
-	species_clause (multiplier);
-
-	// There are 5 other Pokemon on a team for each individual Pokemon.
-	// Therefore, if I've seen a Pokemon with n usages, there are 5 * n other
-	// Pokemon on the team. Subtract the known number of usages from this
-	// number until all known usages are gone. Then, assume the distribution of
-	// Pokemon not on the team mate stats is equal to the relative overall
-	// distribution and divide up all remaining usages proportionally.
-	std::array<unsigned, number_of_species> unaccounted;
-	for (unsigned n = 0; n != number_of_species; ++n)
-		unaccounted [n] = overall [n] * 5;
-
-	load_listed_multipliers (multiplier, overall, unaccounted, total);
-	estimate_remaining_multipliers (multiplier, overall, unaccounted);
 }
 
 }	// namespace technicalmachine
