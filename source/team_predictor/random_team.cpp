@@ -67,12 +67,16 @@ bool species_already_on_team(std::vector<Species> const & current, Species const
 }	// unnamed namespace
 
 
-Team random_team(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
-	Team team;
+void random_team(Team & team, std::mt19937 & random_engine, unsigned const max_random_pokemon) {
 	for (Species const species : random_species(random_engine, max_random_pokemon)) {
 		constexpr uint8_t level = 100;
 		team.add_pokemon(species, level, Gender());
 	}
+}
+
+Team random_team(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
+	Team team;
+	random_team(team, random_engine, max_random_pokemon);
 	return team;
 }
 

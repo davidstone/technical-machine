@@ -44,9 +44,13 @@ using namespace technicalmachine;
 // A GUI version of the team predictor.
 
 namespace {
+constexpr unsigned pokemon_per_team = 6;
 
 class Data {
 	public:
+		void reset() {
+			team = Team();
+		}
 		std::vector<Fl_Input *> input;
 		Fl_Int_Input * random_input;
 		Fl_Multiline_Output * output;
@@ -57,8 +61,17 @@ class Data {
 void generate_random_team(Data & data) {
 	static std::random_device rd;
 	static std::mt19937 random_engine(rd());
-	unsigned const max_random = std::min(boost::lexical_cast<unsigned>(data.random_input->value()), 6u);
-	data.team = random_team(random_engine, max_random);
+	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
+	auto const input = [& data]() {
+		try {
+			return boost::lexical_cast<unsigned>(data.random_input->value());
+		}
+		catch (boost::bad_lexical_cast const &) {
+			return 0u;
+		}
+	};
+	unsigned const max_random = std::min(input(), remaining_pokemon);
+	random_team(data.team, random_engine, max_random);
 }
 
 void function (Fl_Widget * w, void * d) {
@@ -67,7 +80,6 @@ void function (Fl_Widget * w, void * d) {
 	
 	bool using_lead = false;
 	for (Fl_Input * in : data.input) {
-		constexpr unsigned pokemon_per_team = 6;
 		if (data.team.all_pokemon().size() >= pokemon_per_team)
 			break;
 		Species species;
@@ -91,7 +103,7 @@ void function (Fl_Widget * w, void * d) {
 	}
 	else
 		data.output->value ("");
-	data.team = Team();
+	data.reset();
 }
 
 }	// unnamed namespace
@@ -112,7 +124,6 @@ int main () {
 	constexpr int lines_for_ability = 1;
 	constexpr int lines_for_moves = 4;
 	constexpr int lines_per_pokemon = 1 + lines_for_ability + lines_for_moves;
-	constexpr int pokemon_per_team = 6;
 	constexpr int lines_per_team = pokemon_per_team * lines_per_pokemon;
 	constexpr int team_padding = 10;
 	constexpr int team_height = lines_per_team * height_per_line + team_padding;

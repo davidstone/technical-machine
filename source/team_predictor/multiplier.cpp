@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <fstream>
 #include <string>
@@ -34,7 +35,7 @@
 
 namespace technicalmachine {
 namespace {
-static constexpr Multiplier::value_type not_set = -1.0f;
+static constexpr Multiplier::value_type not_set = -1.0F;
 }	// unnamed namespace
 
 Multiplier::Multiplier(Overall const & overall):
@@ -75,7 +76,7 @@ Multiplier::Container Multiplier::species_clause() {
 
 void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unaccounted) {
 	// I may not need to calculate this...
-	unsigned const total = std::accumulate(overall.begin(), overall.end(), 0u);
+	unsigned const total = std::accumulate(overall.begin(), overall.end(), 0U);
 
 	std::string const file_name = "settings/teammate.txt";
 	std::ifstream file (file_name);
@@ -89,6 +90,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 		if (member >= number_of_species or ally >= number_of_species)
 			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
 		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
+		assert(unaccounted[member] >= number_used_with);
 		unaccounted [member] -= number_used_with;
 		auto const per_cent_used_with = static_cast<value_type> (number_used_with) / overall [member];
 		auto const per_cent_used = static_cast<value_type> (overall [ally]) / total;
@@ -116,14 +118,14 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 		if (overall[a] != 0) {
 			for (float & value : multiplier [a]) {
 				if (value == not_set) {
-					value = (unaccounted[a] != 0) ? (unaccounted[a] / (overall [a] * other_pokemon_per_team)) : 0;
+					value = (unaccounted[a] != 0) ? (static_cast<float>(unaccounted[a]) / (overall[a] * other_pokemon_per_team)) : 0.0F;
 				}
 			}
 		}
 		else {
 			// 1 is superior to 0 because if they use an unused Pokemon, this
 			// will have no effect instead of making everything equally 0
-			multiplier[a].fill(1.0f);
+			multiplier[a].fill(1.0F);
 		}
 	}
 }
