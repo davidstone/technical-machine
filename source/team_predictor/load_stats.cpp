@@ -19,14 +19,12 @@
 #include "load_stats.hpp"
 
 #include <array>
-#include <cstddef>
 #include <fstream>
 #include <string>
 #include <boost/lexical_cast.hpp>
 
 #include "../invalid_settings_file.hpp"
 
-#include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
 #include "../string_conversions/conversion.hpp"
