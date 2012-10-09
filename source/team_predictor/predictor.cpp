@@ -97,12 +97,7 @@ void function (Fl_Widget * w, void * d) {
 		}
 	}
 	
-	if (!data.team.all_pokemon().is_empty()) {
-		data.team = predict_team (data.detailed, data.team, using_lead);
-		data.output->value (data.team.to_string(false).c_str());
-	}
-	else
-		data.output->value ("");
+	data.output->value (predict_team (data.detailed, data.team, using_lead).to_string(false).c_str());
 	data.reset();
 }
 
