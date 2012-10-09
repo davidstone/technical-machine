@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "detailed_stats.hpp"
+#include "estimate.hpp"
 #include "load_stats.hpp"
 #include "multiplier.hpp"
 
@@ -36,7 +37,6 @@
 
 namespace technicalmachine {
 namespace {
-typedef std::array<float, number_of_species> Estimate;
 
 template<typename T>
 std::array<T, number_of_species> all_ones_array () {
@@ -55,24 +55,18 @@ Team predict_team (DetailedStats const & detailed, Team team, unsigned size, boo
 	constexpr unsigned total = 961058;	// Total number of teams
 	Multiplier const multiplier(overall);
 	
-	Estimate const lead = using_lead ? lead_stats () : all_ones_array<float>();
+	std::array<float, number_of_species> const lead = using_lead ? lead_stats () : all_ones_array<float>();
 	
-	Estimate estimate;
-	for (unsigned n = 0; n != number_of_species; ++n) {
-		estimate [n] = lead [n] * overall [n] / total;
-	}
+	Estimate estimate(overall, lead, total);
+	estimate.update(multiplier, team);
 
-	team.all_pokemon().for_each([& estimate, & multiplier](Pokemon const & pokemon) {
-		for (auto other = static_cast<Species>(0); other != Species::END; ++other) {
-			estimate [static_cast<size_t>(other)] *= multiplier(pokemon.name(), other);
-		}
-	});
 	predict_pokemon (team, estimate, multiplier);
 	team.all_pokemon().for_each([& detailed, size](Pokemon & pokemon) {
-		pokemon.ability().set_if_unknown (static_cast <Ability::Abilities> (detailed.ability[static_cast<size_t>(pokemon.name())]));
-		pokemon.item().set_if_unknown (static_cast <Item::Items> (detailed.item[static_cast<size_t>(pokemon.name())]));
-		pokemon.nature().set_if_unknown (static_cast <Nature::Natures> (detailed.nature[static_cast<size_t>(pokemon.name())]));
-		predict_move (pokemon, detailed.move[static_cast<size_t>(pokemon.name())], size);
+		auto const name = static_cast<size_t>(pokemon.name());
+		pokemon.ability().set_if_unknown (static_cast <Ability::Abilities> (detailed.ability[name]));
+		pokemon.item().set_if_unknown (static_cast <Item::Items> (detailed.item[name]));
+		pokemon.nature().set_if_unknown (static_cast <Nature::Natures> (detailed.nature[name]));
+		predict_move (pokemon, detailed.move[name], size);
 	});
 	return team;
 }
@@ -82,28 +76,15 @@ namespace {
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
 	auto const index = team.pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
-		Species const name = get_most_likely_pokemon (estimate);
+		Species const name = estimate.most_likely();
 		constexpr unsigned level = 100;
 		Gender const gender;
 		team.add_pokemon(name, level, gender);
 		if (team.number_of_seen_pokemon() == team.size())
 			break;
-		for (auto other = static_cast<Species>(0); other != Species::END; ++other)
-			estimate[static_cast<size_t>(other)] *= multiplier(team.pokemon(team.all_pokemon().size() - 1).name(), other);
+		estimate.update(multiplier, name);
 	}
 	team.all_pokemon().set_index(index);
-}
-
-Species get_most_likely_pokemon (Estimate const & estimate) {
-	Species name = Species::END;
-	float top = -1.0;
-	for (unsigned n = 0; n != number_of_species; ++n) {
-		if (estimate [n] > top) {
-			top = estimate [n];
-			name = static_cast<Species> (n);
-		}
-	}
-	return name;
 }
 
 void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size) {

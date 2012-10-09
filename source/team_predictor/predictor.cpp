@@ -58,26 +58,24 @@ class Data {
 		Team team;
 };
 
+unsigned max_random(Data const & data) {
+	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
+	try {
+		return std::min(boost::lexical_cast<unsigned>(data.random_input->value()), remaining_pokemon);
+	}
+	catch (boost::bad_lexical_cast const &) {
+		return 0u;
+	}
+}
+
 void generate_random_team(Data & data) {
 	static std::random_device rd;
 	static std::mt19937 random_engine(rd());
-	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
-	auto const input = [& data]() {
-		try {
-			return boost::lexical_cast<unsigned>(data.random_input->value());
-		}
-		catch (boost::bad_lexical_cast const &) {
-			return 0u;
-		}
-	};
-	unsigned const max_random = std::min(input(), remaining_pokemon);
-	random_team(data.team, random_engine, max_random);
+	random_team(data.team, random_engine, max_random(data));
 }
 
 void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
-	generate_random_team(data);
-	
 	bool using_lead = false;
 	for (Fl_Input * in : data.input) {
 		if (data.team.all_pokemon().size() >= pokemon_per_team)
@@ -96,8 +94,11 @@ void function (Fl_Widget * w, void * d) {
 			using_lead = (species != Species::END);
 		}
 	}
-	
-	data.output->value (predict_team (data.detailed, data.team, using_lead).to_string(false).c_str());
+	generate_random_team(data);
+	data.team.all_pokemon().for_each([](Pokemon const & pokemon) {
+		std::cerr << pokemon.to_string() << '\n';
+	});
+	data.output->value(predict_team(data.detailed, data.team, using_lead).to_string(false).c_str());
 	data.reset();
 }
 
