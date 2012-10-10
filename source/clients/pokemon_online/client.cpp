@@ -628,12 +628,15 @@ void Client::handle_channel_name_change (InMessage & msg) const {
 
 namespace {
 void get_speaker_and_message (InMessage & msg, std::string & speaker, std::string & message) {
-	// The server sends one string of the form "speaker: message" rather than sending the speaker and the message separately.
+	// The server sends one string of the form "speaker: message" rather than
+	// sending the speaker and the message separately.
 	std::string const speaker_and_message = msg.read_string ();
 	std::string const delimiter = ": ";
 	size_t delimiter_position = speaker_and_message.find (delimiter);
-	speaker = speaker_and_message.substr (0, delimiter_position);
-	message = speaker_and_message.substr (delimiter_position + delimiter.size());
+	if (delimiter_position != std::string::npos) {
+		speaker = speaker_and_message.substr (0, delimiter_position);
+		message = speaker_and_message.substr (delimiter_position + delimiter.size());
+	}
 }
 }	// unnamed namespace
 
