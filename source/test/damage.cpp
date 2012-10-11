@@ -71,7 +71,7 @@ Team max_damage_physical_defender () {
 	defender.add_pokemon(Species::Combee, level, gender);
 	auto & d = defender.pokemon();
 	d.def().iv = 0;
-	d.def().ev = 0;
+	d.def().ev.set_value(0);
 	d.stat_boost(Stat::DEF, -6);
 	return defender;
 }
@@ -85,7 +85,7 @@ Team max_damage_special_defender () {
 	d.ability(Ability::DRY_SKIN);
 
 	d.spd().iv = 0;
-	d.spd().ev = 0;
+	d.spd().ev.set_value(0);
 	d.stat_boost(Stat::SPD, -6);
 
 	return defender;
@@ -136,7 +136,7 @@ void physical_damage_test () {
 	Team attacker = max_damage_physical_attacker ();
 	
 	Pokemon & a = attacker.pokemon();
-	a.def.ev = 252 / 4;
+	a.def.ev.set_value(252);
 	a.nature().name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	a.ability().name = Ability::PURE_POWER;
@@ -166,7 +166,7 @@ void special_damage_test () {
 	a.move.add(Moves::Blast_Burn, 3, team_size);
 	a.change_type(Type::Fire);
 
-	a.spa.ev = 252 / 4;
+	a.spa.ev.set_value(252);
 	a.nature().name = Nature::MODEST;
 	attacker.pokemon().stat_boost(Stat::SPA, 6);
 	calculate_attacking_stat(attacker.pokemon(), weather);

@@ -53,12 +53,12 @@ void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	pt.add ("DV", pokemon.spa.iv);
 	pt.add ("DV", pokemon.spd.iv);
 	pt.add ("DV", pokemon.spe.iv);
-	pt.add ("EV", pokemon.hp.ev * 4);
-	pt.add ("EV", pokemon.atk.ev * 4);
-	pt.add ("EV", pokemon.def.ev * 4);
-	pt.add ("EV", pokemon.spa.ev * 4);
-	pt.add ("EV", pokemon.spd.ev * 4);
-	pt.add ("EV", pokemon.spe.ev * 4);
+	pt.add ("EV", pokemon.hp.ev.value());
+	pt.add ("EV", pokemon.atk.ev.value());
+	pt.add ("EV", pokemon.def.ev.value());
+	pt.add ("EV", pokemon.spa.ev.value());
+	pt.add ("EV", pokemon.spd.ev.value());
+	pt.add ("EV", pokemon.spe.ev.value());
 }
 
 void write_blank_stats (boost::property_tree::ptree & pt) {

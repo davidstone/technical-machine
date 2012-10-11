@@ -20,6 +20,7 @@
 #define STAT__STAT_HPP_
 
 #include <cstdint>
+#include "ev.hpp"
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
@@ -47,7 +48,7 @@ class Stat {
 		stat_type stat;		// Current HP or last calculated value for other stats
 		uint8_t base;
 		uint8_t iv;			// 0 through 31
-		uint8_t ev;			// 0 through 63
+		EV ev;
 	
 		Stat (Species name, Stats stat);
 		void calculate_initial_hp (uint8_t const level);

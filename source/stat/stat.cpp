@@ -201,7 +201,7 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 namespace {
 
 unsigned calculate_initial_stat (Stat const & stat, unsigned level) {
-	return (2u * stat.base + stat.iv + stat.ev) * level / 100 + 5;
+	return (2u * stat.base + stat.iv + stat.ev.points()) * level / 100 + 5;
 }
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {

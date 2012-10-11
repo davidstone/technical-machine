@@ -114,7 +114,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 		}
 		else if (value.first == "EV") {
 			Stat & stat = lookup_stat(pokemon, n);
-			stat.ev = value.second.get_value<unsigned>() / 4;
+			stat.ev.set_value(value.second.get_value<unsigned>());
 			n < 5 ? ++n : n = 0;
 		}
 	}

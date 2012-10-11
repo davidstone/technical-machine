@@ -102,12 +102,12 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_byte (pokemon.spa.iv);
 	write_byte (pokemon.spd.iv);
 
-	write_byte (pokemon.hp.ev * 4);
-	write_byte (pokemon.atk.ev * 4);
-	write_byte (pokemon.def.ev * 4);
-	write_byte (pokemon.spe.ev * 4);
-	write_byte (pokemon.spa.ev * 4);
-	write_byte (pokemon.spd.ev * 4);
+	write_byte(pokemon.hp.ev.value());
+	write_byte(pokemon.atk.ev.value());
+	write_byte(pokemon.def.ev.value());
+	write_byte(pokemon.spe.ev.value());
+	write_byte(pokemon.spa.ev.value());
+	write_byte(pokemon.spd.ev.value());
 }
 
 enum Choice {
