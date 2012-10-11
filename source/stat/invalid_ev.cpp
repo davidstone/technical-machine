@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception class when initializing EVs to a number greater than 252
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
+#include "invalid_ev.hpp"
 #include <string>
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidEV::InvalidEV(unsigned const ev):
+	std::runtime_error ("Attempted to create a Pokemon with " + std::to_string(ev) + " EVs.\n")
+	{
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception class for settings files that are incorrect
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
-#include <string>
+#include "invalid_settings_file.hpp"
 
 namespace technicalmachine {
+namespace {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+std::string to_string(InvalidSettingsFile::Problem const problem) {
+	static const std::string text [] = {
+		"is too long",
+		"is too short",
+		"contains invalid data"
+	};
+	return text[problem];
+}
+}	// unnamed namespace
+
+InvalidSettingsFile::InvalidSettingsFile(std::string const & file_name, Problem const problem):
+	std::runtime_error(file_name + " " + to_string(problem) + ".") {
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

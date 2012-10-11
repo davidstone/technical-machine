@@ -31,17 +31,7 @@ class InvalidSettingsFile : public std::runtime_error {
 			too_short,
 			invalid_data
 		};
-		static std::string to_string (Problem const problem) {
-			static const std::string text [] = {
-				"is too long",
-				"is too short",
-				"contains invalid data"
-			};
-			return text [problem];
-		}
-		InvalidSettingsFile (std::string const & file_name, Problem const problem):
-			std::runtime_error (file_name + " " + to_string (problem) + ".") {
-		}
+		InvalidSettingsFile(std::string const & file_name, Problem const problem);
 };
 
 }	// namespace technicalmachine

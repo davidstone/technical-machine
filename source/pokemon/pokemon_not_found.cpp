@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception if unable to find a Pokemon that should exist
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
-#include <string>
+#include "pokemon_not_found.hpp"
+#include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+PokemonNotFound::PokemonNotFound(Species const species):
+	std::logic_error("Unable to find " + to_string(species) + ".") {
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

@@ -26,9 +26,7 @@ namespace technicalmachine {
 
 class InvalidTeamFileFormat : public std::logic_error {
 	public:
-		InvalidTeamFileFormat(std::string const & file):
-			std::logic_error("Attempted to load " + file + ".") {
-		}
+		explicit InvalidTeamFileFormat(std::string const & file);
 };
 }	// namespace technicalmachine
 #endif	// INVALID_TEAM_FILE_FORMAT_HPP_

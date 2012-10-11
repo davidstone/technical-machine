@@ -1,4 +1,4 @@
-// Invalid user exception
+// Exception thrown when attempting to work with a challenge that does not exist
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,32 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK__INVALID_USER_HPP_
-#define NETWORK__INVALID_USER_HPP_
-
-#include <cstdint>
-#include <stdexcept>
-#include <string>
+#include "no_pending_challenges.hpp"
 
 namespace technicalmachine {
 namespace network {
 
-class InvalidUser : public std::runtime_error {
-	public:
-		InvalidUser():
-			std::runtime_error("No pending challenges.")
-			{
-		}
-		explicit InvalidUser (std::string const & name):
-			std::runtime_error("No pending challenges from " + name + ".")
-			{
-		}
-		explicit InvalidUser (uint32_t const id):
-			std::runtime_error("No pending challenges from user id " + std::to_string(id) + ".")
-			{
-		}
-};
+NoPendingChallenges::NoPendingChallenges():
+	std::runtime_error("No pending challenges.")
+	{
+}
+NoPendingChallenges::NoPendingChallenges(std::string const & name):
+	std::runtime_error("No pending challenges from " + name + ".")
+	{
+}
+NoPendingChallenges::NoPendingChallenges(uint32_t const id):
+	std::runtime_error("No pending challenges from user id " + std::to_string(id) + ".")
+	{
+}
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK__INVALID_USER_HPP_

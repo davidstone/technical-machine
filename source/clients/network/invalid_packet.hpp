@@ -27,9 +27,7 @@ namespace network {
 
 class InvalidPacket : public std::runtime_error {
 	public:
-		explicit InvalidPacket (std::string const & reason):
-			std::runtime_error (reason) {
-		}
+		explicit InvalidPacket(std::string const & reason);
 };
 }	// namespace network
 }	// namespace technicalmachine

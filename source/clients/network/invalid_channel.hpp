@@ -27,10 +27,7 @@ namespace network {
 
 class InvalidChannel : public std::runtime_error {
 	public:
-		explicit InvalidChannel(std::string const & channel):
-			std::runtime_error ("Channel " + channel + " does not exist.")
-			{
-		}
+		explicit InvalidChannel(std::string const & channel);
 };
 
 }	// namespace network

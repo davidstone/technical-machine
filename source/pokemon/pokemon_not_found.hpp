@@ -21,15 +21,12 @@
 
 #include <stdexcept>
 #include "species_forward.hpp"
-#include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
 class PokemonNotFound : public std::logic_error {
 	public:
-		PokemonNotFound(Species const species):
-			std::logic_error("Unable to find " + to_string(species) + ".") {
-		}
+		explicit PokemonNotFound(Species const species);
 };
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_NOT_FOUND_HPP_

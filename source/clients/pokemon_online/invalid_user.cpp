@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Invalid user exception
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
-#include <string>
+#include "invalid_user.hpp"
 
 namespace technicalmachine {
+namespace po {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidUser::InvalidUser (std::string const & name):
+	std::runtime_error ("User name " + name + " not in user_name_to_id.")
+	{
+}
+InvalidUser::InvalidUser (uint32_t const id):
+	std::runtime_error ("User id " + std::to_string (id) + " not in user_id_to_name.")
+	{
+}
 
+}	// namespace po
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

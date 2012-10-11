@@ -20,15 +20,12 @@
 #define INVALID_SWALLOW_HPP_
 
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
 class InvalidSwallow : public std::logic_error {
 	public:
-		InvalidSwallow(int const stockpiles):
-			std::logic_error("Attempted to Swallow " + std::to_string(stockpiles) + " Stockpiles.") {
-		}
+		explicit InvalidSwallow(int const stockpiles);
 };
 }	// namespace technicalmachine
 #endif	// EMPTY_TEAM_HPP_

@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception if the user uses Swallow with an invalid number of Stockpiles
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
+#include "invalid_swallow.hpp"
 #include <string>
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidSwallow::InvalidSwallow(int const stockpiles):
+	std::logic_error("Attempted to Swallow " + std::to_string(stockpiles) + " Stockpiles.") {
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

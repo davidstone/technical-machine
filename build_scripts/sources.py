@@ -19,13 +19,13 @@
 def prepend_dir(directory, sources):
 	return map(lambda source: directory + '/' + source, sources)
 
-string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'gender.cpp', 'item.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'status.cpp'])
+string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'gender.cpp', 'invalid_string_conversion.cpp', 'item.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'status.cpp'])
 
 bide_sources = prepend_dir('bide', ['bide.cpp', 'damage.cpp', 'duration.cpp'])
 
 move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'classification.cpp', 'disable.cpp', 'pp.cpp', 'priority.cpp', 'random.cpp', 'times_used.cpp'])
 
-pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'level.cpp', 'pokemon.cpp', 'seen.cpp'])
+pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'invalid_swallow.cpp', 'pokemon_not_found.cpp', 'level.cpp', 'pokemon.cpp', 'seen.cpp'])
 pokemon_sources += move_sources
 
 active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusion.cpp', 'delayed_attack.cpp', 'embargo.cpp', 'encore.cpp', 'heal_block.cpp', 'magnet_rise.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'rampage.cpp', 'slow_start.cpp', 'stockpile.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'])
@@ -35,26 +35,27 @@ active_pokemon_sources += prepend_dir('stat', ['chance_to_hit.cpp', 'stage.cpp']
 
 team_sources = ['entry_hazards.cpp', 'screen.cpp', 'screens.cpp', 'team.cpp', 'wish.cpp'] + active_pokemon_sources
 
-network = prepend_dir('network', ['battles.cpp', 'client.cpp', 'inmessage.cpp', 'outmessage.cpp'])
+network = prepend_dir('network', ['battles.cpp', 'buffer_overrun.cpp', 'client.cpp', 'inmessage.cpp', 'invalid_channel.cpp', 'invalid_packet.cpp', 'no_pending_challenges.cpp', 'outmessage.cpp'])
 pokemon_lab = prepend_dir('pokemon_lab', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'inmessage.cpp', 'outmessage.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
-pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'read_team_file.cpp', 'inmessage.cpp', 'outmessage.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
-clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'party.cpp'] + network + pokemon_lab + pokemon_online)
+pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'read_team_file.cpp', 'inmessage.cpp', 'invalid_user.cpp', 'outmessage.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
+clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_team_file_format.cpp', 'party.cpp'] + network + pokemon_lab + pokemon_online)
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'transposition.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'transposition.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 ai_sources += team_sources
 ai_sources += clients
 ai_sources += prepend_dir('cryptography', ['hex.cpp', 'md5.cpp', 'rijndael.cpp', 'sha2.cpp'])
 ai_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'power.cpp', 'ranked.cpp', 'reorder.cpp', 'shared.cpp', 'use_move.cpp'])
-ai_sources += prepend_dir('stat', ['ev.cpp', 'nature.cpp', 'stat.cpp'])
+ai_sources += prepend_dir('stat', ['ev.cpp', 'invalid_ev.cpp', 'invalid_stat.cpp', 'nature.cpp', 'stat.cpp'])
 ai_sources += prepend_dir('team_predictor', ['detailed_stats.cpp', 'estimate.cpp', 'load_stats.cpp', 'multiplier.cpp', 'team_predictor.cpp'])
 ai_sources += prepend_dir('type', ['collection.cpp', 'type.cpp'])
 ai_sources += string_conversion_sources
 ai_libraries = ['pthread', 'boost_system', 'boost_filesystem']
 
-predict_sources = ['ability.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'status.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
+predict_sources = ['ability.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'status.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 predict_sources += team_sources
 predict_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'power.cpp', 'ranked.cpp', 'reorder.cpp', 'shared.cpp'])
-predict_sources += prepend_dir('stat', ['ev.cpp', 'nature.cpp', 'stat.cpp'])
+predict_sources += prepend_dir('stat', ['ev.cpp', 'invalid_ev.cpp', 'invalid_stat.cpp', 'nature.cpp', 'stat.cpp'])
+predict_sources += prepend_dir('clients/', ['invalid_team_file_format.cpp'])
 predict_sources += prepend_dir('clients/pokemon_lab', ['read_team_file.cpp'])
 predict_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'read_team_file.cpp'])
 predict_sources += prepend_dir('team_predictor', ['detailed_stats.cpp', 'estimate.cpp', 'ev_optimizer.cpp', 'load_stats.cpp', 'multiplier.cpp', 'predictor.cpp', 'random_team.cpp', 'team_predictor.cpp'])
@@ -62,14 +63,15 @@ predict_sources += prepend_dir('type', ['collection.cpp', 'type.cpp'])
 predict_sources += string_conversion_sources
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
 
-test_sources = prepend_dir('test', ['test.cpp', 'damage.cpp', 'stat.cpp', 'string_conversion.cpp'])
-test_sources += prepend_dir('test/collections', ['collection.cpp', 'move_collection.cpp', 'move_container.cpp', 'variable_collection.cpp'])
+test_sources = prepend_dir('test', ['test.cpp', 'damage.cpp', 'incorrect_calculation.cpp', 'stat.cpp', 'string_conversion.cpp'])
+test_sources += prepend_dir('test/collections', ['collection.cpp', 'invalid_collection.cpp', 'move_collection.cpp', 'move_container.cpp', 'variable_collection.cpp'])
 test_sources += prepend_dir('test/pokemon_lab', ['conversion.cpp', 'team_file.cpp', 'test.cpp'])
 test_sources += prepend_dir('test/pokemon_online', ['conversion.cpp', 'team_file.cpp', 'test.cpp'])
-test_sources += ['ability.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'status.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
+test_sources += ['ability.cpp', 'damage.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'status.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 test_sources += team_sources
 test_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'power.cpp', 'ranked.cpp', 'reorder.cpp', 'shared.cpp'])
-test_sources += prepend_dir('stat', ['ev.cpp', 'nature.cpp', 'stat.cpp'])
+test_sources += prepend_dir('stat', ['ev.cpp', 'invalid_ev.cpp', 'invalid_stat.cpp', 'nature.cpp', 'stat.cpp'])
+test_sources += prepend_dir('clients/', ['invalid_team_file_format.cpp'])
 test_sources += prepend_dir('clients/pokemon_lab', ['conversion.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
 test_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
 test_sources += prepend_dir('type', ['collection.cpp', 'type.cpp'])

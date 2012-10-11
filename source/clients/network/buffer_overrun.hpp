@@ -26,9 +26,7 @@ namespace network {
 
 class BufferOverrun : public InvalidPacket {
 	public:
-		BufferOverrun ():
-			InvalidPacket ("Read past the end of the InMessage buffer.") {
-		}
+		BufferOverrun();
 };
 }	// namespace network
 }	// namespace technicalmachine

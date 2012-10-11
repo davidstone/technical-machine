@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception if an invalid team file extension is given
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
+#include "invalid_team_file_format.hpp"
 #include <string>
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidTeamFileFormat::InvalidTeamFileFormat(std::string const & file):
+	std::logic_error("Attempted to load " + file + ".") {
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

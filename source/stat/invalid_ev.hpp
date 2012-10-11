@@ -20,16 +20,12 @@
 #define STAT__INVALID_EV_HPP_
 
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
 class InvalidEV : public std::runtime_error {
 	public:
-		explicit InvalidEV(unsigned const ev):
-			std::runtime_error ("Attempted to create a Pokemon with " + std::to_string(ev) + " EVs.\n")
-			{
-		}
+		explicit InvalidEV(unsigned const ev);
 };
 
 }	// namespace technicalmachine

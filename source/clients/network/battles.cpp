@@ -21,7 +21,7 @@
 
 #include "battles.hpp"
 
-#include "invalid_user.hpp"
+#include "no_pending_challenges.hpp"
 
 #include "../battle.hpp"
 
@@ -40,7 +40,7 @@ void Battles::handle_challenge_withdrawn (std::string const & opponent) {
 GenericBattle & Battles::handle_begin(uint32_t const battle_id, std::string const & opponent) {
 	auto const it = challenges.find(opponent);
 	if (it == challenges.end())
-		throw InvalidUser(opponent);
+		throw NoPendingChallenges(opponent);
 	GenericBattle & battle = *it->second;
 	active.insert(std::make_pair(battle_id, std::move(it->second)));
 	challenges.erase(opponent);
@@ -54,14 +54,14 @@ void Battles::handle_end(uint32_t const battle_id) {
 GenericBattle const & Battles::find(uint32_t const battle_id) const {
 	auto const it = active.find(battle_id);
 	if (it == active.end())
-		throw InvalidUser(battle_id);
+		throw NoPendingChallenges(battle_id);
 	return *it->second;
 }
 
 GenericBattle & Battles::find(uint32_t const battle_id) {
 	auto const it = active.find(battle_id);
 	if (it == active.end())
-		throw InvalidUser(battle_id);
+		throw NoPendingChallenges(battle_id);
 	return *it->second;
 }
 
@@ -71,7 +71,7 @@ bool Battles::challenges_are_queued() const {
 
 std::string const & Battles::first_challenger() const {
 	if (!challenges_are_queued())
-		throw InvalidUser();
+		throw NoPendingChallenges();
 	return challenges.begin()->first;
 }
 

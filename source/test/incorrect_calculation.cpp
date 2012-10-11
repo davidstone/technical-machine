@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Incorrect Calculation class
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
+#include "incorrect_calculation.hpp"
 #include <string>
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+IncorrectCalculation::IncorrectCalculation(unsigned const result, unsigned const expected):
+	std::logic_error("Result of " + std::to_string(result) + " instead of the expected " + std::to_string(expected) + "\n")
+	{
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

@@ -16,18 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
+#include "invalid_stat.hpp"
 #include <string>
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidStat::InvalidStat(std::string const & stat_string):
+	std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
+	{
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

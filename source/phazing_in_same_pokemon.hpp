@@ -20,16 +20,12 @@
 #define PHAZING_IN_SAME_POKEMON_HPP_
 
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
 class PhazingInSamePokemon : public std::logic_error {
 	public:
-		PhazingInSamePokemon (unsigned index):
-			std::logic_error ("Attempted to phaze in the currently active Pokemon at index " + std::to_string(index) + ".")
-			{
-		}
+		explicit PhazingInSamePokemon(unsigned index);
 };
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception class if phazing attempts to bring in the currently active Pokemon
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
+#include "phazing_in_same_pokemon.hpp"
 #include <string>
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+PhazingInSamePokemon::PhazingInSamePokemon(unsigned const index):
+	std::logic_error("Attempted to phaze in the currently active Pokemon at index " + std::to_string(index) + ".")
+	{
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

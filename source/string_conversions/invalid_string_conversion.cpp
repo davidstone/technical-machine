@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Invalid string conversion classes
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
-#include <string>
+#include "invalid_string_conversion.hpp"
 
 namespace technicalmachine {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidFromStringConversion::InvalidFromStringConversion(std::string const & target, std::string const & requested):
+	std::runtime_error("Invalid conversion from " + requested + " to type " + target + " requested.\n")
+	{
+}
 
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

@@ -28,14 +28,8 @@ namespace po {
 
 class InvalidUser : public std::runtime_error {
 	public:
-		explicit InvalidUser (std::string const & name):
-			std::runtime_error ("User name " + name + " not in user_name_to_id.")
-			{
-		}
-		explicit InvalidUser (uint32_t id):
-			std::runtime_error ("User id " + std::to_string (id) + " not in user_id_to_name.")
-			{
-		}
+		explicit InvalidUser (std::string const & name);
+		explicit InvalidUser (uint32_t id);
 };
 
 }	// namespace po

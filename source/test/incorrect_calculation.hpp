@@ -20,16 +20,12 @@
 #define TEST__INCORRECT_CALCULATION_HPP_
 
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
 class IncorrectCalculation : public std::logic_error {
 	public:
-		IncorrectCalculation (unsigned result, unsigned expected):
-			logic_error ("Result of " + std::to_string (result) + " instead of the expected " + std::to_string (expected) + "\n")
-			{
-		}
+		IncorrectCalculation(unsigned result, unsigned expected);
 };
 
 }	// namespace technicalmachine

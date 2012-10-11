@@ -1,4 +1,4 @@
-// Invalid stat exception class
+// Exception class for invalid packets
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,18 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
-#include <string>
+#include "invalid_packet.hpp"
 
 namespace technicalmachine {
+namespace network {
 
-class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
-};
+InvalidPacket::InvalidPacket(std::string const & reason):
+	std::runtime_error(reason) {
+}
 
+}	// namespace network
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_
