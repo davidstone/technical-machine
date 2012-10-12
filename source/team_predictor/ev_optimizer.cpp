@@ -20,9 +20,44 @@
 #include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
+namespace {
+void remove_unused_offensive_evs(Pokemon & pokemon, bool & lower_attack, bool & lower_special_attack);
+bool has_physical_move(Pokemon const & pokemon);
+bool has_special_move(Pokemon const & pokemon);
+}	// unnamed namespace
 
 void optimize_evs(Pokemon & pokemon) {
-	
+	bool lower_attack = false;
+	bool lower_special_attack = false;
+	remove_unused_offensive_evs(pokemon, lower_attack, lower_special_attack);
+	unsigned const physical_product = pokemon.hp.points() * pokemon.def.points();
+	unsigned const special_product = pokemon.hp.points() * pokemon.spd.points();
 }
 
+namespace {
+
+void remove_unused_offensive_evs(Pokemon & pokemon, bool & lower_attack, bool & lower_special_attack) {
+	if (!has_physical_move(pokemon)) {
+		pokemon.atk.ev.set_value(0);
+		lower_attack = true;
+	}
+	if (!has_special_move(pokemon)) {
+		pokemon.spa.ev.set_value(0);
+		lower_special_attack = true;
+	}
+}
+
+bool has_physical_move(Pokemon const & pokemon) {
+	return pokemon.move.regular_move_exists([](Move const & move) {
+		return move.is_physical();
+	});
+}
+
+bool has_special_move(Pokemon const & pokemon) {
+	return pokemon.move.regular_move_exists([](Move const & move) {
+		return move.is_special();
+	});
+}
+
+}	// unnamed namespace
 }	// namespace technicalmachine
