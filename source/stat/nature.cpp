@@ -28,8 +28,12 @@
 
 namespace technicalmachine {
 
-Nature::Nature ():
-	name (END) {
+Nature::Nature():
+	name(END) {
+}
+
+Nature::Nature(Natures nature):
+	name(nature) {
 }
 
 Nature::Nature(std::string const & str):

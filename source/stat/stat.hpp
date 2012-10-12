@@ -54,19 +54,17 @@ class Stat {
 		void calculate_initial_hp (uint8_t const level);
 };
 
+template<Stat::Stats>
+unsigned initial_stat(Pokemon const & pokemon);
+
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);
-unsigned initial_attack(Pokemon const & pokemon);
 void calculate_attack(ActivePokemon & attacker, Weather const & weather);
-unsigned initial_special_attack(Pokemon const & pokemon);
 void calculate_special_attack(ActivePokemon & attacker, Weather const & weather);
 
 void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather);
-unsigned initial_defense(Pokemon const & pokemon);
 void calculate_defense (ActivePokemon & defender, bool ch = false, bool is_self_KO = false);
-unsigned initial_special_defense(Pokemon const & pokemon);
 void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch = false);
 
-unsigned initial_speed(Pokemon const & pokemon);
 void calculate_speed (Team & team, Weather const & weather);
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);

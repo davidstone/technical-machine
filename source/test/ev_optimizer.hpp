@@ -1,4 +1,4 @@
-// Test stuff
+// Test EV optimizer
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,28 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#ifndef TEST__EV_OPTIMIZER_HPP_
+#define TEST__EV_OPTIMIZER_HPP_
 
-#include "collections/collection.hpp"
-#include "damage.hpp"
-#include "ev_optimizer.hpp"
-#include "stat.hpp"
-#include "string_conversion.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+namespace technicalmachine {
 
-int main() {
-	using namespace technicalmachine;
-	
-	ev_optimizer_tests();
-	string_conversion_tests();
-	stat_tests();
-	damage_tests();
-	collection_tests();
+void ev_optimizer_tests();
 
-	pl::test ();
-	po::test ();
+}	// namespace technicalmachine
 
-	std::cout << "All tests passed.\n";
-	return 0;
-}
+#endif	// TEST__EV_OPTIMIZER_HPP_

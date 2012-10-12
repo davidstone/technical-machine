@@ -1,4 +1,4 @@
-// Test stuff
+// Test EV optimizer
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,28 +16,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
-
-#include "collections/collection.hpp"
-#include "damage.hpp"
 #include "ev_optimizer.hpp"
-#include "stat.hpp"
-#include "string_conversion.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+#include <iostream>
+#include "../team.hpp"
+#include "../pokemon/species.hpp"
+#include "../team_predictor/ev_optimizer.hpp"
 
-int main() {
-	using namespace technicalmachine;
-	
-	ev_optimizer_tests();
-	string_conversion_tests();
-	stat_tests();
-	damage_tests();
-	collection_tests();
+namespace technicalmachine {
 
-	pl::test ();
-	po::test ();
+void ev_optimizer_tests() {
+	std::cout << "\tEV optimizer tests.\n";
 
-	std::cout << "All tests passed.\n";
-	return 0;
+	Team team;
+	constexpr unsigned level = 100;
+	Gender const gender(Gender::FEMALE);
+	team.add_pokemon(Species::Blissey, level, gender);
+	optimize_evs(team.pokemon());
 }
+
+}	// namespace technicalmachine

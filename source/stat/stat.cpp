@@ -36,7 +36,7 @@ namespace {
 
 uint8_t get_base_stat(Species name, Stat::Stats stat_name);
 
-unsigned initial_stat(Stat const & stat, unsigned level);
+unsigned initial_generic_stat(Stat const & stat, unsigned level);
 
 Rational attack_ability_modifier(Pokemon const & attacker, bool slow_start, Weather const & weather);
 Rational attack_item_modifier(Pokemon const & attacker);
@@ -62,13 +62,38 @@ Stat::Stat (Species name, Stats stat_name) :
 	max (65535),
 	base (get_base_stat (name, stat_name)),
 	iv (31),
-	ev (84 / 4)	// Adds up to 504 EVs (126 points). Temporary until I add in EV prediction
+	ev (508 / 6)		// Adds up to 504 EVs (126 points). Temporary until I add in EV prediction
 	{
 }
 
 void Stat::calculate_initial_hp (uint8_t const level) {
-	max = (base > 1) ? (initial_stat(*this, level) + level + 5) : 1;
+	max = (base > 1) ? (initial_generic_stat(*this, level) + level + 5) : 1;
 	stat = max;
+}
+
+template<>
+unsigned initial_stat<Stat::HP>(Pokemon const & pokemon) {
+	return (pokemon.hp.base > 1) ? (initial_generic_stat(pokemon.hp, pokemon.level()) + pokemon.level() + 5) : 1;
+}
+template<>
+unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon) {
+	return initial_generic_stat(pokemon.atk, pokemon.level()) * pokemon.nature().boost<Stat::ATK>();
+}
+template<>
+unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon) {
+	return initial_generic_stat(pokemon.spa, pokemon.level()) * pokemon.nature().boost<Stat::SPA>();
+}
+template<>
+unsigned initial_stat<Stat::DEF>(Pokemon const & pokemon) {
+	return initial_generic_stat(pokemon.def, pokemon.level()) * pokemon.nature().boost<Stat::DEF>();
+}
+template<>
+unsigned initial_stat<Stat::SPD>(Pokemon const & pokemon) {
+	return initial_generic_stat(pokemon.spd, pokemon.level()) * pokemon.nature().boost<Stat::SPD>();
+}
+template<>
+unsigned initial_stat<Stat::SPE>(Pokemon const & pokemon) {
+	return initial_generic_stat(pokemon.spe, pokemon.level()) * pokemon.nature().boost<Stat::SPE>();
 }
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather) {
@@ -78,12 +103,8 @@ void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather
 		calculate_special_attack(attacker, weather);
 }
 
-unsigned initial_attack(Pokemon const & pokemon) {
-	return initial_stat(pokemon.atk, pokemon.level()) * pokemon.nature().boost<Stat::ATK>();
-}
-
 void calculate_attack(ActivePokemon & attacker, Weather const & weather) {
-	attacker.atk().stat = !attacker.power_trick_is_active() ? initial_attack(attacker) : initial_defense(attacker);
+	attacker.atk().stat = !attacker.power_trick_is_active() ? initial_stat<Stat::ATK>(attacker) : initial_stat<Stat::DEF>(attacker);
 
 	attacker.atk().stat *= attacker.stage_modifier<Stat::ATK>(attacker.critical_hit());
 
@@ -94,12 +115,8 @@ void calculate_attack(ActivePokemon & attacker, Weather const & weather) {
 		attacker.atk().stat = 1;
 }
 
-unsigned initial_special_attack(Pokemon const & pokemon) {
-	return initial_stat(pokemon.spa, pokemon.level()) * pokemon.nature().boost<Stat::SPA>();
-}
-
 void calculate_special_attack (ActivePokemon & attacker, Weather const & weather) {
-	attacker.spa().stat = initial_special_attack(attacker);
+	attacker.spa().stat = initial_stat<Stat::SPA>(attacker);
 
 	attacker.spa().stat *= attacker.stage_modifier<Stat::SPA>(attacker.critical_hit());
 
@@ -117,12 +134,8 @@ void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & d
 		calculate_special_defense(defender, weather, attacker.critical_hit());
 }
 
-unsigned initial_defense(Pokemon const & pokemon) {
-	return initial_stat(pokemon.def, pokemon.level()) * pokemon.nature().boost<Stat::DEF>();
-}
-
 void calculate_defense (ActivePokemon & defender, bool ch, bool is_self_KO) {
-	defender.def().stat = !defender.power_trick_is_active() ? initial_defense(defender) : initial_attack(defender);
+	defender.def().stat = !defender.power_trick_is_active() ? initial_stat<Stat::DEF>(defender) : initial_stat<Stat::ATK>(defender);
 
 	defender.def().stat *= defender.stage_modifier<Stat::DEF>(ch);
 	
@@ -136,12 +149,8 @@ void calculate_defense (ActivePokemon & defender, bool ch, bool is_self_KO) {
 		defender.def().stat = 1;
 }
 
-unsigned initial_special_defense(Pokemon const & pokemon) {
-	return initial_stat(pokemon.spd, pokemon.level()) * pokemon.nature().boost<Stat::SPD>();
-}
-
 void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch) {
-	defender.spd().stat = initial_special_defense(defender);
+	defender.spd().stat = initial_stat<Stat::SPD>(defender);
 	
 	defender.spd().stat *= defender.stage_modifier<Stat::SPD>(ch);
 
@@ -154,13 +163,9 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 		defender.spd().stat = 1;
 }
 
-unsigned initial_speed(Pokemon const & pokemon) {
-	return initial_stat(pokemon.spe, pokemon.level()) * pokemon.nature().boost<Stat::SPE>();
-}
-
 void calculate_speed (Team & team, Weather const & weather) {
 	auto & pokemon = team.pokemon();
-	pokemon.spe().stat = initial_speed(pokemon);
+	pokemon.spe().stat = initial_stat<Stat::SPE>(pokemon);
 	
 	pokemon.spe().stat *= pokemon.stage_modifier<Stat::SPE>();
 
@@ -210,7 +215,7 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 
 namespace {
 
-unsigned initial_stat(Stat const & stat, unsigned level) {
+unsigned initial_generic_stat(Stat const & stat, unsigned level) {
 	return (2u * stat.base + stat.iv + stat.ev.points()) * level / 100 + 5;
 }
 

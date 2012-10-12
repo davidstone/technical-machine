@@ -36,8 +36,10 @@ class Nature {
 			NAIVE, NAUGHTY, QUIET, QUIRKY, RASH,
 			RELAXED, SASSY, SERIOUS, TIMID, END
 		};
-		Nature ();
-		Nature (std::string const & str);
+		Nature();
+		// intentionally implicit
+		Nature(Natures nature);
+		explicit Nature(std::string const & str);
 		bool is_set () const;
 		void set_if_unknown (Natures nature);
 		template<Stat::Stats>
