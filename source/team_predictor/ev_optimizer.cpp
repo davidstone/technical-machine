@@ -30,8 +30,8 @@ void optimize_evs(Pokemon & pokemon) {
 	bool lower_attack = false;
 	bool lower_special_attack = false;
 	remove_unused_offensive_evs(pokemon, lower_attack, lower_special_attack);
-	unsigned const physical_product = pokemon.hp.points() * pokemon.def.points();
-	unsigned const special_product = pokemon.hp.points() * pokemon.spd.points();
+	unsigned const physical_product = pokemon.hp.ev.points() * pokemon.def.ev.points();
+	unsigned const special_product = pokemon.hp.ev.points() * pokemon.spd.ev.points();
 }
 
 namespace {

@@ -25,6 +25,7 @@
 #include "stat.hpp"
 
 namespace technicalmachine {
+class Rational;
 
 class Nature {
 	public:
@@ -40,7 +41,7 @@ class Nature {
 		bool is_set () const;
 		void set_if_unknown (Natures nature);
 		template<Stat::Stats>
-		unsigned boost () const;
+		Rational boost() const;
 		std::string to_string () const;
 		friend bool operator== (Nature lhs, Nature rhs);
 

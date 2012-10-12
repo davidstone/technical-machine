@@ -21,6 +21,9 @@
 #include <cassert>
 
 #include "stat.hpp"
+
+#include "../rational.hpp"
+
 #include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
@@ -45,92 +48,92 @@ void Nature::set_if_unknown (Natures const nature) {
 }
 
 template<>
-unsigned Nature::boost<Stat::ATK> () const {
+Rational Nature::boost<Stat::ATK>() const {
 	switch (name) {
 		case ADAMANT:
 		case BRAVE:
 		case LONELY:
 		case NAUGHTY:
-			return 11;
+			return Rational(11, 10);
 		case BOLD:
 		case CALM:
 		case MODEST:
 		case TIMID:
-			return 9;
+			return Rational(9, 10);
 		default:
-			return 10;
+			return Rational(1);
 	}
 }
 
 template<>
-unsigned Nature::boost<Stat::DEF> () const {
+Rational Nature::boost<Stat::DEF>() const {
 	switch (name) {
 		case BOLD:
 		case IMPISH:
 		case LAX:
 		case RELAXED:
-			return 11;
+			return Rational(11, 10);
 		case GENTLE:
 		case HASTY:
 		case LONELY:
 		case MILD:
-			return 9;
+			return Rational(9, 10);
 		default:
-			return 10;
+			return Rational(1);
 	}
 }
 
 template<>
-unsigned Nature::boost<Stat::SPA> () const {
+Rational Nature::boost<Stat::SPA>() const {
 	switch (name) {
 		case MILD:
 		case MODEST:
 		case QUIET:
 		case RASH:
-			return 11;
+			return Rational(11, 10);
 		case ADAMANT:
 		case CAREFUL:
 		case IMPISH:
 		case JOLLY:
-			return 9;
+			return Rational(9, 10);
 		default:
-			return 10;
+			return Rational(1);
 	}
 }
 
 template<>
-unsigned Nature::boost<Stat::SPD> () const {
+Rational Nature::boost<Stat::SPD>() const {
 	switch (name) {
 		case CALM:
 		case CAREFUL:
 		case GENTLE:
 		case SASSY:
-			return 11;
+			return Rational(11, 10);
 		case LAX:
 		case NAIVE:
 		case NAUGHTY:
 		case RASH:
-			return 9;
+			return Rational(9, 10);
 		default:
-			return 10;
+			return Rational(1);
 	}
 }
 
 template<>
-unsigned Nature::boost<Stat::SPE> () const {
+Rational Nature::boost<Stat::SPE>() const {
 	switch (name) {
 		case HASTY:
 		case JOLLY:
 		case NAIVE:
 		case TIMID:
-			return 11;
+			return Rational(11, 10);
 		case BRAVE:
 		case QUIET:
 		case RELAXED:
 		case SASSY:
-			return 9;
+			return Rational(9, 10);
 		default:
-			return 10;
+			return Rational(1);
 	}
 }
 

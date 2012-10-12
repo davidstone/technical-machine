@@ -97,7 +97,7 @@ void calculate_attack(ActivePokemon & attacker, Weather const & weather) {
 
 void calculate_special_attack (ActivePokemon & attacker, Weather const & weather) {
 	attacker.spa().stat = calculate_initial_stat (attacker.spa(), attacker.level());
-	attacker.spa().stat *= Rational(attacker.nature().boost<Stat::SPA>(), 10);
+	attacker.spa().stat *= attacker.nature().boost<Stat::SPA>();
 
 	attacker.spa().stat *= attacker.stage_modifier<Stat::SPA>(attacker.critical_hit());
 
@@ -134,7 +134,7 @@ void calculate_defense (ActivePokemon & defender, bool ch, bool is_self_KO) {
 
 void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch) {
 	defender.spd().stat = calculate_initial_stat (defender.spd(), defender.level());
-	defender.spd().stat *= Rational(defender.nature().boost<Stat::SPD>(), 10);
+	defender.spd().stat *= defender.nature().boost<Stat::SPD>();
 	
 	defender.spd().stat *= defender.stage_modifier<Stat::SPD>(ch);
 
@@ -150,7 +150,7 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 void calculate_speed (Team & team, Weather const & weather) {
 	auto & pokemon = team.pokemon();
 	pokemon.spe().stat = calculate_initial_stat (pokemon.spe(), pokemon.level());
-	pokemon.spe().stat *= Rational(pokemon.nature().boost<Stat::SPE>(), 10);
+	pokemon.spe().stat *= pokemon.nature().boost<Stat::SPE>();
 	
 	pokemon.spe().stat *= pokemon.stage_modifier<Stat::SPE>();
 
@@ -206,12 +206,12 @@ unsigned calculate_initial_stat (Stat const & stat, unsigned level) {
 
 unsigned calculate_attack_before_power_trick (Pokemon const & attacker) {
 	unsigned const n = calculate_initial_stat (attacker.atk, attacker.level());
-	return n * attacker.nature().boost<Stat::ATK>() / 10;
+	return n * attacker.nature().boost<Stat::ATK>();
 }
 
 unsigned calculate_defense_before_power_trick (Pokemon const & defender) {
 	unsigned const n = calculate_initial_stat (defender.def, defender.level());
-	return n * defender.nature().boost<Stat::DEF>() / 10;
+	return n * defender.nature().boost<Stat::DEF>();
 }
 
 Rational attack_ability_modifier(Pokemon const & attacker, bool slow_start, Weather const & weather) {
