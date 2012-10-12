@@ -20,7 +20,7 @@
 #include <iostream>
 #include "../team.hpp"
 #include "../pokemon/species.hpp"
-#include "../team_predictor/ev_optimizer.hpp"
+#include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
 
 namespace technicalmachine {
 

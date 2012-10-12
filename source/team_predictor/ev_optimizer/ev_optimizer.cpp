@@ -24,9 +24,9 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include "../pokemon/pokemon.hpp"
-#include "../stat/nature.hpp"
-#include "../stat/stat.hpp"
+#include "../../pokemon/pokemon.hpp"
+#include "../../stat/nature.hpp"
+#include "../../stat/stat.hpp"
 
 #include <iostream>
 
