@@ -89,7 +89,7 @@ bool operator< (CombinedEVs const & lhs, CombinedEVs const & rhs) {
 }
 
 void remove_unused_offensive_evs(Pokemon & pokemon, bool & lower_attack, bool & lower_special_attack);
-std::map<Nature::Natures, std::vector<CombinedEVs>> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special);
+std::map<Nature::Natures, std::vector<CombinedEVs>> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special, unsigned max_evs);
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 void remove_defensive_waste(Pokemon & pokemon);
@@ -97,6 +97,7 @@ void filter_to_minimum_evs(std::map<Nature::Natures, std::vector<CombinedEVs>> &
 void minimum_evs_per_nature(std::vector<CombinedEVs> & original);
 template<Stat::Stats stat>
 void set_ev(Pokemon & pokemon, unsigned const defensive_ev);
+unsigned defensive_evs_available(Pokemon const & pokemon);
 }	// unnamed namespace
 
 void optimize_evs(Pokemon & pokemon) {
@@ -162,20 +163,21 @@ std::vector<DefensiveEVs> defensiveness(Pokemon pokemon) {
 void remove_defensive_waste(Pokemon & pokemon) {
 	std::vector<DefensiveEVs> const physical = defensiveness<Stat::DEF>(pokemon);
 	std::vector<DefensiveEVs> const special = defensiveness<Stat::SPD>(pokemon);
-	std::map<Nature::Natures, std::vector<CombinedEVs>> const combined = combine_results(physical, special);
+	unsigned const max_evs = defensive_evs_available(pokemon);
+	std::map<Nature::Natures, std::vector<CombinedEVs>> const combined = combine_results(physical, special, max_evs);
 	for (auto const & per_nature : combined) {
 		for (auto const & stat : per_nature.second)
 			std::cerr << stat.to_string() + '\n';
 	}
 }
 
-std::map<Nature::Natures, std::vector<CombinedEVs>> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special) {
+std::map<Nature::Natures, std::vector<CombinedEVs>> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special, unsigned const max_evs) {
 	std::map<Nature::Natures, std::vector<CombinedEVs>> result;
 	for (auto const & p : physical) {
 		for (auto const & s : special) {
 			if (p.hp != s.hp)
 				continue;
-			bool const evs_over_cap = (p.hp + p.defensive + s.defensive > 510);
+			bool const evs_over_cap = (p.hp + p.defensive + s.defensive > max_evs);
 			if (evs_over_cap)
 				continue;
 			bool const legal_nature_combination = (p.nature_boost != s.nature_boost or p.nature_boost == Neutral);
@@ -187,6 +189,11 @@ std::map<Nature::Natures, std::vector<CombinedEVs>> combine_results(std::vector<
 	}
 	filter_to_minimum_evs(result);
 	return result;
+}
+
+unsigned defensive_evs_available(Pokemon const & pokemon) {
+	constexpr unsigned max_total_evs = 510;
+	return max_total_evs - pokemon.atk.ev.value() + pokemon.spa.ev.value() + pokemon.spe.ev.value();
 }
 
 void filter_to_minimum_evs(std::map<Nature::Natures, std::vector<CombinedEVs>> & result) {
