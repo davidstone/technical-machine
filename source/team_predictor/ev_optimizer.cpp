@@ -17,9 +17,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ev_optimizer.hpp"
+#include <algorithm>
 #include <array>
 #include <cassert>
+#include <stdexcept>
 #include <string>
+#include <vector>
 #include "../pokemon/pokemon.hpp"
 #include "../stat/nature.hpp"
 #include "../stat/stat.hpp"
@@ -32,6 +35,7 @@ enum NatureBoost { Penalty, Neutral, Boost };
 
 template<Stat::Stats stat>
 Nature::Natures nature_effect(NatureBoost nature);
+Nature::Natures combine(NatureBoost physical, NatureBoost special);
 
 class DefensiveEVs {
 	public:
@@ -47,7 +51,41 @@ class DefensiveEVs {
 		NatureBoost nature_boost;
 };
 
+class CombinedEVs {
+	public:
+		CombinedEVs(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature):
+			hp(hp_ev),
+			defense(defense_ev),
+			special_defense(special_defense_ev),
+			nature(a_nature) {
+		}
+		std::string to_string() const {
+			return nature.to_string() + " " + std::to_string(hp) + " HP / " + std::to_string(defense) + " Def / " + std::to_string(special_defense) + " SpD";
+		}
+		friend bool operator< (CombinedEVs const & lhs, CombinedEVs const & rhs);
+		unsigned hp;
+		unsigned defense;
+		unsigned special_defense;
+		Nature nature;
+};
+bool operator< (CombinedEVs const & lhs, CombinedEVs const & rhs) {
+	if (lhs.nature.name < rhs.nature.name)
+		return true;
+	if (rhs.nature.name < lhs.nature.name)
+		return false;
+	if (lhs.hp < rhs.hp)
+		return true;
+	if (rhs.hp < lhs.hp)
+		return false;
+	if (lhs.defense < rhs.defense)
+		return true;
+	if (rhs.defense < lhs.defense)
+		return false;
+	return lhs.special_defense < rhs.special_defense;
+}
+
 void remove_unused_offensive_evs(Pokemon & pokemon, bool & lower_attack, bool & lower_special_attack);
+std::vector<CombinedEVs> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special);
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 void remove_defensive_waste(Pokemon & pokemon);
@@ -101,6 +139,7 @@ std::vector<DefensiveEVs> defensiveness(Pokemon pokemon) {
 		nature_effect<stat>(Penalty)
 	}};
 	for (Nature const nature : natures) {
+		pokemon.nature() = nature;
 		for (unsigned hp_ev = 0; hp_ev <= 252; hp_ev += 4) {
 			pokemon.hp.ev.set_value(hp_ev);
 			unsigned const hp = initial_stat<Stat::HP>(pokemon);
@@ -111,13 +150,7 @@ std::vector<DefensiveEVs> defensiveness(Pokemon pokemon) {
 				set_ev<stat>(pokemon, defensive_ev);
 			}
 			if (initial_stat<stat>(pokemon) * hp >= initial_product) {
-				auto const nature_boost = DefensiveEVs::convert(nature);
-				if (!result.empty()) {
-					auto const & old = result.back();
-					if (nature_boost == old.nature_boost and (hp_ev - old.hp <= old.defensive - defensive_ev))
-						result.pop_back();
-				}
-				result.emplace_back(hp_ev, defensive_ev, nature_boost);
+				result.emplace_back(hp_ev, defensive_ev, DefensiveEVs::convert(nature));
 			}
 		}
 	}
@@ -125,11 +158,33 @@ std::vector<DefensiveEVs> defensiveness(Pokemon pokemon) {
 }
 
 void remove_defensive_waste(Pokemon & pokemon) {
-	std::vector<DefensiveEVs> physical = defensiveness<Stat::DEF>(pokemon);
-	for (auto const & stat : physical)
-		std::cerr << stat.to_string<Stat::DEF>("Def") + '\n';
-	
+	std::vector<DefensiveEVs> const physical = defensiveness<Stat::DEF>(pokemon);
+	std::vector<DefensiveEVs> const special = defensiveness<Stat::SPD>(pokemon);
+	std::vector<CombinedEVs> const combined = combine_results(physical, special);
+	for (auto const & stat : combined)
+		std::cerr << stat.to_string() + '\n';
 }
+
+std::vector<CombinedEVs> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special) {
+	std::vector<CombinedEVs> result;
+	for (auto const & p : physical) {
+		for (auto const & s : special) {
+			if (p.hp != s.hp)
+				continue;
+			bool const evs_over_cap = (p.hp + p.defensive + s.defensive > 510);
+			if (evs_over_cap)
+				continue;
+			bool const legal_nature_combination = (p.nature_boost != s.nature_boost or p.nature_boost == Neutral);
+			if (legal_nature_combination) {
+				Nature const nature = combine(p.nature_boost, s.nature_boost);
+				result.emplace_back(p.hp, p.defensive, s.defensive, nature);
+			}
+		}
+	}
+	std::sort(result.begin(), result.end());
+	return result;
+}
+
 
 template<>
 void set_ev<Stat::DEF>(Pokemon & pokemon, unsigned const defensive_ev) {
@@ -146,40 +201,80 @@ DefensiveEVs::DefensiveEVs(unsigned hp_ev, unsigned defensive_ev, NatureBoost na
 	nature_boost(nature) {
 }
 
+class InvalidNatureCombination : public std::logic_error {
+	public:
+		InvalidNatureCombination():
+			std::logic_error("Attempt to create a nature that cannot exist.") {
+		}
+};
+
+Nature::Natures combine(NatureBoost const physical, NatureBoost const special) {
+	switch (physical) {
+	case Boost:
+		switch (special) {
+		case Boost:
+			throw InvalidNatureCombination();
+		case Neutral:
+			return Nature::IMPISH;
+		case Penalty:
+			return Nature::LAX;
+		}
+	case Neutral:
+		switch (special) {
+		case Boost:
+			return Nature::CALM;
+		case Neutral:
+			return Nature::HARDY;
+		case Penalty:
+			return Nature::NAIVE;
+		}
+	case Penalty:
+		switch (special) {
+		case Boost:
+			return Nature::GENTLE;
+		case Neutral:
+			return Nature::HASTY;
+		case Penalty:
+			throw InvalidNatureCombination();
+		}
+	}
+	throw InvalidNatureCombination();
+}
+
 NatureBoost DefensiveEVs::convert(Nature nature) {
 	switch (nature.name) {
-		case Nature::IMPISH:
-		case Nature::CALM:
-			return Boost;
-		case Nature::HASTY:
-		case Nature::NAIVE:
-			return Penalty;
-		default:
-			assert(nature.name == Nature::HARDY);
-			return Neutral;
+	case Nature::IMPISH:
+	case Nature::CALM:
+		return Boost;
+	case Nature::HASTY:
+	case Nature::NAIVE:
+		return Penalty;
+	default:
+		assert(nature.name == Nature::HARDY);
+		return Neutral;
 	}
 }
 
 template<>
 Nature::Natures nature_effect<Stat::DEF>(NatureBoost nature) {
 	switch (nature) {
-		case Boost:
-			return Nature::IMPISH;
-		case Penalty:
-			return Nature::HASTY;
-		default:
-			return Nature::HARDY;
+	case Boost:
+		return Nature::IMPISH;
+	case Penalty:
+		return Nature::HASTY;
+	default:
+		return Nature::HARDY;
 	}
 }
 template<>
 Nature::Natures nature_effect<Stat::SPD>(NatureBoost nature) {
 	switch (nature) {
-		case Boost:
-			return Nature::CALM;
-		case Penalty:
-			return Nature::NAIVE;
-		default:
-			return Nature::HARDY;
+	case Boost:
+		return Nature::CALM;
+	case Penalty:
+		return Nature::NAIVE;
+	default:
+		return Nature::HARDY;
 	}
 }
 
