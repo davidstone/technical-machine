@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ev_optimizer.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -24,7 +25,11 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include "offensive.hpp"
+
 #include "../../pokemon/pokemon.hpp"
+
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
@@ -88,10 +93,7 @@ bool operator< (CombinedEVs const & lhs, CombinedEVs const & rhs) {
 	return lhs.special_defense < rhs.special_defense;
 }
 
-void remove_unused_offensive_evs(Pokemon & pokemon, bool & lower_attack, bool & lower_special_attack);
 std::map<Nature::Natures, std::vector<CombinedEVs>> combine_results(std::vector<DefensiveEVs> const & physical, std::vector<DefensiveEVs> const & special, unsigned max_evs);
-bool has_physical_move(Pokemon const & pokemon);
-bool has_special_move(Pokemon const & pokemon);
 void remove_defensive_waste(Pokemon & pokemon);
 void filter_to_minimum_evs(std::map<Nature::Natures, std::vector<CombinedEVs>> & result);
 void minimum_evs_per_nature(std::vector<CombinedEVs> & original);
@@ -101,36 +103,11 @@ unsigned defensive_evs_available(Pokemon const & pokemon);
 }	// unnamed namespace
 
 void optimize_evs(Pokemon & pokemon) {
-	bool lower_attack = false;
-	bool lower_special_attack = false;
-	remove_unused_offensive_evs(pokemon, lower_attack, lower_special_attack);
+	OffensiveEVs offensive(pokemon);
 	remove_defensive_waste(pokemon);
 }
 
 namespace {
-
-void remove_unused_offensive_evs(Pokemon & pokemon, bool & lower_attack, bool & lower_special_attack) {
-	if (!has_physical_move(pokemon)) {
-		pokemon.atk.ev.set_value(0);
-		lower_attack = true;
-	}
-	if (!has_special_move(pokemon)) {
-		pokemon.spa.ev.set_value(0);
-		lower_special_attack = true;
-	}
-}
-
-bool has_physical_move(Pokemon const & pokemon) {
-	return pokemon.move.regular_move_exists([](Move const & move) {
-		return move.is_physical();
-	});
-}
-
-bool has_special_move(Pokemon const & pokemon) {
-	return pokemon.move.regular_move_exists([](Move const & move) {
-		return move.is_special();
-	});
-}
 
 template<Stat::Stats stat>
 std::vector<DefensiveEVs> defensiveness(Pokemon pokemon) {

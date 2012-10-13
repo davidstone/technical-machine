@@ -36,8 +36,8 @@ void ev_optimizer_tests() {
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(Species::Snorlax, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.hp.ev.set_value(188);
-	pokemon.atk.ev.set_value(0);
+	pokemon.hp.ev.set_value(0);
+	pokemon.atk.ev.set_value(188);
 	pokemon.def.ev.set_value(104);
 	pokemon.spa.ev.set_value(0);
 	pokemon.spd.ev.set_value(216);
