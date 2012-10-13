@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 
@@ -76,6 +77,28 @@ unsigned DefensiveEVs::DataPoint::sum() const {
 	return hp + defense + special_defense;
 }
 
+template<Stat::Stats stat>
+unsigned DefensiveEVs::DataPoint::product(Pokemon const & pokemon) const {
+	return initial_stat<stat>(pokemon) * initial_stat<Stat::HP>(pokemon);
+}
+template unsigned DefensiveEVs::DataPoint::product<Stat::DEF>(Pokemon const & pokemon) const;
+template unsigned DefensiveEVs::DataPoint::product<Stat::SPD>(Pokemon const & pokemon) const;
+
+bool lesser_product(DefensiveEVs::DataPoint const & lhs, DefensiveEVs::DataPoint const & rhs, Pokemon const & pokemon) {
+	auto const left_physical = lhs.product<Stat::DEF>(pokemon);
+	auto const left_special = lhs.product<Stat::SPD>(pokemon);
+	auto const right_physical = lhs.product<Stat::DEF>(pokemon);
+	auto const right_special = lhs.product<Stat::SPD>(pokemon);
+	if (left_physical < right_physical and left_special < right_special)
+		return true;
+	if (right_physical < left_physical and right_special < left_special)
+		return false;
+	auto const left = static_cast<uint64_t>(left_physical) * left_special;
+	auto const right = static_cast<uint64_t>(right_physical) * right_special;
+	return left < right;
+}
+
+
 namespace {
 template<Stat::Stats stat>
 std::vector<DefensiveEVs::SingleClassificationEVs> defensiveness(Pokemon pokemon) {
@@ -111,14 +134,14 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 	Single const physical = defensiveness<Stat::DEF>(pokemon);
 	Single const special = defensiveness<Stat::SPD>(pokemon);
 	unsigned const max_evs = defensive_evs_available(pokemon);
-	combine_results(physical, special, max_evs);
+	combine_results(physical, special, max_evs, pokemon);
 	for (auto const & per_nature : container) {
 		for (auto const & stat : per_nature.second)
 			std::cerr << stat.to_string() + '\n';
 	}
 }
 
-void DefensiveEVs::combine_results(Single const & physical, Single const & special, unsigned max_evs) {
+void DefensiveEVs::combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon) {
 	for (auto const & p : physical) {
 		for (auto const & s : special) {
 			if (p.hp != s.hp)
@@ -134,6 +157,7 @@ void DefensiveEVs::combine_results(Single const & physical, Single const & speci
 		}
 	}
 	filter_to_minimum_evs();
+	most_effective_equal_evs(pokemon);
 }
 
 void DefensiveEVs::filter_to_minimum_evs() {
@@ -152,6 +176,21 @@ void DefensiveEVs::minimum_evs_per_nature(Estimates & original) {
 		return value.sum() != it->sum();
 	};
 	original.erase(std::remove_if(std::begin(original), std::end(original), invalid), std::end(original));
+}
+
+void DefensiveEVs::most_effective_equal_evs(Pokemon const & pokemon) {
+	for (auto & per_nature : container) {
+		most_effective_equal_evs_per_nature(per_nature.second, pokemon);
+	}
+}
+
+void DefensiveEVs::most_effective_equal_evs_per_nature(Estimates & original, Pokemon const & pokemon) {
+	auto const greatest_product = [& pokemon](DataPoint const & largest, DataPoint const & value) {
+		return lesser_product(largest, value, pokemon);
+	};
+	auto const it = std::max_element(std::begin(original), std::end(original), greatest_product);
+	original.front() = *it;
+	original.erase(std::begin(original) + 1, std::end(original));
 }
 
 DefensiveEVs::SingleClassificationEVs::SingleClassificationEVs(unsigned hp_ev, unsigned defensive_ev, NatureBoost nature):

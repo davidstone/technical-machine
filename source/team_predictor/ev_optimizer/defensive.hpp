@@ -37,19 +37,25 @@ class DefensiveEVs {
 				DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature);
 				std::string to_string() const;
 				unsigned sum() const;
+				friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
 			private:
+				template<Stat::Stats stat>
+				unsigned product(Pokemon const & pokemon) const;
 				unsigned hp;
 				unsigned defense;
 				unsigned special_defense;
 				Nature nature;
 		};
+		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
 		class SingleClassificationEVs;
 		typedef std::vector<DataPoint> Estimates;
 		typedef std::map<Nature::Natures, Estimates> Container;
 		typedef std::vector<SingleClassificationEVs> Single;
-		void combine_results(Single const & physical, Single const & special, unsigned max_evs);
+		void combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon);
 		void filter_to_minimum_evs();
 		static void minimum_evs_per_nature(Estimates & original);
+		void most_effective_equal_evs(Pokemon const & pokemon);
+		static void most_effective_equal_evs_per_nature(Estimates & original, Pokemon const & pokemon);
 		Container container;
 };
 
