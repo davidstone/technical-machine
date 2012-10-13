@@ -29,21 +29,17 @@ void ev_optimizer_tests() {
 
 	Team team;
 	constexpr unsigned level = 100;
-	#if 0
-	Gender const gender(Gender::FEMALE);
-	team.add_pokemon(Species::Blissey, level, gender);
-	#else
 	Gender const gender(Gender::MALE);
-	team.add_pokemon(Species::Snorlax, level, gender);
+	team.add_pokemon(Species::Lanturn, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.hp.ev.set_value(0);
-	pokemon.atk.ev.set_value(188);
-	pokemon.def.ev.set_value(104);
-	pokemon.spa.ev.set_value(0);
-	pokemon.spd.ev.set_value(216);
-	pokemon.spe.ev.set_value(0);
-	pokemon.nature() = Nature::CAREFUL;
-	#endif
+	pokemon.hp.ev.set_value(136);
+	pokemon.atk.ev.set_value(0);
+	pokemon.def.ev.set_value(0);
+	pokemon.spa.ev.set_value(252);
+	pokemon.spd.ev.set_value(0);
+	pokemon.spe.ev.set_value(120);
+	pokemon.nature() = Nature::MODEST;
+	pokemon.hp.calculate_initial_hp(pokemon.level());
 	optimize_evs(team.pokemon());
 }
 
