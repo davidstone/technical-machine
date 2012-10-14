@@ -45,6 +45,7 @@ class TypeCollection {
 	private:
 		friend bool is_type (ActivePokemon const & pokemon, Type type);
 		friend class Type;
+		friend class Effectiveness;
 		std::vector<Type> types;
 };
 

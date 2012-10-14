@@ -102,7 +102,7 @@ bool lesser_product(DefensiveEVs::DataPoint const & lhs, DefensiveEVs::DataPoint
 namespace {
 template<Stat::Stats stat>
 std::vector<DefensiveEVs::SingleClassificationEVs> defensiveness(Pokemon pokemon) {
-	unsigned const initial_product = pokemon.hp.max * initial_stat<stat>(pokemon);
+	unsigned const initial_product = pokemon.hp().max * initial_stat<stat>(pokemon);
 	std::vector<DefensiveEVs::SingleClassificationEVs> result;
 	static std::array<Nature, 3> const natures = {{
 		nature_effect<stat>(Boost),
@@ -112,7 +112,7 @@ std::vector<DefensiveEVs::SingleClassificationEVs> defensiveness(Pokemon pokemon
 	for (Nature const nature : natures) {
 		pokemon.nature() = nature;
 		for (unsigned hp_ev = 0; hp_ev <= 252; hp_ev += 4) {
-			pokemon.hp.ev.set_value(hp_ev);
+			pokemon.hp().ev.set_value(hp_ev);
 			unsigned const hp = initial_stat<Stat::HP>(pokemon);
 			unsigned defensive_ev = 0;
 			set_ev<stat>(pokemon, defensive_ev);
@@ -218,16 +218,16 @@ namespace {
 
 unsigned defensive_evs_available(Pokemon const & pokemon) {
 	constexpr unsigned max_total_evs = 510;
-	return max_total_evs - pokemon.atk.ev.value() + pokemon.spa.ev.value() + pokemon.spe.ev.value();
+	return max_total_evs - pokemon.atk().ev.value() + pokemon.spa().ev.value() + pokemon.spe().ev.value();
 }
 
 template<>
 void set_ev<Stat::DEF>(Pokemon & pokemon, unsigned const defensive_ev) {
-	pokemon.def.ev.set_value(defensive_ev);
+	pokemon.def().ev.set_value(defensive_ev);
 }
 template<>
 void set_ev<Stat::SPD>(Pokemon & pokemon, unsigned const defensive_ev) {
-	pokemon.spd.ev.set_value(defensive_ev);
+	pokemon.spd().ev.set_value(defensive_ev);
 }
 
 

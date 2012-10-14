@@ -73,27 +73,27 @@ void Stat::calculate_initial_hp (uint8_t const level) {
 
 template<>
 unsigned initial_stat<Stat::HP>(Pokemon const & pokemon) {
-	return (pokemon.hp.base > 1) ? (initial_generic_stat(pokemon.hp, pokemon.level()) + pokemon.level() + 5) : 1;
+	return (pokemon.hp().base > 1) ? (initial_generic_stat(pokemon.hp(), pokemon.level()) + pokemon.level() + 5) : 1;
 }
 template<>
 unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon) {
-	return initial_generic_stat(pokemon.atk, pokemon.level()) * pokemon.nature().boost<Stat::ATK>();
+	return initial_generic_stat(pokemon.atk(), pokemon.level()) * pokemon.nature().boost<Stat::ATK>();
 }
 template<>
 unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon) {
-	return initial_generic_stat(pokemon.spa, pokemon.level()) * pokemon.nature().boost<Stat::SPA>();
+	return initial_generic_stat(pokemon.spa(), pokemon.level()) * pokemon.nature().boost<Stat::SPA>();
 }
 template<>
 unsigned initial_stat<Stat::DEF>(Pokemon const & pokemon) {
-	return initial_generic_stat(pokemon.def, pokemon.level()) * pokemon.nature().boost<Stat::DEF>();
+	return initial_generic_stat(pokemon.def(), pokemon.level()) * pokemon.nature().boost<Stat::DEF>();
 }
 template<>
 unsigned initial_stat<Stat::SPD>(Pokemon const & pokemon) {
-	return initial_generic_stat(pokemon.spd, pokemon.level()) * pokemon.nature().boost<Stat::SPD>();
+	return initial_generic_stat(pokemon.spd(), pokemon.level()) * pokemon.nature().boost<Stat::SPD>();
 }
 template<>
 unsigned initial_stat<Stat::SPE>(Pokemon const & pokemon) {
-	return initial_generic_stat(pokemon.spe, pokemon.level()) * pokemon.nature().boost<Stat::SPE>();
+	return initial_generic_stat(pokemon.spe(), pokemon.level()) * pokemon.nature().boost<Stat::SPE>();
 }
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather) {

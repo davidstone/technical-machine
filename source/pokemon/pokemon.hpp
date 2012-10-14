@@ -39,6 +39,7 @@
 #include "../type/collection.hpp"
 
 namespace technicalmachine {
+class Rational;
 class SharedMoves;
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
@@ -52,6 +53,11 @@ class Pokemon {
 		uint8_t index_of_first_switch () const;
 		// Fix any rounding issues caused by not seeing the foe's exact HP.
 		void normalize_hp ();
+		// The server reports Technical Machine's HP tracking is wrong
+		void correct_error_in_hp(unsigned correct_hp_stat);
+		// Returns the actual damage applied, rather than just the attempt
+		unsigned apply_damage(unsigned damage);
+		void apply_healing(unsigned amount);
 		unsigned power_of_mass_based_moves() const;
 		std::string to_string () const;
 		std::string get_nickname () const;
@@ -77,6 +83,19 @@ class Pokemon {
 		Item & item();
 		Nature const & nature() const;
 		Nature & nature();
+		Stat const & hp() const;
+		Stat & hp();
+		Rational current_hp() const;
+		Stat const & atk() const;
+		Stat & atk();
+		Stat const & def() const;
+		Stat & def();
+		Stat const & spa() const;
+		Stat & spa();
+		Stat const & spd() const;
+		Stat & spd();
+		Stat const & spe() const;
+		Stat & spe();
 		Status const & status() const;
 		Status & status();
 		TypeCollection const & type() const;
@@ -88,6 +107,7 @@ class Pokemon {
 		// messages being sent about multiple Pokemon fainting in one turn.
 		// Using this function will allow TM to correctly update an entire turn
 		// from a message.
+		bool is_fainted() const;
 		bool will_be_replaced() const;
 		void faint();
 		typedef uint64_t hash_type;
@@ -98,21 +118,24 @@ class Pokemon {
 
 		MoveCollection move;
 		TypeCollection current_type;
-//	private:
+		
+	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
 		#endif
 
-		Stat hp;
-		Stat atk;
-		Stat def;
-		Stat spa;
-		Stat spd;
-		Stat spe;
+		Stat m_hp;
+		Stat m_atk;
+		Stat m_def;
+		Stat m_spa;
+		Stat m_spd;
+		Stat m_spe;
+	public:
 
 		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
 		uint16_t new_hp;
 
+	private:
 		Species m_name;
 		Item m_item;
 		Ability m_ability;

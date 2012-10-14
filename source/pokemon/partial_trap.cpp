@@ -19,12 +19,13 @@
 #include "partial_trap.hpp"
 #include "pokemon.hpp"
 #include "../heal.hpp"
+#include "../rational.hpp"
 
 namespace technicalmachine {
 namespace {
 constexpr unsigned normal_duration = 5;
 constexpr unsigned extended_duration = 8;
-constexpr int end_of_turn_damage = -16;
+constexpr Rational end_of_turn_damage = Rational(1, 16);
 }	// unnamed namespace
 
 PartialTrap::PartialTrap():
@@ -43,7 +44,7 @@ void PartialTrap::activate(bool const extended) {
 
 void PartialTrap::damage(Pokemon & pokemon) {
 	if (is_active()) {
-		heal(pokemon, end_of_turn_damage);
+		drain(pokemon, end_of_turn_damage);
 		--turns_active;
 	}
 }

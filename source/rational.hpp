@@ -19,36 +19,55 @@
 #ifndef RATIONAL_HPP_
 #define RATIONAL_HPP_
 
+#include <type_traits>
+
 namespace technicalmachine {
 class Pokemon;
 
 class Rational {
 	public:
-		constexpr explicit Rational(unsigned const n, unsigned const d = 1):
+		constexpr explicit Rational(unsigned const n = 1, unsigned const d = 1):
 			numerator(n),
 			denominator(d) {
 		}
-		template<typename Integer>
-		friend Integer operator*=(Integer & number, Rational const rational) {
-			number *= rational.numerator;
-			number /= rational.denominator;
+		template<typename T>
+		friend typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+		operator*=(T & number, Rational const rational) {
+			// static_cast is necessary for correct behavior with signed values
+			number *= static_cast<T>(rational.numerator);
+			number /= static_cast<T>(rational.denominator);
 			return number;
 		}
-		template<typename Integer>
-		friend Integer operator*(Integer number, Rational const rational) {
-			return number *= rational;
+		friend Rational operator*=(Rational & lhs, Rational const rhs) {
+			lhs.numerator *= rhs.numerator;
+			lhs.denominator *= rhs.denominator;
+			return lhs;
 		}
-		template<typename Integer>
-		friend Integer operator*(Rational const rational, Integer number) {
-			return rational * number;
+		friend bool operator<(Rational const lhs, Rational const rhs) {
+			return lhs.numerator * rhs.denominator < rhs.numerator * rhs.denominator;
+		}
+		friend bool operator<=(Rational const lhs, Rational const rhs) {
+			return lhs.numerator * rhs.denominator <= rhs.numerator * rhs.denominator;
 		}
 	private:
-		// TODO: temporary measure while I clean up some code
-		friend void heal(Pokemon & member, Rational const & rational, bool positive);
 		unsigned numerator;
 		unsigned denominator;
 };
 
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+operator*(T number, Rational const rational) {
+	return number *= rational;
+}
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+operator*(Rational const rational, T number) {
+	return number *= rational;
+}
+
+inline Rational operator*(Rational lhs, Rational const rhs) {
+	return lhs *= rhs;
+}
 }	// namespace technicalmachine
 
 #endif	// RATIONAL_HPP_

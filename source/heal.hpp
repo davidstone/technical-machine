@@ -24,11 +24,8 @@ namespace technicalmachine {
 class Pokemon;
 class Rational;
 
-void heal(Pokemon & member, Rational const & rational, bool positive);
+void heal(Pokemon & member, Rational const & rational, bool positive = true);
 void drain(Pokemon & member, Rational const & rational);
-
-// Deprecated, use the above version taking a Rational
-void heal (Pokemon & member, int denominator, unsigned numerator = 1);
 
 }	// namespace technicalmachine
 #endif	// HEAL_HPP_

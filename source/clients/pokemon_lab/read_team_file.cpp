@@ -48,17 +48,17 @@ static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 	if (name == "HP")
-		return pokemon.hp;
+		return pokemon.hp();
 	else if (name == "Atk")
-		return pokemon.atk;
+		return pokemon.atk();
 	else if (name == "Def")
-		return pokemon.def;
+		return pokemon.def();
 	else if (name == "Spd")
-		return pokemon.spe;
+		return pokemon.spe();
 	else if (name == "SpAtk")
-		return pokemon.spa;
+		return pokemon.spa();
 	else if (name == "SpDef")
-		return pokemon.spd;
+		return pokemon.spd();
 	else
 		throw InvalidStat (name);
 }

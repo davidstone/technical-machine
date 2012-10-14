@@ -23,7 +23,9 @@
 #include "../status.hpp"
 
 namespace technicalmachine {
+class Effectiveness;
 class Pokemon;
+class Rational;
 class Weather;
 
 class Type {
@@ -61,17 +63,9 @@ class Type {
 		bool blocks_status () const {
 			return false;
 		}
-		// 0, 1, 2, 4, 8, or 16
-		unsigned get_effectiveness (Pokemon const & defender) const;
-		std::vector <unsigned> get_effectiveness_variables (Pokemon const & pokemon) const;
-		static unsigned stealth_rock_effectiveness (Pokemon const & pokemon);
+		Effectiveness get_effectiveness(Pokemon const & defender) const;
 	private:
-		// Calculate the effectiveness of attacking type on defending type. 0 is
-		// no effect, 1 is not very effective, 2 is neutral, and 4 is super
-		// effective.
-		static unsigned lookup_effectiveness (Types attacking, Type defending);
-		unsigned lookup_effectiveness (Type defending) const;
-		static unsigned get_effectiveness (Type::Types type, Pokemon const & defender);
+		friend class Effectiveness;
 		Types type;
 };
 

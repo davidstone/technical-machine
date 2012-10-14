@@ -65,7 +65,6 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	all_pokemon().for_each([](Pokemon & member) {
 		member.set_hidden_power_type();
 		member.calculate_initial_hp();
-		member.new_hp = member.hp.max;
 	});
 }
 
@@ -244,7 +243,7 @@ std::string Team::to_string(bool const include_owner) const {
 	}
 	all_pokemon().for_each([& output](Pokemon const & member) {
 		output += member.to_string();
-		double const d_per_cent_hp = 100.0 * member.hp.stat / member.hp.max;
+		double const d_per_cent_hp = 100.0 * member.current_hp();
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
 		output += " (" + per_cent_hp + "% HP)";
 		output += " @ " + member.item().to_string ();

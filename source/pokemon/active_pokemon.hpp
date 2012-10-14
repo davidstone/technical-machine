@@ -106,6 +106,7 @@ class ActivePokemon {
 		void activate_encore();
 		void increment_encore();
 		void endure();
+		void faint();
 		bool flash_fire_is_active() const;
 		void activate_flash_fire();
 		bool flinched() const;
@@ -238,7 +239,8 @@ class ActivePokemon {
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		unsigned damaged() const;
-		void do_damage(unsigned damage);
+		void direct_damage(unsigned damage);
+		void indirect_damage(unsigned damage);
 		void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 		ChanceToHit::value_type chance_to_hit() const;
 		ChanceToHit::value_type chance_to_miss() const;

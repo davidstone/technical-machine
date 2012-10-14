@@ -40,6 +40,7 @@
 
 #include "../stat/stat.hpp"
 
+#include "../type/effectiveness.hpp"
 #include "../type/type.hpp"
 
 namespace technicalmachine {
@@ -156,10 +157,9 @@ unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather cons
 void do_damage(ActivePokemon & user, ActivePokemon & target, unsigned const damage) {
 	if (damage == 0)
 		return;
-	damage_side_effect(target, damage);
+	target.direct_damage(damage);
 	if (user.item().causes_recoil())
-		heal (user, -10);
-	target.do_damage(damage);
+		drain(user, Rational(1, 10));
 }
 
 void do_side_effects (Team & user_team, Team & target_team, Weather & weather, unsigned const damage) {
@@ -394,7 +394,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Counter:
 			if (target.move().is_physical())
-				damage_side_effect(target, user.damaged() * 2u);
+				target.indirect_damage(user.damaged() * 2u);
 			break;
 		case Moves::Covet:
 		case Moves::Thief:
@@ -478,7 +478,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Explosion:
 		case Moves::Selfdestruct:
-			user.hp().stat = 0;
+			user.faint();
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
@@ -572,7 +572,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Recover:
 		case Moves::Slack_Off:
 		case Moves::Softboiled:
-			heal (user, 2);
+			heal(user, Rational(1, 2));
 			break;
 		case Moves::Healing_Wish:		// Fix
 			break;
@@ -637,10 +637,10 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Memento:
 			target.stat_boost_offensive(-2);
-			user.hp().stat = 0;
+			user.faint();
 			break;
 		case Moves::Metal_Burst:
-			damage_side_effect(target, user.damaged() * 3u / 2);
+			target.indirect_damage(user.damaged() * 3u / 2);
 			break;
 		case Moves::Mimic:		// Fix
 			break;
@@ -648,7 +648,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Mirror_Coat:
 			if (target.move().is_special())
-				damage_side_effect(target, user.damaged() * 2u);
+				target.indirect_damage(user.damaged() * 2u);
 			break;
 		case Moves::Mirror_Shot:
 		case Moves::Mud_Bomb:
@@ -675,7 +675,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 				else
 					return Rational(1, 2);
 			};
-			heal(user, amount(), true);
+			heal(user, amount());
 			break;
 		}
 		case Moves::Mud_Sport:
@@ -757,7 +757,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Roost:
 			user.roost();
-			heal (user, 2);
+			heal(user, Rational(1, 2));
 			break;
 		case Moves::Safeguard:
 			user_team.screens.activate_safeguard();
@@ -921,19 +921,10 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 // I could potentially treat this as negative recoil
 void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
 	if (target.ability().damages_leechers()) {
-		if (damage <= 3)
-			--user.hp.stat;
-		else
-			damage_side_effect (user, damage / 2);
+		user.apply_damage(damage / 2);
 	}
 	else {
-		if (damage <= 3)
-			++user.hp.stat;
-		else {
-			user.hp.stat += damage / 2;
-			if (user.hp.stat > user.hp.max)
-				user.hp.stat = user.hp.max;
-		}
+		user.apply_healing(damage / 2);
 	}
 }
 
@@ -946,7 +937,7 @@ void belly_drum(ActivePokemon & user) {
 }
 
 void clear_field(Team & user, Pokemon const & target) {
-	if (user.pokemon().move().type().get_effectiveness(target) > 0)
+	if (!user.pokemon().move().type().get_effectiveness(target).has_no_effect())
 		user.clear_field();
 }
 
@@ -965,10 +956,7 @@ void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & p
 void curse(ActivePokemon & user, ActivePokemon & target) {
 	if (is_type(user, Type::Ghost) and !user.ability().blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
-			if (user.hp().max <= 3)
-				--user.hp().stat;
-			else
-				damage_side_effect(user, user.hp().max / 2);
+			user.indirect_damage(user.hp().max / 2);
 			target.curse();
 		}
 	}
@@ -994,7 +982,7 @@ void phaze(Team & user, Team & target, Weather & weather) {
 }
 
 void rest(Pokemon & user) {
-	Stat & hp = user.hp;
+	Stat & hp = user.hp();
 	if (hp.stat != hp.max) {
 		hp.stat = hp.max;
 		user.status().rest();
@@ -1002,10 +990,7 @@ void rest(Pokemon & user) {
 }
 
 void struggle(Pokemon & user) {
-	if (user.hp.max <= 7)
-		--user.hp.stat;
-	else
-		damage_side_effect (user, user.hp.max / 4);
+	user.apply_damage(user.hp().max / 4);
 }
 
 void swap_items(Pokemon & user, Pokemon & target) {
@@ -1037,9 +1022,7 @@ void use_swallow(ActivePokemon & user) {
 	auto const stockpiles = user.release_stockpile();
 	if (stockpiles == 0)
 		return;
-	Rational const healing = Stockpile::swallow_healing(stockpiles);
-	constexpr bool positive = true;
-	heal(user, healing, positive);
+	heal(user, Stockpile::swallow_healing(stockpiles));
 }
 
 void call_other_move (ActivePokemon & user) {

@@ -136,7 +136,7 @@ void physical_damage_test () {
 	Team attacker = max_damage_physical_attacker ();
 	
 	Pokemon & a = attacker.pokemon();
-	a.def.ev.set_value(252);
+	a.def().ev.set_value(252);
 	a.nature().name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	a.ability().name = Ability::PURE_POWER;
@@ -166,7 +166,7 @@ void special_damage_test () {
 	a.move.add(Moves::Blast_Burn, 3, team_size);
 	a.change_type(Type::Fire);
 
-	a.spa.ev.set_value(252);
+	a.spa().ev.set_value(252);
 	a.nature().name = Nature::MODEST;
 	attacker.pokemon().stat_boost(Stat::SPA, 6);
 	calculate_attacking_stat(attacker.pokemon(), weather);

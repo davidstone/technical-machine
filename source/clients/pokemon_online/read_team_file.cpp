@@ -51,17 +51,17 @@ Move load_move(boost::property_tree::ptree const & pt, unsigned foe_size) {
 Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
 	switch (n) {
 		case 0:
-			return pokemon.hp;
+			return pokemon.hp();
 		case 1:
-			return pokemon.atk;
+			return pokemon.atk();
 		case 2:
-			return pokemon.def;
+			return pokemon.def();
 		case 3:
-			return pokemon.spa;
+			return pokemon.spa();
 		case 4:
-			return pokemon.spd;
+			return pokemon.spd();
 		case 5:
-			return pokemon.spe;
+			return pokemon.spe();
 		default:
 			throw InvalidStat(std::to_string(n));
 	}

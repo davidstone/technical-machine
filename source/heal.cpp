@@ -18,6 +18,8 @@
 
 #include "heal.hpp"
 
+#include <algorithm>
+
 #include "ability.hpp"
 #include "damage.hpp"
 #include "rational.hpp"
@@ -27,28 +29,15 @@
 namespace technicalmachine {
 
 void heal(Pokemon & member, Rational const & rational, bool positive) {
-	if (member.hp.stat == 0)
+	if (member.is_fainted())
 		return;
+	unsigned const hp_healed = member.hp().max * rational;
 	if (positive) {
-		if (member.hp.max * rational.numerator <= 2 * rational.denominator - 1)
-			++member.hp.stat;
-		else
-			member.hp.stat += member.hp.max * rational;
-		if (member.hp.stat > member.hp.max)
-			member.hp.stat = member.hp.max;
+		member.apply_healing(std::max(hp_healed, 1u));
 	}
-	else {
-		if (!member.ability().blocks_secondary_damage()) {
-			if (member.hp.max * rational.numerator <= 2 * rational.denominator - 1)
-				-- member.hp.stat;
-			else
-				damage_side_effect(member, member.hp.max * rational);
-		}
+	else if (!member.ability().blocks_secondary_damage()) {
+		member.apply_damage(std::max(hp_healed, 1u));
 	}
-}
-
-void heal (Pokemon & member, int const denominator, unsigned const numerator) {
-	heal(member, Rational(numerator, static_cast<unsigned>((denominator >= 0) ? denominator : -denominator)), (denominator > 0));
 }
 
 void drain(Pokemon & member, Rational const & rational) {

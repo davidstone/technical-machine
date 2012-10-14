@@ -270,6 +270,11 @@ void ActivePokemon::endure() {
 	enduring = true;
 }
 
+void ActivePokemon::faint() {
+	get_pokemon().hp().stat = 0;
+	get_pokemon().faint();
+}
+
 bool ActivePokemon::flash_fire_is_active() const {
 	return flash_fire;
 }
@@ -464,9 +469,9 @@ void ActivePokemon::activate_perish_song() {
 }
 
 void ActivePokemon::perish_song_turn() {
-	bool const faint = perish_song.next_turn();
-	if (faint) {
-		hp().stat = 0;
+	bool const faints_this_turn = perish_song.next_turn();
+	if (faints_this_turn) {
+		faint();
 	}
 }
 
@@ -558,45 +563,45 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 }
 
 Stat const & ActivePokemon::hp() const {
-	return get_pokemon().hp;
+	return get_pokemon().hp();
 }
 Stat & ActivePokemon::hp() {
-	return get_pokemon().hp;
+	return get_pokemon().hp();
 }
 
 Stat const & ActivePokemon::atk() const {
-	return get_pokemon().atk;
+	return get_pokemon().atk();
 }
 Stat & ActivePokemon::atk() {
-	return get_pokemon().atk;
+	return get_pokemon().atk();
 }
 
 Stat const & ActivePokemon::def() const {
-	return get_pokemon().def;
+	return get_pokemon().def();
 }
 Stat & ActivePokemon::def() {
-	return get_pokemon().def;
+	return get_pokemon().def();
 }
 
 Stat const & ActivePokemon::spa() const {
-	return get_pokemon().spa;
+	return get_pokemon().spa();
 }
 Stat & ActivePokemon::spa() {
-	return get_pokemon().spa;
+	return get_pokemon().spa();
 }
 
 Stat const & ActivePokemon::spd() const {
-	return get_pokemon().spd;
+	return get_pokemon().spd();
 }
 Stat & ActivePokemon::spd() {
-	return get_pokemon().spd;
+	return get_pokemon().spd();
 }
 
 Stat const & ActivePokemon::spe() const {
-	return get_pokemon().spe;
+	return get_pokemon().spe();
 }
 Stat & ActivePokemon::spe() {
-	return get_pokemon().spe;
+	return get_pokemon().spe();
 }
 
 int ActivePokemon::current_stage(Stat::Stats const stat) const {
@@ -774,7 +779,7 @@ void ActivePokemon::use_bide(Pokemon & target) {
 	else {
 		unsigned const bide_damage = bide.decrement();
 		if (bide_damage != 0)
-			damage_side_effect(target, bide_damage * 2);
+			target.apply_damage(bide_damage * 2);
 	}
 }
 
@@ -782,8 +787,9 @@ void ActivePokemon::use_substitute() {
 	if (!get_pokemon().can_use_substitute())
 		return;
 	bool const created = active_substitute.create(hp().max);
-	if (created)
-		hp().stat -= hp().max / 4;
+	if (created) {
+		indirect_damage(hp().max / 4);
+	}
 }
 
 bool ActivePokemon::is_locked_in_to_bide() const {
@@ -794,9 +800,14 @@ unsigned ActivePokemon::damaged() const {
 	return damage_done_to_active;
 }
 
-void ActivePokemon::do_damage(unsigned const damage) {
+void ActivePokemon::direct_damage(unsigned damage) {
+	damage = get_pokemon().apply_damage(damage);
 	damage_done_to_active = damage;
 	bide.add_damage(damage);
+}
+
+void ActivePokemon::indirect_damage(unsigned const damage) {
+	get_pokemon().apply_damage(damage);
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {

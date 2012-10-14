@@ -25,6 +25,8 @@
 
 #include "pokemon/active_pokemon.hpp"
 
+#include "type/effectiveness.hpp"
+
 namespace technicalmachine {
 namespace {
 
@@ -90,13 +92,11 @@ void EntryHazards::apply(Team & switcher, Weather const & weather) {
 				apply_toxic_spikes(switcher, weather);
 		}
 		if (entry_hazards.spikes)
-			heal (switcher.pokemon(), -16, entry_hazards.spikes + 1u);
+			drain(switcher.pokemon(), Rational(entry_hazards.spikes + 1u, 16));
 	}
-	// get_effectiveness () outputs a value between 0 and 16, with higher
-	// numbers being more effective. 4 * effective Stealth Rock does
-	// 16 / 32 damage.
-	if (entry_hazards.stealth_rock)
-		heal (switcher.pokemon(), -32, Type::stealth_rock_effectiveness(switcher.pokemon()));
+	if (entry_hazards.stealth_rock) {
+		drain(switcher.pokemon(), Rational(1, 8) * Effectiveness::stealth_rock_effectiveness(switcher.pokemon()));
+	}
 }
 
 bool operator== (EntryHazards const lhs, EntryHazards const rhs) {

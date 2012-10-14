@@ -26,6 +26,7 @@
 
 #include "../ability.hpp"
 #include "../gender.hpp"
+#include "../rational.hpp"
 
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
@@ -49,12 +50,12 @@ Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
 	#endif
-	hp (species, Stat::HP),
-	atk (species, Stat::ATK),
-	def (species, Stat::DEF),
-	spa (species, Stat::SPA),
-	spd (species, Stat::SPD),
-	spe (species, Stat::SPE),
+	m_hp(species, Stat::HP),
+	m_atk(species, Stat::ATK),
+	m_def(species, Stat::DEF),
+	m_spa(species, Stat::SPA),
+	m_spd(species, Stat::SPD),
+	m_spe(species, Stat::SPE),
 
 	new_hp (48),
 
@@ -88,7 +89,8 @@ void Pokemon::switch_out() {
 }
 
 void Pokemon::calculate_initial_hp () {
-	hp.calculate_initial_hp(level());
+	m_hp.calculate_initial_hp(level());
+	new_hp = hp().max;
 }
 
 uint8_t Pokemon::index_of_first_switch () const {
@@ -100,9 +102,31 @@ uint8_t Pokemon::index_of_first_switch () const {
 
 void Pokemon::normalize_hp () {
 	if (will_be_replaced())
-		hp.stat = 0;
-	else if (hp.stat == 0)
-		hp.stat = 1;
+		m_hp.stat = 0;
+	else if (hp().stat == 0)
+		m_hp.stat = 1;
+}
+
+void Pokemon::correct_error_in_hp(unsigned const correct_hp_stat) {
+	m_hp.stat = correct_hp_stat;
+}
+
+Rational Pokemon::current_hp() const {
+	return Rational(hp().stat, hp().max);
+}
+
+unsigned Pokemon::apply_damage(unsigned damage) {
+	damage = std::min(damage, static_cast<unsigned>(m_hp.stat));
+	m_hp.stat -= damage;
+	return damage;
+}
+
+void Pokemon::apply_healing(unsigned const amount) {
+	// Should be no risk of overflow. hp.stat has to be at least 16 bits, and no
+	// healing will be anywhere close to that number.
+	assert(hp().stat + amount >= hp().stat);
+	m_hp.stat += amount;
+	m_hp.stat = std::min(hp().stat, hp().max);
 }
 
 bool Pokemon::can_confuse_with_chatter() const {
@@ -110,7 +134,7 @@ bool Pokemon::can_confuse_with_chatter() const {
 }
 
 bool Pokemon::can_use_substitute() const {
-	return hp.stat > hp.max / 4;
+	return hp().stat > hp().max / 4;
 }
 
 bool is_alternate_form(Species first, Species second) {
@@ -268,6 +292,43 @@ Nature & Pokemon::nature() {
 	return m_nature;
 }
 
+Stat const & Pokemon::hp() const {
+	return m_hp;
+}
+Stat & Pokemon::hp() {
+	return m_hp;
+}
+Stat const & Pokemon::atk() const {
+	return m_atk;
+}
+Stat & Pokemon::atk() {
+	return m_atk;
+}
+Stat const & Pokemon::def() const {
+	return m_def;
+}
+Stat & Pokemon::def() {
+	return m_def;
+}
+Stat const & Pokemon::spa() const {
+	return m_spa;
+}
+Stat & Pokemon::spa() {
+	return m_spa;
+}
+Stat const & Pokemon::spd() const {
+	return m_spd;
+}
+Stat & Pokemon::spd() {
+	return m_spd;
+}
+Stat const & Pokemon::spe() const {
+	return m_spe;
+}
+Stat & Pokemon::spe() {
+	return m_spe;
+}
+
 Status const & Pokemon::status() const {
 	return m_status;
 }
@@ -295,6 +356,10 @@ bool Pokemon::has_been_seen() const {
 	return true;
 }
 
+bool Pokemon::is_fainted() const {
+	return m_will_be_replaced;
+}
+
 bool Pokemon::will_be_replaced() const {
 	return m_will_be_replaced;
 }
@@ -306,13 +371,13 @@ Pokemon::hash_type Pokemon::hash() const {
 	return static_cast<hash_type>(m_name) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
-			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
+			((hp().stat - 1u) + hp().max *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * hp.max * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * hp().max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -323,7 +388,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.move == rhs.move and
 			lhs.m_name == rhs.m_name and
 			lhs.m_status == rhs.m_status and
-			lhs.hp.stat == rhs.hp.stat and
+			lhs.hp().stat == rhs.hp().stat and
 			lhs.m_item == rhs.m_item and
 			lhs.seen == rhs.seen;
 }
@@ -356,12 +421,12 @@ constexpr unsigned hidden_power_type_helper(unsigned const iv, unsigned const n)
 }	// unnamed namespace
 
 Type::Types Pokemon::calculate_hidden_power_type() const {
-	unsigned const a = hidden_power_type_helper(hp.iv, 0);
-	unsigned const b = hidden_power_type_helper(atk.iv, 1);
-	unsigned const c = hidden_power_type_helper(def.iv, 2);
-	unsigned const d = hidden_power_type_helper(spe.iv, 3);
-	unsigned const e = hidden_power_type_helper(spa.iv, 4);
-	unsigned const f = hidden_power_type_helper(spd.iv, 5);
+	unsigned const a = hidden_power_type_helper(hp().iv, 0);
+	unsigned const b = hidden_power_type_helper(atk().iv, 1);
+	unsigned const c = hidden_power_type_helper(def().iv, 2);
+	unsigned const d = hidden_power_type_helper(spe().iv, 3);
+	unsigned const e = hidden_power_type_helper(spa().iv, 4);
+	unsigned const f = hidden_power_type_helper(spd().iv, 5);
 	unsigned const index = (a + b + c + d + e + f) * 15 / 63;
 	constexpr static Type::Types lookup [] = {
 		Type::Fighting,

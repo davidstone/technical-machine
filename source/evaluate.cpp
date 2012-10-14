@@ -31,6 +31,8 @@
 #include "pokemon/collection.hpp"
 #include "pokemon/pokemon.hpp"
 
+#include "type/effectiveness.hpp"
+
 namespace technicalmachine {
 namespace {
 class ResetIndex {
@@ -120,12 +122,12 @@ int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const
 
 int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	auto const & pokemon = team.pokemon().get_pokemon();
-	int64_t score = team.entry_hazards.stealth_rock * stealth_rock * static_cast<int>(Type::stealth_rock_effectiveness(pokemon)) / 4;
+	int64_t score = team.entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
 	if (grounded (team.pokemon(), weather))
 		score += team.entry_hazards.spikes * spikes + team.entry_hazards.toxic_spikes * toxic_spikes;
-	if (pokemon.hp.stat != 0) {
+	if (!pokemon.is_fainted()) {
 		score += members;
-		score += hp * pokemon.hp.stat / pokemon.hp.max;
+		score += hp * pokemon.current_hp();
 		score += hidden * !pokemon.seen();
 		score += score_status (team.pokemon());
 		score += score_move (team.pokemon(), other, weather);

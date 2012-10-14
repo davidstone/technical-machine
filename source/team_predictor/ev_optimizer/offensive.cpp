@@ -108,8 +108,8 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
 		pokemon.nature() = it->first;
-		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, pokemon.atk.ev, initial_atk);
-		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, pokemon.spa.ev, initial_spa);
+		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, pokemon.atk().ev, initial_atk);
+		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, pokemon.spa().ev, initial_spa);
 		if (atk and spa) {
 			stats.attack = *atk;
 			stats.special_attack = *spa;

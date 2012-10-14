@@ -302,7 +302,7 @@ void Battle::parse_hp_change (InMessage & msg, Party const party) {
 	if (change_in_hp < 0)
 		return;
 	uint8_t const slot = 0;
-	uint16_t const denominator = my_team ? ai.replacement().hp.max : max_damage_precision ();
+	unsigned const denominator = my_team ? ai.replacement().hp().max : max_damage_precision();
 	handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, denominator);
 }
 
@@ -601,7 +601,7 @@ uint8_t Battle::get_target () const {
 }
 
 int16_t Battle::ai_change_in_hp (uint16_t const remaining_hp) const {
-	Stat const & hp = ai.replacement().hp;
+	Stat const & hp = ai.replacement().hp();
 	if (hp.max < remaining_hp)
 		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), hp.max, "AI's remaining_hp");
 	return hp.stat - remaining_hp;
@@ -610,7 +610,7 @@ int16_t Battle::ai_change_in_hp (uint16_t const remaining_hp) const {
 int16_t Battle::foe_change_in_hp (uint16_t const remaining_hp) const {
 	if (max_damage_precision() < remaining_hp)
 		throw network::InvalidSimulatorData (remaining_hp, static_cast<uint16_t>(0), max_damage_precision(), "Foe's remaining_hp");
-	Stat const & hp = foe.replacement().hp;
+	Stat const & hp = foe.replacement().hp();
 	uint16_t const pixel_hp = max_damage_precision() * hp.stat / hp.max;
 	return pixel_hp - remaining_hp;
 }

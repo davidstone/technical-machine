@@ -186,7 +186,7 @@ void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t
 	}
 }
 
-void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator) {
+void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, unsigned change_in_hp, unsigned remaining_hp, unsigned denominator) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	bool const my_team = (my_party == changing);
@@ -194,8 +194,9 @@ void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16
 	Team & other = my_team ? foe : ai;
 	Pokemon & pokemon = changer.all_pokemon().at_replacement();
 	if (move_damage) {
-		if (other.all_pokemon().at_replacement().move().affects_target(changer.pokemon(), weather))
-			changer.pokemon().do_damage(std::min(static_cast<uint16_t>(pokemon.hp.max * change_in_hp / denominator), pokemon.hp.stat));
+		if (other.all_pokemon().at_replacement().move().affects_target(changer.pokemon(), weather)) {
+			changer.pokemon().direct_damage(pokemon.hp().max * change_in_hp / denominator);
+		}
 		move_damage = false;
 	}
 	pokemon.new_hp = remaining_hp;
@@ -203,23 +204,22 @@ void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, uint16
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	team.all_pokemon().for_each([this, & team] (Pokemon & pokemon) {
-		Stat::stat_type const max_hp = team.is_me() ? pokemon.hp.max : max_damage_precision();
-		Stat::stat_type const tm_estimate = max_hp * pokemon.hp.stat / pokemon.hp.max;
+		Stat::stat_type const max_hp = team.is_me() ? pokemon.hp().max : max_damage_precision();
+		Stat::stat_type const tm_estimate = max_hp * pokemon.current_hp();
 		if (tm_estimate == pokemon.new_hp)
 			return;
-		Stat::stat_type const reported_hp = pokemon.new_hp * pokemon.hp.max / max_hp;
+		Stat::stat_type const reported_hp = pokemon.new_hp * pokemon.current_hp();
 		if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
 			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
 			if (!team.is_me())
 				std::cerr << "approximately ";
-			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp.stat << ".\n";
+			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp().stat << ".\n";
 			std::cerr << "max_hp: " << max_hp << '\n';
-			std::cerr << "pokemon.hp.max: " << pokemon.hp.max << '\n';
-			std::cerr << "pokemon.hp.stat: " << pokemon.hp.stat << '\n';
+			std::cerr << "pokemon.hp.max: " << pokemon.hp().max << '\n';
 			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
 			std::cerr << "tm_estimate: " << tm_estimate << '\n';
 		}
-		pokemon.hp.stat = reported_hp;
+		pokemon.correct_error_in_hp(reported_hp);
 	});
 }
 

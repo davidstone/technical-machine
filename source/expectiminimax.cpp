@@ -396,7 +396,7 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, Weather & weather, u
 int64_t use_move_and_follow_up (Team & user, Team & other, Weather & weather, unsigned depth, Score const & score) {
 	if (!user.pokemon().moved()) {
 		unsigned const damage = call_move(user, other, weather);
-		other.pokemon().do_damage(damage);
+		other.pokemon().direct_damage(damage);
 		int64_t const user_win = Score::win (user);
 		int64_t const other_win = Score::win (other);
 		if (user_win or other_win)

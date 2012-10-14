@@ -52,7 +52,7 @@ class GenericBattle {
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 		void handle_use_move (Party user, uint8_t slot, Moves move_name);
 		void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
-		void handle_hp_change (Party changer, uint8_t slot, uint16_t change_in_hp, uint16_t remaining_hp, uint16_t denominator);
+		void handle_hp_change(Party changer, uint8_t slot, unsigned change_in_hp, unsigned remaining_hp, unsigned denominator);
 		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
 		void handle_fainted (Party fainter, uint8_t slot);
 		void handle_end (network::GenericClient & client, Result const result) const;

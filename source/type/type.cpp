@@ -20,6 +20,9 @@
 
 #include <vector>
 
+#include "effectiveness.hpp"
+
+#include "../rational.hpp"
 #include "../status.hpp"
 #include "../weather.hpp"
 
@@ -92,59 +95,8 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 	return blocks_status<Status::POISON> ();
 }
 
-unsigned Type::lookup_effectiveness (Types const attacking, Type const defending) {
-	constexpr static unsigned effectiveness [18][18] = {
-		{	2,	4,	2,	2,	1,	1,	1,	1,	4,	2,	2,	2,	1,	4,	2,	1,	2,	2	},	// Bug
-		{	2,	1,	2,	2,	1,	2,	2,	4,	2,	2,	2,	2,	2,	4,	2,	1,	2,	2	},	// Dark
-		{	2,	2,	4,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	1,	2,	2	},	// Dragon
-		{	2,	2,	1,	1,	2,	2,	4,	2,	1,	0,	2,	2,	2,	2,	2,	2,	4,	2	},	// Electric
-		{	1,	4,	2,	2,	2,	2,	1,	0,	2,	2,	4,	4,	1,	1,	4,	4,	2,	2	},	// Fighting
-		{	4,	2,	1,	2,	2,	1,	2,	2,	4,	2,	4,	2,	2,	2,	1,	4,	1,	2	},	// Fire
-		{	4,	2,	2,	1,	4,	2,	2,	2,	4,	2,	2,	2,	2,	2,	1,	1,	2,	2	},	// Flying
-		{	2,	1,	2,	2,	2,	2,	2,	4,	2,	2,	2,	0,	2,	4,	2,	1,	2,	2	},	// Ghost
-		{	1,	2,	1,	2,	2,	1,	1,	2,	1,	4,	2,	2,	1,	2,	4,	1,	4,	2	},	// Grass
-		{	1,	2,	2,	4,	2,	4,	0,	2,	1,	2,	2,	2,	4,	2,	4,	4,	2,	2	},	// Ground
-		{	2,	2,	4,	2,	2,	1,	4,	2,	4,	4,	1,	2,	2,	2,	2,	1,	1,	2	},	// Ice
-		{	2,	2,	2,	2,	2,	2,	2,	0,	2,	2,	2,	2,	2,	2,	1,	1,	2,	2	},	// Normal
-		{	2,	2,	2,	2,	2,	2,	2,	1,	4,	1,	2,	2,	1,	2,	1,	0,	2,	2	},	// Poison
-		{	2,	0,	2,	2,	4,	2,	2,	2,	2,	2,	2,	2,	4,	1,	2,	1,	2,	2	},	// Psychic
-		{	4,	2,	2,	2,	1,	4,	4,	2,	2,	1,	4,	2,	2,	2,	2,	1,	2,	2	},	// Rock
-		{	2,	2,	2,	1,	2,	1,	2,	2,	2,	2,	4,	2,	2,	2,	4,	1,	1,	2	},	// Steel
-		{	2,	2,	1,	2,	2,	4,	2,	2,	1,	4,	2,	2,	2,	2,	4,	2,	1,	2	},	// Water
-		{	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2	}	// Typeless
-		//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
-	};
-	return effectiveness [attacking] [defending.type];
-}
-
-unsigned Type::get_effectiveness (Type::Types const type, Pokemon const & defender) {
-	unsigned effectiveness = 1;
-	// Effectiveness on each of the defender's types (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : defender.type().types)
-		effectiveness *= lookup_effectiveness (type, target_type);
-	if (defender.type().types.size () == 1)
-		effectiveness *= 2;
-	return effectiveness;
-}
-
-unsigned Type::lookup_effectiveness (Type const defending) const {
-	return lookup_effectiveness (type, defending);
-}
-
-unsigned Type::get_effectiveness (Pokemon const & defender) const {
-	return get_effectiveness (type, defender);
-}
-
-std::vector <unsigned> Type::get_effectiveness_variables (Pokemon const & target) const {
-	std::vector <unsigned> effectiveness;
-	// Effectiveness on each of the defender's type (1 if NVE, 4 if SE) / 2
-	for (Type const target_type : target.type().types)
-		effectiveness.emplace_back(lookup_effectiveness (target_type));
-	return effectiveness;
-}
-
-unsigned Type::stealth_rock_effectiveness (Pokemon const & pokemon) {
-	return get_effectiveness (Rock, pokemon);
+Effectiveness Type::get_effectiveness(Pokemon const & defender) const {
+	return Effectiveness(type, defender);
 }
 
 }	// namespace technicalmachine

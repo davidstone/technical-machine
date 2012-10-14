@@ -29,7 +29,6 @@ class Weather;
 unsigned damage_calculator (ActivePokemon const & attacker, Team const & defender, Weather const & weather);
 unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather);
 void recoil (Pokemon & user, unsigned damage, unsigned denominator);
-void damage_side_effect (Pokemon & user, unsigned damage);
 
 }	// namespace technicalmachine
 #endif	// DAMAGE_HPP_

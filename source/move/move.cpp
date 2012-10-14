@@ -30,6 +30,7 @@
 
 #include "../string_conversions/conversion.hpp"
 
+#include "../type/effectiveness.hpp"
 #include "../type/type.hpp"
 
 namespace technicalmachine {
@@ -163,7 +164,7 @@ unsigned Move::to_replacement () const {
 }
 
 bool Move::affects_target(ActivePokemon const & target, Weather const & weather) const {
-	return type().get_effectiveness(target) > 0 and (type() != Type::Ground or grounded (target, weather));
+	return !type().get_effectiveness(target).has_no_effect() and (type() != Type::Ground or grounded(target, weather));
 }
 
 bool Move::has_follow_up_decision () const {

@@ -50,12 +50,12 @@ void write_stat (Stat const & stat, std::string const & str, boost::property_tre
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	write_stat (pokemon.hp, "HP", pt);
-	write_stat (pokemon.atk, "Atk", pt);
-	write_stat (pokemon.def, "Def", pt);
-	write_stat (pokemon.spe, "Spd", pt);
-	write_stat (pokemon.spa, "SpAtk", pt);
-	write_stat (pokemon.spd, "SpDef", pt);
+	write_stat(pokemon.hp(), "HP", pt);
+	write_stat(pokemon.atk(), "Atk", pt);
+	write_stat(pokemon.def(), "Def", pt);
+	write_stat(pokemon.spe(), "Spd", pt);
+	write_stat(pokemon.spa(), "SpAtk", pt);
+	write_stat(pokemon.spd(), "SpDef", pt);
 }
 
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {

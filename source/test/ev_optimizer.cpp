@@ -32,14 +32,14 @@ void ev_optimizer_tests() {
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(Species::Lanturn, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.hp.ev.set_value(136);
-	pokemon.atk.ev.set_value(0);
-	pokemon.def.ev.set_value(0);
-	pokemon.spa.ev.set_value(252);
-	pokemon.spd.ev.set_value(0);
-	pokemon.spe.ev.set_value(120);
+	pokemon.hp().ev.set_value(136);
+	pokemon.atk().ev.set_value(0);
+	pokemon.def().ev.set_value(0);
+	pokemon.spa().ev.set_value(252);
+	pokemon.spd().ev.set_value(0);
+	pokemon.spe().ev.set_value(120);
 	pokemon.nature() = Nature::MODEST;
-	pokemon.hp.calculate_initial_hp(pokemon.level());
+	pokemon.hp().calculate_initial_hp(pokemon.level());
 	optimize_evs(team.pokemon());
 }
 

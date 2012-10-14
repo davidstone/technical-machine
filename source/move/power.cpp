@@ -336,7 +336,7 @@ Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & def
 }
 
 bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) {
-	return attacker.move().type() == type and attacker.hp.stat <= attacker.hp.max / 3;
+	return attacker.move().type() == type and attacker.current_hp() <= Rational(1, 3);
 }
 
 Rational defender_ability_modifier(Move const & move, Ability const ability) {

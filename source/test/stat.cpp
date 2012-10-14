@@ -45,7 +45,7 @@ void attack_tests () {
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	pokemon.def.ev.set_value(252);
+	pokemon.def().ev.set_value(252);
 	pokemon.nature().name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	pokemon.ability().name = Ability::PURE_POWER;
@@ -70,7 +70,7 @@ void special_attack_tests () {
 	attacker.add_pokemon(Species::Deoxys_A, 100, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	pokemon.spa.ev.set_value(252);
+	pokemon.spa().ev.set_value(252);
 	pokemon.nature().name = Nature::MODEST;
 	attacker.pokemon().stat_boost(Stat::SPA, 6);
 
@@ -93,7 +93,7 @@ void defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, 100, gender);
 	Pokemon & pokemon = defender.pokemon();
-	pokemon.def.ev.set_value(252);
+	pokemon.def().ev.set_value(252);
 	pokemon.nature().name = Nature::BOLD;
 
 	defender.pokemon().stat_boost(Stat::DEF, 6);
@@ -103,8 +103,8 @@ void defense_tests () {
 
 	calculate_defense(defender.pokemon());
 
-	if (pokemon.def.stat != max_defense)
-		throw IncorrectCalculation (pokemon.def.stat, max_defense);
+	if (pokemon.def().stat != max_defense)
+		throw IncorrectCalculation(pokemon.def().stat, max_defense);
 }
 
 void special_defense_tests () {
@@ -119,15 +119,15 @@ void special_defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	pokemon.spd.ev.set_value(252);
+	pokemon.spd().ev.set_value(252);
 	pokemon.nature().name = Nature::CALM;
 
 	defender.pokemon().stat_boost(Stat::SPD, 6);
 
 	calculate_special_defense(defender.pokemon(), weather);
 
-	if (pokemon.spd.stat != max_special_defense)
-		throw IncorrectCalculation (pokemon.spd.stat, max_special_defense);
+	if (pokemon.spd().stat != max_special_defense)
+		throw IncorrectCalculation (pokemon.spd().stat, max_special_defense);
 }
 
 void speed_tests () {
@@ -142,7 +142,7 @@ void speed_tests () {
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::Deoxys_S, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.spe.ev.set_value(252);
+	pokemon.spe().ev.set_value(252);
 	pokemon.nature().name = Nature::TIMID;
 
 	team.pokemon().stat_boost(Stat::SPE, 6);
@@ -155,8 +155,8 @@ void speed_tests () {
 	
 	calculate_speed(team, weather);
 
-	if (pokemon.spe.stat != max_speed)
-		throw IncorrectCalculation (pokemon.spe.stat, max_speed);
+	if (pokemon.spe().stat != max_speed)
+		throw IncorrectCalculation(pokemon.spe().stat, max_speed);
 }
 
 }	// unnamed namespace

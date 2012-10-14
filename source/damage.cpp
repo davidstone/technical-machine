@@ -33,6 +33,8 @@
 
 #include "pokemon/pokemon.hpp"
 
+#include "type/effectiveness.hpp"
+
 namespace technicalmachine {
 namespace {
 
@@ -54,12 +56,11 @@ Rational calculate_me_first_modifier (ActivePokemon const & attacker);
 
 Rational calculate_stab_modifier (ActivePokemon const & attacker);
 Rational calculate_stab_boost (Ability ability);
-std::vector<Rational> calculate_effectiveness_modifier (Move const & move, Pokemon const & defender);
-Rational calculate_ability_effectiveness_modifier (Ability ability, unsigned effectiveness);
-Rational calculate_expert_belt_modifier (Item item, unsigned effectiveness);
-unsigned calculate_tinted_lens_multiplier (Ability ability, unsigned effectiveness);
-unsigned calculate_resistance_berry_divisor (Item item, Type type, unsigned effectiveness);
-bool resistance_berry_activates (Item item, Type type, unsigned effectiveness);
+Rational calculate_ability_effectiveness_modifier (Ability ability, Effectiveness const & effectiveness);
+Rational calculate_expert_belt_modifier (Item item, Effectiveness const & effectiveness);
+unsigned calculate_tinted_lens_multiplier (Ability ability, Effectiveness const & effectiveness);
+unsigned calculate_resistance_berry_divisor (Item item, Type type, Effectiveness const & effectiveness);
+bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
 
 }	// unnamed namespace
 
@@ -128,13 +129,13 @@ unsigned regular_damage (ActivePokemon const & attacker, Team const & defender, 
 
 	damage *= attacker.move().r();
 	damage *= calculate_stab_modifier(attacker);
-	for (Rational const r : calculate_effectiveness_modifier(attacker.move(), defender.pokemon()))
-		damage *= r;
-	unsigned const effectiveness = attacker.move().type().get_effectiveness(defender.pokemon());
-	damage *= calculate_ability_effectiveness_modifier (defender.pokemon().ability(), effectiveness);
-	damage *= calculate_expert_belt_modifier (attacker.item(), effectiveness);
-	damage *= calculate_tinted_lens_multiplier (attacker.ability(), effectiveness);
-	damage /= calculate_resistance_berry_divisor (defender.pokemon().item(), attacker.move().type(), effectiveness);
+
+	Effectiveness const effectiveness = attacker.move().type().get_effectiveness(defender.pokemon());
+	damage *= effectiveness;
+	damage *= calculate_ability_effectiveness_modifier(defender.pokemon().ability(), effectiveness);
+	damage *= calculate_expert_belt_modifier(attacker.item(), effectiveness);
+	damage *= calculate_tinted_lens_multiplier(attacker.ability(), effectiveness);
+	damage /= calculate_resistance_berry_divisor(defender.pokemon().item(), attacker.move().type(), effectiveness);
 
 	return std::max(damage, 1u);
 }
@@ -144,19 +145,9 @@ unsigned regular_damage (ActivePokemon const & attacker, Team const & defender, 
 
 void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
 	if (!user.ability().blocks_recoil()) {
-		if (damage <= 2 * denominator - 1)
-			--user.hp.stat;
-		else
-			damage_side_effect (user, damage / denominator);
+		user.apply_damage(std::min(damage / denominator, 1u));
 	}
 }
-
-void damage_side_effect (Pokemon & user, unsigned damage) {
-	damage = std::min(damage, static_cast<unsigned> (user.hp.stat));
-	user.hp.stat -= damage;
-}
-
-
 
 namespace {
 
@@ -169,8 +160,8 @@ Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const &
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return attacker.move().is_physical() ?
-		Rational(attacker.atk.stat, 50u * defender.def.stat * weakening_from_status (attacker)) :
-		Rational(attacker.spa.stat, 50u * defender.spd.stat);
+		Rational(attacker.atk().stat, 50u * defender.def().stat * weakening_from_status(attacker)) :
+		Rational(attacker.spa().stat, 50u * defender.spd().stat);
 }
 
 unsigned weakening_from_status (Pokemon const & attacker) {
@@ -237,37 +228,30 @@ Rational calculate_stab_boost (Ability const ability) {
 	return ability.boosts_stab() ? Rational(2) : Rational(3, 2);
 }
 
-std::vector<Rational> calculate_effectiveness_modifier (Move const & move, Pokemon const & defender) {
-	std::vector<Rational> rationals;
-	for (unsigned const effectiveness : move.type().get_effectiveness_variables(defender))
-		rationals.emplace_back(effectiveness, 2);
-	return rationals;
+Rational calculate_ability_effectiveness_modifier (Ability const ability, Effectiveness const & effectiveness) {
+	return (ability.weakens_se_attacks() and effectiveness.is_super_effective()) ? Rational(3, 4) : Rational(1);
 }
 
-Rational calculate_ability_effectiveness_modifier (Ability const ability, unsigned const effectiveness) {
-	return (ability.weakens_se_attacks() and effectiveness > 4) ? Rational(3, 4) : Rational(1);
+Rational calculate_expert_belt_modifier (Item const item, Effectiveness const & effectiveness) {
+	return (item.boosts_super_effective_moves() and effectiveness.is_super_effective()) ? Rational(6, 5) : Rational(1);
 }
 
-Rational calculate_expert_belt_modifier (Item const item, unsigned const effectiveness) {
-	return (item.boosts_super_effective_moves() and effectiveness > 4) ? Rational(6, 5) : Rational(1);
+unsigned calculate_tinted_lens_multiplier (Ability const ability, Effectiveness const & effectiveness) {
+	return (ability.strengthens_nve_attacks() and effectiveness.is_not_very_effective()) ? 2 : 1;
 }
 
-unsigned calculate_tinted_lens_multiplier (Ability const ability, unsigned const effectiveness) {
-	return (ability.strengthens_nve_attacks() and effectiveness < 4) ? 2 : 1;
+unsigned calculate_resistance_berry_divisor (Item const item, Type const type, Effectiveness const & effectiveness) {
+	return resistance_berry_activates(item, type, effectiveness) ? 2 : 1;
 }
 
-unsigned calculate_resistance_berry_divisor (Item const item, Type const type, unsigned const effectiveness) {
-	return resistance_berry_activates (item, type, effectiveness) ? 2 : 1;
-}
-
-bool resistance_berry_activates (Item const item, Type const type, unsigned const effectiveness) {
+bool resistance_berry_activates (Item const item, Type const type, Effectiveness const & effectiveness) {
 	// Perhaps I should create some sort of item function that returns the type
 	// that the item grants resistance toward (and some sort of guard type to
 	// indicate that the item does not grant resistance). Then I can
 	// `return type == returned_type;`
 	if (item.name == Item::CHILAN_BERRY)
 		return type == Type::Normal;
-	else if (effectiveness > 4) {
+	else if (effectiveness.is_super_effective()) {
 		switch (item.name) {
 			case Item::BABIRI_BERRY:
 				return type == Type::Steel;

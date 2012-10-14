@@ -84,15 +84,15 @@ void endofturn2 (Team & team) {
 
 void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 	if (weather.hail() and !pokemon.type().is_immune_to_hail())
-		heal (pokemon, -16);
+		drain(pokemon, Rational(1, 16));
 	if (weather.sand() and !pokemon.type().is_immune_to_sandstorm())
-		heal (pokemon, -16);
+		drain(pokemon, Rational(1, 16));
 	switch (pokemon.ability().name) {
 		case Ability::DRY_SKIN:
 			if (weather.rain())
-				heal (pokemon, 8);
+				heal(pokemon, Rational(1, 8));
 			else if (weather.sun())
-				heal (pokemon, -8);
+				drain(pokemon, Rational(1, 8));
 			break;
 		case Ability::HYDRATION:
 			if (weather.rain())
@@ -100,11 +100,11 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 			break;
 		case Ability::ICE_BODY:
 			if (weather.hail())
-				heal (pokemon, 16);
+				heal(pokemon, Rational(1, 16));
 			break;
 		case Ability::RAIN_DISH:
 			if (weather.rain())
-				heal (pokemon, 16);
+				heal(pokemon, Rational(1, 16));
 			break;
 		default:
 			break;
@@ -113,55 +113,58 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 
 void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 	if (pokemon.ingrained())
-		heal (pokemon, 16);
+		heal(pokemon, Rational(1, 16));
 	if (pokemon.aqua_ring_is_active())
-		heal (pokemon, 16);
+		heal(pokemon, Rational(1, 16));
 	if (pokemon.ability().boosts_speed())
 		pokemon.stat_boost(Stat::SPE, 1);
 	else if (pokemon.shed_skin_activated())
 		pokemon.status().clear();
 	switch (pokemon.item().name) {
 		case Item::LEFTOVERS:
-			heal (pokemon, 16);
+			heal(pokemon, Rational(1, 16));
 			break;
 		case Item::BLACK_SLUDGE:
-			heal (pokemon, (is_type(pokemon, Type::Poison)) ? 16 : -16);
+			if (is_type(pokemon, Type::Poison))
+				heal(pokemon, Rational(1, 16));
+			else
+				drain(pokemon, Rational(1, 16));
 			break;
 		default:
 			break;
 	}
 	if (pokemon.leech_seeded()) {
 		unsigned const n = pokemon.hp().stat;
-		heal(pokemon, -8);
-		if (foe.hp.stat != 0) {
+		drain(pokemon, Rational(1, 8));
+		if (!foe.is_fainted()) {
 			if (pokemon.ability().damages_leechers ())
-				damage_side_effect (foe, n - pokemon.hp().stat);
-			else {
-				foe.hp.stat += n - pokemon.hp().stat;
-				if (foe.hp.stat > foe.hp.max)
-					foe.hp.stat = foe.hp.max;
-			}
+				foe.apply_damage(n - pokemon.hp().stat);
+			else
+				foe.apply_healing(n - pokemon.hp().stat);
 		}
 	}
 	switch (pokemon.status().name()) {
 		case Status::BURN:
-			heal(pokemon, pokemon.ability().weakens_burn() ? -16 : -8);
+			drain(pokemon, Rational(1, pokemon.ability().weakens_burn() ? 16 : 8));
 			break;
 		case Status::POISON:
-			heal(pokemon, pokemon.ability().absorbs_poison_damage() ? 8 : -8);
+			if (pokemon.ability().absorbs_poison_damage())
+				heal(pokemon, Rational(1, 8));
+			else
+				drain(pokemon, Rational(1, 8));
 			break;
 		case Status::POISON_TOXIC:
 			pokemon.increment_toxic();
 			if (pokemon.ability().absorbs_poison_damage())
-				heal(pokemon, 8);
+				heal(pokemon, Rational(1, 8));
 			else
 				drain(pokemon, pokemon.toxic_ratio());
 			break;
 		case Status::SLEEP:
 			if (pokemon.nightmare())
-				heal(pokemon, -4);
+				drain(pokemon, Rational(1, 4));
 			if (foe.ability().harms_sleepers())
-				heal(pokemon, -8);
+				drain(pokemon, Rational(1, 8));
 			break;
 		default:
 			break;
@@ -177,7 +180,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			break;
 	}
 	if (pokemon.is_cursed())
-		heal(pokemon, -4);
+		drain(pokemon, Rational(1, 4));
 	pokemon.partial_trap_damage();
 	
 	pokemon.decrement_lock_in();
@@ -193,7 +196,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 	if (pokemon.decrement_yawn())
 		Status::apply<Status::SLEEP>(pokemon, weather);
 	if (pokemon.item().name == Item::STICKY_BARB)
-		heal(pokemon, -8);
+		drain(pokemon, Rational(1, 8));
 }
 
 void endofturn6 (Team & target, Weather const & weather) {

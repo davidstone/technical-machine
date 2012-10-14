@@ -18,6 +18,7 @@
 
 #include "wish.hpp"
 #include "heal.hpp"
+#include "rational.hpp"
 
 namespace technicalmachine {
 class Pokemon;
@@ -34,7 +35,7 @@ void Wish::activate() {
 void Wish::decrement(Pokemon & pokemon) {
 	if (is_active())
 		--counter;
-	heal(pokemon, 2);
+	heal(pokemon, Rational(1, 2));
 }
 
 bool Wish::is_active() const {
