@@ -42,6 +42,9 @@ template<Stat::Stats stat>
 Nature::Natures nature_effect(NatureBoost nature);
 Nature::Natures combine(NatureBoost physical, NatureBoost special);
 
+bool boosts_defensive_stat(Nature nature);
+bool weakens_defensive_stat(Nature nature);
+
 template<Stat::Stats stat>
 void set_ev(Pokemon & pokemon, unsigned const defensive_ev);
 unsigned defensive_evs_available(Pokemon const & pokemon);
@@ -139,6 +142,12 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 		for (auto const & stat : per_nature.second)
 			std::cerr << stat.to_string() + '\n';
 	}
+	std::cerr << "Reduced to:\n";
+	remove_inefficient_natures();
+	for (auto const & per_nature : container) {
+		for (auto const & stat : per_nature.second)
+			std::cerr << stat.to_string() + '\n';
+	}
 }
 
 void DefensiveEVs::combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon) {
@@ -171,7 +180,6 @@ void DefensiveEVs::minimum_evs_per_nature(Estimates & original) {
 		return value.sum() < least.sum();
 	};
 	auto const it = std::min_element(std::begin(original), std::end(original), least_sum);
-	std::cerr << "Sum: " << it->sum() << '\n';
 	auto const invalid = [it](DataPoint const & value) {
 		return value.sum() != it->sum();
 	};
@@ -191,6 +199,25 @@ void DefensiveEVs::most_effective_equal_evs_per_nature(Estimates & original, Pok
 	auto const it = std::max_element(std::begin(original), std::end(original), greatest_product);
 	original.front() = *it;
 	original.erase(std::begin(original) + 1, std::end(original));
+}
+
+void DefensiveEVs::remove_inefficient_natures() {
+	typedef std::vector<Container::const_iterator> Boosters;
+	Boosters boosters;
+	for (Container::const_iterator it = container.begin(); it != container.end(); ++it) {
+		if (boosts_defensive_stat(it->first))
+			boosters.emplace_back(it);
+	}
+	auto const iter_sum = [](Boosters::value_type const & lhs, Boosters::value_type const & rhs) {
+		return lhs->second.front().sum() < rhs->second.front().sum();
+	};
+	auto const best = std::min_element(boosters.begin(), boosters.end(), iter_sum);
+	for (Container::iterator it = container.begin(); it != container.end();) {
+		if (boosts_defensive_stat(it->first) and it != *best)
+			it = container.erase(it);
+		else
+			++it;
+	}
 }
 
 DefensiveEVs::SingleClassificationEVs::SingleClassificationEVs(unsigned hp_ev, unsigned defensive_ev, NatureBoost nature):
@@ -230,6 +257,27 @@ void set_ev<Stat::SPD>(Pokemon & pokemon, unsigned const defensive_ev) {
 	pokemon.spd().ev.set_value(defensive_ev);
 }
 
+bool boosts_defensive_stat(Nature const nature) {
+	switch (nature.name) {
+	case Nature::CALM:
+	case Nature::IMPISH:
+	case Nature::GENTLE:
+	case Nature::LAX:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool weakens_defensive_stat(Nature const nature) {
+	switch (nature.name) {
+	case Nature::HASTY:
+	case Nature::NAIVE:
+		return true;
+	default:
+		return false;
+	}
+}
 
 
 

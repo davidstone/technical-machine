@@ -56,6 +56,7 @@ class DefensiveEVs {
 		static void minimum_evs_per_nature(Estimates & original);
 		void most_effective_equal_evs(Pokemon const & pokemon);
 		static void most_effective_equal_evs_per_nature(Estimates & original, Pokemon const & pokemon);
+		void remove_inefficient_natures();
 		Container container;
 };
 
