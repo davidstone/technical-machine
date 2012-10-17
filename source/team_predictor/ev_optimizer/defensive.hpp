@@ -51,12 +51,19 @@ class DefensiveEVs {
 		typedef std::vector<DataPoint> Estimates;
 		typedef std::map<Nature::Natures, Estimates> Container;
 		typedef std::vector<SingleClassificationEVs> Single;
+		enum NatureBoost { Penalty, Neutral, Boost };
+		template<Stat::Stats stat>
+		static Nature::Natures nature_effect(NatureBoost nature);
+		static Nature::Natures combine(NatureBoost physical, NatureBoost special);
+		template<Stat::Stats stat>
+		static Single defensiveness(Pokemon pokemon);
 		void combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon);
 		void filter_to_minimum_evs();
 		static void minimum_evs_per_nature(Estimates & original);
 		void most_effective_equal_evs(Pokemon const & pokemon);
 		static void most_effective_equal_evs_per_nature(Estimates & original, Pokemon const & pokemon);
-		void remove_inefficient_natures();
+		void remove_inefficient_natures(NatureBoost effect);
+		static bool affects_defensive_stat(Nature nature, NatureBoost effect);
 		Container container;
 };
 

@@ -36,11 +36,6 @@
 
 namespace technicalmachine {
 namespace {
-enum NatureBoost { Penalty, Neutral, Boost };
-
-template<Stat::Stats stat>
-Nature::Natures nature_effect(NatureBoost nature);
-Nature::Natures combine(NatureBoost physical, NatureBoost special);
 
 bool boosts_defensive_stat(Nature nature);
 bool weakens_defensive_stat(Nature nature);
@@ -102,11 +97,10 @@ bool lesser_product(DefensiveEVs::DataPoint const & lhs, DefensiveEVs::DataPoint
 }
 
 
-namespace {
 template<Stat::Stats stat>
-std::vector<DefensiveEVs::SingleClassificationEVs> defensiveness(Pokemon pokemon) {
+DefensiveEVs::Single DefensiveEVs::defensiveness(Pokemon pokemon) {
 	unsigned const initial_product = pokemon.hp().max * initial_stat<stat>(pokemon);
-	std::vector<DefensiveEVs::SingleClassificationEVs> result;
+	Single result;
 	static std::array<Nature, 3> const natures = {{
 		nature_effect<stat>(Boost),
 		nature_effect<stat>(Neutral),
@@ -124,14 +118,14 @@ std::vector<DefensiveEVs::SingleClassificationEVs> defensiveness(Pokemon pokemon
 				set_ev<stat>(pokemon, defensive_ev);
 			}
 			if (initial_stat<stat>(pokemon) * hp >= initial_product) {
-				result.emplace_back(hp_ev, defensive_ev, DefensiveEVs::SingleClassificationEVs::convert(nature));
+				result.emplace_back(hp_ev, defensive_ev, SingleClassificationEVs::convert(nature));
 			}
 		}
 	}
 	return result;
 }
-
-}	// unnamed namespace
+template DefensiveEVs::Single DefensiveEVs::defensiveness<Stat::DEF>(Pokemon pokemon);
+template DefensiveEVs::Single DefensiveEVs::defensiveness<Stat::SPD>(Pokemon pokemon);
 
 DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 	Single const physical = defensiveness<Stat::DEF>(pokemon);
@@ -143,7 +137,8 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 			std::cerr << stat.to_string() + '\n';
 	}
 	std::cerr << "Reduced to:\n";
-	remove_inefficient_natures();
+	for (auto const effect : { Boost, Penalty })
+		remove_inefficient_natures(effect);
 	for (auto const & per_nature : container) {
 		for (auto const & stat : per_nature.second)
 			std::cerr << stat.to_string() + '\n';
@@ -201,11 +196,11 @@ void DefensiveEVs::most_effective_equal_evs_per_nature(Estimates & original, Pok
 	original.erase(std::begin(original) + 1, std::end(original));
 }
 
-void DefensiveEVs::remove_inefficient_natures() {
+void DefensiveEVs::remove_inefficient_natures(NatureBoost effect) {
 	typedef std::vector<Container::const_iterator> Boosters;
 	Boosters boosters;
 	for (Container::const_iterator it = container.begin(); it != container.end(); ++it) {
-		if (boosts_defensive_stat(it->first))
+		if (affects_defensive_stat(it->first, effect))
 			boosters.emplace_back(it);
 	}
 	auto const iter_sum = [](Boosters::value_type const & lhs, Boosters::value_type const & rhs) {
@@ -213,7 +208,7 @@ void DefensiveEVs::remove_inefficient_natures() {
 	};
 	auto const best = std::min_element(boosters.begin(), boosters.end(), iter_sum);
 	for (Container::iterator it = container.begin(); it != container.end();) {
-		if (boosts_defensive_stat(it->first) and it != *best)
+		if (affects_defensive_stat(it->first, effect) and it != *best)
 			it = container.erase(it);
 		else
 			++it;
@@ -226,7 +221,7 @@ DefensiveEVs::SingleClassificationEVs::SingleClassificationEVs(unsigned hp_ev, u
 	nature_boost(nature) {
 }
 
-NatureBoost DefensiveEVs::SingleClassificationEVs::convert(Nature nature) {
+DefensiveEVs::NatureBoost DefensiveEVs::SingleClassificationEVs::convert(Nature nature) {
 	switch (nature.name) {
 	case Nature::IMPISH:
 	case Nature::CALM:
@@ -240,47 +235,32 @@ NatureBoost DefensiveEVs::SingleClassificationEVs::convert(Nature nature) {
 	}
 }
 
+bool DefensiveEVs::affects_defensive_stat(Nature const nature, NatureBoost const effect) {
+	switch (effect) {
+	case Boost:
+		switch (nature.name) {
+		case Nature::CALM:
+		case Nature::IMPISH:
+		case Nature::GENTLE:
+		case Nature::LAX:
+			return true;
+		default:
+			return false;
+		}
+	case Penalty:
+		switch (nature.name) {
+		case Nature::HASTY:
+		case Nature::NAIVE:
+			return true;
+		default:
+			return false;
+		}
+	default:
+		return nature.name == Nature::HARDY;
+	}
+}
 
 namespace {
-
-unsigned defensive_evs_available(Pokemon const & pokemon) {
-	constexpr unsigned max_total_evs = 510;
-	return max_total_evs - pokemon.atk().ev.value() + pokemon.spa().ev.value() + pokemon.spe().ev.value();
-}
-
-template<>
-void set_ev<Stat::DEF>(Pokemon & pokemon, unsigned const defensive_ev) {
-	pokemon.def().ev.set_value(defensive_ev);
-}
-template<>
-void set_ev<Stat::SPD>(Pokemon & pokemon, unsigned const defensive_ev) {
-	pokemon.spd().ev.set_value(defensive_ev);
-}
-
-bool boosts_defensive_stat(Nature const nature) {
-	switch (nature.name) {
-	case Nature::CALM:
-	case Nature::IMPISH:
-	case Nature::GENTLE:
-	case Nature::LAX:
-		return true;
-	default:
-		return false;
-	}
-}
-
-bool weakens_defensive_stat(Nature const nature) {
-	switch (nature.name) {
-	case Nature::HASTY:
-	case Nature::NAIVE:
-		return true;
-	default:
-		return false;
-	}
-}
-
-
-
 class InvalidNatureCombination : public std::logic_error {
 	public:
 		InvalidNatureCombination():
@@ -288,7 +268,9 @@ class InvalidNatureCombination : public std::logic_error {
 		}
 };
 
-Nature::Natures combine(NatureBoost const physical, NatureBoost const special) {
+}
+
+Nature::Natures DefensiveEVs::combine(NatureBoost const physical, NatureBoost const special) {
 	switch (physical) {
 	case Boost:
 		switch (special) {
@@ -322,7 +304,7 @@ Nature::Natures combine(NatureBoost const physical, NatureBoost const special) {
 }
 
 template<>
-Nature::Natures nature_effect<Stat::DEF>(NatureBoost nature) {
+Nature::Natures DefensiveEVs::nature_effect<Stat::DEF>(NatureBoost nature) {
 	switch (nature) {
 	case Boost:
 		return Nature::IMPISH;
@@ -333,7 +315,7 @@ Nature::Natures nature_effect<Stat::DEF>(NatureBoost nature) {
 	}
 }
 template<>
-Nature::Natures nature_effect<Stat::SPD>(NatureBoost nature) {
+Nature::Natures DefensiveEVs::nature_effect<Stat::SPD>(NatureBoost nature) {
 	switch (nature) {
 	case Boost:
 		return Nature::CALM;
@@ -342,6 +324,22 @@ Nature::Natures nature_effect<Stat::SPD>(NatureBoost nature) {
 	default:
 		return Nature::HARDY;
 	}
+}
+
+namespace {
+
+unsigned defensive_evs_available(Pokemon const & pokemon) {
+	constexpr unsigned max_total_evs = 510;
+	return max_total_evs - pokemon.atk().ev.value() + pokemon.spa().ev.value() + pokemon.spe().ev.value();
+}
+
+template<>
+void set_ev<Stat::DEF>(Pokemon & pokemon, unsigned const defensive_ev) {
+	pokemon.def().ev.set_value(defensive_ev);
+}
+template<>
+void set_ev<Stat::SPD>(Pokemon & pokemon, unsigned const defensive_ev) {
+	pokemon.spd().ev.set_value(defensive_ev);
 }
 
 }	// unnamed namespace
