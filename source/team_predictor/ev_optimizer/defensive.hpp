@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include "defensive_data_point.hpp"
+
 #include "../../stat/nature.hpp"
 
 namespace technicalmachine {
@@ -32,21 +34,6 @@ class DefensiveEVs {
 	public:
 		DefensiveEVs(Pokemon pokemon);
 	private:
-		class DataPoint {
-			public:
-				DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature);
-				std::string to_string() const;
-				unsigned sum() const;
-				friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
-			private:
-				template<Stat::Stats stat>
-				unsigned product(Pokemon const & pokemon) const;
-				unsigned hp;
-				unsigned defense;
-				unsigned special_defense;
-				Nature nature;
-		};
-		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
 		class SingleClassificationEVs;
 		typedef std::vector<DataPoint> Estimates;
 		typedef std::map<Nature::Natures, Estimates> Container;

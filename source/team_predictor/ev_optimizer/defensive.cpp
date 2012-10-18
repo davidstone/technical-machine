@@ -60,43 +60,6 @@ class DefensiveEVs::SingleClassificationEVs {
 		NatureBoost nature_boost;
 };
 
-DefensiveEVs::DataPoint::DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature):
-	hp(hp_ev),
-	defense(defense_ev),
-	special_defense(special_defense_ev),
-	nature(a_nature) {
-}
-
-std::string DefensiveEVs::DataPoint::to_string() const {
-	return nature.to_string() + " " + std::to_string(hp) + " HP / " + std::to_string(defense) + " Def / " + std::to_string(special_defense) + " SpD";
-}
-
-unsigned DefensiveEVs::DataPoint::sum() const {
-	return hp + defense + special_defense;
-}
-
-template<Stat::Stats stat>
-unsigned DefensiveEVs::DataPoint::product(Pokemon const & pokemon) const {
-	return initial_stat<stat>(pokemon) * initial_stat<Stat::HP>(pokemon);
-}
-template unsigned DefensiveEVs::DataPoint::product<Stat::DEF>(Pokemon const & pokemon) const;
-template unsigned DefensiveEVs::DataPoint::product<Stat::SPD>(Pokemon const & pokemon) const;
-
-bool lesser_product(DefensiveEVs::DataPoint const & lhs, DefensiveEVs::DataPoint const & rhs, Pokemon const & pokemon) {
-	auto const left_physical = lhs.product<Stat::DEF>(pokemon);
-	auto const left_special = lhs.product<Stat::SPD>(pokemon);
-	auto const right_physical = lhs.product<Stat::DEF>(pokemon);
-	auto const right_special = lhs.product<Stat::SPD>(pokemon);
-	if (left_physical < right_physical and left_special < right_special)
-		return true;
-	if (right_physical < left_physical and right_special < left_special)
-		return false;
-	auto const left = static_cast<uint64_t>(left_physical) * left_special;
-	auto const right = static_cast<uint64_t>(right_physical) * right_special;
-	return left < right;
-}
-
-
 template<Stat::Stats stat>
 DefensiveEVs::Single DefensiveEVs::defensiveness(Pokemon pokemon) {
 	unsigned const initial_product = pokemon.hp().max * initial_stat<stat>(pokemon);
