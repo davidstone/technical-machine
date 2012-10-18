@@ -28,6 +28,14 @@
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
+namespace {
+
+template<Stat::Stats stat>
+unsigned product(Pokemon const & pokemon) {
+	return initial_stat<stat>(pokemon) * initial_stat<Stat::HP>(pokemon);
+}
+
+}	// unnamed namespace
 
 DataPoint::DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature):
 	hp(hp_ev),
@@ -44,18 +52,13 @@ unsigned DataPoint::sum() const {
 	return hp + defense + special_defense;
 }
 
-template<Stat::Stats stat>
-unsigned DataPoint::product(Pokemon const & pokemon) const {
-	return initial_stat<stat>(pokemon) * initial_stat<Stat::HP>(pokemon);
-}
-template unsigned DataPoint::product<Stat::DEF>(Pokemon const & pokemon) const;
-template unsigned DataPoint::product<Stat::SPD>(Pokemon const & pokemon) const;
-
-bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {
-	auto const left_physical = lhs.product<Stat::DEF>(pokemon);
-	auto const left_special = lhs.product<Stat::SPD>(pokemon);
-	auto const right_physical = lhs.product<Stat::DEF>(pokemon);
-	auto const right_special = lhs.product<Stat::SPD>(pokemon);
+bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon) {
+	lhs.update_pokemon(pokemon);
+	auto const left_physical = product<Stat::DEF>(pokemon);
+	auto const left_special = product<Stat::SPD>(pokemon);
+	rhs.update_pokemon(pokemon);
+	auto const right_physical = product<Stat::DEF>(pokemon);
+	auto const right_special = product<Stat::SPD>(pokemon);
 	if (left_physical < right_physical and left_special < right_special)
 		return true;
 	if (right_physical < left_physical and right_special < left_special)
@@ -65,4 +68,10 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const 
 	return left < right;
 }
 
+void DataPoint::update_pokemon(Pokemon & pokemon) const {
+	pokemon.nature() = nature;
+	pokemon.hp().ev.set_value(hp);
+	pokemon.def().ev.set_value(defense);
+	pokemon.spd().ev.set_value(special_defense);
+}
 }	// namespace technicalmachine

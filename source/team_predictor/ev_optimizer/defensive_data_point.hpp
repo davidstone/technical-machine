@@ -32,10 +32,9 @@ class DataPoint {
 		DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature);
 		std::string to_string() const;
 		unsigned sum() const;
-		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
+		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
 	private:
-		template<Stat::Stats stat>
-		unsigned product(Pokemon const & pokemon) const;
+		void update_pokemon(Pokemon & pokemon) const;
 		unsigned hp;
 		unsigned defense;
 		unsigned special_defense;
