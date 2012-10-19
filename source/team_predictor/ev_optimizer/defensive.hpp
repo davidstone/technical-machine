@@ -20,11 +20,8 @@
 #define TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
 
 #include <map>
-#include <string>
-#include <vector>
 
 #include "defensive_data_point.hpp"
-#include "single_classification_evs.hpp"
 
 #include "../../stat/nature.hpp"
 
@@ -34,17 +31,10 @@ class Pokemon;
 class DefensiveEVs {
 	public:
 		DefensiveEVs(Pokemon pokemon);
+		typedef std::map<Nature::Natures, DataPoint> BestPerNature;
 	private:
-		typedef std::vector<DataPoint> Estimates;
-		typedef std::map<Nature::Natures, Estimates> Container;
-		typedef std::vector<SingleClassificationEVs> Single;
-		void combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon);
-		void filter_to_minimum_evs();
-		static void minimum_evs_per_nature(Estimates & original);
-		void most_effective_equal_evs(Pokemon const & pokemon);
-		static void most_effective_equal_evs_per_nature(Estimates & original, Pokemon const & pokemon);
 		void remove_inefficient_natures(bool boost_nature);
-		Container container;
+		BestPerNature container;
 };
 
 }	// namespace technicalmachine

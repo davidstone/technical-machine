@@ -33,6 +33,7 @@ class DataPoint {
 		std::string to_string() const;
 		unsigned sum() const;
 		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
+		bool affects_defensive_stat(bool boost) const;
 		static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	private:
 		void update_pokemon(Pokemon & pokemon) const;
