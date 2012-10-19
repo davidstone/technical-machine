@@ -40,7 +40,7 @@ pokemon_lab = prepend_dir('pokemon_lab', ['battle.cpp', 'battle_settings.cpp', '
 pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'read_team_file.cpp', 'inmessage.cpp', 'invalid_user.cpp', 'outmessage.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
 clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_team_file_format.cpp', 'party.cpp'] + network + pokemon_lab + pokemon_online)
 
-ev_optimizer_sources = prepend_dir('team_predictor/ev_optimizer', ['defensive.cpp', 'defensive_data_point.cpp', 'ev_optimizer.cpp', 'offensive.cpp', 'single_classification_evs.cpp'])
+ev_optimizer_sources = prepend_dir('team_predictor/ev_optimizer', ['defensive.cpp', 'defensive_data_point.cpp', 'ev_optimizer.cpp', 'offensive.cpp', 'single_classification_evs.cpp', 'speed.cpp'])
 
 ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'transposition.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 ai_sources += team_sources

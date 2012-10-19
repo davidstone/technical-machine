@@ -1,4 +1,4 @@
-// Optimize EVs and nature to remove waste
+// Optimize Speed EVs and nature to remove waste
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ev_optimizer.hpp"
-
-#include "defensive.hpp"
-#include "offensive.hpp"
 #include "speed.hpp"
-
 #include "../../pokemon/pokemon.hpp"
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 
-void optimize_evs(Pokemon & pokemon) {
-	OffensiveEVs offensive(pokemon);
-	DefensiveEVs defensive(pokemon);
-	SpeedEVs speed(pokemon);
+SpeedEVs::SpeedEVs(Pokemon pokemon) {
+	unsigned const speed = initial_stat<Stat::SPE>(pokemon);
+	for (auto const nature : { Nature::JOLLY, Nature::HARDY, Nature::QUIET }) {
+		pokemon.nature().name = nature;
+		for (unsigned ev = 0; ev <= 252; ++ev) {
+			pokemon.spe().ev.set_value(ev);
+			if (initial_stat<Stat::SPE>(pokemon) >= speed) {
+				container.insert(std::make_pair(nature, ev));
+				break;
+			}
+		}
+	}
 }
 
 }	// namespace technicalmachine
