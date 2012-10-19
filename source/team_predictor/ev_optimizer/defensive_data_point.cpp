@@ -18,9 +18,11 @@
 
 #include "defensive_data_point.hpp"
 
-#include <algorithm>
 #include <cstdint>
+#include <stdexcept>
 #include <string>
+
+#include "single_classification_evs.hpp"
 
 #include "../../pokemon/pokemon.hpp"
 
@@ -37,11 +39,11 @@ unsigned product(Pokemon const & pokemon) {
 
 }	// unnamed namespace
 
-DataPoint::DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature):
-	hp(hp_ev),
-	defense(defense_ev),
-	special_defense(special_defense_ev),
-	nature(a_nature) {
+DataPoint::DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special):
+	hp(physical.hp),
+	defense(physical.defensive),
+	special_defense(special.defensive),
+	nature(get_nature(physical, special)) {
 }
 
 std::string DataPoint::to_string() const {
@@ -74,4 +76,44 @@ void DataPoint::update_pokemon(Pokemon & pokemon) const {
 	pokemon.def().ev.set_value(defense);
 	pokemon.spd().ev.set_value(special_defense);
 }
+
+class InvalidNatureCombination : public std::logic_error {
+	public:
+		InvalidNatureCombination():
+			std::logic_error("Attempt to create a nature that cannot exist.") {
+		}
+};
+
+Nature::Natures DataPoint::get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
+	switch (physical.nature_boost) {
+	case SingleClassificationEVs::Boost:
+		switch (special.nature_boost) {
+		case SingleClassificationEVs::Boost:
+			throw InvalidNatureCombination();
+		default:
+			return Nature::IMPISH;
+		case SingleClassificationEVs::Penalty:
+			return Nature::LAX;
+		}
+	default:
+		switch (special.nature_boost) {
+		case SingleClassificationEVs::Boost:
+			return Nature::CALM;
+		default:
+			return Nature::HARDY;
+		case SingleClassificationEVs::Penalty:
+			return Nature::NAIVE;
+		}
+	case SingleClassificationEVs::Penalty:
+		switch (special.nature_boost) {
+		case SingleClassificationEVs::Boost:
+			return Nature::GENTLE;
+		default:
+			return Nature::HASTY;
+		case SingleClassificationEVs::Penalty:
+			throw InvalidNatureCombination();
+		}
+	}
+}
+
 }	// namespace technicalmachine

@@ -16,36 +16,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
-#define TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
+#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__SINGLE_CLASSIFICATION_EVS_HPP_
+#define TEAM_PREDICTOR__EV_OPTIMIZER__SINGLE_CLASSIFICATION_EVS_HPP_
 
-#include <map>
 #include <string>
 #include <vector>
 
-#include "defensive_data_point.hpp"
-#include "single_classification_evs.hpp"
-
-#include "../../stat/nature.hpp"
-
 namespace technicalmachine {
+class Nature;
 class Pokemon;
 
-class DefensiveEVs {
+class SingleClassificationEVs {
 	public:
-		DefensiveEVs(Pokemon pokemon);
+		enum NatureBoost { Penalty, Neutral, Boost };
+		SingleClassificationEVs(unsigned hp_ev, unsigned defensive_ev, Nature nature, bool physical);
+		std::string to_string() const;
+		friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, unsigned max_evs);
 	private:
-		typedef std::vector<DataPoint> Estimates;
-		typedef std::map<Nature::Natures, Estimates> Container;
-		typedef std::vector<SingleClassificationEVs> Single;
-		void combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon);
-		void filter_to_minimum_evs();
-		static void minimum_evs_per_nature(Estimates & original);
-		void most_effective_equal_evs(Pokemon const & pokemon);
-		static void most_effective_equal_evs_per_nature(Estimates & original, Pokemon const & pokemon);
-		void remove_inefficient_natures(bool boost_nature);
-		Container container;
+		friend class DataPoint;
+		std::string stat_name() const;
+		unsigned hp;
+		unsigned defensive;
+		NatureBoost nature_boost;
+		bool physical;
 };
 
+template<bool physical>
+std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon);
+
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
+#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__SINGLE_CLASSIFICATION_EVS_HPP_

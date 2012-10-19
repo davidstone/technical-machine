@@ -22,17 +22,18 @@
 #include <string>
 
 #include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 class Pokemon;
+class SingleClassificationEVs;
 
 class DataPoint {
 	public:
-		DataPoint(unsigned hp_ev, unsigned defense_ev, unsigned special_defense_ev, Nature const a_nature);
+		DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 		std::string to_string() const;
 		unsigned sum() const;
 		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
+		static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	private:
 		void update_pokemon(Pokemon & pokemon) const;
 		unsigned hp;
