@@ -28,7 +28,7 @@ class Pokemon;
 
 class SpeedEVs {
 	public:
-		SpeedEVs(Pokemon pokemon);
+		explicit SpeedEVs(Pokemon pokemon);
 	private:
 		typedef std::map<Nature::Natures, unsigned> Container;
 		Container container;

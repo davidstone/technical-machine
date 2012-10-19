@@ -29,7 +29,7 @@ class Pokemon;
 
 class OffensiveEVs {
 	public:
-		OffensiveEVs(Pokemon pokemon);
+		explicit OffensiveEVs(Pokemon pokemon);
 	private:
 		class OffensiveStats {
 			public:

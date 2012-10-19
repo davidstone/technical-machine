@@ -30,7 +30,7 @@ class Pokemon;
 
 class DefensiveEVs {
 	public:
-		DefensiveEVs(Pokemon pokemon);
+		explicit DefensiveEVs(Pokemon pokemon);
 		typedef std::map<Nature::Natures, DataPoint> BestPerNature;
 	private:
 		void remove_inefficient_natures(bool boost_nature);
