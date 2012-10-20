@@ -44,12 +44,22 @@ class Nature {
 		void set_if_unknown (Natures nature);
 		template<Stat::Stats>
 		Rational boost() const;
+		template<Stat::Stats>
+		bool boosts_stat() const;
+		template<Stat::Stats>
+		bool lowers_stat() const;
 		std::string to_string () const;
 		friend bool operator== (Nature lhs, Nature rhs);
 
 		Natures name;
 };
 bool operator!= (Nature lhs, Nature rhs);
+
+bool boosts_attacking_stat(Nature nature);
+bool boosts_defending_stat(Nature nature);
+bool lowers_attacking_stat(Nature nature);
+bool lowers_defending_stat(Nature nature);
+
 
 }	// namespace technicalmachine
 #endif	// STAT__NATURE_HPP_

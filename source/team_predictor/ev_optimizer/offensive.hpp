@@ -29,7 +29,10 @@ class Pokemon;
 
 class OffensiveStats {
 	public:
-		OffensiveStats() {}
+		OffensiveStats():
+			attack(0),
+			special_attack(0) {
+		}
 		unsigned sum() const {
 			return attack + special_attack;
 		}
@@ -42,7 +45,7 @@ class OffensiveEVs {
 		explicit OffensiveEVs(Pokemon pokemon);
 	private:
 		void optimize(Pokemon & pokemon);
-		void remove_unused(Pokemon const & pokemon);
+		void remove_unused(Pokemon & pokemon);
 		void equal_stats(Pokemon & pokemon);
 		typedef std::map<Nature::Natures, OffensiveStats> Container;
 		Container container;

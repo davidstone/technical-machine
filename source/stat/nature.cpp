@@ -52,94 +52,162 @@ void Nature::set_if_unknown (Natures const nature) {
 }
 
 template<>
-Rational Nature::boost<Stat::ATK>() const {
+bool Nature::boosts_stat<Stat::ATK>() const {
 	switch (name) {
 		case ADAMANT:
 		case BRAVE:
 		case LONELY:
 		case NAUGHTY:
-			return Rational(11, 10);
-		case BOLD:
-		case CALM:
-		case MODEST:
-		case TIMID:
-			return Rational(9, 10);
+			return true;
 		default:
-			return Rational(1);
+			return false;
 	}
 }
-
 template<>
-Rational Nature::boost<Stat::DEF>() const {
-	switch (name) {
-		case BOLD:
-		case IMPISH:
-		case LAX:
-		case RELAXED:
-			return Rational(11, 10);
-		case GENTLE:
-		case HASTY:
-		case LONELY:
-		case MILD:
-			return Rational(9, 10);
-		default:
-			return Rational(1);
-	}
-}
-
-template<>
-Rational Nature::boost<Stat::SPA>() const {
+bool Nature::boosts_stat<Stat::SPA>() const {
 	switch (name) {
 		case MILD:
 		case MODEST:
 		case QUIET:
 		case RASH:
-			return Rational(11, 10);
+			return true;
+		default:
+			return false;
+	}
+}
+bool boosts_attacking_stat(Nature const nature) {
+	return nature.boosts_stat<Stat::ATK>() or nature.boosts_stat<Stat::SPA>();
+}
+
+template<>
+bool Nature::boosts_stat<Stat::DEF>() const {
+	switch (name) {
+		case BOLD:
+		case IMPISH:
+		case LAX:
+		case RELAXED:
+			return true;
+		default:
+			return false;
+	}
+}
+template<>
+bool Nature::boosts_stat<Stat::SPD>() const {
+	switch (name) {
+		case CALM:
+		case CAREFUL:
+		case GENTLE:
+		case SASSY:
+			return true;
+		default:
+			return false;
+	}
+}
+bool boosts_defending_stat(Nature const nature) {
+	return nature.boosts_stat<Stat::DEF>() or nature.boosts_stat<Stat::SPD>();
+}
+
+template<>
+bool Nature::boosts_stat<Stat::SPE>() const {
+	switch (name) {
+		case HASTY:
+		case JOLLY:
+		case NAIVE:
+		case TIMID:
+			return true;
+		default:
+			return false;
+	}
+}
+
+template<>
+bool Nature::lowers_stat<Stat::ATK>() const {
+	switch (name) {
+		case BOLD:
+		case CALM:
+		case MODEST:
+		case TIMID:
+			return true;
+		default:
+			return false;
+	}
+}
+template<>
+bool Nature::lowers_stat<Stat::SPA>() const {
+	switch (name) {
 		case ADAMANT:
 		case CAREFUL:
 		case IMPISH:
 		case JOLLY:
-			return Rational(9, 10);
+			return true;
 		default:
-			return Rational(1);
+			return false;
 	}
+}
+bool lowers_attacking_stat(Nature const nature) {
+	return nature.lowers_stat<Stat::ATK>() or nature.lowers_stat<Stat::SPA>();
 }
 
 template<>
-Rational Nature::boost<Stat::SPD>() const {
+bool Nature::lowers_stat<Stat::DEF>() const {
 	switch (name) {
-		case CALM:
-		case CAREFUL:
 		case GENTLE:
-		case SASSY:
-			return Rational(11, 10);
+		case HASTY:
+		case LONELY:
+		case MILD:
+			return true;
+		default:
+			return false;
+	}
+}
+template<>
+bool Nature::lowers_stat<Stat::SPD>() const {
+	switch (name) {
 		case LAX:
 		case NAIVE:
 		case NAUGHTY:
 		case RASH:
-			return Rational(9, 10);
+			return true;
 		default:
-			return Rational(1);
+			return false;
 	}
+}
+bool lowers_defending_stat(Nature const nature) {
+	return nature.lowers_stat<Stat::DEF>() or nature.lowers_stat<Stat::SPD>();
 }
 
 template<>
-Rational Nature::boost<Stat::SPE>() const {
+bool Nature::lowers_stat<Stat::SPE>() const {
 	switch (name) {
-		case HASTY:
-		case JOLLY:
-		case NAIVE:
-		case TIMID:
-			return Rational(11, 10);
 		case BRAVE:
 		case QUIET:
 		case RELAXED:
 		case SASSY:
-			return Rational(9, 10);
+			return true;
 		default:
-			return Rational(1);
+			return false;
 	}
 }
+
+
+template<Stat::Stats stat>
+Rational Nature::boost() const {
+	if (boosts_stat<stat>()) {
+		return Rational(11, 10);
+	}
+	else if (lowers_stat<stat>()) {
+		return Rational(9, 10);
+	}
+	else {
+		return Rational(1);
+	}
+}
+
+template Rational Nature::boost<Stat::ATK>() const;
+template Rational Nature::boost<Stat::DEF>() const;
+template Rational Nature::boost<Stat::SPA>() const;
+template Rational Nature::boost<Stat::SPD>() const;
+template Rational Nature::boost<Stat::SPE>() const;
 
 bool operator== (Nature const lhs, Nature const rhs) {
 	return lhs.name == rhs.name;

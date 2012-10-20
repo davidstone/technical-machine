@@ -54,16 +54,10 @@ boost::optional<unsigned> reset_stat(Pokemon & pokemon, EV & ev, unsigned initia
 
 }	// unnamed namespace
 
-OffensiveEVs::OffensiveEVs(Pokemon pokemon):
-	container({
-		{ Nature::BRAVE, OffensiveStats() },
-		{ Nature::ADAMANT, OffensiveStats() },
-		{ Nature::QUIET, OffensiveStats() },
-		{ Nature::HARDY, OffensiveStats() },
-		{ Nature::IMPISH, OffensiveStats() },
-		{ Nature::MODEST, OffensiveStats() },
-		{ Nature::CALM, OffensiveStats() }
-	}) {
+OffensiveEVs::OffensiveEVs(Pokemon pokemon) {
+	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
+		container.insert(std::make_pair(nature, OffensiveStats()));
+	}
 	optimize(pokemon);
 }
 
@@ -72,33 +66,51 @@ void OffensiveEVs::optimize(Pokemon & pokemon) {
 	equal_stats(pokemon);
 }
 
-void OffensiveEVs::remove_unused(Pokemon const & pokemon) {
+namespace {
+
+template<typename Container, typename Condition>
+void remove_individual_unused(Container & container, Condition const & condition) {
+	for (typename Container::iterator it = std::begin(container); it != std::end(container);) {
+		if (condition(it)) {
+			it = container.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+}
+
+}	// unnamed namespace
+
+void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 	// If I don't have a physical move, prefer to lower that because it lowers
-	// confusion damage.
-	//
-	// If I don't have a physical or special move, then I want
-	// Impish (-Atk, =SpA).
-	//
-	// If I have a physical move but no special move, then I want
-	// Adamant (+Atk, -SpA) or Impish (=Atk, -SpA).
-	//
-	// If I have a special move but no physical move, then I want
-	// Modest (-Atk, +SpA) or Calm (-Atk, =SpA).
+	// confusion damage. If I do have a physical move but no special move,
+	// prefer to lower Special Attack because it is the only remaining stat
+	// guaranteed to be unused. This allows me to maximize Speed and the
+	// defensive stats.
 	bool const is_physical = has_physical_move(pokemon);
 	if (!is_physical) {
-		for (auto const nature : { Nature::BRAVE, Nature::ADAMANT, Nature::QUIET, Nature::HARDY, Nature::IMPISH })
-			container.erase(nature);
-		for (auto & remainder : container)
-			remainder.second.attack = 0;
+		remove_individual_unused(container, [](Container::iterator it) {
+			return !Nature(it->first).lowers_stat<Stat::ATK>();
+		});
+		pokemon.atk().ev.set_value(0);
 	}
-	if (!has_special_move(pokemon)) {
-		for (auto const nature : { Nature::BRAVE, Nature::QUIET, Nature::HARDY, Nature::MODEST })
-			container.erase(nature);
-		if (is_physical) {
-			container.erase(Nature::CALM);
-		}
-		for (auto & remainder : container)
-			remainder.second.special_attack = 0;
+	bool const is_special = has_special_move(pokemon);
+	if (!is_special) {
+		remove_individual_unused(container, [is_physical](Container::iterator it) {
+			return (is_physical and !Nature(it->first).lowers_stat<Stat::SPA>())
+					or Nature(it->first).boosts_stat<Stat::SPA>();
+		});
+		pokemon.spa().ev.set_value(0);
+	}
+	if (!is_physical and !is_special) {
+		pokemon.nature().name = Nature::CALM;
+	}
+	else if (!is_physical and pokemon.nature().boosts_stat<Stat::SPA>()) {
+		pokemon.nature().name = Nature::MODEST;
+	}
+	else if (!pokemon.nature().boosts_stat<Stat::ATK>() and !is_special) {
+		pokemon.nature().name = Nature::IMPISH;
 	}
 }
 
