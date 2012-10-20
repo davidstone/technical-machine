@@ -1,4 +1,4 @@
-// Optimize offensive EVs and nature to remove waste
+// Collection of all EVs + nature
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,37 +16,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
-#define TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
+#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__EVS_HPP_
+#define TEAM_PREDICTOR__EV_OPTIMIZER__EVS_HPP_
 
-#include <map>
 #include <vector>
-
 #include "../../stat/nature.hpp"
 
 namespace technicalmachine {
 class Pokemon;
+class OffensiveEVs;
+class DefensiveEVs;
 
-class OffensiveStats {
+class EVs {
 	public:
-		OffensiveStats() {}
-		unsigned sum() const {
-			return attack + special_attack;
-		}
-		unsigned attack;
-		unsigned special_attack;
-};
-
-class OffensiveEVs {
-	public:
-		explicit OffensiveEVs(Pokemon pokemon);
+		EVs(OffensiveEVs const & offensive, DefensiveEVs const & defensive, unsigned speed);
 	private:
-		void optimize(Pokemon & pokemon);
-		void remove_unused(Pokemon const & pokemon);
-		void equal_stats(Pokemon & pokemon);
-		typedef std::map<Nature::Natures, OffensiveStats> Container;
-		Container container;
+		class SingleDataPoint {
+			public:
+				unsigned hp;
+				unsigned atk;
+				unsigned def;
+				unsigned spa;
+				unsigned spd;
+				unsigned spe;
+				Nature nature;
+		};
+		std::vector<SingleDataPoint> evs;
 };
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
+#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__EVS_HPP_

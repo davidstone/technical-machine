@@ -1,4 +1,4 @@
-// Optimize offensive EVs and nature to remove waste
+// Collection of all EVs + nature
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,37 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
-#define TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
-
-#include <map>
-#include <vector>
-
-#include "../../stat/nature.hpp"
+#include "evs.hpp"
+#include <cassert>
+#include "../../pokemon/pokemon.hpp"
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
-class Pokemon;
+namespace {
+constexpr unsigned max_total_evs = 510;
+}	// unnamed namespace
 
-class OffensiveStats {
-	public:
-		OffensiveStats() {}
-		unsigned sum() const {
-			return attack + special_attack;
-		}
-		unsigned attack;
-		unsigned special_attack;
-};
-
-class OffensiveEVs {
-	public:
-		explicit OffensiveEVs(Pokemon pokemon);
-	private:
-		void optimize(Pokemon & pokemon);
-		void remove_unused(Pokemon const & pokemon);
-		void equal_stats(Pokemon & pokemon);
-		typedef std::map<Nature::Natures, OffensiveStats> Container;
-		Container container;
-};
+EVs::EVs(OffensiveEVs const & offensive, DefensiveEVs const & defensive, unsigned speed) {
+}
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
