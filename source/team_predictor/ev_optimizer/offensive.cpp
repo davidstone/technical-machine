@@ -29,14 +29,8 @@
 namespace technicalmachine {
 
 namespace {
-enum NatureBoost { Penalty, Neutral, Boost };
-
-template<Stat::Stats stat>
-Nature::Natures nature_effect(NatureBoost nature);
-
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
-
 
 template<Stat::Stats stat>
 boost::optional<unsigned> reset_stat(Pokemon & pokemon, EV & ev, unsigned initial) {

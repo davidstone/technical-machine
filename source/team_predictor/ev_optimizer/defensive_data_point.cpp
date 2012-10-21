@@ -78,26 +78,7 @@ void DataPoint::update_pokemon(Pokemon & pokemon) const {
 }
 
 bool DataPoint::affects_defensive_stat(bool const boost) const {
-	if (boost) {
-		switch (nature.name) {
-		case Nature::CALM:
-		case Nature::IMPISH:
-		case Nature::GENTLE:
-		case Nature::LAX:
-			return true;
-		default:
-			return false;
-		}
-	}
-	else {
-		switch (nature.name) {
-		case Nature::HASTY:
-		case Nature::NAIVE:
-			return true;
-		default:
-			return false;
-		}
-	}
+	return boost ? boosts_defending_stat(nature) : lowers_defending_stat(nature);
 }
 
 class InvalidNatureCombination : public std::logic_error {
