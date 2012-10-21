@@ -39,6 +39,7 @@ class Nature {
 		Nature();
 		// intentionally implicit
 		Nature(Natures nature);
+		Nature(Stat::Stats boosted, Stat::Stats dropped);
 		explicit Nature(std::string const & str);
 		bool is_set () const;
 		void set_if_unknown (Natures nature);

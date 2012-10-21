@@ -27,6 +27,77 @@
 #include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
+namespace {
+Nature::Natures lookup_nature(Stat::Stats const boost, Stat::Stats const drop) {
+	switch (boost) {
+		case Stat::ATK:
+			switch (drop) {
+				case Stat::ATK:
+					return Nature::BASHFUL;
+				case Stat::DEF:
+					return Nature::LONELY;
+				case Stat::SPA:
+					return Nature::ADAMANT;
+				case Stat::SPD:
+					return Nature::NAUGHTY;
+				default:	// case Stat::SPE:
+					return Nature::BRAVE;
+			}
+		case Stat::DEF:
+			switch (drop) {
+				case Stat::ATK:
+					return Nature::BOLD;
+				case Stat::DEF:
+					return Nature::DOCILE;
+				case Stat::SPA:
+					return Nature::IMPISH;
+				case Stat::SPD:
+					return Nature::LAX;
+				default:	// case Stat::SPE:
+					return Nature::RELAXED;
+			}
+		case Stat::SPA:
+			switch (drop) {
+				case Stat::ATK:
+					return Nature::MODEST;
+				case Stat::DEF:
+					return Nature::MILD;
+				case Stat::SPA:
+					return Nature::HARDY;
+				case Stat::SPD:
+					return Nature::RASH;
+				default:	// case Stat::SPE:
+					return Nature::QUIET;
+			}
+		case Stat::SPD:
+			switch (drop) {
+				case Stat::ATK:
+					return Nature::CALM;
+				case Stat::DEF:
+					return Nature::GENTLE;
+				case Stat::SPA:
+					return Nature::CAREFUL;
+				case Stat::SPD:
+					return Nature::QUIRKY;
+				default:	// case Stat::SPE:
+					return Nature::SASSY;
+			}
+		default:	// case Stat::SPE:
+			switch (drop) {
+				case Stat::ATK:
+					return Nature::TIMID;
+				case Stat::DEF:
+					return Nature::HASTY;
+				case Stat::SPA:
+					return Nature::JOLLY;
+				case Stat::SPD:
+					return Nature::NAIVE;
+				default:	// case Stat::SPE:
+					return Nature::SERIOUS;
+			}
+	}
+}
+}	// unnamed namespace
 
 Nature::Nature():
 	name(END) {
@@ -34,6 +105,10 @@ Nature::Nature():
 
 Nature::Nature(Natures nature):
 	name(nature) {
+}
+
+Nature::Nature(Stat::Stats const boosted, Stat::Stats const dropped):
+	name(lookup_nature(boosted, dropped)) {
 }
 
 Nature::Nature(std::string const & str):
