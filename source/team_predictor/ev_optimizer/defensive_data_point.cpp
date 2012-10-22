@@ -46,6 +46,14 @@ DataPoint::DataPoint(SingleClassificationEVs const & physical, SingleClassificat
 	nature(get_nature(physical, special)) {
 }
 
+DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
+	hp(original.hp),
+	defense(original.defense),
+	special_defense(original.special_defense),
+	nature(new_nature)
+	{
+}
+
 std::string DataPoint::to_string() const {
 	return nature.to_string() + " " + std::to_string(hp) + " HP / " + std::to_string(defense) + " Def / " + std::to_string(special_defense) + " SpD";
 }

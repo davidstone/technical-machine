@@ -50,6 +50,11 @@ DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Est
 
 unsigned defensive_evs_available(Pokemon const & pokemon);
 
+typedef std::vector<std::vector<Nature::Natures>> Divided;
+Divided divide_natures(DefensiveEVs::BestPerNature const & container);
+
+bool has_same_effect_on_defenses(Nature const & nature, Nature const & reference_nature);
+
 }	// unnamed namespace
 
 DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
@@ -57,34 +62,89 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 	Single const special = equal_defensiveness<false>(pokemon);
 	unsigned const max_evs = defensive_evs_available(pokemon);
 	container = best_possible_per_nature(combine_results(physical, special, max_evs, pokemon), pokemon);
-	for (bool const boost_nature : { true, false })
-		remove_inefficient_natures(boost_nature);
+	for (auto const & value : divide_natures(container)) {
+		remove_inefficient_natures(value);
+	}
+	add_other_potential_natures();
 	for (auto const & per_nature : container) {
 		auto const & stat = per_nature.second;
 		std::cerr << stat.to_string() + '\n';
 	}
 }
 
-void DefensiveEVs::remove_inefficient_natures(bool boost_nature) {
+void DefensiveEVs::remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures) {
 	typedef std::vector<BestPerNature::const_iterator> Boosters;
 	Boosters boosters;
 	for (BestPerNature::const_iterator it = container.begin(); it != container.end(); ++it) {
-		if (it->second.affects_defensive_stat(boost_nature))
+		if (std::find(std::begin(divided_natures), std::end(divided_natures), it->first) != std::end(divided_natures)) {
 			boosters.emplace_back(it);
+		}
 	}
 	auto const iter_sum = [](Boosters::value_type const & lhs, Boosters::value_type const & rhs) {
 		return lhs->second.sum() < rhs->second.sum();
 	};
 	auto const best = std::min_element(boosters.begin(), boosters.end(), iter_sum);
-	for (BestPerNature::iterator it = container.begin(); it != container.end();) {
-		if (it->second.affects_defensive_stat(boost_nature) and it != *best)
-			it = container.erase(it);
-		else
-			++it;
+	for (auto const & value : divided_natures) {
+		if (value != (*best)->first) {
+			container.erase(value);
+		}
 	}
 }
 
+void DefensiveEVs::add_other_potential_natures() {
+	std::vector<Nature::Natures> used = used_natures();
+	for (auto const reference_nature : used) {
+		for (Stat::Stats boosted = static_cast<Stat::Stats>(0); boosted != Stat::NORMAL_END; boosted = static_cast<Stat::Stats>(boosted + 1)) {
+			for (Stat::Stats penalized = static_cast<Stat::Stats>(0); penalized != Stat::NORMAL_END; penalized = static_cast<Stat::Stats>(penalized + 1)) {
+				Nature const nature(boosted, penalized);
+				if (!has_same_effect_on_defenses(nature, reference_nature)) {
+					continue;
+				}
+				if (nature.name == reference_nature) {
+					continue;
+				}
+				DataPoint const new_data_point(container.at(reference_nature), nature);
+				container.insert(std::make_pair(nature.name, new_data_point));
+			}
+		}
+	}
+}
+
+std::vector<Nature::Natures> DefensiveEVs::used_natures() const {
+	static constexpr auto reference_natures = {
+		Nature::IMPISH, Nature::LAX, Nature::CALM, Nature::NAIVE, Nature::GENTLE, Nature::HASTY
+	};
+	std::vector<Nature::Natures> used;
+	for (auto const reference_nature : reference_natures) {
+		auto const it = container.find(reference_nature);
+		if (it != container.end()) {
+			used.emplace_back(reference_nature);
+		}
+	}
+	return used;
+}
+
 namespace {
+
+bool boosts_same(Nature const & nature, Nature const & reference_nature);
+bool penalizes_same(Nature const & nature, Nature const & reference_nature);
+
+bool has_same_effect_on_defenses(Nature const & nature, Nature const & reference_nature) {
+	bool const result = boosts_same(nature, reference_nature) and penalizes_same(nature, reference_nature);
+	return result;
+}
+
+bool boosts_same(Nature const & nature, Nature const & reference_nature) {
+	return (nature.boosts_stat<Stat::DEF>() and reference_nature.boosts_stat<Stat::DEF>())
+			or (nature.boosts_stat<Stat::SPD>() and reference_nature.boosts_stat<Stat::SPD>())
+			or (!boosts_defending_stat(nature) and !boosts_defending_stat(reference_nature));
+}
+
+bool penalizes_same(Nature const & nature, Nature const & reference_nature) {
+	return (nature.lowers_stat<Stat::DEF>() and reference_nature.lowers_stat<Stat::DEF>())
+			or (nature.lowers_stat<Stat::SPD>() and reference_nature.lowers_stat<Stat::SPD>())
+			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
+}
 
 AllPossible combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon) {
 	AllPossible all;
@@ -140,6 +200,28 @@ unsigned defensive_evs_available(Pokemon const & pokemon) {
 	constexpr unsigned max_total_evs = 510;
 	return max_total_evs - pokemon.atk().ev.value() + pokemon.spa().ev.value() + pokemon.spe().ev.value();
 }
+
+Divided divide_natures(DefensiveEVs::BestPerNature const & container) {
+	enum Divisions { Boost, Penalty, Both, Neutral };
+	Divided divided(4);
+	for (auto const & value : container) {
+		Nature const nature(value.first);
+		if (boosts_defending_stat(nature) and !lowers_defending_stat(nature)) {
+			divided[Boost].emplace_back(value.first);
+		}
+		else if (lowers_defending_stat(nature) and !boosts_defending_stat(nature)) {
+			divided[Penalty].emplace_back(value.first);
+		}
+		else if (lowers_defending_stat(nature) and boosts_defending_stat(nature)) {
+			divided[Both].emplace_back(value.first);
+		}
+		else {
+			divided[Neutral].emplace_back(value.first);
+		}
+	}
+	return divided;
+}
+
 
 }	// unnamed namespace
 }	// namespace technicalmachine

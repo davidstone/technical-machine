@@ -40,6 +40,7 @@ class Stat {
 			SPD,
 			SPE,
 			ACC,
+			NORMAL_END = ACC,
 			EVA,
 			END
 		};

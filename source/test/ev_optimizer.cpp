@@ -21,6 +21,7 @@
 #include "../team.hpp"
 #include "../pokemon/species.hpp"
 #include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 
@@ -30,16 +31,18 @@ void ev_optimizer_tests() {
 	Team team;
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
-	team.add_pokemon(Species::Lanturn, level, gender);
+	team.add_pokemon(Species::Sunkern, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.hp().ev.set_value(136);
-	pokemon.atk().ev.set_value(0);
-	pokemon.def().ev.set_value(0);
-	pokemon.spa().ev.set_value(252);
-	pokemon.spd().ev.set_value(0);
-	pokemon.spe().ev.set_value(120);
-	pokemon.nature() = Nature::MODEST;
+	pokemon.hp().ev.set_value(116);
+	pokemon.atk().ev.set_value(76);
+	pokemon.def().ev.set_value(76);
+	pokemon.spa().ev.set_value(76);
+	pokemon.spd().ev.set_value(76);
+	pokemon.spe().ev.set_value(76);
+	pokemon.nature() = Nature::HARDY;
 	pokemon.hp().calculate_initial_hp(pokemon.level());
+	pokemon.move.add(Moves::Psychic, 3);
+	pokemon.move.add(Moves::Earthquake, 3);
 	optimize_evs(team.pokemon());
 }
 

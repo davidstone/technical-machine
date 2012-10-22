@@ -20,6 +20,7 @@
 #define TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
 
 #include <map>
+#include <vector>
 
 #include "defensive_data_point.hpp"
 
@@ -33,7 +34,9 @@ class DefensiveEVs {
 		explicit DefensiveEVs(Pokemon pokemon);
 		typedef std::map<Nature::Natures, DataPoint> BestPerNature;
 	private:
-		void remove_inefficient_natures(bool boost_nature);
+		void remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures);
+		void add_other_potential_natures();
+		std::vector<Nature::Natures> used_natures() const;
 		BestPerNature container;
 };
 

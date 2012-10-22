@@ -30,6 +30,7 @@ class SingleClassificationEVs;
 class DataPoint {
 	public:
 		DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
+		DataPoint(DataPoint const & original, Nature const & new_nature);
 		std::string to_string() const;
 		unsigned sum() const;
 		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
