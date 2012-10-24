@@ -18,13 +18,14 @@
 
 #include "speed.hpp"
 #include "../../pokemon/pokemon.hpp"
+#include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 
 SpeedEVs::SpeedEVs(Pokemon pokemon) {
 	unsigned const speed = initial_stat<Stat::SPE>(pokemon);
-	for (auto const nature : { Nature::JOLLY, Nature::HARDY, Nature::QUIET }) {
+	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
 		pokemon.nature().name = nature;
 		for (unsigned ev = 0; ev <= 252; ++ev) {
 			pokemon.spe().ev.set_value(ev);

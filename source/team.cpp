@@ -241,17 +241,26 @@ std::string Team::to_string(bool const include_owner) const {
 		output += me ? "AI" : "Foe";
 		output += "'s team:\n";
 	}
-	all_pokemon().for_each([& output](Pokemon const & member) {
+	all_pokemon().for_each([&](Pokemon const & member) {
 		output += member.to_string();
 		double const d_per_cent_hp = 100.0 * member.current_hp();
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
 		output += " (" + per_cent_hp + "% HP)";
 		output += " @ " + member.item().to_string ();
-		output += " ** " + member.get_nickname() + '\n';
-		if (member.ability().is_set())
-			output += "\tAbility: " + member.ability().to_string () + '\n';
-		if (!member.status().is_clear())
-			output += "\tStatus: " + member.status().to_string () + '\n';
+		output += include_owner ? (" ** " + member.get_nickname() + '\n') : "\n";
+		if (member.ability().is_set()) {
+			output += "\tAbility: " + member.ability().to_string() + '\n';
+		}
+		if (!member.status().is_clear()) {
+			output += "\tStatus: " + member.status().to_string() + '\n';
+		}
+		output += "\tNature: " + member.nature().to_string() + " "
+				+ std::to_string(member.hp().ev.value()) + " HP / "
+				+ std::to_string(member.atk().ev.value()) + " Atk / "
+				+ std::to_string(member.def().ev.value()) + " Def / "
+				+ std::to_string(member.spa().ev.value()) + " SpA / "
+				+ std::to_string(member.spd().ev.value()) + " SpD / "
+				+ std::to_string(member.spe().ev.value()) + " Spe\n";
 		member.move.for_each_regular_move([& output](Move const & move) {
 			output += "\t- " + move.to_string() + "\n";
 		});

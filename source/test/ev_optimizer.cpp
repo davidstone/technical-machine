@@ -31,9 +31,9 @@ void ev_optimizer_tests() {
 	Team team;
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
-	team.add_pokemon(Species::Sunkern, level, gender);
+	team.add_pokemon(Species::Snorlax, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.hp().ev.set_value(116);
+	pokemon.hp().ev.set_value(128);
 	pokemon.atk().ev.set_value(76);
 	pokemon.def().ev.set_value(76);
 	pokemon.spa().ev.set_value(76);
@@ -43,7 +43,9 @@ void ev_optimizer_tests() {
 	pokemon.hp().calculate_initial_hp(pokemon.level());
 	pokemon.move.add(Moves::Psychic, 3);
 	pokemon.move.add(Moves::Earthquake, 3);
+	std::cerr << "Before: " << '\n' << team.to_string(false) << '\n';
 	optimize_evs(team.pokemon());
+	std::cerr << "After: " << '\n' << team.to_string(false) << '\n';
 }
 
 }	// namespace technicalmachine

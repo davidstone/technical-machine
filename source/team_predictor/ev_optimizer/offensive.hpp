@@ -26,6 +26,8 @@
 
 namespace technicalmachine {
 class Pokemon;
+class DefensiveEVs;
+class SpeedEVs;
 
 class OffensiveStats {
 	public:
@@ -47,6 +49,7 @@ class OffensiveEVs {
 		void optimize(Pokemon & pokemon);
 		void remove_unused(Pokemon & pokemon);
 		void equal_stats(Pokemon & pokemon);
+		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 		typedef std::map<Nature::Natures, OffensiveStats> Container;
 		Container container;
 };

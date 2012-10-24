@@ -28,6 +28,8 @@
 
 namespace technicalmachine {
 class Pokemon;
+class OffensiveEVs;
+class SpeedEVs;
 
 class DefensiveEVs {
 	public:
@@ -37,6 +39,7 @@ class DefensiveEVs {
 		void remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures);
 		void add_other_potential_natures();
 		std::vector<Nature::Natures> used_natures() const;
+		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 		BestPerNature container;
 };
 

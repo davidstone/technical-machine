@@ -30,8 +30,6 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
-#include <iostream>
-
 namespace technicalmachine {
 namespace {
 
@@ -66,10 +64,6 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 		remove_inefficient_natures(value);
 	}
 	add_other_potential_natures();
-	for (auto const & per_nature : container) {
-		auto const & stat = per_nature.second;
-		std::cerr << stat.to_string() + '\n';
-	}
 }
 
 void DefensiveEVs::remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures) {

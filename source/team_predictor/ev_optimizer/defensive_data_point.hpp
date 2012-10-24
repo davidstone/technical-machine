@@ -26,6 +26,9 @@
 namespace technicalmachine {
 class Pokemon;
 class SingleClassificationEVs;
+class OffensiveEVs;
+class DefensiveEVs;
+class SpeedEVs;
 
 class DataPoint {
 	public:
@@ -38,6 +41,7 @@ class DataPoint {
 		static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	private:
 		void update_pokemon(Pokemon & pokemon) const;
+		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 		unsigned hp;
 		unsigned defense;
 		unsigned special_defense;
