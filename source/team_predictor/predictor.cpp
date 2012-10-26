@@ -58,6 +58,148 @@ class Data {
 		Team team;
 };
 
+class PokemonInputValues {
+	public:
+		void add_to_team(Team & team) const {
+			team.add_pokemon(species, 100, Gender(), item, ability, nature);
+			team.pokemon().hp().ev.set_value(hp);
+			team.pokemon().atk().ev.set_value(atk);
+			team.pokemon().def().ev.set_value(def);
+			team.pokemon().spa().ev.set_value(spa);
+			team.pokemon().spd().ev.set_value(spd);
+			team.pokemon().spe().ev.set_value(spe);
+		}
+		Species species;
+		Item item;
+		Ability ability;
+		Nature nature;
+		unsigned hp;
+		unsigned atk;
+		unsigned def;
+		unsigned spa;
+		unsigned spd;
+		unsigned spe;
+		std::vector<Moves> moves;
+};
+
+class Input {
+	public:
+		template<typename... Args>
+		void emplace_back(Args &&... args) {
+			pokemon.emplace_back(std::forward<Args>(args)...);
+		}
+	private:
+		std::vector<PokemonInputValues> pokemon;
+};
+
+constexpr int left_padding = 70;
+constexpr int pokemon_indent = 20;
+constexpr int padding = 10;
+constexpr int input_width = 120;
+constexpr int input_height = 30;
+constexpr int ev_input_width = 60;
+constexpr int number_of_stats = 6;
+constexpr int button_width = input_width;
+constexpr int button_height = input_height;
+
+constexpr int input_lines_per_pokemon = 3;
+constexpr int input_lines_for_random = 2;
+constexpr int input_lines_for_button = 1;
+constexpr int total_input_lines = pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
+constexpr int total_input_height = total_input_lines * (input_height + padding);
+
+constexpr int output_width = 400;
+constexpr int height_per_line = 16;
+constexpr int output_lines_for_ability = 1;
+constexpr int output_lines_for_nature_and_evs = 2;
+constexpr int output_lines_for_moves = 4;
+constexpr int output_lines_per_pokemon = 1 + output_lines_for_ability + output_lines_for_nature_and_evs + output_lines_for_moves;
+constexpr int output_lines_per_team = pokemon_per_team * output_lines_per_pokemon;
+constexpr int output_team_padding = 10;
+constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
+constexpr int output_height = output_team_height;
+constexpr int output_x_position = left_padding + ev_input_width * number_of_stats + left_padding;
+
+constexpr int window_width = output_x_position + output_width + padding;
+constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
+
+int y_position(int const button_number) {
+	return (1 + button_number) * padding + button_number * input_height;
+}
+
+class PokemonInput {
+	public:
+		explicit PokemonInput(int button_number):
+			input(left_padding, y_position(button_number), input_width, input_height, "Pokemon") {
+		}
+		Fl_Input * get() {
+			return &input;
+		}
+	private:
+		Fl_Input input;
+};
+
+class EVInput {
+	public:
+		explicit EVInput(int const button_number, int const ev, char const * label = ""):
+			input(left_padding + pokemon_indent + ev_input_width * (ev), y_position(button_number), ev_input_width, input_height, label)
+			{
+		}
+		Fl_Int_Input * get() {
+			return & input;
+		}
+	private:
+		Fl_Int_Input input;
+};
+
+class EVInputs {
+	public:
+		EVInputs(int const button_number):
+			hp(button_number, 0, "EVs"),
+			atk(button_number, 1),
+			def(button_number, 2),
+			spa(button_number, 3),
+			spd(button_number, 4),
+			spe(button_number, 5)
+			{
+		}
+		EVInput hp;
+		EVInput atk;
+		EVInput def;
+		EVInput spa;
+		EVInput spd;
+		EVInput spe;
+};
+
+class MoveInput {
+	public:
+		MoveInput(int const button_number, int const x_position, char const * label = ""):
+			input(left_padding + pokemon_indent + x_position * width, y_position(button_number), width, input_height, label)
+			{
+		}
+		Fl_Input * get() {
+			return &input;
+		}
+	private:
+		static constexpr int width = 90;
+		Fl_Input input;
+};
+
+class MoveInputs {
+	public:
+		explicit MoveInputs(int const button_number):
+			input0(button_number, 0, "Moves"),
+			input1(button_number, 1),
+			input2(button_number, 2),
+			input3(button_number, 3)
+			{
+		}
+		MoveInput input0;
+		MoveInput input1;
+		MoveInput input2;
+		MoveInput input3;
+};
+
 unsigned max_random(Data const & data) {
 	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
 	try {
@@ -102,46 +244,30 @@ void function (Fl_Widget * w, void * d) {
 }	// unnamed namespace
 
 int main () {
-	constexpr int left_padding = 50;
-	constexpr int padding = 10;
-	constexpr int input_width = 120;
-	constexpr int input_height = 30;
-	constexpr int button_width = input_width;
-	constexpr int button_height = input_height;
-	auto const y_position = [](int const button_number) {
-		return (1 + button_number) * padding + button_number * input_height;
-	};
-	
-	constexpr int output_width = 320;
-	constexpr int height_per_line = 16;
-	constexpr int lines_for_ability = 1;
-	constexpr int lines_for_moves = 4;
-	constexpr int lines_per_pokemon = 1 + lines_for_ability + lines_for_moves;
-	constexpr int lines_per_team = pokemon_per_team * lines_per_pokemon;
-	constexpr int team_padding = 10;
-	constexpr int team_height = lines_per_team * height_per_line + team_padding;
-	constexpr int output_height = team_height;
-	constexpr int output_x_position = left_padding + input_width + left_padding;
-	
-	constexpr int window_width = output_x_position + output_width + padding;
-	constexpr int window_height = padding + output_height + padding;
 	Fl_Window win (window_width, window_height, "Team Predictor");
 		int button_number = 0;
-		Fl_Input input0 (left_padding, y_position(button_number), input_width, input_height, "Input");
-		++button_number;
-		Fl_Input input1 (left_padding, y_position(button_number), input_width, input_height);
-		++button_number;
-		Fl_Input input2 (left_padding, y_position(button_number), input_width, input_height);
-		++button_number;
-		Fl_Input input3 (left_padding, y_position(button_number), input_width, input_height);
-		++button_number;
-		Fl_Input input4 (left_padding, y_position(button_number), input_width, input_height);
-		++button_number;
-		Fl_Input input5 (left_padding, y_position(button_number), input_width, input_height);
-		button_number += 2;
+		PokemonInput input0(button_number++);
+		EVInputs ev0(button_number++);
+		MoveInputs move0(button_number++);
+		PokemonInput input1(button_number++);
+		EVInputs ev1(button_number++);
+		MoveInputs move1(button_number++);
+		PokemonInput input2(button_number++);
+		EVInputs ev2(button_number++);
+		MoveInputs move2(button_number++);
+		PokemonInput input3(button_number++);
+		EVInputs ev3(button_number++);
+		MoveInputs move3(button_number++);
+		PokemonInput input4(button_number++);
+		EVInputs ev4(button_number++);
+		MoveInputs move4(button_number++);
+		PokemonInput input5(button_number++);
+		EVInputs ev5(button_number++);
+		MoveInputs move5(button_number++);
+		button_number += 1;
 		Fl_Int_Input random_input(left_padding, y_position(button_number), input_width, input_height, "Max random Pokemon");
 		random_input.align(FL_ALIGN_TOP);
-		random_input.value("5");
+		random_input.value("6");
 		++button_number;
 		Fl_Return_Button calculate (left_padding, y_position(button_number), button_width, button_height, "Calculate");
 		++button_number;
@@ -150,12 +276,12 @@ int main () {
 
 	Data data;
 	
-	data.input.emplace_back(&input0);
-	data.input.emplace_back(&input1);
-	data.input.emplace_back(&input2);
-	data.input.emplace_back(&input3);
-	data.input.emplace_back(&input4);
-	data.input.emplace_back(&input5);
+	data.input.emplace_back(input0.get());
+	data.input.emplace_back(input1.get());
+	data.input.emplace_back(input2.get());
+	data.input.emplace_back(input3.get());
+	data.input.emplace_back(input4.get());
+	data.input.emplace_back(input5.get());
 	data.random_input = &random_input;
 	data.output = &output;
 
