@@ -44,6 +44,7 @@ using namespace technicalmachine;
 // A GUI version of the team predictor.
 
 namespace {
+class PokemonInputs;
 constexpr unsigned pokemon_per_team = 6;
 
 class Data {
@@ -51,7 +52,11 @@ class Data {
 		void reset() {
 			team = Team();
 		}
-		std::vector<Fl_Input *> input;
+		template<typename... Args>
+		void add(Args && ... args) {
+			input.emplace_back(std::forward<Args>(args)...);
+		}
+		std::vector<PokemonInputs *> input;
 		Fl_Int_Input * random_input;
 		Fl_Multiline_Output * output;
 		DetailedStats detailed;
@@ -127,13 +132,13 @@ int y_position(int const button_number) {
 	return (1 + button_number) * padding + button_number * input_height;
 }
 
-class PokemonInput {
+class SpeciesInput {
 	public:
-		explicit PokemonInput(int button_number):
+		explicit SpeciesInput(int button_number):
 			input(left_padding, y_position(button_number), input_width, input_height, "Pokemon") {
 		}
-		Fl_Input * get() {
-			return &input;
+		std::string value() const {
+			return input.value();
 		}
 	private:
 		Fl_Input input;
@@ -145,8 +150,8 @@ class EVInput {
 			input(left_padding + pokemon_indent + ev_input_width * (ev), y_position(button_number), ev_input_width, input_height, label)
 			{
 		}
-		Fl_Int_Input * get() {
-			return & input;
+		int value() const {
+			return boost::lexical_cast<int>(input.value());
 		}
 	private:
 		Fl_Int_Input input;
@@ -154,7 +159,7 @@ class EVInput {
 
 class EVInputs {
 	public:
-		EVInputs(int const button_number):
+		explicit EVInputs(int const button_number):
 			hp(button_number, 0, "EVs"),
 			atk(button_number, 1),
 			def(button_number, 2),
@@ -177,8 +182,8 @@ class MoveInput {
 			input(left_padding + pokemon_indent + x_position * width, y_position(button_number), width, input_height, label)
 			{
 		}
-		Fl_Input * get() {
-			return &input;
+		std::string value() const {
+			return input.value();
 		}
 	private:
 		static constexpr int width = 90;
@@ -200,6 +205,23 @@ class MoveInputs {
 		MoveInput input3;
 };
 
+class PokemonInputs {
+	public:
+		explicit PokemonInputs(int & button_number):
+			m_species(button_number++),
+			m_evs(button_number++),
+			m_moves(button_number++)
+			{
+		}
+		std::string species() const {
+			return m_species.value();
+		}
+	private:
+		SpeciesInput m_species;
+		EVInputs m_evs;
+		MoveInputs m_moves;
+};
+
 unsigned max_random(Data const & data) {
 	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
 	try {
@@ -219,12 +241,12 @@ void generate_random_team(Data & data) {
 void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	bool using_lead = false;
-	for (Fl_Input * in : data.input) {
+	for (PokemonInputs * inputs : data.input) {
 		if (data.team.all_pokemon().size() >= pokemon_per_team)
 			break;
 		Species species;
 		try {
-			species = from_string<Species>(in->value());
+			species = from_string<Species>(inputs->species());
 			constexpr unsigned level = 100;
 			Gender const gender(Gender::MALE);
 			data.team.add_pokemon(species, level, gender);
@@ -232,7 +254,7 @@ void function (Fl_Widget * w, void * d) {
 		catch (InvalidFromStringConversion const &) {
 			species = Species::END;
 		}
-		if (in == data.input.front ()) {
+		if (inputs == data.input.front ()) {
 			using_lead = (species != Species::END);
 		}
 	}
@@ -246,24 +268,12 @@ void function (Fl_Widget * w, void * d) {
 int main () {
 	Fl_Window win (window_width, window_height, "Team Predictor");
 		int button_number = 0;
-		PokemonInput input0(button_number++);
-		EVInputs ev0(button_number++);
-		MoveInputs move0(button_number++);
-		PokemonInput input1(button_number++);
-		EVInputs ev1(button_number++);
-		MoveInputs move1(button_number++);
-		PokemonInput input2(button_number++);
-		EVInputs ev2(button_number++);
-		MoveInputs move2(button_number++);
-		PokemonInput input3(button_number++);
-		EVInputs ev3(button_number++);
-		MoveInputs move3(button_number++);
-		PokemonInput input4(button_number++);
-		EVInputs ev4(button_number++);
-		MoveInputs move4(button_number++);
-		PokemonInput input5(button_number++);
-		EVInputs ev5(button_number++);
-		MoveInputs move5(button_number++);
+		PokemonInputs input0(button_number);
+		PokemonInputs input1(button_number);
+		PokemonInputs input2(button_number);
+		PokemonInputs input3(button_number);
+		PokemonInputs input4(button_number);
+		PokemonInputs input5(button_number);
 		button_number += 1;
 		Fl_Int_Input random_input(left_padding, y_position(button_number), input_width, input_height, "Max random Pokemon");
 		random_input.align(FL_ALIGN_TOP);
@@ -276,12 +286,12 @@ int main () {
 
 	Data data;
 	
-	data.input.emplace_back(input0.get());
-	data.input.emplace_back(input1.get());
-	data.input.emplace_back(input2.get());
-	data.input.emplace_back(input3.get());
-	data.input.emplace_back(input4.get());
-	data.input.emplace_back(input5.get());
+	data.add(&input0);
+	data.add(&input1);
+	data.add(&input2);
+	data.add(&input3);
+	data.add(&input4);
+	data.add(&input5);
 	data.random_input = &random_input;
 	data.output = &output;
 
