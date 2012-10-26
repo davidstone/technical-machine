@@ -42,6 +42,8 @@ clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_te
 
 ev_optimizer_sources = prepend_dir('team_predictor/ev_optimizer', ['combine.cpp', 'defensive.cpp', 'defensive_data_point.cpp', 'ev_optimizer.cpp', 'evs.cpp', 'offensive.cpp', 'single_classification_evs.cpp', 'speed.cpp'])
 
+team_builder_ui_sources = prepend_dir('team_predictor/ui', ['species_input.cpp'])
+
 ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'transposition.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 ai_sources += team_sources
 ai_sources += clients
@@ -62,6 +64,7 @@ predict_sources += prepend_dir('clients/pokemon_lab', ['read_team_file.cpp'])
 predict_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'read_team_file.cpp'])
 predict_sources += prepend_dir('team_predictor', ['detailed_stats.cpp', 'estimate.cpp', 'load_stats.cpp', 'multiplier.cpp', 'predictor.cpp', 'random_team.cpp', 'team_predictor.cpp'])
 predict_sources += ev_optimizer_sources
+predict_sources += team_builder_ui_sources
 predict_sources += prepend_dir('type', ['collection.cpp', 'effectiveness.cpp', 'type.cpp'])
 predict_sources += string_conversion_sources
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']

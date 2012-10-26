@@ -26,6 +26,9 @@
 #include "random_team.hpp"
 #include "team_predictor.hpp"
 
+#include "ui/input_constants.hpp"
+#include "ui/species_input.hpp"
+
 #include "../string_conversions/invalid_string_conversion.hpp"
 #include "../string_conversions/conversion.hpp"
 #include "../team.hpp"
@@ -63,8 +66,150 @@ class Data {
 		Team team;
 };
 
+constexpr int pokemon_indent = 20;
+constexpr int ev_input_width = 60;
+constexpr int number_of_stats = 6;
+constexpr int button_width = input_width;
+constexpr int button_height = input_height;
+
+constexpr int input_lines_per_pokemon = 3;
+constexpr int input_lines_for_random = 2;
+constexpr int input_lines_for_button = 1;
+constexpr int total_input_lines = pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
+constexpr int total_input_height = total_input_lines * (input_height + padding);
+
+constexpr int output_width = 400;
+constexpr int height_per_line = 16;
+constexpr int output_lines_for_ability = 1;
+constexpr int output_lines_for_nature_and_evs = 2;
+constexpr int output_lines_for_moves = 4;
+constexpr int output_lines_per_pokemon = 1 + output_lines_for_ability + output_lines_for_nature_and_evs + output_lines_for_moves;
+constexpr int output_lines_per_team = pokemon_per_team * output_lines_per_pokemon;
+constexpr int output_team_padding = 10;
+constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
+constexpr int output_height = output_team_height;
+constexpr int output_x_position = left_padding + ev_input_width * number_of_stats + left_padding;
+
+constexpr int window_width = output_x_position + output_width + padding;
+constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
+
+class EVInput {
+	public:
+		explicit EVInput(int const button_number, int const ev, char const * label = ""):
+			input(left_padding + pokemon_indent + ev_input_width * (ev), y_position(button_number), ev_input_width, input_height, label)
+			{
+		}
+		unsigned value() const {
+			return boost::lexical_cast<unsigned>(input.value());
+		}
+	private:
+		Fl_Int_Input input;
+};
+
+class EVInputs {
+	public:
+		explicit EVInputs(int const button_number):
+			hp(button_number, 0, "EVs"),
+			atk(button_number, 1),
+			def(button_number, 2),
+			spa(button_number, 3),
+			spd(button_number, 4),
+			spe(button_number, 5)
+			{
+		}
+		EVInput hp;
+		EVInput atk;
+		EVInput def;
+		EVInput spa;
+		EVInput spd;
+		EVInput spe;
+};
+
+class MoveInput {
+	public:
+		MoveInput(int const button_number, int const x_position, char const * label = ""):
+			input(left_padding + pokemon_indent + x_position * width, y_position(button_number), width, input_height, label)
+			{
+		}
+		Moves value() const {
+			return from_string<Moves>(input.value());
+		}
+	private:
+		static constexpr int width = 90;
+		Fl_Input input;
+};
+
+class MoveInputs {
+	public:
+		explicit MoveInputs(int const button_number):
+			input0(button_number, 0, "Moves"),
+			input1(button_number, 1),
+			input2(button_number, 2),
+			input3(button_number, 3)
+			{
+		}
+		MoveInput input0;
+		MoveInput input1;
+		MoveInput input2;
+		MoveInput input3;
+};
+
+class PokemonInputs {
+	public:
+		explicit PokemonInputs(int & button_number):
+			m_species(button_number++),
+			m_evs(button_number++),
+			m_moves(button_number++)
+			{
+		}
+		Species species() const {
+			return m_species.value();
+		}
+		unsigned hp() const {
+			return m_evs.hp.value();
+		}
+		unsigned atk() const {
+			return m_evs.atk.value();
+		}
+		unsigned def() const {
+			return m_evs.def.value();
+		}
+		unsigned spa() const {
+			return m_evs.spa.value();
+		}
+		unsigned spd() const {
+			return m_evs.spd.value();
+		}
+		unsigned spe() const {
+			return m_evs.spe.value();
+		}
+		std::vector<Moves> moves() const {
+			return {
+				m_moves.input0.value(),
+				m_moves.input1.value(),
+				m_moves.input2.value(),
+				m_moves.input3.value()
+			};
+		}
+	private:
+		SpeciesInput m_species;
+		EVInputs m_evs;
+		MoveInputs m_moves;
+};
+
 class PokemonInputValues {
 	public:
+		PokemonInputValues(PokemonInputs const & inputs):
+			species(inputs.species()),
+			hp(inputs.hp()),
+			atk(inputs.atk()),
+			def(inputs.def()),
+			spa(inputs.spa()),
+			spd(inputs.spd()),
+			spe(inputs.spe()),
+			moves(inputs.moves())
+			{
+		}
 		void add_to_team(Team & team) const {
 			team.add_pokemon(species, 100, Gender(), item, ability, nature);
 			team.pokemon().hp().ev.set_value(hp);
@@ -97,130 +242,6 @@ class Input {
 		std::vector<PokemonInputValues> pokemon;
 };
 
-constexpr int left_padding = 70;
-constexpr int pokemon_indent = 20;
-constexpr int padding = 10;
-constexpr int input_width = 120;
-constexpr int input_height = 30;
-constexpr int ev_input_width = 60;
-constexpr int number_of_stats = 6;
-constexpr int button_width = input_width;
-constexpr int button_height = input_height;
-
-constexpr int input_lines_per_pokemon = 3;
-constexpr int input_lines_for_random = 2;
-constexpr int input_lines_for_button = 1;
-constexpr int total_input_lines = pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
-constexpr int total_input_height = total_input_lines * (input_height + padding);
-
-constexpr int output_width = 400;
-constexpr int height_per_line = 16;
-constexpr int output_lines_for_ability = 1;
-constexpr int output_lines_for_nature_and_evs = 2;
-constexpr int output_lines_for_moves = 4;
-constexpr int output_lines_per_pokemon = 1 + output_lines_for_ability + output_lines_for_nature_and_evs + output_lines_for_moves;
-constexpr int output_lines_per_team = pokemon_per_team * output_lines_per_pokemon;
-constexpr int output_team_padding = 10;
-constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
-constexpr int output_height = output_team_height;
-constexpr int output_x_position = left_padding + ev_input_width * number_of_stats + left_padding;
-
-constexpr int window_width = output_x_position + output_width + padding;
-constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
-
-int y_position(int const button_number) {
-	return (1 + button_number) * padding + button_number * input_height;
-}
-
-class SpeciesInput {
-	public:
-		explicit SpeciesInput(int button_number):
-			input(left_padding, y_position(button_number), input_width, input_height, "Pokemon") {
-		}
-		std::string value() const {
-			return input.value();
-		}
-	private:
-		Fl_Input input;
-};
-
-class EVInput {
-	public:
-		explicit EVInput(int const button_number, int const ev, char const * label = ""):
-			input(left_padding + pokemon_indent + ev_input_width * (ev), y_position(button_number), ev_input_width, input_height, label)
-			{
-		}
-		int value() const {
-			return boost::lexical_cast<int>(input.value());
-		}
-	private:
-		Fl_Int_Input input;
-};
-
-class EVInputs {
-	public:
-		explicit EVInputs(int const button_number):
-			hp(button_number, 0, "EVs"),
-			atk(button_number, 1),
-			def(button_number, 2),
-			spa(button_number, 3),
-			spd(button_number, 4),
-			spe(button_number, 5)
-			{
-		}
-		EVInput hp;
-		EVInput atk;
-		EVInput def;
-		EVInput spa;
-		EVInput spd;
-		EVInput spe;
-};
-
-class MoveInput {
-	public:
-		MoveInput(int const button_number, int const x_position, char const * label = ""):
-			input(left_padding + pokemon_indent + x_position * width, y_position(button_number), width, input_height, label)
-			{
-		}
-		std::string value() const {
-			return input.value();
-		}
-	private:
-		static constexpr int width = 90;
-		Fl_Input input;
-};
-
-class MoveInputs {
-	public:
-		explicit MoveInputs(int const button_number):
-			input0(button_number, 0, "Moves"),
-			input1(button_number, 1),
-			input2(button_number, 2),
-			input3(button_number, 3)
-			{
-		}
-		MoveInput input0;
-		MoveInput input1;
-		MoveInput input2;
-		MoveInput input3;
-};
-
-class PokemonInputs {
-	public:
-		explicit PokemonInputs(int & button_number):
-			m_species(button_number++),
-			m_evs(button_number++),
-			m_moves(button_number++)
-			{
-		}
-		std::string species() const {
-			return m_species.value();
-		}
-	private:
-		SpeciesInput m_species;
-		EVInputs m_evs;
-		MoveInputs m_moves;
-};
 
 unsigned max_random(Data const & data) {
 	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
@@ -246,7 +267,7 @@ void function (Fl_Widget * w, void * d) {
 			break;
 		Species species;
 		try {
-			species = from_string<Species>(inputs->species());
+			species = inputs->species();
 			constexpr unsigned level = 100;
 			Gender const gender(Gender::MALE);
 			data.team.add_pokemon(species, level, gender);
