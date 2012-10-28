@@ -27,6 +27,8 @@
 #include "random_team.hpp"
 #include "team_predictor.hpp"
 
+#include "ev_optimizer/ev_optimizer.hpp"
+
 #include "ui/input_constants.hpp"
 #include "ui/pokemon_inputs.hpp"
 
@@ -182,8 +184,11 @@ void function (Fl_Widget * w, void * d) {
 		}
 	}
 	generate_random_team(data);
-	std::string const team = predict_team(data.detailed, data.team(), using_lead).to_string(false);
-	data.output->value(team.c_str());
+	Team team = predict_team(data.detailed, data.team(), using_lead);
+	team.all_pokemon().for_each([](Pokemon & pokemon) {
+		optimize_evs(pokemon);
+	});
+	data.output->value(team.to_string(false).c_str());
 	data.reset();
 }
 
