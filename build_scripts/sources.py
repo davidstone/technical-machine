@@ -42,7 +42,7 @@ clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_te
 
 ev_optimizer_sources = prepend_dir('team_predictor/ev_optimizer', ['combine.cpp', 'defensive.cpp', 'defensive_data_point.cpp', 'ev_optimizer.cpp', 'evs.cpp', 'offensive.cpp', 'single_classification_evs.cpp', 'speed.cpp'])
 
-team_builder_ui_sources = prepend_dir('team_predictor/ui', ['species_input.cpp'])
+team_builder_ui_sources = prepend_dir('team_predictor/ui', ['ev_inputs.cpp', 'move_inputs.cpp', 'pokemon_inputs.cpp', 'species_input.cpp'])
 
 ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'transposition.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 ai_sources += team_sources

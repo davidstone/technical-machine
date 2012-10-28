@@ -40,7 +40,7 @@ class Weather;
 
 class Move {
 	public:
-		Move (Moves move, unsigned pp_ups, unsigned size = 1);
+		Move (Moves move, unsigned pp_ups = 3, unsigned size = 1);
 		void reset ();
 		std::string to_string () const;
 		bool selectable() const;

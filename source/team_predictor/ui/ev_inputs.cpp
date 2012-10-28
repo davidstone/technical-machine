@@ -1,4 +1,4 @@
-// Constants related to the size of various inputs
+// Class to abstract UI of getting EVs for the team builder
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,22 +16,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
-#define TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
+#include "ev_inputs.hpp"
+#include <string>
+#include <boost/lexical_cast.hpp>
+#include "input_constants.hpp"
 
 namespace technicalmachine {
 
-constexpr int padding = 10;
-constexpr int left_padding = 70;
-constexpr int input_width = 120;
-constexpr int input_height = 30;
-constexpr int pokemon_indent = 20;
-constexpr int ev_input_width = 60;
+EVInput::EVInput(int const button_number, int const ev, char const * label):
+	input(left_padding + pokemon_indent + ev_input_width * (ev), y_position(button_number), ev_input_width, input_height, label)
+	{
+}
 
-// Returns the y_position of the nth button
-inline int y_position(int const button_number) {
-	return (1 + button_number) * padding + button_number * input_height;
+unsigned EVInput::value() const {
+	std::string const str = input.value();
+	return !str.empty() ? boost::lexical_cast<unsigned>(input.value()) : 0;
+}
+
+EVInputs::EVInputs(int const button_number):
+	hp(button_number, 0, "EVs"),
+	atk(button_number, 1),
+	def(button_number, 2),
+	spa(button_number, 3),
+	spd(button_number, 4),
+	spe(button_number, 5)
+	{
 }
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_

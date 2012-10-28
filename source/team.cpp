@@ -256,30 +256,18 @@ std::string Team::to_string(bool const include_owner) const {
 		}
 		output += "\tNature: " + member.nature().to_string() + '\n';
 		output += "\t";
-		bool has_evs = false;
-		static auto const add_stat = [& has_evs](Stat const & stat, std::string const & stat_name)->std::string {
-			std::string stat_result = has_evs ? " / " : "";
-			has_evs = true;
-			return stat_result + std::to_string(stat.ev.value()) + " " + stat_name;
+		auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
+			if (stat_name != "HP") {
+				output += " / ";
+			}
+			output += std::to_string(stat.ev.value()) + " " + stat_name;
 		};
-		if (member.hp().ev.value() != 0) {
-			output += add_stat(member.hp(), "HP");
-		}
-		if (member.atk().ev.value() != 0) {
-			output += add_stat(member.atk(), "Atk");
-		}
-		if (member.def().ev.value() != 0) {
-			output += add_stat(member.def(), "Def");
-		}
-		if (member.spa().ev.value() != 0) {
-			output += add_stat(member.spa(), "SpA");
-		}
-		if (member.spd().ev.value() != 0) {
-			output += add_stat(member.spd(), "SpD");
-		}
-		if (member.spe().ev.value() != 0) {
-			output += add_stat(member.spe(), "Spe");
-		}
+		add_stat(member.hp(), "HP");
+		add_stat(member.atk(), "Atk");
+		add_stat(member.def(), "Def");
+		add_stat(member.spa(), "SpA");
+		add_stat(member.spd(), "SpD");
+		add_stat(member.spe(), "Spe");
 		output += '\n';
 		member.move.for_each_regular_move([& output](Move const & move) {
 			output += "\t- " + move.to_string() + '\n';

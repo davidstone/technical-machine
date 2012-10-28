@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <algorithm>
+#include <memory>
 #include <random>
 #include <vector>
 
@@ -27,10 +28,8 @@
 #include "team_predictor.hpp"
 
 #include "ui/input_constants.hpp"
-#include "ui/species_input.hpp"
+#include "ui/pokemon_inputs.hpp"
 
-#include "../string_conversions/invalid_string_conversion.hpp"
-#include "../string_conversions/conversion.hpp"
 #include "../team.hpp"
 
 #include "../pokemon/pokemon.hpp"
@@ -38,7 +37,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Return_Button.H>
-#include <FL/Fl_Input.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Multiline_Output.H>
 
@@ -47,27 +45,35 @@ using namespace technicalmachine;
 // A GUI version of the team predictor.
 
 namespace {
-class PokemonInputs;
 constexpr unsigned pokemon_per_team = 6;
 
 class Data {
 	public:
+		Data():
+			team_ptr(new Team())
+			{
+		}
 		void reset() {
-			team = Team();
+			team_ptr.reset(new Team());
 		}
 		template<typename... Args>
 		void add(Args && ... args) {
 			input.emplace_back(std::forward<Args>(args)...);
 		}
+		Team const & team() const {
+			return *team_ptr;
+		}
+		Team & team() {
+			return *team_ptr;
+		}
 		std::vector<PokemonInputs *> input;
 		Fl_Int_Input * random_input;
 		Fl_Multiline_Output * output;
 		DetailedStats detailed;
-		Team team;
+	private:
+		std::unique_ptr<Team> team_ptr;
 };
 
-constexpr int pokemon_indent = 20;
-constexpr int ev_input_width = 60;
 constexpr int number_of_stats = 6;
 constexpr int button_width = input_width;
 constexpr int button_height = input_height;
@@ -93,110 +99,6 @@ constexpr int output_x_position = left_padding + ev_input_width * number_of_stat
 constexpr int window_width = output_x_position + output_width + padding;
 constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
 
-class EVInput {
-	public:
-		explicit EVInput(int const button_number, int const ev, char const * label = ""):
-			input(left_padding + pokemon_indent + ev_input_width * (ev), y_position(button_number), ev_input_width, input_height, label)
-			{
-		}
-		unsigned value() const {
-			return boost::lexical_cast<unsigned>(input.value());
-		}
-	private:
-		Fl_Int_Input input;
-};
-
-class EVInputs {
-	public:
-		explicit EVInputs(int const button_number):
-			hp(button_number, 0, "EVs"),
-			atk(button_number, 1),
-			def(button_number, 2),
-			spa(button_number, 3),
-			spd(button_number, 4),
-			spe(button_number, 5)
-			{
-		}
-		EVInput hp;
-		EVInput atk;
-		EVInput def;
-		EVInput spa;
-		EVInput spd;
-		EVInput spe;
-};
-
-class MoveInput {
-	public:
-		MoveInput(int const button_number, int const x_position, char const * label = ""):
-			input(left_padding + pokemon_indent + x_position * width, y_position(button_number), width, input_height, label)
-			{
-		}
-		Moves value() const {
-			return from_string<Moves>(input.value());
-		}
-	private:
-		static constexpr int width = 90;
-		Fl_Input input;
-};
-
-class MoveInputs {
-	public:
-		explicit MoveInputs(int const button_number):
-			input0(button_number, 0, "Moves"),
-			input1(button_number, 1),
-			input2(button_number, 2),
-			input3(button_number, 3)
-			{
-		}
-		MoveInput input0;
-		MoveInput input1;
-		MoveInput input2;
-		MoveInput input3;
-};
-
-class PokemonInputs {
-	public:
-		explicit PokemonInputs(int & button_number):
-			m_species(button_number++),
-			m_evs(button_number++),
-			m_moves(button_number++)
-			{
-		}
-		Species species() const {
-			return m_species.value();
-		}
-		unsigned hp() const {
-			return m_evs.hp.value();
-		}
-		unsigned atk() const {
-			return m_evs.atk.value();
-		}
-		unsigned def() const {
-			return m_evs.def.value();
-		}
-		unsigned spa() const {
-			return m_evs.spa.value();
-		}
-		unsigned spd() const {
-			return m_evs.spd.value();
-		}
-		unsigned spe() const {
-			return m_evs.spe.value();
-		}
-		std::vector<Moves> moves() const {
-			return {
-				m_moves.input0.value(),
-				m_moves.input1.value(),
-				m_moves.input2.value(),
-				m_moves.input3.value()
-			};
-		}
-	private:
-		SpeciesInput m_species;
-		EVInputs m_evs;
-		MoveInputs m_moves;
-};
-
 class PokemonInputValues {
 	public:
 		PokemonInputValues(PokemonInputs const & inputs):
@@ -212,13 +114,18 @@ class PokemonInputValues {
 		}
 		void add_to_team(Team & team) const {
 			team.add_pokemon(species, 100, Gender(), item, ability, nature);
-			team.pokemon().hp().ev.set_value(hp);
-			team.pokemon().atk().ev.set_value(atk);
-			team.pokemon().def().ev.set_value(def);
-			team.pokemon().spa().ev.set_value(spa);
-			team.pokemon().spd().ev.set_value(spd);
-			team.pokemon().spe().ev.set_value(spe);
+			Pokemon & pokemon = team.replacement();
+			pokemon.hp().ev.set_value(hp);
+			pokemon.atk().ev.set_value(atk);
+			pokemon.def().ev.set_value(def);
+			pokemon.spa().ev.set_value(spa);
+			pokemon.spd().ev.set_value(spd);
+			pokemon.spe().ev.set_value(spe);
+			for (auto const move : moves) {
+				pokemon.move.add(move);
+			}
 		}
+	private:
 		Species species;
 		Item item;
 		Ability ability;
@@ -244,7 +151,7 @@ class Input {
 
 
 unsigned max_random(Data const & data) {
-	unsigned const remaining_pokemon = pokemon_per_team - data.team.all_pokemon().size();
+	unsigned const remaining_pokemon = pokemon_per_team - data.team().all_pokemon().size();
 	try {
 		return std::min(boost::lexical_cast<unsigned>(data.random_input->value()), remaining_pokemon);
 	}
@@ -256,31 +163,27 @@ unsigned max_random(Data const & data) {
 void generate_random_team(Data & data) {
 	static std::random_device rd;
 	static std::mt19937 random_engine(rd());
-	random_team(data.team, random_engine, max_random(data));
+	random_team(data.team(), random_engine, max_random(data));
 }
 
 void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	bool using_lead = false;
 	for (PokemonInputs * inputs : data.input) {
-		if (data.team.all_pokemon().size() >= pokemon_per_team)
+		if (data.team().all_pokemon().size() >= pokemon_per_team)
 			break;
-		Species species;
-		try {
-			species = inputs->species();
-			constexpr unsigned level = 100;
-			Gender const gender(Gender::MALE);
-			data.team.add_pokemon(species, level, gender);
+		if (!inputs->is_valid()) {
+			continue;
 		}
-		catch (InvalidFromStringConversion const &) {
-			species = Species::END;
-		}
-		if (inputs == data.input.front ()) {
-			using_lead = (species != Species::END);
+		PokemonInputValues input(*inputs);
+		input.add_to_team(data.team());
+		if (inputs == data.input.front()) {
+			using_lead = true;
 		}
 	}
 	generate_random_team(data);
-	data.output->value(predict_team(data.detailed, data.team, using_lead).to_string(false).c_str());
+	std::string const team = predict_team(data.detailed, data.team(), using_lead).to_string(false);
+	data.output->value(team.c_str());
 	data.reset();
 }
 

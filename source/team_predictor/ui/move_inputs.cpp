@@ -1,4 +1,4 @@
-// Constants related to the size of various inputs
+// Class to abstract UI of getting each move for the team builder
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,22 +16,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
-#define TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
+#include "move_inputs.hpp"
+#include "input_constants.hpp"
+#include "../../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
-constexpr int padding = 10;
-constexpr int left_padding = 70;
-constexpr int input_width = 120;
-constexpr int input_height = 30;
-constexpr int pokemon_indent = 20;
-constexpr int ev_input_width = 60;
+MoveInput::MoveInput(int const button_number, int const x_position, char const * label):
+	input(left_padding + pokemon_indent + x_position * width, y_position(button_number), width, input_height, label)
+	{
+}
 
-// Returns the y_position of the nth button
-inline int y_position(int const button_number) {
-	return (1 + button_number) * padding + button_number * input_height;
+Moves MoveInput::value() const {
+	return from_string<Moves>(input.value());
+}
+
+MoveInputs::MoveInputs(int const button_number):
+	input0(button_number, 0, "Moves"),
+	input1(button_number, 1),
+	input2(button_number, 2),
+	input3(button_number, 3)
+	{
 }
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_

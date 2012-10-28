@@ -164,7 +164,7 @@ void filter_to_minimum_evs(AllPossible & all) {
 }
 
 void minimum_evs_per_nature(Estimates & original) {
-	static auto const least_sum = [](DataPoint const & value, DataPoint const & least) {
+	static constexpr auto least_sum = [](DataPoint const & value, DataPoint const & least) {
 		return value.sum() < least.sum();
 	};
 	auto const it = std::min_element(std::begin(original), std::end(original), least_sum);

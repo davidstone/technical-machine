@@ -18,7 +18,9 @@
 
 #include "species_input.hpp"
 #include "input_constants.hpp"
+#include "../../pokemon/species.hpp"
 #include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {
 
@@ -28,7 +30,12 @@ SpeciesInput::SpeciesInput(int const button_number):
 }
 
 Species SpeciesInput::value() const {
-	return from_string<Species>(input.value());
+	try {
+		return from_string<Species>(input.value());
+	}
+	catch (InvalidFromStringConversion const &) {
+		return Species::END;
+	}
 }
 
 }	// namespace technicalmachine
