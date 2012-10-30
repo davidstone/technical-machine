@@ -28,8 +28,6 @@
 
 #include "../../pokemon/pokemon.hpp"
 
-#include <iostream>
-
 namespace technicalmachine {
 
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s, Pokemon & pokemon) {
@@ -54,11 +52,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 		return lhs.second < rhs.second;
 	};
 	assert(!sums.empty());
-	for (auto const & value : sums) {
-		std::cerr << Nature(value.first).to_string() << ": " << value.second << '\n';
-	}
 	auto const it = std::min_element(sums.begin(), sums.end(), lesser_mapped_type);
-	std::cerr << "\t" << Nature(it->first).to_string() << ": " << it->second << '\n';
 	auto const & defensive = d.container.at(it->first);
 	auto const & offensive = o.container.at(it->first);
 	auto const & speed = s.container.at(it->first);

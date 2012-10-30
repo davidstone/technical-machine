@@ -19,6 +19,7 @@
 #include "defensive.hpp"
 
 #include <algorithm>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -39,6 +40,7 @@ typedef std::map<Nature::Natures, Estimates> AllPossible;
 AllPossible combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon);
 
 DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);
+std::set<Nature::Natures> used_natures(DefensiveEVs::BestPerNature const & container);
 
 void filter_to_minimum_evs(AllPossible & all);
 void minimum_evs_per_nature(Estimates & original);
@@ -86,7 +88,7 @@ void DefensiveEVs::remove_inefficient_natures(std::vector<Nature::Natures> const
 }
 
 void DefensiveEVs::add_other_potential_natures() {
-	std::vector<Nature::Natures> used = used_natures();
+	auto const used = used_natures(container);
 	for (auto const reference_nature : used) {
 		for (Stat::Stats boosted = static_cast<Stat::Stats>(0); boosted != Stat::NORMAL_END; boosted = static_cast<Stat::Stats>(boosted + 1)) {
 			for (Stat::Stats penalized = static_cast<Stat::Stats>(0); penalized != Stat::NORMAL_END; penalized = static_cast<Stat::Stats>(penalized + 1)) {
@@ -104,21 +106,15 @@ void DefensiveEVs::add_other_potential_natures() {
 	}
 }
 
-std::vector<Nature::Natures> DefensiveEVs::used_natures() const {
-	static constexpr auto reference_natures = {
-		Nature::IMPISH, Nature::LAX, Nature::CALM, Nature::NAIVE, Nature::GENTLE, Nature::HASTY
-	};
-	std::vector<Nature::Natures> used;
-	for (auto const reference_nature : reference_natures) {
-		auto const it = container.find(reference_nature);
-		if (it != container.end()) {
-			used.emplace_back(reference_nature);
-		}
+namespace {
+
+std::set<Nature::Natures> used_natures(DefensiveEVs::BestPerNature const & container) {
+	std::set<Nature::Natures> used;
+	for (auto const & value : container) {
+		used.insert(value.first);
 	}
 	return used;
 }
-
-namespace {
 
 bool boosts_same(Nature const & nature, Nature const & reference_nature);
 bool penalizes_same(Nature const & nature, Nature const & reference_nature);
