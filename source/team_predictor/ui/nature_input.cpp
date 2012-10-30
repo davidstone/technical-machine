@@ -1,4 +1,4 @@
-// Class to abstract UI of getting each Pokemon for the team builder
+// Class to abstract UI of getting Nature for the team builder
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,38 +16,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__UI__POKEMON_INPUTS_HPP_
-#define TEAM_PREDICTOR__UI__POKEMON_INPUTS_HPP_
-
-#include <vector>
-#include "ev_inputs.hpp"
-#include "move_inputs.hpp"
 #include "nature_input.hpp"
-#include "species_input.hpp"
-#include "../../move/moves_forward.hpp"
-#include "../../pokemon/species_forward.hpp"
+#include "input_constants.hpp"
+#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {
+namespace {
+constexpr int nature_input_width = 80;
+}
 
-class PokemonInputs {
-	public:
-		explicit PokemonInputs(int & button_number);
-		Species species() const;
-		bool is_valid() const;
-		Nature::Natures nature() const;
-		unsigned hp() const;
-		unsigned atk() const;
-		unsigned def() const;
-		unsigned spa() const;
-		unsigned spd() const;
-		unsigned spe() const;
-		std::vector<Moves> moves() const;
-	private:
-		SpeciesInput m_species;
-		NatureInput m_nature;
-		EVInputs m_evs;
-		MoveInputs m_moves;
-};
+NatureInput::NatureInput(int const button_number):
+	input(left_padding + pokemon_indent, y_position(button_number), nature_input_width, input_height, "Nature")
+	{
+}
+
+Nature::Natures NatureInput::value() const {
+	try {
+		return from_string<Nature::Natures>(input.value());
+	}
+	catch (InvalidFromStringConversion const &) {
+		return Nature::END;
+	}
+}
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__UI__POKEMON_INPUTS_HPP_

@@ -24,6 +24,7 @@ namespace technicalmachine {
 
 PokemonInputs::PokemonInputs(int & button_number):
 	m_species(button_number++),
+	m_nature(button_number++),
 	m_evs(button_number++),
 	m_moves(button_number++)
 	{
@@ -33,6 +34,10 @@ Species PokemonInputs::species() const {
 }
 bool PokemonInputs::is_valid() const {
 	return m_species.value() != Species::END;
+}
+
+Nature::Natures PokemonInputs::nature() const {
+	return m_nature.value();
 }
 
 unsigned PokemonInputs::hp() const {

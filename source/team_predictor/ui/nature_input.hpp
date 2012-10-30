@@ -1,4 +1,4 @@
-// Constants related to the size of various inputs
+// Class to abstract UI of getting Nature for the team builder
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,22 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
-#define TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
+#ifndef TEAM_PREDICTOR__UI__NATURE_INPUT_HPP_
+#define TEAM_PREDICTOR__UI__NATURE_INPUT_HPP_
+
+#include <FL/Fl_Input.H>
+#include "../../stat/nature.hpp"
 
 namespace technicalmachine {
 
-constexpr int padding = 5;
-constexpr int left_padding = 70;
-constexpr int input_width = 120;
-constexpr int input_height = 30;
-constexpr int pokemon_indent = 20;
-constexpr int ev_input_width = 60;
-
-// Returns the y_position of the nth button
-inline int y_position(int const button_number) {
-	return (1 + button_number) * padding + button_number * input_height;
-}
+class NatureInput {
+	public:
+		explicit NatureInput(int button_number);
+		Nature::Natures value() const;
+	private:
+		Fl_Input input;
+};
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__UI__INPUT_CONSTANTS_HPP_
+#endif	// TEAM_PREDICTOR__UI__NATURE_INPUT_HPP_

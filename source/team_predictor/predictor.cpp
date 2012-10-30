@@ -80,7 +80,7 @@ constexpr int number_of_stats = 6;
 constexpr int button_width = input_width;
 constexpr int button_height = input_height;
 
-constexpr int input_lines_per_pokemon = 3;
+constexpr int input_lines_per_pokemon = 4;
 constexpr int input_lines_for_random = 2;
 constexpr int input_lines_for_button = 1;
 constexpr int total_input_lines = pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
@@ -105,6 +105,7 @@ class PokemonInputValues {
 	public:
 		PokemonInputValues(PokemonInputs const & inputs):
 			species(inputs.species()),
+			nature(inputs.nature()),
 			hp(inputs.hp()),
 			atk(inputs.atk()),
 			def(inputs.def()),
