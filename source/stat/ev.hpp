@@ -28,6 +28,8 @@ class EV {
 		explicit EV(unsigned evs);
 		unsigned value() const;
 		void set_value(unsigned evs);
+		bool is_maxed() const;
+		void add(unsigned evs);
 		// A point increases your stat by 1 at level 100. Smallest useful unit
 		unsigned points() const;
 	private:

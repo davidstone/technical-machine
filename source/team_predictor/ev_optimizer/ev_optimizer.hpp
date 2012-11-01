@@ -19,10 +19,14 @@
 #ifndef TEAM_PREDICTOR__EV_OPTIMIZER_HPP_
 #define TEAM_PREDICTOR__EV_OPTIMIZER_HPP_
 
+#include <random>
+
 namespace technicalmachine {
 class Pokemon;
 
-void optimize_evs(Pokemon & pokemon);
+void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine);
+void minimize_evs(Pokemon & pokemon);
+void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__EV_OPTIMIZER_HPP_

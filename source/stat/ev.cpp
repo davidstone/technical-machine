@@ -17,16 +17,20 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ev.hpp"
+#include <algorithm>
 #include "invalid_ev.hpp"
 
 namespace technicalmachine {
+namespace {
+constexpr unsigned max_per_stat = 252;
+}	// unnamed namespace
 
 EV::EV(unsigned const evs) :
 	// The points give a single point increase at level 100. EVs have a minimum
 	// step of 4 EVs = 1 stat point
 	internal(evs / 4)
 	{
-	if (evs > 252)
+	if (evs > max_per_stat)
 		throw InvalidEV(evs);
 }
 
@@ -35,7 +39,17 @@ unsigned EV::value() const {
 }
 
 void EV::set_value(unsigned const evs) {
+	if (evs > max_per_stat)
+		throw InvalidEV(evs);
 	internal = evs / 4u;
+}
+
+bool EV::is_maxed() const {
+	return value() == max_per_stat;
+}
+
+void EV::add(unsigned const evs) {
+	internal = std::min(evs / 4 + internal, max_per_stat);
 }
 
 unsigned EV::points() const {

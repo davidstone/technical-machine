@@ -187,7 +187,7 @@ void function (Fl_Widget * w, void * d) {
 	generate_random_team(data);
 	Team team = predict_team(data.detailed, data.team(), using_lead);
 	team.all_pokemon().for_each([](Pokemon & pokemon) {
-		optimize_evs(pokemon);
+		minimize_evs(pokemon);
 	});
 	data.output->value(team.to_string(false).c_str());
 	data.reset();

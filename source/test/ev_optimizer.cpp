@@ -18,6 +18,7 @@
 
 #include "ev_optimizer.hpp"
 #include <iostream>
+#include <random>
 #include "../team.hpp"
 #include "../pokemon/species.hpp"
 #include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
@@ -44,8 +45,12 @@ void ev_optimizer_tests() {
 	pokemon.move.add(Moves::Psychic, 3);
 	pokemon.move.add(Moves::Earthquake, 3);
 	std::cerr << "Before: " << '\n' << team.to_string(false) << '\n';
-	optimize_evs(team.pokemon());
+	minimize_evs(team.pokemon());
 	std::cerr << "After: " << '\n' << team.to_string(false) << '\n';
+	std::random_device rd;
+	std::mt19937 random_engine(rd());
+	pad_random_evs(team.pokemon(), random_engine);
+	std::cerr << "Final: " << '\n' << team.to_string(false) << '\n';
 }
 
 }	// namespace technicalmachine
