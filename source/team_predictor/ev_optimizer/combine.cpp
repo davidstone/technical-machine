@@ -57,6 +57,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 	auto const & offensive = o.container.at(it->first);
 	auto const & speed = s.container.at(it->first);
 	pokemon.hp().ev.set_value(defensive.hp);
+	pokemon.calculate_initial_hp();
 	pokemon.atk().ev.set_value(offensive.attack);
 	pokemon.def().ev.set_value(defensive.defense);
 	pokemon.spa().ev.set_value(offensive.special_attack);

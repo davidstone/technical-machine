@@ -119,6 +119,7 @@ class PokemonInputValues {
 			team.add_pokemon(species, 100, Gender(), item, ability, nature);
 			Pokemon & pokemon = team.replacement();
 			pokemon.hp().ev.set_value(hp);
+			pokemon.calculate_initial_hp();
 			pokemon.atk().ev.set_value(atk);
 			pokemon.def().ev.set_value(def);
 			pokemon.spa().ev.set_value(spa);

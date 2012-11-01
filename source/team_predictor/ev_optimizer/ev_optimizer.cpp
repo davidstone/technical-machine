@@ -118,6 +118,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			++it;
 		}
 	} while (ev_sum(pokemon) < max_evs);
+	pokemon.calculate_initial_hp();
 }
 
 }	// namespace technicalmachine
