@@ -52,6 +52,7 @@ constexpr unsigned pokemon_per_team = 6;
 class Data {
 	public:
 		Data():
+			random_engine(rd()),
 			team_ptr(new Team())
 			{
 		}
@@ -72,6 +73,8 @@ class Data {
 		Fl_Int_Input * random_input;
 		Fl_Multiline_Output * output;
 		DetailedStats detailed;
+		std::random_device rd;
+		std::mt19937 random_engine;
 	private:
 		std::unique_ptr<Team> team_ptr;
 };
@@ -165,9 +168,7 @@ unsigned max_random(Data const & data) {
 }
 
 void generate_random_team(Data & data) {
-	static std::random_device rd;
-	static std::mt19937 random_engine(rd());
-	random_team(data.team(), random_engine, max_random(data));
+	random_team(data.team(), data.random_engine, max_random(data));
 }
 
 void function (Fl_Widget * w, void * d) {
@@ -187,8 +188,8 @@ void function (Fl_Widget * w, void * d) {
 	}
 	generate_random_team(data);
 	Team team = predict_team(data.detailed, data.team(), using_lead);
-	team.all_pokemon().for_each([](Pokemon & pokemon) {
-		minimize_evs(pokemon);
+	team.all_pokemon().for_each([& data](Pokemon & pokemon) {
+		optimize_evs(pokemon, data.random_engine);
 	});
 	data.output->value(team.to_string(false).c_str());
 	data.reset();

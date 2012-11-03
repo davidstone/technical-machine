@@ -32,8 +32,6 @@
 
 #include "../../pokemon/pokemon.hpp"
 
-#include <iostream>
-
 namespace technicalmachine {
 namespace {
 
@@ -45,16 +43,6 @@ unsigned ev_sum(Pokemon const & pokemon) {
 }
 
 typedef std::pair<Nature::Natures, std::array<unsigned, 6>> StatState;
-
-void print(StatState const & state) {
-	std::cerr << "Initial\n";
-	std::cerr << "Nature: " << Nature(state.first).to_string();
-	for (auto const & value : state.second) {
-		std::cerr << value << ", ";
-	}
-	std::cerr << '\n';
-}
-
 StatState get_evs(Pokemon const & pokemon) {
 	return std::make_pair(pokemon.nature().name, std::array<unsigned, 6>{{
 		pokemon.hp().ev.value(),
@@ -73,11 +61,9 @@ void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	StatState optimized_evs;
 	do {
 		initial_evs = get_evs(pokemon);
-		print(initial_evs);
 		minimize_evs(pokemon);
 		pad_random_evs(pokemon, random_engine);
 		optimized_evs = get_evs(pokemon);
-		print(optimized_evs);
 	} while (initial_evs != optimized_evs);
 }
 

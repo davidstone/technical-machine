@@ -49,7 +49,7 @@ bool EV::is_maxed() const {
 }
 
 void EV::add(unsigned const evs) {
-	internal = std::min(evs / 4 + internal, max_per_stat);
+	internal = std::min(evs / 4 + internal, max_per_stat / 4);
 }
 
 unsigned EV::points() const {
