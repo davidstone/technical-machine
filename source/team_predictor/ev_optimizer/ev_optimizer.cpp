@@ -81,7 +81,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// more EV point (4 EVs) to the current stat. I use a random_shuffle to
 	// create a uniform distribution of available stats non-maxed EVs. I repeat
 	// the process in case a stat is overfilled.
-	do {
+	while (ev_sum(pokemon) < max_evs) {
 		std::vector<Stat *> stats;
 		add_non_full_stats(stats, pokemon.hp());
 		add_non_full_stats(stats, pokemon.atk());
@@ -101,7 +101,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			stat->ev.add(std::distance(prior, it));
 			++it;
 		}
-	} while (ev_sum(pokemon) < max_evs);
+	}
 	pokemon.calculate_initial_hp();
 }
 
