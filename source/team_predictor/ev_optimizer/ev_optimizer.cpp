@@ -54,6 +54,8 @@ StatState get_evs(Pokemon const & pokemon) {
 	}});
 }
 
+void add_non_full_stats(std::vector<Stat *> & stats, Stat & stat);
+
 }	// unnamed namespace
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
@@ -81,16 +83,12 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// the process in case a stat is overfilled.
 	do {
 		std::vector<Stat *> stats;
-		stats.emplace_back(&pokemon.hp());
-		stats.emplace_back(&pokemon.atk());
-		stats.emplace_back(&pokemon.def());
-		stats.emplace_back(&pokemon.spa());
-		stats.emplace_back(&pokemon.spd());
-		stats.emplace_back(&pokemon.spe());
-		auto const erased = std::remove_if(std::begin(stats), std::end(stats), [](Stat * stat) {
-			return stat->ev.is_maxed();
-		});
-		stats.erase(erased, std::end(stats));
+		add_non_full_stats(stats, pokemon.hp());
+		add_non_full_stats(stats, pokemon.atk());
+		add_non_full_stats(stats, pokemon.def());
+		add_non_full_stats(stats, pokemon.spa());
+		add_non_full_stats(stats, pokemon.spd());
+		add_non_full_stats(stats, pokemon.spe());
 	
 		unsigned const extra_evs = max_evs - ev_sum(pokemon);
 		std::vector<uint8_t> shuffled(extra_evs + stats.size() - 1, 1);
@@ -106,5 +104,15 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	} while (ev_sum(pokemon) < max_evs);
 	pokemon.calculate_initial_hp();
 }
+
+namespace {
+
+void add_non_full_stats(std::vector<Stat *> & stats, Stat & stat) {
+	if (!stat.ev.is_maxed()) {
+		stats.emplace_back(&stat);
+	}
+}
+
+}	// unnamed namespace
 
 }	// namespace technicalmachine
