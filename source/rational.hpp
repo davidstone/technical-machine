@@ -31,11 +31,17 @@ class Rational {
 			denominator(d) {
 		}
 		template<typename T>
-		friend typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+		friend typename std::enable_if<std::is_integral<T>::value, T>::type
 		operator*=(T & number, Rational const rational) {
-			// static_cast is necessary for correct behavior with signed values
-			number *= static_cast<T>(rational.numerator);
-			number /= static_cast<T>(rational.denominator);
+			auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
+			number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
+			return number;
+		}
+		template<typename T>
+		friend typename std::enable_if<std::is_floating_point<T>::value, T>::type
+		operator*=(T & number, Rational const rational) {
+			number *= rational.numerator;
+			number /= rational.denominator;
 			return number;
 		}
 		friend Rational operator*=(Rational & lhs, Rational const rhs) {
@@ -50,6 +56,18 @@ class Rational {
 			return lhs.numerator * rhs.denominator <= rhs.numerator * rhs.denominator;
 		}
 	private:
+		template<typename T, typename Enable = void>
+		class Temp;
+		template<typename T>
+		class Temp<T, typename std::enable_if<std::is_signed<T>::value>::type> {
+			public:
+				typedef int type;
+		};
+		template<typename T>
+		class Temp<T, typename std::enable_if<std::is_unsigned<T>::value>::type> {
+			public:
+				typedef unsigned type;
+		};
 		unsigned numerator;
 		unsigned denominator;
 };
