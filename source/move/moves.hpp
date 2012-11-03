@@ -608,5 +608,7 @@ enum class Moves : uint16_t {
 	END = Generation_5_End
 };
 
+constexpr auto number_of_moves = static_cast<unsigned>(Moves::END);
+
 }	// namespace technicalmachine
 #endif	// MOVE__MOVES_HPP_
