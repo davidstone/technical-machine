@@ -46,8 +46,12 @@ void Party::set_if_unknown (Party const new_party) {
 		*this = new_party;
 }
 
-Party::value_type Party::operator()() const {
+Party::value_type Party::value() const {
 	return party;
+}
+
+Party Party::other() const {
+	return Party(1 - party);
 }
 
 } // namespace technicalmachine

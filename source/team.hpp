@@ -65,6 +65,7 @@ class Team {
 		unsigned size() const;
 		
 		bool is_me() const;
+		std::string who() const;
 		// Not for variables that give a message at the end of the turn, this is
 		// just for some book-keeping variables.
 		void reset_between_turns();

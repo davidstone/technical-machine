@@ -57,8 +57,6 @@ Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level
 	m_spd(species, Stat::SPD),
 	m_spe(species, Stat::SPE),
 
-	new_hp (48),
-
 	m_name(species),
 	m_gender(set_gender),
 
@@ -90,7 +88,6 @@ void Pokemon::switch_out() {
 
 void Pokemon::calculate_initial_hp () {
 	m_hp.calculate_initial_hp(level());
-	new_hp = hp().max;
 }
 
 uint8_t Pokemon::index_of_first_switch () const {

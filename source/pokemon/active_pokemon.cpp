@@ -810,6 +810,10 @@ void ActivePokemon::indirect_damage(unsigned const damage) {
 	get_pokemon().apply_damage(damage);
 }
 
+void ActivePokemon::register_damage(unsigned const damage) {
+	damage_done_to_active = damage;
+}
+
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
 	cached_chance_to_hit.update(*this, target, weather, target_moved);
 }

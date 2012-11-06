@@ -31,6 +31,8 @@
 #include "pokemon/active_pokemon.hpp"
 #include "pokemon/pokemon.hpp"
 
+#include <iostream>
+
 namespace technicalmachine {
 namespace {
 
@@ -48,26 +50,59 @@ void decrement (Integer & n) {
 		--n;
 }
 
+void print(Team const & first, Team const & last, unsigned n) {
+	Team const & team = first.is_me() ? first : last;
+	std::cerr << n << ": " << team.pokemon().hp().stat << '\n';
+}
+
 }	// unnamed namespace
 
 void endofturn (Team & first, Team & last, Weather & weather) {
 	first.pokemon().reset_end_of_turn();
 	last.pokemon().reset_end_of_turn();
+	unsigned n = 0;
+	print(first, last, n);
 	endofturn1 (first);
+	n = 1;
+	print(first, last, n);
 	endofturn1 (last);
+	n = 2;
+	print(first, last, n);
 	endofturn2 (first);
+	n = 3;
+	print(first, last, n);
 	endofturn2 (last);
+	n = 4;
+	print(first, last, n);
 	weather.decrement();	// The order doesn't matter here.
 	if (!first.pokemon().ability().blocks_weather() and !last.pokemon().ability().blocks_weather()) {
+		n = 5;
+		print(first, last, n);
 		endofturn3 (first.pokemon(), weather);
+		n = 6;
+		print(first, last, n);
 		endofturn3 (last.pokemon(), weather);
 	}
+	n = 7;
+	print(first, last, n);
 	endofturn5(first.pokemon(), last.pokemon(), weather);
+	n = 8;
+	print(first, last, n);
 	endofturn5(last.pokemon(), first.pokemon(), weather);
+	n = 9;
+	print(first, last, n);
 	endofturn6 (first, weather);
+	n = 10;
+	print(first, last, n);
 	endofturn6 (last, weather);
+	n = 11;
+	print(first, last, n);
 	endofturn7 (first.pokemon());
+	n = 12;
+	print(first, last, n);
 	endofturn7 (last.pokemon());
+	n = 13;
+	print(first, last, n);
 	reset_variable (first);
 	reset_variable (last);
 }
@@ -122,6 +157,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 		pokemon.status().clear();
 	switch (pokemon.item().name) {
 		case Item::LEFTOVERS:
+			std::cerr << "Healing from Leftovers.\n";
 			heal(pokemon, Rational(1, 16));
 			break;
 		case Item::BLACK_SLUDGE:
@@ -148,6 +184,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			drain(pokemon, Rational(1, pokemon.ability().weakens_burn() ? 16 : 8));
 			break;
 		case Status::POISON:
+			std::cerr << "Regular poison\n";
 			if (pokemon.ability().absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else
@@ -155,6 +192,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			break;
 		case Status::POISON_TOXIC:
 			pokemon.increment_toxic();
+			std::cerr << "Toxic ratio: " << 16 * pokemon.toxic_ratio() << '\n';
 			if (pokemon.ability().absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else

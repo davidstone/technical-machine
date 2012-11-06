@@ -19,6 +19,7 @@
 #include "battle.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <random>
@@ -28,6 +29,7 @@
 #include "battle_result.hpp"
 
 #include "network/client.hpp"
+#include "network/invalid_simulator_data.hpp"
 #include "network/outmessage.hpp"
 
 #include "pokemon_lab/write_team_file.hpp"
@@ -53,6 +55,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	opponent_name (_opponent),
 	random_engine (seed),
 	ai (6, random_engine, team_file_name),
+	updated_hp(ai),
 	depth (battle_depth)
 	{
 	ai.all_pokemon().for_each ([this] (Pokemon const & pokemon)->void {
@@ -65,6 +68,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	opponent_name(_opponent),
 	random_engine (seed),
 	ai (team),
+	updated_hp(ai),
 	depth (battle_depth)
 	{
 	ai.all_pokemon().for_each ([this] (Pokemon const & pokemon)->void {
@@ -105,7 +109,9 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 			uint8_t move_index = 0;
 			while (ai.pokemon().move(move_index).name != move)
 				++move_index;
-			msg.write_move (battle_id, move_index, get_target ());
+			// TODO: fix for 2v2
+			auto const target = my_party.other();
+			msg.write_move(battle_id, move_index, target.value());
 		}
 	}
 	else {
@@ -124,9 +130,9 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 
 Moves GenericBattle::determine_action(network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
-	std::cout << "Predicting...\n";
-	Team predicted = predict_team(client.detailed(), foe, ai.all_pokemon().size());
-	std::cout << predicted.to_string ();
+//	std::cout << "Predicting...\n";
+	Team predicted = predict_foe_team(client.detailed());
+//	std::cout << predicted.to_string ();
 
 	return expectiminimax(ai, predicted, weather, depth, client.score(), random_engine);
 }
@@ -144,7 +150,7 @@ void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_
 	}
 
 	active.move();
-	Pokemon & replacement = active.all_pokemon().at_replacement();
+	Pokemon & replacement = active.replacement();
 	if (!replacement.move.set_index_if_found(move_name)) {
 		replacement.move.add(move_name, 3, inactive.all_pokemon().real_size());
 	}
@@ -157,8 +163,8 @@ void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
-	Team & active = (my_party == switcher) ? ai : foe;
-	Team & inactive = (my_party == switcher) ? foe : ai;
+	Team & active = get_team(switcher);
+	Team & inactive = get_opposing_team(switcher);
 
 	if (first == nullptr) {
 		first = &active;
@@ -173,10 +179,10 @@ void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t
 	// This assumes Species Clause is in effect
 	if (!active.all_pokemon().seen(species)) {
 		active.add_pokemon (species, level, gender, nickname);
-		active.all_pokemon().at_replacement ().new_hp = max_damage_precision();
+		updated_hp.add(active.is_me(), active.replacement(), max_damage_precision());
 	}
 
-	Pokemon & phazer = inactive.all_pokemon().at_replacement();
+	Pokemon & phazer = inactive.replacement();
 	if (phazer.move().is_phaze()) {
 		phazer.move().variable.set_phaze_index(active, species);
 	}
@@ -186,38 +192,74 @@ void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t
 	}
 }
 
-void GenericBattle::handle_hp_change (Party const changing, uint8_t slot, unsigned change_in_hp, unsigned remaining_hp, unsigned denominator) {
+void GenericBattle::handle_hp_change(Party const changing, uint8_t slot, unsigned remaining_hp) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
-	bool const my_team = (my_party == changing);
-	Team & changer = my_team ? ai : foe;
-	Team & other = my_team ? foe : ai;
-	Pokemon & pokemon = changer.all_pokemon().at_replacement();
-	if (move_damage) {
-		if (other.all_pokemon().at_replacement().move().affects_target(changer.pokemon(), weather)) {
-			changer.pokemon().direct_damage(pokemon.hp().max * change_in_hp / denominator);
-		}
-		move_damage = false;
-	}
-	pokemon.new_hp = remaining_hp;
+	Team const & team = get_team(changing);
+	updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 }
+
+void GenericBattle::handle_direct_damage(Party const damaged, uint8_t const slot, unsigned const visible_damage) {
+	Team const & team = get_team(damaged);
+	auto const & pokemon = team.replacement();
+	std::cerr << "is me: " << team.is_me() << '\n';
+	std::cerr << pokemon.to_string() << '\n';
+	assert(move_damage);
+	Rational const change(visible_damage, max_visible_hp_change(team));
+	auto const damage = pokemon.hp().max * change;
+	updated_hp.direct_damage(team.is_me(), pokemon, damage);
+	move_damage = false;
+}
+
+int GenericBattle::hp_change(Party const changing, unsigned const remaining_hp) const {
+	Team const & team = get_team(changing);
+	unsigned const max_visible = max_visible_hp_change(team);
+	if (max_visible < remaining_hp) {
+		throw network::InvalidSimulatorData (remaining_hp, 0u, max_visible, team.who() + "'s remaining_hp");
+	}
+	unsigned const measurable_hp = max_visible * team.replacement().current_hp();
+	return static_cast<int>(measurable_hp - remaining_hp);
+}
+
+unsigned GenericBattle::max_visible_hp_change(Party const changer) const {
+	return max_visible_hp_change(get_team(changer));
+}
+unsigned GenericBattle::max_visible_hp_change(Team const & changer) const {
+	return max_visible_hp_change(changer.is_me(), changer.replacement());
+}
+unsigned GenericBattle::max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const {
+	return my_pokemon ? changer.hp().max : max_damage_precision();
+}
+
+bool GenericBattle::is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const {
+	return hp_change(changer, remaining_hp) == received_change;
+}
+
+bool GenericBattle::is_valid_precision(Party changer, unsigned precision) const {
+	return max_visible_hp_change(changer) == precision;
+}
+
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	team.all_pokemon().for_each([this, & team] (Pokemon & pokemon) {
-		Stat::stat_type const max_hp = team.is_me() ? pokemon.hp().max : max_damage_precision();
-		Stat::stat_type const tm_estimate = max_hp * pokemon.current_hp();
-		if (tm_estimate == pokemon.new_hp)
+		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * pokemon.current_hp();
+		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
+		if (tm_estimate == new_hp)
 			return;
-		Stat::stat_type const reported_hp = pokemon.new_hp * pokemon.current_hp();
-		if (!(tm_estimate - 1 <= pokemon.new_hp and pokemon.new_hp <= tm_estimate + 1)) {
-			std::cerr << "Uh oh! " + pokemon.to_string () + " has the wrong HP! The server reports ";
+		auto const reported_hp = new_hp * pokemon.hp().max / max_visible_hp_change(team.is_me(), pokemon);
+		unsigned const min_value = (tm_estimate == 0) ? 0 : (tm_estimate - 1);
+		unsigned const max_value = tm_estimate + 1;
+		assert(max_value > tm_estimate);
+		if (!(min_value <= new_hp and new_hp <= max_value)) {
+			std::cerr << "Uh oh! " + pokemon.to_string() + " has the wrong HP! The server reports ";
 			if (!team.is_me())
 				std::cerr << "approximately ";
 			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.hp().stat << ".\n";
-			std::cerr << "max_hp: " << max_hp << '\n';
+			std::cerr << "max_visible_hp_change: " << max_visible_hp_change(team.is_me(), pokemon) << '\n';
 			std::cerr << "pokemon.hp.max: " << pokemon.hp().max << '\n';
-			std::cerr << "pokemon.new_hp: " << pokemon.new_hp << '\n';
+			std::cerr << "new_hp: " << new_hp << '\n';
 			std::cerr << "tm_estimate: " << tm_estimate << '\n';
+			assert(false);
 		}
 		pokemon.correct_error_in_hp(reported_hp);
 	});
@@ -228,11 +270,10 @@ void GenericBattle::handle_set_pp (Party const changer, uint8_t slot, uint8_t pp
 	// already handled by other mechanisms.
 }
 
-void GenericBattle::handle_fainted (Party const fainting, uint8_t slot) {
+void GenericBattle::handle_fainted (Party const fainter, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
-	Team & fainter = (my_party == fainting) ? ai : foe;
-	fainter.all_pokemon().at_replacement().faint();
+	get_team(fainter).replacement().faint();
 }
 
 void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
@@ -260,6 +301,7 @@ uint16_t GenericBattle::max_damage_precision () const {
 void GenericBattle::initialize_turn () {
 	ai.reset_between_turns();
 	foe.reset_between_turns();
+	updated_hp.reset_between_turns();
 	// Simulators might not send an HP change message if a move does 0 damage.
 	move_damage = false;
 	
@@ -289,14 +331,39 @@ void GenericBattle::do_turn () {
 		// Anything with recoil will mess this up
 		
 		constexpr bool damage_is_known = true;
+		std::cerr << "First\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
+
+		register_damage();
 		call_move(*first, *last, weather, damage_is_known);
+		std::cerr << "Second\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 		last->pokemon().normalize_hp ();
+		std::cerr << "Third\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 
+		register_damage();
 		call_move(*last, *first, weather, damage_is_known);
+		std::cerr << "Fourth\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 		first->pokemon().normalize_hp ();
+		std::cerr << "Fifth\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 
+		register_damage();
 		endofturn (*first, *last, weather);
+		std::cerr << "Sixth\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 		normalize_hp ();
+		std::cerr << "Seventh\n";
+		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
+		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 		
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
@@ -315,6 +382,18 @@ void GenericBattle::do_turn () {
 	std::cout << last->to_string ();
 }
 
+namespace {
+void register_individual_damage(Team & team, UpdatedHP const & updated_hp) {
+	auto const damage = updated_hp.damage(team.is_me(), team.pokemon());
+	team.pokemon().register_damage(damage);
+}
+}
+
+void GenericBattle::register_damage() {
+	register_individual_damage(ai, updated_hp);
+	register_individual_damage(foe, updated_hp);
+}
+
 void GenericBattle::normalize_hp () {
 	ai.pokemon().normalize_hp ();
 	foe.pokemon().normalize_hp ();
@@ -324,5 +403,37 @@ std::string const & GenericBattle::opponent() const {
 	return opponent_name;
 }
 
+Team const & GenericBattle::get_team(Party party) const {
+	return is_me(party) ? ai : foe;
+}
+Team & GenericBattle::get_team(Party party) {
+	return is_me(party) ? ai : foe;
+}
+Team const & GenericBattle::get_opposing_team(Party party) const {
+	return is_me(party) ? foe : ai;
+}
+Team & GenericBattle::get_opposing_team(Party party) {
+	return is_me(party) ? foe : ai;
+}
+
+void GenericBattle::handle_flinch(Party const party) {
+	get_team(party).replacement().move().variable.set_index(1);
+}
+
+void GenericBattle::handle_miss(Party const party) {
+	get_team(party).pokemon().set_miss(true);
+}
+
+void GenericBattle::handle_critical_hit(Party const party) {
+	get_team(party).pokemon().set_critical_hit(true);
+}
+
+void GenericBattle::handle_ability_message(Party party, Ability::Abilities ability) {
+	get_team(party).replacement().ability().name = ability;
+}
+
+void GenericBattle::handle_item_message(Party party, Item::Items item) {
+	get_team(party).replacement().item().name = item;
+}
 
 } // namespace technicalmachine

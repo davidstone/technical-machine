@@ -33,9 +33,12 @@ void Wish::activate() {
 }
 
 void Wish::decrement(Pokemon & pokemon) {
-	if (is_active())
+	if (is_active()) {
 		--counter;
-	heal(pokemon, Rational(1, 2));
+		if (!is_active()) {
+			heal(pokemon, Rational(1, 2));
+		}
+	}
 }
 
 bool Wish::is_active() const {

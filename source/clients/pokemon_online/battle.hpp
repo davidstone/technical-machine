@@ -35,10 +35,9 @@ class Battle : public GenericBattle {
 		template<typename ... Args>
 		Battle(std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, bool const challenger, Args && ... args):
 			GenericBattle::GenericBattle(seed, foe_name, battle_depth, std::forward<Args>(args)...),
-			action (OutMessage::BATTLE_MESSAGE),
-			damage (0)
+			action (OutMessage::BATTLE_MESSAGE)
 			{
-			my_party.set_if_unknown(Party(challenger ? 0 : 1));
+			set_party_if_unknown(Party(challenger ? 0 : 1));
 		}
 		void handle_message (Client & client, uint32_t battle_id, uint8_t command, Party party, InMessage & msg);
 		static constexpr unsigned pokemon_per_team() {
@@ -53,18 +52,14 @@ class Battle : public GenericBattle {
 		void parse_use_attack (InMessage & msg, Party party);
 		void parse_straight_damage (InMessage & msg);
 		void parse_hp_change (InMessage & msg, Party party);
-		int16_t calculate_change_in_hp (bool my_team, uint16_t remaining_hp) const;
 		void parse_pp_change (InMessage & msg);
 		void parse_effectiveness (InMessage & msg);
-		void handle_miss (Party party);
-		void handle_critical_hit (Party party);
 		void parse_number_of_hits (InMessage & msg);
 		void parse_stat_change (InMessage & msg);
 		void parse_status_message (InMessage & msg);
 		void parse_status_change (InMessage & msg);
 		void parse_abs_status_change (InMessage & msg);
 		void parse_already_statused (InMessage & msg);
-		void handle_flinch (Party party);
 		void parse_recoil (InMessage & msg);
 		void parse_weather_message (InMessage & msg);
 		void parse_ability_message (InMessage & msg, Party party);
@@ -89,11 +84,8 @@ class Battle : public GenericBattle {
 		void parse_spot_shifts (InMessage & msg);
 		void parse_battle_end (InMessage & msg);
 		uint16_t max_damage_precision () const;
-		uint8_t get_target () const;
-		int16_t ai_change_in_hp (uint16_t remaining_hp) const;
-		int16_t foe_change_in_hp (uint16_t remaining_hp) const;
 		OutMessage action;
-		uint16_t damage;
+		Party last_attacker;
 };
 
 }	// namespace po

@@ -20,12 +20,14 @@
 #define BATTLE_HPP_
 
 #include <cstdint>
+#include <map>
 #include <random>
 #include <string>
 #include <vector>
 
 #include "battle_result.hpp"
 #include "party.hpp"
+#include "updated_hp.hpp"
 
 #include "../team.hpp"
 #include "../weather.hpp"
@@ -52,7 +54,6 @@ class GenericBattle {
 		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 		void handle_use_move (Party user, uint8_t slot, Moves move_name);
 		void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
-		void handle_hp_change(Party changer, uint8_t slot, unsigned change_in_hp, unsigned remaining_hp, unsigned denominator);
 		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
 		void handle_fainted (Party fainter, uint8_t slot);
 		void handle_end (network::GenericClient & client, Result const result) const;
@@ -60,6 +61,10 @@ class GenericBattle {
 		virtual ~GenericBattle() {}
 		GenericBattle (GenericBattle const &) = delete;
 		GenericBattle & operator= (GenericBattle const &) = delete;
+		void handle_hp_change(Party changer, uint8_t slot, unsigned remaining_hp);
+		bool is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const;
+		bool is_valid_precision(Party changer, unsigned precision) const;
+		void handle_direct_damage(Party const damaged, uint8_t slot, unsigned damage);
 	protected:
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
@@ -67,26 +72,39 @@ class GenericBattle {
 		uint8_t switch_slot (Moves move) const;
 		virtual uint16_t max_damage_precision () const;
 		void initialize_turn ();
-		virtual uint8_t get_target () const = 0;
+		int hp_change (Party changing, unsigned remaining_hp) const;
+		unsigned max_visible_hp_change(Party changer) const;
+		void handle_flinch(Party party);
+		void handle_miss(Party party);
+		void handle_critical_hit(Party party);
+		void handle_ability_message(Party party, Ability::Abilities ability);
+		void handle_item_message(Party party, Item::Items item);
 	private:
 		Moves determine_action(network::GenericClient & client);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();
+		unsigned max_visible_hp_change(Team const & changer) const;
+		unsigned max_visible_hp_change(bool my_pokemon, Pokemon const & changer) const;
 		void do_turn ();
+		Team const & get_team(Party party) const;
+		Team & get_team(Party party);
+		Team const & get_opposing_team(Party party) const;
+		Team & get_opposing_team(Party party);
+		void register_damage();
 
-	protected:
 		std::string opponent_name;
+	protected:
 		std::mt19937 random_engine;
 		Team ai;
 		Team foe;
 		std::vector <Species> slot_memory;
 	private:
+		UpdatedHP updated_hp;
 		Weather weather;
 		Team * first;
 		Team * last;
 		unsigned depth;
 		bool move_damage;
-	protected:
 		Party my_party;
 };
 

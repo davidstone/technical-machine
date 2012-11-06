@@ -33,6 +33,10 @@ class InvalidSimulatorData : public InvalidPacket {
 		InvalidSimulatorData (Integer const received, Integer const minimum, Integer const maximum, std::string const & variable):
 			InvalidPacket (variable + " should be between " + std::to_string(static_cast<int64_t>(minimum)) + " and " + std::to_string(static_cast<int64_t>(maximum)) + ", but the server sent a value of " + std::to_string(static_cast<int64_t>(received)) + ".") {
 		}
+		template<typename Integer, typename boost::enable_if_c<sizeof(Integer) <= 4, int>::type = 0>
+		InvalidSimulatorData(Integer const received, std::string const & variable):
+			InvalidPacket ("Recieved an invalid value of " + std::to_string(static_cast<int64_t>(received)) + " for " + variable + ".") {
+		}
 };
 }	// namespace network
 }	// namespace technicalmachine

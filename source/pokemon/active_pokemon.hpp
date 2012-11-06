@@ -241,6 +241,7 @@ class ActivePokemon {
 		unsigned damaged() const;
 		void direct_damage(unsigned damage);
 		void indirect_damage(unsigned damage);
+		void register_damage(unsigned damage);
 		void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 		ChanceToHit::value_type chance_to_hit() const;
 		ChanceToHit::value_type chance_to_miss() const;

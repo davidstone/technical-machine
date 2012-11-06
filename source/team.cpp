@@ -238,8 +238,7 @@ bool operator!= (Team const & lhs, Team const & rhs) {
 std::string Team::to_string(bool const include_owner) const {
 	std::string output;
 	if (include_owner) {
-		output += me ? "AI" : "Foe";
-		output += "'s team:\n";
+		output += who() + "'s team:\n";
 	}
 	all_pokemon().for_each([&](Pokemon const & member) {
 		output += member.to_string();
@@ -274,6 +273,10 @@ std::string Team::to_string(bool const include_owner) const {
 		});
 	});
 	return output;
+}
+
+std::string Team::who() const {
+	return is_me() ? "AI" : "Foe";
 }
 
 }	// namespace technicalmachine

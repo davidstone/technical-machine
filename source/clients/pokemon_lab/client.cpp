@@ -37,6 +37,8 @@
 
 #include "../network/client.hpp"
 #include "../network/invalid_channel.hpp"
+#include "../network/invalid_simulator_data.hpp"
+
 
 #include "../../cryptography/byte_order.hpp"
 #include "../../cryptography/md5.hpp"
@@ -379,15 +381,19 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {
 			uint32_t const battle_id = msg.read_int ();
-			auto const party = Party(msg.read_byte());
+			Party const party(msg.read_byte());
 			uint8_t const slot = msg.read_byte ();
-			int16_t const change_in_hp = static_cast<int16_t> (msg.read_short ());
-			assert (change_in_hp > 0);
-			uint16_t const remaining_hp = msg.read_short ();
-			int16_t const denominator = static_cast<int16_t> (msg.read_short ());
-			assert(denominator > 0);
+			int16_t const change_in_hp = static_cast<int16_t>(msg.read_short());
+			uint16_t const remaining_hp = msg.read_short();
+			int16_t const precision = static_cast<int16_t> (msg.read_short ());
 			auto & battle = find_battle(battle_id);
-			battle.handle_hp_change (party, slot, static_cast<uint16_t>(change_in_hp), remaining_hp, static_cast<uint16_t>(denominator));
+			if (!battle.is_valid_hp_change(party, remaining_hp, change_in_hp)) {
+				throw network::InvalidSimulatorData(change_in_hp, "change_in_hp");
+			}
+			if (!battle.is_valid_precision(party, static_cast<unsigned>(precision))) {
+				throw network::InvalidSimulatorData(precision, "HP precision");
+			}
+			battle.handle_hp_change(party, slot, remaining_hp);
 			break;
 		}
 		case InMessage::BATTLE_SET_PP: {

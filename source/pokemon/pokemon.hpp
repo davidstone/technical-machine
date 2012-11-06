@@ -130,12 +130,7 @@ class Pokemon {
 		Stat m_spa;
 		Stat m_spd;
 		Stat m_spe;
-	public:
 
-		// 0 through 48 for foes, used to keep the HP learned from the log on track with reality
-		uint16_t new_hp;
-
-	private:
 		Species m_name;
 		Item m_item;
 		Ability m_ability;
