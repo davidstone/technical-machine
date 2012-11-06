@@ -113,7 +113,7 @@ void Status::rest() {
 
 template<Status::Statuses base_status, Status::Statuses real_status>
 void Status::apply (Pokemon & user, Pokemon & target, Weather const & weather) {
-	if (status_can_apply<base_status>(user.ability(), target, weather)) {
+	if (status_can_apply<real_status>(user.ability(), target, weather)) {
 		target.status().status = real_status;
 		if (status_is_reflectable(base_status) and target.ability().reflects_status())
 			apply<base_status>(target, user, weather);
@@ -132,7 +132,7 @@ template void Status::apply<Status::POISON>(Pokemon & user, Pokemon & target, We
 
 template<>
 void Status::apply<Status::POISON_TOXIC>(Pokemon & user, Pokemon & target, Weather const & weather) {
-	apply<Status::POISON_TOXIC, Status::POISON>(user, target, weather);
+	apply<Status::POISON, Status::POISON_TOXIC>(user, target, weather);
 }
 
 template<>
