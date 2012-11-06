@@ -52,7 +52,9 @@ void decrement (Integer & n) {
 
 void print(Team const & first, Team const & last, unsigned n) {
 	Team const & team = first.is_me() ? first : last;
+	Team const & other = first.is_me() ? last : first;
 	std::cerr << n << ": " << team.pokemon().hp().stat << '\n';
+	std::cerr << n << ": " << other.pokemon().hp().stat << '\n';
 }
 
 }	// unnamed namespace
@@ -120,8 +122,9 @@ void endofturn2 (Team & team) {
 void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 	if (weather.hail() and !pokemon.type().is_immune_to_hail())
 		drain(pokemon, Rational(1, 16));
-	if (weather.sand() and !pokemon.type().is_immune_to_sandstorm())
+	if (weather.sand() and !pokemon.type().is_immune_to_sandstorm()) {
 		drain(pokemon, Rational(1, 16));
+	}
 	switch (pokemon.ability().name) {
 		case Ability::DRY_SKIN:
 			if (weather.rain())
@@ -157,7 +160,6 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 		pokemon.status().clear();
 	switch (pokemon.item().name) {
 		case Item::LEFTOVERS:
-			std::cerr << "Healing from Leftovers.\n";
 			heal(pokemon, Rational(1, 16));
 			break;
 		case Item::BLACK_SLUDGE:
@@ -184,7 +186,6 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			drain(pokemon, Rational(1, pokemon.ability().weakens_burn() ? 16 : 8));
 			break;
 		case Status::POISON:
-			std::cerr << "Regular poison\n";
 			if (pokemon.ability().absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else
@@ -192,7 +193,6 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			break;
 		case Status::POISON_TOXIC:
 			pokemon.increment_toxic();
-			std::cerr << "Toxic ratio: " << 16 * pokemon.toxic_ratio() << '\n';
 			if (pokemon.ability().absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else

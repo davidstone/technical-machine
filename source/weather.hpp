@@ -39,21 +39,8 @@ namespace technicalmachine {
 class Weather {
 	public:
 		typedef uint32_t hash_type;
-		class Duration {
-			public:
-				enum Value : int8_t { standard = 5, extended = 8, permanent = -1 };
-				// intentionally implicit
-				Duration (Value const new_value):
-					value (new_value) {
-				}
-				explicit Duration (bool const is_extended):
-					value (is_extended ? extended : standard) {
-				}
-			private:
-				Value value;
-				friend class Weather;
-		};
-		Weather ();
+		enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
+		Weather();
 		bool operator== (Weather const & other) const;
 
 		bool trick_room () const;
@@ -83,7 +70,8 @@ class Weather {
 		}
 		hash_type hash () const;
 	private:
-		void set_weather (int8_t & primary, Duration duration);
+		void set_weather(int8_t & primary, Duration duration);
+		void set_weather(int8_t & primary, bool is_extended);
 		int8_t trick_room_duration;
 		int8_t gravity_duration;
 		int8_t uproar_duration;
