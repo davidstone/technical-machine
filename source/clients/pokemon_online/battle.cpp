@@ -47,7 +47,7 @@ class Todo {
 		}
 		~Todo() {
 			while (msg.index != msg.buffer.size ())
-				std::cerr << static_cast<int> (msg.read_byte()) << '\n';
+				std::cerr << '\t' << static_cast<int> (msg.read_byte()) << '\n';
 		}
 	private:
 		InMessage & msg;
@@ -283,6 +283,7 @@ void Battle::parse_send_out (InMessage & msg, Party const party) {
 }
 
 void Battle::parse_use_attack (InMessage & msg, Party const party) {
+	std::cerr << is_me(party) << " USE ATTACK\n";
 	uint16_t const attack = msg.read_short ();
 	constexpr uint8_t slot = 0;
 	handle_use_move (party, slot, id_to_move(attack));
@@ -329,7 +330,7 @@ void Battle::parse_status_message (InMessage & msg) {
 }
 
 void Battle::parse_status_change (InMessage & msg) {
-	std::cerr << "STATUS_CHANGE\n";
+	Todo const t(msg, "STATUS_CHANGE");
 	int8_t const status = static_cast<int8_t> (msg.read_byte());
 	// bool const multiple_turns = msg.read_byte ();
 	// Includes things like confusion
