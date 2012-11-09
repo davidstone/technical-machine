@@ -189,7 +189,7 @@ DetailedStats const & GenericClient::detailed() const {
 }
 
 void GenericClient::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
-	stream << "[" + time_stamp () + "] " + message + "\n";
+	stream << time_stamp() + " " + message + "\n";
 }
 
 std::string GenericClient::time_stamp () const {

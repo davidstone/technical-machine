@@ -26,9 +26,9 @@
 
 	<!--
 		time format is passed to strftime (). The default is ISO-8601 date
-		followed by ISO-8601 time (2011-12-24 16:10:05)
+		followed by ISO-8601 time: [2011-12-24 16:10:05]
 	-->
-	<time>%Y-%m-%d %H:%M:%S</time>
+	<time>[%Y-%m-%d %H:%M:%S]</time>
 
 	<!--
 		chattiness determines how often Technical Machine randomly says a line
