@@ -275,10 +275,7 @@ void Battle::parse_send_out (InMessage & msg, Party const party) {
 	uint8_t const slot = 0;
 	handle_send_out (party, slot, index, nickname, species, gender, level);
 	if (is_me(party)) {
-		for (Species & name : slot_memory) {
-			if (ai.replacement().name() == name)
-				std::swap (slot_memory.front(), name);
-		}
+		slot_memory_bring_to_front();
 	}
 }
 

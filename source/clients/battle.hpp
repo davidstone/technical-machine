@@ -79,6 +79,7 @@ class GenericBattle {
 		void handle_critical_hit(Party party);
 		void handle_ability_message(Party party, Ability::Abilities ability);
 		void handle_item_message(Party party, Item::Items item);
+		void slot_memory_bring_to_front();
 	private:
 		void initialize();
 		Moves determine_action(network::GenericClient & client);
@@ -94,12 +95,10 @@ class GenericBattle {
 		void register_damage();
 
 		std::string opponent_name;
-	protected:
 		mutable std::mt19937 random_engine;
 		Team ai;
 		Team foe;
 		std::vector <Species> slot_memory;
-	private:
 		UpdatedHP updated_hp;
 		Weather weather;
 		Team * first;

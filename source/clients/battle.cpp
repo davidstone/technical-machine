@@ -437,4 +437,11 @@ void GenericBattle::handle_item_message(Party party, Item::Items item) {
 	get_team(party).replacement().item().name = item;
 }
 
+void GenericBattle::slot_memory_bring_to_front() {
+	for (Species & name : slot_memory) {
+		if (ai.replacement().name() == name)
+			std::swap (slot_memory.front(), name);
+	}
+}
+
 } // namespace technicalmachine
