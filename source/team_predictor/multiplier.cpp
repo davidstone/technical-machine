@@ -70,6 +70,7 @@ Multiplier::Container Multiplier::species_clause() {
 			if (is_alternate_form(first, second))
 				multiplier[a][b] = 0;
 		}
+		multiplier[a][a] = 0;
 	}
 	return multiplier;
 }
@@ -81,7 +82,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 	std::string const file_name = "settings/Generation 4/OU/teammate.txt";
 	std::ifstream file (file_name);
 	std::string line;
-	for (getline (file, line); !file.eof(); getline (file, line)) {
+	while (getline(file, line)) {
 		constexpr char delimiter = '\t';
 		size_t const x = line.find (delimiter);
 		auto const member = static_cast<size_t>(from_string<Species>(line.substr (0, x)));
