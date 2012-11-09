@@ -80,6 +80,7 @@ class GenericBattle {
 		void handle_ability_message(Party party, Ability::Abilities ability);
 		void handle_item_message(Party party, Item::Items item);
 	private:
+		void initialize();
 		Moves determine_action(network::GenericClient & client);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();

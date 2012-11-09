@@ -58,10 +58,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	updated_hp(ai),
 	depth (battle_depth)
 	{
-	ai.all_pokemon().for_each ([this] (Pokemon const & pokemon)->void {
-		slot_memory.emplace_back(pokemon.name());
-	});
-	initialize_turn ();
+	initialize();
 }
 
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
@@ -71,6 +68,10 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	updated_hp(ai),
 	depth (battle_depth)
 	{
+	initialize();
+}
+
+void GenericBattle::initialize() {
 	ai.all_pokemon().for_each ([this] (Pokemon const & pokemon)->void {
 		slot_memory.emplace_back(pokemon.name());
 	});
