@@ -142,8 +142,8 @@ void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
-	Team & active = (my_party == user) ? ai : foe;
-	Team & inactive = (my_party == user) ? foe : ai;
+	Team & active = is_me(user) ? ai : foe;
+	Team & inactive = is_me(user) ? foe : ai;
 
 	if (first == nullptr) {
 		first = &active;
