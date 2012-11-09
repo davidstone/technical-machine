@@ -42,31 +42,16 @@ unsigned ev_sum(Pokemon const & pokemon) {
 			+ pokemon.spa().ev.value() + pokemon.spd().ev.value() + pokemon.spe().ev.value();
 }
 
-typedef std::pair<Nature::Natures, std::array<unsigned, 6>> StatState;
-StatState get_evs(Pokemon const & pokemon) {
-	return std::make_pair(pokemon.nature().name, std::array<unsigned, 6>{{
-		pokemon.hp().ev.value(),
-		pokemon.atk().ev.value(),
-		pokemon.def().ev.value(),
-		pokemon.spa().ev.value(),
-		pokemon.spd().ev.value(),
-		pokemon.spe().ev.value()
-	}});
-}
-
 void add_non_full_stats(std::vector<Stat *> & stats, Stat & stat);
 
 }	// unnamed namespace
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
-	StatState initial_evs;
-	StatState optimized_evs;
-	do {
-		initial_evs = get_evs(pokemon);
-		minimize_evs(pokemon);
+	minimize_evs(pokemon);
+	while (ev_sum(pokemon) < max_evs) {
 		pad_random_evs(pokemon, random_engine);
-		optimized_evs = get_evs(pokemon);
-	} while (initial_evs != optimized_evs);
+		minimize_evs(pokemon);
+	}
 }
 
 void minimize_evs(Pokemon & pokemon) {

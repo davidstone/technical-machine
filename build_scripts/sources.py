@@ -51,6 +51,7 @@ ai_sources += prepend_dir('cryptography', ['hex.cpp', 'md5.cpp', 'rijndael.cpp',
 ai_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'power.cpp', 'ranked.cpp', 'reorder.cpp', 'shared.cpp', 'use_move.cpp'])
 ai_sources += prepend_dir('stat', ['ev.cpp', 'invalid_ev.cpp', 'invalid_stat.cpp', 'nature.cpp', 'stat.cpp'])
 ai_sources += prepend_dir('team_predictor', ['detailed_stats.cpp', 'estimate.cpp', 'load_stats.cpp', 'multiplier.cpp', 'team_predictor.cpp'])
+ai_sources += ev_optimizer_sources
 ai_sources += prepend_dir('type', ['collection.cpp', 'effectiveness.cpp', 'type.cpp'])
 ai_sources += string_conversion_sources
 ai_libraries = ['pthread', 'boost_system', 'boost_filesystem']

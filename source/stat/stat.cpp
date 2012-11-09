@@ -62,7 +62,7 @@ Stat::Stat (Species name, Stats stat_name) :
 	max (65535),
 	base (get_base_stat (name, stat_name)),
 	iv (31),
-	ev (508 / 6)		// Adds up to 504 EVs (126 points). Temporary until I add in EV prediction
+	ev (0)
 	{
 }
 

@@ -90,7 +90,7 @@ void GenericBattle::write_team (network::OutMessage & msg, std::string const & u
 }
 
 Team GenericBattle::predict_foe_team (DetailedStats const & detailed) const {
-	return predict_team (detailed, foe, ai.all_pokemon().size());
+	return predict_team(detailed, foe, random_engine, ai.all_pokemon().size());
 }
 
 void GenericBattle::handle_begin_turn (uint16_t turn_count) const {

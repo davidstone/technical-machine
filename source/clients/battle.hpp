@@ -94,7 +94,7 @@ class GenericBattle {
 
 		std::string opponent_name;
 	protected:
-		std::mt19937 random_engine;
+		mutable std::mt19937 random_engine;
 		Team ai;
 		Team foe;
 		std::vector <Species> slot_memory;

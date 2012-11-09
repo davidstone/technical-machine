@@ -26,6 +26,8 @@
 #include "load_stats.hpp"
 #include "multiplier.hpp"
 
+#include "ev_optimizer/ev_optimizer.hpp"
+
 #include "../ability.hpp"
 #include "../team.hpp"
 
@@ -50,7 +52,7 @@ void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsign
 
 }	// unnamed namespace
 
-Team predict_team (DetailedStats const & detailed, Team team, unsigned size, bool using_lead) {
+Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, unsigned size, bool using_lead) {
 	std::array<unsigned, number_of_species> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	Multiplier const multiplier(overall);
@@ -61,12 +63,13 @@ Team predict_team (DetailedStats const & detailed, Team team, unsigned size, boo
 	estimate.update(multiplier, team);
 
 	predict_pokemon (team, estimate, multiplier);
-	team.all_pokemon().for_each([& detailed, size](Pokemon & pokemon) {
+	team.all_pokemon().for_each([&](Pokemon & pokemon) {
 		auto const name = static_cast<size_t>(pokemon.name());
 		pokemon.ability().set_if_unknown (static_cast <Ability::Abilities> (detailed.ability[name]));
 		pokemon.item().set_if_unknown (static_cast <Item::Items> (detailed.item[name]));
 		pokemon.nature().set_if_unknown (static_cast <Nature::Natures> (detailed.nature[name]));
 		predict_move (pokemon, detailed.move[name], size);
+		optimize_evs(pokemon, random_engine);
 	});
 	return team;
 }
