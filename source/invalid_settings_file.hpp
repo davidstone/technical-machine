@@ -27,6 +27,7 @@ namespace technicalmachine {
 class InvalidSettingsFile : public std::runtime_error {
 	public:
 		enum Problem {
+			does_not_exist,
 			too_long,
 			too_short,
 			invalid_data

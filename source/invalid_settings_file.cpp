@@ -23,6 +23,7 @@ namespace {
 
 std::string to_string(InvalidSettingsFile::Problem const problem) {
 	static const std::string text [] = {
+		"does not exist",
 		"is too long",
 		"is too short",
 		"contains invalid data"

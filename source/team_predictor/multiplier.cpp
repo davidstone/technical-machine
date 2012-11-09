@@ -78,7 +78,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 	// I may not need to calculate this...
 	unsigned const total = std::accumulate(overall.begin(), overall.end(), 0U);
 
-	std::string const file_name = "settings/teammate.txt";
+	std::string const file_name = "settings/Generation 4/OU/teammate.txt";
 	std::ifstream file (file_name);
 	std::string line;
 	for (getline (file, line); !file.eof(); getline (file, line)) {

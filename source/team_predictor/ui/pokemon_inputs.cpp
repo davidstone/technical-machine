@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pokemon_inputs.hpp"
-#include "../../pokemon/species.hpp"
+#include "../../pokemon/species_forward.hpp"
 #include "../../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {
@@ -33,7 +33,13 @@ Species PokemonInputs::species() const {
 	return m_species.value();
 }
 bool PokemonInputs::is_valid() const {
-	return m_species.value() != Species::END;
+	try {
+		m_species.value();
+		return true;
+	}
+	catch (InvalidFromStringConversion const &) {
+		return false;
+	}
 }
 
 Nature::Natures PokemonInputs::nature() const {

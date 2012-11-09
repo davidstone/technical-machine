@@ -38,19 +38,20 @@
 namespace technicalmachine {
 
 DetailedStats::DetailedStats() {
-	static std::string const file_name = "settings/detailed.txt";
-	std::ifstream file (file_name);
+	static std::string const file_name = "settings/Generation 4/OU/detailed.txt";
+	std::ifstream file(file_name);
+	if (!file.is_open()) {
+		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
+	}
 	std::string line;
 	Species old_member = Species::END;
 	bool ability_found = false;
 	bool item_found = false;
 	bool nature_found = false;
-	for (getline (file, line); !file.eof(); getline (file, line)) {
+	while (getline(file, line)) {
 		constexpr char delimiter = '\t';
 		size_t const x = line.find (delimiter);
 		Species new_member = from_string<Species>(line.substr (0, x));
-		if (new_member >= Species::END)
-			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
 		if (old_member != new_member) {
 			old_member = new_member;
 			ability_found = false;

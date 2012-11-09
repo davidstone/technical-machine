@@ -36,10 +36,13 @@ namespace {
 template<typename T>
 std::array<T, number_of_species> load_stats_from_file (std::string const & file_name) {
 	std::array<T, number_of_species> overall;
-	std::ifstream file (file_name);
+	std::ifstream file(file_name);
+	if (!file.is_open()) {
+		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
+	}
 	std::string line;
 	unsigned n = 0;
-	for (getline (file, line); !file.eof(); getline (file, line)) {
+	while(getline(file, line)) {
 		if (n >= number_of_species)
 			throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_long);
 		overall [n] = boost::lexical_cast<T> (line);
@@ -53,11 +56,11 @@ std::array<T, number_of_species> load_stats_from_file (std::string const & file_
 }	// unnamed namespace
 
 std::array<unsigned, number_of_species> overall_stats () {
-	return load_stats_from_file<unsigned> ("settings/usage.txt");
+	return load_stats_from_file<unsigned> ("settings/Generation 4/OU/usage.txt");
 }
 
 std::array<float, number_of_species> lead_stats () {
-	return load_stats_from_file<float> ("settings/lead.txt");
+	return load_stats_from_file<float> ("settings/Generation 4/OU/lead.txt");
 }
 
 }	// namespace technicalmachine
