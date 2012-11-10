@@ -27,7 +27,6 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include "battles.hpp"
 
@@ -131,7 +130,7 @@ class GenericClient {
 		std::string port;
 		std::random_device rd;
 		std::mt19937 random_engine;
-		boost::scoped_ptr <boost::asio::ip::tcp::socket> socket;
+		std::unique_ptr<boost::asio::ip::tcp::socket> socket;
 		DetailedStats detailed_stats;
 		Score score_variables;
 		std::string current_username;
