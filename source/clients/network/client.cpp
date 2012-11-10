@@ -466,7 +466,7 @@ void GenericClient::taunt_foe(uint32_t const battle_id) {
 
 std::string GenericClient::get_response () {
 	if (!responses.empty()) {
-		std::uniform_int_distribution<unsigned> distribution { 0, static_cast<unsigned>(responses.size() - 1) };
+		std::uniform_int_distribution<size_t> distribution { 0, responses.size() - 1 };
 		return responses[distribution(random_engine)];
 	}
 	else {
