@@ -20,7 +20,6 @@
 #define NETWORK__CONNECT_HPP_
 
 #include <cstdint>
-#include <map>
 #include <random>
 #include <string>
 #include <vector>
