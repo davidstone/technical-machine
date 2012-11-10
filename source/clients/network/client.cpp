@@ -294,11 +294,11 @@ std::string GenericClient::generate_team_file_name () {
 std::string GenericClient::get_random_string (unsigned size) {
 	constexpr unsigned range = 36;
 	static constexpr char legal_characters [] = "abcdefghijklmnopqrstuvwxyz0123456789";
-	std::uniform_int_distribution <unsigned> distribution { 0, range - 1 };
+	static_assert(sizeof(legal_characters) == range + 1, "Invalid amount of legal random characters.");
+	std::uniform_int_distribution<unsigned> distribution { 0, range - 1 };
 	std::string str;
-	str.resize (size);
-	for (unsigned n = 0; n != size; ++n)
-		str [n] = legal_characters [distribution (random_engine)];
+	str.resize(size);
+	std::generate(std::begin(str), std::end(str), [&]() { return legal_characters[distribution(random_engine)]; });
 	return str;
 }
 
