@@ -31,7 +31,6 @@
 
 namespace technicalmachine {
 class Move;
-class SharedMoves;
 
 class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		typedef detail::BaseCollection<Pokemon> Base;
@@ -62,7 +61,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 			// Guaranteed to be a valid index
 			current_replacement = static_cast<index_type>(container.size() - 1);
 		}
-		void remove_active ();
+		void remove_active();
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
 		void for_each_replacement (std::function<void(void)> const & f);
 		unsigned count_if (std::function<bool(Pokemon const &)> const & f) const;
