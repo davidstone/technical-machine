@@ -21,6 +21,7 @@
 #include <iostream>
 #include <string>
 
+#include "create_regular_moves.hpp"
 #include "create_shared_moves.hpp"
 #include "invalid_collection.hpp"
 
@@ -34,22 +35,20 @@ namespace technicalmachine {
 void move_collection_tests() {
 	std::cout << "\tRunning MoveCollection tests.\n";
 	constexpr unsigned team_size = 4;
-	constexpr unsigned move_additions = 6;
 	for (unsigned size = 1; size <= team_size; ++size) {
 		unsigned const shared_moves_size = (size > 1) ? size + 1 : 1;
 		SharedMoves shared(size);
 		MoveCollection c(shared);
 		if (c.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + std::to_string(size));
-		for (unsigned n = 1; n <= move_additions; ++n) {
-			c.add(static_cast<Moves>(n), 0);
-			if (c.size() != shared_moves_size + n or c.size() != c.number_of_regular_moves() + shared_moves_size)
+		auto expected = create_regular_moves();
+		for (unsigned n = 0; n != expected.size(); ++n) {
+			c.add(expected[n]);
+			if (c.size() != shared_moves_size + n + 1 or c.size() != c.number_of_regular_moves() + shared_moves_size) {
 				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + std::to_string(size));
+			}
 		}
 		
-		std::vector<Moves> expected;
-		for (unsigned n = 1; n <= move_additions; ++n)
-			expected.emplace_back(static_cast<Moves>(n));
 		auto const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
 		for (unsigned n = 0; n != expected.size(); ++n) {
