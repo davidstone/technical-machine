@@ -57,7 +57,7 @@ class MoveContainer {
 		friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
 	private:
 		std::vector<Move> regular;
-		std::vector<Move> * shared;
+		SharedMoves * shared;
 };
 
 }	// namespace technicalmachine

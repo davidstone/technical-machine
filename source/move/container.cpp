@@ -30,7 +30,7 @@
 namespace technicalmachine {
 
 MoveContainer::MoveContainer(SharedMoves & s):
-	shared(&s.moves) {
+	shared(&s) {
 }
 
 MoveContainer::MoveContainer(MoveContainer const & other) = default;
@@ -72,15 +72,17 @@ void MoveContainer::for_each_regular_move (std::function<void(Move &)> const & f
 }
 
 void MoveContainer::for_each_shared (std::function<void(Move const &)> const & f) const {
-	std::for_each(shared->cbegin(), shared->cend(), f);
+	shared->for_each(f);
 }
 void MoveContainer::for_each_shared (std::function<void(Move &)> const & f) {
-	std::for_each(shared->begin(), shared->end(), f);
+	shared->for_each(f);
 }
 
 std::vector<Move> MoveContainer::concatenate() const {
 	std::vector<Move> v = regular;
-	v.insert(v.end(), shared->begin(), shared->end());
+	shared->for_each([&](Move const & move) {
+		v.emplace_back(move);
+	});
 	return v;
 }
 
@@ -108,7 +110,7 @@ uint8_t MoveContainer::number_of_regular_moves() const {
 }
 
 void MoveContainer::update_shared_moves(SharedMoves & s) {
-	shared = &s.moves;
+	shared = &s;
 }
 
 bool operator==(MoveContainer const & lhs, MoveContainer const & rhs) {

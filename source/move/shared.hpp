@@ -1,4 +1,4 @@
-// Shared moves
+// Handle common moves that all Pokemon can select
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -19,6 +19,7 @@
 #ifndef MOVE__SHARED_HPP_
 #define MOVE__SHARED_HPP_
 
+#include <cstddef>
 #include <vector>
 #include "move.hpp"
 
@@ -28,9 +29,23 @@ class SharedMoves {
 	public:
 		explicit SharedMoves (unsigned team_size = 6);
 		void remove_switch();
+		Move const & operator[](size_t index) const;
+		Move & operator[](size_t index);
+		size_t size() const;
+		template<typename Function>
+		void for_each(Function const & f) const {
+			for (auto const & move : moves) {
+				f(move);
+			}
+		}
+		template<typename Function>
+		void for_each(Function const & f) {
+			for (auto & move : moves) {
+				f(move);
+			}
+		}
 	private:
 		std::vector<Move> moves;
-		friend class MoveContainer;
 };
 
 }	// namespace technicalmachine

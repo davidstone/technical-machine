@@ -1,4 +1,4 @@
-// Load teams
+// Handle common moves that all Pokemon select
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -40,6 +40,20 @@ void SharedMoves::remove_switch() {
 	moves.pop_back();
 	if (moves.back().name == Moves::Switch0)
 		moves.pop_back();
+}
+
+Move const & SharedMoves::operator[](size_t const index) const {
+	assert(index < moves.size());
+	return moves[index];
+}
+
+Move & SharedMoves::operator[](size_t const index) {
+	assert(index < moves.size());
+	return moves[index];
+}
+
+size_t SharedMoves::size() const {
+	return moves.size();
 }
 
 }	// namespace technicalmachine
