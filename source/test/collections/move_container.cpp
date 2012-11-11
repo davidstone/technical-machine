@@ -20,6 +20,7 @@
 
 #include <functional>
 #include <iostream>
+#include <string>
 
 #include "create_regular_moves.hpp"
 #include "create_shared_moves.hpp"
@@ -30,20 +31,26 @@
 #include "../../move/container.hpp"
 #include "../../move/shared.hpp"
 
+#include "../../string_conversions/conversion.hpp"
+
 namespace technicalmachine {
 namespace {
 class Comparator : public std::unary_function<void, Move> {
 	public:
-		Comparator(std::vector<Moves> const & m):
+		Comparator(std::vector<Moves> const & m, std::string && str_type):
 			moves(m),
+			type(str_type),
 			n(0) {
 		}
 		void operator()(Move const & move) {
-			if (moves[n] != move.name)
-				throw InvalidCollection("MoveContainer has the wrong moves.");
+			if (moves[n] != move.name) {
+				throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + move.to_string());
+			}
 			++n;
 		}
+	private:
 		std::vector<Moves> moves;
+		std::string type;
 		unsigned n;
 };
 
@@ -55,16 +62,18 @@ void move_container_tests() {
 	constexpr unsigned shared_moves_size = team_size + 1;
 	SharedMoves shared(team_size);
 	MoveContainer c(shared);
-	if (c.size() != shared_moves_size)
-		throw InvalidCollection("MoveContainer has the wrong number of shared moves.");
+	if (c.size() != shared_moves_size) {
+		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + std::to_string(shared_moves_size) + " but got " + std::to_string(static_cast<int>(c.size())));
+	}
 	auto const moves = create_regular_moves();
 	for (unsigned n = 0; n != moves.size(); ++n) {
 		c.emplace_back(moves[n]);
-		if (c.size() != shared_moves_size + n + 1 or c.size() != c.number_of_regular_moves() + shared_moves_size)
-			throw InvalidCollection("MoveContainer has the wrong number of moves.");
+		if (c.size() != shared_moves_size + n + 1 or c.size() != c.number_of_regular_moves() + shared_moves_size) {
+			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
+		}
 	}
-	c.for_each_regular_move(Comparator(moves));
-	c.for_each_shared(Comparator(create_shared_moves(team_size)));
+	c.for_each_regular_move(Comparator(moves, "regular"));
+	c.for_each_shared(Comparator(create_shared_moves(team_size), "shared"));
 }
 
 }	// namespace technicalmachine
