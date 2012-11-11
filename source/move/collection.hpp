@@ -49,7 +49,10 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		// Skips Struggle and switches
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);
+		using Base::set_index;
 		bool set_index_if_found(Moves name);
+		void set_index(Moves name);
+		void set_switch_index(unsigned replacement);
 		// nullptr if not found
 		Move const * find (Moves name) const;
 		Move * find (Moves name);

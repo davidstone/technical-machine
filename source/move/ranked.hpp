@@ -20,15 +20,18 @@
 #define MOVE__RANKED_HPP_
 
 #include <cstdint>
+#include "moves_forward.hpp"
 
 namespace technicalmachine {
 
 class RankedMove {
 	public:
-		explicit RankedMove(uint8_t const new_index, int16_t const new_score = 0);
+		explicit RankedMove(Moves set_move, int16_t set_score);
+		Moves name() const;
 		friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
+	private:
 		int16_t score;
-		uint8_t index;
+		Moves move;
 };
 
 }	// namespace technicalmachine

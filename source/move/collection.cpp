@@ -18,6 +18,7 @@
 
 #include "collection.hpp"
 
+#include <cassert>
 #include <cstdint>
 #include <functional>
 #include <vector>
@@ -57,11 +58,16 @@ void MoveCollection::for_each_regular_move (std::function<void(Move &)> const & 
 bool MoveCollection::set_index_if_found(Moves name) {
 	for (index_type new_index = 0; new_index != number_of_regular_moves(); ++new_index) {
 		if (unchecked_value(new_index).name == name) {
-			set_index(new_index);
+			Base::set_index(new_index);
 			return true;
 		}
 	}
 	return false;
+}
+
+void MoveCollection::set_index(Moves const name) {
+	bool const found = set_index_if_found(name);
+	assert(found);
 }
 
 Move const * MoveCollection::find (Moves name) const {

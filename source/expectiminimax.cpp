@@ -192,11 +192,11 @@ int64_t select_move_branch (Team & ai, Team & foe, Weather const & weather, unsi
 	// combination.
 	int64_t alpha = -Score::VICTORY - 1;
 	for (RankedMove const & ai_move : ai_index) {
-		ai.pokemon().all_moves().set_index(ai_move.index);
+		ai.pokemon().all_moves().set_index(ai_move.name());
 		print_action (ai, first_turn);
 		int64_t beta = Score::VICTORY + 1;
 		for (RankedMove const & foe_move : foe_index) {
-			foe.pokemon().all_moves().set_index(foe_move.index);
+			foe.pokemon().all_moves().set_index(foe_move.name());
 			print_action (foe, first_turn);
 			int64_t const max_score = order_branch (ai, foe, weather, depth, score);
 			update_foe_best_move (foe, beta, max_score, first_turn);

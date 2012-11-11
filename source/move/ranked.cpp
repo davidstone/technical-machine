@@ -20,9 +20,13 @@
 
 namespace technicalmachine {
 
-RankedMove::RankedMove(uint8_t const new_index, int16_t const new_score):
-	score(new_score),
-	index(new_index) {
+RankedMove::RankedMove(Moves const set_move, int16_t const set_score):
+	score(set_score),
+	move(set_move) {
+}
+
+Moves RankedMove::name() const {
+	return move;
 }
 
 bool operator<(RankedMove const & lhs, RankedMove const & rhs) {

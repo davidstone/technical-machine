@@ -708,8 +708,7 @@ void ActivePokemon::switch_in() {
 }
 
 void ActivePokemon::update_to_correct_switch() {
-	auto const index_of_switch = get_pokemon().index_of_first_switch() + all_pokemon->replacement();
-	get_pokemon().move.set_index(index_of_switch);
+	get_pokemon().move.set_index(Move::from_replacement(all_pokemon->replacement()));
 }
 
 bool ActivePokemon::trapped() const {
