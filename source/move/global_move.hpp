@@ -16,30 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "global_moves.hpp"
-#include <cassert>
-#include <vector>
-#include "move.hpp"
-#include "moves.hpp"
+#ifndef MOVE__GLOBAL_MOVE_HPP_
+#define MOVE__GLOBAL_MOVE_HPP_
+
+#include "moves_forward.hpp"
 
 namespace technicalmachine {
-namespace {
+class Move;
 
-std::vector<Move> all_moves() {
-	std::vector<Move> all;
-	all.reserve(number_of_moves);
-	for (size_t n = 0; n != number_of_moves; ++n) {
-		all.emplace_back(static_cast<Moves>(n));
-	}
-	return all;
-}
-
-}	// unnamed namespace
-
-Move const & lookup(Moves const name) {
-	static auto const all = all_moves();
-	assert(name != Moves::END);
-	return all[static_cast<size_t>(name)];
-}
+Move const & global_move(Moves name);
 
 }	// namespace technicalmachine
+#endif	// MOVE__GLOBAL_MOVE_HPP_
