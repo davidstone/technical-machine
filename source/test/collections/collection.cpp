@@ -53,8 +53,8 @@ void collection_range_tests() {
 void collection_tests () {
 	std::cout << "Running collection tests.\n";
 	collection_range_tests();
-	move_collection_tests();
 	move_container_tests();
+	move_collection_tests();
 	variable_collection_tests();
 	std::cout << "Collection tests passed.\n\n";
 }
