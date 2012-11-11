@@ -64,7 +64,7 @@ void replace_fainted_pokemon (Team & switcher, Team & other) {
 
 void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
 	other.all_pokemon().for_each([& switcher](Pokemon & pokemon) {
-		pokemon.move.for_each([& switcher](Move & move) {
+		pokemon.move.for_each_regular_move([& switcher](Move & move) {
 			if (move.is_phaze())
 				move.variable.remove_phazing(switcher.all_pokemon().real_size());
 		});
