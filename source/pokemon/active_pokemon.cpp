@@ -118,7 +118,7 @@ void ActivePokemon::reset_switch() {
 	// vanished. Therefore, we need to reset it.
 	vanish.reset();
 	yawn.reset();
-	get_pokemon().move.for_each([](Move & move) {
+	get_pokemon().move.for_each_regular_move([](Move & move) {
 		move.reset();
 	});
 }
