@@ -25,11 +25,11 @@
 
 namespace technicalmachine {
 
-inline std::vector<Move> create_shared_moves(unsigned const team_size) {
-	std::vector<Move> shared ({ Move(Moves::Struggle, 0) });
+inline std::vector<Moves> create_shared_moves(unsigned const team_size) {
+	std::vector<Moves> shared ({ Moves::Struggle });
 	if (team_size != 1) {
 		for (unsigned n = 0; n != team_size; ++n)
-			shared.emplace_back(Move::from_replacement(n), 0);
+			shared.emplace_back(Move::from_replacement(n));
 	}
 	return shared;
 }

@@ -33,16 +33,16 @@ namespace technicalmachine {
 namespace {
 class Comparator : public std::unary_function<void, Move> {
 	public:
-		Comparator(std::vector<Move> const & m):
+		Comparator(std::vector<Moves> const & m):
 			moves(m),
 			n(0) {
 		}
 		void operator()(Move const & move) {
-			if (moves[n] != move)
+			if (moves[n] != move.name)
 				throw InvalidCollection("MoveContainer has the wrong moves.");
 			++n;
 		}
-		std::vector<Move> moves;
+		std::vector<Moves> moves;
 		unsigned n;
 };
 
@@ -62,11 +62,11 @@ void move_container_tests() {
 		if (c.size() != shared_moves_size + n or c.size() != c.number_of_regular_moves() + shared_moves_size)
 			throw InvalidCollection("MoveContainer has the wrong number of moves.");
 	}
-	std::vector<Move> expected_regular;
+	std::vector<Moves> expected_regular;
 	for (unsigned n = 1; n <= move_additions; ++n)
-		expected_regular.emplace_back(static_cast<Moves>(n), 0);
+		expected_regular.emplace_back(static_cast<Moves>(n));
 	c.for_each_regular_move(Comparator(expected_regular));
-	std::vector<Move> const expected_shared = create_shared_moves(team_size);
+	auto const expected_shared = create_shared_moves(team_size);
 	c.for_each_shared(Comparator(expected_shared));
 }
 
