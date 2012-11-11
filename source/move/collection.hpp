@@ -64,7 +64,6 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		bool moved_since_switch() const;
 		std::vector<RankedMove> create_ordered_container (bool ai) const;
 		index_type size () const;
-		index_type regular_size () const;
 		void update_shared_moves(SharedMoves & s);
 		typedef uint64_t hash_type;
 		hash_type hash() const;

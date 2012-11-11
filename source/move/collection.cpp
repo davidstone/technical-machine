@@ -56,7 +56,7 @@ void MoveCollection::for_each_regular_move (std::function<void(Move &)> const & 
 }
 
 bool MoveCollection::set_index_if_found(Moves name) {
-	for (index_type new_index = 0; new_index != number_of_regular_moves(); ++new_index) {
+	for (index_type new_index = 0; new_index != size(); ++new_index) {
 		if (unchecked_value(new_index).name == name) {
 			Base::set_index(new_index);
 			return true;
