@@ -23,11 +23,12 @@
 
 namespace technicalmachine {
 
+class MoveScores;
 class Score;
 class Team;
 class Weather;
 
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score);
+int64_t transposition (Team & ai, Team & foe, MoveScores ai_scores, MoveScores foe_scores, Weather const & weather, unsigned depth, Score const & score);
 
 }	// namespace technicalmachine
 #endif	// TRANSPOSITION_HPP_

@@ -98,7 +98,6 @@ class Move {
 		VariableCollection variable;
 		Moves name;
 		Pp pp;
-		int16_t score;
 		Disable disable;
 		// Move r and times_used up to team when it will reduce the size of Move.
 		// The random number (85 through 100)

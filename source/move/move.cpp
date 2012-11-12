@@ -23,7 +23,6 @@
 
 #include "moves.hpp"
 
-#include "../evaluate.hpp"
 #include "../rational.hpp"
 
 #include "../pokemon/active_pokemon.hpp"
@@ -47,7 +46,6 @@ Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
 	variable (move, size),
 	name (move),
 	pp(move, pp_ups),
-	score (-Score::VICTORY - 1),
 	cached_accuracy(move),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)),

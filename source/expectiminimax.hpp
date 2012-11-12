@@ -25,6 +25,7 @@
 
 namespace technicalmachine {
 
+class MoveScores;
 class Score;
 class Team;
 class Weather;
@@ -32,7 +33,7 @@ class Weather;
 Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
-int64_t select_type_of_move_branch (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, Moves & best_move, bool first_turn = false);
+int64_t select_type_of_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
 #endif	// EXPECTIMINIMAX_HPP_

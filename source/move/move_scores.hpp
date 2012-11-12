@@ -1,4 +1,4 @@
-// Reorder moves for efficient evaluation
+// Hold move scores to allow efficient reordering
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__REORDER_HPP_
-#define MOVE__REORDER_HPP_
+#ifndef MOVE__MOVE_SCORES_HPP_
+#define MOVE__MOVE_SCORES_HPP_
 
-#include <vector>
-#include "move.hpp"
-#include "ranked.hpp"
+#include <cstdint>
+#include <map>
+#include "moves_forward.hpp"
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
+class Pokemon;
 
-class Move;
-class MoveScores;
-
-std::vector<RankedMove> reorder(std::vector<Move> const & input, Species species, MoveScores const & move_scores, bool ai);
+class MoveScores {
+	public:
+		void update(Pokemon const & pokemon);
+		int64_t const & at(Species species, Moves name) const;
+		int64_t & at(Species species, Moves name);
+	private:
+		std::map<std::pair<Species, Moves>, int64_t> scores;
+};
 
 }	// namespace technicalmachine
-#endif	// MOVE__REORDER_HPP_
+#endif	// MOVE__MOVE_SCORES_HPP_

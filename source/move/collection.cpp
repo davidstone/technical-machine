@@ -101,8 +101,8 @@ bool MoveCollection::moved_since_switch() const {
 	return name_of_last_used_move() != Moves::END;
 }
 
-std::vector<RankedMove> MoveCollection::create_ordered_container (bool const ai) const {
-	return reorder(container.concatenate(), ai);
+std::vector<RankedMove> MoveCollection::create_ordered_container(Species const species, MoveScores const & move_scores, bool const ai) const {
+	return reorder(container.concatenate(), species, move_scores, ai);
 }
 
 MoveCollection::index_type MoveCollection::size () const {
