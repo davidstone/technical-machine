@@ -210,7 +210,7 @@ void endofturn7 (ActivePokemon & pokemon) {
 
 void reset_variable (Team & team) {
 	team.all_pokemon().for_each([](Pokemon & pokemon) {
-		pokemon.move.for_each([](Move & move) {
+		pokemon.move.for_each_regular_move([](Move & move) {
 			move.variable.reset_index();
 		});
 	});
