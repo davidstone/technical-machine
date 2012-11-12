@@ -30,10 +30,6 @@ class SharedMoves;
 class MoveContainer {
 	public:
 		MoveContainer(SharedMoves & s);
-		MoveContainer(MoveContainer const & other);
-		MoveContainer(MoveContainer && other);
-		MoveContainer & operator=(MoveContainer const & other);
-		MoveContainer & operator=(MoveContainer && other);
 		Move const & operator[](uint8_t index) const;
 		Move & operator[](uint8_t index);
 		bool empty() const;

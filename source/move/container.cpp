@@ -33,22 +33,6 @@ MoveContainer::MoveContainer(SharedMoves & s):
 	shared(&s) {
 }
 
-MoveContainer::MoveContainer(MoveContainer const & other) = default;
-MoveContainer::MoveContainer(MoveContainer && other) = default;
-
-MoveContainer & MoveContainer::operator=(MoveContainer const & other) {
-	// shared should never change in assignment
-	assert(shared == other.shared);
-	regular = other.regular;
-	return *this;
-}
-
-MoveContainer & MoveContainer::operator=(MoveContainer && other) {
-	assert(shared == other.shared);
-	regular = std::move(other.regular);
-	return *this;
-}
-
 Move const & MoveContainer::operator[](uint8_t const index) const {
 	assert(index < size());
 	return (index < regular.size()) ? regular[index] : (*shared)[index - regular.size()];
