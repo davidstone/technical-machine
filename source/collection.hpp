@@ -54,11 +54,9 @@ class BaseCollection {
 		typedef ContainerType container_type;
 		typedef uint8_t index_type;
 		typedef T value_type;
-		constexpr BaseCollection () :
-			current_index (0) {
-		}
-		constexpr BaseCollection (container_type const & pre_set) :
-			container (pre_set),
+		template<typename... Args>
+		constexpr BaseCollection(Args &&... args) :
+			container(std::forward<Args>(args)...),
 			current_index (0) {
 		}
 		constexpr T const & operator() (index_type const specified_index) const {
