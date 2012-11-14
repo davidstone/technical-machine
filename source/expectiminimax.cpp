@@ -250,21 +250,19 @@ int64_t accuracy_branch (Team & first, Team & last, MoveScores & ai_scores, Move
 	constexpr bool last_moved = false;
 	first.update_chance_to_hit(last, weather, last_moved);
 	last.update_chance_to_hit(first, weather, first_moved);
-	int64_t average_score = first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
-	if (first.pokemon().can_miss()) {
-		first.pokemon().set_miss(true);
-		average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
-		if (last.pokemon().can_miss()) {
-			last.pokemon().set_miss(true);
-			average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
-			last.pokemon().set_miss(false);
+	int64_t average_score = 0;
+	for (auto const first_miss : { true, false }) {
+		if (first_miss and !first.pokemon().can_miss()) {
+			continue;
 		}
-		first.pokemon().set_miss(false);
-	}
-	if (last.pokemon().can_miss()) {
-		last.pokemon().set_miss(true);
-		average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
-		last.pokemon().set_miss(false);
+		first.pokemon().set_miss(first_miss);
+		for (auto const last_miss : { true, false }) {
+			if (last_miss and !last.pokemon().can_miss()) {
+				continue;
+			}
+			last.pokemon().set_miss(last_miss);
+			average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
+		}
 	}
 	average_score /= divisor;
 	return average_score;
