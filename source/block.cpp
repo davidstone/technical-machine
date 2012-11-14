@@ -31,11 +31,10 @@
 namespace technicalmachine {
 namespace {
 
-bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather);
+bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool found_selectable_move);
 bool is_blocked_by_bide (ActivePokemon const & user, Move const & move);
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather);
 bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
-bool not_illegal_struggle (Pokemon const & user, Move const & move);
 bool imprison (Move const & move, ActivePokemon const & other);
 bool blocked_by_torment (ActivePokemon const & user, Move const & move);
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other);
@@ -51,18 +50,43 @@ bool handle_sleep_counter (ActivePokemon & user, Move const & move);
 
 }	// unnamed namespace
 
-void determine_all_legal_selections (ActivePokemon & user, ActivePokemon const & other, Weather const & weather) {
-	user.all_moves().for_each([& user, & other, & weather](Move & move) {
-		move.set_selectable(is_legal_selection(user, move, other, weather));
+LegalSelections::LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather):
+	m_species(user.name()) {
+	user.all_moves().for_each([&](Move const & move) {
+		bool const found_selectable_move = !container.empty();
+		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
+			container.emplace_back(&move);
+		}
 	});
+	assert(!container.empty());
+}
+
+Species LegalSelections::species() const {
+	return m_species;
+}
+
+LegalSelections::const_iterator LegalSelections::begin() const {
+	return container.begin();
+}
+
+LegalSelections::const_iterator LegalSelections::end() const {
+	return container.end();
+}
+
+size_t LegalSelections::size() const {
+	return container.size();
+}
+
+Move const * const & LegalSelections::operator[] (size_t const index) const {
+	return container[index];
 }
 
 namespace {
 
-bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
+bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool const found_selectable_move) {
 	return !is_blocked_by_bide (user, move) and
 			is_not_illegal_switch (user, move, other, weather) and
-			not_illegal_struggle(user, move) and
+			(!move.is_struggle() or !found_selectable_move) and
 			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment (user, move)) and
 			!is_blocked_due_to_lock_in (user, move);
 }
@@ -116,13 +140,6 @@ bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const 
 	bool const block_attempted = other.ability().blocks_switching(user, weather) or user.trapped();
 	bool const result = block_attempted and !user.item().allows_switching();
 	return result;
-}
-
-bool not_illegal_struggle (Pokemon const & user, Move const & move) {
-	if (!move.is_struggle())
-		return true;
-	bool const struggle_can_be_selected = !user.move.a_regular_move_is_selectable();
-	return struggle_can_be_selected;
 }
 
 // Things that both block selection and block execution in between sleep and confusion

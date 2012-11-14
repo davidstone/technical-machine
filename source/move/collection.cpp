@@ -25,8 +25,6 @@
 
 #include "move.hpp"
 #include "moves.hpp"
-#include "ranked.hpp"
-#include "reorder.hpp"
 
 namespace technicalmachine {
 class SharedMoves;
@@ -86,10 +84,6 @@ bool MoveCollection::exists (Moves name) const {
 	return find(name) != nullptr;
 }
 
-bool MoveCollection::a_regular_move_is_selectable () const {
-	return regular_move_exists ([](Move const & move) { return move.selectable(); });
-}
-
 Moves MoveCollection::name_of_last_used_move () const {
 	Move const * move_ptr = container.find_if([] (Move const & move) {
 		return move.was_used_last();
@@ -99,10 +93,6 @@ Moves MoveCollection::name_of_last_used_move () const {
 
 bool MoveCollection::moved_since_switch() const {
 	return name_of_last_used_move() != Moves::END;
-}
-
-std::vector<RankedMove> MoveCollection::create_ordered_container(Species const species, MoveScores const & move_scores, bool const ai) const {
-	return reorder(container.concatenate(), species, move_scores, ai);
 }
 
 MoveCollection::index_type MoveCollection::size () const {

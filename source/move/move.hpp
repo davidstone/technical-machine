@@ -43,8 +43,6 @@ class Move {
 		Move (Moves move, unsigned pp_ups = 3, unsigned size = 1);
 		void reset ();
 		std::string to_string () const;
-		bool selectable() const;
-		void set_selectable(bool b);
 		bool is_damaging() const;
 		bool is_physical() const;
 		bool is_special() const;
@@ -105,8 +103,6 @@ class Move {
 	private:
 		TimesUsed times_used;
 		Accuracy cached_accuracy;
-		// I maintain the selectable state to determine if Struggle is legal
-		bool cached_selectable;
 		// Hidden Power makes this hard to replace with just a function
 		uint8_t cached_base_power;
 		Type cached_type;

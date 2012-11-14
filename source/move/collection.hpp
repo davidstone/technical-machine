@@ -28,11 +28,9 @@
 #include "container.hpp"
 #include "move.hpp"
 #include "moves_forward.hpp"
-#include "ranked.hpp"
-
-#include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
+
 class MoveScores;
 class SharedMoves;
 
@@ -61,11 +59,9 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		Move * find (Moves name);
 		bool regular_move_exists (std::function<bool(Move const &)> const & condition) const;
 		bool exists (Moves name) const;
-		bool a_regular_move_is_selectable () const;
 		// Move::END if none
 		Moves name_of_last_used_move () const;
 		bool moved_since_switch() const;
-		std::vector<RankedMove> create_ordered_container(Species species, MoveScores const & move_scores, bool ai) const;
 		index_type size () const;
 		void update_shared_moves(SharedMoves & s);
 		typedef uint64_t hash_type;

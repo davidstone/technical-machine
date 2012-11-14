@@ -22,14 +22,14 @@
 #include <vector>
 #include "move.hpp"
 #include "ranked.hpp"
-#include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
 
+class LegalSelections;
 class Move;
 class MoveScores;
 
-std::vector<RankedMove> reorder(std::vector<Move> const & input, Species species, MoveScores const & move_scores, bool ai);
+std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
 
 }	// namespace technicalmachine
 #endif	// MOVE__REORDER_HPP_

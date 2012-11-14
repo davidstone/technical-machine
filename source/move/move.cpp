@@ -58,14 +58,6 @@ void Move::reset () {
 	times_used.reset();
 }
 
-bool Move::selectable() const {
-	return cached_selectable;
-}
-
-void Move::set_selectable(bool const b) {
-	cached_selectable = b;
-}
-
 bool Move::is_damaging() const {
 	return base_power() != 0;
 }

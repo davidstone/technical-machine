@@ -62,14 +62,6 @@ void MoveContainer::for_each_shared (std::function<void(Move &)> const & f) {
 	shared->for_each(f);
 }
 
-std::vector<Move> MoveContainer::concatenate() const {
-	std::vector<Move> v = regular;
-	shared->for_each([&](Move const & move) {
-		v.emplace_back(move);
-	});
-	return v;
-}
-
 Move const * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) const {
 	for (Move const & move : regular) {
 		if (condition (move))

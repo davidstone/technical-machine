@@ -40,6 +40,7 @@
 #include "move/move.hpp"
 #include "move/moves.hpp"
 #include "move/move_scores.hpp"
+#include "move/reorder.hpp"
 #include "move/use_move.hpp"
 
 #include "pokemon/pokemon.hpp"
@@ -77,12 +78,11 @@ int64_t switch_after_move_branch (Team switcher, Team other, MoveScores & ai_sco
 
 int get_awaken_numerator (Pokemon const & pokemon);
 
-Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
+Moves random_action (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 bool is_replacing (Team const & team);
 Moves random_switch (Team const & ai, std::mt19937 & random_engine);
 std::vector<Moves> all_switches (uint8_t team_size, uint8_t pokemon_index);
-Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
-std::vector<Moves> all_legal_selections (Team & ai, Team const & foe, Weather const & weather);
+Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 
 void print_best_move (Team const & team, Moves best_move, int64_t score);
 void print_action (Team const & team, bool first_turn);
@@ -182,10 +182,8 @@ int64_t select_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveS
 	// into best_move without any additional logic, such as pre-filling it with
 	// some result.
 	
-	determine_all_legal_selections(ai.pokemon(), foe.pokemon(), weather);
-	determine_all_legal_selections(foe.pokemon(), ai.pokemon(), weather);
-	auto const ai_index = ai.pokemon().all_moves().create_ordered_container(ai.pokemon().name(), ai_scores, true);
-	auto const foe_index = foe.pokemon().all_moves().create_ordered_container(foe.pokemon().name(), foe_scores, false);
+	auto const ai_index = reorder(LegalSelections(ai.pokemon(), foe.pokemon(), weather), ai_scores, true);
+	auto const foe_index = reorder(LegalSelections(foe.pokemon(), ai.pokemon(), weather), foe_scores, false);
 
 	// Iterate through each move each Pokemon has in combination with each
 	// move the other Pokemon has, and evaluate the score of each
@@ -535,7 +533,7 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 }
 
 
-Moves random_action (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
+Moves random_action (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
 	return is_replacing (ai) ? random_switch (ai, random_engine) : random_move_or_switch (ai, foe, weather, random_engine);
 }
 
@@ -559,22 +557,11 @@ std::vector<Moves> all_switches (uint8_t const team_size, uint8_t const pokemon_
 	return switches;
 }
 
-Moves random_move_or_switch (Team & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
-	std::vector <Moves> const moves = all_legal_selections (ai, foe, weather);
-	std::uniform_int_distribution <size_t> distribution { 0, moves.size() - 1 };
-	size_t const index = distribution (random_engine);
-	return moves [index];
-}
-
-std::vector<Moves> all_legal_selections (Team & ai, Team const & foe, Weather const & weather) {
-	determine_all_legal_selections (ai.pokemon(), foe.pokemon(), weather);
-	std::vector <Moves> moves;
-	ai.pokemon().all_moves().for_each([& moves](Move const & move) {
-		if (move.selectable())
-			moves.emplace_back(move.name);
-	});
-	assert (!moves.empty());
-	return moves;
+Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
+	LegalSelections const moves(ai.pokemon(), foe.pokemon(), weather);
+	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
+	auto const index = distribution(random_engine);
+	return moves[index]->name;
 }
 
 void print_best_move (Team const & team, Moves const best_move, int64_t score) {

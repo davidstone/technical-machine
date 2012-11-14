@@ -46,7 +46,6 @@ class MoveContainer {
 		void for_each_shared (std::function<void(Move &)> const & f);
 		uint8_t size() const;
 		uint8_t number_of_regular_moves() const;
-		std::vector<Move> concatenate() const;
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
 		Move * find_if (std::function<bool(Move const &)> const & condition);
 		void update_shared_moves(SharedMoves & s);

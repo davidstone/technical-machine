@@ -24,9 +24,11 @@
 #include "move.hpp"
 #include "move_scores.hpp"
 
+#include "../block.hpp"
+
 namespace technicalmachine {
 
-std::vector<RankedMove> reorder(std::vector<Move> const & input, Species const species, MoveScores const & move_scores, bool ai) {
+std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai) {
 	// This takes all of a Pokemon's moves and sorts them based on previously
 	// evaluated scores. Moves that haven't been evaluated are sorted to the
 	// end. I do this because alpha-beta pruning is most efficient when the
@@ -36,12 +38,12 @@ std::vector<RankedMove> reorder(std::vector<Move> const & input, Species const s
 	// Moves that cannot be selected are excluded.
 	std::vector<RankedMove> output;
 	for (auto const & move : input) {
-		if (move.selectable())
-			output.emplace_back(move.name, move_scores.at(species, move.name));
+		output.emplace_back(move->name, move_scores.at(input.species(), move->name));
 	}
 	std::sort(output.begin(), output.end());
-	if (ai)
+	if (ai) {
 		std::reverse(output.begin(), output.end());
+	}
 	return output;
 }
 
