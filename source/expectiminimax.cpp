@@ -268,39 +268,25 @@ int64_t accuracy_branch (Team & first, Team & last, MoveScores & ai_scores, Move
 	return average_score;
 }
 
-
 int64_t random_move_effects_branch (Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score) {
 	int64_t score3 = 0;
 	first.pokemon().move().variable.for_each_index([&]() {
 		int64_t score2 = 0;
 		last.pokemon().move().variable.for_each_index([&]() {
-			constexpr unsigned ch_denominator = 16;
-			constexpr unsigned ch_numerator = 1;
-			constexpr unsigned non_ch_numerator = ch_denominator - ch_numerator;
-			first.pokemon().set_critical_hit(false);
-			last.pokemon().set_critical_hit(false);
-			int64_t score1 = awaken_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-			if (first.pokemon().move().can_critical_hit() and !last.pokemon().move().can_critical_hit()) {
-				score1 *= non_ch_numerator;
-				first.pokemon().set_critical_hit(true);
-				score1 += awaken_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-				score1 /= ch_denominator;
-			}
-			else if (!first.pokemon().move().can_critical_hit() and last.pokemon().move().can_critical_hit()) {
-				score1 *= non_ch_numerator;
-				last.pokemon().set_critical_hit(true);
-				score1 += awaken_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-				score1 /= ch_denominator;
-			}
-			else if (first.pokemon().move().can_critical_hit() and last.pokemon().move().can_critical_hit()) {
-				score1 *= non_ch_numerator * non_ch_numerator;
-				first.pokemon().set_critical_hit(true);
-				score1 += awaken_branch (first, last, ai_scores, foe_scores, weather, depth, score) * non_ch_numerator;
-				last.pokemon().set_critical_hit(true);
-				score1 += awaken_branch (first, last, ai_scores, foe_scores, weather, depth, score) * ch_numerator;
-				first.pokemon().set_critical_hit(false);
-				score1 += awaken_branch (first, last, ai_scores, foe_scores, weather, depth, score) * non_ch_numerator;
-				score1 /= ch_denominator * ch_denominator;
+			int64_t score1 = 0;
+			for (auto const first_ch : { true, false }) {
+				if (first_ch and !first.pokemon().move().can_critical_hit()) {
+					continue;
+				}
+				first.pokemon().set_critical_hit(first_ch);
+				for (auto const last_ch : { true, false }) {
+					if (last_ch and !last.pokemon().move().can_critical_hit()) {
+						continue;
+					}
+					last.pokemon().set_critical_hit(last_ch);
+					auto const ch_probability = first.pokemon().critical_probability() * last.pokemon().critical_probability();
+					score1 += awaken_branch(first, last, ai_scores, foe_scores, weather, depth, score) * ch_probability;
+				}
 			}
 			score2 += score1 * last.pokemon().move().variable().probability();
 		});

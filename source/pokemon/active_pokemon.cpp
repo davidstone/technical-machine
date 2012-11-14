@@ -218,6 +218,13 @@ void ActivePokemon::set_critical_hit(bool const value) {
 	ch = value;
 }
 
+Rational ActivePokemon::critical_probability() const {
+	constexpr unsigned ch_denominator = 16;
+	return move().can_critical_hit() ?
+		Rational(critical_hit() ? 1 : ch_denominator - 1, ch_denominator) :
+		Rational(critical_hit() ? 0 : 1, 1);
+}
+
 void ActivePokemon::curse() {
 	cursed = true;
 }

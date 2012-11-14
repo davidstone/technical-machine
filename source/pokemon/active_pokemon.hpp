@@ -93,6 +93,8 @@ class ActivePokemon {
 		void handle_confusion();
 		bool critical_hit() const;
 		void set_critical_hit(bool value);
+		// Returns probability of a CH if getting a CH, the complement otherwise
+		Rational critical_probability() const;
 		void curse();
 		bool is_cursed() const;
 		bool defense_curled() const;
