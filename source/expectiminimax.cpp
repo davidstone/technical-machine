@@ -250,20 +250,20 @@ int64_t accuracy_branch (Team & first, Team & last, MoveScores & ai_scores, Move
 	constexpr bool last_moved = false;
 	first.update_chance_to_hit(last, weather, last_moved);
 	last.update_chance_to_hit(first, weather, first_moved);
-	int64_t average_score = first.pokemon().chance_to_hit() * last.pokemon().chance_to_hit() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
+	int64_t average_score = first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
 	if (first.pokemon().can_miss()) {
 		first.pokemon().set_miss(true);
-		average_score += first.pokemon().chance_to_miss() * last.pokemon().chance_to_hit() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
+		average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
 		if (last.pokemon().can_miss()) {
 			last.pokemon().set_miss(true);
-			average_score += first.pokemon().chance_to_miss() * last.pokemon().chance_to_miss() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
+			average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
 			last.pokemon().set_miss(false);
 		}
 		first.pokemon().set_miss(false);
 	}
 	if (last.pokemon().can_miss()) {
 		last.pokemon().set_miss(true);
-		average_score += first.pokemon().chance_to_hit() * last.pokemon().chance_to_miss() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
+		average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
 		last.pokemon().set_miss(false);
 	}
 	average_score /= divisor;

@@ -243,8 +243,9 @@ class ActivePokemon {
 		void indirect_damage(unsigned damage);
 		void register_damage(unsigned damage);
 		void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
-		ChanceToHit::value_type chance_to_hit() const;
-		ChanceToHit::value_type chance_to_miss() const;
+		// If the move is a hit, returns the chance to hit, otherwise, returns
+		// the chance to miss.
+		ChanceToHit::value_type accuracy_probability() const;
 		bool can_miss() const;
 		
 		bool will_be_replaced() const;

@@ -817,12 +817,8 @@ void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather c
 	cached_chance_to_hit.update(*this, target, weather, target_moved);
 }
 
-ChanceToHit::value_type ActivePokemon::chance_to_hit() const {
-	return cached_chance_to_hit();
-}
-
-ChanceToHit::value_type ActivePokemon::chance_to_miss() const {
-	return cached_chance_to_hit.inverse();
+ChanceToHit::value_type ActivePokemon::accuracy_probability() const {
+	return miss ? cached_chance_to_hit.inverse() : cached_chance_to_hit();
 }
 
 bool ActivePokemon::can_miss() const {
