@@ -26,6 +26,7 @@ namespace technicalmachine {
 
 class Ability;
 class Pokemon;
+class Rational;
 class Weather;
 
 class Status {
@@ -66,14 +67,16 @@ class Status {
 		friend bool operator!= (Status lhs, Status rhs);
 
 		void increase_sleep_counter (Ability const & ability, bool awaken);
+		// Returns true only if the status can change from sleeping to awake in
+		// this move. Returns false if the Pokemon is already awake or if, due
+		// to the sleep counter, they will definitely not awaken.
 		bool can_awaken(Ability const & ability) const;
-		unsigned awaken_numerator (Ability const & ability) const;
-		static unsigned min_sleep_turns();
-		static unsigned max_sleep_turns();
+		Rational awaken_probability(Ability const & ability, bool awaken) const;
 
 		uint64_t hash() const;
 		static uint64_t max_hash();
 	private:
+		unsigned awaken_numerator (Ability const & ability) const;
 		Statuses status;
 		uint8_t turns_already_slept;
 };

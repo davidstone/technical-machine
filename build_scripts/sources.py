@@ -70,7 +70,7 @@ predict_sources += prepend_dir('type', ['collection.cpp', 'effectiveness.cpp', '
 predict_sources += string_conversion_sources
 predict_libraries = ['fltk', 'boost_filesystem', 'boost_system']
 
-test_sources = prepend_dir('test', ['test.cpp', 'damage.cpp', 'ev_optimizer.cpp', 'incorrect_calculation.cpp', 'stat.cpp', 'string_conversion.cpp'])
+test_sources = prepend_dir('test', ['test.cpp', 'damage.cpp', 'ev_optimizer.cpp', 'incorrect_calculation.cpp', 'stat.cpp', 'status.cpp', 'string_conversion.cpp'])
 test_sources += prepend_dir('test/collections', ['collection.cpp', 'invalid_collection.cpp', 'move_collection.cpp', 'move_container.cpp', 'variable_collection.cpp'])
 test_sources += prepend_dir('test/pokemon_lab', ['conversion.cpp', 'team_file.cpp', 'test.cpp'])
 test_sources += prepend_dir('test/pokemon_online', ['conversion.cpp', 'team_file.cpp', 'test.cpp'])

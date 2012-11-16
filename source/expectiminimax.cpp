@@ -297,31 +297,20 @@ int64_t random_move_effects_branch (Team & first, Team & last, MoveScores & ai_s
 
 
 int64_t awaken_branch (Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score) {
-	first.pokemon().awaken(false);
-	last.pokemon().awaken(false);
-	int64_t average_score = use_move_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-	if (first.pokemon().status().can_awaken(first.pokemon().ability())) {
-		unsigned const first_numerator = first.pokemon().status().awaken_numerator(first.pokemon().ability());
-		average_score *= Status::max_sleep_turns() - first_numerator;
-		first.pokemon().awaken(true);
-		average_score += first_numerator * use_move_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-		if (last.pokemon().status().can_awaken(last.pokemon().ability())) {
-			unsigned const last_numerator = last.pokemon().status().awaken_numerator(last.pokemon().ability());
-			average_score *= Status::max_sleep_turns() - last_numerator;
-			last.pokemon().awaken(true);
-			average_score += last_numerator * (Status::max_sleep_turns() - first_numerator) * use_move_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-			first.pokemon().awaken(false);
-			average_score += last_numerator * first_numerator * use_move_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-			average_score /= Status::max_sleep_turns();
+	int64_t average_score = 0;
+	for (auto const first_awaken : { true, false }) {
+		if (first_awaken and !first.pokemon().can_awaken()) {
+			continue;
 		}
-		average_score /= Status::max_sleep_turns();
-	}
-	else if (last.pokemon().status().can_awaken(last.pokemon().ability())) {
-		unsigned const last_numerator = last.pokemon().status().awaken_numerator(last.pokemon().ability());
-		average_score *= Status::max_sleep_turns() - last_numerator;
-		last.pokemon().awaken(true);
-		average_score += last_numerator * use_move_branch (first, last, ai_scores, foe_scores, weather, depth, score);
-		average_score /= Status::max_sleep_turns();
+		first.pokemon().awaken(first_awaken);
+		for (auto const last_awaken : { true, false }) {
+			if (last_awaken and !last.pokemon().can_awaken()) {
+				continue;
+			}
+			last.pokemon().awaken(last_awaken);
+			auto const awaken_probability = first.pokemon().awaken_probability() * last.pokemon().awaken_probability();
+			average_score += use_move_branch(first, last, ai_scores, foe_scores, weather, depth, score) * awaken_probability;
+		}
 	}
 	return average_score;
 }

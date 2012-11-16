@@ -19,6 +19,7 @@
 #ifndef RATIONAL_HPP_
 #define RATIONAL_HPP_
 
+#include <string>
 #include <type_traits>
 
 namespace technicalmachine {
@@ -49,11 +50,24 @@ class Rational {
 			lhs.denominator *= rhs.denominator;
 			return lhs;
 		}
-		friend bool operator<(Rational const lhs, Rational const rhs) {
-			return lhs.numerator * rhs.denominator < rhs.numerator * rhs.denominator;
+		friend constexpr Rational operator*(Rational const lhs, Rational const rhs) {
+			return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator);
 		}
-		friend bool operator<=(Rational const lhs, Rational const rhs) {
-			return lhs.numerator * rhs.denominator <= rhs.numerator * rhs.denominator;
+		friend constexpr Rational complement(Rational const rational) {
+			return Rational(rational.denominator - rational.numerator, rational.denominator);
+		}
+		// All these relational operators assume no overflow
+		friend constexpr bool operator==(Rational const lhs, Rational const rhs) {
+			return lhs.numerator * rhs.denominator == rhs.numerator * lhs.denominator;
+		}
+		friend constexpr bool operator<(Rational const lhs, Rational const rhs) {
+			return lhs.numerator * rhs.denominator < rhs.numerator * lhs.denominator;
+		}
+		friend constexpr bool operator<=(Rational const lhs, Rational const rhs) {
+			return lhs.numerator * rhs.denominator <= rhs.numerator * lhs.denominator;
+		}
+		friend std::string to_string(Rational const rational) {
+			return std::to_string(rational.numerator) + " / " + std::to_string(rational.denominator);
 		}
 	private:
 		template<typename T, typename Enable = void>
@@ -83,9 +97,10 @@ operator*(Rational const rational, T number) {
 	return number *= rational;
 }
 
-inline Rational operator*(Rational lhs, Rational const rhs) {
-	return lhs *= rhs;
+constexpr bool operator!=(Rational const lhs, Rational const rhs) {
+	return !(lhs == rhs);
 }
+
 }	// namespace technicalmachine
 
 #endif	// RATIONAL_HPP_

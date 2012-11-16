@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include "ability.hpp"
+#include "rational.hpp"
 #include "weather.hpp"
 
 #include "pokemon/pokemon.hpp"
@@ -31,6 +32,14 @@
 
 namespace technicalmachine {
 namespace {
+
+constexpr unsigned min_sleep_turns() {
+	return 1;
+}
+
+constexpr unsigned max_sleep_turns() {
+	return 4;
+}
 
 template<Status::Statuses status>
 bool status_can_apply (Ability const ability, Pokemon const & target, Weather const & weather) {
@@ -196,19 +205,16 @@ bool operator!= (Status const lhs, Status const rhs) {
 }
 
 bool Status::can_awaken(Ability const & ability) const {
-	return awaken_numerator(ability) > min_sleep_turns();
+	return awaken_numerator(ability) >= min_sleep_turns();
 }
 
 unsigned Status::awaken_numerator (Ability const & ability) const {
 	return static_cast<unsigned>(turns_already_slept) + ability.wakes_up_early();
 }
 
-unsigned Status::min_sleep_turns () {
-	return 1;
-}
-
-unsigned Status::max_sleep_turns () {
-	return 4;
+Rational Status::awaken_probability(Ability const & ability, bool const awaken) const {
+	Rational const result(can_awaken(ability) ? 1 : 0, max_sleep_turns() + 1 - awaken_numerator(ability));
+	return awaken ? result : complement(result);
 }
 
 uint64_t Status::hash() const {

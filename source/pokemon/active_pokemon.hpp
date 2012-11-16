@@ -79,6 +79,8 @@ class ActivePokemon {
 		void ability(Ability::Abilities update);
 		void attract();
 		void awaken(bool value);
+		bool can_awaken() const;
+		Rational awaken_probability() const;
 		bool aqua_ring_is_active() const;
 		void activate_aqua_ring();
 		bool is_baton_passing() const;

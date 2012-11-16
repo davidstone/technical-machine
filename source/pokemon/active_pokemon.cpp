@@ -169,6 +169,14 @@ void ActivePokemon::awaken(bool const value) {
 	awakening = value;
 }
 
+bool ActivePokemon::can_awaken() const {
+	return status().can_awaken(ability());
+}
+
+Rational ActivePokemon::awaken_probability() const {
+	return status().awaken_probability(ability(), awakening);
+}
+
 bool ActivePokemon::is_baton_passing() const {
 	return pass;
 }
