@@ -681,6 +681,10 @@ Status & ActivePokemon::status() {
 	return get_pokemon().status();
 }
 
+bool ActivePokemon::can_clear_status() const {
+	return ability().can_clear_status(status());
+}
+
 unsigned ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }

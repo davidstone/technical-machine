@@ -212,6 +212,7 @@ class ActivePokemon {
 		
 		Status const & status() const;
 		Status & status();
+		bool can_clear_status() const;
 
 		unsigned spit_up_power() const;
 		void increment_stockpile();

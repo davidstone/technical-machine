@@ -344,12 +344,12 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, MoveScores & ai_scor
 	int64_t average_score = 0;
 	int64_t denominator = 0;
 	for (auto const first_shed_skin : { true, false }) {
-		if (first_shed_skin and !first.pokemon().ability().can_clear_status(first.pokemon().status())) {
+		if (first_shed_skin and !first.pokemon().can_clear_status()) {
 			continue;
 		}
 		first.pokemon().shed_skin(first_shed_skin);
 		for (auto const last_shed_skin : { true, false }) {
-			if (last_shed_skin and !last.pokemon().ability().can_clear_status(last.pokemon().status())) {
+			if (last_shed_skin and !last.pokemon().can_clear_status()) {
 				continue;
 			}
 			last.pokemon().shed_skin(last_shed_skin);
