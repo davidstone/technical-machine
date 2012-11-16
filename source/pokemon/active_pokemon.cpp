@@ -560,6 +560,14 @@ void ActivePokemon::shed_skin(bool const value) {
 	shedding_skin = value;
 }
 
+Rational ActivePokemon::shed_skin_probability() const {
+	if (!can_clear_status()) {
+		return Rational(shed_skin_activated() ? 0 : 1, 1);
+	}
+	Rational const result(3, 10);
+	return shed_skin_activated() ? result : complement(result);
+}
+
 void ActivePokemon::increase_sleep_counter() {
 	status().increase_sleep_counter(ability(), awakening);
 }

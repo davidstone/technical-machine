@@ -243,6 +243,25 @@ int64_t order_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores 
 		accuracy_branch (*first, *last, ai_scores, foe_scores, weather, depth, score);
 }
 
+template<typename FlagPossible, typename SetFlag, typename Probability, typename NextBranch>
+int64_t generic_flag_branch(Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score, FlagPossible const & flag_possible, SetFlag const & set_flag, Probability const & probability, NextBranch const & next_branch) {
+	int64_t average_score = 0;
+	for (auto const first_flag : { true, false }) {
+		if (first_flag and !flag_possible(first.pokemon())) {
+			continue;
+		}
+		set_flag(first.pokemon(), first_flag);
+		for (auto const last_flag : { true, false }) {
+			if (last_flag and !flag_possible(last.pokemon())) {
+				continue;
+			}
+			set_flag(last.pokemon(), last_flag);
+			auto const p = probability(first.pokemon()) * probability(last.pokemon());
+			average_score += next_branch(first, last, ai_scores, foe_scores, weather, depth, score) * p;
+		}
+	}
+	return average_score;
+}
 
 int64_t accuracy_branch (Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score) {
 	constexpr int divisor = 100 * 100;
@@ -250,44 +269,33 @@ int64_t accuracy_branch (Team & first, Team & last, MoveScores & ai_scores, Move
 	constexpr bool last_moved = false;
 	first.update_chance_to_hit(last, weather, last_moved);
 	last.update_chance_to_hit(first, weather, first_moved);
-	int64_t average_score = 0;
-	for (auto const first_miss : { true, false }) {
-		if (first_miss and !first.pokemon().can_miss()) {
-			continue;
-		}
-		first.pokemon().set_miss(first_miss);
-		for (auto const last_miss : { true, false }) {
-			if (last_miss and !last.pokemon().can_miss()) {
-				continue;
-			}
-			last.pokemon().set_miss(last_miss);
-			average_score += first.pokemon().accuracy_probability() * last.pokemon().accuracy_probability() * random_move_effects_branch(first, last, ai_scores, foe_scores, weather, depth, score);
-		}
-	}
-	average_score /= divisor;
-	return average_score;
+	auto const flag_possible = [](ActivePokemon const & pokemon) {
+		return pokemon.can_miss();
+	};
+	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+		pokemon.set_miss(flag);
+	};
+	auto const probability = [](ActivePokemon const & pokemon) {
+		return pokemon.accuracy_probability();
+	};
+	return generic_flag_branch(first, last, ai_scores, foe_scores, weather, depth, score, flag_possible, set_flag, probability, random_move_effects_branch) / divisor;
 }
 
 int64_t random_move_effects_branch (Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score) {
+	auto const flag_possible = [](ActivePokemon const & pokemon) {
+		return pokemon.move().can_critical_hit();
+	};
+	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+		pokemon.set_critical_hit(flag);
+	};
+	auto const probability = [](ActivePokemon const & pokemon) {
+		return pokemon.critical_probability();
+	};
 	int64_t score3 = 0;
 	first.pokemon().move().variable.for_each_index([&]() {
 		int64_t score2 = 0;
 		last.pokemon().move().variable.for_each_index([&]() {
-			int64_t score1 = 0;
-			for (auto const first_ch : { true, false }) {
-				if (first_ch and !first.pokemon().move().can_critical_hit()) {
-					continue;
-				}
-				first.pokemon().set_critical_hit(first_ch);
-				for (auto const last_ch : { true, false }) {
-					if (last_ch and !last.pokemon().move().can_critical_hit()) {
-						continue;
-					}
-					last.pokemon().set_critical_hit(last_ch);
-					auto const ch_probability = first.pokemon().critical_probability() * last.pokemon().critical_probability();
-					score1 += awaken_branch(first, last, ai_scores, foe_scores, weather, depth, score) * ch_probability;
-				}
-			}
+			auto const score1 = generic_flag_branch(first, last, ai_scores, foe_scores, weather, depth, score, flag_possible, set_flag, probability, awaken_branch);
 			score2 += score1 * last.pokemon().move().variable().probability();
 		});
 		score3 += score2 * first.pokemon().move().variable().probability() / Variable::max_probability;
@@ -297,22 +305,16 @@ int64_t random_move_effects_branch (Team & first, Team & last, MoveScores & ai_s
 
 
 int64_t awaken_branch (Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score) {
-	int64_t average_score = 0;
-	for (auto const first_awaken : { true, false }) {
-		if (first_awaken and !first.pokemon().can_awaken()) {
-			continue;
-		}
-		first.pokemon().awaken(first_awaken);
-		for (auto const last_awaken : { true, false }) {
-			if (last_awaken and !last.pokemon().can_awaken()) {
-				continue;
-			}
-			last.pokemon().awaken(last_awaken);
-			auto const awaken_probability = first.pokemon().awaken_probability() * last.pokemon().awaken_probability();
-			average_score += use_move_branch(first, last, ai_scores, foe_scores, weather, depth, score) * awaken_probability;
-		}
-	}
-	return average_score;
+	auto const flag_possible = [](ActivePokemon const & pokemon) {
+		return pokemon.can_awaken();
+	};
+	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+		pokemon.awaken(flag);
+	};
+	auto const probability = [](ActivePokemon const & pokemon) {
+		return pokemon.awaken_probability();
+	};
+	return generic_flag_branch(first, last, ai_scores, foe_scores, weather, depth, score, flag_possible, set_flag, probability, use_move_branch);
 }
 
 int64_t use_move_branch (Team first, Team last, MoveScores & ai_scores, MoveScores & foe_scores, Weather weather, unsigned depth, Score const & score) {
@@ -341,29 +343,21 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, MoveScores & ai_scor
 	Team * faster;
 	Team * slower;
 	faster_pokemon (first, last, weather, faster, slower);
-	int64_t average_score = 0;
-	int64_t denominator = 0;
-	for (auto const first_shed_skin : { true, false }) {
-		if (first_shed_skin and !first.pokemon().can_clear_status()) {
-			continue;
-		}
-		first.pokemon().shed_skin(first_shed_skin);
-		for (auto const last_shed_skin : { true, false }) {
-			if (last_shed_skin and !last.pokemon().can_clear_status()) {
-				continue;
-			}
-			last.pokemon().shed_skin(last_shed_skin);
-			auto const individual_probability = [](bool const shedding)->int64_t {
-				constexpr int64_t shed_skin_probability = 3;
-				return shedding ? shed_skin_probability : 10 - shed_skin_probability;
-			};
-			int64_t const numerator = individual_probability(first_shed_skin) * individual_probability(last_shed_skin);
-			average_score += end_of_turn_order_branch(first, last, ai_scores, foe_scores, faster, slower, weather, depth, score) * numerator;
-			denominator += numerator;
-		}
-	}
-	average_score /= denominator;
-	return average_score;
+	auto const flag_possible = [](ActivePokemon const & pokemon) {
+		return pokemon.can_clear_status();
+	};
+	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+		pokemon.shed_skin(flag);
+	};
+	auto const probability = [](ActivePokemon const & pokemon) {
+		return pokemon.shed_skin_probability();
+	};
+	// Partially apply some arguments to the function so it has the expected
+	// signature
+	auto const end_of_turn_order = [faster, slower](Team & team, Team & other, MoveScores & ai_scores_, MoveScores & foe_scores_, Weather const & weather_, unsigned depth_, Score const & score_) {
+		return end_of_turn_order_branch(team, other, ai_scores_, foe_scores_, faster, slower, weather_, depth_, score_);
+	};
+	return generic_flag_branch(first, last, ai_scores, foe_scores, weather, depth, score, flag_possible, set_flag, probability, end_of_turn_order);
 }
 
 int64_t use_move_and_follow_up (Team & user, Team & other, MoveScores & ai_scores, MoveScores & foe_scores, Weather & weather, unsigned depth, Score const & score) {

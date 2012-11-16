@@ -176,6 +176,7 @@ class ActivePokemon {
 		void shadow_force();
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
+		Rational shed_skin_probability() const;
 		void increase_sleep_counter();
 		bool slow_start_is_active() const;
 		bool sport_is_active(Move const & foe_move) const;
