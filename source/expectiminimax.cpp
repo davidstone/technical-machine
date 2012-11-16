@@ -341,27 +341,29 @@ int64_t use_move_no_copy_branch (Team & first, Team & last, MoveScores & ai_scor
 	Team * faster;
 	Team * slower;
 	faster_pokemon (first, last, weather, faster, slower);
-	first.pokemon().shed_skin(false);
-	last.pokemon().shed_skin(false);
-	int64_t average_score = 49 * end_of_turn_order_branch (first, last, ai_scores, foe_scores, faster, slower, weather, depth, score);
-	int64_t divisor = 49;
-	if (first.pokemon().ability().can_clear_status(first.pokemon().status())) {
-		first.pokemon().shed_skin(true);
-		average_score += 21 * end_of_turn_order_branch (first, last, ai_scores, foe_scores, faster, slower, weather, depth, score);
-		divisor += 21;
-		if (last.pokemon().ability().can_clear_status(last.pokemon().status())) {
-			last.pokemon().shed_skin(true);
-			average_score += 9 * end_of_turn_order_branch (first, last, ai_scores, foe_scores, faster, slower, weather, depth, score);
-			divisor += 9;
-			first.pokemon().shed_skin(false);
+	int64_t average_score = 0;
+	int64_t denominator = 0;
+	for (auto const first_shed_skin : { true, false }) {
+		if (first_shed_skin and !first.pokemon().ability().can_clear_status(first.pokemon().status())) {
+			continue;
+		}
+		first.pokemon().shed_skin(first_shed_skin);
+		for (auto const last_shed_skin : { true, false }) {
+			if (last_shed_skin and !last.pokemon().ability().can_clear_status(last.pokemon().status())) {
+				continue;
+			}
+			last.pokemon().shed_skin(last_shed_skin);
+			auto const individual_probability = [](bool const shedding)->int64_t {
+				constexpr int64_t shed_skin_probability = 3;
+				return shedding ? shed_skin_probability : 10 - shed_skin_probability;
+			};
+			int64_t const numerator = individual_probability(first_shed_skin) * individual_probability(last_shed_skin);
+			average_score += end_of_turn_order_branch(first, last, ai_scores, foe_scores, faster, slower, weather, depth, score) * numerator;
+			denominator += numerator;
 		}
 	}
-	if (last.pokemon().ability().can_clear_status(last.pokemon().status())) {
-		last.pokemon().shed_skin(true);
-		average_score += 21 * end_of_turn_order_branch (first, last, ai_scores, foe_scores, faster, slower, weather, depth, score);
-		divisor += 21;
-	}
-	return average_score / divisor;
+	average_score /= denominator;
+	return average_score;
 }
 
 int64_t use_move_and_follow_up (Team & user, Team & other, MoveScores & ai_scores, MoveScores & foe_scores, Weather & weather, unsigned depth, Score const & score) {
