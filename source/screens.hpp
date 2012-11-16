@@ -54,7 +54,7 @@ class Screens {
 		Screen m_mist;
 		Screen m_safeguard;
 		Tailwind m_tailwind;
-		friend class Score;
+		friend class Evaluate;
 };
 bool operator!=(Screens const & lhs, Screens const & rhs);
 

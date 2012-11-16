@@ -35,7 +35,7 @@ class Rampage {
 		static hash_type max_hash();
 		friend bool operator== (Rampage const & lhs, Rampage const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		bool is_active() const;
 		uint8_t turns_remaining;
 };

@@ -35,7 +35,7 @@ class HealBlock {
 		static hash_type max_hash();
 		friend bool operator== (HealBlock const & lhs, HealBlock const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		uint8_t turns_remaining;
 };
 bool operator!= (HealBlock const & lhs, HealBlock const & rhs);

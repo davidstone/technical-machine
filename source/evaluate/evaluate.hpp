@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE_HPP_
-#define EVALUATE_HPP_
+#ifndef EVALUATE__EVALUATE_HPP_
+#define EVALUATE__EVALUATE_HPP_
 
 #include <array>
 #include <cstdint>
 
-#include "stat/stat.hpp"
+#include "../stat/stat.hpp"
 
 namespace technicalmachine {
 
@@ -32,16 +32,13 @@ class Status;
 class Team;
 class Weather;
 
-// All variables within Score do not change during use. I do not declare them
-// const because the values are determined by reading a text file, so they
-// aren't quite known at initialization time. Can be updated between battles.
-class Score {
+class Evaluate {
 	public:
-		Score ();
-		void load_evaluation_constants();
+		Evaluate();
+		void load();
 		// ai and foe are both logically constant. I change the active Pokemon
 		// in each of them, but I change it back before the function returns.
-		int64_t evaluate(Team & ai, Team & foe, Weather const & weather) const;
+		int64_t operator()(Team & ai, Team & foe, Weather const & weather) const;
 		// Both of these return victory if the battle is won. Returns -victory
 		// if the battle is lost. Returns 0 otherwise.
 		static int64_t win(Team const & team);
@@ -102,4 +99,4 @@ class Score {
 };
 
 } // namespace technicalmachine
-#endif // EVALUATE_HPP_
+#endif // EVALUATE__EVALUATE_HPP_

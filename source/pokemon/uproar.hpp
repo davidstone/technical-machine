@@ -33,7 +33,7 @@ class Uproar {
 		hash_type hash() const;
 		static hash_type max_hash();
 	private:
-		friend class Score;
+		friend class Evaluate;
 		uint8_t counter;
 };
 bool operator!= (Uproar const & lhs, Uproar const & rhs);

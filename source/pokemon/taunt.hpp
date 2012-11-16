@@ -35,7 +35,7 @@ class Taunt {
 		hash_type hash() const;
 		static hash_type max_hash();
 	private:
-		friend class Score;
+		friend class Evaluate;
 		uint8_t turns_taunted;
 };
 bool operator!= (Taunt const & lhs, Taunt const & rhs);

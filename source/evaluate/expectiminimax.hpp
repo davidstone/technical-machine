@@ -1,4 +1,4 @@
-// Reorder moves for efficient evaluation
+// Expectiminimax header
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,20 +16,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__REORDER_HPP_
-#define MOVE__REORDER_HPP_
+#ifndef EVALUATE__EXPECTIMINIMAX_HPP_
+#define EVALUATE__EXPECTIMINIMAX_HPP_
 
-#include <vector>
-#include "move.hpp"
-#include "ranked.hpp"
+#include <cstdint>
+#include <random>
+#include "../move/moves_forward.hpp"
 
 namespace technicalmachine {
 
-class LegalSelections;
-class Move;
+class Evaluate;
 class MoveScores;
+class Team;
+class Weather;
 
-std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
+Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
+
+// Called from the function that identifies transpositions
+int64_t select_type_of_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
-#endif	// MOVE__REORDER_HPP_
+#endif	// EVALUATE__EXPECTIMINIMAX_HPP_

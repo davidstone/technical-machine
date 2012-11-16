@@ -35,7 +35,7 @@ class DelayedAttack {
 		static hash_type max_hash();
 		friend bool operator== (DelayedAttack const & lhs, DelayedAttack const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		bool is_active() const;
 		uint8_t turns_before_hitting;
 };

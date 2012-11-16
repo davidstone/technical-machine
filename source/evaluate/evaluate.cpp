@@ -23,15 +23,15 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "team.hpp"
+#include "../team.hpp"
 
-#include "move/move.hpp"
-#include "move/moves.hpp"
+#include "../move/move.hpp"
+#include "../move/moves.hpp"
 
-#include "pokemon/collection.hpp"
-#include "pokemon/pokemon.hpp"
+#include "../pokemon/collection.hpp"
+#include "../pokemon/pokemon.hpp"
 
-#include "type/effectiveness.hpp"
+#include "../type/effectiveness.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -51,12 +51,12 @@ class ResetIndex {
 
 }	// unnamed namespace
 
-int64_t Score::evaluate (Team & ai, Team & foe, Weather const & weather) const {
+int64_t Evaluate::operator()(Team & ai, Team & foe, Weather const & weather) const {
 	int64_t score = score_team (ai) - score_team (foe);
 	return score + score_all_pokemon (ai, foe, weather) - score_all_pokemon (foe, ai, weather);
 }
 
-int64_t Score::score_team (Team const & team) const {
+int64_t Evaluate::score_team (Team const & team) const {
 	int64_t score = lucky_chant * team.screens.m_lucky_chant.turns_remaining;
 	score += mist * team.screens.m_mist.turns_remaining;
 	score += safeguard * team.screens.m_safeguard.turns_remaining;
@@ -76,7 +76,7 @@ int64_t Score::score_team (Team const & team) const {
 	return score;
 }
 
-int64_t Score::score_active_pokemon(ActivePokemon const & pokemon) const {
+int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 	int64_t score = 0;
 	if (pokemon.is_cursed())
 		score += curse;
@@ -95,7 +95,7 @@ int64_t Score::score_active_pokemon(ActivePokemon const & pokemon) const {
 	return score;
 }
 
-int64_t Score::baton_passable_score(ActivePokemon const & pokemon) const {
+int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 	int64_t score = 0;
 	if (pokemon.aqua_ring)
 		score += aqua_ring;
@@ -110,7 +110,7 @@ int64_t Score::baton_passable_score(ActivePokemon const & pokemon) const {
 	return score;
 }
 
-int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
+int64_t Evaluate::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
 	ResetIndex const reset_index (team);
 	int64_t score = 0;
 	for (uint8_t index = 0; index != team.all_pokemon().size(); ++index) {
@@ -120,7 +120,7 @@ int64_t Score::score_all_pokemon (Team & team, Team const & other, Weather const
 	return score;
 }
 
-int64_t Score::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
+int64_t Evaluate::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	auto const & pokemon = team.pokemon().get_pokemon();
 	int64_t score = team.entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
 	if (grounded (team.pokemon(), weather))
@@ -135,7 +135,7 @@ int64_t Score::score_pokemon (Team const & team, Team const & other, Weather con
 	return score;
 }
 
-int64_t Score::score_status (ActivePokemon const & pokemon) const {
+int64_t Evaluate::score_status (ActivePokemon const & pokemon) const {
 	switch (pokemon.status().name()) {
 		case Status::BURN:
 			return burn;
@@ -155,7 +155,7 @@ int64_t Score::score_status (ActivePokemon const & pokemon) const {
 	}
 }
 
-int64_t Score::score_move (ActivePokemon const & pokemon, Team const & other, Weather const & weather) const {
+int64_t Evaluate::score_move (ActivePokemon const & pokemon, Team const & other, Weather const & weather) const {
 	// TODO: alter the score of a move based on the weather
 	int64_t score = 0;
 	pokemon.get_pokemon().move.for_each([&](Move const & move) {
@@ -170,13 +170,13 @@ int64_t Score::score_move (ActivePokemon const & pokemon, Team const & other, We
 }
 
 
-int64_t Score::win (Team const & team) {
+int64_t Evaluate::win (Team const & team) {
 	if (team.all_pokemon().size() == 0)
 		return team.is_me() ? -victory : victory;
 	return 0;
 }
 
-int64_t Score::sleep_clause (Team const & team) {
+int64_t Evaluate::sleep_clause (Team const & team) {
 	unsigned const sleeper_count = team.all_pokemon().count_if([](Pokemon const & pokemon) {
 		return (pokemon.status().is_sleeping_due_to_other());
 	});
@@ -185,7 +185,7 @@ int64_t Score::sleep_clause (Team const & team) {
 	return 0;
 }
 
-Score::Score ():
+Evaluate::Evaluate ():
 	light_screen (0),
 	lucky_chant (0),
 	mist (0),
@@ -228,10 +228,10 @@ Score::Score ():
 	no_pp (0) {
 	// This is a separate function instead of being stuck in directly to support
 	// reloading of the constants.
-	load_evaluation_constants ();
+	load();
 }
 
-void Score::load_evaluation_constants () {
+void Evaluate::load() {
 	boost::property_tree::ptree file;
 	read_xml ("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");

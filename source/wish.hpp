@@ -36,7 +36,7 @@ class Wish {
 	private:
 		bool is_active() const;
 		uint8_t counter;
-		friend class Score;
+		friend class Evaluate;
 };
 
 bool operator!= (Wish lhs, Wish rhs);

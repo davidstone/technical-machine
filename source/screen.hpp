@@ -38,7 +38,7 @@ class Screen {
 	private:
 		uint8_t turns_remaining;
 		static uint8_t max_length();
-		friend class Score;
+		friend class Evaluate;
 };
 bool operator!=(Screen const & lhs, Screen const & rhs);
 

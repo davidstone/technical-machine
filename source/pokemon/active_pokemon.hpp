@@ -272,7 +272,7 @@ class ActivePokemon {
 		Pokemon & get_pokemon() {
 			return (*all_pokemon)();
 		}
-		friend class Score;
+		friend class Evaluate;
 		// I'd make this a reference but I don't want to manually define a copy
 		// and move assignment operator to simply verify that the referents are
 		// the same.

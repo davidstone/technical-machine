@@ -1,4 +1,4 @@
-// Class to order moves to improve alpha-beta pruning
+// Hold move scores to allow efficient reordering
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,23 +16,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__RANKED_HPP_
-#define MOVE__RANKED_HPP_
+#ifndef EVALUATE__MOVE_SCORES_HPP_
+#define EVALUATE__MOVE_SCORES_HPP_
 
 #include <cstdint>
-#include "moves_forward.hpp"
+#include <map>
+#include "../move/moves_forward.hpp"
+#include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
+class Pokemon;
 
-class RankedMove {
+class MoveScores {
 	public:
-		explicit RankedMove(Moves set_move, int16_t set_score);
-		Moves name() const;
-		friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
+		void update(Pokemon const & pokemon);
+		int64_t const & at(Species species, Moves name) const;
+		int64_t & at(Species species, Moves name);
 	private:
-		int16_t score;
-		Moves move;
+		std::map<std::pair<Species, Moves>, int64_t> scores;
 };
 
 }	// namespace technicalmachine
-#endif	// MOVE__RANKED_HPP_
+#endif	// EVALUATE__MOVE_SCORES_HPP_

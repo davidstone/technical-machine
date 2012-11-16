@@ -41,9 +41,10 @@
 
 #include "../battle.hpp"
 
-#include "../../evaluate.hpp"
 #include "../../exit_program.hpp"
 #include "../../settings_file.hpp"
+
+#include "../../evaluate/evaluate.hpp"
 
 namespace technicalmachine {
 namespace network {
@@ -180,8 +181,8 @@ void GenericClient::reconnect () {
 	connect ();
 }
 
-Score const & GenericClient::score() const {
-	return score_variables;
+Evaluate const & GenericClient::evaluation_constants() const {
+	return m_evaluation_constants;
 }
 
 DetailedStats const & GenericClient::detailed() const {
@@ -455,7 +456,7 @@ void GenericClient::handle_reload_settings_command () {
 	responses = load_responses ();
 	trusted_users = load_trusted_users ();
 	load_settings (true);
-	score_variables.load_evaluation_constants();
+	m_evaluation_constants.load();
 }
 
 void GenericClient::taunt_foe(uint32_t const battle_id) {

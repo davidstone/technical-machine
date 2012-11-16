@@ -143,7 +143,7 @@ class Pokemon {
 		Level m_level;
 		uint8_t m_happiness;
 		Type::Types calculate_hidden_power_type () const;
-		friend class Score;
+		friend class Evaluate;
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 

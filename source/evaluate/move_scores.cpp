@@ -17,13 +17,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "move_scores.hpp"
-#include "move.hpp"
-#include "../evaluate.hpp"
+#include "evaluate.hpp"
 #include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {
-constexpr auto initial = Score::victory + 1;
+constexpr auto initial = Evaluate::victory + 1;
 }
 
 void MoveScores::update(Pokemon const & pokemon) {

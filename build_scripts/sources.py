@@ -42,13 +42,16 @@ clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_te
 
 ev_optimizer_sources = prepend_dir('team_predictor/ev_optimizer', ['combine.cpp', 'defensive.cpp', 'defensive_data_point.cpp', 'ev_optimizer.cpp', 'evs.cpp', 'offensive.cpp', 'single_classification_evs.cpp', 'speed.cpp'])
 
+evaluate_sources = prepend_dir('evaluate', ['evaluate.cpp', 'expectiminimax.cpp', 'move_scores.cpp', 'ranked.cpp', 'reorder.cpp', 'transposition.cpp'])
+
 team_builder_ui_sources = prepend_dir('team_predictor/ui', ['ev_inputs.cpp', 'move_inputs.cpp', 'nature_input.cpp', 'pokemon_inputs.cpp', 'species_input.cpp'])
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'evaluate.cpp', 'expectiminimax.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'transposition.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'variable.cpp', 'variable_collection.cpp', 'weather.cpp']
 ai_sources += team_sources
 ai_sources += clients
 ai_sources += prepend_dir('cryptography', ['hex.cpp', 'md5.cpp', 'rijndael.cpp', 'sha2.cpp'])
-ai_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'move_scores.cpp', 'power.cpp', 'ranked.cpp', 'reorder.cpp', 'shared.cpp', 'use_move.cpp'])
+ai_sources += evaluate_sources
+ai_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'power.cpp', 'shared.cpp', 'use_move.cpp'])
 ai_sources += prepend_dir('stat', ['ev.cpp', 'invalid_ev.cpp', 'invalid_stat.cpp', 'nature.cpp', 'stat.cpp'])
 ai_sources += prepend_dir('team_predictor', ['detailed_stats.cpp', 'estimate.cpp', 'load_stats.cpp', 'multiplier.cpp', 'team_predictor.cpp'])
 ai_sources += ev_optimizer_sources

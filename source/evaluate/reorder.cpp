@@ -21,10 +21,11 @@
 #include <algorithm>
 #include <vector>
 
-#include "move.hpp"
 #include "move_scores.hpp"
 
 #include "../block.hpp"
+
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 

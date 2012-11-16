@@ -30,7 +30,8 @@
 #include "battles.hpp"
 
 #include "../battle.hpp"
-#include "../../evaluate.hpp"
+
+#include "../../evaluate/evaluate.hpp"
 
 #include "../../team_predictor/detailed_stats.hpp"
 
@@ -54,7 +55,7 @@ class GenericClient {
 		virtual void send_private_message (std::string const & user, std::string const & message) = 0;
 		std::string generate_team_file_name();
 		void taunt_foe(uint32_t battle_id);
-		Score const & score() const;
+		Evaluate const & evaluation_constants() const;
 		DetailedStats const & detailed() const;
 		void send_message(OutMessage & msg);
 		void read_header(InMessage & msg);
@@ -131,7 +132,7 @@ class GenericClient {
 		std::mt19937 random_engine;
 		std::unique_ptr<boost::asio::ip::tcp::socket> socket;
 		DetailedStats detailed_stats;
-		Score score_variables;
+		Evaluate m_evaluation_constants;
 		std::string current_username;
 		std::string current_password;
 		std::string team_file_name;

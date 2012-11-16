@@ -1,4 +1,4 @@
-// Expectiminimax header
+// Transposition header
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,24 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EXPECTIMINIMAX_HPP_
-#define EXPECTIMINIMAX_HPP_
+#ifndef EVALUATE__TRANSPOSITION_HPP_
+#define EVALUATE__TRANSPOSITION_HPP_
 
 #include <cstdint>
-#include <random>
-#include "move/moves_forward.hpp"
 
 namespace technicalmachine {
 
 class MoveScores;
-class Score;
+class Evaluate;
 class Team;
 class Weather;
 
-Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Score const & score, std::mt19937 & random_engine);
-
-// Called from the function that identifies transpositions
-int64_t select_type_of_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score, Moves & best_move, bool first_turn = false);
+int64_t transposition (Team & ai, Team & foe, MoveScores ai_scores, MoveScores foe_scores, Weather const & weather, unsigned depth, Evaluate const & evaluate);
 
 }	// namespace technicalmachine
-#endif	// EXPECTIMINIMAX_HPP_
+#endif	// EVALUATE__TRANSPOSITION_HPP_

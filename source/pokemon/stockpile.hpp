@@ -41,7 +41,7 @@ class Stockpile {
 		static hash_type max_hash();
 		friend bool operator== (Stockpile const & lhs, Stockpile const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		uint8_t level;
 };
 bool operator!= (Stockpile const & lhs, Stockpile const & rhs);

@@ -35,10 +35,11 @@
 #include "pokemon_lab/write_team_file.hpp"
 
 #include "../endofturn.hpp"
-#include "../expectiminimax.hpp"
 #include "../switch.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
+
+#include "../evaluate/expectiminimax.hpp"
 
 #include "../move/move.hpp"
 #include "../move/moves_forward.hpp"
@@ -135,7 +136,7 @@ Moves GenericBattle::determine_action(network::GenericClient & client) {
 	Team predicted = predict_foe_team(client.detailed());
 //	std::cout << predicted.to_string ();
 
-	return expectiminimax(ai, predicted, weather, depth, client.score(), random_engine);
+	return expectiminimax(ai, predicted, weather, depth, client.evaluation_constants(), random_engine);
 }
 
 void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {

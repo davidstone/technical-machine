@@ -34,7 +34,7 @@ class Embargo {
 		static hash_type max_hash();
 		friend bool operator== (Embargo const & lhs, Embargo const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		bool is_active() const;
 		uint8_t turns_remaining;
 };

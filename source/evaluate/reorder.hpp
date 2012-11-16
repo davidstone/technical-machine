@@ -1,4 +1,4 @@
-// Transposition header
+// Reorder moves for efficient evaluation
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,19 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TRANSPOSITION_HPP_
-#define TRANSPOSITION_HPP_
+#ifndef EVALUATE__REORDER_HPP_
+#define EVALUATE__REORDER_HPP_
 
-#include <cstdint>
+#include <vector>
+#include "ranked.hpp"
 
 namespace technicalmachine {
 
+class LegalSelections;
 class MoveScores;
-class Score;
-class Team;
-class Weather;
 
-int64_t transposition (Team & ai, Team & foe, MoveScores ai_scores, MoveScores foe_scores, Weather const & weather, unsigned depth, Score const & score);
+std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
 
 }	// namespace technicalmachine
-#endif	// TRANSPOSITION_HPP_
+#endif	// EVALUATE__REORDER_HPP_

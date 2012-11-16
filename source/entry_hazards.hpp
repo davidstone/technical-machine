@@ -44,7 +44,7 @@ class EntryHazards {
 		uint8_t spikes;
 		uint8_t toxic_spikes;
 		bool stealth_rock;
-		friend class Score;
+		friend class Evaluate;
 };
 
 bool operator!= (EntryHazards lhs, EntryHazards rhs);

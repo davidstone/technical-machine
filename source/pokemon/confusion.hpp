@@ -39,7 +39,7 @@ class Confusion {
 		static hash_type max_hash();
 	private:
 		void increment();
-		friend class Score;
+		friend class Evaluate;
 		uint8_t turns_spent_confused;
 		bool is_hitting_self;
 };

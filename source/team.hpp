@@ -82,7 +82,7 @@ class Team {
 		friend bool operator== (Team const & lhs, Team const & rhs);
 
 	private:
-		friend class Score;
+		friend class Evaluate;
 		void load (std::string const & name, unsigned other_size);
 
 		PokemonCollection m_all_pokemon;

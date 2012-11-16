@@ -35,7 +35,7 @@ class Toxic {
 		hash_type hash() const;
 		static hash_type max_hash();
 	private:
-		friend class Score;
+		friend class Evaluate;
 		// Number of turns this Pokemon has already taken Toxic damage (or
 		// would have if Magic Guard / Poison Heal weren't in play)
 		uint8_t counter = 0;

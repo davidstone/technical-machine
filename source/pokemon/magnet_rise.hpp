@@ -35,7 +35,7 @@ class MagnetRise {
 		static hash_type max_hash();
 		friend bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		uint8_t turns_remaining;
 };
 bool operator!= (MagnetRise const & lhs, MagnetRise const & rhs);

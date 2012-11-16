@@ -34,7 +34,7 @@ class Seen {
 	private:
 		bool operator() () const;
 		bool seen;
-		friend class Score;
+		friend class Evaluate;
 };
 
 bool operator!= (Seen lhs, Seen rhs);

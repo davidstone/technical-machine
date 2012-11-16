@@ -35,7 +35,7 @@ class Encore {
 		static hash_type max_hash();
 		friend bool operator== (Encore const & lhs, Encore const & rhs);
 	private:
-		friend class Score;
+		friend class Evaluate;
 		uint8_t turns_active;
 };
 bool operator!= (Encore const & lhs, Encore const & rhs);

@@ -35,7 +35,7 @@ class Substitute {
 		hash_type hash () const;
 		static hash_type max_hash();
 	private:
-		friend class Score;
+		friend class Evaluate;
 		bool exists() const;
 		uint8_t hp;
 };
