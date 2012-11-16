@@ -172,7 +172,7 @@ int64_t Score::score_move (ActivePokemon const & pokemon, Team const & other, We
 
 int64_t Score::win (Team const & team) {
 	if (team.all_pokemon().size() == 0)
-		return team.is_me() ? -VICTORY : VICTORY;
+		return team.is_me() ? -victory : victory;
 	return 0;
 }
 
@@ -181,7 +181,7 @@ int64_t Score::sleep_clause (Team const & team) {
 		return (pokemon.status().is_sleeping_due_to_other());
 	});
 	if (sleeper_count > 1)
-		return team.is_me() ? VICTORY : -VICTORY;
+		return team.is_me() ? victory : -victory;
 	return 0;
 }
 

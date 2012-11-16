@@ -42,12 +42,14 @@ class Score {
 		// ai and foe are both logically constant. I change the active Pokemon
 		// in each of them, but I change it back before the function returns.
 		int64_t evaluate(Team & ai, Team & foe, Weather const & weather) const;
+		// Both of these return victory if the battle is won. Returns -victory
+		// if the battle is lost. Returns 0 otherwise.
 		static int64_t win(Team const & team);
 		static int64_t sleep_clause(Team const & team);
 		// Highest score. 100% chance to win. No particular significance to
 		// this number other than being larger than any score a non-winning
 		// position can have.
-		constexpr static int64_t VICTORY = 30240;
+		constexpr static int64_t victory = 30240;
 	private:
 		int64_t score_team(Team const & team) const;
 		int64_t score_active_pokemon(ActivePokemon const & active) const;

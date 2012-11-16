@@ -188,11 +188,11 @@ int64_t select_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveS
 	// Iterate through each move each Pokemon has in combination with each
 	// move the other Pokemon has, and evaluate the score of each
 	// combination.
-	int64_t alpha = -Score::VICTORY - 1;
+	int64_t alpha = -Score::victory - 1;
 	for (RankedMove const & ai_move : ai_index) {
 		ai.pokemon().all_moves().set_index(ai_move.name());
 		print_action (ai, first_turn);
-		int64_t beta = Score::VICTORY + 1;
+		int64_t beta = Score::victory + 1;
 		for (RankedMove const & foe_move : foe_index) {
 			foe.pokemon().all_moves().set_index(foe_move.name());
 			print_action (foe, first_turn);
@@ -205,7 +205,7 @@ int64_t select_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveS
 		ai_scores.at(ai.pokemon().name(), ai.pokemon().move().name) = beta;
 		update_best_move (alpha, beta, first_turn, ai.pokemon().move().name, best_move);
 		// The AI cannot have a better move than a guaranteed win
-		if (alpha == Score::VICTORY)
+		if (alpha == Score::victory)
 			break;
 	}
 	return alpha;
@@ -323,14 +323,14 @@ int64_t use_move_branch (Team first, Team last, MoveScores & ai_scores, MoveScor
 
 int64_t use_move_no_copy_branch (Team & first, Team & last, MoveScores & ai_scores, MoveScores & foe_scores, Weather & weather, unsigned depth, Score const & score) {
 	int64_t value = use_move_and_follow_up (first, last, ai_scores, foe_scores, weather, depth, score);
-	if (value != Score::VICTORY + 1)	// illegal value
+	if (value != Score::victory + 1)	// illegal value
 		return value;
 	// If first uses a phazing move before last gets a chance to move, the
 	// newly brought out Pokemon would try to move without checking to see if
 	// it has already moved. This check is also necessary for my Baton Pass and
 	// U-turn implementation to function.
 	value = use_move_and_follow_up (last, first, ai_scores, foe_scores, weather, depth, score);
-	if (value != Score::VICTORY + 1)
+	if (value != Score::victory + 1)
 		return value;
 
 	// Find the expected return on all possible outcomes at the end of the turn
@@ -373,7 +373,7 @@ int64_t use_move_and_follow_up (Team & user, Team & other, MoveScores & ai_score
 			return move_then_switch_branch (user, other, ai_scores, foe_scores, weather, depth, score, phony);
 		}
 	}
-	return Score::VICTORY + 1;		// return an illegal value
+	return Score::victory + 1;		// return an illegal value
 }
 
 int64_t end_of_turn_order_branch (Team & team, Team & other, MoveScores & ai_scores, MoveScores & foe_scores, Team * first, Team * last, Weather const & weather, unsigned depth, Score const & score) {
@@ -410,12 +410,12 @@ int64_t replace (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe
 	faster_pokemon (ai, foe, weather, first, last);
 	bool const speed_tie = (first == nullptr);
 	unsigned const tabs = first_turn ? 0 : 2;
-	int64_t alpha = -Score::VICTORY - 1;
+	int64_t alpha = -Score::victory - 1;
 	auto const ai_break_out = [& ai]() { return ai.pokemon().hp().stat != 0; };
 	ai.all_pokemon().for_each_replacement(ai_break_out, [&]() {
 		if (verbose or first_turn)
 			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + ai.all_pokemon().at_replacement().to_string() + "\n";
-		int64_t beta = Score::VICTORY + 1;
+		int64_t beta = Score::victory + 1;
 		auto const foe_break_out = [& foe, & alpha, & beta]() {
 			return beta <= alpha or foe.pokemon().hp().stat != 0;
 		};
@@ -455,7 +455,7 @@ int64_t fainted (Team first, Team last, MoveScores & ai_scores, MoveScores & foe
 
 int64_t move_then_switch_branch (Team & switcher, Team const & other, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Score const & score, Moves & best_switch, bool first_turn) {
 	unsigned tabs = first_turn ? 0 : 2;
-	int64_t alpha = -Score::VICTORY - 1;
+	int64_t alpha = -Score::victory - 1;
 	if (!switcher.is_me()) {
 		alpha = -alpha;
 		++tabs;

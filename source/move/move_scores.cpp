@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 namespace {
-constexpr auto initial = Score::VICTORY + 1;
+constexpr auto initial = Score::victory + 1;
 }
 
 void MoveScores::update(Pokemon const & pokemon) {
