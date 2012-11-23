@@ -26,6 +26,7 @@
 #include "../../empty_team.hpp"
 #include "../../phazing_in_same_pokemon.hpp"
 #include "../../team.hpp"
+#include "../../variable.hpp"
 
 #include "../../move/move.hpp"
 #include "../../move/moves.hpp"
@@ -34,67 +35,56 @@
 
 namespace technicalmachine {
 namespace {
-void test_zero_size_team();
-void test_small_size_team(Team & team);
-void test_other_combinations(Team & team, unsigned max_foe_size);
-void phaze_in_same_pokemon(VariableCollection & collection, Team const & team);
-void phaze_in_different_pokemon(VariableCollection & collection, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size);
+void add_pokemon(Team & team, Species species);
+void test_combinations(Team & team, unsigned max_foe_size);
+void phaze_in_same_pokemon(Variable & variable, Team const & team);
+void phaze_in_different_pokemon(Variable & variable, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size);
 unsigned expected_index(unsigned current_index, unsigned new_index);
 
 }	// unnamed namespace
 
 void variable_collection_tests() {
 	std::cout << "\tRunning variable collection tests.\n";
-	std::cout << "\t\tRunning variable collection tests on size zero containers.\n";
-	test_zero_size_team();
-	std::cout << "\t\tRunning variable collection tests on size one / two containers.\n";
 	Team team;
-	test_small_size_team(team);
-	std::cout << "\t\tRunning variable collection tests on arbitrary size containers.\n";
+	add_pokemon(team, static_cast<Species>(1));
 	constexpr unsigned max_foe_size = 10;
-	test_other_combinations(team, max_foe_size);
+	test_combinations(team, max_foe_size);
 }
 
 namespace {
 
-void test_zero_size_team() {
-}
-
-void test_small_size_team(Team & team) {
-	for (unsigned const foe_size : { 1u, 2u }) {
-		constexpr unsigned level = 100;
-		Gender const gender(Gender::MALE);
-		auto const species = static_cast<Species>(foe_size);
-		team.add_pokemon(species, level, gender);
-		VariableCollection collection (Moves::Whirlwind, foe_size);
-		collection.set_phaze_index(team, species);
-		if (collection.index() != 0)
-			throw InvalidCollection("Phazing index is not always 0 when the team size is " + std::to_string(foe_size) + ".");
-	}
-}
-
-void test_other_combinations(Team & team, unsigned const max_foe_size) {
+void add_pokemon(Team & team, Species const species) {
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
-	for (unsigned foe_size = 3; foe_size <= max_foe_size; ++foe_size) {
+	team.add_pokemon(species, level, gender);
+	team.pokemon().all_moves().add(Moves::Whirlwind);
+}
+
+void test_combinations(Team & team, unsigned const max_foe_size) {
+	for (unsigned foe_size = 2; foe_size <= max_foe_size; ++foe_size) {
 		auto const species = static_cast<Species>(foe_size);
-		team.add_pokemon(species, level, gender);
-		VariableCollection collection (Moves::Whirlwind, foe_size);
+		add_pokemon(team, species);
+		auto collection = all_probabilities(team.pokemon(), foe_size);
+		if (collection.size() != foe_size - 1) {
+			throw InvalidCollection("Phazing size is incorrect. Expected: " + std::to_string(foe_size - 1) + " but got " + std::to_string(collection.size()));
+		}
 		for (unsigned new_index = 0; new_index <= foe_size; ++new_index) {
 			for (unsigned current_index = 0; current_index != foe_size; ++current_index) {
 				team.all_pokemon().set_index(current_index);
-				if (current_index == new_index)
-					phaze_in_same_pokemon(collection, team);
-				else
-					phaze_in_different_pokemon(collection, team, new_index, current_index, foe_size);
+				if (current_index == new_index) {
+					phaze_in_same_pokemon(collection.front(), team);
+				}
+				else {
+					phaze_in_different_pokemon(collection.front(), team, new_index, current_index, foe_size);
+				}
 			}
 		}
 	}
 }
 
-void phaze_in_same_pokemon(VariableCollection & collection, Team const & team) {
+void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	try {
-		collection.set_phaze_index(team, team.pokemon().name());
+		variable.set_phaze_index(team, team.pokemon().name());
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	}
 	catch (PhazingInSamePokemon const &) {
@@ -102,12 +92,12 @@ void phaze_in_same_pokemon(VariableCollection & collection, Team const & team) {
 	}
 }
 
-void phaze_in_different_pokemon(VariableCollection & collection, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size) {
+void phaze_in_different_pokemon(Variable & variable, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size) {
 	try {
-		collection.set_phaze_index(team, team.pokemon(new_index).name());
+		variable.set_phaze_index(team, team.pokemon(new_index).name());
 		unsigned const expected = expected_index(current_index, new_index);
-		if (collection().value() != expected)
-			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + std::to_string(expected) + " but got a result of " + std::to_string(static_cast<unsigned>(collection().value())) + ".");
+		if (variable.value() != expected)
+			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + std::to_string(expected) + " but got a result of " + std::to_string(variable.value()) + ".");
 		if (new_index == foe_size)
 			throw InvalidCollection("Phazing supports too many elements when the foe's size is " + std::to_string(foe_size) + ".");
 	}

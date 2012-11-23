@@ -26,6 +26,7 @@
 #include "status.hpp"
 #include "rational.hpp"
 #include "team.hpp"
+#include "variable.hpp"
 
 #include "move/move.hpp"
 #include "move/moves.hpp"
@@ -38,8 +39,8 @@
 namespace technicalmachine {
 namespace {
 
-unsigned capped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather);
-unsigned regular_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather);
+unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
 unsigned calculate_level_multiplier (Pokemon const & attacker);
 Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender);
@@ -64,16 +65,16 @@ bool resistance_berry_activates (Item item, Type type, Effectiveness const & eff
 
 }	// unnamed namespace
 
-unsigned damage_calculator (ActivePokemon const & attacker, Team const & defender, Weather const & weather) {
+unsigned damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	return attacker.move().affects_target(defender.pokemon(), weather) ?
-		capped_damage (attacker, defender, weather) :
+		capped_damage (attacker, defender, weather, variable) :
 		0;
 }
 
 namespace {
 
-unsigned capped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather) {
-	unsigned damage = uncapped_damage (attacker, defender, weather);
+unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+	unsigned damage = uncapped_damage (attacker, defender, weather, variable);
 	Stat const & hp = defender.pokemon().hp();
 	if (damage >= hp.stat) {
 		damage = hp.stat;
@@ -85,7 +86,7 @@ unsigned capped_damage (ActivePokemon const & attacker, Team const & defender, W
 
 }	// unnamed namespace
 
-unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather) {
+unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	switch (attacker.move().name) {
 		case Moves::Dragon_Rage:
 			return 40;
@@ -100,23 +101,23 @@ unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender,
 		case Moves::Seismic_Toss:
 			return attacker.level();
 		case Moves::Psywave:
-			return attacker.move().variable().psywave_damage(attacker.level());
+			return variable.psywave_damage(attacker.level());
 		case Moves::SonicBoom:
 			return 20;
 		case Moves::Super_Fang:
 			return defender.pokemon().hp().stat / 2;
 		default:
-			return regular_damage (attacker, defender, weather);
+			return regular_damage(attacker, defender, weather, variable);
 	}
 }
 
 namespace {
 
-unsigned regular_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather) {
+unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	unsigned damage = calculate_level_multiplier(attacker);
 	damage += 2;
 
-	damage *= move_power(attacker, defender.pokemon(), weather);
+	damage *= move_power(attacker, defender.pokemon(), weather, variable);
 	damage *= physical_vs_special_modifier(attacker, defender.pokemon());
 	damage /= calculate_screen_divisor(attacker, defender);
 	damage *= calculate_weather_modifier(attacker.move().type(), weather);

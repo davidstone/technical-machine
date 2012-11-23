@@ -25,7 +25,7 @@ namespace technicalmachine {
 class Team;
 namespace po {
 
-void load_team (Team & team, std::string const & file_name, unsigned foe_size);
+void load_team (Team & team, std::string const & file_name);
 
 } // namespace po
 } // namespace technicalmachine

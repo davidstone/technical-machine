@@ -32,14 +32,14 @@ class Rational {
 			denominator(d) {
 		}
 		template<typename T>
-		friend typename std::enable_if<std::is_integral<T>::value, T>::type
+		friend typename std::enable_if<std::is_integral<T>::value, T>::type &
 		operator*=(T & number, Rational const rational) {
 			auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
 			number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
 			return number;
 		}
 		template<typename T>
-		friend typename std::enable_if<std::is_floating_point<T>::value, T>::type
+		friend typename std::enable_if<std::is_floating_point<T>::value, T>::type &
 		operator*=(T & number, Rational const rational) {
 			number *= rational.numerator;
 			number /= rational.denominator;
@@ -52,6 +52,24 @@ class Rational {
 		}
 		friend constexpr Rational operator*(Rational const lhs, Rational const rhs) {
 			return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator);
+		}
+		friend Rational & operator+=(Rational & lhs, Rational const rhs) {
+			lhs.numerator *= rhs.denominator;
+			lhs.numerator += rhs.numerator * lhs.denominator;
+			lhs.denominator *= rhs.denominator;
+			return lhs;
+		}
+		friend constexpr Rational operator+(Rational const lhs, Rational const rhs) {
+			return Rational(lhs.numerator * rhs.denominator + rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
+		}
+		friend Rational & operator-=(Rational & lhs, Rational const rhs) {
+			lhs.numerator *= rhs.denominator;
+			lhs.numerator -= rhs.numerator * lhs.denominator;
+			lhs.denominator *= rhs.denominator;
+			return lhs;
+		}
+		friend constexpr Rational operator-(Rational const lhs, Rational const rhs) {
+			return Rational(lhs.numerator * rhs.denominator - rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
 		}
 		friend constexpr Rational complement(Rational const rational) {
 			return Rational(rational.denominator - rational.numerator, rational.denominator);
@@ -99,6 +117,12 @@ operator*(Rational const rational, T number) {
 
 constexpr bool operator!=(Rational const lhs, Rational const rhs) {
 	return !(lhs == rhs);
+}
+constexpr bool operator>(Rational const lhs, Rational const rhs) {
+	return rhs < lhs;
+}
+constexpr bool operator>=(Rational const lhs, Rational const rhs) {
+	return rhs <= lhs;
 }
 
 }	// namespace technicalmachine

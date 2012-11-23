@@ -30,6 +30,7 @@
 #include "updated_hp.hpp"
 
 #include "../team.hpp"
+#include "../variable.hpp"
 #include "../weather.hpp"
 
 #include "../move/moves_forward.hpp"
@@ -90,8 +91,8 @@ class GenericBattle {
 		void do_turn ();
 		Team const & get_team(Party party) const;
 		Team & get_team(Party party);
-		Team const & get_opposing_team(Party party) const;
-		Team & get_opposing_team(Party party);
+		Variable const & variable(Team const & team) const;
+		Variable & variable(Team const & team);
 		void register_damage();
 
 		std::string opponent_name;
@@ -103,6 +104,8 @@ class GenericBattle {
 		Weather weather;
 		Team * first;
 		Team * last;
+		Variable ai_variable;
+		Variable foe_variable;
 		unsigned depth;
 		bool move_damage;
 		Party my_party;

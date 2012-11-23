@@ -33,6 +33,7 @@
 #include "../status.hpp"
 #include "../switch.hpp"
 #include "../team.hpp"
+#include "../variable.hpp"
 #include "../weather.hpp"
 
 #include "../pokemon/active_pokemon.hpp"
@@ -46,29 +47,29 @@
 namespace technicalmachine {
 namespace {
 
-unsigned use_move (Team & user, Team & target, Weather & weather, bool damage_is_known);
-unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, bool const damage_is_known);
+unsigned use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known);
+unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known);
 void call_other_move (ActivePokemon & user);
 void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & predicate);
 void do_effects_before_moving (Pokemon & user, Team & target);
 void do_damage (ActivePokemon & user, ActivePokemon & target, unsigned damage);
-void do_side_effects (Team & user, Team & target, Weather & weather, unsigned damage);
+void do_side_effects (Team & user, Team & target, Weather & weather, Variable const & variable, unsigned damage);
 void absorb_hp(Pokemon & user, Pokemon const & target, unsigned damage);
 void belly_drum(ActivePokemon & user);
 void clear_field(Team & user, Pokemon const & target);
 void confusing_stat_boost(Move const & move, ActivePokemon & target, Stat::Stats stat, int stages);
 void curse(ActivePokemon & user, ActivePokemon & target);
 void equalize(Stat & hp1, Stat & hp2);
-void phaze(Team & user, Team & target, Weather & weather);
+void phaze(Team & user, Team & target, Weather & weather, Variable const & variable);
 void rest(Pokemon & user);
 void struggle(Pokemon & user);
 void swap_items(Pokemon & user, Pokemon & target);
-void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather);
+void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather, Variable const & variable);
 void use_swallow(ActivePokemon & user);
 
 template<Status::Statuses status>
-void fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & weather) {
-	switch (user.move().variable().value()) {
+void fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & weather, Variable const & variable) {
+	switch (variable.value()) {
 		case 0:
 			break;
 		case 1:
@@ -88,15 +89,15 @@ void fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & w
 }
 
 template<Status::Statuses status>
-void recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, unsigned const damage) {
+void recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, unsigned const damage, Variable const & variable) {
 	recoil(user, damage, 3);
-	if (user.move().variable().effect_activates())
+	if (variable.effect_activates())
 		Status::apply<status>(user, target, weather);
 }
 
 }	// unnamed namespace
 
-unsigned call_move (Team & user_team, Team & target_team, Weather & weather, bool const damage_is_known) {
+unsigned call_move (Team & user_team, Team & target_team, Weather & weather, Variable const & variable, bool const damage_is_known) {
 	auto & user = user_team.pokemon();
 	auto const & target = target_team.pokemon();
 	user.update_before_move();
@@ -105,14 +106,14 @@ unsigned call_move (Team & user_team, Team & target_team, Weather & weather, boo
 		if (user.move().calls_other_move())
 			call_other_move (user);
 		if (!user.missed())
-			return use_move (user_team, target_team, weather, damage_is_known);
+			return use_move(user_team, target_team, weather, variable, damage_is_known);
 	}
 	return 0;
 }
 
 namespace {
 
-unsigned use_move (Team & user, Team & target, Weather & weather, bool const damage_is_known) {
+unsigned use_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
 	Move & move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
@@ -124,11 +125,11 @@ unsigned use_move (Team & user, Team & target, Weather & weather, bool const dam
 
 	do_effects_before_moving (user.pokemon(), target);
 
-	unsigned const damage = calculate_real_damage(user.pokemon(), target, weather, damage_is_known);
+	unsigned const damage = calculate_real_damage(user.pokemon(), target, weather, variable, damage_is_known);
 	do_damage (user.pokemon(), target.pokemon(), damage);
 	move.increment_use_counter();
 
-	do_side_effects (user, target, weather, damage);
+	do_side_effects(user, target, weather, variable, damage);
 
 	return damage;
 }
@@ -143,7 +144,7 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 	}
 }
 
-unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, bool const damage_is_known) {
+unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known) {
 	if (!user.move().is_damaging())
 		return 0;
 	if (damage_is_known)
@@ -151,7 +152,7 @@ unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather cons
 
 	calculate_defending_stat (user, target.pokemon(), weather);
 	calculate_attacking_stat (user, weather);
-	return damage_calculator(user, target, weather);
+	return damage_calculator(user, target, weather, variable);
 }
 
 void do_damage(ActivePokemon & user, ActivePokemon & target, unsigned const damage) {
@@ -162,7 +163,7 @@ void do_damage(ActivePokemon & user, ActivePokemon & target, unsigned const dama
 		drain(user, Rational(1, 10));
 }
 
-void do_side_effects (Team & user_team, Team & target_team, Weather & weather, unsigned const damage) {
+void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Variable const & variable, unsigned const damage) {
 	auto & target = target_team.pokemon();
 	auto & user = user_team.pokemon();
 	Move & move = user.move();
@@ -183,7 +184,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Luster_Purge:
 		case Moves::Psychic:
 		case Moves::Shadow_Ball:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::SPD, -1);
 			break;
 		case Moves::Acid_Armor:
@@ -193,7 +194,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Acupressure:
 			// TODO: this doesn't properly account for stats maxing out
-			user.stat_boost(static_cast<Stat::Stats>(move.variable().value()), 2);
+			user.stat_boost(static_cast<Stat::Stats>(variable.value()), 2);
 			break;
 		case Moves::Agility:
 		case Moves::Rock_Polish:
@@ -218,7 +219,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Twister:
 		case Moves::Waterfall:
 		case Moves::Zen_Headbutt:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.flinch();
 			break;
 		case Moves::Amnesia:
@@ -227,14 +228,14 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::AncientPower:
 		case Moves::Ominous_Wind:
 		case Moves::Silver_Wind:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				user.stat_boost_regular(1);
 			break;
 		case Moves::Aqua_Ring:
 			user.activate_aqua_ring();
 			break;
 		case Moves::Aurora_Beam:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::ATK, -1);
 			break;
 		case Moves::Aromatherapy:
@@ -260,7 +261,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
-			target.partially_trap(move.variable().value());
+			target.partially_trap(variable.value());
 			break;
 		case Moves::Blast_Burn:
 		case Moves::Frenzy_Plant:
@@ -280,14 +281,14 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Heat_Wave:
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				Status::apply<Status::BURN>(user, target, weather);
 			break;
 		case Moves::Blizzard:
 		case Moves::Ice_Beam:
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				Status::apply<Status::FREEZE>(user, target, weather);
 			break;
 		case Moves::Block:
@@ -306,7 +307,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Thunderbolt:
 		case Moves::ThunderPunch:
 		case Moves::ThunderShock:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				Status::apply<Status::PARALYSIS>(user, target, weather);
 			break;
 		case Moves::Bounce:		// Todo: Add Paralysis
@@ -320,7 +321,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Bubble:
 		case Moves::BubbleBeam:
 		case Moves::Constrict:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::SPE, -1);
 			break;
 		case Moves::Bug_Bite:			// Fix
@@ -343,7 +344,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			user.stat_boost(Stat::SPD, 1);
 			break;
 		case Moves::Charge_Beam:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				user.stat_boost(Stat::SPA, 1);
 			break;
 		case Moves::Charm:
@@ -351,7 +352,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			target.stat_boost(Stat::ATK, -2);
 			break;
 		case Moves::Chatter:
-			if (user.can_confuse_with_chatter() and move.variable().effect_activates())
+			if (user.can_confuse_with_chatter() and variable.effect_activates())
 				target.confuse();
 			break;
 		case Moves::Close_Combat:
@@ -370,7 +371,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Rock_Climb:
 		case Moves::Signal_Beam:
 		case Moves::Water_Pulse:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.confuse();
 			break;
 		case Moves::Conversion:		// Fix
@@ -385,7 +386,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Crush_Claw:
 		case Moves::Iron_Tail:
 		case Moves::Rock_Smash:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::DEF, -1);
 			break;
 		case Moves::Cotton_Spore:
@@ -408,7 +409,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Sludge:
 		case Moves::Sludge_Bomb:
 		case Moves::Smog:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				Status::apply<Status::POISON>(user, target, weather);
 			break;
 		case Moves::Curse:
@@ -488,10 +489,10 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			target.break_protect();
 			break;
 		case Moves::Fire_Fang:
-			fang_side_effects<Status::BURN>(user, target, weather);
+			fang_side_effects<Status::BURN>(user, target, weather, variable);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status<Status::BURN>(user, target, weather, damage);
+			recoil_status<Status::BURN>(user, target, weather, damage, variable);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -586,14 +587,14 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Metal_Claw:
 		case Moves::Meditate:
 		case Moves::Meteor_Mash:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				user.stat_boost(Stat::ATK, 1);
 			break;
 		case Moves::Ice_Ball:		// Fix
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			fang_side_effects<Status::FREEZE>(user, target, weather);
+			fang_side_effects<Status::FREEZE>(user, target, weather, variable);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Mud_Shot:
@@ -654,14 +655,14 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Mud_Bomb:
 		case Moves::Muddy_Water:
 		case Moves::Octazooka:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::ACC, -1);
 			break;
 		case Moves::Mist:
 			user_team.screens.activate_mist();
 			break;
 		case Moves::Mist_Ball:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::SPA, -1);
 			break;
 		case Moves::Moonlight:
@@ -701,7 +702,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			target.activate_perish_song();
 			break;
 		case Moves::Poison_Fang:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				Status::apply<Status::POISON_TOXIC>(user, target, weather);
 			break;
 		case Moves::Poison_Gas:
@@ -715,7 +716,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			user.activate_power_trick();
 			break;
 		case Moves::Present:
-			if (move.variable().present_heals()) {
+			if (variable.present_heals()) {
 				Stat & hp = target.hp();
 				hp.stat += 80;
 				hp.stat = std::min(hp.stat, hp.max);
@@ -751,7 +752,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			phaze(user_team, target_team, weather);
+			phaze(user_team, target_team, weather, variable);
 			break;
 		case Moves::Role_Play:		// Fix
 			break;
@@ -769,7 +770,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			target.stat_boost(Stat::DEF, -2);
 			break;
 		case Moves::Seed_Flare:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				target.stat_boost(Stat::SPD, -2);
 			break;
 		case Moves::Shadow_Force:
@@ -785,7 +786,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Skull_Bash: // Fix
 			break;
 		case Moves::Sky_Attack:	// Fix
-			if (move.variable().effect_activates()) {
+			if (variable.effect_activates()) {
 			}
 			break;
 		case Moves::SmellingSalt:
@@ -808,7 +809,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			target_team.entry_hazards.add_stealth_rock();
 			break;
 		case Moves::Steel_Wing:
-			if (move.variable().effect_activates())
+			if (variable.effect_activates())
 				user.stat_boost(Stat::DEF, 1);
 			break;
 		case Moves::Stockpile:
@@ -862,7 +863,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			target.taunt();
 			break;
 		case Moves::Thunder_Fang:
-			fang_side_effects<Status::PARALYSIS>(user, target, weather);
+			fang_side_effects<Status::PARALYSIS>(user, target, weather, variable);
 			break;
 		case Moves::Tickle:
 			target.stat_boost_physical(-1);
@@ -879,7 +880,7 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 		case Moves::Transform:		// Fix
 			break;
 		case Moves::Tri_Attack:
-			tri_attack_status(user, target, weather);
+			tri_attack_status(user, target, weather, variable);
 			break;
 		case Moves::Trick_Room:
 			weather.set_trick_room ();
@@ -889,11 +890,11 @@ void do_side_effects (Team & user_team, Team & target_team, Weather & weather, u
 			break;
 		case Moves::Uproar:
 			// TODO: make this make sense
-			weather.set_uproar (static_cast<int8_t> (move.variable().value()));
+			weather.set_uproar (static_cast<int8_t> (variable.value()));
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status<Status::PARALYSIS>(user, target, weather, damage);
+			recoil_status<Status::PARALYSIS>(user, target, weather, damage, variable);
 			break;
 		case Moves::Wake_Up_Slap:
 			if (target.status().is_sleeping ())
@@ -972,9 +973,9 @@ void equalize(Stat & hp1, Stat & hp2) {
 	hp2.stat = std::min(temp, hp2.max);
 }
 
-void phaze(Team & user, Team & target, Weather & weather) {
+void phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
 	if (target.pokemon().can_be_phazed()) {
-		uint8_t const index = user.pokemon().move().variable.phaze_index(target.pokemon().index());
+		uint8_t const index = variable.phaze_index(target.pokemon().index());
 		target.all_pokemon().set_replacement(index);
 		switchpokemon(target, user, weather);
 		target.move();
@@ -1001,8 +1002,8 @@ void swap_items(Pokemon & user, Pokemon & target) {
 	}
 }
 
-void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather) {
-	switch (user.move().variable().value()) {
+void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather, Variable const & variable) {
+	switch (variable.value()) {
 		case 1:
 			Status::apply<Status::BURN>(user, target, weather);
 			break;

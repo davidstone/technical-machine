@@ -42,10 +42,10 @@ namespace technicalmachine {
 namespace po {
 namespace {
 
-Move load_move(boost::property_tree::ptree const & pt, unsigned foe_size) {
+Move load_move(boost::property_tree::ptree const & pt) {
 	unsigned const id = pt.get_value<unsigned>();
 	constexpr unsigned pp_ups = 3;
-	return Move(id_to_move(id), pp_ups, foe_size);
+	return Move(id_to_move(id), pp_ups);
 }
 
 Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
@@ -82,7 +82,7 @@ unsigned number_of_pokemon(boost::property_tree::ptree const & pt) {
 	return pokemon_count;
 }
 
-void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned foe_size) {
+void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	unsigned const id = pt.get<unsigned>("<xmlattr>.Num");
 	unsigned const forme = pt.get<unsigned>("<xmlattr>.Forme");
 	Species const species = id_to_species(id, forme);
@@ -103,9 +103,10 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 	unsigned n = 0;
 	for (auto const & value : pt.get_child("")) {
 		if (value.first == "Move") {
-			Move const move (load_move(value.second, foe_size));
-			if (move.name != Moves::END)
-				pokemon.move.add(load_move(value.second, foe_size));
+			Move const move(load_move(value.second));
+			if (move.name != Moves::END) {
+				pokemon.move.add(move);
+			}
 		}
 		else if (value.first == "DV") {
 			Stat & stat = lookup_stat(pokemon, n);
@@ -122,7 +123,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team, unsigned 
 
 }	// anonymous namespace
 
-void load_team(Team & team, std::string const & file_name, unsigned foe_size) {
+void load_team(Team & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;
 	read_xml(file_name, pt);
 	
@@ -130,7 +131,7 @@ void load_team(Team & team, std::string const & file_name, unsigned foe_size) {
 	team.all_pokemon().initialize_size(number_of_pokemon(all_pokemon));
 	for (auto const & value : all_pokemon) {
 		if (value.first == "Pokemon" and is_real_pokemon(value.second))
-			load_pokemon(value.second, team, foe_size);
+			load_pokemon(value.second, team);
 	}
 	team.all_pokemon().reset_index();
 }

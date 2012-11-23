@@ -42,8 +42,7 @@ uint8_t get_base_power (Moves move);
 
 }	// unnamed namespace
 
-Move::Move (Moves const move, unsigned const pp_ups, unsigned const size) :
-	variable (move, size),
+Move::Move (Moves const move, unsigned const pp_ups) :
 	name (move),
 	pp(move, pp_ups),
 	cached_accuracy(move),

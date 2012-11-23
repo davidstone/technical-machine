@@ -39,11 +39,11 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-static Move load_move (boost::property_tree::ptree const & pt, unsigned foe_size) {
+Move load_move(boost::property_tree::ptree const & pt) {
 	std::string const name_str = pt.get_value<std::string>();
 	Moves const name = from_string<Moves>(name_str);
 	unsigned const pp_ups = pt.get <unsigned> ("<xmlattr>.pp-up");
-	return Move(name, pp_ups, foe_size);
+	return Move(name, pp_ups);
 }
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
@@ -70,7 +70,7 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	stat.ev.set_value(pt.get<unsigned>("<xmlattr>.ev"));
 }
 
-void load_pokemon (boost::property_tree::ptree const & pt, Team & team, unsigned foe_size) {
+void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
 	std::string const nickname_temp = pt.get <std::string> ("nickname");
 	std::string const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
@@ -84,7 +84,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team, unsigned
 	Pokemon & pokemon = team.all_pokemon().at_replacement();
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
-		pokemon.move.add (load_move (value.second, foe_size));
+		pokemon.move.add(load_move(value.second));
 	
 	for (auto const & value : pt.get_child ("stats"))
 		load_stats (pokemon, value.second);
@@ -92,14 +92,15 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team, unsigned
 
 }	// anonymous namespace
 
-void load_team (Team & team, std::string const & file_name, unsigned foe_size) {
+void load_team (Team & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;
 	read_xml (file_name, pt);
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
 	team.all_pokemon().initialize_size(all_pokemon.size());
-	for (auto const & value : all_pokemon)
-		load_pokemon (value.second, team, foe_size);
+	for (auto const & value : all_pokemon) {
+		load_pokemon (value.second, team);
+	}
 	team.all_pokemon().reset_index();
 }
 

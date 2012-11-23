@@ -20,6 +20,7 @@
 #define STAT__STAT_HPP_
 
 #include <cstdint>
+#include <initializer_list>
 #include "ev.hpp"
 #include "../pokemon/species_forward.hpp"
 
@@ -39,8 +40,8 @@ class Stat {
 			SPA,
 			SPD,
 			SPE,
-			ACC,
-			NORMAL_END = ACC,
+			NORMAL_END,
+			ACC = NORMAL_END,
 			EVA,
 			END
 		};
@@ -54,6 +55,10 @@ class Stat {
 		Stat (Species name, Stats stat);
 		void calculate_initial_hp (uint8_t const level);
 };
+
+inline constexpr std::initializer_list<Stat::Stats> boostable_stats() {
+	return { Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE, Stat::ACC, Stat::EVA };
+}
 
 template<Stat::Stats>
 unsigned initial_stat(Pokemon const & pokemon);

@@ -40,7 +40,6 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather);
 void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather);
 void endofturn6 (Team & target, Weather const & weather);
 void endofturn7 (ActivePokemon & pokemon);
-void reset_variable (Team & team);
 
 template<typename Integer>
 void decrement (Integer & n) {
@@ -68,8 +67,6 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	endofturn6 (last, weather);
 	endofturn7 (first.pokemon());
 	endofturn7 (last.pokemon());
-	reset_variable (first);
-	reset_variable (last);
 }
 
 namespace {
@@ -206,14 +203,6 @@ void endofturn6 (Team & target, Weather const & weather) {
 
 void endofturn7 (ActivePokemon & pokemon) {
 	pokemon.perish_song_turn();
-}
-
-void reset_variable (Team & team) {
-	team.all_pokemon().for_each([](Pokemon & pokemon) {
-		pokemon.move.for_each_regular_move([](Move & move) {
-			move.variable.reset_index();
-		});
-	});
 }
 
 }	// unnamed namespace

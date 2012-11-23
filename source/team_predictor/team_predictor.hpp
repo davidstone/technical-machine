@@ -25,7 +25,7 @@ namespace technicalmachine {
 class DetailedStats;
 class Team;
 
-Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, unsigned size, bool using_lead = true);
+Team predict_team(DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead = true);
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_

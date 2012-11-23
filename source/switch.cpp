@@ -27,12 +27,6 @@
 #include "stat/stat.hpp"
 
 namespace technicalmachine {
-namespace {
-
-void replace_fainted_pokemon (Team & switcher, Team & other);
-void remove_fainted_from_phazing_moves (Team const & switcher, Team & other);
-
-}	// unnamed namespace
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	auto & pokemon = switcher.pokemon();
@@ -42,7 +36,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 		pokemon.switch_pokemon();
 	}
 	else {
-		replace_fainted_pokemon (switcher, other);
+		switcher.remove_pokemon();
 		// If the last Pokemon is fainted; there is nothing left to do.
 		if (switcher.all_pokemon().is_empty())
 			return;
@@ -53,23 +47,4 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	pokemon.switch_in();
 }
 
-namespace {
-
-void replace_fainted_pokemon (Team & switcher, Team & other) {
-	switcher.remove_pokemon();
-	if (switcher.all_pokemon().is_empty())
-		return;
-	remove_fainted_from_phazing_moves(switcher, other);
-}
-
-void remove_fainted_from_phazing_moves (Team const & switcher, Team & other) {
-	other.all_pokemon().for_each([& switcher](Pokemon & pokemon) {
-		pokemon.move.for_each_regular_move([& switcher](Move & move) {
-			if (move.is_phaze())
-				move.variable.remove_phazing(switcher.all_pokemon().real_size());
-		});
-	});
-}
-
-}	// unnamed namespace
 }	// namespace technicalmachine

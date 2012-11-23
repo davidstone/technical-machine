@@ -24,10 +24,11 @@ namespace technicalmachine {
 class ActivePokemon;
 class Pokemon;
 class Team;
+class Variable;
 class Weather;
 
-unsigned damage_calculator (ActivePokemon const & attacker, Team const & defender, Weather const & weather);
-unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather);
+unsigned damage_calculator (ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 
 }	// namespace technicalmachine

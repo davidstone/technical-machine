@@ -48,7 +48,7 @@ namespace po {
 
 Client::Client (unsigned set_depth):
 	network::GenericClient (set_depth),
-	team(generate_team(Battle::pokemon_per_team())) {
+	team(generate_team()) {
 	log_in ();
 }
 
@@ -925,7 +925,7 @@ std::string Client::get_user_name (uint32_t id) const {
 }
 
 void Client::write_team() {
-	team = generate_team(Battle::pokemon_per_team());
+	team = generate_team();
 	OutMessage team_msg(OutMessage::SEND_TEAM);
 	team_msg.write_team(team, username());
 	send_message(team_msg);

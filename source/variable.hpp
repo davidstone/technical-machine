@@ -20,25 +20,39 @@
 #define VARIABLE_HPP_
 
 #include <cstdint>
+#include <vector>
+#include "rational.hpp"
+#include "move/moves_forward.hpp"
+#include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
+class ActivePokemon;
+class Team;
 
 // Used for moves with a variable power / length / other integer range. Moves of
 // variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal).
 // It is also used to determine whether random effects activate.
 class Variable {
 	public:
-		Variable (uint16_t v, uint16_t p);
-		uint16_t value () const;
-		uint16_t probability () const;
-		bool effect_activates () const;
-		bool present_heals ()  const;
-		unsigned psywave_damage (unsigned level) const;
-		void reset_phaze_probabilities (uint8_t size);
-		static constexpr uint16_t max_probability = 840;
+		Variable();
+		Variable(unsigned set_value, Rational set_probability);
+		void set_phaze_index(Team const & team, Species species);
+		void set_flinch(bool set = true);
+		unsigned value() const;
+		Rational probability() const;
+		bool effect_activates() const;
+		uint8_t phaze_index(uint8_t foe_index) const;
+		bool present_heals()  const;
+		unsigned psywave_damage(unsigned level) const;
+		void set_magnitude(unsigned magnitude);
+		void reset_phaze_probabilities(uint8_t size);
 	private:
-		uint16_t m_value;
-		uint16_t m_probability;
+		unsigned m_value;
+		Rational m_probability;
 };
+
+typedef std::vector<Variable> Probabilities;
+Probabilities all_probabilities(ActivePokemon const & pokemon, unsigned foe_size);
+
 }	// namespace technicalmachine
 #endif	// VARIABLE_HPP_

@@ -66,7 +66,7 @@ class GenericClient {
 			read_header(msg);
 			io.run();
 		}
-		Team generate_team(unsigned foe_team_size);
+		Team generate_team();
 		virtual void send_keep_alive_message () = 0;
 		std::string const & username() const;
 		std::string const & password() const;

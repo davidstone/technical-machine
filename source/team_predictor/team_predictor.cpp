@@ -48,11 +48,11 @@ std::array<T, number_of_species> all_ones_array () {
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
 Species get_most_likely_pokemon (Estimate const & estimate);
-void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size);
+void predict_move (Pokemon & member, std::vector<Moves> const & detailed);
 
 }	// unnamed namespace
 
-Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, unsigned size, bool using_lead) {
+Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead) {
 	std::array<unsigned, number_of_species> const overall = overall_stats ();
 	constexpr unsigned total = 961058;	// Total number of teams
 	Multiplier const multiplier(overall);
@@ -68,7 +68,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 		pokemon.ability().set_if_unknown (static_cast <Ability::Abilities> (detailed.ability[name]));
 		pokemon.item().set_if_unknown (static_cast <Item::Items> (detailed.item[name]));
 		pokemon.nature().set_if_unknown (static_cast <Nature::Natures> (detailed.nature[name]));
-		predict_move (pokemon, detailed.move[name], size);
+		predict_move (pokemon, detailed.move[name]);
 		optimize_evs(pokemon, random_engine);
 	});
 	return team;
@@ -90,10 +90,10 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move (Pokemon & member, std::vector<Moves> const & detailed, unsigned size) {
+void predict_move (Pokemon & member, std::vector<Moves> const & detailed) {
 	for (Moves const name : detailed) {
 		if (!member.move.exists(name)) {
-			member.move.add(name, 3, size);
+			member.move.add(name, 3);
 			if (member.move.number_of_regular_moves() == Move::max_regular_moves())
 				break;
 		}

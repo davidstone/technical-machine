@@ -55,7 +55,7 @@ class DetailedStats;
 GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	opponent_name (_opponent),
 	random_engine (seed),
-	ai (6, random_engine, team_file_name),
+	ai(random_engine, team_file_name),
 	updated_hp(ai),
 	depth (battle_depth)
 	{
@@ -92,7 +92,7 @@ void GenericBattle::write_team (network::OutMessage & msg, std::string const & u
 }
 
 Team GenericBattle::predict_foe_team (DetailedStats const & detailed) const {
-	return predict_team(detailed, foe, random_engine, ai.all_pokemon().size());
+	return predict_team(detailed, foe, random_engine);
 }
 
 void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
@@ -132,9 +132,9 @@ void GenericBattle::update_from_previous_turn (network::GenericClient & client, 
 
 Moves GenericBattle::determine_action(network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
-//	std::cout << "Predicting...\n";
+	std::cout << "Predicting...\n";
 	Team predicted = predict_foe_team(client.detailed());
-//	std::cout << predicted.to_string ();
+	std::cout << predicted.to_string ();
 
 	return expectiminimax(ai, predicted, weather, depth, client.evaluation_constants(), random_engine);
 }
@@ -154,43 +154,42 @@ void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_
 	active.move();
 	Pokemon & replacement = active.replacement();
 	if (!replacement.move.set_index_if_found(move_name)) {
-		replacement.move.add(move_name, 3, inactive.all_pokemon().real_size());
+		replacement.move.add(move_name, 3);
 	}
-	replacement.move().variable.reset_index();
 	if (replacement.move().is_damaging())
 		move_damage = true;
 }
 
-void GenericBattle::handle_send_out (Party const switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
+void GenericBattle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
-	Team & active = get_team(switcher);
-	Team & inactive = get_opposing_team(switcher);
+	Team & switcher = get_team(switcher_party);
+	Team & other = get_team(switcher_party.other());
 
 	if (first == nullptr) {
-		first = &active;
-		last = &inactive;
+		first = &switcher;
+		last = &other;
 	}
 
 	// This is needed to make sure I don't overwrite important information in a
 	// situation in which a team switches multiple times in one turn (due to
 	// replacing fainted Pokemon).
-	auto const replacement = active.all_pokemon().replacement();
+	auto const replacement = switcher.all_pokemon().replacement();
 	
 	// This assumes Species Clause is in effect
-	if (!active.all_pokemon().seen(species)) {
-		active.add_pokemon (species, level, gender, nickname);
-		updated_hp.add(active.is_me(), active.replacement(), max_damage_precision());
+	if (!switcher.all_pokemon().seen(species)) {
+		switcher.add_pokemon (species, level, gender, nickname);
+		updated_hp.add(switcher.is_me(), switcher.replacement(), max_damage_precision());
 	}
 
-	Pokemon & phazer = inactive.replacement();
+	Pokemon & phazer = other.replacement();
 	if (phazer.move().is_phaze()) {
-		phazer.move().variable.set_phaze_index(active, species);
+		variable(other).set_phaze_index(switcher, species);
 	}
-	else if (!active.pokemon().moved()) {
-		Pokemon & pokemon = active.pokemon(replacement);
-		pokemon.move.set_index(pokemon.index_of_first_switch() + active.all_pokemon().replacement());
+	else if (!switcher.pokemon().moved()) {
+		Pokemon & pokemon = switcher.pokemon(replacement);
+		pokemon.move.set_index(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement());
 	}
 }
 
@@ -338,7 +337,7 @@ void GenericBattle::do_turn () {
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 
 		register_damage();
-		call_move(*first, *last, weather, damage_is_known);
+		call_move(*first, *last, weather, variable(*first), damage_is_known);
 		std::cerr << "Second\n";
 		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
@@ -348,7 +347,7 @@ void GenericBattle::do_turn () {
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
 
 		register_damage();
-		call_move(*last, *first, weather, damage_is_known);
+		call_move(*last, *first, weather, variable(*last), damage_is_known);
 		std::cerr << "Fourth\n";
 		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
@@ -377,7 +376,7 @@ void GenericBattle::do_turn () {
 			if (!pokemon.move().is_switch()) {
 				pokemon.update_to_correct_switch();
 			}
-			call_move(foe, ai, weather, damage_is_known);
+			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}
 	}
 	std::cout << first->to_string ();
@@ -411,15 +410,16 @@ Team const & GenericBattle::get_team(Party party) const {
 Team & GenericBattle::get_team(Party party) {
 	return is_me(party) ? ai : foe;
 }
-Team const & GenericBattle::get_opposing_team(Party party) const {
-	return is_me(party) ? foe : ai;
+
+Variable const & GenericBattle::variable(Team const & team) const {
+	return team.is_me() ? ai_variable : foe_variable;
 }
-Team & GenericBattle::get_opposing_team(Party party) {
-	return is_me(party) ? foe : ai;
+Variable & GenericBattle::variable(Team const & team) {
+	return team.is_me() ? ai_variable : foe_variable;
 }
 
 void GenericBattle::handle_flinch(Party const party) {
-	get_team(party).replacement().move().variable.set_index(1);
+	variable(get_team(party)).set_flinch(true);
 }
 
 void GenericBattle::handle_miss(Party const party) {

@@ -31,7 +31,6 @@
 #include "random.hpp"
 #include "times_used.hpp"
 
-#include "../variable_collection.hpp"
 #include "../type/type.hpp"
 
 namespace technicalmachine {
@@ -40,7 +39,7 @@ class Weather;
 
 class Move {
 	public:
-		Move (Moves move, unsigned pp_ups = 3, unsigned size = 1);
+		Move (Moves move, unsigned pp_ups = 3);
 		void reset ();
 		std::string to_string () const;
 		bool is_damaging() const;
@@ -93,7 +92,6 @@ class Move {
 		hash_type max_hash() const;
 		friend bool operator== (Move const & lhs, Move const & rhs);
 
-		VariableCollection variable;
 		Moves name;
 		Pp pp;
 		Disable disable;

@@ -31,7 +31,7 @@ void test_team_file () {
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
 	Team team;
 	std::string const directory = "source/test/";
-	load_team (team, directory + "test1.tp", 6);
+	load_team (team, directory + "test1.tp");
 	write_team (team, directory + "test2.tp");
 }
 

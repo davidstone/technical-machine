@@ -41,7 +41,7 @@ class Weather;
 class Team {
 	public:
 		Team ();
-		Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name);
+		Team(std::mt19937 & random_engine, std::string const & team_file_name);
 		Team (Team const & other);
 		Team (Team && other);
 		Team & operator= (Team const & other);
@@ -83,7 +83,7 @@ class Team {
 
 	private:
 		friend class Evaluate;
-		void load (std::string const & name, unsigned other_size);
+		void load(std::string const & name);
 
 		PokemonCollection m_all_pokemon;
 		SharedMoves shared_moves;

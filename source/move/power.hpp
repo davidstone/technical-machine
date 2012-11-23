@@ -22,9 +22,10 @@
 namespace technicalmachine {
 
 class ActivePokemon;
+class Variable;
 class Weather;
 
-unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
+unsigned move_power(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable);
 
 }	// namespace technicalmachine
 #endif	// MOVE__POWER_HPP_

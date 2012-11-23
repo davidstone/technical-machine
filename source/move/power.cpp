@@ -29,6 +29,7 @@
 #include "../item.hpp"
 #include "../rational.hpp"
 #include "../status.hpp"
+#include "../variable.hpp"
 #include "../weather.hpp"
 
 #include "../pokemon/active_pokemon.hpp"
@@ -37,7 +38,7 @@
 namespace technicalmachine {
 namespace {
 
-unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon const & defender);
+unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon const & defender, Variable const & variable);
 unsigned second_lowest_bit (Stat const & stat);
 bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 unsigned item_modifier (Pokemon const & attacker);
@@ -47,9 +48,9 @@ Rational defender_ability_modifier (Move const & move, Ability ability);
 
 }	// anonymous namespace
 
-unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable) {
 	Move const & move = attacker.move();
-	unsigned const base_power = calculate_base_power(attacker, defender);
+	unsigned const base_power = calculate_base_power(attacker, defender, variable);
 	unsigned power = base_power;
 
 	if (doubling (attacker, defender, weather))
@@ -76,7 +77,7 @@ unsigned return_power(Pokemon const & pokemon) {
 	return pokemon.happiness() * 2u / 5;
 }
 
-unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon const & defender) {
+unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon const & defender, Variable const & variable) {
 	switch (attacker.move().name) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
@@ -126,12 +127,12 @@ unsigned calculate_base_power (ActivePokemon const & attacker, ActivePokemon con
 			return (u + v + w + x + y + z) * 40 / 63 + 30;
 		}
 		case Moves::Magnitude:
-			return attacker.move().variable().value();
+			return variable.value();
 		case Moves::Natural_Gift:
 			return attacker.item().get_berry_power ();
 		case Moves::Present:
-			assert (!attacker.move().variable().present_heals());
-			return attacker.move().variable().value();
+			assert (!variable.present_heals());
+			return variable.value();
 		case Moves::Punishment: {
 			unsigned const uncapped_power = 60 + 20 * defender.positive_stat_boosts();
 			return std::min(uncapped_power, 200u);

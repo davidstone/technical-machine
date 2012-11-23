@@ -53,7 +53,7 @@ Team::Team() :
 	{
 }
 
-Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const & team_file_name) :
+Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	active_pokemon(m_all_pokemon),
 	me(true)
 	{
@@ -61,7 +61,7 @@ Team::Team (unsigned foe_size, std::mt19937 & random_engine, std::string const &
 	std::vector <boost::filesystem::path> const files = open_directory_and_add_files (team_file);
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
-	load (team_file.string(), foe_size);
+	load(team_file.string());
 	all_pokemon().for_each([](Pokemon & member) {
 		member.set_hidden_power_type();
 		member.calculate_initial_hp();
@@ -202,7 +202,7 @@ Team::hash_type Team::hash () const {
 	return current_hash;
 }
 
-void Team::load (std::string const & name, unsigned other_size) {
+void Team::load(std::string const & name) {
 	// I do no error checking because I assume my team files will always be in
 	// the proper format. This must be changed if I ever allow arbitary teams
 	// to be used.
@@ -214,9 +214,9 @@ void Team::load (std::string const & name, unsigned other_size) {
 	std::string extension = name.substr (dot);
 	boost::algorithm::to_lower (extension);
 	if (extension == ".tp")
-		po::load_team (*this, name, other_size);
+		po::load_team(*this, name);
 	else if (extension == ".sbt")
-		pl::load_team (*this, name, other_size);
+		pl::load_team(*this, name);
 	else
 		throw InvalidTeamFileFormat(name);
 }

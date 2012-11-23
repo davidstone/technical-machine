@@ -25,6 +25,7 @@
 
 #include "../damage.hpp"
 #include "../team.hpp"
+#include "../variable.hpp"
 #include "../weather.hpp"
 
 #include "../move/power.hpp"
@@ -35,8 +36,6 @@
 namespace technicalmachine {
 namespace {
 
-constexpr unsigned team_size = 6;
-
 Team max_damage_physical_attacker () {
 	Team attacker;
 	
@@ -44,7 +43,7 @@ Team max_damage_physical_attacker () {
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
-	pokemon.move.add(Moves::Rollout, 3, team_size);
+	pokemon.move.add(Moves::Rollout, 3);
 
 	attacker.pokemon().defense_curl();
 	for (unsigned n = 0; n != 10; ++n)
@@ -99,7 +98,7 @@ void physical_power_test () {
 	attacker.pokemon().item().name = Item::ROCK_INCENSE;
 	attacker.pokemon().ability(Ability::RIVALRY);
 
-	unsigned const power = move_power(attacker.pokemon(), max_damage_physical_defender().pokemon(), Weather());
+	unsigned const power = move_power(attacker.pokemon(), max_damage_physical_defender().pokemon(), Weather(), Variable());
 	if (power != max_power)
 		throw IncorrectCalculation (power, max_power);
 }
@@ -110,14 +109,14 @@ void special_power_test () {
 
 	Team attacker = max_damage_special_attacker ();
 	Pokemon & pokemon = attacker.pokemon();
-	pokemon.move.add(Moves::Surf, 3, team_size);
+	pokemon.move.add(Moves::Surf, 3);
 	pokemon.item().name = Item::WAVE_INCENSE;
 	pokemon.ability().name = Ability::TORRENT;
 
 	Team defender = max_damage_special_defender ();
 	defender.pokemon().dive();
 
-	unsigned const power = move_power(attacker.pokemon(), defender.pokemon(), Weather());
+	unsigned const power = move_power(attacker.pokemon(), defender.pokemon(), Weather(), Variable());
 	if (power != max_power)
 		throw IncorrectCalculation (power, max_power);
 }
@@ -150,7 +149,7 @@ void physical_damage_test () {
 	Team defender = max_damage_physical_defender();
 	calculate_defending_stat(attacker.pokemon(), defender.pokemon(), weather);
 	
-	unsigned const damage = uncapped_damage(attacker.pokemon(), defender, weather);
+	unsigned const damage = uncapped_damage(attacker.pokemon(), defender, weather, Variable());
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }
@@ -163,7 +162,7 @@ void special_damage_test () {
 
 	Team attacker = max_damage_special_attacker();
 	Pokemon & a = attacker.pokemon();
-	a.move.add(Moves::Blast_Burn, 3, team_size);
+	a.move.add(Moves::Blast_Burn, 3);
 	a.change_type(Type::Fire);
 
 	a.spa().ev.set_value(252);
@@ -182,7 +181,7 @@ void special_damage_test () {
 	Team defender = max_damage_special_defender();
 	calculate_defending_stat(attacker.pokemon(), defender.pokemon(), weather);
 
-	unsigned const damage = uncapped_damage(attacker.pokemon(), defender, weather);
+	unsigned const damage = uncapped_damage(attacker.pokemon(), defender, weather, Variable());
 	if (damage != max_damage)
 		throw IncorrectCalculation (damage, max_damage);
 }

@@ -22,9 +22,10 @@
 namespace technicalmachine {
 
 class Team;
+class Variable;
 class Weather;
 
-unsigned call_move (Team & user, Team & target, Weather & weather, bool damage_is_known = false);
+unsigned call_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false);
 
 }	// namespace technicalmachine
 #endif	// MOVE__USE_MOVE_HPP_
