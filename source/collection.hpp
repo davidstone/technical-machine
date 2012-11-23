@@ -20,7 +20,6 @@
 #define COLLECTION_HPP_
 
 #include <cstdint>
-#include <functional>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
@@ -86,16 +85,6 @@ class BaseCollection {
 		}
 		constexpr index_type index() const {
 			return current_index;
-		}
-		void for_each (typename std::function<void(T &)> const & f) {
-			for (T & element : container) {
-				f (element);
-			}
-		}
-		void for_each (typename std::function<void(T const &)> const & f) const {
-			for (T const & element : container) {
-				f (element);
-			}
 		}
 		friend bool operator==<T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
 	protected:
