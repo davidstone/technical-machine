@@ -38,12 +38,6 @@ class SharedMoves {
 				f(move);
 			}
 		}
-		template<typename Function>
-		void for_each(Function const & f) {
-			for (auto & move : moves) {
-				f(move);
-			}
-		}
 	private:
 		std::vector<Move> moves;
 };
