@@ -45,6 +45,8 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 			auto const self = const_cast<MoveCollection const *>(this);
 			return const_cast<Move &>(self->operator()(std::forward<Args>(args)...));
 		}
+		Move const & regular_move() const;
+		Move & regular_move();
 		Move const & regular_move(size_t index) const;
 		Move & regular_move(size_t index);
 		index_type number_of_regular_moves () const;
