@@ -47,7 +47,6 @@ bool MoveContainer::empty() const {
 	return false;
 }
 
-// Skips Struggle and switches
 void MoveContainer::for_each_regular_move (std::function<void(Move const &)> const & f) const {
 	std::for_each(regular.cbegin(), regular.cend(), f);
 }
