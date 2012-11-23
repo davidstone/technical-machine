@@ -43,7 +43,6 @@ class MoveContainer {
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);
 		void for_each_shared (std::function<void(Move const &)> const & f) const;
-		void for_each_shared (std::function<void(Move &)> const & f);
 		uint8_t size() const;
 		uint8_t number_of_regular_moves() const;
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;

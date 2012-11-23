@@ -46,7 +46,6 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 			current_index = number_of_regular_moves() - 1;
 		}
 		void for_each (std::function<void(Move const &)> const & f) const;
-		void for_each (std::function<void(Move &)> const & f);
 		// Skips Struggle and switches
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);

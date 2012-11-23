@@ -58,9 +58,6 @@ void MoveContainer::for_each_regular_move (std::function<void(Move &)> const & f
 void MoveContainer::for_each_shared (std::function<void(Move const &)> const & f) const {
 	shared->for_each(f);
 }
-void MoveContainer::for_each_shared (std::function<void(Move &)> const & f) {
-	shared->for_each(f);
-}
 
 Move const * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) const {
 	for (Move const & move : regular) {
