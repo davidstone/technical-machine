@@ -87,6 +87,11 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		hash_type hash() const;
 		hash_type max_hash() const;
 	private:
+		using Base::unchecked_value;
+		Pokemon & unchecked_value(index_type const specified_index) {
+			auto const self = const_cast<PokemonCollection const *>(this);
+			return const_cast<Pokemon &>(self->unchecked_value(specified_index));
+		}
 		void decrement_real_size ();
 		// If a Pokemon switches / faints, what Pokemon should replace it?
 		index_type current_replacement;

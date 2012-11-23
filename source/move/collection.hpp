@@ -72,6 +72,12 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		hash_type max_hash() const;
+	private:
+		using Base::unchecked_value;
+		Move & unchecked_value(index_type const specified_index) {
+			auto const self = const_cast<MoveCollection const *>(this);
+			return const_cast<Move &>(self->unchecked_value(specified_index));
+		}
 };
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

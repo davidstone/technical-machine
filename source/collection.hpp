@@ -88,9 +88,6 @@ class BaseCollection {
 		constexpr T const & unchecked_value (index_type const specified_index) const {
 			return container [specified_index];
 		}
-		T & unchecked_value (index_type const specified_index) {
-			return container [specified_index];
-		}
 		container_type container;
 		index_type current_index;
 };
