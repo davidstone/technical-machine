@@ -33,11 +33,11 @@ MoveContainer::MoveContainer(SharedMoves & s):
 	shared(&s) {
 }
 
-Move const & MoveContainer::operator[](uint8_t const index) const {
+Move const & MoveContainer::operator[](size_t const index) const {
 	assert(index < size());
 	return (index < regular.size()) ? regular[index] : (*shared)[index - regular.size()];
 }
-Move & MoveContainer::operator[](uint8_t const index) {
+Move & MoveContainer::operator[](size_t const index) {
 	assert(index < size());
 	return (index < regular.size()) ? regular[index] : (*shared)[index - regular.size()];
 }
@@ -74,11 +74,11 @@ Move * MoveContainer::find_if (std::function<bool(Move const &)> const & conditi
 	return nullptr;
 }
 
-uint8_t MoveContainer::size() const {
+size_t MoveContainer::size() const {
 	return regular.size() + shared->size();
 }
 
-uint8_t MoveContainer::number_of_regular_moves() const {
+size_t MoveContainer::number_of_regular_moves() const {
 	return regular.size();
 }
 

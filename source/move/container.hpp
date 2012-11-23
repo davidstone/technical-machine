@@ -30,8 +30,8 @@ class SharedMoves;
 class MoveContainer {
 	public:
 		MoveContainer(SharedMoves & s);
-		Move const & operator[](uint8_t index) const;
-		Move & operator[](uint8_t index);
+		Move const & operator[](size_t index) const;
+		Move & operator[](size_t index);
 		bool empty() const;
 		template<class... Args>
 		void emplace_back(Args&&... args) {
@@ -43,8 +43,8 @@ class MoveContainer {
 		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
 		void for_each_regular_move (std::function<void(Move &)> const & f);
 		void for_each_shared (std::function<void(Move const &)> const & f) const;
-		uint8_t size() const;
-		uint8_t number_of_regular_moves() const;
+		size_t size() const;
+		size_t number_of_regular_moves() const;
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
 		Move * find_if (std::function<bool(Move const &)> const & condition);
 		void update_shared_moves(SharedMoves & s);
