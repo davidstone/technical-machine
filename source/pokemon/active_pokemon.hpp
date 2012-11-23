@@ -64,7 +64,6 @@ class ActivePokemon {
 		Move const & move(Args&&... args) const {
 			return get_pokemon().move(std::forward<Args>(args)...);
 		}
-		Move & move();
 		template<typename... Args>
 		Move const & regular_move(Args && ... args) const {
 			return get_pokemon().move.regular_move(std::forward<Args>(args)...);

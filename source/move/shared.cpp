@@ -47,11 +47,6 @@ Move const & SharedMoves::operator[](size_t const index) const {
 	return moves[index];
 }
 
-Move & SharedMoves::operator[](size_t const index) {
-	assert(index < moves.size());
-	return moves[index];
-}
-
 size_t SharedMoves::size() const {
 	return moves.size();
 }

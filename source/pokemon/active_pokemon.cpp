@@ -435,10 +435,6 @@ void ActivePokemon::set_miss(bool const value) {
 	miss = value;
 }
 
-Move & ActivePokemon::move() {
-	return get_pokemon().move();
-}
-
 void ActivePokemon::set_moved(bool const value) {
 	has_moved = value;
 }

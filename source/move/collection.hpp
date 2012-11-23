@@ -39,12 +39,6 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 	public:
 		using Base::index_type;
 		MoveCollection (SharedMoves & s);
-		using Base::operator();
-		template<typename... Args>
-		Move & operator()(Args && ... args) {
-			auto const self = const_cast<MoveCollection const *>(this);
-			return const_cast<Move &>(self->operator()(std::forward<Args>(args)...));
-		}
 		Move const & regular_move() const;
 		Move & regular_move();
 		Move const & regular_move(size_t index) const;
@@ -76,12 +70,6 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		hash_type max_hash() const;
-	private:
-		using Base::unchecked_value;
-		Move & unchecked_value(index_type const specified_index) {
-			auto const self = const_cast<MoveCollection const *>(this);
-			return const_cast<Move &>(self->unchecked_value(specified_index));
-		}
 };
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

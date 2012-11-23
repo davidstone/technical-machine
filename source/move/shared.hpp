@@ -30,7 +30,6 @@ class SharedMoves {
 		explicit SharedMoves (unsigned team_size = 6);
 		void remove_switch();
 		Move const & operator[](size_t index) const;
-		Move & operator[](size_t index);
 		size_t size() const;
 		template<typename Function>
 		void for_each(Function const & f) const {
