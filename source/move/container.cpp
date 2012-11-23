@@ -42,6 +42,15 @@ Move & MoveContainer::operator[](size_t const index) {
 	return (index < regular.size()) ? regular[index] : (*shared)[index - regular.size()];
 }
 
+Move const & MoveContainer::regular_move(size_t const index) const {
+	assert(index < regular.size());
+	return regular[index];
+}
+Move & MoveContainer::regular_move(size_t const index) {
+	assert(index < regular.size());
+	return regular[index];
+}
+
 bool MoveContainer::empty() const {
 	// A move container is never empty, it always contains at least Struggle
 	return false;

@@ -33,6 +33,13 @@ MoveCollection::MoveCollection (SharedMoves & s):
 	Base(MoveContainer (s)) {
 }
 
+Move const & MoveCollection::regular_move(size_t const get_index) const {
+	return container.regular_move(get_index);
+}
+Move & MoveCollection::regular_move(size_t const get_index) {
+	return container.regular_move(get_index);
+}
+
 MoveCollection::index_type MoveCollection::number_of_regular_moves () const {
 	return container.number_of_regular_moves();
 }

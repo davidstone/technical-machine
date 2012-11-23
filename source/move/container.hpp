@@ -32,6 +32,8 @@ class MoveContainer {
 		MoveContainer(SharedMoves & s);
 		Move const & operator[](size_t index) const;
 		Move & operator[](size_t index);
+		Move const & regular_move(size_t index) const;
+		Move & regular_move(size_t index);
 		bool empty() const;
 		template<class... Args>
 		void emplace_back(Args&&... args) {
