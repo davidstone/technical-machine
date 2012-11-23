@@ -42,7 +42,6 @@ void MoveCollection::for_each (std::function<void(Move const &)> const & f) cons
 	container.for_each_shared(f);
 }
 
-// Skips Struggle and switches
 void MoveCollection::for_each_regular_move (std::function<void(Move const &)> const & f) const {
 	container.for_each_regular_move(f);
 }
