@@ -256,6 +256,7 @@ class ActivePokemon {
 		void direct_damage(unsigned damage);
 		void indirect_damage(unsigned damage);
 		void register_damage(unsigned damage);
+		void increment_move_use_counter();
 		void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 		// If the move is a hit, returns the chance to hit, otherwise, returns
 		// the chance to miss.

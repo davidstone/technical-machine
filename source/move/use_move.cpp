@@ -57,7 +57,7 @@ void do_side_effects (Team & user, Team & target, Weather & weather, Variable co
 void absorb_hp(Pokemon & user, Pokemon const & target, unsigned damage);
 void belly_drum(ActivePokemon & user);
 void clear_field(Team & user, Pokemon const & target);
-void confusing_stat_boost(Move const & move, ActivePokemon & target, Stat::Stats stat, int stages);
+void confusing_stat_boost(ActivePokemon & target, Stat::Stats stat, int stages);
 void curse(ActivePokemon & user, ActivePokemon & target);
 void equalize(Stat & hp1, Stat & hp2);
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable);
@@ -114,7 +114,7 @@ unsigned call_move (Team & user_team, Team & target_team, Weather & weather, Var
 namespace {
 
 unsigned use_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
-	Move & move = user.pokemon().move();
+	auto const & move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (target.pokemon().ability().blocks_sound_moves() and move.is_sound_based() and
@@ -127,7 +127,7 @@ unsigned use_move (Team & user, Team & target, Weather & weather, Variable const
 
 	unsigned const damage = calculate_real_damage(user.pokemon(), target, weather, variable, damage_is_known);
 	do_damage (user.pokemon(), target.pokemon(), damage);
-	move.increment_use_counter();
+	user.pokemon().increment_move_use_counter();
 
 	do_side_effects(user, target, weather, variable, damage);
 
@@ -166,7 +166,7 @@ void do_damage(ActivePokemon & user, ActivePokemon & target, unsigned const dama
 void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Variable const & variable, unsigned const damage) {
 	auto & target = target_team.pokemon();
 	auto & user = user_team.pokemon();
-	Move & move = user.move();
+	auto const & move = user.move();
 	switch (move.name) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
@@ -502,7 +502,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.stat_boost(Stat::ACC, -1);
 			break;
 		case Moves::Flatter:
-			confusing_stat_boost(move, target, Stat::SPA, 1);
+			confusing_stat_boost(target, Stat::SPA, 1);
 			break;
 		case Moves::Fling:
 			user.item().remove();
@@ -832,7 +832,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.stat_boost_physical(-1);
 			break;
 		case Moves::Swagger:
-			confusing_stat_boost(move, target, Stat::ATK, 2);
+			confusing_stat_boost(target, Stat::ATK, 2);
 			break;
 		case Moves::Swallow:
 			use_swallow(user);
@@ -942,7 +942,7 @@ void clear_field(Team & user, Pokemon const & target) {
 		user.clear_field();
 }
 
-void confusing_stat_boost(Move const & move, ActivePokemon & target, Stat::Stats const stat, int const stages) {
+void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, int const stages) {
 	target.stat_boost(stat, stages);
 	target.confuse();
 }

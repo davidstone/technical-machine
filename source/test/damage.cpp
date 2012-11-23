@@ -47,7 +47,7 @@ Team max_damage_physical_attacker () {
 
 	attacker.pokemon().defense_curl();
 	for (unsigned n = 0; n != 10; ++n)
-		pokemon.move().increment_use_counter();
+		attacker.pokemon().increment_move_use_counter();
 	
 	return attacker;
 }
@@ -172,7 +172,7 @@ void special_damage_test () {
 	
 	a.item().name = Item::METRONOME;
 	for (unsigned n = 0; n != 10; ++n)
-		a.move().increment_use_counter();
+		attacker.pokemon().increment_move_use_counter();
 
 	a.ability().name = Ability::BLAZE;
 	attacker.pokemon().set_critical_hit(true);
