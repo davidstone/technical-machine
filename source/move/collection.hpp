@@ -39,6 +39,12 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 	public:
 		using Base::index_type;
 		MoveCollection (SharedMoves & s);
+		using Base::operator();
+		template<typename... Args>
+		Move & operator()(Args && ... args) {
+			auto const self = const_cast<MoveCollection const *>(this);
+			return const_cast<Move &>(self->operator()(std::forward<Args>(args)...));
+		}
 		index_type number_of_regular_moves () const;
 		template<class... Args>
 		void add(Args&&... args) {

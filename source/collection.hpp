@@ -44,7 +44,7 @@ bool operator==(detail::BaseCollection<T, ContainerType> const & lhs, detail::Ba
 	return lhs.container == rhs.container;
 }
 
-// BaseCollection is defined only as a base class to Pokemon, Move, and Variable
+// BaseCollection is defined only as a base class to Pokemon and Move
 // collections. Do not use directly.
 namespace detail {
 template<typename T, typename ContainerType>
@@ -61,13 +61,7 @@ class BaseCollection {
 		constexpr T const & operator() (index_type const specified_index) const {
 			return unchecked_value (check_range(specified_index));
 		}
-		T & operator() (index_type const specified_index) {
-			return unchecked_value (check_range(specified_index));
-		}
 		constexpr T const & operator() () const {
-			return unchecked_value (index());
-		}
-		T & operator() () {
 			return unchecked_value (index());
 		}
 		constexpr bool is_empty() const {
@@ -86,7 +80,7 @@ class BaseCollection {
 		constexpr index_type index() const {
 			return current_index;
 		}
-		friend bool operator==<T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
+		friend bool operator== <T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
 	protected:
 		constexpr index_type check_range (index_type const new_index) const {
 			return (new_index < container.size()) ? new_index : throw InvalidCollectionIndex (new_index, container.size(), typeid(T).name());

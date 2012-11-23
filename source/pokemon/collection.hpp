@@ -41,6 +41,12 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		// needed. This should only be called once, in team intialization
 		void initialize_size (index_type const new_size);
 		void initialize_replacement ();
+		using Base::operator();
+		template<typename... Args>
+		Pokemon & operator()(Args && ... args) {
+			auto const self = const_cast<PokemonCollection const *>(this);
+			return const_cast<Pokemon &>(self->operator()(std::forward<Args>(args)...));
+		}
 		index_type replacement() const;
 		void set_replacement (index_type const new_index);
 		Pokemon const & at_replacement () const;
