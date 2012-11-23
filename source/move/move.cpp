@@ -57,6 +57,10 @@ void Move::reset () {
 	times_used.reset();
 }
 
+bool Move::is_regular() const {
+	return !is_struggle() and !is_switch();
+}
+
 bool Move::is_damaging() const {
 	return base_power() != 0;
 }

@@ -65,6 +65,14 @@ class ActivePokemon {
 			return get_pokemon().move(std::forward<Args>(args)...);
 		}
 		Move & move();
+		template<typename... Args>
+		Move const & regular_move(Args && ... args) const {
+			return get_pokemon().move.regular_move(std::forward<Args>(args)...);
+		}
+		template<typename... Args>
+		Move & regular_move(Args && ... args) {
+			return get_pokemon().move.regular_move(std::forward<Args>(args)...);
+		}
 		MoveCollection const & all_moves() const;
 		MoveCollection & all_moves();
 		// Not for variables that give a message at the end of the turn, this is

@@ -403,8 +403,8 @@ void ActivePokemon::lock_on_to() {
 }
 
 void ActivePokemon::lower_pp(Ability const & target) {
-	if (!is_locked_in_to_bide())
-		move().pp.decrement(target);
+	if (move().is_regular() and !is_locked_in_to_bide())
+		regular_move().pp.decrement(target);
 }
 
 bool ActivePokemon::magnet_rise_is_active() const {

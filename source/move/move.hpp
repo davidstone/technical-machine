@@ -42,6 +42,7 @@ class Move {
 		Move (Moves move, unsigned pp_ups = 3);
 		void reset ();
 		std::string to_string () const;
+		bool is_regular() const;
 		bool is_damaging() const;
 		bool is_physical() const;
 		bool is_special() const;
