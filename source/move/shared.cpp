@@ -51,4 +51,8 @@ size_t SharedMoves::size() const {
 	return moves.size();
 }
 
+bool operator==(SharedMoves const & lhs, SharedMoves const & rhs) {
+	return lhs.moves == rhs.moves;
+}
+
 }	// namespace technicalmachine

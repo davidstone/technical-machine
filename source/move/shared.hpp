@@ -37,6 +37,7 @@ class SharedMoves {
 				f(operator[](n));
 			}
 		}
+		friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
 	private:
 		std::vector<Move> moves;
 };
