@@ -33,8 +33,8 @@ class SharedMoves {
 		size_t size() const;
 		template<typename Function>
 		void for_each(Function const & f) const {
-			for (auto const & move : moves) {
-				f(move);
+			for (size_t n = 0; n != size(); ++n) {
+				f(operator[](n));
 			}
 		}
 	private:
