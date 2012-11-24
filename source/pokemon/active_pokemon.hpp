@@ -89,7 +89,6 @@ class ActivePokemon {
 		void activate_aqua_ring();
 		bool is_baton_passing() const;
 		void baton_pass();
-		void bounce();
 		bool cannot_be_koed() const;
 		bool charge_boosted() const;
 		void charge();
@@ -106,8 +105,6 @@ class ActivePokemon {
 		bool defense_curled() const;
 		void defense_curl();
 		void use_destiny_bond();
-		void dig();
-		void dive();
 		void activate_embargo();
 		void decrement_embargo();
 		bool is_encored() const;
@@ -119,7 +116,6 @@ class ActivePokemon {
 		void activate_flash_fire();
 		bool flinched() const;
 		void flinch();
-		void fly();
 		void focus_energy();
 		void fully_trap();
 		Gender const & gender() const;
@@ -177,7 +173,6 @@ class ActivePokemon {
 		void not_replacing();
 		bool is_roosting() const;
 		void roost();
-		void shadow_force();
 		bool shed_skin_activated() const;
 		void shed_skin(bool value);
 		Rational shed_skin_probability() const;
@@ -246,6 +241,14 @@ class ActivePokemon {
 		void activate_water_sport();
 		void hit_with_yawn();
 		bool decrement_yawn();
+
+		// Returns whether the Pokemon ends up in a Vanished state
+		bool bounce();
+		bool dig();
+		bool dive();
+		bool fly();
+		bool shadow_force();
+
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		unsigned damaged() const;

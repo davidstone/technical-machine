@@ -190,10 +190,6 @@ void ActivePokemon::baton_pass() {
 	pass = true;
 }
 
-void ActivePokemon::bounce() {
-	vanish.bounce();
-}
-
 bool ActivePokemon::cannot_be_koed() const {
 	return enduring;
 }
@@ -258,14 +254,6 @@ bool ActivePokemon::defense_curled() const {
 	return used_defense_curl;
 }
 
-void ActivePokemon::dig() {
-	vanish.dig();
-}
-
-void ActivePokemon::dive() {
-	vanish.dive();
-}
-
 void ActivePokemon::activate_embargo() {
 	embargo.activate();
 }
@@ -309,10 +297,6 @@ bool ActivePokemon::flinched() const {
 
 void ActivePokemon::flinch() {
 	flinched_this_turn = true;
-}
-
-void ActivePokemon::fly() {
-	vanish.fly();
 }
 
 void ActivePokemon::focus_energy() {
@@ -547,10 +531,6 @@ bool ActivePokemon::is_roosting() const {
 
 void ActivePokemon::roost() {
 	roosting = true;
-}
-
-void ActivePokemon::shadow_force() {
-	vanish.shadow_force();
 }
 
 bool ActivePokemon::shed_skin_activated() const {
@@ -797,6 +777,22 @@ bool ActivePokemon::decrement_yawn() {
 
 void ActivePokemon::hit_with_yawn() {
 	yawn.activate();
+}
+
+bool ActivePokemon::bounce() {
+	return vanish.bounce();
+}
+bool ActivePokemon::dig() {
+	return vanish.dig();
+}
+bool ActivePokemon::dive() {
+	return vanish.dive();
+}
+bool ActivePokemon::fly() {
+	return vanish.fly();
+}
+bool ActivePokemon::shadow_force() {
+	return vanish.shadow_force();
 }
 
 void ActivePokemon::use_bide(Pokemon & target) {

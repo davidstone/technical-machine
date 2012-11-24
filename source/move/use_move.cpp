@@ -309,9 +309,13 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			if (variable.effect_activates())
 				Status::apply<Status::PARALYSIS>(user, target, weather);
 			break;
-		case Moves::Bounce:		// Todo: Add Paralysis
-			user.bounce();
+		case Moves::Bounce: {
+			bool const vanished = user.bounce();
+			if (vanished and variable.effect_activates()) {
+				Status::apply<Status::PARALYSIS>(user, target, weather);
+			}
 			break;
+		}
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:

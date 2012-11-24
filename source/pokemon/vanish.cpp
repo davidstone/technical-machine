@@ -35,31 +35,34 @@ void Vanish::reset() {
 	vanish = VanishTypes::none;
 }
 
-void Vanish::flip(VanishTypes const flipped) {
-	if (vanish == VanishTypes::none)
+bool Vanish::flip(VanishTypes const flipped) {
+	if (vanish == VanishTypes::none) {
 		vanish = flipped;
-	else
+	}
+	else {
 		reset();
+	}
+	return vanish != VanishTypes::none;
 }
 
-void Vanish::bounce() {
-	flip(VanishTypes::bounce);
+bool Vanish::bounce() {
+	return flip(VanishTypes::bounce);
 }
 
-void Vanish::dig() {
-	flip(VanishTypes::dig);
+bool Vanish::dig() {
+	return flip(VanishTypes::dig);
 }
 
-void Vanish::dive() {
-	flip(VanishTypes::dive);
+bool Vanish::dive() {
+	return flip(VanishTypes::dive);
 }
 
-void Vanish::fly() {
-	flip(VanishTypes::fly);
+bool Vanish::fly() {
+	return flip(VanishTypes::fly);
 }
 
-void Vanish::shadow_force() {
-	flip(VanishTypes::shadow_force);
+bool Vanish::shadow_force() {
+	return flip(VanishTypes::shadow_force);
 }
 
 bool Vanish::doubles_move_power(Moves const move) const {

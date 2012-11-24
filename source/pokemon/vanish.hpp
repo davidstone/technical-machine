@@ -30,11 +30,14 @@ class Vanish {
 	public:
 		Vanish();
 		void reset();
-		void bounce();
-		void dig();
-		void dive();
-		void fly();
-		void shadow_force();
+
+		// Returns whether the Pokemon ends up in a Vanished state
+		bool bounce();
+		bool dig();
+		bool dive();
+		bool fly();
+		bool shadow_force();
+
 		bool doubles_move_power(Moves move) const;
 		typedef uint64_t hash_type;
 		hash_type hash() const;
@@ -45,7 +48,7 @@ class Vanish {
 		bool doubles_surf_power() const;
 		bool doubles_wind_power() const;
 		enum class VanishTypes : uint8_t;
-		void flip(VanishTypes const flipped);
+		bool flip(VanishTypes const flipped);
 		VanishTypes vanish;
 };
 
