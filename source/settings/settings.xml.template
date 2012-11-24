@@ -16,7 +16,7 @@
 	<team>teams/</team>
 
 	<servers>
-		<server>
+		<server name = "localhost">
 			<host>127.0.0.1</host>
 			<port>5080</port>
 			<username></username>
