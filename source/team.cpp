@@ -100,17 +100,17 @@ ActivePokemon & Team::pokemon() {
 }
 
 Pokemon const & Team::pokemon(PokemonCollection::index_type const index) const {
-	return m_all_pokemon(index);
+	return all_pokemon()(index);
 }
 Pokemon & Team::pokemon(PokemonCollection::index_type const index) {
-	return m_all_pokemon(index);
+	return all_pokemon()(index);
 }
 
 Pokemon const & Team::replacement() const {
-	return m_all_pokemon.at_replacement();
+	return all_pokemon().at_replacement();
 }
 Pokemon & Team::replacement() {
-	return m_all_pokemon.at_replacement();
+	return all_pokemon().at_replacement();
 }
 
 void Team::remove_pokemon () {
