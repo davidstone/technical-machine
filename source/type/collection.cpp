@@ -56,8 +56,8 @@ void TypeCollection::change_type(Type const type) {
 	types = std::vector<Type>({ type });
 }
 
-bool is_type (ActivePokemon const & pokemon, Type const type) {
-	if (type != Type::Flying or !pokemon.is_roosting()) {
+bool is_type(Pokemon const & pokemon, Type const type, bool const roosting) {
+	if (type != Type::Flying or !roosting) {
 		for (Type const check : pokemon.type().types) {
 			if (check == type)
 				return true;
@@ -65,9 +65,39 @@ bool is_type (ActivePokemon const & pokemon, Type const type) {
 	}
 	return false;
 }
+bool is_type (ActivePokemon const & pokemon, Type const type) {
+	return is_type(pokemon, type, pokemon.is_roosting());
+}
 
-bool grounded (ActivePokemon const & pokemon, Weather const & weather) {
-	return !(is_type(pokemon, Type::Flying) or pokemon.ability().is_immune_to_ground() or pokemon.magnet_rise_is_active()) or weather.gravity() or pokemon.item().grounds() or pokemon.ingrained();
+namespace {
+
+bool forced_grounded(Pokemon const & pokemon, Weather const & weather) {
+	return weather.gravity() or pokemon.item().grounds();
+}
+bool forced_grounded(ActivePokemon const & pokemon, Weather const & weather) {
+	return forced_grounded(static_cast<Pokemon const &>(pokemon), weather) or pokemon.ingrained();
+}
+
+bool is_immune_to_ground(Pokemon const & pokemon, Weather const & weather, bool const roosting = false) {
+	return is_type(pokemon, Type::Flying, roosting) or pokemon.ability().is_immune_to_ground();
+}
+bool is_immune_to_ground(ActivePokemon const & active, Weather const & weather) {
+	auto const & pokemon = static_cast<Pokemon const &>(active);
+	return is_immune_to_ground(pokemon, weather, active.is_roosting()) or active.magnet_rise_is_active();
+}
+
+template<typename PossiblyActivePokemon>
+bool is_grounded(PossiblyActivePokemon const & pokemon, Weather const & weather) {
+	return !is_immune_to_ground(pokemon, weather) or forced_grounded(pokemon, weather);
+}
+
+}	// unnamed namespace
+
+bool grounded(Pokemon const & pokemon, Weather const & weather) {
+	return is_grounded(pokemon, weather);
+}
+bool grounded(ActivePokemon const & pokemon, Weather const & weather) {
+	return is_grounded(pokemon, weather);
 }
 
 namespace {

@@ -34,24 +34,8 @@
 #include "../type/effectiveness.hpp"
 
 namespace technicalmachine {
-namespace {
-class ResetIndex {
-	public:
-		ResetIndex (Team & team):
-			reset (team),
-			index (team.all_pokemon().index()) {
-		}
-		~ResetIndex () {
-			reset.all_pokemon().set_index(index);
-		}
-	private:
-		Team & reset;
-		PokemonCollection::index_type const index;
-};
 
-}	// unnamed namespace
-
-int64_t Evaluate::operator()(Team & ai, Team & foe, Weather const & weather) const {
+int64_t Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const {
 	int64_t score = score_team (ai) - score_team (foe);
 	return score + score_all_pokemon (ai, foe, weather) - score_all_pokemon (foe, ai, weather);
 }
@@ -62,36 +46,6 @@ int64_t Evaluate::score_team (Team const & team) const {
 	score += safeguard * team.screens.m_safeguard.turns_remaining;
 	score += tailwind * team.screens.m_tailwind.turns_remaining;
 	score += wish * team.wish.is_active();
-	if (team.pokemon().hp().stat != 0) {
-		score += score_active_pokemon(team.pokemon());
-	//	if (other.pokemon().leech_seed)
-	//		score += 1 * other.pokemon().hp.max / member.hp.max;
-
-		if (team.pokemon().get_pokemon().move.exists(Moves::Baton_Pass))
-			score += baton_passable_score(team.pokemon()) * 2;
-		else
-			score += baton_passable_score(team.pokemon());
-		
-	}
-	return score;
-}
-
-int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
-	int64_t score = 0;
-	if (pokemon.is_cursed())
-		score += curse;
-	if (pokemon.imprisoned())
-		score += imprison;
-	if (pokemon.leech_seed)
-		score += leech_seed;
-	if (pokemon.loaf)
-		score += loaf;
-	if (pokemon.fully_trapped)
-		score += trapped;
-	if (pokemon.nightmare())
-		score += nightmare;
-	if (pokemon.tormented())
-		score += torment;
 	return score;
 }
 
@@ -110,32 +64,55 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 	return score;
 }
 
-int64_t Evaluate::score_all_pokemon (Team & team, Team const & other, Weather const & weather) const {
-	ResetIndex const reset_index (team);
+int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
 	for (uint8_t index = 0; index != team.all_pokemon().size(); ++index) {
-		team.all_pokemon().set_index(index);
-		score += score_pokemon (team, other, weather);
+		bool const is_active = (index == team.pokemon().index());
+		score += score_pokemon(team.pokemon(index), team.entry_hazards, other, weather);
+		if (is_active) {
+			score += score_active_pokemon(team.pokemon());
+		}
 	}
 	return score;
 }
 
-int64_t Evaluate::score_pokemon (Team const & team, Team const & other, Weather const & weather) const {
-	auto const & pokemon = team.pokemon().get_pokemon();
-	int64_t score = team.entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
-	if (grounded (team.pokemon(), weather))
-		score += team.entry_hazards.spikes * spikes + team.entry_hazards.toxic_spikes * toxic_spikes;
-	if (!pokemon.is_fainted()) {
-		score += members;
-		score += hp * pokemon.current_hp();
-		score += hidden * !pokemon.seen();
-		score += score_status (team.pokemon());
-		score += score_move (team.pokemon(), other, weather);
+int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
+	if (pokemon.hp().stat == 0) {
+		return 0;
 	}
+	int64_t score = 0;
+	if (pokemon.is_cursed())
+		score += curse;
+	if (pokemon.imprisoned())
+		score += imprison;
+	if (pokemon.leech_seed)
+		score += leech_seed;
+	if (pokemon.loaf)
+		score += loaf;
+	if (pokemon.fully_trapped)
+		score += trapped;
+	if (pokemon.nightmare())
+		score += nightmare;
+	if (pokemon.tormented())
+		score += torment;
+	score += baton_passable_score(pokemon) * ((pokemon.all_moves().exists(Moves::Baton_Pass)) ? 2 : 1);
 	return score;
 }
 
-int64_t Evaluate::score_status (ActivePokemon const & pokemon) const {
+int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
+	int64_t score = entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
+	if (grounded(pokemon, weather)) {
+		score += entry_hazards.spikes * spikes + entry_hazards.toxic_spikes * toxic_spikes;
+	}
+	score += members;
+	score += hp * pokemon.current_hp();
+	score += hidden * !pokemon.seen();
+	score += score_status(pokemon, toxic_counter);
+	score += score_move (pokemon, other, weather);
+	return score;
+}
+
+int64_t Evaluate::score_status(Pokemon const & pokemon, int const toxic_counter) const {
 	switch (pokemon.status().name()) {
 		case Status::BURN:
 			return burn;
@@ -146,7 +123,7 @@ int64_t Evaluate::score_status (ActivePokemon const & pokemon) const {
 		case Status::POISON:
 			return poison;
 		case Status::POISON_TOXIC:
-			return poison * pokemon.toxic.counter / 2;
+			return poison * toxic_counter / 2;
 		case Status::REST:
 		case Status::SLEEP:
 			return sleep;
@@ -155,10 +132,10 @@ int64_t Evaluate::score_status (ActivePokemon const & pokemon) const {
 	}
 }
 
-int64_t Evaluate::score_move (ActivePokemon const & pokemon, Team const & other, Weather const & weather) const {
+int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const {
 	// TODO: alter the score of a move based on the weather
 	int64_t score = 0;
-	pokemon.get_pokemon().move.for_each([&](Move const & move) {
+	pokemon.move.for_each([&](Move const & move) {
 		if (move.is_physical())
 			score += other.screens.m_reflect.turns_remaining * reflect;
 		else if (move.is_special())

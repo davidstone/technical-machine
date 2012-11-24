@@ -27,6 +27,7 @@
 namespace technicalmachine {
 
 class ActivePokemon;
+class EntryHazards;
 class Pokemon;
 class Status;
 class Team;
@@ -36,9 +37,7 @@ class Evaluate {
 	public:
 		Evaluate();
 		void load();
-		// ai and foe are both logically constant. I change the active Pokemon
-		// in each of them, but I change it back before the function returns.
-		int64_t operator()(Team & ai, Team & foe, Weather const & weather) const;
+		int64_t operator()(Team const & ai, Team const & foe, Weather const & weather) const;
 		// Both of these return victory if the battle is won. Returns -victory
 		// if the battle is lost. Returns 0 otherwise.
 		static int64_t win(Team const & team);
@@ -49,12 +48,12 @@ class Evaluate {
 		constexpr static int64_t victory = 30240;
 	private:
 		int64_t score_team(Team const & team) const;
+		int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
+		int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
 		int64_t score_active_pokemon(ActivePokemon const & active) const;
-		int64_t score_all_pokemon(Team & team, Team const & other, Weather const & weather) const;
-		int64_t score_pokemon(Team const & team, Team const & other, Weather const & weather) const;
 		int64_t baton_passable_score(ActivePokemon const & pokemon) const;
-		int64_t score_status(ActivePokemon const & pokemon) const;
-		int64_t score_move (ActivePokemon const & pokemon, Team const & other, Weather const & weather) const;
+		int64_t score_status(Pokemon const & pokemon, int toxic_counter) const;
+		int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
 
 		int light_screen;
 		int lucky_chant;

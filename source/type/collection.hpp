@@ -26,6 +26,7 @@
 
 namespace technicalmachine {
 class ActivePokemon;
+class Pokemon;
 class Weather;
 
 class TypeCollection {
@@ -43,14 +44,16 @@ class TypeCollection {
 		}
 		void change_type(Type const type);
 	private:
-		friend bool is_type (ActivePokemon const & pokemon, Type type);
+		friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
 		friend class Type;
 		friend class Effectiveness;
 		std::vector<Type> types;
 };
 
-bool is_type (ActivePokemon const & pokemon, Type type);
-bool grounded (ActivePokemon const & pokemon, Weather const & weather);
+bool is_type(Pokemon const & pokemon, Type type, bool roosting = false);
+bool is_type(ActivePokemon const & pokemon, Type type);
+bool grounded(Pokemon const & pokemon, Weather const & weather);
+bool grounded(ActivePokemon const & pokemon, Weather const & weather);
 
 }	// namespace technicalmachine
 #endif	// TYPE__COLLECTION_HPP_
