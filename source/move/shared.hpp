@@ -20,10 +20,10 @@
 #define MOVE__SHARED_HPP_
 
 #include <cstddef>
-#include <vector>
-#include "move.hpp"
+#include <cstdint>
 
 namespace technicalmachine {
+class Move;
 
 class SharedMoves {
 	public:
@@ -39,7 +39,7 @@ class SharedMoves {
 		}
 		friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
 	private:
-		std::vector<Move> moves;
+		uint8_t number_of_switches;
 };
 
 }	// namespace technicalmachine

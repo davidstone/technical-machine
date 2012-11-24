@@ -20,39 +20,44 @@
 
 #include <cassert>
 
+#include "global_move.hpp"
+#include "move.hpp"
 #include "moves.hpp"
 
 namespace technicalmachine {
+namespace {
+// Struggle is the only other special move right now
+constexpr unsigned number_of_non_switches = 1;
+}
 
-SharedMoves::SharedMoves(unsigned const team_size) {
-	moves.reserve ((team_size > 1) ? team_size + 1 : 1);
-	moves.emplace_back(Moves::Struggle, 0);
-	// A Pokemon has a new "Switch" move for each Pokemon in the party.
-	if (team_size > 1) {
-		for (unsigned count = 0; count != team_size; ++count) {
-			moves.emplace_back(Move::from_replacement(count), 0);
-		}
-	}
+// Once a Pokemon is the last on the team, we remove switching entirely. This
+// takes place if we construct SharedMoves from a one-Pokemon team or if we call
+// remove_switch() and it brings a Pokemon down to only the ability to switch to
+// itself
+
+SharedMoves::SharedMoves(unsigned const team_size):
+	number_of_switches((team_size > 1) ? team_size : 0) {
 }
 
 void SharedMoves::remove_switch() {
-	assert(moves.back().is_switch());
-	moves.pop_back();
-	if (moves.back().name == Moves::Switch0)
-		moves.pop_back();
+	assert(number_of_switches != 0);
+	--number_of_switches;
+	if (number_of_switches == 1)
+		number_of_switches = 0;
 }
 
 Move const & SharedMoves::operator[](size_t const index) const {
-	assert(index < moves.size());
-	return moves[index];
+	assert(index <= number_of_switches + number_of_non_switches);
+	auto const name = (index == 0) ? Moves::Struggle : Move::from_replacement(index - number_of_non_switches);
+	return global_move(name);
 }
 
 size_t SharedMoves::size() const {
-	return moves.size();
+	return number_of_switches + number_of_non_switches;
 }
 
 bool operator==(SharedMoves const & lhs, SharedMoves const & rhs) {
-	return lhs.moves == rhs.moves;
+	return lhs.number_of_switches == rhs.number_of_switches;
 }
 
 }	// namespace technicalmachine
