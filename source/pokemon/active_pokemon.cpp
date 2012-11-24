@@ -29,12 +29,26 @@
 namespace technicalmachine {
 
 ActivePokemon::ActivePokemon(PokemonCollection & all):
-	all_pokemon(&all)
+	m_all_pokemon(&all)
 	{
 }
 
+PokemonCollection const & ActivePokemon::all_pokemon() const {
+	return *m_all_pokemon;
+}
+PokemonCollection & ActivePokemon::all_pokemon() {
+	return *m_all_pokemon;
+}
+
 void ActivePokemon::update_collection(PokemonCollection & all) {
-	all_pokemon = &all;
+	m_all_pokemon = &all;
+}
+
+Pokemon const & ActivePokemon::get_pokemon() const {
+	return all_pokemon()();
+}
+Pokemon & ActivePokemon::get_pokemon() {
+	return all_pokemon()();
 }
 
 ActivePokemon::operator Pokemon const & () const {
@@ -331,7 +345,7 @@ void ActivePokemon::imprison() {
 }
 
 PokemonCollection::index_type ActivePokemon::index() const {
-	return all_pokemon->index();
+	return all_pokemon().index();
 }
 
 bool ActivePokemon::ingrained() const {
@@ -487,7 +501,7 @@ void ActivePokemon::perish_song_turn() {
 }
 
 bool ActivePokemon::can_be_phazed() const {
-	return !ingrained() and !ability().blocks_phazing() and all_pokemon->size() > 1;
+	return !ingrained() and !ability().blocks_phazing() and all_pokemon().size() > 1;
 }
 
 unsigned ActivePokemon::power_of_mass_based_moves() const {
@@ -706,11 +720,11 @@ int ActivePokemon::release_stockpile() {
 }
 
 bool ActivePokemon::is_switching_to_self () const {
-	return all_pokemon->is_switching_to_self();
+	return all_pokemon().is_switching_to_self();
 }
 
 bool ActivePokemon::is_switching_to_self (Move const & switch_move) const {
-	return all_pokemon->is_switching_to_self(switch_move);
+	return all_pokemon().is_switching_to_self(switch_move);
 }
 
 bool ActivePokemon::has_switched() const {
@@ -723,7 +737,7 @@ bool ActivePokemon::switch_decision_required() const {
 
 void ActivePokemon::switch_pokemon() {
 	get_pokemon().switch_out();
-	all_pokemon->to_replacement();
+	all_pokemon().to_replacement();
 }
 
 void ActivePokemon::switch_in() {
@@ -731,7 +745,7 @@ void ActivePokemon::switch_in() {
 }
 
 void ActivePokemon::update_to_correct_switch() {
-	get_pokemon().move.set_index(Move::from_replacement(all_pokemon->replacement()));
+	get_pokemon().move.set_index(Move::from_replacement(all_pokemon().replacement()));
 }
 
 bool ActivePokemon::trapped() const {
@@ -974,7 +988,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return
-			lhs.all_pokemon->index() == rhs.all_pokemon->index() and
+			lhs.m_all_pokemon->index() == rhs.m_all_pokemon->index() and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and
 			lhs.bide == rhs.bide and
