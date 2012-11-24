@@ -568,11 +568,16 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Ghost },			// Dusknoir
 		{ Type::Ice, Type::Ghost },			// Froslass
 		{ Type::Electric, Type::Ghost },			// Rotom
-		{ Type::Electric, Type::Fire },			// Rotom-H
-		{ Type::Electric, Type::Water },			// Rotom-W
-		{ Type::Electric, Type::Ice },			// Rotom-F
-		{ Type::Electric, Type::Flying },			// Rotom-S
-		{ Type::Electric, Type::Grass },			// Rotom-C
+		// Electric + Fire
+		{ Type::Electric, Type::Ghost },			// Rotom-H
+		// Electric + Water
+		{ Type::Electric, Type::Ghost },			// Rotom-W
+		// Electric + Ice
+		{ Type::Electric, Type::Ghost },			// Rotom-F
+		// Electric + Flying
+		{ Type::Electric, Type::Ghost },			// Rotom-S
+		// Electric + Grass
+		{ Type::Electric, Type::Ghost },			// Rotom-C
 		{ Type::Psychic },			// Uxie
 		{ Type::Psychic },			// Mesprit
 		{ Type::Psychic },			// Azelf
