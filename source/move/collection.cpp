@@ -29,7 +29,7 @@
 namespace technicalmachine {
 
 MoveCollection::MoveCollection(unsigned const my_team_size):
-	Base(MoveContainer(my_team_size)) {
+	Base(my_team_size) {
 }
 
 Move const & MoveCollection::regular_move() const {
