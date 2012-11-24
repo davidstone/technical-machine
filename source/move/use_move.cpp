@@ -193,7 +193,6 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.stat_boost(Stat::DEF, 2);
 			break;
 		case Moves::Acupressure:
-			// TODO: this doesn't properly account for stats maxing out
 			user.stat_boost(static_cast<Stat::Stats>(variable.value()), 2);
 			break;
 		case Moves::Agility:
