@@ -785,8 +785,9 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Skull_Bash: // Fix
 			break;
-		case Moves::Sky_Attack:	// Fix
+		case Moves::Sky_Attack:
 			if (variable.effect_activates()) {
+				target.flinch();
 			}
 			break;
 		case Moves::SmellingSalt:
