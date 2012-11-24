@@ -28,7 +28,8 @@
 #include "../../move/move.hpp"
 #include "../../move/collection.hpp"
 #include "../../move/container.hpp"
-#include "../../move/shared.hpp"
+
+#include "../../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
@@ -37,8 +38,7 @@ void move_collection_tests() {
 	constexpr unsigned team_size = 4;
 	for (unsigned size = 1; size <= team_size; ++size) {
 		unsigned const shared_moves_size = (size > 1) ? size + 1 : 1;
-		SharedMoves shared(size);
-		MoveCollection c(shared);
+		MoveCollection c(size);
 		if (c.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + std::to_string(size));
 		auto expected = create_regular_moves();
@@ -52,8 +52,9 @@ void move_collection_tests() {
 		auto const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
 		for (unsigned n = 0; n != expected.size(); ++n) {
-			if (expected[n] != c(n).name)
-				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + std::to_string(size));
+			if (expected[n] != c(n).name) {
+				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + std::to_string(size) + ". Stored: " + c(n).to_string() + " -- Expected: " + to_string(expected[n]));
+			}
 		}
 	}
 }

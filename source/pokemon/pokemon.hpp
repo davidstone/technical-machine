@@ -40,16 +40,16 @@
 
 namespace technicalmachine {
 class Rational;
-class SharedMoves;
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 class Pokemon {
 	public:
-		Pokemon(SharedMoves & shared, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
-		Pokemon(SharedMoves & shared, Species species, uint8_t set_level, Gender set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
+		Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
+		Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
 		void switch_in();
 		void switch_out();
 		void calculate_initial_hp ();
+		void remove_switch();
 		uint8_t index_of_first_switch () const;
 		// Fix any rounding issues caused by not seeing the foe's exact HP.
 		void normalize_hp ();

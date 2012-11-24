@@ -27,10 +27,9 @@
 #include "moves.hpp"
 
 namespace technicalmachine {
-class SharedMoves;
 
-MoveCollection::MoveCollection (SharedMoves & s):
-	Base(MoveContainer (s)) {
+MoveCollection::MoveCollection(unsigned const my_team_size):
+	Base(MoveContainer(my_team_size)) {
 }
 
 Move const & MoveCollection::regular_move() const {
@@ -108,8 +107,8 @@ MoveCollection::index_type MoveCollection::size () const {
 	return container.size();
 }
 
-void MoveCollection::update_shared_moves(SharedMoves & s) {
-	container.update_shared_moves(s);
+void MoveCollection::remove_switch() {
+	container.remove_switch();
 }
 
 MoveCollection::hash_type MoveCollection::hash() const {

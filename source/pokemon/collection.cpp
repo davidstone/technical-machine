@@ -106,6 +106,9 @@ void PokemonCollection::remove_active () {
 	container.erase (container.begin() + index());
 	decrement_real_size();
 	set_index((index() > replacement()) ? replacement() : replacement() - 1);
+	for_each([](Pokemon & pokemon) {
+		pokemon.remove_switch();
+	});
 }
 
 void PokemonCollection::for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f) {

@@ -27,8 +27,6 @@
 #include "screens.hpp"
 #include "wish.hpp"
 
-#include "move/shared.hpp"
-
 #include "pokemon/active_pokemon.hpp"
 #include "pokemon/collection.hpp"
 #include "pokemon/species_forward.hpp"
@@ -55,7 +53,7 @@ class Team {
 		Pokemon & replacement();
 		template<typename... Args>
 		void add_pokemon(Args&&... args) {
-			m_all_pokemon.add(shared_moves, std::forward<Args>(args)...);
+			m_all_pokemon.add(std::forward<Args>(args)...);
 		}
 		void remove_pokemon ();
 		PokemonCollection const & all_pokemon() const;
@@ -86,7 +84,6 @@ class Team {
 		void load(std::string const & name);
 
 		PokemonCollection m_all_pokemon;
-		SharedMoves shared_moves;
 		ActivePokemon active_pokemon;
 	public:
 		Screens screens;

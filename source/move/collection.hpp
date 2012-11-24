@@ -32,13 +32,12 @@
 namespace technicalmachine {
 
 class MoveScores;
-class SharedMoves;
 
 class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		typedef detail::BaseCollection<Move, MoveContainer> Base;
 	public:
 		using Base::index_type;
-		MoveCollection (SharedMoves & s);
+		MoveCollection(unsigned my_team_size);
 		Move const & regular_move() const;
 		Move & regular_move();
 		Move const & regular_move(size_t index) const;
@@ -66,7 +65,7 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		Moves name_of_last_used_move () const;
 		bool moved_since_switch() const;
 		index_type size () const;
-		void update_shared_moves(SharedMoves & s);
+		void remove_switch();
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		hash_type max_hash() const;

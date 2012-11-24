@@ -44,8 +44,8 @@ bool is_shaymin (Species species);
 bool is_wormadam (Species species);
 }	// unnamed namespace
 
-Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level, Gender set_gender, std::string const & set_nickname, uint8_t set_happiness) : 
-	move (shared),
+Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t set_level, Gender set_gender, std::string const & set_nickname, uint8_t set_happiness) : 
+	move(my_team_size),
 	current_type(species),
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
@@ -68,8 +68,8 @@ Pokemon::Pokemon (SharedMoves & shared, Species const species, uint8_t set_level
 	calculate_initial_hp();
 }
 
-Pokemon::Pokemon(SharedMoves & shared, Species const species, uint8_t const set_level, Gender const set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname, uint8_t set_happiness):
-	Pokemon::Pokemon(shared, species, set_level, set_gender, set_nickname, set_happiness)
+Pokemon::Pokemon(unsigned const my_team_size, Species const species, uint8_t const set_level, Gender const set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname, uint8_t set_happiness):
+	Pokemon::Pokemon(my_team_size, species, set_level, set_gender, set_nickname, set_happiness)
 	{
 	m_item = set_item;
 	m_ability = set_ability;
@@ -88,6 +88,10 @@ void Pokemon::switch_out() {
 
 void Pokemon::calculate_initial_hp () {
 	m_hp.calculate_initial_hp(level());
+}
+
+void Pokemon::remove_switch() {
+	move.remove_switch();
 }
 
 uint8_t Pokemon::index_of_first_switch () const {

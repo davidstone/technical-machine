@@ -23,13 +23,13 @@
 #include <functional>
 #include <vector>
 #include "move.hpp"
+#include "shared.hpp"
 
 namespace technicalmachine {
-class SharedMoves;
 
 class MoveContainer {
 	public:
-		MoveContainer(SharedMoves & s);
+		MoveContainer(unsigned my_team_size);
 		Move const & operator[](size_t index) const;
 		Move const & regular_move(size_t index) const;
 		Move & regular_move(size_t index);
@@ -48,11 +48,11 @@ class MoveContainer {
 		size_t number_of_regular_moves() const;
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
 		Move * find_if (std::function<bool(Move const &)> const & condition);
-		void update_shared_moves(SharedMoves & s);
+		void remove_switch();
 		friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
 	private:
 		std::vector<Move> regular;
-		SharedMoves * shared;
+		SharedMoves shared;
 };
 
 }	// namespace technicalmachine

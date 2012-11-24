@@ -70,30 +70,22 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 
 Team::Team(Team const & other):
 	m_all_pokemon (other.m_all_pokemon),
-	shared_moves(other.shared_moves),
 	active_pokemon(other.active_pokemon),
 	screens(other.screens),
 	wish(other.wish),
 	entry_hazards(other.entry_hazards),
 	me(other.me) {
 	pokemon().update_collection(m_all_pokemon);
-	all_pokemon().for_each([this](Pokemon & p) {
-		p.move.update_shared_moves(shared_moves);
-	});
 }
 
 Team::Team(Team && other):
 	m_all_pokemon(std::move(other.m_all_pokemon)),
-	shared_moves(std::move(other.shared_moves)),
 	active_pokemon(std::move(other.active_pokemon)),
 	screens(std::move(other.screens)),
 	wish(std::move(other.wish)),
 	entry_hazards(std::move(other.entry_hazards)),
 	me(std::move(other.me)) {
 	pokemon().update_collection(m_all_pokemon);
-	all_pokemon().for_each([this](Pokemon & p) {
-		p.move.update_shared_moves(shared_moves);
-	});
 }
 
 Team & Team::operator= (Team const & other) = default;
@@ -123,9 +115,6 @@ Pokemon & Team::replacement() {
 
 void Team::remove_pokemon () {
 	all_pokemon().remove_active();
-	if (all_pokemon().is_empty())
-		return;
-	shared_moves.remove_switch();
 }
 
 PokemonCollection const & Team::all_pokemon() const {

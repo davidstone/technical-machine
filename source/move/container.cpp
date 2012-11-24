@@ -29,13 +29,13 @@
 
 namespace technicalmachine {
 
-MoveContainer::MoveContainer(SharedMoves & s):
-	shared(&s) {
+MoveContainer::MoveContainer(unsigned const my_team_size):
+	shared(my_team_size) {
 }
 
 Move const & MoveContainer::operator[](size_t const index) const {
 	assert(index < size());
-	return (index < regular.size()) ? regular[index] : (*shared)[index - regular.size()];
+	return (index < regular.size()) ? regular[index] : shared[index - regular.size()];
 }
 
 Move const & MoveContainer::regular_move(size_t const index) const {
@@ -60,7 +60,7 @@ void MoveContainer::for_each_regular_move (std::function<void(Move &)> const & f
 }
 
 void MoveContainer::for_each_shared (std::function<void(Move const &)> const & f) const {
-	shared->for_each(f);
+	shared.for_each(f);
 }
 
 Move const * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) const {
@@ -79,15 +79,15 @@ Move * MoveContainer::find_if (std::function<bool(Move const &)> const & conditi
 }
 
 size_t MoveContainer::size() const {
-	return regular.size() + shared->size();
+	return regular.size() + shared.size();
 }
 
 size_t MoveContainer::number_of_regular_moves() const {
 	return regular.size();
 }
 
-void MoveContainer::update_shared_moves(SharedMoves & s) {
-	shared = &s;
+void MoveContainer::remove_switch() {
+	shared.remove_switch();
 }
 
 bool operator==(MoveContainer const & lhs, MoveContainer const & rhs) {

@@ -63,7 +63,7 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 
 		template<class... Args>
 		void add(Args&&... args) {
-			Base::add(std::forward<Args>(args)...);
+			Base::add(true_size, std::forward<Args>(args)...);
 			// Guaranteed to be a valid index
 			current_replacement = static_cast<index_type>(container.size() - 1);
 		}

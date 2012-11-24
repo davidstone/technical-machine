@@ -29,7 +29,6 @@
 #include "../../move/move.hpp"
 #include "../../move/moves_forward.hpp"
 #include "../../move/container.hpp"
-#include "../../move/shared.hpp"
 
 #include "../../string_conversions/conversion.hpp"
 
@@ -60,8 +59,7 @@ void move_container_tests() {
 	std::cout << "\tRunning MoveContainer tests.\n";
 	constexpr unsigned team_size = 4;
 	constexpr unsigned shared_moves_size = team_size + 1;
-	SharedMoves shared(team_size);
-	MoveContainer c(shared);
+	MoveContainer c(team_size);
 	if (c.size() != shared_moves_size) {
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + std::to_string(shared_moves_size) + " but got " + std::to_string(static_cast<int>(c.size())));
 	}
