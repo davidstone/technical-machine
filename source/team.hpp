@@ -28,7 +28,6 @@
 #include "wish.hpp"
 
 #include "pokemon/active_pokemon.hpp"
-#include "pokemon/collection.hpp"
 #include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
@@ -40,10 +39,6 @@ class Team {
 	public:
 		Team ();
 		Team(std::mt19937 & random_engine, std::string const & team_file_name);
-		Team (Team const & other);
-		Team (Team && other);
-		Team & operator= (Team const & other);
-		Team & operator= (Team && other);
 		
 		ActivePokemon const & pokemon() const;
 		ActivePokemon & pokemon();
@@ -53,7 +48,7 @@ class Team {
 		Pokemon & replacement();
 		template<typename... Args>
 		void add_pokemon(Args&&... args) {
-			m_all_pokemon.add(std::forward<Args>(args)...);
+			all_pokemon().add(std::forward<Args>(args)...);
 		}
 		void remove_pokemon ();
 		PokemonCollection const & all_pokemon() const;
@@ -83,7 +78,6 @@ class Team {
 		friend class Evaluate;
 		void load(std::string const & name);
 
-		PokemonCollection m_all_pokemon;
 		ActivePokemon active_pokemon;
 	public:
 		Screens screens;

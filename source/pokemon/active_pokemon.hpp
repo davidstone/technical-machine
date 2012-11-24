@@ -55,9 +55,6 @@ class Weather;
 
 class ActivePokemon {
 	public:
-		ActivePokemon(PokemonCollection & all);
-		// this should only be called in Team's copy / move constructors
-		void update_collection(PokemonCollection & all);
 		operator Pokemon const & () const;
 		operator Pokemon & ();
 		template<typename... Args>
@@ -283,7 +280,7 @@ class ActivePokemon {
 		// I'd make this a reference but I don't want to manually define a copy
 		// and move assignment operator to simply verify that the referents are
 		// the same.
-		PokemonCollection * m_all_pokemon;
+		PokemonCollection m_all_pokemon;
 		uint16_t damage_done_to_active = 0;
 		Bide bide;
 		ChanceToHit cached_chance_to_hit;

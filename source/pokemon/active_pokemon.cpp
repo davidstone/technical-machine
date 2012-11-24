@@ -28,20 +28,11 @@
 
 namespace technicalmachine {
 
-ActivePokemon::ActivePokemon(PokemonCollection & all):
-	m_all_pokemon(&all)
-	{
-}
-
 PokemonCollection const & ActivePokemon::all_pokemon() const {
-	return *m_all_pokemon;
+	return m_all_pokemon;
 }
 PokemonCollection & ActivePokemon::all_pokemon() {
-	return *m_all_pokemon;
-}
-
-void ActivePokemon::update_collection(PokemonCollection & all) {
-	m_all_pokemon = &all;
+	return m_all_pokemon;
 }
 
 Pokemon const & ActivePokemon::get_pokemon() const {
@@ -878,6 +869,8 @@ void ActivePokemon::normalize_hp() {
 
 ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
+	current_hash *= m_all_pokemon.max_hash();
+	current_hash += m_all_pokemon.hash();
 	current_hash *= active_substitute.max_hash();
 	current_hash += active_substitute.hash();
 	current_hash *= bide.max_hash();
@@ -964,7 +957,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 }
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
-	hash_type current_hash = active_substitute.max_hash();
+	hash_type current_hash = m_all_pokemon.max_hash();
+	current_hash *= active_substitute.max_hash();
 	current_hash *= bide.max_hash();
 	current_hash *= confusion.max_hash();
 	current_hash *= embargo.max_hash();
@@ -988,7 +982,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return
-			lhs.m_all_pokemon->index() == rhs.m_all_pokemon->index() and
+			lhs.m_all_pokemon == rhs.m_all_pokemon and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and
 			lhs.bide == rhs.bide and

@@ -48,13 +48,11 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 }	// unnamed namespace
 
 Team::Team() :
-	active_pokemon(m_all_pokemon),
 	me(false)
 	{
 }
 
 Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
-	active_pokemon(m_all_pokemon),
 	me(true)
 	{
 	boost::filesystem::path team_file = team_file_name;
@@ -67,29 +65,6 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 		member.calculate_initial_hp();
 	});
 }
-
-Team::Team(Team const & other):
-	m_all_pokemon (other.m_all_pokemon),
-	active_pokemon(other.active_pokemon),
-	screens(other.screens),
-	wish(other.wish),
-	entry_hazards(other.entry_hazards),
-	me(other.me) {
-	pokemon().update_collection(m_all_pokemon);
-}
-
-Team::Team(Team && other):
-	m_all_pokemon(std::move(other.m_all_pokemon)),
-	active_pokemon(std::move(other.active_pokemon)),
-	screens(std::move(other.screens)),
-	wish(std::move(other.wish)),
-	entry_hazards(std::move(other.entry_hazards)),
-	me(std::move(other.me)) {
-	pokemon().update_collection(m_all_pokemon);
-}
-
-Team & Team::operator= (Team const & other) = default;
-Team & Team::operator= (Team && other) = default;
 
 ActivePokemon const & Team::pokemon() const {
 	return active_pokemon;
@@ -118,11 +93,11 @@ void Team::remove_pokemon () {
 }
 
 PokemonCollection const & Team::all_pokemon() const {
-	return m_all_pokemon;
+	return active_pokemon.all_pokemon();
 }
 
 PokemonCollection & Team::all_pokemon() {
-	return m_all_pokemon;
+	return active_pokemon.all_pokemon();
 }
 
 unsigned Team::number_of_seen_pokemon() const {
@@ -179,9 +154,7 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 }	// unnamed namespace
 
 Team::hash_type Team::hash () const {
-	hash_type current_hash = m_all_pokemon.hash();
-	current_hash *= active_pokemon.max_hash();
-	current_hash += active_pokemon.hash();
+	hash_type current_hash = active_pokemon.hash();
 	current_hash *= entry_hazards.max_hash();
 	current_hash += entry_hazards.hash();
 	current_hash *= wish.max_hash();
@@ -212,7 +185,6 @@ void Team::load(std::string const & name) {
 
 bool operator== (Team const & lhs, Team const & rhs) {
 	return
-			lhs.m_all_pokemon == rhs.m_all_pokemon and
 			lhs.active_pokemon == rhs.active_pokemon and
 			lhs.screens == rhs.screens and
 			lhs.wish == rhs.wish and

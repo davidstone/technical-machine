@@ -30,12 +30,12 @@
 int main() {
 	using namespace technicalmachine;
 	
-	ev_optimizer_tests();
 	string_conversion_tests();
 	status_tests();
 	stat_tests();
 	damage_tests();
 	collection_tests();
+	ev_optimizer_tests();
 
 	pl::test ();
 	po::test ();
