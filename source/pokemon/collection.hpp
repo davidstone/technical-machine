@@ -77,7 +77,6 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		void remove_active();
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
 		void for_each_replacement (std::function<void(void)> const & f);
-		unsigned count_if (std::function<bool(Pokemon const &)> const & f) const;
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		hash_type max_hash() const;

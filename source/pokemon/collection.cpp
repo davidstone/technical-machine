@@ -141,10 +141,6 @@ void PokemonCollection::for_each_replacement (std::function<void(void)> const & 
 	for_each_replacement([]() { return false; }, f);
 }
 
-unsigned PokemonCollection::count_if (std::function<bool(Pokemon const &)> const & f) const {
-	return static_cast<unsigned>(std::count_if(container.begin(), container.end(), f));
-}
-
 void PokemonCollection::decrement_real_size () {
 	--true_size;
 }

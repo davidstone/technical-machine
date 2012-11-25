@@ -18,6 +18,7 @@
 
 #include "evaluate.hpp"
 
+#include <algorithm>
 #include <cstdint>
 
 #include <boost/property_tree/ptree.hpp>
@@ -154,9 +155,10 @@ int64_t Evaluate::win (Team const & team) {
 }
 
 int64_t Evaluate::sleep_clause (Team const & team) {
-	unsigned const sleeper_count = team.all_pokemon().count_if([](Pokemon const & pokemon) {
-		return (pokemon.status().is_sleeping_due_to_other());
-	});
+	static constexpr auto sleepers = [](Pokemon const & pokemon) {
+		return pokemon.status().is_sleeping_due_to_other();
+	};
+	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
 	if (sleeper_count > 1)
 		return team.is_me() ? victory : -victory;
 	return 0;
