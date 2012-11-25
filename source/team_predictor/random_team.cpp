@@ -34,13 +34,12 @@
 namespace technicalmachine {
 namespace {
 
-std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned max_random_pokemon);
-unsigned pokemon_to_generate(std::mt19937 & random_engine, unsigned max_random_pokemon);
+std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned random_pokemon);
 }	// unnamed namespace
 
 
-void random_team(Team & team, std::mt19937 & random_engine, unsigned const max_random_pokemon) {
-	for (Species const species : random_species(random_engine, team, max_random_pokemon)) {
+void random_team(Team & team, std::mt19937 & random_engine, unsigned const random_pokemon) {
+	for (Species const species : random_species(random_engine, team, random_pokemon)) {
 		constexpr uint8_t level = 100;
 		team.add_pokemon(species, level, Gender());
 	}
@@ -48,7 +47,7 @@ void random_team(Team & team, std::mt19937 & random_engine, unsigned const max_r
 
 namespace {
 
-std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const max_random_pokemon) {
+std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const random_pokemon) {
 	std::array<unsigned, number_of_species> const overall(overall_stats());
 	std::array<float, number_of_species> lead;
 	lead.fill(1);
@@ -57,18 +56,12 @@ std::vector<Species> random_species(std::mt19937 & random_engine, Team const & t
 	Multiplier multiplier(overall);
 	estimate.update(multiplier, team);
 	std::vector<Species> current;
-	auto const random_pokemon = pokemon_to_generate(random_engine, max_random_pokemon);
 	for (unsigned generated = 0; generated != random_pokemon; ++generated) {
 		Species const species = estimate.random(random_engine);
 		estimate.update(multiplier, species);
 		current.emplace_back(species);
 	}
 	return current;
-}
-
-unsigned pokemon_to_generate(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
-	std::uniform_int_distribution<unsigned> team_distribution(0, max_random_pokemon);
-	return team_distribution(random_engine);
 }
 
 }	// unnamed namespace

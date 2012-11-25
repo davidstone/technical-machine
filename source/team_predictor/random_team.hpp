@@ -26,7 +26,7 @@ namespace technicalmachine {
 class Team;
 
 // Add random Pokemon to an already existing team
-void random_team(Team & team, std::mt19937 & random_engine, unsigned max_random_pokemon);
+void random_team(Team & team, std::mt19937 & random_engine, unsigned random_pokemon);
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__RANDOM_TEAM_HPP_
