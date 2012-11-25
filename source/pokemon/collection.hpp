@@ -22,7 +22,6 @@
 #include "../collection.hpp"
 
 #include <cstdint>
-#include <functional>
 
 #include "pokemon.hpp"
 #include "species_forward.hpp"
@@ -75,8 +74,22 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 			current_replacement = static_cast<index_type>(container.size() - 1);
 		}
 		void remove_active();
-		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
-		void for_each_replacement (std::function<void(void)> const & f);
+		template<typename Function1, typename Function2>
+		void for_each_replacement (Function1 const & break_out, Function2 const & f) {
+			for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
+				if (is_switching_to_self() and size() > 1)
+					continue;
+				f();
+				if (break_out())
+					break;
+			}
+		}
+		template<typename Function>
+		void for_each_replacement (Function const & f) {
+			// Most versions of the loop do not require the ability to break out early.
+			// This passes in a function that always returns false for when to break out
+			for_each_replacement([]() { return false; }, f);
+		}
 		typedef uint64_t hash_type;
 		hash_type hash() const;
 		hash_type max_hash() const;

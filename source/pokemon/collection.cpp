@@ -19,7 +19,6 @@
 #include "collection.hpp"
 
 #include <cassert>
-#include <functional>
 
 #include "pokemon.hpp"
 #include "pokemon_not_found.hpp"
@@ -122,22 +121,6 @@ void PokemonCollection::remove_active () {
 	for (auto & pokemon : container) {
 		pokemon.remove_switch();
 	}
-}
-
-void PokemonCollection::for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f) {
-	assert(container.size() == size());
-	for (current_replacement = 0; current_replacement != container.size(); ++current_replacement) {
-		if (is_switching_to_self() and container.size() > 1)
-			continue;
-		f ();
-		if (break_out())
-			break;
-	}
-}
-void PokemonCollection::for_each_replacement (std::function<void(void)> const & f) {
-	// Most versions of the loop do not require the ability to break out early.
-	// This passes in a function that always returns false for when to break out
-	for_each_replacement([]() { return false; }, f);
 }
 
 void PokemonCollection::decrement_real_size () {
