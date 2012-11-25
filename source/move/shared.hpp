@@ -32,7 +32,7 @@ class SharedMoves {
 		Move const & operator[](size_t index) const;
 		size_t size() const;
 		template<typename Function>
-		void for_each(Function const & f) const {
+		void for_each(Function && f) const {
 			for (size_t n = 0; n != size(); ++n) {
 				f(operator[](n));
 			}

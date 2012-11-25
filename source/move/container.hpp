@@ -41,9 +41,22 @@ class MoveContainer {
 			regular.emplace_back(std::forward<Args>(args)...);
 		}
 		// Skips Struggle and switches
-		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
-		void for_each_regular_move (std::function<void(Move &)> const & f);
-		void for_each_shared (std::function<void(Move const &)> const & f) const;
+		template<typename Function>
+		void for_each_regular_move(Function && f) const {
+			for (auto const & move : regular) {
+				f(move);
+			}
+		}
+		template<typename Function>
+		void for_each_regular_move(Function && f) {
+			for (auto & move : regular) {
+				f(move);
+			}
+		}
+		template<typename Function>
+		void for_each_shared(Function && f) const {
+			shared.for_each(std::forward<Function>(f));
+		}
 		size_t size() const;
 		size_t number_of_regular_moves() const;
 		Move const * find_if (std::function<bool(Move const &)> const & condition) const;

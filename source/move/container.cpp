@@ -21,7 +21,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
-#include <functional>
 #include <vector>
 
 #include "move.hpp"
@@ -50,17 +49,6 @@ Move & MoveContainer::regular_move(size_t const index) {
 bool MoveContainer::empty() const {
 	// A move container is never empty, it always contains at least Struggle
 	return false;
-}
-
-void MoveContainer::for_each_regular_move (std::function<void(Move const &)> const & f) const {
-	std::for_each(regular.cbegin(), regular.cend(), f);
-}
-void MoveContainer::for_each_regular_move (std::function<void(Move &)> const & f) {
-	std::for_each(regular.begin(), regular.end(), f);
-}
-
-void MoveContainer::for_each_shared (std::function<void(Move const &)> const & f) const {
-	shared.for_each(f);
 }
 
 Move const * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) const {
