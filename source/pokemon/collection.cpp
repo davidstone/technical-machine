@@ -18,7 +18,6 @@
 
 #include "collection.hpp"
 
-#include <algorithm>
 #include <cassert>
 #include <functional>
 
