@@ -18,7 +18,6 @@
 
 #include "move_container.hpp"
 
-#include <functional>
 #include <iostream>
 #include <string>
 
