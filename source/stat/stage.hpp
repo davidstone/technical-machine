@@ -19,10 +19,10 @@
 #ifndef STAT__STAGE_HPP_
 #define STAT__STAGE_HPP_
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <functional>
 #include "stat.hpp"
 
 namespace technicalmachine {
@@ -41,7 +41,12 @@ class Stage {
 		Rational modifier() const;
 
 		void boost(Stat::Stats stat, int n);
-		unsigned accumulate(std::function<unsigned(int)> const & f) const;
+		template<typename Function>
+		unsigned accumulate(Function const & f) const {
+			return std::accumulate(stages.begin(), stages.end(), 0u, [& f](unsigned const initial, int const stage) {
+				return initial + f(stage);
+			});
+		}
 		static int dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier);
 		static int dot_product(std::array<int, Stat::END> const & multiplier, Stage const & stage);
 		void boost_regular(int n);

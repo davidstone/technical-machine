@@ -18,8 +18,6 @@
 
 #include "stage.hpp"
 
-#include <algorithm>
-
 #include "../rational.hpp"
 
 namespace technicalmachine {
@@ -47,12 +45,6 @@ void Stage::boost (Stat::Stats const stat, int const n) {
 void Stage::boost(std::initializer_list<Stat::Stats> const & stats, int n) {
 	for (auto const stat : stats)
 		boost(stat, n);
-}
-
-unsigned Stage::accumulate(std::function<unsigned(int)> const & f) const {
-	return std::accumulate(stages.begin(), stages.end(), 0u,[& f](unsigned const initial, int const stage) {
-		return initial + f(stage);
-	});
 }
 
 int Stage::dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier) {
