@@ -41,15 +41,13 @@ std::array<T, number_of_species> load_stats_from_file (std::string const & file_
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
 	}
 	std::string line;
-	unsigned n = 0;
 	while(getline(file, line)) {
-		if (n >= number_of_species)
-			throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_long);
-		overall [n] = boost::lexical_cast<T> (line);
-		++n;
+		constexpr char delimiter = '\t';
+		auto const position = line.find(delimiter);
+		auto const species = from_string<Species>(line.substr(0, position));
+		auto const value = boost::lexical_cast<T>(line.substr(position + 1));
+		overall[static_cast<size_t>(species)] = value;
 	}
-	if (n != number_of_species)
-		throw InvalidSettingsFile (file_name, InvalidSettingsFile::too_short);
 	return overall;
 }
 

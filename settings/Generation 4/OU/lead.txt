@@ -1,667 +1,667 @@
-0.920936
-0.955056
-0.95507
-0.9689
-0.943182
-0.777651
-0.969033
-0.988722
-0.84416
-0.952
-0.843373
-0.316102
-1
-0.694444
-0.680374
-0.864865
-0.875
-0.816344
-0.627907
-0.905181
-1
-0.97191
-0.964286
-0.787911
-0.81239
-0.886518
-0.588235
-0.84097
-1
-1
-0.698168
-1
-1
-0.755426
-0.998733
-0.938382
-0.631579
-0.936003
-0.0724138
-0.631474
-0.956522
-0.350365
-1
-1
-0.942002
-0.238095
-0.851044
-0.380952
-0.670996
-0.92233
-0.931232
-0.628571
-0.482274
-0.75
-0.910788
-1
-0.778724
-0.7
-0.912205
-0.954248
-0.973913
-0.929416
-0.816667
-0.573171
-0.728632
-0.954545
-0.859016
-0.537315
-1
-1
-0.970173
-1
-0.960497
-1
-0.964286
-0.39198
-0.857143
-0.847193
-1
-0.942558
-0.727273
-0.976959
-0.916944
-0.833333
-0.685134
-1
-0.952421
-0.923077
-0.890523
-1
-0.578887
-0.496124
-0.909241
-0.951105
-0.844444
-1
-0.945369
-1
-0.926039
-0.37234
-0.303767
-1
-0.928439
-0.87234
-0.947155
-0.954241
-0.900942
-1
-0.986486
-0.972275
-0.952381
-0.91573
-0.96556
-0.853933
-0.711998
-0.990566
-0.961538
-1
-0.961538
-0.95122
-0.868512
-0.955593
-0.685416
-0.870239
-0.970149
-0.805882
-0.777258
-0.912042
-0.682609
-0.967253
-0.962309
-0.77607
-0.595918
-0.990423
-0.957165
-0.949705
-0.904306
-1
-0.800452
-1
-0.93115
-0.215421
-0.982158
-0.908842
-0.889797
-0.776671
-0.695652
-0.923077
-0.863093
-1
-1
-1
-1
-0.961846
-0.857143
-0.983957
-0.791338
-1
-0.893617
-0.930972
-1
-0.276299
-1
-0.875556
-1
-0.845679
-0.929825
-0.76648
-0.342713
-0.834951
-0.982834
-0.637584
-1
-1
-0.992308
-0.648968
-1
-0.505384
-1
-1
-0.841093
-0.752022
-0.730769
-0.882315
-0.719168
-0.974249
-0.666667
-0.666667
-0.754625
-0.372093
-0.979167
-0.87069
-0.525692
-0.25
-0.995002
-0.847678
-0.927592
-0.947802
-0.979948
-0.886598
-0.951872
-1
-0.617601
-0.607656
-0.738368
-0.902555
-0.852941
-0.839336
-1
-0.908805
-0.77931
-0.978639
-0.882871
-0.956916
-0.467647
-0.995074
-0.931017
-1
-0.853476
-0.699752
-0.993506
-0.372439
-0.629032
-0.884456
-0.634989
-0.976085
-0.845219
-0.782609
-0.940921
-0.982801
-0.884615
-0.870133
-0.978003
-0.790143
-0.486375
-1
-0.907955
-0.763158
-0.972222
-0.666667
-0.825585
-0.992954
-0.979177
-0.95468
-0.996364
-0.740741
-0.931818
-0.885185
-1
-1
-0.887696
-0.914634
-0.464912
-0.947841
-1
-1
-0.935374
-1
-0.882353
-0.666618
-1
-0.586643
-0.884615
-0.72263
-1
-0.875
-0.965909
-1
-0.791111
-1
-0.857143
-0.980672
-1
-1
-0.863027
-0.914027
-0.886047
-0
-0.958984
-0.255814
-0.2
-0.8498
-1
-0.947034
-1
-0.962998
-1
-0.865741
-0.935718
-1
-0.341023
-0.834344
-1
-1
-0.963738
-0.6
-0.66863
-1
-0.55
-0.916667
-0.925501
-0.841567
-0.989505
-1
-0
-0.886403
-0.626582
-0.759183
-0.9375
-0.911188
-0.660714
-0.773956
-0.596774
-0.670732
-0.567568
-0.333333
-0.718232
-1
-0.769272
-1
-0.828539
-0.833333
-0.872778
-0.859048
-1
-0.892642
-0.554517
-0.99537
-0.428571
-0.981673
-1
-0.917231
-1
-0.978029
-0.747401
-0.813187
-0.971058
-0.626305
-1
-0.96997
-0.959184
-0.910781
-1
-0.830951
-1
-0.975462
-0.975
-0.897482
-0.527273
-0.966857
-0.796226
-0.814545
-1
-0.408435
-1
-0.98255
-0.94332
-0.818533
-0.879974
-1
-1
-0.900709
-0.75
-1
-0.995952
-0.988154
-0.97597
-0.993924
-0.952652
-0.866228
-0.684211
-0.995122
-1
-0.923077
-0.863636
-0.649048
-0.896293
-0.983719
-0.822864
-1
-1
-1
-1
-1
-0.783662
-1
-1
-1
-1
-0.714286
-0.857143
-0.893044
-0.711538
-0.895735
-0.798644
-0.809816
-1
-0.868755
-0.88806
-0.714286
-0.750351
-0.714286
-0.967391
-1
-0.981013
-0.96875
-0.909091
-0.931577
-0
-0.513592
-0.902174
-0.941025
-0.666667
-0.734513
-1
-1
-0.84375
-0.395522
-0.842105
-1
-0.873874
-0.847273
-1
-0.83122
-1
-0.965241
-1
-0.810454
-0.337059
-0.993007
-0.857769
-0.969136
-0.557246
-0.960632
-0.882771
-1
-0.65353
-1
-1
-0.948874
-0.791667
-0.749929
-1
-0.157895
-0.8
-0.879135
-0.868278
-0.888889
-0.918958
-1
-0.75
-0.923077
-0.958497
-0.0690423
-0.51576
-0.666667
-0.810605
-1
-0.96764
-0.886905
-0.75
-0.964286
-1
-0.256604
-0.434616
-0.772434
-0.996351
-0.911473
-0.935078
-0.983125
-0.987045
-0.929296
-0.863918
-0.441453
-0.906086
-0.983636
-0.810991
-0.713695
-0.910384
-0.662161
-0.856436
-0.948766
-0.520758
-0.870315
-0.994838
-0.990371
-0.990415
-0.983942
-0.995477
-0.229475
-0.496002
-0.215119
-1
-1
-0.875426
-0.904946
-1
-1
-0.973812
-0.934866
-1
-1
-0.991312
-1
-1
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
+Bulbasaur	0.920936
+Ivysaur	0.955056
+Venusaur	0.95507
+Charmander	0.9689
+Charmeleon	0.943182
+Charizard	0.777651
+Squirtle	0.969033
+Wartortle	0.988722
+Blastoise	0.84416
+Caterpie	0.952
+Metapod	0.843373
+Butterfree	0.316102
+Weedle	1
+Kakuna	0.694444
+Beedrill	0.680374
+Pidgey	0.864865
+Pidgeotto	0.875
+Pidgeot	0.816344
+Rattata	0.627907
+Raticate	0.905181
+Spearow	1
+Fearow	0.97191
+Ekans	0.964286
+Arbok	0.787911
+Pikachu	0.81239
+Raichu	0.886518
+Sandshrew	0.588235
+Sandslash	0.84097
+Nidoran-F	1
+Nidorina	1
+Nidoqueen	0.698168
+Nidoran-M	1
+Nidorino	1
+Nidoking	0.755426
+Clefairy	0.998733
+Clefable	0.938382
+Vulpix	0.631579
+Ninetales	0.936003
+Jigglypuff	0.0724138
+Wigglytuff	0.631474
+Zubat	0.956522
+Golbat	0.350365
+Oddish	1
+Gloom	1
+Vileplume	0.942002
+Paras	0.238095
+Parasect	0.851044
+Venonat	0.380952
+Venomoth	0.670996
+Diglett	0.92233
+Dugtrio	0.931232
+Meowth	0.628571
+Persian	0.482274
+Psyduck	0.75
+Golduck	0.910788
+Mankey	1
+Primeape	0.778724
+Growlithe	0.7
+Arcanine	0.912205
+Poliwag	0.954248
+Poliwhirl	0.973913
+Poliwrath	0.929416
+Abra	0.816667
+Kadabra	0.573171
+Alakazam	0.728632
+Machop	0.954545
+Machoke	0.859016
+Machamp	0.537315
+Bellsprout	1
+Weepinbell	1
+Victreebel	0.970173
+Tentacool	1
+Tentacruel	0.960497
+Geodude	1
+Graveler	0.964286
+Golem	0.39198
+Ponyta	0.857143
+Rapidash	0.847193
+Slowpoke	1
+Slowbro	0.942558
+Magnemite	0.727273
+Magneton	0.976959
+Farfetchd	0.916944
+Doduo	0.833333
+Dodrio	0.685134
+Seel	1
+Dewgong	0.952421
+Grimer	0.923077
+Muk	0.890523
+Shellder	1
+Cloyster	0.578887
+Gastly	0.496124
+Haunter	0.909241
+Gengar	0.951105
+Onix	0.844444
+Drowzee	1
+Hypno	0.945369
+Krabby	1
+Kingler	0.926039
+Voltorb	0.37234
+Electrode	0.303767
+Exeggcute	1
+Exeggutor	0.928439
+Cubone	0.87234
+Marowak	0.947155
+Hitmonlee	0.954241
+Hitmonchan	0.900942
+Lickitung	1
+Koffing	0.986486
+Weezing	0.972275
+Rhyhorn	0.952381
+Rhydon	0.91573
+Chansey	0.96556
+Tangela	0.853933
+Kangaskhan	0.711998
+Horsea	0.990566
+Seadra	0.961538
+Goldeen	1
+Seaking	0.961538
+Staryu	0.95122
+Starmie	0.868512
+Mr. Mime	0.955593
+Scyther	0.685416
+Jynx	0.870239
+Electabuzz	0.970149
+Magmar	0.805882
+Pinsir	0.777258
+Tauros	0.912042
+Magikarp	0.682609
+Gyarados	0.967253
+Lapras	0.962309
+Ditto	0.77607
+Eevee	0.595918
+Vaporeon	0.990423
+Jolteon	0.957165
+Flareon	0.949705
+Porygon	0.904306
+Omanyte	1
+Omastar	0.800452
+Kabuto	1
+Kabutops	0.93115
+Aerodactyl	0.215421
+Snorlax	0.982158
+Articuno	0.908842
+Zapdos	0.889797
+Moltres	0.776671
+Dratini	0.695652
+Dragonair	0.923077
+Dragonite	0.863093
+Mewtwo	1
+Mew	1
+Chikorita	1
+Bayleef	1
+Meganium	0.961846
+Cyndaquil	0.857143
+Quilava	0.983957
+Typhlosion	0.791338
+Totodile	1
+Croconaw	0.893617
+Feraligatr	0.930972
+Sentret	1
+Furret	0.276299
+Hoothoot	1
+Noctowl	0.875556
+Ledyba	1
+Ledian	0.845679
+Spinarak	0.929825
+Ariados	0.76648
+Crobat	0.342713
+Chinchou	0.834951
+Lanturn	0.982834
+Pichu	0.637584
+Cleffa	1
+Igglybuff	1
+Togepi	0.992308
+Togetic	0.648968
+Natu	1
+Xatu	0.505384
+Mareep	1
+Flaaffy	1
+Ampharos	0.841093
+Bellossom	0.752022
+Marill	0.730769
+Azumarill	0.882315
+Sudowoodo	0.719168
+Politoed	0.974249
+Hoppip	0.666667
+Skiploom	0.666667
+Jumpluff	0.754625
+Aipom	0.372093
+Sunkern	0.979167
+Sunflora	0.87069
+Yanma	0.525692
+Wooper	0.25
+Quagsire	0.995002
+Espeon	0.847678
+Umbreon	0.927592
+Murkrow	0.947802
+Slowking	0.979948
+Misdreavus	0.886598
+Unown	0.951872
+Wobbuffet	1
+Girafarig	0.617601
+Pineco	0.607656
+Forretress	0.738368
+Dunsparce	0.902555
+Gligar	0.852941
+Steelix	0.839336
+Snubbull	1
+Granbull	0.908805
+Qwilfish	0.77931
+Scizor	0.978639
+Shuckle	0.882871
+Heracross	0.956916
+Sneasel	0.467647
+Teddiursa	0.995074
+Ursaring	0.931017
+Slugma	1
+Magcargo	0.853476
+Swinub	0.699752
+Piloswine	0.993506
+Corsola	0.372439
+Remoraid	0.629032
+Octillery	0.884456
+Delibird	0.634989
+Mantine	0.976085
+Skarmory	0.845219
+Houndour	0.782609
+Houndoom	0.940921
+Kingdra	0.982801
+Phanpy	0.884615
+Donphan	0.870133
+Porygon2	0.978003
+Stantler	0.790143
+Smeargle	0.486375
+Tyrogue	1
+Hitmontop	0.907955
+Smoochum	0.763158
+Elekid	0.972222
+Magby	0.666667
+Miltank	0.825585
+Blissey	0.992954
+Raikou	0.979177
+Entei	0.95468
+Suicune	0.996364
+Larvitar	0.740741
+Pupitar	0.931818
+Tyranitar	0.885185
+Lugia	1
+Ho-Oh	1
+Celebi	0.887696
+Treecko	0.914634
+Grovyle	0.464912
+Sceptile	0.947841
+Torchic	1
+Combusken	1
+Blaziken	0.935374
+Mudkip	1
+Marshtomp	0.882353
+Swampert	0.666618
+Poochyena	1
+Mightyena	0.586643
+Zigzagoon	0.884615
+Linoone	0.72263
+Wurmple	1
+Silcoon	0.875
+Beautifly	0.965909
+Cascoon	1
+Dustox	0.791111
+Lotad	1
+Lombre	0.857143
+Ludicolo	0.980672
+Seedot	1
+Nuzleaf	1
+Shiftry	0.863027
+Taillow	0.914027
+Swellow	0.886047
+Wingull	0
+Pelipper	0.958984
+Ralts	0.255814
+Kirlia	0.2
+Gardevoir	0.8498
+Surskit	1
+Masquerain	0.947034
+Shroomish	1
+Breloom	0.962998
+Slakoth	1
+Vigoroth	0.865741
+Slaking	0.935718
+Nincada	1
+Ninjask	0.341023
+Shedinja	0.834344
+Whismur	1
+Loudred	1
+Exploud	0.963738
+Makuhita	0.6
+Hariyama	0.66863
+Azurill	1
+Nosepass	0.55
+Skitty	0.916667
+Delcatty	0.925501
+Sableye	0.841567
+Mawile	0.989505
+Aron	1
+Lairon	0
+Aggron	0.886403
+Meditite	0.626582
+Medicham	0.759183
+Electrike	0.9375
+Manectric	0.911188
+Plusle	0.660714
+Minun	0.773956
+Volbeat	0.596774
+Illumise	0.670732
+Roselia	0.567568
+Gulpin	0.333333
+Swalot	0.718232
+Carvanha	1
+Sharpedo	0.769272
+Wailmer	1
+Wailord	0.828539
+Numel	0.833333
+Camerupt	0.872778
+Torkoal	0.859048
+Spoink	1
+Grumpig	0.892642
+Spinda	0.554517
+Trapinch	0.99537
+Vibrava	0.428571
+Flygon	0.981673
+Cacnea	1
+Cacturne	0.917231
+Swablu	1
+Altaria	0.978029
+Zangoose	0.747401
+Seviper	0.813187
+Lunatone	0.971058
+Solrock	0.626305
+Barboach	1
+Whiscash	0.96997
+Corphish	0.959184
+Crawdaunt	0.910781
+Baltoy	1
+Claydol	0.830951
+Lileep	1
+Cradily	0.975462
+Anorith	0.975
+Armaldo	0.897482
+Feebas	0.527273
+Milotic	0.966857
+Castform	0.796226
+Kecleon	0.814545
+Shuppet	1
+Banette	0.408435
+Duskull	1
+Dusclops	0.98255
+Tropius	0.94332
+Chimecho	0.818533
+Absol	0.879974
+Wynaut	1
+Snorunt	1
+Glalie	0.900709
+Spheal	0.75
+Sealeo	1
+Walrein	0.995952
+Clamperl	0.988154
+Huntail	0.97597
+Gorebyss	0.993924
+Relicanth	0.952652
+Luvdisc	0.866228
+Bagon	0.684211
+Shelgon	0.995122
+Salamence	1
+Beldum	0.923077
+Metang	0.863636
+Metagross	0.649048
+Regirock	0.896293
+Regice	0.983719
+Registeel	0.822864
+Latias	1
+Latios	1
+Kyogre	1
+Groudon	1
+Rayquaza	1
+Jirachi	0.783662
+Deoxys-M	1
+Deoxys-A	1
+Deoxys-D	1
+Deoxys-S	1
+Turtwig	0.714286
+Grotle	0.857143
+Torterra	0.893044
+Chimchar	0.711538
+Monferno	0.895735
+Infernape	0.798644
+Piplup	0.809816
+Prinplup	1
+Empoleon	0.868755
+Starly	0.88806
+Staravia	0.714286
+Staraptor	0.750351
+Bidoof	0.714286
+Bibarel	0.967391
+Kricketot	1
+Kricketune	0.981013
+Shinx	0.96875
+Luxio	0.909091
+Luxray	0.931577
+Budew	0
+Roserade	0.513592
+Cranidos	0.902174
+Rampardos	0.941025
+Shieldon	0.666667
+Bastiodon	0.734513
+Burmy	1
+Wormadam-P	1
+Wormadam-S	0.84375
+Wormadam-T	0.395522
+Mothim	0.842105
+Combee	1
+Vespiquen	0.873874
+Pachirisu	0.847273
+Buizel	1
+Floatzel	0.83122
+Cherubi	1
+Cherrim	0.965241
+Shellos	1
+Gastrodon	0.810454
+Ambipom	0.337059
+Drifloon	0.993007
+Drifblim	0.857769
+Buneary	0.969136
+Lopunny	0.557246
+Mismagius	0.960632
+Honchkrow	0.882771
+Glameow	1
+Purugly	0.65353
+Chingling	1
+Stunky	1
+Skuntank	0.948874
+Bronzor	0.791667
+Bronzong	0.749929
+Bonsly	1
+Mime Jr.	0.157895
+Happiny	0.8
+Chatot	0.879135
+Spiritomb	0.868278
+Gible	0.888889
+Gabite	0.918958
+Garchomp	1
+Munchlax	0.75
+Riolu	0.923077
+Lucario	0.958497
+Hippopotas	0.0690423
+Hippowdon	0.51576
+Skorupi	0.666667
+Drapion	0.810605
+Croagunk	1
+Toxicroak	0.96764
+Carnivine	0.886905
+Finneon	0.75
+Lumineon	0.964286
+Mantyke	1
+Snover	0.256604
+Abomasnow	0.434616
+Weavile	0.772434
+Magnezone	0.996351
+Lickilicky	0.911473
+Rhyperior	0.935078
+Tangrowth	0.983125
+Electivire	0.987045
+Magmortar	0.929296
+Togekiss	0.863918
+Yanmega	0.441453
+Leafeon	0.906086
+Glaceon	0.983636
+Gliscor	0.810991
+Mamoswine	0.713695
+Porygon-Z	0.910384
+Gallade	0.662161
+Probopass	0.856436
+Dusknoir	0.948766
+Froslass	0.520758
+Rotom	0.870315
+Rotom-H	0.994838
+Rotom-W	0.990371
+Rotom-F	0.990415
+Rotom-S	0.983942
+Rotom-C	0.995477
+Uxie	0.229475
+Mesprit	0.496002
+Azelf	0.215119
+Dialga	1
+Palkia	1
+Heatran	0.875426
+Regigigas	0.904946
+Giratina-A	1
+Giratina-O	1
+Cresselia	0.973812
+Phione	0.934866
+Manaphy	1
+Darkrai	1
+Shaymin-L	0.991312
+Shaymin-S	1
+Arceus	1
+Victini	0
+Snivy	0
+Servine	0
+Serperior	0
+Tepig	0
+Pignite	0
+Emboar	0
+Oshawott	0
+Dewott	0
+Samurott	0
+Patrat	0
+Watchog	0
+Lillipup	0
+Herdier	0
+Stoutland	0
+Purrloin	0
+Liepard	0
+Pansage	0
+Simisage	0
+Pansear	0
+Simisear	0
+Panpour	0
+Simipour	0
+Munna	0
+Musharna	0
+Pidove	0
+Tranquill	0
+Unfezant	0
+Blitzle	0
+Zebstrika	0
+Roggenrola	0
+Boldore	0
+Gigalith	0
+Woobat	0
+Swoobat	0
+Drilbur	0
+Excadrill	0
+Audino	0
+Timburr	0
+Gurdurr	0
+Conkeldurr	0
+Tympole	0
+Palpitoad	0
+Seismitoad	0
+Throh	0
+Sawk	0
+Sewaddle	0
+Swadloon	0
+Leavanny	0
+Venipede	0
+Whirlipede	0
+Scolipede	0
+Cottonee	0
+Whimsicott	0
+Petilil	0
+Lilligant	0
+Basculin-R	0
+Basculin-B	0
+Sandile	0
+Krokorok	0
+Krookodile	0
+Darumaka	0
+Darmanitan	0
+Maractus	0
+Dwebble	0
+Crustle	0
+Scraggy	0
+Scrafty	0
+Sigilyph	0
+Yamask	0
+Cofagrigus	0
+Tirtouga	0
+Carracosta	0
+Archen	0
+Archeops	0
+Trubbish	0
+Garbodor	0
+Zorua	0
+Zoroark	0
+Minccino	0
+Cinccino	0
+Gothita	0
+Gothorita	0
+Gothitelle	0
+Solosis	0
+Duosion	0
+Reuniclus	0
+Ducklett	0
+Swanna	0
+Vanillite	0
+Vanillish	0
+Vanilluxe	0
+Deerling	0
+Sawsbuck	0
+Emolga	0
+Karrablast	0
+Escavalier	0
+Foongus	0
+Amoonguss	0
+Frillish	0
+Jellicent	0
+Alomomola	0
+Joltik	0
+Galvantula	0
+Ferroseed	0
+Ferrothorn	0
+Klink	0
+Klang	0
+Klinklang	0
+Tynamo	0
+Eelektrik	0
+Eelektross	0
+Elgyem	0
+Beheeyem	0
+Litwick	0
+Lampent	0
+Chandelure	0
+Axew	0
+Fraxure	0
+Haxorus	0
+Cubchoo	0
+Beartic	0
+Cryogonal	0
+Shelmet	0
+Accelgor	0
+Stunfisk	0
+Mienfoo	0
+Mienshao	0
+Druddigon	0
+Golett	0
+Golurk	0
+Pawniard	0
+Bisharp	0
+Bouffalant	0
+Rufflet	0
+Braviary	0
+Vullaby	0
+Mandibuzz	0
+Heatmor	0
+Durant	0
+Deino	0
+Zweilous	0
+Hydreigon	0
+Larvesta	0
+Volcarona	0
+Cobalion	0
+Terrakion	0
+Virizion	0
+Tornadus-I	0
+Tornadus-T	0
+Thundurus-I	0
+Thundurus-T	0
+Reshiram	0
+Zekrom	0
+Landorus-I	0
+Landorus-T	0
+Kyurem	0
+Kyurem-B	0
+Kyurem-W	0
+Keldeo	0
+Meloetta	0
+Genesect	0

@@ -1,667 +1,667 @@
-1581
-356
-16292
-418
-352
-20135
-1324
-266
-15702
-125
-83
-2186
-194
-36
-535
-37
-48
-1187
-1161
-1023
-72
-178
-28
-943
-4552
-2952
-17
-4081
-16
-1
-5460
-5
-4
-5990
-789
-18079
-19
-4844
-290
-502
-23
-137
-21
-17
-1069
-42
-1054
-63
-1617
-103
-21129
-70
-3413
-4
-1928
-49
-5283
-10
-22040
-153
-115
-5667
-60
-82
-27214
-22
-305
-124761
-13
-20
-1274
-12
-44402
-10
-28
-3541
-14
-2886
-5
-16782
-11
-2387
-301
-72
-1083
-25
-1177
-13
-4896
-177
-8696
-129
-606
-185644
-180
-5
-1922
-71
-1974
-94
-8309
-0
-5394
-47
-9613
-5682
-4563
-36
-74
-13237
-21
-178
-1597
-89
-4434
-106
-78
-2
-182
-123
-164965
-6598
-4018
-2258
-804
-170
-3632
-4775
-460
-184813
-6792
-1496
-245
-98364
-87731
-2207
-209
-14
-3979
-87
-16732
-71511
-50891
-2194
-81640
-6327
-23
-260
-156091
-0
-0
-17
-10
-3381
-49
-187
-7735
-30
-47
-10532
-21
-789
-5
-675
-1
-324
-57
-895
-23562
-103
-13573
-149
-592
-19
-130
-339
-1
-1486
-8
-2
-3329
-371
-208
-7673
-673
-2563
-15
-3
-6594
-129
-48
-348
-506
-4
-6003
-8784
-34292
-364
-6583
-97
-187
-0
-1284
-209
-72835
-1683
-170
-7469
-15
-636
-6670
-212167
-11705
-32170
-340
-203
-7799
-8
-935
-403
-308
-537
-62
-3609
-463
-1129
-92537
-46
-10359
-96050
-52
-15308
-15684
-629
-33359
-20
-12885
-38
-72
-15
-6668
-113689
-13783
-2030
-82772
-27
-44
-180351
-0
-0
-85349
-164
-114
-20035
-221
-37
-8526
-151
-17
-122424
-33
-554
-26
-5718
-22
-16
-88
-5
-225
-70
-35
-22403
-25
-0
-3205
-221
-7038
-1
-512
-172
-10
-8249
-332
-472
-114
-117157
-2
-216
-6207
-4
-41267
-5276
-4
-32
-717
-10
-7979
-68
-20
-60
-349
-1174
-667
-44
-5
-8583
-158
-8467
-16
-3164
-280
-407
-62
-82
-111
-3
-543
-15
-3775
-12
-1773
-6
-2531
-2774
-31
-829
-321
-216
-7
-140883
-27
-7527
-2
-3277
-1924
-546
-1002
-1916
-5
-1998
-49
-807
-14
-13014
-18
-10433
-40
-2780
-110
-17832
-265
-1100
-2
-1802
-89
-745
-494
-259
-9198
-0
-7
-705
-12
-18
-14080
-2448
-541
-3456
-2112
-456
-19
-205
-0
-13
-44
-145789
-4532
-3931
-10698
-0
-0
-0
-0
-0
-144533
-0
-0
-0
-0
-14
-14
-9733
-52
-211
-160209
-163
-18
-53183
-134
-21
-11380
-91
-2944
-4
-158
-32
-11
-2733
-11
-52606
-92
-5833
-3
-2373
-3
-25
-32
-268
-38
-3
-888
-550
-62
-4023
-0
-374
-2
-3788
-22097
-143
-5702
-162
-2760
-11710
-16182
-24
-609
-4
-1
-1643
-48
-63310
-13
-19
-30
-786
-18000
-72
-691
-0
-220
-13
-128640
-449
-46795
-3
-9467
-14
-7262
-168
-4
-196
-61
-265
-24226
-47907
-66052
-3931
-19223
-8474
-60209
-9561
-58832
-25552
-5899
-6111
-88964
-41620
-27484
-26557
-1616
-48230
-25436
-1681
-84270
-55355
-9911
-6850
-28299
-25981
-4502
-122374
-0
-0
-255319
-2325
-0
-0
-25813
-522
-0
-0
-41320
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
+Bulbasaur	1581
+Ivysaur	356
+Venusaur	16292
+Charmander	418
+Charmeleon	352
+Charizard	20135
+Squirtle	1324
+Wartortle	266
+Blastoise	15702
+Caterpie	125
+Metapod	83
+Butterfree	2186
+Weedle	194
+Kakuna	36
+Beedrill	535
+Pidgey	37
+Pidgeotto	48
+Pidgeot	1187
+Rattata	1161
+Raticate	1023
+Spearow	72
+Fearow	178
+Ekans	28
+Arbok	943
+Pikachu	4552
+Raichu	2952
+Sandshrew	17
+Sandslash	4081
+Nidoran-F	16
+Nidorina	1
+Nidoqueen	5460
+Nidoran-M	5
+Nidorino	4
+Nidoking	5990
+Clefairy	789
+Clefable	18079
+Vulpix	19
+Ninetales	4844
+Jigglypuff	290
+Wigglytuff	502
+Zubat	23
+Golbat	137
+Oddish	21
+Gloom	17
+Vileplume	1069
+Paras	42
+Parasect	1054
+Venonat	63
+Venomoth	1617
+Diglett	103
+Dugtrio	21129
+Meowth	70
+Persian	3413
+Psyduck	4
+Golduck	1928
+Mankey	49
+Primeape	5283
+Growlithe	10
+Arcanine	22040
+Poliwag	153
+Poliwhirl	115
+Poliwrath	5667
+Abra	60
+Kadabra	82
+Alakazam	27214
+Machop	22
+Machoke	305
+Machamp	124761
+Bellsprout	13
+Weepinbell	20
+Victreebel	1274
+Tentacool	12
+Tentacruel	44402
+Geodude	10
+Graveler	28
+Golem	3541
+Ponyta	14
+Rapidash	2886
+Slowpoke	5
+Slowbro	16782
+Magnemite	11
+Magneton	2387
+Farfetchd	301
+Doduo	72
+Dodrio	1083
+Seel	25
+Dewgong	1177
+Grimer	13
+Muk	4896
+Shellder	177
+Cloyster	8696
+Gastly	129
+Haunter	606
+Gengar	185644
+Onix	180
+Drowzee	5
+Hypno	1922
+Krabby	71
+Kingler	1974
+Voltorb	94
+Electrode	8309
+Exeggcute	0
+Exeggutor	5394
+Cubone	47
+Marowak	9613
+Hitmonlee	5682
+Hitmonchan	4563
+Lickitung	36
+Koffing	74
+Weezing	13237
+Rhyhorn	21
+Rhydon	178
+Chansey	1597
+Tangela	89
+Kangaskhan	4434
+Horsea	106
+Seadra	78
+Goldeen	2
+Seaking	182
+Staryu	123
+Starmie	164965
+Mr. Mime	6598
+Scyther	4018
+Jynx	2258
+Electabuzz	804
+Magmar	170
+Pinsir	3632
+Tauros	4775
+Magikarp	460
+Gyarados	184813
+Lapras	6792
+Ditto	1496
+Eevee	245
+Vaporeon	98364
+Jolteon	87731
+Flareon	2207
+Porygon	209
+Omanyte	14
+Omastar	3979
+Kabuto	87
+Kabutops	16732
+Aerodactyl	71511
+Snorlax	50891
+Articuno	2194
+Zapdos	81640
+Moltres	6327
+Dratini	23
+Dragonair	260
+Dragonite	156091
+Mewtwo	0
+Mew	0
+Chikorita	17
+Bayleef	10
+Meganium	3381
+Cyndaquil	49
+Quilava	187
+Typhlosion	7735
+Totodile	30
+Croconaw	47
+Feraligatr	10532
+Sentret	21
+Furret	789
+Hoothoot	5
+Noctowl	675
+Ledyba	1
+Ledian	324
+Spinarak	57
+Ariados	895
+Crobat	23562
+Chinchou	103
+Lanturn	13573
+Pichu	149
+Cleffa	592
+Igglybuff	19
+Togepi	130
+Togetic	339
+Natu	1
+Xatu	1486
+Mareep	8
+Flaaffy	2
+Ampharos	3329
+Bellossom	371
+Marill	208
+Azumarill	7673
+Sudowoodo	673
+Politoed	2563
+Hoppip	15
+Skiploom	3
+Jumpluff	6594
+Aipom	129
+Sunkern	48
+Sunflora	348
+Yanma	506
+Wooper	4
+Quagsire	6003
+Espeon	8784
+Umbreon	34292
+Murkrow	364
+Slowking	6583
+Misdreavus	97
+Unown	187
+Wobbuffet	0
+Girafarig	1284
+Pineco	209
+Forretress	72835
+Dunsparce	1683
+Gligar	170
+Steelix	7469
+Snubbull	15
+Granbull	636
+Qwilfish	6670
+Scizor	212167
+Shuckle	11705
+Heracross	32170
+Sneasel	340
+Teddiursa	203
+Ursaring	7799
+Slugma	8
+Magcargo	935
+Swinub	403
+Piloswine	308
+Corsola	537
+Remoraid	62
+Octillery	3609
+Delibird	463
+Mantine	1129
+Skarmory	92537
+Houndour	46
+Houndoom	10359
+Kingdra	96050
+Phanpy	52
+Donphan	15308
+Porygon2	15684
+Stantler	629
+Smeargle	33359
+Tyrogue	20
+Hitmontop	12885
+Smoochum	38
+Elekid	72
+Magby	15
+Miltank	6668
+Blissey	113689
+Raikou	13783
+Entei	2030
+Suicune	82772
+Larvitar	27
+Pupitar	44
+Tyranitar	180351
+Lugia	0
+Ho-Oh	0
+Celebi	85349
+Treecko	164
+Grovyle	114
+Sceptile	20035
+Torchic	221
+Combusken	37
+Blaziken	8526
+Mudkip	151
+Marshtomp	17
+Swampert	122424
+Poochyena	33
+Mightyena	554
+Zigzagoon	26
+Linoone	5718
+Wurmple	22
+Silcoon	16
+Beautifly	88
+Cascoon	5
+Dustox	225
+Lotad	70
+Lombre	35
+Ludicolo	22403
+Seedot	25
+Nuzleaf	0
+Shiftry	3205
+Taillow	221
+Swellow	7038
+Wingull	1
+Pelipper	512
+Ralts	172
+Kirlia	10
+Gardevoir	8249
+Surskit	332
+Masquerain	472
+Shroomish	114
+Breloom	117157
+Slakoth	2
+Vigoroth	216
+Slaking	6207
+Nincada	4
+Ninjask	41267
+Shedinja	5276
+Whismur	4
+Loudred	32
+Exploud	717
+Makuhita	10
+Hariyama	7979
+Azurill	68
+Nosepass	20
+Skitty	60
+Delcatty	349
+Sableye	1174
+Mawile	667
+Aron	44
+Lairon	5
+Aggron	8583
+Meditite	158
+Medicham	8467
+Electrike	16
+Manectric	3164
+Plusle	280
+Minun	407
+Volbeat	62
+Illumise	82
+Roselia	111
+Gulpin	3
+Swalot	543
+Carvanha	15
+Sharpedo	3775
+Wailmer	12
+Wailord	1773
+Numel	6
+Camerupt	2531
+Torkoal	2774
+Spoink	31
+Grumpig	829
+Spinda	321
+Trapinch	216
+Vibrava	7
+Flygon	140883
+Cacnea	27
+Cacturne	7527
+Swablu	2
+Altaria	3277
+Zangoose	1924
+Seviper	546
+Lunatone	1002
+Solrock	1916
+Barboach	5
+Whiscash	1998
+Corphish	49
+Crawdaunt	807
+Baltoy	14
+Claydol	13014
+Lileep	18
+Cradily	10433
+Anorith	40
+Armaldo	2780
+Feebas	110
+Milotic	17832
+Castform	265
+Kecleon	1100
+Shuppet	2
+Banette	1802
+Duskull	89
+Dusclops	745
+Tropius	494
+Chimecho	259
+Absol	9198
+Wynaut	0
+Snorunt	7
+Glalie	705
+Spheal	12
+Sealeo	18
+Walrein	14080
+Clamperl	2448
+Huntail	541
+Gorebyss	3456
+Relicanth	2112
+Luvdisc	456
+Bagon	19
+Shelgon	205
+Salamence	0
+Beldum	13
+Metang	44
+Metagross	145789
+Regirock	4532
+Regice	3931
+Registeel	10698
+Latias	0
+Latios	0
+Kyogre	0
+Groudon	0
+Rayquaza	0
+Jirachi	144533
+Deoxys-M	0
+Deoxys-A	0
+Deoxys-D	0
+Deoxys-S	0
+Turtwig	14
+Grotle	14
+Torterra	9733
+Chimchar	52
+Monferno	211
+Infernape	160209
+Piplup	163
+Prinplup	18
+Empoleon	53183
+Starly	134
+Staravia	21
+Staraptor	11380
+Bidoof	91
+Bibarel	2944
+Kricketot	4
+Kricketune	158
+Shinx	32
+Luxio	11
+Luxray	2733
+Budew	11
+Roserade	52606
+Cranidos	92
+Rampardos	5833
+Shieldon	3
+Bastiodon	2373
+Burmy	3
+Wormadam-P	25
+Wormadam-S	32
+Wormadam-T	268
+Mothim	38
+Combee	3
+Vespiquen	888
+Pachirisu	550
+Buizel	62
+Floatzel	4023
+Cherubi	0
+Cherrim	374
+Shellos	2
+Gastrodon	3788
+Ambipom	22097
+Drifloon	143
+Drifblim	5702
+Buneary	162
+Lopunny	2760
+Mismagius	11710
+Honchkrow	16182
+Glameow	24
+Purugly	609
+Chingling	4
+Stunky	1
+Skuntank	1643
+Bronzor	48
+Bronzong	63310
+Bonsly	13
+Mime Jr.	19
+Happiny	30
+Chatot	786
+Spiritomb	18000
+Gible	72
+Gabite	691
+Garchomp	0
+Munchlax	220
+Riolu	13
+Lucario	128640
+Hippopotas	449
+Hippowdon	46795
+Skorupi	3
+Drapion	9467
+Croagunk	14
+Toxicroak	7262
+Carnivine	168
+Finneon	4
+Lumineon	196
+Mantyke	61
+Snover	265
+Abomasnow	24226
+Weavile	47907
+Magnezone	66052
+Lickilicky	3931
+Rhyperior	19223
+Tangrowth	8474
+Electivire	60209
+Magmortar	9561
+Togekiss	58832
+Yanmega	25552
+Leafeon	5899
+Glaceon	6111
+Gliscor	88964
+Mamoswine	41620
+Porygon-Z	27484
+Gallade	26557
+Probopass	1616
+Dusknoir	48230
+Froslass	25436
+Rotom	1681
+Rotom-H	84270
+Rotom-W	55355
+Rotom-F	9911
+Rotom-S	6850
+Rotom-C	28299
+Uxie	25981
+Mesprit	4502
+Azelf	122374
+Dialga	0
+Palkia	0
+Heatran	255319
+Regigigas	2325
+Giratina-A	0
+Giratina-O	0
+Cresselia	25813
+Phione	522
+Manaphy	0
+Darkrai	0
+Shaymin-L	41320
+Shaymin-S	0
+Arceus	0
+Victini	0
+Snivy	0
+Servine	0
+Serperior	0
+Tepig	0
+Pignite	0
+Emboar	0
+Oshawott	0
+Dewott	0
+Samurott	0
+Patrat	0
+Watchog	0
+Lillipup	0
+Herdier	0
+Stoutland	0
+Purrloin	0
+Liepard	0
+Pansage	0
+Simisage	0
+Pansear	0
+Simisear	0
+Panpour	0
+Simipour	0
+Munna	0
+Musharna	0
+Pidove	0
+Tranquill	0
+Unfezant	0
+Blitzle	0
+Zebstrika	0
+Roggenrola	0
+Boldore	0
+Gigalith	0
+Woobat	0
+Swoobat	0
+Drilbur	0
+Excadrill	0
+Audino	0
+Timburr	0
+Gurdurr	0
+Conkeldurr	0
+Tympole	0
+Palpitoad	0
+Seismitoad	0
+Throh	0
+Sawk	0
+Sewaddle	0
+Swadloon	0
+Leavanny	0
+Venipede	0
+Whirlipede	0
+Scolipede	0
+Cottonee	0
+Whimsicott	0
+Petilil	0
+Lilligant	0
+Basculin-R	0
+Basculin-B	0
+Sandile	0
+Krokorok	0
+Krookodile	0
+Darumaka	0
+Darmanitan	0
+Maractus	0
+Dwebble	0
+Crustle	0
+Scraggy	0
+Scrafty	0
+Sigilyph	0
+Yamask	0
+Cofagrigus	0
+Tirtouga	0
+Carracosta	0
+Archen	0
+Archeops	0
+Trubbish	0
+Garbodor	0
+Zorua	0
+Zoroark	0
+Minccino	0
+Cinccino	0
+Gothita	0
+Gothorita	0
+Gothitelle	0
+Solosis	0
+Duosion	0
+Reuniclus	0
+Ducklett	0
+Swanna	0
+Vanillite	0
+Vanillish	0
+Vanilluxe	0
+Deerling	0
+Sawsbuck	0
+Emolga	0
+Karrablast	0
+Escavalier	0
+Foongus	0
+Amoonguss	0
+Frillish	0
+Jellicent	0
+Alomomola	0
+Joltik	0
+Galvantula	0
+Ferroseed	0
+Ferrothorn	0
+Klink	0
+Klang	0
+Klinklang	0
+Tynamo	0
+Eelektrik	0
+Eelektross	0
+Elgyem	0
+Beheeyem	0
+Litwick	0
+Lampent	0
+Chandelure	0
+Axew	0
+Fraxure	0
+Haxorus	0
+Cubchoo	0
+Beartic	0
+Cryogonal	0
+Shelmet	0
+Accelgor	0
+Stunfisk	0
+Mienfoo	0
+Mienshao	0
+Druddigon	0
+Golett	0
+Golurk	0
+Pawniard	0
+Bisharp	0
+Bouffalant	0
+Rufflet	0
+Braviary	0
+Vullaby	0
+Mandibuzz	0
+Heatmor	0
+Durant	0
+Deino	0
+Zweilous	0
+Hydreigon	0
+Larvesta	0
+Volcarona	0
+Cobalion	0
+Terrakion	0
+Virizion	0
+Tornadus-I	0
+Tornadus-T	0
+Thundurus-I	0
+Thundurus-T	0
+Reshiram	0
+Zekrom	0
+Landorus-I	0
+Landorus-T	0
+Kyurem	0
+Kyurem-B	0
+Kyurem-W	0
+Keldeo	0
+Meloetta	0
+Genesect	0
