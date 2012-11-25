@@ -19,7 +19,6 @@
 #include "conversion.hpp"
 
 #include <iostream>
-#include <functional>
 
 #include "../invalid_simulator_conversion.hpp"
 
@@ -38,8 +37,8 @@
 namespace technicalmachine {
 namespace po {
 namespace {
-template<typename Enum>
-void for_each(typename std::function<void(Enum)> const & f, Enum const last = Enum::END) {
+template<typename Enum, typename Function>
+void for_each(Function && f, Enum const last = Enum::END) {
 	for (Enum original = static_cast<Enum>(0); original != last; original = static_cast<Enum>(static_cast<unsigned>(original) + 1))
 		f(original);
 }
