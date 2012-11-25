@@ -51,21 +51,6 @@ bool MoveContainer::empty() const {
 	return false;
 }
 
-Move const * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) const {
-	for (Move const & move : regular) {
-		if (condition (move))
-			return & move;
-	}
-	return nullptr;
-}
-Move * MoveContainer::find_if (std::function<bool(Move const &)> const & condition) {
-	for (Move & move : regular) {
-		if (condition (move))
-			return & move;
-	}
-	return nullptr;
-}
-
 size_t MoveContainer::size() const {
 	return regular.size() + shared.size();
 }

@@ -19,8 +19,8 @@
 #ifndef MOVE__CONTAINER_HPP_
 #define MOVE__CONTAINER_HPP_
 
+#include <algorithm>
 #include <cstdint>
-#include <functional>
 #include <vector>
 #include "move.hpp"
 #include "shared.hpp"
@@ -43,15 +43,11 @@ class MoveContainer {
 		// Skips Struggle and switches
 		template<typename Function>
 		void for_each_regular_move(Function && f) const {
-			for (auto const & move : regular) {
-				f(move);
-			}
+			std::for_each(regular.begin(), regular.end(), f);
 		}
 		template<typename Function>
 		void for_each_regular_move(Function && f) {
-			for (auto & move : regular) {
-				f(move);
-			}
+			std::for_each(regular.begin(), regular.end(), f);
 		}
 		template<typename Function>
 		void for_each_shared(Function && f) const {
@@ -59,8 +55,16 @@ class MoveContainer {
 		}
 		size_t size() const;
 		size_t number_of_regular_moves() const;
-		Move const * find_if (std::function<bool(Move const &)> const & condition) const;
-		Move * find_if (std::function<bool(Move const &)> const & condition);
+		template<typename Function>
+		Move const * find_if(Function const & condition) const {
+			auto const it = std::find_if(regular.begin(), regular.end(), condition);
+			return (it != regular.end()) ? &*it : nullptr;
+		}
+		template<typename Function>
+		Move * find_if(Function const & condition) {
+			auto const it = std::find_if(regular.begin(), regular.end(), condition);
+			return (it != regular.end()) ? &*it : nullptr;
+		}
 		void remove_switch();
 		friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
 	private:
