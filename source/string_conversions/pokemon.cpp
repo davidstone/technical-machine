@@ -18,6 +18,7 @@
 
 #include "conversion.hpp"
 
+#include <algorithm>
 #include <map>
 #include <string>
 
@@ -917,7 +918,9 @@ Species from_string(std::string const & str) {
 		{ "meloetta", Species::Meloetta },
 		{ "genesect", Species::Genesect }
 	};
-	auto const it = converter.find(boost::algorithm::to_lower_copy(str));
+	auto normalized = boost::algorithm::to_lower_copy(str);
+	std::replace(normalized.begin(), normalized.end(), '_', '-');
+	auto const it = converter.find(normalized);
 	if (it != converter.end ())
 		return it->second;
 	else
