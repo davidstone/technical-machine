@@ -22,7 +22,6 @@
 #include "../collection.hpp"
 
 #include <cstdint>
-#include <functional>
 #include <vector>
 
 #include "container.hpp"
@@ -48,10 +47,20 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 			Base::add(std::forward<Args>(args)...);
 			current_index = number_of_regular_moves() - 1;
 		}
-		void for_each (std::function<void(Move const &)> const & f) const;
+		template<typename Function>
+		void for_each(Function && f) const {
+			container.for_each_regular_move(f);
+			container.for_each_shared(std::forward<Function>(f));
+		}
 		// Skips Struggle and switches
-		void for_each_regular_move (std::function<void(Move const &)> const & f) const;
-		void for_each_regular_move (std::function<void(Move &)> const & f);
+		template<typename Function>
+		void for_each_regular_move(Function && f) const {
+			container.for_each_regular_move(std::forward<Function>(f));
+		}
+		template<typename Function>
+		void for_each_regular_move(Function && f) {
+			container.for_each_regular_move(std::forward<Function>(f));
+		}
 		using Base::set_index;
 		bool set_index_if_found(Moves name);
 		void set_index(Moves name);
@@ -59,7 +68,10 @@ class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
 		// nullptr if not found
 		Move const * find (Moves name) const;
 		Move * find (Moves name);
-		bool regular_move_exists (std::function<bool(Move const &)> const & condition) const;
+		template<typename Function>
+		bool regular_move_exists(Function && condition) const {
+			return container.find_if(std::forward<Function>(condition)) != nullptr;
+		}
 		bool exists (Moves name) const;
 		// Move::END if none
 		Moves name_of_last_used_move () const;

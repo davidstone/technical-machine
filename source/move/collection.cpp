@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <cstdint>
-#include <functional>
 #include <vector>
 
 #include "move.hpp"
@@ -49,18 +48,6 @@ MoveCollection::index_type MoveCollection::number_of_regular_moves () const {
 	return container.number_of_regular_moves();
 }
 
-void MoveCollection::for_each (std::function<void(Move const &)> const & f) const {
-	container.for_each_regular_move(f);
-	container.for_each_shared(f);
-}
-
-void MoveCollection::for_each_regular_move (std::function<void(Move const &)> const & f) const {
-	container.for_each_regular_move(f);
-}
-void MoveCollection::for_each_regular_move (std::function<void(Move &)> const & f) {
-	container.for_each_regular_move(f);
-}
-
 bool MoveCollection::set_index_if_found(Moves name) {
 	for (index_type new_index = 0; new_index != size(); ++new_index) {
 		if (unchecked_value(new_index).name == name) {
@@ -82,10 +69,6 @@ Move const * MoveCollection::find (Moves name) const {
 
 Move * MoveCollection::find (Moves name) {
 	return container.find_if([name](Move const & move) { return move.name == name; });
-}
-
-bool MoveCollection::regular_move_exists (std::function<bool(Move const &)> const & condition) const {
-	return container.find_if(condition) != nullptr;
 }
 
 bool MoveCollection::exists (Moves name) const {
