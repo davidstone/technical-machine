@@ -45,6 +45,20 @@ void PokemonCollection::initialize_replacement () {
 	current_replacement = index();
 }
 
+PokemonCollection::const_iterator PokemonCollection::begin() const {
+	return container.begin();
+}
+PokemonCollection::iterator PokemonCollection::begin() {
+	return container.begin();
+}
+PokemonCollection::const_iterator PokemonCollection::end() const {
+	return container.end();
+}
+PokemonCollection::iterator PokemonCollection::end() {
+	return container.end();
+}
+
+
 PokemonCollection::index_type PokemonCollection::replacement() const {
 	return current_replacement;
 }

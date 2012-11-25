@@ -36,6 +36,8 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		typedef detail::BaseCollection<Pokemon> Base;
 	public:
 		using Base::index_type;
+		typedef Base::container_type::const_iterator const_iterator;
+		typedef Base::container_type::iterator iterator;
 		PokemonCollection ();
 		// Need to rework my constructors or something so that this is not
 		// needed. This should only be called once, in team intialization
@@ -47,6 +49,11 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 			auto const self = const_cast<PokemonCollection const *>(this);
 			return const_cast<Pokemon &>(self->operator()(std::forward<Args>(args)...));
 		}
+		const_iterator begin() const;
+		iterator begin();
+		const_iterator end() const;
+		iterator end();
+
 		index_type replacement() const;
 		void set_replacement (index_type const new_index);
 		Pokemon const & at_replacement () const;
