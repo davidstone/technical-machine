@@ -952,10 +952,10 @@ void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, int co
 }
 
 void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & predicate) {
-	user.all_pokemon().for_each([& predicate](Pokemon & pokemon) {
+	for (auto & pokemon : user.all_pokemon()) {
 		if (predicate(pokemon))
 			pokemon.status().clear();
-	});
+	}
 }
 
 void curse(ActivePokemon & user, ActivePokemon & target) {

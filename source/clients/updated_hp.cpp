@@ -23,11 +23,10 @@
 
 namespace technicalmachine {
 
-UpdatedHP::UpdatedHP(Team const & team)
-	{
-	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
+UpdatedHP::UpdatedHP(Team const & team) {
+	for (auto const & pokemon : team.all_pokemon()) {
 		add(team.is_me(), pokemon, pokemon.hp().max);
-	});
+	}
 }
 
 void UpdatedHP::reset_between_turns() {

@@ -128,9 +128,9 @@ void write_team (Team & team, std::string const & file_name) {
 	trainer.put ("<xmlattr>.avatar", 1);
 	trainer.put ("<xmlattr>.winMsg", "");
 	trainer.put ("<xmlattr>.infoMsg", "");
-	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
+	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
-	});
+	}
 	for (unsigned n = team.all_pokemon().size (); n < 6; ++n)
 		write_blank_pokemon (t);
 	write_xml (file_name, pt, std::locale (), settings);

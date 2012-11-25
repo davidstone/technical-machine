@@ -75,18 +75,6 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 			current_replacement = static_cast<index_type>(container.size() - 1);
 		}
 		void remove_active();
-		template<typename Function>
-		void for_each(Function const & f) const {
-			for (Pokemon const & element : container) {
-				f(element);
-			}
-		}
-		template<typename Function>
-		void for_each(Function const & f) {
-			for (Pokemon & element : container) {
-				f(element);
-			}
-		}
 		void for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f);
 		void for_each_replacement (std::function<void(void)> const & f);
 		unsigned count_if (std::function<bool(Pokemon const &)> const & f) const;

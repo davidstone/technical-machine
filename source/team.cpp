@@ -60,10 +60,10 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
 	load(team_file.string());
-	all_pokemon().for_each([](Pokemon & member) {
+	for (auto & member : all_pokemon()) {
 		member.set_hidden_power_type();
 		member.calculate_initial_hp();
-	});
+	}
 }
 
 ActivePokemon const & Team::pokemon() const {
@@ -113,9 +113,9 @@ bool Team::is_me() const {
 
 void Team::reset_between_turns() {
 	pokemon().reset_between_turns();
-	all_pokemon().for_each ([](Pokemon & pokemon)->void {
-		pokemon.move.reset_index();
-	});
+	for (auto & member : all_pokemon()) {
+		member.move.reset_index();
+	}
 	all_pokemon().initialize_replacement();
 }
 
@@ -201,7 +201,7 @@ std::string Team::to_string(bool const include_owner) const {
 	if (include_owner) {
 		output += who() + "'s team:\n";
 	}
-	all_pokemon().for_each([&](Pokemon const & member) {
+	for (auto const & member : all_pokemon()) {
 		output += member.to_string();
 		double const d_per_cent_hp = 100.0 * member.current_hp();
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
@@ -232,7 +232,7 @@ std::string Team::to_string(bool const include_owner) const {
 		member.move.for_each_regular_move([& output](Move const & move) {
 			output += "\t- " + move.to_string() + '\n';
 		});
-	});
+	}
 	return output;
 }
 

@@ -45,9 +45,9 @@ Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const to
 }
 
 void Estimate::update(Multiplier const & multiplier, Team const & team) {
-	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
+	for (auto const & pokemon : team.all_pokemon()) {
 		update(multiplier, pokemon.name());
-	});
+	}
 }
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {

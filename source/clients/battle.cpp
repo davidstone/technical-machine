@@ -73,9 +73,9 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 }
 
 void GenericBattle::initialize() {
-	ai.all_pokemon().for_each ([this] (Pokemon const & pokemon)->void {
+	for (auto const & pokemon : ai.all_pokemon()) {
 		slot_memory.emplace_back(pokemon.name());
-	});
+	}
 	initialize_turn ();
 }
 
@@ -242,7 +242,7 @@ bool GenericBattle::is_valid_precision(Party changer, unsigned precision) const 
 
 
 void GenericBattle::correct_hp_and_report_errors (Team & team) {
-	team.all_pokemon().for_each([this, & team] (Pokemon & pokemon) {
+	for (auto & pokemon : team.all_pokemon()) {
 		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * pokemon.current_hp();
 		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
 		if (tm_estimate == new_hp)
@@ -263,7 +263,7 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 			assert(false);
 		}
 		pokemon.correct_error_in_hp(reported_hp);
-	});
+	}
 }
 
 void GenericBattle::handle_set_pp (Party const changer, uint8_t slot, uint8_t pp) {

@@ -120,9 +120,9 @@ void PokemonCollection::remove_active () {
 	container.erase (container.begin() + index());
 	decrement_real_size();
 	set_index((index() > replacement()) ? replacement() : replacement() - 1);
-	for_each([](Pokemon & pokemon) {
+	for (auto & pokemon : container) {
 		pokemon.remove_switch();
-	});
+	}
 }
 
 void PokemonCollection::for_each_replacement (std::function<bool(void)> const & break_out, std::function<void(void)> const & f) {
@@ -155,10 +155,10 @@ constexpr unsigned max_size = 6;
 
 PokemonCollection::hash_type PokemonCollection::hash() const {
 	hash_type current_hash = 0;
-	for_each([& current_hash](Pokemon const & next_pokemon) {
-		current_hash *= next_pokemon.max_hash();
-		current_hash += next_pokemon.hash();
-	});
+	for (auto const & pokemon : container) {
+		current_hash *= pokemon.max_hash();
+		current_hash += pokemon.hash();
+	}
 	current_hash *= max_size;
 	current_hash += static_cast<hash_type>(true_size - 1);
 	current_hash *= true_size;
@@ -169,9 +169,9 @@ PokemonCollection::hash_type PokemonCollection::hash() const {
 PokemonCollection::hash_type PokemonCollection::max_hash() const {
 	hash_type current_max = max_size;
 	current_max *= true_size;
-	for_each([& current_max](Pokemon const & next_pokemon) {
-		current_max *= next_pokemon.max_hash();
-	});
+	for (auto const & pokemon : container) {
+		current_max *= pokemon.max_hash();
+	}
 	return current_max;
 }
 

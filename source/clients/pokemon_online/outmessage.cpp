@@ -60,9 +60,9 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	write_string (tier);
 	uint8_t const generation = 4;
 	write_byte (generation);
-	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
+	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon);
-	});
+	}
 	for (unsigned n = team.all_pokemon().size(); n <= 6; ++n) {
 		write_short (0);
 	}

@@ -80,9 +80,9 @@ void write_team (Team const & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;
 	boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
 	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
-	team.all_pokemon().for_each([&](Pokemon const & pokemon) {
+	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
-	});
+	}
 	write_xml (file_name, pt, std::locale (), settings);
 }
 
