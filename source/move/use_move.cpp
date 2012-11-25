@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <functional>
 
 #include "move.hpp"
 #include "moves.hpp"
@@ -50,7 +49,13 @@ namespace {
 unsigned use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known);
 unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known);
 void call_other_move (ActivePokemon & user);
-void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & predicate);
+template<typename Predicate>
+void cure_all_status(Team & user, Predicate const & predicate) {
+	for (auto & pokemon : user.all_pokemon()) {
+		if (predicate(pokemon))
+			pokemon.status().clear();
+	}
+}
 void do_effects_before_moving (Pokemon & user, Team & target);
 void do_damage (ActivePokemon & user, ActivePokemon & target, unsigned damage);
 void do_side_effects (Team & user, Team & target, Weather & weather, Variable const & variable, unsigned damage);
@@ -949,13 +954,6 @@ void clear_field(Team & user, Pokemon const & target) {
 void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, int const stages) {
 	target.stat_boost(stat, stages);
 	target.confuse();
-}
-
-void cure_all_status(Team & user, std::function<bool(Pokemon const &)> const & predicate) {
-	for (auto & pokemon : user.all_pokemon()) {
-		if (predicate(pokemon))
-			pokemon.status().clear();
-	}
 }
 
 void curse(ActivePokemon & user, ActivePokemon & target) {
