@@ -46,12 +46,6 @@ void random_team(Team & team, std::mt19937 & random_engine, unsigned const max_r
 	}
 }
 
-Team random_team(std::mt19937 & random_engine, unsigned const max_random_pokemon) {
-	Team team;
-	random_team(team, random_engine, max_random_pokemon);
-	return team;
-}
-
 namespace {
 
 std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const max_random_pokemon) {

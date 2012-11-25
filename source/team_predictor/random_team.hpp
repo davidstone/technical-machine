@@ -25,8 +25,7 @@ namespace technicalmachine {
 
 class Team;
 
-Team random_team(std::mt19937 & random_engine, unsigned max_random_pokemon);
-// Add random Pokemon to an already full team
+// Add random Pokemon to an already existing team
 void random_team(Team & team, std::mt19937 & random_engine, unsigned max_random_pokemon);
 
 }	// namespace technicalmachine
