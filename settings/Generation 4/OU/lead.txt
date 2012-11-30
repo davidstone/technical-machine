@@ -482,11 +482,11 @@ Probopass	0.856436
 Dusknoir	0.948766
 Froslass	0.520758
 Rotom	0.870315
-Rotom-H	0.994838
-Rotom-W	0.990371
-Rotom-F	0.990415
-Rotom-S	0.983942
-Rotom-C	0.995477
+Rotom-Heat	0.994838
+Rotom-Wash	0.990371
+Rotom-Frost	0.990415
+Rotom-Fan	0.983942
+Rotom-Mow	0.995477
 Uxie	0.229475
 Mesprit	0.496002
 Azelf	0.215119

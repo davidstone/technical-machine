@@ -10565,160 +10565,160 @@ Rotom	Move	Discharge	12.7
 Rotom	Move	Light Screen	10.5
 Rotom	Move	Toxic	9.8
 Rotom	Move	Reflect	8.8
-Rotom-c	Ability	Levitate	100.0
-Rotom-c	Item	Leftovers	63.5
-Rotom-c	Item	Choice Scarf	26.7
-Rotom-c	Nature	Bold	41.0
-Rotom-c	Nature	Timid	38.2
-Rotom-c	Nature	Modest	14.5
-Rotom-c	Nature	Calm	6.2
-Rotom-c	HP EV	Max	54.3
-Rotom-c	HP EV	None	37.1
-Rotom-c	Atk EV	None	100.0
-Rotom-c	Def EV	None	47.6
-Rotom-c	Def EV	High (150-200)	31.1
-Rotom-c	SpA EV	None	53.0
-Rotom-c	SpA EV	Max	38.3
-Rotom-c	SpD EV	None	90.1
-Rotom-c	Spe EV	Max	36.9
-Rotom-c	Spe EV	Low (50-100)	32.1
-Rotom-c	Spe EV	None	17.0
-Rotom-c	Move	Shadow Ball	85.3
-Rotom-c	Move	Thunderbolt	78.4
-Rotom-c	Move	Leaf Storm	66.4
-Rotom-c	Move	Will-o-wisp	54.1
-Rotom-c	Move	Trick	29.8
-Rotom-c	Move	Discharge	18.3
-Rotom-c	Move	Pain Split	13.2
-Rotom-c	Move	Substitute	12.7
-Rotom-c	Move	Rest	7.1
-Rotom-c	Move	Sleep Talk	6.5
-Rotom-c	Move	Hidden Power Ice	6.1
-Rotom-f	Ability	Levitate	100.0
-Rotom-f	Item	Leftovers	72.2
-Rotom-f	Item	Choice Scarf	16.5
-Rotom-f	Nature	Bold	56.6
-Rotom-f	Nature	Timid	27.5
-Rotom-f	Nature	Modest	11.9
-Rotom-f	HP EV	Max	60.7
-Rotom-f	HP EV	None	29.7
-Rotom-f	Atk EV	None	100.0
-Rotom-f	Def EV	None	36.9
-Rotom-f	Def EV	Medium (100-150)	34.1
-Rotom-f	Def EV	High (150-200)	11.5
-Rotom-f	SpA EV	None	54.0
-Rotom-f	SpA EV	Max	25.2
-Rotom-f	SpD EV	None	56.7
-Rotom-f	SpD EV	Medium (100-150)	28.2
-Rotom-f	Spe EV	None	56.8
-Rotom-f	Spe EV	Max	22.5
-Rotom-f	Move	Thunderbolt	72.5
-Rotom-f	Move	Blizzard	57.6
-Rotom-f	Move	Shadow Ball	56.2
-Rotom-f	Move	Rest	37.2
-Rotom-f	Move	Will-o-wisp	35.7
-Rotom-f	Move	Sleep Talk	28.7
-Rotom-f	Move	Trick	19.9
-Rotom-f	Move	Discharge	17.6
-Rotom-f	Move	Substitute	16.7
-Rotom-f	Move	Pain Split	15.1
-Rotom-f	Move	Charge Beam	7.9
-Rotom-f	Move	Thunder Wave	6.2
-Rotom-h	Ability	Levitate	100.0
-Rotom-h	Item	Leftovers	50.8
-Rotom-h	Item	Choice Scarf	43.6
-Rotom-h	Nature	Timid	46.9
-Rotom-h	Nature	Bold	37.6
-Rotom-h	Nature	Modest	13.8
-Rotom-h	Nature	Calm	1.7
-Rotom-h	HP EV	Max	45.0
-Rotom-h	HP EV	None	40.0
-Rotom-h	Atk EV	None	100.0
-Rotom-h	Def EV	None	58.1
-Rotom-h	Def EV	High (150-200)	23.6
-Rotom-h	SpA EV	None	42.3
-Rotom-h	SpA EV	Max	42.1
-Rotom-h	SpD EV	None	88.6
-Rotom-h	SpD EV	Medium (100-150)	7.0
-Rotom-h	Spe EV	Max	44.2
-Rotom-h	Spe EV	Low (50-100)	21.9
-Rotom-h	Spe EV	None	15.2
-Rotom-h	Spe EV	Very High (200+)	10.8
-Rotom-h	Move	Shadow Ball	84.6
-Rotom-h	Move	Thunderbolt	77.9
-Rotom-h	Move	Overheat	64.0
-Rotom-h	Move	Trick	42.3
-Rotom-h	Move	Will-o-wisp	37.1
-Rotom-h	Move	Discharge	15.7
-Rotom-h	Move	Rest	11.8
-Rotom-h	Move	Substitute	11.0
-Rotom-h	Move	Sleep Talk	9.2
-Rotom-h	Move	Pain Split	8.5
-Rotom-h	Move	Hidden Power Fighting	7.4
-Rotom-h	Move	Thunder Wave	6.4
-Rotom-s	Ability	Levitate	100.0
-Rotom-s	Item	Leftovers	64.4
-Rotom-s	Item	Choice Scarf	20.1
-Rotom-s	Nature	Modest	34.8
-Rotom-s	Nature	Timid	34.4
-Rotom-s	Nature	Bold	21.0
-Rotom-s	HP EV	Max	52.8
-Rotom-s	HP EV	None	37.7
-Rotom-s	Atk EV	None	100.0
-Rotom-s	Def EV	None	72.4
-Rotom-s	Def EV	Low (50-100)	7.1
-Rotom-s	SpA EV	Max	39.4
-Rotom-s	SpA EV	None	29.1
-Rotom-s	SpA EV	Very Low (<50)	24.5
-Rotom-s	SpD EV	None	79.5
-Rotom-s	Spe EV	Max	39.1
-Rotom-s	Spe EV	None	26.0
-Rotom-s	Spe EV	Very High (200+)	23.6
-Rotom-s	Move	Shadow Ball	80.1
-Rotom-s	Move	Air Slash	69.0
-Rotom-s	Move	Thunderbolt	54.8
-Rotom-s	Move	Confuse Ray	30.0
-Rotom-s	Move	Will-o-wisp	28.1
-Rotom-s	Move	Discharge	27.2
-Rotom-s	Move	Trick	24.7
-Rotom-s	Move	Thunder Wave	22.2
-Rotom-s	Move	Pain Split	11.0
-Rotom-s	Move	Hidden Power Ice	8.4
-Rotom-s	Move	Rest	8.1
-Rotom-s	Move	Substitute	7.2
-Rotom-w	Ability	Levitate	100.0
-Rotom-w	Item	Leftovers	33.3
-Rotom-w	Item	Choice Scarf	30.5
-Rotom-w	Item	Choice Specs	25.9
-Rotom-w	Nature	Timid	59.6
-Rotom-w	Nature	Bold	18.9
-Rotom-w	Nature	Modest	17.3
-Rotom-w	Nature	Calm	4.2
-Rotom-w	HP EV	None	59.5
-Rotom-w	HP EV	Max	28.0
-Rotom-w	Atk EV	None	100.0
-Rotom-w	Def EV	None	76.4
-Rotom-w	Def EV	High (150-200)	11.6
-Rotom-w	SpA EV	Max	60.9
-Rotom-w	SpA EV	None	27.3
-Rotom-w	SpD EV	None	93.0
-Rotom-w	SpD EV	Medium (100-150)	5.8
-Rotom-w	SpD EV	Low (50-100)	1.2
-Rotom-w	Spe EV	Max	67.0
-Rotom-w	Spe EV	None	13.3
-Rotom-w	Spe EV	Low (50-100)	11.7
-Rotom-w	Move	Shadow Ball	88.1
-Rotom-w	Move	Hydro Pump	79.3
-Rotom-w	Move	Thunderbolt	77.4
-Rotom-w	Move	Trick	53.2
-Rotom-w	Move	Will-o-wisp	21.9
-Rotom-w	Move	Discharge	11.9
-Rotom-w	Move	Substitute	11.7
-Rotom-w	Move	Pain Split	11.3
-Rotom-w	Move	Thunder	7.1
-Rotom-w	Move	Rest	6.9
-Rotom-w	Move	Rain Dance	6.6
-Rotom-w	Move	Sleep Talk	6.1
+Rotom-Mow	Ability	Levitate	100.0
+Rotom-Mow	Item	Leftovers	63.5
+Rotom-Mow	Item	Choice Scarf	26.7
+Rotom-Mow	Nature	Bold	41.0
+Rotom-Mow	Nature	Timid	38.2
+Rotom-Mow	Nature	Modest	14.5
+Rotom-Mow	Nature	Calm	6.2
+Rotom-Mow	HP EV	Max	54.3
+Rotom-Mow	HP EV	None	37.1
+Rotom-Mow	Atk EV	None	100.0
+Rotom-Mow	Def EV	None	47.6
+Rotom-Mow	Def EV	High (150-200)	31.1
+Rotom-Mow	SpA EV	None	53.0
+Rotom-Mow	SpA EV	Max	38.3
+Rotom-Mow	SpD EV	None	90.1
+Rotom-Mow	Spe EV	Max	36.9
+Rotom-Mow	Spe EV	Low (50-100)	32.1
+Rotom-Mow	Spe EV	None	17.0
+Rotom-Mow	Move	Shadow Ball	85.3
+Rotom-Mow	Move	Thunderbolt	78.4
+Rotom-Mow	Move	Leaf Storm	66.4
+Rotom-Mow	Move	Will-o-wisp	54.1
+Rotom-Mow	Move	Trick	29.8
+Rotom-Mow	Move	Discharge	18.3
+Rotom-Mow	Move	Pain Split	13.2
+Rotom-Mow	Move	Substitute	12.7
+Rotom-Mow	Move	Rest	7.1
+Rotom-Mow	Move	Sleep Talk	6.5
+Rotom-Mow	Move	Hidden Power Ice	6.1
+Rotom-Frost	Ability	Levitate	100.0
+Rotom-Frost	Item	Leftovers	72.2
+Rotom-Frost	Item	Choice Scarf	16.5
+Rotom-Frost	Nature	Bold	56.6
+Rotom-Frost	Nature	Timid	27.5
+Rotom-Frost	Nature	Modest	11.9
+Rotom-Frost	HP EV	Max	60.7
+Rotom-Frost	HP EV	None	29.7
+Rotom-Frost	Atk EV	None	100.0
+Rotom-Frost	Def EV	None	36.9
+Rotom-Frost	Def EV	Medium (100-150)	34.1
+Rotom-Frost	Def EV	High (150-200)	11.5
+Rotom-Frost	SpA EV	None	54.0
+Rotom-Frost	SpA EV	Max	25.2
+Rotom-Frost	SpD EV	None	56.7
+Rotom-Frost	SpD EV	Medium (100-150)	28.2
+Rotom-Frost	Spe EV	None	56.8
+Rotom-Frost	Spe EV	Max	22.5
+Rotom-Frost	Move	Thunderbolt	72.5
+Rotom-Frost	Move	Blizzard	57.6
+Rotom-Frost	Move	Shadow Ball	56.2
+Rotom-Frost	Move	Rest	37.2
+Rotom-Frost	Move	Will-o-wisp	35.7
+Rotom-Frost	Move	Sleep Talk	28.7
+Rotom-Frost	Move	Trick	19.9
+Rotom-Frost	Move	Discharge	17.6
+Rotom-Frost	Move	Substitute	16.7
+Rotom-Frost	Move	Pain Split	15.1
+Rotom-Frost	Move	Charge Beam	7.9
+Rotom-Frost	Move	Thunder Wave	6.2
+Rotom-Heat	Ability	Levitate	100.0
+Rotom-Heat	Item	Leftovers	50.8
+Rotom-Heat	Item	Choice Scarf	43.6
+Rotom-Heat	Nature	Timid	46.9
+Rotom-Heat	Nature	Bold	37.6
+Rotom-Heat	Nature	Modest	13.8
+Rotom-Heat	Nature	Calm	1.7
+Rotom-Heat	HP EV	Max	45.0
+Rotom-Heat	HP EV	None	40.0
+Rotom-Heat	Atk EV	None	100.0
+Rotom-Heat	Def EV	None	58.1
+Rotom-Heat	Def EV	High (150-200)	23.6
+Rotom-Heat	SpA EV	None	42.3
+Rotom-Heat	SpA EV	Max	42.1
+Rotom-Heat	SpD EV	None	88.6
+Rotom-Heat	SpD EV	Medium (100-150)	7.0
+Rotom-Heat	Spe EV	Max	44.2
+Rotom-Heat	Spe EV	Low (50-100)	21.9
+Rotom-Heat	Spe EV	None	15.2
+Rotom-Heat	Spe EV	Very High (200+)	10.8
+Rotom-Heat	Move	Shadow Ball	84.6
+Rotom-Heat	Move	Thunderbolt	77.9
+Rotom-Heat	Move	Overheat	64.0
+Rotom-Heat	Move	Trick	42.3
+Rotom-Heat	Move	Will-o-wisp	37.1
+Rotom-Heat	Move	Discharge	15.7
+Rotom-Heat	Move	Rest	11.8
+Rotom-Heat	Move	Substitute	11.0
+Rotom-Heat	Move	Sleep Talk	9.2
+Rotom-Heat	Move	Pain Split	8.5
+Rotom-Heat	Move	Hidden Power Fighting	7.4
+Rotom-Heat	Move	Thunder Wave	6.4
+Rotom-Fan	Ability	Levitate	100.0
+Rotom-Fan	Item	Leftovers	64.4
+Rotom-Fan	Item	Choice Scarf	20.1
+Rotom-Fan	Nature	Modest	34.8
+Rotom-Fan	Nature	Timid	34.4
+Rotom-Fan	Nature	Bold	21.0
+Rotom-Fan	HP EV	Max	52.8
+Rotom-Fan	HP EV	None	37.7
+Rotom-Fan	Atk EV	None	100.0
+Rotom-Fan	Def EV	None	72.4
+Rotom-Fan	Def EV	Low (50-100)	7.1
+Rotom-Fan	SpA EV	Max	39.4
+Rotom-Fan	SpA EV	None	29.1
+Rotom-Fan	SpA EV	Very Low (<50)	24.5
+Rotom-Fan	SpD EV	None	79.5
+Rotom-Fan	Spe EV	Max	39.1
+Rotom-Fan	Spe EV	None	26.0
+Rotom-Fan	Spe EV	Very High (200+)	23.6
+Rotom-Fan	Move	Shadow Ball	80.1
+Rotom-Fan	Move	Air Slash	69.0
+Rotom-Fan	Move	Thunderbolt	54.8
+Rotom-Fan	Move	Confuse Ray	30.0
+Rotom-Fan	Move	Will-o-wisp	28.1
+Rotom-Fan	Move	Discharge	27.2
+Rotom-Fan	Move	Trick	24.7
+Rotom-Fan	Move	Thunder Wave	22.2
+Rotom-Fan	Move	Pain Split	11.0
+Rotom-Fan	Move	Hidden Power Ice	8.4
+Rotom-Fan	Move	Rest	8.1
+Rotom-Fan	Move	Substitute	7.2
+Rotom-Wash	Ability	Levitate	100.0
+Rotom-Wash	Item	Leftovers	33.3
+Rotom-Wash	Item	Choice Scarf	30.5
+Rotom-Wash	Item	Choice Specs	25.9
+Rotom-Wash	Nature	Timid	59.6
+Rotom-Wash	Nature	Bold	18.9
+Rotom-Wash	Nature	Modest	17.3
+Rotom-Wash	Nature	Calm	4.2
+Rotom-Wash	HP EV	None	59.5
+Rotom-Wash	HP EV	Max	28.0
+Rotom-Wash	Atk EV	None	100.0
+Rotom-Wash	Def EV	None	76.4
+Rotom-Wash	Def EV	High (150-200)	11.6
+Rotom-Wash	SpA EV	Max	60.9
+Rotom-Wash	SpA EV	None	27.3
+Rotom-Wash	SpD EV	None	93.0
+Rotom-Wash	SpD EV	Medium (100-150)	5.8
+Rotom-Wash	SpD EV	Low (50-100)	1.2
+Rotom-Wash	Spe EV	Max	67.0
+Rotom-Wash	Spe EV	None	13.3
+Rotom-Wash	Spe EV	Low (50-100)	11.7
+Rotom-Wash	Move	Shadow Ball	88.1
+Rotom-Wash	Move	Hydro Pump	79.3
+Rotom-Wash	Move	Thunderbolt	77.4
+Rotom-Wash	Move	Trick	53.2
+Rotom-Wash	Move	Will-o-wisp	21.9
+Rotom-Wash	Move	Discharge	11.9
+Rotom-Wash	Move	Substitute	11.7
+Rotom-Wash	Move	Pain Split	11.3
+Rotom-Wash	Move	Thunder	7.1
+Rotom-Wash	Move	Rest	6.9
+Rotom-Wash	Move	Rain Dance	6.6
+Rotom-Wash	Move	Sleep Talk	6.1
 Sableye	Ability	Keen Eye	100.0
 Sableye	Item	Leftovers	68.2
 Sableye	Item	Choice Scarf	10.2

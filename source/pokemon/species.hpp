@@ -36,11 +36,8 @@ namespace technicalmachine {
 // Giratina-Altered, Giratina-Origin. Both of these are somewhat standard.
 // Giratina-Altered is sometimes refered to as simply Giratina.
 //
-// The weaker Rotom form is Rotom. The appliance Rotom forms use their standard
-// one-letter abbreviation. This is the same as Shoddy Battle, except Shoddy
-// does not capitalize the form letter. For reference: Rotom-C(ut),
-// Rotom-F(ridge), Rotom-H(eat), Rotom-S(pin), Rotom-W(ash). Pokemon Online uses
-// the same as I do.
+// The weaker Rotom form is Rotom. The appliance Rotom are Rotom-Mow,
+// Rotom-Fan, Rotom-Frost, Rotom-Heat, Rotom-Wash.
 //
 // Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon
 // Online uses Shaymin and Shaymin-S.
@@ -546,11 +543,11 @@ enum class Species : uint16_t {
 	Dusknoir,
 	Froslass,
 	Rotom,
-	Rotom_H,
-	Rotom_W,
-	Rotom_F,
-	Rotom_S,
-	Rotom_C,
+	Rotom_Heat,
+	Rotom_Wash,
+	Rotom_Frost,
+	Rotom_Fan,
+	Rotom_Mow,
 	Uxie,
 	Mesprit,
 	Azelf,

@@ -52,15 +52,15 @@ Species rotom_forme_to_species(unsigned const forme) {
 		case 0:
 			return Species::Rotom;
 		case 1:
-			return Species::Rotom_C;
+			return Species::Rotom_Mow;
 		case 2:
-			return Species::Rotom_H;
+			return Species::Rotom_Heat;
 		case 3:
-			return Species::Rotom_F;
+			return Species::Rotom_Frost;
 		case 4:
-			return Species::Rotom_W;
+			return Species::Rotom_Wash;
 		case 5:
-			return Species::Rotom_S;
+			return Species::Rotom_Fan;
 		default:
 			throw (InvalidFormeId("Rotom"));
 	}
@@ -102,20 +102,20 @@ unsigned get_forme (Species const species) {
 	switch (species) {
 		case Species::Deoxys_Attack:
 		case Species::Giratina_Origin:
-		case Species::Rotom_C:
+		case Species::Rotom_Mow:
 		case Species::Shaymin_S:
 		case Species::Wormadam_Sandy:
 			return 1;
 		case Species::Deoxys_Defense:
-		case Species::Rotom_H:
+		case Species::Rotom_Heat:
 		case Species::Wormadam_Trash:
 			return 2;
 		case Species::Deoxys_Speed:
-		case Species::Rotom_F:
+		case Species::Rotom_Frost:
 			return 3;
-		case Species::Rotom_W:
+		case Species::Rotom_Wash:
 			return 4;
-		case Species::Rotom_S:
+		case Species::Rotom_Fan:
 			return 5;
 		default:
 			return 0;
@@ -1120,11 +1120,11 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		477,		//	Dusknoir
 		478,		//	Froslass
 		479,		//	Rotom
-		479,		//	Rotom-H
-		479,		//	Rotom-W
-		479,		//	Rotom-F
-		479,		//	Rotom-S
-		479,		//	Rotom-C
+		479,		//	Rotom-Heat
+		479,		//	Rotom-Wash
+		479,		//	Rotom-Frost
+		479,		//	Rotom-Fan
+		479,		//	Rotom-Mow
 		480,		//	Uxie
 		481,		//	Mesprit
 		482,		//	Azelf

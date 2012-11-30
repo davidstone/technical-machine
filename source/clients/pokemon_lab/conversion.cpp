@@ -564,11 +564,11 @@ Species id_to_species (unsigned const id) {
 		Species::Darkrai,
 		Species::Shaymin_L,
 		Species::Arceus,
-		Species::Rotom_F,
-		Species::Rotom_C,
-		Species::Rotom_H,
-		Species::Rotom_S,
-		Species::Rotom_W,
+		Species::Rotom_Frost,
+		Species::Rotom_Mow,
+		Species::Rotom_Heat,
+		Species::Rotom_Fan,
+		Species::Rotom_Wash,
 		Species::Giratina_Origin,
 		Species::Shaymin_S,
 	};
@@ -1061,11 +1061,11 @@ unsigned species_to_id (Species species) {
 		481,		//  Dusknoir
 		482,		//  Froslass
 		483,		//  Rotom
-		500,		//  Rotom-H
-		502,		//  Rotom-W
-		498,		//  Rotom-F
-		501,		//  Rotom-S
-		499,		//  Rotom-C
+		500,		//  Rotom-Heat
+		502,		//  Rotom-Wash
+		498,		//  Rotom-Frost
+		501,		//  Rotom-Fan
+		499,		//  Rotom-Mow
 		484,		//  Uxie
 		485,		//  Mesprit
 		486,		//  Azelf

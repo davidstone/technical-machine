@@ -173,11 +173,11 @@ bool is_giratina (Species species) {
 bool is_rotom (Species species) {
 	switch (species) {
 		case Species::Rotom:
-		case Species::Rotom_C:
-		case Species::Rotom_F:
-		case Species::Rotom_H:
-		case Species::Rotom_S:
-		case Species::Rotom_W:
+		case Species::Rotom_Mow:
+		case Species::Rotom_Frost:
+		case Species::Rotom_Heat:
+		case Species::Rotom_Fan:
+		case Species::Rotom_Wash:
 			return true;
 		default:
 			return false;
@@ -943,11 +943,11 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		100,		// Dusknoir
 		60,		// Froslass
 		20,		// Rotom
-		20,		// Rotom-H
-		20,		// Rotom-W
-		20,		// Rotom-F
-		20,		// Rotom-S
-		20,		// Rotom-C
+		20,		// Rotom-Heat
+		20,		// Rotom-Wash
+		20,		// Rotom-Frost
+		20,		// Rotom-Fan
+		20,		// Rotom-Mow
 		20,		// Uxie
 		20,		// Mesprit
 		20,		// Azelf

@@ -482,11 +482,11 @@ Probopass	1616
 Dusknoir	48230
 Froslass	25436
 Rotom	1681
-Rotom-H	84270
-Rotom-W	55355
-Rotom-F	9911
-Rotom-S	6850
-Rotom-C	28299
+Rotom-Heat	84270
+Rotom-Wash	55355
+Rotom-Frost	9911
+Rotom-Fan	6850
+Rotom-Mow	28299
 Uxie	25981
 Mesprit	4502
 Azelf	122374
