@@ -621,8 +621,8 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Water },			// Phione
 		{ Type::Water },			// Manaphy
 		{ Type::Dark },			// Darkrai
-		{ Type::Grass },			// Shaymin-L
-		{ Type::Grass, Type::Flying },			// Shaymin-S
+		{ Type::Grass },			// Shaymin-Land
+		{ Type::Grass, Type::Flying },			// Shaymin-Sky
 		{ Type::Normal },			// Arceus
 		
 		// Generation 5

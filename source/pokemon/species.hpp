@@ -39,14 +39,11 @@ namespace technicalmachine {
 // The weaker Rotom form is Rotom. The appliance Rotom are Rotom-Mow,
 // Rotom-Fan, Rotom-Frost, Rotom-Heat, Rotom-Wash.
 //
-// Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon
-// Online uses Shaymin and Shaymin-S.
+// Shaymin-Land, Shaymin-Sky.
 
 // Wormadam-Plant = Grass-type, Wormadam-Sandy = Ground-type,
 // Wormadam-Trash = Steel-type. These names are based on the in-game Pokedex
 // descriptions of the forms.
-//
-// Pokemon Online refers to Porygon2 as Porygon 2.
 
 enum class Species : uint16_t {
 	// Generation 1
@@ -561,8 +558,8 @@ enum class Species : uint16_t {
 	Phione,
 	Manaphy,
 	Darkrai,
-	Shaymin_L,
-	Shaymin_S,
+	Shaymin_Land,
+	Shaymin_Sky,
 	Arceus,
 	Generation_4_End,
 	

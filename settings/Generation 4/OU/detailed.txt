@@ -11182,44 +11182,44 @@ Sharpedo	Move	Super Fang	15.0
 Sharpedo	Move	Zen Headbutt	12.2
 Sharpedo	Move	Taunt	11.3
 Sharpedo	Move	Hydro Pump	9.8
-Shaymin	Ability	Natural Cure	100.0
-Shaymin	Item	Leftovers	42.8
-Shaymin	Item	Life Orb	40.8
-Shaymin	Nature	Timid	70.0
-Shaymin	Nature	Modest	16.0
-Shaymin	Nature	Bold	10.9
-Shaymin	Nature	Calm	3.1
-Shaymin	HP EV	None	38.1
-Shaymin	HP EV	Max	28.0
-Shaymin	HP EV	Very Low (<50)	26.8
-Shaymin	Atk EV	None	100.0
-Shaymin	Def EV	None	86.7
-Shaymin	Def EV	Very High (200+)	10.0
-Shaymin	SpA EV	Max	65.3
-Shaymin	SpA EV	None	19.5
-Shaymin	SpD EV	None	93.3
-Shaymin	Spe EV	Max	41.2
-Shaymin	Spe EV	Very High (200+)	32.6
-Shaymin	Spe EV	Very Low (<50)	10.2
-Shaymin	Move	Seed Flare	95.7
-Shaymin	Move	Earth Power	64.3
-Shaymin	Move	Hidden Power Fire	49.9
-Shaymin	Move	Leech Seed	48.0
-Shaymin	Move	Rest	48.0
-Shaymin	Move	Hidden Power Ice	20.9
-Shaymin	Move	Air Slash	17.3
-Shaymin	Move	Substitute	11.2
-Shaymin	Move	Protect	10.4
-Shaymin	Move	Aromatherapy	10.2
-Shaymin-S	Ability	Serene Grace	100.0
-Shaymin-S	Item	Leftovers	100.0
-Shaymin-S	Nature	Hardy	100.0
-Shaymin-S	HP EV	None	100.0
-Shaymin-S	Atk EV	None	100.0
-Shaymin-S	Def EV	None	100.0
-Shaymin-S	SpA EV	None	100.0
-Shaymin-S	SpD EV	None	100.0
-Shaymin-S	Spe EV	None	100.0
+Shaymin-Land	Ability	Natural Cure	100.0
+Shaymin-Land	Item	Leftovers	42.8
+Shaymin-Land	Item	Life Orb	40.8
+Shaymin-Land	Nature	Timid	70.0
+Shaymin-Land	Nature	Modest	16.0
+Shaymin-Land	Nature	Bold	10.9
+Shaymin-Land	Nature	Calm	3.1
+Shaymin-Land	HP EV	None	38.1
+Shaymin-Land	HP EV	Max	28.0
+Shaymin-Land	HP EV	Very Low (<50)	26.8
+Shaymin-Land	Atk EV	None	100.0
+Shaymin-Land	Def EV	None	86.7
+Shaymin-Land	Def EV	Very High (200+)	10.0
+Shaymin-Land	SpA EV	Max	65.3
+Shaymin-Land	SpA EV	None	19.5
+Shaymin-Land	SpD EV	None	93.3
+Shaymin-Land	Spe EV	Max	41.2
+Shaymin-Land	Spe EV	Very High (200+)	32.6
+Shaymin-Land	Spe EV	Very Low (<50)	10.2
+Shaymin-Land	Move	Seed Flare	95.7
+Shaymin-Land	Move	Earth Power	64.3
+Shaymin-Land	Move	Hidden Power Fire	49.9
+Shaymin-Land	Move	Leech Seed	48.0
+Shaymin-Land	Move	Rest	48.0
+Shaymin-Land	Move	Hidden Power Ice	20.9
+Shaymin-Land	Move	Air Slash	17.3
+Shaymin-Land	Move	Substitute	11.2
+Shaymin-Land	Move	Protect	10.4
+Shaymin-Land	Move	Aromatherapy	10.2
+Shaymin-Sky	Ability	Serene Grace	100.0
+Shaymin-Sky	Item	Leftovers	100.0
+Shaymin-Sky	Nature	Hardy	100.0
+Shaymin-Sky	HP EV	None	100.0
+Shaymin-Sky	Atk EV	None	100.0
+Shaymin-Sky	Def EV	None	100.0
+Shaymin-Sky	SpA EV	None	100.0
+Shaymin-Sky	SpD EV	None	100.0
+Shaymin-Sky	Spe EV	None	100.0
 Shedinja	Ability	Wonder Guard	100.0
 Shedinja	Item	Focus Sash	88.0
 Shedinja	Nature	Adamant	43.2

@@ -856,8 +856,8 @@ uint8_t get_base_stat (Species name, Stat::Stats stat) {
 		{	80,	80,	80,	80,	80,	80	},		// Phione
 		{	100,	100,	100,	100,	100,	100	},		// Manaphy
 		{	70,	90,	90,	135,	90,	125	},		// Darkrai
-		{	100,	100,	100,	100,	100,	100	},		// Shaymin-L
-		{	100,	103,	75,	120,	75,	127	},		// Shaymin-S
+		{	100,	100,	100,	100,	100,	100	},		// Shaymin-Land
+		{	100,	103,	75,	120,	75,	127	},		// Shaymin-Sky
 		{	120,	120,	120,	120,	120,	120	},		// Arceus
 		
 		// Generation 5

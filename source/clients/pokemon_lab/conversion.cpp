@@ -562,7 +562,7 @@ Species id_to_species (unsigned const id) {
 		Species::Phione,
 		Species::Manaphy,
 		Species::Darkrai,
-		Species::Shaymin_L,
+		Species::Shaymin_Land,
 		Species::Arceus,
 		Species::Rotom_Frost,
 		Species::Rotom_Mow,
@@ -570,7 +570,7 @@ Species id_to_species (unsigned const id) {
 		Species::Rotom_Fan,
 		Species::Rotom_Wash,
 		Species::Giratina_Origin,
-		Species::Shaymin_S,
+		Species::Shaymin_Sky,
 	};
 	return (id < sizeof(species_converter)) ? species_converter [id] : Species::END;
 }
@@ -1079,8 +1079,8 @@ unsigned species_to_id (Species species) {
 		493,		//  Phione
 		494,		//  Manaphy
 		495,		//  Darkrai
-		496,		//  Shaymin-L
-		504,		//  Shaymin-S
+		496,		//  Shaymin-Land
+		504,		//  Shaymin-Sky
 		497		// Arceus
 	};
 	return species_converter[static_cast<unsigned>(species)];

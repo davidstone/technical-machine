@@ -141,7 +141,7 @@ std::string to_string(Species const name) {
 		"Rotom-Heat", "Rotom-Wash", "Rotom-Frost", "Rotom-Fan", "Rotom-Mow",
 		"Uxie", "Mesprit", "Azelf", "Dialga", "Palkia",
 		"Heatran", "Regigigas", "Giratina-Altered", "Giratina-Origin", "Cresselia",
-		"Phione", "Manaphy", "Darkrai", "Shaymin-L", "Shaymin-S",
+		"Phione", "Manaphy", "Darkrai", "Shaymin-Land", "Shaymin-Sky",
 		"Arceus",
 
 		// Generation 5
@@ -699,11 +699,8 @@ Species from_string(std::string const & str) {
 		{ "phione", Species::Phione },
 		{ "manaphy", Species::Manaphy },
 		{ "darkrai", Species::Darkrai },
-		{ "shaymin-l", Species::Shaymin_L },
-		{ "shaymin-land", Species::Shaymin_L },
-		{ "shaymin", Species::Shaymin_L },
-		{ "shaymin-s", Species::Shaymin_S },
-		{ "shaymin-sky", Species::Shaymin_S },
+		{ "shaymin-land", Species::Shaymin_Land },
+		{ "shaymin-sky", Species::Shaymin_Sky },
 		{ "arceus", Species::Arceus },
 		{ "arceus-bug", Species::Arceus },
 		{ "arceus-dark", Species::Arceus },

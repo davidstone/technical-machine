@@ -186,8 +186,8 @@ bool is_rotom (Species species) {
 
 bool is_shaymin (Species species) {
 	switch (species) {
-		case Species::Shaymin_L:
-		case Species::Shaymin_S:
+		case Species::Shaymin_Land:
+		case Species::Shaymin_Sky:
 			return true;
 		default:
 			return false;
@@ -961,8 +961,8 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		20,		// Phione
 		20,		// Manaphy
 		80,		// Darkrai
-		20,		// Shaymin-L
-		20,		// Shaymin-S
+		20,		// Shaymin-Land
+		20,		// Shaymin-Sky
 		120,		// Arceus
 
 		// Generation 5

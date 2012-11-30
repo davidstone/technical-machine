@@ -103,7 +103,7 @@ unsigned get_forme (Species const species) {
 		case Species::Deoxys_Attack:
 		case Species::Giratina_Origin:
 		case Species::Rotom_Mow:
-		case Species::Shaymin_S:
+		case Species::Shaymin_Sky:
 		case Species::Wormadam_Sandy:
 			return 1;
 		case Species::Deoxys_Defense:
@@ -626,7 +626,7 @@ Species id_to_species (unsigned const id, unsigned const forme) {
 		Species::Phione,
 		Species::Manaphy,
 		Species::Darkrai,
-		Species::Shaymin_L,
+		Species::Shaymin_Land,
 		Species::Arceus
 	};
 	Species const base_species = (id < sizeof(species_converter)) ? species_converter [id] : Species::END;
@@ -757,7 +757,7 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		119,		//	Seaking
 		120,		//	Staryu
 		121,		//	Starmie
-		122,		//	Mr_Mime
+		122,		//	Mr. Mime
 		123,		//	Scyther
 		124,		//	Jynx
 		125,		//	Electabuzz
@@ -1138,8 +1138,8 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		489,		//	Phione
 		490,		//	Manaphy
 		491,		//	Darkrai
-		492,		//	Shaymin_L
-		492,		//	Shaymin-S
+		492,		//	Shaymin-Land
+		492,		//	Shaymin-Sky
 		493,		//	Arceus
 		0			//	End
 	};

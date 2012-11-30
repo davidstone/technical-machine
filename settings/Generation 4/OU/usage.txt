@@ -500,8 +500,8 @@ Cresselia	25813
 Phione	522
 Manaphy	0
 Darkrai	0
-Shaymin-L	41320
-Shaymin-S	0
+Shaymin-Land	41320
+Shaymin-Sky	0
 Arceus	0
 Victini	0
 Snivy	0

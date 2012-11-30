@@ -500,8 +500,8 @@ Cresselia	0.973812
 Phione	0.934866
 Manaphy	1
 Darkrai	1
-Shaymin-L	0.991312
-Shaymin-S	1
+Shaymin-Land	0.991312
+Shaymin-Sky	1
 Arceus	1
 Victini	0
 Snivy	0
