@@ -27,18 +27,8 @@
 namespace technicalmachine {
 namespace pl {
 
-Gender::Genders id_to_gender (unsigned id) {
-	switch (id) {
-		case 0:
-			return Gender::GENDERLESS;
-		case 1:
-			return Gender::MALE;
-		default:	// case 2:
-			return Gender::FEMALE;
-	}
-}
-
-unsigned gender_to_id (Gender::Genders gender) {
+template<>
+unsigned simulator_cast<unsigned, Gender::Genders>(Gender::Genders const & gender) {
 	switch (gender) {
 		case Gender::MALE:
 			return 1;
@@ -49,15 +39,30 @@ unsigned gender_to_id (Gender::Genders gender) {
 	}
 }
 
-Moves id_to_move (unsigned const id) {
+template<>
+Gender::Genders simulator_cast<Gender::Genders, unsigned>(unsigned const & id) {
+	switch (id) {
+		case 0:
+			return Gender::GENDERLESS;
+		case 1:
+			return Gender::MALE;
+		default:	// case 2:
+			return Gender::FEMALE;
+	}
+}
+
+template<>
+Moves simulator_cast<Moves, unsigned>(unsigned const & id) {
 	return static_cast<Moves>(id);
 }
 
-unsigned move_to_id (Moves move) {
+template<>
+unsigned simulator_cast<unsigned, Moves>(Moves const & move) {
 	return static_cast<unsigned>(move);
 }
 
-Species id_to_species (unsigned const id) {
+template<>
+Species simulator_cast<Species, unsigned>(unsigned const & id) {
 	constexpr static Species species_converter [] = {
 		// Generation 1
 		Species::Bulbasaur,
@@ -575,7 +580,8 @@ Species id_to_species (unsigned const id) {
 	return (id < sizeof(species_converter)) ? species_converter [id] : Species::END;
 }
 
-unsigned species_to_id (Species species) {
+template<>
+unsigned simulator_cast<unsigned, Species>(Species const & species) {
 	constexpr static unsigned species_converter [] = {
 		0,			//  Bulbasaur
 		1,			//  Ivysaur

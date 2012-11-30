@@ -19,21 +19,11 @@
 #ifndef POKEMON_LAB__CONVERSION_HPP_
 #define POKEMON_LAB__CONVERSION_HPP_
 
-#include "../../gender.hpp"
-#include "../../move/moves_forward.hpp"
-#include "../../pokemon/species_forward.hpp"
-
 namespace technicalmachine {
 namespace pl {
 
-Gender::Genders id_to_gender (unsigned id);
-unsigned gender_to_id (Gender::Genders gender);
-Moves id_to_move (unsigned id);
-unsigned move_to_id (Moves move);
-Species id_to_species (unsigned id);
-unsigned species_to_id (Species species);
-
-// Pokemon Lab uses the same format as Technical Machine for any conversions not listed here.
+template<typename Destination, typename Source>
+Destination simulator_cast(Source const & source);
 
 }	// namespace pl
 }	// namespace technicalmachine

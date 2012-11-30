@@ -52,12 +52,12 @@ void OutMessage::write_team (Team const & team, std::string const &) {
 }
 
 void OutMessage::write_pokemon (Pokemon const & pokemon) {
-	write_int(species_to_id(pokemon.name()));
+	write_int(simulator_cast<unsigned>(pokemon.name()));
 	write_string (pokemon.get_nickname());
 	constexpr bool shiny = false;
 	write_byte (shiny);
 
-	uint8_t const gender = gender_to_id(pokemon.gender().gender);
+	uint8_t const gender = simulator_cast<unsigned>(pokemon.gender().gender);
 	write_byte (gender);
 
 	write_byte (pokemon.happiness());
@@ -67,7 +67,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_int(pokemon.nature().name);
 	write_int (pokemon.move.number_of_regular_moves());
 	pokemon.move.for_each_regular_move([&](Move const & move) {
-		write_int (move_to_id (move.name));
+		write_int(simulator_cast<unsigned>(move.name));
 		write_int (3);		// Replace this with real PP-ups logic later
 	});
 	write_int (pokemon.hp().iv);
