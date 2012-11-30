@@ -769,9 +769,9 @@ uint8_t get_base_stat (Species name, Stat::Stats stat) {
 		{	30,	42,	118,	42,	88,	30	},		// Shieldon
 		{	60,	52,	168,	47,	138,	30	},		// Bastiodon
 		{	40,	29,	45,	29,	45,	36	},		// Burmy
-		{	60,	59,	85,	79,	105,	36	},		// Wormadam-P
-		{	60,	79,	105,	59,	85,	36	},		// Wormadam-S
-		{	60,	69,	95,	69,	95,	36	},		// Wormadam-T
+		{	60,	59,	85,	79,	105,	36	},		// Wormadam-Plant
+		{	60,	79,	105,	59,	85,	36	},		// Wormadam-Sandy
+		{	60,	69,	95,	69,	95,	36	},		// Wormadam-Trash
 		{	70,	94,	50,	94,	50,	66	},		// Mothim
 		{	30,	30,	42,	30,	42,	70	},		// Combee
 		{	70,	80,	102,	80,	102,	40	},		// Vespiquen

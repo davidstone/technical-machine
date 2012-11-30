@@ -104,11 +104,11 @@ unsigned get_forme (Species const species) {
 		case Species::Giratina_O:
 		case Species::Rotom_C:
 		case Species::Shaymin_S:
-		case Species::Wormadam_S:
+		case Species::Wormadam_Sandy:
 			return 1;
 		case Species::Deoxys_D:
 		case Species::Rotom_H:
-		case Species::Wormadam_T:
+		case Species::Wormadam_Trash:
 			return 2;
 		case Species::Deoxys_S:
 		case Species::Rotom_F:
@@ -547,7 +547,7 @@ Species id_to_species (unsigned const id, unsigned const forme) {
 		Species::Shieldon,
 		Species::Bastiodon,
 		Species::Burmy,
-		Species::Wormadam_P,
+		Species::Wormadam_Plant,
 		Species::Mothim,
 		Species::Combee,
 		Species::Vespiquen,
@@ -1051,9 +1051,9 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		410,		//	Shieldon
 		411,		//	Bastiodon
 		412,		//	Burmy
-		413,		//	Wormadam-P
-		413,		//	Wormadam-S
-		413,		//	Wormadam-T
+		413,		//	Wormadam-Plant
+		413,		//	Wormadam-Sandy
+		413,		//	Wormadam-Trash
 		414,		//	Mothim
 		415,		//	Combee
 		416,		//	Vespiquen

@@ -413,9 +413,9 @@ Rampardos	5833
 Shieldon	3
 Bastiodon	2373
 Burmy	3
-Wormadam-P	25
-Wormadam-S	32
-Wormadam-T	268
+Wormadam-Plant	25
+Wormadam-Sandy	32
+Wormadam-Trash	268
 Mothim	38
 Combee	3
 Vespiquen	888

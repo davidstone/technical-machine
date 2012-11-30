@@ -196,9 +196,9 @@ bool is_shaymin (Species species) {
 
 bool is_wormadam (Species species) {
 	switch (species) {
-		case Species::Wormadam_P:
-		case Species::Wormadam_S:
-		case Species::Wormadam_T:
+		case Species::Wormadam_Plant:
+		case Species::Wormadam_Sandy:
+		case Species::Wormadam_Trash:
 			return true;
 		default:
 			return false;
@@ -874,9 +874,9 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		80,		// Shieldon
 		100,		// Bastiodon
 		20,		// Burmy
-		20,		// Wormadam-P
-		20,		// Wormadam-S
-		20,		// Wormadam-T
+		20,		// Wormadam-Plant
+		20,		// Wormadam-Sandy
+		20,		// Wormadam-Trash
 		40,		// Mothim
 		20,		// Combee
 		60,		// Vespiquen

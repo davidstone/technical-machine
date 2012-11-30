@@ -481,9 +481,9 @@ Species id_to_species (unsigned const id) {
 		Species::Shieldon,
 		Species::Bastiodon,
 		Species::Burmy,
-		Species::Wormadam_P,
-		Species::Wormadam_S,
-		Species::Wormadam_T,
+		Species::Wormadam_Plant,
+		Species::Wormadam_Sandy,
+		Species::Wormadam_Trash,
 		Species::Mothim,
 		Species::Combee,
 		Species::Vespiquen,
@@ -992,9 +992,9 @@ unsigned species_to_id (Species species) {
 		412,		//  Shieldon
 		413,		//  Bastiodon
 		414,		//  Burmy
-		415,		//  Wormadam-P
-		416,		//  Wormadam-S
-		417,		//  Wormadam-T
+		415,		//  Wormadam-Plant
+		416,		//  Wormadam-Sandy
+		417,		//  Wormadam-Trash
 		418,		//  Mothim
 		419,		//  Combee
 		420,		//  Vespiquen

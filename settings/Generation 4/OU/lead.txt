@@ -413,9 +413,9 @@ Rampardos	0.941025
 Shieldon	0.666667
 Bastiodon	0.734513
 Burmy	1
-Wormadam-P	1
-Wormadam-S	0.84375
-Wormadam-T	0.395522
+Wormadam-Plant	1
+Wormadam-Sandy	0.84375
+Wormadam-Trash	0.395522
 Mothim	0.842105
 Combee	1
 Vespiquen	0.873874

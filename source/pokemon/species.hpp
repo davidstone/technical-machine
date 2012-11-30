@@ -49,10 +49,9 @@ namespace technicalmachine {
 // Shaymin-L(and), Shaymin-S(ky). Shoddy uses Shaymin and Shaymin-s. Pokemon
 // Online uses Shaymin and Shaymin-S.
 
-// Wormadam-P(lant) = Grass-type, Wormadam-S(andy) = Ground-type,
-// Wormadam-T(rash) = Steel-type. These names are based on the in-game Pokedex
-// descriptions of the forms. On Shoddy Battle, P = no letter, S = g, T = s.
-// Pokemon Online uses Wormadam, Wormadam-G, and Wormadam-S.
+// Wormadam-Plant = Grass-type, Wormadam-Sandy = Ground-type,
+// Wormadam-Trash = Steel-type. These names are based on the in-game Pokedex
+// descriptions of the forms.
 //
 // Pokemon Online refers to Porygon2 as Porygon 2.
 
@@ -482,9 +481,9 @@ enum class Species : uint16_t {
 	Shieldon,
 	Bastiodon,
 	Burmy,
-	Wormadam_P,
-	Wormadam_S,
-	Wormadam_T,
+	Wormadam_Plant,
+	Wormadam_Sandy,
+	Wormadam_Trash,
 	Mothim,
 	Combee,
 	Vespiquen,

@@ -529,9 +529,9 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Rock, Type::Steel },			// Shieldon
 		{ Type::Rock, Type::Steel },			// Bastiodon
 		{ Type::Bug },			// Burmy
-		{ Type::Bug, Type::Grass },			// Wormadam-P
-		{ Type::Bug, Type::Ground },			// Wormadam-S
-		{ Type::Bug, Type::Steel },			// Wormadam-T
+		{ Type::Bug, Type::Grass },			// Wormadam-Plant
+		{ Type::Bug, Type::Ground },			// Wormadam-Sandy
+		{ Type::Bug, Type::Steel },			// Wormadam-Trash
 		{ Type::Bug, Type::Flying },			// Mothim
 		{ Type::Bug, Type::Flying },			// Combee
 		{ Type::Bug, Type::Flying },			// Vespiquen

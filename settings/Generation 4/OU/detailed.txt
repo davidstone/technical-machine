@@ -14489,115 +14489,115 @@ Wooper	Move	Snore	75.0
 Wooper	Move	Waterfall	25.0
 Wooper	Move	Body Slam	25.0
 Wooper	Move	Ice Punch	25.0
-Wormadam	Ability	Anticipation	100.0
-Wormadam	Item	Choice Band	40.0
-Wormadam	Item	Leftovers	36.0
-Wormadam	Nature	Adamant	40.0
-Wormadam	Nature	Bold	24.0
-Wormadam	Nature	Calm	20.0
-Wormadam	HP EV	Max	76.0
-Wormadam	HP EV	None	16.0
-Wormadam	HP EV	Medium (100-150)	8.0
-Wormadam	Atk EV	Max	48.0
-Wormadam	Atk EV	None	44.0
-Wormadam	Atk EV	Low (50-100)	8.0
-Wormadam	Def EV	None	56.0
-Wormadam	Def EV	Medium (100-150)	44.0
-Wormadam	SpA EV	None	72.0
-Wormadam	SpA EV	Low (50-100)	24.0
-Wormadam	SpA EV	Max	4.0
-Wormadam	SpD EV	None	52.0
-Wormadam	SpD EV	Medium (100-150)	20.0
-Wormadam	SpD EV	Very Low (<50)	16.0
-Wormadam	Spe EV	None	84.0
-Wormadam	Spe EV	Max	8.0
-Wormadam	Spe EV	Very Low (<50)	8.0
-Wormadam	Move	Bug Bite	52.0
-Wormadam	Move	Sucker Punch	48.0
-Wormadam	Move	Leaf Storm	44.0
-Wormadam	Move	Seed Bomb	40.0
-Wormadam	Move	Signal Beam	24.0
-Wormadam	Move	Grass Knot	24.0
-Wormadam	Move	Toxic	20.0
-Wormadam	Move	Protect	20.0
-Wormadam	Move	Rain Dance	20.0
-Wormadam	Move	Substitute	20.0
-Wormadam	Move	Worry Seed	16.0
-Wormadam	Move	Synthesis	16.0
-Wormadam-g	Ability	Anticipation	100.0
-Wormadam-g	Item	Life Orb	29.0
-Wormadam-g	Item	Leftovers	22.6
-Wormadam-g	Item	Chesto Berry	16.1
-Wormadam-g	Item	No Item	12.9
-Wormadam-g	Nature	Adamant	58.1
-Wormadam-g	Nature	Jolly	16.1
-Wormadam-g	Nature	Impish	16.1
-Wormadam-g	HP EV	Max	67.7
-Wormadam-g	HP EV	Very Low (<50)	16.1
-Wormadam-g	HP EV	None	12.9
-Wormadam-g	HP EV	Very High (200+)	3.2
-Wormadam-g	Atk EV	Max	61.3
-Wormadam-g	Atk EV	Medium (100-150)	29.0
-Wormadam-g	Def EV	None	64.5
-Wormadam-g	Def EV	Low (50-100)	19.4
-Wormadam-g	Def EV	Medium (100-150)	12.9
-Wormadam-g	Def EV	Max	3.2
-Wormadam-g	Spa EV	None	74.2
-Wormadam-g	Spa EV	Medium (100-150)	16.1
-Wormadam-g	Spa EV	Max	9.7
-Wormadam-g	SpD EV	None	80.6
-Wormadam-g	SpD EV	Medium (100-150)	16.1
-Wormadam-g	SpD EV	Max	3.2
-Wormadam-g	Spe EV	None	80.6
-Wormadam-g	Spe EV	High (150-200)	16.1
-Wormadam-g	Spe EV	Max	3.2
-Wormadam-g	Move	Earthquake	96.8
-Wormadam-g	Move	Rock Blast	64.5
-Wormadam-g	Move	Sucker Punch	48.4
-Wormadam-g	Move	Toxic	45.2
-Wormadam-g	Move	Bug Bite	25.8
-Wormadam-g	Move	Protect	25.8
-Wormadam-g	Move	Hidden Power Ground	16.1
-Wormadam-g	Move	Signal Beam	16.1
-Wormadam-g	Move	Rollout	16.1
-Wormadam-g	Move	Shadow Ball	9.7
-Wormadam-g	Move	Earth Power	9.7
-Wormadam-g	Move	Substitute	9.7
-Wormadam-s	Ability	Anticipation	100.0
-Wormadam-s	Item	Focus Sash	50.9
-Wormadam-s	Item	Leftovers	45.7
-Wormadam-s	Nature	Modest	27.7
-Wormadam-s	Nature	Sassy	27.3
-Wormadam-s	Nature	Impish	19.1
-Wormadam-s	Nature	Bold	16.5
-Wormadam-s	HP EV	Max	48.1
-Wormadam-s	HP EV	None	47.4
-Wormadam-s	Atk EV	None	80.2
-Wormadam-s	Atk EV	Max	17.9
-Wormadam-s	Atk EV	Medium (100-150)	1.9
-Wormadam-s	Def EV	None	44.0
-Wormadam-s	Def EV	Max	40.7
-Wormadam-s	Def EV	Medium (100-150)	10.4
-Wormadam-s	Spa EV	None	54.1
-Wormadam-s	Spa EV	Max	27.6
-Wormadam-s	Spa EV	Medium (100-150)	16.4
-Wormadam-s	Spa EV	Very Low (<50)	1.9
-Wormadam-s	SpD EV	None	41.4
-Wormadam-s	SpD EV	Medium (100-150)	28.0
-Wormadam-s	SpD EV	Max	26.9
-Wormadam-s	Spe EV	None	95.5
-Wormadam-s	Move	Stealth Rock	85.8
-Wormadam-s	Move	Gyro Ball	45.1
-Wormadam-s	Move	Skill Swap	37.7
-Wormadam-s	Move	Mirror Shot	35.1
-Wormadam-s	Move	Hidden Power Ground	33.2
-Wormadam-s	Move	Toxic	28.7
-Wormadam-s	Move	Protect	24.3
-Wormadam-s	Move	Sucker Punch	23.9
-Wormadam-s	Move	Endeavor	17.2
-Wormadam-s	Move	Shadow Ball	16.0
-Wormadam-s	Move	Flash Cannon	10.8
-Wormadam-s	Move	Metal Sound	10.8
+Wormadam-Plant	Ability	Anticipation	100.0
+Wormadam-Plant	Item	Choice Band	40.0
+Wormadam-Plant	Item	Leftovers	36.0
+Wormadam-Plant	Nature	Adamant	40.0
+Wormadam-Plant	Nature	Bold	24.0
+Wormadam-Plant	Nature	Calm	20.0
+Wormadam-Plant	HP EV	Max	76.0
+Wormadam-Plant	HP EV	None	16.0
+Wormadam-Plant	HP EV	Medium (100-150)	8.0
+Wormadam-Plant	Atk EV	Max	48.0
+Wormadam-Plant	Atk EV	None	44.0
+Wormadam-Plant	Atk EV	Low (50-100)	8.0
+Wormadam-Plant	Def EV	None	56.0
+Wormadam-Plant	Def EV	Medium (100-150)	44.0
+Wormadam-Plant	SpA EV	None	72.0
+Wormadam-Plant	SpA EV	Low (50-100)	24.0
+Wormadam-Plant	SpA EV	Max	4.0
+Wormadam-Plant	SpD EV	None	52.0
+Wormadam-Plant	SpD EV	Medium (100-150)	20.0
+Wormadam-Plant	SpD EV	Very Low (<50)	16.0
+Wormadam-Plant	Spe EV	None	84.0
+Wormadam-Plant	Spe EV	Max	8.0
+Wormadam-Plant	Spe EV	Very Low (<50)	8.0
+Wormadam-Plant	Move	Bug Bite	52.0
+Wormadam-Plant	Move	Sucker Punch	48.0
+Wormadam-Plant	Move	Leaf Storm	44.0
+Wormadam-Plant	Move	Seed Bomb	40.0
+Wormadam-Plant	Move	Signal Beam	24.0
+Wormadam-Plant	Move	Grass Knot	24.0
+Wormadam-Plant	Move	Toxic	20.0
+Wormadam-Plant	Move	Protect	20.0
+Wormadam-Plant	Move	Rain Dance	20.0
+Wormadam-Plant	Move	Substitute	20.0
+Wormadam-Plant	Move	Worry Seed	16.0
+Wormadam-Plant	Move	Synthesis	16.0
+Wormadam-Sandy	Ability	Anticipation	100.0
+Wormadam-Sandy	Item	Life Orb	29.0
+Wormadam-Sandy	Item	Leftovers	22.6
+Wormadam-Sandy	Item	Chesto Berry	16.1
+Wormadam-Sandy	Item	No Item	12.9
+Wormadam-Sandy	Nature	Adamant	58.1
+Wormadam-Sandy	Nature	Jolly	16.1
+Wormadam-Sandy	Nature	Impish	16.1
+Wormadam-Sandy	HP EV	Max	67.7
+Wormadam-Sandy	HP EV	Very Low (<50)	16.1
+Wormadam-Sandy	HP EV	None	12.9
+Wormadam-Sandy	HP EV	Very High (200+)	3.2
+Wormadam-Sandy	Atk EV	Max	61.3
+Wormadam-Sandy	Atk EV	Medium (100-150)	29.0
+Wormadam-Sandy	Def EV	None	64.5
+Wormadam-Sandy	Def EV	Low (50-100)	19.4
+Wormadam-Sandy	Def EV	Medium (100-150)	12.9
+Wormadam-Sandy	Def EV	Max	3.2
+Wormadam-Sandy	Spa EV	None	74.2
+Wormadam-Sandy	Spa EV	Medium (100-150)	16.1
+Wormadam-Sandy	Spa EV	Max	9.7
+Wormadam-Sandy	SpD EV	None	80.6
+Wormadam-Sandy	SpD EV	Medium (100-150)	16.1
+Wormadam-Sandy	SpD EV	Max	3.2
+Wormadam-Sandy	Spe EV	None	80.6
+Wormadam-Sandy	Spe EV	High (150-200)	16.1
+Wormadam-Sandy	Spe EV	Max	3.2
+Wormadam-Sandy	Move	Earthquake	96.8
+Wormadam-Sandy	Move	Rock Blast	64.5
+Wormadam-Sandy	Move	Sucker Punch	48.4
+Wormadam-Sandy	Move	Toxic	45.2
+Wormadam-Sandy	Move	Bug Bite	25.8
+Wormadam-Sandy	Move	Protect	25.8
+Wormadam-Sandy	Move	Hidden Power Ground	16.1
+Wormadam-Sandy	Move	Signal Beam	16.1
+Wormadam-Sandy	Move	Rollout	16.1
+Wormadam-Sandy	Move	Shadow Ball	9.7
+Wormadam-Sandy	Move	Earth Power	9.7
+Wormadam-Sandy	Move	Substitute	9.7
+Wormadam-Trash	Ability	Anticipation	100.0
+Wormadam-Trash	Item	Focus Sash	50.9
+Wormadam-Trash	Item	Leftovers	45.7
+Wormadam-Trash	Nature	Modest	27.7
+Wormadam-Trash	Nature	Sassy	27.3
+Wormadam-Trash	Nature	Impish	19.1
+Wormadam-Trash	Nature	Bold	16.5
+Wormadam-Trash	HP EV	Max	48.1
+Wormadam-Trash	HP EV	None	47.4
+Wormadam-Trash	Atk EV	None	80.2
+Wormadam-Trash	Atk EV	Max	17.9
+Wormadam-Trash	Atk EV	Medium (100-150)	1.9
+Wormadam-Trash	Def EV	None	44.0
+Wormadam-Trash	Def EV	Max	40.7
+Wormadam-Trash	Def EV	Medium (100-150)	10.4
+Wormadam-Trash	Spa EV	None	54.1
+Wormadam-Trash	Spa EV	Max	27.6
+Wormadam-Trash	Spa EV	Medium (100-150)	16.4
+Wormadam-Trash	Spa EV	Very Low (<50)	1.9
+Wormadam-Trash	SpD EV	None	41.4
+Wormadam-Trash	SpD EV	Medium (100-150)	28.0
+Wormadam-Trash	SpD EV	Max	26.9
+Wormadam-Trash	Spe EV	None	95.5
+Wormadam-Trash	Move	Stealth Rock	85.8
+Wormadam-Trash	Move	Gyro Ball	45.1
+Wormadam-Trash	Move	Skill Swap	37.7
+Wormadam-Trash	Move	Mirror Shot	35.1
+Wormadam-Trash	Move	Hidden Power Ground	33.2
+Wormadam-Trash	Move	Toxic	28.7
+Wormadam-Trash	Move	Protect	24.3
+Wormadam-Trash	Move	Sucker Punch	23.9
+Wormadam-Trash	Move	Endeavor	17.2
+Wormadam-Trash	Move	Shadow Ball	16.0
+Wormadam-Trash	Move	Flash Cannon	10.8
+Wormadam-Trash	Move	Metal Sound	10.8
 Wurmple	Ability	Shield Dust	100.0
 Wurmple	Item	No Item	72.2
 Wurmple	Item	Focus Band	22.2
