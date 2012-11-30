@@ -383,7 +383,7 @@ Kyogre	1
 Groudon	1
 Rayquaza	1
 Jirachi	0.783662
-Deoxys-Medicore	1
+Deoxys-Mediocre	1
 Deoxys-Attack	1
 Deoxys-Defense	1
 Deoxys-Speed	1

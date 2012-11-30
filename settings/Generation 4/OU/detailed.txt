@@ -2705,15 +2705,15 @@ Deoxys-Defense	Def EV	None	100.0
 Deoxys-Defense	SpA EV	None	100.0
 Deoxys-Defense	SpD EV	None	100.0
 Deoxys-Defense	Spe EV	None	100.0
-Deoxys-Medicore	Ability	Pressure	100.0
-Deoxys-Medicore	Item	Leftovers	100.0
-Deoxys-Medicore	Nature	Hardy	100.0
-Deoxys-Medicore	HP EV	None	100.0
-Deoxys-Medicore	Atk EV	None	100.0
-Deoxys-Medicore	Def EV	None	100.0
-Deoxys-Medicore	SpA EV	None	100.0
-Deoxys-Medicore	SpD EV	None	100.0
-Deoxys-Medicore	Spe EV	None	100.0
+Deoxys-Mediocre	Ability	Pressure	100.0
+Deoxys-Mediocre	Item	Leftovers	100.0
+Deoxys-Mediocre	Nature	Hardy	100.0
+Deoxys-Mediocre	HP EV	None	100.0
+Deoxys-Mediocre	Atk EV	None	100.0
+Deoxys-Mediocre	Def EV	None	100.0
+Deoxys-Mediocre	SpA EV	None	100.0
+Deoxys-Mediocre	SpD EV	None	100.0
+Deoxys-Mediocre	Spe EV	None	100.0
 Deoxys-Speed	Ability	Pressure	100.0
 Deoxys-Speed	Item	Leftovers	100.0
 Deoxys-Speed	Nature	Hardy	100.0
