@@ -150,10 +150,10 @@ namespace {
 
 bool is_deoxys (Species species) {
 	switch (species) {
-		case Species::Deoxys_A:
-		case Species::Deoxys_D:
-		case Species::Deoxys_M:
-		case Species::Deoxys_S:
+		case Species::Deoxys_Attack:
+		case Species::Deoxys_Defense:
+		case Species::Deoxys_Mediocre:
+		case Species::Deoxys_Speed:
 			return true;
 		default:
 			return false;
@@ -842,10 +842,10 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		120,		// Groudon
 		120,		// Rayquaza
 		20,		// Jirachi
-		80,		// Deoxys-M
-		80,		// Deoxys-A
-		80,		// Deoxys-D
-		80,		// Deoxys-S
+		80,		// Deoxys-Mediocre
+		80,		// Deoxys-Attack
+		80,		// Deoxys-Defense
+		80,		// Deoxys-Speed
 
 		// Generation 4
 		40,		// Turtwig

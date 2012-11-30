@@ -67,7 +67,7 @@ void special_attack_tests () {
 
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
-	attacker.add_pokemon(Species::Deoxys_A, 100, gender);
+	attacker.add_pokemon(Species::Deoxys_Attack, 100, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
 	pokemon.spa().ev.set_value(252);
@@ -140,7 +140,7 @@ void speed_tests () {
 
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
-	team.add_pokemon(Species::Deoxys_S, level, gender);
+	team.add_pokemon(Species::Deoxys_Speed, level, gender);
 	Pokemon & pokemon = team.pokemon();
 	pokemon.spe().ev.set_value(252);
 	pokemon.nature().name = Nature::TIMID;

@@ -737,10 +737,10 @@ uint8_t get_base_stat (Species name, Stat::Stats stat) {
 		{	100,	150,	140,	100,	90,	90	},		// Groudon
 		{	105,	150,	90,	150,	90,	95	},		// Rayquaza
 		{	100,	100,	100,	100,	100,	100	},		// Jirachi
-		{	50,	150,	50,	150,	50,	150	},		// Deoxys-M
-		{	50,	180,	20,	180,	20,	150	},		// Deoxys-A
-		{	50,	70,	160,	70,	160,	90	},		// Deoxys-D
-		{	50,	95,	90,	95,	90,	180	},		// Deoxys-S
+		{	50,	150,	50,	150,	50,	150	},		// Deoxys-Mediocre
+		{	50,	180,	20,	180,	20,	150	},		// Deoxys-Attack
+		{	50,	70,	160,	70,	160,	90	},		// Deoxys-Defense
+		{	50,	95,	90,	95,	90,	180	},		// Deoxys-Speed
 		
 		// Generation 4
 		{	55,	68,	64,	45,	55,	31	},		// Turtwig

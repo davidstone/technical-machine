@@ -497,10 +497,10 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Ground },			// Groudon
 		{ Type::Dragon, Type::Flying },			// Rayquaza
 		{ Type::Steel, Type::Psychic },			// Jirachi
-		{ Type::Psychic },			// Deoxys-M
-		{ Type::Psychic },			// Deoxys-A
-		{ Type::Psychic },			// Deoxys-D
-		{ Type::Psychic },			// Deoxys-S
+		{ Type::Psychic },			// Deoxys-Mediocre
+		{ Type::Psychic },			// Deoxys-Attack
+		{ Type::Psychic },			// Deoxys-Defense
+		{ Type::Psychic },			// Deoxys-Speed
 		
 		// Generation 4
 		{ Type::Grass },			// Turtwig

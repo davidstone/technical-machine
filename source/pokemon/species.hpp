@@ -29,10 +29,8 @@ namespace technicalmachine {
 //
 // The following are my formats for species:
 //
-// Deoxys-A(ttack), Deoxys-D(efense), Deoxys-M(ediocre), Deoxys-S(peed). All of
-// these are standard except Deoxys-M, which is usually refered as simply
-// Deoxys. On Shoddy Battle, A = f, D = l, S = e, and M has no letter. Pokemon
-// Online uses my standard abbreviations, except with Deoxys-M being just
+// Deoxys-Attack, Deoxys-Defense, Deoxys-Mediocre, Deoxys-Speed. All of these
+// are standard except Deoxys-Mediocre, which is usually refered as simply
 // Deoxys.
 //
 // Giratina-A(ltered), Giratina-O(rigin). Both of these are somewhat standard.
@@ -448,10 +446,10 @@ enum class Species : uint16_t {
 	Groudon,
 	Rayquaza,
 	Jirachi,
-	Deoxys_M,
-	Deoxys_A,
-	Deoxys_D,
-	Deoxys_S,
+	Deoxys_Mediocre,
+	Deoxys_Attack,
+	Deoxys_Defense,
+	Deoxys_Speed,
 	Generation_3_End,
 	
 	// Generation 4

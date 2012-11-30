@@ -100,17 +100,17 @@ unsigned get_forme_offset (unsigned const id, unsigned const forme) {
 	
 unsigned get_forme (Species const species) {
 	switch (species) {
-		case Species::Deoxys_A:
+		case Species::Deoxys_Attack:
 		case Species::Giratina_O:
 		case Species::Rotom_C:
 		case Species::Shaymin_S:
 		case Species::Wormadam_Sandy:
 			return 1;
-		case Species::Deoxys_D:
+		case Species::Deoxys_Defense:
 		case Species::Rotom_H:
 		case Species::Wormadam_Trash:
 			return 2;
-		case Species::Deoxys_S:
+		case Species::Deoxys_Speed:
 		case Species::Rotom_F:
 			return 3;
 		case Species::Rotom_W:
@@ -518,7 +518,7 @@ Species id_to_species (unsigned const id, unsigned const forme) {
 		Species::Groudon,
 		Species::Rayquaza,
 		Species::Jirachi,
-		Species::Deoxys_M,
+		Species::Deoxys_Mediocre,
 		
 		// Generation 4
 		Species::Turtwig,
@@ -1021,10 +1021,10 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		383,		//	Groudon
 		384,		//	Rayquaza
 		385,		//	Jirachi
-		386,		//	Deoxys-M
-		386,		//	Deoxys-A
-		386,		//	Deoxys-D
-		386,		//	Deoxys-S
+		386,		//	Deoxys-Mediocre
+		386,		//	Deoxys-Attack
+		386,		//	Deoxys-Defense
+		386,		//	Deoxys-Speed
 		387,		//	Turtwig
 		388,		//	Grotle
 		389,		//	Torterra

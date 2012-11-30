@@ -449,10 +449,10 @@ Species id_to_species (unsigned const id) {
 		Species::Groudon,
 		Species::Rayquaza,
 		Species::Jirachi,
-		Species::Deoxys_M,
-		Species::Deoxys_A,
-		Species::Deoxys_D,
-		Species::Deoxys_S,
+		Species::Deoxys_Mediocre,
+		Species::Deoxys_Attack,
+		Species::Deoxys_Defense,
+		Species::Deoxys_Speed,
 		
 		// Generation 4
 		Species::Turtwig,
@@ -962,10 +962,10 @@ unsigned species_to_id (Species species) {
 		382,		//  Groudon
 		383,		//  Rayquaza
 		384,		//  Jirachi
-		385,		//  Deoxys-M
-		386,		//  Deoxys-A
-		387,		//  Deoxys-D
-		388,		//  Deoxys-S
+		385,		//  Deoxys-Mediocre
+		386,		//  Deoxys-Attack
+		387,		//  Deoxys-Defense
+		388,		//  Deoxys-Speed
 		389,		//  Turtwig
 		390,		//  Grotle
 		391,		//  Torterra

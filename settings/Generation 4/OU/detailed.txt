@@ -2687,42 +2687,42 @@ Delibird	Move	Thief	16.2
 Delibird	Move	Gunk Shot	12.6
 Delibird	Move	Focus Punch	11.6
 Delibird	Move	Quick Attack	11.2
-Deoxys-A	Ability	Pressure	100.0
-Deoxys-A	Item	Leftovers	100.0
-Deoxys-A	Nature	Hardy	100.0
-Deoxys-A	HP EV	None	100.0
-Deoxys-A	Atk EV	None	100.0
-Deoxys-A	Def EV	None	100.0
-Deoxys-A	SpA EV	None	100.0
-Deoxys-A	SpD EV	None	100.0
-Deoxys-A	Spe EV	None	100.0
-Deoxys-D	Ability	Pressure	100.0
-Deoxys-D	Item	Leftovers	100.0
-Deoxys-D	Nature	Hardy	100.0
-Deoxys-D	HP EV	None	100.0
-Deoxys-D	Atk EV	None	100.0
-Deoxys-D	Def EV	None	100.0
-Deoxys-D	SpA EV	None	100.0
-Deoxys-D	SpD EV	None	100.0
-Deoxys-D	Spe EV	None	100.0
-Deoxys-M	Ability	Pressure	100.0
-Deoxys-M	Item	Leftovers	100.0
-Deoxys-M	Nature	Hardy	100.0
-Deoxys-M	HP EV	None	100.0
-Deoxys-M	Atk EV	None	100.0
-Deoxys-M	Def EV	None	100.0
-Deoxys-M	SpA EV	None	100.0
-Deoxys-M	SpD EV	None	100.0
-Deoxys-M	Spe EV	None	100.0
-Deoxys-S	Ability	Pressure	100.0
-Deoxys-S	Item	Leftovers	100.0
-Deoxys-S	Nature	Hardy	100.0
-Deoxys-S	HP EV	None	100.0
-Deoxys-S	Atk EV	None	100.0
-Deoxys-S	Def EV	None	100.0
-Deoxys-S	SpA EV	None	100.0
-Deoxys-S	SpD EV	None	100.0
-Deoxys-S	Spe EV	None	100.0
+Deoxys-Attack	Ability	Pressure	100.0
+Deoxys-Attack	Item	Leftovers	100.0
+Deoxys-Attack	Nature	Hardy	100.0
+Deoxys-Attack	HP EV	None	100.0
+Deoxys-Attack	Atk EV	None	100.0
+Deoxys-Attack	Def EV	None	100.0
+Deoxys-Attack	SpA EV	None	100.0
+Deoxys-Attack	SpD EV	None	100.0
+Deoxys-Attack	Spe EV	None	100.0
+Deoxys-Defense	Ability	Pressure	100.0
+Deoxys-Defense	Item	Leftovers	100.0
+Deoxys-Defense	Nature	Hardy	100.0
+Deoxys-Defense	HP EV	None	100.0
+Deoxys-Defense	Atk EV	None	100.0
+Deoxys-Defense	Def EV	None	100.0
+Deoxys-Defense	SpA EV	None	100.0
+Deoxys-Defense	SpD EV	None	100.0
+Deoxys-Defense	Spe EV	None	100.0
+Deoxys-Medicore	Ability	Pressure	100.0
+Deoxys-Medicore	Item	Leftovers	100.0
+Deoxys-Medicore	Nature	Hardy	100.0
+Deoxys-Medicore	HP EV	None	100.0
+Deoxys-Medicore	Atk EV	None	100.0
+Deoxys-Medicore	Def EV	None	100.0
+Deoxys-Medicore	SpA EV	None	100.0
+Deoxys-Medicore	SpD EV	None	100.0
+Deoxys-Medicore	Spe EV	None	100.0
+Deoxys-Speed	Ability	Pressure	100.0
+Deoxys-Speed	Item	Leftovers	100.0
+Deoxys-Speed	Nature	Hardy	100.0
+Deoxys-Speed	HP EV	None	100.0
+Deoxys-Speed	Atk EV	None	100.0
+Deoxys-Speed	Def EV	None	100.0
+Deoxys-Speed	SpA EV	None	100.0
+Deoxys-Speed	SpD EV	None	100.0
+Deoxys-Speed	Spe EV	None	100.0
 Dewgong	Ability	Hydration	57.0
 Dewgong	Ability	Thick Fat	43.0
 Dewgong	Item	Leftovers	47.9

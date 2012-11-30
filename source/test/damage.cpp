@@ -57,7 +57,7 @@ Team max_damage_special_attacker () {
 
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
-	attacker.add_pokemon(Species::Deoxys_A, level, gender);
+	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	attacker.pokemon().hp().stat = 1;
 	
 	return attacker;

@@ -383,10 +383,10 @@ Kyogre	0
 Groudon	0
 Rayquaza	0
 Jirachi	144533
-Deoxys-M	0
-Deoxys-A	0
-Deoxys-D	0
-Deoxys-S	0
+Deoxys-Mediocre 0
+Deoxys-Attack	0
+Deoxys-Defense	0
+Deoxys-Speed	0
 Turtwig	14
 Grotle	14
 Torterra	9733

@@ -383,10 +383,10 @@ Kyogre	1
 Groudon	1
 Rayquaza	1
 Jirachi	0.783662
-Deoxys-M	1
-Deoxys-A	1
-Deoxys-D	1
-Deoxys-S	1
+Deoxys-Medicore	1
+Deoxys-Attack	1
+Deoxys-Defense	1
+Deoxys-Speed	1
 Turtwig	0.714286
 Grotle	0.857143
 Torterra	0.893044

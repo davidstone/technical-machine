@@ -116,7 +116,7 @@ std::string to_string(Species const name) {
 		"Bagon", "Shelgon", "Salamence", "Beldum", "Metang",
 		"Metagross", "Regirock", "Regice", "Registeel", "Latias",
 		"Latios", "Kyogre", "Groudon", "Rayquaza", "Jirachi",
-		"Deoxys-M", "Deoxys-A", "Deoxys-D", "Deoxys-S",
+		"Deoxys-Mediocre", "Deoxys-Attack", "Deoxys-Defense", "Deoxys-Speed",
 
 		// Generation 4
 		"Turtwig", "Grotle", "Torterra", "Chimchar", "Monferno",
@@ -579,14 +579,10 @@ Species from_string(std::string const & str) {
 		{ "groudon", Species::Groudon },
 		{ "rayquaza", Species::Rayquaza },
 		{ "jirachi", Species::Jirachi },
-		{ "deoxys-m", Species::Deoxys_M },
-		{ "deoxys", Species::Deoxys_M },
-		{ "deoxys-a", Species::Deoxys_A },
-		{ "deoxys-attack", Species::Deoxys_A },
-		{ "deoxys-d", Species::Deoxys_D },
-		{ "deoxys-defense", Species::Deoxys_D },
-		{ "deoxys-s", Species::Deoxys_S },
-		{ "deoxys-speed", Species::Deoxys_S },
+		{ "deoxys-mediocre", Species::Deoxys_Mediocre },
+		{ "deoxys-attack", Species::Deoxys_Attack },
+		{ "deoxys-defense", Species::Deoxys_Defense },
+		{ "deoxys-speed", Species::Deoxys_Speed },
 
 		// Generation 4	
 		{ "turtwig", Species::Turtwig },
