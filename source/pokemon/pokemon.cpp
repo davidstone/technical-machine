@@ -162,8 +162,8 @@ bool is_deoxys (Species species) {
 
 bool is_giratina (Species species) {
 	switch (species) {
-		case Species::Giratina_A:
-		case Species::Giratina_O:
+		case Species::Giratina_Altered:
+		case Species::Giratina_Origin:
 			return true;
 		default:
 			return false;
@@ -228,7 +228,7 @@ bool Pokemon::is_boosted_by_light_ball() const {
 }
 
 bool Pokemon::is_boosted_by_lustrous_orb() const {
-	return name() == Species::Giratina_O;
+	return name() == Species::Giratina_Origin;
 }
 
 bool Pokemon::is_boosted_by_metal_powder() const {
@@ -955,8 +955,8 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		120,		// Palkia
 		120,		// Heatran
 		120,		// Regigigas
-		120,		// Giratina-A
-		120,		// Giratina-O
+		120,		// Giratina-Altered
+		120,		// Giratina-Origin
 		80,		// Cresselia
 		20,		// Phione
 		20,		// Manaphy

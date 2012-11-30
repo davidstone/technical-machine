@@ -494,8 +494,8 @@ Dialga	0
 Palkia	0
 Heatran	255319
 Regigigas	2325
-Giratina-A	0
-Giratina-O	0
+Giratina-Altered	0
+Giratina-Origin	0
 Cresselia	25813
 Phione	522
 Manaphy	0

@@ -101,7 +101,7 @@ unsigned get_forme_offset (unsigned const id, unsigned const forme) {
 unsigned get_forme (Species const species) {
 	switch (species) {
 		case Species::Deoxys_Attack:
-		case Species::Giratina_O:
+		case Species::Giratina_Origin:
 		case Species::Rotom_C:
 		case Species::Shaymin_S:
 		case Species::Wormadam_Sandy:
@@ -621,7 +621,7 @@ Species id_to_species (unsigned const id, unsigned const forme) {
 		Species::Palkia,
 		Species::Heatran,
 		Species::Regigigas,
-		Species::Giratina_A,
+		Species::Giratina_Altered,
 		Species::Cresselia,
 		Species::Phione,
 		Species::Manaphy,
@@ -1132,8 +1132,8 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 		484,		//	Palkia
 		485,		//	Heatran
 		486,		//	Regigigas
-		487,		//	Giratina-A
-		487,		//	Giratina-O
+		487,		//	Giratina-Altered
+		487,		//	Giratina-Origin
 		488,		//	Cresselia
 		489,		//	Phione
 		490,		//	Manaphy

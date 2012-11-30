@@ -615,8 +615,8 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Water, Type::Dragon },			// Palkia
 		{ Type::Fire, Type::Steel },			// Heatran
 		{ Type::Normal },			// Regigigas
-		{ Type::Ghost, Type::Dragon },			// Giratina-A
-		{ Type::Ghost, Type::Dragon },			// Giratina-O
+		{ Type::Ghost, Type::Dragon },			// Giratina-Altered
+		{ Type::Ghost, Type::Dragon },			// Giratina-Origin
 		{ Type::Psychic },			// Cresselia
 		{ Type::Water },			// Phione
 		{ Type::Water },			// Manaphy

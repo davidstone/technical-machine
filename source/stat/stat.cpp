@@ -850,8 +850,8 @@ uint8_t get_base_stat (Species name, Stat::Stats stat) {
 		{	90,	120,	100,	150,	120,	100	},		// Palkia
 		{	91,	90,	106,	130,	106,	77	},		// Heatran
 		{	110,	160,	110,	80,	110,	100	},		// Regigigas
-		{	150,	100,	120,	100,	120,	90	},		// Giratina-A
-		{	150,	120,	100,	120,	100,	90	},		// Giratina-O
+		{	150,	100,	120,	100,	120,	90	},		// Giratina-Altered
+		{	150,	120,	100,	120,	100,	90	},		// Giratina-Origin
 		{	120,	70,	120,	75,	130,	85	},		// Cresselia
 		{	80,	80,	80,	80,	80,	80	},		// Phione
 		{	100,	100,	100,	100,	100,	100	},		// Manaphy

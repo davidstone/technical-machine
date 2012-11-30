@@ -494,8 +494,8 @@ Dialga	1
 Palkia	1
 Heatran	0.875426
 Regigigas	0.904946
-Giratina-A	1
-Giratina-O	1
+Giratina-Altered	1
+Giratina-Origin	1
 Cresselia	0.973812
 Phione	0.934866
 Manaphy	1

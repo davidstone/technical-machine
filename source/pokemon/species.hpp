@@ -33,10 +33,8 @@ namespace technicalmachine {
 // are standard except Deoxys-Mediocre, which is usually refered as simply
 // Deoxys.
 //
-// Giratina-A(ltered), Giratina-O(rigin). Both of these are somewhat standard.
-// Giratina-A is sometimes refered to as simply Giratina. On Shoddy, Giratina-A
-// has no letter, and Giratina-O is Giratina-o. Pokemon Online uses Giratina and
-// Giratina-O.
+// Giratina-Altered, Giratina-Origin. Both of these are somewhat standard.
+// Giratina-Altered is sometimes refered to as simply Giratina.
 //
 // The weaker Rotom form is Rotom. The appliance Rotom forms use their standard
 // one-letter abbreviation. This is the same as Shoddy Battle, except Shoddy
@@ -560,8 +558,8 @@ enum class Species : uint16_t {
 	Palkia,
 	Heatran,
 	Regigigas,
-	Giratina_A,
-	Giratina_O,
+	Giratina_Altered,
+	Giratina_Origin,
 	Cresselia,
 	Phione,
 	Manaphy,

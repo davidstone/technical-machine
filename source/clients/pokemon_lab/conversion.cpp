@@ -557,7 +557,7 @@ Species id_to_species (unsigned const id) {
 		Species::Palkia,
 		Species::Heatran,
 		Species::Regigigas,
-		Species::Giratina_A,
+		Species::Giratina_Altered,
 		Species::Cresselia,
 		Species::Phione,
 		Species::Manaphy,
@@ -569,7 +569,7 @@ Species id_to_species (unsigned const id) {
 		Species::Rotom_H,
 		Species::Rotom_S,
 		Species::Rotom_W,
-		Species::Giratina_O,
+		Species::Giratina_Origin,
 		Species::Shaymin_S,
 	};
 	return (id < sizeof(species_converter)) ? species_converter [id] : Species::END;
@@ -1073,8 +1073,8 @@ unsigned species_to_id (Species species) {
 		488,		//  Palkia
 		489,		//  Heatran
 		490,		//  Regigigas
-		491,		//  Giratina-A
-		503,		//  Giratina-O
+		491,		//  Giratina-Altered
+		503,		//  Giratina-Origin
 		492,		//  Cresselia
 		493,		//  Phione
 		494,		//  Manaphy

@@ -4312,24 +4312,24 @@ Girafarig	Move	Grass Knot	13.2
 Girafarig	Move	Substitute	13.0
 Girafarig	Move	Crunch	11.4
 Girafarig	Move	Sucker Punch	10.5
-Giratina-A	Ability	Pressure	100.0
-Giratina-A	Item	Leftovers	100.0
-Giratina-A	Nature	Hardy	100.0
-Giratina-A	HP EV	None	100.0
-Giratina-A	Atk EV	None	100.0
-Giratina-A	Def EV	None	100.0
-Giratina-A	SpA EV	None	100.0
-Giratina-A	SpD EV	None	100.0
-Giratina-A	Spe EV	None	100.0
-Giratina-O	Ability	Levitate	100.0
-Giratina-O	Item	Leftovers	100.0
-Giratina-O	Nature	Hardy	100.0
-Giratina-O	HP EV	None	100.0
-Giratina-O	Atk EV	None	100.0
-Giratina-O	Def EV	None	100.0
-Giratina-O	SpA EV	None	100.0
-Giratina-O	SpD EV	None	100.0
-Giratina-O	Spe EV	None	100.0
+Giratina-Altered	Ability	Pressure	100.0
+Giratina-Altered	Item	Leftovers	100.0
+Giratina-Altered	Nature	Hardy	100.0
+Giratina-Altered	HP EV	None	100.0
+Giratina-Altered	Atk EV	None	100.0
+Giratina-Altered	Def EV	None	100.0
+Giratina-Altered	SpA EV	None	100.0
+Giratina-Altered	SpD EV	None	100.0
+Giratina-Altered	Spe EV	None	100.0
+Giratina-Origin	Ability	Levitate	100.0
+Giratina-Origin	Item	Leftovers	100.0
+Giratina-Origin	Nature	Hardy	100.0
+Giratina-Origin	HP EV	None	100.0
+Giratina-Origin	Atk EV	None	100.0
+Giratina-Origin	Def EV	None	100.0
+Giratina-Origin	SpA EV	None	100.0
+Giratina-Origin	SpD EV	None	100.0
+Giratina-Origin	Spe EV	None	100.0
 Glaceon	Ability	Snow Cloak	100.0
 Glaceon	Item	Leftovers	34.3
 Glaceon	Item	Choice Scarf	25.8
