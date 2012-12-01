@@ -23,6 +23,7 @@
 #include "../invalid_simulator_conversion.hpp"
 
 #include "../../clients/pokemon_lab/conversion.hpp"
+#include "../../clients/pokemon_lab/id.hpp"
 
 #include "../../move/moves.hpp"
 
@@ -70,7 +71,7 @@ void test_nature () {
 void test_species () {
 	std::cout << "\t\tVerifying correct species.\n";
 	for (auto original = static_cast<Species>(0); original != Species::Generation_4_End; original = static_cast<Species>(static_cast<unsigned>(original) + 1)) {
-		auto const id = simulator_cast<unsigned>(original);
+		auto const id = simulator_cast<ID<Species>>(original);
 		auto const result = simulator_cast<Species>(id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Pokemon> (original, result);

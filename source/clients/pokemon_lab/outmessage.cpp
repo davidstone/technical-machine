@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "conversion.hpp"
+#include "id.hpp"
 
 #include "../../ability.hpp"
 #include "../../team.hpp"
@@ -52,7 +53,7 @@ void OutMessage::write_team (Team const & team, std::string const &) {
 }
 
 void OutMessage::write_pokemon (Pokemon const & pokemon) {
-	write_int(simulator_cast<unsigned>(pokemon.name()));
+	write_int(simulator_cast<ID<Species>>(pokemon.name()).value());
 	write_string (pokemon.get_nickname());
 	constexpr bool shiny = false;
 	write_byte (shiny);

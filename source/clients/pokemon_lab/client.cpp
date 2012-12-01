@@ -32,6 +32,7 @@
 #include "conversion.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
+#include "id.hpp"
 
 #include "../battle_result.hpp"
 
@@ -372,7 +373,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			Species const species = simulator_cast<Species>(static_cast<unsigned>(msg.read_short()));
+			auto const species = simulator_cast<Species>(ID<Species>(msg.read_short()));
 			Gender gender(simulator_cast<Gender::Genders>(static_cast<unsigned>(msg.read_byte())));
 			uint8_t const level = msg.read_byte();
 			auto & battle = find_battle (battle_id);
