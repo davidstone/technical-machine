@@ -67,7 +67,7 @@ void test_conversions () {
 	test_item ();
 	test_generic("Move", Moves::END);
 	test_nature ();
-	test_generic("Species", Species::END);
+	test_generic("Species", Species::Generation_4_End);
 }
 
 }	// namespace pl
