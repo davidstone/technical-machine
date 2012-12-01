@@ -917,8 +917,8 @@ uint8_t get_base_stat (Species name, Stat::Stats stat) {
 		{	60,	67,	85,	77,	75,	116	},		// Whimsicott
 		{	45,	35,	50,	70,	50,	30	},		// Petilil
 		{	70,	60,	75,	110,	75,	90	},		// Lilligant
-		{	70,	92,	65,	80,	55,	98	},		// Basculin-R
-		{	70,	92,	65,	80,	55,	98	},		// Basculin-B
+		{	70,	92,	65,	80,	55,	98	},		// Basculin-Red
+		{	70,	92,	65,	80,	55,	98	},		// Basculin-Blue
 		{	50,	72,	35,	35,	35,	65	},		// Sandile
 		{	60,	82,	45,	45,	45,	74	},		// Krokorok
 		{	95,	117,	70,	65,	70,	92	},		// Krookodile
@@ -1010,17 +1010,17 @@ uint8_t get_base_stat (Species name, Stat::Stats stat) {
 		{	91,	90,	129,	90,	72,	108	},		// Cobalion
 		{	91,	129,	90,	72,	90,	108	},		// Terrakion
 		{	91,	90,	72,	90,	129,	108	},		// Virizion
-		{	79,	115,	70,	125,	80,	111	},		// Tornadus-I
-		{	79,	100,	80,	110,	90,	121	},		// Tornadus-T
-		{	79,	115,	70,	125,	80,	111	},		// Thundurus-I
-		{	79,	105,	70,	145,	80,	101	},		// Thundurus-T
+		{	79,	115,	70,	125,	80,	111	},		// Tornadus-Incarnate
+		{	79,	100,	80,	110,	90,	121	},		// Tornadus-Therian
+		{	79,	115,	70,	125,	80,	111	},		// Thundurus-Incarnate
+		{	79,	105,	70,	145,	80,	101	},		// Thundurus-Therian
 		{	100,	120,	100,	150,	120,	90	},		// Reshiram
 		{	100,	150,	120,	120,	100,	90	},		// Zekrom
-		{	89,	125,	90,	115,	80,	101	},		// Landorus-I
-		{	89,	145,	90,	105,	80,	91	},		// Landorus-T
+		{	89,	125,	90,	115,	80,	101	},		// Landorus-Incarnate
+		{	89,	145,	90,	105,	80,	91	},		// Landorus-Therian
 		{	125,	130,	90,	130,	90,	95	},		// Kyurem
-		{	125,	170,	100,	120,	90,	95	},		// Kyurem-B
-		{	125,	120,	90,	170,	100,	95	},		// Kyurem-W
+		{	125,	170,	100,	120,	90,	95	},		// Kyurem-Black
+		{	125,	120,	90,	170,	100,	95	},		// Kyurem-White
 		{	91,	72,	90,	129,	90,	108	},		// Keldeo
 		{	100,	77,	77,	128,	128,	90	},		// Meloetta
 	//	{	100,	128,	90,	77,	77,	128	},		// Meloetta (Pirouette form)

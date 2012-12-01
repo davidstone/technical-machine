@@ -682,8 +682,8 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Grass },			// Whimsicott
 		{ Type::Grass },			// Petilil
 		{ Type::Grass },			// Lilligant
-		{ Type::Water },			// Basculin-R
-		{ Type::Water },			// Basculin-B
+		{ Type::Water },			// Basculin-Red
+		{ Type::Water },			// Basculin-Blue
 		{ Type::Ground, Type::Dark },			// Sandile
 		{ Type::Ground, Type::Dark },			// Krokorok
 		{ Type::Ground, Type::Dark },			// Krookodile
@@ -775,17 +775,17 @@ std::vector<Type> get_type (Species const name) {
 		{ Type::Steel, Type::Fighting },			// Cobalion
 		{ Type::Rock, Type::Fighting },			// Terrakion
 		{ Type::Grass, Type::Fighting },			// Virizion
-		{ Type::Flying },			// Tornadus-I
-		{ Type::Flying },			// Tornadus-T
-		{ Type::Electric, Type::Flying },			// Thundurus-I
-		{ Type::Electric, Type::Flying },			// Thundurus-T
+		{ Type::Flying },			// Tornadus-Incarnate
+		{ Type::Flying },			// Tornadus-Therian
+		{ Type::Electric, Type::Flying },			// Thundurus-Incarnate
+		{ Type::Electric, Type::Flying },			// Thundurus-Therian
 		{ Type::Dragon, Type::Fire },			// Reshiram
 		{ Type::Dragon, Type::Electric },			// Zekrom
-		{ Type::Ground, Type::Flying },			// Landorus-I
-		{ Type::Ground, Type::Flying },			// Landorus-T
+		{ Type::Ground, Type::Flying },			// Landorus-Incarnate
+		{ Type::Ground, Type::Flying },			// Landorus-Therian
 		{ Type::Dragon, Type::Ice },			// Kyurem
-		{ Type::Dragon, Type::Ice },			// Kyurem-B
-		{ Type::Dragon, Type::Ice },			// Kyurem-W
+		{ Type::Dragon, Type::Ice },			// Kyurem-Black
+		{ Type::Dragon, Type::Ice },			// Kyurem-White
 		{ Type::Water, Type::Fighting },			// Keldeo
 		{ Type::Normal, Type::Psychic },			// Meloetta
 	//	{ Type::Normal, Type::Fighting },			// Meloetta (Pirouette form)

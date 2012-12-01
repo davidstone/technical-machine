@@ -1114,17 +1114,17 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		120,		// Cobalion
 		120,		// Terrakion
 		100,		// Virizion
-		80,		// Tornadus-I
-		80,		// Tornadus-T
-		80,		// Thundurus-I
-		80,		// Thundurus-T
+		80,		// Tornadus-Incarnate
+		80,		// Tornadus-Therian
+		80,		// Thundurus-Incarnate
+		80,		// Thundurus-Therian
 		120,		// Reshiram
 		120,		// Zekrom
-		80,		// Landorus-I
-		80,		// Landorus-T
+		80,		// Landorus-Incarnate
+		80,		// Landorus-Therian
 		120,		// Kyurem
-		120,		// Kyurem-B
-		120,		// Kyurem-W
+		120,		// Kyurem-Black
+		120,		// Kyurem-White
 		60,		// Keldeo
 		20,		// Meloetta
 		80,		// Genesect 
