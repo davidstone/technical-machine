@@ -17,13 +17,14 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "conversion.hpp"
+
+#include <string>
+
 #include "id.hpp"
-
 #include "../../gender.hpp"
-
 #include "../../move/moves.hpp"
-
 #include "../../pokemon/species.hpp"
+#include "../../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 namespace pl {
@@ -60,6 +61,16 @@ Moves simulator_cast<Moves, ID<Moves>>(ID<Moves> const & id) {
 template<>
 ID<Moves> simulator_cast<ID<Moves>, Moves>(Moves const & move) {
 	return ID<Moves>(static_cast<unsigned>(move));
+}
+
+template<>
+std::string simulator_cast<std::string, Species>(Species const & species) {
+	return to_string(species);
+}
+
+template<>
+Species simulator_cast<Species, std::string>(std::string const & str) {
+	return from_string<Species>(str);
 }
 
 template<>
