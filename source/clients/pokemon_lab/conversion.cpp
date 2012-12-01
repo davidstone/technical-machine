@@ -18,6 +18,7 @@
 
 #include "conversion.hpp"
 
+#include <map>
 #include <string>
 
 #include "id.hpp"
@@ -65,12 +66,66 @@ ID<Moves> simulator_cast<ID<Moves>, Moves>(Moves const & move) {
 
 template<>
 std::string simulator_cast<std::string, Species>(Species const & species) {
-	return to_string(species);
+	switch (species) {
+		case Species::Deoxys_Mediocre:
+			return "Deoxys";
+		case Species::Deoxys_Attack:
+			return "Deoxys-f";
+		case Species::Deoxys_Defense:
+			return "Deoxys-l";
+		case Species::Deoxys_Speed:
+			return "Deoxys-e";
+		case Species::Giratina_Altered:
+			return "Giratina";
+		case Species::Giratina_Origin:
+			return "Giratina-o";
+		case Species::Rotom_Mow:
+			return "Rotom-c";
+		case Species::Rotom_Frost:
+			return "Rotom-f";
+		case Species::Rotom_Heat:
+			return "Rotom-h";
+		case Species::Rotom_Fan:
+			return "Rotom-s";
+		case Species::Rotom_Wash:
+			return "Rotom-w";
+		case Species::Shaymin_Land:
+			return "Shaymin";
+		case Species::Shaymin_Sky:
+			return "Shaymin-s";
+		case Species::Wormadam_Plant:
+			return "Wormadam";
+		case Species::Wormadam_Sandy:
+			return "Wormadam-g";
+		case Species::Wormadam_Trash:
+			return "Wormadam-s";
+		default:
+			return to_string(species);
+	}
 }
 
 template<>
 Species simulator_cast<Species, std::string>(std::string const & str) {
-	return from_string<Species>(str);
+	static std::map<std::string, Species> const convertor = {
+		{ "Deoxys", Species::Deoxys_Mediocre },
+		{ "Deoxys-f", Species::Deoxys_Attack },
+		{ "Deoxys-l", Species::Deoxys_Defense },
+		{ "Deoxys-e", Species::Deoxys_Speed },
+		{ "Giratina", Species::Giratina_Altered },
+		{ "Giratina-o", Species::Giratina_Origin },
+		{ "Rotom-c", Species::Rotom_Mow },
+		{ "Rotom-f", Species::Rotom_Frost },
+		{ "Rotom-h", Species::Rotom_Heat },
+		{ "Rotom-s", Species::Rotom_Fan },
+		{ "Rotom-w", Species::Rotom_Wash },
+		{ "Shaymin", Species::Shaymin_Land },
+		{ "Shaymin-s", Species::Shaymin_Sky },
+		{ "Wormadam", Species::Wormadam_Plant },
+		{ "Wormadam-g", Species::Wormadam_Sandy },
+		{ "Wormadam-s", Species::Wormadam_Trash }
+	};
+	auto const it = convertor.find(str);
+	return (it != convertor.end()) ? it->second : from_string<Species>(str);
 }
 
 template<>

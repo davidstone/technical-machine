@@ -23,6 +23,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "conversion.hpp"
+
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
@@ -80,7 +82,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	Nature const nature(pt.get<std::string>("nature"));
 	Item const item(pt.get<std::string>("item"));
 	Ability const ability(pt.get<std::string>("ability"));
-	team.add_pokemon(from_string<Species>(species_str), level, gender, item, ability, nature, nickname, happiness);
+	team.add_pokemon(simulator_cast<Species>(species_str), level, gender, item, ability, nature, nickname, happiness);
 	Pokemon & pokemon = team.all_pokemon().at_replacement();
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))

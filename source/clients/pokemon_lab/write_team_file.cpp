@@ -24,6 +24,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "conversion.hpp"
+
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
@@ -60,7 +62,7 @@ void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
-	member.put ("<xmlattr>.species", pokemon.to_string ());
+	member.put("<xmlattr>.species", simulator_cast<std::string>(pokemon.name()));
 	member.put ("nickname", pokemon.get_nickname());
 	member.put ("level", pokemon.level());
 	member.put ("happiness", pokemon.happiness());
