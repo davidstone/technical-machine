@@ -37,7 +37,11 @@
 
 namespace technicalmachine {
 
-DetailedStats::DetailedStats() {
+DetailedStats::DetailedStats():
+	ability(),
+	item(),
+	nature()
+	{
 	static std::string const file_name = "settings/Generation 4/OU/detailed.txt";
 	std::ifstream file(file_name);
 	if (!file.is_open()) {

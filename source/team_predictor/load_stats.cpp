@@ -35,7 +35,7 @@ namespace {
 
 template<typename T>
 std::array<T, number_of_species> load_stats_from_file (std::string const & file_name) {
-	std::array<T, number_of_species> overall;
+	std::array<T, number_of_species> overall {{ 0 }};
 	std::ifstream file(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
