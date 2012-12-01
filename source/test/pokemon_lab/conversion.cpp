@@ -38,13 +38,15 @@ void test_ability () {
 	// Abilities are sent as strings, so no ID conversion required.
 }
 
-void test_gender () {
-	std::cout << "\t\tVerifying correct gender.\n";
-	for (Gender::Genders original = static_cast <Gender::Genders> (0); original != Gender::END; original = static_cast <Gender::Genders> (original + 1)) {
-		auto const id = simulator_cast<ID<Gender::Genders>>(original);
-		auto const result = simulator_cast<Gender::Genders>(id);
-		if (original != result)
-			throw InvalidSimulatorConversion <Gender> (original, result);
+template<typename Enum>
+void test_generic(std::string const & type, Enum const last) {
+	std::cout << "\t\tVerifying correct " << type << ".\n";
+	for (Enum original = static_cast<Enum>(0); original != last; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
+		auto const id = simulator_cast<ID<Enum>>(original);
+		auto const result = simulator_cast<Enum>(id);
+		if (original != result) {
+			throw InvalidSimulatorConversion(original, result);
+		}
 	}
 }
 
@@ -52,30 +54,8 @@ void test_item () {
 	// Items are sent as strings, so no ID conversion required.
 }
 
-void test_move () {
-	std::cout << "\t\tVerifying correct move.\n";
-	for (auto original = static_cast<Moves>(0); original != Moves::END; original = static_cast<Moves>(static_cast<unsigned>(original) + 1)) {
-		if (!Move::is_switch (original)) {
-			auto const id = simulator_cast<ID<Moves>>(original);
-			auto const result = simulator_cast<Moves>(id);
-			if (original != result)
-				throw InvalidSimulatorConversion <Move> (original, result);
-		}
-	}
-}
-
 void test_nature () {
 	// Natures are sent the same as TM, so no conversion required.
-}
-
-void test_species () {
-	std::cout << "\t\tVerifying correct species.\n";
-	for (auto original = static_cast<Species>(0); original != Species::Generation_4_End; original = static_cast<Species>(static_cast<unsigned>(original) + 1)) {
-		auto const id = simulator_cast<ID<Species>>(original);
-		auto const result = simulator_cast<Species>(id);
-		if (original != result)
-			throw InvalidSimulatorConversion <Pokemon> (original, result);
-	}
 }
 
 }	// anonymous namespace
@@ -83,11 +63,11 @@ void test_species () {
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Lab conversion tests.\n";
 	test_ability ();
-	test_gender ();
+	test_generic("Gender", Gender::Genders::END);
 	test_item ();
-	test_move ();
+	test_generic("Move", Moves::END);
 	test_nature ();
-	test_species ();
+	test_generic("Species", Species::END);
 }
 
 }	// namespace pl

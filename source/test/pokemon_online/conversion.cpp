@@ -49,7 +49,7 @@ void test_ability () {
 		unsigned const id = ability_to_id (original);
 		Ability::Abilities const result = id_to_ability (id);
 		if (original != result)
-			throw InvalidSimulatorConversion <Ability> (original, result);
+			throw InvalidSimulatorConversion(original, result);
 	});
 }
 
@@ -59,7 +59,7 @@ void test_gender () {
 		unsigned const id = gender_to_id (original);
 		Gender::Genders const result = id_to_gender (id);
 		if (original != result)
-			throw InvalidSimulatorConversion <Gender> (original, result);
+			throw InvalidSimulatorConversion(original, result);
 	});
 }
 
@@ -69,7 +69,7 @@ void test_item () {
 		unsigned const id = item_to_id (original);
 		Item::Items const result = id_to_item (id);
 		if (original != result and id != 0)
-			throw InvalidSimulatorConversion <Item> (original, result);
+			throw InvalidSimulatorConversion(original, result);
 	});
 }
 
@@ -80,7 +80,7 @@ void test_move () {
 			unsigned const id = move_to_id (original);
 			Moves const result = id_to_move (id);
 			if (original != result)
-				throw InvalidSimulatorConversion <Move> (original, result);
+				throw InvalidSimulatorConversion(original, result);
 		}
 	});
 }
@@ -91,7 +91,7 @@ void test_nature () {
 		unsigned const id = nature_to_id (original);
 		Nature::Natures const result = id_to_nature (id);
 		if (original != result)
-			throw InvalidSimulatorConversion <Nature> (original, result);
+			throw InvalidSimulatorConversion(original, result);
 	});
 }
 
@@ -101,7 +101,7 @@ void test_species () {
 		std::pair <uint16_t, uint8_t> const ids = species_to_id (original);
 		Species const result = id_to_species (ids.first, ids.second);
 		if (original != result)
-			throw InvalidSimulatorConversion <Pokemon> (original, result);
+			throw InvalidSimulatorConversion(original, result);
 	};
 	for_each<Species>(f, Species::Generation_4_End);
 }

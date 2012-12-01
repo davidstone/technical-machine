@@ -25,7 +25,6 @@
 namespace technicalmachine {
 class Pokemon;
 
-template<class Class>
 class InvalidSimulatorConversion : public std::logic_error {
 	public:
 		template<typename Test>
