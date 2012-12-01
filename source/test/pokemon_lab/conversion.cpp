@@ -56,7 +56,7 @@ void test_move () {
 	std::cout << "\t\tVerifying correct move.\n";
 	for (auto original = static_cast<Moves>(0); original != Moves::END; original = static_cast<Moves>(static_cast<unsigned>(original) + 1)) {
 		if (!Move::is_switch (original)) {
-			auto const id = simulator_cast<unsigned>(original);
+			auto const id = simulator_cast<ID<Moves>>(original);
 			auto const result = simulator_cast<Moves>(id);
 			if (original != result)
 				throw InvalidSimulatorConversion <Move> (original, result);

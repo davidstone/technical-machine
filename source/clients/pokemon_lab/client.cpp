@@ -350,7 +350,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			auto const party = Party(msg.read_byte());
 			uint8_t const slot = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			unsigned const move_id = msg.read_short ();
+			auto const move_id = ID<Moves>(msg.read_short());
 			auto & battle = find_battle(battle_id);
 			battle.handle_use_move(party, slot, simulator_cast<Moves>(move_id));
 			break;

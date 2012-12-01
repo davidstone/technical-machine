@@ -53,13 +53,13 @@ Gender::Genders simulator_cast<Gender::Genders, unsigned>(unsigned const & id) {
 }
 
 template<>
-Moves simulator_cast<Moves, unsigned>(unsigned const & id) {
-	return static_cast<Moves>(id);
+Moves simulator_cast<Moves, ID<Moves>>(ID<Moves> const & id) {
+	return static_cast<Moves>(id.value());
 }
 
 template<>
-unsigned simulator_cast<unsigned, Moves>(Moves const & move) {
-	return static_cast<unsigned>(move);
+ID<Moves> simulator_cast<ID<Moves>, Moves>(Moves const & move) {
+	return ID<Moves>(static_cast<unsigned>(move));
 }
 
 template<>

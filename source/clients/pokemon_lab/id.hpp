@@ -20,6 +20,7 @@
 #define POKEMON_LAB__SPECIES_ID_HPP_
 
 #include <cstdint>
+#include "../../move/moves_forward.hpp"
 #include "../../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
@@ -29,6 +30,11 @@ template<typename T>
 class IDType;
 template<>
 class IDType<Species> {
+	public:
+		typedef uint16_t type;
+};
+template<>
+class IDType<Moves> {
 	public:
 		typedef uint16_t type;
 };
