@@ -58,8 +58,8 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	constexpr bool shiny = false;
 	write_byte (shiny);
 
-	uint8_t const gender = simulator_cast<unsigned>(pokemon.gender().gender);
-	write_byte (gender);
+	auto const gender = simulator_cast<ID<Gender::Genders>>(pokemon.gender().gender);
+	write_byte(gender.value());
 
 	write_byte (pokemon.happiness());
 	write_int(pokemon.level());

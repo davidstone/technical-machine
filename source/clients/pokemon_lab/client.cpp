@@ -374,10 +374,10 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
 			auto const species = simulator_cast<Species>(ID<Species>(msg.read_short()));
-			Gender gender(simulator_cast<Gender::Genders>(static_cast<unsigned>(msg.read_byte())));
+			auto const gender = simulator_cast<Gender::Genders>(ID<Gender::Genders>(msg.read_byte()));
 			uint8_t const level = msg.read_byte();
 			auto & battle = find_battle (battle_id);
-			battle.handle_send_out (party, slot, index, nickname, species, gender, level);
+			battle.handle_send_out (party, slot, index, nickname, species, Gender(gender), level);
 			break;
 		}
 		case InMessage::BATTLE_HEALTH_CHANGE: {

@@ -29,20 +29,20 @@ namespace technicalmachine {
 namespace pl {
 
 template<>
-unsigned simulator_cast<unsigned, Gender::Genders>(Gender::Genders const & gender) {
+ID<Gender::Genders> simulator_cast<ID<Gender::Genders>, Gender::Genders>(Gender::Genders const & gender) {
 	switch (gender) {
 		case Gender::MALE:
-			return 1;
+			return ID<Gender::Genders>(1);
 		case Gender::FEMALE:
-			return 2;
+			return ID<Gender::Genders>(2);
 		default:	// Gender::GENDERLESS:
-			return 0;
+			return ID<Gender::Genders>(0);
 	}
 }
 
 template<>
-Gender::Genders simulator_cast<Gender::Genders, unsigned>(unsigned const & id) {
-	switch (id) {
+Gender::Genders simulator_cast<Gender::Genders, ID<Gender::Genders>>(ID<Gender::Genders> const & id) {
+	switch (id.value()) {
 		case 0:
 			return Gender::GENDERLESS;
 		case 1:

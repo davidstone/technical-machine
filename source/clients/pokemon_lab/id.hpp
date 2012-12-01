@@ -20,6 +20,7 @@
 #define POKEMON_LAB__SPECIES_ID_HPP_
 
 #include <cstdint>
+#include "../../gender.hpp"
 #include "../../move/moves_forward.hpp"
 #include "../../pokemon/species_forward.hpp"
 
@@ -37,6 +38,11 @@ template<>
 class IDType<Moves> {
 	public:
 		typedef uint16_t type;
+};
+template<>
+class IDType<Gender::Genders> {
+	public:
+		typedef uint8_t type;
 };
 
 template<typename T>

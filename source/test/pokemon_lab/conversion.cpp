@@ -41,7 +41,7 @@ void test_ability () {
 void test_gender () {
 	std::cout << "\t\tVerifying correct gender.\n";
 	for (Gender::Genders original = static_cast <Gender::Genders> (0); original != Gender::END; original = static_cast <Gender::Genders> (original + 1)) {
-		auto const id = simulator_cast<unsigned>(original);
+		auto const id = simulator_cast<ID<Gender::Genders>>(original);
 		auto const result = simulator_cast<Gender::Genders>(id);
 		if (original != result)
 			throw InvalidSimulatorConversion <Gender> (original, result);
