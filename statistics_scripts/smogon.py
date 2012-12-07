@@ -104,8 +104,10 @@ def create_xml_tree(lines):
 			super_tag = specific[0].lower()
 			super_element = ET.SubElement(pokemon, super_tag)
 			for value in specific[1:]:
-				element = ET.SubElement(super_element, to_singular[super_tag])
 				info = delimit_value_from_text(value)
+				if info[0] == 'Other':
+					continue
+				element = ET.SubElement(super_element, to_singular[super_tag])
 				name = ET.SubElement(element, 'name')
 				name.text = info[0]
 				probability = ET.SubElement(element, 'probability')
