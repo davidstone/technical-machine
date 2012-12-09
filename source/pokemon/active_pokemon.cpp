@@ -66,7 +66,6 @@ void ActivePokemon::reset_end_of_turn() {
 	me_first = false;
 	loaf = !loaf;
 	protecting = false;
-	is_replacing = false;
 }
 
 void ActivePokemon::reset_switch() {
@@ -123,6 +122,7 @@ void ActivePokemon::reset_switch() {
 	// vanished. Therefore, we need to reset it.
 	vanish.reset();
 	yawn.reset();
+	get_pokemon().reset_replacing();
 	get_pokemon().move.for_each_regular_move([](Move & move) {
 		move.reset();
 	});
@@ -517,14 +517,6 @@ void ActivePokemon::use_recharge_move() {
 	recharge_lock_in = true;
 }
 
-bool ActivePokemon::replacing() const {
-	return is_replacing;
-}
-
-void ActivePokemon::not_replacing() {
-	is_replacing = false;
-}
-
 bool ActivePokemon::is_roosting() const {
 	return roosting;
 }
@@ -703,7 +695,7 @@ bool ActivePokemon::has_switched() const {
 }
 
 bool ActivePokemon::switch_decision_required() const {
-	return pass or u_turning;
+	return pass or u_turning or will_be_replaced();
 }
 
 void ActivePokemon::switch_pokemon() {
@@ -859,8 +851,13 @@ bool ActivePokemon::will_be_replaced() const {
 	return get_pokemon().will_be_replaced();
 }
 
-void ActivePokemon::normalize_hp() {
-	get_pokemon().normalize_hp();
+void ActivePokemon::normalize_hp(bool fainted) {
+	if (fainted) {
+		faint();
+	}
+	else if (hp().stat == 0) {
+		hp().stat = 1;
+	}
 }
 
 ActivePokemon::hash_type ActivePokemon::hash() const {

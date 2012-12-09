@@ -130,9 +130,9 @@ int64_t select_type_of_move_branch (Team & ai, Team & foe, MoveScores & ai_score
 
 	if (ai.pokemon().hp().stat == 0 or foe.pokemon().hp().stat == 0)
 		return replace (ai, foe, ai_scores, foe_scores, weather, depth, evaluate, best_move, first_turn);
-	else if (ai.switch_decision_required())
+	else if (ai.pokemon().switch_decision_required())
 		return initial_move_then_switch_branch(ai, foe, ai_scores, foe_scores, weather, depth, evaluate, best_move, first_turn);
-	else if (foe.switch_decision_required()) {
+	else if (foe.pokemon().switch_decision_required()) {
 		assert(false);
 		return initial_move_then_switch_branch(foe, ai, ai_scores, foe_scores, weather, depth, evaluate, best_move, first_turn);
 	}
@@ -510,11 +510,9 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 
 
 Moves random_action (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine) {
-	return is_replacing (ai) ? random_switch (ai, random_engine) : random_move_or_switch (ai, foe, weather, random_engine);
-}
-
-bool is_replacing (Team const & team) {
-	return team.pokemon().hp().stat == 0 or team.switch_decision_required();
+	return ai.pokemon().switch_decision_required() ?
+			random_switch(ai, random_engine) :
+			random_move_or_switch(ai, foe, weather, random_engine);
 }
 
 Moves random_switch (Team const & ai, std::mt19937 & random_engine) {

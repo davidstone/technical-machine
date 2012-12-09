@@ -33,11 +33,27 @@ class UpdatedHP {
 		void add(bool is_me, Pokemon const & pokemon, unsigned max_precision);
 		void update(bool is_me, Pokemon const & pokemon, unsigned value);
 		void direct_damage(bool is_me, Pokemon const & pokemon, unsigned damage);
+		void faint(bool is_me, Pokemon const & pokemon);
 		unsigned get(bool is_me, Pokemon const & pokemon) const;
 		unsigned damage(bool is_me, Pokemon const & pokemon) const;
+		bool is_fainted(bool is_me, Pokemon const & pokemon) const;
 	private:
 		typedef std::pair<bool, Species> key_type;
-		typedef std::pair<unsigned, unsigned> mapped_type;
+		class mapped_type {
+			public:
+				mapped_type(unsigned set_new_hp, unsigned set_damage);
+				unsigned new_hp() const;
+				unsigned damage() const;
+				bool is_fainted() const;
+				void change_hp(unsigned set_new_hp);
+				void direct_damage(unsigned set_damage);
+				void faint();
+				void reset();
+			private:
+				unsigned m_new_hp;
+				unsigned m_damage;
+				bool m_fainted;
+		};
 		std::map<key_type, mapped_type> container;
 };
 

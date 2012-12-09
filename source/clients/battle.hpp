@@ -86,6 +86,7 @@ class GenericBattle {
 		Moves determine_action(network::GenericClient & client);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();
+		void normalize_hp(Team & team);
 		unsigned max_visible_hp_change(Team const & changer) const;
 		unsigned max_visible_hp_change(bool my_pokemon, Pokemon const & changer) const;
 		void do_turn ();

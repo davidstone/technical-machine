@@ -101,13 +101,6 @@ uint8_t Pokemon::index_of_first_switch () const {
 	return index;
 }
 
-void Pokemon::normalize_hp () {
-	if (will_be_replaced())
-		m_hp.stat = 0;
-	else if (hp().stat == 0)
-		m_hp.stat = 1;
-}
-
 void Pokemon::correct_error_in_hp(unsigned const correct_hp_stat) {
 	m_hp.stat = correct_hp_stat;
 }
@@ -353,19 +346,17 @@ unsigned Pokemon::happiness() const {
 	return m_happiness;
 }
 
-bool Pokemon::has_been_seen() const {
-	return true;
-}
-
 bool Pokemon::is_fainted() const {
 	return m_will_be_replaced;
 }
-
 bool Pokemon::will_be_replaced() const {
 	return m_will_be_replaced;
 }
 void Pokemon::faint() {
 	m_will_be_replaced = true;
+}
+void Pokemon::reset_replacing() {
+	m_will_be_replaced = false;
 }
 
 Pokemon::hash_type Pokemon::hash() const {

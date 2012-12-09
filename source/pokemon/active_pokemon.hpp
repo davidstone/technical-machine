@@ -169,8 +169,6 @@ class ActivePokemon {
 		bool recharging() const;
 		bool recharge();
 		void use_recharge_move();
-		bool replacing() const;
-		void not_replacing();
 		bool is_roosting() const;
 		void roost();
 		bool shed_skin_activated() const;
@@ -264,7 +262,8 @@ class ActivePokemon {
 		
 		bool will_be_replaced() const;
 		
-		void normalize_hp();
+		// Fix any rounding issues caused by not seeing the foe's exact HP.
+		void normalize_hp(bool fainted);
 		
 		PokemonCollection const & all_pokemon() const;
 		PokemonCollection & all_pokemon();
@@ -337,9 +336,6 @@ class ActivePokemon {
 		bool power_trick = false;
 		bool protecting = false;
 		bool recharge_lock_in = false;
-		// Replacing a fainted Pokemon. Also used for initial switch-in at
-		// start of battle.
-		bool is_replacing = false;
 		bool roosting = false;
 		bool shedding_skin = false;
 		bool is_tormented = false;

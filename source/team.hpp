@@ -67,8 +67,6 @@ class Team {
 
 		void update_chance_to_hit(Team const & target, Weather const & weather, bool target_moved);
 		
-		bool switch_decision_required() const;
-
 		typedef uint64_t hash_type;
 		hash_type hash () const;
 		std::string to_string(bool include_owner = true) const;

@@ -132,10 +132,6 @@ void Team::update_chance_to_hit(Team const & target, Weather const & weather, bo
 	pokemon().update_chance_to_hit(target.pokemon(), weather, target_moved);
 }
 
-bool Team::switch_decision_required() const {
-	return pokemon().switch_decision_required();
-}
-
 namespace {
 
 std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file) {

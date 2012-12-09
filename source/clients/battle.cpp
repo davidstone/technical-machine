@@ -119,7 +119,7 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 	else {
 		msg.write_move (battle_id, 1);
 	}
-	if (!ai.pokemon().replacing())
+	if (!ai.pokemon().will_be_replaced())
 		initialize_turn ();
 }
 
@@ -176,10 +176,12 @@ void GenericBattle::handle_send_out (Party const switcher_party, uint8_t slot, u
 	// situation in which a team switches multiple times in one turn (due to
 	// replacing fainted Pokemon).
 	auto const replacement = switcher.all_pokemon().replacement();
+	if (switcher.is_me())
+		std::cerr << switcher.pokemon(replacement).to_string() << '\n';
 	
 	// This assumes Species Clause is in effect
-	if (!switcher.all_pokemon().seen(species)) {
-		switcher.add_pokemon (species, level, gender, nickname);
+	bool const added = switcher.all_pokemon().add_if_not_present(species, level, gender, nickname);
+	if (added) {
 		updated_hp.add(switcher.is_me(), switcher.replacement(), max_damage_precision());
 	}
 
@@ -274,7 +276,9 @@ void GenericBattle::handle_set_pp (Party const changer, uint8_t slot, uint8_t pp
 void GenericBattle::handle_fainted (Party const fainter, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
-	get_team(fainter).replacement().faint();
+	auto const team = get_team(fainter);
+	std::cerr << team.pokemon().to_string() << " fainted\n";
+	updated_hp.faint(team.is_me(), team.pokemon());
 }
 
 void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
@@ -313,18 +317,21 @@ void GenericBattle::initialize_turn () {
 void GenericBattle::do_turn () {
 	first->move(false);
 	last->move(false);
-	if (first->pokemon().replacing()) {
-		normalize_hp ();
-		switchpokemon (*first, *last, weather);
-		first->move(false);
-		normalize_hp ();
-		if (last->pokemon().replacing()) {
-			switchpokemon (*last, *first, weather);
-			last->move(false);
-			normalize_hp ();
-			last->pokemon().not_replacing();
+	auto const replacement = [&](Team & switcher, Team & other) {
+		switchpokemon(switcher, other, weather);
+		switcher.move(false);
+		normalize_hp();
+	};
+	if (first->pokemon().will_be_replaced()) {
+		normalize_hp();
+		replacement(*first, *last);
+		if (last->pokemon().will_be_replaced()) {
+			replacement(*last, *first);
 		}
-		first->pokemon().not_replacing();
+	}
+	else if (last->pokemon().will_be_replaced()) {
+		normalize_hp();
+		replacement(*last, *first);
 	}
 	else {
 		std::cout << "First move: " + first->pokemon().to_string() + " uses " + first->pokemon().move().to_string() + '\n';
@@ -341,7 +348,7 @@ void GenericBattle::do_turn () {
 		std::cerr << "Second\n";
 		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
-		last->pokemon().normalize_hp ();
+		normalize_hp(*last);
 		std::cerr << "Third\n";
 		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
@@ -351,7 +358,7 @@ void GenericBattle::do_turn () {
 		std::cerr << "Fourth\n";
 		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
-		first->pokemon().normalize_hp ();
+		normalize_hp(*first);
 		std::cerr << "Fifth\n";
 		std::cerr << "AI HP: " << ai.pokemon().hp().stat << '\n';
 		std::cerr << "Foe HP: " << foe.pokemon().hp().stat << '\n';
@@ -395,9 +402,14 @@ void GenericBattle::register_damage() {
 	register_individual_damage(foe, updated_hp);
 }
 
-void GenericBattle::normalize_hp () {
-	ai.pokemon().normalize_hp ();
-	foe.pokemon().normalize_hp ();
+void GenericBattle::normalize_hp() {
+	normalize_hp(ai);
+	normalize_hp(foe);
+}
+
+void GenericBattle::normalize_hp(Team & team) {
+	bool const fainted = updated_hp.is_fainted(team.is_me(), team.pokemon());
+	team.pokemon().normalize_hp(fainted);
 }
 
 std::string const & GenericBattle::opponent() const {

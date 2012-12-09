@@ -65,7 +65,6 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		index_type size () const;
 		index_type real_size () const;
 		index_type find_index(Species name) const;
-		bool seen (Species name);
 
 		template<class... Args>
 		void add(Args&&... args) {
@@ -73,9 +72,18 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 			// Guaranteed to be a valid index
 			current_replacement = static_cast<index_type>(container.size() - 1);
 		}
+		template<class...Args>
+		bool add_if_not_present(Species name, Args&&... args) {
+			bool const add_new_pokemon = !seen(name);
+			if (add_new_pokemon) {
+				add(name, std::forward<Args>(args)...);
+			}
+			return add_new_pokemon;
+		}
 		void remove_active();
 		template<typename Function1, typename Function2>
 		void for_each_replacement (Function1 const & break_out, Function2 const & f) {
+			ResetIndex reset(*this);
 			for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
 				if (is_switching_to_self() and size() > 1)
 					continue;
@@ -94,11 +102,26 @@ class PokemonCollection : public detail::BaseCollection<Pokemon> {
 		hash_type hash() const;
 		hash_type max_hash() const;
 	private:
+		class ResetIndex {
+			public:
+				ResetIndex(PokemonCollection & collection):
+					copy(collection),
+					index(collection.current_replacement)
+					{
+				}
+				~ResetIndex() {
+					copy.current_replacement = index;
+				}
+			private:
+				PokemonCollection & copy;
+				index_type const index;
+		};
 		using Base::unchecked_value;
 		Pokemon & unchecked_value(index_type const specified_index) {
 			auto const self = const_cast<PokemonCollection const *>(this);
 			return const_cast<Pokemon &>(self->unchecked_value(specified_index));
 		}
+		bool seen(Species name);
 		void decrement_real_size ();
 		// If a Pokemon switches / faints, what Pokemon should replace it?
 		index_type current_replacement;

@@ -106,6 +106,8 @@ PokemonCollection::index_type PokemonCollection::find_index(Species const name) 
 }
 
 bool PokemonCollection::seen (Species const name) {
+	// In the event of current_replacement == size(), a new Pokemon is added
+	// immediately, increasing size() by 1, making this safe.
 	for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
 		if (name == at_replacement().name())
 			return true;

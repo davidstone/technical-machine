@@ -51,8 +51,6 @@ class Pokemon {
 		void calculate_initial_hp ();
 		void remove_switch();
 		uint8_t index_of_first_switch () const;
-		// Fix any rounding issues caused by not seeing the foe's exact HP.
-		void normalize_hp ();
 		// The server reports Technical Machine's HP tracking is wrong
 		void correct_error_in_hp(unsigned correct_hp_stat);
 		// Returns the actual damage applied, rather than just the attempt
@@ -102,7 +100,6 @@ class Pokemon {
 		void change_type(Type::Types new_type);
 		unsigned level() const;
 		unsigned happiness() const;
-		bool has_been_seen() const;
 		// This function should be used instead of checking if hp == 0 to handle
 		// messages being sent about multiple Pokemon fainting in one turn.
 		// Using this function will allow TM to correctly update an entire turn
@@ -110,6 +107,7 @@ class Pokemon {
 		bool is_fainted() const;
 		bool will_be_replaced() const;
 		void faint();
+		void reset_replacing();
 		typedef uint64_t hash_type;
 		hash_type hash () const;
 		hash_type max_hash() const;

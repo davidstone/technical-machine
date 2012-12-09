@@ -29,15 +29,43 @@ UpdatedHP::UpdatedHP(Team const & team) {
 	}
 }
 
+UpdatedHP::mapped_type::mapped_type(unsigned set_new_hp, unsigned set_damage):
+	m_new_hp(set_new_hp),
+	m_damage(set_damage),
+	m_fainted(false)
+	{
+}
+unsigned UpdatedHP::mapped_type::new_hp() const {
+	return m_new_hp;
+}
+unsigned UpdatedHP::mapped_type::damage() const {
+	return m_damage;
+}
+bool UpdatedHP::mapped_type::is_fainted() const {
+	return m_fainted;
+}
+void UpdatedHP::mapped_type::change_hp(unsigned set_new_hp) {
+	m_new_hp = set_new_hp;
+}
+void UpdatedHP::mapped_type::direct_damage(unsigned set_damage) {
+	m_damage = set_damage;
+}
+void UpdatedHP::mapped_type::faint() {
+	m_fainted = true;
+}
+void UpdatedHP::mapped_type::reset() {
+	m_damage = 0;
+}
+
 void UpdatedHP::reset_between_turns() {
 	for (auto & value : container) {
-		value.second.second = 0;
+		value.second.reset();
 	}
 }
 
 void UpdatedHP::add(bool const is_me, Pokemon const & pokemon, unsigned const max_precision) {
 	auto const key = std::make_pair(is_me, pokemon.name());
-	auto const mapped = std::make_pair(max_precision, 0);
+	mapped_type const mapped(max_precision, 0);
 	auto const result = container.insert(std::make_pair(key, mapped));
 	// This implementation only works if Species Clause is in effect
 	assert(result.second);
@@ -45,22 +73,32 @@ void UpdatedHP::add(bool const is_me, Pokemon const & pokemon, unsigned const ma
 
 void UpdatedHP::update(bool const is_me, Pokemon const & pokemon, unsigned const value) {
 	auto const key = std::make_pair(is_me, pokemon.name());
-	container.at(key).first = value;
+	container.at(key).change_hp(value);
 }
 
 void UpdatedHP::direct_damage(bool is_me, Pokemon const & pokemon, unsigned set_damage) {
 	auto const key = std::make_pair(is_me, pokemon.name());
-	container.at(key).second = set_damage;
+	container.at(key).direct_damage(set_damage);
+}
+
+void UpdatedHP::faint(bool is_me, Pokemon const & pokemon) {
+	auto const key = std::make_pair(is_me, pokemon.name());
+	container.at(key).faint();
 }
 
 unsigned UpdatedHP::get(bool const is_me, Pokemon const & pokemon) const {
 	auto const key = std::make_pair(is_me, pokemon.name());
-	return container.at(key).first;
+	return container.at(key).new_hp();
 }
 
 unsigned UpdatedHP::damage(bool is_me, Pokemon const & pokemon) const {
 	auto const key = std::make_pair(is_me, pokemon.name());
-	return container.at(key).second;
+	return container.at(key).damage();
+}
+
+bool UpdatedHP::is_fainted(bool is_me, Pokemon const & pokemon) const {
+	auto const key = std::make_pair(is_me, pokemon.name());
+	return container.at(key).is_fainted();
 }
 
 } // namespace technicalmachine
