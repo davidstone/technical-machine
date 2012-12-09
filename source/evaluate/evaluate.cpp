@@ -149,7 +149,7 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 
 
 int64_t Evaluate::win (Team const & team) {
-	if (team.all_pokemon().size() == 0)
+	if (team.all_pokemon().size() == 1 and team.pokemon().hp().stat == 0)
 		return team.is_me() ? -victory : victory;
 	return 0;
 }
