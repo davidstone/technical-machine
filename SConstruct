@@ -1,9 +1,7 @@
 # SCons file
 # Copyright (C) 2012 David Stone
 #
-# This file is part of Technical Machine.
-#
-# Technical Machine is free software: you can redistribute it and / or modify
+# This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
@@ -19,16 +17,19 @@
 import os
 import multiprocessing
 
-from build_scripts.sources import ai, predict, test, generate_sources
+from build_scripts.sources import base_sources
 
 SetOption('warn', 'no-duplicate-environment')
+
+# Options to improve the default speed of SCons
 SetOption('max_drift', 2)
 SetOption('implicit_cache', 1)
 SetOption('num_jobs', multiprocessing.cpu_count())
 
 AddOption('--compiler', dest = 'compiler', type = 'string', action = 'store', help = 'Name of the compiler to use.')
 AddOption('--compiler-command', dest = 'compiler_command', type = 'string', action = 'store', help = 'Command to launch the compiler.')
-AddOption('--verbose', dest = 'verbose', action = "store_true", help = 'Print the full compiler command output.')
+
+AddOption('--verbose', dest = 'verbose', action = "store_true", help = 'Print the full compiler output.')
 
 Decider('MD5-timestamp')
 
@@ -37,6 +38,8 @@ Import('flags', 'compiler_command', 'compiler_name')
 
 default = DefaultEnvironment()
 
+# This replaces the wall of text caused by compiling with max warnings turned on
+# into something a little more readable.
 if not GetOption('verbose'):
 	default['CXXCOMSTR'] = 'Compiling $TARGET'
 	default['LINKCOMSTR'] = 'Linking $TARGET'
@@ -58,17 +61,22 @@ default = setup_environment_flags('default')
 debug = setup_environment_flags('debug')
 optimized = setup_environment_flags('optimized')
 
-def create_program (base, versions):
+def generate_sources(sources, version, compiler_name):
+	temp = []
+	for source in sources:
+		temp += ['build/' + compiler_name + '/' + version + '/' + source]
+	return temp
+
+def create_program(base):
 	env = { 'debug':debug, 'optimized':optimized }
 	suffix = { 'debug':'-debug', 'optimized':'' }
-	name, base_sources, libraries = base
-	for version in versions:
-		sources = generate_sources (base_sources, version, compiler_name)
-		executable_name = name + suffix [version]
-		env[version].Clone(LIBS = libraries).Program(executable_name, sources)
+	name, sources, libraries = base
+	for version in ['debug', 'optimized']:
+		targets = generate_sources(sources, version, compiler_name)
+		executable_name = name + suffix[version]
+		env[version].Clone(LIBS = libraries).Program(executable_name, targets)
 
-create_program (ai, ['debug', 'optimized'])
-create_program (predict, ['debug'])
-create_program (test, ['debug', 'optimized'])
+for sources in base_sources:
+	create_program(sources)
 
 SConscript('build_scripts/settings_file.py')

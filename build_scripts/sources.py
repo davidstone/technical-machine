@@ -1,9 +1,7 @@
 # List of sources
 # Copyright (C) 2012 David Stone
 #
-# This file is part of Technical Machine.
-#
-# Technical Machine is free software: you can redistribute it and / or modify
+# This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
@@ -17,6 +15,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 def prepend_dir(directory, sources):
+	"""Remove redundant specification of a directory for multiple sources"""
 	return map(lambda source: directory + '/' + source, sources)
 
 string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'gender.cpp', 'invalid_string_conversion.cpp', 'item.cpp', 'move.cpp', 'nature.cpp', 'pokemon.cpp', 'status.cpp'])
@@ -93,8 +92,4 @@ ai = ('ai', ai_sources, ai_libraries)
 predict = ('predict', predict_sources, predict_libraries)
 test = ('test', test_sources, test_libraries)
 
-def generate_sources (sources, version, compiler_name):
-	temp = []
-	for source in sources:
-		temp += ['build/' + compiler_name + '/' + version + '/' + source]
-	return temp
+base_sources = [ai, predict, test]

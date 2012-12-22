@@ -2183,7 +2183,7 @@ Cloyster	Move	Rock Blast	35.6
 Cloyster	Move	Toxic Spikes	35.1
 Cloyster	Move	Surf	34.8
 Cloyster	Move	Ice Beam	8.8
-Cloyster	Move	Icicle	Spear	6.8
+Cloyster	Move	Icicle Spear	6.8
 Combee	Ability	Honey Gather	100.0
 Combee	Item	Razor Claw	33.3
 Combee	Item	Expert Belt	33.3
