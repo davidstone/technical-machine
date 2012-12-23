@@ -67,9 +67,8 @@ void print_debug_statements() {
 	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
 	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
 	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-	constexpr unsigned average_number_of_variables = 2;
-	constexpr auto heap_allocated_size = 6 * (sizeof(Pokemon) + sizeof(MoveCollection) + 6 * (sizeof(Move)));
-	constexpr auto full_team_size = sizeof(Team) + sizeof(PokemonCollection) + heap_allocated_size;
+	constexpr auto heap_allocated_size = 6 * (sizeof(Pokemon) + 4 * (sizeof(Move)));
+	constexpr auto full_team_size = sizeof(Team) + heap_allocated_size;
 	std::cout << "size of full team: " << full_team_size << '\n';
 	std::cout << "heap allocated_size: " << heap_allocated_size << '\n';
 }
