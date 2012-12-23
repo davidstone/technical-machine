@@ -79,8 +79,8 @@ typename std::vector<T> top_sub_elements(boost::property_tree::ptree const & pt)
 }	// unnamed namespace
 
 DetailedStats::DetailedStats():
-	ability(),
 	item(),
+	ability(),
 	nature() {
 	static std::string const file_name = "settings/Generation 4/OU/detailed.xml";
 	boost::property_tree::ptree pt;

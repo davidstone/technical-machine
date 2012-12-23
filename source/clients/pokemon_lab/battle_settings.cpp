@@ -24,9 +24,9 @@ namespace pl {
 
 BattleSettings::BattleSettings (uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length):
 	network::GenericBattleSettings (),
-	generation (battle_generation),
 	active_party_size (battle_active_party_size),
-	max_team_length (battle_max_team_length) {
+	max_team_length (battle_max_team_length),
+	generation (battle_generation) {
 }
 
 bool BattleSettings::are_acceptable () const {

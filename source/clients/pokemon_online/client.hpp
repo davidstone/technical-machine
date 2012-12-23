@@ -134,11 +134,11 @@ class Client : public network::GenericClient {
 		// of a new battle to prevent counter-teaming. It's only used when challenged.
 		Team team;
 	private:
-		uint32_t my_id;
 		std::map <uint32_t, std::string> user_id_to_name;
 		std::map <std::string, uint32_t> user_name_to_id;
 		std::map <std::string, uint32_t> channel_to_id;
 		std::map <uint32_t, std::string> id_to_channel;
+		uint32_t my_id;
 };
 
 }	// namespace po

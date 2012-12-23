@@ -84,8 +84,8 @@ class Battle : public GenericBattle {
 		void parse_spot_shifts (InMessage & msg);
 		void parse_battle_end (InMessage & msg);
 		uint16_t max_damage_precision () const;
-		OutMessage action;
 		Party last_attacker;
+		OutMessage action;
 };
 
 }	// namespace po

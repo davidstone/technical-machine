@@ -58,17 +58,15 @@ class BattleSettings : public network::GenericBattleSettings {
 };
 
 class BattleConfiguration {
+	public:
+		BattleConfiguration (InMessage & msg);
 	private:
 		uint8_t const generation;
 		uint8_t const mode;
-	public:
 		uint32_t const id1;
 		uint32_t const id2;
-	private:
 		uint32_t const clauses;
-	public:
 		BattleSettings const settings;
-		BattleConfiguration (InMessage & msg);
 };
 
 }	// namespace po
