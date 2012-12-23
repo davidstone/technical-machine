@@ -37,6 +37,9 @@ namespace technicalmachine {
 class DetailedStats {
 	public:
 		DetailedStats();
+		template<typename T>
+		T const & get(Species species) const;
+	private:
 		std::array<Ability::Abilities, number_of_species> ability;
 		std::array<Item::Items, number_of_species> item;
 		std::array<Nature::Natures, number_of_species> nature;

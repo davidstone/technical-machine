@@ -100,4 +100,25 @@ DetailedStats::DetailedStats():
 	}
 }
 
+template<>
+Ability::Abilities const & DetailedStats::get<Ability::Abilities>(Species const species) const {
+	return ability[static_cast<size_t>(species)];
+}
+
+template<>
+Item::Items const & DetailedStats::get<Item::Items>(Species const species) const {
+	return item[static_cast<size_t>(species)];
+}
+
+template<>
+Nature::Natures const & DetailedStats::get<Nature::Natures>(Species const species) const {
+	return nature[static_cast<size_t>(species)];
+}
+
+template<>
+std::vector<Moves> const & DetailedStats::get<std::vector<Moves>>(Species const species) const {
+	return move[static_cast<size_t>(species)];
+}
+
+
 }	// namespace technicalmachine
