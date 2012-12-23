@@ -491,7 +491,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 		}
 		case InMessage::BATTLE_STATUS_CHANGE: {
 			uint32_t const battle_id = msg.read_int ();
-			auto const party = Party(msg.read_byte());
+			Party(msg.read_byte());
 			uint8_t const index = msg.read_byte ();
 			uint8_t const type = msg.read_byte ();
 			uint8_t const radius = msg.read_byte ();

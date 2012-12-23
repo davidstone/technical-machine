@@ -89,7 +89,7 @@
 # rewrite the Rijndael implementation to use modern C++ techniques, rather than
 # just being a C program with .cpp as the extension.
 
-warnings = ['-Wall', '-Wextra', '-pedantic', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable', '-Wno-unused-but-set-variable']
+warnings = ['-Wall', '-Wextra', '-pedantic', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-unused-parameter', '-Wno-unused-variable']
 # I have to set -Wstrict-overflow=5 to be a "debug" warning because it conflicts
 # with a boost library when link-time optimization is turned on.
 warnings_debug = ['-Wstrict-overflow=5']

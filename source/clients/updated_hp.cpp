@@ -69,6 +69,8 @@ void UpdatedHP::add(bool const is_me, Pokemon const & pokemon, unsigned const ma
 	auto const result = container.insert(std::make_pair(key, mapped));
 	// This implementation only works if Species Clause is in effect
 	assert(result.second);
+	// Do not warn if asserts are disabled
+	static_cast<void>(result);
 }
 
 void UpdatedHP::update(bool const is_me, Pokemon const & pokemon, unsigned const value) {

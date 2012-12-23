@@ -410,6 +410,8 @@ void Battle::parse_dynamic_info (InMessage & msg) {
 		ToxicSpikes=16,
 		ToxicSpikesLV2=32
 	};
+	// I don't think I need any of this
+	static_cast<void>(boosts);
 	uint8_t const flags = msg.read_byte ();
 }
 
