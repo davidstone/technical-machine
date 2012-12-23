@@ -18,6 +18,7 @@
 
 #include "detailed_stats.hpp"
 
+#include <algorithm>
 #include <cstddef>
 #include <fstream>
 #include <string>
@@ -35,59 +36,67 @@
 
 #include "../string_conversions/conversion.hpp"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 namespace technicalmachine {
+
+namespace {
+
+// Put the double first so that std::max_element works without defining a
+// comparison function
+typedef std::vector<std::pair<double, std::string>> Probabilities;
+
+Probabilities all_sub_elements(boost::property_tree::ptree const & pt) {
+	Probabilities data;
+	for (auto const & value : pt) {
+		auto const name = value.second.get<std::string>("name");
+		auto const probability = value.second.get<double>("probability");
+		data.emplace_back(std::make_pair(probability, name));
+	}
+	return data;
+}
+
+template<typename T>
+T most_likely_sub_elements(boost::property_tree::ptree const & pt) {
+	auto const data = all_sub_elements(pt);
+	auto const most_likely = std::max_element(std::begin(data), std::end(data));
+	return from_string<T>(most_likely->second);
+}
+
+template<typename T>
+typename std::vector<T> top_sub_elements(boost::property_tree::ptree const & pt) {
+	auto data = all_sub_elements(pt);
+	std::sort(std::begin(data), std::end(data), std::greater<Probabilities::value_type>());
+	typename std::vector<T> result;
+	for (auto const & element : data) {
+		result.emplace_back(from_string<T>(element.second));
+		if (result.size() == 4) {
+			break;
+		}
+	}
+	return result;
+}
+
+}	// unnamed namespace
 
 DetailedStats::DetailedStats():
 	ability(),
 	item(),
-	nature()
-	{
-	static std::string const file_name = "settings/Generation 4/OU/detailed.txt";
-	std::ifstream file(file_name);
-	if (!file.is_open()) {
-		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
-	}
-	std::string line;
-	Species old_member = Species::END;
-	bool ability_found = false;
-	bool item_found = false;
-	bool nature_found = false;
-	while (getline(file, line)) {
-		constexpr char delimiter = '\t';
-		size_t const x = line.find (delimiter);
-		Species new_member = from_string<Species>(line.substr (0, x));
-		if (old_member != new_member) {
-			old_member = new_member;
-			ability_found = false;
-			item_found = false;
-			nature_found = false;
-		}
-		size_t const y = line.find(delimiter, x + 1);
-		size_t const z = line.find(delimiter, y + 1);
-		std::string const sub = line.substr(x + 1, y - x - 1);
-		if (sub == "Ability") {
-			if (!ability_found) {
-				ability_found = true;
-				ability[static_cast<size_t>(new_member)] = from_string<Ability::Abilities>(line.substr(y + 1, z - y - 1));
-			}
-		}
-		else if (sub == "Item") {
-			if (!item_found) {
-				item_found = true;
-				item[static_cast<size_t>(new_member)] = from_string<Item::Items>(line.substr(y + 1, z - y - 1));
-			}
-		}
-		else if (sub == "Nature") {
-			if (!nature_found) {
-				nature_found = true;
-				nature[static_cast<size_t>(new_member)] = from_string<Nature::Natures>(line.substr(y + 1, z - y - 1));
-			}
-		}
-		else if (sub == "Move") {
-			// When I get smarter move statistics, I won't want to cap this at 4
-			if (move[static_cast<size_t>(new_member)].size() < 4)
-				move[static_cast<size_t>(new_member)].emplace_back(from_string<Moves>(line.substr(y + 1, z - y - 1)));
-		}
+	nature() {
+	static std::string const file_name = "settings/Generation 4/OU/detailed.xml";
+	boost::property_tree::ptree pt;
+	read_xml(file_name, pt);
+	
+	auto const all_stats = pt.get_child("stats");
+	for (auto const & value : all_stats) {
+		assert(value.first == "pokemon");
+		auto const pokemon = value.second;
+		auto const species = from_string<Species>(pokemon.get<std::string>("species"));
+		ability[static_cast<size_t>(species)] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
+		item[static_cast<size_t>(species)] = most_likely_sub_elements<Item::Items>(pokemon.get_child("items"));
+		nature[static_cast<size_t>(species)] = most_likely_sub_elements<Nature::Natures>(pokemon.get_child("natures"));
+		move[static_cast<size_t>(species)] = top_sub_elements<Moves>(pokemon.get_child("moves"));
 	}
 }
 
