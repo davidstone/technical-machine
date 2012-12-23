@@ -19,17 +19,15 @@
 #include "detailed_stats.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <cstddef>
-#include <fstream>
 #include <string>
 
 #include "../ability.hpp"
 #include "../item.hpp"
-#include "../invalid_settings_file.hpp"
 
 #include "../move/move.hpp"
 
-#include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
 #include "../stat/nature.hpp"
