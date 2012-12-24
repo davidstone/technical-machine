@@ -39,6 +39,7 @@
 #include "vanish.hpp"
 #include "yawn.hpp"
 
+#include "../random_damage.hpp"
 #include "../rational.hpp"
 
 #include "../bide/bide.hpp"
@@ -250,6 +251,7 @@ class ActivePokemon {
 		void use_bide(Pokemon & target);
 		bool is_locked_in_to_bide() const;
 		unsigned damaged() const;
+		Rational random_damage_multiplier() const;
 		void direct_damage(unsigned damage);
 		void indirect_damage(unsigned damage);
 		void register_damage(unsigned damage);
@@ -295,6 +297,7 @@ class ActivePokemon {
 		PartialTrap partial_trap;
 		PerishSong perish_song;
 		Rampage rampage;
+		RandomDamage random_damage;
 		Stage stage;
 		SlowStart slow_start;
 		Stockpile stockpile;

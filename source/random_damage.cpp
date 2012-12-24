@@ -16,21 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__RANDOM_HPP_
-#define MOVE__RANDOM_HPP_
-
-#include <cstdint>
+#include "random_damage.hpp"
+#include "rational.hpp"
 
 namespace technicalmachine {
-class Rational;
 
-class Random {
-	public:
-		Random();
-		Rational operator() () const;
-	private:
-		uint8_t r;
-};
+RandomDamage::RandomDamage() :
+	r(100) {
+}
+
+Rational RandomDamage::operator() () const {
+	return Rational(r, 100);
+}
 
 }	// namespace technicalmachine
-#endif	// MOVE__RANDOM_HPP_

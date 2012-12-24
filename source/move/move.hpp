@@ -28,7 +28,6 @@
 #include "moves_forward.hpp"
 #include "pp.hpp"
 #include "priority.hpp"
-#include "random.hpp"
 #include "times_used.hpp"
 
 #include "../type/type.hpp"
@@ -96,9 +95,7 @@ class Move {
 		Moves name;
 		Pp pp;
 		Disable disable;
-		// Move r and times_used up to team when it will reduce the size of Move.
-		// The random number (85 through 100)
-		Random r;
+		// Move times_used up to ActivePokemon when it will reduce the size of Move.
 	private:
 		TimesUsed times_used;
 		Accuracy cached_accuracy;

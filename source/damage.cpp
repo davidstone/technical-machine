@@ -128,7 +128,7 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 	damage *= calculate_item_modifier(attacker);
 	damage *= calculate_me_first_modifier(attacker);
 
-	damage *= attacker.move().r();
+	damage *= attacker.random_damage_multiplier();
 	damage *= calculate_stab_modifier(attacker);
 
 	Effectiveness const effectiveness = attacker.move().type().get_effectiveness(defender.pokemon());

@@ -815,6 +815,10 @@ unsigned ActivePokemon::damaged() const {
 	return damage_done_to_active;
 }
 
+Rational ActivePokemon::random_damage_multiplier() const {
+	return random_damage();
+}
+
 void ActivePokemon::direct_damage(unsigned damage) {
 	damage = get_pokemon().apply_damage(damage);
 	damage_done_to_active = damage;
