@@ -80,20 +80,28 @@ void Variable::set_magnitude(unsigned const magnitude) {
 	switch (magnitude) {
 		case 4:
 			m_value = 10;
+			break;
 		case 5:
 			m_value = 30;
+			break;
 		case 6:
 			m_value = 50;
+			break;
 		case 7:
 			m_value = 70;
+			break;
 		case 8:
 			m_value = 90;
+			break;
 		case 9:
 			m_value = 110;
+			break;
 		case 10:
 			m_value = 150;
+			break;
 		default:
 			assert(false);
+			break;
 	}
 }
 
