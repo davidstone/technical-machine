@@ -43,12 +43,11 @@ uint8_t get_base_power (Moves move);
 }	// unnamed namespace
 
 Move::Move (Moves const move, unsigned const pp_ups) :
-	name (move),
+	name(move),
 	pp(move, pp_ups),
 	cached_accuracy(move),
 	cached_base_power(get_base_power(move)),
-	cached_type(get_type(move)),
-	cached_classification(move) {
+	cached_type(get_type(move)) {
 }
 
 void Move::reset () {
@@ -65,11 +64,11 @@ bool Move::is_damaging() const {
 }
 
 bool Move::is_physical() const {
-	return cached_classification.is_physical();
+	return Classification(name).is_physical();
 }
 
 bool Move::is_special() const {
-	return cached_classification.is_special();
+	return Classification(name).is_special();
 }
 
 bool Move::is_blocked_by_taunt() const {

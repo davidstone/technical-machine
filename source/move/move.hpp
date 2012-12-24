@@ -102,8 +102,6 @@ class Move {
 		// Hidden Power makes this hard to replace with just a function
 		uint8_t cached_base_power;
 		Type cached_type;
-		// Replace this with a function when it will reduce the size of Move.
-		Classification cached_classification;
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);
