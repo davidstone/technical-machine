@@ -48,7 +48,6 @@ Move::Move (Moves const move, unsigned const pp_ups) :
 	cached_accuracy(move),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)),
-	cached_priority(move),
 	cached_classification(move) {
 }
 
@@ -123,7 +122,7 @@ unsigned Move::base_power() const {
 }
 
 Priority Move::priority() const {
-	return cached_priority;
+	return Priority(name);
 }
 
 bool Move::is_struggle_or_switch () const {

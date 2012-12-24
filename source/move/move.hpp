@@ -95,15 +95,13 @@ class Move {
 		Moves name;
 		Pp pp;
 		Disable disable;
-		// Move times_used up to ActivePokemon when it will reduce the size of Move.
 	private:
+		// Move times_used up to ActivePokemon when it will reduce the size of Move.
 		TimesUsed times_used;
 		Accuracy cached_accuracy;
 		// Hidden Power makes this hard to replace with just a function
 		uint8_t cached_base_power;
 		Type cached_type;
-		// Replace this with a function when it will reduce the size of Move.
-		Priority cached_priority;
 		// Replace this with a function when it will reduce the size of Move.
 		Classification cached_classification;
 };
