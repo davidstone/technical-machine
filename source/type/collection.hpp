@@ -19,7 +19,7 @@
 #ifndef TYPE__COLLECTION_HPP_
 #define TYPE__COLLECTION_HPP_
 
-#include <vector>
+#include <array>
 #include "type.hpp"
 #include "../pokemon/species_forward.hpp"
 #include "../status.hpp"
@@ -28,6 +28,23 @@ namespace technicalmachine {
 class ActivePokemon;
 class Pokemon;
 class Weather;
+
+namespace detail {
+class TypeArray {
+		typedef std::array<Type, 2> container_type;
+	public:
+		typedef container_type::const_iterator const_iterator;
+		typedef container_type::size_type size_type;
+		explicit TypeArray(Type const type1);
+		TypeArray(Type const type1, Type const type2);
+		size_type size() const;
+		const_iterator begin() const;
+		const_iterator end() const;
+	private:
+		container_type m_types;
+		uint8_t m_size;
+};
+}
 
 class TypeCollection {
 	public:
@@ -47,7 +64,7 @@ class TypeCollection {
 		friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
 		friend class Type;
 		friend class Effectiveness;
-		std::vector<Type> types;
+		detail::TypeArray types;
 };
 
 bool is_type(Pokemon const & pokemon, Type type, bool roosting = false);
