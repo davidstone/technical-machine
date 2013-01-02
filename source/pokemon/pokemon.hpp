@@ -34,7 +34,7 @@
 #include "../move/collection.hpp"
 
 #include "../stat/nature.hpp"
-#include "../stat/stat.hpp"
+#include "../stat/stats.hpp"
 
 #include "../type/collection.hpp"
 
@@ -81,19 +81,9 @@ class Pokemon {
 		Item & item();
 		Nature const & nature() const;
 		Nature & nature();
-		Stat const & hp() const;
-		Stat & hp();
+		Stat const & stat(Stat::Stats index_stat) const;
+		Stat & stat(Stat::Stats index_stat);
 		Rational current_hp() const;
-		Stat const & atk() const;
-		Stat & atk();
-		Stat const & def() const;
-		Stat & def();
-		Stat const & spa() const;
-		Stat & spa();
-		Stat const & spd() const;
-		Stat & spd();
-		Stat const & spe() const;
-		Stat & spe();
 		Status const & status() const;
 		Status & status();
 		TypeCollection const & type() const;
@@ -115,19 +105,14 @@ class Pokemon {
 		friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
 
 		MoveCollection move;
-		TypeCollection current_type;
 		
 	private:
 		#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		std::string nickname;
 		#endif
+		TypeCollection current_type;
 
-		Stat m_hp;
-		Stat m_atk;
-		Stat m_def;
-		Stat m_spa;
-		Stat m_spd;
-		Stat m_spe;
+		Stats stats;
 
 		Species m_name;
 		Item m_item;

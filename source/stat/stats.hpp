@@ -1,4 +1,4 @@
-// Function to change a Pokemon's HP by a fractional multiplier
+// All 'normal' stats that a Pokemon has
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,32 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "heal.hpp"
+#ifndef STAT__STATS_HPP_
+#define STAT__STATS_HPP_
 
-#include <algorithm>
-
-#include "ability.hpp"
-#include "damage.hpp"
-#include "rational.hpp"
-
-#include "pokemon/pokemon.hpp"
+#include <array>
+#include "stat.hpp"
+#include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
 
-void heal(Pokemon & member, Rational const & rational, bool positive) {
-	if (member.is_fainted())
-		return;
-	unsigned const hp_healed = member.stat(Stat::HP).max * rational;
-	if (positive) {
-		member.apply_healing(std::max(hp_healed, 1u));
-	}
-	else if (!member.ability().blocks_secondary_damage()) {
-		member.apply_damage(std::max(hp_healed, 1u));
-	}
-}
-
-void drain(Pokemon & member, Rational const & rational) {
-	heal(member, rational, false);
-}
+class Stats {
+	public:
+		Stats(Species species);
+		Stat const & operator[](Stat::Stats stat) const;
+		Stat & operator[](Stat::Stats stat);
+	private:
+		std::array<Stat, 6> stats;
+};
 
 }	// namespace technicalmachine
+#endif	// STAT__STATS_HPP_

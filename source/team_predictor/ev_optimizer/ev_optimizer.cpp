@@ -38,8 +38,10 @@ namespace {
 constexpr unsigned max_evs = 508;
 
 unsigned ev_sum(Pokemon const & pokemon) {
-	return pokemon.hp().ev.value() + pokemon.atk().ev.value() + pokemon.def().ev.value()
-			+ pokemon.spa().ev.value() + pokemon.spd().ev.value() + pokemon.spe().ev.value();
+	auto const ev_sum = [&](unsigned const sum, Stat::Stats const stat) {
+		return sum + pokemon.stat(stat).ev.value();
+	};
+	return std::accumulate(std::begin(regular_stats()), std::end(regular_stats()), 0u, ev_sum);
 }
 
 void add_non_full_stats(std::vector<Stat *> & stats, Stat & stat);
@@ -68,13 +70,9 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// the process in case a stat is overfilled.
 	while (ev_sum(pokemon) < max_evs) {
 		std::vector<Stat *> stats;
-		add_non_full_stats(stats, pokemon.hp());
-		add_non_full_stats(stats, pokemon.atk());
-		add_non_full_stats(stats, pokemon.def());
-		add_non_full_stats(stats, pokemon.spa());
-		add_non_full_stats(stats, pokemon.spd());
-		add_non_full_stats(stats, pokemon.spe());
-	
+		for (auto const stat : regular_stats()) {
+			add_non_full_stats(stats, pokemon.stat(stat));
+		}
 		unsigned const extra_evs = max_evs - ev_sum(pokemon);
 		std::vector<uint8_t> shuffled(extra_evs + stats.size() - 1, 1);
 		std::fill(std::begin(shuffled), std::begin(shuffled) + static_cast<int>(stats.size()) - 1, 0);

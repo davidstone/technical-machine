@@ -278,8 +278,11 @@ void ActivePokemon::endure() {
 	enduring = true;
 }
 
+bool ActivePokemon::is_fainted() const {
+	return get_pokemon().is_fainted();
+}
+
 void ActivePokemon::faint() {
-	get_pokemon().hp().stat = 0;
 	get_pokemon().faint();
 }
 
@@ -558,50 +561,12 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 		return false;
 }
 
-Stat const & ActivePokemon::hp() const {
-	return get_pokemon().hp();
-}
-Stat & ActivePokemon::hp() {
-	return get_pokemon().hp();
+Rational ActivePokemon::hp_ratio() const {
+	return get_pokemon().current_hp();
 }
 
-Stat const & ActivePokemon::atk() const {
-	return get_pokemon().atk();
-}
-Stat & ActivePokemon::atk() {
-	return get_pokemon().atk();
-}
-
-Stat const & ActivePokemon::def() const {
-	return get_pokemon().def();
-}
-Stat & ActivePokemon::def() {
-	return get_pokemon().def();
-}
-
-Stat const & ActivePokemon::spa() const {
-	return get_pokemon().spa();
-}
-Stat & ActivePokemon::spa() {
-	return get_pokemon().spa();
-}
-
-Stat const & ActivePokemon::spd() const {
-	return get_pokemon().spd();
-}
-Stat & ActivePokemon::spd() {
-	return get_pokemon().spd();
-}
-
-Stat const & ActivePokemon::spe() const {
-	return get_pokemon().spe();
-}
-Stat & ActivePokemon::spe() {
-	return get_pokemon().spe();
-}
-
-int ActivePokemon::current_stage(Stat::Stats const stat) const {
-	return stage[stat];
+int ActivePokemon::current_stage(Stat::Stats const stat_index) const {
+	return stage[stat_index];
 }
 
 unsigned ActivePokemon::positive_stat_boosts() const {
@@ -609,8 +574,8 @@ unsigned ActivePokemon::positive_stat_boosts() const {
 	return stage.accumulate(positive_values);
 }
 
-void ActivePokemon::stat_boost(Stat::Stats const stat, int const n) {
-	stage.boost(stat, n);
+void ActivePokemon::stat_boost(Stat::Stats const stat_index, int const n) {
+	stage.boost(stat_index, n);
 }
 
 void ActivePokemon::stat_boost_physical(int n) {
@@ -801,9 +766,9 @@ void ActivePokemon::use_bide(Pokemon & target) {
 void ActivePokemon::use_substitute() {
 	if (!get_pokemon().can_use_substitute())
 		return;
-	bool const created = active_substitute.create(hp().max);
+	bool const created = active_substitute.create(stat(Stat::HP).max);
 	if (created) {
-		indirect_damage(hp().max / 4);
+		indirect_damage(stat(Stat::HP).max / 4);
 	}
 }
 
@@ -859,8 +824,8 @@ void ActivePokemon::normalize_hp(bool fainted) {
 	if (fainted) {
 		faint();
 	}
-	else if (hp().stat == 0) {
-		hp().stat = 1;
+	else if (stat(Stat::HP).stat == 0) {
+		stat(Stat::HP).stat = 1;
 	}
 }
 

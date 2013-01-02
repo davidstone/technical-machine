@@ -95,19 +95,15 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 		write_int (0);
 		++number_of_moves;
 	}
-	write_byte(pokemon.hp().iv);
-	write_byte(pokemon.atk().iv);
-	write_byte(pokemon.def().iv);
-	write_byte(pokemon.spe().iv);
-	write_byte(pokemon.spa().iv);
-	write_byte(pokemon.spd().iv);
-
-	write_byte(pokemon.hp().ev.value());
-	write_byte(pokemon.atk().ev.value());
-	write_byte(pokemon.def().ev.value());
-	write_byte(pokemon.spe().ev.value());
-	write_byte(pokemon.spa().ev.value());
-	write_byte(pokemon.spd().ev.value());
+	static constexpr auto stats = {
+		Stat::HP, Stat::ATK, Stat::DEF, Stat::SPE, Stat::SPA, Stat::SPD
+	};
+	for (auto const stat : stats) {
+		write_byte(pokemon.stat(stat).iv);
+	}
+	for (auto const stat : stats) {
+		write_byte(pokemon.stat(stat).ev.value());
+	}
 }
 
 enum Choice {

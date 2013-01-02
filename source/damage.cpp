@@ -75,7 +75,7 @@ namespace {
 
 unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	unsigned damage = uncapped_damage (attacker, defender, weather, variable);
-	Stat const & hp = defender.pokemon().hp();
+	Stat const & hp = defender.pokemon().stat(Stat::HP);
 	if (damage >= hp.stat) {
 		damage = hp.stat;
 		if (attacker.move().cannot_ko() or defender.pokemon().cannot_be_koed())
@@ -91,12 +91,12 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 		case Moves::Dragon_Rage:
 			return 40;
 		case Moves::Endeavor:
-			return static_cast<unsigned> (std::max(defender.pokemon().hp().stat - attacker.hp().stat, 0));
+			return static_cast<unsigned> (std::max(defender.pokemon().stat(Stat::HP).stat - attacker.stat(Stat::HP).stat, 0));
 		case Moves::Fissure:
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return defender.pokemon().hp().max;
+			return defender.pokemon().stat(Stat::HP).max;
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
 			return attacker.level();
@@ -105,7 +105,7 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 		case Moves::SonicBoom:
 			return 20;
 		case Moves::Super_Fang:
-			return defender.pokemon().hp().stat / 2;
+			return defender.pokemon().stat(Stat::HP).stat / 2;
 		default:
 			return regular_damage(attacker, defender, weather, variable);
 	}
@@ -161,8 +161,8 @@ Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const &
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return attacker.move().is_physical() ?
-		Rational(attacker.atk().stat, 50u * defender.def().stat * weakening_from_status(attacker)) :
-		Rational(attacker.spa().stat, 50u * defender.spd().stat);
+		Rational(attacker.stat(Stat::ATK).stat, 50u * defender.stat(Stat::DEF).stat * weakening_from_status(attacker)) :
+		Rational(attacker.stat(Stat::SPA).stat, 50u * defender.stat(Stat::SPD).stat);
 }
 
 unsigned weakening_from_status (Pokemon const & attacker) {

@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 
 #include "move.hpp"
 #include "moves.hpp"
@@ -81,13 +82,13 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 	switch (attacker.move().name) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
-			return 120u * defender.hp().stat / defender.hp().max + 1;
+			return 120u * defender.hp_ratio() + 1;
 		case Moves::Eruption:
 		case Moves::Water_Spout:
-			return 150u * attacker.hp().stat / attacker.hp().max;
+			return 150u * attacker.hp_ratio();
 		case Moves::Flail:
 		case Moves::Reversal: {
-			unsigned const k = 64u * attacker.hp().stat / attacker.hp().max;
+			unsigned const k = 64u * attacker.hp_ratio();
 			if (k <= 1)
 				return 200;
 			else if (k <= 5)
@@ -111,20 +112,25 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Low_Kick:
 			return defender.power_of_mass_based_moves();
 		case Moves::Gyro_Ball: {
-			unsigned const uncapped_power = 25u * defender.spe().stat / attacker.spe().stat + 1;
+			unsigned const uncapped_power = 25u * defender.stat(Stat::SPE).stat / attacker.stat(Stat::SPE).stat + 1;
 			return std::min(uncapped_power, 150u);
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return attacker.move().momentum_move_power();
 		case Moves::Hidden_Power: {
-			unsigned const u = second_lowest_bit (attacker.hp()) * (1 << 0);	// 1
-			unsigned const v = second_lowest_bit (attacker.atk()) * (1 << 1);	// 2
-			unsigned const w = second_lowest_bit (attacker.def()) * (1 << 2);	// 4
-			unsigned const x = second_lowest_bit (attacker.spe()) * (1 << 3);	// 8
-			unsigned const y = second_lowest_bit (attacker.spa()) * (1 << 4);	// 16
-			unsigned const z = second_lowest_bit (attacker.spd()) * (1 << 5);	// 32
-			return (u + v + w + x + y + z) * 40 / 63 + 30;
+			static constexpr std::array<std::pair<Stat::Stats, unsigned>, 6> stat_and_position {{
+				{ Stat::HP, 0 },
+				{ Stat::ATK, 1 },
+				{ Stat::DEF, 2 },
+				{ Stat::SPE, 3 },
+				{ Stat::SPA, 4 },
+				{ Stat::SPD, 5 }
+			}};
+			auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & stat) {
+				return value + second_lowest_bit(attacker.stat(stat.first)) * (1u << stat.second);
+			};
+			return std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), 0u, sum) * 40 / 63 + 30;
 		}
 		case Moves::Magnitude:
 			return variable.value();
@@ -174,7 +180,7 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 		case Moves::Revenge:
 			return attacker.damaged();
 		case Moves::Brine:
-			return defender.hp().stat <= defender.hp().max / 2;
+			return defender.stat(Stat::HP).stat <= defender.stat(Stat::HP).max / 2;
 		case Moves::Facade:
 			return attacker.status().boosts_facade();
 		case Moves::Ice_Ball:

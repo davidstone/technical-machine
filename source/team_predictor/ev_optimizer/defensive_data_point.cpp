@@ -80,9 +80,9 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemo
 
 void DataPoint::update_pokemon(Pokemon & pokemon) const {
 	pokemon.nature() = nature;
-	pokemon.hp().ev.set_value(hp);
-	pokemon.def().ev.set_value(defense);
-	pokemon.spd().ev.set_value(special_defense);
+	pokemon.stat(Stat::HP).ev.set_value(hp);
+	pokemon.stat(Stat::DEF).ev.set_value(defense);
+	pokemon.stat(Stat::SPD).ev.set_value(special_defense);
 }
 
 bool DataPoint::affects_defensive_stat(bool const boost) const {

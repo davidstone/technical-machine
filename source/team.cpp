@@ -218,12 +218,17 @@ std::string Team::to_string(bool const include_owner) const {
 			}
 			output += std::to_string(stat.ev.value()) + " " + stat_name;
 		};
-		add_stat(member.hp(), "HP");
-		add_stat(member.atk(), "Atk");
-		add_stat(member.def(), "Def");
-		add_stat(member.spa(), "SpA");
-		add_stat(member.spd(), "SpD");
-		add_stat(member.spe(), "Spe");
+		static std::pair<Stat::Stats, std::string> const stats [] = {
+			{ Stat::HP, "HP" },
+			{ Stat::ATK, "Atk" },
+			{ Stat::DEF, "Def" },
+			{ Stat::SPA, "SpA" },
+			{ Stat::SPD, "SpD" },
+			{ Stat::SPE, "Spe" },
+		};
+		for (auto const stat : stats) {
+			add_stat(member.stat(stat.first), stat.second);
+		}
 		output += '\n';
 		member.move.for_each_regular_move([& output](Move const & move) {
 			output += "\t- " + move.to_string() + '\n';

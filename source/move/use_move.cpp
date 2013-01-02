@@ -703,7 +703,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.activate_rampage();
 			break;
 		case Moves::Pain_Split:
-			equalize(user.hp(), target.hp());
+			equalize(user.stat(Stat::HP), target.stat(Stat::HP));
 			break;
 		case Moves::Perish_Song:
 			user.activate_perish_song();
@@ -725,7 +725,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Present:
 			if (variable.present_heals()) {
-				Stat & hp = target.hp();
+				Stat & hp = target.stat(Stat::HP);
 				hp.stat += 80;
 				hp.stat = std::min(hp.stat, hp.max);
 			}
@@ -939,7 +939,7 @@ void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
 }
 
 void belly_drum(ActivePokemon & user) {
-	Stat & hp = user.hp();
+	Stat & hp = user.stat(Stat::HP);
 	if (hp.stat > hp.max / 2 and hp.stat > 1) {
 		hp.stat -= hp.max / 2;
 		user.stat_boost(Stat::ATK, 12);
@@ -959,7 +959,7 @@ void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, int co
 void curse(ActivePokemon & user, ActivePokemon & target) {
 	if (is_type(user, Type::Ghost) and !user.ability().blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
-			user.indirect_damage(user.hp().max / 2);
+			user.indirect_damage(user.stat(Stat::HP).max / 2);
 			target.curse();
 		}
 	}
@@ -985,7 +985,7 @@ void phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 }
 
 void rest(Pokemon & user) {
-	Stat & hp = user.hp();
+	Stat & hp = user.stat(Stat::HP);
 	if (hp.stat != hp.max) {
 		hp.stat = hp.max;
 		user.status().rest();
@@ -993,7 +993,7 @@ void rest(Pokemon & user) {
 }
 
 void struggle(Pokemon & user) {
-	user.apply_damage(user.hp().max / 4);
+	user.apply_damage(user.stat(Stat::HP).max / 4);
 }
 
 void swap_items(Pokemon & user, Pokemon & target) {

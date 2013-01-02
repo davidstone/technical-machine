@@ -56,13 +56,13 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 	auto const & defensive = d.container.at(it->first);
 	auto const & offensive = o.container.at(it->first);
 	auto const & speed = s.container.at(it->first);
-	pokemon.hp().ev.set_value(defensive.hp);
+	pokemon.stat(Stat::HP).ev.set_value(defensive.hp);
 	pokemon.calculate_initial_hp();
-	pokemon.atk().ev.set_value(offensive.attack);
-	pokemon.def().ev.set_value(defensive.defense);
-	pokemon.spa().ev.set_value(offensive.special_attack);
-	pokemon.spd().ev.set_value(defensive.special_defense);
-	pokemon.spe().ev.set_value(speed);
+	pokemon.stat(Stat::ATK).ev.set_value(offensive.attack);
+	pokemon.stat(Stat::DEF).ev.set_value(defensive.defense);
+	pokemon.stat(Stat::SPA).ev.set_value(offensive.special_attack);
+	pokemon.stat(Stat::SPD).ev.set_value(defensive.special_defense);
+	pokemon.stat(Stat::SPE).ev.set_value(speed);
 	pokemon.nature().name = it->first;
 }
 

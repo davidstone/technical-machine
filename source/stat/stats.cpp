@@ -1,4 +1,4 @@
-// Function to change a Pokemon's HP by a fractional multiplier
+// All 'normal' stats that a Pokemon has
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,32 +16,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "heal.hpp"
-
-#include <algorithm>
-
-#include "ability.hpp"
-#include "damage.hpp"
-#include "rational.hpp"
-
-#include "pokemon/pokemon.hpp"
+#include "stats.hpp"
 
 namespace technicalmachine {
 
-void heal(Pokemon & member, Rational const & rational, bool positive) {
-	if (member.is_fainted())
-		return;
-	unsigned const hp_healed = member.stat(Stat::HP).max * rational;
-	if (positive) {
-		member.apply_healing(std::max(hp_healed, 1u));
-	}
-	else if (!member.ability().blocks_secondary_damage()) {
-		member.apply_damage(std::max(hp_healed, 1u));
-	}
+Stats::Stats(Species const species):
+	stats({{
+		Stat(species, Stat::HP),
+		Stat(species, Stat::ATK),
+		Stat(species, Stat::DEF),
+		Stat(species, Stat::SPA),
+		Stat(species, Stat::SPD),
+		Stat(species, Stat::SPE)
+	}}) {
 }
 
-void drain(Pokemon & member, Rational const & rational) {
-	heal(member, rational, false);
+// The indexing requires a +1 because I have the first stat in the array, HP,
+// set to -1 in the enum. This allowed me to index stat boosting without having
+// to offset the index.
+Stat const & Stats::operator[](Stat::Stats const stat) const {
+	return stats[static_cast<size_t>(stat + 1)];
 }
+Stat & Stats::operator[](Stat::Stats const stat) {
+	return stats[static_cast<size_t>(stat + 1)];
+}
+
 
 }	// namespace technicalmachine

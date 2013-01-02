@@ -28,7 +28,7 @@ SpeedEVs::SpeedEVs(Pokemon pokemon) {
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
 		pokemon.nature().name = nature;
 		for (unsigned ev = 0; ev <= 252; ++ev) {
-			pokemon.spe().ev.set_value(ev);
+			pokemon.stat(Stat::SPE).ev.set_value(ev);
 			if (initial_stat<Stat::SPE>(pokemon) >= speed) {
 				container.insert(std::make_pair(nature, ev));
 				break;

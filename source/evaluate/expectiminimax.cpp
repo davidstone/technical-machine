@@ -128,7 +128,7 @@ int64_t select_type_of_move_branch (Team & ai, Team & foe, MoveScores & ai_score
 	calculate_speed (ai, weather);
 	calculate_speed (foe, weather);
 
-	if (ai.pokemon().hp().stat == 0 or foe.pokemon().hp().stat == 0)
+	if (ai.pokemon().stat(Stat::HP).stat == 0 or foe.pokemon().stat(Stat::HP).stat == 0)
 		return replace (ai, foe, ai_scores, foe_scores, weather, depth, evaluate, best_move, first_turn);
 	else if (ai.pokemon().switch_decision_required())
 		return initial_move_then_switch_branch(ai, foe, ai_scores, foe_scores, weather, depth, evaluate, best_move, first_turn);
@@ -416,13 +416,13 @@ int64_t replace (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe
 	bool const speed_tie = (first == nullptr);
 	unsigned const tabs = first_turn ? 0 : 2;
 	int64_t alpha = -Evaluate::victory - 1;
-	auto const ai_break_out = [& ai]() { return ai.pokemon().hp().stat != 0; };
+	auto const ai_break_out = [& ai]() { return ai.pokemon().stat(Stat::HP).stat != 0; };
 	ai.all_pokemon().for_each_replacement(ai_break_out, [&]() {
 		if (verbose or first_turn)
 			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + ai.all_pokemon().at_replacement().to_string() + "\n";
 		int64_t beta = Evaluate::victory + 1;
 		auto const foe_break_out = [& foe, & alpha, & beta]() {
-			return beta <= alpha or foe.pokemon().hp().stat != 0;
+			return beta <= alpha or foe.pokemon().stat(Stat::HP).stat != 0;
 		};
 		foe.all_pokemon().for_each_replacement(foe_break_out, [&]() {
 			beta = (speed_tie) ?
@@ -437,12 +437,12 @@ int64_t replace (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe
 int64_t fainted (Team first, Team last, MoveScores & ai_scores, MoveScores & foe_scores, Weather weather, unsigned depth, Evaluate const & evaluate) {
 	// Use pokemon() instead of at_replacement() because it checks whether the
 	// current Pokemon needs to be replaced because it fainted.
-	if (first.pokemon().hp().stat == 0) {
+	if (first.pokemon().stat(Stat::HP).stat == 0) {
 		switchpokemon (first, last, weather);
 		if (Evaluate::win (first) != 0 or Evaluate::win (last) != 0)
 			return Evaluate::win (first) + Evaluate::win (last);
 	}
-	if (last.pokemon().hp().stat == 0) {
+	if (last.pokemon().stat(Stat::HP).stat == 0) {
 		switchpokemon (last, first, weather);
 		if (Evaluate::win (first) != 0 or Evaluate::win (last) != 0)
 			return Evaluate::win (first) + Evaluate::win (last);

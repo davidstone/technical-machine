@@ -60,7 +60,7 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 		score += ingrain;
 	score += pokemon.magnet_rise.turns_remaining * magnet_rise;
 	if (pokemon.active_substitute)
-		score += substitute + substitute_hp * pokemon.active_substitute.hp / pokemon.hp().max;
+		score += substitute + substitute_hp * pokemon.active_substitute.hp / pokemon.stat(Stat::HP).max;
 	score += Stage::dot_product(pokemon.stage, stage);
 	return score;
 }
@@ -78,7 +78,7 @@ int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weat
 }
 
 int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
-	if (pokemon.hp().stat == 0) {
+	if (pokemon.stat(Stat::HP).stat == 0) {
 		return 0;
 	}
 	int64_t score = 0;
@@ -149,7 +149,7 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 
 
 int64_t Evaluate::win (Team const & team) {
-	if (team.all_pokemon().size() == 1 and team.pokemon().hp().stat == 0)
+	if (team.all_pokemon().size() == 1 and team.pokemon().stat(Stat::HP).stat == 0)
 		return team.is_me() ? -victory : victory;
 	return 0;
 }

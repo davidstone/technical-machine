@@ -24,6 +24,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "conversion.hpp"
+#include "stat_order.hpp"
 
 #include "../../ability.hpp"
 #include "../../item.hpp"
@@ -49,22 +50,10 @@ Move load_move(boost::property_tree::ptree const & pt) {
 }
 
 Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
-	switch (n) {
-		case 0:
-			return pokemon.hp();
-		case 1:
-			return pokemon.atk();
-		case 2:
-			return pokemon.def();
-		case 3:
-			return pokemon.spa();
-		case 4:
-			return pokemon.spd();
-		case 5:
-			return pokemon.spe();
-		default:
-			throw InvalidStat(std::to_string(n));
+	if (n >= stat_order.size()) {
+		throw InvalidStat(std::to_string(n));
 	}
+	return pokemon.stat(stat_order[n]);
 }
 
 bool is_real_pokemon(boost::property_tree::ptree const & pt) {

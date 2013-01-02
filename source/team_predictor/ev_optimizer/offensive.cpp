@@ -87,7 +87,7 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 		remove_individual_unused(container, [](Container::iterator it) {
 			return !Nature(it->first).lowers_stat<Stat::ATK>();
 		});
-		pokemon.atk().ev.set_value(0);
+		pokemon.stat(Stat::ATK).ev.set_value(0);
 	}
 	bool const is_special = has_special_move(pokemon);
 	if (!is_special) {
@@ -95,7 +95,7 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 			return (is_physical and !Nature(it->first).lowers_stat<Stat::SPA>())
 					or Nature(it->first).boosts_stat<Stat::SPA>();
 		});
-		pokemon.spa().ev.set_value(0);
+		pokemon.stat(Stat::SPA).ev.set_value(0);
 	}
 	if (!is_physical and !is_special) {
 		pokemon.nature().name = Nature::CALM;
@@ -114,8 +114,8 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
 		pokemon.nature() = it->first;
-		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, pokemon.atk().ev, initial_atk);
-		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, pokemon.spa().ev, initial_spa);
+		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, pokemon.stat(Stat::ATK).ev, initial_atk);
+		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, pokemon.stat(Stat::SPA).ev, initial_spa);
 		if (atk and spa) {
 			stats.attack = *atk;
 			stats.special_attack = *spa;

@@ -109,25 +109,24 @@ class PokemonInputValues {
 		PokemonInputValues(PokemonInputs const & inputs):
 			species(inputs.species()),
 			nature(inputs.nature()),
-			hp(inputs.hp()),
-			atk(inputs.atk()),
-			def(inputs.def()),
-			spa(inputs.spa()),
-			spd(inputs.spd()),
-			spe(inputs.spe()),
+			stats({{
+				inputs.hp(),
+				inputs.atk(),
+				inputs.def(),
+				inputs.spa(),
+				inputs.spd(),
+				inputs.spe()
+			}}),
 			moves(inputs.moves())
 			{
 		}
 		void add_to_team(Team & team) const {
 			team.add_pokemon(species, 100, Gender(), item, ability, nature);
 			Pokemon & pokemon = team.replacement();
-			pokemon.hp().ev.set_value(hp);
+			for (auto const stat : regular_stats()) {
+				pokemon.stat(stat).ev.set_value(stats[static_cast<size_t>(stat + 1)]);
+			}
 			pokemon.calculate_initial_hp();
-			pokemon.atk().ev.set_value(atk);
-			pokemon.def().ev.set_value(def);
-			pokemon.spa().ev.set_value(spa);
-			pokemon.spd().ev.set_value(spd);
-			pokemon.spe().ev.set_value(spe);
 			for (auto const move : moves) {
 				pokemon.move.add(move);
 			}
@@ -137,12 +136,7 @@ class PokemonInputValues {
 		Item item;
 		Ability ability;
 		Nature nature;
-		unsigned hp;
-		unsigned atk;
-		unsigned def;
-		unsigned spa;
-		unsigned spd;
-		unsigned spe;
+		std::array<unsigned, 6> stats;
 		std::vector<Moves> moves;
 };
 

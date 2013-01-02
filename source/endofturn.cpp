@@ -132,13 +132,13 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 			break;
 	}
 	if (pokemon.leech_seeded()) {
-		unsigned const n = pokemon.hp().stat;
+		unsigned const n = pokemon.stat(Stat::HP).stat;
 		drain(pokemon, Rational(1, 8));
 		if (!foe.is_fainted()) {
 			if (pokemon.ability().damages_leechers ())
-				foe.apply_damage(n - pokemon.hp().stat);
+				foe.apply_damage(n - pokemon.stat(Stat::HP).stat);
 			else
-				foe.apply_healing(n - pokemon.hp().stat);
+				foe.apply_healing(n - pokemon.stat(Stat::HP).stat);
 		}
 	}
 	switch (pokemon.status().name()) {

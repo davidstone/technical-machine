@@ -275,9 +275,9 @@ bool Ability::is_loafing (bool const loaf) const {
 void Ability::activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
 	switch (switcher.ability().name) {
 		case DOWNLOAD: {
-			calculate_defense (other);
-			calculate_special_defense (other, weather);
-			switcher.stat_boost((other.def().stat >= other.spd().stat) ? Stat::SPA : Stat::ATK, 1);
+			calculate_defense(other, weather);
+			calculate_special_defense(other, weather);
+			switcher.stat_boost((other.stat(Stat::DEF).stat >= other.stat(Stat::SPD).stat) ? Stat::SPA : Stat::ATK, 1);
 			break;
 		}
 		case DRIZZLE:

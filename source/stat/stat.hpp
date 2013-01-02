@@ -56,19 +56,28 @@ class Stat {
 		void calculate_initial_hp (uint8_t const level);
 };
 
+inline constexpr std::initializer_list<Stat::Stats> regular_stats() {
+	return { Stat::HP, Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE };
+}
 inline constexpr std::initializer_list<Stat::Stats> boostable_stats() {
 	return { Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE, Stat::ACC, Stat::EVA };
 }
 
 template<Stat::Stats>
 unsigned initial_stat(Pokemon const & pokemon);
+extern template unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon);
+extern template unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon);
+extern template unsigned initial_stat<Stat::DEF>(Pokemon const & pokemon);
+extern template unsigned initial_stat<Stat::SPD>(Pokemon const & pokemon);
+extern template unsigned initial_stat<Stat::SPE>(Pokemon const & pokemon);
+
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);
 void calculate_attack(ActivePokemon & attacker, Weather const & weather);
 void calculate_special_attack(ActivePokemon & attacker, Weather const & weather);
 
 void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather);
-void calculate_defense (ActivePokemon & defender, bool ch = false, bool is_self_KO = false);
+void calculate_defense (ActivePokemon & defender, Weather const & weather, bool ch = false, bool is_self_KO = false);
 void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch = false);
 
 void calculate_speed (Team & team, Weather const & weather);

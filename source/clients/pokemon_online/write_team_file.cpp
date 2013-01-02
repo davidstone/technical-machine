@@ -25,6 +25,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "conversion.hpp"
+#include "stat_order.hpp"
 
 #include "../../team.hpp"
 
@@ -47,18 +48,12 @@ void write_blank_move (boost::property_tree::ptree & pt) {
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	pt.add("DV", pokemon.hp().iv);
-	pt.add("DV", pokemon.atk().iv);
-	pt.add("DV", pokemon.def().iv);
-	pt.add("DV", pokemon.spa().iv);
-	pt.add("DV", pokemon.spd().iv);
-	pt.add("DV", pokemon.spe().iv);
-	pt.add("EV", pokemon.hp().ev.value());
-	pt.add("EV", pokemon.atk().ev.value());
-	pt.add("EV", pokemon.def().ev.value());
-	pt.add("EV", pokemon.spa().ev.value());
-	pt.add("EV", pokemon.spd().ev.value());
-	pt.add("EV", pokemon.spe().ev.value());
+	for (auto const stat : stat_order) {
+		pt.add("DV", pokemon.stat(stat).iv);
+	}
+	for (auto const stat : stat_order) {
+		pt.add("EV", pokemon.stat(stat).ev.value());
+	}
 }
 
 void write_blank_stats (boost::property_tree::ptree & pt) {

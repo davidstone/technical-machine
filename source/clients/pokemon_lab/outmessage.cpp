@@ -71,18 +71,13 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 		write_int(simulator_cast<ID<Moves>>(move.name).value());
 		write_int (3);		// Replace this with real PP-ups logic later
 	});
-	write_int (pokemon.hp().iv);
-	write_int (pokemon.hp().ev.value());
-	write_int (pokemon.atk().iv);
-	write_int (pokemon.atk().ev.value());
-	write_int (pokemon.def().iv);
-	write_int (pokemon.def().ev.value());
-	write_int (pokemon.spe().iv);
-	write_int (pokemon.spe().ev.value());
-	write_int (pokemon.spa().iv);
-	write_int (pokemon.spa().ev.value());
-	write_int (pokemon.spd().iv);
-	write_int (pokemon.spd().ev.value());
+	static constexpr auto stats = {
+		Stat::HP, Stat::ATK, Stat::DEF, Stat::SPE, Stat::SPA, Stat::SPD
+	};
+	for (auto const stat : stats) {
+		write_int(pokemon.stat(stat).iv);
+		write_int(pokemon.stat(stat).ev.value());
+	}
 }
 
 void OutMessage::write_move (uint32_t field_id, uint8_t move_index, uint8_t target) {

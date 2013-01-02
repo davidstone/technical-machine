@@ -18,6 +18,7 @@
 
 #include "read_team_file.hpp"
 
+#include <map>
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
@@ -32,7 +33,6 @@
 
 #include "../../pokemon/pokemon.hpp"
 
-#include "../../stat/invalid_stat.hpp"
 #include "../../stat/stat.hpp"
 
 #include "../../string_conversions/conversion.hpp"
@@ -49,20 +49,15 @@ Move load_move(boost::property_tree::ptree const & pt) {
 }
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
-	if (name == "HP")
-		return pokemon.hp();
-	else if (name == "Atk")
-		return pokemon.atk();
-	else if (name == "Def")
-		return pokemon.def();
-	else if (name == "Spd")
-		return pokemon.spe();
-	else if (name == "SpAtk")
-		return pokemon.spa();
-	else if (name == "SpDef")
-		return pokemon.spd();
-	else
-		throw InvalidStat (name);
+	static std::map<std::string, Stat::Stats> const stats = {
+		{ "HP", Stat::HP },
+		{ "Atk", Stat::ATK },
+		{ "Def", Stat::DEF },
+		{ "SpAtk", Stat::SPA },
+		{ "SpDef", Stat::SPD },
+		{ "Spd", Stat::SPE }
+	};
+	return pokemon.stat(stats.at(name));
 }
 
 static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {

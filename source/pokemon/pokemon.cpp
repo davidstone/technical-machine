@@ -50,12 +50,7 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t se
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
 	#endif
-	m_hp(species, Stat::HP),
-	m_atk(species, Stat::ATK),
-	m_def(species, Stat::DEF),
-	m_spa(species, Stat::SPA),
-	m_spd(species, Stat::SPD),
-	m_spe(species, Stat::SPE),
+	stats(species),
 
 	m_name(species),
 	m_gender(set_gender),
@@ -87,7 +82,7 @@ void Pokemon::switch_out() {
 }
 
 void Pokemon::calculate_initial_hp () {
-	m_hp.calculate_initial_hp(level());
+	stat(Stat::HP).calculate_initial_hp(level());
 }
 
 void Pokemon::remove_switch() {
@@ -102,25 +97,27 @@ uint8_t Pokemon::index_of_first_switch () const {
 }
 
 void Pokemon::correct_error_in_hp(unsigned const correct_hp_stat) {
-	m_hp.stat = correct_hp_stat;
+	stat(Stat::HP).stat = correct_hp_stat;
 }
 
 Rational Pokemon::current_hp() const {
-	return Rational(hp().stat, hp().max);
+	return Rational(stat(Stat::HP).stat, stat(Stat::HP).max);
 }
 
 unsigned Pokemon::apply_damage(unsigned damage) {
-	damage = std::min(damage, static_cast<unsigned>(m_hp.stat));
-	m_hp.stat -= damage;
+	auto & hp = stat(Stat::HP);
+	damage = std::min(damage, static_cast<unsigned>(hp.stat));
+	hp.stat -= damage;
 	return damage;
 }
 
 void Pokemon::apply_healing(unsigned const amount) {
 	// Should be no risk of overflow. hp.stat has to be at least 16 bits, and no
 	// healing will be anywhere close to that number.
-	assert(hp().stat + amount >= hp().stat);
-	m_hp.stat += amount;
-	m_hp.stat = std::min(hp().stat, hp().max);
+	auto & hp = stat(Stat::HP);
+	assert(hp.stat + amount >= amount);
+	hp.stat += amount;
+	hp.stat = std::min(hp.stat, hp.max);
 }
 
 bool Pokemon::can_confuse_with_chatter() const {
@@ -128,7 +125,7 @@ bool Pokemon::can_confuse_with_chatter() const {
 }
 
 bool Pokemon::can_use_substitute() const {
-	return hp().stat > hp().max / 4;
+	return stat(Stat::HP).stat > stat(Stat::HP).max / 4;
 }
 
 bool is_alternate_form(Species first, Species second) {
@@ -286,41 +283,11 @@ Nature & Pokemon::nature() {
 	return m_nature;
 }
 
-Stat const & Pokemon::hp() const {
-	return m_hp;
+Stat const & Pokemon::stat(Stat::Stats const index_stat) const {
+	return stats[index_stat];
 }
-Stat & Pokemon::hp() {
-	return m_hp;
-}
-Stat const & Pokemon::atk() const {
-	return m_atk;
-}
-Stat & Pokemon::atk() {
-	return m_atk;
-}
-Stat const & Pokemon::def() const {
-	return m_def;
-}
-Stat & Pokemon::def() {
-	return m_def;
-}
-Stat const & Pokemon::spa() const {
-	return m_spa;
-}
-Stat & Pokemon::spa() {
-	return m_spa;
-}
-Stat const & Pokemon::spd() const {
-	return m_spd;
-}
-Stat & Pokemon::spd() {
-	return m_spd;
-}
-Stat const & Pokemon::spe() const {
-	return m_spe;
-}
-Stat & Pokemon::spe() {
-	return m_spe;
+Stat & Pokemon::stat(Stat::Stats const index_stat) {
+	return stats[index_stat];
 }
 
 Status const & Pokemon::status() const {
@@ -353,6 +320,7 @@ bool Pokemon::will_be_replaced() const {
 	return m_will_be_replaced;
 }
 void Pokemon::faint() {
+	stat(Stat::HP).stat = 0;
 	m_will_be_replaced = true;
 }
 void Pokemon::reset_replacing() {
@@ -363,13 +331,13 @@ Pokemon::hash_type Pokemon::hash() const {
 	return static_cast<hash_type>(m_name) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
-			((hp().stat - 1u) + hp().max *	// - 1 because you can't have 0 HP
+			((stat(Stat::HP).stat - 1u) + stat(Stat::HP).max *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * hp().max * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * stat(Stat::HP).max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -380,7 +348,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.move == rhs.move and
 			lhs.m_name == rhs.m_name and
 			lhs.m_status == rhs.m_status and
-			lhs.hp().stat == rhs.hp().stat and
+			lhs.stat(Stat::HP).stat == rhs.stat(Stat::HP).stat and
 			lhs.m_item == rhs.m_item and
 			lhs.seen == rhs.seen;
 }
@@ -406,20 +374,21 @@ constexpr unsigned lowest_bit(unsigned const iv) {
 	return iv % 2;
 }
 
-constexpr unsigned hidden_power_type_helper(unsigned const iv, unsigned const n) {
-	return lowest_bit(iv) << n;
-}
-
 }	// unnamed namespace
 
 Type::Types Pokemon::calculate_hidden_power_type() const {
-	unsigned const a = hidden_power_type_helper(hp().iv, 0);
-	unsigned const b = hidden_power_type_helper(atk().iv, 1);
-	unsigned const c = hidden_power_type_helper(def().iv, 2);
-	unsigned const d = hidden_power_type_helper(spe().iv, 3);
-	unsigned const e = hidden_power_type_helper(spa().iv, 4);
-	unsigned const f = hidden_power_type_helper(spd().iv, 5);
-	unsigned const index = (a + b + c + d + e + f) * 15 / 63;
+	static constexpr std::pair<Stat::Stats, unsigned> modifiers[] = {
+		{ Stat::HP, 0 },
+		{ Stat::ATK, 1 },
+		{ Stat::DEF, 2 },
+		{ Stat::SPE, 3 },
+		{ Stat::SPA, 4 },
+		{ Stat::SPD, 5 }
+	};
+	auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & pair) {
+		return value + (lowest_bit(stat(pair.first).iv) << pair.second);
+	};
+	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), 0u, sum) * 15 / 63;
 	constexpr static Type::Types lookup [] = {
 		Type::Fighting,
 		Type::Flying,
@@ -438,7 +407,7 @@ Type::Types Pokemon::calculate_hidden_power_type() const {
 		Type::Dragon,
 		Type::Dark
 	};
-	return lookup [index];
+	return lookup[index];
 }
 
 unsigned Pokemon::power_of_mass_based_moves() const {

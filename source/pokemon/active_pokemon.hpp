@@ -112,6 +112,7 @@ class ActivePokemon {
 		void activate_encore();
 		void increment_encore();
 		void endure();
+		bool is_fainted() const;
 		void faint();
 		bool flash_fire_is_active() const;
 		void activate_flash_fire();
@@ -179,18 +180,15 @@ class ActivePokemon {
 		bool slow_start_is_active() const;
 		bool sport_is_active(Move const & foe_move) const;
 
-		Stat const & hp() const;
-		Stat & hp();
-		Stat const & atk() const;
-		Stat & atk();
-		Stat const & def() const;
-		Stat & def();
-		Stat const & spa() const;
-		Stat & spa();
-		Stat const & spd() const;
-		Stat & spd();
-		Stat const & spe() const;
-		Stat & spe();
+		template<typename... Args>
+		Stat const & stat(Args && ... args) const {
+			return get_pokemon().stat(std::forward<Args>(args)...);
+		}
+		template<typename... Args>
+		Stat & stat(Args && ... args) {
+			return get_pokemon().stat(std::forward<Args>(args)...);
+		}
+		Rational hp_ratio() const;
 		int current_stage(Stat::Stats stat) const;
 		unsigned positive_stat_boosts() const;
 		template<Stat::Stats stat, typename... Args>
