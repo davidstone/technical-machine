@@ -29,6 +29,7 @@ class RankedMove {
 		explicit RankedMove(Moves set_move, int16_t set_score);
 		Moves name() const;
 		friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
+		friend bool operator>(RankedMove const & lhs, RankedMove const & rhs);
 	private:
 		int16_t score;
 		Moves move;

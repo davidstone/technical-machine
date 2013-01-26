@@ -36,7 +36,7 @@ void MoveScores::update(Pokemon const & pokemon) {
 	pokemon.move.for_each([&](Move const & move) {
 		auto const key = std::make_pair(pokemon.name(), move.name);
 		auto const inserted = scores.insert(std::make_pair(key, initial));
-		if (!inserted.second) {
+		if (inserted.second) {
 			inserted.first->second = initial;
 		}
 	});
@@ -48,6 +48,5 @@ int64_t const & MoveScores::at(Species const species, Moves const name) const {
 int64_t & MoveScores::at(Species const species, Moves const name) {
 	return scores.at(std::make_pair(species, name));
 }
-
 
 }	// namespace technicalmachine

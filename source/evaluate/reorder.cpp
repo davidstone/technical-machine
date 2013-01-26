@@ -41,9 +41,11 @@ std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const 
 	for (auto const & move : input) {
 		output.emplace_back(move->name, move_scores.at(input.species(), move->name));
 	}
-	std::sort(output.begin(), output.end());
 	if (ai) {
-		std::reverse(output.begin(), output.end());
+		std::sort(output.begin(), output.end(), std::greater<RankedMove>());
+	}
+	else {
+		std::sort(output.begin(), output.end(), std::less<RankedMove>());
 	}
 	return output;
 }

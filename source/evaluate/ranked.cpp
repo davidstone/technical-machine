@@ -33,4 +33,8 @@ bool operator<(RankedMove const & lhs, RankedMove const & rhs) {
 	return lhs.score < rhs.score;
 }
 
+bool operator>(RankedMove const & lhs, RankedMove const & rhs) {
+	return lhs.score > rhs.score;
+}
+
 }	// namespace technicalmachine
