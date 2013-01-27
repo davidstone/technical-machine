@@ -61,6 +61,7 @@ namespace {
 constexpr bool verbose = false;
 
 int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn);
+int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn, MoveScores & ai_scores, MoveScores & foe_scores);
 int64_t order_branch(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate);
 int64_t accuracy_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate);
 int64_t random_move_effects_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate);
@@ -139,6 +140,22 @@ int64_t select_type_of_move(Team & ai, Team & foe, Weather const & weather, unsi
 namespace {
 
 int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
+	MoveScores ai_scores(ai.pokemon());
+	MoveScores foe_scores(foe.pokemon());
+	return select_move_branch(ai, foe, weather, depth, evaluate, best_move, first_turn, ai_scores, foe_scores);
+}
+
+int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn, MoveScores & ai_scores, MoveScores & foe_scores) {
+	// This calls itself at one lower depth in order to get an initial estimate
+	// for ai_scores and foe_scores, because the algorithm works faster if you
+	// start with the correct result. The results from one less depth are used
+	// to estimate the correct result.
+	if (depth >= 1) {
+		select_move_branch(ai, foe, weather, depth - 1, evaluate, best_move, false, ai_scores, foe_scores);
+	}
+	auto const ai_index = reorder(LegalSelections(ai.pokemon(), foe.pokemon(), weather), ai_scores, true);
+	auto const foe_index = reorder(LegalSelections(foe.pokemon(), ai.pokemon(), weather), foe_scores, false);
+
 	// Working from the inside loop out:
 
 	// The following begins by setting beta to the largest possible value. This
@@ -182,14 +199,6 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 	// into best_move without any additional logic, such as pre-filling it with
 	// some result.
 	
-	MoveScores ai_scores(ai.pokemon());
-	MoveScores foe_scores(foe.pokemon());
-	auto const ai_index = reorder(LegalSelections(ai.pokemon(), foe.pokemon(), weather), ai_scores, true);
-	auto const foe_index = reorder(LegalSelections(foe.pokemon(), ai.pokemon(), weather), foe_scores, false);
-
-	// Iterate through each move each Pokemon has in combination with each
-	// move the other Pokemon has, and evaluate the score of each
-	// combination.
 	int64_t alpha = -Evaluate::victory - 1;
 	for (RankedMove const & ai_move : ai_index) {
 		ai.pokemon().all_moves().set_index(ai_move.name());
@@ -199,19 +208,20 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 			foe.pokemon().all_moves().set_index(foe_move.name());
 			print_action (foe, first_turn);
 			int64_t const max_score = order_branch(ai, foe, weather, depth, evaluate);
-			update_foe_best_move (foe, foe_scores, beta, max_score, first_turn);
+			update_foe_best_move(foe, foe_scores, beta, max_score, first_turn);
 			// Alpha-Beta pruning
 			if (beta <= alpha)
 				break;
 		}
 		ai_scores.at(ai.pokemon().name(), ai.pokemon().move().name) = beta;
-		update_best_move (alpha, beta, first_turn, ai.pokemon().move().name, best_move);
+		update_best_move(alpha, beta, first_turn, ai.pokemon().move().name, best_move);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == Evaluate::victory)
 			break;
 	}
 	return alpha;
 }
+
 
 void update_best_move (int64_t & alpha, int64_t beta, bool first_turn, Moves new_move, Moves & best_move) {
 	// If their best response isn't as good as their previous best
