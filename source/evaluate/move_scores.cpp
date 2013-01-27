@@ -25,7 +25,7 @@ namespace {
 constexpr auto initial = Evaluate::victory + 1;
 }
 
-void MoveScores::update(Pokemon const & pokemon) {
+MoveScores::MoveScores(Pokemon const & pokemon) {
 	// Set the score of all foe moves to an illegally high value, so that they
 	// get sorted last. If they didn't even need to be checked for their
 	// complete value before, they probably still don't need to be.

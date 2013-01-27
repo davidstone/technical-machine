@@ -29,7 +29,7 @@ class Pokemon;
 
 class MoveScores {
 	public:
-		void update(Pokemon const & pokemon);
+		explicit MoveScores(Pokemon const & pokemon);
 		int64_t const & at(Species species, Moves name) const;
 		int64_t & at(Species species, Moves name);
 	private:

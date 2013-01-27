@@ -26,14 +26,13 @@
 namespace technicalmachine {
 
 class Evaluate;
-class MoveScores;
 class Team;
 class Weather;
 
 Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
-int64_t select_type_of_move_branch (Team & ai, Team & foe, MoveScores & ai_scores, MoveScores & foe_scores, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
+int64_t select_type_of_move(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
 #endif	// EVALUATE__EXPECTIMINIMAX_HPP_

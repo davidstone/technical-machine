@@ -96,7 +96,7 @@ Hash & hash_table_lookup (Hash const & current) {
 
 }	// anonymous namespace
 
-int64_t transposition (Team & ai, Team & foe, MoveScores ai_scores, MoveScores foe_scores, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
+int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
 	int64_t value;
 	if (depth == 0) {
 		value = evaluate(ai, foe, weather);
@@ -113,7 +113,7 @@ int64_t transposition (Team & ai, Team & foe, MoveScores ai_scores, MoveScores f
 		else {
 			Moves phony = Moves::END;
 			// If I can't find it, continue evaluation as normal.
-			value = select_type_of_move_branch (ai, foe, ai_scores, foe_scores, weather, depth, evaluate, phony);
+			value = select_type_of_move(ai, foe, weather, depth, evaluate, phony);
 			current.value = value;
 			
 			// Since I didn't find any stored value at the same hash as the
