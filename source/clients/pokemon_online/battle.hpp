@@ -47,7 +47,7 @@ class Battle : public GenericBattle {
 			return 4;
 		}
 	private:
-		void parse_begin_turn (InMessage & msg);
+		void parse_begin_turn (InMessage & msg) const;
 		void parse_send_out (InMessage & msg, Party party);
 		void parse_use_attack (InMessage & msg, Party party);
 		void parse_straight_damage (InMessage & msg);

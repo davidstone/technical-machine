@@ -723,7 +723,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 void Client::handle_metagame_list (std::vector <Metagame> const & metagames) {
 }
 
-void Client::handle_invalid_team (std::vector <int16_t> const & violations) {
+void Client::handle_invalid_team(std::vector<int16_t> const & violations) const {
 	print_with_time_stamp (std::cerr, "Invalid team.");
 	for (int16_t const violation : violations) {
 		int const pokemon = (-(violation + 1)) % 6;

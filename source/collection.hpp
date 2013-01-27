@@ -82,7 +82,7 @@ class BaseCollection {
 		}
 		friend bool operator== <T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
 	protected:
-		constexpr index_type check_range(index_type const new_index, index_type const max_index) const {
+		static constexpr index_type check_range(index_type const new_index, index_type const max_index) {
 			return (new_index < max_index) ? new_index : throw InvalidCollectionIndex(new_index, max_index, typeid(T).name());
 		}
 		constexpr index_type check_range (index_type const new_index) const {

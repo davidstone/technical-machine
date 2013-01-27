@@ -255,9 +255,9 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 	}
 }
 
-void Battle::parse_begin_turn (InMessage & msg) {
-	uint32_t const turn = msg.read_int ();
-	handle_begin_turn (turn);
+void Battle::parse_begin_turn(InMessage & msg) const {
+	uint32_t const turn = msg.read_int();
+	handle_begin_turn(turn);
 }
 
 void Battle::parse_send_out (InMessage & msg, Party const party) {

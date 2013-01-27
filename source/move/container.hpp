@@ -33,7 +33,10 @@ class MoveContainer {
 		Move const & operator[](size_t index) const;
 		Move const & regular_move(size_t index) const;
 		Move & regular_move(size_t index);
-		bool empty() const;
+		static constexpr bool empty() {
+			// A move container is never empty, it always contains at least Struggle
+			return false;
+		}
 		template<class... Args>
 		void emplace_back(Args&&... args) {
 			// The only moves that are ever added are regular moves. Shared

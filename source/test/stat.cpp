@@ -67,7 +67,7 @@ void special_attack_tests () {
 
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::GENDERLESS);
-	attacker.add_pokemon(Species::Deoxys_Attack, 100, gender);
+	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
 	pokemon.stat(Stat::SPA).ev.set_value(252);
@@ -92,7 +92,7 @@ void defense_tests () {
 
 	constexpr unsigned level = 100;
 	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::Shuckle, 100, gender);
+	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
 	pokemon.stat(Stat::DEF).ev.set_value(252);
 	pokemon.nature().name = Nature::BOLD;

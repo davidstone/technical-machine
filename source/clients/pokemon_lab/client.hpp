@@ -67,7 +67,7 @@ class Client : public network::GenericClient {
 		void send_battle_challenge (std::string const & opponent);
 		void handle_finalize_challenge (std::string const & user, bool accepted, bool challenger);
 		void handle_metagame_list (std::vector <Metagame> const & metagames);
-		void handle_invalid_team (std::vector <int16_t> const & violations);
+		void handle_invalid_team(std::vector<int16_t> const & violations) const;
 		void handle_error_message (uint8_t code, std::string const & details) const;
 		void send_private_message (std::string const & user, std::string const & message);
 		Result get_result (uint32_t battle_id, uint16_t winner);
