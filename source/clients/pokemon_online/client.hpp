@@ -1,5 +1,5 @@
 // Connect to Pokemon Online
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,7 +37,6 @@ class Client : public network::GenericClient {
 		explicit Client (unsigned set_depth);
 		void run ();
 		void handle_message (InMessage::Message code, InMessage & msg);
-		void send_channel_message (std::string channel, std::string const & message);
 		void send_channel_message(std::string const & channel, std::string const & message);
 		void send_channel_message (uint32_t channel_id, std::string const & message);
 		void send_private_message (std::string const & user, std::string const & message);
