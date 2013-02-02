@@ -45,21 +45,21 @@ class OutMessage;
 
 class GenericClient {
 	public:
-		explicit GenericClient (unsigned set_depth);
-		virtual ~GenericClient () { }
-		void reconnect ();
-		void print_with_time_stamp (std::ostream & stream, std::string const & message) const;
+		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
-		virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
-		virtual void send_channel_message(uint32_t channel_id, std::string const & message) = 0;
-		virtual void send_private_message(std::string const & user, std::string const & message) = 0;
 		std::string generate_team_file_name();
 		void taunt_foe(uint32_t battle_id);
 		Evaluate const & evaluation_constants() const;
 		DetailedStats const & detailed() const;
 		void send_message(OutMessage & msg);
-		void read_header(InMessage & msg);
 	protected:
+		explicit GenericClient (unsigned set_depth);
+		virtual ~GenericClient () { }
+		void reconnect ();
+		virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
+		virtual void send_channel_message(uint32_t channel_id, std::string const & message) = 0;
+		virtual void send_private_message(std::string const & user, std::string const & message) = 0;
+		void read_header(InMessage & msg);
 		template<typename SimulatorInMessage>
 		void run_main_service() {
 			SimulatorInMessage msg;

@@ -30,7 +30,6 @@ namespace network {
 
 class OutMessage {
 	public:
-		std::vector <uint8_t> buffer;
 		explicit OutMessage (uint8_t code);
 		virtual ~OutMessage () {}
 		template<typename Integer>
@@ -45,6 +44,7 @@ class OutMessage {
 		virtual void write_team (Team const & team, std::string const & = std::string()) = 0;
 		virtual void finalize() = 0;
 		void send(boost::asio::ip::tcp::socket & socket);
+		std::vector <uint8_t> buffer;
 };
 
 }	// namespace technicalmachine

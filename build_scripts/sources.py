@@ -36,7 +36,8 @@ team_sources = ['entry_hazards.cpp', 'screen.cpp', 'screens.cpp', 'team.cpp', 'w
 network = prepend_dir('network', ['battles.cpp', 'buffer_overrun.cpp', 'client.cpp', 'inmessage.cpp', 'invalid_channel.cpp', 'invalid_packet.cpp', 'no_pending_challenges.cpp', 'outmessage.cpp'])
 pokemon_lab = prepend_dir('pokemon_lab', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'inmessage.cpp', 'outmessage.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
 pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'read_team_file.cpp', 'inmessage.cpp', 'invalid_user.cpp', 'outmessage.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
-clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_team_file_format.cpp', 'party.cpp', 'updated_hp.cpp'] + network + pokemon_lab + pokemon_online)
+pokemon_showdown = prepend_dir('pokemon_showdown', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'inmessage.cpp', 'outmessage.cpp'])
+clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'invalid_team_file_format.cpp', 'party.cpp', 'updated_hp.cpp'] + network + pokemon_lab + pokemon_online + pokemon_showdown)
 
 ev_optimizer_sources = prepend_dir('team_predictor/ev_optimizer', ['combine.cpp', 'defensive.cpp', 'defensive_data_point.cpp', 'ev_optimizer.cpp', 'evs.cpp', 'offensive.cpp', 'single_classification_evs.cpp', 'speed.cpp'])
 

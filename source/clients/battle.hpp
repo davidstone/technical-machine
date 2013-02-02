@@ -59,13 +59,13 @@ class GenericBattle {
 		void handle_fainted (Party fainter, uint8_t slot);
 		void handle_end (network::GenericClient & client, Result const result) const;
 		std::string const & opponent() const;
-		virtual ~GenericBattle() {}
 		GenericBattle (GenericBattle const &) = delete;
 		GenericBattle & operator= (GenericBattle const &) = delete;
 		void handle_hp_change(Party changer, uint8_t slot, unsigned remaining_hp);
 		bool is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const;
 		bool is_valid_precision(Party changer, unsigned precision) const;
 		void handle_direct_damage(Party const damaged, uint8_t slot, unsigned damage);
+		virtual ~GenericBattle() {}
 	protected:
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
 		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
