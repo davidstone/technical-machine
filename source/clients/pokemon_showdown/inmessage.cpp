@@ -30,16 +30,13 @@
 #include "../network/invalid_packet.hpp"
 
 namespace technicalmachine {
-namespace network {
-class GenericClient;
-}	// namespace network
 namespace ps {
 
 std::string InMessage::read_string() {
 	throw std::runtime_error("Unimplemented read string");
 }
 
-void InMessage::read_body(boost::asio::ip::tcp::socket & socket, network::GenericClient * client) {
+void InMessage::read_body(boost::asio::ip::tcp::socket & socket, network::Client * client) {
 }
 
 size_t InMessage::header_size() const {

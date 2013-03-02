@@ -43,7 +43,7 @@ class GenericBattleSettings;
 class InMessage;
 class OutMessage;
 
-class GenericClient {
+class Client {
 	public:
 		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
@@ -53,8 +53,8 @@ class GenericClient {
 		DetailedStats const & detailed() const;
 		void send_message(OutMessage & msg);
 	protected:
-		explicit GenericClient (unsigned set_depth);
-		virtual ~GenericClient () { }
+		explicit Client(unsigned set_depth);
+		virtual ~Client() { }
 		void reconnect ();
 		virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
 		virtual void send_channel_message(uint32_t channel_id, std::string const & message) = 0;

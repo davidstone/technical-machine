@@ -37,7 +37,7 @@ class Battle;
 class Channel;
 class Metagame;
 
-class Client : public network::GenericClient {
+class Client : public network::Client {
 	public:
 		explicit Client (unsigned set_depth);
 		void run ();

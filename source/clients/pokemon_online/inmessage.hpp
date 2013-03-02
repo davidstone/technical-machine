@@ -1,5 +1,5 @@
 // Pokemon Online incoming messages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,7 +24,7 @@
 
 namespace technicalmachine {
 namespace network {
-class GenericClient;
+class Client;
 }	// namespace network
 namespace po {
 
@@ -32,7 +32,7 @@ class InMessage : public network::InMessage::InMessage {
 	public:
 		InMessage ();
 		std::string read_string ();
-		void read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client);
+		void read_body (boost::asio::ip::tcp::socket & socket, network::Client * client);
 
 		enum Message {
 			// WHAT_ARE_YOU and WHO_ARE_YOU are unused.

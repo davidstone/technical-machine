@@ -1,5 +1,5 @@
 // Connect to Pokemon Online
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -47,7 +47,7 @@ namespace technicalmachine {
 namespace po {
 
 Client::Client (unsigned set_depth):
-	network::GenericClient (set_depth),
+	network::Client(set_depth),
 	team(generate_team()) {
 	log_in ();
 }
@@ -904,8 +904,7 @@ void Client::handle_announcement (std::string const & announcement) const {
 }
 
 void Client::handle_private_message (uint32_t user_id, std::string const & message) {
-	std::string const user = get_user_name (user_id);
-	GenericClient::handle_private_message (user, message);
+	network::Client::handle_private_message(get_user_name(user_id), message);
 }
 
 uint32_t Client::get_user_id (std::string const & name) const {

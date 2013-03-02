@@ -51,7 +51,7 @@ namespace technicalmachine {
 namespace pl {
 
 Client::Client (unsigned set_depth):
-	network::GenericClient (set_depth),
+	network::Client(set_depth),
 	timer(make_timer<boost::asio::deadline_timer>())
 	{
 	request_authentication ();

@@ -41,7 +41,7 @@ namespace technicalmachine {
 class DetailedStats;
 class Gender;
 namespace network {
-class GenericClient;
+class Client;
 class OutMessage;
 } // namespace network
 
@@ -52,12 +52,12 @@ class Battle {
 		void write_team (network::OutMessage & msg, std::string const & username = std::string()) const;
 		Team predict_foe_team (DetailedStats const & detailed) const;
 		void handle_begin_turn (uint16_t turn_count) const;
-		void handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
+		void handle_request_action (network::Client & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 		void handle_use_move (Party user, uint8_t slot, Moves move_name);
 		void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
 		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
 		void handle_fainted (Party fainter, uint8_t slot);
-		void handle_end (network::GenericClient & client, Result const result) const;
+		void handle_end (network::Client & client, Result const result) const;
 		std::string const & opponent() const;
 		Battle(Battle const &) = delete;
 		Battle & operator= (Battle const &) = delete;
@@ -69,7 +69,7 @@ class Battle {
 	protected:
 		Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
 		Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
-		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
+		void update_from_previous_turn (network::Client & client, uint32_t battle_id);
 		uint8_t switch_slot (Moves move) const;
 		virtual uint16_t max_damage_precision () const;
 		void initialize_turn ();
@@ -83,7 +83,7 @@ class Battle {
 		void slot_memory_bring_to_front();
 	private:
 		void initialize();
-		Moves determine_action(network::GenericClient & client);
+		Moves determine_action(network::Client & client);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();
 		void normalize_hp(Team & team);

@@ -1,5 +1,5 @@
 // Pokemon Lab incoming messages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,9 +29,6 @@
 #include "client.hpp"
 
 namespace technicalmachine {
-namespace network {
-class GenericClient;
-}	// namespace network
 namespace pl {
 
 InMessage::InMessage ():
@@ -46,7 +43,7 @@ std::string InMessage::read_string () {
 	return data;
 }
 
-void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client) {
+void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::Client * client) {
 	// extract the message type and length components
 	// TODO: store in the underlying type instead of the enum so the compiler
 	// can assume all enums are within their range.

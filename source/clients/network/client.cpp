@@ -57,7 +57,7 @@ void handle_exit_command();
 
 }	// unnamed namespace
 
-GenericClient::GenericClient (unsigned set_depth):
+Client::Client(unsigned set_depth):
 	random_engine (rd ()),
 	highlights (load_highlights ()),
 	responses (load_responses ()),
@@ -121,13 +121,13 @@ std::vector<std::string> load_trusted_users () {
 
 }	// unnamed namespace
 
-bool GenericClient::is_trusted (std::string const & user) const {
+bool Client::is_trusted (std::string const & user) const {
 	// I sort the std::vector of trusted users as soon as I load them to make
 	// this legal and as fast as possible.
 	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
 }
 
-void GenericClient::load_settings (bool const reloading) {
+void Client::load_settings (bool const reloading) {
 	Settings settings;
 	team_file_name = settings.team_file;
 	chattiness = settings.chattiness;
@@ -146,15 +146,15 @@ void GenericClient::load_settings (bool const reloading) {
 	}
 }
 
-void GenericClient::send_message(OutMessage & msg) {
+void Client::send_message(OutMessage & msg) {
 	msg.send(*socket);
 }
 
-void GenericClient::read_header(InMessage & msg) {
+void Client::read_header(InMessage & msg) {
 	msg.read_header(*socket, this);
 }
 
-void GenericClient::connect () {
+void Client::connect () {
 	socket.reset (new boost::asio::ip::tcp::socket (io));
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
@@ -173,7 +173,7 @@ void GenericClient::connect () {
 	}
 }
 
-void GenericClient::reconnect () {
+void Client::reconnect () {
 	// Wait a few seconds before reconnecting.
 	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (5));
 	pause.wait ();
@@ -181,19 +181,19 @@ void GenericClient::reconnect () {
 	connect ();
 }
 
-Evaluate const & GenericClient::evaluation_constants() const {
+Evaluate const & Client::evaluation_constants() const {
 	return m_evaluation_constants;
 }
 
-DetailedStats const & GenericClient::detailed() const {
+DetailedStats const & Client::detailed() const {
 	return detailed_stats;
 }
 
-void GenericClient::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
+void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << time_stamp() + " " + message + "\n";
 }
 
-std::string GenericClient::time_stamp () const {
+std::string Client::time_stamp () const {
 	// There does not appear to be an easy way to format the current time with
 	// a format string. This seems like a major limitation of boost::date_time
 	// and / or boost::posix_time, as well as the std header chrono.
@@ -211,7 +211,7 @@ std::string GenericClient::time_stamp () const {
 	return result;
 }
 
-void GenericClient::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
+void Client::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
 	std::string msg = message;
 	boost::to_lower (msg);
 	if (is_highlighted (msg)) {
@@ -219,39 +219,39 @@ void GenericClient::handle_channel_message (uint32_t channel_id, std::string con
 	}
 }
 
-void GenericClient::handle_server_message (std::string const & sender, std::string const & message) const {
+void Client::handle_server_message (std::string const & sender, std::string const & message) const {
 	print_with_time_stamp (std::cout, "~~" + sender + "~~: " + message);
 }
 
 
-void GenericClient::handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings) {
+void Client::handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings) {
 	bool const accepted = settings.are_acceptable () and is_trusted (opponent);
 	constexpr bool challenger = false;
 	handle_finalize_challenge (opponent, accepted, challenger);
 }
 
-void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
+void Client::handle_challenge_withdrawn (std::string const & opponent) {
 	battles.handle_challenge_withdrawn(opponent);
 }
 
-void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party const party) {
+void Client::handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party const party) {
 	auto & battle = battles.handle_begin(battle_id, opponent);
 	battle.set_party_if_unknown(party);
 //	pause_at_start_of_battle ();
 }
 
-void GenericClient::pause_at_start_of_battle () {
+void Client::pause_at_start_of_battle () {
 	// The bot pauses before it sends actions at the start of the battle to
 	// give spectators a chance to join.
 	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
 	pause.wait ();
 }
 
-std::string const & GenericClient::username() const {
+std::string const & Client::username() const {
 	return current_username;
 }
 
-std::string const & GenericClient::password() const {
+std::string const & Client::password() const {
 	return current_password;
 }
 
@@ -264,17 +264,17 @@ std::string get_extension () {
 
 }	// unnamed namespace
 
-void GenericClient::handle_battle_end (uint32_t const battle_id, Result const result) {
+void Client::handle_battle_end (uint32_t const battle_id, Result const result) {
 	auto const & battle = battles.find(battle_id);
 	battle.handle_end (*this, result);
 	battles.handle_end(battle_id);
 }
 
-Team GenericClient::generate_team() {
+Team Client::generate_team() {
 	return Team(random_engine, team_file_name);
 }
 
-std::string GenericClient::generate_team_file_name () {
+std::string Client::generate_team_file_name () {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
 	// file name, and continues until it generates a name that does not exist.
@@ -292,7 +292,7 @@ std::string GenericClient::generate_team_file_name () {
 	return foe_team_file;
 }
 
-std::string GenericClient::get_random_string (unsigned size) {
+std::string Client::get_random_string (unsigned size) {
 	constexpr unsigned range = 36;
 	static constexpr char legal_characters [] = "abcdefghijklmnopqrstuvwxyz0123456789";
 	static_assert(sizeof(legal_characters) == range + 1, "Invalid amount of legal random characters.");
@@ -303,7 +303,7 @@ std::string GenericClient::get_random_string (unsigned size) {
 	return str;
 }
 
-bool GenericClient::is_highlighted (std::string const & message) const {
+bool Client::is_highlighted (std::string const & message) const {
 	// Easiest way I've thought of to see if anything in highlights is in the
 	// message is to do a search in the message on each of the elements in
 	// highlights. A problem with this approach are that most people want to
@@ -349,13 +349,13 @@ size_t set_target_and_find_message_begin (std::string const & request, size_t st
 
 }	// unnamed namespace
 
-void GenericClient::handle_private_message(std::string const & sender, std::string const & message) {
+void Client::handle_private_message(std::string const & sender, std::string const & message) {
 	print_with_time_stamp(std::cout, "<PM> " + sender + ": " + message);
 	if (is_trusted(sender) and is_valid_command_structure(message))
 		do_request(sender, message);
 }
 
-void GenericClient::do_request (std::string const & user, std::string const & request) {
+void Client::do_request (std::string const & user, std::string const & request) {
 	size_t const delimiter_position = request.find (' ');
 	std::string const command = request.substr (1, delimiter_position - 1);
 	// I may replace this with a version that hashes the command and switches
@@ -380,14 +380,14 @@ void GenericClient::do_request (std::string const & user, std::string const & re
 		handle_reload_settings_command ();
 }
 
-void GenericClient::handle_challenge_command (std::string const & request, size_t start) {
+void Client::handle_challenge_command (std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
 	std::string const opponent = request.substr (start);
 	send_battle_challenge (opponent);
 }
 
-void GenericClient::handle_depth_change_command (std::string const & user, std::string const & request, size_t start) {
+void Client::handle_depth_change_command (std::string const & user, std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
 	try {
@@ -408,14 +408,14 @@ void GenericClient::handle_depth_change_command (std::string const & user, std::
 	}
 }
 
-void GenericClient::handle_join_channel_command (std::string const & request, size_t start) {
+void Client::handle_join_channel_command (std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
 	std::string const channel = request.substr (start);
 	join_channel (channel);
 }
 
-void GenericClient::handle_send_message_command (std::string const & request, size_t start) {
+void Client::handle_send_message_command (std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
 	std::string target_channel;
@@ -426,14 +426,14 @@ void GenericClient::handle_send_message_command (std::string const & request, si
 	}
 }
 
-void GenericClient::handle_part_channel_command (std::string const & request, size_t start) {
+void Client::handle_part_channel_command (std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
 	std::string const channel = request.substr (start);
 	part_channel (channel);
 }
 
-void GenericClient::handle_send_pm_command (std::string const & request, size_t start) {
+void Client::handle_send_pm_command (std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
 	std::string target;
@@ -451,7 +451,7 @@ void handle_exit_command() {
 
 }	// unnamed namespace
 
-void GenericClient::handle_reload_settings_command () {
+void Client::handle_reload_settings_command () {
 	highlights = load_highlights ();
 	responses = load_responses ();
 	trusted_users = load_trusted_users ();
@@ -459,13 +459,13 @@ void GenericClient::handle_reload_settings_command () {
 	m_evaluation_constants.load();
 }
 
-void GenericClient::taunt_foe(uint32_t const battle_id) {
+void Client::taunt_foe(uint32_t const battle_id) {
 	std::uniform_int_distribution<unsigned> distribution { 0, chattiness - 1 };
 	if (distribution(random_engine) == 0)
 		send_channel_message(battle_id, get_response());
 }
 
-std::string GenericClient::get_response () {
+std::string Client::get_response () {
 	if (!responses.empty()) {
 		std::uniform_int_distribution<size_t> distribution { 0, responses.size() - 1 };
 		return responses[distribution(random_engine)];
@@ -475,11 +475,11 @@ std::string GenericClient::get_response () {
 	}
 }
 
-bool GenericClient::challenges_are_queued() const {
+bool Client::challenges_are_queued() const {
 	return battles.challenges_are_queued();
 }
 
-std::string const & GenericClient::first_challenger() const {
+std::string const & Client::first_challenger() const {
 	return battles.first_challenger();
 }
 

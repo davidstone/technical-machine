@@ -24,14 +24,14 @@
 
 namespace technicalmachine {
 namespace network {
-class GenericClient;
+class Client;
 }	// namespace network
 namespace ps {
 
 class InMessage : public network::InMessage::InMessage {
 	public:
 		std::string read_string();
-		void read_body(boost::asio::ip::tcp::socket & socket, network::GenericClient * client) override;
+		void read_body(boost::asio::ip::tcp::socket & socket, network::Client * client) override;
 		enum Message {
 		};
 	private:

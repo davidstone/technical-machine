@@ -99,7 +99,7 @@ void Battle::handle_begin_turn (uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
-void Battle::handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
+void Battle::handle_request_action (network::Client & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
 	// At some point, I will create a fail-safe that actually checks that the
 	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn (client, battle_id);
@@ -123,14 +123,14 @@ void Battle::handle_request_action (network::GenericClient & client, network::Ou
 		initialize_turn ();
 }
 
-void Battle::update_from_previous_turn (network::GenericClient & client, uint32_t battle_id) {
+void Battle::update_from_previous_turn (network::Client & client, uint32_t battle_id) {
 	do_turn ();
 	correct_hp_and_report_errors (*first);
 	correct_hp_and_report_errors (*last);
 	client.taunt_foe(battle_id);
 }
 
-Moves Battle::determine_action(network::GenericClient & client) {
+Moves Battle::determine_action(network::Client & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	Team predicted = predict_foe_team(client.detailed());
@@ -281,7 +281,7 @@ void Battle::handle_fainted (Party const fainter, uint8_t slot) {
 	updated_hp.faint(team.is_me(), team.pokemon());
 }
 
-void Battle::handle_end (network::GenericClient & client, Result const result) const {
+void Battle::handle_end (network::Client & client, Result const result) const {
 	std::string const verb = to_string (result);
 	client.print_with_time_stamp(std::cout, verb + " a battle vs. " + opponent());
 	if (result == Result::lost) {

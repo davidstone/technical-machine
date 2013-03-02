@@ -1,5 +1,5 @@
 // Read and write settings files
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,9 +25,6 @@
 #include <boost/property_tree/ptree.hpp>
 
 namespace technicalmachine {
-namespace network {
-class GenericClient;
-}	// namespace network
 
 class Server {
 private:

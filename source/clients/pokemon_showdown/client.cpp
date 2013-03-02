@@ -31,7 +31,7 @@ namespace technicalmachine {
 namespace ps {
 
 Client::Client(unsigned set_depth):
-	network::GenericClient(set_depth) {
+	network::Client(set_depth) {
 	log_in();
 }
 

@@ -30,9 +30,6 @@
 #include "../network/invalid_packet.hpp"
 
 namespace technicalmachine {
-namespace network {
-class GenericClient;
-}	// namespace network
 namespace po {
 
 InMessage::InMessage (): network::InMessage::InMessage () {
@@ -50,7 +47,7 @@ std::string InMessage::read_string () {
 	return data;
 }
 
-void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::GenericClient * client) {
+void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::Client * client) {
 	// extract the message type and length components
 	uint16_t const bytes = read_short ();
 	// Don't do an invalid call to new if the server says the message has a length of 0
