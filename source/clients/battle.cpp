@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -52,7 +52,7 @@
 namespace technicalmachine {
 class DetailedStats;
 
-GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
+Battle::Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
 	opponent_name (_opponent),
 	random_engine (seed),
 	ai(random_engine, team_file_name),
@@ -62,7 +62,7 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	initialize();
 }
 
-GenericBattle::GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
+Battle::Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
 	opponent_name(_opponent),
 	random_engine (seed),
 	ai (team),
@@ -72,34 +72,34 @@ GenericBattle::GenericBattle (std::random_device::result_type seed, std::string 
 	initialize();
 }
 
-void GenericBattle::initialize() {
+void Battle::initialize() {
 	for (auto const & pokemon : ai.all_pokemon()) {
 		slot_memory.emplace_back(pokemon.name());
 	}
 	initialize_turn ();
 }
 
-bool GenericBattle::is_me (Party const other_party) const {
+bool Battle::is_me (Party const other_party) const {
 	return my_party == other_party;
 }
 
-void GenericBattle::set_party_if_unknown(Party const new_party) {
+void Battle::set_party_if_unknown(Party const new_party) {
 	my_party.set_if_unknown(new_party);
 }
 
-void GenericBattle::write_team (network::OutMessage & msg, std::string const & username) const {
+void Battle::write_team (network::OutMessage & msg, std::string const & username) const {
 	msg.write_team (ai, username);
 }
 
-Team GenericBattle::predict_foe_team (DetailedStats const & detailed) const {
+Team Battle::predict_foe_team (DetailedStats const & detailed) const {
 	return predict_team(detailed, foe, random_engine);
 }
 
-void GenericBattle::handle_begin_turn (uint16_t turn_count) const {
+void Battle::handle_begin_turn (uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
-void GenericBattle::handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
+void Battle::handle_request_action (network::GenericClient & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
 	// At some point, I will create a fail-safe that actually checks that the
 	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn (client, battle_id);
@@ -123,14 +123,14 @@ void GenericBattle::handle_request_action (network::GenericClient & client, netw
 		initialize_turn ();
 }
 
-void GenericBattle::update_from_previous_turn (network::GenericClient & client, uint32_t battle_id) {
+void Battle::update_from_previous_turn (network::GenericClient & client, uint32_t battle_id) {
 	do_turn ();
 	correct_hp_and_report_errors (*first);
 	correct_hp_and_report_errors (*last);
 	client.taunt_foe(battle_id);
 }
 
-Moves GenericBattle::determine_action(network::GenericClient & client) {
+Moves Battle::determine_action(network::GenericClient & client) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	Team predicted = predict_foe_team(client.detailed());
@@ -139,7 +139,7 @@ Moves GenericBattle::determine_action(network::GenericClient & client) {
 	return expectiminimax(ai, predicted, weather, depth, client.evaluation_constants(), random_engine);
 }
 
-void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
+void Battle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
@@ -160,7 +160,7 @@ void GenericBattle::handle_use_move (Party const user, uint8_t slot, Moves move_
 		move_damage = true;
 }
 
-void GenericBattle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
+void Battle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
@@ -195,14 +195,14 @@ void GenericBattle::handle_send_out (Party const switcher_party, uint8_t slot, u
 	}
 }
 
-void GenericBattle::handle_hp_change(Party const changing, uint8_t slot, unsigned remaining_hp) {
+void Battle::handle_hp_change(Party const changing, uint8_t slot, unsigned remaining_hp) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	Team const & team = get_team(changing);
 	updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 }
 
-void GenericBattle::handle_direct_damage(Party const damaged, uint8_t const slot, unsigned const visible_damage) {
+void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, unsigned const visible_damage) {
 	Team const & team = get_team(damaged);
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
@@ -214,7 +214,7 @@ void GenericBattle::handle_direct_damage(Party const damaged, uint8_t const slot
 	move_damage = false;
 }
 
-int GenericBattle::hp_change(Party const changing, unsigned const remaining_hp) const {
+int Battle::hp_change(Party const changing, unsigned const remaining_hp) const {
 	Team const & team = get_team(changing);
 	unsigned const max_visible = max_visible_hp_change(team);
 	if (max_visible < remaining_hp) {
@@ -224,26 +224,26 @@ int GenericBattle::hp_change(Party const changing, unsigned const remaining_hp) 
 	return static_cast<int>(measurable_hp - remaining_hp);
 }
 
-unsigned GenericBattle::max_visible_hp_change(Party const changer) const {
+unsigned Battle::max_visible_hp_change(Party const changer) const {
 	return max_visible_hp_change(get_team(changer));
 }
-unsigned GenericBattle::max_visible_hp_change(Team const & changer) const {
+unsigned Battle::max_visible_hp_change(Team const & changer) const {
 	return max_visible_hp_change(changer.is_me(), changer.replacement());
 }
-unsigned GenericBattle::max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const {
+unsigned Battle::max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const {
 	return my_pokemon ? changer.stat(Stat::HP).max : max_damage_precision();
 }
 
-bool GenericBattle::is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const {
+bool Battle::is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const {
 	return hp_change(changer, remaining_hp) == received_change;
 }
 
-bool GenericBattle::is_valid_precision(Party changer, unsigned precision) const {
+bool Battle::is_valid_precision(Party changer, unsigned precision) const {
 	return max_visible_hp_change(changer) == precision;
 }
 
 
-void GenericBattle::correct_hp_and_report_errors (Team & team) {
+void Battle::correct_hp_and_report_errors (Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * pokemon.current_hp();
 		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
@@ -268,12 +268,12 @@ void GenericBattle::correct_hp_and_report_errors (Team & team) {
 	}
 }
 
-void GenericBattle::handle_set_pp (Party const changer, uint8_t slot, uint8_t pp) {
+void Battle::handle_set_pp (Party const changer, uint8_t slot, uint8_t pp) {
 	// This function may actually be useless. I believe that any PP change is
 	// already handled by other mechanisms.
 }
 
-void GenericBattle::handle_fainted (Party const fainter, uint8_t slot) {
+void Battle::handle_fainted (Party const fainter, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	auto const team = get_team(fainter);
@@ -281,7 +281,7 @@ void GenericBattle::handle_fainted (Party const fainter, uint8_t slot) {
 	updated_hp.faint(team.is_me(), team.pokemon());
 }
 
-void GenericBattle::handle_end (network::GenericClient & client, Result const result) const {
+void Battle::handle_end (network::GenericClient & client, Result const result) const {
 	std::string const verb = to_string (result);
 	client.print_with_time_stamp(std::cout, verb + " a battle vs. " + opponent());
 	if (result == Result::lost) {
@@ -289,7 +289,7 @@ void GenericBattle::handle_end (network::GenericClient & client, Result const re
 	}
 }
 
-uint8_t GenericBattle::switch_slot (Moves move) const {
+uint8_t Battle::switch_slot (Moves move) const {
 	uint8_t const slot = static_cast<uint8_t>(Move::to_replacement(move));
 	Species const name = ai.pokemon(slot).name();
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
@@ -299,11 +299,11 @@ uint8_t GenericBattle::switch_slot (Moves move) const {
 	throw PokemonNotFound(name);
 }
 
-uint16_t GenericBattle::max_damage_precision () const {
+uint16_t Battle::max_damage_precision () const {
 	return 48;
 }
 
-void GenericBattle::initialize_turn () {
+void Battle::initialize_turn () {
 	ai.reset_between_turns();
 	foe.reset_between_turns();
 	updated_hp.reset_between_turns();
@@ -314,7 +314,7 @@ void GenericBattle::initialize_turn () {
 	last = nullptr;
 }
 
-void GenericBattle::do_turn () {
+void Battle::do_turn () {
 	first->move(false);
 	last->move(false);
 	auto const replacement = [&](Team & switcher, Team & other) {
@@ -397,60 +397,60 @@ void register_individual_damage(Team & team, UpdatedHP const & updated_hp) {
 }
 }
 
-void GenericBattle::register_damage() {
+void Battle::register_damage() {
 	register_individual_damage(ai, updated_hp);
 	register_individual_damage(foe, updated_hp);
 }
 
-void GenericBattle::normalize_hp() {
+void Battle::normalize_hp() {
 	normalize_hp(ai);
 	normalize_hp(foe);
 }
 
-void GenericBattle::normalize_hp(Team & team) {
+void Battle::normalize_hp(Team & team) {
 	bool const fainted = updated_hp.is_fainted(team.is_me(), team.pokemon());
 	team.pokemon().normalize_hp(fainted);
 }
 
-std::string const & GenericBattle::opponent() const {
+std::string const & Battle::opponent() const {
 	return opponent_name;
 }
 
-Team const & GenericBattle::get_team(Party party) const {
+Team const & Battle::get_team(Party party) const {
 	return is_me(party) ? ai : foe;
 }
-Team & GenericBattle::get_team(Party party) {
+Team & Battle::get_team(Party party) {
 	return is_me(party) ? ai : foe;
 }
 
-Variable const & GenericBattle::variable(Team const & team) const {
+Variable const & Battle::variable(Team const & team) const {
 	return team.is_me() ? ai_variable : foe_variable;
 }
-Variable & GenericBattle::variable(Team const & team) {
+Variable & Battle::variable(Team const & team) {
 	return team.is_me() ? ai_variable : foe_variable;
 }
 
-void GenericBattle::handle_flinch(Party const party) {
+void Battle::handle_flinch(Party const party) {
 	variable(get_team(party)).set_flinch(true);
 }
 
-void GenericBattle::handle_miss(Party const party) {
+void Battle::handle_miss(Party const party) {
 	get_team(party).pokemon().set_miss(true);
 }
 
-void GenericBattle::handle_critical_hit(Party const party) {
+void Battle::handle_critical_hit(Party const party) {
 	get_team(party).pokemon().set_critical_hit(true);
 }
 
-void GenericBattle::handle_ability_message(Party party, Ability::Abilities ability) {
+void Battle::handle_ability_message(Party party, Ability::Abilities ability) {
 	get_team(party).replacement().ability().name = ability;
 }
 
-void GenericBattle::handle_item_message(Party party, Item::Items item) {
+void Battle::handle_item_message(Party party, Item::Items item) {
 	get_team(party).replacement().item().name = item;
 }
 
-void GenericBattle::slot_memory_bring_to_front() {
+void Battle::slot_memory_bring_to_front() {
 	for (Species & name : slot_memory) {
 		if (ai.replacement().name() == name)
 			std::swap (slot_memory.front(), name);

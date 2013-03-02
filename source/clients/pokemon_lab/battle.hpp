@@ -1,5 +1,5 @@
 // Pokemon Lab battle
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,11 +29,11 @@ namespace pl {
 
 class Client;
 
-class Battle : public GenericBattle {
+class Battle : public ::technicalmachine::Battle {
 	public:
 		template<typename ... Args>
-		Battle (Args && ... args):
-			GenericBattle::GenericBattle(std::forward<Args>(args)...) {
+		Battle(Args &&... args):
+			::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
 		}
 		void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
 		void update_active_print (std::vector <std::string> const & arguments);

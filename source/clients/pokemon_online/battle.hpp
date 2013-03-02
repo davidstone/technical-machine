@@ -1,5 +1,5 @@
 // Pokemon Online battle logic
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,11 +30,11 @@ namespace po {
 class Client;
 class InMessage;
 
-class Battle : public GenericBattle {
+class Battle : public ::technicalmachine::Battle {
 	public:
 		template<typename ... Args>
 		Battle(std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, bool const challenger, Args && ... args):
-			GenericBattle::GenericBattle(seed, foe_name, battle_depth, std::forward<Args>(args)...),
+			::technicalmachine::Battle::Battle(seed, foe_name, battle_depth, std::forward<Args>(args)...),
 			action (OutMessage::BATTLE_MESSAGE)
 			{
 			set_party_if_unknown(Party(challenger ? 0 : 1));

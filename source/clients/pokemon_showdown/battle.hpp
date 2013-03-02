@@ -27,11 +27,11 @@
 namespace technicalmachine {
 namespace ps {
 
-class Battle : public GenericBattle {
+class Battle : public ::technicalmachine::Battle {
 	public:
 		template<typename ... Args>
-		Battle(std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, bool const challenger, Args && ... args):
-			GenericBattle::GenericBattle(std::forward<Args>(args)...) {
+		Battle(Args &&... args):
+			::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
 		}
 	private:
 		uint16_t max_damage_precision() const override;

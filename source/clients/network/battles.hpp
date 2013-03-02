@@ -1,5 +1,5 @@
 // Handles challenges / current battles
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,7 +25,7 @@
 #include <string>
 
 namespace technicalmachine {
-class GenericBattle;
+class Battle;
 namespace network {
 
 class Battles {
@@ -38,14 +38,14 @@ class Battles {
 		}
 		void handle_challenge_withdrawn();
 		void handle_challenge_withdrawn(std::string const & opponent);
-		GenericBattle & handle_begin(uint32_t battle_id, std::string const & opponent);
+		Battle & handle_begin(uint32_t battle_id, std::string const & opponent);
 		void handle_end(uint32_t battle_id);
-		GenericBattle const & find(uint32_t battle_id) const;
-		GenericBattle & find(uint32_t battle_id);
+		Battle const & find(uint32_t battle_id) const;
+		Battle & find(uint32_t battle_id);
 		bool challenges_are_queued() const;
 		std::string const & first_challenger() const;
 	private:
-		typedef std::unique_ptr<GenericBattle> Pointer;
+		typedef std::unique_ptr<Battle> Pointer;
 		// Battles that have not yet begun
 		typedef std::map<std::string, Pointer> Challenges;
 		// Battles currently underway

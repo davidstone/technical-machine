@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -45,7 +45,7 @@ class GenericClient;
 class OutMessage;
 } // namespace network
 
-class GenericBattle {
+class Battle {
 	public:
 		bool is_me (Party other_party) const;
 		void set_party_if_unknown(Party new_party);
@@ -59,16 +59,16 @@ class GenericBattle {
 		void handle_fainted (Party fainter, uint8_t slot);
 		void handle_end (network::GenericClient & client, Result const result) const;
 		std::string const & opponent() const;
-		GenericBattle (GenericBattle const &) = delete;
-		GenericBattle & operator= (GenericBattle const &) = delete;
+		Battle(Battle const &) = delete;
+		Battle & operator= (Battle const &) = delete;
 		void handle_hp_change(Party changer, uint8_t slot, unsigned remaining_hp);
 		bool is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const;
 		bool is_valid_precision(Party changer, unsigned precision) const;
 		void handle_direct_damage(Party const damaged, uint8_t slot, unsigned damage);
-		virtual ~GenericBattle() {}
+		virtual ~Battle() {}
 	protected:
-		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
-		GenericBattle (std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
+		Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
+		Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
 		void update_from_previous_turn (network::GenericClient & client, uint32_t battle_id);
 		uint8_t switch_slot (Moves move) const;
 		virtual uint16_t max_damage_precision () const;

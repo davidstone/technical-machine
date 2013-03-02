@@ -1,5 +1,5 @@
 // Connect to an arbitrary Pokemon sim
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -235,7 +235,7 @@ void GenericClient::handle_challenge_withdrawn (std::string const & opponent) {
 }
 
 void GenericClient::handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party const party) {
-	GenericBattle & battle = battles.handle_begin(battle_id, opponent);
+	auto & battle = battles.handle_begin(battle_id, opponent);
 	battle.set_party_if_unknown(party);
 //	pause_at_start_of_battle ();
 }
@@ -265,7 +265,7 @@ std::string get_extension () {
 }	// unnamed namespace
 
 void GenericClient::handle_battle_end (uint32_t const battle_id, Result const result) {
-	GenericBattle const & battle = battles.find(battle_id);
+	auto const & battle = battles.find(battle_id);
 	battle.handle_end (*this, result);
 	battles.handle_end(battle_id);
 }

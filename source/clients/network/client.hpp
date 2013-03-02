@@ -1,5 +1,5 @@
 // Connect to an arbitrary Pokemon sim
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -81,11 +81,11 @@ class GenericClient {
 			return battles.add_pending_challenge<Battle>(rd(), opponent, depth, std::forward<Args>(args)..., team_file_name);
 		}
 		template<typename ... Args>
-		GenericBattle const & find_battle(Args && ... args) const {
+		Battle const & find_battle(Args && ... args) const {
 			return battles.find(std::forward<Args>(args)...);
 		}
 		template<typename ... Args>
-		GenericBattle & find_battle(Args && ... args) {
+		Battle & find_battle(Args && ... args) {
 			return battles.find(std::forward<Args>(args)...);
 		}
 		template<typename ... Args>

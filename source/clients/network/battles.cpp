@@ -1,5 +1,5 @@
 // Handles challenges / current battles
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,11 +37,11 @@ void Battles::handle_challenge_withdrawn (std::string const & opponent) {
 	challenges.erase(opponent);
 }
 
-GenericBattle & Battles::handle_begin(uint32_t const battle_id, std::string const & opponent) {
+Battle & Battles::handle_begin(uint32_t const battle_id, std::string const & opponent) {
 	auto const it = challenges.find(opponent);
 	if (it == challenges.end())
 		throw NoPendingChallenges(opponent);
-	GenericBattle & battle = *it->second;
+	Battle & battle = *it->second;
 	active.insert(std::make_pair(battle_id, std::move(it->second)));
 	challenges.erase(opponent);
 	return battle;
@@ -51,14 +51,14 @@ void Battles::handle_end(uint32_t const battle_id) {
 	active.erase(battle_id);
 }
 
-GenericBattle const & Battles::find(uint32_t const battle_id) const {
+Battle const & Battles::find(uint32_t const battle_id) const {
 	auto const it = active.find(battle_id);
 	if (it == active.end())
 		throw NoPendingChallenges(battle_id);
 	return *it->second;
 }
 
-GenericBattle & Battles::find(uint32_t const battle_id) {
+Battle & Battles::find(uint32_t const battle_id) {
 	auto const it = active.find(battle_id);
 	if (it == active.end())
 		throw NoPendingChallenges(battle_id);
