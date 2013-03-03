@@ -1,4 +1,4 @@
-// Connect to an arbitrary Pokemon sim
+// Connect to an arbitrary networked Pokemon sim
 // Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.

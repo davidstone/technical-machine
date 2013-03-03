@@ -1,4 +1,4 @@
-// Connect to an arbitrary Pokemon sim
+// Connect to an arbitrary networked Pokemon sim
 // Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK__CONNECT_HPP_
-#define NETWORK__CONNECT_HPP_
+#ifndef CLIENTS__NETWORK__CLIENT_HPP_
+#define CLIENTS__NETWORK__CLIENT_HPP_
 
 #include <cstdint>
 #include <random>
@@ -30,6 +30,7 @@
 #include "battles.hpp"
 
 #include "../battle.hpp"
+#include "../client.hpp"
 
 #include "../../evaluate/evaluate.hpp"
 
@@ -43,7 +44,7 @@ class GenericBattleSettings;
 class InMessage;
 class OutMessage;
 
-class Client {
+class Client : public ::technicalmachine::Client {
 	public:
 		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
@@ -52,7 +53,6 @@ class Client {
 		void send_message(OutMessage & msg);
 	protected:
 		explicit Client(unsigned set_depth);
-		virtual ~Client() { }
 		void reconnect ();
 		virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
 		virtual void send_channel_message(uint32_t channel_id, std::string const & message) = 0;
@@ -141,4 +141,4 @@ class Client {
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK__CONNECT_HPP_
+#endif	// CLIENTS__NETWORK__CLIENT_HPP_
