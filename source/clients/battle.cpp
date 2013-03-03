@@ -55,7 +55,7 @@
 namespace technicalmachine {
 class DetailedStats;
 
-Battle::Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name):
+Battle::Battle(std::string const & _opponent, std::random_device::result_type seed, unsigned battle_depth, std::string const & team_file_name):
 	opponent_name (_opponent),
 	random_engine (seed),
 	ai(random_engine, team_file_name),
@@ -65,7 +65,7 @@ Battle::Battle(std::random_device::result_type seed, std::string const & _oppone
 	initialize();
 }
 
-Battle::Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team):
+Battle::Battle(std::string const & _opponent, std::random_device::result_type seed, unsigned battle_depth, Team const & team):
 	opponent_name(_opponent),
 	random_engine (seed),
 	ai (team),

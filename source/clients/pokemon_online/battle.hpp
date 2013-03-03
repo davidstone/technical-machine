@@ -33,8 +33,8 @@ class InMessage;
 class Battle : public ::technicalmachine::Battle {
 	public:
 		template<typename ... Args>
-		Battle(std::random_device::result_type seed, std::string const & foe_name, unsigned const battle_depth, bool const challenger, Args && ... args):
-			::technicalmachine::Battle::Battle(seed, foe_name, battle_depth, std::forward<Args>(args)...),
+		Battle(std::string const & foe_name, std::random_device::result_type seed, unsigned const battle_depth, bool const challenger, Args && ... args):
+			::technicalmachine::Battle::Battle(foe_name, seed, battle_depth, std::forward<Args>(args)...),
 			action (OutMessage::BATTLE_MESSAGE)
 			{
 			set_party_if_unknown(Party(challenger ? 0 : 1));

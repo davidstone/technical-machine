@@ -72,11 +72,11 @@ class Client {
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
-			return battles.add_pending_challenge<Battle>(rd(), opponent, depth, std::forward<Args>(args)..., team);
+			return battles.add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team);
 		}
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
-			return battles.add_pending_challenge<Battle>(rd(), opponent, depth, std::forward<Args>(args)..., team_file_name);
+			return battles.add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team_file_name);
 		}
 		template<typename ... Args>
 		Battle const & find_battle(Args && ... args) const {
