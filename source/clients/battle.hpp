@@ -39,6 +39,7 @@
 
 namespace technicalmachine {
 class DetailedStats;
+class Evaluate;
 class Gender;
 namespace network {
 class Client;
@@ -52,7 +53,7 @@ class Battle {
 		void write_team (network::OutMessage & msg, std::string const & username = std::string()) const;
 		Team predict_foe_team (DetailedStats const & detailed) const;
 		void handle_begin_turn (uint16_t turn_count) const;
-		void handle_request_action (network::Client & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
+		void handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 		void handle_use_move (Party user, uint8_t slot, Moves move_name);
 		void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
 		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
@@ -82,7 +83,7 @@ class Battle {
 		void slot_memory_bring_to_front();
 	private:
 		void initialize();
-		Moves determine_action(network::Client & client);
+		Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate);
 		void correct_hp_and_report_errors (Team & team);
 		void normalize_hp ();
 		void normalize_hp(Team & team);

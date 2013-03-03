@@ -308,7 +308,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			}
 			auto & battle = find_battle(battle_id);
 			OutMessage action (OutMessage::BATTLE_ACTION);
-			battle.handle_request_action (*this, action, battle_id, can_switch, moves, forced);
+			battle.handle_request_action(detailed(), evaluation_constants(), action, battle_id, can_switch, moves, forced);
 			send_message(action);
 			break;
 		}

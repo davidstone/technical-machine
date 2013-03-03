@@ -523,7 +523,7 @@ void Battle::parse_offer_choice (Client & client, InMessage & msg, uint32_t cons
 	bool const can_attack = msg.read_byte();
 	std::vector<uint8_t> attacks_allowed(moves_per_pokemon());
 	std::generate(std::begin(attacks_allowed), std::end(attacks_allowed), [&]() { return msg.read_byte(); });
-	handle_request_action (client, action, battle_id, can_switch, attacks_allowed);
+	handle_request_action(client.detailed(), client.evaluation_constants(), action, battle_id, can_switch, attacks_allowed);
 }
 
 void Battle::handle_make_your_choice (Client & client) {

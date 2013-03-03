@@ -99,12 +99,12 @@ void Battle::handle_begin_turn (uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
-void Battle::handle_request_action (network::Client & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
+void Battle::handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
 	// At some point, I will create a fail-safe that actually checks that the
 	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn();
 	if (!forced) {
-		Moves const move = determine_action(client);
+		Moves const move = determine_action(detailed, evaluate);
 		if (Move::is_switch (move))
 			msg.write_switch (battle_id, switch_slot (move));
 		else {
@@ -129,13 +129,13 @@ void Battle::update_from_previous_turn() {
 	correct_hp_and_report_errors (*last);
 }
 
-Moves Battle::determine_action(network::Client & client) {
+Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & evaluate) {
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	Team predicted = predict_foe_team(client.detailed());
+	Team predicted = predict_foe_team(detailed);
 	std::cout << predicted.to_string ();
 
-	return expectiminimax(ai, predicted, weather, depth, client.evaluation_constants(), random_engine);
+	return expectiminimax(ai, predicted, weather, depth, evaluate, random_engine);
 }
 
 void Battle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
