@@ -1,5 +1,5 @@
 // Exception thrown when attempting to work with a challenge that does not exist
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,6 @@
 #include "no_pending_challenges.hpp"
 
 namespace technicalmachine {
-namespace network {
 
 NoPendingChallenges::NoPendingChallenges():
 	std::runtime_error("No pending challenges.")
@@ -34,5 +33,4 @@ NoPendingChallenges::NoPendingChallenges(uint32_t const id):
 	{
 }
 
-}	// namespace network
 }	// namespace technicalmachine

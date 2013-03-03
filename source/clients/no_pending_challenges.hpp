@@ -1,5 +1,5 @@
 // Exception thrown when attempting to work with a challenge that does not exist
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,23 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK__NO_PENDING_CHALLENGES_HPP_
-#define NETWORK__NO_PENDING_CHALLENGES_HPP_
+#ifndef CLIENTS__NO_PENDING_CHALLENGES_HPP_
+#define CLIENTS__NO_PENDING_CHALLENGES_HPP_
 
 #include <cstdint>
 #include <stdexcept>
 #include <string>
 
 namespace technicalmachine {
-namespace network {
 
 class NoPendingChallenges : public std::runtime_error {
 	public:
 		NoPendingChallenges();
-		explicit NoPendingChallenges (std::string const & name);
-		explicit NoPendingChallenges (uint32_t const id);
+		explicit NoPendingChallenges(std::string const & name);
+		explicit NoPendingChallenges(uint32_t const id);
 };
 
-}	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK__NO_PENDING_CHALLENGES_HPP_
+#endif	// CLIENTS__NO_PENDING_CHALLENGES_HPP_

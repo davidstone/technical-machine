@@ -23,9 +23,8 @@
 
 #include <cassert>
 
-#include "no_pending_challenges.hpp"
-
 #include "../battle.hpp"
+#include "../no_pending_challenges.hpp"
 
 namespace technicalmachine {
 namespace network {
