@@ -136,7 +136,6 @@ class Client {
 		std::string team_file_name;
 		std::string time_format;
 		std::vector <std::string> highlights;
-		std::vector <std::string> responses;
 		std::vector <std::string> trusted_users;
 		unsigned chattiness;
 		unsigned depth;
