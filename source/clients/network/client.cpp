@@ -51,7 +51,6 @@ namespace network {
 namespace {
 
 std::vector<std::string> load_highlights ();
-std::vector<std::string> load_responses ();
 std::vector<std::string> load_trusted_users ();
 void handle_exit_command();
 
@@ -60,7 +59,6 @@ void handle_exit_command();
 Client::Client(unsigned set_depth):
 	random_engine (rd ()),
 	highlights (load_highlights ()),
-	responses (load_responses ()),
 	trusted_users (load_trusted_users ()),
 	depth (set_depth)
 	{
@@ -109,10 +107,6 @@ std::vector<std::string> create_sorted_vector (std::string const & file_name) {
 
 std::vector<std::string> load_highlights () {
 	return create_unsorted_vector ("settings/highlights.txt");
-}
-
-std::vector<std::string> load_responses () {
-	return create_unsorted_vector ("settings/responses.txt");
 }
 
 std::vector<std::string> load_trusted_users () {
@@ -454,20 +448,9 @@ void handle_exit_command() {
 
 void Client::handle_reload_settings_command () {
 	highlights = load_highlights ();
-	responses = load_responses ();
 	trusted_users = load_trusted_users ();
 	load_settings (true);
 	m_evaluation_constants.load();
-}
-
-std::string Client::get_response () {
-	if (!responses.empty()) {
-		std::uniform_int_distribution<size_t> distribution { 0, responses.size() - 1 };
-		return responses[distribution(random_engine)];
-	}
-	else {
-		return "";
-	}
 }
 
 bool Client::challenges_are_queued() const {

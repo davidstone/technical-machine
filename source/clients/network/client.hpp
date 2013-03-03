@@ -121,7 +121,6 @@ class Client {
 		void handle_send_pm_command (std::string const & request, size_t start);
 		void handle_reload_settings_command ();
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
-		std::string get_response ();
 
 		boost::asio::io_service io;
 		Battles battles;
