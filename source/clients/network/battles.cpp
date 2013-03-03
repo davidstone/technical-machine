@@ -21,6 +21,8 @@
 
 #include "battles.hpp"
 
+#include <cassert>
+
 #include "no_pending_challenges.hpp"
 
 #include "../battle.hpp"
@@ -29,8 +31,10 @@ namespace technicalmachine {
 namespace network {
 
 void Battles::handle_challenge_withdrawn() {
-	if (challenges_are_queued())
+	if (challenges_are_queued()) {
+		assert(challenges.size() == 1);
 		challenges.erase(challenges.begin());
+	}
 }
 
 void Battles::handle_challenge_withdrawn (std::string const & opponent) {
