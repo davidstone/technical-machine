@@ -31,9 +31,9 @@ namespace network {
 class Battles {
 	public:
 		template<typename Battle, typename ... Args>
-		Battle const & add_pending_challenge (Args && ... args) {
-			auto * battle = new Battle(std::forward<Args>(args)...);
-			challenges.insert(std::make_pair(battle->opponent(), Pointer(battle)));
+		Battle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
+			auto * battle = new Battle(opponent, std::forward<Args>(args)...);
+			challenges.insert(std::make_pair(opponent, Pointer(battle)));
 			return *battle;
 		}
 		void handle_challenge_withdrawn();
