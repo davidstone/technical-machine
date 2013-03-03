@@ -460,12 +460,6 @@ void Client::handle_reload_settings_command () {
 	m_evaluation_constants.load();
 }
 
-void Client::taunt_foe(uint32_t const battle_id) {
-	std::uniform_int_distribution<unsigned> distribution { 0, chattiness - 1 };
-	if (distribution(random_engine) == 0)
-		send_channel_message(battle_id, get_response());
-}
-
 std::string Client::get_response () {
 	if (!responses.empty()) {
 		std::uniform_int_distribution<size_t> distribution { 0, responses.size() - 1 };

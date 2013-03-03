@@ -48,7 +48,6 @@ class Client {
 		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
 		std::string generate_team_file_name();
-		void taunt_foe(uint32_t battle_id);
 		Evaluate const & evaluation_constants() const;
 		DetailedStats const & detailed() const;
 		void send_message(OutMessage & msg);
