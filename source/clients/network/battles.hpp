@@ -30,11 +30,12 @@ namespace network {
 
 class Battles {
 	public:
-		template<typename Battle, typename ... Args>
-		Battle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
-			auto * battle = new Battle(opponent, std::forward<Args>(args)...);
-			challenges.insert(std::make_pair(opponent, Pointer(battle)));
-			return *battle;
+		template<typename SpecificBattle, typename ... Args>
+		SpecificBattle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
+			Pointer battle_ptr(new SpecificBattle(opponent, std::forward<Args>(args)...));
+			auto const & battle = static_cast<SpecificBattle const &>(*battle_ptr);
+			challenges.insert(std::make_pair(opponent, std::move(battle_ptr)));
+			return battle;
 		}
 		void handle_challenge_withdrawn();
 		void handle_challenge_withdrawn(std::string const & opponent);
