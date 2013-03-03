@@ -47,7 +47,6 @@ class Client {
 	public:
 		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
-		std::string generate_team_file_name();
 		Evaluate const & evaluation_constants() const;
 		DetailedStats const & detailed() const;
 		void send_message(OutMessage & msg);
@@ -111,7 +110,6 @@ class Client {
 		virtual void part_channel (std::string const & channel) = 0;
 		std::string time_stamp () const;
 		bool is_highlighted (std::string const & message) const;
-		std::string get_random_string (unsigned size);
 		void do_request (std::string const & user, std::string const & request);
 		void handle_challenge_command (std::string const & request, size_t start);
 		void handle_depth_change_command (std::string const & user, std::string const & request, size_t start);

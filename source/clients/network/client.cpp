@@ -40,6 +40,7 @@
 #include "outmessage.hpp"
 
 #include "../battle.hpp"
+#include "../random_string.hpp"
 
 #include "../../exit_program.hpp"
 #include "../../settings_file.hpp"
@@ -133,7 +134,7 @@ void Client::load_settings (bool const reloading) {
 		port = server.port;
 		current_username = server.username;
 		if (server.password.empty()) {
-			server.password = get_random_string (31);
+			server.password = random_string(random_engine, 31);
 			settings.write();
 		}
 		current_password = server.password;
@@ -249,15 +250,6 @@ std::string const & Client::password() const {
 	return current_password;
 }
 
-namespace {
-
-std::string get_extension () {
-	// TODO: add support for other formats
-	return ".sbt";
-}
-
-}	// unnamed namespace
-
 void Client::handle_battle_end (uint32_t const battle_id, Result const result) {
 	auto const & battle = battles.find(battle_id);
 	battle.handle_end (*this, result);
@@ -266,35 +258,6 @@ void Client::handle_battle_end (uint32_t const battle_id, Result const result) {
 
 Team Client::generate_team() {
 	return Team(random_engine, team_file_name);
-}
-
-std::string Client::generate_team_file_name () {
-	// Randomly generates a file name in 8.3 format. It then checks to see if
-	// that file name already exists. If it does, it randomly generates a new
-	// file name, and continues until it generates a name that does not exist.
-	// This limits the potential for a race condition down to a 1 / 36^8 chance
-	// (about 1 / 2 ^ 41), assuming that another process / thread is also
-	// trying to save an 8 character file name with an identical extension at
-	// the same time. The result of this is that a team file would not be saved
-	// when it should have been, which is not a major issue.
-	std::string foe_team_file;
-	do {
-		foe_team_file = "teams/foe/";
-		foe_team_file += get_random_string (8);
-		foe_team_file += get_extension ();
-	} while (boost::filesystem::exists (foe_team_file));
-	return foe_team_file;
-}
-
-std::string Client::get_random_string (unsigned size) {
-	constexpr unsigned range = 36;
-	static constexpr char legal_characters [] = "abcdefghijklmnopqrstuvwxyz0123456789";
-	static_assert(sizeof(legal_characters) == range + 1, "Invalid amount of legal random characters.");
-	std::uniform_int_distribution<unsigned> distribution { 0, range - 1 };
-	std::string str;
-	str.resize(size);
-	std::generate(std::begin(str), std::end(str), [&]() { return legal_characters[distribution(random_engine)]; });
-	return str;
 }
 
 bool Client::is_highlighted (std::string const & message) const {
