@@ -69,7 +69,6 @@ class Battle {
 	protected:
 		Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, std::string const & team_file_name);
 		Battle(std::random_device::result_type seed, std::string const & _opponent, unsigned battle_depth, Team const & team);
-		void update_from_previous_turn (network::Client & client, uint32_t battle_id);
 		uint8_t switch_slot (Moves move) const;
 		virtual uint16_t max_damage_precision () const;
 		void initialize_turn ();
@@ -90,6 +89,7 @@ class Battle {
 		unsigned max_visible_hp_change(Team const & changer) const;
 		unsigned max_visible_hp_change(bool my_pokemon, Pokemon const & changer) const;
 		void do_turn ();
+		void update_from_previous_turn();
 		Team const & get_team(Party party) const;
 		Team & get_team(Party party);
 		Variable const & variable(Team const & team) const;

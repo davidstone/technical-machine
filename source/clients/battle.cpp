@@ -102,7 +102,7 @@ void Battle::handle_begin_turn (uint16_t turn_count) const {
 void Battle::handle_request_action (network::Client & client, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
 	// At some point, I will create a fail-safe that actually checks that the
 	// move TM tries to use is considered a valid move by the server.
-	update_from_previous_turn (client, battle_id);
+	update_from_previous_turn();
 	if (!forced) {
 		Moves const move = determine_action(client);
 		if (Move::is_switch (move))
@@ -123,11 +123,10 @@ void Battle::handle_request_action (network::Client & client, network::OutMessag
 		initialize_turn ();
 }
 
-void Battle::update_from_previous_turn (network::Client & client, uint32_t battle_id) {
+void Battle::update_from_previous_turn() {
 	do_turn ();
 	correct_hp_and_report_errors (*first);
 	correct_hp_and_report_errors (*last);
-	client.taunt_foe(battle_id);
 }
 
 Moves Battle::determine_action(network::Client & client) {
