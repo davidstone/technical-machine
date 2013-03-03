@@ -390,20 +390,21 @@ void Client::handle_challenge_command (std::string const & request, size_t start
 void Client::handle_depth_change_command (std::string const & user, std::string const & request, size_t start) {
 	if (request.length () <= start)
 		return;
+	constexpr unsigned max_depth = 4;
 	try {
 		depth = boost::lexical_cast<unsigned> (request.substr (start));
-		if (depth > 3) {
+		if (depth > max_depth) {
 			// Hopefully this will happen rarely enough that declaring
 			// big_message static would be a pessimization. There is no need to
 			// store that extra memory for a non-performance critical section
 			// of code.
-			std::string const big_message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 0 and 3 inclusive or proceed at your own risk.";
+			std::string const big_message = "Warning: very large depth requested. Battles will probably time out. Enter a value between 0 and " + std::to_string(max_depth) + " inclusive or proceed at your own risk.";
 			std::cerr << big_message + "\n";
 			send_private_message (user, big_message);
 		}
 	}
 	catch (boost::bad_lexical_cast const &) {
-		std::string const invalid_depth = "Invalid depth requested. Please enter a number between 0 and 3 inclusive.";
+		std::string const invalid_depth = "Invalid depth requested. Please enter a number between 0 and " + std::to_string(max_depth) + " inclusive.";
 		send_private_message (user, invalid_depth);
 	}
 }
