@@ -38,6 +38,7 @@
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
+class Client;
 class DetailedStats;
 class Evaluate;
 class Gender;
@@ -58,7 +59,7 @@ class Battle {
 		void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
 		void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
 		void handle_fainted (Party fainter, uint8_t slot);
-		void handle_end (network::Client const & client, Result const result) const;
+		void handle_end (Client const & client, Result const result) const;
 		std::string const & opponent() const;
 		Battle(Battle const &) = delete;
 		Battle & operator= (Battle const &) = delete;
