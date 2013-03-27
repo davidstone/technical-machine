@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK__BATTLES_HPP_
-#define NETWORK__BATTLES_HPP_
+#ifndef CLIENTS__BATTLES_HPP_
+#define CLIENTS__BATTLES_HPP_
 
 #include <cstdint>
 #include <map>
@@ -26,7 +26,6 @@
 
 namespace technicalmachine {
 class Battle;
-namespace network {
 
 class Battles {
 	public:
@@ -55,6 +54,5 @@ class Battles {
 		Active active;
 };
 
-}	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK__BATTLES_HPP_
+#endif	// CLIENTS__BATTLES_HPP_

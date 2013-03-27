@@ -27,7 +27,6 @@
 #include "no_pending_challenges.hpp"
 
 namespace technicalmachine {
-namespace network {
 
 void Battles::handle_challenge_withdrawn() {
 	if (challenges_are_queued()) {
@@ -78,5 +77,4 @@ std::string const & Battles::first_challenger() const {
 	return challenges.begin()->first;
 }
 
-}	// namespace network
 }	// namespace technicalmachine
