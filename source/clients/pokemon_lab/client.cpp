@@ -50,8 +50,8 @@
 namespace technicalmachine {
 namespace pl {
 
-Client::Client (unsigned set_depth):
-	network::Client(set_depth),
+Client::Client (unsigned depth):
+	network::Client(depth),
 	timer(make_timer<boost::asio::deadline_timer>())
 	{
 	request_authentication ();

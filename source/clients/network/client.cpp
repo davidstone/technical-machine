@@ -56,10 +56,10 @@ void handle_exit_command();
 
 }	// unnamed namespace
 
-Client::Client(unsigned set_depth):
+Client::Client(unsigned const depth):
+	Base(depth),
 	highlights (load_highlights ()),
-	trusted_users (load_trusted_users ()),
-	depth (set_depth)
+	trusted_users (load_trusted_users ())
 	{
 	load_settings (false);
 	while (username().empty()) {
@@ -121,7 +121,7 @@ bool Client::is_trusted (std::string const & user) const {
 }
 
 void Client::load_settings (bool const reloading) {
-	auto settings = ::technicalmachine::Client::load_settings();
+	auto settings = Base::load_settings();
 	chattiness = settings.chattiness;
 	
 	if (!reloading) {
@@ -288,7 +288,7 @@ void Client::handle_depth_change_command (std::string const & user, std::string 
 		return;
 	constexpr unsigned max_depth = 4;
 	try {
-		depth = boost::lexical_cast<unsigned> (request.substr (start));
+		auto const depth = boost::lexical_cast<unsigned>(request.substr(start));
 		if (depth > max_depth) {
 			// Hopefully this will happen rarely enough that declaring
 			// big_message static would be a pessimization. There is no need to
@@ -298,6 +298,7 @@ void Client::handle_depth_change_command (std::string const & user, std::string 
 			std::cerr << big_message + "\n";
 			send_private_message (user, big_message);
 		}
+		set_depth(depth);
 	}
 	catch (boost::bad_lexical_cast const &) {
 		std::string const invalid_depth = "Invalid depth requested. Please enter a number between 0 and " + std::to_string(max_depth) + " inclusive.";

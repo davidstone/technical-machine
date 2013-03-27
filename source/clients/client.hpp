@@ -38,7 +38,8 @@ class Client {
 		Evaluate const & evaluation_constants() const;
 		virtual ~Client() { }
 	protected:
-		Client();
+		explicit Client(unsigned depth);
+		void set_depth(unsigned new_depth);
 		Settings load_settings();
 		Team generate_team();
 		void reload_settings();
@@ -58,11 +59,11 @@ class Client {
 		}
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
-			return battles.add_pending_challenge<Battle>(opponent, rd(), std::forward<Args>(args)..., team);
+			return battles.add_pending_challenge<Battle>(opponent, rd(), m_depth, std::forward<Args>(args)..., team);
 		}
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
-			return battles.add_pending_challenge<Battle>(opponent, rd(), std::forward<Args>(args)..., team_file_name);
+			return battles.add_pending_challenge<Battle>(opponent, rd(), m_depth, std::forward<Args>(args)..., team_file_name);
 		}
 		bool challenges_are_queued() const;
 		std::string const & first_challenger() const;
@@ -76,6 +77,7 @@ class Client {
 		Evaluate m_evaluation_constants;
 		std::string team_file_name;
 		std::string time_format;
+		unsigned m_depth;
 };
 
 }	// namespace technicalmachine

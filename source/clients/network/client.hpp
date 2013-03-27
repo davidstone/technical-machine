@@ -38,11 +38,12 @@ class InMessage;
 class OutMessage;
 
 class Client : public ::technicalmachine::Client {
+	typedef ::technicalmachine::Client Base;
 	public:
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
 		void send_message(OutMessage & msg);
 	protected:
-		explicit Client(unsigned set_depth);
+		explicit Client(unsigned depth);
 		void reconnect ();
 		virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
 		virtual void send_channel_message(uint32_t channel_id, std::string const & message) = 0;
@@ -60,12 +61,8 @@ class Client : public ::technicalmachine::Client {
 		void handle_server_message (std::string const & sender, std::string const & message) const;
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		template<typename Battle, typename ... Args>
-		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
-			return ::technicalmachine::Client::add_pending_challenge<Battle>(team, opponent, depth, std::forward<Args>(args)...);
-		}
-		template<typename Battle, typename ... Args>
-		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
-			return ::technicalmachine::Client::add_pending_challenge<Battle>(opponent, depth, std::forward<Args>(args)...);
+		Battle const & add_pending_challenge(Args && ... args) {
+			return Base::add_pending_challenge<Battle>(std::forward<Args>(args)...);
 		}
 		template<typename Timer>
 		std::unique_ptr<Timer> make_timer() {
@@ -99,7 +96,6 @@ class Client : public ::technicalmachine::Client {
 		std::vector <std::string> highlights;
 		std::vector <std::string> trusted_users;
 		unsigned chattiness;
-		unsigned depth;
 };
 
 }	// namespace network

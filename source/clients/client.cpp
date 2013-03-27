@@ -25,8 +25,13 @@
 
 namespace technicalmachine {
 
-Client::Client():
-	random_engine(rd()) {
+Client::Client(unsigned depth):
+	random_engine(rd()),
+	m_depth(depth) {
+}
+
+void Client::set_depth(unsigned const new_depth) {
+	m_depth = new_depth;
 }
 
 void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
