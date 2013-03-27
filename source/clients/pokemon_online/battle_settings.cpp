@@ -32,13 +32,13 @@ uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses);
 }	// unnamed namespace
 
 BattleSettings::BattleSettings (uint32_t const battle_clauses, uint8_t const battle_mode):
-	network::GenericBattleSettings (),
+	::technicalmachine::BattleSettings(),
 	clauses (battle_clauses),
 	mode (static_cast <Mode> (battle_mode)) {
 }
 
 BattleSettings::BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t const battle_mode):
-	network::GenericBattleSettings (),
+	::technicalmachine::BattleSettings(),
 	clauses (vector_to_clauses (battle_clauses)),
 	mode (static_cast <Mode> (battle_mode)) {
 }

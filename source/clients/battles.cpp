@@ -41,8 +41,9 @@ void Battles::handle_challenge_withdrawn (std::string const & opponent) {
 
 Battle & Battles::handle_begin(uint32_t const battle_id, std::string const & opponent) {
 	auto const it = challenges.find(opponent);
-	if (it == challenges.end())
+	if (it == challenges.end()) {
 		throw NoPendingChallenges(opponent);
+	}
 	Battle & battle = *it->second;
 	active.insert(std::make_pair(battle_id, std::move(it->second)));
 	challenges.erase(opponent);

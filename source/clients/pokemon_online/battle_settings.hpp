@@ -21,14 +21,14 @@
 
 #include <cstdint>
 #include <vector>
-#include "../network/battle_settings.hpp"
+#include "../battle_settings.hpp"
 
 namespace technicalmachine {
 namespace po {
 
 class InMessage;
 
-class BattleSettings : public network::GenericBattleSettings {
+class BattleSettings : public ::technicalmachine::BattleSettings {
 	public:
 		enum Clauses : uint32_t {
 			SLEEP_CLAUSE = 1 << 0,

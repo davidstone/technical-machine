@@ -19,6 +19,7 @@
 #ifndef CLIENTS__CLIENT_HPP_
 #define CLIENTS__CLIENT_HPP_
 
+#include <cstdint>
 #include <random>
 #include <string>
 
@@ -30,6 +31,9 @@
 
 namespace technicalmachine {
 class Settings;
+class Party;
+enum class Result;
+class BattleSettings;
 
 class Client {
 	public:
@@ -37,16 +41,17 @@ class Client {
 		DetailedStats const & detailed() const;
 		Evaluate const & evaluation_constants() const;
 		virtual ~Client() { }
+		void handle_incoming_challenge(std::string const & opponent, BattleSettings const & settings);
 	protected:
 		explicit Client(unsigned depth);
 		void set_depth(unsigned new_depth);
-		Settings load_settings();
+		Settings load_settings(bool reload);
 		Team generate_team();
-		void reload_settings();
 		template<typename ... Args>
 		void handle_challenge_withdrawn(Args && ... args) {
 			return battles.handle_challenge_withdrawn(std::forward<Args>(args)...);
 		}
+		virtual void handle_finalize_challenge(std::string const & opponent, bool accepted, bool challenger) = 0;
 		void handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party party = Party());
 		void handle_battle_end(uint32_t battle_id, Result result);
 		template<typename ... Args>
@@ -68,10 +73,12 @@ class Client {
 		bool challenges_are_queued() const;
 		std::string const & first_challenger() const;
 		std::string random_string(size_t size);
+		virtual void send_battle_challenge(std::string const & opponent) = 0;
 	private:
+		typedef std::mt19937 RandomEngine;
 		std::string time_stamp() const;
 		std::random_device rd;
-		std::mt19937 random_engine;
+		RandomEngine random_engine;
 		Battles battles;
 		DetailedStats detailed_stats;
 		Evaluate m_evaluation_constants;

@@ -1,5 +1,5 @@
 // AI to win a 1v1 battle
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,6 +25,7 @@
 #include "clients/network/invalid_packet.hpp"
 #include "clients/pokemon_lab/client.hpp"
 #include "clients/pokemon_online/client.hpp"
+#include "clients/pokemon_showdown/client.hpp"
 
 using namespace technicalmachine;
 

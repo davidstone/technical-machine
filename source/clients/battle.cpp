@@ -29,9 +29,9 @@
 #include <boost/filesystem.hpp>
 
 #include "battle_result.hpp"
+#include "client.hpp"
 #include "random_string.hpp"
 
-#include "network/client.hpp"
 #include "network/invalid_simulator_data.hpp"
 #include "network/outmessage.hpp"
 

@@ -35,11 +35,11 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "battle_settings.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 
 #include "../battle.hpp"
+#include "../battle_settings.hpp"
 
 #include "../../exit_program.hpp"
 #include "../../settings_file.hpp"
@@ -121,7 +121,7 @@ bool Client::is_trusted (std::string const & user) const {
 }
 
 void Client::load_settings (bool const reloading) {
-	auto settings = Base::load_settings();
+	auto settings = reloading ? Base::load_settings(true) : Settings();
 	chattiness = settings.chattiness;
 	
 	if (!reloading) {
@@ -185,7 +185,7 @@ void Client::handle_server_message (std::string const & sender, std::string cons
 }
 
 
-void Client::handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings) {
+void Client::handle_incoming_challenge (std::string const & opponent, BattleSettings const & settings) {
 	bool const accepted = settings.are_acceptable () and is_trusted (opponent);
 	constexpr bool challenger = false;
 	handle_finalize_challenge (opponent, accepted, challenger);
@@ -353,7 +353,6 @@ void Client::handle_reload_settings_command () {
 	highlights = load_highlights ();
 	trusted_users = load_trusted_users ();
 	load_settings (true);
-	reload_settings();
 }
 
 }	// namespace network

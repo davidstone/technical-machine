@@ -20,7 +20,14 @@
 // sim. Specific functions and data are found in the respective sim's folder.
 
 #include "client.hpp"
+
+#include <ctime>
+#include <iostream>
+
+#include "battle.hpp"
+#include "battle_settings.hpp"
 #include "random_string.hpp"
+
 #include "../settings_file.hpp"
 
 namespace technicalmachine {
@@ -28,6 +35,7 @@ namespace technicalmachine {
 Client::Client(unsigned depth):
 	random_engine(rd()),
 	m_depth(depth) {
+	load_settings(false);
 }
 
 void Client::set_depth(unsigned const new_depth) {
@@ -56,15 +64,14 @@ std::string Client::time_stamp() const {
 	return result;
 }
 
-Settings Client::load_settings() {
-	Settings settings;
+Settings Client::load_settings(bool const reload) {
+	if (reload) {
+		m_evaluation_constants.load();
+	}
+	Settings const settings;
 	team_file_name = settings.team_file;
 	time_format = settings.time_format;
 	return settings;
-}
-
-void Client::reload_settings() {
-	m_evaluation_constants.load();
 }
 
 DetailedStats const & Client::detailed() const {
@@ -76,6 +83,7 @@ Evaluate const & Client::evaluation_constants() const {
 }
 
 Team Client::generate_team() {
+	std::cerr << team_file_name << '\n';
 	return Team(random_engine, team_file_name);
 }
 
@@ -100,6 +108,11 @@ std::string const & Client::first_challenger() const {
 
 std::string Client::random_string(size_t const size) {
 	return ::technicalmachine::random_string(random_engine, size);
+}
+
+void Client::handle_incoming_challenge(std::string const & opponent, BattleSettings const & settings) {
+	constexpr bool challenger = false;
+	handle_finalize_challenge(opponent, settings.are_acceptable(), challenger);
 }
 
 }	// namespace technicalmachine

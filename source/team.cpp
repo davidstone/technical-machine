@@ -57,6 +57,7 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	{
 	boost::filesystem::path team_file = team_file_name;
 	std::vector <boost::filesystem::path> const files = open_directory_and_add_files (team_file);
+	assert(files.size() > 0);
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
 	load(team_file.string());

@@ -19,12 +19,12 @@
 #ifndef POKEMON_SHOWDOWN__BATTLE_SETTINGS_HPP_
 #define POKEMON_SHOWDOWN__BATTLE_SETTINGS_HPP_
 
-#include "../network/battle_settings.hpp"
+#include "../battle_settings.hpp"
 
 namespace technicalmachine {
 namespace ps {
 
-class BattleSettings : public network::GenericBattleSettings {
+class BattleSettings : public ::technicalmachine::BattleSettings {
 	public:
 		bool are_acceptable() const override;
 };

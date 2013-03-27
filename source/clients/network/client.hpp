@@ -30,10 +30,10 @@
 #include "../client.hpp"
 
 namespace technicalmachine {
+class BattleSettings;
 class Party;
 enum class Result;
 namespace network {
-class GenericBattleSettings;
 class InMessage;
 class OutMessage;
 
@@ -59,7 +59,7 @@ class Client : public ::technicalmachine::Client {
 		std::string const & username() const;
 		std::string const & password() const;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
-		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
+		void handle_incoming_challenge (std::string const & opponent, BattleSettings const & settings);
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge(Args && ... args) {
 			return Base::add_pending_challenge<Battle>(std::forward<Args>(args)...);
@@ -68,7 +68,6 @@ class Client : public ::technicalmachine::Client {
 		std::unique_ptr<Timer> make_timer() {
 			return std::unique_ptr<Timer>(new Timer(io));
 		}
-		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
 		void handle_private_message (std::string const & sender, std::string const & message);
 	private:
 		bool is_trusted (std::string const & user) const;
@@ -85,7 +84,6 @@ class Client : public ::technicalmachine::Client {
 		void handle_part_channel_command (std::string const & request, size_t start);
 		void handle_send_pm_command (std::string const & request, size_t start);
 		void handle_reload_settings_command ();
-		virtual void send_battle_challenge (std::string const & opponent) = 0;
 
 		boost::asio::io_service io;
 		std::string host;

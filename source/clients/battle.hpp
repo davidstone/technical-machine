@@ -43,7 +43,6 @@ class DetailedStats;
 class Evaluate;
 class Gender;
 namespace network {
-class Client;
 class OutMessage;
 } // namespace network
 

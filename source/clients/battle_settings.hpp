@@ -1,5 +1,5 @@
 // Generic Battle settings
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,18 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK__BATTLE_SETTINGS_HPP_
-#define NETWORK__BATTLE_SETTINGS_HPP_
+#ifndef CLIENTS__BATTLE_SETTINGS_HPP_
+#define CLIENTS__BATTLE_SETTINGS_HPP_
 
 namespace technicalmachine {
-namespace network {
 
-class GenericBattleSettings {
+class BattleSettings {
 	public:
 		virtual bool are_acceptable () const = 0;
-		virtual ~GenericBattleSettings () {}
+		virtual ~BattleSettings () {}
 };
 
-}	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK__BATTLE_SETTINGS_HPP_
+#endif	// CLIENTS__BATTLE_SETTINGS_HPP_

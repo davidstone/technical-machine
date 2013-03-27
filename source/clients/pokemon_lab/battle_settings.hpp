@@ -1,5 +1,5 @@
 // Pokemon Lab Battle settings
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,14 +20,14 @@
 #define POKEMON_LAB__BATTLE_SETTINGS_HPP_
 
 #include <cstdint>
-#include "../network/battle_settings.hpp"
+#include "../battle_settings.hpp"
 
 namespace technicalmachine {
 namespace pl {
 
-class BattleSettings : public network::GenericBattleSettings {
+class BattleSettings : public ::technicalmachine::BattleSettings {
 	public:
-		BattleSettings (uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length);
+		BattleSettings(uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length);
 		bool are_acceptable () const;
 	private:
 		uint32_t active_party_size;

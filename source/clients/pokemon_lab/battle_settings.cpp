@@ -1,5 +1,5 @@
 // Pokemon Lab Battle settings
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,7 @@ namespace technicalmachine {
 namespace pl {
 
 BattleSettings::BattleSettings (uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length):
-	network::GenericBattleSettings (),
+	::technicalmachine::BattleSettings(),
 	active_party_size (battle_active_party_size),
 	max_team_length (battle_max_team_length),
 	generation (battle_generation) {
