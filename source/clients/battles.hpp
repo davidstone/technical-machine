@@ -24,8 +24,9 @@
 #include <memory>
 #include <string>
 
+#include "battle.hpp"
+
 namespace technicalmachine {
-class Battle;
 
 class Battles {
 	public:

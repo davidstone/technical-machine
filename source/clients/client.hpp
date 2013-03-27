@@ -19,6 +19,10 @@
 #ifndef CLIENTS__CLIENT_HPP_
 #define CLIENTS__CLIENT_HPP_
 
+#include <string>
+
+#include "battles.hpp"
+
 #include "../evaluate/evaluate.hpp"
 
 #include "../team_predictor/detailed_stats.hpp"
@@ -35,8 +39,29 @@ class Client {
 	protected:
 		Settings load_settings();
 		void reload_settings();
+		template<typename ... Args>
+		void handle_challenge_withdrawn(Args && ... args) {
+			return battles.handle_challenge_withdrawn(std::forward<Args>(args)...);
+		}
+		void handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party party = Party());
+		void handle_battle_end(uint32_t battle_id, Result result);
+		template<typename ... Args>
+		Battle const & find_battle(Args && ... args) const {
+			return battles.find(std::forward<Args>(args)...);
+		}
+		template<typename ... Args>
+		Battle & find_battle(Args && ... args) {
+			return battles.find(std::forward<Args>(args)...);
+		}
+		template<typename Battle, typename ... Args>
+		Battle const & add_pending_challenge(Args && ... args) {
+			return battles.add_pending_challenge<Battle>(std::forward<Args>(args)...);
+		}
+		bool challenges_are_queued() const;
+		std::string const & first_challenger() const;
 	private:
 		std::string time_stamp() const;
+		Battles battles;
 		DetailedStats detailed_stats;
 		Evaluate m_evaluation_constants;
 		std::string time_format;

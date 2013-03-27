@@ -28,7 +28,6 @@
 #include <boost/asio/ip/tcp.hpp>
 
 #include "../battle.hpp"
-#include "../battles.hpp"
 #include "../client.hpp"
 
 namespace technicalmachine {
@@ -64,35 +63,17 @@ class Client : public ::technicalmachine::Client {
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
-			return battles.add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team);
+			return ::technicalmachine::Client::add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team);
 		}
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
-			return battles.add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team_file_name);
+			return ::technicalmachine::Client::add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team_file_name);
 		}
-		template<typename ... Args>
-		Battle const & find_battle(Args && ... args) const {
-			return battles.find(std::forward<Args>(args)...);
-		}
-		template<typename ... Args>
-		Battle & find_battle(Args && ... args) {
-			return battles.find(std::forward<Args>(args)...);
-		}
-		template<typename ... Args>
-		void handle_challenge_withdrawn(Args && ... args) {
-			return battles.handle_challenge_withdrawn(std::forward<Args>(args)...);
-		}
-		bool challenges_are_queued() const;
-		std::string const & first_challenger() const;
 		template<typename Timer>
 		std::unique_ptr<Timer> make_timer() {
 			return std::unique_ptr<Timer>(new Timer(io));
 		}
-		void handle_challenge_withdrawn (std::string const & opponent);
-		void handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party party = Party());
-		void pause_at_start_of_battle ();
 		virtual void handle_finalize_challenge (std::string const & opponent, bool accepted, bool challenger) = 0;
-		void handle_battle_end(uint32_t battle_id, Result result);
 		void handle_private_message (std::string const & sender, std::string const & message);
 	private:
 		bool is_trusted (std::string const & user) const;
@@ -112,7 +93,6 @@ class Client : public ::technicalmachine::Client {
 		virtual void send_battle_challenge (std::string const & opponent) = 0;
 
 		boost::asio::io_service io;
-		Battles battles;
 		std::string host;
 		std::string port;
 		std::random_device rd;

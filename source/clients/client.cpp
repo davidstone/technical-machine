@@ -65,4 +65,23 @@ Evaluate const & Client::evaluation_constants() const {
 	return m_evaluation_constants;
 }
 
+void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party const party) {
+	auto & battle = battles.handle_begin(battle_id, opponent);
+	battle.set_party_if_unknown(party);
+}
+
+void Client::handle_battle_end(uint32_t const battle_id, Result const result) {
+	auto const & battle = battles.find(battle_id);
+	battle.handle_end(*this, result);
+	battles.handle_end(battle_id);
+}
+
+bool Client::challenges_are_queued() const {
+	return battles.challenges_are_queued();
+}
+
+std::string const & Client::first_challenger() const {
+	return battles.first_challenger();
+}
+
 }	// namespace technicalmachine

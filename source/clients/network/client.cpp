@@ -194,35 +194,12 @@ void Client::handle_incoming_challenge (std::string const & opponent, GenericBat
 	handle_finalize_challenge (opponent, accepted, challenger);
 }
 
-void Client::handle_challenge_withdrawn (std::string const & opponent) {
-	battles.handle_challenge_withdrawn(opponent);
-}
-
-void Client::handle_battle_begin (uint32_t battle_id, std::string const & opponent, Party const party) {
-	auto & battle = battles.handle_begin(battle_id, opponent);
-	battle.set_party_if_unknown(party);
-//	pause_at_start_of_battle ();
-}
-
-void Client::pause_at_start_of_battle () {
-	// The bot pauses before it sends actions at the start of the battle to
-	// give spectators a chance to join.
-	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (10));
-	pause.wait ();
-}
-
 std::string const & Client::username() const {
 	return current_username;
 }
 
 std::string const & Client::password() const {
 	return current_password;
-}
-
-void Client::handle_battle_end (uint32_t const battle_id, Result const result) {
-	auto const & battle = battles.find(battle_id);
-	battle.handle_end (*this, result);
-	battles.handle_end(battle_id);
 }
 
 Team Client::generate_team() {
@@ -383,14 +360,6 @@ void Client::handle_reload_settings_command () {
 	trusted_users = load_trusted_users ();
 	load_settings (true);
 	reload_settings();
-}
-
-bool Client::challenges_are_queued() const {
-	return battles.challenges_are_queued();
-}
-
-std::string const & Client::first_challenger() const {
-	return battles.first_challenger();
 }
 
 }	// namespace network
