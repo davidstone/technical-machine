@@ -40,7 +40,6 @@
 #include "outmessage.hpp"
 
 #include "../battle.hpp"
-#include "../random_string.hpp"
 
 #include "../../exit_program.hpp"
 #include "../../settings_file.hpp"
@@ -58,7 +57,6 @@ void handle_exit_command();
 }	// unnamed namespace
 
 Client::Client(unsigned set_depth):
-	random_engine (rd ()),
 	highlights (load_highlights ()),
 	trusted_users (load_trusted_users ()),
 	depth (set_depth)
@@ -124,7 +122,6 @@ bool Client::is_trusted (std::string const & user) const {
 
 void Client::load_settings (bool const reloading) {
 	auto settings = ::technicalmachine::Client::load_settings();
-	team_file_name = settings.team_file;
 	chattiness = settings.chattiness;
 	
 	if (!reloading) {
@@ -133,7 +130,7 @@ void Client::load_settings (bool const reloading) {
 		port = server.port;
 		current_username = server.username;
 		if (server.password.empty()) {
-			server.password = random_string(random_engine, 31);
+			server.password = random_string(31);
 			settings.write();
 		}
 		current_password = server.password;
@@ -200,10 +197,6 @@ std::string const & Client::username() const {
 
 std::string const & Client::password() const {
 	return current_password;
-}
-
-Team Client::generate_team() {
-	return Team(random_engine, team_file_name);
 }
 
 bool Client::is_highlighted (std::string const & message) const {

@@ -20,7 +20,6 @@
 #define CLIENTS__NETWORK__CLIENT_HPP_
 
 #include <cstdint>
-#include <random>
 #include <string>
 #include <vector>
 
@@ -55,7 +54,6 @@ class Client : public ::technicalmachine::Client {
 			read_header(msg);
 			io.run();
 		}
-		Team generate_team();
 		virtual void send_keep_alive_message () = 0;
 		std::string const & username() const;
 		std::string const & password() const;
@@ -63,11 +61,11 @@ class Client : public ::technicalmachine::Client {
 		void handle_incoming_challenge (std::string const & opponent, GenericBattleSettings const & settings);
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
-			return ::technicalmachine::Client::add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team);
+			return ::technicalmachine::Client::add_pending_challenge<Battle>(team, opponent, depth, std::forward<Args>(args)...);
 		}
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
-			return ::technicalmachine::Client::add_pending_challenge<Battle>(opponent, rd(), depth, std::forward<Args>(args)..., team_file_name);
+			return ::technicalmachine::Client::add_pending_challenge<Battle>(opponent, depth, std::forward<Args>(args)...);
 		}
 		template<typename Timer>
 		std::unique_ptr<Timer> make_timer() {
@@ -95,12 +93,9 @@ class Client : public ::technicalmachine::Client {
 		boost::asio::io_service io;
 		std::string host;
 		std::string port;
-		std::random_device rd;
-		std::mt19937 random_engine;
 		std::unique_ptr<boost::asio::ip::tcp::socket> socket;
 		std::string current_username;
 		std::string current_password;
-		std::string team_file_name;
 		std::vector <std::string> highlights;
 		std::vector <std::string> trusted_users;
 		unsigned chattiness;

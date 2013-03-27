@@ -20,10 +20,14 @@
 // sim. Specific functions and data are found in the respective sim's folder.
 
 #include "client.hpp"
-
+#include "random_string.hpp"
 #include "../settings_file.hpp"
 
 namespace technicalmachine {
+
+Client::Client():
+	random_engine(rd()) {
+}
 
 void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << time_stamp() + " " + message + "\n";
@@ -49,6 +53,7 @@ std::string Client::time_stamp() const {
 
 Settings Client::load_settings() {
 	Settings settings;
+	team_file_name = settings.team_file;
 	time_format = settings.time_format;
 	return settings;
 }
@@ -63,6 +68,10 @@ DetailedStats const & Client::detailed() const {
 
 Evaluate const & Client::evaluation_constants() const {
 	return m_evaluation_constants;
+}
+
+Team Client::generate_team() {
+	return Team(random_engine, team_file_name);
 }
 
 void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party const party) {
@@ -82,6 +91,10 @@ bool Client::challenges_are_queued() const {
 
 std::string const & Client::first_challenger() const {
 	return battles.first_challenger();
+}
+
+std::string Client::random_string(size_t const size) {
+	return ::technicalmachine::random_string(random_engine, size);
 }
 
 }	// namespace technicalmachine

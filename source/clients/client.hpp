@@ -19,6 +19,7 @@
 #ifndef CLIENTS__CLIENT_HPP_
 #define CLIENTS__CLIENT_HPP_
 
+#include <random>
 #include <string>
 
 #include "battles.hpp"
@@ -37,7 +38,9 @@ class Client {
 		Evaluate const & evaluation_constants() const;
 		virtual ~Client() { }
 	protected:
+		Client();
 		Settings load_settings();
+		Team generate_team();
 		void reload_settings();
 		template<typename ... Args>
 		void handle_challenge_withdrawn(Args && ... args) {
@@ -54,16 +57,24 @@ class Client {
 			return battles.find(std::forward<Args>(args)...);
 		}
 		template<typename Battle, typename ... Args>
-		Battle const & add_pending_challenge(Args && ... args) {
-			return battles.add_pending_challenge<Battle>(std::forward<Args>(args)...);
+		Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
+			return battles.add_pending_challenge<Battle>(opponent, rd(), std::forward<Args>(args)..., team);
+		}
+		template<typename Battle, typename ... Args>
+		Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
+			return battles.add_pending_challenge<Battle>(opponent, rd(), std::forward<Args>(args)..., team_file_name);
 		}
 		bool challenges_are_queued() const;
 		std::string const & first_challenger() const;
+		std::string random_string(size_t size);
 	private:
 		std::string time_stamp() const;
+		std::random_device rd;
+		std::mt19937 random_engine;
 		Battles battles;
 		DetailedStats detailed_stats;
 		Evaluate m_evaluation_constants;
+		std::string team_file_name;
 		std::string time_format;
 };
 
