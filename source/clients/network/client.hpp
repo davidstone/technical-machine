@@ -41,7 +41,6 @@ class OutMessage;
 
 class Client : public ::technicalmachine::Client {
 	public:
-		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
 		void send_message(OutMessage & msg);
 	protected:
@@ -101,7 +100,6 @@ class Client : public ::technicalmachine::Client {
 		void connect ();
 		virtual void join_channel (std::string const & channel) = 0;
 		virtual void part_channel (std::string const & channel) = 0;
-		std::string time_stamp () const;
 		bool is_highlighted (std::string const & message) const;
 		void do_request (std::string const & user, std::string const & request);
 		void handle_challenge_command (std::string const & request, size_t start);
@@ -123,7 +121,6 @@ class Client : public ::technicalmachine::Client {
 		std::string current_username;
 		std::string current_password;
 		std::string team_file_name;
-		std::string time_format;
 		std::vector <std::string> highlights;
 		std::vector <std::string> trusted_users;
 		unsigned chattiness;

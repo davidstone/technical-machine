@@ -24,17 +24,22 @@
 #include "../team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
+class Settings;
 
 class Client {
 	public:
+		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		DetailedStats const & detailed() const;
 		Evaluate const & evaluation_constants() const;
 		virtual ~Client() { }
 	protected:
+		Settings load_settings();
 		void reload_settings();
 	private:
+		std::string time_stamp() const;
 		DetailedStats detailed_stats;
 		Evaluate m_evaluation_constants;
+		std::string time_format;
 };
 
 }	// namespace technicalmachine

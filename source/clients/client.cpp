@@ -21,7 +21,37 @@
 
 #include "client.hpp"
 
+#include "../settings_file.hpp"
+
 namespace technicalmachine {
+
+void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
+	stream << time_stamp() + " " + message + "\n";
+}
+
+std::string Client::time_stamp() const {
+	// There does not appear to be an easy way to format the current time with
+	// a format string. This seems like a major limitation of boost::date_time
+	// and / or boost::posix_time, as well as the std header chrono.
+	std::string result;
+	if (!time_format.empty ()) {
+		// probably_big_enough is a guess at how big the time stamp will be.
+		// It is OK if it is wrong.
+		constexpr unsigned probably_big_enough = 30;
+		result.resize (probably_big_enough);
+		time_t current_time = time (nullptr);
+		tm * timeptr = localtime (&current_time);
+		while (strftime (&result [0], result.size (), time_format.c_str(), timeptr) == 0)
+			result.resize (result.size () * 2);
+	}
+	return result;
+}
+
+Settings Client::load_settings() {
+	Settings settings;
+	time_format = settings.time_format;
+	return settings;
+}
 
 void Client::reload_settings() {
 	m_evaluation_constants.load();
