@@ -27,9 +27,8 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "battles.hpp"
-
 #include "../battle.hpp"
+#include "../battles.hpp"
 #include "../client.hpp"
 
 #include "../../evaluate/evaluate.hpp"
