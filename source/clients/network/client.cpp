@@ -180,10 +180,6 @@ Evaluate const & Client::evaluation_constants() const {
 	return m_evaluation_constants;
 }
 
-DetailedStats const & Client::detailed() const {
-	return detailed_stats;
-}
-
 void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << time_stamp() + " " + message + "\n";
 }

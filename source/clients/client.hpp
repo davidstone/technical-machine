@@ -19,11 +19,16 @@
 #ifndef CLIENTS__CLIENT_HPP_
 #define CLIENTS__CLIENT_HPP_
 
+#include "../team_predictor/detailed_stats.hpp"
+
 namespace technicalmachine {
 
 class Client {
 	public:
+		DetailedStats const & detailed() const;
 		virtual ~Client() { }
+	private:
+		DetailedStats detailed_stats;
 };
 
 }	// namespace technicalmachine

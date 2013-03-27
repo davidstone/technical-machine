@@ -23,4 +23,8 @@
 
 namespace technicalmachine {
 
+DetailedStats const & Client::detailed() const {
+	return detailed_stats;
+}
+
 }	// namespace technicalmachine
