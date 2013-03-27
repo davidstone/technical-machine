@@ -19,6 +19,8 @@
 #ifndef CLIENTS__CLIENT_HPP_
 #define CLIENTS__CLIENT_HPP_
 
+#include "../evaluate/evaluate.hpp"
+
 #include "../team_predictor/detailed_stats.hpp"
 
 namespace technicalmachine {
@@ -26,9 +28,13 @@ namespace technicalmachine {
 class Client {
 	public:
 		DetailedStats const & detailed() const;
+		Evaluate const & evaluation_constants() const;
 		virtual ~Client() { }
+	protected:
+		void reload_settings();
 	private:
 		DetailedStats detailed_stats;
+		Evaluate m_evaluation_constants;
 };
 
 }	// namespace technicalmachine

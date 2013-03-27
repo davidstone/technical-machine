@@ -23,8 +23,16 @@
 
 namespace technicalmachine {
 
+void Client::reload_settings() {
+	m_evaluation_constants.load();
+}
+
 DetailedStats const & Client::detailed() const {
 	return detailed_stats;
+}
+
+Evaluate const & Client::evaluation_constants() const {
+	return m_evaluation_constants;
 }
 
 }	// namespace technicalmachine

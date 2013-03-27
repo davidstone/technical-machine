@@ -176,10 +176,6 @@ void Client::reconnect () {
 	connect ();
 }
 
-Evaluate const & Client::evaluation_constants() const {
-	return m_evaluation_constants;
-}
-
 void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
 	stream << time_stamp() + " " + message + "\n";
 }
@@ -409,7 +405,7 @@ void Client::handle_reload_settings_command () {
 	highlights = load_highlights ();
 	trusted_users = load_trusted_users ();
 	load_settings (true);
-	m_evaluation_constants.load();
+	reload_settings();
 }
 
 bool Client::challenges_are_queued() const {

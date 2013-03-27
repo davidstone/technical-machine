@@ -31,8 +31,6 @@
 #include "../battles.hpp"
 #include "../client.hpp"
 
-#include "../../evaluate/evaluate.hpp"
-
 namespace technicalmachine {
 class Party;
 enum class Result;
@@ -45,7 +43,6 @@ class Client : public ::technicalmachine::Client {
 	public:
 		void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 		void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
-		Evaluate const & evaluation_constants() const;
 		void send_message(OutMessage & msg);
 	protected:
 		explicit Client(unsigned set_depth);
@@ -123,7 +120,6 @@ class Client : public ::technicalmachine::Client {
 		std::random_device rd;
 		std::mt19937 random_engine;
 		std::unique_ptr<boost::asio::ip::tcp::socket> socket;
-		Evaluate m_evaluation_constants;
 		std::string current_username;
 		std::string current_password;
 		std::string team_file_name;
