@@ -55,11 +55,9 @@ class Client : public ::technicalmachine::Client {
 			read_header(msg);
 			io.run();
 		}
-		virtual void send_keep_alive_message () = 0;
 		std::string const & username() const;
 		std::string const & password() const;
 		void handle_server_message (std::string const & sender, std::string const & message) const;
-		void handle_incoming_challenge (std::string const & opponent, BattleSettings const & settings);
 		template<typename Battle, typename ... Args>
 		Battle const & add_pending_challenge(Args && ... args) {
 			return Base::add_pending_challenge<Battle>(std::forward<Args>(args)...);
@@ -73,6 +71,7 @@ class Client : public ::technicalmachine::Client {
 		bool is_trusted (std::string const & user) const;
 		void load_settings (bool reloading);
 		void connect ();
+		virtual void send_keep_alive_message () = 0;
 		virtual void join_channel (std::string const & channel) = 0;
 		virtual void part_channel (std::string const & channel) = 0;
 		bool is_highlighted (std::string const & message) const;

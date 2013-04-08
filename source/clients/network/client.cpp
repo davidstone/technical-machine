@@ -185,12 +185,6 @@ void Client::handle_server_message (std::string const & sender, std::string cons
 }
 
 
-void Client::handle_incoming_challenge (std::string const & opponent, BattleSettings const & settings) {
-	bool const accepted = settings.are_acceptable () and is_trusted (opponent);
-	constexpr bool challenger = false;
-	handle_finalize_challenge (opponent, accepted, challenger);
-}
-
 std::string const & Client::username() const {
 	return current_username;
 }
