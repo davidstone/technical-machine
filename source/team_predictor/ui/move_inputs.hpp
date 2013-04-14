@@ -25,21 +25,21 @@
 namespace technicalmachine {
 
 class MoveInput {
-	public:
-		MoveInput(int button_number, int x_position, char const * label = "");
-		Moves value() const;
-	private:
-		static constexpr int width = 90;
-		Fl_Input input;
+public:
+	MoveInput(int button_number, int x_position, char const * label = "");
+	Moves value() const;
+private:
+	static constexpr int width = 90;
+	Fl_Input input;
 };
 
 class MoveInputs {
-	public:
-		explicit MoveInputs(int button_number);
-		MoveInput input0;
-		MoveInput input1;
-		MoveInput input2;
-		MoveInput input3;
+public:
+	explicit MoveInputs(int button_number);
+	MoveInput input0;
+	MoveInput input1;
+	MoveInput input2;
+	MoveInput input3;
 };
 
 }	// namespace technicalmachine

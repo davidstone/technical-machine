@@ -24,8 +24,8 @@
 namespace technicalmachine {
 
 class InvalidEV : public std::runtime_error {
-	public:
-		explicit InvalidEV(unsigned const ev);
+public:
+	explicit InvalidEV(unsigned const ev);
 };
 
 }	// namespace technicalmachine

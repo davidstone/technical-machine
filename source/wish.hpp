@@ -25,18 +25,18 @@ namespace technicalmachine {
 class Pokemon;
 
 class Wish {
-	public:
-		Wish();
-		void activate();
-		void decrement(Pokemon & pokemon);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (Wish lhs, Wish rhs);
-	private:
-		bool is_active() const;
-		uint8_t counter;
-		friend class Evaluate;
+public:
+	Wish();
+	void activate();
+	void decrement(Pokemon & pokemon);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (Wish lhs, Wish rhs);
+private:
+	bool is_active() const;
+	uint8_t counter;
+	friend class Evaluate;
 };
 
 bool operator!= (Wish lhs, Wish rhs);

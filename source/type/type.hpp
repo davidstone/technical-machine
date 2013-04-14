@@ -29,44 +29,44 @@ class Rational;
 class Weather;
 
 class Type {
-	public:
-		enum Types : uint8_t {
-			Bug,
-			Dark,
-			Dragon,
-			Electric,
-			Fighting,
-			Fire,
-			Flying,
-			Ghost,
-			Grass,
-			Ground,
-			Ice,
-			Normal,
-			Poison,
-			Psychic,
-			Rock,
-			Steel,
-			Water,
-			Typeless
-		};
-		Type (Types name);
-		friend bool operator== (Type lhs, Type rhs);
-		friend bool operator!= (Type lhs, Type rhs);
-		bool is_boosted_by_flash_fire () const;
-		bool is_immune_to_hail () const;
-		bool is_immune_to_sandstorm () const;
-		bool is_strengthened_by_weather (Weather const & weather) const;
-		bool is_weakened_by_weather (Weather const & weather) const;
-		// Template specializations are defined in cpp
-		template<Status::Statuses status>
-		bool blocks_status () const {
-			return false;
-		}
-		Effectiveness get_effectiveness(Pokemon const & defender) const;
-	private:
-		friend class Effectiveness;
-		Types type;
+public:
+	enum Types : uint8_t {
+		Bug,
+		Dark,
+		Dragon,
+		Electric,
+		Fighting,
+		Fire,
+		Flying,
+		Ghost,
+		Grass,
+		Ground,
+		Ice,
+		Normal,
+		Poison,
+		Psychic,
+		Rock,
+		Steel,
+		Water,
+		Typeless
+	};
+	Type (Types name);
+	friend bool operator== (Type lhs, Type rhs);
+	friend bool operator!= (Type lhs, Type rhs);
+	bool is_boosted_by_flash_fire () const;
+	bool is_immune_to_hail () const;
+	bool is_immune_to_sandstorm () const;
+	bool is_strengthened_by_weather (Weather const & weather) const;
+	bool is_weakened_by_weather (Weather const & weather) const;
+	// Template specializations are defined in cpp
+	template<Status::Statuses status>
+	bool blocks_status () const {
+		return false;
+	}
+	Effectiveness get_effectiveness(Pokemon const & defender) const;
+private:
+	friend class Effectiveness;
+	Types type;
 };
 
 }	// namespace technicalmachine

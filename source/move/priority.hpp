@@ -25,13 +25,13 @@
 namespace technicalmachine {
 
 class Priority {
-	public:
-		explicit Priority(Moves move);
-		friend bool operator== (Priority lhs, Priority rhs);
-		friend bool operator< (Priority lhs, Priority rhs);
-		friend bool operator> (Priority lhs, Priority rhs);
-	private:
-		int8_t cached_priority;
+public:
+	explicit Priority(Moves move);
+	friend bool operator== (Priority lhs, Priority rhs);
+	friend bool operator< (Priority lhs, Priority rhs);
+	friend bool operator> (Priority lhs, Priority rhs);
+private:
+	int8_t cached_priority;
 };
 
 bool operator!= (Priority lhs, Priority rhs);

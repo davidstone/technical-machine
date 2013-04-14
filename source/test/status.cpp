@@ -31,11 +31,11 @@
 namespace technicalmachine {
 namespace {
 class InvalidSleepProbability : public std::runtime_error {
-	public:
-		InvalidSleepProbability(Rational const expected, Rational const calculated):
-			std::runtime_error("Expected: " + to_string(expected) + " but got " + to_string(calculated))
-			{
-		}
+public:
+	InvalidSleepProbability(Rational const expected, Rational const calculated):
+		std::runtime_error("Expected: " + to_string(expected) + " but got " + to_string(calculated))
+		{
+	}
 };
 
 void awakening_probability_tests() {

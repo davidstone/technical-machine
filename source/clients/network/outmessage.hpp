@@ -29,22 +29,22 @@ class Team;
 namespace network {
 
 class OutMessage {
-	public:
-		explicit OutMessage (uint8_t code);
-		virtual ~OutMessage () {}
-		template<typename Integer>
-		void write_bytes(Integer bytes);
-		// The next three are the same as above for sizeof(Integer) = 1, 2, 4
-		void write_byte (uint8_t byte);
-		void write_short (uint16_t bytes);
-		void write_int (uint32_t bytes);
-		virtual void write_string (std::string const & str) = 0;
-		virtual void write_move (uint32_t battle_id, uint8_t move_index, uint8_t target = 1) = 0;
-		virtual void write_switch (uint32_t battle_id, uint8_t slot) = 0;
-		virtual void write_team (Team const & team, std::string const & = std::string()) = 0;
-		virtual void finalize() = 0;
-		void send(boost::asio::ip::tcp::socket & socket);
-		std::vector <uint8_t> buffer;
+public:
+	explicit OutMessage (uint8_t code);
+	virtual ~OutMessage () {}
+	template<typename Integer>
+	void write_bytes(Integer bytes);
+	// The next three are the same as above for sizeof(Integer) = 1, 2, 4
+	void write_byte (uint8_t byte);
+	void write_short (uint16_t bytes);
+	void write_int (uint32_t bytes);
+	virtual void write_string (std::string const & str) = 0;
+	virtual void write_move (uint32_t battle_id, uint8_t move_index, uint8_t target = 1) = 0;
+	virtual void write_switch (uint32_t battle_id, uint8_t slot) = 0;
+	virtual void write_team (Team const & team, std::string const & = std::string()) = 0;
+	virtual void finalize() = 0;
+	void send(boost::asio::ip::tcp::socket & socket);
+	std::vector <uint8_t> buffer;
 };
 
 }	// namespace technicalmachine

@@ -30,55 +30,55 @@ class Rational;
 class Weather;
 
 class Status {
-	public:
-		enum Statuses : uint8_t {
-			NO_STATUS,
-			BURN,
-			FREEZE,
-			PARALYSIS,
-			POISON,
-			POISON_TOXIC,
-			REST,
-			SLEEP,
-			END
-		};
-		Status ();
-		Statuses name() const;
-		void clear ();
-		bool is_clear() const;
-		bool is_frozen() const;
-		bool is_sleeping () const;
-		bool is_sleeping_due_to_other() const;
-		bool lowers_speed (Ability const & ability) const;
-		bool weakens_physical_attacks() const;
-		bool boosts_facade() const;
-		bool boosts_smellingsalt() const;
+public:
+	enum Statuses : uint8_t {
+		NO_STATUS,
+		BURN,
+		FREEZE,
+		PARALYSIS,
+		POISON,
+		POISON_TOXIC,
+		REST,
+		SLEEP,
+		END
+	};
+	Status ();
+	Statuses name() const;
+	void clear ();
+	bool is_clear() const;
+	bool is_frozen() const;
+	bool is_sleeping () const;
+	bool is_sleeping_due_to_other() const;
+	bool lowers_speed (Ability const & ability) const;
+	bool weakens_physical_attacks() const;
+	bool boosts_facade() const;
+	bool boosts_smellingsalt() const;
 
-		std::string to_string () const;
+	std::string to_string () const;
 
-		void rest ();
-		template<Statuses real_status, Statuses base_status = real_status>
-		static void apply(Pokemon & user, Pokemon & target, Weather const & weather);
-		template<Statuses real_status>
-		static void apply(Pokemon & target, Weather const & weather);
-		static void shift (Pokemon & user, Pokemon & target, Weather const & weather);
+	void rest ();
+	template<Statuses real_status, Statuses base_status = real_status>
+	static void apply(Pokemon & user, Pokemon & target, Weather const & weather);
+	template<Statuses real_status>
+	static void apply(Pokemon & target, Weather const & weather);
+	static void shift (Pokemon & user, Pokemon & target, Weather const & weather);
 
-		friend bool operator== (Status lhs, Status rhs);
-		friend bool operator!= (Status lhs, Status rhs);
+	friend bool operator== (Status lhs, Status rhs);
+	friend bool operator!= (Status lhs, Status rhs);
 
-		void increase_sleep_counter (Ability const & ability, bool awaken);
-		// Returns true only if the status can change from sleeping to awake in
-		// this move. Returns false if the Pokemon is already awake or if, due
-		// to the sleep counter, they will definitely not awaken.
-		bool can_awaken(Ability const & ability) const;
-		Rational awaken_probability(Ability const & ability, bool awaken) const;
+	void increase_sleep_counter (Ability const & ability, bool awaken);
+	// Returns true only if the status can change from sleeping to awake in
+	// this move. Returns false if the Pokemon is already awake or if, due
+	// to the sleep counter, they will definitely not awaken.
+	bool can_awaken(Ability const & ability) const;
+	Rational awaken_probability(Ability const & ability, bool awaken) const;
 
-		uint64_t hash() const;
-		static uint64_t max_hash();
-	private:
-		unsigned awaken_numerator (Ability const & ability) const;
-		Statuses status;
-		uint8_t turns_already_slept;
+	uint64_t hash() const;
+	static uint64_t max_hash();
+private:
+	unsigned awaken_numerator (Ability const & ability) const;
+	Statuses status;
+	uint8_t turns_already_slept;
 };
 
 }	// namespace technicalmachine

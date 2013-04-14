@@ -34,22 +34,22 @@
 namespace technicalmachine {
 namespace {
 class Comparator : public std::unary_function<void, Move> {
-	public:
-		Comparator(std::vector<Moves> const & m, std::string && str_type):
-			moves(m),
-			type(str_type),
-			n(0) {
+public:
+	Comparator(std::vector<Moves> const & m, std::string && str_type):
+		moves(m),
+		type(str_type),
+		n(0) {
+	}
+	void operator()(Move const & move) {
+		if (moves[n] != move.name) {
+			throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + move.to_string());
 		}
-		void operator()(Move const & move) {
-			if (moves[n] != move.name) {
-				throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + move.to_string());
-			}
-			++n;
-		}
-	private:
-		std::vector<Moves> moves;
-		std::string type;
-		unsigned n;
+		++n;
+	}
+private:
+	std::vector<Moves> moves;
+	std::string type;
+	unsigned n;
 };
 
 }	// unnamed namespace

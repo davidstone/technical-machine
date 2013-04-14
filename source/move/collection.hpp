@@ -33,54 +33,54 @@ namespace technicalmachine {
 class MoveScores;
 
 class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
-		typedef detail::BaseCollection<Move, MoveContainer> Base;
-	public:
-		using Base::index_type;
-		MoveCollection(unsigned my_team_size);
-		Move const & regular_move() const;
-		Move & regular_move();
-		Move const & regular_move(size_t index) const;
-		Move & regular_move(size_t index);
-		index_type number_of_regular_moves () const;
-		template<class... Args>
-		void add(Args&&... args) {
-			Base::add(std::forward<Args>(args)...);
-			current_index = number_of_regular_moves() - 1;
-		}
-		template<typename Function>
-		void for_each(Function && f) const {
-			container.for_each_regular_move(f);
-			container.for_each_shared(std::forward<Function>(f));
-		}
-		// Skips Struggle and switches
-		template<typename Function>
-		void for_each_regular_move(Function && f) const {
-			container.for_each_regular_move(std::forward<Function>(f));
-		}
-		template<typename Function>
-		void for_each_regular_move(Function && f) {
-			container.for_each_regular_move(std::forward<Function>(f));
-		}
-		using Base::set_index;
-		bool set_index_if_found(Moves name);
-		void set_index(Moves name);
-		void set_switch_index(unsigned replacement);
-		// nullptr if not found
-		Move const * find (Moves name) const;
-		Move * find (Moves name);
-		template<typename Function>
-		bool regular_move_exists(Function && condition) const {
-			return container.find_if(std::forward<Function>(condition)) != nullptr;
-		}
-		bool exists (Moves name) const;
-		// Move::END if none
-		Moves name_of_last_used_move () const;
-		bool moved_since_switch() const;
-		index_type size () const;
-		void remove_switch();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		hash_type max_hash() const;
+	typedef detail::BaseCollection<Move, MoveContainer> Base;
+public:
+	using Base::index_type;
+	MoveCollection(unsigned my_team_size);
+	Move const & regular_move() const;
+	Move & regular_move();
+	Move const & regular_move(size_t index) const;
+	Move & regular_move(size_t index);
+	index_type number_of_regular_moves () const;
+	template<class... Args>
+	void add(Args&&... args) {
+		Base::add(std::forward<Args>(args)...);
+		current_index = number_of_regular_moves() - 1;
+	}
+	template<typename Function>
+	void for_each(Function && f) const {
+		container.for_each_regular_move(f);
+		container.for_each_shared(std::forward<Function>(f));
+	}
+	// Skips Struggle and switches
+	template<typename Function>
+	void for_each_regular_move(Function && f) const {
+		container.for_each_regular_move(std::forward<Function>(f));
+	}
+	template<typename Function>
+	void for_each_regular_move(Function && f) {
+		container.for_each_regular_move(std::forward<Function>(f));
+	}
+	using Base::set_index;
+	bool set_index_if_found(Moves name);
+	void set_index(Moves name);
+	void set_switch_index(unsigned replacement);
+	// nullptr if not found
+	Move const * find (Moves name) const;
+	Move * find (Moves name);
+	template<typename Function>
+	bool regular_move_exists(Function && condition) const {
+		return container.find_if(std::forward<Function>(condition)) != nullptr;
+	}
+	bool exists (Moves name) const;
+	// Move::END if none
+	Moves name_of_last_used_move () const;
+	bool moved_since_switch() const;
+	index_type size () const;
+	void remove_switch();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	hash_type max_hash() const;
 };
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

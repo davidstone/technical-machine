@@ -24,9 +24,9 @@
 namespace technicalmachine {
 
 class InvalidSubstituteHP : public std::logic_error {
-	public:
-		// Defined in substitute.cpp
-		InvalidSubstituteHP(unsigned const hp);
+public:
+	// Defined in substitute.cpp
+	InvalidSubstituteHP(unsigned const hp);
 };
 }	// namespace technicalmachine
 #endif	// INVALID_SUBSTITUTE_HP_HPP_

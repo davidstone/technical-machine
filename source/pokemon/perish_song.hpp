@@ -24,19 +24,19 @@
 namespace technicalmachine {
 
 class PerishSong {
-	public:
-		PerishSong();
-		void activate();
-		// return value: whether this Pokemon faints
-		bool next_turn();
-		void reset();
-		friend bool operator== (PerishSong const & lhs, PerishSong const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		bool is_active() const;
-		uint8_t duration;
+public:
+	PerishSong();
+	void activate();
+	// return value: whether this Pokemon faints
+	bool next_turn();
+	void reset();
+	friend bool operator== (PerishSong const & lhs, PerishSong const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	bool is_active() const;
+	uint8_t duration;
 };
 
 bool operator!= (PerishSong const & lhs, PerishSong const & rhs);

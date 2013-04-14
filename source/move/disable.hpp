@@ -24,18 +24,18 @@
 namespace technicalmachine {
 
 class Disable {
-	public:
-		Disable();
-		void activate();
-		void advance_one_turn();
-		void reset();
-		explicit operator bool() const;
-		uint64_t hash() const;
-		static uint64_t max_hash();
-		friend bool operator== (Disable lhs, Disable rhs);
-	private:
-		// Number of turns this move has been Disabled (4-7)
-		uint8_t counter;
+public:
+	Disable();
+	void activate();
+	void advance_one_turn();
+	void reset();
+	explicit operator bool() const;
+	uint64_t hash() const;
+	static uint64_t max_hash();
+	friend bool operator== (Disable lhs, Disable rhs);
+private:
+	// Number of turns this move has been Disabled (4-7)
+	uint8_t counter;
 };
 
 bool operator!= (Disable lhs, Disable rhs);

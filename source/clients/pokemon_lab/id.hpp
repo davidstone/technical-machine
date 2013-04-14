@@ -31,32 +31,32 @@ template<typename T>
 class IDType;
 template<>
 class IDType<Species> {
-	public:
-		typedef uint16_t type;
+public:
+	typedef uint16_t type;
 };
 template<>
 class IDType<Moves> {
-	public:
-		typedef uint16_t type;
+public:
+	typedef uint16_t type;
 };
 template<>
 class IDType<Gender::Genders> {
-	public:
-		typedef uint8_t type;
+public:
+	typedef uint8_t type;
 };
 
 template<typename T>
 class ID {
-	public:
-		typedef typename IDType<T>::type underlying_type;
-		constexpr explicit ID(underlying_type const id):
-			m_value(id) {
-		}
-		constexpr underlying_type value() const {
-			return m_value;
-		}
-	private:
-		underlying_type m_value;
+public:
+	typedef typename IDType<T>::type underlying_type;
+	constexpr explicit ID(underlying_type const id):
+		m_value(id) {
+	}
+	constexpr underlying_type value() const {
+		return m_value;
+	}
+private:
+	underlying_type m_value;
 };
 
 

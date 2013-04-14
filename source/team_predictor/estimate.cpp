@@ -30,11 +30,11 @@
 namespace technicalmachine {
 namespace {
 class InvalidRandomSpecies : public std::logic_error {
-	public:
-		InvalidRandomSpecies():
-			std::logic_error("Random species selection is invalid.")
-			{
-		}
+public:
+	InvalidRandomSpecies():
+		std::logic_error("Random species selection is invalid.")
+		{
+	}
 };
 }	// unnamed namespace
 

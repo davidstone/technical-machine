@@ -25,11 +25,11 @@
 namespace technicalmachine {
 
 class SpeciesInput {
-	public:
-		explicit SpeciesInput(int button_number);
-		Species value() const;
-	private:
-		Fl_Input input;
+public:
+	explicit SpeciesInput(int button_number);
+	Species value() const;
+private:
+	Fl_Input input;
 };
 
 }	// namespace technicalmachine

@@ -26,13 +26,13 @@ namespace technicalmachine {
 namespace pl {
 
 class BattleSettings : public ::technicalmachine::BattleSettings {
-	public:
-		BattleSettings(uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length);
-		bool are_acceptable () const;
-	private:
-		uint32_t active_party_size;
-		uint32_t max_team_length;
-		uint8_t generation;
+public:
+	BattleSettings(uint8_t battle_generation, uint32_t battle_active_party_size, uint32_t battle_max_team_length);
+	bool are_acceptable () const;
+private:
+	uint32_t active_party_size;
+	uint32_t max_team_length;
+	uint8_t generation;
 };
 
 }	// namespace pl

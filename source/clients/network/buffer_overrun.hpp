@@ -25,8 +25,8 @@ namespace technicalmachine {
 namespace network {
 
 class BufferOverrun : public InvalidPacket {
-	public:
-		BufferOverrun();
+public:
+	BufferOverrun();
 };
 }	// namespace network
 }	// namespace technicalmachine

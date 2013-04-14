@@ -30,27 +30,27 @@ namespace po {
 class InMessage;
 
 class User {
-	public:
-		uint32_t const id;
-		std::string const name;
-		std::string const info;
-		int8_t const authority;
-		uint8_t const flags;
-		bool const logged_in;
-		bool const battling;
-		bool const away;
-		int16_t const rating;
-		std::vector <std::pair <uint16_t, uint8_t>> const team;
-		uint16_t avatar;
-		std::string const tier;
-		uint8_t const color_spec;
-		uint16_t const alpha;
-		uint16_t const red;
-		uint16_t const green;
-		uint16_t const blue;
-		uint16_t const padding;
-		uint8_t const gen;
-		explicit User (InMessage & msg);
+public:
+	uint32_t const id;
+	std::string const name;
+	std::string const info;
+	int8_t const authority;
+	uint8_t const flags;
+	bool const logged_in;
+	bool const battling;
+	bool const away;
+	int16_t const rating;
+	std::vector <std::pair <uint16_t, uint8_t>> const team;
+	uint16_t avatar;
+	std::string const tier;
+	uint8_t const color_spec;
+	uint16_t const alpha;
+	uint16_t const red;
+	uint16_t const green;
+	uint16_t const blue;
+	uint16_t const padding;
+	uint8_t const gen;
+	explicit User (InMessage & msg);
 };
 
 }	// namespace po

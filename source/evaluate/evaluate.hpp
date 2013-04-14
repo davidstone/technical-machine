@@ -34,67 +34,67 @@ class Team;
 class Weather;
 
 class Evaluate {
-	public:
-		Evaluate();
-		void load();
-		int64_t operator()(Team const & ai, Team const & foe, Weather const & weather) const;
-		// Both of these return victory if the battle is won. Returns -victory
-		// if the battle is lost. Returns 0 otherwise.
-		static int64_t win(Team const & team);
-		static int64_t sleep_clause(Team const & team);
-		// Highest score. 100% chance to win. No particular significance to
-		// this number other than being larger than any score a non-winning
-		// position can have.
-		constexpr static int64_t victory = 30240;
-	private:
-		int64_t score_team(Team const & team) const;
-		int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
-		int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
-		int64_t score_active_pokemon(ActivePokemon const & active) const;
-		int64_t baton_passable_score(ActivePokemon const & pokemon) const;
-		int64_t score_status(Pokemon const & pokemon, int toxic_counter) const;
-		int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
+public:
+	Evaluate();
+	void load();
+	int64_t operator()(Team const & ai, Team const & foe, Weather const & weather) const;
+	// Both of these return victory if the battle is won. Returns -victory
+	// if the battle is lost. Returns 0 otherwise.
+	static int64_t win(Team const & team);
+	static int64_t sleep_clause(Team const & team);
+	// Highest score. 100% chance to win. No particular significance to
+	// this number other than being larger than any score a non-winning
+	// position can have.
+	constexpr static int64_t victory = 30240;
+private:
+	int64_t score_team(Team const & team) const;
+	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
+	int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
+	int64_t score_active_pokemon(ActivePokemon const & active) const;
+	int64_t baton_passable_score(ActivePokemon const & pokemon) const;
+	int64_t score_status(Pokemon const & pokemon, int toxic_counter) const;
+	int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
 
-		int light_screen;
-		int lucky_chant;
-		int mist;
-		int reflect;
-		int safeguard;
-		int tailwind;
+	int light_screen;
+	int lucky_chant;
+	int mist;
+	int reflect;
+	int safeguard;
+	int tailwind;
 
-		int wish;
+	int wish;
 
-		int spikes;
-		int stealth_rock;
-		int toxic_spikes;
+	int spikes;
+	int stealth_rock;
+	int toxic_spikes;
 
-		int members;
-		int hp;
-		int hidden;
-		int aqua_ring;
-		int curse;
-		int imprison;
-		int ingrain;
-		int leech_seed;
-		int loaf;
-		int magnet_rise;
-		int nightmare;
-		int substitute;
-		int substitute_hp;
-		int torment;
-		int trapped;
+	int members;
+	int hp;
+	int hidden;
+	int aqua_ring;
+	int curse;
+	int imprison;
+	int ingrain;
+	int leech_seed;
+	int loaf;
+	int magnet_rise;
+	int nightmare;
+	int substitute;
+	int substitute_hp;
+	int torment;
+	int trapped;
 
-		int burn;
-		int freeze;
-		int paralysis;
-		int poison;
-		int sleep;
-		
-		std::array<int, Stat::END> stage;
-		int focus_energy;
+	int burn;
+	int freeze;
+	int paralysis;
+	int poison;
+	int sleep;
 	
-		int baton_pass;
-		int no_pp;
+	std::array<int, Stat::END> stage;
+	int focus_energy;
+
+	int baton_pass;
+	int no_pp;
 };
 
 } // namespace technicalmachine

@@ -25,18 +25,18 @@
 namespace technicalmachine {
 
 class Gender {
-	public:
-		enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
-		
-		Gender ();
-		explicit Gender (Genders gender_);
+public:
+	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
+	
+	Gender ();
+	explicit Gender (Genders gender_);
 
-		// Return 1 if the same, -1 if opposite, and 0 if either is genderless
-		int multiplier (Gender foe) const;
-		std::string to_string() const;
-		friend bool operator== (Gender lhs, Gender rhs);
+	// Return 1 if the same, -1 if opposite, and 0 if either is genderless
+	int multiplier (Gender foe) const;
+	std::string to_string() const;
+	friend bool operator== (Gender lhs, Gender rhs);
 
-		Genders gender;
+	Genders gender;
 };
 bool operator!= (Gender lhs, Gender rhs);
 

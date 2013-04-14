@@ -28,11 +28,11 @@
 namespace technicalmachine {
 
 class InvalidCollectionIndex : public std::out_of_range {
-	public:
-		InvalidCollectionIndex (unsigned index, size_t size, std::string const & name):
-			out_of_range ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
-			{
-		}
+public:
+	InvalidCollectionIndex (unsigned index, size_t size, std::string const & name):
+		out_of_range ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
+		{
+	}
 };
 
 namespace detail {
@@ -49,50 +49,50 @@ bool operator==(detail::BaseCollection<T, ContainerType> const & lhs, detail::Ba
 namespace detail {
 template<typename T, typename ContainerType>
 class BaseCollection {
-	public:
-		typedef ContainerType container_type;
-		typedef uint8_t index_type;
-		typedef T value_type;
-		template<typename... Args>
-		constexpr BaseCollection(Args &&... args) :
-			container(std::forward<Args>(args)...),
-			current_index (0) {
-		}
-		constexpr T const & operator() (index_type const specified_index) const {
-			return unchecked_value (check_range(specified_index));
-		}
-		constexpr T const & operator() () const {
-			return unchecked_value (index());
-		}
-		constexpr bool is_empty() const {
-			return container.empty();
-		}
-		template<class... Args>
-		void add(Args&&... args) {
-			container.emplace_back(std::forward<Args>(args)...);
-		}
-		void set_index (index_type const new_index) {
-			current_index = check_range (new_index);
-		}
-		void reset_index () {
-			current_index = 0;
-		}
-		constexpr index_type index() const {
-			return current_index;
-		}
-		friend bool operator== <T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
-	protected:
-		static constexpr index_type check_range(index_type const new_index, index_type const max_index) {
-			return (new_index < max_index) ? new_index : throw InvalidCollectionIndex(new_index, max_index, typeid(T).name());
-		}
-		constexpr index_type check_range (index_type const new_index) const {
-			return check_range(new_index, container.size());
-		}
-		constexpr T const & unchecked_value (index_type const specified_index) const {
-			return container [specified_index];
-		}
-		container_type container;
-		index_type current_index;
+public:
+	typedef ContainerType container_type;
+	typedef uint8_t index_type;
+	typedef T value_type;
+	template<typename... Args>
+	constexpr BaseCollection(Args &&... args) :
+		container(std::forward<Args>(args)...),
+		current_index (0) {
+	}
+	constexpr T const & operator() (index_type const specified_index) const {
+		return unchecked_value (check_range(specified_index));
+	}
+	constexpr T const & operator() () const {
+		return unchecked_value (index());
+	}
+	constexpr bool is_empty() const {
+		return container.empty();
+	}
+	template<class... Args>
+	void add(Args&&... args) {
+		container.emplace_back(std::forward<Args>(args)...);
+	}
+	void set_index (index_type const new_index) {
+		current_index = check_range (new_index);
+	}
+	void reset_index () {
+		current_index = 0;
+	}
+	constexpr index_type index() const {
+		return current_index;
+	}
+	friend bool operator== <T, ContainerType>(BaseCollection<T, ContainerType> const & lhs, BaseCollection<T, ContainerType> const & rhs);
+protected:
+	static constexpr index_type check_range(index_type const new_index, index_type const max_index) {
+		return (new_index < max_index) ? new_index : throw InvalidCollectionIndex(new_index, max_index, typeid(T).name());
+	}
+	constexpr index_type check_range (index_type const new_index) const {
+		return check_range(new_index, container.size());
+	}
+	constexpr T const & unchecked_value (index_type const specified_index) const {
+		return container [specified_index];
+	}
+	container_type container;
+	index_type current_index;
 };
 }	// namespace detail
 

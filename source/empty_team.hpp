@@ -25,10 +25,10 @@
 namespace technicalmachine {
 
 class EmptyTeam : public std::logic_error {
-	public:
-		EmptyTeam(std::string const & file, unsigned const line):
-			std::logic_error("Attempted operation on a team of size 0 at: " + file + ": " + std::to_string(line) + ".") {
-		}
+public:
+	EmptyTeam(std::string const & file, unsigned const line):
+		std::logic_error("Attempted operation on a team of size 0 at: " + file + ": " + std::to_string(line) + ".") {
+	}
 };
 }	// namespace technicalmachine
 #endif	// EMPTY_TEAM_HPP_

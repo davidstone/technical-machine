@@ -28,51 +28,51 @@
 namespace technicalmachine {
 
 class MoveContainer {
-	public:
-		MoveContainer(unsigned my_team_size);
-		Move const & operator[](size_t index) const;
-		Move const & regular_move(size_t index) const;
-		Move & regular_move(size_t index);
-		static constexpr bool empty() {
-			// A move container is never empty, it always contains at least Struggle
-			return false;
-		}
-		template<class... Args>
-		void emplace_back(Args&&... args) {
-			// The only moves that are ever added are regular moves. Shared
-			// moves are just a reference to a collection at the Team level.
-			regular.emplace_back(std::forward<Args>(args)...);
-		}
-		// Skips Struggle and switches
-		template<typename Function>
-		void for_each_regular_move(Function && f) const {
-			std::for_each(regular.begin(), regular.end(), f);
-		}
-		template<typename Function>
-		void for_each_regular_move(Function && f) {
-			std::for_each(regular.begin(), regular.end(), f);
-		}
-		template<typename Function>
-		void for_each_shared(Function && f) const {
-			shared.for_each(std::forward<Function>(f));
-		}
-		size_t size() const;
-		size_t number_of_regular_moves() const;
-		template<typename Function>
-		Move const * find_if(Function const & condition) const {
-			auto const it = std::find_if(regular.begin(), regular.end(), condition);
-			return (it != regular.end()) ? &*it : nullptr;
-		}
-		template<typename Function>
-		Move * find_if(Function const & condition) {
-			auto const it = std::find_if(regular.begin(), regular.end(), condition);
-			return (it != regular.end()) ? &*it : nullptr;
-		}
-		void remove_switch();
-		friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
-	private:
-		std::vector<Move> regular;
-		SharedMoves shared;
+public:
+	MoveContainer(unsigned my_team_size);
+	Move const & operator[](size_t index) const;
+	Move const & regular_move(size_t index) const;
+	Move & regular_move(size_t index);
+	static constexpr bool empty() {
+		// A move container is never empty, it always contains at least Struggle
+		return false;
+	}
+	template<class... Args>
+	void emplace_back(Args&&... args) {
+		// The only moves that are ever added are regular moves. Shared
+		// moves are just a reference to a collection at the Team level.
+		regular.emplace_back(std::forward<Args>(args)...);
+	}
+	// Skips Struggle and switches
+	template<typename Function>
+	void for_each_regular_move(Function && f) const {
+		std::for_each(regular.begin(), regular.end(), f);
+	}
+	template<typename Function>
+	void for_each_regular_move(Function && f) {
+		std::for_each(regular.begin(), regular.end(), f);
+	}
+	template<typename Function>
+	void for_each_shared(Function && f) const {
+		shared.for_each(std::forward<Function>(f));
+	}
+	size_t size() const;
+	size_t number_of_regular_moves() const;
+	template<typename Function>
+	Move const * find_if(Function const & condition) const {
+		auto const it = std::find_if(regular.begin(), regular.end(), condition);
+		return (it != regular.end()) ? &*it : nullptr;
+	}
+	template<typename Function>
+	Move * find_if(Function const & condition) {
+		auto const it = std::find_if(regular.begin(), regular.end(), condition);
+		return (it != regular.end()) ? &*it : nullptr;
+	}
+	void remove_switch();
+	friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
+private:
+	std::vector<Move> regular;
+	SharedMoves shared;
 };
 
 }	// namespace technicalmachine

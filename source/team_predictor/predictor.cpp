@@ -50,33 +50,33 @@ namespace {
 constexpr unsigned pokemon_per_team = 6;
 
 class Data {
-	public:
-		Data():
-			random_engine(rd()),
-			team_ptr(new Team())
-			{
-		}
-		void reset() {
-			team_ptr.reset(new Team());
-		}
-		template<typename... Args>
-		void add(Args && ... args) {
-			input.emplace_back(std::forward<Args>(args)...);
-		}
-		Team const & team() const {
-			return *team_ptr;
-		}
-		Team & team() {
-			return *team_ptr;
-		}
-		std::vector<PokemonInputs *> input;
-		Fl_Int_Input * random_input;
-		Fl_Multiline_Output * output;
-		DetailedStats detailed;
-		std::random_device rd;
-		std::mt19937 random_engine;
-	private:
-		std::unique_ptr<Team> team_ptr;
+public:
+	Data():
+		random_engine(rd()),
+		team_ptr(new Team())
+		{
+	}
+	void reset() {
+		team_ptr.reset(new Team());
+	}
+	template<typename... Args>
+	void add(Args && ... args) {
+		input.emplace_back(std::forward<Args>(args)...);
+	}
+	Team const & team() const {
+		return *team_ptr;
+	}
+	Team & team() {
+		return *team_ptr;
+	}
+	std::vector<PokemonInputs *> input;
+	Fl_Int_Input * random_input;
+	Fl_Multiline_Output * output;
+	DetailedStats detailed;
+	std::random_device rd;
+	std::mt19937 random_engine;
+private:
+	std::unique_ptr<Team> team_ptr;
 };
 
 constexpr int number_of_stats = 6;
@@ -105,49 +105,49 @@ constexpr int window_width = output_x_position + output_width + padding;
 constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
 
 class PokemonInputValues {
-	public:
-		PokemonInputValues(PokemonInputs const & inputs):
-			species(inputs.species()),
-			nature(inputs.nature()),
-			stats({{
-				inputs.hp(),
-				inputs.atk(),
-				inputs.def(),
-				inputs.spa(),
-				inputs.spd(),
-				inputs.spe()
-			}}),
-			moves(inputs.moves())
-			{
+public:
+	PokemonInputValues(PokemonInputs const & inputs):
+		species(inputs.species()),
+		nature(inputs.nature()),
+		stats({{
+			inputs.hp(),
+			inputs.atk(),
+			inputs.def(),
+			inputs.spa(),
+			inputs.spd(),
+			inputs.spe()
+		}}),
+		moves(inputs.moves())
+		{
+	}
+	void add_to_team(Team & team) const {
+		team.add_pokemon(species, 100, Gender(), item, ability, nature);
+		Pokemon & pokemon = team.replacement();
+		for (auto const stat : regular_stats()) {
+			pokemon.stat(stat).ev.set_value(stats[static_cast<size_t>(stat + 1)]);
 		}
-		void add_to_team(Team & team) const {
-			team.add_pokemon(species, 100, Gender(), item, ability, nature);
-			Pokemon & pokemon = team.replacement();
-			for (auto const stat : regular_stats()) {
-				pokemon.stat(stat).ev.set_value(stats[static_cast<size_t>(stat + 1)]);
-			}
-			pokemon.calculate_initial_hp();
-			for (auto const move : moves) {
-				pokemon.move.add(move);
-			}
+		pokemon.calculate_initial_hp();
+		for (auto const move : moves) {
+			pokemon.move.add(move);
 		}
-	private:
-		Species species;
-		Item item;
-		Ability ability;
-		Nature nature;
-		std::array<unsigned, 6> stats;
-		std::vector<Moves> moves;
+	}
+private:
+	Species species;
+	Item item;
+	Ability ability;
+	Nature nature;
+	std::array<unsigned, 6> stats;
+	std::vector<Moves> moves;
 };
 
 class Input {
-	public:
-		template<typename... Args>
-		void emplace_back(Args &&... args) {
-			pokemon.emplace_back(std::forward<Args>(args)...);
-		}
-	private:
-		std::vector<PokemonInputValues> pokemon;
+public:
+	template<typename... Args>
+	void emplace_back(Args &&... args) {
+		pokemon.emplace_back(std::forward<Args>(args)...);
+	}
+private:
+	std::vector<PokemonInputValues> pokemon;
 };
 
 

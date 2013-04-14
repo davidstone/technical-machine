@@ -31,40 +31,40 @@ class Weather;
 
 namespace detail {
 class TypeArray {
-		typedef std::array<Type, 2> container_type;
-	public:
-		typedef container_type::const_iterator const_iterator;
-		typedef container_type::size_type size_type;
-		explicit TypeArray(Type const type1);
-		TypeArray(Type const type1, Type const type2);
-		size_type size() const;
-		const_iterator begin() const;
-		const_iterator end() const;
-	private:
-		container_type m_types;
-		uint8_t m_size;
+	typedef std::array<Type, 2> container_type;
+public:
+	typedef container_type::const_iterator const_iterator;
+	typedef container_type::size_type size_type;
+	explicit TypeArray(Type const type1);
+	TypeArray(Type const type1, Type const type2);
+	size_type size() const;
+	const_iterator begin() const;
+	const_iterator end() const;
+private:
+	container_type m_types;
+	uint8_t m_size;
 };
 }
 
 class TypeCollection {
-	public:
-		TypeCollection (Species name);
-		bool is_immune_to_hail () const;
-		bool is_immune_to_sandstorm () const;
-		template<Status::Statuses status>
-		bool blocks_status () const {
-			for (Type const type : types) {
-				if (type.blocks_status<status> ())
-					return true;
-			}
-			return false;
+public:
+	TypeCollection (Species name);
+	bool is_immune_to_hail () const;
+	bool is_immune_to_sandstorm () const;
+	template<Status::Statuses status>
+	bool blocks_status () const {
+		for (Type const type : types) {
+			if (type.blocks_status<status> ())
+				return true;
 		}
-		void change_type(Type const type);
-	private:
-		friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
-		friend class Type;
-		friend class Effectiveness;
-		detail::TypeArray types;
+		return false;
+	}
+	void change_type(Type const type);
+private:
+	friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
+	friend class Type;
+	friend class Effectiveness;
+	detail::TypeArray types;
 };
 
 bool is_type(Pokemon const & pokemon, Type type, bool roosting = false);

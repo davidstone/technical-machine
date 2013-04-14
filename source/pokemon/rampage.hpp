@@ -24,20 +24,20 @@
 namespace technicalmachine {
 
 class Rampage {
-	public:
-		Rampage();
-		void activate();
-		// returns whether the rampage ended
-		bool decrement();
-		void reset();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (Rampage const & lhs, Rampage const & rhs);
-	private:
-		friend class Evaluate;
-		bool is_active() const;
-		uint8_t turns_remaining;
+public:
+	Rampage();
+	void activate();
+	// returns whether the rampage ended
+	bool decrement();
+	void reset();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (Rampage const & lhs, Rampage const & rhs);
+private:
+	friend class Evaluate;
+	bool is_active() const;
+	uint8_t turns_remaining;
 };
 bool operator!= (Rampage const & lhs, Rampage const & rhs);
 

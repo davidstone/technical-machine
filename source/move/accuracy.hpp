@@ -25,13 +25,13 @@
 namespace technicalmachine {
 
 class Accuracy {
-	public:
-		Accuracy(Moves move);
-		bool can_miss() const;
-		uint8_t operator() () const;
-	private:
-		// A number between 0 (1?) and 100, according to poccil.
-		uint8_t accuracy;
+public:
+	Accuracy(Moves move);
+	bool can_miss() const;
+	uint8_t operator() () const;
+private:
+	// A number between 0 (1?) and 100, according to poccil.
+	uint8_t accuracy;
 };
 
 }	// namespace technicalmachine

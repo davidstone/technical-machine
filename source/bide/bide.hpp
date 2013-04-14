@@ -27,20 +27,20 @@
 namespace technicalmachine {
 
 class Bide {
-	public:
-		friend bool operator== (Bide const & lhs, Bide const & rhs);
-		bool is_active() const;
-		void activate();
-		void add_damage(unsigned extra_damage);
-		void reset();
-		// Returns the damage released by Bide (or 0 if none)
-		unsigned decrement();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		BideDamage damage;
-		BideDuration duration;
+public:
+	friend bool operator== (Bide const & lhs, Bide const & rhs);
+	bool is_active() const;
+	void activate();
+	void add_damage(unsigned extra_damage);
+	void reset();
+	// Returns the damage released by Bide (or 0 if none)
+	unsigned decrement();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	BideDamage damage;
+	BideDuration duration;
 };
 
 bool operator!= (Bide const & lhs, Bide const & rhs);

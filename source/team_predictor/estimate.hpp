@@ -28,17 +28,17 @@ class Multiplier;
 class Team;
 
 class Estimate {
-	public:
-		typedef std::array<unsigned, number_of_species> Overall;
-		typedef std::array<float, number_of_species> Lead;
-		Estimate(Overall const & overall, Lead const & lead, unsigned total);
-		void update(Multiplier const & multiplier, Team const & team);
-		void update(Multiplier const & multiplier, Species seen);
-		Species most_likely() const;
-		Species random(std::mt19937 & random_engine) const;
-	private:
-		typedef std::array<float, number_of_species> Container;
-		Container estimate;
+public:
+	typedef std::array<unsigned, number_of_species> Overall;
+	typedef std::array<float, number_of_species> Lead;
+	Estimate(Overall const & overall, Lead const & lead, unsigned total);
+	void update(Multiplier const & multiplier, Team const & team);
+	void update(Multiplier const & multiplier, Species seen);
+	Species most_likely() const;
+	Species random(std::mt19937 & random_engine) const;
+private:
+	typedef std::array<float, number_of_species> Container;
+	Container estimate;
 };
 
 }	// namespace technicalmachine

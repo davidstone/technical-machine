@@ -24,8 +24,8 @@
 namespace technicalmachine {
 
 class PhazingInSamePokemon : public std::logic_error {
-	public:
-		explicit PhazingInSamePokemon(unsigned index);
+public:
+	explicit PhazingInSamePokemon(unsigned index);
 };
 
 }	// namespace technicalmachine

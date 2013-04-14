@@ -40,11 +40,11 @@ namespace po {
 namespace {
 
 class InvalidFormeId : public std::runtime_error {
-	public:
-		explicit InvalidFormeId (std::string const & species):
-			std::runtime_error ("Invalid forme ID for " + species + ".\n")
-			{
-		}
+public:
+	explicit InvalidFormeId (std::string const & species):
+		std::runtime_error ("Invalid forme ID for " + species + ".\n")
+		{
+	}
 };
 
 Species rotom_forme_to_species(unsigned const forme) {
@@ -1327,10 +1327,10 @@ unsigned ability_to_id (Ability::Abilities ability) {
 }
 
 class InvalidPart : public std::runtime_error {
-	public:
-		InvalidPart (uint16_t id, uint8_t part):
-			std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (static_cast<unsigned> (id)) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
-		}
+public:
+	InvalidPart (uint16_t id, uint8_t part):
+		std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (static_cast<unsigned> (id)) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
+	}
 };
 
 Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {

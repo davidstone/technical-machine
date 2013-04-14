@@ -25,38 +25,38 @@ namespace technicalmachine {
 
 // Lucky Chant, Mist, and Safeguard use the base class
 class Screen {
-	public:
-		Screen();
-		void activate();
-		void decrement();
-		explicit operator bool() const;
-		uint64_t hash() const;
-		static uint64_t max_hash();
-		friend bool operator==(Screen const & lhs, Screen const & rhs);
-	protected:
-		void set_duration(uint8_t duration);
-	private:
-		uint8_t turns_remaining;
-		static uint8_t max_length();
-		friend class Evaluate;
+public:
+	Screen();
+	void activate();
+	void decrement();
+	explicit operator bool() const;
+	uint64_t hash() const;
+	static uint64_t max_hash();
+	friend bool operator==(Screen const & lhs, Screen const & rhs);
+protected:
+	void set_duration(uint8_t duration);
+private:
+	uint8_t turns_remaining;
+	static uint8_t max_length();
+	friend class Evaluate;
 };
 bool operator!=(Screen const & lhs, Screen const & rhs);
 
 class ReflectLightScreen : public Screen {
-	public:
-		void activate(bool is_extended);
-		void clear();
-		static uint64_t max_hash();
-	private:
-		static uint8_t max_length();
+public:
+	void activate(bool is_extended);
+	void clear();
+	static uint64_t max_hash();
+private:
+	static uint8_t max_length();
 };
 
 class Tailwind : public Screen {
-	public:
-		void activate();
-		static uint64_t max_hash();
-	private:
-		static uint8_t max_length();
+public:
+	void activate();
+	static uint64_t max_hash();
+private:
+	static uint8_t max_length();
 };
 
 }	// namespace technicalmachine

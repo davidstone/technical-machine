@@ -27,20 +27,20 @@ class Pokemon;
 // This class handles the number of turns remaining on Bind, Clamp, Fire Spin,
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap
 class PartialTrap {
-	public:
-		PartialTrap();
-		void activate(bool extended = false);
-		void damage(Pokemon & pokemon);
-		void reset();
-		explicit operator bool() const;
-		friend bool operator== (PartialTrap const & lhs, PartialTrap const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash () const;
-		static hash_type max_hash();
-	private:
-		friend class Evaluate;
-		bool is_active() const;
-		uint8_t turns_active;
+public:
+	PartialTrap();
+	void activate(bool extended = false);
+	void damage(Pokemon & pokemon);
+	void reset();
+	explicit operator bool() const;
+	friend bool operator== (PartialTrap const & lhs, PartialTrap const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash () const;
+	static hash_type max_hash();
+private:
+	friend class Evaluate;
+	bool is_active() const;
+	uint8_t turns_active;
 };
 
 bool operator!= (PartialTrap const & lhs, PartialTrap const & rhs);

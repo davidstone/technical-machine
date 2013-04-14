@@ -30,14 +30,14 @@ namespace pl {
 class Client;
 
 class Battle : public ::technicalmachine::Battle {
-	public:
-		template<typename ... Args>
-		Battle(Args &&... args):
-			::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
-		}
-		void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
-		void update_active_print (std::vector <std::string> const & arguments);
-		void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
+public:
+	template<typename ... Args>
+	Battle(Args &&... args):
+		::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
+	}
+	void handle_print (uint8_t category, uint16_t message_id, std::vector <std::string> const & arguments);
+	void update_active_print (std::vector <std::string> const & arguments);
+	void handle_set_move (uint8_t pokemon, uint8_t move_slot, int16_t new_move, uint8_t pp, uint8_t max_pp);
 };
 
 }	// namespace pl

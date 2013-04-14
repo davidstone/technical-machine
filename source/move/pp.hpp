@@ -26,18 +26,18 @@ namespace technicalmachine {
 class Ability;
 
 class Pp {
-	public:
-		Pp(Moves move, unsigned pp_ups);
-		uint64_t hash () const;
-		uint64_t max_hash () const;
-		bool is_empty() const;
-		bool has_unlimited_pp() const;
-		void decrement(Ability const & foe_ability);
-		unsigned trump_card_power() const;
-		friend bool operator== (Pp const & lhs, Pp const & rhs);
-	private:
-		uint8_t max;
-		uint8_t current;
+public:
+	Pp(Moves move, unsigned pp_ups);
+	uint64_t hash () const;
+	uint64_t max_hash () const;
+	bool is_empty() const;
+	bool has_unlimited_pp() const;
+	void decrement(Ability const & foe_ability);
+	unsigned trump_card_power() const;
+	friend bool operator== (Pp const & lhs, Pp const & rhs);
+private:
+	uint8_t max;
+	uint8_t current;
 };
 bool operator!= (Pp const & lhs, Pp const & rhs);
 

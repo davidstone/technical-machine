@@ -25,24 +25,24 @@ namespace technicalmachine {
 class Rational;
 
 class Stockpile {
-	public:
-		Stockpile();
-		// Returns whether Stockpile was able to increment (true) or if it is
-		// already maxed out (false)
-		bool increment();
-		// Returns the amount of Stockpile lost. This allows correct subtraction
-		// for stat boosts.
-		int release();
-		void reset();
-		unsigned spit_up_power() const;
-		static Rational swallow_healing(int const stockpiles);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (Stockpile const & lhs, Stockpile const & rhs);
-	private:
-		friend class Evaluate;
-		uint8_t level;
+public:
+	Stockpile();
+	// Returns whether Stockpile was able to increment (true) or if it is
+	// already maxed out (false)
+	bool increment();
+	// Returns the amount of Stockpile lost. This allows correct subtraction
+	// for stat boosts.
+	int release();
+	void reset();
+	unsigned spit_up_power() const;
+	static Rational swallow_healing(int const stockpiles);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (Stockpile const & lhs, Stockpile const & rhs);
+private:
+	friend class Evaluate;
+	uint8_t level;
 };
 bool operator!= (Stockpile const & lhs, Stockpile const & rhs);
 

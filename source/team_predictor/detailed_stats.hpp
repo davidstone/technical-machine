@@ -35,15 +35,15 @@
 namespace technicalmachine {
 
 class DetailedStats {
-	public:
-		DetailedStats();
-		template<typename T>
-		T const & get(Species species) const;
-	private:
-		std::array<std::vector<Moves>, number_of_species> move;
-		std::array<Item::Items, number_of_species> item;
-		std::array<Ability::Abilities, number_of_species> ability;
-		std::array<Nature::Natures, number_of_species> nature;
+public:
+	DetailedStats();
+	template<typename T>
+	T const & get(Species species) const;
+private:
+	std::array<std::vector<Moves>, number_of_species> move;
+	std::array<Item::Items, number_of_species> item;
+	std::array<Ability::Abilities, number_of_species> ability;
+	std::array<Nature::Natures, number_of_species> nature;
 };
 
 }	// namespace technicalmachine

@@ -25,11 +25,11 @@
 namespace technicalmachine {
 
 class NatureInput {
-	public:
-		explicit NatureInput(int button_number);
-		Nature::Natures value() const;
-	private:
-		Fl_Input input;
+public:
+	explicit NatureInput(int button_number);
+	Nature::Natures value() const;
+private:
+	Fl_Input input;
 };
 
 }	// namespace technicalmachine

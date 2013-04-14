@@ -25,20 +25,20 @@ namespace technicalmachine {
 class Rational;
 
 class Toxic {
-	public:
-		Toxic();
-		void reset();
-		void increment();
-		Rational ratio_drained() const;
-		friend bool operator== (Toxic const & lhs, Toxic const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		friend class Evaluate;
-		// Number of turns this Pokemon has already taken Toxic damage (or
-		// would have if Magic Guard / Poison Heal weren't in play)
-		uint8_t counter = 0;
+public:
+	Toxic();
+	void reset();
+	void increment();
+	Rational ratio_drained() const;
+	friend bool operator== (Toxic const & lhs, Toxic const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	friend class Evaluate;
+	// Number of turns this Pokemon has already taken Toxic damage (or
+	// would have if Magic Guard / Poison Heal weren't in play)
+	uint8_t counter = 0;
 };
 bool operator!= (Toxic const & lhs, Toxic const & rhs);
 

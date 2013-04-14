@@ -25,14 +25,14 @@
 namespace technicalmachine {
 
 class InvalidSettingsFile : public std::runtime_error {
-	public:
-		enum Problem {
-			does_not_exist,
-			too_long,
-			too_short,
-			invalid_data
-		};
-		InvalidSettingsFile(std::string const & file_name, Problem const problem);
+public:
+	enum Problem {
+		does_not_exist,
+		too_long,
+		too_short,
+		invalid_data
+	};
+	InvalidSettingsFile(std::string const & file_name, Problem const problem);
 };
 
 }	// namespace technicalmachine

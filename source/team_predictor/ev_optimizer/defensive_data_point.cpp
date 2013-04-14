@@ -90,10 +90,10 @@ bool DataPoint::affects_defensive_stat(bool const boost) const {
 }
 
 class InvalidNatureCombination : public std::logic_error {
-	public:
-		InvalidNatureCombination():
-			std::logic_error("Attempt to create a nature that cannot exist.") {
-		}
+public:
+	InvalidNatureCombination():
+		std::logic_error("Attempt to create a nature that cannot exist.") {
+	}
 };
 
 Nature::Natures DataPoint::get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {

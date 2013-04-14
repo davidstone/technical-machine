@@ -26,11 +26,11 @@ namespace technicalmachine {
 class Pokemon;
 
 class InvalidSimulatorConversion : public std::logic_error {
-	public:
-		template<typename Test>
-		InvalidSimulatorConversion(Test original, Test result):
-			std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
-		}
+public:
+	template<typename Test>
+	InvalidSimulatorConversion(Test original, Test result):
+		std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
+	}
 };
 
 }	// namespace technicalmachine

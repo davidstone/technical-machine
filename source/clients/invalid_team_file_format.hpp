@@ -25,8 +25,8 @@
 namespace technicalmachine {
 
 class InvalidTeamFileFormat : public std::logic_error {
-	public:
-		explicit InvalidTeamFileFormat(std::string const & file);
+public:
+	explicit InvalidTeamFileFormat(std::string const & file);
 };
 }	// namespace technicalmachine
 #endif	// INVALID_TEAM_FILE_FORMAT_HPP_

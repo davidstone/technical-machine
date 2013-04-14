@@ -24,18 +24,18 @@
 namespace technicalmachine {
 
 class BideDuration {
-	public:
-		BideDuration();
-		void activate();
-		explicit operator bool() const;
-		// returns whether Bide releases damage
-		bool decrement();
-		friend bool operator== (BideDuration const & lhs, BideDuration const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		uint8_t turns_until_activation;
+public:
+	BideDuration();
+	void activate();
+	explicit operator bool() const;
+	// returns whether Bide releases damage
+	bool decrement();
+	friend bool operator== (BideDuration const & lhs, BideDuration const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	uint8_t turns_until_activation;
 };
 
 bool operator!= (BideDuration const & lhs, BideDuration const & rhs);

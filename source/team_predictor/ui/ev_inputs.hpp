@@ -24,22 +24,22 @@
 namespace technicalmachine {
 
 class EVInput {
-	public:
-		explicit EVInput(int button_number, int ev, char const * label = "");
-		unsigned value() const;
-	private:
-		Fl_Int_Input input;
+public:
+	explicit EVInput(int button_number, int ev, char const * label = "");
+	unsigned value() const;
+private:
+	Fl_Int_Input input;
 };
 
 class EVInputs {
-	public:
-		explicit EVInputs(int button_number);
-		EVInput hp;
-		EVInput atk;
-		EVInput def;
-		EVInput spa;
-		EVInput spd;
-		EVInput spe;
+public:
+	explicit EVInputs(int button_number);
+	EVInput hp;
+	EVInput atk;
+	EVInput def;
+	EVInput spa;
+	EVInput spd;
+	EVInput spe;
 };
 
 }	// namespace technicalmachine

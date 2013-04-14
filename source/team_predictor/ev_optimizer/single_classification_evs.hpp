@@ -27,18 +27,18 @@ class Nature;
 class Pokemon;
 
 class SingleClassificationEVs {
-	public:
-		enum NatureBoost { Penalty, Neutral, Boost };
-		SingleClassificationEVs(unsigned hp_ev, unsigned defensive_ev, Nature nature, bool physical);
-		std::string to_string() const;
-		friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, unsigned max_evs);
-	private:
-		friend class DataPoint;
-		std::string stat_name() const;
-		unsigned hp;
-		unsigned defensive;
-		NatureBoost nature_boost;
-		bool physical;
+public:
+	enum NatureBoost { Penalty, Neutral, Boost };
+	SingleClassificationEVs(unsigned hp_ev, unsigned defensive_ev, Nature nature, bool physical);
+	std::string to_string() const;
+	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, unsigned max_evs);
+private:
+	friend class DataPoint;
+	std::string stat_name() const;
+	unsigned hp;
+	unsigned defensive;
+	NatureBoost nature_boost;
+	bool physical;
 };
 
 template<bool physical>

@@ -25,8 +25,8 @@
 namespace technicalmachine {
 
 class InvalidStat : public std::runtime_error {
-	public:
-		explicit InvalidStat (std::string const & stat_string);
+public:
+	explicit InvalidStat (std::string const & stat_string);
 };
 
 }	// namespace technicalmachine

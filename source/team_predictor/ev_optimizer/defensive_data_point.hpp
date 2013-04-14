@@ -31,21 +31,21 @@ class DefensiveEVs;
 class SpeedEVs;
 
 class DataPoint {
-	public:
-		DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
-		DataPoint(DataPoint const & original, Nature const & new_nature);
-		std::string to_string() const;
-		unsigned sum() const;
-		friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
-		bool affects_defensive_stat(bool boost) const;
-		static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
-	private:
-		void update_pokemon(Pokemon & pokemon) const;
-		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-		unsigned hp;
-		unsigned defense;
-		unsigned special_defense;
-		Nature nature;
+public:
+	DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
+	DataPoint(DataPoint const & original, Nature const & new_nature);
+	std::string to_string() const;
+	unsigned sum() const;
+	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
+	bool affects_defensive_stat(bool boost) const;
+	static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
+private:
+	void update_pokemon(Pokemon & pokemon) const;
+	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
+	unsigned hp;
+	unsigned defense;
+	unsigned special_defense;
+	Nature nature;
 };
 
 }	// namespace technicalmachine

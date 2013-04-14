@@ -31,14 +31,14 @@ namespace ps {
 class BattleSettings;
 
 class OutMessage : public network::OutMessage {
-	public:
-		void write_string(std::string const & str) override;
-		void write_team(Team const & team, std::string const & username) override;
-		void write_move(uint32_t field_id, uint8_t move_index, uint8_t target = 1) override;
-		void write_switch(uint32_t field_id, uint8_t slot) override;
-		void finalize() override;
-		enum Message {
-		};
+public:
+	void write_string(std::string const & str) override;
+	void write_team(Team const & team, std::string const & username) override;
+	void write_move(uint32_t field_id, uint8_t move_index, uint8_t target = 1) override;
+	void write_switch(uint32_t field_id, uint8_t slot) override;
+	void finalize() override;
+	enum Message {
+	};
 };
 
 }	// namespace ps

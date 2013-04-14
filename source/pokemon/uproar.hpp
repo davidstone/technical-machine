@@ -24,17 +24,17 @@
 namespace technicalmachine {
 
 class Uproar {
-	public:
-		Uproar();
-		void reset();
-		void increment();
-		friend bool operator== (Uproar const & lhs, Uproar const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		friend class Evaluate;
-		uint8_t counter;
+public:
+	Uproar();
+	void reset();
+	void increment();
+	friend bool operator== (Uproar const & lhs, Uproar const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	friend class Evaluate;
+	uint8_t counter;
 };
 bool operator!= (Uproar const & lhs, Uproar const & rhs);
 

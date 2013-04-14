@@ -24,19 +24,19 @@
 namespace technicalmachine {
 
 class Encore {
-	public:
-		Encore();
-		bool is_active() const;
-		void activate();
-		void increment();
-		void reset();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (Encore const & lhs, Encore const & rhs);
-	private:
-		friend class Evaluate;
-		uint8_t turns_active;
+public:
+	Encore();
+	bool is_active() const;
+	void activate();
+	void increment();
+	void reset();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (Encore const & lhs, Encore const & rhs);
+private:
+	friend class Evaluate;
+	uint8_t turns_active;
 };
 bool operator!= (Encore const & lhs, Encore const & rhs);
 

@@ -30,23 +30,23 @@
 namespace technicalmachine {
 
 class PokemonInputs {
-	public:
-		explicit PokemonInputs(int & button_number);
-		Species species() const;
-		bool is_valid() const;
-		Nature::Natures nature() const;
-		unsigned hp() const;
-		unsigned atk() const;
-		unsigned def() const;
-		unsigned spa() const;
-		unsigned spd() const;
-		unsigned spe() const;
-		std::vector<Moves> moves() const;
-	private:
-		SpeciesInput m_species;
-		NatureInput m_nature;
-		EVInputs m_evs;
-		MoveInputs m_moves;
+public:
+	explicit PokemonInputs(int & button_number);
+	Species species() const;
+	bool is_valid() const;
+	Nature::Natures nature() const;
+	unsigned hp() const;
+	unsigned atk() const;
+	unsigned def() const;
+	unsigned spa() const;
+	unsigned spd() const;
+	unsigned spe() const;
+	std::vector<Moves> moves() const;
+private:
+	SpeciesInput m_species;
+	NatureInput m_nature;
+	EVInputs m_evs;
+	MoveInputs m_moves;
 };
 
 }	// namespace technicalmachine

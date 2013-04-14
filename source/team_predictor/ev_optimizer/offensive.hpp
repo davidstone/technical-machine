@@ -30,28 +30,28 @@ class DefensiveEVs;
 class SpeedEVs;
 
 class OffensiveStats {
-	public:
-		OffensiveStats():
-			attack(0),
-			special_attack(0) {
-		}
-		unsigned sum() const {
-			return attack + special_attack;
-		}
-		unsigned attack;
-		unsigned special_attack;
+public:
+	OffensiveStats():
+		attack(0),
+		special_attack(0) {
+	}
+	unsigned sum() const {
+		return attack + special_attack;
+	}
+	unsigned attack;
+	unsigned special_attack;
 };
 
 class OffensiveEVs {
-	public:
-		explicit OffensiveEVs(Pokemon pokemon);
-	private:
-		void optimize(Pokemon & pokemon);
-		void remove_unused(Pokemon & pokemon);
-		void equal_stats(Pokemon & pokemon);
-		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-		typedef std::map<Nature::Natures, OffensiveStats> Container;
-		Container container;
+public:
+	explicit OffensiveEVs(Pokemon pokemon);
+private:
+	void optimize(Pokemon & pokemon);
+	void remove_unused(Pokemon & pokemon);
+	void equal_stats(Pokemon & pokemon);
+	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
+	typedef std::map<Nature::Natures, OffensiveStats> Container;
+	Container container;
 };
 
 }	// namespace technicalmachine

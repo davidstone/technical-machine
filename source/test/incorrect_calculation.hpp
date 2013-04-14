@@ -24,8 +24,8 @@
 namespace technicalmachine {
 
 class IncorrectCalculation : public std::logic_error {
-	public:
-		IncorrectCalculation(unsigned result, unsigned expected);
+public:
+	IncorrectCalculation(unsigned result, unsigned expected);
 };
 
 }	// namespace technicalmachine

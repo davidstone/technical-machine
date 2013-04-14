@@ -24,17 +24,17 @@
 namespace technicalmachine {
 
 class Seen {
-	public:
-		Seen();
-		void make_visible();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (Seen lhs, Seen rhs);
-	private:
-		bool operator() () const;
-		bool seen;
-		friend class Evaluate;
+public:
+	Seen();
+	void make_visible();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (Seen lhs, Seen rhs);
+private:
+	bool operator() () const;
+	bool seen;
+	friend class Evaluate;
 };
 
 bool operator!= (Seen lhs, Seen rhs);

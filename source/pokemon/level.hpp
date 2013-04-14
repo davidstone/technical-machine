@@ -24,12 +24,12 @@
 namespace technicalmachine {
 
 class Level {
-	public:
-		explicit Level(uint8_t set_level);
-		unsigned operator() () const;
-		friend bool operator== (Level lhs, Level rhs);
-	private:
-		uint8_t level;
+public:
+	explicit Level(uint8_t set_level);
+	unsigned operator() () const;
+	friend bool operator== (Level lhs, Level rhs);
+private:
+	uint8_t level;
 };
 
 bool operator!= (Level lhs, Level rhs);

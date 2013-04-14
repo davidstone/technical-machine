@@ -169,30 +169,30 @@ class StatTraits;
 
 template<>
 class StatTraits<Stat::ATK> {
-	public:
-		static constexpr bool is_physical = true;
-		static constexpr Stat::Stats other = Stat::DEF;
+public:
+	static constexpr bool is_physical = true;
+	static constexpr Stat::Stats other = Stat::DEF;
 };
 template<>
 class StatTraits<Stat::DEF> {
-	public:
-		static constexpr bool is_physical = true;
-		static constexpr Stat::Stats other = Stat::ATK;
+public:
+	static constexpr bool is_physical = true;
+	static constexpr Stat::Stats other = Stat::ATK;
 };
 template<>
 class StatTraits<Stat::SPA> {
-	public:
-		static constexpr bool is_physical = false;
+public:
+	static constexpr bool is_physical = false;
 };
 template<>
 class StatTraits<Stat::SPD> {
-	public:
-		static constexpr bool is_physical = false;
+public:
+	static constexpr bool is_physical = false;
 };
 template<>
 class StatTraits<Stat::SPE> {
-	public:
-		static constexpr bool is_physical = false;
+public:
+	static constexpr bool is_physical = false;
 };
 
 template<Stat::Stats stat>

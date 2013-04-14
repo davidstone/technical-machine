@@ -25,14 +25,14 @@
 namespace technicalmachine {
 
 class Classification {
-	public:
-		Classification(Moves move);
-		bool is_physical() const;
-		bool is_special() const;
-	private:
-		enum class Cached : int8_t;
-		static Cached classification (Moves move);
-		Cached cached;
+public:
+	Classification(Moves move);
+	bool is_physical() const;
+	bool is_special() const;
+private:
+	enum class Cached : int8_t;
+	static Cached classification (Moves move);
+	Cached cached;
 };
 
 }	// namespace technicalmachine

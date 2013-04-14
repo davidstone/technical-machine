@@ -25,8 +25,8 @@ namespace technicalmachine {
 namespace ps {
 
 class BattleSettings : public ::technicalmachine::BattleSettings {
-	public:
-		bool are_acceptable() const override;
+public:
+	bool are_acceptable() const override;
 };
 
 }	// namespace ps

@@ -24,16 +24,16 @@
 namespace technicalmachine {
 
 class Party {
-	public:
-		typedef uint8_t value_type;
-		Party();
-		explicit Party(value_type initial);
-		void set_if_unknown (Party new_party);
-		Party other() const;
-		value_type value() const;
-		friend bool operator==(Party lhs, Party rhs);
-	private:
-		value_type party;
+public:
+	typedef uint8_t value_type;
+	Party();
+	explicit Party(value_type initial);
+	void set_if_unknown (Party new_party);
+	Party other() const;
+	value_type value() const;
+	friend bool operator==(Party lhs, Party rhs);
+private:
+	value_type party;
 };
 
 bool operator!=(Party lhs, Party rhs);

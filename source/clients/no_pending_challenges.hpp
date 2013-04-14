@@ -26,10 +26,10 @@
 namespace technicalmachine {
 
 class NoPendingChallenges : public std::runtime_error {
-	public:
-		NoPendingChallenges();
-		explicit NoPendingChallenges(std::string const & name);
-		explicit NoPendingChallenges(uint32_t const id);
+public:
+	NoPendingChallenges();
+	explicit NoPendingChallenges(std::string const & name);
+	explicit NoPendingChallenges(uint32_t const id);
 };
 
 }	// namespace technicalmachine

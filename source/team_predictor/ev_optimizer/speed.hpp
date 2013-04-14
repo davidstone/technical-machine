@@ -29,12 +29,12 @@ class OffensiveEVs;
 class DefensiveEVs;
 
 class SpeedEVs {
-	public:
-		explicit SpeedEVs(Pokemon pokemon);
-	private:
-		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-		typedef std::map<Nature::Natures, unsigned> Container;
-		Container container;
+public:
+	explicit SpeedEVs(Pokemon pokemon);
+private:
+	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
+	typedef std::map<Nature::Natures, unsigned> Container;
+	Container container;
 };
 
 }	// namespace technicalmachine

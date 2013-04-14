@@ -28,13 +28,13 @@ namespace technicalmachine {
 namespace ps {
 
 class Battle : public ::technicalmachine::Battle {
-	public:
-		template<typename ... Args>
-		Battle(Args &&... args):
-			::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
-		}
-	private:
-		uint16_t max_damage_precision() const override;
+public:
+	template<typename ... Args>
+	Battle(Args &&... args):
+		::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
+	}
+private:
+	uint16_t max_damage_precision() const override;
 };
 
 }	// namespace ps

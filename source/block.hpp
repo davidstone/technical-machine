@@ -30,18 +30,18 @@ class Move;
 class Weather;
 
 class LegalSelections {
-		typedef std::vector<Move const *> Container;
-	public:
-		typedef Container::const_iterator const_iterator;
-		LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
-		Species species() const;
-		const_iterator begin() const;
-		const_iterator end() const;
-		size_t size() const;
-		Move const * const & operator[] (size_t index) const;
-	private:
-		Container container;
-		Species m_species;
+	typedef std::vector<Move const *> Container;
+public:
+	typedef Container::const_iterator const_iterator;
+	LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
+	Species species() const;
+	const_iterator begin() const;
+	const_iterator end() const;
+	size_t size() const;
+	Move const * const & operator[] (size_t index) const;
+private:
+	Container container;
+	Species m_species;
 };
 
 bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const & weather);

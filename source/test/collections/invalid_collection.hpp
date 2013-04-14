@@ -25,8 +25,8 @@
 namespace technicalmachine {
 
 class InvalidCollection : public std::logic_error {
-	public:
-		explicit InvalidCollection(std::string const & str);
+public:
+	explicit InvalidCollection(std::string const & str);
 };
 
 }	// namespace technicalmachine

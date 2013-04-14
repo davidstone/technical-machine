@@ -24,8 +24,8 @@
 namespace technicalmachine {
 
 class InvalidSwallow : public std::logic_error {
-	public:
-		explicit InvalidSwallow(int const stockpiles);
+public:
+	explicit InvalidSwallow(int const stockpiles);
 };
 }	// namespace technicalmachine
 #endif	// EMPTY_TEAM_HPP_

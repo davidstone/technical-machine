@@ -27,29 +27,29 @@ namespace technicalmachine {
 // Various states a Pokemon can be in due to vanishing moves.
 
 class Vanish {
-	public:
-		Vanish();
-		void reset();
+public:
+	Vanish();
+	void reset();
 
-		// Returns whether the Pokemon ends up in a Vanished state
-		bool bounce();
-		bool dig();
-		bool dive();
-		bool fly();
-		bool shadow_force();
+	// Returns whether the Pokemon ends up in a Vanished state
+	bool bounce();
+	bool dig();
+	bool dive();
+	bool fly();
+	bool shadow_force();
 
-		bool doubles_move_power(Moves move) const;
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (Vanish const lhs, Vanish const rhs);
-	private:
-		bool doubles_ground_power() const;
-		bool doubles_surf_power() const;
-		bool doubles_wind_power() const;
-		enum class VanishTypes : uint8_t;
-		bool flip(VanishTypes const flipped);
-		VanishTypes vanish;
+	bool doubles_move_power(Moves move) const;
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (Vanish const lhs, Vanish const rhs);
+private:
+	bool doubles_ground_power() const;
+	bool doubles_surf_power() const;
+	bool doubles_wind_power() const;
+	enum class VanishTypes : uint8_t;
+	bool flip(VanishTypes const flipped);
+	VanishTypes vanish;
 };
 
 bool operator!= (Vanish const lhs, Vanish const rhs);

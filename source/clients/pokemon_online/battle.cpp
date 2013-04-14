@@ -37,20 +37,20 @@ namespace po {
 namespace {
 
 class Todo {
-	public:
-		explicit Todo (InMessage & in_msg, std::string const & str):
-			msg (in_msg) {
-			std::cerr << str + '\n';
-		}
-		explicit Todo (InMessage & in_msg):
-			msg (in_msg) {
-		}
-		~Todo() {
-			while (msg.index != msg.buffer.size ())
-				std::cerr << '\t' << static_cast<int> (msg.read_byte()) << '\n';
-		}
-	private:
-		InMessage & msg;
+public:
+	explicit Todo (InMessage & in_msg, std::string const & str):
+		msg (in_msg) {
+		std::cerr << str + '\n';
+	}
+	explicit Todo (InMessage & in_msg):
+		msg (in_msg) {
+	}
+	~Todo() {
+		while (msg.index != msg.buffer.size ())
+			std::cerr << '\t' << static_cast<int> (msg.read_byte()) << '\n';
+	}
+private:
+	InMessage & msg;
 };
 
 std::array<int8_t, 7> parse_boosts(InMessage & msg);

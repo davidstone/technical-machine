@@ -32,14 +32,14 @@ class OffensiveEVs;
 class SpeedEVs;
 
 class DefensiveEVs {
-	public:
-		explicit DefensiveEVs(Pokemon pokemon);
-		typedef std::map<Nature::Natures, DataPoint> BestPerNature;
-	private:
-		void remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures);
-		void add_other_potential_natures();
-		friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-		BestPerNature container;
+public:
+	explicit DefensiveEVs(Pokemon pokemon);
+	typedef std::map<Nature::Natures, DataPoint> BestPerNature;
+private:
+	void remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures);
+	void add_other_potential_natures();
+	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
+	BestPerNature container;
 };
 
 }	// namespace technicalmachine

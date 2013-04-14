@@ -25,20 +25,20 @@ namespace technicalmachine {
 class Rational;
 
 class TimesUsed {
-	public:
-		TimesUsed();
-		void reset ();
-		uint64_t hash() const;
-		uint64_t max_hash() const;
-		void increment();
-		bool was_used_last () const;
-		unsigned fury_cutter_power() const;
-		unsigned momentum_move_power() const;
-		unsigned triple_kick_power() const;
-		Rational metronome_boost() const;
-		friend bool operator== (TimesUsed lhs, TimesUsed rhs);
-	private:
-		uint8_t counter;
+public:
+	TimesUsed();
+	void reset ();
+	uint64_t hash() const;
+	uint64_t max_hash() const;
+	void increment();
+	bool was_used_last () const;
+	unsigned fury_cutter_power() const;
+	unsigned momentum_move_power() const;
+	unsigned triple_kick_power() const;
+	Rational metronome_boost() const;
+	friend bool operator== (TimesUsed lhs, TimesUsed rhs);
+private:
+	uint8_t counter;
 };
 
 bool operator!= (TimesUsed lhs, TimesUsed rhs);

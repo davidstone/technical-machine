@@ -37,71 +37,71 @@ class ActivePokemon;
 class Weather;
 
 class Move {
-	public:
-		Move (Moves move, unsigned pp_ups = 3);
-		void reset ();
-		std::string to_string () const;
-		bool is_regular() const;
-		bool is_damaging() const;
-		bool is_physical() const;
-		bool is_special() const;
-		bool is_blocked_by_taunt() const;
-		Type type() const;
-		void set_type(Type::Types t);	// for Hidden Power only.
-		unsigned base_power() const;
-		uint8_t accuracy() const;
-		bool can_miss () const;
-		bool can_critical_hit() const;
-		Priority priority() const;
-		bool is_struggle() const;
-		static bool is_switch (Moves name);
-		bool is_switch () const;
-		static Moves from_replacement (unsigned replacement);
-		static unsigned to_replacement (Moves name);
-		unsigned to_replacement () const;
-		bool affects_target (ActivePokemon const & target, Weather const & weather) const;
-		bool has_follow_up_decision () const;
-		bool calls_other_move () const;
-		void increment_use_counter();
-		bool was_used_last () const;
-		bool is_bide() const;
-		unsigned fury_cutter_power() const;
-		unsigned momentum_move_power() const;
-		unsigned triple_kick_power() const;
-		Rational metronome_boost() const;
-		bool cannot_ko () const;
-		bool breaks_screens () const;
-		bool is_struggle_or_switch () const;
-		static bool is_phaze (Moves name);
-		bool is_phaze () const;
-		static bool is_healing (Moves name);
-		bool is_healing () const;
-		bool is_blocked_by_gravity () const;
-		bool is_boosted_by_iron_fist () const;
-		bool is_boosted_by_reckless() const;
-		bool is_usable_while_sleeping () const;
-		bool is_usable_while_frozen () const;
-		bool is_sound_based () const;
-		bool is_self_KO () const;
-		void get_magnitude (unsigned magnitude);
-		static constexpr unsigned max_regular_moves () {
-			return 4;
-		}
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		hash_type max_hash() const;
-		friend bool operator== (Move const & lhs, Move const & rhs);
+public:
+	Move (Moves move, unsigned pp_ups = 3);
+	void reset ();
+	std::string to_string () const;
+	bool is_regular() const;
+	bool is_damaging() const;
+	bool is_physical() const;
+	bool is_special() const;
+	bool is_blocked_by_taunt() const;
+	Type type() const;
+	void set_type(Type::Types t);	// for Hidden Power only.
+	unsigned base_power() const;
+	uint8_t accuracy() const;
+	bool can_miss () const;
+	bool can_critical_hit() const;
+	Priority priority() const;
+	bool is_struggle() const;
+	static bool is_switch (Moves name);
+	bool is_switch () const;
+	static Moves from_replacement (unsigned replacement);
+	static unsigned to_replacement (Moves name);
+	unsigned to_replacement () const;
+	bool affects_target (ActivePokemon const & target, Weather const & weather) const;
+	bool has_follow_up_decision () const;
+	bool calls_other_move () const;
+	void increment_use_counter();
+	bool was_used_last () const;
+	bool is_bide() const;
+	unsigned fury_cutter_power() const;
+	unsigned momentum_move_power() const;
+	unsigned triple_kick_power() const;
+	Rational metronome_boost() const;
+	bool cannot_ko () const;
+	bool breaks_screens () const;
+	bool is_struggle_or_switch () const;
+	static bool is_phaze (Moves name);
+	bool is_phaze () const;
+	static bool is_healing (Moves name);
+	bool is_healing () const;
+	bool is_blocked_by_gravity () const;
+	bool is_boosted_by_iron_fist () const;
+	bool is_boosted_by_reckless() const;
+	bool is_usable_while_sleeping () const;
+	bool is_usable_while_frozen () const;
+	bool is_sound_based () const;
+	bool is_self_KO () const;
+	void get_magnitude (unsigned magnitude);
+	static constexpr unsigned max_regular_moves () {
+		return 4;
+	}
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	hash_type max_hash() const;
+	friend bool operator== (Move const & lhs, Move const & rhs);
 
-		Moves name;
-		Pp pp;
-		Disable disable;
-	private:
-		// Move times_used up to ActivePokemon when it will reduce the size of Move.
-		TimesUsed times_used;
-		Accuracy cached_accuracy;
-		// Hidden Power makes this hard to replace with just a function
-		uint8_t cached_base_power;
-		Type cached_type;
+	Moves name;
+	Pp pp;
+	Disable disable;
+private:
+	// Move times_used up to ActivePokemon when it will reduce the size of Move.
+	TimesUsed times_used;
+	Accuracy cached_accuracy;
+	// Hidden Power makes this hard to replace with just a function
+	uint8_t cached_base_power;
+	Type cached_type;
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);

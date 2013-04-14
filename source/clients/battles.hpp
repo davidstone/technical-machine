@@ -29,30 +29,30 @@
 namespace technicalmachine {
 
 class Battles {
-	public:
-		template<typename SpecificBattle, typename ... Args>
-		SpecificBattle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
-			Pointer battle_ptr(new SpecificBattle(opponent, std::forward<Args>(args)...));
-			auto const & battle = static_cast<SpecificBattle const &>(*battle_ptr);
-			challenges.insert(std::make_pair(opponent, std::move(battle_ptr)));
-			return battle;
-		}
-		void handle_challenge_withdrawn();
-		void handle_challenge_withdrawn(std::string const & opponent);
-		Battle & handle_begin(uint32_t battle_id, std::string const & opponent);
-		void handle_end(uint32_t battle_id);
-		Battle const & find(uint32_t battle_id) const;
-		Battle & find(uint32_t battle_id);
-		bool challenges_are_queued() const;
-		std::string const & first_challenger() const;
-	private:
-		typedef std::unique_ptr<Battle> Pointer;
-		// Battles that have not yet begun
-		typedef std::map<std::string, Pointer> Challenges;
-		// Battles currently underway
-		typedef std::map<uint32_t, Pointer> Active;
-		Challenges challenges;
-		Active active;
+public:
+	template<typename SpecificBattle, typename ... Args>
+	SpecificBattle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
+		Pointer battle_ptr(new SpecificBattle(opponent, std::forward<Args>(args)...));
+		auto const & battle = static_cast<SpecificBattle const &>(*battle_ptr);
+		challenges.insert(std::make_pair(opponent, std::move(battle_ptr)));
+		return battle;
+	}
+	void handle_challenge_withdrawn();
+	void handle_challenge_withdrawn(std::string const & opponent);
+	Battle & handle_begin(uint32_t battle_id, std::string const & opponent);
+	void handle_end(uint32_t battle_id);
+	Battle const & find(uint32_t battle_id) const;
+	Battle & find(uint32_t battle_id);
+	bool challenges_are_queued() const;
+	std::string const & first_challenger() const;
+private:
+	typedef std::unique_ptr<Battle> Pointer;
+	// Battles that have not yet begun
+	typedef std::map<std::string, Pointer> Challenges;
+	// Battles currently underway
+	typedef std::map<uint32_t, Pointer> Active;
+	Challenges challenges;
+	Active active;
 };
 
 }	// namespace technicalmachine

@@ -31,29 +31,29 @@ class Team;
 class Weather;
 
 class Stat {
-	public:
-		// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
-		enum Stats {
-			HP = -1,
-			ATK,
-			DEF,
-			SPA,
-			SPD,
-			SPE,
-			NORMAL_END,
-			ACC = NORMAL_END,
-			EVA,
-			END
-		};
-		typedef uint16_t stat_type;
-		stat_type max;		// Max HP only
-		stat_type stat;		// Current HP or last calculated value for other stats
-		uint8_t base;
-		uint8_t iv;			// 0 through 31
-		EV ev;
-	
-		Stat (Species name, Stats stat);
-		void calculate_initial_hp (uint8_t const level);
+public:
+	// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
+	enum Stats {
+		HP = -1,
+		ATK,
+		DEF,
+		SPA,
+		SPD,
+		SPE,
+		NORMAL_END,
+		ACC = NORMAL_END,
+		EVA,
+		END
+	};
+	typedef uint16_t stat_type;
+	stat_type max;		// Max HP only
+	stat_type stat;		// Current HP or last calculated value for other stats
+	uint8_t base;
+	uint8_t iv;			// 0 through 31
+	EV ev;
+
+	Stat (Species name, Stats stat);
+	void calculate_initial_hp (uint8_t const level);
 };
 
 inline constexpr std::initializer_list<Stat::Stats> regular_stats() {

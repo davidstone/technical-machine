@@ -37,48 +37,48 @@ namespace technicalmachine {
 // permanent weather condition.
 
 class Weather {
-	public:
-		typedef uint32_t hash_type;
-		enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
-		Weather();
-		bool operator== (Weather const & other) const;
+public:
+	typedef uint32_t hash_type;
+	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
+	Weather();
+	bool operator== (Weather const & other) const;
 
-		bool trick_room () const;
-		bool fog;
-		bool gravity () const;
-		bool uproar () const;
-		bool hail () const;
-		bool sun () const;
-		bool sand () const;
-		bool rain () const;
-		void decrement ();
-		void set_trick_room ();
-		void set_gravity ();
-		void set_uproar (int8_t duration);
-		void set_hail (Duration duration);
-		void set_sun (Duration duration);
-		void set_sand (Duration duration);
-		void set_rain (Duration duration);
-		void set_hail (bool is_extended);
-		void set_sun (bool is_extended);
-		void set_sand (bool is_extended);
-		void set_rain (bool is_extended);
+	bool trick_room () const;
+	bool fog;
+	bool gravity () const;
+	bool uproar () const;
+	bool hail () const;
+	bool sun () const;
+	bool sand () const;
+	bool rain () const;
+	void decrement ();
+	void set_trick_room ();
+	void set_gravity ();
+	void set_uproar (int8_t duration);
+	void set_hail (Duration duration);
+	void set_sun (Duration duration);
+	void set_sand (Duration duration);
+	void set_rain (Duration duration);
+	void set_hail (bool is_extended);
+	void set_sun (bool is_extended);
+	void set_sand (bool is_extended);
+	void set_rain (bool is_extended);
 
-		template<Status::Statuses status>
-		bool blocks_status () const {
-			return false;
-		}
-		hash_type hash () const;
-	private:
-		void set_weather(int8_t & primary, Duration duration);
-		void set_weather(int8_t & primary, bool is_extended);
-		int8_t trick_room_duration;
-		int8_t gravity_duration;
-		int8_t uproar_duration;
-		int8_t hail_duration;
-		int8_t sun_duration;
-		int8_t sand_duration;
-		int8_t rain_duration;
+	template<Status::Statuses status>
+	bool blocks_status () const {
+		return false;
+	}
+	hash_type hash () const;
+private:
+	void set_weather(int8_t & primary, Duration duration);
+	void set_weather(int8_t & primary, bool is_extended);
+	int8_t trick_room_duration;
+	int8_t gravity_duration;
+	int8_t uproar_duration;
+	int8_t hail_duration;
+	int8_t sun_duration;
+	int8_t sand_duration;
+	int8_t rain_duration;
 };
 
 }	// namespace technicalmachine

@@ -24,18 +24,18 @@
 namespace technicalmachine {
 
 class SlowStart {
-	public:
-		SlowStart();
-		bool is_active() const;
-		void decrement();
-		void reset();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (SlowStart const & lhs, SlowStart const & rhs);
-	private:
-		friend class Evaluate;
-		uint8_t turns_remaining;
+public:
+	SlowStart();
+	bool is_active() const;
+	void decrement();
+	void reset();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (SlowStart const & lhs, SlowStart const & rhs);
+private:
+	friend class Evaluate;
+	uint8_t turns_remaining;
 };
 bool operator!= (SlowStart const & lhs, SlowStart const & rhs);
 

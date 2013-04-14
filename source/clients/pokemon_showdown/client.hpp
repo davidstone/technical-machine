@@ -29,20 +29,20 @@ namespace technicalmachine {
 namespace ps {
 
 class Client : public network::Client {
-	public:
-		explicit Client(unsigned set_depth);
-		void run();
-		void handle_message(InMessage::Message code, InMessage & msg);
-		void send_channel_message(std::string const & channel, std::string const & message) override;
-		void send_channel_message(uint32_t channel_id, std::string const & message) override;
-		void send_private_message(std::string const & user, std::string const & message) override;
-	private:
-		void log_in();
-		void send_battle_challenge(std::string const & opponent) override;
-		void handle_finalize_challenge(std::string const & opponent, bool accepted, bool unused = false) override;
-		void send_keep_alive_message() override;
-		void join_channel(std::string const & channel) override;
-		void part_channel(std::string const & channel) override;
+public:
+	explicit Client(unsigned set_depth);
+	void run();
+	void handle_message(InMessage::Message code, InMessage & msg);
+	void send_channel_message(std::string const & channel, std::string const & message) override;
+	void send_channel_message(uint32_t channel_id, std::string const & message) override;
+	void send_private_message(std::string const & user, std::string const & message) override;
+private:
+	void log_in();
+	void send_battle_challenge(std::string const & opponent) override;
+	void handle_finalize_challenge(std::string const & opponent, bool accepted, bool unused = false) override;
+	void send_keep_alive_message() override;
+	void join_channel(std::string const & channel) override;
+	void part_channel(std::string const & channel) override;
 };
 
 }	// namespace ps

@@ -24,19 +24,19 @@
 namespace technicalmachine {
 
 class MagnetRise {
-	public:
-		MagnetRise();
-		bool is_active() const;
-		void activate();
-		void decrement();
-		void reset();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);
-	private:
-		friend class Evaluate;
-		uint8_t turns_remaining;
+public:
+	MagnetRise();
+	bool is_active() const;
+	void activate();
+	void decrement();
+	void reset();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);
+private:
+	friend class Evaluate;
+	uint8_t turns_remaining;
 };
 bool operator!= (MagnetRise const & lhs, MagnetRise const & rhs);
 

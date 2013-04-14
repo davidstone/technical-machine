@@ -25,23 +25,23 @@ namespace technicalmachine {
 class Pokemon;
 
 class Confusion {
-	public:
-		Confusion();
-		bool is_active() const;
-		void activate();
-		void do_turn(Pokemon & pokemon);
-		void reset();
-		void hit_self();
-		void end_of_turn_reset();
-		friend bool operator== (Confusion const & lhs, Confusion const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash () const;
-		static hash_type max_hash();
-	private:
-		void increment();
-		friend class Evaluate;
-		uint8_t turns_spent_confused;
-		bool is_hitting_self;
+public:
+	Confusion();
+	bool is_active() const;
+	void activate();
+	void do_turn(Pokemon & pokemon);
+	void reset();
+	void hit_self();
+	void end_of_turn_reset();
+	friend bool operator== (Confusion const & lhs, Confusion const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash () const;
+	static hash_type max_hash();
+private:
+	void increment();
+	friend class Evaluate;
+	uint8_t turns_spent_confused;
+	bool is_hitting_self;
 };
 bool operator!= (Confusion const & lhs, Confusion const & rhs);
 

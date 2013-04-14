@@ -28,23 +28,23 @@ class Weather;
 // Using an entry hazard puts them down on the opponent's side of the field.
 
 class EntryHazards {
-	public:
-		EntryHazards();
-		void clear();
-		void add_spikes();
-		void add_toxic_spikes();
-		void add_stealth_rock();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		static void apply(Team & switcher, Weather const & weather);
-		friend bool operator== (EntryHazards lhs, EntryHazards rhs);
-	private:
-		static void apply_toxic_spikes(Team & switcher, Weather const & weather);
-		uint8_t spikes;
-		uint8_t toxic_spikes;
-		bool stealth_rock;
-		friend class Evaluate;
+public:
+	EntryHazards();
+	void clear();
+	void add_spikes();
+	void add_toxic_spikes();
+	void add_stealth_rock();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	static void apply(Team & switcher, Weather const & weather);
+	friend bool operator== (EntryHazards lhs, EntryHazards rhs);
+private:
+	static void apply_toxic_spikes(Team & switcher, Weather const & weather);
+	uint8_t spikes;
+	uint8_t toxic_spikes;
+	bool stealth_rock;
+	friend class Evaluate;
 };
 
 bool operator!= (EntryHazards lhs, EntryHazards rhs);

@@ -27,23 +27,23 @@ namespace technicalmachine {
 class Pokemon;
 
 class Effectiveness {
-	public:
-		Effectiveness(Type::Types type, Pokemon const & defender);
-		Effectiveness(Type::Types attacking, Type::Types defending);
-		static Effectiveness stealth_rock_effectiveness(Pokemon const & pokemon);
-		bool is_super_effective() const;
-		bool is_neutral() const;
-		bool is_not_very_effective() const;
-		bool has_no_effect() const;
+public:
+	Effectiveness(Type::Types type, Pokemon const & defender);
+	Effectiveness(Type::Types attacking, Type::Types defending);
+	static Effectiveness stealth_rock_effectiveness(Pokemon const & pokemon);
+	bool is_super_effective() const;
+	bool is_neutral() const;
+	bool is_not_very_effective() const;
+	bool has_no_effect() const;
 
-		template<typename Integer>
-		friend Integer operator*=(Integer & number, Effectiveness const & e) {
-			for (Rational const & rational : e.effectiveness)
-				number *= rational;
-			return number;
-		}
-	private:
-		std::vector<Rational> effectiveness;
+	template<typename Integer>
+	friend Integer operator*=(Integer & number, Effectiveness const & e) {
+		for (Rational const & rational : e.effectiveness)
+			number *= rational;
+		return number;
+	}
+private:
+	std::vector<Rational> effectiveness;
 };
 
 template<typename Integer>

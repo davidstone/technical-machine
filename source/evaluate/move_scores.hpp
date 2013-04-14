@@ -28,12 +28,12 @@ namespace technicalmachine {
 class Pokemon;
 
 class MoveScores {
-	public:
-		explicit MoveScores(Pokemon const & pokemon);
-		int64_t const & at(Species species, Moves name) const;
-		int64_t & at(Species species, Moves name);
-	private:
-		std::map<std::pair<Species, Moves>, int64_t> scores;
+public:
+	explicit MoveScores(Pokemon const & pokemon);
+	int64_t const & at(Species species, Moves name) const;
+	int64_t & at(Species species, Moves name);
+private:
+	std::map<std::pair<Species, Moves>, int64_t> scores;
 };
 
 }	// namespace technicalmachine

@@ -36,53 +36,53 @@ class Pokemon;
 class Weather;
 
 class Team {
-	public:
-		Team ();
-		Team(std::mt19937 & random_engine, std::string const & team_file_name);
-		
-		ActivePokemon const & pokemon() const;
-		ActivePokemon & pokemon();
-		Pokemon const & pokemon(PokemonCollection::index_type index) const;
-		Pokemon & pokemon(PokemonCollection::index_type index);
-		Pokemon const & replacement() const;
-		Pokemon & replacement();
-		template<typename... Args>
-		void add_pokemon(Args&&... args) {
-			all_pokemon().add(std::forward<Args>(args)...);
-		}
-		void remove_pokemon ();
-		PokemonCollection const & all_pokemon() const;
-		PokemonCollection & all_pokemon();
-		
-		unsigned number_of_seen_pokemon() const;
-		unsigned size() const;
-		
-		bool is_me() const;
-		std::string who() const;
-		// Not for variables that give a message at the end of the turn, this is
-		// just for some book-keeping variables.
-		void reset_between_turns();
-		void clear_field();
-		void move(bool value = true);
+public:
+	Team ();
+	Team(std::mt19937 & random_engine, std::string const & team_file_name);
+	
+	ActivePokemon const & pokemon() const;
+	ActivePokemon & pokemon();
+	Pokemon const & pokemon(PokemonCollection::index_type index) const;
+	Pokemon & pokemon(PokemonCollection::index_type index);
+	Pokemon const & replacement() const;
+	Pokemon & replacement();
+	template<typename... Args>
+	void add_pokemon(Args&&... args) {
+		all_pokemon().add(std::forward<Args>(args)...);
+	}
+	void remove_pokemon ();
+	PokemonCollection const & all_pokemon() const;
+	PokemonCollection & all_pokemon();
+	
+	unsigned number_of_seen_pokemon() const;
+	unsigned size() const;
+	
+	bool is_me() const;
+	std::string who() const;
+	// Not for variables that give a message at the end of the turn, this is
+	// just for some book-keeping variables.
+	void reset_between_turns();
+	void clear_field();
+	void move(bool value = true);
 
-		void update_chance_to_hit(Team const & target, Weather const & weather, bool target_moved);
-		
-		typedef uint64_t hash_type;
-		hash_type hash () const;
-		std::string to_string(bool include_owner = true) const;
-		friend bool operator== (Team const & lhs, Team const & rhs);
+	void update_chance_to_hit(Team const & target, Weather const & weather, bool target_moved);
+	
+	typedef uint64_t hash_type;
+	hash_type hash () const;
+	std::string to_string(bool include_owner = true) const;
+	friend bool operator== (Team const & lhs, Team const & rhs);
 
-	private:
-		friend class Evaluate;
-		void load(std::string const & name);
+private:
+	friend class Evaluate;
+	void load(std::string const & name);
 
-		ActivePokemon active_pokemon;
-	public:
-		Screens screens;
-		Wish wish;
-		EntryHazards entry_hazards;
-	private:
-		bool me;
+	ActivePokemon active_pokemon;
+public:
+	Screens screens;
+	Wish wish;
+	EntryHazards entry_hazards;
+private:
+	bool me;
 };
 bool operator!= (Team const & lhs, Team const & rhs);
 

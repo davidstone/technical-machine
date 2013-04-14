@@ -24,19 +24,19 @@
 namespace technicalmachine {
 
 class Taunt {
-	public:
-		Taunt();
-		bool is_active() const;
-		void activate();
-		void increment();
-		void reset();
-		friend bool operator== (Taunt const & lhs, Taunt const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		friend class Evaluate;
-		uint8_t turns_taunted;
+public:
+	Taunt();
+	bool is_active() const;
+	void activate();
+	void increment();
+	void reset();
+	friend bool operator== (Taunt const & lhs, Taunt const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	friend class Evaluate;
+	uint8_t turns_taunted;
 };
 bool operator!= (Taunt const & lhs, Taunt const & rhs);
 

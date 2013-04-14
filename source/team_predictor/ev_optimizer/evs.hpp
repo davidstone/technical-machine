@@ -28,20 +28,20 @@ class OffensiveEVs;
 class DefensiveEVs;
 
 class EVs {
+public:
+	EVs(OffensiveEVs const & offensive, DefensiveEVs const & defensive, unsigned speed);
+private:
+	class SingleDataPoint {
 	public:
-		EVs(OffensiveEVs const & offensive, DefensiveEVs const & defensive, unsigned speed);
-	private:
-		class SingleDataPoint {
-			public:
-				unsigned hp;
-				unsigned atk;
-				unsigned def;
-				unsigned spa;
-				unsigned spd;
-				unsigned spe;
-				Nature nature;
-		};
-		std::vector<SingleDataPoint> evs;
+		unsigned hp;
+		unsigned atk;
+		unsigned def;
+		unsigned spa;
+		unsigned spd;
+		unsigned spe;
+		Nature nature;
+	};
+	std::vector<SingleDataPoint> evs;
 };
 
 }	// namespace technicalmachine

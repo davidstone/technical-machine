@@ -26,12 +26,12 @@
 namespace technicalmachine {
 
 class Stats {
-	public:
-		Stats(Species species);
-		Stat const & operator[](Stat::Stats stat) const;
-		Stat & operator[](Stat::Stats stat);
-	private:
-		std::array<Stat, 6> stats;
+public:
+	Stats(Species species);
+	Stat const & operator[](Stat::Stats stat) const;
+	Stat & operator[](Stat::Stats stat);
+private:
+	std::array<Stat, 6> stats;
 };
 
 }	// namespace technicalmachine

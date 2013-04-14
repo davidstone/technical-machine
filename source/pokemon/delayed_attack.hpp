@@ -24,20 +24,20 @@
 namespace technicalmachine {
 
 class DelayedAttack {
-	public:
-		DelayedAttack();
-		void activate();
-		// Returns whether Doom Desire / Future Sight hits this turn
-		bool decrement();
-		void reset();
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-		friend bool operator== (DelayedAttack const & lhs, DelayedAttack const & rhs);
-	private:
-		friend class Evaluate;
-		bool is_active() const;
-		uint8_t turns_before_hitting;
+public:
+	DelayedAttack();
+	void activate();
+	// Returns whether Doom Desire / Future Sight hits this turn
+	bool decrement();
+	void reset();
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+	friend bool operator== (DelayedAttack const & lhs, DelayedAttack const & rhs);
+private:
+	friend class Evaluate;
+	bool is_active() const;
+	uint8_t turns_before_hitting;
 };
 bool operator!= (DelayedAttack const & lhs, DelayedAttack const & rhs);
 

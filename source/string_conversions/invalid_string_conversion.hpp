@@ -29,11 +29,11 @@ namespace technicalmachine {
 // if there is a logic error in my program.
 
 class InvalidToStringConversion : public std::logic_error {
-	public:
-		template<typename Test>
-		InvalidToStringConversion(Test original, Test result, std::string const & intermediate):
-			std::logic_error(std::to_string(static_cast<unsigned>(original)) + " is seen as " + std::to_string(static_cast<unsigned>(result)) + " with an intermediate string of " + intermediate + ".\n") {
-		}
+public:
+	template<typename Test>
+	InvalidToStringConversion(Test original, Test result, std::string const & intermediate):
+		std::logic_error(std::to_string(static_cast<unsigned>(original)) + " is seen as " + std::to_string(static_cast<unsigned>(result)) + " with an intermediate string of " + intermediate + ".\n") {
+	}
 };
 
 // I make the FromString a runtime error because I only convert from a string
@@ -41,8 +41,8 @@ class InvalidToStringConversion : public std::logic_error {
 // but it is definitely a runtime error.
 
 class InvalidFromStringConversion : public std::runtime_error {
-	public:
-		InvalidFromStringConversion(std::string const & target, std::string const & requested);
+public:
+	InvalidFromStringConversion(std::string const & target, std::string const & requested);
 };
 
 }	// namespace technicalmachine

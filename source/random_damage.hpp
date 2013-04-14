@@ -25,11 +25,11 @@ namespace technicalmachine {
 class Rational;
 
 class RandomDamage {
-	public:
-		RandomDamage();
-		Rational operator() () const;
-	private:
-		uint8_t r;
+public:
+	RandomDamage();
+	Rational operator() () const;
+private:
+	uint8_t r;
 };
 
 }	// namespace technicalmachine

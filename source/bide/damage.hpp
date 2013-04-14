@@ -24,16 +24,16 @@
 namespace technicalmachine {
 
 class BideDamage {
-	public:
-		BideDamage();
-		void add(unsigned extra_damage);
-		unsigned release();
-		friend bool operator== (BideDamage const & lhs, BideDamage const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		uint16_t damage;
+public:
+	BideDamage();
+	void add(unsigned extra_damage);
+	unsigned release();
+	friend bool operator== (BideDamage const & lhs, BideDamage const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	uint16_t damage;
 };
 
 bool operator!= (BideDamage const & lhs, BideDamage const & rhs);

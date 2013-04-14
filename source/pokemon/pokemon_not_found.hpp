@@ -25,8 +25,8 @@
 namespace technicalmachine {
 
 class PokemonNotFound : public std::logic_error {
-	public:
-		explicit PokemonNotFound(Species const species);
+public:
+	explicit PokemonNotFound(Species const species);
 };
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_NOT_FOUND_HPP_

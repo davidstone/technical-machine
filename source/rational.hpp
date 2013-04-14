@@ -26,82 +26,82 @@ namespace technicalmachine {
 class Pokemon;
 
 class Rational {
+public:
+	constexpr explicit Rational(unsigned const n = 1, unsigned const d = 1):
+		numerator(n),
+		denominator(d) {
+	}
+	template<typename T>
+	friend typename std::enable_if<std::is_integral<T>::value, T>::type &
+	operator*=(T & number, Rational const rational) {
+		auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
+		number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
+		return number;
+	}
+	template<typename T>
+	friend typename std::enable_if<std::is_floating_point<T>::value, T>::type &
+	operator*=(T & number, Rational const rational) {
+		number *= rational.numerator;
+		number /= rational.denominator;
+		return number;
+	}
+	friend Rational operator*=(Rational & lhs, Rational const rhs) {
+		lhs.numerator *= rhs.numerator;
+		lhs.denominator *= rhs.denominator;
+		return lhs;
+	}
+	friend constexpr Rational operator*(Rational const lhs, Rational const rhs) {
+		return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator);
+	}
+	friend Rational & operator+=(Rational & lhs, Rational const rhs) {
+		lhs.numerator *= rhs.denominator;
+		lhs.numerator += rhs.numerator * lhs.denominator;
+		lhs.denominator *= rhs.denominator;
+		return lhs;
+	}
+	friend constexpr Rational operator+(Rational const lhs, Rational const rhs) {
+		return Rational(lhs.numerator * rhs.denominator + rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
+	}
+	friend Rational & operator-=(Rational & lhs, Rational const rhs) {
+		lhs.numerator *= rhs.denominator;
+		lhs.numerator -= rhs.numerator * lhs.denominator;
+		lhs.denominator *= rhs.denominator;
+		return lhs;
+	}
+	friend constexpr Rational operator-(Rational const lhs, Rational const rhs) {
+		return Rational(lhs.numerator * rhs.denominator - rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
+	}
+	friend constexpr Rational complement(Rational const rational) {
+		return Rational(rational.denominator - rational.numerator, rational.denominator);
+	}
+	// All these relational operators assume no overflow
+	friend constexpr bool operator==(Rational const lhs, Rational const rhs) {
+		return lhs.numerator * rhs.denominator == rhs.numerator * lhs.denominator;
+	}
+	friend constexpr bool operator<(Rational const lhs, Rational const rhs) {
+		return lhs.numerator * rhs.denominator < rhs.numerator * lhs.denominator;
+	}
+	friend constexpr bool operator<=(Rational const lhs, Rational const rhs) {
+		return lhs.numerator * rhs.denominator <= rhs.numerator * lhs.denominator;
+	}
+	friend std::string to_string(Rational const rational) {
+		return std::to_string(rational.numerator) + " / " + std::to_string(rational.denominator);
+	}
+private:
+	template<typename T, typename Enable = void>
+	class Temp;
+	template<typename T>
+	class Temp<T, typename std::enable_if<std::is_signed<T>::value>::type> {
 	public:
-		constexpr explicit Rational(unsigned const n = 1, unsigned const d = 1):
-			numerator(n),
-			denominator(d) {
-		}
-		template<typename T>
-		friend typename std::enable_if<std::is_integral<T>::value, T>::type &
-		operator*=(T & number, Rational const rational) {
-			auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
-			number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
-			return number;
-		}
-		template<typename T>
-		friend typename std::enable_if<std::is_floating_point<T>::value, T>::type &
-		operator*=(T & number, Rational const rational) {
-			number *= rational.numerator;
-			number /= rational.denominator;
-			return number;
-		}
-		friend Rational operator*=(Rational & lhs, Rational const rhs) {
-			lhs.numerator *= rhs.numerator;
-			lhs.denominator *= rhs.denominator;
-			return lhs;
-		}
-		friend constexpr Rational operator*(Rational const lhs, Rational const rhs) {
-			return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator);
-		}
-		friend Rational & operator+=(Rational & lhs, Rational const rhs) {
-			lhs.numerator *= rhs.denominator;
-			lhs.numerator += rhs.numerator * lhs.denominator;
-			lhs.denominator *= rhs.denominator;
-			return lhs;
-		}
-		friend constexpr Rational operator+(Rational const lhs, Rational const rhs) {
-			return Rational(lhs.numerator * rhs.denominator + rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
-		}
-		friend Rational & operator-=(Rational & lhs, Rational const rhs) {
-			lhs.numerator *= rhs.denominator;
-			lhs.numerator -= rhs.numerator * lhs.denominator;
-			lhs.denominator *= rhs.denominator;
-			return lhs;
-		}
-		friend constexpr Rational operator-(Rational const lhs, Rational const rhs) {
-			return Rational(lhs.numerator * rhs.denominator - rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
-		}
-		friend constexpr Rational complement(Rational const rational) {
-			return Rational(rational.denominator - rational.numerator, rational.denominator);
-		}
-		// All these relational operators assume no overflow
-		friend constexpr bool operator==(Rational const lhs, Rational const rhs) {
-			return lhs.numerator * rhs.denominator == rhs.numerator * lhs.denominator;
-		}
-		friend constexpr bool operator<(Rational const lhs, Rational const rhs) {
-			return lhs.numerator * rhs.denominator < rhs.numerator * lhs.denominator;
-		}
-		friend constexpr bool operator<=(Rational const lhs, Rational const rhs) {
-			return lhs.numerator * rhs.denominator <= rhs.numerator * lhs.denominator;
-		}
-		friend std::string to_string(Rational const rational) {
-			return std::to_string(rational.numerator) + " / " + std::to_string(rational.denominator);
-		}
-	private:
-		template<typename T, typename Enable = void>
-		class Temp;
-		template<typename T>
-		class Temp<T, typename std::enable_if<std::is_signed<T>::value>::type> {
-			public:
-				typedef int type;
-		};
-		template<typename T>
-		class Temp<T, typename std::enable_if<std::is_unsigned<T>::value>::type> {
-			public:
-				typedef unsigned type;
-		};
-		unsigned numerator;
-		unsigned denominator;
+		typedef int type;
+	};
+	template<typename T>
+	class Temp<T, typename std::enable_if<std::is_unsigned<T>::value>::type> {
+	public:
+		typedef unsigned type;
+	};
+	unsigned numerator;
+	unsigned denominator;
 };
 
 template<typename T>

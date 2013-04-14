@@ -29,44 +29,43 @@ namespace po {
 class InMessage;
 
 class BattleSettings : public ::technicalmachine::BattleSettings {
-	public:
-		enum Clauses : uint32_t {
-			SLEEP_CLAUSE = 1 << 0,
-			FREEZE_CLAUSE = 1 << 1,
-			DISALLOW_SPECTATORS = 1 << 2,
-			ITEM_CLAUSE = 1 << 3,
-			CHALLENGE_CUP = 1 << 4,
-			NO_TIME_OUT = 1 << 5,
-			SPECIES_CLAUSE = 1 << 6,
-			REARRANGE_TEAMS = 1 << 7,
-			SELF_KO_CLAUSE = 1 << 8
-		};
-		enum Mode {
-			SINGLES = 0,
-			DOUBLES = 1,
-			TRIPLES = 2,
-			ROTATION = 3
-		};
-		uint32_t const clauses;
-		Mode const mode;
-		BattleSettings (uint32_t battle_clauses, uint8_t battle_mode);
-		BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t battle_mode);
-	private:
-		bool active (Clauses const check) const;
-	public:
-		bool are_acceptable () const;
+public:
+	enum Clauses : uint32_t {
+		SLEEP_CLAUSE = 1 << 0,
+		FREEZE_CLAUSE = 1 << 1,
+		DISALLOW_SPECTATORS = 1 << 2,
+		ITEM_CLAUSE = 1 << 3,
+		CHALLENGE_CUP = 1 << 4,
+		NO_TIME_OUT = 1 << 5,
+		SPECIES_CLAUSE = 1 << 6,
+		REARRANGE_TEAMS = 1 << 7,
+		SELF_KO_CLAUSE = 1 << 8
+	};
+	enum Mode {
+		SINGLES = 0,
+		DOUBLES = 1,
+		TRIPLES = 2,
+		ROTATION = 3
+	};
+	BattleSettings (uint32_t battle_clauses, uint8_t battle_mode);
+	BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t battle_mode);
+	bool are_acceptable () const;
+	uint32_t const clauses;
+	Mode const mode;
+private:
+	bool active (Clauses const check) const;
 };
 
 class BattleConfiguration {
-	public:
-		BattleConfiguration (InMessage & msg);
-	private:
-		uint8_t const generation;
-		uint8_t const mode;
-		uint32_t const id1;
-		uint32_t const id2;
-		uint32_t const clauses;
-		BattleSettings const settings;
+public:
+	BattleConfiguration (InMessage & msg);
+private:
+	uint8_t const generation;
+	uint8_t const mode;
+	uint32_t const id1;
+	uint32_t const id2;
+	uint32_t const clauses;
+	BattleSettings const settings;
 };
 
 }	// namespace po

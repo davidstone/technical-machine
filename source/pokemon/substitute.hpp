@@ -24,20 +24,20 @@
 namespace technicalmachine {
 
 class Substitute {
-	public:
-		Substitute();
-		bool create(unsigned total_hp);
-		void damage(unsigned damage_taken);
-		void destroy();
-		explicit operator bool() const;
-		friend bool operator== (Substitute const & lhs, Substitute const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash () const;
-		static hash_type max_hash();
-	private:
-		friend class Evaluate;
-		bool exists() const;
-		uint8_t hp;
+public:
+	Substitute();
+	bool create(unsigned total_hp);
+	void damage(unsigned damage_taken);
+	void destroy();
+	explicit operator bool() const;
+	friend bool operator== (Substitute const & lhs, Substitute const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash () const;
+	static hash_type max_hash();
+private:
+	friend class Evaluate;
+	bool exists() const;
+	uint8_t hp;
 };
 bool operator!= (Substitute const & lhs, Substitute const & rhs);
 

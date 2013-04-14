@@ -24,20 +24,20 @@
 namespace technicalmachine {
 
 class Yawn {
-	public:
-		Yawn();
-		void reset();
-		void activate();
-		// return value represents whether Yawn activated
-		bool decrement();
-		friend bool operator== (Yawn const & lhs, Yawn const & rhs);
-		typedef uint64_t hash_type;
-		hash_type hash() const;
-		static hash_type max_hash();
-	private:
-		friend class Evaluate;
-		bool is_inactive() const;
-		uint8_t counter;
+public:
+	Yawn();
+	void reset();
+	void activate();
+	// return value represents whether Yawn activated
+	bool decrement();
+	friend bool operator== (Yawn const & lhs, Yawn const & rhs);
+	typedef uint64_t hash_type;
+	hash_type hash() const;
+	static hash_type max_hash();
+private:
+	friend class Evaluate;
+	bool is_inactive() const;
+	uint8_t counter;
 };
 bool operator!= (Yawn const & lhs, Yawn const & rhs);
 

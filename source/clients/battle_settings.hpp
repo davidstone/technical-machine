@@ -22,9 +22,9 @@
 namespace technicalmachine {
 
 class BattleSettings {
-	public:
-		virtual bool are_acceptable () const = 0;
-		virtual ~BattleSettings () {}
+public:
+	virtual bool are_acceptable () const = 0;
+	virtual ~BattleSettings () {}
 };
 
 }	// namespace technicalmachine

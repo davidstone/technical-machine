@@ -26,15 +26,15 @@ class ActivePokemon;
 class Weather;
 
 class ChanceToHit {
-	public:
-		typedef uint8_t value_type;
-		ChanceToHit();
-		value_type operator()() const;
-		value_type inverse() const;
-		bool can_miss() const;
-		void update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved);
-	private:
-		value_type probability;
+public:
+	typedef uint8_t value_type;
+	ChanceToHit();
+	value_type operator()() const;
+	value_type inverse() const;
+	bool can_miss() const;
+	void update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved);
+private:
+	value_type probability;
 };
 
 }	// namespace technicalmachine

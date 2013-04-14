@@ -29,13 +29,13 @@ class Client;
 namespace ps {
 
 class InMessage : public network::InMessage::InMessage {
-	public:
-		std::string read_string();
-		void read_body(boost::asio::ip::tcp::socket & socket, network::Client * client) override;
-		enum Message {
-		};
-	private:
-		size_t header_size() const override;
+public:
+	std::string read_string();
+	void read_body(boost::asio::ip::tcp::socket & socket, network::Client * client) override;
+	enum Message {
+	};
+private:
+	size_t header_size() const override;
 };
 
 }	// namespace ps

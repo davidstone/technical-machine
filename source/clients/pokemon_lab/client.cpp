@@ -81,73 +81,73 @@ void Client::send_keep_alive_message () {
 }
 
 class Channel {
-	public:
-		std::string name;
-		uint8_t type;
-		std::string topic;
-		uint32_t population;
-		explicit Channel (InMessage & msg):
-			name (msg.read_string()),
-			type (msg.read_byte()),
-			topic (msg.read_string()),
-			population (msg.read_int()) {
-		}
+public:
+	std::string name;
+	uint8_t type;
+	std::string topic;
+	uint32_t population;
+	explicit Channel (InMessage & msg):
+		name (msg.read_string()),
+		type (msg.read_byte()),
+		topic (msg.read_string()),
+		population (msg.read_int()) {
+	}
 };
 
 class Metagame {
-	public:
-		uint8_t index;
-		std::string name;
-		std::string id;
-		std::string description;
-		uint8_t party_size;
-		uint8_t max_team_length;
+public:
+	uint8_t index;
+	std::string name;
+	std::string id;
+	std::string description;
+	uint8_t party_size;
+	uint8_t max_team_length;
 
-		std::vector <uint16_t> bans;
-		std::vector <std::string> clauses;
+	std::vector <uint16_t> bans;
+	std::vector <std::string> clauses;
 
-		bool timing;
-		uint16_t pool_length;
-		uint8_t periods;
-		uint16_t period_length;
-	private:
-		void load_bans (InMessage & msg) {
-			uint16_t ban_list_count = msg.read_short ();
-			for (uint16_t n = 0; n != ban_list_count; ++n) {
-				uint16_t species_id = msg.read_short ();
-				bans.emplace_back(species_id);
-			}
+	bool timing;
+	uint16_t pool_length;
+	uint8_t periods;
+	uint16_t period_length;
+private:
+	void load_bans (InMessage & msg) {
+		uint16_t ban_list_count = msg.read_short ();
+		for (uint16_t n = 0; n != ban_list_count; ++n) {
+			uint16_t species_id = msg.read_short ();
+			bans.emplace_back(species_id);
 		}
-		void load_clauses (InMessage & msg) {
-			uint16_t clause_count = msg.read_short ();
-			for (uint16_t b = 0; b != clause_count; ++b) {
-				std::string clause_name = msg.read_string ();
-				clauses.emplace_back(clause_name);
-			}
+	}
+	void load_clauses (InMessage & msg) {
+		uint16_t clause_count = msg.read_short ();
+		for (uint16_t b = 0; b != clause_count; ++b) {
+			std::string clause_name = msg.read_string ();
+			clauses.emplace_back(clause_name);
 		}
-		void load_battle_timer (InMessage & msg) {
-			timing = msg.read_byte ();
-			if (timing) {
-				pool_length = msg.read_short ();
-				periods = msg.read_byte ();
-				period_length = msg.read_short ();
-			}
+	}
+	void load_battle_timer (InMessage & msg) {
+		timing = msg.read_byte ();
+		if (timing) {
+			pool_length = msg.read_short ();
+			periods = msg.read_byte ();
+			period_length = msg.read_short ();
 		}
-	public:
-		explicit Metagame (InMessage & msg):
-			index (msg.read_byte ()),
-			name (msg.read_string ()),
-			id (msg.read_string ()),
-			description (msg.read_string ()),
-			party_size (msg.read_byte ()),
-			max_team_length (msg.read_byte ()),
-			pool_length (0xFFFF),
-			periods (0xFF),
-			period_length (0xFFFF) {
-			load_bans (msg);
-			load_clauses (msg);
-			load_battle_timer (msg);
-		}
+	}
+public:
+	explicit Metagame (InMessage & msg):
+		index (msg.read_byte ()),
+		name (msg.read_string ()),
+		id (msg.read_string ()),
+		description (msg.read_string ()),
+		party_size (msg.read_byte ()),
+		max_team_length (msg.read_byte ()),
+		pool_length (0xFFFF),
+		periods (0xFF),
+		period_length (0xFFFF) {
+		load_bans (msg);
+		load_clauses (msg);
+		load_battle_timer (msg);
+	}
 };
 
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
