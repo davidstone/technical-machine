@@ -34,7 +34,7 @@ def extract_info(name, command):
 		name = os.path.basename(command)
 	elif command == None and name != None:
 		command = name
-	else:
+	elif command == None and name == None:
 		name = DefaultEnvironment()['CXX']
 		command = name
 	return (name, command)
