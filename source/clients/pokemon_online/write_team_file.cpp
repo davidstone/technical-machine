@@ -66,7 +66,7 @@ void write_blank_stats (boost::property_tree::ptree & pt) {
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
 	member.put ("<xmlattr>.Item", item_to_id (pokemon.item().name));
-	member.put ("<xmlattr>.Ability", ability_to_id (pokemon.ability().name));
+	member.put ("<xmlattr>.Ability", ability_to_id (pokemon.ability().name()));
 	std::pair<unsigned, unsigned> const ids = species_to_id (pokemon.name());
 	member.put ("<xmlattr>.Num", ids.first);
 	member.put ("<xmlattr>.Nature", nature_to_id (pokemon.nature().name));

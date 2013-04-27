@@ -154,8 +154,8 @@ Ability const & ActivePokemon::ability() const {
 	return get_pokemon().ability();
 }
 
-void ActivePokemon::ability(Ability::Abilities const update) {
-	get_pokemon().ability().name = update;
+Ability & ActivePokemon::ability() {
+	return get_pokemon().ability();
 }
 
 bool ActivePokemon::aqua_ring_is_active() const {

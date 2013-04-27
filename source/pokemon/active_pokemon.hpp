@@ -81,7 +81,7 @@ public:
 	void update_before_move();
 	void use_substitute();
 	Ability const & ability() const;
-	void ability(Ability::Abilities update);
+	Ability & ability();
 	void attract();
 	void awaken(bool value);
 	bool can_awaken() const;

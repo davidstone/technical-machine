@@ -81,7 +81,7 @@ Team max_damage_special_defender () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Paras, level, gender);
 	auto & d = defender.pokemon();
-	d.ability(Ability::Dry_Skin);
+	d.ability() = Ability::Dry_Skin;
 
 	d.stat(Stat::SPD).iv = 0;
 	d.stat(Stat::SPD).ev.set_value(0);
@@ -96,7 +96,7 @@ void physical_power_test () {
 
 	Team attacker = max_damage_physical_attacker ();
 	attacker.pokemon().item().name = Item::ROCK_INCENSE;
-	attacker.pokemon().ability(Ability::Rivalry);
+	attacker.pokemon().ability() = Ability::Rivalry;
 
 	unsigned const power = move_power(attacker.pokemon(), max_damage_physical_defender().pokemon(), Weather(), Variable());
 	if (power != max_power)
@@ -111,7 +111,7 @@ void special_power_test () {
 	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::Surf, 3);
 	pokemon.item().name = Item::WAVE_INCENSE;
-	pokemon.ability() = Ability(Ability::Torrent);
+	pokemon.ability() = Ability::Torrent;
 
 	Team defender = max_damage_special_defender ();
 	defender.pokemon().dive();
@@ -138,7 +138,7 @@ void physical_damage_test () {
 	a.stat(Stat::DEF).ev.set_value(252);
 	a.nature().name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
-	a.ability() = Ability(Ability::Pure_Power);
+	a.ability() = Ability::Pure_Power;
 	attacker.pokemon().stat_boost(Stat::ATK, 6);
 	calculate_attacking_stat (attacker.pokemon(), weather);
 
@@ -174,7 +174,7 @@ void special_damage_test () {
 	for (unsigned n = 0; n != 10; ++n)
 		attacker.pokemon().increment_move_use_counter();
 
-	a.ability() = Ability(Ability::Blaze);
+	a.ability() = Ability::Blaze;
 	attacker.pokemon().set_critical_hit(true);
 	attacker.pokemon().activate_flash_fire();
 

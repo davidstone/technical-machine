@@ -39,32 +39,36 @@ bool pinch_ability_activates(Pokemon const & attacker, Type::Types type);
 }	// namespace
 
 Ability::Ability():
-	name(END) {
+	m_name(END) {
 }
 
 Ability::Ability(Abilities ability):
-	name(ability) {
+	m_name(ability) {
 }
 
 Ability::Ability(std::string const & str):
-	name(::technicalmachine::from_string<Abilities>(str))
+	m_name(::technicalmachine::from_string<Abilities>(str))
 	{
 }
 
+Ability::Abilities Ability::name() const {
+	return m_name;
+}
+
 bool Ability::is_set() const {
-	return name != END;
+	return name() != END;
 }
 
 void Ability::set_if_unknown(Abilities const ability) {
 	assert(ability < END);
 	if (!is_set())
-		name = ability;
+		m_name = ability;
 }
 
 bool Ability::blocks_switching(ActivePokemon const & switcher, Weather const & weather) const {
-	switch (name) {
+	switch (name()) {
 		case Shadow_Tag:
-			return switcher.ability().name != Shadow_Tag;
+			return switcher.ability().name() != Shadow_Tag;
 		case Arena_Trap:
 			return grounded(switcher, weather);
 		case Magnet_Pull:
@@ -75,7 +79,7 @@ bool Ability::blocks_switching(ActivePokemon const & switcher, Weather const & w
 }
 
 bool Ability::blocks_weather() const {
-	switch (name) {
+	switch (name()) {
 		case Air_Lock:
 		case Cloud_Nine:
 			return true;
@@ -86,7 +90,7 @@ bool Ability::blocks_weather() const {
 
 template<>
 bool Ability::blocks_status<Status::BURN>(Weather const & weather) const {
-	switch (name) {
+	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
 		case Water_Veil:
@@ -101,12 +105,12 @@ bool Ability::blocks_status<Status::FREEZE>(Weather const & weather) const {
 	// Pass in weather to take advantage of template specialization, but I don't
 	// want to be warned about unused variables.
 	static_cast<void>(weather);
-	return name == Magma_Armor;
+	return name() == Magma_Armor;
 }
 
 template<>
 bool Ability::blocks_status<Status::PARALYSIS>(Weather const & weather) const {
-	switch (name) {
+	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
 		case Limber:
@@ -118,7 +122,7 @@ bool Ability::blocks_status<Status::PARALYSIS>(Weather const & weather) const {
 
 template<>
 bool Ability::blocks_status<Status::POISON>(Weather const & weather) const {
-	switch (name) {
+	switch (name()) {
 		case Immunity:
 			return true;
 		case Leaf_Guard:
@@ -135,7 +139,7 @@ bool Ability::blocks_status<Status::POISON_TOXIC>(Weather const & weather) const
 
 template<>
 bool Ability::blocks_status<Status::SLEEP>(Weather const & weather) const {
-	switch (name) {
+	switch (name()) {
 		case Insomnia:
 		case Vital_Spirit:
 			return true;
@@ -152,59 +156,59 @@ bool Ability::blocks_status<Status::REST>(Weather const & weather) const {
 }
 
 bool Ability::blocks_confusion() const {
-	return name == Own_Tempo;
+	return name() == Own_Tempo;
 }
 
 bool Ability::reflects_status() const {
-	return name == Synchronize;
+	return name() == Synchronize;
 }
 
 bool Ability::absorbs_poison_damage() const {
-	return name == Poison_Heal;
+	return name() == Poison_Heal;
 }
 
 bool Ability::blocks_burn_damage_penalty() const {
-	return name == Guts;
+	return name() == Guts;
 }
 
 bool Ability::blocks_paralysis_speed_penalty() const {
-	return name == Quick_Feet;
+	return name() == Quick_Feet;
 }
 
 bool Ability::blocks_sound_moves() const {
-	return name == Soundproof;
+	return name() == Soundproof;
 }
 
 bool Ability::can_clear_status(Status const status) const {
-	return name == Shed_Skin and !status.is_clear();
+	return name() == Shed_Skin and !status.is_clear();
 }
 
 bool Ability::clears_status_on_switch() const {
-	return name == Natural_Cure;
+	return name() == Natural_Cure;
 }
 
 bool Ability::is_immune_to_ground() const {
-	return name == Levitate;
+	return name() == Levitate;
 }
 
 bool Ability::wakes_up_early() const {
-	return name == Early_Bird;
+	return name() == Early_Bird;
 }
 
 bool Ability::weakens_burn() const {
-	return name == Heatproof;
+	return name() == Heatproof;
 }
 
 bool Ability::harms_sleepers() const {
-	return name == Bad_Dreams;
+	return name() == Bad_Dreams;
 }
 
 bool Ability::blocks_phazing() const {
-	return name == Suction_Cups;
+	return name() == Suction_Cups;
 }
 
 bool Ability::blocks_recoil() const {
-	switch (name) {
+	switch (name()) {
 		case Magic_Guard:
 		case Rock_Head:
 			return true;
@@ -214,19 +218,19 @@ bool Ability::blocks_recoil() const {
 }
 
 bool Ability::blocks_secondary_damage() const {
-	return name == Magic_Guard;
+	return name() == Magic_Guard;
 }
 
 bool Ability::cannot_miss() const {
-	return name == No_Guard;
+	return name() == No_Guard;
 }
 
 bool Ability::damages_leechers() const {
-	return name == Liquid_Ooze;
+	return name() == Liquid_Ooze;
 }
 
 bool Ability::weakens_se_attacks() const {
-	switch (name) {
+	switch (name()) {
 		case Filter:
 		case Solid_Rock:
 			return true;
@@ -236,51 +240,51 @@ bool Ability::weakens_se_attacks() const {
 }
 
 bool Ability::strengthens_nve_attacks() const {
-	return name == Tinted_Lens;
+	return name() == Tinted_Lens;
 }
 
 bool Ability::uses_extra_pp() const {
-	return name == Pressure;
+	return name() == Pressure;
 }
 
 bool Ability::ignores_blockers() const {
-	return name == Mold_Breaker;
+	return name() == Mold_Breaker;
 }
 
 bool Ability::boosts_critical_hits() const {
-	return name == Sniper;
+	return name() == Sniper;
 }
 
 bool Ability::boosts_defense(Status const status) const {
-	return name == Marvel_Scale and !status.is_clear();
+	return name() == Marvel_Scale and !status.is_clear();
 }
 
 bool Ability::boosts_special_attack(Weather const & weather) const {
-	return name == Solar_Power and weather.sun();
+	return name() == Solar_Power and weather.sun();
 }
 
 bool Ability::boosts_special_defense(Weather const & weather) const {
-	return name == Flower_Gift and weather.sun();
+	return name() == Flower_Gift and weather.sun();
 }
 
 bool Ability::boosts_speed() const {
-	return name == Speed_Boost;
+	return name() == Speed_Boost;
 }
 
 bool Ability::boosts_speed_when_flinched() const {
-	return name == Steadfast;
+	return name() == Steadfast;
 }
 
 bool Ability::boosts_stab() const {
-	return name == Adaptability;
+	return name() == Adaptability;
 }
 
 bool Ability::is_loafing(bool const loaf) const {
-	return name == Truant and loaf;
+	return name() == Truant and loaf;
 }
 
 Rational Ability::accuracy_modifier(ActivePokemon const & user) {
-	switch (user.ability().name) {
+	switch (user.ability().name()) {
 		case Compoundeyes:
 			return Rational(13, 10);
 		case Hustle:
@@ -291,7 +295,7 @@ Rational Ability::accuracy_modifier(ActivePokemon const & user) {
 }
 
 Rational Ability::evasion_modifier(ActivePokemon const & target, Weather const & weather) {
-	switch (target.ability().name) {
+	switch (target.ability().name()) {
 		case Sand_Veil:
 			return weather.sand() ? Rational(4, 5) : Rational(1, 1);
 		case Snow_Cloak:
@@ -304,7 +308,7 @@ Rational Ability::evasion_modifier(ActivePokemon const & target, Weather const &
 }
 
 Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
-	switch (attacker.ability().name) {
+	switch (attacker.ability().name()) {
 		case Technician:
 			return (base_power <= 60) ? Rational(3, 2) : Rational(1);
 		case Blaze:
@@ -333,7 +337,7 @@ bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
 }	// namespace
 
 Rational Ability::defender_modifier(Move const & move, Ability const ability) {
-	switch (ability.name) {
+	switch (ability.name()) {
 		case Dry_Skin:
 			return (move.type() == Type::Fire) ? Rational(5, 4) : Rational(1);
 		case Heatproof:
@@ -347,7 +351,7 @@ Rational Ability::defender_modifier(Move const & move, Ability const ability) {
 
 template<>
 Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & attacker, Weather const & weather) {
-	switch (attacker.ability().name) {
+	switch (attacker.ability().name()) {
 		case Flower_Gift:
 			return weather.sun() ? Rational(3, 2) : Rational(1);
 		case Guts:
@@ -377,7 +381,7 @@ Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weathe
 }
 template<>
 Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather) {
-	switch (pokemon.ability().name) {
+	switch (pokemon.ability().name()) {
 		case Chlorophyll:
 			return weather.sun() ? Rational(2) : Rational(1);
 		case Swift_Swim:
@@ -394,7 +398,7 @@ Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weathe
 }
 
 void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
-	switch (switcher.ability().name) {
+	switch (switcher.ability().name()) {
 		case Download: {
 			calculate_defense(other, weather);
 			calculate_special_defense(other, weather);
@@ -426,7 +430,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 }
 
 void Ability::weather_healing(Pokemon & pokemon, Weather const & weather) {
-	switch (pokemon.ability().name) {
+	switch (pokemon.ability().name()) {
 		case Dry_Skin:
 			if (weather.rain()) {
 				heal(pokemon, Rational(1, 8));
@@ -456,7 +460,7 @@ void Ability::weather_healing(Pokemon & pokemon, Weather const & weather) {
 }
 
 bool operator==(Ability const lhs, Ability const rhs) {
-	return lhs.name == rhs.name;
+	return lhs.m_name == rhs.m_name;
 }
 
 bool operator!=(Ability const lhs, Ability const rhs) {
@@ -464,7 +468,7 @@ bool operator!=(Ability const lhs, Ability const rhs) {
 }
 
 std::string Ability::to_string() const {
-	return ::technicalmachine::to_string(name);
+	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine

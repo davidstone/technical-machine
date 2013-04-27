@@ -473,7 +473,7 @@ void Battle::handle_critical_hit(Party const party) {
 }
 
 void Battle::handle_ability_message(Party party, Ability::Abilities ability) {
-	get_team(party).replacement().ability().name = ability;
+	get_team(party).replacement().ability() = ability;
 }
 
 void Battle::handle_item_message(Party party, Item::Items item) {

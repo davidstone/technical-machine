@@ -61,8 +61,9 @@ public:
 		Water_Veil, White_Smoke, Wonder_Guard, END
 	};
 	Ability ();
-	explicit Ability (Abilities ability);
+	Ability(Abilities ability);
 	explicit Ability (std::string const & str);
+	Abilities name() const;
 	bool is_set () const;
 	void set_if_unknown (Abilities ability);
 	bool blocks_switching (ActivePokemon const & switcher, Weather const & weather) const;
@@ -114,7 +115,8 @@ public:
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
 	static void weather_healing(Pokemon & pokemon, Weather const & weather);
 	friend bool operator== (Ability lhs, Ability rhs);
-	Abilities name;
+private:
+	Abilities m_name;
 };
 bool operator!= (Ability lhs, Ability rhs);
 

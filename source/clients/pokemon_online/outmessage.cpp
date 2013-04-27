@@ -75,7 +75,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_string (pokemon.get_nickname());
 	uint16_t const item = item_to_id (pokemon.item().name);
 	write_short (item);
-	uint16_t const ability = ability_to_id (pokemon.ability().name);
+	uint16_t const ability = ability_to_id (pokemon.ability().name());
 	write_short (ability);
 	uint8_t const nature = nature_to_id (pokemon.nature().name);
 	write_byte (nature);

@@ -85,7 +85,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	unsigned const item = pt.get<unsigned>("<xmlattr>.Item");
 	pokemon.item().name = id_to_item(item);
 	unsigned const ability = pt.get<unsigned>("<xmlattr>.Ability");
-	pokemon.ability().name = id_to_ability(ability);
+	pokemon.ability() = id_to_ability(ability);
 	unsigned const nature = pt.get<unsigned>("<xmlattr>.Nature");
 	pokemon.nature().name = id_to_nature(nature);
 
