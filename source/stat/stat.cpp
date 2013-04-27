@@ -238,10 +238,10 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 	constexpr auto stat = Stat::SPD;
 	auto defense = calculate_initial_stat<stat>(defender);
 	
-	defense *= defender.stage_modifier<Stat::SPD>(ch);
+	defense *= defender.stage_modifier<stat>(ch);
 
-	defense *= Ability::stat_modifier<Stat::SPD>(defender, weather);	
-	defense *= item_modifier<Stat::SPD>(defender);
+	defense *= Ability::stat_modifier<stat>(defender, weather);	
+	defense *= item_modifier<stat>(defender);
 	
 	defense *= special_defense_sandstorm_boost(defender, weather);
 	
