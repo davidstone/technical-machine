@@ -136,7 +136,7 @@ Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & 
 	std::cout << std::string (20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	Team predicted = predict_foe_team(detailed);
-	std::cout << predicted.to_string ();
+	std::cout << to_string(predicted) << '\n';
 
 	return expectiminimax(ai, predicted, weather, depth, evaluate, random_engine);
 }
@@ -416,8 +416,8 @@ void Battle::do_turn () {
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}
 	}
-	std::cout << first->to_string ();
-	std::cout << last->to_string ();
+	std::cout << to_string(*first) << '\n';
+	std::cout << to_string(*last) << '\n';
 }
 
 namespace {

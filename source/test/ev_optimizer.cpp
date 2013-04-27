@@ -42,13 +42,13 @@ void ev_optimizer_tests() {
 	pokemon.calculate_initial_hp();
 	pokemon.move.add(Moves::Psychic, 3);
 	pokemon.move.add(Moves::Earthquake, 3);
-	std::cerr << "Before: " << '\n' << team.to_string(false) << '\n';
+//	std::cerr << "Before: " << '\n' << team.to_string(false) << '\n';
 	minimize_evs(team.pokemon());
-	std::cerr << "After: " << '\n' << team.to_string(false) << '\n';
+//	std::cerr << "After: " << '\n' << team.to_string(false) << '\n';
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
 	pad_random_evs(team.pokemon(), random_engine);
-	std::cerr << "Final: " << '\n' << team.to_string(false) << '\n';
+//	std::cerr << "Final: " << '\n' << team.to_string(false) << '\n';
 }
 
 }	// namespace technicalmachine

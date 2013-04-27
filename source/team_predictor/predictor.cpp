@@ -182,7 +182,7 @@ void function (Fl_Widget * w, void * d) {
 	}
 	generate_random_team(data);
 	Team team = predict_team(data.detailed, data.team(), data.random_engine, using_lead);
-	data.output->value(team.to_string(false).c_str());
+	data.output->value(to_string(team, false).c_str());
 	data.reset();
 }
 

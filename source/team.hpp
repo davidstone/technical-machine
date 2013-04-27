@@ -69,7 +69,6 @@ public:
 	
 	typedef uint64_t hash_type;
 	hash_type hash () const;
-	std::string to_string(bool include_owner = true) const;
 	friend bool operator== (Team const & lhs, Team const & rhs);
 
 private:
@@ -85,6 +84,8 @@ private:
 	bool me;
 };
 bool operator!= (Team const & lhs, Team const & rhs);
+
+std::string to_string(Team const & team, bool include_owner = true);
 
 }	// namespace technicalmachine
 #endif	// TEAM_HPP_

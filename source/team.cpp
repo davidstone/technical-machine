@@ -193,12 +193,12 @@ bool operator!= (Team const & lhs, Team const & rhs) {
 	return !(lhs == rhs);
 }
 
-std::string Team::to_string(bool const include_owner) const {
+std::string to_string(Team const & team, bool const include_owner) {
 	std::string output;
 	if (include_owner) {
-		output += who() + "'s team:\n";
+		output += team.who() + "'s team:\n";
 	}
-	for (auto const & member : all_pokemon()) {
+	for (auto const & member : team.all_pokemon()) {
 		output += member.to_string();
 		double const d_per_cent_hp = 100.0 * member.current_hp();
 		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
@@ -230,9 +230,8 @@ std::string Team::to_string(bool const include_owner) const {
 		for (auto const stat : stats) {
 			add_stat(member.stat(stat.first), stat.second);
 		}
-		output += '\n';
 		member.move.for_each_regular_move([& output](Move const & move) {
-			output += "\t- " + move.to_string() + '\n';
+			output += "\n\t- " + move.to_string();
 		});
 	}
 	return output;
