@@ -1150,177 +1150,177 @@ std::pair <uint16_t, uint8_t> species_to_id (Species species) {
 
 Ability::Abilities id_to_ability (unsigned id) {
 	constexpr static Ability::Abilities ability_converter [] = {
-		Ability::END, Ability::STENCH, Ability::DRIZZLE,
-		Ability::SPEED_BOOST, Ability::BATTLE_ARMOR, Ability::STURDY,
-		Ability::DAMP, Ability::LIMBER, Ability::SAND_VEIL,
-		Ability::STATIC, Ability::VOLT_ABSORB, Ability::WATER_ABSORB,
-		Ability::OBLIVIOUS, Ability::CLOUD_NINE, Ability::COMPOUNDEYES,
-		Ability::INSOMNIA, Ability::COLOR_CHANGE, Ability::IMMUNITY,
-		Ability::FLASH_FIRE, Ability::SHIELD_DUST, Ability::OWN_TEMPO,
-		Ability::SUCTION_CUPS, Ability::INTIMIDATE, Ability::SHADOW_TAG,
-		Ability::ROUGH_SKIN, Ability::WONDER_GUARD, Ability::LEVITATE,
-		Ability::EFFECT_SPORE, Ability::SYNCHRONIZE, Ability::CLEAR_BODY,
-		Ability::NATURAL_CURE, Ability::LIGHTNINGROD, Ability::SERENE_GRACE,
-		Ability::SWIFT_SWIM, Ability::CHLOROPHYLL, Ability::ILLUMINATE,
-		Ability::TRACE, Ability::HUGE_POWER, Ability::POISON_POINT,
-		Ability::INNER_FOCUS, Ability::MAGMA_ARMOR, Ability::WATER_VEIL,
-		Ability::MAGNET_PULL, Ability::SOUNDPROOF, Ability::RAIN_DISH,
-		Ability::SAND_STREAM, Ability::PRESSURE, Ability::THICK_FAT,
-		Ability::EARLY_BIRD, Ability::FLAME_BODY, Ability::RUN_AWAY,
-		Ability::KEEN_EYE, Ability::HYPER_CUTTER, Ability::PICKUP,
-		Ability::TRUANT, Ability::HUSTLE, Ability::CUTE_CHARM,
-		Ability::PLUS, Ability::MINUS, Ability::FORECAST,
-		Ability::STICKY_HOLD, Ability::SHED_SKIN, Ability::GUTS,
-		Ability::MARVEL_SCALE, Ability::LIQUID_OOZE, Ability::OVERGROW,
-		Ability::BLAZE, Ability::TORRENT, Ability::SWARM,
-		Ability::ROCK_HEAD, Ability::DROUGHT, Ability::ARENA_TRAP,
-		Ability::VITAL_SPIRIT, Ability::WHITE_SMOKE, Ability::PURE_POWER,
-		Ability::SHELL_ARMOR, Ability::AIR_LOCK, Ability::TANGLED_FEET,
-		Ability::MOTOR_DRIVE, Ability::RIVALRY, Ability::STEADFAST,
-		Ability::SNOW_CLOAK, Ability::GLUTTONY, Ability::ANGER_POINT,
-		Ability::UNBURDEN, Ability::HEATPROOF, Ability::SIMPLE,
-		Ability::DRY_SKIN, Ability::DOWNLOAD, Ability::IRON_FIST,
-		Ability::POISON_HEAL, Ability::ADAPTABILITY, Ability::SKILL_LINK,
-		Ability::HYDRATION, Ability::SOLAR_POWER, Ability::QUICK_FEET,
-		Ability::NORMALIZE, Ability::SNIPER, Ability::MAGIC_GUARD,
-		Ability::NO_GUARD, Ability::STALL, Ability::TECHNICIAN,
-		Ability::LEAF_GUARD, Ability::KLUTZ, Ability::MOLD_BREAKER,
-		Ability::SUPER_LUCK, Ability::AFTERMATH, Ability::ANTICIPATION,
-		Ability::FOREWARN, Ability::UNAWARE, Ability::TINTED_LENS,
-		Ability::FILTER, Ability::SLOW_START, Ability::SCRAPPY,
-		Ability::STORM_DRAIN, Ability::ICE_BODY, Ability::SOLID_ROCK,
-		Ability::SNOW_WARNING, Ability::HONEY_GATHER, Ability::FRISK,
-		Ability::RECKLESS, Ability::MULTITYPE, Ability::FLOWER_GIFT,
-		Ability::BAD_DREAMS
+		Ability::END, Ability::Stench, Ability::Drizzle,
+		Ability::Speed_Boost, Ability::Battle_Armor, Ability::Sturdy,
+		Ability::Damp, Ability::Limber, Ability::Sand_Veil,
+		Ability::Static, Ability::Volt_Absorb, Ability::Water_Absorb,
+		Ability::Oblivious, Ability::Cloud_Nine, Ability::Compoundeyes,
+		Ability::Insomnia, Ability::Color_Change, Ability::Immunity,
+		Ability::Flash_Fire, Ability::Shield_Dust, Ability::Own_Tempo,
+		Ability::Suction_Cups, Ability::Intimidate, Ability::Shadow_Tag,
+		Ability::Rough_Skin, Ability::Wonder_Guard, Ability::Levitate,
+		Ability::Effect_Spore, Ability::Synchronize, Ability::Clear_Body,
+		Ability::Natural_Cure, Ability::Lightningrod, Ability::Serene_Grace,
+		Ability::Swift_Swim, Ability::Chlorophyll, Ability::Illuminate,
+		Ability::Trace, Ability::Huge_Power, Ability::Poison_Point,
+		Ability::Inner_Focus, Ability::Magma_Armor, Ability::Water_Veil,
+		Ability::Magnet_Pull, Ability::Soundproof, Ability::Rain_Dish,
+		Ability::Sand_Stream, Ability::Pressure, Ability::Thick_Fat,
+		Ability::Early_Bird, Ability::Flame_Body, Ability::Run_Away,
+		Ability::Keen_Eye, Ability::Hyper_Cutter, Ability::Pickup,
+		Ability::Truant, Ability::Hustle, Ability::Cute_Charm,
+		Ability::Plus, Ability::Minus, Ability::Forecast,
+		Ability::Sticky_Hold, Ability::Shed_Skin, Ability::Guts,
+		Ability::Marvel_Scale, Ability::Liquid_Ooze, Ability::Overgrow,
+		Ability::Blaze, Ability::Torrent, Ability::Swarm,
+		Ability::Rock_Head, Ability::Drought, Ability::Arena_Trap,
+		Ability::Vital_Spirit, Ability::White_Smoke, Ability::Pure_Power,
+		Ability::Shell_Armor, Ability::Air_Lock, Ability::Tangled_Feet,
+		Ability::Motor_Drive, Ability::Rivalry, Ability::Steadfast,
+		Ability::Snow_Cloak, Ability::Gluttony, Ability::Anger_Point,
+		Ability::Unburden, Ability::Heatproof, Ability::Simple,
+		Ability::Dry_Skin, Ability::Download, Ability::Iron_Fist,
+		Ability::Poison_Heal, Ability::Adaptability, Ability::Skill_Link,
+		Ability::Hydration, Ability::Solar_Power, Ability::Quick_Feet,
+		Ability::Normalize, Ability::Sniper, Ability::Magic_Guard,
+		Ability::No_Guard, Ability::Stall, Ability::Technician,
+		Ability::Leaf_Guard, Ability::Klutz, Ability::Mold_Breaker,
+		Ability::Super_Luck, Ability::Aftermath, Ability::Anticipation,
+		Ability::Forewarn, Ability::Unaware, Ability::Tinted_Lens,
+		Ability::Filter, Ability::Slow_Start, Ability::Scrappy,
+		Ability::Storm_Drain, Ability::Ice_Body, Ability::Solid_Rock,
+		Ability::Snow_Warning, Ability::Honey_Gather, Ability::Frisk,
+		Ability::Reckless, Ability::Multitype, Ability::Flower_Gift,
+		Ability::Bad_Dreams
 	};
 	return ability_converter [id];
 }
 
 unsigned ability_to_id (Ability::Abilities ability) {
 	constexpr static unsigned ability_converter [] = {
-		91,		// ADAPTABILITY
-		106,		// AFTERMATH
-		76,		// AIR_LOCK
-		83,		// ANGER_POINT
-		107,		// ANTICIPATION
-		71,		// ARENA_TRAP
-		123,		// BAD_DREAMS
-		4,		// BATTLE_ARMOR
-		66,		// BLAZE
-		34,		// CHLOROPHYLL
-		29,		// CLEAR_BODY
-		13,		// CLOUD_NINE
-		16,		// COLOR_CHANGE
-		14,		// COMPOUNDEYES
-		56,		// CUTE_CHARM
-		6,		// DAMP
-		88,		// DOWNLOAD
-		2,		// DRIZZLE
-		70,		// DROUGHT
-		87,		// DRY_SKIN
-		48,		// EARLY_BIRD
-		27,		// EFFECT_SPORE
-		111,		// FILTER
-		49,		// FLAME_BODY
-		18,		// FLASH_FIRE
-		122,		// FLOWER_GIFT
-		59,		// FORECAST
-		108,		// FOREWARN
-		119,		// FRISK
-		82,		// GLUTTONY
-		62,		// GUTS
-		85,		// HEATPROOF
-		118,		// HONEY_GATHER
-		37,		// HUGE_POWER
-		55,		// HUSTLE
-		93,		// HYDRATION
-		52,		// HYPER_CUTTER
-		115,		// ICE_BODY
-		35,		// ILLUMINATE
-		17,		// IMMUNITY
-		39,		// INNER_FOCUS
-		15,		// INSOMNIA
-		22,		// INTIMIDATE
-		89,		// IRON_FIST
-		51,		// KEEN_EYE
-		103,		// KLUTZ
-		102,		// LEAF_GUARD
-		26,		// LEVITATE
-		31,		// LIGHTNINGROD
-		7,		// LIMBER
-		64,		// LIQUID_OOZE
-		98,		// MAGIC_GUARD
-		40,		// MAGMA_ARMOR
-		42,		// MAGNET_PULL
-		63,		// MARVEL_SCALE
-		58,		// MINUS
-		104,		// MOLD_BREAKER
-		78,		// MOTOR_DRIVE
-		121,		// MULTITYPE
-		30,		// NATURAL_CURE
-		99,		// NO_GUARD
-		96,		// NORMALIZE
-		12,		// OBLIVIOUS
-		65,		// OVERGROW
-		20,		// OWN_TEMPO
-		53,		// PICKUP
-		57,		// PLUS
-		90,		// POISON_HEAL
-		38,		// POISON_POINT
-		46,		// PRESSURE
-		74,		// PURE_POWER
-		95,		// QUICK_FEET
-		44,		// RAIN_DISH
-		120,		// RECKLESS
-		79,		// RIVALRY
-		69,		// ROCK_HEAD
-		24,		// ROUGH_SKIN
-		50,		// RUN_AWAY
-		45,		// SAND_STREAM
-		8,		// SAND_VEIL
-		113,		// SCRAPPY
-		32,		// SERENE_GRACE
-		23,		// SHADOW_TAG
-		61,		// SHED_SKIN
-		75,		// SHELL_ARMOR
-		19,		// SHIELD_DUST
-		86,		// SIMPLE
-		92,		// SKILL_LINK
-		112,		// SLOW_START
-		97,		// SNIPER
-		81,		// SNOW_CLOAK
-		117,		// SNOW_WARNING
-		94,		// SOLAR_POWER
-		116,		// SOLID_ROCK
-		43,		// SOUNDPROOF
-		3,		// SPEED_BOOST
-		100,		// STALL
-		9,		// STATIC
-		80,		// STEADFAST
-		1,		// STENCH
-		60,		// STICKY_HOLD
-		114,		// STORM_DRAIN
-		5,		// STURDY
-		21,		// SUCTION_CUPS
-		105,		// SUPER_LUCK
-		68,		// SWARM
-		33,		// SWIFT_SWIM
-		28,		// SYNCHRONIZE
-		77,		// TANGLED_FEET
-		101,		// TECHNICIAN
-		47,		// THICK_FAT
-		110,		// TINTED_LENS
-		67,		// TORRENT
-		36,		// TRACE
-		54,		// TRUANT
-		109,		// UNAWARE
-		84,		// UNBURDEN
-		72,		// VITAL_SPIRIT
-		10,		// VOLT_ABSORB
-		11,		// WATER_ABSORB
-		41,		// WATER_VEIL
-		73,		// WHITE_SMOKE
-		25,		// WONDER_GUARD
+		91,		// Adaptability
+		106,		// Aftermath
+		76,		// Air_Lock
+		83,		// Anger_Point
+		107,		// Anticipation
+		71,		// Arena_Trap
+		123,		// Bad_Dreams
+		4,		// Battle_Armor
+		66,		// Blaze
+		34,		// Chlorophyll
+		29,		// Clear_Body
+		13,		// Cloud_Nine
+		16,		// Color_Change
+		14,		// Compoundeyes
+		56,		// Cute_Charm
+		6,		// Damp
+		88,		// Download
+		2,		// Drizzle
+		70,		// Drought
+		87,		// Dry_Skin
+		48,		// Early_Bird
+		27,		// Effect_Spore
+		111,		// Filter
+		49,		// Flame_Body
+		18,		// Flash_Fire
+		122,		// Flower_Gift
+		59,		// Forecast
+		108,		// Forewarn
+		119,		// Frisk
+		82,		// Gluttony
+		62,		// Guts
+		85,		// Heatproof
+		118,		// Honey_Gather
+		37,		// Huge_Power
+		55,		// Hustle
+		93,		// Hydration
+		52,		// Hyper_Cutter
+		115,		// Ice_Body
+		35,		// Illuminate
+		17,		// Immunity
+		39,		// Inner_Focus
+		15,		// Insomnia
+		22,		// Intimidate
+		89,		// Iron_Fist
+		51,		// Keen_Eye
+		103,		// Klutz
+		102,		// Leaf_Guard
+		26,		// Levitate
+		31,		// Lightningrod
+		7,		// Limber
+		64,		// Liquid_Ooze
+		98,		// Magic_Guard
+		40,		// Magma_Armor
+		42,		// Magnet_Pull
+		63,		// Marvel_Scale
+		58,		// Minus
+		104,		// Mold_Breaker
+		78,		// Motor_Drive
+		121,		// Multitype
+		30,		// Natural_Cure
+		99,		// No_Guard
+		96,		// Normalize
+		12,		// Oblivious
+		65,		// Overgrow
+		20,		// Own_Tempo
+		53,		// Pickup
+		57,		// Plus
+		90,		// Poison_Heal
+		38,		// Poison_Point
+		46,		// Pressure
+		74,		// Pure_Power
+		95,		// Quick_Feet
+		44,		// Rain_Dish
+		120,		// Reckless
+		79,		// Rivalry
+		69,		// Rock_Head
+		24,		// Rough_Skin
+		50,		// Run_Away
+		45,		// Sand_Stream
+		8,		// Sand_Veil
+		113,		// Scrappy
+		32,		// Serene_Grace
+		23,		// Shadow_Tag
+		61,		// Shed_Skin
+		75,		// Shell_Armor
+		19,		// Shield_Dust
+		86,		// Simple
+		92,		// Skill_Link
+		112,		// Slow_Start
+		97,		// Sniper
+		81,		// Snow_Cloak
+		117,		// Snow_Warning
+		94,		// Solar_Power
+		116,		// Solid_Rock
+		43,		// Soundproof
+		3,		// Speed_Boost
+		100,		// Stall
+		9,		// Static
+		80,		// Steadfast
+		1,		// Stench
+		60,		// Sticky_Hold
+		114,		// Storm_Drain
+		5,		// Sturdy
+		21,		// Suction_Cups
+		105,		// Super_Luck
+		68,		// Swarm
+		33,		// Swift_Swim
+		28,		// Synchronize
+		77,		// Tangled_Feet
+		101,		// Technician
+		47,		// Thick_Fat
+		110,		// Tinted_Lens
+		67,		// Torrent
+		36,		// Trace
+		54,		// Truant
+		109,		// Unaware
+		84,		// Unburden
+		72,		// Vital_Spirit
+		10,		// Volt_Absorb
+		11,		// Water_Absorb
+		41,		// Water_Veil
+		73,		// White_Smoke
+		25,		// Wonder_Guard
 		0		// END
 	};
 	return ability_converter [ability];
@@ -1348,80 +1348,80 @@ Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
 	// 70: %s's %a absorbs the attack!|%s's %a made the attack useless!
 	switch (id) {
 		case 2:
-			return Ability::AFTERMATH;
+			return Ability::Aftermath;
 		case 3:
-			return Ability::ANGER_POINT;
+			return Ability::Anger_Point;
 		case 4:
-			return Ability::ANTICIPATION;
+			return Ability::Anticipation;
 		case 6:
-			return Ability::BAD_DREAMS;
+			return Ability::Bad_Dreams;
 		case 9:
-			return Ability::COLOR_CHANGE;
+			return Ability::Color_Change;
 		case 11:
-			return Ability::CUTE_CHARM;
+			return Ability::Cute_Charm;
 		case 12:
-			return Ability::INNER_FOCUS;
+			return Ability::Inner_Focus;
 		case 13:
-			return Ability::DOWNLOAD;
+			return Ability::Download;
 		case 14:
 			switch (part) {
 				case 0:
-					return Ability::SNOW_WARNING;
+					return Ability::Snow_Warning;
 				case 1:
-					return Ability::DRIZZLE;
+					return Ability::Drizzle;
 				case 2:
-					return Ability::SAND_STREAM;
+					return Ability::Sand_Stream;
 				case 3:
-					return Ability::DROUGHT;
+					return Ability::Drought;
 				default:
-					throw InvalidPart (id, part);
+					throw InvalidPart(id, part);
 			}
 		case 15:
-			return Ability::DRY_SKIN;
+			return Ability::Dry_Skin;
 		case 16:
-			return Ability::EFFECT_SPORE;
+			return Ability::Effect_Spore;
 		case 19:
-			return Ability::FLASH_FIRE;
+			return Ability::Flash_Fire;
 		case 22:
-			return Ability::FOREWARN;
+			return Ability::Forewarn;
 		case 23:
-			return Ability::FRISK;
+			return Ability::Frisk;
 		case 24:
-			return Ability::SHIELD_DUST;
+			return Ability::Shield_Dust;
 		case 29:
-			return Ability::HYDRATION;
+			return Ability::Hydration;
 		case 34:
-			return Ability::INTIMIDATE;
+			return Ability::Intimidate;
 		case 37:
-			return Ability::LEAF_GUARD;
+			return Ability::Leaf_Guard;
 		case 41:
-			return Ability::MOTOR_DRIVE;
+			return Ability::Motor_Drive;
 		case 44:
-			return Ability::OWN_TEMPO;
+			return Ability::Own_Tempo;
 		case 45:
-			return Ability::POISON_HEAL;
+			return Ability::Poison_Heal;
 		case 46:
-			return Ability::PRESSURE;
+			return Ability::Pressure;
 		case 54:
-			return Ability::SHED_SKIN;
+			return Ability::Shed_Skin;
 		case 55:
-			return Ability::SLOW_START;
+			return Ability::Slow_Start;
 		case 56:
-			return Ability::SOLAR_POWER;
+			return Ability::Solar_Power;
 		case 57:
-			return Ability::SOUNDPROOF;
+			return Ability::Soundproof;
 		case 58:
-			return Ability::SPEED_BOOST;
+			return Ability::Speed_Boost;
 		case 60:
-			return Ability::STEADFAST;
+			return Ability::Steadfast;
 		case 61:
-			return Ability::SYNCHRONIZE;
+			return Ability::Synchronize;
 		case 66:
-			return Ability::TRACE;
+			return Ability::Trace;
 		case 67:
-			return Ability::TRUANT;
+			return Ability::Truant;
 		case 71:
-			return Ability::WONDER_GUARD;
+			return Ability::Wonder_Guard;
 		default:
 			return Ability::END;
 	}

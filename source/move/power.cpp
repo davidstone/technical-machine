@@ -1,5 +1,5 @@
 // Move power calculator
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -43,9 +43,6 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 unsigned second_lowest_bit (Stat const & stat);
 bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 unsigned item_modifier (Pokemon const & attacker);
-Rational attacker_ability_modifier (Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
-bool pinch_ability_activates (Pokemon const & attacker, Type::Types type);
-Rational defender_ability_modifier (Move const & move, Ability ability);
 
 }	// anonymous namespace
 
@@ -65,9 +62,9 @@ unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defen
 	if (defender.sport_is_active(attacker.move()))
 		power /= 2;
 
-	power *= attacker_ability_modifier(attacker, defender, base_power);
+	power *= Ability::attacker_modifier(attacker, defender, base_power);
 	
-	power *= defender_ability_modifier(move, defender.ability());
+	power *= Ability::defender_modifier(move, defender.ability());
 	
 	return std::max(power, 1u);
 }
@@ -317,46 +314,6 @@ unsigned item_modifier (Pokemon const & attacker) {
 			break;
 	}
 	return 10;
-}
-
-Rational attacker_ability_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
-	switch (attacker.ability().name) {
-		case Ability::TECHNICIAN:
-			return (base_power <= 60) ? Rational(3, 2) : Rational(1);
-		case Ability::BLAZE:
-			return pinch_ability_activates (attacker, Type::Fire) ? Rational(3, 2) : Rational(1);
-		case Ability::OVERGROW:
-			return pinch_ability_activates (attacker, Type::Grass) ? Rational(3, 2) : Rational(1);
-		case Ability::SWARM:
-			return pinch_ability_activates (attacker, Type::Bug) ? Rational(3, 2) : Rational(1);
-		case Ability::TORRENT:
-			return pinch_ability_activates (attacker, Type::Water) ? Rational(3, 2) : Rational(1);
-		case Ability::IRON_FIST:
-			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : Rational(1);
-		case Ability::RECKLESS:
-			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : Rational(1);
-		case Ability::RIVALRY:
-			return Rational(static_cast<unsigned>(4 + attacker.gender().multiplier(defender.gender())), 4);
-		default:
-			return Rational(1);
-	}
-}
-
-bool pinch_ability_activates (Pokemon const & attacker, Type::Types const type) {
-	return attacker.move().type() == type and attacker.current_hp() <= Rational(1, 3);
-}
-
-Rational defender_ability_modifier(Move const & move, Ability const ability) {
-	switch (ability.name) {
-		case Ability::DRY_SKIN:
-			return (move.type() == Type::Fire) ? Rational(5, 4) : Rational(1);
-		case Ability::HEATPROOF:
-			return (move.type() == Type::Fire) ? Rational(1, 2) : Rational(1);
-		case Ability::THICK_FAT:
-			return (move.type() == Type::Fire or move.type() == Type::Ice) ? Rational(1, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
 }
 
 }	// unnamed namespace

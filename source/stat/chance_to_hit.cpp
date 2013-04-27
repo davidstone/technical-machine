@@ -23,6 +23,7 @@
 #include "stage.hpp"
 #include "stat.hpp"
 
+#include "../ability.hpp"
 #include "../rational.hpp"
 #include "../weather.hpp"
 
@@ -35,9 +36,7 @@ constexpr ChanceToHit::value_type max = 100;
 
 bool move_can_miss(ActivePokemon const & user, Ability const & target_ability);
 Rational accuracy_item_modifier (Item const & item, bool target_moved);
-Rational accuracy_ability_modifier (ActivePokemon const & pokemon);
 Rational evasion_item_modifier (Item const & item);
-Rational evasion_ability_modifier(ActivePokemon const & target, Weather const & weather);
 
 }	// unnamed namespace
 
@@ -65,10 +64,10 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 		accuracy *= target.stage_modifier<Stat::EVA>();
 
 		accuracy *= accuracy_item_modifier(user.item(), target_moved);
-		accuracy *= accuracy_ability_modifier(user);
+		accuracy *= Ability::accuracy_modifier(user);
 		
 		accuracy *= evasion_item_modifier(target.item());
-		accuracy *= evasion_ability_modifier (target, weather);
+		accuracy *= Ability::evasion_modifier(target, weather);
 
 		if (weather.gravity())
 			accuracy *= Rational(5, 3);
@@ -97,36 +96,12 @@ Rational accuracy_item_modifier(Item const & item, bool target_moved) {
 	}
 }
 
-Rational accuracy_ability_modifier(ActivePokemon const & pokemon) {
-	switch (pokemon.ability().name) {
-		case Ability::COMPOUNDEYES:
-			return Rational(13, 10);
-		case Ability::HUSTLE:
-			return pokemon.move().is_physical() ? Rational(4, 5) : Rational(1, 1);
-		default:
-			return Rational(1, 1);
-	}
-}
-
 Rational evasion_item_modifier(Item const & item) {
 	switch (item.name) {
 		case Item::BRIGHTPOWDER:
 			return Rational(9, 10);
 		case Item::LAX_INCENSE:
 			return Rational(19, 20);
-		default:
-			return Rational(1, 1);
-	}
-}
-
-Rational evasion_ability_modifier(ActivePokemon const & target, Weather const & weather) {
-	switch (target.ability().name) {
-		case Ability::SAND_VEIL:
-			return weather.sand() ? Rational(4, 5) : Rational(1, 1);
-		case Ability::SNOW_CLOAK:
-			return weather.hail() ? Rational(4, 5) : Rational(1, 1);
-		case Ability::TANGLED_FEET:
-			return target.is_confused() ? Rational(4, 5) : Rational(1, 1);
 		default:
 			return Rational(1, 1);
 	}

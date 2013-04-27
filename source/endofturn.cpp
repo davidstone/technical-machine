@@ -85,28 +85,7 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 	if (weather.sand() and !pokemon.type().is_immune_to_sandstorm()) {
 		drain(pokemon, Rational(1, 16));
 	}
-	switch (pokemon.ability().name) {
-		case Ability::DRY_SKIN:
-			if (weather.rain())
-				heal(pokemon, Rational(1, 8));
-			else if (weather.sun())
-				drain(pokemon, Rational(1, 8));
-			break;
-		case Ability::HYDRATION:
-			if (weather.rain())
-				pokemon.status().clear ();
-			break;
-		case Ability::ICE_BODY:
-			if (weather.hail())
-				heal(pokemon, Rational(1, 16));
-			break;
-		case Ability::RAIN_DISH:
-			if (weather.rain())
-				heal(pokemon, Rational(1, 16));
-			break;
-		default:
-			break;
-	}
+	Ability::weather_healing(pokemon, weather);
 }
 
 void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {

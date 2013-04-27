@@ -40,57 +40,6 @@ uint8_t get_base_stat(Species name, Stat::Stats stat_name);
 unsigned initial_generic_stat(Stat const & stat, unsigned level);
 
 template<Stat::Stats stat>
-Rational ability_modifier(ActivePokemon const & pokemon, Weather const & weather);
-template<>
-Rational ability_modifier<Stat::ATK>(ActivePokemon const & attacker, Weather const & weather) {
-	switch (attacker.ability().name) {
-		case Ability::FLOWER_GIFT:
-			return weather.sun() ? Rational(3, 2) : Rational(1);
-		case Ability::GUTS:
-			return (!attacker.status().is_clear()) ? Rational(3, 2) : Rational(1);
-		case Ability::HUSTLE:
-			return Rational(3, 2);
-		case Ability::HUGE_POWER:
-		case Ability::PURE_POWER:
-			return Rational(2);
-		case Ability::SLOW_START:
-			return attacker.slow_start_is_active() ? Rational(1, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
-template<>
-Rational ability_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather) {
-	return pokemon.ability().boosts_special_attack(weather) ? Rational(3, 2) : Rational(1);
-}
-template<>
-Rational ability_modifier<Stat::DEF>(ActivePokemon const & defender, Weather const &) {
-	return defender.ability().boosts_defense(defender.status()) ? Rational(3, 2) : Rational(1);
-}
-template<>
-Rational ability_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather) {
-	return pokemon.ability().boosts_special_defense(weather) ? Rational(3, 2) : Rational(1);
-}
-template<>
-Rational ability_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather) {
-	switch (pokemon.ability().name) {
-		case Ability::CHLOROPHYLL:
-			return weather.sun() ? Rational(2) : Rational(1);
-		case Ability::SWIFT_SWIM:
-			return weather.rain() ? Rational(2) : Rational(1);
-		case Ability::UNBURDEN:
-			return pokemon.item().was_lost() ? Rational(2) : Rational(1);
-		case Ability::QUICK_FEET:
-			return (!pokemon.status().is_clear()) ? Rational(3, 2) : Rational(1);
-		case Ability::SLOW_START:
-			return pokemon.slow_start_is_active() ? Rational(1, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
-
-
-template<Stat::Stats stat>
 Rational item_modifier(Pokemon const & pokemon);
 template<>
 Rational item_modifier<Stat::ATK>(Pokemon const & attacker) {
@@ -212,7 +161,7 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 	auto attack = calculate_initial_stat<stat>(pokemon);
 	attack *= pokemon.stage_modifier<stat>(pokemon.critical_hit());
 
-	attack *= ability_modifier<stat>(pokemon, weather);
+	attack *= Ability::stat_modifier<stat>(pokemon, weather);
 	attack *= item_modifier<stat>(pokemon);
 	
 	pokemon.stat(stat).stat = std::max(attack, 1u);
@@ -276,7 +225,7 @@ void calculate_defense (ActivePokemon & defender, Weather const & weather, bool 
 
 	defense *= defender.stage_modifier<stat>(ch);
 	
-	defense *= ability_modifier<stat>(defender, weather);
+	defense *= Ability::stat_modifier<stat>(defender, weather);
 	defense *= item_modifier<stat>(defender);
 	
 	if (is_self_KO)
@@ -291,7 +240,7 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 	
 	defense *= defender.stage_modifier<Stat::SPD>(ch);
 
-	defense *= ability_modifier<Stat::SPD>(defender, weather);	
+	defense *= Ability::stat_modifier<Stat::SPD>(defender, weather);	
 	defense *= item_modifier<Stat::SPD>(defender);
 	
 	defense *= special_defense_sandstorm_boost(defender, weather);
@@ -306,7 +255,7 @@ void calculate_speed (Team & team, Weather const & weather) {
 	
 	speed *= pokemon.stage_modifier<stat>();
 
-	speed *= ability_modifier<stat>(pokemon, weather);
+	speed *= Ability::stat_modifier<stat>(pokemon, weather);
 	speed *= item_modifier<stat>(pokemon);
 	
 	speed /= paralysis_speed_divisor (pokemon);

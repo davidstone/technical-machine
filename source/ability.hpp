@@ -1,5 +1,5 @@
 // Ability data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,40 +22,43 @@
 #include <cstdint>
 #include <string>
 #include "status.hpp"
+#include "stat/stat.hpp"
 
 namespace technicalmachine {
 
 class ActivePokemon;
+class Move;
+class Rational;
 class Weather;
 
 class Ability {
 public:
 	enum Abilities : uint8_t {
-		ADAPTABILITY, AFTERMATH, AIR_LOCK, ANGER_POINT, ANTICIPATION,
-		ARENA_TRAP, BAD_DREAMS, BATTLE_ARMOR, BLAZE, CHLOROPHYLL,
-		CLEAR_BODY, CLOUD_NINE, COLOR_CHANGE, COMPOUNDEYES, CUTE_CHARM,
-		DAMP, DOWNLOAD, DRIZZLE, DROUGHT, DRY_SKIN,
-		EARLY_BIRD, EFFECT_SPORE, FILTER, FLAME_BODY, FLASH_FIRE,
-		FLOWER_GIFT, FORECAST, FOREWARN, FRISK, GLUTTONY,
-		GUTS, HEATPROOF, HONEY_GATHER, HUGE_POWER, HUSTLE,
-		HYDRATION, HYPER_CUTTER, ICE_BODY, ILLUMINATE, IMMUNITY,
-		INNER_FOCUS, INSOMNIA, INTIMIDATE, IRON_FIST, KEEN_EYE,
-		KLUTZ, LEAF_GUARD, LEVITATE, LIGHTNINGROD, LIMBER,
-		LIQUID_OOZE, MAGIC_GUARD, MAGMA_ARMOR, MAGNET_PULL, MARVEL_SCALE,
-		MINUS, MOLD_BREAKER, MOTOR_DRIVE, MULTITYPE, NATURAL_CURE,
-		NO_GUARD, NORMALIZE, OBLIVIOUS, OVERGROW, OWN_TEMPO,
-		PICKUP, PLUS, POISON_HEAL, POISON_POINT, PRESSURE,
-		PURE_POWER, QUICK_FEET, RAIN_DISH, RECKLESS, RIVALRY,
-		ROCK_HEAD, ROUGH_SKIN, RUN_AWAY, SAND_STREAM, SAND_VEIL,
-		SCRAPPY, SERENE_GRACE, SHADOW_TAG, SHED_SKIN, SHELL_ARMOR,
-		SHIELD_DUST, SIMPLE, SKILL_LINK, SLOW_START, SNIPER,
-		SNOW_CLOAK, SNOW_WARNING, SOLAR_POWER, SOLID_ROCK, SOUNDPROOF,
-		SPEED_BOOST, STALL, STATIC, STEADFAST, STENCH,
-		STICKY_HOLD, STORM_DRAIN, STURDY, SUCTION_CUPS, SUPER_LUCK,
-		SWARM, SWIFT_SWIM, SYNCHRONIZE, TANGLED_FEET, TECHNICIAN,
-		THICK_FAT, TINTED_LENS, TORRENT, TRACE, TRUANT,
-		UNAWARE, UNBURDEN, VITAL_SPIRIT, VOLT_ABSORB, WATER_ABSORB,
-		WATER_VEIL, WHITE_SMOKE, WONDER_GUARD, END
+		Adaptability, Aftermath, Air_Lock, Anger_Point, Anticipation,
+		Arena_Trap, Bad_Dreams, Battle_Armor, Blaze, Chlorophyll,
+		Clear_Body, Cloud_Nine, Color_Change, Compoundeyes, Cute_Charm,
+		Damp, Download, Drizzle, Drought, Dry_Skin,
+		Early_Bird, Effect_Spore, Filter, Flame_Body, Flash_Fire,
+		Flower_Gift, Forecast, Forewarn, Frisk, Gluttony,
+		Guts, Heatproof, Honey_Gather, Huge_Power, Hustle,
+		Hydration, Hyper_Cutter, Ice_Body, Illuminate, Immunity,
+		Inner_Focus, Insomnia, Intimidate, Iron_Fist, Keen_Eye,
+		Klutz, Leaf_Guard, Levitate, Lightningrod, Limber,
+		Liquid_Ooze, Magic_Guard, Magma_Armor, Magnet_Pull, Marvel_Scale,
+		Minus, Mold_Breaker, Motor_Drive, Multitype, Natural_Cure,
+		No_Guard, Normalize, Oblivious, Overgrow, Own_Tempo,
+		Pickup, Plus, Poison_Heal, Poison_Point, Pressure,
+		Pure_Power, Quick_Feet, Rain_Dish, Reckless, Rivalry,
+		Rock_Head, Rough_Skin, Run_Away, Sand_Stream, Sand_Veil,
+		Scrappy, Serene_Grace, Shadow_Tag, Shed_Skin, Shell_Armor,
+		Shield_Dust, Simple, Skill_Link, Slow_Start, Sniper,
+		Snow_Cloak, Snow_Warning, Solar_Power, Solid_Rock, Soundproof,
+		Speed_Boost, Stall, Static, Steadfast, Stench,
+		Sticky_Hold, Storm_Drain, Sturdy, Suction_Cups, Super_Luck,
+		Swarm, Swift_Swim, Synchronize, Tangled_Feet, Technician,
+		Thick_Fat, Tinted_Lens, Torrent, Trace, Truant,
+		Unaware, Unburden, Vital_Spirit, Volt_Absorb, Water_Absorb,
+		Water_Veil, White_Smoke, Wonder_Guard, END
 	};
 	Ability ();
 	explicit Ability (Abilities ability);
@@ -102,11 +105,29 @@ public:
 	bool is_loafing (bool loaf) const;
 	std::string to_string () const;
 	
+	static Rational accuracy_modifier(ActivePokemon const & user);
+	static Rational evasion_modifier(ActivePokemon const & target, Weather const & weather);
+	static Rational attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
+	static Rational defender_modifier(Move const & move, Ability ability);
+	template<Stat::Stats stat>
+	static Rational stat_modifier(ActivePokemon const & pokemon, Weather const & weather);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
+	static void weather_healing(Pokemon & pokemon, Weather const & weather);
 	friend bool operator== (Ability lhs, Ability rhs);
 	Abilities name;
 };
 bool operator!= (Ability lhs, Ability rhs);
+
+template<> Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<Stat::DEF>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<Stat::DEF>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather);
 
 }
 #endif	// ABILITY_HPP_

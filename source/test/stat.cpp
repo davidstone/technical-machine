@@ -48,7 +48,7 @@ void attack_tests () {
 	pokemon.stat(Stat::DEF).ev.set_value(252);
 	pokemon.nature().name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
-	pokemon.ability().name = Ability::PURE_POWER;
+	pokemon.ability() = Ability(Ability::Pure_Power);
 	attacker.pokemon().stat_boost(Stat::ATK, 6);
 
 	pokemon.item().name = Item::CHOICE_BAND;
@@ -74,7 +74,7 @@ void special_attack_tests () {
 	pokemon.nature().name = Nature::MODEST;
 	attacker.pokemon().stat_boost(Stat::SPA, 6);
 
-	pokemon.ability().name = Ability::SOLAR_POWER;
+	pokemon.ability() = Ability(Ability::Solar_Power);
 
 	pokemon.item().name = Item::CHOICE_SPECS;
 	
@@ -99,7 +99,7 @@ void defense_tests () {
 
 	defender.pokemon().stat_boost(Stat::DEF, 6);
 
-	pokemon.ability().name = Ability::MARVEL_SCALE;
+	pokemon.ability() = Ability(Ability::Marvel_Scale);
 	Status::apply<Status::BURN>(pokemon, weather);
 
 	calculate_defense(defender.pokemon(), weather);
@@ -148,7 +148,7 @@ void speed_tests () {
 
 	team.pokemon().stat_boost(Stat::SPE, 6);
 
-	pokemon.ability().name = Ability::SWIFT_SWIM;
+	pokemon.ability() = Ability(Ability::Swift_Swim);
 
 	pokemon.item().name = Item::CHOICE_SCARF;
 	
