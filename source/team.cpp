@@ -24,8 +24,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include "ability.hpp"
 #include "damage.hpp"
@@ -199,40 +197,7 @@ std::string to_string(Team const & team, bool const include_owner) {
 		output += team.who() + "'s team:\n";
 	}
 	for (auto const & member : team.all_pokemon()) {
-		output += member.to_string();
-		double const d_per_cent_hp = 100.0 * member.current_hp();
-		std::string const per_cent_hp = boost::lexical_cast <std::string> (boost::format ("%.1f") % d_per_cent_hp);
-		output += " (" + per_cent_hp + "% HP)";
-		output += " @ " + member.item().to_string ();
-		output += include_owner ? (" ** " + member.get_nickname() + '\n') : "\n";
-		if (member.ability().is_set()) {
-			output += "\tAbility: " + member.ability().to_string() + '\n';
-		}
-		if (!member.status().is_clear()) {
-			output += "\tStatus: " + member.status().to_string() + '\n';
-		}
-		output += "\tNature: " + member.nature().to_string() + '\n';
-		output += "\t";
-		auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
-			if (stat_name != "HP") {
-				output += " / ";
-			}
-			output += std::to_string(stat.ev.value()) + " " + stat_name;
-		};
-		static std::pair<Stat::Stats, std::string> const stats [] = {
-			{ Stat::HP, "HP" },
-			{ Stat::ATK, "Atk" },
-			{ Stat::DEF, "Def" },
-			{ Stat::SPA, "SpA" },
-			{ Stat::SPD, "SpD" },
-			{ Stat::SPE, "Spe" },
-		};
-		for (auto const stat : stats) {
-			add_stat(member.stat(stat.first), stat.second);
-		}
-		member.move.for_each_regular_move([& output](Move const & move) {
-			output += "\n\t- " + move.to_string();
-		});
+		output += to_string(member, include_owner) + '\n';
 	}
 	return output;
 }

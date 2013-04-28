@@ -988,8 +988,4 @@ bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return !(lhs == rhs);
 }
 
-std::string ActivePokemon::to_string() const {
-	return get_pokemon().to_string();
-}
-
 }	// namespace technicalmachine

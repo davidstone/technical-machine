@@ -57,7 +57,6 @@ public:
 	unsigned apply_damage(unsigned damage);
 	void apply_healing(unsigned amount);
 	unsigned power_of_mass_based_moves() const;
-	std::string to_string () const;
 	std::string get_nickname () const;
 	bool can_confuse_with_chatter() const;
 	bool can_use_substitute() const;
@@ -131,6 +130,7 @@ private:
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 bool is_alternate_form(Species first, Species second);
+std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_HPP_

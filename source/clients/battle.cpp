@@ -50,6 +50,8 @@
 
 #include "../pokemon/pokemon_not_found.hpp"
 
+#include "../string_conversions/conversion.hpp"
+
 #include "../team_predictor/team_predictor.hpp"
 
 namespace technicalmachine {
@@ -179,7 +181,7 @@ void Battle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t 
 	// replacing fainted Pokemon).
 	auto const replacement = switcher.all_pokemon().replacement();
 	if (switcher.is_me())
-		std::cerr << switcher.pokemon(replacement).to_string() << '\n';
+		std::cerr << to_string(switcher.pokemon(replacement).name()) << '\n';
 	
 	// This assumes Species Clause is in effect
 	bool const added = switcher.all_pokemon().add_if_not_present(species, level, gender, nickname);
@@ -208,7 +210,7 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, unsig
 	Team const & team = get_team(damaged);
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
-	std::cerr << pokemon.to_string() << '\n';
+	std::cerr << to_string(pokemon.name()) << '\n';
 	assert(move_damage);
 	Rational const change(visible_damage, max_visible_hp_change(team));
 	auto const damage = pokemon.stat(Stat::HP).max * change;
@@ -256,7 +258,7 @@ void Battle::correct_hp_and_report_errors (Team & team) {
 		unsigned const max_value = tm_estimate + 1;
 		assert(max_value > tm_estimate);
 		if (!(min_value <= new_hp and new_hp <= max_value)) {
-			std::cerr << "Uh oh! " + pokemon.to_string() + " has the wrong HP! The server reports ";
+			std::cerr << "Uh oh! " + to_string(pokemon.name()) + " has the wrong HP! The server reports ";
 			if (!team.is_me())
 				std::cerr << "approximately ";
 			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.stat(Stat::HP).stat << ".\n";
@@ -279,7 +281,7 @@ void Battle::handle_fainted (Party const fainter, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	auto const team = get_team(fainter);
-	std::cerr << team.pokemon().to_string() << " fainted\n";
+	std::cerr << to_string(team.pokemon().name()) << " fainted\n";
 	updated_hp.faint(team.is_me(), team.pokemon());
 }
 
@@ -364,8 +366,8 @@ void Battle::do_turn () {
 		replacement(*last, *first);
 	}
 	else {
-		std::cout << "First move: " + first->pokemon().to_string() + " uses " + first->pokemon().move().to_string() + '\n';
-		std::cout << "Last move: " + last->pokemon().to_string() + " uses " + last->pokemon().move().to_string() + '\n';
+		std::cout << "First move: " + to_string(first->pokemon().name()) + " uses " + first->pokemon().move().to_string() + '\n';
+		std::cout << "Last move: " + to_string(last->pokemon().name()) + " uses " + last->pokemon().move().to_string() + '\n';
 		// Anything with recoil will mess this up
 		
 		constexpr bool damage_is_known = true;

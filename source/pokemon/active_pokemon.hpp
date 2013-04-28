@@ -272,8 +272,6 @@ public:
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	hash_type max_hash() const;
-	
-	std::string to_string() const;
 
 private:
 	Pokemon const & get_pokemon() const;

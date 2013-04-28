@@ -427,7 +427,7 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth,
 	auto const ai_break_out = [& ai]() { return ai.pokemon().stat(Stat::HP).stat != 0; };
 	ai.all_pokemon().for_each_replacement(ai_break_out, [&]() {
 		if (verbose or first_turn)
-			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + ai.all_pokemon().at_replacement().to_string() + "\n";
+			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(ai.all_pokemon().at_replacement().name()) + "\n";
 		int64_t beta = Evaluate::victory + 1;
 		auto const foe_break_out = [& foe, & alpha, & beta]() {
 			return beta <= alpha or foe.pokemon().stat(Stat::HP).stat != 0;
@@ -477,7 +477,7 @@ int64_t move_then_switch_branch(Team & switcher, Team const & other, Variable co
 	}
 	switcher.all_pokemon().for_each_replacement([&]() {
 		if (first_turn)
-			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + switcher.all_pokemon().at_replacement ().to_string () + "\n";
+			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(switcher.all_pokemon().at_replacement().name()) + "\n";
 		int64_t const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
 		if (switcher.is_me())
 			update_best_move (alpha, value, first_turn, switcher.all_pokemon().replacement_to_switch(), best_switch);
@@ -550,7 +550,7 @@ Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & 
 
 void print_best_move (Team const & team, Moves const best_move, int64_t score) {
 	if (Move::is_switch (best_move))
-		std::cout << "Switch to " + team.pokemon(Move::to_replacement(best_move)).to_string();
+		std::cout << "Switch to " + to_string(team.pokemon(Move::to_replacement(best_move)).name());
 	else
 		std::cout << "Use " + to_string(best_move);
 	std::cout << " for a minimum expected score of " << score << "\n";
@@ -562,10 +562,13 @@ void print_action (Team const & team, bool first_turn) {
 		if (!team.is_me())
 			++tabs;
 		std::cout << std::string (tabs, '\t') + "Evaluating ";
-		if (team.pokemon().move().is_switch())
-			std::cout << "switching to " + team.pokemon(team.pokemon().move().to_replacement()).to_string () + "\n";
-		else
+		if (team.pokemon().move().is_switch()) {
+			auto const replacement_index = team.pokemon().move().to_replacement();
+			std::cout << "switching to " + to_string(team.pokemon(replacement_index).name()) + "\n";
+		}
+		else {
 			std::cout << team.pokemon().move().to_string() + "\n";
+		}
 	}
 }
 

@@ -22,6 +22,8 @@
 #include <cstdint>
 #include <string>
 
+#include <boost/format.hpp>
+
 #include "species.hpp"
 
 #include "../ability.hpp"
@@ -241,7 +243,7 @@ std::string Pokemon::get_nickname () const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
 	#else
-		return to_string();
+		return to_string(name());
 	#endif
 }
 
@@ -375,6 +377,47 @@ constexpr unsigned lowest_bit(unsigned const iv) {
 }
 
 }	// unnamed namespace
+
+std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
+	std::string output = to_string(pokemon.name());
+	double const d_per_cent_hp = 100.0 * pokemon.current_hp();
+	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
+	output += " (" + per_cent_hp + "% HP)";
+	output += " @ " + pokemon.item().to_string();
+	if (include_nickname and pokemon.get_nickname() != to_string(pokemon.name())) {
+		output += " ** " + pokemon.get_nickname();
+	}
+	output += '\n';
+	if (pokemon.ability().is_set()) {
+		output += "\tAbility: " + pokemon.ability().to_string() + '\n';
+	}
+	if (!pokemon.status().is_clear()) {
+		output += "\tStatus: " + pokemon.status().to_string() + '\n';
+	}
+	output += "\tNature: " + pokemon.nature().to_string() + '\n';
+	output += "\t";
+	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
+		if (stat_name != "HP") {
+			output += " / ";
+		}
+		output += std::to_string(stat.ev.value()) + " " + stat_name;
+	};
+	static std::pair<Stat::Stats, std::string> const stats [] = {
+		{ Stat::HP, "HP" },
+		{ Stat::ATK, "Atk" },
+		{ Stat::DEF, "Def" },
+		{ Stat::SPA, "SpA" },
+		{ Stat::SPD, "SpD" },
+		{ Stat::SPE, "Spe" },
+	};
+	for (auto const stat : stats) {
+		add_stat(pokemon.stat(stat.first), stat.second);
+	}
+	pokemon.move.for_each_regular_move([& output](Move const & move) {
+		output += "\n\t- " + move.to_string();
+	});
+	return output;
+}
 
 Type::Types Pokemon::calculate_hidden_power_type() const {
 	static constexpr std::pair<Stat::Stats, unsigned> modifiers[] = {
@@ -1090,10 +1133,6 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		80,		// Genesect 
 	};
 	return mass_array[static_cast<unsigned>(name())];
-}
-
-std::string Pokemon::to_string() const {
-	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine
