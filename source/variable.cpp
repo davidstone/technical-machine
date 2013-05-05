@@ -762,7 +762,7 @@ Probabilities acupressure_probability(ActivePokemon const & pokemon) {
 		// longer work
 		return Probabilities(1, Variable(0, Rational(1, 1)));
 	}
-	Rational const probability(1, non_maxed_stats);
+	Rational const probability(1, static_cast<unsigned>(non_maxed_stats));
 	Probabilities probabilities;
 	for (auto const stat : stats) {
 		probabilities.emplace_back(static_cast<unsigned>(stat), probability);
