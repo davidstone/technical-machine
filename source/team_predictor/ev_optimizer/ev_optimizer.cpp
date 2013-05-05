@@ -81,7 +81,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		for (auto const & stat : stats) {
 			auto const prior = it;
 			it = std::find(prior, std::end(shuffled), 0);
-			stat->ev.add(std::distance(prior, it));
+			stat->ev.add(static_cast<unsigned>(std::distance(prior, it)));
 			++it;
 		}
 	}
