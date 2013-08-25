@@ -266,15 +266,6 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	read_header(msg);
 }
 
-namespace {
-
-void print_message_bytes (InMessage & msg) {
-	while (msg.index != msg.buffer.size ())
-		std::cerr << static_cast <int> (msg.read_byte ()) << '\n';
-}
-
-}	// unnamed namespace
-
 void Client::handle_log_in (InMessage & msg) {
 	User const user (msg);
 	if (user.name == username())
@@ -608,7 +599,7 @@ void Client::handle_channel_battle (InMessage & msg) const {
 	uint32_t const battle_id = msg.read_int ();
 	uint32_t const id1 = msg.read_int ();
 	uint32_t const id2 = msg.read_int ();
-	print_message_bytes (msg);
+	msg.read_remaining_bytes();
 }
 
 void Client::parse_add_channel (InMessage & msg) {
@@ -689,7 +680,7 @@ void Client::handle_unknown_message_code (InMessage::Message const code) const {
 
 void Client::handle_unimplemented_message (InMessage & msg, std::string const & message_name) const {
 	print_with_time_stamp (std::cerr, message_name);
-	print_message_bytes (msg);
+	msg.read_remaining_bytes();
 }
 
 void Client::authenticate (std::string const & salt) {

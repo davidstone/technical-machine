@@ -46,8 +46,7 @@ public:
 		msg (in_msg) {
 	}
 	~Todo() {
-		while (msg.index != msg.buffer.size ())
-			std::cerr << '\t' << static_cast<int> (msg.read_byte()) << '\n';
+		msg.read_remaining_bytes();
 	}
 private:
 	InMessage & msg;
