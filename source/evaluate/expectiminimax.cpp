@@ -479,10 +479,11 @@ int64_t move_then_switch_branch(Team & switcher, Team const & other, Variable co
 		if (first_turn)
 			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(switcher.all_pokemon().at_replacement().name()) + "\n";
 		int64_t const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
-		if (switcher.is_me())
+		if (switcher.is_me()) {
 			update_best_move (alpha, value, first_turn, switcher.all_pokemon().replacement_to_switch(), best_switch);
+		}
 		else {
-			MoveScores foe_scores(other.pokemon());
+			MoveScores foe_scores(switcher.pokemon());
 			update_foe_best_move(switcher, foe_scores, alpha, value, first_turn);
 		}
 	});
