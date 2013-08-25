@@ -101,6 +101,9 @@ int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 }
 
 int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
+	if (pokemon.stat(Stat::HP).stat == 0) {
+		return 0;
+	}
 	int64_t score = entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
 	if (grounded(pokemon, weather)) {
 		score += entry_hazards.spikes * spikes + entry_hazards.toxic_spikes * toxic_spikes;

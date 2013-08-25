@@ -89,6 +89,9 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 }
 
 void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
+	if (pokemon.stat(Stat::HP).stat == 0) {
+		return;
+	}
 	if (pokemon.ingrained())
 		heal(pokemon, Rational(1, 16));
 	if (pokemon.aqua_ring_is_active())

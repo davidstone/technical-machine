@@ -98,7 +98,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 	
 	if (move.is_switch())
 		return true;
-	if (user.is_fainted() or (other.is_fainted() and false))
+	if (user.stat(Stat::HP).stat == 0 or (other.is_fainted() and false))
 		return false;
 
 	bool execute = !(is_blocked_due_to_status (user, move) or

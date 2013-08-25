@@ -266,7 +266,7 @@ void Battle::correct_hp_and_report_errors (Team & team) {
 			std::cerr << "pokemon.hp.max: " << pokemon.stat(Stat::HP).max << '\n';
 			std::cerr << "new_hp: " << new_hp << '\n';
 			std::cerr << "tm_estimate: " << tm_estimate << '\n';
-			assert(false);
+//			assert(false);
 		}
 		pokemon.correct_error_in_hp(reported_hp);
 	}
