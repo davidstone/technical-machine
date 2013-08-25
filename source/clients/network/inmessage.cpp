@@ -20,6 +20,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <iostream>
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/read.hpp>
@@ -77,6 +78,20 @@ uint32_t InMessage::read_int () {
 void InMessage::read_header(boost::asio::ip::tcp::socket & socket, Client * client) {
 	reset(header_size());
 	boost::asio::async_read(socket, boost::asio::buffer(buffer), boost::bind(& InMessage::read_body, this, boost::ref(socket), client));
+}
+
+void InMessage::read_remaining_bytes() {
+	auto const backup = index;
+	std::cerr << "As int:\n";
+	while (index != buffer.size()) {
+		std::cerr << '\t' << static_cast<int>(read_byte()) << '\n';
+	}
+	index = backup;
+	std::cerr << "As char:\n\t";
+	while (index != buffer.size()) {
+		std::cerr << static_cast<char>(read_byte());
+	}
+	std::cerr << '\n';
 }
 
 }	// namespace network
