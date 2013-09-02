@@ -22,27 +22,42 @@
 #include <cstdint>
 #include <string>
 
+#include <websocketpp/client.hpp>
+#include <websocketpp/config/asio_no_tls_client.hpp>
+
 #include "inmessage.hpp"
-#include "../network/client.hpp"
+#include "../client.hpp"
 
 namespace technicalmachine {
 namespace ps {
 
-class Client : public network::Client {
+class Client : public ::technicalmachine::Client {
 public:
-	explicit Client(unsigned set_depth);
+	explicit Client(unsigned depth);
 	void run();
-	void handle_message(InMessage::Message code, InMessage & msg);
-	void send_channel_message(std::string const & channel, std::string const & message) override;
-	void send_channel_message(uint32_t channel_id, std::string const & message) override;
-	void send_private_message(std::string const & user, std::string const & message) override;
+	void handle_message(InMessage const & message);
+	void send_channel_message(std::string const & channel, std::string const & message);
+	void send_channel_message(uint32_t channel_id, std::string const & message);
+	void send_private_message(std::string const & user, std::string const & message);
 private:
+	using Base = ::technicalmachine::Client;
 	void log_in();
+	void load_settings(bool reloading);
 	void send_battle_challenge(std::string const & opponent) override;
 	void handle_finalize_challenge(std::string const & opponent, bool accepted, bool unused = false) override;
-	void send_keep_alive_message() override;
-	void join_channel(std::string const & channel) override;
-	void part_channel(std::string const & channel) override;
+	void join_channel(std::string const & channel);
+	void part_channel(std::string const & channel);
+	
+	using Socket = websocketpp::client<websocketpp::config::asio_client>;
+	Socket socket;
+	websocketpp::connection_hdl m_handle;
+	
+	std::string m_host;
+	std::string m_username;
+	std::string m_password;
+	std::vector<std::string> m_highlights;
+	std::vector<std::string> m_trusted_users;
+	unsigned m_chattiness;
 };
 
 }	// namespace ps

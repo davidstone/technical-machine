@@ -32,16 +32,27 @@
 namespace technicalmachine {
 namespace ps {
 
-std::string InMessage::read_string() {
-	throw std::runtime_error("Unimplemented read string");
+InMessage::InMessage(Room room_, Type type_, Data data_):
+	m_room(std::move(room_)),
+	m_type(std::move(type_)),
+	m_data(std::move(data_)) {
 }
 
-void InMessage::read_body(boost::asio::ip::tcp::socket & socket, network::Client * client) {
+InMessage::Type const & InMessage::type() const noexcept {
+	return m_type;
 }
 
-size_t InMessage::header_size() const {
-	throw std::runtime_error("Unimplemented header size");
+std::string const & InMessage::at(Data::size_type position) const {
+	return m_data.at(position);
 }
+
+InMessage::Data::const_iterator InMessage::begin() const {
+	return m_data.begin();
+}
+InMessage::Data::const_iterator InMessage::end() const {
+	return m_data.end();
+}
+
 
 }	// namespace ps
 }	// namespace technicalmachine

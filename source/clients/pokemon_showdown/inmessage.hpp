@@ -20,22 +20,25 @@
 #define POKEMON_SHOWDOWN__INMESSAGE_HPP_
 
 #include <string>
-#include "../network/inmessage.hpp"
+#include <vector>
 
 namespace technicalmachine {
-namespace network {
-class Client;
-}	// namespace network
 namespace ps {
 
-class InMessage : public network::InMessage::InMessage {
+class InMessage {
 public:
-	std::string read_string();
-	void read_body(boost::asio::ip::tcp::socket & socket, network::Client * client) override;
-	enum Message {
-	};
+	using Room = std::string;
+	using Type = std::string;
+	using Data = std::vector<std::string>;
+	InMessage(Room room, Type type, Data data);
+	Type const & type() const noexcept;
+	Data::const_iterator begin() const;
+	Data::const_iterator end() const;
+	std::string const & at(Data::size_type position) const;
 private:
-	size_t header_size() const override;
+	Room m_room;
+	Type m_type;
+	Data m_data;
 };
 
 }	// namespace ps
