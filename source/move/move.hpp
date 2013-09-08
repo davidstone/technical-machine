@@ -1,5 +1,5 @@
 // Moves data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,6 @@
 #include <cstdint>
 #include <string>
 
-#include "accuracy.hpp"
 #include "classification.hpp"
 #include "disable.hpp"
 #include "moves_forward.hpp"
@@ -39,6 +38,7 @@ class Weather;
 class Move {
 public:
 	Move (Moves move, unsigned pp_ups = 3);
+	Moves name() const;
 	void reset ();
 	std::string to_string () const;
 	bool is_regular() const;
@@ -49,8 +49,6 @@ public:
 	Type type() const;
 	void set_type(Type::Types t);	// for Hidden Power only.
 	unsigned base_power() const;
-	uint8_t accuracy() const;
-	bool can_miss () const;
 	bool can_critical_hit() const;
 	Priority priority() const;
 	bool is_struggle() const;
@@ -92,13 +90,14 @@ public:
 	hash_type max_hash() const;
 	friend bool operator== (Move const & lhs, Move const & rhs);
 
-	Moves name;
+private:
+	Moves m_name;
+public:
 	Pp pp;
 	Disable disable;
 private:
 	// Move times_used up to ActivePokemon when it will reduce the size of Move.
 	TimesUsed times_used;
-	Accuracy cached_accuracy;
 	// Hidden Power makes this hard to replace with just a function
 	uint8_t cached_base_power;
 	Type cached_type;

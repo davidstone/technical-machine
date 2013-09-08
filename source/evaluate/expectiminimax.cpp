@@ -213,8 +213,8 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 			if (beta <= alpha)
 				break;
 		}
-		ai_scores.at(ai.pokemon().name(), ai.pokemon().move().name) = beta;
-		update_best_move(alpha, beta, first_turn, ai.pokemon().move().name, best_move);
+		ai_scores.at(ai.pokemon().name(), ai.pokemon().move().name()) = beta;
+		update_best_move(alpha, beta, first_turn, ai.pokemon().move().name(), best_move);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == Evaluate::victory)
 			break;
@@ -238,7 +238,7 @@ void update_best_move (int64_t & alpha, int64_t beta, bool first_turn, Moves new
 void update_foe_best_move (Team & foe, MoveScores & foe_scores, int64_t & beta, int64_t const max_score, bool const first_turn) {
 	if (beta > max_score) {
 		beta = max_score;
-		foe_scores.at(foe.pokemon().name(), foe.pokemon().move().name) = beta;
+		foe_scores.at(foe.pokemon().name(), foe.pokemon().move().name()) = beta;
 	}
 	constexpr bool is_me = false;
 	print_estimated_score (first_turn, is_me, max_score);
@@ -546,7 +546,7 @@ Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & 
 	LegalSelections const moves(ai.pokemon(), foe.pokemon(), weather);
 	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
 	auto const index = distribution(random_engine);
-	return moves[index]->name;
+	return moves[index]->name();
 }
 
 void print_best_move (Team const & team, Moves const best_move, int64_t score) {

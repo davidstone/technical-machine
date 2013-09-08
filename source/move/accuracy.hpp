@@ -1,5 +1,5 @@
-// Accuracy data structure
-// Copyright (C) 2012 David Stone
+// Accuracy functions
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,15 +24,9 @@
 
 namespace technicalmachine {
 
-class Accuracy {
-public:
-	Accuracy(Moves move);
-	bool can_miss() const;
-	uint8_t operator() () const;
-private:
-	// A number between 0 (1?) and 100, according to poccil.
-	uint8_t accuracy;
-};
+bool can_miss(Moves move);
+// A number between 0 (1?) and 100, according to poccil.
+uint8_t accuracy(Moves move);
 
 }	// namespace technicalmachine
 #endif	// MOVE__ACCURACY_HPP_

@@ -123,7 +123,7 @@ unsigned use_move (Team & user, Team & target, Weather & weather, Variable const
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (target.pokemon().ability().blocks_sound_moves() and move.is_sound_based() and
-			!(move.name == Moves::Heal_Bell or move.name == Moves::Perish_Song))
+			!(move.name() == Moves::Heal_Bell or move.name() == Moves::Perish_Song))
 		return 0;
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
@@ -172,7 +172,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 	auto & target = target_team.pokemon();
 	auto & user = user_team.pokemon();
 	auto const & move = user.move();
-	switch (move.name) {
+	switch (move.name()) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
 		case Moves::Giga_Drain:

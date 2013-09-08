@@ -114,7 +114,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 			msg.write_switch (battle_id, switch_slot (move));
 		else {
 			uint8_t move_index = 0;
-			while (ai.pokemon().move(move_index).name != move)
+			while (ai.pokemon().move(move_index).name() != move)
 				++move_index;
 			// TODO: fix for 2v2
 			auto const target = my_party.other();

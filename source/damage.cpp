@@ -87,7 +87,7 @@ unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, We
 }	// unnamed namespace
 
 unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	switch (attacker.move().name) {
+	switch (attacker.move().name()) {
 		case Moves::Dragon_Rage:
 			return 40;
 		case Moves::Endeavor:

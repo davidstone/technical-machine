@@ -1,5 +1,5 @@
-// Accuracy data structure
-// Copyright (C) 2012 David Stone
+// Accuracy functions
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,25 +24,15 @@ namespace technicalmachine {
 namespace {
 
 constexpr uint8_t perfect_accuracy = 0xFF;
-uint8_t get_accuracy (Moves move);
 
 }	// unnamed namespace
 
-Accuracy::Accuracy(Moves const move) :
-	accuracy(get_accuracy(move)) {
+bool can_miss(Moves const move) {
+	return accuracy(move) != perfect_accuracy;
 }
 
-uint8_t Accuracy::operator() () const {
-	return accuracy;
-}
-
-bool Accuracy::can_miss () const {
-	return accuracy != perfect_accuracy;
-}
-
-namespace {
-
-uint8_t get_accuracy (Moves const move) {
+// A number between 0 (1?) and 100, according to poccil.
+uint8_t accuracy(Moves move) {
 	static constexpr uint8_t get_accuracy [] = {
 		perfect_accuracy,		// Switch0
 		perfect_accuracy,		// Switch1
@@ -613,7 +603,5 @@ uint8_t get_accuracy (Moves const move) {
 	};
 	return get_accuracy [static_cast<size_t>(move)];
 }
-
-}	// unnamed namespace
 
 }	// namespace technicalmachine

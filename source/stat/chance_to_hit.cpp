@@ -27,6 +27,8 @@
 #include "../rational.hpp"
 #include "../weather.hpp"
 
+#include "../move/accuracy.hpp"
+
 #include "../pokemon/active_pokemon.hpp"
 #include "../pokemon/pokemon.hpp"
 
@@ -59,20 +61,20 @@ bool ChanceToHit::can_miss() const {
 
 void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
 	if (move_can_miss(user, target.ability())) {
-		value_type accuracy = user.move().accuracy();
-		accuracy *= user.stage_modifier<Stat::ACC>();
-		accuracy *= target.stage_modifier<Stat::EVA>();
+		value_type calculated_accuracy = accuracy(user.move().name());
+		calculated_accuracy *= user.stage_modifier<Stat::ACC>();
+		calculated_accuracy *= target.stage_modifier<Stat::EVA>();
 
-		accuracy *= accuracy_item_modifier(user.item(), target_moved);
-		accuracy *= Ability::accuracy_modifier(user);
+		calculated_accuracy *= accuracy_item_modifier(user.item(), target_moved);
+		calculated_accuracy *= Ability::accuracy_modifier(user);
 		
-		accuracy *= evasion_item_modifier(target.item());
-		accuracy *= Ability::evasion_modifier(target, weather);
+		calculated_accuracy *= evasion_item_modifier(target.item());
+		calculated_accuracy *= Ability::evasion_modifier(target, weather);
 
 		if (weather.gravity())
-			accuracy *= Rational(5, 3);
+			calculated_accuracy *= Rational(5, 3);
 		
-		probability = std::min(accuracy, max);
+		probability = std::min(calculated_accuracy, max);
 	}
 	else {
 		probability = max;
@@ -82,7 +84,7 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 namespace {
 
 bool move_can_miss(ActivePokemon const & user, Ability const & target_ability) {
-	return user.move().can_miss() and !user.ability().cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
+	return can_miss(user.move().name()) and !user.ability().cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
 Rational accuracy_item_modifier(Item const & item, bool target_moved) {

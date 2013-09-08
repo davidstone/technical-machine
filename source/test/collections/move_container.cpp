@@ -41,7 +41,7 @@ public:
 		n(0) {
 	}
 	void operator()(Move const & move) {
-		if (moves[n] != move.name) {
+		if (moves[n] != move.name()) {
 			throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + move.to_string());
 		}
 		++n;

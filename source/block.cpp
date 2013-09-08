@@ -152,7 +152,7 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 
 bool imprison (Move const & move, ActivePokemon const & other) {
 	return other.imprisoned() and other.all_moves().regular_move_exists ([& move](Move const & element) {
-		return move.name == element.name;
+		return move.name() == element.name();
 	});
 }
 
@@ -180,7 +180,7 @@ bool is_locked_in_by_choice_item(ActivePokemon const & user) {
 }
 
 bool is_locked_in_to_different_move (Pokemon const & user, Move const & move) {
-	return user.move.name_of_last_used_move() != move.name;
+	return user.move.name_of_last_used_move() != move.name();
 }
 
 bool blocked_by_torment (ActivePokemon const & user, Move const & move) {

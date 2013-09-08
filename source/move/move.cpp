@@ -1,5 +1,5 @@
 // class Move
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -43,11 +43,14 @@ uint8_t get_base_power (Moves move);
 }	// unnamed namespace
 
 Move::Move (Moves const move, unsigned const pp_ups) :
-	name(move),
+	m_name(move),
 	pp(move, pp_ups),
-	cached_accuracy(move),
 	cached_base_power(get_base_power(move)),
 	cached_type(get_type(move)) {
+}
+
+Moves Move::name() const {
+	return m_name;
 }
 
 void Move::reset () {
@@ -64,11 +67,11 @@ bool Move::is_damaging() const {
 }
 
 bool Move::is_physical() const {
-	return Classification(name).is_physical();
+	return Classification(name()).is_physical();
 }
 
 bool Move::is_special() const {
-	return Classification(name).is_special();
+	return Classification(name()).is_special();
 }
 
 bool Move::is_blocked_by_taunt() const {
@@ -86,7 +89,7 @@ bool Move::can_critical_hit() const {
 }
 
 uint64_t Move::hash () const {
-	return static_cast<uint64_t>(name) + static_cast<uint64_t>(Moves::END) *
+	return static_cast<uint64_t>(name()) + static_cast<uint64_t>(Moves::END) *
 			(pp.hash() + pp.max_hash() *
 			(disable.hash() + disable.max_hash() *
 			times_used.hash()));
@@ -97,7 +100,7 @@ uint64_t Move::max_hash() const {
 }
 
 bool operator== (Move const & lhs, Move const & rhs) {
-	return lhs.name == rhs.name and
+	return lhs.name() == rhs.name() and
 			lhs.disable == rhs.disable and
 			lhs.pp == rhs.pp and
 			lhs.times_used == rhs.times_used;
@@ -112,7 +115,7 @@ Type Move::type() const {
 }
 
 void Move::set_type(Type::Types const t) {
-	assert(name == Moves::Hidden_Power);
+	assert(name() == Moves::Hidden_Power);
 	cached_type = t;
 }
 
@@ -121,7 +124,7 @@ unsigned Move::base_power() const {
 }
 
 Priority Move::priority() const {
-	return Priority(name);
+	return Priority(name());
 }
 
 bool Move::is_struggle_or_switch () const {
@@ -129,7 +132,7 @@ bool Move::is_struggle_or_switch () const {
 }
 
 bool Move::is_struggle() const {
-	return name == Moves::Struggle;
+	return name() == Moves::Struggle;
 }
 
 bool Move::is_switch (Moves const name) {
@@ -138,7 +141,7 @@ bool Move::is_switch (Moves const name) {
 }
 
 bool Move::is_switch () const {
-	return is_switch (name);
+	return is_switch(name());
 }
 
 Moves Move::from_replacement (unsigned const replacement) {
@@ -151,7 +154,7 @@ unsigned Move::to_replacement (Moves const name) {
 }
 
 unsigned Move::to_replacement () const {
-	return to_replacement (name);
+	return to_replacement(name());
 }
 
 bool Move::affects_target(ActivePokemon const & target, Weather const & weather) const {
@@ -159,7 +162,7 @@ bool Move::affects_target(ActivePokemon const & target, Weather const & weather)
 }
 
 bool Move::has_follow_up_decision () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Baton_Pass:
 		case Moves::U_turn:
 			return true;
@@ -169,7 +172,7 @@ bool Move::has_follow_up_decision () const {
 }
 
 bool Move::calls_other_move () const {
-	switch (name) {
+	switch (name()) {
 //		case Moves::Nature_Power:
 		case Moves::Assist:
 		case Moves::Copycat:
@@ -184,11 +187,11 @@ bool Move::calls_other_move () const {
 }
 
 bool Move::cannot_ko () const {
-	return name == Moves::False_Swipe;
+	return name() == Moves::False_Swipe;
 }
 
 bool Move::breaks_screens () const {
-	return name == Moves::Brick_Break;
+	return name() == Moves::Brick_Break;
 }
 
 void Move::increment_use_counter() {
@@ -200,7 +203,7 @@ bool Move::was_used_last () const {
 }
 
 bool Move::is_bide() const {
-	return name == Moves::Bide;
+	return name() == Moves::Bide;
 }
 
 unsigned Move::fury_cutter_power() const {
@@ -230,7 +233,7 @@ bool Move::is_phaze (Moves name) {
 }
 
 bool Move::is_phaze () const {
-	return is_phaze (name);
+	return is_phaze (name());
 }
 
 bool Move::is_healing (Moves name) {
@@ -254,11 +257,11 @@ bool Move::is_healing (Moves name) {
 }
 
 bool Move::is_healing () const {
-	return is_healing (name);
+	return is_healing (name());
 }
 
 bool Move::is_blocked_by_gravity () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Bounce:
 		case Moves::Fly:
 		case Moves::Hi_Jump_Kick:
@@ -272,7 +275,7 @@ bool Move::is_blocked_by_gravity () const {
 }
 
 bool Move::is_boosted_by_iron_fist () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Bullet_Punch:
 		case Moves::Comet_Punch:
 		case Moves::Dizzy_Punch:
@@ -295,7 +298,7 @@ bool Move::is_boosted_by_iron_fist () const {
 }
 
 bool Move::is_boosted_by_reckless() const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Flare_Blitz:
@@ -311,7 +314,7 @@ bool Move::is_boosted_by_reckless() const {
 }
 
 bool Move::is_usable_while_sleeping () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Sleep_Talk:
 		case Moves::Snore:
 			return true;
@@ -321,7 +324,7 @@ bool Move::is_usable_while_sleeping () const {
 }
 
 bool Move::is_usable_while_frozen () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Flame_Wheel:
 		case Moves::Sacred_Fire:
 			return true;
@@ -331,7 +334,7 @@ bool Move::is_usable_while_frozen () const {
 }
 
 bool Move::is_sound_based () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Bug_Buzz:
 		case Moves::Chatter:
 		case Moves::GrassWhistle:
@@ -353,21 +356,13 @@ bool Move::is_sound_based () const {
 }
 
 bool Move::is_self_KO () const {
-	switch (name) {
+	switch (name()) {
 		case Moves::Explosion:
 		case Moves::Selfdestruct:
 			return true;
 		default:
 			return false;
 	}
-}
-
-uint8_t Move::accuracy() const {
-	return cached_accuracy();
-}
-
-bool Move::can_miss () const {
-	return cached_accuracy.can_miss();
 }
 
 namespace {
@@ -1519,7 +1514,7 @@ uint8_t get_base_power (Moves const move) {
 }	// unnamed namespace
 
 std::string Move::to_string() const {
-	return ::technicalmachine::to_string(name);
+	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine

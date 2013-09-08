@@ -50,7 +50,7 @@ MoveCollection::index_type MoveCollection::number_of_regular_moves () const {
 
 bool MoveCollection::set_index_if_found(Moves name) {
 	for (index_type new_index = 0; new_index != size(); ++new_index) {
-		if (unchecked_value(new_index).name == name) {
+		if (unchecked_value(new_index).name() == name) {
 			Base::set_index(new_index);
 			return true;
 		}
@@ -64,11 +64,11 @@ void MoveCollection::set_index(Moves const name) {
 }
 
 Move const * MoveCollection::find (Moves name) const {
-	return container.find_if([name](Move const & move) { return move.name == name; });
+	return container.find_if([name](Move const & move) { return move.name() == name; });
 }
 
 Move * MoveCollection::find (Moves name) {
-	return container.find_if([name](Move const & move) { return move.name == name; });
+	return container.find_if([name](Move const & move) { return move.name() == name; });
 }
 
 bool MoveCollection::exists (Moves name) const {
@@ -79,7 +79,7 @@ Moves MoveCollection::name_of_last_used_move () const {
 	Move const * move_ptr = container.find_if([] (Move const & move) {
 		return move.was_used_last();
 	});
-	return (move_ptr != nullptr) ? move_ptr->name : Moves::END;
+	return (move_ptr != nullptr) ? move_ptr->name() : Moves::END;
 }
 
 bool MoveCollection::moved_since_switch() const {

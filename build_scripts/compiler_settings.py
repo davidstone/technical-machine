@@ -67,7 +67,7 @@ elif is_compiler('clang'):
 cc_flags = { 'default': warnings + debug, 'debug': warnings_debug, 'optimized': optimizations + warnings_optimized }
 cxx_flags = { 'default': cxx_std, 'debug': [], 'optimized': [] }
 link_flags = { 'default': warnings + cxx_std, 'debug': [], 'optimized': linker_optimizations + warnings_optimized }
-cpp_flags = { 'default': [], 'debug': [], 'optimized': preprocessor_optimizations }
+cpp_flags = { 'default': ['_WEBSOCKETPP_CPP11_STL_'], 'debug': [], 'optimized': preprocessor_optimizations }
 
 flags = { 'cc': cc_flags, 'cxx': cxx_flags, 'link': link_flags, 'cpp': cpp_flags }
 

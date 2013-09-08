@@ -40,7 +40,7 @@ namespace po {
 namespace {
 
 void write_move (Move const & move, boost::property_tree::ptree & pt) {
-	pt.add ("Move", move_to_id (move.name));
+	pt.add ("Move", move_to_id (move.name()));
 }
 
 void write_blank_move (boost::property_tree::ptree & pt) {
