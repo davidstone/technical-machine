@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,6 +29,8 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
+#include "../../string_conversions/nature.hpp"
+
 namespace technicalmachine {
 namespace {
 
@@ -55,7 +57,7 @@ DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
 }
 
 std::string DataPoint::to_string() const {
-	return nature.to_string() + " " + std::to_string(hp) + " HP / " + std::to_string(defense) + " Def / " + std::to_string(special_defense) + " SpD";
+	return ::technicalmachine::to_string(nature.name) + " " + std::to_string(hp) + " HP / " + std::to_string(defense) + " Def / " + std::to_string(special_defense) + " SpD";
 }
 
 unsigned DataPoint::sum() const {

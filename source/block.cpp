@@ -86,7 +86,7 @@ namespace {
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool const found_selectable_move) {
 	return !is_blocked_by_bide (user, move) and
 			is_not_illegal_switch (user, move, other, weather) and
-			(!move.is_struggle() or !found_selectable_move) and
+			(!is_struggle(move) or !found_selectable_move) and
 			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment (user, move)) and
 			!is_blocked_due_to_lock_in (user, move);
 }
@@ -94,9 +94,9 @@ bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePo
 
 bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const & weather) {
 	Move const & move = user.move();
-	assert(!move.is_switch() or !user.recharging());
+	assert(!is_switch(move) or !user.recharging());
 	
-	if (move.is_switch())
+	if (is_switch(move))
 		return true;
 	if (user.stat(Stat::HP).stat == 0 or (other.is_fainted() and false))
 		return false;
@@ -131,7 +131,7 @@ bool is_blocked_by_bide (ActivePokemon const & user, Move const & move) {
 }
 
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
-	return move.is_switch() ?
+	return is_switch(move) ?
 		!user.is_switching_to_self (move) and !is_blocked_from_switching (user, other, weather) :
 		true;
 }
@@ -158,13 +158,15 @@ bool imprison (Move const & move, ActivePokemon const & other) {
 
 // Things that both block selection and block execution after flinching
 bool block2 (ActivePokemon const & user, Move const & move, Weather const & weather) {
-	return !move.is_switch() and
-			((user.is_taunted() and move.is_blocked_by_taunt()) or
-			(weather.gravity() and move.is_blocked_by_gravity()));
+	return !is_switch(move) and
+			((user.is_taunted() and is_blocked_by_taunt(move)) or
+			(weather.gravity() and is_blocked_by_gravity(move)));
 }
 
 bool is_blocked_due_to_lock_in (ActivePokemon const & user, Move const & move) {
-	return move.is_struggle_or_switch() ? user.recharging() : standard_move_lock_in (user, move);
+	return (is_struggle(move) or is_switch(move)) ?
+		user.recharging() :
+		standard_move_lock_in(user, move);
 }
 
 bool standard_move_lock_in (ActivePokemon const & user, Move const & move) {

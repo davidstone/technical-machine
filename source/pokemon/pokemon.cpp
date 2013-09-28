@@ -1,5 +1,5 @@
 // Pokemon functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,7 +35,12 @@
 
 #include "../stat/stat.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/ability.hpp"
+#include "../string_conversions/item.hpp"
+#include "../string_conversions/move.hpp"
+#include "../string_conversions/nature.hpp"
+#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/status.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -93,7 +98,7 @@ void Pokemon::remove_switch() {
 
 uint8_t Pokemon::index_of_first_switch () const {
 	uint8_t index = 0;
-	while (!move(index).is_switch())
+	while (!is_switch(move(index)))
 		++index;
 	return index;
 }
@@ -383,18 +388,18 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	double const d_per_cent_hp = 100.0 * pokemon.current_hp();
 	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
 	output += " (" + per_cent_hp + "% HP)";
-	output += " @ " + pokemon.item().to_string();
+	output += " @ " + to_string(pokemon.item().name);
 	if (include_nickname and pokemon.get_nickname() != to_string(pokemon.name())) {
 		output += " ** " + pokemon.get_nickname();
 	}
 	output += '\n';
 	if (pokemon.ability().is_set()) {
-		output += "\tAbility: " + pokemon.ability().to_string() + '\n';
+		output += "\tAbility: " + to_string(pokemon.ability().name()) + '\n';
 	}
 	if (!pokemon.status().is_clear()) {
-		output += "\tStatus: " + pokemon.status().to_string() + '\n';
+		output += "\tStatus: " + to_string(pokemon.status().name()) + '\n';
 	}
-	output += "\tNature: " + pokemon.nature().to_string() + '\n';
+	output += "\tNature: " + to_string(pokemon.nature().name) + '\n';
 	output += "\t";
 	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
 		if (stat_name != "HP") {
@@ -414,7 +419,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		add_stat(pokemon.stat(stat.first), stat.second);
 	}
 	pokemon.move.for_each_regular_move([& output](Move const & move) {
-		output += "\n\t- " + move.to_string();
+		output += "\n\t- " + to_string(move);
 	});
 	return output;
 }

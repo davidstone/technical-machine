@@ -160,7 +160,7 @@ Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const &
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
-	return attacker.move().is_physical() ?
+	return is_physical(attacker.move()) ?
 		Rational(attacker.stat(Stat::ATK).stat, 50u * defender.stat(Stat::DEF).stat * weakening_from_status(attacker)) :
 		Rational(attacker.stat(Stat::SPA).stat, 50u * defender.stat(Stat::SPD).stat);
 }
@@ -179,11 +179,11 @@ bool screen_is_active (ActivePokemon const & attacker, Team const & defender) {
 }
 
 bool reflect_is_active (Move const & move, Team const & defender) {
-	return defender.screens.reflect() and move.is_physical();
+	return defender.screens.reflect() and is_physical(move);
 }
 
 bool light_screen_is_active (Move const & move, Team const & defender) {
-	return defender.screens.light_screen() and move.is_special();
+	return defender.screens.light_screen() and is_special(move);
 }
 
 Rational calculate_weather_modifier (Type const type, Weather const & weather) {

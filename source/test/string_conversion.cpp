@@ -34,7 +34,13 @@
 
 #include "../stat/nature.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/ability.hpp"
+#include "../string_conversions/gender.hpp"
+#include "../string_conversions/item.hpp"
+#include "../string_conversions/move.hpp"
+#include "../string_conversions/nature.hpp"
+#include "../string_conversions/pokemon.hpp"
+#include "../string_conversions/status.hpp"
 #include "../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {

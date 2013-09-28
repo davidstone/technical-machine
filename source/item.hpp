@@ -1,5 +1,5 @@
 // Item header
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 #define ITEM_HPP_
 
 #include <cstdint>
-#include <string>
 
 namespace technicalmachine {
 
@@ -119,7 +118,6 @@ public:
 	Items name;
 	Item ();
 	explicit Item (Items item);
-	explicit Item (std::string const & str);
 	bool is_set () const;
 	void set_if_unknown (Items item);
 	bool allows_switching () const;
@@ -141,7 +139,6 @@ public:
 	bool extends_light_screen () const;
 	bool extends_reflect () const;
 	void steal (Item & other);
-	std::string to_string () const;
 	friend bool operator== (Item const & lhs, Item const & rhs);
 };
 bool operator!= (Item const & lhs, Item const & rhs);

@@ -20,7 +20,6 @@
 #define ABILITY_HPP_
 
 #include <cstdint>
-#include <string>
 #include "status.hpp"
 #include "stat/stat.hpp"
 
@@ -62,7 +61,6 @@ public:
 	};
 	Ability ();
 	Ability(Abilities ability);
-	explicit Ability (std::string const & str);
 	Abilities name() const;
 	bool is_set () const;
 	void set_if_unknown (Abilities ability);
@@ -104,7 +102,6 @@ public:
 	bool boosts_stab () const;
 	
 	bool is_loafing (bool loaf) const;
-	std::string to_string () const;
 	
 	static Rational accuracy_modifier(ActivePokemon const & user);
 	static Rational evasion_modifier(ActivePokemon const & target, Weather const & weather);

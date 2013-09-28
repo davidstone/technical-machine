@@ -29,7 +29,7 @@
 #include "../../move/moves_forward.hpp"
 #include "../../move/container.hpp"
 
-#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/move.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -42,7 +42,7 @@ public:
 	}
 	void operator()(Move const & move) {
 		if (moves[n] != move.name()) {
-			throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + move.to_string());
+			throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + to_string(move));
 		}
 		++n;
 	}

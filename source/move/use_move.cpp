@@ -150,7 +150,7 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 }
 
 unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known) {
-	if (!user.move().is_damaging())
+	if (!is_damaging(user.move()))
 		return 0;
 	if (damage_is_known)
 		return target.pokemon().damaged();
@@ -402,7 +402,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.stat_boost(Stat::SPE, -2);
 			break;
 		case Moves::Counter:
-			if (target.move().is_physical())
+			if (is_physical(target.move()))
 				target.indirect_damage(user.damaged() * 2u);
 			break;
 		case Moves::Covet:
@@ -656,7 +656,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Miracle_Eye:		// Fix
 			break;
 		case Moves::Mirror_Coat:
-			if (target.move().is_special())
+			if (is_special(target.move()))
 				target.indirect_damage(user.damaged() * 2u);
 			break;
 		case Moves::Mirror_Shot:

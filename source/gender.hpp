@@ -1,5 +1,5 @@
 // Gender header
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 #define GENDER_HPP_
 
 #include <cstdint>
-#include <string>
 
 namespace technicalmachine {
 
@@ -33,7 +32,6 @@ public:
 
 	// Return 1 if the same, -1 if opposite, and 0 if either is genderless
 	int multiplier (Gender foe) const;
-	std::string to_string() const;
 	friend bool operator== (Gender lhs, Gender rhs);
 
 	Genders gender;

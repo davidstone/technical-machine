@@ -72,22 +72,19 @@ Pokemon & PokemonCollection::at_replacement () {
 	return operator() (replacement());
 }
 
-void PokemonCollection::to_replacement() {
-	set_index (replacement());
-}
-
 Moves PokemonCollection::replacement_to_switch () const {
-	return Move::from_replacement (replacement());
+	return from_replacement(replacement());
 }
 void PokemonCollection::replacement_from_switch () {
-	set_replacement(operator()().move().to_replacement());
+	Move const & move = operator()().move();
+	set_replacement(to_replacement(move));
 }
 
 bool PokemonCollection::is_switching_to_self () const {
 	return replacement() == index();
 }
-bool PokemonCollection::is_switching_to_self (Move const & move) const {
-	return move.to_replacement() == index();
+bool PokemonCollection::is_switching_to_self (Moves const move) const {
+	return to_replacement(move) == index();
 }
 
 PokemonCollection::index_type PokemonCollection::size () const {

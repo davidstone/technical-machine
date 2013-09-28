@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,6 +28,8 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
+#include "../../string_conversions/nature.hpp"
+
 namespace technicalmachine {
 namespace {
 constexpr auto max_evs = 252u;
@@ -55,7 +57,7 @@ SingleClassificationEVs::SingleClassificationEVs(unsigned hp_ev, unsigned defens
 
 std::string SingleClassificationEVs::to_string() const {
 	Nature const nature = nature_boost_convert(nature_boost, physical);
-	return nature.to_string() + " " + std::to_string(hp) + " HP / " + std::to_string(defensive) + " " + stat_name();
+	return ::technicalmachine::to_string(nature.name) + " " + std::to_string(hp) + " HP / " + std::to_string(defensive) + " " + stat_name();
 }
 
 std::string SingleClassificationEVs::stat_name() const {

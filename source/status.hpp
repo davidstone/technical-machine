@@ -1,5 +1,5 @@
 // Status class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 #define STATUS_HPP_
 
 #include <cstdint>
-#include <string>
 
 namespace technicalmachine {
 
@@ -53,8 +52,6 @@ public:
 	bool weakens_physical_attacks() const;
 	bool boosts_facade() const;
 	bool boosts_smellingsalt() const;
-
-	std::string to_string () const;
 
 	void rest ();
 	template<Statuses real_status, Statuses base_status = real_status>

@@ -1,5 +1,5 @@
 // Exception if unable to find a Pokemon that should exist
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "pokemon_not_found.hpp"
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 

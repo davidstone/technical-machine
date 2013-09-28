@@ -25,7 +25,7 @@
 #include "../../gender.hpp"
 #include "../../move/moves.hpp"
 #include "../../pokemon/species.hpp"
-#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 namespace pl {

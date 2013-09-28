@@ -1,5 +1,5 @@
 // Nature data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 #define STAT__NATURE_HPP_
 
 #include <cstdint>
-#include <string>
 
 #include "stat.hpp"
 
@@ -40,7 +39,6 @@ public:
 	// intentionally implicit
 	Nature(Natures nature);
 	Nature(Stat::Stats boosted, Stat::Stats dropped);
-	explicit Nature(std::string const & str);
 	bool is_set () const;
 	void set_if_unknown (Natures nature);
 	template<Stat::Stats>
@@ -49,7 +47,6 @@ public:
 	bool boosts_stat() const;
 	template<Stat::Stats>
 	bool lowers_stat() const;
-	std::string to_string () const;
 	friend bool operator== (Nature lhs, Nature rhs);
 
 	Natures name;

@@ -140,9 +140,9 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 	// TODO: alter the score of a move based on the weather
 	int64_t score = 0;
 	pokemon.move.for_each([&](Move const & move) {
-		if (move.is_physical())
+		if (is_physical(move))
 			score += other.screens.m_reflect.turns_remaining * reflect;
-		else if (move.is_special())
+		else if (is_special(move))
 			score += other.screens.m_light_screen.turns_remaining * light_screen;
 		if (move.pp.is_empty())
 			score += no_pp;

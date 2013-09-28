@@ -27,8 +27,6 @@
 
 #include "../pokemon/active_pokemon.hpp"
 
-#include "../string_conversions/conversion.hpp"
-
 #include "../type/effectiveness.hpp"
 #include "../type/type.hpp"
 
@@ -52,34 +50,37 @@ Move::Move (Moves const move, unsigned const pp_ups) :
 Moves Move::name() const {
 	return m_name;
 }
+Move::operator Moves() const {
+	return name();
+}
 
 void Move::reset () {
 	disable.reset();
 	times_used.reset();
 }
 
-bool Move::is_regular() const {
-	return !is_struggle() and !is_switch();
+bool is_regular(Move const & move) {
+	return !is_struggle(move) and !is_switch(move);
 }
 
-bool Move::is_damaging() const {
-	return base_power() != 0;
+bool is_damaging(Move const & move) {
+	return move.base_power() != 0;
 }
 
-bool Move::is_physical() const {
-	return Classification(name()).is_physical();
+bool is_physical(Moves const move) {
+	return Classification(move).is_physical();
 }
 
-bool Move::is_special() const {
-	return Classification(name()).is_special();
+bool is_special(Moves const move) {
+	return Classification(move).is_special();
 }
 
-bool Move::is_blocked_by_taunt() const {
-	return !is_damaging();
+bool is_blocked_by_taunt(Move const & move) {
+	return !is_damaging(move);
 }
 
-bool Move::can_critical_hit() const {
-	switch (base_power()) {
+bool can_critical_hit(Move const & move) {
+	switch (move.base_power()) {
 		case 0:
 		case indeterminate_power:
 			return false;
@@ -123,38 +124,22 @@ unsigned Move::base_power() const {
 	return cached_base_power;
 }
 
-Priority Move::priority() const {
-	return Priority(name());
+bool is_struggle(Move const & move) {
+	return move.name() == Moves::Struggle;
 }
 
-bool Move::is_struggle_or_switch () const {
-	return is_struggle() or is_switch();
-}
-
-bool Move::is_struggle() const {
-	return name() == Moves::Struggle;
-}
-
-bool Move::is_switch (Moves const name) {
+bool is_switch(Moves const name) {
 	static_assert(static_cast<unsigned>(Moves::Switch0) == 0, "Switching is not the first Move enum.");
 	return name <= Moves::Switch5;
 }
 
-bool Move::is_switch () const {
-	return is_switch(name());
-}
-
-Moves Move::from_replacement (unsigned const replacement) {
+Moves from_replacement(unsigned const replacement) {
 	return static_cast<Moves>(replacement + static_cast<unsigned>(Moves::Switch0));
 }
 
-unsigned Move::to_replacement (Moves const name) {
-	assert (is_switch(name));
+unsigned to_replacement(Moves const name) {
+	assert(is_switch(name));
 	return static_cast<unsigned>(name) - static_cast<unsigned>(Moves::Switch0);
-}
-
-unsigned Move::to_replacement () const {
-	return to_replacement(name());
 }
 
 bool Move::affects_target(ActivePokemon const & target, Weather const & weather) const {
@@ -260,8 +245,8 @@ bool Move::is_healing () const {
 	return is_healing (name());
 }
 
-bool Move::is_blocked_by_gravity () const {
-	switch (name()) {
+bool is_blocked_by_gravity(Move const & move) {
+	switch (move.name()) {
 		case Moves::Bounce:
 		case Moves::Fly:
 		case Moves::Hi_Jump_Kick:
@@ -1512,9 +1497,5 @@ uint8_t get_base_power (Moves const move) {
 }
 
 }	// unnamed namespace
-
-std::string Move::to_string() const {
-	return ::technicalmachine::to_string(name());
-}
 
 }	// namespace technicalmachine

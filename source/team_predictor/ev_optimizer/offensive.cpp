@@ -131,13 +131,13 @@ namespace {
 
 bool has_physical_move(Pokemon const & pokemon) {
 	return pokemon.move.regular_move_exists([](Move const & move) {
-		return move.is_physical();
+		return is_physical(move);
 	});
 }
 
 bool has_special_move(Pokemon const & pokemon) {
 	return pokemon.move.regular_move_exists([](Move const & move) {
-		return move.is_special();
+		return is_special(move);
 	});
 }
 

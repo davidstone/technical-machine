@@ -1,5 +1,5 @@
 // Status functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,8 +25,6 @@
 #include "weather.hpp"
 
 #include "pokemon/pokemon.hpp"
-
-#include "string_conversions/conversion.hpp"
 
 #include "type/type.hpp"
 
@@ -224,10 +222,6 @@ uint64_t Status::hash() const {
 
 uint64_t Status::max_hash() {
 	return END + (max_sleep_turns() + 1);
-}
-
-std::string Status::to_string() const {
-	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine

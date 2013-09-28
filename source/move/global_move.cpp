@@ -18,6 +18,7 @@
 
 #include "global_move.hpp"
 #include <cassert>
+#include <cstddef>
 #include <vector>
 #include "move.hpp"
 #include "moves.hpp"
@@ -28,7 +29,7 @@ namespace {
 std::vector<Move> all_moves() {
 	std::vector<Move> all;
 	all.reserve(number_of_moves);
-	for (size_t n = 0; n != number_of_moves; ++n) {
+	for (unsigned n = 0; n != number_of_moves; ++n) {
 		all.emplace_back(static_cast<Moves>(n));
 	}
 	return all;

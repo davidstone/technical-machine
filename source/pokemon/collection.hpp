@@ -57,11 +57,10 @@ public:
 	void set_replacement (index_type const new_index);
 	Pokemon const & at_replacement () const;
 	Pokemon & at_replacement ();
-	void to_replacement();
 	Moves replacement_to_switch () const;
 	void replacement_from_switch ();
 	bool is_switching_to_self () const;
-	bool is_switching_to_self (Move const & move) const;
+	bool is_switching_to_self(Moves move) const;
 	index_type size () const;
 	index_type real_size () const;
 	index_type find_index(Species name) const;

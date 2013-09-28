@@ -198,7 +198,7 @@ template unsigned initial_stat<Stat::SPD>(Pokemon const & pokemon);
 template unsigned initial_stat<Stat::SPE>(Pokemon const & pokemon);
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather) {
-	if (attacker.move().is_physical())
+	if (is_physical(attacker.move()))
 		calculate_attack(attacker, weather);
 	else
 		calculate_special_attack(attacker, weather);
@@ -213,7 +213,7 @@ void calculate_special_attack (ActivePokemon & attacker, Weather const & weather
 }
 
 void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather) {
-	if (attacker.move().is_physical())
+	if (is_physical(attacker.move()))
 		calculate_defense(defender, weather, attacker.critical_hit(), attacker.move().is_self_KO());
 	else
 		calculate_special_defense(defender, weather, attacker.critical_hit());
@@ -266,16 +266,18 @@ void calculate_speed (Team & team, Weather const & weather) {
 }
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	if (team1.pokemon().move().priority() == team2.pokemon().move().priority()) {
+	Priority const priority1(team1.pokemon().move());
+	Priority const priority2(team2.pokemon().move());
+	if (priority1 == priority2) {
 		calculate_speed(team1, weather);
 		calculate_speed(team2, weather);
 		faster_pokemon (team1, team2, weather, faster, slower);
 	}
-	else if (team1.pokemon().move().priority() > team2.pokemon().move().priority()) {
+	else if (priority1 > priority2) {
 		faster = &team1;
 		slower = &team2;
 	}
-	else {			// if (team2.pokemon().move().priority() > team1.pokemon().move().priority())
+	else {	// if (priority1 < priority2)
 		faster = &team2;
 		slower = &team1;
 	}

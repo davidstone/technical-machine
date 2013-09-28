@@ -24,8 +24,6 @@
 
 #include "../rational.hpp"
 
-#include "../string_conversions/conversion.hpp"
-
 namespace technicalmachine {
 namespace {
 Nature::Natures lookup_nature(Stat::Stats const boost, Stat::Stats const drop) {
@@ -109,11 +107,6 @@ Nature::Nature(Natures nature):
 
 Nature::Nature(Stat::Stats const boosted, Stat::Stats const dropped):
 	name(lookup_nature(boosted, dropped)) {
-}
-
-Nature::Nature(std::string const & str):
-	name(from_string<Natures>(str))
-	{
 }
 
 bool Nature::is_set () const {
@@ -290,10 +283,6 @@ bool operator== (Nature const lhs, Nature const rhs) {
 
 bool operator!= (Nature const lhs, Nature const rhs) {
 	return !(lhs == rhs);
-}
-
-std::string Nature::to_string() const {
-	return ::technicalmachine::to_string(name);
 }
 
 }	// namespace technicalmachine

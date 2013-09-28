@@ -50,7 +50,8 @@
 
 #include "../pokemon/pokemon_not_found.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/move.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 #include "../team_predictor/team_predictor.hpp"
 
@@ -110,7 +111,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 	update_from_previous_turn();
 	if (!forced) {
 		Moves const move = determine_action(detailed, evaluate);
-		if (Move::is_switch (move))
+		if (is_switch(move))
 			msg.write_switch (battle_id, switch_slot (move));
 		else {
 			uint8_t move_index = 0;
@@ -160,7 +161,7 @@ void Battle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
 	if (!replacement.move.set_index_if_found(move_name)) {
 		replacement.move.add(move_name, 3);
 	}
-	if (replacement.move().is_damaging())
+	if (is_damaging(replacement.move()))
 		move_damage = true;
 }
 
@@ -322,7 +323,7 @@ void Battle::handle_end (Client const & client, Result const result) const {
 }
 
 uint8_t Battle::switch_slot (Moves move) const {
-	uint8_t const slot = static_cast<uint8_t>(Move::to_replacement(move));
+	auto const slot = static_cast<uint8_t>(to_replacement(move));
 	Species const name = ai.pokemon(slot).name();
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == name)
@@ -366,8 +367,8 @@ void Battle::do_turn () {
 		replacement(*last, *first);
 	}
 	else {
-		std::cout << "First move: " + to_string(first->pokemon().name()) + " uses " + first->pokemon().move().to_string() + '\n';
-		std::cout << "Last move: " + to_string(last->pokemon().name()) + " uses " + last->pokemon().move().to_string() + '\n';
+		std::cout << "First move: " + to_string(first->pokemon().name()) + " uses " + to_string(first->pokemon().move()) + '\n';
+		std::cout << "Last move: " + to_string(last->pokemon().name()) + " uses " + to_string(last->pokemon().move()) + '\n';
 		// Anything with recoil will mess this up
 		
 		constexpr bool damage_is_known = true;
@@ -412,7 +413,7 @@ void Battle::do_turn () {
 		while (pokemon.will_be_replaced()) {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
-			if (!pokemon.move().is_switch()) {
+			if (!is_switch(pokemon.move())) {
 				pokemon.update_to_correct_switch();
 			}
 			call_move(foe, ai, weather, foe_variable, damage_is_known);

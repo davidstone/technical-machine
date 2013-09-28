@@ -34,12 +34,18 @@
 
 #include "../../stat/stat.hpp"
 
+#include "../../string_conversions/ability.hpp"
+#include "../../string_conversions/gender.hpp"
+#include "../../string_conversions/item.hpp"
+#include "../../string_conversions/move.hpp"
+#include "../../string_conversions/nature.hpp"
+
 namespace technicalmachine {
 namespace pl {
 namespace {
 
 void write_move (Move const & move, boost::property_tree::ptree & pt) {
-	boost::property_tree::ptree & m = pt.add ("moveset.move", move.to_string ());
+	boost::property_tree::ptree & m = pt.add("moveset.move", to_string(move));
 	// TODO: replace with real PP ups logic
 	m.put ("<xmlattr>.pp-up", 3);
 }
@@ -71,10 +77,10 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("nickname", pokemon.get_nickname());
 	member.put ("level", pokemon.level());
 	member.put ("happiness", pokemon.happiness());
-	member.put ("gender", pokemon.gender().to_string ());
-	member.put ("nature", pokemon.nature().to_string ());
-	member.put ("item", pokemon.item().to_string ());
-	member.put ("ability", pokemon.ability().to_string ());
+	member.put ("gender", to_string(pokemon.gender().gender));
+	member.put ("nature", to_string(pokemon.nature().name));
+	member.put ("item", to_string(pokemon.item().name));
+	member.put ("ability", to_string(pokemon.ability().name()));
 	pokemon.move.for_each_regular_move ([&](Move const & move) {
 		write_move (move, member);
 	});

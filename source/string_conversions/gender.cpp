@@ -1,5 +1,5 @@
 // Gender string conversions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "conversion.hpp"
+#include "gender.hpp"
 
 #include <map>
 #include <string>
@@ -27,7 +27,6 @@
 
 namespace technicalmachine {
 
-template<>
 std::string to_string(Gender::Genders const gender) {
 	static std::string const gender_name [] {
 		"Female", "Genderless", "Male"

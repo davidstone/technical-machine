@@ -203,11 +203,11 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 unsigned item_modifier (Pokemon const & attacker) {
 	switch (attacker.item().name) {
 		case Item::MUSCLE_BAND:
-			if (attacker.move().is_physical())
+			if (is_physical(attacker.move()))
 				return 11;
 			break;
 		case Item::WISE_GLASSES:
-			if (attacker.move().is_special())
+			if (is_special(attacker.move()))
 				return 11;
 			break;
 		case Item::INSECT_PLATE:

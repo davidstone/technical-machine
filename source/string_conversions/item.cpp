@@ -1,5 +1,5 @@
 // Item string conversions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "conversion.hpp"
+#include "item.hpp"
 
 #include <map>
 #include <string>
@@ -27,7 +27,6 @@
 
 namespace technicalmachine {
 
-template<>
 std::string to_string(Item::Items const name) {
 	static std::string const item_name [] = {
 		"No Item", "Adamant Orb", "Aguav Berry", "Air Mail",

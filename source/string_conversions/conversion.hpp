@@ -1,5 +1,5 @@
 // String conversions template
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,9 +25,6 @@ namespace technicalmachine {
 
 template<typename T>
 T from_string(std::string const & str);
-
-template<typename T>
-std::string to_string(T name);
 
 }	// namespace technicalmachine
 #endif	// STRING_CONVERSIONS__CONVERSION_HPP_

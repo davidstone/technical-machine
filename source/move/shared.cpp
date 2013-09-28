@@ -48,7 +48,7 @@ void SharedMoves::remove_switch() {
 
 Move const & SharedMoves::operator[](size_t const index) const {
 	assert(index <= number_of_switches + number_of_non_switches);
-	auto const name = (index == 0) ? Moves::Struggle : Move::from_replacement(index - number_of_non_switches);
+	auto const name = (index == 0) ? Moves::Struggle : from_replacement(index - number_of_non_switches);
 	return global_move(name);
 }
 

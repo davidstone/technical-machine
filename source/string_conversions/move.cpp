@@ -1,5 +1,5 @@
 // Move string conversions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "conversion.hpp"
+#include "move.hpp"
 
 #include <cassert>
 #include <map>
@@ -26,12 +26,10 @@
 
 #include "invalid_string_conversion.hpp"
 
-#include "../move/move.hpp"
 #include "../move/moves.hpp"
 
 namespace technicalmachine {
 
-template<>
 std::string to_string(Moves const name) {
 	assert(name <= Moves::END);
 	static std::string const name_to_string [] = {

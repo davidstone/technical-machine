@@ -29,8 +29,6 @@
 
 #include "pokemon/active_pokemon.hpp"
 
-#include "string_conversions/conversion.hpp"
-
 #include "type/type.hpp"
 
 namespace technicalmachine {
@@ -44,11 +42,6 @@ Ability::Ability():
 
 Ability::Ability(Abilities ability):
 	m_name(ability) {
-}
-
-Ability::Ability(std::string const & str):
-	m_name(::technicalmachine::from_string<Abilities>(str))
-	{
 }
 
 Ability::Abilities Ability::name() const {
@@ -288,7 +281,7 @@ Rational Ability::accuracy_modifier(ActivePokemon const & user) {
 		case Compoundeyes:
 			return Rational(13, 10);
 		case Hustle:
-			return user.move().is_physical() ? Rational(4, 5) : Rational(1, 1);
+			return is_physical(user.move()) ? Rational(4, 5) : Rational(1, 1);
 		default:
 			return Rational(1, 1);
 	}
@@ -465,10 +458,6 @@ bool operator==(Ability const lhs, Ability const rhs) {
 
 bool operator!=(Ability const lhs, Ability const rhs) {
 	return !(lhs == rhs);
-}
-
-std::string Ability::to_string() const {
-	return ::technicalmachine::to_string(name());
 }
 
 }	// namespace technicalmachine

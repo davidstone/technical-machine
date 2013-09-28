@@ -1,5 +1,5 @@
-// Basis for some move tests
-// Copyright (C) 2012 David Stone
+// Move string conversions
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,23 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
-#define TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
+#include "conversion.hpp"
 
-#include <vector>
-#include "../../move/move.hpp"
-#include "../../move/moves.hpp"
+#include <string>
+
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 
-inline std::vector<Moves> create_shared_moves(unsigned const team_size) {
-	std::vector<Moves> shared ({ Moves::Struggle });
-	if (team_size != 1) {
-		for (unsigned n = 0; n != team_size; ++n)
-			shared.emplace_back(from_replacement(n));
-	}
-	return shared;
-}
+std::string to_string(Moves name);
 
 }	// namespace technicalmachine
-#endif	// TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_

@@ -1,5 +1,5 @@
 // Gender functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "gender.hpp"
-#include "string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 
@@ -33,10 +32,6 @@ Gender::Gender (Genders gender_):
 int Gender::multiplier (Gender foe) const {
 	// Return 1 for same gender, -1 for opposite, and 0 if either is genderless
 	return (gender - 1) * (foe.gender - 1);
-}
-
-std::string Gender::to_string() const {
-	return ::technicalmachine::to_string(gender);
 }
 
 bool operator== (Gender const lhs, Gender const rhs) {

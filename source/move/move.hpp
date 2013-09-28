@@ -20,7 +20,6 @@
 #define MOVE__MOVE_HPP_
 
 #include <cstdint>
-#include <string>
 
 #include "classification.hpp"
 #include "disable.hpp"
@@ -39,24 +38,11 @@ class Move {
 public:
 	Move (Moves move, unsigned pp_ups = 3);
 	Moves name() const;
+	operator Moves() const;
 	void reset ();
-	std::string to_string () const;
-	bool is_regular() const;
-	bool is_damaging() const;
-	bool is_physical() const;
-	bool is_special() const;
-	bool is_blocked_by_taunt() const;
 	Type type() const;
 	void set_type(Type::Types t);	// for Hidden Power only.
 	unsigned base_power() const;
-	bool can_critical_hit() const;
-	Priority priority() const;
-	bool is_struggle() const;
-	static bool is_switch (Moves name);
-	bool is_switch () const;
-	static Moves from_replacement (unsigned replacement);
-	static unsigned to_replacement (Moves name);
-	unsigned to_replacement () const;
 	bool affects_target (ActivePokemon const & target, Weather const & weather) const;
 	bool has_follow_up_decision () const;
 	bool calls_other_move () const;
@@ -69,12 +55,10 @@ public:
 	Rational metronome_boost() const;
 	bool cannot_ko () const;
 	bool breaks_screens () const;
-	bool is_struggle_or_switch () const;
 	static bool is_phaze (Moves name);
 	bool is_phaze () const;
 	static bool is_healing (Moves name);
 	bool is_healing () const;
-	bool is_blocked_by_gravity () const;
 	bool is_boosted_by_iron_fist () const;
 	bool is_boosted_by_reckless() const;
 	bool is_usable_while_sleeping () const;
@@ -104,6 +88,23 @@ private:
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);
+
+bool is_physical(Moves move);
+bool is_special(Moves move);
+
+bool is_regular(Move const & move);
+bool is_struggle(Move const & move);
+bool is_switch(Moves name);
+bool is_damaging(Move const & move);
+
+bool is_blocked_by_taunt(Move const & move);
+bool is_blocked_by_gravity(Move const & move);
+
+bool can_critical_hit(Move const & move);
+
+Moves from_replacement(unsigned replacement);
+unsigned to_replacement(Moves name);
+
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

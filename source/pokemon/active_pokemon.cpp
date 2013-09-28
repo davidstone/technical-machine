@@ -229,7 +229,7 @@ void ActivePokemon::set_critical_hit(bool const value) {
 
 Rational ActivePokemon::critical_probability() const {
 	constexpr unsigned ch_denominator = 16;
-	return move().can_critical_hit() ?
+	return can_critical_hit(move()) ?
 		Rational(critical_hit() ? 1 : ch_denominator - 1, ch_denominator) :
 		Rational(critical_hit() ? 0 : 1, 1);
 }
@@ -395,7 +395,7 @@ void ActivePokemon::lock_on_to() {
 }
 
 void ActivePokemon::lower_pp(Ability const & target) {
-	if (move().is_regular() and !is_locked_in_to_bide())
+	if (is_regular(move()) and !is_locked_in_to_bide())
 		regular_move().pp.decrement(target);
 }
 
@@ -656,7 +656,7 @@ bool ActivePokemon::is_switching_to_self (Move const & switch_move) const {
 }
 
 bool ActivePokemon::has_switched() const {
-	return moved() and move().is_switch();
+	return moved() and is_switch(move());
 }
 
 bool ActivePokemon::switch_decision_required() const {
@@ -665,7 +665,7 @@ bool ActivePokemon::switch_decision_required() const {
 
 void ActivePokemon::switch_pokemon() {
 	get_pokemon().switch_out();
-	all_pokemon().to_replacement();
+	all_pokemon().set_index(all_pokemon().replacement());
 }
 
 void ActivePokemon::switch_in() {
@@ -673,7 +673,7 @@ void ActivePokemon::switch_in() {
 }
 
 void ActivePokemon::update_to_correct_switch() {
-	get_pokemon().move.set_index(Move::from_replacement(all_pokemon().replacement()));
+	get_pokemon().move.set_index(from_replacement(all_pokemon().replacement()));
 }
 
 bool ActivePokemon::trapped() const {
@@ -799,7 +799,7 @@ void ActivePokemon::register_damage(unsigned const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	if (move().is_regular()) {
+	if (is_regular(move())) {
 		regular_move().increment_use_counter();
 	}
 }

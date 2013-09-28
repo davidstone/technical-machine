@@ -50,7 +50,8 @@
 #include "../stat/chance_to_hit.hpp"
 #include "../stat/stat.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/move.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -309,7 +310,7 @@ int64_t awaken_branch(Team & first, Team & last, Weather const & weather, unsign
 
 int64_t random_move_effects_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
 	auto const flag_possible = [](ActivePokemon const & pokemon) {
-		return pokemon.move().can_critical_hit();
+		return can_critical_hit(pokemon.move());
 	};
 	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
 		pokemon.set_critical_hit(flag);
@@ -536,8 +537,9 @@ Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
 std::vector<Moves> all_switches (uint8_t const team_size, uint8_t const pokemon_index) {
 	std::vector<Moves> switches;
 	for (unsigned n = 0; n != team_size; ++n) {
-		if (n != pokemon_index)
-			switches.emplace_back(Move::from_replacement(n));
+		if (n != pokemon_index) {
+			switches.emplace_back(from_replacement(n));
+		}
 	}
 	return switches;
 }
@@ -550,8 +552,8 @@ Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & 
 }
 
 void print_best_move (Team const & team, Moves const best_move, int64_t score) {
-	if (Move::is_switch (best_move))
-		std::cout << "Switch to " + to_string(team.pokemon(Move::to_replacement(best_move)).name());
+	if (is_switch(best_move))
+		std::cout << "Switch to " + to_string(team.pokemon(to_replacement(best_move)).name());
 	else
 		std::cout << "Use " + to_string(best_move);
 	std::cout << " for a minimum expected score of " << score << "\n";
@@ -563,12 +565,12 @@ void print_action (Team const & team, bool first_turn) {
 		if (!team.is_me())
 			++tabs;
 		std::cout << std::string (tabs, '\t') + "Evaluating ";
-		if (team.pokemon().move().is_switch()) {
-			auto const replacement_index = team.pokemon().move().to_replacement();
+		if (is_switch(team.pokemon().move())) {
+			auto const replacement_index = to_replacement(team.pokemon().move());
 			std::cout << "switching to " + to_string(team.pokemon(replacement_index).name()) + "\n";
 		}
 		else {
-			std::cout << team.pokemon().move().to_string() + "\n";
+			std::cout << to_string(team.pokemon().move()) + "\n";
 		}
 	}
 }

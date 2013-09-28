@@ -1,5 +1,5 @@
 // Pokemon Lab outgoing messages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,6 +32,10 @@
 
 #include "../../pokemon/pokemon.hpp"
 
+#include "../../string_conversions/ability.hpp"
+#include "../../string_conversions/item.hpp"
+#include "../../string_conversions/pokemon.hpp"
+
 namespace technicalmachine {
 namespace pl {
 
@@ -63,8 +67,8 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 
 	write_byte (pokemon.happiness());
 	write_int(pokemon.level());
-	write_string(pokemon.item().to_string());
-	write_string(pokemon.ability().to_string());
+	write_string(to_string(pokemon.item().name));
+	write_string(to_string(pokemon.ability().name()));
 	write_int(pokemon.nature().name);
 	write_int (pokemon.move.number_of_regular_moves());
 	pokemon.move.for_each_regular_move([&](Move const & move) {
