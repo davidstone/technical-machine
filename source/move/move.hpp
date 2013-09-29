@@ -47,7 +47,6 @@ public:
 	unsigned momentum_move_power() const;
 	unsigned triple_kick_power() const;
 	Rational metronome_boost() const;
-	void get_magnitude (unsigned magnitude);
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	hash_type max_hash() const;
