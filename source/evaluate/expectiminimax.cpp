@@ -308,6 +308,11 @@ int64_t awaken_branch(Team & first, Team & last, Weather const & weather, unsign
 }
 
 
+bool can_critical_hit(Moves const move) {
+	BasePower const base_power(move);
+	return !base_power.does_fixed_damage() and base_power() != 0;
+}
+
 int64_t random_move_effects_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
 	auto const flag_possible = [](ActivePokemon const & pokemon) {
 		return can_critical_hit(pokemon.move());
@@ -316,7 +321,11 @@ int64_t random_move_effects_branch(Team & first, Team & last, Weather const & we
 		pokemon.set_critical_hit(flag);
 	};
 	auto const probability = [](ActivePokemon const & pokemon) {
-		return pokemon.critical_probability();
+		constexpr unsigned ch_denominator = 16;
+		bool const ch = pokemon.critical_hit();
+		return can_critical_hit(pokemon.move()) ?
+			Rational(ch ? 1 : ch_denominator - 1, ch_denominator) :
+			Rational(ch ? 0 : 1, 1);
 	};
 	int64_t score3 = 0;
 

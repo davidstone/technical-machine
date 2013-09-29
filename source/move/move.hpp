@@ -19,8 +19,7 @@
 #ifndef MOVE__MOVE_HPP_
 #define MOVE__MOVE_HPP_
 
-#include <cstdint>
-
+#include "base_power.hpp"
 #include "disable.hpp"
 #include "moves_forward.hpp"
 #include "pp.hpp"
@@ -61,8 +60,8 @@ private:
 	// Move times_used up to ActivePokemon when it will reduce the size of Move.
 	TimesUsed times_used;
 	// Hidden Power makes this hard to replace with just a function
-	uint8_t cached_base_power;
-	Type cached_type;
+	BasePower m_base_power;
+	Type m_type;
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);
@@ -75,8 +74,6 @@ bool is_damaging(Move const & move);
 bool is_phaze(Moves name);
 
 bool is_usable_while_frozen(Moves move);
-
-bool can_critical_hit(Move const & move);
 
 Moves from_replacement(unsigned replacement);
 unsigned to_replacement(Moves name);
