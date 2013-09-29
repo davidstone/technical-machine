@@ -1,5 +1,5 @@
 // Chance to hit calculations
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,18 +23,16 @@
 
 namespace technicalmachine {
 class ActivePokemon;
+class Rational;
 class Weather;
 
 class ChanceToHit {
 public:
-	typedef uint8_t value_type;
 	ChanceToHit();
-	value_type operator()() const;
-	value_type inverse() const;
-	bool can_miss() const;
+	Rational operator()() const;
 	void update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved);
 private:
-	value_type probability;
+	uint8_t probability;
 };
 
 }	// namespace technicalmachine

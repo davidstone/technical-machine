@@ -1,5 +1,5 @@
 // Chance to hit calculations
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,7 +34,7 @@
 
 namespace technicalmachine {
 namespace {
-constexpr ChanceToHit::value_type max = 100;
+constexpr uint8_t max = 100;
 
 bool move_can_miss(ActivePokemon const & user, Ability const & target_ability);
 Rational accuracy_item_modifier (Item const & item, bool target_moved);
@@ -47,21 +47,13 @@ ChanceToHit::ChanceToHit() :
 	{
 }
 
-ChanceToHit::value_type ChanceToHit::operator()() const {
-	return probability;
-}
-
-ChanceToHit::value_type ChanceToHit::inverse() const {
-	return max - probability;
-}
-
-bool ChanceToHit::can_miss() const {
-	return probability < max;
+Rational ChanceToHit::operator()() const {
+	return Rational(probability, max);
 }
 
 void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
 	if (move_can_miss(user, target.ability())) {
-		value_type calculated_accuracy = accuracy(user.move().name());
+		unsigned calculated_accuracy = accuracy(user.move().name());
 		calculated_accuracy *= user.stage_modifier<Stat::ACC>();
 		calculated_accuracy *= target.stage_modifier<Stat::EVA>();
 
@@ -74,7 +66,7 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 		if (weather.gravity())
 			calculated_accuracy *= Rational(5, 3);
 		
-		probability = std::min(calculated_accuracy, max);
+		probability = std::min(static_cast<uint8_t>(calculated_accuracy), max);
 	}
 	else {
 		probability = max;
@@ -84,7 +76,7 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 namespace {
 
 bool move_can_miss(ActivePokemon const & user, Ability const & target_ability) {
-	return can_miss(user.move().name()) and !user.ability().cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
+	return can_miss(user.move()) and !user.ability().cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
 Rational accuracy_item_modifier(Item const & item, bool target_moved) {

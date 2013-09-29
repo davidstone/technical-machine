@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -84,7 +84,6 @@ public:
 	Ability & ability();
 	void attract();
 	void awaken(bool value);
-	bool can_awaken() const;
 	Rational awaken_probability() const;
 	bool aqua_ring_is_active() const;
 	void activate_aqua_ring();
@@ -207,7 +206,6 @@ public:
 	
 	Status const & status() const;
 	Status & status();
-	bool can_clear_status() const;
 
 	unsigned spit_up_power() const;
 	void increment_stockpile();
@@ -255,8 +253,7 @@ public:
 	void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 	// If the move is a hit, returns the chance to hit, otherwise, returns
 	// the chance to miss.
-	ChanceToHit::value_type accuracy_probability() const;
-	bool can_miss() const;
+	Rational accuracy_probability() const;
 	
 	bool will_be_replaced() const;
 	

@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -173,10 +173,6 @@ void ActivePokemon::attract() {
 
 void ActivePokemon::awaken(bool const value) {
 	awakening = value;
-}
-
-bool ActivePokemon::can_awaken() const {
-	return status().can_awaken(ability());
 }
 
 Rational ActivePokemon::awaken_probability() const {
@@ -539,7 +535,7 @@ void ActivePokemon::shed_skin(bool const value) {
 }
 
 Rational ActivePokemon::shed_skin_probability() const {
-	if (!can_clear_status()) {
+	if (!ability().can_clear_status(status())) {
 		return Rational(shed_skin_activated() ? 0 : 1, 1);
 	}
 	Rational const result(3, 10);
@@ -627,10 +623,6 @@ Status const & ActivePokemon::status() const {
 
 Status & ActivePokemon::status() {
 	return get_pokemon().status();
-}
-
-bool ActivePokemon::can_clear_status() const {
-	return ability().can_clear_status(status());
 }
 
 unsigned ActivePokemon::spit_up_power() const {
@@ -810,12 +802,8 @@ void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather c
 	cached_chance_to_hit.update(*this, target, weather, target_moved);
 }
 
-ChanceToHit::value_type ActivePokemon::accuracy_probability() const {
-	return miss ? cached_chance_to_hit.inverse() : cached_chance_to_hit();
-}
-
-bool ActivePokemon::can_miss() const {
-	return cached_chance_to_hit.can_miss();
+Rational ActivePokemon::accuracy_probability() const {
+	return miss ? complement(cached_chance_to_hit()) : cached_chance_to_hit();
 }
 
 bool ActivePokemon::will_be_replaced() const {
