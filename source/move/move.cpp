@@ -21,13 +21,11 @@
 #include <cassert>
 #include <cstdint>
 
+#include "classification.hpp"
 #include "moves.hpp"
 
 #include "../rational.hpp"
 
-#include "../pokemon/active_pokemon.hpp"
-
-#include "../type/effectiveness.hpp"
 #include "../type/type.hpp"
 
 namespace technicalmachine {
@@ -59,10 +57,6 @@ void Move::reset () {
 	times_used.reset();
 }
 
-bool is_regular(Move const & move) {
-	return !is_struggle(move) and !is_switch(move);
-}
-
 bool is_damaging(Move const & move) {
 	return move.base_power() != 0;
 }
@@ -73,10 +67,6 @@ bool is_physical(Moves const move) {
 
 bool is_special(Moves const move) {
 	return Classification(move).is_special();
-}
-
-bool is_blocked_by_taunt(Move const & move) {
-	return !is_damaging(move);
 }
 
 bool can_critical_hit(Move const & move) {
@@ -124,10 +114,6 @@ unsigned Move::base_power() const {
 	return cached_base_power;
 }
 
-bool is_struggle(Move const & move) {
-	return move.name() == Moves::Struggle;
-}
-
 bool is_switch(Moves const name) {
 	static_assert(static_cast<unsigned>(Moves::Switch0) == 0, "Switching is not the first Move enum.");
 	return name <= Moves::Switch5;
@@ -142,53 +128,12 @@ unsigned to_replacement(Moves const name) {
 	return static_cast<unsigned>(name) - static_cast<unsigned>(Moves::Switch0);
 }
 
-bool Move::affects_target(ActivePokemon const & target, Weather const & weather) const {
-	return !type().get_effectiveness(target).has_no_effect() and (type() != Type::Ground or grounded(target, weather));
-}
-
-bool Move::has_follow_up_decision () const {
-	switch (name()) {
-		case Moves::Baton_Pass:
-		case Moves::U_turn:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::calls_other_move () const {
-	switch (name()) {
-//		case Moves::Nature_Power:
-		case Moves::Assist:
-		case Moves::Copycat:
-		case Moves::Me_First:
-		case Moves::Metronome:
-		case Moves::Mirror_Move:
-		case Moves::Sleep_Talk:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::cannot_ko () const {
-	return name() == Moves::False_Swipe;
-}
-
-bool Move::breaks_screens () const {
-	return name() == Moves::Brick_Break;
-}
-
 void Move::increment_use_counter() {
 	times_used.increment();
 }
 
-bool Move::was_used_last () const {
+bool Move::was_used_last() const {
 	return times_used.was_used_last();
-}
-
-bool Move::is_bide() const {
-	return name() == Moves::Bide;
 }
 
 unsigned Move::fury_cutter_power() const {
@@ -207,7 +152,7 @@ Rational Move::metronome_boost() const {
 	return times_used.metronome_boost();
 }
 
-bool Move::is_phaze (Moves name) {
+bool is_phaze(Moves const name) {
 	switch (name) {
 		case Moves::Roar:
 		case Moves::Whirlwind:
@@ -217,133 +162,10 @@ bool Move::is_phaze (Moves name) {
 	}
 }
 
-bool Move::is_phaze () const {
-	return is_phaze (name());
-}
-
-bool Move::is_healing (Moves name) {
-	switch (name) {
-		case Moves::Heal_Order:
-		case Moves::Milk_Drink:
-		case Moves::Moonlight:
-		case Moves::Morning_Sun:
-		case Moves::Recover:
-		case Moves::Rest:
-		case Moves::Roost:
-		case Moves::Slack_Off:
-		case Moves::Softboiled:
-		case Moves::Swallow:
-		case Moves::Synthesis:
-		case Moves::Wish:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_healing () const {
-	return is_healing (name());
-}
-
-bool is_blocked_by_gravity(Move const & move) {
-	switch (move.name()) {
-		case Moves::Bounce:
-		case Moves::Fly:
-		case Moves::Hi_Jump_Kick:
-		case Moves::Jump_Kick:
-		case Moves::Magnet_Rise:
-		case Moves::Splash:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_boosted_by_iron_fist () const {
-	switch (name()) {
-		case Moves::Bullet_Punch:
-		case Moves::Comet_Punch:
-		case Moves::Dizzy_Punch:
-		case Moves::Drain_Punch:
-		case Moves::DynamicPunch:
-		case Moves::Fire_Punch:
-		case Moves::Focus_Punch:
-		case Moves::Hammer_Arm:
-		case Moves::Ice_Punch:
-		case Moves::Mach_Punch:
-		case Moves::Mega_Punch:
-		case Moves::Meteor_Mash:
-		case Moves::Shadow_Punch:
-		case Moves::Sky_Uppercut:
-		case Moves::ThunderPunch:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_boosted_by_reckless() const {
-	switch (name()) {
-		case Moves::Brave_Bird:
-		case Moves::Double_Edge:
-		case Moves::Flare_Blitz:
-		case Moves::Head_Smash:
-		case Moves::Submission:
-		case Moves::Take_Down:
-		case Moves::Volt_Tackle:
-		case Moves::Wood_Hammer:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_usable_while_sleeping () const {
-	switch (name()) {
-		case Moves::Sleep_Talk:
-		case Moves::Snore:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_usable_while_frozen () const {
-	switch (name()) {
+bool is_usable_while_frozen(Moves const move) {
+	switch (move) {
 		case Moves::Flame_Wheel:
 		case Moves::Sacred_Fire:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_sound_based () const {
-	switch (name()) {
-		case Moves::Bug_Buzz:
-		case Moves::Chatter:
-		case Moves::GrassWhistle:
-		case Moves::Growl:
-		case Moves::Heal_Bell:
-		case Moves::Hyper_Voice:
-		case Moves::Metal_Sound:
-		case Moves::Perish_Song:
-		case Moves::Roar:
-		case Moves::Screech:
-		case Moves::Sing:
-		case Moves::Snore:
-		case Moves::Supersonic:
-		case Moves::Uproar:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Move::is_self_KO () const {
-	switch (name()) {
-		case Moves::Explosion:
-		case Moves::Selfdestruct:
 			return true;
 		default:
 			return false;

@@ -374,6 +374,16 @@ int64_t use_move_branch(Team & first, Team & last, Variable const & first_variab
 	return generic_flag_branch(first, last, weather, depth, evaluate, flag_possible, set_flag, probability, end_of_turn_order);
 }
 
+bool has_follow_up_decision(Moves const move) {
+	switch (move) {
+		case Moves::Baton_Pass:
+		case Moves::U_turn:
+			return true;
+		default:
+			return false;
+	}
+}
+
 int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
 	if (!user.pokemon().moved()) {
 		unsigned const damage = call_move(user, other, weather, user_variable);
@@ -382,7 +392,7 @@ int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_
 		int64_t const other_win = Evaluate::win (other);
 		if (user_win or other_win)
 			return user_win + other_win;
-		if (user.pokemon().move().has_follow_up_decision() and user.all_pokemon().size() > 1) {
+		if (has_follow_up_decision(user.pokemon().move()) and user.all_pokemon().size() > 1) {
 			Moves phony = Moves::END;
 			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
 		}

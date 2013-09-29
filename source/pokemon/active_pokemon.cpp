@@ -25,6 +25,7 @@
 #include "../rational.hpp"
 
 #include "../move/move.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 
@@ -393,6 +394,14 @@ bool ActivePokemon::locked_on() const {
 void ActivePokemon::lock_on_to() {
 	lock_on = true;
 }
+
+namespace {
+
+bool is_regular(Moves const move) {
+	return move != Moves::Struggle and !is_switch(move);
+}
+
+}	// namespace
 
 void ActivePokemon::lower_pp(Ability const & target) {
 	if (is_regular(move()) and !is_locked_in_to_bide())

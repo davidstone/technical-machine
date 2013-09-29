@@ -191,7 +191,7 @@ void Battle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t 
 	}
 	
 	// TODO: I'm skeptical of this logic
-	if (other.number_of_seen_pokemon() != 0 and other.replacement().move().is_phaze()) {
+	if (other.number_of_seen_pokemon() != 0 and is_phaze(other.replacement().move())) {
 		variable(other).set_phaze_index(switcher, species);
 	}
 	else if (!switcher.pokemon().moved()) {

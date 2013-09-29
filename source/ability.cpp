@@ -26,6 +26,7 @@
 #include "weather.hpp"
 
 #include "move/move.hpp"
+#include "move/moves.hpp"
 
 #include "pokemon/active_pokemon.hpp"
 
@@ -300,6 +301,49 @@ Rational Ability::evasion_modifier(ActivePokemon const & target, Weather const &
 	}
 }
 
+namespace {
+
+bool is_boosted_by_iron_fist(Moves const move) {
+	switch (move) {
+		case Moves::Bullet_Punch:
+		case Moves::Comet_Punch:
+		case Moves::Dizzy_Punch:
+		case Moves::Drain_Punch:
+		case Moves::DynamicPunch:
+		case Moves::Fire_Punch:
+		case Moves::Focus_Punch:
+		case Moves::Hammer_Arm:
+		case Moves::Ice_Punch:
+		case Moves::Mach_Punch:
+		case Moves::Mega_Punch:
+		case Moves::Meteor_Mash:
+		case Moves::Shadow_Punch:
+		case Moves::Sky_Uppercut:
+		case Moves::ThunderPunch:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_boosted_by_reckless(Moves const move) {
+	switch (move) {
+		case Moves::Brave_Bird:
+		case Moves::Double_Edge:
+		case Moves::Flare_Blitz:
+		case Moves::Head_Smash:
+		case Moves::Submission:
+		case Moves::Take_Down:
+		case Moves::Volt_Tackle:
+		case Moves::Wood_Hammer:
+			return true;
+		default:
+			return false;
+	}
+}
+
+}	// namespace
+
 Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
 	switch (attacker.ability().name()) {
 		case Technician:
@@ -313,9 +357,9 @@ Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & de
 		case Torrent:
 			return pinch_ability_activates(attacker, Type::Water) ? Rational(3, 2) : Rational(1);
 		case Iron_Fist:
-			return attacker.move().is_boosted_by_iron_fist() ? Rational(6, 5) : Rational(1);
+			return is_boosted_by_iron_fist(attacker.move()) ? Rational(6, 5) : Rational(1);
 		case Reckless:
-			return attacker.move().is_boosted_by_reckless() ? Rational(6, 5) : Rational(1);
+			return is_boosted_by_reckless(attacker.move()) ? Rational(6, 5) : Rational(1);
 		case Rivalry:
 			return Rational(static_cast<unsigned>(4 + attacker.gender().multiplier(defender.gender())), 4);
 		default:

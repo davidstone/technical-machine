@@ -21,11 +21,9 @@
 
 #include <cstdint>
 
-#include "classification.hpp"
 #include "disable.hpp"
 #include "moves_forward.hpp"
 #include "pp.hpp"
-#include "priority.hpp"
 #include "times_used.hpp"
 
 #include "../type/type.hpp"
@@ -43,32 +41,13 @@ public:
 	Type type() const;
 	void set_type(Type::Types t);	// for Hidden Power only.
 	unsigned base_power() const;
-	bool affects_target (ActivePokemon const & target, Weather const & weather) const;
-	bool has_follow_up_decision () const;
-	bool calls_other_move () const;
 	void increment_use_counter();
 	bool was_used_last () const;
-	bool is_bide() const;
 	unsigned fury_cutter_power() const;
 	unsigned momentum_move_power() const;
 	unsigned triple_kick_power() const;
 	Rational metronome_boost() const;
-	bool cannot_ko () const;
-	bool breaks_screens () const;
-	static bool is_phaze (Moves name);
-	bool is_phaze () const;
-	static bool is_healing (Moves name);
-	bool is_healing () const;
-	bool is_boosted_by_iron_fist () const;
-	bool is_boosted_by_reckless() const;
-	bool is_usable_while_sleeping () const;
-	bool is_usable_while_frozen () const;
-	bool is_sound_based () const;
-	bool is_self_KO () const;
 	void get_magnitude (unsigned magnitude);
-	static constexpr unsigned max_regular_moves () {
-		return 4;
-	}
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	hash_type max_hash() const;
@@ -92,19 +71,16 @@ bool operator!= (Move const & lhs, Move const & rhs);
 bool is_physical(Moves move);
 bool is_special(Moves move);
 
-bool is_regular(Move const & move);
-bool is_struggle(Move const & move);
 bool is_switch(Moves name);
 bool is_damaging(Move const & move);
+bool is_phaze(Moves name);
 
-bool is_blocked_by_taunt(Move const & move);
-bool is_blocked_by_gravity(Move const & move);
+bool is_usable_while_frozen(Moves move);
 
 bool can_critical_hit(Move const & move);
 
 Moves from_replacement(unsigned replacement);
 unsigned to_replacement(Moves name);
-
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

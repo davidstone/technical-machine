@@ -30,6 +30,9 @@
 #include "../team.hpp"
 #include "../weather.hpp"
 
+#include "../move/moves.hpp"
+#include "../move/priority.hpp"
+
 #include "../pokemon/pokemon.hpp"
 
 namespace technicalmachine {
@@ -212,11 +215,27 @@ void calculate_special_attack (ActivePokemon & attacker, Weather const & weather
 	calculate_common_offensive_stat<Stat::SPA>(attacker, weather);
 }
 
+namespace {
+
+bool is_self_KO(Moves const move) {
+	switch (move) {
+		case Moves::Explosion:
+		case Moves::Selfdestruct:
+			return true;
+		default:
+			return false;
+	}
+}
+
+}	// namespace
+
 void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather) {
-	if (is_physical(attacker.move()))
-		calculate_defense(defender, weather, attacker.critical_hit(), attacker.move().is_self_KO());
-	else
+	if (is_physical(attacker.move())) {
+		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(attacker.move()));
+	}
+	else {
 		calculate_special_defense(defender, weather, attacker.critical_hit());
+	}
 }
 
 void calculate_defense (ActivePokemon & defender, Weather const & weather, bool ch, bool is_self_KO) {

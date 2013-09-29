@@ -100,6 +100,21 @@ void recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, un
 		Status::apply<status>(user, target, weather);
 }
 
+bool calls_other_move(Moves const move) {
+	switch (move) {
+//		case Moves::Nature_Power:
+		case Moves::Assist:
+		case Moves::Copycat:
+		case Moves::Me_First:
+		case Moves::Metronome:
+		case Moves::Mirror_Move:
+		case Moves::Sleep_Talk:
+			return true;
+		default:
+			return false;
+	}
+}
+
 }	// unnamed namespace
 
 unsigned call_move (Team & user_team, Team & target_team, Weather & weather, Variable const & variable, bool const damage_is_known) {
@@ -108,7 +123,7 @@ unsigned call_move (Team & user_team, Team & target_team, Weather & weather, Var
 	user.update_before_move();
 	if (can_execute_move (user, target, weather)) {
 		user.lower_pp(target.ability());
-		if (user.move().calls_other_move())
+		if (calls_other_move(user.move()))
 			call_other_move (user);
 		if (!user.missed())
 			return use_move(user_team, target_team, weather, variable, damage_is_known);
@@ -118,11 +133,33 @@ unsigned call_move (Team & user_team, Team & target_team, Weather & weather, Var
 
 namespace {
 
+bool is_sound_based(Moves const move) {
+	switch (move) {
+		case Moves::Bug_Buzz:
+		case Moves::Chatter:
+		case Moves::GrassWhistle:
+		case Moves::Growl:
+		case Moves::Heal_Bell:
+		case Moves::Hyper_Voice:
+		case Moves::Metal_Sound:
+		case Moves::Perish_Song:
+		case Moves::Roar:
+		case Moves::Screech:
+		case Moves::Sing:
+		case Moves::Snore:
+		case Moves::Supersonic:
+		case Moves::Uproar:
+			return true;
+		default:
+			return false;
+	}
+}
+
 unsigned use_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
 	auto const & move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
-	if (target.pokemon().ability().blocks_sound_moves() and move.is_sound_based() and
+	if (target.pokemon().ability().blocks_sound_moves() and is_sound_based(move) and
 			!(move.name() == Moves::Heal_Bell or move.name() == Moves::Perish_Song))
 		return 0;
 	calculate_speed (user, weather);
@@ -139,11 +176,15 @@ unsigned use_move (Team & user, Team & target, Weather & weather, Variable const
 	return damage;
 }
 
+constexpr bool breaks_screens(Moves const move) {
+	return move == Moves::Brick_Break;
+}
+
 void do_effects_before_moving (Pokemon & user, Team & target) {
-	if (user.move().breaks_screens()) {
+	if (breaks_screens(user.move())) {
 		target.screens.shatter();
 	}
-	else if (user.move().is_usable_while_frozen()) {
+	else if (is_usable_while_frozen(user.move())) {
 		if (user.status().is_frozen())
 			user.status().clear();
 	}

@@ -24,6 +24,7 @@
 #include "weather.hpp"
 
 #include "move/move.hpp"
+#include "move/moves.hpp"
 
 #include "pokemon/pokemon.hpp"
 #include "pokemon/active_pokemon.hpp"
@@ -32,21 +33,21 @@ namespace technicalmachine {
 namespace {
 
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool found_selectable_move);
-bool is_blocked_by_bide (ActivePokemon const & user, Move const & move);
+bool is_blocked_by_bide (ActivePokemon const & user, Moves move);
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather);
 bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
 bool imprison (Move const & move, ActivePokemon const & other);
 bool blocked_by_torment (ActivePokemon const & user, Move const & move);
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other);
 bool block2 (ActivePokemon const & user, Move const & move, Weather const & weather);
-bool is_blocked_due_to_lock_in (ActivePokemon const & user, Move const & move);
-bool standard_move_lock_in (ActivePokemon const & user, Move const & move);
+bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves move);
+bool standard_move_lock_in(ActivePokemon const & user, Moves move);
 bool is_locked_in (ActivePokemon const & user);
 bool is_locked_in_by_choice_item(ActivePokemon const & user);
-bool is_locked_in_to_different_move (Pokemon const & user, Move const & move);
-bool is_blocked_due_to_status (ActivePokemon & user, Move const & move);
-bool is_blocked_by_freeze (Pokemon const & user, Move const & move);
-bool handle_sleep_counter (ActivePokemon & user, Move const & move);
+bool is_locked_in_to_different_move(Pokemon const & user, Moves move);
+bool is_blocked_due_to_status(ActivePokemon & user, Moves move);
+bool is_blocked_by_freeze(Pokemon const & user, Moves move);
+bool handle_sleep_counter(ActivePokemon & user, Moves move);
 
 }	// unnamed namespace
 
@@ -86,9 +87,9 @@ namespace {
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool const found_selectable_move) {
 	return !is_blocked_by_bide (user, move) and
 			is_not_illegal_switch (user, move, other, weather) and
-			(!is_struggle(move) or !found_selectable_move) and
+			(move.name() != Moves::Struggle or !found_selectable_move) and
 			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment (user, move)) and
-			!is_blocked_due_to_lock_in (user, move);
+			!is_blocked_due_to_lock_in(user, move);
 }
 }	// unnamed namespace
 
@@ -126,8 +127,8 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 
 namespace {
 
-bool is_blocked_by_bide (ActivePokemon const & user, Move const & move) {
-	return user.is_locked_in_to_bide() and move.is_bide();
+bool is_blocked_by_bide(ActivePokemon const & user, Moves const move) {
+	return user.is_locked_in_to_bide() and move == Moves::Bide;
 }
 
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
@@ -142,11 +143,31 @@ bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const 
 	return result;
 }
 
+bool is_healing(Moves const name) {
+	switch (name) {
+		case Moves::Heal_Order:
+		case Moves::Milk_Drink:
+		case Moves::Moonlight:
+		case Moves::Morning_Sun:
+		case Moves::Recover:
+		case Moves::Rest:
+		case Moves::Roost:
+		case Moves::Slack_Off:
+		case Moves::Softboiled:
+		case Moves::Swallow:
+		case Moves::Synthesis:
+		case Moves::Wish:
+			return true;
+		default:
+			return false;
+	}
+}
+
 // Things that both block selection and block execution in between sleep and confusion
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other) {
 	return (move.pp.is_empty())
 			or (move.disable)
-			or (user.heal_block_is_active() and (move.is_healing()))
+			or (user.heal_block_is_active() and (is_healing(move)))
 			or (imprison (move, other));
 }
 
@@ -156,6 +177,24 @@ bool imprison (Move const & move, ActivePokemon const & other) {
 	});
 }
 
+bool is_blocked_by_taunt(Move const & move) {
+	return !is_damaging(move);
+}
+
+bool is_blocked_by_gravity(Moves const move) {
+	switch (move) {
+		case Moves::Bounce:
+		case Moves::Fly:
+		case Moves::Hi_Jump_Kick:
+		case Moves::Jump_Kick:
+		case Moves::Magnet_Rise:
+		case Moves::Splash:
+			return true;
+		default:
+			return false;
+	}
+}
+
 // Things that both block selection and block execution after flinching
 bool block2 (ActivePokemon const & user, Move const & move, Weather const & weather) {
 	return !is_switch(move) and
@@ -163,14 +202,14 @@ bool block2 (ActivePokemon const & user, Move const & move, Weather const & weat
 			(weather.gravity() and is_blocked_by_gravity(move)));
 }
 
-bool is_blocked_due_to_lock_in (ActivePokemon const & user, Move const & move) {
-	return (is_struggle(move) or is_switch(move)) ?
+bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves const move) {
+	return (is_switch(move) or move == Moves::Struggle) ?
 		user.recharging() :
 		standard_move_lock_in(user, move);
 }
 
-bool standard_move_lock_in (ActivePokemon const & user, Move const & move) {
-	return is_locked_in (user) ? is_locked_in_to_different_move (user, move) : false;
+bool standard_move_lock_in(ActivePokemon const & user, Moves const move) {
+	return is_locked_in(user) ? is_locked_in_to_different_move(user, move) : false;
 }
 
 bool is_locked_in (ActivePokemon const & user) {
@@ -181,27 +220,37 @@ bool is_locked_in_by_choice_item(ActivePokemon const & user) {
 	return user.item().is_choice_item() and user.moved_since_switch();
 }
 
-bool is_locked_in_to_different_move (Pokemon const & user, Move const & move) {
-	return user.move.name_of_last_used_move() != move.name();
+bool is_locked_in_to_different_move(Pokemon const & user, Moves const move) {
+	return user.move.name_of_last_used_move() != move;
 }
 
 bool blocked_by_torment (ActivePokemon const & user, Move const & move) {
 	return user.tormented() and move.was_used_last();
 }
 
-bool is_blocked_due_to_status (ActivePokemon & user, Move const & move) {
+bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {
 	return is_blocked_by_freeze(user, move) or handle_sleep_counter(user, move);
 }
 
-bool is_blocked_by_freeze (Pokemon const & user, Move const & move) {
-	return user.status().is_frozen() and !move.is_usable_while_frozen();
+bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
+	return user.status().is_frozen() and !is_usable_while_frozen(move);
 }
 
-bool handle_sleep_counter (ActivePokemon & user, Move const & move) {
+bool is_blocked_by_sleep(Moves const move) {
+	switch (move) {
+		case Moves::Sleep_Talk:
+		case Moves::Snore:
+			return false;
+		default:
+			return true;
+	}
+}
+
+bool handle_sleep_counter(ActivePokemon & user, Moves const move) {
 	if (!user.status().is_sleeping())
 		return false;
 	user.increase_sleep_counter();
-	return !move.is_usable_while_sleeping();
+	return is_blocked_by_sleep(move);
 }
 
 }	// unnamed namespace

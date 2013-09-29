@@ -39,6 +39,8 @@
 namespace technicalmachine {
 namespace {
 
+bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
+
 unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
@@ -66,19 +68,27 @@ bool resistance_berry_activates (Item item, Type type, Effectiveness const & eff
 }	// unnamed namespace
 
 unsigned damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	return attacker.move().affects_target(defender.pokemon(), weather) ?
+	return affects_target(attacker.move().type(), defender.pokemon(), weather) ?
 		capped_damage (attacker, defender, weather, variable) :
 		0;
 }
 
 namespace {
 
+bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather) {
+	return !move_type.get_effectiveness(target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
+}
+
+constexpr bool cannot_ko(Moves const move) {
+	return move == Moves::False_Swipe;
+}
+
 unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	unsigned damage = uncapped_damage (attacker, defender, weather, variable);
 	Stat const & hp = defender.pokemon().stat(Stat::HP);
 	if (damage >= hp.stat) {
 		damage = hp.stat;
-		if (attacker.move().cannot_ko() or defender.pokemon().cannot_be_koed())
+		if (cannot_ko(attacker.move()) or defender.pokemon().cannot_be_koed())
 			--damage;
 	}
 	return damage;
