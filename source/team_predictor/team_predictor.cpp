@@ -92,11 +92,14 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 
 void predict_move (Pokemon & member, std::vector<Moves> const & detailed) {
 	for (Moves const name : detailed) {
-		if (!member.move.exists(name)) {
-			member.move.add(name, 3);
-			static constexpr unsigned max_regular_moves = 4;
-			if (member.move.number_of_regular_moves() == max_regular_moves)
-				break;
+		bool const already_has_this_move = static_cast<bool>(member.move.index(name));
+		if (already_has_this_move) {
+			continue;
+		}
+		member.move.add(name, 3);
+		static constexpr unsigned max_regular_moves = 4;
+		if (member.move.number_of_regular_moves() == max_regular_moves) {
+			break;
 		}
 	}
 }

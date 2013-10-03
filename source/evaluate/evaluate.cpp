@@ -96,7 +96,8 @@ int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 		score += nightmare;
 	if (pokemon.tormented())
 		score += torment;
-	score += baton_passable_score(pokemon) * ((pokemon.all_moves().exists(Moves::Baton_Pass)) ? 2 : 1);
+	bool const has_baton_pass = static_cast<bool>(pokemon.all_moves().index(Moves::Baton_Pass));
+	score += baton_passable_score(pokemon) * (has_baton_pass ? 2 : 1);
 	return score;
 }
 

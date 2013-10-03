@@ -23,6 +23,7 @@
 
 #include "collection.hpp"
 #include "confusion.hpp"
+#include "disable.hpp"
 #include "embargo.hpp"
 #include "encore.hpp"
 #include "heal_block.hpp"
@@ -103,6 +104,10 @@ public:
 	bool defense_curled() const;
 	void defense_curl();
 	void use_destiny_bond();
+	// Requires that move is actually one of this Pokemon's moves
+	bool is_disabled(Moves move) const;
+	void disable();
+	void advance_disable();
 	void activate_embargo();
 	void decrement_embargo();
 	bool is_encored() const;
@@ -280,6 +285,7 @@ private:
 	Bide bide;
 	ChanceToHit cached_chance_to_hit;
 	Confusion confusion;
+	Disable m_disable;
 	Embargo embargo;
 	Encore encore;
 	HealBlock heal_block;

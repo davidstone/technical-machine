@@ -22,12 +22,12 @@ string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'g
 
 bide_sources = prepend_dir('bide', ['bide.cpp', 'damage.cpp', 'duration.cpp'])
 
-move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'base_power.cpp', 'classification.cpp', 'disable.cpp', 'global_move.cpp', 'pp.cpp', 'priority.cpp', 'times_used.cpp'])
+move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'base_power.cpp', 'classification.cpp', 'global_move.cpp', 'pp.cpp', 'priority.cpp', 'times_used.cpp'])
 
 pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'invalid_swallow.cpp', 'pokemon_not_found.cpp', 'level.cpp', 'pokemon.cpp', 'seen.cpp'])
 pokemon_sources += move_sources
 
-active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusion.cpp', 'delayed_attack.cpp', 'embargo.cpp', 'encore.cpp', 'heal_block.cpp', 'magnet_rise.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'rampage.cpp', 'slow_start.cpp', 'stockpile.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'])
+active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusion.cpp', 'delayed_attack.cpp', 'disable.cpp', 'embargo.cpp', 'encore.cpp', 'heal_block.cpp', 'magnet_rise.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'rampage.cpp', 'slow_start.cpp', 'stockpile.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'])
 active_pokemon_sources += prepend_dir('stat', ['chance_to_hit.cpp', 'stage.cpp'])
 active_pokemon_sources += bide_sources + pokemon_sources + ['random_damage.cpp']
 

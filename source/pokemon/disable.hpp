@@ -1,5 +1,5 @@
-// Disable class
-// Copyright (C) 2012 David Stone
+// Which Move is disabled and for how long
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__DISABLE_HPP_
-#define MOVE__DISABLE_HPP_
+#ifndef POKEMON__DISABLE_HPP_
+#define POKEMON__DISABLE_HPP_
 
 #include <cstdint>
 
@@ -26,19 +26,19 @@ namespace technicalmachine {
 class Disable {
 public:
 	Disable();
-	void activate();
+	void activate(uint8_t index_of_disabled_move);
 	void advance_one_turn();
 	void reset();
-	explicit operator bool() const;
+	bool move_is_disabled(uint8_t index_of_move_to_check) const;
 	uint64_t hash() const;
 	static uint64_t max_hash();
 	friend bool operator== (Disable lhs, Disable rhs);
 private:
-	// Number of turns this move has been Disabled (4-7)
-	uint8_t counter;
+	uint8_t m_index_of_disabled_move;
+	uint8_t m_turns_disabled;
 };
 
 bool operator!= (Disable lhs, Disable rhs);
 
 }	// namespace technicalmachine
-#endif	// MOVE__DISABLE_HPP_
+#endif	// POKEMON__DISABLE_HPP_

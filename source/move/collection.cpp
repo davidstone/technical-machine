@@ -71,8 +71,13 @@ Move * MoveCollection::find (Moves name) {
 	return container.find_if([name](Move const & move) { return move.name() == name; });
 }
 
-bool MoveCollection::exists (Moves name) const {
-	return find(name) != nullptr;
+boost::optional<MoveCollection::index_type> MoveCollection::index(Moves const name) const {
+	for (index_type n = 0; n != container.number_of_regular_moves(); ++n) {
+		if (container.regular_move(n).name() == name) {
+			return n;
+		}
+	}
+	return boost::optional<index_type>{};
 }
 
 Moves MoveCollection::name_of_last_used_move () const {

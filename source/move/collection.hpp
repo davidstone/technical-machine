@@ -24,6 +24,8 @@
 #include <cstdint>
 #include <vector>
 
+#include <boost/optional.hpp>
+
 #include "container.hpp"
 #include "move.hpp"
 #include "moves_forward.hpp"
@@ -72,7 +74,8 @@ public:
 	bool regular_move_exists(Function && condition) const {
 		return container.find_if(std::forward<Function>(condition)) != nullptr;
 	}
-	bool exists (Moves name) const;
+	using Base::index;
+	boost::optional<index_type> index(Moves name) const;
 	// Move::END if none
 	Moves name_of_last_used_move () const;
 	bool moved_since_switch() const;

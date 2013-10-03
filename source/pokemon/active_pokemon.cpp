@@ -91,6 +91,7 @@ void ActivePokemon::reset_switch() {
 	charged = false;
 	used_defense_curl = false;
 	destiny_bond = false;
+	m_disable.reset();
 	encore.reset();
 	flash_fire = false;
 	flinched_this_turn = false;
@@ -242,6 +243,18 @@ void ActivePokemon::use_destiny_bond() {
 
 bool ActivePokemon::defense_curled() const {
 	return used_defense_curl;
+}
+
+bool ActivePokemon::is_disabled(Moves const move_name) const {
+	return m_disable.move_is_disabled(*all_moves().index(move_name));
+}
+
+void ActivePokemon::disable() {
+	m_disable.activate(all_moves().index());
+}
+
+void ActivePokemon::advance_disable() {
+	m_disable.advance_one_turn();
 }
 
 void ActivePokemon::activate_embargo() {
@@ -829,6 +842,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += bide.hash();
 	current_hash *= confusion.max_hash();
 	current_hash += confusion.hash();
+	current_hash *= m_disable.max_hash();
+	current_hash += m_disable.hash();
 	current_hash *= embargo.max_hash();
 	current_hash += embargo.hash();
 	current_hash *= encore.max_hash();
@@ -913,6 +928,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= active_substitute.max_hash();
 	current_hash *= bide.max_hash();
 	current_hash *= confusion.max_hash();
+	current_hash *= m_disable.max_hash();
 	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();
 	current_hash *= heal_block.max_hash();
@@ -943,6 +959,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.cursed == rhs.cursed and
 			lhs.used_defense_curl == rhs.used_defense_curl and
 			lhs.destiny_bond == rhs.destiny_bond and
+			lhs.m_disable == rhs.m_disable and
 			lhs.embargo == rhs.embargo and
 			lhs.encore == rhs.encore and
 			lhs.flash_fire == rhs.flash_fire and

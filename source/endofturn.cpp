@@ -165,9 +165,7 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 	
 	pokemon.decrement_lock_in();
 	
-	pokemon.all_moves().for_each_regular_move([](Move & move) {
-		move.disable.advance_one_turn();
-	});
+	pokemon.advance_disable();
 	pokemon.increment_encore();
 	pokemon.increment_taunt();
 	pokemon.decrement_magnet_rise();

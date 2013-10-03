@@ -166,7 +166,7 @@ bool is_healing(Moves const name) {
 // Things that both block selection and block execution in between sleep and confusion
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other) {
 	return (move.pp.is_empty())
-			or (move.disable)
+			or (user.is_disabled(move))
 			or (user.heal_block_is_active() and (is_healing(move)))
 			or (imprison (move, other));
 }

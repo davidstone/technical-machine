@@ -20,7 +20,6 @@
 #define MOVE__MOVE_HPP_
 
 #include "base_power.hpp"
-#include "disable.hpp"
 #include "moves_forward.hpp"
 #include "pp.hpp"
 #include "times_used.hpp"
@@ -55,7 +54,6 @@ private:
 	Moves m_name;
 public:
 	Pp pp;
-	Disable disable;
 private:
 	// Move times_used up to ActivePokemon when it will reduce the size of Move.
 	TimesUsed times_used;
