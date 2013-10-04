@@ -1,5 +1,5 @@
 // Block selection and execution of moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,14 +37,13 @@ bool is_blocked_by_bide (ActivePokemon const & user, Moves move);
 bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather);
 bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
 bool imprison (Move const & move, ActivePokemon const & other);
-bool blocked_by_torment (ActivePokemon const & user, Move const & move);
+bool blocked_by_torment(ActivePokemon const & user, Moves move);
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other);
 bool block2 (ActivePokemon const & user, Move const & move, Weather const & weather);
 bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves move);
 bool standard_move_lock_in(ActivePokemon const & user, Moves move);
 bool is_locked_in (ActivePokemon const & user);
-bool is_locked_in_by_choice_item(ActivePokemon const & user);
-bool is_locked_in_to_different_move(Pokemon const & user, Moves move);
+bool is_locked_in_to_different_move(ActivePokemon const & user, Moves move);
 bool is_blocked_due_to_status(ActivePokemon & user, Moves move);
 bool is_blocked_by_freeze(Pokemon const & user, Moves move);
 bool handle_sleep_counter(ActivePokemon & user, Moves move);
@@ -88,7 +87,7 @@ bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePo
 	return !is_blocked_by_bide (user, move) and
 			is_not_illegal_switch (user, move, other, weather) and
 			(move.name() != Moves::Struggle or !found_selectable_move) and
-			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment (user, move)) and
+			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment(user, move)) and
 			!is_blocked_due_to_lock_in(user, move);
 }
 }	// unnamed namespace
@@ -213,19 +212,15 @@ bool standard_move_lock_in(ActivePokemon const & user, Moves const move) {
 }
 
 bool is_locked_in (ActivePokemon const & user) {
-	return user.is_encored() or user.recharging() or is_locked_in_by_choice_item(user);
+	return user.is_encored() or user.recharging() or user.item().is_choice_item();
 }
 
-bool is_locked_in_by_choice_item(ActivePokemon const & user) {
-	return user.item().is_choice_item() and user.moved_since_switch();
+bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move) {
+	return user.moved_since_switch() and !user.was_used_last(move);
 }
 
-bool is_locked_in_to_different_move(Pokemon const & user, Moves const move) {
-	return user.move.name_of_last_used_move() != move;
-}
-
-bool blocked_by_torment (ActivePokemon const & user, Move const & move) {
-	return user.tormented() and move.was_used_last();
+bool blocked_by_torment(ActivePokemon const & user, Moves const move) {
+	return user.tormented() and user.was_used_last(move);
 }
 
 bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {

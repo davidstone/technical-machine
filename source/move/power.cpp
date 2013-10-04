@@ -104,7 +104,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Frustration:
 			return 102 - return_power(attacker);
 		case Moves::Fury_Cutter:
-			return attacker.move().fury_cutter_power();
+			return attacker.fury_cutter_power();
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
 			return defender.power_of_mass_based_moves();
@@ -114,7 +114,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return attacker.move().momentum_move_power();
+			return attacker.momentum_move_power();
 		case Moves::Hidden_Power: {
 			static constexpr std::array<std::pair<Stat::Stats, unsigned>, 6> stat_and_position {{
 				{ Stat::HP, 0 },
@@ -145,7 +145,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Spit_Up:
 			return attacker.spit_up_power();
 		case Moves::Triple_Kick:
-			return attacker.move().triple_kick_power();
+			return attacker.triple_kick_power();
 		case Moves::Trump_Card:
 			return attacker.move().pp.trump_card_power();
 		default:

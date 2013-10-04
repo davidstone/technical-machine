@@ -1,5 +1,5 @@
-// Moves data structure
-// Copyright (C) 2012 David Stone
+// Keeps track of the last used move
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,32 +16,34 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__TIMES_USED_HPP_
-#define MOVE__TIMES_USED_HPP_
+#ifndef POKEMON__LAST_USED_MOVE_HPP_
+#define POKEMON__LAST_USED_MOVE_HPP_
 
 #include <cstdint>
 
 namespace technicalmachine {
 class Rational;
 
-class TimesUsed {
+class LastUsedMove {
 public:
-	TimesUsed();
-	void reset ();
-	uint64_t hash() const;
-	uint64_t max_hash() const;
-	void increment();
-	bool was_used_last () const;
+	LastUsedMove();
+	bool has_moved() const;
+	bool was_used_last(uint8_t index_of_move) const;
+	void reset();
+	void increment(uint8_t index_of_move, uint8_t number_of_regular_moves);
 	unsigned fury_cutter_power() const;
 	unsigned momentum_move_power() const;
 	unsigned triple_kick_power() const;
 	Rational metronome_boost() const;
-	friend bool operator== (TimesUsed lhs, TimesUsed rhs);
+	uint64_t hash() const;
+	uint64_t max_hash() const;
+	friend bool operator== (LastUsedMove lhs, LastUsedMove rhs);
 private:
-	uint8_t counter;
+	uint8_t m_index_of_move;
+	uint8_t m_consecutive_turns_used;
 };
 
-bool operator!= (TimesUsed lhs, TimesUsed rhs);
+bool operator!= (LastUsedMove lhs, LastUsedMove rhs);
 
 }	// namespace technicalmachine
-#endif	// MOVE__TIMES_USED_HPP_
+#endif	// POKEMON__LAST_USED_MOVE_HPP_

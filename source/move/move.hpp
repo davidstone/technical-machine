@@ -22,7 +22,6 @@
 #include "base_power.hpp"
 #include "moves_forward.hpp"
 #include "pp.hpp"
-#include "times_used.hpp"
 
 #include "../type/type.hpp"
 
@@ -35,16 +34,9 @@ public:
 	Move (Moves move, unsigned pp_ups = 3);
 	Moves name() const;
 	operator Moves() const;
-	void reset ();
 	Type type() const;
 	void set_type(Type::Types t);	// for Hidden Power only.
 	unsigned base_power() const;
-	void increment_use_counter();
-	bool was_used_last () const;
-	unsigned fury_cutter_power() const;
-	unsigned momentum_move_power() const;
-	unsigned triple_kick_power() const;
-	Rational metronome_boost() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	hash_type max_hash() const;
@@ -55,8 +47,6 @@ private:
 public:
 	Pp pp;
 private:
-	// Move times_used up to ActivePokemon when it will reduce the size of Move.
-	TimesUsed times_used;
 	// Hidden Power makes this hard to replace with just a function
 	BasePower m_base_power;
 	Type m_type;

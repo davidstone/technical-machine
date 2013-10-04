@@ -27,6 +27,7 @@
 #include "embargo.hpp"
 #include "encore.hpp"
 #include "heal_block.hpp"
+#include "last_used_move.hpp"
 #include "magnet_rise.hpp"
 #include "partial_trap.hpp"
 #include "perish_song.hpp"
@@ -73,6 +74,7 @@ public:
 	}
 	MoveCollection const & all_moves() const;
 	MoveCollection & all_moves();
+	bool was_used_last(Moves move) const;
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
 	void reset_end_of_turn();
@@ -148,6 +150,10 @@ public:
 	void activate_magnet_rise();
 	void decrement_magnet_rise();
 	bool me_first_is_active() const;
+	unsigned fury_cutter_power() const;
+	unsigned momentum_move_power() const;
+	unsigned triple_kick_power() const;
+	Rational metronome_boost() const;
 	bool minimized() const;
 	bool missed() const;
 	void set_miss(bool value);
@@ -289,6 +295,7 @@ private:
 	Embargo embargo;
 	Encore encore;
 	HealBlock heal_block;
+	LastUsedMove last_used_move;
 	MagnetRise magnet_rise;
 	Substitute active_substitute;
 	PartialTrap partial_trap;

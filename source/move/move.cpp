@@ -19,12 +19,11 @@
 #include "move.hpp"
 
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 
 #include "classification.hpp"
 #include "moves.hpp"
-
-#include "../rational.hpp"
 
 #include "../type/type.hpp"
 
@@ -49,10 +48,6 @@ Move::operator Moves() const {
 	return name();
 }
 
-void Move::reset() {
-	times_used.reset();
-}
-
 bool is_damaging(Move const & move) {
 	return move.base_power() != 0;
 }
@@ -66,19 +61,16 @@ bool is_special(Moves const move) {
 }
 
 uint64_t Move::hash () const {
-	return static_cast<uint64_t>(name()) + static_cast<uint64_t>(Moves::END) *
-			(pp.hash() + pp.max_hash() *
-			times_used.hash());
+	return pp.hash() + pp.max_hash() * static_cast<uint64_t>(name());
 }
 
 uint64_t Move::max_hash() const {
-	return times_used.hash() * pp.max_hash() * static_cast<uint64_t>(Moves::END);
+	return pp.max_hash() * static_cast<uint64_t>(Moves::END);
 }
 
 bool operator== (Move const & lhs, Move const & rhs) {
 	return lhs.name() == rhs.name() and
-			lhs.pp == rhs.pp and
-			lhs.times_used == rhs.times_used;
+			lhs.pp == rhs.pp;
 }
 
 bool operator!= (Move const & lhs, Move const & rhs) {
@@ -110,30 +102,6 @@ Moves from_replacement(unsigned const replacement) {
 unsigned to_replacement(Moves const name) {
 	assert(is_switch(name));
 	return static_cast<unsigned>(name) - static_cast<unsigned>(Moves::Switch0);
-}
-
-void Move::increment_use_counter() {
-	times_used.increment();
-}
-
-bool Move::was_used_last() const {
-	return times_used.was_used_last();
-}
-
-unsigned Move::fury_cutter_power() const {
-	return times_used.fury_cutter_power();
-}
-
-unsigned Move::momentum_move_power() const {
-	return times_used.momentum_move_power();
-}
-
-unsigned Move::triple_kick_power() const {
-	return times_used.triple_kick_power();
-}
-
-Rational Move::metronome_boost() const {
-	return times_used.metronome_boost();
 }
 
 bool is_phaze(Moves const name) {

@@ -80,17 +80,6 @@ boost::optional<MoveCollection::index_type> MoveCollection::index(Moves const na
 	return boost::optional<index_type>{};
 }
 
-Moves MoveCollection::name_of_last_used_move () const {
-	Move const * move_ptr = container.find_if([] (Move const & move) {
-		return move.was_used_last();
-	});
-	return (move_ptr != nullptr) ? move_ptr->name() : Moves::END;
-}
-
-bool MoveCollection::moved_since_switch() const {
-	return name_of_last_used_move() != Moves::END;
-}
-
 MoveCollection::index_type MoveCollection::size () const {
 	return container.size();
 }

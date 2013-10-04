@@ -59,6 +59,11 @@ MoveCollection & ActivePokemon::all_moves() {
 	return get_pokemon().move;
 }
 
+bool ActivePokemon::was_used_last(Moves const move_name) const {
+	return last_used_move.was_used_last(*all_moves().index(move_name));
+}
+
+
 void ActivePokemon::reset_end_of_turn() {
 	damage_done_to_active = 0;
 	enduring = false;
@@ -99,6 +104,7 @@ void ActivePokemon::reset_switch() {
 	heal_block.reset();
 	identified = false;
 	used_imprison = false;
+	last_used_move.reset();
 	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
 	// replaced; false makes it wrong otherwise
 	loaf = false;
@@ -125,9 +131,6 @@ void ActivePokemon::reset_switch() {
 	vanish.reset();
 	yawn.reset();
 	get_pokemon().reset_replacing();
-	get_pokemon().move.for_each_regular_move([](Move & move) {
-		move.reset();
-	});
 }
 
 void ActivePokemon::reset_between_turns() {
@@ -426,6 +429,20 @@ bool ActivePokemon::me_first_is_active() const {
 	return me_first;
 }
 
+unsigned ActivePokemon::fury_cutter_power() const {
+	return last_used_move.fury_cutter_power();
+}
+unsigned ActivePokemon::momentum_move_power() const {
+	return last_used_move.momentum_move_power();
+}
+unsigned ActivePokemon::triple_kick_power() const {
+	return last_used_move.triple_kick_power();
+}
+
+Rational ActivePokemon::metronome_boost() const {
+	return last_used_move.metronome_boost();
+}
+
 bool ActivePokemon::minimized() const {
 	return minimize;
 }
@@ -447,7 +464,7 @@ bool ActivePokemon::moved() const {
 }
 
 bool ActivePokemon::moved_since_switch() const {
-	return get_pokemon().move.moved_since_switch();
+	return last_used_move.has_moved();
 }
 
 void ActivePokemon::activate_mud_sport() {
@@ -806,9 +823,7 @@ void ActivePokemon::register_damage(unsigned const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	if (is_regular(move())) {
-		regular_move().increment_use_counter();
-	}
+	last_used_move.increment(all_moves().index(), all_moves().number_of_regular_moves());
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
@@ -850,6 +865,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += encore.hash();
 	current_hash *= heal_block.max_hash();
 	current_hash += heal_block.hash();
+	current_hash *= last_used_move.max_hash();
+	current_hash += last_used_move.hash();
 	current_hash *= magnet_rise.max_hash();
 	current_hash += magnet_rise.hash();
 	current_hash *= partial_trap.max_hash();
@@ -932,6 +949,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();
 	current_hash *= heal_block.max_hash();
+	current_hash *= last_used_move.max_hash();
 	current_hash *= magnet_rise.max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
@@ -969,6 +987,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.identified == rhs.identified and
 			lhs.used_imprison == rhs.used_imprison and
 			lhs.ingrain_active == rhs.ingrain_active and
+			lhs.last_used_move == rhs.last_used_move and
 			lhs.leech_seed == rhs.leech_seed and
 			lhs.loaf == rhs.loaf and
 			lhs.lock_on == rhs.lock_on and

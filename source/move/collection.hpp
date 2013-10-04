@@ -76,9 +76,6 @@ public:
 	}
 	using Base::index;
 	boost::optional<index_type> index(Moves name) const;
-	// Move::END if none
-	Moves name_of_last_used_move () const;
-	bool moved_since_switch() const;
 	index_type size () const;
 	void remove_switch();
 	typedef uint64_t hash_type;

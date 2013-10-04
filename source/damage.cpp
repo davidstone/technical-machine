@@ -1,5 +1,5 @@
 // Damage calculator
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -54,7 +54,7 @@ unsigned weakening_from_status (Pokemon const & attacker);
 Rational calculate_weather_modifier (Type type, Weather const & weather);
 Rational calculate_flash_fire_modifier (ActivePokemon const & attacker);
 unsigned calculate_critical_hit_multiplier (ActivePokemon const & attacker);
-Rational calculate_item_modifier (Pokemon const & attacker);
+Rational calculate_item_modifier(ActivePokemon const & attacker);
 Rational calculate_me_first_modifier (ActivePokemon const & attacker);
 
 Rational calculate_stab_modifier (ActivePokemon const & attacker);
@@ -216,12 +216,12 @@ unsigned calculate_critical_hit_multiplier (ActivePokemon const & attacker) {
 	return (attacker.ability().boosts_critical_hits()) ? 3 : 2;
 }
 
-Rational calculate_item_modifier (Pokemon const & attacker) {
+Rational calculate_item_modifier(ActivePokemon const & attacker) {
 	switch (attacker.item().name) {
 		case Item::LIFE_ORB:
 			return Rational(13, 10);
 		case Item::METRONOME:
-			return attacker.move().metronome_boost();
+			return attacker.metronome_boost();
 		default:
 			return Rational(1);
 	}
