@@ -28,7 +28,7 @@ class Weather;
 
 class Move {
 public:
-	Move (Moves move, unsigned pp_ups = 3);
+	explicit Move(Moves move, unsigned pp_ups = 3);
 	Moves name() const;
 	operator Moves() const;
 	typedef uint64_t hash_type;
