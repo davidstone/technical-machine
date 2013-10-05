@@ -988,8 +988,10 @@ void belly_drum(ActivePokemon & user) {
 }
 
 void clear_field(Team & user, Pokemon const & target) {
-	if (!user.pokemon().move().type().get_effectiveness(target).has_no_effect())
+	Type const type(user.pokemon().move(), user.pokemon());
+	if (!type.get_effectiveness(target).has_no_effect()) {
 		user.clear_field();
+	}
 }
 
 void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, int const stages) {

@@ -196,7 +196,7 @@ bool ActivePokemon::cannot_be_koed() const {
 }
 
 bool ActivePokemon::charge_boosted() const {
-	return charged and move().type() == Type::Electric;
+	return charged and Type(move(), get_pokemon()) == Type::Electric;
 }
 
 void ActivePokemon::charge() {
@@ -581,12 +581,16 @@ bool ActivePokemon::slow_start_is_active() const {
 }
 
 bool ActivePokemon::sport_is_active(Move const & foe_move) const {
-	if (foe_move.type() == Type::Electric)
+	Type const move_type(foe_move, get_pokemon());
+	if (move_type == Type::Electric) {
 		return mud_sport;
-	else if (foe_move.type() == Type::Fire)
+	}
+	else if (move_type == Type::Fire) {
 		return water_sport;
-	else
+	}
+	else {
 		return false;
+	}
 }
 
 Rational ActivePokemon::hp_ratio() const {

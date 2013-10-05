@@ -70,7 +70,6 @@ public:
 	bool is_boosted_by_quick_powder() const;
 	bool is_boosted_by_soul_dew() const;
 	bool is_boosted_by_thick_club() const;
-	void set_hidden_power_type ();
 	Species name() const;
 	Ability const & ability() const;
 	Ability & ability();
@@ -124,7 +123,6 @@ private:
 	Seen seen;
 	Level m_level;
 	uint8_t m_happiness;
-	Type::Types calculate_hidden_power_type () const;
 	friend class Evaluate;
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);

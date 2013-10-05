@@ -41,6 +41,7 @@
 #include "../variable.hpp"
 #include "../weather.hpp"
 
+#include "../move/base_power.hpp"
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
 #include "../move/use_move.hpp"

@@ -19,11 +19,8 @@
 #ifndef MOVE__MOVE_HPP_
 #define MOVE__MOVE_HPP_
 
-#include "base_power.hpp"
 #include "moves_forward.hpp"
 #include "pp.hpp"
-
-#include "../type/type.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
@@ -34,9 +31,6 @@ public:
 	Move (Moves move, unsigned pp_ups = 3);
 	Moves name() const;
 	operator Moves() const;
-	Type type() const;
-	void set_type(Type::Types t);	// for Hidden Power only.
-	unsigned base_power() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	hash_type max_hash() const;
@@ -46,10 +40,6 @@ private:
 	Moves m_name;
 public:
 	Pp pp;
-private:
-	// Hidden Power makes this hard to replace with just a function
-	BasePower m_base_power;
-	Type m_type;
 };
 
 bool operator!= (Move const & lhs, Move const & rhs);

@@ -252,12 +252,6 @@ std::string Pokemon::get_nickname () const {
 	#endif
 }
 
-void Pokemon::set_hidden_power_type() {
-	Move * const move_ptr = move.find(Moves::Hidden_Power);
-	if (move_ptr != nullptr)
-		move_ptr->set_type(calculate_hidden_power_type());
-}
-
 Species Pokemon::name() const {
 	return m_name;
 }
@@ -375,14 +369,6 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
 	return !(lhs == rhs);
 }
 
-namespace {
-
-constexpr unsigned lowest_bit(unsigned const iv) {
-	return iv % 2;
-}
-
-}	// unnamed namespace
-
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	std::string output = to_string(pokemon.name());
 	double const d_per_cent_hp = 100.0 * pokemon.current_hp();
@@ -422,40 +408,6 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		output += "\n\t- " + to_string(move);
 	});
 	return output;
-}
-
-Type::Types Pokemon::calculate_hidden_power_type() const {
-	static constexpr std::pair<Stat::Stats, unsigned> modifiers[] = {
-		{ Stat::HP, 0 },
-		{ Stat::ATK, 1 },
-		{ Stat::DEF, 2 },
-		{ Stat::SPE, 3 },
-		{ Stat::SPA, 4 },
-		{ Stat::SPD, 5 }
-	};
-	auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & pair) {
-		return value + (lowest_bit(stat(pair.first).iv) << pair.second);
-	};
-	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), 0u, sum) * 15 / 63;
-	constexpr static Type::Types lookup [] = {
-		Type::Fighting,
-		Type::Flying,
-		Type::Poison,
-		Type::Ground,
-		Type::Rock,
-		Type::Bug,
-		Type::Ghost,
-		Type::Steel,
-		Type::Fire,
-		Type::Water,
-		Type::Grass,
-		Type::Electric,
-		Type::Psychic,
-		Type::Ice,
-		Type::Dragon,
-		Type::Dark
-	};
-	return lookup[index];
 }
 
 unsigned Pokemon::power_of_mass_based_moves() const {

@@ -106,7 +106,6 @@ public:
 	static Rational accuracy_modifier(ActivePokemon const & user);
 	static Rational evasion_modifier(ActivePokemon const & target, Weather const & weather);
 	static Rational attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
-	static Rational defender_modifier(Move const & move, Ability ability);
 	template<Stat::Stats stat>
 	static Rational stat_modifier(ActivePokemon const & pokemon, Weather const & weather);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);

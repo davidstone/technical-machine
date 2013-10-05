@@ -369,22 +369,9 @@ Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & de
 
 namespace {
 bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
-	return attacker.move().type() == type and attacker.current_hp() <= Rational(1, 3);
+	return Type(attacker.move(), attacker) == type and attacker.current_hp() <= Rational(1, 3);
 }
 }	// namespace
-
-Rational Ability::defender_modifier(Move const & move, Ability const ability) {
-	switch (ability.name()) {
-		case Dry_Skin:
-			return (move.type() == Type::Fire) ? Rational(5, 4) : Rational(1);
-		case Heatproof:
-			return (move.type() == Type::Fire) ? Rational(1, 2) : Rational(1);
-		case Thick_Fat:
-			return (move.type() == Type::Fire or move.type() == Type::Ice) ? Rational(1, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
 
 template<>
 Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & attacker, Weather const & weather) {

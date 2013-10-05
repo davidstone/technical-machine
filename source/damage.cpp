@@ -68,7 +68,7 @@ bool resistance_berry_activates (Item item, Type type, Effectiveness const & eff
 }	// unnamed namespace
 
 unsigned damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	return affects_target(attacker.move().type(), defender.pokemon(), weather) ?
+	return affects_target(Type(attacker.move(), attacker), defender.pokemon(), weather) ?
 		capped_damage (attacker, defender, weather, variable) :
 		0;
 }
@@ -130,7 +130,8 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 	damage *= move_power(attacker, defender.pokemon(), weather, variable);
 	damage *= physical_vs_special_modifier(attacker, defender.pokemon());
 	damage /= calculate_screen_divisor(attacker, defender);
-	damage *= calculate_weather_modifier(attacker.move().type(), weather);
+	Type const type(attacker.move(), attacker);
+	damage *= calculate_weather_modifier(type, weather);
 	damage *= calculate_flash_fire_modifier(attacker);
 	damage += 2;
 
@@ -141,12 +142,12 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 	damage *= attacker.random_damage_multiplier();
 	damage *= calculate_stab_modifier(attacker);
 
-	Effectiveness const effectiveness = attacker.move().type().get_effectiveness(defender.pokemon());
+	Effectiveness const effectiveness = type.get_effectiveness(defender.pokemon());
 	damage *= effectiveness;
 	damage *= calculate_ability_effectiveness_modifier(defender.pokemon().ability(), effectiveness);
 	damage *= calculate_expert_belt_modifier(attacker.item(), effectiveness);
 	damage *= calculate_tinted_lens_multiplier(attacker.ability(), effectiveness);
-	damage /= calculate_resistance_berry_divisor(defender.pokemon().item(), attacker.move().type(), effectiveness);
+	damage /= calculate_resistance_berry_divisor(defender.pokemon().item(), type, effectiveness);
 
 	return std::max(damage, 1u);
 }
@@ -206,7 +207,7 @@ Rational calculate_weather_modifier (Type const type, Weather const & weather) {
 }
 
 Rational calculate_flash_fire_modifier (ActivePokemon const & attacker) {
-	Type const & type = attacker.move().type();
+	Type const type(attacker.move(), attacker);
 	return (attacker.flash_fire_is_active() and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : Rational(1);
 }
 
@@ -232,7 +233,8 @@ Rational calculate_me_first_modifier (ActivePokemon const & attacker) {
 }
 
 Rational calculate_stab_modifier (ActivePokemon const & attacker) {
-	return is_type(attacker, attacker.move().type()) ? calculate_stab_boost(attacker.ability()) : Rational(1);
+	Type const type(attacker.move(), attacker);
+	return is_type(attacker, type) ? calculate_stab_boost(attacker.ability()) : Rational(1);
 }
 
 Rational calculate_stab_boost (Ability const ability) {

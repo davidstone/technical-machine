@@ -1,5 +1,5 @@
 // Type information
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,12 @@
 #ifndef TYPE__TYPE_HPP_
 #define TYPE__TYPE_HPP_
 
-#include <vector>
 #include "../status.hpp"
+#include "../move/moves_forward.hpp"
 
 namespace technicalmachine {
 class Effectiveness;
 class Pokemon;
-class Rational;
 class Weather;
 
 class Type {
@@ -51,6 +50,7 @@ public:
 		Typeless
 	};
 	Type (Types name);
+	Type(Moves move, Pokemon const & pokemon);
 	friend bool operator== (Type lhs, Type rhs);
 	friend bool operator!= (Type lhs, Type rhs);
 	bool is_boosted_by_flash_fire () const;

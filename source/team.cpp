@@ -1,5 +1,5 @@
 // Load teams
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -60,7 +60,6 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	team_file = files [distribution (random_engine)];
 	load(team_file.string());
 	for (auto & member : all_pokemon()) {
-		member.set_hidden_power_type();
 		member.calculate_initial_hp();
 	}
 }
