@@ -48,7 +48,6 @@ Rational defender_ability_modifier(Pokemon const & attacker, Ability const abili
 }	// namespace
 
 unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable) {
-	Move const & move = attacker.move();
 	unsigned const base_power = calculate_base_power(attacker, defender, variable);
 	unsigned power = base_power;
 

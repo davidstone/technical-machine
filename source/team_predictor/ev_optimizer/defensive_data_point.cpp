@@ -87,10 +87,6 @@ void DataPoint::update_pokemon(Pokemon & pokemon) const {
 	pokemon.stat(Stat::SPD).ev.set_value(special_defense);
 }
 
-bool DataPoint::affects_defensive_stat(bool const boost) const {
-	return boost ? boosts_defending_stat(nature) : lowers_defending_stat(nature);
-}
-
 class InvalidNatureCombination : public std::logic_error {
 public:
 	InvalidNatureCombination():

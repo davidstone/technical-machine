@@ -42,10 +42,6 @@ bool Item::allows_switching () const {
 	return name == SHED_SHELL;
 }
 
-bool Item::boosts_defense_of_ditto () const {
-	return name == METAL_POWDER;
-}
-
 bool Item::boosts_super_effective_moves () const {
 	return name == EXPERT_BELT;
 }

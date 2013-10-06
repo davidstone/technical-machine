@@ -121,7 +121,6 @@ public:
 	bool is_set () const;
 	void set_if_unknown (Items item);
 	bool allows_switching () const;
-	bool boosts_defense_of_ditto () const;
 	bool boosts_super_effective_moves () const;
 	bool causes_recoil () const;
 	bool grounds () const;

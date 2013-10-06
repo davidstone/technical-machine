@@ -1,5 +1,5 @@
 # SCons file
-# Copyright (C) 2012 David Stone
+# Copyright (C) 2013 David Stone
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
@@ -37,6 +37,7 @@ SConscript('build_scripts/compiler_settings.py')
 Import('flags', 'compiler_command', 'compiler_name')
 
 default = DefaultEnvironment()
+default.Append(CPPPATH='ranged_integer')
 
 # This replaces the wall of text caused by compiling with max warnings turned on
 # into something a little more readable.

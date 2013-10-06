@@ -1,5 +1,5 @@
 // Effectiveness of a type
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,7 +32,6 @@ public:
 	Effectiveness(Type::Types attacking, Type::Types defending);
 	static Effectiveness stealth_rock_effectiveness(Pokemon const & pokemon);
 	bool is_super_effective() const;
-	bool is_neutral() const;
 	bool is_not_very_effective() const;
 	bool has_no_effect() const;
 

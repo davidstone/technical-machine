@@ -143,9 +143,6 @@ bool Nature::boosts_stat<Stat::SPA>() const {
 			return false;
 	}
 }
-bool boosts_attacking_stat(Nature const nature) {
-	return nature.boosts_stat<Stat::ATK>() or nature.boosts_stat<Stat::SPA>();
-}
 
 template<>
 bool Nature::boosts_stat<Stat::DEF>() const {

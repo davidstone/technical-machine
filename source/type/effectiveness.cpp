@@ -1,5 +1,5 @@
 // Effectiveness of a type
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,7 +26,7 @@ namespace technicalmachine {
 namespace {
 Rational lookup_effectiveness(Type::Types const attacking, Type::Types const defending);
 bool check_effectiveness(std::vector<Rational> const & effectiveness, std::initializer_list<unsigned> const & results);
-}	// unnamed namespace
+}	// namespace
 
 Effectiveness::Effectiveness(Type::Types const type, Pokemon const & defender) {
 	for (Type const target_type : defender.type().types)
@@ -43,10 +43,6 @@ Effectiveness Effectiveness::stealth_rock_effectiveness(Pokemon const & pokemon)
 
 bool Effectiveness::is_super_effective() const {
 	return check_effectiveness(effectiveness, { 8, 16 });
-}
-
-bool Effectiveness::is_neutral() const {
-	return check_effectiveness(effectiveness, { 4 });
 }
 
 bool Effectiveness::is_not_very_effective() const {

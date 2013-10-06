@@ -491,7 +491,8 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Dig:
 			user.dig();
 			break;
-		case Moves::Disable:		// Fix
+		case Moves::Disable:
+			target.disable();
 			break;
 		case Moves::Dive:
 			user.dive();

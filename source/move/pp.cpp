@@ -1,5 +1,5 @@
 // PP class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,8 @@
 
 #include <algorithm>
 #include <cassert>
+
+#include <source/ranged_integer.hpp>
 
 #include "moves_forward.hpp"
 
