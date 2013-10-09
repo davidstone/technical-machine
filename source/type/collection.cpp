@@ -100,15 +100,15 @@ bool grounded(ActivePokemon const & pokemon, Weather const & weather) {
 
 namespace detail {
 TypeArray::TypeArray(Type const type1):
-	m_types({{type1, Type::Typeless}}),
-	m_size(1) {
+	m_types({{type1, Type::Typeless}})
+	{
 }
 TypeArray::TypeArray(Type const type1, Type const type2):
-	m_types({{type1, type2}}),
-	m_size(2) {
+	m_types({{type1, type2}})
+	{
 }
 TypeArray::size_type TypeArray::size() const {
-	return m_size;
+	return (m_types[1] == Type::Typeless) ? 1 : 2;
 }
 TypeArray::const_iterator TypeArray::begin() const {
 	return std::begin(m_types);

@@ -31,18 +31,18 @@ class Weather;
 
 namespace detail {
 class TypeArray {
+private:
 	typedef std::array<Type, 2> container_type;
 public:
 	typedef container_type::const_iterator const_iterator;
-	typedef container_type::size_type size_type;
 	explicit TypeArray(Type const type1);
 	TypeArray(Type const type1, Type const type2);
-	size_type size() const;
 	const_iterator begin() const;
 	const_iterator end() const;
 private:
+	typedef container_type::size_type size_type;
+	size_type size() const;
 	container_type m_types;
-	uint8_t m_size;
 };
 }
 
