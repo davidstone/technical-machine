@@ -155,9 +155,16 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 }	// unnamed namespace
 
 
+unsigned apply_damage(Pokemon & pokemon, unsigned damage) {
+	auto & hp = pokemon.stat(Stat::HP);
+	damage = std::min(damage, static_cast<unsigned>(hp.stat));
+	hp.stat -= damage;
+	return damage;
+}
+
 void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
 	if (!user.ability().blocks_recoil()) {
-		user.apply_damage(std::min(damage / denominator, 1u));
+		apply_damage(user, std::min(damage / denominator, 1u));
 	}
 }
 

@@ -973,10 +973,10 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 // I could potentially treat this as negative recoil
 void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
 	if (target.ability().damages_leechers()) {
-		user.apply_damage(damage / 2);
+		apply_damage(user, damage / 2);
 	}
 	else {
-		user.apply_healing(damage / 2);
+		apply_healing(user, damage / 2);
 	}
 }
 
@@ -1037,7 +1037,7 @@ void rest(Pokemon & user) {
 }
 
 void struggle(Pokemon & user) {
-	user.apply_damage(user.stat(Stat::HP).max / 4);
+	apply_damage(user, user.stat(Stat::HP).max / 4);
 }
 
 void swap_items(Pokemon & user, Pokemon & target) {

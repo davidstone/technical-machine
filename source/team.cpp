@@ -60,7 +60,7 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	team_file = files [distribution (random_engine)];
 	load(team_file.string());
 	for (auto & member : all_pokemon()) {
-		member.calculate_initial_hp();
+		calculate_initial_hp(member);
 	}
 }
 

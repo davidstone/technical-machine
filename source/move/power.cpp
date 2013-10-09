@@ -318,15 +318,15 @@ unsigned item_modifier (Pokemon const & attacker) {
 				return 12;
 			break;
 		case Item::ADAMANT_ORB:
-			if (attacker.is_boosted_by_adamant_orb() and (type == Type::Dragon or type == Type::Steel))
+			if (is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel))
 				return 12;
 			break;
 		case Item::GRISEOUS_ORB:
-			if (attacker.is_boosted_by_griseous_orb() and (type == Type::Dragon or type == Type::Ghost))
+			if (is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost))
 				return 12;
 			break;
 		case Item::LUSTROUS_ORB:
-			if (attacker.is_boosted_by_lustrous_orb() and (type == Type::Dragon or type == Type::Water))
+			if (is_boosted_by_lustrous_orb(attacker) and (type == Type::Dragon or type == Type::Water))
 				return 12;
 			break;
 		default:

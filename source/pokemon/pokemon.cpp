@@ -67,7 +67,7 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t se
 
 	m_happiness(set_happiness)
 	{
-	calculate_initial_hp();
+	calculate_initial_hp(*this);
 }
 
 Pokemon::Pokemon(unsigned const my_team_size, Species const species, uint8_t const set_level, Gender const set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname, uint8_t set_happiness):
@@ -78,18 +78,23 @@ Pokemon::Pokemon(unsigned const my_team_size, Species const species, uint8_t con
 	m_nature = set_nature;
 }
 
+Pokemon::operator Species() const {
+	return m_name;
+}
+
+
 void Pokemon::switch_in() {
 	seen.make_visible();
 }
 
-void Pokemon::switch_out() {
+void switch_out(Pokemon & pokemon) {
 	// Cure the status of a Natural Cure Pokemon
-	if (ability().clears_status_on_switch())
-		status().clear();
+	if (pokemon.ability().clears_status_on_switch())
+		pokemon.status().clear();
 }
 
-void Pokemon::calculate_initial_hp () {
-	stat(Stat::HP).calculate_initial_hp(level());
+void calculate_initial_hp(Pokemon & pokemon) {
+	pokemon.stat(Stat::HP).calculate_initial_hp(pokemon.level());
 }
 
 void Pokemon::remove_switch() {
@@ -103,36 +108,21 @@ uint8_t Pokemon::index_of_first_switch () const {
 	return index;
 }
 
-void Pokemon::correct_error_in_hp(unsigned const correct_hp_stat) {
-	stat(Stat::HP).stat = correct_hp_stat;
+void correct_error_in_hp(Pokemon & pokemon, unsigned const correct_hp_stat) {
+	pokemon.stat(Stat::HP).stat = correct_hp_stat;
 }
 
-Rational Pokemon::current_hp() const {
-	return Rational(stat(Stat::HP).stat, stat(Stat::HP).max);
+Rational current_hp(Pokemon const & pokemon) {
+	return Rational(pokemon.stat(Stat::HP).stat, pokemon.stat(Stat::HP).max);
 }
 
-unsigned Pokemon::apply_damage(unsigned damage) {
-	auto & hp = stat(Stat::HP);
-	damage = std::min(damage, static_cast<unsigned>(hp.stat));
-	hp.stat -= damage;
-	return damage;
+bool can_confuse_with_chatter(Species const pokemon) {
+	return pokemon == Species::Chatot;
 }
 
-void Pokemon::apply_healing(unsigned const amount) {
-	// Should be no risk of overflow. hp.stat has to be at least 16 bits, and no
-	// healing will be anywhere close to that number.
-	auto & hp = stat(Stat::HP);
-	assert(hp.stat + amount >= amount);
-	hp.stat += amount;
-	hp.stat = std::min(hp.stat, hp.max);
-}
-
-bool Pokemon::can_confuse_with_chatter() const {
-	return name() == Species::Chatot;
-}
-
-bool Pokemon::can_use_substitute() const {
-	return stat(Stat::HP).stat > stat(Stat::HP).max / 4;
+bool can_use_substitute(Pokemon const & pokemon) {
+	auto const & hp = pokemon.stat(Stat::HP);
+	return hp.stat > hp.max / 4;
 }
 
 bool is_alternate_form(Species first, Species second) {
@@ -204,44 +194,56 @@ bool is_wormadam (Species species) {
 
 }	// unnamed namespace
 
-bool Pokemon::is_boosted_by_adamant_orb() const {
-	return name() == Species::Dialga;
+bool is_boosted_by_adamant_orb(Species const species) {
+	return species == Species::Dialga;
 }
 
-bool Pokemon::is_boosted_by_deepseascale() const {
-	return name() == Species::Clamperl;
+bool is_boosted_by_deepseascale(Species const species) {
+	return species == Species::Clamperl;
 }
 
-bool Pokemon::is_boosted_by_deepseatooth() const {
-	return name() == Species::Clamperl;
+bool is_boosted_by_deepseatooth(Species const species) {
+	return species == Species::Clamperl;
 }
 
-bool Pokemon::is_boosted_by_griseous_orb() const {
-	return name() == Species::Palkia;
+bool is_boosted_by_griseous_orb(Species const species) {
+	return species == Species::Palkia;
 }
 
-bool Pokemon::is_boosted_by_light_ball() const {
-	return name() == Species::Pikachu;
+bool is_boosted_by_light_ball(Species const species) {
+	return species == Species::Pikachu;
 }
 
-bool Pokemon::is_boosted_by_lustrous_orb() const {
-	return name() == Species::Giratina_Origin;
+bool is_boosted_by_lustrous_orb(Species const species) {
+	return species == Species::Giratina_Origin;
 }
 
-bool Pokemon::is_boosted_by_metal_powder() const {
-	return name() == Species::Ditto;
+bool is_boosted_by_metal_powder(Species const species) {
+	return species == Species::Ditto;
 }
 
-bool Pokemon::is_boosted_by_quick_powder() const {
-	return name() == Species::Ditto;
+bool is_boosted_by_quick_powder(Species const species) {
+	return species == Species::Ditto;
 }
 
-bool Pokemon::is_boosted_by_soul_dew() const {
-	return name() == Species::Latias or name() == Species::Latios;
+bool is_boosted_by_soul_dew(Species const species) {
+	switch (species) {
+		case Species::Latias:
+		case Species::Latios:
+			return true;
+		default:
+			return false;
+	}
 }
 
-bool Pokemon::is_boosted_by_thick_club() const {
-	return name() == Species::Cubone or name() == Species::Marowak;
+bool is_boosted_by_thick_club(Species const species) {
+	switch (species) {
+		case Species::Cubone:
+		case Species::Marowak:
+			return true;
+		default:
+			return false;
+	}
 }
 
 std::string Pokemon::get_nickname () const {
@@ -371,7 +373,7 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
 
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	std::string output = to_string(pokemon.name());
-	double const d_per_cent_hp = 100.0 * pokemon.current_hp();
+	double const d_per_cent_hp = 100.0 * current_hp(pokemon);
 	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
 	output += " (" + per_cent_hp + "% HP)";
 	output += " @ " + to_string(pokemon.item().name);
@@ -410,7 +412,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	return output;
 }
 
-unsigned Pokemon::power_of_mass_based_moves() const {
+unsigned power_of_mass_based_moves(Species const species) {
 	constexpr static uint8_t mass_array [] = {
 		// Generation 1
 		20,		// Bulbasaur
@@ -1089,7 +1091,7 @@ unsigned Pokemon::power_of_mass_based_moves() const {
 		20,		// Meloetta
 		80,		// Genesect 
 	};
-	return mass_array[static_cast<unsigned>(name())];
+	return mass_array[static_cast<unsigned>(species)];
 }
 
 }	// namespace technicalmachine

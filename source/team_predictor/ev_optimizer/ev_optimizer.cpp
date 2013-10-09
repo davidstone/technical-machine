@@ -85,7 +85,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			++it;
 		}
 	}
-	pokemon.calculate_initial_hp();
+	calculate_initial_hp(pokemon);
 }
 
 namespace {

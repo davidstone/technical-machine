@@ -39,7 +39,7 @@ void ev_optimizer_tests() {
 		pokemon.stat(stat).ev.set_value(76);
 	}
 	pokemon.nature() = Nature::HARDY;
-	pokemon.calculate_initial_hp();
+	calculate_initial_hp(pokemon);
 	pokemon.move.add(Moves::Psychic, 3);
 	pokemon.move.add(Moves::Earthquake, 3);
 //	std::cerr << "Before: " << '\n' << team.to_string(false) << '\n';

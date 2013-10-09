@@ -1,5 +1,5 @@
 // Function to change a Pokemon's HP by a fractional multiplier
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,8 +24,9 @@ namespace technicalmachine {
 class Pokemon;
 class Rational;
 
-void heal(Pokemon & member, Rational const & rational, bool positive = true);
-void drain(Pokemon & member, Rational const & rational);
+void apply_healing(Pokemon & pokemon, unsigned amount);
+void heal(Pokemon & pokemon, Rational const & rational, bool positive = true);
+void drain(Pokemon & pokemon, Rational const & rational);
 
 }	// namespace technicalmachine
 #endif	// HEAL_HPP_

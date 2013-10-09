@@ -50,9 +50,9 @@ Rational item_modifier<Stat::ATK>(Pokemon const & attacker) {
 		case Item::CHOICE_BAND:
 			return Rational(3, 2);
 		case Item::LIGHT_BALL:
-			return attacker.is_boosted_by_light_ball() ? Rational(2) : Rational(1);
+			return is_boosted_by_light_ball(attacker) ? Rational(2) : Rational(1);
 		case Item::THICK_CLUB:
-			return attacker.is_boosted_by_thick_club() ? Rational(2, 1) : Rational(1);
+			return is_boosted_by_thick_club(attacker) ? Rational(2, 1) : Rational(1);
 		default:
 			return Rational(1);
 	}
@@ -61,20 +61,20 @@ template<>
 Rational item_modifier<Stat::SPA>(Pokemon const & attacker) {
 	switch (attacker.item().name) {
 		case Item::SOUL_DEW:
-			return attacker.is_boosted_by_soul_dew() ? Rational(3, 2) : Rational(1);
+			return is_boosted_by_soul_dew(attacker) ? Rational(3, 2) : Rational(1);
 		case Item::CHOICE_SPECS:
 			return Rational(3, 2);
 		case Item::DEEPSEATOOTH:
-			return attacker.is_boosted_by_deepseatooth() ? Rational(2) : Rational(1);
+			return is_boosted_by_deepseatooth(attacker) ? Rational(2) : Rational(1);
 		case Item::LIGHT_BALL:
-			return attacker.is_boosted_by_light_ball() ? Rational(2) : Rational(1);
+			return is_boosted_by_light_ball(attacker) ? Rational(2) : Rational(1);
 		default:
 			return Rational(1);
 	}
 }
 template<>
 Rational item_modifier<Stat::DEF>(Pokemon const & defender) {
-	return (defender.item().name == Item::METAL_POWDER and defender.is_boosted_by_metal_powder()) ?
+	return (defender.item().name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender)) ?
 		Rational(3, 2) :
 		Rational(1);
 }
@@ -82,11 +82,11 @@ template<>
 Rational item_modifier<Stat::SPD>(Pokemon const & defender) {
 	switch (defender.item().name) {
 		case Item::DEEPSEASCALE:
-			return defender.is_boosted_by_deepseascale() ? Rational(2) : Rational(1);
+			return is_boosted_by_deepseascale(defender) ? Rational(2) : Rational(1);
 		case Item::METAL_POWDER:
-			return defender.is_boosted_by_metal_powder() ? Rational(3, 2) : Rational(1);
+			return is_boosted_by_metal_powder(defender) ? Rational(3, 2) : Rational(1);
 		case Item::SOUL_DEW:
-			return defender.is_boosted_by_soul_dew() ? Rational(3, 2) : Rational(1);
+			return is_boosted_by_soul_dew(defender) ? Rational(3, 2) : Rational(1);
 		default:
 			return Rational(1);
 	}
@@ -95,7 +95,7 @@ template<>
 Rational item_modifier<Stat::SPE>(Pokemon const & pokemon) {
 	switch (pokemon.item().name) {
 		case Item::QUICK_POWDER:
-			return pokemon.is_boosted_by_quick_powder() ? Rational(2) : Rational(1);
+			return is_boosted_by_quick_powder(pokemon) ? Rational(2) : Rational(1);
 		case Item::CHOICE_SCARF:
 			return Rational(3, 2);
 		case Item::MACHO_BRACE:

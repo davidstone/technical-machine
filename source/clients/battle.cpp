@@ -225,7 +225,7 @@ int Battle::hp_change(Party const changing, unsigned const remaining_hp) const {
 	if (max_visible < remaining_hp) {
 		throw network::InvalidSimulatorData (remaining_hp, 0u, max_visible, team.who() + "'s remaining_hp");
 	}
-	unsigned const measurable_hp = max_visible * team.replacement().current_hp();
+	unsigned const measurable_hp = max_visible * current_hp(team.replacement());
 	return static_cast<int>(measurable_hp - remaining_hp);
 }
 
@@ -250,7 +250,7 @@ bool Battle::is_valid_precision(Party changer, unsigned precision) const {
 
 void Battle::correct_hp_and_report_errors (Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
-		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * pokemon.current_hp();
+		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * current_hp(pokemon);
 		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
 		if (tm_estimate == new_hp)
 			return;
@@ -269,7 +269,7 @@ void Battle::correct_hp_and_report_errors (Team & team) {
 			std::cerr << "tm_estimate: " << tm_estimate << '\n';
 //			assert(false);
 		}
-		pokemon.correct_error_in_hp(reported_hp);
+		correct_error_in_hp(pokemon, reported_hp);
 	}
 }
 

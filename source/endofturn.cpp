@@ -117,10 +117,12 @@ void endofturn5 (ActivePokemon & pokemon, Pokemon & foe, Weather & weather) {
 		unsigned const n = pokemon.stat(Stat::HP).stat;
 		drain(pokemon, Rational(1, 8));
 		if (!foe.is_fainted()) {
-			if (pokemon.ability().damages_leechers ())
-				foe.apply_damage(n - pokemon.stat(Stat::HP).stat);
-			else
-				foe.apply_healing(n - pokemon.stat(Stat::HP).stat);
+			if (pokemon.ability().damages_leechers()) {
+				apply_damage(foe, n - pokemon.stat(Stat::HP).stat);
+			}
+			else {
+				apply_healing(foe, n - pokemon.stat(Stat::HP).stat);
+			}
 		}
 	}
 	switch (pokemon.status().name()) {

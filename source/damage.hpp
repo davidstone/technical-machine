@@ -1,5 +1,5 @@
 // Damage calculator forward declarations
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,6 +29,9 @@ class Weather;
 
 unsigned damage_calculator (ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+
+// Returns the actual damage applied, rather than just the attempt
+unsigned apply_damage(Pokemon & pokemon, unsigned damage);
 void recoil (Pokemon & user, unsigned damage, unsigned denominator);
 
 }	// namespace technicalmachine

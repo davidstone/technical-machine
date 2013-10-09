@@ -126,7 +126,7 @@ public:
 		for (auto const stat : regular_stats()) {
 			pokemon.stat(stat).ev.set_value(stats[static_cast<size_t>(stat + 1)]);
 		}
-		pokemon.calculate_initial_hp();
+		calculate_initial_hp(pokemon);
 		for (auto const move : moves) {
 			pokemon.move.add(move);
 		}

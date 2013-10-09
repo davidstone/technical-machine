@@ -1,5 +1,5 @@
 // Pokemon data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -46,30 +46,11 @@ class Pokemon {
 public:
 	Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
 	Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
+	operator Species() const;
 	void switch_in();
-	void switch_out();
-	void calculate_initial_hp ();
 	void remove_switch();
 	uint8_t index_of_first_switch () const;
-	// The server reports Technical Machine's HP tracking is wrong
-	void correct_error_in_hp(unsigned correct_hp_stat);
-	// Returns the actual damage applied, rather than just the attempt
-	unsigned apply_damage(unsigned damage);
-	void apply_healing(unsigned amount);
-	unsigned power_of_mass_based_moves() const;
 	std::string get_nickname () const;
-	bool can_confuse_with_chatter() const;
-	bool can_use_substitute() const;
-	bool is_boosted_by_adamant_orb() const;
-	bool is_boosted_by_deepseascale() const;
-	bool is_boosted_by_deepseatooth() const;
-	bool is_boosted_by_griseous_orb() const;
-	bool is_boosted_by_light_ball() const;
-	bool is_boosted_by_lustrous_orb() const;
-	bool is_boosted_by_metal_powder() const;
-	bool is_boosted_by_quick_powder() const;
-	bool is_boosted_by_soul_dew() const;
-	bool is_boosted_by_thick_club() const;
 	Species name() const;
 	Ability const & ability() const;
 	Ability & ability();
@@ -81,7 +62,6 @@ public:
 	Nature & nature();
 	Stat const & stat(Stat::Stats index_stat) const;
 	Stat & stat(Stat::Stats index_stat);
-	Rational current_hp() const;
 	Status const & status() const;
 	Status & status();
 	TypeCollection const & type() const;
@@ -129,6 +109,29 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 bool is_alternate_form(Species first, Species second);
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
+
+void switch_out(Pokemon & pokemon);
+
+void calculate_initial_hp(Pokemon & pokemon);
+// The server reports Technical Machine's HP tracking is wrong
+void correct_error_in_hp(Pokemon & pokemon, unsigned correct_hp_stat);
+Rational current_hp(Pokemon const & pokemon);
+
+bool can_confuse_with_chatter(Species pokemon);
+bool can_use_substitute(Pokemon const & pokemon);
+
+bool is_boosted_by_adamant_orb(Species species);
+bool is_boosted_by_deepseascale(Species species);
+bool is_boosted_by_deepseatooth(Species species);
+bool is_boosted_by_griseous_orb(Species species);
+bool is_boosted_by_light_ball(Species species);
+bool is_boosted_by_lustrous_orb(Species species);
+bool is_boosted_by_metal_powder(Species species);
+bool is_boosted_by_quick_powder(Species species);
+bool is_boosted_by_soul_dew(Species species);
+bool is_boosted_by_thick_club(Species species);
+
+unsigned power_of_mass_based_moves(Species species);
 
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_HPP_

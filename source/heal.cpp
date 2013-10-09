@@ -1,5 +1,5 @@
 // Function to change a Pokemon's HP by a fractional multiplier
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,20 +28,29 @@
 
 namespace technicalmachine {
 
-void heal(Pokemon & member, Rational const & rational, bool positive) {
-	if (member.is_fainted())
+void apply_healing(Pokemon & pokemon, unsigned const amount) {
+	// Should be no risk of overflow. hp.stat has to be at least 16 bits, and no
+	// healing will be anywhere close to that number.
+	auto & hp = pokemon.stat(Stat::HP);
+	assert(hp.stat + amount >= amount);
+	hp.stat += amount;
+	hp.stat = std::min(hp.stat, hp.max);
+}
+
+void heal(Pokemon & pokemon, Rational const & rational, bool positive) {
+	if (pokemon.is_fainted())
 		return;
-	unsigned const hp_healed = member.stat(Stat::HP).max * rational;
+	unsigned const hp_healed = pokemon.stat(Stat::HP).max * rational;
 	if (positive) {
-		member.apply_healing(std::max(hp_healed, 1u));
+		apply_healing(pokemon, std::max(hp_healed, 1u));
 	}
-	else if (!member.ability().blocks_secondary_damage()) {
-		member.apply_damage(std::max(hp_healed, 1u));
+	else if (!pokemon.ability().blocks_secondary_damage()) {
+		apply_damage(pokemon, std::max(hp_healed, 1u));
 	}
 }
 
-void drain(Pokemon & member, Rational const & rational) {
-	heal(member, rational, false);
+void drain(Pokemon & pokemon, Rational const & rational) {
+	heal(pokemon, rational, false);
 }
 
 }	// namespace technicalmachine

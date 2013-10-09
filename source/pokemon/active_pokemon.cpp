@@ -204,7 +204,7 @@ void ActivePokemon::charge() {
 }
 
 bool ActivePokemon::can_confuse_with_chatter() const {
-	return get_pokemon().can_confuse_with_chatter();
+	return ::technicalmachine::can_confuse_with_chatter(get_pokemon());
 }
 
 bool ActivePokemon::is_confused() const {
@@ -511,7 +511,7 @@ bool ActivePokemon::can_be_phazed() const {
 }
 
 unsigned ActivePokemon::power_of_mass_based_moves() const {
-	return get_pokemon().power_of_mass_based_moves();
+	return ::technicalmachine::power_of_mass_based_moves(get_pokemon());
 }
 
 bool ActivePokemon::power_trick_is_active() const {
@@ -594,7 +594,7 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 }
 
 Rational ActivePokemon::hp_ratio() const {
-	return get_pokemon().current_hp();
+	return current_hp(get_pokemon());
 }
 
 int ActivePokemon::current_stage(Stat::Stats const stat_index) const {
@@ -692,7 +692,7 @@ bool ActivePokemon::switch_decision_required() const {
 }
 
 void ActivePokemon::switch_pokemon() {
-	get_pokemon().switch_out();
+	switch_out(get_pokemon());
 	all_pokemon().set_index(all_pokemon().replacement());
 }
 
@@ -787,12 +787,12 @@ void ActivePokemon::use_bide(Pokemon & target) {
 	else {
 		unsigned const bide_damage = bide.decrement();
 		if (bide_damage != 0)
-			target.apply_damage(bide_damage * 2);
+			apply_damage(target, bide_damage * 2);
 	}
 }
 
 void ActivePokemon::use_substitute() {
-	if (!get_pokemon().can_use_substitute())
+	if (!can_use_substitute(get_pokemon()))
 		return;
 	bool const created = active_substitute.create(stat(Stat::HP).max);
 	if (created) {
@@ -813,13 +813,13 @@ Rational ActivePokemon::random_damage_multiplier() const {
 }
 
 void ActivePokemon::direct_damage(unsigned damage) {
-	damage = get_pokemon().apply_damage(damage);
+	damage = apply_damage(get_pokemon(), damage);
 	damage_done_to_active = damage;
 	bide.add_damage(damage);
 }
 
 void ActivePokemon::indirect_damage(unsigned const damage) {
-	get_pokemon().apply_damage(damage);
+	apply_damage(get_pokemon(), damage);
 }
 
 void ActivePokemon::register_damage(unsigned const damage) {
