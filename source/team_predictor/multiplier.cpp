@@ -36,6 +36,8 @@
 namespace technicalmachine {
 namespace {
 static constexpr Multiplier::value_type not_set = -1.0F;
+bool is_alternate_form(Species first, Species second);
+
 }	// unnamed namespace
 
 Multiplier::Multiplier(Overall const & overall):
@@ -131,4 +133,78 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	}
 }
 
+namespace {
+
+bool is_deoxys (Species species);
+bool is_giratina (Species species);
+bool is_rotom (Species species);
+bool is_shaymin (Species species);
+bool is_wormadam (Species species);
+
+bool is_alternate_form(Species const first, Species const second) {
+	return (is_deoxys (first) and is_deoxys (second)) or
+			(is_giratina (first) and is_giratina (second)) or
+			(is_rotom (first) and is_rotom (second)) or
+			(is_shaymin (first) and is_shaymin (second)) or
+			(is_wormadam (first) and is_wormadam (second));
+}
+
+bool is_deoxys(Species const species) {
+	switch (species) {
+		case Species::Deoxys_Attack:
+		case Species::Deoxys_Defense:
+		case Species::Deoxys_Mediocre:
+		case Species::Deoxys_Speed:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_giratina(Species const species) {
+	switch (species) {
+		case Species::Giratina_Altered:
+		case Species::Giratina_Origin:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_rotom(Species const species) {
+	switch (species) {
+		case Species::Rotom:
+		case Species::Rotom_Mow:
+		case Species::Rotom_Frost:
+		case Species::Rotom_Heat:
+		case Species::Rotom_Fan:
+		case Species::Rotom_Wash:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_shaymin(Species const species) {
+	switch (species) {
+		case Species::Shaymin_Land:
+		case Species::Shaymin_Sky:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_wormadam(Species const species) {
+	switch (species) {
+		case Species::Wormadam_Plant:
+		case Species::Wormadam_Sandy:
+		case Species::Wormadam_Trash:
+			return true;
+		default:
+			return false;
+	}
+}
+
+}	// namespace
 }	// namespace technicalmachine

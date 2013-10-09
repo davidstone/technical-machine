@@ -247,6 +247,14 @@ bool Battle::is_valid_precision(Party changer, unsigned precision) const {
 	return max_visible_hp_change(changer) == precision;
 }
 
+namespace {
+
+// The server reports Technical Machine's HP tracking is wrong
+void correct_error_in_hp(Pokemon & pokemon, unsigned const correct_hp_stat) {
+	pokemon.stat(Stat::HP).stat = correct_hp_stat;
+}
+
+}	// namespace
 
 void Battle::correct_hp_and_report_errors (Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {

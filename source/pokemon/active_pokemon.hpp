@@ -60,6 +60,7 @@ class ActivePokemon {
 public:
 	operator Pokemon const & () const;
 	operator Pokemon & ();
+	operator Species() const;
 	template<typename... Args>
 	Move const & move(Args&&... args) const {
 		return get_pokemon().move(std::forward<Args>(args)...);
@@ -95,7 +96,6 @@ public:
 	bool cannot_be_koed() const;
 	bool charge_boosted() const;
 	void charge();
-	bool can_confuse_with_chatter() const;
 	bool is_confused() const;
 	void confuse();
 	void handle_confusion();
@@ -170,7 +170,6 @@ public:
 	void activate_perish_song();
 	void perish_song_turn();
 	bool can_be_phazed() const;
-	unsigned power_of_mass_based_moves() const;
 	bool power_trick_is_active() const;
 	void activate_power_trick();
 	void protect();

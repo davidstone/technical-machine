@@ -107,31 +107,12 @@ private:
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
-bool is_alternate_form(Species first, Species second);
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
 void switch_out(Pokemon & pokemon);
 
 void calculate_initial_hp(Pokemon & pokemon);
-// The server reports Technical Machine's HP tracking is wrong
-void correct_error_in_hp(Pokemon & pokemon, unsigned correct_hp_stat);
 Rational current_hp(Pokemon const & pokemon);
-
-bool can_confuse_with_chatter(Species pokemon);
-bool can_use_substitute(Pokemon const & pokemon);
-
-bool is_boosted_by_adamant_orb(Species species);
-bool is_boosted_by_deepseascale(Species species);
-bool is_boosted_by_deepseatooth(Species species);
-bool is_boosted_by_griseous_orb(Species species);
-bool is_boosted_by_light_ball(Species species);
-bool is_boosted_by_lustrous_orb(Species species);
-bool is_boosted_by_metal_powder(Species species);
-bool is_boosted_by_quick_powder(Species species);
-bool is_boosted_by_soul_dew(Species species);
-bool is_boosted_by_thick_club(Species species);
-
-unsigned power_of_mass_based_moves(Species species);
 
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_HPP_

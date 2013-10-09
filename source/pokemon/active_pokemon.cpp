@@ -51,6 +51,10 @@ ActivePokemon::operator Pokemon & () {
 	return get_pokemon();
 }
 
+ActivePokemon::operator Species() const {
+	return static_cast<Species>(get_pokemon());
+}
+
 MoveCollection const & ActivePokemon::all_moves() const {
 	return get_pokemon().move;
 }
@@ -201,10 +205,6 @@ bool ActivePokemon::charge_boosted() const {
 
 void ActivePokemon::charge() {
 	charged = true;
-}
-
-bool ActivePokemon::can_confuse_with_chatter() const {
-	return ::technicalmachine::can_confuse_with_chatter(get_pokemon());
 }
 
 bool ActivePokemon::is_confused() const {
@@ -510,10 +510,6 @@ bool ActivePokemon::can_be_phazed() const {
 	return !ingrained() and !ability().blocks_phazing() and all_pokemon().size() > 1;
 }
 
-unsigned ActivePokemon::power_of_mass_based_moves() const {
-	return ::technicalmachine::power_of_mass_based_moves(get_pokemon());
-}
-
 bool ActivePokemon::power_trick_is_active() const {
 	return power_trick;
 }
@@ -790,6 +786,15 @@ void ActivePokemon::use_bide(Pokemon & target) {
 			apply_damage(target, bide_damage * 2);
 	}
 }
+
+namespace {
+
+bool can_use_substitute(Pokemon const & pokemon) {
+	auto const & hp = pokemon.stat(Stat::HP);
+	return hp.stat > hp.max / 4;
+}
+
+}	// namespace
 
 void ActivePokemon::use_substitute() {
 	if (!can_use_substitute(get_pokemon()))

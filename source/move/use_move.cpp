@@ -37,6 +37,7 @@
 
 #include "../pokemon/active_pokemon.hpp"
 #include "../pokemon/pokemon.hpp"
+#include "../pokemon/species.hpp"
 
 #include "../stat/stat.hpp"
 
@@ -61,6 +62,7 @@ void do_damage (ActivePokemon & user, ActivePokemon & target, unsigned damage);
 void do_side_effects (Team & user, Team & target, Weather & weather, Variable const & variable, unsigned damage);
 void absorb_hp(Pokemon & user, Pokemon const & target, unsigned damage);
 void belly_drum(ActivePokemon & user);
+bool can_confuse_with_chatter(Species pokemon);
 void clear_field(Team & user, Pokemon const & target);
 void confusing_stat_boost(ActivePokemon & target, Stat::Stats stat, int stages);
 void curse(ActivePokemon & user, ActivePokemon & target);
@@ -401,7 +403,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.stat_boost(Stat::ATK, -2);
 			break;
 		case Moves::Chatter:
-			if (user.can_confuse_with_chatter() and variable.effect_activates())
+			if (can_confuse_with_chatter(user) and variable.effect_activates())
 				target.confuse();
 			break;
 		case Moves::Close_Combat:
@@ -986,6 +988,10 @@ void belly_drum(ActivePokemon & user) {
 		hp.stat -= hp.max / 2;
 		user.stat_boost(Stat::ATK, 12);
 	}
+}
+
+bool can_confuse_with_chatter(Species const pokemon) {
+	return pokemon == Species::Chatot;
 }
 
 void clear_field(Team & user, Pokemon const & target) {

@@ -1,5 +1,5 @@
 // Stat formulas
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,6 +34,7 @@
 #include "../move/priority.hpp"
 
 #include "../pokemon/pokemon.hpp"
+#include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -41,6 +42,46 @@ namespace {
 uint8_t get_base_stat(Species name, Stat::Stats stat_name);
 
 unsigned initial_generic_stat(Stat const & stat, unsigned level);
+
+bool is_boosted_by_deepseascale(Species const species) {
+	return species == Species::Clamperl;
+}
+
+bool is_boosted_by_deepseatooth(Species const species) {
+	return species == Species::Clamperl;
+}
+
+bool is_boosted_by_light_ball(Species const species) {
+	return species == Species::Pikachu;
+}
+
+bool is_boosted_by_metal_powder(Species const species) {
+	return species == Species::Ditto;
+}
+
+bool is_boosted_by_quick_powder(Species const species) {
+	return species == Species::Ditto;
+}
+
+bool is_boosted_by_soul_dew(Species const species) {
+	switch (species) {
+		case Species::Latias:
+		case Species::Latios:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_boosted_by_thick_club(Species const species) {
+	switch (species) {
+		case Species::Cubone:
+		case Species::Marowak:
+			return true;
+		default:
+			return false;
+	}
+}
 
 template<Stat::Stats stat>
 Rational item_modifier(Pokemon const & pokemon);
