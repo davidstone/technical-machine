@@ -119,7 +119,7 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 		{ Stat::SPD, 5 }
 	};
 	auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & pair) {
-		return value + ((pokemon.stat(pair.first).iv % 2u) << pair.second);
+		return value + ((get_stat(pokemon, pair.first).iv % 2u) << pair.second);
 	};
 	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), 0u, sum) * 15 / 63;
 	constexpr static Type::Types lookup [] = {

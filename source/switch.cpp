@@ -32,8 +32,8 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	auto & pokemon = switcher.pokemon();
 	pokemon.reset_switch();
 
-	if (pokemon.stat(Stat::HP).stat > 0) {
-		pokemon.switch_pokemon();
+	if (get_stat(pokemon, Stat::HP).stat > 0) {
+		switch_pokemon(pokemon);
 	}
 	else {
 		switcher.remove_pokemon();
@@ -42,9 +42,9 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 	}
 	EntryHazards::apply(switcher, weather);
-	if (pokemon.stat(Stat::HP).stat > 0)
+	if (get_stat(pokemon, Stat::HP).stat > 0)
 		Ability::activate_on_switch (pokemon, other.pokemon(), weather);
-	pokemon.switch_in();
+	switch_in(pokemon);
 }
 
 }	// namespace technicalmachine

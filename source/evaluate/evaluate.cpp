@@ -60,7 +60,7 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 		score += ingrain;
 	score += pokemon.magnet_rise.turns_remaining * magnet_rise;
 	if (pokemon.active_substitute)
-		score += substitute + substitute_hp * pokemon.active_substitute.hp / pokemon.stat(Stat::HP).max;
+		score += substitute + substitute_hp * pokemon.active_substitute.hp / get_stat(pokemon, Stat::HP).max;
 	score += Stage::dot_product(pokemon.stage, stage);
 	return score;
 }
@@ -78,7 +78,7 @@ int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weat
 }
 
 int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
-	if (pokemon.stat(Stat::HP).stat == 0) {
+	if (get_stat(pokemon, Stat::HP).stat == 0) {
 		return 0;
 	}
 	int64_t score = 0;
@@ -102,7 +102,7 @@ int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 }
 
 int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	if (pokemon.stat(Stat::HP).stat == 0) {
+	if (get_stat(pokemon, Stat::HP).stat == 0) {
 		return 0;
 	}
 	int64_t score = entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
@@ -110,7 +110,7 @@ int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & e
 		score += entry_hazards.spikes * spikes + entry_hazards.toxic_spikes * toxic_spikes;
 	}
 	score += members;
-	score += hp * current_hp(pokemon);
+	score += hp * hp_ratio(pokemon);
 	score += hidden * !pokemon.seen();
 	score += score_status(pokemon, toxic_counter);
 	score += score_move (pokemon, other, weather);
@@ -118,7 +118,7 @@ int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & e
 }
 
 int64_t Evaluate::score_status(Pokemon const & pokemon, int const toxic_counter) const {
-	switch (pokemon.status().name()) {
+	switch (get_status(pokemon).name()) {
 		case Status::BURN:
 			return burn;
 		case Status::FREEZE:
@@ -153,14 +153,14 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 
 
 int64_t Evaluate::win (Team const & team) {
-	if (team.all_pokemon().size() == 1 and team.pokemon().stat(Stat::HP).stat == 0)
+	if (team.all_pokemon().size() == 1 and get_stat(team.pokemon(), Stat::HP).stat == 0)
 		return team.is_me() ? -victory : victory;
 	return 0;
 }
 
 int64_t Evaluate::sleep_clause (Team const & team) {
 	static constexpr auto sleepers = [](Pokemon const & pokemon) {
-		return pokemon.status().is_sleeping_due_to_other();
+		return get_status(pokemon).is_sleeping_due_to_other();
 	};
 	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
 	if (sleeper_count > 1)

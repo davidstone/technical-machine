@@ -42,7 +42,7 @@ void PartialTrap::activate(bool const extended) {
 		turns_active = extended ? extended_duration : normal_duration;
 }
 
-void PartialTrap::damage(Pokemon & pokemon) {
+void PartialTrap::damage(ActivePokemon & pokemon) {
 	if (is_active()) {
 		drain(pokemon, end_of_turn_damage);
 		--turns_active;

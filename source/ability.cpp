@@ -62,7 +62,7 @@ void Ability::set_if_unknown(Abilities const ability) {
 bool Ability::blocks_switching(ActivePokemon const & switcher, Weather const & weather) const {
 	switch (name()) {
 		case Shadow_Tag:
-			return switcher.ability().name() != Shadow_Tag;
+			return get_ability(switcher).name() != Shadow_Tag;
 		case Arena_Trap:
 			return grounded(switcher, weather);
 		case Magnet_Pull:
@@ -278,7 +278,7 @@ bool Ability::is_loafing(bool const loaf) const {
 }
 
 Rational Ability::accuracy_modifier(ActivePokemon const & user) {
-	switch (user.ability().name()) {
+	switch (get_ability(user).name()) {
 		case Compoundeyes:
 			return Rational(13, 10);
 		case Hustle:
@@ -289,7 +289,7 @@ Rational Ability::accuracy_modifier(ActivePokemon const & user) {
 }
 
 Rational Ability::evasion_modifier(ActivePokemon const & target, Weather const & weather) {
-	switch (target.ability().name()) {
+	switch (get_ability(target).name()) {
 		case Sand_Veil:
 			return weather.sand() ? Rational(4, 5) : Rational(1, 1);
 		case Snow_Cloak:
@@ -345,7 +345,7 @@ bool is_boosted_by_reckless(Moves const move) {
 }	// namespace
 
 Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
-	switch (attacker.ability().name()) {
+	switch (get_ability(attacker).name()) {
 		case Technician:
 			return (base_power <= 60) ? Rational(3, 2) : Rational(1);
 		case Blaze:
@@ -361,7 +361,7 @@ Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & de
 		case Reckless:
 			return is_boosted_by_reckless(attacker.move()) ? Rational(6, 5) : Rational(1);
 		case Rivalry:
-			return Rational(static_cast<unsigned>(4 + attacker.gender().multiplier(defender.gender())), 4);
+			return Rational(static_cast<unsigned>(4 + get_gender(attacker).multiplier(get_gender(defender))), 4);
 		default:
 			return Rational(1);
 	}
@@ -369,17 +369,17 @@ Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & de
 
 namespace {
 bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
-	return Type(attacker.move(), attacker) == type and current_hp(attacker) <= Rational(1, 3);
+	return Type(attacker.move(), attacker) == type and hp_ratio(attacker) <= Rational(1, 3);
 }
 }	// namespace
 
 template<>
 Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & attacker, Weather const & weather) {
-	switch (attacker.ability().name()) {
+	switch (get_ability(attacker).name()) {
 		case Flower_Gift:
 			return weather.sun() ? Rational(3, 2) : Rational(1);
 		case Guts:
-			return (!attacker.status().is_clear()) ? Rational(3, 2) : Rational(1);
+			return (!get_status(attacker).is_clear()) ? Rational(3, 2) : Rational(1);
 		case Hustle:
 			return Rational(3, 2);
 		case Huge_Power:
@@ -393,27 +393,27 @@ Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & attacker, Weath
 }
 template<>
 Rational Ability::stat_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather) {
-	return pokemon.ability().boosts_special_attack(weather) ? Rational(3, 2) : Rational(1);
+	return get_ability(pokemon).boosts_special_attack(weather) ? Rational(3, 2) : Rational(1);
 }
 template<>
 Rational Ability::stat_modifier<Stat::DEF>(ActivePokemon const & defender, Weather const &) {
-	return defender.ability().boosts_defense(defender.status()) ? Rational(3, 2) : Rational(1);
+	return get_ability(defender).boosts_defense(get_status(defender)) ? Rational(3, 2) : Rational(1);
 }
 template<>
 Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather) {
-	return pokemon.ability().boosts_special_defense(weather) ? Rational(3, 2) : Rational(1);
+	return get_ability(pokemon).boosts_special_defense(weather) ? Rational(3, 2) : Rational(1);
 }
 template<>
 Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather) {
-	switch (pokemon.ability().name()) {
+	switch (get_ability(pokemon).name()) {
 		case Chlorophyll:
 			return weather.sun() ? Rational(2) : Rational(1);
 		case Swift_Swim:
 			return weather.rain() ? Rational(2) : Rational(1);
 		case Unburden:
-			return pokemon.item().was_lost() ? Rational(2) : Rational(1);
+			return get_item(pokemon).was_lost() ? Rational(2) : Rational(1);
 		case Quick_Feet:
-			return (!pokemon.status().is_clear()) ? Rational(3, 2) : Rational(1);
+			return (!get_status(pokemon).is_clear()) ? Rational(3, 2) : Rational(1);
 		case Slow_Start:
 			return pokemon.slow_start_is_active() ? Rational(1, 2) : Rational(1);
 		default:
@@ -422,11 +422,11 @@ Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weathe
 }
 
 void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
-	switch (switcher.ability().name()) {
+	switch (get_ability(switcher).name()) {
 		case Download: {
 			calculate_defense(other, weather);
 			calculate_special_defense(other, weather);
-			switcher.stat_boost((other.stat(Stat::DEF).stat >= other.stat(Stat::SPD).stat) ? Stat::SPA : Stat::ATK, 1);
+			switcher.stat_boost((get_stat(other, Stat::DEF).stat >= get_stat(other, Stat::SPD).stat) ? Stat::SPA : Stat::ATK, 1);
 			break;
 		}
 		case Drizzle:
@@ -453,8 +453,8 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 	}
 }
 
-void Ability::weather_healing(Pokemon & pokemon, Weather const & weather) {
-	switch (pokemon.ability().name()) {
+void Ability::weather_healing(ActivePokemon & pokemon, Weather const & weather) {
+	switch (get_ability(pokemon).name()) {
 		case Dry_Skin:
 			if (weather.rain()) {
 				heal(pokemon, Rational(1, 8));
@@ -465,7 +465,7 @@ void Ability::weather_healing(Pokemon & pokemon, Weather const & weather) {
 			break;
 		case Hydration:
 			if (weather.rain()) {
-				pokemon.status().clear();
+				get_status(pokemon).clear();
 			}
 			break;
 		case Ice_Body:

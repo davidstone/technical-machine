@@ -73,18 +73,18 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_short (species.first);
 	write_byte (species.second);
 	write_string (pokemon.get_nickname());
-	uint16_t const item = item_to_id (pokemon.item().name);
+	uint16_t const item = item_to_id (get_item(pokemon).name);
 	write_short (item);
-	uint16_t const ability = ability_to_id (pokemon.ability().name());
+	uint16_t const ability = ability_to_id (get_ability(pokemon).name());
 	write_short (ability);
-	uint8_t const nature = nature_to_id (pokemon.nature().name);
+	uint8_t const nature = nature_to_id (get_nature(pokemon).name);
 	write_byte (nature);
-	uint8_t const gender = gender_to_id (pokemon.gender().gender);
+	uint8_t const gender = gender_to_id (get_gender(pokemon).gender);
 	write_byte (gender);
 	bool shiny = false;
 	write_byte (shiny);
 	write_byte(pokemon.happiness());
-	write_byte(pokemon.level());
+	write_byte(get_level(pokemon));
 	unsigned number_of_moves = 0;
 	pokemon.move.for_each_regular_move([&](Move const & move) {
 		++number_of_moves;
@@ -99,10 +99,10 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 		Stat::HP, Stat::ATK, Stat::DEF, Stat::SPE, Stat::SPA, Stat::SPD
 	};
 	for (auto const stat : stats) {
-		write_byte(pokemon.stat(stat).iv);
+		write_byte(get_stat(pokemon, stat).iv);
 	}
 	for (auto const stat : stats) {
-		write_byte(pokemon.stat(stat).ev.value());
+		write_byte(get_stat(pokemon, stat).ev.value());
 	}
 }
 

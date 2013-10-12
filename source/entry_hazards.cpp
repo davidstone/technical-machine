@@ -81,7 +81,7 @@ EntryHazards::hash_type EntryHazards::max_hash() {
 
 void EntryHazards::apply(Team & switcher, Weather const & weather) {
 	EntryHazards & entry_hazards = switcher.entry_hazards;
-	if (switcher.pokemon().ability().blocks_secondary_damage())
+	if (get_ability(switcher.pokemon()).blocks_secondary_damage())
 		return;
 
 	if (grounded(switcher.pokemon(), weather)) {

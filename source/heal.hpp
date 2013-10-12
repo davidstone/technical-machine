@@ -21,12 +21,13 @@
 
 namespace technicalmachine {
 
+class ActivePokemon;
 class Pokemon;
 class Rational;
 
 void apply_healing(Pokemon & pokemon, unsigned amount);
-void heal(Pokemon & pokemon, Rational const & rational, bool positive = true);
-void drain(Pokemon & pokemon, Rational const & rational);
+void heal(ActivePokemon & pokemon, Rational const & rational, bool positive = true);
+void drain(ActivePokemon & pokemon, Rational const & rational);
 
 }	// namespace technicalmachine
 #endif	// HEAL_HPP_

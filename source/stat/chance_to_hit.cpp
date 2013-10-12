@@ -52,15 +52,15 @@ Rational ChanceToHit::operator()() const {
 }
 
 void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
-	if (move_can_miss(user, target.ability())) {
+	if (move_can_miss(user, get_ability(target))) {
 		unsigned calculated_accuracy = accuracy(user.move().name());
 		calculated_accuracy *= user.stage_modifier<Stat::ACC>();
 		calculated_accuracy *= target.stage_modifier<Stat::EVA>();
 
-		calculated_accuracy *= accuracy_item_modifier(user.item(), target_moved);
+		calculated_accuracy *= accuracy_item_modifier(get_item(user), target_moved);
 		calculated_accuracy *= Ability::accuracy_modifier(user);
 		
-		calculated_accuracy *= evasion_item_modifier(target.item());
+		calculated_accuracy *= evasion_item_modifier(get_item(target));
 		calculated_accuracy *= Ability::evasion_modifier(target, weather);
 
 		if (weather.gravity())
@@ -76,7 +76,7 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 namespace {
 
 bool move_can_miss(ActivePokemon const & user, Ability const & target_ability) {
-	return can_miss(user.move()) and !user.ability().cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
+	return can_miss(user.move()) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
 Rational accuracy_item_modifier(Item const & item, bool target_moved) {

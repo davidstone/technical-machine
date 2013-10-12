@@ -191,7 +191,7 @@ unsigned defensive_evs_available(Pokemon const & pokemon) {
 	constexpr unsigned max_total_evs = 510;
 	auto used_evs = 0u;
 	for (auto const stat : { Stat::ATK, Stat::SPA, Stat::SPE }) {
-		used_evs += pokemon.stat(stat).ev.value();
+		used_evs += get_stat(pokemon, stat).ev.value();
 	}
 	return max_total_evs - used_evs;
 }

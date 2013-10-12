@@ -42,7 +42,7 @@ constexpr Stat::Stats from_physical(bool physical) {
 
 template<bool physical>
 void set_ev(Pokemon & pokemon, unsigned const defensive_ev) {
-	auto & stat = physical ? pokemon.stat(Stat::DEF) : pokemon.stat(Stat::SPD);
+	auto & stat = physical ? get_stat(pokemon, Stat::DEF) : get_stat(pokemon, Stat::SPD);
 	stat.ev.set_value(defensive_ev);
 }
 
@@ -107,7 +107,7 @@ Nature::Natures nature_boost_convert(SingleClassificationEVs::NatureBoost nature
 
 template<bool physical>
 std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon) {
-	unsigned const initial_product = pokemon.stat(Stat::HP).max * initial_stat<from_physical(physical)>(pokemon);
+	unsigned const initial_product = get_stat(pokemon, Stat::HP).max * initial_stat<from_physical(physical)>(pokemon);
 	std::vector<SingleClassificationEVs> result;
 	static std::initializer_list<Nature> const natures = {
 		nature_boost_convert(SingleClassificationEVs::Boost, physical),
@@ -115,9 +115,9 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon) {
 		nature_boost_convert(SingleClassificationEVs::Penalty, physical)
 	};
 	for (Nature const nature : natures) {
-		pokemon.nature() = nature;
+		get_nature(pokemon) = nature;
 		for (unsigned hp_ev = 0; hp_ev <= max_evs; hp_ev += 4) {
-			pokemon.stat(Stat::HP).ev.set_value(hp_ev);
+			get_stat(pokemon, Stat::HP).ev.set_value(hp_ev);
 			unsigned const hp = initial_stat<Stat::HP>(pokemon);
 			unsigned defensive_ev = 0;
 			set_ev<physical>(pokemon, defensive_ev);

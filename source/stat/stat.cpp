@@ -87,7 +87,7 @@ template<Stat::Stats stat>
 Rational item_modifier(Pokemon const & pokemon);
 template<>
 Rational item_modifier<Stat::ATK>(Pokemon const & attacker) {
-	switch (attacker.item().name) {
+	switch (get_item(attacker).name) {
 		case Item::CHOICE_BAND:
 			return Rational(3, 2);
 		case Item::LIGHT_BALL:
@@ -100,7 +100,7 @@ Rational item_modifier<Stat::ATK>(Pokemon const & attacker) {
 }
 template<>
 Rational item_modifier<Stat::SPA>(Pokemon const & attacker) {
-	switch (attacker.item().name) {
+	switch (get_item(attacker).name) {
 		case Item::SOUL_DEW:
 			return is_boosted_by_soul_dew(attacker) ? Rational(3, 2) : Rational(1);
 		case Item::CHOICE_SPECS:
@@ -115,13 +115,13 @@ Rational item_modifier<Stat::SPA>(Pokemon const & attacker) {
 }
 template<>
 Rational item_modifier<Stat::DEF>(Pokemon const & defender) {
-	return (defender.item().name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender)) ?
+	return (get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender)) ?
 		Rational(3, 2) :
 		Rational(1);
 }
 template<>
 Rational item_modifier<Stat::SPD>(Pokemon const & defender) {
-	switch (defender.item().name) {
+	switch (get_item(defender).name) {
 		case Item::DEEPSEASCALE:
 			return is_boosted_by_deepseascale(defender) ? Rational(2) : Rational(1);
 		case Item::METAL_POWDER:
@@ -134,7 +134,7 @@ Rational item_modifier<Stat::SPD>(Pokemon const & defender) {
 }
 template<>
 Rational item_modifier<Stat::SPE>(Pokemon const & pokemon) {
-	switch (pokemon.item().name) {
+	switch (get_item(pokemon).name) {
 		case Item::QUICK_POWDER:
 			return is_boosted_by_quick_powder(pokemon) ? Rational(2) : Rational(1);
 		case Item::CHOICE_SCARF:
@@ -208,7 +208,7 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 	attack *= Ability::stat_modifier<stat>(pokemon, weather);
 	attack *= item_modifier<stat>(pokemon);
 	
-	pokemon.stat(stat).stat = std::max(attack, 1u);
+	get_stat(pokemon, stat).stat = std::max(attack, 1u);
 }
 
 }	// unnamed namespace
@@ -228,12 +228,12 @@ void Stat::calculate_initial_hp (uint8_t const level) {
 
 template<Stat::Stats stat>
 unsigned initial_stat(Pokemon const & pokemon) {
-	return initial_generic_stat(pokemon.stat(stat), pokemon.level()) * pokemon.nature().boost<stat>();
+	return initial_generic_stat(get_stat(pokemon, stat), get_level(pokemon)) * get_nature(pokemon).boost<stat>();
 }
 template<>
 unsigned initial_stat<Stat::HP>(Pokemon const & pokemon) {
-	Stat const & hp = pokemon.stat(Stat::HP);
-	return (hp.base > 1) ? (initial_generic_stat(hp, pokemon.level()) + pokemon.level() + 5) : 1;
+	Stat const & hp = get_stat(pokemon, Stat::HP);
+	return (hp.base > 1) ? (initial_generic_stat(hp, get_level(pokemon)) + get_level(pokemon) + 5) : 1;
 }
 template unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon);
 template unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon);
@@ -291,7 +291,7 @@ void calculate_defense (ActivePokemon & defender, Weather const & weather, bool 
 	if (is_self_KO)
 		defense /= 2;
 
-	defender.stat(stat).stat = std::max(defense, 1u);
+	get_stat(defender, stat).stat = std::max(defense, 1u);
 }
 
 void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch) {
@@ -305,7 +305,7 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 	
 	defense *= special_defense_sandstorm_boost(defender, weather);
 	
-	defender.stat(stat).stat = std::max(defense, 1u);
+	get_stat(defender, stat).stat = std::max(defense, 1u);
 }
 
 void calculate_speed (Team & team, Weather const & weather) {
@@ -322,7 +322,7 @@ void calculate_speed (Team & team, Weather const & weather) {
 	
 	speed *= tailwind_speed_multiplier (team);
 
-	pokemon.stat(stat).stat = std::max(speed, 1u);
+	get_stat(pokemon, stat).stat = std::max(speed, 1u);
 }
 
 void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
@@ -344,8 +344,8 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 }
 
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	auto const speed1 = team1.pokemon().stat(Stat::SPE).stat;
-	auto const speed2 = team2.pokemon().stat(Stat::SPE).stat;
+	auto const speed1 = get_stat(team1.pokemon(), Stat::SPE).stat;
+	auto const speed2 = get_stat(team2.pokemon(), Stat::SPE).stat;
 	if (speed1 > speed2) {
 		faster = &team1;
 		slower = &team2;
@@ -373,7 +373,7 @@ Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather
 }
 
 unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
-	return pokemon.status().lowers_speed(pokemon.ability()) ? 4 : 1;
+	return get_status(pokemon).lowers_speed(get_ability(pokemon)) ? 4 : 1;
 }
 
 unsigned tailwind_speed_multiplier (Team const & team) {

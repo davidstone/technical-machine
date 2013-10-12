@@ -32,7 +32,7 @@ void Wish::activate() {
 		counter = 2;
 }
 
-void Wish::decrement(Pokemon & pokemon) {
+void Wish::decrement(ActivePokemon & pokemon) {
 	if (is_active()) {
 		--counter;
 		if (!is_active()) {

@@ -39,7 +39,7 @@ constexpr unsigned max_evs = 508;
 
 unsigned ev_sum(Pokemon const & pokemon) {
 	auto const ev_sum = [&](unsigned const sum, Stat::Stats const stat) {
-		return sum + pokemon.stat(stat).ev.value();
+		return sum + get_stat(pokemon, stat).ev.value();
 	};
 	return std::accumulate(std::begin(regular_stats()), std::end(regular_stats()), 0u, ev_sum);
 }
@@ -71,7 +71,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	while (ev_sum(pokemon) < max_evs) {
 		std::vector<Stat *> stats;
 		for (auto const stat : regular_stats()) {
-			add_non_full_stats(stats, pokemon.stat(stat));
+			add_non_full_stats(stats, get_stat(pokemon, stat));
 		}
 		unsigned const extra_evs = max_evs - ev_sum(pokemon);
 		std::vector<uint8_t> shuffled(extra_evs + stats.size() - 1, 1);

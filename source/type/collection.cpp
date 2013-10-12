@@ -56,7 +56,7 @@ void TypeCollection::change_type(Type const type) {
 
 bool is_type(Pokemon const & pokemon, Type const type, bool const roosting) {
 	if (type != Type::Flying or !roosting) {
-		for (Type const check : pokemon.type().types) {
+		for (Type const check : get_type(pokemon).types) {
 			if (check == type)
 				return true;
 		}
@@ -70,14 +70,14 @@ bool is_type (ActivePokemon const & pokemon, Type const type) {
 namespace {
 
 bool forced_grounded(Pokemon const & pokemon, Weather const & weather) {
-	return weather.gravity() or pokemon.item().grounds();
+	return weather.gravity() or get_item(pokemon).grounds();
 }
 bool forced_grounded(ActivePokemon const & pokemon, Weather const & weather) {
 	return forced_grounded(static_cast<Pokemon const &>(pokemon), weather) or pokemon.ingrained();
 }
 
 bool is_immune_to_ground(Pokemon const & pokemon, Weather const & weather, bool const roosting = false) {
-	return is_type(pokemon, Type::Flying, roosting) or pokemon.ability().is_immune_to_ground();
+	return is_type(pokemon, Type::Flying, roosting) or get_ability(pokemon).is_immune_to_ground();
 }
 bool is_immune_to_ground(ActivePokemon const & active, Weather const & weather) {
 	auto const & pokemon = static_cast<Pokemon const &>(active);

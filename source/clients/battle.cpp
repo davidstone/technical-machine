@@ -214,7 +214,7 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, unsig
 	std::cerr << to_string(pokemon.name()) << '\n';
 	assert(move_damage);
 	Rational const change(visible_damage, max_visible_hp_change(team));
-	auto const damage = pokemon.stat(Stat::HP).max * change;
+	auto const damage = get_stat(pokemon, Stat::HP).max * change;
 	updated_hp.direct_damage(team.is_me(), pokemon, damage);
 	move_damage = false;
 }
@@ -225,7 +225,7 @@ int Battle::hp_change(Party const changing, unsigned const remaining_hp) const {
 	if (max_visible < remaining_hp) {
 		throw network::InvalidSimulatorData (remaining_hp, 0u, max_visible, team.who() + "'s remaining_hp");
 	}
-	unsigned const measurable_hp = max_visible * current_hp(team.replacement());
+	unsigned const measurable_hp = max_visible * hp_ratio(team.replacement());
 	return static_cast<int>(measurable_hp - remaining_hp);
 }
 
@@ -236,7 +236,7 @@ unsigned Battle::max_visible_hp_change(Team const & changer) const {
 	return max_visible_hp_change(changer.is_me(), changer.replacement());
 }
 unsigned Battle::max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const {
-	return my_pokemon ? changer.stat(Stat::HP).max : max_damage_precision();
+	return my_pokemon ? get_stat(changer, Stat::HP).max : max_damage_precision();
 }
 
 bool Battle::is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const {
@@ -251,18 +251,18 @@ namespace {
 
 // The server reports Technical Machine's HP tracking is wrong
 void correct_error_in_hp(Pokemon & pokemon, unsigned const correct_hp_stat) {
-	pokemon.stat(Stat::HP).stat = correct_hp_stat;
+	get_stat(pokemon, Stat::HP).stat = correct_hp_stat;
 }
 
 }	// namespace
 
 void Battle::correct_hp_and_report_errors (Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
-		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * current_hp(pokemon);
+		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * hp_ratio(pokemon);
 		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
 		if (tm_estimate == new_hp)
 			return;
-		auto const reported_hp = new_hp * pokemon.stat(Stat::HP).max / max_visible_hp_change(team.is_me(), pokemon);
+		auto const reported_hp = new_hp * get_stat(pokemon, Stat::HP).max / max_visible_hp_change(team.is_me(), pokemon);
 		unsigned const min_value = (tm_estimate == 0) ? 0 : (tm_estimate - 1);
 		unsigned const max_value = tm_estimate + 1;
 		assert(max_value > tm_estimate);
@@ -270,9 +270,9 @@ void Battle::correct_hp_and_report_errors (Team & team) {
 			std::cerr << "Uh oh! " + to_string(pokemon.name()) + " has the wrong HP! The server reports ";
 			if (!team.is_me())
 				std::cerr << "approximately ";
-			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << pokemon.stat(Stat::HP).stat << ".\n";
+			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << get_stat(pokemon, Stat::HP).stat << ".\n";
 			std::cerr << "max_visible_hp_change: " << max_visible_hp_change(team.is_me(), pokemon) << '\n';
-			std::cerr << "pokemon.hp.max: " << pokemon.stat(Stat::HP).max << '\n';
+			std::cerr << "pokemon.hp.max: " << get_stat(pokemon, Stat::HP).max << '\n';
 			std::cerr << "new_hp: " << new_hp << '\n';
 			std::cerr << "tm_estimate: " << tm_estimate << '\n';
 //			assert(false);
@@ -290,7 +290,7 @@ void Battle::handle_fainted (Party const fainter, uint8_t slot) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	auto const team = get_team(fainter);
-	std::cerr << to_string(team.pokemon().name()) << " fainted\n";
+	std::cerr << to_string(static_cast<Species>(team.pokemon())) << " fainted\n";
 	updated_hp.faint(team.is_me(), team.pokemon());
 }
 
@@ -355,6 +355,13 @@ void Battle::initialize_turn () {
 	last = nullptr;
 }
 
+namespace {
+
+void update_to_correct_switch(ActivePokemon & pokemon) {
+	pokemon.all_moves().set_index(pokemon.all_pokemon().replacement());
+}
+}	// namespace
+
 void Battle::do_turn () {
 	first->move(false);
 	last->move(false);
@@ -375,44 +382,44 @@ void Battle::do_turn () {
 		replacement(*last, *first);
 	}
 	else {
-		std::cout << "First move: " + to_string(first->pokemon().name()) + " uses " + to_string(first->pokemon().move()) + '\n';
-		std::cout << "Last move: " + to_string(last->pokemon().name()) + " uses " + to_string(last->pokemon().move()) + '\n';
+		std::cout << "First move: " << to_string(static_cast<Species>(first->pokemon())) << " uses " << to_string(first->pokemon().move()) << '\n';
+		std::cout << "Last move: " << to_string(static_cast<Species>(last->pokemon())) << " uses " << to_string(last->pokemon().move()) << '\n';
 		// Anything with recoil will mess this up
 		
 		constexpr bool damage_is_known = true;
 		std::cerr << "First\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 
 		register_damage();
 		call_move(*first, *last, weather, variable(*first), damage_is_known);
 		std::cerr << "Second\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 		normalize_hp(*last);
 		std::cerr << "Third\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 
 		register_damage();
 		call_move(*last, *first, weather, variable(*last), damage_is_known);
 		std::cerr << "Fourth\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 		normalize_hp(*first);
 		std::cerr << "Fifth\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 
 		register_damage();
 		endofturn (*first, *last, weather);
 		std::cerr << "Sixth\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 		normalize_hp ();
 		std::cerr << "Seventh\n";
-		std::cerr << "AI HP: " << ai.pokemon().stat(Stat::HP).stat << '\n';
-		std::cerr << "Foe HP: " << foe.pokemon().stat(Stat::HP).stat << '\n';
+		std::cerr << "AI HP: " << get_stat(ai.pokemon(), Stat::HP).stat << '\n';
+		std::cerr << "Foe HP: " << get_stat(foe.pokemon(), Stat::HP).stat << '\n';
 		
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
@@ -422,7 +429,7 @@ void Battle::do_turn () {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!is_switch(pokemon.move())) {
-				pokemon.update_to_correct_switch();
+				update_to_correct_switch(pokemon);
 			}
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}
@@ -484,11 +491,11 @@ void Battle::handle_critical_hit(Party const party) {
 }
 
 void Battle::handle_ability_message(Party party, Ability::Abilities ability) {
-	get_team(party).replacement().ability() = ability;
+	get_ability(get_team(party).replacement()) = ability;
 }
 
 void Battle::handle_item_message(Party party, Item::Items item) {
-	get_team(party).replacement().item().name = item;
+	get_item(get_team(party).replacement()).name = item;
 }
 
 void Battle::slot_memory_bring_to_front() {

@@ -51,7 +51,7 @@ bool handle_sleep_counter(ActivePokemon & user, Moves move);
 }	// unnamed namespace
 
 LegalSelections::LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather):
-	m_species(user.name()) {
+	m_species(user) {
 	user.all_moves().for_each([&](Move const & move) {
 		bool const found_selectable_move = !container.empty();
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
@@ -98,7 +98,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 	
 	if (is_switch(move))
 		return true;
-	if (user.stat(Stat::HP).stat == 0 or (other.is_fainted() and false))
+	if (get_stat(user, Stat::HP).stat == 0 or (other.is_fainted() and false))
 		return false;
 
 	bool execute = !(is_blocked_due_to_status (user, move) or
@@ -110,7 +110,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 		// execute
 		user.handle_confusion();
 		if (user.flinched()) {
-			if (user.ability().boosts_speed_when_flinched ())
+			if (get_ability(user).boosts_speed_when_flinched ())
 				user.stat_boost(Stat::SPE, 1);
 			execute = false;
 		}
@@ -137,8 +137,8 @@ bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, Activ
 }
 
 bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather) {
-	bool const block_attempted = other.ability().blocks_switching(user, weather) or user.trapped();
-	bool const result = block_attempted and !user.item().allows_switching();
+	bool const block_attempted = get_ability(other).blocks_switching(user, weather) or user.trapped();
+	bool const result = block_attempted and !get_item(user).allows_switching();
 	return result;
 }
 
@@ -212,7 +212,7 @@ bool standard_move_lock_in(ActivePokemon const & user, Moves const move) {
 }
 
 bool is_locked_in (ActivePokemon const & user) {
-	return user.is_encored() or user.recharging() or user.item().is_choice_item();
+	return user.is_encored() or user.recharging() or get_item(user).is_choice_item();
 }
 
 bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move) {
@@ -228,7 +228,7 @@ bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {
 }
 
 bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
-	return user.status().is_frozen() and !is_usable_while_frozen(move);
+	return get_status(user).is_frozen() and !is_usable_while_frozen(move);
 }
 
 bool is_blocked_by_sleep(Moves const move) {
@@ -242,7 +242,7 @@ bool is_blocked_by_sleep(Moves const move) {
 }
 
 bool handle_sleep_counter(ActivePokemon & user, Moves const move) {
-	if (!user.status().is_sleeping())
+	if (!get_status(user).is_sleeping())
 		return false;
 	user.increase_sleep_counter();
 	return is_blocked_by_sleep(move);

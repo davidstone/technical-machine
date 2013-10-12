@@ -22,6 +22,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
+class ActivePokemon;
 class Pokemon;
 
 // This class handles the number of turns remaining on Bind, Clamp, Fire Spin,
@@ -30,7 +31,7 @@ class PartialTrap {
 public:
 	PartialTrap();
 	void activate(bool extended = false);
-	void damage(Pokemon & pokemon);
+	void damage(ActivePokemon & pokemon);
 	void reset();
 	explicit operator bool() const;
 	friend bool operator== (PartialTrap const & lhs, PartialTrap const & rhs);

@@ -25,7 +25,7 @@ namespace technicalmachine {
 
 UpdatedHP::UpdatedHP(Team const & team) {
 	for (auto const & pokemon : team.all_pokemon()) {
-		add(team.is_me(), pokemon, pokemon.stat(Stat::HP).max);
+		add(team.is_me(), pokemon, get_stat(pokemon, Stat::HP).max);
 	}
 }
 

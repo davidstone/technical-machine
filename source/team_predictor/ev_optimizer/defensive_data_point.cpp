@@ -81,10 +81,10 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemo
 }
 
 void DataPoint::update_pokemon(Pokemon & pokemon) const {
-	pokemon.nature() = nature;
-	pokemon.stat(Stat::HP).ev.set_value(hp);
-	pokemon.stat(Stat::DEF).ev.set_value(defense);
-	pokemon.stat(Stat::SPD).ev.set_value(special_defense);
+	::technicalmachine::get_nature(pokemon) = nature;
+	get_stat(pokemon, Stat::HP).ev.set_value(hp);
+	get_stat(pokemon, Stat::DEF).ev.set_value(defense);
+	get_stat(pokemon, Stat::SPD).ev.set_value(special_defense);
 }
 
 class InvalidNatureCombination : public std::logic_error {

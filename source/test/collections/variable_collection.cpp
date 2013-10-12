@@ -84,7 +84,7 @@ void test_combinations(Team & team, unsigned const max_foe_size) {
 
 void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	try {
-		variable.set_phaze_index(team, team.pokemon().name());
+		variable.set_phaze_index(team, team.pokemon());
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	}
 	catch (PhazingInSamePokemon const &) {

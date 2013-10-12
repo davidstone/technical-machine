@@ -71,7 +71,7 @@ unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defen
 
 	power *= Ability::attacker_modifier(attacker, defender, base_power);
 	
-	power *= defender_ability_modifier(attacker, defender.ability());
+	power *= defender_ability_modifier(attacker, get_ability(defender));
 	
 	return std::max(power, 1u);
 }
@@ -104,13 +104,13 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 	switch (attacker.move().name()) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
-			return 120u * defender.hp_ratio() + 1;
+			return 120u * hp_ratio(defender) + 1;
 		case Moves::Eruption:
 		case Moves::Water_Spout:
-			return 150u * attacker.hp_ratio();
+			return 150u * hp_ratio(attacker);
 		case Moves::Flail:
 		case Moves::Reversal: {
-			unsigned const k = 64u * attacker.hp_ratio();
+			unsigned const k = 64u * hp_ratio(attacker);
 			if (k <= 1)
 				return 200;
 			else if (k <= 5)
@@ -125,7 +125,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 				return 20;
 		}
 		case Moves::Fling:
-			return attacker.item().get_fling_power();
+			return get_item(attacker).get_fling_power();
 		case Moves::Frustration:
 			return 102 - return_power(attacker);
 		case Moves::Fury_Cutter:
@@ -134,7 +134,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Low_Kick:
 			return power_of_mass_based_moves(defender);
 		case Moves::Gyro_Ball: {
-			unsigned const uncapped_power = 25u * defender.stat(Stat::SPE).stat / attacker.stat(Stat::SPE).stat + 1;
+			unsigned const uncapped_power = 25u * get_stat(defender, Stat::SPE).stat / get_stat(attacker, Stat::SPE).stat + 1;
 			return std::min(uncapped_power, 150u);
 		}
 		case Moves::Ice_Ball:
@@ -150,14 +150,14 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 				{ Stat::SPD, 5 }
 			}};
 			auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & stat) {
-				return value + second_lowest_bit(attacker.stat(stat.first)) * (1u << stat.second);
+				return value + second_lowest_bit(get_stat(attacker, stat.first)) * (1u << stat.second);
 			};
 			return std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), 0u, sum) * 40 / 63 + 30;
 		}
 		case Moves::Magnitude:
 			return variable.value();
 		case Moves::Natural_Gift:
-			return attacker.item().get_berry_power ();
+			return get_item(attacker).get_berry_power ();
 		case Moves::Present:
 			assert (!variable.present_heals());
 			return variable.value();
@@ -202,22 +202,22 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 		case Moves::Revenge:
 			return attacker.damaged();
 		case Moves::Brine:
-			return defender.stat(Stat::HP).stat <= defender.stat(Stat::HP).max / 2;
+			return get_stat(defender, Stat::HP).stat <= get_stat(defender, Stat::HP).max / 2;
 		case Moves::Facade:
-			return attacker.status().boosts_facade();
+			return get_status(attacker).boosts_facade();
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return attacker.defense_curled();
 		case Moves::Payback:
 			return defender.moved();
 		case Moves::SmellingSalt:
-			return defender.status().boosts_smellingsalt();
+			return get_status(defender).boosts_smellingsalt();
 		case Moves::SolarBeam:
 			return !weather.rain();
 		case Moves::Stomp:
 			return defender.minimized();
 		case Moves::Wake_Up_Slap:
-			return defender.status().is_sleeping();
+			return get_status(defender).is_sleeping();
 		case Moves::Weather_Ball:
 			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:
@@ -227,7 +227,7 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 
 unsigned item_modifier (Pokemon const & attacker) {
 	Type const type(attacker.move(), attacker);
-	switch (attacker.item().name) {
+	switch (get_item(attacker).name) {
 		case Item::MUSCLE_BAND:
 			if (is_physical(attacker.move()))
 				return 11;

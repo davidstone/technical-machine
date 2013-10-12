@@ -61,20 +61,22 @@ public:
 	operator Pokemon const & () const;
 	operator Pokemon & ();
 	operator Species() const;
+	MoveCollection const & all_moves() const;
+	MoveCollection & all_moves();
 	template<typename... Args>
 	Move const & move(Args&&... args) const {
-		return get_pokemon().move(std::forward<Args>(args)...);
+		return all_moves()(std::forward<Args>(args)...);
 	}
 	template<typename... Args>
 	Move const & regular_move(Args && ... args) const {
-		return get_pokemon().move.regular_move(std::forward<Args>(args)...);
+		auto const & self = static_cast<Pokemon const &>(*this);
+		return all_moves().regular_move(std::forward<Args>(args)...);
 	}
 	template<typename... Args>
 	Move & regular_move(Args && ... args) {
-		return get_pokemon().move.regular_move(std::forward<Args>(args)...);
+		auto const & self = static_cast<Pokemon const &>(*this);
+		return all_moves().regular_move(std::forward<Args>(args)...);
 	}
-	MoveCollection const & all_moves() const;
-	MoveCollection & all_moves();
 	bool was_used_last(Moves move) const;
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
@@ -84,8 +86,6 @@ public:
 	void clear_field();
 	void update_before_move();
 	void use_substitute();
-	Ability const & ability() const;
-	Ability & ability();
 	void attract();
 	void awaken(bool value);
 	Rational awaken_probability() const;
@@ -116,6 +116,10 @@ public:
 	void activate_encore();
 	void increment_encore();
 	void endure();
+	// This function should be used instead of checking if hp == 0 to handle
+	// messages being sent about multiple Pokemon fainting in one turn.
+	// Using this function will allow TM to correctly update an entire turn
+	// from a message.
 	bool is_fainted() const;
 	void faint();
 	bool flash_fire_is_active() const;
@@ -124,7 +128,6 @@ public:
 	void flinch();
 	void focus_energy();
 	void fully_trap();
-	Gender const & gender() const;
 	bool heal_block_is_active() const;
 	void activate_heal_block();
 	void decrement_heal_block();
@@ -141,10 +144,7 @@ public:
 	PokemonCollection::index_type index() const;
 	bool ingrained() const;
 	void ingrain();
-	Item const & item() const;
-	Item & item();
 	bool is_fully_paralyzed() const;
-	unsigned level() const;
 	void lower_pp(Ability const & target);
 	bool magnet_rise_is_active() const;
 	void activate_magnet_rise();
@@ -161,8 +161,6 @@ public:
 	bool moved() const;
 	bool moved_since_switch() const;
 	void activate_mud_sport();
-	Species name() const;
-	Nature const & nature() const;
 	bool nightmare() const;
 	void give_nightmares();
 	void partially_trap(bool extended);
@@ -187,15 +185,6 @@ public:
 	bool slow_start_is_active() const;
 	bool sport_is_active(Move const & foe_move) const;
 
-	template<typename... Args>
-	Stat const & stat(Args && ... args) const {
-		return get_pokemon().stat(std::forward<Args>(args)...);
-	}
-	template<typename... Args>
-	Stat & stat(Args && ... args) {
-		return get_pokemon().stat(std::forward<Args>(args)...);
-	}
-	Rational hp_ratio() const;
 	int current_stage(Stat::Stats stat) const;
 	unsigned positive_stat_boosts() const;
 	template<Stat::Stats stat, typename... Args>
@@ -214,9 +203,6 @@ public:
 	static void swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
 	static void swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs);
 	
-	Status const & status() const;
-	Status & status();
-
 	unsigned spit_up_power() const;
 	void increment_stockpile();
 	int release_stockpile();
@@ -225,9 +211,6 @@ public:
 	bool is_switching_to_self (Move const & switch_move) const;
 	bool has_switched() const;
 	bool switch_decision_required() const;
-	void switch_pokemon();
-	void switch_in();
-	void update_to_correct_switch();
 	
 	bool trapped() const;
 	bool tormented() const;
@@ -237,7 +220,6 @@ public:
 	void increment_taunt();
 	Rational toxic_ratio() const;
 	void increment_toxic();
-	TypeCollection const & type() const;
 	void u_turn();
 	void use_uproar();
 	bool vanish_doubles_power(Moves move_name) const;
@@ -279,8 +261,6 @@ public:
 	hash_type max_hash() const;
 
 private:
-	Pokemon const & get_pokemon() const;
-	Pokemon & get_pokemon();
 	friend class Evaluate;
 	// I'd make this a reference but I don't want to manually define a copy
 	// and move assignment operator to simply verify that the referents are
@@ -347,8 +327,12 @@ private:
 	bool is_tormented = false;
 	bool u_turning = false;
 	bool water_sport = false;
+	bool m_will_be_replaced = false;
 };
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);
+
+void switch_pokemon(ActivePokemon & pokemon);
+
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_

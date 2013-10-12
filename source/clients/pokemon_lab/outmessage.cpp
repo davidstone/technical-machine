@@ -62,14 +62,14 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	constexpr bool shiny = false;
 	write_byte (shiny);
 
-	auto const gender = simulator_cast<ID<Gender::Genders>>(pokemon.gender().gender);
+	auto const gender = simulator_cast<ID<Gender::Genders>>(get_gender(pokemon).gender);
 	write_byte(gender.value());
 
 	write_byte (pokemon.happiness());
-	write_int(pokemon.level());
-	write_string(to_string(pokemon.item().name));
-	write_string(to_string(pokemon.ability().name()));
-	write_int(pokemon.nature().name);
+	write_int(get_level(pokemon));
+	write_string(to_string(get_item(pokemon).name));
+	write_string(to_string(get_ability(pokemon).name()));
+	write_int(get_nature(pokemon).name);
 	write_int (pokemon.move.number_of_regular_moves());
 	pokemon.move.for_each_regular_move([&](Move const & move) {
 		write_int(simulator_cast<ID<Moves>>(move.name()).value());
@@ -79,8 +79,8 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 		Stat::HP, Stat::ATK, Stat::DEF, Stat::SPE, Stat::SPA, Stat::SPD
 	};
 	for (auto const stat : stats) {
-		write_int(pokemon.stat(stat).iv);
-		write_int(pokemon.stat(stat).ev.value());
+		write_int(get_stat(pokemon, stat).iv);
+		write_int(get_stat(pokemon, stat).ev.value());
 	}
 }
 

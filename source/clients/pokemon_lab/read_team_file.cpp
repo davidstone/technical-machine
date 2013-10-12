@@ -57,7 +57,7 @@ static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 		{ "SpDef", Stat::SPD },
 		{ "Spd", Stat::SPE }
 	};
-	return pokemon.stat(stats.at(name));
+	return get_stat(pokemon, stats.at(name));
 }
 
 static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {

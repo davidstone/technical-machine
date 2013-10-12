@@ -109,7 +109,7 @@ public:
 	template<Stat::Stats stat>
 	static Rational stat_modifier(ActivePokemon const & pokemon, Weather const & weather);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
-	static void weather_healing(Pokemon & pokemon, Weather const & weather);
+	static void weather_healing(ActivePokemon & pokemon, Weather const & weather);
 	friend bool operator== (Ability lhs, Ability rhs);
 private:
 	Abilities m_name;

@@ -65,9 +65,9 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 	predict_pokemon (team, estimate, multiplier);
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const name = pokemon.name();
-		pokemon.ability().set_if_unknown(detailed.get<Ability::Abilities>(name));
-		pokemon.item().set_if_unknown(detailed.get<Item::Items>(name));
-		pokemon.nature().set_if_unknown(detailed.get<Nature::Natures>(name));
+		get_ability(pokemon).set_if_unknown(detailed.get<Ability::Abilities>(name));
+		get_item(pokemon).set_if_unknown(detailed.get<Item::Items>(name));
+		get_nature(pokemon).set_if_unknown(detailed.get<Nature::Natures>(name));
 		predict_move(pokemon, detailed.get<std::vector<Moves>>(name));
 		optimize_evs(pokemon, random_engine);
 	}

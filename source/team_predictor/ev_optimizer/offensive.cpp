@@ -87,7 +87,7 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 		remove_individual_unused(container, [](Container::iterator it) {
 			return !Nature(it->first).lowers_stat<Stat::ATK>();
 		});
-		pokemon.stat(Stat::ATK).ev.set_value(0);
+		get_stat(pokemon, Stat::ATK).ev.set_value(0);
 	}
 	bool const is_special = has_special_move(pokemon);
 	if (!is_special) {
@@ -95,16 +95,16 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 			return (is_physical and !Nature(it->first).lowers_stat<Stat::SPA>())
 					or Nature(it->first).boosts_stat<Stat::SPA>();
 		});
-		pokemon.stat(Stat::SPA).ev.set_value(0);
+		get_stat(pokemon, Stat::SPA).ev.set_value(0);
 	}
 	if (!is_physical and !is_special) {
-		pokemon.nature().name = Nature::CALM;
+		get_nature(pokemon).name = Nature::CALM;
 	}
-	else if (!is_physical and pokemon.nature().boosts_stat<Stat::SPA>()) {
-		pokemon.nature().name = Nature::MODEST;
+	else if (!is_physical and get_nature(pokemon).boosts_stat<Stat::SPA>()) {
+		get_nature(pokemon).name = Nature::MODEST;
 	}
-	else if (!pokemon.nature().boosts_stat<Stat::ATK>() and !is_special) {
-		pokemon.nature().name = Nature::IMPISH;
+	else if (!get_nature(pokemon).boosts_stat<Stat::ATK>() and !is_special) {
+		get_nature(pokemon).name = Nature::IMPISH;
 	}
 }
 
@@ -113,9 +113,9 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 	unsigned const initial_spa = initial_stat<Stat::SPA>(pokemon);
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
-		pokemon.nature() = it->first;
-		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, pokemon.stat(Stat::ATK).ev, initial_atk);
-		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, pokemon.stat(Stat::SPA).ev, initial_spa);
+		get_nature(pokemon) = it->first;
+		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, get_stat(pokemon, Stat::ATK).ev, initial_atk);
+		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, get_stat(pokemon, Stat::SPA).ev, initial_spa);
 		if (atk and spa) {
 			stats.attack = *atk;
 			stats.special_attack = *spa;

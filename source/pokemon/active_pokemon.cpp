@@ -36,31 +36,26 @@ PokemonCollection & ActivePokemon::all_pokemon() {
 	return m_all_pokemon;
 }
 
-Pokemon const & ActivePokemon::get_pokemon() const {
-	return all_pokemon()();
-}
-Pokemon & ActivePokemon::get_pokemon() {
-	return all_pokemon()();
-}
-
 ActivePokemon::operator Pokemon const & () const {
-	return get_pokemon();
+	return all_pokemon()();
 }
 
 ActivePokemon::operator Pokemon & () {
-	return get_pokemon();
+	return all_pokemon()();
 }
 
 ActivePokemon::operator Species() const {
-	return static_cast<Species>(get_pokemon());
+	return static_cast<Species>(static_cast<Pokemon const &>(*this));
 }
 
 MoveCollection const & ActivePokemon::all_moves() const {
-	return get_pokemon().move;
+	auto const & self = static_cast<Pokemon const &>(*this);
+	return self.move;
 }
 
 MoveCollection & ActivePokemon::all_moves() {
-	return get_pokemon().move;
+	auto & self = static_cast<Pokemon &>(*this);
+	return self.move;
 }
 
 bool ActivePokemon::was_used_last(Moves const move_name) const {
@@ -134,7 +129,7 @@ void ActivePokemon::reset_switch() {
 	// vanished. Therefore, we need to reset it.
 	vanish.reset();
 	yawn.reset();
-	get_pokemon().reset_replacing();
+	m_will_be_replaced = false;
 }
 
 void ActivePokemon::reset_between_turns() {
@@ -159,14 +154,6 @@ void ActivePokemon::clear_leech_seed() {
 	leech_seed = false;
 }
 
-Ability const & ActivePokemon::ability() const {
-	return get_pokemon().ability();
-}
-
-Ability & ActivePokemon::ability() {
-	return get_pokemon().ability();
-}
-
 bool ActivePokemon::aqua_ring_is_active() const {
 	return aqua_ring;
 }
@@ -184,7 +171,9 @@ void ActivePokemon::awaken(bool const value) {
 }
 
 Rational ActivePokemon::awaken_probability() const {
-	return status().awaken_probability(ability(), awakening);
+	auto const & status = get_status(*this);
+	auto const & ability = get_ability(*this);
+	return status.awaken_probability(ability, awakening);
 }
 
 bool ActivePokemon::is_baton_passing() const {
@@ -200,7 +189,7 @@ bool ActivePokemon::cannot_be_koed() const {
 }
 
 bool ActivePokemon::charge_boosted() const {
-	return charged and Type(move(), get_pokemon()) == Type::Electric;
+	return charged and Type(move(), *this) == Type::Electric;
 }
 
 void ActivePokemon::charge() {
@@ -212,12 +201,12 @@ bool ActivePokemon::is_confused() const {
 }
 
 void ActivePokemon::confuse() {
-	if (!get_pokemon().ability().blocks_confusion())
+	if (!get_ability(*this).blocks_confusion())
 		confusion.activate();
 }
 
 void ActivePokemon::handle_confusion() {
-	confusion.do_turn(get_pokemon());
+	confusion.do_turn(*this);
 }
 
 bool ActivePokemon::critical_hit() const {
@@ -285,11 +274,12 @@ void ActivePokemon::endure() {
 }
 
 bool ActivePokemon::is_fainted() const {
-	return get_pokemon().is_fainted();
+	return m_will_be_replaced;
 }
 
 void ActivePokemon::faint() {
-	get_pokemon().faint();
+	get_stat(*this, Stat::HP).stat = 0;
+	m_will_be_replaced = true;
 }
 
 bool ActivePokemon::flash_fire_is_active() const {
@@ -352,20 +342,8 @@ void ActivePokemon::decrement_heal_block() {
 	heal_block.decrement();
 }
 
-Item const & ActivePokemon::item() const {
-	return get_pokemon().item();
-}
-
-Item & ActivePokemon::item() {
-	return get_pokemon().item();
-}
-
 bool ActivePokemon::is_fully_paralyzed() const {
 	return fully_paralyzed;
-}
-
-Gender const & ActivePokemon::gender() const {
-	return get_pokemon().gender();
 }
 
 bool ActivePokemon::leech_seeded() const {
@@ -376,12 +354,8 @@ void ActivePokemon::hit_with_leech_seed() {
 	leech_seed = true;
 }
 
-unsigned ActivePokemon::level() const {
-	return get_pokemon().level();
-}
-
 bool ActivePokemon::is_loafing() const {
-	return ability().is_loafing(loaf);
+	return get_ability(*this).is_loafing(loaf);
 }
 
 void ActivePokemon::decrement_lock_in() {
@@ -471,14 +445,6 @@ void ActivePokemon::activate_mud_sport() {
 	mud_sport = true;
 }
 
-Species ActivePokemon::name() const {
-	return get_pokemon().name();
-}
-
-Nature const & ActivePokemon::nature() const {
-	return get_pokemon().nature();
-}
-
 bool ActivePokemon::nightmare() const {
 	return nightmares;
 }
@@ -492,7 +458,7 @@ void ActivePokemon::partially_trap(bool const extended) {
 }
 
 void ActivePokemon::partial_trap_damage() {
-	partial_trap.damage(get_pokemon());
+	partial_trap.damage(*this);
 }
 
 void ActivePokemon::activate_perish_song() {
@@ -507,7 +473,7 @@ void ActivePokemon::perish_song_turn() {
 }
 
 bool ActivePokemon::can_be_phazed() const {
-	return !ingrained() and !ability().blocks_phazing() and all_pokemon().size() > 1;
+	return !ingrained() and !get_ability(*this).blocks_phazing() and all_pokemon().size() > 1;
 }
 
 bool ActivePokemon::power_trick_is_active() const {
@@ -561,7 +527,8 @@ void ActivePokemon::shed_skin(bool const value) {
 }
 
 Rational ActivePokemon::shed_skin_probability() const {
-	if (!ability().can_clear_status(status())) {
+	auto const & status = get_status(*this);
+	if (!get_ability(*this).can_clear_status(status)) {
 		return Rational(shed_skin_activated() ? 0 : 1, 1);
 	}
 	Rational const result(3, 10);
@@ -569,7 +536,9 @@ Rational ActivePokemon::shed_skin_probability() const {
 }
 
 void ActivePokemon::increase_sleep_counter() {
-	status().increase_sleep_counter(ability(), awakening);
+	auto & status = get_status(*this);
+	auto const & ability = get_ability(*this);
+	status.increase_sleep_counter(ability, awakening);
 }
 
 bool ActivePokemon::slow_start_is_active() const {
@@ -577,7 +546,7 @@ bool ActivePokemon::slow_start_is_active() const {
 }
 
 bool ActivePokemon::sport_is_active(Move const & foe_move) const {
-	Type const move_type(foe_move, get_pokemon());
+	Type const move_type(foe_move, *this);
 	if (move_type == Type::Electric) {
 		return mud_sport;
 	}
@@ -587,10 +556,6 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 	else {
 		return false;
 	}
-}
-
-Rational ActivePokemon::hp_ratio() const {
-	return current_hp(get_pokemon());
 }
 
 int ActivePokemon::current_stage(Stat::Stats const stat_index) const {
@@ -647,14 +612,6 @@ void ActivePokemon::swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs) {
 	swap(lhs.stage, rhs.stage);
 }
 
-Status const & ActivePokemon::status() const {
-	return get_pokemon().status();
-}
-
-Status & ActivePokemon::status() {
-	return get_pokemon().status();
-}
-
 unsigned ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }
@@ -687,17 +644,11 @@ bool ActivePokemon::switch_decision_required() const {
 	return pass or u_turning or will_be_replaced();
 }
 
-void ActivePokemon::switch_pokemon() {
-	switch_out(get_pokemon());
-	all_pokemon().set_index(all_pokemon().replacement());
-}
-
-void ActivePokemon::switch_in() {
-	get_pokemon().switch_in();
-}
-
-void ActivePokemon::update_to_correct_switch() {
-	get_pokemon().move.set_index(from_replacement(all_pokemon().replacement()));
+void switch_pokemon(ActivePokemon & pokemon) {
+	if (get_ability(pokemon).clears_status_on_switch()) {
+		get_status(pokemon).clear();
+	}
+	pokemon.all_pokemon().set_index(pokemon.all_pokemon().replacement());
 }
 
 bool ActivePokemon::trapped() const {
@@ -730,10 +681,6 @@ Rational ActivePokemon::toxic_ratio() const {
 
 void ActivePokemon::increment_toxic() {
 	toxic.increment();
-}
-
-TypeCollection const & ActivePokemon::type() const {
-	return get_pokemon().type();
 }
 
 void ActivePokemon::u_turn() {
@@ -790,18 +737,19 @@ void ActivePokemon::use_bide(Pokemon & target) {
 namespace {
 
 bool can_use_substitute(Pokemon const & pokemon) {
-	auto const & hp = pokemon.stat(Stat::HP);
+	auto const & hp = get_stat(pokemon, Stat::HP);
 	return hp.stat > hp.max / 4;
 }
 
 }	// namespace
 
 void ActivePokemon::use_substitute() {
-	if (!can_use_substitute(get_pokemon()))
+	if (!can_use_substitute(*this))
 		return;
-	bool const created = active_substitute.create(stat(Stat::HP).max);
+	auto const & max_hp = get_stat(*this, Stat::HP).max;
+	bool const created = active_substitute.create(max_hp);
 	if (created) {
-		indirect_damage(stat(Stat::HP).max / 4);
+		indirect_damage(max_hp / 4);
 	}
 }
 
@@ -818,13 +766,13 @@ Rational ActivePokemon::random_damage_multiplier() const {
 }
 
 void ActivePokemon::direct_damage(unsigned damage) {
-	damage = apply_damage(get_pokemon(), damage);
+	damage = apply_damage(*this, damage);
 	damage_done_to_active = damage;
 	bide.add_damage(damage);
 }
 
 void ActivePokemon::indirect_damage(unsigned const damage) {
-	apply_damage(get_pokemon(), damage);
+	apply_damage(*this, damage);
 }
 
 void ActivePokemon::register_damage(unsigned const damage) {
@@ -844,15 +792,16 @@ Rational ActivePokemon::accuracy_probability() const {
 }
 
 bool ActivePokemon::will_be_replaced() const {
-	return get_pokemon().will_be_replaced();
+	return m_will_be_replaced;
 }
 
 void ActivePokemon::normalize_hp(bool fainted) {
+	auto & hp = get_stat(*this, Stat::HP).stat;
 	if (fainted) {
 		faint();
 	}
-	else if (stat(Stat::HP).stat == 0) {
-		stat(Stat::HP).stat = 1;
+	else if (hp == 0) {
+		hp = 1;
 	}
 }
 

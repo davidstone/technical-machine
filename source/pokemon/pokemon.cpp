@@ -55,7 +55,6 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t se
 	m_name(species),
 	m_gender(set_gender),
 
-	m_will_be_replaced(false),
 	m_level(set_level),
 
 	m_happiness(set_happiness)
@@ -76,18 +75,12 @@ Pokemon::operator Species() const {
 }
 
 
-void Pokemon::switch_in() {
-	seen.make_visible();
-}
-
-void switch_out(Pokemon & pokemon) {
-	// Cure the status of a Natural Cure Pokemon
-	if (pokemon.ability().clears_status_on_switch())
-		pokemon.status().clear();
+void switch_in(Pokemon & pokemon) {
+	pokemon.seen.make_visible();
 }
 
 void calculate_initial_hp(Pokemon & pokemon) {
-	pokemon.stat(Stat::HP).calculate_initial_hp(pokemon.level());
+	get_stat(pokemon, Stat::HP).calculate_initial_hp(get_level(pokemon));
 }
 
 void Pokemon::remove_switch() {
@@ -101,8 +94,9 @@ uint8_t Pokemon::index_of_first_switch () const {
 	return index;
 }
 
-Rational current_hp(Pokemon const & pokemon) {
-	return Rational(pokemon.stat(Stat::HP).stat, pokemon.stat(Stat::HP).max);
+Rational hp_ratio(Pokemon const & pokemon) {
+	auto const & hp = get_stat(pokemon, Stat::HP);
+	return Rational(hp.stat, hp.max);
 }
 
 std::string Pokemon::get_nickname () const {
@@ -117,89 +111,76 @@ Species Pokemon::name() const {
 	return m_name;
 }
 
-Ability const & Pokemon::ability() const {
-	return m_ability;
+Ability const & get_ability(Pokemon const & pokemon) {
+	return pokemon.m_ability;
 }
-Ability & Pokemon::ability() {
-	return m_ability;
-}
-
-Gender const & Pokemon::gender() const {
-	return m_gender;
-}
-Gender & Pokemon::gender() {
-	return m_gender;
+Ability & get_ability(Pokemon & pokemon) {
+	return pokemon.m_ability;
 }
 
-Item const & Pokemon::item() const {
-	return m_item;
+Gender const & get_gender(Pokemon const & pokemon) {
+	return pokemon.m_gender;
 }
-Item & Pokemon::item() {
-	return m_item;
-}
-
-Nature const & Pokemon::nature() const {
-	return m_nature;
-}
-Nature & Pokemon::nature() {
-	return m_nature;
+Gender & get_gender(Pokemon & pokemon) {
+	return pokemon.m_gender;
 }
 
-Stat const & Pokemon::stat(Stat::Stats const index_stat) const {
-	return stats[index_stat];
+Item const & get_item(Pokemon const & pokemon) {
+	return pokemon.m_item;
 }
-Stat & Pokemon::stat(Stat::Stats const index_stat) {
-	return stats[index_stat];
-}
-
-Status const & Pokemon::status() const {
-	return m_status;
-}
-Status & Pokemon::status() {
-	return m_status;
+Item & get_item(Pokemon & pokemon) {
+	return pokemon.m_item;
 }
 
-TypeCollection const & Pokemon::type() const {
-	return current_type;
+Nature const & get_nature(Pokemon const & pokemon) {
+	return pokemon.m_nature;
+}
+Nature & get_nature(Pokemon & pokemon) {
+	return pokemon.m_nature;
+}
+
+Stat const & get_stat(Pokemon const & pokemon, Stat::Stats const index_stat) {
+	return pokemon.stats[index_stat];
+}
+Stat & get_stat(Pokemon & pokemon, Stat::Stats const index_stat) {
+	return pokemon.stats[index_stat];
+}
+
+Status const & get_status(Pokemon const & pokemon) {
+	return pokemon.m_status;
+}
+Status & get_status(Pokemon & pokemon) {
+	return pokemon.m_status;
+}
+
+TypeCollection const & get_type(Pokemon const & pokemon) {
+	return pokemon.current_type;
 }
 
 void Pokemon::change_type(Type::Types const new_type) {
 	current_type.change_type(new_type);
 }
 
-unsigned Pokemon::level() const {
-	return m_level();
+unsigned get_level(Pokemon const & pokemon) {
+	return pokemon.m_level();
 }
 
 unsigned Pokemon::happiness() const {
 	return m_happiness;
 }
 
-bool Pokemon::is_fainted() const {
-	return m_will_be_replaced;
-}
-bool Pokemon::will_be_replaced() const {
-	return m_will_be_replaced;
-}
-void Pokemon::faint() {
-	stat(Stat::HP).stat = 0;
-	m_will_be_replaced = true;
-}
-void Pokemon::reset_replacing() {
-	m_will_be_replaced = false;
-}
-
 Pokemon::hash_type Pokemon::hash() const {
+	auto const & hp = get_stat(*this, Stat::HP);
 	return static_cast<hash_type>(m_name) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
-			((stat(Stat::HP).stat - 1u) + stat(Stat::HP).max *	// - 1 because you can't have 0 HP
+			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * stat(Stat::HP).max * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * get_stat(*this, Stat::HP).max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -210,7 +191,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.move == rhs.move and
 			lhs.m_name == rhs.m_name and
 			lhs.m_status == rhs.m_status and
-			lhs.stat(Stat::HP).stat == rhs.stat(Stat::HP).stat and
+			get_stat(lhs, Stat::HP).stat == get_stat(rhs, Stat::HP).stat and
 			lhs.m_item == rhs.m_item and
 			lhs.seen == rhs.seen;
 }
@@ -221,8 +202,7 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.m_ability == rhs.m_ability and
 			lhs.m_gender == rhs.m_gender and
 			lhs.m_nature == rhs.m_nature and
-			lhs.will_be_replaced() == rhs.will_be_replaced() and
-			lhs.level() == rhs.level() and
+			lhs.m_level == rhs.m_level and
 			lhs.happiness() == rhs.happiness();
 }
 
@@ -232,21 +212,21 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
 
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	std::string output = to_string(pokemon.name());
-	double const d_per_cent_hp = 100.0 * current_hp(pokemon);
+	double const d_per_cent_hp = 100.0 * hp_ratio(pokemon);
 	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
 	output += " (" + per_cent_hp + "% HP)";
-	output += " @ " + to_string(pokemon.item().name);
+	output += " @ " + to_string(get_item(pokemon).name);
 	if (include_nickname and pokemon.get_nickname() != to_string(pokemon.name())) {
 		output += " ** " + pokemon.get_nickname();
 	}
 	output += '\n';
-	if (pokemon.ability().is_set()) {
-		output += "\tAbility: " + to_string(pokemon.ability().name()) + '\n';
+	if (get_ability(pokemon).is_set()) {
+		output += "\tAbility: " + to_string(get_ability(pokemon).name()) + '\n';
 	}
-	if (!pokemon.status().is_clear()) {
-		output += "\tStatus: " + to_string(pokemon.status().name()) + '\n';
+	if (!get_status(pokemon).is_clear()) {
+		output += "\tStatus: " + to_string(get_status(pokemon).name()) + '\n';
 	}
-	output += "\tNature: " + to_string(pokemon.nature().name) + '\n';
+	output += "\tNature: " + to_string(get_nature(pokemon).name) + '\n';
 	output += "\t";
 	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
 		if (stat_name != "HP") {
@@ -263,7 +243,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		{ Stat::SPE, "Spe" },
 	};
 	for (auto const stat : stats) {
-		add_stat(pokemon.stat(stat.first), stat.second);
+		add_stat(get_stat(pokemon, stat.first), stat.second);
 	}
 	pokemon.move.for_each_regular_move([& output](Move const & move) {
 		output += "\n\t- " + to_string(move);

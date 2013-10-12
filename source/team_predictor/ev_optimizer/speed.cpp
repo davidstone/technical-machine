@@ -26,9 +26,9 @@ namespace technicalmachine {
 SpeedEVs::SpeedEVs(Pokemon pokemon) {
 	unsigned const speed = initial_stat<Stat::SPE>(pokemon);
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
-		pokemon.nature().name = nature;
+		get_nature(pokemon).name = nature;
 		for (unsigned ev = 0; ev <= 252; ++ev) {
-			pokemon.stat(Stat::SPE).ev.set_value(ev);
+			get_stat(pokemon, Stat::SPE).ev.set_value(ev);
 			if (initial_stat<Stat::SPE>(pokemon) >= speed) {
 				container.insert(std::make_pair(nature, ev));
 				break;

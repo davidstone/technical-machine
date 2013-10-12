@@ -22,13 +22,14 @@
 #include <cstdint>
 
 namespace technicalmachine {
+class ActivePokemon;
 class Pokemon;
 
 class Wish {
 public:
 	Wish();
 	void activate();
-	void decrement(Pokemon & pokemon);
+	void decrement(ActivePokemon & pokemon);
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();

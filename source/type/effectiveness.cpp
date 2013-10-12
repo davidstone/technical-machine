@@ -29,7 +29,7 @@ bool check_effectiveness(std::vector<Rational> const & effectiveness, std::initi
 }	// namespace
 
 Effectiveness::Effectiveness(Type::Types const type, Pokemon const & defender) {
-	for (Type const target_type : defender.type().types)
+	for (Type const target_type : get_type(defender).types)
 		effectiveness.emplace_back(lookup_effectiveness(type, target_type.type));
 }
 

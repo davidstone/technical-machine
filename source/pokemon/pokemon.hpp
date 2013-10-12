@@ -42,49 +42,53 @@ namespace technicalmachine {
 class Rational;
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
+// I use a macro here because I rely on a conversion operator. Friend functions
+// only declared in a class body are not found by lookup rules in that case. The
+// macro solution seemed better than duplicating all of this by hand.
+//
+// qualifier should be `friend` or nothing
+#define TECHNICALMACHINE_FRIEND_DECLARATIONS(qualifier) \
+qualifier Ability const & get_ability(Pokemon const & pokemon); \
+qualifier Ability & get_ability(Pokemon & pokemon); \
+qualifier Gender const & get_gender(Pokemon const & pokemon); \
+qualifier Gender & get_gender(Pokemon & pokemon); \
+qualifier Item const & get_item(Pokemon const & pokemon); \
+qualifier Item & get_item(Pokemon & pokemon); \
+qualifier unsigned get_level(Pokemon const & pokemon); \
+qualifier Nature const & get_nature(Pokemon const & pokemon); \
+qualifier Nature & get_nature(Pokemon & pokemon); \
+qualifier Stat const & get_stat(Pokemon const & pokemon, Stat::Stats index_stat); \
+qualifier Stat & get_stat(Pokemon & pokemon, Stat::Stats index_stat); \
+qualifier Status const & get_status(Pokemon const & pokemon); \
+qualifier Status & get_status(Pokemon & pokemon); \
+qualifier TypeCollection const & get_type(Pokemon const & pokemon); \
+qualifier void switch_in(Pokemon & pokemon)
+
+TECHNICALMACHINE_FRIEND_DECLARATIONS(/*empty*/);
+
+
 class Pokemon {
 public:
 	Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
 	Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
 	operator Species() const;
-	void switch_in();
 	void remove_switch();
 	uint8_t index_of_first_switch () const;
 	std::string get_nickname () const;
 	Species name() const;
-	Ability const & ability() const;
-	Ability & ability();
-	Gender const & gender() const;
-	Gender & gender();
-	Item const & item() const;
-	Item & item();
-	Nature const & nature() const;
-	Nature & nature();
-	Stat const & stat(Stat::Stats index_stat) const;
-	Stat & stat(Stat::Stats index_stat);
-	Status const & status() const;
-	Status & status();
-	TypeCollection const & type() const;
+	
+	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
 	void change_type(Type::Types new_type);
-	unsigned level() const;
 	unsigned happiness() const;
-	// This function should be used instead of checking if hp == 0 to handle
-	// messages being sent about multiple Pokemon fainting in one turn.
-	// Using this function will allow TM to correctly update an entire turn
-	// from a message.
-	bool is_fainted() const;
-	bool will_be_replaced() const;
-	void faint();
-	void reset_replacing();
 	typedef uint64_t hash_type;
 	hash_type hash () const;
 	hash_type max_hash() const;
 	friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
-	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
 
 	MoveCollection move;
 	
 private:
+	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	std::string nickname;
 	#endif
@@ -99,7 +103,6 @@ private:
 	Status m_status;
 	Nature m_nature;
 
-	bool m_will_be_replaced;
 	Seen seen;
 	Level m_level;
 	uint8_t m_happiness;
@@ -107,12 +110,13 @@ private:
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
+#undef TECHNICALMACHINE_FRIEND_DECLARATIONS
+
+
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
-void switch_out(Pokemon & pokemon);
-
 void calculate_initial_hp(Pokemon & pokemon);
-Rational current_hp(Pokemon const & pokemon);
+Rational hp_ratio(Pokemon const & pokemon);
 
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_HPP_

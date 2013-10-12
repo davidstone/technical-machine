@@ -34,11 +34,11 @@ void ev_optimizer_tests() {
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(Species::Snorlax, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	pokemon.stat(Stat::HP).ev.set_value(128);
+	get_stat(pokemon, Stat::HP).ev.set_value(128);
 	for (auto const stat : { Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE }) {
-		pokemon.stat(stat).ev.set_value(76);
+		get_stat(pokemon, stat).ev.set_value(76);
 	}
-	pokemon.nature() = Nature::HARDY;
+	get_nature(pokemon) = Nature::HARDY;
 	calculate_initial_hp(pokemon);
 	pokemon.move.add(Moves::Psychic, 3);
 	pokemon.move.add(Moves::Earthquake, 3);

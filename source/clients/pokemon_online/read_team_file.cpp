@@ -53,7 +53,7 @@ Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
 	if (n >= stat_order.size()) {
 		throw InvalidStat(std::to_string(n));
 	}
-	return pokemon.stat(stat_order[n]);
+	return get_stat(pokemon, stat_order[n]);
 }
 
 bool is_real_pokemon(boost::property_tree::ptree const & pt) {
@@ -83,11 +83,11 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	Pokemon & pokemon = team.replacement();
 
 	unsigned const item = pt.get<unsigned>("<xmlattr>.Item");
-	pokemon.item().name = id_to_item(item);
+	get_item(pokemon).name = id_to_item(item);
 	unsigned const ability = pt.get<unsigned>("<xmlattr>.Ability");
-	pokemon.ability() = id_to_ability(ability);
+	get_ability(pokemon) = id_to_ability(ability);
 	unsigned const nature = pt.get<unsigned>("<xmlattr>.Nature");
-	pokemon.nature().name = id_to_nature(nature);
+	get_nature(pokemon).name = id_to_nature(nature);
 
 	unsigned n = 0;
 	for (auto const & value : pt.get_child("")) {

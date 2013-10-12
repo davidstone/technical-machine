@@ -67,7 +67,7 @@ void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 		{ Stat::SPD, "SpDef" }
 	};
 	for (auto const & stat : stats) {
-		write_stat(pokemon.stat(stat.first), stat.second, pt);
+		write_stat(get_stat(pokemon, stat.first), stat.second, pt);
 	}
 }
 
@@ -75,12 +75,12 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
 	member.put("<xmlattr>.species", simulator_cast<std::string>(pokemon.name()));
 	member.put ("nickname", pokemon.get_nickname());
-	member.put ("level", pokemon.level());
+	member.put ("level", get_level(pokemon));
 	member.put ("happiness", pokemon.happiness());
-	member.put ("gender", to_string(pokemon.gender().gender));
-	member.put ("nature", to_string(pokemon.nature().name));
-	member.put ("item", to_string(pokemon.item().name));
-	member.put ("ability", to_string(pokemon.ability().name()));
+	member.put ("gender", to_string(get_gender(pokemon).gender));
+	member.put ("nature", to_string(get_nature(pokemon).name));
+	member.put ("item", to_string(get_item(pokemon).name));
+	member.put ("ability", to_string(get_ability(pokemon).name()));
 	pokemon.move.for_each_regular_move ([&](Move const & move) {
 		write_move (move, member);
 	});
