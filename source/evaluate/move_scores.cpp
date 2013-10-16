@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,8 +34,8 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
 	pokemon.move.for_each([&](Move const & move) {
-		auto const key = std::make_pair(pokemon.name(), move.name());
-		auto const inserted = scores.insert(std::make_pair(key, initial));
+		key_type const key(pokemon, move.name());
+		auto const inserted = scores.insert(container_type::value_type(key, initial));
 		if (inserted.second) {
 			inserted.first->second = initial;
 		}
@@ -43,10 +43,10 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 }
 
 int64_t const & MoveScores::at(Species const species, Moves const name) const {
-	return scores.at(std::make_pair(species, name));
+	return scores.at(key_type(species, name));
 }
 int64_t & MoveScores::at(Species const species, Moves const name) {
-	return scores.at(std::make_pair(species, name));
+	return scores.at(key_type(species, name));
 }
 
 }	// namespace technicalmachine

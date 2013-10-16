@@ -75,7 +75,6 @@ public:
 	void remove_switch();
 	uint8_t index_of_first_switch () const;
 	std::string get_nickname () const;
-	Species name() const;
 	
 	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
 	void change_type(Type::Types new_type);
@@ -96,7 +95,7 @@ private:
 
 	Stats stats;
 
-	Species m_name;
+	Species m_species;
 	Item m_item;
 	Ability m_ability;
 	Gender m_gender;

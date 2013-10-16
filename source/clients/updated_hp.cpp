@@ -1,5 +1,5 @@
 // Keep track of changes in HP to make sure TM has the same view as the server
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,8 +32,7 @@ UpdatedHP::UpdatedHP(Team const & team) {
 UpdatedHP::mapped_type::mapped_type(unsigned set_new_hp, unsigned set_damage):
 	m_new_hp(set_new_hp),
 	m_damage(set_damage),
-	m_fainted(false)
-	{
+	m_fainted(false) {
 }
 unsigned UpdatedHP::mapped_type::new_hp() const {
 	return m_new_hp;
@@ -63,44 +62,38 @@ void UpdatedHP::reset_between_turns() {
 	}
 }
 
-void UpdatedHP::add(bool const is_me, Pokemon const & pokemon, unsigned const max_precision) {
-	auto const key = std::make_pair(is_me, pokemon.name());
+void UpdatedHP::add(bool const is_me, Species const species, unsigned const max_precision) {
+	key_type const key(is_me, species);
 	mapped_type const mapped(max_precision, 0);
-	auto const result = container.insert(std::make_pair(key, mapped));
+	auto const result = container.insert(container_type::value_type(key, mapped));
 	// This implementation only works if Species Clause is in effect
 	assert(result.second);
 	// Do not warn if asserts are disabled
 	static_cast<void>(result);
 }
 
-void UpdatedHP::update(bool const is_me, Pokemon const & pokemon, unsigned const value) {
-	auto const key = std::make_pair(is_me, pokemon.name());
-	container.at(key).change_hp(value);
+void UpdatedHP::update(bool const is_me, Species const species, unsigned const value) {
+	container.at(key_type(is_me, species)).change_hp(value);
 }
 
-void UpdatedHP::direct_damage(bool is_me, Pokemon const & pokemon, unsigned set_damage) {
-	auto const key = std::make_pair(is_me, pokemon.name());
-	container.at(key).direct_damage(set_damage);
+void UpdatedHP::direct_damage(bool is_me, Species const species, unsigned set_damage) {
+	container.at(key_type(is_me, species)).direct_damage(set_damage);
 }
 
-void UpdatedHP::faint(bool is_me, Pokemon const & pokemon) {
-	auto const key = std::make_pair(is_me, pokemon.name());
-	container.at(key).faint();
+void UpdatedHP::faint(bool is_me, Species const species) {
+	container.at(key_type(is_me, species)).faint();
 }
 
-unsigned UpdatedHP::get(bool const is_me, Pokemon const & pokemon) const {
-	auto const key = std::make_pair(is_me, pokemon.name());
-	return container.at(key).new_hp();
+unsigned UpdatedHP::get(bool const is_me, Species const species) const {
+	return container.at(key_type(is_me, species)).new_hp();
 }
 
-unsigned UpdatedHP::damage(bool is_me, Pokemon const & pokemon) const {
-	auto const key = std::make_pair(is_me, pokemon.name());
-	return container.at(key).damage();
+unsigned UpdatedHP::damage(bool is_me, Species const species) const {
+	return container.at(key_type(is_me, species)).damage();
 }
 
-bool UpdatedHP::is_fainted(bool is_me, Pokemon const & pokemon) const {
-	auto const key = std::make_pair(is_me, pokemon.name());
-	return container.at(key).is_fainted();
+bool UpdatedHP::is_fainted(bool is_me, Species const species) const {
+	return container.at(key_type(is_me, species)).is_fainted();
 }
 
 } // namespace technicalmachine

@@ -80,7 +80,7 @@ Battle::Battle(std::string const & _opponent, std::random_device::result_type se
 
 void Battle::initialize() {
 	for (auto const & pokemon : ai.all_pokemon()) {
-		slot_memory.emplace_back(pokemon.name());
+		slot_memory.emplace_back(pokemon);
 	}
 	initialize_turn ();
 }
@@ -182,7 +182,7 @@ void Battle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t 
 	// replacing fainted Pokemon).
 	auto const replacement = switcher.all_pokemon().replacement();
 	if (switcher.is_me())
-		std::cerr << to_string(switcher.pokemon(replacement).name()) << '\n';
+		std::cerr << to_string(static_cast<Species>(switcher.pokemon(replacement))) << '\n';
 	
 	// This assumes Species Clause is in effect
 	bool const added = switcher.all_pokemon().add_if_not_present(species, level, gender, nickname);
@@ -211,7 +211,7 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, unsig
 	Team const & team = get_team(damaged);
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
-	std::cerr << to_string(pokemon.name()) << '\n';
+	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
 	assert(move_damage);
 	Rational const change(visible_damage, max_visible_hp_change(team));
 	auto const damage = get_stat(pokemon, Stat::HP).max * change;
@@ -267,7 +267,7 @@ void Battle::correct_hp_and_report_errors (Team & team) {
 		unsigned const max_value = tm_estimate + 1;
 		assert(max_value > tm_estimate);
 		if (!(min_value <= new_hp and new_hp <= max_value)) {
-			std::cerr << "Uh oh! " + to_string(pokemon.name()) + " has the wrong HP! The server reports ";
+			std::cerr << "Uh oh! " + to_string(static_cast<Species>(pokemon)) + " has the wrong HP! The server reports ";
 			if (!team.is_me())
 				std::cerr << "approximately ";
 			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << get_stat(pokemon, Stat::HP).stat << ".\n";
@@ -332,7 +332,7 @@ void Battle::handle_end (Client const & client, Result const result) const {
 
 uint8_t Battle::switch_slot (Moves move) const {
 	auto const slot = static_cast<uint8_t>(to_replacement(move));
-	Species const name = ai.pokemon(slot).name();
+	Species const name = ai.pokemon(slot);
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == name)
 			return n;
@@ -500,7 +500,7 @@ void Battle::handle_item_message(Party party, Item::Items item) {
 
 void Battle::slot_memory_bring_to_front() {
 	for (Species & name : slot_memory) {
-		if (ai.replacement().name() == name)
+		if (ai.replacement() == name)
 			std::swap (slot_memory.front(), name);
 	}
 }

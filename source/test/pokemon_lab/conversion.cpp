@@ -1,5 +1,5 @@
 // Test PL conversions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,6 @@
 #include "../invalid_simulator_conversion.hpp"
 
 #include "../../clients/pokemon_lab/conversion.hpp"
-#include "../../clients/pokemon_lab/id.hpp"
 
 #include "../../move/moves.hpp"
 
@@ -42,8 +41,8 @@ template<typename Enum>
 void test_generic(std::string const & type, Enum const last) {
 	std::cout << "\t\tVerifying correct " << type << ".\n";
 	for (Enum original = static_cast<Enum>(0); original != last; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
-		auto const id = simulator_cast<ID<Enum>>(original);
-		auto const result = simulator_cast<Enum>(id);
+		auto const id = simulator_cast(original);
+		auto const result = simulator_cast(id);
 		if (original != result) {
 			throw InvalidSimulatorConversion(original, result);
 		}
@@ -58,7 +57,7 @@ void test_nature () {
 	// Natures are sent the same as TM, so no conversion required.
 }
 
-}	// anonymous namespace
+}	// namespace
 
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Lab conversion tests.\n";

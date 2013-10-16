@@ -1,5 +1,5 @@
 // Keep track of changes in HP to make sure TM has the same view as the server
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,20 +23,19 @@
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-class Pokemon;
 class Team;
 
 class UpdatedHP {
 public:
 	explicit UpdatedHP(Team const & team);
 	void reset_between_turns();
-	void add(bool is_me, Pokemon const & pokemon, unsigned max_precision);
-	void update(bool is_me, Pokemon const & pokemon, unsigned value);
-	void direct_damage(bool is_me, Pokemon const & pokemon, unsigned damage);
-	void faint(bool is_me, Pokemon const & pokemon);
-	unsigned get(bool is_me, Pokemon const & pokemon) const;
-	unsigned damage(bool is_me, Pokemon const & pokemon) const;
-	bool is_fainted(bool is_me, Pokemon const & pokemon) const;
+	void add(bool is_me, Species species, unsigned max_precision);
+	void update(bool is_me, Species species, unsigned value);
+	void direct_damage(bool is_me, Species species, unsigned damage);
+	void faint(bool is_me, Species species);
+	unsigned get(bool is_me, Species species) const;
+	unsigned damage(bool is_me, Species species) const;
+	bool is_fainted(bool is_me, Species species) const;
 private:
 	typedef std::pair<bool, Species> key_type;
 	class mapped_type {
@@ -54,7 +53,8 @@ private:
 		unsigned m_damage;
 		bool m_fainted;
 	};
-	std::map<key_type, mapped_type> container;
+	using container_type = std::map<key_type, mapped_type>;
+	container_type container;
 };
 
 }	// namespace technicalmachine

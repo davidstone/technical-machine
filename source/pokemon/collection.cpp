@@ -96,7 +96,7 @@ PokemonCollection::index_type PokemonCollection::real_size () const {
 
 PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
 	for (index_type found_index = 0; found_index != size(); ++found_index) {
-		if (operator()(found_index).name() == name)
+		if (operator()(found_index) == name)
 			return found_index;
 	}
 	throw PokemonNotFound(name);
@@ -106,7 +106,7 @@ bool PokemonCollection::seen (Species const name) {
 	// In the event of current_replacement == size(), a new Pokemon is added
 	// immediately, increasing size() by 1, making this safe.
 	for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
-		if (name == at_replacement().name())
+		if (name == at_replacement())
 			return true;
 	}
 	return false;

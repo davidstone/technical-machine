@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,7 +33,9 @@ public:
 	int64_t const & at(Species species, Moves name) const;
 	int64_t & at(Species species, Moves name);
 private:
-	std::map<std::pair<Species, Moves>, int64_t> scores;
+	using key_type = std::pair<Species, Moves>;
+	using container_type = std::map<key_type, int64_t>;
+	container_type scores;
 };
 
 }	// namespace technicalmachine

@@ -52,7 +52,7 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t se
 	#endif
 	stats(species),
 
-	m_name(species),
+	m_species(species),
 	m_gender(set_gender),
 
 	m_level(set_level),
@@ -71,7 +71,7 @@ Pokemon::Pokemon(unsigned const my_team_size, Species const species, uint8_t con
 }
 
 Pokemon::operator Species() const {
-	return m_name;
+	return m_species;
 }
 
 
@@ -103,12 +103,8 @@ std::string Pokemon::get_nickname () const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
 	#else
-		return to_string(name());
+		return to_string(m_species);
 	#endif
-}
-
-Species Pokemon::name() const {
-	return m_name;
 }
 
 Ability const & get_ability(Pokemon const & pokemon) {
@@ -171,7 +167,7 @@ unsigned Pokemon::happiness() const {
 
 Pokemon::hash_type Pokemon::hash() const {
 	auto const & hp = get_stat(*this, Stat::HP);
-	return static_cast<hash_type>(m_name) + number_of_species *
+	return static_cast<hash_type>(m_species) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
 			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
@@ -189,7 +185,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	// same
 	assert(illegal_inequality_check(lhs, rhs));
 	return lhs.move == rhs.move and
-			lhs.m_name == rhs.m_name and
+			lhs.m_species == rhs.m_species and
 			lhs.m_status == rhs.m_status and
 			get_stat(lhs, Stat::HP).stat == get_stat(rhs, Stat::HP).stat and
 			lhs.m_item == rhs.m_item and
@@ -197,7 +193,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 }
 
 bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
-	if (lhs.name() != rhs.name())
+	if (lhs.m_species != rhs.m_species)
 		return true;
 	return lhs.m_ability == rhs.m_ability and
 			lhs.m_gender == rhs.m_gender and
@@ -211,12 +207,12 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
 }
 
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
-	std::string output = to_string(pokemon.name());
+	std::string output = to_string(static_cast<Species>(pokemon));
 	double const d_per_cent_hp = 100.0 * hp_ratio(pokemon);
 	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
 	output += " (" + per_cent_hp + "% HP)";
 	output += " @ " + to_string(get_item(pokemon).name);
-	if (include_nickname and pokemon.get_nickname() != to_string(pokemon.name())) {
+	if (include_nickname and pokemon.get_nickname() != to_string(static_cast<Species>(pokemon))) {
 		output += " ** " + pokemon.get_nickname();
 	}
 	output += '\n';

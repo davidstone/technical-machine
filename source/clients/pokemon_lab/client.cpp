@@ -352,7 +352,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::string const nickname = msg.read_string ();
 			auto const move_id = ID<Moves>(msg.read_short());
 			auto & battle = find_battle(battle_id);
-			battle.handle_use_move(party, slot, simulator_cast<Moves>(move_id));
+			battle.handle_use_move(party, slot, simulator_cast(move_id));
 			break;
 		}
 		case InMessage::BATTLE_WITHDRAW: {
@@ -373,8 +373,8 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			uint8_t const slot = msg.read_byte ();
 			uint8_t const index = msg.read_byte ();
 			std::string const nickname = msg.read_string ();
-			auto const species = simulator_cast<Species>(ID<Species>(msg.read_short()));
-			auto const gender = simulator_cast<Gender::Genders>(ID<Gender::Genders>(msg.read_byte()));
+			auto const species = simulator_cast(ID<Species>(msg.read_short()));
+			auto const gender = simulator_cast(ID<Gender::Genders>(msg.read_byte()));
 			uint8_t const level = msg.read_byte();
 			auto & battle = find_battle (battle_id);
 			battle.handle_send_out (party, slot, index, nickname, species, Gender(gender), level);

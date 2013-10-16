@@ -57,12 +57,12 @@ void OutMessage::write_team (Team const & team, std::string const &) {
 }
 
 void OutMessage::write_pokemon (Pokemon const & pokemon) {
-	write_int(simulator_cast<ID<Species>>(pokemon.name()).value());
+	write_int(simulator_cast(pokemon).value());
 	write_string (pokemon.get_nickname());
 	constexpr bool shiny = false;
 	write_byte (shiny);
 
-	auto const gender = simulator_cast<ID<Gender::Genders>>(get_gender(pokemon).gender);
+	auto const gender = simulator_cast(get_gender(pokemon).gender);
 	write_byte(gender.value());
 
 	write_byte (pokemon.happiness());
@@ -72,7 +72,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_int(get_nature(pokemon).name);
 	write_int (pokemon.move.number_of_regular_moves());
 	pokemon.move.for_each_regular_move([&](Move const & move) {
-		write_int(simulator_cast<ID<Moves>>(move.name()).value());
+		write_int(simulator_cast(move.name()).value());
 		write_int (3);		// Replace this with real PP-ups logic later
 	});
 	static constexpr auto stats = {

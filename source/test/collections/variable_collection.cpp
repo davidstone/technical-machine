@@ -94,7 +94,7 @@ void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 
 void phaze_in_different_pokemon(Variable & variable, Team const & team, unsigned new_index, unsigned current_index, unsigned foe_size) {
 	try {
-		variable.set_phaze_index(team, team.pokemon(new_index).name());
+		variable.set_phaze_index(team, team.pokemon(new_index));
 		unsigned const expected = expected_index(current_index, new_index);
 		if (variable.value() != expected)
 			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + std::to_string(expected) + " but got a result of " + std::to_string(variable.value()) + ".");

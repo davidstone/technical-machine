@@ -1,5 +1,5 @@
 // Convert to / from PL's format
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,8 +30,7 @@
 namespace technicalmachine {
 namespace pl {
 
-template<>
-ID<Gender::Genders> simulator_cast<ID<Gender::Genders>, Gender::Genders>(Gender::Genders const & gender) {
+ID<Gender::Genders> simulator_cast(Gender::Genders const gender) {
 	switch (gender) {
 		case Gender::MALE:
 			return ID<Gender::Genders>(1);
@@ -42,8 +41,7 @@ ID<Gender::Genders> simulator_cast<ID<Gender::Genders>, Gender::Genders>(Gender:
 	}
 }
 
-template<>
-Gender::Genders simulator_cast<Gender::Genders, ID<Gender::Genders>>(ID<Gender::Genders> const & id) {
+Gender::Genders simulator_cast(ID<Gender::Genders> const id) {
 	switch (id.value()) {
 		case 0:
 			return Gender::GENDERLESS;
@@ -54,18 +52,15 @@ Gender::Genders simulator_cast<Gender::Genders, ID<Gender::Genders>>(ID<Gender::
 	}
 }
 
-template<>
-Moves simulator_cast<Moves, ID<Moves>>(ID<Moves> const & id) {
+Moves simulator_cast(ID<Moves> const id) {
 	return static_cast<Moves>(id.value());
 }
 
-template<>
-ID<Moves> simulator_cast<ID<Moves>, Moves>(Moves const & move) {
-	return ID<Moves>(static_cast<unsigned>(move));
+ID<Moves> simulator_cast(Moves const move) {
+	return ID<Moves>(move);
 }
 
-template<>
-std::string simulator_cast<std::string, Species>(Species const & species) {
+std::string to_simulator_string(Species const species) {
 	switch (species) {
 		case Species::Deoxys_Mediocre:
 			return "Deoxys";
@@ -104,8 +99,7 @@ std::string simulator_cast<std::string, Species>(Species const & species) {
 	}
 }
 
-template<>
-Species simulator_cast<Species, std::string>(std::string const & str) {
+Species from_simulator_string(std::string const & str) {
 	static std::map<std::string, Species> const convertor = {
 		{ "Deoxys", Species::Deoxys_Mediocre },
 		{ "Deoxys-f", Species::Deoxys_Attack },
@@ -128,9 +122,8 @@ Species simulator_cast<Species, std::string>(std::string const & str) {
 	return (it != convertor.end()) ? it->second : from_string<Species>(str);
 }
 
-template<>
-Species simulator_cast<Species, ID<Species>>(ID<Species> const & id) {
-	constexpr static Species species_converter [] = {
+Species simulator_cast(ID<Species> const id) {
+	static constexpr Species species_converter [] = {
 		// Generation 1
 		Species::Bulbasaur,
 		Species::Ivysaur,
@@ -647,8 +640,7 @@ Species simulator_cast<Species, ID<Species>>(ID<Species> const & id) {
 	return (id.value() < sizeof(species_converter)) ? species_converter[id.value()] : Species::END;
 }
 
-template<>
-ID<Species> simulator_cast<ID<Species>, Species>(Species const & species) {
+ID<Species> simulator_cast(Species const species) {
 	static constexpr ID<Species> species_converter[] {
 		ID<Species>(0),		//  Bulbasaur
 		ID<Species>(1),		//  Ivysaur

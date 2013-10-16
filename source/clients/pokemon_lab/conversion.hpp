@@ -1,5 +1,5 @@
 // Convert to / from PL's format
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,11 +19,24 @@
 #ifndef POKEMON_LAB__CONVERSION_HPP_
 #define POKEMON_LAB__CONVERSION_HPP_
 
+#include <string>
+#include "id.hpp"
+#include "../../gender.hpp"
+#include "../../move/moves_forward.hpp"
+#include "../../pokemon/species_forward.hpp"
+
 namespace technicalmachine {
 namespace pl {
 
-template<typename Destination, typename Source>
-Destination simulator_cast(Source const & source);
+ID<Gender::Genders> simulator_cast(Gender::Genders gender);
+ID<Moves> simulator_cast(Moves move);
+ID<Species> simulator_cast(Species species);
+std::string to_simulator_string(Species const species);
+
+Gender::Genders simulator_cast(ID<Gender::Genders> id);
+Moves simulator_cast(ID<Moves> id);
+Species simulator_cast(ID<Species> id);
+Species from_simulator_string(std::string const & str);
 
 }	// namespace pl
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Pokemon Lab Species ID
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #define POKEMON_LAB__SPECIES_ID_HPP_
 
 #include <cstdint>
+#include <type_traits>
 #include "../../gender.hpp"
 #include "../../move/moves_forward.hpp"
 #include "../../pokemon/species_forward.hpp"
@@ -28,29 +29,14 @@ namespace technicalmachine {
 namespace pl {
 
 template<typename T>
-class IDType;
-template<>
-class IDType<Species> {
-public:
-	typedef uint16_t type;
-};
-template<>
-class IDType<Moves> {
-public:
-	typedef uint16_t type;
-};
-template<>
-class IDType<Gender::Genders> {
-public:
-	typedef uint8_t type;
-};
-
-template<typename T>
 class ID {
 public:
-	typedef typename IDType<T>::type underlying_type;
+	using underlying_type = typename std::underlying_type<T>::type;
 	constexpr explicit ID(underlying_type const id):
 		m_value(id) {
+	}
+	constexpr explicit ID(T const t):
+		m_value(static_cast<typename std::underlying_type<T>::type>(t)) {
 	}
 	constexpr underlying_type value() const {
 		return m_value;
