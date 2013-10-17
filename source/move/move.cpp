@@ -28,19 +28,16 @@
 
 namespace technicalmachine {
 
-Move::Move (Moves const move, unsigned const pp_ups) :
+Move::Move(Moves const move, unsigned const pp_ups) :
 	m_name(move),
 	pp(move, pp_ups) {
 }
 
-Moves Move::name() const {
+Move::operator Moves() const {
 	return m_name;
 }
-Move::operator Moves() const {
-	return name();
-}
 
-bool is_damaging(Move const & move) {
+bool is_damaging(Moves const move) {
 	return BasePower(move)() != 0;
 }
 
@@ -53,7 +50,7 @@ bool is_special(Moves const move) {
 }
 
 uint64_t Move::hash () const {
-	return pp.hash() + pp.max_hash() * static_cast<uint64_t>(name());
+	return pp.hash() + pp.max_hash() * static_cast<uint64_t>(m_name);
 }
 
 uint64_t Move::max_hash() const {
@@ -61,7 +58,7 @@ uint64_t Move::max_hash() const {
 }
 
 bool operator== (Move const & lhs, Move const & rhs) {
-	return lhs.name() == rhs.name() and
+	return lhs.m_name == rhs.m_name and
 			lhs.pp == rhs.pp;
 }
 
@@ -69,22 +66,22 @@ bool operator!= (Move const & lhs, Move const & rhs) {
 	return !(lhs == rhs);
 }
 
-bool is_switch(Moves const name) {
+bool is_switch(Moves const move) {
 	static_assert(static_cast<unsigned>(Moves::Switch0) == 0, "Switching is not the first Move enum.");
-	return name <= Moves::Switch5;
+	return move <= Moves::Switch5;
 }
 
 Moves from_replacement(unsigned const replacement) {
 	return static_cast<Moves>(replacement + static_cast<unsigned>(Moves::Switch0));
 }
 
-unsigned to_replacement(Moves const name) {
-	assert(is_switch(name));
-	return static_cast<unsigned>(name) - static_cast<unsigned>(Moves::Switch0);
+unsigned to_replacement(Moves const move) {
+	assert(is_switch(move));
+	return static_cast<unsigned>(move) - static_cast<unsigned>(Moves::Switch0);
 }
 
-bool is_phaze(Moves const name) {
-	switch (name) {
+bool is_phaze(Moves const move) {
+	switch (move) {
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return true;

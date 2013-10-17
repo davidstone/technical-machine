@@ -52,7 +52,7 @@ void move_collection_tests() {
 		auto const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
 		for (unsigned n = 0; n != expected.size(); ++n) {
-			if (expected[n] != collection(n).name()) {
+			if (expected[n] != collection(n)) {
 				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + std::to_string(size) + ". Stored: " + to_string(collection(n)) + " -- Expected: " + to_string(expected[n]));
 			}
 		}

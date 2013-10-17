@@ -101,7 +101,7 @@ unsigned return_power(Pokemon const & pokemon) {
 }
 
 unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon const & defender, Variable const & variable) {
-	switch (attacker.move().name()) {
+	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
 			return 120u * hp_ratio(defender) + 1;
@@ -192,7 +192,7 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 
-	auto const move = attacker.move().name();
+	Moves const move = attacker.move();
 	if (defender.vanish_doubles_power(move))
 		return true;
 	switch (move) {

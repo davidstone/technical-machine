@@ -208,7 +208,7 @@ public:
 	int release_stockpile();
 
 	bool is_switching_to_self () const;
-	bool is_switching_to_self (Move const & switch_move) const;
+	bool is_switching_to_self(Moves switch_move) const;
 	bool has_switched() const;
 	bool switch_decision_required() const;
 	

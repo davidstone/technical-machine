@@ -632,7 +632,7 @@ bool ActivePokemon::is_switching_to_self () const {
 	return all_pokemon().is_switching_to_self();
 }
 
-bool ActivePokemon::is_switching_to_self (Move const & switch_move) const {
+bool ActivePokemon::is_switching_to_self(Moves const switch_move) const {
 	return all_pokemon().is_switching_to_self(switch_move);
 }
 

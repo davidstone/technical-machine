@@ -88,7 +88,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	unsigned number_of_moves = 0;
 	pokemon.move.for_each_regular_move([&](Move const & move) {
 		++number_of_moves;
-		uint32_t const move_id = move_to_id (move.name());
+		uint32_t const move_id = move_to_id(move);
 		write_int (move_id);
 	});
 	while (number_of_moves < 4) {

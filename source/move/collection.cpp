@@ -50,7 +50,7 @@ MoveCollection::index_type MoveCollection::number_of_regular_moves () const {
 
 bool MoveCollection::set_index_if_found(Moves name) {
 	for (index_type new_index = 0; new_index != size(); ++new_index) {
-		if (unchecked_value(new_index).name() == name) {
+		if (unchecked_value(new_index) == name) {
 			Base::set_index(new_index);
 			return true;
 		}
@@ -64,16 +64,16 @@ void MoveCollection::set_index(Moves const name) {
 }
 
 Move const * MoveCollection::find (Moves name) const {
-	return container.find_if([name](Move const & move) { return move.name() == name; });
+	return container.find_if([name](Move const & move) { return move == name; });
 }
 
 Move * MoveCollection::find (Moves name) {
-	return container.find_if([name](Move const & move) { return move.name() == name; });
+	return container.find_if([name](Move const & move) { return move == name; });
 }
 
 boost::optional<MoveCollection::index_type> MoveCollection::index(Moves const name) const {
 	for (index_type n = 0; n != container.number_of_regular_moves(); ++n) {
-		if (container.regular_move(n).name() == name) {
+		if (container.regular_move(n) == name) {
 			return n;
 		}
 	}

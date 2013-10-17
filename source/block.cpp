@@ -34,12 +34,12 @@ namespace {
 
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool found_selectable_move);
 bool is_blocked_by_bide (ActivePokemon const & user, Moves move);
-bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather);
+bool is_not_illegal_switch(ActivePokemon const & user, Moves move, ActivePokemon const & other, Weather const & weather);
 bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
-bool imprison (Move const & move, ActivePokemon const & other);
+bool imprison(Moves move, ActivePokemon const & other);
 bool blocked_by_torment(ActivePokemon const & user, Moves move);
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other);
-bool block2 (ActivePokemon const & user, Move const & move, Weather const & weather);
+bool block2(ActivePokemon const & user, Moves move, Weather const & weather);
 bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves move);
 bool standard_move_lock_in(ActivePokemon const & user, Moves move);
 bool is_locked_in (ActivePokemon const & user);
@@ -86,7 +86,7 @@ namespace {
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool const found_selectable_move) {
 	return !is_blocked_by_bide (user, move) and
 			is_not_illegal_switch (user, move, other, weather) and
-			(move.name() != Moves::Struggle or !found_selectable_move) and
+			(move != Moves::Struggle or !found_selectable_move) and
 			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment(user, move)) and
 			!is_blocked_due_to_lock_in(user, move);
 }
@@ -130,9 +130,9 @@ bool is_blocked_by_bide(ActivePokemon const & user, Moves const move) {
 	return user.is_locked_in_to_bide() and move == Moves::Bide;
 }
 
-bool is_not_illegal_switch (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather) {
+bool is_not_illegal_switch(ActivePokemon const & user, Moves const move, ActivePokemon const & other, Weather const & weather) {
 	return is_switch(move) ?
-		!user.is_switching_to_self (move) and !is_blocked_from_switching (user, other, weather) :
+		!user.is_switching_to_self(move) and !is_blocked_from_switching (user, other, weather) :
 		true;
 }
 
@@ -170,13 +170,13 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 			or (imprison (move, other));
 }
 
-bool imprison (Move const & move, ActivePokemon const & other) {
-	return other.imprisoned() and other.all_moves().regular_move_exists ([& move](Move const & element) {
-		return move.name() == element.name();
+bool imprison(Moves const move, ActivePokemon const & other) {
+	return other.imprisoned() and other.all_moves().regular_move_exists ([move](Move const & element) {
+		return move == element;
 	});
 }
 
-bool is_blocked_by_taunt(Move const & move) {
+bool is_blocked_by_taunt(Moves const move) {
 	return !is_damaging(move);
 }
 
@@ -195,7 +195,7 @@ bool is_blocked_by_gravity(Moves const move) {
 }
 
 // Things that both block selection and block execution after flinching
-bool block2 (ActivePokemon const & user, Move const & move, Weather const & weather) {
+bool block2(ActivePokemon const & user, Moves const move, Weather const & weather) {
 	return !is_switch(move) and
 			((user.is_taunted() and is_blocked_by_taunt(move)) or
 			(weather.gravity() and is_blocked_by_gravity(move)));

@@ -93,7 +93,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	for (auto const & value : pt.get_child("")) {
 		if (value.first == "Move") {
 			Move const move(load_move(value.second));
-			if (move.name() != Moves::END) {
+			if (move != Moves::END) {
 				pokemon.move.add(move);
 			}
 		}

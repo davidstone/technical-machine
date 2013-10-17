@@ -23,13 +23,10 @@
 #include "pp.hpp"
 
 namespace technicalmachine {
-class ActivePokemon;
-class Weather;
 
 class Move {
 public:
 	explicit Move(Moves move, unsigned pp_ups = 3);
-	Moves name() const;
 	operator Moves() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;
@@ -48,7 +45,7 @@ bool is_physical(Moves move);
 bool is_special(Moves move);
 
 bool is_switch(Moves name);
-bool is_damaging(Move const & move);
+bool is_damaging(Moves move);
 bool is_phaze(Moves name);
 
 bool is_usable_while_frozen(Moves move);

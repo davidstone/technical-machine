@@ -37,11 +37,11 @@ class Comparator : public std::unary_function<void, Move> {
 public:
 	Comparator(std::vector<Moves> const & m, std::string && str_type):
 		moves(m),
-		type(str_type),
+		type(std::move(str_type)),
 		n(0) {
 	}
-	void operator()(Move const & move) {
-		if (moves[n] != move.name()) {
+	void operator()(Moves const move) {
+		if (moves[n] != move) {
 			throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + to_string(move));
 		}
 		++n;

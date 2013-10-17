@@ -53,7 +53,7 @@ Rational ChanceToHit::operator()() const {
 
 void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
 	if (move_can_miss(user, get_ability(target))) {
-		unsigned calculated_accuracy = accuracy(user.move().name());
+		unsigned calculated_accuracy = accuracy(user.move());
 		calculated_accuracy *= user.stage_modifier<Stat::ACC>();
 		calculated_accuracy *= target.stage_modifier<Stat::EVA>();
 

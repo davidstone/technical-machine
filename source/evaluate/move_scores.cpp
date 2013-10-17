@@ -34,7 +34,7 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
 	pokemon.move.for_each([&](Move const & move) {
-		key_type const key(pokemon, move.name());
+		key_type const key(pokemon, move);
 		auto const inserted = scores.insert(container_type::value_type(key, initial));
 		if (inserted.second) {
 			inserted.first->second = initial;
