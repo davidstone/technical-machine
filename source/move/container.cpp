@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,6 @@
 #include <cstdint>
 #include <vector>
 
-#include "move.hpp"
 #include "shared.hpp"
 
 namespace technicalmachine {

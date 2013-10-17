@@ -26,9 +26,9 @@
 #include "../ability.hpp"
 #include "../item.hpp"
 
-#include "../move/move.hpp"
+#include "../move/moves_forward.hpp"
 
-#include "../pokemon/species.hpp"
+#include "../pokemon/species_forward.hpp"
 
 #include "../stat/nature.hpp"
 

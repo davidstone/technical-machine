@@ -35,7 +35,7 @@ namespace {
 bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const & weather, bool found_selectable_move);
 bool is_blocked_by_bide (ActivePokemon const & user, Moves move);
 bool is_not_illegal_switch(ActivePokemon const & user, Moves move, ActivePokemon const & other, Weather const & weather);
-bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
+bool is_blocked_from_switching(ActivePokemon const & user, Pokemon const & other, Weather const & weather);
 bool imprison(Moves move, ActivePokemon const & other);
 bool blocked_by_torment(ActivePokemon const & user, Moves move);
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other);
@@ -136,7 +136,7 @@ bool is_not_illegal_switch(ActivePokemon const & user, Moves const move, ActiveP
 		true;
 }
 
-bool is_blocked_from_switching (ActivePokemon const & user, ActivePokemon const & other, Weather const & weather) {
+bool is_blocked_from_switching(ActivePokemon const & user, Pokemon const & other, Weather const & weather) {
 	bool const block_attempted = get_ability(other).blocks_switching(user, weather) or user.trapped();
 	bool const result = block_attempted and !get_item(user).allows_switching();
 	return result;

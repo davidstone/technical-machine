@@ -79,7 +79,7 @@ unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defen
 namespace {
 
 Rational defender_ability_modifier(Pokemon const & attacker, Ability const ability) {
-	Move const & move = attacker.move();
+	Moves const move = attacker.move();
 	switch (ability.name()) {
 		case Ability::Dry_Skin:
 			return (Type(move, attacker) == Type::Fire) ? Rational(5, 4) : Rational(1);

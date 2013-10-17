@@ -25,7 +25,6 @@
 #include "create_shared_moves.hpp"
 #include "invalid_collection.hpp"
 
-#include "../../move/move.hpp"
 #include "../../move/moves_forward.hpp"
 #include "../../move/container.hpp"
 
@@ -33,7 +32,7 @@
 
 namespace technicalmachine {
 namespace {
-class Comparator : public std::unary_function<void, Move> {
+class Comparator {
 public:
 	Comparator(std::vector<Moves> const & m, std::string && str_type):
 		moves(m),

@@ -28,7 +28,6 @@
 #include "../../team.hpp"
 #include "../../variable.hpp"
 
-#include "../../move/move.hpp"
 #include "../../move/moves.hpp"
 
 #include "../../pokemon/species.hpp"

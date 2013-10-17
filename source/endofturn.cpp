@@ -26,8 +26,6 @@
 #include "team.hpp"
 #include "weather.hpp"
 
-#include "move/move.hpp"
-
 #include "pokemon/active_pokemon.hpp"
 #include "pokemon/pokemon.hpp"
 

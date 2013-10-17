@@ -26,10 +26,8 @@
 #include "../item.hpp"
 #include "../status.hpp"
 
-#include "../move/move.hpp"
 #include "../move/moves.hpp"
 
-#include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
 #include "../stat/nature.hpp"
@@ -46,7 +44,7 @@
 namespace technicalmachine {
 namespace {
 
-template <class Class, typename Enum>
+template <typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
 	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
@@ -61,13 +59,13 @@ void test_generic (std::string const & thing) {
 
 void string_conversion_tests () {
 	std::cout << "Running string conversion tests.\n";
-	test_generic <Ability, Ability::Abilities> ("ability");
-	test_generic <Gender, Gender::Genders> ("gender");
-	test_generic <Item, Item::Items> ("item");
-	test_generic <Move, Moves> ("move");
-	test_generic <Nature, Nature::Natures> ("nature");
-	test_generic <Pokemon, Species> ("species");
-	test_generic <Status, Status::Statuses> ("status");
+	test_generic<Ability::Abilities> ("ability");
+	test_generic<Gender::Genders> ("gender");
+	test_generic<Item::Items> ("item");
+	test_generic<Moves> ("move");
+	test_generic<Nature::Natures> ("nature");
+	test_generic<Species> ("species");
+	test_generic<Status::Statuses> ("status");
 	std::cout << "String conversion tests passed.\n\n";
 }
 

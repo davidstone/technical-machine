@@ -34,7 +34,6 @@
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
-#include "../move/move.hpp"
 #include "../move/moves_forward.hpp"
 
 namespace technicalmachine {
