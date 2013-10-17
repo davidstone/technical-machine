@@ -39,7 +39,7 @@ std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const 
 	// Moves that cannot be selected are excluded.
 	std::vector<RankedMove> output;
 	for (auto const & move : input) {
-		output.emplace_back(*move, move_scores.at(input.species(), *move));
+		output.emplace_back(move, move_scores.at(input.species(), move));
 	}
 	if (ai) {
 		std::sort(output.begin(), output.end(), std::greater<RankedMove>());

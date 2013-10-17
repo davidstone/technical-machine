@@ -1,5 +1,5 @@
 // Declaration of functions that block selection / execution
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,24 +21,24 @@
 
 #include <cstddef>
 #include <vector>
+#include "move/moves_forward.hpp"
 #include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
 
 class ActivePokemon;
-class Move;
 class Weather;
 
 class LegalSelections {
-	typedef std::vector<Move const *> Container;
+	using Container = std::vector<Moves>;
 public:
-	typedef Container::const_iterator const_iterator;
+	using const_iterator = Container::const_iterator;
 	LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
 	Species species() const;
 	const_iterator begin() const;
 	const_iterator end() const;
 	size_t size() const;
-	Move const * const & operator[] (size_t index) const;
+	Moves operator[](size_t index) const;
 private:
 	Container container;
 	Species m_species;

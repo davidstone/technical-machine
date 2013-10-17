@@ -55,7 +55,7 @@ LegalSelections::LegalSelections(ActivePokemon const & user, ActivePokemon const
 	user.all_moves().for_each([&](Move const & move) {
 		bool const found_selectable_move = !container.empty();
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
-			container.emplace_back(&move);
+			container.emplace_back(move);
 		}
 	});
 	assert(!container.empty());
@@ -77,7 +77,7 @@ size_t LegalSelections::size() const {
 	return container.size();
 }
 
-Move const * const & LegalSelections::operator[] (size_t const index) const {
+Moves LegalSelections::operator[](size_t const index) const {
 	return container[index];
 }
 

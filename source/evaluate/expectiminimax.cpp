@@ -558,7 +558,7 @@ Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & 
 	LegalSelections const moves(ai.pokemon(), foe.pokemon(), weather);
 	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
 	auto const index = distribution(random_engine);
-	return *moves[index];
+	return moves[index];
 }
 
 void print_best_move (Team const & team, Moves const best_move, int64_t score) {
