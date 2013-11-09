@@ -21,8 +21,6 @@
 #include <algorithm>
 #include <cassert>
 
-#include <source/ranged_integer.hpp>
-
 #include "moves_forward.hpp"
 
 #include "../ability.hpp"
