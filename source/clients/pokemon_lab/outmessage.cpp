@@ -66,7 +66,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_byte(gender.value());
 
 	write_byte (pokemon.happiness());
-	write_int(get_level(pokemon));
+	write_int(static_cast<uint32_t>(get_level(pokemon)()));
 	write_string(to_string(get_item(pokemon).name));
 	write_string(to_string(get_ability(pokemon).name()));
 	write_int(get_nature(pokemon).name);

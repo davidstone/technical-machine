@@ -27,6 +27,7 @@
 
 namespace technicalmachine {
 class ActivePokemon;
+class Level;
 class Team;
 
 // Used for moves with a variable power / length / other integer range. Moves of
@@ -43,7 +44,7 @@ public:
 	bool effect_activates() const;
 	uint8_t phaze_index(uint8_t foe_index) const;
 	bool present_heals()  const;
-	unsigned psywave_damage(unsigned level) const;
+	unsigned psywave_damage(Level level) const;
 	void set_magnitude(unsigned magnitude);
 	void reset_phaze_probabilities(uint8_t size);
 private:

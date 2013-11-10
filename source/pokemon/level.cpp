@@ -1,5 +1,5 @@
-// Pokemon functions
-// Copyright (C) 2012 David Stone
+// Level data structure
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,23 +18,19 @@
 
 #include "level.hpp"
 
-#include <cassert>
-
 namespace technicalmachine {
 
-Level::Level(uint8_t set_level) : 
-	level(set_level)
+Level::Level(checked_integer<min, max> const level) : 
+	m_value(level)
 	{
-	assert(level > 0);
-	assert(level <= 100);
 }
 
-unsigned Level::operator() () const {
-	return level;
+auto Level::operator()() const -> native_integer<min, max> {
+	return m_value;
 }
 
 bool operator== (Level const lhs, Level const rhs) {
-	return lhs.level == rhs.level;
+	return lhs() == rhs();
 }
 
 bool operator!= (Level const lhs, Level const rhs) {

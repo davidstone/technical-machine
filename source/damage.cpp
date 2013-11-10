@@ -44,7 +44,6 @@ bool affects_target(Type const & move_type, ActivePokemon const & target, Weathe
 unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
-unsigned calculate_level_multiplier (Pokemon const & attacker);
 Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender);
 unsigned calculate_screen_divisor (ActivePokemon const & attacker, Team const & defender);
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
@@ -109,7 +108,7 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 			return get_stat(defender.pokemon(), Stat::HP).max;
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
-			return get_level(attacker);
+			return static_cast<unsigned>(get_level(attacker)());
 		case Moves::Psywave:
 			return variable.psywave_damage(get_level(attacker));
 		case Moves::SonicBoom:
@@ -123,8 +122,12 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 
 namespace {
 
+auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_ri / 5_ri) {
+	return get_level(attacker)() * 2_ri / 5_ri;
+}
+
 unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	unsigned damage = calculate_level_multiplier(attacker);
+	unsigned damage = static_cast<unsigned>(calculate_level_multiplier(attacker));
 	damage += 2;
 
 	damage *= move_power(attacker, defender.pokemon(), weather, variable);
@@ -169,10 +172,6 @@ void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
 }
 
 namespace {
-
-unsigned calculate_level_multiplier (Pokemon const & attacker) {
-	return get_level(attacker) * 2u / 5;
-}
 
 Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender) {
 	// For all integers a, b, and c:

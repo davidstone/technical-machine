@@ -270,7 +270,7 @@ void Battle::parse_send_out (InMessage & msg, Party const party) {
 	uint32_t const full_status = msg.read_int ();
 	Gender const gender (id_to_gender (msg.read_byte ()));
 	bool const shiny = msg.read_byte ();
-	uint8_t const level = msg.read_byte ();
+	Level const level(checked_integer<Level::min, Level::max>(msg.read_byte()));
 	uint8_t const slot = 0;
 	handle_send_out (party, slot, index, nickname, species, gender, level);
 	if (is_me(party)) {

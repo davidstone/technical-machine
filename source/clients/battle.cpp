@@ -165,7 +165,7 @@ void Battle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
 		move_damage = true;
 }
 
-void Battle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level) {
+void Battle::handle_send_out (Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level const level) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 

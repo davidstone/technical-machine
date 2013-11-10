@@ -75,7 +75,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("<xmlattr>.Gen", 4);
 	member.put ("<xmlattr>.Forme", ids.second);
 	member.put ("<xmlattr>.Happiness", pokemon.happiness());
-	member.put ("<xmlattr>.Lvl", get_level(pokemon));
+	member.put ("<xmlattr>.Lvl", get_level(pokemon)());
 	member.put ("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
 
 	unsigned n = 0;

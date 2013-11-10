@@ -30,7 +30,7 @@ void ev_optimizer_tests() {
 	std::cout << "\tEV optimizer tests.\n";
 
 	Team team;
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(Species::Snorlax, level, gender);
 	Pokemon & pokemon = team.pokemon();

@@ -121,7 +121,7 @@ public:
 		{
 	}
 	void add_to_team(Team & team) const {
-		team.add_pokemon(species, 100, Gender(), item, ability, nature);
+		team.add_pokemon(species, Level(100_ri), Gender{}, item, ability, nature);
 		Pokemon & pokemon = team.replacement();
 		for (auto const stat : regular_stats()) {
 			get_stat(pokemon, stat).ev.set_value(stats[static_cast<size_t>(stat + 1)]);

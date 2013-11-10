@@ -40,7 +40,7 @@ void attack_tests () {
 	constexpr unsigned max_attack = 7368;
 	Team attacker;
 
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
@@ -65,7 +65,7 @@ void special_attack_tests () {
 	weather.set_sun (Weather::Duration::permanent);
 	Team attacker;
 
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	Gender const gender(Gender::GENDERLESS);
 	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
@@ -90,7 +90,7 @@ void defense_tests () {
 	Team defender;
 	Weather weather;
 
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
@@ -116,7 +116,7 @@ void special_defense_tests () {
 	Weather weather;
 	weather.set_sand (Weather::Duration::permanent);
 
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
@@ -139,7 +139,7 @@ void speed_tests () {
 
 	Team team;
 
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::Deoxys_Speed, level, gender);
 	Pokemon & pokemon = team.pokemon();

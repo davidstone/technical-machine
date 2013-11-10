@@ -26,6 +26,7 @@
 
 namespace technicalmachine {
 class ActivePokemon;
+class Level;
 class Pokemon;
 class Team;
 class Weather;
@@ -53,7 +54,7 @@ public:
 	EV ev;
 
 	Stat (Species name, Stats stat);
-	void calculate_initial_hp (uint8_t const level);
+	void calculate_initial_hp(Level level);
 };
 
 inline constexpr std::initializer_list<Stat::Stats> regular_stats() {

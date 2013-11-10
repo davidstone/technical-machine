@@ -1,5 +1,5 @@
 // Level data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,19 +19,21 @@
 #ifndef POKEMON__LEVEL_HPP_
 #define POKEMON__LEVEL_HPP_
 
-#include <cstdint>
+#include <ranged_integer/ranged_integer.hpp>
 
 namespace technicalmachine {
 
 class Level {
 public:
-	explicit Level(uint8_t set_level);
-	unsigned operator() () const;
-	friend bool operator== (Level lhs, Level rhs);
+	static constexpr int min = 1;
+	static constexpr int max = 100;
+	explicit Level(checked_integer<min, max> level);
+	native_integer<min, max> operator() () const;
 private:
-	uint8_t level;
+	checked_integer<min, max> m_value;
 };
 
+bool operator== (Level lhs, Level rhs);
 bool operator!= (Level lhs, Level rhs);
 
 }	// namespace technicalmachine

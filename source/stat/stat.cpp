@@ -33,6 +33,7 @@
 #include "../move/moves.hpp"
 #include "../move/priority.hpp"
 
+#include "../pokemon/level.hpp"
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
@@ -41,7 +42,7 @@ namespace {
 
 uint8_t get_base_stat(Species name, Stat::Stats stat_name);
 
-unsigned initial_generic_stat(Stat const & stat, unsigned level);
+unsigned initial_generic_stat(Stat const & stat, Level level);
 
 bool is_boosted_by_deepseascale(Species const species) {
 	return species == Species::Clamperl;
@@ -221,8 +222,8 @@ Stat::Stat (Species name, Stats stat_name) :
 	{
 }
 
-void Stat::calculate_initial_hp (uint8_t const level) {
-	max = (base > 1) ? (initial_generic_stat(*this, level) + level + 5) : 1;
+void Stat::calculate_initial_hp(Level const level) {
+	max = (base > 1) ? (initial_generic_stat(*this, level) + static_cast<unsigned>(level()) + 5) : 1;
 	stat = max;
 }
 
@@ -233,7 +234,7 @@ unsigned initial_stat(Pokemon const & pokemon) {
 template<>
 unsigned initial_stat<Stat::HP>(Pokemon const & pokemon) {
 	Stat const & hp = get_stat(pokemon, Stat::HP);
-	return (hp.base > 1) ? (initial_generic_stat(hp, get_level(pokemon)) + get_level(pokemon) + 5) : 1;
+	return (hp.base > 1) ? (initial_generic_stat(hp, get_level(pokemon)) + static_cast<unsigned>(get_level(pokemon)()) + 5) : 1;
 }
 template unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon);
 template unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon);
@@ -364,8 +365,8 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 
 namespace {
 
-unsigned initial_generic_stat(Stat const & stat, unsigned level) {
-	return (2u * stat.base + stat.iv + stat.ev.points()) * level / 100 + 5;
+unsigned initial_generic_stat(Stat const & stat, Level const level) {
+	return (2u * stat.base + stat.iv + stat.ev.points()) * static_cast<unsigned>(level()) / 100 + 5;
 }
 
 Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {

@@ -77,7 +77,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	Species const species = id_to_species(id, forme);
 	std::string const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	unsigned const gender = pt.get<unsigned>("<xmlattr>.Gender");
-	uint8_t const level = pt.get<uint8_t>("<xmlattr>.Lvl");
+	Level const level(checked_integer<Level::min, Level::max>(pt.get<uint8_t>("<xmlattr>.Lvl")));
 	uint8_t const happiness = pt.get<uint8_t>("<xmlattr>.Happiness");
 	team.add_pokemon(species, level, Gender(id_to_gender(gender)), nickname, happiness);
 	Pokemon & pokemon = team.replacement();

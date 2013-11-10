@@ -40,8 +40,8 @@ std::vector<Species> random_species(std::mt19937 & random_engine, Team const & t
 
 void random_team(Team & team, std::mt19937 & random_engine, unsigned const random_pokemon) {
 	for (Species const species : random_species(random_engine, team, random_pokemon)) {
-		constexpr uint8_t level = 100;
-		team.add_pokemon(species, level, Gender());
+		Level const level(100_ri);
+		team.add_pokemon(species, level, Gender{});
 	}
 }
 

@@ -54,7 +54,7 @@ qualifier Gender const & get_gender(Pokemon const & pokemon); \
 qualifier Gender & get_gender(Pokemon & pokemon); \
 qualifier Item const & get_item(Pokemon const & pokemon); \
 qualifier Item & get_item(Pokemon & pokemon); \
-qualifier unsigned get_level(Pokemon const & pokemon); \
+qualifier Level get_level(Pokemon const & pokemon); \
 qualifier Nature const & get_nature(Pokemon const & pokemon); \
 qualifier Nature & get_nature(Pokemon & pokemon); \
 qualifier Stat const & get_stat(Pokemon const & pokemon, Stat::Stats index_stat); \
@@ -69,8 +69,8 @@ TECHNICALMACHINE_FRIEND_DECLARATIONS(/*empty*/);
 
 class Pokemon {
 public:
-	Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
-	Pokemon(unsigned my_team_size, Species species, uint8_t set_level, Gender set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname = std::string(), uint8_t set_happiness = 255);
+	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), uint8_t happiness = 255);
+	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), uint8_t happiness = 255);
 	operator Species() const;
 	void remove_switch();
 	uint8_t index_of_first_switch () const;

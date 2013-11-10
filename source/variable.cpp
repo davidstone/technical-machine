@@ -22,6 +22,7 @@
 #include "phazing_in_same_pokemon.hpp"
 #include "team.hpp"
 #include "move/moves.hpp"
+#include "pokemon/level.hpp"
 
 namespace technicalmachine {
 
@@ -72,8 +73,8 @@ bool Variable::present_heals() const {
 	return value() != 0;
 }
 
-unsigned Variable::psywave_damage(unsigned level) const {
-	return level * value() / 10;
+unsigned Variable::psywave_damage(Level const level) const {
+	return static_cast<unsigned>(level()) * value() / 10;
 }
 
 void Variable::set_magnitude(unsigned const magnitude) {

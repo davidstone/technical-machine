@@ -44,7 +44,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t set_level, Gender set_gender, std::string const & set_nickname, uint8_t set_happiness) : 
+Pokemon::Pokemon (unsigned const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, uint8_t set_happiness) : 
 	move(my_team_size),
 	current_type(species),
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
@@ -53,21 +53,21 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, uint8_t se
 	stats(species),
 
 	m_species(species),
-	m_gender(set_gender),
+	m_gender(gender),
 
-	m_level(set_level),
+	m_level(level),
 
 	m_happiness(set_happiness)
 	{
 	calculate_initial_hp(*this);
 }
 
-Pokemon::Pokemon(unsigned const my_team_size, Species const species, uint8_t const set_level, Gender const set_gender, Item const & set_item, Ability const & set_ability, Nature const & set_nature, std::string const & set_nickname, uint8_t set_happiness):
-	Pokemon::Pokemon(my_team_size, species, set_level, set_gender, set_nickname, set_happiness)
+Pokemon::Pokemon(unsigned const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, uint8_t set_happiness):
+	Pokemon::Pokemon(my_team_size, species, level, gender, set_nickname, set_happiness)
 	{
-	m_item = set_item;
-	m_ability = set_ability;
-	m_nature = set_nature;
+	m_item = item;
+	m_ability = ability;
+	m_nature = nature;
 }
 
 Pokemon::operator Species() const {
@@ -157,8 +157,8 @@ void Pokemon::change_type(Type::Types const new_type) {
 	current_type.change_type(new_type);
 }
 
-unsigned get_level(Pokemon const & pokemon) {
-	return pokemon.m_level();
+Level get_level(Pokemon const & pokemon) {
+	return pokemon.m_level;
 }
 
 unsigned Pokemon::happiness() const {

@@ -42,6 +42,7 @@ class Client;
 class DetailedStats;
 class Evaluate;
 class Gender;
+class Level;
 namespace network {
 class OutMessage;
 } // namespace network
@@ -55,7 +56,7 @@ public:
 	void handle_begin_turn (uint16_t turn_count) const;
 	void handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
 	void handle_use_move (Party user, uint8_t slot, Moves move_name);
-	void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, uint8_t level);
+	void handle_send_out (Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
 	void handle_set_pp (Party changer, uint8_t slot, uint8_t pp);
 	void handle_fainted (Party fainter, uint8_t slot);
 	void handle_end (Client const & client, Result const result) const;

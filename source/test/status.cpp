@@ -41,7 +41,7 @@ public:
 void awakening_probability_tests() {
 	Weather weather;
 	Team team;
-	constexpr unsigned level = 100;
+	Level const level(100_ri);
 	team.add_pokemon(Species::Zapdos, level, Gender());
 	auto & pokemon = team.pokemon();
 	Status::apply<Status::SLEEP>(pokemon, weather);
