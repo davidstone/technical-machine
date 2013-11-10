@@ -40,12 +40,11 @@
 #include "../network/invalid_channel.hpp"
 #include "../network/invalid_simulator_data.hpp"
 
-
-#include "../../cryptography/byte_order.hpp"
 #include "../../cryptography/md5.hpp"
 #include "../../cryptography/sha2.hpp"
 #include "../../cryptography/rijndael.h"
 
+#include <endian/endian.hpp>
 
 namespace technicalmachine {
 namespace pl {

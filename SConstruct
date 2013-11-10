@@ -37,7 +37,7 @@ SConscript('build_scripts/compiler_settings.py')
 Import('flags', 'compiler_command', 'compiler_name')
 
 default = DefaultEnvironment()
-default.Append(CPPPATH='ranged_integer')
+default.Append(CPPPATH= ['endian', 'ranged_integer'])
 
 # This replaces the wall of text caused by compiling with max warnings turned on
 # into something a little more readable.

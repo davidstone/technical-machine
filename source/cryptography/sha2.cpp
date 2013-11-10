@@ -33,7 +33,7 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
-#include "byte_order.hpp"
+#include <endian/endian.hpp>
 
 using namespace boost::endian;
 
@@ -90,9 +90,7 @@ constexpr void scr (T * w) {
 }
 
 template<typename T>
-T get_k (unsigned const n) {
-	return n;
-}
+constexpr T get_k (unsigned const n);
 
 // First 32 bits of fractional part of the cube roots of the first 64 primes.
 constexpr uint32_t k_32 [] = {

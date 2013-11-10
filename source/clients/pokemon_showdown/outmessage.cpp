@@ -25,7 +25,7 @@
 
 #include "../../team.hpp"
 
-#include "../../cryptography/byte_order.hpp"
+#include <endian/endian.hpp>
 
 namespace technicalmachine {
 namespace ps {

@@ -28,13 +28,13 @@
 #include "../../ability.hpp"
 #include "../../team.hpp"
 
-#include "../../cryptography/byte_order.hpp"
-
 #include "../../pokemon/pokemon.hpp"
 
 #include "../../string_conversions/ability.hpp"
 #include "../../string_conversions/item.hpp"
 #include "../../string_conversions/pokemon.hpp"
+
+#include <endian/endian.hpp>
 
 namespace technicalmachine {
 namespace pl {

@@ -25,7 +25,7 @@
 
 #include <boost/detail/endian.hpp>
 
-#include "byte_order.hpp"
+#include <endian/endian.hpp>
 
 using namespace boost::endian;
 

@@ -28,9 +28,9 @@
 
 #include "../../team.hpp"
 
-#include "../../cryptography/byte_order.hpp"
-
 #include "../../pokemon/pokemon.hpp"
+
+#include <endian/endian.hpp>
 
 namespace technicalmachine {
 namespace po {
