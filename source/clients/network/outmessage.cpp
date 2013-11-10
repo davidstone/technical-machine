@@ -33,24 +33,28 @@ OutMessage::OutMessage (uint8_t const code) {
 	write_byte (code);
 }
 
+namespace {
+
 template<typename Integer>
-void OutMessage::write_bytes(Integer const bytes) {
+void write_bytes(std::vector<uint8_t> & buffer, Integer const bytes) {
 	Integer const network_byte = boost::endian::h_to_n(bytes);
 	uint8_t const * byte = reinterpret_cast<uint8_t const *>(&network_byte);
 	for (unsigned n = 0; n != sizeof(Integer); ++n)
 		buffer.emplace_back(*(byte + n));
 }
 
+}	// namespace
+
 void OutMessage::write_byte (uint8_t byte) {
-	write_bytes(byte);
+	write_bytes(buffer, byte);
 }
 
 void OutMessage::write_short (uint16_t bytes) {
-	write_bytes(bytes);
+	write_bytes(buffer, bytes);
 }
 
 void OutMessage::write_int (uint32_t bytes) {
-	write_bytes(bytes);
+	write_bytes(buffer, bytes);
 }
 
 void OutMessage::send(boost::asio::ip::tcp::socket & socket) {
