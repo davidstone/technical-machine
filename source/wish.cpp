@@ -1,5 +1,5 @@
 // Wish data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,41 +23,37 @@
 namespace technicalmachine {
 class Pokemon;
 
-Wish::Wish() :
-	counter(0) {
-}
-
 void Wish::activate() {
-	if (!is_active())
-		counter = 2;
+	if (!is_active()) {
+		static constexpr auto turn_delay = 1_ri;
+		turns_until_activation = counter_type(turn_delay);
+	}
 }
 
 void Wish::decrement(ActivePokemon & pokemon) {
 	if (is_active()) {
-		--counter;
-		if (!is_active()) {
+		--*turns_until_activation;
+		if (*turns_until_activation == 0_ri) {
+			turns_until_activation = {};
 			heal(pokemon, Rational(1, 2));
 		}
 	}
 }
 
 bool Wish::is_active() const {
-	return counter != 0;
+	return static_cast<bool>(turns_until_activation);
 }
 
 Wish::hash_type Wish::hash() const {
-	return counter;
+	return is_active() ? 1 : 0;
 }
 
 Wish::hash_type Wish::max_hash() {
 	return 2;
 }
 
-// 2 = Wish will heal next turn, 1 = Wish will heal this turn, 0 = Wish
-// is not in play
-
 bool operator== (Wish const lhs, Wish const rhs) {
-	return lhs.counter == rhs.counter;
+	return lhs.turns_until_activation == rhs.turns_until_activation;
 }
 bool operator!= (Wish const lhs, Wish const rhs) {
 	return !(lhs == rhs);

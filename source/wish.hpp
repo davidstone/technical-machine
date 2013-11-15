@@ -1,5 +1,5 @@
 // Wish data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,8 @@
 #define WISH_HPP_
 
 #include <cstdint>
+#include <ranged_integer/optional.hpp>
+#include <ranged_integer/ranged_integer.hpp>
 
 namespace technicalmachine {
 class ActivePokemon;
@@ -27,7 +29,6 @@ class Pokemon;
 
 class Wish {
 public:
-	Wish();
 	void activate();
 	void decrement(ActivePokemon & pokemon);
 	typedef uint64_t hash_type;
@@ -36,7 +37,8 @@ public:
 	friend bool operator== (Wish lhs, Wish rhs);
 private:
 	bool is_active() const;
-	uint8_t counter;
+	using counter_type = checked_integer<0, 1>;
+	optional<counter_type> turns_until_activation;
 	friend class Evaluate;
 };
 
