@@ -1,5 +1,5 @@
 // Priority data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,7 @@
 #ifndef MOVE__PRIORITY_HPP_
 #define MOVE__PRIORITY_HPP_
 
-#include <cstdint>
+#include <ranged_integer/ranged_integer.hpp>
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
@@ -29,12 +29,12 @@ public:
 	explicit Priority(Moves move);
 	friend bool operator== (Priority lhs, Priority rhs);
 	friend bool operator< (Priority lhs, Priority rhs);
-	friend bool operator> (Priority lhs, Priority rhs);
 private:
-	int8_t cached_priority;
+	checked_integer<-6, 6> priority;
 };
 
 bool operator!= (Priority lhs, Priority rhs);
+bool operator> (Priority lhs, Priority rhs);
 bool operator<= (Priority lhs, Priority rhs);
 bool operator>= (Priority lhs, Priority rhs);
 

@@ -1,5 +1,5 @@
 // Priority data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,32 +18,30 @@
 
 #include "priority.hpp"
 
-#include <cstdint>
-
 #include "moves.hpp"
 
 namespace technicalmachine {
 namespace {
 
-int8_t get_priority(Moves move);
+checked_integer<-6, 6> get_priority(Moves move);
 
 }	// unnamed namespace
 
 Priority::Priority(Moves const move) :
-	cached_priority(get_priority(move)) {
+	priority(get_priority(move)) {
 }
 
 bool operator== (Priority const lhs, Priority const rhs) {
-	return lhs.cached_priority == rhs.cached_priority;
+	return lhs.priority == rhs.priority;
 }
 bool operator!= (Priority const lhs, Priority const rhs) {
 	return !(lhs == rhs);
 }
 bool operator< (Priority const lhs, Priority const rhs) {
-	return lhs.cached_priority < rhs.cached_priority;
+	return lhs.priority < rhs.priority;
 }
 bool operator> (Priority const lhs, Priority const rhs) {
-	return lhs.cached_priority > rhs.cached_priority;
+	return rhs < lhs;
 }
 bool operator<= (Priority const lhs, Priority const rhs) {
 	return !(lhs > rhs);
@@ -54,7 +52,7 @@ bool operator>= (Priority const lhs, Priority const rhs) {
 
 namespace {
 
-int8_t get_priority(Moves const move) {
+checked_integer<-6, 6> get_priority(Moves const move) {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -62,19 +60,19 @@ int8_t get_priority(Moves const move) {
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			return 6;
+			return 6_ri;
 		case Moves::Helping_Hand:
-			return 5;
+			return 5_ri;
 		case Moves::Magic_Coat:
 		case Moves::Snatch:
-			return 4;
+			return 4_ri;
 		case Moves::Detect:
 		case Moves::Endure:
 		case Moves::Follow_Me:
 		case Moves::Protect:
-			return 3;
+			return 3_ri;
 		case Moves::Feint:
-			return 2;
+			return 2_ri;
 		case Moves::Aqua_Jet:
 		case Moves::Bide:
 		case Moves::Bullet_Punch:
@@ -86,24 +84,24 @@ int8_t get_priority(Moves const move) {
 		case Moves::Shadow_Sneak:
 		case Moves::Sucker_Punch:
 		case Moves::Vacuum_Wave:
-			return 1;
+			return 1_ri;
 		case Moves::Vital_Throw:
-			return -1;
+			return -1_ri;
 		case Moves::Focus_Punch:
-			return -2;
+			return -2_ri;
 		case Moves::Avalanche:
 		case Moves::Revenge:
-			return -3;
+			return -3_ri;
 		case Moves::Counter:
 		case Moves::Mirror_Coat:
-			return -4;
+			return -4_ri;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			return -5;
+			return -5_ri;
 		case Moves::Trick_Room:
-			return -6;
+			return -6_ri;
 		default:
-			return 0;
+			return 0_ri;
 	}
 }
 }	// unnamed namespace
