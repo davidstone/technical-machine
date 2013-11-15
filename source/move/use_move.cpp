@@ -1027,7 +1027,7 @@ void equalize(Stat & hp1, Stat & hp2) {
 
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
 	if (target.pokemon().can_be_phazed()) {
-		uint8_t const index = variable.phaze_index(target.pokemon().index());
+		auto const index = variable.phaze_index(target.pokemon().index());
 		target.all_pokemon().set_replacement(index);
 		switchpokemon(target, user, weather);
 		target.move();
