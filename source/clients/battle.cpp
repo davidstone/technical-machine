@@ -159,7 +159,7 @@ void Battle::handle_use_move (Party const user, uint8_t slot, Moves move_name) {
 	active.move();
 	Pokemon & replacement = active.replacement();
 	if (!replacement.move.set_index_if_found(move_name)) {
-		replacement.move.add(move_name, 3);
+		replacement.move.add(move_name);
 	}
 	if (is_damaging(replacement.move()))
 		move_damage = true;

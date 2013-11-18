@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-Move::Move(Moves const move, unsigned const pp_ups) :
+Move::Move(Moves const move, Pp::pp_ups_type const pp_ups) :
 	m_name(move),
 	pp(move, pp_ups) {
 }

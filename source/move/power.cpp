@@ -172,7 +172,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Triple_Kick:
 			return attacker.triple_kick_power();
 		case Moves::Trump_Card:
-			return attacker.move().pp.trump_card_power();
+			return static_cast<unsigned>(attacker.move().pp.trump_card_power());
 		default:
 			return BasePower(attacker.move())();
 	}

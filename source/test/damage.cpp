@@ -43,7 +43,7 @@ Team max_damage_physical_attacker () {
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
-	pokemon.move.add(Moves::Rollout, 3);
+	pokemon.move.add(Moves::Rollout);
 
 	attacker.pokemon().defense_curl();
 	for (unsigned n = 0; n != 10; ++n)
@@ -109,7 +109,7 @@ void special_power_test () {
 
 	Team attacker = max_damage_special_attacker ();
 	Pokemon & pokemon = attacker.pokemon();
-	pokemon.move.add(Moves::Surf, 3);
+	pokemon.move.add(Moves::Surf);
 	get_item(pokemon).name = Item::WAVE_INCENSE;
 	get_ability(pokemon) = Ability::Torrent;
 
@@ -162,7 +162,7 @@ void special_damage_test () {
 
 	Team attacker = max_damage_special_attacker();
 	Pokemon & a = attacker.pokemon();
-	a.move.add(Moves::Blast_Burn, 3);
+	a.move.add(Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
 	get_stat(a, Stat::SPA).ev.set_value(252);

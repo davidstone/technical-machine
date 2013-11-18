@@ -94,7 +94,7 @@ void predict_move (Pokemon & member, std::vector<Moves> const & detailed) {
 		if (already_has_this_move) {
 			continue;
 		}
-		member.move.add(name, 3);
+		member.move.add(name, 3_ri);
 		static constexpr unsigned max_regular_moves = 4;
 		if (member.move.number_of_regular_moves() == max_regular_moves) {
 			break;

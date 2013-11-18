@@ -19,6 +19,7 @@
 #ifndef MOVE__MOVE_HPP_
 #define MOVE__MOVE_HPP_
 
+#include <ranged_integer/ranged_integer.hpp>
 #include "moves_forward.hpp"
 #include "pp.hpp"
 
@@ -26,7 +27,7 @@ namespace technicalmachine {
 
 class Move {
 public:
-	explicit Move(Moves move, unsigned pp_ups = 3);
+	explicit Move(Moves move, Pp::pp_ups_type pp_ups = 3_ri);
 	operator Moves() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;

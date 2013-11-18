@@ -44,7 +44,7 @@ namespace {
 Move load_move(boost::property_tree::ptree const & pt) {
 	std::string const name_str = pt.get_value<std::string>();
 	Moves const name = from_string<Moves>(name_str);
-	unsigned const pp_ups = pt.get <unsigned> ("<xmlattr>.pp-up");
+	auto const pp_ups = pt.get<Pp::pp_ups_type>("<xmlattr>.pp-up");
 	return Move(name, pp_ups);
 }
 

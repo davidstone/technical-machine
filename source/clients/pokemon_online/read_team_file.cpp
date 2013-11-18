@@ -45,7 +45,7 @@ namespace {
 
 Move load_move(boost::property_tree::ptree const & pt) {
 	unsigned const id = pt.get_value<unsigned>();
-	constexpr unsigned pp_ups = 3;
+	constexpr auto pp_ups = 3_ri;
 	return Move(id_to_move(id), pp_ups);
 }
 
