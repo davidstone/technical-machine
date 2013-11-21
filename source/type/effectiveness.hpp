@@ -28,7 +28,7 @@ class Pokemon;
 
 class Effectiveness {
 public:
-	Effectiveness(Type::Types type, Pokemon const & defender);
+	Effectiveness(Type type, Pokemon const & defender);
 	Effectiveness(Type::Types attacking, Type::Types defending);
 	static Effectiveness stealth_rock_effectiveness(Pokemon const & pokemon);
 	bool is_super_effective() const;

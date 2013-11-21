@@ -75,7 +75,7 @@ unsigned damage_calculator(ActivePokemon const & attacker, Team const & defender
 namespace {
 
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather) {
-	return !move_type.get_effectiveness(target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
+	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
 }
 
 constexpr bool cannot_ko(Moves const move) {
@@ -145,7 +145,7 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 	damage *= attacker.random_damage_multiplier();
 	damage *= calculate_stab_modifier(attacker);
 
-	Effectiveness const effectiveness = type.get_effectiveness(defender.pokemon());
+	Effectiveness const effectiveness(type, defender.pokemon());
 	damage *= effectiveness;
 	damage *= calculate_ability_effectiveness_modifier(get_ability(defender.pokemon()), effectiveness);
 	damage *= calculate_expert_belt_modifier(get_item(attacker), effectiveness);

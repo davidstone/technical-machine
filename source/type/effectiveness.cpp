@@ -28,9 +28,9 @@ Rational lookup_effectiveness(Type::Types const attacking, Type::Types const def
 bool check_effectiveness(std::vector<Rational> const & effectiveness, std::initializer_list<unsigned> const & results);
 }	// namespace
 
-Effectiveness::Effectiveness(Type::Types const type, Pokemon const & defender) {
+Effectiveness::Effectiveness(Type const type, Pokemon const & defender) {
 	for (Type const target_type : get_type(defender).types)
-		effectiveness.emplace_back(lookup_effectiveness(type, target_type.type));
+		effectiveness.emplace_back(lookup_effectiveness(type.type, target_type.type));
 }
 
 Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending):

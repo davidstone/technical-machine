@@ -996,7 +996,7 @@ bool can_confuse_with_chatter(Species const pokemon) {
 
 void clear_field(Team & user, Pokemon const & target) {
 	Type const type(user.pokemon().move(), user.pokemon());
-	if (!type.get_effectiveness(target).has_no_effect()) {
+	if (!Effectiveness(type, target).has_no_effect()) {
 		user.clear_field();
 	}
 }

@@ -103,10 +103,6 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 	return blocks_status<Status::POISON> ();
 }
 
-Effectiveness Type::get_effectiveness(Pokemon const & defender) const {
-	return Effectiveness(type, defender);
-}
-
 namespace {
 
 Type::Types hidden_power_type(Pokemon const & pokemon) {

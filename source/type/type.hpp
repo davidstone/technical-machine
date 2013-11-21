@@ -63,7 +63,6 @@ public:
 	bool blocks_status () const {
 		return false;
 	}
-	Effectiveness get_effectiveness(Pokemon const & defender) const;
 private:
 	friend class Effectiveness;
 	Types type;
