@@ -592,7 +592,7 @@ optional<native_integer<30, 100>> accuracy(Moves const move) {
 		100_ri,		// Fusion Flare
 		100_ri		// Fusion Bolt
 	);
-	static_assert(std::is_same<decltype(get_accuracy)::value_type, decltype(accuracy(std::declval<Moves>()))>::value, "Array type is not the same as the return type of function.");
+	static_assert(std::is_same<decltype(get_accuracy)::value_type, BaseAccuracy>::value, "Array type is not the same as the return type of function.");
 	return get_accuracy[static_cast<size_t>(move)];
 }
 
