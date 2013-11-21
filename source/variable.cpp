@@ -754,8 +754,10 @@ Probabilities phaze_probability(unsigned const foe_size) {
 }
 
 Probabilities acupressure_probability(ActivePokemon const & pokemon) {
-	static constexpr auto stats = boostable_stats();
-	auto const non_maxed_stats = std::count_if(std::begin(stats), std::end(stats), [&](Stat::Stats const stat) {
+	static constexpr Stat::Stats boostable_stats[] = {
+		Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE, Stat::ACC, Stat::EVA
+	};
+	auto const non_maxed_stats = std::count_if(std::begin(boostable_stats), std::end(boostable_stats), [&](Stat::Stats const stat) {
 		return pokemon.current_stage(stat) != 6;
 	});
 	if (non_maxed_stats == 0) {
@@ -765,7 +767,7 @@ Probabilities acupressure_probability(ActivePokemon const & pokemon) {
 	}
 	Rational const probability(1, static_cast<unsigned>(non_maxed_stats));
 	Probabilities probabilities;
-	for (auto const stat : stats) {
+	for (auto const stat : boostable_stats) {
 		probabilities.emplace_back(static_cast<unsigned>(stat), probability);
 	}
 	return probabilities;
