@@ -77,7 +77,7 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 namespace {
 
 bool move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) {
-	return !base_accuracy and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
+	return static_cast<bool>(base_accuracy) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
 Rational accuracy_item_modifier(Item const & item, bool target_moved) {
