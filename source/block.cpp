@@ -162,8 +162,15 @@ bool is_healing(Moves const name) {
 	}
 }
 
+bool is_regular_move(Moves const move) {
+	return !is_switch(move) and move != Moves::Struggle;
+}
+
 // Things that both block selection and block execution in between sleep and confusion
 bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const & other) {
+	if (!is_regular_move(move)) {
+		return false;
+	}
 	return (move.pp.is_empty())
 			or (user.is_disabled(move))
 			or (user.heal_block_is_active() and (is_healing(move)))
@@ -202,7 +209,7 @@ bool block2(ActivePokemon const & user, Moves const move, Weather const & weathe
 }
 
 bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves const move) {
-	return (is_switch(move) or move == Moves::Struggle) ?
+	return !is_regular_move(move) ?
 		user.recharging() :
 		standard_move_lock_in(user, move);
 }
