@@ -55,6 +55,7 @@ warnings = [
 	'-Wno-exit-time-destructors',
 	'-Wno-float-equal',
 	'-Wno-implicit-fallthrough',
+	'-Wno-mismatched-tags',
 	'-Wno-padded',
 	'-Wno-switch-enum',
 	'-Wno-unused-parameter',
