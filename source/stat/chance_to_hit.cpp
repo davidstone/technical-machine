@@ -36,7 +36,7 @@ namespace technicalmachine {
 namespace {
 constexpr uint8_t max = 100;
 
-bool move_can_miss(ActivePokemon const & user, Ability const & target_ability);
+bool move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability);
 Rational accuracy_item_modifier (Item const & item, bool target_moved);
 Rational evasion_item_modifier (Item const & item);
 
@@ -52,8 +52,9 @@ Rational ChanceToHit::operator()() const {
 }
 
 void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
-	if (move_can_miss(user, get_ability(target))) {
-		unsigned calculated_accuracy = accuracy(user.move());
+	BaseAccuracy const base_accuracy = accuracy(user.move());
+	if (move_can_miss(user, base_accuracy, get_ability(target))) {
+		auto calculated_accuracy = static_cast<unsigned>(*base_accuracy);
 		calculated_accuracy *= user.stage_modifier<Stat::ACC>();
 		calculated_accuracy *= target.stage_modifier<Stat::EVA>();
 
@@ -75,8 +76,8 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 
 namespace {
 
-bool move_can_miss(ActivePokemon const & user, Ability const & target_ability) {
-	return can_miss(user.move()) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
+bool move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) {
+	return !base_accuracy and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
 Rational accuracy_item_modifier(Item const & item, bool target_moved) {

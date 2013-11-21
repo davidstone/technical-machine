@@ -19,14 +19,15 @@
 #ifndef MOVE__ACCURACY_HPP_
 #define MOVE__ACCURACY_HPP_
 
-#include <cstdint>
+#include <ranged_integer/optional.hpp>
+#include <ranged_integer/ranged_integer.hpp>
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
 
-bool can_miss(Moves move);
-// A number between 0 (1?) and 100, according to poccil.
-uint8_t accuracy(Moves move);
+// A value that is not present indicates that the move cannot miss.
+using BaseAccuracy = optional<native_integer<30, 100>>;
+BaseAccuracy accuracy(Moves move);
 
 }	// namespace technicalmachine
 #endif	// MOVE__ACCURACY_HPP_
