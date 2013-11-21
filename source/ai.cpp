@@ -42,7 +42,7 @@ int main (int argc, char * argv []) {
 		// I'll get back to this later.
 		while (true) {
 			try {
-				ps::Client client(depth);
+				po::Client client(depth);
 				client.run();
 			}
 			catch (network::InvalidPacket const & error) {
