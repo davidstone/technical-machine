@@ -47,6 +47,19 @@
 # overkill for an "all-or-nothing" setting.
 #
 
-warnings = ['-Weverything', '-Werror', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-exit-time-destructors', '-Wno-float-equal', '-Wno-implicit-fallthrough', '-Wno-padded', '-Wno-switch-enum', '-Wno-unused-parameter', '-Wno-unused-private-field', '-Wno-unused-variable']
+warnings = [
+	'-Weverything',
+	'-Werror',
+	'-Wno-c++98-compat',
+	'-Wno-c++98-compat-pedantic',
+	'-Wno-exit-time-destructors',
+	'-Wno-float-equal',
+	'-Wno-implicit-fallthrough',
+	'-Wno-padded',
+	'-Wno-switch-enum',
+	'-Wno-unused-parameter',
+	'-Wno-unused-private-field',
+	'-Wno-unused-variable'
+]
 warnings_debug = []
 warnings_optimized = []
