@@ -60,9 +60,6 @@ public:
 inline constexpr std::initializer_list<Stat::Stats> regular_stats() {
 	return { Stat::HP, Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE };
 }
-inline constexpr std::initializer_list<Stat::Stats> boostable_stats() {
-	return { Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE, Stat::ACC, Stat::EVA };
-}
 
 template<Stat::Stats>
 unsigned initial_stat(Pokemon const & pokemon);
