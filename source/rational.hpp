@@ -1,5 +1,5 @@
 // Class to properly do integer multiplication / division
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,31 +19,39 @@
 #ifndef RATIONAL_HPP_
 #define RATIONAL_HPP_
 
+#include <limits>
 #include <string>
 #include <type_traits>
+
+#include <ranged_integer/ranged_integer.hpp>
 
 namespace technicalmachine {
 class Pokemon;
 
 class Rational {
 public:
-	constexpr explicit Rational(unsigned const n = 1, unsigned const d = 1):
+	using underlying_type = unsigned;
+	constexpr explicit Rational(underlying_type const n = 1, underlying_type const d = 1):
 		numerator(n),
 		denominator(d) {
 	}
-	template<typename T>
-	friend typename std::enable_if<std::is_integral<T>::value, T>::type &
-	operator*=(T & number, Rational const rational) {
-		auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
-		number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
-		return number;
+	template<
+		intmax_t lhs_min, intmax_t lhs_max, typename lhs_policy,
+		intmax_t rhs_min, intmax_t rhs_max, typename rhs_policy,
+		typename = std::enable_if<
+			lhs_min >= std::numeric_limits<underlying_type>::min() and
+			rhs_min >= std::numeric_limits<underlying_type>::min() and
+			lhs_max >= std::numeric_limits<underlying_type>::max() and
+			rhs_max >= std::numeric_limits<underlying_type>::max()
+		>
+	>
+	constexpr Rational(ranged_integer<lhs_min, lhs_max, lhs_policy> const n, ranged_integer<rhs_min, rhs_max, rhs_policy> const d):
+		numerator(static_cast<underlying_type>(n)),
+		denominator(static_cast<underlying_type>(d)) {
 	}
 	template<typename T>
-	friend typename std::enable_if<std::is_floating_point<T>::value, T>::type &
-	operator*=(T & number, Rational const rational) {
-		number *= rational.numerator;
-		number /= rational.denominator;
-		return number;
+	friend T & operator*=(T & number, Rational const rational) {
+		return compound_multiplication(number, rational, std::is_floating_point<T>{});
 	}
 	friend Rational operator*=(Rational & lhs, Rational const rhs) {
 		lhs.numerator *= rhs.numerator;
@@ -88,20 +96,32 @@ public:
 		return std::to_string(rational.numerator) + " / " + std::to_string(rational.denominator);
 	}
 private:
+	template<typename T>
+	friend T & compound_multiplication(T & number, Rational const rational, std::false_type is_floating_point) {
+		auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
+		number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
+		return number;
+	}
+	template<typename T>
+	friend T & compound_multiplication(T & number, Rational const rational, std::true_type is_floating_point) {
+		number *= rational.numerator;
+		number /= rational.denominator;
+		return number;
+	}
 	template<typename T, typename Enable = void>
 	class Temp;
 	template<typename T>
-	class Temp<T, typename std::enable_if<std::is_signed<T>::value>::type> {
+	class Temp<T, typename std::enable_if<std::numeric_limits<T>::is_signed>::type> {
 	public:
-		typedef int type;
+		using type = typename std::make_signed<underlying_type>::type;
 	};
 	template<typename T>
-	class Temp<T, typename std::enable_if<std::is_unsigned<T>::value>::type> {
+	class Temp<T, typename std::enable_if<!std::numeric_limits<T>::is_signed>::type> {
 	public:
-		typedef unsigned type;
+		using type = typename std::make_unsigned<underlying_type>::type;
 	};
-	unsigned numerator;
-	unsigned denominator;
+	underlying_type numerator;
+	underlying_type denominator;
 };
 
 template<typename T>
