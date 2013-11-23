@@ -106,18 +106,20 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 namespace {
 
 Type::Types hidden_power_type(Pokemon const & pokemon) {
-	static constexpr std::pair<Stat::Stats, unsigned> modifiers[] = {
-		{ Stat::HP, 0 },
-		{ Stat::ATK, 1 },
-		{ Stat::DEF, 2 },
-		{ Stat::SPE, 3 },
-		{ Stat::SPA, 4 },
-		{ Stat::SPD, 5 }
+	using modifier_type = std::pair<Stat::Stats, native_integer<0, 5>>;
+	static constexpr modifier_type modifiers[] = {
+		{ Stat::HP, 0_ri },
+		{ Stat::ATK, 1_ri },
+		{ Stat::DEF, 2_ri },
+		{ Stat::SPE, 3_ri },
+		{ Stat::SPA, 4_ri },
+		{ Stat::SPD, 5_ri }
 	};
-	auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & pair) {
-		return value + ((get_stat(pokemon, pair.first).iv % 2u) << pair.second);
+	using intermediate_type = checked_integer<0, 63>;
+	auto const sum = [&](intermediate_type value, modifier_type const & pair) {
+		return value + ((get_stat(pokemon, pair.first).iv % 2_ri) << pair.second);
 	};
-	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), 0u, sum) * 15 / 63;
+	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), intermediate_type(0_ri), sum) * 15_ri / 63_ri;
 	constexpr static Type::Types lookup [] = {
 		Type::Fighting,
 		Type::Flying,
@@ -136,7 +138,9 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 		Type::Dragon,
 		Type::Dark
 	};
-	return lookup[index];
+	static_assert(std::numeric_limits<decltype(index)>::min() == 0_ri, "Incorrect minimum index.");
+	static_assert(std::numeric_limits<decltype(index)>::max() == sizeof(lookup) - 1, "Incorrect maximum index.");
+	return lookup[static_cast<size_t>(index)];
 }
 
 Type::Types get_type(Moves const move, Pokemon const & pokemon) {

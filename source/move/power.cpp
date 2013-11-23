@@ -42,7 +42,6 @@ namespace technicalmachine {
 namespace {
 
 unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon const & defender, Variable const & variable);
-unsigned second_lowest_bit (Stat const & stat);
 bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 unsigned item_modifier (Pokemon const & attacker);
 Rational defender_ability_modifier(Pokemon const & attacker, Ability const ability);
@@ -141,18 +140,23 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Rollout:
 			return attacker.momentum_move_power();
 		case Moves::Hidden_Power: {
-			static constexpr std::array<std::pair<Stat::Stats, unsigned>, 6> stat_and_position {{
-				{ Stat::HP, 0 },
-				{ Stat::ATK, 1 },
-				{ Stat::DEF, 2 },
-				{ Stat::SPE, 3 },
-				{ Stat::SPA, 4 },
-				{ Stat::SPD, 5 }
+			using stat_and_position_type = std::pair<Stat::Stats, native_integer<0, 5>>;
+			static constexpr std::array<stat_and_position_type, 6> stat_and_position {{
+				{ Stat::HP, 0_ri },
+				{ Stat::ATK, 1_ri },
+				{ Stat::DEF, 2_ri },
+				{ Stat::SPE, 3_ri },
+				{ Stat::SPA, 4_ri },
+				{ Stat::SPD, 5_ri }
 			}};
-			auto const sum = [&](unsigned value, std::pair<Stat::Stats, unsigned> const & stat) {
-				return value + second_lowest_bit(get_stat(attacker, stat.first)) * (1u << stat.second);
+			using intermediate_type = checked_integer<0, 63>;
+			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
+				return value + ((get_stat(attacker, stat.first).iv >> 1_ri) % 2_ri) << stat.second;
 			};
-			return std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), 0u, sum) * 40 / 63 + 30;
+			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), intermediate_type(0_ri), sum) * 40_ri / 63_ri + 30_ri;
+			static_assert(std::numeric_limits<decltype(result)>::min() == 30_ri, "Incorrect Hidden Power minimum.");
+			static_assert(std::numeric_limits<decltype(result)>::max() == 70_ri, "Incorrect Hidden Power maximum.");
+			return static_cast<unsigned>(result);
 		}
 		case Moves::Magnitude:
 			return variable.value();
@@ -176,10 +180,6 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		default:
 			return BasePower(attacker.move())();
 	}
-}
-
-unsigned second_lowest_bit (Stat const & stat) {
-	return static_cast<unsigned>(stat.iv >> 1) % 2;
 }
 
 bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {

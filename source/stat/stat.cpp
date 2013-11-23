@@ -217,7 +217,7 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 Stat::Stat (Species name, Stats stat_name) :
 	max (65535),
 	base (get_base_stat (name, stat_name)),
-	iv (31),
+	iv(31_ri),
 	ev (0)
 	{
 }
@@ -366,7 +366,7 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 namespace {
 
 unsigned initial_generic_stat(Stat const & stat, Level const level) {
-	return (2u * stat.base + stat.iv + stat.ev.points()) * static_cast<unsigned>(level()) / 100 + 5;
+	return (2u * stat.base + static_cast<unsigned>(stat.iv) + stat.ev.points()) * static_cast<unsigned>(level()) / 100 + 5;
 }
 
 Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {

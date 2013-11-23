@@ -1,5 +1,5 @@
 // Test stat calculations
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -53,7 +53,7 @@ void attack_tests () {
 
 	get_item(pokemon).name = Item::CHOICE_BAND;
 	
-	calculate_attack(attacker.pokemon(), Weather ());
+	calculate_attack(attacker.pokemon(), Weather{});
 	if (get_stat(attacker.pokemon(), Stat::ATK).stat != max_attack)
 		throw IncorrectCalculation (get_stat(attacker.pokemon(), Stat::ATK).stat, max_attack);
 }

@@ -1,5 +1,5 @@
 // Stats data structures
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <initializer_list>
+#include <ranged_integer/ranged_integer.hpp>
 #include "ev.hpp"
 #include "../pokemon/species_forward.hpp"
 
@@ -50,7 +51,7 @@ public:
 	stat_type max;		// Max HP only
 	stat_type stat;		// Current HP or last calculated value for other stats
 	uint8_t base;
-	uint8_t iv;			// 0 through 31
+	checked_integer<0, 31> iv;
 	EV ev;
 
 	Stat (Species name, Stats stat);
