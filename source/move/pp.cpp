@@ -30,7 +30,7 @@ namespace technicalmachine {
 
 Pp::Pp (Moves const move, pp_ups_type const pp_ups):
 	max(calculate_max(get_base_pp(move), pp_ups)),
-	current(static_cast<bool>(max) ? bounded_integer::optional<current_type>(*max) : bounded_integer::optional<current_type>{}) {
+	current(static_cast<bool>(max) ? bounded_integer::optional<current_type>(*max) : bounded_integer::none) {
 }
 
 auto Pp::calculate_max(bounded_integer::optional<base_type> base, pp_ups_type pp_ups) -> bounded_integer::optional<max_type> {
@@ -91,14 +91,15 @@ bool operator!= (Pp const & lhs, Pp const & rhs) {
 }
 
 auto Pp::get_base_pp(Moves const move) -> bounded_integer::optional<base_type> {
-	static constexpr bounded_integer::optional<base_type> get_pp[] = {
-		{},		// Switch0
-		{},		// Switch1
-		{},		// Switch2
-		{},		// Switch3
-		{},		// Switch4
-		{},		// Switch5
-		{},		// Hit_Self
+	using bounded_integer::none;
+	static constexpr auto get_pp = bounded_integer::make_optional_array(
+		none,		// Switch0
+		none,		// Switch1
+		none,		// Switch2
+		none,		// Switch3
+		none,		// Switch4
+		none,		// Switch5
+		none,		// Hit_Self
 		35_bi,		// Pound
 		25_bi,		// Karate Chop
 		10_bi,		// DoubleSlap
@@ -263,7 +264,7 @@ auto Pp::get_base_pp(Moves const move) -> bounded_integer::optional<base_type> {
 		10_bi,		// Super Fang
 		20_bi,		// Slash
 		10_bi,		// Substitute
-		{},		// Struggle
+		none,		// Struggle
 		1_bi,		// Sketch
 		10_bi,		// Triple Kick
 		10_bi,		// Thief
@@ -658,8 +659,9 @@ auto Pp::get_base_pp(Moves const move) -> bounded_integer::optional<base_type> {
 		5_bi,		// V-create
 		5_bi,		// Fusion Flare
 		5_bi		// Fusion Bolt
-	};
-	return get_pp[static_cast<std::size_t>(move)];
+	);
+	static_assert(std::is_same<decltype(get_pp)::value_type, bounded_integer::optional<base_type>>::value, "Incorrect array type.");
+	return get_pp.at(move);
 }
 
 }	// namespace technicalmachine

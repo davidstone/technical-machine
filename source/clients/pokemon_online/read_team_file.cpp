@@ -43,9 +43,8 @@ namespace technicalmachine {
 namespace po {
 namespace {
 
-Move load_move(boost::property_tree::ptree const & pt) {
-	unsigned const id = pt.get_value<unsigned>();
-	return Move(id_to_move(id));
+Moves load_move(boost::property_tree::ptree const & pt) {
+	return id_to_move(pt.get_value<unsigned>());
 }
 
 Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
@@ -91,7 +90,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	unsigned n = 0;
 	for (auto const & value : pt.get_child("")) {
 		if (value.first == "Move") {
-			Move const move(load_move(value.second));
+			Moves const move(load_move(value.second));
 			if (move != Moves::END) {
 				pokemon.move.add(move);
 			}

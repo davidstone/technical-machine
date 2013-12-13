@@ -44,7 +44,7 @@ public:
 	// Pokemon
 	friend bool operator== (Pp const & lhs, Pp const & rhs);
 private:
-	using base_type = bounded_integer::checked_integer<1, 40>;
+	using base_type = bounded_integer::native_integer<1, 40>;
 	using max_type = decltype(std::declval<base_type>() * (std::declval<pp_ups_type>() + 5_bi) / 5_bi);
 	// clamped_integer simplifies situations like Pressure and Leppa
 	using current_type = bounded_integer::clamped_integer<0, static_cast<intmax_t>(std::numeric_limits<max_type>::max())>;
