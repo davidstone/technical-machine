@@ -140,22 +140,22 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Rollout:
 			return attacker.momentum_move_power();
 		case Moves::Hidden_Power: {
-			using stat_and_position_type = std::pair<Stat::Stats, native_integer<0, 5>>;
+			using stat_and_position_type = std::pair<Stat::Stats, bounded_integer::native_integer<0, 5>>;
 			static constexpr std::array<stat_and_position_type, 6> stat_and_position {{
-				{ Stat::HP, 0_ri },
-				{ Stat::ATK, 1_ri },
-				{ Stat::DEF, 2_ri },
-				{ Stat::SPE, 3_ri },
-				{ Stat::SPA, 4_ri },
-				{ Stat::SPD, 5_ri }
+				{ Stat::HP, 0_bi },
+				{ Stat::ATK, 1_bi },
+				{ Stat::DEF, 2_bi },
+				{ Stat::SPE, 3_bi },
+				{ Stat::SPA, 4_bi },
+				{ Stat::SPD, 5_bi }
 			}};
-			using intermediate_type = checked_integer<0, 63>;
+			using intermediate_type = bounded_integer::checked_integer<0, 63>;
 			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
-				return value + ((get_stat(attacker, stat.first).iv >> 1_ri) % 2_ri) << stat.second;
+				return value + ((get_stat(attacker, stat.first).iv >> 1_bi) % 2_bi) << stat.second;
 			};
-			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), intermediate_type(0_ri), sum) * 40_ri / 63_ri + 30_ri;
-			static_assert(std::numeric_limits<decltype(result)>::min() == 30_ri, "Incorrect Hidden Power minimum.");
-			static_assert(std::numeric_limits<decltype(result)>::max() == 70_ri, "Incorrect Hidden Power maximum.");
+			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), intermediate_type(0_bi), sum) * 40_bi / 63_bi + 30_bi;
+			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");
+			static_assert(std::numeric_limits<decltype(result)>::max() == 70_bi, "Incorrect Hidden Power maximum.");
 			return static_cast<unsigned>(result);
 		}
 		case Moves::Magnitude:

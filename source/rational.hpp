@@ -23,7 +23,7 @@
 #include <string>
 #include <type_traits>
 
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 class Pokemon;
@@ -45,7 +45,7 @@ public:
 			rhs_max >= std::numeric_limits<underlying_type>::max()
 		>
 	>
-	constexpr Rational(ranged_integer<lhs_min, lhs_max, lhs_policy> const n, ranged_integer<rhs_min, rhs_max, rhs_policy> const d):
+	constexpr Rational(bounded_integer::bounded_integer<lhs_min, lhs_max, lhs_policy> const n, bounded_integer::bounded_integer<rhs_min, rhs_max, rhs_policy> const d):
 		numerator(static_cast<underlying_type>(n)),
 		denominator(static_cast<underlying_type>(d)) {
 	}

@@ -19,7 +19,7 @@
 #ifndef POKEMON__LEVEL_HPP_
 #define POKEMON__LEVEL_HPP_
 
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 
@@ -27,10 +27,10 @@ class Level {
 public:
 	static constexpr int min = 1;
 	static constexpr int max = 100;
-	explicit Level(checked_integer<min, max> level);
-	native_integer<min, max> operator() () const;
+	explicit Level(bounded_integer::checked_integer<min, max> level);
+	bounded_integer::native_integer<min, max> operator() () const;
 private:
-	checked_integer<min, max> m_value;
+	bounded_integer::checked_integer<min, max> m_value;
 };
 
 bool operator== (Level lhs, Level rhs);

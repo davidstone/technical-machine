@@ -39,7 +39,7 @@ namespace {
 Team max_damage_physical_attacker () {
 	Team attacker;
 	
-	Level const level(100_ri);
+	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
@@ -55,7 +55,7 @@ Team max_damage_physical_attacker () {
 Team max_damage_special_attacker () {
 	Team attacker;
 
-	Level const level(100_ri);
+	Level const level(100_bi);
 	Gender const gender(Gender::GENDERLESS);
 	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	get_stat(attacker.pokemon(), Stat::HP).stat = 1;
@@ -65,7 +65,7 @@ Team max_damage_special_attacker () {
 
 Team max_damage_physical_defender () {
 	Team defender;
-	Level const level(1_ri);
+	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
 	auto & d = defender.pokemon();
@@ -77,7 +77,7 @@ Team max_damage_physical_defender () {
 
 Team max_damage_special_defender () {
 	Team defender;
-	Level const level(1_ri);
+	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Paras, level, gender);
 	auto & d = defender.pokemon();

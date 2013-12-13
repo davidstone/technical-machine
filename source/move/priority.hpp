@@ -19,7 +19,7 @@
 #ifndef MOVE__PRIORITY_HPP_
 #define MOVE__PRIORITY_HPP_
 
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
@@ -30,7 +30,7 @@ public:
 	friend bool operator== (Priority lhs, Priority rhs);
 	friend bool operator< (Priority lhs, Priority rhs);
 private:
-	checked_integer<-6, 6> priority;
+	bounded_integer::checked_integer<-6, 6> priority;
 };
 
 bool operator!= (Priority lhs, Priority rhs);

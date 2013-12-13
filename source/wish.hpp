@@ -20,8 +20,8 @@
 #define WISH_HPP_
 
 #include <cstdint>
-#include <ranged_integer/optional.hpp>
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/optional.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 class ActivePokemon;
@@ -37,8 +37,8 @@ public:
 	friend bool operator== (Wish lhs, Wish rhs);
 private:
 	bool is_active() const;
-	using counter_type = checked_integer<0, 1>;
-	optional<counter_type> turns_until_activation;
+	using counter_type = bounded_integer::checked_integer<0, 1>;
+	bounded_integer::optional<counter_type> turns_until_activation;
 	friend class Evaluate;
 };
 

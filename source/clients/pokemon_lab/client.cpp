@@ -374,7 +374,7 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 			std::string const nickname = msg.read_string ();
 			auto const species = simulator_cast(ID<Species>(msg.read_short()));
 			auto const gender = simulator_cast(ID<Gender::Genders>(msg.read_byte()));
-			Level const level(checked_integer<Level::min, Level::max>{msg.read_byte()});
+			Level const level(bounded_integer::checked_integer<Level::min, Level::max>{msg.read_byte()});
 			auto & battle = find_battle (battle_id);
 			battle.handle_send_out (party, slot, index, nickname, species, Gender(gender), level);
 			break;

@@ -21,7 +21,7 @@
 
 #include <cstdint>
 #include <initializer_list>
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
 #include "../pokemon/species_forward.hpp"
 
@@ -50,8 +50,9 @@ public:
 	typedef uint16_t stat_type;
 	stat_type max;		// Max HP only
 	stat_type stat;		// Current HP or last calculated value for other stats
-	uint8_t base;
-	checked_integer<0, 31> iv;
+	using base_type = bounded_integer::checked_integer<1, 255>;
+	base_type base;
+	bounded_integer::checked_integer<0, 31> iv;
 	EV ev;
 
 	Stat (Species name, Stats stat);

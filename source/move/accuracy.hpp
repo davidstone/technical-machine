@@ -19,14 +19,14 @@
 #ifndef MOVE__ACCURACY_HPP_
 #define MOVE__ACCURACY_HPP_
 
-#include <ranged_integer/optional.hpp>
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/optional.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
 
 // A value that is not present indicates that the move cannot miss.
-using BaseAccuracy = optional<native_integer<30, 100>>;
+using BaseAccuracy = bounded_integer::optional<bounded_integer::native_integer<30, 100>>;
 BaseAccuracy accuracy(Moves move);
 
 }	// namespace technicalmachine

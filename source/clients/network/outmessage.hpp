@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 #include <boost/asio/ip/tcp.hpp>
-#include <ranged_integer/ranged_integer.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 class Team;
@@ -36,19 +36,19 @@ public:
 	virtual ~OutMessage () {}
 	void write_byte (uint8_t byte);
 	template<intmax_t minimum, intmax_t maximum, typename policy>
-	void write_byte(ranged_integer<minimum, maximum, policy> const integer) {
+	void write_byte(bounded_integer::bounded_integer<minimum, maximum, policy> const integer) {
 		static_assert(minimum >= 0 and maximum <= std::numeric_limits<uint8_t>::max(), "Value out of range of uint8_t.");
 		write_byte(static_cast<uint8_t>(integer));
 	}
 	void write_short (uint16_t bytes);
 	template<intmax_t minimum, intmax_t maximum, typename policy>
-	void write_short(ranged_integer<minimum, maximum, policy> const integer) {
+	void write_short(bounded_integer::bounded_integer<minimum, maximum, policy> const integer) {
 		static_assert(minimum >= 0 and maximum <= std::numeric_limits<uint16_t>::max(), "Value out of range of uint16_t.");
 		write_short(static_cast<uint16_t>(integer));
 	}
 	void write_int (uint32_t bytes);
 	template<intmax_t minimum, intmax_t maximum, typename policy>
-	void write_int(ranged_integer<minimum, maximum, policy> const integer) {
+	void write_int(bounded_integer::bounded_integer<minimum, maximum, policy> const integer) {
 		static_assert(minimum >= 0 and maximum <= std::numeric_limits<uint32_t>::max(), "Value out of range of uint32_t.");
 		write_int(static_cast<uint32_t>(integer));
 	}

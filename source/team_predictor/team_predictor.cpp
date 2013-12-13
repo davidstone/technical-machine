@@ -78,7 +78,7 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	auto const index = team.pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = estimate.most_likely();
-		Level const level(100_ri);
+		Level const level(100_bi);
 		Gender const gender;
 		team.add_pokemon(name, level, gender);
 		if (team.number_of_seen_pokemon() == team.size())
@@ -94,7 +94,7 @@ void predict_move (Pokemon & member, std::vector<Moves> const & detailed) {
 		if (already_has_this_move) {
 			continue;
 		}
-		member.move.add(name, 3_ri);
+		member.move.add(name);
 		static constexpr unsigned max_regular_moves = 4;
 		if (member.move.number_of_regular_moves() == max_regular_moves) {
 			break;

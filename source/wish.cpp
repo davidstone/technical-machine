@@ -21,11 +21,12 @@
 #include "rational.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 class Pokemon;
 
 void Wish::activate() {
 	if (!is_active()) {
-		static constexpr auto turn_delay = 1_ri;
+		static constexpr auto turn_delay = 1_bi;
 		turns_until_activation = counter_type(turn_delay);
 	}
 }
@@ -33,7 +34,7 @@ void Wish::activate() {
 void Wish::decrement(ActivePokemon & pokemon) {
 	if (is_active()) {
 		--*turns_until_activation;
-		if (*turns_until_activation == 0_ri) {
+		if (*turns_until_activation == 0_bi) {
 			turns_until_activation = {};
 			heal(pokemon, Rational(1, 2));
 		}

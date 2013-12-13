@@ -37,6 +37,7 @@
 #include "type/effectiveness.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 namespace {
 
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
@@ -122,8 +123,8 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 
 namespace {
 
-auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_ri / 5_ri) {
-	return get_level(attacker)() * 2_ri / 5_ri;
+auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_bi / 5_bi) {
+	return get_level(attacker)() * 2_bi / 5_bi;
 }
 
 unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {

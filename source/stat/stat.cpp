@@ -21,6 +21,8 @@
 #include <cstdint>
 #include <type_traits>
 
+#include <bounded_integer/array.hpp>
+
 #include "nature.hpp"
 
 #include "../ability.hpp"
@@ -40,7 +42,7 @@
 namespace technicalmachine {
 namespace {
 
-uint8_t get_base_stat(Species name, Stat::Stats stat_name);
+Stat::base_type get_base_stat(Species name, Stat::Stats stat_name);
 
 unsigned initial_generic_stat(Stat const & stat, Level level);
 
@@ -216,8 +218,8 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 
 Stat::Stat (Species name, Stats stat_name) :
 	max (65535),
-	base (get_base_stat (name, stat_name)),
-	iv(31_ri),
+	base(get_base_stat(name, stat_name)),
+	iv(31_bi),
 	ev (0)
 	{
 }
@@ -366,7 +368,7 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 namespace {
 
 unsigned initial_generic_stat(Stat const & stat, Level const level) {
-	return (2u * stat.base + static_cast<unsigned>(stat.iv) + stat.ev.points()) * static_cast<unsigned>(level()) / 100 + 5;
+	return (static_cast<unsigned>(2_bi * stat.base + stat.iv) + stat.ev.points()) * static_cast<unsigned>(level()) / 100 + 5;
 }
 
 Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
@@ -381,690 +383,693 @@ unsigned tailwind_speed_multiplier (Team const & team) {
 	return team.screens.tailwind() ? 2 : 1;
 }
 
-uint8_t get_base_stat (Species name, Stat::Stats stat) {
-	constexpr static uint8_t base_stat [][6] = {
+Stat::base_type get_base_stat(Species name, Stat::Stats stat) {
+	static constexpr auto base_stat = bounded_integer::make_array<6>(
 	
 		// Generation 1
-		{	45,	49,	49,	65,	65,	45	},		// Bulbasaur
-		{	60,	62,	63,	80,	80,	60	},		// Ivysaur
-		{	80,	82,	83,	100,	100,	80	},		// Venusaur
-		{	39,	52,	43,	60,	50,	65	},		// Charmander
-		{	58,	64,	58,	80,	65,	80	},		// Charmeleon
-		{	78,	84,	78,	109,	85,	100	},		// Charizard
-		{	44,	48,	65,	50,	64,	43	},		// Squirtle
-		{	59,	63,	80,	65,	80,	58	},		// Wartortle
-		{	79,	83,	100,	85,	105,	78	},		// Blastoise
-		{	45,	30,	35,	20,	20,	45	},		// Caterpie
-		{	50,	20,	55,	25,	25,	30	},		// Metapod
-		{	60,	45,	50,	80,	80,	70	},		// Butterfree
-		{	40,	35,	30,	20,	20,	50	},		// Weedle
-		{	45,	25,	50,	25,	25,	35	},		// Kakuna
-		{	65,	80,	40,	45,	80,	75	},		// Beedrill
-		{	40,	45,	40,	35,	35,	56	},		// Pidgey
-		{	63,	60,	55,	50,	50,	71	},		// Pidgeotto
-		{	83,	80,	75,	70,	70,	91	},		// Pidgeot
-		{	30,	56,	35,	25,	35,	72	},		// Rattata
-		{	55,	81,	60,	50,	70,	97	},		// Raticate
-		{	40,	60,	30,	31,	31,	70	},		// Spearow
-		{	65,	90,	65,	61,	61,	100	},		// Fearow
-		{	35,	60,	44,	40,	54,	55	},		// Ekans
-		{	60,	85,	69,	65,	79,	80	},		// Arbok
-		{	35,	55,	30,	50,	40,	90	},		// Pikachu
-		{	60,	90,	55,	90,	80,	100	},		// Raichu
-		{	50,	75,	85,	20,	30,	40	},		// Sandshrew
-		{	75,	100,	110,	45,	55,	65	},		// Sandslash
-		{	55,	47,	52,	40,	40,	41	},		// Nidoran-F
-		{	70,	62,	67,	55,	55,	56	},		// Nidorina
-		{	90,	82,	87,	75,	85,	76	},		// Nidoqueen
-		{	46,	57,	40,	40,	40,	50	},		// Nidoran-M
-		{	61,	72,	57,	55,	55,	65	},		// Nidorino
-		{	81,	92,	77,	85,	75,	85	},		// Nidoking
-		{	70,	45,	48,	60,	65,	35	},		// Clefairy
-		{	95,	70,	73,	85,	90,	60	},		// Clefable
-		{	38,	41,	40,	50,	65,	65	},		// Vulpix
-		{	73,	76,	75,	81,	100,	100	},		// Ninetales
-		{	115,	45,	20,	45,	25,	20	},		// Jigglypuff
-		{	140,	70,	45,	75,	50,	45	},		// Wigglytuff
-		{	40,	45,	35,	30,	40,	55	},		// Zubat
-		{	75,	80,	70,	65,	75,	90	},		// Golbat
-		{	45,	50,	55,	75,	65,	30	},		// Oddish
-		{	60,	65,	70,	85,	75,	40	},		// Gloom
-		{	75,	80,	85,	100,	90,	50	},		// Vileplume
-		{	35,	70,	55,	45,	55,	25	},		// Paras
-		{	60,	95,	80,	60,	80,	30	},		// Parasect
-		{	60,	55,	50,	40,	55,	45	},		// Venonat
-		{	70,	65,	60,	90,	75,	90	},		// Venomoth
-		{	10,	55,	25,	35,	45,	95	},		// Diglett
-		{	35,	80,	50,	50,	70,	120	},		// Dugtrio
-		{	40,	45,	35,	40,	40,	90	},		// Meowth
-		{	65,	70,	60,	65,	65,	115	},		// Persian
-		{	50,	52,	48,	65,	50,	55	},		// Psyduck
-		{	80,	82,	78,	95,	80,	85	},		// Golduck
-		{	40,	80,	35,	35,	45,	70	},		// Mankey
-		{	65,	105,	60,	60,	70,	95	},		// Primeape
-		{	55,	70,	45,	70,	50,	60	},		// Growlithe
-		{	90,	110,	80,	100,	80,	95	},		// Arcanine
-		{	40,	50,	40,	40,	40,	90	},		// Poliwag
-		{	65,	65,	65,	50,	50,	90	},		// Poliwhirl
-		{	90,	85,	95,	70,	90,	70	},		// Poliwrath
-		{	25,	20,	15,	105,	55,	90	},		// Abra
-		{	40,	35,	30,	120,	70,	105	},		// Kadabra
-		{	55,	50,	45,	135,	85,	120	},		// Alakazam
-		{	70,	80,	50,	35,	35,	35	},		// Machop
-		{	80,	100,	70,	50,	60,	45	},		// Machoke
-		{	90,	130,	80,	65,	85,	55	},		// Machamp
-		{	50,	75,	35,	70,	30,	40	},		// Bellsprout
-		{	65,	90,	50,	85,	45,	55	},		// Weepinbell
-		{	80,	105,	65,	100,	60,	70	},		// Victreebel
-		{	40,	40,	35,	50,	100,	70	},		// Tentacool
-		{	80,	70,	65,	80,	120,	100	},		// Tentacruel
-		{	40,	80,	100,	30,	30,	20	},		// Geodude
-		{	55,	95,	115,	45,	45,	35	},		// Graveler
-		{	80,	110,	130,	55,	65,	45	},		// Golem
-		{	50,	85,	55,	65,	65,	90	},		// Ponyta
-		{	65,	100,	70,	80,	80,	105	},		// Rapidash
-		{	90,	65,	65,	40,	40,	15	},		// Slowpoke
-		{	95,	75,	110,	100,	80,	30	},		// Slowbro
-		{	25,	35,	70,	95,	55,	45	},		// Magnemite
-		{	50,	60,	95,	120,	70,	70	},		// Magneton
-		{	52,	65,	55,	58,	62,	60	},		// Farfetch'd
-		{	35,	85,	45,	35,	35,	75	},		// Doduo
-		{	60,	110,	70,	60,	60,	100	},		// Dodrio
-		{	65,	45,	55,	45,	70,	45	},		// Seel
-		{	90,	70,	80,	70,	95,	70	},		// Dewgong
-		{	80,	80,	50,	40,	50,	25	},		// Grimer
-		{	105,	105,	75,	65,	100,	50	},		// Muk
-		{	30,	65,	100,	45,	25,	40	},		// Shellder
-		{	50,	95,	180,	85,	45,	70	},		// Cloyster
-		{	30,	35,	30,	100,	35,	80	},		// Gastly
-		{	45,	50,	45,	115,	55,	95	},		// Haunter
-		{	60,	65,	60,	130,	75,	110	},		// Gengar
-		{	35,	45,	160,	30,	45,	70	},		// Onix
-		{	60,	48,	45,	43,	90,	42	},		// Drowzee
-		{	85,	73,	70,	73,	115,	67	},		// Hypno
-		{	30,	105,	90,	25,	25,	50	},		// Krabby
-		{	55,	130,	115,	50,	50,	75	},		// Kingler
-		{	40,	30,	50,	55,	55,	100	},		// Voltorb
-		{	60,	50,	70,	80,	80,	140	},		// Electrode
-		{	60,	40,	80,	60,	45,	40	},		// Exeggcute
-		{	95,	95,	85,	125,	65,	55	},		// Exeggutor
-		{	50,	50,	95,	40,	50,	35	},		// Cubone
-		{	60,	80,	110,	50,	80,	45	},		// Marowak
-		{	50,	120,	53,	35,	110,	87	},		// Hitmonlee
-		{	50,	105,	79,	35,	110,	76	},		// Hitmonchan
-		{	90,	55,	75,	60,	75,	30	},		// Lickitung
-		{	40,	65,	95,	60,	45,	35	},		// Koffing
-		{	65,	90,	120,	85,	70,	60	},		// Weezing
-		{	80,	85,	95,	30,	30,	25	},		// Rhyhorn
-		{	105,	130,	120,	45,	45,	40	},		// Rhydon
-		{	250,	5, 	5, 	35,	105,	50	},		// Chansey
-		{	65,	55,	115,	100,	40,	60	},		// Tangela
-		{	105,	95,	80,	40,	80,	90	},		// Kangaskhan
-		{	30,	40,	70,	70,	25,	60	},		// Horsea
-		{	55,	65,	95,	95,	45,	85	},		// Seadra
-		{	45,	67,	60,	35,	50,	63	},		// Goldeen
-		{	80,	92,	65,	65,	80,	68	},		// Seaking
-		{	30,	45,	55,	70,	55,	85	},		// Staryu
-		{	60,	75,	85,	100,	85,	115	},		// Starmie
-		{	40,	45,	65,	100,	120,	90	},		// Mr. Mime
-		{	70,	110,	80,	55,	80,	105	},		// Scyther
-		{	65,	50,	35,	115,	95,	95	},		// Jynx
-		{	65,	83,	57,	95,	85,	105	},		// Electabuzz
-		{	65,	95,	57,	100,	85,	93	},		// Magmar
-		{	65,	125,	100,	55,	70,	85	},		// Pinsir
-		{	75,	100,	95,	40,	70,	110	},		// Tauros
-		{	20,	10,	55,	15,	20,	80	},		// Magikarp
-		{	95,	125,	79,	60,	100,	81	},		// Gyarados
-		{	130,	85,	80,	85,	95,	60	},		// Lapras
-		{	48,	48,	48,	48,	48,	48	},		// Ditto
-		{	55,	55,	50,	45,	65,	55	},		// Eevee
-		{	130,	65,	60,	110,	95,	65	},		// Vaporeon
-		{	65,	65,	60,	110,	95,	130	},		// Jolteon
-		{	65,	130,	60,	95,	110,	65	},		// Flareon
-		{	65,	60,	70,	85,	75,	40	},		// Porygon
-		{	35,	40,	100,	90,	55,	35	},		// Omanyte
-		{	70,	60,	125,	115,	70,	55	},		// Omastar
-		{	30,	80,	90,	55,	45,	55	},		// Kabuto
-		{	60,	115,	105,	65,	70,	80	},		// Kabutops
-		{	80,	105,	65,	60,	75,	130	},		// Aerodactyl
-		{	160,	110,	65,	65,	110,	30	},		// Snorlax
-		{	90,	85,	100,	95,	125,	85	},		// Articuno
-		{	90,	90,	85,	125,	90,	100	},		// Zapdos
-		{	90,	100,	90,	125,	85,	90	},		// Moltres
-		{	41,	64,	45,	50,	50,	50	},		// Dratini
-		{	61,	84,	65,	70,	70,	70	},		// Dragonair
-		{	91,	134,	95,	100,	100,	80	},		// Dragonite
-		{	106,	110,	90,	154,	90,	130	},		// Mewtwo
-		{	100,	100,	100,	100,	100,	100	},		// Mew
+		45_bi,	49_bi,	49_bi,	65_bi,	65_bi,	45_bi,		// Bulbasaur
+		60_bi,	62_bi,	63_bi,	80_bi,	80_bi,	60_bi,		// Ivysaur
+		80_bi,	82_bi,	83_bi,	100_bi,	100_bi,	80_bi,		// Venusaur
+		39_bi,	52_bi,	43_bi,	60_bi,	50_bi,	65_bi,		// Charmander
+		58_bi,	64_bi,	58_bi,	80_bi,	65_bi,	80_bi,		// Charmeleon
+		78_bi,	84_bi,	78_bi,	109_bi,	85_bi,	100_bi,		// Charizard
+		44_bi,	48_bi,	65_bi,	50_bi,	64_bi,	43_bi,		// Squirtle
+		59_bi,	63_bi,	80_bi,	65_bi,	80_bi,	58_bi,		// Wartortle
+		79_bi,	83_bi,	100_bi,	85_bi,	105_bi,	78_bi,		// Blastoise
+		45_bi,	30_bi,	35_bi,	20_bi,	20_bi,	45_bi,		// Caterpie
+		50_bi,	20_bi,	55_bi,	25_bi,	25_bi,	30_bi,		// Metapod
+		60_bi,	45_bi,	50_bi,	80_bi,	80_bi,	70_bi,		// Butterfree
+		40_bi,	35_bi,	30_bi,	20_bi,	20_bi,	50_bi,		// Weedle
+		45_bi,	25_bi,	50_bi,	25_bi,	25_bi,	35_bi,		// Kakuna
+		65_bi,	80_bi,	40_bi,	45_bi,	80_bi,	75_bi,		// Beedrill
+		40_bi,	45_bi,	40_bi,	35_bi,	35_bi,	56_bi,		// Pidgey
+		63_bi,	60_bi,	55_bi,	50_bi,	50_bi,	71_bi,		// Pidgeotto
+		83_bi,	80_bi,	75_bi,	70_bi,	70_bi,	91_bi,		// Pidgeot
+		30_bi,	56_bi,	35_bi,	25_bi,	35_bi,	72_bi,		// Rattata
+		55_bi,	81_bi,	60_bi,	50_bi,	70_bi,	97_bi,		// Raticate
+		40_bi,	60_bi,	30_bi,	31_bi,	31_bi,	70_bi,		// Spearow
+		65_bi,	90_bi,	65_bi,	61_bi,	61_bi,	100_bi,		// Fearow
+		35_bi,	60_bi,	44_bi,	40_bi,	54_bi,	55_bi,		// Ekans
+		60_bi,	85_bi,	69_bi,	65_bi,	79_bi,	80_bi,		// Arbok
+		35_bi,	55_bi,	30_bi,	50_bi,	40_bi,	90_bi,		// Pikachu
+		60_bi,	90_bi,	55_bi,	90_bi,	80_bi,	100_bi,		// Raichu
+		50_bi,	75_bi,	85_bi,	20_bi,	30_bi,	40_bi,		// Sandshrew
+		75_bi,	100_bi,	110_bi,	45_bi,	55_bi,	65_bi,		// Sandslash
+		55_bi,	47_bi,	52_bi,	40_bi,	40_bi,	41_bi,		// Nidoran-F
+		70_bi,	62_bi,	67_bi,	55_bi,	55_bi,	56_bi,		// Nidorina
+		90_bi,	82_bi,	87_bi,	75_bi,	85_bi,	76_bi,		// Nidoqueen
+		46_bi,	57_bi,	40_bi,	40_bi,	40_bi,	50_bi,		// Nidoran-M
+		61_bi,	72_bi,	57_bi,	55_bi,	55_bi,	65_bi,		// Nidorino
+		81_bi,	92_bi,	77_bi,	85_bi,	75_bi,	85_bi,		// Nidoking
+		70_bi,	45_bi,	48_bi,	60_bi,	65_bi,	35_bi,		// Clefairy
+		95_bi,	70_bi,	73_bi,	85_bi,	90_bi,	60_bi,		// Clefable
+		38_bi,	41_bi,	40_bi,	50_bi,	65_bi,	65_bi,		// Vulpix
+		73_bi,	76_bi,	75_bi,	81_bi,	100_bi,	100_bi,		// Ninetales
+		115_bi,	45_bi,	20_bi,	45_bi,	25_bi,	20_bi,		// Jigglypuff
+		140_bi,	70_bi,	45_bi,	75_bi,	50_bi,	45_bi,		// Wigglytuff
+		40_bi,	45_bi,	35_bi,	30_bi,	40_bi,	55_bi,		// Zubat
+		75_bi,	80_bi,	70_bi,	65_bi,	75_bi,	90_bi,		// Golbat
+		45_bi,	50_bi,	55_bi,	75_bi,	65_bi,	30_bi,		// Oddish
+		60_bi,	65_bi,	70_bi,	85_bi,	75_bi,	40_bi,		// Gloom
+		75_bi,	80_bi,	85_bi,	100_bi,	90_bi,	50_bi,		// Vileplume
+		35_bi,	70_bi,	55_bi,	45_bi,	55_bi,	25_bi,		// Paras
+		60_bi,	95_bi,	80_bi,	60_bi,	80_bi,	30_bi,		// Parasect
+		60_bi,	55_bi,	50_bi,	40_bi,	55_bi,	45_bi,		// Venonat
+		70_bi,	65_bi,	60_bi,	90_bi,	75_bi,	90_bi,		// Venomoth
+		10_bi,	55_bi,	25_bi,	35_bi,	45_bi,	95_bi,		// Diglett
+		35_bi,	80_bi,	50_bi,	50_bi,	70_bi,	120_bi,		// Dugtrio
+		40_bi,	45_bi,	35_bi,	40_bi,	40_bi,	90_bi,		// Meowth
+		65_bi,	70_bi,	60_bi,	65_bi,	65_bi,	115_bi,		// Persian
+		50_bi,	52_bi,	48_bi,	65_bi,	50_bi,	55_bi,		// Psyduck
+		80_bi,	82_bi,	78_bi,	95_bi,	80_bi,	85_bi,		// Golduck
+		40_bi,	80_bi,	35_bi,	35_bi,	45_bi,	70_bi,		// Mankey
+		65_bi,	105_bi,	60_bi,	60_bi,	70_bi,	95_bi,		// Primeape
+		55_bi,	70_bi,	45_bi,	70_bi,	50_bi,	60_bi,		// Growlithe
+		90_bi,	110_bi,	80_bi,	100_bi,	80_bi,	95_bi,		// Arcanine
+		40_bi,	50_bi,	40_bi,	40_bi,	40_bi,	90_bi,		// Poliwag
+		65_bi,	65_bi,	65_bi,	50_bi,	50_bi,	90_bi,		// Poliwhirl
+		90_bi,	85_bi,	95_bi,	70_bi,	90_bi,	70_bi,		// Poliwrath
+		25_bi,	20_bi,	15_bi,	105_bi,	55_bi,	90_bi,		// Abra
+		40_bi,	35_bi,	30_bi,	120_bi,	70_bi,	105_bi,		// Kadabra
+		55_bi,	50_bi,	45_bi,	135_bi,	85_bi,	120_bi,		// Alakazam
+		70_bi,	80_bi,	50_bi,	35_bi,	35_bi,	35_bi,		// Machop
+		80_bi,	100_bi,	70_bi,	50_bi,	60_bi,	45_bi,		// Machoke
+		90_bi,	130_bi,	80_bi,	65_bi,	85_bi,	55_bi,		// Machamp
+		50_bi,	75_bi,	35_bi,	70_bi,	30_bi,	40_bi,		// Bellsprout
+		65_bi,	90_bi,	50_bi,	85_bi,	45_bi,	55_bi,		// Weepinbell
+		80_bi,	105_bi,	65_bi,	100_bi,	60_bi,	70_bi,		// Victreebel
+		40_bi,	40_bi,	35_bi,	50_bi,	100_bi,	70_bi,		// Tentacool
+		80_bi,	70_bi,	65_bi,	80_bi,	120_bi,	100_bi,		// Tentacruel
+		40_bi,	80_bi,	100_bi,	30_bi,	30_bi,	20_bi,		// Geodude
+		55_bi,	95_bi,	115_bi,	45_bi,	45_bi,	35_bi,		// Graveler
+		80_bi,	110_bi,	130_bi,	55_bi,	65_bi,	45_bi,		// Golem
+		50_bi,	85_bi,	55_bi,	65_bi,	65_bi,	90_bi,		// Ponyta
+		65_bi,	100_bi,	70_bi,	80_bi,	80_bi,	105_bi,		// Rapidash
+		90_bi,	65_bi,	65_bi,	40_bi,	40_bi,	15_bi,		// Slowpoke
+		95_bi,	75_bi,	110_bi,	100_bi,	80_bi,	30_bi,		// Slowbro
+		25_bi,	35_bi,	70_bi,	95_bi,	55_bi,	45_bi,		// Magnemite
+		50_bi,	60_bi,	95_bi,	120_bi,	70_bi,	70_bi,		// Magneton
+		52_bi,	65_bi,	55_bi,	58_bi,	62_bi,	60_bi,		// Farfetch'd
+		35_bi,	85_bi,	45_bi,	35_bi,	35_bi,	75_bi,		// Doduo
+		60_bi,	110_bi,	70_bi,	60_bi,	60_bi,	100_bi,		// Dodrio
+		65_bi,	45_bi,	55_bi,	45_bi,	70_bi,	45_bi,		// Seel
+		90_bi,	70_bi,	80_bi,	70_bi,	95_bi,	70_bi,		// Dewgong
+		80_bi,	80_bi,	50_bi,	40_bi,	50_bi,	25_bi,		// Grimer
+		105_bi,	105_bi,	75_bi,	65_bi,	100_bi,	50_bi,		// Muk
+		30_bi,	65_bi,	100_bi,	45_bi,	25_bi,	40_bi,		// Shellder
+		50_bi,	95_bi,	180_bi,	85_bi,	45_bi,	70_bi,		// Cloyster
+		30_bi,	35_bi,	30_bi,	100_bi,	35_bi,	80_bi,		// Gastly
+		45_bi,	50_bi,	45_bi,	115_bi,	55_bi,	95_bi,		// Haunter
+		60_bi,	65_bi,	60_bi,	130_bi,	75_bi,	110_bi,		// Gengar
+		35_bi,	45_bi,	160_bi,	30_bi,	45_bi,	70_bi,		// Onix
+		60_bi,	48_bi,	45_bi,	43_bi,	90_bi,	42_bi,		// Drowzee
+		85_bi,	73_bi,	70_bi,	73_bi,	115_bi,	67_bi,		// Hypno
+		30_bi,	105_bi,	90_bi,	25_bi,	25_bi,	50_bi,		// Krabby
+		55_bi,	130_bi,	115_bi,	50_bi,	50_bi,	75_bi,		// Kingler
+		40_bi,	30_bi,	50_bi,	55_bi,	55_bi,	100_bi,		// Voltorb
+		60_bi,	50_bi,	70_bi,	80_bi,	80_bi,	140_bi,		// Electrode
+		60_bi,	40_bi,	80_bi,	60_bi,	45_bi,	40_bi,		// Exeggcute
+		95_bi,	95_bi,	85_bi,	125_bi,	65_bi,	55_bi,		// Exeggutor
+		50_bi,	50_bi,	95_bi,	40_bi,	50_bi,	35_bi,		// Cubone
+		60_bi,	80_bi,	110_bi,	50_bi,	80_bi,	45_bi,		// Marowak
+		50_bi,	120_bi,	53_bi,	35_bi,	110_bi,	87_bi,		// Hitmonlee
+		50_bi,	105_bi,	79_bi,	35_bi,	110_bi,	76_bi,		// Hitmonchan
+		90_bi,	55_bi,	75_bi,	60_bi,	75_bi,	30_bi,		// Lickitung
+		40_bi,	65_bi,	95_bi,	60_bi,	45_bi,	35_bi,		// Koffing
+		65_bi,	90_bi,	120_bi,	85_bi,	70_bi,	60_bi,		// Weezing
+		80_bi,	85_bi,	95_bi,	30_bi,	30_bi,	25_bi,		// Rhyhorn
+		105_bi,	130_bi,	120_bi,	45_bi,	45_bi,	40_bi,		// Rhydon
+		250_bi,	5_bi,	5_bi,	35_bi,	105_bi,	50_bi,		// Chansey
+		65_bi,	55_bi,	115_bi,	100_bi,	40_bi,	60_bi,		// Tangela
+		105_bi,	95_bi,	80_bi,	40_bi,	80_bi,	90_bi,		// Kangaskhan
+		30_bi,	40_bi,	70_bi,	70_bi,	25_bi,	60_bi,		// Horsea
+		55_bi,	65_bi,	95_bi,	95_bi,	45_bi,	85_bi,		// Seadra
+		45_bi,	67_bi,	60_bi,	35_bi,	50_bi,	63_bi,		// Goldeen
+		80_bi,	92_bi,	65_bi,	65_bi,	80_bi,	68_bi,		// Seaking
+		30_bi,	45_bi,	55_bi,	70_bi,	55_bi,	85_bi,		// Staryu
+		60_bi,	75_bi,	85_bi,	100_bi,	85_bi,	115_bi,		// Starmie
+		40_bi,	45_bi,	65_bi,	100_bi,	120_bi,	90_bi,		// Mr. Mime
+		70_bi,	110_bi,	80_bi,	55_bi,	80_bi,	105_bi,		// Scyther
+		65_bi,	50_bi,	35_bi,	115_bi,	95_bi,	95_bi,		// Jynx
+		65_bi,	83_bi,	57_bi,	95_bi,	85_bi,	105_bi,		// Electabuzz
+		65_bi,	95_bi,	57_bi,	100_bi,	85_bi,	93_bi,		// Magmar
+		65_bi,	125_bi,	100_bi,	55_bi,	70_bi,	85_bi,		// Pinsir
+		75_bi,	100_bi,	95_bi,	40_bi,	70_bi,	110_bi,		// Tauros
+		20_bi,	10_bi,	55_bi,	15_bi,	20_bi,	80_bi,		// Magikarp
+		95_bi,	125_bi,	79_bi,	60_bi,	100_bi,	81_bi,		// Gyarados
+		130_bi,	85_bi,	80_bi,	85_bi,	95_bi,	60_bi,		// Lapras
+		48_bi,	48_bi,	48_bi,	48_bi,	48_bi,	48_bi,		// Ditto
+		55_bi,	55_bi,	50_bi,	45_bi,	65_bi,	55_bi,		// Eevee
+		130_bi,	65_bi,	60_bi,	110_bi,	95_bi,	65_bi,		// Vaporeon
+		65_bi,	65_bi,	60_bi,	110_bi,	95_bi,	130_bi,		// Jolteon
+		65_bi,	130_bi,	60_bi,	95_bi,	110_bi,	65_bi,		// Flareon
+		65_bi,	60_bi,	70_bi,	85_bi,	75_bi,	40_bi,		// Porygon
+		35_bi,	40_bi,	100_bi,	90_bi,	55_bi,	35_bi,		// Omanyte
+		70_bi,	60_bi,	125_bi,	115_bi,	70_bi,	55_bi,		// Omastar
+		30_bi,	80_bi,	90_bi,	55_bi,	45_bi,	55_bi,		// Kabuto
+		60_bi,	115_bi,	105_bi,	65_bi,	70_bi,	80_bi,		// Kabutops
+		80_bi,	105_bi,	65_bi,	60_bi,	75_bi,	130_bi,		// Aerodactyl
+		160_bi,	110_bi,	65_bi,	65_bi,	110_bi,	30_bi,		// Snorlax
+		90_bi,	85_bi,	100_bi,	95_bi,	125_bi,	85_bi,		// Articuno
+		90_bi,	90_bi,	85_bi,	125_bi,	90_bi,	100_bi,		// Zapdos
+		90_bi,	100_bi,	90_bi,	125_bi,	85_bi,	90_bi,		// Moltres
+		41_bi,	64_bi,	45_bi,	50_bi,	50_bi,	50_bi,		// Dratini
+		61_bi,	84_bi,	65_bi,	70_bi,	70_bi,	70_bi,		// Dragonair
+		91_bi,	134_bi,	95_bi,	100_bi,	100_bi,	80_bi,		// Dragonite
+		106_bi,	110_bi,	90_bi,	154_bi,	90_bi,	130_bi,		// Mewtwo
+		100_bi,	100_bi,	100_bi,	100_bi,	100_bi,	100_bi,		// Mew
 		
 		// Generation 2
-		{	45,	49,	65,	49,	65,	45	},		// Chikorita
-		{	60,	62,	80,	63,	80,	60	},		// Bayleef
-		{	80,	82,	100,	83,	100,	80	},		// Meganium
-		{	39,	52,	43,	60,	50,	65	},		// Cyndaquil
-		{	58,	64,	58,	80,	65,	80	},		// Quilava
-		{	78,	84,	78,	109,	85,	100	},		// Typhlosion
-		{	50,	65,	64,	44,	48,	43	},		// Totodile
-		{	65,	80,	80,	59,	63,	58	},		// Croconaw
-		{	85,	105,	100,	79,	83,	78	},		// Feraligatr
-		{	35,	46,	34,	35,	45,	20	},		// Sentret
-		{	85,	76,	64,	45,	55,	90	},		// Furret
-		{	60,	30,	30,	36,	56,	50	},		// Hoothoot
-		{	100,	50,	50,	76,	96,	70	},		// Noctowl
-		{	40,	20,	30,	40,	80,	55	},		// Ledyba
-		{	55,	35,	50,	55,	110,	85	},		// Ledian
-		{	40,	60,	40,	40,	40,	30	},		// Spinarak
-		{	70,	90,	70,	60,	60,	40	},		// Ariados
-		{	85,	90,	80,	70,	80,	130	},		// Crobat
-		{	75,	38,	38,	56,	56,	67	},		// Chinchou
-		{	125,	58,	58,	76,	76,	67	},		// Lanturn
-		{	20,	40,	15,	35,	35,	60	},		// Pichu
-		{	50,	25,	28,	45,	55,	15	},		// Cleffa
-		{	90,	30,	15,	40,	20,	15	},		// Igglybuff
-		{	35,	20,	65,	40,	65,	20	},		// Togepi
-		{	55,	40,	85,	80,	105,	40	},		// Togetic
-		{	40,	50,	45,	70,	45,	70	},		// Natu
-		{	65,	75,	70,	95,	70,	95	},		// Xatu
-		{	55,	40,	40,	65,	45,	35	},		// Mareep
-		{	70,	55,	55,	80,	60,	45	},		// Flaaffy
-		{	90,	75,	75,	115,	90,	55	},		// Ampharos
-		{	75,	80,	85,	90,	100,	50	},		// Bellossom
-		{	70,	20,	50,	20,	50,	40	},		// Marill
-		{	100,	50,	80,	50,	80,	50	},		// Azumarill
-		{	70,	100,	115,	30,	65,	30	},		// Sudowoodo
-		{	90,	75,	75,	90,	100,	70	},		// Politoed
-		{	35,	35,	40,	35,	55,	50	},		// Hoppip
-		{	55,	45,	50,	45,	65,	80	},		// Skiploom
-		{	75,	55,	70,	55,	85,	110	},		// Jumpluff
-		{	55,	70,	55,	40,	55,	85	},		// Aipom
-		{	30,	30,	30,	30,	30,	30	},		// Sunkern
-		{	75,	75,	55,	105,	85,	30	},		// Sunflora
-		{	65,	65,	45,	75,	45,	95	},		// Yanma
-		{	55,	45,	45,	25,	25,	15	},		// Wooper
-		{	95,	85,	85,	65,	65,	35	},		// Quagsire
-		{	65,	65,	60,	130,	95,	110	},		// Espeon
-		{	95,	65,	110,	60,	130,	65	},		// Umbreon
-		{	60,	85,	42,	85,	42,	91	},		// Murkrow
-		{	95,	75,	80,	100,	110,	30	},		// Slowking
-		{	60,	60,	60,	85,	85,	85	},		// Misdreavus
-		{	48,	72,	48,	72,	48,	48	},		// Unown
-		{	190,	33,	58,	33,	58,	33	},		// Wobbuffet
-		{	70,	80,	65,	90,	65,	85	},		// Girafarig
-		{	50,	65,	90,	35,	35,	15	},		// Pineco
-		{	75,	90,	140,	60,	60,	40	},		// Forretress
-		{	100,	70,	70,	65,	65,	45	},		// Dunsparce
-		{	65,	75,	105,	35,	65,	85	},		// Gligar
-		{	75,	85,	200,	55,	65,	30	},		// Steelix
-		{	60,	80,	50,	40,	40,	30	},		// Snubbull
-		{	90,	120,	75,	60,	60,	45	},		// Granbull
-		{	65,	95,	75,	55,	55,	85	},		// Qwilfish
-		{	70,	130,	100,	55,	80,	65	},		// Scizor
-		{	20,	10,	230,	10,	230,	5  	},		// Shuckle
-		{	80,	125,	75,	40,	95,	85	},		// Heracross
-		{	55,	95,	55,	35,	75,	115	},		// Sneasel
-		{	60,	80,	50,	50,	50,	40	},		// Teddiursa
-		{	90,	130,	75,	75,	75,	55	},		// Ursaring
-		{	40,	40,	40,	70,	40,	20	},		// Slugma
-		{	50,	50,	120,	80,	80,	30	},		// Magcargo
-		{	50,	50,	40,	30,	30,	50	},		// Swinub
-		{	100,	100,	80,	60,	60,	50	},		// Piloswine
-		{	55,	55,	85,	65,	85,	35	},		// Corsola
-		{	35,	65,	35,	65,	35,	65	},		// Remoraid
-		{	75,	105,	75,	105,	75,	45	},		// Octillery
-		{	45,	55,	45,	65,	45,	75	},		// Delibird
-		{	65,	40,	70,	80,	140,	70	},		// Mantine
-		{	65,	80,	140,	40,	70,	70	},		// Skarmory
-		{	45,	60,	30,	80,	50,	65	},		// Houndour
-		{	75,	90,	50,	110,	80,	95	},		// Houndoom
-		{	75,	95,	95,	95,	95,	85	},		// Kingdra
-		{	90,	60,	60,	40,	40,	40	},		// Phanpy
-		{	90,	120,	120,	60,	60,	50	},		// Donphan
-		{	85,	80,	90,	105,	95,	60	},		// Porygon2
-		{	73,	95,	62,	85,	65,	85	},		// Stantler
-		{	55,	20,	35,	20,	45,	75	},		// Smeargle
-		{	35,	35,	35,	35,	35,	35	},		// Tyrogue
-		{	50,	95,	95,	35,	110,	70	},		// Hitmontop
-		{	45,	30,	15,	85,	65,	65	},		// Smoochum
-		{	45,	63,	37,	65,	55,	95	},		// Elekid
-		{	45,	75,	37,	70,	55,	83	},		// Magby
-		{	95,	80,	105,	40,	70,	100	},		// Miltank
-		{	255,	10,	10,	75,	135,	55	},		// Blissey
-		{	90,	85,	75,	115,	100,	115	},		// Raikou
-		{	115,	115,	85,	90,	75,	100	},		// Entei
-		{	100,	75,	115,	90,	115,	85	},		// Suicune
-		{	50,	64,	50,	45,	50,	41	},		// Larvitar
-		{	70,	84,	70,	65,	70,	51	},		// Pupitar
-		{	100,	134,	110,	95,	100,	61	},		// Tyranitar
-		{	106,	90,	130,	90,	154,	110	},		// Lugia
-		{	106,	130,	90,	110,	154,	90	},		// Ho-Oh
-		{	100,	100,	100,	100,	100,	100	},		// Celebi
+		45_bi,	49_bi,	65_bi,	49_bi,	65_bi,	45_bi,		// Chikorita
+		60_bi,	62_bi,	80_bi,	63_bi,	80_bi,	60_bi,		// Bayleef
+		80_bi,	82_bi,	100_bi,	83_bi,	100_bi,	80_bi,		// Meganium
+		39_bi,	52_bi,	43_bi,	60_bi,	50_bi,	65_bi,		// Cyndaquil
+		58_bi,	64_bi,	58_bi,	80_bi,	65_bi,	80_bi,		// Quilava
+		78_bi,	84_bi,	78_bi,	109_bi,	85_bi,	100_bi,		// Typhlosion
+		50_bi,	65_bi,	64_bi,	44_bi,	48_bi,	43_bi,		// Totodile
+		65_bi,	80_bi,	80_bi,	59_bi,	63_bi,	58_bi,		// Croconaw
+		85_bi,	105_bi,	100_bi,	79_bi,	83_bi,	78_bi,		// Feraligatr
+		35_bi,	46_bi,	34_bi,	35_bi,	45_bi,	20_bi,		// Sentret
+		85_bi,	76_bi,	64_bi,	45_bi,	55_bi,	90_bi,		// Furret
+		60_bi,	30_bi,	30_bi,	36_bi,	56_bi,	50_bi,		// Hoothoot
+		100_bi,	50_bi,	50_bi,	76_bi,	96_bi,	70_bi,		// Noctowl
+		40_bi,	20_bi,	30_bi,	40_bi,	80_bi,	55_bi,		// Ledyba
+		55_bi,	35_bi,	50_bi,	55_bi,	110_bi,	85_bi,		// Ledian
+		40_bi,	60_bi,	40_bi,	40_bi,	40_bi,	30_bi,		// Spinarak
+		70_bi,	90_bi,	70_bi,	60_bi,	60_bi,	40_bi,		// Ariados
+		85_bi,	90_bi,	80_bi,	70_bi,	80_bi,	130_bi,		// Crobat
+		75_bi,	38_bi,	38_bi,	56_bi,	56_bi,	67_bi,		// Chinchou
+		125_bi,	58_bi,	58_bi,	76_bi,	76_bi,	67_bi,		// Lanturn
+		20_bi,	40_bi,	15_bi,	35_bi,	35_bi,	60_bi,		// Pichu
+		50_bi,	25_bi,	28_bi,	45_bi,	55_bi,	15_bi,		// Cleffa
+		90_bi,	30_bi,	15_bi,	40_bi,	20_bi,	15_bi,		// Igglybuff
+		35_bi,	20_bi,	65_bi,	40_bi,	65_bi,	20_bi,		// Togepi
+		55_bi,	40_bi,	85_bi,	80_bi,	105_bi,	40_bi,		// Togetic
+		40_bi,	50_bi,	45_bi,	70_bi,	45_bi,	70_bi,		// Natu
+		65_bi,	75_bi,	70_bi,	95_bi,	70_bi,	95_bi,		// Xatu
+		55_bi,	40_bi,	40_bi,	65_bi,	45_bi,	35_bi,		// Mareep
+		70_bi,	55_bi,	55_bi,	80_bi,	60_bi,	45_bi,		// Flaaffy
+		90_bi,	75_bi,	75_bi,	115_bi,	90_bi,	55_bi,		// Ampharos
+		75_bi,	80_bi,	85_bi,	90_bi,	100_bi,	50_bi,		// Bellossom
+		70_bi,	20_bi,	50_bi,	20_bi,	50_bi,	40_bi,		// Marill
+		100_bi,	50_bi,	80_bi,	50_bi,	80_bi,	50_bi,		// Azumarill
+		70_bi,	100_bi,	115_bi,	30_bi,	65_bi,	30_bi,		// Sudowoodo
+		90_bi,	75_bi,	75_bi,	90_bi,	100_bi,	70_bi,		// Politoed
+		35_bi,	35_bi,	40_bi,	35_bi,	55_bi,	50_bi,		// Hoppip
+		55_bi,	45_bi,	50_bi,	45_bi,	65_bi,	80_bi,		// Skiploom
+		75_bi,	55_bi,	70_bi,	55_bi,	85_bi,	110_bi,		// Jumpluff
+		55_bi,	70_bi,	55_bi,	40_bi,	55_bi,	85_bi,		// Aipom
+		30_bi,	30_bi,	30_bi,	30_bi,	30_bi,	30_bi,		// Sunkern
+		75_bi,	75_bi,	55_bi,	105_bi,	85_bi,	30_bi,		// Sunflora
+		65_bi,	65_bi,	45_bi,	75_bi,	45_bi,	95_bi,		// Yanma
+		55_bi,	45_bi,	45_bi,	25_bi,	25_bi,	15_bi,		// Wooper
+		95_bi,	85_bi,	85_bi,	65_bi,	65_bi,	35_bi,		// Quagsire
+		65_bi,	65_bi,	60_bi,	130_bi,	95_bi,	110_bi,		// Espeon
+		95_bi,	65_bi,	110_bi,	60_bi,	130_bi,	65_bi,		// Umbreon
+		60_bi,	85_bi,	42_bi,	85_bi,	42_bi,	91_bi,		// Murkrow
+		95_bi,	75_bi,	80_bi,	100_bi,	110_bi,	30_bi,		// Slowking
+		60_bi,	60_bi,	60_bi,	85_bi,	85_bi,	85_bi,		// Misdreavus
+		48_bi,	72_bi,	48_bi,	72_bi,	48_bi,	48_bi,		// Unown
+		190_bi,	33_bi,	58_bi,	33_bi,	58_bi,	33_bi,		// Wobbuffet
+		70_bi,	80_bi,	65_bi,	90_bi,	65_bi,	85_bi,		// Girafarig
+		50_bi,	65_bi,	90_bi,	35_bi,	35_bi,	15_bi,		// Pineco
+		75_bi,	90_bi,	140_bi,	60_bi,	60_bi,	40_bi,		// Forretress
+		100_bi,	70_bi,	70_bi,	65_bi,	65_bi,	45_bi,		// Dunsparce
+		65_bi,	75_bi,	105_bi,	35_bi,	65_bi,	85_bi,		// Gligar
+		75_bi,	85_bi,	200_bi,	55_bi,	65_bi,	30_bi,		// Steelix
+		60_bi,	80_bi,	50_bi,	40_bi,	40_bi,	30_bi,		// Snubbull
+		90_bi,	120_bi,	75_bi,	60_bi,	60_bi,	45_bi,		// Granbull
+		65_bi,	95_bi,	75_bi,	55_bi,	55_bi,	85_bi,		// Qwilfish
+		70_bi,	130_bi,	100_bi,	55_bi,	80_bi,	65_bi,		// Scizor
+		20_bi,	10_bi,	230_bi,	10_bi,	230_bi,	5_bi,		// Shuckle
+		80_bi,	125_bi,	75_bi,	40_bi,	95_bi,	85_bi,		// Heracross
+		55_bi,	95_bi,	55_bi,	35_bi,	75_bi,	115_bi,		// Sneasel
+		60_bi,	80_bi,	50_bi,	50_bi,	50_bi,	40_bi,		// Teddiursa
+		90_bi,	130_bi,	75_bi,	75_bi,	75_bi,	55_bi,		// Ursaring
+		40_bi,	40_bi,	40_bi,	70_bi,	40_bi,	20_bi,		// Slugma
+		50_bi,	50_bi,	120_bi,	80_bi,	80_bi,	30_bi,		// Magcargo
+		50_bi,	50_bi,	40_bi,	30_bi,	30_bi,	50_bi,		// Swinub
+		100_bi,	100_bi,	80_bi,	60_bi,	60_bi,	50_bi,		// Piloswine
+		55_bi,	55_bi,	85_bi,	65_bi,	85_bi,	35_bi,		// Corsola
+		35_bi,	65_bi,	35_bi,	65_bi,	35_bi,	65_bi,		// Remoraid
+		75_bi,	105_bi,	75_bi,	105_bi,	75_bi,	45_bi,		// Octillery
+		45_bi,	55_bi,	45_bi,	65_bi,	45_bi,	75_bi,		// Delibird
+		65_bi,	40_bi,	70_bi,	80_bi,	140_bi,	70_bi,		// Mantine
+		65_bi,	80_bi,	140_bi,	40_bi,	70_bi,	70_bi,		// Skarmory
+		45_bi,	60_bi,	30_bi,	80_bi,	50_bi,	65_bi,		// Houndour
+		75_bi,	90_bi,	50_bi,	110_bi,	80_bi,	95_bi,		// Houndoom
+		75_bi,	95_bi,	95_bi,	95_bi,	95_bi,	85_bi,		// Kingdra
+		90_bi,	60_bi,	60_bi,	40_bi,	40_bi,	40_bi,		// Phanpy
+		90_bi,	120_bi,	120_bi,	60_bi,	60_bi,	50_bi,		// Donphan
+		85_bi,	80_bi,	90_bi,	105_bi,	95_bi,	60_bi,		// Porygon2
+		73_bi,	95_bi,	62_bi,	85_bi,	65_bi,	85_bi,		// Stantler
+		55_bi,	20_bi,	35_bi,	20_bi,	45_bi,	75_bi,		// Smeargle
+		35_bi,	35_bi,	35_bi,	35_bi,	35_bi,	35_bi,		// Tyrogue
+		50_bi,	95_bi,	95_bi,	35_bi,	110_bi,	70_bi,		// Hitmontop
+		45_bi,	30_bi,	15_bi,	85_bi,	65_bi,	65_bi,		// Smoochum
+		45_bi,	63_bi,	37_bi,	65_bi,	55_bi,	95_bi,		// Elekid
+		45_bi,	75_bi,	37_bi,	70_bi,	55_bi,	83_bi,		// Magby
+		95_bi,	80_bi,	105_bi,	40_bi,	70_bi,	100_bi,		// Miltank
+		255_bi,	10_bi,	10_bi,	75_bi,	135_bi,	55_bi,		// Blissey
+		90_bi,	85_bi,	75_bi,	115_bi,	100_bi,	115_bi,		// Raikou
+		115_bi,	115_bi,	85_bi,	90_bi,	75_bi,	100_bi,		// Entei
+		100_bi,	75_bi,	115_bi,	90_bi,	115_bi,	85_bi,		// Suicune
+		50_bi,	64_bi,	50_bi,	45_bi,	50_bi,	41_bi,		// Larvitar
+		70_bi,	84_bi,	70_bi,	65_bi,	70_bi,	51_bi,		// Pupitar
+		100_bi,	134_bi,	110_bi,	95_bi,	100_bi,	61_bi,		// Tyranitar
+		106_bi,	90_bi,	130_bi,	90_bi,	154_bi,	110_bi,		// Lugia
+		106_bi,	130_bi,	90_bi,	110_bi,	154_bi,	90_bi,		// Ho-Oh
+		100_bi,	100_bi,	100_bi,	100_bi,	100_bi,	100_bi,		// Celebi
 		
 		// Generation 3
-		{	40,	45,	35,	65,	55,	70	},		// Treecko
-		{	50,	65,	45,	85,	65,	95	},		// Grovyle
-		{	70,	85,	65,	105,	85,	120	},		// Sceptile
-		{	45,	60,	40,	70,	50,	45	},		// Torchic
-		{	60,	85,	60,	85,	60,	55	},		// Combusken
-		{	80,	120,	70,	110,	70,	80	},		// Blaziken
-		{	50,	70,	50,	50,	50,	40	},		// Mudkip
-		{	70,	85,	70,	60,	70,	50	},		// Marshtomp
-		{	100,	110,	90,	85,	90,	60	},		// Swampert
-		{	35,	55,	35,	30,	30,	35	},		// Poochyena
-		{	70,	90,	70,	60,	60,	70	},		// Mightyena
-		{	38,	30,	41,	30,	41,	60	},		// Zigzagoon
-		{	78,	70,	61,	50,	61,	100	},		// Linoone
-		{	45,	45,	35,	20,	30,	20	},		// Wurmple
-		{	50,	35,	55,	25,	25,	15	},		// Silcoon
-		{	60,	70,	50,	90,	50,	65	},		// Beautifly
-		{	50,	35,	55,	25,	25,	15	},		// Cascoon
-		{	60,	50,	70,	50,	90,	65	},		// Dustox
-		{	40,	30,	30,	40,	50,	30	},		// Lotad
-		{	60,	50,	50,	60,	70,	50	},		// Lombre
-		{	80,	70,	70,	90,	100,	70	},		// Ludicolo
-		{	40,	40,	50,	30,	30,	30	},		// Seedot
-		{	70,	70,	40,	60,	40,	60	},		// Nuzleaf
-		{	90,	100,	60,	90,	60,	80	},		// Shiftry
-		{	40,	55,	30,	30,	30,	85	},		// Taillow
-		{	60,	85,	60,	50,	50,	125	},		// Swellow
-		{	40,	30,	30,	55,	30,	85	},		// Wingull
-		{	60,	50,	100,	85,	70,	65	},		// Pelipper
-		{	28,	25,	25,	45,	35,	40	},		// Ralts
-		{	38,	35,	35,	65,	55,	50	},		// Kirlia
-		{	68,	65,	65,	125,	115,	80	},		// Gardevoir
-		{	40,	30,	32,	50,	52,	65	},		// Surskit
-		{	70,	60,	62,	80,	82,	60	},		// Masquerain
-		{	60,	40,	60,	40,	60,	35	},		// Shroomish
-		{	60,	130,	80,	60,	60,	70	},		// Breloom
-		{	60,	60,	60,	35,	35,	30	},		// Slakoth
-		{	80,	80,	80,	55,	55,	90	},		// Vigoroth
-		{	150,	160,	100,	95,	65,	100	},		// Slaking
-		{	31,	45,	90,	30,	30,	40	},		// Nincada
-		{	61,	90,	45,	50,	50,	160	},		// Ninjask
-		{	1, 	90,	45,	30,	30,	40	},		// Shedinja
-		{	64,	51,	23,	51,	23,	28	},		// Whismur
-		{	84,	71,	43,	71,	43,	48	},		// Loudred
-		{	104,	91,	63,	91,	63,	68	},		// Exploud
-		{	72,	60,	30,	20,	30,	25	},		// Makuhita
-		{	144,	120,	60,	40,	60,	50	},		// Hariyama
-		{	50,	20,	40,	20,	40,	20	},		// Azurill
-		{	30,	45,	135,	45,	90,	30	},		// Nosepass
-		{	50,	45,	45,	35,	35,	50	},		// Skitty
-		{	70,	65,	65,	55,	55,	70	},		// Delcatty
-		{	50,	75,	75,	65,	65,	50	},		// Sableye
-		{	50,	85,	85,	55,	55,	50	},		// Mawile
-		{	50,	70,	100,	40,	40,	30	},		// Aron
-		{	60,	90,	140,	50,	50,	40	},		// Lairon
-		{	70,	110,	180,	60,	60,	50	},		// Aggron
-		{	30,	40,	55,	40,	55,	60	},		// Meditite
-		{	60,	60,	75,	60,	75,	80	},		// Medicham
-		{	40,	45,	40,	65,	40,	65	},		// Electrike
-		{	70,	75,	60,	105,	60,	105	},		// Manectric
-		{	60,	50,	40,	85,	75,	95	},		// Plusle
-		{	60,	40,	50,	75,	85,	95	},		// Minun
-		{	65,	73,	55,	47,	75,	85	},		// Volbeat
-		{	65,	47,	55,	73,	75,	85	},		// Illumise
-		{	50,	60,	45,	100,	80,	65	},		// Roselia
-		{	70,	43,	53,	43,	53,	40	},		// Gulpin
-		{	100,	73,	83,	73,	83,	55	},		// Swalot
-		{	45,	90,	20,	65,	20,	65	},		// Carvanha
-		{	70,	120,	40,	95,	40,	95	},		// Sharpedo
-		{	130,	70,	35,	70,	35,	60	},		// Wailmer
-		{	170,	90,	45,	90,	45,	60	},		// Wailord
-		{	60,	60,	40,	65,	45,	35	},		// Numel
-		{	70,	100,	70,	105,	75,	40	},		// Camerupt
-		{	70,	85,	140,	85,	70,	20	},		// Torkoal
-		{	60,	25,	35,	70,	80,	60	},		// Spoink
-		{	80,	45,	65,	90,	110,	80	},		// Grumpig
-		{	60,	60,	60,	60,	60,	60	},		// Spinda
-		{	45,	100,	45,	45,	45,	10	},		// Trapinch
-		{	50,	70,	50,	50,	50,	70	},		// Vibrava
-		{	80,	100,	80,	80,	80,	100	},		// Flygon
-		{	50,	85,	40,	85,	40,	35	},		// Cacnea
-		{	70,	115,	60,	115,	60,	55	},		// Cacturne
-		{	45,	40,	60,	40,	75,	50	},		// Swablu
-		{	75,	70,	90,	70,	105,	80	},		// Altaria
-		{	73,	115,	60,	60,	60,	90	},		// Zangoose
-		{	73,	100,	60,	100,	60,	65	},		// Seviper
-		{	70,	55,	65,	95,	85,	70	},		// Lunatone
-		{	70,	95,	85,	55,	65,	70	},		// Solrock
-		{	50,	48,	43,	46,	41,	60	},		// Barboach
-		{	110,	78,	73,	76,	71,	60	},		// Whiscash
-		{	43,	80,	65,	50,	35,	35	},		// Corphish
-		{	63,	120,	85,	90,	55,	55	},		// Crawdaunt
-		{	40,	40,	55,	40,	70,	55	},		// Baltoy
-		{	60,	70,	105,	70,	120,	75	},		// Claydol
-		{	66,	41,	77,	61,	87,	23	},		// Lileep
-		{	86,	81,	97,	81,	107,	43	},		// Cradily
-		{	45,	95,	50,	40,	50,	75	},		// Anorith
-		{	75,	125,	100,	70,	80,	45	},		// Armaldo
-		{	20,	15,	20,	10,	55,	80	},		// Feebas
-		{	95,	60,	79,	100,	125,	81	},		// Milotic
-		{	70,	70,	70,	70,	70,	70	},		// Castform
-		{	60,	90,	70,	60,	120,	40	},		// Kecleon
-		{	44,	75,	35,	63,	33,	45	},		// Shuppet
-		{	64,	115,	65,	83,	63,	65	},		// Banette
-		{	20,	40,	90,	30,	90,	25	},		// Duskull
-		{	40,	70,	130,	60,	130,	25	},		// Dusclops
-		{	99,	68,	83,	72,	87,	51	},		// Tropius
-		{	65,	50,	70,	95,	80,	65	},		// Chimecho
-		{	65,	130,	60,	75,	60,	75	},		// Absol
-		{	95,	23,	48,	23,	48,	23	},		// Wynaut
-		{	50,	50,	50,	50,	50,	50	},		// Snorunt
-		{	80,	80,	80,	80,	80,	80	},		// Glalie
-		{	70,	40,	50,	55,	50,	25	},		// Spheal
-		{	90,	60,	70,	75,	70,	45	},		// Sealeo
-		{	110,	80,	90,	95,	90,	65	},		// Walrein
-		{	35,	64,	85,	74,	55,	32	},		// Clamperl
-		{	55,	104,	105,	94,	75,	52	},		// Huntail
-		{	55,	84,	105,	114,	75,	52	},		// Gorebyss
-		{	100,	90,	130,	45,	65,	55	},		// Relicanth
-		{	43,	30,	55,	40,	65,	97	},		// Luvdisc
-		{	45,	75,	60,	40,	30,	50	},		// Bagon
-		{	65,	95,	100,	60,	50,	50	},		// Shelgon
-		{	95,	135,	80,	110,	80,	100	},		// Salamence
-		{	40,	55,	80,	35,	60,	30	},		// Beldum
-		{	60,	75,	100,	55,	80,	50	},		// Metang
-		{	80,	135,	130,	95,	90,	70	},		// Metagross
-		{	80,	100,	200,	50,	100,	50	},		// Regirock
-		{	80,	50,	100,	100,	200,	50	},		// Regice
-		{	80,	75,	150,	75,	150,	50	},		// Registeel
-		{	80,	80,	90,	110,	130,	110	},		// Latias
-		{	80,	90,	80,	130,	110,	110	},		// Latios
-		{	100,	100,	90,	150,	140,	90	},		// Kyogre
-		{	100,	150,	140,	100,	90,	90	},		// Groudon
-		{	105,	150,	90,	150,	90,	95	},		// Rayquaza
-		{	100,	100,	100,	100,	100,	100	},		// Jirachi
-		{	50,	150,	50,	150,	50,	150	},		// Deoxys-Mediocre
-		{	50,	180,	20,	180,	20,	150	},		// Deoxys-Attack
-		{	50,	70,	160,	70,	160,	90	},		// Deoxys-Defense
-		{	50,	95,	90,	95,	90,	180	},		// Deoxys-Speed
+		40_bi,	45_bi,	35_bi,	65_bi,	55_bi,	70_bi,		// Treecko
+		50_bi,	65_bi,	45_bi,	85_bi,	65_bi,	95_bi,		// Grovyle
+		70_bi,	85_bi,	65_bi,	105_bi,	85_bi,	120_bi,		// Sceptile
+		45_bi,	60_bi,	40_bi,	70_bi,	50_bi,	45_bi,		// Torchic
+		60_bi,	85_bi,	60_bi,	85_bi,	60_bi,	55_bi,		// Combusken
+		80_bi,	120_bi,	70_bi,	110_bi,	70_bi,	80_bi,		// Blaziken
+		50_bi,	70_bi,	50_bi,	50_bi,	50_bi,	40_bi,		// Mudkip
+		70_bi,	85_bi,	70_bi,	60_bi,	70_bi,	50_bi,		// Marshtomp
+		100_bi,	110_bi,	90_bi,	85_bi,	90_bi,	60_bi,		// Swampert
+		35_bi,	55_bi,	35_bi,	30_bi,	30_bi,	35_bi,		// Poochyena
+		70_bi,	90_bi,	70_bi,	60_bi,	60_bi,	70_bi,		// Mightyena
+		38_bi,	30_bi,	41_bi,	30_bi,	41_bi,	60_bi,		// Zigzagoon
+		78_bi,	70_bi,	61_bi,	50_bi,	61_bi,	100_bi,		// Linoone
+		45_bi,	45_bi,	35_bi,	20_bi,	30_bi,	20_bi,		// Wurmple
+		50_bi,	35_bi,	55_bi,	25_bi,	25_bi,	15_bi,		// Silcoon
+		60_bi,	70_bi,	50_bi,	90_bi,	50_bi,	65_bi,		// Beautifly
+		50_bi,	35_bi,	55_bi,	25_bi,	25_bi,	15_bi,		// Cascoon
+		60_bi,	50_bi,	70_bi,	50_bi,	90_bi,	65_bi,		// Dustox
+		40_bi,	30_bi,	30_bi,	40_bi,	50_bi,	30_bi,		// Lotad
+		60_bi,	50_bi,	50_bi,	60_bi,	70_bi,	50_bi,		// Lombre
+		80_bi,	70_bi,	70_bi,	90_bi,	100_bi,	70_bi,		// Ludicolo
+		40_bi,	40_bi,	50_bi,	30_bi,	30_bi,	30_bi,		// Seedot
+		70_bi,	70_bi,	40_bi,	60_bi,	40_bi,	60_bi,		// Nuzleaf
+		90_bi,	100_bi,	60_bi,	90_bi,	60_bi,	80_bi,		// Shiftry
+		40_bi,	55_bi,	30_bi,	30_bi,	30_bi,	85_bi,		// Taillow
+		60_bi,	85_bi,	60_bi,	50_bi,	50_bi,	125_bi,		// Swellow
+		40_bi,	30_bi,	30_bi,	55_bi,	30_bi,	85_bi,		// Wingull
+		60_bi,	50_bi,	100_bi,	85_bi,	70_bi,	65_bi,		// Pelipper
+		28_bi,	25_bi,	25_bi,	45_bi,	35_bi,	40_bi,		// Ralts
+		38_bi,	35_bi,	35_bi,	65_bi,	55_bi,	50_bi,		// Kirlia
+		68_bi,	65_bi,	65_bi,	125_bi,	115_bi,	80_bi,		// Gardevoir
+		40_bi,	30_bi,	32_bi,	50_bi,	52_bi,	65_bi,		// Surskit
+		70_bi,	60_bi,	62_bi,	80_bi,	82_bi,	60_bi,		// Masquerain
+		60_bi,	40_bi,	60_bi,	40_bi,	60_bi,	35_bi,		// Shroomish
+		60_bi,	130_bi,	80_bi,	60_bi,	60_bi,	70_bi,		// Breloom
+		60_bi,	60_bi,	60_bi,	35_bi,	35_bi,	30_bi,		// Slakoth
+		80_bi,	80_bi,	80_bi,	55_bi,	55_bi,	90_bi,		// Vigoroth
+		150_bi,	160_bi,	100_bi,	95_bi,	65_bi,	100_bi,		// Slaking
+		31_bi,	45_bi,	90_bi,	30_bi,	30_bi,	40_bi,		// Nincada
+		61_bi,	90_bi,	45_bi,	50_bi,	50_bi,	160_bi,		// Ninjask
+		1_bi,	90_bi,	45_bi,	30_bi,	30_bi,	40_bi,		// Shedinja
+		64_bi,	51_bi,	23_bi,	51_bi,	23_bi,	28_bi,		// Whismur
+		84_bi,	71_bi,	43_bi,	71_bi,	43_bi,	48_bi,		// Loudred
+		104_bi,	91_bi,	63_bi,	91_bi,	63_bi,	68_bi,		// Exploud
+		72_bi,	60_bi,	30_bi,	20_bi,	30_bi,	25_bi,		// Makuhita
+		144_bi,	120_bi,	60_bi,	40_bi,	60_bi,	50_bi,		// Hariyama
+		50_bi,	20_bi,	40_bi,	20_bi,	40_bi,	20_bi,		// Azurill
+		30_bi,	45_bi,	135_bi,	45_bi,	90_bi,	30_bi,		// Nosepass
+		50_bi,	45_bi,	45_bi,	35_bi,	35_bi,	50_bi,		// Skitty
+		70_bi,	65_bi,	65_bi,	55_bi,	55_bi,	70_bi,		// Delcatty
+		50_bi,	75_bi,	75_bi,	65_bi,	65_bi,	50_bi,		// Sableye
+		50_bi,	85_bi,	85_bi,	55_bi,	55_bi,	50_bi,		// Mawile
+		50_bi,	70_bi,	100_bi,	40_bi,	40_bi,	30_bi,		// Aron
+		60_bi,	90_bi,	140_bi,	50_bi,	50_bi,	40_bi,		// Lairon
+		70_bi,	110_bi,	180_bi,	60_bi,	60_bi,	50_bi,		// Aggron
+		30_bi,	40_bi,	55_bi,	40_bi,	55_bi,	60_bi,		// Meditite
+		60_bi,	60_bi,	75_bi,	60_bi,	75_bi,	80_bi,		// Medicham
+		40_bi,	45_bi,	40_bi,	65_bi,	40_bi,	65_bi,		// Electrike
+		70_bi,	75_bi,	60_bi,	105_bi,	60_bi,	105_bi,		// Manectric
+		60_bi,	50_bi,	40_bi,	85_bi,	75_bi,	95_bi,		// Plusle
+		60_bi,	40_bi,	50_bi,	75_bi,	85_bi,	95_bi,		// Minun
+		65_bi,	73_bi,	55_bi,	47_bi,	75_bi,	85_bi,		// Volbeat
+		65_bi,	47_bi,	55_bi,	73_bi,	75_bi,	85_bi,		// Illumise
+		50_bi,	60_bi,	45_bi,	100_bi,	80_bi,	65_bi,		// Roselia
+		70_bi,	43_bi,	53_bi,	43_bi,	53_bi,	40_bi,		// Gulpin
+		100_bi,	73_bi,	83_bi,	73_bi,	83_bi,	55_bi,		// Swalot
+		45_bi,	90_bi,	20_bi,	65_bi,	20_bi,	65_bi,		// Carvanha
+		70_bi,	120_bi,	40_bi,	95_bi,	40_bi,	95_bi,		// Sharpedo
+		130_bi,	70_bi,	35_bi,	70_bi,	35_bi,	60_bi,		// Wailmer
+		170_bi,	90_bi,	45_bi,	90_bi,	45_bi,	60_bi,		// Wailord
+		60_bi,	60_bi,	40_bi,	65_bi,	45_bi,	35_bi,		// Numel
+		70_bi,	100_bi,	70_bi,	105_bi,	75_bi,	40_bi,		// Camerupt
+		70_bi,	85_bi,	140_bi,	85_bi,	70_bi,	20_bi,		// Torkoal
+		60_bi,	25_bi,	35_bi,	70_bi,	80_bi,	60_bi,		// Spoink
+		80_bi,	45_bi,	65_bi,	90_bi,	110_bi,	80_bi,		// Grumpig
+		60_bi,	60_bi,	60_bi,	60_bi,	60_bi,	60_bi,		// Spinda
+		45_bi,	100_bi,	45_bi,	45_bi,	45_bi,	10_bi,		// Trapinch
+		50_bi,	70_bi,	50_bi,	50_bi,	50_bi,	70_bi,		// Vibrava
+		80_bi,	100_bi,	80_bi,	80_bi,	80_bi,	100_bi,		// Flygon
+		50_bi,	85_bi,	40_bi,	85_bi,	40_bi,	35_bi,		// Cacnea
+		70_bi,	115_bi,	60_bi,	115_bi,	60_bi,	55_bi,		// Cacturne
+		45_bi,	40_bi,	60_bi,	40_bi,	75_bi,	50_bi,		// Swablu
+		75_bi,	70_bi,	90_bi,	70_bi,	105_bi,	80_bi,		// Altaria
+		73_bi,	115_bi,	60_bi,	60_bi,	60_bi,	90_bi,		// Zangoose
+		73_bi,	100_bi,	60_bi,	100_bi,	60_bi,	65_bi,		// Seviper
+		70_bi,	55_bi,	65_bi,	95_bi,	85_bi,	70_bi,		// Lunatone
+		70_bi,	95_bi,	85_bi,	55_bi,	65_bi,	70_bi,		// Solrock
+		50_bi,	48_bi,	43_bi,	46_bi,	41_bi,	60_bi,		// Barboach
+		110_bi,	78_bi,	73_bi,	76_bi,	71_bi,	60_bi,		// Whiscash
+		43_bi,	80_bi,	65_bi,	50_bi,	35_bi,	35_bi,		// Corphish
+		63_bi,	120_bi,	85_bi,	90_bi,	55_bi,	55_bi,		// Crawdaunt
+		40_bi,	40_bi,	55_bi,	40_bi,	70_bi,	55_bi,		// Baltoy
+		60_bi,	70_bi,	105_bi,	70_bi,	120_bi,	75_bi,		// Claydol
+		66_bi,	41_bi,	77_bi,	61_bi,	87_bi,	23_bi,		// Lileep
+		86_bi,	81_bi,	97_bi,	81_bi,	107_bi,	43_bi,		// Cradily
+		45_bi,	95_bi,	50_bi,	40_bi,	50_bi,	75_bi,		// Anorith
+		75_bi,	125_bi,	100_bi,	70_bi,	80_bi,	45_bi,		// Armaldo
+		20_bi,	15_bi,	20_bi,	10_bi,	55_bi,	80_bi,		// Feebas
+		95_bi,	60_bi,	79_bi,	100_bi,	125_bi,	81_bi,		// Milotic
+		70_bi,	70_bi,	70_bi,	70_bi,	70_bi,	70_bi,		// Castform
+		60_bi,	90_bi,	70_bi,	60_bi,	120_bi,	40_bi,		// Kecleon
+		44_bi,	75_bi,	35_bi,	63_bi,	33_bi,	45_bi,		// Shuppet
+		64_bi,	115_bi,	65_bi,	83_bi,	63_bi,	65_bi,		// Banette
+		20_bi,	40_bi,	90_bi,	30_bi,	90_bi,	25_bi,		// Duskull
+		40_bi,	70_bi,	130_bi,	60_bi,	130_bi,	25_bi,		// Dusclops
+		99_bi,	68_bi,	83_bi,	72_bi,	87_bi,	51_bi,		// Tropius
+		65_bi,	50_bi,	70_bi,	95_bi,	80_bi,	65_bi,		// Chimecho
+		65_bi,	130_bi,	60_bi,	75_bi,	60_bi,	75_bi,		// Absol
+		95_bi,	23_bi,	48_bi,	23_bi,	48_bi,	23_bi,		// Wynaut
+		50_bi,	50_bi,	50_bi,	50_bi,	50_bi,	50_bi,		// Snorunt
+		80_bi,	80_bi,	80_bi,	80_bi,	80_bi,	80_bi,		// Glalie
+		70_bi,	40_bi,	50_bi,	55_bi,	50_bi,	25_bi,		// Spheal
+		90_bi,	60_bi,	70_bi,	75_bi,	70_bi,	45_bi,		// Sealeo
+		110_bi,	80_bi,	90_bi,	95_bi,	90_bi,	65_bi,		// Walrein
+		35_bi,	64_bi,	85_bi,	74_bi,	55_bi,	32_bi,		// Clamperl
+		55_bi,	104_bi,	105_bi,	94_bi,	75_bi,	52_bi,		// Huntail
+		55_bi,	84_bi,	105_bi,	114_bi,	75_bi,	52_bi,		// Gorebyss
+		100_bi,	90_bi,	130_bi,	45_bi,	65_bi,	55_bi,		// Relicanth
+		43_bi,	30_bi,	55_bi,	40_bi,	65_bi,	97_bi,		// Luvdisc
+		45_bi,	75_bi,	60_bi,	40_bi,	30_bi,	50_bi,		// Bagon
+		65_bi,	95_bi,	100_bi,	60_bi,	50_bi,	50_bi,		// Shelgon
+		95_bi,	135_bi,	80_bi,	110_bi,	80_bi,	100_bi,		// Salamence
+		40_bi,	55_bi,	80_bi,	35_bi,	60_bi,	30_bi,		// Beldum
+		60_bi,	75_bi,	100_bi,	55_bi,	80_bi,	50_bi,		// Metang
+		80_bi,	135_bi,	130_bi,	95_bi,	90_bi,	70_bi,		// Metagross
+		80_bi,	100_bi,	200_bi,	50_bi,	100_bi,	50_bi,		// Regirock
+		80_bi,	50_bi,	100_bi,	100_bi,	200_bi,	50_bi,		// Regice
+		80_bi,	75_bi,	150_bi,	75_bi,	150_bi,	50_bi,		// Registeel
+		80_bi,	80_bi,	90_bi,	110_bi,	130_bi,	110_bi,		// Latias
+		80_bi,	90_bi,	80_bi,	130_bi,	110_bi,	110_bi,		// Latios
+		100_bi,	100_bi,	90_bi,	150_bi,	140_bi,	90_bi,		// Kyogre
+		100_bi,	150_bi,	140_bi,	100_bi,	90_bi,	90_bi,		// Groudon
+		105_bi,	150_bi,	90_bi,	150_bi,	90_bi,	95_bi,		// Rayquaza
+		100_bi,	100_bi,	100_bi,	100_bi,	100_bi,	100_bi,		// Jirachi
+		50_bi,	150_bi,	50_bi,	150_bi,	50_bi,	150_bi,		// Deoxys-Mediocre
+		50_bi,	180_bi,	20_bi,	180_bi,	20_bi,	150_bi,		// Deoxys-Attack
+		50_bi,	70_bi,	160_bi,	70_bi,	160_bi,	90_bi,		// Deoxys-Defense
+		50_bi,	95_bi,	90_bi,	95_bi,	90_bi,	180_bi,		// Deoxys-Speed
 		
 		// Generation 4
-		{	55,	68,	64,	45,	55,	31	},		// Turtwig
-		{	75,	89,	85,	55,	65,	36	},		// Grotle
-		{	95,	109,	105,	75,	85,	56	},		// Torterra
-		{	44,	58,	44,	58,	44,	61	},		// Chimchar
-		{	64,	78,	52,	78,	52,	81	},		// Monferno
-		{	76,	104,	71,	104,	71,	108	},		// Infernape
-		{	53,	51,	53,	61,	56,	40	},		// Piplup
-		{	64,	66,	68,	81,	76,	50	},		// Prinplup
-		{	84,	86,	88,	111,	101,	60	},		// Empoleon
-		{	40,	55,	30,	30,	30,	60	},		// Starly
-		{	55,	75,	50,	40,	40,	80	},		// Staravia
-		{	85,	120,	70,	50,	50,	100	},		// Staraptor
-		{	59,	45,	40,	35,	40,	31	},		// Bidoof
-		{	79,	85,	60,	55,	60,	71	},		// Bibarel
-		{	37,	25,	41,	25,	41,	25	},		// Kricketot
-		{	77,	85,	51,	55,	51,	65	},		// Kricketune
-		{	45,	65,	34,	40,	34,	45	},		// Shinx
-		{	60,	85,	49,	60,	49,	60	},		// Luxio
-		{	80,	120,	79,	95,	79,	70	},		// Luxray
-		{	40,	30,	35,	50,	70,	55	},		// Budew
-		{	60,	70,	55,	125,	105,	90	},		// Roserade
-		{	67,	125,	40,	30,	30,	58	},		// Cranidos
-		{	97,	165,	60,	65,	50,	58	},		// Rampardos
-		{	30,	42,	118,	42,	88,	30	},		// Shieldon
-		{	60,	52,	168,	47,	138,	30	},		// Bastiodon
-		{	40,	29,	45,	29,	45,	36	},		// Burmy
-		{	60,	59,	85,	79,	105,	36	},		// Wormadam-Plant
-		{	60,	79,	105,	59,	85,	36	},		// Wormadam-Sandy
-		{	60,	69,	95,	69,	95,	36	},		// Wormadam-Trash
-		{	70,	94,	50,	94,	50,	66	},		// Mothim
-		{	30,	30,	42,	30,	42,	70	},		// Combee
-		{	70,	80,	102,	80,	102,	40	},		// Vespiquen
-		{	60,	45,	70,	45,	90,	95	},		// Pachirisu
-		{	55,	65,	35,	60,	30,	85	},		// Buizel
-		{	85,	105,	55,	85,	50,	115	},		// Floatzel
-		{	45,	35,	45,	62,	53,	35	},		// Cherubi
-		{	70,	60,	70,	87,	78,	85	},		// Cherrim
-		{	76,	48,	48,	57,	62,	34	},		// Shellos
-		{	111,	83,	68,	92,	82,	39	},		// Gastrodon
-		{	75,	100,	66,	60,	66,	115	},		// Ambipom
-		{	90,	50,	34,	60,	44,	70	},		// Drifloon
-		{	150,	80,	44,	90,	54,	80	},		// Drifblim
-		{	55,	66,	44,	44,	56,	85	},		// Buneary
-		{	65,	76,	84,	54,	96,	105	},		// Lopunny
-		{	60,	60,	60,	105,	105,	105	},		// Mismagius
-		{	100,	125,	52,	105,	52,	71	},		// Honchkrow
-		{	49,	55,	42,	42,	37,	85	},		// Glameow
-		{	71,	82,	64,	64,	59,	112	},		// Purugly
-		{	45,	30,	50,	65,	50,	45	},		// Chingling
-		{	63,	63,	47,	41,	41,	74	},		// Stunky
-		{	103,	93,	67,	71,	61,	84	},		// Skuntank
-		{	57,	24,	86,	24,	86,	23	},		// Bronzor
-		{	67,	89,	116,	79,	116,	33	},		// Bronzong
-		{	50,	80,	95,	10,	45,	10	},		// Bonsly
-		{	20,	25,	45,	70,	90,	60	},		// Mime Jr.
-		{	100,	5, 	5, 	15,	65,	30	},		// Happiny
-		{	76,	65,	45,	92,	42,	91	},		// Chatot
-		{	50,	92,	108,	92,	108,	35	},		// Spiritomb
-		{	58,	70,	45,	40,	45,	42	},		// Gible
-		{	68,	90,	65,	50,	55,	82	},		// Gabite
-		{	108,	130,	95,	80,	85,	102	},		// Garchomp
-		{	135,	85,	40,	40,	85,	5  	},		// Munchlax
-		{	40,	70,	40,	35,	40,	60	},		// Riolu
-		{	70,	110,	70,	115,	70,	90	},		// Lucario
-		{	68,	72,	78,	38,	42,	32	},		// Hippopotas
-		{	108,	112,	118,	68,	72,	47	},		// Hippowdon
-		{	40,	50,	90,	30,	55,	65	},		// Skorupi
-		{	70,	90,	110,	60,	75,	95	},		// Drapion
-		{	48,	61,	40,	61,	40,	50	},		// Croagunk
-		{	83,	106,	65,	86,	65,	85	},		// Toxicroak
-		{	74,	100,	72,	90,	72,	46	},		// Carnivine
-		{	49,	49,	56,	49,	61,	66	},		// Finneon
-		{	69,	69,	76,	69,	86,	91	},		// Lumineon
-		{	45,	20,	50,	60,	120,	50	},		// Mantyke
-		{	60,	62,	50,	62,	60,	40	},		// Snover
-		{	90,	92,	75,	92,	85,	60	},		// Abomasnow
-		{	70,	120,	65,	45,	85,	125	},		// Weavile
-		{	70,	70,	115,	130,	90,	60	},		// Magnezone
-		{	110,	85,	95,	80,	95,	50	},		// Lickilicky
-		{	115,	140,	130,	55,	55,	40	},		// Rhyperior
-		{	100,	100,	125,	110,	50,	50	},		// Tangrowth
-		{	75,	123,	67,	95,	85,	95	},		// Electivire
-		{	75,	95,	67,	125,	95,	83	},		// Magmortar
-		{	85,	50,	95,	120,	115,	80	},		// Togekiss
-		{	86,	76,	86,	116,	56,	95	},		// Yanmega
-		{	65,	110,	130,	60,	65,	95	},		// Leafeon
-		{	65,	60,	110,	130,	95,	65	},		// Glaceon
-		{	75,	95,	125,	45,	75,	95	},		// Gliscor
-		{	110,	130,	80,	70,	60,	80	},		// Mamoswine
-		{	85,	80,	70,	135,	75,	90	},		// Porygon-Z
-		{	68,	125,	65,	65,	115,	80	},		// Gallade
-		{	60,	55,	145,	75,	150,	40	},		// Probopass
-		{	45,	100,	135,	65,	135,	45	},		// Dusknoir
-		{	70,	80,	70,	80,	70,	110	},		// Froslass
-		{	50,	50,	77,	95,	77,	91	},		// Rotom
-		{	50,	65,	107,	105,	107,	86	},		// Rotom-Heat
-		{	50,	65,	107,	105,	107,	86	},		// Rotom-Wash
-		{	50,	65,	107,	105,	107,	86	},		// Rotom-Frost
-		{	50,	65,	107,	105,	107,	86	},		// Rotom-Fan
-		{	50,	65,	107,	105,	107,	86	},		// Rotom-Mow
-		{	75,	75,	130,	75,	130,	95	},		// Uxie
-		{	80,	105,	105,	105,	105,	80	},		// Mesprit
-		{	75,	125,	70,	125,	70,	115	},		// Azelf
-		{	100,	120,	120,	150,	100,	90	},		// Dialga
-		{	90,	120,	100,	150,	120,	100	},		// Palkia
-		{	91,	90,	106,	130,	106,	77	},		// Heatran
-		{	110,	160,	110,	80,	110,	100	},		// Regigigas
-		{	150,	100,	120,	100,	120,	90	},		// Giratina-Altered
-		{	150,	120,	100,	120,	100,	90	},		// Giratina-Origin
-		{	120,	70,	120,	75,	130,	85	},		// Cresselia
-		{	80,	80,	80,	80,	80,	80	},		// Phione
-		{	100,	100,	100,	100,	100,	100	},		// Manaphy
-		{	70,	90,	90,	135,	90,	125	},		// Darkrai
-		{	100,	100,	100,	100,	100,	100	},		// Shaymin-Land
-		{	100,	103,	75,	120,	75,	127	},		// Shaymin-Sky
-		{	120,	120,	120,	120,	120,	120	},		// Arceus
+		55_bi,	68_bi,	64_bi,	45_bi,	55_bi,	31_bi,		// Turtwig
+		75_bi,	89_bi,	85_bi,	55_bi,	65_bi,	36_bi,		// Grotle
+		95_bi,	109_bi,	105_bi,	75_bi,	85_bi,	56_bi,		// Torterra
+		44_bi,	58_bi,	44_bi,	58_bi,	44_bi,	61_bi,		// Chimchar
+		64_bi,	78_bi,	52_bi,	78_bi,	52_bi,	81_bi,		// Monferno
+		76_bi,	104_bi,	71_bi,	104_bi,	71_bi,	108_bi,		// Infernape
+		53_bi,	51_bi,	53_bi,	61_bi,	56_bi,	40_bi,		// Piplup
+		64_bi,	66_bi,	68_bi,	81_bi,	76_bi,	50_bi,		// Prinplup
+		84_bi,	86_bi,	88_bi,	111_bi,	101_bi,	60_bi,		// Empoleon
+		40_bi,	55_bi,	30_bi,	30_bi,	30_bi,	60_bi,		// Starly
+		55_bi,	75_bi,	50_bi,	40_bi,	40_bi,	80_bi,		// Staravia
+		85_bi,	120_bi,	70_bi,	50_bi,	50_bi,	100_bi,		// Staraptor
+		59_bi,	45_bi,	40_bi,	35_bi,	40_bi,	31_bi,		// Bidoof
+		79_bi,	85_bi,	60_bi,	55_bi,	60_bi,	71_bi,		// Bibarel
+		37_bi,	25_bi,	41_bi,	25_bi,	41_bi,	25_bi,		// Kricketot
+		77_bi,	85_bi,	51_bi,	55_bi,	51_bi,	65_bi,		// Kricketune
+		45_bi,	65_bi,	34_bi,	40_bi,	34_bi,	45_bi,		// Shinx
+		60_bi,	85_bi,	49_bi,	60_bi,	49_bi,	60_bi,		// Luxio
+		80_bi,	120_bi,	79_bi,	95_bi,	79_bi,	70_bi,		// Luxray
+		40_bi,	30_bi,	35_bi,	50_bi,	70_bi,	55_bi,		// Budew
+		60_bi,	70_bi,	55_bi,	125_bi,	105_bi,	90_bi,		// Roserade
+		67_bi,	125_bi,	40_bi,	30_bi,	30_bi,	58_bi,		// Cranidos
+		97_bi,	165_bi,	60_bi,	65_bi,	50_bi,	58_bi,		// Rampardos
+		30_bi,	42_bi,	118_bi,	42_bi,	88_bi,	30_bi,		// Shieldon
+		60_bi,	52_bi,	168_bi,	47_bi,	138_bi,	30_bi,		// Bastiodon
+		40_bi,	29_bi,	45_bi,	29_bi,	45_bi,	36_bi,		// Burmy
+		60_bi,	59_bi,	85_bi,	79_bi,	105_bi,	36_bi,		// Wormadam-Plant
+		60_bi,	79_bi,	105_bi,	59_bi,	85_bi,	36_bi,		// Wormadam-Sandy
+		60_bi,	69_bi,	95_bi,	69_bi,	95_bi,	36_bi,		// Wormadam-Trash
+		70_bi,	94_bi,	50_bi,	94_bi,	50_bi,	66_bi,		// Mothim
+		30_bi,	30_bi,	42_bi,	30_bi,	42_bi,	70_bi,		// Combee
+		70_bi,	80_bi,	102_bi,	80_bi,	102_bi,	40_bi,		// Vespiquen
+		60_bi,	45_bi,	70_bi,	45_bi,	90_bi,	95_bi,		// Pachirisu
+		55_bi,	65_bi,	35_bi,	60_bi,	30_bi,	85_bi,		// Buizel
+		85_bi,	105_bi,	55_bi,	85_bi,	50_bi,	115_bi,		// Floatzel
+		45_bi,	35_bi,	45_bi,	62_bi,	53_bi,	35_bi,		// Cherubi
+		70_bi,	60_bi,	70_bi,	87_bi,	78_bi,	85_bi,		// Cherrim
+		76_bi,	48_bi,	48_bi,	57_bi,	62_bi,	34_bi,		// Shellos
+		111_bi,	83_bi,	68_bi,	92_bi,	82_bi,	39_bi,		// Gastrodon
+		75_bi,	100_bi,	66_bi,	60_bi,	66_bi,	115_bi,		// Ambipom
+		90_bi,	50_bi,	34_bi,	60_bi,	44_bi,	70_bi,		// Drifloon
+		150_bi,	80_bi,	44_bi,	90_bi,	54_bi,	80_bi,		// Drifblim
+		55_bi,	66_bi,	44_bi,	44_bi,	56_bi,	85_bi,		// Buneary
+		65_bi,	76_bi,	84_bi,	54_bi,	96_bi,	105_bi,		// Lopunny
+		60_bi,	60_bi,	60_bi,	105_bi,	105_bi,	105_bi,		// Mismagius
+		100_bi,	125_bi,	52_bi,	105_bi,	52_bi,	71_bi,		// Honchkrow
+		49_bi,	55_bi,	42_bi,	42_bi,	37_bi,	85_bi,		// Glameow
+		71_bi,	82_bi,	64_bi,	64_bi,	59_bi,	112_bi,		// Purugly
+		45_bi,	30_bi,	50_bi,	65_bi,	50_bi,	45_bi,		// Chingling
+		63_bi,	63_bi,	47_bi,	41_bi,	41_bi,	74_bi,		// Stunky
+		103_bi,	93_bi,	67_bi,	71_bi,	61_bi,	84_bi,		// Skuntank
+		57_bi,	24_bi,	86_bi,	24_bi,	86_bi,	23_bi,		// Bronzor
+		67_bi,	89_bi,	116_bi,	79_bi,	116_bi,	33_bi,		// Bronzong
+		50_bi,	80_bi,	95_bi,	10_bi,	45_bi,	10_bi,		// Bonsly
+		20_bi,	25_bi,	45_bi,	70_bi,	90_bi,	60_bi,		// Mime Jr.
+		100_bi,	5_bi,	5_bi,	15_bi,	65_bi,	30_bi,		// Happiny
+		76_bi,	65_bi,	45_bi,	92_bi,	42_bi,	91_bi,		// Chatot
+		50_bi,	92_bi,	108_bi,	92_bi,	108_bi,	35_bi,		// Spiritomb
+		58_bi,	70_bi,	45_bi,	40_bi,	45_bi,	42_bi,		// Gible
+		68_bi,	90_bi,	65_bi,	50_bi,	55_bi,	82_bi,		// Gabite
+		108_bi,	130_bi,	95_bi,	80_bi,	85_bi,	102_bi,		// Garchomp
+		135_bi,	85_bi,	40_bi,	40_bi,	85_bi,	5_bi,		// Munchlax
+		40_bi,	70_bi,	40_bi,	35_bi,	40_bi,	60_bi,		// Riolu
+		70_bi,	110_bi,	70_bi,	115_bi,	70_bi,	90_bi,		// Lucario
+		68_bi,	72_bi,	78_bi,	38_bi,	42_bi,	32_bi,		// Hippopotas
+		108_bi,	112_bi,	118_bi,	68_bi,	72_bi,	47_bi,		// Hippowdon
+		40_bi,	50_bi,	90_bi,	30_bi,	55_bi,	65_bi,		// Skorupi
+		70_bi,	90_bi,	110_bi,	60_bi,	75_bi,	95_bi,		// Drapion
+		48_bi,	61_bi,	40_bi,	61_bi,	40_bi,	50_bi,		// Croagunk
+		83_bi,	106_bi,	65_bi,	86_bi,	65_bi,	85_bi,		// Toxicroak
+		74_bi,	100_bi,	72_bi,	90_bi,	72_bi,	46_bi,		// Carnivine
+		49_bi,	49_bi,	56_bi,	49_bi,	61_bi,	66_bi,		// Finneon
+		69_bi,	69_bi,	76_bi,	69_bi,	86_bi,	91_bi,		// Lumineon
+		45_bi,	20_bi,	50_bi,	60_bi,	120_bi,	50_bi,		// Mantyke
+		60_bi,	62_bi,	50_bi,	62_bi,	60_bi,	40_bi,		// Snover
+		90_bi,	92_bi,	75_bi,	92_bi,	85_bi,	60_bi,		// Abomasnow
+		70_bi,	120_bi,	65_bi,	45_bi,	85_bi,	125_bi,		// Weavile
+		70_bi,	70_bi,	115_bi,	130_bi,	90_bi,	60_bi,		// Magnezone
+		110_bi,	85_bi,	95_bi,	80_bi,	95_bi,	50_bi,		// Lickilicky
+		115_bi,	140_bi,	130_bi,	55_bi,	55_bi,	40_bi,		// Rhyperior
+		100_bi,	100_bi,	125_bi,	110_bi,	50_bi,	50_bi,		// Tangrowth
+		75_bi,	123_bi,	67_bi,	95_bi,	85_bi,	95_bi,		// Electivire
+		75_bi,	95_bi,	67_bi,	125_bi,	95_bi,	83_bi,		// Magmortar
+		85_bi,	50_bi,	95_bi,	120_bi,	115_bi,	80_bi,		// Togekiss
+		86_bi,	76_bi,	86_bi,	116_bi,	56_bi,	95_bi,		// Yanmega
+		65_bi,	110_bi,	130_bi,	60_bi,	65_bi,	95_bi,		// Leafeon
+		65_bi,	60_bi,	110_bi,	130_bi,	95_bi,	65_bi,		// Glaceon
+		75_bi,	95_bi,	125_bi,	45_bi,	75_bi,	95_bi,		// Gliscor
+		110_bi,	130_bi,	80_bi,	70_bi,	60_bi,	80_bi,		// Mamoswine
+		85_bi,	80_bi,	70_bi,	135_bi,	75_bi,	90_bi,		// Porygon-Z
+		68_bi,	125_bi,	65_bi,	65_bi,	115_bi,	80_bi,		// Gallade
+		60_bi,	55_bi,	145_bi,	75_bi,	150_bi,	40_bi,		// Probopass
+		45_bi,	100_bi,	135_bi,	65_bi,	135_bi,	45_bi,		// Dusknoir
+		70_bi,	80_bi,	70_bi,	80_bi,	70_bi,	110_bi,		// Froslass
+		50_bi,	50_bi,	77_bi,	95_bi,	77_bi,	91_bi,		// Rotom
+		50_bi,	65_bi,	107_bi,	105_bi,	107_bi,	86_bi,		// Rotom-Heat
+		50_bi,	65_bi,	107_bi,	105_bi,	107_bi,	86_bi,		// Rotom-Wash
+		50_bi,	65_bi,	107_bi,	105_bi,	107_bi,	86_bi,		// Rotom-Frost
+		50_bi,	65_bi,	107_bi,	105_bi,	107_bi,	86_bi,		// Rotom-Fan
+		50_bi,	65_bi,	107_bi,	105_bi,	107_bi,	86_bi,		// Rotom-Mow
+		75_bi,	75_bi,	130_bi,	75_bi,	130_bi,	95_bi,		// Uxie
+		80_bi,	105_bi,	105_bi,	105_bi,	105_bi,	80_bi,		// Mesprit
+		75_bi,	125_bi,	70_bi,	125_bi,	70_bi,	115_bi,		// Azelf
+		100_bi,	120_bi,	120_bi,	150_bi,	100_bi,	90_bi,		// Dialga
+		90_bi,	120_bi,	100_bi,	150_bi,	120_bi,	100_bi,		// Palkia
+		91_bi,	90_bi,	106_bi,	130_bi,	106_bi,	77_bi,		// Heatran
+		110_bi,	160_bi,	110_bi,	80_bi,	110_bi,	100_bi,		// Regigigas
+		150_bi,	100_bi,	120_bi,	100_bi,	120_bi,	90_bi,		// Giratina-Altered
+		150_bi,	120_bi,	100_bi,	120_bi,	100_bi,	90_bi,		// Giratina-Origin
+		120_bi,	70_bi,	120_bi,	75_bi,	130_bi,	85_bi,		// Cresselia
+		80_bi,	80_bi,	80_bi,	80_bi,	80_bi,	80_bi,		// Phione
+		100_bi,	100_bi,	100_bi,	100_bi,	100_bi,	100_bi,		// Manaphy
+		70_bi,	90_bi,	90_bi,	135_bi,	90_bi,	125_bi,		// Darkrai
+		100_bi,	100_bi,	100_bi,	100_bi,	100_bi,	100_bi,		// Shaymin-Land
+		100_bi,	103_bi,	75_bi,	120_bi,	75_bi,	127_bi,		// Shaymin-Sky
+		120_bi,	120_bi,	120_bi,	120_bi,	120_bi,	120_bi,		// Arceus
 		
 		// Generation 5
-		{	100,	100,	100,	100,	100,	100	},		// Victini
-		{	45,	45,	55,	45,	55,	63	},		// Snivy
-		{	60,	60,	75,	60,	75,	83	},		// Servine
-		{	75,	75,	95,	75,	95,	113	},		// Serperior
-		{	65,	63,	45,	45,	45,	45	},		// Tepig
-		{	90,	93,	55,	70,	55,	55	},		// Pignite
-		{	110,	123,	65,	100,	65,	65	},		// Emboar
-		{	55,	55,	45,	63,	45,	45	},		// Oshawott
-		{	75,	75,	60,	83,	60,	60	},		// Dewott
-		{	95,	100,	85,	108,	70,	70	},		// Samurott
-		{	45,	55,	39,	35,	39,	42	},		// Patrat
-		{	60,	85,	69,	60,	69,	77	},		// Watchog
-		{	45,	60,	45,	25,	45,	55	},		// Lillipup
-		{	65,	80,	65,	35,	65,	60	},		// Herdier
-		{	85,	100,	90,	45,	90,	80	},		// Stoutland
-		{	41,	50,	37,	50,	37,	66	},		// Purrloin
-		{	64,	88,	50,	88,	50,	106	},		// Liepard
-		{	50,	53,	48,	53,	48,	64	},		// Pansage
-		{	75,	98,	63,	98,	63,	101	},		// Simisage
-		{	50,	53,	48,	53,	48,	64	},		// Pansear
-		{	75,	98,	63,	98,	63,	101	},		// Simisear
-		{	50,	53,	48,	53,	48,	64	},		// Panpour
-		{	75,	98,	63,	98,	63,	101	},		// Simipour
-		{	76,	25,	45,	67,	55,	24	},		// Munna
-		{	116,	55,	85,	107,	95,	29	},		// Musharna
-		{	50,	55,	50,	36,	30,	43	},		// Pidove
-		{	62,	77,	62,	50,	42,	65	},		// Tranquill
-		{	80,	105,	80,	65,	55,	93	},		// Unfezant
-		{	45,	60,	32,	50,	32,	76	},		// Blitzle
-		{	75,	100,	63,	80,	63,	116	},		// Zebstrika
-		{	55,	75,	85,	25,	25,	15	},		// Roggenrola
-		{	70,	105,	105,	50,	40,	20	},		// Boldore
-		{	85,	135,	130,	60,	70,	25	},		// Gigalith
-		{	55,	45,	43,	55,	43,	72	},		// Woobat
-		{	67,	57,	55,	77,	55,	114	},		// Swoobat
-		{	60,	85,	40,	30,	45,	68	},		// Drilbur
-		{	110,	135,	60,	50,	65,	88	},		// Excadrill
-		{	103,	60,	86,	60,	86,	50	},		// Audino
-		{	75,	80,	55,	25,	35,	35	},		// Timburr
-		{	85,	105,	85,	40,	50,	40	},		// Gurdurr
-		{	105,	140,	95,	55,	65,	45	},		// Conkeldurr
-		{	50,	50,	40,	50,	40,	64	},		// Tympole
-		{	75,	65,	55,	65,	55,	69	},		// Palpitoad
-		{	105,	85,	75,	85,	75,	74	},		// Seismitoad
-		{	120,	100,	85,	30,	85,	45	},		// Throh
-		{	75,	125,	75,	30,	75,	85	},		// Sawk
-		{	45,	53,	70,	40,	60,	42	},		// Sewaddle
-		{	55,	63,	90,	50,	80,	42	},		// Swadloon
-		{	75,	103,	80,	70,	70,	92	},		// Leavanny
-		{	30,	45,	59,	30,	39,	57	},		// Venipede
-		{	40,	55,	99,	40,	79,	47	},		// Whirlipede
-		{	60,	90,	89,	55,	69,	112	},		// Scolipede
-		{	40,	27,	60,	37,	50,	66	},		// Cottonee
-		{	60,	67,	85,	77,	75,	116	},		// Whimsicott
-		{	45,	35,	50,	70,	50,	30	},		// Petilil
-		{	70,	60,	75,	110,	75,	90	},		// Lilligant
-		{	70,	92,	65,	80,	55,	98	},		// Basculin-Red
-		{	70,	92,	65,	80,	55,	98	},		// Basculin-Blue
-		{	50,	72,	35,	35,	35,	65	},		// Sandile
-		{	60,	82,	45,	45,	45,	74	},		// Krokorok
-		{	95,	117,	70,	65,	70,	92	},		// Krookodile
-		{	70,	90,	45,	15,	45,	50	},		// Darumaka
-		{	105,	140,	55,	30,	55,	95	},		// Darmanitan
-	//	{	105,	30,	105,	140,	105,	55	},		// Darmanitan (Zen Mode)
-		{	75,	86,	67,	106,	67,	60	},		// Maractus
-		{	50,	65,	85,	35,	35,	55	},		// Dwebble
-		{	70,	95,	125,	65,	75,	45	},		// Crustle
-		{	50,	75,	70,	35,	70,	48	},		// Scraggy
-		{	65,	90,	115,	45,	115,	58	},		// Scrafty
-		{	72,	58,	80,	103,	80,	97	},		// Sigilyph
-		{	38,	30,	85,	55,	65,	30	},		// Yamask
-		{	58,	50,	145,	95,	105,	30	},		// Cofagrigus
-		{	54,	78,	103,	53,	45,	22	},		// Tirtouga
-		{	74,	108,	133,	83,	65,	32	},		// Carracosta
-		{	55,	112,	45,	74,	45,	70	},		// Archen
-		{	75,	140,	65,	112,	65,	110	},		// Archeops
-		{	50,	50,	62,	40,	62,	65	},		// Trubbish
-		{	80,	95,	82,	60,	82,	75	},		// Garbodor
-		{	40,	65,	40,	80,	40,	65	},		// Zorua
-		{	60,	105,	60,	120,	60,	105	},		// Zoroark
-		{	55,	50,	40,	40,	40,	75	},		// Minccino
-		{	75,	95,	60,	65,	60,	115	},		// Cinccino
-		{	45,	30,	50,	55,	65,	45	},		// Gothita
-		{	60,	45,	70,	75,	85,	55	},		// Gothorita
-		{	70,	55,	95,	95,	110,	65	},		// Gothitelle
-		{	45,	30,	40,	105,	50,	20	},		// Solosis
-		{	65,	40,	50,	125,	60,	30	},		// Duosion
-		{	110,	65,	75,	125,	85,	30	},		// Reuniclus
-		{	62,	44,	50,	44,	50,	55	},		// Ducklett
-		{	75,	87,	63,	87,	63,	98	},		// Swanna
-		{	36,	50,	50,	65,	60,	44	},		// Vanillite
-		{	51,	65,	65,	80,	75,	59	},		// Vanillish
-		{	71,	95,	85,	110,	95,	79	},		// Vanilluxe
-		{	60,	60,	50,	40,	50,	75	},		// Deerling
-		{	80,	100,	70,	60,	70,	95	},		// Sawsbuck
-		{	55,	75,	60,	75,	60,	103	},		// Emolga
-		{	50,	75,	45,	40,	45,	60	},		// Karrablast
-		{	70,	135,	105,	60,	105,	20	},		// Escavalier
-		{	69,	55,	45,	55,	55,	15	},		// Foongus
-		{	114,	85,	70,	85,	80,	30	},		// Amoonguss
-		{	55,	40,	50,	65,	85,	40	},		// Frillish
-		{	100,	60,	70,	85,	105,	60	},		// Jellicent
-		{	165,	75,	80,	40,	45,	65	},		// Alomomola
-		{	50,	47,	50,	57,	50,	65	},		// Joltik
-		{	70,	77,	60,	97,	60,	108	},		// Galvantula
-		{	44,	50,	91,	24,	86,	10	},		// Ferroseed
-		{	74,	94,	131,	54,	116,	20	},		// Ferrothorn
-		{	40,	55,	70,	45,	60,	30	},		// Klink
-		{	60,	80,	95,	70,	85,	50	},		// Klang
-		{	60,	100,	115,	70,	85,	90	},		// Klinklang
-		{	35,	55,	40,	45,	40,	60	},		// Tynamo
-		{	65,	85,	70,	75,	70,	40	},		// Eelektrik
-		{	85,	115,	80,	105,	80,	50	},		// Eelektross
-		{	55,	55,	55,	85,	55,	30	},		// Elgyem
-		{	75,	75,	75,	125,	95,	40	},		// Beheeyem
-		{	50,	30,	55,	65,	55,	20	},		// Litwick
-		{	60,	40,	60,	95,	60,	55	},		// Lampent
-		{	60,	55,	90,	145,	90,	80	},		// Chandelure
-		{	46,	87,	60,	30,	40,	57	},		// Axew
-		{	66,	117,	70,	40,	50,	67	},		// Fraxure
-		{	76,	147,	90,	60,	70,	97	},		// Haxorus
-		{	55,	70,	40,	60,	40,	40	},		// Cubchoo
-		{	95,	110,	80,	70,	80,	50	},		// Beartic
-		{	70,	50,	30,	95,	135,	105	},		// Cryogonal
-		{	50,	40,	85,	40,	65,	25	},		// Shelmet
-		{	80,	70,	40,	100,	60,	145	},		// Accelgor
-		{	109,	66,	84,	81,	99,	32	},		// Stunfisk
-		{	45,	85,	50,	55,	50,	65	},		// Mienfoo
-		{	65,	125,	60,	95,	60,	105	},		// Mienshao
-		{	77,	120,	90,	60,	90,	48	},		// Druddigon
-		{	59,	74,	50,	35,	50,	35	},		// Golett
-		{	89,	124,	80,	55,	80,	55	},		// Golurk
-		{	45,	85,	70,	40,	40,	60	},		// Pawniard
-		{	65,	125,	100,	60,	70,	70	},		// Bisharp
-		{	95,	110,	95,	40,	95,	55	},		// Bouffalant
-		{	70,	83,	50,	37,	50,	60	},		// Rufflet
-		{	100,	123,	75,	57,	75,	80	},		// Braviary
-		{	70,	55,	75,	45,	65,	60	},		// Vullaby
-		{	110,	65,	105,	55,	95,	80	},		// Mandibuzz
-		{	85,	97,	66,	105,	66,	65	},		// Heatmor
-		{	58,	109,	112,	48,	48,	109	},		// Durant
-		{	52,	65,	50,	45,	50,	38	},		// Deino
-		{	72,	85,	70,	65,	70,	58	},		// Zweilous
-		{	92,	105,	90,	125,	90,	98	},		// Hydreigon
-		{	55,	85,	55,	50,	55,	60	},		// Larvesta
-		{	85,	60,	65,	135,	105,	100	},		// Volcarona
-		{	91,	90,	129,	90,	72,	108	},		// Cobalion
-		{	91,	129,	90,	72,	90,	108	},		// Terrakion
-		{	91,	90,	72,	90,	129,	108	},		// Virizion
-		{	79,	115,	70,	125,	80,	111	},		// Tornadus-Incarnate
-		{	79,	100,	80,	110,	90,	121	},		// Tornadus-Therian
-		{	79,	115,	70,	125,	80,	111	},		// Thundurus-Incarnate
-		{	79,	105,	70,	145,	80,	101	},		// Thundurus-Therian
-		{	100,	120,	100,	150,	120,	90	},		// Reshiram
-		{	100,	150,	120,	120,	100,	90	},		// Zekrom
-		{	89,	125,	90,	115,	80,	101	},		// Landorus-Incarnate
-		{	89,	145,	90,	105,	80,	91	},		// Landorus-Therian
-		{	125,	130,	90,	130,	90,	95	},		// Kyurem
-		{	125,	170,	100,	120,	90,	95	},		// Kyurem-Black
-		{	125,	120,	90,	170,	100,	95	},		// Kyurem-White
-		{	91,	72,	90,	129,	90,	108	},		// Keldeo
-		{	100,	77,	77,	128,	128,	90	},		// Meloetta
-	//	{	100,	128,	90,	77,	77,	128	},		// Meloetta (Pirouette form)
-		{	71,	120,	95,	120,	95,	99	}		// Genesect 
-	};
+		100_bi,	100_bi,	100_bi,	100_bi,	100_bi,	100_bi,		// Victini
+		45_bi,	45_bi,	55_bi,	45_bi,	55_bi,	63_bi,		// Snivy
+		60_bi,	60_bi,	75_bi,	60_bi,	75_bi,	83_bi,		// Servine
+		75_bi,	75_bi,	95_bi,	75_bi,	95_bi,	113_bi,		// Serperior
+		65_bi,	63_bi,	45_bi,	45_bi,	45_bi,	45_bi,		// Tepig
+		90_bi,	93_bi,	55_bi,	70_bi,	55_bi,	55_bi,		// Pignite
+		110_bi,	123_bi,	65_bi,	100_bi,	65_bi,	65_bi,		// Emboar
+		55_bi,	55_bi,	45_bi,	63_bi,	45_bi,	45_bi,		// Oshawott
+		75_bi,	75_bi,	60_bi,	83_bi,	60_bi,	60_bi,		// Dewott
+		95_bi,	100_bi,	85_bi,	108_bi,	70_bi,	70_bi,		// Samurott
+		45_bi,	55_bi,	39_bi,	35_bi,	39_bi,	42_bi,		// Patrat
+		60_bi,	85_bi,	69_bi,	60_bi,	69_bi,	77_bi,		// Watchog
+		45_bi,	60_bi,	45_bi,	25_bi,	45_bi,	55_bi,		// Lillipup
+		65_bi,	80_bi,	65_bi,	35_bi,	65_bi,	60_bi,		// Herdier
+		85_bi,	100_bi,	90_bi,	45_bi,	90_bi,	80_bi,		// Stoutland
+		41_bi,	50_bi,	37_bi,	50_bi,	37_bi,	66_bi,		// Purrloin
+		64_bi,	88_bi,	50_bi,	88_bi,	50_bi,	106_bi,		// Liepard
+		50_bi,	53_bi,	48_bi,	53_bi,	48_bi,	64_bi,		// Pansage
+		75_bi,	98_bi,	63_bi,	98_bi,	63_bi,	101_bi,		// Simisage
+		50_bi,	53_bi,	48_bi,	53_bi,	48_bi,	64_bi,		// Pansear
+		75_bi,	98_bi,	63_bi,	98_bi,	63_bi,	101_bi,		// Simisear
+		50_bi,	53_bi,	48_bi,	53_bi,	48_bi,	64_bi,		// Panpour
+		75_bi,	98_bi,	63_bi,	98_bi,	63_bi,	101_bi,		// Simipour
+		76_bi,	25_bi,	45_bi,	67_bi,	55_bi,	24_bi,		// Munna
+		116_bi,	55_bi,	85_bi,	107_bi,	95_bi,	29_bi,		// Musharna
+		50_bi,	55_bi,	50_bi,	36_bi,	30_bi,	43_bi,		// Pidove
+		62_bi,	77_bi,	62_bi,	50_bi,	42_bi,	65_bi,		// Tranquill
+		80_bi,	105_bi,	80_bi,	65_bi,	55_bi,	93_bi,		// Unfezant
+		45_bi,	60_bi,	32_bi,	50_bi,	32_bi,	76_bi,		// Blitzle
+		75_bi,	100_bi,	63_bi,	80_bi,	63_bi,	116_bi,		// Zebstrika
+		55_bi,	75_bi,	85_bi,	25_bi,	25_bi,	15_bi,		// Roggenrola
+		70_bi,	105_bi,	105_bi,	50_bi,	40_bi,	20_bi,		// Boldore
+		85_bi,	135_bi,	130_bi,	60_bi,	70_bi,	25_bi,		// Gigalith
+		55_bi,	45_bi,	43_bi,	55_bi,	43_bi,	72_bi,		// Woobat
+		67_bi,	57_bi,	55_bi,	77_bi,	55_bi,	114_bi,		// Swoobat
+		60_bi,	85_bi,	40_bi,	30_bi,	45_bi,	68_bi,		// Drilbur
+		110_bi,	135_bi,	60_bi,	50_bi,	65_bi,	88_bi,		// Excadrill
+		103_bi,	60_bi,	86_bi,	60_bi,	86_bi,	50_bi,		// Audino
+		75_bi,	80_bi,	55_bi,	25_bi,	35_bi,	35_bi,		// Timburr
+		85_bi,	105_bi,	85_bi,	40_bi,	50_bi,	40_bi,		// Gurdurr
+		105_bi,	140_bi,	95_bi,	55_bi,	65_bi,	45_bi,		// Conkeldurr
+		50_bi,	50_bi,	40_bi,	50_bi,	40_bi,	64_bi,		// Tympole
+		75_bi,	65_bi,	55_bi,	65_bi,	55_bi,	69_bi,		// Palpitoad
+		105_bi,	85_bi,	75_bi,	85_bi,	75_bi,	74_bi,		// Seismitoad
+		120_bi,	100_bi,	85_bi,	30_bi,	85_bi,	45_bi,		// Throh
+		75_bi,	125_bi,	75_bi,	30_bi,	75_bi,	85_bi,		// Sawk
+		45_bi,	53_bi,	70_bi,	40_bi,	60_bi,	42_bi,		// Sewaddle
+		55_bi,	63_bi,	90_bi,	50_bi,	80_bi,	42_bi,		// Swadloon
+		75_bi,	103_bi,	80_bi,	70_bi,	70_bi,	92_bi,		// Leavanny
+		30_bi,	45_bi,	59_bi,	30_bi,	39_bi,	57_bi,		// Venipede
+		40_bi,	55_bi,	99_bi,	40_bi,	79_bi,	47_bi,		// Whirlipede
+		60_bi,	90_bi,	89_bi,	55_bi,	69_bi,	112_bi,		// Scolipede
+		40_bi,	27_bi,	60_bi,	37_bi,	50_bi,	66_bi,		// Cottonee
+		60_bi,	67_bi,	85_bi,	77_bi,	75_bi,	116_bi,		// Whimsicott
+		45_bi,	35_bi,	50_bi,	70_bi,	50_bi,	30_bi,		// Petilil
+		70_bi,	60_bi,	75_bi,	110_bi,	75_bi,	90_bi,		// Lilligant
+		70_bi,	92_bi,	65_bi,	80_bi,	55_bi,	98_bi,		// Basculin-Red
+		70_bi,	92_bi,	65_bi,	80_bi,	55_bi,	98_bi,		// Basculin-Blue
+		50_bi,	72_bi,	35_bi,	35_bi,	35_bi,	65_bi,		// Sandile
+		60_bi,	82_bi,	45_bi,	45_bi,	45_bi,	74_bi,		// Krokorok
+		95_bi,	117_bi,	70_bi,	65_bi,	70_bi,	92_bi,		// Krookodile
+		70_bi,	90_bi,	45_bi,	15_bi,	45_bi,	50_bi,		// Darumaka
+		105_bi,	140_bi,	55_bi,	30_bi,	55_bi,	95_bi,		// Darmanitan
+		//105_bi,	30_bi,	105_bi,	140_bi,	105_bi,	55_bi,		// Darmanitan (Zen Mode)
+		75_bi,	86_bi,	67_bi,	106_bi,	67_bi,	60_bi,		// Maractus
+		50_bi,	65_bi,	85_bi,	35_bi,	35_bi,	55_bi,		// Dwebble
+		70_bi,	95_bi,	125_bi,	65_bi,	75_bi,	45_bi,		// Crustle
+		50_bi,	75_bi,	70_bi,	35_bi,	70_bi,	48_bi,		// Scraggy
+		65_bi,	90_bi,	115_bi,	45_bi,	115_bi,	58_bi,		// Scrafty
+		72_bi,	58_bi,	80_bi,	103_bi,	80_bi,	97_bi,		// Sigilyph
+		38_bi,	30_bi,	85_bi,	55_bi,	65_bi,	30_bi,		// Yamask
+		58_bi,	50_bi,	145_bi,	95_bi,	105_bi,	30_bi,		// Cofagrigus
+		54_bi,	78_bi,	103_bi,	53_bi,	45_bi,	22_bi,		// Tirtouga
+		74_bi,	108_bi,	133_bi,	83_bi,	65_bi,	32_bi,		// Carracosta
+		55_bi,	112_bi,	45_bi,	74_bi,	45_bi,	70_bi,		// Archen
+		75_bi,	140_bi,	65_bi,	112_bi,	65_bi,	110_bi,		// Archeops
+		50_bi,	50_bi,	62_bi,	40_bi,	62_bi,	65_bi,		// Trubbish
+		80_bi,	95_bi,	82_bi,	60_bi,	82_bi,	75_bi,		// Garbodor
+		40_bi,	65_bi,	40_bi,	80_bi,	40_bi,	65_bi,		// Zorua
+		60_bi,	105_bi,	60_bi,	120_bi,	60_bi,	105_bi,		// Zoroark
+		55_bi,	50_bi,	40_bi,	40_bi,	40_bi,	75_bi,		// Minccino
+		75_bi,	95_bi,	60_bi,	65_bi,	60_bi,	115_bi,		// Cinccino
+		45_bi,	30_bi,	50_bi,	55_bi,	65_bi,	45_bi,		// Gothita
+		60_bi,	45_bi,	70_bi,	75_bi,	85_bi,	55_bi,		// Gothorita
+		70_bi,	55_bi,	95_bi,	95_bi,	110_bi,	65_bi,		// Gothitelle
+		45_bi,	30_bi,	40_bi,	105_bi,	50_bi,	20_bi,		// Solosis
+		65_bi,	40_bi,	50_bi,	125_bi,	60_bi,	30_bi,		// Duosion
+		110_bi,	65_bi,	75_bi,	125_bi,	85_bi,	30_bi,		// Reuniclus
+		62_bi,	44_bi,	50_bi,	44_bi,	50_bi,	55_bi,		// Ducklett
+		75_bi,	87_bi,	63_bi,	87_bi,	63_bi,	98_bi,		// Swanna
+		36_bi,	50_bi,	50_bi,	65_bi,	60_bi,	44_bi,		// Vanillite
+		51_bi,	65_bi,	65_bi,	80_bi,	75_bi,	59_bi,		// Vanillish
+		71_bi,	95_bi,	85_bi,	110_bi,	95_bi,	79_bi,		// Vanilluxe
+		60_bi,	60_bi,	50_bi,	40_bi,	50_bi,	75_bi,		// Deerling
+		80_bi,	100_bi,	70_bi,	60_bi,	70_bi,	95_bi,		// Sawsbuck
+		55_bi,	75_bi,	60_bi,	75_bi,	60_bi,	103_bi,		// Emolga
+		50_bi,	75_bi,	45_bi,	40_bi,	45_bi,	60_bi,		// Karrablast
+		70_bi,	135_bi,	105_bi,	60_bi,	105_bi,	20_bi,		// Escavalier
+		69_bi,	55_bi,	45_bi,	55_bi,	55_bi,	15_bi,		// Foongus
+		114_bi,	85_bi,	70_bi,	85_bi,	80_bi,	30_bi,		// Amoonguss
+		55_bi,	40_bi,	50_bi,	65_bi,	85_bi,	40_bi,		// Frillish
+		100_bi,	60_bi,	70_bi,	85_bi,	105_bi,	60_bi,		// Jellicent
+		165_bi,	75_bi,	80_bi,	40_bi,	45_bi,	65_bi,		// Alomomola
+		50_bi,	47_bi,	50_bi,	57_bi,	50_bi,	65_bi,		// Joltik
+		70_bi,	77_bi,	60_bi,	97_bi,	60_bi,	108_bi,		// Galvantula
+		44_bi,	50_bi,	91_bi,	24_bi,	86_bi,	10_bi,		// Ferroseed
+		74_bi,	94_bi,	131_bi,	54_bi,	116_bi,	20_bi,		// Ferrothorn
+		40_bi,	55_bi,	70_bi,	45_bi,	60_bi,	30_bi,		// Klink
+		60_bi,	80_bi,	95_bi,	70_bi,	85_bi,	50_bi,		// Klang
+		60_bi,	100_bi,	115_bi,	70_bi,	85_bi,	90_bi,		// Klinklang
+		35_bi,	55_bi,	40_bi,	45_bi,	40_bi,	60_bi,		// Tynamo
+		65_bi,	85_bi,	70_bi,	75_bi,	70_bi,	40_bi,		// Eelektrik
+		85_bi,	115_bi,	80_bi,	105_bi,	80_bi,	50_bi,		// Eelektross
+		55_bi,	55_bi,	55_bi,	85_bi,	55_bi,	30_bi,		// Elgyem
+		75_bi,	75_bi,	75_bi,	125_bi,	95_bi,	40_bi,		// Beheeyem
+		50_bi,	30_bi,	55_bi,	65_bi,	55_bi,	20_bi,		// Litwick
+		60_bi,	40_bi,	60_bi,	95_bi,	60_bi,	55_bi,		// Lampent
+		60_bi,	55_bi,	90_bi,	145_bi,	90_bi,	80_bi,		// Chandelure
+		46_bi,	87_bi,	60_bi,	30_bi,	40_bi,	57_bi,		// Axew
+		66_bi,	117_bi,	70_bi,	40_bi,	50_bi,	67_bi,		// Fraxure
+		76_bi,	147_bi,	90_bi,	60_bi,	70_bi,	97_bi,		// Haxorus
+		55_bi,	70_bi,	40_bi,	60_bi,	40_bi,	40_bi,		// Cubchoo
+		95_bi,	110_bi,	80_bi,	70_bi,	80_bi,	50_bi,		// Beartic
+		70_bi,	50_bi,	30_bi,	95_bi,	135_bi,	105_bi,		// Cryogonal
+		50_bi,	40_bi,	85_bi,	40_bi,	65_bi,	25_bi,		// Shelmet
+		80_bi,	70_bi,	40_bi,	100_bi,	60_bi,	145_bi,		// Accelgor
+		109_bi,	66_bi,	84_bi,	81_bi,	99_bi,	32_bi,		// Stunfisk
+		45_bi,	85_bi,	50_bi,	55_bi,	50_bi,	65_bi,		// Mienfoo
+		65_bi,	125_bi,	60_bi,	95_bi,	60_bi,	105_bi,		// Mienshao
+		77_bi,	120_bi,	90_bi,	60_bi,	90_bi,	48_bi,		// Druddigon
+		59_bi,	74_bi,	50_bi,	35_bi,	50_bi,	35_bi,		// Golett
+		89_bi,	124_bi,	80_bi,	55_bi,	80_bi,	55_bi,		// Golurk
+		45_bi,	85_bi,	70_bi,	40_bi,	40_bi,	60_bi,		// Pawniard
+		65_bi,	125_bi,	100_bi,	60_bi,	70_bi,	70_bi,		// Bisharp
+		95_bi,	110_bi,	95_bi,	40_bi,	95_bi,	55_bi,		// Bouffalant
+		70_bi,	83_bi,	50_bi,	37_bi,	50_bi,	60_bi,		// Rufflet
+		100_bi,	123_bi,	75_bi,	57_bi,	75_bi,	80_bi,		// Braviary
+		70_bi,	55_bi,	75_bi,	45_bi,	65_bi,	60_bi,		// Vullaby
+		110_bi,	65_bi,	105_bi,	55_bi,	95_bi,	80_bi,		// Mandibuzz
+		85_bi,	97_bi,	66_bi,	105_bi,	66_bi,	65_bi,		// Heatmor
+		58_bi,	109_bi,	112_bi,	48_bi,	48_bi,	109_bi,		// Durant
+		52_bi,	65_bi,	50_bi,	45_bi,	50_bi,	38_bi,		// Deino
+		72_bi,	85_bi,	70_bi,	65_bi,	70_bi,	58_bi,		// Zweilous
+		92_bi,	105_bi,	90_bi,	125_bi,	90_bi,	98_bi,		// Hydreigon
+		55_bi,	85_bi,	55_bi,	50_bi,	55_bi,	60_bi,		// Larvesta
+		85_bi,	60_bi,	65_bi,	135_bi,	105_bi,	100_bi,		// Volcarona
+		91_bi,	90_bi,	129_bi,	90_bi,	72_bi,	108_bi,		// Cobalion
+		91_bi,	129_bi,	90_bi,	72_bi,	90_bi,	108_bi,		// Terrakion
+		91_bi,	90_bi,	72_bi,	90_bi,	129_bi,	108_bi,		// Virizion
+		79_bi,	115_bi,	70_bi,	125_bi,	80_bi,	111_bi,		// Tornadus-Incarnate
+		79_bi,	100_bi,	80_bi,	110_bi,	90_bi,	121_bi,		// Tornadus-Therian
+		79_bi,	115_bi,	70_bi,	125_bi,	80_bi,	111_bi,		// Thundurus-Incarnate
+		79_bi,	105_bi,	70_bi,	145_bi,	80_bi,	101_bi,		// Thundurus-Therian
+		100_bi,	120_bi,	100_bi,	150_bi,	120_bi,	90_bi,		// Reshiram
+		100_bi,	150_bi,	120_bi,	120_bi,	100_bi,	90_bi,		// Zekrom
+		89_bi,	125_bi,	90_bi,	115_bi,	80_bi,	101_bi,		// Landorus-Incarnate
+		89_bi,	145_bi,	90_bi,	105_bi,	80_bi,	91_bi,		// Landorus-Therian
+		125_bi,	130_bi,	90_bi,	130_bi,	90_bi,	95_bi,		// Kyurem
+		125_bi,	170_bi,	100_bi,	120_bi,	90_bi,	95_bi,		// Kyurem-Black
+		125_bi,	120_bi,	90_bi,	170_bi,	100_bi,	95_bi,		// Kyurem-White
+		91_bi,	72_bi,	90_bi,	129_bi,	90_bi,	108_bi,		// Keldeo
+		100_bi,	77_bi,	77_bi,	128_bi,	128_bi,	90_bi,		// Meloetta
+		// 100_bi,	128_bi,	90_bi,	77_bi,	77_bi,	128_bi,		// Meloetta (Pirouette form)
+		71_bi,	120_bi,	95_bi,	120_bi,	95_bi,	99_bi			// Genesect 
+	);
+	using value_type = decltype(base_stat)::value_type::value_type;
+	static_assert(std::numeric_limits<Stat::base_type>::min() == std::numeric_limits<value_type>::min(), "Incorrect base stat minimum.");
+	static_assert(std::numeric_limits<Stat::base_type>::max() == std::numeric_limits<value_type>::max(), "Incorrect base stat maximum.");
 	// I add 1 because HP is -1 to allow every other index to be easier.
-	return base_stat [static_cast<size_t>(name)] [stat + 1];
+	return base_stat.at(name).at(stat + 1);
 }
 
 }	// unnamed namespace

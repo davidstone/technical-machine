@@ -45,8 +45,7 @@ namespace {
 
 Move load_move(boost::property_tree::ptree const & pt) {
 	unsigned const id = pt.get_value<unsigned>();
-	constexpr auto pp_ups = 3_ri;
-	return Move(id_to_move(id), pp_ups);
+	return Move(id_to_move(id));
 }
 
 Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
@@ -77,7 +76,7 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	Species const species = id_to_species(id, forme);
 	std::string const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	unsigned const gender = pt.get<unsigned>("<xmlattr>.Gender");
-	Level const level(checked_integer<Level::min, Level::max>(pt.get<uint8_t>("<xmlattr>.Lvl")));
+	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(pt.get<uint8_t>("<xmlattr>.Lvl")));
 	uint8_t const happiness = pt.get<uint8_t>("<xmlattr>.Happiness");
 	team.add_pokemon(species, level, Gender(id_to_gender(gender)), nickname, happiness);
 	Pokemon & pokemon = team.replacement();

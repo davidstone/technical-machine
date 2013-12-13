@@ -20,12 +20,12 @@
 
 namespace technicalmachine {
 
-Level::Level(checked_integer<min, max> const level) : 
+Level::Level(bounded_integer::checked_integer<min, max> const level) : 
 	m_value(level)
 	{
 }
 
-auto Level::operator()() const -> native_integer<min, max> {
+auto Level::operator()() const -> bounded_integer::native_integer<min, max> {
 	return m_value;
 }
 

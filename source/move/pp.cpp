@@ -30,20 +30,20 @@ namespace technicalmachine {
 
 Pp::Pp (Moves const move, pp_ups_type const pp_ups):
 	max(calculate_max(get_base_pp(move), pp_ups)),
-	current(static_cast<bool>(max) ? optional<current_type>(*max) : optional<current_type>{}) {
+	current(static_cast<bool>(max) ? bounded_integer::optional<current_type>(*max) : bounded_integer::optional<current_type>{}) {
 }
 
-auto Pp::calculate_max(optional<base_type> base, pp_ups_type pp_ups) -> optional<max_type> {
+auto Pp::calculate_max(bounded_integer::optional<base_type> base, pp_ups_type pp_ups) -> bounded_integer::optional<max_type> {
 	// Macro needed until C++14 automatic return type deduction
 	#define TECHNICALMACHINE_PP_MAX \
-		make_optional(*base * (pp_ups + 5_ri) / 5_ri)
-	static_assert(std::is_same<optional<max_type>, decltype(TECHNICALMACHINE_PP_MAX)>::value, "Incorrect PP type.");
-	return static_cast<bool>(base) ? TECHNICALMACHINE_PP_MAX : decltype(TECHNICALMACHINE_PP_MAX){};
+		make_optional(*base * (pp_ups + 5_bi) / 5_bi)
+	static_assert(std::is_same<bounded_integer::optional<max_type>, decltype(TECHNICALMACHINE_PP_MAX)>::value, "Incorrect PP type.");
+	return static_cast<bool>(base) ? TECHNICALMACHINE_PP_MAX : bounded_integer::none;
 	#undef TECHNICALMACHINE_PP_MAX
 }
 
 bool Pp::is_empty() const {
-	return current == 0_ri;
+	return current == 0_bi;
 }
 
 bool Pp::has_unlimited_pp() const {
@@ -54,23 +54,23 @@ void Pp::decrement(Ability const & foe_ability) {
 	if (has_unlimited_pp())
 		return;
 	// I think it is always an error to try to decrement a move without PP.
-	assert(current != 0_ri);
-	*current -= ternary_conditional(foe_ability.uses_extra_pp(), 2_ri, 1_ri);
+	assert(current != 0_bi);
+	*current -= ternary_conditional(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
 }
 
-native_integer<40, 200> Pp::trump_card_power() const {
+bounded_integer::native_integer<40, 200> Pp::trump_card_power() const {
 	// Should be safe because we assume we are using Trump Card
 	switch (current->value()) {
 		case 0:
-			return 200_ri;
+			return 200_bi;
 		case 1:
-			return 80_ri;
+			return 80_bi;
 		case 2:
-			return 60_ri;
+			return 60_bi;
 		case 3:
-			return 50_ri;
+			return 50_bi;
 		default:
-			return 40_ri;
+			return 40_bi;
 	}
 }
 
@@ -79,7 +79,7 @@ uint64_t Pp::hash() const {
 }
 
 uint64_t Pp::max_hash() const {
-	return static_cast<bool>(max) ? static_cast<uint64_t>(*max + 1_ri) : 1;
+	return static_cast<bool>(max) ? static_cast<uint64_t>(*max + 1_bi) : 1;
 }
 
 bool operator== (Pp const & lhs, Pp const & rhs) {
@@ -90,8 +90,8 @@ bool operator!= (Pp const & lhs, Pp const & rhs) {
 	return !(lhs == rhs);
 }
 
-auto Pp::get_base_pp(Moves const move) -> optional<base_type> {
-	static constexpr optional<base_type> get_pp[] = {
+auto Pp::get_base_pp(Moves const move) -> bounded_integer::optional<base_type> {
+	static constexpr bounded_integer::optional<base_type> get_pp[] = {
 		{},		// Switch0
 		{},		// Switch1
 		{},		// Switch2
@@ -99,565 +99,565 @@ auto Pp::get_base_pp(Moves const move) -> optional<base_type> {
 		{},		// Switch4
 		{},		// Switch5
 		{},		// Hit_Self
-		35_ri,		// Pound
-		25_ri,		// Karate Chop
-		10_ri,		// DoubleSlap
-		15_ri,		// Comet Punch
-		20_ri,		// Mega Punch
-		20_ri,		// Pay Day
-		15_ri,		// Fire Punch
-		15_ri,		// Ice Punch
-		15_ri,		// ThunderPunch
-		35_ri,		// Scratch
-		30_ri,		// ViceGrip
-		5_ri,		// Guillotine
-		10_ri,		// Razor Wind
-		30_ri,		// Swords Dance
-		30_ri,		// Cut
-		35_ri,		// Gust
-		35_ri,		// Wing Attack
-		20_ri,		// Whirlwind
-		15_ri,		// Fly
-		20_ri,		// Bind
-		20_ri,		// Slam
-		15_ri,		// Vine Whip
-		20_ri,		// Stomp
-		30_ri,		// Double Kick
-		5_ri,		// Mega Kick
-		10_ri,		// Jump Kick
-		15_ri,		// Rolling Kick
-		15_ri,		// Sand-Attack
-		15_ri,		// Headbutt
-		25_ri,		// Horn Attack
-		20_ri,		// Fury Attack
-		5_ri,		// Horn Drill
-		35_ri,		// Tackle
-		15_ri,		// Body Slam
-		20_ri,		// Wrap
-		20_ri,		// Take Down
-		10_ri,		// Thrash
-		15_ri,		// Double-Edge
-		30_ri,		// Tail Whip
-		35_ri,		// Poison Sting
-		20_ri,		// Twineedle
-		20_ri,		// Pin Missile
-		30_ri,		// Leer
-		25_ri,		// Bite
-		40_ri,		// Growl
-		20_ri,		// Roar
-		15_ri,		// Sing
-		20_ri,		// Supersonic
-		20_ri,		// SonicBoom
-		20_ri,		// Disable
-		30_ri,		// Acid
-		25_ri,		// Ember
-		15_ri,		// Flamethrower
-		30_ri,		// Mist
-		25_ri,		// Water Gun
-		5_ri,		// Hydro Pump
-		15_ri,		// Surf
-		10_ri,		// Ice Beam
-		5_ri,		// Blizzard
-		20_ri,		// Psybeam
-		20_ri,		// BubbleBeam
-		20_ri,		// Aurora Beam
-		5_ri,		// Hyper Beam
-		35_ri,		// Peck
-		20_ri,		// Drill Peck
-		25_ri,		// Submission
-		20_ri,		// Low Kick
-		20_ri,		// Counter
-		20_ri,		// Seismic Toss
-		15_ri,		// Strength
-		25_ri,		// Absorb
-		15_ri,		// Mega Drain
-		10_ri,		// Leech Seed
-		40_ri,		// Growth
-		25_ri,		// Razor Leaf
-		10_ri,		// SolarBeam
-		35_ri,		// PoisonPowder
-		30_ri,		// Stun Spore
-		15_ri,		// Sleep Powder
-		10_ri,		// Petal Dance
-		40_ri,		// String Shot
-		10_ri,		// Dragon Rage
-		15_ri,		// Fire Spin
-		30_ri,		// ThunderShock
-		15_ri,		// Thunderbolt
-		20_ri,		// Thunder Wave
-		10_ri,		// Thunder
-		15_ri,		// Rock Throw
-		10_ri,		// Earthquake
-		5_ri,		// Fissure
-		10_ri,		// Dig
-		10_ri,		// Toxic
-		25_ri,		// Confusion
-		10_ri,		// Psychic
-		20_ri,		// Hypnosis
-		40_ri,		// Meditate
-		30_ri,		// Agility
-		30_ri,		// Quick Attack
-		20_ri,		// Rage
-		20_ri,		// Teleport
-		15_ri,		// Night Shade
-		10_ri,		// Mimic
-		40_ri,		// Screech
-		15_ri,		// Double Team
-		10_ri,		// Recover
-		30_ri,		// Harden
-		20_ri,		// Minimize
-		20_ri,		// SmokeScreen
-		10_ri,		// Confuse Ray
-		40_ri,		// Withdraw
-		40_ri,		// Defense Curl
-		30_ri,		// Barrier
-		30_ri,		// Light Screen
-		30_ri,		// Haze
-		20_ri,		// Reflect
-		30_ri,		// Focus Energy
-		10_ri,		// Bide
-		10_ri,		// Metronome
-		20_ri,		// Mirror Move
-		5_ri,		// Selfdestruct
-		10_ri,		// Egg Bomb
-		30_ri,		// Lick
-		20_ri,		// Smog
-		20_ri,		// Sludge
-		20_ri,		// Bone Club
-		5_ri,		// Fire Blast
-		15_ri,		// Waterfall
-		15_ri,		// Clamp
-		20_ri,		// Swift
-		15_ri,		// Skull Bash
-		15_ri,		// Spike Cannon
-		35_ri,		// Constrict
-		20_ri,		// Amnesia
-		15_ri,		// Kinesis
-		10_ri,		// Softboiled
-		10_ri,		// Hi Jump Kick
-		30_ri,		// Glare
-		15_ri,		// Dream Eater
-		40_ri,		// Poison Gas
-		20_ri,		// Barrage
-		15_ri,		// Leech Life
-		10_ri,		// Lovely Kiss
-		5_ri,		// Sky Attack
-		10_ri,		// Transform
-		30_ri,		// Bubble
-		10_ri,		// Dizzy Punch
-		15_ri,		// Spore
-		20_ri,		// Flash
-		15_ri,		// Psywave
-		40_ri,		// Splash
-		40_ri,		// Acid Armor
-		10_ri,		// Crabhammer
-		5_ri,		// Explosion
-		15_ri,		// Fury Swipes
-		10_ri,		// Bonemerang
-		10_ri,		// Rest
-		10_ri,		// Rock Slide
-		15_ri,		// Hyper Fang
-		30_ri,		// Sharpen
-		30_ri,		// Conversion
-		10_ri,		// Tri Attack
-		10_ri,		// Super Fang
-		20_ri,		// Slash
-		10_ri,		// Substitute
+		35_bi,		// Pound
+		25_bi,		// Karate Chop
+		10_bi,		// DoubleSlap
+		15_bi,		// Comet Punch
+		20_bi,		// Mega Punch
+		20_bi,		// Pay Day
+		15_bi,		// Fire Punch
+		15_bi,		// Ice Punch
+		15_bi,		// ThunderPunch
+		35_bi,		// Scratch
+		30_bi,		// ViceGrip
+		5_bi,		// Guillotine
+		10_bi,		// Razor Wind
+		30_bi,		// Swords Dance
+		30_bi,		// Cut
+		35_bi,		// Gust
+		35_bi,		// Wing Attack
+		20_bi,		// Whirlwind
+		15_bi,		// Fly
+		20_bi,		// Bind
+		20_bi,		// Slam
+		15_bi,		// Vine Whip
+		20_bi,		// Stomp
+		30_bi,		// Double Kick
+		5_bi,		// Mega Kick
+		10_bi,		// Jump Kick
+		15_bi,		// Rolling Kick
+		15_bi,		// Sand-Attack
+		15_bi,		// Headbutt
+		25_bi,		// Horn Attack
+		20_bi,		// Fury Attack
+		5_bi,		// Horn Drill
+		35_bi,		// Tackle
+		15_bi,		// Body Slam
+		20_bi,		// Wrap
+		20_bi,		// Take Down
+		10_bi,		// Thrash
+		15_bi,		// Double-Edge
+		30_bi,		// Tail Whip
+		35_bi,		// Poison Sting
+		20_bi,		// Twineedle
+		20_bi,		// Pin Missile
+		30_bi,		// Leer
+		25_bi,		// Bite
+		40_bi,		// Growl
+		20_bi,		// Roar
+		15_bi,		// Sing
+		20_bi,		// Supersonic
+		20_bi,		// SonicBoom
+		20_bi,		// Disable
+		30_bi,		// Acid
+		25_bi,		// Ember
+		15_bi,		// Flamethrower
+		30_bi,		// Mist
+		25_bi,		// Water Gun
+		5_bi,		// Hydro Pump
+		15_bi,		// Surf
+		10_bi,		// Ice Beam
+		5_bi,		// Blizzard
+		20_bi,		// Psybeam
+		20_bi,		// BubbleBeam
+		20_bi,		// Aurora Beam
+		5_bi,		// Hyper Beam
+		35_bi,		// Peck
+		20_bi,		// Drill Peck
+		25_bi,		// Submission
+		20_bi,		// Low Kick
+		20_bi,		// Counter
+		20_bi,		// Seismic Toss
+		15_bi,		// Strength
+		25_bi,		// Absorb
+		15_bi,		// Mega Drain
+		10_bi,		// Leech Seed
+		40_bi,		// Growth
+		25_bi,		// Razor Leaf
+		10_bi,		// SolarBeam
+		35_bi,		// PoisonPowder
+		30_bi,		// Stun Spore
+		15_bi,		// Sleep Powder
+		10_bi,		// Petal Dance
+		40_bi,		// String Shot
+		10_bi,		// Dragon Rage
+		15_bi,		// Fire Spin
+		30_bi,		// ThunderShock
+		15_bi,		// Thunderbolt
+		20_bi,		// Thunder Wave
+		10_bi,		// Thunder
+		15_bi,		// Rock Throw
+		10_bi,		// Earthquake
+		5_bi,		// Fissure
+		10_bi,		// Dig
+		10_bi,		// Toxic
+		25_bi,		// Confusion
+		10_bi,		// Psychic
+		20_bi,		// Hypnosis
+		40_bi,		// Meditate
+		30_bi,		// Agility
+		30_bi,		// Quick Attack
+		20_bi,		// Rage
+		20_bi,		// Teleport
+		15_bi,		// Night Shade
+		10_bi,		// Mimic
+		40_bi,		// Screech
+		15_bi,		// Double Team
+		10_bi,		// Recover
+		30_bi,		// Harden
+		20_bi,		// Minimize
+		20_bi,		// SmokeScreen
+		10_bi,		// Confuse Ray
+		40_bi,		// Withdraw
+		40_bi,		// Defense Curl
+		30_bi,		// Barrier
+		30_bi,		// Light Screen
+		30_bi,		// Haze
+		20_bi,		// Reflect
+		30_bi,		// Focus Energy
+		10_bi,		// Bide
+		10_bi,		// Metronome
+		20_bi,		// Mirror Move
+		5_bi,		// Selfdestruct
+		10_bi,		// Egg Bomb
+		30_bi,		// Lick
+		20_bi,		// Smog
+		20_bi,		// Sludge
+		20_bi,		// Bone Club
+		5_bi,		// Fire Blast
+		15_bi,		// Waterfall
+		15_bi,		// Clamp
+		20_bi,		// Swift
+		15_bi,		// Skull Bash
+		15_bi,		// Spike Cannon
+		35_bi,		// Constrict
+		20_bi,		// Amnesia
+		15_bi,		// Kinesis
+		10_bi,		// Softboiled
+		10_bi,		// Hi Jump Kick
+		30_bi,		// Glare
+		15_bi,		// Dream Eater
+		40_bi,		// Poison Gas
+		20_bi,		// Barrage
+		15_bi,		// Leech Life
+		10_bi,		// Lovely Kiss
+		5_bi,		// Sky Attack
+		10_bi,		// Transform
+		30_bi,		// Bubble
+		10_bi,		// Dizzy Punch
+		15_bi,		// Spore
+		20_bi,		// Flash
+		15_bi,		// Psywave
+		40_bi,		// Splash
+		40_bi,		// Acid Armor
+		10_bi,		// Crabhammer
+		5_bi,		// Explosion
+		15_bi,		// Fury Swipes
+		10_bi,		// Bonemerang
+		10_bi,		// Rest
+		10_bi,		// Rock Slide
+		15_bi,		// Hyper Fang
+		30_bi,		// Sharpen
+		30_bi,		// Conversion
+		10_bi,		// Tri Attack
+		10_bi,		// Super Fang
+		20_bi,		// Slash
+		10_bi,		// Substitute
 		{},		// Struggle
-		1_ri,		// Sketch
-		10_ri,		// Triple Kick
-		10_ri,		// Thief
-		10_ri,		// Spider Web
-		5_ri,		// Mind Reader
-		15_ri,		// Nightmare
-		25_ri,		// Flame Wheel
-		15_ri,		// Snore
-		10_ri,		// Curse
-		15_ri,		// Flail
-		30_ri,		// Conversion 2
-		5_ri,		// Aeroblast
-		40_ri,		// Cotton Spore
-		15_ri,		// Reversal
-		10_ri,		// Spite
-		25_ri,		// Powder Snow
-		10_ri,		// Protect
-		30_ri,		// Mach Punch
-		10_ri,		// Scary Face
-		20_ri,		// Faint Attack
-		10_ri,		// Sweet Kiss
-		10_ri,		// Belly Drum
-		10_ri,		// Sludge Bomb
-		10_ri,		// Mud-Slap
-		10_ri,		// Octazooka
-		20_ri,		// Spikes
-		5_ri,		// Zap Cannon
-		40_ri,		// Foresight
-		5_ri,		// Destiny Bond
-		5_ri,		// Perish Song
-		15_ri,		// Icy Wind
-		5_ri,		// Detect
-		10_ri,		// Bone Rush
-		5_ri,		// Lock-On
-		10_ri,		// Outrage
-		10_ri,		// Sandstorm
-		10_ri,		// Giga Drain
-		10_ri,		// Endure
-		20_ri,		// Charm
-		20_ri,		// Rollout
-		40_ri,		// False Swipe
-		15_ri,		// Swagger
-		10_ri,		// Milk Drink
-		20_ri,		// Spark
-		20_ri,		// Fury Cutter
-		25_ri,		// Steel Wing
-		5_ri,		// Mean Look
-		15_ri,		// Attract
-		10_ri,		// Sleep Talk
-		5_ri,		// Heal Bell
-		20_ri,		// Return
-		15_ri,		// Present
-		20_ri,		// Frustration
-		25_ri,		// Safeguard
-		20_ri,		// Pain Split
-		5_ri,		// Sacred Fire
-		30_ri,		// Magnitude
-		5_ri,		// DynamicPunch
-		10_ri,		// Megahorn
-		20_ri,		// DragonBreath
-		40_ri,		// Baton Pass
-		5_ri,		// Encore
-		20_ri,		// Pursuit
-		40_ri,		// Rapid Spin
-		20_ri,		// Sweet Scent
-		15_ri,		// Iron Tail
-		35_ri,		// Metal Claw
-		10_ri,		// Vital Throw
-		5_ri,		// Morning Sun
-		5_ri,		// Synthesis
-		5_ri,		// Moonlight
-		15_ri,		// Hidden Power
-		5_ri,		// Cross Chop
-		20_ri,		// Twister
-		5_ri,		// Rain Dance
-		5_ri,		// Sunny Day
-		15_ri,		// Crunch
-		20_ri,		// Mirror Coat
-		10_ri,		// Psych Up
-		5_ri,		// ExtremeSpeed
-		5_ri,		// AncientPower
-		15_ri,		// Shadow Ball
-		10_ri,		// Future Sight
-		15_ri,		// Rock Smash
-		15_ri,		// Whirlpool
-		10_ri,		// Beat Up
-		10_ri,		// Fake Out
-		10_ri,		// Uproar
-		20_ri,		// Stockpile
-		10_ri,		// Spit Up
-		10_ri,		// Swallow
-		10_ri,		// Heat Wave
-		10_ri,		// Hail
-		15_ri,		// Torment
-		15_ri,		// Flatter
-		15_ri,		// Will-O-Wisp
-		10_ri,		// Memento
-		20_ri,		// Facade
-		20_ri,		// Focus Punch
-		10_ri,		// SmellingSalt
-		20_ri,		// Follow Me
-		20_ri,		// Nature Power
-		20_ri,		// Charge
-		20_ri,		// Taunt
-		20_ri,		// Helping Hand
-		10_ri,		// Trick
-		10_ri,		// Role Play
-		10_ri,		// Wish
-		20_ri,		// Assist
-		20_ri,		// Ingrain
-		5_ri,		// Superpower
-		15_ri,		// Magic Coat
-		10_ri,		// Recycle
-		10_ri,		// Revenge
-		15_ri,		// Brick Break
-		10_ri,		// Yawn
-		20_ri,		// Knock Off
-		5_ri,		// Endeavor
-		5_ri,		// Eruption
-		10_ri,		// Skill Swap
-		10_ri,		// Imprison
-		20_ri,		// Refresh
-		5_ri,		// Grudge
-		10_ri,		// Snatch
-		20_ri,		// Secret Power
-		10_ri,		// Dive
-		20_ri,		// Arm Thrust
-		20_ri,		// Camouflage
-		20_ri,		// Tail Glow
-		5_ri,		// Luster Purge
-		5_ri,		// Mist Ball
-		15_ri,		// FeatherDance
-		20_ri,		// Teeter Dance
-		10_ri,		// Blaze Kick
-		15_ri,		// Mud Sport
-		20_ri,		// Ice Ball
-		15_ri,		// Needle Arm
-		10_ri,		// Slack Off
-		10_ri,		// Hyper Voice
-		15_ri,		// Poison Fang
-		10_ri,		// Crush Claw
-		5_ri,		// Blast Burn
-		5_ri,		// Hydro Cannon
-		10_ri,		// Meteor Mash
-		15_ri,		// Astonish
-		10_ri,		// Weather Ball
-		5_ri,		// Aromatherapy
-		20_ri,		// Fake Tears
-		25_ri,		// Air Cutter
-		5_ri,		// Overheat
-		40_ri,		// Odor Sleuth
-		10_ri,		// Rock Tomb
-		5_ri,		// Silver Wind
-		40_ri,		// Metal Sound
-		15_ri,		// GrassWhistle
-		20_ri,		// Tickle
-		20_ri,		// Cosmic Power
-		5_ri,		// Water Spout
-		15_ri,		// Signal Beam
-		20_ri,		// Shadow Punch
-		30_ri,		// Extrasensory
-		15_ri,		// Sky Uppercut
-		15_ri,		// Sand Tomb
-		5_ri,		// Sheer Cold
-		10_ri,		// Muddy Water
-		30_ri,		// Bullet Seed
-		20_ri,		// Aerial Ace
-		30_ri,		// Icicle Spear
-		15_ri,		// Iron Defense
-		5_ri,		// Block
-		40_ri,		// Howl
-		15_ri,		// Dragon Claw
-		5_ri,		// Frenzy Plant
-		20_ri,		// Bulk Up
-		5_ri,		// Bounce
-		15_ri,		// Mud Shot
-		25_ri,		// Poison Tail
-		40_ri,		// Covet
-		15_ri,		// Volt Tackle
-		20_ri,		// Magical Leaf
-		15_ri,		// Water Sport
-		20_ri,		// Calm Mind
-		15_ri,		// Leaf Blade
-		20_ri,		// Dragon Dance
-		10_ri,		// Rock Blast
-		20_ri,		// Shock Wave
-		20_ri,		// Water Pulse
-		5_ri,		// Doom Desire
-		5_ri,		// Psycho Boost
-		10_ri,		// Roost
-		5_ri,		// Gravity
-		40_ri,		// Miracle Eye
-		10_ri,		// Wake-Up Slap
-		10_ri,		// Hammer Arm
-		5_ri,		// Gyro Ball
-		10_ri,		// Healing Wish
-		10_ri,		// Brine
-		15_ri,		// Natural Gift
-		10_ri,		// Feint
-		20_ri,		// Pluck
-		30_ri,		// Tailwind
-		30_ri,		// Acupressure
-		10_ri,		// Metal Burst
-		20_ri,		// U-turn
-		5_ri,		// Close Combat
-		10_ri,		// Payback
-		10_ri,		// Assurance
-		15_ri,		// Embargo
-		10_ri,		// Fling
-		10_ri,		// Psycho Shift
-		5_ri,		// Trump Card
-		15_ri,		// Heal Block
-		5_ri,		// Wring Out
-		10_ri,		// Power Trick
-		10_ri,		// Gastro Acid
-		30_ri,		// Lucky Chant
-		20_ri,		// Me First
-		20_ri,		// Copycat
-		10_ri,		// Power Swap
-		10_ri,		// Guard Swap
-		5_ri,		// Punishment
-		5_ri,		// Last Resort
-		10_ri,		// Worry Seed
-		5_ri,		// Sucker Punch
-		20_ri,		// Toxic Spikes
-		10_ri,		// Heart Swap
-		20_ri,		// Aqua Ring
-		10_ri,		// Magnet Rise
-		15_ri,		// Flare Blitz
-		10_ri,		// Force Palm
-		20_ri,		// Aura Sphere
-		20_ri,		// Rock Polish
-		20_ri,		// Poison Jab
-		15_ri,		// Dark Pulse
-		15_ri,		// Night Slash
-		10_ri,		// Aqua Tail
-		15_ri,		// Seed Bomb
-		20_ri,		// Air Slash
-		15_ri,		// X-Scissor
-		10_ri,		// Bug Buzz
-		10_ri,		// Dragon Pulse
-		10_ri,		// Dragon Rush
-		20_ri,		// Power Gem
-		10_ri,		// Drain Punch
-		30_ri,		// Vacuum Wave
-		5_ri,		// Focus Blast
-		10_ri,		// Energy Ball
-		15_ri,		// Brave Bird
-		10_ri,		// Earth Power
-		10_ri,		// Switcheroo
-		5_ri,		// Giga Impact
-		20_ri,		// Nasty Plot
-		30_ri,		// Bullet Punch
-		10_ri,		// Avalanche
-		30_ri,		// Ice Shard
-		15_ri,		// Shadow Claw
-		15_ri,		// Thunder Fang
-		15_ri,		// Ice Fang
-		15_ri,		// Fire Fang
-		30_ri,		// Shadow Sneak
-		10_ri,		// Mud Bomb
-		20_ri,		// Psycho Cut
-		15_ri,		// Zen Headbutt
-		10_ri,		// Mirror Shot
-		10_ri,		// Flash Cannon
-		20_ri,		// Rock Climb
-		15_ri,		// Defog
-		5_ri,		// Trick Room
-		5_ri,		// Draco Meteor
-		15_ri,		// Discharge
-		15_ri,		// Lava Plume
-		5_ri,		// Leaf Storm
-		10_ri,		// Power Whip
-		5_ri,		// Rock Wrecker
-		20_ri,		// Cross Poison
-		5_ri,		// Gunk Shot
-		15_ri,		// Iron Head
-		20_ri,		// Magnet Bomb
-		5_ri,		// Stone Edge
-		20_ri,		// Captivate
-		20_ri,		// Stealth Rock
-		20_ri,		// Grass Knot
-		20_ri,		// Chatter
-		10_ri,		// Judgment
-		20_ri,		// Bug Bite
-		10_ri,		// Charge Beam
-		15_ri,		// Wood Hammer
-		20_ri,		// Aqua Jet
-		15_ri,		// Attack Order
-		10_ri,		// Defend Order
-		10_ri,		// Heal Order
-		5_ri,		// Head Smash
-		10_ri,		// Double Hit
-		5_ri,		// Roar of Time
-		5_ri,		// Spacial Rend
-		10_ri,		// Lunar Dance
-		5_ri,		// Crush Grip
-		5_ri,		// Magma Storm
-		10_ri,		// Dark Void
-		5_ri,		// Seed Flare
-		5_ri,		// Ominous Wind
-		5_ri,		// Shadow Force
-		15_ri,		// Hone Claws
-		10_ri,		// Wide Guard
-		10_ri,		// Guard Split
-		10_ri,		// Power Split
-		10_ri,		// Wonder Room
-		10_ri,		// Psyshock
-		10_ri,		// Venoshock
-		15_ri,		// Autotomize
-		20_ri,		// Rage Powder
-		15_ri,		// Telekinesis
-		10_ri,		// Magic Room
-		15_ri,		// Smack Down
-		10_ri,		// Storm Throw
-		15_ri,		// Flame Burst
-		10_ri,		// Sludge Wave
-		20_ri,		// Quiver Dance
-		10_ri,		// Heavy Slam
-		15_ri,		// Synchronoise
-		10_ri,		// Electro Ball
-		20_ri,		// Soak
-		20_ri,		// Flame Charge
-		20_ri,		// Coil
-		20_ri,		// Low Sweep
-		20_ri,		// Acid Spray
-		15_ri,		// Foul Play
-		15_ri,		// Simple Beam
-		15_ri,		// Entrainment
-		15_ri,		// After You
-		15_ri,		// Round
-		15_ri,		// Echoed Voice
-		20_ri,		// Chip Away
-		15_ri,		// Clear Smog
-		10_ri,		// Stored Power
-		15_ri,		// Quick Guard
-		15_ri,		// Ally Switch
-		15_ri,		// Scald
-		15_ri,		// Shell Smash
-		10_ri,		// Heal Pulse
-		10_ri,		// Hex
-		10_ri,		// Sky Drop
-		10_ri,		// Shift Gear
-		10_ri,		// Circle Throw
-		15_ri,		// Incinerate
-		15_ri,		// Quash
-		15_ri,		// Acrobatics
-		15_ri,		// Reflect Type
-		5_ri,		// Retaliate
-		5_ri,		// Final Gambit
-		15_ri,		// Bestow
-		5_ri,		// Inferno
-		10_ri,		// Water Pledge
-		10_ri,		// Fire Pledge
-		10_ri,		// Grass Pledge
-		20_ri,		// Volt Switch
-		20_ri,		// Struggle Bug
-		20_ri,		// Bulldoze
-		10_ri,		// Frost Breath
-		10_ri,		// Dragon Tail
-		30_ri,		// Work Up
-		15_ri,		// Electroweb
-		15_ri,		// Wild Charge
-		10_ri,		// Drill Run
-		15_ri,		// Dual Chop
-		25_ri,		// Heart Stamp
-		10_ri,		// Horn Leech
-		20_ri,		// Sacred Sword
-		10_ri,		// Razor Shell
-		10_ri,		// Heat Crash
-		10_ri,		// Leaf Tornado
-		20_ri,		// Steamroller
-		10_ri,		// Cotton Guard
-		10_ri,		// Night Daze
-		10_ri,		// Psystrike
-		10_ri,		// Tail Slap
-		10_ri,		// Hurricane
-		15_ri,		// Head Charge
-		15_ri,		// Gear Grind
-		5_ri,		// Searing Shot
-		5_ri,		// Techno Blast
-		10_ri,		// Relic Song
-		10_ri,		// Secret Sword
-		10_ri,		// Glaciate
-		5_ri,		// Bolt Strike
-		5_ri,		// Blue Flare
-		10_ri,		// Fiery Dance
-		5_ri,		// Freeze Shock
-		5_ri,		// Ice Burn
-		15_ri,		// Snarl
-		10_ri,		// Icicle Crash
-		5_ri,		// V-create
-		5_ri,		// Fusion Flare
-		5_ri		// Fusion Bolt
+		1_bi,		// Sketch
+		10_bi,		// Triple Kick
+		10_bi,		// Thief
+		10_bi,		// Spider Web
+		5_bi,		// Mind Reader
+		15_bi,		// Nightmare
+		25_bi,		// Flame Wheel
+		15_bi,		// Snore
+		10_bi,		// Curse
+		15_bi,		// Flail
+		30_bi,		// Conversion 2
+		5_bi,		// Aeroblast
+		40_bi,		// Cotton Spore
+		15_bi,		// Reversal
+		10_bi,		// Spite
+		25_bi,		// Powder Snow
+		10_bi,		// Protect
+		30_bi,		// Mach Punch
+		10_bi,		// Scary Face
+		20_bi,		// Faint Attack
+		10_bi,		// Sweet Kiss
+		10_bi,		// Belly Drum
+		10_bi,		// Sludge Bomb
+		10_bi,		// Mud-Slap
+		10_bi,		// Octazooka
+		20_bi,		// Spikes
+		5_bi,		// Zap Cannon
+		40_bi,		// Foresight
+		5_bi,		// Destiny Bond
+		5_bi,		// Perish Song
+		15_bi,		// Icy Wind
+		5_bi,		// Detect
+		10_bi,		// Bone Rush
+		5_bi,		// Lock-On
+		10_bi,		// Outrage
+		10_bi,		// Sandstorm
+		10_bi,		// Giga Drain
+		10_bi,		// Endure
+		20_bi,		// Charm
+		20_bi,		// Rollout
+		40_bi,		// False Swipe
+		15_bi,		// Swagger
+		10_bi,		// Milk Drink
+		20_bi,		// Spark
+		20_bi,		// Fury Cutter
+		25_bi,		// Steel Wing
+		5_bi,		// Mean Look
+		15_bi,		// Attract
+		10_bi,		// Sleep Talk
+		5_bi,		// Heal Bell
+		20_bi,		// Return
+		15_bi,		// Present
+		20_bi,		// Frustration
+		25_bi,		// Safeguard
+		20_bi,		// Pain Split
+		5_bi,		// Sacred Fire
+		30_bi,		// Magnitude
+		5_bi,		// DynamicPunch
+		10_bi,		// Megahorn
+		20_bi,		// DragonBreath
+		40_bi,		// Baton Pass
+		5_bi,		// Encore
+		20_bi,		// Pursuit
+		40_bi,		// Rapid Spin
+		20_bi,		// Sweet Scent
+		15_bi,		// Iron Tail
+		35_bi,		// Metal Claw
+		10_bi,		// Vital Throw
+		5_bi,		// Morning Sun
+		5_bi,		// Synthesis
+		5_bi,		// Moonlight
+		15_bi,		// Hidden Power
+		5_bi,		// Cross Chop
+		20_bi,		// Twister
+		5_bi,		// Rain Dance
+		5_bi,		// Sunny Day
+		15_bi,		// Crunch
+		20_bi,		// Mirror Coat
+		10_bi,		// Psych Up
+		5_bi,		// ExtremeSpeed
+		5_bi,		// AncientPower
+		15_bi,		// Shadow Ball
+		10_bi,		// Future Sight
+		15_bi,		// Rock Smash
+		15_bi,		// Whirlpool
+		10_bi,		// Beat Up
+		10_bi,		// Fake Out
+		10_bi,		// Uproar
+		20_bi,		// Stockpile
+		10_bi,		// Spit Up
+		10_bi,		// Swallow
+		10_bi,		// Heat Wave
+		10_bi,		// Hail
+		15_bi,		// Torment
+		15_bi,		// Flatter
+		15_bi,		// Will-O-Wisp
+		10_bi,		// Memento
+		20_bi,		// Facade
+		20_bi,		// Focus Punch
+		10_bi,		// SmellingSalt
+		20_bi,		// Follow Me
+		20_bi,		// Nature Power
+		20_bi,		// Charge
+		20_bi,		// Taunt
+		20_bi,		// Helping Hand
+		10_bi,		// Trick
+		10_bi,		// Role Play
+		10_bi,		// Wish
+		20_bi,		// Assist
+		20_bi,		// Ingrain
+		5_bi,		// Superpower
+		15_bi,		// Magic Coat
+		10_bi,		// Recycle
+		10_bi,		// Revenge
+		15_bi,		// Brick Break
+		10_bi,		// Yawn
+		20_bi,		// Knock Off
+		5_bi,		// Endeavor
+		5_bi,		// Eruption
+		10_bi,		// Skill Swap
+		10_bi,		// Imprison
+		20_bi,		// Refresh
+		5_bi,		// Grudge
+		10_bi,		// Snatch
+		20_bi,		// Secret Power
+		10_bi,		// Dive
+		20_bi,		// Arm Thrust
+		20_bi,		// Camouflage
+		20_bi,		// Tail Glow
+		5_bi,		// Luster Purge
+		5_bi,		// Mist Ball
+		15_bi,		// FeatherDance
+		20_bi,		// Teeter Dance
+		10_bi,		// Blaze Kick
+		15_bi,		// Mud Sport
+		20_bi,		// Ice Ball
+		15_bi,		// Needle Arm
+		10_bi,		// Slack Off
+		10_bi,		// Hyper Voice
+		15_bi,		// Poison Fang
+		10_bi,		// Crush Claw
+		5_bi,		// Blast Burn
+		5_bi,		// Hydro Cannon
+		10_bi,		// Meteor Mash
+		15_bi,		// Astonish
+		10_bi,		// Weather Ball
+		5_bi,		// Aromatherapy
+		20_bi,		// Fake Tears
+		25_bi,		// Air Cutter
+		5_bi,		// Overheat
+		40_bi,		// Odor Sleuth
+		10_bi,		// Rock Tomb
+		5_bi,		// Silver Wind
+		40_bi,		// Metal Sound
+		15_bi,		// GrassWhistle
+		20_bi,		// Tickle
+		20_bi,		// Cosmic Power
+		5_bi,		// Water Spout
+		15_bi,		// Signal Beam
+		20_bi,		// Shadow Punch
+		30_bi,		// Extrasensory
+		15_bi,		// Sky Uppercut
+		15_bi,		// Sand Tomb
+		5_bi,		// Sheer Cold
+		10_bi,		// Muddy Water
+		30_bi,		// Bullet Seed
+		20_bi,		// Aerial Ace
+		30_bi,		// Icicle Spear
+		15_bi,		// Iron Defense
+		5_bi,		// Block
+		40_bi,		// Howl
+		15_bi,		// Dragon Claw
+		5_bi,		// Frenzy Plant
+		20_bi,		// Bulk Up
+		5_bi,		// Bounce
+		15_bi,		// Mud Shot
+		25_bi,		// Poison Tail
+		40_bi,		// Covet
+		15_bi,		// Volt Tackle
+		20_bi,		// Magical Leaf
+		15_bi,		// Water Sport
+		20_bi,		// Calm Mind
+		15_bi,		// Leaf Blade
+		20_bi,		// Dragon Dance
+		10_bi,		// Rock Blast
+		20_bi,		// Shock Wave
+		20_bi,		// Water Pulse
+		5_bi,		// Doom Desire
+		5_bi,		// Psycho Boost
+		10_bi,		// Roost
+		5_bi,		// Gravity
+		40_bi,		// Miracle Eye
+		10_bi,		// Wake-Up Slap
+		10_bi,		// Hammer Arm
+		5_bi,		// Gyro Ball
+		10_bi,		// Healing Wish
+		10_bi,		// Brine
+		15_bi,		// Natural Gift
+		10_bi,		// Feint
+		20_bi,		// Pluck
+		30_bi,		// Tailwind
+		30_bi,		// Acupressure
+		10_bi,		// Metal Burst
+		20_bi,		// U-turn
+		5_bi,		// Close Combat
+		10_bi,		// Payback
+		10_bi,		// Assurance
+		15_bi,		// Embargo
+		10_bi,		// Fling
+		10_bi,		// Psycho Shift
+		5_bi,		// Trump Card
+		15_bi,		// Heal Block
+		5_bi,		// Wring Out
+		10_bi,		// Power Trick
+		10_bi,		// Gastro Acid
+		30_bi,		// Lucky Chant
+		20_bi,		// Me First
+		20_bi,		// Copycat
+		10_bi,		// Power Swap
+		10_bi,		// Guard Swap
+		5_bi,		// Punishment
+		5_bi,		// Last Resort
+		10_bi,		// Worry Seed
+		5_bi,		// Sucker Punch
+		20_bi,		// Toxic Spikes
+		10_bi,		// Heart Swap
+		20_bi,		// Aqua Ring
+		10_bi,		// Magnet Rise
+		15_bi,		// Flare Blitz
+		10_bi,		// Force Palm
+		20_bi,		// Aura Sphere
+		20_bi,		// Rock Polish
+		20_bi,		// Poison Jab
+		15_bi,		// Dark Pulse
+		15_bi,		// Night Slash
+		10_bi,		// Aqua Tail
+		15_bi,		// Seed Bomb
+		20_bi,		// Air Slash
+		15_bi,		// X-Scissor
+		10_bi,		// Bug Buzz
+		10_bi,		// Dragon Pulse
+		10_bi,		// Dragon Rush
+		20_bi,		// Power Gem
+		10_bi,		// Drain Punch
+		30_bi,		// Vacuum Wave
+		5_bi,		// Focus Blast
+		10_bi,		// Energy Ball
+		15_bi,		// Brave Bird
+		10_bi,		// Earth Power
+		10_bi,		// Switcheroo
+		5_bi,		// Giga Impact
+		20_bi,		// Nasty Plot
+		30_bi,		// Bullet Punch
+		10_bi,		// Avalanche
+		30_bi,		// Ice Shard
+		15_bi,		// Shadow Claw
+		15_bi,		// Thunder Fang
+		15_bi,		// Ice Fang
+		15_bi,		// Fire Fang
+		30_bi,		// Shadow Sneak
+		10_bi,		// Mud Bomb
+		20_bi,		// Psycho Cut
+		15_bi,		// Zen Headbutt
+		10_bi,		// Mirror Shot
+		10_bi,		// Flash Cannon
+		20_bi,		// Rock Climb
+		15_bi,		// Defog
+		5_bi,		// Trick Room
+		5_bi,		// Draco Meteor
+		15_bi,		// Discharge
+		15_bi,		// Lava Plume
+		5_bi,		// Leaf Storm
+		10_bi,		// Power Whip
+		5_bi,		// Rock Wrecker
+		20_bi,		// Cross Poison
+		5_bi,		// Gunk Shot
+		15_bi,		// Iron Head
+		20_bi,		// Magnet Bomb
+		5_bi,		// Stone Edge
+		20_bi,		// Captivate
+		20_bi,		// Stealth Rock
+		20_bi,		// Grass Knot
+		20_bi,		// Chatter
+		10_bi,		// Judgment
+		20_bi,		// Bug Bite
+		10_bi,		// Charge Beam
+		15_bi,		// Wood Hammer
+		20_bi,		// Aqua Jet
+		15_bi,		// Attack Order
+		10_bi,		// Defend Order
+		10_bi,		// Heal Order
+		5_bi,		// Head Smash
+		10_bi,		// Double Hit
+		5_bi,		// Roar of Time
+		5_bi,		// Spacial Rend
+		10_bi,		// Lunar Dance
+		5_bi,		// Crush Grip
+		5_bi,		// Magma Storm
+		10_bi,		// Dark Void
+		5_bi,		// Seed Flare
+		5_bi,		// Ominous Wind
+		5_bi,		// Shadow Force
+		15_bi,		// Hone Claws
+		10_bi,		// Wide Guard
+		10_bi,		// Guard Split
+		10_bi,		// Power Split
+		10_bi,		// Wonder Room
+		10_bi,		// Psyshock
+		10_bi,		// Venoshock
+		15_bi,		// Autotomize
+		20_bi,		// Rage Powder
+		15_bi,		// Telekinesis
+		10_bi,		// Magic Room
+		15_bi,		// Smack Down
+		10_bi,		// Storm Throw
+		15_bi,		// Flame Burst
+		10_bi,		// Sludge Wave
+		20_bi,		// Quiver Dance
+		10_bi,		// Heavy Slam
+		15_bi,		// Synchronoise
+		10_bi,		// Electro Ball
+		20_bi,		// Soak
+		20_bi,		// Flame Charge
+		20_bi,		// Coil
+		20_bi,		// Low Sweep
+		20_bi,		// Acid Spray
+		15_bi,		// Foul Play
+		15_bi,		// Simple Beam
+		15_bi,		// Entrainment
+		15_bi,		// After You
+		15_bi,		// Round
+		15_bi,		// Echoed Voice
+		20_bi,		// Chip Away
+		15_bi,		// Clear Smog
+		10_bi,		// Stored Power
+		15_bi,		// Quick Guard
+		15_bi,		// Ally Switch
+		15_bi,		// Scald
+		15_bi,		// Shell Smash
+		10_bi,		// Heal Pulse
+		10_bi,		// Hex
+		10_bi,		// Sky Drop
+		10_bi,		// Shift Gear
+		10_bi,		// Circle Throw
+		15_bi,		// Incinerate
+		15_bi,		// Quash
+		15_bi,		// Acrobatics
+		15_bi,		// Reflect Type
+		5_bi,		// Retaliate
+		5_bi,		// Final Gambit
+		15_bi,		// Bestow
+		5_bi,		// Inferno
+		10_bi,		// Water Pledge
+		10_bi,		// Fire Pledge
+		10_bi,		// Grass Pledge
+		20_bi,		// Volt Switch
+		20_bi,		// Struggle Bug
+		20_bi,		// Bulldoze
+		10_bi,		// Frost Breath
+		10_bi,		// Dragon Tail
+		30_bi,		// Work Up
+		15_bi,		// Electroweb
+		15_bi,		// Wild Charge
+		10_bi,		// Drill Run
+		15_bi,		// Dual Chop
+		25_bi,		// Heart Stamp
+		10_bi,		// Horn Leech
+		20_bi,		// Sacred Sword
+		10_bi,		// Razor Shell
+		10_bi,		// Heat Crash
+		10_bi,		// Leaf Tornado
+		20_bi,		// Steamroller
+		10_bi,		// Cotton Guard
+		10_bi,		// Night Daze
+		10_bi,		// Psystrike
+		10_bi,		// Tail Slap
+		10_bi,		// Hurricane
+		15_bi,		// Head Charge
+		15_bi,		// Gear Grind
+		5_bi,		// Searing Shot
+		5_bi,		// Techno Blast
+		10_bi,		// Relic Song
+		10_bi,		// Secret Sword
+		10_bi,		// Glaciate
+		5_bi,		// Bolt Strike
+		5_bi,		// Blue Flare
+		10_bi,		// Fiery Dance
+		5_bi,		// Freeze Shock
+		5_bi,		// Ice Burn
+		15_bi,		// Snarl
+		10_bi,		// Icicle Crash
+		5_bi,		// V-create
+		5_bi,		// Fusion Flare
+		5_bi		// Fusion Bolt
 	};
 	return get_pp[static_cast<std::size_t>(move)];
 }

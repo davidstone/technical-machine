@@ -21,9 +21,11 @@
 #include "moves.hpp"
 
 namespace technicalmachine {
+
+using namespace bounded_integer::literal;
 namespace {
 
-checked_integer<-6, 6> get_priority(Moves move);
+bounded_integer::checked_integer<-6, 6> get_priority(Moves move);
 
 }	// unnamed namespace
 
@@ -52,7 +54,7 @@ bool operator>= (Priority const lhs, Priority const rhs) {
 
 namespace {
 
-checked_integer<-6, 6> get_priority(Moves const move) {
+bounded_integer::checked_integer<-6, 6> get_priority(Moves const move) {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -60,19 +62,19 @@ checked_integer<-6, 6> get_priority(Moves const move) {
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			return 6_ri;
+			return 6_bi;
 		case Moves::Helping_Hand:
-			return 5_ri;
+			return 5_bi;
 		case Moves::Magic_Coat:
 		case Moves::Snatch:
-			return 4_ri;
+			return 4_bi;
 		case Moves::Detect:
 		case Moves::Endure:
 		case Moves::Follow_Me:
 		case Moves::Protect:
-			return 3_ri;
+			return 3_bi;
 		case Moves::Feint:
-			return 2_ri;
+			return 2_bi;
 		case Moves::Aqua_Jet:
 		case Moves::Bide:
 		case Moves::Bullet_Punch:
@@ -84,24 +86,24 @@ checked_integer<-6, 6> get_priority(Moves const move) {
 		case Moves::Shadow_Sneak:
 		case Moves::Sucker_Punch:
 		case Moves::Vacuum_Wave:
-			return 1_ri;
+			return 1_bi;
 		case Moves::Vital_Throw:
-			return -1_ri;
+			return -1_bi;
 		case Moves::Focus_Punch:
-			return -2_ri;
+			return -2_bi;
 		case Moves::Avalanche:
 		case Moves::Revenge:
-			return -3_ri;
+			return -3_bi;
 		case Moves::Counter:
 		case Moves::Mirror_Coat:
-			return -4_ri;
+			return -4_bi;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			return -5_ri;
+			return -5_bi;
 		case Moves::Trick_Room:
-			return -6_ri;
+			return -6_bi;
 		default:
-			return 0_ri;
+			return 0_bi;
 	}
 }
 }	// unnamed namespace

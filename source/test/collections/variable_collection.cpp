@@ -53,7 +53,7 @@ void variable_collection_tests() {
 namespace {
 
 void add_pokemon(Team & team, Species const species) {
-	Level const level(100_ri);
+	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(species, level, gender);
 	team.pokemon().all_moves().add(Moves::Whirlwind);
