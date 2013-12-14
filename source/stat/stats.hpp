@@ -1,5 +1,5 @@
 // All 'normal' stats that a Pokemon has
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,7 @@
 #ifndef STAT__STATS_HPP_
 #define STAT__STATS_HPP_
 
-#include <array>
+#include <bounded_integer/array.hpp>
 #include "stat.hpp"
 #include "../pokemon/species_forward.hpp"
 
@@ -31,7 +31,7 @@ public:
 	Stat const & operator[](Stat::Stats stat) const;
 	Stat & operator[](Stat::Stats stat);
 private:
-	std::array<Stat, 6> stats;
+	bounded_integer::array<Stat, 6> stats;
 };
 
 }	// namespace technicalmachine

@@ -21,24 +21,24 @@
 namespace technicalmachine {
 
 Stats::Stats(Species const species):
-	stats({{
+	stats{
 		Stat(species, Stat::HP),
 		Stat(species, Stat::ATK),
 		Stat(species, Stat::DEF),
 		Stat(species, Stat::SPA),
 		Stat(species, Stat::SPD),
 		Stat(species, Stat::SPE)
-	}}) {
+	} {
 }
 
 // The indexing requires a +1 because I have the first stat in the array, HP,
 // set to -1 in the enum. This allowed me to index stat boosting without having
 // to offset the index.
 Stat const & Stats::operator[](Stat::Stats const stat) const {
-	return stats[static_cast<size_t>(stat + 1)];
+	return stats.at(stat + 1);
 }
 Stat & Stats::operator[](Stat::Stats const stat) {
-	return stats[static_cast<size_t>(stat + 1)];
+	return stats.at(stat + 1);
 }
 
 
