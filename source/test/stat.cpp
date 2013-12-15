@@ -32,6 +32,7 @@
 
 namespace technicalmachine {
 namespace {
+using namespace bounded_integer::literal;
 
 constexpr unsigned team_size = 6;
 
@@ -49,7 +50,7 @@ void attack_tests () {
 	get_nature(pokemon).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
-	attacker.pokemon().stat_boost(Stat::ATK, 6);
+	attacker.pokemon().stat_boost(Stat::ATK, 6_bi);
 
 	get_item(pokemon).name = Item::CHOICE_BAND;
 	
@@ -72,7 +73,7 @@ void special_attack_tests () {
 
 	get_stat(pokemon, Stat::SPA).ev.set_value(252);
 	get_nature(pokemon).name = Nature::MODEST;
-	attacker.pokemon().stat_boost(Stat::SPA, 6);
+	attacker.pokemon().stat_boost(Stat::SPA, 6_bi);
 
 	get_ability(pokemon) = Ability::Solar_Power;
 
@@ -97,7 +98,7 @@ void defense_tests () {
 	get_stat(pokemon, Stat::DEF).ev.set_value(252);
 	get_nature(pokemon).name = Nature::BOLD;
 
-	defender.pokemon().stat_boost(Stat::DEF, 6);
+	defender.pokemon().stat_boost(Stat::DEF, 6_bi);
 
 	get_ability(pokemon) = Ability::Marvel_Scale;
 	Status::apply<Status::BURN>(pokemon, weather);
@@ -123,7 +124,7 @@ void special_defense_tests () {
 	get_stat(pokemon, Stat::SPD).ev.set_value(252);
 	get_nature(pokemon).name = Nature::CALM;
 
-	defender.pokemon().stat_boost(Stat::SPD, 6);
+	defender.pokemon().stat_boost(Stat::SPD, 6_bi);
 
 	calculate_special_defense(defender.pokemon(), weather);
 
@@ -146,7 +147,7 @@ void speed_tests () {
 	get_stat(pokemon, Stat::SPE).ev.set_value(252);
 	get_nature(pokemon).name = Nature::TIMID;
 
-	team.pokemon().stat_boost(Stat::SPE, 6);
+	team.pokemon().stat_boost(Stat::SPE, 6_bi);
 
 	get_ability(pokemon) = Ability::Swift_Swim;
 

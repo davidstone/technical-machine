@@ -166,8 +166,8 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 			assert (!variable.present_heals());
 			return variable.value();
 		case Moves::Punishment: {
-			unsigned const uncapped_power = 60 + 20 * defender.positive_stat_boosts();
-			return std::min(uncapped_power, 200u);
+			auto const uncapped_power = 60_bi + 20_bi * defender.positive_stat_boosts();
+			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 200_bi));
 		}
 		case Moves::Return:
 			return return_power(attacker);

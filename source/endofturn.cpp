@@ -95,7 +95,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	if (pokemon.aqua_ring_is_active())
 		heal(pokemon, Rational(1, 16));
 	if (get_ability(pokemon).boosts_speed())
-		pokemon.stat_boost(Stat::SPE, 1);
+		pokemon.stat_boost(Stat::SPE, 1_bi);
 	else if (pokemon.shed_skin_activated())
 		get_status(pokemon).clear();
 	switch (get_item(pokemon).name) {

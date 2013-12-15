@@ -1,5 +1,5 @@
 // Stat stages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,36 +21,27 @@
 #include "../rational.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 namespace {
-constexpr int max_stage = 6;
+constexpr auto max_stage = 6;
 }
 
-Stage::Stage () :
-	stages({{}})
-	{
+Stage::Stage() {
+	reset();
 }
 
 void Stage::reset() {
-	std::fill(stages.begin(), stages.end(), 0);
+	std::fill(m_stages.begin(), m_stages.end(), 0_bi);
 }
 
-void Stage::boost (int8_t & stage, int const n) {
-	stage = std::min(max_stage, std::max(-max_stage, stage + n));
-}
-
-void Stage::boost (Stat::Stats const stat, int const n) {
-	boost(stages[stat], n);
-}
-
-void Stage::boost(std::initializer_list<Stat::Stats> const & stats, int n) {
-	for (auto const stat : stats)
-		boost(stat, n);
+void Stage::boost(Stat::Stats const stat, boost_type const number_of_stages) {
+	m_stages[stat] += number_of_stages;
 }
 
 int Stage::dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier) {
 	int result = 0;
-	for (unsigned n = 0; n != multiplier.size(); ++n) {
-		result += stage[n] * multiplier[n];
+	for (Stat::Stats stat = static_cast<Stat::Stats>(0); stat != Stat::END; stat = static_cast<Stat::Stats>(static_cast<int>(stat) + 1)) {
+		result += stage.m_stages[stat] * multiplier[stat];
 	}
 	return result;
 }
@@ -58,27 +49,38 @@ int Stage::dot_product(std::array<int, Stat::END> const & multiplier, Stage cons
 	return dot_product(stage, multiplier);
 }
 
-void Stage::boost_regular(int const n) {
-	boost({ Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE }, n);
+void Stage::boost_regular(boost_type const number_of_stages) {
+	for (auto const stat : { Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE }) {
+		boost(stat, number_of_stages);
+	}
 }
 
-void Stage::boost_physical(int n) {
-	boost({ Stat::ATK, Stat::DEF }, n);
+void Stage::boost_physical(boost_type const number_of_stages) {
+	for (auto const stat : { Stat::ATK, Stat::DEF }) {
+		boost(stat, number_of_stages);
+	}
 }
-void Stage::boost_special(int n) {
-	boost({ Stat::SPA, Stat::SPD }, n);
+void Stage::boost_special(boost_type const number_of_stages) {
+	for (auto const stat : { Stat::SPA, Stat::SPD }) {
+		boost(stat, number_of_stages);
+	}
 }
-void Stage::boost_defensive(int n) {
-	boost({ Stat::DEF, Stat::SPD }, n);
+void Stage::boost_defensive(boost_type const number_of_stages) {
+	for (auto const stat : { Stat::DEF, Stat::SPD }) {
+		boost(stat, number_of_stages);
+	}
 }
-void Stage::boost_offensive(int n) {
-	boost({ Stat::ATK, Stat::SPA }, n);
+void Stage::boost_offensive(boost_type const number_of_stages) {
+	for (auto const stat : { Stat::ATK, Stat::SPA }) {
+		boost(stat, number_of_stages);
+	}
 }
 
 void Stage::swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<Stat::Stats> const & stats) {
 	using std::swap;
-	for (auto const stat : stats)
-		swap(lhs[stat], rhs[stat]);
+	for (auto const stat : stats) {
+		swap(lhs.m_stages[stat], rhs.m_stages[stat]);
+	}
 }
 void Stage::swap_defensive(Stage & lhs, Stage & rhs) {
 	swap_specified(lhs, rhs, { Stat::DEF, Stat::SPD });
@@ -100,33 +102,33 @@ constexpr Rational negative_stage_boost(unsigned const stage) {
 	return Rational(base, base + stage);
 }
 
-Rational attacking_stage_modifier(int const stage, bool const ch) {
+Rational attacking_stage_modifier(Stage::value_type const stage, bool const ch) {
 	if (stage >= 0)		// >= is better than > to check for a CH less often
 		return positive_stage_boost<2>(static_cast<unsigned>(stage));
 	else
 		return (!ch) ? negative_stage_boost<2>(static_cast<unsigned>(-stage)) : Rational(1, 1);
 }
 
-Rational defending_stage_modifier(int const stage, bool const ch) {
+Rational defending_stage_modifier(Stage::value_type const stage, bool const ch) {
 	if (stage > 0)		// > is better than >= to check for a CH less often
 		return (!ch) ? positive_stage_boost<2>(static_cast<unsigned>(stage)) : Rational(1, 1);
 	else
 		return negative_stage_boost<2>(static_cast<unsigned>(-stage));
 }
 
-Rational speed_stage_modifier(int const stage) {
+Rational speed_stage_modifier(Stage::value_type const stage) {
 	return (stage >= 0) ?
 		positive_stage_boost<2>(static_cast<unsigned>(stage)) :
 		negative_stage_boost<2>(static_cast<unsigned>(-stage));
 }
 
-Rational accuracy_stage_modifier(int const stage) {
+Rational accuracy_stage_modifier(Stage::value_type const stage) {
 	return (stage >= 0) ?
 		positive_stage_boost<3>(static_cast<unsigned>(stage)) :
 		negative_stage_boost<3>(static_cast<unsigned>(-stage));
 }
 
-Rational evasion_stage_modifier(int const stage) {
+Rational evasion_stage_modifier(Stage::value_type const stage) {
 	return (stage < 0) ?
 		positive_stage_boost<3>(static_cast<unsigned>(-stage)) :
 		negative_stage_boost<3>(static_cast<unsigned>(stage));
@@ -136,47 +138,47 @@ Rational evasion_stage_modifier(int const stage) {
 
 template<>
 Rational Stage::modifier<Stat::ATK>(bool const ch) const {
-	return attacking_stage_modifier(stages[Stat::ATK], ch);
+	return attacking_stage_modifier(m_stages[Stat::ATK], ch);
 }
 
 template<>
 Rational Stage::modifier<Stat::SPA>(bool const ch) const {
-	return attacking_stage_modifier(stages[Stat::SPA], ch);
+	return attacking_stage_modifier(m_stages[Stat::SPA], ch);
 }
 
 template<>
 Rational Stage::modifier<Stat::DEF>(bool const ch) const {
-	return defending_stage_modifier(stages[Stat::DEF], ch);
+	return defending_stage_modifier(m_stages[Stat::DEF], ch);
 }
 
 template<>
 Rational Stage::modifier<Stat::SPD>(bool const ch) const {
-	return defending_stage_modifier(stages[Stat::SPD], ch);
+	return defending_stage_modifier(m_stages[Stat::SPD], ch);
 }
 
 template<>
 Rational Stage::modifier<Stat::SPE>() const {
-	return speed_stage_modifier(stages[Stat::SPE]);
+	return speed_stage_modifier(m_stages[Stat::SPE]);
 }
 
 template<>
 Rational Stage::modifier<Stat::ACC>() const {
-	return accuracy_stage_modifier(stages[Stat::ACC]);
+	return accuracy_stage_modifier(m_stages[Stat::ACC]);
 }
 
 template<>
 Rational Stage::modifier<Stat::EVA>() const {
-	return evasion_stage_modifier(stages[Stat::EVA]);
+	return evasion_stage_modifier(m_stages[Stat::EVA]);
 }
 
 namespace {
 constexpr unsigned stage_radix = max_stage + max_stage + 1;
-}	// unnamed namespace
+}	// namespace
 
 // Construct a number in base stage_radix, with each stage representing a digit.
 uint64_t Stage::hash() const {
 	uint64_t h = 0;
-	for (auto stage : stages) {
+	for (auto stage : m_stages) {
 		h *= stage_radix;
 		// The + max_stage will always make the result non-negative
 		h += static_cast<uint64_t>(stage + max_stage);
@@ -188,19 +190,23 @@ uint64_t Stage::max_hash() {
 	return stage_radix * Stat::END - 1;
 }
 
+bool operator==(Stage::array const & lhs, Stage::array const & rhs) {
+	return lhs.m_value == rhs.m_value;
+}
+
 bool operator==(Stage const & lhs, Stage const & rhs) {
-	return lhs.stages == rhs.stages;
+	return lhs.m_stages == rhs.m_stages;
 }
 
 bool operator!=(Stage const & lhs, Stage const & rhs) {
 	return !(lhs == rhs);
 }
 
-int8_t const & Stage::operator[](size_t const index) const {
-	return stages[index];
+auto Stage::array::operator[](Stat::Stats const index) const -> value_type const & {
+	return m_value.at(index);
 }
-int8_t & Stage::operator[](size_t const index) {
-	return stages[index];
+auto Stage::array::operator[](Stat::Stats const index) -> value_type & {
+	return m_value.at(index);
 }
 
 } // namespace technicalmachine

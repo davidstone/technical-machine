@@ -35,6 +35,7 @@
 
 namespace technicalmachine {
 namespace {
+using namespace bounded_integer::literal;
 
 Team max_damage_physical_attacker () {
 	Team attacker;
@@ -71,7 +72,9 @@ Team max_damage_physical_defender () {
 	auto & d = defender.pokemon();
 	get_stat(d, Stat::DEF).iv = 0;
 	get_stat(d, Stat::DEF).ev.set_value(0);
-	d.stat_boost(Stat::DEF, -6);
+	for (unsigned n = 0; n != 3; ++n) {
+		d.stat_boost(Stat::DEF, -2_bi);
+	}
 	return defender;
 }
 
@@ -85,7 +88,9 @@ Team max_damage_special_defender () {
 
 	get_stat(d, Stat::SPD).iv = 0;
 	get_stat(d, Stat::SPD).ev.set_value(0);
-	d.stat_boost(Stat::SPD, -6);
+	for (unsigned n = 0; n != 3; ++n) {
+		d.stat_boost(Stat::SPD, -2_bi);
+	}
 
 	return defender;
 }
@@ -139,7 +144,7 @@ void physical_damage_test () {
 	get_nature(a).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
-	attacker.pokemon().stat_boost(Stat::ATK, 6);
+	attacker.pokemon().stat_boost(Stat::ATK, 6_bi);
 	calculate_attacking_stat (attacker.pokemon(), weather);
 
 	get_item(a).name = Item::METRONOME;
@@ -167,7 +172,7 @@ void special_damage_test () {
 
 	get_stat(a, Stat::SPA).ev.set_value(252);
 	get_nature(a).name = Nature::MODEST;
-	attacker.pokemon().stat_boost(Stat::SPA, 6);
+	attacker.pokemon().stat_boost(Stat::SPA, 6_bi);
 	calculate_attacking_stat(attacker.pokemon(), weather);
 	
 	get_item(a).name = Item::METRONOME;

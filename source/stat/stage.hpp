@@ -1,5 +1,5 @@
 // Stat stages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,16 +20,22 @@
 #define STAT__STAGE_HPP_
 
 #include <algorithm>
-#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <bounded_integer/array.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 #include "stat.hpp"
 
 namespace technicalmachine {
 class Rational;
 
+using namespace bounded_integer::literal;
+
 class Stage {
 public:
+	using value_type = bounded_integer::clamped_integer<-6, 6>;
+	using boost_type = bounded_integer::checked_integer<-3, 12>;
+
 	Stage();
 	void reset();
 
@@ -40,36 +46,57 @@ public:
 	template<Stat::Stats stat>
 	Rational modifier() const;
 
-	void boost(Stat::Stats stat, int n);
+	void boost(Stat::Stats stat, boost_type number_of_stages);
 	template<typename Function>
-	unsigned accumulate(Function const & f) const {
-		return std::accumulate(stages.begin(), stages.end(), 0u, [& f](unsigned const initial, int const stage) {
+	auto accumulate(Function const & f) const {
+		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<m_stages.size>());
+		return std::accumulate(m_stages.begin(), m_stages.end(), sum_type(0_bi), [& f](sum_type const initial, value_type const stage) {
 			return initial + f(stage);
 		});
 	}
 	static int dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier);
 	static int dot_product(std::array<int, Stat::END> const & multiplier, Stage const & stage);
-	void boost_regular(int n);
-	void boost_physical(int n);
-	void boost_special(int n);
-	void boost_defensive(int n);
-	void boost_offensive(int n);
+	void boost_regular(boost_type number_of_stages);
+	void boost_physical(boost_type number_of_stages);
+	void boost_special(boost_type number_of_stages);
+	void boost_defensive(boost_type number_of_stages);
+	void boost_offensive(boost_type number_of_stages);
 	static void swap_defensive(Stage & lhs, Stage & rhs);
 	static void swap_offensive(Stage & lhs, Stage & rhs);
 	uint64_t hash() const;
 	static uint64_t max_hash();
 	friend bool operator==(Stage const & lhs, Stage const & rhs);
-	friend bool operator!=(Stage const & lhs, Stage const & rhs);
 private:
 	friend class Stat;
 	friend class ActivePokemon;
-	static void boost(int8_t & stage, int n);
-	void boost(std::initializer_list<Stat::Stats> const & stats, int n);
 	static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<Stat::Stats> const & stats);
-	int8_t const & operator[](size_t index) const;
-	int8_t & operator[](size_t index);
-	std::array<int8_t, Stat::END> stages;
+	class array {
+	public:
+		static constexpr auto size = static_cast<std::size_t>(Stat::END);
+		using container_type = bounded_integer::array<value_type, size>;
+		constexpr container_type::const_iterator begin() const {
+			return m_value.begin();
+		}
+		container_type::iterator begin() {
+			return m_value.begin();
+		}
+		constexpr container_type::const_iterator end() const {
+			return m_value.end();
+		}
+		container_type::iterator end() {
+			return m_value.end();
+		}
+		value_type const & operator[](Stat::Stats index) const;
+		value_type & operator[](Stat::Stats index);
+		friend bool operator==(array const & lhs, array const & rhs);
+	private:
+		container_type m_value;
+	};
+	friend bool operator==(array const & lhs, array const & rhs);
+	array m_stages;
 };
+
+bool operator!=(Stage const & lhs, Stage const & rhs);
 
 }	// namespace technicalmachine
 #endif	// STAT__STAGE_HPP_

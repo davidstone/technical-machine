@@ -185,18 +185,23 @@ public:
 	bool slow_start_is_active() const;
 	bool sport_is_active(Move const & foe_move) const;
 
-	int current_stage(Stat::Stats stat) const;
-	unsigned positive_stat_boosts() const;
+	Stage::value_type current_stage(Stat::Stats stat) const;
+	bounded_integer::native_integer<0, 42> positive_stat_boosts() const {
+		auto const positive_values = [](Stage::value_type const stage) { return bounded_integer::max(stage, 0_bi); };
+		auto const result = stage.accumulate(positive_values);
+		return result;
+	}
+
 	template<Stat::Stats stat, typename... Args>
 	Rational stage_modifier(Args&&... args) const {
 		return stage.modifier<stat>(std::forward<Args>(args)...);
 	}
-	void stat_boost(Stat::Stats stat, int n);
-	void stat_boost_physical(int n);
-	void stat_boost_special(int n);
-	void stat_boost_regular(int n);
-	void stat_boost_defensive(int n);
-	void stat_boost_offensive(int n);
+	void stat_boost(Stat::Stats stat, Stage::boost_type number_of_stages);
+	void stat_boost_physical(Stage::boost_type number_of_stages);
+	void stat_boost_special(Stage::boost_type number_of_stages);
+	void stat_boost_regular(Stage::boost_type number_of_stages);
+	void stat_boost_defensive(Stage::boost_type number_of_stages);
+	void stat_boost_offensive(Stage::boost_type number_of_stages);
 	void reset_stats();
 	void copy_stat_boosts(ActivePokemon const & other);
 	static void swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);

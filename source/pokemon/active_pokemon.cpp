@@ -558,37 +558,32 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 	}
 }
 
-int ActivePokemon::current_stage(Stat::Stats const stat_index) const {
-	return stage[stat_index];
+Stage::value_type ActivePokemon::current_stage(Stat::Stats const stat_index) const {
+	return stage.m_stages[stat_index];
 }
 
-unsigned ActivePokemon::positive_stat_boosts() const {
-	auto const positive_values = [](int const stage) { return static_cast<unsigned>(std::max(stage, 0)); };
-	return stage.accumulate(positive_values);
+void ActivePokemon::stat_boost(Stat::Stats const stat_index, Stage::boost_type const number_of_stages) {
+	stage.boost(stat_index, number_of_stages);
 }
 
-void ActivePokemon::stat_boost(Stat::Stats const stat_index, int const n) {
-	stage.boost(stat_index, n);
+void ActivePokemon::stat_boost_physical(Stage::boost_type const number_of_stages) {
+	stage.boost_physical(number_of_stages);
 }
 
-void ActivePokemon::stat_boost_physical(int n) {
-	stage.boost_physical(n);
+void ActivePokemon::stat_boost_special(Stage::boost_type const number_of_stages) {
+	stage.boost_special(number_of_stages);
 }
 
-void ActivePokemon::stat_boost_special(int n) {
-	stage.boost_special(n);
+void ActivePokemon::stat_boost_regular(Stage::boost_type const number_of_stages) {
+	stage.boost_regular(number_of_stages);
 }
 
-void ActivePokemon::stat_boost_regular(int n) {
-	stage.boost_regular(n);
+void ActivePokemon::stat_boost_defensive(Stage::boost_type const number_of_stages) {
+	stage.boost_defensive(number_of_stages);
 }
 
-void ActivePokemon::stat_boost_defensive(int const n) {
-	stage.boost_defensive(n);
-}
-
-void ActivePokemon::stat_boost_offensive(int const n) {
-	stage.boost_offensive(n);
+void ActivePokemon::stat_boost_offensive(Stage::boost_type const number_of_stages) {
+	stage.boost_offensive(number_of_stages);
 }
 
 void ActivePokemon::reset_stats() {
@@ -619,12 +614,12 @@ bounded_integer::native_integer<0, Stockpile::max * 100> ActivePokemon::spit_up_
 void ActivePokemon::increment_stockpile() {
 	bool const increased = stockpile.increment();
 	if (increased)
-		stat_boost_defensive(1);
+		stat_boost_defensive(1_bi);
 }
 
 bounded_integer::native_integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
 	auto const stages = stockpile.release();
-	stat_boost_defensive(-static_cast<int>(stages));
+	stat_boost_defensive(-stages);
 	return stages;
 }
 

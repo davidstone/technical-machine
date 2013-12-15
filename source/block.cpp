@@ -111,7 +111,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 		user.handle_confusion();
 		if (user.flinched()) {
 			if (get_ability(user).boosts_speed_when_flinched ())
-				user.stat_boost(Stat::SPE, 1);
+				user.stat_boost(Stat::SPE, 1_bi);
 			execute = false;
 		}
 		else if (block2 (user, move, weather) or user.is_fully_paralyzed()) {
