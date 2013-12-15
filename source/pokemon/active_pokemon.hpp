@@ -203,9 +203,9 @@ public:
 	static void swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
 	static void swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs);
 	
-	unsigned spit_up_power() const;
+	bounded_integer::native_integer<0, Stockpile::max * 100> spit_up_power() const;
 	void increment_stockpile();
-	int release_stockpile();
+	bounded_integer::native_integer<0, Stockpile::max> release_stockpile();
 
 	bool is_switching_to_self () const;
 	bool is_switching_to_self(Moves switch_move) const;

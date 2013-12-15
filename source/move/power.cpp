@@ -172,7 +172,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Return:
 			return return_power(attacker);
 		case Moves::Spit_Up:
-			return attacker.spit_up_power();
+			return static_cast<unsigned>(attacker.spit_up_power());
 		case Moves::Triple_Kick:
 			return attacker.triple_kick_power();
 		case Moves::Trump_Card:

@@ -1073,9 +1073,9 @@ void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather
 
 void use_swallow(ActivePokemon & user) {
 	auto const stockpiles = user.release_stockpile();
-	if (stockpiles == 0)
+	if (stockpiles == 0_bi)
 		return;
-	heal(user, Stockpile::swallow_healing(stockpiles));
+	heal(user, swallow_healing(bounded_integer::native_integer<1, Stockpile::max>(stockpiles)));
 }
 
 void call_other_move (ActivePokemon & user) {

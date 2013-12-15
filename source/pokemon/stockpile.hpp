@@ -19,32 +19,35 @@
 #ifndef STOCKPILE_HPP_
 #define STOCKPILE_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 class Rational;
+using namespace bounded_integer::literal;
 
 class Stockpile {
 public:
+	static constexpr auto max = 3;
 	Stockpile();
 	// Returns whether Stockpile was able to increment (true) or if it is
 	// already maxed out (false)
 	bool increment();
 	// Returns the amount of Stockpile lost. This allows correct subtraction
 	// for stat boosts.
-	int release();
+	bounded_integer::native_integer<0, max> release();
 	void reset();
-	unsigned spit_up_power() const;
-	static Rational swallow_healing(int const stockpiles);
+	bounded_integer::native_integer<0, max * 100> spit_up_power() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();
 	friend bool operator== (Stockpile const & lhs, Stockpile const & rhs);
 private:
 	friend class Evaluate;
-	uint8_t level;
+	bounded_integer::clamped_integer<0, max> m_level;
 };
 bool operator!= (Stockpile const & lhs, Stockpile const & rhs);
+
+Rational swallow_healing(bounded_integer::checked_integer<1, Stockpile::max> stockpiles);
 
 }	// namespace technicalmachine
 #endif	// STOCKPILE_HPP_

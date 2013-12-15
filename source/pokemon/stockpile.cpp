@@ -17,65 +17,57 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stockpile.hpp"
-#include "invalid_swallow.hpp"
 #include "../rational.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max_level = 3;
-}	// unnamed namespace
 
 Stockpile::Stockpile() :
-	level(0)
+	m_level(0_bi)
 	{
 }
 
 bool Stockpile::increment() {
-	if (level == max_level)
-		return false;
-
-	++level;
-	return true;
+	auto const initial = m_level;
+	++m_level;
+	return m_level == initial;
 }
 
-int Stockpile::release() {
-	int const temp = level;
-	level = 0;
+auto Stockpile::release() -> bounded_integer::native_integer<0, max> {
+	auto const temp = m_level;
+	reset();
 	return temp;
 }
 
 void Stockpile::reset() {
-	level = 0;
+	m_level = 0_bi;
 }
 
-unsigned Stockpile::spit_up_power() const {
-	return level * 100u;
+auto Stockpile::spit_up_power() const -> bounded_integer::native_integer<0, max * 100> {
+	return m_level * 100_bi;
 }
 
-Rational Stockpile::swallow_healing(int const stockpiles) {
-	switch (stockpiles) {
+
+Rational swallow_healing(bounded_integer::checked_integer<1, Stockpile::max> const stockpiles) {
+	switch (stockpiles.value()) {
 		case 1:
 			return Rational(1, 4);
 		case 2:
 			return Rational(1, 2);
-		case 3:
+		default:	// case 3:
 			return Rational(1, 1);
-		default:
-			// A level of 0 means the move fails, so I'm disallowing it.
-			throw InvalidSwallow(stockpiles);
 	}
 }
 
 Stockpile::hash_type Stockpile::hash() const {
-	return level;
+	return static_cast<hash_type>(m_level);
 }
 
 Stockpile::hash_type Stockpile::max_hash() {
-	return max_level + 1;
+	return max + 1;
 }
 
 bool operator== (Stockpile const & lhs, Stockpile const & rhs) {
-	return lhs.level == rhs.level;
+	return lhs.m_level == rhs.m_level;
 }
 
 bool operator!= (Stockpile const & lhs, Stockpile const & rhs) {

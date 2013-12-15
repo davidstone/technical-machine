@@ -612,7 +612,7 @@ void ActivePokemon::swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs) {
 	swap(lhs.stage, rhs.stage);
 }
 
-unsigned ActivePokemon::spit_up_power() const {
+bounded_integer::native_integer<0, Stockpile::max * 100> ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }
 
@@ -622,9 +622,9 @@ void ActivePokemon::increment_stockpile() {
 		stat_boost_defensive(1);
 }
 
-int ActivePokemon::release_stockpile() {
-	int const stages = stockpile.release();
-	stat_boost_defensive(-stages);
+bounded_integer::native_integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
+	auto const stages = stockpile.release();
+	stat_boost_defensive(-static_cast<int>(stages));
 	return stages;
 }
 
