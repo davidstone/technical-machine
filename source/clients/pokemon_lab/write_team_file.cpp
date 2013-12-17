@@ -24,13 +24,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "conversion.hpp"
-
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+#include "../../pokemon/species.hpp"
 
 #include "../../stat/stat.hpp"
 
@@ -39,6 +38,7 @@
 #include "../../string_conversions/item.hpp"
 #include "../../string_conversions/move.hpp"
 #include "../../string_conversions/nature.hpp"
+#include "../../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 namespace pl {
@@ -71,6 +71,45 @@ void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	}
 }
 
+std::string to_simulator_string(Species const species) {
+	switch (species) {
+		case Species::Deoxys_Mediocre:
+			return "Deoxys";
+		case Species::Deoxys_Attack:
+			return "Deoxys-f";
+		case Species::Deoxys_Defense:
+			return "Deoxys-l";
+		case Species::Deoxys_Speed:
+			return "Deoxys-e";
+		case Species::Giratina_Altered:
+			return "Giratina";
+		case Species::Giratina_Origin:
+			return "Giratina-o";
+		case Species::Rotom_Mow:
+			return "Rotom-c";
+		case Species::Rotom_Frost:
+			return "Rotom-f";
+		case Species::Rotom_Heat:
+			return "Rotom-h";
+		case Species::Rotom_Fan:
+			return "Rotom-s";
+		case Species::Rotom_Wash:
+			return "Rotom-w";
+		case Species::Shaymin_Land:
+			return "Shaymin";
+		case Species::Shaymin_Sky:
+			return "Shaymin-s";
+		case Species::Wormadam_Plant:
+			return "Wormadam";
+		case Species::Wormadam_Sandy:
+			return "Wormadam-g";
+		case Species::Wormadam_Trash:
+			return "Wormadam-s";
+		default:
+			return to_string(species);
+	}
+}
+
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
 	member.put("<xmlattr>.species", to_simulator_string(pokemon));
@@ -87,7 +126,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	write_stats (pokemon, member);
 }
 
-}	// anonymous namespace
+}	// namespace
 
 void write_team (Team const & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;

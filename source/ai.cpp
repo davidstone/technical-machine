@@ -23,7 +23,6 @@
 #include "exit_program.hpp"
 
 #include "clients/network/invalid_packet.hpp"
-#include "clients/pokemon_lab/client.hpp"
 #include "clients/pokemon_online/client.hpp"
 #include "clients/pokemon_showdown/client.hpp"
 

@@ -24,14 +24,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "conversion.hpp"
-
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
 #include "../../move/moves_forward.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+#include "../../pokemon/species.hpp"
 
 #include "../../stat/stat.hpp"
 
@@ -67,6 +66,29 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	stat.ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
 }
 
+Species from_simulator_string(std::string const & str) {
+	static std::map<std::string, Species> const convertor = {
+		{ "Deoxys", Species::Deoxys_Mediocre },
+		{ "Deoxys-f", Species::Deoxys_Attack },
+		{ "Deoxys-l", Species::Deoxys_Defense },
+		{ "Deoxys-e", Species::Deoxys_Speed },
+		{ "Giratina", Species::Giratina_Altered },
+		{ "Giratina-o", Species::Giratina_Origin },
+		{ "Rotom-c", Species::Rotom_Mow },
+		{ "Rotom-f", Species::Rotom_Frost },
+		{ "Rotom-h", Species::Rotom_Heat },
+		{ "Rotom-s", Species::Rotom_Fan },
+		{ "Rotom-w", Species::Rotom_Wash },
+		{ "Shaymin", Species::Shaymin_Land },
+		{ "Shaymin-s", Species::Shaymin_Sky },
+		{ "Wormadam", Species::Wormadam_Plant },
+		{ "Wormadam-g", Species::Wormadam_Sandy },
+		{ "Wormadam-s", Species::Wormadam_Trash }
+	};
+	auto const it = convertor.find(str);
+	return (it != convertor.end()) ? it->second : from_string<Species>(str);
+}
+
 void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
 	std::string const nickname_temp = pt.get <std::string> ("nickname");
@@ -87,7 +109,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 		load_stats (pokemon, value.second);
 }
 
-}	// anonymous namespace
+}	// namespace
 
 void load_team (Team & team, std::string const & file_name) {
 	boost::property_tree::ptree pt;

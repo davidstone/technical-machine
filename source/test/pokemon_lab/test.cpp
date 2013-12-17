@@ -1,5 +1,5 @@
 // Test PL stuff
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 
 #include <iostream>
 
-#include "conversion.hpp"
 #include "team_file.hpp"
 
 namespace technicalmachine {
@@ -28,8 +27,7 @@ namespace pl {
 
 void test () {
 	std::cout << "Running Pokemon Lab tests.\n";
-	test_conversions ();
-	test_team_file ();
+	test_team_file();
 	std::cout << "Pokemon Lab tests passed.\n\n";
 }
 
