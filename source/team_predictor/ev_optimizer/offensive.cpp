@@ -33,7 +33,7 @@ using namespace bounded_integer::literal;
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 
-template<Stat::Stats stat>
+template<StatNames stat>
 bounded_integer::optional<EV::value_type> reset_stat(Pokemon const & pokemon, EV & ev, unsigned const initial) {
 	EV::value_type ev_estimate = 0_bi;
 	ev = EV(ev_estimate);
@@ -86,43 +86,43 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 	bool const is_physical = has_physical_move(pokemon);
 	if (!is_physical) {
 		remove_individual_unused(container, [](Container::const_iterator it) {
-			return !Nature(it->first).lowers_stat<Stat::ATK>();
+			return !Nature(it->first).lowers_stat<StatNames::ATK>();
 		});
-		get_stat(pokemon, Stat::ATK).ev = EV(0_bi);
+		get_stat(pokemon, StatNames::ATK).ev = EV(0_bi);
 	}
 	bool const is_special = has_special_move(pokemon);
 	if (!is_special) {
 		if (is_physical) {
 			remove_individual_unused(container, [](Container::const_iterator it) {
-				return !Nature(it->first).lowers_stat<Stat::SPA>();
+				return !Nature(it->first).lowers_stat<StatNames::SPA>();
 			});
 		}
 		else {
 			remove_individual_unused(container, [](Container::const_iterator it) {
-				return Nature(it->first).boosts_stat<Stat::SPA>();
+				return Nature(it->first).boosts_stat<StatNames::SPA>();
 			});
 		}
-		get_stat(pokemon, Stat::SPA).ev = EV(0_bi);
+		get_stat(pokemon, StatNames::SPA).ev = EV(0_bi);
 	}
 	if (!is_physical and !is_special) {
 		get_nature(pokemon).name = Nature::CALM;
 	}
-	else if (!is_physical and get_nature(pokemon).boosts_stat<Stat::SPA>()) {
+	else if (!is_physical and get_nature(pokemon).boosts_stat<StatNames::SPA>()) {
 		get_nature(pokemon).name = Nature::MODEST;
 	}
-	else if (!get_nature(pokemon).boosts_stat<Stat::ATK>() and !is_special) {
+	else if (!get_nature(pokemon).boosts_stat<StatNames::ATK>() and !is_special) {
 		get_nature(pokemon).name = Nature::IMPISH;
 	}
 }
 
 void OffensiveEVs::equal_stats(Pokemon & pokemon) {
-	unsigned const initial_atk = initial_stat<Stat::ATK>(pokemon);
-	unsigned const initial_spa = initial_stat<Stat::SPA>(pokemon);
+	unsigned const initial_atk = initial_stat<StatNames::ATK>(pokemon);
+	unsigned const initial_spa = initial_stat<StatNames::SPA>(pokemon);
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
 		get_nature(pokemon) = it->first;
-		auto const atk = reset_stat<Stat::ATK>(pokemon, get_stat(pokemon, Stat::ATK).ev, initial_atk);
-		auto const spa = reset_stat<Stat::SPA>(pokemon, get_stat(pokemon, Stat::SPA).ev, initial_spa);
+		auto const atk = reset_stat<StatNames::ATK>(pokemon, get_stat(pokemon, StatNames::ATK).ev, initial_atk);
+		auto const spa = reset_stat<StatNames::SPA>(pokemon, get_stat(pokemon, StatNames::SPA).ev, initial_spa);
 		if (atk and spa) {
 			stats.attack = EV(*atk);
 			stats.special_attack = EV(*spa);

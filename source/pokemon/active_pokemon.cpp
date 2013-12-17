@@ -278,7 +278,7 @@ bool ActivePokemon::is_fainted() const {
 }
 
 void ActivePokemon::faint() {
-	get_stat(*this, Stat::HP).stat = 0;
+	get_stat(*this, StatNames::HP).stat = 0;
 	m_will_be_replaced = true;
 }
 
@@ -558,11 +558,11 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 	}
 }
 
-Stage::value_type ActivePokemon::current_stage(Stat::Stats const stat_index) const {
+Stage::value_type ActivePokemon::current_stage(StatNames const stat_index) const {
 	return stage.m_stages[stat_index];
 }
 
-void ActivePokemon::stat_boost(Stat::Stats const stat_index, Stage::boost_type const number_of_stages) {
+void ActivePokemon::stat_boost(StatNames const stat_index, Stage::boost_type const number_of_stages) {
 	stage.boost(stat_index, number_of_stages);
 }
 
@@ -732,7 +732,7 @@ void ActivePokemon::use_bide(Pokemon & target) {
 namespace {
 
 bool can_use_substitute(Pokemon const & pokemon) {
-	auto const & hp = get_stat(pokemon, Stat::HP);
+	auto const & hp = get_stat(pokemon, StatNames::HP);
 	return hp.stat > hp.max / 4;
 }
 
@@ -741,7 +741,7 @@ bool can_use_substitute(Pokemon const & pokemon) {
 void ActivePokemon::use_substitute() {
 	if (!can_use_substitute(*this))
 		return;
-	auto const & max_hp = get_stat(*this, Stat::HP).max;
+	auto const & max_hp = get_stat(*this, StatNames::HP).max;
 	bool const created = active_substitute.create(max_hp);
 	if (created) {
 		indirect_damage(max_hp / 4);
@@ -791,7 +791,7 @@ bool ActivePokemon::will_be_replaced() const {
 }
 
 void ActivePokemon::normalize_hp(bool fainted) {
-	auto & hp = get_stat(*this, Stat::HP).stat;
+	auto & hp = get_stat(*this, StatNames::HP).stat;
 	if (fainted) {
 		faint();
 	}

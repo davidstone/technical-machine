@@ -25,12 +25,12 @@ namespace technicalmachine {
 using namespace bounded_integer::literal;
 
 SpeedEVs::SpeedEVs(Pokemon pokemon) {
-	unsigned const speed = initial_stat<Stat::SPE>(pokemon);
+	unsigned const speed = initial_stat<StatNames::SPE>(pokemon);
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
 		get_nature(pokemon).name = nature;
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
-			get_stat(pokemon, Stat::SPE).ev = EV(ev);
-			if (initial_stat<Stat::SPE>(pokemon) >= speed) {
+			get_stat(pokemon, StatNames::SPE).ev = EV(ev);
+			if (initial_stat<StatNames::SPE>(pokemon) >= speed) {
 				container.insert(Container::value_type(nature, EV(ev)));
 				break;
 			}

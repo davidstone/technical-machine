@@ -25,8 +25,8 @@
 namespace technicalmachine {
 namespace po {
 
-constexpr std::array<Stat::Stats, 6> stat_order {{
-	Stat::HP, Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE
+constexpr std::array<StatNames, 6> stat_order {{
+	StatNames::HP, StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE
 }};
 
 }	// namespace po

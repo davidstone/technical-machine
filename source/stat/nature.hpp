@@ -38,14 +38,14 @@ public:
 	Nature();
 	// intentionally implicit
 	Nature(Natures nature);
-	Nature(Stat::Stats boosted, Stat::Stats dropped);
+	Nature(StatNames boosted, StatNames dropped);
 	bool is_set () const;
 	void set_if_unknown (Natures nature);
-	template<Stat::Stats>
+	template<StatNames>
 	Rational boost() const;
-	template<Stat::Stats>
+	template<StatNames>
 	bool boosts_stat() const;
-	template<Stat::Stats>
+	template<StatNames>
 	bool lowers_stat() const;
 	friend bool operator== (Nature lhs, Nature rhs);
 

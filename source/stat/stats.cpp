@@ -1,5 +1,5 @@
 // All 'normal' stats that a Pokemon has
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,23 +22,23 @@ namespace technicalmachine {
 
 Stats::Stats(Species const species):
 	stats{
-		Stat(species, Stat::HP),
-		Stat(species, Stat::ATK),
-		Stat(species, Stat::DEF),
-		Stat(species, Stat::SPA),
-		Stat(species, Stat::SPD),
-		Stat(species, Stat::SPE)
+		Stat(species, StatNames::HP),
+		Stat(species, StatNames::ATK),
+		Stat(species, StatNames::DEF),
+		Stat(species, StatNames::SPA),
+		Stat(species, StatNames::SPD),
+		Stat(species, StatNames::SPE)
 	} {
 }
 
 // The indexing requires a +1 because I have the first stat in the array, HP,
 // set to -1 in the enum. This allowed me to index stat boosting without having
 // to offset the index.
-Stat const & Stats::operator[](Stat::Stats const stat) const {
-	return stats.at(stat + 1);
+Stat const & Stats::operator[](StatNames const stat) const {
+	return stats.at(static_cast<int>(stat) + 1);
 }
-Stat & Stats::operator[](Stat::Stats const stat) {
-	return stats.at(stat + 1);
+Stat & Stats::operator[](StatNames const stat) {
+	return stats.at(static_cast<int>(stat) + 1);
 }
 
 

@@ -106,7 +106,7 @@ public:
 	static Rational accuracy_modifier(ActivePokemon const & user);
 	static Rational evasion_modifier(ActivePokemon const & target, Weather const & weather);
 	static Rational attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
-	template<Stat::Stats stat>
+	template<StatNames stat>
 	static Rational stat_modifier(ActivePokemon const & pokemon, Weather const & weather);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
 	static void weather_healing(ActivePokemon & pokemon, Weather const & weather);
@@ -116,16 +116,16 @@ private:
 };
 bool operator!= (Ability lhs, Ability rhs);
 
-template<> Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<Stat::DEF>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<Stat::DEF>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<StatNames::ATK>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<StatNames::ATK>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<StatNames::DEF>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<StatNames::DEF>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<StatNames::SPA>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<StatNames::SPA>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<StatNames::SPD>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<StatNames::SPD>(ActivePokemon const & pokemon, Weather const & weather);
+template<> Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, Weather const & weather);
+extern template Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, Weather const & weather);
 
 }
 #endif	// ABILITY_HPP_

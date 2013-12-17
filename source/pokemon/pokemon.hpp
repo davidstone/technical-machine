@@ -57,8 +57,8 @@ qualifier Item & get_item(Pokemon & pokemon); \
 qualifier Level get_level(Pokemon const & pokemon); \
 qualifier Nature const & get_nature(Pokemon const & pokemon); \
 qualifier Nature & get_nature(Pokemon & pokemon); \
-qualifier Stat const & get_stat(Pokemon const & pokemon, Stat::Stats index_stat); \
-qualifier Stat & get_stat(Pokemon & pokemon, Stat::Stats index_stat); \
+qualifier Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat); \
+qualifier Stat & get_stat(Pokemon & pokemon, StatNames index_stat); \
 qualifier Status const & get_status(Pokemon const & pokemon); \
 qualifier Status & get_status(Pokemon & pokemon); \
 qualifier TypeCollection const & get_type(Pokemon const & pokemon); \

@@ -28,8 +28,8 @@ namespace technicalmachine {
 class Stats {
 public:
 	Stats(Species species);
-	Stat const & operator[](Stat::Stats stat) const;
-	Stat & operator[](Stat::Stats stat);
+	Stat const & operator[](StatNames stat) const;
+	Stat & operator[](StatNames stat);
 private:
 	bounded_integer::array<Stat, 6> stats;
 };

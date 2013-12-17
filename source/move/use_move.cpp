@@ -1,5 +1,5 @@
 // Use moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -64,7 +64,7 @@ void absorb_hp(Pokemon & user, Pokemon const & target, unsigned damage);
 void belly_drum(ActivePokemon & user);
 bool can_confuse_with_chatter(Species pokemon);
 void clear_field(Team & user, Pokemon const & target);
-void confusing_stat_boost(ActivePokemon & target, Stat::Stats stat, bounded_integer::checked_integer<1, 2> stages);
+void confusing_stat_boost(ActivePokemon & target, StatNames stat, bounded_integer::checked_integer<1, 2> stages);
 void curse(ActivePokemon & user, ActivePokemon & target);
 void equalize(Stat & hp1, Stat & hp2);
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable);
@@ -233,19 +233,19 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Psychic:
 		case Moves::Shadow_Ball:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::SPD, -1_bi);
+				target.stat_boost(StatNames::SPD, -1_bi);
 			break;
 		case Moves::Acid_Armor:
 		case Moves::Barrier:
 		case Moves::Iron_Defense:
-			user.stat_boost(Stat::DEF, 2_bi);
+			user.stat_boost(StatNames::DEF, 2_bi);
 			break;
 		case Moves::Acupressure:
-			user.stat_boost(static_cast<Stat::Stats>(variable.value()), 2_bi);
+			user.stat_boost(static_cast<StatNames>(variable.value()), 2_bi);
 			break;
 		case Moves::Agility:
 		case Moves::Rock_Polish:
-			user.stat_boost(Stat::SPE, 2_bi);
+			user.stat_boost(StatNames::SPE, 2_bi);
 			break;
 		case Moves::Air_Slash:
 		case Moves::Astonish:
@@ -270,7 +270,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 				target.flinch();
 			break;
 		case Moves::Amnesia:
-			user.stat_boost(Stat::SPD, 2_bi);
+			user.stat_boost(StatNames::SPD, 2_bi);
 			break;
 		case Moves::AncientPower:
 		case Moves::Ominous_Wind:
@@ -283,7 +283,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Aurora_Beam:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::ATK, -1_bi);
+				target.stat_boost(StatNames::ATK, -1_bi);
 			break;
 		case Moves::Aromatherapy:
 			cure_all_status(user_team, [](Pokemon const & pokemon) { return true; });
@@ -373,7 +373,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::BubbleBeam:
 		case Moves::Constrict:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::SPE, -1_bi);
+				target.stat_boost(StatNames::SPE, -1_bi);
 			break;
 		case Moves::Bug_Bite:			// Fix
 		case Moves::Pluck:
@@ -388,19 +388,19 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Captivate:
 			if (get_gender(user).multiplier(get_gender(target)) == -1)
-				target.stat_boost(Stat::SPD, -2_bi);
+				target.stat_boost(StatNames::SPD, -2_bi);
 			break;
 		case Moves::Charge:
 			user.charge();
-			user.stat_boost(Stat::SPD, 1_bi);
+			user.stat_boost(StatNames::SPD, 1_bi);
 			break;
 		case Moves::Charge_Beam:
 			if (variable.effect_activates())
-				user.stat_boost(Stat::SPA, 1_bi);
+				user.stat_boost(StatNames::SPA, 1_bi);
 			break;
 		case Moves::Charm:
 		case Moves::FeatherDance:
-			target.stat_boost(Stat::ATK, -2_bi);
+			target.stat_boost(StatNames::ATK, -2_bi);
 			break;
 		case Moves::Chatter:
 			if (can_confuse_with_chatter(user) and variable.effect_activates())
@@ -438,11 +438,11 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Iron_Tail:
 		case Moves::Rock_Smash:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::DEF, -1_bi);
+				target.stat_boost(StatNames::DEF, -1_bi);
 			break;
 		case Moves::Cotton_Spore:
 		case Moves::Scary_Face:
-			target.stat_boost(Stat::SPE, -2_bi);
+			target.stat_boost(StatNames::SPE, -2_bi);
 			break;
 		case Moves::Counter:
 			if (is_physical(target.move()))
@@ -476,12 +476,12 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			Status::apply<Status::SLEEP>(user, target, weather);
 			break;
 		case Moves::Defense_Curl:
-			user.stat_boost(Stat::DEF, 1_bi);
+			user.stat_boost(StatNames::DEF, 1_bi);
 			user.defense_curl();
 			break;
 		case Moves::Defog:
 			weather.fog = false;
-			target.stat_boost(Stat::EVA, -1_bi);
+			target.stat_boost(StatNames::EVA, -1_bi);
 			break;
 		case Moves::Destiny_Bond:
 			user.use_destiny_bond();
@@ -504,17 +504,17 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Double_Team:
 		case Moves::Minimize:
-			user.stat_boost(Stat::EVA, 1_bi);
+			user.stat_boost(StatNames::EVA, 1_bi);
 			break;
 		case Moves::Draco_Meteor:
 		case Moves::Leaf_Storm:
 		case Moves::Overheat:
 		case Moves::Psycho_Boost:
-			user.stat_boost(Stat::SPA, -2_bi);
+			user.stat_boost(StatNames::SPA, -2_bi);
 			break;
 		case Moves::Dragon_Dance:
-			user.stat_boost(Stat::ATK, 1_bi);
-			user.stat_boost(Stat::SPE, 1_bi);
+			user.stat_boost(StatNames::ATK, 1_bi);
+			user.stat_boost(StatNames::SPE, 1_bi);
 			break;
 		case Moves::Dream_Eater:
 			if (get_status(target).is_sleeping ())
@@ -535,7 +535,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
-			target.stat_boost(Stat::SPD, -2_bi);
+			target.stat_boost(StatNames::SPD, -2_bi);
 			break;
 		case Moves::Feint:
 			target.break_protect();
@@ -551,10 +551,10 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Mud_Slap:
 		case Moves::Sand_Attack:
 		case Moves::SmokeScreen:
-			target.stat_boost(Stat::ACC, -1_bi);
+			target.stat_boost(StatNames::ACC, -1_bi);
 			break;
 		case Moves::Flatter:
-			confusing_stat_boost(target, Stat::SPA, 1_bi);
+			confusing_stat_boost(target, StatNames::SPA, 1_bi);
 			break;
 		case Moves::Fling:
 			get_item(user).remove();
@@ -585,10 +585,10 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			weather.set_gravity();
 			break;
 		case Moves::Growl:
-			target.stat_boost(Stat::ATK, -1_bi);
+			target.stat_boost(StatNames::ATK, -1_bi);
 			break;
 		case Moves::Growth:
-			user.stat_boost(Stat::SPA, 1_bi);
+			user.stat_boost(StatNames::SPA, 1_bi);
 			break;
 		case Moves::Grudge:		// Fix
 			break;
@@ -599,11 +599,11 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			weather.set_hail (get_item(user).extends_hail());
 			break;
 		case Moves::Hammer_Arm:
-			user.stat_boost(Stat::SPE, -1_bi);
+			user.stat_boost(StatNames::SPE, -1_bi);
 			break;
 		case Moves::Harden:
 		case Moves::Withdraw:
-			user.stat_boost(Stat::DEF, 1_bi);
+			user.stat_boost(StatNames::DEF, 1_bi);
 			break;
 		case Moves::Haze:
 			user.reset_stats();
@@ -640,7 +640,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Meditate:
 		case Moves::Meteor_Mash:
 			if (variable.effect_activates())
-				user.stat_boost(Stat::ATK, 1_bi);
+				user.stat_boost(StatNames::ATK, 1_bi);
 			break;
 		case Moves::Ice_Ball:		// Fix
 		case Moves::Rollout:
@@ -652,7 +652,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Mud_Shot:
 		case Moves::Rock_Tomb:
 		case Moves::String_Shot:
-			target.stat_boost(Stat::SPE, -1_bi);
+			target.stat_boost(StatNames::SPE, -1_bi);
 			break;
 		case Moves::Imprison:
 			user.imprison();
@@ -667,7 +667,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Leer:
 		case Moves::Tail_Whip:
-			target.stat_boost(Stat::DEF, -1_bi);
+			target.stat_boost(StatNames::DEF, -1_bi);
 			break;
 		case Moves::Light_Screen:
 			user_team.screens.activate_light_screen(get_item(user).extends_light_screen());
@@ -708,14 +708,14 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Muddy_Water:
 		case Moves::Octazooka:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::ACC, -1_bi);
+				target.stat_boost(StatNames::ACC, -1_bi);
 			break;
 		case Moves::Mist:
 			user_team.screens.activate_mist();
 			break;
 		case Moves::Mist_Ball:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::SPA, -1_bi);
+				target.stat_boost(StatNames::SPA, -1_bi);
 			break;
 		case Moves::Moonlight:
 		case Moves::Morning_Sun:
@@ -736,7 +736,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Nasty_Plot:
 		case Moves::Tail_Glow:
-			user.stat_boost(Stat::SPA, 2_bi);
+			user.stat_boost(StatNames::SPA, 2_bi);
 			break;
 		case Moves::Nightmare:
 			target.give_nightmares();
@@ -747,7 +747,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.activate_rampage();
 			break;
 		case Moves::Pain_Split:
-			equalize(get_stat(user, Stat::HP), get_stat(target, Stat::HP));
+			equalize(get_stat(user, StatNames::HP), get_stat(target, StatNames::HP));
 			break;
 		case Moves::Perish_Song:
 			user.activate_perish_song();
@@ -769,7 +769,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Present:
 			if (variable.present_heals()) {
-				Stat & hp = get_stat(target, Stat::HP);
+				Stat & hp = get_stat(target, StatNames::HP);
 				hp.stat += 80;
 				hp.stat = std::min(hp.stat, hp.max);
 			}
@@ -819,17 +819,17 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			weather.set_sand (get_item(user).extends_sand());
 			break;
 		case Moves::Screech:
-			target.stat_boost(Stat::DEF, -2_bi);
+			target.stat_boost(StatNames::DEF, -2_bi);
 			break;
 		case Moves::Seed_Flare:
 			if (variable.effect_activates())
-				target.stat_boost(Stat::SPD, -2_bi);
+				target.stat_boost(StatNames::SPD, -2_bi);
 			break;
 		case Moves::Shadow_Force:
 			user.shadow_force();
 			break;
 		case Moves::Sharpen:
-			user.stat_boost(Stat::ATK, 1_bi);
+			user.stat_boost(StatNames::ATK, 1_bi);
 			break;
 		case Moves::Sketch:		// Fix
 			break;
@@ -863,7 +863,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Steel_Wing:
 			if (variable.effect_activates())
-				user.stat_boost(Stat::DEF, 1_bi);
+				user.stat_boost(StatNames::DEF, 1_bi);
 			break;
 		case Moves::Stockpile:
 			user.increment_stockpile();
@@ -885,13 +885,13 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.stat_boost_physical(-1_bi);
 			break;
 		case Moves::Swagger:
-			confusing_stat_boost(target, Stat::ATK, 2_bi);
+			confusing_stat_boost(target, StatNames::ATK, 2_bi);
 			break;
 		case Moves::Swallow:
 			use_swallow(user);
 			break;
 		case Moves::Sweet_Scent:
-			target.stat_boost(Stat::EVA, -1_bi);
+			target.stat_boost(StatNames::EVA, -1_bi);
 			break;
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -907,7 +907,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			swap_items(user, target);
 			break;
 		case Moves::Swords_Dance:
-			user.stat_boost(Stat::ATK, 2_bi);
+			user.stat_boost(StatNames::ATK, 2_bi);
 			break;
 		case Moves::Tailwind:
 			user_team.screens.activate_tailwind();
@@ -983,10 +983,10 @@ void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
 }
 
 void belly_drum(ActivePokemon & user) {
-	Stat & hp = get_stat(user, Stat::HP);
+	Stat & hp = get_stat(user, StatNames::HP);
 	if (hp.stat > hp.max / 2 and hp.stat > 1) {
 		hp.stat -= hp.max / 2;
-		user.stat_boost(Stat::ATK, 12_bi);
+		user.stat_boost(StatNames::ATK, 12_bi);
 	}
 }
 
@@ -1001,7 +1001,7 @@ void clear_field(Team & user, Pokemon const & target) {
 	}
 }
 
-void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, bounded_integer::checked_integer<1, 2> const stages) {
+void confusing_stat_boost(ActivePokemon & target, StatNames const stat, bounded_integer::checked_integer<1, 2> const stages) {
 	target.stat_boost(stat, stages);
 	target.confuse();
 }
@@ -1009,13 +1009,13 @@ void confusing_stat_boost(ActivePokemon & target, Stat::Stats const stat, bounde
 void curse(ActivePokemon & user, ActivePokemon & target) {
 	if (is_type(user, Type::Ghost) and !get_ability(user).blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
-			user.indirect_damage(get_stat(user, Stat::HP).max / 2);
+			user.indirect_damage(get_stat(user, StatNames::HP).max / 2);
 			target.curse();
 		}
 	}
 	else {
 		user.stat_boost_physical(1_bi);
-		user.stat_boost(Stat::SPE, -1_bi);
+		user.stat_boost(StatNames::SPE, -1_bi);
 	}
 }
 
@@ -1035,7 +1035,7 @@ void phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 }
 
 void rest(Pokemon & user) {
-	Stat & hp = get_stat(user, Stat::HP);
+	Stat & hp = get_stat(user, StatNames::HP);
 	if (hp.stat != hp.max) {
 		hp.stat = hp.max;
 		get_status(user).rest();
@@ -1043,7 +1043,7 @@ void rest(Pokemon & user) {
 }
 
 void struggle(Pokemon & user) {
-	apply_damage(user, get_stat(user, Stat::HP).max / 4);
+	apply_damage(user, get_stat(user, StatNames::HP).max / 4);
 }
 
 void swap_items(Pokemon & user, Pokemon & target) {

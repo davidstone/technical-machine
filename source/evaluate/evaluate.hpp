@@ -90,7 +90,7 @@ private:
 	int poison;
 	int sleep;
 	
-	std::array<int, Stat::END> stage;
+	std::array<int, static_cast<std::size_t>(StatNames::END)> stage;
 	int focus_energy;
 
 	int baton_pass;

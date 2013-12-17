@@ -35,8 +35,8 @@ namespace {
 Nature::Natures nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical);
 SingleClassificationEVs::NatureBoost nature_boost_convert(Nature nature);
 
-constexpr Stat::Stats from_physical(bool physical) {
-	return physical ? Stat::DEF : Stat::SPD;
+constexpr StatNames from_physical(bool physical) {
+	return physical ? StatNames::DEF : StatNames::SPD;
 }
 
 template<bool physical>
@@ -44,11 +44,11 @@ Stat & defensive_stat(Pokemon & pokemon);
 
 template<>
 Stat & defensive_stat<true>(Pokemon & pokemon) {
-	return get_stat(pokemon, Stat::DEF);
+	return get_stat(pokemon, StatNames::DEF);
 }
 template<>
 Stat & defensive_stat<false>(Pokemon & pokemon) {
-	return get_stat(pokemon, Stat::SPD);
+	return get_stat(pokemon, StatNames::SPD);
 }
 
 std::string stat_name(bool const physical) {
@@ -114,7 +114,7 @@ Nature::Natures nature_boost_convert(SingleClassificationEVs::NatureBoost nature
 
 template<bool physical>
 std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon) {
-	auto const initial_product = get_stat(pokemon, Stat::HP).max * initial_stat<from_physical(physical)>(pokemon);
+	auto const initial_product = get_stat(pokemon, StatNames::HP).max * initial_stat<from_physical(physical)>(pokemon);
 	std::vector<SingleClassificationEVs> result;
 	static std::initializer_list<Nature> const natures = {
 		nature_boost_convert(SingleClassificationEVs::Boost, physical),
@@ -124,8 +124,8 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon) {
 	for (Nature const nature : natures) {
 		get_nature(pokemon) = nature;
 		for (EV::value_type hp_ev = 0_bi; ; hp_ev += 4_bi) {
-			get_stat(pokemon, Stat::HP).ev = EV(EV::value_type(hp_ev));
-			auto const hp = initial_stat<Stat::HP>(pokemon);
+			get_stat(pokemon, StatNames::HP).ev = EV(EV::value_type(hp_ev));
+			auto const hp = initial_stat<StatNames::HP>(pokemon);
 			EV::value_type defensive_ev = 0_bi;
 			defensive_stat<physical>(pokemon).ev = EV(defensive_ev);
 			while (initial_stat<from_physical(physical)>(pokemon) * hp < initial_product and defensive_ev <= EV::max - 4) {

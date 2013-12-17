@@ -98,7 +98,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 	
 	if (is_switch(move))
 		return true;
-	if (get_stat(user, Stat::HP).stat == 0 or (other.is_fainted() and false))
+	if (get_stat(user, StatNames::HP).stat == 0 or (other.is_fainted() and false))
 		return false;
 
 	bool execute = !(is_blocked_due_to_status (user, move) or
@@ -111,7 +111,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 		user.handle_confusion();
 		if (user.flinched()) {
 			if (get_ability(user).boosts_speed_when_flinched ())
-				user.stat_boost(Stat::SPE, 1_bi);
+				user.stat_boost(StatNames::SPE, 1_bi);
 			execute = false;
 		}
 		else if (block2 (user, move, weather) or user.is_fully_paralyzed()) {

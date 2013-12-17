@@ -87,7 +87,7 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 }
 
 void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather) {
-	if (get_stat(pokemon, Stat::HP).stat == 0) {
+	if (get_stat(pokemon, StatNames::HP).stat == 0) {
 		return;
 	}
 	if (pokemon.ingrained())
@@ -95,7 +95,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	if (pokemon.aqua_ring_is_active())
 		heal(pokemon, Rational(1, 16));
 	if (get_ability(pokemon).boosts_speed())
-		pokemon.stat_boost(Stat::SPE, 1_bi);
+		pokemon.stat_boost(StatNames::SPE, 1_bi);
 	else if (pokemon.shed_skin_activated())
 		get_status(pokemon).clear();
 	switch (get_item(pokemon).name) {
@@ -112,14 +112,14 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			break;
 	}
 	if (pokemon.leech_seeded()) {
-		unsigned const n = get_stat(pokemon, Stat::HP).stat;
+		unsigned const n = get_stat(pokemon, StatNames::HP).stat;
 		drain(pokemon, Rational(1, 8));
 		if (!foe.is_fainted()) {
 			if (get_ability(pokemon).damages_leechers()) {
-				apply_damage(foe, n - get_stat(pokemon, Stat::HP).stat);
+				apply_damage(foe, n - get_stat(pokemon, StatNames::HP).stat);
 			}
 			else {
-				apply_healing(foe, n - get_stat(pokemon, Stat::HP).stat);
+				apply_healing(foe, n - get_stat(pokemon, StatNames::HP).stat);
 			}
 		}
 	}

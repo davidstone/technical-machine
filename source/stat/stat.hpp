@@ -32,21 +32,22 @@ class Pokemon;
 class Team;
 class Weather;
 
+// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
+enum class StatNames {
+	HP = -1,
+	ATK,
+	DEF,
+	SPA,
+	SPD,
+	SPE,
+	NORMAL_END,
+	ACC = NORMAL_END,
+	EVA,
+	END
+};
+
 class Stat {
 public:
-	// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
-	enum Stats {
-		HP = -1,
-		ATK,
-		DEF,
-		SPA,
-		SPD,
-		SPE,
-		NORMAL_END,
-		ACC = NORMAL_END,
-		EVA,
-		END
-	};
 	typedef uint16_t stat_type;
 	stat_type max;		// Max HP only
 	stat_type stat;		// Current HP or last calculated value for other stats
@@ -55,21 +56,21 @@ public:
 	bounded_integer::checked_integer<0, 31> iv;
 	EV ev;
 
-	Stat (Species name, Stats stat);
+	Stat (Species name, StatNames stat);
 	void calculate_initial_hp(Level level);
 };
 
-inline constexpr std::initializer_list<Stat::Stats> regular_stats() {
-	return { Stat::HP, Stat::ATK, Stat::DEF, Stat::SPA, Stat::SPD, Stat::SPE };
+inline constexpr std::initializer_list<StatNames> regular_stats() {
+	return { StatNames::HP, StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE };
 }
 
-template<Stat::Stats>
+template<StatNames>
 unsigned initial_stat(Pokemon const & pokemon);
-extern template unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon);
-extern template unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon);
-extern template unsigned initial_stat<Stat::DEF>(Pokemon const & pokemon);
-extern template unsigned initial_stat<Stat::SPD>(Pokemon const & pokemon);
-extern template unsigned initial_stat<Stat::SPE>(Pokemon const & pokemon);
+extern template unsigned initial_stat<StatNames::ATK>(Pokemon const & pokemon);
+extern template unsigned initial_stat<StatNames::SPA>(Pokemon const & pokemon);
+extern template unsigned initial_stat<StatNames::DEF>(Pokemon const & pokemon);
+extern template unsigned initial_stat<StatNames::SPD>(Pokemon const & pokemon);
+extern template unsigned initial_stat<StatNames::SPE>(Pokemon const & pokemon);
 
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);

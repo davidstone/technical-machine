@@ -374,7 +374,7 @@ bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
 }	// namespace
 
 template<>
-Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & attacker, Weather const & weather) {
+Rational Ability::stat_modifier<StatNames::ATK>(ActivePokemon const & attacker, Weather const & weather) {
 	switch (get_ability(attacker).name()) {
 		case Flower_Gift:
 			return weather.sun() ? Rational(3, 2) : Rational(1);
@@ -392,19 +392,19 @@ Rational Ability::stat_modifier<Stat::ATK>(ActivePokemon const & attacker, Weath
 	}
 }
 template<>
-Rational Ability::stat_modifier<Stat::SPA>(ActivePokemon const & pokemon, Weather const & weather) {
+Rational Ability::stat_modifier<StatNames::SPA>(ActivePokemon const & pokemon, Weather const & weather) {
 	return get_ability(pokemon).boosts_special_attack(weather) ? Rational(3, 2) : Rational(1);
 }
 template<>
-Rational Ability::stat_modifier<Stat::DEF>(ActivePokemon const & defender, Weather const &) {
+Rational Ability::stat_modifier<StatNames::DEF>(ActivePokemon const & defender, Weather const &) {
 	return get_ability(defender).boosts_defense(get_status(defender)) ? Rational(3, 2) : Rational(1);
 }
 template<>
-Rational Ability::stat_modifier<Stat::SPD>(ActivePokemon const & pokemon, Weather const & weather) {
+Rational Ability::stat_modifier<StatNames::SPD>(ActivePokemon const & pokemon, Weather const & weather) {
 	return get_ability(pokemon).boosts_special_defense(weather) ? Rational(3, 2) : Rational(1);
 }
 template<>
-Rational Ability::stat_modifier<Stat::SPE>(ActivePokemon const & pokemon, Weather const & weather) {
+Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, Weather const & weather) {
 	switch (get_ability(pokemon).name()) {
 		case Chlorophyll:
 			return weather.sun() ? Rational(2) : Rational(1);
@@ -426,7 +426,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 		case Download: {
 			calculate_defense(other, weather);
 			calculate_special_defense(other, weather);
-			switcher.stat_boost((get_stat(other, Stat::DEF).stat >= get_stat(other, Stat::SPD).stat) ? Stat::SPA : Stat::ATK, 1_bi);
+			switcher.stat_boost((get_stat(other, StatNames::DEF).stat >= get_stat(other, StatNames::SPD).stat) ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;
 		}
 		case Drizzle:
@@ -438,7 +438,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 		case Forecast:	// TODO: fix this
 			break;
 		case Intimidate:
-			other.stat_boost(Stat::ATK, -1_bi);
+			other.stat_boost(StatNames::ATK, -1_bi);
 			break;
 		case Sand_Stream:
 			weather.set_sand(Weather::Duration::permanent);

@@ -85,7 +85,7 @@ constexpr bool cannot_ko(Moves const move) {
 
 unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	unsigned damage = uncapped_damage (attacker, defender, weather, variable);
-	Stat const & hp = get_stat(defender.pokemon(), Stat::HP);
+	Stat const & hp = get_stat(defender.pokemon(), StatNames::HP);
 	if (damage >= hp.stat) {
 		damage = hp.stat;
 		if (cannot_ko(attacker.move()) or defender.pokemon().cannot_be_koed())
@@ -101,12 +101,12 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 		case Moves::Dragon_Rage:
 			return 40;
 		case Moves::Endeavor:
-			return static_cast<unsigned> (std::max(get_stat(defender.pokemon(), Stat::HP).stat - get_stat(attacker, Stat::HP).stat, 0));
+			return static_cast<unsigned> (std::max(get_stat(defender.pokemon(), StatNames::HP).stat - get_stat(attacker, StatNames::HP).stat, 0));
 		case Moves::Fissure:
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return get_stat(defender.pokemon(), Stat::HP).max;
+			return get_stat(defender.pokemon(), StatNames::HP).max;
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
 			return static_cast<unsigned>(get_level(attacker)());
@@ -115,7 +115,7 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 		case Moves::SonicBoom:
 			return 20;
 		case Moves::Super_Fang:
-			return get_stat(defender.pokemon(), Stat::HP).stat / 2;
+			return get_stat(defender.pokemon(), StatNames::HP).stat / 2;
 		default:
 			return regular_damage(attacker, defender, weather, variable);
 	}
@@ -160,7 +160,7 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 
 
 unsigned apply_damage(Pokemon & pokemon, unsigned damage) {
-	auto & hp = get_stat(pokemon, Stat::HP);
+	auto & hp = get_stat(pokemon, StatNames::HP);
 	damage = std::min(damage, static_cast<unsigned>(hp.stat));
 	hp.stat -= damage;
 	return damage;
@@ -179,8 +179,8 @@ Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const &
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return is_physical(attacker.move()) ?
-		Rational(get_stat(attacker, Stat::ATK).stat, 50u * get_stat(defender, Stat::DEF).stat * weakening_from_status(attacker)) :
-		Rational(get_stat(attacker, Stat::SPA).stat, 50u * get_stat(defender, Stat::SPD).stat);
+		Rational(get_stat(attacker, StatNames::ATK).stat, 50u * get_stat(defender, StatNames::DEF).stat * weakening_from_status(attacker)) :
+		Rational(get_stat(attacker, StatNames::SPA).stat, 50u * get_stat(defender, StatNames::SPD).stat);
 }
 
 unsigned weakening_from_status (Pokemon const & attacker) {

@@ -93,8 +93,8 @@ void DefensiveEVs::remove_inefficient_natures(std::vector<Nature::Natures> const
 void DefensiveEVs::add_other_potential_natures() {
 	auto const used = used_natures(container);
 	for (auto const reference_nature : used) {
-		for (Stat::Stats boosted = static_cast<Stat::Stats>(0); boosted != Stat::NORMAL_END; boosted = static_cast<Stat::Stats>(boosted + 1)) {
-			for (Stat::Stats penalized = static_cast<Stat::Stats>(0); penalized != Stat::NORMAL_END; penalized = static_cast<Stat::Stats>(penalized + 1)) {
+		for (StatNames boosted = static_cast<StatNames>(0); boosted != StatNames::NORMAL_END; boosted = static_cast<StatNames>(static_cast<int>(boosted) + 1)) {
+			for (StatNames penalized = static_cast<StatNames>(0); penalized != StatNames::NORMAL_END; penalized = static_cast<StatNames>(static_cast<int>(penalized) + 1)) {
 				Nature const nature(boosted, penalized);
 				if (!has_same_effect_on_defenses(nature, reference_nature)) {
 					continue;
@@ -128,14 +128,14 @@ bool has_same_effect_on_defenses(Nature const & nature, Nature const & reference
 }
 
 bool boosts_same(Nature const & nature, Nature const & reference_nature) {
-	return (nature.boosts_stat<Stat::DEF>() and reference_nature.boosts_stat<Stat::DEF>())
-			or (nature.boosts_stat<Stat::SPD>() and reference_nature.boosts_stat<Stat::SPD>())
+	return (nature.boosts_stat<StatNames::DEF>() and reference_nature.boosts_stat<StatNames::DEF>())
+			or (nature.boosts_stat<StatNames::SPD>() and reference_nature.boosts_stat<StatNames::SPD>())
 			or (!boosts_defending_stat(nature) and !boosts_defending_stat(reference_nature));
 }
 
 bool penalizes_same(Nature const & nature, Nature const & reference_nature) {
-	return (nature.lowers_stat<Stat::DEF>() and reference_nature.lowers_stat<Stat::DEF>())
-			or (nature.lowers_stat<Stat::SPD>() and reference_nature.lowers_stat<Stat::SPD>())
+	return (nature.lowers_stat<StatNames::DEF>() and reference_nature.lowers_stat<StatNames::DEF>())
+			or (nature.lowers_stat<StatNames::SPD>() and reference_nature.lowers_stat<StatNames::SPD>())
 			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
 }
 
@@ -191,7 +191,7 @@ DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Est
 
 EV::total_type defensive_evs_available(Pokemon const & pokemon) {
 	EV::total_type used_evs = 0_bi;
-	for (auto const stat : { Stat::ATK, Stat::SPA, Stat::SPE }) {
+	for (auto const stat : { StatNames::ATK, StatNames::SPA, StatNames::SPE }) {
 		used_evs += get_stat(pokemon, stat).ev.value();
 	}
 	return bounded_integer::make_bounded<EV::max_total>() - used_evs;

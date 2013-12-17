@@ -34,9 +34,9 @@
 namespace technicalmachine {
 namespace {
 
-template<Stat::Stats stat>
+template<StatNames stat>
 unsigned product(Pokemon const & pokemon) {
-	return initial_stat<stat>(pokemon) * initial_stat<Stat::HP>(pokemon);
+	return initial_stat<stat>(pokemon) * initial_stat<StatNames::HP>(pokemon);
 }
 
 }	// unnamed namespace
@@ -66,11 +66,11 @@ bounded_integer::native_integer<0, EV::max * 3> DataPoint::sum() const {
 
 bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon) {
 	lhs.update_pokemon(pokemon);
-	auto const left_physical = product<Stat::DEF>(pokemon);
-	auto const left_special = product<Stat::SPD>(pokemon);
+	auto const left_physical = product<StatNames::DEF>(pokemon);
+	auto const left_special = product<StatNames::SPD>(pokemon);
 	rhs.update_pokemon(pokemon);
-	auto const right_physical = product<Stat::DEF>(pokemon);
-	auto const right_special = product<Stat::SPD>(pokemon);
+	auto const right_physical = product<StatNames::DEF>(pokemon);
+	auto const right_special = product<StatNames::SPD>(pokemon);
 	if (left_physical < right_physical and left_special < right_special)
 		return true;
 	if (right_physical < left_physical and right_special < left_special)
@@ -82,9 +82,9 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemo
 
 void DataPoint::update_pokemon(Pokemon & pokemon) const {
 	::technicalmachine::get_nature(pokemon) = nature;
-	get_stat(pokemon, Stat::HP).ev = hp;
-	get_stat(pokemon, Stat::DEF).ev = defense;
-	get_stat(pokemon, Stat::SPD).ev = special_defense;
+	get_stat(pokemon, StatNames::HP).ev = hp;
+	get_stat(pokemon, StatNames::DEF).ev = defense;
+	get_stat(pokemon, StatNames::SPD).ev = special_defense;
 }
 
 class InvalidNatureCombination : public std::logic_error {

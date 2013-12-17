@@ -32,7 +32,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	auto & pokemon = switcher.pokemon();
 	pokemon.reset_switch();
 
-	if (get_stat(pokemon, Stat::HP).stat > 0) {
+	if (get_stat(pokemon, StatNames::HP).stat > 0) {
 		switch_pokemon(pokemon);
 	}
 	else {
@@ -42,7 +42,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 	}
 	EntryHazards::apply(switcher, weather);
-	if (get_stat(pokemon, Stat::HP).stat > 0)
+	if (get_stat(pokemon, StatNames::HP).stat > 0)
 		Ability::activate_on_switch (pokemon, other.pokemon(), weather);
 	switch_in(pokemon);
 }

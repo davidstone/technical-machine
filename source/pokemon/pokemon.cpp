@@ -80,7 +80,7 @@ void switch_in(Pokemon & pokemon) {
 }
 
 void calculate_initial_hp(Pokemon & pokemon) {
-	get_stat(pokemon, Stat::HP).calculate_initial_hp(get_level(pokemon));
+	get_stat(pokemon, StatNames::HP).calculate_initial_hp(get_level(pokemon));
 }
 
 void Pokemon::remove_switch() {
@@ -95,7 +95,7 @@ uint8_t Pokemon::index_of_first_switch () const {
 }
 
 Rational hp_ratio(Pokemon const & pokemon) {
-	auto const & hp = get_stat(pokemon, Stat::HP);
+	auto const & hp = get_stat(pokemon, StatNames::HP);
 	return Rational(hp.stat, hp.max);
 }
 
@@ -135,10 +135,10 @@ Nature & get_nature(Pokemon & pokemon) {
 	return pokemon.m_nature;
 }
 
-Stat const & get_stat(Pokemon const & pokemon, Stat::Stats const index_stat) {
+Stat const & get_stat(Pokemon const & pokemon, StatNames const index_stat) {
 	return pokemon.stats[index_stat];
 }
-Stat & get_stat(Pokemon & pokemon, Stat::Stats const index_stat) {
+Stat & get_stat(Pokemon & pokemon, StatNames const index_stat) {
 	return pokemon.stats[index_stat];
 }
 
@@ -166,7 +166,7 @@ unsigned Pokemon::happiness() const {
 }
 
 Pokemon::hash_type Pokemon::hash() const {
-	auto const & hp = get_stat(*this, Stat::HP);
+	auto const & hp = get_stat(*this, StatNames::HP);
 	return static_cast<hash_type>(m_species) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
@@ -176,7 +176,7 @@ Pokemon::hash_type Pokemon::hash() const {
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * get_stat(*this, Stat::HP).max * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * get_stat(*this, StatNames::HP).max * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -187,7 +187,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.move == rhs.move and
 			lhs.m_species == rhs.m_species and
 			lhs.m_status == rhs.m_status and
-			get_stat(lhs, Stat::HP).stat == get_stat(rhs, Stat::HP).stat and
+			get_stat(lhs, StatNames::HP).stat == get_stat(rhs, StatNames::HP).stat and
 			lhs.m_item == rhs.m_item and
 			lhs.seen == rhs.seen;
 }
@@ -230,13 +230,13 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		}
 		output += bounded_integer::to_string(stat.ev.value()) + " " + stat_name;
 	};
-	static std::pair<Stat::Stats, std::string> const stats [] = {
-		{ Stat::HP, "HP" },
-		{ Stat::ATK, "Atk" },
-		{ Stat::DEF, "Def" },
-		{ Stat::SPA, "SpA" },
-		{ Stat::SPD, "SpD" },
-		{ Stat::SPE, "Spe" },
+	static std::pair<StatNames, std::string> const stats [] = {
+		{ StatNames::HP, "HP" },
+		{ StatNames::ATK, "Atk" },
+		{ StatNames::DEF, "Def" },
+		{ StatNames::SPA, "SpA" },
+		{ StatNames::SPD, "SpD" },
+		{ StatNames::SPE, "Spe" },
 	};
 	for (auto const stat : stats) {
 		add_stat(get_stat(pokemon, stat.first), stat.second);

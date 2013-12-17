@@ -48,13 +48,13 @@ Move load_move(boost::property_tree::ptree const & pt) {
 }
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
-	static std::map<std::string, Stat::Stats> const stats = {
-		{ "HP", Stat::HP },
-		{ "Atk", Stat::ATK },
-		{ "Def", Stat::DEF },
-		{ "SpAtk", Stat::SPA },
-		{ "SpDef", Stat::SPD },
-		{ "Spd", Stat::SPE }
+	static std::map<std::string, StatNames> const stats = {
+		{ "HP", StatNames::HP },
+		{ "Atk", StatNames::ATK },
+		{ "Def", StatNames::DEF },
+		{ "SpAtk", StatNames::SPA },
+		{ "SpDef", StatNames::SPD },
+		{ "Spd", StatNames::SPE }
 	};
 	return get_stat(pokemon, stats.at(name));
 }

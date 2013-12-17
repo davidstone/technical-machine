@@ -106,14 +106,14 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 namespace {
 
 Type::Types hidden_power_type(Pokemon const & pokemon) {
-	using modifier_type = std::pair<Stat::Stats, bounded_integer::native_integer<0, 5>>;
+	using modifier_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
 	static constexpr modifier_type modifiers[] = {
-		{ Stat::HP, 0_bi },
-		{ Stat::ATK, 1_bi },
-		{ Stat::DEF, 2_bi },
-		{ Stat::SPE, 3_bi },
-		{ Stat::SPA, 4_bi },
-		{ Stat::SPD, 5_bi }
+		{ StatNames::HP, 0_bi },
+		{ StatNames::ATK, 1_bi },
+		{ StatNames::DEF, 2_bi },
+		{ StatNames::SPE, 3_bi },
+		{ StatNames::SPA, 4_bi },
+		{ StatNames::SPD, 5_bi }
 	};
 	using intermediate_type = bounded_integer::checked_integer<0, 63>;
 	auto const sum = [&](intermediate_type value, modifier_type const & pair) {

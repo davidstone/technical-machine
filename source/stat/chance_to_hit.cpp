@@ -55,8 +55,8 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 	BaseAccuracy const base_accuracy = accuracy(user.move());
 	if (move_can_miss(user, base_accuracy, get_ability(target))) {
 		auto calculated_accuracy = static_cast<unsigned>(*base_accuracy);
-		calculated_accuracy *= user.stage_modifier<Stat::ACC>();
-		calculated_accuracy *= target.stage_modifier<Stat::EVA>();
+		calculated_accuracy *= user.stage_modifier<StatNames::ACC>();
+		calculated_accuracy *= target.stage_modifier<StatNames::EVA>();
 
 		calculated_accuracy *= accuracy_item_modifier(get_item(user), target_moved);
 		calculated_accuracy *= Ability::accuracy_modifier(user);

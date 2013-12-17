@@ -42,7 +42,7 @@
 namespace technicalmachine {
 namespace {
 
-Stat::base_type get_base_stat(Species name, Stat::Stats stat_name);
+Stat::base_type get_base_stat(Species name, StatNames stat_name);
 
 bool is_boosted_by_deepseascale(Species const species) {
 	return species == Species::Clamperl;
@@ -84,10 +84,10 @@ bool is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-template<Stat::Stats stat>
+template<StatNames stat>
 Rational item_modifier(Pokemon const & pokemon);
 template<>
-Rational item_modifier<Stat::ATK>(Pokemon const & attacker) {
+Rational item_modifier<StatNames::ATK>(Pokemon const & attacker) {
 	switch (get_item(attacker).name) {
 		case Item::CHOICE_BAND:
 			return Rational(3, 2);
@@ -100,7 +100,7 @@ Rational item_modifier<Stat::ATK>(Pokemon const & attacker) {
 	}
 }
 template<>
-Rational item_modifier<Stat::SPA>(Pokemon const & attacker) {
+Rational item_modifier<StatNames::SPA>(Pokemon const & attacker) {
 	switch (get_item(attacker).name) {
 		case Item::SOUL_DEW:
 			return is_boosted_by_soul_dew(attacker) ? Rational(3, 2) : Rational(1);
@@ -115,13 +115,13 @@ Rational item_modifier<Stat::SPA>(Pokemon const & attacker) {
 	}
 }
 template<>
-Rational item_modifier<Stat::DEF>(Pokemon const & defender) {
+Rational item_modifier<StatNames::DEF>(Pokemon const & defender) {
 	return (get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender)) ?
 		Rational(3, 2) :
 		Rational(1);
 }
 template<>
-Rational item_modifier<Stat::SPD>(Pokemon const & defender) {
+Rational item_modifier<StatNames::SPD>(Pokemon const & defender) {
 	switch (get_item(defender).name) {
 		case Item::DEEPSEASCALE:
 			return is_boosted_by_deepseascale(defender) ? Rational(2) : Rational(1);
@@ -134,7 +134,7 @@ Rational item_modifier<Stat::SPD>(Pokemon const & defender) {
 	}
 }
 template<>
-Rational item_modifier<Stat::SPE>(Pokemon const & pokemon) {
+Rational item_modifier<StatNames::SPE>(Pokemon const & pokemon) {
 	switch (get_item(pokemon).name) {
 		case Item::QUICK_POWDER:
 			return is_boosted_by_quick_powder(pokemon) ? Rational(2) : Rational(1);
@@ -158,50 +158,50 @@ Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather
 unsigned paralysis_speed_divisor (Pokemon const & pokemon);
 unsigned tailwind_speed_multiplier (Team const & team);
 
-template<Stat::Stats stat>
+template<StatNames stat>
 class StatTraits;
 
 template<>
-class StatTraits<Stat::ATK> {
+class StatTraits<StatNames::ATK> {
 public:
 	static constexpr bool is_physical = true;
-	static constexpr Stat::Stats other = Stat::DEF;
+	static constexpr StatNames other = StatNames::DEF;
 };
 template<>
-class StatTraits<Stat::DEF> {
+class StatTraits<StatNames::DEF> {
 public:
 	static constexpr bool is_physical = true;
-	static constexpr Stat::Stats other = Stat::ATK;
+	static constexpr StatNames other = StatNames::ATK;
 };
 template<>
-class StatTraits<Stat::SPA> {
+class StatTraits<StatNames::SPA> {
 public:
 	static constexpr bool is_physical = false;
 };
 template<>
-class StatTraits<Stat::SPD> {
+class StatTraits<StatNames::SPD> {
 public:
 	static constexpr bool is_physical = false;
 };
 template<>
-class StatTraits<Stat::SPE> {
+class StatTraits<StatNames::SPE> {
 public:
 	static constexpr bool is_physical = false;
 };
 
-template<Stat::Stats stat>
+template<StatNames stat>
 typename std::enable_if<StatTraits<stat>::is_physical, unsigned>::type
 calculate_initial_stat(ActivePokemon const & pokemon) {
 	constexpr auto other = StatTraits<stat>::other;
 	return !pokemon.power_trick_is_active() ? initial_stat<stat>(pokemon) : initial_stat<other>(pokemon);
 }
-template<Stat::Stats stat>
+template<StatNames stat>
 typename std::enable_if<!StatTraits<stat>::is_physical, unsigned>::type
 calculate_initial_stat(ActivePokemon const & pokemon) {
 	return initial_stat<stat>(pokemon);
 }
 
-template<Stat::Stats stat>
+template<StatNames stat>
 void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & weather) {
 	auto attack = calculate_initial_stat<stat>(pokemon);
 	attack *= pokemon.stage_modifier<stat>(pokemon.critical_hit());
@@ -214,7 +214,7 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 
 }	// namespace
 
-Stat::Stat (Species name, Stats stat_name) :
+Stat::Stat (Species name, StatNames stat_name) :
 	max (65535),
 	base(get_base_stat(name, stat_name)),
 	iv(31_bi),
@@ -235,20 +235,20 @@ void Stat::calculate_initial_hp(Level const level) {
 	stat = max;
 }
 
-template<Stat::Stats stat>
+template<StatNames stat>
 unsigned initial_stat(Pokemon const & pokemon) {
 	return static_cast<unsigned>(initial_generic_stat(get_stat(pokemon, stat), get_level(pokemon))) * get_nature(pokemon).boost<stat>();
 }
 template<>
-unsigned initial_stat<Stat::HP>(Pokemon const & pokemon) {
-	Stat const & hp = get_stat(pokemon, Stat::HP);
+unsigned initial_stat<StatNames::HP>(Pokemon const & pokemon) {
+	Stat const & hp = get_stat(pokemon, StatNames::HP);
 	return static_cast<unsigned>(bounded_integer::ternary_conditional((hp.base > 1_bi), (initial_generic_stat(hp, get_level(pokemon)) + get_level(pokemon)() + 5_bi), 1_bi));
 }
-template unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon);
-template unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon);
-template unsigned initial_stat<Stat::DEF>(Pokemon const & pokemon);
-template unsigned initial_stat<Stat::SPD>(Pokemon const & pokemon);
-template unsigned initial_stat<Stat::SPE>(Pokemon const & pokemon);
+template unsigned initial_stat<StatNames::ATK>(Pokemon const & pokemon);
+template unsigned initial_stat<StatNames::SPA>(Pokemon const & pokemon);
+template unsigned initial_stat<StatNames::DEF>(Pokemon const & pokemon);
+template unsigned initial_stat<StatNames::SPD>(Pokemon const & pokemon);
+template unsigned initial_stat<StatNames::SPE>(Pokemon const & pokemon);
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather) {
 	if (is_physical(attacker.move()))
@@ -258,11 +258,11 @@ void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather
 }
 
 void calculate_attack(ActivePokemon & attacker, Weather const & weather) {
-	calculate_common_offensive_stat<Stat::ATK>(attacker, weather);
+	calculate_common_offensive_stat<StatNames::ATK>(attacker, weather);
 }
 
 void calculate_special_attack (ActivePokemon & attacker, Weather const & weather) {
-	calculate_common_offensive_stat<Stat::SPA>(attacker, weather);
+	calculate_common_offensive_stat<StatNames::SPA>(attacker, weather);
 }
 
 namespace {
@@ -289,7 +289,7 @@ void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & d
 }
 
 void calculate_defense (ActivePokemon & defender, Weather const & weather, bool ch, bool is_self_KO) {
-	constexpr auto stat = Stat::DEF;
+	constexpr auto stat = StatNames::DEF;
 	auto defense = calculate_initial_stat<stat>(defender);
 
 	defense *= defender.stage_modifier<stat>(ch);
@@ -304,7 +304,7 @@ void calculate_defense (ActivePokemon & defender, Weather const & weather, bool 
 }
 
 void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch) {
-	constexpr auto stat = Stat::SPD;
+	constexpr auto stat = StatNames::SPD;
 	auto defense = calculate_initial_stat<stat>(defender);
 	
 	defense *= defender.stage_modifier<stat>(ch);
@@ -318,7 +318,7 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 }
 
 void calculate_speed (Team & team, Weather const & weather) {
-	constexpr auto stat = Stat::SPE;
+	constexpr auto stat = StatNames::SPE;
 	auto & pokemon = team.pokemon();
 	auto speed = calculate_initial_stat<stat>(pokemon);
 	
@@ -353,8 +353,8 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 }
 
 void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	auto const speed1 = get_stat(team1.pokemon(), Stat::SPE).stat;
-	auto const speed2 = get_stat(team2.pokemon(), Stat::SPE).stat;
+	auto const speed1 = get_stat(team1.pokemon(), StatNames::SPE).stat;
+	auto const speed2 = get_stat(team2.pokemon(), StatNames::SPE).stat;
 	if (speed1 > speed2) {
 		faster = &team1;
 		slower = &team2;
@@ -385,7 +385,7 @@ unsigned tailwind_speed_multiplier (Team const & team) {
 	return team.screens.tailwind() ? 2 : 1;
 }
 
-Stat::base_type get_base_stat(Species name, Stat::Stats stat) {
+Stat::base_type get_base_stat(Species name, StatNames stat) {
 	static constexpr auto base_stat = bounded_integer::make_array<6>(
 	
 		// Generation 1
@@ -1071,7 +1071,7 @@ Stat::base_type get_base_stat(Species name, Stat::Stats stat) {
 	static_assert(std::numeric_limits<Stat::base_type>::min() == std::numeric_limits<value_type>::min(), "Incorrect base stat minimum.");
 	static_assert(std::numeric_limits<Stat::base_type>::max() == std::numeric_limits<value_type>::max(), "Incorrect base stat maximum.");
 	// I add 1 because HP is -1 to allow every other index to be easier.
-	return base_stat.at(name).at(stat + 1);
+	return base_stat.at(name).at(static_cast<int>(stat) + 1);
 }
 
 }	// unnamed namespace

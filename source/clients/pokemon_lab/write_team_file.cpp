@@ -58,13 +58,13 @@ void write_stat (Stat const & stat, std::string const & str, boost::property_tre
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	static std::pair<Stat::Stats, std::string> const stats [] = {
-		{ Stat::HP, "HP" },
-		{ Stat::ATK, "Atk" },
-		{ Stat::DEF, "Def" },
-		{ Stat::SPE, "Spd" },
-		{ Stat::SPA, "SpAtk" },
-		{ Stat::SPD, "SpDef" }
+	static std::pair<StatNames, std::string> const stats [] = {
+		{ StatNames::HP, "HP" },
+		{ StatNames::ATK, "Atk" },
+		{ StatNames::DEF, "Def" },
+		{ StatNames::SPE, "Spd" },
+		{ StatNames::SPA, "SpAtk" },
+		{ StatNames::SPD, "SpDef" }
 	};
 	for (auto const & stat : stats) {
 		write_stat(get_stat(pokemon, stat.first), stat.second, pt);

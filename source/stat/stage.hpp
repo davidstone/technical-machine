@@ -40,13 +40,13 @@ public:
 	void reset();
 
 	// Used for attacking / defending stats
-	template<Stat::Stats stat>
+	template<StatNames stat>
 	Rational modifier(bool ch) const;
 	// Used for all other stats
-	template<Stat::Stats stat>
+	template<StatNames stat>
 	Rational modifier() const;
 
-	void boost(Stat::Stats stat, boost_type number_of_stages);
+	void boost(StatNames stat, boost_type number_of_stages);
 	template<typename Function>
 	auto accumulate(Function const & f) const {
 		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<m_stages.size>());
@@ -54,8 +54,7 @@ public:
 			return initial + f(stage);
 		});
 	}
-	static int dot_product(Stage const & stage, std::array<int, Stat::END> const & multiplier);
-	static int dot_product(std::array<int, Stat::END> const & multiplier, Stage const & stage);
+	friend int dot_product(Stage const & stage, std::array<int, static_cast<std::size_t>(StatNames::END)> const & multiplier);
 	void boost_regular(boost_type number_of_stages);
 	void boost_physical(boost_type number_of_stages);
 	void boost_special(boost_type number_of_stages);
@@ -69,10 +68,10 @@ public:
 private:
 	friend class Stat;
 	friend class ActivePokemon;
-	static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<Stat::Stats> const & stats);
+	static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats);
 	class array {
 	public:
-		static constexpr auto size = static_cast<std::size_t>(Stat::END);
+		static constexpr auto size = static_cast<std::size_t>(StatNames::END);
 		using container_type = bounded_integer::array<value_type, size>;
 		constexpr container_type::const_iterator begin() const {
 			return m_value.begin();
@@ -86,8 +85,8 @@ private:
 		container_type::iterator end() {
 			return m_value.end();
 		}
-		value_type const & operator[](Stat::Stats index) const;
-		value_type & operator[](Stat::Stats index);
+		value_type const & operator[](StatNames index) const;
+		value_type & operator[](StatNames index);
 		friend bool operator==(array const & lhs, array const & rhs);
 	private:
 		container_type m_value;

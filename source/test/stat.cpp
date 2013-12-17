@@ -46,17 +46,17 @@ void attack_tests () {
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	get_stat(pokemon, Stat::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
-	attacker.pokemon().stat_boost(Stat::ATK, 6_bi);
+	attacker.pokemon().stat_boost(StatNames::ATK, 6_bi);
 
 	get_item(pokemon).name = Item::CHOICE_BAND;
 	
 	calculate_attack(attacker.pokemon(), Weather{});
-	if (get_stat(attacker.pokemon(), Stat::ATK).stat != max_attack)
-		throw IncorrectCalculation (get_stat(attacker.pokemon(), Stat::ATK).stat, max_attack);
+	if (get_stat(attacker.pokemon(), StatNames::ATK).stat != max_attack)
+		throw IncorrectCalculation (get_stat(attacker.pokemon(), StatNames::ATK).stat, max_attack);
 }
 
 void special_attack_tests () {
@@ -71,17 +71,17 @@ void special_attack_tests () {
 	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	get_stat(pokemon, Stat::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::MODEST;
-	attacker.pokemon().stat_boost(Stat::SPA, 6_bi);
+	attacker.pokemon().stat_boost(StatNames::SPA, 6_bi);
 
 	get_ability(pokemon) = Ability::Solar_Power;
 
 	get_item(pokemon).name = Item::CHOICE_SPECS;
 	
 	calculate_special_attack(attacker.pokemon(), weather);
-	if (get_stat(attacker.pokemon(), Stat::SPA).stat != max_special_attack)
-		throw IncorrectCalculation (get_stat(attacker.pokemon(), Stat::SPA).stat, max_special_attack);
+	if (get_stat(attacker.pokemon(), StatNames::SPA).stat != max_special_attack)
+		throw IncorrectCalculation (get_stat(attacker.pokemon(), StatNames::SPA).stat, max_special_attack);
 }
 
 void defense_tests () {
@@ -95,18 +95,18 @@ void defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	get_stat(pokemon, Stat::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::BOLD;
 
-	defender.pokemon().stat_boost(Stat::DEF, 6_bi);
+	defender.pokemon().stat_boost(StatNames::DEF, 6_bi);
 
 	get_ability(pokemon) = Ability::Marvel_Scale;
 	Status::apply<Status::BURN>(pokemon, weather);
 
 	calculate_defense(defender.pokemon(), weather);
 
-	if (get_stat(pokemon, Stat::DEF).stat != max_defense)
-		throw IncorrectCalculation(get_stat(pokemon, Stat::DEF).stat, max_defense);
+	if (get_stat(pokemon, StatNames::DEF).stat != max_defense)
+		throw IncorrectCalculation(get_stat(pokemon, StatNames::DEF).stat, max_defense);
 }
 
 void special_defense_tests () {
@@ -121,15 +121,15 @@ void special_defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	get_stat(pokemon, Stat::SPD).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::SPD).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::CALM;
 
-	defender.pokemon().stat_boost(Stat::SPD, 6_bi);
+	defender.pokemon().stat_boost(StatNames::SPD, 6_bi);
 
 	calculate_special_defense(defender.pokemon(), weather);
 
-	if (get_stat(pokemon, Stat::SPD).stat != max_special_defense)
-		throw IncorrectCalculation (get_stat(pokemon, Stat::SPD).stat, max_special_defense);
+	if (get_stat(pokemon, StatNames::SPD).stat != max_special_defense)
+		throw IncorrectCalculation (get_stat(pokemon, StatNames::SPD).stat, max_special_defense);
 }
 
 void speed_tests () {
@@ -144,10 +144,10 @@ void speed_tests () {
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::Deoxys_Speed, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	get_stat(pokemon, Stat::SPE).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::SPE).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::TIMID;
 
-	team.pokemon().stat_boost(Stat::SPE, 6_bi);
+	team.pokemon().stat_boost(StatNames::SPE, 6_bi);
 
 	get_ability(pokemon) = Ability::Swift_Swim;
 
@@ -157,8 +157,8 @@ void speed_tests () {
 	
 	calculate_speed(team, weather);
 
-	if (get_stat(pokemon, Stat::SPE).stat != max_speed)
-		throw IncorrectCalculation(get_stat(pokemon, Stat::SPE).stat, max_speed);
+	if (get_stat(pokemon, StatNames::SPE).stat != max_speed)
+		throw IncorrectCalculation(get_stat(pokemon, StatNames::SPE).stat, max_speed);
 }
 
 }	// unnamed namespace

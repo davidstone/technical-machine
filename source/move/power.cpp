@@ -133,21 +133,21 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Low_Kick:
 			return power_of_mass_based_moves(defender);
 		case Moves::Gyro_Ball: {
-			unsigned const uncapped_power = 25u * get_stat(defender, Stat::SPE).stat / get_stat(attacker, Stat::SPE).stat + 1;
+			unsigned const uncapped_power = 25u * get_stat(defender, StatNames::SPE).stat / get_stat(attacker, StatNames::SPE).stat + 1;
 			return std::min(uncapped_power, 150u);
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return attacker.momentum_move_power();
 		case Moves::Hidden_Power: {
-			using stat_and_position_type = std::pair<Stat::Stats, bounded_integer::native_integer<0, 5>>;
+			using stat_and_position_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
 			static constexpr std::array<stat_and_position_type, 6> stat_and_position {{
-				{ Stat::HP, 0_bi },
-				{ Stat::ATK, 1_bi },
-				{ Stat::DEF, 2_bi },
-				{ Stat::SPE, 3_bi },
-				{ Stat::SPA, 4_bi },
-				{ Stat::SPD, 5_bi }
+				{ StatNames::HP, 0_bi },
+				{ StatNames::ATK, 1_bi },
+				{ StatNames::DEF, 2_bi },
+				{ StatNames::SPE, 3_bi },
+				{ StatNames::SPA, 4_bi },
+				{ StatNames::SPD, 5_bi }
 			}};
 			using intermediate_type = bounded_integer::checked_integer<0, 63>;
 			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
@@ -202,7 +202,7 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 		case Moves::Revenge:
 			return attacker.damaged();
 		case Moves::Brine:
-			return get_stat(defender, Stat::HP).stat <= get_stat(defender, Stat::HP).max / 2;
+			return get_stat(defender, StatNames::HP).stat <= get_stat(defender, StatNames::HP).max / 2;
 		case Moves::Facade:
 			return get_status(attacker).boosts_facade();
 		case Moves::Ice_Ball:

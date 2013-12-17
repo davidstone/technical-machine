@@ -124,7 +124,7 @@ public:
 		team.add_pokemon(species, Level(100_bi), Gender{}, item, ability, nature);
 		Pokemon & pokemon = team.replacement();
 		for (auto const stat : regular_stats()) {
-			get_stat(pokemon, stat).ev = EV(evs[static_cast<size_t>(stat + 1)]);
+			get_stat(pokemon, stat).ev = EV(evs[static_cast<size_t>(static_cast<int>(stat) + 1)]);
 		}
 		calculate_initial_hp(pokemon);
 		for (auto const move : moves) {

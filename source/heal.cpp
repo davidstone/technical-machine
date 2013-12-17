@@ -32,7 +32,7 @@ namespace technicalmachine {
 void apply_healing(Pokemon & pokemon, unsigned const amount) {
 	// Should be no risk of overflow. hp.stat has to be at least 16 bits, and no
 	// healing will be anywhere close to that number.
-	auto & hp = get_stat(pokemon, Stat::HP);
+	auto & hp = get_stat(pokemon, StatNames::HP);
 	assert(hp.stat + amount >= amount);
 	hp.stat += amount;
 	hp.stat = std::min(hp.stat, hp.max);
@@ -41,7 +41,7 @@ void apply_healing(Pokemon & pokemon, unsigned const amount) {
 void heal(ActivePokemon & pokemon, Rational const & rational, bool positive) {
 	if (pokemon.is_fainted())
 		return;
-	unsigned const hp_healed = get_stat(pokemon, Stat::HP).max * rational;
+	unsigned const hp_healed = get_stat(pokemon, StatNames::HP).max * rational;
 	if (positive) {
 		apply_healing(pokemon, std::max(hp_healed, 1u));
 	}

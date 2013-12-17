@@ -38,7 +38,7 @@ using namespace bounded_integer::literal;
 
 using sum_type = bounded_integer::checked_integer<0, EV::max_total>;
 sum_type ev_sum(Pokemon const & pokemon) {
-	auto const ev_sum = [&](sum_type const sum, Stat::Stats const stat) {
+	auto const ev_sum = [&](sum_type const sum, StatNames const stat) {
 		return sum + get_stat(pokemon, stat).ev.value();
 	};
 	return std::accumulate(std::begin(regular_stats()), std::end(regular_stats()), sum_type(0_bi), ev_sum);

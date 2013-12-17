@@ -1,5 +1,5 @@
 // Evaluate the state of the game
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,6 +32,8 @@
 #include "../pokemon/collection.hpp"
 #include "../pokemon/pokemon.hpp"
 
+#include "../stat/stage.hpp"
+
 #include "../type/effectiveness.hpp"
 
 namespace technicalmachine {
@@ -50,6 +52,14 @@ int64_t Evaluate::score_team (Team const & team) const {
 	return score;
 }
 
+int dot_product(Stage const & stage, std::array<int, static_cast<std::size_t>(StatNames::END)> const & multiplier) {
+	int result = 0;
+	for (StatNames stat = static_cast<StatNames>(0); stat != StatNames::END; stat = static_cast<StatNames>(static_cast<int>(stat) + 1)) {
+		result += stage.m_stages[stat] * multiplier[static_cast<std::size_t>(stat)];
+	}
+	return result;
+}
+
 int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 	int64_t score = 0;
 	if (pokemon.aqua_ring)
@@ -60,8 +70,8 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 		score += ingrain;
 	score += pokemon.magnet_rise.turns_remaining * magnet_rise;
 	if (pokemon.active_substitute)
-		score += substitute + substitute_hp * pokemon.active_substitute.hp / get_stat(pokemon, Stat::HP).max;
-	score += Stage::dot_product(pokemon.stage, stage);
+		score += substitute + substitute_hp * pokemon.active_substitute.hp / get_stat(pokemon, StatNames::HP).max;
+	score += dot_product(pokemon.stage, stage);
 	return score;
 }
 
@@ -78,7 +88,7 @@ int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weat
 }
 
 int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
-	if (get_stat(pokemon, Stat::HP).stat == 0) {
+	if (get_stat(pokemon, StatNames::HP).stat == 0) {
 		return 0;
 	}
 	int64_t score = 0;
@@ -102,7 +112,7 @@ int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 }
 
 int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	if (get_stat(pokemon, Stat::HP).stat == 0) {
+	if (get_stat(pokemon, StatNames::HP).stat == 0) {
 		return 0;
 	}
 	int64_t score = entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
@@ -153,7 +163,7 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 
 
 int64_t Evaluate::win (Team const & team) {
-	if (team.all_pokemon().size() == 1 and get_stat(team.pokemon(), Stat::HP).stat == 0)
+	if (team.all_pokemon().size() == 1 and get_stat(team.pokemon(), StatNames::HP).stat == 0)
 		return team.is_me() ? -victory : victory;
 	return 0;
 }
@@ -248,11 +258,11 @@ void Evaluate::load() {
 	paralysis = pt.get<int>("paralysis", 0);
 	poison = pt.get<int>("poison", 0);
 	sleep = pt.get<int>("sleep", 0);
-	stage[Stat::ATK] = pt.get<int>("attack_stage", 0);
-	stage[Stat::DEF] = pt.get<int>("defense_stage", 0);
-	stage[Stat::SPA] = pt.get<int>("special_attack_stage", 0);
-	stage[Stat::SPD] = pt.get<int>("special_defense_stage", 0);
-	stage[Stat::SPE] = pt.get<int>("speed_stage", 0);
+	stage[static_cast<std::size_t>(StatNames::ATK)] = pt.get<int>("attack_stage", 0);
+	stage[static_cast<std::size_t>(StatNames::DEF)] = pt.get<int>("defense_stage", 0);
+	stage[static_cast<std::size_t>(StatNames::SPA)] = pt.get<int>("special_attack_stage", 0);
+	stage[static_cast<std::size_t>(StatNames::SPD)] = pt.get<int>("special_defense_stage", 0);
+	stage[static_cast<std::size_t>(StatNames::SPE)] = pt.get<int>("speed_stage", 0);
 	focus_energy = pt.get<int>("focus_energy", 0);
 	baton_pass = pt.get<int>("baton_pass", 0);
 	no_pp = pt.get<int>("no_pp", 0);
