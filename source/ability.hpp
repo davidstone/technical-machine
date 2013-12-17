@@ -21,7 +21,7 @@
 
 #include <cstdint>
 #include "status.hpp"
-#include "stat/stat.hpp"
+#include "stat/stat_names.hpp"
 
 namespace technicalmachine {
 

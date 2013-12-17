@@ -24,7 +24,7 @@
 #include <cstdint>
 #include <bounded_integer/array.hpp>
 #include <bounded_integer/bounded_integer.hpp>
-#include "stat.hpp"
+#include "stat_names.hpp"
 
 namespace technicalmachine {
 class Rational;

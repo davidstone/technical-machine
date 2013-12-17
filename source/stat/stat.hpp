@@ -23,6 +23,7 @@
 #include <initializer_list>
 #include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
+#include "stat_names.hpp"
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
@@ -31,20 +32,6 @@ class Level;
 class Pokemon;
 class Team;
 class Weather;
-
-// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
-enum class StatNames {
-	HP = -1,
-	ATK,
-	DEF,
-	SPA,
-	SPD,
-	SPE,
-	NORMAL_END,
-	ACC = NORMAL_END,
-	EVA,
-	END
-};
 
 class Stat {
 public:

@@ -20,7 +20,7 @@
 
 #include <cassert>
 
-#include "stat.hpp"
+#include "stat_names.hpp"
 
 #include "../rational.hpp"
 

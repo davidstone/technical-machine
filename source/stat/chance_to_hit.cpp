@@ -21,7 +21,7 @@
 #include <algorithm>
 
 #include "stage.hpp"
-#include "stat.hpp"
+#include "stat_names.hpp"
 
 #include "../ability.hpp"
 #include "../rational.hpp"

@@ -30,7 +30,7 @@
 #include "../../pokemon/pokemon.hpp"
 
 #include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
+#include "../../stat/stat_names.hpp"
 
 namespace technicalmachine {
 namespace {

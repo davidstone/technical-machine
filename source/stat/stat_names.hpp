@@ -1,4 +1,4 @@
-// Optimize Speed EVs and nature to remove waste
+// Stats data structures
 // Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,29 +16,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "speed.hpp"
-#include "../../pokemon/pokemon.hpp"
-#include "../../stat/nature.hpp"
-#include "../../stat/stat_names.hpp"
+#ifndef STAT__STAT_NAMES_HPP_
+#define STAT__STAT_NAMES_HPP_
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
 
-SpeedEVs::SpeedEVs(Pokemon pokemon) {
-	unsigned const speed = initial_stat<StatNames::SPE>(pokemon);
-	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
-		get_nature(pokemon).name = nature;
-		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
-			get_stat(pokemon, StatNames::SPE).ev = EV(ev);
-			if (initial_stat<StatNames::SPE>(pokemon) >= speed) {
-				container.insert(Container::value_type(nature, EV(ev)));
-				break;
-			}
-			if (ev == bounded_integer::make_bounded<EV::max>()) {
-				break;
-			}
-		}
-	}
-}
+// I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
+enum class StatNames {
+	HP = -1,
+	ATK,
+	DEF,
+	SPA,
+	SPD,
+	SPE,
+	NORMAL_END,
+	ACC = NORMAL_END,
+	EVA,
+	END
+};
 
 }	// namespace technicalmachine
+#endif	// STAT__STAT_NAMES_HPP_

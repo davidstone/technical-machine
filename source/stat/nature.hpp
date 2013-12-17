@@ -21,7 +21,7 @@
 
 #include <cstdint>
 
-#include "stat.hpp"
+#include "stat_names.hpp"
 
 namespace technicalmachine {
 class Rational;

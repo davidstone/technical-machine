@@ -1,5 +1,5 @@
 // Evaluate header
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 #include <array>
 #include <cstdint>
 
-#include "../stat/stat.hpp"
+#include "../stat/stat_names.hpp"
 
 namespace technicalmachine {
 
