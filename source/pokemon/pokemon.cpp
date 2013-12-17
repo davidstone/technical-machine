@@ -228,7 +228,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		if (stat_name != "HP") {
 			output += " / ";
 		}
-		output += std::to_string(stat.ev.value()) + " " + stat_name;
+		output += bounded_integer::to_string(stat.ev.value()) + " " + stat_name;
 	};
 	static std::pair<Stat::Stats, std::string> const stats [] = {
 		{ Stat::HP, "HP" },

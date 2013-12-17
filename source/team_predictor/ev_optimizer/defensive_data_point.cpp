@@ -57,11 +57,11 @@ DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
 }
 
 std::string DataPoint::to_string() const {
-	return ::technicalmachine::to_string(nature.name) + " " + std::to_string(hp) + " HP / " + std::to_string(defense) + " Def / " + std::to_string(special_defense) + " SpD";
+	return ::technicalmachine::to_string(nature.name) + " " + bounded_integer::to_string(hp.value()) + " HP / " + bounded_integer::to_string(defense.value()) + " Def / " + bounded_integer::to_string(special_defense.value()) + " SpD";
 }
 
-unsigned DataPoint::sum() const {
-	return hp + defense + special_defense;
+bounded_integer::native_integer<0, EV::max * 3> DataPoint::sum() const {
+	return hp.value() + defense.value() + special_defense.value();
 }
 
 bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon) {
@@ -82,9 +82,9 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemo
 
 void DataPoint::update_pokemon(Pokemon & pokemon) const {
 	::technicalmachine::get_nature(pokemon) = nature;
-	get_stat(pokemon, Stat::HP).ev.set_value(hp);
-	get_stat(pokemon, Stat::DEF).ev.set_value(defense);
-	get_stat(pokemon, Stat::SPD).ev.set_value(special_defense);
+	get_stat(pokemon, Stat::HP).ev = hp;
+	get_stat(pokemon, Stat::DEF).ev = defense;
+	get_stat(pokemon, Stat::SPD).ev = special_defense;
 }
 
 class InvalidNatureCombination : public std::logic_error {

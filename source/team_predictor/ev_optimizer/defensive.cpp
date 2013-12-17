@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,10 +35,12 @@
 namespace technicalmachine {
 namespace {
 
+using namespace bounded_integer::literal;
+
 typedef std::vector<SingleClassificationEVs> Single;
 typedef std::vector<DataPoint> Estimates;
 typedef std::map<Nature::Natures, Estimates> AllPossible;
-AllPossible combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon);
+AllPossible combine_results(Single const & physical, Single const & special, EV::total_type max_evs, Pokemon const & pokemon);
 
 DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);
 std::set<Nature::Natures> used_natures(DefensiveEVs::BestPerNature const & container);
@@ -49,7 +51,7 @@ void minimum_evs_per_nature(Estimates & original);
 DefensiveEVs::BestPerNature most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon);
 DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon);
 
-unsigned defensive_evs_available(Pokemon const & pokemon);
+EV::total_type defensive_evs_available(Pokemon const & pokemon);
 
 typedef std::vector<std::vector<Nature::Natures>> Divided;
 Divided divide_natures(DefensiveEVs::BestPerNature const & container);
@@ -61,7 +63,7 @@ bool has_same_effect_on_defenses(Nature const & nature, Nature const & reference
 DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 	Single const physical = equal_defensiveness<true>(pokemon);
 	Single const special = equal_defensiveness<false>(pokemon);
-	unsigned const max_evs = defensive_evs_available(pokemon);
+	auto const max_evs = defensive_evs_available(pokemon);
 	container = best_possible_per_nature(combine_results(physical, special, max_evs, pokemon), pokemon);
 	for (auto const & value : divide_natures(container)) {
 		remove_inefficient_natures(value);
@@ -137,7 +139,7 @@ bool penalizes_same(Nature const & nature, Nature const & reference_nature) {
 			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
 }
 
-AllPossible combine_results(Single const & physical, Single const & special, unsigned max_evs, Pokemon const & pokemon) {
+AllPossible combine_results(Single const & physical, Single const & special, EV::total_type const max_evs, Pokemon const & pokemon) {
 	AllPossible all;
 	for (auto const & p : physical) {
 		for (auto const & s : special) {
@@ -187,13 +189,12 @@ DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Est
 	return *std::max_element(std::begin(original), std::end(original), greatest_product);
 }
 
-unsigned defensive_evs_available(Pokemon const & pokemon) {
-	constexpr unsigned max_total_evs = 510;
-	auto used_evs = 0u;
+EV::total_type defensive_evs_available(Pokemon const & pokemon) {
+	EV::total_type used_evs = 0_bi;
 	for (auto const stat : { Stat::ATK, Stat::SPA, Stat::SPE }) {
 		used_evs += get_stat(pokemon, stat).ev.value();
 	}
-	return max_total_evs - used_evs;
+	return bounded_integer::make_bounded<EV::max_total>() - used_evs;
 }
 
 Divided divide_natures(DefensiveEVs::BestPerNature const & container) {

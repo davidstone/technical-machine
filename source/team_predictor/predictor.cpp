@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -109,14 +109,14 @@ public:
 	PokemonInputValues(PokemonInputs const & inputs):
 		species(inputs.species()),
 		nature(inputs.nature()),
-		stats({{
+		evs{
 			inputs.hp(),
 			inputs.atk(),
 			inputs.def(),
 			inputs.spa(),
 			inputs.spd(),
 			inputs.spe()
-		}}),
+		},
 		moves(inputs.moves())
 		{
 	}
@@ -124,7 +124,7 @@ public:
 		team.add_pokemon(species, Level(100_bi), Gender{}, item, ability, nature);
 		Pokemon & pokemon = team.replacement();
 		for (auto const stat : regular_stats()) {
-			get_stat(pokemon, stat).ev.set_value(stats[static_cast<size_t>(stat + 1)]);
+			get_stat(pokemon, stat).ev = EV(evs[static_cast<size_t>(stat + 1)]);
 		}
 		calculate_initial_hp(pokemon);
 		for (auto const move : moves) {
@@ -136,7 +136,7 @@ private:
 	Item item;
 	Ability ability;
 	Nature nature;
-	std::array<unsigned, 6> stats;
+	std::array<EV, 6> evs;
 	std::vector<Moves> moves;
 };
 

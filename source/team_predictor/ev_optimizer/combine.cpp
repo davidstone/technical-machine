@@ -1,5 +1,5 @@
 // Combine all optimized EVs and correct the Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,8 @@
 #include <cassert>
 #include <map>
 
+#include <bounded_integer/bounded_integer.hpp>
+
 #include "defensive.hpp"
 #include "offensive.hpp"
 #include "speed.hpp"
@@ -31,7 +33,7 @@
 namespace technicalmachine {
 
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s, Pokemon & pokemon) {
-	typedef std::map<Nature::Natures, unsigned> Sums;
+	typedef std::map<Nature::Natures, EV::total_type> Sums;
 	Sums sums;
 	for (auto const & speed : s.container) {
 		auto const offensive = o.container.find(speed.first);
@@ -42,27 +44,45 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 		if (defensive == d.container.end()) {
 			continue;
 		}
-		unsigned const sum = speed.second + offensive->second.sum() + defensive->second.sum();
-		if (sum > 510) {
+		auto const sum = speed.second.value() + offensive->second.sum() + defensive->second.sum();
+		static_assert(std::numeric_limits<decltype(sum)>::min() == 0_bi, "Minimum EV sum is not 0.");
+		if (sum > bounded_integer::make_bounded<EV::max_total>()) {
 			continue;
 		}
-		sums.insert(std::make_pair(speed.first, sum));
+		sums.emplace(speed.first, EV::total_type(sum, bounded_integer::non_check));
 	}
+	#if 0
+	if (sums.empty()) {
+		std::cerr << to_string(pokemon) << '\n';
+		std::cerr << "Speed:\n";
+		for (auto const & value : s.container) {
+			std::cerr << '\t' << to_string(value.first) << " : " << value.second.value() << '\n';
+		}
+		std::cerr << "Offensive:\n";
+		for (auto const & value : o.container) {
+			std::cerr << '\t' << to_string(value.first) << " : " << value.second.attack.value() << ", " << value.second.attack.value() << '\n';
+		}
+		std::cerr << "Defensive:\n";
+		for (auto const & value : d.container) {
+			std::cerr << '\t' << to_string(value.first) << " : " << value.second.hp.value() << ", " << value.second.defense.value() << ", " << value.second.special_defense.value() << '\n';
+		}
+	}
+	#endif
+	assert(!sums.empty());
 	static constexpr auto lesser_mapped_type = [](Sums::value_type const & lhs, Sums::value_type const & rhs) {
 		return lhs.second < rhs.second;
 	};
-	assert(!sums.empty());
 	auto const it = std::min_element(sums.begin(), sums.end(), lesser_mapped_type);
 	auto const & defensive = d.container.at(it->first);
 	auto const & offensive = o.container.at(it->first);
 	auto const & speed = s.container.at(it->first);
-	get_stat(pokemon, Stat::HP).ev.set_value(defensive.hp);
+	get_stat(pokemon, Stat::HP).ev = defensive.hp;
 	calculate_initial_hp(pokemon);
-	get_stat(pokemon, Stat::ATK).ev.set_value(offensive.attack);
-	get_stat(pokemon, Stat::DEF).ev.set_value(defensive.defense);
-	get_stat(pokemon, Stat::SPA).ev.set_value(offensive.special_attack);
-	get_stat(pokemon, Stat::SPD).ev.set_value(defensive.special_defense);
-	get_stat(pokemon, Stat::SPE).ev.set_value(speed);
+	get_stat(pokemon, Stat::ATK).ev = offensive.attack;
+	get_stat(pokemon, Stat::DEF).ev = defensive.defense;
+	get_stat(pokemon, Stat::SPA).ev = offensive.special_attack;
+	get_stat(pokemon, Stat::SPD).ev = defensive.special_defense;
+	get_stat(pokemon, Stat::SPE).ev = speed;
 	get_nature(pokemon).name = it->first;
 }
 

@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,8 @@
 #include <string>
 #include <vector>
 
+#include "../../stat/ev.hpp"
+
 namespace technicalmachine {
 class Nature;
 class Pokemon;
@@ -29,14 +31,13 @@ class Pokemon;
 class SingleClassificationEVs {
 public:
 	enum NatureBoost { Penalty, Neutral, Boost };
-	SingleClassificationEVs(unsigned hp_ev, unsigned defensive_ev, Nature nature, bool physical);
+	SingleClassificationEVs(EV hp, EV defensive, Nature nature, bool physical);
 	std::string to_string() const;
-	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, unsigned max_evs);
+	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type max_evs);
 private:
 	friend class DataPoint;
-	std::string stat_name() const;
-	unsigned hp;
-	unsigned defensive;
+	EV hp;
+	EV defensive;
 	NatureBoost nature_boost;
 	bool physical;
 };

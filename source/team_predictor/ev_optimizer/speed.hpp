@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,6 +21,7 @@
 
 #include <map>
 
+#include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
 
 namespace technicalmachine {
@@ -33,7 +34,7 @@ public:
 	explicit SpeedEVs(Pokemon pokemon);
 private:
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-	typedef std::map<Nature::Natures, unsigned> Container;
+	using Container = std::map<Nature::Natures, EV>;
 	Container container;
 };
 

@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,24 +22,28 @@
 #include <map>
 #include <vector>
 
+#include <bounded_integer/bounded_integer.hpp>
+
+#include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
 
 namespace technicalmachine {
 class Pokemon;
 class DefensiveEVs;
 class SpeedEVs;
+using namespace bounded_integer::literal;
 
 class OffensiveStats {
 public:
 	OffensiveStats():
-		attack(0),
-		special_attack(0) {
+		attack(0_bi),
+		special_attack(0_bi) {
 	}
-	unsigned sum() const {
-		return attack + special_attack;
+	bounded_integer::native_integer<0, EV::max * 2> sum() const {
+		return attack.value() + special_attack.value();
 	}
-	unsigned attack;
-	unsigned special_attack;
+	EV attack;
+	EV special_attack;
 };
 
 class OffensiveEVs {

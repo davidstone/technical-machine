@@ -71,7 +71,7 @@ Team max_damage_physical_defender () {
 	defender.add_pokemon(Species::Combee, level, gender);
 	auto & d = defender.pokemon();
 	get_stat(d, Stat::DEF).iv = 0;
-	get_stat(d, Stat::DEF).ev.set_value(0);
+	get_stat(d, Stat::DEF).ev = EV(0_bi);
 	for (unsigned n = 0; n != 3; ++n) {
 		d.stat_boost(Stat::DEF, -2_bi);
 	}
@@ -87,7 +87,7 @@ Team max_damage_special_defender () {
 	get_ability(d) = Ability::Dry_Skin;
 
 	get_stat(d, Stat::SPD).iv = 0;
-	get_stat(d, Stat::SPD).ev.set_value(0);
+	get_stat(d, Stat::SPD).ev = EV(0_bi);
 	for (unsigned n = 0; n != 3; ++n) {
 		d.stat_boost(Stat::SPD, -2_bi);
 	}
@@ -140,7 +140,7 @@ void physical_damage_test () {
 	Team attacker = max_damage_physical_attacker ();
 	
 	Pokemon & a = attacker.pokemon();
-	get_stat(a, Stat::DEF).ev.set_value(252);
+	get_stat(a, Stat::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(a).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
@@ -170,7 +170,7 @@ void special_damage_test () {
 	a.move.add(Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
-	get_stat(a, Stat::SPA).ev.set_value(252);
+	get_stat(a, Stat::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(a).name = Nature::MODEST;
 	attacker.pokemon().stat_boost(Stat::SPA, 6_bi);
 	calculate_attacking_stat(attacker.pokemon(), weather);

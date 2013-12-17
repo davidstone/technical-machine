@@ -26,6 +26,7 @@
 #include "species_input.hpp"
 #include "../../move/moves_forward.hpp"
 #include "../../pokemon/species_forward.hpp"
+#include "../../stat/ev.hpp"
 
 namespace technicalmachine {
 
@@ -35,12 +36,12 @@ public:
 	Species species() const;
 	bool is_valid() const;
 	Nature::Natures nature() const;
-	unsigned hp() const;
-	unsigned atk() const;
-	unsigned def() const;
-	unsigned spa() const;
-	unsigned spd() const;
-	unsigned spe() const;
+	EV hp() const;
+	EV atk() const;
+	EV def() const;
+	EV spa() const;
+	EV spd() const;
+	EV spe() const;
 	std::vector<Moves> moves() const;
 private:
 	SpeciesInput m_species;

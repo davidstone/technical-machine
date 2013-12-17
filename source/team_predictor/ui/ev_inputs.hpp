@@ -1,5 +1,5 @@
 // Class to abstract UI of getting EVs for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,13 +20,14 @@
 #define TEAM_PREDICTOR__UI__EV_INPUTS_HPP_
 
 #include <FL/Fl_Int_Input.H>
+#include "../../stat/ev.hpp"
 
 namespace technicalmachine {
 
 class EVInput {
 public:
 	explicit EVInput(int button_number, int ev, char const * label = "");
-	unsigned value() const;
+	EV value() const;
 private:
 	Fl_Int_Input input;
 };

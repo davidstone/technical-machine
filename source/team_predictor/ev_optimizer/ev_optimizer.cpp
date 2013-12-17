@@ -34,14 +34,14 @@
 
 namespace technicalmachine {
 namespace {
+using namespace bounded_integer::literal;
 
-constexpr unsigned max_evs = 508;
-
-unsigned ev_sum(Pokemon const & pokemon) {
-	auto const ev_sum = [&](unsigned const sum, Stat::Stats const stat) {
+using sum_type = bounded_integer::checked_integer<0, EV::max_total>;
+sum_type ev_sum(Pokemon const & pokemon) {
+	auto const ev_sum = [&](sum_type const sum, Stat::Stats const stat) {
 		return sum + get_stat(pokemon, stat).ev.value();
 	};
-	return std::accumulate(std::begin(regular_stats()), std::end(regular_stats()), 0u, ev_sum);
+	return std::accumulate(std::begin(regular_stats()), std::end(regular_stats()), sum_type(0_bi), ev_sum);
 }
 
 void add_non_full_stats(std::vector<Stat *> & stats, Stat & stat);
@@ -50,7 +50,7 @@ void add_non_full_stats(std::vector<Stat *> & stats, Stat & stat);
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	minimize_evs(pokemon);
-	while (ev_sum(pokemon) < max_evs) {
+	while (ev_sum(pokemon) < EV::max_total) {
 		pad_random_evs(pokemon, random_engine);
 		minimize_evs(pokemon);
 	}
@@ -68,20 +68,25 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// more EV point (4 EVs) to the current stat. I use a random_shuffle to
 	// create a uniform distribution of available stats non-maxed EVs. I repeat
 	// the process in case a stat is overfilled.
-	while (ev_sum(pokemon) < max_evs) {
+	while (ev_sum(pokemon) < EV::max_total) {
 		std::vector<Stat *> stats;
 		for (auto const stat : regular_stats()) {
 			add_non_full_stats(stats, get_stat(pokemon, stat));
 		}
-		unsigned const extra_evs = max_evs - ev_sum(pokemon);
-		std::vector<uint8_t> shuffled(extra_evs + stats.size() - 1, 1);
-		std::fill(std::begin(shuffled), std::begin(shuffled) + static_cast<int>(stats.size()) - 1, 0);
+		auto const extra_evs = bounded_integer::make_bounded<EV::max_total>() - ev_sum(pokemon);
+		static constexpr auto number_of_stats = 6;
+		static constexpr auto maximum_full_stats = 2;
+		bounded_integer::checked_integer<number_of_stats - maximum_full_stats, number_of_stats> size(stats.size());
+		std::vector<bounded_integer::checked_integer<0, 1>> shuffled(extra_evs.value() + stats.size() - 1, 1_bi);
+		std::fill(std::begin(shuffled), std::begin(shuffled) + static_cast<int>(stats.size()) - 1, 0_bi);
 		std::shuffle(std::begin(shuffled), std::end(shuffled), random_engine);
 		auto it = shuffled.begin();
 		for (auto const & stat : stats) {
 			auto const prior = it;
-			it = std::find(prior, std::end(shuffled), 0);
-			stat->ev.add(static_cast<unsigned>(std::distance(prior, it)));
+			it = std::find(prior, std::end(shuffled), 0_bi);
+			// I use clamped here because I expect there to be some extra EVs
+			// assigned to some stats, which is why I put this in a loop.
+			stat->ev.add(static_cast<bounded_integer::clamped_integer<0, EV::max>>(std::distance(prior, it)));
 			++it;
 		}
 	}

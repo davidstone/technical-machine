@@ -46,22 +46,22 @@ Nature::Natures PokemonInputs::nature() const {
 	return m_nature.value();
 }
 
-unsigned PokemonInputs::hp() const {
+EV PokemonInputs::hp() const {
 	return m_evs.hp.value();
 }
-unsigned PokemonInputs::atk() const {
+EV PokemonInputs::atk() const {
 	return m_evs.atk.value();
 }
-unsigned PokemonInputs::def() const {
+EV PokemonInputs::def() const {
 	return m_evs.def.value();
 }
-unsigned PokemonInputs::spa() const {
+EV PokemonInputs::spa() const {
 	return m_evs.spa.value();
 }
-unsigned PokemonInputs::spd() const {
+EV PokemonInputs::spd() const {
 	return m_evs.spd.value();
 }
-unsigned PokemonInputs::spe() const {
+EV PokemonInputs::spe() const {
 	return m_evs.spe.value();
 }
 

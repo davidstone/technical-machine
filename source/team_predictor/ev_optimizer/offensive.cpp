@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,37 +20,38 @@
 
 #include <vector>
 
-#include <boost/optional.hpp>
+#include <bounded_integer/optional.hpp>
 
 #include "../../pokemon/pokemon.hpp"
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
-
 namespace {
+
+using namespace bounded_integer::literal;
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 
 template<Stat::Stats stat>
-boost::optional<unsigned> reset_stat(Pokemon & pokemon, EV & ev, unsigned initial) {
-	constexpr unsigned max_ev = 252;
-	unsigned ev_estimate = 0;
-	ev.set_value(ev_estimate);
+bounded_integer::optional<EV::value_type> reset_stat(Pokemon const & pokemon, EV & ev, unsigned const initial) {
+	EV::value_type ev_estimate = 0_bi;
+	ev = EV(ev_estimate);
 	while (initial_stat<stat>(pokemon) < initial) {
-		ev_estimate += 4;
-		if (ev_estimate > max_ev)
-			break;
-		ev.set_value(ev_estimate);
+		ev_estimate += 4_bi;
+		ev = EV(ev_estimate);
+		if (ev_estimate == bounded_integer::make_bounded<EV::max>()) {
+			return bounded_integer::none;
+		}
 	}
-	return (ev_estimate <= max_ev) ? boost::optional<unsigned>(ev_estimate) : boost::optional<unsigned>();
+	return bounded_integer::optional<EV::value_type>(ev_estimate);
 }
 
-}	// unnamed namespace
+}	// namespace
 
 OffensiveEVs::OffensiveEVs(Pokemon pokemon) {
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
-		container.insert(std::make_pair(nature, OffensiveStats()));
+		container.insert(Container::value_type(nature, OffensiveStats{}));
 	}
 	optimize(pokemon);
 }
@@ -64,7 +65,7 @@ namespace {
 
 template<typename Container, typename Condition>
 void remove_individual_unused(Container & container, Condition const & condition) {
-	for (typename Container::iterator it = std::begin(container); it != std::end(container);) {
+	for (auto it = std::begin(container); it != std::end(container);) {
 		if (condition(it)) {
 			it = container.erase(it);
 		}
@@ -74,7 +75,7 @@ void remove_individual_unused(Container & container, Condition const & condition
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 
 void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 	// If I don't have a physical move, prefer to lower that because it lowers
@@ -84,18 +85,24 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 	// defensive stats.
 	bool const is_physical = has_physical_move(pokemon);
 	if (!is_physical) {
-		remove_individual_unused(container, [](Container::iterator it) {
+		remove_individual_unused(container, [](Container::const_iterator it) {
 			return !Nature(it->first).lowers_stat<Stat::ATK>();
 		});
-		get_stat(pokemon, Stat::ATK).ev.set_value(0);
+		get_stat(pokemon, Stat::ATK).ev = EV(0_bi);
 	}
 	bool const is_special = has_special_move(pokemon);
 	if (!is_special) {
-		remove_individual_unused(container, [is_physical](Container::iterator it) {
-			return (is_physical and !Nature(it->first).lowers_stat<Stat::SPA>())
-					or Nature(it->first).boosts_stat<Stat::SPA>();
-		});
-		get_stat(pokemon, Stat::SPA).ev.set_value(0);
+		if (is_physical) {
+			remove_individual_unused(container, [](Container::const_iterator it) {
+				return !Nature(it->first).lowers_stat<Stat::SPA>();
+			});
+		}
+		else {
+			remove_individual_unused(container, [](Container::const_iterator it) {
+				return Nature(it->first).boosts_stat<Stat::SPA>();
+			});
+		}
+		get_stat(pokemon, Stat::SPA).ev = EV(0_bi);
 	}
 	if (!is_physical and !is_special) {
 		get_nature(pokemon).name = Nature::CALM;
@@ -114,15 +121,15 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
 		get_nature(pokemon) = it->first;
-		boost::optional<unsigned> const atk = reset_stat<Stat::ATK>(pokemon, get_stat(pokemon, Stat::ATK).ev, initial_atk);
-		boost::optional<unsigned> const spa = reset_stat<Stat::SPA>(pokemon, get_stat(pokemon, Stat::SPA).ev, initial_spa);
+		auto const atk = reset_stat<Stat::ATK>(pokemon, get_stat(pokemon, Stat::ATK).ev, initial_atk);
+		auto const spa = reset_stat<Stat::SPA>(pokemon, get_stat(pokemon, Stat::SPA).ev, initial_spa);
 		if (atk and spa) {
-			stats.attack = *atk;
-			stats.special_attack = *spa;
+			stats.attack = EV(*atk);
+			stats.special_attack = EV(*spa);
 			++it;
 		}
 		else {
-			container.erase(it++);
+			it = container.erase(it);
 		}
 	}
 }

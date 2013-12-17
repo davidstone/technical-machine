@@ -46,7 +46,7 @@ void attack_tests () {
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	get_stat(pokemon, Stat::DEF).ev.set_value(252);
+	get_stat(pokemon, Stat::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
@@ -71,7 +71,7 @@ void special_attack_tests () {
 	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	get_stat(pokemon, Stat::SPA).ev.set_value(252);
+	get_stat(pokemon, Stat::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::MODEST;
 	attacker.pokemon().stat_boost(Stat::SPA, 6_bi);
 
@@ -95,7 +95,7 @@ void defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	get_stat(pokemon, Stat::DEF).ev.set_value(252);
+	get_stat(pokemon, Stat::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::BOLD;
 
 	defender.pokemon().stat_boost(Stat::DEF, 6_bi);
@@ -121,7 +121,7 @@ void special_defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	get_stat(pokemon, Stat::SPD).ev.set_value(252);
+	get_stat(pokemon, Stat::SPD).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::CALM;
 
 	defender.pokemon().stat_boost(Stat::SPD, 6_bi);
@@ -144,7 +144,7 @@ void speed_tests () {
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::Deoxys_Speed, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	get_stat(pokemon, Stat::SPE).ev.set_value(252);
+	get_stat(pokemon, Stat::SPE).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::TIMID;
 
 	team.pokemon().stat_boost(Stat::SPE, 6_bi);

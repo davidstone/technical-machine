@@ -1,5 +1,5 @@
 // EVs
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,43 +17,24 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ev.hpp"
-#include <algorithm>
-#include "invalid_ev.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max_per_stat = 252;
-}	// unnamed namespace
 
-EV::EV(unsigned const evs) :
-	// The points give a single point increase at level 100. EVs have a minimum
-	// step of 4 EVs = 1 stat point
-	internal(evs / 4)
+EV::EV(value_type const evs) :
+	m_value(evs)
 	{
-	if (evs > max_per_stat)
-		throw InvalidEV(evs);
 }
 
-unsigned EV::value() const {
-	return internal * 4u;
-}
-
-void EV::set_value(unsigned const evs) {
-	if (evs > max_per_stat)
-		throw InvalidEV(evs);
-	internal = evs / 4u;
+auto EV::value() const -> bounded_integer::native_integer<0, max> {
+	return m_value;
 }
 
 bool EV::is_maxed() const {
-	return value() == max_per_stat;
+	return m_value == max;
 }
 
-void EV::add(unsigned const evs) {
-	internal = std::min(evs / 4 + internal, max_per_stat / 4);
-}
-
-unsigned EV::points() const {
-	return internal;
+void EV::add(value_type const evs) {
+	m_value += evs;
 }
 
 }	// namespace technicalmachine

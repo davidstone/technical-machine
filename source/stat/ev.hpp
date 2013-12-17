@@ -1,5 +1,5 @@
 // EVs
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,21 +19,23 @@
 #ifndef STAT__EV_HPP_
 #define STAT__EV_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 class EV {
 public:
-	explicit EV(unsigned evs);
-	unsigned value() const;
-	void set_value(unsigned evs);
+	static constexpr auto max = 252;
+	static constexpr auto max_total = 508;
+	using value_type = bounded_integer::checked_integer<0, max>;
+	using total_type = bounded_integer::checked_integer<0, max_total>;
+	explicit EV(value_type evs);
+	bounded_integer::native_integer<0, max> value() const;
 	bool is_maxed() const;
-	void add(unsigned evs);
-	// A point increases your stat by 1 at level 100. Smallest useful unit
-	unsigned points() const;
+	void add(value_type evs);
 private:
-	uint8_t internal;
+	bounded_integer::clamped_integer<0, max> m_value;
 };
 
 }	// namespace technicalmachine

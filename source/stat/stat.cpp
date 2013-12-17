@@ -44,8 +44,6 @@ namespace {
 
 Stat::base_type get_base_stat(Species name, Stat::Stats stat_name);
 
-unsigned initial_generic_stat(Stat const & stat, Level level);
-
 bool is_boosted_by_deepseascale(Species const species) {
 	return species == Species::Clamperl;
 }
@@ -214,29 +212,37 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 	get_stat(pokemon, stat).stat = std::max(attack, 1u);
 }
 
-}	// unnamed namespace
+}	// namespace
 
 Stat::Stat (Species name, Stats stat_name) :
 	max (65535),
 	base(get_base_stat(name, stat_name)),
 	iv(31_bi),
-	ev (0)
+	ev(0_bi)
 	{
 }
 
+namespace {
+
+auto initial_generic_stat(Stat const & stat, Level const level) {
+	return (2_bi * stat.base + stat.iv + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
+}
+
+}	// namespace
+
 void Stat::calculate_initial_hp(Level const level) {
-	max = (base > 1) ? (initial_generic_stat(*this, level) + static_cast<unsigned>(level()) + 5) : 1;
+	max = static_cast<stat_type>(bounded_integer::ternary_conditional((base > 1_bi), (initial_generic_stat(*this, level) + level() + 5_bi), 1_bi));
 	stat = max;
 }
 
 template<Stat::Stats stat>
 unsigned initial_stat(Pokemon const & pokemon) {
-	return initial_generic_stat(get_stat(pokemon, stat), get_level(pokemon)) * get_nature(pokemon).boost<stat>();
+	return static_cast<unsigned>(initial_generic_stat(get_stat(pokemon, stat), get_level(pokemon))) * get_nature(pokemon).boost<stat>();
 }
 template<>
 unsigned initial_stat<Stat::HP>(Pokemon const & pokemon) {
 	Stat const & hp = get_stat(pokemon, Stat::HP);
-	return (hp.base > 1) ? (initial_generic_stat(hp, get_level(pokemon)) + static_cast<unsigned>(get_level(pokemon)()) + 5) : 1;
+	return static_cast<unsigned>(bounded_integer::ternary_conditional((hp.base > 1_bi), (initial_generic_stat(hp, get_level(pokemon)) + get_level(pokemon)() + 5_bi), 1_bi));
 }
 template unsigned initial_stat<Stat::ATK>(Pokemon const & pokemon);
 template unsigned initial_stat<Stat::SPA>(Pokemon const & pokemon);
@@ -366,10 +372,6 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 }
 
 namespace {
-
-unsigned initial_generic_stat(Stat const & stat, Level const level) {
-	return (static_cast<unsigned>(2_bi * stat.base + stat.iv) + stat.ev.points()) * static_cast<unsigned>(level()) / 100 + 5;
-}
 
 Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
 	return (is_type(defender, Type::Rock) and weather.sand()) ? Rational(3, 2) : Rational(1);

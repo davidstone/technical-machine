@@ -1,5 +1,5 @@
 // Class to abstract UI of getting EVs for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,9 +28,9 @@ EVInput::EVInput(int const button_number, int const ev, char const * label):
 	{
 }
 
-unsigned EVInput::value() const {
+EV EVInput::value() const {
 	std::string const str = input.value();
-	return !str.empty() ? boost::lexical_cast<unsigned>(input.value()) : 0;
+	return EV(!str.empty() ? boost::lexical_cast<EV::value_type>(str) : 0_bi);
 }
 
 EVInputs::EVInputs(int const button_number):

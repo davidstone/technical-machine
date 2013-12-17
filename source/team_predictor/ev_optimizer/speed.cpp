@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,15 +22,19 @@
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 SpeedEVs::SpeedEVs(Pokemon pokemon) {
 	unsigned const speed = initial_stat<Stat::SPE>(pokemon);
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
 		get_nature(pokemon).name = nature;
-		for (unsigned ev = 0; ev <= 252; ++ev) {
-			get_stat(pokemon, Stat::SPE).ev.set_value(ev);
+		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
+			get_stat(pokemon, Stat::SPE).ev = EV(ev);
 			if (initial_stat<Stat::SPE>(pokemon) >= speed) {
-				container.insert(std::make_pair(nature, ev));
+				container.insert(Container::value_type(nature, EV(ev)));
+				break;
+			}
+			if (ev == bounded_integer::make_bounded<EV::max>()) {
 				break;
 			}
 		}
