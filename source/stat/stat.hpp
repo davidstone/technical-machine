@@ -23,12 +23,14 @@
 #include <initializer_list>
 #include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
+#include "nature.hpp"
 #include "stat_names.hpp"
+#include "../pokemon/level.hpp"
 #include "../pokemon/species_forward.hpp"
+#include "../rational.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
-class Level;
 class Pokemon;
 class Team;
 class Weather;
@@ -36,7 +38,7 @@ class Weather;
 class Stat {
 public:
 	typedef uint16_t stat_type;
-	stat_type max;		// Max HP only
+	bounded_integer::checked_integer<1, 714> max;		// Max HP only
 	stat_type stat;		// Current HP or last calculated value for other stats
 	using base_type = bounded_integer::checked_integer<1, 255>;
 	base_type base;
@@ -51,13 +53,22 @@ inline constexpr std::initializer_list<StatNames> regular_stats() {
 	return { StatNames::HP, StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE };
 }
 
-template<StatNames>
-unsigned initial_stat(Pokemon const & pokemon);
-extern template unsigned initial_stat<StatNames::ATK>(Pokemon const & pokemon);
-extern template unsigned initial_stat<StatNames::SPA>(Pokemon const & pokemon);
-extern template unsigned initial_stat<StatNames::DEF>(Pokemon const & pokemon);
-extern template unsigned initial_stat<StatNames::SPD>(Pokemon const & pokemon);
-extern template unsigned initial_stat<StatNames::SPE>(Pokemon const & pokemon);
+namespace detail {
+
+inline auto initial_generic_stat(Stat const & stat, Level const level) {
+	return (2_bi * stat.base + stat.iv + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
+}
+
+}	// namespace detail
+
+template<StatNames stat_name>
+unsigned initial_stat(Stat const & stat, Level const & level, Nature const & nature) {
+	return static_cast<unsigned>(detail::initial_generic_stat(stat, level)) * nature.boost<stat_name>();
+}
+
+inline auto initial_hp(Stat const & hp, Level const & level) {
+	return bounded_integer::ternary_conditional((hp.base > 1_bi), (detail::initial_generic_stat(hp, level) + level() + 5_bi), 1_bi);
+}
 
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);

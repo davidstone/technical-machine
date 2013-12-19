@@ -96,7 +96,7 @@ uint8_t Pokemon::index_of_first_switch () const {
 
 Rational hp_ratio(Pokemon const & pokemon) {
 	auto const & hp = get_stat(pokemon, StatNames::HP);
-	return Rational(hp.stat, hp.max);
+	return Rational(hp.stat, static_cast<unsigned>(hp.max));
 }
 
 std::string Pokemon::get_nickname () const {
@@ -170,13 +170,13 @@ Pokemon::hash_type Pokemon::hash() const {
 	return static_cast<hash_type>(m_species) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
-			((hp.stat - 1u) + hp.max *	// - 1 because you can't have 0 HP
+			((hp.stat - 1u) + static_cast<hash_type>(hp.max) *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * get_stat(*this, StatNames::HP).max * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_stat(*this, StatNames::HP).max) * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {

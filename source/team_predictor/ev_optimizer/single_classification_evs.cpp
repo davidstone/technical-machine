@@ -114,7 +114,12 @@ Nature::Natures nature_boost_convert(SingleClassificationEVs::NatureBoost nature
 
 template<bool physical>
 std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon) {
-	auto const initial_product = get_stat(pokemon, StatNames::HP).max * initial_stat<from_physical(physical)>(pokemon);
+	static constexpr StatNames stat_name = from_physical(physical);
+	Stat & stat = get_stat(pokemon, stat_name);
+	Level const level = get_level(pokemon);
+	Nature & current_nature = get_nature(pokemon);
+	Stat & hp = get_stat(pokemon, StatNames::HP);
+	auto const initial_product = hp.max * initial_stat<stat_name>(stat, level, current_nature);
 	std::vector<SingleClassificationEVs> result;
 	static std::initializer_list<Nature> const natures = {
 		nature_boost_convert(SingleClassificationEVs::Boost, physical),
@@ -122,17 +127,20 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon pokemon) {
 		nature_boost_convert(SingleClassificationEVs::Penalty, physical)
 	};
 	for (Nature const nature : natures) {
-		get_nature(pokemon) = nature;
+		current_nature = nature;
 		for (EV::value_type hp_ev = 0_bi; ; hp_ev += 4_bi) {
-			get_stat(pokemon, StatNames::HP).ev = EV(EV::value_type(hp_ev));
-			auto const hp = initial_stat<StatNames::HP>(pokemon);
+			hp.ev = EV(EV::value_type(hp_ev));
+			auto const hp_value = initial_hp(hp, level);
 			EV::value_type defensive_ev = 0_bi;
 			defensive_stat<physical>(pokemon).ev = EV(defensive_ev);
-			while (initial_stat<from_physical(physical)>(pokemon) * hp < initial_product and defensive_ev <= EV::max - 4) {
+			while (initial_stat<stat_name>(stat, level, current_nature) * hp_value < initial_product) {
 				defensive_ev += 4_bi;
 				defensive_stat<physical>(pokemon).ev = EV(defensive_ev);
+				if (defensive_ev == bounded_integer::make_bounded<EV::max>()) {
+					break;
+				}
 			}
-			if (initial_stat<from_physical(physical)>(pokemon) * hp >= initial_product) {
+			if (initial_stat<stat_name>(stat, level, current_nature) * hp_value >= initial_product) {
 				result.emplace_back(EV(hp_ev), EV(defensive_ev), nature, physical);
 			}
 			if (hp_ev == EV::max) {

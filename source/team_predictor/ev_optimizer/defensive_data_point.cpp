@@ -36,10 +36,12 @@ namespace {
 
 template<StatNames stat>
 unsigned product(Pokemon const & pokemon) {
-	return initial_stat<stat>(pokemon) * initial_stat<StatNames::HP>(pokemon);
+	auto const initial = initial_stat<stat>(get_stat(pokemon, stat), get_level(pokemon), get_nature(pokemon));
+	auto const hp = initial_hp(get_stat(pokemon, stat), get_level(pokemon));
+	return initial * static_cast<unsigned>(hp);
 }
 
-}	// unnamed namespace
+}	// namespace
 
 DataPoint::DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special):
 	hp(physical.hp),

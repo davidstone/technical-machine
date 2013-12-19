@@ -190,15 +190,15 @@ public:
 };
 
 template<StatNames stat>
-typename std::enable_if<StatTraits<stat>::is_physical, unsigned>::type
-calculate_initial_stat(ActivePokemon const & pokemon) {
+typename std::enable_if<StatTraits<stat>::is_physical, unsigned>::type calculate_initial_stat(ActivePokemon const & pokemon) {
 	constexpr auto other = StatTraits<stat>::other;
-	return !pokemon.power_trick_is_active() ? initial_stat<stat>(pokemon) : initial_stat<other>(pokemon);
+	return !pokemon.power_trick_is_active() ?
+		initial_stat<stat>(get_stat(pokemon, stat), get_level(pokemon), get_nature(pokemon)) :
+		initial_stat<other>(get_stat(pokemon, other), get_level(pokemon), get_nature(pokemon));
 }
 template<StatNames stat>
-typename std::enable_if<!StatTraits<stat>::is_physical, unsigned>::type
-calculate_initial_stat(ActivePokemon const & pokemon) {
-	return initial_stat<stat>(pokemon);
+typename std::enable_if<!StatTraits<stat>::is_physical, unsigned>::type calculate_initial_stat(ActivePokemon const & pokemon) {
+	return initial_stat<stat>(get_stat(pokemon, stat), get_level(pokemon), get_nature(pokemon));
 }
 
 template<StatNames stat>
@@ -215,40 +215,16 @@ void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & we
 }	// namespace
 
 Stat::Stat (Species name, StatNames stat_name) :
-	max (65535),
 	base(get_base_stat(name, stat_name)),
 	iv(31_bi),
 	ev(0_bi)
 	{
 }
 
-namespace {
-
-auto initial_generic_stat(Stat const & stat, Level const level) {
-	return (2_bi * stat.base + stat.iv + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
-}
-
-}	// namespace
-
 void Stat::calculate_initial_hp(Level const level) {
-	max = static_cast<stat_type>(bounded_integer::ternary_conditional((base > 1_bi), (initial_generic_stat(*this, level) + level() + 5_bi), 1_bi));
-	stat = max;
+	max = initial_hp(*this, level);
+	stat = static_cast<Stat::stat_type>(max);
 }
-
-template<StatNames stat>
-unsigned initial_stat(Pokemon const & pokemon) {
-	return static_cast<unsigned>(initial_generic_stat(get_stat(pokemon, stat), get_level(pokemon))) * get_nature(pokemon).boost<stat>();
-}
-template<>
-unsigned initial_stat<StatNames::HP>(Pokemon const & pokemon) {
-	Stat const & hp = get_stat(pokemon, StatNames::HP);
-	return static_cast<unsigned>(bounded_integer::ternary_conditional((hp.base > 1_bi), (initial_generic_stat(hp, get_level(pokemon)) + get_level(pokemon)() + 5_bi), 1_bi));
-}
-template unsigned initial_stat<StatNames::ATK>(Pokemon const & pokemon);
-template unsigned initial_stat<StatNames::SPA>(Pokemon const & pokemon);
-template unsigned initial_stat<StatNames::DEF>(Pokemon const & pokemon);
-template unsigned initial_stat<StatNames::SPD>(Pokemon const & pokemon);
-template unsigned initial_stat<StatNames::SPE>(Pokemon const & pokemon);
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather) {
 	if (is_physical(attacker.move()))
@@ -386,7 +362,13 @@ unsigned tailwind_speed_multiplier (Team const & team) {
 }
 
 Stat::base_type get_base_stat(Species name, StatNames stat) {
-	static constexpr auto base_stat = bounded_integer::make_array<6>(
+	// I do not use the make_array function because it has poor compile-time
+	// performance and memory use for this many arguments.
+	using array_type = bounded_integer::array<
+		bounded_integer::array<bounded_integer::native_integer<1, 255>, 6>,
+		667
+	>;
+	static constexpr array_type base_stat{
 	
 		// Generation 1
 		45_bi,	49_bi,	49_bi,	65_bi,	65_bi,	45_bi,		// Bulbasaur
@@ -1066,7 +1048,7 @@ Stat::base_type get_base_stat(Species name, StatNames stat) {
 		100_bi,	77_bi,	77_bi,	128_bi,	128_bi,	90_bi,		// Meloetta
 		// 100_bi,	128_bi,	90_bi,	77_bi,	77_bi,	128_bi,		// Meloetta (Pirouette form)
 		71_bi,	120_bi,	95_bi,	120_bi,	95_bi,	99_bi			// Genesect 
-	);
+	};
 	using value_type = decltype(base_stat)::value_type::value_type;
 	static_assert(std::numeric_limits<Stat::base_type>::min() == std::numeric_limits<value_type>::min(), "Incorrect base stat minimum.");
 	static_assert(std::numeric_limits<Stat::base_type>::max() == std::numeric_limits<value_type>::max(), "Incorrect base stat maximum.");

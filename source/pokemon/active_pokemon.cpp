@@ -742,9 +742,9 @@ void ActivePokemon::use_substitute() {
 	if (!can_use_substitute(*this))
 		return;
 	auto const & max_hp = get_stat(*this, StatNames::HP).max;
-	bool const created = active_substitute.create(max_hp);
+	bool const created = active_substitute.create(static_cast<unsigned>(max_hp));
 	if (created) {
-		indirect_damage(max_hp / 4);
+		indirect_damage(static_cast<unsigned>(max_hp) / 4);
 	}
 }
 

@@ -214,7 +214,7 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, unsig
 	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
 	assert(move_damage);
 	Rational const change(visible_damage, max_visible_hp_change(team));
-	auto const damage = get_stat(pokemon, StatNames::HP).max * change;
+	auto const damage = static_cast<unsigned>(get_stat(pokemon, StatNames::HP).max) * change;
 	updated_hp.direct_damage(team.is_me(), pokemon, damage);
 	move_damage = false;
 }
@@ -236,7 +236,7 @@ unsigned Battle::max_visible_hp_change(Team const & changer) const {
 	return max_visible_hp_change(changer.is_me(), changer.replacement());
 }
 unsigned Battle::max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const {
-	return my_pokemon ? get_stat(changer, StatNames::HP).max : max_damage_precision();
+	return my_pokemon ? static_cast<unsigned>(get_stat(changer, StatNames::HP).max) : max_damage_precision();
 }
 
 bool Battle::is_valid_hp_change(Party changer, unsigned remaining_hp, int received_change) const {
@@ -262,7 +262,7 @@ void Battle::correct_hp_and_report_errors (Team & team) {
 		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
 		if (tm_estimate == new_hp)
 			return;
-		auto const reported_hp = new_hp * get_stat(pokemon, StatNames::HP).max / max_visible_hp_change(team.is_me(), pokemon);
+		auto const reported_hp = new_hp * static_cast<unsigned>(get_stat(pokemon, StatNames::HP).max) / max_visible_hp_change(team.is_me(), pokemon);
 		unsigned const min_value = (tm_estimate == 0) ? 0 : (tm_estimate - 1);
 		unsigned const max_value = tm_estimate + 1;
 		assert(max_value > tm_estimate);

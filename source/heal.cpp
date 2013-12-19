@@ -35,13 +35,13 @@ void apply_healing(Pokemon & pokemon, unsigned const amount) {
 	auto & hp = get_stat(pokemon, StatNames::HP);
 	assert(hp.stat + amount >= amount);
 	hp.stat += amount;
-	hp.stat = std::min(hp.stat, hp.max);
+	hp.stat = std::min(hp.stat, static_cast<Stat::stat_type>(hp.max));
 }
 
 void heal(ActivePokemon & pokemon, Rational const & rational, bool positive) {
 	if (pokemon.is_fainted())
 		return;
-	unsigned const hp_healed = get_stat(pokemon, StatNames::HP).max * rational;
+	unsigned const hp_healed = static_cast<unsigned>(get_stat(pokemon, StatNames::HP).max) * rational;
 	if (positive) {
 		apply_healing(pokemon, std::max(hp_healed, 1u));
 	}

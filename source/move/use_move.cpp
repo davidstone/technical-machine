@@ -771,7 +771,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			if (variable.present_heals()) {
 				Stat & hp = get_stat(target, StatNames::HP);
 				hp.stat += 80;
-				hp.stat = std::min(hp.stat, hp.max);
+				hp.stat = std::min(hp.stat, static_cast<Stat::stat_type>(hp.max));
 			}
 			break;
 		case Moves::Psych_Up:
@@ -1009,7 +1009,7 @@ void confusing_stat_boost(ActivePokemon & target, StatNames const stat, bounded_
 void curse(ActivePokemon & user, ActivePokemon & target) {
 	if (is_type(user, Type::Ghost) and !get_ability(user).blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
-			user.indirect_damage(get_stat(user, StatNames::HP).max / 2);
+			user.indirect_damage(static_cast<unsigned>(get_stat(user, StatNames::HP).max / 2_bi));
 			target.curse();
 		}
 	}
@@ -1021,8 +1021,8 @@ void curse(ActivePokemon & user, ActivePokemon & target) {
 
 void equalize(Stat & hp1, Stat & hp2) {
 	Stat::stat_type const temp = (hp1.stat + hp2.stat) / 2;
-	hp1.stat = std::min(temp, hp1.max);
-	hp2.stat = std::min(temp, hp2.max);
+	hp1.stat = std::min(temp, static_cast<Stat::stat_type>(hp1.max));
+	hp2.stat = std::min(temp, static_cast<Stat::stat_type>(hp2.max));
 }
 
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
@@ -1037,13 +1037,13 @@ void phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 void rest(Pokemon & user) {
 	Stat & hp = get_stat(user, StatNames::HP);
 	if (hp.stat != hp.max) {
-		hp.stat = hp.max;
+		hp.stat = static_cast<Stat::stat_type>(hp.max);
 		get_status(user).rest();
 	}
 }
 
 void struggle(Pokemon & user) {
-	apply_damage(user, get_stat(user, StatNames::HP).max / 4);
+	apply_damage(user, static_cast<unsigned>(get_stat(user, StatNames::HP).max / 4_bi));
 }
 
 void swap_items(Pokemon & user, Pokemon & target) {

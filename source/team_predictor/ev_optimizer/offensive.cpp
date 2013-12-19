@@ -33,11 +33,12 @@ using namespace bounded_integer::literal;
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 
-template<StatNames stat>
-bounded_integer::optional<EV::value_type> reset_stat(Pokemon const & pokemon, EV & ev, unsigned const initial) {
+template<StatNames stat_name>
+bounded_integer::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nature const nature, unsigned const initial) {
 	EV::value_type ev_estimate = 0_bi;
+	EV & ev = stat.ev;
 	ev = EV(ev_estimate);
-	while (initial_stat<stat>(pokemon) < initial) {
+	while (initial_stat<stat_name>(stat, level, nature) < initial) {
 		ev_estimate += 4_bi;
 		ev = EV(ev_estimate);
 		if (ev_estimate == bounded_integer::make_bounded<EV::max>()) {
@@ -116,16 +117,20 @@ void OffensiveEVs::remove_unused(Pokemon & pokemon) {
 }
 
 void OffensiveEVs::equal_stats(Pokemon & pokemon) {
-	unsigned const initial_atk = initial_stat<StatNames::ATK>(pokemon);
-	unsigned const initial_spa = initial_stat<StatNames::SPA>(pokemon);
+	Stat & attack = get_stat(pokemon, StatNames::ATK);
+	Stat & special_attack = get_stat(pokemon, StatNames::SPA);
+	Level const level = get_level(pokemon);
+	Nature & nature = get_nature(pokemon);
+	unsigned const initial_atk = initial_stat<StatNames::ATK>(attack, level, nature);
+	unsigned const initial_spa = initial_stat<StatNames::SPA>(special_attack, level, nature);
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
-		get_nature(pokemon) = it->first;
-		auto const atk = reset_stat<StatNames::ATK>(pokemon, get_stat(pokemon, StatNames::ATK).ev, initial_atk);
-		auto const spa = reset_stat<StatNames::SPA>(pokemon, get_stat(pokemon, StatNames::SPA).ev, initial_spa);
-		if (atk and spa) {
-			stats.attack = EV(*atk);
-			stats.special_attack = EV(*spa);
+		nature = it->first;
+		auto const atk_ev = reset_stat<StatNames::ATK>(attack, level, nature, initial_atk);
+		auto const spa_ev = reset_stat<StatNames::SPA>(special_attack, level, nature, initial_spa);
+		if (atk_ev and spa_ev) {
+			stats.attack = EV(*atk_ev);
+			stats.special_attack = EV(*spa_ev);
 			++it;
 		}
 		else {

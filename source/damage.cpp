@@ -106,7 +106,7 @@ unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, 
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return get_stat(defender.pokemon(), StatNames::HP).max;
+			return static_cast<unsigned>(get_stat(defender.pokemon(), StatNames::HP).max);
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
 			return static_cast<unsigned>(get_level(attacker)());
