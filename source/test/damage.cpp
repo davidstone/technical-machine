@@ -70,7 +70,7 @@ Team max_damage_physical_defender () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
 	auto & d = defender.pokemon();
-	get_stat(d, StatNames::DEF).iv = 0;
+	get_stat(d, StatNames::DEF).iv = IV(0_bi);
 	get_stat(d, StatNames::DEF).ev = EV(0_bi);
 	for (unsigned n = 0; n != 3; ++n) {
 		d.stat_boost(StatNames::DEF, -2_bi);
@@ -86,7 +86,7 @@ Team max_damage_special_defender () {
 	auto & d = defender.pokemon();
 	get_ability(d) = Ability::Dry_Skin;
 
-	get_stat(d, StatNames::SPD).iv = 0;
+	get_stat(d, StatNames::SPD).iv = IV(0_bi);
 	get_stat(d, StatNames::SPD).ev = EV(0_bi);
 	for (unsigned n = 0; n != 3; ++n) {
 		d.stat_boost(StatNames::SPD, -2_bi);

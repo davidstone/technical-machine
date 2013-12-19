@@ -117,7 +117,7 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 	};
 	using intermediate_type = bounded_integer::checked_integer<0, 63>;
 	auto const sum = [&](intermediate_type value, modifier_type const & pair) {
-		return value + ((get_stat(pokemon, pair.first).iv % 2_bi) << pair.second);
+		return value + ((get_stat(pokemon, pair.first).iv.value() % 2_bi) << pair.second);
 	};
 	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), intermediate_type(0_bi), sum) * 15_bi / 63_bi;
 	constexpr static Type::Types lookup [] = {

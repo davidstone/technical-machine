@@ -52,9 +52,9 @@ void write_move (Move const & move, boost::property_tree::ptree & pt) {
 
 void write_stat (Stat const & stat, std::string const & str, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
-	s.put ("<xmlattr>.name", str);
-	s.put ("<xmlattr>.iv", stat.iv);
-	s.put ("<xmlattr>.ev", stat.ev.value());
+	s.put("<xmlattr>.name", str);
+	s.put("<xmlattr>.iv", stat.iv.value());
+	s.put("<xmlattr>.ev", stat.ev.value());
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {

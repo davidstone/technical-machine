@@ -23,6 +23,7 @@
 #include <initializer_list>
 #include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
+#include "iv.hpp"
 #include "nature.hpp"
 #include "stat_names.hpp"
 #include "../pokemon/level.hpp"
@@ -42,7 +43,7 @@ public:
 	stat_type stat;		// Current HP or last calculated value for other stats
 	using base_type = bounded_integer::checked_integer<1, 255>;
 	base_type base;
-	bounded_integer::checked_integer<0, 31> iv;
+	IV iv;
 	EV ev;
 
 	Stat (Species name, StatNames stat);
@@ -56,7 +57,7 @@ inline constexpr std::initializer_list<StatNames> regular_stats() {
 namespace detail {
 
 inline auto initial_generic_stat(Stat const & stat, Level const level) {
-	return (2_bi * stat.base + stat.iv + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
+	return (2_bi * stat.base + stat.iv.value() + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
 }
 
 }	// namespace detail

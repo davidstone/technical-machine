@@ -62,7 +62,7 @@ static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	std::string const name = pt.get <std::string> ("<xmlattr>.name");
 	Stat & stat = lookup_stat (pokemon, name);
-	stat.iv = pt.get <unsigned> ("<xmlattr>.iv");
+	stat.iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
 	stat.ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
 }
 

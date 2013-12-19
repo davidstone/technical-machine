@@ -99,7 +99,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 		StatNames::HP, StatNames::ATK, StatNames::DEF, StatNames::SPE, StatNames::SPA, StatNames::SPD
 	};
 	for (auto const stat : stats) {
-		write_byte(get_stat(pokemon, stat).iv);
+		write_byte(get_stat(pokemon, stat).iv.value());
 	}
 	for (auto const stat : stats) {
 		write_byte(get_stat(pokemon, stat).ev.value());

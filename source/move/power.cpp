@@ -151,7 +151,7 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 			}};
 			using intermediate_type = bounded_integer::checked_integer<0, 63>;
 			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
-				return value + ((get_stat(attacker, stat.first).iv >> 1_bi) % 2_bi) << stat.second;
+				return value + ((get_stat(attacker, stat.first).iv.value() / 2_bi) % 2_bi) << stat.second;
 			};
 			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), intermediate_type(0_bi), sum) * 40_bi / 63_bi + 30_bi;
 			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");

@@ -49,7 +49,7 @@ void write_blank_move (boost::property_tree::ptree & pt) {
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	for (auto const stat : stat_order) {
-		pt.add("DV", get_stat(pokemon, stat).iv);
+		pt.add("DV", get_stat(pokemon, stat).iv.value());
 	}
 	for (auto const stat : stat_order) {
 		pt.add("EV", get_stat(pokemon, stat).ev.value());
