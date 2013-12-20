@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,8 +29,9 @@ void Bide::activate() {
 }
 
 void Bide::add_damage(unsigned const extra_damage) {
-	if (is_active())
-		damage.add(extra_damage);
+	if (is_active()) {
+		damage.add(static_cast<bounded_integer::checked_integer<0, BideDamage::max_hp - 1>>(extra_damage));
+	}
 }
 
 void Bide::reset() {
@@ -39,7 +40,7 @@ void Bide::reset() {
 }
 
 unsigned Bide::decrement() {
-	return duration.decrement() ? damage.release() : 0;
+	return duration.decrement() ? static_cast<unsigned>(damage.release()) : 0;
 }
 
 Bide::hash_type Bide::hash() const {

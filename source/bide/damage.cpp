@@ -1,5 +1,5 @@
 // Handles bide damage
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,42 +21,36 @@
 #include <algorithm>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 BideDamage::BideDamage():
-	damage(0)
+	m_damage(0_bi)
 	{
 }
 
-namespace {
-constexpr BideDamage::hash_type max_hp = 714;
-constexpr BideDamage::hash_type max_bide_damage = (max_hp + 1) / 2;
-
-}	// unnamed namespace
-
-void BideDamage::add(unsigned const extra_damage) {
-	damage += extra_damage;
-	damage = std::min(static_cast<hash_type>(damage), max_bide_damage);
+void BideDamage::add(bounded_integer::checked_integer<0, max_hp - 1> const damage) {
+	m_damage += damage;
 }
 
-unsigned BideDamage::release() {
-	unsigned const temp = damage;
-	damage = 0;
-	return temp;
+auto BideDamage::release() -> bounded_integer::native_integer<0, max_hp> {
+	bounded_integer::clamped_integer<0, max_hp> const output_damage = m_damage * 2_bi;
+	m_damage = 0_bi;
+	return output_damage;
 }
 
 BideDamage::hash_type BideDamage::hash() const {
-	return damage;
+	return static_cast<hash_type>(m_damage);
 }
 
 BideDamage::hash_type BideDamage::max_hash() {
-	return max_bide_damage + 1;
+	return static_cast<hash_type>(std::numeric_limits<decltype(m_damage)>::max() + 1_bi);
 }
 
-bool operator== (BideDamage const & lhs, BideDamage const & rhs) {
-	return lhs.damage == rhs.damage;
+bool operator== (BideDamage const lhs, BideDamage const rhs) {
+	return lhs.m_damage == rhs.m_damage;
 }
 
-bool operator!= (BideDamage const & lhs, BideDamage const & rhs) {
+bool operator!= (BideDamage const lhs, BideDamage const rhs) {
 	return !(lhs == rhs);
 }
 

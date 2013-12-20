@@ -1,5 +1,5 @@
 // Handles bide damage
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,24 +19,26 @@
 #ifndef BIDE__DAMAGE_HPP_
 #define BIDE__DAMAGE_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 
 class BideDamage {
 public:
 	BideDamage();
-	void add(unsigned extra_damage);
-	unsigned release();
-	friend bool operator== (BideDamage const & lhs, BideDamage const & rhs);
+	static constexpr auto max_hp = 714;
+	void add(bounded_integer::checked_integer<0, max_hp - 1> damage);
+	bounded_integer::native_integer<0, max_hp> release();
+	friend bool operator== (BideDamage lhs, BideDamage rhs);
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();
 private:
-	uint16_t damage;
+	// This is the greatest range that matters since anything more is overkill
+	bounded_integer::clamped_integer<0, (max_hp + 1) / 2> m_damage;
 };
 
-bool operator!= (BideDamage const & lhs, BideDamage const & rhs);
+bool operator!= (BideDamage lhs, BideDamage rhs);
 
 }	// namespace technicalmachine
 #endif	// BIDE__DAMAGE_HPP_
