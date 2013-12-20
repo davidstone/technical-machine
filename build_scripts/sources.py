@@ -31,13 +31,13 @@ active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusio
 active_pokemon_sources += prepend_dir('stat', ['chance_to_hit.cpp', 'stage.cpp'])
 active_pokemon_sources += bide_sources + pokemon_sources + ['random_damage.cpp']
 
-stat_sources = prepend_dir('stat', ['ev.cpp', 'invalid_stat.cpp', 'iv.cpp', 'nature.cpp', 'stat.cpp', 'stat_names.cpp', 'stats.cpp'])
+stat_sources = prepend_dir('stat', ['ev.cpp', 'iv.cpp', 'nature.cpp', 'stat.cpp', 'stat_names.cpp', 'stats.cpp'])
 
 team_sources = ['entry_hazards.cpp', 'screen.cpp', 'screens.cpp', 'team.cpp', 'wish.cpp'] + active_pokemon_sources
 
 network = prepend_dir('network', ['buffer_overrun.cpp', 'client.cpp', 'inmessage.cpp', 'invalid_channel.cpp', 'invalid_packet.cpp', 'outmessage.cpp'])
 pokemon_lab = prepend_dir('pokemon_lab', ['read_team_file.cpp', 'write_team_file.cpp'])
-pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'read_team_file.cpp', 'inmessage.cpp', 'invalid_user.cpp', 'outmessage.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
+pokemon_online = prepend_dir('pokemon_online', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'conversion.cpp', 'inmessage.cpp', 'invalid_team_file.cpp', 'invalid_user.cpp', 'outmessage.cpp', 'read_team_file.cpp', 'read_user_info.cpp', 'write_team_file.cpp'])
 pokemon_showdown = prepend_dir('pokemon_showdown', ['battle.cpp', 'battle_settings.cpp', 'client.cpp', 'inmessage.cpp', 'outmessage.cpp'])
 clients = prepend_dir('clients', ['battle.cpp', 'battle_result.cpp', 'battles.cpp', 'client.cpp', 'invalid_team_file_format.cpp', 'no_pending_challenges.cpp', 'party.cpp', 'updated_hp.cpp'] + network + pokemon_lab + pokemon_online + pokemon_showdown)
 
@@ -66,7 +66,7 @@ predict_sources += prepend_dir('move', ['collection.cpp', 'container.cpp', 'powe
 predict_sources += stat_sources
 predict_sources += prepend_dir('clients/', ['invalid_team_file_format.cpp'])
 predict_sources += prepend_dir('clients/pokemon_lab', ['read_team_file.cpp'])
-predict_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'read_team_file.cpp'])
+predict_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'invalid_team_file.cpp', 'read_team_file.cpp'])
 predict_sources += prepend_dir('team_predictor', ['detailed_stats.cpp', 'estimate.cpp', 'load_stats.cpp', 'multiplier.cpp', 'predictor.cpp', 'random_team.cpp', 'team_predictor.cpp'])
 predict_sources += ev_optimizer_sources
 predict_sources += team_builder_ui_sources
@@ -85,7 +85,7 @@ test_sources += stat_sources
 test_sources += ev_optimizer_sources
 test_sources += prepend_dir('clients/', ['invalid_team_file_format.cpp'])
 test_sources += prepend_dir('clients/pokemon_lab', ['read_team_file.cpp', 'write_team_file.cpp'])
-test_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
+test_sources += prepend_dir('clients/pokemon_online', ['conversion.cpp', 'invalid_team_file.cpp', 'read_team_file.cpp', 'write_team_file.cpp'])
 test_sources += prepend_dir('type', ['collection.cpp', 'effectiveness.cpp', 'type.cpp'])
 test_sources += string_conversion_sources
 test_libraries = ['boost_filesystem', 'boost_system']

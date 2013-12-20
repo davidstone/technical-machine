@@ -1,5 +1,5 @@
-// Invalid stat exception class
-// Copyright (C) 2012 David Stone
+// Thrown if an invalid team file is detected
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,14 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "invalid_stat.hpp"
+#ifndef POKEMON_ONLINE__INVALID_TEAM_FILE_HPP_
+#define POKEMON_ONLINE__INVALID_TEAM_FILE_HPP_
+
+#include <stdexcept>
 #include <string>
 
 namespace technicalmachine {
+namespace po {
 
-InvalidStat::InvalidStat(std::string const & stat_string):
-	std::runtime_error ("Invalid stat of " + stat_string + " requested.\n")
-	{
-}
+class InvalidTeamFile : public std::runtime_error {
+public:
+	InvalidTeamFile(std::string const & expected, std::string const & received);
+};
 
+}	// namespace po
 }	// namespace technicalmachine
+#endif	// POKEMON_ONLINE__INVALID_TEAM_FILE_HPP_

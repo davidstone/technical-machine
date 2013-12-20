@@ -1,5 +1,5 @@
-// Invalid stat exception class
-// Copyright (C) 2012 David Stone
+// Thrown if an invalid team file is detected
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,18 +16,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__INVALID_STAT_HPP_
-#define STAT__INVALID_STAT_HPP_
-
-#include <stdexcept>
-#include <string>
+#include "invalid_team_file.hpp"
 
 namespace technicalmachine {
+namespace po {
 
-class InvalidStat : public std::runtime_error {
-public:
-	explicit InvalidStat (std::string const & stat_string);
-};
+InvalidTeamFile::InvalidTeamFile(std::string const & expected, std::string const & received):
+	std::runtime_error("Expected a field labeled " + expected + " but got " + received) {
+}
 
+}	// namespace po
 }	// namespace technicalmachine
-#endif	// STAT__INVALID_STAT_HPP_

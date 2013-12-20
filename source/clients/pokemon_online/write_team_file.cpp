@@ -1,5 +1,5 @@
 // Write Pokemon Online teams
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -38,33 +38,36 @@
 namespace technicalmachine {
 namespace po {
 namespace {
+using boost::property_tree::ptree;
 
-void write_move (Move const & move, boost::property_tree::ptree & pt) {
+void write_move (Move const & move, ptree & pt) {
 	pt.add("Move", move_to_id(move));
 }
 
-void write_blank_move (boost::property_tree::ptree & pt) {
+void write_blank_move (ptree & pt) {
 	pt.add ("Move", 0);
 }
 
-void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+void write_stats (Pokemon const & pokemon, ptree & pt) {
+	pt.add("DV", get_stat(pokemon, StatNames::HP).iv.value());
 	for (auto const stat : stat_order) {
 		pt.add("DV", get_stat(pokemon, stat).iv.value());
 	}
+	pt.add("EV", get_stat(pokemon, StatNames::HP).ev.value());
 	for (auto const stat : stat_order) {
 		pt.add("EV", get_stat(pokemon, stat).ev.value());
 	}
 }
 
-void write_blank_stats (boost::property_tree::ptree & pt) {
+void write_blank_stats (ptree & pt) {
 	for (unsigned n = 0; n != 6; ++n)
 		pt.add ("DV", 31);
 	for (unsigned n = 0; n != 6; ++n)
 		pt.add ("EV", 0);
 }
 
-void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
+void write_pokemon (Pokemon const & pokemon, ptree & pt) {
+	ptree & member = pt.add ("Pokemon", "");
 	member.put ("<xmlattr>.Item", item_to_id (get_item(pokemon).name));
 	member.put ("<xmlattr>.Ability", ability_to_id (get_ability(pokemon).name()));
 	std::pair<unsigned, unsigned> const ids = species_to_id(pokemon);
@@ -89,8 +92,8 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	write_stats (pokemon, member);
 }
 
-void write_blank_pokemon (boost::property_tree::ptree & pt) {
-	boost::property_tree::ptree & member = pt.add ("Pokemon", "");
+void write_blank_pokemon (ptree & pt) {
+	ptree & member = pt.add ("Pokemon", "");
 	member.put ("<xmlattr>.Item", 0);
 	member.put ("<xmlattr>.Ability", 0);
 	member.put ("<xmlattr>.Num", 0);
@@ -112,13 +115,13 @@ void write_blank_pokemon (boost::property_tree::ptree & pt) {
 }	// anonymous namespace
 
 void write_team (Team & team, std::string const & file_name) {
-	boost::property_tree::ptree pt;
+	ptree pt;
 	boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
-	boost::property_tree::ptree & t = pt.add ("Team", "");
+	ptree & t = pt.add ("Team", "");
 	t.put ("<xmlattr>.version", 1);
 	t.put ("<xmlattr>.gen", 4);
 	t.put ("<xmlattr>.defaultTier", "");
-	boost::property_tree::ptree & trainer = t.add ("Trainer", "TM");
+	ptree & trainer = t.add ("Trainer", "TM");
 	trainer.put ("<xmlattr>.loseMsg", "");
 	trainer.put ("<xmlattr>.avatar", 1);
 	trainer.put ("<xmlattr>.winMsg", "");

@@ -1,5 +1,5 @@
 // Load Pokemon Online teams
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "conversion.hpp"
+#include "invalid_team_file.hpp"
 #include "stat_order.hpp"
 
 #include "../../ability.hpp"
@@ -36,31 +37,24 @@
 #include "../../pokemon/pokemon.hpp"
 #include "../../pokemon/species_forward.hpp"
 
-#include "../../stat/invalid_stat.hpp"
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
 namespace po {
 namespace {
+using boost::property_tree::ptree;
 
-Moves load_move(boost::property_tree::ptree const & pt) {
+Moves load_move(ptree const & pt) {
 	return id_to_move(pt.get_value<unsigned>());
 }
 
-Stat & lookup_stat(Pokemon & pokemon, unsigned n) {
-	if (n >= stat_order.size()) {
-		throw InvalidStat(std::to_string(n));
-	}
-	return get_stat(pokemon, stat_order[n]);
-}
-
-bool is_real_pokemon(boost::property_tree::ptree const & pt) {
+bool is_real_pokemon(ptree const & pt) {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
 	// empty slots in teams smaller than 6 Pokemon.
 	return pt.get<unsigned>("<xmlattr>.Num");
 }
 
-unsigned number_of_pokemon(boost::property_tree::ptree const & pt) {
+unsigned number_of_pokemon(ptree const & pt) {
 	unsigned pokemon_count = 0;
 	for (auto const & value : pt) {
 		if (value.first == "Pokemon" and is_real_pokemon(value.second))
@@ -69,7 +63,69 @@ unsigned number_of_pokemon(boost::property_tree::ptree const & pt) {
 	return pokemon_count;
 }
 
-void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
+ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
+	for (unsigned n = 0; n != 4; ++n) {
+		if (it->first != "Move") {
+			throw InvalidTeamFile("Move", it->first);
+		}
+		Moves const move(load_move(it->second));
+		if (move != Moves::END) {
+			pokemon.move.add(move);
+		}
+		++it;
+	}
+	return it;
+}
+
+template<typename Field>
+class StatType;
+
+template<>
+class StatType<EV> {
+public:
+	static std::string const & name() {
+		static std::string const str = "EV";
+		return str;
+	}
+	template<typename Type>
+	static EV & get(Type & stat) {
+		return stat.ev;
+	}
+};
+template<>
+class StatType<IV> {
+public:
+	static std::string const & name() {
+		static std::string const str = "DV";
+		return str;
+	}
+	template<typename Type>
+	static IV & get(Type & stat) {
+		return stat.iv;
+	}
+};
+
+template<typename Type>
+ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
+	std::string const & name = StatType<Type>::name();
+	if (it->first != name) {
+		throw InvalidTeamFile(name, it->first);
+	}
+	Stat & hp = get_stat(pokemon, StatNames::HP);
+	StatType<Type>::get(hp) = Type(it->second.get_value<typename Type::value_type>());
+	++it;
+	for (unsigned n = 0; n != 5; ++n) {
+		if (it->first != name) {
+			throw InvalidTeamFile(name, it->first);
+		}
+		Stat & stat = get_stat(pokemon, stat_order[n]);
+		StatType<Type>::get(stat) = Type(it->second.get_value<typename Type::value_type>());
+		++it;
+	}
+	return it;
+}
+
+void load_pokemon(ptree const & pt, Team & team) {
 	unsigned const id = pt.get<unsigned>("<xmlattr>.Num");
 	unsigned const forme = pt.get<unsigned>("<xmlattr>.Forme");
 	Species const species = id_to_species(id, forme);
@@ -87,31 +143,17 @@ void load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	unsigned const nature = pt.get<unsigned>("<xmlattr>.Nature");
 	get_nature(pokemon).name = id_to_nature(nature);
 
-	unsigned n = 0;
-	for (auto const & value : pt.get_child("")) {
-		if (value.first == "Move") {
-			Moves const move(load_move(value.second));
-			if (move != Moves::END) {
-				pokemon.move.add(move);
-			}
-		}
-		else if (value.first == "DV") {
-			Stat & stat = lookup_stat(pokemon, n);
-			stat.iv = IV(value.second.get_value<IV::value_type>());
-			n < 5 ? ++n : n = 0;
-		}
-		else if (value.first == "EV") {
-			Stat & stat = lookup_stat(pokemon, n);
-			stat.ev = EV(value.second.get_value<EV::value_type>());
-			n < 5 ? ++n : n = 0;
-		}
-	}
+	// Get past the xml attributes
+	auto it = ++pt.get_child("").begin();
+	it = load_moves(pokemon, it);
+	it = load_stats<IV>(pokemon, it);
+	load_stats<EV>(pokemon, it);
 }
 
 }	// anonymous namespace
 
 void load_team(Team & team, std::string const & file_name) {
-	boost::property_tree::ptree pt;
+	ptree pt;
 	read_xml(file_name, pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
