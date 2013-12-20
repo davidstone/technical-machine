@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,14 @@
 #ifndef BIDE__DURATION_HPP_
 #define BIDE__DURATION_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class BideDuration {
 public:
-	BideDuration();
+	static constexpr auto max = 1;
 	void activate();
 	explicit operator bool() const;
 	// returns whether Bide releases damage
@@ -35,7 +36,7 @@ public:
 	hash_type hash() const;
 	static hash_type max_hash();
 private:
-	uint8_t turns_until_activation;
+	bounded_integer::optional<bounded_integer::native_integer<0, max>> m_turns_active;
 };
 
 bool operator!= (BideDuration const & lhs, BideDuration const & rhs);

@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,40 +21,39 @@
 #include <cassert>
 
 namespace technicalmachine {
-
-BideDuration::BideDuration():
-	turns_until_activation(0)
-	{
-}
-
-namespace {
-constexpr BideDuration::hash_type max_duration = 2;
-}	// unnamed namespace
+using namespace bounded_integer::literal;
 
 void BideDuration::activate() {
-	turns_until_activation = max_duration;
+	m_turns_active = 0_bi;
 }
 
 BideDuration::operator bool() const {
-	return turns_until_activation != 0;
+	return static_cast<bool>(m_turns_active);
 }
 
 bool BideDuration::decrement() {
 	assert(this->operator bool());
-	--turns_until_activation;
-	return this->operator bool();
+	if (*m_turns_active == max) {
+		m_turns_active = bounded_integer::none;
+		return true;
+	}
+	else {
+		++*m_turns_active;
+		return false;
+	}
 }
 
 BideDuration::hash_type BideDuration::hash() const {
-	return turns_until_activation;
+	return m_turns_active ? static_cast<hash_type>(*m_turns_active + 1_bi) : 0;
 }
 
 BideDuration::hash_type BideDuration::max_hash() {
-	return max_duration + 1;
+	// Additional 1 for the optional state
+	return max + 2;
 }
 
 bool operator== (BideDuration const & lhs, BideDuration const & rhs) {
-	return lhs.turns_until_activation == rhs.turns_until_activation;
+	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
 bool operator!= (BideDuration const & lhs, BideDuration const & rhs) {
