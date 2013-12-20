@@ -55,7 +55,7 @@ void Pp::decrement(Ability const & foe_ability) {
 		return;
 	// I think it is always an error to try to decrement a move without PP.
 	assert(current != 0_bi);
-	*current -= bounded_integer::ternary_conditional(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
+	*current -= BOUNDED_INTEGER_CONDITIONAL(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
 }
 
 bounded_integer::native_integer<40, 200> Pp::trump_card_power() const {

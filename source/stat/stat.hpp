@@ -68,7 +68,7 @@ unsigned initial_stat(Stat const & stat, Level const & level, Nature const & nat
 }
 
 inline auto initial_hp(Stat const & hp, Level const & level) {
-	return bounded_integer::ternary_conditional((hp.base > 1_bi), (detail::initial_generic_stat(hp, level) + level() + 5_bi), 1_bi);
+	return BOUNDED_INTEGER_CONDITIONAL(hp.base > 1_bi, detail::initial_generic_stat(hp, level) + level() + 5_bi, 1_bi);
 }
 
 
