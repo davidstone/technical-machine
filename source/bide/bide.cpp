@@ -19,45 +19,47 @@
 #include "bide.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 bool Bide::is_active() const {
-	return static_cast<bool>(duration);
+	return static_cast<bool>(m_duration);
 }
 
 void Bide::activate() {
-	duration.activate();
+	m_duration.activate();
 }
 
-void Bide::add_damage(unsigned const extra_damage) {
+void Bide::add_damage(bounded_integer::checked_integer<0, BideDamage::max_hp - 1> const damage) {
 	if (is_active()) {
-		damage.add(static_cast<bounded_integer::checked_integer<0, BideDamage::max_hp - 1>>(extra_damage));
+		m_damage.add(damage);
 	}
 }
 
 void Bide::reset() {
-	damage = BideDamage();
-	duration = BideDuration();
+	m_damage = BideDamage{};
+	m_duration = BideDuration{};
 }
 
-unsigned Bide::decrement() {
-	return duration.decrement() ? static_cast<unsigned>(damage.release()) : 0;
+bounded_integer::native_integer<0, BideDamage::max_hp> Bide::decrement() {
+	return BOUNDED_INTEGER_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 }
 
 Bide::hash_type Bide::hash() const {
-	return duration.hash() + duration.max_hash() *
-			damage.hash();
+	return m_duration.hash() + m_duration.max_hash() *
+			m_damage.hash();
 }
 
 Bide::hash_type Bide::max_hash() {
 	return BideDuration::max_hash() * BideDamage::max_hash();
 }
 
-bool operator== (Bide const & lhs, Bide const & rhs) {
-	return lhs.damage == rhs.damage and
-			lhs.duration == rhs.duration;
+bool operator== (Bide const lhs, Bide const rhs) {
+	return
+		lhs.m_damage == rhs.m_damage and
+		lhs.m_duration == rhs.m_duration;
 }
 
-bool operator!= (Bide const & lhs, Bide const & rhs) {
+bool operator!= (Bide const lhs, Bide const rhs) {
 	return !(lhs == rhs);
 }
 

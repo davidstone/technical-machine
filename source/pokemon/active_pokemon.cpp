@@ -723,9 +723,10 @@ void ActivePokemon::use_bide(Pokemon & target) {
 		bide.activate();
 	}
 	else {
-		unsigned const bide_damage = bide.decrement();
-		if (bide_damage != 0)
-			apply_damage(target, bide_damage * 2);
+		auto const bide_damage = bide.decrement();
+		if (bide_damage != 0_bi) {
+			apply_damage(target, static_cast<unsigned>(bide_damage * 2_bi));
+		}
 	}
 }
 
@@ -763,7 +764,7 @@ Rational ActivePokemon::random_damage_multiplier() const {
 void ActivePokemon::direct_damage(unsigned damage) {
 	damage = apply_damage(*this, damage);
 	damage_done_to_active = damage;
-	bide.add_damage(damage);
+	bide.add_damage(static_cast<bounded_integer::checked_integer<0, BideDamage::max_hp - 1>>(damage));
 }
 
 void ActivePokemon::indirect_damage(unsigned const damage) {

@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,22 +28,22 @@ namespace technicalmachine {
 
 class Bide {
 public:
-	friend bool operator== (Bide const & lhs, Bide const & rhs);
 	bool is_active() const;
 	void activate();
-	void add_damage(unsigned extra_damage);
+	void add_damage(bounded_integer::checked_integer<0, BideDamage::max_hp - 1> damage);
 	void reset();
 	// Returns the damage released by Bide (or 0 if none)
-	unsigned decrement();
+	bounded_integer::native_integer<0, BideDamage::max_hp> decrement();
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();
+	friend bool operator== (Bide lhs, Bide rhs);
 private:
-	BideDamage damage;
-	BideDuration duration;
+	BideDamage m_damage;
+	BideDuration m_duration;
 };
 
-bool operator!= (Bide const & lhs, Bide const & rhs);
+bool operator!= (Bide lhs, Bide rhs);
 
 }	// namespace technicalmachine
 #endif	// BIDE__BIDE_HPP_
