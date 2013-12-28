@@ -18,10 +18,9 @@
 
 #include "heal.hpp"
 
-#include <algorithm>
+#include <bounded_integer/bounded_integer.hpp>
 
 #include "ability.hpp"
-#include "damage.hpp"
 #include "rational.hpp"
 
 #include "pokemon/active_pokemon.hpp"
@@ -29,24 +28,15 @@
 
 namespace technicalmachine {
 
-void apply_healing(Pokemon & pokemon, unsigned const amount) {
-	// Should be no risk of overflow. hp.stat has to be at least 16 bits, and no
-	// healing will be anywhere close to that number.
-	auto & hp = get_stat(pokemon, StatNames::HP);
-	assert(hp.stat + amount >= amount);
-	hp.stat += amount;
-	hp.stat = std::min(hp.stat, static_cast<Stat::stat_type>(hp.max));
-}
-
 void heal(ActivePokemon & pokemon, Rational const & rational, bool positive) {
 	if (pokemon.is_fainted())
 		return;
-	unsigned const hp_healed = static_cast<unsigned>(get_stat(pokemon, StatNames::HP).max) * rational;
+	unsigned const hp_healed = static_cast<unsigned>(get_hp(pokemon).max()) * rational;
 	if (positive) {
-		apply_healing(pokemon, std::max(hp_healed, 1u));
+		get_hp(pokemon) += bounded_integer::max(hp_healed, 1_bi);
 	}
 	else if (!get_ability(pokemon).blocks_secondary_damage()) {
-		apply_damage(pokemon, std::max(hp_healed, 1u));
+		get_hp(pokemon) -= bounded_integer::max(hp_healed, 1_bi);
 	}
 }
 

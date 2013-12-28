@@ -41,6 +41,7 @@
 #include "vanish.hpp"
 #include "yawn.hpp"
 
+#include "../damage.hpp"
 #include "../random_damage.hpp"
 #include "../rational.hpp"
 
@@ -241,11 +242,11 @@ public:
 
 	void use_bide(Pokemon & target);
 	bool is_locked_in_to_bide() const;
-	unsigned damaged() const;
+	bounded_integer::native_integer<0, HP::max_value> damaged() const;
 	Rational random_damage_multiplier() const;
-	void direct_damage(unsigned damage);
-	void indirect_damage(unsigned damage);
-	void register_damage(unsigned damage);
+	void direct_damage(damage_type damage);
+	void indirect_damage(damage_type damage);
+	void register_damage(damage_type damage);
 	void increment_move_use_counter();
 	void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 	// If the move is a hit, returns the chance to hit, otherwise, returns
@@ -271,7 +272,7 @@ private:
 	// and move assignment operator to simply verify that the referents are
 	// the same.
 	PokemonCollection m_all_pokemon;
-	uint16_t damage_done_to_active = 0;
+	HP::current_type damage_done_to_active = 0_bi;
 	Bide bide;
 	ChanceToHit cached_chance_to_hit;
 	Confusion confusion;

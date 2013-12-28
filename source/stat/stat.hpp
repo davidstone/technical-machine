@@ -31,6 +31,7 @@
 #include "../rational.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 class ActivePokemon;
 class Pokemon;
 class Team;
@@ -38,39 +39,22 @@ class Weather;
 
 class Stat {
 public:
-	typedef uint16_t stat_type;
-	bounded_integer::checked_integer<1, 714> max;		// Max HP only
-	stat_type stat;		// Current HP or last calculated value for other stats
-	using base_type = bounded_integer::checked_integer<1, 255>;
+	using stat_type = uint16_t;
+	using base_type = bounded_integer::checked_integer<5, 230>;
+
+	Stat(Species name, StatNames stat, EV ev = EV(0_bi));
+
 	base_type base;
-	IV iv;
 	EV ev;
-
-	Stat (Species name, StatNames stat);
-	void calculate_initial_hp(Level level);
+	IV iv;
+	stat_type stat;
 };
-
-inline constexpr std::initializer_list<StatNames> regular_stats() {
-	return { StatNames::HP, StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE };
-}
-
-namespace detail {
-
-inline auto initial_generic_stat(Stat const & stat, Level const level) {
-	return (2_bi * stat.base + stat.iv.value() + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
-}
-
-}	// namespace detail
 
 template<StatNames stat_name>
 unsigned initial_stat(Stat const & stat, Level const & level, Nature const & nature) {
-	return static_cast<unsigned>(detail::initial_generic_stat(stat, level)) * nature.boost<stat_name>();
+	auto const pre_nature = (2_bi * stat.base + stat.iv.value() + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
+	return static_cast<unsigned>(pre_nature) * nature.boost<stat_name>();
 }
-
-inline auto initial_hp(Stat const & hp, Level const & level) {
-	return BOUNDED_INTEGER_CONDITIONAL(hp.base > 1_bi, detail::initial_generic_stat(hp, level) + level() + 5_bi, 1_bi);
-}
-
 
 void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);
 void calculate_attack(ActivePokemon & attacker, Weather const & weather);

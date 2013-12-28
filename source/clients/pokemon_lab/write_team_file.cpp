@@ -50,7 +50,8 @@ void write_move (Move const & move, boost::property_tree::ptree & pt) {
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-void write_stat (Stat const & stat, std::string const & str, boost::property_tree::ptree & pt) {
+template<typename StatType>
+void write_stat(StatType const & stat, std::string const & str, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
 	s.put("<xmlattr>.name", str);
 	s.put("<xmlattr>.iv", stat.iv.value());
@@ -59,13 +60,13 @@ void write_stat (Stat const & stat, std::string const & str, boost::property_tre
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	static std::pair<StatNames, std::string> const stats [] = {
-		{ StatNames::HP, "HP" },
 		{ StatNames::ATK, "Atk" },
 		{ StatNames::DEF, "Def" },
 		{ StatNames::SPE, "Spd" },
 		{ StatNames::SPA, "SpAtk" },
 		{ StatNames::SPD, "SpDef" }
 	};
+	write_stat(get_hp(pokemon), "HP", pt);
 	for (auto const & stat : stats) {
 		write_stat(get_stat(pokemon, stat.first), stat.second, pt);
 	}

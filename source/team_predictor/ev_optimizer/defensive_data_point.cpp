@@ -32,16 +32,6 @@
 #include "../../string_conversions/nature.hpp"
 
 namespace technicalmachine {
-namespace {
-
-template<StatNames stat>
-unsigned product(Pokemon const & pokemon) {
-	auto const initial = initial_stat<stat>(get_stat(pokemon, stat), get_level(pokemon), get_nature(pokemon));
-	auto const hp = initial_hp(get_stat(pokemon, stat), get_level(pokemon));
-	return initial * static_cast<unsigned>(hp);
-}
-
-}	// namespace
 
 DataPoint::DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special):
 	hp(physical.hp),
@@ -66,27 +56,23 @@ bounded_integer::native_integer<0, EV::max * 3> DataPoint::sum() const {
 	return hp.value() + defense.value() + special_defense.value();
 }
 
-bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon) {
-	lhs.update_pokemon(pokemon);
-	auto const left_physical = product<StatNames::DEF>(pokemon);
-	auto const left_special = product<StatNames::SPD>(pokemon);
-	rhs.update_pokemon(pokemon);
-	auto const right_physical = product<StatNames::DEF>(pokemon);
-	auto const right_special = product<StatNames::SPD>(pokemon);
-	if (left_physical < right_physical and left_special < right_special)
+bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {
+	Level const level = get_level(pokemon);
+	auto const left_physical = lhs.product<StatNames::DEF>(pokemon, level);
+	auto const left_special = lhs.product<StatNames::SPD>(pokemon, level);
+
+	auto const right_physical = rhs.product<StatNames::DEF>(pokemon, level);
+	auto const right_special = rhs.product<StatNames::SPD>(pokemon, level);
+
+	if (left_physical < right_physical and left_special < right_special) {
 		return true;
-	if (right_physical < left_physical and right_special < left_special)
+	}
+	if (right_physical < left_physical and right_special < left_special) {
 		return false;
+	}
 	auto const left = static_cast<uint64_t>(left_physical) * left_special;
 	auto const right = static_cast<uint64_t>(right_physical) * right_special;
 	return left < right;
-}
-
-void DataPoint::update_pokemon(Pokemon & pokemon) const {
-	::technicalmachine::get_nature(pokemon) = nature;
-	get_stat(pokemon, StatNames::HP).ev = hp;
-	get_stat(pokemon, StatNames::DEF).ev = defense;
-	get_stat(pokemon, StatNames::SPD).ev = special_defense;
 }
 
 class InvalidNatureCombination : public std::logic_error {

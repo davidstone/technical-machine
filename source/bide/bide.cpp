@@ -29,7 +29,7 @@ void Bide::activate() {
 	m_duration.activate();
 }
 
-void Bide::add_damage(bounded_integer::checked_integer<0, BideDamage::max_hp - 1> const damage) {
+void Bide::add_damage(damage_type const damage) {
 	if (is_active()) {
 		m_damage.add(damage);
 	}
@@ -40,7 +40,7 @@ void Bide::reset() {
 	m_duration = BideDuration{};
 }
 
-bounded_integer::native_integer<0, BideDamage::max_hp> Bide::decrement() {
+damage_type Bide::decrement() {
 	return BOUNDED_INTEGER_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 }
 

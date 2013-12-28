@@ -1,5 +1,5 @@
 // Optimize EVs and nature to remove waste
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,10 +19,16 @@
 #ifndef TEAM_PREDICTOR__EV_OPTIMIZER_HPP_
 #define TEAM_PREDICTOR__EV_OPTIMIZER_HPP_
 
+#include <initializer_list>
 #include <random>
+#include "../../stat/stat_names.hpp"
 
 namespace technicalmachine {
 class Pokemon;
+
+inline constexpr std::initializer_list<StatNames> regular_stats() {
+	return { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE };
+}
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine);
 void minimize_evs(Pokemon & pokemon);

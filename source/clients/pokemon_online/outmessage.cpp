@@ -96,11 +96,13 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 		++number_of_moves;
 	}
 	static constexpr auto stats = {
-		StatNames::HP, StatNames::ATK, StatNames::DEF, StatNames::SPE, StatNames::SPA, StatNames::SPD
+		StatNames::ATK, StatNames::DEF, StatNames::SPE, StatNames::SPA, StatNames::SPD
 	};
+	write_byte(get_hp(pokemon).iv.value());
 	for (auto const stat : stats) {
 		write_byte(get_stat(pokemon, stat).iv.value());
 	}
+	write_byte(get_hp(pokemon).ev.value());
 	for (auto const stat : stats) {
 		write_byte(get_stat(pokemon, stat).ev.value());
 	}

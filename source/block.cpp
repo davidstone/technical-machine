@@ -90,16 +90,18 @@ bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePo
 			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment(user, move)) and
 			!is_blocked_due_to_lock_in(user, move);
 }
-}	// unnamed namespace
+}	// namespace
 
 bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const & weather) {
 	Move const & move = user.move();
 	assert(!is_switch(move) or !user.recharging());
 	
-	if (is_switch(move))
+	if (is_switch(move)) {
 		return true;
-	if (get_stat(user, StatNames::HP).stat == 0 or (other.is_fainted() and false))
+	}
+	if (get_hp(user) == 0_bi or (other.is_fainted() and false)) {
 		return false;
+	}
 
 	bool execute = !(is_blocked_due_to_status (user, move) or
 			block1 (user, move, other) or

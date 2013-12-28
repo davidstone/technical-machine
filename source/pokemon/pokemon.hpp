@@ -57,6 +57,8 @@ qualifier Item & get_item(Pokemon & pokemon); \
 qualifier Level get_level(Pokemon const & pokemon); \
 qualifier Nature const & get_nature(Pokemon const & pokemon); \
 qualifier Nature & get_nature(Pokemon & pokemon); \
+qualifier HP const & get_hp(Pokemon const & pokemon); \
+qualifier HP & get_hp(Pokemon & pokemon); \
 qualifier Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat); \
 qualifier Stat & get_stat(Pokemon & pokemon, StatNames index_stat); \
 qualifier Status const & get_status(Pokemon const & pokemon); \
@@ -114,7 +116,6 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
-void calculate_initial_hp(Pokemon & pokemon);
 Rational hp_ratio(Pokemon const & pokemon);
 
 }	// namespace technicalmachine

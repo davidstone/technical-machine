@@ -23,7 +23,7 @@ namespace technicalmachine {
 
 // I set HP to -1 so it doesn't get in the way of indexing stat boosts in an array.
 enum class StatNames {
-	HP = -1,
+//	HP = -1,
 	ATK,
 	DEF,
 	SPA,

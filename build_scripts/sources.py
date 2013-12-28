@@ -31,7 +31,7 @@ active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusio
 active_pokemon_sources += prepend_dir('stat', ['chance_to_hit.cpp', 'stage.cpp'])
 active_pokemon_sources += bide_sources + pokemon_sources + ['random_damage.cpp']
 
-stat_sources = prepend_dir('stat', ['ev.cpp', 'iv.cpp', 'nature.cpp', 'stat.cpp', 'stat_names.cpp', 'stats.cpp'])
+stat_sources = prepend_dir('stat', ['ev.cpp', 'hp.cpp', 'iv.cpp', 'nature.cpp', 'stat.cpp', 'stat_names.cpp', 'stats.cpp'])
 
 team_sources = ['entry_hazards.cpp', 'screen.cpp', 'screens.cpp', 'team.cpp', 'wish.cpp'] + active_pokemon_sources
 

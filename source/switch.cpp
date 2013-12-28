@@ -1,5 +1,5 @@
 // Switching-related functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,18 +32,20 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	auto & pokemon = switcher.pokemon();
 	pokemon.reset_switch();
 
-	if (get_stat(pokemon, StatNames::HP).stat > 0) {
+	if (get_hp(pokemon) != 0_bi) {
 		switch_pokemon(pokemon);
 	}
 	else {
 		switcher.remove_pokemon();
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (switcher.all_pokemon().is_empty())
+		if (switcher.all_pokemon().is_empty()) {
 			return;
+		}
 	}
 	EntryHazards::apply(switcher, weather);
-	if (get_stat(pokemon, StatNames::HP).stat > 0)
+	if (get_hp(pokemon) != 0_bi) {
 		Ability::activate_on_switch (pokemon, other.pokemon(), weather);
+	}
 	switch_in(pokemon);
 }
 

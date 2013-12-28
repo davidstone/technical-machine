@@ -1,5 +1,5 @@
 // Use moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,15 @@
 #ifndef MOVE__USE_MOVE_HPP_
 #define MOVE__USE_MOVE_HPP_
 
+#include "../damage.hpp"
+
 namespace technicalmachine {
 
 class Team;
 class Variable;
 class Weather;
 
-unsigned call_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false);
+damage_type call_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false);
 
 }	// namespace technicalmachine
 #endif	// MOVE__USE_MOVE_HPP_

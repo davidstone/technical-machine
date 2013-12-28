@@ -59,9 +59,6 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
 	team_file = files [distribution (random_engine)];
 	load(team_file.string());
-	for (auto & member : all_pokemon()) {
-		calculate_initial_hp(member);
-	}
 }
 
 ActivePokemon const & Team::pokemon() const {

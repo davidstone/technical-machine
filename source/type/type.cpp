@@ -106,9 +106,8 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 namespace {
 
 Type::Types hidden_power_type(Pokemon const & pokemon) {
-	using modifier_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
+	using modifier_type = std::pair<StatNames, bounded_integer::native_integer<1, 5>>;
 	static constexpr modifier_type modifiers[] = {
-		{ StatNames::HP, 0_bi },
 		{ StatNames::ATK, 1_bi },
 		{ StatNames::DEF, 2_bi },
 		{ StatNames::SPE, 3_bi },
@@ -116,10 +115,11 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 		{ StatNames::SPD, 5_bi }
 	};
 	using intermediate_type = bounded_integer::checked_integer<0, 63>;
-	auto const sum = [&](intermediate_type value, modifier_type const & pair) {
+	auto const sum = [&](intermediate_type const value, modifier_type const & pair) {
 		return value + ((get_stat(pokemon, pair.first).iv.value() % 2_bi) << pair.second);
 	};
-	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), intermediate_type(0_bi), sum) * 15_bi / 63_bi;
+	intermediate_type const initial = get_hp(pokemon).iv.value() % 2_bi;
+	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), initial, sum) * 15_bi / 63_bi;
 	constexpr static Type::Types lookup [] = {
 		Type::Fighting,
 		Type::Flying,

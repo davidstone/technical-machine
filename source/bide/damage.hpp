@@ -20,22 +20,23 @@
 #define BIDE__DAMAGE_HPP_
 
 #include <bounded_integer/bounded_integer.hpp>
+#include "../damage.hpp"
+#include "../stat/hp.hpp"
 
 namespace technicalmachine {
 
 class BideDamage {
 public:
 	BideDamage();
-	static constexpr auto max_hp = 714;
-	void add(bounded_integer::checked_integer<0, max_hp - 1> damage);
-	bounded_integer::native_integer<0, max_hp> release();
+	void add(damage_type damage);
+	damage_type release();
 	friend bool operator== (BideDamage lhs, BideDamage rhs);
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();
 private:
 	// This is the greatest range that matters since anything more is overkill
-	bounded_integer::clamped_integer<0, (max_hp + 1) / 2> m_damage;
+	bounded_integer::clamped_integer<0, (HP::max_value + 1) / 2> m_damage;
 };
 
 bool operator!= (BideDamage lhs, BideDamage rhs);

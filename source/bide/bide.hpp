@@ -24,16 +24,17 @@
 #include "damage.hpp"
 #include "duration.hpp"
 
+#include "../stat/hp.hpp"
+
 namespace technicalmachine {
 
 class Bide {
 public:
 	bool is_active() const;
 	void activate();
-	void add_damage(bounded_integer::checked_integer<0, BideDamage::max_hp - 1> damage);
+	void add_damage(damage_type damage);
 	void reset();
-	// Returns the damage released by Bide (or 0 if none)
-	bounded_integer::native_integer<0, BideDamage::max_hp> decrement();
+	damage_type decrement();
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();

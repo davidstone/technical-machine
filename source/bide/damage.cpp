@@ -28,12 +28,12 @@ BideDamage::BideDamage():
 	{
 }
 
-void BideDamage::add(bounded_integer::checked_integer<0, max_hp - 1> const damage) {
+void BideDamage::add(damage_type const damage) {
 	m_damage += damage;
 }
 
-auto BideDamage::release() -> bounded_integer::native_integer<0, max_hp> {
-	bounded_integer::clamped_integer<0, max_hp> const output_damage = m_damage * 2_bi;
+damage_type BideDamage::release() {
+	bounded_integer::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
 	m_damage = 0_bi;
 	return output_damage;
 }

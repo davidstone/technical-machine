@@ -53,20 +53,23 @@ bool is_boosted_by_lustrous_orb(Species species);
 unsigned power_of_mass_based_moves(Species species);
 }	// namespace
 
-unsigned move_power (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable) {
+unsigned move_power(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable) {
 	unsigned const base_power = calculate_base_power(attacker, defender, variable);
 	unsigned power = base_power;
 
-	if (doubling (attacker, defender, weather))
+	if (doubling(attacker, defender, weather)) {
 		power *= 2;
+	}
 
 	power *= Rational(item_modifier(attacker), 10);
 
-	if (attacker.charge_boosted())
+	if (attacker.charge_boosted()) {
 		power *= 2;
+	}
 
-	if (defender.sport_is_active(attacker.move()))
+	if (defender.sport_is_active(attacker.move())) {
 		power /= 2;
+	}
 
 	power *= Ability::attacker_modifier(attacker, defender, base_power);
 	
@@ -141,19 +144,19 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 			return attacker.momentum_move_power();
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
-			static constexpr std::array<stat_and_position_type, 6> stat_and_position {{
-				{ StatNames::HP, 0_bi },
+			static constexpr std::array<stat_and_position_type, 5> stat_and_position {{
 				{ StatNames::ATK, 1_bi },
 				{ StatNames::DEF, 2_bi },
 				{ StatNames::SPE, 3_bi },
 				{ StatNames::SPA, 4_bi },
 				{ StatNames::SPD, 5_bi }
 			}};
-			using intermediate_type = bounded_integer::checked_integer<0, 63>;
+			using intermediate_type = bounded_integer::checked_integer<0, (1 << 6) - 1>;
 			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
 				return value + ((get_stat(attacker, stat.first).iv.value() / 2_bi) % 2_bi) << stat.second;
 			};
-			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), intermediate_type(0_bi), sum) * 40_bi / 63_bi + 30_bi;
+			intermediate_type const initial = (get_hp(attacker).iv.value() / 2_bi) % 2_bi;
+			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), initial, sum) * 40_bi / 63_bi + 30_bi;
 			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");
 			static_assert(std::numeric_limits<decltype(result)>::max() == 70_bi, "Incorrect Hidden Power maximum.");
 			return static_cast<unsigned>(result);
@@ -197,12 +200,12 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 		return true;
 	switch (move) {
 		case Moves::Assurance:
-			return defender.damaged();
+			return static_cast<bool>(defender.damaged());
 		case Moves::Avalanche: 
 		case Moves::Revenge:
-			return attacker.damaged();
+			return static_cast<bool>(attacker.damaged());
 		case Moves::Brine:
-			return get_stat(defender, StatNames::HP).stat <= get_stat(defender, StatNames::HP).max / 2;
+			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
 		case Moves::Facade:
 			return get_status(attacker).boosts_facade();
 		case Moves::Ice_Ball:

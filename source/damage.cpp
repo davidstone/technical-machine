@@ -42,8 +42,7 @@ namespace {
 
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
 
-unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
-unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+bounded_integer::equivalent_type<unsigned> regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
 Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender);
 unsigned calculate_screen_divisor (ActivePokemon const & attacker, Team const & defender);
@@ -65,15 +64,6 @@ unsigned calculate_tinted_lens_multiplier (Ability ability, Effectiveness const 
 unsigned calculate_resistance_berry_divisor (Item item, Type type, Effectiveness const & effectiveness);
 bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
 
-}	// unnamed namespace
-
-unsigned damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	return affects_target(Type(attacker.move(), attacker), defender.pokemon(), weather) ?
-		capped_damage (attacker, defender, weather, variable) :
-		0;
-}
-
-namespace {
 
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather) {
 	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
@@ -83,42 +73,44 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-unsigned capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	unsigned damage = uncapped_damage (attacker, defender, weather, variable);
-	Stat const & hp = get_stat(defender.pokemon(), StatNames::HP);
-	if (damage >= hp.stat) {
-		damage = hp.stat;
-		if (cannot_ko(attacker.move()) or defender.pokemon().cannot_be_koed())
-			--damage;
-	}
-	return damage;
-}
-
-}	// unnamed namespace
-
-unsigned uncapped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type raw_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Dragon_Rage:
-			return 40;
+			return 40_bi;
 		case Moves::Endeavor:
-			return static_cast<unsigned> (std::max(get_stat(defender.pokemon(), StatNames::HP).stat - get_stat(attacker, StatNames::HP).stat, 0));
+			return bounded_integer::max(get_hp(defender.pokemon()).current() - get_hp(attacker).current(), 0_bi);
 		case Moves::Fissure:
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return static_cast<unsigned>(get_stat(defender.pokemon(), StatNames::HP).max);
+			return get_hp(defender.pokemon()).max();
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
-			return static_cast<unsigned>(get_level(attacker)());
+			return get_level(attacker)();
 		case Moves::Psywave:
 			return variable.psywave_damage(get_level(attacker));
 		case Moves::SonicBoom:
-			return 20;
+			return 20_bi;
 		case Moves::Super_Fang:
-			return get_stat(defender.pokemon(), StatNames::HP).stat / 2;
+			return get_hp(defender.pokemon()).current() / 2_bi;
 		default:
 			return regular_damage(attacker, defender, weather, variable);
 	}
+}
+
+damage_type capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+	auto const damage = raw_damage(attacker, defender, weather, variable);
+	return (cannot_ko(attacker.move()) or defender.pokemon().cannot_be_koed()) ?
+		static_cast<damage_type>(bounded_integer::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
+		damage;
+}
+
+}	// namespace
+
+damage_type damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+	return affects_target(Type(attacker.move(), attacker), defender.pokemon(), weather) ?
+		capped_damage(attacker, defender, weather, variable) :
+		static_cast<damage_type>(0_bi);
 }
 
 namespace {
@@ -127,7 +119,7 @@ auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level
 	return get_level(attacker)() * 2_bi / 5_bi;
 }
 
-unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	unsigned damage = static_cast<unsigned>(calculate_level_multiplier(attacker));
 	damage += 2;
 
@@ -153,22 +145,15 @@ unsigned regular_damage(ActivePokemon const & attacker, Team const & defender, W
 	damage *= calculate_tinted_lens_multiplier(get_ability(attacker), effectiveness);
 	damage /= calculate_resistance_berry_divisor(get_item(defender.pokemon()), type, effectiveness);
 
-	return std::max(damage, 1u);
+	return bounded_integer::max(static_cast<damage_type>(damage), 1_bi);
 }
 
-}	// unnamed namespace
+}	// namespace
 
 
-unsigned apply_damage(Pokemon & pokemon, unsigned damage) {
-	auto & hp = get_stat(pokemon, StatNames::HP);
-	damage = std::min(damage, static_cast<unsigned>(hp.stat));
-	hp.stat -= damage;
-	return damage;
-}
-
-void recoil (Pokemon & user, unsigned damage, unsigned denominator) {
+void recoil(Pokemon & user, damage_type const damage, bounded_integer::checked_integer<1, 4> const denominator) {
 	if (!get_ability(user).blocks_recoil()) {
-		apply_damage(user, std::min(damage / denominator, 1u));
+		get_hp(user) -= bounded_integer::max(damage / denominator, 1_bi);
 	}
 }
 

@@ -70,7 +70,7 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 		score += ingrain;
 	score += pokemon.magnet_rise.turns_remaining * magnet_rise;
 	if (pokemon.active_substitute)
-		score += substitute + substitute_hp * pokemon.active_substitute.hp / get_stat(pokemon, StatNames::HP).max;
+		score += substitute + substitute_hp * pokemon.active_substitute.hp / get_hp(pokemon).max();
 	score += dot_product(pokemon.stage, stage);
 	return score;
 }
@@ -88,7 +88,7 @@ int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weat
 }
 
 int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
-	if (get_stat(pokemon, StatNames::HP).stat == 0) {
+	if (get_hp(pokemon) == 0_bi) {
 		return 0;
 	}
 	int64_t score = 0;
@@ -112,7 +112,7 @@ int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 }
 
 int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	if (get_stat(pokemon, StatNames::HP).stat == 0) {
+	if (get_hp(pokemon) == 0_bi) {
 		return 0;
 	}
 	int64_t score = entry_hazards.stealth_rock * stealth_rock * Effectiveness::stealth_rock_effectiveness(pokemon);
@@ -163,7 +163,7 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 
 
 int64_t Evaluate::win (Team const & team) {
-	if (team.all_pokemon().size() == 1 and get_stat(team.pokemon(), StatNames::HP).stat == 0)
+	if (team.all_pokemon().size() == 1 and get_hp(team.pokemon()) == 0_bi)
 		return team.is_me() ? -victory : victory;
 	return 0;
 }

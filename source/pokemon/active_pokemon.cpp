@@ -278,7 +278,7 @@ bool ActivePokemon::is_fainted() const {
 }
 
 void ActivePokemon::faint() {
-	get_stat(*this, StatNames::HP).stat = 0;
+	get_hp(*this) = 0_bi;
 	m_will_be_replaced = true;
 }
 
@@ -724,17 +724,15 @@ void ActivePokemon::use_bide(Pokemon & target) {
 	}
 	else {
 		auto const bide_damage = bide.decrement();
-		if (bide_damage != 0_bi) {
-			apply_damage(target, static_cast<unsigned>(bide_damage * 2_bi));
-		}
+		get_hp(target) -= bide_damage * 2_bi;
 	}
 }
 
 namespace {
 
 bool can_use_substitute(Pokemon const & pokemon) {
-	auto const & hp = get_stat(pokemon, StatNames::HP);
-	return hp.stat > hp.max / 4;
+	auto const & hp = get_hp(pokemon);
+	return hp.current() > hp.max() / 4_bi;
 }
 
 }	// namespace
@@ -742,10 +740,10 @@ bool can_use_substitute(Pokemon const & pokemon) {
 void ActivePokemon::use_substitute() {
 	if (!can_use_substitute(*this))
 		return;
-	auto const & max_hp = get_stat(*this, StatNames::HP).max;
+	auto const max_hp = get_hp(*this).max();
 	bool const created = active_substitute.create(static_cast<unsigned>(max_hp));
 	if (created) {
-		indirect_damage(static_cast<unsigned>(max_hp) / 4);
+		indirect_damage(max_hp / 4_bi);
 	}
 }
 
@@ -753,7 +751,7 @@ bool ActivePokemon::is_locked_in_to_bide() const {
 	return bide.is_active();
 }
 
-unsigned ActivePokemon::damaged() const {
+bounded_integer::native_integer<0, HP::max_value> ActivePokemon::damaged() const {
 	return damage_done_to_active;
 }
 
@@ -761,17 +759,19 @@ Rational ActivePokemon::random_damage_multiplier() const {
 	return random_damage();
 }
 
-void ActivePokemon::direct_damage(unsigned damage) {
-	damage = apply_damage(*this, damage);
-	damage_done_to_active = damage;
-	bide.add_damage(static_cast<bounded_integer::checked_integer<0, BideDamage::max_hp - 1>>(damage));
+void ActivePokemon::direct_damage(damage_type const damage) {
+	auto & hp = get_hp(*this);
+	auto const initial_hp = hp.current();
+	hp -= damage;
+	damage_done_to_active = initial_hp - hp.current();
+	bide.add_damage(damage);
 }
 
-void ActivePokemon::indirect_damage(unsigned const damage) {
-	apply_damage(*this, damage);
+void ActivePokemon::indirect_damage(damage_type const damage) {
+	get_hp(*this) -= damage;
 }
 
-void ActivePokemon::register_damage(unsigned const damage) {
+void ActivePokemon::register_damage(damage_type const damage) {
 	damage_done_to_active = damage;
 }
 
@@ -792,12 +792,12 @@ bool ActivePokemon::will_be_replaced() const {
 }
 
 void ActivePokemon::normalize_hp(bool fainted) {
-	auto & hp = get_stat(*this, StatNames::HP).stat;
 	if (fainted) {
 		faint();
 	}
-	else if (hp == 0) {
-		hp = 1;
+	else {
+		HP & hp = get_hp(*this);
+		hp = bounded_integer::max(hp.current(), 1_bi);
 	}
 }
 

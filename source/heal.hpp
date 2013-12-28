@@ -25,7 +25,6 @@ class ActivePokemon;
 class Pokemon;
 class Rational;
 
-void apply_healing(Pokemon & pokemon, unsigned amount);
 void heal(ActivePokemon & pokemon, Rational const & rational, bool positive = true);
 void drain(ActivePokemon & pokemon, Rational const & rational);
 

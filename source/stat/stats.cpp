@@ -20,9 +20,9 @@
 
 namespace technicalmachine {
 
-Stats::Stats(Species const species):
-	stats{
-		Stat(species, StatNames::HP),
+Stats::Stats(Species const species, Level const level):
+	m_hp(species, level),
+	m_stats{
 		Stat(species, StatNames::ATK),
 		Stat(species, StatNames::DEF),
 		Stat(species, StatNames::SPA),
@@ -31,14 +31,18 @@ Stats::Stats(Species const species):
 	} {
 }
 
-// The indexing requires a +1 because I have the first stat in the array, HP,
-// set to -1 in the enum. This allowed me to index stat boosting without having
-// to offset the index.
+HP const & Stats::hp() const {
+	return m_hp;
+}
+HP & Stats::hp() {
+	return m_hp;
+}
+
 Stat const & Stats::operator[](StatNames const stat) const {
-	return stats.at(static_cast<int>(stat) + 1);
+	return m_stats.at(stat);
 }
 Stat & Stats::operator[](StatNames const stat) {
-	return stats.at(static_cast<int>(stat) + 1);
+	return m_stats.at(stat);
 }
 
 

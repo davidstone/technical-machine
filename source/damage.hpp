@@ -19,6 +19,8 @@
 #ifndef DAMAGE_HPP_
 #define DAMAGE_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
+
 namespace technicalmachine {
 
 class ActivePokemon;
@@ -27,12 +29,11 @@ class Team;
 class Variable;
 class Weather;
 
-unsigned damage_calculator (ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
-unsigned uncapped_damage (ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+using damage_type = bounded_integer::equivalent_type<unsigned>;
 
-// Returns the actual damage applied, rather than just the attempt
-unsigned apply_damage(Pokemon & pokemon, unsigned damage);
-void recoil (Pokemon & user, unsigned damage, unsigned denominator);
+damage_type damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+
+void recoil (Pokemon & user, damage_type damage, bounded_integer::checked_integer<1, 4> denominator);
 
 }	// namespace technicalmachine
 #endif	// DAMAGE_HPP_

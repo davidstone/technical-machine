@@ -50,7 +50,7 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, Level cons
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
 	#endif
-	stats(species),
+	stats(species, level),
 
 	m_species(species),
 	m_gender(gender),
@@ -59,7 +59,6 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, Level cons
 
 	m_happiness(set_happiness)
 	{
-	calculate_initial_hp(*this);
 }
 
 Pokemon::Pokemon(unsigned const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, uint8_t set_happiness):
@@ -79,10 +78,6 @@ void switch_in(Pokemon & pokemon) {
 	pokemon.seen.make_visible();
 }
 
-void calculate_initial_hp(Pokemon & pokemon) {
-	get_stat(pokemon, StatNames::HP).calculate_initial_hp(get_level(pokemon));
-}
-
 void Pokemon::remove_switch() {
 	move.remove_switch();
 }
@@ -95,8 +90,8 @@ uint8_t Pokemon::index_of_first_switch () const {
 }
 
 Rational hp_ratio(Pokemon const & pokemon) {
-	auto const & hp = get_stat(pokemon, StatNames::HP);
-	return Rational(hp.stat, static_cast<unsigned>(hp.max));
+	auto const & hp = get_hp(pokemon);
+	return Rational(static_cast<unsigned>(hp.current()), static_cast<unsigned>(hp.max()));
 }
 
 std::string Pokemon::get_nickname () const {
@@ -135,6 +130,13 @@ Nature & get_nature(Pokemon & pokemon) {
 	return pokemon.m_nature;
 }
 
+HP const & get_hp(Pokemon const & pokemon) {
+	return pokemon.stats.hp();
+}
+HP & get_hp(Pokemon & pokemon) {
+	return pokemon.stats.hp();
+}
+
 Stat const & get_stat(Pokemon const & pokemon, StatNames const index_stat) {
 	return pokemon.stats[index_stat];
 }
@@ -166,17 +168,17 @@ unsigned Pokemon::happiness() const {
 }
 
 Pokemon::hash_type Pokemon::hash() const {
-	auto const & hp = get_stat(*this, StatNames::HP);
+	auto const & hp = get_hp(*this);
 	return static_cast<hash_type>(m_species) + number_of_species *
 			(m_item.name + Item::END *
 			(m_status.hash() + Status::max_hash() *
-			((hp.stat - 1u) + static_cast<hash_type>(hp.max) *	// - 1 because you can't have 0 HP
+			(static_cast<hash_type>(hp.current() - 1_bi) + static_cast<hash_type>(hp.max()) *	// - 1 because you can't have 0 HP
 			(seen.hash() + seen.max_hash() *
 			move.hash()))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_stat(*this, StatNames::HP).max) * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_hp(*this).max()) * seen.max_hash() * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -187,7 +189,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.move == rhs.move and
 			lhs.m_species == rhs.m_species and
 			lhs.m_status == rhs.m_status and
-			get_stat(lhs, StatNames::HP).stat == get_stat(rhs, StatNames::HP).stat and
+			get_hp(lhs).current() == get_hp(rhs).current() and
 			lhs.m_item == rhs.m_item and
 			lhs.seen == rhs.seen;
 }
@@ -225,20 +227,17 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	output += "\tNature: " + to_string(get_nature(pokemon).name) + '\n';
 	output += "\t";
 	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
-		if (stat_name != "HP") {
-			output += " / ";
-		}
-		output += bounded_integer::to_string(stat.ev.value()) + " " + stat_name;
+		output += " / " + bounded_integer::to_string(stat.ev.value()) + " " + stat_name;
 	};
 	static std::pair<StatNames, std::string> const stats [] = {
-		{ StatNames::HP, "HP" },
 		{ StatNames::ATK, "Atk" },
 		{ StatNames::DEF, "Def" },
 		{ StatNames::SPA, "SpA" },
 		{ StatNames::SPD, "SpD" },
-		{ StatNames::SPE, "Spe" },
+		{ StatNames::SPE, "Spe" }
 	};
-	for (auto const stat : stats) {
+	output += bounded_integer::to_string(get_hp(pokemon).ev.value()) + " HP";
+	for (auto const & stat : stats) {
 		add_stat(get_stat(pokemon, stat.first), stat.second);
 	}
 	pokemon.move.for_each_regular_move([& output](Move const & move) {

@@ -47,8 +47,8 @@
 namespace technicalmachine {
 namespace {
 
-unsigned use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known);
-unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known);
+damage_type use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known);
+damage_type calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known);
 void call_other_move (ActivePokemon & user);
 template<typename Predicate>
 void cure_all_status(Team & user, Predicate const & predicate) {
@@ -58,15 +58,15 @@ void cure_all_status(Team & user, Predicate const & predicate) {
 	}
 }
 void do_effects_before_moving (Pokemon & user, Team & target);
-void do_damage (ActivePokemon & user, ActivePokemon & target, unsigned damage);
-void do_side_effects (Team & user, Team & target, Weather & weather, Variable const & variable, unsigned damage);
-void absorb_hp(Pokemon & user, Pokemon const & target, unsigned damage);
+void do_damage (ActivePokemon & user, ActivePokemon & target, damage_type damage);
+void do_side_effects (Team & user, Team & target, Weather & weather, Variable const & variable, damage_type damage);
+void absorb_hp(Pokemon & user, Pokemon const & target, damage_type damage);
 void belly_drum(ActivePokemon & user);
 bool can_confuse_with_chatter(Species pokemon);
 void clear_field(Team & user, Pokemon const & target);
 void confusing_stat_boost(ActivePokemon & target, StatNames stat, bounded_integer::checked_integer<1, 2> stages);
 void curse(ActivePokemon & user, ActivePokemon & target);
-void equalize(Stat & hp1, Stat & hp2);
+void equalize(HP & hp1, HP & hp2);
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable);
 void rest(Pokemon & user);
 void struggle(Pokemon & user);
@@ -96,10 +96,11 @@ void fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & w
 }
 
 template<Status::Statuses status>
-void recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, unsigned const damage, Variable const & variable) {
-	recoil(user, damage, 3);
-	if (variable.effect_activates())
+void recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, damage_type const damage, Variable const & variable) {
+	recoil(user, damage, 3_bi);
+	if (variable.effect_activates()) {
 		Status::apply<status>(user, target, weather);
+	}
 }
 
 bool calls_other_move(Moves const move) {
@@ -117,20 +118,22 @@ bool calls_other_move(Moves const move) {
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 
-unsigned call_move (Team & user_team, Team & target_team, Weather & weather, Variable const & variable, bool const damage_is_known) {
+damage_type call_move (Team & user_team, Team & target_team, Weather & weather, Variable const & variable, bool const damage_is_known) {
 	auto & user = user_team.pokemon();
 	auto const & target = target_team.pokemon();
 	user.update_before_move();
 	if (can_execute_move (user, target, weather)) {
 		user.lower_pp(get_ability(target));
-		if (calls_other_move(user.move()))
+		if (calls_other_move(user.move())) {
 			call_other_move (user);
-		if (!user.missed())
+		}
+		if (!user.missed()) {
 			return use_move(user_team, target_team, weather, variable, damage_is_known);
+		}
 	}
-	return 0;
+	return 0_bi;
 }
 
 namespace {
@@ -157,19 +160,20 @@ bool is_sound_based(Moves const move) {
 	}
 }
 
-unsigned use_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
+damage_type use_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
 	Moves const move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and
-			!(move == Moves::Heal_Bell or move == Moves::Perish_Song))
-		return 0;
+			!(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
+		return 0_bi;
+	}
 	calculate_speed (user, weather);
 	calculate_speed (target, weather);
 
 	do_effects_before_moving (user.pokemon(), target);
 
-	unsigned const damage = calculate_real_damage(user.pokemon(), target, weather, variable, damage_is_known);
+	auto const damage = calculate_real_damage(user.pokemon(), target, weather, variable, damage_is_known);
 	do_damage (user.pokemon(), target.pokemon(), damage);
 	user.pokemon().increment_move_use_counter();
 
@@ -192,26 +196,29 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 	}
 }
 
-unsigned calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known) {
-	if (!is_damaging(user.move()))
-		return 0;
-	if (damage_is_known)
+damage_type calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known) {
+	if (!is_damaging(user.move())) {
+		return 0_bi;
+	}
+	if (damage_is_known) {
 		return target.pokemon().damaged();
+	}
 
 	calculate_defending_stat (user, target.pokemon(), weather);
 	calculate_attacking_stat (user, weather);
 	return damage_calculator(user, target, weather, variable);
 }
 
-void do_damage(ActivePokemon & user, ActivePokemon & target, unsigned const damage) {
-	if (damage == 0)
+void do_damage(ActivePokemon & user, ActivePokemon & target, damage_type const damage) {
+	if (damage == 0_bi)
 		return;
 	target.direct_damage(damage);
-	if (get_item(user).causes_recoil())
+	if (get_item(user).causes_recoil()) {
 		drain(user, Rational(1, 10));
+	}
 }
 
-void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Variable const & variable, unsigned const damage) {
+void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Variable const & variable, damage_type const damage) {
 	auto & target = target_team.pokemon();
 	auto & user = user_team.pokemon();
 	Moves const move = user.move();
@@ -367,7 +374,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:
-			recoil (user, damage, 3);
+			recoil(user, damage, 3_bi);
 			break;
 		case Moves::Bubble:
 		case Moves::BubbleBeam:
@@ -446,7 +453,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Counter:
 			if (is_physical(target.move()))
-				target.indirect_damage(user.damaged() * 2u);
+				target.indirect_damage(user.damaged() * 2_bi);
 			break;
 		case Moves::Covet:
 		case Moves::Thief:
@@ -610,7 +617,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.reset_stats();
 			break;
 		case Moves::Head_Smash:
-			recoil (user, damage, 2);
+			recoil(user, damage, 2_bi);
 			break;
 		case Moves::Heal_Bell:
 			cure_all_status(user_team, [](Pokemon const & pokemon) {
@@ -693,15 +700,16 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.faint();
 			break;
 		case Moves::Metal_Burst:
-			target.indirect_damage(user.damaged() * 3u / 2);
+			target.indirect_damage(user.damaged() * 3_bi / 2_bi);
 			break;
 		case Moves::Mimic:		// Fix
 			break;
 		case Moves::Miracle_Eye:		// Fix
 			break;
 		case Moves::Mirror_Coat:
-			if (is_special(target.move()))
-				target.indirect_damage(user.damaged() * 2u);
+			if (is_special(target.move())) {
+				target.indirect_damage(user.damaged() * 2_bi);
+			}
 			break;
 		case Moves::Mirror_Shot:
 		case Moves::Mud_Bomb:
@@ -747,7 +755,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.activate_rampage();
 			break;
 		case Moves::Pain_Split:
-			equalize(get_stat(user, StatNames::HP), get_stat(target, StatNames::HP));
+			equalize(get_hp(user), get_hp(target));
 			break;
 		case Moves::Perish_Song:
 			user.activate_perish_song();
@@ -769,9 +777,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Present:
 			if (variable.present_heals()) {
-				Stat & hp = get_stat(target, StatNames::HP);
-				hp.stat += 80;
-				hp.stat = std::min(hp.stat, static_cast<Stat::stat_type>(hp.max));
+				get_hp(target) += 80_bi;
 			}
 			break;
 		case Moves::Psych_Up:
@@ -873,7 +879,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Submission:
 		case Moves::Take_Down:
-			recoil (user, damage, 4);
+			recoil(user, damage, 4_bi);
 			break;
 		case Moves::Substitute:
 			user.use_substitute();		
@@ -973,19 +979,19 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 }
 
 // I could potentially treat this as negative recoil
-void absorb_hp(Pokemon & user, Pokemon const & target, unsigned const damage) {
+void absorb_hp(Pokemon & user, Pokemon const & target, damage_type const damage) {
 	if (get_ability(target).damages_leechers()) {
-		apply_damage(user, damage / 2);
+		get_hp(user) -= damage / 2_bi;
 	}
 	else {
-		apply_healing(user, damage / 2);
+		get_hp(user) += damage / 2_bi;
 	}
 }
 
 void belly_drum(ActivePokemon & user) {
-	Stat & hp = get_stat(user, StatNames::HP);
-	if (hp.stat > hp.max / 2 and hp.stat > 1) {
-		hp.stat -= hp.max / 2;
+	HP & hp = get_hp(user);
+	if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
+		hp -= hp.max() / 2_bi;
 		user.stat_boost(StatNames::ATK, 12_bi);
 	}
 }
@@ -1009,7 +1015,7 @@ void confusing_stat_boost(ActivePokemon & target, StatNames const stat, bounded_
 void curse(ActivePokemon & user, ActivePokemon & target) {
 	if (is_type(user, Type::Ghost) and !get_ability(user).blocks_secondary_damage()) {
 		if (!target.is_cursed()) {
-			user.indirect_damage(static_cast<unsigned>(get_stat(user, StatNames::HP).max / 2_bi));
+			user.indirect_damage(get_hp(user).max() / 2_bi);
 			target.curse();
 		}
 	}
@@ -1019,10 +1025,10 @@ void curse(ActivePokemon & user, ActivePokemon & target) {
 	}
 }
 
-void equalize(Stat & hp1, Stat & hp2) {
-	Stat::stat_type const temp = (hp1.stat + hp2.stat) / 2;
-	hp1.stat = std::min(temp, static_cast<Stat::stat_type>(hp1.max));
-	hp2.stat = std::min(temp, static_cast<Stat::stat_type>(hp2.max));
+void equalize(HP & hp1, HP & hp2) {
+	HP::current_type const temp = (hp1.current() + hp2.current()) / 2_bi;
+	hp1 = temp;
+	hp2 = temp;
 }
 
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
@@ -1035,15 +1041,15 @@ void phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 }
 
 void rest(Pokemon & user) {
-	Stat & hp = get_stat(user, StatNames::HP);
-	if (hp.stat != hp.max) {
-		hp.stat = static_cast<Stat::stat_type>(hp.max);
+	HP & hp = get_hp(user);
+	if (hp.current() != hp.max()) {
+		hp = static_cast<Stat::stat_type>(hp.max());
 		get_status(user).rest();
 	}
 }
 
 void struggle(Pokemon & user) {
-	apply_damage(user, static_cast<unsigned>(get_stat(user, StatNames::HP).max / 4_bi));
+	get_hp(user) -= get_hp(user).max() / 4_bi;
 }
 
 void swap_items(Pokemon & user, Pokemon & target) {

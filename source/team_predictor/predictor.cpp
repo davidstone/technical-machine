@@ -123,10 +123,10 @@ public:
 	void add_to_team(Team & team) const {
 		team.add_pokemon(species, Level(100_bi), Gender{}, item, ability, nature);
 		Pokemon & pokemon = team.replacement();
+		get_hp(pokemon).ev = EV(evs[0]);
 		for (auto const stat : regular_stats()) {
-			get_stat(pokemon, stat).ev = EV(evs[static_cast<size_t>(static_cast<int>(stat) + 1)]);
+			get_stat(pokemon, stat).ev = EV(evs[static_cast<unsigned>(stat) + 1u]);
 		}
-		calculate_initial_hp(pokemon);
 		for (auto const move : moves) {
 			pokemon.move.add(move);
 		}

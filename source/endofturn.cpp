@@ -1,5 +1,5 @@
 // End of turn effects
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -87,7 +87,7 @@ void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 }
 
 void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather) {
-	if (get_stat(pokemon, StatNames::HP).stat == 0) {
+	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
 	if (pokemon.ingrained())
@@ -112,14 +112,14 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			break;
 	}
 	if (pokemon.leech_seeded()) {
-		unsigned const n = get_stat(pokemon, StatNames::HP).stat;
+		auto const initial = get_hp(pokemon).current();
 		drain(pokemon, Rational(1, 8));
 		if (!foe.is_fainted()) {
 			if (get_ability(pokemon).damages_leechers()) {
-				apply_damage(foe, n - get_stat(pokemon, StatNames::HP).stat);
+				get_hp(foe) -= initial - get_hp(pokemon).current();
 			}
 			else {
-				apply_healing(foe, n - get_stat(pokemon, StatNames::HP).stat);
+				get_hp(foe) += initial - get_hp(pokemon).current();
 			}
 		}
 	}

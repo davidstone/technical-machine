@@ -49,7 +49,6 @@ Move load_move(boost::property_tree::ptree const & pt) {
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 	static std::map<std::string, StatNames> const stats = {
-		{ "HP", StatNames::HP },
 		{ "Atk", StatNames::ATK },
 		{ "Def", StatNames::DEF },
 		{ "SpAtk", StatNames::SPA },
@@ -61,9 +60,18 @@ static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 
 static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	std::string const name = pt.get <std::string> ("<xmlattr>.name");
-	Stat & stat = lookup_stat (pokemon, name);
-	stat.iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
-	stat.ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
+	IV const iv(pt.get<IV::value_type>("<xmlattr>.iv"));
+	EV const ev(pt.get<EV::value_type>("<xmlattr>.ev"));
+	if (name == "HP") {
+		HP & hp = get_hp(pokemon);
+		hp.iv = iv;
+		hp.ev = ev;
+	}
+	else {
+		Stat & stat = lookup_stat(pokemon, name);
+		stat.iv = iv;
+		stat.ev = ev;
+	}
 }
 
 Species from_simulator_string(std::string const & str) {

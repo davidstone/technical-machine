@@ -20,18 +20,23 @@
 #define STAT__STATS_HPP_
 
 #include <bounded_integer/array.hpp>
+#include "hp.hpp"
 #include "stat.hpp"
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
+class Level;
 
 class Stats {
 public:
-	Stats(Species species);
+	Stats(Species species, Level level);
+	HP const & hp() const;
+	HP & hp();
 	Stat const & operator[](StatNames stat) const;
 	Stat & operator[](StatNames stat);
 private:
-	bounded_integer::array<Stat, 6> stats;
+	HP m_hp;
+	bounded_integer::array<Stat, 5> m_stats;
 };
 
 }	// namespace technicalmachine

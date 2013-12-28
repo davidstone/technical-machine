@@ -23,10 +23,15 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
+#include "../../pokemon/species_forward.hpp"
+
 #include "../../stat/ev.hpp"
+#include "../../stat/hp.hpp"
 #include "../../stat/nature.hpp"
+#include "../../stat/stat.hpp"
 
 namespace technicalmachine {
+class Level;
 class Pokemon;
 class SingleClassificationEVs;
 class OffensiveEVs;
@@ -39,10 +44,16 @@ public:
 	DataPoint(DataPoint const & original, Nature const & new_nature);
 	std::string to_string() const;
 	bounded_integer::native_integer<0, EV::max * 3> sum() const;
-	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon pokemon);
+	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
 	static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 private:
 	void update_pokemon(Pokemon & pokemon) const;
+
+	template<StatNames stat>
+	unsigned product(Species const species, Level const & level) const {
+		auto const initial = initial_stat<stat>(Stat(species, stat, defense), level, nature);
+		return initial * static_cast<unsigned>(HP(species, level, hp).max());
+	}
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 	EV hp;
 	EV defense;
