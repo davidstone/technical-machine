@@ -39,7 +39,6 @@ class Weather;
 
 class Stat {
 public:
-	using stat_type = uint16_t;
 	using base_type = bounded_integer::checked_integer<5, 230>;
 
 	Stat(Species name, StatNames stat, EV ev = EV(0_bi));
@@ -47,7 +46,6 @@ public:
 	base_type base;
 	EV ev;
 	IV iv;
-	stat_type stat;
 };
 
 template<StatNames stat_name>
@@ -56,17 +54,17 @@ unsigned initial_stat(Stat const & stat, Level const & level, Nature const & nat
 	return static_cast<unsigned>(pre_nature) * nature.boost<stat_name>();
 }
 
-void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather);
-void calculate_attack(ActivePokemon & attacker, Weather const & weather);
-void calculate_special_attack(ActivePokemon & attacker, Weather const & weather);
+unsigned calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather);
+unsigned calculate_attack(ActivePokemon const & attacker, Weather const & weather);
+unsigned calculate_special_attack(ActivePokemon const & attacker, Weather const & weather);
 
-void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather);
-void calculate_defense (ActivePokemon & defender, Weather const & weather, bool ch = false, bool is_self_KO = false);
-void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch = false);
+unsigned calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
+unsigned calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false, bool is_self_KO = false);
+unsigned calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false);
 
-void calculate_speed (Team & team, Weather const & weather);
-void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
-void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
+unsigned calculate_speed(Team const & team, Weather const & weather);
+void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
+void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 
 }	// namespace technicalmachine
 #endif	// STAT__STAT_HPP_

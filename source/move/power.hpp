@@ -1,5 +1,5 @@
 // Move power calculator forward declarations
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,11 +21,11 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
+class Team;
 class Variable;
 class Weather;
 
-unsigned move_power(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable);
+unsigned move_power(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
 }	// namespace technicalmachine
 #endif	// MOVE__POWER_HPP_

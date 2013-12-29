@@ -31,7 +31,7 @@ class Weather;
 
 using damage_type = bounded_integer::equivalent_type<unsigned>;
 
-damage_type damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
 void recoil (Pokemon & user, damage_type damage, bounded_integer::checked_integer<1, 4> denominator);
 

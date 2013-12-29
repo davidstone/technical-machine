@@ -424,9 +424,9 @@ Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, W
 void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
 	switch (get_ability(switcher).name()) {
 		case Download: {
-			calculate_defense(other, weather);
-			calculate_special_defense(other, weather);
-			switcher.stat_boost((get_stat(other, StatNames::DEF).stat >= get_stat(other, StatNames::SPD).stat) ? StatNames::SPA : StatNames::ATK, 1_bi);
+			auto const defense = calculate_defense(other, weather);
+			auto const special_defense = calculate_special_defense(other, weather);
+			switcher.stat_boost(defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;
 		}
 		case Drizzle:

@@ -1,5 +1,5 @@
 // Incorrect Calculation class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,13 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "incorrect_calculation.hpp"
-#include <string>
-
-namespace technicalmachine {
-
-IncorrectCalculation::IncorrectCalculation(unsigned const result, unsigned const expected):
-	std::logic_error("Result of " + std::to_string(result) + " instead of the expected " + std::to_string(expected) + "\n")
-	{
-}
-
-}	// namespace technicalmachine

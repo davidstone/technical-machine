@@ -54,9 +54,7 @@ void attack_tests () {
 
 	get_item(pokemon).name = Item::CHOICE_BAND;
 	
-	calculate_attack(attacker.pokemon(), Weather{});
-	if (get_stat(attacker.pokemon(), StatNames::ATK).stat != max_attack)
-		throw IncorrectCalculation (get_stat(attacker.pokemon(), StatNames::ATK).stat, max_attack);
+	check_equal(calculate_attack(attacker.pokemon(), Weather{}), max_attack);
 }
 
 void special_attack_tests () {
@@ -79,9 +77,7 @@ void special_attack_tests () {
 
 	get_item(pokemon).name = Item::CHOICE_SPECS;
 	
-	calculate_special_attack(attacker.pokemon(), weather);
-	if (get_stat(attacker.pokemon(), StatNames::SPA).stat != max_special_attack)
-		throw IncorrectCalculation (get_stat(attacker.pokemon(), StatNames::SPA).stat, max_special_attack);
+	check_equal(calculate_special_attack(attacker.pokemon(), weather), max_special_attack);
 }
 
 void defense_tests () {
@@ -103,10 +99,7 @@ void defense_tests () {
 	get_ability(pokemon) = Ability::Marvel_Scale;
 	Status::apply<Status::BURN>(pokemon, weather);
 
-	calculate_defense(defender.pokemon(), weather);
-
-	if (get_stat(pokemon, StatNames::DEF).stat != max_defense)
-		throw IncorrectCalculation(get_stat(pokemon, StatNames::DEF).stat, max_defense);
+	check_equal(calculate_defense(defender.pokemon(), weather), max_defense);
 }
 
 void special_defense_tests () {
@@ -126,10 +119,7 @@ void special_defense_tests () {
 
 	defender.pokemon().stat_boost(StatNames::SPD, 6_bi);
 
-	calculate_special_defense(defender.pokemon(), weather);
-
-	if (get_stat(pokemon, StatNames::SPD).stat != max_special_defense)
-		throw IncorrectCalculation (get_stat(pokemon, StatNames::SPD).stat, max_special_defense);
+	check_equal(calculate_special_defense(defender.pokemon(), weather), max_special_defense);
 }
 
 void speed_tests () {
@@ -155,10 +145,7 @@ void speed_tests () {
 	
 	team.screens.activate_tailwind();
 	
-	calculate_speed(team, weather);
-
-	if (get_stat(pokemon, StatNames::SPE).stat != max_speed)
-		throw IncorrectCalculation(get_stat(pokemon, StatNames::SPE).stat, max_speed);
+	check_equal(calculate_speed(team, weather), max_speed);
 }
 
 }	// unnamed namespace

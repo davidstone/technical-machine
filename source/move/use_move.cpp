@@ -48,7 +48,7 @@ namespace technicalmachine {
 namespace {
 
 damage_type use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known);
-damage_type calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known);
+damage_type calculate_real_damage(Team const & user, Team const & target, Weather const & weather, Variable const & variable, bool const damage_is_known);
 void call_other_move (ActivePokemon & user);
 template<typename Predicate>
 void cure_all_status(Team & user, Predicate const & predicate) {
@@ -160,7 +160,7 @@ bool is_sound_based(Moves const move) {
 	}
 }
 
-damage_type use_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
+damage_type use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) {
 	Moves const move = user.pokemon().move();
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
@@ -168,12 +168,10 @@ damage_type use_move (Team & user, Team & target, Weather & weather, Variable co
 			!(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
 		return 0_bi;
 	}
-	calculate_speed (user, weather);
-	calculate_speed (target, weather);
 
 	do_effects_before_moving (user.pokemon(), target);
 
-	auto const damage = calculate_real_damage(user.pokemon(), target, weather, variable, damage_is_known);
+	auto const damage = calculate_real_damage(user, target, weather, variable, damage_is_known);
 	do_damage (user.pokemon(), target.pokemon(), damage);
 	user.pokemon().increment_move_use_counter();
 
@@ -196,16 +194,14 @@ void do_effects_before_moving (Pokemon & user, Team & target) {
 	}
 }
 
-damage_type calculate_real_damage(ActivePokemon & user, Team & target, Weather const & weather, Variable const & variable, bool const damage_is_known) {
-	if (!is_damaging(user.move())) {
+damage_type calculate_real_damage(Team const & user, Team const & target, Weather const & weather, Variable const & variable, bool const damage_is_known) {
+	if (!is_damaging(user.pokemon().move())) {
 		return 0_bi;
 	}
 	if (damage_is_known) {
 		return target.pokemon().damaged();
 	}
 
-	calculate_defending_stat (user, target.pokemon(), weather);
-	calculate_attacking_stat (user, weather);
 	return damage_calculator(user, target, weather, variable);
 }
 
@@ -1043,7 +1039,7 @@ void phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 void rest(Pokemon & user) {
 	HP & hp = get_hp(user);
 	if (hp.current() != hp.max()) {
-		hp = static_cast<Stat::stat_type>(hp.max());
+		hp = hp.max();
 		get_status(user).rest();
 	}
 }

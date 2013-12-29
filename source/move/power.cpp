@@ -31,6 +31,7 @@
 #include "../item.hpp"
 #include "../rational.hpp"
 #include "../status.hpp"
+#include "../team.hpp"
 #include "../variable.hpp"
 #include "../weather.hpp"
 
@@ -41,7 +42,7 @@
 namespace technicalmachine {
 namespace {
 
-unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon const & defender, Variable const & variable);
+unsigned calculate_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable);
 bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 unsigned item_modifier (Pokemon const & attacker);
 Rational defender_ability_modifier(Pokemon const & attacker, Ability const ability);
@@ -53,8 +54,10 @@ bool is_boosted_by_lustrous_orb(Species species);
 unsigned power_of_mass_based_moves(Species species);
 }	// namespace
 
-unsigned move_power(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather, Variable const & variable) {
-	unsigned const base_power = calculate_base_power(attacker, defender, variable);
+unsigned move_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) {
+	auto const & attacker = attacker_team.pokemon();
+	auto const & defender = defender_team.pokemon();
+	auto const base_power = calculate_base_power(attacker_team, defender_team, weather, variable);
 	unsigned power = base_power;
 
 	if (doubling(attacker, defender, weather)) {
@@ -102,7 +105,9 @@ unsigned return_power(Pokemon const & pokemon) {
 	return pokemon.happiness() * 2u / 5;
 }
 
-unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon const & defender, Variable const & variable) {
+unsigned calculate_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) {
+	auto const & attacker = attacker_team.pokemon();
+	auto const & defender = defender_team.pokemon();
 	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
@@ -136,7 +141,9 @@ unsigned calculate_base_power(ActivePokemon const & attacker, ActivePokemon cons
 		case Moves::Low_Kick:
 			return power_of_mass_based_moves(defender);
 		case Moves::Gyro_Ball: {
-			unsigned const uncapped_power = 25u * get_stat(defender, StatNames::SPE).stat / get_stat(attacker, StatNames::SPE).stat + 1;
+			auto const defender_speed = calculate_speed(defender_team, weather);
+			auto const attacker_speed = calculate_speed(attacker_team, weather);
+			unsigned const uncapped_power = 25u * defender_speed / attacker_speed + 1;
 			return std::min(uncapped_power, 150u);
 		}
 		case Moves::Ice_Ball:

@@ -124,9 +124,6 @@ int64_t select_type_of_move(Team & ai, Team & foe, Weather const & weather, unsi
 	assert(depth > 0);
 	--depth;
 	
-	calculate_speed (ai, weather);
-	calculate_speed (foe, weather);
-
 	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi)
 		return replace(ai, foe, weather, depth, evaluate, best_move, first_turn);
 	else if (ai.pokemon().switch_decision_required())
@@ -352,14 +349,9 @@ int64_t use_move_branch(Team & first, Team & last, Variable const & first_variab
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
-	// Need to recalculate speed because end-of-turn effects occur in a
-	// specified order based on Speed, and a that order can be changed within a
-	// turn.
-	calculate_speed (first, weather);
-	calculate_speed (last, weather);
 	Team * faster;
 	Team * slower;
-	faster_pokemon (first, last, weather, faster, slower);
+	faster_pokemon(first, last, weather, faster, slower);
 	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
 		pokemon.shed_skin(flag);
 	};

@@ -1,5 +1,5 @@
 // Incorrect Calculation class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,13 +20,32 @@
 #define TEST__INCORRECT_CALCULATION_HPP_
 
 #include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 
 class IncorrectCalculation : public std::logic_error {
 public:
-	IncorrectCalculation(unsigned result, unsigned expected);
+	template<typename LHS, typename RHS>
+	IncorrectCalculation(LHS const result, RHS const expected):
+		std::logic_error("Result of " + to_string(result) + " instead of the expected " + to_string(expected) + '\n')
+		{
+	}
+private:
+	template<typename T>
+	static std::string to_string(T && t) {
+		using std::to_string;
+		return to_string(std::forward<T>(t));
+	}
+
 };
+
+template<typename LHS, typename RHS>
+void check_equal(LHS const lhs, RHS const rhs) {
+	if (lhs != rhs) {
+		throw IncorrectCalculation(lhs, rhs);
+	}
+}
 
 }	// namespace technicalmachine
 

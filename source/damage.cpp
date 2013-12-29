@@ -42,9 +42,9 @@ namespace {
 
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
 
-bounded_integer::equivalent_type<unsigned> regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+damage_type regular_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
-Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender);
+Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 unsigned calculate_screen_divisor (ActivePokemon const & attacker, Team const & defender);
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
@@ -73,7 +73,8 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-damage_type raw_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type raw_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
+	auto const & attacker = attacker_team.pokemon();
 	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Dragon_Rage:
 			return 40_bi;
@@ -94,22 +95,23 @@ damage_type raw_damage(ActivePokemon const & attacker, Team const & defender, We
 		case Moves::Super_Fang:
 			return get_hp(defender.pokemon()).current() / 2_bi;
 		default:
-			return regular_damage(attacker, defender, weather, variable);
+			return regular_damage(attacker_team, defender, weather, variable);
 	}
 }
 
-damage_type capped_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type capped_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	auto const damage = raw_damage(attacker, defender, weather, variable);
-	return (cannot_ko(attacker.move()) or defender.pokemon().cannot_be_koed()) ?
+	return (cannot_ko(attacker.pokemon().move()) or defender.pokemon().cannot_be_koed()) ?
 		static_cast<damage_type>(bounded_integer::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
 		damage;
 }
 
 }	// namespace
 
-damage_type damage_calculator(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type damage_calculator(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
+	auto const & attacker = attacker_team.pokemon();
 	return affects_target(Type(attacker.move(), attacker), defender.pokemon(), weather) ?
-		capped_damage(attacker, defender, weather, variable) :
+		capped_damage(attacker_team, defender, weather, variable) :
 		static_cast<damage_type>(0_bi);
 }
 
@@ -119,12 +121,13 @@ auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level
 	return get_level(attacker)() * 2_bi / 5_bi;
 }
 
-damage_type regular_damage(ActivePokemon const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
+	auto const & attacker = attacker_team.pokemon();
 	unsigned damage = static_cast<unsigned>(calculate_level_multiplier(attacker));
 	damage += 2;
 
-	damage *= move_power(attacker, defender.pokemon(), weather, variable);
-	damage *= physical_vs_special_modifier(attacker, defender.pokemon());
+	damage *= move_power(attacker_team, defender, weather, variable);
+	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);
 	damage /= calculate_screen_divisor(attacker, defender);
 	Type const type(attacker.move(), attacker);
 	damage *= calculate_weather_modifier(type, weather);
@@ -159,13 +162,19 @@ void recoil(Pokemon & user, damage_type const damage, bounded_integer::checked_i
 
 namespace {
 
-Rational physical_vs_special_modifier (Pokemon const & attacker, Pokemon const & defender) {
+Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return is_physical(attacker.move()) ?
-		Rational(get_stat(attacker, StatNames::ATK).stat, 50u * get_stat(defender, StatNames::DEF).stat * weakening_from_status(attacker)) :
-		Rational(get_stat(attacker, StatNames::SPA).stat, 50u * get_stat(defender, StatNames::SPD).stat);
+		Rational(
+			calculate_attack(attacker, weather),
+			50 * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
+		) :
+		Rational(
+			calculate_special_attack(attacker, weather),
+			50 * calculate_special_defense(defender, weather, attacker.critical_hit())
+		);
 }
 
 unsigned weakening_from_status (Pokemon const & attacker) {

@@ -214,31 +214,30 @@ typename std::enable_if<!StatTraits<stat>::is_physical, unsigned>::type calculat
 }
 
 template<StatNames stat>
-void calculate_common_offensive_stat(ActivePokemon & pokemon, Weather const & weather) {
+unsigned calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather const & weather) {
 	auto attack = calculate_initial_stat<stat>(pokemon);
 	attack *= pokemon.stage_modifier<stat>(pokemon.critical_hit());
 
 	attack *= Ability::stat_modifier<stat>(pokemon, weather);
 	attack *= item_modifier<stat>(pokemon);
 	
-	get_stat(pokemon, stat).stat = std::max(attack, 1u);
+	return std::max(attack, 1u);
 }
 
 }	// namespace
 
-void calculate_attacking_stat (ActivePokemon & attacker, Weather const & weather) {
-	if (is_physical(attacker.move()))
-		calculate_attack(attacker, weather);
-	else
+unsigned calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather) {
+	return is_physical(attacker.move()) ?
+		calculate_attack(attacker, weather) :
 		calculate_special_attack(attacker, weather);
 }
 
-void calculate_attack(ActivePokemon & attacker, Weather const & weather) {
-	calculate_common_offensive_stat<StatNames::ATK>(attacker, weather);
+unsigned calculate_attack(ActivePokemon const & attacker, Weather const & weather) {
+	return calculate_common_offensive_stat<StatNames::ATK>(attacker, weather);
 }
 
-void calculate_special_attack (ActivePokemon & attacker, Weather const & weather) {
-	calculate_common_offensive_stat<StatNames::SPA>(attacker, weather);
+unsigned calculate_special_attack(ActivePokemon const & attacker, Weather const & weather) {
+	return calculate_common_offensive_stat<StatNames::SPA>(attacker, weather);
 }
 
 namespace {
@@ -255,16 +254,13 @@ bool is_self_KO(Moves const move) {
 
 }	// namespace
 
-void calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon & defender, Weather const & weather) {
-	if (is_physical(attacker.move())) {
-		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(attacker.move()));
-	}
-	else {
+unsigned calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+	return is_physical(attacker.move()) ?
+		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(attacker.move())) :
 		calculate_special_defense(defender, weather, attacker.critical_hit());
-	}
 }
 
-void calculate_defense (ActivePokemon & defender, Weather const & weather, bool ch, bool is_self_KO) {
+unsigned calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) {
 	constexpr auto stat = StatNames::DEF;
 	auto defense = calculate_initial_stat<stat>(defender);
 
@@ -273,13 +269,14 @@ void calculate_defense (ActivePokemon & defender, Weather const & weather, bool 
 	defense *= Ability::stat_modifier<stat>(defender, weather);
 	defense *= item_modifier<stat>(defender);
 	
-	if (is_self_KO)
+	if (is_self_KO) {
 		defense /= 2;
+	}
 
-	get_stat(defender, stat).stat = std::max(defense, 1u);
+	return std::max(defense, 1u);
 }
 
-void calculate_special_defense (ActivePokemon & defender, Weather const & weather, bool ch) {
+unsigned calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) {
 	constexpr auto stat = StatNames::SPD;
 	auto defense = calculate_initial_stat<stat>(defender);
 	
@@ -290,12 +287,12 @@ void calculate_special_defense (ActivePokemon & defender, Weather const & weathe
 	
 	defense *= special_defense_sandstorm_boost(defender, weather);
 	
-	get_stat(defender, stat).stat = std::max(defense, 1u);
+	return std::max(defense, 1u);
 }
 
-void calculate_speed (Team & team, Weather const & weather) {
+unsigned calculate_speed(Team const & team, Weather const & weather) {
 	constexpr auto stat = StatNames::SPE;
-	auto & pokemon = team.pokemon();
+	auto const & pokemon = team.pokemon();
 	auto speed = calculate_initial_stat<stat>(pokemon);
 	
 	speed *= pokemon.stage_modifier<stat>();
@@ -307,16 +304,14 @@ void calculate_speed (Team & team, Weather const & weather) {
 	
 	speed *= tailwind_speed_multiplier (team);
 
-	get_stat(pokemon, stat).stat = std::max(speed, 1u);
+	return std::max(speed, 1u);
 }
 
-void order (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
+void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
 	Priority const priority1(team1.pokemon().move());
 	Priority const priority2(team2.pokemon().move());
 	if (priority1 == priority2) {
-		calculate_speed(team1, weather);
-		calculate_speed(team2, weather);
-		faster_pokemon (team1, team2, weather, faster, slower);
+		faster_pokemon(team1, team2, weather, faster, slower);
 	}
 	else if (priority1 > priority2) {
 		faster = &team1;
@@ -328,9 +323,9 @@ void order (Team & team1, Team & team2, Weather const & weather, Team* & faster,
 	}
 }
 
-void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
-	auto const speed1 = get_stat(team1.pokemon(), StatNames::SPE).stat;
-	auto const speed2 = get_stat(team2.pokemon(), StatNames::SPE).stat;
+void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
+	auto const speed1 = calculate_speed(team1, weather);
+	auto const speed2 = calculate_speed(team2, weather);
 	if (speed1 > speed2) {
 		faster = &team1;
 		slower = &team2;
@@ -343,8 +338,9 @@ void faster_pokemon (Team & team1, Team & team2, Weather const & weather, Team* 
 		faster = nullptr;
 		slower = nullptr;
 	}
-	if (weather.trick_room())
-		std::swap (faster, slower);
+	if (weather.trick_room()) {
+		std::swap(faster, slower);
+	}
 }
 
 namespace {

@@ -1,5 +1,5 @@
 // Test damage-related functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,7 +37,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded_integer::literal;
 
-Team max_damage_physical_attacker () {
+Team max_damage_physical_attacker() {
 	Team attacker;
 	
 	Level const level(100_bi);
@@ -54,7 +54,7 @@ Team max_damage_physical_attacker () {
 	return attacker;
 }
 
-Team max_damage_special_attacker () {
+Team max_damage_special_attacker() {
 	Team attacker;
 
 	Level const level(100_bi);
@@ -65,7 +65,7 @@ Team max_damage_special_attacker () {
 	return attacker;
 }
 
-Team max_damage_physical_defender () {
+Team max_damage_physical_defender() {
 	Team defender;
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
@@ -79,7 +79,7 @@ Team max_damage_physical_defender () {
 	return defender;
 }
 
-Team max_damage_special_defender () {
+Team max_damage_special_defender() {
 	Team defender;
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
@@ -96,21 +96,20 @@ Team max_damage_special_defender () {
 	return defender;
 }
 
-void physical_power_test () {
+void physical_power_test() {
 	std::cout << "\t\tRunning physical power tests.\n";
 	constexpr unsigned max_power = 1440;
 
-	Team attacker = max_damage_physical_attacker ();
-	get_item(attacker.pokemon()).name = Item::ROCK_INCENSE;
-	get_ability(attacker.pokemon()) = Ability::Rivalry;
+	Team attacker = max_damage_physical_attacker();
+	auto & pokemon = attacker.pokemon();
+	get_item(pokemon).name = Item::ROCK_INCENSE;
+	get_ability(pokemon) = Ability::Rivalry;
 
-	unsigned const power = move_power(attacker.pokemon(), max_damage_physical_defender().pokemon(), Weather(), Variable());
-	if (power != max_power) {
-		throw IncorrectCalculation (power, max_power);
-	}
+	auto const power = move_power(attacker, max_damage_physical_defender(), Weather{}, Variable{});
+	check_equal(power, max_power);
 }
 
-void special_power_test () {
+void special_power_test() {
 	std::cout << "\t\tRunning special power tests.\n";
 	constexpr unsigned max_power = 342;
 
@@ -123,51 +122,44 @@ void special_power_test () {
 	Team defender = max_damage_special_defender();
 	defender.pokemon().dive();
 
-	unsigned const power = move_power(attacker.pokemon(), defender.pokemon(), Weather{}, Variable{});
-	if (power != max_power) {
-		throw IncorrectCalculation(power, max_power);
-	}
+	unsigned const power = move_power(attacker, defender, Weather{}, Variable{});
+	check_equal(power, max_power);
 }
 
-void power_test () {
+void power_test() {
 	std::cout << "\tRunning power tests.\n";
-	physical_power_test ();
-	special_power_test ();
+	physical_power_test();
+	special_power_test();
 }
 
-void physical_damage_test () {
+void physical_damage_test() {
 	std::cout << "\t\tRunning max physical damage tests.\n";
 	constexpr auto max_damage = 95064912_bi;
 	Weather const weather;
 
-	Team attacker = max_damage_physical_attacker ();
+	Team attacker = max_damage_physical_attacker();
 	
 	Pokemon & a = attacker.pokemon();
+
 	get_stat(a, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(a).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
 	attacker.pokemon().stat_boost(StatNames::ATK, 6_bi);
-	calculate_attacking_stat (attacker.pokemon(), weather);
 
 	get_item(a).name = Item::METRONOME;
-
 	attacker.pokemon().set_critical_hit(true);
 
 	Team defender = max_damage_physical_defender();
-	calculate_defending_stat(attacker.pokemon(), defender.pokemon(), weather);
 	
-	auto const damage = damage_calculator(attacker.pokemon(), defender, weather, Variable{});
-	if (damage != max_damage) {
-		throw IncorrectCalculation(static_cast<unsigned>(damage), static_cast<unsigned>(max_damage));
-	}
+	check_equal(damage_calculator(attacker, defender, weather, Variable{}), max_damage);
 }
 
-void special_damage_test () {
+void special_damage_test() {
 	std::cout << "\t\tRunning max special damage tests.\n";
 	constexpr auto max_damage = 25696272_bi;
 	Weather weather;
-	weather.set_sun (Weather::Duration::permanent);
+	weather.set_sun(Weather::Duration::permanent);
 
 	Team attacker = max_damage_special_attacker();
 	Pokemon & a = attacker.pokemon();
@@ -177,7 +169,6 @@ void special_damage_test () {
 	get_stat(a, StatNames::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(a).name = Nature::MODEST;
 	attacker.pokemon().stat_boost(StatNames::SPA, 6_bi);
-	calculate_attacking_stat(attacker.pokemon(), weather);
 	
 	get_item(a).name = Item::METRONOME;
 	for (unsigned n = 0; n != 10; ++n) {
@@ -189,26 +180,22 @@ void special_damage_test () {
 	attacker.pokemon().activate_flash_fire();
 
 	Team defender = max_damage_special_defender();
-	calculate_defending_stat(attacker.pokemon(), defender.pokemon(), weather);
 
-	auto const damage = damage_calculator(attacker.pokemon(), defender, weather, Variable{});
-	if (damage != max_damage) {
-		throw IncorrectCalculation(static_cast<unsigned>(damage), static_cast<unsigned>(max_damage));
-	}
+	check_equal(damage_calculator(attacker, defender, weather, Variable{}), max_damage);
 }
 
-void damage_test () {
+void damage_test() {
 	std::cout << "\tRunning max damage tests.\n";
-	physical_damage_test ();
-	special_damage_test ();
+	physical_damage_test();
+	special_damage_test();
 }
 
-}	// unnamed namespace
+}	// namespace
 
-void damage_tests () {
+void damage_tests() {
 	std::cout << "Running damage tests.\n";
-	power_test ();
-	damage_test ();
+	power_test();
+	damage_test();
 	std::cout << "Damage tests passed.\n\n";
 }
 
