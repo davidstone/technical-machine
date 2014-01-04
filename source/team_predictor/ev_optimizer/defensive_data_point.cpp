@@ -70,8 +70,8 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const 
 	if (right_physical < left_physical and right_special < left_special) {
 		return false;
 	}
-	auto const left = static_cast<uint64_t>(left_physical) * left_special;
-	auto const right = static_cast<uint64_t>(right_physical) * right_special;
+	auto const left = left_physical * left_special;
+	auto const right = right_physical * right_special;
 	return left < right;
 }
 

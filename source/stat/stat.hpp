@@ -49,9 +49,9 @@ public:
 };
 
 template<StatNames stat_name>
-unsigned initial_stat(Stat const & stat, Level const & level, Nature const & nature) {
+auto initial_stat(Stat const & stat, Level const & level, Nature const & nature) {
 	auto const pre_nature = (2_bi * stat.base + stat.iv.value() + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
-	return static_cast<unsigned>(pre_nature) * nature.boost<stat_name>();
+	return pre_nature * nature.boost<stat_name>();
 }
 
 unsigned calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather);

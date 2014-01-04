@@ -70,11 +70,12 @@ Team max_damage_physical_defender() {
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
-	auto & d = defender.pokemon();
-	get_stat(d, StatNames::DEF).iv = IV(0_bi);
-	get_stat(d, StatNames::DEF).ev = EV(0_bi);
+	auto & pokemon = defender.pokemon();
+	get_stat(pokemon, StatNames::DEF).iv = IV(0_bi);
+	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
+	get_nature(pokemon) = Nature::HASTY;
 	for (unsigned n = 0; n != 3; ++n) {
-		d.stat_boost(StatNames::DEF, -2_bi);
+		pokemon.stat_boost(StatNames::DEF, -2_bi);
 	}
 	return defender;
 }

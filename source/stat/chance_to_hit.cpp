@@ -54,20 +54,21 @@ Rational ChanceToHit::operator()() const {
 void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
 	BaseAccuracy const base_accuracy = accuracy(user.move());
 	if (move_can_miss(user, base_accuracy, get_ability(target))) {
-		auto calculated_accuracy = static_cast<unsigned>(*base_accuracy);
-		calculated_accuracy *= user.stage_modifier<StatNames::ACC>();
-		calculated_accuracy *= target.stage_modifier<StatNames::EVA>();
+		auto const calculated_accuracy = *base_accuracy *
+			user.stage_modifier<StatNames::ACC>() *
+			target.stage_modifier<StatNames::EVA>();
 
-		calculated_accuracy *= accuracy_item_modifier(get_item(user), target_moved);
-		calculated_accuracy *= Ability::accuracy_modifier(user);
+		// Temporary variable until I finish transitioning to bounded_integer
+		auto accuracy2 = static_cast<unsigned>(calculated_accuracy) * accuracy_item_modifier(get_item(user), target_moved);
+		accuracy2 *= Ability::accuracy_modifier(user);
 		
-		calculated_accuracy *= evasion_item_modifier(get_item(target));
-		calculated_accuracy *= Ability::evasion_modifier(target, weather);
+		accuracy2 *= evasion_item_modifier(get_item(target));
+		accuracy2 *= Ability::evasion_modifier(target, weather);
 
 		if (weather.gravity())
-			calculated_accuracy *= Rational(5, 3);
+			accuracy2 *= Rational(5, 3);
 		
-		probability = std::min(static_cast<uint8_t>(calculated_accuracy), max);
+		probability = std::min(static_cast<uint8_t>(accuracy2), max);
 	}
 	else {
 		probability = max;

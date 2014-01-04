@@ -108,10 +108,9 @@ damage_type capped_damage(Team const & attacker, Team const & defender, Weather 
 
 }	// namespace
 
-damage_type damage_calculator(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
-	auto const & attacker = attacker_team.pokemon();
-	return affects_target(Type(attacker.move(), attacker), defender.pokemon(), weather) ?
-		capped_damage(attacker_team, defender, weather, variable) :
+damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+	return affects_target(Type(attacker.pokemon().move(), attacker.pokemon()), defender.pokemon(), weather) ?
+		capped_damage(attacker, defender, weather, variable) :
 		static_cast<damage_type>(0_bi);
 }
 
@@ -123,8 +122,7 @@ auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level
 
 damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
-	unsigned damage = static_cast<unsigned>(calculate_level_multiplier(attacker));
-	damage += 2;
+	auto damage = static_cast<unsigned>(calculate_level_multiplier(attacker) + 2_bi);
 
 	damage *= move_power(attacker_team, defender, weather, variable);
 	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);

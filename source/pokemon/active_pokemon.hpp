@@ -194,7 +194,7 @@ public:
 	}
 
 	template<StatNames stat, typename... Args>
-	Rational stage_modifier(Args&&... args) const {
+	auto stage_modifier(Args&&... args) const {
 		return stage.modifier<stat>(std::forward<Args>(args)...);
 	}
 	void stat_boost(StatNames stat, Stage::boost_type number_of_stages);

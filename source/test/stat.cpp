@@ -80,8 +80,8 @@ void special_attack_tests () {
 	check_equal(calculate_special_attack(attacker.pokemon(), weather), max_special_attack);
 }
 
-void defense_tests () {
-	std::cout << "\tRunning Defense tests.\n";
+void max_defense_test() {
+	std::cout << "\t\tRunning max Defense test.\n";
 	constexpr unsigned max_defense = 3684;
 
 	Team defender;
@@ -100,6 +100,32 @@ void defense_tests () {
 	Status::apply<Status::BURN>(pokemon, weather);
 
 	check_equal(calculate_defense(defender.pokemon(), weather), max_defense);
+}
+
+void min_defense_test() {
+	std::cout << "\t\tRunning min Defense test.\n";
+	constexpr auto min_defense = 1_bi;
+
+	Team defender;
+
+	Level const level(1_bi);
+	Gender const gender(Gender::MALE);
+	defender.add_pokemon(Species::Combee, level, gender);
+	auto & pokemon = defender.pokemon();
+	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
+	get_nature(pokemon) = Nature::HASTY;
+
+	for (unsigned n = 0; n != 3; ++n) {
+		pokemon.stat_boost(StatNames::DEF, -2_bi);
+	}
+
+	check_equal(calculate_defense(defender.pokemon(), Weather{}), min_defense);
+}
+
+void defense_tests () {
+	std::cout << "\tRunning Defense tests.\n";
+	max_defense_test();
+	min_defense_test();
 }
 
 void special_defense_tests () {

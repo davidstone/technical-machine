@@ -20,11 +20,14 @@
 #define STAT__NATURE_HPP_
 
 #include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
 
 #include "stat_names.hpp"
 
+#include "../rational.hpp"
+
 namespace technicalmachine {
-class Rational;
+using namespace bounded_integer::literal;
 
 class Nature {
 public:
@@ -41,8 +44,17 @@ public:
 	Nature(StatNames boosted, StatNames dropped);
 	bool is_set () const;
 	void set_if_unknown (Natures nature);
-	template<StatNames>
-	Rational boost() const;
+
+	template<StatNames stat>
+	auto boost() const {
+		auto const numerator = BOUNDED_INTEGER_CONDITIONAL(
+			boosts_stat<stat>(), 11_bi,
+			BOUNDED_INTEGER_CONDITIONAL(lowers_stat<stat>(), 9_bi, 10_bi)
+		);
+		static constexpr auto denominator = 10_bi;
+		return make_bounded_rational(numerator, denominator);
+	}
+
 	template<StatNames>
 	bool boosts_stat() const;
 	template<StatNames>

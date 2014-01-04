@@ -33,8 +33,8 @@ using namespace bounded_integer::literal;
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 
-template<StatNames stat_name>
-bounded_integer::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nature const nature, unsigned const initial) {
+template<StatNames stat_name, typename Initial>
+bounded_integer::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nature const nature, Initial const initial) {
 	EV::value_type ev_estimate = 0_bi;
 	EV & ev = stat.ev;
 	ev = EV(ev_estimate);
@@ -121,8 +121,8 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 	Stat & special_attack = get_stat(pokemon, StatNames::SPA);
 	Level const level = get_level(pokemon);
 	Nature & nature = get_nature(pokemon);
-	unsigned const initial_atk = initial_stat<StatNames::ATK>(attack, level, nature);
-	unsigned const initial_spa = initial_stat<StatNames::SPA>(special_attack, level, nature);
+	auto const initial_atk = initial_stat<StatNames::ATK>(attack, level, nature);
+	auto const initial_spa = initial_stat<StatNames::SPA>(special_attack, level, nature);
 	for (auto it = std::begin(container); it != std::end(container);) {
 		OffensiveStats & stats = it->second;
 		nature = it->first;

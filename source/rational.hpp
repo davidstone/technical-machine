@@ -26,6 +26,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 class Pokemon;
 
 class Rational {
@@ -97,13 +98,13 @@ public:
 	}
 private:
 	template<typename T>
-	friend T & compound_multiplication(T & number, Rational const rational, std::false_type is_floating_point) {
+	friend T & compound_multiplication(T & number, Rational const rational, std::false_type /* is_floating_point */) {
 		auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
 		number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
 		return number;
 	}
 	template<typename T>
-	friend T & compound_multiplication(T & number, Rational const rational, std::true_type is_floating_point) {
+	friend T & compound_multiplication(T & number, Rational const rational, std::true_type /* is_floating_point */) {
 		number *= rational.numerator;
 		number /= rational.denominator;
 		return number;
@@ -145,6 +146,152 @@ constexpr bool operator>=(Rational const lhs, Rational const rhs) {
 	return rhs <= lhs;
 }
 
+
+
+template<typename Numerator, typename Denominator>
+class bounded_rational;
+
+template<typename Numerator, typename Denominator>
+constexpr auto make_bounded_rational(Numerator const & numerator, Denominator const & denominator) {
+	// It has the null policy so that it can convert to any other policy with
+	// arithmetic operations.
+	using bounded_integer::equivalent_type;
+	using bounded_integer::null_policy;
+	using N = equivalent_type<Numerator, null_policy>;
+	using D = equivalent_type<Denominator, null_policy>;
+	return bounded_rational<N, D>(numerator, denominator);
+}
+
+template<typename Numerator, typename Denominator>
+class bounded_rational {
+private:
+	template<typename N, typename D>
+	friend class bounded_rational;
+	Numerator m_numerator;
+	Denominator m_denominator;
+public:
+	constexpr bounded_rational(Numerator const numerator, Denominator const denominator):
+		m_numerator(numerator),
+		m_denominator(denominator) {
+	}
+
+	template<intmax_t minimum, intmax_t maximum, typename overflow_policy>
+	constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> const number) const -> decltype(number * m_numerator / m_denominator) {
+		return number * m_numerator / m_denominator;
+	}
+
+	template<typename N, typename D>
+	constexpr auto operator*(bounded_rational<N, D> const other) const -> decltype(make_bounded_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator)) {
+		return make_bounded_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator);
+	}
+	template<typename N, typename D>
+	constexpr auto operator+(bounded_rational<N, D> const other) const -> decltype(make_bounded_rational(m_numerator * other.m_denominator + other.m_numerator * m_denominator, m_denominator * other.m_denominator)) {
+		return make_bounded_rational(m_numerator * other.m_denominator + other.m_numerator * m_denominator, m_denominator * other.m_denominator);
+	}
+	template<typename N, typename D>
+	constexpr auto operator-(bounded_rational<N, D> const other) const -> decltype(make_bounded_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator)) {
+		return make_bounded_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator);
+	}
+
+	template<typename N, typename D>
+	constexpr bool operator==(bounded_rational<N, D> const other) const {
+		return m_numerator * other.m_denominator == other.m_numerator * m_denominator;
+	}
+	template<typename N, typename D>
+	constexpr bool operator<(bounded_rational<N, D> const other) const {
+		return m_numerator * other.m_denominator < other.m_numerator * m_denominator;
+	}
+
+	friend std::string to_string(bounded_rational<Numerator, Denominator> const rational) {
+		using bounded_integer::to_string;
+		return to_string(rational.m_numerator) + " / " + to_string(rational.m_denominator);
+	}
+	
+	template<typename N, typename D>
+	explicit constexpr operator bounded_rational<N, D>() {
+		// Perhaps this should be a check like is_implicitly_constructible
+		static_assert(
+			std::numeric_limits<N>::min() <= std::numeric_limits<Numerator>::min() and
+			std::numeric_limits<N>::max() >= std::numeric_limits<Numerator>::max() and
+			std::numeric_limits<D>::min() <= std::numeric_limits<Denominator>::min() and
+			std::numeric_limits<D>::max() >= std::numeric_limits<Denominator>::max(),
+		"Narrowing conversion.");
+		return bounded_rational<N, D>(static_cast<N>(m_numerator), static_cast<D>(m_denominator));
+	}
+};
+
+template<typename Numerator, typename Denominator>
+constexpr auto complement(bounded_rational<Numerator, Denominator> const rational) {
+	return make_bounded_rational(1_bi, 1_bi) - rational;
+}
+
+
+
+template<intmax_t minimum, intmax_t maximum, typename overflow_policy, typename Numerator, typename Denominator>
+constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> const number, bounded_rational<Numerator, Denominator> const rational) {
+	return rational * number;
+}
+
+template<intmax_t minimum, intmax_t maximum, typename overflow_policy, typename N, typename D>
+auto & operator*=(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> & number, bounded_rational<N, D> const rational) {
+	return number = number * rational;
+}
+
+
+template<typename N1, typename D1, typename N2, typename D2>
+auto & operator*=(bounded_rational<N1, D1> & lhs, bounded_rational<N2, D2> const rhs) {
+	return lhs = lhs * rhs;
+}
+
+template<typename N1, typename D1, typename N2, typename D2>
+auto & operator+=(bounded_rational<N1, D1> & lhs, bounded_rational<N2, D2> const rhs) {
+	return lhs = lhs + rhs;
+}
+
+template<typename N1, typename D1, typename N2, typename D2>
+auto & operator-=(bounded_rational<N1, D1> & lhs, bounded_rational<N2, D2> const rhs) {
+	return lhs = lhs - rhs;
+}
+
+
+
+template<typename N1, typename D1, typename N2, typename D2>
+constexpr bool operator!=(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
+	return !(lhs == rhs);
+}
+template<typename N1, typename D1, typename N2, typename D2>
+constexpr bool operator>(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
+	return rhs < lhs;
+}
+template<typename N1, typename D1, typename N2, typename D2>
+constexpr bool operator>=(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
+	return !(lhs < rhs);
+}
+template<typename N1, typename D1, typename N2, typename D2>
+constexpr bool operator<=(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
+	return !(rhs < lhs);
+}
+
+
 }	// namespace technicalmachine
+
+// I briefly considered writing this in terms of scaling the two types to have
+// the same numerator, but I decided against that because it requires more than
+// just manipulating types; the value must be scaled as well. Instead, this
+// takes the free-at-runtime but more conservative approach of just getting the
+// common type of the numerator and denominator.
+
+namespace std {
+
+template<typename N1, typename D1, typename N2, typename D2>
+struct common_type<technicalmachine::bounded_rational<N1, D1>, technicalmachine::bounded_rational<N2, D2>> {
+private:
+	using numerator = typename common_type<N1, N2>::type;
+	using denominator = typename common_type<D1, D2>::type;
+public:
+	using type = technicalmachine::bounded_rational<numerator, denominator>;
+};
+
+}	// namespace std
 
 #endif	// RATIONAL_HPP_

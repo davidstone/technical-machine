@@ -255,25 +255,6 @@ bool Nature::lowers_stat<StatNames::SPE>() const {
 }
 
 
-template<StatNames stat>
-Rational Nature::boost() const {
-	if (boosts_stat<stat>()) {
-		return Rational(11, 10);
-	}
-	else if (lowers_stat<stat>()) {
-		return Rational(9, 10);
-	}
-	else {
-		return Rational(1);
-	}
-}
-
-template Rational Nature::boost<StatNames::ATK>() const;
-template Rational Nature::boost<StatNames::DEF>() const;
-template Rational Nature::boost<StatNames::SPA>() const;
-template Rational Nature::boost<StatNames::SPD>() const;
-template Rational Nature::boost<StatNames::SPE>() const;
-
 bool operator== (Nature const lhs, Nature const rhs) {
 	return lhs.name == rhs.name;
 }
