@@ -45,14 +45,11 @@ bool affects_target(Type const & move_type, ActivePokemon const & target, Weathe
 damage_type regular_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
 Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
-unsigned calculate_screen_divisor (ActivePokemon const & attacker, Team const & defender);
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
-unsigned weakening_from_status (Pokemon const & attacker);
 Rational calculate_weather_modifier (Type type, Weather const & weather);
 Rational calculate_flash_fire_modifier (ActivePokemon const & attacker);
-unsigned calculate_critical_hit_multiplier (ActivePokemon const & attacker);
 Rational calculate_item_modifier(ActivePokemon const & attacker);
 Rational calculate_me_first_modifier (ActivePokemon const & attacker);
 
@@ -60,8 +57,6 @@ Rational calculate_stab_modifier (ActivePokemon const & attacker);
 Rational calculate_stab_boost (Ability ability);
 Rational calculate_ability_effectiveness_modifier (Ability ability, Effectiveness const & effectiveness);
 Rational calculate_expert_belt_modifier (Item item, Effectiveness const & effectiveness);
-unsigned calculate_tinted_lens_multiplier (Ability ability, Effectiveness const & effectiveness);
-unsigned calculate_resistance_berry_divisor (Item item, Type type, Effectiveness const & effectiveness);
 bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
 
 
@@ -116,23 +111,46 @@ damage_type damage_calculator(Team const & attacker, Team const & defender, Weat
 
 namespace {
 
-auto calculate_level_multiplier (Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_bi / 5_bi) {
+auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_bi / 5_bi) {
 	return get_level(attacker)() * 2_bi / 5_bi;
+}
+
+auto screen_divisor(ActivePokemon const & attacker, Team const & defender) {
+	return BOUNDED_INTEGER_CONDITIONAL(screen_is_active (attacker, defender), 2_bi, 1_bi);
+}
+
+auto critical_hit_multiplier(ActivePokemon const & attacker) {
+	return BOUNDED_INTEGER_CONDITIONAL(
+		!attacker.critical_hit(), 1_bi,
+		BOUNDED_INTEGER_CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
+	);
+}
+
+auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effectiveness) {
+	return BOUNDED_INTEGER_CONDITIONAL(
+		ability.strengthens_nve_attacks() and effectiveness.is_not_very_effective(),
+		2_bi,
+		1_bi
+	);
+}
+
+auto resistance_berry_divisor(Item const item, Type const type, Effectiveness const & effectiveness) {
+	return BOUNDED_INTEGER_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
 damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
-	auto damage = static_cast<unsigned>(calculate_level_multiplier(attacker) + 2_bi);
+	auto damage = static_cast<unsigned>(level_multiplier(attacker) + 2_bi);
 
 	damage *= move_power(attacker_team, defender, weather, variable);
 	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);
-	damage /= calculate_screen_divisor(attacker, defender);
+	damage /= screen_divisor(attacker, defender);
 	Type const type(attacker.move(), attacker);
 	damage *= calculate_weather_modifier(type, weather);
 	damage *= calculate_flash_fire_modifier(attacker);
 	damage += 2;
 
-	damage *= calculate_critical_hit_multiplier(attacker);
+	damage *= critical_hit_multiplier(attacker);
 	damage *= calculate_item_modifier(attacker);
 	damage *= calculate_me_first_modifier(attacker);
 
@@ -143,8 +161,8 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	damage *= effectiveness;
 	damage *= calculate_ability_effectiveness_modifier(get_ability(defender.pokemon()), effectiveness);
 	damage *= calculate_expert_belt_modifier(get_item(attacker), effectiveness);
-	damage *= calculate_tinted_lens_multiplier(get_ability(attacker), effectiveness);
-	damage /= calculate_resistance_berry_divisor(get_item(defender.pokemon()), type, effectiveness);
+	damage *= tinted_lens_multiplier(get_ability(attacker), effectiveness);
+	damage /= resistance_berry_divisor(get_item(defender.pokemon()), type, effectiveness);
 
 	return bounded_integer::max(static_cast<damage_type>(damage), 1_bi);
 }
@@ -160,6 +178,14 @@ void recoil(Pokemon & user, damage_type const damage, bounded_integer::checked_i
 
 namespace {
 
+auto weakening_from_status(Pokemon const & attacker) {
+	return BOUNDED_INTEGER_CONDITIONAL(
+		get_status(attacker).weakens_physical_attacks() and get_ability(attacker).blocks_burn_damage_penalty(),
+		2_bi,
+		1_bi
+	);
+}
+
 Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
@@ -167,20 +193,12 @@ Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePoke
 	return is_physical(attacker.move()) ?
 		Rational(
 			calculate_attack(attacker, weather),
-			50 * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
+			50 * calculate_defense(defender, weather, attacker.critical_hit()) * static_cast<unsigned>(weakening_from_status(attacker))
 		) :
 		Rational(
 			calculate_special_attack(attacker, weather),
 			50 * calculate_special_defense(defender, weather, attacker.critical_hit())
 		);
-}
-
-unsigned weakening_from_status (Pokemon const & attacker) {
-	return (get_status(attacker).weakens_physical_attacks() and get_ability(attacker).blocks_burn_damage_penalty()) ? 2 : 1;
-}
-
-unsigned calculate_screen_divisor (ActivePokemon const & attacker, Team const & defender) {
-	return screen_is_active (attacker, defender) ? 2 : 1;
 }
 
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender) {
@@ -208,12 +226,6 @@ Rational calculate_weather_modifier (Type const type, Weather const & weather) {
 Rational calculate_flash_fire_modifier (ActivePokemon const & attacker) {
 	Type const type(attacker.move(), attacker);
 	return (attacker.flash_fire_is_active() and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : Rational(1);
-}
-
-unsigned calculate_critical_hit_multiplier (ActivePokemon const & attacker) {
-	if (!attacker.critical_hit())
-		return 1;
-	return (get_ability(attacker).boosts_critical_hits()) ? 3 : 2;
 }
 
 Rational calculate_item_modifier(ActivePokemon const & attacker) {
@@ -248,15 +260,7 @@ Rational calculate_expert_belt_modifier (Item const item, Effectiveness const & 
 	return (item.boosts_super_effective_moves() and effectiveness.is_super_effective()) ? Rational(6, 5) : Rational(1);
 }
 
-unsigned calculate_tinted_lens_multiplier (Ability const ability, Effectiveness const & effectiveness) {
-	return (ability.strengthens_nve_attacks() and effectiveness.is_not_very_effective()) ? 2 : 1;
-}
-
-unsigned calculate_resistance_berry_divisor (Item const item, Type const type, Effectiveness const & effectiveness) {
-	return resistance_berry_activates(item, type, effectiveness) ? 2 : 1;
-}
-
-bool resistance_berry_activates (Item const item, Type const type, Effectiveness const & effectiveness) {
+bool resistance_berry_activates(Item const item, Type const type, Effectiveness const & effectiveness) {
 	// Perhaps I should create some sort of item function that returns the type
 	// that the item grants resistance toward (and some sort of guard type to
 	// indicate that the item does not grant resistance). Then I can
