@@ -1,5 +1,5 @@
 // Stat formulas
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -96,6 +96,74 @@ bool is_boosted_by_thick_club(Species const species) {
 	}
 }
 
+#define CONDITIONAL(a, b, c) BOUNDED_INTEGER_CONDITIONAL(a, b, c)
+
+constexpr auto ability_denominator = 2_bi;
+
+template<StatNames stat>
+struct AbilityNumerator;
+
+template<>
+struct AbilityNumerator<StatNames::ATK> {
+	auto operator()(ActivePokemon const & attacker, Weather const & weather) -> bounded_integer::native_integer<1, 4> {
+		switch (get_ability(attacker).name()) {
+			case Ability::Flower_Gift:
+				return CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
+			case Ability::Guts:
+				return CONDITIONAL(!get_status(attacker).is_clear(), 3_bi, ability_denominator);
+			case Ability::Hustle:
+				return 3_bi;
+			case Ability::Huge_Power:
+			case Ability::Pure_Power:
+				return ability_denominator * 2_bi;
+			case Ability::Slow_Start:
+				return CONDITIONAL(attacker.slow_start_is_active(), 1_bi, ability_denominator);
+			default:
+				return ability_denominator;
+		}
+	}
+};
+template<>
+struct AbilityNumerator<StatNames::SPA> {
+	auto operator()(ActivePokemon const & pokemon, Weather const & weather)
+		RETURNS(CONDITIONAL(get_ability(pokemon).boosts_special_attack(weather), 3_bi, ability_denominator))
+};
+template<>
+struct AbilityNumerator<StatNames::DEF> {
+	auto operator()(ActivePokemon const & defender, Weather const &)
+		RETURNS(CONDITIONAL(get_ability(defender).boosts_defense(get_status(defender)), 3_bi, ability_denominator))
+};
+template<>
+struct AbilityNumerator<StatNames::SPD> {
+	auto operator()(ActivePokemon const & pokemon, Weather const & weather)
+		RETURNS(CONDITIONAL(get_ability(pokemon).boosts_special_defense(weather), 3_bi, ability_denominator))
+};
+template<>
+struct AbilityNumerator<StatNames::SPE> {
+	auto operator()(ActivePokemon const & pokemon, Weather const & weather) -> bounded_integer::native_integer<1, 4> {
+		switch (get_ability(pokemon).name()) {
+			case Ability::Chlorophyll:
+				return CONDITIONAL(weather.sun(), ability_denominator * 2_bi, ability_denominator);
+			case Ability::Swift_Swim:
+				return CONDITIONAL(weather.rain(), ability_denominator * 2_bi, ability_denominator);
+			case Ability::Unburden:
+				return CONDITIONAL(get_item(pokemon).was_lost(), ability_denominator * 2_bi, ability_denominator);
+			case Ability::Quick_Feet:
+				return CONDITIONAL(!get_status(pokemon).is_clear(), 3_bi, ability_denominator);
+			case Ability::Slow_Start:
+				return CONDITIONAL(pokemon.slow_start_is_active(), 1_bi, ability_denominator);
+			default:
+				return ability_denominator;
+		}
+	}
+};
+
+template<StatNames stat>
+auto ability_modifier(ActivePokemon const & pokemon, Weather const & weather) {
+	return make_bounded_rational(AbilityNumerator<stat>{}(pokemon, weather), ability_denominator);
+}
+
+
 template<StatNames stat>
 Rational item_modifier(Pokemon const & pokemon);
 template<>
@@ -167,9 +235,6 @@ Rational item_modifier<StatNames::SPE>(Pokemon const & pokemon) {
 
 Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather);
 
-unsigned paralysis_speed_divisor (Pokemon const & pokemon);
-unsigned tailwind_speed_multiplier (Team const & team);
-
 template<StatNames stat>
 class StatTraits;
 
@@ -218,10 +283,9 @@ auto calculate_initial_stat(ActivePokemon const & pokemon) {
 template<StatNames stat>
 unsigned calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather const & weather) {
 	auto const attack = calculate_initial_stat<stat>(pokemon) *
-		pokemon.stage_modifier<stat>(pokemon.critical_hit());
-
-	unsigned attack2 = static_cast<unsigned>(attack) * Ability::stat_modifier<stat>(pokemon, weather);
-	attack2 *= item_modifier<stat>(pokemon);
+		pokemon.stage_modifier<stat>(pokemon.critical_hit()) *
+		ability_modifier<stat>(pokemon, weather);
+	auto const attack2 = static_cast<unsigned>(attack) * item_modifier<stat>(pokemon);
 	
 	return std::max(attack2, 1u);
 }
@@ -265,40 +329,59 @@ unsigned calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon
 unsigned calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat<stat>(defender) *
-		defender.stage_modifier<stat>(ch);
+		defender.stage_modifier<stat>(ch) *
+		ability_modifier<stat>(defender, weather);
 	
-	// Temporary until we transition to all bounded_integer
-	auto defense2 = static_cast<unsigned>(defense) * Ability::stat_modifier<stat>(defender, weather);
-	defense2 *= item_modifier<stat>(defender);
+	auto defense2 = static_cast<unsigned>(defense) * item_modifier<stat>(defender);
 	
 	if (is_self_KO) {
-		defense2 /= 2;
+		defense2 /= 2_bi;
 	}
 
 	return std::max(defense2, 1u);
 }
 
+namespace {
+
+Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
+	return (is_type(defender, Type::Rock) and weather.sand()) ? Rational(3, 2) : Rational(1);
+}
+
+}	// namespace
+
 unsigned calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat<stat>(defender) *	
-		defender.stage_modifier<stat>(ch);
-
-	auto defense2 = static_cast<unsigned>(defense) * Ability::stat_modifier<stat>(defender, weather);	
-	defense2 *= item_modifier<stat>(defender);
+		defender.stage_modifier<stat>(ch) *
+		ability_modifier<stat>(defender, weather);
+	
+	auto	defense2 = static_cast<unsigned>(defense) * item_modifier<stat>(defender);
 	
 	defense2 *= special_defense_sandstorm_boost(defender, weather);
 	
 	return std::max(defense2, 1u);
 }
 
+namespace {
+
+unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
+	return get_status(pokemon).lowers_speed(get_ability(pokemon)) ? 4 : 1;
+}
+
+unsigned tailwind_speed_multiplier (Team const & team) {
+	return team.screens.tailwind() ? 2 : 1;
+}
+
+}	// namespace
+
 unsigned calculate_speed(Team const & team, Weather const & weather) {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat<stat>(pokemon) *
-		pokemon.stage_modifier<stat>();
-
-	auto speed2 = static_cast<unsigned>(speed) * Ability::stat_modifier<stat>(pokemon, weather);
-	speed2 *= item_modifier<stat>(pokemon);
+		pokemon.stage_modifier<stat>() *
+		ability_modifier<stat>(pokemon, weather);
+	
+	auto speed2 = static_cast<unsigned>(speed) * item_modifier<stat>(pokemon);
 	
 	speed2 /= paralysis_speed_divisor (pokemon);
 	
@@ -344,18 +427,6 @@ void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* &
 }
 
 namespace {
-
-Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
-	return (is_type(defender, Type::Rock) and weather.sand()) ? Rational(3, 2) : Rational(1);
-}
-
-unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
-	return get_status(pokemon).lowers_speed(get_ability(pokemon)) ? 4 : 1;
-}
-
-unsigned tailwind_speed_multiplier (Team const & team) {
-	return team.screens.tailwind() ? 2 : 1;
-}
 
 Stat::base_type get_base(Species const species, StatNames const stat) {
 	static constexpr auto base_stat = bounded_integer::make_array<5>(

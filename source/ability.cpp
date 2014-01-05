@@ -1,5 +1,5 @@
 // Ability data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -372,54 +372,6 @@ bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
 	return Type(attacker.move(), attacker) == type and hp_ratio(attacker) <= make_bounded_rational(1_bi, 3_bi);
 }
 }	// namespace
-
-template<>
-Rational Ability::stat_modifier<StatNames::ATK>(ActivePokemon const & attacker, Weather const & weather) {
-	switch (get_ability(attacker).name()) {
-		case Flower_Gift:
-			return weather.sun() ? Rational(3, 2) : Rational(1);
-		case Guts:
-			return (!get_status(attacker).is_clear()) ? Rational(3, 2) : Rational(1);
-		case Hustle:
-			return Rational(3, 2);
-		case Huge_Power:
-		case Pure_Power:
-			return Rational(2);
-		case Slow_Start:
-			return attacker.slow_start_is_active() ? Rational(1, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
-template<>
-Rational Ability::stat_modifier<StatNames::SPA>(ActivePokemon const & pokemon, Weather const & weather) {
-	return get_ability(pokemon).boosts_special_attack(weather) ? Rational(3, 2) : Rational(1);
-}
-template<>
-Rational Ability::stat_modifier<StatNames::DEF>(ActivePokemon const & defender, Weather const &) {
-	return get_ability(defender).boosts_defense(get_status(defender)) ? Rational(3, 2) : Rational(1);
-}
-template<>
-Rational Ability::stat_modifier<StatNames::SPD>(ActivePokemon const & pokemon, Weather const & weather) {
-	return get_ability(pokemon).boosts_special_defense(weather) ? Rational(3, 2) : Rational(1);
-}
-template<>
-Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, Weather const & weather) {
-	switch (get_ability(pokemon).name()) {
-		case Chlorophyll:
-			return weather.sun() ? Rational(2) : Rational(1);
-		case Swift_Swim:
-			return weather.rain() ? Rational(2) : Rational(1);
-		case Unburden:
-			return get_item(pokemon).was_lost() ? Rational(2) : Rational(1);
-		case Quick_Feet:
-			return (!get_status(pokemon).is_clear()) ? Rational(3, 2) : Rational(1);
-		case Slow_Start:
-			return pokemon.slow_start_is_active() ? Rational(1, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
 
 void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
 	switch (get_ability(switcher).name()) {

@@ -1,5 +1,5 @@
 // Stats data structures
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 #define STAT__STAT_HPP_
 
 #include <cstdint>
-#include <initializer_list>
 #include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
 #include "iv.hpp"

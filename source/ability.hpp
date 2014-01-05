@@ -1,5 +1,5 @@
 // Ability data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -106,8 +106,6 @@ public:
 	static Rational accuracy_modifier(ActivePokemon const & user);
 	static Rational evasion_modifier(ActivePokemon const & target, Weather const & weather);
 	static Rational attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
-	template<StatNames stat>
-	static Rational stat_modifier(ActivePokemon const & pokemon, Weather const & weather);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
 	static void weather_healing(ActivePokemon & pokemon, Weather const & weather);
 	friend bool operator== (Ability lhs, Ability rhs);
@@ -115,17 +113,6 @@ private:
 	Abilities m_name;
 };
 bool operator!= (Ability lhs, Ability rhs);
-
-template<> Rational Ability::stat_modifier<StatNames::ATK>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<StatNames::ATK>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<StatNames::DEF>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<StatNames::DEF>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<StatNames::SPA>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<StatNames::SPA>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<StatNames::SPD>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<StatNames::SPD>(ActivePokemon const & pokemon, Weather const & weather);
-template<> Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, Weather const & weather);
-extern template Rational Ability::stat_modifier<StatNames::SPE>(ActivePokemon const & pokemon, Weather const & weather);
 
 }
 #endif	// ABILITY_HPP_
