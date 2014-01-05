@@ -111,22 +111,22 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
-			return 120u * hp_ratio(defender) + 1;
+			return static_cast<unsigned>(120_bi * hp_ratio(defender) + 1_bi);
 		case Moves::Eruption:
 		case Moves::Water_Spout:
-			return 150u * hp_ratio(attacker);
+			return static_cast<unsigned>(150_bi * hp_ratio(attacker));
 		case Moves::Flail:
 		case Moves::Reversal: {
-			unsigned const k = 64u * hp_ratio(attacker);
-			if (k <= 1)
+			auto const k = 64_bi * hp_ratio(attacker);
+			if (k <= 1_bi)
 				return 200;
-			else if (k <= 5)
+			else if (k <= 5_bi)
 				return 150;
-			else if (k <= 12)
+			else if (k <= 12_bi)
 				return 100;
-			else if (k <= 21)
+			else if (k <= 21_bi)
 				return 80;
-			else if (k <= 42)
+			else if (k <= 42_bi)
 				return 40;
 			else
 				return 20;

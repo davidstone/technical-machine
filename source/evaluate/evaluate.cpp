@@ -120,7 +120,7 @@ int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & e
 		score += entry_hazards.spikes * spikes + entry_hazards.toxic_spikes * toxic_spikes;
 	}
 	score += members;
-	score += hp * hp_ratio(pokemon);
+	score += hp * Rational(hp_ratio(pokemon));
 	score += hidden * !pokemon.seen();
 	score += score_status(pokemon, toxic_counter);
 	score += score_move (pokemon, other, weather);

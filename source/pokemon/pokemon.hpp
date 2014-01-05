@@ -116,7 +116,10 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
-Rational hp_ratio(Pokemon const & pokemon);
+inline auto hp_ratio(Pokemon const & pokemon) {
+	auto const & hp = get_hp(pokemon);
+	return make_bounded_rational(hp.current(), hp.max());
+}
 
 }	// namespace technicalmachine
 #endif	// POKEMON__POKEMON_HPP_

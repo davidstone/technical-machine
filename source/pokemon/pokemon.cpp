@@ -89,11 +89,6 @@ uint8_t Pokemon::index_of_first_switch () const {
 	return index;
 }
 
-Rational hp_ratio(Pokemon const & pokemon) {
-	auto const & hp = get_hp(pokemon);
-	return Rational(static_cast<unsigned>(hp.current()), static_cast<unsigned>(hp.max()));
-}
-
 std::string Pokemon::get_nickname () const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
@@ -210,7 +205,7 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
 
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	std::string output = to_string(static_cast<Species>(pokemon));
-	double const d_per_cent_hp = 100.0 * hp_ratio(pokemon);
+	double const d_per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
 	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
 	output += " (" + per_cent_hp + "% HP)";
 	output += " @ " + to_string(get_item(pokemon).name);

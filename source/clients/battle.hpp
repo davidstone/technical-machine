@@ -66,7 +66,7 @@ public:
 	void handle_hp_change(Party changer, uint8_t slot, UpdatedHP::VisibleHP remaining_hp);
 	bool is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const;
 	bool is_valid_precision(Party changer, unsigned precision) const;
-	void handle_direct_damage(Party const damaged, uint8_t slot, damage_type damage);
+	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
 	Battle(std::string const & _opponent, std::random_device::result_type seed, unsigned battle_depth, std::string const & team_file_name);

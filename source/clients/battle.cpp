@@ -207,14 +207,14 @@ void Battle::handle_hp_change(Party const changing, uint8_t slot, UpdatedHP::Vis
 	updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 }
 
-void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, damage_type const visible_damage) {
+void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, UpdatedHP::VisibleHP const visible_damage) {
 	Team const & team = get_team(damaged);
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
 	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
 	assert(move_damage);
-	Rational const change(visible_damage, max_visible_hp_change(team));
-	auto const damage = static_cast<unsigned>(get_hp(pokemon).max()) * change;
+	auto const change = make_bounded_rational(visible_damage, max_visible_hp_change(team));
+	auto const damage = get_hp(pokemon).max() * change;
 	updated_hp.direct_damage(team.is_me(), pokemon, damage);
 	move_damage = false;
 }
@@ -225,7 +225,7 @@ int Battle::hp_change(Party const changing, UpdatedHP::VisibleHP const remaining
 	if (max_visible < remaining_hp) {
 		throw network::InvalidSimulatorData(remaining_hp, 0_bi, max_visible, team.who() + "'s remaining_hp");
 	}
-	auto const measurable_hp = static_cast<unsigned>(max_visible) * hp_ratio(team.replacement());
+	auto const measurable_hp = max_visible * hp_ratio(team.replacement());
 	return static_cast<int>(measurable_hp - remaining_hp);
 }
 
@@ -249,13 +249,14 @@ bool Battle::is_valid_precision(Party changer, unsigned precision) const {
 
 void Battle::correct_hp_and_report_errors(Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
-		auto const tm_estimate = static_cast<unsigned>(max_visible_hp_change(team.is_me(), pokemon)) * hp_ratio(pokemon);
+		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * hp_ratio(pokemon);
 		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
-		if (tm_estimate == new_hp)
-			return;
+		if (tm_estimate == new_hp) {
+			continue;
+		}
 		auto const reported_hp = new_hp * get_hp(pokemon).max() / max_visible_hp_change(team.is_me(), pokemon);
-		unsigned const min_value = (tm_estimate == 0) ? 0 : (tm_estimate - 1);
-		unsigned const max_value = tm_estimate + 1;
+		auto const min_value = BOUNDED_INTEGER_CONDITIONAL(tm_estimate == 0_bi, 0_bi, tm_estimate - 1_bi);
+		auto const max_value = tm_estimate + 1_bi;
 		assert(max_value > tm_estimate);
 		if (!(min_value <= new_hp and new_hp <= max_value)) {
 			std::cerr << "Uh oh! " + to_string(static_cast<Species>(pokemon)) + " has the wrong HP! The server reports ";
