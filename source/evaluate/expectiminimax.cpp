@@ -1,5 +1,5 @@
 // Expectiminimax
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -48,6 +48,7 @@
 
 #include "../pokemon/pokemon.hpp"
 
+#include "../stat/calculate.hpp"
 #include "../stat/chance_to_hit.hpp"
 #include "../stat/stat.hpp"
 
@@ -247,7 +248,7 @@ int64_t order_branch(Team & ai, Team & foe, Weather const & weather, unsigned de
 	// Determine turn order
 	Team* first;
 	Team* last;
-	order (ai, foe, weather, first, last); 
+	order(ai, foe, weather, first, last); 
 	bool const speed_tie = (first == nullptr);
 	return speed_tie ?
 		(accuracy_branch(ai, foe, weather, depth, evaluate) + accuracy_branch(foe, ai, weather, depth, evaluate)) / 2 :

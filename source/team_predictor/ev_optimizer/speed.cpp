@@ -18,6 +18,7 @@
 
 #include "speed.hpp"
 #include "../../pokemon/pokemon.hpp"
+#include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
 

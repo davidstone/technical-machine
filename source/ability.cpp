@@ -30,6 +30,8 @@
 
 #include "pokemon/active_pokemon.hpp"
 
+#include "stat/calculate.hpp"
+
 #include "type/type.hpp"
 
 namespace technicalmachine {

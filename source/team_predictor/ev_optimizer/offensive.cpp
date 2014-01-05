@@ -23,6 +23,7 @@
 #include <bounded_integer/optional.hpp>
 
 #include "../../pokemon/pokemon.hpp"
+#include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 

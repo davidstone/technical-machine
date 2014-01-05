@@ -1,5 +1,5 @@
 // Damage calculator
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,6 +33,8 @@
 #include "move/power.hpp"
 
 #include "pokemon/pokemon.hpp"
+
+#include "stat/calculate.hpp"
 
 #include "type/effectiveness.hpp"
 

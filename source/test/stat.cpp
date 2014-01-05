@@ -28,6 +28,7 @@
 
 #include "../pokemon/species.hpp"
 
+#include "../stat/calculate.hpp"
 #include "../stat/stat.hpp"
 
 namespace technicalmachine {

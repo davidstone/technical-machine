@@ -1,5 +1,5 @@
 // Move power calculator
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,6 +34,8 @@
 #include "../team.hpp"
 #include "../variable.hpp"
 #include "../weather.hpp"
+
+#include "../stat/calculate.hpp"
 
 #include "../pokemon/active_pokemon.hpp"
 #include "../pokemon/pokemon.hpp"

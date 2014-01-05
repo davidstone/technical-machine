@@ -25,6 +25,7 @@
 
 #include "../../pokemon/species_forward.hpp"
 
+#include "../../stat/calculate.hpp"
 #include "../../stat/ev.hpp"
 #include "../../stat/hp.hpp"
 #include "../../stat/nature.hpp"

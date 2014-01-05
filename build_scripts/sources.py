@@ -28,10 +28,9 @@ pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'pokemon_not_found.c
 pokemon_sources += move_sources
 
 active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusion.cpp', 'delayed_attack.cpp', 'disable.cpp', 'embargo.cpp', 'encore.cpp', 'heal_block.cpp', 'last_used_move.cpp', 'magnet_rise.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'rampage.cpp', 'slow_start.cpp', 'stockpile.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'])
-active_pokemon_sources += prepend_dir('stat', ['chance_to_hit.cpp', 'stage.cpp'])
 active_pokemon_sources += bide_sources + pokemon_sources + ['random_damage.cpp']
 
-stat_sources = prepend_dir('stat', ['ev.cpp', 'hp.cpp', 'iv.cpp', 'nature.cpp', 'stat.cpp', 'stat_names.cpp', 'stats.cpp'])
+stat_sources = prepend_dir('stat', ['calculate.cpp', 'chance_to_hit.cpp', 'ev.cpp', 'hp.cpp', 'iv.cpp', 'nature.cpp', 'stage.cpp', 'stat.cpp', 'stat_names.cpp', 'stats.cpp'])
 
 team_sources = ['entry_hazards.cpp', 'screen.cpp', 'screens.cpp', 'team.cpp', 'wish.cpp'] + active_pokemon_sources
 
