@@ -1,5 +1,5 @@
 // Pokemon Showdown battle logic
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,7 +34,7 @@ public:
 		::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
 	}
 private:
-	uint16_t max_damage_precision() const override;
+	VisibleFoeHP max_damage_precision() const override;
 };
 
 }	// namespace ps

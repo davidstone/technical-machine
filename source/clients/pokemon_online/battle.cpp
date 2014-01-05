@@ -293,9 +293,9 @@ void Battle::parse_straight_damage (InMessage & msg) {
 }
 
 void Battle::parse_hp_change (InMessage & msg, Party const party) {
-	uint16_t const remaining_hp = msg.read_short ();
+	auto const remaining_hp = UpdatedHP::VisibleHP(msg.read_short());
 	uint8_t const slot = 0;
-	handle_hp_change (party, slot, remaining_hp);
+	handle_hp_change(party, slot, remaining_hp);
 }
 
 void Battle::parse_pp_change (InMessage & msg) {
@@ -559,8 +559,8 @@ void Battle::parse_battle_end (InMessage & msg) {
 	uint8_t const result = msg.read_byte ();
 }
 
-uint16_t Battle::max_damage_precision () const {
-	return 100;
+VisibleFoeHP Battle::max_damage_precision() const {
+	return 100_bi;
 }
 
 }	// namespace po

@@ -27,15 +27,17 @@
 namespace technicalmachine {
 namespace network {
 
+using std::to_string;
+
 class InvalidSimulatorData : public InvalidPacket {
 public:
-	template<typename Integer, typename boost::enable_if_c<sizeof(Integer) <= 4, int>::type = 0>
-	InvalidSimulatorData (Integer const received, Integer const minimum, Integer const maximum, std::string const & variable):
-		InvalidPacket (variable + " should be between " + std::to_string(static_cast<int64_t>(minimum)) + " and " + std::to_string(static_cast<int64_t>(maximum)) + ", but the server sent a value of " + std::to_string(static_cast<int64_t>(received)) + ".") {
+	template<typename Received, typename Minimum, typename Maximum>
+	InvalidSimulatorData(Received const received, Minimum const minimum, Maximum const maximum, std::string const & variable):
+		InvalidPacket (variable + " should be between " + to_string(minimum) + " and " + to_string(maximum) + ", but the server sent a value of " + to_string(received) + ".") {
 	}
-	template<typename Integer, typename boost::enable_if_c<sizeof(Integer) <= 4, int>::type = 0>
-	InvalidSimulatorData(Integer const received, std::string const & variable):
-		InvalidPacket ("Recieved an invalid value of " + std::to_string(static_cast<int64_t>(received)) + " for " + variable + ".") {
+	template<typename Received>
+	InvalidSimulatorData(Received const received, std::string const & variable):
+		InvalidPacket ("Recieved an invalid value of " + to_string(received) + " for " + variable + ".") {
 	}
 };
 }	// namespace network

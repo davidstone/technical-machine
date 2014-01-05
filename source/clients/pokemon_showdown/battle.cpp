@@ -1,5 +1,5 @@
 // Pokemon Showdown battle logic
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,8 +21,8 @@
 namespace technicalmachine {
 namespace ps {
 
-uint16_t Battle::max_damage_precision() const {
-	return 100;
+VisibleFoeHP Battle::max_damage_precision() const {
+	return 100_bi;
 }
 
 }	// namespace ps
