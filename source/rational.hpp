@@ -208,7 +208,7 @@ public:
 	}
 	
 	template<typename N, typename D>
-	explicit constexpr operator bounded_rational<N, D>() {
+	explicit constexpr operator bounded_rational<N, D>() const {
 		// Perhaps this should be a check like is_implicitly_constructible
 		static_assert(
 			std::numeric_limits<N>::min() <= std::numeric_limits<Numerator>::min() and
@@ -217,6 +217,10 @@ public:
 			std::numeric_limits<D>::max() >= std::numeric_limits<Denominator>::max(),
 		"Narrowing conversion.");
 		return bounded_rational<N, D>(static_cast<N>(m_numerator), static_cast<D>(m_denominator));
+	}
+	
+	explicit constexpr operator double() const {
+		return static_cast<double>(m_numerator.value()) / static_cast<double>(m_denominator.value());
 	}
 };
 
