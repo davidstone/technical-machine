@@ -143,8 +143,8 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 		case Moves::Gyro_Ball: {
 			auto const defender_speed = calculate_speed(defender_team, weather);
 			auto const attacker_speed = calculate_speed(attacker_team, weather);
-			unsigned const uncapped_power = 25u * defender_speed / attacker_speed + 1;
-			return std::min(uncapped_power, 150u);
+			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
+			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 150_bi));
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:

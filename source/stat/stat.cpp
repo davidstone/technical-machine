@@ -164,76 +164,94 @@ auto ability_modifier(ActivePokemon const & pokemon, Weather const & weather) {
 }
 
 
-template<StatNames stat>
-Rational item_modifier(Pokemon const & pokemon);
-template<>
-Rational item_modifier<StatNames::ATK>(Pokemon const & attacker) {
-	switch (get_item(attacker).name) {
-		case Item::CHOICE_BAND:
-			return Rational(3, 2);
-		case Item::LIGHT_BALL:
-			return is_boosted_by_light_ball(attacker) ? Rational(2) : Rational(1);
-		case Item::THICK_CLUB:
-			return is_boosted_by_thick_club(attacker) ? Rational(2, 1) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
-template<>
-Rational item_modifier<StatNames::SPA>(Pokemon const & attacker) {
-	switch (get_item(attacker).name) {
-		case Item::SOUL_DEW:
-			return is_boosted_by_soul_dew(attacker) ? Rational(3, 2) : Rational(1);
-		case Item::CHOICE_SPECS:
-			return Rational(3, 2);
-		case Item::DEEPSEATOOTH:
-			return is_boosted_by_deepseatooth(attacker) ? Rational(2) : Rational(1);
-		case Item::LIGHT_BALL:
-			return is_boosted_by_light_ball(attacker) ? Rational(2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
-template<>
-Rational item_modifier<StatNames::DEF>(Pokemon const & defender) {
-	return (get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender)) ?
-		Rational(3, 2) :
-		Rational(1);
-}
-template<>
-Rational item_modifier<StatNames::SPD>(Pokemon const & defender) {
-	switch (get_item(defender).name) {
-		case Item::DEEPSEASCALE:
-			return is_boosted_by_deepseascale(defender) ? Rational(2) : Rational(1);
-		case Item::METAL_POWDER:
-			return is_boosted_by_metal_powder(defender) ? Rational(3, 2) : Rational(1);
-		case Item::SOUL_DEW:
-			return is_boosted_by_soul_dew(defender) ? Rational(3, 2) : Rational(1);
-		default:
-			return Rational(1);
-	}
-}
-template<>
-Rational item_modifier<StatNames::SPE>(Pokemon const & pokemon) {
-	switch (get_item(pokemon).name) {
-		case Item::QUICK_POWDER:
-			return is_boosted_by_quick_powder(pokemon) ? Rational(2) : Rational(1);
-		case Item::CHOICE_SCARF:
-			return Rational(3, 2);
-		case Item::MACHO_BRACE:
-		case Item::POWER_ANKLET:
-		case Item::POWER_BAND:
-		case Item::POWER_BELT:
-		case Item::POWER_BRACER:
-		case Item::POWER_LENS:
-		case Item::POWER_WEIGHT:
-			return Rational(1, 2);
-		default:
-			return Rational(1);
-	}
-}
+constexpr auto item_denominator = 2_bi;
 
-Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather);
+template<StatNames>
+struct ItemNumerator;
+
+template<>
+struct ItemNumerator<StatNames::ATK> {
+	auto operator()(Pokemon const & attacker) -> bounded_integer::native_integer<2, 4> {
+		switch (get_item(attacker).name) {
+			case Item::CHOICE_BAND:
+				return 3_bi;
+			case Item::LIGHT_BALL:
+				return CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
+			case Item::THICK_CLUB:
+				return CONDITIONAL(is_boosted_by_thick_club(attacker), 2_bi * item_denominator, item_denominator);
+			default:
+				return item_denominator;
+		}
+	}
+};
+template<>
+struct ItemNumerator<StatNames::SPA> {
+	auto operator()(Pokemon const & attacker) -> bounded_integer::native_integer<2, 4> {
+		switch (get_item(attacker).name) {
+			case Item::SOUL_DEW:
+				return CONDITIONAL(is_boosted_by_soul_dew(attacker), 3_bi, item_denominator);
+			case Item::CHOICE_SPECS:
+				return 3_bi;
+			case Item::DEEPSEATOOTH:
+				return CONDITIONAL(is_boosted_by_deepseatooth(attacker), 2_bi * item_denominator, item_denominator);
+			case Item::LIGHT_BALL:
+				return CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
+			default:
+				return item_denominator;
+		}
+	}
+};
+template<>
+struct ItemNumerator<StatNames::DEF> {
+	auto operator()(Pokemon const & defender) -> bounded_integer::native_integer<2, 3> {
+		return CONDITIONAL(
+			get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender),
+			3_bi,
+			item_denominator
+		);
+	}
+};
+template<>
+struct ItemNumerator<StatNames::SPD> {
+	auto operator()(Pokemon const & defender) -> bounded_integer::native_integer<2, 4> {
+		switch (get_item(defender).name) {
+			case Item::DEEPSEASCALE:
+				return CONDITIONAL(is_boosted_by_deepseascale(defender), 2_bi * item_denominator, item_denominator);
+			case Item::METAL_POWDER:
+				return CONDITIONAL(is_boosted_by_metal_powder(defender), 3_bi, item_denominator);
+			case Item::SOUL_DEW:
+				return CONDITIONAL(is_boosted_by_soul_dew(defender), 3_bi, item_denominator);
+			default:
+				return item_denominator;
+		}
+	}
+};
+template<>
+struct ItemNumerator<StatNames::SPE> {
+	auto operator()(Pokemon const & pokemon) -> bounded_integer::native_integer<1, 4> {
+		switch (get_item(pokemon).name) {
+			case Item::QUICK_POWDER:
+				return CONDITIONAL(is_boosted_by_quick_powder(pokemon), 2_bi * item_denominator, item_denominator);
+			case Item::CHOICE_SCARF:
+				return 3_bi;
+			case Item::MACHO_BRACE:
+			case Item::POWER_ANKLET:
+			case Item::POWER_BAND:
+			case Item::POWER_BELT:
+			case Item::POWER_BRACER:
+			case Item::POWER_LENS:
+			case Item::POWER_WEIGHT:
+				return 1_bi;
+			default:
+				return item_denominator;
+		}
+	}
+};
+
+template<StatNames stat>
+auto item_modifier(Pokemon const & pokemon) {
+	return make_bounded_rational(ItemNumerator<stat>{}(pokemon), item_denominator);
+}
 
 template<StatNames stat>
 class StatTraits;
@@ -281,29 +299,34 @@ auto calculate_initial_stat(ActivePokemon const & pokemon) {
 }
 
 template<StatNames stat>
-unsigned calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather const & weather) {
+auto calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather const & weather) {
 	auto const attack = calculate_initial_stat<stat>(pokemon) *
 		pokemon.stage_modifier<stat>(pokemon.critical_hit()) *
-		ability_modifier<stat>(pokemon, weather);
-	auto const attack2 = static_cast<unsigned>(attack) * item_modifier<stat>(pokemon);
+		ability_modifier<stat>(pokemon, weather) *
+		item_modifier<stat>(pokemon);
 	
-	return std::max(attack2, 1u);
+	return bounded_integer::max(attack, 1_bi);
 }
 
 }	// namespace
 
-unsigned calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather) {
+std::common_type<attack_type, special_attack_type>::type calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather) {
 	return is_physical(attacker.move()) ?
 		calculate_attack(attacker, weather) :
 		calculate_special_attack(attacker, weather);
 }
 
-unsigned calculate_attack(ActivePokemon const & attacker, Weather const & weather) {
-	return calculate_common_offensive_stat<StatNames::ATK>(attacker, weather);
+attack_type calculate_attack(ActivePokemon const & attacker, Weather const & weather) {
+	// static_cast here because it looks as though the strongest attacker would
+	// hold a Light Ball, but because of the restriction on the attacker being
+	// Pikachu, it is better to use a Power Trick Shuckle with a Choice Band.
+	return static_cast<attack_type>(calculate_common_offensive_stat<StatNames::ATK>(attacker, weather));
 }
 
-unsigned calculate_special_attack(ActivePokemon const & attacker, Weather const & weather) {
-	return calculate_common_offensive_stat<StatNames::SPA>(attacker, weather);
+special_attack_type calculate_special_attack(ActivePokemon const & attacker, Weather const & weather) {
+	// see above comment about Light Ball, except the strongest Special Attack
+	// Pokemon is actually a Choice Specs Deoxys-Attack.
+	return static_cast<special_attack_type>(calculate_common_offensive_stat<StatNames::SPA>(attacker, weather));
 }
 
 namespace {
@@ -320,74 +343,76 @@ bool is_self_KO(Moves const move) {
 
 }	// namespace
 
-unsigned calculate_defending_stat (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+std::common_type<defense_type, special_defense_type>::type calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
 	return is_physical(attacker.move()) ?
 		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(attacker.move())) :
 		calculate_special_defense(defender, weather, attacker.critical_hit());
 }
 
-unsigned calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) {
+defense_type calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat<stat>(defender) *
 		defender.stage_modifier<stat>(ch) *
-		ability_modifier<stat>(defender, weather);
+		ability_modifier<stat>(defender, weather) *
+		item_modifier<stat>(defender);
 	
-	auto defense2 = static_cast<unsigned>(defense) * item_modifier<stat>(defender);
-	
-	if (is_self_KO) {
-		defense2 /= 2_bi;
-	}
-
-	return std::max(defense2, 1u);
+	// static_cast here because it looks as though the strongest defender would
+	// hold Metal Powder, but because of the restriction on the attacker being
+	// Ditto, it is better to use a Shuckle with no boosting item available.
+	return static_cast<defense_type>(bounded_integer::max(CONDITIONAL(is_self_KO, defense / 2_bi, defense), 1_bi));
 }
 
 namespace {
 
-Rational special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
-	return (is_type(defender, Type::Rock) and weather.sand()) ? Rational(3, 2) : Rational(1);
+auto special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
+	return make_bounded_rational(CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(), 3_bi, 2_bi), 2_bi);
 }
 
 }	// namespace
 
-unsigned calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) {
+special_defense_type calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat<stat>(defender) *	
 		defender.stage_modifier<stat>(ch) *
-		ability_modifier<stat>(defender, weather);
+		ability_modifier<stat>(defender, weather) *
+		item_modifier<stat>(defender) *
+		special_defense_sandstorm_boost(defender, weather);
 	
-	auto	defense2 = static_cast<unsigned>(defense) * item_modifier<stat>(defender);
-	
-	defense2 *= special_defense_sandstorm_boost(defender, weather);
-	
-	return std::max(defense2, 1u);
+	// static_cast here because it looks as though the strongest defender would
+	// hold DeepSeaScale, but because of the restriction on the defender being
+	// Clamperl, it is better to use a Shuckle with no boosting item available.
+	// This also gives more Special Defense than Latias with Soul Dew. It also
+	// looks like the best ability would be Flower Gift in the Sun, but this is
+	// just as good as Sandstorm's Special Defense boost.
+	return static_cast<special_defense_type>(bounded_integer::max(defense, 1_bi));
 }
 
 namespace {
 
-unsigned paralysis_speed_divisor (Pokemon const & pokemon) {
-	return get_status(pokemon).lowers_speed(get_ability(pokemon)) ? 4 : 1;
+auto paralysis_speed_divisor(Pokemon const & pokemon) {
+	return CONDITIONAL(get_status(pokemon).lowers_speed(get_ability(pokemon)), 4_bi, 1_bi);
 }
 
-unsigned tailwind_speed_multiplier (Team const & team) {
-	return team.screens.tailwind() ? 2 : 1;
+auto tailwind_speed_multiplier(Team const & team) {
+	return CONDITIONAL(team.screens.tailwind(), 2_bi, 1_bi);
 }
 
 }	// namespace
 
-unsigned calculate_speed(Team const & team, Weather const & weather) {
+speed_type calculate_speed(Team const & team, Weather const & weather) {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat<stat>(pokemon) *
 		pokemon.stage_modifier<stat>() *
-		ability_modifier<stat>(pokemon, weather);
-	
-	auto speed2 = static_cast<unsigned>(speed) * item_modifier<stat>(pokemon);
-	
-	speed2 /= paralysis_speed_divisor (pokemon);
-	
-	speed2 *= tailwind_speed_multiplier (team);
+		ability_modifier<stat>(pokemon, weather) *
+		item_modifier<stat>(pokemon) /
+		paralysis_speed_divisor (pokemon) *
+		tailwind_speed_multiplier (team);
 
-	return std::max(speed2, 1u);
+	// static_cast here because it looks as though the fastest Pokemon would
+	// hold Quick Powder, but because of the restriction on the Pokemon being
+	// Ditto, it is better to use a Deoxys-Speed with Choice Scarf.
+	return static_cast<speed_type>(bounded_integer::max(speed, 1_bi));
 }
 
 void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
@@ -429,7 +454,8 @@ void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* &
 namespace {
 
 Stat::base_type get_base(Species const species, StatNames const stat) {
-	static constexpr auto base_stat = bounded_integer::make_array<5>(
+	using bounded_integer::array;
+	static constexpr array<array<Stat::base_type, 5>, number_of_species> base_stat{
 		// Generation 1							
 		49_bi,	49_bi,	65_bi,	65_bi,	45_bi,		// Bulbasaur	
 		62_bi,	63_bi,	80_bi,	80_bi,	60_bi,		// Ivysaur	
@@ -1108,7 +1134,7 @@ Stat::base_type get_base(Species const species, StatNames const stat) {
 		77_bi,	77_bi,	128_bi,	128_bi,	90_bi,		// Meloetta	
 		// 128_bi,	90_bi,	77_bi,	77_bi,	128_bi,		// Meloetta (Pirouette form)
 		120_bi,	95_bi,	120_bi,	95_bi,	99_bi			// Genesect 
-	);
+	};
 	return base_stat.at(species).at(stat);
 }
 

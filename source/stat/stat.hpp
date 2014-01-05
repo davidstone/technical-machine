@@ -53,15 +53,20 @@ auto initial_stat(Stat const & stat, Level const & level, Nature const & nature)
 	return pre_nature * nature.boost<stat_name>();
 }
 
-unsigned calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather);
-unsigned calculate_attack(ActivePokemon const & attacker, Weather const & weather);
-unsigned calculate_special_attack(ActivePokemon const & attacker, Weather const & weather);
+using attack_type = bounded_integer::native_integer<1, 7368>;
+using special_attack_type = bounded_integer::native_integer<1, 4536>;
+std::common_type<attack_type, special_attack_type>::type calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather);
+attack_type calculate_attack(ActivePokemon const & attacker, Weather const & weather);
+special_attack_type calculate_special_attack(ActivePokemon const & attacker, Weather const & weather);
 
-unsigned calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
-unsigned calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false, bool is_self_KO = false);
-unsigned calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false);
+using defense_type = bounded_integer::native_integer<1, 3684>;
+using special_defense_type = bounded_integer::native_integer<1, 3684>;
+std::common_type<defense_type, special_defense_type>::type calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
+defense_type calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false, bool is_self_KO = false);
+special_defense_type calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false);
 
-unsigned calculate_speed(Team const & team, Weather const & weather);
+using speed_type = bounded_integer::native_integer<1, 12096>;
+speed_type calculate_speed(Team const & team, Weather const & weather);
 void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
 

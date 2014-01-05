@@ -38,7 +38,7 @@ constexpr unsigned team_size = 6;
 
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";
-	constexpr unsigned max_attack = 7368;
+	constexpr auto max_attack = 7368_bi;
 	Team attacker;
 
 	Level const level(100_bi);
@@ -59,7 +59,7 @@ void attack_tests () {
 
 void special_attack_tests () {
 	std::cout << "\tRunning Special Attack tests.\n";
-	constexpr unsigned max_special_attack = 4536;
+	constexpr auto max_special_attack = 4536_bi;
 	Weather weather;
 	weather.set_sun (Weather::Duration::permanent);
 	Team attacker;
@@ -82,7 +82,7 @@ void special_attack_tests () {
 
 void max_defense_test() {
 	std::cout << "\t\tRunning max Defense test.\n";
-	constexpr unsigned max_defense = 3684;
+	constexpr auto max_defense = 3684_bi;
 
 	Team defender;
 	Weather weather;
@@ -130,7 +130,7 @@ void defense_tests () {
 
 void special_defense_tests () {
 	std::cout << "\tRunning Special Defense tests.\n";
-	constexpr unsigned max_special_defense = 3684;
+	constexpr auto max_special_defense = 3684_bi;
 
 	Team defender;
 	Weather weather;
@@ -150,7 +150,7 @@ void special_defense_tests () {
 
 void speed_tests () {
 	std::cout << "\tRunning Speed tests.\n";
-	constexpr unsigned max_speed = 12096;
+	constexpr auto max_speed = 12096_bi;
 	Weather weather;
 	weather.set_rain (Weather::Duration::permanent);
 

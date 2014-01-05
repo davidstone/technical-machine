@@ -40,11 +40,12 @@ namespace technicalmachine {
 using namespace bounded_integer::literal;
 namespace {
 
+#define CONDITIONAL(a, b, c) BOUNDED_INTEGER_CONDITIONAL(a, b, c)
+
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
 
 damage_type regular_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
-Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
@@ -115,19 +116,43 @@ auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)(
 	return get_level(attacker)() * 2_bi / 5_bi;
 }
 
+auto weakening_from_status(Pokemon const & attacker) {
+	return CONDITIONAL(
+		get_status(attacker).weakens_physical_attacks() and get_ability(attacker).blocks_burn_damage_penalty(),
+		2_bi,
+		1_bi
+	);
+}
+
+auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+	// For all integers a, b, and c:
+	// (a / b) / c == a / (b * c)
+	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
+	return CONDITIONAL(is_physical(attacker.move()),
+		make_bounded_rational(
+			calculate_attack(attacker, weather),
+			50_bi * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
+		),
+		make_bounded_rational(
+			calculate_special_attack(attacker, weather),
+			50_bi * calculate_special_defense(defender, weather, attacker.critical_hit())
+		)
+	);
+}
+
 auto screen_divisor(ActivePokemon const & attacker, Team const & defender) {
-	return BOUNDED_INTEGER_CONDITIONAL(screen_is_active (attacker, defender), 2_bi, 1_bi);
+	return CONDITIONAL(screen_is_active (attacker, defender), 2_bi, 1_bi);
 }
 
 auto critical_hit_multiplier(ActivePokemon const & attacker) {
-	return BOUNDED_INTEGER_CONDITIONAL(
+	return CONDITIONAL(
 		!attacker.critical_hit(), 1_bi,
-		BOUNDED_INTEGER_CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
+		CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
 	);
 }
 
 auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effectiveness) {
-	return BOUNDED_INTEGER_CONDITIONAL(
+	return CONDITIONAL(
 		ability.strengthens_nve_attacks() and effectiveness.is_not_very_effective(),
 		2_bi,
 		1_bi
@@ -135,7 +160,7 @@ auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effecti
 }
 
 auto resistance_berry_divisor(Item const item, Type const type, Effectiveness const & effectiveness) {
-	return BOUNDED_INTEGER_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
+	return CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
 damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
@@ -143,7 +168,7 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	auto damage = static_cast<unsigned>(level_multiplier(attacker) + 2_bi);
 
 	damage *= move_power(attacker_team, defender, weather, variable);
-	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);
+	damage *= Rational(physical_vs_special_modifier(attacker, defender.pokemon(), weather));
 	damage /= screen_divisor(attacker, defender);
 	Type const type(attacker.move(), attacker);
 	damage *= calculate_weather_modifier(type, weather);
@@ -177,29 +202,6 @@ void recoil(Pokemon & user, damage_type const damage, bounded_integer::checked_i
 }
 
 namespace {
-
-auto weakening_from_status(Pokemon const & attacker) {
-	return BOUNDED_INTEGER_CONDITIONAL(
-		get_status(attacker).weakens_physical_attacks() and get_ability(attacker).blocks_burn_damage_penalty(),
-		2_bi,
-		1_bi
-	);
-}
-
-Rational physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
-	// For all integers a, b, and c:
-	// (a / b) / c == a / (b * c)
-	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
-	return is_physical(attacker.move()) ?
-		Rational(
-			calculate_attack(attacker, weather),
-			50 * calculate_defense(defender, weather, attacker.critical_hit()) * static_cast<unsigned>(weakening_from_status(attacker))
-		) :
-		Rational(
-			calculate_special_attack(attacker, weather),
-			50 * calculate_special_defense(defender, weather, attacker.critical_hit())
-		);
-}
 
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender) {
 	Move const & move = attacker.move();
