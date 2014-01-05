@@ -1,5 +1,5 @@
-// Base power type
-// Copyright (C) 2013 David Stone
+// Base power calculation
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,20 +19,15 @@
 #ifndef MOVE__BASE_POWER_HPP_
 #define MOVE__BASE_POWER_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/optional.hpp>
 
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
 
-class BasePower {
-public:
-	BasePower(Moves move);
-	unsigned operator()() const;
-	bool does_fixed_damage() const;
-private:
-	uint8_t base_power;
-};
+// variable power returns non-0. Fixed damage is the uninitialized state.
+bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Moves move);
 
 }	// namespace technicalmachine
 #endif	// MOVE__BASE_POWER_HPP_

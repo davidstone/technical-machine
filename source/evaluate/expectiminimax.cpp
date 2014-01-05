@@ -304,8 +304,8 @@ int64_t awaken_branch(Team & first, Team & last, Weather const & weather, unsign
 
 
 bool can_critical_hit(Moves const move) {
-	BasePower const base_power(move);
-	return !base_power.does_fixed_damage() and base_power() != 0;
+	auto const power = base_power(move);
+	return power and *power != 0_bi;
 }
 
 int64_t random_move_effects_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate) {

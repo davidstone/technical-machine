@@ -190,7 +190,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 		case Moves::Trump_Card:
 			return static_cast<unsigned>(attacker.move().pp.trump_card_power());
 		default:
-			return BasePower(attacker.move())();
+			return static_cast<unsigned>(*base_power(attacker.move()));
 	}
 }
 

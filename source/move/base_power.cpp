@@ -1,5 +1,5 @@
-// Base Power lookup
-// Copyright (C) 2013 David Stone
+// Base Power calculation
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,605 +17,584 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "base_power.hpp"
-#include <cstddef>
+#include <bounded_integer/array.hpp>
 
 namespace technicalmachine {
-namespace {
+using namespace bounded_integer::literal;
 
-constexpr uint8_t fixed_damage = 0xFF;
-constexpr uint8_t variable_power = fixed_damage - 1;
-uint8_t get_base_power (Moves move);
-
-}	// unnamed namespace
-
-BasePower::BasePower(Moves const move) :
-	base_power(get_base_power(move))
-	{
-}
-
-unsigned BasePower::operator()() const {
-	return base_power;
-}
-
-bool BasePower::does_fixed_damage() const {
-	return base_power == fixed_damage;
-}
-
-
-namespace {
-
-uint8_t get_base_power(Moves const move) {
-	static constexpr uint8_t get_power [] = {
-		0,		// Switch0
-		0,		// Switch1
-		0,		// Switch2
-		0,		// Switch3
-		0,		// Switch4
-		0,		// Switch5
-		40,		// Hit Self
-		40,		// Pound
-		50,		// Karate Chop
-		15,		// DoubleSlap
-		18,		// Comet Punch
-		80,		// Mega Punch
-		40,		// Pay Day
-		75,		// Fire Punch
-		75,		// Ice Punch
-		75,		// ThunderPunch
-		40,		// Scratch
-		55,		// ViceGrip
-		fixed_damage,		// Guillotine
-		80,		// Razor Wind
-		0,		// Swords Dance
-		50,		// Cut
-		40,		// Gust
-		60,		// Wing Attack
-		0,		// Whirlwind
-		90,		// Fly
-		15,		// Bind
-		80,		// Slam
-		35,		// Vine Whip
-		65,		// Stomp
-		30,		// Double Kick
-		120,		// Mega Kick
-		100,		// Jump Kick
-		60,		// Rolling Kick
-		0,		// Sand-Attack
-		70,		// Headbutt
-		65,		// Horn Attack
-		15,		// Fury Attack
-		fixed_damage,		// Horn Drill
-		50,		// Tackle
-		85,		// Body Slam
-		15,		// Wrap
-		90,		// Take Down
-		120,		// Thrash
-		120,		// Double-Edge
-		0,		// Tail Whip
-		15,		// Poison Sting
-		25,		// Twineedle
-		14,		// Pin Missile
-		0,		// Leer
-		60,		// Bite
-		0,		// Growl
-		0,		// Roar
-		0,		// Sing
-		0,		// Supersonic
-		fixed_damage,		// SonicBoom
-		0,		// Disable
-		40,		// Acid
-		40,		// Ember
-		95,		// Flamethrower
-		0,		// Mist
-		40,		// Water Gun
-		120,		// Hydro Pump
-		95,		// Surf
-		95,		// Ice Beam
-		120,		// Blizzard
-		65,		// Psybeam
-		65,		// BubbleBeam
-		65,		// Aurora Beam
-		150,		// Hyper Beam
-		35,		// Peck
-		80,		// Drill Peck
-		80,		// Submission
+bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Moves const move) {
+	// It doesn't matter if variable_power happens to have the same value as
+	// anything else, as long as it is not 0.
+	static constexpr auto variable_power = 1_bi;
+	static constexpr auto power = bounded_integer::make_optional_array(
+		0_bi,		// Switch0
+		0_bi,		// Switch1
+		0_bi,		// Switch2
+		0_bi,		// Switch3
+		0_bi,		// Switch4
+		0_bi,		// Switch5
+		40_bi,		// Hit Self
+		40_bi,		// Pound
+		50_bi,		// Karate Chop
+		15_bi,		// DoubleSlap
+		18_bi,		// Comet Punch
+		80_bi,		// Mega Punch
+		40_bi,		// Pay Day
+		75_bi,		// Fire Punch
+		75_bi,		// Ice Punch
+		75_bi,		// ThunderPunch
+		40_bi,		// Scratch
+		55_bi,		// ViceGrip
+		bounded_integer::none,		// Guillotine
+		80_bi,		// Razor Wind
+		0_bi,		// Swords Dance
+		50_bi,		// Cut
+		40_bi,		// Gust
+		60_bi,		// Wing Attack
+		0_bi,		// Whirlwind
+		90_bi,		// Fly
+		15_bi,		// Bind
+		80_bi,		// Slam
+		35_bi,		// Vine Whip
+		65_bi,		// Stomp
+		30_bi,		// Double Kick
+		120_bi,		// Mega Kick
+		100_bi,		// Jump Kick
+		60_bi,		// Rolling Kick
+		0_bi,		// Sand-Attack
+		70_bi,		// Headbutt
+		65_bi,		// Horn Attack
+		15_bi,		// Fury Attack
+		bounded_integer::none,		// Horn Drill
+		50_bi,		// Tackle
+		85_bi,		// Body Slam
+		15_bi,		// Wrap
+		90_bi,		// Take Down
+		120_bi,		// Thrash
+		120_bi,		// Double-Edge
+		0_bi,		// Tail Whip
+		15_bi,		// Poison Sting
+		25_bi,		// Twineedle
+		14_bi,		// Pin Missile
+		0_bi,		// Leer
+		60_bi,		// Bite
+		0_bi,		// Growl
+		0_bi,		// Roar
+		0_bi,		// Sing
+		0_bi,		// Supersonic
+		bounded_integer::none,		// SonicBoom
+		0_bi,		// Disable
+		40_bi,		// Acid
+		40_bi,		// Ember
+		95_bi,		// Flamethrower
+		0_bi,		// Mist
+		40_bi,		// Water Gun
+		120_bi,		// Hydro Pump
+		95_bi,		// Surf
+		95_bi,		// Ice Beam
+		120_bi,		// Blizzard
+		65_bi,		// Psybeam
+		65_bi,		// BubbleBeam
+		65_bi,		// Aurora Beam
+		150_bi,		// Hyper Beam
+		35_bi,		// Peck
+		80_bi,		// Drill Peck
+		80_bi,		// Submission
 		variable_power,		// Low Kick
-		fixed_damage,		// Counter
-		fixed_damage,		// Seismic Toss
-		80,		// Strength
-		20,		// Absorb
-		40,		// Mega Drain
-		0,		// Leech Seed
-		0,		// Growth
-		55,		// Razor Leaf
-		120,		// SolarBeam
-		0,		// PoisonPowder
-		0,		// Stun Spore
-		0,		// Sleep Powder
-		120,		// Petal Dance
-		0,		// String Shot
-		fixed_damage,		// Dragon Rage
-		35,		// Fire Spin
-		40,		// ThunderShock
-		95,		// Thunderbolt
-		0,		// Thunder Wave
-		120,		// Thunder
-		50,		// Rock Throw
-		100,		// Earthquake
-		fixed_damage,		// Fissure
-		80,		// Dig
-		0,		// Toxic
-		50,		// Confusion
-		90,		// Psychic
-		0,		// Hypnosis
-		0,		// Meditate
-		0,		// Agility
-		40,		// Quick Attack
-		20,		// Rage
-		0,		// Teleport
-		fixed_damage,		// Night Shade
-		0,		// Mimic
-		0,		// Screech
-		0,		// Double Team
-		0,		// Recover
-		0,		// Harden
-		0,		// Minimize
-		0,		// SmokeScreen
-		0,		// Confuse Ray
-		0,		// Withdraw
-		0,		// Defense Curl
-		0,		// Barrier
-		0,		// Light Screen
-		0,		// Haze
-		0,		// Reflect
-		0,		// Focus Energy
+		bounded_integer::none,		// Counter
+		bounded_integer::none,		// Seismic Toss
+		80_bi,		// Strength
+		20_bi,		// Absorb
+		40_bi,		// Mega Drain
+		0_bi,		// Leech Seed
+		0_bi,		// Growth
+		55_bi,		// Razor Leaf
+		120_bi,		// SolarBeam
+		0_bi,		// PoisonPowder
+		0_bi,		// Stun Spore
+		0_bi,		// Sleep Powder
+		120_bi,		// Petal Dance
+		0_bi,		// String Shot
+		bounded_integer::none,		// Dragon Rage
+		35_bi,		// Fire Spin
+		40_bi,		// ThunderShock
+		95_bi,		// Thunderbolt
+		0_bi,		// Thunder Wave
+		120_bi,		// Thunder
+		50_bi,		// Rock Throw
+		100_bi,		// Earthquake
+		bounded_integer::none,		// Fissure
+		80_bi,		// Dig
+		0_bi,		// Toxic
+		50_bi,		// Confusion
+		90_bi,		// Psychic
+		0_bi,		// Hypnosis
+		0_bi,		// Meditate
+		0_bi,		// Agility
+		40_bi,		// Quick Attack
+		20_bi,		// Rage
+		0_bi,		// Teleport
+		bounded_integer::none,		// Night Shade
+		0_bi,		// Mimic
+		0_bi,		// Screech
+		0_bi,		// Double Team
+		0_bi,		// Recover
+		0_bi,		// Harden
+		0_bi,		// Minimize
+		0_bi,		// SmokeScreen
+		0_bi,		// Confuse Ray
+		0_bi,		// Withdraw
+		0_bi,		// Defense Curl
+		0_bi,		// Barrier
+		0_bi,		// Light Screen
+		0_bi,		// Haze
+		0_bi,		// Reflect
+		0_bi,		// Focus Energy
 		variable_power,		// Bide
-		0,		// Metronome
-		0,		// Mirror Move
-		200,		// Selfdestruct
-		100,		// Egg Bomb
-		20,		// Lick
-		20,		// Smog
-		65,		// Sludge
-		65,		// Bone Club
-		120,		// Fire Blast
-		80,		// Waterfall
-		35,		// Clamp
-		60,		// Swift
-		100,		// Skull Bash
-		20,		// Spike Cannon
-		10,		// Constrict
-		0,		// Amnesia
-		0,		// Kinesis
-		0,		// Softboiled
-		130,		// Hi Jump Kick
-		0,		// Glare
-		100,		// Dream Eater
-		0,		// Poison Gas
-		15,		// Barrage
-		20,		// Leech Life
-		0,		// Lovely Kiss
-		140,		// Sky Attack
-		0,		// Transform
-		20,		// Bubble
-		70,		// Dizzy Punch
-		0,		// Spore
-		0,		// Flash
-		fixed_damage,		// Psywave
-		0,		// Splash
-		0,		// Acid Armor
-		90,		// Crabhammer
-		250,		// Explosion
-		18,		// Fury Swipes
-		50,		// Bonemerang
-		0,		// Rest
-		75,		// Rock Slide
-		80,		// Hyper Fang
-		0,		// Sharpen
-		0,		// Conversion
-		80,		// Tri Attack
-		fixed_damage,		// Super Fang
-		70,		// Slash
-		0,		// Substitute
-		50,		// Struggle
-		0,		// Sketch
-		10,		// Triple Kick
-		40,		// Thief
-		0,		// Spider Web
-		0,		// Mind Reader
-		0,		// Nightmare
-		60,		// Flame Wheel
-		40,		// Snore
-		0,		// Curse
+		0_bi,		// Metronome
+		0_bi,		// Mirror Move
+		200_bi,		// Selfdestruct
+		100_bi,		// Egg Bomb
+		20_bi,		// Lick
+		20_bi,		// Smog
+		65_bi,		// Sludge
+		65_bi,		// Bone Club
+		120_bi,		// Fire Blast
+		80_bi,		// Waterfall
+		35_bi,		// Clamp
+		60_bi,		// Swift
+		100_bi,		// Skull Bash
+		20_bi,		// Spike Cannon
+		10_bi,		// Constrict
+		0_bi,		// Amnesia
+		0_bi,		// Kinesis
+		0_bi,		// Softboiled
+		130_bi,		// Hi Jump Kick
+		0_bi,		// Glare
+		100_bi,		// Dream Eater
+		0_bi,		// Poison Gas
+		15_bi,		// Barrage
+		20_bi,		// Leech Life
+		0_bi,		// Lovely Kiss
+		140_bi,		// Sky Attack
+		0_bi,		// Transform
+		20_bi,		// Bubble
+		70_bi,		// Dizzy Punch
+		0_bi,		// Spore
+		0_bi,		// Flash
+		bounded_integer::none,		// Psywave
+		0_bi,		// Splash
+		0_bi,		// Acid Armor
+		90_bi,		// Crabhammer
+		250_bi,		// Explosion
+		18_bi,		// Fury Swipes
+		50_bi,		// Bonemerang
+		0_bi,		// Rest
+		75_bi,		// Rock Slide
+		80_bi,		// Hyper Fang
+		0_bi,		// Sharpen
+		0_bi,		// Conversion
+		80_bi,		// Tri Attack
+		bounded_integer::none,		// Super Fang
+		70_bi,		// Slash
+		0_bi,		// Substitute
+		50_bi,		// Struggle
+		0_bi,		// Sketch
+		10_bi,		// Triple Kick
+		40_bi,		// Thief
+		0_bi,		// Spider Web
+		0_bi,		// Mind Reader
+		0_bi,		// Nightmare
+		60_bi,		// Flame Wheel
+		40_bi,		// Snore
+		0_bi,		// Curse
 		variable_power,		// Flail
-		0,		// Conversion 2
-		100,		// Aeroblast
-		0,		// Cotton Spore
+		0_bi,		// Conversion 2
+		100_bi,		// Aeroblast
+		0_bi,		// Cotton Spore
 		variable_power,		// Reversal
-		0,		// Spite
-		40,		// Powder Snow
-		0,		// Protect
-		40,		// Mach Punch
-		0,		// Scary Face
-		60,		// Faint Attack
-		0,		// Sweet Kiss
-		0,		// Belly Drum
-		90,		// Sludge Bomb
-		20,		// Mud-Slap
-		65,		// Octazooka
-		0,		// Spikes
-		120,		// Zap Cannon
-		0,		// Foresight
-		0,		// Destiny Bond
-		0,		// Perish Song
-		55,		// Icy Wind
-		0,		// Detect
-		25,		// Bone Rush
-		0,		// Lock-On
-		120,		// Outrage
-		0,		// Sandstorm
-		75,		// Giga Drain
-		0,		// Endure
-		0,		// Charm
-		30,		// Rollout
-		40,		// False Swipe
-		0,		// Swagger
-		0,		// Milk Drink
-		65,		// Spark
-		20,		// Fury Cutter
-		70,		// Steel Wing
-		0,		// Mean Look
-		0,		// Attract
-		0,		// Sleep Talk
-		0,		// Heal Bell
+		0_bi,		// Spite
+		40_bi,		// Powder Snow
+		0_bi,		// Protect
+		40_bi,		// Mach Punch
+		0_bi,		// Scary Face
+		60_bi,		// Faint Attack
+		0_bi,		// Sweet Kiss
+		0_bi,		// Belly Drum
+		90_bi,		// Sludge Bomb
+		20_bi,		// Mud-Slap
+		65_bi,		// Octazooka
+		0_bi,		// Spikes
+		120_bi,		// Zap Cannon
+		0_bi,		// Foresight
+		0_bi,		// Destiny Bond
+		0_bi,		// Perish Song
+		55_bi,		// Icy Wind
+		0_bi,		// Detect
+		25_bi,		// Bone Rush
+		0_bi,		// Lock-On
+		120_bi,		// Outrage
+		0_bi,		// Sandstorm
+		75_bi,		// Giga Drain
+		0_bi,		// Endure
+		0_bi,		// Charm
+		30_bi,		// Rollout
+		40_bi,		// False Swipe
+		0_bi,		// Swagger
+		0_bi,		// Milk Drink
+		65_bi,		// Spark
+		20_bi,		// Fury Cutter
+		70_bi,		// Steel Wing
+		0_bi,		// Mean Look
+		0_bi,		// Attract
+		0_bi,		// Sleep Talk
+		0_bi,		// Heal Bell
 		variable_power,		// Return
 		variable_power,		// Present
 		variable_power,		// Frustration
-		0,		// Safeguard
-		0,		// Pain Split
-		100,		// Sacred Fire
+		0_bi,		// Safeguard
+		0_bi,		// Pain Split
+		100_bi,		// Sacred Fire
 		variable_power,		// Magnitude
-		100,		// DynamicPunch
-		120,		// Megahorn
-		60,		// DragonBreath
-		0,		// Baton Pass
-		0,		// Encore
-		40,		// Pursuit
-		20,		// Rapid Spin
-		0,		// Sweet Scent
-		100,		// Iron Tail
-		50,		// Metal Claw
-		70,		// Vital Throw
-		0,		// Morning Sun
-		0,		// Synthesis
-		0,		// Moonlight
+		100_bi,		// DynamicPunch
+		120_bi,		// Megahorn
+		60_bi,		// DragonBreath
+		0_bi,		// Baton Pass
+		0_bi,		// Encore
+		40_bi,		// Pursuit
+		20_bi,		// Rapid Spin
+		0_bi,		// Sweet Scent
+		100_bi,		// Iron Tail
+		50_bi,		// Metal Claw
+		70_bi,		// Vital Throw
+		0_bi,		// Morning Sun
+		0_bi,		// Synthesis
+		0_bi,		// Moonlight
 		variable_power,		// Hidden Power
-		100,		// Cross Chop
-		40,		// Twister
-		0,		// Rain Dance
-		0,		// Sunny Day
-		80,		// Crunch
-		fixed_damage,		// Mirror Coat
-		0,		// Psych Up
-		80,		// ExtremeSpeed
-		60,		// AncientPower
-		80,		// Shadow Ball
-		100,		// Future Sight
-		40,		// Rock Smash
-		35,		// Whirlpool
+		100_bi,		// Cross Chop
+		40_bi,		// Twister
+		0_bi,		// Rain Dance
+		0_bi,		// Sunny Day
+		80_bi,		// Crunch
+		bounded_integer::none,		// Mirror Coat
+		0_bi,		// Psych Up
+		80_bi,		// ExtremeSpeed
+		60_bi,		// AncientPower
+		80_bi,		// Shadow Ball
+		100_bi,		// Future Sight
+		40_bi,		// Rock Smash
+		35_bi,		// Whirlpool
 		variable_power,		// Beat Up
-		40,		// Fake Out
-		90,		// Uproar
-		0,		// Stockpile
+		40_bi,		// Fake Out
+		90_bi,		// Uproar
+		0_bi,		// Stockpile
 		variable_power,		// Spit Up
-		0,		// Swallow
-		100,		// Heat Wave
-		0,		// Hail
-		0,		// Torment
-		0,		// Flatter
-		0,		// Will-O-Wisp
-		0,		// Memento
-		70,		// Facade
-		150,		// Focus Punch
-		60,		// SmellingSalt
-		0,		// Follow Me
-		0,		// Nature Power
-		0,		// Charge
-		0,		// Taunt
-		0,		// Helping Hand
-		0,		// Trick
-		0,		// Role Play
-		0,		// Wish
-		0,		// Assist
-		0,		// Ingrain
-		120,		// Superpower
-		0,		// Magic Coat
-		0,		// Recycle
-		60,		// Revenge
-		75,		// Brick Break
-		0,		// Yawn
-		20,		// Knock Off
-		fixed_damage,		// Endeavor
-		150,		// Eruption
-		0,		// Skill Swap
-		0,		// Imprison
-		0,		// Refresh
-		0,		// Grudge
-		0,		// Snatch
-		70,		// Secret Power
-		80,		// Dive
-		15,		// Arm Thrust
-		0,		// Camouflage
-		0,		// Tail Glow
-		70,		// Luster Purge
-		70,		// Mist Ball
-		0,		// FeatherDance
-		0,		// Teeter Dance
-		85,		// Blaze Kick
-		0,		// Mud Sport
-		30,		// Ice Ball
-		60,		// Needle Arm
-		0,		// Slack Off
-		90,		// Hyper Voice
-		50,		// Poison Fang
-		75,		// Crush Claw
-		150,		// Blast Burn
-		150,		// Hydro Cannon
-		100,		// Meteor Mash
-		30,		// Astonish
-		50,		// Weather Ball
-		0,		// Aromatherapy
-		0,		// Fake Tears
-		55,		// Air Cutter
-		140,		// Overheat
-		0,		// Odor Sleuth
-		50,		// Rock Tomb
-		60,		// Silver Wind
-		0,		// Metal Sound
-		0,		// GrassWhistle
-		0,		// Tickle
-		0,		// Cosmic Power
-		150,		// Water Spout
-		75,		// Signal Beam
-		60,		// Shadow Punch
-		80,		// Extrasensory
-		85,		// Sky Uppercut
-		35,		// Sand Tomb
-		fixed_damage,		// Sheer Cold
-		95,		// Muddy Water
-		25,		// Bullet Seed
-		60,		// Aerial Ace
-		25,		// Icicle Spear
-		0,		// Iron Defense
-		0,		// Block
-		0,		// Howl
-		80,		// Dragon Claw
-		150,		// Frenzy Plant
-		0,		// Bulk Up
-		85,		// Bounce
-		55,		// Mud Shot
-		50,		// Poison Tail
-		60,		// Covet
-		120,		// Volt Tackle
-		60,		// Magical Leaf
-		0,		// Water Sport
-		0,		// Calm Mind
-		90,		// Leaf Blade
-		0,		// Dragon Dance
-		25,		// Rock Blast
-		60,		// Shock Wave
-		60,		// Water Pulse
-		140,		// Doom Desire
-		140,		// Psycho Boost
-		0,		// Roost
-		0,		// Gravity
-		0,		// Miracle Eye
-		60,		// Wake-Up Slap
-		100,		// Hammer Arm
+		0_bi,		// Swallow
+		100_bi,		// Heat Wave
+		0_bi,		// Hail
+		0_bi,		// Torment
+		0_bi,		// Flatter
+		0_bi,		// Will-O-Wisp
+		0_bi,		// Memento
+		70_bi,		// Facade
+		150_bi,		// Focus Punch
+		60_bi,		// SmellingSalt
+		0_bi,		// Follow Me
+		0_bi,		// Nature Power
+		0_bi,		// Charge
+		0_bi,		// Taunt
+		0_bi,		// Helping Hand
+		0_bi,		// Trick
+		0_bi,		// Role Play
+		0_bi,		// Wish
+		0_bi,		// Assist
+		0_bi,		// Ingrain
+		120_bi,		// Superpower
+		0_bi,		// Magic Coat
+		0_bi,		// Recycle
+		60_bi,		// Revenge
+		75_bi,		// Brick Break
+		0_bi,		// Yawn
+		20_bi,		// Knock Off
+		bounded_integer::none,		// Endeavor
+		150_bi,		// Eruption
+		0_bi,		// Skill Swap
+		0_bi,		// Imprison
+		0_bi,		// Refresh
+		0_bi,		// Grudge
+		0_bi,		// Snatch
+		70_bi,		// Secret Power
+		80_bi,		// Dive
+		15_bi,		// Arm Thrust
+		0_bi,		// Camouflage
+		0_bi,		// Tail Glow
+		70_bi,		// Luster Purge
+		70_bi,		// Mist Ball
+		0_bi,		// FeatherDance
+		0_bi,		// Teeter Dance
+		85_bi,		// Blaze Kick
+		0_bi,		// Mud Sport
+		30_bi,		// Ice Ball
+		60_bi,		// Needle Arm
+		0_bi,		// Slack Off
+		90_bi,		// Hyper Voice
+		50_bi,		// Poison Fang
+		75_bi,		// Crush Claw
+		150_bi,		// Blast Burn
+		150_bi,		// Hydro Cannon
+		100_bi,		// Meteor Mash
+		30_bi,		// Astonish
+		50_bi,		// Weather Ball
+		0_bi,		// Aromatherapy
+		0_bi,		// Fake Tears
+		55_bi,		// Air Cutter
+		140_bi,		// Overheat
+		0_bi,		// Odor Sleuth
+		50_bi,		// Rock Tomb
+		60_bi,		// Silver Wind
+		0_bi,		// Metal Sound
+		0_bi,		// GrassWhistle
+		0_bi,		// Tickle
+		0_bi,		// Cosmic Power
+		150_bi,		// Water Spout
+		75_bi,		// Signal Beam
+		60_bi,		// Shadow Punch
+		80_bi,		// Extrasensory
+		85_bi,		// Sky Uppercut
+		35_bi,		// Sand Tomb
+		bounded_integer::none,		// Sheer Cold
+		95_bi,		// Muddy Water
+		25_bi,		// Bullet Seed
+		60_bi,		// Aerial Ace
+		25_bi,		// Icicle Spear
+		0_bi,		// Iron Defense
+		0_bi,		// Block
+		0_bi,		// Howl
+		80_bi,		// Dragon Claw
+		150_bi,		// Frenzy Plant
+		0_bi,		// Bulk Up
+		85_bi,		// Bounce
+		55_bi,		// Mud Shot
+		50_bi,		// Poison Tail
+		60_bi,		// Covet
+		120_bi,		// Volt Tackle
+		60_bi,		// Magical Leaf
+		0_bi,		// Water Sport
+		0_bi,		// Calm Mind
+		90_bi,		// Leaf Blade
+		0_bi,		// Dragon Dance
+		25_bi,		// Rock Blast
+		60_bi,		// Shock Wave
+		60_bi,		// Water Pulse
+		140_bi,		// Doom Desire
+		140_bi,		// Psycho Boost
+		0_bi,		// Roost
+		0_bi,		// Gravity
+		0_bi,		// Miracle Eye
+		60_bi,		// Wake-Up Slap
+		100_bi,		// Hammer Arm
 		variable_power,		// Gyro Ball
-		0,		// Healing Wish
-		65,		// Brine
+		0_bi,		// Healing Wish
+		65_bi,		// Brine
 		variable_power,		// Natural Gift
-		30,		// Feint
-		60,		// Pluck
-		0,		// Tailwind
-		0,		// Acupressure
-		fixed_damage,		// Metal Burst
-		70,		// U-turn
-		120,		// Close Combat
-		50,		// Payback
-		50,		// Assurance
-		0,		// Embargo
+		30_bi,		// Feint
+		60_bi,		// Pluck
+		0_bi,		// Tailwind
+		0_bi,		// Acupressure
+		bounded_integer::none,		// Metal Burst
+		70_bi,		// U-turn
+		120_bi,		// Close Combat
+		50_bi,		// Payback
+		50_bi,		// Assurance
+		0_bi,		// Embargo
 		variable_power,		// Fling
-		0,		// Psycho Shift
+		0_bi,		// Psycho Shift
 		variable_power,		// Trump Card
-		0,		// Heal Block
+		0_bi,		// Heal Block
 		variable_power,		// Wring Out
-		0,		// Power Trick
-		0,		// Gastro Acid
-		0,		// Lucky Chant
+		0_bi,		// Power Trick
+		0_bi,		// Gastro Acid
+		0_bi,		// Lucky Chant
 		variable_power,		// Me First
-		0,		// Copycat
-		0,		// Power Swap
-		0,		// Guard Swap
+		0_bi,		// Copycat
+		0_bi,		// Power Swap
+		0_bi,		// Guard Swap
 		variable_power,		// Punishment
-		140,		// Last Resort
-		0,		// Worry Seed
-		80,		// Sucker Punch
-		0,		// Toxic Spikes
-		0,		// Heart Swap
-		0,		// Aqua Ring
-		0,		// Magnet Rise
-		120,		// Flare Blitz
-		60,		// Force Palm
-		90,		// Aura Sphere
-		0,		// Rock Polish
-		80,		// Poison Jab
-		80,		// Dark Pulse
-		70,		// Night Slash
-		90,		// Aqua Tail
-		80,		// Seed Bomb
-		75,		// Air Slash
-		80,		// X-Scissor
-		90,		// Bug Buzz
-		90,		// Dragon Pulse
-		100,		// Dragon Rush
-		70,		// Power Gem
-		75,		// Drain Punch
-		40,		// Vacuum Wave
-		120,		// Focus Blast
-		80,		// Energy Ball
-		120,		// Brave Bird
-		90,		// Earth Power
-		0,		// Switcheroo
-		150,		// Giga Impact
-		0,		// Nasty Plot
-		40,		// Bullet Punch
-		60,		// Avalanche
-		40,		// Ice Shard
-		70,		// Shadow Claw
-		65,		// Thunder Fang
-		65,		// Ice Fang
-		65,		// Fire Fang
-		40,		// Shadow Sneak
-		65,		// Mud Bomb
-		70,		// Psycho Cut
-		80,		// Zen Headbutt
-		65,		// Mirror Shot
-		80,		// Flash Cannon
-		90,		// Rock Climb
-		0,		// Defog
-		0,		// Trick Room
-		140,		// Draco Meteor
-		80,		// Discharge
-		80,		// Lava Plume
-		140,		// Leaf Storm
-		120,		// Power Whip
-		150,		// Rock Wrecker
-		70,		// Cross Poison
-		120,		// Gunk Shot
-		80,		// Iron Head
-		60,		// Magnet Bomb
-		100,		// Stone Edge
-		0,		// Captivate
-		0,		// Stealth Rock
+		140_bi,		// Last Resort
+		0_bi,		// Worry Seed
+		80_bi,		// Sucker Punch
+		0_bi,		// Toxic Spikes
+		0_bi,		// Heart Swap
+		0_bi,		// Aqua Ring
+		0_bi,		// Magnet Rise
+		120_bi,		// Flare Blitz
+		60_bi,		// Force Palm
+		90_bi,		// Aura Sphere
+		0_bi,		// Rock Polish
+		80_bi,		// Poison Jab
+		80_bi,		// Dark Pulse
+		70_bi,		// Night Slash
+		90_bi,		// Aqua Tail
+		80_bi,		// Seed Bomb
+		75_bi,		// Air Slash
+		80_bi,		// X-Scissor
+		90_bi,		// Bug Buzz
+		90_bi,		// Dragon Pulse
+		100_bi,		// Dragon Rush
+		70_bi,		// Power Gem
+		75_bi,		// Drain Punch
+		40_bi,		// Vacuum Wave
+		120_bi,		// Focus Blast
+		80_bi,		// Energy Ball
+		120_bi,		// Brave Bird
+		90_bi,		// Earth Power
+		0_bi,		// Switcheroo
+		150_bi,		// Giga Impact
+		0_bi,		// Nasty Plot
+		40_bi,		// Bullet Punch
+		60_bi,		// Avalanche
+		40_bi,		// Ice Shard
+		70_bi,		// Shadow Claw
+		65_bi,		// Thunder Fang
+		65_bi,		// Ice Fang
+		65_bi,		// Fire Fang
+		40_bi,		// Shadow Sneak
+		65_bi,		// Mud Bomb
+		70_bi,		// Psycho Cut
+		80_bi,		// Zen Headbutt
+		65_bi,		// Mirror Shot
+		80_bi,		// Flash Cannon
+		90_bi,		// Rock Climb
+		0_bi,		// Defog
+		0_bi,		// Trick Room
+		140_bi,		// Draco Meteor
+		80_bi,		// Discharge
+		80_bi,		// Lava Plume
+		140_bi,		// Leaf Storm
+		120_bi,		// Power Whip
+		150_bi,		// Rock Wrecker
+		70_bi,		// Cross Poison
+		120_bi,		// Gunk Shot
+		80_bi,		// Iron Head
+		60_bi,		// Magnet Bomb
+		100_bi,		// Stone Edge
+		0_bi,		// Captivate
+		0_bi,		// Stealth Rock
 		variable_power,		// Grass Knot
-		60,		// Chatter
-		100,		// Judgment
-		60,		// Bug Bite
-		50,		// Charge Beam
-		120,		// Wood Hammer
-		40,		// Aqua Jet
-		90,		// Attack Order
-		0,		// Defend Order
-		0,		// Heal Order
-		150,		// Head Smash
-		35,		// Double Hit
-		150,		// Roar of Time
-		100,		// Spacial Rend
-		0,		// Lunar Dance
+		60_bi,		// Chatter
+		100_bi,		// Judgment
+		60_bi,		// Bug Bite
+		50_bi,		// Charge Beam
+		120_bi,		// Wood Hammer
+		40_bi,		// Aqua Jet
+		90_bi,		// Attack Order
+		0_bi,		// Defend Order
+		0_bi,		// Heal Order
+		150_bi,		// Head Smash
+		35_bi,		// Double Hit
+		150_bi,		// Roar of Time
+		100_bi,		// Spacial Rend
+		0_bi,		// Lunar Dance
 		variable_power,		// Crush Grip
-		120,		// Magma Storm
-		0,		// Dark Void
-		120,		// Seed Flare
-		60,		// Ominous Wind
-		120,		// Shadow Force
-		0,		// Hone Claws
-		0,		// Wide Guard
-		0,		// Guard Split
-		0,		// Power Split
-		0,		// Wonder Room
-		80,		// Psyshock
-		65,		// Venoshock
-		0,		// Autotomize
-		0,		// Rage Powder
-		0,		// Telekinesis
-		0,		// Magic Room
-		50,		// Smack Down
-		40,		// Storm Throw
-		70,		// Flame Burst
-		95,		// Sludge Wave
-		0,		// Quiver Dance
+		120_bi,		// Magma Storm
+		0_bi,		// Dark Void
+		120_bi,		// Seed Flare
+		60_bi,		// Ominous Wind
+		120_bi,		// Shadow Force
+		0_bi,		// Hone Claws
+		0_bi,		// Wide Guard
+		0_bi,		// Guard Split
+		0_bi,		// Power Split
+		0_bi,		// Wonder Room
+		80_bi,		// Psyshock
+		65_bi,		// Venoshock
+		0_bi,		// Autotomize
+		0_bi,		// Rage Powder
+		0_bi,		// Telekinesis
+		0_bi,		// Magic Room
+		50_bi,		// Smack Down
+		40_bi,		// Storm Throw
+		70_bi,		// Flame Burst
+		95_bi,		// Sludge Wave
+		0_bi,		// Quiver Dance
 		variable_power,		// Heavy Slam
-		70,		// Synchronoise
+		70_bi,		// Synchronoise
 		variable_power,		// Electro Ball
-		0,		// Soak
-		50,		// Flame Charge
-		0,		// Coil
-		60,		// Low Sweep
-		40,		// Acid Spray
-		95,		// Foul Play
-		0,		// Simple Beam
-		0,		// Entrainment
-		0,		// After You
-		60,		// Round
-		40,		// Echoed Voice
-		70,		// Chip Away
-		50,		// Clear Smog
-		20,		// Stored Power
-		0,		// Quick Guard
-		0,		// Ally Switch
-		80,		// Scald
-		0,		// Shell Smash
-		0,		// Heal Pulse
-		50,		// Hex
-		60,		// Sky Drop
-		0,		// Shift Gear
-		60,		// Circle Throw
-		30,		// Incinerate
-		0,		// Quash
-		55,		// Acrobatics
-		0,		// Reflect Type
-		70,		// Retaliate
-		fixed_damage,		// Final Gambit
-		0,		// Bestow
-		100,		// Inferno
-		50,		// Water Pledge
-		50,		// Fire Pledge
-		50,		// Grass Pledge
-		70,		// Volt Switch
-		30,		// Struggle Bug
-		60,		// Bulldoze
-		40,		// Frost Breath
-		60,		// Dragon Tail
-		0,		// Work Up
-		55,		// Electroweb
-		90,		// Wild Charge
-		80,		// Drill Run
-		40,		// Dual Chop
-		60,		// Heart Stamp
-		75,		// Horn Leech
-		90,		// Sacred Sword
-		75,		// Razor Shell
+		0_bi,		// Soak
+		50_bi,		// Flame Charge
+		0_bi,		// Coil
+		60_bi,		// Low Sweep
+		40_bi,		// Acid Spray
+		95_bi,		// Foul Play
+		0_bi,		// Simple Beam
+		0_bi,		// Entrainment
+		0_bi,		// After You
+		60_bi,		// Round
+		40_bi,		// Echoed Voice
+		70_bi,		// Chip Away
+		50_bi,		// Clear Smog
+		20_bi,		// Stored Power
+		0_bi,		// Quick Guard
+		0_bi,		// Ally Switch
+		80_bi,		// Scald
+		0_bi,		// Shell Smash
+		0_bi,		// Heal Pulse
+		50_bi,		// Hex
+		60_bi,		// Sky Drop
+		0_bi,		// Shift Gear
+		60_bi,		// Circle Throw
+		30_bi,		// Incinerate
+		0_bi,		// Quash
+		55_bi,		// Acrobatics
+		0_bi,		// Reflect Type
+		70_bi,		// Retaliate
+		bounded_integer::none,		// Final Gambit
+		0_bi,		// Bestow
+		100_bi,		// Inferno
+		50_bi,		// Water Pledge
+		50_bi,		// Fire Pledge
+		50_bi,		// Grass Pledge
+		70_bi,		// Volt Switch
+		30_bi,		// Struggle Bug
+		60_bi,		// Bulldoze
+		40_bi,		// Frost Breath
+		60_bi,		// Dragon Tail
+		0_bi,		// Work Up
+		55_bi,		// Electroweb
+		90_bi,		// Wild Charge
+		80_bi,		// Drill Run
+		40_bi,		// Dual Chop
+		60_bi,		// Heart Stamp
+		75_bi,		// Horn Leech
+		90_bi,		// Sacred Sword
+		75_bi,		// Razor Shell
 		variable_power,		// Heat Crash
-		65,		// Leaf Tornado
-		65,		// Steamroller
-		0,		// Cotton Guard
-		85,		// Night Daze
-		100,		// Psystrike
-		25,		// Tail Slap
-		120,		// Hurricane
-		120,		// Head Charge
-		50,		// Gear Grind
-		100,		// Searing Shot
-		85,		// Techno Blast
-		75,		// Relic Song
-		85,		// Secret Sword
-		65,		// Glaciate
-		130,		// Bolt Strike
-		130,		// Blue Flare
-		80,		// Fiery Dance
-		140,		// Freeze Shock
-		140,		// Ice Burn
-		55,		// Snarl
-		85,		// Icicle Crash
-		180,		// V-create
-		100,		// Fusion Flare
-		100		// Fusion Bolt
-	};
-	return get_power[static_cast<size_t>(move)];
+		65_bi,		// Leaf Tornado
+		65_bi,		// Steamroller
+		0_bi,		// Cotton Guard
+		85_bi,		// Night Daze
+		100_bi,		// Psystrike
+		25_bi,		// Tail Slap
+		120_bi,		// Hurricane
+		120_bi,		// Head Charge
+		50_bi,		// Gear Grind
+		100_bi,		// Searing Shot
+		85_bi,		// Techno Blast
+		75_bi,		// Relic Song
+		85_bi,		// Secret Sword
+		65_bi,		// Glaciate
+		130_bi,		// Bolt Strike
+		130_bi,		// Blue Flare
+		80_bi,		// Fiery Dance
+		140_bi,		// Freeze Shock
+		140_bi,		// Ice Burn
+		55_bi,		// Snarl
+		85_bi,		// Icicle Crash
+		180_bi,		// V-create
+		100_bi,		// Fusion Flare
+		100_bi		// Fusion Bolt
+	);
+	return power.at(move);
 }
-
-}	// unnamed namespace
 
 }	// namespace technicalmachine

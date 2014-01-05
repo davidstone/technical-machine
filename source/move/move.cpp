@@ -38,7 +38,8 @@ Move::operator Moves() const {
 }
 
 bool is_damaging(Moves const move) {
-	return BasePower(move)() != 0;
+	auto const power = base_power(move);
+	return !static_cast<bool>(power) or *power != 0_bi;
 }
 
 bool is_physical(Moves const move) {
