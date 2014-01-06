@@ -108,7 +108,7 @@ void Item::steal (Item & other) {
 		swap (name, other.name);
 }
 
-unsigned Item::get_berry_power () const {
+bounded_integer::native_integer<0, 80> Item::berry_power() const {
 	switch (name) {
 		case AGUAV_BERRY:
 		case ASPEAR_BERRY:
@@ -143,7 +143,7 @@ unsigned Item::get_berry_power () const {
 		case WACAN_BERRY:
 		case WIKI_BERRY:
 		case YACHE_BERRY:
-			return 60;
+			return 60_bi;
 		case BLUK_BERRY:
 		case CORNN_BERRY:
 		case GREPA_BERRY:
@@ -160,7 +160,7 @@ unsigned Item::get_berry_power () const {
 		case SPELON_BERRY:
 		case TAMATO_BERRY:
 		case WEPEAR_BERRY:
-			return 70;
+			return 70_bi;
 		case APICOT_BERRY:
 		case BELUE_BERRY:
 		case CUSTAP_BERRY:
@@ -176,13 +176,13 @@ unsigned Item::get_berry_power () const {
 		case SALAC_BERRY:
 		case STARF_BERRY:
 		case WATMEL_BERRY:
-			return 80;
+			return 80_bi;
 		default:
-			return 0;
+			return 0_bi;
 	}
 }
 
-bounded_integer::native_integer<0, 130> Item::get_fling_power() const {
+bounded_integer::native_integer<0, 130> Item::fling_power() const {
 	switch (name) {
 		case IRON_BALL:
 			return 130_bi;
