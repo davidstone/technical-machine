@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -59,7 +59,7 @@ MoveCollection & ActivePokemon::all_moves() {
 }
 
 bool ActivePokemon::was_used_last(Moves const move_name) const {
-	return last_used_move.was_used_last(*all_moves().index(move_name));
+	return last_used_move.was_used_last(static_cast<LastUsedMove::index_type>(*all_moves().index(move_name)));
 }
 
 
@@ -403,17 +403,17 @@ bool ActivePokemon::me_first_is_active() const {
 	return me_first;
 }
 
-unsigned ActivePokemon::fury_cutter_power() const {
+bounded_integer::native_integer<10, 160> ActivePokemon::fury_cutter_power() const {
 	return last_used_move.fury_cutter_power();
 }
-unsigned ActivePokemon::momentum_move_power() const {
+bounded_integer::native_integer<30, 480> ActivePokemon::momentum_move_power() const {
 	return last_used_move.momentum_move_power();
 }
-unsigned ActivePokemon::triple_kick_power() const {
+bounded_integer::native_integer<0, 30> ActivePokemon::triple_kick_power() const {
 	return last_used_move.triple_kick_power();
 }
 
-Rational ActivePokemon::metronome_boost() const {
+bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> ActivePokemon::metronome_boost() const {
 	return last_used_move.metronome_boost();
 }
 
@@ -776,7 +776,7 @@ void ActivePokemon::register_damage(damage_type const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	last_used_move.increment(all_moves().index(), all_moves().number_of_regular_moves());
+	last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()), static_cast<bounded_integer::checked_integer<1, 4>>(all_moves().number_of_regular_moves()));
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {

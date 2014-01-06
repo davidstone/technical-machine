@@ -1,5 +1,5 @@
 // Keeps track of the last used move
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,70 +18,62 @@
 
 #include "last_used_move.hpp"
 
-#include <algorithm>
 #include <cassert>
-#include <cstdint>
 
 #include "../rational.hpp"
 
 namespace technicalmachine {
 namespace {
-constexpr uint8_t max_number_of_moves = 4;
-constexpr uint8_t max_relevant_counter_value = 10;
+using namespace bounded_integer::literal;
+constexpr uint64_t max_number_of_moves = 4;
 }	// namespace
 
 LastUsedMove::LastUsedMove() :
-	m_index_of_move(max_number_of_moves),
-	m_consecutive_turns_used(0) {
+	m_consecutive_turns_used(0_bi) {
 }
 
 bool LastUsedMove::has_moved() const {
-	return m_index_of_move != max_number_of_moves;
+	return static_cast<bool>(m_index_of_move);
 }
 
-bool LastUsedMove::was_used_last(uint8_t const index_of_move) const {
-	assert(index_of_move < max_number_of_moves);
-	return m_index_of_move == index_of_move;
+bool LastUsedMove::was_used_last(index_type const index_of_move) const {
+	return has_moved() and *m_index_of_move == index_of_move;
 }
 
-void LastUsedMove::increment(uint8_t const index_of_move, uint8_t const number_of_regular_moves) {
-	if (index_of_move >= number_of_regular_moves) {
-		return;
-	}
+void LastUsedMove::increment(index_type const index_of_move, bounded_integer::checked_integer<1, 4> const number_of_regular_moves) {
+	assert(index_of_move <= number_of_regular_moves);
 	m_index_of_move = index_of_move;
-	if (m_consecutive_turns_used < max_relevant_counter_value) {
-		++m_consecutive_turns_used;
-	}
+	++m_consecutive_turns_used;
 }
 
 void LastUsedMove::reset () {
 	*this = LastUsedMove{};
 }
 
-unsigned LastUsedMove::fury_cutter_power() const {
+bounded_integer::native_integer<10, 160> LastUsedMove::fury_cutter_power() const {
 	// 10 * 2 ^ n
-	return 10u << std::min(static_cast<unsigned>(m_consecutive_turns_used), 4u);
+	return 10_bi << bounded_integer::min(m_consecutive_turns_used, 4_bi);
 }
 
-unsigned LastUsedMove::momentum_move_power() const {
-	return 30u << std::min(static_cast<unsigned>(m_consecutive_turns_used), 4u);
+bounded_integer::native_integer<30, 480> LastUsedMove::momentum_move_power() const {
+	return 30_bi << bounded_integer::min(m_consecutive_turns_used, 4_bi);
 }
 
-unsigned LastUsedMove::triple_kick_power() const {
-	return 10 * std::min(static_cast<unsigned>(m_consecutive_turns_used), 3u);
+bounded_integer::native_integer<0, 30> LastUsedMove::triple_kick_power() const {
+	return 10_bi * bounded_integer::min(m_consecutive_turns_used, 3_bi);
 }
 
-Rational LastUsedMove::metronome_boost() const {
-	assert(m_consecutive_turns_used <= 10);
-	return Rational(10u + m_consecutive_turns_used, 10);
+bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> LastUsedMove::metronome_boost() const {
+	return make_bounded_rational(10_bi + m_consecutive_turns_used, 10_bi);
 }
 
 uint64_t LastUsedMove::hash() const {
-	return m_index_of_move + (max_number_of_moves + 1) * static_cast<uint64_t>(m_consecutive_turns_used);
+	auto const index = static_cast<bool>(m_index_of_move) ? static_cast<uint64_t>(*m_index_of_move) : max_number_of_moves;
+	return index + (max_number_of_moves + 1) * static_cast<uint64_t>(m_consecutive_turns_used);
 }
 
 uint64_t LastUsedMove::max_hash() const {
-	return (max_relevant_counter_value + 1) * (max_number_of_moves + 1);
+	return (10 + 1) * (max_number_of_moves + 1);
 }
 
 bool operator== (LastUsedMove const lhs, LastUsedMove const rhs) {

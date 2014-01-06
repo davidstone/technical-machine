@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -43,7 +43,6 @@
 
 #include "../damage.hpp"
 #include "../random_damage.hpp"
-#include "../rational.hpp"
 
 #include "../bide/bide.hpp"
 
@@ -56,6 +55,8 @@ class Move;
 class Pokemon;
 class Rational;
 class Weather;
+template<typename Numerator, typename Denominator>
+class bounded_rational;
 
 class ActivePokemon {
 public:
@@ -151,10 +152,10 @@ public:
 	void activate_magnet_rise();
 	void decrement_magnet_rise();
 	bool me_first_is_active() const;
-	unsigned fury_cutter_power() const;
-	unsigned momentum_move_power() const;
-	unsigned triple_kick_power() const;
-	Rational metronome_boost() const;
+	bounded_integer::native_integer<10, 160> fury_cutter_power() const;
+	bounded_integer::native_integer<30, 480> momentum_move_power() const;
+	bounded_integer::native_integer<0, 30> triple_kick_power() const;
+	bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> metronome_boost() const;
 	bool minimized() const;
 	bool missed() const;
 	void set_miss(bool value);

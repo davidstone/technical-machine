@@ -237,7 +237,7 @@ Rational calculate_item_modifier(ActivePokemon const & attacker) {
 		case Item::LIFE_ORB:
 			return Rational(13, 10);
 		case Item::METRONOME:
-			return attacker.metronome_boost();
+			return Rational(attacker.metronome_boost());
 		default:
 			return Rational(1);
 	}

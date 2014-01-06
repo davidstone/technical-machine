@@ -138,7 +138,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 		case Moves::Frustration:
 			return 102 - return_power(attacker);
 		case Moves::Fury_Cutter:
-			return attacker.fury_cutter_power();
+			return static_cast<unsigned>(attacker.fury_cutter_power());
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
 			return power_of_mass_based_moves(defender);
@@ -150,7 +150,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return attacker.momentum_move_power();
+			return static_cast<unsigned>(attacker.momentum_move_power());
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
 			static constexpr std::array<stat_and_position_type, 5> stat_and_position {{
@@ -186,7 +186,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 		case Moves::Spit_Up:
 			return static_cast<unsigned>(attacker.spit_up_power());
 		case Moves::Triple_Kick:
-			return attacker.triple_kick_power();
+			return static_cast<unsigned>(attacker.triple_kick_power());
 		case Moves::Trump_Card:
 			return static_cast<unsigned>(attacker.move().pp.trump_card_power());
 		default:

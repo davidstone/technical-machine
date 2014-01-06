@@ -1,5 +1,5 @@
 // Keeps track of the last used move
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,28 +19,31 @@
 #ifndef POKEMON__LAST_USED_MOVE_HPP_
 #define POKEMON__LAST_USED_MOVE_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
-class Rational;
+template<typename Numerator, typename Denominator>
+class bounded_rational;
 
 class LastUsedMove {
 public:
 	LastUsedMove();
+	using index_type = bounded_integer::checked_integer<0, 3>;
 	bool has_moved() const;
-	bool was_used_last(uint8_t index_of_move) const;
+	bool was_used_last(index_type index_of_move) const;
 	void reset();
-	void increment(uint8_t index_of_move, uint8_t number_of_regular_moves);
-	unsigned fury_cutter_power() const;
-	unsigned momentum_move_power() const;
-	unsigned triple_kick_power() const;
-	Rational metronome_boost() const;
+	void increment(index_type index_of_move, bounded_integer::checked_integer<1, 4> number_of_regular_moves);
+	bounded_integer::native_integer<10, 160> fury_cutter_power() const;
+	bounded_integer::native_integer<30, 480> momentum_move_power() const;
+	bounded_integer::native_integer<0, 30> triple_kick_power() const;
+	bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> metronome_boost() const;
 	uint64_t hash() const;
 	uint64_t max_hash() const;
 	friend bool operator== (LastUsedMove lhs, LastUsedMove rhs);
 private:
-	uint8_t m_index_of_move;
-	uint8_t m_consecutive_turns_used;
+	bounded_integer::optional<index_type> m_index_of_move;
+	bounded_integer::clamped_integer<0, 10> m_consecutive_turns_used;
 };
 
 bool operator!= (LastUsedMove lhs, LastUsedMove rhs);
