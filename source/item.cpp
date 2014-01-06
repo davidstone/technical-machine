@@ -1,5 +1,5 @@
 // Item functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #include <algorithm>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 Item::Item ():
 	name (END) {
@@ -181,10 +182,10 @@ unsigned Item::get_berry_power () const {
 	}
 }
 
-unsigned Item::get_fling_power () const {
+bounded_integer::native_integer<0, 130> Item::get_fling_power() const {
 	switch (name) {
 		case IRON_BALL:
-			return 130;
+			return 130_bi;
 		case HARD_STONE:
 		case ARMOR_FOSSIL:
 		case CLAW_FOSSIL:
@@ -194,7 +195,7 @@ unsigned Item::get_fling_power () const {
 		case RARE_BONE:
 		case ROOT_FOSSIL:
 		case SKULL_FOSSIL:
-			return 100;
+			return 100_bi;
 		case DEEPSEATOOTH:
 		case DRACO_PLATE:
 		case DREAD_PLATE:
@@ -214,7 +215,7 @@ unsigned Item::get_fling_power () const {
 		case THICK_CLUB:
 		case TOXIC_PLATE:
 		case ZAP_PLATE:
-			return 90;
+			return 90_bi;
 		case QUICK_CLAW:
 		case RAZOR_CLAW:
 		case STICKY_BARB:
@@ -226,7 +227,7 @@ unsigned Item::get_fling_power () const {
 		case OVAL_STONE:
 		case PROTECTOR:
 		case SHINY_STONE:
-			return 80;
+			return 80_bi;
 		case DRAGON_FANG:
 		case POISON_BARB:
 		case POWER_ANKLET:
@@ -235,20 +236,20 @@ unsigned Item::get_fling_power () const {
 		case POWER_BRACER:
 		case POWER_LENS:
 		case POWER_WEIGHT:
-			return 70;
+			return 70_bi;
 		case ADAMANT_ORB:
 		case DAMP_ROCK:
 		case HEAT_ROCK:
 		case LUSTROUS_ORB:
 		case MACHO_BRACE:
 		case STICK:
-			return 60;
+			return 60_bi;
 		case SHARP_BEAK:
 		case DUBIOUS_DISC:
-			return 50;
+			return 50_bi;
 		case ICY_ROCK:
 		case LUCKY_PUNCH:
-			return 40;
+			return 40_bi;
 		case BERRY_JUICE:
 		case BLACK_BELT:
 		case BLACK_SLUDGE:
@@ -362,7 +363,7 @@ unsigned Item::get_fling_power () const {
 		case YELLOW_FLUTE:
 		case YELLOW_SHARD:
 		case ZINC:
-			return 30;
+			return 30_bi;
 		case BIG_ROOT:
 		case BLUE_SCARF:
 		case BRIGHTPOWDER:
@@ -468,9 +469,9 @@ unsigned Item::get_fling_power () const {
 		case SALAC_BERRY:
 		case STARF_BERRY:
 		case WATMEL_BERRY:
-			return 10;
+			return 10_bi;
 		default:
-			return 0;
+			return 0_bi;
 	}
 }
 

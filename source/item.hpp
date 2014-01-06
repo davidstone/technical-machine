@@ -1,5 +1,5 @@
 // Item header
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #define ITEM_HPP_
 
 #include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 
@@ -129,7 +130,7 @@ public:
 	bool was_lost() const;
 	void remove ();
 	unsigned get_berry_power () const;		// Returns 0 for non-berries
-	unsigned get_fling_power () const;
+	bounded_integer::native_integer<0, 130> get_fling_power() const;
 	bool blocks_trick () const;
 	bool extends_hail () const;
 	bool extends_rain () const;

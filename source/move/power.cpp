@@ -134,7 +134,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 				return 20;
 		}
 		case Moves::Fling:
-			return get_item(attacker).get_fling_power();
+			return static_cast<unsigned>(get_item(attacker).get_fling_power());
 		case Moves::Frustration:
 			return 102 - return_power(attacker);
 		case Moves::Fury_Cutter:
