@@ -38,6 +38,7 @@
 #include "../stat/calculate.hpp"
 
 #include "../pokemon/active_pokemon.hpp"
+#include "../pokemon/happiness.hpp"
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
@@ -103,10 +104,6 @@ Rational defender_ability_modifier(Pokemon const & attacker, Ability const abili
 	}
 }
 
-unsigned return_power(Pokemon const & pokemon) {
-	return pokemon.happiness() * 2u / 5;
-}
-
 unsigned calculate_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
@@ -136,7 +133,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 		case Moves::Fling:
 			return static_cast<unsigned>(get_item(attacker).fling_power());
 		case Moves::Frustration:
-			return 102 - return_power(attacker);
+			return static_cast<unsigned>(frustration_power(get_happiness(attacker)));
 		case Moves::Fury_Cutter:
 			return static_cast<unsigned>(attacker.fury_cutter_power());
 		case Moves::Grass_Knot:
@@ -182,7 +179,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 200_bi));
 		}
 		case Moves::Return:
-			return return_power(attacker);
+			return static_cast<unsigned>(return_power(get_happiness(attacker)));
 		case Moves::Spit_Up:
 			return static_cast<unsigned>(attacker.spit_up_power());
 		case Moves::Triple_Kick:

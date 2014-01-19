@@ -1,5 +1,5 @@
 // Load Pokemon Lab teams
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -103,7 +103,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	std::string const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
 	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(pt.get<int>("level")));
 	Gender const gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
-	uint8_t const happiness = pt.get<uint8_t>("happiness");
+	Happiness const happiness(pt.get<Happiness::value_type>("happiness"));
 	Nature const nature(from_string<Nature::Natures>(pt.get<std::string>("nature")));
 	Item const item(from_string<Item::Items>(pt.get<std::string>("item")));
 	Ability const ability(from_string<Ability::Abilities>(pt.get<std::string>("ability")));

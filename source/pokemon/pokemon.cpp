@@ -1,5 +1,5 @@
 // Pokemon functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -44,7 +44,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon (unsigned const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, uint8_t set_happiness) : 
+Pokemon::Pokemon (unsigned const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
 	move(my_team_size),
 	current_type(species),
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
@@ -57,12 +57,12 @@ Pokemon::Pokemon (unsigned const my_team_size, Species const species, Level cons
 
 	m_level(level),
 
-	m_happiness(set_happiness)
+	m_happiness(happiness)
 	{
 }
 
-Pokemon::Pokemon(unsigned const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, uint8_t set_happiness):
-	Pokemon::Pokemon(my_team_size, species, level, gender, set_nickname, set_happiness)
+Pokemon::Pokemon(unsigned const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, Happiness const happiness):
+	Pokemon::Pokemon(my_team_size, species, level, gender, set_nickname, happiness)
 	{
 	m_item = item;
 	m_ability = ability;
@@ -158,8 +158,8 @@ Level get_level(Pokemon const & pokemon) {
 	return pokemon.m_level;
 }
 
-unsigned Pokemon::happiness() const {
-	return m_happiness;
+Happiness get_happiness(Pokemon const & pokemon) {
+	return pokemon.m_happiness;
 }
 
 Pokemon::hash_type Pokemon::hash() const {
@@ -195,8 +195,7 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 	return lhs.m_ability == rhs.m_ability and
 			lhs.m_gender == rhs.m_gender and
 			lhs.m_nature == rhs.m_nature and
-			lhs.m_level == rhs.m_level and
-			lhs.happiness() == rhs.happiness();
+			lhs.m_level == rhs.m_level;
 }
 
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {

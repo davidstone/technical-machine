@@ -1,5 +1,5 @@
 // Pokemon Online outgoing messages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -83,7 +83,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_byte (gender);
 	bool shiny = false;
 	write_byte (shiny);
-	write_byte(pokemon.happiness());
+	write_byte(get_happiness(pokemon)());
 	write_byte(get_level(pokemon)());
 	unsigned number_of_moves = 0;
 	pokemon.move.for_each_regular_move([&](Move const & move) {

@@ -1,5 +1,5 @@
 // Pokemon data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <string>
 
+#include "happiness.hpp"
 #include "level.hpp"
 #include "seen.hpp"
 #include "species_forward.hpp"
@@ -52,6 +53,7 @@ qualifier Ability const & get_ability(Pokemon const & pokemon); \
 qualifier Ability & get_ability(Pokemon & pokemon); \
 qualifier Gender const & get_gender(Pokemon const & pokemon); \
 qualifier Gender & get_gender(Pokemon & pokemon); \
+qualifier Happiness get_happiness(Pokemon const & pokemon); \
 qualifier Item const & get_item(Pokemon const & pokemon); \
 qualifier Item & get_item(Pokemon & pokemon); \
 qualifier Level get_level(Pokemon const & pokemon); \
@@ -71,8 +73,8 @@ TECHNICALMACHINE_FRIEND_DECLARATIONS(/*empty*/);
 
 class Pokemon {
 public:
-	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), uint8_t happiness = 255);
-	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), uint8_t happiness = 255);
+	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
+	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	operator Species() const;
 	void remove_switch();
 	uint8_t index_of_first_switch () const;
@@ -80,7 +82,6 @@ public:
 	
 	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
 	void change_type(Type::Types new_type);
-	unsigned happiness() const;
 	typedef uint64_t hash_type;
 	hash_type hash () const;
 	hash_type max_hash() const;
@@ -106,7 +107,7 @@ private:
 
 	Seen seen;
 	Level m_level;
-	uint8_t m_happiness;
+	Happiness m_happiness;
 	friend class Evaluate;
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);

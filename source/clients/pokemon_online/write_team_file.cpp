@@ -1,5 +1,5 @@
 // Write Pokemon Online teams
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -77,7 +77,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	member.put ("<xmlattr>.Nickname", pokemon.get_nickname());
 	member.put ("<xmlattr>.Gen", 4);
 	member.put ("<xmlattr>.Forme", ids.second);
-	member.put ("<xmlattr>.Happiness", pokemon.happiness());
+	member.put ("<xmlattr>.Happiness", get_happiness(pokemon));
 	member.put ("<xmlattr>.Lvl", get_level(pokemon)());
 	member.put ("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
 

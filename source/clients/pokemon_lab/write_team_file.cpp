@@ -1,5 +1,5 @@
 // Write Pokemon Lab teams
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -116,7 +116,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put("<xmlattr>.species", to_simulator_string(pokemon));
 	member.put ("nickname", pokemon.get_nickname());
 	member.put ("level", get_level(pokemon)());
-	member.put ("happiness", pokemon.happiness());
+	member.put ("happiness", get_happiness(pokemon));
 	member.put ("gender", to_string(get_gender(pokemon).gender));
 	member.put ("nature", to_string(get_nature(pokemon).name));
 	member.put ("item", to_string(get_item(pokemon).name));

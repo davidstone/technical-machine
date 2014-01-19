@@ -1,5 +1,5 @@
 // Load Pokemon Online teams
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -130,10 +130,10 @@ void load_pokemon(ptree const & pt, Team & team) {
 	unsigned const forme = pt.get<unsigned>("<xmlattr>.Forme");
 	Species const species = id_to_species(id, forme);
 	std::string const nickname = pt.get<std::string>("<xmlattr>.Nickname");
-	unsigned const gender = pt.get<unsigned>("<xmlattr>.Gender");
+	Gender const gender(id_to_gender(pt.get<unsigned>("<xmlattr>.Gender")));
 	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(pt.get<uint8_t>("<xmlattr>.Lvl")));
-	uint8_t const happiness = pt.get<uint8_t>("<xmlattr>.Happiness");
-	team.add_pokemon(species, level, Gender(id_to_gender(gender)), nickname, happiness);
+	Happiness const happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
+	team.add_pokemon(species, level, gender, nickname, happiness);
 	Pokemon & pokemon = team.replacement();
 
 	unsigned const item = pt.get<unsigned>("<xmlattr>.Item");
