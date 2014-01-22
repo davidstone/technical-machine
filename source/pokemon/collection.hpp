@@ -22,6 +22,7 @@
 #include "../collection.hpp"
 
 #include <cstdint>
+#include <vector>
 
 #include "pokemon.hpp"
 #include "species_forward.hpp"
@@ -31,13 +32,13 @@
 namespace technicalmachine {
 class Move;
 
-class PokemonCollection : public detail::BaseCollection<Pokemon> {
-	typedef detail::BaseCollection<Pokemon> Base;
+class PokemonCollection : public detail::BaseCollection<std::vector<Pokemon>> {
+	typedef detail::BaseCollection<std::vector<Pokemon>> Base;
 public:
 	using Base::index_type;
-	typedef Base::container_type::const_iterator const_iterator;
-	typedef Base::container_type::iterator iterator;
-	PokemonCollection ();
+	using const_iterator = Base::container_type::const_iterator;
+	using iterator = Base::container_type::iterator;
+	PokemonCollection();
 	// Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
 	void initialize_size (index_type const new_size);

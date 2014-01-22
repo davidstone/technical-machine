@@ -1,5 +1,5 @@
 // Test checked collections
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,7 +28,7 @@ namespace technicalmachine {
 namespace {
 void collection_range_tests() {
 	std::vector<int> const v ({ 2, 3, 5, 7, 11, 13, 17 });
-	detail::BaseCollection<int> base (v);
+	detail::BaseCollection<std::vector<int>> base(v);
 	base.set_index(v.size() - 1);
 	if (base.index() != v.size() - 1)
 		throw InvalidCollection("Cannot set Collection index properly.");

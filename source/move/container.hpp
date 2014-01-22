@@ -1,5 +1,5 @@
 // Moves specific to one Pokemon and shared moves (Struggle and switches)
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,6 +29,7 @@ namespace technicalmachine {
 
 class MoveContainer {
 public:
+	using value_type = Move;
 	MoveContainer(unsigned my_team_size);
 	Move const & operator[](size_t index) const;
 	Move const & regular_move(size_t index) const;

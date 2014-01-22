@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,8 +34,8 @@ namespace technicalmachine {
 
 class MoveScores;
 
-class MoveCollection : public detail::BaseCollection<Move, MoveContainer> {
-	typedef detail::BaseCollection<Move, MoveContainer> Base;
+class MoveCollection : public detail::BaseCollection<MoveContainer> {
+	typedef detail::BaseCollection<MoveContainer> Base;
 public:
 	using Base::index_type;
 	MoveCollection(unsigned my_team_size);
