@@ -45,13 +45,13 @@ private:
 	public:
 		static constexpr auto size = static_cast<std::size_t>(StatNames::END);
 		using container_type = bounded_integer::array<value_type, size>;
-		constexpr container_type::const_iterator begin() const {
+		container_type::const_iterator begin() const {
 			return m_value.begin();
 		}
 		container_type::iterator begin() {
 			return m_value.begin();
 		}
-		constexpr container_type::const_iterator end() const {
+		container_type::const_iterator end() const {
 			return m_value.end();
 		}
 		container_type::iterator end() {
