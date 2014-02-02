@@ -1,5 +1,5 @@
 // HP class
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,11 +28,16 @@ namespace {
 using base_type = bounded_integer::checked_integer<1, 255>;
 base_type get_base(Species species);
 
-auto initial_hp(base_type const base, EV const ev, IV const iv, Level const level) -> HP::max_type {
-	return BOUNDED_INTEGER_CONDITIONAL((base > 1_bi),
+using hp_type = bounded_integer::clamped_integer<0, HP::max_value, bounded_integer::bounds::dynamic_max>;
+hp_type initial_hp(base_type const base, EV const ev, IV const iv, Level const level) {
+	auto const value = BOUNDED_INTEGER_CONDITIONAL((base > 1_bi),
 		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
 		1_bi
 	);
+	static_assert(std::numeric_limits<decltype(value)>::min() == std::numeric_limits<HP::max_type>::min(), "Incorrect HP min.");
+	static_assert(std::numeric_limits<hp_type>::max() == std::numeric_limits<decltype(value)>::max(), "Incorrect HP max.");
+	// Current HP starts out as max HP
+	return hp_type(value, value);
 }
 
 }	// namespace
@@ -40,17 +45,17 @@ auto initial_hp(base_type const base, EV const ev, IV const iv, Level const leve
 HP::HP(Species const species, Level const level, EV const set_ev) :
 	ev(set_ev),
 	iv(31_bi),
-	m_max(initial_hp(get_base(species), set_ev, iv, level)),
-	m_current(m_max)
+	m_value(initial_hp(get_base(species), ev, iv, level))
 	{
+	static_assert(std::is_same<decltype(m_value), hp_type>::value, "Incorrect HP type.");
 }
 
 auto HP::current() const -> current_type {
-	return m_current;
+	return m_value;
 }
 
 auto HP::max() const -> max_type {
-	return m_max;
+	return max_type(m_value.max(), bounded_integer::non_check);
 }
 
 

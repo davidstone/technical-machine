@@ -1,5 +1,5 @@
 // HP class
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,13 +33,13 @@ using namespace bounded_integer::literal;
 class HP {
 public:
 	static constexpr unsigned max_value = 714;
-	using max_type = bounded_integer::checked_integer<1, max_value>;
+	using max_type = bounded_integer::native_integer<1, max_value>;
 	using current_type = bounded_integer::clamped_integer<0, max_value>;
 	
 	HP(Species species, Level level, EV ev = EV(0_bi));
 	template<typename T>
 	HP & operator=(T const & value) {
-		m_current = bounded_integer::min(value, bounded_integer::make_bounded<bounded_integer::null_policy>(max()));
+		m_value = value;
 		return *this;
 	}
 	current_type current() const;
@@ -47,8 +47,7 @@ public:
 	EV ev;
 	IV iv;
 private:
-	max_type m_max;
-	current_type m_current;
+	bounded_integer::clamped_integer<0, max_value, bounded_integer::bounds::dynamic_max> m_value;
 };
 
 template<typename T>
