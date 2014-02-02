@@ -34,7 +34,7 @@ class HP {
 public:
 	static constexpr unsigned max_value = 714;
 	using max_type = bounded_integer::native_integer<1, max_value>;
-	using current_type = bounded_integer::clamped_integer<0, max_value>;
+	using current_type = bounded_integer::native_integer<0, max_value>;
 	
 	HP(Species species, Level level, EV ev = EV(0_bi));
 	template<typename T>
