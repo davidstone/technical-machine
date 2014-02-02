@@ -1,5 +1,5 @@
 // Read "User" message from PO
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,22 +18,23 @@
 
 #include "read_user_info.hpp"
 
+#include "inmessage.hpp"
+
+#include "../../pokemon/max_pokemon_per_team.hpp"
+
 #include <cstdint>
 #include <vector>
 #include <utility>
 
-#include "inmessage.hpp"
-
 namespace technicalmachine {
 namespace po {
 
-static std::vector <std::pair <uint16_t, uint8_t>> load_team_vector (InMessage & msg) {
-	std::vector <std::pair <uint16_t, uint8_t>> temp_team;
-	constexpr unsigned team_size = 6;
-	temp_team.reserve (team_size);
-	for (unsigned n = 0; n != team_size; ++n) {
-		uint16_t const species = msg.read_short ();
-		uint8_t const forme = msg.read_byte ();
+static std::vector<std::pair <uint16_t, uint8_t>> load_team_vector(InMessage & msg) {
+	std::vector<std::pair<uint16_t, uint8_t>> temp_team;
+	temp_team.reserve(max_pokemon_per_team);
+	for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
+		uint16_t const species = msg.read_short();
+		uint8_t const forme = msg.read_byte();
 		temp_team.emplace_back(species, forme);
 	}
 	return temp_team;

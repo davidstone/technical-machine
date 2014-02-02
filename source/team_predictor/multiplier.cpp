@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,24 +18,28 @@
 
 #include "multiplier.hpp"
 
+#include "../invalid_settings_file.hpp"
+
+#include "../pokemon/max_pokemon_per_team.hpp"
+#include "../pokemon/pokemon.hpp"
+#include "../pokemon/species.hpp"
+
+#include "../string_conversions/conversion.hpp"
+
+#include <boost/lexical_cast.hpp>
+
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstddef>
 #include <fstream>
 #include <string>
-#include <boost/lexical_cast.hpp>
-
-#include "../invalid_settings_file.hpp"
-
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
-
-#include "../string_conversions/conversion.hpp"
 
 namespace technicalmachine {
 namespace {
-static constexpr Multiplier::value_type not_set = -1.0F;
+
+constexpr auto other_pokemon_per_team = max_pokemon_per_team - 1;
+constexpr Multiplier::value_type not_set = -1.0F;
 bool is_alternate_form(Species first, Species second);
 
 }	// unnamed namespace

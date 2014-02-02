@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +18,7 @@
 
 #include "collection.hpp"
 
-#include <cassert>
-
+#include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
 #include "pokemon_not_found.hpp"
 #include "species.hpp"
@@ -27,11 +26,13 @@
 #include "../move/move.hpp"
 #include "../move/moves_forward.hpp"
 
+#include <cassert>
+
 namespace technicalmachine {
 
-PokemonCollection::PokemonCollection ():
+PokemonCollection::PokemonCollection():
 	current_replacement(0),
-	true_size(6) {
+	true_size(max_pokemon_per_team) {
 }
 
 void PokemonCollection::initialize_size (index_type const new_size) {
@@ -126,17 +127,13 @@ void PokemonCollection::decrement_real_size () {
 	--true_size;
 }
 
-namespace {
-constexpr unsigned max_size = 6;
-}	// unnamed namespace
-
 PokemonCollection::hash_type PokemonCollection::hash() const {
 	hash_type current_hash = 0;
 	for (auto const & pokemon : container) {
 		current_hash *= pokemon.max_hash();
 		current_hash += pokemon.hash();
 	}
-	current_hash *= max_size;
+	current_hash *= max_pokemon_per_team;
 	current_hash += static_cast<hash_type>(true_size - 1);
 	current_hash *= true_size;
 	current_hash += index();
@@ -144,7 +141,7 @@ PokemonCollection::hash_type PokemonCollection::hash() const {
 }
 
 PokemonCollection::hash_type PokemonCollection::max_hash() const {
-	hash_type current_max = max_size;
+	hash_type current_max = max_pokemon_per_team;
 	current_max *= true_size;
 	for (auto const & pokemon : container) {
 		current_max *= pokemon.max_hash();

@@ -1,5 +1,5 @@
 // Pokemon Online battle logic
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,10 +19,11 @@
 #ifndef POKEMON_ONLINE__BATTLE_HPP_
 #define POKEMON_ONLINE__BATTLE_HPP_
 
-#include <random>
-#include <string>
 #include "outmessage.hpp"
 #include "../battle.hpp"
+
+#include <random>
+#include <string>
 
 namespace technicalmachine {
 namespace po {
@@ -40,9 +41,6 @@ public:
 		set_party_if_unknown(Party(challenger ? 0 : 1));
 	}
 	void handle_message (Client & client, uint32_t battle_id, uint8_t command, Party party, InMessage & msg);
-	static constexpr unsigned pokemon_per_team() {
-		return 6;
-	}
 	static constexpr unsigned moves_per_pokemon() {
 		return 4;
 	}

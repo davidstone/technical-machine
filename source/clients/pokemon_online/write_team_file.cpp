@@ -18,12 +18,6 @@
 
 #include "write_team_file.hpp"
 
-#include <string>
-#include <utility>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
 #include "conversion.hpp"
 #include "stat_order.hpp"
 
@@ -31,9 +25,16 @@
 
 #include "../../move/move.hpp"
 
+#include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
 
 #include "../../stat/stat.hpp"
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include <string>
+#include <utility>
 
 namespace technicalmachine {
 namespace po {
@@ -60,9 +61,9 @@ void write_stats (Pokemon const & pokemon, ptree & pt) {
 }
 
 void write_blank_stats (ptree & pt) {
-	for (unsigned n = 0; n != 6; ++n)
+	for (unsigned n = 0; n != max_pokemon_per_team; ++n)
 		pt.add ("DV", 31);
-	for (unsigned n = 0; n != 6; ++n)
+	for (unsigned n = 0; n != max_pokemon_per_team; ++n)
 		pt.add ("EV", 0);
 }
 
@@ -129,9 +130,10 @@ void write_team (Team & team, std::string const & file_name) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
 	}
-	for (unsigned n = team.all_pokemon().size (); n < 6; ++n)
-		write_blank_pokemon (t);
-	write_xml (file_name, pt, std::locale (), settings);
+	for (unsigned n = team.all_pokemon().size(); n < max_pokemon_per_team; ++n) {
+		write_blank_pokemon(t);
+	}
+	write_xml(file_name, pt, std::locale{}, settings);
 }
 
 }	// namespace po

@@ -1,4 +1,4 @@
-// Handle common moves that all Pokemon can select
+// The maximum number of Pokemon possible on a team
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,33 +16,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__SHARED_HPP_
-#define MOVE__SHARED_HPP_
-
-#include "../pokemon/max_pokemon_per_team.hpp"
-
-#include <cstddef>
-#include <cstdint>
-
-namespace technicalmachine {
-class Move;
-
-class SharedMoves {
-public:
-	explicit SharedMoves(unsigned team_size = max_pokemon_per_team);
-	void remove_switch();
-	Move const & operator[](size_t index) const;
-	size_t size() const;
-	template<typename Function>
-	void for_each(Function && f) const {
-		for (size_t n = 0; n != size(); ++n) {
-			f(operator[](n));
-		}
-	}
-	friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
-private:
-	uint8_t number_of_switches;
-};
-
-}	// namespace technicalmachine
-#endif	// MOVE__SHARED_HPP_
+#include "max_pokemon_per_team.hpp"

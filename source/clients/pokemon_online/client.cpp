@@ -1,5 +1,5 @@
 // Connect to Pokemon Online
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,15 +18,6 @@
 
 #include "client.hpp"
 
-#include <cstdint>
-#include <iostream>
-#include <map>
-#include <string>
-#include <utility>
-#include <vector>
-
-#include <boost/algorithm/string.hpp>
-
 #include "battle.hpp"
 #include "battle_settings.hpp"
 #include "conversion.hpp"
@@ -39,9 +30,20 @@
 
 #include "../../move/moves_forward.hpp"
 
+#include "../../pokemon/max_pokemon_per_team.hpp"
+
 #include "../../team.hpp"
 
 #include "../../cryptography/md5.hpp"
+
+#include <boost/algorithm/string.hpp>
+
+#include <cstdint>
+#include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace technicalmachine {
 namespace po {
@@ -364,11 +366,11 @@ public:
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const total_pp = msg.read_byte ();
 		}
-		for (unsigned n = 0; n != 6; ++n) {
+		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
 			// PO uses a QList of int, so hopefully their int is always 32-bit.
 			uint32_t const ev = msg.read_int ();
 		}
-		for (unsigned n = 0; n != 6; ++n) {
+		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
 			uint32_t const dv = msg.read_int ();
 		}
 	}
@@ -378,7 +380,7 @@ class BattleTeam {
 public:
 	std::vector <BattlePokemon> pokemon;
 	explicit BattleTeam (InMessage & msg) {
-		for (unsigned n = 0; n != 6; ++n) {
+		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
 			pokemon.emplace_back(msg);
 		}
 	}

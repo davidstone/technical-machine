@@ -1,4 +1,4 @@
-// Teammate stat multipliers
+// The maximum number of Pokemon possible on a team
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,27 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__MULTIPLIER_HPP_
-#define TEAM_PREDICTOR__MULTIPLIER_HPP_
-
-#include "../pokemon/species.hpp"
-#include <array>
+#ifndef POKEMON_MAX_POKEMON_PER_TEAM_HPP_
+#define POKEMON_MAX_POKEMON_PER_TEAM_HPP_
 
 namespace technicalmachine {
 
-class Multiplier {
-public:
-	typedef std::array<unsigned, number_of_species> Overall;
-	typedef float value_type;
-	Multiplier(Overall const & overall);
-	value_type operator() (Species species1, Species species2) const;
-private:
-	typedef std::array<std::array<value_type, number_of_species>, number_of_species> Container;
-	static Container species_clause();
-	void load_listed_multipliers(Overall const & overall, Overall & unaccounted);
-	void estimate_remaining(Overall const & overall, Overall const & unaccounted);
-	Container multiplier;
-};
+constexpr unsigned max_pokemon_per_team = 6;
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__MULTIPLIER_HPP_
+#endif	// POKEMON_MAX_POKEMON_PER_TEAM_HPP_

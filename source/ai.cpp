@@ -1,5 +1,5 @@
 // AI to win a 1v1 battle
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,15 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
-
-#include <boost/lexical_cast.hpp>
-
 #include "exit_program.hpp"
 
 #include "clients/network/invalid_packet.hpp"
 #include "clients/pokemon_online/client.hpp"
 #include "clients/pokemon_showdown/client.hpp"
+
+#include "pokemon/max_pokemon_per_team.hpp"
+
+#include <boost/lexical_cast.hpp>
+
+#include <iostream>
 
 using namespace technicalmachine;
 
@@ -67,7 +69,7 @@ void print_debug_statements() {
 	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
 	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
 	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-	constexpr auto heap_allocated_size = 6 * (sizeof(Pokemon) + 4 * (sizeof(Move)));
+	constexpr auto heap_allocated_size = max_pokemon_per_team * (sizeof(Pokemon) + 4 * (sizeof(Move)));
 	constexpr auto full_team_size = sizeof(Team) + heap_allocated_size;
 	std::cout << "size of full team: " << full_team_size << '\n';
 	std::cout << "heap allocated_size: " << heap_allocated_size << '\n';

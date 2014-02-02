@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,13 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <algorithm>
-#include <memory>
-#include <random>
-#include <vector>
-
-#include <boost/lexical_cast.hpp>
-
 #include "detailed_stats.hpp"
 #include "random_team.hpp"
 #include "team_predictor.hpp"
@@ -34,6 +27,7 @@
 
 #include "../team.hpp"
 
+#include "../pokemon/max_pokemon_per_team.hpp"
 #include "../pokemon/pokemon.hpp"
 
 #include <FL/Fl.H>
@@ -42,12 +36,18 @@
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Multiline_Output.H>
 
+#include <boost/lexical_cast.hpp>
+
+#include <algorithm>
+#include <memory>
+#include <random>
+#include <vector>
+
 using namespace technicalmachine;
 
 // A GUI version of the team predictor.
 
 namespace {
-constexpr unsigned pokemon_per_team = 6;
 
 class Data {
 public:
@@ -86,7 +86,7 @@ constexpr int button_height = input_height;
 constexpr int input_lines_per_pokemon = 4;
 constexpr int input_lines_for_random = 2;
 constexpr int input_lines_for_button = 1;
-constexpr int total_input_lines = pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
+constexpr int total_input_lines = max_pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
 constexpr int total_input_height = total_input_lines * (input_height + padding);
 
 constexpr int output_width = 400;
@@ -95,7 +95,7 @@ constexpr int output_lines_for_ability = 1;
 constexpr int output_lines_for_nature_and_evs = 2;
 constexpr int output_lines_for_moves = 4;
 constexpr int output_lines_per_pokemon = 1 + output_lines_for_ability + output_lines_for_nature_and_evs + output_lines_for_moves;
-constexpr int output_lines_per_team = pokemon_per_team * output_lines_per_pokemon;
+constexpr int output_lines_per_team = max_pokemon_per_team * output_lines_per_pokemon;
 constexpr int output_team_padding = 10;
 constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
 constexpr int output_height = output_team_height;
@@ -136,7 +136,7 @@ private:
 	Item item;
 	Ability ability;
 	Nature nature;
-	std::array<EV, 6> evs;
+	std::array<EV, number_of_stats> evs;
 	std::vector<Moves> moves;
 };
 
@@ -152,7 +152,7 @@ private:
 
 
 unsigned max_random(Data const & data) {
-	unsigned const remaining_pokemon = pokemon_per_team - data.team().all_pokemon().size();
+	unsigned const remaining_pokemon = max_pokemon_per_team - data.team().all_pokemon().size();
 	try {
 		return std::min(boost::lexical_cast<unsigned>(data.random_input->value()), remaining_pokemon);
 	}
@@ -169,7 +169,7 @@ void function (Fl_Widget * w, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	bool using_lead = false;
 	for (PokemonInputs * inputs : data.input) {
-		if (data.team().all_pokemon().size() >= pokemon_per_team)
+		if (data.team().all_pokemon().size() >= max_pokemon_per_team)
 			break;
 		if (!inputs->is_valid()) {
 			continue;
@@ -200,6 +200,7 @@ int main () {
 		button_number += 1;
 		Fl_Int_Input random_input(left_padding, y_position(button_number), input_width, input_height, "Max random Pokemon");
 		random_input.align(FL_ALIGN_TOP);
+		// FLTK has a poor interface
 		random_input.value("6");
 		++button_number;
 		Fl_Return_Button calculate (left_padding, y_position(button_number), button_width, button_height, "Calculate");

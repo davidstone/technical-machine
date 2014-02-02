@@ -1,5 +1,5 @@
 // Test stat calculations
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,24 +18,25 @@
 
 #include "stat.hpp"
 
-#include <iostream>
-#include <string>
-
 #include "incorrect_calculation.hpp"
 
 #include "../team.hpp"
 #include "../weather.hpp"
 
+#include "../pokemon/max_pokemon_per_team.hpp"
 #include "../pokemon/species.hpp"
 
 #include "../stat/calculate.hpp"
 #include "../stat/stat.hpp"
 
+#include <iostream>
+#include <string>
+
 namespace technicalmachine {
 namespace {
 using namespace bounded_integer::literal;
 
-constexpr unsigned team_size = 6;
+constexpr auto team_size = max_pokemon_per_team;
 
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";

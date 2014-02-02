@@ -1,5 +1,5 @@
 // Pokemon Online battle logic
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,11 +18,6 @@
 
 #include "battle.hpp"
 
-#include <array>
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "client.hpp"
 #include "conversion.hpp"
 #include "inmessage.hpp"
@@ -30,7 +25,13 @@
 
 #include "../../team.hpp"
 
+#include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
+
+#include <array>
+#include <iostream>
+#include <string>
+#include <vector>
 
 namespace technicalmachine {
 namespace po {
@@ -54,7 +55,7 @@ private:
 
 std::array<int8_t, 7> parse_boosts(InMessage & msg);
 
-}	// unnamed namespace
+}	// namespace
 
 void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t command, Party const party, InMessage & msg) {
 	enum {
@@ -334,7 +335,7 @@ void Battle::parse_status_change (InMessage & msg) {
 
 void Battle::parse_abs_status_change (InMessage & msg) {
 	uint8_t const index = msg.read_byte();
-	if (index >= pokemon_per_team()) {
+	if (index >= max_pokemon_per_team) {
 		std::cerr << "Invalid Pokemon index.\n";
 		return;
 	}
@@ -537,7 +538,7 @@ void Battle::handle_cancel_move () {
 
 void Battle::parse_rearrange_team (InMessage & msg) {
 	Todo const t (msg, "REARRANGE_TEAM");
-	for (unsigned n = 0; n != pokemon_per_team(); ++n) {
+	for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
 		uint16_t const species_id = msg.read_short ();
 		uint8_t const form_id = msg.read_byte ();
 		uint8_t const level = msg.read_byte ();

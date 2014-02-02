@@ -18,19 +18,20 @@
 
 #include "outmessage.hpp"
 
-#include <cstdint>
-#include <string>
-#include <vector>
-#include <utility>
-
 #include "battle_settings.hpp"
 #include "conversion.hpp"
 
 #include "../../team.hpp"
 
+#include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
 
 #include <endian/endian.hpp>
+
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <utility>
 
 namespace technicalmachine {
 namespace po {
@@ -63,7 +64,7 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon);
 	}
-	for (unsigned n = team.all_pokemon().size(); n <= 6; ++n) {
+	for (unsigned n = team.all_pokemon().size(); n <= max_pokemon_per_team; ++n) {
 		write_short (0);
 	}
 }
