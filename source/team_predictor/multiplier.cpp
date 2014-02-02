@@ -54,7 +54,7 @@ Multiplier::Multiplier(Overall const & overall):
 	// distribution and divide up all remaining usages proportionally.
 	Overall unaccounted;
 	std::transform(overall.begin(), overall.end(), unaccounted.begin(), [](unsigned const element) {
-		return element * other_pokemon_per_team;
+		return element * static_cast<unsigned>(other_pokemon_per_team);
 	});
 
 	load_listed_multipliers(overall, unaccounted);
@@ -125,7 +125,7 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 		if (overall[a] != 0) {
 			for (float & value : multiplier [a]) {
 				if (value == not_set) {
-					value = (unaccounted[a] != 0) ? (static_cast<float>(unaccounted[a]) / (overall[a] * other_pokemon_per_team)) : 0.0F;
+					value = (unaccounted[a] != 0) ? (static_cast<float>(unaccounted[a]) / (overall[a] * static_cast<unsigned>(other_pokemon_per_team))) : 0.0F;
 				}
 			}
 		}

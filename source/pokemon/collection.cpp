@@ -141,7 +141,7 @@ PokemonCollection::hash_type PokemonCollection::hash() const {
 }
 
 PokemonCollection::hash_type PokemonCollection::max_hash() const {
-	hash_type current_max = max_pokemon_per_team;
+	hash_type current_max = static_cast<hash_type>(max_pokemon_per_team);
 	current_max *= true_size;
 	for (auto const & pokemon : container) {
 		current_max *= pokemon.max_hash();

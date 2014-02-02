@@ -65,13 +65,16 @@ int main (int argc, char * argv []) {
 }
 
 namespace {
+using namespace bounded_integer::literal;
+
 void print_debug_statements() {
+	using bounded_integer::make_bounded;
 	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
 	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
 	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-	constexpr auto heap_allocated_size = max_pokemon_per_team * (sizeof(Pokemon) + 4 * (sizeof(Move)));
-	constexpr auto full_team_size = sizeof(Team) + heap_allocated_size;
+	constexpr auto heap_allocated_size = max_pokemon_per_team * (make_bounded<sizeof(Pokemon)>() + 4_bi * make_bounded<sizeof(Move)>());
+	constexpr auto full_team_size = make_bounded<sizeof(Team)>() + heap_allocated_size;
 	std::cout << "size of full team: " << full_team_size << '\n';
 	std::cout << "heap allocated_size: " << heap_allocated_size << '\n';
 }
-}	// unnamed namespace
+}	// namespace

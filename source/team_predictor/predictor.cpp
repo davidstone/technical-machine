@@ -86,7 +86,7 @@ constexpr int button_height = input_height;
 constexpr int input_lines_per_pokemon = 4;
 constexpr int input_lines_for_random = 2;
 constexpr int input_lines_for_button = 1;
-constexpr int total_input_lines = max_pokemon_per_team * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
+constexpr int total_input_lines = static_cast<int>(max_pokemon_per_team) * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
 constexpr int total_input_height = total_input_lines * (input_height + padding);
 
 constexpr int output_width = 400;
@@ -95,7 +95,7 @@ constexpr int output_lines_for_ability = 1;
 constexpr int output_lines_for_nature_and_evs = 2;
 constexpr int output_lines_for_moves = 4;
 constexpr int output_lines_per_pokemon = 1 + output_lines_for_ability + output_lines_for_nature_and_evs + output_lines_for_moves;
-constexpr int output_lines_per_team = max_pokemon_per_team * output_lines_per_pokemon;
+constexpr int output_lines_per_team = static_cast<int>(max_pokemon_per_team) * output_lines_per_pokemon;
 constexpr int output_team_padding = 10;
 constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
 constexpr int output_height = output_team_height;
@@ -152,7 +152,7 @@ private:
 
 
 unsigned max_random(Data const & data) {
-	unsigned const remaining_pokemon = max_pokemon_per_team - data.team().all_pokemon().size();
+	unsigned const remaining_pokemon = static_cast<unsigned>(max_pokemon_per_team) - data.team().all_pokemon().size();
 	try {
 		return std::min(boost::lexical_cast<unsigned>(data.random_input->value()), remaining_pokemon);
 	}

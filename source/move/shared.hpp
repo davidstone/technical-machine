@@ -29,7 +29,7 @@ class Move;
 
 class SharedMoves {
 public:
-	explicit SharedMoves(unsigned team_size = max_pokemon_per_team);
+	explicit SharedMoves(unsigned team_size = static_cast<unsigned>(max_pokemon_per_team));
 	void remove_switch();
 	Move const & operator[](size_t index) const;
 	size_t size() const;

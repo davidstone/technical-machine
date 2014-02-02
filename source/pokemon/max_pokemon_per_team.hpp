@@ -19,9 +19,12 @@
 #ifndef POKEMON_MAX_POKEMON_PER_TEAM_HPP_
 #define POKEMON_MAX_POKEMON_PER_TEAM_HPP_
 
-namespace technicalmachine {
+#include <bounded_integer/bounded_integer.hpp>
 
-constexpr unsigned max_pokemon_per_team = 6;
+namespace technicalmachine {
+using namespace bounded_integer::literal;
+
+constexpr auto max_pokemon_per_team = 6_bi;
 
 }	// namespace technicalmachine
 #endif	// POKEMON_MAX_POKEMON_PER_TEAM_HPP_
