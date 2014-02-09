@@ -33,12 +33,6 @@ public:
 	void remove_switch();
 	Move const & operator[](size_t index) const;
 	size_t size() const;
-	template<typename Function>
-	void for_each(Function && f) const {
-		for (size_t n = 0; n != size(); ++n) {
-			f(operator[](n));
-		}
-	}
 	friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
 private:
 	uint8_t number_of_switches;

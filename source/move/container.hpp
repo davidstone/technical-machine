@@ -55,7 +55,9 @@ public:
 	}
 	template<typename Function>
 	void for_each_shared(Function && f) const {
-		shared.for_each(std::forward<Function>(f));
+		for (std::size_t n = 0; n != shared.size(); ++n) {
+			f(shared[n]);
+		}
 	}
 	size_t size() const;
 	size_t number_of_regular_moves() const;
