@@ -1,5 +1,5 @@
 // Load teams
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -95,10 +95,10 @@ PokemonCollection & Team::all_pokemon() {
 	return active_pokemon.all_pokemon();
 }
 
-unsigned Team::number_of_seen_pokemon() const {
+TeamSize Team::number_of_seen_pokemon() const {
 	return all_pokemon().size();
 }
-unsigned Team::size() const {
+TeamSize Team::size() const {
 	return all_pokemon().real_size();
 }
 

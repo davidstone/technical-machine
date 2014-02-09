@@ -54,8 +54,8 @@ bool is_real_pokemon(ptree const & pt) {
 	return pt.get<unsigned>("<xmlattr>.Num");
 }
 
-unsigned number_of_pokemon(ptree const & pt) {
-	unsigned pokemon_count = 0;
+TeamSize number_of_pokemon(ptree const & pt) {
+	TeamSize pokemon_count = 0_bi;
 	for (auto const & value : pt) {
 		if (value.first == "Pokemon" and is_real_pokemon(value.second))
 			++pokemon_count;

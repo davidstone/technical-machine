@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,13 +27,13 @@
 
 namespace technicalmachine {
 
-MoveContainer::MoveContainer(unsigned const my_team_size):
+MoveContainer::MoveContainer(TeamSize const my_team_size):
 	shared(my_team_size) {
 }
 
 Move const & MoveContainer::operator[](size_t const index) const {
 	assert(index < size());
-	return (index < regular.size()) ? regular[index] : shared[index - regular.size()];
+	return (index < regular.size()) ? regular[index] : shared[static_cast<SharedMoves::index_type>(index - regular.size())];
 }
 
 Move const & MoveContainer::regular_move(size_t const index) const {
@@ -46,7 +46,7 @@ Move & MoveContainer::regular_move(size_t const index) {
 }
 
 size_t MoveContainer::size() const {
-	return regular.size() + shared.size();
+	return regular.size() + static_cast<std::size_t>(shared.size());
 }
 
 size_t MoveContainer::number_of_regular_moves() const {

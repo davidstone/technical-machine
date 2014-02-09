@@ -87,7 +87,7 @@ int get_awaken_numerator (Pokemon const & pokemon);
 Moves random_action (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 bool is_replacing (Team const & team);
 Moves random_switch (Team const & ai, std::mt19937 & random_engine);
-std::vector<Moves> all_switches (uint8_t team_size, uint8_t pokemon_index);
+std::vector<Moves> all_switches(TeamSize team_size, uint8_t pokemon_index);
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 
 void print_best_move (Team const & team, Moves best_move, int64_t score);
@@ -321,9 +321,9 @@ int64_t random_move_effects_branch(Team & first, Team & last, Weather const & we
 	};
 	int64_t score3 = 0;
 
-	for (auto const & first_variable : all_probabilities(first.pokemon(), last.size())) {
+	for (auto const & first_variable : all_probabilities(first.pokemon(), static_cast<unsigned>(last.size()))) {
 		int64_t score2 = 0;
-		for (auto const & last_variable : all_probabilities(last.pokemon(), first.size())) {
+		for (auto const & last_variable : all_probabilities(last.pokemon(), static_cast<unsigned>(first.size()))) {
 			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_) {
 				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_);
 			};
@@ -539,11 +539,11 @@ Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
 	return switches [index];
 }
 
-std::vector<Moves> all_switches (uint8_t const team_size, uint8_t const pokemon_index) {
+std::vector<Moves> all_switches(TeamSize const team_size, uint8_t const pokemon_index) {
 	std::vector<Moves> switches;
-	for (unsigned n = 0; n != team_size; ++n) {
+	for (auto const n : bounded_integer::range(team_size)) {
 		if (n != pokemon_index) {
-			switches.emplace_back(from_replacement(n));
+			switches.emplace_back(from_replacement(static_cast<unsigned>(n)));
 		}
 	}
 	return switches;

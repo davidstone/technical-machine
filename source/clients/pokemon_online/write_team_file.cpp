@@ -130,7 +130,8 @@ void write_team (Team & team, std::string const & file_name) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
 	}
-	for (unsigned n = team.all_pokemon().size(); n < max_pokemon_per_team; ++n) {
+	for (auto const & unused : bounded_integer::range(team.all_pokemon().size(), max_pokemon_per_team)) {
+		static_cast<void>(unused);
 		write_blank_pokemon(t);
 	}
 	write_xml(file_name, pt, std::locale{}, settings);

@@ -21,21 +21,29 @@
 
 #include "../pokemon/max_pokemon_per_team.hpp"
 
-#include <cstddef>
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <utility>
 
 namespace technicalmachine {
 class Move;
+using namespace bounded_integer::literal;
 
 class SharedMoves {
 public:
-	explicit SharedMoves(unsigned team_size = static_cast<unsigned>(max_pokemon_per_team));
+	// Struggle is the only other special move right now
+	static constexpr auto number_of_non_switches() noexcept -> decltype(1_bi) {
+		return 1_bi;
+	}
+	using size_type = decltype(std::declval<TeamSize>() + number_of_non_switches());
+	using index_type = decltype(std::declval<size_type>() - 1_bi);
+	explicit SharedMoves(TeamSize team_size = max_pokemon_per_team);
 	void remove_switch();
-	Move const & operator[](size_t index) const;
-	size_t size() const;
+	Move const & operator[](index_type index) const;
+	size_type size() const;
 	friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
 private:
-	uint8_t number_of_switches;
+	bounded_integer::equivalent_type<TeamSize, bounded_integer::throw_policy> m_number_of_switches;
 };
 
 }	// namespace technicalmachine

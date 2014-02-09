@@ -73,8 +73,8 @@ TECHNICALMACHINE_FRIEND_DECLARATIONS(/*empty*/);
 
 class Pokemon {
 public:
-	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
-	Pokemon(unsigned my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
+	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
+	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	operator Species() const;
 	void remove_switch();
 	uint8_t index_of_first_switch () const;

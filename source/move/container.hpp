@@ -30,7 +30,7 @@ namespace technicalmachine {
 class MoveContainer {
 public:
 	using value_type = Move;
-	MoveContainer(unsigned my_team_size);
+	MoveContainer(TeamSize my_team_size);
 	Move const & operator[](size_t index) const;
 	Move const & regular_move(size_t index) const;
 	Move & regular_move(size_t index);
@@ -55,7 +55,7 @@ public:
 	}
 	template<typename Function>
 	void for_each_shared(Function && f) const {
-		for (std::size_t n = 0; n != shared.size(); ++n) {
+		for (auto const n : bounded_integer::range(shared.size())) {
 			f(shared[n]);
 		}
 	}

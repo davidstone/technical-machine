@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,15 +21,19 @@
 
 #include "../collection.hpp"
 
-#include <cstdint>
-#include <vector>
-
+#include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
 #include "species_forward.hpp"
 
 #include "../move/moves_forward.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <cstdint>
+#include <vector>
+
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 class Move;
 
 class PokemonCollection : public detail::BaseCollection<std::vector<Pokemon>> {
@@ -41,7 +45,7 @@ public:
 	PokemonCollection();
 	// Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
-	void initialize_size (index_type const new_size);
+	void initialize_size(TeamSize const new_size);
 	void initialize_replacement ();
 	using Base::operator();
 	template<typename... Args>
@@ -62,8 +66,8 @@ public:
 	void replacement_from_switch ();
 	bool is_switching_to_self () const;
 	bool is_switching_to_self(Moves move) const;
-	index_type size () const;
-	index_type real_size () const;
+	TeamSize size() const;
+	TeamSize real_size() const;
 	index_type find_index(Species name) const;
 
 	template<class... Args>
@@ -85,7 +89,7 @@ public:
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
 		ResetIndex reset(*this);
 		for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
-			if (is_switching_to_self() and size() > 1)
+			if (is_switching_to_self() and size() > 1_bi)
 				continue;
 			f();
 			if (break_out())
@@ -126,7 +130,7 @@ private:
 	// If a Pokemon switches / faints, what Pokemon should replace it?
 	index_type current_replacement;
 	// The actual size of the foe's team, not just the Pokemon I've seen
-	index_type true_size;
+	TeamSize true_size;
 };
 
 }	// namespace technicalmachine

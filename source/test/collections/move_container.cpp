@@ -1,5 +1,5 @@
 // Test container for moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,6 +32,8 @@
 
 namespace technicalmachine {
 namespace {
+using namespace bounded_integer::literal;
+
 class Comparator {
 public:
 	Comparator(std::vector<Moves> const & m, std::string && str_type):
@@ -51,20 +53,20 @@ private:
 	unsigned n;
 };
 
-}	// unnamed namespace
+}	// namespace
 
 void move_container_tests() {
 	std::cout << "\tRunning MoveContainer tests.\n";
-	constexpr unsigned team_size = 4;
-	constexpr unsigned shared_moves_size = team_size + 1;
+	constexpr TeamSize team_size(4_bi);
+	constexpr auto shared_moves_size = team_size + 1_bi;
 	MoveContainer c(team_size);
 	if (c.size() != shared_moves_size) {
-		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + std::to_string(shared_moves_size) + " but got " + std::to_string(static_cast<int>(c.size())));
+		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded_integer::to_string(shared_moves_size) + " but got " + bounded_integer::to_string(c.size()));
 	}
 	auto const moves = create_regular_moves();
-	for (unsigned n = 0; n != moves.size(); ++n) {
-		c.emplace_back(moves[n]);
-		if (c.size() != shared_moves_size + n + 1 or c.size() != c.number_of_regular_moves() + shared_moves_size) {
+	for (auto const n : bounded_integer::range(static_cast<bounded_integer::checked_integer<0, 100>>(moves.size()))) {
+		c.emplace_back(moves[static_cast<std::size_t>(n)]);
+		if (c.size() != shared_moves_size + n + 1_bi or c.size() != static_cast<bounded_integer::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}

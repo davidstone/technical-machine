@@ -38,7 +38,7 @@ class MoveCollection : public detail::BaseCollection<MoveContainer> {
 	typedef detail::BaseCollection<MoveContainer> Base;
 public:
 	using Base::index_type;
-	MoveCollection(unsigned my_team_size);
+	MoveCollection(TeamSize my_team_size);
 	Move const & regular_move() const;
 	Move & regular_move();
 	Move const & regular_move(size_t index) const;

@@ -152,7 +152,7 @@ private:
 
 
 unsigned max_random(Data const & data) {
-	unsigned const remaining_pokemon = static_cast<unsigned>(max_pokemon_per_team) - data.team().all_pokemon().size();
+	auto const remaining_pokemon = static_cast<unsigned>(max_pokemon_per_team - data.team().all_pokemon().size());
 	try {
 		return std::min(boost::lexical_cast<unsigned>(data.random_input->value()), remaining_pokemon);
 	}

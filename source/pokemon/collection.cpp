@@ -35,7 +35,7 @@ PokemonCollection::PokemonCollection():
 	true_size(max_pokemon_per_team) {
 }
 
-void PokemonCollection::initialize_size (index_type const new_size) {
+void PokemonCollection::initialize_size(TeamSize const new_size) {
 	true_size = new_size;
 }
 
@@ -88,10 +88,10 @@ bool PokemonCollection::is_switching_to_self (Moves const move) const {
 	return to_replacement(move) == index();
 }
 
-PokemonCollection::index_type PokemonCollection::size () const {
-	return container.size();
+TeamSize PokemonCollection::size() const {
+	return static_cast<TeamSize>(container.size());
 }
-PokemonCollection::index_type PokemonCollection::real_size () const {
+TeamSize PokemonCollection::real_size() const {
 	return true_size;
 }
 
@@ -134,8 +134,8 @@ PokemonCollection::hash_type PokemonCollection::hash() const {
 		current_hash += pokemon.hash();
 	}
 	current_hash *= max_pokemon_per_team;
-	current_hash += static_cast<hash_type>(true_size - 1);
-	current_hash *= true_size;
+	current_hash += static_cast<hash_type>(true_size - 1_bi);
+	current_hash *= static_cast<hash_type>(true_size);
 	current_hash += index();
 	return current_hash;
 }

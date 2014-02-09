@@ -1,5 +1,5 @@
 // Team data structure
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -54,8 +54,8 @@ public:
 	PokemonCollection const & all_pokemon() const;
 	PokemonCollection & all_pokemon();
 	
-	unsigned number_of_seen_pokemon() const;
-	unsigned size() const;
+	TeamSize number_of_seen_pokemon() const;
+	TeamSize size() const;
 	
 	bool is_me() const;
 	std::string who() const;

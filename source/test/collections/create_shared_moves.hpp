@@ -1,5 +1,5 @@
 // Basis for some move tests
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,17 +19,23 @@
 #ifndef TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
 #define TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
 
-#include <vector>
 #include "../../move/move.hpp"
 #include "../../move/moves.hpp"
+#include "../../pokemon/max_pokemon_per_team.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <vector>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
-inline std::vector<Moves> create_shared_moves(unsigned const team_size) {
+inline std::vector<Moves> create_shared_moves(TeamSize const team_size) {
 	std::vector<Moves> shared ({ Moves::Struggle });
-	if (team_size != 1) {
-		for (unsigned n = 0; n != team_size; ++n)
-			shared.emplace_back(from_replacement(n));
+	if (team_size != 1_bi) {
+		for (auto const n : bounded_integer::range(team_size)) {
+			shared.emplace_back(from_replacement(static_cast<unsigned>(n)));
+		}
 	}
 	return shared;
 }

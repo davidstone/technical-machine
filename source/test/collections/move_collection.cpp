@@ -1,5 +1,5 @@
 // Test container for moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,28 +31,31 @@
 #include "../../string_conversions/move.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 void move_collection_tests() {
+	using bounded_integer::to_string;
 	std::cout << "\tRunning MoveCollection tests.\n";
-	constexpr unsigned team_size = 4;
-	for (unsigned size = 1; size <= team_size; ++size) {
-		unsigned const shared_moves_size = (size > 1) ? size + 1 : 1;
+	constexpr TeamSize team_size = 4_bi;
+	for (auto const & size : bounded_integer::range(1_bi, team_size + 1_bi)) {
+		auto const shared_moves_size = BOUNDED_INTEGER_CONDITIONAL(size > 1_bi, size + 1_bi, 1_bi);
 		MoveCollection collection(size);
 		if (collection.size() != shared_moves_size)
-			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + std::to_string(size));
+			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(size));
 		auto expected = create_regular_moves();
-		for (unsigned n = 0; n != expected.size(); ++n) {
-			collection.add(expected[n]);
-			if (collection.size() != shared_moves_size + n + 1 or collection.size() != collection.number_of_regular_moves() + shared_moves_size) {
-				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + std::to_string(size));
+		using ExpectedSize = bounded_integer::checked_integer<0, 100>;
+		for (auto const & n : bounded_integer::range(static_cast<ExpectedSize>(expected.size()))) {
+			collection.add(expected[static_cast<std::size_t>(n)]);
+			if (collection.size() != shared_moves_size + n + 1_bi or collection.size() != collection.number_of_regular_moves() + shared_moves_size) {
+				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + to_string(size));
 			}
 		}
 		
 		auto const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
-		for (unsigned n = 0; n != expected.size(); ++n) {
-			if (expected[n] != collection(n)) {
-				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + std::to_string(size) + ". Stored: " + to_string(collection(n)) + " -- Expected: " + to_string(expected[n]));
+		for (auto const & n : bounded_integer::range(static_cast<ExpectedSize>(expected.size()))) {
+			if (expected[static_cast<std::size_t>(n)] != collection(static_cast<unsigned>(n))) {
+				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(size) + ". Stored: " + to_string(collection(static_cast<unsigned>(n))) + " -- Expected: " + to_string(expected[static_cast<unsigned>(n)]));
 			}
 		}
 	}

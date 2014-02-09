@@ -25,6 +25,7 @@ namespace technicalmachine {
 using namespace bounded_integer::literal;
 
 constexpr auto max_pokemon_per_team = 6_bi;
+using TeamSize = bounded_integer::native_integer<0, max_pokemon_per_team.value()>;
 
 }	// namespace technicalmachine
 #endif	// POKEMON_MAX_POKEMON_PER_TEAM_HPP_

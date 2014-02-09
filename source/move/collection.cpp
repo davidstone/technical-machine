@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 
-MoveCollection::MoveCollection(unsigned const my_team_size):
+MoveCollection::MoveCollection(TeamSize const my_team_size):
 	Base(my_team_size) {
 }
 
