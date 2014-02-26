@@ -29,17 +29,18 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
-#include <cstdint>
+#include <cstddef>
 #include <vector>
 
 namespace technicalmachine {
 using namespace bounded_integer::literal;
 class Move;
 
-class PokemonCollection : public detail::BaseCollection<std::vector<Pokemon>> {
-	typedef detail::BaseCollection<std::vector<Pokemon>> Base;
+class PokemonCollection : public detail::Collection<std::vector<Pokemon>, max_pokemon_per_team.value()> {
+	using Base = detail::Collection<std::vector<Pokemon>, max_pokemon_per_team.value()>;
 public:
 	using Base::index_type;
+	using Base::size_type;
 	using const_iterator = Base::container_type::const_iterator;
 	using iterator = Base::container_type::iterator;
 	PokemonCollection();
@@ -74,7 +75,7 @@ public:
 	void add(Args&&... args) {
 		Base::add(true_size, std::forward<Args>(args)...);
 		// Guaranteed to be a valid index
-		current_replacement = static_cast<index_type>(container.size() - 1);
+		current_replacement = static_cast<index_type>(size() - 1_bi);
 	}
 	template<class...Args>
 	bool add_if_not_present(Species name, Args&&... args) {
@@ -88,7 +89,7 @@ public:
 	template<typename Function1, typename Function2>
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
 		ResetIndex reset(*this);
-		for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
+		for (current_replacement = 0_bi; current_replacement != size(); ++current_replacement) {
 			if (is_switching_to_self() and size() > 1_bi)
 				continue;
 			f();
@@ -132,6 +133,9 @@ private:
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize true_size;
 };
+
+Moves from_replacement(PokemonCollection::index_type replacement);
+PokemonCollection::index_type to_replacement(Moves move);
 
 }	// namespace technicalmachine
 #endif	// POKEMON__COLLECTION_HPP_

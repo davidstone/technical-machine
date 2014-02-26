@@ -1,5 +1,5 @@
 // Allows safe access to the active Pokemon / move
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,48 +19,52 @@
 #ifndef COLLECTION_HPP_
 #define COLLECTION_HPP_
 
-#include <cstdint>
+#include <cstddef>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
 #include <vector>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 class InvalidCollectionIndex : public std::out_of_range {
 public:
-	InvalidCollectionIndex (unsigned index, size_t size, std::string const & name):
-		out_of_range ("Attempted to access element " + std::to_string (index) + " in a container of size " + std::to_string (size) + " with elements of type " + name + "\n")
+	template<typename Index, typename Size>
+	InvalidCollectionIndex(Index const index, Size const size, std::string const & name):
+		out_of_range ("Attempted to access element " + bounded_integer::to_string(index) + " in a container of size " + bounded_integer::to_string(size) + " with elements of type " + name + "\n")
 		{
 	}
 };
 
 namespace detail {
 
-template<typename Container>
-class BaseCollection;
+template<typename Container, std::size_t maximum>
+class Collection;
 
-template<typename Container>
-bool operator==(BaseCollection<Container> const & lhs, BaseCollection<Container> const & rhs) {
+template<typename Container, std::size_t maximum>
+bool operator==(Collection<Container, maximum> const & lhs, Collection<Container, maximum> const & rhs) {
 	return lhs.container == rhs.container;
 }
 
-template<typename Container>
-class BaseCollection {
+template<typename Container, std::size_t maximum>
+class Collection {
 public:
 	using container_type = Container;
-	using index_type = uint8_t;
+	using index_type = bounded_integer::checked_integer<0, maximum - 1>;
+	using size_type = bounded_integer::checked_integer<0, maximum>;
 	using value_type = typename container_type::value_type;
 	template<typename... Args>
-	constexpr BaseCollection(Args &&... args) :
+	constexpr Collection(Args &&... args) :
 		container(std::forward<Args>(args)...),
-		current_index (0) {
+		current_index(0_bi) {
 	}
 	constexpr value_type const & operator() (index_type const specified_index) const {
-		return unchecked_value (check_range(specified_index));
+		return unchecked_value(check_range(specified_index));
 	}
 	constexpr value_type const & operator() () const {
-		return unchecked_value (index());
+		return unchecked_value(index());
 	}
 	constexpr bool is_empty() const {
 		return container.empty();
@@ -69,25 +73,25 @@ public:
 	void add(Args&&... args) {
 		container.emplace_back(std::forward<Args>(args)...);
 	}
-	void set_index (index_type const new_index) {
+	void set_index(index_type const new_index) {
 		current_index = check_range (new_index);
 	}
-	void reset_index () {
-		current_index = 0;
+	void reset_index() {
+		current_index = 0_bi;
 	}
 	constexpr index_type index() const {
 		return current_index;
 	}
-	friend bool operator== <container_type>(BaseCollection<container_type> const & lhs, BaseCollection<container_type> const & rhs);
+	friend bool operator== <container_type, maximum>(Collection const & lhs, Collection const & rhs);
 protected:
-	static constexpr index_type check_range(index_type const new_index, index_type const max_index) {
+	static constexpr index_type check_range(index_type const new_index, size_type const max_index) {
 		return (new_index < max_index) ? new_index : throw InvalidCollectionIndex(new_index, max_index, typeid(value_type).name());
 	}
-	constexpr index_type check_range (index_type const new_index) const {
-		return check_range(new_index, container.size());
+	constexpr index_type check_range(index_type const new_index) const {
+		return check_range(new_index, static_cast<size_type>(container.size()));
 	}
-	constexpr value_type const & unchecked_value (index_type const specified_index) const {
-		return container [specified_index];
+	constexpr value_type const & unchecked_value(index_type const specified_index) const {
+		return container[specified_index.value()];
 	}
 	container_type container;
 	index_type current_index;

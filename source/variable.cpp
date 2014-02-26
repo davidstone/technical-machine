@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -46,7 +46,7 @@ void Variable::set_phaze_index(Team const & team, Species const species) {
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
 	}
-	m_value = (new_index < pokemon_index) ? new_index : new_index - 1u;
+	m_value = static_cast<unsigned>(BOUNDED_INTEGER_CONDITIONAL(new_index < pokemon_index, new_index, new_index - 1_bi));
 }
 
 void Variable::set_flinch(bool const set) {

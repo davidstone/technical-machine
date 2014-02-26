@@ -22,6 +22,8 @@
 #include "move.hpp"
 #include "moves.hpp"
 
+#include "../pokemon/collection.hpp"
+
 namespace technicalmachine {
 namespace {
 }
@@ -45,7 +47,7 @@ void SharedMoves::remove_switch() {
 Move const & SharedMoves::operator[](index_type const index) const {
 	static_assert(number_of_non_switches() == 1_bi, "Incorrect non-switch shared moves.");
 	using switch_index_type = bounded_integer::checked_integer<1, static_cast<intmax_t>(std::numeric_limits<index_type>::max())>;
-	auto const name = (index == 0_bi) ? Moves::Struggle : from_replacement(static_cast<unsigned>(static_cast<switch_index_type>(index) - number_of_non_switches()));
+	auto const name = (index == 0_bi) ? Moves::Struggle : from_replacement(static_cast<switch_index_type>(index) - number_of_non_switches());
 	return global_move(name);
 }
 

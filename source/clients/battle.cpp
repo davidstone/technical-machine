@@ -111,13 +111,12 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 	update_from_previous_turn();
 	if (!forced) {
 		Moves const move = determine_action(detailed, evaluate);
-		if (is_switch(move))
+		if (is_switch(move)) {
 			msg.write_switch(battle_id, switch_slot(move));
+		}
 		else {
-			uint8_t move_index = 0;
-			while (ai.pokemon().move(move_index) != move)
-				++move_index;
 			// TODO: fix for 2v2
+			auto const move_index = static_cast<uint8_t>(*ai.pokemon().all_moves().index(move));
 			auto const target = my_party.other();
 			msg.write_move(battle_id, move_index, target.value());
 		}
@@ -196,7 +195,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t i
 	}
 	else if (!switcher.pokemon().moved()) {
 		Pokemon & pokemon = switcher.pokemon(replacement);
-		pokemon.move.set_index(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement());
+		pokemon.move.set_index(static_cast<MoveCollection::index_type>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
 	}
 }
 
@@ -324,8 +323,7 @@ void Battle::handle_end(Client const & client, Result const result) const {
 }
 
 uint8_t Battle::switch_slot(Moves move) const {
-	auto const slot = static_cast<uint8_t>(to_replacement(move));
-	Species const name = ai.pokemon(slot);
+	Species const name = ai.pokemon(to_replacement(move));
 	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
 		if (slot_memory [n] == name)
 			return n;
@@ -351,7 +349,7 @@ void Battle::initialize_turn() {
 namespace {
 
 void update_to_correct_switch(ActivePokemon & pokemon) {
-	pokemon.all_moves().set_index(pokemon.all_pokemon().replacement());
+	pokemon.all_moves().set_index(pokemon.all_pokemon().replacement_to_switch());
 }
 }	// namespace
 

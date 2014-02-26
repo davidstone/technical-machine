@@ -82,10 +82,11 @@ void Pokemon::remove_switch() {
 	move.remove_switch();
 }
 
-uint8_t Pokemon::index_of_first_switch () const {
-	uint8_t index = 0;
-	while (!is_switch(move(index)))
+MoveCollection::index_type Pokemon::index_of_first_switch() const {
+	MoveCollection::index_type index = 0_bi;
+	while (!is_switch(move(index))) {
 		++index;
+	}
 	return index;
 }
 

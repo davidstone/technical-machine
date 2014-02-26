@@ -238,11 +238,11 @@ bool ActivePokemon::defense_curled() const {
 }
 
 bool ActivePokemon::is_disabled(Moves const move_name) const {
-	return m_disable.move_is_disabled(*all_moves().index(move_name));
+	return m_disable.move_is_disabled(static_cast<uint8_t>(*all_moves().index(move_name)));
 }
 
 void ActivePokemon::disable() {
-	m_disable.activate(all_moves().index());
+	m_disable.activate(static_cast<uint8_t>(all_moves().index()));
 }
 
 void ActivePokemon::advance_disable() {

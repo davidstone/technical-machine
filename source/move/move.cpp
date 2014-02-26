@@ -18,7 +18,6 @@
 
 #include "move.hpp"
 
-#include <cassert>
 #include <cstddef>
 #include <cstdint>
 
@@ -70,15 +69,6 @@ bool operator!= (Move const & lhs, Move const & rhs) {
 bool is_switch(Moves const move) {
 	static_assert(static_cast<unsigned>(Moves::Switch0) == 0, "Switching is not the first Move enum.");
 	return move <= Moves::Switch5;
-}
-
-Moves from_replacement(unsigned const replacement) {
-	return static_cast<Moves>(replacement + static_cast<unsigned>(Moves::Switch0));
-}
-
-unsigned to_replacement(Moves const move) {
-	assert(is_switch(move));
-	return static_cast<unsigned>(move) - static_cast<unsigned>(Moves::Switch0);
 }
 
 bool is_phaze(Moves const move) {

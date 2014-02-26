@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "collection.hpp"
+#include <cassert>
 #include <iostream>
 #include "invalid_collection.hpp"
 #include "move_collection.hpp"
@@ -26,27 +27,24 @@
 
 namespace technicalmachine {
 namespace {
+using namespace bounded_integer::literal;
+
 void collection_range_tests() {
+	constexpr auto size = 7_bi;
 	std::vector<int> const v ({ 2, 3, 5, 7, 11, 13, 17 });
-	detail::BaseCollection<std::vector<int>> base(v);
-	base.set_index(v.size() - 1);
-	if (base.index() != v.size() - 1)
+	using collection_type = detail::Collection<std::vector<int>, size.value()>;
+	collection_type base(v);
+	assert(v.size() == size);
+	base.set_index(size - 1_bi);
+	if (base.index() != size - 1_bi)
 		throw InvalidCollection("Cannot set Collection index properly.");
 	if (base() != v.back())
 		throw InvalidCollection("Stored index in Collection does not return proper value.");
-	for (unsigned n = 0; n != v.size(); ++n) {
-		if (v[n] != base(n))
+	for (auto const n : bounded_integer::range(size)) {
+		if (v[static_cast<std::size_t>(n)] != base(n)) {
 			throw InvalidCollection("Specified index in Collection does not return proper value.");
+		}
 	}
-	try {
-		base.set_index(v.size());
-		throw InvalidCollection("Out of range index not caught.");
-	}
-	catch (InvalidCollectionIndex const &) {
-		// Do nothing; the above operation should throw.
-	}
-	if (base() != v.back())
-		throw InvalidCollection("Collection modified by setting an invalid index.");
 }
 }	// unnamed namespace
 

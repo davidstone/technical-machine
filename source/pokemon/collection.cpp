@@ -24,14 +24,14 @@
 #include "species.hpp"
 
 #include "../move/move.hpp"
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 #include <cassert>
 
 namespace technicalmachine {
 
 PokemonCollection::PokemonCollection():
-	current_replacement(0),
+	current_replacement(0_bi),
 	true_size(max_pokemon_per_team) {
 }
 
@@ -96,7 +96,7 @@ TeamSize PokemonCollection::real_size() const {
 }
 
 PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
-	for (index_type found_index = 0; found_index != size(); ++found_index) {
+	for (index_type const found_index : bounded_integer::range(size())) {
 		if (operator()(found_index) == name)
 			return found_index;
 	}
@@ -106,7 +106,7 @@ PokemonCollection::index_type PokemonCollection::find_index(Species const name) 
 bool PokemonCollection::seen (Species const name) {
 	// In the event of current_replacement == size(), a new Pokemon is added
 	// immediately, increasing size() by 1, making this safe.
-	for (current_replacement = 0; current_replacement != size(); ++current_replacement) {
+	for (current_replacement = 0_bi; current_replacement != size(); ++current_replacement) {
 		if (name == at_replacement())
 			return true;
 	}
@@ -115,9 +115,12 @@ bool PokemonCollection::seen (Species const name) {
 
 void PokemonCollection::remove_active () {
 	assert(index() != replacement());
-	container.erase (container.begin() + index());
+	container.erase(container.begin() + index().value());
 	decrement_real_size();
-	set_index((index() > replacement()) ? replacement() : replacement() - 1);
+	// We don't need any bounds checking here because we've already established
+	// that replacement() is greater than index(), so it cannot be 0, which is
+	// the only value that could get this out of bounds.
+	set_index((index() > replacement()) ? replacement() : index_type(replacement() - 1_bi, bounded_integer::non_check));
 	for (auto & pokemon : container) {
 		pokemon.remove_switch();
 	}
@@ -147,6 +150,21 @@ PokemonCollection::hash_type PokemonCollection::max_hash() const {
 		current_max *= pokemon.max_hash();
 	}
 	return current_max;
+}
+
+namespace {
+
+using MoveInteger = bounded_integer::native_integer<0, number_of_moves>;
+
+}	// namespace
+
+Moves from_replacement(PokemonCollection::index_type const replacement) {
+	return static_cast<Moves>(replacement + static_cast<MoveInteger>(Moves::Switch0));
+}
+
+PokemonCollection::index_type to_replacement(Moves const move) {
+	assert(is_switch(move));
+	return static_cast<PokemonCollection::index_type>(static_cast<MoveInteger>(move) - static_cast<MoveInteger>(Moves::Switch0));
 }
 
 }	// namespace technicalmachine

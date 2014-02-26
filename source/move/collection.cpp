@@ -19,7 +19,6 @@
 #include "collection.hpp"
 
 #include <cassert>
-#include <cstdint>
 #include <vector>
 
 #include "move.hpp"
@@ -32,24 +31,24 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 }
 
 Move const & MoveCollection::regular_move() const {
-	return regular_move(index());
+	return regular_move(static_cast<regular_index_type>(index()));
 }
 Move & MoveCollection::regular_move() {
-	return regular_move(index());
+	return regular_move(static_cast<regular_index_type>(index()));
 }
-Move const & MoveCollection::regular_move(size_t const get_index) const {
-	return container.regular_move(check_range(get_index, number_of_regular_moves()));
+Move const & MoveCollection::regular_move(regular_index_type const get_index) const {
+	return container.regular_move(static_cast<std::size_t>(check_range(get_index, number_of_regular_moves())));
 }
-Move & MoveCollection::regular_move(size_t const get_index) {
-	return container.regular_move(check_range(get_index, number_of_regular_moves()));
+Move & MoveCollection::regular_move(regular_index_type const get_index) {
+	return container.regular_move(static_cast<std::size_t>(check_range(get_index, number_of_regular_moves())));
 }
 
-MoveCollection::index_type MoveCollection::number_of_regular_moves () const {
-	return container.number_of_regular_moves();
+auto MoveCollection::number_of_regular_moves () const -> regular_size_type {
+	return static_cast<regular_size_type>(container.number_of_regular_moves());
 }
 
 bool MoveCollection::set_index_if_found(Moves name) {
-	for (index_type new_index = 0; new_index != size(); ++new_index) {
+	for (index_type const new_index : bounded_integer::range(size())) {
 		if (unchecked_value(new_index) == name) {
 			Base::set_index(new_index);
 			return true;
@@ -71,17 +70,17 @@ Move * MoveCollection::find (Moves name) {
 	return container.find_if([name](Move const & move) { return move == name; });
 }
 
-boost::optional<MoveCollection::index_type> MoveCollection::index(Moves const name) const {
-	for (index_type n = 0; n != container.number_of_regular_moves(); ++n) {
-		if (container.regular_move(n) == name) {
+auto MoveCollection::index(Moves const name) const -> bounded_integer::optional<regular_index_type> {
+	for (regular_index_type const n : bounded_integer::range(static_cast<regular_size_type>(container.number_of_regular_moves()))) {
+		if (container.regular_move(static_cast<std::size_t>(n)) == name) {
 			return n;
 		}
 	}
-	return boost::optional<index_type>{};
+	return bounded_integer::none;
 }
 
-MoveCollection::index_type MoveCollection::size () const {
-	return container.size();
+auto MoveCollection::size() const -> MoveCollection::size_type {
+	return static_cast<size_type>(container.size());
 }
 
 void MoveCollection::remove_switch() {

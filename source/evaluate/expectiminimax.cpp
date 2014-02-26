@@ -87,7 +87,7 @@ int get_awaken_numerator (Pokemon const & pokemon);
 Moves random_action (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 bool is_replacing (Team const & team);
 Moves random_switch (Team const & ai, std::mt19937 & random_engine);
-std::vector<Moves> all_switches(TeamSize team_size, uint8_t pokemon_index);
+std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_type index);
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
 
 void print_best_move (Team const & team, Moves best_move, int64_t score);
@@ -539,11 +539,11 @@ Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
 	return switches [index];
 }
 
-std::vector<Moves> all_switches(TeamSize const team_size, uint8_t const pokemon_index) {
+std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
 	std::vector<Moves> switches;
 	for (auto const n : bounded_integer::range(team_size)) {
-		if (n != pokemon_index) {
-			switches.emplace_back(from_replacement(static_cast<unsigned>(n)));
+		if (n != index) {
+			switches.emplace_back(from_replacement(n));
 		}
 	}
 	return switches;

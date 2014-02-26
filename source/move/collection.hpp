@@ -21,29 +21,37 @@
 
 #include "../collection.hpp"
 
-#include <cstdint>
+#include <cstddef>
 #include <vector>
 
-#include <boost/optional.hpp>
+#include <bounded_integer/optional.hpp>
 
 #include "container.hpp"
 #include "move.hpp"
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 class MoveScores;
 
-class MoveCollection : public detail::BaseCollection<MoveContainer> {
-	typedef detail::BaseCollection<MoveContainer> Base;
+constexpr auto max_regular_moves_per_pokemon = 4_bi;
+constexpr auto max_shared_moves_per_pokemon = 1_bi + max_pokemon_per_team;
+constexpr auto max_moves_per_pokemon = max_regular_moves_per_pokemon + max_shared_moves_per_pokemon;
+
+class MoveCollection : public detail::Collection<MoveContainer, max_moves_per_pokemon.value()> {
+	using Base = detail::Collection<MoveContainer, max_moves_per_pokemon.value()>;
 public:
 	using Base::index_type;
+	using Base::size_type;
+	using regular_index_type = bounded_integer::checked_integer<0, max_regular_moves_per_pokemon.value() - 1>;
+	using regular_size_type = bounded_integer::checked_integer<1, max_regular_moves_per_pokemon.value()>;
 	MoveCollection(TeamSize my_team_size);
 	Move const & regular_move() const;
 	Move & regular_move();
-	Move const & regular_move(size_t index) const;
-	Move & regular_move(size_t index);
-	index_type number_of_regular_moves () const;
+	Move const & regular_move(regular_index_type index) const;
+	Move & regular_move(regular_index_type index);
+	regular_size_type number_of_regular_moves() const;
 	template<class... Args>
 	void add(Args&&... args) {
 		Base::add(std::forward<Args>(args)...);
@@ -66,7 +74,6 @@ public:
 	using Base::set_index;
 	bool set_index_if_found(Moves name);
 	void set_index(Moves name);
-	void set_switch_index(unsigned replacement);
 	// nullptr if not found
 	Move const * find (Moves name) const;
 	Move * find (Moves name);
@@ -75,8 +82,8 @@ public:
 		return container.find_if(std::forward<Function>(condition)) != nullptr;
 	}
 	using Base::index;
-	boost::optional<index_type> index(Moves name) const;
-	index_type size () const;
+	bounded_integer::optional<regular_index_type> index(Moves name) const;
+	size_type size() const;
 	void remove_switch();
 	typedef uint64_t hash_type;
 	hash_type hash() const;

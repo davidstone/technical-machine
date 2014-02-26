@@ -1,5 +1,5 @@
 // Moves data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -51,9 +51,6 @@ bool is_damaging(Moves move);
 bool is_phaze(Moves name);
 
 bool is_usable_while_frozen(Moves move);
-
-Moves from_replacement(unsigned replacement);
-unsigned to_replacement(Moves name);
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

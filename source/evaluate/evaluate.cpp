@@ -77,7 +77,7 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 
 int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
-	for (uint8_t index = 0; index != team.all_pokemon().size(); ++index) {
+	for (auto const index : bounded_integer::range(team.all_pokemon().size())) {
 		bool const is_active = (index == team.pokemon().index());
 		score += score_pokemon(team.pokemon(index), team.entry_hazards, other, weather);
 		if (is_active) {

@@ -43,7 +43,7 @@ void move_collection_tests() {
 		if (collection.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(size));
 		auto expected = create_regular_moves();
-		using ExpectedSize = bounded_integer::checked_integer<0, 100>;
+		using ExpectedSize = bounded_integer::checked_integer<0, max_moves_per_pokemon.value()>;
 		for (auto const & n : bounded_integer::range(static_cast<ExpectedSize>(expected.size()))) {
 			collection.add(expected[static_cast<std::size_t>(n)]);
 			if (collection.size() != shared_moves_size + n + 1_bi or collection.size() != collection.number_of_regular_moves() + shared_moves_size) {
@@ -54,8 +54,8 @@ void move_collection_tests() {
 		auto const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
 		for (auto const & n : bounded_integer::range(static_cast<ExpectedSize>(expected.size()))) {
-			if (expected[static_cast<std::size_t>(n)] != collection(static_cast<unsigned>(n))) {
-				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(size) + ". Stored: " + to_string(collection(static_cast<unsigned>(n))) + " -- Expected: " + to_string(expected[static_cast<unsigned>(n)]));
+			if (expected[static_cast<std::size_t>(n)] != collection(n)) {
+				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(size) + ". Stored: " + to_string(collection(n)) + " -- Expected: " + to_string(expected[static_cast<unsigned>(n)]));
 			}
 		}
 	}
