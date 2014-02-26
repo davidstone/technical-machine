@@ -47,7 +47,7 @@ public:
 	EV ev;
 	IV iv;
 private:
-	bounded_integer::clamped_integer<0, max_value, bounded_integer::bounds::dynamic_max> m_value;
+	bounded_integer::dynamic_max_integer<0, max_value, bounded_integer::clamp_policy> m_value;
 };
 
 template<typename T>

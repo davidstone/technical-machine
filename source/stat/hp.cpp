@@ -28,7 +28,7 @@ namespace {
 using base_type = bounded_integer::checked_integer<1, 255>;
 base_type get_base(Species species);
 
-using hp_type = bounded_integer::clamped_integer<0, HP::max_value, bounded_integer::bounds::dynamic_max>;
+using hp_type = bounded_integer::dynamic_max_integer<0, HP::max_value, bounded_integer::clamp_policy>;
 hp_type initial_hp(base_type const base, EV const ev, IV const iv, Level const level) {
 	auto const value = BOUNDED_INTEGER_CONDITIONAL((base > 1_bi),
 		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
@@ -37,7 +37,8 @@ hp_type initial_hp(base_type const base, EV const ev, IV const iv, Level const l
 	static_assert(std::numeric_limits<decltype(value)>::min() == std::numeric_limits<HP::max_type>::min(), "Incorrect HP min.");
 	static_assert(std::numeric_limits<hp_type>::max() == std::numeric_limits<decltype(value)>::max(), "Incorrect HP max.");
 	// Current HP starts out as max HP
-	return hp_type(value, value);
+	hp_type::overflow_policy_type max_hp(value);
+	return hp_type(value, std::move(max_hp));
 }
 
 }	// namespace
@@ -55,7 +56,7 @@ auto HP::current() const -> current_type {
 }
 
 auto HP::max() const -> max_type {
-	return max_type(m_value.max(), bounded_integer::non_check);
+	return max_type(m_value.overflow_policy().max(), bounded_integer::non_check);
 }
 
 
