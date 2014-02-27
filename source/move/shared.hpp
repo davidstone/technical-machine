@@ -19,7 +19,7 @@
 #ifndef MOVE__SHARED_HPP_
 #define MOVE__SHARED_HPP_
 
-#include "../pokemon/max_pokemon_per_team.hpp"
+#include "max_moves_per_pokemon.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -31,12 +31,8 @@ using namespace bounded_integer::literal;
 
 class SharedMoves {
 public:
-	// Struggle is the only other special move right now
-	static constexpr auto number_of_non_switches() noexcept -> decltype(1_bi) {
-		return 1_bi;
-	}
-	using size_type = decltype(std::declval<TeamSize>() + number_of_non_switches());
-	using index_type = decltype(std::declval<size_type>() - 1_bi);
+	using size_type = SharedMoveSize;
+	using index_type = SharedMoveIndex;
 	explicit SharedMoves(TeamSize team_size = max_pokemon_per_team);
 	void remove_switch();
 	Move const & operator[](index_type index) const;

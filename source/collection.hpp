@@ -40,20 +40,20 @@ public:
 
 namespace detail {
 
-template<typename Container, std::size_t maximum>
+template<typename Container>
 class Collection;
 
-template<typename Container, std::size_t maximum>
-bool operator==(Collection<Container, maximum> const & lhs, Collection<Container, maximum> const & rhs) {
+template<typename Container>
+bool operator==(Collection<Container> const & lhs, Collection<Container> const & rhs) {
 	return lhs.container == rhs.container;
 }
 
-template<typename Container, std::size_t maximum>
+template<typename Container>
 class Collection {
 public:
 	using container_type = Container;
-	using index_type = bounded_integer::checked_integer<0, maximum - 1>;
-	using size_type = bounded_integer::checked_integer<0, maximum>;
+	using index_type = typename container_type::index_type;
+	using size_type = typename container_type::size_type;
 	using value_type = typename container_type::value_type;
 	template<typename... Args>
 	constexpr Collection(Args &&... args) :
@@ -82,16 +82,17 @@ public:
 	constexpr index_type index() const {
 		return current_index;
 	}
-	friend bool operator== <container_type, maximum>(Collection const & lhs, Collection const & rhs);
+	friend bool operator== <container_type>(Collection const & lhs, Collection const & rhs);
 protected:
-	static constexpr index_type check_range(index_type const new_index, size_type const max_index) {
+	template<typename Index, typename Size>
+	static constexpr Index check_range(Index const new_index, Size const max_index) {
 		return (new_index < max_index) ? new_index : throw InvalidCollectionIndex(new_index, max_index, typeid(value_type).name());
 	}
 	constexpr index_type check_range(index_type const new_index) const {
-		return check_range(new_index, static_cast<size_type>(container.size()));
+		return check_range(new_index, container.size());
 	}
 	constexpr value_type const & unchecked_value(index_type const specified_index) const {
-		return container[specified_index.value()];
+		return container[specified_index];
 	}
 	container_type container;
 	index_type current_index;

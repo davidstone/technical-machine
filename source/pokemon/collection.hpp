@@ -19,11 +19,12 @@
 #ifndef POKEMON__COLLECTION_HPP_
 #define POKEMON__COLLECTION_HPP_
 
-#include "../collection.hpp"
-
+#include "container.hpp"
 #include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
 #include "species_forward.hpp"
+
+#include "../collection.hpp"
 
 #include "../move/moves_forward.hpp"
 
@@ -36,8 +37,8 @@ namespace technicalmachine {
 using namespace bounded_integer::literal;
 class Move;
 
-class PokemonCollection : public detail::Collection<std::vector<Pokemon>, max_pokemon_per_team.value()> {
-	using Base = detail::Collection<std::vector<Pokemon>, max_pokemon_per_team.value()>;
+class PokemonCollection : public detail::Collection<PokemonContainer> {
+	using Base = detail::Collection<PokemonContainer>;
 public:
 	using Base::index_type;
 	using Base::size_type;

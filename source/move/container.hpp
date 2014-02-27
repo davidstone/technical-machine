@@ -19,21 +19,26 @@
 #ifndef MOVE__CONTAINER_HPP_
 #define MOVE__CONTAINER_HPP_
 
-#include <algorithm>
-#include <cstdint>
-#include <vector>
+#include "max_moves_per_pokemon.hpp"
 #include "move.hpp"
 #include "shared.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <algorithm>
+#include <vector>
 
 namespace technicalmachine {
 
 class MoveContainer {
 public:
 	using value_type = Move;
+	using size_type = MoveSize;
+	using index_type = MoveIndex;
 	MoveContainer(TeamSize my_team_size);
-	Move const & operator[](size_t index) const;
-	Move const & regular_move(size_t index) const;
-	Move & regular_move(size_t index);
+	Move const & operator[](index_type index) const;
+	Move const & regular_move(RegularMoveIndex index) const;
+	Move & regular_move(RegularMoveIndex index);
 	static constexpr bool empty() {
 		// A move container is never empty, it always contains at least Struggle
 		return false;
@@ -59,8 +64,8 @@ public:
 			f(shared[n]);
 		}
 	}
-	size_t size() const;
-	size_t number_of_regular_moves() const;
+	size_type size() const;
+	RegularMoveSize number_of_regular_moves() const;
 	template<typename Function>
 	Move const * find_if(Function const & condition) const {
 		auto const it = std::find_if(regular.begin(), regular.end(), condition);
@@ -74,6 +79,8 @@ public:
 	void remove_switch();
 	friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
 private:
+	Move const & unchecked_regular_move(RegularMoveIndex index) const;
+	Move & unchecked_regular_move(RegularMoveIndex index);
 	std::vector<Move> regular;
 	SharedMoves shared;
 };

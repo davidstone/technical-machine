@@ -45,14 +45,16 @@ void SharedMoves::remove_switch() {
 }
 
 Move const & SharedMoves::operator[](index_type const index) const {
-	static_assert(number_of_non_switches() == 1_bi, "Incorrect non-switch shared moves.");
-	using switch_index_type = bounded_integer::checked_integer<1, static_cast<intmax_t>(std::numeric_limits<index_type>::max())>;
-	auto const name = (index == 0_bi) ? Moves::Struggle : from_replacement(static_cast<switch_index_type>(index) - number_of_non_switches());
+	using switch_index_type = bounded_integer::checked_integer<
+		static_cast<intmax_t>(number_of_weird_moves),
+		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
+	>;
+	auto const name = (index == 0_bi) ? Moves::Struggle : from_replacement(static_cast<switch_index_type>(index) - number_of_weird_moves);
 	return global_move(name);
 }
 
 auto SharedMoves::size() const -> size_type {
-	return m_number_of_switches + number_of_non_switches();
+	return m_number_of_switches + number_of_weird_moves;
 }
 
 bool operator==(SharedMoves const & lhs, SharedMoves const & rhs) {

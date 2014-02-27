@@ -1,5 +1,5 @@
 # List of sources
-# Copyright (C) 2013 David Stone
+# Copyright (C) 2014 David Stone
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
@@ -22,9 +22,9 @@ string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'g
 
 bide_sources = prepend_dir('bide', ['bide.cpp', 'damage.cpp', 'duration.cpp'])
 
-move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'base_power.cpp', 'classification.cpp', 'global_move.cpp', 'pp.cpp', 'priority.cpp'])
+move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'base_power.cpp', 'classification.cpp', 'global_move.cpp', 'max_moves_per_pokemon.cpp', 'pp.cpp', 'priority.cpp'])
 
-pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'max_pokemon_per_team.cpp', 'pokemon_not_found.cpp', 'happiness.cpp', 'level.cpp', 'pokemon.cpp', 'seen.cpp'])
+pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'container.cpp', 'max_pokemon_per_team.cpp', 'pokemon_not_found.cpp', 'happiness.cpp', 'level.cpp', 'pokemon.cpp', 'seen.cpp'])
 pokemon_sources += move_sources
 
 active_pokemon_sources = prepend_dir('pokemon', ['active_pokemon.cpp', 'confusion.cpp', 'delayed_attack.cpp', 'disable.cpp', 'embargo.cpp', 'encore.cpp', 'heal_block.cpp', 'last_used_move.cpp', 'magnet_rise.cpp', 'partial_trap.cpp', 'perish_song.cpp', 'rampage.cpp', 'slow_start.cpp', 'stockpile.cpp', 'substitute.cpp', 'taunt.cpp', 'toxic.cpp', 'uproar.cpp', 'vanish.cpp', 'yawn.cpp'])

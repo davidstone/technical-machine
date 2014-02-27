@@ -29,10 +29,31 @@ namespace technicalmachine {
 namespace {
 using namespace bounded_integer::literal;
 
+class TestContainer {
+private:
+	static constexpr intmax_t maximum = 7;
+public:
+	using size_type = bounded_integer::checked_integer<0, maximum>;
+	using index_type = bounded_integer::checked_integer<0, maximum - 1>;
+	using value_type = int;
+	template<typename ... Args>
+	TestContainer(Args && ... args):
+		m_container(std::forward<Args>(args)...) {
+	}
+	size_type size() const {
+		return static_cast<size_type>(m_container.size());
+	}
+	value_type const & operator[](index_type const index) const {
+		return m_container[static_cast<std::size_t>(index)];
+	}
+private:
+	std::vector<value_type> m_container;
+};
+
 void collection_range_tests() {
 	constexpr auto size = 7_bi;
 	std::vector<int> const v ({ 2, 3, 5, 7, 11, 13, 17 });
-	using collection_type = detail::Collection<std::vector<int>, size.value()>;
+	using collection_type = detail::Collection<TestContainer>;
 	collection_type base(v);
 	assert(v.size() == size);
 	base.set_index(size - 1_bi);

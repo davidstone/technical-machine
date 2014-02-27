@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cstdint>
 #include <vector>
 
 #include "shared.hpp"
@@ -31,26 +30,35 @@ MoveContainer::MoveContainer(TeamSize const my_team_size):
 	shared(my_team_size) {
 }
 
-Move const & MoveContainer::operator[](size_t const index) const {
+auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) const -> Move const & {
+	return regular[index.value()];
+}
+auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move & {
+	return regular[index.value()];
+}
+
+auto MoveContainer::operator[](index_type const index) const -> Move const & {
 	assert(index < size());
-	return (index < regular.size()) ? regular[index] : shared[static_cast<SharedMoves::index_type>(index - regular.size())];
+	return (index < number_of_regular_moves()) ?
+		unchecked_regular_move(RegularMoveIndex(index, bounded_integer::non_check)) :
+		shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
 }
 
-Move const & MoveContainer::regular_move(size_t const index) const {
-	assert(index < regular.size());
-	return regular[index];
+auto MoveContainer::regular_move(RegularMoveIndex const index) const -> Move const & {
+	assert(index < number_of_regular_moves());
+	return unchecked_regular_move(index);
 }
-Move & MoveContainer::regular_move(size_t const index) {
-	assert(index < regular.size());
-	return regular[index];
-}
-
-size_t MoveContainer::size() const {
-	return regular.size() + static_cast<std::size_t>(shared.size());
+auto MoveContainer::regular_move(RegularMoveIndex const index) -> Move & {
+	assert(index < number_of_regular_moves());
+	return unchecked_regular_move(index);
 }
 
-size_t MoveContainer::number_of_regular_moves() const {
-	return regular.size();
+auto MoveContainer::size() const -> size_type {
+	return number_of_regular_moves() + shared.size();
+}
+
+auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
+	return static_cast<RegularMoveSize>(regular.size());
 }
 
 void MoveContainer::remove_switch() {

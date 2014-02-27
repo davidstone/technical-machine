@@ -1,5 +1,5 @@
 // Basis for some move tests
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,8 +26,7 @@ namespace technicalmachine {
 
 inline std::vector<Moves> create_regular_moves() {
 	return std::vector<Moves>({
-		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack,
-		Moves::Body_Slam, Moves::Agility, Moves::Wrap
+		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
 	});
 }
 

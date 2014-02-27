@@ -1,4 +1,4 @@
-// The maximum number of Pokemon possible on a team
+// The maximum number of moves possible on a pokemon
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,23 +16,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_MAX_POKEMON_PER_TEAM_HPP_
-#define POKEMON_MAX_POKEMON_PER_TEAM_HPP_
-
-#include <bounded_integer/bounded_integer.hpp>
-
-namespace technicalmachine {
-using namespace bounded_integer::literal;
-
-constexpr auto max_pokemon_per_team = 6_bi;
-using TeamSize = bounded_integer::native_integer<
-	0,
-	static_cast<intmax_t>(max_pokemon_per_team)
->;
-using TeamIndex = bounded_integer::checked_integer<
-	0,
-	static_cast<intmax_t>(max_pokemon_per_team - 1_bi)
->;
-
-}	// namespace technicalmachine
-#endif	// POKEMON_MAX_POKEMON_PER_TEAM_HPP_
+#include "max_moves_per_pokemon.hpp"
