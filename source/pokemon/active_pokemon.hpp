@@ -227,7 +227,9 @@ public:
 	bool is_taunted() const;
 	void torment();
 	void increment_taunt();
-	Rational toxic_ratio() const;
+	auto toxic_ratio() const {
+		return toxic.ratio_drained();
+	}
 	void increment_toxic();
 	void u_turn();
 	void use_uproar();

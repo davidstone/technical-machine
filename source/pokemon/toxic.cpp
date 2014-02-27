@@ -1,5 +1,5 @@
 // Class to represent Toxic's counter
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,41 +17,23 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "toxic.hpp"
-#include "../rational.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max = 15;
-}	// unnamed namespace
-
-Toxic::Toxic() :
-	counter(0)
-	{
-}
-
-void Toxic::reset() {
-	counter = 0;
-}
 
 void Toxic::increment() {
-	if (counter != max)
-		++counter;
-}
-
-Rational Toxic::ratio_drained() const {
-	return Rational(counter, 16);
+	++m_counter;
 }
 
 Toxic::hash_type Toxic::hash() const {
-	return counter;
+	return static_cast<hash_type>(m_counter);
 }
 
 Toxic::hash_type Toxic::max_hash() {
-	return max + 1;
+	return static_cast<hash_type>(std::numeric_limits<decltype(m_counter)>::max() + 1_bi);
 }
 
 bool operator== (Toxic const & lhs, Toxic const & rhs) {
-	return lhs.counter == rhs.counter;
+	return lhs.m_counter == rhs.m_counter;
 }
 
 bool operator!= (Toxic const & lhs, Toxic const & rhs) {

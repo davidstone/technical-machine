@@ -1,5 +1,5 @@
 // Class to represent Toxic's counter
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,17 +19,21 @@
 #ifndef TOXIC_HPP_
 #define TOXIC_HPP_
 
+#include "../rational.hpp"
+#include <bounded_integer/bounded_integer.hpp>
 #include <cstdint>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 class Rational;
 
 class Toxic {
 public:
-	Toxic();
-	void reset();
+	Toxic() = default;
 	void increment();
-	Rational ratio_drained() const;
+	auto ratio_drained() const {
+		return make_bounded_rational(m_counter, 16_bi);
+	}
 	friend bool operator== (Toxic const & lhs, Toxic const & rhs);
 	typedef uint64_t hash_type;
 	hash_type hash() const;
@@ -38,7 +42,7 @@ private:
 	friend class Evaluate;
 	// Number of turns this Pokemon has already taken Toxic damage (or
 	// would have if Magic Guard / Poison Heal weren't in play)
-	uint8_t counter = 0;
+	bounded_integer::clamped_integer<0, 15> m_counter = 0_bi;
 };
 bool operator!= (Toxic const & lhs, Toxic const & rhs);
 

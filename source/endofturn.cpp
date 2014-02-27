@@ -1,5 +1,5 @@
 // End of turn effects
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -138,7 +138,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			if (get_ability(pokemon).absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else
-				drain(pokemon, pokemon.toxic_ratio());
+				drain(pokemon, static_cast<Rational>(pokemon.toxic_ratio()));
 			break;
 		case Status::SLEEP:
 			if (pokemon.nightmare())

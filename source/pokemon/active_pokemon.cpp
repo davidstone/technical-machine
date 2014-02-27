@@ -123,7 +123,7 @@ void ActivePokemon::reset_switch() {
 	bide.reset();
 	damage_done_to_active = 0;
 	m_taunt.reset();
-	toxic.reset();
+	toxic = Toxic{};
 	uproar.reset();
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
 	// vanished. Therefore, we need to reset it.
@@ -668,10 +668,6 @@ bool ActivePokemon::is_taunted() const {
 
 void ActivePokemon::increment_taunt() {
 	m_taunt.increment();
-}
-
-Rational ActivePokemon::toxic_ratio() const {
-	return toxic.ratio_drained();
 }
 
 void ActivePokemon::increment_toxic() {
