@@ -46,10 +46,9 @@ std::array<T, number_of_species> all_ones_array () {
 	return all_ones;
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
-Species get_most_likely_pokemon (Estimate const & estimate);
 void predict_move (Pokemon & member, std::vector<Moves> const & detailed);
 
-}	// unnamed namespace
+}	// namespace
 
 Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead) {
 	std::array<unsigned, number_of_species> const overall = overall_stats ();

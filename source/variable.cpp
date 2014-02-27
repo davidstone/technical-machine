@@ -338,7 +338,7 @@ std::array<Probabilities, number_of_moves> initial_probabilities() {
 		{ },				// Sleep Talk
 		{ },				// Heal Bell
 		{ },				// Return
-		{ },				// Present
+		{ present_variables() },				// Present
 		{ },				// Frustration
 		{ },				// Safeguard
 		{ },				// Pain Split

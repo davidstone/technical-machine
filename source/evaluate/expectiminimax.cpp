@@ -82,10 +82,7 @@ int64_t initial_move_then_switch_branch(Team & switcher, Team const & other, Wea
 int64_t move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
 int64_t switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate);
 
-int get_awaken_numerator (Pokemon const & pokemon);
-
 Moves random_action (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);
-bool is_replacing (Team const & team);
 Moves random_switch (Team const & ai, std::mt19937 & random_engine);
 std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_type index);
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const & weather, std::mt19937 & random_engine);

@@ -189,7 +189,9 @@ public:
 
 	Stage::value_type current_stage(StatNames stat) const;
 	bounded_integer::native_integer<0, 42> positive_stat_boosts() const {
-		auto const positive_values = [](Stage::value_type const stage) { return bounded_integer::max(stage, 0_bi); };
+		auto const positive_values = [](Stage::value_type const check_stage) {
+			return bounded_integer::max(check_stage, 0_bi);
+		};
 		auto const result = stage.accumulate(positive_values);
 		return result;
 	}

@@ -20,6 +20,7 @@
 #define STAT__STAGE_HPP_
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <bounded_integer/array.hpp>
@@ -119,7 +120,7 @@ public:
 	void boost(StatNames stat, boost_type number_of_stages);
 	template<typename Function>
 	auto accumulate(Function const & f) const {
-		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<m_stages.size>());
+		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<array::size>());
 		return std::accumulate(m_stages.begin(), m_stages.end(), sum_type(0_bi), [& f](sum_type const initial, value_type const stage) {
 			return initial + f(stage);
 		});
