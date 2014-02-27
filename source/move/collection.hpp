@@ -55,7 +55,7 @@ public:
 	template<class... Args>
 	void add(Args&&... args) {
 		Base::add(std::forward<Args>(args)...);
-		current_index = number_of_regular_moves() - 1;
+		current_index = number_of_regular_moves() - 1_bi;
 	}
 	template<typename Function>
 	void for_each(Function && f) const {
