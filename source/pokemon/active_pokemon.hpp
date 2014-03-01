@@ -148,7 +148,7 @@ public:
 	void ingrain();
 	bool is_fully_paralyzed() const;
 	void lower_pp(Ability const & target);
-	bool magnet_rise_is_active() const;
+	auto magnet_rise() const -> MagnetRise const &;
 	void activate_magnet_rise();
 	void decrement_magnet_rise();
 	bool me_first_is_active() const;
@@ -286,7 +286,7 @@ private:
 	Encore encore;
 	HealBlock heal_block;
 	LastUsedMove last_used_move;
-	MagnetRise magnet_rise;
+	MagnetRise m_magnet_rise;
 	Substitute m_substitute;
 	PartialTrap partial_trap;
 	PerishSong perish_song;

@@ -85,7 +85,7 @@ void ActivePokemon::reset_switch() {
 		ingrain_active = false;
 		leech_seed = false;
 		lock_on = false;
-		magnet_rise = MagnetRise{};
+		m_magnet_rise = MagnetRise{};
 		perish_song.reset();
 		power_trick = false;
 		stage.reset();
@@ -387,16 +387,16 @@ void ActivePokemon::lower_pp(Ability const & target) {
 		regular_move().pp.decrement(target);
 }
 
-bool ActivePokemon::magnet_rise_is_active() const {
-	return magnet_rise.is_active();
+auto ActivePokemon::magnet_rise() const -> MagnetRise const & {
+	return m_magnet_rise;
 }
 
 void ActivePokemon::activate_magnet_rise() {
-	magnet_rise.activate();
+	m_magnet_rise.activate();
 }
 
 void ActivePokemon::decrement_magnet_rise() {
-	magnet_rise.decrement();
+	m_magnet_rise.decrement();
 }
 
 bool ActivePokemon::me_first_is_active() const {
@@ -814,8 +814,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += heal_block.hash();
 	current_hash *= last_used_move.max_hash();
 	current_hash += last_used_move.hash();
-	current_hash *= magnet_rise.max_hash();
-	current_hash += magnet_rise.hash();
+	current_hash *= magnet_rise().max_hash();
+	current_hash += magnet_rise().hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
@@ -897,7 +897,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= encore.max_hash();
 	current_hash *= heal_block.max_hash();
 	current_hash *= last_used_move.max_hash();
-	current_hash *= magnet_rise.max_hash();
+	current_hash *= magnet_rise().max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
@@ -938,7 +938,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.leech_seed == rhs.leech_seed and
 			lhs.loaf == rhs.loaf and
 			lhs.lock_on == rhs.lock_on and
-			lhs.magnet_rise == rhs.magnet_rise and
+			lhs.magnet_rise() == rhs.magnet_rise() and
 			lhs.minimize == rhs.minimize and
 			lhs.mud_sport == rhs.mud_sport and
 			lhs.nightmares == rhs.nightmares and

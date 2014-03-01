@@ -81,7 +81,7 @@ bool is_immune_to_ground(Pokemon const & pokemon, Weather const & weather, bool 
 }
 bool is_immune_to_ground(ActivePokemon const & active, Weather const & weather) {
 	auto const & pokemon = static_cast<Pokemon const &>(active);
-	return is_immune_to_ground(pokemon, weather, active.is_roosting()) or active.magnet_rise_is_active();
+	return is_immune_to_ground(pokemon, weather, active.is_roosting()) or active.magnet_rise().is_active();
 }
 
 template<typename PossiblyActivePokemon>
