@@ -1,5 +1,5 @@
 // Stat stages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,9 +30,6 @@
 
 namespace technicalmachine {
 class Rational;
-
-// Work around internal compiler error in gcc
-#define RETURNS(x) -> decltype((x)) { return (x); }
 
 using namespace bounded_integer::literal;
 
@@ -68,45 +65,49 @@ private:
 	array m_stages;
 
 
-	static auto offensive_modifier(value_type const stage, bool const ch)
-		RETURNS(
-			BOUNDED_INTEGER_CONDITIONAL((stage >= 0_bi),
-				make_bounded_rational(2_bi + bounded_integer::abs(stage), 2_bi),
-				make_bounded_rational(2_bi, BOUNDED_INTEGER_CONDITIONAL(!ch, 2_bi + bounded_integer::abs(stage), 2_bi))
-			)
-		)
-	static auto defensive_modifier(value_type const stage, bool const ch)
-		RETURNS(
-			BOUNDED_INTEGER_CONDITIONAL((stage <= 0_bi),
-				make_bounded_rational(2_bi, 2_bi + bounded_integer::abs(stage)),
-				make_bounded_rational(BOUNDED_INTEGER_CONDITIONAL(!ch, 2_bi + bounded_integer::abs(stage), 2_bi), 2_bi)
-			)
-		)
+	static auto offensive_modifier(value_type const stage, bool const ch) {
+		return BOUNDED_INTEGER_CONDITIONAL((stage >= 0_bi),
+			make_bounded_rational(2_bi + bounded_integer::abs(stage), 2_bi),
+			make_bounded_rational(2_bi, BOUNDED_INTEGER_CONDITIONAL(!ch, 2_bi + bounded_integer::abs(stage), 2_bi))
+		);
+	}
+	static auto defensive_modifier(value_type const stage, bool const ch) {
+		return BOUNDED_INTEGER_CONDITIONAL((stage <= 0_bi),
+			make_bounded_rational(2_bi, 2_bi + bounded_integer::abs(stage)),
+			make_bounded_rational(BOUNDED_INTEGER_CONDITIONAL(!ch, 2_bi + bounded_integer::abs(stage), 2_bi), 2_bi)
+		);
+	}
 	template<typename Base>
-	static auto neutral_modifier(value_type const stage, Base const base)
-		RETURNS(
-			BOUNDED_INTEGER_CONDITIONAL((stage >= 0_bi),
-				make_bounded_rational(base + bounded_integer::abs(stage), base),
-				make_bounded_rational(base, base + bounded_integer::abs(stage))
-			)
-		)
+	static auto neutral_modifier(value_type const stage, Base const base) {
+		return BOUNDED_INTEGER_CONDITIONAL((stage >= 0_bi),
+			make_bounded_rational(base + bounded_integer::abs(stage), base),
+			make_bounded_rational(base, base + bounded_integer::abs(stage))
+		);
+	}
 
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::ATK>)
-		RETURNS(offensive_modifier(stage, ch))
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPA>)
-		RETURNS(offensive_modifier(stage, ch))
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::ATK>) {
+		return offensive_modifier(stage, ch);
+	}
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPA>) {
+		return offensive_modifier(stage, ch);
+	}
 
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::DEF>)
-		RETURNS(defensive_modifier(stage, ch))
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPD>)
-		RETURNS(defensive_modifier(stage, ch))
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::DEF>) {
+		return defensive_modifier(stage, ch);
+	}
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPD>) {
+		return defensive_modifier(stage, ch);
+	}
 
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPE>)
-		RETURNS(neutral_modifier(stage, 2_bi))
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::ACC>)
-		RETURNS(neutral_modifier(stage, 3_bi))
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::EVA>)
-		RETURNS(neutral_modifier(stage, 3_bi))
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPE>) {
+		return neutral_modifier(stage, 2_bi);
+	}
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::ACC>) {
+		return neutral_modifier(stage, 3_bi);
+	}
+	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::EVA>) {
+		return neutral_modifier(stage, 3_bi);
+	}
 
 public:
 
@@ -114,8 +115,9 @@ public:
 	void reset();
 
 	template<StatNames stat>
-	auto modifier(bool const ch = false) const
-		RETURNS(stage_modifier(m_stages[stat], ch, std::integral_constant<StatNames, stat>{}))
+	auto modifier(bool const ch = false) const {
+		return stage_modifier(m_stages[stat], ch, std::integral_constant<StatNames, stat>{});
+	}
 
 	void boost(StatNames stat, boost_type number_of_stages);
 	template<typename Function>

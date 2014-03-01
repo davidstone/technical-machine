@@ -81,7 +81,7 @@ bool is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-#define CONDITIONAL(a, b, c) BOUNDED_INTEGER_CONDITIONAL(a, b, c)
+#define CONDITIONAL(b, t, f) BOUNDED_INTEGER_CONDITIONAL(b, t, f)
 
 constexpr auto ability_denominator = 2_bi;
 
@@ -110,18 +110,21 @@ struct AbilityNumerator<StatNames::ATK> {
 };
 template<>
 struct AbilityNumerator<StatNames::SPA> {
-	auto operator()(ActivePokemon const & pokemon, Weather const & weather)
-		RETURNS(CONDITIONAL(get_ability(pokemon).boosts_special_attack(weather), 3_bi, ability_denominator))
+	auto operator()(ActivePokemon const & pokemon, Weather const & weather) {
+		return CONDITIONAL(get_ability(pokemon).boosts_special_attack(weather), 3_bi, ability_denominator);
+	}
 };
 template<>
 struct AbilityNumerator<StatNames::DEF> {
-	auto operator()(ActivePokemon const & defender, Weather const &)
-		RETURNS(CONDITIONAL(get_ability(defender).boosts_defense(get_status(defender)), 3_bi, ability_denominator))
+	auto operator()(ActivePokemon const & defender, Weather const &) {
+		return CONDITIONAL(get_ability(defender).boosts_defense(get_status(defender)), 3_bi, ability_denominator);
+	}
 };
 template<>
 struct AbilityNumerator<StatNames::SPD> {
-	auto operator()(ActivePokemon const & pokemon, Weather const & weather)
-		RETURNS(CONDITIONAL(get_ability(pokemon).boosts_special_defense(weather), 3_bi, ability_denominator))
+	auto operator()(ActivePokemon const & pokemon, Weather const & weather) {
+		return CONDITIONAL(get_ability(pokemon).boosts_special_defense(weather), 3_bi, ability_denominator);
+	}
 };
 template<>
 struct AbilityNumerator<StatNames::SPE> {
