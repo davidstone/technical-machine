@@ -52,13 +52,17 @@ int64_t Evaluate::score_team (Team const & team) const {
 	return score;
 }
 
-int dot_product(Stage const & stage, std::array<int, static_cast<std::size_t>(StatNames::END)> const & multiplier) {
+namespace {
+
+int dot_product(Stage const & stage, std::array<int, Stage::number_of_stats.value()> const & multiplier) {
 	int result = 0;
 	for (StatNames stat = static_cast<StatNames>(0); stat != StatNames::END; stat = static_cast<StatNames>(static_cast<int>(stat) + 1)) {
-		result += stage.m_stages[stat] * multiplier[static_cast<std::size_t>(stat)];
+		result += stage[stat] * multiplier[static_cast<std::size_t>(stat)];
 	}
 	return result;
 }
+
+}	// namespace
 
 int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 	int64_t score = 0;

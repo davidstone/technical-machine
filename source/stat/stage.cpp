@@ -1,5 +1,5 @@
 // Stat stages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,47 +30,73 @@ Stage::Stage() {
 	std::fill(m_stages.begin(), m_stages.end(), 0_bi);
 }
 
-void Stage::boost(StatNames const stat, boost_type const number_of_stages) {
-	m_stages[stat] += number_of_stages;
+auto Stage::operator[](StatNames const index) const -> value_type const & {
+	return m_stages[container_type::index_type(index, bounded_integer::non_check)];
+}
+auto Stage::operator[](StatNames const index) -> value_type & {
+	return m_stages[container_type::index_type(index, bounded_integer::non_check)];
 }
 
-void Stage::boost_regular(boost_type const number_of_stages) {
+auto Stage::begin() const -> container_type::const_iterator {
+	return m_stages.begin();
+}
+auto Stage::begin() -> container_type::iterator {
+	return m_stages.begin();
+}
+auto Stage::end() const -> container_type::const_iterator {
+	return m_stages.end();
+}
+auto Stage::end() -> container_type::iterator {
+	return m_stages.end();
+}
+
+
+auto boost(Stage & stage, StatNames const stat, Stage::boost_type const number_of_stages) -> void {
+	stage[stat] += number_of_stages;
+}
+
+auto boost_regular(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE }) {
-		boost(stat, number_of_stages);
+		boost(stage, stat, number_of_stages);
 	}
 }
 
-void Stage::boost_physical(boost_type const number_of_stages) {
+auto boost_physical(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::ATK, StatNames::DEF }) {
-		boost(stat, number_of_stages);
+		boost(stage, stat, number_of_stages);
 	}
 }
-void Stage::boost_special(boost_type const number_of_stages) {
+auto boost_special(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::SPA, StatNames::SPD }) {
-		boost(stat, number_of_stages);
+		boost(stage, stat, number_of_stages);
 	}
 }
-void Stage::boost_defensive(boost_type const number_of_stages) {
+auto boost_defensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::DEF, StatNames::SPD }) {
-		boost(stat, number_of_stages);
+		boost(stage, stat, number_of_stages);
 	}
 }
-void Stage::boost_offensive(boost_type const number_of_stages) {
+auto boost_offensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::ATK, StatNames::SPA }) {
-		boost(stat, number_of_stages);
+		boost(stage, stat, number_of_stages);
 	}
 }
 
-void Stage::swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats) {
+namespace {
+
+void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats) {
 	using std::swap;
 	for (auto const stat : stats) {
-		swap(lhs.m_stages[stat], rhs.m_stages[stat]);
+		swap(lhs[stat], rhs[stat]);
 	}
 }
-void Stage::swap_defensive(Stage & lhs, Stage & rhs) {
+
+}	// namespace
+
+auto swap_defensive(Stage & lhs, Stage & rhs) -> void {
 	swap_specified(lhs, rhs, { StatNames::DEF, StatNames::SPD });
 }
-void Stage::swap_offensive(Stage & lhs, Stage & rhs) {
+auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
 	swap_specified(lhs, rhs, { StatNames::ATK, StatNames::SPA });
 }
 
@@ -79,37 +105,25 @@ constexpr unsigned stage_radix = max_stage + max_stage + 1;
 }	// namespace
 
 // Construct a number in base stage_radix, with each stage representing a digit.
-uint64_t Stage::hash() const {
-	uint64_t h = 0;
+auto Stage::hash() const -> hash_type {
+	hash_type h = 0;
 	for (auto stage : m_stages) {
 		h *= stage_radix;
 		// The + max_stage will always make the result non-negative
-		h += static_cast<uint64_t>(stage + max_stage);
+		h += static_cast<hash_type>(stage + max_stage);
 	}
 	return h;
 }
 
-uint64_t Stage::max_hash() {
-	return stage_radix * static_cast<uint64_t>(StatNames::END) - 1;
+auto Stage::max_hash() -> hash_type {
+	return stage_radix * static_cast<hash_type>(StatNames::END) - 1;
 }
 
-bool operator==(Stage::array const & lhs, Stage::array const & rhs) {
-	return lhs.m_value == rhs.m_value;
+auto operator==(Stage const & lhs, Stage const & rhs) -> bool {
+	return std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
-
-bool operator==(Stage const & lhs, Stage const & rhs) {
-	return lhs.m_stages == rhs.m_stages;
-}
-
-bool operator!=(Stage const & lhs, Stage const & rhs) {
+auto operator!=(Stage const & lhs, Stage const & rhs) -> bool {
 	return !(lhs == rhs);
-}
-
-auto Stage::array::operator[](StatNames const index) const -> value_type const & {
-	return m_value.at(index);
-}
-auto Stage::array::operator[](StatNames const index) -> value_type & {
-	return m_value.at(index);
 }
 
 } // namespace technicalmachine

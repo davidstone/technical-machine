@@ -559,31 +559,31 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 }
 
 Stage::value_type ActivePokemon::current_stage(StatNames const stat_index) const {
-	return stage.m_stages[stat_index];
+	return stage[stat_index];
 }
 
 void ActivePokemon::stat_boost(StatNames const stat_index, Stage::boost_type const number_of_stages) {
-	stage.boost(stat_index, number_of_stages);
+	boost(stage, stat_index, number_of_stages);
 }
 
 void ActivePokemon::stat_boost_physical(Stage::boost_type const number_of_stages) {
-	stage.boost_physical(number_of_stages);
+	boost_physical(stage, number_of_stages);
 }
 
 void ActivePokemon::stat_boost_special(Stage::boost_type const number_of_stages) {
-	stage.boost_special(number_of_stages);
+	boost_special(stage, number_of_stages);
 }
 
 void ActivePokemon::stat_boost_regular(Stage::boost_type const number_of_stages) {
-	stage.boost_regular(number_of_stages);
+	boost_regular(stage, number_of_stages);
 }
 
 void ActivePokemon::stat_boost_defensive(Stage::boost_type const number_of_stages) {
-	stage.boost_defensive(number_of_stages);
+	boost_defensive(stage, number_of_stages);
 }
 
 void ActivePokemon::stat_boost_offensive(Stage::boost_type const number_of_stages) {
-	stage.boost_offensive(number_of_stages);
+	boost_offensive(stage, number_of_stages);
 }
 
 void ActivePokemon::reset_stats() {
@@ -595,11 +595,11 @@ void ActivePokemon::copy_stat_boosts(ActivePokemon const & other) {
 }
 
 void ActivePokemon::swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs) {
-	Stage::swap_defensive(lhs.stage, rhs.stage);
+	swap_defensive(lhs.stage, rhs.stage);
 }
 
 void ActivePokemon::swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs) {
-	Stage::swap_offensive(lhs.stage, rhs.stage);
+	swap_offensive(lhs.stage, rhs.stage);
 }
 
 void ActivePokemon::swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs) {

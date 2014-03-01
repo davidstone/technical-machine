@@ -20,8 +20,6 @@
 #define STAT__STAGE_HPP_
 
 #include <algorithm>
-#include <array>
-#include <cstddef>
 #include <cstdint>
 #include <bounded_integer/array.hpp>
 #include <bounded_integer/bounded_integer.hpp>
@@ -29,7 +27,6 @@
 #include "../rational.hpp"
 
 namespace technicalmachine {
-class Rational;
 
 using namespace bounded_integer::literal;
 
@@ -37,62 +34,30 @@ class Stage {
 public:
 	using value_type = bounded_integer::clamped_integer<-6, 6>;
 	using boost_type = bounded_integer::checked_integer<-3, 12>;
+	static constexpr auto number_of_stats = bounded_integer::make_bounded<static_cast<intmax_t>(StatNames::END)>();
+	using container_type = bounded_integer::array<value_type, number_of_stats.value()>;
 
 	Stage();
 
+	auto operator[](StatNames index) const -> value_type const &;
+	auto operator[](StatNames index) -> value_type &;
+	
+	auto begin() const -> container_type::const_iterator;
+	auto begin() -> container_type::iterator;
+	auto end() const -> container_type::const_iterator;
+	auto end() -> container_type::iterator;
+
 	template<StatNames stat>
 	auto modifier(bool const ch = false) const {
-		return stage_modifier(m_stages[stat], ch, std::integral_constant<StatNames, stat>{});
+		return stage_modifier(operator[](stat), ch, std::integral_constant<StatNames, stat>{});
 	}
 
-	void boost(StatNames stat, boost_type number_of_stages);
-	template<typename Function>
-	auto accumulate(Function const & f) const {
-		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<array::size>());
-		return std::accumulate(m_stages.begin(), m_stages.end(), sum_type(0_bi), [& f](sum_type const initial, value_type const stage) {
-			return initial + f(stage);
-		});
-	}
-	friend int dot_product(Stage const & stage, std::array<int, static_cast<std::size_t>(StatNames::END)> const & multiplier);
-	void boost_regular(boost_type number_of_stages);
-	void boost_physical(boost_type number_of_stages);
-	void boost_special(boost_type number_of_stages);
-	void boost_defensive(boost_type number_of_stages);
-	void boost_offensive(boost_type number_of_stages);
-	static void swap_defensive(Stage & lhs, Stage & rhs);
-	static void swap_offensive(Stage & lhs, Stage & rhs);
-	uint64_t hash() const;
-	static uint64_t max_hash();
-	friend bool operator==(Stage const & lhs, Stage const & rhs);
+	using hash_type = uint64_t;
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
-	friend class Stat;
-	friend class ActivePokemon;
-	static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats);
 
-	class array {
-	public:
-		static constexpr auto size = static_cast<std::size_t>(StatNames::END);
-		using container_type = bounded_integer::array<value_type, size>;
-		container_type::const_iterator begin() const {
-			return m_value.begin();
-		}
-		container_type::iterator begin() {
-			return m_value.begin();
-		}
-		container_type::const_iterator end() const {
-			return m_value.end();
-		}
-		container_type::iterator end() {
-			return m_value.end();
-		}
-		value_type const & operator[](StatNames index) const;
-		value_type & operator[](StatNames index);
-		friend bool operator==(array const & lhs, array const & rhs);
-	private:
-		container_type m_value;
-	};
-	friend bool operator==(array const & lhs, array const & rhs);
-	array m_stages;
+	container_type m_stages;
 
 
 	static auto offensive_modifier(value_type const stage, bool const ch) {
@@ -140,7 +105,27 @@ private:
 	}
 };
 
-bool operator!=(Stage const & lhs, Stage const & rhs);
+auto boost(Stage & stage, StatNames stat, Stage::boost_type number_of_stages) -> void;
+auto boost_regular(Stage & stage, Stage::boost_type number_of_stages) -> void;
+auto boost_physical(Stage & stage, Stage::boost_type number_of_stages) -> void;
+auto boost_special(Stage & stage, Stage::boost_type number_of_stages) -> void;
+auto boost_defensive(Stage & stage, Stage::boost_type number_of_stages) -> void;
+auto boost_offensive(Stage & stage, Stage::boost_type number_of_stages) -> void;
+
+template<typename Function>
+auto accumulate(Stage const & stages, Function && f) {
+	using sum_type = decltype(f(std::declval<Stage::value_type>()) * Stage::number_of_stats);
+	return std::accumulate(stages.begin(), stages.end(), sum_type(0_bi), [& f](sum_type const initial, Stage::value_type const stage) {
+		return initial + f(stage);
+	});
+}
+
+auto swap_defensive(Stage & lhs, Stage & rhs) -> void;
+auto swap_offensive(Stage & lhs, Stage & rhs) -> void;
+
+
+auto operator==(Stage const & lhs, Stage const & rhs) -> bool;
+auto operator!=(Stage const & lhs, Stage const & rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// STAT__STAGE_HPP_

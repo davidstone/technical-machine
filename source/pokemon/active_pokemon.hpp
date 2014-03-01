@@ -192,8 +192,7 @@ public:
 		auto const positive_values = [](Stage::value_type const check_stage) {
 			return bounded_integer::max(check_stage, 0_bi);
 		};
-		auto const result = stage.accumulate(positive_values);
-		return result;
+		return accumulate(stage, positive_values);
 	}
 
 	template<StatNames stat, typename... Args>
