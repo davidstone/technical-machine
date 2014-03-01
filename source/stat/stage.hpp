@@ -38,7 +38,37 @@ public:
 	using value_type = bounded_integer::clamped_integer<-6, 6>;
 	using boost_type = bounded_integer::checked_integer<-3, 12>;
 
+	Stage();
+
+	template<StatNames stat>
+	auto modifier(bool const ch = false) const {
+		return stage_modifier(m_stages[stat], ch, std::integral_constant<StatNames, stat>{});
+	}
+
+	void boost(StatNames stat, boost_type number_of_stages);
+	template<typename Function>
+	auto accumulate(Function const & f) const {
+		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<array::size>());
+		return std::accumulate(m_stages.begin(), m_stages.end(), sum_type(0_bi), [& f](sum_type const initial, value_type const stage) {
+			return initial + f(stage);
+		});
+	}
+	friend int dot_product(Stage const & stage, std::array<int, static_cast<std::size_t>(StatNames::END)> const & multiplier);
+	void boost_regular(boost_type number_of_stages);
+	void boost_physical(boost_type number_of_stages);
+	void boost_special(boost_type number_of_stages);
+	void boost_defensive(boost_type number_of_stages);
+	void boost_offensive(boost_type number_of_stages);
+	static void swap_defensive(Stage & lhs, Stage & rhs);
+	static void swap_offensive(Stage & lhs, Stage & rhs);
+	uint64_t hash() const;
+	static uint64_t max_hash();
+	friend bool operator==(Stage const & lhs, Stage const & rhs);
 private:
+	friend class Stat;
+	friend class ActivePokemon;
+	static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats);
+
 	class array {
 	public:
 		static constexpr auto size = static_cast<std::size_t>(StatNames::END);
@@ -108,39 +138,6 @@ private:
 	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::EVA>) {
 		return neutral_modifier(stage, 3_bi);
 	}
-
-public:
-
-	Stage();
-
-	template<StatNames stat>
-	auto modifier(bool const ch = false) const {
-		return stage_modifier(m_stages[stat], ch, std::integral_constant<StatNames, stat>{});
-	}
-
-	void boost(StatNames stat, boost_type number_of_stages);
-	template<typename Function>
-	auto accumulate(Function const & f) const {
-		using sum_type = decltype(f(std::declval<value_type>()) * bounded_integer::make_bounded<array::size>());
-		return std::accumulate(m_stages.begin(), m_stages.end(), sum_type(0_bi), [& f](sum_type const initial, value_type const stage) {
-			return initial + f(stage);
-		});
-	}
-	friend int dot_product(Stage const & stage, std::array<int, static_cast<std::size_t>(StatNames::END)> const & multiplier);
-	void boost_regular(boost_type number_of_stages);
-	void boost_physical(boost_type number_of_stages);
-	void boost_special(boost_type number_of_stages);
-	void boost_defensive(boost_type number_of_stages);
-	void boost_offensive(boost_type number_of_stages);
-	static void swap_defensive(Stage & lhs, Stage & rhs);
-	static void swap_offensive(Stage & lhs, Stage & rhs);
-	uint64_t hash() const;
-	static uint64_t max_hash();
-	friend bool operator==(Stage const & lhs, Stage const & rhs);
-private:
-	friend class Stat;
-	friend class ActivePokemon;
-	static void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats);
 };
 
 bool operator!=(Stage const & lhs, Stage const & rhs);
