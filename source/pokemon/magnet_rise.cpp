@@ -1,5 +1,5 @@
 // Class that handles Magnet Rise
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,43 +19,41 @@
 #include "magnet_rise.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max_duration = 5;
-}	// unnamed namespace
+using namespace bounded_integer::literal;
 
 MagnetRise::MagnetRise() :
-	turns_remaining(0)
+	m_turns_remaining(0_bi)
 	{
 }
 
-bool MagnetRise::is_active() const {
-	return turns_remaining != 0;
+auto MagnetRise::is_active() const -> bool {
+	return turns_remaining() != 0_bi;
 }
 
-void MagnetRise::activate() {
-	if (!is_active())
-		turns_remaining = max_duration;
+auto MagnetRise::activate() -> void{
+	if (!is_active()) {
+		m_turns_remaining = std::numeric_limits<duration_type>::max();
+	}
 }
 
-void MagnetRise::decrement() {
-	if (is_active())
-		--turns_remaining;
+auto MagnetRise::decrement() -> void {
+	--m_turns_remaining;
 }
 
-void MagnetRise::reset() {
-	turns_remaining = 0;
+auto MagnetRise::turns_remaining() const -> duration_type {
+	return m_turns_remaining;
 }
 
-MagnetRise::hash_type MagnetRise::hash() const {
-	return turns_remaining;
+auto MagnetRise::hash() const -> hash_type {
+	return static_cast<hash_type>(turns_remaining());
 }
 
-MagnetRise::hash_type MagnetRise::max_hash() {
-	return max_duration;
+auto MagnetRise::max_hash() -> hash_type{
+	return static_cast<hash_type>(std::numeric_limits<duration_type>::max());
 }
 
 bool operator== (MagnetRise const & lhs, MagnetRise const & rhs) {
-	return lhs.turns_remaining == rhs.turns_remaining;
+	return lhs.turns_remaining() == rhs.turns_remaining();
 }
 
 bool operator!= (MagnetRise const & lhs, MagnetRise const & rhs) {

@@ -85,7 +85,7 @@ void ActivePokemon::reset_switch() {
 		ingrain_active = false;
 		leech_seed = false;
 		lock_on = false;
-		magnet_rise.reset();
+		magnet_rise = MagnetRise{};
 		perish_song.reset();
 		power_trick = false;
 		stage.reset();

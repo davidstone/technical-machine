@@ -1,5 +1,5 @@
 // Class that handles Magnet Rise
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,25 +19,28 @@
 #ifndef MAGNET_RISE_HPP_
 #define MAGNET_RISE_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
 #include <cstdint>
 
 namespace technicalmachine {
 
 class MagnetRise {
+private:
+	using duration_type = bounded_integer::native_integer<0, 5>;
 public:
 	MagnetRise();
 	bool is_active() const;
 	void activate();
 	void decrement();
-	void reset();
+	duration_type turns_remaining() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();
-	friend bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);
 private:
-	friend class Evaluate;
-	uint8_t turns_remaining;
+	bounded_integer::equivalent_type<duration_type, bounded_integer::clamp_policy> m_turns_remaining;
 };
+
+bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);
 bool operator!= (MagnetRise const & lhs, MagnetRise const & rhs);
 
 }	// namespace technicalmachine
