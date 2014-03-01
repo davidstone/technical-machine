@@ -1,5 +1,5 @@
 // Block selection and execution of moves
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -113,7 +113,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 		user.handle_confusion();
 		if (user.flinched()) {
 			if (get_ability(user).boosts_speed_when_flinched ())
-				user.stat_boost(StatNames::SPE, 1_bi);
+				boost(user.stage(), StatNames::SPE, 1_bi);
 			execute = false;
 		}
 		else if (block2 (user, move, weather) or user.is_fully_paralyzed()) {

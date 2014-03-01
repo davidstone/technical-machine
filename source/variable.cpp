@@ -758,7 +758,7 @@ Probabilities acupressure_probability(ActivePokemon const & pokemon) {
 		StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE, StatNames::ACC, StatNames::EVA
 	};
 	auto const non_maxed_stats = std::count_if(std::begin(boostable_stats), std::end(boostable_stats), [&](StatNames const stat) {
-		return pokemon.current_stage(stat) != 6;
+		return pokemon.stage()[stat] != 6_bi;
 	});
 	if (non_maxed_stats == 0) {
 		// Arbitrary value so the code doesn't break when Acupressure can no
@@ -773,7 +773,7 @@ Probabilities acupressure_probability(ActivePokemon const & pokemon) {
 	return probabilities;
 }
 
-}	// unnamed namespace
+}	// namespace
 
 Probabilities all_probabilities(ActivePokemon const & pokemon, unsigned const foe_size) {
 	static auto const probability = initial_probabilities();

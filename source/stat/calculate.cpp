@@ -289,7 +289,7 @@ auto calculate_initial_stat(ActivePokemon const & pokemon) {
 template<StatNames stat>
 auto calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather const & weather) {
 	auto const attack = calculate_initial_stat<stat>(pokemon) *
-		pokemon.stage_modifier<stat>(pokemon.critical_hit()) *
+		modifier<stat>(pokemon.stage(), pokemon.critical_hit()) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon);
 	
@@ -340,7 +340,7 @@ std::common_type<defense_type, special_defense_type>::type calculate_defending_s
 defense_type calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat<stat>(defender) *
-		defender.stage_modifier<stat>(ch) *
+		modifier<stat>(defender.stage(), ch) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender);
 	
@@ -361,7 +361,7 @@ auto special_defense_sandstorm_boost(ActivePokemon const & defender, Weather con
 special_defense_type calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat<stat>(defender) *	
-		defender.stage_modifier<stat>(ch) *
+		modifier<stat>(defender.stage(), ch) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender) *
 		special_defense_sandstorm_boost(defender, weather);
@@ -391,7 +391,7 @@ speed_type calculate_speed(Team const & team, Weather const & weather) {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat<stat>(pokemon) *
-		pokemon.stage_modifier<stat>() *
+		modifier<stat>(pokemon.stage()) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon) /
 		paralysis_speed_divisor (pokemon) *

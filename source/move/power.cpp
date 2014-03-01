@@ -178,7 +178,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			assert (!variable.present_heals());
 			return variable.value();
 		case Moves::Punishment: {
-			auto const uncapped_power = 60_bi + 20_bi * defender.positive_stat_boosts();
+			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(defender.stage());
 			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 200_bi));
 		}
 		case Moves::Return:

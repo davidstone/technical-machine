@@ -19,12 +19,14 @@
 #ifndef STAT__STAGE_HPP_
 #define STAT__STAGE_HPP_
 
-#include <algorithm>
-#include <cstdint>
-#include <bounded_integer/array.hpp>
-#include <bounded_integer/bounded_integer.hpp>
 #include "stat_names.hpp"
 #include "../rational.hpp"
+
+#include <bounded_integer/array.hpp>
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <algorithm>
+#include <cstdint>
 
 namespace technicalmachine {
 
@@ -47,63 +49,64 @@ public:
 	auto end() const -> container_type::const_iterator;
 	auto end() -> container_type::iterator;
 
-	template<StatNames stat>
-	auto modifier(bool const ch = false) const {
-		return stage_modifier(operator[](stat), ch, std::integral_constant<StatNames, stat>{});
-	}
-
 	using hash_type = uint64_t;
 	auto hash() const -> hash_type;
 	static auto max_hash() -> hash_type;
 private:
-
 	container_type m_stages;
-
-
-	static auto offensive_modifier(value_type const stage, bool const ch) {
-		return BOUNDED_INTEGER_CONDITIONAL((stage >= 0_bi),
-			make_bounded_rational(2_bi + bounded_integer::abs(stage), 2_bi),
-			make_bounded_rational(2_bi, BOUNDED_INTEGER_CONDITIONAL(!ch, 2_bi + bounded_integer::abs(stage), 2_bi))
-		);
-	}
-	static auto defensive_modifier(value_type const stage, bool const ch) {
-		return BOUNDED_INTEGER_CONDITIONAL((stage <= 0_bi),
-			make_bounded_rational(2_bi, 2_bi + bounded_integer::abs(stage)),
-			make_bounded_rational(BOUNDED_INTEGER_CONDITIONAL(!ch, 2_bi + bounded_integer::abs(stage), 2_bi), 2_bi)
-		);
-	}
-	template<typename Base>
-	static auto neutral_modifier(value_type const stage, Base const base) {
-		return BOUNDED_INTEGER_CONDITIONAL((stage >= 0_bi),
-			make_bounded_rational(base + bounded_integer::abs(stage), base),
-			make_bounded_rational(base, base + bounded_integer::abs(stage))
-		);
-	}
-
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::ATK>) {
-		return offensive_modifier(stage, ch);
-	}
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPA>) {
-		return offensive_modifier(stage, ch);
-	}
-
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::DEF>) {
-		return defensive_modifier(stage, ch);
-	}
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPD>) {
-		return defensive_modifier(stage, ch);
-	}
-
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::SPE>) {
-		return neutral_modifier(stage, 2_bi);
-	}
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::ACC>) {
-		return neutral_modifier(stage, 3_bi);
-	}
-	static auto stage_modifier(value_type const stage, bool const ch, std::integral_constant<StatNames, StatNames::EVA>) {
-		return neutral_modifier(stage, 3_bi);
-	}
 };
+
+namespace detail {
+
+template<StatNames stat>
+class Base {
+public:
+	static constexpr auto value = 2_bi;
+};
+template<>
+class Base<StatNames::ACC> {
+public:
+	static constexpr auto value = 3_bi;
+};
+template<>
+class Base<StatNames::EVA> {
+public:
+	static constexpr auto value = 3_bi;
+};
+
+}	// namespace detail
+
+#define CONDITIONAL(b, t, f) BOUNDED_INTEGER_CONDITIONAL(b, t, f)
+
+template<StatNames stat, enable_if_t<stat == StatNames::ATK or stat == StatNames::SPA> = clang_dummy>
+auto modifier(Stage const & stage, bool const ch) {
+	constexpr auto base = detail::Base<stat>::value;
+	return CONDITIONAL((stage[stat] >= 0_bi),
+		make_bounded_rational(base + bounded_integer::abs(stage[stat]), base),
+		make_bounded_rational(base, CONDITIONAL(!ch, base + bounded_integer::abs(stage[stat]), base))
+	);
+}
+
+template<StatNames stat, enable_if_t<stat == StatNames::DEF or stat == StatNames::SPD> = clang_dummy>
+auto modifier(Stage const & stage, bool const ch) {
+	constexpr auto base = detail::Base<stat>::value;
+	return BOUNDED_INTEGER_CONDITIONAL((stage[stat] <= 0_bi),
+		make_bounded_rational(base, base + bounded_integer::abs(stage[stat])),
+		make_bounded_rational(CONDITIONAL(!ch, base + bounded_integer::abs(stage[stat]), base), base)
+	);
+}
+
+template<StatNames stat, enable_if_t<stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA> = clang_dummy>
+auto modifier(Stage const & stage) {
+	constexpr auto base = detail::Base<stat>::value;
+	return CONDITIONAL((stage[stat] >= 0_bi),
+		make_bounded_rational(base + bounded_integer::abs(stage[stat]), base),
+		make_bounded_rational(base, base + bounded_integer::abs(stage[stat]))
+	);
+}
+
+#undef CONDITIONAL
+
 
 auto boost(Stage & stage, StatNames stat, Stage::boost_type number_of_stages) -> void;
 auto boost_regular(Stage & stage, Stage::boost_type number_of_stages) -> void;
@@ -118,6 +121,13 @@ auto accumulate(Stage const & stages, Function && f) {
 	return std::accumulate(stages.begin(), stages.end(), sum_type(0_bi), [& f](sum_type const initial, Stage::value_type const stage) {
 		return initial + f(stage);
 	});
+}
+
+inline auto positive_boosts(Stage const & stage) {
+	auto const positive_values = [](Stage::value_type const check_stage) {
+		return bounded_integer::max(check_stage, 0_bi);
+	};
+	return accumulate(stage, positive_values);
 }
 
 auto swap_defensive(Stage & lhs, Stage & rhs) -> void;

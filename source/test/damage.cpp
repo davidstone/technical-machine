@@ -1,5 +1,5 @@
 // Test damage-related functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -75,7 +75,7 @@ Team max_damage_physical_defender() {
 	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
 	get_nature(pokemon) = Nature::HASTY;
 	for (unsigned n = 0; n != 3; ++n) {
-		pokemon.stat_boost(StatNames::DEF, -2_bi);
+		boost(pokemon.stage(), StatNames::DEF, -2_bi);
 	}
 	return defender;
 }
@@ -91,7 +91,7 @@ Team max_damage_special_defender() {
 	get_stat(d, StatNames::SPD).iv = IV(0_bi);
 	get_stat(d, StatNames::SPD).ev = EV(0_bi);
 	for (unsigned n = 0; n != 3; ++n) {
-		d.stat_boost(StatNames::SPD, -2_bi);
+		boost(d.stage(), StatNames::SPD, -2_bi);
 	}
 
 	return defender;
@@ -146,7 +146,7 @@ void physical_damage_test() {
 	get_nature(a).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
-	attacker.pokemon().stat_boost(StatNames::ATK, 6_bi);
+	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
 
 	get_item(a).name = Item::METRONOME;
 	attacker.pokemon().set_critical_hit(true);
@@ -169,7 +169,7 @@ void special_damage_test() {
 
 	get_stat(a, StatNames::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(a).name = Nature::MODEST;
-	attacker.pokemon().stat_boost(StatNames::SPA, 6_bi);
+	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 	
 	get_item(a).name = Item::METRONOME;
 	for (unsigned n = 0; n != 10; ++n) {

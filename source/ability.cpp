@@ -380,7 +380,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 		case Download: {
 			auto const defense = calculate_defense(other, weather);
 			auto const special_defense = calculate_special_defense(other, weather);
-			switcher.stat_boost(defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
+			boost(switcher.stage(), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;
 		}
 		case Drizzle:
@@ -392,7 +392,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 		case Forecast:	// TODO: fix this
 			break;
 		case Intimidate:
-			other.stat_boost(StatNames::ATK, -1_bi);
+			boost(other.stage(), StatNames::ATK, -1_bi);
 			break;
 		case Sand_Stream:
 			weather.set_sand(Weather::Duration::permanent);

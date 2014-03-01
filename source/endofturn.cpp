@@ -90,14 +90,18 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
-	if (pokemon.ingrained())
+	if (pokemon.ingrained()) {
 		heal(pokemon, Rational(1, 16));
-	if (pokemon.aqua_ring_is_active())
+	}
+	if (pokemon.aqua_ring_is_active()) {
 		heal(pokemon, Rational(1, 16));
-	if (get_ability(pokemon).boosts_speed())
-		pokemon.stat_boost(StatNames::SPE, 1_bi);
-	else if (pokemon.shed_skin_activated())
+	}
+	if (get_ability(pokemon).boosts_speed()) {
+		boost(pokemon.stage(), StatNames::SPE, 1_bi);
+	}
+	else if (pokemon.shed_skin_activated()) {
 		get_status(pokemon).clear();
+	}
 	switch (get_item(pokemon).name) {
 		case Item::LEFTOVERS:
 			heal(pokemon, Rational(1, 16));

@@ -75,7 +75,7 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 	score += pokemon.magnet_rise().turns_remaining() * magnet_rise;
 	if (pokemon.m_substitute)
 		score += substitute + substitute_hp * pokemon.m_substitute.hp() / get_hp(pokemon).max();
-	score += dot_product(pokemon.stage, stage);
+	score += dot_product(pokemon.stage(), stage);
 	return score;
 }
 

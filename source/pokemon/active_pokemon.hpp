@@ -187,29 +187,8 @@ public:
 	bool slow_start_is_active() const;
 	bool sport_is_active(Move const & foe_move) const;
 
-	Stage::value_type current_stage(StatNames stat) const;
-	bounded_integer::native_integer<0, 42> positive_stat_boosts() const {
-		auto const positive_values = [](Stage::value_type const check_stage) {
-			return bounded_integer::max(check_stage, 0_bi);
-		};
-		return accumulate(stage, positive_values);
-	}
-
-	template<StatNames stat, typename... Args>
-	auto stage_modifier(Args&&... args) const {
-		return stage.modifier<stat>(std::forward<Args>(args)...);
-	}
-	void stat_boost(StatNames stat, Stage::boost_type number_of_stages);
-	void stat_boost_physical(Stage::boost_type number_of_stages);
-	void stat_boost_special(Stage::boost_type number_of_stages);
-	void stat_boost_regular(Stage::boost_type number_of_stages);
-	void stat_boost_defensive(Stage::boost_type number_of_stages);
-	void stat_boost_offensive(Stage::boost_type number_of_stages);
-	void reset_stats();
-	void copy_stat_boosts(ActivePokemon const & other);
-	static void swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
-	static void swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs);
-	static void swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs);
+	auto stage() const -> Stage const &;
+	auto stage() -> Stage &;
 	
 	bounded_integer::native_integer<0, Stockpile::max * 100> spit_up_power() const;
 	void increment_stockpile();
@@ -291,7 +270,7 @@ private:
 	PerishSong perish_song;
 	Rampage rampage;
 	RandomDamage random_damage;
-	Stage stage;
+	Stage m_stage;
 	SlowStart slow_start;
 	Stockpile stockpile;
 	Taunt m_taunt;
@@ -342,7 +321,6 @@ private:
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);
 
 void switch_pokemon(ActivePokemon & pokemon);
-
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_

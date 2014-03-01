@@ -1,5 +1,5 @@
 // Chance to hit calculations
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -55,8 +55,8 @@ void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & targe
 	BaseAccuracy const base_accuracy = accuracy(user.move());
 	if (move_can_miss(user, base_accuracy, get_ability(target))) {
 		auto const calculated_accuracy = *base_accuracy *
-			user.stage_modifier<StatNames::ACC>() *
-			target.stage_modifier<StatNames::EVA>();
+			modifier<StatNames::ACC>(user.stage()) *
+			modifier<StatNames::EVA>(target.stage());
 
 		// Temporary variable until I finish transitioning to bounded_integer
 		auto accuracy2 = static_cast<unsigned>(calculated_accuracy) * accuracy_item_modifier(get_item(user), target_moved);

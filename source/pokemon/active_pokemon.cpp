@@ -88,7 +88,7 @@ void ActivePokemon::reset_switch() {
 		m_magnet_rise = MagnetRise{};
 		perish_song.reset();
 		power_trick = false;
-		stage = Stage{};
+		m_stage = Stage{};
 		m_substitute = Substitute{};
 	}
 	attracted = false;
@@ -558,53 +558,11 @@ bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 	}
 }
 
-Stage::value_type ActivePokemon::current_stage(StatNames const stat_index) const {
-	return stage[stat_index];
+auto ActivePokemon::stage() const -> Stage const & {
+	return m_stage;
 }
-
-void ActivePokemon::stat_boost(StatNames const stat_index, Stage::boost_type const number_of_stages) {
-	boost(stage, stat_index, number_of_stages);
-}
-
-void ActivePokemon::stat_boost_physical(Stage::boost_type const number_of_stages) {
-	boost_physical(stage, number_of_stages);
-}
-
-void ActivePokemon::stat_boost_special(Stage::boost_type const number_of_stages) {
-	boost_special(stage, number_of_stages);
-}
-
-void ActivePokemon::stat_boost_regular(Stage::boost_type const number_of_stages) {
-	boost_regular(stage, number_of_stages);
-}
-
-void ActivePokemon::stat_boost_defensive(Stage::boost_type const number_of_stages) {
-	boost_defensive(stage, number_of_stages);
-}
-
-void ActivePokemon::stat_boost_offensive(Stage::boost_type const number_of_stages) {
-	boost_offensive(stage, number_of_stages);
-}
-
-void ActivePokemon::reset_stats() {
-	stage = Stage{};
-}
-
-void ActivePokemon::copy_stat_boosts(ActivePokemon const & other) {
-	stage = other.stage;
-}
-
-void ActivePokemon::swap_defensive_stages(ActivePokemon & lhs, ActivePokemon & rhs) {
-	swap_defensive(lhs.stage, rhs.stage);
-}
-
-void ActivePokemon::swap_offensive_stages(ActivePokemon & lhs, ActivePokemon & rhs) {
-	swap_offensive(lhs.stage, rhs.stage);
-}
-
-void ActivePokemon::swap_stat_boosts(ActivePokemon & lhs, ActivePokemon & rhs) {
-	using std::swap;
-	swap(lhs.stage, rhs.stage);
+auto ActivePokemon::stage() -> Stage & {
+	return m_stage;
 }
 
 bounded_integer::native_integer<0, Stockpile::max * 100> ActivePokemon::spit_up_power() const {
@@ -613,13 +571,14 @@ bounded_integer::native_integer<0, Stockpile::max * 100> ActivePokemon::spit_up_
 
 void ActivePokemon::increment_stockpile() {
 	bool const increased = stockpile.increment();
-	if (increased)
-		stat_boost_defensive(1_bi);
+	if (increased) {
+		boost_defensive(stage(), 1_bi);
+	}
 }
 
 bounded_integer::native_integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
 	auto const stages = stockpile.release();
-	stat_boost_defensive(-stages);
+	boost_defensive(stage(), -stages);
 	return stages;
 }
 
@@ -824,8 +783,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
-	current_hash *= stage.max_hash();
-	current_hash += stage.hash();
+	current_hash *= stage().max_hash();
+	current_hash += stage().hash();
 	current_hash *= stockpile.max_hash();
 	current_hash += stockpile.hash();
 	current_hash *= m_taunt.max_hash();
@@ -902,7 +861,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
-	current_hash *= stage.max_hash();
+	current_hash *= stage().max_hash();
 	current_hash *= stockpile.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
@@ -946,7 +905,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.perish_song == rhs.perish_song and
 			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
-			lhs.stage == rhs.stage and
+			lhs.stage() == rhs.stage() and
 			lhs.stockpile == rhs.stockpile and
 			lhs.m_taunt == rhs.m_taunt and
 			lhs.is_tormented == rhs.is_tormented and

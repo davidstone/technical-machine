@@ -52,7 +52,7 @@ void attack_tests () {
 	get_nature(pokemon).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
-	attacker.pokemon().stat_boost(StatNames::ATK, 6_bi);
+	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
 
 	get_item(pokemon).name = Item::CHOICE_BAND;
 	
@@ -73,7 +73,7 @@ void special_attack_tests () {
 
 	get_stat(pokemon, StatNames::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::MODEST;
-	attacker.pokemon().stat_boost(StatNames::SPA, 6_bi);
+	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 
 	get_ability(pokemon) = Ability::Solar_Power;
 
@@ -96,7 +96,7 @@ void max_defense_test() {
 	get_stat(pokemon, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::BOLD;
 
-	defender.pokemon().stat_boost(StatNames::DEF, 6_bi);
+	boost(defender.pokemon().stage(), StatNames::DEF, 6_bi);
 
 	get_ability(pokemon) = Ability::Marvel_Scale;
 	Status::apply<Status::BURN>(pokemon, weather);
@@ -118,7 +118,7 @@ void min_defense_test() {
 	get_nature(pokemon) = Nature::HASTY;
 
 	for (unsigned n = 0; n != 3; ++n) {
-		pokemon.stat_boost(StatNames::DEF, -2_bi);
+		boost(pokemon.stage(), StatNames::DEF, -2_bi);
 	}
 
 	check_equal(calculate_defense(defender.pokemon(), Weather{}), min_defense);
@@ -145,7 +145,7 @@ void special_defense_tests () {
 	get_stat(pokemon, StatNames::SPD).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::CALM;
 
-	defender.pokemon().stat_boost(StatNames::SPD, 6_bi);
+	boost(defender.pokemon().stage(), StatNames::SPD, 6_bi);
 
 	check_equal(calculate_special_defense(defender.pokemon(), weather), max_special_defense);
 }
@@ -165,7 +165,7 @@ void speed_tests () {
 	get_stat(pokemon, StatNames::SPE).ev = EV(bounded_integer::make_bounded<EV::max>());
 	get_nature(pokemon).name = Nature::TIMID;
 
-	team.pokemon().stat_boost(StatNames::SPE, 6_bi);
+	boost(team.pokemon().stage(), StatNames::SPE, 6_bi);
 
 	get_ability(pokemon) = Ability::Swift_Swim;
 
