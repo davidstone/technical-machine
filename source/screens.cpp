@@ -1,5 +1,5 @@
 // All Screens a team can set up
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-void Screens::decrement() {
+auto Screens::decrement() -> void {
 	m_light_screen.decrement();
 	m_reflect.decrement();
 	m_lucky_chant.decrement();
@@ -29,82 +29,82 @@ void Screens::decrement() {
 	m_tailwind.decrement();
 }
 
-bool Screens::light_screen() const {
-	return static_cast<bool>(m_light_screen);
+auto Screens::light_screen() const -> ReflectLightScreen const & {
+	return m_light_screen;
 }
 
-bool Screens::reflect() const {
-	return static_cast<bool>(m_reflect);
+auto Screens::reflect() const -> ReflectLightScreen const & {
+	return m_reflect;
 }
 
-bool Screens::lucky_chant() const {
-	return static_cast<bool>(m_lucky_chant);
+auto Screens::lucky_chant() const -> Screen const & {
+	return m_lucky_chant;
 }
 
-bool Screens::mist() const {
-	return static_cast<bool>(m_mist);
+auto Screens::mist() const -> Screen const & {
+	return m_mist;
 }
 
-bool Screens::safeguard() const {
-	return static_cast<bool>(m_safeguard);
+auto Screens::safeguard() const -> Screen const & {
+	return m_safeguard;
 }
 
-bool Screens::tailwind() const {
-	return static_cast<bool>(m_tailwind);
+auto Screens::tailwind() const -> Tailwind const & {
+	return m_tailwind;
 }
 
-void Screens::activate_light_screen(bool is_extended) {
+auto Screens::activate_light_screen(bool is_extended) -> void {
 	m_light_screen.activate(is_extended);
 }
 
-void Screens::activate_reflect(bool is_extended) {
+auto Screens::activate_reflect(bool is_extended) -> void {
 	m_reflect.activate(is_extended);
 }
 
-void Screens::activate_lucky_chant() {
+auto Screens::activate_lucky_chant() -> void {
 	m_lucky_chant.activate();
 }
 
-void Screens::activate_mist() {
+auto Screens::activate_mist() -> void {
 	m_mist.activate();
 }
 
-void Screens::activate_safeguard() {
+auto Screens::activate_safeguard() -> void {
 	m_safeguard.activate();
 }
 
-void Screens::activate_tailwind() {
+auto Screens::activate_tailwind() -> void {
 	m_tailwind.activate();
 }
 
-void Screens::shatter() {
+auto Screens::shatter() -> void {
 	m_light_screen.clear();
 	m_reflect.clear();
 }
 
-Screens::hash_type Screens::hash() const {
-	return m_light_screen.hash() + m_light_screen.max_hash() *
-			(m_reflect.hash() + m_reflect.max_hash() *
-			(m_lucky_chant.hash() + m_lucky_chant.max_hash() *
-			(m_mist.hash() + m_mist.max_hash() *
-			(m_safeguard.hash() + m_safeguard.max_hash() *
-			(m_tailwind.hash() + m_tailwind.max_hash())))));
+auto Screens::hash() const -> hash_type {
+	return light_screen().hash() + light_screen().max_hash() *
+			(reflect().hash() + reflect().max_hash() *
+			(lucky_chant().hash() + lucky_chant().max_hash() *
+			(mist().hash() + mist().max_hash() *
+			(safeguard().hash() + safeguard().max_hash() *
+			(tailwind().hash() + tailwind().max_hash())))));
 }
 
-Screens::hash_type Screens::max_hash() {
+auto Screens::max_hash() -> hash_type {
 	return ReflectLightScreen::max_hash() * ReflectLightScreen::max_hash() * Screen::max_hash() * Screen::max_hash() * Screen::max_hash() * Tailwind::max_hash();
 }
 
-bool operator==(Screens const & lhs, Screens const & rhs) {
-	return lhs.m_light_screen == rhs.m_light_screen and
-			lhs.m_reflect == rhs.m_reflect and
-			lhs.m_lucky_chant == rhs.m_lucky_chant and
-			lhs.m_mist == rhs.m_mist and
-			lhs.m_safeguard == rhs.m_safeguard and
-			lhs.m_tailwind == rhs.m_tailwind;
+auto operator==(Screens const & lhs, Screens const & rhs) -> bool {
+	return lhs.light_screen() == rhs.light_screen() and
+			lhs.reflect() == rhs.reflect() and
+			lhs.lucky_chant() == rhs.lucky_chant() and
+			lhs.mist() == rhs.mist() and
+			lhs.safeguard() == rhs.safeguard() and
+			lhs.tailwind() == rhs.tailwind();
 }
 
-bool operator!=(Screens const & lhs, Screens const & rhs) {
+auto operator!=(Screens const & lhs, Screens const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 

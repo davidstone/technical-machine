@@ -1,5 +1,5 @@
 // All Screens a team can set up
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,27 +26,26 @@ namespace technicalmachine {
 
 class Screens {
 public:
-	void decrement();
+	auto decrement() -> void;
 
-	bool light_screen() const;
-	bool reflect() const;
-	bool lucky_chant() const;
-	bool mist() const;
-	bool safeguard() const;
-	bool tailwind() const;
+	auto light_screen() const -> ReflectLightScreen const &;
+	auto reflect() const -> ReflectLightScreen const &;
+	auto lucky_chant() const -> Screen const &;
+	auto mist() const -> Screen const &;
+	auto safeguard() const -> Screen const &;
+	auto tailwind() const -> Tailwind const &;
 
-	void activate_light_screen(bool is_extended = false);
-	void activate_reflect(bool is_extended = false);
-	void activate_lucky_chant();
-	void activate_mist();
-	void activate_safeguard();
-	void activate_tailwind();
+	auto activate_light_screen(bool is_extended = false) -> void;
+	auto activate_reflect(bool is_extended = false) -> void;
+	auto activate_lucky_chant() -> void;
+	auto activate_mist() -> void;
+	auto activate_safeguard() -> void;
+	auto activate_tailwind() -> void;
 
-	void shatter();
+	auto shatter() -> void;
 	typedef uint64_t hash_type;
-	uint64_t hash() const;
-	static uint64_t max_hash();
-	friend bool operator==(Screens const & lhs, Screens const & rhs);
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
 	ReflectLightScreen m_light_screen;
 	ReflectLightScreen m_reflect;
@@ -54,9 +53,9 @@ private:
 	Screen m_mist;
 	Screen m_safeguard;
 	Tailwind m_tailwind;
-	friend class Evaluate;
 };
-bool operator!=(Screens const & lhs, Screens const & rhs);
+auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
+auto operator!=(Screens const & lhs, Screens const & rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// SCREENS_HPP_
