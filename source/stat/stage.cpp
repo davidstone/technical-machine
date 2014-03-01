@@ -27,10 +27,6 @@ constexpr auto max_stage = 6;
 }
 
 Stage::Stage() {
-	reset();
-}
-
-void Stage::reset() {
 	std::fill(m_stages.begin(), m_stages.end(), 0_bi);
 }
 

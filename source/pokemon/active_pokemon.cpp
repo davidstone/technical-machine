@@ -88,7 +88,7 @@ void ActivePokemon::reset_switch() {
 		m_magnet_rise = MagnetRise{};
 		perish_song.reset();
 		power_trick = false;
-		stage.reset();
+		stage = Stage{};
 		m_substitute = Substitute{};
 	}
 	attracted = false;
@@ -587,7 +587,7 @@ void ActivePokemon::stat_boost_offensive(Stage::boost_type const number_of_stage
 }
 
 void ActivePokemon::reset_stats() {
-	stage.reset();
+	stage = Stage{};
 }
 
 void ActivePokemon::copy_stat_boosts(ActivePokemon const & other) {

@@ -112,7 +112,6 @@ private:
 public:
 
 	Stage();
-	void reset();
 
 	template<StatNames stat>
 	auto modifier(bool const ch = false) const {
