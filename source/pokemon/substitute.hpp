@@ -1,5 +1,5 @@
 // Substitute class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,26 +19,37 @@
 #ifndef SUBSTITUTE_HPP_
 #define SUBSTITUTE_HPP_
 
+#include "../stat/hp.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <cstdint>
+#include <utility>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 class Substitute {
+private:
+	using hp_type = bounded_integer::equivalent_type<decltype(std::declval<HP::current_type>() / 4_bi), bounded_integer::null_policy>;
 public:
 	Substitute();
-	bool create(unsigned total_hp);
-	void damage(unsigned damage_taken);
-	void destroy();
+	auto create(HP::current_type total_hp) -> hp_type;
+	template<typename Damage>
+	auto damage(Damage const damage_done) -> void {
+		m_hp -= damage_done;
+	}
+	auto hp() const {
+		return m_hp;
+	}
 	explicit operator bool() const;
-	friend bool operator== (Substitute const & lhs, Substitute const & rhs);
 	typedef uint64_t hash_type;
-	hash_type hash () const;
-	static hash_type max_hash();
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
-	friend class Evaluate;
-	bool exists() const;
-	uint8_t hp;
+	bounded_integer::equivalent_type<hp_type, bounded_integer::clamp_policy> m_hp;
 };
+bool operator== (Substitute const & lhs, Substitute const & rhs);
 bool operator!= (Substitute const & lhs, Substitute const & rhs);
 
 }	// namespace technicalmachine

@@ -287,7 +287,7 @@ private:
 	HealBlock heal_block;
 	LastUsedMove last_used_move;
 	MagnetRise magnet_rise;
-	Substitute active_substitute;
+	Substitute m_substitute;
 	PartialTrap partial_trap;
 	PerishSong perish_song;
 	Rampage rampage;

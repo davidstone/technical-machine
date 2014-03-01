@@ -1,5 +1,5 @@
 // Substitute class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,66 +17,38 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "substitute.hpp"
-#include <string>
-#include "invalid_substitute_hp.hpp"
 
 namespace technicalmachine {
 
 Substitute::Substitute():
-	hp(0)
-	{
+	m_hp(0_bi) {
 }
 
-namespace {
-constexpr unsigned max_pokemon_hp = 714;
-constexpr unsigned max_substitute_hp = 714 / 4;
-}	// unnamed namespace
-
-bool Substitute::create(unsigned const total_hp) {
-	unsigned const new_hp = total_hp / 4;
-	if (new_hp > max_substitute_hp)
-		throw InvalidSubstituteHP(new_hp);
-	// Cannot create a new substitute if one already exists
-	if (exists())
-		return false;
-	hp = new_hp;
-	return true;
-}
-
-void Substitute::damage(unsigned const damage_taken) {
-	hp = (damage_taken >= hp) ? 0 : hp - damage_taken;
-}
-
-void Substitute::destroy() {
-	hp = 0;
-}
-
-bool Substitute::exists() const {
-	return hp != 0;
+auto Substitute::create(HP::current_type const total_hp) -> hp_type {
+	if (static_cast<bool>(*this)) {
+		return 0_bi;
+	}
+	m_hp = total_hp / 4_bi;
+	return m_hp;
 }
 
 Substitute::operator bool() const {
-	return exists();
+	return hp() != 0_bi;
 }
 
 Substitute::hash_type Substitute::hash() const {
-	return hp;
+	return static_cast<hash_type>(hp());
 }
 
 Substitute::hash_type Substitute::max_hash() {
-	return max_substitute_hp + 1;
+	return static_cast<hash_type>(std::numeric_limits<hp_type>::max() + 1_bi);
 }
 
 bool operator== (Substitute const & lhs, Substitute const & rhs) {
-	return lhs.hp == rhs.hp;
+	return lhs.hp() == rhs.hp();
 }
 bool operator!= (Substitute const & lhs, Substitute const & rhs) {
 	return !(lhs == rhs);
 }
-
-InvalidSubstituteHP::InvalidSubstituteHP(unsigned const hp):
-	std::logic_error("Attempted to create a substitute with " + std::to_string(hp) + " HP. The largest possible substitute is " + std::to_string(max_substitute_hp) + " HP.") {
-}
-
 
 }	// namespace technicalmachine

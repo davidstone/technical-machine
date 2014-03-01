@@ -1,5 +1,5 @@
 // Evaluate the state of the game
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -69,8 +69,8 @@ int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
 	if (pokemon.ingrained())
 		score += ingrain;
 	score += pokemon.magnet_rise.turns_remaining * magnet_rise;
-	if (pokemon.active_substitute)
-		score += substitute + substitute_hp * pokemon.active_substitute.hp / get_hp(pokemon).max();
+	if (pokemon.m_substitute)
+		score += substitute + substitute_hp * pokemon.m_substitute.hp() / get_hp(pokemon).max();
 	score += dot_product(pokemon.stage, stage);
 	return score;
 }

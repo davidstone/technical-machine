@@ -89,7 +89,7 @@ void ActivePokemon::reset_switch() {
 		perish_song.reset();
 		power_trick = false;
 		stage.reset();
-		active_substitute.destroy();
+		m_substitute = Substitute{};
 	}
 	attracted = false;
 	charged = false;
@@ -737,10 +737,7 @@ void ActivePokemon::use_substitute() {
 	if (!can_use_substitute(*this))
 		return;
 	auto const max_hp = get_hp(*this).max();
-	bool const created = active_substitute.create(static_cast<unsigned>(max_hp));
-	if (created) {
-		indirect_damage(max_hp / 4_bi);
-	}
+	indirect_damage(m_substitute.create(max_hp));
 }
 
 bool ActivePokemon::is_locked_in_to_bide() const {
@@ -801,8 +798,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
 	current_hash *= m_all_pokemon.max_hash();
 	current_hash += m_all_pokemon.hash();
-	current_hash *= active_substitute.max_hash();
-	current_hash += active_substitute.hash();
+	current_hash *= m_substitute.max_hash();
+	current_hash += m_substitute.hash();
 	current_hash *= bide.max_hash();
 	current_hash += bide.hash();
 	current_hash *= confusion.max_hash();
@@ -892,7 +889,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = m_all_pokemon.max_hash();
-	current_hash *= active_substitute.max_hash();
+	current_hash *= m_substitute.max_hash();
 	current_hash *= bide.max_hash();
 	current_hash *= confusion.max_hash();
 	current_hash *= m_disable.max_hash();
