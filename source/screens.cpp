@@ -29,27 +29,27 @@ auto Screens::decrement() -> void {
 	m_tailwind.decrement();
 }
 
-auto Screens::light_screen() const -> ReflectLightScreen const & {
+auto Screens::light_screen() const -> LightScreenEffect const & {
 	return m_light_screen;
 }
 
-auto Screens::reflect() const -> ReflectLightScreen const & {
+auto Screens::reflect() const -> ReflectEffect const & {
 	return m_reflect;
 }
 
-auto Screens::lucky_chant() const -> Screen const & {
+auto Screens::lucky_chant() const -> LuckyChantEffect const & {
 	return m_lucky_chant;
 }
 
-auto Screens::mist() const -> Screen const & {
+auto Screens::mist() const -> MistEffect const & {
 	return m_mist;
 }
 
-auto Screens::safeguard() const -> Screen const & {
+auto Screens::safeguard() const -> SafeguardEffect const & {
 	return m_safeguard;
 }
 
-auto Screens::tailwind() const -> Tailwind const & {
+auto Screens::tailwind() const -> TailwindEffect const & {
 	return m_tailwind;
 }
 
@@ -78,8 +78,8 @@ auto Screens::activate_tailwind() -> void {
 }
 
 auto Screens::shatter() -> void {
-	m_light_screen.clear();
-	m_reflect.clear();
+	m_light_screen = LightScreenEffect{};
+	m_reflect = ReflectEffect{};
 }
 
 auto Screens::hash() const -> hash_type {
@@ -92,7 +92,7 @@ auto Screens::hash() const -> hash_type {
 }
 
 auto Screens::max_hash() -> hash_type {
-	return ReflectLightScreen::max_hash() * ReflectLightScreen::max_hash() * Screen::max_hash() * Screen::max_hash() * Screen::max_hash() * Tailwind::max_hash();
+	return LightScreenEffect::max_hash() * ReflectEffect::max_hash() * LuckyChantEffect::max_hash() * MistEffect::max_hash() * SafeguardEffect::max_hash() * TailwindEffect::max_hash();
 }
 
 auto operator==(Screens const & lhs, Screens const & rhs) -> bool {

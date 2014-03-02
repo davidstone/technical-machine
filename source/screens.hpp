@@ -28,12 +28,12 @@ class Screens {
 public:
 	auto decrement() -> void;
 
-	auto light_screen() const -> ReflectLightScreen const &;
-	auto reflect() const -> ReflectLightScreen const &;
-	auto lucky_chant() const -> Screen const &;
-	auto mist() const -> Screen const &;
-	auto safeguard() const -> Screen const &;
-	auto tailwind() const -> Tailwind const &;
+	auto light_screen() const -> LightScreenEffect const &;
+	auto reflect() const -> ReflectEffect const &;
+	auto lucky_chant() const -> LuckyChantEffect const &;
+	auto mist() const -> MistEffect const &;
+	auto safeguard() const -> SafeguardEffect const &;
+	auto tailwind() const -> TailwindEffect const &;
 
 	auto activate_light_screen(bool is_extended = false) -> void;
 	auto activate_reflect(bool is_extended = false) -> void;
@@ -47,12 +47,12 @@ public:
 	auto hash() const -> hash_type;
 	static auto max_hash() -> hash_type;
 private:
-	ReflectLightScreen m_light_screen;
-	ReflectLightScreen m_reflect;
-	Screen m_lucky_chant;
-	Screen m_mist;
-	Screen m_safeguard;
-	Tailwind m_tailwind;
+	LightScreenEffect m_light_screen;
+	ReflectEffect m_reflect;
+	LuckyChantEffect m_lucky_chant;
+	MistEffect m_mist;
+	SafeguardEffect m_safeguard;
+	TailwindEffect m_tailwind;
 };
 auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
 auto operator!=(Screens const & lhs, Screens const & rhs) -> bool;

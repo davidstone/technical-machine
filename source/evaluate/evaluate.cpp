@@ -44,10 +44,10 @@ int64_t Evaluate::operator()(Team const & ai, Team const & foe, Weather const & 
 }
 
 int64_t Evaluate::score_team (Team const & team) const {
-	int64_t score = lucky_chant * team.screens.lucky_chant().turns_remaining;
-	score += mist * team.screens.mist().turns_remaining;
-	score += safeguard * team.screens.safeguard().turns_remaining;
-	score += tailwind * team.screens.tailwind().turns_remaining;
+	int64_t score = lucky_chant * static_cast<int64_t>(team.screens.lucky_chant().turns_remaining());
+	score += mist * static_cast<int64_t>(team.screens.mist().turns_remaining());
+	score += safeguard * static_cast<int64_t>(team.screens.safeguard().turns_remaining());
+	score += tailwind * static_cast<int64_t>(team.screens.tailwind().turns_remaining());
 	score += wish * team.wish.is_active();
 	return score;
 }
@@ -156,9 +156,9 @@ int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weath
 	int64_t score = 0;
 	pokemon.move.for_each([&](Move const & move) {
 		if (is_physical(move))
-			score += other.screens.reflect().turns_remaining * reflect;
+			score += static_cast<int64_t>(other.screens.reflect().turns_remaining()) * reflect;
 		else if (is_special(move))
-			score += other.screens.light_screen().turns_remaining * light_screen;
+			score += static_cast<int64_t>(other.screens.light_screen().turns_remaining()) * light_screen;
 		if (move.pp.is_empty())
 			score += no_pp;
 	});

@@ -1,5 +1,5 @@
 // Screens
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,77 +18,3 @@
 
 #include "screen.hpp"
 
-namespace technicalmachine {
-
-Screen::Screen():
-	turns_remaining(0) {
-}
-
-uint8_t Screen::max_length() {
-	return 5;
-}
-
-void Screen::set_duration(uint8_t const duration) {
-	if (turns_remaining == 0)
-		turns_remaining = duration;
-}
-
-void Screen::activate() {
-	set_duration(max_length());
-}
-
-void Screen::decrement() {
-	if (turns_remaining > 0)
-		--turns_remaining;
-}
-
-Screen::operator bool() const {
-	return turns_remaining != 0;
-}
-
-uint64_t Screen::hash() const {
-	return turns_remaining;
-}
-uint64_t Screen::max_hash() {
-	return max_length();
-}
-
-bool operator==(Screen const & lhs, Screen const & rhs) {
-	return lhs.turns_remaining == rhs.turns_remaining;
-}
-bool operator!=(Screen const & lhs, Screen const & rhs) {
-	return !(lhs == rhs);
-}
-
-
-uint8_t ReflectLightScreen::max_length() {
-	return 8;
-}
-
-void ReflectLightScreen::activate(bool const is_extended) {
-	enum Duration : uint8_t { standard = 5, extended = 8 };
-	set_duration(is_extended ? extended : standard);
-}
-
-void ReflectLightScreen::clear() {
-	set_duration(0);
-}
-
-uint64_t ReflectLightScreen::max_hash() {
-	return max_length();
-}
-
-
-uint8_t Tailwind::max_length() {
-	return 3;
-}
-
-void Tailwind::activate() {
-	set_duration(max_length());
-}
-
-uint64_t Tailwind::max_hash() {
-	return max_length();
-}
-
-}	// namespace technicalmachine
