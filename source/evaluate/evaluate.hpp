@@ -50,6 +50,9 @@ public:
 	// position can have.
 	constexpr static int64_t victory = 30240;
 
+	// Arbitrary values
+	using value_type = bounded_integer::native_integer<-4096, 4096>;
+
 	auto light_screen() const { return m_light_screen; }
 	auto lucky_chant() const { return m_lucky_chant; }
 	auto mist() const { return m_mist; }
@@ -90,11 +93,7 @@ private:
 	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
 	int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
 	int64_t score_active_pokemon(ActivePokemon const & active) const;
-	int64_t score_status(Pokemon const & pokemon, int toxic_counter) const;
 	int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
-
-	// Arbitrary values
-	using value_type = bounded_integer::native_integer<-4096, 4096>;
 
 	value_type m_light_screen;
 	value_type m_lucky_chant;

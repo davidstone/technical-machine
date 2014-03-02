@@ -40,7 +40,7 @@ namespace technicalmachine {
 namespace {
 
 using baton_passable_score_type = bounded_integer::native_integer<-766204, 766204>;
-baton_passable_score_type baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) {
+auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) -> baton_passable_score_type {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
 	return
 		(pokemon.aqua_ring_is_active() ? evaluate.aqua_ring() : 0_bi) +
@@ -50,6 +50,26 @@ baton_passable_score_type baton_passable_score(Evaluate const & evaluate, Active
 		(pokemon.substitute() ? (evaluate.substitute() + evaluate.substitute_hp() * pokemon.substitute().hp() / get_hp(pokemon).max()) : 0_bi) +
 		std::inner_product(pokemon.stage().begin(), pokemon.stage().end(), evaluate.stage().begin(), static_cast<stage_type>(0_bi))
 	;
+}
+
+auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluate::value_type {
+	switch (get_status(pokemon).name()) {
+		case Status::BURN:
+			return evaluate.burn();
+		case Status::FREEZE:
+			return evaluate.freeze();
+		case Status::PARALYSIS:
+			return evaluate.paralysis();
+		case Status::POISON:
+			return evaluate.poison();
+		case Status::POISON_TOXIC:
+			return evaluate.toxic();
+		case Status::REST:
+		case Status::SLEEP:
+			return evaluate.sleep();
+		default:
+			return 0_bi;
+	}
 }
 
 }	// namespace
@@ -115,29 +135,9 @@ int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & e
 	score += members();
 	score += static_cast<int64_t>(hp()) * Rational(hp_ratio(pokemon));
 	score += hidden() * !pokemon.seen();
-	score += score_status(pokemon, toxic_counter);
+	score += score_status(*this, pokemon);
 	score += score_move (pokemon, other, weather);
 	return score;
-}
-
-int64_t Evaluate::score_status(Pokemon const & pokemon, int const toxic_counter) const {
-	switch (get_status(pokemon).name()) {
-		case Status::BURN:
-			return static_cast<int64_t>(burn());
-		case Status::FREEZE:
-			return static_cast<int64_t>(freeze());
-		case Status::PARALYSIS:
-			return static_cast<int64_t>(paralysis());
-		case Status::POISON:
-			return static_cast<int64_t>(poison());
-		case Status::POISON_TOXIC:
-			return static_cast<int64_t>(poison()) * toxic_counter / 2;
-		case Status::REST:
-		case Status::SLEEP:
-			return static_cast<int64_t>(sleep());
-		default:
-			return 0;
-	}
 }
 
 int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const {
@@ -208,6 +208,7 @@ Evaluate::Evaluate() {
 	m_paralysis = pt.get<underlying_type>("paralysis", 0_bi);
 	m_poison = pt.get<underlying_type>("poison", 0_bi);
 	m_sleep = pt.get<underlying_type>("sleep", 0_bi);
+	m_toxic = pt.get<underlying_type>("toxic", 0_bi);
 	m_stage = {
 		pt.get<underlying_type>("attack_stage", 0_bi),
 		pt.get<underlying_type>("defense_stage", 0_bi),

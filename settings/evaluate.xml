@@ -33,6 +33,7 @@
 	<paralysis>-100</paralysis>
 	<poison>-100</poison>
 	<sleep>-120</sleep>
+	<toxic>-100</toxic>
 
 	<attack_stage>50</attack_stage>
 	<defense_stage>50</defense_stage>
