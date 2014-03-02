@@ -298,6 +298,10 @@ void ActivePokemon::flinch() {
 	flinched_this_turn = true;
 }
 
+auto ActivePokemon::has_focused_energy() const -> bool {
+	return focusing_energy;
+}
+
 void ActivePokemon::focus_energy() {
 	focusing_energy = true;
 }
@@ -812,7 +816,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash *= 2;
 	current_hash += flash_fire;
 	current_hash *= 2;
-	current_hash += focusing_energy;
+	current_hash += has_focused_energy();
 	current_hash *= 2;
 	current_hash += fully_trapped;
 	current_hash *= 2;
@@ -887,7 +891,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.embargo == rhs.embargo and
 			lhs.encore == rhs.encore and
 			lhs.flash_fire == rhs.flash_fire and
-			lhs.focusing_energy == rhs.focusing_energy and
+			lhs.has_focused_energy() == rhs.has_focused_energy() and
 			lhs.fully_trapped == rhs.fully_trapped and
 			lhs.heal_block == rhs.heal_block and
 			lhs.identified == rhs.identified and

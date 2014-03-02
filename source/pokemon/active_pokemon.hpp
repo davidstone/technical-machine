@@ -128,6 +128,7 @@ public:
 	void activate_flash_fire();
 	bool flinched() const;
 	void flinch();
+	auto has_focused_energy() const -> bool;
 	void focus_energy();
 	void fully_trap();
 	bool heal_block_is_active() const;
