@@ -87,6 +87,7 @@ public:
 	void reset_between_turns();
 	void clear_field();
 	void update_before_move();
+	auto substitute() const -> Substitute const &;
 	void use_substitute();
 	void attract();
 	void awaken(bool value);

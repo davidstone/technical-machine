@@ -687,6 +687,10 @@ void ActivePokemon::use_bide(Pokemon & target) {
 	}
 }
 
+auto ActivePokemon::substitute() const -> Substitute const & {
+	return m_substitute;
+}
+
 namespace {
 
 bool can_use_substitute(Pokemon const & pokemon) {
