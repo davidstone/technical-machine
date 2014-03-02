@@ -37,6 +37,22 @@
 #include "../type/effectiveness.hpp"
 
 namespace technicalmachine {
+namespace {
+
+using baton_passable_score_type = bounded_integer::native_integer<-766204, 766204>;
+baton_passable_score_type baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) {
+	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
+	return
+		(pokemon.aqua_ring_is_active() ? evaluate.aqua_ring() : 0_bi) +
+		(pokemon.has_focused_energy() ? evaluate.focus_energy() : 0_bi) +
+		(pokemon.ingrained() ? evaluate.ingrain() : 0_bi) +
+		evaluate.magnet_rise() * pokemon.magnet_rise().turns_remaining() +
+		(pokemon.substitute() ? (evaluate.substitute() + evaluate.substitute_hp() * pokemon.substitute().hp() / get_hp(pokemon).max()) : 0_bi) +
+		std::inner_product(pokemon.stage().begin(), pokemon.stage().end(), evaluate.stage().begin(), static_cast<stage_type>(0_bi))
+	;
+}
+
+}	// namespace
 
 int64_t Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const {
 	int64_t score = score_team (ai) - score_team (foe);
@@ -49,34 +65,6 @@ int64_t Evaluate::score_team (Team const & team) const {
 	score += safeguard() * team.screens.safeguard().turns_remaining();
 	score += tailwind() * team.screens.tailwind().turns_remaining();
 	score += wish() * bounded_integer::make_bounded(team.wish.is_active());
-	return score;
-}
-
-namespace {
-
-template<typename Array>
-int dot_product(Stage const & stage, Array const & multiplier) {
-	int result = 0;
-	for (StatNames stat = static_cast<StatNames>(0); stat != StatNames::END; stat = static_cast<StatNames>(static_cast<int>(stat) + 1)) {
-		result += stage[stat] * static_cast<int>(multiplier.at(stat));
-	}
-	return result;
-}
-
-}	// namespace
-
-int64_t Evaluate::baton_passable_score(ActivePokemon const & pokemon) const {
-	int64_t score = 0;
-	if (pokemon.aqua_ring)
-		score += aqua_ring();
-	if (pokemon.focusing_energy)
-		score += focus_energy();
-	if (pokemon.ingrained())
-		score += ingrain();
-	score += pokemon.magnet_rise().turns_remaining() * magnet_rise();
-	if (pokemon.m_substitute)
-		score += substitute() + substitute_hp() * pokemon.m_substitute.hp() / get_hp(pokemon).max();
-	score += dot_product(pokemon.stage(), stage());
 	return score;
 }
 
@@ -112,7 +100,7 @@ int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
 	if (pokemon.tormented())
 		score += torment();
 	bool const has_baton_pass = static_cast<bool>(pokemon.all_moves().index(Moves::Baton_Pass));
-	score += baton_passable_score(pokemon) * (has_baton_pass ? 2 : 1);
+	score += baton_passable_score(*this, pokemon) * (has_baton_pass ? 2 : 1);
 	return score;
 }
 
@@ -187,6 +175,9 @@ Evaluate::Evaluate() {
 	boost::property_tree::ptree file;
 	read_xml("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
+
+	using underlying_type = bounded_integer::equivalent_type<value_type, bounded_integer::throw_policy>;
+
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
 	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);
 	m_mist = pt.get<underlying_type>("mist", 0_bi);

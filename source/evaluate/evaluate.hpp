@@ -50,96 +50,93 @@ public:
 	// position can have.
 	constexpr static int64_t victory = 30240;
 
-	// Arbitrary values
-	using value_type = bounded_integer::native_integer<-4096, 4096>;
-	using underlying_type = bounded_integer::equivalent_type<value_type, bounded_integer::throw_policy>;
-	using stage_type = bounded_integer::array<underlying_type, Stage::number_of_stats.value()>;
-
-	auto light_screen() const -> value_type { return m_light_screen; }
-	auto lucky_chant() const -> value_type { return m_lucky_chant; }
-	auto mist() const -> value_type { return m_mist; }
-	auto reflect() const -> value_type { return m_reflect; }
-	auto safeguard() const -> value_type { return m_safeguard; }
-	auto tailwind() const -> value_type { return m_tailwind; }
-	auto wish() const -> value_type { return m_wish; }
-	auto spikes() const -> value_type { return m_spikes; }
-	auto stealth_rock() const -> value_type { return m_stealth_rock; }
-	auto toxic_spikes() const -> value_type { return m_toxic_spikes; }
-	auto members() const -> value_type { return m_members; }
-	auto hp() const -> value_type { return m_hp; }
-	auto hidden() const -> value_type { return m_hidden; }
-	auto aqua_ring() const -> value_type { return m_aqua_ring; }
-	auto curse() const -> value_type { return m_curse; }
-	auto imprison() const -> value_type { return m_imprison; }
-	auto ingrain() const -> value_type { return m_ingrain; }
-	auto leech_seed() const -> value_type { return m_leech_seed; }
-	auto loaf() const -> value_type { return m_loaf; }
-	auto magnet_rise() const -> value_type { return m_magnet_rise; }
-	auto nightmare() const -> value_type { return m_nightmare; }
-	auto substitute() const -> value_type { return m_substitute; }
-	auto substitute_hp() const -> value_type { return m_substitute_hp; }
-	auto torment() const -> value_type { return m_torment; }
-	auto trapped() const -> value_type { return m_trapped; }
-	auto burn() const -> value_type { return m_burn; }
-	auto freeze() const -> value_type { return m_freeze; }
-	auto paralysis() const -> value_type { return m_paralysis; }
-	auto poison() const -> value_type { return m_poison; }
-	auto sleep() const -> value_type { return m_sleep; }
-	auto toxic() const -> value_type { return m_toxic; }
-	auto focus_energy() const -> value_type { return m_focus_energy; }
-	auto baton_pass() const -> value_type { return m_baton_pass; }
-	auto no_pp() const -> value_type { return m_no_pp; }
-	auto stage() const -> stage_type { return m_stage; }
+	auto light_screen() const { return m_light_screen; }
+	auto lucky_chant() const { return m_lucky_chant; }
+	auto mist() const { return m_mist; }
+	auto reflect() const { return m_reflect; }
+	auto safeguard() const { return m_safeguard; }
+	auto tailwind() const { return m_tailwind; }
+	auto wish() const { return m_wish; }
+	auto spikes() const { return m_spikes; }
+	auto stealth_rock() const { return m_stealth_rock; }
+	auto toxic_spikes() const { return m_toxic_spikes; }
+	auto members() const { return m_members; }
+	auto hp() const { return m_hp; }
+	auto hidden() const { return m_hidden; }
+	auto aqua_ring() const { return m_aqua_ring; }
+	auto curse() const { return m_curse; }
+	auto imprison() const { return m_imprison; }
+	auto ingrain() const { return m_ingrain; }
+	auto leech_seed() const { return m_leech_seed; }
+	auto loaf() const { return m_loaf; }
+	auto magnet_rise() const { return m_magnet_rise; }
+	auto nightmare() const { return m_nightmare; }
+	auto substitute() const { return m_substitute; }
+	auto substitute_hp() const { return m_substitute_hp; }
+	auto torment() const { return m_torment; }
+	auto trapped() const { return m_trapped; }
+	auto burn() const { return m_burn; }
+	auto freeze() const { return m_freeze; }
+	auto paralysis() const { return m_paralysis; }
+	auto poison() const { return m_poison; }
+	auto sleep() const { return m_sleep; }
+	auto toxic() const { return m_toxic; }
+	auto focus_energy() const { return m_focus_energy; }
+	auto baton_pass() const { return m_baton_pass; }
+	auto no_pp() const { return m_no_pp; }
+	auto stage() const { return m_stage; }
 private:
 	int64_t score_team(Team const & team) const;
 	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
 	int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
 	int64_t score_active_pokemon(ActivePokemon const & active) const;
-	int64_t baton_passable_score(ActivePokemon const & pokemon) const;
 	int64_t score_status(Pokemon const & pokemon, int toxic_counter) const;
 	int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
 
-	underlying_type m_light_screen;
-	underlying_type m_lucky_chant;
-	underlying_type m_mist;
-	underlying_type m_reflect;
-	underlying_type m_safeguard;
-	underlying_type m_tailwind;
+	// Arbitrary values
+	using value_type = bounded_integer::native_integer<-4096, 4096>;
 
-	underlying_type m_wish;
+	value_type m_light_screen;
+	value_type m_lucky_chant;
+	value_type m_mist;
+	value_type m_reflect;
+	value_type m_safeguard;
+	value_type m_tailwind;
 
-	underlying_type m_spikes;
-	underlying_type m_stealth_rock;
-	underlying_type m_toxic_spikes;
+	value_type m_wish;
 
-	underlying_type m_members;
-	underlying_type m_hp;
-	underlying_type m_hidden;
-	underlying_type m_aqua_ring;
-	underlying_type m_curse;
-	underlying_type m_imprison;
-	underlying_type m_ingrain;
-	underlying_type m_leech_seed;
-	underlying_type m_loaf;
-	underlying_type m_magnet_rise;
-	underlying_type m_nightmare;
-	underlying_type m_substitute;
-	underlying_type m_substitute_hp;
-	underlying_type m_torment;
-	underlying_type m_trapped;
+	value_type m_spikes;
+	value_type m_stealth_rock;
+	value_type m_toxic_spikes;
 
-	underlying_type m_burn;
-	underlying_type m_freeze;
-	underlying_type m_paralysis;
-	underlying_type m_poison;
-	underlying_type m_sleep;
-	underlying_type m_toxic;
+	value_type m_members;
+	value_type m_hp;
+	value_type m_hidden;
+	value_type m_aqua_ring;
+	value_type m_curse;
+	value_type m_imprison;
+	value_type m_ingrain;
+	value_type m_leech_seed;
+	value_type m_loaf;
+	value_type m_magnet_rise;
+	value_type m_nightmare;
+	value_type m_substitute;
+	value_type m_substitute_hp;
+	value_type m_torment;
+	value_type m_trapped;
+
+	value_type m_burn;
+	value_type m_freeze;
+	value_type m_paralysis;
+	value_type m_poison;
+	value_type m_sleep;
+	value_type m_toxic;
 	
-	stage_type m_stage;
-	underlying_type m_focus_energy;
+	bounded_integer::array<value_type, Stage::number_of_stats.value()> m_stage;
+	value_type m_focus_energy;
 
-	underlying_type m_baton_pass;
-	underlying_type m_no_pp;
+	value_type m_baton_pass;
+	value_type m_no_pp;
 };
 
 } // namespace technicalmachine
