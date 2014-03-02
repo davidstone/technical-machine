@@ -1,5 +1,5 @@
 // Evaluate header
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,10 +19,14 @@
 #ifndef EVALUATE__EVALUATE_HPP_
 #define EVALUATE__EVALUATE_HPP_
 
+#include "../stat/stage.hpp"
+#include "../stat/stat_names.hpp"
+
+#include <bounded_integer/array.hpp>
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <array>
 #include <cstdint>
-
-#include "../stat/stat_names.hpp"
 
 namespace technicalmachine {
 
@@ -46,6 +50,47 @@ public:
 	// this number other than being larger than any score a non-winning
 	// position can have.
 	constexpr static int64_t victory = 30240;
+
+	// Arbitrary values
+	using value_type = bounded_integer::native_integer<-4096, 4096>;
+	using underlying_type = bounded_integer::equivalent_type<value_type, bounded_integer::throw_policy>;
+	using stage_type = bounded_integer::array<underlying_type, Stage::number_of_stats.value()>;
+
+	auto light_screen() const -> value_type { return m_light_screen; }
+	auto lucky_chant() const -> value_type { return m_lucky_chant; }
+	auto mist() const -> value_type { return m_mist; }
+	auto reflect() const -> value_type { return m_reflect; }
+	auto safeguard() const -> value_type { return m_safeguard; }
+	auto tailwind() const -> value_type { return m_tailwind; }
+	auto wish() const -> value_type { return m_wish; }
+	auto spikes() const -> value_type { return m_spikes; }
+	auto stealth_rock() const -> value_type { return m_stealth_rock; }
+	auto toxic_spikes() const -> value_type { return m_toxic_spikes; }
+	auto members() const -> value_type { return m_members; }
+	auto hp() const -> value_type { return m_hp; }
+	auto hidden() const -> value_type { return m_hidden; }
+	auto aqua_ring() const -> value_type { return m_aqua_ring; }
+	auto curse() const -> value_type { return m_curse; }
+	auto imprison() const -> value_type { return m_imprison; }
+	auto ingrain() const -> value_type { return m_ingrain; }
+	auto leech_seed() const -> value_type { return m_leech_seed; }
+	auto loaf() const -> value_type { return m_loaf; }
+	auto magnet_rise() const -> value_type { return m_magnet_rise; }
+	auto nightmare() const -> value_type { return m_nightmare; }
+	auto substitute() const -> value_type { return m_substitute; }
+	auto substitute_hp() const -> value_type { return m_substitute_hp; }
+	auto torment() const -> value_type { return m_torment; }
+	auto trapped() const -> value_type { return m_trapped; }
+	auto burn() const -> value_type { return m_burn; }
+	auto freeze() const -> value_type { return m_freeze; }
+	auto paralysis() const -> value_type { return m_paralysis; }
+	auto poison() const -> value_type { return m_poison; }
+	auto sleep() const -> value_type { return m_sleep; }
+	auto toxic() const -> value_type { return m_toxic; }
+	auto focus_energy() const -> value_type { return m_focus_energy; }
+	auto baton_pass() const -> value_type { return m_baton_pass; }
+	auto no_pp() const -> value_type { return m_no_pp; }
+	auto stage() const -> stage_type { return m_stage; }
 private:
 	int64_t score_team(Team const & team) const;
 	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
@@ -55,46 +100,47 @@ private:
 	int64_t score_status(Pokemon const & pokemon, int toxic_counter) const;
 	int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
 
-	int light_screen;
-	int lucky_chant;
-	int mist;
-	int reflect;
-	int safeguard;
-	int tailwind;
+	underlying_type m_light_screen;
+	underlying_type m_lucky_chant;
+	underlying_type m_mist;
+	underlying_type m_reflect;
+	underlying_type m_safeguard;
+	underlying_type m_tailwind;
 
-	int wish;
+	underlying_type m_wish;
 
-	int spikes;
-	int stealth_rock;
-	int toxic_spikes;
+	underlying_type m_spikes;
+	underlying_type m_stealth_rock;
+	underlying_type m_toxic_spikes;
 
-	int members;
-	int hp;
-	int hidden;
-	int aqua_ring;
-	int curse;
-	int imprison;
-	int ingrain;
-	int leech_seed;
-	int loaf;
-	int magnet_rise;
-	int nightmare;
-	int substitute;
-	int substitute_hp;
-	int torment;
-	int trapped;
+	underlying_type m_members;
+	underlying_type m_hp;
+	underlying_type m_hidden;
+	underlying_type m_aqua_ring;
+	underlying_type m_curse;
+	underlying_type m_imprison;
+	underlying_type m_ingrain;
+	underlying_type m_leech_seed;
+	underlying_type m_loaf;
+	underlying_type m_magnet_rise;
+	underlying_type m_nightmare;
+	underlying_type m_substitute;
+	underlying_type m_substitute_hp;
+	underlying_type m_torment;
+	underlying_type m_trapped;
 
-	int burn;
-	int freeze;
-	int paralysis;
-	int poison;
-	int sleep;
+	underlying_type m_burn;
+	underlying_type m_freeze;
+	underlying_type m_paralysis;
+	underlying_type m_poison;
+	underlying_type m_sleep;
+	underlying_type m_toxic;
 	
-	std::array<int, static_cast<std::size_t>(StatNames::END)> stage;
-	int focus_energy;
+	stage_type m_stage;
+	underlying_type m_focus_energy;
 
-	int baton_pass;
-	int no_pp;
+	underlying_type m_baton_pass;
+	underlying_type m_no_pp;
 };
 
 } // namespace technicalmachine
