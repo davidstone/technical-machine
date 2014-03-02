@@ -40,7 +40,6 @@ class Weather;
 class Evaluate {
 public:
 	Evaluate();
-	void load();
 	int64_t operator()(Team const & ai, Team const & foe, Weather const & weather) const;
 	// Both of these return victory if the battle is won. Returns -victory
 	// if the battle is lost. Returns 0 otherwise.

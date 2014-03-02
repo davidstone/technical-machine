@@ -66,7 +66,7 @@ std::string Client::time_stamp() const {
 
 Settings Client::load_settings(bool const reload) {
 	if (reload) {
-		m_evaluation_constants.load();
+		m_evaluation_constants = Evaluate{};
 	}
 	Settings const settings;
 	team_file_name = settings.team_file;

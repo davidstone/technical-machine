@@ -183,53 +183,7 @@ int64_t Evaluate::sleep_clause (Team const & team) {
 	return 0;
 }
 
-Evaluate::Evaluate():
-	m_light_screen(0_bi),
-	m_lucky_chant(0_bi),
-	m_mist(0_bi),
-	m_reflect(0_bi),
-	m_safeguard(0_bi),
-	m_tailwind(0_bi),
-
-	m_wish(0_bi),
-
-	m_spikes(0_bi),
-	m_stealth_rock(0_bi),
-	m_toxic_spikes(0_bi),
-
-	m_members(0_bi),
-	m_hp(0_bi),
-	m_hidden(0_bi),
-	m_aqua_ring(0_bi),
-	m_curse(0_bi),
-	m_imprison(0_bi),
-	m_ingrain(0_bi),
-	m_leech_seed(0_bi),
-	m_loaf(0_bi),
-	m_magnet_rise(0_bi),
-	m_nightmare(0_bi),
-	m_substitute(0_bi),
-	m_substitute_hp(0_bi),
-	m_torment(0_bi),
-	m_trapped(0_bi),
-
-	m_burn(0_bi),
-	m_freeze(0_bi),
-	m_paralysis(0_bi),
-	m_poison(0_bi),
-	m_sleep(0_bi),
-	
-	m_stage({{}}),
-	m_focus_energy(0_bi),
-
-	m_baton_pass(0_bi),
-	m_no_pp(0_bi) {
-	// This is a separate function instead of being stuck in directly to support
-	// reloading of the constants.
-	load();
-}
-
-void Evaluate::load() {
+Evaluate::Evaluate() {
 	boost::property_tree::ptree file;
 	read_xml("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
