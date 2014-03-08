@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- All values must be between -4096 and 4096 -->
 <score>
 	<light_screen>64</light_screen>
 	<lucky_chant>4</lucky_chant>
