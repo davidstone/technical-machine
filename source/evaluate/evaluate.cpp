@@ -144,9 +144,9 @@ int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weat
 }
 
 int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	auto score = entry_hazards.stealth_rock * static_cast<int64_t>(stealth_rock() * stealth_rock_effectiveness(pokemon));
+	auto score = static_cast<int64_t>(entry_hazards.stealth_rock() * stealth_rock() * Effectiveness(Type::Rock, pokemon));
 	if (grounded(pokemon, weather)) {
-		score += entry_hazards.spikes * spikes() + entry_hazards.toxic_spikes * toxic_spikes();
+		score += entry_hazards.spikes() * spikes() + entry_hazards.toxic_spikes() * toxic_spikes();
 	}
 	score += members();
 	score += static_cast<int64_t>(hp()) * Rational(hp_ratio(pokemon));

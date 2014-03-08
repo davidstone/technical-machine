@@ -59,7 +59,5 @@ auto operator*(Effectiveness const & effectiveness, Integer const number) -> Int
 	return number * effectiveness;
 }
 
-auto stealth_rock_effectiveness(Pokemon const & pokemon) -> Effectiveness;
-
 }	// namespace technicalmachine
 #endif	// TYPE__EFFECTIVENESS_HPP_

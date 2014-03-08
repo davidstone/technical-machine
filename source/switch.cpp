@@ -42,7 +42,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 		}
 	}
-	EntryHazards::apply(switcher, weather);
+	apply(switcher.entry_hazards, pokemon, weather);
 	if (get_hp(pokemon) != 0_bi) {
 		Ability::activate_on_switch (pokemon, other.pokemon(), weather);
 	}
