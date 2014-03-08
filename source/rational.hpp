@@ -1,5 +1,5 @@
 // Class to properly do integer multiplication / division
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -58,20 +58,20 @@ public:
 	}
 
 	template<intmax_t minimum, intmax_t maximum, typename overflow_policy>
-	constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> const number) const -> decltype(number * m_numerator / m_denominator) {
+	constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> const number) const {
 		return number * m_numerator / m_denominator;
 	}
 
 	template<typename N, typename D>
-	constexpr auto operator*(bounded_rational<N, D> const other) const -> decltype(make_bounded_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator)) {
+	constexpr auto operator*(bounded_rational<N, D> const other) const {
 		return make_bounded_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator);
 	}
 	template<typename N, typename D>
-	constexpr auto operator+(bounded_rational<N, D> const other) const -> decltype(make_bounded_rational(m_numerator * other.m_denominator + other.m_numerator * m_denominator, m_denominator * other.m_denominator)) {
+	constexpr auto operator+(bounded_rational<N, D> const other) const {
 		return make_bounded_rational(m_numerator * other.m_denominator + other.m_numerator * m_denominator, m_denominator * other.m_denominator);
 	}
 	template<typename N, typename D>
-	constexpr auto operator-(bounded_rational<N, D> const other) const -> decltype(make_bounded_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator)) {
+	constexpr auto operator-(bounded_rational<N, D> const other) const {
 		return make_bounded_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator);
 	}
 
@@ -89,15 +89,13 @@ public:
 		return to_string(rational.m_numerator) + " / " + to_string(rational.m_denominator);
 	}
 	
-	template<typename N, typename D>
-	explicit constexpr operator bounded_rational<N, D>() const {
-		// Perhaps this should be a check like is_implicitly_constructible
-		static_assert(
-			std::numeric_limits<N>::min() <= std::numeric_limits<Numerator>::min() and
-			std::numeric_limits<N>::max() >= std::numeric_limits<Numerator>::max() and
-			std::numeric_limits<D>::min() <= std::numeric_limits<Denominator>::min() and
-			std::numeric_limits<D>::max() >= std::numeric_limits<Denominator>::max(),
-		"Narrowing conversion.");
+	template<typename N, typename D, enable_if_t<
+		std::numeric_limits<N>::min() <= std::numeric_limits<Numerator>::min() and
+		std::numeric_limits<N>::max() >= std::numeric_limits<Numerator>::max() and
+		std::numeric_limits<D>::min() <= std::numeric_limits<Denominator>::min() and
+		std::numeric_limits<D>::max() >= std::numeric_limits<Denominator>::max()
+	> = clang_dummy>
+	constexpr operator bounded_rational<N, D>() const {
 		return bounded_rational<N, D>(static_cast<N>(m_numerator), static_cast<D>(m_denominator));
 	}
 	
@@ -120,6 +118,15 @@ constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, over
 
 template<intmax_t minimum, intmax_t maximum, typename overflow_policy, typename N, typename D>
 auto & operator*=(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> & number, bounded_rational<N, D> const rational) {
+	return number = number * rational;
+}
+
+template<typename T, typename Numerator, typename Denominator, enable_if_t<std::is_integral<T>::value> = clang_dummy>
+constexpr auto operator*(T const number, bounded_rational<Numerator, Denominator> const rational) {
+	return static_cast<T>(bounded_integer::make_bounded(number) * rational);
+}
+template<typename T, typename Numerator, typename Denominator, enable_if_t<std::is_integral<T>::value> = clang_dummy>
+auto operator*=(T & number, bounded_rational<Numerator, Denominator> const rational) {
 	return number = number * rational;
 }
 
@@ -300,6 +307,33 @@ private:
 	using denominator = typename common_type<D1, D2>::type;
 public:
 	using type = technicalmachine::bounded_rational<numerator, denominator>;
+};
+
+template<typename N1, typename D1, typename N2, typename D2>
+struct common_type<technicalmachine::bounded_rational<N1, D1> const, technicalmachine::bounded_rational<N2, D2>> {
+private:
+	using numerator = typename common_type<N1, N2>::type;
+	using denominator = typename common_type<D1, D2>::type;
+public:
+	using type = technicalmachine::bounded_rational<numerator, denominator> const;
+};
+
+template<typename N1, typename D1, typename N2, typename D2>
+struct common_type<technicalmachine::bounded_rational<N1, D1>, technicalmachine::bounded_rational<N2, D2> const> {
+private:
+	using numerator = typename common_type<N1, N2>::type;
+	using denominator = typename common_type<D1, D2>::type;
+public:
+	using type = technicalmachine::bounded_rational<numerator, denominator> const;
+};
+
+template<typename N1, typename D1, typename N2, typename D2>
+struct common_type<technicalmachine::bounded_rational<N1, D1> const, technicalmachine::bounded_rational<N2, D2> const> {
+private:
+	using numerator = typename common_type<N1, N2>::type;
+	using denominator = typename common_type<D1, D2>::type;
+public:
+	using type = technicalmachine::bounded_rational<numerator, denominator> const;
 };
 
 }	// namespace std

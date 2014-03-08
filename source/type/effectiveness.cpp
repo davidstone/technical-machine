@@ -1,5 +1,5 @@
 // Effectiveness of a type
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,73 +21,82 @@
 #include "collection.hpp"
 #include "type.hpp"
 #include "../pokemon/pokemon.hpp"
+#include "../rational.hpp"
 
 namespace technicalmachine {
 namespace {
-Rational lookup_effectiveness(Type::Types const attacking, Type::Types const defending);
-bool check_effectiveness(std::vector<Rational> const & effectiveness, std::initializer_list<unsigned> const & results);
+
+constexpr auto ne = make_bounded_rational(0_bi, 1_bi);
+constexpr auto nve = make_bounded_rational(1_bi, 2_bi);
+constexpr auto reg = make_bounded_rational(1_bi, 2_bi);
+constexpr auto se = make_bounded_rational(2_bi, 1_bi);
+
+auto lookup_effectiveness(Type::Types const attacking, Type::Types const defending) {
+	using lookup_type = std::common_type<decltype(ne), decltype(nve), decltype(reg), decltype(se)>::type;
+	static constexpr bounded_integer::array<bounded_integer::array<lookup_type, 18>, 18> effectiveness {{
+		{ reg, se, reg, reg, nve, nve, nve, nve, se, reg, reg, reg, nve, se, reg, nve, reg, reg },	// Bug
+		{ reg, nve, reg, reg, nve, reg, reg, se, reg, reg, reg, reg, reg, se, reg, nve, reg, reg },	// Dark
+		{ reg, reg, se, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, nve, reg, reg },	// Dragon
+		{ reg, reg, nve, nve, reg, reg, se, reg, nve, ne, reg, reg, reg, reg, reg, reg, se, reg },	// Electric
+		{ nve, se, reg, reg, reg, reg, nve, ne, reg, reg, se, se, nve, nve, se, se, reg, reg },	// Fighting
+		{ se, reg, nve, reg, reg, nve, reg, reg, se, reg, se, reg, reg, reg, nve, se, nve, reg },	// Fire
+		{ se, reg, reg, nve, se, reg, reg, reg, se, reg, reg, reg, reg, reg, nve, nve, reg, reg },	// Flying
+		{ reg, nve, reg, reg, reg, reg, reg, se, reg, reg, reg, ne, reg, se, reg, nve, reg, reg },	// Ghost
+		{ nve, reg, nve, reg, reg, nve, nve, reg, nve, se, reg, reg, nve, reg, se, nve, se, reg },	// Grass
+		{ nve, reg, reg, se, reg, se, ne, reg, nve, reg, reg, reg, se, reg, se, se, reg, reg },	// Ground
+		{ reg, reg, se, reg, reg, nve, se, reg, se, se, nve, reg, reg, reg, reg, nve, nve, reg },	// Ice
+		{ reg, reg, reg, reg, reg, reg, reg, ne, reg, reg, reg, reg, reg, reg, nve, nve, reg, reg },	// Normal
+		{ reg, reg, reg, reg, reg, reg, reg, nve, se, nve, reg, reg, nve, reg, nve, ne, reg, reg },	// Poison
+		{ reg, ne, reg, reg, se, reg, reg, reg, reg, reg, reg, reg, se, nve, reg, nve, reg, reg },	// Psychic
+		{ se, reg, reg, reg, nve, se, se, reg, reg, nve, se, reg, reg, reg, reg, nve, reg, reg },	// Rock
+		{ reg, reg, reg, nve, reg, nve, reg, reg, reg, reg, se, reg, reg, reg, se, nve, nve, reg },	// Steel
+		{ reg, reg, nve, reg, reg, se, reg, reg, nve, se, reg, reg, reg, reg, se, reg, nve, reg },	// Water
+		{ reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg }	// Typeless
+		//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
+	}};
+	return effectiveness.at(attacking).at(defending);
+}
+
+template<typename Container, typename Product>
+auto check_effectiveness(Container const & effectiveness, std::initializer_list<Product> const & results) {
+	auto const value = effectiveness[0_bi] * effectiveness[1_bi];
+	return std::find(std::begin(results), std::end(results), value) != std::end(results);
+}
+
+
+
 }	// namespace
 
-Effectiveness::Effectiveness(Type const type, Pokemon const & defender) {
-	for (Type const target_type : get_type(defender).types)
-		effectiveness.emplace_back(lookup_effectiveness(type.type, target_type.type));
+Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending1, Type::Types const defending2):
+	m_effectiveness({
+		lookup_effectiveness(attacking, defending1),
+		lookup_effectiveness(attacking, defending2)
+	}) {
+	static_assert(std::is_same<decltype(lookup_effectiveness(attacking, defending1)), SingleType>::value, "Incorrect effectiveness type.");
+}
+
+Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
+	Effectiveness(type.type, get_type(defender).types.begin()->type, std::next(get_type(defender).types.begin())->type) {
 }
 
 Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending):
-	effectiveness({ lookup_effectiveness(attacking, defending) }) {
+	Effectiveness(attacking, defending, Type::Typeless) {
 }
 
-Effectiveness Effectiveness::stealth_rock_effectiveness(Pokemon const & pokemon) {
+auto stealth_rock_effectiveness(Pokemon const & pokemon) -> Effectiveness {
 	return Effectiveness(Type::Rock, pokemon);
 }
 
 bool Effectiveness::is_super_effective() const {
-	return check_effectiveness(effectiveness, { 8, 16 });
+	return check_effectiveness(m_effectiveness, { Product(se), Product(se * se) });
 }
 
 bool Effectiveness::is_not_very_effective() const {
-	return check_effectiveness(effectiveness, { 1, 2 });
+	return check_effectiveness(m_effectiveness, { Product(nve), Product(nve * nve) });
 }
 
 bool Effectiveness::has_no_effect() const {
-	return check_effectiveness(effectiveness, { 0 });
+	return check_effectiveness(m_effectiveness, { Product(ne) });
 }
 
-
-namespace {
-
-bool check_effectiveness(std::vector<Rational> const & effectiveness, std::initializer_list<unsigned> const & results) {
-	unsigned value = 4;
-	for (Rational const & e : effectiveness) {
-		value *= e;
-	}
-	return std::find(std::begin(results), std::end(results), value) != std::end(results);
-}
-
-Rational lookup_effectiveness(Type::Types const attacking, Type::Types const defending) {
-	constexpr static unsigned effectiveness [18][18] = {
-		{	2,	4,	2,	2,	1,	1,	1,	1,	4,	2,	2,	2,	1,	4,	2,	1,	2,	2	},	// Bug
-		{	2,	1,	2,	2,	1,	2,	2,	4,	2,	2,	2,	2,	2,	4,	2,	1,	2,	2	},	// Dark
-		{	2,	2,	4,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	1,	2,	2	},	// Dragon
-		{	2,	2,	1,	1,	2,	2,	4,	2,	1,	0,	2,	2,	2,	2,	2,	2,	4,	2	},	// Electric
-		{	1,	4,	2,	2,	2,	2,	1,	0,	2,	2,	4,	4,	1,	1,	4,	4,	2,	2	},	// Fighting
-		{	4,	2,	1,	2,	2,	1,	2,	2,	4,	2,	4,	2,	2,	2,	1,	4,	1,	2	},	// Fire
-		{	4,	2,	2,	1,	4,	2,	2,	2,	4,	2,	2,	2,	2,	2,	1,	1,	2,	2	},	// Flying
-		{	2,	1,	2,	2,	2,	2,	2,	4,	2,	2,	2,	0,	2,	4,	2,	1,	2,	2	},	// Ghost
-		{	1,	2,	1,	2,	2,	1,	1,	2,	1,	4,	2,	2,	1,	2,	4,	1,	4,	2	},	// Grass
-		{	1,	2,	2,	4,	2,	4,	0,	2,	1,	2,	2,	2,	4,	2,	4,	4,	2,	2	},	// Ground
-		{	2,	2,	4,	2,	2,	1,	4,	2,	4,	4,	1,	2,	2,	2,	2,	1,	1,	2	},	// Ice
-		{	2,	2,	2,	2,	2,	2,	2,	0,	2,	2,	2,	2,	2,	2,	1,	1,	2,	2	},	// Normal
-		{	2,	2,	2,	2,	2,	2,	2,	1,	4,	1,	2,	2,	1,	2,	1,	0,	2,	2	},	// Poison
-		{	2,	0,	2,	2,	4,	2,	2,	2,	2,	2,	2,	2,	4,	1,	2,	1,	2,	2	},	// Psychic
-		{	4,	2,	2,	2,	1,	4,	4,	2,	2,	1,	4,	2,	2,	2,	2,	1,	2,	2	},	// Rock
-		{	2,	2,	2,	1,	2,	1,	2,	2,	2,	2,	4,	2,	2,	2,	4,	1,	1,	2	},	// Steel
-		{	2,	2,	1,	2,	2,	4,	2,	2,	1,	4,	2,	2,	2,	2,	4,	2,	1,	2	},	// Water
-		{	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2,	2	}	// Typeless
-		//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
-	};
-	return Rational(effectiveness[attacking][defending], 2);
-}
-
-}	// unnamed namespace
 }	// namespace technicalmachine

@@ -95,7 +95,7 @@ void EntryHazards::apply(Team & switcher, Weather const & weather) {
 			drain(switcher.pokemon(), Rational(entry_hazards.spikes + 1u, 16));
 	}
 	if (entry_hazards.stealth_rock) {
-		drain(switcher.pokemon(), Rational(1, 8) * Effectiveness::stealth_rock_effectiveness(switcher.pokemon()));
+		drain(switcher.pokemon(), Rational(make_bounded_rational(1_bi, 8_bi) * stealth_rock_effectiveness(switcher.pokemon())));
 	}
 }
 

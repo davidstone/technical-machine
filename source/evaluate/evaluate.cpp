@@ -128,7 +128,7 @@ int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & e
 	if (get_hp(pokemon) == 0_bi) {
 		return 0;
 	}
-	auto score = entry_hazards.stealth_rock * static_cast<int64_t>(stealth_rock()) * Effectiveness::stealth_rock_effectiveness(pokemon);
+	auto score = entry_hazards.stealth_rock * static_cast<int64_t>(stealth_rock() * stealth_rock_effectiveness(pokemon));
 	if (grounded(pokemon, weather)) {
 		score += entry_hazards.spikes * spikes() + entry_hazards.toxic_spikes * toxic_spikes();
 	}

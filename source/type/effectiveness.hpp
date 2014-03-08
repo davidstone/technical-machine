@@ -1,5 +1,5 @@
 // Effectiveness of a type
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,8 +20,10 @@
 #define TYPE__EFFECTIVENESS_HPP_
 
 #include "type.hpp"
-#include <vector>
 #include "../rational.hpp"
+
+#include <bounded_integer/array.hpp>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 class Pokemon;
@@ -30,29 +32,34 @@ class Effectiveness {
 public:
 	Effectiveness(Type type, Pokemon const & defender);
 	Effectiveness(Type::Types attacking, Type::Types defending);
-	static Effectiveness stealth_rock_effectiveness(Pokemon const & pokemon);
-	bool is_super_effective() const;
-	bool is_not_very_effective() const;
-	bool has_no_effect() const;
+	auto is_super_effective() const -> bool;
+	auto is_not_very_effective() const -> bool;
+	auto has_no_effect() const -> bool;
+
+private:
+	Effectiveness(Type::Types attacking, Type::Types defending1, Type::Types defending2);
+	using SingleType = bounded_rational<bounded_integer::native_integer<0, 2>, bounded_integer::native_integer<1, 2>>;
+	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
+	using container_type = bounded_integer::array<SingleType, 2>;
+
+	container_type m_effectiveness;
 
 	template<typename Integer>
-	friend Integer operator*=(Integer & number, Effectiveness const & e) {
-		for (Rational const & rational : e.effectiveness)
-			number *= rational;
-		return number;
+	friend auto operator*(Integer const number, Effectiveness const & e) -> decltype(number * std::declval<container_type>()[0_bi] * std::declval<container_type>()[1_bi]) {
+		return number * e.m_effectiveness[0_bi] * e.m_effectiveness[1_bi];
 	}
-private:
-	std::vector<Rational> effectiveness;
 };
 
 template<typename Integer>
-inline Integer operator*(Integer number, Effectiveness const & effectiveness) {
-	return number *= effectiveness;
+auto operator*=(Integer & number, Effectiveness const & effectiveness) {
+	return number = number * effectiveness;
 }
 template<typename Integer>
-inline Integer operator*(Effectiveness const & effectiveness, Integer number) {
-	return number *= effectiveness;
+auto operator*(Effectiveness const & effectiveness, Integer const number) -> Integer{
+	return number * effectiveness;
 }
+
+auto stealth_rock_effectiveness(Pokemon const & pokemon) -> Effectiveness;
 
 }	// namespace technicalmachine
 #endif	// TYPE__EFFECTIVENESS_HPP_
