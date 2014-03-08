@@ -55,7 +55,7 @@ auto operator*=(Integer & number, Effectiveness const & effectiveness) {
 	return number = number * effectiveness;
 }
 template<typename Integer>
-auto operator*(Effectiveness const & effectiveness, Integer const number) -> Integer{
+auto operator*(Effectiveness const & effectiveness, Integer const number) {
 	return number * effectiveness;
 }
 

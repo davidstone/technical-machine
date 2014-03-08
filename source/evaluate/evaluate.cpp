@@ -97,6 +97,19 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 }
 
 
+auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather) {
+	return
+		evaluate.members() +
+		hp_ratio(pokemon) * evaluate.hp() +
+		CONDITIONAL(!pokemon.has_been_seen(), evaluate.hidden(), 0_bi) +
+		CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(Type::Rock, pokemon) * evaluate.stealth_rock(), 0_bi) +
+		CONDITIONAL(grounded(pokemon, weather), entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
+		score_status(evaluate, pokemon) +
+		score_moves(evaluate, pokemon, other.screens, weather)
+	;
+}
+
+
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokemon) {
 	bool const has_baton_pass = static_cast<bool>(pokemon.all_moves().index(Moves::Baton_Pass));
 	return
@@ -135,24 +148,11 @@ int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weat
 			continue;
 		}
 		bool const is_active = (index == team.pokemon().index());
-		score += score_pokemon(team.pokemon(index), team.entry_hazards, other, weather);
+		score += score_pokemon(*this, team.pokemon(index), team.entry_hazards, other, weather);
 		if (is_active) {
 			score += score_active_pokemon(*this, team.pokemon());
 		}
 	}
-	return score;
-}
-
-int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	auto score = static_cast<int64_t>(entry_hazards.stealth_rock() * stealth_rock() * Effectiveness(Type::Rock, pokemon));
-	if (grounded(pokemon, weather)) {
-		score += entry_hazards.spikes() * spikes() + entry_hazards.toxic_spikes() * toxic_spikes();
-	}
-	score += members();
-	score += static_cast<int64_t>(hp()) * Rational(hp_ratio(pokemon));
-	score += hidden() * !pokemon.seen();
-	score += score_status(*this, pokemon);
-	score += score_moves(*this, pokemon, other.screens, weather);
 	return score;
 }
 

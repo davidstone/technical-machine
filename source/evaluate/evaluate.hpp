@@ -91,7 +91,6 @@ public:
 private:
 	int64_t score_team(Team const & team) const;
 	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
-	int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
 
 	value_type m_light_screen;
 	value_type m_lucky_chant;
