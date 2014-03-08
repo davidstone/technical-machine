@@ -92,8 +92,6 @@ private:
 	int64_t score_team(Team const & team) const;
 	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
 	int64_t score_pokemon(Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int toxic_counter = 1) const;
-	int64_t score_active_pokemon(ActivePokemon const & active) const;
-	int64_t score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const;
 
 	value_type m_light_screen;
 	value_type m_lucky_chant;

@@ -201,6 +201,7 @@ public:
 	bool has_switched() const;
 	bool switch_decision_required() const;
 	
+	auto fully_trapped() const -> bool;
 	bool trapped() const;
 	bool tormented() const;
 	void taunt();
@@ -252,7 +253,6 @@ public:
 	hash_type max_hash() const;
 
 private:
-	friend class Evaluate;
 	// I'd make this a reference but I don't want to manually define a copy
 	// and move assignment operator to simply verify that the referents are
 	// the same.
@@ -295,7 +295,7 @@ private:
 	bool focusing_energy = false;
 	bool fully_paralyzed = false;
 	// Block, Mean Look, Spider Web
-	bool fully_trapped = false;
+	bool m_fully_trapped = false;
 	bool gastro_acid = false;
 	bool identified = false;
 	bool used_imprison = false;

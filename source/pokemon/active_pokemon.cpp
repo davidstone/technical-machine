@@ -99,7 +99,7 @@ void ActivePokemon::reset_switch() {
 	encore.reset();
 	flash_fire = false;
 	flinched_this_turn = false;
-	fully_trapped = false;
+	m_fully_trapped = false;
 	heal_block.reset();
 	identified = false;
 	used_imprison = false;
@@ -307,7 +307,7 @@ void ActivePokemon::focus_energy() {
 }
 
 void ActivePokemon::fully_trap() {
-	fully_trapped = true;
+	m_fully_trapped = true;
 }
 
 void ActivePokemon::identify() {
@@ -609,8 +609,12 @@ void switch_pokemon(ActivePokemon & pokemon) {
 	pokemon.all_pokemon().set_index(pokemon.all_pokemon().replacement());
 }
 
+auto ActivePokemon::fully_trapped() const -> bool {
+	return m_fully_trapped;
+}
+
 bool ActivePokemon::trapped() const {
-	return fully_trapped or ingrained() or partial_trap;
+	return m_fully_trapped or ingrained() or partial_trap;
 }
 
 bool ActivePokemon::tormented() const {
@@ -822,7 +826,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash *= 2;
 	current_hash += has_focused_energy();
 	current_hash *= 2;
-	current_hash += fully_trapped;
+	current_hash += fully_trapped();
 	current_hash *= 2;
 	current_hash += gastro_acid;
 	current_hash *= 2;
@@ -896,7 +900,7 @@ bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 			lhs.encore == rhs.encore and
 			lhs.flash_fire == rhs.flash_fire and
 			lhs.has_focused_energy() == rhs.has_focused_energy() and
-			lhs.fully_trapped == rhs.fully_trapped and
+			lhs.fully_trapped() == rhs.fully_trapped() and
 			lhs.heal_block == rhs.heal_block and
 			lhs.identified == rhs.identified and
 			lhs.used_imprison == rhs.used_imprison and

@@ -38,9 +38,9 @@
 
 namespace technicalmachine {
 namespace {
+#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
 
-using baton_passable_score_type = bounded_integer::native_integer<-766204, 766204>;
-auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) -> baton_passable_score_type {
+auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
 	return
 		(pokemon.aqua_ring_is_active() ? evaluate.aqua_ring() : 0_bi) +
@@ -51,8 +51,10 @@ auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokem
 		std::inner_product(pokemon.stage().begin(), pokemon.stage().end(), evaluate.stage().begin(), static_cast<stage_type>(0_bi))
 	;
 }
+using BatonPassableScore = decltype(baton_passable_score(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
 
-auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluate::value_type {
+using ScoreStatus = Evaluate::value_type;
+auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> ScoreStatus {
 	switch (get_status(pokemon).name()) {
 		case Status::BURN:
 			return evaluate.burn();
@@ -71,6 +73,44 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluat
 			return 0_bi;
 	}
 }
+
+auto score_move(Evaluate const & evaluate, Move const & move, Screens const & other) {
+	return
+		(
+			CONDITIONAL(is_physical(move), evaluate.reflect() * other.reflect().turns_remaining(),
+			CONDITIONAL(is_special(move), evaluate.light_screen() * other.light_screen().turns_remaining(),
+			0_bi))
+		) +
+		CONDITIONAL(move.pp.is_empty(), evaluate.no_pp(), 0_bi)
+	;
+}
+using ScoreMove = decltype(score_move(std::declval<Evaluate>(), std::declval<Move>(), std::declval<Screens>()));
+
+using ScoreMoves = decltype(std::declval<ScoreMove>() * std::declval<RegularMoveSize>());
+auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const & weather) {
+	// TODO: alter the score of a move based on the weather
+	ScoreMoves score = 0_bi;
+	pokemon.move.for_each([&](Move const & move) {
+		score += score_move(evaluate, move, other);
+	});
+	return score;
+}
+
+
+auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokemon) {
+	bool const has_baton_pass = static_cast<bool>(pokemon.all_moves().index(Moves::Baton_Pass));
+	return
+		CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
+		CONDITIONAL(pokemon.imprisoned(), evaluate.imprison(), 0_bi) +
+		CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
+		CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
+		CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
+		CONDITIONAL(pokemon.nightmare(), evaluate.nightmare(), 0_bi) +
+		CONDITIONAL(pokemon.tormented(), evaluate.torment(), 0_bi) +
+		baton_passable_score(evaluate, pokemon) * CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
+	;
+}
+
 
 }	// namespace
 
@@ -91,43 +131,19 @@ int64_t Evaluate::score_team (Team const & team) const {
 int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weather const & weather) const {
 	int64_t score = 0;
 	for (auto const index : bounded_integer::range(team.all_pokemon().size())) {
+		if (get_hp(team.pokemon(index)) == 0_bi) {
+			continue;
+		}
 		bool const is_active = (index == team.pokemon().index());
 		score += score_pokemon(team.pokemon(index), team.entry_hazards, other, weather);
 		if (is_active) {
-			score += score_active_pokemon(team.pokemon());
+			score += score_active_pokemon(*this, team.pokemon());
 		}
 	}
 	return score;
 }
 
-int64_t Evaluate::score_active_pokemon(ActivePokemon const & pokemon) const {
-	if (get_hp(pokemon) == 0_bi) {
-		return 0;
-	}
-	int64_t score = 0;
-	if (pokemon.is_cursed())
-		score += curse();
-	if (pokemon.imprisoned())
-		score += imprison();
-	if (pokemon.leech_seed)
-		score += leech_seed();
-	if (pokemon.loaf)
-		score += loaf();
-	if (pokemon.fully_trapped)
-		score += trapped();
-	if (pokemon.nightmare())
-		score += nightmare();
-	if (pokemon.tormented())
-		score += torment();
-	bool const has_baton_pass = static_cast<bool>(pokemon.all_moves().index(Moves::Baton_Pass));
-	score += baton_passable_score(*this, pokemon) * (has_baton_pass ? 2 : 1);
-	return score;
-}
-
 int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	if (get_hp(pokemon) == 0_bi) {
-		return 0;
-	}
 	auto score = entry_hazards.stealth_rock * static_cast<int64_t>(stealth_rock() * stealth_rock_effectiveness(pokemon));
 	if (grounded(pokemon, weather)) {
 		score += entry_hazards.spikes * spikes() + entry_hazards.toxic_spikes * toxic_spikes();
@@ -136,24 +152,9 @@ int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & e
 	score += static_cast<int64_t>(hp()) * Rational(hp_ratio(pokemon));
 	score += hidden() * !pokemon.seen();
 	score += score_status(*this, pokemon);
-	score += score_move (pokemon, other, weather);
+	score += score_moves(*this, pokemon, other.screens, weather);
 	return score;
 }
-
-int64_t Evaluate::score_move (Pokemon const & pokemon, Team const & other, Weather const & weather) const {
-	// TODO: alter the score of a move based on the weather
-	int64_t score = 0;
-	pokemon.move.for_each([&](Move const & move) {
-		if (is_physical(move))
-			score += other.screens.reflect().turns_remaining() * reflect();
-		else if (is_special(move))
-			score += other.screens.light_screen().turns_remaining() * light_screen();
-		if (move.pp.is_empty())
-			score += no_pp();
-	});
-	return score;
-}
-
 
 int64_t Evaluate::win (Team const & team) {
 	if (team.all_pokemon().size() == 1_bi and get_hp(team.pokemon()) == 0_bi)
