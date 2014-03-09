@@ -32,6 +32,12 @@ class Pokemon;
 template<typename Numerator, typename Denominator>
 class bounded_rational;
 
+template<typename T>
+struct is_bounded_rational : std::false_type {};
+
+template<typename Numerator, typename Denominator>
+struct is_bounded_rational<bounded_rational<Numerator, Denominator>> : std::true_type {};
+
 template<typename Numerator, typename Denominator>
 constexpr auto make_bounded_rational(Numerator const & numerator, Denominator const & denominator) {
 	// It has the null policy so that it can convert to any other policy with
@@ -52,7 +58,9 @@ private:
 	Numerator m_numerator;
 	Denominator m_denominator;
 public:
-	constexpr bounded_rational(Numerator const numerator, Denominator const denominator):
+	using numerator_type = Numerator;
+	using denominator_type = Denominator;
+	constexpr bounded_rational(numerator_type const numerator, denominator_type const denominator):
 		m_numerator(numerator),
 		m_denominator(denominator) {
 	}
@@ -84,19 +92,28 @@ public:
 		return m_numerator * other.m_denominator < other.m_numerator * m_denominator;
 	}
 
-	friend std::string to_string(bounded_rational<Numerator, Denominator> const rational) {
+	friend std::string to_string(bounded_rational<numerator_type, denominator_type> const rational) {
 		using bounded_integer::to_string;
 		return to_string(rational.m_numerator) + " / " + to_string(rational.m_denominator);
 	}
 	
+	// Convert allows narrowing conversions, conversion operator does not
+	template<typename T>
+	constexpr T convert() const {
+		static_assert(is_bounded_rational<T>::value, "Only usable with a bounded_rational type.");
+		return T(
+			static_cast<typename T::numerator_type>(m_numerator),
+			static_cast<typename T::denominator_type>(m_denominator)
+		);
+	}
 	template<typename N, typename D, enable_if_t<
-		std::numeric_limits<N>::min() <= std::numeric_limits<Numerator>::min() and
-		std::numeric_limits<N>::max() >= std::numeric_limits<Numerator>::max() and
-		std::numeric_limits<D>::min() <= std::numeric_limits<Denominator>::min() and
-		std::numeric_limits<D>::max() >= std::numeric_limits<Denominator>::max()
+		std::numeric_limits<N>::min() <= std::numeric_limits<numerator_type>::min() and
+		std::numeric_limits<N>::max() >= std::numeric_limits<numerator_type>::max() and
+		std::numeric_limits<D>::min() <= std::numeric_limits<denominator_type>::min() and
+		std::numeric_limits<D>::max() >= std::numeric_limits<denominator_type>::max()
 	> = clang_dummy>
 	constexpr operator bounded_rational<N, D>() const {
-		return bounded_rational<N, D>(static_cast<N>(m_numerator), static_cast<D>(m_denominator));
+		return convert<bounded_rational<N, D>>();
 	}
 	
 	explicit constexpr operator double() const {

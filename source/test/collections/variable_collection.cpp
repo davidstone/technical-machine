@@ -65,7 +65,7 @@ void add_pokemon(Team & team, Species const species) {
 void test_combinations(Team & team) {
 	for (auto const foe_size : bounded_integer::range(2_bi, max_pokemon_per_team + 1_bi)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
-		auto collection = all_probabilities(team.pokemon(), static_cast<unsigned>(foe_size));
+		auto collection = all_probabilities(team.pokemon(), foe_size);
 		if (collection.size() != foe_size - 1_bi) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(foe_size - 1_bi) + " but got " + to_string(collection.size()));
 		}

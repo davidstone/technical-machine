@@ -318,16 +318,16 @@ int64_t random_move_effects_branch(Team & first, Team & last, Weather const & we
 	};
 	int64_t score3 = 0;
 
-	for (auto const & first_variable : all_probabilities(first.pokemon(), static_cast<unsigned>(last.size()))) {
+	for (auto const & first_variable : all_probabilities(first.pokemon(), last.size())) {
 		int64_t score2 = 0;
-		for (auto const & last_variable : all_probabilities(last.pokemon(), static_cast<unsigned>(first.size()))) {
+		for (auto const & last_variable : all_probabilities(last.pokemon(), first.size())) {
 			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_) {
 				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_);
 			};
 			auto const score1 = generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, use_move_copy_branch);
-			score2 += score1 * last_variable.probability();
+			score2 += score1 * Rational(last_variable.probability());
 		}
-		score3 += score2 * first_variable.probability();
+		score3 += score2 * Rational(first_variable.probability());
 	}
 	return score3;
 }

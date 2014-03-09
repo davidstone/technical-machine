@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,13 +21,17 @@
 
 #include <cstdint>
 #include <vector>
+
+#include <bounded_integer/bounded_integer.hpp>
+
 #include "rational.hpp"
 #include "move/moves_forward.hpp"
+#include "pokemon/collection.hpp"
+#include "pokemon/level.hpp"
 #include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
-class Level;
 class Team;
 
 // Used for moves with a variable power / length / other integer range. Moves of
@@ -35,25 +39,32 @@ class Team;
 // It is also used to determine whether random effects activate.
 class Variable {
 public:
+	using value_type = bounded_integer::native_integer<0, 150>;
+	using Probability = bounded_rational<bounded_integer::native_integer<0, 79>, bounded_integer::native_integer<1, 101>>;
 	Variable();
-	Variable(unsigned set_value, Rational set_probability);
-	void set_phaze_index(Team const & team, Species species);
-	void set_flinch(bool set = true);
-	unsigned value() const;
-	Rational probability() const;
-	bool effect_activates() const;
-	uint8_t phaze_index(uint8_t foe_index) const;
-	bool present_heals()  const;
-	unsigned psywave_damage(Level level) const;
-	void set_magnitude(unsigned magnitude);
-	void reset_phaze_probabilities(uint8_t size);
+	Variable(value_type value, Probability probability);
+	// Team is the Team that was phazed, not the team that used the phazing move
+	auto set_phaze_index(Team const & team, Species species) -> void;
+	auto set_flinch(bool set = true) -> void;
+	auto value() const -> value_type;
+	auto probability() const -> Probability;
+	auto effect_activates() const -> bool;
+	auto phaze_index(PokemonCollection::index_type foe_index) const -> PokemonCollection::index_type;
+	auto present_heals() const -> bool;
+
+	using PsywaveDamage = bounded_integer::native_integer<1, 150>;
+	auto psywave_damage(Level const level) const -> PsywaveDamage {
+		return bounded_integer::max(1_bi, level() * static_cast<bounded_integer::native_integer<50, 150>>(value()) / 100_bi);
+	}
+	using Magnitude = bounded_integer::checked_integer<4, 10>;
+	auto set_magnitude(Magnitude magnitude) -> void;
 private:
-	unsigned m_value;
-	Rational m_probability;
+	value_type m_value;
+	Probability m_probability;
 };
 
-typedef std::vector<Variable> Probabilities;
-Probabilities all_probabilities(ActivePokemon const & pokemon, unsigned foe_size);
+using Probabilities = std::vector<Variable>;
+auto all_probabilities(ActivePokemon const & pokemon, TeamSize foe_size) -> Probabilities;
 
 }	// namespace technicalmachine
 #endif	// VARIABLE_HPP_

@@ -171,12 +171,12 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			return static_cast<unsigned>(result);
 		}
 		case Moves::Magnitude:
-			return variable.value();
+			return static_cast<unsigned>(variable.value());
 		case Moves::Natural_Gift:
 			return static_cast<unsigned>(get_item(attacker).berry_power());
 		case Moves::Present:
 			assert (!variable.present_heals());
-			return variable.value();
+			return static_cast<unsigned>(variable.value());
 		case Moves::Punishment: {
 			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(defender.stage());
 			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 200_bi));

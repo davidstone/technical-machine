@@ -76,7 +76,7 @@ void use_swallow(ActivePokemon & user);
 
 template<Status::Statuses status>
 void fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & weather, Variable const & variable) {
-	switch (variable.value()) {
+	switch (variable.value().value()) {
 		case 0:
 			break;
 		case 1:
@@ -313,7 +313,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
-			target.partially_trap(variable.value());
+			target.partially_trap(static_cast<unsigned>(variable.value()));
 			break;
 		case Moves::Blast_Burn:
 		case Moves::Frenzy_Plant:
@@ -1042,8 +1042,7 @@ void equalize(HP & hp1, HP & hp2) {
 
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
 	if (target.pokemon().can_be_phazed()) {
-		auto const index = variable.phaze_index(static_cast<uint8_t>(target.pokemon().index()));
-		target.all_pokemon().set_replacement(static_cast<PokemonCollection::index_type>(index));
+		target.all_pokemon().set_replacement(variable.phaze_index(target.pokemon().index()));
 		switchpokemon(target, user, weather);
 		target.move();
 	}
@@ -1070,7 +1069,7 @@ void swap_items(Pokemon & user, Pokemon & target) {
 }
 
 void tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather, Variable const & variable) {
-	switch (variable.value()) {
+	switch (variable.value().value()) {
 		case 1:
 			Status::apply<Status::BURN>(user, target, weather);
 			break;
