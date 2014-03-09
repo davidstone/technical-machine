@@ -1,5 +1,5 @@
 // Entry hazards
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,96 +29,88 @@
 
 namespace technicalmachine {
 namespace {
+using namespace bounded_integer::literal;
 
-constexpr unsigned max_spikes_layers = 3;
-constexpr unsigned max_toxic_spikes_layers = 2;
-constexpr unsigned max_stealth_rock_layers = 1;
-constexpr EntryHazards::hash_type max_spikes = max_spikes_layers + 1;
-constexpr EntryHazards::hash_type max_toxic_spikes = max_toxic_spikes_layers + 1;
-constexpr EntryHazards::hash_type max_stealth_rock = max_stealth_rock_layers + 1;
+auto removes_toxic_spikes(ActivePokemon const & switcher) {
+	return is_type(switcher, Type::Poison);
+}
 
-bool removes_toxic_spikes(ActivePokemon const & switcher);
+auto apply_toxic_spikes(EntryHazards const & hazards, ActivePokemon & switcher, Weather const & weather) {
+	if (hazards.toxic_spikes() == 1_bi) {
+		Status::apply<Status::POISON>(switcher, weather);
+	}
+	else {
+		Status::apply<Status::POISON_TOXIC>(switcher, weather);
+	}
+}
 
-}	// unnamed namespace
+}	// namespace
 
 EntryHazards::EntryHazards() :
-	spikes(0),
-	toxic_spikes(0),
-	stealth_rock(false)
+	m_spikes(0_bi),
+	m_toxic_spikes(0_bi),
+	m_stealth_rock(false)
 	{
 }
 
-void EntryHazards::clear() {
-	spikes = 0;
-	toxic_spikes = 0;
-	stealth_rock = 0;
+auto EntryHazards::add_spikes() -> void {
+	++m_spikes;
 }
 
-void EntryHazards::add_spikes() {
-	if (spikes < max_spikes_layers)
-		++spikes;
+auto EntryHazards::add_toxic_spikes() -> void {
+	++m_toxic_spikes;
 }
 
-void EntryHazards::add_toxic_spikes() {
-	if (toxic_spikes < max_toxic_spikes_layers)
-		++toxic_spikes;
+auto EntryHazards::clear_toxic_spikes() -> void {
+	m_toxic_spikes = 0_bi;
 }
 
-void EntryHazards::add_stealth_rock() {
-	if (!stealth_rock)
-		stealth_rock = true;
+auto EntryHazards::add_stealth_rock() -> void {
+	m_stealth_rock = true;
 }
 
-EntryHazards::hash_type EntryHazards::hash() const {
-	return spikes + max_spikes *
-			(toxic_spikes + max_toxic_spikes *
-			stealth_rock);
+auto EntryHazards::hash() const -> hash_type {
+	return static_cast<hash_type>(
+		m_spikes + (std::numeric_limits<decltype(m_spikes)>::max() + 1_bi) *
+		(m_toxic_spikes + (std::numeric_limits<decltype(m_toxic_spikes)>::max() + 1_bi) *
+		m_stealth_rock
+	));
 }
 
-EntryHazards::hash_type EntryHazards::max_hash() {
-	return max_spikes * max_toxic_spikes * max_stealth_rock;
+auto EntryHazards::max_hash() -> hash_type {
+	return static_cast<hash_type>((std::numeric_limits<decltype(m_spikes)>::max() + 1_bi) * (std::numeric_limits<decltype(m_toxic_spikes)>::max() + 1_bi) * 2_bi);
 }
 
-void EntryHazards::apply(Team & switcher, Weather const & weather) {
-	EntryHazards & entry_hazards = switcher.entry_hazards;
-	if (get_ability(switcher.pokemon()).blocks_secondary_damage())
+auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const & weather) -> void {
+	if (get_ability(switcher).blocks_secondary_damage())
 		return;
 
-	if (grounded(switcher.pokemon(), weather)) {
-		if (entry_hazards.toxic_spikes) {
-			if (removes_toxic_spikes(switcher.pokemon()))
-				entry_hazards.toxic_spikes = 0;
-			else
-				apply_toxic_spikes(switcher, weather);
+	if (grounded(switcher, weather)) {
+		if (hazards.toxic_spikes() != 0_bi) {
+			if (removes_toxic_spikes(switcher)) {
+				hazards.clear_toxic_spikes();
+			}
+			else {
+				apply_toxic_spikes(hazards, switcher, weather);
+			}
 		}
-		if (entry_hazards.spikes)
-			drain(switcher.pokemon(), Rational(entry_hazards.spikes + 1u, 16));
+		if (hazards.spikes() != 0_bi) {
+			drain(switcher, Rational(make_bounded_rational(hazards.spikes() + 1_bi, 16_bi)));
+		}
 	}
-	if (entry_hazards.stealth_rock) {
-		drain(switcher.pokemon(), Rational(make_bounded_rational(1_bi, 8_bi) * stealth_rock_effectiveness(switcher.pokemon())));
+	if (hazards.stealth_rock()) {
+		drain(switcher, Rational(make_bounded_rational(1_bi, 8_bi) * Effectiveness(Type::Rock, switcher)));
 	}
 }
 
-bool operator== (EntryHazards const lhs, EntryHazards const rhs) {
-	return lhs.spikes == rhs.spikes and
-			lhs.toxic_spikes == rhs.toxic_spikes and
-			lhs.stealth_rock == rhs.stealth_rock;
+auto operator== (EntryHazards const lhs, EntryHazards const rhs) -> bool {
+	return
+		lhs.spikes() == rhs.spikes() and
+		lhs.toxic_spikes() == rhs.toxic_spikes() and
+		lhs.stealth_rock() == rhs.stealth_rock();
 }
-bool operator!= (EntryHazards const lhs, EntryHazards const rhs) {
+auto operator!= (EntryHazards const lhs, EntryHazards const rhs) -> bool {
 	return !(lhs == rhs);
 }
 
-void EntryHazards::apply_toxic_spikes(Team & switcher, Weather const & weather) {
-	if (switcher.entry_hazards.toxic_spikes == 1)
-		Status::apply<Status::POISON>(switcher.pokemon(), weather);
-	else
-		Status::apply<Status::POISON_TOXIC>(switcher.pokemon(), weather);
-}
-
-namespace {
-
-bool removes_toxic_spikes(ActivePokemon const & switcher) {
-	return is_type(switcher, Type::Poison);
-}
-}	// unnamed namespace
 }	// namespace technicalmachine

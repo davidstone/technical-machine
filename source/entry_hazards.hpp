@@ -1,5 +1,5 @@
 // Entry hazards
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,9 +19,11 @@
 #ifndef ENTRY_HAZARDS_HPP_
 #define ENTRY_HAZARDS_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
 #include <cstdint>
 
 namespace technicalmachine {
+class ActivePokemon;
 class Team;
 class Weather;
 
@@ -30,24 +32,32 @@ class Weather;
 class EntryHazards {
 public:
 	EntryHazards();
-	void clear();
-	void add_spikes();
-	void add_toxic_spikes();
-	void add_stealth_rock();
+	auto spikes() const {
+		return bounded_integer::make_bounded<bounded_integer::null_policy>(m_spikes);
+	}
+	auto stealth_rock() const {
+		return m_stealth_rock;
+	}
+	auto toxic_spikes() const {
+		return bounded_integer::make_bounded<bounded_integer::null_policy>(m_toxic_spikes);
+	}
+	auto add_spikes() -> void;
+	auto add_toxic_spikes() -> void;
+	auto clear_toxic_spikes() -> void;
+	auto add_stealth_rock() -> void;
 	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	static void apply(Team & switcher, Weather const & weather);
-	friend bool operator== (EntryHazards lhs, EntryHazards rhs);
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
-	static void apply_toxic_spikes(Team & switcher, Weather const & weather);
-	uint8_t spikes;
-	uint8_t toxic_spikes;
-	bool stealth_rock;
-	friend class Evaluate;
+	bounded_integer::clamped_integer<0, 3> m_spikes;
+	bounded_integer::clamped_integer<0, 2> m_toxic_spikes;
+	bool m_stealth_rock;
 };
 
-bool operator!= (EntryHazards lhs, EntryHazards rhs);
+auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
+auto operator!=(EntryHazards lhs, EntryHazards rhs) -> bool;
+
+auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const & weather) -> void;
 
 }	// namespace technicalmachine
 #endif	// ENTRY_HAZARDS_HPP_

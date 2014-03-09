@@ -55,11 +55,9 @@ auto operator*=(Integer & number, Effectiveness const & effectiveness) {
 	return number = number * effectiveness;
 }
 template<typename Integer>
-auto operator*(Effectiveness const & effectiveness, Integer const number) -> Integer{
+auto operator*(Effectiveness const & effectiveness, Integer const number) {
 	return number * effectiveness;
 }
-
-auto stealth_rock_effectiveness(Pokemon const & pokemon) -> Effectiveness;
 
 }	// namespace technicalmachine
 #endif	// TYPE__EFFECTIVENESS_HPP_

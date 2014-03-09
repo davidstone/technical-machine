@@ -75,7 +75,7 @@ Pokemon::operator Species() const {
 
 
 void switch_in(Pokemon & pokemon) {
-	pokemon.seen.make_visible();
+	pokemon.m_has_been_seen = true;
 }
 
 void Pokemon::remove_switch() {
@@ -151,10 +151,6 @@ TypeCollection const & get_type(Pokemon const & pokemon) {
 	return pokemon.current_type;
 }
 
-void Pokemon::change_type(Type::Types const new_type) {
-	current_type.change_type(new_type);
-}
-
 Level get_level(Pokemon const & pokemon) {
 	return pokemon.m_level;
 }
@@ -163,18 +159,28 @@ Happiness get_happiness(Pokemon const & pokemon) {
 	return pokemon.m_happiness;
 }
 
+void Pokemon::change_type(Type::Types const new_type) {
+	current_type.change_type(new_type);
+}
+
+auto Pokemon::has_been_seen() const -> bool {
+	return m_has_been_seen;
+}
+
 Pokemon::hash_type Pokemon::hash() const {
 	auto const & hp = get_hp(*this);
-	return static_cast<hash_type>(m_species) + number_of_species *
-			(m_item.name + Item::END *
-			(m_status.hash() + Status::max_hash() *
-			(static_cast<hash_type>(hp.current() - 1_bi) + static_cast<hash_type>(hp.max()) *	// - 1 because you can't have 0 HP
-			(seen.hash() + seen.max_hash() *
-			move.hash()))));
+	return
+		static_cast<hash_type>(m_species) + number_of_species *
+		(m_item.name + Item::END *
+		(m_status.hash() + Status::max_hash() *
+		(static_cast<hash_type>(hp.current() - 1_bi) + static_cast<hash_type>(hp.max()) *	// - 1 because you can't have 0 HP
+		(m_has_been_seen + 2 *
+		move.hash()
+	))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_hp(*this).max()) * seen.max_hash() * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_hp(*this).max()) * 2 * move.max_hash();
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -187,7 +193,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 			lhs.m_status == rhs.m_status and
 			get_hp(lhs).current() == get_hp(rhs).current() and
 			lhs.m_item == rhs.m_item and
-			lhs.seen == rhs.seen;
+			lhs.has_been_seen() == rhs.has_been_seen();
 }
 
 bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {

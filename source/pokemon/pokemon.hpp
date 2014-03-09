@@ -24,7 +24,6 @@
 
 #include "happiness.hpp"
 #include "level.hpp"
-#include "seen.hpp"
 #include "species_forward.hpp"
 
 #include "../ability.hpp"
@@ -82,6 +81,7 @@ public:
 	
 	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
 	void change_type(Type::Types new_type);
+	auto has_been_seen() const -> bool;
 	typedef uint64_t hash_type;
 	hash_type hash () const;
 	hash_type max_hash() const;
@@ -105,10 +105,10 @@ private:
 	Status m_status;
 	Nature m_nature;
 
-	Seen seen;
 	Level m_level;
 	Happiness m_happiness;
-	friend class Evaluate;
+
+	bool m_has_been_seen = false;
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 

@@ -158,7 +158,7 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 	// The following begins by setting beta to the largest possible value. This
 	// is the variable that the opposing player is trying to minimize. As long
 	// as the opposing player has any move that won't guarantee their loss,
-	// that move will score lower (more negative) than Evaluate::victory, and thus
+	// that move will score lower (more negative) than victory, and thus
 	// the opponent will set that as their best response to the particular move
 	// that the AI uses.
 
@@ -166,7 +166,7 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 	// finally set to whatever the score will be if the AI uses that move.
 	// alpha is initially set to the lowest possible value, so as long as the
 	// AI has any move that won't guarantee its loss, that move will score
-	// higher (more positive) than -Evaluate::victory, and thus the AI will set
+	// higher (more positive) than -victory, and thus the AI will set
 	// that as its best response. It then replaces that move if it finds a move
 	// for which the opponent's best response is more positive than the first
 	// move found. In other words, it finds the move for the AI for which the
@@ -182,29 +182,29 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 	// number of trials could be close enough to the average to potentially
 	// speed up the program enough to justify the loss in accuracy.
 	
-	// I subtract 1 from -Evaluate::victory to make sure that even a guaranteed
+	// I subtract 1 from -victory to make sure that even a guaranteed
 	// loss is seen as better than not returning a result. This way, I can do
 	// some things when my intermediate scores are strictly greater than alpha,
 	// rather than greater than or equal to, which can save a few calculations.
-	// This has the side-effect of limiting Evaluate::victory to be at least one
+	// This has the side-effect of limiting victory to be at least one
 	// less than the greatest value representable by an int64_t, which in
 	// practice shouldn't matter.
 	
-	// For a similar reason, I later set beta to Evaluate::victory + 1.
+	// For a similar reason, I later set beta to victory + 1.
 	
 	// This change also has the advantage of making sure a move is always put
 	// into best_move without any additional logic, such as pre-filling it with
 	// some result.
 	
-	int64_t alpha = -Evaluate::victory - 1;
+	auto alpha = static_cast<int64_t>(-victory - 1_bi);
 	for (RankedMove const & ai_move : ai_index) {
 		ai.pokemon().all_moves().set_index(ai_move.name());
 		print_action (ai, first_turn);
-		int64_t beta = Evaluate::victory + 1;
+		auto beta = static_cast<int64_t>(victory + 1_bi);
 		for (RankedMove const & foe_move : foe_index) {
 			foe.pokemon().all_moves().set_index(foe_move.name());
 			print_action (foe, first_turn);
-			int64_t const max_score = order_branch(ai, foe, weather, depth, evaluate);
+			auto const max_score = order_branch(ai, foe, weather, depth, evaluate);
 			update_foe_best_move(foe, foe_scores, beta, max_score, first_turn);
 			// Alpha-Beta pruning
 			if (beta <= alpha)
@@ -213,7 +213,7 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 		ai_scores.at(ai.pokemon(), ai.pokemon().move()) = beta;
 		update_best_move(alpha, beta, first_turn, ai.pokemon().move(), best_move);
 		// The AI cannot have a better move than a guaranteed win
-		if (alpha == Evaluate::victory)
+		if (alpha == victory)
 			break;
 	}
 	return alpha;
@@ -334,15 +334,15 @@ int64_t random_move_effects_branch(Team & first, Team & last, Weather const & we
 
 
 int64_t use_move_branch(Team & first, Team & last, Variable const & first_variable, Variable const & last_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
-	int64_t value = use_move_and_follow_up(first, last, first_variable, last_variable, weather, depth, evaluate);
-	if (value != Evaluate::victory + 1)	// illegal value
+	auto value = use_move_and_follow_up(first, last, first_variable, last_variable, weather, depth, evaluate);
+	if (value != victory + 1)	// illegal value
 		return value;
 	// If first uses a phazing move before last gets a chance to move, the
 	// newly brought out Pokemon would try to move without checking to see if
 	// it has already moved. This check is also necessary for my Baton Pass and
 	// U-turn implementation to function.
 	value = use_move_and_follow_up (last, first, last_variable, first_variable, weather, depth, evaluate);
-	if (value != Evaluate::victory + 1)
+	if (value != victory + 1)
 		return value;
 
 	// Find the expected return on all possible outcomes at the end of the turn
@@ -378,16 +378,17 @@ int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_
 	if (!user.pokemon().moved()) {
 		auto const damage = call_move(user, other, weather, user_variable);
 		other.pokemon().direct_damage(damage);
-		int64_t const user_win = Evaluate::win (user);
-		int64_t const other_win = Evaluate::win (other);
-		if (user_win or other_win)
-			return user_win + other_win;
+		auto const user_win = Evaluate::win(user);
+		auto const other_win = Evaluate::win(other);
+		if (user_win != 0_bi or other_win != 0_bi) {
+			return static_cast<int64_t>(user_win + other_win);
+		}
 		if (has_follow_up_decision(user.pokemon().move()) and user.all_pokemon().size() > 1) {
 			Moves phony = Moves::END;
 			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
 		}
 	}
-	return Evaluate::victory + 1;		// return an illegal value
+	return static_cast<int64_t>(victory + 1_bi);		// return an illegal value
 }
 
 int64_t end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * last, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
@@ -400,15 +401,17 @@ int64_t end_of_turn_order_branch(Team & team, Team & other, Team * first, Team *
 int64_t end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate) {
 	endofturn (first, last, weather);
 
-	int64_t const last_violated = Evaluate::sleep_clause (first);
-	int64_t const first_violated = Evaluate::sleep_clause (last);
-	if (last_violated or first_violated)
-		return last_violated + first_violated;
+	auto const last_violated = Evaluate::sleep_clause(first);
+	auto const first_violated = Evaluate::sleep_clause(last);
+	if (last_violated != 0_bi or first_violated != 0_bi) {
+		return static_cast<int64_t>(last_violated + first_violated);
+	}
 
-	int64_t const first_win = Evaluate::win (first);
-	int64_t const last_win = Evaluate::win (last);
-	if (first_win or last_win)
-		return first_win + last_win;
+	auto const first_win = Evaluate::win(first);
+	auto const last_win = Evaluate::win(last);
+	if (first_win != 0_bi or last_win != 0_bi) {
+		return static_cast<int64_t>(first_win + last_win);
+	}
 
 	Team* ai;
 	Team* foe;
@@ -424,12 +427,12 @@ int64_t replace (Team & ai, Team & foe, Weather const & weather, unsigned depth,
 	faster_pokemon (ai, foe, weather, first, last);
 	bool const speed_tie = (first == nullptr);
 	unsigned const tabs = first_turn ? 0 : 2;
-	int64_t alpha = -Evaluate::victory - 1;
+	auto alpha = static_cast<int64_t>(-victory - 1_bi);
 	auto const ai_break_out = [& ai]() { return get_hp(ai.pokemon()) != 0_bi; };
 	ai.all_pokemon().for_each_replacement(ai_break_out, [&]() {
 		if (verbose or first_turn)
 			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai.all_pokemon().at_replacement())) + "\n";
-		int64_t beta = Evaluate::victory + 1;
+		auto beta = static_cast<int64_t>(victory + 1_bi);
 		auto const foe_break_out = [& foe, & alpha, & beta]() {
 			return beta <= alpha or get_hp(foe.pokemon()) != 0_bi;
 		};
@@ -448,14 +451,18 @@ int64_t fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate
 	// current Pokemon needs to be replaced because it fainted.
 	if (get_hp(first.pokemon()) == 0_bi) {
 		switchpokemon (first, last, weather);
-		if (Evaluate::win (first) != 0 or Evaluate::win (last) != 0) {
-			return Evaluate::win (first) + Evaluate::win (last);
+		auto const first_won = Evaluate::win(first);
+		auto const last_won = Evaluate::win(last);
+		if (first_won != 0_bi or last_won != 0_bi) {
+			return static_cast<int64_t>(first_won + last_won);
 		}
 	}
 	if (get_hp(last.pokemon()) == 0_bi) {
 		switchpokemon (last, first, weather);
-		if (Evaluate::win (first) != 0 or Evaluate::win (last) != 0) {
-			return Evaluate::win (first) + Evaluate::win (last);
+		auto const first_won = Evaluate::win(first);
+		auto const last_won = Evaluate::win(last);
+		if (first_won != 0_bi or last_won != 0_bi) {
+			return static_cast<int64_t>(first_won + last_won);
 		}
 	}
 
@@ -463,7 +470,7 @@ int64_t fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate
 	Team* foe;
 	deorder (first, last, ai, foe);
 	return (depth == 0) ?
-		evaluate(*ai, *foe, weather) :
+		static_cast<int64_t>(evaluate(*ai, *foe, weather)) :
 		transposition (*ai, *foe, weather, depth, evaluate);
 }
 
@@ -473,7 +480,7 @@ int64_t initial_move_then_switch_branch(Team & switcher, Team const & other, Wea
 
 int64_t move_then_switch_branch(Team & switcher, Team const & other, Variable const & switcher_variable, Variable const & other_variable, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
 	unsigned tabs = first_turn ? 0 : 2;
-	int64_t alpha = -Evaluate::victory - 1;
+	auto alpha = static_cast<int64_t>(-victory - 1_bi);
 	if (!switcher.is_me()) {
 		alpha = -alpha;
 		++tabs;
@@ -481,7 +488,7 @@ int64_t move_then_switch_branch(Team & switcher, Team const & other, Variable co
 	switcher.all_pokemon().for_each_replacement([&]() {
 		if (first_turn)
 			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(static_cast<Species>(switcher.all_pokemon().at_replacement())) + "\n";
-		int64_t const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
+		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
 		if (switcher.is_me()) {
 			update_best_move (alpha, value, first_turn, switcher.all_pokemon().replacement_to_switch(), best_switch);
 		}

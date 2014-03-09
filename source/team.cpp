@@ -116,7 +116,7 @@ void Team::reset_between_turns() {
 
 void Team::clear_field() {
 	pokemon().clear_field();
-	entry_hazards.clear();
+	entry_hazards = EntryHazards{};
 }
 
 void Team::move(bool const value) {

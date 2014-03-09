@@ -110,66 +110,81 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokem
 		baton_passable_score(evaluate, pokemon) * CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
 	;
 }
+using ScoreActivePokemon = decltype(score_active_pokemon(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
 
 
-}	// namespace
-
-int64_t Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const {
-	int64_t score = score_team (ai) - score_team (foe);
-	return score + score_all_pokemon (ai, foe, weather) - score_all_pokemon (foe, ai, weather);
+auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather) {
+	return
+		evaluate.members() +
+		hp_ratio(pokemon) * evaluate.hp() +
+		CONDITIONAL(!pokemon.has_been_seen(), evaluate.hidden(), 0_bi) +
+		CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(Type::Rock, pokemon) * evaluate.stealth_rock(), 0_bi) +
+		CONDITIONAL(grounded(pokemon, weather), entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
+		score_status(evaluate, pokemon) +
+		score_moves(evaluate, pokemon, other.screens, weather)
+	;
 }
+using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declval<Pokemon>(), std::declval<EntryHazards>(), std::declval<Team>(), std::declval<Weather>()));
 
-int64_t Evaluate::score_team (Team const & team) const {
-	auto score = static_cast<int64_t>(lucky_chant() * team.screens.lucky_chant().turns_remaining());
-	score += mist() * team.screens.mist().turns_remaining();
-	score += safeguard() * team.screens.safeguard().turns_remaining();
-	score += tailwind() * team.screens.tailwind().turns_remaining();
-	score += wish() * bounded_integer::make_bounded(team.wish.is_active());
-	return score;
-}
-
-int64_t Evaluate::score_all_pokemon (Team const & team, Team const & other, Weather const & weather) const {
-	int64_t score = 0;
+using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
+auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const & weather) {
+	ScoreAllPokemon score = 0_bi;
 	for (auto const index : bounded_integer::range(team.all_pokemon().size())) {
 		if (get_hp(team.pokemon(index)) == 0_bi) {
 			continue;
 		}
 		bool const is_active = (index == team.pokemon().index());
-		score += score_pokemon(team.pokemon(index), team.entry_hazards, other, weather);
+		score += score_pokemon(evaluate, team.pokemon(index), team.entry_hazards, other, weather);
 		if (is_active) {
-			score += score_active_pokemon(*this, team.pokemon());
+			score += score_active_pokemon(evaluate, team.pokemon());
 		}
 	}
 	return score;
 }
 
-int64_t Evaluate::score_pokemon (Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather, int const toxic_counter) const {
-	auto score = entry_hazards.stealth_rock * static_cast<int64_t>(stealth_rock() * stealth_rock_effectiveness(pokemon));
-	if (grounded(pokemon, weather)) {
-		score += entry_hazards.spikes * spikes() + entry_hazards.toxic_spikes * toxic_spikes();
+auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wish const & wish) {
+	return
+		screens.lucky_chant().turns_remaining() * evaluate.lucky_chant() +
+		screens.mist().turns_remaining() * evaluate.mist() +
+		screens.safeguard().turns_remaining() * evaluate.safeguard() +
+		screens.tailwind().turns_remaining() * evaluate.tailwind() +
+		bounded_integer::make_bounded(wish.is_active()) * evaluate.wish()
+	;
+}
+
+auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, Weather const & weather) {
+	return bounded_integer::make_bounded<bounded_integer::null_policy>(
+		score_field_effects(evaluate, ai.screens, ai.wish) - score_field_effects(evaluate, foe.screens, foe.wish) +
+		score_all_pokemon(evaluate, ai, foe, weather) - score_all_pokemon(evaluate, foe, ai, weather)
+	);
+}
+constexpr bounded_integer::native_integer<-1, 1> extra = 0_bi;
+using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
+
+static_assert(std::is_same<Evaluate::type, decltype(std::declval<ScoreTeam>() + extra)>::value, "Type mismatch in Evaluate::operator()");
+
+}	// namespace
+
+auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type {
+	return score_team(*this, ai, foe, weather);
+}
+
+auto Evaluate::win(Team const & team) -> type {
+	if (team.all_pokemon().size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
+		return CONDITIONAL(team.is_me(), -victory, victory);
 	}
-	score += members();
-	score += static_cast<int64_t>(hp()) * Rational(hp_ratio(pokemon));
-	score += hidden() * !pokemon.seen();
-	score += score_status(*this, pokemon);
-	score += score_moves(*this, pokemon, other.screens, weather);
-	return score;
+	return 0_bi;
 }
 
-int64_t Evaluate::win (Team const & team) {
-	if (team.all_pokemon().size() == 1_bi and get_hp(team.pokemon()) == 0_bi)
-		return team.is_me() ? -victory : victory;
-	return 0;
-}
-
-int64_t Evaluate::sleep_clause (Team const & team) {
+auto Evaluate::sleep_clause (Team const & team) -> type {
 	static constexpr auto sleepers = [](Pokemon const & pokemon) {
 		return get_status(pokemon).is_sleeping_due_to_other();
 	};
 	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
-	if (sleeper_count > 1_bi)
-		return team.is_me() ? victory : -victory;
-	return 0;
+	if (sleeper_count > 1_bi) {
+		return CONDITIONAL(team.is_me(), victory, -victory);
+	}
+	return 0_bi;
 }
 
 Evaluate::Evaluate() {

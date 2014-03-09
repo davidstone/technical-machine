@@ -83,10 +83,6 @@ Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defe
 	Effectiveness(attacking, defending, Type::Typeless) {
 }
 
-auto stealth_rock_effectiveness(Pokemon const & pokemon) -> Effectiveness {
-	return Effectiveness(Type::Rock, pokemon);
-}
-
 bool Effectiveness::is_super_effective() const {
 	return check_effectiveness(m_effectiveness, { Product(se), Product(se * se) });
 }
