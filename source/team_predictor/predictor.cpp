@@ -165,7 +165,7 @@ void generate_random_team(Data & data) {
 	random_team(data.team(), data.random_engine, max_random(data));
 }
 
-void function (Fl_Widget * w, void * d) {
+void function (Fl_Widget *, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	bool using_lead = false;
 	for (PokemonInputs * inputs : data.input) {

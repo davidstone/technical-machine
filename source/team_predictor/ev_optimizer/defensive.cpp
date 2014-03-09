@@ -40,7 +40,7 @@ using namespace bounded_integer::literal;
 typedef std::vector<SingleClassificationEVs> Single;
 typedef std::vector<DataPoint> Estimates;
 typedef std::map<Nature::Natures, Estimates> AllPossible;
-AllPossible combine_results(Single const & physical, Single const & special, EV::total_type max_evs, Pokemon const & pokemon);
+AllPossible combine_results(Single const & physical, Single const & special, EV::total_type max_evs);
 
 DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);
 std::set<Nature::Natures> used_natures(DefensiveEVs::BestPerNature const & container);
@@ -64,7 +64,7 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 	Single const physical = equal_defensiveness<true>(pokemon);
 	Single const special = equal_defensiveness<false>(pokemon);
 	auto const max_evs = defensive_evs_available(pokemon);
-	container = best_possible_per_nature(combine_results(physical, special, max_evs, pokemon), pokemon);
+	container = best_possible_per_nature(combine_results(physical, special, max_evs), pokemon);
 	for (auto const & value : divide_natures(container)) {
 		remove_inefficient_natures(value);
 	}
@@ -139,7 +139,7 @@ bool penalizes_same(Nature const & nature, Nature const & reference_nature) {
 			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
 }
 
-AllPossible combine_results(Single const & physical, Single const & special, EV::total_type const max_evs, Pokemon const & pokemon) {
+AllPossible combine_results(Single const & physical, Single const & special, EV::total_type const max_evs) {
 	AllPossible all;
 	for (auto const & p : physical) {
 		for (auto const & s : special) {

@@ -81,16 +81,54 @@
 # loop).  It is also warning for the constructor of a const array of const
 # std::string (where there is no loop in user code).
 #
-# -Wzero-as-null-pointer-constant triggers for a few boost libraries.
+# -Wuseless-cast is incompatible with BOUNDED_INTEGER_CONDITIONAL
 #
-# -Wuseless-cast is a GCC-4.8-only warning, which I will add when I transition.
+# -Wzero-as-null-pointer-constant triggers for a few boost libraries.
 
 # Add -Wold-style-cast when I transition to my byte swapping library and
 # rewrite the Rijndael implementation to use modern C++ techniques, rather than
 # just being a C program with .cpp as the extension.
 
-warnings = ['-Wall', '-Wextra', '-pedantic', '-Wcast-align', '-Wcast-qual', '-Wctor-dtor-privacy', '-Wdouble-promotion', '-Wformat=2', '-Winit-self', '-Winvalid-pch', '-Wlogical-op', '-Wmissing-declarations', '-Wmissing-include-dirs', '-Wnoexcept', '-Woverloaded-virtual', '-Wredundant-decls', '-Wshadow', '-Wsign-conversion', '-Wsign-promo', '-Wstrict-null-sentinel', '-Wtrampolines', '-Wundef', '-Werror', '-Wno-maybe-uninitialized', '-Wno-unused-parameter', '-Wno-unused-variable']
-# I have to set -Wstrict-overflow=5 to be a "debug" warning because it conflicts
-# with a boost library when link-time optimization is turned on.
-warnings_debug = ['-Wstrict-overflow=5']
-warnings_optimized = ['-Wdisabled-optimization', '-Wvector-operation-performance']
+warnings = [
+	'-Wall',
+	'-Wextra',
+	'-Wpedantic',
+	'-Wcast-align',
+	'-Wcast-qual',
+#	'-Wconversion',
+	'-Wctor-dtor-privacy',
+	'-Wdisabled-optimization',
+	'-Wdouble-promotion',
+#	'-Weffc++',
+#	'-Wfloat-equal',
+	'-Wformat=2',
+	'-Winit-self',
+	'-Winvalid-pch',
+	'-Wlogical-op',
+	'-Wmissing-declarations',
+	'-Wmissing-include-dirs',
+	'-Wnoexcept',
+#	'-Wold-style-cast',
+	'-Woverloaded-virtual',
+	'-Wredundant-decls',
+	'-Wshadow',
+	'-Wsign-conversion',
+	'-Wsign-promo',
+	'-Wstrict-null-sentinel',
+#	'-Wstrict-overflow=5',
+	'-Wstrict-overflow=1',
+	'-Wswitch-default',
+#	'-Wswitch-enum',
+	'-Wtrampolines',
+	'-Wundef',
+#	'-Wunsafe-loop-optimizations',
+	'-Wvector-operation-performance',
+#	'-Wzero-as-null-pointer-constant',
+	'-Werror',
+	'-Wno-maybe-uninitialized',
+	'-Wno-unused-parameter',
+	'-Wno-unused-variable',
+]
+
+warnings_debug = []
+warnings_optimized = []

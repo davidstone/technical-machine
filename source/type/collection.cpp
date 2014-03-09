@@ -76,17 +76,17 @@ bool forced_grounded(ActivePokemon const & pokemon, Weather const & weather) {
 	return forced_grounded(static_cast<Pokemon const &>(pokemon), weather) or pokemon.ingrained();
 }
 
-bool is_immune_to_ground(Pokemon const & pokemon, Weather const & weather, bool const roosting = false) {
+bool is_immune_to_ground(Pokemon const & pokemon, bool const roosting = false) {
 	return is_type(pokemon, Type::Flying, roosting) or get_ability(pokemon).is_immune_to_ground();
 }
-bool is_immune_to_ground(ActivePokemon const & active, Weather const & weather) {
+bool is_immune_to_ground(ActivePokemon const & active) {
 	auto const & pokemon = static_cast<Pokemon const &>(active);
-	return is_immune_to_ground(pokemon, weather, active.is_roosting()) or active.magnet_rise().is_active();
+	return is_immune_to_ground(pokemon, active.is_roosting()) or active.magnet_rise().is_active();
 }
 
 template<typename PossiblyActivePokemon>
 bool is_grounded(PossiblyActivePokemon const & pokemon, Weather const & weather) {
-	return !is_immune_to_ground(pokemon, weather) or forced_grounded(pokemon, weather);
+	return !is_immune_to_ground(pokemon) or forced_grounded(pokemon, weather);
 }
 
 }	// unnamed namespace

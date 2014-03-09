@@ -1,5 +1,5 @@
 // Connect to an arbitrary Pokemon sim
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,6 +36,9 @@ Client::Client(unsigned depth):
 	random_engine(rd()),
 	m_depth(depth) {
 	load_settings(false);
+}
+
+Client::~Client() {
 }
 
 void Client::set_depth(unsigned const new_depth) {

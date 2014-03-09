@@ -71,12 +71,10 @@ public:
 	}
 	template<typename... Args>
 	Move const & regular_move(Args && ... args) const {
-		auto const & self = static_cast<Pokemon const &>(*this);
 		return all_moves().regular_move(std::forward<Args>(args)...);
 	}
 	template<typename... Args>
 	Move & regular_move(Args && ... args) {
-		auto const & self = static_cast<Pokemon const &>(*this);
 		return all_moves().regular_move(std::forward<Args>(args)...);
 	}
 	bool was_used_last(Moves move) const;

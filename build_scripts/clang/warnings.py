@@ -1,5 +1,5 @@
 # Warnings if building with clang
-# Copyright (C) 2012 David Stone
+# Copyright (C) 2014 David Stone
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
@@ -22,17 +22,19 @@
 # destructor. I use a few static const variables, but they do not depend on each
 # other for their destruction (or any global variable), so my usage is safe.
 #
-# -Wfloat-equal warns for safe equality comparisons (in particular, comparison
-# with a non-computed value of -1). An example in my code where I use this is
-# that I have a vector of float. I go through this vector, and there are some
-# elements I cannot evaluate yet what they should be, so I set them to -1.0f
-# (since my problem only uses positive numbers, -1 is out of the domain). I
-# later go through and update -1.0f values. It does not easily lend itself to a
-# different method of operation.
-#
-# -Wno-implicit-fallthrough must be used because it warns about an empty case
+# -Wimplicit-fallthrough must be disabled because it warns about an empty case
 # followed by another case (in other words, giving multiple cases identical
 # actions).
+#
+# -Wmismatched-tags is not disabled for two reasons:
+# 1) It is turned on by default at a low warning level, and I don't want clang
+# warning about my project for everyone else
+# 2) It could possibly cause linker problems due to name mangling issues
+#
+# -Wmissing-braces is incompatible with the implementation of make_array. An
+# implementation that doesn't run afoul of this warning ended up being very slow
+# and memory intensive, so it seems that disabling the warning is the better
+# option.
 #
 # -Wpadded is turned on occasionally to optimize the layout of classes, but it
 # is not left on because not all classes have enough elements to remove padding
@@ -53,14 +55,12 @@ warnings = [
 	'-Wno-c++98-compat',
 	'-Wno-c++98-compat-pedantic',
 	'-Wno-exit-time-destructors',
-	'-Wno-float-equal',
 	'-Wno-implicit-fallthrough',
-	'-Wno-mismatched-tags',
+	'-Wno-missing-braces',
 	'-Wno-padded',
 	'-Wno-switch-enum',
 	'-Wno-unused-parameter',
-	'-Wno-unused-private-field',
-	'-Wno-unused-variable'
+	'-Wno-weak-vtables',
 ]
 warnings_debug = []
 warnings_optimized = []

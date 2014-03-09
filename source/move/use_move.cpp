@@ -291,7 +291,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			}
 			break;
 		case Moves::Aromatherapy:
-			cure_all_status(user_team, [](Pokemon const & pokemon) { return true; });
+			cure_all_status(user_team, [](Pokemon const &) { return true; });
 			break;
 		case Moves::Attract:
 			if (get_gender(user).multiplier(get_gender(target)) == -1)

@@ -1,5 +1,5 @@
 // Connect to an arbitrary Pokemon sim
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -40,7 +40,7 @@ public:
 	void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 	DetailedStats const & detailed() const;
 	Evaluate const & evaluation_constants() const;
-	virtual ~Client() { }
+	virtual ~Client();
 	void handle_incoming_challenge(std::string const & opponent, BattleSettings const & settings);
 protected:
 	explicit Client(unsigned depth);

@@ -261,19 +261,23 @@ void Battle::parse_begin_turn(InMessage & msg) const {
 }
 
 void Battle::parse_send_out (InMessage & msg, Party const party) {
-	bool const is_silent = msg.read_byte ();
-	uint8_t const index = msg.read_byte ();
-	uint16_t const species_id = msg.read_short ();
-	uint8_t const forme_id = msg.read_byte ();
-	Species const species = id_to_species (species_id, forme_id);
-	std::string const nickname = msg.read_string ();
-	uint8_t const hp_percent = msg.read_byte ();
-	uint32_t const full_status = msg.read_int ();
-	Gender const gender (id_to_gender (msg.read_byte ()));
-	bool const shiny = msg.read_byte ();
+	bool const is_silent = msg.read_byte();
+	static_cast<void>(is_silent);
+	uint8_t const index = msg.read_byte();
+	uint16_t const species_id = msg.read_short();
+	uint8_t const forme_id = msg.read_byte();
+	Species const species = id_to_species(species_id, forme_id);
+	std::string const nickname = msg.read_string();
+	uint8_t const hp_percent = msg.read_byte();
+	// TODO: use hp_percent to verify things are good
+	uint32_t const full_status = msg.read_int();
+	// TODO: use full_status to verify things are good
+	Gender const gender(id_to_gender(msg.read_byte()));
+	bool const shiny = msg.read_byte();
+	static_cast<void>(shiny);
 	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(msg.read_byte()));
 	uint8_t const slot = 0;
-	handle_send_out (party, slot, index, nickname, species, gender, level);
+	handle_send_out(party, slot, index, nickname, species, gender, level);
 	if (is_me(party)) {
 		slot_memory_bring_to_front();
 	}
@@ -300,30 +304,33 @@ void Battle::parse_hp_change (InMessage & msg, Party const party) {
 }
 
 void Battle::parse_pp_change (InMessage & msg) {
-	uint8_t const move = msg.read_byte ();
-	uint8_t const new_pp = msg.read_byte ();
+	uint8_t const move = msg.read_byte();
+	uint8_t const new_pp = msg.read_byte();
+	// TODO: use these to verify things are still good
 }
 
-void Battle::parse_effectiveness (InMessage & msg) {
-	// This matters for Hidden Power. Do nothing with this for now.
-	uint8_t const effectiveness = msg.read_byte ();
+void Battle::parse_effectiveness(InMessage & msg) {
+	// TODO: Hidden Power.
+	uint8_t const effectiveness = msg.read_byte();
 	// 0, 1, 2, 4, 8, 16
 }
 
-void Battle::parse_number_of_hits (InMessage & msg) {
-	uint8_t const number = msg.read_byte ();
+void Battle::parse_number_of_hits(InMessage & msg) {
+	// TODO: parse this
+	uint8_t const number = msg.read_byte();
 }
 
-void Battle::parse_stat_change (InMessage & msg) {
+void Battle::parse_stat_change(InMessage & msg) {
 	std::cerr << "STAT_CHANGE\n";
 	// I think stat may work just as well unsigned.
-	int8_t const stat = static_cast<int8_t> (msg.read_byte ());
-	int8_t const boost = static_cast<int8_t> (msg.read_byte ());
+	int8_t const stat = static_cast<int8_t>(msg.read_byte());
+	int8_t const boost = static_cast<int8_t>(msg.read_byte());
+	// TODO: Parse for Accupressure
 }
 
 void Battle::parse_status_message (InMessage & msg) {
-	Todo const t (msg, "STATUS_MESSAGE");
-	int8_t const status = static_cast<int8_t> (msg.read_byte ());
+	Todo const t(msg, "STATUS_MESSAGE");
+	int8_t const status = static_cast<int8_t>(msg.read_byte());
 }
 
 void Battle::parse_status_change (InMessage & msg) {
