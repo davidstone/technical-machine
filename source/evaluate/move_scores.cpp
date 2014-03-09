@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,9 @@
 
 namespace technicalmachine {
 namespace {
-constexpr auto initial = Evaluate::victory + 1;
+using namespace bounded_integer::literal;
+
+constexpr auto initial = static_cast<int64_t>(victory + 1_bi);
 }
 
 MoveScores::MoveScores(Pokemon const & pokemon) {

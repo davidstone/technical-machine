@@ -1,5 +1,5 @@
 // Wish data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,20 +29,19 @@ class Pokemon;
 
 class Wish {
 public:
-	void activate();
-	void decrement(ActivePokemon & pokemon);
+	auto activate() -> void;
+	auto decrement(ActivePokemon & pokemon) -> void;
+	auto is_active() const -> bool;
 	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (Wish lhs, Wish rhs);
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
-	bool is_active() const;
 	using counter_type = bounded_integer::checked_integer<0, 1>;
 	bounded_integer::optional<counter_type> turns_until_activation;
-	friend class Evaluate;
 };
 
-bool operator!= (Wish lhs, Wish rhs);
+auto operator== (Wish lhs, Wish rhs) -> bool;
+auto operator!= (Wish lhs, Wish rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// WISH_HPP_

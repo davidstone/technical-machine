@@ -99,7 +99,7 @@ Hash & hash_table_lookup (Hash const & current) {
 int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
 	int64_t value;
 	if (depth == 0) {
-		value = evaluate(ai, foe, weather);
+		value = static_cast<int64_t>(evaluate(ai, foe, weather));
 	}
 	else {
 		// This long-form hash should be unique within a game.

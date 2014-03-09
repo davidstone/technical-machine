@@ -29,6 +29,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
 
 class ActivePokemon;
 class EntryHazards;
@@ -37,18 +38,19 @@ class Status;
 class Team;
 class Weather;
 
+// 100% chance to win
+constexpr auto victory = 40731632_bi;
+
 class Evaluate {
 public:
+	// +1 gives me room to create a value that will always be overwritten
+	using type = bounded_integer::native_integer<-static_cast<intmax_t>(victory + 1_bi), static_cast<intmax_t>(victory + 1_bi)>;
 	Evaluate();
-	int64_t operator()(Team const & ai, Team const & foe, Weather const & weather) const;
+	auto operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type;
 	// Both of these return victory if the battle is won. Returns -victory
 	// if the battle is lost. Returns 0 otherwise.
-	static int64_t win(Team const & team);
-	static int64_t sleep_clause(Team const & team);
-	// Highest score. 100% chance to win. No particular significance to
-	// this number other than being larger than any score a non-winning
-	// position can have.
-	constexpr static int64_t victory = 30240;
+	static auto win(Team const & team) -> type;
+	static auto sleep_clause(Team const & team) -> type;
 
 	// Arbitrary values
 	using value_type = bounded_integer::native_integer<-4096, 4096>;
@@ -89,9 +91,6 @@ public:
 	auto no_pp() const { return m_no_pp; }
 	auto stage() const { return m_stage; }
 private:
-	int64_t score_team(Team const & team) const;
-	int64_t score_all_pokemon(Team const & team, Team const & other, Weather const & weather) const;
-
 	value_type m_light_screen;
 	value_type m_lucky_chant;
 	value_type m_mist;
