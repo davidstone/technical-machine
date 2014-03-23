@@ -1,5 +1,5 @@
 // Type information
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,7 +49,9 @@ public:
 		Water,
 		Typeless
 	};
-	Type (Types name);
+	constexpr Type(Types name):
+		type(name) {
+	}
 	Type(Moves move, Pokemon const & pokemon);
 	friend bool operator== (Type lhs, Type rhs);
 	friend bool operator!= (Type lhs, Type rhs);

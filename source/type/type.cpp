@@ -36,10 +36,6 @@ namespace {
 Type::Types get_type(Moves move, Pokemon const & pokemon);
 }	// namespace
 
-Type::Type (Types name):
-	type (name) {
-}
-
 Type::Type(Moves const move, Pokemon const & pokemon):
 	type(get_type(move, pokemon)) {
 }
