@@ -1,5 +1,5 @@
 // Type function definitions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +18,6 @@
 
 #include "type.hpp"
 
-#include <algorithm>
-
 #include "effectiveness.hpp"
 
 #include "../status.hpp"
@@ -28,6 +26,10 @@
 #include "../move/moves.hpp"
 
 #include "../pokemon/pokemon.hpp"
+
+#include <bounded_integer/array.hpp>
+
+#include <algorithm>
 
 namespace technicalmachine {
 namespace {
@@ -107,20 +109,20 @@ namespace {
 
 Type::Types hidden_power_type(Pokemon const & pokemon) {
 	using modifier_type = std::pair<StatNames, bounded_integer::native_integer<1, 5>>;
-	static constexpr modifier_type modifiers[] = {
-		{ StatNames::ATK, 1_bi },
-		{ StatNames::DEF, 2_bi },
-		{ StatNames::SPE, 3_bi },
-		{ StatNames::SPA, 4_bi },
-		{ StatNames::SPD, 5_bi }
-	};
+	static constexpr auto modifiers = bounded_integer::make_array(
+		modifier_type(StatNames::ATK, 1_bi),
+		modifier_type(StatNames::DEF, 2_bi),
+		modifier_type(StatNames::SPE, 3_bi),
+		modifier_type(StatNames::SPA, 4_bi),
+		modifier_type(StatNames::SPD, 5_bi)
+	);
 	using intermediate_type = bounded_integer::checked_integer<0, 63>;
 	auto const sum = [&](intermediate_type const value, modifier_type const & pair) {
 		return value + ((get_stat(pokemon, pair.first).iv.value() % 2_bi) << pair.second);
 	};
 	intermediate_type const initial = get_hp(pokemon).iv.value() % 2_bi;
 	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), initial, sum) * 15_bi / 63_bi;
-	constexpr static Type::Types lookup [] = {
+	constexpr static auto lookup = bounded_integer::make_array(
 		Type::Fighting,
 		Type::Flying,
 		Type::Poison,
@@ -137,14 +139,14 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 		Type::Ice,
 		Type::Dragon,
 		Type::Dark
-	};
+	);
 	static_assert(std::numeric_limits<decltype(index)>::min() == 0_bi, "Incorrect minimum index.");
-	static_assert(std::numeric_limits<decltype(index)>::max() == sizeof(lookup) - 1, "Incorrect maximum index.");
-	return lookup[static_cast<size_t>(index)];
+	static_assert(std::numeric_limits<decltype(index)>::max() == lookup.size() - 1_bi, "Incorrect maximum index.");
+	return lookup[index];
 }
 
 Type::Types get_type(Moves const move, Pokemon const & pokemon) {
-	static constexpr Type::Types move_type [] = {
+	static constexpr auto move_type = bounded_integer::make_array(
 		Type::Typeless,		// Switch0
 		Type::Typeless,		// Switch1
 		Type::Typeless,		// Switch2
@@ -711,10 +713,10 @@ Type::Types get_type(Moves const move, Pokemon const & pokemon) {
 		Type::Fire,		// V-create
 		Type::Fire,		// Fusion Flare
 		Type::Electric		// Fusion Bolt
-	};
+	);
 	return move == Moves::Hidden_Power ?
 		hidden_power_type(pokemon) :
-		move_type[static_cast<size_t>(move)];
+		move_type.at(move);
 }
 
 }	// namespace
