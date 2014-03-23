@@ -19,9 +19,11 @@
 #ifndef ABILITY_HPP_
 #define ABILITY_HPP_
 
-#include <cstdint>
+#include "rational.hpp"
 #include "status.hpp"
 #include "stat/stat_names.hpp"
+
+#include <cstdint>
 
 namespace technicalmachine {
 
@@ -103,8 +105,6 @@ public:
 	
 	bool is_loafing (bool loaf) const;
 	
-	static Rational accuracy_modifier(ActivePokemon const & user);
-	static Rational evasion_modifier(ActivePokemon const & target, Weather const & weather);
 	static Rational attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
 	static void weather_healing(ActivePokemon & pokemon, Weather const & weather);
@@ -113,6 +113,18 @@ private:
 	Abilities m_name;
 };
 bool operator!= (Ability lhs, Ability rhs);
+
+using AbilityAccuracyModifier = bounded_rational<
+	bounded_integer::native_integer<1, 13>,
+	bounded_integer::native_integer<1, 10>
+>;
+auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyModifier;
+
+using AbilityEvasionModifier = bounded_rational<
+	bounded_integer::native_integer<1, 4>,
+	bounded_integer::native_integer<1, 5>
+>;
+auto ability_evasion_modifier(ActivePokemon const & target, Weather const & weather) -> AbilityEvasionModifier;
 
 }
 #endif	// ABILITY_HPP_

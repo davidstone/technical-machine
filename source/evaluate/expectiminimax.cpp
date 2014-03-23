@@ -256,13 +256,13 @@ template<typename SetFlag, typename Probability, typename NextBranch>
 int64_t generic_flag_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & probability, NextBranch const & next_branch) {
 	int64_t average_score = 0;
 	for (auto const first_flag : { true, false }) {
-		auto const p1 = probability(first.pokemon());
+		auto const p1 = static_cast<Rational>(probability(first.pokemon()));
 		if (first_flag and p1 == Rational(0)) {
 			continue;
 		}
 		set_flag(first.pokemon(), first_flag);
 		for (auto const last_flag : { true, false }) {
-			auto const p2 = probability(last.pokemon());
+			auto const p2 = static_cast<Rational>(probability(last.pokemon()));
 			if (last_flag and p2 == Rational(0)) {
 				continue;
 			}
@@ -278,12 +278,13 @@ int64_t accuracy_branch(Team & first, Team & last, Weather const & weather, unsi
 	constexpr int divisor = 100 * 100;
 	constexpr bool first_moved = true;
 	constexpr bool last_moved = false;
-	first.update_chance_to_hit(last, weather, last_moved);
-	last.update_chance_to_hit(first, weather, first_moved);
+	first.pokemon().update_chance_to_hit(last.pokemon(), weather, last_moved);
+	last.pokemon().update_chance_to_hit(first.pokemon(), weather, first_moved);
 	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
 		pokemon.set_miss(flag);
 	};
-	auto const probability = [](ActivePokemon const & pokemon) {
+	auto const probability = [&](ActivePokemon const & pokemon) {
+		
 		return pokemon.accuracy_probability();
 	};
 	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, awaken_branch) / divisor;

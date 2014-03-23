@@ -65,8 +65,6 @@ public:
 	void clear_field();
 	void move(bool value = true);
 
-	void update_chance_to_hit(Team const & target, Weather const & weather, bool target_moved);
-	
 	typedef uint64_t hash_type;
 	hash_type hash () const;
 	friend bool operator== (Team const & lhs, Team const & rhs);

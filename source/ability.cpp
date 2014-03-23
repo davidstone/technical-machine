@@ -279,27 +279,27 @@ bool Ability::is_loafing(bool const loaf) const {
 	return name() == Truant and loaf;
 }
 
-Rational Ability::accuracy_modifier(ActivePokemon const & user) {
+auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyModifier {
 	switch (get_ability(user).name()) {
-		case Compoundeyes:
-			return Rational(13, 10);
-		case Hustle:
-			return is_physical(user.move()) ? Rational(4, 5) : Rational(1, 1);
+		case Ability::Compoundeyes:
+			return AbilityAccuracyModifier(13_bi, 10_bi);
+		case Ability::Hustle:
+			return is_physical(user.move()) ? AbilityAccuracyModifier(4_bi, 5_bi) : AbilityAccuracyModifier(1_bi, 1_bi);
 		default:
-			return Rational(1, 1);
+			return AbilityAccuracyModifier(1_bi, 1_bi);
 	}
 }
 
-Rational Ability::evasion_modifier(ActivePokemon const & target, Weather const & weather) {
+auto ability_evasion_modifier(ActivePokemon const & target, Weather const & weather) -> AbilityEvasionModifier {
 	switch (get_ability(target).name()) {
-		case Sand_Veil:
-			return weather.sand() ? Rational(4, 5) : Rational(1, 1);
-		case Snow_Cloak:
-			return weather.hail() ? Rational(4, 5) : Rational(1, 1);
-		case Tangled_Feet:
-			return target.is_confused() ? Rational(4, 5) : Rational(1, 1);
+		case Ability::Sand_Veil:
+			return weather.sand() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
+		case Ability::Snow_Cloak:
+			return weather.hail() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
+		case Ability::Tangled_Feet:
+			return target.is_confused() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
 		default:
-			return Rational(1, 1);
+			return AbilityEvasionModifier(1_bi, 1_bi);
 	}
 }
 

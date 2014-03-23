@@ -1,5 +1,5 @@
 // Chance to hit calculations
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,21 +19,29 @@
 #ifndef STAT__CHANCE_TO_HIT_HPP_
 #define STAT__CHANCE_TO_HIT_HPP_
 
-#include <cstdint>
+#include "../rational.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
+using namespace bounded_integer::literal;
+
 class ActivePokemon;
-class Rational;
 class Weather;
 
-class ChanceToHit {
-public:
-	ChanceToHit();
-	Rational operator()() const;
-	void update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved);
-private:
-	uint8_t probability;
-};
+namespace detail_chance_to_hit {
+
+constexpr auto min = 0_bi;
+constexpr auto max = 100_bi;
+
+}	// namespace detail_chance_to_hit
+
+using ChanceToHit = bounded_rational<
+	bounded_integer::native_integer<detail_chance_to_hit::min.value(), detail_chance_to_hit::max.value()>,
+	bounded_integer::native_integer<detail_chance_to_hit::max.value(), detail_chance_to_hit::max.value()>
+>;
+
+auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved) -> ChanceToHit;
 
 }	// namespace technicalmachine
 #endif	// STAT__CHANCE_TO_HIT_HPP_

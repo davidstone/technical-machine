@@ -744,11 +744,11 @@ void ActivePokemon::increment_move_use_counter() {
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
-	cached_chance_to_hit.update(*this, target, weather, target_moved);
+	m_chance_to_hit = chance_to_hit(*this, target, weather, target_moved);
 }
 
-Rational ActivePokemon::accuracy_probability() const {
-	return miss ? complement(cached_chance_to_hit()) : cached_chance_to_hit();
+auto ActivePokemon::accuracy_probability() const -> ChanceToHit {
+	return missed() ? complement(m_chance_to_hit) : m_chance_to_hit;
 }
 
 bool ActivePokemon::will_be_replaced() const {

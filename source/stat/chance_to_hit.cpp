@@ -34,75 +34,71 @@
 
 namespace technicalmachine {
 namespace {
-constexpr uint8_t max = 100;
+using namespace bounded_integer::literal;
 
-bool move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability);
-Rational accuracy_item_modifier (Item const & item, bool target_moved);
-Rational evasion_item_modifier (Item const & item);
+using bounded_integer::clamped_integer;
+using bounded_integer::native_integer;
 
-}	// unnamed namespace
+auto move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool;
 
-ChanceToHit::ChanceToHit() :
-	probability(max)
-	{
-}
+using AccuracyItemModifier = bounded_rational<native_integer<1, 11>, native_integer<1, 10>>;
+auto accuracy_item_modifier(Item const & item, bool target_moved) -> AccuracyItemModifier;
 
-Rational ChanceToHit::operator()() const {
-	return Rational(probability, max);
-}
+using EvasionItemModifier = bounded_rational<native_integer<1, 19>, native_integer<1, 20>>;
+auto evasion_item_modifier(Item const & item) -> EvasionItemModifier;
 
-void ChanceToHit::update(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool const target_moved) {
-	BaseAccuracy const base_accuracy = accuracy(user.move());
-	if (move_can_miss(user, base_accuracy, get_ability(target))) {
-		auto const calculated_accuracy = *base_accuracy *
-			modifier<StatNames::ACC>(user.stage()) *
-			modifier<StatNames::EVA>(target.stage());
+using namespace detail_chance_to_hit;
 
-		// Temporary variable until I finish transitioning to bounded_integer
-		auto accuracy2 = static_cast<unsigned>(calculated_accuracy) * accuracy_item_modifier(get_item(user), target_moved);
-		accuracy2 *= Ability::accuracy_modifier(user);
-		
-		accuracy2 *= evasion_item_modifier(get_item(target));
-		accuracy2 *= Ability::evasion_modifier(target, weather);
+}	// namespace
 
-		if (weather.gravity())
-			accuracy2 *= Rational(5, 3);
-		
-		probability = std::min(static_cast<uint8_t>(accuracy2), max);
+auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved) -> ChanceToHit {
+	auto const base_accuracy = accuracy(user.move());
+	if (!move_can_miss(user, base_accuracy, get_ability(target))) {
+		return ChanceToHit(max, max);
 	}
-	else {
-		probability = max;
-	}
+	constexpr auto gravity_denominator = 3_bi;
+	auto const gravity_numerator = BOUNDED_INTEGER_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
+	auto const gravity_multiplier = make_bounded_rational(gravity_numerator, gravity_denominator);
+	auto const calculated_accuracy = *base_accuracy *
+		modifier<StatNames::ACC>(user.stage()) *
+		modifier<StatNames::EVA>(target.stage()) *
+		accuracy_item_modifier(get_item(user), target_moved) *
+		ability_accuracy_modifier(user) *
+		evasion_item_modifier(get_item(target)) *
+		ability_evasion_modifier(target, weather) *
+		gravity_multiplier
+	;
+	
+	return ChanceToHit(clamped_integer<min.value(), max.value()>(calculated_accuracy), max);
 }
 
 namespace {
 
-bool move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) {
+auto move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool {
 	return static_cast<bool>(base_accuracy) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
-Rational accuracy_item_modifier(Item const & item, bool target_moved) {
+auto accuracy_item_modifier(Item const & item, bool target_moved) -> AccuracyItemModifier {
 	switch (item.name) {
 		case Item::WIDE_LENS:
-			return Rational(11, 10);
+			return AccuracyItemModifier(11_bi, 10_bi);
 		case Item::ZOOM_LENS:
-			return target_moved ? Rational(6, 5) : Rational(1, 1);
+			return target_moved ? AccuracyItemModifier(6_bi, 5_bi) : AccuracyItemModifier(1_bi, 1_bi);
 		default:
-			return Rational(1, 1);
+			return AccuracyItemModifier(1_bi, 1_bi);
 	}
 }
 
-Rational evasion_item_modifier(Item const & item) {
+auto evasion_item_modifier(Item const & item) -> EvasionItemModifier {
 	switch (item.name) {
 		case Item::BRIGHTPOWDER:
-			return Rational(9, 10);
+			return EvasionItemModifier(9_bi, 10_bi);
 		case Item::LAX_INCENSE:
-			return Rational(19, 20);
+			return EvasionItemModifier(19_bi, 20_bi);
 		default:
-			return Rational(1, 1);
+			return EvasionItemModifier(1_bi, 1_bi);
 	}
 }
 
-}	// unnamed namespace
-
+}	// namespace
 }	// namespace technicalmachine

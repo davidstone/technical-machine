@@ -235,7 +235,7 @@ public:
 	void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
 	// If the move is a hit, returns the chance to hit, otherwise, returns
 	// the chance to miss.
-	Rational accuracy_probability() const;
+	auto accuracy_probability() const -> ChanceToHit;
 	
 	bool will_be_replaced() const;
 	
@@ -257,7 +257,7 @@ private:
 	PokemonCollection m_all_pokemon;
 	HP::current_type damage_done_to_active = 0_bi;
 	Bide bide;
-	ChanceToHit cached_chance_to_hit;
+	ChanceToHit m_chance_to_hit = ChanceToHit(100_bi, 100_bi);
 	Confusion confusion;
 	Disable m_disable;
 	Embargo embargo;

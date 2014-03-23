@@ -123,10 +123,6 @@ void Team::move(bool const value) {
 	pokemon().set_moved(value);
 }
 
-void Team::update_chance_to_hit(Team const & target, Weather const & weather, bool const target_moved) {
-	pokemon().update_chance_to_hit(target.pokemon(), weather, target_moved);
-}
-
 namespace {
 
 std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file) {
