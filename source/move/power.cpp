@@ -153,7 +153,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			return static_cast<unsigned>(attacker.momentum_move_power());
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
-			static constexpr std::array<stat_and_position_type, 5> stat_and_position {{
+			static constexpr bounded_integer::array<stat_and_position_type, 5> stat_and_position {{
 				{ StatNames::ATK, 1_bi },
 				{ StatNames::DEF, 2_bi },
 				{ StatNames::SPE, 3_bi },
