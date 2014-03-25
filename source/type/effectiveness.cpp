@@ -72,11 +72,14 @@ Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defe
 		lookup_effectiveness(attacking, defending1),
 		lookup_effectiveness(attacking, defending2)
 	}) {
-	static_assert(std::is_same<decltype(lookup_effectiveness(attacking, defending1)), SingleType>::value, "Incorrect effectiveness type.");
+	static_assert(
+		std::is_same<decltype(lookup_effectiveness(attacking, defending1)), SingleType>::value,
+		"Incorrect effectiveness type."
+	);
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
-	Effectiveness(type.type, get_type(defender).types.begin()->type, std::next(get_type(defender).types.begin())->type) {
+	Effectiveness(type.type, get_type(defender).types.begin()->type, bounded_integer::next(get_type(defender).types.begin())->type) {
 }
 
 Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending):

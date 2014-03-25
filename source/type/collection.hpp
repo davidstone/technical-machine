@@ -1,5 +1,5 @@
 // Type information for Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,32 +19,39 @@
 #ifndef TYPE__COLLECTION_HPP_
 #define TYPE__COLLECTION_HPP_
 
-#include <array>
 #include "type.hpp"
 #include "../pokemon/species_forward.hpp"
 #include "../status.hpp"
+
+#include <bounded_integer/array.hpp>
 
 namespace technicalmachine {
 class ActivePokemon;
 class Pokemon;
 class Weather;
 
-namespace detail {
+namespace detail_type_collection {
+
 class TypeArray {
 private:
-	typedef std::array<Type, 2> container_type;
+	using container_type = bounded_integer::array<Type, 2>;
 public:
-	typedef container_type::const_iterator const_iterator;
-	explicit TypeArray(Type const type1);
-	TypeArray(Type const type1, Type const type2);
-	const_iterator begin() const;
-	const_iterator end() const;
+	using const_iterator = container_type::const_iterator;
+	explicit constexpr TypeArray(Type const type1):
+		m_types({{type1, Type::Typeless}})
+		{
+	}
+	constexpr TypeArray(Type const type1, Type const type2):
+		m_types({{type1, type2}})
+		{
+	}
+	auto begin() const -> const_iterator;
+	auto end() const -> const_iterator;
 private:
-	typedef container_type::size_type size_type;
-	size_type size() const;
 	container_type m_types;
 };
-}
+
+}	// namespace detail_type_collection
 
 class TypeCollection {
 public:
@@ -64,7 +71,7 @@ private:
 	friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
 	friend class Type;
 	friend class Effectiveness;
-	detail::TypeArray types;
+	detail_type_collection::TypeArray types;
 };
 
 bool is_type(Pokemon const & pokemon, Type type, bool roosting = false);
