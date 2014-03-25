@@ -114,11 +114,11 @@ ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
 	HP & hp = get_hp(pokemon);
 	StatType<Type>::get(hp) = Type(it->second.get_value<typename Type::value_type>());
 	++it;
-	for (unsigned n = 0; n != 5; ++n) {
+	for (auto const & stat_name : stat_order) {
 		if (it->first != name) {
 			throw InvalidTeamFile(name, it->first);
 		}
-		Stat & stat = get_stat(pokemon, stat_order[n]);
+		Stat & stat = get_stat(pokemon, stat_name);
 		StatType<Type>::get(stat) = Type(it->second.get_value<typename Type::value_type>());
 		++it;
 	}

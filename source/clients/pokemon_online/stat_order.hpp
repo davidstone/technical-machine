@@ -1,5 +1,5 @@
 // Pokemon Online stat order
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,15 +19,16 @@
 #ifndef POKEMON_ONLINE__STAT_ORDER_HPP_
 #define POKEMON_ONLINE__STAT_ORDER_HPP_
 
-#include <array>
 #include "../../stat/stat.hpp"
+
+#include <bounded_integer/array.hpp>
 
 namespace technicalmachine {
 namespace po {
 
-constexpr std::array<StatNames, 5> stat_order {{
+constexpr bounded_integer::array<StatNames, 5> stat_order = {
 	StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE
-}};
+};
 
 }	// namespace po
 }	// namespace technicalmachine
