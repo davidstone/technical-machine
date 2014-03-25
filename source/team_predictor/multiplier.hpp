@@ -20,18 +20,19 @@
 #define TEAM_PREDICTOR__MULTIPLIER_HPP_
 
 #include "../pokemon/species.hpp"
-#include <array>
+
+#include <bounded_integer/array.hpp>
 
 namespace technicalmachine {
 
 class Multiplier {
 public:
-	typedef std::array<unsigned, number_of_species> Overall;
-	typedef float value_type;
+	using Overall = bounded_integer::array<unsigned, number_of_species>;
+	using value_type = float;
 	Multiplier(Overall const & overall);
 	value_type operator() (Species species1, Species species2) const;
 private:
-	typedef std::array<std::array<value_type, number_of_species>, number_of_species> Container;
+	using Container = bounded_integer::array<bounded_integer::array<value_type, number_of_species>, number_of_species>;
 	static Container species_clause();
 	void load_listed_multipliers(Overall const & overall, Overall & unaccounted);
 	void estimate_remaining(Overall const & overall, Overall const & unaccounted);

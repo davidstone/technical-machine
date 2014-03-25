@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #include "load_stats.hpp"
 
-#include <array>
 #include <fstream>
 #include <string>
 #include <boost/lexical_cast.hpp>
@@ -34,8 +33,8 @@ namespace technicalmachine {
 namespace {
 
 template<typename T>
-std::array<T, number_of_species> load_stats_from_file (std::string const & file_name) {
-	std::array<T, number_of_species> overall {{ 0 }};
+auto load_stats_from_file(std::string const & file_name) {
+	bounded_integer::array<T, number_of_species> overall = {{}};
 	std::ifstream file(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
@@ -46,19 +45,19 @@ std::array<T, number_of_species> load_stats_from_file (std::string const & file_
 		auto const position = line.find(delimiter);
 		auto const species = from_string<Species>(line.substr(0, position));
 		auto const value = boost::lexical_cast<T>(line.substr(position + 1));
-		overall[static_cast<size_t>(species)] = value;
+		overall.at(species) = value;
 	}
 	return overall;
 }
 
-}	// unnamed namespace
+}	// namespace
 
-std::array<unsigned, number_of_species> overall_stats () {
-	return load_stats_from_file<unsigned> ("settings/Generation 4/OU/usage.txt");
+auto overall_stats () -> bounded_integer::array<unsigned, number_of_species> {
+	return load_stats_from_file<unsigned>("settings/Generation 4/OU/usage.txt");
 }
 
-std::array<float, number_of_species> lead_stats () {
-	return load_stats_from_file<float> ("settings/Generation 4/OU/lead.txt");
+auto lead_stats () -> bounded_integer::array<float, number_of_species> {
+	return load_stats_from_file<float>("settings/Generation 4/OU/lead.txt");
 }
 
 }	// namespace technicalmachine

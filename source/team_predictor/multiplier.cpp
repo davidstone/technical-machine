@@ -37,11 +37,13 @@
 namespace technicalmachine {
 namespace {
 
-constexpr auto other_pokemon_per_team = max_pokemon_per_team - 1;
+using namespace bounded_integer::literal;
+
+constexpr auto other_pokemon_per_team = max_pokemon_per_team - 1_bi;
 constexpr Multiplier::value_type not_set = -1.0F;
 bool is_alternate_form(Species first, Species second);
 
-}	// unnamed namespace
+}	// namespace
 
 Multiplier::Multiplier(Overall const & overall):
 	multiplier(species_clause()) {
@@ -61,19 +63,19 @@ Multiplier::Multiplier(Overall const & overall):
 }
 
 Multiplier::value_type Multiplier::operator() (Species const species1, Species const species2) const {
-	return multiplier[static_cast<size_t>(species1)][static_cast<size_t>(species2)];
+	return multiplier.at(species1).at(species2);
 }
 
 Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
 	for (auto & array : multiplier)
 		array.fill(not_set);
-	for (unsigned a = 0; a != number_of_species; ++a) {
-		for (unsigned b = 0; b != number_of_species; ++b) {
-			auto const first = static_cast<Species>(a);
-			auto const second = static_cast<Species>(b);
-			if (is_alternate_form(first, second))
+	using bounded_integer::range;
+	for (auto const a : range(bounded_integer::make_bounded<number_of_species>())) {
+		for (auto const b : range(bounded_integer::make_bounded<number_of_species>())) {
+			if (is_alternate_form(static_cast<Species>(a), static_cast<Species>(b))) {
 				multiplier[a][b] = 0;
+			}
 		}
 		multiplier[a][a] = 0;
 	}
@@ -90,17 +92,16 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 	while (getline(file, line)) {
 		constexpr char delimiter = '\t';
 		size_t const x = line.find (delimiter);
-		auto const member = static_cast<size_t>(from_string<Species>(line.substr (0, x)));
+		auto const member = from_string<Species>(line.substr (0, x));
 		size_t const y = line.find (delimiter, x + 1);
-		auto const ally = static_cast<size_t>(from_string<Species>(line.substr(x + 1, y - x - 1)));
-		if (member >= number_of_species or ally >= number_of_species)
-			throw InvalidSettingsFile (file_name, InvalidSettingsFile::invalid_data);
-		unsigned const number_used_with = boost::lexical_cast<unsigned> (line.substr (y + 1));
-		assert(unaccounted[member] >= number_used_with);
-		unaccounted [member] -= number_used_with;
-		auto const per_cent_used_with = static_cast<value_type> (number_used_with) / overall [member];
-		auto const per_cent_used = static_cast<value_type> (overall [ally]) / total;
-		multiplier[member][ally] = per_cent_used_with / per_cent_used;
+		auto const ally = from_string<Species>(line.substr(x + 1, y - x - 1));
+
+		auto const number_used_with = boost::lexical_cast<unsigned>(line.substr(y + 1));
+		assert(unaccounted.at(member) >= number_used_with);
+		unaccounted.at(member) -= number_used_with;
+		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / overall.at(member);
+		auto const per_cent_used = static_cast<value_type>(overall.at(ally)) / total;
+		multiplier.at(member).at(ally) = per_cent_used_with / per_cent_used;
 	}
 }
 
@@ -120,11 +121,11 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	// this Pokemon. If a Pokemon that is used a lot does not show up on this
 	// list, then we can be sure that it is used less than the current method
 	// suggests.
-	for (unsigned a = 0; a != number_of_species; ++a) {
-		if (overall[a] != 0) {
-			for (float & value : multiplier [a]) {
+	for (auto const a : bounded_integer::range(bounded_integer::make_bounded<number_of_species>())) {
+		if (overall[a] != 0_bi) {
+			for (float & value : multiplier[a]) {
 				if (value == not_set) {
-					value = (unaccounted[a] != 0) ? (static_cast<float>(unaccounted[a]) / (overall[a] * static_cast<unsigned>(other_pokemon_per_team))) : 0.0F;
+					value = (unaccounted[a] != 0_bi) ? (static_cast<float>(unaccounted[a]) / (overall[a] * static_cast<unsigned>(other_pokemon_per_team))) : 0.0F;
 				}
 			}
 		}

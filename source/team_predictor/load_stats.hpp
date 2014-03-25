@@ -1,5 +1,5 @@
 // Header for loading stats like Pokemon usages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,15 +19,16 @@
 #ifndef TEAM_PREDICTOR__LOAD_STATS_HPP_
 #define TEAM_PREDICTOR__LOAD_STATS_HPP_
 
-#include <array>
 #include "../pokemon/species.hpp"
+
+#include <bounded_integer/array.hpp>
 
 namespace technicalmachine {
 
-std::array<unsigned, number_of_species> overall_stats ();
+auto overall_stats() -> bounded_integer::array<unsigned, number_of_species>;
 
 // Multiplier for Pokemon after you've seen the lead
-std::array<float, number_of_species> lead_stats ();
+auto lead_stats() -> bounded_integer::array<float, number_of_species>;
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__LOAD_STATS_HPP_

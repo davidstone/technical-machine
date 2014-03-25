@@ -1,5 +1,5 @@
 // Class to help get the next most likely Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,14 +18,14 @@
 
 #include "estimate.hpp"
 
+#include "multiplier.hpp"
+
+#include "../team.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <random>
 #include <stdexcept>
-
-#include "multiplier.hpp"
-
-#include "../team.hpp"
 
 namespace technicalmachine {
 namespace {
@@ -39,8 +39,8 @@ public:
 }	// unnamed namespace
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
-	for (unsigned n = 0; n != number_of_species; ++n) {
-		estimate [n] = lead [n] * overall [n] / total;
+	for (auto const n : bounded_integer::range(bounded_integer::make_bounded<number_of_species>())) {
+		estimate[n] = lead[n] * overall[n] / total;
 	}
 }
 
@@ -51,8 +51,8 @@ void Estimate::update(Multiplier const & multiplier, Team const & team) {
 }
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {
-	for (auto predicted = static_cast<Species>(0); predicted != Species::END; ++predicted) {
-		estimate[static_cast<size_t>(predicted)] *= multiplier(seen, predicted);
+	for (auto const predicted : bounded_integer::range(bounded_integer::make_bounded<number_of_species>())) {
+		estimate[predicted] *= multiplier(seen, static_cast<Species>(predicted));
 	}
 }
 

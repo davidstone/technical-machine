@@ -1,5 +1,5 @@
 // Class to help get the next most likely Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,9 +19,11 @@
 #ifndef TEAM_PREDICTOR__ESTIMATE_HPP_
 #define TEAM_PREDICTOR__ESTIMATE_HPP_
 
-#include <array>
-#include <random>
 #include "../pokemon/species.hpp"
+
+#include <bounded_integer/array.hpp>
+
+#include <random>
 
 namespace technicalmachine {
 class Multiplier;
@@ -29,15 +31,15 @@ class Team;
 
 class Estimate {
 public:
-	typedef std::array<unsigned, number_of_species> Overall;
-	typedef std::array<float, number_of_species> Lead;
+	using Overall = bounded_integer::array<unsigned, number_of_species>;
+	using Lead = bounded_integer::array<float, number_of_species>;
 	Estimate(Overall const & overall, Lead const & lead, unsigned total);
 	void update(Multiplier const & multiplier, Team const & team);
 	void update(Multiplier const & multiplier, Species seen);
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;
 private:
-	typedef std::array<float, number_of_species> Container;
+	using Container = bounded_integer::array<float, number_of_species>;
 	Container estimate;
 };
 

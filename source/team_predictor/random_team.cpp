@@ -18,10 +18,6 @@
 
 #include "random_team.hpp"
 
-#include <algorithm>
-#include <numeric>
-#include <random>
-
 #include "estimate.hpp"
 #include "load_stats.hpp"
 #include "multiplier.hpp"
@@ -30,6 +26,12 @@
 
 #include "../pokemon/species.hpp"
 #include "../string_conversions/conversion.hpp"
+
+#include <bounded_integer/array.hpp>
+
+#include <algorithm>
+#include <numeric>
+#include <random>
 
 namespace technicalmachine {
 namespace {
@@ -48,9 +50,9 @@ void random_team(Team & team, std::mt19937 & random_engine, unsigned const rando
 namespace {
 
 std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const random_pokemon) {
-	std::array<unsigned, number_of_species> const overall(overall_stats());
-	std::array<float, number_of_species> lead;
-	lead.fill(1);
+	auto const overall = overall_stats();
+	bounded_integer::array<float, number_of_species> lead;
+	lead.fill(1.0F);
 	unsigned const total(std::accumulate(std::begin(overall), std::end(overall), 0U));
 	Estimate estimate(overall, lead, total);
 	Multiplier multiplier(overall);

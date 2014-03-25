@@ -18,9 +18,6 @@
 
 #include "team_predictor.hpp"
 
-#include <array>
-#include <vector>
-
 #include "detailed_stats.hpp"
 #include "estimate.hpp"
 #include "load_stats.hpp"
@@ -36,13 +33,16 @@
 
 #include "../move/moves_forward.hpp"
 
+#include <bounded_integer/array.hpp>
+
+#include <vector>
+
 namespace technicalmachine {
 namespace {
 
-template<typename T>
-std::array<T, number_of_species> all_ones_array () {
-	std::array<T, number_of_species> all_ones;
-	all_ones.fill (1);
+auto all_ones_array() {
+	bounded_integer::array<float, number_of_species> all_ones;
+	all_ones.fill(1.0F);
 	return all_ones;
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
@@ -51,11 +51,11 @@ void predict_move (Pokemon & member, std::vector<Moves> const & detailed);
 }	// namespace
 
 Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead) {
-	std::array<unsigned, number_of_species> const overall = overall_stats ();
+	auto const overall = overall_stats();
 	constexpr unsigned total = 961058;	// Total number of teams
 	Multiplier const multiplier(overall);
 	
-	std::array<float, number_of_species> const lead = using_lead ? lead_stats () : all_ones_array<float>();
+	auto const lead = using_lead ? lead_stats() : all_ones_array();
 	
 	Estimate estimate(overall, lead, total);
 	estimate.update(multiplier, team);
