@@ -28,7 +28,8 @@
 #include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
 
-#include <array>
+#include <bounded_integer/array.hpp>
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -52,8 +53,6 @@ public:
 private:
 	InMessage & msg;
 };
-
-std::array<int8_t, 7> parse_boosts(InMessage & msg);
 
 }	// namespace
 
@@ -407,8 +406,19 @@ void Battle::parse_substitute (InMessage & msg) {
 	bool const substitute = msg.read_byte ();
 }
 
+namespace {
+
+auto parse_boosts(InMessage & msg) {
+	bounded_integer::array<int8_t, 7> boosts;
+	for (int8_t & boost : boosts)
+		boost = static_cast<int8_t>(msg.read_byte());
+	return boosts;
+}
+
+}	// namespace
+
 void Battle::parse_dynamic_info (InMessage & msg) {
-	std::array<int8_t, 7> const boosts = parse_boosts(msg);
+	auto const boosts = parse_boosts(msg);
 	enum DynamicFlags {
 		Spikes=1,
 		SpikesLV2=2,
@@ -421,17 +431,6 @@ void Battle::parse_dynamic_info (InMessage & msg) {
 	static_cast<void>(boosts);
 	uint8_t const flags = msg.read_byte ();
 }
-
-namespace {
-
-std::array<int8_t, 7> parse_boosts(InMessage & msg) {
-	std::array<int8_t, 7> boosts;
-	for (int8_t & boost : boosts)
-		boost = static_cast<int8_t>(msg.read_byte());
-	return boosts;
-}
-
-}	// unnamed namespace
 
 void Battle::parse_dynamic_stats (InMessage & msg) {
 	for (unsigned n = 0; n != 5; ++n)
