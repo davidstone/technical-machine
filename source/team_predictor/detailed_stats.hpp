@@ -1,5 +1,5 @@
 // Detailed Pokemon stats
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,10 +19,6 @@
 #ifndef TEAM_PREDICTOR__DETAILED_STATS_HPP_
 #define TEAM_PREDICTOR__DETAILED_STATS_HPP_
 
-#include <array>
-#include <cstdint>
-#include <vector>
-
 #include "../ability.hpp"
 #include "../item.hpp"
 
@@ -32,6 +28,11 @@
 
 #include "../stat/nature.hpp"
 
+#include <bounded_integer/array.hpp>
+
+#include <cstdint>
+#include <vector>
+
 namespace technicalmachine {
 
 class DetailedStats {
@@ -40,10 +41,10 @@ public:
 	template<typename T>
 	T const & get(Species species) const;
 private:
-	std::array<std::vector<Moves>, number_of_species> move;
-	std::array<Item::Items, number_of_species> item;
-	std::array<Ability::Abilities, number_of_species> ability;
-	std::array<Nature::Natures, number_of_species> nature;
+	bounded_integer::array<std::vector<Moves>, number_of_species> move;
+	bounded_integer::array<Item::Items, number_of_species> item;
+	bounded_integer::array<Ability::Abilities, number_of_species> ability;
+	bounded_integer::array<Nature::Natures, number_of_species> nature;
 };
 
 }	// namespace technicalmachine

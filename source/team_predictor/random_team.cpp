@@ -1,5 +1,5 @@
 // Generate a random team, weighted by usage
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //

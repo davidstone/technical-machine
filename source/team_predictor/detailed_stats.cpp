@@ -1,5 +1,5 @@
 // Detailed Pokemon stats
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,24 +18,26 @@
 
 #include "detailed_stats.hpp"
 
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <string>
-
 #include "../ability.hpp"
 #include "../item.hpp"
 
 #include "../move/moves_forward.hpp"
 
-#include "../pokemon/species_forward.hpp"
+#include "../pokemon/species.hpp"
 
 #include "../stat/nature.hpp"
 
 #include "../string_conversions/conversion.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <string>
 
 namespace technicalmachine {
 
@@ -43,7 +45,7 @@ namespace {
 
 // Put the double first so that std::max_element works without defining a
 // comparison function
-typedef std::vector<std::pair<double, std::string>> Probabilities;
+using Probabilities = std::vector<std::pair<double, std::string>>;
 
 Probabilities all_sub_elements(boost::property_tree::ptree const & pt) {
 	Probabilities data;
@@ -76,6 +78,8 @@ typename std::vector<T> top_sub_elements(boost::property_tree::ptree const & pt)
 	return result;
 }
 
+using SpeciesIndex = bounded_integer::native_integer<0, number_of_species - 1>;
+
 }	// unnamed namespace
 
 DetailedStats::DetailedStats():
@@ -91,31 +95,32 @@ DetailedStats::DetailedStats():
 		assert(value.first == "pokemon");
 		auto const pokemon = value.second;
 		auto const species = from_string<Species>(pokemon.get<std::string>("species"));
-		ability[static_cast<size_t>(species)] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
-		item[static_cast<size_t>(species)] = most_likely_sub_elements<Item::Items>(pokemon.get_child("items"));
-		nature[static_cast<size_t>(species)] = most_likely_sub_elements<Nature::Natures>(pokemon.get_child("natures"));
-		move[static_cast<size_t>(species)] = top_sub_elements<Moves>(pokemon.get_child("moves"));
+		SpeciesIndex const species_index(species, bounded_integer::non_check);
+		ability[species_index] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
+		item[species_index] = most_likely_sub_elements<Item::Items>(pokemon.get_child("items"));
+		nature[species_index] = most_likely_sub_elements<Nature::Natures>(pokemon.get_child("natures"));
+		move[species_index] = top_sub_elements<Moves>(pokemon.get_child("moves"));
 	}
 }
 
 template<>
 Ability::Abilities const & DetailedStats::get<Ability::Abilities>(Species const species) const {
-	return ability[static_cast<size_t>(species)];
+	return ability.at(species);
 }
 
 template<>
 Item::Items const & DetailedStats::get<Item::Items>(Species const species) const {
-	return item[static_cast<size_t>(species)];
+	return item.at(species);
 }
 
 template<>
 Nature::Natures const & DetailedStats::get<Nature::Natures>(Species const species) const {
-	return nature[static_cast<size_t>(species)];
+	return nature.at(species);
 }
 
 template<>
 std::vector<Moves> const & DetailedStats::get<std::vector<Moves>>(Species const species) const {
-	return move[static_cast<size_t>(species)];
+	return move.at(species);
 }
 
 
