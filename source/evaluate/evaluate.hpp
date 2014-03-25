@@ -25,7 +25,6 @@
 #include <bounded_integer/array.hpp>
 #include <bounded_integer/bounded_integer.hpp>
 
-#include <array>
 #include <cstdint>
 
 namespace technicalmachine {
