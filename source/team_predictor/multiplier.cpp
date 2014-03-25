@@ -29,7 +29,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cstddef>
 #include <fstream>
