@@ -1,5 +1,5 @@
 // Exception class for settings files that are incorrect
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,19 +18,21 @@
 
 #include "invalid_settings_file.hpp"
 
+#include <bounded_integer/array.hpp>
+
 namespace technicalmachine {
 namespace {
 
 std::string to_string(InvalidSettingsFile::Problem const problem) {
-	static const std::string text [] = {
+	static auto const text = bounded_integer::make_array<std::string>(
 		"does not exist",
 		"is too long",
 		"is too short",
 		"contains invalid data"
-	};
-	return text[problem];
+	);
+	return text.at(problem, bounded_integer::non_check);
 }
-}	// unnamed namespace
+}	// namespace
 
 InvalidSettingsFile::InvalidSettingsFile(std::string const & file_name, Problem const problem):
 	std::runtime_error(file_name + " " + to_string(problem) + ".") {
