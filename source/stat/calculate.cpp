@@ -90,7 +90,7 @@ struct AbilityNumerator;
 
 template<>
 struct AbilityNumerator<StatNames::ATK> {
-	auto operator()(ActivePokemon const & attacker, Weather const & weather) -> bounded_integer::native_integer<1, 4> {
+	auto operator()(ActivePokemon const & attacker, Weather const & weather) -> bounded::integer<1, 4> {
 		switch (get_ability(attacker).name()) {
 			case Ability::Flower_Gift:
 				return CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
@@ -128,7 +128,7 @@ struct AbilityNumerator<StatNames::SPD> {
 };
 template<>
 struct AbilityNumerator<StatNames::SPE> {
-	auto operator()(ActivePokemon const & pokemon, Weather const & weather) -> bounded_integer::native_integer<1, 4> {
+	auto operator()(ActivePokemon const & pokemon, Weather const & weather) -> bounded::integer<1, 4> {
 		switch (get_ability(pokemon).name()) {
 			case Ability::Chlorophyll:
 				return CONDITIONAL(weather.sun(), ability_denominator * 2_bi, ability_denominator);
@@ -159,7 +159,7 @@ struct ItemNumerator;
 
 template<>
 struct ItemNumerator<StatNames::ATK> {
-	auto operator()(Pokemon const & attacker) -> bounded_integer::native_integer<2, 4> {
+	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
 		switch (get_item(attacker).name) {
 			case Item::CHOICE_BAND:
 				return 3_bi;
@@ -174,7 +174,7 @@ struct ItemNumerator<StatNames::ATK> {
 };
 template<>
 struct ItemNumerator<StatNames::SPA> {
-	auto operator()(Pokemon const & attacker) -> bounded_integer::native_integer<2, 4> {
+	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
 		switch (get_item(attacker).name) {
 			case Item::SOUL_DEW:
 				return CONDITIONAL(is_boosted_by_soul_dew(attacker), 3_bi, item_denominator);
@@ -191,7 +191,7 @@ struct ItemNumerator<StatNames::SPA> {
 };
 template<>
 struct ItemNumerator<StatNames::DEF> {
-	auto operator()(Pokemon const & defender) -> bounded_integer::native_integer<2, 3> {
+	auto operator()(Pokemon const & defender) -> bounded::integer<2, 3> {
 		return CONDITIONAL(
 			get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender),
 			3_bi,
@@ -201,7 +201,7 @@ struct ItemNumerator<StatNames::DEF> {
 };
 template<>
 struct ItemNumerator<StatNames::SPD> {
-	auto operator()(Pokemon const & defender) -> bounded_integer::native_integer<2, 4> {
+	auto operator()(Pokemon const & defender) -> bounded::integer<2, 4> {
 		switch (get_item(defender).name) {
 			case Item::DEEPSEASCALE:
 				return CONDITIONAL(is_boosted_by_deepseascale(defender), 2_bi * item_denominator, item_denominator);
@@ -216,7 +216,7 @@ struct ItemNumerator<StatNames::SPD> {
 };
 template<>
 struct ItemNumerator<StatNames::SPE> {
-	auto operator()(Pokemon const & pokemon) -> bounded_integer::native_integer<1, 4> {
+	auto operator()(Pokemon const & pokemon) -> bounded::integer<1, 4> {
 		switch (get_item(pokemon).name) {
 			case Item::QUICK_POWDER:
 				return CONDITIONAL(is_boosted_by_quick_powder(pokemon), 2_bi * item_denominator, item_denominator);
@@ -293,7 +293,7 @@ auto calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather cons
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon);
 	
-	return bounded_integer::max(attack, 1_bi);
+	return bounded::max(attack, 1_bi);
 }
 
 }	// namespace
@@ -347,7 +347,7 @@ defense_type calculate_defense(ActivePokemon const & defender, Weather const & w
 	// static_cast here because it looks as though the strongest defender would
 	// hold Metal Powder, but because of the restriction on the attacker being
 	// Ditto, it is better to use a Shuckle with no boosting item available.
-	return static_cast<defense_type>(bounded_integer::max(CONDITIONAL(is_self_KO, defense / 2_bi, defense), 1_bi));
+	return static_cast<defense_type>(bounded::max(CONDITIONAL(is_self_KO, defense / 2_bi, defense), 1_bi));
 }
 
 namespace {
@@ -372,7 +372,7 @@ special_defense_type calculate_special_defense(ActivePokemon const & defender, W
 	// This also gives more Special Defense than Latias with Soul Dew. It also
 	// looks like the best ability would be Flower Gift in the Sun, but this is
 	// just as good as Sandstorm's Special Defense boost.
-	return static_cast<special_defense_type>(bounded_integer::max(defense, 1_bi));
+	return static_cast<special_defense_type>(bounded::max(defense, 1_bi));
 }
 
 namespace {
@@ -400,7 +400,7 @@ speed_type calculate_speed(Team const & team, Weather const & weather) {
 	// static_cast here because it looks as though the fastest Pokemon would
 	// hold Quick Powder, but because of the restriction on the Pokemon being
 	// Ditto, it is better to use a Deoxys-Speed with Choice Scarf.
-	return static_cast<speed_type>(bounded_integer::max(speed, 1_bi));
+	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
 void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {

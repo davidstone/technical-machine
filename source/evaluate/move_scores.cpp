@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 constexpr auto initial = static_cast<int64_t>(victory + 1_bi);
 }

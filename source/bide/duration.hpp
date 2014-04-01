@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,7 +36,7 @@ public:
 	hash_type hash() const;
 	static hash_type max_hash();
 private:
-	bounded_integer::optional<bounded_integer::native_integer<0, max>> m_turns_active;
+	bounded::optional<bounded::integer<0, max>> m_turns_active;
 };
 
 bool operator!= (BideDuration const & lhs, BideDuration const & rhs);

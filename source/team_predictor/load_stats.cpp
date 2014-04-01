@@ -34,7 +34,7 @@ namespace {
 
 template<typename T>
 auto load_stats_from_file(std::string const & file_name) {
-	bounded_integer::array<T, number_of_species> overall = {{}};
+	bounded::array<T, number_of_species> overall = {{}};
 	std::ifstream file(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
@@ -52,11 +52,11 @@ auto load_stats_from_file(std::string const & file_name) {
 
 }	// namespace
 
-auto overall_stats () -> bounded_integer::array<unsigned, number_of_species> {
+auto overall_stats () -> bounded::array<unsigned, number_of_species> {
 	return load_stats_from_file<unsigned>("settings/Generation 4/OU/usage.txt");
 }
 
-auto lead_stats () -> bounded_integer::array<float, number_of_species> {
+auto lead_stats () -> bounded::array<float, number_of_species> {
 	return load_stats_from_file<float>("settings/Generation 4/OU/lead.txt");
 }
 

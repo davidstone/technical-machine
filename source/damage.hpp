@@ -1,5 +1,5 @@
 // Damage calculator forward declarations
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,11 +29,11 @@ class Team;
 class Variable;
 class Weather;
 
-using damage_type = bounded_integer::equivalent_type<unsigned>;
+using damage_type = bounded::equivalent_type<unsigned>;
 
 damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
 
-void recoil (Pokemon & user, damage_type damage, bounded_integer::checked_integer<1, 4> denominator);
+void recoil (Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
 
 }	// namespace technicalmachine
 #endif	// DAMAGE_HPP_

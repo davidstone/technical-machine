@@ -21,7 +21,7 @@
 namespace technicalmachine {
 
 PhazingInSamePokemon::PhazingInSamePokemon(PokemonCollection::index_type const index):
-	std::logic_error("Attempted to phaze in the currently active Pokemon at index " + bounded_integer::to_string(index) + ".")
+	std::logic_error("Attempted to phaze in the currently active Pokemon at index " + bounded::to_string(index) + ".")
 	{
 }
 

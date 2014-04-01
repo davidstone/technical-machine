@@ -27,11 +27,11 @@
 #include <utility>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class Substitute {
 private:
-	using hp_type = bounded_integer::equivalent_type<decltype(std::declval<HP::current_type>() / 4_bi), bounded_integer::null_policy>;
+	using hp_type = bounded::equivalent_type<decltype(std::declval<HP::current_type>() / 4_bi), bounded::null_policy>;
 public:
 	Substitute();
 	auto create(HP::current_type total_hp) -> hp_type;
@@ -47,7 +47,7 @@ public:
 	auto hash() const -> hash_type;
 	static auto max_hash() -> hash_type;
 private:
-	bounded_integer::equivalent_type<hp_type, bounded_integer::clamp_policy> m_hp;
+	bounded::equivalent_type<hp_type, bounded::clamp_policy> m_hp;
 };
 bool operator== (Substitute const & lhs, Substitute const & rhs);
 bool operator!= (Substitute const & lhs, Substitute const & rhs);

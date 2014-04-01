@@ -37,7 +37,7 @@
 namespace technicalmachine {
 namespace {
 
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 constexpr auto other_pokemon_per_team = max_pokemon_per_team - 1_bi;
 constexpr Multiplier::value_type not_set = -1.0F;
@@ -70,9 +70,9 @@ Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
 	for (auto & array : multiplier)
 		array.fill(not_set);
-	using bounded_integer::range;
-	for (auto const a : range(bounded_integer::make_bounded<number_of_species>())) {
-		for (auto const b : range(bounded_integer::make_bounded<number_of_species>())) {
+	using bounded::range;
+	for (auto const a : range(bounded::make<number_of_species>())) {
+		for (auto const b : range(bounded::make<number_of_species>())) {
 			if (is_alternate_form(static_cast<Species>(a), static_cast<Species>(b))) {
 				multiplier[a][b] = 0;
 			}
@@ -121,7 +121,7 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	// this Pokemon. If a Pokemon that is used a lot does not show up on this
 	// list, then we can be sure that it is used less than the current method
 	// suggests.
-	for (auto const a : bounded_integer::range(bounded_integer::make_bounded<number_of_species>())) {
+	for (auto const a : bounded::range(bounded::make<number_of_species>())) {
 		if (overall[a] != 0_bi) {
 			for (float & value : multiplier[a]) {
 				if (value == not_set) {

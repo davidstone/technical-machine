@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,10 +49,10 @@ DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
 }
 
 std::string DataPoint::to_string() const {
-	return ::technicalmachine::to_string(nature.name) + " " + bounded_integer::to_string(hp.value()) + " HP / " + bounded_integer::to_string(defense.value()) + " Def / " + bounded_integer::to_string(special_defense.value()) + " SpD";
+	return ::technicalmachine::to_string(nature.name) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defense.value()) + " Def / " + bounded::to_string(special_defense.value()) + " SpD";
 }
 
-bounded_integer::native_integer<0, EV::max * 3> DataPoint::sum() const {
+bounded::integer<0, EV::max * 3> DataPoint::sum() const {
 	return hp.value() + defense.value() + special_defense.value();
 }
 

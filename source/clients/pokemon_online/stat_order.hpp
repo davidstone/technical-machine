@@ -26,7 +26,7 @@
 namespace technicalmachine {
 namespace po {
 
-constexpr bounded_integer::array<StatNames, 5> stat_order = {
+constexpr bounded::array<StatNames, 5> stat_order = {
 	StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE
 };
 

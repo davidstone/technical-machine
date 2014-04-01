@@ -1,5 +1,5 @@
 // Combine all optimized EVs and correct the Pokemon
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -46,10 +46,10 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 		}
 		auto const sum = speed.second.value() + offensive->second.sum() + defensive->second.sum();
 		static_assert(std::numeric_limits<decltype(sum)>::min() == 0_bi, "Minimum EV sum is not 0.");
-		if (sum > bounded_integer::make_bounded<EV::max_total>()) {
+		if (sum > bounded::make<EV::max_total>()) {
 			continue;
 		}
-		sums.emplace(speed.first, EV::total_type(sum, bounded_integer::non_check));
+		sums.emplace(speed.first, EV::total_type(sum, bounded::non_check));
 	}
 	#if 0
 	if (sums.empty()) {

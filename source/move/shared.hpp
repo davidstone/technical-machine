@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 class Move;
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class SharedMoves {
 public:
@@ -39,7 +39,7 @@ public:
 	size_type size() const;
 	friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
 private:
-	bounded_integer::equivalent_type<TeamSize, bounded_integer::throw_policy> m_number_of_switches;
+	bounded::equivalent_type<TeamSize, bounded::throw_policy> m_number_of_switches;
 };
 
 }	// namespace technicalmachine

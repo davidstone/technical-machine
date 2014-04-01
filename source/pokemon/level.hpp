@@ -1,5 +1,5 @@
 // Level data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,10 +27,10 @@ class Level {
 public:
 	static constexpr int min = 1;
 	static constexpr int max = 100;
-	explicit Level(bounded_integer::checked_integer<min, max> level);
-	bounded_integer::native_integer<min, max> operator() () const;
+	explicit Level(bounded::checked_integer<min, max> level);
+	bounded::integer<min, max> operator() () const;
 private:
-	bounded_integer::checked_integer<min, max> m_value;
+	bounded::checked_integer<min, max> m_value;
 };
 
 bool operator== (Level lhs, Level rhs);

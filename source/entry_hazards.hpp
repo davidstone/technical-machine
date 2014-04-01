@@ -33,13 +33,13 @@ class EntryHazards {
 public:
 	EntryHazards();
 	auto spikes() const {
-		return bounded_integer::make_bounded<bounded_integer::null_policy>(m_spikes);
+		return bounded::make<bounded::null_policy>(m_spikes);
 	}
 	auto stealth_rock() const {
 		return m_stealth_rock;
 	}
 	auto toxic_spikes() const {
-		return bounded_integer::make_bounded<bounded_integer::null_policy>(m_toxic_spikes);
+		return bounded::make<bounded::null_policy>(m_toxic_spikes);
 	}
 	auto add_spikes() -> void;
 	auto add_toxic_spikes() -> void;
@@ -49,8 +49,8 @@ public:
 	auto hash() const -> hash_type;
 	static auto max_hash() -> hash_type;
 private:
-	bounded_integer::clamped_integer<0, 3> m_spikes;
-	bounded_integer::clamped_integer<0, 2> m_toxic_spikes;
+	bounded::clamped_integer<0, 3> m_spikes;
+	bounded::clamped_integer<0, 2> m_toxic_spikes;
 	bool m_stealth_rock;
 };
 

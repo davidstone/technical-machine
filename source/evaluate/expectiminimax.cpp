@@ -546,7 +546,7 @@ Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
 
 std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
 	std::vector<Moves> switches;
-	for (auto const n : bounded_integer::range(team_size)) {
+	for (auto const n : bounded::range(team_size)) {
 		if (n != index) {
 			switches.emplace_back(from_replacement(n));
 		}

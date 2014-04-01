@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,7 @@
 #include "bide.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 bool Bide::is_active() const {
 	return static_cast<bool>(m_duration);

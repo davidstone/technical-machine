@@ -26,11 +26,11 @@
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class Stat {
 public:
-	using base_type = bounded_integer::checked_integer<5, 230>;
+	using base_type = bounded::checked_integer<5, 230>;
 
 	Stat(Species name, StatNames stat, EV ev = EV(0_bi));
 

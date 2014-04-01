@@ -46,7 +46,7 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 unsigned calculate_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable);
 bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
@@ -57,7 +57,7 @@ bool is_boosted_by_adamant_orb(Species species);
 bool is_boosted_by_griseous_orb(Species species);
 bool is_boosted_by_lustrous_orb(Species species);
 
-bounded_integer::native_integer<20, 120> power_of_mass_based_moves(Species species);
+bounded::integer<20, 120> power_of_mass_based_moves(Species species);
 }	// namespace
 
 unsigned move_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) {
@@ -146,21 +146,21 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			auto const defender_speed = calculate_speed(defender_team, weather);
 			auto const attacker_speed = calculate_speed(attacker_team, weather);
 			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
-			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 150_bi));
+			return static_cast<unsigned>(bounded::min(uncapped_power, 150_bi));
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return static_cast<unsigned>(attacker.momentum_move_power());
 		case Moves::Hidden_Power: {
-			using stat_and_position_type = std::pair<StatNames, bounded_integer::native_integer<0, 5>>;
-			static constexpr bounded_integer::array<stat_and_position_type, 5> stat_and_position {{
+			using stat_and_position_type = std::pair<StatNames, bounded::integer<0, 5>>;
+			static constexpr bounded::array<stat_and_position_type, 5> stat_and_position {{
 				{ StatNames::ATK, 1_bi },
 				{ StatNames::DEF, 2_bi },
 				{ StatNames::SPE, 3_bi },
 				{ StatNames::SPA, 4_bi },
 				{ StatNames::SPD, 5_bi }
 			}};
-			using intermediate_type = bounded_integer::checked_integer<0, (1 << 6) - 1>;
+			using intermediate_type = bounded::checked_integer<0, (1 << 6) - 1>;
 			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
 				return value + ((get_stat(attacker, stat.first).iv.value() / 2_bi) % 2_bi) << stat.second;
 			};
@@ -179,7 +179,7 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			return static_cast<unsigned>(variable.value());
 		case Moves::Punishment: {
 			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(defender.stage());
-			return static_cast<unsigned>(bounded_integer::min(uncapped_power, 200_bi));
+			return static_cast<unsigned>(bounded::min(uncapped_power, 200_bi));
 		}
 		case Moves::Return:
 			return static_cast<unsigned>(return_power(get_happiness(attacker)));
@@ -366,8 +366,8 @@ bool is_boosted_by_lustrous_orb(Species const species) {
 	return species == Species::Giratina_Origin;
 }
 
-bounded_integer::native_integer<20, 120> power_of_mass_based_moves(Species const species) {
-	static constexpr auto mass_array = bounded_integer::make_array(
+bounded::integer<20, 120> power_of_mass_based_moves(Species const species) {
+	static constexpr auto mass_array = bounded::make_array(
 		// Generation 1
 		20_bi,		// Bulbasaur
 		40_bi,		// Ivysaur

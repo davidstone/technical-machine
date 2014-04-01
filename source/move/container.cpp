@@ -40,7 +40,7 @@ auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move
 auto MoveContainer::operator[](index_type const index) const -> Move const & {
 	assert(index < size());
 	return (index < number_of_regular_moves()) ?
-		unchecked_regular_move(RegularMoveIndex(index, bounded_integer::non_check)) :
+		unchecked_regular_move(RegularMoveIndex(index, bounded::non_check)) :
 		shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
 }
 

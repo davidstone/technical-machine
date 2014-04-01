@@ -24,13 +24,13 @@ namespace technicalmachine {
 namespace {
 
 std::string to_string(InvalidSettingsFile::Problem const problem) {
-	static auto const text = bounded_integer::make_array<std::string>(
+	static auto const text = bounded::make_array<std::string>(
 		"does not exist",
 		"is too long",
 		"is too short",
 		"contains invalid data"
 	);
-	return text.at(problem, bounded_integer::non_check);
+	return text.at(problem, bounded::non_check);
 }
 }	// namespace
 

@@ -21,7 +21,7 @@
 #include "../rational.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 namespace {
 constexpr auto max_stage = 6;
 }
@@ -31,10 +31,10 @@ Stage::Stage() {
 }
 
 auto Stage::operator[](StatNames const index) const -> value_type const & {
-	return m_stages[container_type::index_type(index, bounded_integer::non_check)];
+	return m_stages[container_type::index_type(index, bounded::non_check)];
 }
 auto Stage::operator[](StatNames const index) -> value_type & {
-	return m_stages[container_type::index_type(index, bounded_integer::non_check)];
+	return m_stages[container_type::index_type(index, bounded::non_check)];
 }
 
 auto Stage::begin() const -> container_type::const_iterator {

@@ -1,5 +1,5 @@
 // Handles bide damage
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,7 +21,7 @@
 #include <algorithm>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 BideDamage::BideDamage():
 	m_damage(0_bi)
@@ -33,7 +33,7 @@ void BideDamage::add(damage_type const damage) {
 }
 
 damage_type BideDamage::release() {
-	bounded_integer::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
+	bounded::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
 	m_damage = 0_bi;
 	return output_damage;
 }

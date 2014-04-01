@@ -1,5 +1,5 @@
 // All 'normal' stats that a Pokemon has
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,7 +36,7 @@ public:
 	Stat & operator[](StatNames stat);
 private:
 	HP m_hp;
-	bounded_integer::array<Stat, 5> m_stats;
+	bounded::array<Stat, 5> m_stats;
 };
 
 }	// namespace technicalmachine

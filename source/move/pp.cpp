@@ -1,5 +1,5 @@
 // PP class
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,15 +30,15 @@ namespace technicalmachine {
 
 Pp::Pp (Moves const move, pp_ups_type const pp_ups):
 	max(calculate_max(get_base_pp(move), pp_ups)),
-	current(static_cast<bool>(max) ? bounded_integer::optional<current_type>(*max) : bounded_integer::none) {
+	current(static_cast<bool>(max) ? bounded::optional<current_type>(*max) : bounded::none) {
 }
 
-auto Pp::calculate_max(bounded_integer::optional<base_type> base, pp_ups_type pp_ups) -> bounded_integer::optional<max_type> {
+auto Pp::calculate_max(bounded::optional<base_type> base, pp_ups_type pp_ups) -> bounded::optional<max_type> {
 	// Macro needed until C++14 automatic return type deduction
 	#define TECHNICALMACHINE_PP_MAX \
 		make_optional(*base * (pp_ups + 5_bi) / 5_bi)
-	static_assert(std::is_same<bounded_integer::optional<max_type>, decltype(TECHNICALMACHINE_PP_MAX)>::value, "Incorrect PP type.");
-	return static_cast<bool>(base) ? TECHNICALMACHINE_PP_MAX : bounded_integer::none;
+	static_assert(std::is_same<bounded::optional<max_type>, decltype(TECHNICALMACHINE_PP_MAX)>::value, "Incorrect PP type.");
+	return static_cast<bool>(base) ? TECHNICALMACHINE_PP_MAX : bounded::none;
 	#undef TECHNICALMACHINE_PP_MAX
 }
 
@@ -58,7 +58,7 @@ void Pp::decrement(Ability const & foe_ability) {
 	*current -= BOUNDED_INTEGER_CONDITIONAL(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
 }
 
-bounded_integer::native_integer<40, 200> Pp::trump_card_power() const {
+bounded::integer<40, 200> Pp::trump_card_power() const {
 	// Should be safe because we assume we are using Trump Card
 	switch (current->value()) {
 		case 0:
@@ -90,9 +90,9 @@ bool operator!= (Pp const & lhs, Pp const & rhs) {
 	return !(lhs == rhs);
 }
 
-auto Pp::get_base_pp(Moves const move) -> bounded_integer::optional<base_type> {
-	using bounded_integer::none;
-	static constexpr auto get_pp = bounded_integer::make_optional_array(
+auto Pp::get_base_pp(Moves const move) -> bounded::optional<base_type> {
+	using bounded::none;
+	static constexpr auto get_pp = bounded::make_optional_array(
 		none,		// Switch0
 		none,		// Switch1
 		none,		// Switch2
@@ -660,7 +660,7 @@ auto Pp::get_base_pp(Moves const move) -> bounded_integer::optional<base_type> {
 		5_bi,		// Fusion Flare
 		5_bi		// Fusion Bolt
 	);
-	static_assert(std::is_same<decltype(get_pp)::value_type, bounded_integer::optional<base_type>>::value, "Incorrect array type.");
+	static_assert(std::is_same<decltype(get_pp)::value_type, bounded::optional<base_type>>::value, "Incorrect array type.");
 	return get_pp.at(move);
 }
 

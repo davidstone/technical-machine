@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,7 +21,7 @@
 #include <cassert>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 void BideDuration::activate() {
 	m_turns_active = 0_bi;
@@ -34,7 +34,7 @@ BideDuration::operator bool() const {
 bool BideDuration::decrement() {
 	assert(this->operator bool());
 	if (*m_turns_active == max) {
-		m_turns_active = bounded_integer::none;
+		m_turns_active = bounded::none;
 		return true;
 	}
 	else {

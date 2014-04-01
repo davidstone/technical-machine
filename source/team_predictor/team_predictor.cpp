@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -41,7 +41,7 @@ namespace technicalmachine {
 namespace {
 
 auto all_ones_array() {
-	bounded_integer::array<float, number_of_species> all_ones;
+	bounded::array<float, number_of_species> all_ones;
 	all_ones.fill(1.0F);
 	return all_ones;
 }

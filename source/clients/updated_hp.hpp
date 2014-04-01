@@ -28,12 +28,12 @@
 namespace technicalmachine {
 class Team;
 
-using VisibleFoeHP = bounded_integer::native_integer<48, 100>;
+using VisibleFoeHP = bounded::integer<48, 100>;
 
 class UpdatedHP {
 public:
 	using VisibleHP = std::common_type<
-		bounded_integer::equivalent_type<HP::current_type, bounded_integer::throw_policy>,
+		bounded::equivalent_type<HP::current_type, bounded::throw_policy>,
 		VisibleFoeHP
 	>::type;
 	explicit UpdatedHP(Team const & team);

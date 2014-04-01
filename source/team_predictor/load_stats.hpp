@@ -25,10 +25,10 @@
 
 namespace technicalmachine {
 
-auto overall_stats() -> bounded_integer::array<unsigned, number_of_species>;
+auto overall_stats() -> bounded::array<unsigned, number_of_species>;
 
 // Multiplier for Pokemon after you've seen the lead
-auto lead_stats() -> bounded_integer::array<float, number_of_species>;
+auto lead_stats() -> bounded::array<float, number_of_species>;
 
 }	// namespace technicalmachine
 #endif	// TEAM_PREDICTOR__LOAD_STATS_HPP_

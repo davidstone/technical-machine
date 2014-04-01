@@ -20,13 +20,13 @@
 #include <bounded_integer/array.hpp>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
-bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Moves const move) {
+bounded::optional<bounded::integer<0, 250>> base_power(Moves const move) {
 	// It doesn't matter if variable_power happens to have the same value as
 	// anything else, as long as it is not 0.
 	static constexpr auto variable_power = 1_bi;
-	static constexpr auto power = bounded_integer::make_optional_array(
+	static constexpr auto power = bounded::make_optional_array(
 		0_bi,		// Switch0
 		0_bi,		// Switch1
 		0_bi,		// Switch2
@@ -45,7 +45,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		75_bi,		// ThunderPunch
 		40_bi,		// Scratch
 		55_bi,		// ViceGrip
-		bounded_integer::none,		// Guillotine
+		bounded::none,		// Guillotine
 		80_bi,		// Razor Wind
 		0_bi,		// Swords Dance
 		50_bi,		// Cut
@@ -65,7 +65,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		70_bi,		// Headbutt
 		65_bi,		// Horn Attack
 		15_bi,		// Fury Attack
-		bounded_integer::none,		// Horn Drill
+		bounded::none,		// Horn Drill
 		50_bi,		// Tackle
 		85_bi,		// Body Slam
 		15_bi,		// Wrap
@@ -82,7 +82,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		0_bi,		// Roar
 		0_bi,		// Sing
 		0_bi,		// Supersonic
-		bounded_integer::none,		// SonicBoom
+		bounded::none,		// SonicBoom
 		0_bi,		// Disable
 		40_bi,		// Acid
 		40_bi,		// Ember
@@ -101,8 +101,8 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		80_bi,		// Drill Peck
 		80_bi,		// Submission
 		variable_power,		// Low Kick
-		bounded_integer::none,		// Counter
-		bounded_integer::none,		// Seismic Toss
+		bounded::none,		// Counter
+		bounded::none,		// Seismic Toss
 		80_bi,		// Strength
 		20_bi,		// Absorb
 		40_bi,		// Mega Drain
@@ -115,7 +115,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		0_bi,		// Sleep Powder
 		120_bi,		// Petal Dance
 		0_bi,		// String Shot
-		bounded_integer::none,		// Dragon Rage
+		bounded::none,		// Dragon Rage
 		35_bi,		// Fire Spin
 		40_bi,		// ThunderShock
 		95_bi,		// Thunderbolt
@@ -123,7 +123,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		120_bi,		// Thunder
 		50_bi,		// Rock Throw
 		100_bi,		// Earthquake
-		bounded_integer::none,		// Fissure
+		bounded::none,		// Fissure
 		80_bi,		// Dig
 		0_bi,		// Toxic
 		50_bi,		// Confusion
@@ -134,7 +134,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		40_bi,		// Quick Attack
 		20_bi,		// Rage
 		0_bi,		// Teleport
-		bounded_integer::none,		// Night Shade
+		bounded::none,		// Night Shade
 		0_bi,		// Mimic
 		0_bi,		// Screech
 		0_bi,		// Double Team
@@ -182,7 +182,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		70_bi,		// Dizzy Punch
 		0_bi,		// Spore
 		0_bi,		// Flash
-		bounded_integer::none,		// Psywave
+		bounded::none,		// Psywave
 		0_bi,		// Splash
 		0_bi,		// Acid Armor
 		90_bi,		// Crabhammer
@@ -195,7 +195,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		0_bi,		// Sharpen
 		0_bi,		// Conversion
 		80_bi,		// Tri Attack
-		bounded_integer::none,		// Super Fang
+		bounded::none,		// Super Fang
 		70_bi,		// Slash
 		0_bi,		// Substitute
 		50_bi,		// Struggle
@@ -276,7 +276,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		0_bi,		// Rain Dance
 		0_bi,		// Sunny Day
 		80_bi,		// Crunch
-		bounded_integer::none,		// Mirror Coat
+		bounded::none,		// Mirror Coat
 		0_bi,		// Psych Up
 		80_bi,		// ExtremeSpeed
 		60_bi,		// AncientPower
@@ -316,7 +316,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		75_bi,		// Brick Break
 		0_bi,		// Yawn
 		20_bi,		// Knock Off
-		bounded_integer::none,		// Endeavor
+		bounded::none,		// Endeavor
 		150_bi,		// Eruption
 		0_bi,		// Skill Swap
 		0_bi,		// Imprison
@@ -362,7 +362,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		80_bi,		// Extrasensory
 		85_bi,		// Sky Uppercut
 		35_bi,		// Sand Tomb
-		bounded_integer::none,		// Sheer Cold
+		bounded::none,		// Sheer Cold
 		95_bi,		// Muddy Water
 		25_bi,		// Bullet Seed
 		60_bi,		// Aerial Ace
@@ -401,7 +401,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		60_bi,		// Pluck
 		0_bi,		// Tailwind
 		0_bi,		// Acupressure
-		bounded_integer::none,		// Metal Burst
+		bounded::none,		// Metal Burst
 		70_bi,		// U-turn
 		120_bi,		// Close Combat
 		50_bi,		// Payback
@@ -548,7 +548,7 @@ bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Mo
 		55_bi,		// Acrobatics
 		0_bi,		// Reflect Type
 		70_bi,		// Retaliate
-		bounded_integer::none,		// Final Gambit
+		bounded::none,		// Final Gambit
 		0_bi,		// Bestow
 		100_bi,		// Inferno
 		50_bi,		// Water Pledge

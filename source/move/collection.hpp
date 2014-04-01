@@ -32,7 +32,7 @@
 #include "moves_forward.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class MoveScores;
 
@@ -77,7 +77,7 @@ public:
 		return container.find_if(std::forward<Function>(condition)) != nullptr;
 	}
 	using Base::index;
-	bounded_integer::optional<RegularMoveIndex> index(Moves name) const;
+	bounded::optional<RegularMoveIndex> index(Moves name) const;
 	size_type size() const;
 	void remove_switch();
 	typedef uint64_t hash_type;

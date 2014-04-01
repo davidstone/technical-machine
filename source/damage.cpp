@@ -39,7 +39,7 @@
 #include "type/effectiveness.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 namespace {
 
 #define CONDITIONAL(a, b, c) BOUNDED_INTEGER_CONDITIONAL(a, b, c)
@@ -77,7 +77,7 @@ damage_type raw_damage(Team const & attacker_team, Team const & defender, Weathe
 		case Moves::Dragon_Rage:
 			return 40_bi;
 		case Moves::Endeavor:
-			return bounded_integer::max(get_hp(defender.pokemon()).current() - get_hp(attacker).current(), 0_bi);
+			return bounded::max(get_hp(defender.pokemon()).current() - get_hp(attacker).current(), 0_bi);
 		case Moves::Fissure:
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
@@ -100,7 +100,7 @@ damage_type raw_damage(Team const & attacker_team, Team const & defender, Weathe
 damage_type capped_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
 	auto const damage = raw_damage(attacker, defender, weather, variable);
 	return (cannot_ko(attacker.pokemon().move()) or defender.pokemon().cannot_be_koed()) ?
-		static_cast<damage_type>(bounded_integer::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
+		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
 		damage;
 }
 
@@ -191,15 +191,15 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	damage *= tinted_lens_multiplier(get_ability(attacker), effectiveness);
 	damage /= resistance_berry_divisor(get_item(defender.pokemon()), type, effectiveness);
 
-	return bounded_integer::max(static_cast<damage_type>(damage), 1_bi);
+	return bounded::max(static_cast<damage_type>(damage), 1_bi);
 }
 
 }	// namespace
 
 
-void recoil(Pokemon & user, damage_type const damage, bounded_integer::checked_integer<1, 4> const denominator) {
+void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1, 4> const denominator) {
 	if (!get_ability(user).blocks_recoil()) {
-		get_hp(user) -= bounded_integer::max(damage / denominator, 1_bi);
+		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
 	}
 }
 

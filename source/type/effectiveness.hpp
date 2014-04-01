@@ -38,9 +38,9 @@ public:
 
 private:
 	Effectiveness(Type::Types attacking, Type::Types defending1, Type::Types defending2);
-	using SingleType = bounded_rational<bounded_integer::native_integer<0, 2>, bounded_integer::native_integer<1, 2>>;
+	using SingleType = bounded_rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
-	using container_type = bounded_integer::array<SingleType, 2>;
+	using container_type = bounded::array<SingleType, 2>;
 
 	container_type m_effectiveness;
 

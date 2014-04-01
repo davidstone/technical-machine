@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -55,7 +55,7 @@ SingleClassificationEVs::SingleClassificationEVs(EV hp_ev, EV defensive_ev, Natu
 
 std::string SingleClassificationEVs::to_string() const {
 	Nature const nature = nature_boost_convert(nature_boost, physical);
-	return ::technicalmachine::to_string(nature.name) + " " + bounded_integer::to_string(hp.value()) + " HP / " + bounded_integer::to_string(defensive.value()) + " " + stat_name(physical);
+	return ::technicalmachine::to_string(nature.name) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defensive.value()) + " " + stat_name(physical);
 }
 
 bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type const max_evs) {
@@ -124,7 +124,7 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 			while (initial_stat<stat_name>(stat, level, current_nature) * hp.max() < initial_product) {
 				defensive_ev += 4_bi;
 				stat.ev = EV(defensive_ev);
-				if (defensive_ev == bounded_integer::make_bounded<EV::max>()) {
+				if (defensive_ev == bounded::make<EV::max>()) {
 					break;
 				}
 			}

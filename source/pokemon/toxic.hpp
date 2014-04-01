@@ -24,7 +24,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 class Rational;
 
 class Toxic {
@@ -42,7 +42,7 @@ private:
 	friend class Evaluate;
 	// Number of turns this Pokemon has already taken Toxic damage (or
 	// would have if Magic Guard / Poison Heal weren't in play)
-	bounded_integer::clamped_integer<0, 15> m_counter = 0_bi;
+	bounded::clamped_integer<0, 15> m_counter = 0_bi;
 };
 bool operator!= (Toxic const & lhs, Toxic const & rhs);
 

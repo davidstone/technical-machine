@@ -274,7 +274,7 @@ void Battle::parse_send_out (InMessage & msg, Party const party) {
 	Gender const gender(id_to_gender(msg.read_byte()));
 	bool const shiny = msg.read_byte();
 	static_cast<void>(shiny);
-	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(msg.read_byte()));
+	Level const level(bounded::checked_integer<Level::min, Level::max>(msg.read_byte()));
 	uint8_t const slot = 0;
 	handle_send_out(party, slot, index, nickname, species, gender, level);
 	if (is_me(party)) {
@@ -409,7 +409,7 @@ void Battle::parse_substitute (InMessage & msg) {
 namespace {
 
 auto parse_boosts(InMessage & msg) {
-	bounded_integer::array<int8_t, 7> boosts;
+	bounded::array<int8_t, 7> boosts;
 	for (int8_t & boost : boosts)
 		boost = static_cast<int8_t>(msg.read_byte());
 	return boosts;

@@ -31,19 +31,19 @@
 #include "../../string_conversions/move.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 void move_collection_tests() {
-	using bounded_integer::to_string;
+	using bounded::to_string;
 	std::cout << "\tRunning MoveCollection tests.\n";
 	constexpr TeamSize team_size = 4_bi;
-	for (auto const & size : bounded_integer::range(1_bi, team_size + 1_bi)) {
+	for (auto const & size : bounded::range(1_bi, team_size + 1_bi)) {
 		auto const shared_moves_size = BOUNDED_INTEGER_CONDITIONAL(size > 1_bi, size + 1_bi, 1_bi);
 		MoveCollection collection(size);
 		if (collection.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(size));
 		auto expected = create_regular_moves();
-		for (auto const & n : bounded_integer::range(static_cast<MoveSize>(expected.size()))) {
+		for (auto const & n : bounded::range(static_cast<MoveSize>(expected.size()))) {
 			collection.add(expected[static_cast<std::size_t>(n)]);
 			if (collection.size() != shared_moves_size + n + 1_bi or collection.size() != collection.number_of_regular_moves() + shared_moves_size) {
 				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + to_string(size));
@@ -52,7 +52,7 @@ void move_collection_tests() {
 		
 		auto const expected_shared = create_shared_moves(size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
-		for (auto const & n : bounded_integer::range(static_cast<MoveSize>(expected.size()))) {
+		for (auto const & n : bounded::range(static_cast<MoveSize>(expected.size()))) {
 			if (expected[static_cast<std::size_t>(n)] != collection(n)) {
 				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(size) + ". Stored: " + to_string(collection(n)) + " -- Expected: " + to_string(expected[static_cast<unsigned>(n)]));
 			}

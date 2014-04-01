@@ -130,7 +130,7 @@ void write_team (Team & team, std::string const & file_name) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
 	}
-	for (auto const & unused : bounded_integer::range(team.all_pokemon().size(), max_pokemon_per_team)) {
+	for (auto const & unused : bounded::range(team.all_pokemon().size(), max_pokemon_per_team)) {
 		static_cast<void>(unused);
 		write_blank_pokemon(t);
 	}

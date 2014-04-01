@@ -34,17 +34,14 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
-
-using bounded_integer::clamped_integer;
-using bounded_integer::native_integer;
+using namespace bounded::literal;
 
 auto move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool;
 
-using AccuracyItemModifier = bounded_rational<native_integer<1, 11>, native_integer<1, 10>>;
+using AccuracyItemModifier = bounded_rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
 auto accuracy_item_modifier(Item const & item, bool target_moved) -> AccuracyItemModifier;
 
-using EvasionItemModifier = bounded_rational<native_integer<1, 19>, native_integer<1, 20>>;
+using EvasionItemModifier = bounded_rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
 auto evasion_item_modifier(Item const & item) -> EvasionItemModifier;
 
 using namespace detail_chance_to_hit;
@@ -69,7 +66,7 @@ auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Wea
 		gravity_multiplier
 	;
 	
-	return ChanceToHit(clamped_integer<min.value(), max.value()>(calculated_accuracy), max);
+	return ChanceToHit(bounded::clamped_integer<min.value(), max.value()>(calculated_accuracy), max);
 }
 
 namespace {

@@ -34,7 +34,7 @@
 #include <vector>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 class Move;
 
 class PokemonCollection : public detail::Collection<PokemonContainer> {

@@ -1,5 +1,5 @@
 // Level data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,12 +20,12 @@
 
 namespace technicalmachine {
 
-Level::Level(bounded_integer::checked_integer<min, max> const level) : 
+Level::Level(bounded::checked_integer<min, max> const level) : 
 	m_value(level)
 	{
 }
 
-auto Level::operator()() const -> bounded_integer::native_integer<min, max> {
+auto Level::operator()() const -> bounded::integer<min, max> {
 	return m_value;
 }
 

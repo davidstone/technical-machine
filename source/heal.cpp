@@ -1,5 +1,5 @@
 // Function to change a Pokemon's HP by a fractional multiplier
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,10 +33,10 @@ void heal(ActivePokemon & pokemon, Rational const & rational, bool positive) {
 		return;
 	unsigned const hp_healed = static_cast<unsigned>(get_hp(pokemon).max()) * rational;
 	if (positive) {
-		get_hp(pokemon) += bounded_integer::max(hp_healed, 1_bi);
+		get_hp(pokemon) += bounded::max(hp_healed, 1_bi);
 	}
 	else if (!get_ability(pokemon).blocks_secondary_damage()) {
-		get_hp(pokemon) -= bounded_integer::max(hp_healed, 1_bi);
+		get_hp(pokemon) -= bounded::max(hp_healed, 1_bi);
 	}
 }
 

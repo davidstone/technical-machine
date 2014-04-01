@@ -29,12 +29,12 @@
 #include <vector>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 inline std::vector<Moves> create_shared_moves(TeamSize const team_size) {
 	std::vector<Moves> shared ({ Moves::Struggle });
 	if (team_size != 1_bi) {
-		for (auto const n : bounded_integer::range(team_size)) {
+		for (auto const n : bounded::range(team_size)) {
 			shared.emplace_back(from_replacement(n));
 		}
 	}

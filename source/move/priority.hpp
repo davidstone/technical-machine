@@ -1,5 +1,5 @@
 // Priority data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,7 +30,7 @@ public:
 	friend bool operator== (Priority lhs, Priority rhs);
 	friend bool operator< (Priority lhs, Priority rhs);
 private:
-	bounded_integer::checked_integer<-6, 6> priority;
+	bounded::checked_integer<-6, 6> priority;
 };
 
 bool operator!= (Priority lhs, Priority rhs);

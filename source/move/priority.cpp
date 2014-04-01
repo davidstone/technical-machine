@@ -1,5 +1,5 @@
 // Priority data structure
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,10 +22,10 @@
 
 namespace technicalmachine {
 
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 namespace {
 
-bounded_integer::checked_integer<-6, 6> get_priority(Moves move);
+bounded::checked_integer<-6, 6> get_priority(Moves move);
 
 }	// unnamed namespace
 
@@ -54,7 +54,7 @@ bool operator>= (Priority const lhs, Priority const rhs) {
 
 namespace {
 
-bounded_integer::checked_integer<-6, 6> get_priority(Moves const move) {
+bounded::checked_integer<-6, 6> get_priority(Moves const move) {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:

@@ -48,7 +48,7 @@ auto MoveCollection::number_of_regular_moves() const -> RegularMoveSize {
 }
 
 bool MoveCollection::set_index_if_found(Moves name) {
-	for (index_type const new_index : bounded_integer::range(size())) {
+	for (index_type const new_index : bounded::range(size())) {
 		if (unchecked_value(new_index) == name) {
 			Base::set_index(new_index);
 			return true;
@@ -70,13 +70,13 @@ Move * MoveCollection::find (Moves name) {
 	return container.find_if([name](Move const & move) { return move == name; });
 }
 
-auto MoveCollection::index(Moves const name) const -> bounded_integer::optional<RegularMoveIndex> {
-	for (RegularMoveIndex const n : bounded_integer::range(container.number_of_regular_moves())) {
+auto MoveCollection::index(Moves const name) const -> bounded::optional<RegularMoveIndex> {
+	for (RegularMoveIndex const n : bounded::range(container.number_of_regular_moves())) {
 		if (container.regular_move(n) == name) {
 			return n;
 		}
 	}
-	return bounded_integer::none;
+	return bounded::none;
 }
 
 auto MoveCollection::size() const -> MoveCollection::size_type {

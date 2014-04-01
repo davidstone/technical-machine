@@ -1,5 +1,5 @@
 // IVs
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,11 +26,11 @@ namespace technicalmachine {
 class IV {
 public:
 	static constexpr unsigned max = 31u;
-	using value_type = bounded_integer::checked_integer<0, max>;
+	using value_type = bounded::checked_integer<0, max>;
 	constexpr explicit IV(value_type iv) noexcept:
 		m_value(iv) {
 	}
-	constexpr bounded_integer::native_integer<0, max> value() const noexcept {
+	constexpr bounded::integer<0, max> value() const noexcept {
 		return m_value;
 	}
 private:

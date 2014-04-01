@@ -22,14 +22,14 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 constexpr auto max_pokemon_per_team = 6_bi;
-using TeamSize = bounded_integer::native_integer<
+using TeamSize = bounded::integer<
 	0,
 	static_cast<intmax_t>(max_pokemon_per_team)
 >;
-using TeamIndex = bounded_integer::checked_integer<
+using TeamIndex = bounded::checked_integer<
 	0,
 	static_cast<intmax_t>(max_pokemon_per_team - 1_bi)
 >;

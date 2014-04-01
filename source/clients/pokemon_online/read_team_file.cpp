@@ -131,7 +131,7 @@ void load_pokemon(ptree const & pt, Team & team) {
 	Species const species = id_to_species(id, forme);
 	std::string const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	Gender const gender(id_to_gender(pt.get<unsigned>("<xmlattr>.Gender")));
-	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(pt.get<uint8_t>("<xmlattr>.Lvl")));
+	Level const level(bounded::checked_integer<Level::min, Level::max>(pt.get<uint8_t>("<xmlattr>.Lvl")));
 	Happiness const happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
 	team.add_pokemon(species, level, gender, nickname, happiness);
 	Pokemon & pokemon = team.replacement();

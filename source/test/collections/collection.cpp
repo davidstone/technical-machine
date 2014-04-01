@@ -27,14 +27,14 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class TestContainer {
 private:
 	static constexpr intmax_t maximum = 7;
 public:
-	using size_type = bounded_integer::checked_integer<0, maximum>;
-	using index_type = bounded_integer::checked_integer<0, maximum - 1>;
+	using size_type = bounded::checked_integer<0, maximum>;
+	using index_type = bounded::checked_integer<0, maximum - 1>;
 	using value_type = int;
 	template<typename ... Args>
 	TestContainer(Args && ... args):
@@ -61,7 +61,7 @@ void collection_range_tests() {
 		throw InvalidCollection("Cannot set Collection index properly.");
 	if (base() != v.back())
 		throw InvalidCollection("Stored index in Collection does not return proper value.");
-	for (auto const n : bounded_integer::range(size)) {
+	for (auto const n : bounded::range(size)) {
 		if (v[static_cast<std::size_t>(n)] != base(n)) {
 			throw InvalidCollection("Specified index in Collection does not return proper value.");
 		}

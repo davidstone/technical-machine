@@ -104,21 +104,21 @@ bool Type::blocks_status<Status::POISON_TOXIC> () const {
 namespace {
 
 Type::Types hidden_power_type(Pokemon const & pokemon) {
-	using modifier_type = std::pair<StatNames, bounded_integer::native_integer<1, 5>>;
-	static constexpr auto modifiers = bounded_integer::make_array(
+	using modifier_type = std::pair<StatNames, bounded::integer<1, 5>>;
+	static constexpr auto modifiers = bounded::make_array(
 		modifier_type(StatNames::ATK, 1_bi),
 		modifier_type(StatNames::DEF, 2_bi),
 		modifier_type(StatNames::SPE, 3_bi),
 		modifier_type(StatNames::SPA, 4_bi),
 		modifier_type(StatNames::SPD, 5_bi)
 	);
-	using intermediate_type = bounded_integer::checked_integer<0, 63>;
+	using intermediate_type = bounded::checked_integer<0, 63>;
 	auto const sum = [&](intermediate_type const value, modifier_type const & pair) {
 		return value + ((get_stat(pokemon, pair.first).iv.value() % 2_bi) << pair.second);
 	};
 	intermediate_type const initial = get_hp(pokemon).iv.value() % 2_bi;
 	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), initial, sum) * 15_bi / 63_bi;
-	constexpr static auto lookup = bounded_integer::make_array(
+	constexpr static auto lookup = bounded::make_array(
 		Type::Fighting,
 		Type::Flying,
 		Type::Poison,
@@ -142,7 +142,7 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 }
 
 Type::Types get_type(Moves const move, Pokemon const & pokemon) {
-	static constexpr auto move_type = bounded_integer::make_array(
+	static constexpr auto move_type = bounded::make_array(
 		Type::Typeless,		// Switch0
 		Type::Typeless,		// Switch1
 		Type::Typeless,		// Switch2

@@ -117,7 +117,7 @@ auto grounded(ActivePokemon const & pokemon, Weather const & weather) -> bool {
 namespace {
 
 auto get_type(Species const name) -> TypeArray {
-	static constexpr auto type_array = bounded_integer::make_array<TypeArray>(
+	static constexpr auto type_array = bounded::make_array<TypeArray>(
 		// Generation 1
 		TypeArray{ Type::Grass, Type::Poison },			// Bulbasaur
 		TypeArray{ Type::Grass, Type::Poison },			// Ivysaur

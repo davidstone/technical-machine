@@ -33,7 +33,7 @@ constexpr auto se = make_bounded_rational(2_bi, 1_bi);
 
 auto lookup_effectiveness(Type::Types const attacking, Type::Types const defending) {
 	using lookup_type = std::common_type<decltype(ne), decltype(nve), decltype(reg), decltype(se)>::type;
-	static constexpr bounded_integer::array<bounded_integer::array<lookup_type, 18>, 18> effectiveness {{
+	static constexpr bounded::array<bounded::array<lookup_type, 18>, 18> effectiveness {{
 		{ reg, se, reg, reg, nve, nve, nve, nve, se, reg, reg, reg, nve, se, reg, nve, reg, reg },	// Bug
 		{ reg, nve, reg, reg, nve, reg, reg, se, reg, reg, reg, reg, reg, se, reg, nve, reg, reg },	// Dark
 		{ reg, reg, se, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, nve, reg, reg },	// Dragon
@@ -79,7 +79,7 @@ Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defe
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
-	Effectiveness(type.type, get_type(defender).types.begin()->type, bounded_integer::next(get_type(defender).types.begin())->type) {
+	Effectiveness(type.type, get_type(defender).types.begin()->type, bounded::next(get_type(defender).types.begin())->type) {
 }
 
 Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending):

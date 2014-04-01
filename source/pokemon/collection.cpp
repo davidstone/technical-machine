@@ -96,7 +96,7 @@ TeamSize PokemonCollection::real_size() const {
 }
 
 PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
-	for (index_type const found_index : bounded_integer::range(size())) {
+	for (index_type const found_index : bounded::range(size())) {
 		if (operator()(found_index) == name)
 			return found_index;
 	}
@@ -120,7 +120,7 @@ void PokemonCollection::remove_active () {
 	// We don't need any bounds checking here because we've already established
 	// that replacement() is greater than index(), so it cannot be 0, which is
 	// the only value that could get this out of bounds.
-	set_index((index() > replacement()) ? replacement() : index_type(replacement() - 1_bi, bounded_integer::non_check));
+	set_index((index() > replacement()) ? replacement() : index_type(replacement() - 1_bi, bounded::non_check));
 	for (auto & pokemon : container) {
 		pokemon.remove_switch();
 	}
@@ -154,7 +154,7 @@ PokemonCollection::hash_type PokemonCollection::max_hash() const {
 
 namespace {
 
-using MoveInteger = bounded_integer::native_integer<0, number_of_moves>;
+using MoveInteger = bounded::integer<0, number_of_moves>;
 
 }	// namespace
 

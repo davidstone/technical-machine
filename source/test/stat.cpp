@@ -34,7 +34,7 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 constexpr auto team_size = max_pokemon_per_team;
 
@@ -48,7 +48,7 @@ void attack_tests () {
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	get_stat(pokemon, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::DEF).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
@@ -71,7 +71,7 @@ void special_attack_tests () {
 	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
 
-	get_stat(pokemon, StatNames::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::SPA).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon).name = Nature::MODEST;
 	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 
@@ -93,7 +93,7 @@ void max_defense_test() {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	get_stat(pokemon, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::DEF).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon).name = Nature::BOLD;
 
 	boost(defender.pokemon().stage(), StatNames::DEF, 6_bi);
@@ -142,7 +142,7 @@ void special_defense_tests () {
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
-	get_stat(pokemon, StatNames::SPD).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::SPD).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon).name = Nature::CALM;
 
 	boost(defender.pokemon().stage(), StatNames::SPD, 6_bi);
@@ -162,7 +162,7 @@ void speed_tests () {
 	Gender const gender(Gender::GENDERLESS);
 	team.add_pokemon(Species::Deoxys_Speed, level, gender);
 	Pokemon & pokemon = team.pokemon();
-	get_stat(pokemon, StatNames::SPE).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(pokemon, StatNames::SPE).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon).name = Nature::TIMID;
 
 	boost(team.pokemon().stage(), StatNames::SPE, 6_bi);

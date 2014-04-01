@@ -24,17 +24,17 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
-using RegularMoveSize = bounded_integer::native_integer<1, 4>;
-using RegularMoveIndex = bounded_integer::checked_integer<
+using RegularMoveSize = bounded::integer<1, 4>;
+using RegularMoveIndex = bounded::checked_integer<
 	0,
 	static_cast<intmax_t>(std::numeric_limits<RegularMoveSize>::max() - 1_bi)
 >;
 
 constexpr auto number_of_weird_moves = 1_bi;	// Struggle
 using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves);
-using SharedMoveIndex = bounded_integer::checked_integer<
+using SharedMoveIndex = bounded::checked_integer<
 	0,
 	static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max() - 1_bi)
 >;
@@ -43,7 +43,7 @@ using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedM
 using MoveIndex = decltype(
 	std::declval<RegularMoveIndex>() +
 	std::declval<SharedMoveIndex>() +
-	std::declval<bounded_integer::native_integer<0, 1>>()
+	std::declval<bounded::integer<0, 1>>()
 );
 
 }	// namespace technicalmachine

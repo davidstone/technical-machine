@@ -28,7 +28,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class ActivePokemon;
 class EntryHazards;
@@ -43,7 +43,7 @@ constexpr auto victory = 40731632_bi;
 class Evaluate {
 public:
 	// +1 gives me room to create a value that will always be overwritten
-	using type = bounded_integer::native_integer<-static_cast<intmax_t>(victory + 1_bi), static_cast<intmax_t>(victory + 1_bi)>;
+	using type = bounded::integer<-static_cast<intmax_t>(victory + 1_bi), static_cast<intmax_t>(victory + 1_bi)>;
 	Evaluate();
 	auto operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type;
 	// Both of these return victory if the battle is won. Returns -victory
@@ -52,7 +52,7 @@ public:
 	static auto sleep_clause(Team const & team) -> type;
 
 	// Arbitrary values
-	using value_type = bounded_integer::native_integer<-4096, 4096>;
+	using value_type = bounded::integer<-4096, 4096>;
 
 	auto light_screen() const { return m_light_screen; }
 	auto lucky_chant() const { return m_lucky_chant; }
@@ -126,7 +126,7 @@ private:
 	value_type m_sleep;
 	value_type m_toxic;
 	
-	bounded_integer::array<value_type, Stage::number_of_stats.value()> m_stage;
+	bounded::array<value_type, Stage::number_of_stats.value()> m_stage;
 	value_type m_focus_energy;
 
 	value_type m_baton_pass;

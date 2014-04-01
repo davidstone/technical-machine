@@ -228,7 +228,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	output += "\tNature: " + to_string(get_nature(pokemon).name) + '\n';
 	output += "\t";
 	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
-		output += " / " + bounded_integer::to_string(stat.ev.value()) + " " + stat_name;
+		output += " / " + bounded::to_string(stat.ev.value()) + " " + stat_name;
 	};
 	static std::pair<StatNames, std::string> const stats [] = {
 		{ StatNames::ATK, "Atk" },
@@ -237,7 +237,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		{ StatNames::SPD, "SpD" },
 		{ StatNames::SPE, "Spe" }
 	};
-	output += bounded_integer::to_string(get_hp(pokemon).ev.value()) + " HP";
+	output += bounded::to_string(get_hp(pokemon).ev.value()) + " HP";
 	for (auto const & stat : stats) {
 		add_stat(get_stat(pokemon, stat.first), stat.second);
 	}

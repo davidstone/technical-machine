@@ -39,8 +39,8 @@ class Team;
 // It is also used to determine whether random effects activate.
 class Variable {
 public:
-	using value_type = bounded_integer::native_integer<0, 150>;
-	using Probability = bounded_rational<bounded_integer::native_integer<0, 79>, bounded_integer::native_integer<1, 101>>;
+	using value_type = bounded::integer<0, 150>;
+	using Probability = bounded_rational<bounded::integer<0, 79>, bounded::integer<1, 101>>;
 	Variable();
 	Variable(value_type value, Probability probability);
 	// Team is the Team that was phazed, not the team that used the phazing move
@@ -52,11 +52,11 @@ public:
 	auto phaze_index(PokemonCollection::index_type foe_index) const -> PokemonCollection::index_type;
 	auto present_heals() const -> bool;
 
-	using PsywaveDamage = bounded_integer::native_integer<1, 150>;
+	using PsywaveDamage = bounded::integer<1, 150>;
 	auto psywave_damage(Level const level) const -> PsywaveDamage {
-		return bounded_integer::max(1_bi, level() * static_cast<bounded_integer::native_integer<50, 150>>(value()) / 100_bi);
+		return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(value()) / 100_bi);
 	}
-	using Magnitude = bounded_integer::checked_integer<4, 10>;
+	using Magnitude = bounded::checked_integer<4, 10>;
 	auto set_magnitude(Magnitude magnitude) -> void;
 private:
 	value_type m_value;

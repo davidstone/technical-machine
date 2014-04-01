@@ -27,13 +27,13 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class InvalidCollectionIndex : public std::out_of_range {
 public:
 	template<typename Index, typename Size>
 	InvalidCollectionIndex(Index const index, Size const size, std::string const & name):
-		out_of_range ("Attempted to access element " + bounded_integer::to_string(index) + " in a container of size " + bounded_integer::to_string(size) + " with elements of type " + name + "\n")
+		out_of_range("Attempted to access element " + bounded::to_string(index) + " in a container of size " + bounded::to_string(size) + " with elements of type " + name + "\n")
 		{
 	}
 };

@@ -129,7 +129,7 @@ using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declv
 using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
 auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const & weather) {
 	ScoreAllPokemon score = 0_bi;
-	for (auto const index : bounded_integer::range(team.all_pokemon().size())) {
+	for (auto const index : bounded::range(team.all_pokemon().size())) {
 		if (get_hp(team.pokemon(index)) == 0_bi) {
 			continue;
 		}
@@ -148,17 +148,17 @@ auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wis
 		screens.mist().turns_remaining() * evaluate.mist() +
 		screens.safeguard().turns_remaining() * evaluate.safeguard() +
 		screens.tailwind().turns_remaining() * evaluate.tailwind() +
-		bounded_integer::make_bounded(wish.is_active()) * evaluate.wish()
+		bounded::make(wish.is_active()) * evaluate.wish()
 	;
 }
 
 auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, Weather const & weather) {
-	return bounded_integer::make_bounded<bounded_integer::null_policy>(
+	return bounded::make<bounded::null_policy>(
 		score_field_effects(evaluate, ai.screens, ai.wish) - score_field_effects(evaluate, foe.screens, foe.wish) +
 		score_all_pokemon(evaluate, ai, foe, weather) - score_all_pokemon(evaluate, foe, ai, weather)
 	);
 }
-constexpr bounded_integer::native_integer<-1, 1> extra = 0_bi;
+constexpr bounded::integer<-1, 1> extra = 0_bi;
 using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
 
 static_assert(std::is_same<Evaluate::type, decltype(std::declval<ScoreTeam>() + extra)>::value, "Type mismatch in Evaluate::operator()");
@@ -192,7 +192,7 @@ Evaluate::Evaluate() {
 	read_xml("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
 
-	using underlying_type = bounded_integer::equivalent_type<value_type, bounded_integer::throw_policy>;
+	using underlying_type = bounded::equivalent_type<value_type, bounded::throw_policy>;
 
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
 	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);

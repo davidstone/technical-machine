@@ -24,7 +24,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class ActivePokemon;
 class Weather;
@@ -37,8 +37,8 @@ constexpr auto max = 100_bi;
 }	// namespace detail_chance_to_hit
 
 using ChanceToHit = bounded_rational<
-	bounded_integer::native_integer<detail_chance_to_hit::min.value(), detail_chance_to_hit::max.value()>,
-	bounded_integer::native_integer<detail_chance_to_hit::max.value(), detail_chance_to_hit::max.value()>
+	bounded::integer<detail_chance_to_hit::min.value(), detail_chance_to_hit::max.value()>,
+	bounded::integer<detail_chance_to_hit::max.value(), detail_chance_to_hit::max.value()>
 >;
 
 auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Weather const & weather, bool target_moved) -> ChanceToHit;

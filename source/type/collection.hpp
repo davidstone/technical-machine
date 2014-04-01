@@ -34,7 +34,7 @@ namespace detail_type_collection {
 
 class TypeArray {
 private:
-	using container_type = bounded_integer::array<Type, 2>;
+	using container_type = bounded::array<Type, 2>;
 public:
 	using const_iterator = container_type::const_iterator;
 	explicit constexpr TypeArray(Type const type1):

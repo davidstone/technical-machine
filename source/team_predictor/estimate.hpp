@@ -31,15 +31,15 @@ class Team;
 
 class Estimate {
 public:
-	using Overall = bounded_integer::array<unsigned, number_of_species>;
-	using Lead = bounded_integer::array<float, number_of_species>;
+	using Overall = bounded::array<unsigned, number_of_species>;
+	using Lead = bounded::array<float, number_of_species>;
 	Estimate(Overall const & overall, Lead const & lead, unsigned total);
 	void update(Multiplier const & multiplier, Team const & team);
 	void update(Multiplier const & multiplier, Species seen);
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;
 private:
-	using Container = bounded_integer::array<float, number_of_species>;
+	using Container = bounded::array<float, number_of_species>;
 	Container estimate;
 };
 

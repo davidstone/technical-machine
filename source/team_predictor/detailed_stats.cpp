@@ -78,7 +78,7 @@ typename std::vector<T> top_sub_elements(boost::property_tree::ptree const & pt)
 	return result;
 }
 
-using SpeciesIndex = bounded_integer::native_integer<0, number_of_species - 1>;
+using SpeciesIndex = bounded::integer<0, number_of_species - 1>;
 
 }	// unnamed namespace
 
@@ -95,7 +95,7 @@ DetailedStats::DetailedStats():
 		assert(value.first == "pokemon");
 		auto const pokemon = value.second;
 		auto const species = from_string<Species>(pokemon.get<std::string>("species"));
-		SpeciesIndex const species_index(species, bounded_integer::non_check);
+		SpeciesIndex const species_index(species, bounded::non_check);
 		ability[species_index] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
 		item[species_index] = most_likely_sub_elements<Item::Items>(pokemon.get_child("items"));
 		nature[species_index] = most_likely_sub_elements<Nature::Natures>(pokemon.get_child("natures"));

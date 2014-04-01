@@ -24,7 +24,7 @@
 #include "pp.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class Move {
 public:

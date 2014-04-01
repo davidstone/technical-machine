@@ -21,7 +21,7 @@
 #include "rational.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 class Pokemon;
 
 auto Wish::activate() -> void {

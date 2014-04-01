@@ -51,7 +51,7 @@ namespace {
 
 std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const random_pokemon) {
 	auto const overall = overall_stats();
-	bounded_integer::array<float, number_of_species> lead;
+	bounded::array<float, number_of_species> lead;
 	lead.fill(1.0F);
 	unsigned const total(std::accumulate(std::begin(overall), std::end(overall), 0U));
 	Estimate estimate(overall, lead, total);

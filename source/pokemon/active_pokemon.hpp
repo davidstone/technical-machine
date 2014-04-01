@@ -19,8 +19,6 @@
 #ifndef ACTIVE_POKEMON_HPP_
 #define ACTIVE_POKEMON_HPP_
 
-#include <cstdint>
-
 #include "collection.hpp"
 #include "confusion.hpp"
 #include "disable.hpp"
@@ -48,6 +46,10 @@
 
 #include "../stat/chance_to_hit.hpp"
 #include "../stat/stage.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <cstdint>
 
 namespace technicalmachine {
 class Ability;
@@ -152,10 +154,10 @@ public:
 	void activate_magnet_rise();
 	void decrement_magnet_rise();
 	bool me_first_is_active() const;
-	bounded_integer::native_integer<10, 160> fury_cutter_power() const;
-	bounded_integer::native_integer<30, 480> momentum_move_power() const;
-	bounded_integer::native_integer<0, 30> triple_kick_power() const;
-	bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> metronome_boost() const;
+	bounded::integer<10, 160> fury_cutter_power() const;
+	bounded::integer<30, 480> momentum_move_power() const;
+	bounded::integer<0, 30> triple_kick_power() const;
+	bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> metronome_boost() const;
 	bool minimized() const;
 	bool missed() const;
 	void set_miss(bool value);
@@ -190,9 +192,9 @@ public:
 	auto stage() const -> Stage const &;
 	auto stage() -> Stage &;
 	
-	bounded_integer::native_integer<0, Stockpile::max * 100> spit_up_power() const;
+	bounded::integer<0, Stockpile::max * 100> spit_up_power() const;
 	void increment_stockpile();
-	bounded_integer::native_integer<0, Stockpile::max> release_stockpile();
+	bounded::integer<0, Stockpile::max> release_stockpile();
 
 	bool is_switching_to_self () const;
 	bool is_switching_to_self(Moves switch_move) const;
@@ -226,7 +228,7 @@ public:
 
 	void use_bide(Pokemon & target);
 	bool is_locked_in_to_bide() const;
-	bounded_integer::native_integer<0, HP::max_value> damaged() const;
+	bounded::integer<0, HP::max_value> damaged() const;
 	Rational random_damage_multiplier() const;
 	void direct_damage(damage_type damage);
 	void indirect_damage(damage_type damage);

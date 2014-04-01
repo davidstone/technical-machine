@@ -45,7 +45,7 @@ void SharedMoves::remove_switch() {
 }
 
 Move const & SharedMoves::operator[](index_type const index) const {
-	using switch_index_type = bounded_integer::checked_integer<
+	using switch_index_type = bounded::checked_integer<
 		static_cast<intmax_t>(number_of_weird_moves),
 		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
 	>;

@@ -30,14 +30,14 @@
 
 namespace technicalmachine {
 
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class Stage {
 public:
-	using value_type = bounded_integer::clamped_integer<-6, 6>;
-	using boost_type = bounded_integer::checked_integer<-3, 12>;
-	static constexpr auto number_of_stats = bounded_integer::make_bounded<static_cast<intmax_t>(StatNames::END)>();
-	using container_type = bounded_integer::array<value_type, number_of_stats.value()>;
+	using value_type = bounded::clamped_integer<-6, 6>;
+	using boost_type = bounded::checked_integer<-3, 12>;
+	static constexpr auto number_of_stats = bounded::make<static_cast<intmax_t>(StatNames::END)>();
+	using container_type = bounded::array<value_type, number_of_stats.value()>;
 
 	Stage();
 
@@ -82,8 +82,8 @@ template<StatNames stat, enable_if_t<stat == StatNames::ATK or stat == StatNames
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::Base<stat>::value;
 	return CONDITIONAL((stage[stat] >= 0_bi),
-		make_bounded_rational(base + bounded_integer::abs(stage[stat]), base),
-		make_bounded_rational(base, CONDITIONAL(!ch, base + bounded_integer::abs(stage[stat]), base))
+		make_bounded_rational(base + bounded::abs(stage[stat]), base),
+		make_bounded_rational(base, CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base))
 	);
 }
 
@@ -91,8 +91,8 @@ template<StatNames stat, enable_if_t<stat == StatNames::DEF or stat == StatNames
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::Base<stat>::value;
 	return BOUNDED_INTEGER_CONDITIONAL((stage[stat] <= 0_bi),
-		make_bounded_rational(base, base + bounded_integer::abs(stage[stat])),
-		make_bounded_rational(CONDITIONAL(!ch, base + bounded_integer::abs(stage[stat]), base), base)
+		make_bounded_rational(base, base + bounded::abs(stage[stat])),
+		make_bounded_rational(CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base), base)
 	);
 }
 
@@ -100,8 +100,8 @@ template<StatNames stat, enable_if_t<stat == StatNames::SPE or stat == StatNames
 auto modifier(Stage const & stage) {
 	constexpr auto base = detail::Base<stat>::value;
 	return CONDITIONAL((stage[stat] >= 0_bi),
-		make_bounded_rational(base + bounded_integer::abs(stage[stat]), base),
-		make_bounded_rational(base, base + bounded_integer::abs(stage[stat]))
+		make_bounded_rational(base + bounded::abs(stage[stat]), base),
+		make_bounded_rational(base, base + bounded::abs(stage[stat]))
 	);
 }
 
@@ -125,7 +125,7 @@ auto accumulate(Stage const & stages, Function && f) {
 
 inline auto positive_boosts(Stage const & stage) {
 	auto const positive_values = [](Stage::value_type const check_stage) {
-		return bounded_integer::max(check_stage, 0_bi);
+		return bounded::max(check_stage, 0_bi);
 	};
 	return accumulate(stage, positive_values);
 }

@@ -129,8 +129,8 @@ public:
 	bool is_gone () const;
 	bool was_lost() const;
 	void remove ();
-	bounded_integer::native_integer<0, 80> berry_power() const;		// Returns 0 for non-berries
-	bounded_integer::native_integer<0, 130> fling_power() const;
+	bounded::integer<0, 80> berry_power() const;		// Returns 0 for non-berries
+	bounded::integer<0, 130> fling_power() const;
 	bool blocks_trick () const;
 	bool extends_hail () const;
 	bool extends_rain () const;

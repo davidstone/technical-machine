@@ -33,9 +33,9 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
-using sum_type = bounded_integer::checked_integer<0, EV::max_total>;
+using sum_type = bounded::checked_integer<0, EV::max_total>;
 sum_type ev_sum(Pokemon const & pokemon) {
 	auto const ev_sum = [&](sum_type const sum, StatNames const stat) {
 		return sum + get_stat(pokemon, stat).ev.value();
@@ -73,11 +73,11 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		for (auto const stat : regular_stats()) {
 			add_non_full_evs(evs, get_stat(pokemon, stat).ev);
 		}
-		auto const extra_evs = bounded_integer::make_bounded<EV::max_total>() - ev_sum(pokemon);
+		auto const extra_evs = bounded::make<EV::max_total>() - ev_sum(pokemon);
 		static constexpr auto number_of_stats = 6;
 		static constexpr auto maximum_full_stats = 2;
-		bounded_integer::checked_integer<number_of_stats - maximum_full_stats, number_of_stats> size(evs.size());
-		std::vector<bounded_integer::checked_integer<0, 1>> shuffled(extra_evs.value() + evs.size() - 1, 1_bi);
+		bounded::checked_integer<number_of_stats - maximum_full_stats, number_of_stats> size(evs.size());
+		std::vector<bounded::checked_integer<0, 1>> shuffled(extra_evs.value() + evs.size() - 1, 1_bi);
 		std::fill(std::begin(shuffled), std::begin(shuffled) + static_cast<int>(evs.size()) - 1, 0_bi);
 		std::shuffle(std::begin(shuffled), std::end(shuffled), random_engine);
 		auto it = shuffled.begin();
@@ -86,7 +86,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			it = std::find(prior, std::end(shuffled), 0_bi);
 			// I use clamped here because I expect there to be some extra EVs
 			// assigned to some stats, which is why I put this in a loop.
-			ev->add(static_cast<bounded_integer::clamped_integer<0, EV::max>>(std::distance(prior, it)));
+			ev->add(static_cast<bounded::clamped_integer<0, EV::max>>(std::distance(prior, it)));
 			++it;
 		}
 	}

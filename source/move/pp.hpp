@@ -1,5 +1,5 @@
 // PP class
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,30 +28,30 @@
 namespace technicalmachine {
 class Ability;
 
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class Pp {
 public:
-	using pp_ups_type = bounded_integer::checked_integer<0, 3>;
+	using pp_ups_type = bounded::checked_integer<0, 3>;
 	Pp(Moves move, pp_ups_type pp_ups);
 	uint64_t hash () const;
 	uint64_t max_hash () const;
 	bool is_empty() const;
 	bool has_unlimited_pp() const;
 	void decrement(Ability const & foe_ability);
-	bounded_integer::native_integer<40, 200> trump_card_power() const;
+	bounded::integer<40, 200> trump_card_power() const;
 	// Assumes max PP is the same because it assumes the same Move on the same
 	// Pokemon
 	friend bool operator== (Pp const & lhs, Pp const & rhs);
 private:
-	using base_type = bounded_integer::native_integer<1, 40>;
+	using base_type = bounded::integer<1, 40>;
 	using max_type = decltype(std::declval<base_type>() * (std::declval<pp_ups_type>() + 5_bi) / 5_bi);
 	// clamped_integer simplifies situations like Pressure and Leppa
-	using current_type = bounded_integer::clamped_integer<0, static_cast<intmax_t>(std::numeric_limits<max_type>::max())>;
-	static bounded_integer::optional<max_type> calculate_max(bounded_integer::optional<base_type> base, pp_ups_type pp_ups);
-	static bounded_integer::optional<base_type> get_base_pp(Moves move);
-	bounded_integer::optional<max_type> max;
-	bounded_integer::optional<current_type> current;
+	using current_type = bounded::clamped_integer<0, static_cast<intmax_t>(std::numeric_limits<max_type>::max())>;
+	static bounded::optional<max_type> calculate_max(bounded::optional<base_type> base, pp_ups_type pp_ups);
+	static bounded::optional<base_type> get_base_pp(Moves move);
+	bounded::optional<max_type> max;
+	bounded::optional<current_type> current;
 };
 bool operator!= (Pp const & lhs, Pp const & rhs);
 

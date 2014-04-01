@@ -64,7 +64,7 @@ void absorb_hp(Pokemon & user, Pokemon const & target, damage_type damage);
 void belly_drum(ActivePokemon & user);
 bool can_confuse_with_chatter(Species pokemon);
 void clear_field(Team & user, Pokemon const & target);
-void confusing_stat_boost(ActivePokemon & target, StatNames stat, bounded_integer::checked_integer<1, 2> stages);
+void confusing_stat_boost(ActivePokemon & target, StatNames stat, bounded::checked_integer<1, 2> stages);
 void curse(ActivePokemon & user, ActivePokemon & target);
 void equalize(HP & hp1, HP & hp2);
 void phaze(Team & user, Team & target, Weather & weather, Variable const & variable);
@@ -1016,7 +1016,7 @@ void clear_field(Team & user, Pokemon const & target) {
 	}
 }
 
-void confusing_stat_boost(ActivePokemon & target, StatNames const stat, bounded_integer::checked_integer<1, 2> const stages) {
+void confusing_stat_boost(ActivePokemon & target, StatNames const stat, bounded::checked_integer<1, 2> const stages) {
 	boost(target.stage(), stat, stages);
 	target.confuse();
 }
@@ -1089,7 +1089,7 @@ void use_swallow(ActivePokemon & user) {
 	auto const stockpiles = user.release_stockpile();
 	if (stockpiles == 0_bi)
 		return;
-	heal(user, swallow_healing(bounded_integer::native_integer<1, Stockpile::max>(stockpiles)));
+	heal(user, swallow_healing(bounded::integer<1, Stockpile::max>(stockpiles)));
 }
 
 void call_other_move (ActivePokemon & user) {

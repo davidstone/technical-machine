@@ -20,7 +20,7 @@
 #include <algorithm>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 Item::Item ():
 	name (END) {
@@ -108,7 +108,7 @@ void Item::steal (Item & other) {
 		swap (name, other.name);
 }
 
-bounded_integer::native_integer<0, 80> Item::berry_power() const {
+bounded::integer<0, 80> Item::berry_power() const {
 	switch (name) {
 		case AGUAV_BERRY:
 		case ASPEAR_BERRY:
@@ -182,7 +182,7 @@ bounded_integer::native_integer<0, 80> Item::berry_power() const {
 	}
 }
 
-bounded_integer::native_integer<0, 130> Item::fling_power() const {
+bounded::integer<0, 130> Item::fling_power() const {
 	switch (name) {
 		case IRON_BALL:
 			return 130_bi;

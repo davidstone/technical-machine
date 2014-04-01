@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -44,7 +44,7 @@ public:
 	DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	DataPoint(DataPoint const & original, Nature const & new_nature);
 	std::string to_string() const;
-	bounded_integer::native_integer<0, EV::max * 3> sum() const;
+	bounded::integer<0, EV::max * 3> sum() const;
 	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
 	static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 private:

@@ -23,7 +23,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 template<intmax_t normal_duration, intmax_t max_duration = normal_duration>
 class Screen {
@@ -56,15 +56,15 @@ public:
 	}
 private:
 	auto activate(std::true_type) -> void {
-		set(bounded_integer::make_bounded<normal_duration>());
+		set(bounded::make<normal_duration>());
 	}
 	auto activate(std::false_type, bool const is_extended) -> void {
 		set(BOUNDED_INTEGER_CONDITIONAL(is_extended,
-			bounded_integer::make_bounded<max_duration>(),
-			bounded_integer::make_bounded<normal_duration>()
+			bounded::make<max_duration>(),
+			bounded::make<normal_duration>()
 		));
 	}
-	using duration_type = bounded_integer::clamped_integer<0, max_duration>;
+	using duration_type = bounded::clamped_integer<0, max_duration>;
 	auto set(duration_type const duration) -> void {
 		if (m_turns_remaining == 0_bi) {
 			m_turns_remaining = duration;

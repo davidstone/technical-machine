@@ -1,5 +1,5 @@
 // Accuracy functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,10 +22,10 @@
 #include <utility>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 BaseAccuracy accuracy(Moves const move) {
-	using bounded_integer::none;
+	using bounded::none;
 	static constexpr auto get_accuracy = make_optional_array(
 		none,		// Switch0
 		none,		// Switch1

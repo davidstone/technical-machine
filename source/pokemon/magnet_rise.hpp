@@ -26,7 +26,7 @@ namespace technicalmachine {
 
 class MagnetRise {
 private:
-	using duration_type = bounded_integer::native_integer<0, 5>;
+	using duration_type = bounded::integer<0, 5>;
 public:
 	MagnetRise();
 	bool is_active() const;
@@ -37,7 +37,7 @@ public:
 	hash_type hash() const;
 	static hash_type max_hash();
 private:
-	bounded_integer::equivalent_type<duration_type, bounded_integer::clamp_policy> m_turns_remaining;
+	bounded::equivalent_type<duration_type, bounded::clamp_policy> m_turns_remaining;
 };
 
 bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);

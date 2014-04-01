@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,23 +30,23 @@
 namespace technicalmachine {
 namespace {
 
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 
 template<StatNames stat_name, typename Initial>
-bounded_integer::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nature const nature, Initial const initial) {
+bounded::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nature const nature, Initial const initial) {
 	EV::value_type ev_estimate = 0_bi;
 	EV & ev = stat.ev;
 	ev = EV(ev_estimate);
 	while (initial_stat<stat_name>(stat, level, nature) < initial) {
 		ev_estimate += 4_bi;
 		ev = EV(ev_estimate);
-		if (ev_estimate == bounded_integer::make_bounded<EV::max>()) {
-			return bounded_integer::none;
+		if (ev_estimate == bounded::make<EV::max>()) {
+			return bounded::none;
 		}
 	}
-	return bounded_integer::optional<EV::value_type>(ev_estimate);
+	return bounded::optional<EV::value_type>(ev_estimate);
 }
 
 }	// namespace

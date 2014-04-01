@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,7 +35,7 @@
 namespace technicalmachine {
 namespace {
 
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 typedef std::vector<SingleClassificationEVs> Single;
 typedef std::vector<DataPoint> Estimates;
@@ -194,7 +194,7 @@ EV::total_type defensive_evs_available(Pokemon const & pokemon) {
 	for (auto const stat : { StatNames::ATK, StatNames::SPA, StatNames::SPE }) {
 		used_evs += get_stat(pokemon, stat).ev.value();
 	}
-	return bounded_integer::make_bounded<EV::max_total>() - used_evs;
+	return bounded::make<EV::max_total>() - used_evs;
 }
 
 Divided divide_natures(DefensiveEVs::BestPerNature const & container) {

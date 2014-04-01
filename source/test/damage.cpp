@@ -35,7 +35,7 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 Team max_damage_physical_attacker() {
 	Team attacker;
@@ -142,7 +142,7 @@ void physical_damage_test() {
 	
 	Pokemon & a = attacker.pokemon();
 
-	get_stat(a, StatNames::DEF).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(a, StatNames::DEF).ev = EV(bounded::make<EV::max>());
 	get_nature(a).name = Nature::IMPISH;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
@@ -167,7 +167,7 @@ void special_damage_test() {
 	a.move.add(Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
-	get_stat(a, StatNames::SPA).ev = EV(bounded_integer::make_bounded<EV::max>());
+	get_stat(a, StatNames::SPA).ev = EV(bounded::make<EV::max>());
 	get_nature(a).name = Nature::MODEST;
 	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 	

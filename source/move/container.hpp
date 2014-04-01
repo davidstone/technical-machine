@@ -60,7 +60,7 @@ public:
 	}
 	template<typename Function>
 	void for_each_shared(Function && f) const {
-		for (auto const n : bounded_integer::range(shared.size())) {
+		for (auto const n : bounded::range(shared.size())) {
 			f(shared[n]);
 		}
 	}

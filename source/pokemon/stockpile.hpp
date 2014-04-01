@@ -1,5 +1,5 @@
 // Class that handles Stockpile
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 class Rational;
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class Stockpile {
 public:
@@ -34,20 +34,20 @@ public:
 	bool increment();
 	// Returns the amount of Stockpile lost. This allows correct subtraction
 	// for stat boosts.
-	bounded_integer::native_integer<0, max> release();
+	bounded::integer<0, max> release();
 	void reset();
-	bounded_integer::native_integer<0, max * 100> spit_up_power() const;
+	bounded::integer<0, max * 100> spit_up_power() const;
 	typedef uint64_t hash_type;
 	hash_type hash() const;
 	static hash_type max_hash();
 	friend bool operator== (Stockpile const & lhs, Stockpile const & rhs);
 private:
 	friend class Evaluate;
-	bounded_integer::clamped_integer<0, max> m_level;
+	bounded::clamped_integer<0, max> m_level;
 };
 bool operator!= (Stockpile const & lhs, Stockpile const & rhs);
 
-Rational swallow_healing(bounded_integer::checked_integer<1, Stockpile::max> stockpiles);
+Rational swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles);
 
 }	// namespace technicalmachine
 #endif	// STOCKPILE_HPP_

@@ -25,7 +25,7 @@
 #include "pokemon/level.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 Variable::Variable():
 	m_value(0_bi),
@@ -132,8 +132,8 @@ auto probability_sum(Probabilities const & value) -> ProbabilitySum {
 #endif
 
 
-auto initial_probabilities() -> bounded_integer::array<Probabilities, number_of_moves> {
-	bounded_integer::array<Probabilities, number_of_moves> activate_probability {{
+auto initial_probabilities() -> bounded::array<Probabilities, number_of_moves> {
+	bounded::array<Probabilities, number_of_moves> activate_probability {{
 		{ Variable(0_bi, Probability(1_bi, 1_bi)) },				// Switch0
 		{ Variable(0_bi, Probability(1_bi, 1_bi)) },				// Switch1
 		{ Variable(0_bi, Probability(1_bi, 1_bi)) },				// Switch2
@@ -725,7 +725,7 @@ auto magnitude_variables() -> Probabilities {
 }
 
 auto present_variables() -> Probabilities {
-	static constexpr auto present = bounded_integer::make_array(
+	static constexpr auto present = bounded::make_array(
 		0_bi, 40_bi, 80_bi, 120_bi
 	);
 	Probabilities probabilities;
@@ -739,7 +739,7 @@ auto psywave_variables() -> Probabilities {
 	Probabilities probabilities;
 	constexpr auto min = 50_bi;
 	constexpr auto max = 150_bi + 1_bi;
-	for (auto const n : bounded_integer::range(min, max)) {
+	for (auto const n : bounded::range(min, max)) {
 		probabilities.emplace_back(n, Probability(1_bi, max - min));
 	}
 	return probabilities;
@@ -748,16 +748,16 @@ auto psywave_variables() -> Probabilities {
 auto phaze_probability(TeamSize const foe_size) -> Probabilities {
 	Probabilities probabilities;
 	static constexpr auto large_cutoff = 2_bi;
-	using LargeFoeSize = bounded_integer::native_integer<large_cutoff.value(), std::numeric_limits<TeamSize>::max().value()>;
-	auto const possible_replacements = BOUNDED_INTEGER_CONDITIONAL(foe_size > large_cutoff, LargeFoeSize(foe_size - 1_bi, bounded_integer::non_check), 1_bi);
-	for (auto const n : bounded_integer::range(possible_replacements)) {
+	using LargeFoeSize = bounded::integer<large_cutoff.value(), std::numeric_limits<TeamSize>::max().value()>;
+	auto const possible_replacements = BOUNDED_INTEGER_CONDITIONAL(foe_size > large_cutoff, LargeFoeSize(foe_size - 1_bi, bounded::non_check), 1_bi);
+	for (auto const n : bounded::range(possible_replacements)) {
 		probabilities.emplace_back(n, Probability(1_bi, possible_replacements));
 	}
 	return probabilities;
 }
 
 auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
-	static constexpr auto boostable_stats = bounded_integer::make_array(
+	static constexpr auto boostable_stats = bounded::make_array(
 		StatNames::ATK,
 		StatNames::DEF,
 		StatNames::SPA,
@@ -766,7 +766,7 @@ auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
 		StatNames::ACC,
 		StatNames::EVA
 	);
-	auto const non_maxed_stats = bounded_integer::count_if(std::begin(boostable_stats), std::end(boostable_stats), [&](StatNames const stat) {
+	auto const non_maxed_stats = bounded::count_if(std::begin(boostable_stats), std::end(boostable_stats), [&](StatNames const stat) {
 		return pokemon.stage()[stat] != 6_bi;
 	});
 	if (non_maxed_stats == 0_bi) {
@@ -774,7 +774,7 @@ auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
 		// longer work
 		return Probabilities({ Variable(0_bi, Probability(1_bi, 1_bi)) });
 	}
-	Probability const probability(1_bi, bounded_integer::max(1_bi, non_maxed_stats));
+	Probability const probability(1_bi, bounded::max(1_bi, non_maxed_stats));
 	Probabilities probabilities;
 	for (auto const stat : boostable_stats) {
 		probabilities.emplace_back(static_cast<Variable::value_type>(stat), probability);

@@ -101,7 +101,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
 	std::string const nickname_temp = pt.get <std::string> ("nickname");
 	std::string const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
-	Level const level(bounded_integer::checked_integer<Level::min, Level::max>(pt.get<int>("level")));
+	Level const level(bounded::checked_integer<Level::min, Level::max>(pt.get<int>("level")));
 	Gender const gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
 	Happiness const happiness(pt.get<Happiness::value_type>("happiness"));
 	Nature const nature(from_string<Nature::Natures>(pt.get<std::string>("nature")));

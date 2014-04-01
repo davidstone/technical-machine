@@ -407,17 +407,17 @@ bool ActivePokemon::me_first_is_active() const {
 	return me_first;
 }
 
-bounded_integer::native_integer<10, 160> ActivePokemon::fury_cutter_power() const {
+bounded::integer<10, 160> ActivePokemon::fury_cutter_power() const {
 	return last_used_move.fury_cutter_power();
 }
-bounded_integer::native_integer<30, 480> ActivePokemon::momentum_move_power() const {
+bounded::integer<30, 480> ActivePokemon::momentum_move_power() const {
 	return last_used_move.momentum_move_power();
 }
-bounded_integer::native_integer<0, 30> ActivePokemon::triple_kick_power() const {
+bounded::integer<0, 30> ActivePokemon::triple_kick_power() const {
 	return last_used_move.triple_kick_power();
 }
 
-bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> ActivePokemon::metronome_boost() const {
+bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> ActivePokemon::metronome_boost() const {
 	return last_used_move.metronome_boost();
 }
 
@@ -569,7 +569,7 @@ auto ActivePokemon::stage() -> Stage & {
 	return m_stage;
 }
 
-bounded_integer::native_integer<0, Stockpile::max * 100> ActivePokemon::spit_up_power() const {
+bounded::integer<0, Stockpile::max * 100> ActivePokemon::spit_up_power() const {
 	return stockpile.spit_up_power();
 }
 
@@ -580,7 +580,7 @@ void ActivePokemon::increment_stockpile() {
 	}
 }
 
-bounded_integer::native_integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
+bounded::integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
 	auto const stages = stockpile.release();
 	boost_defensive(stage(), -stages);
 	return stages;
@@ -715,7 +715,7 @@ bool ActivePokemon::is_locked_in_to_bide() const {
 	return bide.is_active();
 }
 
-bounded_integer::native_integer<0, HP::max_value> ActivePokemon::damaged() const {
+bounded::integer<0, HP::max_value> ActivePokemon::damaged() const {
 	return damage_done_to_active;
 }
 
@@ -740,7 +740,7 @@ void ActivePokemon::register_damage(damage_type const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()), static_cast<bounded_integer::checked_integer<1, 4>>(all_moves().number_of_regular_moves()));
+	last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()), static_cast<bounded::checked_integer<1, 4>>(all_moves().number_of_regular_moves()));
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
@@ -761,7 +761,7 @@ void ActivePokemon::normalize_hp(bool fainted) {
 	}
 	else {
 		HP & hp = get_hp(*this);
-		hp = bounded_integer::max(hp.current(), 1_bi);
+		hp = bounded::max(hp.current(), 1_bi);
 	}
 }
 

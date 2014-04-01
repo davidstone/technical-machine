@@ -1,5 +1,5 @@
 // Class that handles Stockpile
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,7 +32,7 @@ bool Stockpile::increment() {
 	return m_level == initial;
 }
 
-auto Stockpile::release() -> bounded_integer::native_integer<0, max> {
+auto Stockpile::release() -> bounded::integer<0, max> {
 	auto const temp = m_level;
 	reset();
 	return temp;
@@ -42,12 +42,12 @@ void Stockpile::reset() {
 	m_level = 0_bi;
 }
 
-auto Stockpile::spit_up_power() const -> bounded_integer::native_integer<0, max * 100> {
+auto Stockpile::spit_up_power() const -> bounded::integer<0, max * 100> {
 	return m_level * 100_bi;
 }
 
 
-Rational swallow_healing(bounded_integer::checked_integer<1, Stockpile::max> const stockpiles) {
+Rational swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpiles) {
 	switch (stockpiles.value()) {
 		case 1:
 			return Rational(1, 4);

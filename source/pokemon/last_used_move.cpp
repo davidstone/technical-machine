@@ -24,7 +24,7 @@
 
 namespace technicalmachine {
 namespace {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 constexpr uint64_t max_number_of_moves = 4;
 }	// namespace
 
@@ -40,7 +40,7 @@ bool LastUsedMove::was_used_last(index_type const index_of_move) const {
 	return has_moved() and *m_index_of_move == index_of_move;
 }
 
-void LastUsedMove::increment(index_type const index_of_move, bounded_integer::checked_integer<1, 4> const number_of_regular_moves) {
+void LastUsedMove::increment(index_type const index_of_move, bounded::checked_integer<1, 4> const number_of_regular_moves) {
 	assert(index_of_move <= number_of_regular_moves);
 	m_index_of_move = index_of_move;
 	++m_consecutive_turns_used;
@@ -50,20 +50,20 @@ void LastUsedMove::reset () {
 	*this = LastUsedMove{};
 }
 
-bounded_integer::native_integer<10, 160> LastUsedMove::fury_cutter_power() const {
+bounded::integer<10, 160> LastUsedMove::fury_cutter_power() const {
 	// 10 * 2 ^ n
-	return 10_bi << bounded_integer::min(m_consecutive_turns_used, 4_bi);
+	return 10_bi << bounded::min(m_consecutive_turns_used, 4_bi);
 }
 
-bounded_integer::native_integer<30, 480> LastUsedMove::momentum_move_power() const {
-	return 30_bi << bounded_integer::min(m_consecutive_turns_used, 4_bi);
+bounded::integer<30, 480> LastUsedMove::momentum_move_power() const {
+	return 30_bi << bounded::min(m_consecutive_turns_used, 4_bi);
 }
 
-bounded_integer::native_integer<0, 30> LastUsedMove::triple_kick_power() const {
-	return 10_bi * bounded_integer::min(m_consecutive_turns_used, 3_bi);
+bounded::integer<0, 30> LastUsedMove::triple_kick_power() const {
+	return 10_bi * bounded::min(m_consecutive_turns_used, 3_bi);
 }
 
-bounded_rational<bounded_integer::native_integer<10, 20>, bounded_integer::native_integer<10, 10>> LastUsedMove::metronome_boost() const {
+bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> LastUsedMove::metronome_boost() const {
 	return make_bounded_rational(10_bi + m_consecutive_turns_used, 10_bi);
 }
 

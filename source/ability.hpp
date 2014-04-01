@@ -115,14 +115,14 @@ private:
 bool operator!= (Ability lhs, Ability rhs);
 
 using AbilityAccuracyModifier = bounded_rational<
-	bounded_integer::native_integer<1, 13>,
-	bounded_integer::native_integer<1, 10>
+	bounded::integer<1, 13>,
+	bounded::integer<1, 10>
 >;
 auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyModifier;
 
 using AbilityEvasionModifier = bounded_rational<
-	bounded_integer::native_integer<1, 4>,
-	bounded_integer::native_integer<1, 5>
+	bounded::integer<1, 4>,
+	bounded::integer<1, 5>
 >;
 auto ability_evasion_modifier(ActivePokemon const & target, Weather const & weather) -> AbilityEvasionModifier;
 

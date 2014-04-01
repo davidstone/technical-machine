@@ -19,7 +19,7 @@
 #include "magnet_rise.hpp"
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 MagnetRise::MagnetRise() :
 	m_turns_remaining(0_bi)

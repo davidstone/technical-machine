@@ -27,7 +27,7 @@
 namespace technicalmachine {
 
 // variable power returns non-0. Fixed damage is the uninitialized state.
-bounded_integer::optional<bounded_integer::native_integer<0, 250>> base_power(Moves move);
+bounded::optional<bounded::integer<0, 250>> base_power(Moves move);
 
 }	// namespace technicalmachine
 #endif	// MOVE__BASE_POWER_HPP_

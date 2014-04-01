@@ -41,10 +41,10 @@ public:
 	template<typename T>
 	T const & get(Species species) const;
 private:
-	bounded_integer::array<std::vector<Moves>, number_of_species> move;
-	bounded_integer::array<Item::Items, number_of_species> item;
-	bounded_integer::array<Ability::Abilities, number_of_species> ability;
-	bounded_integer::array<Nature::Natures, number_of_species> nature;
+	bounded::array<std::vector<Moves>, number_of_species> move;
+	bounded::array<Item::Items, number_of_species> item;
+	bounded::array<Ability::Abilities, number_of_species> ability;
+	bounded::array<Nature::Natures, number_of_species> nature;
 };
 
 }	// namespace technicalmachine

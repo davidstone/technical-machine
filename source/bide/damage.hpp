@@ -1,5 +1,5 @@
 // Handles bide damage
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,7 +36,7 @@ public:
 	static hash_type max_hash();
 private:
 	// This is the greatest range that matters since anything more is overkill
-	bounded_integer::clamped_integer<0, (HP::max_value + 1) / 2> m_damage;
+	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage;
 };
 
 bool operator!= (BideDamage lhs, BideDamage rhs);

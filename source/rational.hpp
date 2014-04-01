@@ -26,7 +26,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 class Pokemon;
 
 template<typename Numerator, typename Denominator>
@@ -42,8 +42,8 @@ template<typename Numerator, typename Denominator>
 constexpr auto make_bounded_rational(Numerator const & numerator, Denominator const & denominator) {
 	// It has the null policy so that it can convert to any other policy with
 	// arithmetic operations.
-	using bounded_integer::equivalent_type;
-	using bounded_integer::null_policy;
+	using bounded::equivalent_type;
+	using bounded::null_policy;
 	using N = equivalent_type<Numerator, null_policy>;
 	using D = equivalent_type<Denominator, null_policy>;
 	return bounded_rational<N, D>(numerator, denominator);
@@ -66,7 +66,7 @@ public:
 	}
 
 	template<intmax_t minimum, intmax_t maximum, typename overflow_policy>
-	constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> const number) const {
+	constexpr auto operator*(bounded::integer<minimum, maximum, overflow_policy> const number) const {
 		return number * m_numerator / m_denominator;
 	}
 
@@ -93,7 +93,7 @@ public:
 	}
 
 	friend std::string to_string(bounded_rational<numerator_type, denominator_type> const rational) {
-		using bounded_integer::to_string;
+		using bounded::to_string;
 		return to_string(rational.m_numerator) + " / " + to_string(rational.m_denominator);
 	}
 	
@@ -129,18 +129,18 @@ constexpr auto complement(bounded_rational<Numerator, Denominator> const rationa
 
 
 template<intmax_t minimum, intmax_t maximum, typename overflow_policy, typename Numerator, typename Denominator>
-constexpr auto operator*(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> const number, bounded_rational<Numerator, Denominator> const rational) {
+constexpr auto operator*(bounded::integer<minimum, maximum, overflow_policy> const number, bounded_rational<Numerator, Denominator> const rational) {
 	return rational * number;
 }
 
 template<intmax_t minimum, intmax_t maximum, typename overflow_policy, typename N, typename D>
-auto & operator*=(bounded_integer::bounded_integer<minimum, maximum, overflow_policy> & number, bounded_rational<N, D> const rational) {
+auto & operator*=(bounded::integer<minimum, maximum, overflow_policy> & number, bounded_rational<N, D> const rational) {
 	return number = number * rational;
 }
 
 template<typename T, typename Numerator, typename Denominator, enable_if_t<std::is_integral<T>::value> = clang_dummy>
 constexpr auto operator*(T const number, bounded_rational<Numerator, Denominator> const rational) {
-	return static_cast<T>(bounded_integer::make_bounded(number) * rational);
+	return static_cast<T>(bounded::make(number) * rational);
 }
 template<typename T, typename Numerator, typename Denominator, enable_if_t<std::is_integral<T>::value> = clang_dummy>
 auto operator*=(T & number, bounded_rational<Numerator, Denominator> const rational) {
@@ -202,7 +202,7 @@ public:
 			rhs_max >= std::numeric_limits<underlying_type>::max()
 		>
 	>
-	constexpr Rational(bounded_integer::bounded_integer<lhs_min, lhs_max, lhs_policy> const n, bounded_integer::bounded_integer<rhs_min, rhs_max, rhs_policy> const d):
+	constexpr Rational(bounded::integer<lhs_min, lhs_max, lhs_policy> const n, bounded::integer<rhs_min, rhs_max, rhs_policy> const d):
 		numerator(static_cast<underlying_type>(n)),
 		denominator(static_cast<underlying_type>(d)) {
 	}

@@ -1,5 +1,5 @@
 // Accuracy functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,7 +26,7 @@
 namespace technicalmachine {
 
 // A value that is not present indicates that the move cannot miss.
-using BaseAccuracy = bounded_integer::optional<bounded_integer::native_integer<30, 100>>;
+using BaseAccuracy = bounded::optional<bounded::integer<30, 100>>;
 BaseAccuracy accuracy(Moves move);
 
 }	// namespace technicalmachine

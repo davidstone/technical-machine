@@ -28,13 +28,13 @@
 
 namespace technicalmachine {
 class Level;
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 class HP {
 public:
 	static constexpr unsigned max_value = 714;
-	using max_type = bounded_integer::native_integer<1, max_value>;
-	using current_type = bounded_integer::native_integer<0, max_value>;
+	using max_type = bounded::integer<1, max_value>;
+	using current_type = bounded::integer<0, max_value>;
 	
 	HP(Species species, Level level, EV ev = EV(0_bi));
 	template<typename T>
@@ -47,12 +47,12 @@ public:
 	EV ev;
 	IV iv;
 private:
-	bounded_integer::dynamic_max_integer<0, max_value, bounded_integer::clamp_policy> m_value;
+	bounded::dynamic_max_integer<0, max_value, bounded::clamp_policy> m_value;
 };
 
 template<typename T>
 HP & operator+=(HP & lhs, T const & rhs) {
-	lhs = lhs.current() + bounded_integer::make_bounded<bounded_integer::null_policy>(rhs);
+	lhs = lhs.current() + bounded::make<bounded::null_policy>(rhs);
 	return lhs;
 }
 
@@ -62,20 +62,20 @@ HP & operator-=(HP & lhs, T const & rhs) {
 }
 
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator==(HP const lhs, bounded_integer::bounded_integer<min, max, overflow> const rhs) {
+bool operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
 	return lhs.current() == rhs;
 }
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator==(bounded_integer::bounded_integer<min, max, overflow> const lhs, HP const rhs) {
+bool operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return rhs == lhs.current();
 }
 
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator!=(HP const lhs, bounded_integer::bounded_integer<min, max, overflow> const rhs) {
+bool operator!=(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
 	return lhs.current() != rhs;
 }
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator!=(bounded_integer::bounded_integer<min, max, overflow> const lhs, HP const rhs) {
+bool operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return rhs != lhs.current();
 }
 

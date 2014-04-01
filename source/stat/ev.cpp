@@ -1,5 +1,5 @@
 // EVs
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,7 +25,7 @@ EV::EV(value_type const evs) :
 	{
 }
 
-auto EV::value() const -> bounded_integer::native_integer<0, max> {
+auto EV::value() const -> bounded::integer<0, max> {
 	return m_value;
 }
 

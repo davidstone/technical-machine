@@ -28,12 +28,12 @@
 
 namespace technicalmachine {
 namespace po {
-using namespace bounded_integer::literal;
+using namespace bounded::literal;
 
 static std::vector<std::pair <uint16_t, uint8_t>> load_team_vector(InMessage & msg) {
 	std::vector<std::pair<uint16_t, uint8_t>> temp_team;
 	temp_team.reserve(max_pokemon_per_team.value());
-	for (bounded_integer::native_integer<0, max_pokemon_per_team.value()> n = 0_bi; n != max_pokemon_per_team; ++n) {
+	for (bounded::integer<0, max_pokemon_per_team.value()> n = 0_bi; n != max_pokemon_per_team; ++n) {
 		uint16_t const species = msg.read_short();
 		uint8_t const forme = msg.read_byte();
 		temp_team.emplace_back(species, forme);

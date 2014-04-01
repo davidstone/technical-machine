@@ -36,8 +36,8 @@ public:
 	auto hash() const -> hash_type;
 	static auto max_hash() -> hash_type;
 private:
-	using counter_type = bounded_integer::checked_integer<0, 1>;
-	bounded_integer::optional<counter_type> turns_until_activation;
+	using counter_type = bounded::checked_integer<0, 1>;
+	bounded::optional<counter_type> turns_until_activation;
 };
 
 auto operator== (Wish lhs, Wish rhs) -> bool;
