@@ -26,6 +26,8 @@
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
 
+#include <bounded_integer/integer_range.hpp>
+
 #include <cassert>
 
 namespace technicalmachine {
@@ -96,7 +98,7 @@ TeamSize PokemonCollection::real_size() const {
 }
 
 PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
-	for (index_type const found_index : bounded::range(size())) {
+	for (index_type const found_index : bounded::integer_range(size())) {
 		if (operator()(found_index) == name)
 			return found_index;
 	}

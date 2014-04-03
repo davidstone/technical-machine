@@ -25,6 +25,7 @@
 #include "../../pokemon/max_pokemon_per_team.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/integer_range.hpp>
 
 #include <vector>
 
@@ -34,7 +35,7 @@ using namespace bounded::literal;
 inline std::vector<Moves> create_shared_moves(TeamSize const team_size) {
 	std::vector<Moves> shared ({ Moves::Struggle });
 	if (team_size != 1_bi) {
-		for (auto const n : bounded::range(team_size)) {
+		for (auto const n : bounded::integer_range(team_size)) {
 			shared.emplace_back(from_replacement(n));
 		}
 	}

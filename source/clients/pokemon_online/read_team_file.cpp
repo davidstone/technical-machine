@@ -20,9 +20,6 @@
 
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
 #include "conversion.hpp"
 #include "invalid_team_file.hpp"
 #include "stat_order.hpp"
@@ -38,6 +35,11 @@
 #include "../../pokemon/species_forward.hpp"
 
 #include "../../stat/stat.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace technicalmachine {
 namespace po {
@@ -64,7 +66,7 @@ TeamSize number_of_pokemon(ptree const & pt) {
 }
 
 ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
-	for (auto const n : bounded::range(4_bi)) {
+	for (auto const n : bounded::integer_range(4_bi)) {
 		static_cast<void>(n);
 		if (it->first != "Move") {
 			throw InvalidTeamFile("Move", it->first);

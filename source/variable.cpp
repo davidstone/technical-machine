@@ -17,12 +17,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "variable.hpp"
-#include <algorithm>
-#include <cassert>
 #include "phazing_in_same_pokemon.hpp"
 #include "team.hpp"
 #include "move/moves.hpp"
 #include "pokemon/level.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <algorithm>
+#include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -739,7 +742,7 @@ auto psywave_variables() -> Probabilities {
 	Probabilities probabilities;
 	constexpr auto min = 50_bi;
 	constexpr auto max = 150_bi + 1_bi;
-	for (auto const n : bounded::range(min, max)) {
+	for (auto const n : bounded::integer_range(min, max)) {
 		probabilities.emplace_back(n, Probability(1_bi, max - min));
 	}
 	return probabilities;
@@ -750,7 +753,7 @@ auto phaze_probability(TeamSize const foe_size) -> Probabilities {
 	static constexpr auto large_cutoff = 2_bi;
 	using LargeFoeSize = bounded::integer<large_cutoff.value(), std::numeric_limits<TeamSize>::max().value()>;
 	auto const possible_replacements = BOUNDED_INTEGER_CONDITIONAL(foe_size > large_cutoff, LargeFoeSize(foe_size - 1_bi, bounded::non_check), 1_bi);
-	for (auto const n : bounded::range(possible_replacements)) {
+	for (auto const n : bounded::integer_range(possible_replacements)) {
 		probabilities.emplace_back(n, Probability(1_bi, possible_replacements));
 	}
 	return probabilities;

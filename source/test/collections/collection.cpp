@@ -17,13 +17,17 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "collection.hpp"
-#include <cassert>
-#include <iostream>
+
 #include "invalid_collection.hpp"
 #include "move_collection.hpp"
 #include "move_container.hpp"
 #include "variable_collection.hpp"
 #include "../../collection.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <cassert>
+#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -61,7 +65,7 @@ void collection_range_tests() {
 		throw InvalidCollection("Cannot set Collection index properly.");
 	if (base() != v.back())
 		throw InvalidCollection("Stored index in Collection does not return proper value.");
-	for (auto const n : bounded::range(size)) {
+	for (auto const n : bounded::integer_range(size)) {
 		if (v[static_cast<std::size_t>(n)] != base(n)) {
 			throw InvalidCollection("Specified index in Collection does not return proper value.");
 		}

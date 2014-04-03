@@ -26,6 +26,8 @@
 
 #include "../string_conversions/conversion.hpp"
 
+#include <bounded_integer/integer_range.hpp>
+
 #include <boost/lexical_cast.hpp>
 
 #include <algorithm>
@@ -70,9 +72,8 @@ Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
 	for (auto & array : multiplier)
 		array.fill(not_set);
-	using bounded::range;
-	for (auto const a : range(bounded::make<number_of_species>())) {
-		for (auto const b : range(bounded::make<number_of_species>())) {
+	for (auto const a : bounded::integer_range(bounded::make<number_of_species>())) {
+		for (auto const b : bounded::integer_range(bounded::make<number_of_species>())) {
 			if (is_alternate_form(static_cast<Species>(a), static_cast<Species>(b))) {
 				multiplier[a][b] = 0;
 			}
@@ -121,7 +122,7 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	// this Pokemon. If a Pokemon that is used a lot does not show up on this
 	// list, then we can be sure that it is used less than the current method
 	// suggests.
-	for (auto const a : bounded::range(bounded::make<number_of_species>())) {
+	for (auto const a : bounded::integer_range(bounded::make<number_of_species>())) {
 		if (overall[a] != 0_bi) {
 			for (float & value : multiplier[a]) {
 				if (value == not_set) {

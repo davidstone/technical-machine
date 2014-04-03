@@ -24,6 +24,7 @@
 #include "shared.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/integer_range.hpp>
 
 #include <algorithm>
 #include <vector>
@@ -60,7 +61,7 @@ public:
 	}
 	template<typename Function>
 	void for_each_shared(Function && f) const {
-		for (auto const n : bounded::range(shared.size())) {
+		for (auto const n : bounded::integer_range(shared.size())) {
 			f(shared[n]);
 		}
 	}

@@ -18,9 +18,6 @@
 
 #include "variable_collection.hpp"
 
-#include <iostream>
-#include <string>
-
 #include "invalid_collection.hpp"
 
 #include "../../empty_team.hpp"
@@ -33,6 +30,11 @@
 #include "../../pokemon/collection.hpp"
 #include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/species.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <iostream>
+#include <string>
 
 namespace technicalmachine {
 namespace {
@@ -63,14 +65,14 @@ void add_pokemon(Team & team, Species const species) {
 }
 
 void test_combinations(Team & team) {
-	for (auto const foe_size : bounded::range(2_bi, max_pokemon_per_team + 1_bi)) {
+	for (auto const foe_size : bounded::integer_range(2_bi, max_pokemon_per_team + 1_bi)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
 		auto collection = all_probabilities(team.pokemon(), foe_size);
 		if (collection.size() != foe_size - 1_bi) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(foe_size - 1_bi) + " but got " + to_string(collection.size()));
 		}
-		for (auto const new_index : bounded::range(foe_size)) {
-			for (auto const current_index : bounded::range(foe_size)) {
+		for (auto const new_index : bounded::integer_range(foe_size)) {
+			for (auto const current_index : bounded::integer_range(foe_size)) {
 				team.all_pokemon().set_index(current_index);
 				if (current_index == new_index) {
 					phaze_in_same_pokemon(collection.front(), team);

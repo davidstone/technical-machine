@@ -26,6 +26,8 @@
 #include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
 
+#include <bounded_integer/integer_range.hpp>
+
 #include <endian/endian.hpp>
 
 #include <cstdint>
@@ -64,7 +66,7 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon);
 	}
-	for (auto const & unused : bounded::range(team.all_pokemon().size(), max_pokemon_per_team)) {
+	for (auto const & unused : bounded::integer_range(team.all_pokemon().size(), max_pokemon_per_team)) {
 		static_cast<void>(unused);
 		write_short(0);
 	}

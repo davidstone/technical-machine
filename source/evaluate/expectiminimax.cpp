@@ -18,16 +18,6 @@
 
 #include "expectiminimax.hpp"
 
-#include <cassert>
-#include <cstddef>
-#include <cstdint>
-#include <iostream>
-#include <random>
-#include <string>
-#include <vector>
-
-#include <boost/timer.hpp>
-
 #include "evaluate.hpp"
 #include "move_scores.hpp"
 #include "reorder.hpp"
@@ -54,6 +44,18 @@
 
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <boost/timer.hpp>
+
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+#include <random>
+#include <string>
+#include <vector>
 
 namespace technicalmachine {
 namespace {
@@ -546,7 +548,7 @@ Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
 
 std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
 	std::vector<Moves> switches;
-	for (auto const n : bounded::range(team_size)) {
+	for (auto const n : bounded::integer_range(team_size)) {
 		if (n != index) {
 			switches.emplace_back(from_replacement(n));
 		}

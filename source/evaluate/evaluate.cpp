@@ -18,12 +18,6 @@
 
 #include "evaluate.hpp"
 
-#include <algorithm>
-#include <cstdint>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
 #include "../team.hpp"
 
 #include "../move/move.hpp"
@@ -35,6 +29,14 @@
 #include "../stat/stage.hpp"
 
 #include "../type/effectiveness.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include <algorithm>
+#include <cstdint>
 
 namespace technicalmachine {
 namespace {
@@ -129,7 +131,7 @@ using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declv
 using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
 auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const & weather) {
 	ScoreAllPokemon score = 0_bi;
-	for (auto const index : bounded::range(team.all_pokemon().size())) {
+	for (auto const index : bounded::integer_range(team.all_pokemon().size())) {
 		if (get_hp(team.pokemon(index)) == 0_bi) {
 			continue;
 		}

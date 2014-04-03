@@ -22,6 +22,8 @@
 
 #include "../team.hpp"
 
+#include <bounded_integer/integer_range.hpp>
+
 #include <algorithm>
 #include <cstddef>
 #include <random>
@@ -39,7 +41,7 @@ public:
 }	// unnamed namespace
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
-	for (auto const n : bounded::range(bounded::make<number_of_species>())) {
+	for (auto const n : bounded::integer_range(bounded::make<number_of_species>())) {
 		estimate[n] = lead[n] * overall[n] / total;
 	}
 }
@@ -51,7 +53,7 @@ void Estimate::update(Multiplier const & multiplier, Team const & team) {
 }
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {
-	for (auto const predicted : bounded::range(bounded::make<number_of_species>())) {
+	for (auto const predicted : bounded::integer_range(bounded::make<number_of_species>())) {
 		estimate[predicted] *= multiplier(seen, static_cast<Species>(predicted));
 	}
 }

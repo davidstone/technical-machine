@@ -18,9 +18,6 @@
 
 #include "move_container.hpp"
 
-#include <iostream>
-#include <string>
-
 #include "create_regular_moves.hpp"
 #include "create_shared_moves.hpp"
 #include "invalid_collection.hpp"
@@ -29,6 +26,11 @@
 #include "../../move/container.hpp"
 
 #include "../../string_conversions/move.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <iostream>
+#include <string>
 
 namespace technicalmachine {
 namespace {
@@ -64,7 +66,7 @@ void move_container_tests() {
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(c.size()));
 	}
 	auto const moves = create_regular_moves();
-	for (auto const n : bounded::range(static_cast<bounded::checked_integer<0, 100>>(moves.size()))) {
+	for (auto const n : bounded::integer_range(static_cast<bounded::checked_integer<0, 100>>(moves.size()))) {
 		c.emplace_back(moves[static_cast<std::size_t>(n)]);
 		if (c.size() != shared_moves_size + n + 1_bi or c.size() != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
