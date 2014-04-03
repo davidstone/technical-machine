@@ -41,8 +41,7 @@ namespace pl {
 namespace {
 
 Move load_move(boost::property_tree::ptree const & pt) {
-	std::string const name_str = pt.get_value<std::string>();
-	Moves const name = from_string<Moves>(name_str);
+	Moves const name = from_string<Moves>(pt.get_value<std::string>());
 	auto const pp_ups = pt.get<Pp::pp_ups_type>("<xmlattr>.pp-up");
 	return Move(name, pp_ups);
 }
@@ -59,7 +58,7 @@ static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 }
 
 static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {
-	std::string const name = pt.get <std::string> ("<xmlattr>.name");
+	auto const name = pt.get<std::string>("<xmlattr>.name");
 	IV const iv(pt.get<IV::value_type>("<xmlattr>.iv"));
 	EV const ev(pt.get<EV::value_type>("<xmlattr>.ev"));
 	if (name == "HP") {
@@ -98,10 +97,10 @@ Species from_simulator_string(std::string const & str) {
 }
 
 void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
-	std::string const species_str = pt.get <std::string> ("<xmlattr>.species");
-	std::string const nickname_temp = pt.get <std::string> ("nickname");
-	std::string const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
-	Level const level(bounded::checked_integer<Level::min, Level::max>(pt.get<int>("level")));
+	auto const species_str = pt.get <std::string> ("<xmlattr>.species");
+	auto const nickname_temp = pt.get <std::string> ("nickname");
+	auto const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
+	Level const level(pt.get<bounded::checked_integer<Level::min, Level::max>>("level"));
 	Gender const gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
 	Happiness const happiness(pt.get<Happiness::value_type>("happiness"));
 	Nature const nature(from_string<Nature::Natures>(pt.get<std::string>("nature")));
