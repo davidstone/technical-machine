@@ -1,5 +1,5 @@
 // Connect to an arbitrary networked Pokemon sim
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -146,7 +146,7 @@ void Client::read_header(InMessage & msg) {
 }
 
 void Client::connect () {
-	socket.reset (new boost::asio::ip::tcp::socket (io));
+	socket = std::make_unique<boost::asio::ip::tcp::socket>(io);
 	boost::asio::ip::tcp::resolver resolver (io);
 	boost::asio::ip::tcp::resolver::query query (host, port);
 

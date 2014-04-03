@@ -1,5 +1,5 @@
 // Handles challenges / current battles
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,8 +32,8 @@ class Battles {
 public:
 	template<typename SpecificBattle, typename ... Args>
 	SpecificBattle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
-		Pointer battle_ptr(new SpecificBattle(opponent, std::forward<Args>(args)...));
-		auto const & battle = static_cast<SpecificBattle const &>(*battle_ptr);
+		auto battle_ptr = std::make_unique<SpecificBattle>(opponent, std::forward<Args>(args)...);
+		auto const & battle = *battle_ptr;
 		challenges.insert(std::make_pair(opponent, std::move(battle_ptr)));
 		return battle;
 	}

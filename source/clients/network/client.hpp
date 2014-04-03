@@ -1,5 +1,5 @@
 // Connect to an arbitrary networked Pokemon sim
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -63,8 +63,8 @@ protected:
 		return Base::add_pending_challenge<Battle>(std::forward<Args>(args)...);
 	}
 	template<typename Timer>
-	std::unique_ptr<Timer> make_timer() {
-		return std::unique_ptr<Timer>(new Timer(io));
+	auto make_timer() {
+		return std::make_unique<Timer>(io);
 	}
 	void handle_private_message (std::string const & sender, std::string const & message);
 private:

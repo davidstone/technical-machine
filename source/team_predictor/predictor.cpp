@@ -52,22 +52,18 @@ namespace {
 class Data {
 public:
 	Data():
-		random_engine(rd()),
-		team_ptr(new Team())
+		random_engine(rd())
 		{
-	}
-	void reset() {
-		team_ptr.reset(new Team());
 	}
 	template<typename... Args>
 	void add(Args && ... args) {
 		input.emplace_back(std::forward<Args>(args)...);
 	}
 	Team const & team() const {
-		return *team_ptr;
+		return m_team;
 	}
 	Team & team() {
-		return *team_ptr;
+		return m_team;
 	}
 	std::vector<PokemonInputs *> input;
 	Fl_Int_Input * random_input;
@@ -76,7 +72,7 @@ public:
 	std::random_device rd;
 	std::mt19937 random_engine;
 private:
-	std::unique_ptr<Team> team_ptr;
+	Team m_team;
 };
 
 constexpr int number_of_stats = 6;
@@ -183,7 +179,7 @@ void function (Fl_Widget *, void * d) {
 	generate_random_team(data);
 	Team team = predict_team(data.detailed, data.team(), data.random_engine, using_lead);
 	data.output->value(to_string(team, false).c_str());
-	data.reset();
+	data.team() = Team{};
 }
 
 }	// unnamed namespace
