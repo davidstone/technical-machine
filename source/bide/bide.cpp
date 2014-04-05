@@ -35,11 +35,6 @@ void Bide::add_damage(damage_type const damage) {
 	}
 }
 
-void Bide::reset() {
-	m_damage = BideDamage{};
-	m_duration = BideDuration{};
-}
-
 damage_type Bide::decrement() {
 	return BOUNDED_INTEGER_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 }

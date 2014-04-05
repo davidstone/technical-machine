@@ -120,7 +120,7 @@ void ActivePokemon::reset_switch() {
 	is_tormented = false;
 	u_turning = false;
 	water_sport = false;
-	bide.reset();
+	bide = Bide{};
 	damage_done_to_active = 0;
 	m_taunt.reset();
 	toxic = Toxic{};

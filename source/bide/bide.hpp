@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,7 +33,6 @@ public:
 	bool is_active() const;
 	void activate();
 	void add_damage(damage_type damage);
-	void reset();
 	damage_type decrement();
 	typedef uint64_t hash_type;
 	hash_type hash() const;
