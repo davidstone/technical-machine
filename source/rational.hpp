@@ -39,7 +39,7 @@ template<typename Numerator, typename Denominator>
 struct is_bounded_rational<bounded_rational<Numerator, Denominator>> : std::true_type {};
 
 template<typename Numerator, typename Denominator>
-constexpr auto make_bounded_rational(Numerator const & numerator, Denominator const & denominator) {
+constexpr auto make_rational(Numerator const & numerator, Denominator const & denominator) {
 	// It has the null policy so that it can convert to any other policy with
 	// arithmetic operations.
 	using bounded::equivalent_type;
@@ -72,15 +72,15 @@ public:
 
 	template<typename N, typename D>
 	constexpr auto operator*(bounded_rational<N, D> const other) const {
-		return make_bounded_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator);
+		return make_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator);
 	}
 	template<typename N, typename D>
 	constexpr auto operator+(bounded_rational<N, D> const other) const {
-		return make_bounded_rational(m_numerator * other.m_denominator + other.m_numerator * m_denominator, m_denominator * other.m_denominator);
+		return make_rational(m_numerator * other.m_denominator + other.m_numerator * m_denominator, m_denominator * other.m_denominator);
 	}
 	template<typename N, typename D>
 	constexpr auto operator-(bounded_rational<N, D> const other) const {
-		return make_bounded_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator);
+		return make_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator);
 	}
 
 	template<typename N, typename D>
@@ -123,7 +123,7 @@ public:
 
 template<typename Numerator, typename Denominator>
 constexpr auto complement(bounded_rational<Numerator, Denominator> const rational) {
-	return make_bounded_rational(1_bi, 1_bi) - rational;
+	return make_rational(1_bi, 1_bi) - rational;
 }
 
 

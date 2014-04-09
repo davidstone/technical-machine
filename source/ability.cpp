@@ -371,7 +371,7 @@ Rational Ability::attacker_modifier(Pokemon const & attacker, Pokemon const & de
 
 namespace {
 bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
-	return Type(attacker.move(), attacker) == type and hp_ratio(attacker) <= make_bounded_rational(1_bi, 3_bi);
+	return Type(attacker.move(), attacker) == type and hp_ratio(attacker) <= make_rational(1_bi, 3_bi);
 }
 }	// namespace
 

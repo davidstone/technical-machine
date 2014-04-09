@@ -32,7 +32,7 @@ public:
 	Toxic() = default;
 	void increment();
 	auto ratio_drained() const {
-		return make_bounded_rational(m_counter, 16_bi);
+		return make_rational(m_counter, 16_bi);
 	}
 	friend bool operator== (Toxic const & lhs, Toxic const & rhs);
 	typedef uint64_t hash_type;

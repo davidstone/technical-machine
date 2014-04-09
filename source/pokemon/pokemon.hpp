@@ -119,7 +119,7 @@ std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
 inline auto hp_ratio(Pokemon const & pokemon) {
 	auto const & hp = get_hp(pokemon);
-	return make_bounded_rational(hp.current(), hp.max());
+	return make_rational(hp.current(), hp.max());
 }
 
 }	// namespace technicalmachine

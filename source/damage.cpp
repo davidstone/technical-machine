@@ -131,11 +131,11 @@ auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon 
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return CONDITIONAL(is_physical(attacker.move()),
-		make_bounded_rational(
+		make_rational(
 			calculate_attack(attacker, weather),
 			50_bi * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
 		),
-		make_bounded_rational(
+		make_rational(
 			calculate_special_attack(attacker, weather),
 			50_bi * calculate_special_defense(defender, weather, attacker.critical_hit())
 		)

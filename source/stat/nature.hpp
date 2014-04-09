@@ -52,7 +52,7 @@ public:
 			BOUNDED_INTEGER_CONDITIONAL(lowers_stat<stat>(), 9_bi, 10_bi)
 		);
 		static constexpr auto denominator = 10_bi;
-		return make_bounded_rational(numerator, denominator);
+		return make_rational(numerator, denominator);
 	}
 
 	template<StatNames>

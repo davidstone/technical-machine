@@ -216,7 +216,7 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, Updat
 	std::cerr << "is me: " << team.is_me() << '\n';
 	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
 	assert(move_damage);
-	auto const change = make_bounded_rational(visible_damage, max_visible_hp_change(team));
+	auto const change = make_rational(visible_damage, max_visible_hp_change(team));
 	auto const damage = get_hp(pokemon).max() * change;
 	updated_hp.direct_damage(team.is_me(), pokemon, damage);
 	move_damage = false;

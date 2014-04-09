@@ -64,7 +64,7 @@ bounded::integer<0, 30> LastUsedMove::triple_kick_power() const {
 }
 
 bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> LastUsedMove::metronome_boost() const {
-	return make_bounded_rational(10_bi + m_consecutive_turns_used, 10_bi);
+	return make_rational(10_bi + m_consecutive_turns_used, 10_bi);
 }
 
 uint64_t LastUsedMove::hash() const {

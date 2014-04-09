@@ -148,7 +148,7 @@ struct AbilityNumerator<StatNames::SPE> {
 
 template<StatNames stat>
 auto ability_modifier(ActivePokemon const & pokemon, Weather const & weather) {
-	return make_bounded_rational(AbilityNumerator<stat>{}(pokemon, weather), ability_denominator);
+	return make_rational(AbilityNumerator<stat>{}(pokemon, weather), ability_denominator);
 }
 
 
@@ -238,7 +238,7 @@ struct ItemNumerator<StatNames::SPE> {
 
 template<StatNames stat>
 auto item_modifier(Pokemon const & pokemon) {
-	return make_bounded_rational(ItemNumerator<stat>{}(pokemon), item_denominator);
+	return make_rational(ItemNumerator<stat>{}(pokemon), item_denominator);
 }
 
 template<StatNames stat>
@@ -353,7 +353,7 @@ defense_type calculate_defense(ActivePokemon const & defender, Weather const & w
 namespace {
 
 auto special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
-	return make_bounded_rational(CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(), 3_bi, 2_bi), 2_bi);
+	return make_rational(CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(), 3_bi, 2_bi), 2_bi);
 }
 
 }	// namespace
