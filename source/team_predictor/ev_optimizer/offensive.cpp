@@ -18,14 +18,15 @@
 
 #include "offensive.hpp"
 
-#include <vector>
-
-#include <bounded_integer/optional.hpp>
-
 #include "../../pokemon/pokemon.hpp"
 #include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
+
+#include <bounded_integer/optional.hpp>
+
+#include <cassert>
+#include <vector>
 
 namespace technicalmachine {
 namespace {
@@ -56,6 +57,7 @@ OffensiveEVs::OffensiveEVs(Pokemon pokemon) {
 		container.insert(Container::value_type(nature, OffensiveStats{}));
 	}
 	optimize(pokemon);
+	assert(!container.empty());
 }
 
 void OffensiveEVs::optimize(Pokemon & pokemon) {

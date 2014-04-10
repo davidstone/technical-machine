@@ -99,7 +99,7 @@ Team max_damage_special_defender() {
 
 void physical_power_test() {
 	std::cout << "\t\tRunning physical power tests.\n";
-	constexpr unsigned max_power = 1440;
+	constexpr auto max_power = 1440_bi;
 
 	Team attacker = max_damage_physical_attacker();
 	auto & pokemon = attacker.pokemon();
@@ -112,7 +112,7 @@ void physical_power_test() {
 
 void special_power_test() {
 	std::cout << "\t\tRunning special power tests.\n";
-	constexpr unsigned max_power = 342;
+	constexpr auto max_power = 342_bi;
 
 	Team attacker = max_damage_special_attacker();
 	Pokemon & pokemon = attacker.pokemon();
@@ -123,7 +123,7 @@ void special_power_test() {
 	Team defender = max_damage_special_defender();
 	defender.pokemon().dive();
 
-	unsigned const power = move_power(attacker, defender, Weather{}, Variable{});
+	auto const power = move_power(attacker, defender, Weather{}, Variable{});
 	check_equal(power, max_power);
 }
 

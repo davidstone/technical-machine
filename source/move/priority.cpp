@@ -25,36 +25,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-bounded::checked_integer<-6, 6> get_priority(Moves move);
-
-}	// unnamed namespace
-
-Priority::Priority(Moves const move) :
-	priority(get_priority(move)) {
-}
-
-bool operator== (Priority const lhs, Priority const rhs) {
-	return lhs.priority == rhs.priority;
-}
-bool operator!= (Priority const lhs, Priority const rhs) {
-	return !(lhs == rhs);
-}
-bool operator< (Priority const lhs, Priority const rhs) {
-	return lhs.priority < rhs.priority;
-}
-bool operator> (Priority const lhs, Priority const rhs) {
-	return rhs < lhs;
-}
-bool operator<= (Priority const lhs, Priority const rhs) {
-	return !(lhs > rhs);
-}
-bool operator>= (Priority const lhs, Priority const rhs) {
-	return !(lhs < rhs);
-}
-
-namespace {
-
-bounded::checked_integer<-6, 6> get_priority(Moves const move) {
+auto get_priority(Moves const move) -> bounded::checked_integer<-6, 6> {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -106,5 +77,30 @@ bounded::checked_integer<-6, 6> get_priority(Moves const move) {
 			return 0_bi;
 	}
 }
-}	// unnamed namespace
+
+}	// namespace
+
+Priority::Priority(Moves const move) :
+	priority(get_priority(move)) {
+}
+
+auto operator== (Priority const lhs, Priority const rhs) -> bool {
+	return lhs.priority == rhs.priority;
+}
+auto operator!= (Priority const lhs, Priority const rhs) -> bool {
+	return !(lhs == rhs);
+}
+auto operator< (Priority const lhs, Priority const rhs) -> bool {
+	return lhs.priority < rhs.priority;
+}
+auto operator> (Priority const lhs, Priority const rhs) -> bool {
+	return rhs < lhs;
+}
+auto operator<= (Priority const lhs, Priority const rhs) -> bool {
+	return !(lhs > rhs);
+}
+auto operator>= (Priority const lhs, Priority const rhs) -> bool {
+	return !(lhs < rhs);
+}
+
 }	// namespace technicalmachine

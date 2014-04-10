@@ -18,12 +18,6 @@
 
 #include "defensive.hpp"
 
-#include <algorithm>
-#include <iostream>
-#include <set>
-#include <string>
-#include <vector>
-
 #include "offensive.hpp"
 #include "single_classification_evs.hpp"
 
@@ -31,6 +25,13 @@
 
 #include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
+
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <set>
+#include <string>
+#include <vector>
 
 namespace technicalmachine {
 namespace {
@@ -58,7 +59,7 @@ Divided divide_natures(DefensiveEVs::BestPerNature const & container);
 
 bool has_same_effect_on_defenses(Nature const & nature, Nature const & reference_nature);
 
-}	// unnamed namespace
+}	// namespace
 
 DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 	Single const physical = equal_defensiveness<true>(pokemon);
@@ -69,6 +70,7 @@ DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
 		remove_inefficient_natures(value);
 	}
 	add_other_potential_natures();
+	assert(!container.empty());
 }
 
 void DefensiveEVs::remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures) {

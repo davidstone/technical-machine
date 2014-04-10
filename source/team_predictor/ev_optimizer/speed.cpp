@@ -22,6 +22,8 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
 
+#include <cassert>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -43,6 +45,7 @@ SpeedEVs::SpeedEVs(Pokemon pokemon) {
 			}
 		}
 	}
+	assert(!container.empty());
 }
 
 }	// namespace technicalmachine

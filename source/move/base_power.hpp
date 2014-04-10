@@ -27,7 +27,10 @@
 namespace technicalmachine {
 
 // variable power returns non-0. Fixed damage is the uninitialized state.
-bounded::optional<bounded::integer<0, 250>> base_power(Moves move);
+auto base_power(Moves move) -> bounded::optional<bounded::integer<0, 250>>;
+
+// Fling gives 0, Rollout gives 480
+using VariableAdjustedBasePower = bounded::integer<0, 480>;
 
 }	// namespace technicalmachine
 #endif	// MOVE__BASE_POWER_HPP_

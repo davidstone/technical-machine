@@ -37,14 +37,14 @@ SharedMoves::SharedMoves(TeamSize const team_size):
 	m_number_of_switches(BOUNDED_INTEGER_CONDITIONAL(team_size > 1_bi, team_size, 0_bi)) {
 }
 
-void SharedMoves::remove_switch() {
+auto SharedMoves::remove_switch() -> void {
 	--m_number_of_switches;
 	if (m_number_of_switches == 1_bi) {
 		m_number_of_switches = 0_bi;
 	}
 }
 
-Move const & SharedMoves::operator[](index_type const index) const {
+auto SharedMoves::operator[](index_type const index) const -> Move const & {
 	using switch_index_type = bounded::checked_integer<
 		static_cast<intmax_t>(number_of_weird_moves),
 		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
@@ -57,8 +57,8 @@ auto SharedMoves::size() const -> size_type {
 	return m_number_of_switches + number_of_weird_moves;
 }
 
-bool operator==(SharedMoves const & lhs, SharedMoves const & rhs) {
-	return lhs.m_number_of_switches == rhs.m_number_of_switches;
+auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool {
+	return lhs.size() == rhs.size();
 }
 
 }	// namespace technicalmachine

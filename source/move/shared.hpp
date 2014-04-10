@@ -34,13 +34,14 @@ public:
 	using size_type = SharedMoveSize;
 	using index_type = SharedMoveIndex;
 	explicit SharedMoves(TeamSize team_size = max_pokemon_per_team);
-	void remove_switch();
-	Move const & operator[](index_type index) const;
-	size_type size() const;
-	friend bool operator==(SharedMoves const & lhs, SharedMoves const & rhs);
+	auto remove_switch() -> void;
+	auto operator[](index_type index) const -> Move const &;
+	auto size() const -> size_type;
 private:
 	bounded::equivalent_type<TeamSize, bounded::throw_policy> m_number_of_switches;
 };
+
+auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// MOVE__SHARED_HPP_

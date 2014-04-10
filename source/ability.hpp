@@ -21,6 +21,7 @@
 
 #include "rational.hpp"
 #include "status.hpp"
+#include "move/base_power.hpp"
 #include "stat/stat_names.hpp"
 
 #include <cstdint>
@@ -125,7 +126,7 @@ using AbilityEvasionModifier = bounded_rational<
 >;
 auto ability_evasion_modifier(ActivePokemon const & target, Weather const & weather) -> AbilityEvasionModifier;
 
-bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>> attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
+auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
 }
 #endif	// ABILITY_HPP_

@@ -348,7 +348,7 @@ bool is_boosted_by_reckless(Moves const move) {
 
 #define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
 
-bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>> attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned const base_power) {
+auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	switch (get_ability(attacker).name()) {
 		case Ability::Technician:
 			return make_rational(CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);

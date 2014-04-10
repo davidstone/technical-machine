@@ -48,109 +48,52 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-unsigned calculate_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable);
-bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
-unsigned item_modifier (Pokemon const & attacker);
-Rational defender_ability_modifier(Pokemon const & attacker, Ability const ability);
+auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
-bool is_boosted_by_adamant_orb(Species species);
-bool is_boosted_by_griseous_orb(Species species);
-bool is_boosted_by_lustrous_orb(Species species);
-
-bounded::integer<20, 120> power_of_mass_based_moves(Species species);
-}	// namespace
-
-unsigned move_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) {
-	auto const & attacker = attacker_team.pokemon();
-	auto const & defender = defender_team.pokemon();
-	auto const base_power = calculate_base_power(attacker_team, defender_team, weather, variable);
-	unsigned power = base_power;
-
-	if (doubling(attacker, defender, weather)) {
-		power *= 2;
-	}
-
-	power *= Rational(item_modifier(attacker), 10);
-
-	if (attacker.charge_boosted()) {
-		power *= 2;
-	}
-
-	if (defender.sport_is_active(attacker.move())) {
-		power /= 2;
-	}
-
-	power *= attacker_ability_power_modifier(attacker, defender, base_power);
-	
-	power *= defender_ability_modifier(attacker, get_ability(defender));
-	
-	return std::max(power, 1u);
-}
-
-namespace {
-
-Rational defender_ability_modifier(Pokemon const & attacker, Ability const ability) {
-	Moves const move = attacker.move();
-	switch (ability.name()) {
-		case Ability::Dry_Skin:
-			return (Type(move, attacker) == Type::Fire) ? Rational(5, 4) : Rational(1);
-		case Ability::Heatproof:
-			return (Type(move, attacker) == Type::Fire) ? Rational(1, 2) : Rational(1);
-		case Ability::Thick_Fat: {
-			Type const type(move, attacker);
-			return (type == Type::Fire or type == Type::Ice) ?
-				Rational(1, 2) :
-				Rational(1);
-		}
-		default:
-			return Rational(1);
-	}
-}
-
-unsigned calculate_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) {
+auto variable_adjusted_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
-			return static_cast<unsigned>(120_bi * hp_ratio(defender) + 1_bi);
+			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
 		case Moves::Eruption:
 		case Moves::Water_Spout:
-			return static_cast<unsigned>(150_bi * hp_ratio(attacker));
+			return bounded::integer<1, 150>(bounded::max(150_bi * hp_ratio(attacker), 1_bi), bounded::non_check);
 		case Moves::Flail:
 		case Moves::Reversal: {
 			auto const k = 64_bi * hp_ratio(attacker);
 			if (k <= 1_bi)
-				return 200;
+				return 200_bi;
 			else if (k <= 5_bi)
-				return 150;
+				return 150_bi;
 			else if (k <= 12_bi)
-				return 100;
+				return 100_bi;
 			else if (k <= 21_bi)
-				return 80;
+				return 80_bi;
 			else if (k <= 42_bi)
-				return 40;
+				return 40_bi;
 			else
-				return 20;
+				return 20_bi;
 		}
 		case Moves::Fling:
-			return static_cast<unsigned>(get_item(attacker).fling_power());
+			return get_item(attacker).fling_power();
 		case Moves::Frustration:
-			return static_cast<unsigned>(frustration_power(get_happiness(attacker)));
+			return frustration_power(get_happiness(attacker));
 		case Moves::Fury_Cutter:
-			return static_cast<unsigned>(attacker.fury_cutter_power());
+			return attacker.fury_cutter_power();
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
-			return static_cast<unsigned>(power_of_mass_based_moves(defender));
+			return power_of_mass_based_moves(defender);
 		case Moves::Gyro_Ball: {
 			auto const defender_speed = calculate_speed(defender_team, weather);
 			auto const attacker_speed = calculate_speed(attacker_team, weather);
 			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
-			return static_cast<unsigned>(bounded::min(uncapped_power, 150_bi));
+			return bounded::min(uncapped_power, 150_bi);
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return static_cast<unsigned>(attacker.momentum_move_power());
+			return attacker.momentum_move_power();
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded::integer<0, 5>>;
 			static constexpr bounded::array<stat_and_position_type, 5> stat_and_position {{
@@ -168,33 +111,81 @@ unsigned calculate_base_power(Team const & attacker_team, Team const & defender_
 			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), initial, sum) * 40_bi / 63_bi + 30_bi;
 			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");
 			static_assert(std::numeric_limits<decltype(result)>::max() == 70_bi, "Incorrect Hidden Power maximum.");
-			return static_cast<unsigned>(result);
+			return result;
 		}
 		case Moves::Magnitude:
-			return static_cast<unsigned>(variable.value());
+			return variable.value();
 		case Moves::Natural_Gift:
-			return static_cast<unsigned>(get_item(attacker).berry_power());
+			return get_item(attacker).berry_power();
 		case Moves::Present:
 			assert (!variable.present_heals());
-			return static_cast<unsigned>(variable.value());
+			return variable.value();
 		case Moves::Punishment: {
 			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(defender.stage());
-			return static_cast<unsigned>(bounded::min(uncapped_power, 200_bi));
+			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:
-			return static_cast<unsigned>(return_power(get_happiness(attacker)));
+			return return_power(get_happiness(attacker));
 		case Moves::Spit_Up:
-			return static_cast<unsigned>(attacker.spit_up_power());
+			return attacker.spit_up_power();
 		case Moves::Triple_Kick:
-			return static_cast<unsigned>(attacker.triple_kick_power());
+			return attacker.triple_kick_power();
 		case Moves::Trump_Card:
-			return static_cast<unsigned>(attacker.move().pp.trump_card_power());
+			return attacker.move().pp.trump_card_power();
 		default:
-			return static_cast<unsigned>(*base_power(attacker.move()));
+			return *base_power(attacker.move());
 	}
 }
 
-bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) -> bool;
+
+auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 12>;
+auto item_modifier(Pokemon const & attacker) {
+	return make_rational(item_modifier_numerator(attacker), 10_bi);
+}
+
+auto is_boosted_by_adamant_orb(Species species) -> bool;
+auto is_boosted_by_griseous_orb(Species species) -> bool;
+auto is_boosted_by_lustrous_orb(Species species) -> bool;
+
+auto defender_ability_modifier(Pokemon const & attacker, Ability const ability) -> bounded_rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
+	#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
+	Moves const move = attacker.move();
+	switch (ability.name()) {
+		case Ability::Dry_Skin:
+			return make_rational(CONDITIONAL(Type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
+		case Ability::Heatproof:
+			return make_rational(1_bi, CONDITIONAL(Type(move, attacker) == Type::Fire, 2_bi, 1_bi));
+		case Ability::Thick_Fat: {
+			Type const type(move, attacker);
+			return make_rational(1_bi, CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
+		}
+		default:
+			return make_rational(1_bi, 1_bi);
+	}
+	#undef CONDITIONAL
+}
+
+}	// namespace
+
+auto move_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) -> MovePower {
+	auto const & attacker = attacker_team.pokemon();
+	auto const & defender = defender_team.pokemon();
+	auto const base_power = variable_adjusted_base_power(attacker_team, defender_team, weather, variable);
+	return static_cast<MovePower>(bounded::max(1_bi,
+		base_power *
+		BOUNDED_INTEGER_CONDITIONAL(doubling(attacker, defender, weather), 2_bi, 1_bi) *
+		item_modifier(attacker) *
+		BOUNDED_INTEGER_CONDITIONAL(attacker.charge_boosted(), 2_bi, 1_bi) /
+		BOUNDED_INTEGER_CONDITIONAL(defender.sport_is_active(attacker.move()), 2_bi, 1_bi) *
+		attacker_ability_power_modifier(attacker, defender, base_power) *
+		defender_ability_modifier(attacker, get_ability(defender))
+	));
+}
+
+namespace {
+
+auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -237,136 +228,92 @@ bool doubling (ActivePokemon const & attacker, ActivePokemon const & defender, W
 	}
 }
 
-unsigned item_modifier (Pokemon const & attacker) {
+auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 12> {
+	static constexpr auto base = 10_bi;
 	Type const type(attacker.move(), attacker);
 	switch (get_item(attacker).name) {
 		case Item::MUSCLE_BAND:
-			if (is_physical(attacker.move()))
-				return 11;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(is_physical(attacker.move()), 11_bi, base);
 		case Item::WISE_GLASSES:
-			if (is_special(attacker.move()))
-				return 11;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(is_special(attacker.move()), 11_bi, base);
 		case Item::INSECT_PLATE:
 		case Item::SILVERPOWDER:
-			if (type == Type::Bug)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Bug, 12_bi, base);
 		case Item::DREAD_PLATE:	
 		case Item::BLACKGLASSES:
-			if (type == Type::Dark)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Dark, 12_bi, base);
 		case Item::DRACO_PLATE:
 		case Item::DRAGON_FANG:
-			if (type == Type::Dragon)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Dragon, 12_bi, base);
 		case Item::ZAP_PLATE:
 		case Item::MAGNET:
-			if (type == Type::Electric)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Electric, 12_bi, base);
 		case Item::FIST_PLATE:
 		case Item::BLACK_BELT:
-			if (type == Type::Fighting)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Fighting, 12_bi, base);
 		case Item::FLAME_PLATE:
 		case Item::CHARCOAL:
-			if (type == Type::Fire)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Fire, 12_bi, base);
 		case Item::SKY_PLATE:
 		case Item::SHARP_BEAK:
-			if (type == Type::Flying)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Flying, 12_bi, base);
 		case Item::SPOOKY_PLATE:
 		case Item::SPELL_TAG:
-			if (type == Type::Ghost)
- 				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Ghost, 12_bi, base);
 		case Item::MEADOW_PLATE:
 		case Item::MIRACLE_SEED:
-			if (type == Type::Grass)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Grass, 12_bi, base);
 		case Item::EARTH_PLATE:
 		case Item::SOFT_SAND:
-			if (type == Type::Ground)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Ground, 12_bi, base);
 		case Item::ICICLE_PLATE:
 		case Item::NEVERMELTICE:
-			if (type == Type::Ice)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Ice, 12_bi, base);
 		case Item::SILK_SCARF:
-			if (type == Type::Normal)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Normal, 12_bi, base);
 		case Item::TOXIC_PLATE:
 		case Item::POISON_BARB:
-			if (type == Type::Poison)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Poison, 12_bi, base);
 		case Item::MIND_PLATE:
 		case Item::TWISTEDSPOON:
 		case Item::ODD_INCENSE:
-			if (type == Type::Psychic)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Psychic, 12_bi, base);
 		case Item::STONE_PLATE:
 		case Item::HARD_STONE:
 		case Item::ROCK_INCENSE:
-			if (type == Type::Rock)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Rock, 12_bi, base);
 		case Item::IRON_PLATE:
 		case Item::METAL_COAT:
-			if (type == Type::Steel)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Steel, 12_bi, base);
 		case Item::SPLASH_PLATE:
 		case Item::MYSTIC_WATER:
 		case Item::SEA_INCENSE:
 		case Item::WAVE_INCENSE:
-			if (type == Type::Water)
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Water, 12_bi, base);
 		case Item::ADAMANT_ORB:
-			if (is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel))
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
 		case Item::GRISEOUS_ORB:
-			if (is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost))
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);
 		case Item::LUSTROUS_ORB:
-			if (is_boosted_by_lustrous_orb(attacker) and (type == Type::Dragon or type == Type::Water))
-				return 12;
-			break;
+			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_lustrous_orb(attacker) and (type == Type::Dragon or type == Type::Water), 12_bi, base);
 		default:
-			break;
+			return base;
 	}
-	return 10;
 }
 
-bool is_boosted_by_adamant_orb(Species const species) {
+auto is_boosted_by_adamant_orb(Species const species) -> bool {
 	return species == Species::Dialga;
 }
 
-bool is_boosted_by_griseous_orb(Species const species) {
+auto is_boosted_by_griseous_orb(Species const species) -> bool {
 	return species == Species::Palkia;
 }
 
-bool is_boosted_by_lustrous_orb(Species const species) {
+auto is_boosted_by_lustrous_orb(Species const species) -> bool {
 	return species == Species::Giratina_Origin;
 }
 
-bounded::integer<20, 120> power_of_mass_based_moves(Species const species) {
+auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 120> {
 	static constexpr auto mass_array = bounded::make_array(
 		// Generation 1
 		20_bi,		// Bulbasaur

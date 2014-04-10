@@ -27,72 +27,11 @@
 #include "../ability.hpp"
 
 namespace technicalmachine {
+namespace {
 
-Pp::Pp (Moves const move, pp_ups_type const pp_ups):
-	max(calculate_max(get_base_pp(move), pp_ups)),
-	current(static_cast<bool>(max) ? bounded::optional<current_type>(*max) : bounded::none) {
-}
-
-auto Pp::calculate_max(bounded::optional<base_type> base, pp_ups_type pp_ups) -> bounded::optional<max_type> {
-	// Macro needed until C++14 automatic return type deduction
-	#define TECHNICALMACHINE_PP_MAX \
-		make_optional(*base * (pp_ups + 5_bi) / 5_bi)
-	static_assert(std::is_same<bounded::optional<max_type>, decltype(TECHNICALMACHINE_PP_MAX)>::value, "Incorrect PP type.");
-	return static_cast<bool>(base) ? TECHNICALMACHINE_PP_MAX : bounded::none;
-	#undef TECHNICALMACHINE_PP_MAX
-}
-
-bool Pp::is_empty() const {
-	return current == 0_bi;
-}
-
-bool Pp::has_unlimited_pp() const {
-	return static_cast<bool>(max);
-}
-
-void Pp::decrement(Ability const & foe_ability) {
-	if (has_unlimited_pp())
-		return;
-	// I think it is always an error to try to decrement a move without PP.
-	assert(current != 0_bi);
-	*current -= BOUNDED_INTEGER_CONDITIONAL(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
-}
-
-bounded::integer<40, 200> Pp::trump_card_power() const {
-	// Should be safe because we assume we are using Trump Card
-	switch (current->value()) {
-		case 0:
-			return 200_bi;
-		case 1:
-			return 80_bi;
-		case 2:
-			return 60_bi;
-		case 3:
-			return 50_bi;
-		default:
-			return 40_bi;
-	}
-}
-
-uint64_t Pp::hash() const {
-	return static_cast<bool>(current) ? static_cast<uint64_t>(*current) : 0;
-}
-
-uint64_t Pp::max_hash() const {
-	return static_cast<bool>(max) ? static_cast<uint64_t>(*max + 1_bi) : 1;
-}
-
-bool operator== (Pp const & lhs, Pp const & rhs) {
-	return lhs.current == rhs.current;
-}
-
-bool operator!= (Pp const & lhs, Pp const & rhs) {
-	return !(lhs == rhs);
-}
-
-auto Pp::get_base_pp(Moves const move) -> bounded::optional<base_type> {
+auto base_pp(Moves const move) {
 	using bounded::none;
-	static constexpr auto get_pp = bounded::make_optional_array(
+	static constexpr auto base = bounded::make_optional_array(
 		none,		// Switch0
 		none,		// Switch1
 		none,		// Switch2
@@ -660,8 +599,70 @@ auto Pp::get_base_pp(Moves const move) -> bounded::optional<base_type> {
 		5_bi,		// Fusion Flare
 		5_bi		// Fusion Bolt
 	);
-	static_assert(std::is_same<decltype(get_pp)::value_type, bounded::optional<base_type>>::value, "Incorrect array type.");
-	return get_pp.at(move);
+	return base.at(move);
+}
+using BasePP = decltype(base_pp(std::declval<Moves>()));
+
+auto max(BasePP const base, Pp::pp_ups_type const pp_ups) {
+	return static_cast<bool>(base) ? make_optional(*base * (pp_ups + 5_bi) / 5_bi) : bounded::none;
+}
+using Max = decltype(max(std::declval<BasePP>(), std::declval<Pp::pp_ups_type>()));
+
+}	// namespace
+
+Pp::Pp(Moves const move, pp_ups_type const pp_ups):
+	m_max(max(base_pp(move), pp_ups)),
+	m_current(static_cast<bool>(m_max) ? bounded::optional<current_type>(*m_max) : bounded::none) {
+	static_assert(std::is_same<bounded::optional<base_type>, BasePP>::value, "Incorrect PP type.");
+	static_assert(std::is_same<decltype(m_max), Max>::value, "Incorrect PP type.");
+}
+
+auto Pp::is_empty() const -> bool {
+	return m_current == 0_bi;
+}
+
+auto Pp::has_unlimited_pp() const -> bool {
+	return static_cast<bool>(m_max);
+}
+
+auto Pp::decrement(Ability const & foe_ability) -> void {
+	if (has_unlimited_pp())
+		return;
+	// I think it is always an error to try to decrement a move without PP.
+	assert(m_current != 0_bi);
+	*m_current -= BOUNDED_INTEGER_CONDITIONAL(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
+}
+
+auto Pp::trump_card_power() const -> bounded::integer<40, 200> {
+	// Should be safe because we assume we are using Trump Card
+	switch (m_current->value()) {
+		case 0:
+			return 200_bi;
+		case 1:
+			return 80_bi;
+		case 2:
+			return 60_bi;
+		case 3:
+			return 50_bi;
+		default:
+			return 40_bi;
+	}
+}
+
+uint64_t Pp::hash() const {
+	return static_cast<bool>(m_current) ? static_cast<uint64_t>(*m_current) : 0;
+}
+
+uint64_t Pp::max_hash() const {
+	return static_cast<bool>(m_max) ? static_cast<uint64_t>(*m_max + 1_bi) : 1;
+}
+
+auto operator== (Pp const & lhs, Pp const & rhs) -> bool {
+	return lhs.m_current == rhs.m_current;
+}
+
+auto operator!= (Pp const & lhs, Pp const & rhs) -> bool {
+	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

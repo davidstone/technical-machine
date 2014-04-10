@@ -18,17 +18,20 @@
 
 #include "combine.hpp"
 
-#include <algorithm>
-#include <cassert>
-#include <map>
-
-#include <bounded_integer/bounded_integer.hpp>
-
 #include "defensive.hpp"
 #include "offensive.hpp"
 #include "speed.hpp"
 
 #include "../../pokemon/pokemon.hpp"
+
+#include "../../string_conversions/nature.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <map>
 
 namespace technicalmachine {
 
@@ -51,7 +54,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 		}
 		sums.emplace(speed.first, EV::total_type(sum, bounded::non_check));
 	}
-	#if 0
+	#if 1
 	if (sums.empty()) {
 		std::cerr << to_string(pokemon) << '\n';
 		std::cerr << "Speed:\n";
@@ -60,7 +63,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 		}
 		std::cerr << "Offensive:\n";
 		for (auto const & value : o.container) {
-			std::cerr << '\t' << to_string(value.first) << " : " << value.second.attack.value() << ", " << value.second.attack.value() << '\n';
+			std::cerr << '\t' << to_string(value.first) << " : " << value.second.attack.value() << ", " << value.second.special_attack.value() << '\n';
 		}
 		std::cerr << "Defensive:\n";
 		for (auto const & value : d.container) {

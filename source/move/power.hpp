@@ -1,5 +1,5 @@
 // Move power calculator forward declarations
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,16 @@
 #ifndef MOVE__POWER_HPP_
 #define MOVE__POWER_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
+
 namespace technicalmachine {
 
 class Team;
 class Variable;
 class Weather;
 
-unsigned move_power(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+using MovePower = bounded::integer<1, 1440>;
+auto move_power(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) -> MovePower;
 
 }	// namespace technicalmachine
 #endif	// MOVE__POWER_HPP_

@@ -27,16 +27,16 @@ namespace technicalmachine {
 class Priority {
 public:
 	explicit Priority(Moves move);
-	friend bool operator== (Priority lhs, Priority rhs);
-	friend bool operator< (Priority lhs, Priority rhs);
+	friend auto operator== (Priority lhs, Priority rhs) -> bool;
+	friend auto operator< (Priority lhs, Priority rhs) -> bool;
 private:
 	bounded::checked_integer<-6, 6> priority;
 };
 
-bool operator!= (Priority lhs, Priority rhs);
-bool operator> (Priority lhs, Priority rhs);
-bool operator<= (Priority lhs, Priority rhs);
-bool operator>= (Priority lhs, Priority rhs);
+auto operator!= (Priority lhs, Priority rhs) -> bool;
+auto operator> (Priority lhs, Priority rhs) -> bool;
+auto operator<= (Priority lhs, Priority rhs) -> bool;
+auto operator>= (Priority lhs, Priority rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

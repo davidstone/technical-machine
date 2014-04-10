@@ -22,7 +22,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-bounded::optional<bounded::integer<0, 250>> base_power(Moves const move) {
+auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>> {
 	// It doesn't matter if variable_power happens to have the same value as
 	// anything else, as long as it is not 0.
 	static constexpr auto variable_power = 1_bi;

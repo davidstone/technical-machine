@@ -1,5 +1,5 @@
 // Use moves
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,7 @@ class Team;
 class Variable;
 class Weather;
 
-damage_type call_move (Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false);
+auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false) -> damage_type;
 
 }	// namespace technicalmachine
 #endif	// MOVE__USE_MOVE_HPP_
