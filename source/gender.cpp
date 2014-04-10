@@ -1,5 +1,5 @@
 // Gender functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +19,7 @@
 #include "gender.hpp"
 
 namespace technicalmachine {
+using namespace bounded::literal;
 
 Gender::Gender ():
 	gender (MALE)		// No sexism here!
@@ -29,9 +30,8 @@ Gender::Gender (Genders gender_):
 	gender (gender_) {
 }
 
-int Gender::multiplier (Gender foe) const {
-	// Return 1 for same gender, -1 for opposite, and 0 if either is genderless
-	return (gender - 1) * (foe.gender - 1);
+bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) {
+	return (static_cast<bounded::integer<0, 2>>(my.gender) - 1_bi) * (static_cast<bounded::integer<0, 2>>(foe.gender) - 1_bi);
 }
 
 bool operator== (Gender const lhs, Gender const rhs) {

@@ -1,5 +1,5 @@
 // Gender header
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +19,8 @@
 #ifndef GENDER_HPP_
 #define GENDER_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -27,16 +29,17 @@ class Gender {
 public:
 	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 	
-	Gender ();
-	explicit Gender (Genders gender_);
+	Gender();
+	explicit Gender(Genders gender_);
 
-	// Return 1 if the same, -1 if opposite, and 0 if either is genderless
-	int multiplier (Gender foe) const;
 	friend bool operator== (Gender lhs, Gender rhs);
 
 	Genders gender;
 };
 bool operator!= (Gender lhs, Gender rhs);
+
+// Return 1 if the same, -1 if opposite, and 0 if either is genderless
+bounded::integer<-1, 1> multiplier(Gender me, Gender foe);
 
 }	// namespace technicalmachine
 #endif	// GENDER_HPP_

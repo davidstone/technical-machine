@@ -294,8 +294,9 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			cure_all_status(user_team, [](Pokemon const &) { return true; });
 			break;
 		case Moves::Attract:
-			if (get_gender(user).multiplier(get_gender(target)) == -1)
+			if (multiplier(get_gender(user), get_gender(target)) == -1_bi) {
 				target.attract();
+			}
 			break;
 		case Moves::Baton_Pass:
 			user.baton_pass();
@@ -393,7 +394,7 @@ void do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Camouflage:
 			break;
 		case Moves::Captivate:
-			if (get_gender(user).multiplier(get_gender(target)) == -1) {
+			if (multiplier(get_gender(user), get_gender(target)) == -1_bi) {
 				boost(target.stage(), StatNames::SPD, -2_bi);
 			}
 			break;

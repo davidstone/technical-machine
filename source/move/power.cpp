@@ -80,7 +80,7 @@ unsigned move_power(Team const & attacker_team, Team const & defender_team, Weat
 		power /= 2;
 	}
 
-	power *= Ability::attacker_modifier(attacker, defender, base_power);
+	power *= attacker_ability_power_modifier(attacker, defender, base_power);
 	
 	power *= defender_ability_modifier(attacker, get_ability(defender));
 	

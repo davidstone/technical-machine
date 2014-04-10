@@ -105,7 +105,6 @@ public:
 	
 	bool is_loafing (bool loaf) const;
 	
-	static Rational attacker_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
 	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
 	static void weather_healing(ActivePokemon & pokemon, Weather const & weather);
 	friend bool operator== (Ability lhs, Ability rhs);
@@ -125,6 +124,8 @@ using AbilityEvasionModifier = bounded_rational<
 	bounded::integer<1, 5>
 >;
 auto ability_evasion_modifier(ActivePokemon const & target, Weather const & weather) -> AbilityEvasionModifier;
+
+bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>> attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, unsigned base_power);
 
 }
 #endif	// ABILITY_HPP_
