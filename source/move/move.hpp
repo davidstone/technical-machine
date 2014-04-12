@@ -26,31 +26,35 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+class Ability;
+
 class Move {
 public:
 	explicit Move(Moves move, Pp::pp_ups_type pp_ups = 3_bi);
 	operator Moves() const;
-	typedef uint64_t hash_type;
+
+	auto pp() const -> Pp const &;
+	auto decrement_pp(Ability const & target) -> void;
+
+	using hash_type = uint64_t;
 	hash_type hash() const;
 	hash_type max_hash() const;
-	friend bool operator== (Move const & lhs, Move const & rhs);
-
 private:
 	Moves m_name;
-public:
-	Pp pp;
+	Pp m_pp;
 };
 
-bool operator!= (Move const & lhs, Move const & rhs);
+auto operator==(Move const & lhs, Move const & rhs) -> bool;
+auto operator!=(Move const & lhs, Move const & rhs) -> bool;
 
-bool is_physical(Moves move);
-bool is_special(Moves move);
+auto is_physical(Moves move) -> bool;
+auto is_special(Moves move) -> bool;
 
-bool is_switch(Moves name);
-bool is_damaging(Moves move);
-bool is_phaze(Moves name);
+auto is_switch(Moves name) -> bool;
+auto is_damaging(Moves move) -> bool;
+auto is_phaze(Moves name) -> bool;
 
-bool is_usable_while_frozen(Moves move);
+auto is_usable_while_frozen(Moves move) -> bool;
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

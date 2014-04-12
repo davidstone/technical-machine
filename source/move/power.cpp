@@ -131,7 +131,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		case Moves::Triple_Kick:
 			return attacker.triple_kick_power();
 		case Moves::Trump_Card:
-			return attacker.move().pp.trump_card_power();
+			return attacker.move().pp().trump_card_power();
 		default:
 			return *base_power(attacker.move());
 	}

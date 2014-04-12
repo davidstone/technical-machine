@@ -83,7 +83,7 @@ auto score_move(Evaluate const & evaluate, Move const & move, Screens const & ot
 			CONDITIONAL(is_special(move), evaluate.light_screen() * other.light_screen().turns_remaining(),
 			0_bi))
 		) +
-		CONDITIONAL(move.pp.is_empty(), evaluate.no_pp(), 0_bi)
+		CONDITIONAL(move.pp().is_empty(), evaluate.no_pp(), 0_bi)
 	;
 }
 using ScoreMove = decltype(score_move(std::declval<Evaluate>(), std::declval<Move>(), std::declval<Screens>()));

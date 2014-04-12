@@ -388,7 +388,7 @@ bool is_regular(Moves const move) {
 
 void ActivePokemon::lower_pp(Ability const & target) {
 	if (is_regular(move()) and !is_locked_in_to_bide())
-		regular_move().pp.decrement(target);
+		regular_move().decrement_pp(target);
 }
 
 auto ActivePokemon::magnet_rise() const -> MagnetRise const & {

@@ -29,49 +29,59 @@ namespace technicalmachine {
 
 Move::Move(Moves const move, Pp::pp_ups_type const pp_ups) :
 	m_name(move),
-	pp(move, pp_ups) {
+	m_pp(move, pp_ups) {
 }
 
 Move::operator Moves() const {
 	return m_name;
 }
 
-bool is_damaging(Moves const move) {
+auto Move::pp() const -> Pp const & {
+	return m_pp;
+}
+
+auto Move::decrement_pp(Ability const & target) -> void {
+	m_pp.decrement(target);
+}
+
+auto is_damaging(Moves const move) -> bool {
 	auto const power = base_power(move);
 	return !static_cast<bool>(power) or *power != 0_bi;
 }
 
-bool is_physical(Moves const move) {
+auto is_physical(Moves const move) -> bool {
 	return Classification(move).is_physical();
 }
 
-bool is_special(Moves const move) {
+auto is_special(Moves const move) -> bool {
 	return Classification(move).is_special();
 }
 
 uint64_t Move::hash () const {
-	return pp.hash() + pp.max_hash() * static_cast<uint64_t>(m_name);
+	return pp().hash() + pp().max_hash() * static_cast<uint64_t>(m_name);
 }
 
 uint64_t Move::max_hash() const {
-	return pp.max_hash() * static_cast<uint64_t>(Moves::END);
+	return pp().max_hash() * static_cast<uint64_t>(Moves::END);
 }
 
-bool operator== (Move const & lhs, Move const & rhs) {
-	return lhs.m_name == rhs.m_name and
-			lhs.pp == rhs.pp;
+auto operator==(Move const & lhs, Move const & rhs) -> bool {
+	return
+		static_cast<Moves>(lhs) == static_cast<Moves>(rhs) and
+		lhs.pp() == rhs.pp()
+	;
 }
 
-bool operator!= (Move const & lhs, Move const & rhs) {
+auto operator!=(Move const & lhs, Move const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 
-bool is_switch(Moves const move) {
+auto is_switch(Moves const move) -> bool {
 	static_assert(static_cast<unsigned>(Moves::Switch0) == 0, "Switching is not the first Move enum.");
 	return move <= Moves::Switch5;
 }
 
-bool is_phaze(Moves const move) {
+auto is_phaze(Moves const move) -> bool {
 	switch (move) {
 		case Moves::Roar:
 		case Moves::Whirlwind:
@@ -81,7 +91,7 @@ bool is_phaze(Moves const move) {
 	}
 }
 
-bool is_usable_while_frozen(Moves const move) {
+auto is_usable_while_frozen(Moves const move) -> bool {
 	switch (move) {
 		case Moves::Flame_Wheel:
 		case Moves::Sacred_Fire:

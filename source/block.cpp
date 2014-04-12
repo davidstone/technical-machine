@@ -173,7 +173,7 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 	if (!is_regular_move(move)) {
 		return false;
 	}
-	return (move.pp.is_empty())
+	return (move.pp().is_empty())
 			or (user.is_disabled(move))
 			or (user.heal_block_is_active() and (is_healing(move)))
 			or (imprison (move, other));
