@@ -1,5 +1,5 @@
 // Hold all moves for easy use by certain moves that call other moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,7 +24,7 @@
 namespace technicalmachine {
 class Move;
 
-Move const & global_move(Moves name);
+auto global_move(Moves name) -> Move const &;
 
 }	// namespace technicalmachine
 #endif	// MOVE__GLOBAL_MOVE_HPP_

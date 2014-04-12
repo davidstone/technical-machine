@@ -1,5 +1,5 @@
 // Hold all moves for easy use by certain moves that call other moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,27 +17,31 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "global_move.hpp"
+
+#include "move.hpp"
+#include "moves.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
 #include <cassert>
 #include <cstddef>
 #include <vector>
-#include "move.hpp"
-#include "moves.hpp"
 
 namespace technicalmachine {
 namespace {
 
-std::vector<Move> all_moves() {
+auto all_moves() {
 	std::vector<Move> all;
 	all.reserve(number_of_moves);
-	for (unsigned n = 0; n != number_of_moves; ++n) {
+	for (auto const n : bounded::integer_range(bounded::make<number_of_moves>())) {
 		all.emplace_back(static_cast<Moves>(n));
 	}
 	return all;
 }
 
-}	// unnamed namespace
+}	// namespace
 
-Move const & global_move(Moves const name) {
+auto global_move(Moves const name) -> Move const & {
 	static auto const all = all_moves();
 	assert(name != Moves::END);
 	return all[static_cast<size_t>(name)];
