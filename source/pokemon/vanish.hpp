@@ -1,5 +1,5 @@
 // Vanishing moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,27 +29,26 @@ namespace technicalmachine {
 class Vanish {
 public:
 	Vanish();
-	void reset();
 
 	// Returns whether the Pokemon ends up in a Vanished state
-	bool bounce();
-	bool dig();
-	bool dive();
-	bool fly();
-	bool shadow_force();
+	auto bounce() -> bool;
+	auto dig() -> bool;
+	auto dive() -> bool;
+	auto fly() -> bool;
+	auto shadow_force() -> bool;
 
-	bool doubles_move_power(Moves move) const;
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (Vanish const lhs, Vanish const rhs);
+	auto doubles_move_power(Moves move) const -> bool;
+	using hash_type = uint64_t;
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
+	friend auto operator== (Vanish const lhs, Vanish const rhs) -> bool;
 private:
-	bool doubles_ground_power() const;
-	bool doubles_surf_power() const;
-	bool doubles_wind_power() const;
+	auto doubles_ground_power() const -> bool;
+	auto doubles_surf_power() const -> bool;
+	auto doubles_wind_power() const -> bool;
 	enum class VanishTypes : uint8_t;
-	bool flip(VanishTypes const flipped);
-	VanishTypes vanish;
+	auto flip(VanishTypes const flipped) -> bool;
+	VanishTypes m_state;
 };
 
 bool operator!= (Vanish const lhs, Vanish const rhs);

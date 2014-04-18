@@ -1,5 +1,5 @@
 // Vanishing moves
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,46 +26,37 @@ enum class Vanish::VanishTypes : uint8_t {
 	none, bounce, dig, dive, fly, shadow_force, end
 };
 
-Vanish::Vanish () :
-	vanish (VanishTypes::none)
+Vanish::Vanish() :
+	m_state(VanishTypes::none)
 	{
 }
 
-void Vanish::reset() {
-	vanish = VanishTypes::none;
+auto Vanish::flip(VanishTypes const flipped) -> bool {
+	m_state = (m_state == VanishTypes::none) ? flipped : VanishTypes::none;
+	return m_state != VanishTypes::none;
 }
 
-bool Vanish::flip(VanishTypes const flipped) {
-	if (vanish == VanishTypes::none) {
-		vanish = flipped;
-	}
-	else {
-		reset();
-	}
-	return vanish != VanishTypes::none;
-}
-
-bool Vanish::bounce() {
+auto Vanish::bounce() -> bool {
 	return flip(VanishTypes::bounce);
 }
 
-bool Vanish::dig() {
+auto Vanish::dig() -> bool {
 	return flip(VanishTypes::dig);
 }
 
-bool Vanish::dive() {
+auto Vanish::dive() -> bool {
 	return flip(VanishTypes::dive);
 }
 
-bool Vanish::fly() {
+auto Vanish::fly() -> bool {
 	return flip(VanishTypes::fly);
 }
 
-bool Vanish::shadow_force() {
+auto Vanish::shadow_force() -> bool {
 	return flip(VanishTypes::shadow_force);
 }
 
-bool Vanish::doubles_move_power(Moves const move) const {
+auto Vanish::doubles_move_power(Moves const move) const -> bool {
 	switch (move) {
 		case Moves::Earthquake:
 		case Moves::Magnitude:
@@ -80,16 +71,16 @@ bool Vanish::doubles_move_power(Moves const move) const {
 	}
 }
 
-bool Vanish::doubles_ground_power() const {
-	return vanish == VanishTypes::dig;
+auto Vanish::doubles_ground_power() const -> bool {
+	return m_state == VanishTypes::dig;
 }
 
-bool Vanish::doubles_surf_power() const {
-	return vanish == VanishTypes::dive;
+auto Vanish::doubles_surf_power() const -> bool {
+	return m_state == VanishTypes::dive;
 }
 
-bool Vanish::doubles_wind_power() const {
-	switch (vanish) {
+auto Vanish::doubles_wind_power() const -> bool {
+	switch (m_state) {
 		case VanishTypes::bounce:
 		case VanishTypes::fly:
 			return true;
@@ -98,18 +89,18 @@ bool Vanish::doubles_wind_power() const {
 	}
 }
 
-Vanish::hash_type Vanish::hash() const {
-	return static_cast<hash_type>(vanish);
+auto Vanish::hash() const -> hash_type {
+	return static_cast<hash_type>(m_state);
 }
 
-Vanish::hash_type Vanish::max_hash() {
+auto Vanish::max_hash() -> hash_type {
 	return static_cast<hash_type>(VanishTypes::end);
 }
 
-bool operator== (Vanish const lhs, Vanish const rhs) {
-	return lhs.vanish == rhs.vanish;
+auto operator==(Vanish const lhs, Vanish const rhs) -> bool {
+	return lhs.m_state == rhs.m_state;
 }
-bool operator!= (Vanish const lhs, Vanish const rhs) {
+auto operator!=(Vanish const lhs, Vanish const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

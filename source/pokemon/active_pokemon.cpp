@@ -127,7 +127,7 @@ void ActivePokemon::reset_switch() {
 	uproar.reset();
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
 	// vanished. Therefore, we need to reset it.
-	vanish.reset();
+	vanish = Vanish{};
 	yawn = Yawn{};
 	m_will_be_replaced = false;
 }
