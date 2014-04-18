@@ -216,8 +216,9 @@ public:
 	void use_uproar();
 	bool vanish_doubles_power(Moves move_name) const;
 	void activate_water_sport();
-	void hit_with_yawn();
-	bool decrement_yawn();
+	auto hit_with_yawn() -> void;
+	// Advanced the yawn counter and returns whether the Pokemon fell sleep
+	auto try_to_activate_yawn() -> bool;
 
 	// Returns whether the Pokemon ends up in a Vanished state
 	bool bounce();

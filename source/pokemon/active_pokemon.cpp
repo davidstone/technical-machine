@@ -128,7 +128,7 @@ void ActivePokemon::reset_switch() {
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
 	// vanished. Therefore, we need to reset it.
 	vanish.reset();
-	yawn.reset();
+	yawn = Yawn{};
 	m_will_be_replaced = false;
 }
 
@@ -657,12 +657,12 @@ void ActivePokemon::activate_water_sport() {
 	water_sport = true;
 }
 
-bool ActivePokemon::decrement_yawn() {
-	return yawn.decrement();
+auto ActivePokemon::hit_with_yawn() -> void {
+	yawn.activate();
 }
 
-void ActivePokemon::hit_with_yawn() {
-	yawn.activate();
+auto ActivePokemon::try_to_activate_yawn() -> bool {
+	return yawn.advance_turn();
 }
 
 bool ActivePokemon::bounce() {

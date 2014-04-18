@@ -1,5 +1,5 @@
 // Class to represent Yawn's counter
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,27 +19,25 @@
 #ifndef YAWN_HPP_
 #define YAWN_HPP_
 
-#include <cstdint>
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class Yawn {
 public:
-	Yawn();
-	void reset();
-	void activate();
+	auto activate() -> void;
 	// return value represents whether Yawn activated
-	bool decrement();
-	friend bool operator== (Yawn const & lhs, Yawn const & rhs);
+	auto advance_turn() -> bool;
+	friend auto operator==(Yawn const & lhs, Yawn const & rhs) -> bool;
 	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
 	friend class Evaluate;
-	bool is_inactive() const;
-	uint8_t counter;
+	// If present, value represents number of turns since Yawn has been used
+	bounded::optional<bounded::integer<0, 1>> m_counter;
 };
-bool operator!= (Yawn const & lhs, Yawn const & rhs);
+auto operator!= (Yawn const & lhs, Yawn const & rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// YAWN_HPP_

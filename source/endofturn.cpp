@@ -175,8 +175,9 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	pokemon.decrement_magnet_rise();
 	pokemon.decrement_heal_block();
 	pokemon.decrement_embargo();
-	if (pokemon.decrement_yawn())
+	if (pokemon.try_to_activate_yawn()) {
 		Status::apply<Status::SLEEP>(pokemon, weather);
+	}
 	if (get_item(pokemon).name == Item::STICKY_BARB)
 		drain(pokemon, Rational(1, 8));
 }

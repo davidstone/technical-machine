@@ -1,5 +1,5 @@
 // Class to represent Yawn's counter
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,50 +19,45 @@
 #include "yawn.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned initial_value = 2;
-}	// unnamed namespace
+using namespace bounded::literal;
+constexpr auto used_this_turn = 0_bi;
+constexpr auto causes_sleep_this_turn = 1_bi;
 
-Yawn::Yawn() :
-	counter(0)
-	{
+auto Yawn::activate() -> void {
+	if (!m_counter) {
+		m_counter = used_this_turn;
+	}
 }
 
-void Yawn::reset() {
-	counter = 0;
-}
-
-bool Yawn::is_inactive() const {
-	return counter == 0;
-}
-
-void Yawn::activate() {
-	if (is_inactive())
-		counter = initial_value;
-}
-
-bool Yawn::decrement() {
-	if (is_inactive())
+auto Yawn::advance_turn() -> bool {
+	if (!m_counter) {
 		return false;
-	--counter;
-	return is_inactive();
+	}
+	else if (*m_counter == used_this_turn) {
+		*m_counter = causes_sleep_this_turn;
+		return false;
+	}
+	else {
+		m_counter = bounded::none;
+		return true;
+	}
 }
 
-Yawn::hash_type Yawn::hash() const {
-	return counter;
+// It is decremented at the end of the turn, and hashes are calculated after the
+// end of turn.
+auto Yawn::hash() const -> hash_type {
+	return !m_counter ? 0 : static_cast<hash_type>(*m_counter);
 }
 
-Yawn::hash_type Yawn::max_hash(){
-	// It is decremented at the end of the turn, and hashes are calculated
-	// after the end of turn.
-	return initial_value;
+auto Yawn::max_hash() -> hash_type {
+	return static_cast<hash_type>(std::numeric_limits<decltype(m_counter)::value_type>::max() + 1_bi);
 }
 
-bool operator== (Yawn const & lhs, Yawn const & rhs) {
-	return lhs.counter == rhs.counter;
+auto operator==(Yawn const & lhs, Yawn const & rhs) -> bool {
+	return lhs.m_counter == rhs.m_counter;
 }
 
-bool operator!= (Yawn const & lhs, Yawn const & rhs) {
+auto operator!=(Yawn const & lhs, Yawn const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 
