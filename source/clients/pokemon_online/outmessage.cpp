@@ -89,16 +89,17 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_byte (shiny);
 	write_byte(get_happiness(pokemon)());
 	write_byte(get_level(pokemon)());
-	unsigned number_of_moves = 0;
-	pokemon.move.for_each_regular_move([&](Move const & move) {
-		++number_of_moves;
-		uint32_t const move_id = move_to_id(move);
-		write_int (move_id);
-	});
-	while (number_of_moves < 4) {
-		write_int (0);
-		++number_of_moves;
+
+	auto const & moves = pokemon.move;
+	auto const number_of_moves = moves.number_of_regular_moves();
+	for (auto const index : bounded::integer_range(number_of_moves)) {
+		write_int(move_to_id(moves.regular_move(index)));
 	}
+	for (auto const n : bounded::integer_range(number_of_moves, 4_bi)) {
+		static_cast<void>(n);
+		write_int(0);
+	}
+
 	static constexpr auto stats = {
 		StatNames::ATK, StatNames::DEF, StatNames::SPE, StatNames::SPA, StatNames::SPD
 	};

@@ -32,16 +32,16 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 	Base(my_team_size) {
 }
 
-Move const & MoveCollection::regular_move() const {
+auto MoveCollection::regular_move() const -> Move const & {
 	return regular_move(static_cast<RegularMoveIndex>(index()));
 }
-Move & MoveCollection::regular_move() {
+auto MoveCollection::regular_move() -> Move & {
 	return regular_move(static_cast<RegularMoveIndex>(index()));
 }
-Move const & MoveCollection::regular_move(RegularMoveIndex const get_index) const {
+auto MoveCollection::regular_move(RegularMoveIndex const get_index) const -> Move const & {
 	return container.regular_move(check_range(get_index, number_of_regular_moves()));
 }
-Move & MoveCollection::regular_move(RegularMoveIndex const get_index) {
+auto MoveCollection::regular_move(RegularMoveIndex const get_index) -> Move & {
 	return container.regular_move(check_range(get_index, number_of_regular_moves()));
 }
 
@@ -49,7 +49,7 @@ auto MoveCollection::number_of_regular_moves() const -> RegularMoveSize {
 	return container.number_of_regular_moves();
 }
 
-bool MoveCollection::set_index_if_found(Moves name) {
+auto MoveCollection::set_index_if_found(Moves name) -> bool {
 	for (index_type const new_index : bounded::integer_range(size())) {
 		if (unchecked_value(new_index) == name) {
 			Base::set_index(new_index);
@@ -59,16 +59,16 @@ bool MoveCollection::set_index_if_found(Moves name) {
 	return false;
 }
 
-void MoveCollection::set_index(Moves const name) {
+auto MoveCollection::set_index(Moves const name) -> void {
 	bool const found = set_index_if_found(name);
 	assert(found);
 }
 
-Move const * MoveCollection::find (Moves name) const {
+auto MoveCollection::find (Moves name) const -> Move const * {
 	return container.find_if([name](Move const & move) { return move == name; });
 }
 
-Move * MoveCollection::find (Moves name) {
+auto MoveCollection::find (Moves name) -> Move * {
 	return container.find_if([name](Move const & move) { return move == name; });
 }
 
@@ -85,25 +85,16 @@ auto MoveCollection::size() const -> MoveCollection::size_type {
 	return container.size();
 }
 
-void MoveCollection::remove_switch() {
+auto MoveCollection::remove_switch() -> void {
 	container.remove_switch();
 }
 
-MoveCollection::hash_type MoveCollection::hash() const {
-	hash_type current_hash = 0;
-	for_each_regular_move([& current_hash](Move const & next_move) {
-		current_hash *= next_move.max_hash();
-		current_hash += next_move.hash();
-	});
-	return current_hash;
+auto MoveCollection::hash() const -> hash_type {
+	return container.hash();
 }
 
-MoveCollection::hash_type MoveCollection::max_hash() const {
-	hash_type current_max = 0;
-	for_each_regular_move([& current_max](Move const & next_move) {
-		current_max += next_move.max_hash();
-	});
-	return current_max;
+auto MoveCollection::max_hash() const -> hash_type {
+	return container.max_hash();
 }
 
 }	// namespace technicalmachine

@@ -21,15 +21,15 @@
 
 #include "../collection.hpp"
 
-#include <cstddef>
-#include <vector>
-
-#include <bounded_integer/optional.hpp>
-
 #include "container.hpp"
 #include "max_moves_per_pokemon.hpp"
 #include "move.hpp"
 #include "moves_forward.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+#include <bounded_integer/optional.hpp>
+
+#include <vector>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -42,47 +42,42 @@ public:
 	using Base::index_type;
 	using Base::size_type;
 	MoveCollection(TeamSize my_team_size);
-	Move const & regular_move() const;
-	Move & regular_move();
-	Move const & regular_move(RegularMoveIndex index) const;
-	Move & regular_move(RegularMoveIndex index);
-	RegularMoveSize number_of_regular_moves() const;
+
+	auto regular_move() const -> Move const &;
+	auto regular_move() -> Move &;
+	auto regular_move(RegularMoveIndex index) const -> Move const &;
+	auto regular_move(RegularMoveIndex index) -> Move &;
+	auto number_of_regular_moves() const -> RegularMoveSize;
+
 	template<class... Args>
-	void add(Args&&... args) {
+	auto add(Args&&... args) -> void {
 		Base::add(std::forward<Args>(args)...);
 		current_index = number_of_regular_moves() - 1_bi;
 	}
 	template<typename Function>
-	void for_each(Function && f) const {
-		container.for_each_regular_move(f);
-		container.for_each_shared(std::forward<Function>(f));
+	auto for_each(Function && f) const -> void {
+		for (auto const move_index : bounded::integer_range(container.size())) {
+			f(container[move_index]);
+		}
 	}
-	// Skips Struggle and switches
-	template<typename Function>
-	void for_each_regular_move(Function && f) const {
-		container.for_each_regular_move(std::forward<Function>(f));
-	}
-	template<typename Function>
-	void for_each_regular_move(Function && f) {
-		container.for_each_regular_move(std::forward<Function>(f));
-	}
+
 	using Base::set_index;
-	bool set_index_if_found(Moves name);
-	void set_index(Moves name);
+	auto set_index_if_found(Moves name) -> bool;
+	auto set_index(Moves name) -> void;
 	// nullptr if not found
-	Move const * find (Moves name) const;
-	Move * find (Moves name);
+	auto find (Moves name) const -> Move const *;
+	auto find (Moves name) -> Move *;
 	template<typename Function>
-	bool regular_move_exists(Function && condition) const {
+	auto regular_move_exists(Function && condition) const -> bool {
 		return container.find_if(std::forward<Function>(condition)) != nullptr;
 	}
 	using Base::index;
-	bounded::optional<RegularMoveIndex> index(Moves name) const;
-	size_type size() const;
-	void remove_switch();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	hash_type max_hash() const;
+	auto index(Moves name) const -> bounded::optional<RegularMoveIndex>;
+	auto size() const -> size_type;
+	auto remove_switch() -> void;
+	using hash_type = uint64_t;
+	auto hash() const -> hash_type;
+	auto max_hash() const -> hash_type;
 };
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

@@ -31,57 +31,50 @@
 
 namespace technicalmachine {
 
+// TODO: add begin, end, regular_end iterators
 class MoveContainer {
 public:
 	using value_type = Move;
 	using size_type = MoveSize;
 	using index_type = MoveIndex;
 	MoveContainer(TeamSize my_team_size);
-	Move const & operator[](index_type index) const;
-	Move const & regular_move(RegularMoveIndex index) const;
-	Move & regular_move(RegularMoveIndex index);
-	static constexpr bool empty() {
+	auto operator[](index_type index) const -> Move const &;
+	// Skips Struggle and switches
+	auto regular_move(RegularMoveIndex index) const -> Move const &;
+	auto regular_move(RegularMoveIndex index) -> Move &;
+	static constexpr auto empty() -> bool {
 		// A move container is never empty, it always contains at least Struggle
 		return false;
 	}
 	template<class... Args>
-	void emplace_back(Args&&... args) {
+	auto emplace_back(Args&&... args) -> void {
 		// The only moves that are ever added are regular moves. Shared
 		// moves are just a reference to a collection at the Team level.
 		regular.emplace_back(std::forward<Args>(args)...);
 	}
-	// Skips Struggle and switches
+
+	auto size() const -> size_type;
+	auto number_of_regular_moves() const -> RegularMoveSize;
 	template<typename Function>
-	void for_each_regular_move(Function && f) const {
-		std::for_each(regular.begin(), regular.end(), f);
-	}
-	template<typename Function>
-	void for_each_regular_move(Function && f) {
-		std::for_each(regular.begin(), regular.end(), f);
-	}
-	template<typename Function>
-	void for_each_shared(Function && f) const {
-		for (auto const n : bounded::integer_range(shared.size())) {
-			f(shared[n]);
-		}
-	}
-	size_type size() const;
-	RegularMoveSize number_of_regular_moves() const;
-	template<typename Function>
-	Move const * find_if(Function const & condition) const {
+	auto find_if(Function const & condition) const -> Move const * {
 		auto const it = std::find_if(regular.begin(), regular.end(), condition);
 		return (it != regular.end()) ? &*it : nullptr;
 	}
 	template<typename Function>
-	Move * find_if(Function const & condition) {
+	auto find_if(Function const & condition) -> Move * {
 		auto const it = std::find_if(regular.begin(), regular.end(), condition);
 		return (it != regular.end()) ? &*it : nullptr;
 	}
-	void remove_switch();
-	friend bool operator==(MoveContainer const & lhs, MoveContainer const & rhs);
+	auto remove_switch() -> void;
+	
+	using hash_type = uint64_t;
+	auto hash() const -> hash_type;
+	auto max_hash() const -> hash_type;
+	
+	friend auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool;
 private:
-	Move const & unchecked_regular_move(RegularMoveIndex index) const;
-	Move & unchecked_regular_move(RegularMoveIndex index);
+	auto unchecked_regular_move(RegularMoveIndex index) const -> Move const &;
+	auto unchecked_regular_move(RegularMoveIndex index) -> Move &;
 	std::vector<Move> regular;
 	SharedMoves shared;
 };

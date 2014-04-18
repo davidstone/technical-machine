@@ -36,23 +36,24 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-class Comparator {
+class Verify {
 public:
-	Comparator(std::vector<Moves> const & m, std::string && str_type):
-		moves(m),
-		type(std::move(str_type)),
-		n(0) {
+	Verify(std::vector<Moves> m, TeamSize team_size):
+		m_moves(std::move(m)),
+		m_shared_moves(create_shared_moves(team_size)),
+		m_index(0) {
 	}
 	void operator()(Moves const move) {
-		if (moves[n] != move) {
-			throw InvalidCollection("MoveContainer has the wrong " + type + " moves. Expected: " + to_string(moves[n]) + " but got " + to_string(move));
+		auto const mine = (m_index < m_moves.size()) ? m_moves[m_index] : m_shared_moves[m_index - m_moves.size()];
+		if (mine != move) {
+			throw InvalidCollection("MoveContainer has the wrong moves. Expected: " + to_string(mine) + " but got " + to_string(move));
 		}
-		++n;
+		++m_index;
 	}
 private:
-	std::vector<Moves> moves;
-	std::string type;
-	unsigned n;
+	std::vector<Moves> m_moves;
+	std::vector<Moves> m_shared_moves;
+	unsigned m_index;
 };
 
 }	// namespace
@@ -72,8 +73,10 @@ void move_container_tests() {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}
-	c.for_each_regular_move(Comparator(moves, "regular"));
-	c.for_each_shared(Comparator(create_shared_moves(team_size), "shared"));
+	Verify verify(moves, team_size);
+	for (auto const index : bounded::integer_range(c.size())) {
+		verify(c[index]);
+	}
 }
 
 }	// namespace technicalmachine

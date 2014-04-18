@@ -18,11 +18,11 @@
 
 #include "container.hpp"
 
+#include "shared.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <vector>
-
-#include "shared.hpp"
 
 namespace technicalmachine {
 
@@ -61,11 +61,26 @@ auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
 	return static_cast<RegularMoveSize>(regular.size());
 }
 
-void MoveContainer::remove_switch() {
+auto MoveContainer::remove_switch() -> void {
 	shared.remove_switch();
 }
 
-bool operator==(MoveContainer const & lhs, MoveContainer const & rhs) {
+auto MoveContainer::hash() const -> hash_type {
+	static constexpr auto initial = static_cast<hash_type>(0);
+	return std::accumulate(regular.begin(), regular.end(), initial, [](hash_type const & value, Move const & move) {
+		return value * move.max_hash() + move.hash();
+	});
+}
+
+auto MoveContainer::max_hash() const -> hash_type {
+	static constexpr auto initial = static_cast<hash_type>(0);
+	return std::accumulate(regular.begin(), regular.end(), initial, [](hash_type const & value, Move const & move) {
+		return value + move.max_hash();
+	});
+}
+
+
+auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool {
 	// I may not need to check if lhs.shared == rhs.shared, because whenever I
 	// compare two moves, it's in the context of comparing an entire team, and I
 	// believe other parts of the team will always give me all the information

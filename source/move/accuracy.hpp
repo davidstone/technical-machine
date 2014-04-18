@@ -27,7 +27,7 @@ namespace technicalmachine {
 
 // A value that is not present indicates that the move cannot miss.
 using BaseAccuracy = bounded::optional<bounded::integer<30, 100>>;
-BaseAccuracy accuracy(Moves move);
+auto accuracy(Moves move) -> BaseAccuracy;
 
 }	// namespace technicalmachine
 #endif	// MOVE__ACCURACY_HPP_

@@ -241,9 +241,10 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	for (auto const & stat : stats) {
 		add_stat(get_stat(pokemon, stat.first), stat.second);
 	}
-	pokemon.move.for_each_regular_move([& output](Move const & move) {
-		output += "\n\t- " + to_string(move);
-	});
+	auto const & moves = pokemon.move;
+	for (auto const index : bounded::integer_range(moves.number_of_regular_moves())) {
+		output += "\n\t- " + to_string(moves.regular_move(index));
+	}
 	return output;
 }
 

@@ -41,6 +41,7 @@
 namespace technicalmachine {
 namespace po {
 namespace {
+using namespace bounded::literal;
 using boost::property_tree::ptree;
 
 void write_move (Move const & move, ptree & pt) {
@@ -84,13 +85,15 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	member.put ("<xmlattr>.Lvl", get_level(pokemon)());
 	member.put ("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
 
-	unsigned n = 0;
-	pokemon.move.for_each_regular_move([&](Move const & move) {
-		write_move (move, member);
-		++n;
-	});
-	for (; n < 4; ++n)
-		write_blank_move (member);
+	auto const & moves = pokemon.move;
+	auto const number_of_moves = moves.number_of_regular_moves();
+	for (auto const index : bounded::integer_range(number_of_moves)) {
+		write_move(moves.regular_move(index), member);
+	}
+	for (auto const n : bounded::integer_range(number_of_moves, 4_bi)) {
+		static_cast<void>(n);
+		write_blank_move(member);
+	}
 
 	write_stats (pokemon, member);
 }

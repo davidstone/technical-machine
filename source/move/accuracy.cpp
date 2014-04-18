@@ -17,14 +17,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "accuracy.hpp"
-#include "moves.hpp"
 #include <type_traits>
-#include <utility>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-BaseAccuracy accuracy(Moves const move) {
+auto accuracy(Moves const move) -> BaseAccuracy {
 	using bounded::none;
 	static constexpr auto get_accuracy = make_optional_array(
 		none,		// Switch0
