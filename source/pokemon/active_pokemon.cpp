@@ -124,7 +124,7 @@ void ActivePokemon::reset_switch() {
 	damage_done_to_active = 0;
 	m_taunt.reset();
 	toxic = Toxic{};
-	uproar.reset();
+	uproar = Uproar{};
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
 	// vanished. Therefore, we need to reset it.
 	vanish = Vanish{};

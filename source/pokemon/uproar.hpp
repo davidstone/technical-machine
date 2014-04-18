@@ -1,5 +1,5 @@
 // Class to represent Uproar's counter
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,24 +19,22 @@
 #ifndef UPROAR_HPP_
 #define UPROAR_HPP_
 
-#include <cstdint>
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class Uproar {
 public:
-	Uproar();
-	void reset();
-	void increment();
-	friend bool operator== (Uproar const & lhs, Uproar const & rhs);
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	auto increment() -> void;
+	friend auto operator== (Uproar const & lhs, Uproar const & rhs) -> bool;
+	using hash_type = uint64_t;
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
 	friend class Evaluate;
-	uint8_t counter;
+	bounded::optional<bounded::integer<1, 4>> m_counter;
 };
-bool operator!= (Uproar const & lhs, Uproar const & rhs);
+auto operator!= (Uproar const & lhs, Uproar const & rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// UPROAR_HPP_
