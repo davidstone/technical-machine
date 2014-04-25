@@ -21,30 +21,25 @@
 #include "move.hpp"
 #include "moves.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded_integer/array.hpp>
 
-#include <cassert>
-#include <cstddef>
-#include <vector>
+#include <utility>
 
 namespace technicalmachine {
 namespace {
 
-auto all_moves() {
-	std::vector<Move> all;
-	all.reserve(number_of_moves);
-	for (auto const n : bounded::integer_range(bounded::make<number_of_moves>())) {
-		all.emplace_back(static_cast<Moves>(n));
-	}
-	return all;
+using underlying = std::underlying_type_t<Moves>;
+
+template<underlying... integers>
+auto all_moves(std::integer_sequence<underlying, integers...>) noexcept {
+	return bounded::array<Move, number_of_moves>{ Move(static_cast<Moves>(integers))... };
 }
 
 }	// namespace
 
 auto global_move(Moves const name) -> Move const & {
-	static auto const all = all_moves();
-	assert(name != Moves::END);
-	return all[static_cast<size_t>(name)];
+	static auto const all = all_moves(std::make_integer_sequence<underlying, static_cast<underlying>(number_of_moves)>{});
+	return all.at(name);
 }
 
 }	// namespace technicalmachine
