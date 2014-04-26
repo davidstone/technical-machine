@@ -135,8 +135,8 @@ auto probability_sum(Probabilities const & value) -> ProbabilitySum {
 #endif
 
 
-auto initial_probabilities() -> bounded::array<Probabilities, number_of_moves> {
-	bounded::array<Probabilities, number_of_moves> activate_probability {{
+auto initial_probabilities() {
+	bounded::array<Probabilities, number_of_moves.value()> activate_probability {{
 		{ Variable(0_bi, Probability(1_bi, 1_bi)) },				// Switch0
 		{ Variable(0_bi, Probability(1_bi, 1_bi)) },				// Switch1
 		{ Variable(0_bi, Probability(1_bi, 1_bi)) },				// Switch2

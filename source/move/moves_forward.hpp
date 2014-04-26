@@ -1,5 +1,5 @@
 // Moves enum forward declaration
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,11 +19,16 @@
 #ifndef MOVE__MOVES_FORWARD_HPP_
 #define MOVE__MOVES_FORWARD_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
-
+using namespace bounded::literal;
+ 
 enum class Moves : uint16_t;
+ 
+constexpr auto number_of_moves = 566_bi;
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVES_FORWARD_HPP_

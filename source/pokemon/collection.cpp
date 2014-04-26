@@ -156,7 +156,7 @@ PokemonCollection::hash_type PokemonCollection::max_hash() const {
 
 namespace {
 
-using MoveInteger = bounded::integer<0, number_of_moves>;
+using MoveInteger = bounded::integer<0, number_of_moves.value()>;
 
 }	// namespace
 

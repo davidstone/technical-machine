@@ -31,7 +31,6 @@
 #include "../rational.hpp"
 
 #include "../move/move.hpp"
-#include "../move/moves.hpp"
 
 #include "../stat/stat.hpp"
 

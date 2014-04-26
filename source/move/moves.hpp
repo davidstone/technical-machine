@@ -1,5 +1,5 @@
 // Moves enum
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -608,7 +608,10 @@ enum class Moves : uint16_t {
 	END = Generation_5_End
 };
 
-constexpr auto number_of_moves = static_cast<unsigned>(Moves::END);
+static_assert(
+	number_of_moves == bounded::make<static_cast<std::underlying_type_t<Moves>>(Moves::END)>(),
+	"Incorrect number of moves."
+);
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVES_HPP_

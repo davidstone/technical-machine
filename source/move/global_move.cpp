@@ -19,7 +19,7 @@
 #include "global_move.hpp"
 
 #include "move.hpp"
-#include "moves.hpp"
+#include "moves_forward.hpp"
 
 #include <bounded_integer/array.hpp>
 
@@ -32,7 +32,7 @@ using underlying = std::underlying_type_t<Moves>;
 
 template<underlying... integers>
 auto all_moves(std::integer_sequence<underlying, integers...>) noexcept {
-	return bounded::array<Move, number_of_moves>{ Move(static_cast<Moves>(integers))... };
+	return bounded::array<Move, number_of_moves.value()>{ Move(static_cast<Moves>(integers))... };
 }
 
 }	// namespace

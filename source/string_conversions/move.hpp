@@ -1,5 +1,5 @@
 // Move string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 
 #include <string>
 
-#include "../move/moves.hpp"
+#include "../move/moves_forward.hpp"
 
 namespace technicalmachine {
 

@@ -19,7 +19,7 @@
 #include "collection.hpp"
 
 #include "move.hpp"
-#include "moves.hpp"
+#include "moves_forward.hpp"
 
 #include <bounded_integer/integer_range.hpp>
 
