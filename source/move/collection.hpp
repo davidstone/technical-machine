@@ -41,7 +41,20 @@ class MoveCollection : public detail::Collection<MoveContainer> {
 public:
 	using Base::index_type;
 	using Base::size_type;
-	MoveCollection(TeamSize my_team_size);
+	explicit MoveCollection(TeamSize my_team_size);
+	
+	auto regular_begin() const {
+		return container.regular_begin();
+	}
+	auto regular_begin() {
+		return container.regular_begin();
+	}
+	auto regular_end() const {
+		return container.regular_end();
+	}
+	auto regular_end() {
+		return container.regular_end();
+	}
 
 	auto regular_move() const -> Move const &;
 	auto regular_move() -> Move &;
@@ -54,23 +67,11 @@ public:
 		Base::add(std::forward<Args>(args)...);
 		current_index = number_of_regular_moves() - 1_bi;
 	}
-	template<typename Function>
-	auto for_each(Function && f) const -> void {
-		for (auto const move_index : bounded::integer_range(container.size())) {
-			f(container[move_index]);
-		}
-	}
 
 	using Base::set_index;
 	auto set_index_if_found(Moves name) -> bool;
 	auto set_index(Moves name) -> void;
-	// nullptr if not found
-	auto find (Moves name) const -> Move const *;
-	auto find (Moves name) -> Move *;
-	template<typename Function>
-	auto regular_move_exists(Function && condition) const -> bool {
-		return container.find_if(std::forward<Function>(condition)) != nullptr;
-	}
+
 	using Base::index;
 	auto index(Moves name) const -> bounded::optional<RegularMoveIndex>;
 	auto size() const -> size_type;

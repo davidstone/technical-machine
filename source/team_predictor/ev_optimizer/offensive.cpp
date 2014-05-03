@@ -144,16 +144,18 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 
 namespace {
 
+template<typename Predicate>
+bool has_move(Pokemon const & pokemon, Predicate predicate) {
+	auto const & moves = pokemon.move;
+	return std::find_if(moves.regular_begin(), moves.regular_end(), predicate) != moves.regular_end();
+}
+
 bool has_physical_move(Pokemon const & pokemon) {
-	return pokemon.move.regular_move_exists([](Move const & move) {
-		return is_physical(move);
-	});
+	return has_move(pokemon, is_physical);
 }
 
 bool has_special_move(Pokemon const & pokemon) {
-	return pokemon.move.regular_move_exists([](Move const & move) {
-		return is_special(move);
-	});
+	return has_move(pokemon, is_special);
 }
 
 }	// unnamed namespace

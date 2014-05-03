@@ -53,12 +53,12 @@ bool handle_sleep_counter(ActivePokemon & user, Moves move);
 
 LegalSelections::LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather):
 	m_species(user) {
-	user.all_moves().for_each([&](Move const & move) {
+	for (auto const & move : user.all_moves()) {
 		bool const found_selectable_move = !container.empty();
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
 			container.emplace_back(move);
 		}
-	});
+	}
 	assert(!container.empty());
 }
 
@@ -181,9 +181,8 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 }
 
 bool imprison(Moves const move, ActivePokemon const & other) {
-	return other.imprisoned() and other.all_moves().regular_move_exists ([move](Move const & element) {
-		return move == element;
-	});
+	auto const & moves = other.all_moves();
+	return other.imprisoned() and std::find(moves.regular_begin(), moves.regular_end(), move) != moves.regular_end();
 }
 
 bool is_blocked_by_taunt(Moves const move) {

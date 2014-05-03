@@ -64,14 +64,6 @@ auto MoveCollection::set_index(Moves const name) -> void {
 	assert(found);
 }
 
-auto MoveCollection::find (Moves name) const -> Move const * {
-	return container.find_if([name](Move const & move) { return move == name; });
-}
-
-auto MoveCollection::find (Moves name) -> Move * {
-	return container.find_if([name](Move const & move) { return move == name; });
-}
-
 auto MoveCollection::index(Moves const name) const -> bounded::optional<RegularMoveIndex> {
 	for (RegularMoveIndex const n : bounded::integer_range(container.number_of_regular_moves())) {
 		if (container.regular_move(n) == name) {

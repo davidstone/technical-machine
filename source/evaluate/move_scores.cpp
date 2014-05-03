@@ -35,13 +35,13 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// If this is for my team, then it doesn't matter what I set the scores to,
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
-	pokemon.move.for_each([&](Move const & move) {
+	for (auto const & move : pokemon.move) {
 		key_type const key(pokemon, move);
-		auto const inserted = scores.insert(container_type::value_type(key, initial));
+		auto const inserted = scores.emplace(key, initial);
 		if (inserted.second) {
 			inserted.first->second = initial;
 		}
-	});
+	}
 }
 
 int64_t const & MoveScores::at(Species const species, Moves const name) const {

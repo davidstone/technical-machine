@@ -22,26 +22,47 @@
 
 #include <algorithm>
 #include <cassert>
+#include <utility>
 #include <vector>
 
 namespace technicalmachine {
 
+auto operator+(MoveIterator const lhs, MoveIterator::difference_type const rhs) -> MoveIterator {
+	using RegularDistance = std::vector<Move>::const_iterator::difference_type;
+	static constexpr auto regular_max = static_cast<intmax_t>(std::numeric_limits<RegularMoveSize>::max());
+	auto const distance = static_cast<bounded::integer<-regular_max, regular_max>>(std::distance(lhs.m_regular, lhs.m_regular_end));
+	return (distance > rhs) ?
+		MoveIterator(lhs.m_regular + static_cast<RegularDistance>(rhs), lhs.m_regular_end, lhs.m_shared) :
+		MoveIterator(lhs.m_regular_end, lhs.m_regular_end, lhs.m_shared + static_cast<SharedMovesIterator::difference_type>(rhs - distance));
+}
+auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> MoveIterator::difference_type {
+	using RegularMoveDifference = decltype(std::declval<RegularMoveIndex>() - std::declval<RegularMoveIndex>());
+	return (lhs.m_shared - rhs.m_shared) + static_cast<RegularMoveDifference>(lhs.m_regular - rhs.m_regular);
+}
+
+auto operator==(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool {
+	return lhs.m_regular == rhs.m_regular and lhs.m_shared == rhs.m_shared;
+}
+auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool {
+	return lhs.m_regular < rhs.m_regular or lhs.m_shared < rhs.m_shared;
+}
+
 MoveContainer::MoveContainer(TeamSize const my_team_size):
-	shared(my_team_size) {
+	m_shared(my_team_size) {
 }
 
 auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) const -> Move const & {
-	return regular[index.value()];
+	return m_regular[index.value()];
 }
 auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move & {
-	return regular[index.value()];
+	return m_regular[index.value()];
 }
 
 auto MoveContainer::operator[](index_type const index) const -> Move const & {
 	assert(index < size());
 	return (index < number_of_regular_moves()) ?
 		unchecked_regular_move(RegularMoveIndex(index, bounded::non_check)) :
-		shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
+		m_shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
 }
 
 auto MoveContainer::regular_move(RegularMoveIndex const index) const -> Move const & {
@@ -54,27 +75,27 @@ auto MoveContainer::regular_move(RegularMoveIndex const index) -> Move & {
 }
 
 auto MoveContainer::size() const -> size_type {
-	return number_of_regular_moves() + shared.size();
+	return number_of_regular_moves() + technicalmachine::size(m_shared);
 }
 
 auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
-	return static_cast<RegularMoveSize>(regular.size());
+	return static_cast<RegularMoveSize>(m_regular.size());
 }
 
 auto MoveContainer::remove_switch() -> void {
-	shared.remove_switch();
+	m_shared.remove_switch();
 }
 
 auto MoveContainer::hash() const -> hash_type {
 	static constexpr auto initial = static_cast<hash_type>(0);
-	return std::accumulate(regular.begin(), regular.end(), initial, [](hash_type const & value, Move const & move) {
+	return std::accumulate(m_regular.begin(), m_regular.end(), initial, [](hash_type const & value, Move const & move) {
 		return value * move.max_hash() + move.hash();
 	});
 }
 
 auto MoveContainer::max_hash() const -> hash_type {
 	static constexpr auto initial = static_cast<hash_type>(0);
-	return std::accumulate(regular.begin(), regular.end(), initial, [](hash_type const & value, Move const & move) {
+	return std::accumulate(m_regular.begin(), m_regular.end(), initial, [](hash_type const & value, Move const & move) {
 		return value + move.max_hash();
 	});
 }
@@ -85,8 +106,8 @@ auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool {
 	// compare two moves, it's in the context of comparing an entire team, and I
 	// believe other parts of the team will always give me all the information
 	// contained in lhs.shared == rhs.shared.
-	return lhs.regular == rhs.regular and
-			lhs.shared == rhs.shared;
+	return lhs.m_regular == rhs.m_regular and
+			lhs.m_shared == rhs.m_shared;
 }
 
 }	// namespace technicalmachine

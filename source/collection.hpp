@@ -60,6 +60,20 @@ public:
 		container(std::forward<Args>(args)...),
 		current_index(0_bi) {
 	}
+	
+	auto begin() const {
+		return container.begin();
+	}
+	auto begin() {
+		return container.begin();
+	}
+	auto end() const {
+		return container.end();
+	}
+	auto end() {
+		return container.end();
+	}
+	
 	constexpr value_type const & operator() (index_type const specified_index) const {
 		return unchecked_value(check_range(specified_index));
 	}

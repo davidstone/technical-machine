@@ -92,10 +92,9 @@ using ScoreMoves = decltype(std::declval<ScoreMove>() * std::declval<RegularMove
 auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const & weather) {
 	// TODO: alter the score of a move based on the weather
 	ScoreMoves score = 0_bi;
-	pokemon.move.for_each([&](Move const & move) {
-		score += score_move(evaluate, move, other);
+	return std::accumulate(pokemon.move.begin(), pokemon.move.end(), score, [&](auto init, auto const & move) {
+		return init + score_move(evaluate, move, other);
 	});
-	return score;
 }
 
 

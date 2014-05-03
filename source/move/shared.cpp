@@ -20,14 +20,24 @@
 
 #include "global_move.hpp"
 #include "is_switch.hpp"
-#include "move.hpp"
 #include "moves.hpp"
-
-#include "../pokemon/collection.hpp"
 
 namespace technicalmachine {
 namespace {
 }
+
+auto SharedMovesIterator::operator*() const -> reference {
+	using switch_index_type = bounded::integer<
+		static_cast<intmax_t>(number_of_weird_moves),
+		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
+	>;
+	static_assert(number_of_weird_moves == 1_bi, "Struggle is not the only weird move.");
+	return global_move((m_index == 0_bi) ?
+		Moves::Struggle :
+		from_replacement(static_cast<switch_index_type>(m_index) - number_of_weird_moves)
+	);
+}
+
 
 // Once a Pokemon is the last on the team, we remove switching entirely. This
 // takes place if we construct SharedMoves from a one-Pokemon team or if we call
@@ -38,6 +48,17 @@ SharedMoves::SharedMoves(TeamSize const team_size):
 	m_number_of_switches(BOUNDED_INTEGER_CONDITIONAL(team_size > 1_bi, team_size, 0_bi)) {
 }
 
+auto SharedMoves::begin() const -> const_iterator {
+	return const_iterator(0_bi);
+}
+auto SharedMoves::end() const -> const_iterator {
+	return const_iterator(m_number_of_switches + number_of_weird_moves);
+}
+
+auto SharedMoves::operator[](index_type const index) const -> Move const & {
+	return *const_iterator(index);
+}
+
 auto SharedMoves::remove_switch() -> void {
 	--m_number_of_switches;
 	if (m_number_of_switches == 1_bi) {
@@ -45,21 +66,8 @@ auto SharedMoves::remove_switch() -> void {
 	}
 }
 
-auto SharedMoves::operator[](index_type const index) const -> Move const & {
-	using switch_index_type = bounded::checked_integer<
-		static_cast<intmax_t>(number_of_weird_moves),
-		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
-	>;
-	auto const name = (index == 0_bi) ? Moves::Struggle : from_replacement(static_cast<switch_index_type>(index) - number_of_weird_moves);
-	return global_move(name);
-}
-
-auto SharedMoves::size() const -> size_type {
-	return m_number_of_switches + number_of_weird_moves;
-}
-
 auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool {
-	return lhs.size() == rhs.size();
+	return size(lhs) == size(rhs);
 }
 
 }	// namespace technicalmachine
