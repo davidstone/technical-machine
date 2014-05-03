@@ -119,7 +119,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 		}
 		else {
 			// TODO: fix for 2v2
-			auto const move_index = static_cast<uint8_t>(*ai.pokemon().all_moves().index(move));
+			auto const move_index = static_cast<uint8_t>(*index(ai.pokemon().all_moves(), move));
 			auto const target = my_party.other();
 			// TODO: verify everything lines up
 			static_cast<void>(attacks_allowed);

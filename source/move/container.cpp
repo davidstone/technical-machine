@@ -65,15 +65,6 @@ auto MoveContainer::operator[](index_type const index) const -> Move const & {
 		m_shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
 }
 
-auto MoveContainer::regular_move(RegularMoveIndex const index) const -> Move const & {
-	assert(index < number_of_regular_moves());
-	return unchecked_regular_move(index);
-}
-auto MoveContainer::regular_move(RegularMoveIndex const index) -> Move & {
-	assert(index < number_of_regular_moves());
-	return unchecked_regular_move(index);
-}
-
 auto MoveContainer::size() const -> size_type {
 	return number_of_regular_moves() + technicalmachine::size(m_shared);
 }

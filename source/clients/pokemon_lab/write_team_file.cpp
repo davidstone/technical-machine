@@ -34,8 +34,6 @@
 #include "../../string_conversions/nature.hpp"
 #include "../../string_conversions/pokemon.hpp"
 
-#include <bounded_integer/integer_range.hpp>
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -123,9 +121,8 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("nature", to_string(get_nature(pokemon).name));
 	member.put ("item", to_string(get_item(pokemon).name));
 	member.put ("ability", to_string(get_ability(pokemon).name()));
-	auto const & moves = pokemon.move;
-	for (auto const index : bounded::integer_range(moves.number_of_regular_moves())) {
-		write_move(moves.regular_move(index), member);
+	for (auto const & move : pokemon.move.regular()) {
+		write_move(move, member);
 	}
 	write_stats (pokemon, member);
 }

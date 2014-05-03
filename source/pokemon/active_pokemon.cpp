@@ -60,7 +60,7 @@ MoveCollection & ActivePokemon::all_moves() {
 }
 
 bool ActivePokemon::was_used_last(Moves const move_name) const {
-	return last_used_move.was_used_last(static_cast<LastUsedMove::index_type>(*all_moves().index(move_name)));
+	return last_used_move.was_used_last(static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(), move_name)));
 }
 
 
@@ -239,7 +239,7 @@ bool ActivePokemon::defense_curled() const {
 }
 
 bool ActivePokemon::is_disabled(Moves const move_name) const {
-	return m_disable.move_is_disabled(static_cast<uint8_t>(*all_moves().index(move_name)));
+	return m_disable.move_is_disabled(static_cast<uint8_t>(*technicalmachine::index(all_moves(), move_name)));
 }
 
 void ActivePokemon::disable() {
@@ -388,8 +388,9 @@ bool is_regular(Moves const move) {
 }	// namespace
 
 void ActivePokemon::lower_pp(Ability const & target) {
-	if (is_regular(move()) and !is_locked_in_to_bide())
-		regular_move().decrement_pp(target);
+	if (is_regular(move()) and !is_locked_in_to_bide()) {
+		regular_move(all_moves()).decrement_pp(target);
+	}
 }
 
 auto ActivePokemon::magnet_rise() const -> MagnetRise const & {

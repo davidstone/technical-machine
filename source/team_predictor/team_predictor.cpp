@@ -46,7 +46,7 @@ auto all_ones_array() {
 	return all_ones;
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
-void predict_move (Pokemon & member, std::vector<Moves> const & detailed);
+void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed);
 
 }	// namespace
 
@@ -65,7 +65,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 		get_ability(pokemon).set_if_unknown(detailed.get<Ability::Abilities>(pokemon));
 		get_item(pokemon).set_if_unknown(detailed.get<Item::Items>(pokemon));
 		get_nature(pokemon).set_if_unknown(detailed.get<Nature::Natures>(pokemon));
-		predict_move(pokemon, detailed.get<std::vector<Moves>>(pokemon));
+		predict_move(pokemon.move, detailed.get<std::vector<Moves>>(pokemon));
 		optimize_evs(pokemon, random_engine);
 	}
 	return team;
@@ -87,19 +87,19 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move (Pokemon & member, std::vector<Moves> const & detailed) {
-	for (Moves const name : detailed) {
-		bool const already_has_this_move = static_cast<bool>(member.move.index(name));
-		if (already_has_this_move) {
+void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed) {
+	auto const & current = moves.regular();
+	for (Moves const move : detailed) {
+		bool const already_has_move = std::find(current.begin(), current.end(), move) != current.end();
+		if (already_has_move) {
 			continue;
 		}
-		member.move.add(name);
-		static constexpr unsigned max_regular_moves = 4;
-		if (member.move.number_of_regular_moves() == max_regular_moves) {
+		moves.add(move);
+		if (moves.number_of_regular_moves() == max_moves_per_pokemon) {
 			break;
 		}
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

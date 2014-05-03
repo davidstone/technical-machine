@@ -91,11 +91,10 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_byte(get_level(pokemon)());
 
 	auto const & moves = pokemon.move;
-	auto const number_of_moves = moves.number_of_regular_moves();
-	for (auto const index : bounded::integer_range(number_of_moves)) {
-		write_int(move_to_id(moves.regular_move(index)));
+	for (auto const & move : moves.regular()) {
+		write_int(move_to_id(move));
 	}
-	for (auto const n : bounded::integer_range(number_of_moves, 4_bi)) {
+	for (auto const n : bounded::integer_range(moves.number_of_regular_moves(), 4_bi)) {
 		static_cast<void>(n);
 		write_int(0);
 	}

@@ -71,14 +71,6 @@ public:
 	Move const & move(Args&&... args) const {
 		return all_moves()(std::forward<Args>(args)...);
 	}
-	template<typename... Args>
-	Move const & regular_move(Args && ... args) const {
-		return all_moves().regular_move(std::forward<Args>(args)...);
-	}
-	template<typename... Args>
-	Move & regular_move(Args && ... args) {
-		return all_moves().regular_move(std::forward<Args>(args)...);
-	}
 	bool was_used_last(Moves move) const;
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.

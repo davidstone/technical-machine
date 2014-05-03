@@ -86,11 +86,10 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	member.put ("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
 
 	auto const & moves = pokemon.move;
-	auto const number_of_moves = moves.number_of_regular_moves();
-	for (auto const index : bounded::integer_range(number_of_moves)) {
-		write_move(moves.regular_move(index), member);
+	for (auto const & move : moves.regular()) {
+		write_move(move, member);
 	}
-	for (auto const n : bounded::integer_range(number_of_moves, 4_bi)) {
+	for (auto const n : bounded::integer_range(moves.number_of_regular_moves(), 4_bi)) {
 		static_cast<void>(n);
 		write_blank_move(member);
 	}

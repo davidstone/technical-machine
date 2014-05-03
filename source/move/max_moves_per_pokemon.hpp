@@ -26,7 +26,8 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-using RegularMoveSize = bounded::integer<1, 4>;
+constexpr auto max_moves_per_pokemon = 4_bi;
+using RegularMoveSize = bounded::integer<1, static_cast<intmax_t>(max_moves_per_pokemon)>;
 using RegularMoveIndex = bounded::checked_integer<
 	0,
 	static_cast<intmax_t>(std::numeric_limits<RegularMoveSize>::max() - 1_bi)

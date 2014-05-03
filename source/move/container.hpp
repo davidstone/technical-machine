@@ -137,6 +137,8 @@ public:
 	const_iterator end() const {
 		return const_iterator(m_regular.end(), m_regular.end(), m_shared.end());
 	}
+
+	// Skips Struggle and switches
 	const_regular_iterator regular_begin() const {
 		return m_regular.begin();
 	}
@@ -151,9 +153,6 @@ public:
 	}
 	
 	auto operator[](index_type index) const -> Move const &;
-	// Skips Struggle and switches
-	auto regular_move(RegularMoveIndex index) const -> Move const &;
-	auto regular_move(RegularMoveIndex index) -> Move &;
 	static constexpr auto empty() -> bool {
 		// A move container is never empty, it always contains at least Struggle
 		return false;

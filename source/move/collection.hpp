@@ -50,10 +50,6 @@ public:
 		return make_range(container.regular_begin(), container.regular_end());
 	}
 
-	auto regular_move() const -> Move const &;
-	auto regular_move() -> Move &;
-	auto regular_move(RegularMoveIndex index) const -> Move const &;
-	auto regular_move(RegularMoveIndex index) -> Move &;
 	auto number_of_regular_moves() const -> RegularMoveSize;
 
 	template<class... Args>
@@ -67,13 +63,16 @@ public:
 	auto set_index(Moves name) -> void;
 
 	using Base::index;
-	auto index(Moves name) const -> bounded::optional<RegularMoveIndex>;
 	auto size() const -> size_type;
 	auto remove_switch() -> void;
 	using hash_type = uint64_t;
 	auto hash() const -> hash_type;
 	auto max_hash() const -> hash_type;
 };
+
+auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
+auto regular_move(MoveCollection const & moves) -> Move const &;
+auto regular_move(MoveCollection & moves) -> Move &;
 
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

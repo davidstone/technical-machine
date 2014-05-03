@@ -32,21 +32,15 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 	Base(my_team_size) {
 }
 
-auto MoveCollection::regular_move() const -> Move const & {
-	return regular_move(static_cast<RegularMoveIndex>(index()));
-}
-auto MoveCollection::regular_move() -> Move & {
-	return regular_move(static_cast<RegularMoveIndex>(index()));
-}
-auto MoveCollection::regular_move(RegularMoveIndex const get_index) const -> Move const & {
-	return container.regular_move(check_range(get_index, number_of_regular_moves()));
-}
-auto MoveCollection::regular_move(RegularMoveIndex const get_index) -> Move & {
-	return container.regular_move(check_range(get_index, number_of_regular_moves()));
-}
-
 auto MoveCollection::number_of_regular_moves() const -> RegularMoveSize {
 	return container.number_of_regular_moves();
+}
+
+auto regular_move(MoveCollection const & moves) -> Move const & {
+	return *(moves.regular().begin() + static_cast<int>(moves.index()));
+}
+auto regular_move(MoveCollection & moves) -> Move & {
+	return *(moves.regular().begin() + static_cast<int>(moves.index()));
 }
 
 auto MoveCollection::set_index_if_found(Moves name) -> bool {
@@ -64,13 +58,10 @@ auto MoveCollection::set_index(Moves const name) -> void {
 	assert(found);
 }
 
-auto MoveCollection::index(Moves const name) const -> bounded::optional<RegularMoveIndex> {
-	for (RegularMoveIndex const n : bounded::integer_range(container.number_of_regular_moves())) {
-		if (container.regular_move(n) == name) {
-			return n;
-		}
-	}
-	return bounded::none;
+using IndexResult = bounded::optional<RegularMoveIndex>;
+auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
+	auto const it = std::find(moves.regular().begin(), moves.regular().end(), name);
+	return (it != moves.regular().end()) ? IndexResult(it - moves.regular().begin()) : bounded::none;
 }
 
 auto MoveCollection::size() const -> MoveCollection::size_type {

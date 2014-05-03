@@ -99,7 +99,8 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokemon) {
-	bool const has_baton_pass = static_cast<bool>(pokemon.all_moves().index(Moves::Baton_Pass));
+	auto const & moves = pokemon.all_moves().regular();
+	auto const has_baton_pass = std::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return
 		CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
 		CONDITIONAL(pokemon.imprisoned(), evaluate.imprison(), 0_bi) +
