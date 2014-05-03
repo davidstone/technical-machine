@@ -23,8 +23,8 @@
 #include "pokemon_not_found.hpp"
 #include "species.hpp"
 
+#include "../move/is_switch.hpp"
 #include "../move/move.hpp"
-#include "../move/moves.hpp"
 
 #include <bounded_integer/integer_range.hpp>
 
@@ -152,21 +152,6 @@ PokemonCollection::hash_type PokemonCollection::max_hash() const {
 		current_max *= pokemon.max_hash();
 	}
 	return current_max;
-}
-
-namespace {
-
-using MoveInteger = bounded::integer<0, number_of_moves.value()>;
-
-}	// namespace
-
-Moves from_replacement(PokemonCollection::index_type const replacement) {
-	return static_cast<Moves>(replacement + static_cast<MoveInteger>(Moves::Switch0));
-}
-
-PokemonCollection::index_type to_replacement(Moves const move) {
-	assert(is_switch(move));
-	return static_cast<PokemonCollection::index_type>(static_cast<MoveInteger>(move) - static_cast<MoveInteger>(Moves::Switch0));
 }
 
 }	// namespace technicalmachine

@@ -22,7 +22,7 @@ string_conversion_sources = prepend_dir('string_conversions', ['ability.cpp', 'g
 
 bide_sources = prepend_dir('bide', ['bide.cpp', 'damage.cpp', 'duration.cpp'])
 
-move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'base_power.cpp', 'global_move.cpp', 'max_moves_per_pokemon.cpp', 'pp.cpp', 'priority.cpp'])
+move_sources = prepend_dir('move', ['move.cpp', 'accuracy.cpp', 'base_power.cpp', 'global_move.cpp', 'is_switch.cpp', 'max_moves_per_pokemon.cpp', 'pp.cpp', 'priority.cpp'])
 
 pokemon_sources = prepend_dir('pokemon', ['collection.cpp', 'container.cpp', 'max_pokemon_per_team.cpp', 'pokemon_not_found.cpp', 'happiness.cpp', 'level.cpp', 'pokemon.cpp'])
 pokemon_sources += move_sources

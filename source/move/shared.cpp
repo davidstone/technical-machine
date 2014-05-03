@@ -19,6 +19,7 @@
 #include "shared.hpp"
 
 #include "global_move.hpp"
+#include "is_switch.hpp"
 #include "move.hpp"
 #include "moves.hpp"
 

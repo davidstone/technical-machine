@@ -66,11 +66,6 @@ auto operator!=(Move const & lhs, Move const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 
-auto is_switch(Moves const move) -> bool {
-	static_assert(static_cast<unsigned>(Moves::Switch0) == 0, "Switching is not the first Move enum.");
-	return move <= Moves::Switch5;
-}
-
 auto is_phaze(Moves const move) -> bool {
 	switch (move) {
 		case Moves::Roar:

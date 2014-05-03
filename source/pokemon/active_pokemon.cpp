@@ -24,6 +24,7 @@
 #include "../damage.hpp"
 #include "../rational.hpp"
 
+#include "../move/is_switch.hpp"
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
 

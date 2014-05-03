@@ -135,8 +135,5 @@ private:
 	TeamSize true_size;
 };
 
-Moves from_replacement(PokemonCollection::index_type replacement);
-PokemonCollection::index_type to_replacement(Moves move);
-
 }	// namespace technicalmachine
 #endif	// POKEMON__COLLECTION_HPP_

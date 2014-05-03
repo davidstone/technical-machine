@@ -1,5 +1,5 @@
 // Test PO conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,7 @@
 
 #include "../../ability.hpp"
 
+#include "../../move/is_switch.hpp"
 #include "../../move/moves.hpp"
 
 #include "../../pokemon/pokemon.hpp"

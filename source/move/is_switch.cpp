@@ -1,4 +1,4 @@
-// Basis for some move tests
+// Convert between a switch and the equivalent Pokemon index
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,32 +16,40 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
-#define TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_
+#include "is_switch.hpp"
 
-#include "../../move/is_switch.hpp"
-#include "../../move/move.hpp"
-#include "../../move/moves.hpp"
-#include "../../pokemon/collection.hpp"
-#include "../../pokemon/max_pokemon_per_team.hpp"
+#include "moves.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/integer_range.hpp>
-
-#include <vector>
+#include <cassert>
 
 namespace technicalmachine {
-using namespace bounded::literal;
+namespace {
 
-inline std::vector<Moves> create_shared_moves(TeamSize const team_size) {
-	std::vector<Moves> shared ({ Moves::Struggle });
-	if (team_size != 1_bi) {
-		for (auto const n : bounded::integer_range(team_size)) {
-			shared.emplace_back(from_replacement(n));
-		}
+using MoveInteger = bounded::integer<0, number_of_moves.value()>;
+
+}	// namespace
+
+auto is_switch(Moves const move) -> bool {
+	switch (move) {
+		case Moves::Switch0:
+		case Moves::Switch1:
+		case Moves::Switch2:
+		case Moves::Switch3:
+		case Moves::Switch4:
+		case Moves::Switch5:
+			return true;
+		default:
+			return false;
 	}
-	return shared;
+}
+
+auto from_replacement(TeamIndex const replacement) -> Moves {
+	return static_cast<Moves>(replacement + static_cast<MoveInteger>(Moves::Switch0));
+}
+
+auto to_replacement(Moves const move) -> TeamIndex {
+	assert(is_switch(move));
+	return static_cast<TeamIndex>(static_cast<MoveInteger>(move) - static_cast<MoveInteger>(Moves::Switch0));
 }
 
 }	// namespace technicalmachine
-#endif	// TEST__COLLECTIONS__CREATE_SHARED_MOVES_HPP_

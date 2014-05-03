@@ -50,7 +50,6 @@ auto operator!=(Move const & lhs, Move const & rhs) -> bool;
 auto is_physical(Moves move) -> bool;
 auto is_special(Moves move) -> bool;
 
-auto is_switch(Moves name) -> bool;
 auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 

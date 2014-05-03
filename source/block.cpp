@@ -25,6 +25,7 @@
 
 #include "move/move.hpp"
 #include "move/moves.hpp"
+#include "move/is_switch.hpp"
 
 #include "pokemon/pokemon.hpp"
 #include "pokemon/active_pokemon.hpp"
