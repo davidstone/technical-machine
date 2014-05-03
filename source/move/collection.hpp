@@ -43,17 +43,11 @@ public:
 	using Base::size_type;
 	explicit MoveCollection(TeamSize my_team_size);
 	
-	auto regular_begin() const {
-		return container.regular_begin();
+	auto regular() const {
+		return make_range(container.regular_begin(), container.regular_end());
 	}
-	auto regular_begin() {
-		return container.regular_begin();
-	}
-	auto regular_end() const {
-		return container.regular_end();
-	}
-	auto regular_end() {
-		return container.regular_end();
+	auto regular() {
+		return make_range(container.regular_begin(), container.regular_end());
 	}
 
 	auto regular_move() const -> Move const &;
@@ -80,5 +74,6 @@ public:
 	auto hash() const -> hash_type;
 	auto max_hash() const -> hash_type;
 };
+
 }	// namespace technicalmachine
 #endif	// MOVE__COLLECTION_HPP_

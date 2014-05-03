@@ -38,6 +38,30 @@ public:
 	}
 };
 
+template<typename Iterator>
+class Range {
+public:
+	using iterator = Iterator;
+	constexpr Range(iterator first, iterator last):
+		m_first(std::move(first)),
+		m_last(std::move(last)) {
+	}
+	constexpr auto begin() const {
+		return m_first;
+	}
+	constexpr auto end() const {
+		return m_last;
+	}
+private:
+	iterator m_first;
+	iterator m_last;
+};
+
+template<typename Iterator>
+constexpr auto make_range(Iterator first, Iterator last) {
+	return Range<Iterator>(first, last);
+}
+
 namespace detail {
 
 template<typename Container>
