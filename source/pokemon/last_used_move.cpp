@@ -40,8 +40,7 @@ bool LastUsedMove::was_used_last(index_type const index_of_move) const {
 	return has_moved() and *m_index_of_move == index_of_move;
 }
 
-void LastUsedMove::increment(index_type const index_of_move, bounded::checked_integer<1, 4> const number_of_regular_moves) {
-	assert(index_of_move <= number_of_regular_moves);
+void LastUsedMove::increment(index_type const index_of_move) {
 	m_index_of_move = index_of_move;
 	++m_consecutive_turns_used;
 }

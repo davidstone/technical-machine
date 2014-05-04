@@ -32,10 +32,6 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 	Base(my_team_size) {
 }
 
-auto MoveCollection::number_of_regular_moves() const -> RegularMoveSize {
-	return container.number_of_regular_moves();
-}
-
 auto regular_move(MoveCollection const & moves) -> Move const & {
 	return *(moves.regular().begin() + static_cast<int>(moves.index()));
 }

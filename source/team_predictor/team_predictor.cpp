@@ -95,7 +95,7 @@ void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed) {
 			continue;
 		}
 		moves.add(move);
-		if (moves.number_of_regular_moves() == max_moves_per_pokemon) {
+		if (size(current) == max_moves_per_pokemon) {
 			break;
 		}
 	}

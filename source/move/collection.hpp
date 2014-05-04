@@ -50,12 +50,10 @@ public:
 		return make_range(container.regular_begin(), container.regular_end());
 	}
 
-	auto number_of_regular_moves() const -> RegularMoveSize;
-
 	template<class... Args>
 	auto add(Args&&... args) -> void {
 		Base::add(std::forward<Args>(args)...);
-		current_index = number_of_regular_moves() - 1_bi;
+		current_index = container.number_of_regular_moves() - 1_bi;
 	}
 
 	using Base::set_index;

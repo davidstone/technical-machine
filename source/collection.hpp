@@ -58,6 +58,11 @@ private:
 };
 
 template<typename Iterator>
+constexpr auto size(Range<Iterator> const & range) {
+	return range.end() - range.begin();
+}
+
+template<typename Iterator>
 constexpr auto make_range(Iterator first, Iterator last) {
 	return Range<Iterator>(first, last);
 }

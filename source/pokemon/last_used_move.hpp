@@ -33,7 +33,7 @@ public:
 	bool has_moved() const;
 	bool was_used_last(index_type index_of_move) const;
 	void reset();
-	void increment(index_type index_of_move, bounded::checked_integer<1, 4> number_of_regular_moves);
+	void increment(index_type index_of_move);
 	bounded::integer<10, 160> fury_cutter_power() const;
 	bounded::integer<30, 480> momentum_move_power() const;
 	bounded::integer<0, 30> triple_kick_power() const;

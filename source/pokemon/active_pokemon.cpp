@@ -742,7 +742,7 @@ void ActivePokemon::register_damage(damage_type const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()), static_cast<bounded::checked_integer<1, 4>>(all_moves().number_of_regular_moves()));
+	last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()));
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {

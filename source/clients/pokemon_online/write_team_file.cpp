@@ -89,7 +89,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	for (auto const & move : moves.regular()) {
 		write_move(move, member);
 	}
-	for (auto const n : bounded::integer_range(moves.number_of_regular_moves(), 4_bi)) {
+	for (auto const n : bounded::integer_range(RegularMoveSize(size(moves.regular())), max_moves_per_pokemon)) {
 		static_cast<void>(n);
 		write_blank_move(member);
 	}
