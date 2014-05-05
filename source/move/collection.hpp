@@ -50,17 +50,7 @@ public:
 		return make_range(container.regular_begin(), container.regular_end());
 	}
 
-	template<class... Args>
-	auto add(Args&&... args) -> void {
-		Base::add(std::forward<Args>(args)...);
-		current_index = container.number_of_regular_moves() - 1_bi;
-	}
-
-	using Base::set_index;
-	auto set_index_if_found(Moves name) -> bool;
-	auto set_index(Moves name) -> void;
-
-	using Base::index;
+	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
 	auto size() const -> size_type;
 	auto remove_switch() -> void;
 	using hash_type = uint64_t;
@@ -69,6 +59,7 @@ public:
 };
 
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
+auto set_index(MoveCollection & moves, Moves name) -> void;
 auto regular_move(MoveCollection const & moves) -> Move const &;
 auto regular_move(MoveCollection & moves) -> Move &;
 

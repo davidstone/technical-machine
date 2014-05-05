@@ -161,12 +161,10 @@ void Battle::handle_use_move(Party const user, uint8_t slot, Moves move_name) {
 	}
 
 	active.move();
-	Pokemon & replacement = active.replacement();
-	if (!replacement.move.set_index_if_found(move_name)) {
-		replacement.move.add(move_name);
-	}
-	if (is_damaging(replacement.move()))
+	active.replacement().move.add(move_name);
+	if (is_damaging(move_name)) {
 		move_damage = true;
+	}
 }
 
 void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level const level) {
@@ -351,12 +349,6 @@ void Battle::initialize_turn() {
 	last = nullptr;
 }
 
-namespace {
-
-void update_to_correct_switch(ActivePokemon & pokemon) {
-	pokemon.all_moves().set_index(pokemon.all_pokemon().replacement_to_switch());
-}
-}	// namespace
 
 void Battle::do_turn() {
 	first->move(false);
@@ -425,7 +417,7 @@ void Battle::do_turn() {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!is_switch(pokemon.move())) {
-				update_to_correct_switch(pokemon);
+				set_index(pokemon.all_moves(), pokemon.all_pokemon().replacement_to_switch());
 			}
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}

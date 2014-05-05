@@ -39,19 +39,24 @@ auto regular_move(MoveCollection & moves) -> Move & {
 	return *(moves.regular().begin() + static_cast<int>(moves.index()));
 }
 
-auto MoveCollection::set_index_if_found(Moves name) -> bool {
-	for (index_type const new_index : bounded::integer_range(size())) {
-		if (unchecked_value(new_index) == name) {
-			Base::set_index(new_index);
-			return true;
-		}
+auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
+	auto it = std::find(regular().begin(), regular().end(), move);
+	if (it == regular().end()) {
+		container.emplace_back(move, pp_ups);
+		it = std::prev(regular().end());
 	}
-	return false;
+	current_index = static_cast<index_type>(it - regular().begin());
 }
 
-auto MoveCollection::set_index(Moves const name) -> void {
-	bool const found = set_index_if_found(name);
-	assert(found);
+auto set_index(MoveCollection & moves, Moves const move) -> void {
+	auto it = moves.begin();
+	for (; it != moves.end(); ++it) {
+		if (static_cast<Moves>(*it) == move) {
+			moves.set_index(static_cast<MoveCollection::index_type>(it - moves.begin()));
+			break;
+		}
+	}
+	assert(it != moves.end());
 }
 
 using IndexResult = bounded::optional<RegularMoveIndex>;

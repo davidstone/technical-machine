@@ -201,11 +201,11 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const & weather, unsig
 	
 	auto alpha = static_cast<int64_t>(-victory - 1_bi);
 	for (RankedMove const & ai_move : ai_index) {
-		ai.pokemon().all_moves().set_index(ai_move.name());
+		set_index(ai.pokemon().all_moves(), ai_move.name());
 		print_action (ai, first_turn);
 		auto beta = static_cast<int64_t>(victory + 1_bi);
 		for (RankedMove const & foe_move : foe_index) {
-			foe.pokemon().all_moves().set_index(foe_move.name());
+			set_index(foe.pokemon().all_moves(), foe_move.name());
 			print_action (foe, first_turn);
 			auto const max_score = order_branch(ai, foe, weather, depth, evaluate);
 			update_foe_best_move(foe, foe_scores, beta, max_score, first_turn);

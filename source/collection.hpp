@@ -112,10 +112,6 @@ public:
 	constexpr bool is_empty() const {
 		return container.empty();
 	}
-	template<class... Args>
-	void add(Args&&... args) {
-		container.emplace_back(std::forward<Args>(args)...);
-	}
 	void set_index(index_type const new_index) {
 		current_index = check_range (new_index);
 	}
