@@ -649,14 +649,6 @@ auto Pp::trump_card_power() const -> bounded::integer<40, 200> {
 	}
 }
 
-uint64_t Pp::hash() const {
-	return static_cast<bool>(m_current) ? static_cast<uint64_t>(*m_current) : 0;
-}
-
-uint64_t Pp::max_hash() const {
-	return static_cast<bool>(m_max) ? static_cast<uint64_t>(*m_max + 1_bi) : 1;
-}
-
 auto operator== (Pp const & lhs, Pp const & rhs) -> bool {
 	return lhs.m_current == rhs.m_current;
 }

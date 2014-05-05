@@ -20,7 +20,7 @@
 #define MOVE__MOVE_HPP_
 
 #include <bounded_integer/bounded_integer.hpp>
-#include "moves_forward.hpp"
+#include "moves.hpp"
 #include "pp.hpp"
 
 namespace technicalmachine {
@@ -30,15 +30,13 @@ class Ability;
 
 class Move {
 public:
+	// move must not be Moves::END
 	explicit Move(Moves move, Pp::pp_ups_type pp_ups = 3_bi);
 	operator Moves() const;
 
 	auto pp() const -> Pp const &;
 	auto decrement_pp(Ability const & target) -> void;
 
-	using hash_type = uint64_t;
-	hash_type hash() const;
-	hash_type max_hash() const;
 private:
 	Moves m_name;
 	Pp m_pp;
@@ -54,6 +52,22 @@ auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
+
+constexpr auto hash(Moves const move) noexcept {
+	using move_integer_type = bounded::integer<0, static_cast<intmax_t>(number_of_moves - 1_bi)>;
+	return static_cast<move_integer_type>(move);
+}
+constexpr auto max_hash(Moves const) noexcept {
+	return number_of_moves;
+}
+
+inline auto hash(Move const & move) noexcept {
+	return hash(static_cast<Moves>(move), move.pp());
+}
+
+inline auto max_hash(Move const & move) noexcept {
+	return max_hash(static_cast<Moves>(move), move.pp());
+}
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVE_HPP_

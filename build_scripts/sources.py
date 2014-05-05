@@ -46,7 +46,7 @@ evaluate_sources = prepend_dir('evaluate', ['evaluate.cpp', 'expectiminimax.cpp'
 
 team_builder_ui_sources = prepend_dir('team_predictor/ui', ['ev_inputs.cpp', 'move_inputs.cpp', 'nature_input.cpp', 'pokemon_inputs.cpp', 'species_input.cpp'])
 
-ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'gender.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'variable.cpp', 'weather.cpp']
+ai_sources = ['ai.cpp', 'ability.cpp', 'block.cpp', 'damage.cpp', 'endofturn.cpp', 'gender.cpp', 'hash.cpp', 'heal.cpp', 'item.cpp', 'invalid_settings_file.cpp', 'phazing_in_same_pokemon.cpp', 'settings_file.cpp', 'status.cpp', 'switch.cpp', 'variable.cpp', 'weather.cpp']
 ai_sources += team_sources
 ai_sources += clients
 ai_sources += prepend_dir('cryptography', ['hex.cpp', 'md5.cpp', 'rijndael.cpp', 'sha2.cpp'])

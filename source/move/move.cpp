@@ -47,14 +47,6 @@ auto is_damaging(Moves const move) -> bool {
 	return !static_cast<bool>(power) or *power != 0_bi;
 }
 
-uint64_t Move::hash () const {
-	return pp().hash() + pp().max_hash() * static_cast<uint64_t>(m_name);
-}
-
-uint64_t Move::max_hash() const {
-	return pp().max_hash() * static_cast<uint64_t>(Moves::END);
-}
-
 auto operator==(Move const & lhs, Move const & rhs) -> bool {
 	return
 		static_cast<Moves>(lhs) == static_cast<Moves>(rhs) and

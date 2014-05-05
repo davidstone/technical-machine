@@ -77,20 +77,6 @@ auto MoveContainer::remove_switch() -> void {
 	m_shared.remove_switch();
 }
 
-auto MoveContainer::hash() const -> hash_type {
-	static constexpr auto initial = static_cast<hash_type>(0);
-	return std::accumulate(m_regular.begin(), m_regular.end(), initial, [](hash_type const & value, Move const & move) {
-		return value * move.max_hash() + move.hash();
-	});
-}
-
-auto MoveContainer::max_hash() const -> hash_type {
-	static constexpr auto initial = static_cast<hash_type>(0);
-	return std::accumulate(m_regular.begin(), m_regular.end(), initial, [](hash_type const & value, Move const & move) {
-		return value + move.max_hash();
-	});
-}
-
 
 auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool {
 	// I may not need to check if lhs.shared == rhs.shared, because whenever I

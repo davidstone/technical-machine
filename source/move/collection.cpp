@@ -73,12 +73,4 @@ auto MoveCollection::remove_switch() -> void {
 	container.remove_switch();
 }
 
-auto MoveCollection::hash() const -> hash_type {
-	return container.hash();
-}
-
-auto MoveCollection::max_hash() const -> hash_type {
-	return container.max_hash();
-}
-
 }	// namespace technicalmachine

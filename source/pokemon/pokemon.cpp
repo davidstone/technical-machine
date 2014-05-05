@@ -175,12 +175,12 @@ Pokemon::hash_type Pokemon::hash() const {
 		(m_status.hash() + Status::max_hash() *
 		(static_cast<hash_type>(hp.current() - 1_bi) + static_cast<hash_type>(hp.max()) *	// - 1 because you can't have 0 HP
 		(m_has_been_seen + 2 *
-		move.hash()
+		static_cast<hash_type>(::technicalmachine::hash(move))
 	))));
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_hp(*this).max()) * 2 * move.max_hash();
+	return number_of_species * Item::END * Status::max_hash() * static_cast<hash_type>(get_hp(*this).max()) * 2 * static_cast<hash_type>(::technicalmachine::max_hash(move));
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {

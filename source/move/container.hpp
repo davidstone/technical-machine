@@ -29,6 +29,7 @@
 #include <vector>
 
 namespace technicalmachine {
+using namespace bounded::literal;
 
 class MoveIterator {
 private:
@@ -167,10 +168,6 @@ public:
 	auto size() const -> size_type;
 	auto number_of_regular_moves() const -> RegularMoveSize;
 	auto remove_switch() -> void;
-	
-	using hash_type = uint64_t;
-	auto hash() const -> hash_type;
-	auto max_hash() const -> hash_type;
 	
 	friend auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool;
 private:

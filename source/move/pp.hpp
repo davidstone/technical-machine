@@ -19,11 +19,14 @@
 #ifndef MOVE__PP_HPP_
 #define MOVE__PP_HPP_
 
-#include <cstdint>
-#include <utility>
+#include "moves_forward.hpp"
+
+#include "../hash.hpp"
+
 #include <bounded_integer/optional.hpp>
 #include <bounded_integer/bounded_integer.hpp>
-#include "moves_forward.hpp"
+
+#include <utility>
 
 namespace technicalmachine {
 class Ability;
@@ -34,15 +37,22 @@ class Pp {
 public:
 	using pp_ups_type = bounded::checked_integer<0, 3>;
 	Pp(Moves move, pp_ups_type pp_ups);
-	uint64_t hash () const;
-	uint64_t max_hash () const;
 	auto is_empty() const -> bool;
 	auto has_unlimited_pp() const -> bool;
 	auto decrement(Ability const & foe_ability) -> void;
 	auto trump_card_power() const -> bounded::integer<40, 200>;
+
 	// Assumes max PP is the same because it assumes the same Move on the same
 	// Pokemon
 	friend auto operator== (Pp const & lhs, Pp const & rhs) -> bool;
+
+	// I have to declare these as member functions to work around gcc 4.9.0 bug
+	auto hash() const noexcept {
+		return ::technicalmachine::hash(m_current);
+	}
+	auto max_hash() const noexcept {
+		return ::technicalmachine::max_hash(m_max);
+	}
 private:
 	using base_type = bounded::integer<1, 40>;
 	using max_type = decltype(std::declval<base_type>() * (std::declval<pp_ups_type>() + 5_bi) / 5_bi);
@@ -52,6 +62,13 @@ private:
 	bounded::optional<current_type> m_current;
 };
 auto operator!= (Pp const & lhs, Pp const & rhs) -> bool;
+
+inline auto hash(Pp const & pp) noexcept {
+	return pp.hash();
+}
+inline auto max_hash(Pp const & pp) noexcept {
+	return pp.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// MOVE__PP_HPP_

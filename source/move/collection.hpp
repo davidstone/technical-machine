@@ -53,10 +53,15 @@ public:
 	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
 	auto size() const -> size_type;
 	auto remove_switch() -> void;
-	using hash_type = uint64_t;
-	auto hash() const -> hash_type;
-	auto max_hash() const -> hash_type;
 };
+
+inline auto hash(MoveCollection const & collection) noexcept {
+	return hash_range<RegularMoveSize>(collection.regular().begin(), collection.regular().end());
+}
+
+inline auto max_hash(MoveCollection const & collection) noexcept {
+	return max_hash_range<RegularMoveSize>(collection.regular().begin(), collection.regular().end());
+}
 
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
 auto set_index(MoveCollection & moves, Moves name) -> void;
