@@ -21,40 +21,40 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-bool Bide::is_active() const {
+auto Bide::is_active() const -> bool {
 	return static_cast<bool>(m_duration);
 }
 
-void Bide::activate() {
+auto Bide::activate() -> void {
 	m_duration.activate();
 }
 
-void Bide::add_damage(damage_type const damage) {
+auto Bide::add_damage(damage_type const damage) -> void {
 	if (is_active()) {
 		m_damage.add(damage);
 	}
 }
 
-damage_type Bide::decrement() {
+auto Bide::decrement() -> damage_type {
 	return BOUNDED_INTEGER_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 }
 
-Bide::hash_type Bide::hash() const {
+auto Bide::hash() const -> hash_type {
 	return m_duration.hash() + m_duration.max_hash() *
 			m_damage.hash();
 }
 
-Bide::hash_type Bide::max_hash() {
+auto Bide::max_hash() -> hash_type {
 	return BideDuration::max_hash() * BideDamage::max_hash();
 }
 
-bool operator== (Bide const lhs, Bide const rhs) {
+auto operator== (Bide const lhs, Bide const rhs) -> bool {
 	return
 		lhs.m_damage == rhs.m_damage and
 		lhs.m_duration == rhs.m_duration;
 }
 
-bool operator!= (Bide const lhs, Bide const rhs) {
+auto operator!= (Bide const lhs, Bide const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

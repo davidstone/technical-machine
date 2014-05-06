@@ -28,29 +28,29 @@ BideDamage::BideDamage():
 	{
 }
 
-void BideDamage::add(damage_type const damage) {
+auto BideDamage::add(damage_type const damage) -> void {
 	m_damage += damage;
 }
 
-damage_type BideDamage::release() {
+auto BideDamage::release() -> damage_type {
 	bounded::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
 	m_damage = 0_bi;
 	return output_damage;
 }
 
-BideDamage::hash_type BideDamage::hash() const {
+auto BideDamage::hash() const -> hash_type{
 	return static_cast<hash_type>(m_damage);
 }
 
-BideDamage::hash_type BideDamage::max_hash() {
+auto BideDamage::max_hash() -> hash_type{
 	return static_cast<hash_type>(std::numeric_limits<decltype(m_damage)>::max() + 1_bi);
 }
 
-bool operator== (BideDamage const lhs, BideDamage const rhs) {
+auto operator== (BideDamage const lhs, BideDamage const rhs) -> bool {
 	return lhs.m_damage == rhs.m_damage;
 }
 
-bool operator!= (BideDamage const lhs, BideDamage const rhs) {
+auto operator!= (BideDamage const lhs, BideDamage const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

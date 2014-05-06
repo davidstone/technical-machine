@@ -26,20 +26,20 @@ namespace technicalmachine {
 
 class BideDuration {
 public:
-	static constexpr auto max = 1;
-	void activate();
+	auto activate() -> void;
 	explicit operator bool() const;
 	// returns whether Bide releases damage
-	bool decrement();
-	friend bool operator== (BideDuration const & lhs, BideDuration const & rhs);
+	auto decrement() -> bool;
+	friend auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool;
 	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
+	static constexpr auto max = 1;
 	bounded::optional<bounded::integer<0, max>> m_turns_active;
 };
 
-bool operator!= (BideDuration const & lhs, BideDuration const & rhs);
+auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// BIDE__DURATION_HPP_

@@ -23,7 +23,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-void BideDuration::activate() {
+auto BideDuration::activate() -> void {
 	m_turns_active = 0_bi;
 }
 
@@ -31,7 +31,7 @@ BideDuration::operator bool() const {
 	return static_cast<bool>(m_turns_active);
 }
 
-bool BideDuration::decrement() {
+auto BideDuration::decrement() -> bool {
 	assert(this->operator bool());
 	if (*m_turns_active == max) {
 		m_turns_active = bounded::none;
@@ -43,20 +43,20 @@ bool BideDuration::decrement() {
 	}
 }
 
-BideDuration::hash_type BideDuration::hash() const {
+auto BideDuration::hash() const -> hash_type {
 	return m_turns_active ? static_cast<hash_type>(*m_turns_active + 1_bi) : 0;
 }
 
-BideDuration::hash_type BideDuration::max_hash() {
+auto BideDuration::max_hash() -> hash_type {
 	// Additional 1 for the optional state
 	return max + 2;
 }
 
-bool operator== (BideDuration const & lhs, BideDuration const & rhs) {
+auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool {
 	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
-bool operator!= (BideDuration const & lhs, BideDuration const & rhs) {
+auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 

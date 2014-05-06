@@ -28,18 +28,18 @@ namespace technicalmachine {
 class BideDamage {
 public:
 	BideDamage();
-	void add(damage_type damage);
-	damage_type release();
-	friend bool operator== (BideDamage lhs, BideDamage rhs);
+	auto add(damage_type damage) -> void;
+	auto release() -> damage_type;
+	friend auto operator== (BideDamage lhs, BideDamage rhs) -> bool;
 	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
 private:
 	// This is the greatest range that matters since anything more is overkill
 	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage;
 };
 
-bool operator!= (BideDamage lhs, BideDamage rhs);
+auto operator!= (BideDamage lhs, BideDamage rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// BIDE__DAMAGE_HPP_

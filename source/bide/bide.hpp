@@ -30,20 +30,20 @@ namespace technicalmachine {
 
 class Bide {
 public:
-	bool is_active() const;
-	void activate();
-	void add_damage(damage_type damage);
-	damage_type decrement();
+	auto is_active() const -> bool ;
+	auto activate() -> void;
+	auto add_damage(damage_type damage) -> void;
+	auto decrement() -> damage_type;
 	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (Bide lhs, Bide rhs);
+	auto hash() const -> hash_type;
+	static auto max_hash() -> hash_type;
+	friend auto operator== (Bide lhs, Bide rhs) -> bool ;
 private:
 	BideDamage m_damage;
 	BideDuration m_duration;
 };
 
-bool operator!= (Bide lhs, Bide rhs);
+auto operator!= (Bide lhs, Bide rhs) -> bool ;
 
 }	// namespace technicalmachine
 #endif	// BIDE__BIDE_HPP_
