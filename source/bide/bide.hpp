@@ -19,11 +19,10 @@
 #ifndef BIDE__BIDE_HPP_
 #define BIDE__BIDE_HPP_
 
-#include <cstdint>
-
 #include "damage.hpp"
 #include "duration.hpp"
 
+#include "../hash.hpp"
 #include "../stat/hp.hpp"
 
 namespace technicalmachine {
@@ -34,9 +33,12 @@ public:
 	auto activate() -> void;
 	auto add_damage(damage_type damage) -> void;
 	auto decrement() -> damage_type;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
+	constexpr auto hash() const noexcept {
+		return ::technicalmachine::hash(m_damage, m_duration);
+	}
+	constexpr auto max_hash() const noexcept {
+		return ::technicalmachine::max_hash(m_damage, m_duration);
+	}
 	friend auto operator== (Bide lhs, Bide rhs) -> bool ;
 private:
 	BideDamage m_damage;
@@ -44,6 +46,13 @@ private:
 };
 
 auto operator!= (Bide lhs, Bide rhs) -> bool ;
+
+constexpr auto hash(Bide const bide) noexcept {
+	return bide.hash();
+}
+constexpr auto max_hash(Bide const bide) noexcept {
+	return bide.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// BIDE__BIDE_HPP_

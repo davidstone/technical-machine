@@ -19,6 +19,8 @@
 #ifndef BIDE__DURATION_HPP_
 #define BIDE__DURATION_HPP_
 
+#include "../hash.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
 
@@ -31,15 +33,27 @@ public:
 	// returns whether Bide releases damage
 	auto decrement() -> bool;
 	friend auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
+
+	// Declare as member functions to work around gcc 4.9.0 bug
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_active);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_active);
+	}
 private:
 	static constexpr auto max = 1;
 	bounded::optional<bounded::integer<0, max>> m_turns_active;
 };
 
 auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool;
+
+constexpr auto hash(BideDuration const duration) noexcept {
+	return duration.hash();
+}
+constexpr auto max_hash(BideDuration const duration) noexcept {
+	return duration.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// BIDE__DURATION_HPP_

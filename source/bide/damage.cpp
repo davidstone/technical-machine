@@ -23,11 +23,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-BideDamage::BideDamage():
-	m_damage(0_bi)
-	{
-}
-
 auto BideDamage::add(damage_type const damage) -> void {
 	m_damage += damage;
 }
@@ -36,14 +31,6 @@ auto BideDamage::release() -> damage_type {
 	bounded::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
 	m_damage = 0_bi;
 	return output_damage;
-}
-
-auto BideDamage::hash() const -> hash_type{
-	return static_cast<hash_type>(m_damage);
-}
-
-auto BideDamage::max_hash() -> hash_type{
-	return static_cast<hash_type>(std::numeric_limits<decltype(m_damage)>::max() + 1_bi);
 }
 
 auto operator== (BideDamage const lhs, BideDamage const rhs) -> bool {

@@ -43,15 +43,6 @@ auto BideDuration::decrement() -> bool {
 	}
 }
 
-auto BideDuration::hash() const -> hash_type {
-	return m_turns_active ? static_cast<hash_type>(*m_turns_active + 1_bi) : 0;
-}
-
-auto BideDuration::max_hash() -> hash_type {
-	// Additional 1 for the optional state
-	return max + 2;
-}
-
 auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool {
 	return lhs.m_turns_active == rhs.m_turns_active;
 }

@@ -19,27 +19,41 @@
 #ifndef BIDE__DAMAGE_HPP_
 #define BIDE__DAMAGE_HPP_
 
-#include <bounded_integer/bounded_integer.hpp>
 #include "../damage.hpp"
+#include "../hash.hpp"
 #include "../stat/hp.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
 namespace technicalmachine {
+using namespace bounded::literal;
 
 class BideDamage {
 public:
-	BideDamage();
 	auto add(damage_type damage) -> void;
 	auto release() -> damage_type;
 	friend auto operator== (BideDamage lhs, BideDamage rhs) -> bool;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
+	
+	// Work around gcc 4.9.0 bug
+	constexpr auto hash() const noexcept {
+		return ::technicalmachine::hash(m_damage);
+	}
+	constexpr auto max_hash() const noexcept {
+		return ::technicalmachine::max_hash(m_damage);
+	}
 private:
 	// This is the greatest range that matters since anything more is overkill
-	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage;
+	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;
 };
 
 auto operator!= (BideDamage lhs, BideDamage rhs) -> bool;
+
+constexpr auto hash(BideDamage const damage) noexcept {
+	return damage.hash();
+}
+constexpr auto max_hash(BideDamage const damage) noexcept {
+	return damage.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// BIDE__DAMAGE_HPP_

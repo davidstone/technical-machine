@@ -39,15 +39,6 @@ auto Bide::decrement() -> damage_type {
 	return BOUNDED_INTEGER_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 }
 
-auto Bide::hash() const -> hash_type {
-	return m_duration.hash() + m_duration.max_hash() *
-			m_damage.hash();
-}
-
-auto Bide::max_hash() -> hash_type {
-	return BideDuration::max_hash() * BideDamage::max_hash();
-}
-
 auto operator== (Bide const lhs, Bide const rhs) -> bool {
 	return
 		lhs.m_damage == rhs.m_damage and
