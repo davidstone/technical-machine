@@ -27,10 +27,10 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-SpeedEVs::SpeedEVs(Pokemon pokemon) {
-	Stat & stat = get_stat(pokemon, StatNames::SPE);
+SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
+	Stat stat = get_stat(pokemon, StatNames::SPE);
 	Level const level = get_level(pokemon);
-	Nature & current_nature = get_nature(pokemon);
+	Nature current_nature = get_nature(pokemon);
 	auto const speed = initial_stat<StatNames::SPE>(stat, level, current_nature);
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
 		current_nature.name = nature;

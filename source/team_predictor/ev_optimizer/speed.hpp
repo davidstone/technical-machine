@@ -31,7 +31,7 @@ class DefensiveEVs;
 
 class SpeedEVs {
 public:
-	explicit SpeedEVs(Pokemon pokemon);
+	explicit SpeedEVs(Pokemon const & pokemon);
 private:
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 	using Container = std::map<Nature::Natures, EV>;
