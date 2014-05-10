@@ -85,7 +85,7 @@ bool Ability::blocks_weather() const {
 }
 
 template<>
-bool Ability::blocks_status<Status::BURN>(Weather const & weather) const {
+bool Ability::blocks_status<Status::burn>(Weather const & weather) const {
 	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
@@ -97,7 +97,7 @@ bool Ability::blocks_status<Status::BURN>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::FREEZE>(Weather const & weather) const {
+bool Ability::blocks_status<Status::freeze>(Weather const & weather) const {
 	// Pass in weather to take advantage of template specialization, but I don't
 	// want to be warned about unused variables.
 	static_cast<void>(weather);
@@ -105,7 +105,7 @@ bool Ability::blocks_status<Status::FREEZE>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::PARALYSIS>(Weather const & weather) const {
+bool Ability::blocks_status<Status::paralysis>(Weather const & weather) const {
 	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
@@ -117,7 +117,7 @@ bool Ability::blocks_status<Status::PARALYSIS>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::POISON>(Weather const & weather) const {
+bool Ability::blocks_status<Status::poison>(Weather const & weather) const {
 	switch (name()) {
 		case Immunity:
 			return true;
@@ -129,12 +129,12 @@ bool Ability::blocks_status<Status::POISON>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::POISON_TOXIC>(Weather const & weather) const {
-	return blocks_status<Status::POISON>(weather);
+bool Ability::blocks_status<Status::poison_toxic>(Weather const & weather) const {
+	return blocks_status<Status::poison>(weather);
 }
 
 template<>
-bool Ability::blocks_status<Status::SLEEP>(Weather const & weather) const {
+bool Ability::blocks_status<Status::sleep>(Weather const & weather) const {
 	switch (name()) {
 		case Insomnia:
 		case Vital_Spirit:
@@ -147,8 +147,8 @@ bool Ability::blocks_status<Status::SLEEP>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::REST>(Weather const & weather) const {
-	return blocks_status<Status::SLEEP>(weather);
+bool Ability::blocks_status<Status::sleep_rest>(Weather const & weather) const {
+	return blocks_status<Status::sleep>(weather);
 }
 
 bool Ability::blocks_confusion() const {
@@ -176,7 +176,7 @@ bool Ability::blocks_sound_moves() const {
 }
 
 bool Ability::can_clear_status(Status const status) const {
-	return name() == Shed_Skin and !status.is_clear();
+	return name() == Shed_Skin and !is_clear(status);
 }
 
 bool Ability::clears_status_on_switch() const {
@@ -252,7 +252,7 @@ bool Ability::boosts_critical_hits() const {
 }
 
 bool Ability::boosts_defense(Status const status) const {
-	return name() == Marvel_Scale and !status.is_clear();
+	return name() == Marvel_Scale and !is_clear(status);
 }
 
 bool Ability::boosts_special_attack(Weather const & weather) const {
@@ -423,7 +423,7 @@ void Ability::weather_healing(ActivePokemon & pokemon, Weather const & weather) 
 			break;
 		case Hydration:
 			if (weather.rain()) {
-				get_status(pokemon).clear();
+				get_status(pokemon) = Status{};
 			}
 			break;
 		case Ice_Body:

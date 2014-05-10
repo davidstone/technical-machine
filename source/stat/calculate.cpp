@@ -95,7 +95,7 @@ struct AbilityNumerator<StatNames::ATK> {
 			case Ability::Flower_Gift:
 				return CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
 			case Ability::Guts:
-				return CONDITIONAL(!get_status(attacker).is_clear(), 3_bi, ability_denominator);
+				return CONDITIONAL(!is_clear(get_status(attacker)), 3_bi, ability_denominator);
 			case Ability::Hustle:
 				return 3_bi;
 			case Ability::Huge_Power:
@@ -137,7 +137,7 @@ struct AbilityNumerator<StatNames::SPE> {
 			case Ability::Unburden:
 				return CONDITIONAL(get_item(pokemon).was_lost(), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Quick_Feet:
-				return CONDITIONAL(!get_status(pokemon).is_clear(), 3_bi, ability_denominator);
+				return CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, ability_denominator);
 			case Ability::Slow_Start:
 				return CONDITIONAL(pokemon.slow_start_is_active(), 1_bi, ability_denominator);
 			default:
@@ -378,7 +378,7 @@ special_defense_type calculate_special_defense(ActivePokemon const & defender, W
 namespace {
 
 auto paralysis_speed_divisor(Pokemon const & pokemon) {
-	return CONDITIONAL(get_status(pokemon).lowers_speed(get_ability(pokemon)), 4_bi, 1_bi);
+	return CONDITIONAL(lowers_speed(get_status(pokemon), get_ability(pokemon)), 4_bi, 1_bi);
 }
 
 auto tailwind_speed_multiplier(Team const & team) {

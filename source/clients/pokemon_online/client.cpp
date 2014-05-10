@@ -755,8 +755,8 @@ void Client::send_battle_challenge_with_current_team () {
 			uint32_t const user_id = get_user_id(first_challenger());
 			uint8_t const generation = 4;		// ???
 			std::vector <uint32_t> clauses {
-				BattleSettings::FREEZE_CLAUSE,
-				BattleSettings::SLEEP_CLAUSE,
+				BattleSettings::freeze_CLAUSE,
+				BattleSettings::sleep_CLAUSE,
 				BattleSettings::SPECIES_CLAUSE,
 			};
 			BattleSettings const settings (clauses, BattleSettings::SINGLES);

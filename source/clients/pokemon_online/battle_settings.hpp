@@ -31,8 +31,8 @@ class InMessage;
 class BattleSettings : public ::technicalmachine::BattleSettings {
 public:
 	enum Clauses : uint32_t {
-		SLEEP_CLAUSE = 1 << 0,
-		FREEZE_CLAUSE = 1 << 1,
+		sleep_CLAUSE = 1 << 0,
+		freeze_CLAUSE = 1 << 1,
 		DISALLOW_SPECTATORS = 1 << 2,
 		ITEM_CLAUSE = 1 << 3,
 		CHALLENGE_CUP = 1 << 4,

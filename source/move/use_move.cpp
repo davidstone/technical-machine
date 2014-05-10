@@ -54,7 +54,7 @@ template<typename Predicate>
 auto cure_all_status(Team & user, Predicate const & predicate) -> void {
 	for (auto & pokemon : user.all_pokemon()) {
 		if (predicate(pokemon)) {
-			get_status(pokemon).clear();
+			get_status(pokemon) = Status{};
 		}
 	}
 }
@@ -190,8 +190,9 @@ auto do_effects_before_moving (Pokemon & user, Team & target) -> void {
 		target.screens.shatter();
 	}
 	else if (is_usable_while_frozen(user.move())) {
-		if (get_status(user).is_frozen())
-			get_status(user).clear();
+		if (is_frozen(get_status(user))) {
+			get_status(user) = Status{};
+		}
 	}
 }
 
@@ -339,7 +340,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
 			if (variable.effect_activates()) {
-				Status::apply<Status::BURN>(user, target, weather);
+				Status::apply<Status::burn>(user, target, weather);
 			}
 			break;
 		case Moves::Blizzard:
@@ -347,7 +348,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
 			if (variable.effect_activates()) {
-				Status::apply<Status::FREEZE>(user, target, weather);
+				Status::apply<Status::freeze>(user, target, weather);
 			}
 			break;
 		case Moves::Block:
@@ -367,13 +368,13 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::ThunderPunch:
 		case Moves::ThunderShock:
 			if (variable.effect_activates()) {
-				Status::apply<Status::PARALYSIS>(user, target, weather);
+				Status::apply<Status::paralysis>(user, target, weather);
 			}
 			break;
 		case Moves::Bounce: {
 			bool const vanished = user.bounce();
 			if (vanished and variable.effect_activates()) {
-				Status::apply<Status::PARALYSIS>(user, target, weather);
+				Status::apply<Status::paralysis>(user, target, weather);
 			}
 			break;
 		}
@@ -481,7 +482,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Sludge_Bomb:
 		case Moves::Smog:
 			if (variable.effect_activates()) {
-				Status::apply<Status::POISON>(user, target, weather);
+				Status::apply<Status::poison>(user, target, weather);
 			}
 			break;
 		case Moves::Curse:
@@ -494,7 +495,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Sing:
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
-			Status::apply<Status::SLEEP>(user, target, weather);
+			Status::apply<Status::sleep>(user, target, weather);
 			break;
 		case Moves::Defense_Curl:
 			boost(user.stage(), StatNames::DEF, 1_bi);
@@ -538,7 +539,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			boost(user.stage(), StatNames::SPE, 1_bi);
 			break;
 		case Moves::Dream_Eater:
-			if (get_status(target).is_sleeping()) {
+			if (is_sleeping(get_status(target))) {
 				absorb_hp(user, target, damage);
 			}
 			break;
@@ -563,10 +564,10 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.break_protect();
 			break;
 		case Moves::Fire_Fang:
-			fang_side_effects<Status::BURN>(user, target, weather, variable);
+			fang_side_effects<Status::burn>(user, target, weather, variable);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status<Status::BURN>(user, target, weather, damage, variable);
+			recoil_status<Status::burn>(user, target, weather, damage, variable);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -601,7 +602,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Stun_Spore:
 		case Moves::Thunder_Wave:
 		case Moves::Zap_Cannon:
-			Status::apply<Status::PARALYSIS>(user, target, weather);
+			Status::apply<Status::paralysis>(user, target, weather);
 			break;
 		case Moves::Gravity:
 			weather.set_gravity();
@@ -671,7 +672,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			fang_side_effects<Status::FREEZE>(user, target, weather, variable);
+			fang_side_effects<Status::freeze>(user, target, weather, variable);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Mud_Shot:
@@ -786,12 +787,12 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Poison_Fang:
 			if (variable.effect_activates()) {
-				Status::apply<Status::POISON_TOXIC>(user, target, weather);
+				Status::apply<Status::poison_toxic>(user, target, weather);
 			}
 			break;
 		case Moves::Poison_Gas:
 		case Moves::PoisonPowder:
-			Status::apply<Status::POISON>(user, target, weather);
+			Status::apply<Status::poison>(user, target, weather);
 			break;
 		case Moves::Power_Swap:
 			swap_offensive(user.stage(), target.stage());
@@ -808,7 +809,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.stage() = target.stage();
 			break;
 		case Moves::Psycho_Shift:
-			if (get_status(target).is_clear()) {
+			if (is_clear(get_status(target))) {
 				Status::shift(user, target, weather);
 			}
 			break;
@@ -828,7 +829,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user_team.screens.activate_reflect(get_item(user).extends_reflect());
 			break;
 		case Moves::Refresh:
-			get_status(user).clear();
+			get_status(user) = Status{};
 			break;
 		case Moves::Rest:
 			rest(user);
@@ -875,8 +876,8 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			}
 			break;
 		case Moves::SmellingSalt:
-			if (get_status(target).boosts_smellingsalt()) {
-				get_status(target).clear();
+			if (boosts_smellingsalt(get_status(target))) {
+				get_status(target) = Status{};
 			}
 			break;
 		case Moves::Snatch:	// Fix
@@ -950,7 +951,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.taunt();
 			break;
 		case Moves::Thunder_Fang:
-			fang_side_effects<Status::PARALYSIS>(user, target, weather, variable);
+			fang_side_effects<Status::paralysis>(user, target, weather, variable);
 			break;
 		case Moves::Tickle:
 			boost_physical(target.stage(), -1_bi);
@@ -959,7 +960,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			target.torment();
 			break;
 		case Moves::Toxic:
-			Status::apply<Status::POISON_TOXIC>(user, target, weather);
+			Status::apply<Status::poison_toxic>(user, target, weather);
 			break;
 		case Moves::Toxic_Spikes:
 			target_team.entry_hazards.add_toxic_spikes();
@@ -981,17 +982,18 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status<Status::PARALYSIS>(user, target, weather, damage, variable);
+			recoil_status<Status::paralysis>(user, target, weather, damage, variable);
 			break;
 		case Moves::Wake_Up_Slap:
-			if (get_status(target).is_sleeping ())
-				get_status(target).clear ();
+			if (is_sleeping(get_status(target))) {
+				get_status(target) = Status{};
+			}
 			break;
 		case Moves::Water_Sport:
 			user.activate_water_sport();
 			break;
 		case Moves::Will_O_Wisp:
-			Status::apply<Status::BURN>(user, target, weather);
+			Status::apply<Status::burn>(user, target, weather);
 			break;
 		case Moves::Wish:
 			user_team.wish.activate();
@@ -1090,13 +1092,13 @@ auto swap_items(Pokemon & user, Pokemon & target) -> void {
 auto tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather, Variable const & variable) -> void {
 	switch (variable.value().value()) {
 		case 1:
-			Status::apply<Status::BURN>(user, target, weather);
+			Status::apply<Status::burn>(user, target, weather);
 			break;
 		case 2:
-			Status::apply<Status::FREEZE>(user, target, weather);
+			Status::apply<Status::freeze>(user, target, weather);
 			break;
 		case 3:
-			Status::apply<Status::PARALYSIS>(user, target, weather);
+			Status::apply<Status::paralysis>(user, target, weather);
 			break;
 		default:
 			assert(false);

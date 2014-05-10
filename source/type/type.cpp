@@ -76,17 +76,17 @@ bool Type::is_weakened_by_weather (Weather const & weather) const {
 }
 
 template<>
-bool Type::blocks_status<Status::BURN> () const {
+bool Type::blocks_status<Status::burn> () const {
 	return type == Fire;
 }
 
 template<>
-bool Type::blocks_status<Status::FREEZE> () const {
+bool Type::blocks_status<Status::freeze> () const {
 	return type == Ice;
 }
 
 template<>
-bool Type::blocks_status<Status::POISON> () const {
+bool Type::blocks_status<Status::poison> () const {
 	switch (type) {
 		case Poison:
 		case Steel:
@@ -97,8 +97,8 @@ bool Type::blocks_status<Status::POISON> () const {
 }
 
 template<>
-bool Type::blocks_status<Status::POISON_TOXIC> () const {
-	return blocks_status<Status::POISON> ();
+bool Type::blocks_status<Status::poison_toxic> () const {
+	return blocks_status<Status::poison> ();
 }
 
 namespace {

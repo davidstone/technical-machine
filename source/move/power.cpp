@@ -207,20 +207,20 @@ auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, We
 		case Moves::Brine:
 			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
 		case Moves::Facade:
-			return get_status(attacker).boosts_facade();
+			return boosts_facade(get_status(attacker));
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return attacker.defense_curled();
 		case Moves::Payback:
 			return defender.moved();
 		case Moves::SmellingSalt:
-			return get_status(defender).boosts_smellingsalt();
+			return boosts_smellingsalt(get_status(defender));
 		case Moves::SolarBeam:
 			return !weather.rain();
 		case Moves::Stomp:
 			return defender.minimized();
 		case Moves::Wake_Up_Slap:
-			return get_status(defender).is_sleeping();
+			return is_sleeping(get_status(defender));
 		case Moves::Weather_Ball:
 			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
 		default:
@@ -272,7 +272,7 @@ auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 1
 		case Item::SILK_SCARF:
 			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Normal, 12_bi, base);
 		case Item::TOXIC_PLATE:
-		case Item::POISON_BARB:
+		case Item::poison_BARB:
 			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Poison, 12_bi, base);
 		case Item::MIND_PLATE:
 		case Item::TWISTEDSPOON:

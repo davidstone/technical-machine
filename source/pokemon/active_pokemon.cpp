@@ -606,7 +606,7 @@ bool ActivePokemon::switch_decision_required() const {
 
 void switch_pokemon(ActivePokemon & pokemon) {
 	if (get_ability(pokemon).clears_status_on_switch()) {
-		get_status(pokemon).clear();
+		get_status(pokemon) = Status{};
 	}
 	pokemon.all_pokemon().set_index(pokemon.all_pokemon().replacement());
 }

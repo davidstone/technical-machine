@@ -58,18 +58,18 @@ using BatonPassableScore = decltype(baton_passable_score(std::declval<Evaluate>(
 using ScoreStatus = Evaluate::value_type;
 auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> ScoreStatus {
 	switch (get_status(pokemon).name()) {
-		case Status::BURN:
+		case Status::burn:
 			return evaluate.burn();
-		case Status::FREEZE:
+		case Status::freeze:
 			return evaluate.freeze();
-		case Status::PARALYSIS:
+		case Status::paralysis:
 			return evaluate.paralysis();
-		case Status::POISON:
+		case Status::poison:
 			return evaluate.poison();
-		case Status::POISON_TOXIC:
+		case Status::poison_toxic:
 			return evaluate.toxic();
-		case Status::REST:
-		case Status::SLEEP:
+		case Status::sleep_rest:
+		case Status::sleep:
 			return evaluate.sleep();
 		default:
 			return 0_bi;
@@ -180,7 +180,7 @@ auto Evaluate::win(Team const & team) -> type {
 
 auto Evaluate::sleep_clause (Team const & team) -> type {
 	static constexpr auto sleepers = [](Pokemon const & pokemon) {
-		return get_status(pokemon).is_sleeping_due_to_other();
+		return is_sleeping_due_to_other(get_status(pokemon));
 	};
 	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
 	if (sleeper_count > 1_bi) {

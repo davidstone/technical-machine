@@ -120,7 +120,7 @@ auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)(
 
 auto weakening_from_status(Pokemon const & attacker) {
 	return CONDITIONAL(
-		get_status(attacker).weakens_physical_attacks() and get_ability(attacker).blocks_burn_damage_penalty(),
+		weakens_physical_attacks(get_status(attacker)) and get_ability(attacker).blocks_burn_damage_penalty(),
 		2_bi,
 		1_bi
 	);

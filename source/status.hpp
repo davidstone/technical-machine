@@ -1,5 +1,5 @@
 // Status class
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +19,9 @@
 #ifndef STATUS_HPP_
 #define STATUS_HPP_
 
+#include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/optional.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -31,52 +34,53 @@ class Weather;
 class Status {
 public:
 	enum Statuses : uint8_t {
-		NO_STATUS,
-		BURN,
-		FREEZE,
-		PARALYSIS,
-		POISON,
-		POISON_TOXIC,
-		REST,
-		SLEEP,
+		clear,
+		burn,
+		freeze,
+		paralysis,
+		poison,
+		poison_toxic,
+		sleep,
+		sleep_rest,
 		END
 	};
-	Status ();
-	Statuses name() const;
-	void clear ();
-	bool is_clear() const;
-	bool is_frozen() const;
-	bool is_sleeping () const;
-	bool is_sleeping_due_to_other() const;
-	bool lowers_speed (Ability const & ability) const;
-	bool weakens_physical_attacks() const;
-	bool boosts_facade() const;
-	bool boosts_smellingsalt() const;
+	auto name() const -> Statuses;
 
-	void rest ();
+	auto rest() -> void;
 	template<Statuses real_status, Statuses base_status = real_status>
-	static void apply(Pokemon & user, Pokemon & target, Weather const & weather);
+	static auto apply(Pokemon & user, Pokemon & target, Weather const & weather) -> void;
 	template<Statuses real_status>
-	static void apply(Pokemon & target, Weather const & weather);
-	static void shift (Pokemon & user, Pokemon & target, Weather const & weather);
+	static auto apply(Pokemon & target, Weather const & weather) -> void;
+	static auto shift (Pokemon & user, Pokemon & target, Weather const & weather) -> void;
 
-	friend bool operator== (Status lhs, Status rhs);
-	friend bool operator!= (Status lhs, Status rhs);
+	friend auto operator==(Status lhs, Status rhs) -> bool;
 
-	void increase_sleep_counter (Ability const & ability, bool awaken);
-	// Returns true only if the status can change from sleeping to awake in
-	// this move. Returns false if the Pokemon is already awake or if, due
-	// to the sleep counter, they will definitely not awaken.
-	bool can_awaken(Ability const & ability) const;
-	Rational awaken_probability(Ability const & ability, bool awaken) const;
+	auto increase_sleep_counter (Ability const & ability, bool awaken) -> void;
 
-	uint64_t hash() const;
-	static uint64_t max_hash();
+	// Returns the probability the status can change from sleeping to awake in
+	// this move. Returns 0 if the Pokemon is already awake or if, due to the
+	// sleep counter, they will definitely not awaken.
+	auto awaken_probability(Ability const & ability, bool awaken) const -> Rational;
+
+	auto hash() const -> uint64_t;
+	auto max_hash() const -> uint64_t;
 private:
-	unsigned awaken_numerator (Ability const & ability) const;
-	Statuses status;
-	uint8_t turns_already_slept;
+	Statuses m_status = clear;
+	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
+	SleepCounter m_turns_already_slept;
 };
+
+auto is_clear(Status status) -> bool;
+auto is_frozen(Status status) -> bool;
+auto is_sleeping(Status status) -> bool;
+auto is_sleeping_due_to_other(Status status) -> bool;
+auto lowers_speed(Status status, Ability const & ability) -> bool;
+auto weakens_physical_attacks(Status status) -> bool;
+auto boosts_facade(Status status) -> bool;
+auto boosts_smellingsalt(Status status) -> bool;
+
+
+auto operator!=(Status lhs, Status rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// STATUS_HPP_

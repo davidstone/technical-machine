@@ -34,8 +34,8 @@ std::string to_string(Status::Statuses const name) {
 		"Paralysis",
 		"Poison",
 		"Toxic",
-		"Rest",
 		"Sleep",
+		"Rest",
 		"END_STATUS"
 	};
 	return status_name [name];
@@ -44,14 +44,14 @@ std::string to_string(Status::Statuses const name) {
 template<>
 Status::Statuses from_string(std::string const & str) {
 	static std::map <std::string, Status::Statuses> const converter {
-		{ "No status", Status::NO_STATUS },
-		{ "Burn", Status::BURN },
-		{ "Freeze", Status::FREEZE },
-		{ "Paralysis", Status::PARALYSIS },
-		{ "Poison", Status::POISON },
-		{ "Toxic", Status::POISON_TOXIC },
-		{ "Rest", Status::REST },
-		{ "Sleep", Status::SLEEP },
+		{ "No status", Status::clear },
+		{ "Burn", Status::burn },
+		{ "Freeze", Status::freeze },
+		{ "Paralysis", Status::paralysis },
+		{ "Poison", Status::poison },
+		{ "Toxic", Status::poison_toxic },
+		{ "Sleep", Status::sleep },
+		{ "Rest", Status::sleep_rest },
 		{ "END_STATUS", Status::END }
 	};
 	auto const it = converter.find (str);

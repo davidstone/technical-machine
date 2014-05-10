@@ -139,18 +139,18 @@ void Weather::set_weather(int8_t & primary, Duration const duration) {
 }
 
 template<>
-bool Weather::blocks_status<Status::FREEZE> () const {
+bool Weather::blocks_status<Status::freeze> () const {
 	return sun();
 }
 
 template<>
-bool Weather::blocks_status<Status::SLEEP> () const {
+bool Weather::blocks_status<Status::sleep> () const {
 	return uproar();
 }
 
 template<>
-bool Weather::blocks_status<Status::REST> () const {
-	return blocks_status<Status::SLEEP>();
+bool Weather::blocks_status<Status::sleep_rest> () const {
+	return blocks_status<Status::sleep>();
 }
 
 Weather::hash_type Weather::hash () const {

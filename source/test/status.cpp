@@ -44,7 +44,7 @@ void awakening_probability_tests() {
 	Level const level(100_bi);
 	team.add_pokemon(Species::Zapdos, level, Gender());
 	auto & pokemon = team.pokemon();
-	Status::apply<Status::SLEEP>(pokemon, weather);
+	Status::apply<Status::sleep>(pokemon, weather);
 	for (auto const expected : { Rational(1, 1), Rational(3, 4), Rational(2, 3), Rational(1, 2), Rational(0, 1) }) {
 		auto const calculated = pokemon.awaken_probability();
 		if (expected != calculated) {

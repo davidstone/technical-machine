@@ -59,7 +59,7 @@ bool BattleSettings::active (Clauses const check) const {
 }
 
 bool BattleSettings::are_acceptable () const {
-	return active (SLEEP_CLAUSE) and active (SPECIES_CLAUSE) and !active (CHALLENGE_CUP) and !active (REARRANGE_TEAMS) and mode == SINGLES;
+	return active (sleep_CLAUSE) and active (SPECIES_CLAUSE) and !active (CHALLENGE_CUP) and !active (REARRANGE_TEAMS) and mode == SINGLES;
 }
 
 BattleConfiguration::BattleConfiguration (InMessage & msg):

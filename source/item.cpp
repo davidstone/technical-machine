@@ -229,7 +229,7 @@ bounded::integer<0, 130> Item::fling_power() const {
 		case SHINY_STONE:
 			return 80_bi;
 		case DRAGON_FANG:
-		case POISON_BARB:
+		case poison_BARB:
 		case POWER_ANKLET:
 		case POWER_BAND:
 		case POWER_BELT:
@@ -282,7 +282,7 @@ bounded::integer<0, 130> Item::fling_power() const {
 		case BLACK_FLUTE:
 		case BLUE_FLUTE:
 		case BLUE_SHARD:
-		case BURN_HEAL:
+		case burn_HEAL:
 		case CALCIUM:
 		case CARBOS:
 		case CLEANSE_TAG:
@@ -300,7 +300,7 @@ bounded::integer<0, 130> Item::fling_power() const {
 		case FLUFFY_TAIL:
 		case FRESH_WATER:
 		case FULL_HEAL:
-		case FULL_RESTORE:
+		case FULL_sleep_restORE:
 		case GOOEY_MULCH:
 		case GREEN_SHARD:
 		case GROWTH_MULCH:

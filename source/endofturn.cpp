@@ -100,7 +100,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		boost(pokemon.stage(), StatNames::SPE, 1_bi);
 	}
 	else if (pokemon.shed_skin_activated()) {
-		get_status(pokemon).clear();
+		get_status(pokemon) = Status{};
 	}
 	switch (get_item(pokemon).name) {
 		case Item::LEFTOVERS:
@@ -128,23 +128,23 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		}
 	}
 	switch (get_status(pokemon).name()) {
-		case Status::BURN:
+		case Status::burn:
 			drain(pokemon, Rational(1, get_ability(pokemon).weakens_burn() ? 16 : 8));
 			break;
-		case Status::POISON:
+		case Status::poison:
 			if (get_ability(pokemon).absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else
 				drain(pokemon, Rational(1, 8));
 			break;
-		case Status::POISON_TOXIC:
+		case Status::poison_toxic:
 			pokemon.increment_toxic();
 			if (get_ability(pokemon).absorbs_poison_damage())
 				heal(pokemon, Rational(1, 8));
 			else
 				drain(pokemon, static_cast<Rational>(pokemon.toxic_ratio()));
 			break;
-		case Status::SLEEP:
+		case Status::sleep:
 			if (pokemon.nightmare())
 				drain(pokemon, Rational(1, 4));
 			if (get_ability(foe).harms_sleepers())
@@ -155,10 +155,10 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	}
 	switch (get_item(pokemon).name) {
 		case Item::FLAME_ORB:
-			Status::apply<Status::BURN>(pokemon, weather);
+			Status::apply<Status::burn>(pokemon, weather);
 			break;
 		case Item::TOXIC_ORB:
-			Status::apply<Status::POISON_TOXIC>(pokemon, weather);
+			Status::apply<Status::poison_toxic>(pokemon, weather);
 			break;
 		default:
 			break;
@@ -176,7 +176,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	pokemon.decrement_heal_block();
 	pokemon.decrement_embargo();
 	if (pokemon.try_to_activate_yawn()) {
-		Status::apply<Status::SLEEP>(pokemon, weather);
+		Status::apply<Status::sleep>(pokemon, weather);
 	}
 	if (get_item(pokemon).name == Item::STICKY_BARB)
 		drain(pokemon, Rational(1, 8));

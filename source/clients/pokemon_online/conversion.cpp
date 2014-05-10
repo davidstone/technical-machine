@@ -1560,7 +1560,7 @@ Item::Items id_to_item (unsigned id) {
 		case 53:
 			return Item::BLUE_SHARD;
 		case 54:
-			return Item::BURN_HEAL;
+			return Item::burn_HEAL;
 		case 55:
 			return Item::CALCIUM;
 		case 56:
@@ -1602,7 +1602,7 @@ Item::Items id_to_item (unsigned id) {
 		case 74:
 			return Item::FULL_HEAL;
 		case 75:
-			return Item::FULL_RESTORE;
+			return Item::FULL_sleep_restORE;
 		case 76:
 			return Item::GOOEY_MULCH;
 		case 77:
@@ -1784,7 +1784,7 @@ Item::Items id_to_item (unsigned id) {
 		case 165:
 			return Item::DRAGON_FANG;
 		case 166:
-			return Item::POISON_BARB;
+			return Item::poison_BARB;
 		case 167:
 			return Item::POWER_ANKLET;
 		case 168:
@@ -2019,7 +2019,7 @@ unsigned item_to_id (Item::Items item) {
 			return 52;
 		case Item::BLUE_SHARD:
 			return 53;
-		case Item::BURN_HEAL:
+		case Item::burn_HEAL:
 			return 54;
 		case Item::CALCIUM:
 			return 55;
@@ -2061,7 +2061,7 @@ unsigned item_to_id (Item::Items item) {
 			return 73;
 		case Item::FULL_HEAL:
 			return 74;
-		case Item::FULL_RESTORE:
+		case Item::FULL_sleep_restORE:
 			return 75;
 		case Item::GOOEY_MULCH:
 			return 76;
@@ -2243,7 +2243,7 @@ unsigned item_to_id (Item::Items item) {
 			return 164;
 		case Item::DRAGON_FANG:
 			return 165;
-		case Item::POISON_BARB:
+		case Item::poison_BARB:
 			return 166;
 		case Item::POWER_ANKLET:
 			return 167;

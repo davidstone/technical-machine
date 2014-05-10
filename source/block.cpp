@@ -237,7 +237,7 @@ bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {
 }
 
 bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
-	return get_status(user).is_frozen() and !is_usable_while_frozen(move);
+	return is_frozen(get_status(user)) and !is_usable_while_frozen(move);
 }
 
 bool is_blocked_by_sleep(Moves const move) {
@@ -251,8 +251,9 @@ bool is_blocked_by_sleep(Moves const move) {
 }
 
 bool handle_sleep_counter(ActivePokemon & user, Moves const move) {
-	if (!get_status(user).is_sleeping())
+	if (!is_sleeping(get_status(user))) {
 		return false;
+	}
 	user.increase_sleep_counter();
 	return is_blocked_by_sleep(move);
 }

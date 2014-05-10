@@ -37,10 +37,10 @@ auto removes_toxic_spikes(ActivePokemon const & switcher) {
 
 auto apply_toxic_spikes(EntryHazards const & hazards, ActivePokemon & switcher, Weather const & weather) {
 	if (hazards.toxic_spikes() == 1_bi) {
-		Status::apply<Status::POISON>(switcher, weather);
+		Status::apply<Status::poison>(switcher, weather);
 	}
 	else {
-		Status::apply<Status::POISON_TOXIC>(switcher, weather);
+		Status::apply<Status::poison_toxic>(switcher, weather);
 	}
 }
 
