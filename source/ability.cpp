@@ -36,7 +36,7 @@
 
 namespace technicalmachine {
 namespace {
-bool pinch_ability_activates(Pokemon const & attacker, Type::Types type);
+bool pinch_ability_activates(Pokemon const & attacker, Type type);
 }	// namespace
 
 Ability::Ability():
@@ -374,8 +374,8 @@ auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & d
 #undef CONDITIONAL
 
 namespace {
-bool pinch_ability_activates(Pokemon const & attacker, Type::Types const type) {
-	return Type(attacker.move(), attacker) == type and hp_ratio(attacker) <= make_rational(1_bi, 3_bi);
+bool pinch_ability_activates(Pokemon const & attacker, Type const type) {
+	return get_type(attacker.move(), attacker) == type and hp_ratio(attacker) <= make_rational(1_bi, 3_bi);
 }
 }	// namespace
 

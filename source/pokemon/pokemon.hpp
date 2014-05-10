@@ -80,7 +80,7 @@ public:
 	std::string get_nickname () const;
 	
 	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
-	void change_type(Type::Types new_type);
+	void change_type(Type new_type);
 	auto has_been_seen() const -> bool;
 	typedef uint64_t hash_type;
 	hash_type hash () const;

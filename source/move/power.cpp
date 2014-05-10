@@ -153,11 +153,11 @@ auto defender_ability_modifier(Pokemon const & attacker, Ability const ability) 
 	Moves const move = attacker.move();
 	switch (ability.name()) {
 		case Ability::Dry_Skin:
-			return make_rational(CONDITIONAL(Type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
+			return make_rational(CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
 		case Ability::Heatproof:
-			return make_rational(1_bi, CONDITIONAL(Type(move, attacker) == Type::Fire, 2_bi, 1_bi));
+			return make_rational(1_bi, CONDITIONAL(get_type(move, attacker) == Type::Fire, 2_bi, 1_bi));
 		case Ability::Thick_Fat: {
-			Type const type(move, attacker);
+			auto const type = get_type(move, attacker);
 			return make_rational(1_bi, CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
 		}
 		default:
@@ -230,7 +230,7 @@ auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, We
 
 auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 12> {
 	static constexpr auto base = 10_bi;
-	Type const type(attacker.move(), attacker);
+	auto const type = get_type(attacker.move(), attacker);
 	switch (get_item(attacker).name) {
 		case Item::MUSCLE_BAND:
 			return BOUNDED_INTEGER_CONDITIONAL(is_physical(attacker.move()), 11_bi, base);

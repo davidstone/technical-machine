@@ -107,7 +107,7 @@ damage_type capped_damage(Team const & attacker, Team const & defender, Weather 
 }	// namespace
 
 damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
-	return affects_target(Type(attacker.pokemon().move(), attacker.pokemon()), defender.pokemon(), weather) ?
+	return affects_target(get_type(attacker.pokemon().move(), attacker.pokemon()), defender.pokemon(), weather) ?
 		capped_damage(attacker, defender, weather, variable) :
 		static_cast<damage_type>(0_bi);
 }
@@ -172,7 +172,7 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	damage *= move_power(attacker_team, defender, weather, variable);
 	damage *= Rational(physical_vs_special_modifier(attacker, defender.pokemon(), weather));
 	damage /= screen_divisor(attacker, defender);
-	Type const type(attacker.move(), attacker);
+	auto const type = get_type(attacker.move(), attacker);
 	damage *= calculate_weather_modifier(type, weather);
 	damage *= calculate_flash_fire_modifier(attacker);
 	damage += 2;
@@ -219,17 +219,17 @@ bool light_screen_is_active (Move const & move, Team const & defender) {
 }
 
 Rational calculate_weather_modifier (Type const type, Weather const & weather) {
-	if (type.is_strengthened_by_weather(weather))
+	if (is_strengthened_by_weather(type, weather))
 		return Rational(3, 2);
-	else if (type.is_weakened_by_weather(weather))
+	else if (is_weakened_by_weather(type, weather))
 		return Rational(1, 2);
 	else
 		return Rational(1);
 }
 
 Rational calculate_flash_fire_modifier (ActivePokemon const & attacker) {
-	Type const type(attacker.move(), attacker);
-	return (attacker.flash_fire_is_active() and type.is_boosted_by_flash_fire()) ? Rational(3, 2) : Rational(1);
+	auto const type = get_type(attacker.move(), attacker);
+	return (attacker.flash_fire_is_active() and is_boosted_by_flash_fire(type)) ? Rational(3, 2) : Rational(1);
 }
 
 Rational calculate_item_modifier(ActivePokemon const & attacker) {
@@ -248,7 +248,7 @@ Rational calculate_me_first_modifier (ActivePokemon const & attacker) {
 }
 
 Rational calculate_stab_modifier (ActivePokemon const & attacker) {
-	Type const type(attacker.move(), attacker);
+	auto const type = get_type(attacker.move(), attacker);
 	return is_type(attacker, type) ? calculate_stab_boost(get_ability(attacker)) : Rational(1);
 }
 

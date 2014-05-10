@@ -31,13 +31,13 @@ class Pokemon;
 class Effectiveness {
 public:
 	Effectiveness(Type type, Pokemon const & defender);
-	Effectiveness(Type::Types attacking, Type::Types defending);
+	Effectiveness(Type attacking, Type defending);
 	auto is_super_effective() const -> bool;
 	auto is_not_very_effective() const -> bool;
 	auto has_no_effect() const -> bool;
 
 private:
-	Effectiveness(Type::Types attacking, Type::Types defending1, Type::Types defending2);
+	Effectiveness(Type attacking, Type defending1, Type defending2);
 	using SingleType = bounded_rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
 	using container_type = bounded::array<SingleType, 2>;

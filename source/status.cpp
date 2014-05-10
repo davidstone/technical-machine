@@ -37,7 +37,7 @@ template<Status::Statuses status>
 auto status_can_apply(Ability const ability, Pokemon const & target, Weather const & weather) -> bool {
 	return is_clear(get_status(target)) and
 		(ability.ignores_blockers() or !get_ability(target).blocks_status<status>(weather)) and
-		!get_type(target).blocks_status<status>() and
+		!blocks_status<status>(get_type(target)) and
 		!weather.blocks_status<status>();
 }
 

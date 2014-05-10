@@ -27,48 +27,71 @@ class Effectiveness;
 class Pokemon;
 class Weather;
 
-class Type {
-public:
-	enum Types : uint8_t {
-		Bug,
-		Dark,
-		Dragon,
-		Electric,
-		Fighting,
-		Fire,
-		Flying,
-		Ghost,
-		Grass,
-		Ground,
-		Ice,
-		Normal,
-		Poison,
-		Psychic,
-		Rock,
-		Steel,
-		Water,
-		Typeless
-	};
-	constexpr Type(Types name):
-		type(name) {
-	}
-	Type(Moves move, Pokemon const & pokemon);
-	friend bool operator== (Type lhs, Type rhs);
-	friend bool operator!= (Type lhs, Type rhs);
-	bool is_boosted_by_flash_fire () const;
-	bool is_immune_to_hail () const;
-	bool is_immune_to_sandstorm () const;
-	bool is_strengthened_by_weather (Weather const & weather) const;
-	bool is_weakened_by_weather (Weather const & weather) const;
-	// Template specializations are defined in cpp
-	template<Status::Statuses status>
-	bool blocks_status () const {
-		return false;
-	}
-private:
-	friend class Effectiveness;
-	Types type;
+enum class Type : uint8_t {
+	Bug,
+	Dark,
+	Dragon,
+	Electric,
+	Fighting,
+	Fire,
+	Flying,
+	Ghost,
+	Grass,
+	Ground,
+	Ice,
+	Normal,
+	Poison,
+	Psychic,
+	Rock,
+	Steel,
+	Water,
+	Typeless
 };
+
+auto get_type(Moves move, Pokemon const & pokemon) -> Type;
+
+constexpr auto is_boosted_by_flash_fire(Type const type) {
+	return type == Type::Fire;
+}
+constexpr auto is_immune_to_hail(Type const type) {
+	return type == Type::Ice;
+}
+inline auto is_immune_to_sandstorm(Type const type) {
+	switch (type) {
+		case Type::Ground:
+		case Type::Rock:
+		case Type::Steel:
+			return true;
+		default:
+			return false;
+	}
+}
+
+
+auto is_strengthened_by_weather(Type type, Weather const & weather) -> bool;
+auto is_weakened_by_weather(Type type, Weather const & weather) -> bool;
+
+template<Status::Statuses status>
+constexpr auto blocks_status(Type) {
+	return false;
+}
+template<>
+constexpr auto blocks_status<Status::burn>(Type const type) {
+	return type == Type::Fire;
+}
+template<>
+constexpr auto blocks_status<Status::freeze>(Type const type) {
+	return type == Type::Ice;
+}
+template<>
+constexpr auto blocks_status<Status::poison>(Type const type) {
+	return type == Type::Poison or type == Type::Steel;
+}
+template<>
+constexpr auto blocks_status<Status::poison_toxic>(Type const type) {
+	return blocks_status<Status::poison>(type);
+}
+
 
 }	// namespace technicalmachine
 #endif	// TYPE__TYPE_HPP_

@@ -1031,7 +1031,7 @@ auto can_confuse_with_chatter(Species const pokemon) -> bool {
 }
 
 auto clear_field(Team & user, Pokemon const & target) -> void {
-	Type const type(user.pokemon().move(), user.pokemon());
+	auto const type = get_type(user.pokemon().move(), user.pokemon());
 	if (!Effectiveness(type, target).has_no_effect()) {
 		user.clear_field();
 	}

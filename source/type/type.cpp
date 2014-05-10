@@ -19,12 +19,8 @@
 #include "type.hpp"
 
 #include "effectiveness.hpp"
-
-#include "../status.hpp"
 #include "../weather.hpp"
-
 #include "../move/moves.hpp"
-
 #include "../pokemon/pokemon.hpp"
 
 #include <bounded_integer/array.hpp>
@@ -32,78 +28,18 @@
 #include <algorithm>
 
 namespace technicalmachine {
-namespace {
-Type::Types get_type(Moves move, Pokemon const & pokemon);
-}	// namespace
 
-Type::Type(Moves const move, Pokemon const & pokemon):
-	type(get_type(move, pokemon)) {
+auto is_strengthened_by_weather(Type const type, Weather const & weather) -> bool {
+	return (weather.rain() and type == Type::Water) or (weather.sun() and type == Type::Fire);
 }
 
-bool operator== (Type const lhs, Type const rhs) {
-	return lhs.type == rhs.type;
-}
-
-bool operator!= (Type const lhs, Type const rhs) {
-	return !(lhs == rhs);
-}
-
-bool Type::is_boosted_by_flash_fire () const {
-	return type == Fire;
-}
-
-bool Type::is_immune_to_hail () const {
-	return type == Ice;
-}
-
-bool Type::is_immune_to_sandstorm () const {
-	switch (type) {
-		case Ground:
-		case Rock:
-		case Steel:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool Type::is_strengthened_by_weather (Weather const & weather) const {
-	return (weather.rain() and type == Water) or (weather.sun() and type == Fire);
-}
-
-bool Type::is_weakened_by_weather (Weather const & weather) const {
-	return (weather.rain() and type == Fire) or (weather.sun() and type == Water);
-}
-
-template<>
-bool Type::blocks_status<Status::burn> () const {
-	return type == Fire;
-}
-
-template<>
-bool Type::blocks_status<Status::freeze> () const {
-	return type == Ice;
-}
-
-template<>
-bool Type::blocks_status<Status::poison> () const {
-	switch (type) {
-		case Poison:
-		case Steel:
-			return true;
-		default:
-			return false;
-	}
-}
-
-template<>
-bool Type::blocks_status<Status::poison_toxic> () const {
-	return blocks_status<Status::poison> ();
+auto is_weakened_by_weather(Type const type, Weather const & weather) -> bool {
+	return (weather.rain() and type == Type::Fire) or (weather.sun() and type == Type::Water);
 }
 
 namespace {
 
-Type::Types hidden_power_type(Pokemon const & pokemon) {
+auto hidden_power_type(Pokemon const & pokemon) {
 	using modifier_type = std::pair<StatNames, bounded::integer<1, 5>>;
 	static constexpr auto modifiers = bounded::make_array(
 		modifier_type(StatNames::ATK, 1_bi),
@@ -141,7 +77,9 @@ Type::Types hidden_power_type(Pokemon const & pokemon) {
 	return lookup[index];
 }
 
-Type::Types get_type(Moves const move, Pokemon const & pokemon) {
+}	// namespace
+
+auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 	static constexpr auto move_type = bounded::make_array(
 		Type::Typeless,		// Switch0
 		Type::Typeless,		// Switch1
@@ -715,5 +653,4 @@ Type::Types get_type(Moves const move, Pokemon const & pokemon) {
 		move_type.at(move);
 }
 
-}	// namespace
 }	// namespace technicalmachine

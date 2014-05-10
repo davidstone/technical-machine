@@ -159,7 +159,7 @@ Happiness get_happiness(Pokemon const & pokemon) {
 	return pokemon.m_happiness;
 }
 
-void Pokemon::change_type(Type::Types const new_type) {
+void Pokemon::change_type(Type const new_type) {
 	current_type.change_type(new_type);
 }
 

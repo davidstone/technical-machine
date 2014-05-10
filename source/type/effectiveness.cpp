@@ -31,7 +31,7 @@ constexpr auto nve = make_rational(1_bi, 2_bi);
 constexpr auto reg = make_rational(1_bi, 2_bi);
 constexpr auto se = make_rational(2_bi, 1_bi);
 
-auto lookup_effectiveness(Type::Types const attacking, Type::Types const defending) {
+auto lookup_effectiveness(Type const attacking, Type const defending) {
 	using lookup_type = std::common_type<decltype(ne), decltype(nve), decltype(reg), decltype(se)>::type;
 	static constexpr bounded::array<bounded::array<lookup_type, 18>, 18> effectiveness {{
 		{ reg, se, reg, reg, nve, nve, nve, nve, se, reg, reg, reg, nve, se, reg, nve, reg, reg },	// Bug
@@ -67,7 +67,7 @@ auto check_effectiveness(Container const & effectiveness, std::initializer_list<
 
 }	// namespace
 
-Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending1, Type::Types const defending2):
+Effectiveness::Effectiveness(Type const attacking, Type const defending1, Type const defending2):
 	m_effectiveness({
 		lookup_effectiveness(attacking, defending1),
 		lookup_effectiveness(attacking, defending2)
@@ -79,10 +79,10 @@ Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defe
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
-	Effectiveness(type.type, get_type(defender).types.begin()->type, bounded::next(get_type(defender).types.begin())->type) {
+	Effectiveness(type, *get_type(defender).types.begin(), *bounded::next(get_type(defender).types.begin())) {
 }
 
-Effectiveness::Effectiveness(Type::Types const attacking, Type::Types const defending):
+Effectiveness::Effectiveness(Type const attacking, Type const defending):
 	Effectiveness(attacking, defending, Type::Typeless) {
 }
 

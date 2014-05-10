@@ -78,9 +78,9 @@ void endofturn2 (Team & team) {
 }
 
 void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
-	if (weather.hail() and !get_type(pokemon).is_immune_to_hail())
+	if (weather.hail() and !is_immune_to_hail(get_type(pokemon)))
 		drain(pokemon, Rational(1, 16));
-	if (weather.sand() and !get_type(pokemon).is_immune_to_sandstorm()) {
+	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
 		drain(pokemon, Rational(1, 16));
 	}
 	Ability::weather_healing(pokemon, weather);

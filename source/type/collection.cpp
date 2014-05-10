@@ -50,18 +50,20 @@ TypeCollection::TypeCollection(Species const name):
 	types(get_type(name)) {
 }
 
-auto TypeCollection::is_immune_to_sandstorm() const -> bool {
-	for (Type const type : types) {
-		if (type.is_immune_to_sandstorm ())
+auto is_immune_to_sandstorm(TypeCollection const collection) -> bool {
+	for (Type const type : collection.types) {
+		if (is_immune_to_sandstorm(type)) {
 			return true;
+		}
 	}
 	return false;
 }
 
-auto TypeCollection::is_immune_to_hail () const -> bool {
-	for (Type const type : types) {
-		if (type.is_immune_to_hail())
+auto is_immune_to_hail(TypeCollection const collection) -> bool {
+	for (Type const type : collection.types) {
+		if (is_immune_to_hail(type)) {
 			return true;
+		}
 	}
 	return false;
 }

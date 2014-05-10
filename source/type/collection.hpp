@@ -56,20 +56,20 @@ private:
 class TypeCollection {
 public:
 	TypeCollection (Species name);
-	bool is_immune_to_hail () const;
-	bool is_immune_to_sandstorm () const;
+	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
+	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
 	template<Status::Statuses status>
-	bool blocks_status () const {
-		for (Type const type : types) {
-			if (type.blocks_status<status> ())
+	friend auto blocks_status(TypeCollection const collection) -> bool {
+		for (auto const type : collection.types) {
+			if (blocks_status<status>(type)) {
 				return true;
+			}
 		}
 		return false;
 	}
 	void change_type(Type const type);
 private:
 	friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
-	friend class Type;
 	friend class Effectiveness;
 	detail_type_collection::TypeArray types;
 };
