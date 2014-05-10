@@ -33,10 +33,10 @@ using namespace bounded::literal;
 
 class MoveIterator {
 private:
-	static constexpr auto max_size = static_cast<intmax_t>(std::numeric_limits<MoveSize>::max());
+	static constexpr auto max_difference = static_cast<intmax_t>(std::numeric_limits<MoveSize>::max() + 1_bi);
 public:
 	using value_type = Move const;
-	using difference_type = bounded::integer<-max_size, max_size>;
+	using difference_type = bounded::integer<-max_difference, max_difference>;
 	using index_type = MoveIndex;
 	using pointer = value_type *;
 	using reference = value_type &;

@@ -36,7 +36,8 @@ auto operator+(MoveIterator const lhs, MoveIterator::difference_type const rhs) 
 		MoveIterator(lhs.m_regular_end, lhs.m_regular_end, lhs.m_shared + static_cast<SharedMovesIterator::difference_type>(rhs - distance));
 }
 auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> MoveIterator::difference_type {
-	using RegularMoveDifference = decltype(std::declval<RegularMoveIndex>() - std::declval<RegularMoveIndex>());
+	// The +-1 accounts for the one-past-the-end index.
+	using RegularMoveDifference = decltype(std::declval<RegularMoveIndex>() - std::declval<RegularMoveIndex>() + std::declval<bounded::integer<-1, 1>>());
 	return (lhs.m_shared - rhs.m_shared) + static_cast<RegularMoveDifference>(lhs.m_regular - rhs.m_regular);
 }
 
