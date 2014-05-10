@@ -83,10 +83,6 @@ Pokemon & Team::replacement() {
 	return all_pokemon().at_replacement();
 }
 
-void Team::remove_pokemon () {
-	all_pokemon().remove_active();
-}
-
 PokemonCollection const & Team::all_pokemon() const {
 	return active_pokemon.all_pokemon();
 }

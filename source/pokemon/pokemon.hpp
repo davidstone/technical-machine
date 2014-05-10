@@ -75,7 +75,6 @@ public:
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	operator Species() const;
-	void remove_switch();
 	MoveCollection::index_type index_of_first_switch () const;
 	std::string get_nickname () const;
 	

@@ -50,7 +50,6 @@ public:
 	void add_pokemon(Args&&... args) {
 		all_pokemon().add(std::forward<Args>(args)...);
 	}
-	void remove_pokemon ();
 	PokemonCollection const & all_pokemon() const;
 	PokemonCollection & all_pokemon();
 	

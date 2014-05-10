@@ -78,10 +78,6 @@ void switch_in(Pokemon & pokemon) {
 	pokemon.m_has_been_seen = true;
 }
 
-void Pokemon::remove_switch() {
-	move.remove_switch();
-}
-
 MoveCollection::index_type Pokemon::index_of_first_switch() const {
 	MoveCollection::index_type index = 0_bi;
 	while (!is_switch(move(index))) {

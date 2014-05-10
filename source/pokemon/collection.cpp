@@ -124,7 +124,7 @@ void PokemonCollection::remove_active () {
 	// the only value that could get this out of bounds.
 	set_index((index() > replacement()) ? replacement() : index_type(replacement() - 1_bi, bounded::non_check));
 	for (auto & pokemon : container) {
-		pokemon.remove_switch();
+		pokemon.move.remove_switch();
 	}
 }
 
