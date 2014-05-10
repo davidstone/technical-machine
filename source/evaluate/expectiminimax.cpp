@@ -378,6 +378,7 @@ bool has_follow_up_decision(Moves const move) {
 }
 
 int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
+	auto const original = static_cast<Species>(user.pokemon());
 	if (!user.pokemon().moved()) {
 		auto const damage = call_move(user, other, weather, user_variable);
 		other.pokemon().direct_damage(damage);
@@ -386,7 +387,8 @@ int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_
 		if (user_win != 0_bi or other_win != 0_bi) {
 			return static_cast<int64_t>(user_win + other_win);
 		}
-		if (has_follow_up_decision(user.pokemon().move()) and user.all_pokemon().size() > 1) {
+		auto const current = static_cast<Species>(user.pokemon());
+		if (original == current and has_follow_up_decision(user.pokemon().move()) and user.all_pokemon().size() > 1_bi) {
 			Moves phony = Moves::END;
 			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
 		}
