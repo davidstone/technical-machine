@@ -259,17 +259,17 @@ template<typename SetFlag, typename Probability, typename NextBranch>
 int64_t generic_flag_branch(Team & first, Team & last, Weather const & weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & probability, NextBranch const & next_branch) {
 	int64_t average_score = 0;
 	for (auto const first_flag : { true, false }) {
+		set_flag(first.pokemon(), first_flag);
 		auto const p1 = static_cast<Rational>(probability(first.pokemon()));
 		if (first_flag and p1 == Rational(0)) {
 			continue;
 		}
-		set_flag(first.pokemon(), first_flag);
 		for (auto const last_flag : { true, false }) {
+			set_flag(last.pokemon(), last_flag);
 			auto const p2 = static_cast<Rational>(probability(last.pokemon()));
 			if (last_flag and p2 == Rational(0)) {
 				continue;
 			}
-			set_flag(last.pokemon(), last_flag);
 			auto const p = p1 * p2;
 			average_score += next_branch(first, last, weather, depth, evaluate) * p;
 		}
@@ -287,7 +287,6 @@ int64_t accuracy_branch(Team & first, Team & last, Weather const & weather, unsi
 		pokemon.set_miss(flag);
 	};
 	auto const probability = [&](ActivePokemon const & pokemon) {
-		
 		return pokemon.accuracy_probability();
 	};
 	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, awaken_branch) / divisor;
