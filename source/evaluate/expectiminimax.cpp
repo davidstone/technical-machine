@@ -473,9 +473,7 @@ int64_t fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate
 	Team* ai;
 	Team* foe;
 	deorder (first, last, ai, foe);
-	return (depth == 0) ?
-		static_cast<int64_t>(evaluate(*ai, *foe, weather)) :
-		transposition (*ai, *foe, weather, depth, evaluate);
+	return transposition(*ai, *foe, weather, depth, evaluate);
 }
 
 int64_t initial_move_then_switch_branch(Team & switcher, Team const & other, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
