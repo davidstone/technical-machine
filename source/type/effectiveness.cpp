@@ -28,7 +28,7 @@ namespace {
 
 constexpr auto ne = make_rational(0_bi, 1_bi);
 constexpr auto nve = make_rational(1_bi, 2_bi);
-constexpr auto reg = make_rational(1_bi, 2_bi);
+constexpr auto reg = make_rational(1_bi, 1_bi);
 constexpr auto se = make_rational(2_bi, 1_bi);
 
 auto lookup_effectiveness(Type const attacking, Type const defending) {

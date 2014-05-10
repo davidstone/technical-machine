@@ -37,6 +37,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -116,6 +117,10 @@ using ScoreActivePokemon = decltype(score_active_pokemon(std::declval<Evaluate>(
 
 
 auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather) {
+	if (entry_hazards.stealth_rock()) {
+		std::cout << "Effectiveness * 4: " << 4_bi * Effectiveness(Type::Rock, pokemon);
+		std::cout << "Stealth rock points: " << evaluate.stealth_rock() << "\n\n";
+	}
 	return
 		evaluate.members() +
 		hp_ratio(pokemon) * evaluate.hp() +
@@ -155,10 +160,15 @@ auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wis
 }
 
 auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, Weather const & weather) {
-	return bounded::make<bounded::null_policy>(
-		score_field_effects(evaluate, ai.screens, ai.wish) - score_field_effects(evaluate, foe.screens, foe.wish) +
-		score_all_pokemon(evaluate, ai, foe, weather) - score_all_pokemon(evaluate, foe, ai, weather)
-	);
+	auto const ai_field_effects = score_field_effects(evaluate, ai.screens, ai.wish);
+	auto const foe_field_effects = score_field_effects(evaluate, foe.screens, foe.wish);
+	auto const ai_pokemon = score_all_pokemon(evaluate, ai, foe, weather);
+	auto const foe_pokemon = score_all_pokemon(evaluate, foe, ai, weather);
+	std::cout << "AI field effects: " << ai_field_effects << '\n';
+	std::cout << "Foe field effects: " << foe_field_effects << '\n';
+	std::cout << "AI pokemon: " << ai_pokemon << '\n';
+	std::cout << "Foe pokemon: " << foe_pokemon << '\n';
+	return bounded::make<bounded::null_policy>(ai_field_effects - foe_field_effects + ai_pokemon - foe_pokemon);
 }
 constexpr bounded::integer<-1, 1> extra = 0_bi;
 using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
@@ -168,7 +178,9 @@ static_assert(std::is_same<Evaluate::type, decltype(std::declval<ScoreTeam>() + 
 }	// namespace
 
 auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type {
-	return score_team(*this, ai, foe, weather);
+	auto const score = score_team(*this, ai, foe, weather);
+	std::cout << "Score: " << score << '\n';
+	return score;
 }
 
 auto Evaluate::win(Team const & team) -> type {
