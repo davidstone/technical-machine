@@ -24,6 +24,7 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
+#include "../../stat/calculate.hpp"
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
 
@@ -39,7 +40,7 @@ public:
 		attack(0_bi),
 		special_attack(0_bi) {
 	}
-	bounded::integer<0, EV::max * 2> sum() const {
+	auto sum() const {
 		return attack.value() + special_attack.value();
 	}
 	EV attack;
@@ -48,12 +49,19 @@ public:
 
 class OffensiveEVs {
 public:
-	explicit OffensiveEVs(Pokemon pokemon);
+	explicit OffensiveEVs(Pokemon const & pokemon);
 private:
-	void optimize(Pokemon & pokemon);
-	void remove_unused(Pokemon & pokemon);
-	void equal_stats(Pokemon & pokemon);
-	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
+	auto optimize(Pokemon const & pokemon) -> void;
+	class OffensiveData {
+	private:
+		template<StatNames stat>
+		using StatType = decltype(initial_stat<stat>(std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
+	public:
+		StatType<StatNames::ATK> atk;
+		StatType<StatNames::SPA> spa;
+	};
+	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
+	friend auto combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon) -> void;
 	typedef std::map<Nature::Natures, OffensiveStats> Container;
 	Container container;
 };

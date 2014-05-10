@@ -36,36 +36,46 @@ bool has_physical_move(Pokemon const & pokemon);
 bool has_special_move(Pokemon const & pokemon);
 
 template<StatNames stat_name, typename Initial>
-bounded::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nature const nature, Initial const initial) {
-	EV::value_type ev_estimate = 0_bi;
-	EV & ev = stat.ev;
-	ev = EV(ev_estimate);
+auto find_least_stat(Species const species, Level const level, Nature const nature, Initial const initial) -> bounded::optional<EV::value_type> {
+	EV::value_type ev = 0_bi;
+	Stat stat(species, stat_name, EV(ev));
 	auto const test_stat = [&]() { return initial_stat<stat_name>(stat, level, nature); };
 	while (test_stat() < initial) {
-		ev_estimate += 4_bi;
-		ev = EV(ev_estimate);
-		if (ev_estimate == bounded::make<EV::max>()) {
+		ev += 4_bi;
+		stat.ev = EV(ev);
+		if (ev == bounded::make<EV::max>()) {
 			break;
 		}
 	}
-	return (test_stat() < initial) ? bounded::none : bounded::optional<EV::value_type>(ev_estimate);
+	return (test_stat() < initial) ? bounded::none : bounded::optional<EV::value_type>(ev);
 }
 
 }	// namespace
 
-OffensiveEVs::OffensiveEVs(Pokemon pokemon) {
+OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
 		container.emplace(nature, OffensiveStats{});
 	}
 	optimize(pokemon);
 }
 
-void OffensiveEVs::optimize(Pokemon & pokemon) {
-	remove_unused(pokemon);
-	equal_stats(pokemon);
-}
-
 namespace {
+
+auto ideal_attack_stat(Pokemon const & pokemon, bool const is_physical) {
+	// All we care about on this nature is the boost to Attack
+	auto const nature = is_physical ? get_nature(pokemon) : Nature::MODEST;
+	Stat const stat(pokemon, StatNames::ATK, is_physical ? get_stat(pokemon, StatNames::ATK).ev : EV(0_bi));
+	return initial_stat<StatNames::ATK>(stat, get_level(pokemon), nature);
+}
+auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, bool const is_physical) {
+	// All we care about on this nature is the boost to Special Attack
+	auto const nature =
+		is_special ? get_nature(pokemon) :
+		is_physical ? Nature::ADAMANT :
+		Nature::HARDY;
+	Stat const stat(pokemon, StatNames::SPA, is_special ? get_stat(pokemon, StatNames::SPA).ev : EV(0_bi));
+	return initial_stat<StatNames::SPA>(stat, get_level(pokemon), nature);
+}
 
 template<typename Container, typename Condition>
 void remove_individual_unused(Container & container, Condition const & condition) {
@@ -80,59 +90,55 @@ void remove_individual_unused(Container & container, Condition const & condition
 	assert(!container.empty());
 }
 
+template<typename Container>
+auto remove_inferior_natures(Container & container, bool const is_physical, bool const is_special) {
+	auto const does_not_lower_attack = [](auto const iter) {
+		return !Nature(iter->first).lowers_stat<StatNames::ATK>();
+	};
+	auto const does_not_lower_special_attack = [](auto const iter) {
+		return !Nature(iter->first).lowers_stat<StatNames::SPA>();
+	};
+	auto const boosts_special_attack = [](auto const iter) {
+		return Nature(iter->first).boosts_stat<StatNames::SPA>();
+	};
+	if (!is_physical) {
+		remove_individual_unused(container, does_not_lower_attack);
+	}
+	if (!is_special) {
+		if (is_physical) {
+			remove_individual_unused(container, does_not_lower_special_attack);
+		}
+		else {
+			remove_individual_unused(container, boosts_special_attack);
+		}
+	}
+}
+
 }	// namespace
 
-void OffensiveEVs::remove_unused(Pokemon & pokemon) {
+void OffensiveEVs::optimize(Pokemon const & pokemon) {
 	// If I don't have a physical move, prefer to lower that because it lowers
 	// confusion damage. If I do have a physical move but no special move,
 	// prefer to lower Special Attack because it is the only remaining stat
 	// guaranteed to be unused. This allows me to maximize Speed and the
 	// defensive stats.
 	bool const is_physical = has_physical_move(pokemon);
-	if (!is_physical) {
-		remove_individual_unused(container, [](Container::const_iterator it) {
-			return !Nature(it->first).lowers_stat<StatNames::ATK>();
-		});
-		get_stat(pokemon, StatNames::ATK).ev = EV(0_bi);
-	}
 	bool const is_special = has_special_move(pokemon);
-	if (!is_special) {
-		if (is_physical) {
-			remove_individual_unused(container, [](Container::const_iterator it) {
-				return !Nature(it->first).lowers_stat<StatNames::SPA>();
-			});
-		}
-		else {
-			remove_individual_unused(container, [](Container::const_iterator it) {
-				return Nature(it->first).boosts_stat<StatNames::SPA>();
-			});
-		}
-		get_stat(pokemon, StatNames::SPA).ev = EV(0_bi);
-	}
-	if (!is_physical and !is_special) {
-		get_nature(pokemon).name = Nature::CALM;
-	}
-	else if (!is_physical and get_nature(pokemon).boosts_stat<StatNames::SPA>()) {
-		get_nature(pokemon).name = Nature::MODEST;
-	}
-	else if (!get_nature(pokemon).boosts_stat<StatNames::ATK>() and !is_special) {
-		get_nature(pokemon).name = Nature::IMPISH;
-	}
+	
+	remove_inferior_natures(container, is_physical, is_special);
+	
+	OffensiveData const stats{ideal_attack_stat(pokemon, is_physical), ideal_special_attack_stat(pokemon, is_special, is_physical)};
+
+	equal_stats(stats, pokemon, get_level(pokemon));
 }
 
-void OffensiveEVs::equal_stats(Pokemon & pokemon) {
-	Stat & attack = get_stat(pokemon, StatNames::ATK);
-	Stat & special_attack = get_stat(pokemon, StatNames::SPA);
-	Level const level = get_level(pokemon);
-	Nature & nature = get_nature(pokemon);
-	auto const initial_atk = initial_stat<StatNames::ATK>(attack, level, nature);
-	auto const initial_spa = initial_stat<StatNames::SPA>(special_attack, level, nature);
+void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
 	for (auto it = std::begin(container); it != std::end(container);) {
-		OffensiveStats & stats = it->second;
-		nature = it->first;
-		auto const atk_ev = reset_stat<StatNames::ATK>(attack, level, nature, initial_atk);
-		auto const spa_ev = reset_stat<StatNames::SPA>(special_attack, level, nature, initial_spa);
+		auto const nature = it->first;
+		auto const atk_ev = find_least_stat<StatNames::ATK>(species, level, nature, initial.atk);
+		auto const spa_ev = find_least_stat<StatNames::SPA>(species, level, nature, initial.spa);
 		if (atk_ev and spa_ev) {
+			OffensiveStats & stats = it->second;
 			stats.attack = EV(*atk_ev);
 			stats.special_attack = EV(*spa_ev);
 			++it;
