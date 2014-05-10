@@ -29,6 +29,7 @@
 #include "../move/moves_forward.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/integer_range.hpp>
 
 #include <cstddef>
 #include <vector>
@@ -90,7 +91,8 @@ public:
 	template<typename Function1, typename Function2>
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
 		ResetIndex reset(*this);
-		for (current_replacement = 0_bi; current_replacement != size(); ++current_replacement) {
+		for (auto const test_replacement : bounded::integer_range(size())) {
+			current_replacement = test_replacement;
 			if (is_switching_to_self() and size() > 1_bi)
 				continue;
 			f();
