@@ -37,7 +37,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -171,7 +170,6 @@ static_assert(std::is_same<Evaluate::type, decltype(std::declval<ScoreTeam>() + 
 
 auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type {
 	auto const score = score_team(*this, ai, foe, weather);
-	std::cout << "Score: " << score << '\n';
 	return score;
 }
 
