@@ -40,14 +40,15 @@ bounded::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nat
 	EV::value_type ev_estimate = 0_bi;
 	EV & ev = stat.ev;
 	ev = EV(ev_estimate);
-	while (initial_stat<stat_name>(stat, level, nature) < initial) {
+	auto const test_stat = [&]() { return initial_stat<stat_name>(stat, level, nature); };
+	while (test_stat() < initial) {
 		ev_estimate += 4_bi;
 		ev = EV(ev_estimate);
 		if (ev_estimate == bounded::make<EV::max>()) {
-			return bounded::none;
+			break;
 		}
 	}
-	return bounded::optional<EV::value_type>(ev_estimate);
+	return (test_stat() < initial) ? bounded::none : bounded::optional<EV::value_type>(ev_estimate);
 }
 
 }	// namespace
