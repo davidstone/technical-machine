@@ -104,7 +104,7 @@ void ActivePokemon::reset_switch() {
 	heal_block.reset();
 	identified = false;
 	used_imprison = false;
-	last_used_move.reset();
+	last_used_move = LastUsedMove{};
 	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
 	// replaced; false makes it wrong otherwise
 	loaf = false;
@@ -740,7 +740,12 @@ void ActivePokemon::register_damage(damage_type const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()));
+	if (is_regular(move())) {
+		last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()));
+	}
+	else {
+		last_used_move = LastUsedMove{};
+	}
 }
 
 void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
@@ -783,8 +788,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += encore.hash();
 	current_hash *= heal_block.max_hash();
 	current_hash += heal_block.hash();
-	current_hash *= last_used_move.max_hash();
-	current_hash += last_used_move.hash();
+	current_hash *= technicalmachine::max_hash(last_used_move);
+	current_hash += technicalmachine::hash(last_used_move);
 	current_hash *= magnet_rise().max_hash();
 	current_hash += magnet_rise().hash();
 	current_hash *= partial_trap.max_hash();
@@ -867,7 +872,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();
 	current_hash *= heal_block.max_hash();
-	current_hash *= last_used_move.max_hash();
+	current_hash *= technicalmachine::max_hash(last_used_move);
 	current_hash *= magnet_rise().max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();

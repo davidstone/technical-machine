@@ -19,6 +19,8 @@
 #ifndef POKEMON__LAST_USED_MOVE_HPP_
 #define POKEMON__LAST_USED_MOVE_HPP_
 
+#include "../hash.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
 
@@ -26,27 +28,39 @@ namespace technicalmachine {
 template<typename Numerator, typename Denominator>
 class bounded_rational;
 
+using namespace bounded::literal;
+
 class LastUsedMove {
 public:
-	LastUsedMove();
 	using index_type = bounded::checked_integer<0, 3>;
-	bool has_moved() const;
-	bool was_used_last(index_type index_of_move) const;
-	void reset();
-	void increment(index_type index_of_move);
-	bounded::integer<10, 160> fury_cutter_power() const;
-	bounded::integer<30, 480> momentum_move_power() const;
-	bounded::integer<0, 30> triple_kick_power() const;
-	bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> metronome_boost() const;
-	uint64_t hash() const;
-	uint64_t max_hash() const;
-	friend bool operator== (LastUsedMove lhs, LastUsedMove rhs);
+	auto has_moved() const -> bool;
+	auto was_used_last(index_type index_of_move) const -> bool;
+	auto increment(index_type index_of_move) -> void;
+	auto fury_cutter_power() const -> bounded::integer<10, 160>;
+	auto momentum_move_power() const -> bounded::integer<30, 480>;
+	auto triple_kick_power() const -> bounded::integer<0, 30>;
+	auto metronome_boost() const -> bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
+	friend auto operator==(LastUsedMove lhs, LastUsedMove rhs) -> bool;
+
+	constexpr auto hash() const noexcept {
+		return ::technicalmachine::hash(m_index_of_move, m_consecutive_turns_used);
+	}
+	constexpr auto max_hash() const noexcept {
+		return ::technicalmachine::max_hash(m_index_of_move, m_consecutive_turns_used);
+	}
 private:
 	bounded::optional<index_type> m_index_of_move;
-	bounded::clamped_integer<0, 10> m_consecutive_turns_used;
+	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
 };
 
-bool operator!= (LastUsedMove lhs, LastUsedMove rhs);
+auto operator!=(LastUsedMove lhs, LastUsedMove rhs) -> bool;
+
+constexpr auto hash(LastUsedMove const last_used_move) noexcept {
+	return last_used_move.hash();
+}
+constexpr auto max_hash(LastUsedMove const last_used_move) noexcept {
+	return last_used_move.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// POKEMON__LAST_USED_MOVE_HPP_

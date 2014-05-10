@@ -23,64 +23,44 @@
 #include "../rational.hpp"
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
-constexpr uint64_t max_number_of_moves = 4;
-}	// namespace
 
-LastUsedMove::LastUsedMove() :
-	m_consecutive_turns_used(0_bi) {
-}
-
-bool LastUsedMove::has_moved() const {
+auto LastUsedMove::has_moved() const -> bool {
 	return static_cast<bool>(m_index_of_move);
 }
 
-bool LastUsedMove::was_used_last(index_type const index_of_move) const {
+auto LastUsedMove::was_used_last(index_type const index_of_move) const -> bool {
 	return has_moved() and *m_index_of_move == index_of_move;
 }
 
-void LastUsedMove::increment(index_type const index_of_move) {
+auto LastUsedMove::increment(index_type const index_of_move) -> void {
 	m_index_of_move = index_of_move;
 	++m_consecutive_turns_used;
 }
 
-void LastUsedMove::reset () {
-	*this = LastUsedMove{};
-}
-
-bounded::integer<10, 160> LastUsedMove::fury_cutter_power() const {
+auto LastUsedMove::fury_cutter_power() const -> bounded::integer<10, 160> {
 	// 10 * 2 ^ n
 	return 10_bi << bounded::min(m_consecutive_turns_used, 4_bi);
 }
 
-bounded::integer<30, 480> LastUsedMove::momentum_move_power() const {
+auto LastUsedMove::momentum_move_power() const -> bounded::integer<30, 480> {
 	return 30_bi << bounded::min(m_consecutive_turns_used, 4_bi);
 }
 
-bounded::integer<0, 30> LastUsedMove::triple_kick_power() const {
+auto LastUsedMove::triple_kick_power() const -> bounded::integer<0, 30> {
 	return 10_bi * bounded::min(m_consecutive_turns_used, 3_bi);
 }
 
-bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> LastUsedMove::metronome_boost() const {
+auto LastUsedMove::metronome_boost() const -> bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> {
 	return make_rational(10_bi + m_consecutive_turns_used, 10_bi);
 }
 
-uint64_t LastUsedMove::hash() const {
-	auto const index = static_cast<bool>(m_index_of_move) ? static_cast<uint64_t>(*m_index_of_move) : max_number_of_moves;
-	return index + (max_number_of_moves + 1) * static_cast<uint64_t>(m_consecutive_turns_used);
-}
-
-uint64_t LastUsedMove::max_hash() const {
-	return (10 + 1) * (max_number_of_moves + 1);
-}
-
-bool operator== (LastUsedMove const lhs, LastUsedMove const rhs) {
+auto operator== (LastUsedMove const lhs, LastUsedMove const rhs) -> bool {
 	return
 		lhs.m_index_of_move == rhs.m_index_of_move and
 		lhs.m_consecutive_turns_used == rhs.m_consecutive_turns_used;
 }
-bool operator!= (LastUsedMove const lhs, LastUsedMove const rhs) {
+auto operator!= (LastUsedMove const lhs, LastUsedMove const rhs) -> bool {
 	return !(lhs == rhs);
 }
 
