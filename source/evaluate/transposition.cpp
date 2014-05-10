@@ -1,5 +1,5 @@
 // Determine when transpositions occur
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -97,30 +97,28 @@ Hash & hash_table_lookup (Hash const & current) {
 }	// anonymous namespace
 
 int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
-	int64_t value;
 	if (depth == 0) {
-		value = static_cast<int64_t>(evaluate(ai, foe, weather));
+		return static_cast<int64_t>(evaluate(ai, foe, weather));
 	}
+	int64_t value;
+	// This long-form hash should be unique within a game.
+	Hash current (ai.hash(), foe.hash(), weather.hash(), depth);
+	Hash & saved = hash_table_lookup (current);
+	// I verify that saved == current because hash_table_lookup only checks
+	// against shortened hashes for speed and memory reasons. I need the
+	// additional check to minimize the chances of a collision.
+	if (saved.depth >= current.depth and saved == current)
+		value = saved.value;
 	else {
-		// This long-form hash should be unique within a game.
-		Hash current (ai.hash(), foe.hash(), weather.hash(), depth);
-		Hash & saved = hash_table_lookup (current);
-		// I verify that saved == current because hash_table_lookup only checks
-		// against shortened hashes for speed and memory reasons. I need the
-		// additional check to minimize the chances of a collision.
-		if (saved.depth >= current.depth and saved == current)
-			value = saved.value;
-		else {
-			Moves phony = Moves::END;
-			// If I can't find it, continue evaluation as normal.
-			value = select_type_of_move(ai, foe, weather, depth, evaluate, phony);
-			current.value = value;
-			
-			// Since I didn't find any stored value at the same hash as the
-			// current state, or the value I found was for a shallower depth,
-			// add the new value to my table.
-			saved = current;
-		}
+		Moves phony = Moves::END;
+		// If I can't find it, continue evaluation as normal.
+		value = select_type_of_move(ai, foe, weather, depth, evaluate, phony);
+		current.value = value;
+		
+		// Since I didn't find any stored value at the same hash as the
+		// current state, or the value I found was for a shallower depth,
+		// add the new value to my table.
+		saved = current;
 	}
 	return value;
 }
