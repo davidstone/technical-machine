@@ -54,10 +54,9 @@ bounded::optional<EV::value_type> reset_stat(Stat & stat, Level const level, Nat
 
 OffensiveEVs::OffensiveEVs(Pokemon pokemon) {
 	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
-		container.insert(Container::value_type(nature, OffensiveStats{}));
+		container.emplace(nature, OffensiveStats{});
 	}
 	optimize(pokemon);
-	assert(!container.empty());
 }
 
 void OffensiveEVs::optimize(Pokemon & pokemon) {
@@ -77,6 +76,7 @@ void remove_individual_unused(Container & container, Condition const & condition
 			++it;
 		}
 	}
+	assert(!container.empty());
 }
 
 }	// namespace
@@ -140,6 +140,7 @@ void OffensiveEVs::equal_stats(Pokemon & pokemon) {
 			it = container.erase(it);
 		}
 	}
+	assert(!container.empty());
 }
 
 namespace {
