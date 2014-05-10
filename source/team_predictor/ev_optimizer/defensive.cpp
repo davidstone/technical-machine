@@ -28,7 +28,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <set>
 #include <string>
 #include <vector>
@@ -61,7 +60,7 @@ bool has_same_effect_on_defenses(Nature const & nature, Nature const & reference
 
 }	// namespace
 
-DefensiveEVs::DefensiveEVs(Pokemon pokemon) {
+DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
 	Single const physical = equal_defensiveness<true>(pokemon);
 	Single const special = equal_defensiveness<false>(pokemon);
 	auto const max_evs = defensive_evs_available(pokemon);

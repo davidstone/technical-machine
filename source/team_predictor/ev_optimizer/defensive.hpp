@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,7 +33,7 @@ class SpeedEVs;
 
 class DefensiveEVs {
 public:
-	explicit DefensiveEVs(Pokemon pokemon);
+	explicit DefensiveEVs(Pokemon const & pokemon);
 	typedef std::map<Nature::Natures, DataPoint> BestPerNature;
 private:
 	void remove_inefficient_natures(std::vector<Nature::Natures> const & divided_natures);
