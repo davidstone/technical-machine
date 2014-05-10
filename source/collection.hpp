@@ -87,7 +87,7 @@ public:
 	template<typename... Args>
 	constexpr Collection(Args &&... args) :
 		container(std::forward<Args>(args)...),
-		current_index(0_bi) {
+		m_current_index(0_bi) {
 	}
 	
 	auto begin() const {
@@ -113,13 +113,13 @@ public:
 		return container.empty();
 	}
 	void set_index(index_type const new_index) {
-		current_index = check_range (new_index);
+		m_current_index = check_range (new_index);
 	}
 	void reset_index() {
-		current_index = 0_bi;
+		m_current_index = 0_bi;
 	}
 	constexpr index_type index() const {
-		return current_index;
+		return m_current_index;
 	}
 	friend bool operator== <container_type>(Collection const & lhs, Collection const & rhs);
 protected:
@@ -134,7 +134,8 @@ protected:
 		return container[specified_index];
 	}
 	container_type container;
-	index_type current_index;
+private:
+	index_type m_current_index;
 };
 }	// namespace detail
 

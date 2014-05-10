@@ -45,7 +45,7 @@ auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
 		container.emplace_back(move, pp_ups);
 		it = std::prev(regular().end());
 	}
-	current_index = static_cast<index_type>(it - regular().begin());
+	set_index(static_cast<index_type>(it - regular().begin()));
 }
 
 auto set_index(MoveCollection & moves, Moves const move) -> void {
