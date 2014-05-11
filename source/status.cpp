@@ -170,7 +170,7 @@ auto Status::increase_sleep_counter(Ability const & ability, bool awaken) -> voi
 		m_status = clear;
 	}
 	else {
-		*m_turns_already_slept += BOUNDED_INTEGER_CONDITIONAL(ability.wakes_up_early(), 2_bi, 1_bi);
+		*m_turns_already_slept += BOUNDED_CONDITIONAL(ability.wakes_up_early(), 2_bi, 1_bi);
 	}
 }
 
@@ -189,7 +189,7 @@ namespace {
 using DefiniteSleepCounter = bounded::integer<0, 4>;
 
 auto awaken_numerator(DefiniteSleepCounter const turns_slept, Ability const & ability) {
-	return turns_slept + BOUNDED_INTEGER_CONDITIONAL(ability.wakes_up_early(), 1_bi, 0_bi);
+	return turns_slept + BOUNDED_CONDITIONAL(ability.wakes_up_early(), 1_bi, 0_bi);
 }
 
 auto can_awaken(DefiniteSleepCounter const turns_slept, Ability const & ability) {
@@ -205,7 +205,7 @@ auto Status::awaken_probability(Ability const & ability, bool const awaken) cons
 	}
 	static constexpr auto max_sleep_turns = std::numeric_limits<SleepCounter::value_type>::max();
 	Rational const result(
-		BOUNDED_INTEGER_CONDITIONAL(can_awaken(*m_turns_already_slept, ability), 1_bi, 0_bi),
+		BOUNDED_CONDITIONAL(can_awaken(*m_turns_already_slept, ability), 1_bi, 0_bi),
 		max_sleep_turns + 1_bi - awaken_numerator(*m_turns_already_slept, ability)
 	);
 	return awaken ? result : complement(result);

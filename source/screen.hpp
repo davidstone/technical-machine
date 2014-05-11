@@ -59,7 +59,7 @@ private:
 		set(bounded::make<normal_duration>());
 	}
 	auto activate(std::false_type, bool const is_extended) -> void {
-		set(BOUNDED_INTEGER_CONDITIONAL(is_extended,
+		set(BOUNDED_CONDITIONAL(is_extended,
 			bounded::make<max_duration>(),
 			bounded::make<normal_duration>()
 		));

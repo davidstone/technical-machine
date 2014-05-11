@@ -81,36 +81,32 @@ public:
 
 }	// namespace detail
 
-#define CONDITIONAL(b, t, f) BOUNDED_INTEGER_CONDITIONAL(b, t, f)
-
 template<StatNames stat, enable_if_t<stat == StatNames::ATK or stat == StatNames::SPA> = clang_dummy>
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::Base<stat>::value;
-	return CONDITIONAL((stage[stat] >= 0_bi),
+	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
 		make_rational(base + bounded::abs(stage[stat]), base),
-		make_rational(base, CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base))
+		make_rational(base, BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base))
 	);
 }
 
 template<StatNames stat, enable_if_t<stat == StatNames::DEF or stat == StatNames::SPD> = clang_dummy>
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::Base<stat>::value;
-	return BOUNDED_INTEGER_CONDITIONAL((stage[stat] <= 0_bi),
+	return BOUNDED_CONDITIONAL((stage[stat] <= 0_bi),
 		make_rational(base, base + bounded::abs(stage[stat])),
-		make_rational(CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base), base)
+		make_rational(BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base), base)
 	);
 }
 
 template<StatNames stat, enable_if_t<stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA> = clang_dummy>
 auto modifier(Stage const & stage) {
 	constexpr auto base = detail::Base<stat>::value;
-	return CONDITIONAL((stage[stat] >= 0_bi),
+	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
 		make_rational(base + bounded::abs(stage[stat]), base),
 		make_rational(base, base + bounded::abs(stage[stat]))
 	);
 }
-
-#undef CONDITIONAL
 
 
 auto boost(Stage & stage, StatNames stat, Stage::boost_type number_of_stages) -> void;

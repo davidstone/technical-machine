@@ -40,7 +40,7 @@ constexpr auto max_hash(bounded::integer<minimum, maximum, policy> const &) noex
 
 template<intmax_t minimum, intmax_t maximum, typename policy>
 constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>> const & value) noexcept {
-	return BOUNDED_INTEGER_CONDITIONAL(value, hash(*value) + 1_bi, 0_bi);
+	return BOUNDED_CONDITIONAL(value, hash(*value) + 1_bi, 0_bi);
 }
 
 template<intmax_t minimum, intmax_t maximum, typename policy>

@@ -346,32 +346,28 @@ bool is_boosted_by_reckless(Moves const move) {
 
 }	// namespace
 
-#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
-
 auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	switch (get_ability(attacker).name()) {
 		case Ability::Technician:
-			return make_rational(CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
+			return make_rational(BOUNDED_CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
-			return make_rational(CONDITIONAL(pinch_ability_activates(attacker, Type::Fire), 3_bi, 2_bi), 2_bi);
+			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Fire), 3_bi, 2_bi), 2_bi);
 		case Ability::Overgrow:
-			return make_rational(CONDITIONAL(pinch_ability_activates(attacker, Type::Grass), 3_bi, 2_bi), 2_bi);
+			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Grass), 3_bi, 2_bi), 2_bi);
 		case Ability::Swarm:
-			return make_rational(CONDITIONAL(pinch_ability_activates(attacker, Type::Bug), 3_bi, 2_bi), 2_bi);
+			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Bug), 3_bi, 2_bi), 2_bi);
 		case Ability::Torrent:
-			return make_rational(CONDITIONAL(pinch_ability_activates(attacker, Type::Water), 3_bi, 2_bi), 2_bi);
+			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Water), 3_bi, 2_bi), 2_bi);
 		case Ability::Iron_Fist:
-			return make_rational(CONDITIONAL(is_boosted_by_iron_fist(attacker.move()), 6_bi, 5_bi), 5_bi);
+			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(attacker.move()), 6_bi, 5_bi), 5_bi);
 		case Ability::Reckless:
-			return make_rational(CONDITIONAL(is_boosted_by_reckless(attacker.move()), 6_bi, 5_bi), 5_bi);
+			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(attacker.move()), 6_bi, 5_bi), 5_bi);
 		case Ability::Rivalry:
 			return make_rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
 		default:
 			return make_rational(1_bi, 1_bi);
 	}
 }
-
-#undef CONDITIONAL
 
 namespace {
 bool pinch_ability_activates(Pokemon const & attacker, Type const type) {

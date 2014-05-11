@@ -257,7 +257,7 @@ void Battle::correct_hp_and_report_errors(Team & team) {
 			continue;
 		}
 		auto const reported_hp = new_hp * get_hp(pokemon).max() / max_visible_hp_change(team.is_me(), pokemon);
-		auto const min_value = BOUNDED_INTEGER_CONDITIONAL(tm_estimate == 0_bi, 0_bi, tm_estimate - 1_bi);
+		auto const min_value = BOUNDED_CONDITIONAL(tm_estimate == 0_bi, 0_bi, tm_estimate - 1_bi);
 		auto const max_value = tm_estimate + 1_bi;
 		assert(max_value > tm_estimate);
 		if (!(min_value <= new_hp and new_hp <= max_value)) {

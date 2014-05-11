@@ -45,7 +45,7 @@ auto SharedMovesIterator::operator*() const -> reference {
 // itself
 
 SharedMoves::SharedMoves(TeamSize const team_size):
-	m_number_of_switches(BOUNDED_INTEGER_CONDITIONAL(team_size > 1_bi, team_size, 0_bi)) {
+	m_number_of_switches(BOUNDED_CONDITIONAL(team_size > 1_bi, team_size, 0_bi)) {
 }
 
 auto SharedMoves::begin() const -> const_iterator {

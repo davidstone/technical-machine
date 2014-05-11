@@ -48,11 +48,11 @@ auto Variable::set_phaze_index(Team const & team, Species const species) -> void
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
 	}
-	m_value = BOUNDED_INTEGER_CONDITIONAL(new_index < pokemon_index, new_index, new_index - 1_bi);
+	m_value = BOUNDED_CONDITIONAL(new_index < pokemon_index, new_index, new_index - 1_bi);
 }
 
 auto Variable::set_flinch(bool const set) -> void {
-	m_value = BOUNDED_INTEGER_CONDITIONAL(set, 1_bi, 0_bi);
+	m_value = BOUNDED_CONDITIONAL(set, 1_bi, 0_bi);
 }
 
 auto Variable::value() const -> value_type {
@@ -752,7 +752,7 @@ auto phaze_probability(TeamSize const foe_size) -> Probabilities {
 	Probabilities probabilities;
 	static constexpr auto large_cutoff = 2_bi;
 	using LargeFoeSize = bounded::integer<large_cutoff.value(), std::numeric_limits<TeamSize>::max().value()>;
-	auto const possible_replacements = BOUNDED_INTEGER_CONDITIONAL(foe_size > large_cutoff, LargeFoeSize(foe_size - 1_bi, bounded::non_check), 1_bi);
+	auto const possible_replacements = BOUNDED_CONDITIONAL(foe_size > large_cutoff, LargeFoeSize(foe_size - 1_bi, bounded::non_check), 1_bi);
 	for (auto const n : bounded::integer_range(possible_replacements)) {
 		probabilities.emplace_back(n, Probability(1_bi, possible_replacements));
 	}

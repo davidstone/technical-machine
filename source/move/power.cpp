@@ -149,21 +149,19 @@ auto is_boosted_by_griseous_orb(Species species) -> bool;
 auto is_boosted_by_lustrous_orb(Species species) -> bool;
 
 auto defender_ability_modifier(Pokemon const & attacker, Ability const ability) -> bounded_rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
-	#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
 	Moves const move = attacker.move();
 	switch (ability.name()) {
 		case Ability::Dry_Skin:
-			return make_rational(CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
+			return make_rational(BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
 		case Ability::Heatproof:
-			return make_rational(1_bi, CONDITIONAL(get_type(move, attacker) == Type::Fire, 2_bi, 1_bi));
+			return make_rational(1_bi, BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 2_bi, 1_bi));
 		case Ability::Thick_Fat: {
 			auto const type = get_type(move, attacker);
-			return make_rational(1_bi, CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
+			return make_rational(1_bi, BOUNDED_CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
 		}
 		default:
 			return make_rational(1_bi, 1_bi);
 	}
-	#undef CONDITIONAL
 }
 
 }	// namespace
@@ -174,10 +172,10 @@ auto move_power(Team const & attacker_team, Team const & defender_team, Weather 
 	auto const base_power = variable_adjusted_base_power(attacker_team, defender_team, weather, variable);
 	return static_cast<bounded::equivalent_type<MovePower, bounded::throw_policy>>(bounded::max(1_bi,
 		base_power *
-		BOUNDED_INTEGER_CONDITIONAL(doubling(attacker, defender, weather), 2_bi, 1_bi) *
+		BOUNDED_CONDITIONAL(doubling(attacker, defender, weather), 2_bi, 1_bi) *
 		item_modifier(attacker) *
-		BOUNDED_INTEGER_CONDITIONAL(attacker.charge_boosted(), 2_bi, 1_bi) /
-		BOUNDED_INTEGER_CONDITIONAL(defender.sport_is_active(attacker.move()), 2_bi, 1_bi) *
+		BOUNDED_CONDITIONAL(attacker.charge_boosted(), 2_bi, 1_bi) /
+		BOUNDED_CONDITIONAL(defender.sport_is_active(attacker.move()), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(attacker, defender, base_power) *
 		defender_ability_modifier(attacker, get_ability(defender))
 	));
@@ -233,69 +231,69 @@ auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 1
 	auto const type = get_type(attacker.move(), attacker);
 	switch (get_item(attacker).name) {
 		case Item::MUSCLE_BAND:
-			return BOUNDED_INTEGER_CONDITIONAL(is_physical(attacker.move()), 11_bi, base);
+			return BOUNDED_CONDITIONAL(is_physical(attacker.move()), 11_bi, base);
 		case Item::WISE_GLASSES:
-			return BOUNDED_INTEGER_CONDITIONAL(is_special(attacker.move()), 11_bi, base);
+			return BOUNDED_CONDITIONAL(is_special(attacker.move()), 11_bi, base);
 		case Item::INSECT_PLATE:
 		case Item::SILVERPOWDER:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Bug, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Bug, 12_bi, base);
 		case Item::DREAD_PLATE:	
 		case Item::BLACKGLASSES:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Dark, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Dark, 12_bi, base);
 		case Item::DRACO_PLATE:
 		case Item::DRAGON_FANG:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Dragon, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Dragon, 12_bi, base);
 		case Item::ZAP_PLATE:
 		case Item::MAGNET:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Electric, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Electric, 12_bi, base);
 		case Item::FIST_PLATE:
 		case Item::BLACK_BELT:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Fighting, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Fighting, 12_bi, base);
 		case Item::FLAME_PLATE:
 		case Item::CHARCOAL:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Fire, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Fire, 12_bi, base);
 		case Item::SKY_PLATE:
 		case Item::SHARP_BEAK:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Flying, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Flying, 12_bi, base);
 		case Item::SPOOKY_PLATE:
 		case Item::SPELL_TAG:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Ghost, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Ghost, 12_bi, base);
 		case Item::MEADOW_PLATE:
 		case Item::MIRACLE_SEED:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Grass, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Grass, 12_bi, base);
 		case Item::EARTH_PLATE:
 		case Item::SOFT_SAND:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Ground, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Ground, 12_bi, base);
 		case Item::ICICLE_PLATE:
 		case Item::NEVERMELTICE:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Ice, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Ice, 12_bi, base);
 		case Item::SILK_SCARF:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Normal, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Normal, 12_bi, base);
 		case Item::TOXIC_PLATE:
 		case Item::poison_BARB:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Poison, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Poison, 12_bi, base);
 		case Item::MIND_PLATE:
 		case Item::TWISTEDSPOON:
 		case Item::ODD_INCENSE:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Psychic, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Psychic, 12_bi, base);
 		case Item::STONE_PLATE:
 		case Item::HARD_STONE:
 		case Item::ROCK_INCENSE:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Rock, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Rock, 12_bi, base);
 		case Item::IRON_PLATE:
 		case Item::METAL_COAT:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Steel, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Steel, 12_bi, base);
 		case Item::SPLASH_PLATE:
 		case Item::MYSTIC_WATER:
 		case Item::SEA_INCENSE:
 		case Item::WAVE_INCENSE:
-			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Water, 12_bi, base);
+			return BOUNDED_CONDITIONAL(type == Type::Water, 12_bi, base);
 		case Item::Adamant_ORB:
-			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
 		case Item::GRISEOUS_ORB:
-			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);
 		case Item::LUSTROUS_ORB:
-			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_lustrous_orb(attacker) and (type == Type::Dragon or type == Type::Water), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_lustrous_orb(attacker) and (type == Type::Dragon or type == Type::Water), 12_bi, base);
 		default:
 			return base;
 	}

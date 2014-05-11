@@ -42,8 +42,6 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-#define CONDITIONAL(a, b, c) BOUNDED_INTEGER_CONDITIONAL(a, b, c)
-
 bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
 
 damage_type regular_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
@@ -119,7 +117,7 @@ auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)(
 }
 
 auto weakening_from_status(Pokemon const & attacker) {
-	return CONDITIONAL(
+	return BOUNDED_CONDITIONAL(
 		weakens_physical_attacks(get_status(attacker)) and get_ability(attacker).blocks_burn_damage_penalty(),
 		2_bi,
 		1_bi
@@ -130,7 +128,7 @@ auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon 
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
-	return CONDITIONAL(is_physical(attacker.move()),
+	return BOUNDED_CONDITIONAL(is_physical(attacker.move()),
 		make_rational(
 			calculate_attack(attacker, weather),
 			50_bi * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
@@ -143,18 +141,18 @@ auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon 
 }
 
 auto screen_divisor(ActivePokemon const & attacker, Team const & defender) {
-	return CONDITIONAL(screen_is_active (attacker, defender), 2_bi, 1_bi);
+	return BOUNDED_CONDITIONAL(screen_is_active (attacker, defender), 2_bi, 1_bi);
 }
 
 auto critical_hit_multiplier(ActivePokemon const & attacker) {
-	return CONDITIONAL(
+	return BOUNDED_CONDITIONAL(
 		!attacker.critical_hit(), 1_bi,
-		CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
+		BOUNDED_CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
 	);
 }
 
 auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effectiveness) {
-	return CONDITIONAL(
+	return BOUNDED_CONDITIONAL(
 		ability.strengthens_nve_attacks() and effectiveness.is_not_very_effective(),
 		2_bi,
 		1_bi
@@ -162,7 +160,7 @@ auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effecti
 }
 
 auto resistance_berry_divisor(Item const item, Type const type, Effectiveness const & effectiveness) {
-	return CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
+	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
 damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
@@ -312,5 +310,5 @@ bool resistance_berry_activates(Item const item, Type const type, Effectiveness 
 	return false;
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

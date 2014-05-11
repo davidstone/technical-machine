@@ -30,7 +30,7 @@ auto get_base(Species species) -> base_type;
 
 using hp_type = bounded::dynamic_max_integer<0, HP::max_value, bounded::clamp_policy>;
 auto initial_hp(base_type const base, EV const ev, IV const iv, Level const level) -> hp_type {
-	auto const value = BOUNDED_INTEGER_CONDITIONAL((base > 1_bi),
+	auto const value = BOUNDED_CONDITIONAL((base > 1_bi),
 		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
 		1_bi
 	);

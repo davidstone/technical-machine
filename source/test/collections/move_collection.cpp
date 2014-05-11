@@ -40,7 +40,7 @@ void move_collection_tests() {
 	std::cout << "\tRunning MoveCollection tests.\n";
 	constexpr TeamSize team_size = 4_bi;
 	for (auto const & test_size : bounded::integer_range(1_bi, team_size + 1_bi)) {
-		auto const shared_moves_size = BOUNDED_INTEGER_CONDITIONAL(test_size > 1_bi, test_size + 1_bi, 1_bi);
+		auto const shared_moves_size = BOUNDED_CONDITIONAL(test_size > 1_bi, test_size + 1_bi, 1_bi);
 		MoveCollection collection(test_size);
 		if (collection.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(test_size));

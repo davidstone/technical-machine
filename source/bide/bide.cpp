@@ -36,7 +36,7 @@ auto Bide::add_damage(damage_type const damage) -> void {
 }
 
 auto Bide::decrement() -> damage_type {
-	return BOUNDED_INTEGER_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
+	return BOUNDED_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 }
 
 auto operator== (Bide const lhs, Bide const rhs) -> bool {

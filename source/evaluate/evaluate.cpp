@@ -40,7 +40,6 @@
 
 namespace technicalmachine {
 namespace {
-#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
 
 auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
@@ -79,11 +78,11 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> ScoreSt
 auto score_move(Evaluate const & evaluate, Move const & move, Screens const & other) {
 	return
 		(
-			CONDITIONAL(is_physical(move), evaluate.reflect() * other.reflect().turns_remaining(),
-			CONDITIONAL(is_special(move), evaluate.light_screen() * other.light_screen().turns_remaining(),
+			BOUNDED_CONDITIONAL(is_physical(move), evaluate.reflect() * other.reflect().turns_remaining(),
+			BOUNDED_CONDITIONAL(is_special(move), evaluate.light_screen() * other.light_screen().turns_remaining(),
 			0_bi))
 		) +
-		CONDITIONAL(move.pp().is_empty(), evaluate.no_pp(), 0_bi)
+		BOUNDED_CONDITIONAL(move.pp().is_empty(), evaluate.no_pp(), 0_bi)
 	;
 }
 using ScoreMove = decltype(score_move(std::declval<Evaluate>(), std::declval<Move>(), std::declval<Screens>()));
@@ -102,14 +101,14 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokem
 	auto const & moves = pokemon.all_moves().regular();
 	auto const has_baton_pass = std::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return
-		CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
-		CONDITIONAL(pokemon.imprisoned(), evaluate.imprison(), 0_bi) +
-		CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
-		CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
-		CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
-		CONDITIONAL(pokemon.nightmare(), evaluate.nightmare(), 0_bi) +
-		CONDITIONAL(pokemon.tormented(), evaluate.torment(), 0_bi) +
-		baton_passable_score(evaluate, pokemon) * CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
+		BOUNDED_CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.imprisoned(), evaluate.imprison(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.nightmare(), evaluate.nightmare(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.tormented(), evaluate.torment(), 0_bi) +
+		baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
 	;
 }
 using ScoreActivePokemon = decltype(score_active_pokemon(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
@@ -119,9 +118,9 @@ auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHaza
 	return
 		evaluate.members() +
 		hp_ratio(pokemon) * evaluate.hp() +
-		CONDITIONAL(!pokemon.has_been_seen(), evaluate.hidden(), 0_bi) +
-		CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(Type::Rock, pokemon) * evaluate.stealth_rock(), 0_bi) +
-		CONDITIONAL(grounded(pokemon, weather), entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
+		BOUNDED_CONDITIONAL(!pokemon.has_been_seen(), evaluate.hidden(), 0_bi) +
+		BOUNDED_CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(Type::Rock, pokemon) * evaluate.stealth_rock(), 0_bi) +
+		BOUNDED_CONDITIONAL(grounded(pokemon, weather), entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
 		score_status(evaluate, pokemon) +
 		score_moves(evaluate, pokemon, other.screens, weather)
 	;
@@ -175,7 +174,7 @@ auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const & wea
 
 auto Evaluate::win(Team const & team) -> type {
 	if (team.all_pokemon().size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
-		return CONDITIONAL(team.is_me(), -victory, victory);
+		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
 	}
 	return 0_bi;
 }
@@ -186,7 +185,7 @@ auto Evaluate::sleep_clause (Team const & team) -> type {
 	};
 	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
 	if (sleeper_count > 1_bi) {
-		return CONDITIONAL(team.is_me(), victory, -victory);
+		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
 	}
 	return 0_bi;
 }

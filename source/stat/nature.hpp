@@ -47,9 +47,9 @@ auto lowers_stat(Nature nature) -> bool;
 
 template<StatNames stat>
 auto boost(Nature const nature) {
-	auto const numerator = BOUNDED_INTEGER_CONDITIONAL(
+	auto const numerator = BOUNDED_CONDITIONAL(
 		boosts_stat<stat>(nature), 11_bi,
-		BOUNDED_INTEGER_CONDITIONAL(lowers_stat<stat>(nature), 9_bi, 10_bi)
+		BOUNDED_CONDITIONAL(lowers_stat<stat>(nature), 9_bi, 10_bi)
 	);
 	static constexpr auto denominator = 10_bi;
 	return make_rational(numerator, denominator);

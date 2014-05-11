@@ -54,7 +54,7 @@ auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Wea
 		return ChanceToHit(max, max);
 	}
 	constexpr auto gravity_denominator = 3_bi;
-	auto const gravity_numerator = BOUNDED_INTEGER_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
+	auto const gravity_numerator = BOUNDED_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
 	auto const gravity_multiplier = make_rational(gravity_numerator, gravity_denominator);
 	auto const calculated_accuracy = *base_accuracy *
 		modifier<StatNames::ACC>(user.stage()) *

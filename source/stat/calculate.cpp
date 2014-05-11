@@ -81,8 +81,6 @@ auto is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
-
 constexpr auto ability_denominator = 2_bi;
 
 template<StatNames stat>
@@ -93,16 +91,16 @@ struct AbilityNumerator<StatNames::ATK> {
 	auto operator()(ActivePokemon const & attacker, Weather const & weather) -> bounded::integer<1, 4> {
 		switch (get_ability(attacker).name()) {
 			case Ability::Flower_Gift:
-				return CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
 			case Ability::Guts:
-				return CONDITIONAL(!is_clear(get_status(attacker)), 3_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(!is_clear(get_status(attacker)), 3_bi, ability_denominator);
 			case Ability::Hustle:
 				return 3_bi;
 			case Ability::Huge_Power:
 			case Ability::Pure_Power:
 				return ability_denominator * 2_bi;
 			case Ability::Slow_Start:
-				return CONDITIONAL(attacker.slow_start_is_active(), 1_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(attacker.slow_start_is_active(), 1_bi, ability_denominator);
 			default:
 				return ability_denominator;
 		}
@@ -111,19 +109,19 @@ struct AbilityNumerator<StatNames::ATK> {
 template<>
 struct AbilityNumerator<StatNames::SPA> {
 	auto operator()(ActivePokemon const & pokemon, Weather const & weather) {
-		return CONDITIONAL(get_ability(pokemon).boosts_special_attack(weather), 3_bi, ability_denominator);
+		return BOUNDED_CONDITIONAL(get_ability(pokemon).boosts_special_attack(weather), 3_bi, ability_denominator);
 	}
 };
 template<>
 struct AbilityNumerator<StatNames::DEF> {
 	auto operator()(ActivePokemon const & defender, Weather const &) {
-		return CONDITIONAL(get_ability(defender).boosts_defense(get_status(defender)), 3_bi, ability_denominator);
+		return BOUNDED_CONDITIONAL(get_ability(defender).boosts_defense(get_status(defender)), 3_bi, ability_denominator);
 	}
 };
 template<>
 struct AbilityNumerator<StatNames::SPD> {
 	auto operator()(ActivePokemon const & pokemon, Weather const & weather) {
-		return CONDITIONAL(get_ability(pokemon).boosts_special_defense(weather), 3_bi, ability_denominator);
+		return BOUNDED_CONDITIONAL(get_ability(pokemon).boosts_special_defense(weather), 3_bi, ability_denominator);
 	}
 };
 template<>
@@ -131,15 +129,15 @@ struct AbilityNumerator<StatNames::SPE> {
 	auto operator()(ActivePokemon const & pokemon, Weather const & weather) -> bounded::integer<1, 4> {
 		switch (get_ability(pokemon).name()) {
 			case Ability::Chlorophyll:
-				return CONDITIONAL(weather.sun(), ability_denominator * 2_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(weather.sun(), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Swift_Swim:
-				return CONDITIONAL(weather.rain(), ability_denominator * 2_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(weather.rain(), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Unburden:
-				return CONDITIONAL(get_item(pokemon).was_lost(), ability_denominator * 2_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(get_item(pokemon).was_lost(), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Quick_Feet:
-				return CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, ability_denominator);
 			case Ability::Slow_Start:
-				return CONDITIONAL(pokemon.slow_start_is_active(), 1_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(pokemon.slow_start_is_active(), 1_bi, ability_denominator);
 			default:
 				return ability_denominator;
 		}
@@ -164,9 +162,9 @@ struct ItemNumerator<StatNames::ATK> {
 			case Item::CHOICE_BAND:
 				return 3_bi;
 			case Item::LIGHT_BALL:
-				return CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
 			case Item::THICK_CLUB:
-				return CONDITIONAL(is_boosted_by_thick_club(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(attacker), 2_bi * item_denominator, item_denominator);
 			default:
 				return item_denominator;
 		}
@@ -177,13 +175,13 @@ struct ItemNumerator<StatNames::SPA> {
 	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
 		switch (get_item(attacker).name) {
 			case Item::SOUL_DEW:
-				return CONDITIONAL(is_boosted_by_soul_dew(attacker), 3_bi, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(attacker), 3_bi, item_denominator);
 			case Item::CHOICE_SPECS:
 				return 3_bi;
 			case Item::DEEPSEATOOTH:
-				return CONDITIONAL(is_boosted_by_deepseatooth(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(attacker), 2_bi * item_denominator, item_denominator);
 			case Item::LIGHT_BALL:
-				return CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
 			default:
 				return item_denominator;
 		}
@@ -192,7 +190,7 @@ struct ItemNumerator<StatNames::SPA> {
 template<>
 struct ItemNumerator<StatNames::DEF> {
 	auto operator()(Pokemon const & defender) -> bounded::integer<2, 3> {
-		return CONDITIONAL(
+		return BOUNDED_CONDITIONAL(
 			get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender),
 			3_bi,
 			item_denominator
@@ -204,11 +202,11 @@ struct ItemNumerator<StatNames::SPD> {
 	auto operator()(Pokemon const & defender) -> bounded::integer<2, 4> {
 		switch (get_item(defender).name) {
 			case Item::DEEPSEASCALE:
-				return CONDITIONAL(is_boosted_by_deepseascale(defender), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(defender), 2_bi * item_denominator, item_denominator);
 			case Item::METAL_POWDER:
-				return CONDITIONAL(is_boosted_by_metal_powder(defender), 3_bi, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(defender), 3_bi, item_denominator);
 			case Item::SOUL_DEW:
-				return CONDITIONAL(is_boosted_by_soul_dew(defender), 3_bi, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(defender), 3_bi, item_denominator);
 			default:
 				return item_denominator;
 		}
@@ -219,7 +217,7 @@ struct ItemNumerator<StatNames::SPE> {
 	auto operator()(Pokemon const & pokemon) -> bounded::integer<1, 4> {
 		switch (get_item(pokemon).name) {
 			case Item::QUICK_POWDER:
-				return CONDITIONAL(is_boosted_by_quick_powder(pokemon), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(pokemon), 2_bi * item_denominator, item_denominator);
 			case Item::CHOICE_SCARF:
 				return 3_bi;
 			case Item::MACHO_BRACE:
@@ -347,13 +345,13 @@ auto calculate_defense(ActivePokemon const & defender, Weather const & weather, 
 	// static_cast here because it looks as though the strongest defender would
 	// hold Metal Powder, but because of the restriction on the attacker being
 	// Ditto, it is better to use a Shuckle with no boosting item available.
-	return static_cast<defense_type>(bounded::max(CONDITIONAL(is_self_KO, defense / 2_bi, defense), 1_bi));
+	return static_cast<defense_type>(bounded::max(BOUNDED_CONDITIONAL(is_self_KO, defense / 2_bi, defense), 1_bi));
 }
 
 namespace {
 
 auto special_defense_sandstorm_boost(ActivePokemon const & defender, Weather const & weather) {
-	return make_rational(CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(), 3_bi, 2_bi), 2_bi);
+	return make_rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(), 3_bi, 2_bi), 2_bi);
 }
 
 }	// namespace
@@ -378,11 +376,11 @@ auto calculate_special_defense(ActivePokemon const & defender, Weather const & w
 namespace {
 
 auto paralysis_speed_divisor(Pokemon const & pokemon) {
-	return CONDITIONAL(lowers_speed(get_status(pokemon), get_ability(pokemon)), 4_bi, 1_bi);
+	return BOUNDED_CONDITIONAL(lowers_speed(get_status(pokemon), get_ability(pokemon)), 4_bi, 1_bi);
 }
 
 auto tailwind_speed_multiplier(Team const & team) {
-	return CONDITIONAL(team.screens.tailwind(), 2_bi, 1_bi);
+	return BOUNDED_CONDITIONAL(team.screens.tailwind(), 2_bi, 1_bi);
 }
 
 }	// namespace
