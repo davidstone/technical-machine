@@ -30,7 +30,7 @@ public:
 	constexpr explicit IV(value_type iv) noexcept:
 		m_value(iv) {
 	}
-	constexpr bounded::integer<0, max> value() const noexcept {
+	constexpr auto value() const noexcept -> bounded::integer<0, max> {
 		return m_value;
 	}
 private:
