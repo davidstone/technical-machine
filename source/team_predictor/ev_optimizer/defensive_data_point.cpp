@@ -52,10 +52,6 @@ std::string DataPoint::to_string() const {
 	return ::technicalmachine::to_string(nature.name) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defense.value()) + " Def / " + bounded::to_string(special_defense.value()) + " SpD";
 }
 
-bounded::integer<0, EV::max * 3> DataPoint::sum() const {
-	return hp.value() + defense.value() + special_defense.value();
-}
-
 bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {
 	Level const level = get_level(pokemon);
 	auto const left_physical = lhs.product<StatNames::DEF>(pokemon, level);

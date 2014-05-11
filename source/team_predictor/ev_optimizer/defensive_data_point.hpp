@@ -38,13 +38,16 @@ class SingleClassificationEVs;
 class OffensiveEVs;
 class DefensiveEVs;
 class SpeedEVs;
+using namespace bounded::literal;
 
 class DataPoint {
 public:
 	DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	DataPoint(DataPoint const & original, Nature const & new_nature);
 	std::string to_string() const;
-	bounded::integer<0, EV::max * 3> sum() const;
+	auto sum() const {
+		return hp.value() + defense.value() + special_defense.value();
+	}
 	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
 	static Nature::Natures get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 private:
