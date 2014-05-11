@@ -800,8 +800,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
-	current_hash *= stage().max_hash();
-	current_hash += stage().hash();
+	current_hash *= technicalmachine::max_hash(stage());
+	current_hash += technicalmachine::hash(stage());
 	current_hash *= stockpile.max_hash();
 	current_hash += stockpile.hash();
 	current_hash *= m_taunt.max_hash();
@@ -878,7 +878,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
-	current_hash *= stage().max_hash();
+	current_hash *= technicalmachine::max_hash(stage());
 	current_hash *= stockpile.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();

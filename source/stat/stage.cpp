@@ -22,9 +22,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-namespace {
-constexpr auto max_stage = 6;
-}
 
 Stage::Stage() {
 	std::fill(m_stages.begin(), m_stages.end(), 0_bi);
@@ -100,24 +97,6 @@ auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
 	swap_specified(lhs, rhs, { StatNames::ATK, StatNames::SPA });
 }
 
-namespace {
-constexpr unsigned stage_radix = max_stage + max_stage + 1;
-}	// namespace
-
-// Construct a number in base stage_radix, with each stage representing a digit.
-auto Stage::hash() const -> hash_type {
-	hash_type h = 0;
-	for (auto stage : m_stages) {
-		h *= stage_radix;
-		// The + max_stage will always make the result non-negative
-		h += static_cast<hash_type>(stage + max_stage);
-	}
-	return h;
-}
-
-auto Stage::max_hash() -> hash_type {
-	return stage_radix * static_cast<hash_type>(StatNames::END) - 1;
-}
 
 auto operator==(Stage const & lhs, Stage const & rhs) -> bool {
 	return std::equal(lhs.begin(), lhs.end(), rhs.begin());

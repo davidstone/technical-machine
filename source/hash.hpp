@@ -81,11 +81,13 @@ auto max_hash_range(Iterator first, Iterator last) {
 // Cannot use 0_bi because it causes an internal compiler error in gcc 4.9.0
 template<typename Size, typename Iterator, enable_if_t<(std::numeric_limits<Size>::min() > 0)> = clang_dummy>
 auto max_hash_range(Iterator first, Iterator last) {
-	using hash_type = decltype(max_hash(std::declval<decltype(*first)>()) * std::declval<Size>());
-	hash_type const initial = max_hash(*first);
-	return std::accumulate(bounded::next(first), std::move(last), initial, [](auto const & current, auto const & element) {
+	using individual_type = decltype(max_hash(*first));
+	using result_type = decltype(std::declval<individual_type>() * std::declval<Size>());
+	std::common_type_t<result_type, individual_type> const initial = max_hash(*first);
+	auto const result = std::accumulate(bounded::next(first), std::move(last), initial, [](auto const & current, auto const & element) {
 		return current * max_hash(element);
 	});
+	return static_cast<result_type>(result);
 }
 
 }	// namespace technicalmachine

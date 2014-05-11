@@ -20,6 +20,7 @@
 #define STAT__STAGE_HPP_
 
 #include "stat_names.hpp"
+#include "../hash.hpp"
 #include "../rational.hpp"
 
 #include <bounded_integer/array.hpp>
@@ -49,12 +50,16 @@ public:
 	auto end() const -> container_type::const_iterator;
 	auto end() -> container_type::iterator;
 
-	using hash_type = uint64_t;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
 private:
 	container_type m_stages;
 };
+
+inline auto hash(Stage const & stage) noexcept {
+	return hash_range<Stage::container_type::size_type>(stage.begin(), stage.end());
+}
+inline auto max_hash(Stage const & stage) noexcept {
+	return max_hash_range<Stage::container_type::size_type>(stage.begin(), stage.end());
+}
 
 namespace detail {
 
