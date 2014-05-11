@@ -29,12 +29,12 @@ auto EV::value() const -> bounded::integer<0, max> {
 	return m_value;
 }
 
-auto EV::is_maxed() const -> bool {
-	return m_value == bounded::make<max>();
-}
-
 auto EV::add(value_type const evs) -> void {
 	m_value += evs;
+}
+
+auto is_maxed(EV const ev) -> bool {
+	return ev.value() == bounded::make<max>();
 }
 
 }	// namespace technicalmachine

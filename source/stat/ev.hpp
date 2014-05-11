@@ -32,11 +32,12 @@ public:
 	using total_type = bounded::checked_integer<0, max_total>;
 	explicit EV(value_type evs);
 	auto value() const -> bounded::integer<0, max>;
-	auto is_maxed() const -> bool;
 	auto add(value_type evs) -> void;
 private:
 	bounded::clamped_integer<0, max> m_value;
 };
+
+auto is_maxed(EV ev) -> bool;
 
 }	// namespace technicalmachine
 #endif	// STAT__EV_HPP_
