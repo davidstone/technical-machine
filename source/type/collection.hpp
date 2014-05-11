@@ -67,17 +67,17 @@ public:
 		}
 		return false;
 	}
-	void change_type(Type const type);
+	auto change_type(Type const type) -> void;
 private:
-	friend bool is_type(Pokemon const & pokemon, Type type, bool roosting);
+	friend auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
 	friend class Effectiveness;
 	detail_type_collection::TypeArray types;
 };
 
-bool is_type(Pokemon const & pokemon, Type type, bool roosting = false);
-bool is_type(ActivePokemon const & pokemon, Type type);
-bool grounded(Pokemon const & pokemon, Weather const & weather);
-bool grounded(ActivePokemon const & pokemon, Weather const & weather);
+auto is_type(Pokemon const & pokemon, Type type, bool roosting = false) -> bool;
+auto is_type(ActivePokemon const & pokemon, Type type) -> bool;
+auto grounded(Pokemon const & pokemon, Weather const & weather) -> bool;
+auto grounded(ActivePokemon const & pokemon, Weather const & weather) -> bool;
 
 }	// namespace technicalmachine
 #endif	// TYPE__COLLECTION_HPP_

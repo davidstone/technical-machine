@@ -86,15 +86,15 @@ Effectiveness::Effectiveness(Type const attacking, Type const defending):
 	Effectiveness(attacking, defending, Type::Typeless) {
 }
 
-bool Effectiveness::is_super_effective() const {
+auto Effectiveness::is_super_effective() const -> bool {
 	return check_effectiveness(m_effectiveness, { Product(se), Product(se * se) });
 }
 
-bool Effectiveness::is_not_very_effective() const {
+auto Effectiveness::is_not_very_effective() const -> bool {
 	return check_effectiveness(m_effectiveness, { Product(nve), Product(nve * nve) });
 }
 
-bool Effectiveness::has_no_effect() const {
+auto Effectiveness::has_no_effect() const -> bool {
 	return check_effectiveness(m_effectiveness, { Product(ne) });
 }
 
