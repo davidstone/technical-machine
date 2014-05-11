@@ -1,5 +1,5 @@
 // Nature string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,6 @@
 
 namespace technicalmachine {
 
-std::string to_string(Nature::Natures const name);
+std::string to_string(Nature nature);
 
 }	// namespace technicalmachine

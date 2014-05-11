@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,7 +34,7 @@ public:
 	explicit SpeedEVs(Pokemon const & pokemon);
 private:
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-	using Container = std::map<Nature::Natures, EV>;
+	using Container = std::map<Nature, EV>;
 	Container container;
 };
 

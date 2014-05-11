@@ -1,5 +1,5 @@
 // Convert to / from PO's format
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,8 +49,8 @@ unsigned item_to_id (Item::Items item);
 Item::Items battle_id_to_item (uint16_t id, uint8_t part);
 Moves id_to_move (unsigned id);
 unsigned move_to_id (Moves move);
-Nature::Natures id_to_nature (unsigned id);
-unsigned nature_to_id (Nature::Natures nature);
+Nature id_to_nature(unsigned id);
+unsigned nature_to_id(Nature nature);
 
 } // namespace po
 } // namespace technicalmachine

@@ -1,5 +1,5 @@
 // Class to abstract UI of getting Nature for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,7 @@ namespace technicalmachine {
 class NatureInput {
 public:
 	explicit NatureInput(int button_number);
-	Nature::Natures value() const;
+	Nature value() const;
 private:
 	Fl_Input input;
 };

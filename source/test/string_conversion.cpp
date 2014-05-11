@@ -1,5 +1,5 @@
 // Test string conversions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -63,7 +63,7 @@ void string_conversion_tests () {
 	test_generic<Gender::Genders> ("gender");
 	test_generic<Item::Items> ("item");
 	test_generic<Moves> ("move");
-	test_generic<Nature::Natures> ("nature");
+	test_generic<Nature> ("nature");
 	test_generic<Species> ("species");
 	test_generic<Status::Statuses> ("status");
 	std::cout << "String conversion tests passed.\n\n";

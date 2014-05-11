@@ -95,7 +95,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 namespace {
 
 void add_non_full_evs(std::vector<EV *> & evs, EV & ev) {
-	if (!ev.is_maxed()) {
+	if (!is_maxed(ev)) {
 		evs.emplace_back(&ev);
 	}
 }

@@ -47,7 +47,7 @@ namespace technicalmachine {
 Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
 	move(my_team_size),
 	current_type(species),
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+	#if defined TECHNICalmACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
 	#endif
 	stats(species, level),
@@ -87,7 +87,7 @@ MoveCollection::index_type Pokemon::index_of_first_switch() const {
 }
 
 std::string Pokemon::get_nickname () const {
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+	#if defined TECHNICalmACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
 	#else
 		return to_string(m_species);
@@ -221,7 +221,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	if (!is_clear(get_status(pokemon))) {
 		output += "\tStatus: " + to_string(get_status(pokemon).name()) + '\n';
 	}
-	output += "\tNature: " + to_string(get_nature(pokemon).name) + '\n';
+	output += "\tNature: " + to_string(get_nature(pokemon)) + '\n';
 	output += "\t";
 	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
 		output += " / " + bounded::to_string(stat.ev.value()) + " " + stat_name;

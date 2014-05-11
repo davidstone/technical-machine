@@ -73,7 +73,7 @@ Team max_damage_physical_defender() {
 	auto & pokemon = defender.pokemon();
 	get_stat(pokemon, StatNames::DEF).iv = IV(0_bi);
 	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
-	get_nature(pokemon) = Nature::HASTY;
+	get_nature(pokemon) = Nature::Hasty;
 	for (unsigned n = 0; n != 3; ++n) {
 		boost(pokemon.stage(), StatNames::DEF, -2_bi);
 	}
@@ -143,7 +143,7 @@ void physical_damage_test() {
 	Pokemon & a = attacker.pokemon();
 
 	get_stat(a, StatNames::DEF).ev = EV(bounded::make<EV::max>());
-	get_nature(a).name = Nature::IMPISH;
+	get_nature(a) = Nature::Impish;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
 	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
@@ -168,7 +168,7 @@ void special_damage_test() {
 	a.change_type(Type::Fire);
 
 	get_stat(a, StatNames::SPA).ev = EV(bounded::make<EV::max>());
-	get_nature(a).name = Nature::MODEST;
+	get_nature(a) = Nature::Modest;
 	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 	
 	get_item(a).name = Item::METRONOME;

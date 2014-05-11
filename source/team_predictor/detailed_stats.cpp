@@ -98,7 +98,7 @@ DetailedStats::DetailedStats():
 		SpeciesIndex const species_index(species, bounded::non_check);
 		ability[species_index] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
 		item[species_index] = most_likely_sub_elements<Item::Items>(pokemon.get_child("items"));
-		nature[species_index] = most_likely_sub_elements<Nature::Natures>(pokemon.get_child("natures"));
+		nature[species_index] = most_likely_sub_elements<Nature>(pokemon.get_child("natures"));
 		move[species_index] = top_sub_elements<Moves>(pokemon.get_child("moves"));
 	}
 }
@@ -114,7 +114,7 @@ Item::Items const & DetailedStats::get<Item::Items>(Species const species) const
 }
 
 template<>
-Nature::Natures const & DetailedStats::get<Nature::Natures>(Species const species) const {
+Nature const & DetailedStats::get<Nature>(Species const species) const {
 	return nature.at(species);
 }
 

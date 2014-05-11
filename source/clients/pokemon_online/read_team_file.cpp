@@ -141,7 +141,7 @@ void load_pokemon(ptree const & pt, Team & team) {
 
 	get_item(pokemon).name = id_to_item(pt.get<unsigned>("<xmlattr>.Item"));
 	get_ability(pokemon) = id_to_ability(pt.get<unsigned>("<xmlattr>.Ability"));
-	get_nature(pokemon).name = id_to_nature(pt.get<unsigned>("<xmlattr>.Nature"));
+	get_nature(pokemon) = id_to_nature(pt.get<unsigned>("<xmlattr>.Nature"));
 
 	// Get past the xml attributes
 	auto it = ++pt.get_child("").begin();

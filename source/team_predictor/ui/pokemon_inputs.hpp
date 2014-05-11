@@ -1,5 +1,5 @@
 // Class to abstract UI of getting each Pokemon for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,7 +35,7 @@ public:
 	explicit PokemonInputs(int & button_number);
 	Species species() const;
 	bool is_valid() const;
-	Nature::Natures nature() const;
+	Nature nature() const;
 	EV hp() const;
 	EV atk() const;
 	EV def() const;

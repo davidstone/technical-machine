@@ -32,12 +32,12 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 	Level const level = get_level(pokemon);
 	Nature current_nature = get_nature(pokemon);
 	auto const speed = initial_stat<StatNames::SPE>(stat, level, current_nature);
-	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
-		current_nature.name = nature;
+	for (auto nature = static_cast<Nature>(0); nature != Nature::END; nature = static_cast<Nature>(static_cast<int>(nature) + 1)) {
+		current_nature = nature;
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
 			stat.ev = EV(ev);
 			if (initial_stat<StatNames::SPE>(stat, level, current_nature) >= speed) {
-				container.insert(Container::value_type(nature, EV(ev)));
+				container.emplace(nature, EV(ev));
 				break;
 			}
 			if (ev == bounded::make<EV::max>()) {

@@ -90,7 +90,7 @@ auto evasion_item_modifier(Item const & item) -> EvasionItemModifier {
 	switch (item.name) {
 		case Item::BRIGHTPOWDER:
 			return EvasionItemModifier(9_bi, 10_bi);
-		case Item::LAX_INCENSE:
+		case Item::Lax_INCENSE:
 			return EvasionItemModifier(19_bi, 20_bi);
 		default:
 			return EvasionItemModifier(1_bi, 1_bi);

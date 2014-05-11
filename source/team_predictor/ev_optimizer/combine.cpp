@@ -36,7 +36,7 @@
 namespace technicalmachine {
 
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s, Pokemon & pokemon) {
-	typedef std::map<Nature::Natures, EV::total_type> Sums;
+	typedef std::map<Nature, EV::total_type> Sums;
 	Sums sums;
 	for (auto const & speed : s.container) {
 		auto const offensive = o.container.find(speed.first);
@@ -85,7 +85,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 	get_stat(pokemon, StatNames::SPA).ev = offensive.special_attack;
 	get_stat(pokemon, StatNames::SPD).ev = defensive.special_defense;
 	get_stat(pokemon, StatNames::SPE).ev = speed;
-	get_nature(pokemon).name = it->first;
+	get_nature(pokemon) = it->first;
 }
 
 }	// namespace technicalmachine

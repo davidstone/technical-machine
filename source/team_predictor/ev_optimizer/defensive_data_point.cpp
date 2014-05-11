@@ -49,7 +49,7 @@ DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
 }
 
 std::string DataPoint::to_string() const {
-	return ::technicalmachine::to_string(nature.name) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defense.value()) + " Def / " + bounded::to_string(special_defense.value()) + " SpD";
+	return ::technicalmachine::to_string(nature) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defense.value()) + " Def / " + bounded::to_string(special_defense.value()) + " SpD";
 }
 
 bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {
@@ -78,32 +78,32 @@ public:
 	}
 };
 
-Nature::Natures DataPoint::get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
+Nature DataPoint::get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
 	switch (physical.nature_boost) {
 	case SingleClassificationEVs::Boost:
 		switch (special.nature_boost) {
 		case SingleClassificationEVs::Boost:
 			throw InvalidNatureCombination();
 		default:
-			return Nature::IMPISH;
+			return Nature::Impish;
 		case SingleClassificationEVs::Penalty:
-			return Nature::LAX;
+			return Nature::Lax;
 		}
 	default:
 		switch (special.nature_boost) {
 		case SingleClassificationEVs::Boost:
-			return Nature::CALM;
+			return Nature::Calm;
 		default:
-			return Nature::HARDY;
+			return Nature::Hardy;
 		case SingleClassificationEVs::Penalty:
-			return Nature::NAIVE;
+			return Nature::Naive;
 		}
 	case SingleClassificationEVs::Penalty:
 		switch (special.nature_boost) {
 		case SingleClassificationEVs::Boost:
-			return Nature::GENTLE;
+			return Nature::Gentle;
 		default:
-			return Nature::HASTY;
+			return Nature::Hasty;
 		case SingleClassificationEVs::Penalty:
 			throw InvalidNatureCombination();
 		}

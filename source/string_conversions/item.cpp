@@ -147,7 +147,7 @@ template<>
 Item::Items from_string(std::string const & str) {
 	static std::map <std::string, Item::Items> const converter {
 		{ "No Item", Item::NO_ITEM },
-		{ "Adamant Orb", Item::ADAMANT_ORB },
+		{ "Adamant Orb", Item::Adamant_ORB },
 		{ "Aguav Berry", Item::AGUAV_BERRY },
 		{ "Apicot Berry", Item::APICOT_BERRY },
 		{ "Aspear Berry", Item::ASPEAR_BERRY },
@@ -216,7 +216,7 @@ Item::Items from_string(std::string const & str) {
 		{ "Full Incense", Item::FULL_INCENSE },
 		{ "Lagging Tail", Item::LAGGING_TAIL },
 		{ "Lansat Berry", Item::LANSAT_BERRY },
-		{ "Lax Incense", Item::LAX_INCENSE },
+		{ "Lax Incense", Item::Lax_INCENSE },
 		{ "Leftovers", Item::LEFTOVERS },
 		{ "Leppa Berry", Item::LEPPA_BERRY },
 		{ "Liechi Berry", Item::LIECHI_BERRY },

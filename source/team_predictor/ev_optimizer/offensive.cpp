@@ -53,7 +53,7 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 }	// namespace
 
 OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
-	for (Nature::Natures nature = static_cast<Nature::Natures>(0); nature != Nature::END; nature = static_cast<Nature::Natures>(nature + 1)) {
+	for (auto nature = static_cast<Nature>(0); nature != Nature::END; nature = static_cast<Nature>(static_cast<int>(nature) + 1)) {
 		container.emplace(nature, OffensiveStats{});
 	}
 	optimize(pokemon);
@@ -63,7 +63,7 @@ namespace {
 
 auto ideal_attack_stat(Pokemon const & pokemon, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
-	auto const nature = is_physical ? get_nature(pokemon) : Nature::MODEST;
+	auto const nature = is_physical ? get_nature(pokemon) : Nature::Modest;
 	Stat const stat(pokemon, StatNames::ATK, is_physical ? get_stat(pokemon, StatNames::ATK).ev : EV(0_bi));
 	return initial_stat<StatNames::ATK>(stat, get_level(pokemon), nature);
 }
@@ -71,8 +71,8 @@ auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, b
 	// All we care about on this nature is the boost to Special Attack
 	auto const nature =
 		is_special ? get_nature(pokemon) :
-		is_physical ? Nature::ADAMANT :
-		Nature::HARDY;
+		is_physical ? Nature::Adamant :
+		Nature::Hardy;
 	Stat const stat(pokemon, StatNames::SPA, is_special ? get_stat(pokemon, StatNames::SPA).ev : EV(0_bi));
 	return initial_stat<StatNames::SPA>(stat, get_level(pokemon), nature);
 }
@@ -93,13 +93,13 @@ void remove_individual_unused(Container & container, Condition const & condition
 template<typename Container>
 auto remove_inferior_natures(Container & container, bool const is_physical, bool const is_special) {
 	auto const does_not_lower_attack = [](auto const iter) {
-		return !Nature(iter->first).lowers_stat<StatNames::ATK>();
+		return !lowers_stat<StatNames::ATK>(iter->first);
 	};
 	auto const does_not_lower_special_attack = [](auto const iter) {
-		return !Nature(iter->first).lowers_stat<StatNames::SPA>();
+		return !lowers_stat<StatNames::SPA>(iter->first);
 	};
 	auto const boosts_special_attack = [](auto const iter) {
-		return Nature(iter->first).boosts_stat<StatNames::SPA>();
+		return boosts_stat<StatNames::SPA>(iter->first);
 	};
 	if (!is_physical) {
 		remove_individual_unused(container, does_not_lower_attack);

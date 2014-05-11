@@ -33,7 +33,7 @@
 
 namespace technicalmachine {
 namespace {
-Nature::Natures nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical);
+Nature nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical);
 SingleClassificationEVs::NatureBoost nature_boost_convert(Nature nature);
 
 constexpr StatNames from_physical(bool physical) {
@@ -55,7 +55,7 @@ SingleClassificationEVs::SingleClassificationEVs(EV hp_ev, EV defensive_ev, Natu
 
 std::string SingleClassificationEVs::to_string() const {
 	Nature const nature = nature_boost_convert(nature_boost, physical);
-	return ::technicalmachine::to_string(nature.name) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defensive.value()) + " " + stat_name(physical);
+	return ::technicalmachine::to_string(nature) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defensive.value()) + " " + stat_name(physical);
 }
 
 bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type const max_evs) {
@@ -74,28 +74,28 @@ bool are_compatible(SingleClassificationEVs const & physical, SingleClassificati
 
 namespace {
 
-SingleClassificationEVs::NatureBoost nature_boost_convert(Nature nature) {
-	switch (nature.name) {
-	case Nature::IMPISH:
-	case Nature::CALM:
+SingleClassificationEVs::NatureBoost nature_boost_convert(Nature const nature) {
+	switch (nature) {
+	case Nature::Impish:
+	case Nature::Calm:
 		return SingleClassificationEVs::Boost;
-	case Nature::HASTY:
-	case Nature::NAIVE:
+	case Nature::Hasty:
+	case Nature::Naive:
 		return SingleClassificationEVs::Penalty;
 	default:
-		assert(nature.name == Nature::HARDY);
+		assert(nature == Nature::Hardy);
 		return SingleClassificationEVs::Neutral;
 	}
 }
 
-Nature::Natures nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical) {
+Nature nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical) {
 	switch (nature) {
 	case SingleClassificationEVs::Boost:
-		return physical ? Nature::IMPISH : Nature::CALM;
+		return physical ? Nature::Impish : Nature::Calm;
 	case SingleClassificationEVs::Penalty:
-		return physical ? Nature::HASTY : Nature::NAIVE;
+		return physical ? Nature::Hasty : Nature::Naive;
 	default:
-		return Nature::HARDY;
+		return Nature::Hardy;
 	}
 }
 }	// namespace

@@ -35,9 +35,9 @@ class Team;
 class Weather;
 
 template<StatNames stat_name>
-auto initial_stat(Stat const & stat, Level const & level, Nature const & nature) {
+auto initial_stat(Stat const stat, Level const level, Nature const nature) {
 	auto const pre_nature = (2_bi * stat.base + stat.iv.value() + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
-	return pre_nature * nature.boost<stat_name>();
+	return pre_nature * boost<stat_name>(nature);
 }
 
 using attack_type = bounded::integer<1, 7368>;

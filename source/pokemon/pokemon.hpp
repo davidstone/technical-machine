@@ -40,14 +40,14 @@
 
 namespace technicalmachine {
 class Rational;
-// #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+// #define TECHNICalmACHINE_POKEMON_USE_NICKNAMES
 
 // I use a macro here because I rely on a conversion operator. Friend functions
 // only declared in a class body are not found by lookup rules in that case. The
 // macro solution seemed better than duplicating all of this by hand.
 //
 // qualifier should be `friend` or nothing
-#define TECHNICALMACHINE_FRIEND_DECLARATIONS(qualifier) \
+#define TECHNICalmACHINE_FRIEND_DECLARATIONS(qualifier) \
 qualifier Ability const & get_ability(Pokemon const & pokemon); \
 qualifier Ability & get_ability(Pokemon & pokemon); \
 qualifier Gender const & get_gender(Pokemon const & pokemon); \
@@ -67,7 +67,7 @@ qualifier Status & get_status(Pokemon & pokemon); \
 qualifier TypeCollection const & get_type(Pokemon const & pokemon); \
 qualifier void switch_in(Pokemon & pokemon)
 
-TECHNICALMACHINE_FRIEND_DECLARATIONS(/*empty*/);
+TECHNICalmACHINE_FRIEND_DECLARATIONS(/*empty*/);
 
 
 class Pokemon {
@@ -78,7 +78,7 @@ public:
 	MoveCollection::index_type index_of_first_switch () const;
 	std::string get_nickname () const;
 	
-	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
+	TECHNICalmACHINE_FRIEND_DECLARATIONS(friend);
 	void change_type(Type new_type);
 	auto has_been_seen() const -> bool;
 	typedef uint64_t hash_type;
@@ -90,7 +90,7 @@ public:
 	
 private:
 	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
+	#if defined TECHNICalmACHINE_POKEMON_USE_NICKNAMES
 	std::string nickname;
 	#endif
 	TypeCollection current_type;
@@ -111,7 +111,7 @@ private:
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
-#undef TECHNICALMACHINE_FRIEND_DECLARATIONS
+#undef TECHNICalmACHINE_FRIEND_DECLARATIONS
 
 
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);

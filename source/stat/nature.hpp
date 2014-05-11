@@ -1,4 +1,4 @@
-// Nature data structure
+// Nature functions
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -29,46 +29,36 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Nature {
-public:
-	enum Natures : uint8_t {
-		ADAMANT, BASHFUL, BOLD, BRAVE, CALM,
-		CAREFUL, DOCILE, GENTLE, HARDY, HASTY,
-		IMPISH, JOLLY, LAX, LONELY, MILD, MODEST,
-		NAIVE, NAUGHTY, QUIET, QUIRKY, RASH,
-		RELAXED, SASSY, SERIOUS, TIMID, END
-	};
-	Nature();
-	// intentionally implicit
-	Nature(Natures nature);
-	Nature(StatNames boosted, StatNames dropped);
-	bool is_set () const;
-	void set_if_unknown (Natures nature);
-
-	template<StatNames stat>
-	auto boost() const {
-		auto const numerator = BOUNDED_INTEGER_CONDITIONAL(
-			boosts_stat<stat>(), 11_bi,
-			BOUNDED_INTEGER_CONDITIONAL(lowers_stat<stat>(), 9_bi, 10_bi)
-		);
-		static constexpr auto denominator = 10_bi;
-		return make_rational(numerator, denominator);
-	}
-
-	template<StatNames>
-	bool boosts_stat() const;
-	template<StatNames>
-	bool lowers_stat() const;
-	friend bool operator== (Nature lhs, Nature rhs);
-
-	Natures name;
+enum class Nature : uint8_t {
+	Adamant, Bashful, Bold, Brave, Calm,
+	Careful, Docile, Gentle, Hardy, Hasty,
+	Impish, Jolly, Lax, Lonely, Mild, Modest,
+	Naive, Naughty, Quiet, Quirky, Rash,
+	Relaxed, Sassy, Serious, Timid, END
 };
-bool operator!= (Nature lhs, Nature rhs);
 
-bool boosts_attacking_stat(Nature nature);
-bool boosts_defending_stat(Nature nature);
-bool lowers_attacking_stat(Nature nature);
-bool lowers_defending_stat(Nature nature);
+auto make_nature(StatNames boost, StatNames drop) -> Nature;
+auto is_set(Nature nature) -> bool;
+
+template<StatNames>
+auto boosts_stat(Nature nature) -> bool;
+template<StatNames>
+auto lowers_stat(Nature nature) -> bool;
+
+template<StatNames stat>
+auto boost(Nature const nature) {
+	auto const numerator = BOUNDED_INTEGER_CONDITIONAL(
+		boosts_stat<stat>(nature), 11_bi,
+		BOUNDED_INTEGER_CONDITIONAL(lowers_stat<stat>(nature), 9_bi, 10_bi)
+	);
+	static constexpr auto denominator = 10_bi;
+	return make_rational(numerator, denominator);
+}
+
+auto boosts_attacking_stat(Nature nature) -> bool;
+auto boosts_defending_stat(Nature nature) -> bool;
+auto lowers_attacking_stat(Nature nature) -> bool;
+auto lowers_defending_stat(Nature nature) -> bool;
 
 
 }	// namespace technicalmachine

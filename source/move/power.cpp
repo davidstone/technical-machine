@@ -290,7 +290,7 @@ auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 1
 		case Item::SEA_INCENSE:
 		case Item::WAVE_INCENSE:
 			return BOUNDED_INTEGER_CONDITIONAL(type == Type::Water, 12_bi, base);
-		case Item::ADAMANT_ORB:
+		case Item::Adamant_ORB:
 			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
 		case Item::GRISEOUS_ORB:
 			return BOUNDED_INTEGER_CONDITIONAL(is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);

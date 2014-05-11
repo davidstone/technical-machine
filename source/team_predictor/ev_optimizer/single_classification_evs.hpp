@@ -25,7 +25,7 @@
 #include "../../stat/ev.hpp"
 
 namespace technicalmachine {
-class Nature;
+enum class Nature : uint8_t;
 class Pokemon;
 
 class SingleClassificationEVs {

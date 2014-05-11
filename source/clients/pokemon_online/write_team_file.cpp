@@ -76,7 +76,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	member.put ("<xmlattr>.Ability", ability_to_id (get_ability(pokemon).name()));
 	std::pair<unsigned, unsigned> const ids = species_to_id(pokemon);
 	member.put ("<xmlattr>.Num", ids.first);
-	member.put ("<xmlattr>.Nature", nature_to_id (get_nature(pokemon).name));
+	member.put ("<xmlattr>.Nature", nature_to_id(get_nature(pokemon)));
 	member.put ("<xmlattr>.Shiny", 0);
 	member.put ("<xmlattr>.Nickname", pokemon.get_nickname());
 	member.put ("<xmlattr>.Gen", 4);

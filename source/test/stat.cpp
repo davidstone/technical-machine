@@ -49,7 +49,7 @@ void attack_tests () {
 	Pokemon & pokemon = attacker.pokemon();
 
 	get_stat(pokemon, StatNames::DEF).ev = EV(bounded::make<EV::max>());
-	get_nature(pokemon).name = Nature::IMPISH;
+	get_nature(pokemon) = Nature::Impish;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
 	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
@@ -72,7 +72,7 @@ void special_attack_tests () {
 	Pokemon & pokemon = attacker.pokemon();
 
 	get_stat(pokemon, StatNames::SPA).ev = EV(bounded::make<EV::max>());
-	get_nature(pokemon).name = Nature::MODEST;
+	get_nature(pokemon) = Nature::Modest;
 	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 
 	get_ability(pokemon) = Ability::Solar_Power;
@@ -94,7 +94,7 @@ void max_defense_test() {
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
 	get_stat(pokemon, StatNames::DEF).ev = EV(bounded::make<EV::max>());
-	get_nature(pokemon).name = Nature::BOLD;
+	get_nature(pokemon) = Nature::Bold;
 
 	boost(defender.pokemon().stage(), StatNames::DEF, 6_bi);
 
@@ -115,7 +115,7 @@ void min_defense_test() {
 	defender.add_pokemon(Species::Combee, level, gender);
 	auto & pokemon = defender.pokemon();
 	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
-	get_nature(pokemon) = Nature::HASTY;
+	get_nature(pokemon) = Nature::Hasty;
 
 	for (unsigned n = 0; n != 3; ++n) {
 		boost(pokemon.stage(), StatNames::DEF, -2_bi);
@@ -143,7 +143,7 @@ void special_defense_tests () {
 	defender.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = defender.pokemon();
 	get_stat(pokemon, StatNames::SPD).ev = EV(bounded::make<EV::max>());
-	get_nature(pokemon).name = Nature::CALM;
+	get_nature(pokemon) = Nature::Calm;
 
 	boost(defender.pokemon().stage(), StatNames::SPD, 6_bi);
 
@@ -163,7 +163,7 @@ void speed_tests () {
 	team.add_pokemon(Species::Deoxys_Speed, level, gender);
 	Pokemon & pokemon = team.pokemon();
 	get_stat(pokemon, StatNames::SPE).ev = EV(bounded::make<EV::max>());
-	get_nature(pokemon).name = Nature::TIMID;
+	get_nature(pokemon) = Nature::Timid;
 
 	boost(team.pokemon().stage(), StatNames::SPE, 6_bi);
 

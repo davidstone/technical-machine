@@ -31,9 +31,9 @@ NatureInput::NatureInput(int const button_number):
 	{
 }
 
-Nature::Natures NatureInput::value() const {
+Nature NatureInput::value() const {
 	try {
-		return from_string<Nature::Natures>(input.value());
+		return from_string<Nature>(input.value());
 	}
 	catch (InvalidFromStringConversion const &) {
 		return Nature::END;

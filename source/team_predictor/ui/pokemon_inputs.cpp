@@ -1,5 +1,5 @@
 // Class to abstract UI of getting each move for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,7 +42,7 @@ bool PokemonInputs::is_valid() const {
 	}
 }
 
-Nature::Natures PokemonInputs::nature() const {
+Nature PokemonInputs::nature() const {
 	return m_nature.value();
 }
 

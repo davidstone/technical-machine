@@ -62,7 +62,7 @@ private:
 	};
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
 	friend auto combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon) -> void;
-	typedef std::map<Nature::Natures, OffensiveStats> Container;
+	typedef std::map<Nature, OffensiveStats> Container;
 	Container container;
 };
 

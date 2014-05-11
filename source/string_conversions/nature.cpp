@@ -1,5 +1,5 @@
 // Nature string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 
-std::string to_string(Nature::Natures const name) {
+std::string to_string(Nature const nature) {
 	std::string const nature_converter [] = {
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
 		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
@@ -35,37 +35,37 @@ std::string to_string(Nature::Natures const name) {
 		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
 		"Timid", "End_Nature"
 	};
-	return nature_converter [name];
+	return nature_converter[static_cast<std::size_t>(nature)];
 }
 
 template<>
-Nature::Natures from_string<Nature::Natures>(std::string const & str) {
-	static std::map <std::string, Nature::Natures> const converter {
-		{ "Adamant", Nature::ADAMANT },
-		{ "Bashful", Nature::BASHFUL },
-		{ "Bold", Nature::BOLD },
-		{ "Brave", Nature::BRAVE },
-		{ "Calm", Nature::CALM },
-		{ "Careful", Nature::CAREFUL },
-		{ "Docile", Nature::DOCILE },
-		{ "Gentle", Nature::GENTLE },
-		{ "Hardy", Nature::HARDY },
-		{ "Hasty", Nature::HASTY },
-		{ "Impish", Nature::IMPISH },
-		{ "Jolly", Nature::JOLLY },
-		{ "Lax", Nature::LAX },
-		{ "Lonely", Nature::LONELY },
-		{ "Mild", Nature::MILD },
-		{ "Modest", Nature::MODEST },
-		{ "Naive", Nature::NAIVE },
-		{ "Naughty", Nature::NAUGHTY },
-		{ "Quiet", Nature::QUIET },
-		{ "Quirky", Nature::QUIRKY },
-		{ "Rash", Nature::RASH },
-		{ "Relaxed", Nature::RELAXED },
-		{ "Sassy", Nature::SASSY },
-		{ "Serious", Nature::SERIOUS },
-		{ "Timid", Nature::TIMID }
+Nature from_string<Nature>(std::string const & str) {
+	static std::map <std::string, Nature> const converter {
+		{ "Adamant", Nature::Adamant },
+		{ "Bashful", Nature::Bashful },
+		{ "Bold", Nature::Bold },
+		{ "Brave", Nature::Brave },
+		{ "Calm", Nature::Calm },
+		{ "Careful", Nature::Careful },
+		{ "Docile", Nature::Docile },
+		{ "Gentle", Nature::Gentle },
+		{ "Hardy", Nature::Hardy },
+		{ "Hasty", Nature::Hasty },
+		{ "Impish", Nature::Impish },
+		{ "Jolly", Nature::Jolly },
+		{ "Lax", Nature::Lax },
+		{ "Lonely", Nature::Lonely },
+		{ "Mild", Nature::Mild },
+		{ "Modest", Nature::Modest },
+		{ "Naive", Nature::Naive },
+		{ "Naughty", Nature::Naughty },
+		{ "Quiet", Nature::Quiet },
+		{ "Quirky", Nature::Quirky },
+		{ "Rash", Nature::Rash },
+		{ "Relaxed", Nature::Relaxed },
+		{ "Sassy", Nature::Sassy },
+		{ "Serious", Nature::Serious },
+		{ "Timid", Nature::Timid }
 	};
 	auto const it = converter.find (str);
 	if (it != converter.end ())

@@ -1,5 +1,5 @@
 // Convert to / from PO's format
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -1480,7 +1480,7 @@ Item::Items id_to_item (unsigned id) {
 		case 13:
 			return Item::LAGGING_TAIL;
 		case 14:
-			return Item::LAX_INCENSE;
+			return Item::Lax_INCENSE;
 		case 15:
 			return Item::LEFTOVERS;
 		case 16:
@@ -1770,7 +1770,7 @@ Item::Items id_to_item (unsigned id) {
 		case 158:
 			return Item::SHARP_BEAK;
 		case 159:
-			return Item::ADAMANT_ORB;
+			return Item::Adamant_ORB;
 		case 160:
 			return Item::DAMP_ROCK;
 		case 161:
@@ -1939,7 +1939,7 @@ unsigned item_to_id (Item::Items item) {
 			return 12;
 		case Item::LAGGING_TAIL:
 			return 13;
-		case Item::LAX_INCENSE:
+		case Item::Lax_INCENSE:
 			return 14;
 		case Item::LEFTOVERS:
 			return 15;
@@ -2229,7 +2229,7 @@ unsigned item_to_id (Item::Items item) {
 			return 157;
 		case Item::SHARP_BEAK:
 			return 158;
-		case Item::ADAMANT_ORB:
+		case Item::Adamant_ORB:
 			return 159;
 		case Item::DAMP_ROCK:
 			return 160;
@@ -2625,38 +2625,38 @@ unsigned move_to_id (Moves move) {
 	return (move == Moves::END) ? 0 : move_id;
 }
 
-Nature::Natures id_to_nature (unsigned id) {
-	constexpr static Nature::Natures nature_converter [] = {
-		Nature::HARDY,
-		Nature::LONELY,
-		Nature::BRAVE,
-		Nature::ADAMANT,
-		Nature::NAUGHTY,
-		Nature::BOLD,
-		Nature::DOCILE,
-		Nature::RELAXED,
-		Nature::IMPISH,
-		Nature::LAX,
-		Nature::TIMID,
-		Nature::HASTY,
-		Nature::SERIOUS,
-		Nature::JOLLY,
-		Nature::NAIVE,
-		Nature::MODEST,
-		Nature::MILD,
-		Nature::QUIET,
-		Nature::BASHFUL,
-		Nature::RASH,
-		Nature::CALM,
-		Nature::GENTLE,
-		Nature::SASSY,
-		Nature::CAREFUL,
-		Nature::QUIRKY
+Nature id_to_nature (unsigned id) {
+	constexpr static Nature nature_converter [] = {
+		Nature::Hardy,
+		Nature::Lonely,
+		Nature::Brave,
+		Nature::Adamant,
+		Nature::Naughty,
+		Nature::Bold,
+		Nature::Docile,
+		Nature::Relaxed,
+		Nature::Impish,
+		Nature::Lax,
+		Nature::Timid,
+		Nature::Hasty,
+		Nature::Serious,
+		Nature::Jolly,
+		Nature::Naive,
+		Nature::Modest,
+		Nature::Mild,
+		Nature::Quiet,
+		Nature::Bashful,
+		Nature::Rash,
+		Nature::Calm,
+		Nature::Gentle,
+		Nature::Sassy,
+		Nature::Careful,
+		Nature::Quirky
 	};
 	return nature_converter [id];
 }
 
-unsigned nature_to_id (Nature::Natures nature) {
+unsigned nature_to_id (Nature nature) {
 	constexpr static unsigned nature_converter [] = {
 		3,		// Adamant
 		18,		// Bashful
@@ -2684,7 +2684,7 @@ unsigned nature_to_id (Nature::Natures nature) {
 		12,		// Serious
 		10		// Timid
 	};
-	return nature_converter [nature];
+	return nature_converter[static_cast<std::size_t>(nature)];
 }
 } // namespace po
 } // namespace technicalmachine

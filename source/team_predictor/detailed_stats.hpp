@@ -44,7 +44,7 @@ private:
 	bounded::array<std::vector<Moves>, number_of_species> move;
 	bounded::array<Item::Items, number_of_species> item;
 	bounded::array<Ability::Abilities, number_of_species> ability;
-	bounded::array<Nature::Natures, number_of_species> nature;
+	bounded::array<Nature, number_of_species> nature;
 };
 
 }	// namespace technicalmachine

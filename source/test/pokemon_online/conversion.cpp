@@ -87,9 +87,9 @@ void test_move () {
 
 void test_nature () {
 	std::cout << "\t\tVerifying correct nature.\n";
-	for_each<Nature::Natures>([](Nature::Natures const original) {
+	for_each<Nature>([](Nature const original) {
 		unsigned const id = nature_to_id (original);
-		Nature::Natures const result = id_to_nature (id);
+		Nature const result = id_to_nature (id);
 		if (original != result)
 			throw InvalidSimulatorConversion(original, result);
 	});
@@ -106,7 +106,7 @@ void test_species () {
 	for_each<Species>(f, Species::Generation_4_End);
 }
 
-}	// anonymous namespace
+}	// namespace
 
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Online conversion tests.\n";

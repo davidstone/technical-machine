@@ -38,7 +38,7 @@ void ev_optimizer_tests() {
 	for (auto const stat : { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE }) {
 		get_stat(pokemon, stat).ev = EV(76_bi);
 	}
-	get_nature(pokemon) = Nature::HARDY;
+	get_nature(pokemon) = Nature::Hardy;
 	pokemon.move.add(Moves::Psychic);
 	pokemon.move.add(Moves::Earthquake);
 	minimize_evs(team.pokemon());

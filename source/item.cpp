@@ -237,7 +237,7 @@ bounded::integer<0, 130> Item::fling_power() const {
 		case POWER_LENS:
 		case POWER_WEIGHT:
 			return 70_bi;
-		case ADAMANT_ORB:
+		case Adamant_ORB:
 		case DAMP_ROCK:
 		case HEAT_ROCK:
 		case LUSTROUS_ORB:
@@ -377,7 +377,7 @@ bounded::integer<0, 130> Item::fling_power() const {
 		case FULL_INCENSE:
 		case GREEN_SCARF:
 		case LAGGING_TAIL:
-		case LAX_INCENSE:
+		case Lax_INCENSE:
 		case LEFTOVERS:
 		case LUCK_INCENSE:
 		case MENTAL_HERB:
