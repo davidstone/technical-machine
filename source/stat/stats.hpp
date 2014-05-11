@@ -30,10 +30,10 @@ class Level;
 class Stats {
 public:
 	Stats(Species species, Level level);
-	HP const & hp() const;
-	HP & hp();
-	Stat const & operator[](StatNames stat) const;
-	Stat & operator[](StatNames stat);
+	auto hp() const -> HP const &;
+	auto hp() -> HP &;
+	auto operator[](StatNames stat) const -> Stat const &;
+	auto operator[](StatNames stat) -> Stat &;
 private:
 	HP m_hp;
 	bounded::array<Stat, 5> m_stats;

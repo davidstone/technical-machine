@@ -38,12 +38,12 @@ public:
 	
 	HP(Species species, Level level, EV ev = EV(0_bi));
 	template<typename T>
-	HP & operator=(T const & value) {
+	auto operator=(T const & value) -> HP & {
 		m_value = value;
 		return *this;
 	}
-	current_type current() const;
-	max_type max() const;
+	auto current() const -> current_type;
+	auto max() const -> max_type;
 	EV ev;
 	IV iv;
 private:
@@ -51,31 +51,31 @@ private:
 };
 
 template<typename T>
-HP & operator+=(HP & lhs, T const & rhs) {
+auto operator+=(HP & lhs, T const & rhs) -> HP & {
 	lhs = lhs.current() + bounded::make<bounded::null_policy>(rhs);
 	return lhs;
 }
 
 template<typename T>
-HP & operator-=(HP & lhs, T const & rhs) {
+auto operator-=(HP & lhs, T const & rhs) -> HP & {
 	return lhs += -rhs;
 }
 
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) -> bool {
 	return lhs.current() == rhs;
 }
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) -> bool {
 	return rhs == lhs.current();
 }
 
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator!=(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+auto operator!=(HP const lhs, bounded::integer<min, max, overflow> const rhs) -> bool {
 	return lhs.current() != rhs;
 }
 template<intmax_t min, intmax_t max, typename overflow>
-bool operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+auto operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) -> bool {
 	return rhs != lhs.current();
 }
 

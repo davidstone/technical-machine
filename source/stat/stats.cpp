@@ -1,5 +1,5 @@
 // All 'normal' stats that a Pokemon has
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,17 +31,17 @@ Stats::Stats(Species const species, Level const level):
 	} {
 }
 
-HP const & Stats::hp() const {
+auto Stats::hp() const -> HP const & {
 	return m_hp;
 }
-HP & Stats::hp() {
+auto Stats::hp() -> HP & {
 	return m_hp;
 }
 
-Stat const & Stats::operator[](StatNames const stat) const {
+auto Stats::operator[](StatNames const stat) const -> Stat const & {
 	return m_stats.at(stat);
 }
-Stat & Stats::operator[](StatNames const stat) {
+auto Stats::operator[](StatNames const stat) -> Stat & {
 	return m_stats.at(stat);
 }
 
