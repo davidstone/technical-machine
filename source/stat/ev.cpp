@@ -29,11 +29,11 @@ auto EV::value() const -> bounded::integer<0, max> {
 	return m_value;
 }
 
-bool EV::is_maxed() const {
-	return m_value == max;
+auto EV::is_maxed() const -> bool {
+	return m_value == bounded::make<max>();
 }
 
-void EV::add(value_type const evs) {
+auto EV::add(value_type const evs) -> void {
 	m_value += evs;
 }
 

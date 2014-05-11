@@ -41,27 +41,27 @@
 namespace technicalmachine {
 namespace {
 
-bool is_boosted_by_deepseascale(Species const species) {
+auto is_boosted_by_deepseascale(Species const species) {
 	return species == Species::Clamperl;
 }
 
-bool is_boosted_by_deepseatooth(Species const species) {
+auto is_boosted_by_deepseatooth(Species const species) {
 	return species == Species::Clamperl;
 }
 
-bool is_boosted_by_light_ball(Species const species) {
+auto is_boosted_by_light_ball(Species const species) {
 	return species == Species::Pikachu;
 }
 
-bool is_boosted_by_metal_powder(Species const species) {
+auto is_boosted_by_metal_powder(Species const species) {
 	return species == Species::Ditto;
 }
 
-bool is_boosted_by_quick_powder(Species const species) {
+auto is_boosted_by_quick_powder(Species const species) {
 	return species == Species::Ditto;
 }
 
-bool is_boosted_by_soul_dew(Species const species) {
+auto is_boosted_by_soul_dew(Species const species) {
 	switch (species) {
 		case Species::Latias:
 		case Species::Latios:
@@ -71,7 +71,7 @@ bool is_boosted_by_soul_dew(Species const species) {
 	}
 }
 
-bool is_boosted_by_thick_club(Species const species) {
+auto is_boosted_by_thick_club(Species const species) {
 	switch (species) {
 		case Species::Cubone:
 		case Species::Marowak:
@@ -81,7 +81,7 @@ bool is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-#define CONDITIONAL(b, t, f) BOUNDED_INTEGER_CONDITIONAL(b, t, f)
+#define CONDITIONAL BOUNDED_INTEGER_CONDITIONAL
 
 constexpr auto ability_denominator = 2_bi;
 
@@ -298,20 +298,20 @@ auto calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather cons
 
 }	// namespace
 
-std::common_type<attack_type, special_attack_type>::type calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather) {
+auto calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather) -> std::common_type_t<attack_type, special_attack_type> {
 	return is_physical(attacker.move()) ?
 		calculate_attack(attacker, weather) :
 		calculate_special_attack(attacker, weather);
 }
 
-attack_type calculate_attack(ActivePokemon const & attacker, Weather const & weather) {
+auto calculate_attack(ActivePokemon const & attacker, Weather const & weather) -> attack_type {
 	// static_cast here because it looks as though the strongest attacker would
 	// hold a Light Ball, but because of the restriction on the attacker being
 	// Pikachu, it is better to use a Power Trick Shuckle with a Choice Band.
 	return static_cast<attack_type>(calculate_common_offensive_stat<StatNames::ATK>(attacker, weather));
 }
 
-special_attack_type calculate_special_attack(ActivePokemon const & attacker, Weather const & weather) {
+auto calculate_special_attack(ActivePokemon const & attacker, Weather const & weather) -> special_attack_type {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
 	return static_cast<special_attack_type>(calculate_common_offensive_stat<StatNames::SPA>(attacker, weather));
@@ -319,7 +319,7 @@ special_attack_type calculate_special_attack(ActivePokemon const & attacker, Wea
 
 namespace {
 
-bool is_self_KO(Moves const move) {
+auto is_self_KO(Moves const move) {
 	switch (move) {
 		case Moves::Explosion:
 		case Moves::Selfdestruct:
@@ -331,13 +331,13 @@ bool is_self_KO(Moves const move) {
 
 }	// namespace
 
-std::common_type<defense_type, special_defense_type>::type calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+auto calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) -> std::common_type_t<defense_type, special_defense_type> {
 	return is_physical(attacker.move()) ?
 		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(attacker.move())) :
 		calculate_special_defense(defender, weather, attacker.critical_hit());
 }
 
-defense_type calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) {
+auto calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch, bool is_self_KO) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat<stat>(defender) *
 		modifier<stat>(defender.stage(), ch) *
@@ -358,7 +358,7 @@ auto special_defense_sandstorm_boost(ActivePokemon const & defender, Weather con
 
 }	// namespace
 
-special_defense_type calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) {
+auto calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch) -> special_defense_type {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat<stat>(defender) *	
 		modifier<stat>(defender.stage(), ch) *
@@ -387,7 +387,7 @@ auto tailwind_speed_multiplier(Team const & team) {
 
 }	// namespace
 
-speed_type calculate_speed(Team const & team, Weather const & weather) {
+auto calculate_speed(Team const & team, Weather const & weather) -> speed_type {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat<stat>(pokemon) *
@@ -403,7 +403,7 @@ speed_type calculate_speed(Team const & team, Weather const & weather) {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
+auto order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) -> void {
 	Priority const priority1(team1.pokemon().move());
 	Priority const priority2(team2.pokemon().move());
 	if (priority1 == priority2) {
@@ -419,7 +419,7 @@ void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, 
 	}
 }
 
-void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) {
+auto faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) -> void {
 	auto const speed1 = calculate_speed(team1, weather);
 	auto const speed2 = calculate_speed(team2, weather);
 	if (speed1 > speed2) {

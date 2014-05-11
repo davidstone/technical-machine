@@ -31,9 +31,9 @@ public:
 	using value_type = bounded::checked_integer<0, max>;
 	using total_type = bounded::checked_integer<0, max_total>;
 	explicit EV(value_type evs);
-	bounded::integer<0, max> value() const;
-	bool is_maxed() const;
-	void add(value_type evs);
+	auto value() const -> bounded::integer<0, max>;
+	auto is_maxed() const -> bool;
+	auto add(value_type evs) -> void;
 private:
 	bounded::clamped_integer<0, max> m_value;
 };

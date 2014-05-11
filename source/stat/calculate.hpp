@@ -42,20 +42,20 @@ auto initial_stat(Stat const & stat, Level const & level, Nature const & nature)
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-std::common_type<attack_type, special_attack_type>::type calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather);
-attack_type calculate_attack(ActivePokemon const & attacker, Weather const & weather);
-special_attack_type calculate_special_attack(ActivePokemon const & attacker, Weather const & weather);
+auto calculate_attacking_stat(ActivePokemon const & attacker, Weather const & weather) -> std::common_type_t<attack_type, special_attack_type>;
+auto calculate_attack(ActivePokemon const & attacker, Weather const & weather) -> attack_type;
+auto calculate_special_attack(ActivePokemon const & attacker, Weather const & weather) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-std::common_type<defense_type, special_defense_type>::type calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather);
-defense_type calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false, bool is_self_KO = false);
-special_defense_type calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false);
+auto calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) -> std::common_type_t<defense_type, special_defense_type>;
+auto calculate_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false, bool is_self_KO = false) -> defense_type;
+auto calculate_special_defense(ActivePokemon const & defender, Weather const & weather, bool ch = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;
-speed_type calculate_speed(Team const & team, Weather const & weather);
-void order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
-void faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower);
+auto calculate_speed(Team const & team, Weather const & weather) -> speed_type;
+auto order(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) -> void;
+auto faster_pokemon(Team & team1, Team & team2, Weather const & weather, Team* & faster, Team* & slower) -> void;
 
 }	// namespace technicalmachine
 #endif	// STAT__CALCULATE_HPP_
