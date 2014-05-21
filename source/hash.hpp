@@ -1,4 +1,4 @@
-// Calculate hashes
+// Calculate hashes. Specializations should return a bounded::integer
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -27,36 +27,63 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+constexpr auto hash(bool const value) noexcept {
+	return BOUNDED_CONDITIONAL(value, 1_bi, 0_bi);
+}
+constexpr auto max_hash(bool) noexcept {
+	return 2_bi;
+}
+
 template<intmax_t minimum, intmax_t maximum, typename policy>
-constexpr auto hash(bounded::integer<minimum, maximum, policy> const & value) noexcept {
+constexpr auto hash(bounded::integer<minimum, maximum, policy> const value) noexcept {
 	return bounded::make<bounded::null_policy>(value) - bounded::make<minimum>();
 }
 
 template<intmax_t minimum, intmax_t maximum, typename policy>
-constexpr auto max_hash(bounded::integer<minimum, maximum, policy> const &) noexcept {
+constexpr auto max_hash(bounded::integer<minimum, maximum, policy>) noexcept {
 	return bounded::make<maximum>() - bounded::make<minimum>() + 1_bi;
 }
 
 
 template<intmax_t minimum, intmax_t maximum, typename policy>
-constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>> const & value) noexcept {
+constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>> const value) noexcept {
 	return BOUNDED_CONDITIONAL(value, hash(*value) + 1_bi, 0_bi);
 }
 
 template<intmax_t minimum, intmax_t maximum, typename policy>
-constexpr auto max_hash(bounded::optional<bounded::integer<minimum, maximum, policy>> const &) noexcept {
+constexpr auto max_hash(bounded::optional<bounded::integer<minimum, maximum, policy>>) noexcept {
 	return bounded::make<maximum>() - bounded::make<minimum>() + 1_bi + 1_bi;
 }
 
+template<typename ... Ts>
+constexpr auto noexcept_hashable() noexcept -> bool;
+template<typename ... Ts>
+constexpr auto noexcept_max_hashable() noexcept -> bool;
+
 template<typename T, typename... Ts>
-constexpr auto hash(T const & t, Ts && ... ts) noexcept(noexcept(hash(t) + max_hash(t) * hash(ts...))) {
+constexpr auto hash(T const & t, Ts && ... ts) noexcept(noexcept(hash(t)) and noexcept(max_hash(t)) and noexcept_hashable<Ts...>()) {
+	static_assert(noexcept(hash(t) + max_hash(t) * hash(ts...)), "Incorrect return type for hash or max_hash.");
 	return hash(t) + max_hash(t) * hash(ts...);
 }
 
 template<typename T, typename... Ts>
-constexpr auto max_hash(T const & t, Ts && ... ts) noexcept(noexcept(max_hash(t) * max_hash(ts...))) {
+constexpr auto max_hash(T const & t, Ts && ... ts) noexcept(noexcept(max_hash(t)) and noexcept_max_hashable<Ts...>()) {
+	static_assert(noexcept(max_hash(t) * max_hash(ts...)), "Incorrect return type for max_hash.");
 	return max_hash(t) * max_hash(ts...);
 }
+
+
+template<typename ... Ts>
+constexpr auto noexcept_hashable() noexcept -> bool {
+	return noexcept(hash(std::declval<Ts>()...));
+}
+
+template<typename ... Ts>
+constexpr auto noexcept_max_hashable() noexcept -> bool {
+	return noexcept(max_hash(std::declval<Ts>()...));
+}
+
+
 
 template<typename Size, typename Iterator>
 auto hash_range(Iterator first, Iterator last) {
