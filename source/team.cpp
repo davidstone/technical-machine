@@ -138,8 +138,8 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 Team::hash_type Team::hash () const {
 	hash_type current_hash = active_pokemon.hash();
-	current_hash *= entry_hazards.max_hash();
-	current_hash += entry_hazards.hash();
+	current_hash *= technicalmachine::max_hash(entry_hazards);
+	current_hash += technicalmachine::hash(entry_hazards);
 	current_hash *= wish.max_hash();
 	current_hash += wish.hash();
 	current_hash *= screens.max_hash();

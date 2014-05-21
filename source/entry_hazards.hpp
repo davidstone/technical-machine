@@ -19,10 +19,12 @@
 #ifndef ENTRY_HAZARDS_HPP_
 #define ENTRY_HAZARDS_HPP_
 
+#include "hash.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
-#include <cstdint>
 
 namespace technicalmachine {
+using namespace bounded::literal;
 class ActivePokemon;
 class Team;
 class Weather;
@@ -31,28 +33,31 @@ class Weather;
 
 class EntryHazards {
 public:
-	EntryHazards();
-	auto spikes() const {
+	constexpr auto spikes() const {
 		return bounded::make<bounded::null_policy>(m_spikes);
 	}
-	auto stealth_rock() const {
+	constexpr auto stealth_rock() const {
 		return m_stealth_rock;
 	}
-	auto toxic_spikes() const {
+	constexpr auto toxic_spikes() const {
 		return bounded::make<bounded::null_policy>(m_toxic_spikes);
 	}
 	auto add_spikes() -> void;
 	auto add_toxic_spikes() -> void;
 	auto clear_toxic_spikes() -> void;
 	auto add_stealth_rock() -> void;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
 private:
-	bounded::clamped_integer<0, 3> m_spikes;
-	bounded::clamped_integer<0, 2> m_toxic_spikes;
-	bool m_stealth_rock;
+	bounded::clamped_integer<0, 3> m_spikes = 0_bi;
+	bounded::clamped_integer<0, 2> m_toxic_spikes = 0_bi;
+	bool m_stealth_rock = false;
 };
+
+constexpr auto hash(EntryHazards const hazards) noexcept {
+	return hash(hazards.spikes(), hazards.stealth_rock(), hazards.toxic_spikes());
+}
+constexpr auto max_hash(EntryHazards const hazards) noexcept {
+	return max_hash(hazards.spikes(), hazards.stealth_rock(), hazards.toxic_spikes());
+}
 
 auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
 auto operator!=(EntryHazards lhs, EntryHazards rhs) -> bool;

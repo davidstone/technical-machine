@@ -46,13 +46,6 @@ auto apply_toxic_spikes(EntryHazards const & hazards, ActivePokemon & switcher, 
 
 }	// namespace
 
-EntryHazards::EntryHazards() :
-	m_spikes(0_bi),
-	m_toxic_spikes(0_bi),
-	m_stealth_rock(false)
-	{
-}
-
 auto EntryHazards::add_spikes() -> void {
 	++m_spikes;
 }
@@ -67,18 +60,6 @@ auto EntryHazards::clear_toxic_spikes() -> void {
 
 auto EntryHazards::add_stealth_rock() -> void {
 	m_stealth_rock = true;
-}
-
-auto EntryHazards::hash() const -> hash_type {
-	return static_cast<hash_type>(
-		m_spikes + (std::numeric_limits<decltype(m_spikes)>::max() + 1_bi) *
-		(m_toxic_spikes + (std::numeric_limits<decltype(m_toxic_spikes)>::max() + 1_bi) *
-		m_stealth_rock
-	));
-}
-
-auto EntryHazards::max_hash() -> hash_type {
-	return static_cast<hash_type>((std::numeric_limits<decltype(m_spikes)>::max() + 1_bi) * (std::numeric_limits<decltype(m_toxic_spikes)>::max() + 1_bi) * 2_bi);
 }
 
 auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const & weather) -> void {
