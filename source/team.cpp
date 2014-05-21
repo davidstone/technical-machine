@@ -140,8 +140,8 @@ Team::hash_type Team::hash () const {
 	hash_type current_hash = active_pokemon.hash();
 	current_hash *= technicalmachine::max_hash(entry_hazards);
 	current_hash += technicalmachine::hash(entry_hazards);
-	current_hash *= wish.max_hash();
-	current_hash += wish.hash();
+	current_hash *= technicalmachine::max_hash(wish);
+	current_hash += technicalmachine::hash(wish);
 	current_hash *= screens.max_hash();
 	current_hash += screens.hash();
 	return current_hash;

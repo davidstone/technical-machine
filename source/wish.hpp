@@ -19,7 +19,8 @@
 #ifndef WISH_HPP_
 #define WISH_HPP_
 
-#include <cstdint>
+#include "hash.hpp"
+
 #include <bounded_integer/optional.hpp>
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -31,16 +32,25 @@ class Wish {
 public:
 	auto activate() -> void;
 	auto decrement(ActivePokemon & pokemon) -> void;
-	auto is_active() const -> bool;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
+	constexpr auto is_active() const {
+		return static_cast<bool>(m_turns_until_activation);
+	}
+	friend auto operator==(Wish lhs, Wish rhs) -> bool;
 private:
 	using counter_type = bounded::checked_integer<0, 1>;
-	bounded::optional<counter_type> turns_until_activation;
+	bounded::optional<counter_type> m_turns_until_activation;
 };
 
-auto operator== (Wish lhs, Wish rhs) -> bool;
+// These are sufficient because hashing only has to distinguish end-of-turn
+// conditions.
+constexpr auto hash(Wish const wish) noexcept {
+	return hash(wish.is_active());
+}
+
+constexpr auto max_hash(Wish const wish) noexcept {
+	return max_hash(wish.is_active());
+}
+
 auto operator!= (Wish lhs, Wish rhs) -> bool;
 
 }	// namespace technicalmachine

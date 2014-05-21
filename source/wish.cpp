@@ -27,34 +27,22 @@ class Pokemon;
 auto Wish::activate() -> void {
 	if (!is_active()) {
 		static constexpr auto turn_delay = 1_bi;
-		turns_until_activation = counter_type(turn_delay);
+		m_turns_until_activation = counter_type(turn_delay);
 	}
 }
 
 auto Wish::decrement(ActivePokemon & pokemon) -> void {
 	if (is_active()) {
-		--*turns_until_activation;
-		if (*turns_until_activation == 0_bi) {
-			turns_until_activation = {};
+		--*m_turns_until_activation;
+		if (*m_turns_until_activation == 0_bi) {
+			m_turns_until_activation = {};
 			heal(pokemon, Rational(1, 2));
 		}
 	}
 }
 
-auto Wish::is_active() const -> bool {
-	return static_cast<bool>(turns_until_activation);
-}
-
-auto Wish::hash() const -> hash_type {
-	return is_active() ? 1 : 0;
-}
-
-auto Wish::max_hash() -> hash_type {
-	return 2;
-}
-
 auto operator== (Wish const lhs, Wish const rhs) -> bool {
-	return lhs.is_active() == rhs.is_active();
+	return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
 }
 auto operator!= (Wish const lhs, Wish const rhs) -> bool {
 	return !(lhs == rhs);
