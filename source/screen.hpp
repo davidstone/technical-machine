@@ -19,6 +19,8 @@
 #ifndef SCREEN_HPP_
 #define SCREEN_HPP_
 
+#include "hash.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 #include <cstdint>
 
@@ -29,9 +31,6 @@ template<intmax_t normal_duration, intmax_t max_duration = normal_duration>
 class Screen {
 public:
 	static_assert(normal_duration <= max_duration, "Max duration cannot be less than normal duration.");
-	constexpr Screen():
-		m_turns_remaining(0_bi) {
-	}
 
 	constexpr operator bool() const {
 		return m_turns_remaining != 0_bi;
@@ -47,13 +46,6 @@ public:
 		--m_turns_remaining;
 	}
 	
-	using hash_type = uint64_t;
-	constexpr auto hash() const -> hash_type {
-		return static_cast<hash_type>(m_turns_remaining);
-	}
-	static constexpr auto max_hash() -> hash_type {
-		return max_duration;
-	}
 private:
 	auto activate(std::true_type) -> void {
 		set(bounded::make<normal_duration>());
@@ -70,8 +62,18 @@ private:
 			m_turns_remaining = duration;
 		}
 	}
-	duration_type m_turns_remaining;
+	// Explicit call to constructor needed for workaround to gcc 4.9.0 bug.
+	duration_type m_turns_remaining = duration_type(0_bi);
 };
+
+template<intmax_t normal_duration, intmax_t max_duration>
+constexpr auto hash(Screen<normal_duration, max_duration> const screen) noexcept {
+	return hash(screen.turns_remaining());
+}
+template<intmax_t normal_duration, intmax_t max_duration>
+constexpr auto max_hash(Screen<normal_duration, max_duration>) noexcept {
+	return bounded::make<max_duration>();
+}
 
 template<intmax_t normal_duration, intmax_t max_duration>
 auto operator==(Screen<normal_duration, max_duration> const & lhs, Screen<normal_duration, max_duration> const & rhs) -> bool {

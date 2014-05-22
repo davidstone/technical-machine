@@ -19,7 +19,7 @@
 #ifndef SCREENS_HPP_
 #define SCREENS_HPP_
 
-#include <cstdint>
+#include "hash.hpp"
 #include "screen.hpp"
 
 namespace technicalmachine {
@@ -28,12 +28,24 @@ class Screens {
 public:
 	auto decrement() -> void;
 
-	auto light_screen() const -> LightScreenEffect const &;
-	auto reflect() const -> ReflectEffect const &;
-	auto lucky_chant() const -> LuckyChantEffect const &;
-	auto mist() const -> MistEffect const &;
-	auto safeguard() const -> SafeguardEffect const &;
-	auto tailwind() const -> TailwindEffect const &;
+	constexpr auto light_screen() const noexcept {
+		return m_light_screen;
+	}
+	constexpr auto reflect() const noexcept {
+		return m_reflect;
+	}
+	constexpr auto lucky_chant() const noexcept {
+		return m_lucky_chant;
+	}
+	constexpr auto mist() const noexcept {
+		return m_mist;
+	}
+	constexpr auto safeguard() const noexcept {
+		return m_safeguard;
+	}
+	constexpr auto tailwind() const noexcept {
+		return m_tailwind;
+	}
 
 	auto activate_light_screen(bool is_extended = false) -> void;
 	auto activate_reflect(bool is_extended = false) -> void;
@@ -43,9 +55,6 @@ public:
 	auto activate_tailwind() -> void;
 
 	auto shatter() -> void;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
 private:
 	LightScreenEffect m_light_screen;
 	ReflectEffect m_reflect;
@@ -54,6 +63,28 @@ private:
 	SafeguardEffect m_safeguard;
 	TailwindEffect m_tailwind;
 };
+
+constexpr auto hash(Screens const & screens) noexcept {
+	return hash(
+		screens.light_screen(),
+		screens.reflect(),
+		screens.lucky_chant(),
+		screens.mist(),
+		screens.safeguard(),
+		screens.tailwind()
+	);
+}
+constexpr auto max_hash(Screens const & screens) noexcept {
+	return max_hash(
+		screens.light_screen(),
+		screens.reflect(),
+		screens.lucky_chant(),
+		screens.mist(),
+		screens.safeguard(),
+		screens.tailwind()
+	);
+}
+
 auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
 auto operator!=(Screens const & lhs, Screens const & rhs) -> bool;
 

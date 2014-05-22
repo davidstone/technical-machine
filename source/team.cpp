@@ -136,14 +136,14 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 }	// unnamed namespace
 
-Team::hash_type Team::hash () const {
+Team::hash_type Team::hash() const {
 	hash_type current_hash = active_pokemon.hash();
 	current_hash *= technicalmachine::max_hash(entry_hazards);
 	current_hash += technicalmachine::hash(entry_hazards);
 	current_hash *= technicalmachine::max_hash(wish);
 	current_hash += technicalmachine::hash(wish);
-	current_hash *= screens.max_hash();
-	current_hash += screens.hash();
+	current_hash *= technicalmachine::max_hash(screens);
+	current_hash += technicalmachine::hash(screens);
 	return current_hash;
 }
 
