@@ -68,7 +68,7 @@ private:
 
 template<intmax_t normal_duration, intmax_t max_duration>
 constexpr auto hash(Screen<normal_duration, max_duration> const screen) noexcept {
-	return hash(screen.turns_remaining());
+	return hash(bounded::integer<0, max_duration - 1>(screen.turns_remaining()));
 }
 template<intmax_t normal_duration, intmax_t max_duration>
 constexpr auto max_hash(Screen<normal_duration, max_duration>) noexcept {
