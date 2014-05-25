@@ -88,7 +88,7 @@ auto is_type (ActivePokemon const & pokemon, Type const type) -> bool {
 namespace {
 
 auto forced_grounded(Pokemon const & pokemon, Weather const & weather) -> bool {
-	return weather.gravity() or get_item(pokemon).grounds();
+	return weather.gravity() or grounds(get_item(pokemon));
 }
 auto forced_grounded(ActivePokemon const & pokemon, Weather const & weather) -> bool {
 	return forced_grounded(static_cast<Pokemon const &>(pokemon), weather) or pokemon.ingrained();

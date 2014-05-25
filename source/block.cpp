@@ -141,7 +141,7 @@ bool is_not_illegal_switch(ActivePokemon const & user, Moves const move, ActiveP
 
 bool is_blocked_from_switching(ActivePokemon const & user, Pokemon const & other, Weather const & weather) {
 	bool const block_attempted = get_ability(other).blocks_switching(user, weather) or user.trapped();
-	bool const result = block_attempted and !get_item(user).allows_switching();
+	bool const result = block_attempted and !allows_switching(get_item(user));
 	return result;
 }
 
@@ -221,7 +221,7 @@ bool standard_move_lock_in(ActivePokemon const & user, Moves const move) {
 }
 
 bool is_locked_in (ActivePokemon const & user) {
-	return user.is_encored() or user.recharging() or get_item(user).is_choice_item();
+	return user.is_encored() or user.recharging() or is_choice_item(get_item(user));
 }
 
 bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move) {

@@ -104,7 +104,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	Gender const gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
 	Happiness const happiness(pt.get<Happiness::value_type>("happiness"));
 	Nature const nature(from_string<Nature>(pt.get<std::string>("nature")));
-	Item const item(from_string<Item::Items>(pt.get<std::string>("item")));
+	Item const item(from_string<Item>(pt.get<std::string>("item")));
 	Ability const ability(from_string<Ability::Abilities>(pt.get<std::string>("ability")));
 	team.add_pokemon(from_simulator_string(species_str), level, gender, item, ability, nature, nickname, happiness);
 	Pokemon & pokemon = team.all_pokemon().at_replacement();

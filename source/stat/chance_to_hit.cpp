@@ -39,10 +39,10 @@ using namespace bounded::literal;
 auto move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool;
 
 using AccuracyItemModifier = bounded_rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
-auto accuracy_item_modifier(Item const & item, bool target_moved) -> AccuracyItemModifier;
+auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier;
 
 using EvasionItemModifier = bounded_rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
-auto evasion_item_modifier(Item const & item) -> EvasionItemModifier;
+auto evasion_item_modifier(Item const item) -> EvasionItemModifier;
 
 using namespace detail_chance_to_hit;
 
@@ -75,22 +75,22 @@ auto move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy,
 	return static_cast<bool>(base_accuracy) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
 }
 
-auto accuracy_item_modifier(Item const & item, bool target_moved) -> AccuracyItemModifier {
-	switch (item.name) {
-		case Item::WIDE_LENS:
+auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier {
+	switch (item) {
+		case Item::Wide_Lens:
 			return AccuracyItemModifier(11_bi, 10_bi);
-		case Item::ZOOM_LENS:
+		case Item::Zoom_Lens:
 			return target_moved ? AccuracyItemModifier(6_bi, 5_bi) : AccuracyItemModifier(1_bi, 1_bi);
 		default:
 			return AccuracyItemModifier(1_bi, 1_bi);
 	}
 }
 
-auto evasion_item_modifier(Item const & item) -> EvasionItemModifier {
-	switch (item.name) {
-		case Item::BRIGHTPOWDER:
+auto evasion_item_modifier(Item const item) -> EvasionItemModifier {
+	switch (item) {
+		case Item::BrightPowder:
 			return EvasionItemModifier(9_bi, 10_bi);
-		case Item::Lax_INCENSE:
+		case Item::Lax_Incense:
 			return EvasionItemModifier(19_bi, 20_bi);
 		default:
 			return EvasionItemModifier(1_bi, 1_bi);

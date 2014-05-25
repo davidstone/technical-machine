@@ -167,7 +167,7 @@ Pokemon::hash_type Pokemon::hash() const {
 	auto const & hp = get_hp(*this);
 	return
 		static_cast<hash_type>(m_species) + number_of_species *
-		(m_item.name + Item::END *
+		(static_cast<hash_type>(m_item) + static_cast<hash_type>(Item::END) *
 		(m_status.hash() + m_status.max_hash() *
 		(static_cast<hash_type>(hp.current() - 1_bi) + static_cast<hash_type>(hp.max()) *	// - 1 because you can't have 0 HP
 		(m_has_been_seen + 2 *
@@ -176,7 +176,7 @@ Pokemon::hash_type Pokemon::hash() const {
 }
 
 Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * Item::END * m_status.max_hash() * static_cast<hash_type>(get_hp(*this).max()) * 2 * static_cast<hash_type>(::technicalmachine::max_hash(move));
+	return number_of_species * static_cast<hash_type>(Item::END) * m_status.max_hash() * static_cast<hash_type>(get_hp(*this).max()) * 2 * static_cast<hash_type>(::technicalmachine::max_hash(move));
 }
 
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
@@ -210,7 +210,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	double const d_per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
 	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
 	output += " (" + per_cent_hp + "% HP)";
-	output += " @ " + to_string(get_item(pokemon).name);
+	output += " @ " + to_string(get_item(pokemon));
 	if (include_nickname and pokemon.get_nickname() != to_string(static_cast<Species>(pokemon))) {
 		output += " ** " + pokemon.get_nickname();
 	}

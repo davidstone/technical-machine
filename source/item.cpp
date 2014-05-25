@@ -22,485 +22,462 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-Item::Item ():
-	name (END) {
+bool is_set(Item const item) {
+	return item != Item::END;
 }
 
-Item::Item (Items item):
-	name (item) {
+bool allows_switching(Item const item) {
+	return item == Item::Shed_Shell;
 }
 
-bool Item::is_set () const {
-	return name != END;
+bool boosts_super_effective_moves(Item const item) {
+	return item == Item::Expert_Belt;
 }
 
-void Item::set_if_unknown (Item::Items const item) {
-	if (!is_set ())
-		name = item;
+bool causes_recoil(Item const item) {
+	return item == Item::Life_Orb;
 }
 
-bool Item::allows_switching () const {
-	return name == SHED_SHELL;
+bool grounds(Item const item) {
+	return item == Item::Iron_Ball;
 }
 
-bool Item::boosts_super_effective_moves () const {
-	return name == EXPERT_BELT;
-}
-
-bool Item::causes_recoil () const {
-	return name == LIFE_ORB;
-}
-
-bool Item::grounds () const {
-	return name == IRON_BALL;
-}
-
-bool Item::is_choice_item () const {
-	switch (name) {
-		case CHOICE_BAND:
-		case CHOICE_SCARF:
-		case CHOICE_SPECS:
+bool is_choice_item(Item const item) {
+	switch (item) {
+		case Item::Choice_Band:
+		case Item::Choice_Scarf:
+		case Item::Choice_Specs:
 			return true;
 		default:
 			return false;
 	}
 }
 
-bool Item::is_gone () const {
-	return name == NO_ITEM;
-}
-
-bool Item::was_lost() const {
+bool was_lost(Item const item) {
+	// TODO
 	return false;
 }
 
-void Item::remove () {
-	name = NO_ITEM;
+void remove(Item & item) {
+	item = Item::No_Item;
 }
 
-bool Item::extends_hail () const {
-	return name == ICY_ROCK;
+bool extends_hail(Item const item) {
+	return item == Item::Icy_Rock;
 }
 
-bool Item::extends_rain () const {
-	return name == DAMP_ROCK;
+bool extends_rain(Item const item) {
+	return item == Item::Damp_Rock;
 }
 
-bool Item::extends_sand () const {
-	return name == SMOOTH_ROCK;
+bool extends_sand(Item const item) {
+	return item == Item::Smooth_Rock;
 }
 
-bool Item::extends_sun () const {
-	return name == HEAT_ROCK;
+bool extends_sun(Item const item) {
+	return item == Item::Heat_Rock;
 }
 
-bool Item::extends_light_screen () const {
-	return name == LIGHT_CLAY;
+bool extends_light_screen(Item const item) {
+	return item == Item::Light_Clay;
 }
 
-bool Item::extends_reflect () const {
-	return name == LIGHT_CLAY;
+bool extends_reflect(Item const item) {
+	return item == Item::Light_Clay;
 }
 
-void Item::steal (Item & other) {
-	using std::swap;
-	if (is_gone() and !other.blocks_trick())
-		swap (name, other.name);
+void steal(Item & mine, Item & other) {
+	if (mine == Item::No_Item and !blocks_trick(other)) {
+		using std::swap;
+		swap(mine, other);
+	}
 }
 
-bounded::integer<0, 80> Item::berry_power() const {
-	switch (name) {
-		case AGUAV_BERRY:
-		case ASPEAR_BERRY:
-		case BABIRI_BERRY:
-		case CHARTI_BERRY:
-		case CHERI_BERRY:
-		case CHESTO_BERRY:
-		case CHILAN_BERRY:
-		case CHOPLE_BERRY:
-		case COBA_BERRY:
-		case COLBUR_BERRY:
-		case FIGY_BERRY:
-		case HABAN_BERRY:
-		case IAPAPA_BERRY:
-		case KASIB_BERRY:
-		case KEBIA_BERRY:
-		case LEPPA_BERRY:
-		case LUM_BERRY:
-		case MAGO_BERRY:
-		case OCCA_BERRY:
-		case ORAN_BERRY:
-		case PASSHO_BERRY:
-		case PAYAPA_BERRY:
-		case PECHA_BERRY:
-		case PERSIM_BERRY:
-		case RAWST_BERRY:
-		case RAZZ_BERRY:
-		case RINDO_BERRY:
-		case SHUCA_BERRY:
-		case SITRUS_BERRY:
-		case TANGA_BERRY:
-		case WACAN_BERRY:
-		case WIKI_BERRY:
-		case YACHE_BERRY:
+bounded::integer<0, 80> berry_power(Item const item) {
+	switch (item) {
+		case Item::Aguav_Berry:
+		case Item::Aspear_Berry:
+		case Item::Babiri_Berry:
+		case Item::Charti_Berry:
+		case Item::Cheri_Berry:
+		case Item::Chesto_Berry:
+		case Item::Chilan_Berry:
+		case Item::Chople_Berry:
+		case Item::Coba_Berry:
+		case Item::Colbur_Berry:
+		case Item::Figy_Berry:
+		case Item::Haban_Berry:
+		case Item::Iapapa_Berry:
+		case Item::Kasib_Berry:
+		case Item::Kebia_Berry:
+		case Item::Leppa_Berry:
+		case Item::Lum_Berry:
+		case Item::Mago_Berry:
+		case Item::Occa_Berry:
+		case Item::Oran_Berry:
+		case Item::Passho_Berry:
+		case Item::Payapa_Berry:
+		case Item::Pecha_Berry:
+		case Item::Persim_Berry:
+		case Item::Rawst_Berry:
+		case Item::Razz_Berry:
+		case Item::Rindo_Berry:
+		case Item::Shuca_Berry:
+		case Item::Sitrus_Berry:
+		case Item::Tanga_Berry:
+		case Item::Wacan_Berry:
+		case Item::Wiki_Berry:
+		case Item::Yache_Berry:
 			return 60_bi;
-		case BLUK_BERRY:
-		case CORNN_BERRY:
-		case GREPA_BERRY:
-		case HONDEW_BERRY:
-		case KELPSY_BERRY:
-		case MAGOST_BERRY:
-		case NANAB_BERRY:
-		case NOMEL_BERRY:
-		case PAMTRE_BERRY:
-		case PINAP_BERRY:
-		case POMEG_BERRY:
-		case QUALOT_BERRY:
-		case RABUTA_BERRY:
-		case SPELON_BERRY:
-		case TAMATO_BERRY:
-		case WEPEAR_BERRY:
+		case Item::Bluk_Berry:
+		case Item::Cornn_Berry:
+		case Item::Grepa_Berry:
+		case Item::Hondew_Berry:
+		case Item::Kelpsy_Berry:
+		case Item::Magost_Berry:
+		case Item::Nanab_Berry:
+		case Item::Nomel_Berry:
+		case Item::Pamtre_Berry:
+		case Item::Pinap_Berry:
+		case Item::Pomeg_Berry:
+		case Item::Qualot_Berry:
+		case Item::Rabuta_Berry:
+		case Item::Spelon_Berry:
+		case Item::Tamato_Berry:
+		case Item::Wepear_Berry:
 			return 70_bi;
-		case APICOT_BERRY:
-		case BELUE_BERRY:
-		case CUSTAP_BERRY:
-		case DURIN_BERRY:
-		case ENIGMA_BERRY:
-		case GANLON_BERRY:
-		case JABOCA_BERRY:
-		case LANSAT_BERRY:
-		case LIECHI_BERRY:
-		case MICLE_BERRY:
-		case PETAYA_BERRY:
-		case ROWAP_BERRY:
-		case SALAC_BERRY:
-		case STARF_BERRY:
-		case WATMEL_BERRY:
+		case Item::Apicot_Berry:
+		case Item::Belue_Berry:
+		case Item::Custap_Berry:
+		case Item::Durin_Berry:
+		case Item::Enigma_Berry:
+		case Item::Ganlon_Berry:
+		case Item::Jaboca_Berry:
+		case Item::Lansat_Berry:
+		case Item::Liechi_Berry:
+		case Item::Micle_Berry:
+		case Item::Petaya_Berry:
+		case Item::Rowap_Berry:
+		case Item::Salac_Berry:
+		case Item::Starf_Berry:
+		case Item::Watmel_Berry:
 			return 80_bi;
 		default:
 			return 0_bi;
 	}
 }
 
-bounded::integer<0, 130> Item::fling_power() const {
-	switch (name) {
-		case IRON_BALL:
+bounded::integer<0, 130> fling_power(Item const item) {
+	switch (item) {
+		case Item::Iron_Ball:
 			return 130_bi;
-		case HARD_STONE:
-		case ARMOR_FOSSIL:
-		case CLAW_FOSSIL:
-		case DOME_FOSSIL:
-		case HELIX_FOSSIL:
-		case OLD_AMBER:
-		case RARE_BONE:
-		case ROOT_FOSSIL:
-		case SKULL_FOSSIL:
+		case Item::Hard_Stone:
+		case Item::Armor_Fossil:
+		case Item::Claw_Fossil:
+		case Item::Dome_Fossil:
+		case Item::Helix_Fossil:
+		case Item::Old_Amber:
+		case Item::Rare_Bone:
+		case Item::Root_Fossil:
+		case Item::Skull_Fossil:
 			return 100_bi;
-		case DEEPSEATOOTH:
-		case DRACO_PLATE:
-		case DREAD_PLATE:
-		case EARTH_PLATE:
-		case FIST_PLATE:
-		case FLAME_PLATE:
-		case GRIP_CLAW:
-		case ICICLE_PLATE:
-		case INSECT_PLATE:
-		case IRON_PLATE:
-		case MEADOW_PLATE:
-		case MIND_PLATE:
-		case SKY_PLATE:
-		case SPLASH_PLATE:
-		case SPOOKY_PLATE:
-		case STONE_PLATE:
-		case THICK_CLUB:
-		case TOXIC_PLATE:
-		case ZAP_PLATE:
+		case Item::DeepSeaTooth:
+		case Item::Draco_Plate:
+		case Item::Dread_Plate:
+		case Item::Earth_Plate:
+		case Item::Fist_Plate:
+		case Item::Flame_Plate:
+		case Item::Grip_Claw:
+		case Item::Icicle_Plate:
+		case Item::Insect_Plate:
+		case Item::Iron_Plate:
+		case Item::Meadow_Plate:
+		case Item::Mind_Plate:
+		case Item::Sky_Plate:
+		case Item::Splash_Plate:
+		case Item::Spooky_Plate:
+		case Item::Stone_Plate:
+		case Item::Thick_Club:
+		case Item::Toxic_Plate:
+		case Item::Zap_Plate:
 			return 90_bi;
-		case QUICK_CLAW:
-		case RAZOR_CLAW:
-		case STICKY_BARB:
-		case DAWN_STONE:
-		case DUSK_STONE:
-		case ELECTIRIZER:
-		case MAGMARIZER:
-		case ODD_KEYSTONE:
-		case OVAL_STONE:
-		case PROTECTOR:
-		case SHINY_STONE:
+		case Item::Quick_Claw:
+		case Item::Razor_Claw:
+		case Item::Sticky_Barb:
+		case Item::Dawn_Stone:
+		case Item::Dusk_Stone:
+		case Item::Electirizer:
+		case Item::Magmarizer:
+		case Item::Odd_Keystone:
+		case Item::Oval_Stone:
+		case Item::Protector:
+		case Item::Shiny_Stone:
 			return 80_bi;
-		case DRAGON_FANG:
-		case poison_BARB:
-		case POWER_ANKLET:
-		case POWER_BAND:
-		case POWER_BELT:
-		case POWER_BRACER:
-		case POWER_LENS:
-		case POWER_WEIGHT:
+		case Item::Dragon_Fang:
+		case Item::Poison_Barb:
+		case Item::Power_Anklet:
+		case Item::Power_Band:
+		case Item::Power_Belt:
+		case Item::Power_Bracer:
+		case Item::Power_Lens:
+		case Item::Power_Weight:
 			return 70_bi;
-		case Adamant_ORB:
-		case DAMP_ROCK:
-		case HEAT_ROCK:
-		case LUSTROUS_ORB:
-		case MACHO_BRACE:
-		case STICK:
+		case Item::Adamant_Orb:
+		case Item::Damp_Rock:
+		case Item::Heat_Rock:
+		case Item::Lustrous_Orb:
+		case Item::Macho_Brace:
+		case Item::Stick:
 			return 60_bi;
-		case SHARP_BEAK:
-		case DUBIOUS_DISC:
+		case Item::Sharp_Beak:
+		case Item::Dubious_Disc:
 			return 50_bi;
-		case ICY_ROCK:
-		case LUCKY_PUNCH:
+		case Item::Icy_Rock:
+		case Item::Lucky_Punch:
 			return 40_bi;
-		case BERRY_JUICE:
-		case BLACK_BELT:
-		case BLACK_SLUDGE:
-		case BLACKGLASSES:
-		case CHARCOAL:
-		case DEEPSEASCALE:
-		case FLAME_ORB:
-		case KINGS_ROCK:
-		case LIFE_ORB:
-		case LIGHT_BALL:
-		case LIGHT_CLAY:
-		case MAGNET:
-		case METAL_COAT:
-		case METRONOME:
-		case MIRACLE_SEED:
-		case MYSTIC_WATER:
-		case NEVERMELTICE:
-		case RAZOR_FANG:
-		case SCOPE_LENS:
-		case SHELL_BELL:
-		case SOUL_DEW:
-		case SPELL_TAG:
-		case TOXIC_ORB:
-		case TWISTEDSPOON:
-		case AMULET_COIN:
-		case ANTIDOTE:
-		case AWAKENING:
-		case BIG_MUSHROOM:
-		case BIG_PEARL:
-		case BLACK_FLUTE:
-		case BLUE_FLUTE:
-		case BLUE_SHARD:
-		case burn_HEAL:
-		case CALCIUM:
-		case CARBOS:
-		case CLEANSE_TAG:
-		case DAMP_MULCH:
-		case DIRE_HIT:
-		case DRAGON_SCALE:
-		case ELIXIR:
-		case ENERGY_ROOT:
-		case ENERGYPOWDER:
-		case ESCAPE_ROPE:
-		case ETHER:
-		case EVERSTONE:
-		case EXP_SHARE:
-		case FIRE_STONE:
-		case FLUFFY_TAIL:
-		case FRESH_WATER:
-		case FULL_HEAL:
-		case FULL_sleep_restORE:
-		case GOOEY_MULCH:
-		case GREEN_SHARD:
-		case GROWTH_MULCH:
-		case GUARD_SPEC:
-		case HEAL_POWDER:
-		case HEART_SCALE:
-		case HONEY:
-		case HP_UP:
-		case HYPER_POTION:
-		case ICE_HEAL:
-		case IRON:
-		case LAVA_COOKIE:
-		case LEAF_STONE:
-		case LEMONADE:
-		case LUCKY_EGG:
-		case MAX_ELIXIR:
-		case MAX_ETHER:
-		case MAX_POTION:
-		case MAX_REPEL:
-		case MAX_REVIVE:
-		case MOOMOO_MILK:
-		case MOON_STONE:
-		case NUGGET:
-		case OLD_GATEAU:
-		case PARLYZ_HEAL:
-		case PEARL:
-		case POKE_DOLL:
-		case POTION:
-		case PP_MAX:
-		case PP_UP:
-		case PROTEIN:
-		case RARE_CANDY:
-		case RED_FLUTE:
-		case RED_SHARD:
-		case REPEL:
-		case REVIVAL_HERB:
-		case REVIVE:
-		case SACRED_ASH:
-		case SHOAL_SALT:
-		case SHOAL_SHELL:
-		case SMOKE_BALL:
-		case SODA_POP:
-		case STABLE_MULCH:
-		case STAR_PIECE:
-		case STARDUST:
-		case SUN_STONE:
-		case SUPER_POTION:
-		case SUPER_REPEL:
-		case THUNDERSTONE:
-		case TINYMUSHROOM:
-		case UP_GRADE:
-		case WATER_STONE:
-		case WHITE_FLUTE:
-		case X_ACCURACY:
-		case X_ATTACK:
-		case X_DEFEND:
-		case X_SP_DEF:
-		case X_SPECIAL:
-		case X_SPEED:
-		case YELLOW_FLUTE:
-		case YELLOW_SHARD:
-		case ZINC:
+		case Item::Berry_Juice:
+		case Item::Black_Belt:
+		case Item::Black_Sludge:
+		case Item::BlackGlasses:
+		case Item::Charcoal:
+		case Item::DeepSeaScale:
+		case Item::Flame_Orb:
+		case Item::Kings_Rock:
+		case Item::Life_Orb:
+		case Item::Light_Ball:
+		case Item::Light_Clay:
+		case Item::Magnet:
+		case Item::Metal_Coat:
+		case Item::Metronome:
+		case Item::Miracle_Seed:
+		case Item::Mystic_Water:
+		case Item::NeverMeltIce:
+		case Item::Razor_Fang:
+		case Item::Scope_Lens:
+		case Item::Shell_Bell:
+		case Item::Soul_Dew:
+		case Item::Spell_Tag:
+		case Item::Toxic_Orb:
+		case Item::TwistedSpoon:
+		case Item::Amulet_Coin:
+		case Item::Antidote:
+		case Item::Awakening:
+		case Item::Big_Mushroom:
+		case Item::Big_Pearl:
+		case Item::Black_Flute:
+		case Item::Blue_Flute:
+		case Item::Blue_Shard:
+		case Item::Burn_Heal:
+		case Item::Calcium:
+		case Item::Carbos:
+		case Item::Cleanse_Tag:
+		case Item::Damp_Mulch:
+		case Item::Dire_Hit:
+		case Item::Dragon_Scale:
+		case Item::Elixir:
+		case Item::Energy_Root:
+		case Item::EnergyPowder:
+		case Item::Escape_Rope:
+		case Item::Ether:
+		case Item::Everstone:
+		case Item::Exp_Share:
+		case Item::Fire_Stone:
+		case Item::Fluffy_Tail:
+		case Item::Fresh_Water:
+		case Item::Full_Heal:
+		case Item::Full_Sleep_Restore:
+		case Item::Gooey_Mulch:
+		case Item::Green_Shard:
+		case Item::Growth_Mulch:
+		case Item::Guard_Spec:
+		case Item::Heal_Powder:
+		case Item::Heart_Scale:
+		case Item::Honey:
+		case Item::HP_Up:
+		case Item::Hyper_Potion:
+		case Item::Ice_Heal:
+		case Item::Iron:
+		case Item::Lava_Cookie:
+		case Item::Leaf_Stone:
+		case Item::Lemonade:
+		case Item::Lucky_Egg:
+		case Item::Max_Elixir:
+		case Item::Max_Ether:
+		case Item::Max_Potion:
+		case Item::Max_Repel:
+		case Item::Max_Revive:
+		case Item::MooMoo_Milk:
+		case Item::Moon_Stone:
+		case Item::Nugget:
+		case Item::Old_Gateau:
+		case Item::Parlyz_Heal:
+		case Item::Pearl:
+		case Item::Poke_Doll:
+		case Item::Potion:
+		case Item::PP_Max:
+		case Item::PP_Up:
+		case Item::Protein:
+		case Item::Rare_Candy:
+		case Item::Red_Flute:
+		case Item::Red_Shard:
+		case Item::Repel:
+		case Item::Revival_Herb:
+		case Item::Revive:
+		case Item::Sacred_Ash:
+		case Item::Shoal_Salt:
+		case Item::Shoal_Shell:
+		case Item::Smoke_Ball:
+		case Item::Soda_Pop:
+		case Item::Stable_Mulch:
+		case Item::Star_Piece:
+		case Item::Stardust:
+		case Item::Sun_Stone:
+		case Item::Super_Potion:
+		case Item::Super_Repel:
+		case Item::Thunderstone:
+		case Item::TinyMushroom:
+		case Item::Up_Grade:
+		case Item::Water_Stone:
+		case Item::White_Flute:
+		case Item::X_Accuracy:
+		case Item::X_Attack:
+		case Item::X_Defend:
+		case Item::X_Sp_Def:
+		case Item::X_Special:
+		case Item::X_Speed:
+		case Item::Yellow_Flute:
+		case Item::Yellow_Shard:
+		case Item::Zinc:
 			return 30_bi;
-		case BIG_ROOT:
-		case BLUE_SCARF:
-		case BRIGHTPOWDER:
-		case CHOICE_BAND:
-		case CHOICE_SCARF:
-		case CHOICE_SPECS:
-		case DESTINY_KNOT:
-		case EXPERT_BELT:
-		case FOCUS_BAND:
-		case FOCUS_SASH:
-		case FULL_INCENSE:
-		case GREEN_SCARF:
-		case LAGGING_TAIL:
-		case Lax_INCENSE:
-		case LEFTOVERS:
-		case LUCK_INCENSE:
-		case MENTAL_HERB:
-		case METAL_POWDER:
-		case MUSCLE_BAND:
-		case ODD_INCENSE:
-		case PINK_SCARF:
-		case POWER_HERB:
-		case PURE_INCENSE:
-		case QUICK_POWDER:
-		case REAPER_CLOTH:
-		case RED_SCARF:
-		case ROCK_INCENSE:
-		case ROSE_INCENSE:
-		case SEA_INCENSE:
-		case SHED_SHELL:
-		case SILK_SCARF:
-		case SILVERPOWDER:
-		case SMOOTH_ROCK:
-		case SOFT_SAND:
-		case SOOTHE_BELL:
-		case WAVE_INCENSE:
-		case WHITE_HERB:
-		case WIDE_LENS:
-		case WISE_GLASSES:
-		case YELLOW_SCARF:
-		case ZOOM_LENS:
-		case AGUAV_BERRY:
-		case ASPEAR_BERRY:
-		case BABIRI_BERRY:
-		case CHARTI_BERRY:
-		case CHERI_BERRY:
-		case CHESTO_BERRY:
-		case CHILAN_BERRY:
-		case CHOPLE_BERRY:
-		case COBA_BERRY:
-		case COLBUR_BERRY:
-		case FIGY_BERRY:
-		case HABAN_BERRY:
-		case IAPAPA_BERRY:
-		case KASIB_BERRY:
-		case KEBIA_BERRY:
-		case LEPPA_BERRY:
-		case LUM_BERRY:
-		case MAGO_BERRY:
-		case OCCA_BERRY:
-		case ORAN_BERRY:
-		case PASSHO_BERRY:
-		case PAYAPA_BERRY:
-		case PECHA_BERRY:
-		case PERSIM_BERRY:
-		case RAWST_BERRY:
-		case RAZZ_BERRY:
-		case RINDO_BERRY:
-		case SHUCA_BERRY:
-		case SITRUS_BERRY:
-		case TANGA_BERRY:
-		case WACAN_BERRY:
-		case WIKI_BERRY:
-		case YACHE_BERRY:
-		case BLUK_BERRY:
-		case CORNN_BERRY:
-		case GREPA_BERRY:
-		case HONDEW_BERRY:
-		case KELPSY_BERRY:
-		case MAGOST_BERRY:
-		case NANAB_BERRY:
-		case NOMEL_BERRY:
-		case PAMTRE_BERRY:
-		case PINAP_BERRY:
-		case POMEG_BERRY:
-		case QUALOT_BERRY:
-		case RABUTA_BERRY:
-		case SPELON_BERRY:
-		case TAMATO_BERRY:
-		case WEPEAR_BERRY:
-		case APICOT_BERRY:
-		case BELUE_BERRY:
-		case CUSTAP_BERRY:
-		case DURIN_BERRY:
-		case ENIGMA_BERRY:
-		case GANLON_BERRY:
-		case JABOCA_BERRY:
-		case LANSAT_BERRY:
-		case LIECHI_BERRY:
-		case MICLE_BERRY:
-		case PETAYA_BERRY:
-		case ROWAP_BERRY:
-		case SALAC_BERRY:
-		case STARF_BERRY:
-		case WATMEL_BERRY:
+		case Item::Big_Root:
+		case Item::Blue_Scarf:
+		case Item::BrightPowder:
+		case Item::Choice_Band:
+		case Item::Choice_Scarf:
+		case Item::Choice_Specs:
+		case Item::Destiny_Knot:
+		case Item::Expert_Belt:
+		case Item::Focus_Band:
+		case Item::Focus_Sash:
+		case Item::Full_Incense:
+		case Item::Green_Scarf:
+		case Item::Lagging_Tail:
+		case Item::Lax_Incense:
+		case Item::Leftovers:
+		case Item::Luck_Incense:
+		case Item::Mental_Herb:
+		case Item::Metal_Powder:
+		case Item::Muscle_Band:
+		case Item::Odd_Incense:
+		case Item::Pink_Scarf:
+		case Item::Power_Herb:
+		case Item::Pure_Incense:
+		case Item::Quick_Powder:
+		case Item::Reaper_Cloth:
+		case Item::Red_Scarf:
+		case Item::Rock_Incense:
+		case Item::Rose_Incense:
+		case Item::Sea_Incense:
+		case Item::Shed_Shell:
+		case Item::Silk_Scarf:
+		case Item::SilverPowder:
+		case Item::Smooth_Rock:
+		case Item::Soft_Sand:
+		case Item::Soothe_Bell:
+		case Item::Wave_Incense:
+		case Item::White_Herb:
+		case Item::Wide_Lens:
+		case Item::Wise_Glasses:
+		case Item::Yellow_Scarf:
+		case Item::Zoom_Lens:
+		case Item::Aguav_Berry:
+		case Item::Aspear_Berry:
+		case Item::Babiri_Berry:
+		case Item::Charti_Berry:
+		case Item::Cheri_Berry:
+		case Item::Chesto_Berry:
+		case Item::Chilan_Berry:
+		case Item::Chople_Berry:
+		case Item::Coba_Berry:
+		case Item::Colbur_Berry:
+		case Item::Figy_Berry:
+		case Item::Haban_Berry:
+		case Item::Iapapa_Berry:
+		case Item::Kasib_Berry:
+		case Item::Kebia_Berry:
+		case Item::Leppa_Berry:
+		case Item::Lum_Berry:
+		case Item::Mago_Berry:
+		case Item::Occa_Berry:
+		case Item::Oran_Berry:
+		case Item::Passho_Berry:
+		case Item::Payapa_Berry:
+		case Item::Pecha_Berry:
+		case Item::Persim_Berry:
+		case Item::Rawst_Berry:
+		case Item::Razz_Berry:
+		case Item::Rindo_Berry:
+		case Item::Shuca_Berry:
+		case Item::Sitrus_Berry:
+		case Item::Tanga_Berry:
+		case Item::Wacan_Berry:
+		case Item::Wiki_Berry:
+		case Item::Yache_Berry:
+		case Item::Bluk_Berry:
+		case Item::Cornn_Berry:
+		case Item::Grepa_Berry:
+		case Item::Hondew_Berry:
+		case Item::Kelpsy_Berry:
+		case Item::Magost_Berry:
+		case Item::Nanab_Berry:
+		case Item::Nomel_Berry:
+		case Item::Pamtre_Berry:
+		case Item::Pinap_Berry:
+		case Item::Pomeg_Berry:
+		case Item::Qualot_Berry:
+		case Item::Rabuta_Berry:
+		case Item::Spelon_Berry:
+		case Item::Tamato_Berry:
+		case Item::Wepear_Berry:
+		case Item::Apicot_Berry:
+		case Item::Belue_Berry:
+		case Item::Custap_Berry:
+		case Item::Durin_Berry:
+		case Item::Enigma_Berry:
+		case Item::Ganlon_Berry:
+		case Item::Jaboca_Berry:
+		case Item::Lansat_Berry:
+		case Item::Liechi_Berry:
+		case Item::Micle_Berry:
+		case Item::Petaya_Berry:
+		case Item::Rowap_Berry:
+		case Item::Salac_Berry:
+		case Item::Starf_Berry:
+		case Item::Watmel_Berry:
 			return 10_bi;
 		default:
 			return 0_bi;
 	}
 }
 
-bool Item::blocks_trick () const {
-	switch (name) {
-		case AIR_MAIL:
-		case BLOOM_MAIL:
-		case BRICK_MAIL:
-		case BUBBLE_MAIL:
-		case FLAME_MAIL:
-		case GRASS_MAIL:
-		case HEART_MAIL:
-		case MOSAIC_MAIL:
-		case SNOW_MAIL:
-		case SPACE_MAIL:
-		case STEEL_MAIL:
-		case TUNNEL_MAIL:
+bool blocks_trick(Item const item) {
+	switch (item) {
+		case Item::Air_Mail:
+		case Item::Bloom_Mail:
+		case Item::Brick_Mail:
+		case Item::Bubble_Mail:
+		case Item::Flame_Mail:
+		case Item::Grass_Mail:
+		case Item::Heart_Mail:
+		case Item::Mosaic_Mail:
+		case Item::Snow_Mail:
+		case Item::Space_Mail:
+		case Item::Steel_Mail:
+		case Item::Tunnel_Mail:
 			return true;
 		default:
 			return false;
 	}
-}
-
-bool operator== (Item const & lhs, Item const & rhs) {
-	return lhs.name == rhs.name;
-}
-
-bool operator!= (Item const & lhs, Item const & rhs) {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

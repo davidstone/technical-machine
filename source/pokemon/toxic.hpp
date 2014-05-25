@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TOXIC_HPP_
-#define TOXIC_HPP_
+#ifndef Toxic_HPP_
+#define Toxic_HPP_
 
 #include "../rational.hpp"
 #include <bounded_integer/bounded_integer.hpp>
@@ -47,4 +47,4 @@ private:
 bool operator!= (Toxic const & lhs, Toxic const & rhs);
 
 }	// namespace technicalmachine
-#endif	// TOXIC_HPP_
+#endif	// Toxic_HPP_

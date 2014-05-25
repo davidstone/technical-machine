@@ -212,7 +212,7 @@ auto do_damage(ActivePokemon & user, ActivePokemon & target, damage_type const d
 		return;
 	}
 	target.direct_damage(damage);
-	if (get_item(user).causes_recoil()) {
+	if (causes_recoil(get_item(user))) {
 		drain(user, Rational(1, 10));
 	}
 }
@@ -471,7 +471,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Covet:
 		case Moves::Thief:
-			get_item(user).steal(get_item(target));
+			steal(get_item(user), get_item(target));
 			break;
 		case Moves::Cross_Poison:
 		case Moves::Gunk_Shot:
@@ -580,7 +580,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			confusing_stat_boost(target, StatNames::SPA, 1_bi);
 			break;
 		case Moves::Fling:
-			get_item(user).remove();
+			remove(get_item(user));
 			break;
 		case Moves::Fly:
 			user.fly();
@@ -619,7 +619,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			swap_defensive(user.stage(), target.stage());
 			break;
 		case Moves::Hail:
-			weather.set_hail (get_item(user).extends_hail());
+			weather.set_hail(extends_hail(get_item(user)));
 			break;
 		case Moves::Hammer_Arm:
 			boost(user.stage(), StatNames::SPE, -1_bi);
@@ -696,7 +696,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			boost(target.stage(), StatNames::DEF, -1_bi);
 			break;
 		case Moves::Light_Screen:
-			user_team.screens.activate_light_screen(get_item(user).extends_light_screen());
+			user_team.screens.activate_light_screen(extends_light_screen(get_item(user)));
 			break;
 		case Moves::Lock_On:
 		case Moves::Mind_Reader:
@@ -816,7 +816,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Rage:		// Fix
 			break;
 		case Moves::Rain_Dance:
-			weather.set_rain (get_item(user).extends_rain());
+			weather.set_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
 			clear_field(user_team, target);
@@ -826,7 +826,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Recycle:		// Fix
 			break;
 		case Moves::Reflect:
-			user_team.screens.activate_reflect(get_item(user).extends_reflect());
+			user_team.screens.activate_reflect(extends_reflect(get_item(user)));
 			break;
 		case Moves::Refresh:
 			get_status(user) = Status{};
@@ -848,7 +848,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user_team.screens.activate_safeguard();
 			break;
 		case Moves::Sandstorm:
-			weather.set_sand (get_item(user).extends_sand());
+			weather.set_sand(extends_sand(get_item(user)));
 			break;
 		case Moves::Screech:
 			boost(target.stage(), StatNames::DEF, -2_bi);
@@ -914,7 +914,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.use_substitute();		
 			break;
 		case Moves::Sunny_Day:
-			weather.set_sun (get_item(user).extends_sun());
+			weather.set_sun(extends_sun(get_item(user)));
 			break;
 		case Moves::Superpower:
 			boost_physical(user.stage(), -1_bi);
@@ -1083,7 +1083,7 @@ auto struggle(Pokemon & user) -> void {
 
 auto swap_items(Pokemon & user, Pokemon & target) -> void {
 	// Add support for abilities that block Trick / Switcheroo
-	if (!get_item(user).blocks_trick () and !get_item(target).blocks_trick()) {
+	if (!blocks_trick(get_item(user)) and !blocks_trick(get_item(target))) {
 		using std::swap;
 		swap(get_item(user), get_item(target));
 	}

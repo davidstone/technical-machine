@@ -54,7 +54,7 @@ void attack_tests () {
 	get_ability(pokemon) = Ability::Pure_Power;
 	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
 
-	get_item(pokemon).name = Item::CHOICE_BAND;
+	get_item(pokemon) = Item::Choice_Band;
 	
 	check_equal(calculate_attack(attacker.pokemon(), Weather{}), max_attack);
 }
@@ -77,7 +77,7 @@ void special_attack_tests () {
 
 	get_ability(pokemon) = Ability::Solar_Power;
 
-	get_item(pokemon).name = Item::CHOICE_SPECS;
+	get_item(pokemon) = Item::Choice_Specs;
 	
 	check_equal(calculate_special_attack(attacker.pokemon(), weather), max_special_attack);
 }
@@ -169,7 +169,7 @@ void speed_tests () {
 
 	get_ability(pokemon) = Ability::Swift_Swim;
 
-	get_item(pokemon).name = Item::CHOICE_SCARF;
+	get_item(pokemon) = Item::Choice_Scarf;
 	
 	team.screens.activate_tailwind();
 	

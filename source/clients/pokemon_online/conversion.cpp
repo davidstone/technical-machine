@@ -1449,959 +1449,959 @@ unsigned gender_to_id (Gender::Genders gender) {
 	}
 }
 
-Item::Items id_to_item (unsigned id) {
+Item id_to_item(unsigned id) {
 	switch (id) {
 		case 0:
-			return Item::NO_ITEM;
+			return Item::No_Item;
 		case 1:
-			return Item::BIG_ROOT;
+			return Item::Big_Root;
 		case 2:
-			return Item::BLUE_SCARF;
+			return Item::Blue_Scarf;
 		case 3:
-			return Item::BRIGHTPOWDER;
+			return Item::BrightPowder;
 		case 4:
-			return Item::CHOICE_BAND;
+			return Item::Choice_Band;
 		case 5:
-			return Item::CHOICE_SCARF;
+			return Item::Choice_Scarf;
 		case 6:
-			return Item::CHOICE_SPECS;
+			return Item::Choice_Specs;
 		case 7:
-			return Item::DESTINY_KNOT;
+			return Item::Destiny_Knot;
 		case 8:
-			return Item::EXPERT_BELT;
+			return Item::Expert_Belt;
 		case 9:
-			return Item::FOCUS_BAND;
+			return Item::Focus_Band;
 		case 10:
-			return Item::FOCUS_SASH;
+			return Item::Focus_Sash;
 		case 11:
-			return Item::FULL_INCENSE;
+			return Item::Full_Incense;
 		case 12:
-			return Item::GREEN_SCARF;
+			return Item::Green_Scarf;
 		case 13:
-			return Item::LAGGING_TAIL;
+			return Item::Lagging_Tail;
 		case 14:
-			return Item::Lax_INCENSE;
+			return Item::Lax_Incense;
 		case 15:
-			return Item::LEFTOVERS;
+			return Item::Leftovers;
 		case 16:
-			return Item::LUCK_INCENSE;
+			return Item::Luck_Incense;
 		case 17:
-			return Item::MENTAL_HERB;
+			return Item::Mental_Herb;
 		case 18:
-			return Item::METAL_POWDER;
+			return Item::Metal_Powder;
 		case 19:
-			return Item::MUSCLE_BAND;
+			return Item::Muscle_Band;
 		case 20:
-			return Item::ODD_INCENSE;
+			return Item::Odd_Incense;
 		case 21:
-			return Item::PINK_SCARF;
+			return Item::Pink_Scarf;
 		case 22:
-			return Item::POWER_HERB;
+			return Item::Power_Herb;
 		case 23:
-			return Item::PURE_INCENSE;
+			return Item::Pure_Incense;
 		case 24:
-			return Item::QUICK_POWDER;
+			return Item::Quick_Powder;
 		case 25:
-			return Item::REAPER_CLOTH;
+			return Item::Reaper_Cloth;
 		case 26:
-			return Item::RED_SCARF;
+			return Item::Red_Scarf;
 		case 27:
-			return Item::ROCK_INCENSE;
+			return Item::Rock_Incense;
 		case 28:
-			return Item::ROSE_INCENSE;
+			return Item::Rose_Incense;
 		case 29:
-			return Item::SEA_INCENSE;
+			return Item::Sea_Incense;
 		case 30:
-			return Item::SHED_SHELL;
+			return Item::Shed_Shell;
 		case 31:
-			return Item::SILK_SCARF;
+			return Item::Silk_Scarf;
 		case 32:
-			return Item::SILVERPOWDER;
+			return Item::SilverPowder;
 		case 33:
-			return Item::SMOOTH_ROCK;
+			return Item::Smooth_Rock;
 		case 34:
-			return Item::SOFT_SAND;
+			return Item::Soft_Sand;
 		case 35:
-			return Item::SOOTHE_BELL;
+			return Item::Soothe_Bell;
 		case 36:
-			return Item::WAVE_INCENSE;
+			return Item::Wave_Incense;
 		case 37:
-			return Item::WHITE_HERB;
+			return Item::White_Herb;
 		case 38:
-			return Item::WIDE_LENS;
+			return Item::Wide_Lens;
 		case 39:
-			return Item::WISE_GLASSES;
+			return Item::Wise_Glasses;
 		case 40:
-			return Item::YELLOW_SCARF;
+			return Item::Yellow_Scarf;
 		case 41:
-			return Item::ZOOM_LENS;
+			return Item::Zoom_Lens;
 		case 42:
-			return Item::AMULET_COIN;
+			return Item::Amulet_Coin;
 		case 43:
-			return Item::ANTIDOTE;
+			return Item::Antidote;
 		case 44:
-			return Item::AWAKENING;
+			return Item::Awakening;
 		case 45:
-			return Item::BERRY_JUICE;
+			return Item::Berry_Juice;
 		case 46:
-			return Item::BIG_PEARL;
+			return Item::Big_Pearl;
 		case 47:
-			return Item::BIG_MUSHROOM;
+			return Item::Big_Mushroom;
 		case 48:
-			return Item::BLACK_BELT;
+			return Item::Black_Belt;
 		case 49:
-			return Item::BLACK_FLUTE;
+			return Item::Black_Flute;
 		case 50:
-			return Item::BLACK_SLUDGE;
+			return Item::Black_Sludge;
 		case 51:
-			return Item::BLACKGLASSES;
+			return Item::BlackGlasses;
 		case 52:
-			return Item::BLUE_FLUTE;
+			return Item::Blue_Flute;
 		case 53:
-			return Item::BLUE_SHARD;
+			return Item::Blue_Shard;
 		case 54:
-			return Item::burn_HEAL;
+			return Item::Burn_Heal;
 		case 55:
-			return Item::CALCIUM;
+			return Item::Calcium;
 		case 56:
-			return Item::CARBOS;
+			return Item::Carbos;
 		case 57:
-			return Item::CHARCOAL;
+			return Item::Charcoal;
 		case 58:
-			return Item::CLEANSE_TAG;
+			return Item::Cleanse_Tag;
 		case 59:
-			return Item::DAMP_MULCH;
+			return Item::Damp_Mulch;
 		case 60:
-			return Item::DEEPSEASCALE;
+			return Item::DeepSeaScale;
 		case 61:
-			return Item::DIRE_HIT;
+			return Item::Dire_Hit;
 		case 62:
-			return Item::DRAGON_SCALE;
+			return Item::Dragon_Scale;
 		case 63:
-			return Item::ELIXIR;
+			return Item::Elixir;
 		case 64:
-			return Item::ENERGY_ROOT;
+			return Item::Energy_Root;
 		case 65:
-			return Item::ENERGYPOWDER;
+			return Item::EnergyPowder;
 		case 66:
-			return Item::ESCAPE_ROPE;
+			return Item::Escape_Rope;
 		case 67:
-			return Item::ETHER;
+			return Item::Ether;
 		case 68:
-			return Item::EVERSTONE;
+			return Item::Everstone;
 		case 69:
-			return Item::EXP_SHARE;
+			return Item::Exp_Share;
 		case 70:
-			return Item::FIRE_STONE;
+			return Item::Fire_Stone;
 		case 71:
-			return Item::FLAME_ORB;
+			return Item::Flame_Orb;
 		case 72:
-			return Item::FLUFFY_TAIL;
+			return Item::Fluffy_Tail;
 		case 73:
-			return Item::FRESH_WATER;
+			return Item::Fresh_Water;
 		case 74:
-			return Item::FULL_HEAL;
+			return Item::Full_Heal;
 		case 75:
-			return Item::FULL_sleep_restORE;
+			return Item::Full_Sleep_Restore;
 		case 76:
-			return Item::GOOEY_MULCH;
+			return Item::Gooey_Mulch;
 		case 77:
-			return Item::GREEN_SHARD;
+			return Item::Green_Shard;
 		case 78:
-			return Item::GROWTH_MULCH;
+			return Item::Growth_Mulch;
 		case 79:
-			return Item::GUARD_SPEC;
+			return Item::Guard_Spec;
 		case 80:
-			return Item::HEAL_POWDER;
+			return Item::Heal_Powder;
 		case 81:
-			return Item::HEART_SCALE;
+			return Item::Heart_Scale;
 		case 82:
-			return Item::HONEY;
+			return Item::Honey;
 		case 83:
-			return Item::HP_UP;
+			return Item::HP_Up;
 		case 84:
-			return Item::HYPER_POTION;
+			return Item::Hyper_Potion;
 		case 85:
-			return Item::ICE_HEAL;
+			return Item::Ice_Heal;
 		case 86:
-			return Item::IRON;
+			return Item::Iron;
 		case 87:
-			return Item::KINGS_ROCK;
+			return Item::Kings_Rock;
 		case 88:
-			return Item::LAVA_COOKIE;
+			return Item::Lava_Cookie;
 		case 89:
-			return Item::LEAF_STONE;
+			return Item::Leaf_Stone;
 		case 90:
-			return Item::LEMONADE;
+			return Item::Lemonade;
 		case 91:
-			return Item::LIFE_ORB;
+			return Item::Life_Orb;
 		case 92:
-			return Item::LIGHT_BALL;
+			return Item::Light_Ball;
 		case 93:
-			return Item::LIGHT_CLAY;
+			return Item::Light_Clay;
 		case 94:
-			return Item::LUCKY_EGG;
+			return Item::Lucky_Egg;
 		case 95:
-			return Item::MAGNET;
+			return Item::Magnet;
 		case 96:
-			return Item::MAX_ELIXIR;
+			return Item::Max_Elixir;
 		case 97:
-			return Item::MAX_ETHER;
+			return Item::Max_Ether;
 		case 98:
-			return Item::MAX_POTION;
+			return Item::Max_Potion;
 		case 99:
-			return Item::MAX_REPEL;
+			return Item::Max_Repel;
 		case 100:
-			return Item::MAX_REVIVE;
+			return Item::Max_Revive;
 		case 101:
-			return Item::METAL_COAT;
+			return Item::Metal_Coat;
 		case 102:
-			return Item::METRONOME;
+			return Item::Metronome;
 		case 103:
-			return Item::MIRACLE_SEED;
+			return Item::Miracle_Seed;
 		case 104:
-			return Item::MOOMOO_MILK;
+			return Item::MooMoo_Milk;
 		case 105:
-			return Item::MOON_STONE;
+			return Item::Moon_Stone;
 		case 106:
-			return Item::MYSTIC_WATER;
+			return Item::Mystic_Water;
 		case 107:
-			return Item::NEVERMELTICE;
+			return Item::NeverMeltIce;
 		case 108:
-			return Item::NUGGET;
+			return Item::Nugget;
 		case 109:
-			return Item::OLD_GATEAU;
+			return Item::Old_Gateau;
 		case 110:
-			return Item::PARLYZ_HEAL;
+			return Item::Parlyz_Heal;
 		case 111:
-			return Item::PEARL;
+			return Item::Pearl;
 		case 112:
-			return Item::POKE_DOLL;
+			return Item::Poke_Doll;
 		case 113:
-			return Item::POTION;
+			return Item::Potion;
 		case 114:
-			return Item::PP_MAX;
+			return Item::PP_Max;
 		case 115:
-			return Item::PP_UP;
+			return Item::PP_Up;
 		case 116:
-			return Item::PROTEIN;
+			return Item::Protein;
 		case 117:
-			return Item::RARE_CANDY;
+			return Item::Rare_Candy;
 		case 118:
-			return Item::RAZOR_FANG;
+			return Item::Razor_Fang;
 		case 119:
-			return Item::RED_FLUTE;
+			return Item::Red_Flute;
 		case 120:
-			return Item::RED_SHARD;
+			return Item::Red_Shard;
 		case 121:
-			return Item::REPEL;
+			return Item::Repel;
 		case 122:
-			return Item::REVIVAL_HERB;
+			return Item::Revival_Herb;
 		case 123:
-			return Item::REVIVE;
+			return Item::Revive;
 		case 124:
-			return Item::SACRED_ASH;
+			return Item::Sacred_Ash;
 		case 125:
-			return Item::SCOPE_LENS;
+			return Item::Scope_Lens;
 		case 126:
-			return Item::SHELL_BELL;
+			return Item::Shell_Bell;
 		case 127:
-			return Item::SHOAL_SALT;
+			return Item::Shoal_Salt;
 		case 128:
-			return Item::SHOAL_SHELL;
+			return Item::Shoal_Shell;
 		case 129:
-			return Item::SMOKE_BALL;
+			return Item::Smoke_Ball;
 		case 130:
-			return Item::SODA_POP;
+			return Item::Soda_Pop;
 		case 131:
-			return Item::SOUL_DEW;
+			return Item::Soul_Dew;
 		case 132:
-			return Item::SPELL_TAG;
+			return Item::Spell_Tag;
 		case 133:
-			return Item::STABLE_MULCH;
+			return Item::Stable_Mulch;
 		case 134:
-			return Item::STAR_PIECE;
+			return Item::Star_Piece;
 		case 135:
-			return Item::STARDUST;
+			return Item::Stardust;
 		case 136:
-			return Item::SUN_STONE;
+			return Item::Sun_Stone;
 		case 137:
-			return Item::SUPER_POTION;
+			return Item::Super_Potion;
 		case 138:
-			return Item::SUPER_REPEL;
+			return Item::Super_Repel;
 		case 139:
-			return Item::THUNDERSTONE;
+			return Item::Thunderstone;
 		case 140:
-			return Item::TINYMUSHROOM;
+			return Item::TinyMushroom;
 		case 141:
-			return Item::TOXIC_ORB;
+			return Item::Toxic_Orb;
 		case 142:
-			return Item::TWISTEDSPOON;
+			return Item::TwistedSpoon;
 		case 143:
-			return Item::UP_GRADE;
+			return Item::Up_Grade;
 		case 144:
-			return Item::WATER_STONE;
+			return Item::Water_Stone;
 		case 145:
-			return Item::WHITE_FLUTE;
+			return Item::White_Flute;
 		case 146:
-			return Item::X_ACCURACY;
+			return Item::X_Accuracy;
 		case 147:
-			return Item::X_ATTACK;
+			return Item::X_Attack;
 		case 148:
-			return Item::X_DEFEND;
+			return Item::X_Defend;
 		case 149:
-			return Item::X_SPECIAL;
+			return Item::X_Special;
 		case 150:
-			return Item::X_SP_DEF;
+			return Item::X_Sp_Def;
 		case 151:
-			return Item::X_SPEED;
+			return Item::X_Speed;
 		case 152:
-			return Item::YELLOW_FLUTE;
+			return Item::Yellow_Flute;
 		case 153:
-			return Item::YELLOW_SHARD;
+			return Item::Yellow_Shard;
 		case 154:
-			return Item::ZINC;
+			return Item::Zinc;
 		case 155:
-			return Item::ICY_ROCK;
+			return Item::Icy_Rock;
 		case 156:
-			return Item::LUCKY_PUNCH;
+			return Item::Lucky_Punch;
 		case 157:
-			return Item::DUBIOUS_DISC;
+			return Item::Dubious_Disc;
 		case 158:
-			return Item::SHARP_BEAK;
+			return Item::Sharp_Beak;
 		case 159:
-			return Item::Adamant_ORB;
+			return Item::Adamant_Orb;
 		case 160:
-			return Item::DAMP_ROCK;
+			return Item::Damp_Rock;
 		case 161:
-			return Item::HEAT_ROCK;
+			return Item::Heat_Rock;
 		case 162:
-			return Item::LUSTROUS_ORB;
+			return Item::Lustrous_Orb;
 		case 163:
-			return Item::MACHO_BRACE;
+			return Item::Macho_Brace;
 		case 164:
-			return Item::STICK;
+			return Item::Stick;
 		case 165:
-			return Item::DRAGON_FANG;
+			return Item::Dragon_Fang;
 		case 166:
-			return Item::poison_BARB;
+			return Item::Poison_Barb;
 		case 167:
-			return Item::POWER_ANKLET;
+			return Item::Power_Anklet;
 		case 168:
-			return Item::POWER_BAND;
+			return Item::Power_Band;
 		case 169:
-			return Item::POWER_BELT;
+			return Item::Power_Belt;
 		case 170:
-			return Item::POWER_BRACER;
+			return Item::Power_Bracer;
 		case 171:
-			return Item::POWER_LENS;
+			return Item::Power_Lens;
 		case 172:
-			return Item::POWER_WEIGHT;
+			return Item::Power_Weight;
 		case 173:
-			return Item::DAWN_STONE;
+			return Item::Dawn_Stone;
 		case 174:
-			return Item::DUSK_STONE;
+			return Item::Dusk_Stone;
 		case 175:
-			return Item::ELECTIRIZER;
+			return Item::Electirizer;
 		case 176:
-			return Item::MAGMARIZER;
+			return Item::Magmarizer;
 		case 177:
-			return Item::ODD_KEYSTONE;
+			return Item::Odd_Keystone;
 		case 178:
-			return Item::OVAL_STONE;
+			return Item::Oval_Stone;
 		case 179:
-			return Item::PROTECTOR;
+			return Item::Protector;
 		case 180:
-			return Item::QUICK_CLAW;
+			return Item::Quick_Claw;
 		case 181:
-			return Item::RAZOR_CLAW;
+			return Item::Razor_Claw;
 		case 182:
-			return Item::SHINY_STONE;
+			return Item::Shiny_Stone;
 		case 183:
-			return Item::STICKY_BARB;
+			return Item::Sticky_Barb;
 		case 184:
-			return Item::DEEPSEATOOTH;
+			return Item::DeepSeaTooth;
 		case 185:
-			return Item::DRACO_PLATE;
+			return Item::Draco_Plate;
 		case 186:
-			return Item::DREAD_PLATE;
+			return Item::Dread_Plate;
 		case 187:
-			return Item::EARTH_PLATE;
+			return Item::Earth_Plate;
 		case 188:
-			return Item::FIST_PLATE;
+			return Item::Fist_Plate;
 		case 189:
-			return Item::FLAME_PLATE;
+			return Item::Flame_Plate;
 		case 190:
-			return Item::GRIP_CLAW;
+			return Item::Grip_Claw;
 		case 191:
-			return Item::ICICLE_PLATE;
+			return Item::Icicle_Plate;
 		case 192:
-			return Item::INSECT_PLATE;
+			return Item::Insect_Plate;
 		case 193:
-			return Item::IRON_PLATE;
+			return Item::Iron_Plate;
 		case 194:
-			return Item::MEADOW_PLATE;
+			return Item::Meadow_Plate;
 		case 195:
-			return Item::MIND_PLATE;
+			return Item::Mind_Plate;
 		case 196:
-			return Item::SKY_PLATE;
+			return Item::Sky_Plate;
 		case 197:
-			return Item::SPLASH_PLATE;
+			return Item::Splash_Plate;
 		case 198:
-			return Item::SPOOKY_PLATE;
+			return Item::Spooky_Plate;
 		case 199:
-			return Item::STONE_PLATE;
+			return Item::Stone_Plate;
 		case 200:
-			return Item::THICK_CLUB;
+			return Item::Thick_Club;
 		case 201:
-			return Item::TOXIC_PLATE;
+			return Item::Toxic_Plate;
 		case 202:
-			return Item::ZAP_PLATE;
+			return Item::Zap_Plate;
 		case 203:
-			return Item::ARMOR_FOSSIL;
+			return Item::Armor_Fossil;
 		case 204:
-			return Item::CLAW_FOSSIL;
+			return Item::Claw_Fossil;
 		case 205:
-			return Item::DOME_FOSSIL;
+			return Item::Dome_Fossil;
 		case 206:
-			return Item::HARD_STONE;
+			return Item::Hard_Stone;
 		case 207:
-			return Item::HELIX_FOSSIL;
+			return Item::Helix_Fossil;
 		case 208:
-			return Item::OLD_AMBER;
+			return Item::Old_Amber;
 		case 209:
-			return Item::RARE_BONE;
+			return Item::Rare_Bone;
 		case 210:
-			return Item::ROOT_FOSSIL;
+			return Item::Root_Fossil;
 		case 211:
-			return Item::SKULL_FOSSIL;
+			return Item::Skull_Fossil;
 		case 212:
-			return Item::IRON_BALL;
+			return Item::Iron_Ball;
 		case 213:
-			return Item::GRISEOUS_ORB;
+			return Item::Griseous_Orb;
 		case 214:
-			return Item::AIR_MAIL;
+			return Item::Air_Mail;
 		case 215:
-			return Item::BLOOM_MAIL;
+			return Item::Bloom_Mail;
 		case 216:
-			return Item::BRICK_MAIL;
+			return Item::Brick_Mail;
 		case 217:
-			return Item::BUBBLE_MAIL;
+			return Item::Bubble_Mail;
 		case 218:
-			return Item::FLAME_MAIL;
+			return Item::Flame_Mail;
 		case 219:
-			return Item::GRASS_MAIL;
-		// case 220 intentionally missing
+			return Item::Grass_Mail;
+		// case 220 Intentionally Missing
 		case 221:
-			return Item::HEART_MAIL;
+			return Item::Heart_Mail;
 		case 222:
-			return Item::MOSAIC_MAIL;
+			return Item::Mosaic_Mail;
 		case 223:
-			return Item::SNOW_MAIL;
+			return Item::Snow_Mail;
 		case 224:
-			return Item::SPACE_MAIL;
+			return Item::Space_Mail;
 		case 225:
-			return Item::STEEL_MAIL;
+			return Item::Steel_Mail;
 		case 226:
-			return Item::TUNNEL_MAIL;
+			return Item::Tunnel_Mail;
 		default:
 			return Item::END;
 	}
 }
 
-unsigned item_to_id (Item::Items item) {
+unsigned item_to_id(Item item) {
 	switch (item) {
-		case Item::NO_ITEM:
+		case Item::No_Item:
 			return 0;
-		case Item::BIG_ROOT:
+		case Item::Big_Root:
 			return 1;
-		case Item::BLUE_SCARF:
+		case Item::Blue_Scarf:
 			return 2;
-		case Item::BRIGHTPOWDER:
+		case Item::BrightPowder:
 			return 3;
-		case Item::CHOICE_BAND:
+		case Item::Choice_Band:
 			return 4;
-		case Item::CHOICE_SCARF:
+		case Item::Choice_Scarf:
 			return 5;
-		case Item::CHOICE_SPECS:
+		case Item::Choice_Specs:
 			return 6;
-		case Item::DESTINY_KNOT:
+		case Item::Destiny_Knot:
 			return 7;
-		case Item::EXPERT_BELT:
+		case Item::Expert_Belt:
 			return 8;
-		case Item::FOCUS_BAND:
+		case Item::Focus_Band:
 			return 9;
-		case Item::FOCUS_SASH:
+		case Item::Focus_Sash:
 			return 10;
-		case Item::FULL_INCENSE:
+		case Item::Full_Incense:
 			return 11;
-		case Item::GREEN_SCARF:
+		case Item::Green_Scarf:
 			return 12;
-		case Item::LAGGING_TAIL:
+		case Item::Lagging_Tail:
 			return 13;
-		case Item::Lax_INCENSE:
+		case Item::Lax_Incense:
 			return 14;
-		case Item::LEFTOVERS:
+		case Item::Leftovers:
 			return 15;
-		case Item::LUCK_INCENSE:
+		case Item::Luck_Incense:
 			return 16;
-		case Item::MENTAL_HERB:
+		case Item::Mental_Herb:
 			return 17;
-		case Item::METAL_POWDER:
+		case Item::Metal_Powder:
 			return 18;
-		case Item::MUSCLE_BAND:
+		case Item::Muscle_Band:
 			return 19;
-		case Item::ODD_INCENSE:
+		case Item::Odd_Incense:
 			return 20;
-		case Item::PINK_SCARF:
+		case Item::Pink_Scarf:
 			return 21;
-		case Item::POWER_HERB:
+		case Item::Power_Herb:
 			return 22;
-		case Item::PURE_INCENSE:
+		case Item::Pure_Incense:
 			return 23;
-		case Item::QUICK_POWDER:
+		case Item::Quick_Powder:
 			return 24;
-		case Item::REAPER_CLOTH:
+		case Item::Reaper_Cloth:
 			return 25;
-		case Item::RED_SCARF:
+		case Item::Red_Scarf:
 			return 26;
-		case Item::ROCK_INCENSE:
+		case Item::Rock_Incense:
 			return 27;
-		case Item::ROSE_INCENSE:
+		case Item::Rose_Incense:
 			return 28;
-		case Item::SEA_INCENSE:
+		case Item::Sea_Incense:
 			return 29;
-		case Item::SHED_SHELL:
+		case Item::Shed_Shell:
 			return 30;
-		case Item::SILK_SCARF:
+		case Item::Silk_Scarf:
 			return 31;
-		case Item::SILVERPOWDER:
+		case Item::SilverPowder:
 			return 32;
-		case Item::SMOOTH_ROCK:
+		case Item::Smooth_Rock:
 			return 33;
-		case Item::SOFT_SAND:
+		case Item::Soft_Sand:
 			return 34;
-		case Item::SOOTHE_BELL:
+		case Item::Soothe_Bell:
 			return 35;
-		case Item::WAVE_INCENSE:
+		case Item::Wave_Incense:
 			return 36;
-		case Item::WHITE_HERB:
+		case Item::White_Herb:
 			return 37;
-		case Item::WIDE_LENS:
+		case Item::Wide_Lens:
 			return 38;
-		case Item::WISE_GLASSES:
+		case Item::Wise_Glasses:
 			return 39;
-		case Item::YELLOW_SCARF:
+		case Item::Yellow_Scarf:
 			return 40;
-		case Item::ZOOM_LENS:
+		case Item::Zoom_Lens:
 			return 41;
-		case Item::AMULET_COIN:
+		case Item::Amulet_Coin:
 			return 42;
-		case Item::ANTIDOTE:
+		case Item::Antidote:
 			return 43;
-		case Item::AWAKENING:
+		case Item::Awakening:
 			return 44;
-		case Item::BERRY_JUICE:
+		case Item::Berry_Juice:
 			return 45;
-		case Item::BIG_PEARL:
+		case Item::Big_Pearl:
 			return 46;
-		case Item::BIG_MUSHROOM:
+		case Item::Big_Mushroom:
 			return 47;
-		case Item::BLACK_BELT:
+		case Item::Black_Belt:
 			return 48;
-		case Item::BLACK_FLUTE:
+		case Item::Black_Flute:
 			return 49;
-		case Item::BLACK_SLUDGE:
+		case Item::Black_Sludge:
 			return 50;
-		case Item::BLACKGLASSES:
+		case Item::BlackGlasses:
 			return 51;
-		case Item::BLUE_FLUTE:
+		case Item::Blue_Flute:
 			return 52;
-		case Item::BLUE_SHARD:
+		case Item::Blue_Shard:
 			return 53;
-		case Item::burn_HEAL:
+		case Item::Burn_Heal:
 			return 54;
-		case Item::CALCIUM:
+		case Item::Calcium:
 			return 55;
-		case Item::CARBOS:
+		case Item::Carbos:
 			return 56;
-		case Item::CHARCOAL:
+		case Item::Charcoal:
 			return 57;
-		case Item::CLEANSE_TAG:
+		case Item::Cleanse_Tag:
 			return 58;
-		case Item::DAMP_MULCH:
+		case Item::Damp_Mulch:
 			return 59;
-		case Item::DEEPSEASCALE:
+		case Item::DeepSeaScale:
 			return 60;
-		case Item::DIRE_HIT:
+		case Item::Dire_Hit:
 			return 61;
-		case Item::DRAGON_SCALE:
+		case Item::Dragon_Scale:
 			return 62;
-		case Item::ELIXIR:
+		case Item::Elixir:
 			return 63;
-		case Item::ENERGY_ROOT:
+		case Item::Energy_Root:
 			return 64;
-		case Item::ENERGYPOWDER:
+		case Item::EnergyPowder:
 			return 65;
-		case Item::ESCAPE_ROPE:
+		case Item::Escape_Rope:
 			return 66;
-		case Item::ETHER:
+		case Item::Ether:
 			return 67;
-		case Item::EVERSTONE:
+		case Item::Everstone:
 			return 68;
-		case Item::EXP_SHARE:
+		case Item::Exp_Share:
 			return 69;
-		case Item::FIRE_STONE:
+		case Item::Fire_Stone:
 			return 70;
-		case Item::FLAME_ORB:
+		case Item::Flame_Orb:
 			return 71;
-		case Item::FLUFFY_TAIL:
+		case Item::Fluffy_Tail:
 			return 72;
-		case Item::FRESH_WATER:
+		case Item::Fresh_Water:
 			return 73;
-		case Item::FULL_HEAL:
+		case Item::Full_Heal:
 			return 74;
-		case Item::FULL_sleep_restORE:
+		case Item::Full_Sleep_Restore:
 			return 75;
-		case Item::GOOEY_MULCH:
+		case Item::Gooey_Mulch:
 			return 76;
-		case Item::GREEN_SHARD:
+		case Item::Green_Shard:
 			return 77;
-		case Item::GROWTH_MULCH:
+		case Item::Growth_Mulch:
 			return 78;
-		case Item::GUARD_SPEC:
+		case Item::Guard_Spec:
 			return 79;
-		case Item::HEAL_POWDER:
+		case Item::Heal_Powder:
 			return 80;
-		case Item::HEART_SCALE:
+		case Item::Heart_Scale:
 			return 81;
-		case Item::HONEY:
+		case Item::Honey:
 			return 82;
-		case Item::HP_UP:
+		case Item::HP_Up:
 			return 83;
-		case Item::HYPER_POTION:
+		case Item::Hyper_Potion:
 			return 84;
-		case Item::ICE_HEAL:
+		case Item::Ice_Heal:
 			return 85;
-		case Item::IRON:
+		case Item::Iron:
 			return 86;
-		case Item::KINGS_ROCK:
+		case Item::Kings_Rock:
 			return 87;
-		case Item::LAVA_COOKIE:
+		case Item::Lava_Cookie:
 			return 88;
-		case Item::LEAF_STONE:
+		case Item::Leaf_Stone:
 			return 89;
-		case Item::LEMONADE:
+		case Item::Lemonade:
 			return 90;
-		case Item::LIFE_ORB:
+		case Item::Life_Orb:
 			return 91;
-		case Item::LIGHT_BALL:
+		case Item::Light_Ball:
 			return 92;
-		case Item::LIGHT_CLAY:
+		case Item::Light_Clay:
 			return 93;
-		case Item::LUCKY_EGG:
+		case Item::Lucky_Egg:
 			return 94;
-		case Item::MAGNET:
+		case Item::Magnet:
 			return 95;
-		case Item::MAX_ELIXIR:
+		case Item::Max_Elixir:
 			return 96;
-		case Item::MAX_ETHER:
+		case Item::Max_Ether:
 			return 97;
-		case Item::MAX_POTION:
+		case Item::Max_Potion:
 			return 98;
-		case Item::MAX_REPEL:
+		case Item::Max_Repel:
 			return 99;
-		case Item::MAX_REVIVE:
+		case Item::Max_Revive:
 			return 100;
-		case Item::METAL_COAT:
+		case Item::Metal_Coat:
 			return 101;
-		case Item::METRONOME:
+		case Item::Metronome:
 			return 102;
-		case Item::MIRACLE_SEED:
+		case Item::Miracle_Seed:
 			return 103;
-		case Item::MOOMOO_MILK:
+		case Item::MooMoo_Milk:
 			return 104;
-		case Item::MOON_STONE:
+		case Item::Moon_Stone:
 			return 105;
-		case Item::MYSTIC_WATER:
+		case Item::Mystic_Water:
 			return 106;
-		case Item::NEVERMELTICE:
+		case Item::NeverMeltIce:
 			return 107;
-		case Item::NUGGET:
+		case Item::Nugget:
 			return 108;
-		case Item::OLD_GATEAU:
+		case Item::Old_Gateau:
 			return 109;
-		case Item::PARLYZ_HEAL:
+		case Item::Parlyz_Heal:
 			return 110;
-		case Item::PEARL:
+		case Item::Pearl:
 			return 111;
-		case Item::POKE_DOLL:
+		case Item::Poke_Doll:
 			return 112;
-		case Item::POTION:
+		case Item::Potion:
 			return 113;
-		case Item::PP_MAX:
+		case Item::PP_Max:
 			return 114;
-		case Item::PP_UP:
+		case Item::PP_Up:
 			return 115;
-		case Item::PROTEIN:
+		case Item::Protein:
 			return 116;
-		case Item::RARE_CANDY:
+		case Item::Rare_Candy:
 			return 117;
-		case Item::RAZOR_FANG:
+		case Item::Razor_Fang:
 			return 118;
-		case Item::RED_FLUTE:
+		case Item::Red_Flute:
 			return 119;
-		case Item::RED_SHARD:
+		case Item::Red_Shard:
 			return 120;
-		case Item::REPEL:
+		case Item::Repel:
 			return 121;
-		case Item::REVIVAL_HERB:
+		case Item::Revival_Herb:
 			return 122;
-		case Item::REVIVE:
+		case Item::Revive:
 			return 123;
-		case Item::SACRED_ASH:
+		case Item::Sacred_Ash:
 			return 124;
-		case Item::SCOPE_LENS:
+		case Item::Scope_Lens:
 			return 125;
-		case Item::SHELL_BELL:
+		case Item::Shell_Bell:
 			return 126;
-		case Item::SHOAL_SALT:
+		case Item::Shoal_Salt:
 			return 127;
-		case Item::SHOAL_SHELL:
+		case Item::Shoal_Shell:
 			return 128;
-		case Item::SMOKE_BALL:
+		case Item::Smoke_Ball:
 			return 129;
-		case Item::SODA_POP:
+		case Item::Soda_Pop:
 			return 130;
-		case Item::SOUL_DEW:
+		case Item::Soul_Dew:
 			return 131;
-		case Item::SPELL_TAG:
+		case Item::Spell_Tag:
 			return 132;
-		case Item::STABLE_MULCH:
+		case Item::Stable_Mulch:
 			return 133;
-		case Item::STAR_PIECE:
+		case Item::Star_Piece:
 			return 134;
-		case Item::STARDUST:
+		case Item::Stardust:
 			return 135;
-		case Item::SUN_STONE:
+		case Item::Sun_Stone:
 			return 136;
-		case Item::SUPER_POTION:
+		case Item::Super_Potion:
 			return 137;
-		case Item::SUPER_REPEL:
+		case Item::Super_Repel:
 			return 138;
-		case Item::THUNDERSTONE:
+		case Item::Thunderstone:
 			return 139;
-		case Item::TINYMUSHROOM:
+		case Item::TinyMushroom:
 			return 140;
-		case Item::TOXIC_ORB:
+		case Item::Toxic_Orb:
 			return 141;
-		case Item::TWISTEDSPOON:
+		case Item::TwistedSpoon:
 			return 142;
-		case Item::UP_GRADE:
+		case Item::Up_Grade:
 			return 143;
-		case Item::WATER_STONE:
+		case Item::Water_Stone:
 			return 144;
-		case Item::WHITE_FLUTE:
+		case Item::White_Flute:
 			return 145;
-		case Item::X_ACCURACY:
+		case Item::X_Accuracy:
 			return 146;
-		case Item::X_ATTACK:
+		case Item::X_Attack:
 			return 147;
-		case Item::X_DEFEND:
+		case Item::X_Defend:
 			return 148;
-		case Item::X_SPECIAL:
+		case Item::X_Special:
 			return 149;
-		case Item::X_SP_DEF:
+		case Item::X_Sp_Def:
 			return 150;
-		case Item::X_SPEED:
+		case Item::X_Speed:
 			return 151;
-		case Item::YELLOW_FLUTE:
+		case Item::Yellow_Flute:
 			return 152;
-		case Item::YELLOW_SHARD:
+		case Item::Yellow_Shard:
 			return 153;
-		case Item::ZINC:
+		case Item::Zinc:
 			return 154;
-		case Item::ICY_ROCK:
+		case Item::Icy_Rock:
 			return 155;
-		case Item::LUCKY_PUNCH:
+		case Item::Lucky_Punch:
 			return 156;
-		case Item::DUBIOUS_DISC:
+		case Item::Dubious_Disc:
 			return 157;
-		case Item::SHARP_BEAK:
+		case Item::Sharp_Beak:
 			return 158;
-		case Item::Adamant_ORB:
+		case Item::Adamant_Orb:
 			return 159;
-		case Item::DAMP_ROCK:
+		case Item::Damp_Rock:
 			return 160;
-		case Item::HEAT_ROCK:
+		case Item::Heat_Rock:
 			return 161;
-		case Item::LUSTROUS_ORB:
+		case Item::Lustrous_Orb:
 			return 162;
-		case Item::MACHO_BRACE:
+		case Item::Macho_Brace:
 			return 163;
-		case Item::STICK:
+		case Item::Stick:
 			return 164;
-		case Item::DRAGON_FANG:
+		case Item::Dragon_Fang:
 			return 165;
-		case Item::poison_BARB:
+		case Item::Poison_Barb:
 			return 166;
-		case Item::POWER_ANKLET:
+		case Item::Power_Anklet:
 			return 167;
-		case Item::POWER_BAND:
+		case Item::Power_Band:
 			return 168;
-		case Item::POWER_BELT:
+		case Item::Power_Belt:
 			return 169;
-		case Item::POWER_BRACER:
+		case Item::Power_Bracer:
 			return 170;
-		case Item::POWER_LENS:
+		case Item::Power_Lens:
 			return 171;
-		case Item::POWER_WEIGHT:
+		case Item::Power_Weight:
 			return 172;
-		case Item::DAWN_STONE:
+		case Item::Dawn_Stone:
 			return 173;
-		case Item::DUSK_STONE:
+		case Item::Dusk_Stone:
 			return 174;
-		case Item::ELECTIRIZER:
+		case Item::Electirizer:
 			return 175;
-		case Item::MAGMARIZER:
+		case Item::Magmarizer:
 			return 176;
-		case Item::ODD_KEYSTONE:
+		case Item::Odd_Keystone:
 			return 177;
-		case Item::OVAL_STONE:
+		case Item::Oval_Stone:
 			return 178;
-		case Item::PROTECTOR:
+		case Item::Protector:
 			return 179;
-		case Item::QUICK_CLAW:
+		case Item::Quick_Claw:
 			return 180;
-		case Item::RAZOR_CLAW:
+		case Item::Razor_Claw:
 			return 181;
-		case Item::SHINY_STONE:
+		case Item::Shiny_Stone:
 			return 182;
-		case Item::STICKY_BARB:
+		case Item::Sticky_Barb:
 			return 183;
-		case Item::DEEPSEATOOTH:
+		case Item::DeepSeaTooth:
 			return 184;
-		case Item::DRACO_PLATE:
+		case Item::Draco_Plate:
 			return 185;
-		case Item::DREAD_PLATE:
+		case Item::Dread_Plate:
 			return 186;
-		case Item::EARTH_PLATE:
+		case Item::Earth_Plate:
 			return 187;
-		case Item::FIST_PLATE:
+		case Item::Fist_Plate:
 			return 188;
-		case Item::FLAME_PLATE:
+		case Item::Flame_Plate:
 			return 189;
-		case Item::GRIP_CLAW:
+		case Item::Grip_Claw:
 			return 190;
-		case Item::ICICLE_PLATE:
+		case Item::Icicle_Plate:
 			return 191;
-		case Item::INSECT_PLATE:
+		case Item::Insect_Plate:
 			return 192;
-		case Item::IRON_PLATE:
+		case Item::Iron_Plate:
 			return 193;
-		case Item::MEADOW_PLATE:
+		case Item::Meadow_Plate:
 			return 194;
-		case Item::MIND_PLATE:
+		case Item::Mind_Plate:
 			return 195;
-		case Item::SKY_PLATE:
+		case Item::Sky_Plate:
 			return 196;
-		case Item::SPLASH_PLATE:
+		case Item::Splash_Plate:
 			return 197;
-		case Item::SPOOKY_PLATE:
+		case Item::Spooky_Plate:
 			return 198;
-		case Item::STONE_PLATE:
+		case Item::Stone_Plate:
 			return 199;
-		case Item::THICK_CLUB:
+		case Item::Thick_Club:
 			return 200;
-		case Item::TOXIC_PLATE:
+		case Item::Toxic_Plate:
 			return 201;
-		case Item::ZAP_PLATE:
+		case Item::Zap_Plate:
 			return 202;
-		case Item::ARMOR_FOSSIL:
+		case Item::Armor_Fossil:
 			return 203;
-		case Item::CLAW_FOSSIL:
+		case Item::Claw_Fossil:
 			return 204;
-		case Item::DOME_FOSSIL:
+		case Item::Dome_Fossil:
 			return 205;
-		case Item::HARD_STONE:
+		case Item::Hard_Stone:
 			return 206;
-		case Item::HELIX_FOSSIL:
+		case Item::Helix_Fossil:
 			return 207;
-		case Item::OLD_AMBER:
+		case Item::Old_Amber:
 			return 208;
-		case Item::RARE_BONE:
+		case Item::Rare_Bone:
 			return 209;
-		case Item::ROOT_FOSSIL:
+		case Item::Root_Fossil:
 			return 210;
-		case Item::SKULL_FOSSIL:
+		case Item::Skull_Fossil:
 			return 211;
-		case Item::IRON_BALL:
+		case Item::Iron_Ball:
 			return 212;
-		case Item::GRISEOUS_ORB:
+		case Item::Griseous_Orb:
 			return 213;
-		case Item::AIR_MAIL:
+		case Item::Air_Mail:
 			return 214;
-		case Item::BLOOM_MAIL:
+		case Item::Bloom_Mail:
 			return 215;
-		case Item::BRICK_MAIL:
+		case Item::Brick_Mail:
 			return 216;
-		case Item::BUBBLE_MAIL:
+		case Item::Bubble_Mail:
 			return 217;
-		case Item::FLAME_MAIL:
+		case Item::Flame_Mail:
 			return 218;
-		case Item::GRASS_MAIL:
+		case Item::Grass_Mail:
 			return 219;
-		// Intentionally missing 220
-		case Item::HEART_MAIL:
+		// Intentionally Missing 220
+		case Item::Heart_Mail:
 			return 221;
-		case Item::MOSAIC_MAIL:
+		case Item::Mosaic_Mail:
 			return 222;
-		case Item::SNOW_MAIL:
+		case Item::Snow_Mail:
 			return 223;
-		case Item::SPACE_MAIL:
+		case Item::Space_Mail:
 			return 224;
-		case Item::STEEL_MAIL:
+		case Item::Steel_Mail:
 			return 225;
-		case Item::TUNNEL_MAIL:
+		case Item::Tunnel_Mail:
 			return 226;
 		default:
 			return 0;
 			/*
-			AGUAV_BERRY
-			APICOT_BERRY
-			ASPEAR_BERRY
-			BABIRI_BERRY
-			BELUE_BERRY
-			BICYCLE
-			BLUK_BERRY
-			CHARTI_BERRY
-			CHERI_BERRY
-			CHERISH_BALL
-			CHESTO_BERRY
-			CHILAN_BERRY
-			CHOPLE_BERRY
-			COBA_BERRY
-			COIN_CASE
-			COLBUR_BERRY
-			CORNN_BERRY
-			COUPON_1
-			COUPON_2
-			COUPON_3
-			CUSTAP_BERRY
-			DIVE_BALL
-			DURIN_BERRY
-			DUSK_BALL
-			ENIGMA_BERRY
-			EXPLORER_KIT
-			FASHION_CASE
-			FIGY_BERRY
-			GALACTIC_KEY
-			GANLON_BERRY
-			GOOD_ROD
-			GREAT_BALL
-			GREPA_BERRY
-			HABAN_BERRY
-			HEAL_BALL
+			Aguav_Berry
+			Apicot_Berry
+			Aspear_Berry
+			Babiri_Berry
+			Belue_Berry
+			Bicycle
+			Bluk_Berry
+			Charti_Berry
+			Cheri_Berry
+			Cherish_Ball
+			Chesto_Berry
+			Chilan_Berry
+			Chople_Berry
+			Coba_Berry
+			Coin_case
+			Colbur_Berry
+			Cornn_Berry
+			Coupon_1
+			Coupon_2
+			Coupon_3
+			Custap_Berry
+			Dive_Ball
+			Durin_Berry
+			Dusk_Ball
+			Enigma_Berry
+			Explorer_Kit
+			Fashion_case
+			Figy_Berry
+			Galactic_Key
+			Ganlon_Berry
+			Good_Rod
+			Great_Ball
+			Grepa_Berry
+			Haban_Berry
+			Heal_Ball
 			HM01
 			HM02
 			HM03
@@ -2410,73 +2410,73 @@ unsigned item_to_id (Item::Items item) {
 			HM06
 			HM07
 			HM08
-			HONDEW_BERRY
-			IAPAPA_BERRY
-			JABOCA_BERRY
-			JOURNAL
-			KASIB_BERRY
-			KEBIA_BERRY
-			KELPSY_BERRY
-			LANSAT_BERRY
-			LEPPA_BERRY
-			LIECHI_BERRY
-			LOOT_SACK
-			LUM_BERRY
-			LUNAR_WING
-			LUXURY_BALL
-			MAGO_BERRY
-			MAGOST_BERRY
-			MASTER_BALL
-			MEMBER_CARD
-			MICLE_BERRY
-			NANAB_BERRY
-			NEST_BALL
-			NET_BALL
-			NOMEL_BERRY
-			OAKS_LETTER
-			OCCA_BERRY
-			OLD_CHARM
-			OLD_ROD
-			ORAN_BERRY
-			PAL_PAD
-			PAMTRE_BERRY
-			PARCEL
-			PASSHO_BERRY
-			PAYAPA_BERRY
-			PECHA_BERRY
-			PERSIM_BERRY
-			PETAYA_BERRY
-			PINAP_BERRY
-			POFFIN_CASE
-			POINT_CARD
-			POKE_BALL
-			POKE_RADAR
-			POMEG_BERRY
-			PREMIER_BALL
-			QUALOT_BERRY
-			QUICK_BALL
-			RABUTA_BERRY
-			RAWST_BERRY
-			RAZZ_BERRY
-			REPEAT_BALL
-			RINDO_BERRY
-			ROWAP_BERRY
-			SAFARI_BALL
-			SALAC_BERRY
-			SEAL_BAG
-			SEAL_CASE
-			SECRETPOTION
-			SHUCA_BERRY
-			SITRUS_BERRY
-			SPELON_BERRY
-			SPRAYDUCK
-			STARF_BERRY
-			STORAGE_KEY
-			SUITE_KEY
-			SUPER_ROD
-			TAMATO_BERRY
-			TANGA_BERRY
-			TIMER_BALL
+			Hondew_Berry
+			Iapapa_Berry
+			Jaboca_Berry
+			Journal
+			Kasib_Berry
+			Kebia_Berry
+			Kelpsy_Berry
+			Lansat_Berry
+			Leppa_Berry
+			Liechi_Berry
+			Loot_Sack
+			Lum_Berry
+			Lunar_Wing
+			Luxury_Ball
+			Mago_Berry
+			Magost_Berry
+			Master_Ball
+			Member_Card
+			Micle_Berry
+			Nanab_Berry
+			Nest_Ball
+			Net_Ball
+			Nomel_Berry
+			Oaks_Letter
+			Occa_Berry
+			Old_Charm
+			Old_Rod
+			Oran_Berry
+			Pal_Pad
+			Pamtre_Berry
+			Parcel
+			Passho_Berry
+			Payapa_Berry
+			Pecha_Berry
+			Persim_Berry
+			Petaya_Berry
+			Pinap_Berry
+			Poffin_case
+			Point_Card
+			Poke_Ball
+			Poke_Radar
+			Pomeg_Berry
+			Premier_Ball
+			Qualot_Berry
+			Quick_Ball
+			Rabuta_Berry
+			Rawst_Berry
+			Razz_Berry
+			Repeat_Ball
+			Rindo_Berry
+			Rowap_Berry
+			Safari_Ball
+			Salac_Berry
+			Seal_Bag
+			Seal_case
+			Secretpotion
+			Shuca_Berry
+			Sitrus_Berry
+			Spelon_Berry
+			Sprayduck
+			Starf_Berry
+			Storage_Key
+			Suite_Key
+			Super_Rod
+			Tamato_Berry
+			Tanga_Berry
+			Timer_Ball
 			TM01
 			TM02
 			TM03
@@ -2569,47 +2569,47 @@ unsigned item_to_id (Item::Items item) {
 			TM90
 			TM91
 			TM92
-			TOWN_MAP
-			ULTRA_BALL
-			VS_SEEKER
-			WACAN_BERRY
-			WATMEL_BERRY
-			WEPEAR_BERRY
-			WIKI_BERRY
-			WORKS_KEY
-			YACHE_BERRY
+			Town_Map
+			Ultra_Ball
+			Vs_Seeker
+			Wacan_Berry
+			Watmel_Berry
+			Wepear_Berry
+			Wiki_Berry
+			Works_Key
+			Yache_Berry
 			*/
 	}
 }
 
-Item::Items battle_id_to_item (uint16_t id, uint8_t part) {
+Item battle_id_to_item(uint16_t id, uint8_t part) {
 	switch (id) {
 		case 3:
-			return Item::WHITE_HERB;
+			return Item::White_Herb;
 		case 4:
-			return Item::FOCUS_BAND;
+			return Item::Focus_Band;
 		case 5:
-			return Item::FOCUS_SASH;
+			return Item::Focus_Sash;
 		case 7:
-			return Item::MENTAL_HERB;
+			return Item::Mental_Herb;
 		case 11:
-			return Item::POWER_HERB;
+			return Item::Power_Herb;
 		case 12:
-			return Item::LEFTOVERS;
+			return Item::Leftovers;
 		case 16:
-			return Item::BLACK_SLUDGE;
+			return Item::Black_Sludge;
 		case 17:
-			return Item::QUICK_CLAW;
+			return Item::Quick_Claw;
 		case 18:
-			return Item::BERRY_JUICE;
+			return Item::Berry_Juice;
 		case 19:
-			return (part == 0) ? Item::FLAME_ORB : Item::TOXIC_ORB;
+			return (part == 0) ? Item::Flame_Orb : Item::Toxic_Orb;
 		case 21:
-			return Item::LIFE_ORB;
+			return Item::Life_Orb;
 		case 24:
-			return Item::SHELL_BELL;
+			return Item::Shell_Bell;
 		case 29:
-			return Item::STICKY_BARB;
+			return Item::Sticky_Barb;
 		default:
 			return Item::END;
 	}

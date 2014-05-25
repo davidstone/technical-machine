@@ -139,7 +139,7 @@ void load_pokemon(ptree const & pt, Team & team) {
 	team.add_pokemon(species, level, gender, nickname, happiness);
 	Pokemon & pokemon = team.replacement();
 
-	get_item(pokemon).name = id_to_item(pt.get<unsigned>("<xmlattr>.Item"));
+	get_item(pokemon) = id_to_item(pt.get<unsigned>("<xmlattr>.Item"));
 	get_ability(pokemon) = id_to_ability(pt.get<unsigned>("<xmlattr>.Ability"));
 	get_nature(pokemon) = id_to_nature(pt.get<unsigned>("<xmlattr>.Nature"));
 

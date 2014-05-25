@@ -102,11 +102,11 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	else if (pokemon.shed_skin_activated()) {
 		get_status(pokemon) = Status{};
 	}
-	switch (get_item(pokemon).name) {
-		case Item::LEFTOVERS:
+	switch (get_item(pokemon)) {
+		case Item::Leftovers:
 			heal(pokemon, Rational(1, 16));
 			break;
-		case Item::BLACK_SLUDGE:
+		case Item::Black_Sludge:
 			if (is_type(pokemon, Type::Poison))
 				heal(pokemon, Rational(1, 16));
 			else
@@ -153,11 +153,11 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		default:
 			break;
 	}
-	switch (get_item(pokemon).name) {
-		case Item::FLAME_ORB:
+	switch (get_item(pokemon)) {
+		case Item::Flame_Orb:
 			Status::apply<Status::burn>(pokemon, weather);
 			break;
-		case Item::TOXIC_ORB:
+		case Item::Toxic_Orb:
 			Status::apply<Status::poison_toxic>(pokemon, weather);
 			break;
 		default:
@@ -178,8 +178,9 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	if (pokemon.try_to_activate_yawn()) {
 		Status::apply<Status::sleep>(pokemon, weather);
 	}
-	if (get_item(pokemon).name == Item::STICKY_BARB)
+	if (get_item(pokemon) == Item::Sticky_Barb) {
 		drain(pokemon, Rational(1, 8));
+	}
 }
 
 void endofturn6 (Team & target, Weather const & weather) {

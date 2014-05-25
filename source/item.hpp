@@ -24,124 +24,115 @@
 
 namespace technicalmachine {
 
-class Item {
-public:
-	enum Items : uint16_t {
-		NO_ITEM, Adamant_ORB, AGUAV_BERRY, AIR_MAIL, AMULET_COIN,
-		ANTIDOTE, APICOT_BERRY, ARMOR_FOSSIL, ASPEAR_BERRY, AWAKENING,
-		BABIRI_BERRY, BELUE_BERRY, BERRY_JUICE, BICYCLE, BIG_MUSHROOM,
-		BIG_PEARL, BIG_ROOT, BLACK_BELT, BLACK_FLUTE, BLACK_SLUDGE,
-		BLACKGLASSES, BLOOM_MAIL, BLUE_FLUTE, BLUE_SCARF, BLUE_SHARD,
-		BLUK_BERRY, BRICK_MAIL, BRIGHTPOWDER, BUBBLE_MAIL, burn_HEAL,
-		CALCIUM, CARBOS, CHARCOAL, CHARTI_BERRY, CHERI_BERRY,
-		CHERISH_BALL, CHESTO_BERRY, CHILAN_BERRY, CHOICE_BAND, CHOICE_SCARF,
-		CHOICE_SPECS, CHOPLE_BERRY, CLAW_FOSSIL, CLEANSE_TAG, COBA_BERRY,
-		COIN_CASE, COLBUR_BERRY, CORNN_BERRY, COUPON_1, COUPON_2,
-		COUPON_3, CUSTAP_BERRY, DAMP_MULCH, DAMP_ROCK, DAWN_STONE,
-		DEEPSEASCALE, DEEPSEATOOTH, DESTINY_KNOT, DIRE_HIT, DIVE_BALL,
-		DOME_FOSSIL, DRACO_PLATE, DRAGON_FANG, DRAGON_SCALE, DREAD_PLATE,
-		DUBIOUS_DISC, DURIN_BERRY, DUSK_BALL, DUSK_STONE, EARTH_PLATE,
-		ELECTIRIZER, ELIXIR, ENERGY_ROOT, ENERGYPOWDER, ENIGMA_BERRY,
-		ESCAPE_ROPE, ETHER, EVERSTONE, EXP_SHARE, EXPERT_BELT,
-		EXPLORER_KIT, FASHION_CASE, FIGY_BERRY, FIRE_STONE, FIST_PLATE,
-		FLAME_MAIL, FLAME_ORB, FLAME_PLATE, FLUFFY_TAIL, FOCUS_BAND,
-		FOCUS_SASH, FRESH_WATER, FULL_HEAL, FULL_INCENSE, FULL_sleep_restORE,
-		GALACTIC_KEY, GANLON_BERRY, GOOD_ROD, GOOEY_MULCH, GRASS_MAIL,
-		GREAT_BALL, GREEN_SCARF, GREEN_SHARD, GREPA_BERRY, GRIP_CLAW,
-		GRISEOUS_ORB, GROWTH_MULCH, GUARD_SPEC, HABAN_BERRY, HARD_STONE,
-		HEAL_BALL, HEAL_POWDER, HEART_MAIL, HEART_SCALE, HEAT_ROCK,
-		HELIX_FOSSIL, HM01, HM02, HM03, HM04,
-		HM05, HM06, HM07, HM08, HONDEW_BERRY,
-		HONEY, HP_UP, HYPER_POTION, IAPAPA_BERRY, ICE_HEAL,
-		ICICLE_PLATE, ICY_ROCK, INSECT_PLATE, IRON, IRON_BALL,
-		IRON_PLATE, JABOCA_BERRY, JOURNAL, KASIB_BERRY, KEBIA_BERRY,
-		KELPSY_BERRY, KINGS_ROCK, LAGGING_TAIL, LANSAT_BERRY, LAVA_COOKIE,
-		Lax_INCENSE, LEAF_STONE, LEFTOVERS, LEMONADE, LEPPA_BERRY,
-		LIECHI_BERRY, LIFE_ORB, LIGHT_BALL, LIGHT_CLAY, LOOT_SACK,
-		LUCK_INCENSE, LUCKY_EGG, LUCKY_PUNCH, LUM_BERRY, LUNAR_WING,
-		LUSTROUS_ORB, LUXURY_BALL, MACHO_BRACE, MAGMARIZER, MAGNET,
-		MAGO_BERRY, MAGOST_BERRY, MASTER_BALL, MAX_ELIXIR, MAX_ETHER,
-		MAX_POTION, MAX_REPEL, MAX_REVIVE, MEADOW_PLATE, MEMBER_CARD,
-		MENTAL_HERB, METAL_COAT, METAL_POWDER, METRONOME, MICLE_BERRY,
-		MIND_PLATE, MIRACLE_SEED, MOOMOO_MILK, MOON_STONE, MOSAIC_MAIL,
-		MUSCLE_BAND, MYSTIC_WATER, NANAB_BERRY, NEST_BALL, NET_BALL,
-		NEVERMELTICE, NOMEL_BERRY, NUGGET, OAKS_LETTER, OCCA_BERRY,
-		ODD_INCENSE, ODD_KEYSTONE, OLD_AMBER, OLD_CHARM, OLD_GATEAU,
-		OLD_ROD, ORAN_BERRY, OVAL_STONE, PAL_PAD, PAMTRE_BERRY,
-		PARCEL, PARLYZ_HEAL, PASSHO_BERRY, PAYAPA_BERRY, PEARL,
-		PECHA_BERRY, PERSIM_BERRY, PETAYA_BERRY, PINAP_BERRY, PINK_SCARF,
-		POFFIN_CASE, POINT_CARD, poison_BARB, POKE_BALL, POKE_DOLL,
-		POKE_RADAR, POMEG_BERRY, POTION, POWER_ANKLET, POWER_BAND,
-		POWER_BELT, POWER_BRACER, POWER_HERB, POWER_LENS, POWER_WEIGHT,
-		PP_MAX, PP_UP, PREMIER_BALL, PROTECTOR, PROTEIN,
-		PURE_INCENSE, QUALOT_BERRY, QUICK_BALL, QUICK_CLAW, QUICK_POWDER,
-		RABUTA_BERRY, RARE_BONE, RARE_CANDY, RAWST_BERRY, RAZOR_CLAW,
-		RAZOR_FANG, RAZZ_BERRY, REAPER_CLOTH, RED_FLUTE, RED_SCARF,
-		RED_SHARD, REPEAT_BALL, REPEL, REVIVAL_HERB, REVIVE,
-		RINDO_BERRY, ROCK_INCENSE, ROOT_FOSSIL, ROSE_INCENSE, ROWAP_BERRY,
-		SACRED_ASH, SAFARI_BALL, SALAC_BERRY, SCOPE_LENS, SEA_INCENSE,
-		SEAL_BAG, SEAL_CASE, SECRETPOTION, SHARP_BEAK, SHED_SHELL,
-		SHELL_BELL, SHINY_STONE, SHOAL_SALT, SHOAL_SHELL, SHUCA_BERRY,
-		SILK_SCARF, SILVERPOWDER, SITRUS_BERRY, SKULL_FOSSIL, SKY_PLATE,
-		SMOKE_BALL, SMOOTH_ROCK, SNOW_MAIL, SODA_POP, SOFT_SAND,
-		SOOTHE_BELL, SOUL_DEW, SPACE_MAIL, SPELL_TAG, SPELON_BERRY,
-		SPLASH_PLATE, SPOOKY_PLATE, SPRAYDUCK, STABLE_MULCH, STAR_PIECE,
-		STARDUST, STARF_BERRY, STEEL_MAIL, STICK, STICKY_BARB,
-		STONE_PLATE, STORAGE_KEY, SUITE_KEY, SUN_STONE, SUPER_POTION,
-		SUPER_REPEL, SUPER_ROD, TAMATO_BERRY, TANGA_BERRY, THICK_CLUB,
-		THUNDERSTONE, TIMER_BALL, TINYMUSHROOM, TM01, TM02,
-		TM03, TM04, TM05, TM06, TM07,
-		TM08, TM09, TM10, TM11, TM12,
-		TM13, TM14, TM15, TM16, TM17,
-		TM18, TM19, TM20, TM21, TM22,
-		TM23, TM24, TM25, TM26, TM27,
-		TM28, TM29, TM30, TM31, TM32,
-		TM33, TM34, TM35, TM36, TM37,
-		TM38, TM39, TM40, TM41, TM42,
-		TM43, TM44, TM45, TM46, TM47,
-		TM48, TM49, TM50, TM51, TM52,
-		TM53, TM54, TM55, TM56, TM57,
-		TM58, TM59, TM60, TM61, TM62,
-		TM63, TM64, TM65, TM66, TM67,
-		TM68, TM69, TM70, TM71, TM72,
-		TM73, TM74, TM75, TM76, TM77,
-		TM78, TM79, TM80, TM81, TM82,
-		TM83, TM84, TM85, TM86, TM87,
-		TM88, TM89, TM90, TM91, TM92,
-		TOWN_MAP, TOXIC_ORB, TOXIC_PLATE, TUNNEL_MAIL, TWISTEDSPOON,
-		ULTRA_BALL, UP_GRADE, VS_SEEKER, WACAN_BERRY, WATER_STONE,
-		WATMEL_BERRY, WAVE_INCENSE, WEPEAR_BERRY, WHITE_FLUTE, WHITE_HERB,
-		WIDE_LENS, WIKI_BERRY, WISE_GLASSES, WORKS_KEY, X_ACCURACY,
-		X_ATTACK, X_DEFEND, X_SP_DEF, X_SPECIAL, X_SPEED,
-		YACHE_BERRY, YELLOW_FLUTE, YELLOW_SCARF, YELLOW_SHARD, ZAP_PLATE,
-		ZINC, ZOOM_LENS, END
-	};
-	Items name;
-	Item ();
-	explicit Item (Items item);
-	bool is_set () const;
-	void set_if_unknown (Items item);
-	bool allows_switching () const;
-	bool boosts_super_effective_moves () const;
-	bool causes_recoil () const;
-	bool grounds () const;
-	bool is_choice_item () const;
-	bool is_gone () const;
-	bool was_lost() const;
-	void remove ();
-	bounded::integer<0, 80> berry_power() const;		// Returns 0 for non-berries
-	bounded::integer<0, 130> fling_power() const;
-	bool blocks_trick () const;
-	bool extends_hail () const;
-	bool extends_rain () const;
-	bool extends_sand () const;
-	bool extends_sun () const;
-	bool extends_light_screen () const;
-	bool extends_reflect () const;
-	void steal (Item & other);
-	friend bool operator== (Item const & lhs, Item const & rhs);
+enum class Item : uint16_t {
+	No_Item, Adamant_Orb, Aguav_Berry, Air_Mail, Amulet_Coin,
+	Antidote, Apicot_Berry, Armor_Fossil, Aspear_Berry, Awakening,
+	Babiri_Berry, Belue_Berry, Berry_Juice, Bicycle, Big_Mushroom,
+	Big_Pearl, Big_Root, Black_Belt, Black_Flute, Black_Sludge,
+	BlackGlasses, Bloom_Mail, Blue_Flute, Blue_Scarf, Blue_Shard,
+	Bluk_Berry, Brick_Mail, BrightPowder, Bubble_Mail, Burn_Heal,
+	Calcium, Carbos, Charcoal, Charti_Berry, Cheri_Berry,
+	Cherish_Ball, Chesto_Berry, Chilan_Berry, Choice_Band, Choice_Scarf,
+	Choice_Specs, Chople_Berry, Claw_Fossil, Cleanse_Tag, Coba_Berry,
+	Coin_Case, Colbur_Berry, Cornn_Berry, Coupon_1, Coupon_2,
+	Coupon_3, Custap_Berry, Damp_Mulch, Damp_Rock, Dawn_Stone,
+	DeepSeaScale, DeepSeaTooth, Destiny_Knot, Dire_Hit, Dive_Ball,
+	Dome_Fossil, Draco_Plate, Dragon_Fang, Dragon_Scale, Dread_Plate,
+	Dubious_Disc, Durin_Berry, Dusk_Ball, Dusk_Stone, Earth_Plate,
+	Electirizer, Elixir, Energy_Root, EnergyPowder, Enigma_Berry,
+	Escape_Rope, Ether, Everstone, Exp_Share, Expert_Belt,
+	Explorer_Kit, Fashion_Case, Figy_Berry, Fire_Stone, Fist_Plate,
+	Flame_Mail, Flame_Orb, Flame_Plate, Fluffy_Tail, Focus_Band,
+	Focus_Sash, Fresh_Water, Full_Heal, Full_Incense, Full_Sleep_Restore,
+	Galactic_Key, Ganlon_Berry, Good_Rod, Gooey_Mulch, Grass_Mail,
+	Great_Ball, Green_Scarf, Green_Shard, Grepa_Berry, Grip_Claw,
+	Griseous_Orb, Growth_Mulch, Guard_Spec, Haban_Berry, Hard_Stone,
+	Heal_Ball, Heal_Powder, Heart_Mail, Heart_Scale, Heat_Rock,
+	Helix_Fossil, HM01, HM02, HM03, HM04,
+	HM05, HM06, HM07, HM08, Hondew_Berry,
+	Honey, HP_Up, Hyper_Potion, Iapapa_Berry, Ice_Heal,
+	Icicle_Plate, Icy_Rock, Insect_Plate, Iron, Iron_Ball,
+	Iron_Plate, Jaboca_Berry, Journal, Kasib_Berry, Kebia_Berry,
+	Kelpsy_Berry, Kings_Rock, Lagging_Tail, Lansat_Berry, Lava_Cookie,
+	Lax_Incense, Leaf_Stone, Leftovers, Lemonade, Leppa_Berry,
+	Liechi_Berry, Life_Orb, Light_Ball, Light_Clay, Loot_Sack,
+	Luck_Incense, Lucky_Egg, Lucky_Punch, Lum_Berry, Lunar_Wing,
+	Lustrous_Orb, Luxury_Ball, Macho_Brace, Magmarizer, Magnet,
+	Mago_Berry, Magost_Berry, Master_Ball, Max_Elixir, Max_Ether,
+	Max_Potion, Max_Repel, Max_Revive, Meadow_Plate, Member_Card,
+	Mental_Herb, Metal_Coat, Metal_Powder, Metronome, Micle_Berry,
+	Mind_Plate, Miracle_Seed, MooMoo_Milk, Moon_Stone, Mosaic_Mail,
+	Muscle_Band, Mystic_Water, Nanab_Berry, Nest_Ball, Net_Ball,
+	NeverMeltIce, Nomel_Berry, Nugget, Oaks_Letter, Occa_Berry,
+	Odd_Incense, Odd_Keystone, Old_Amber, Old_Charm, Old_Gateau,
+	Old_Rod, Oran_Berry, Oval_Stone, Pal_Pad, Pamtre_Berry,
+	Parcel, Parlyz_Heal, Passho_Berry, Payapa_Berry, Pearl,
+	Pecha_Berry, Persim_Berry, Petaya_Berry, Pinap_Berry, Pink_Scarf,
+	Poffin_Case, Point_Card, Poison_Barb, Poke_Ball, Poke_Doll,
+	Poke_Radar, Pomeg_Berry, Potion, Power_Anklet, Power_Band,
+	Power_Belt, Power_Bracer, Power_Herb, Power_Lens, Power_Weight,
+	PP_Max, PP_Up, Premier_Ball, Protector, Protein,
+	Pure_Incense, Qualot_Berry, Quick_Ball, Quick_Claw, Quick_Powder,
+	Rabuta_Berry, Rare_Bone, Rare_Candy, Rawst_Berry, Razor_Claw,
+	Razor_Fang, Razz_Berry, Reaper_Cloth, Red_Flute, Red_Scarf,
+	Red_Shard, Repeat_Ball, Repel, Revival_Herb, Revive,
+	Rindo_Berry, Rock_Incense, Root_Fossil, Rose_Incense, Rowap_Berry,
+	Sacred_Ash, Safari_Ball, Salac_Berry, Scope_Lens, Sea_Incense,
+	Seal_Bag, Seal_Case, SecretPotion, Sharp_Beak, Shed_Shell,
+	Shell_Bell, Shiny_Stone, Shoal_Salt, Shoal_Shell, Shuca_Berry,
+	Silk_Scarf, SilverPowder, Sitrus_Berry, Skull_Fossil, Sky_Plate,
+	Smoke_Ball, Smooth_Rock, Snow_Mail, Soda_Pop, Soft_Sand,
+	Soothe_Bell, Soul_Dew, Space_Mail, Spell_Tag, Spelon_Berry,
+	Splash_Plate, Spooky_Plate, Sprayduck, Stable_Mulch, Star_Piece,
+	Stardust, Starf_Berry, Steel_Mail, Stick, Sticky_Barb,
+	Stone_Plate, Storage_Key, Suite_Key, Sun_Stone, Super_Potion,
+	Super_Repel, Super_Rod, Tamato_Berry, Tanga_Berry, Thick_Club,
+	Thunderstone, Timer_Ball, TinyMushroom, TM01, TM02,
+	TM03, TM04, TM05, TM06, TM07,
+	TM08, TM09, TM10, TM11, TM12,
+	TM13, TM14, TM15, TM16, TM17,
+	TM18, TM19, TM20, TM21, TM22,
+	TM23, TM24, TM25, TM26, TM27,
+	TM28, TM29, TM30, TM31, TM32,
+	TM33, TM34, TM35, TM36, TM37,
+	TM38, TM39, TM40, TM41, TM42,
+	TM43, TM44, TM45, TM46, TM47,
+	TM48, TM49, TM50, TM51, TM52,
+	TM53, TM54, TM55, TM56, TM57,
+	TM58, TM59, TM60, TM61, TM62,
+	TM63, TM64, TM65, TM66, TM67,
+	TM68, TM69, TM70, TM71, TM72,
+	TM73, TM74, TM75, TM76, TM77,
+	TM78, TM79, TM80, TM81, TM82,
+	TM83, TM84, TM85, TM86, TM87,
+	TM88, TM89, TM90, TM91, TM92,
+	Town_Map, Toxic_Orb, Toxic_Plate, Tunnel_Mail, TwistedSpoon,
+	Ultra_Ball, Up_Grade, VS_Seeker, Wacan_Berry, Water_Stone,
+	Watmel_Berry, Wave_Incense, Wepear_Berry, White_Flute, White_Herb,
+	Wide_Lens, Wiki_Berry, Wise_Glasses, Works_Key, X_Accuracy,
+	X_Attack, X_Defend, X_Sp_Def, X_Special, X_Speed,
+	Yache_Berry, Yellow_Flute, Yellow_Scarf, Yellow_Shard, Zap_Plate,
+	Zinc, Zoom_Lens, END
 };
-bool operator!= (Item const & lhs, Item const & rhs);
+
+bool is_set(Item item);
+bool allows_switching(Item item);
+bool boosts_super_effective_moves(Item item);
+bool causes_recoil(Item item);
+bool grounds(Item item);
+bool is_choice_item(Item item);
+bool was_lost(Item item);
+void remove(Item & item);
+bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries
+bounded::integer<0, 130> fling_power(Item item);
+bool blocks_trick(Item item);
+bool extends_hail(Item item);
+bool extends_rain(Item item);
+bool extends_sand(Item item);
+bool extends_sun(Item item);
+bool extends_light_screen(Item item);
+bool extends_reflect(Item item);
+void steal(Item & mine, Item & other);
 
 }	// namespace technicalmachine
 #endif	// ITEM_HPP_

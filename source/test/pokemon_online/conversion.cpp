@@ -65,9 +65,9 @@ void test_gender () {
 
 void test_item () {
 	std::cout << "\t\tVerifying correct item.\n";
-	for_each<Item::Items>([](Item::Items const original) {
+	for_each<Item>([](Item const original) {
 		unsigned const id = item_to_id (original);
-		Item::Items const result = id_to_item (id);
+		Item const result = id_to_item(id);
 		if (original != result and id != 0)
 			throw InvalidSimulatorConversion(original, result);
 	});

@@ -231,10 +231,10 @@ Rational calculate_flash_fire_modifier (ActivePokemon const & attacker) {
 }
 
 Rational calculate_item_modifier(ActivePokemon const & attacker) {
-	switch (get_item(attacker).name) {
-		case Item::LIFE_ORB:
+	switch (get_item(attacker)) {
+		case Item::Life_Orb:
 			return Rational(13, 10);
-		case Item::METRONOME:
+		case Item::Metronome:
 			return Rational(attacker.metronome_boost());
 		default:
 			return Rational(1);
@@ -259,7 +259,7 @@ Rational calculate_ability_effectiveness_modifier (Ability const ability, Effect
 }
 
 Rational calculate_expert_belt_modifier (Item const item, Effectiveness const & effectiveness) {
-	return (item.boosts_super_effective_moves() and effectiveness.is_super_effective()) ? Rational(6, 5) : Rational(1);
+	return (boosts_super_effective_moves(item) and effectiveness.is_super_effective()) ? Rational(6, 5) : Rational(1);
 }
 
 bool resistance_berry_activates(Item const item, Type const type, Effectiveness const & effectiveness) {
@@ -267,41 +267,41 @@ bool resistance_berry_activates(Item const item, Type const type, Effectiveness 
 	// that the item grants resistance toward (and some sort of guard type to
 	// indicate that the item does not grant resistance). Then I can
 	// `return type == returned_type;`
-	if (item.name == Item::CHILAN_BERRY)
+	if (item == Item::Chilan_Berry)
 		return type == Type::Normal;
 	else if (effectiveness.is_super_effective()) {
-		switch (item.name) {
-			case Item::BABIRI_BERRY:
+		switch (item) {
+			case Item::Babiri_Berry:
 				return type == Type::Steel;
-			case Item::CHARTI_BERRY:
+			case Item::Charti_Berry:
 				return type == Type::Rock;
-			case Item::CHOPLE_BERRY:
+			case Item::Chople_Berry:
 				return type == Type::Fighting;
-			case Item::COBA_BERRY:
+			case Item::Coba_Berry:
 				return type == Type::Flying;
-			case Item::COLBUR_BERRY:
+			case Item::Colbur_Berry:
 				return type == Type::Dark;
-			case Item::HABAN_BERRY:
+			case Item::Haban_Berry:
 				return type == Type::Dragon;
-			case Item::KASIB_BERRY:
+			case Item::Kasib_Berry:
 				return type == Type::Ghost;
-			case Item::KEBIA_BERRY:
+			case Item::Kebia_Berry:
 				return type == Type::Poison;
-			case Item::OCCA_BERRY:
+			case Item::Occa_Berry:
 				return type == Type::Fire;
-			case Item::PASSHO_BERRY:
+			case Item::Passho_Berry:
 				return type == Type::Water;
-			case Item::PAYAPA_BERRY:
+			case Item::Payapa_Berry:
 				return type == Type::Psychic;
-			case Item::RINDO_BERRY:
+			case Item::Rindo_Berry:
 				return type == Type::Grass;
-			case Item::SHUCA_BERRY:
+			case Item::Shuca_Berry:
 				return type == Type::Ground;
-			case Item::TANGA_BERRY:
+			case Item::Tanga_Berry:
 				return type == Type::Bug;
-			case Item::WACAN_BERRY:
+			case Item::Wacan_Berry:
 				return type == Type::Electric;
-			case Item::YACHE_BERRY:
+			case Item::Yache_Berry:
 				return type == Type::Ice;
 			default:
 				return false;

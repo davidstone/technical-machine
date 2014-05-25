@@ -42,7 +42,7 @@ public:
 	T const & get(Species species) const;
 private:
 	bounded::array<std::vector<Moves>, number_of_species> move;
-	bounded::array<Item::Items, number_of_species> item;
+	bounded::array<Item, number_of_species> item;
 	bounded::array<Ability::Abilities, number_of_species> ability;
 	bounded::array<Nature, number_of_species> nature;
 };

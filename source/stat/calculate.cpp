@@ -133,7 +133,7 @@ struct AbilityNumerator<StatNames::SPE> {
 			case Ability::Swift_Swim:
 				return BOUNDED_CONDITIONAL(weather.rain(), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Unburden:
-				return BOUNDED_CONDITIONAL(get_item(pokemon).was_lost(), ability_denominator * 2_bi, ability_denominator);
+				return BOUNDED_CONDITIONAL(was_lost(get_item(pokemon)), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Quick_Feet:
 				return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, ability_denominator);
 			case Ability::Slow_Start:
@@ -158,12 +158,12 @@ struct ItemNumerator;
 template<>
 struct ItemNumerator<StatNames::ATK> {
 	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
-		switch (get_item(attacker).name) {
-			case Item::CHOICE_BAND:
+		switch (get_item(attacker)) {
+			case Item::Choice_Band:
 				return 3_bi;
-			case Item::LIGHT_BALL:
+			case Item::Light_Ball:
 				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
-			case Item::THICK_CLUB:
+			case Item::Thick_Club:
 				return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(attacker), 2_bi * item_denominator, item_denominator);
 			default:
 				return item_denominator;
@@ -173,14 +173,14 @@ struct ItemNumerator<StatNames::ATK> {
 template<>
 struct ItemNumerator<StatNames::SPA> {
 	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
-		switch (get_item(attacker).name) {
-			case Item::SOUL_DEW:
+		switch (get_item(attacker)) {
+			case Item::Soul_Dew:
 				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(attacker), 3_bi, item_denominator);
-			case Item::CHOICE_SPECS:
+			case Item::Choice_Specs:
 				return 3_bi;
-			case Item::DEEPSEATOOTH:
+			case Item::DeepSeaTooth:
 				return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(attacker), 2_bi * item_denominator, item_denominator);
-			case Item::LIGHT_BALL:
+			case Item::Light_Ball:
 				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
 			default:
 				return item_denominator;
@@ -191,7 +191,7 @@ template<>
 struct ItemNumerator<StatNames::DEF> {
 	auto operator()(Pokemon const & defender) -> bounded::integer<2, 3> {
 		return BOUNDED_CONDITIONAL(
-			get_item(defender).name == Item::METAL_POWDER and is_boosted_by_metal_powder(defender),
+			get_item(defender) == Item::Metal_Powder and is_boosted_by_metal_powder(defender),
 			3_bi,
 			item_denominator
 		);
@@ -200,12 +200,12 @@ struct ItemNumerator<StatNames::DEF> {
 template<>
 struct ItemNumerator<StatNames::SPD> {
 	auto operator()(Pokemon const & defender) -> bounded::integer<2, 4> {
-		switch (get_item(defender).name) {
-			case Item::DEEPSEASCALE:
+		switch (get_item(defender)) {
+			case Item::DeepSeaScale:
 				return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(defender), 2_bi * item_denominator, item_denominator);
-			case Item::METAL_POWDER:
+			case Item::Metal_Powder:
 				return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(defender), 3_bi, item_denominator);
-			case Item::SOUL_DEW:
+			case Item::Soul_Dew:
 				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(defender), 3_bi, item_denominator);
 			default:
 				return item_denominator;
@@ -215,18 +215,18 @@ struct ItemNumerator<StatNames::SPD> {
 template<>
 struct ItemNumerator<StatNames::SPE> {
 	auto operator()(Pokemon const & pokemon) -> bounded::integer<1, 4> {
-		switch (get_item(pokemon).name) {
-			case Item::QUICK_POWDER:
+		switch (get_item(pokemon)) {
+			case Item::Quick_Powder:
 				return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(pokemon), 2_bi * item_denominator, item_denominator);
-			case Item::CHOICE_SCARF:
+			case Item::Choice_Scarf:
 				return 3_bi;
-			case Item::MACHO_BRACE:
-			case Item::POWER_ANKLET:
-			case Item::POWER_BAND:
-			case Item::POWER_BELT:
-			case Item::POWER_BRACER:
-			case Item::POWER_LENS:
-			case Item::POWER_WEIGHT:
+			case Item::Macho_Brace:
+			case Item::Power_Anklet:
+			case Item::Power_Band:
+			case Item::Power_Belt:
+			case Item::Power_Bracer:
+			case Item::Power_Lens:
+			case Item::Power_Weight:
 				return 1_bi;
 			default:
 				return item_denominator;

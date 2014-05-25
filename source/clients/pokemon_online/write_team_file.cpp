@@ -72,7 +72,7 @@ void write_blank_stats (ptree & pt) {
 
 void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	ptree & member = pt.add ("Pokemon", "");
-	member.put ("<xmlattr>.Item", item_to_id (get_item(pokemon).name));
+	member.put("<xmlattr>.Item", item_to_id(get_item(pokemon)));
 	member.put ("<xmlattr>.Ability", ability_to_id (get_ability(pokemon).name()));
 	std::pair<unsigned, unsigned> const ids = species_to_id(pokemon);
 	member.put ("<xmlattr>.Num", ids.first);

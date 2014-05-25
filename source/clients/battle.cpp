@@ -482,14 +482,15 @@ void Battle::handle_ability_message(Party party, Ability::Abilities ability) {
 	get_ability(get_team(party).replacement()) = ability;
 }
 
-void Battle::handle_item_message(Party party, Item::Items item) {
-	get_item(get_team(party).replacement()).name = item;
+void Battle::handle_item_message(Party party, Item item) {
+	get_item(get_team(party).replacement()) = item;
 }
 
 void Battle::slot_memory_bring_to_front() {
 	for (Species & name : slot_memory) {
-		if (ai.replacement() == name)
+		if (ai.replacement() == name) {
 			std::swap(slot_memory.front(), name);
+		}
 	}
 }
 

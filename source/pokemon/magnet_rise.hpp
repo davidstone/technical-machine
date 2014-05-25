@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MAGNET_RISE_HPP_
-#define MAGNET_RISE_HPP_
+#ifndef Magnet_RISE_HPP_
+#define Magnet_RISE_HPP_
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <cstdint>
@@ -44,4 +44,4 @@ bool operator== (MagnetRise const & lhs, MagnetRise const & rhs);
 bool operator!= (MagnetRise const & lhs, MagnetRise const & rhs);
 
 }	// namespace technicalmachine
-#endif	// MAGNET_RISE_HPP_
+#endif	// Magnet_RISE_HPP_

@@ -103,7 +103,7 @@ void physical_power_test() {
 
 	Team attacker = max_damage_physical_attacker();
 	auto & pokemon = attacker.pokemon();
-	get_item(pokemon).name = Item::ROCK_INCENSE;
+	get_item(pokemon) = Item::Rock_Incense;
 	get_ability(pokemon) = Ability::Rivalry;
 
 	auto const power = move_power(attacker, max_damage_physical_defender(), Weather{}, Variable{});
@@ -117,7 +117,7 @@ void special_power_test() {
 	Team attacker = max_damage_special_attacker();
 	Pokemon & pokemon = attacker.pokemon();
 	pokemon.move.add(Moves::Surf);
-	get_item(pokemon).name = Item::WAVE_INCENSE;
+	get_item(pokemon) = Item::Wave_Incense;
 	get_ability(pokemon) = Ability::Torrent;
 
 	Team defender = max_damage_special_defender();
@@ -148,7 +148,7 @@ void physical_damage_test() {
 	get_ability(a) = Ability::Pure_Power;
 	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
 
-	get_item(a).name = Item::METRONOME;
+	get_item(a) = Item::Metronome;
 	attacker.pokemon().set_critical_hit(true);
 
 	Team defender = max_damage_physical_defender();
@@ -171,7 +171,7 @@ void special_damage_test() {
 	get_nature(a) = Nature::Modest;
 	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
 	
-	get_item(a).name = Item::METRONOME;
+	get_item(a) = Item::Metronome;
 	for (unsigned n = 0; n != 10; ++n) {
 		attacker.pokemon().increment_move_use_counter();
 	}
