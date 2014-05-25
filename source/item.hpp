@@ -19,6 +19,8 @@
 #ifndef ITEM_HPP_
 #define ITEM_HPP_
 
+#include "hash.hpp"
+
 #include <cstdint>
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -133,6 +135,13 @@ bool extends_sun(Item item);
 bool extends_light_screen(Item item);
 bool extends_reflect(Item item);
 void steal(Item & mine, Item & other);
+
+constexpr auto hash(Item const item) noexcept {
+	return bounded::integer<0, static_cast<intmax_t>(Item::END)>(item);
+}
+constexpr auto max_hash(Item) noexcept {
+	return bounded::make<static_cast<intmax_t>(Item::END)>();
+}
 
 }	// namespace technicalmachine
 #endif	// ITEM_HPP_
