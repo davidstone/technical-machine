@@ -79,5 +79,13 @@ auto operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) ->
 	return rhs != lhs.current();
 }
 
+inline auto hash(HP const hp) noexcept {
+	return hp.current();
+}
+
+inline auto max_hash(HP const hp) noexcept {
+	return hp.max();
+}
+
 }	// namespace technicalmachine
 #endif	// STAT__HP_HPP_
