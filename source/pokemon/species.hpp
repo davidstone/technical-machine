@@ -1,5 +1,5 @@
 // Species enum
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,8 @@
 #define POKEMON__SPECIES_HPP_
 
 #include "species_forward.hpp"
+#include "../hash.hpp"
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -734,6 +736,13 @@ constexpr auto number_of_species = static_cast<unsigned>(Species::END);
 inline Species & operator++(Species & species) {
 	species = static_cast<Species>(static_cast<unsigned>(species) + 1);
 	return species;
+}
+
+constexpr auto hash(Species const species) noexcept {
+	return bounded::integer<0, static_cast<intmax_t>(Species::END)>(species);
+}
+constexpr auto max_hash(Species) noexcept {
+	return bounded::make<static_cast<intmax_t>(Species::END)>();
 }
 
 }	// namespace technicalmachine
