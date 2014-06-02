@@ -25,6 +25,7 @@
 #include "species_forward.hpp"
 
 #include "../collection.hpp"
+#include "../hash.hpp"
 
 #include "../move/moves_forward.hpp"
 
@@ -106,9 +107,6 @@ public:
 		// This passes in a function that always returns false for when to break out
 		for_each_replacement([]() { return false; }, f);
 	}
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	hash_type max_hash() const;
 private:
 	class ResetIndex {
 	public:
@@ -136,6 +134,18 @@ private:
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize true_size;
 };
+
+inline auto hash(PokemonCollection const & collection) noexcept {
+	return
+		static_cast<uint64_t>(hash(collection.real_size())) + static_cast<uint64_t>(max_hash(collection.real_size())) *
+		hash_range<TeamSize>(collection.begin(), collection.end());
+}
+
+inline auto max_hash(PokemonCollection const & collection) noexcept {
+	return static_cast<uint64_t>(max_hash(collection.real_size())) * max_hash_range<TeamSize>(collection.begin(), collection.end());
+}
+
+
 
 }	// namespace technicalmachine
 #endif	// POKEMON__COLLECTION_HPP_

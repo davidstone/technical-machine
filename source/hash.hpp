@@ -68,14 +68,19 @@ constexpr auto max_hash(T const & t) {
 
 template<typename hash_type, typename max_hash_type>
 class VerifyHashBoundsImpl {
+	static_assert(!std::is_same<hash_type, uint64_t>::value, "Mismatched hash types.");
+	static_assert(!std::is_same<max_hash_type, uint64_t>::value, "Mismatched hash types.");
 	static_assert(
 		std::numeric_limits<hash_type>::min() == 0_bi,
 		"Incorrect minimum for hash."
 	);
 	static_assert(
-		std::is_same<hash_type, uint64_t>::value or std::numeric_limits<hash_type>::max() + 1_bi == std::numeric_limits<max_hash_type>::max(),
+		std::numeric_limits<hash_type>::max() + 1_bi == std::numeric_limits<max_hash_type>::max(),
 		"Incorrect maximum for hash."
 	);
+};
+template<>
+class VerifyHashBoundsImpl<uint64_t, uint64_t> {
 };
 template<typename T>
 class VerifyHashBounds {
@@ -114,13 +119,21 @@ constexpr auto noexcept_max_hashable() noexcept -> bool {
 	return noexcept(max_hash(std::declval<Ts>()...));
 }
 
+template<typename Size, typename Iterator>
+class range_result {
+private:
+	using max_hash_type = decltype(max_hash(*std::declval<Iterator>()));
+	using size_type = std::conditional_t<std::is_same<max_hash_type, uint64_t>::value, uint64_t, Size>;
+public:
+	using type = decltype(std::declval<max_hash_type>() * std::declval<size_type>());
+}; 
 
-
-template<typename Size, typename Iterator, enable_if_t<std::numeric_limits<Size>::min() == 0_bi> = clang_dummy>
+// Cannot use 0_bi because it causes an internal compiler error in gcc 4.9.0
+template<typename Size, typename Iterator, enable_if_t<std::numeric_limits<Size>::min() == 0> = clang_dummy>
 auto max_hash_range(Iterator first, Iterator last) {
-	using hash_type = decltype(max_hash(std::declval<decltype(*first)>()) * std::declval<Size>());
-	static constexpr hash_type initial(1_bi);
-	return std::accumulate(std::move(first), std::move(last), initial, [](auto const & current, auto const & element) {
+	using result_type = typename range_result<Size, Iterator>::type;
+	static constexpr result_type initial(1_bi);
+	return std::accumulate(first, last, initial, [](auto const current, auto const & element) {
 		return current * max_hash(element);
 	});
 }
@@ -129,12 +142,11 @@ auto max_hash_range(Iterator first, Iterator last) {
 template<typename Size, typename Iterator, enable_if_t<(std::numeric_limits<Size>::min() > 0)> = clang_dummy>
 auto max_hash_range(Iterator first, Iterator last) {
 	using individual_type = decltype(max_hash(*first));
-	using result_type = decltype(std::declval<individual_type>() * std::declval<Size>());
+	using result_type = typename range_result<Size, Iterator>::type;
 	std::common_type_t<result_type, individual_type> const initial = max_hash(*first);
-	auto const result = std::accumulate(bounded::next(first), std::move(last), initial, [](auto const & current, auto const & element) {
+	return static_cast<result_type>(std::accumulate(bounded::next(first), last, initial, [](auto const current, auto const & element) {
 		return current * max_hash(element);
-	});
-	return static_cast<result_type>(result);
+	}));
 }
 
 
@@ -161,16 +173,27 @@ constexpr auto max_range_bound(intmax_t const value, intmax_t const counter) noe
 		value * max_range_bound(value, counter - 1);
 }
 
+template<typename T, typename max_hash_type, intmax_t min_size, intmax_t max_size>
+class max_range_bounds_impl {
+private:
+	static constexpr auto min = max_range_bound(static_cast<intmax_t>(std::numeric_limits<max_hash_type>::min()), min_size);
+	static constexpr auto max = max_range_bound(static_cast<intmax_t>(std::numeric_limits<max_hash_type>::max()), max_size);
+public:
+	using type = bounded::integer<min, max>;
+};
+template<typename T, intmax_t min_size, intmax_t max_size>
+class max_range_bounds_impl<T, uint64_t, min_size, max_size> {
+public:
+	using type = uint64_t;
+};
 template<typename T, intmax_t min_size, intmax_t max_size>
 class max_range_bounds {
 private:
 	static_assert(min_size <= max_size, "Incorrect range.");
 	static_assert(min_size >= 0, "Incorrect size.");
 	using max_hash_type = decltype(max_hash(std::declval<T>()));
-	static constexpr auto min = max_range_bound(static_cast<intmax_t>(std::numeric_limits<max_hash_type>::min()), min_size);
-	static constexpr auto max = max_range_bound(static_cast<intmax_t>(std::numeric_limits<max_hash_type>::max()), max_size);
 public:
-	using type = bounded::integer<min, max>;
+	using type = typename max_range_bounds_impl<T, max_hash_type, min_size, max_size>::type;
 };
 template<typename T, intmax_t min_size, intmax_t max_size>
 using max_range_bounds_t = typename max_range_bounds<T, min_size, max_size>::type;
@@ -188,7 +211,7 @@ auto hash_range(Iterator first, Iterator last) {
 	static constexpr hash_type initial(0_bi);
 	return std::accumulate(std::move(first), std::move(last), initial, [](auto const current, auto const & element) {
 		// TODO: change when bounded::integer supports large integers
-		return static_cast<hash_type>(current.value() * static_cast<uint64_t>(max_hash(element)) + static_cast<uint64_t>(hash(element)));
+		return static_cast<hash_type>(static_cast<uint64_t>(current) * static_cast<uint64_t>(max_hash(element)) + static_cast<uint64_t>(hash(element)));
 	});
 }
 

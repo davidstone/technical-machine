@@ -141,8 +141,9 @@ Team::hash_type Team::hash() const {
 		static_cast<uint64_t>(technicalmachine::hash(screens)) + static_cast<uint64_t>(technicalmachine::max_hash(screens)) *
 		(static_cast<uint64_t>(technicalmachine::hash(wish)) + static_cast<uint64_t>(technicalmachine::max_hash(wish)) *
 		(static_cast<uint64_t>(technicalmachine::hash(entry_hazards)) + static_cast<uint64_t>(technicalmachine::max_hash(entry_hazards)) *
+		(static_cast<uint64_t>(technicalmachine::hash(all_pokemon())) + static_cast<uint64_t>(technicalmachine::max_hash(all_pokemon())) *
 		static_cast<uint64_t>(active_pokemon.hash())
-	));
+	)));
 }
 
 void Team::load(std::string const & name) {

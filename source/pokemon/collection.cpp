@@ -132,26 +132,4 @@ void PokemonCollection::decrement_real_size () {
 	--true_size;
 }
 
-PokemonCollection::hash_type PokemonCollection::hash() const {
-	hash_type current_hash = 0;
-	for (auto const & pokemon : container) {
-		current_hash *= technicalmachine::max_hash(pokemon);
-		current_hash += technicalmachine::hash(pokemon);
-	}
-	current_hash *= max_pokemon_per_team;
-	current_hash += static_cast<hash_type>(true_size - 1_bi);
-	current_hash *= static_cast<hash_type>(true_size);
-	current_hash += index();
-	return current_hash;
-}
-
-PokemonCollection::hash_type PokemonCollection::max_hash() const {
-	hash_type current_max = static_cast<hash_type>(max_pokemon_per_team);
-	current_max *= true_size;
-	for (auto const & pokemon : container) {
-		current_max *= technicalmachine::max_hash(pokemon);
-	}
-	return current_max;
-}
-
 }	// namespace technicalmachine
