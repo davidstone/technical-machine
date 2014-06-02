@@ -27,7 +27,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-Stat::base_type get_base(Species name, StatNames stat_name);
+auto get_base(Species name, StatNames stat_name) -> Stat::base_type;
 
 }	// namespace
 
@@ -40,7 +40,7 @@ Stat::Stat(Species const species, StatNames const stat_name, EV const set_ev) :
 
 namespace {
 
-Stat::base_type get_base(Species const species, StatNames const stat) {
+auto get_base(Species const species, StatNames const stat) -> Stat::base_type {
 	static constexpr bounded::array<bounded::array<Stat::base_type, 5>, number_of_species> base_stat{
 		// Generation 1							
 		49_bi,	49_bi,	65_bi,	65_bi,	45_bi,		// Bulbasaur	

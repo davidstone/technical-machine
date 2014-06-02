@@ -25,7 +25,7 @@
 namespace technicalmachine {
 namespace {
 
-using base_type = bounded::checked_integer<1, 255>;
+using base_type = bounded::integer<1, 255>;
 auto get_base(Species species) -> base_type;
 
 using hp_type = bounded::dynamic_max_integer<0, HP::max_value, bounded::clamp_policy>;
@@ -743,6 +743,7 @@ auto get_base(Species const name) -> base_type {
 		// 100_bi,		// Meloetta (Pirouette form)
 		71_bi		// Genesect 
 	);
+	static_assert(std::is_same<std::decay_t<decltype(base.at(name))>, base_type>::value, "Incorrect base stat HP type.");
 	return base.at(name);
 }
 

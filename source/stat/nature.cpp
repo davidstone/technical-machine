@@ -145,7 +145,7 @@ auto boosts_stat<StatNames::SPD>(Nature const nature) -> bool {
 			return false;
 	}
 }
-bool boosts_defending_stat(Nature const nature) {
+auto boosts_defending_stat(Nature const nature) -> bool {
 	return boosts_stat<StatNames::DEF>(nature) or boosts_stat<StatNames::SPD>(nature);
 }
 
@@ -186,7 +186,7 @@ auto lowers_stat<StatNames::SPA>(Nature const nature) -> bool {
 			return false;
 	}
 }
-bool lowers_attacking_stat(Nature const nature) {
+auto lowers_attacking_stat(Nature const nature) -> bool {
 	return lowers_stat<StatNames::ATK>(nature) or lowers_stat<StatNames::SPA>(nature);
 }
 
@@ -214,7 +214,7 @@ auto lowers_stat<StatNames::SPD>(Nature const nature) -> bool {
 			return false;
 	}
 }
-bool lowers_defending_stat(Nature const nature) {
+auto lowers_defending_stat(Nature const nature) -> bool {
 	return lowers_stat<StatNames::DEF>(nature) or lowers_stat<StatNames::SPD>(nature);
 }
 

@@ -32,7 +32,7 @@ using namespace bounded::literal;
 
 class HP {
 public:
-	static constexpr unsigned max_value = 714;
+	static constexpr auto max_value = 714U;
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
@@ -62,20 +62,20 @@ auto operator-=(HP & lhs, T const & rhs) -> HP & {
 }
 
 template<intmax_t min, intmax_t max, typename overflow>
-auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) -> bool {
+auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
 	return lhs.current() == rhs;
 }
 template<intmax_t min, intmax_t max, typename overflow>
-auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) -> bool {
+auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return rhs == lhs.current();
 }
 
 template<intmax_t min, intmax_t max, typename overflow>
-auto operator!=(HP const lhs, bounded::integer<min, max, overflow> const rhs) -> bool {
+auto operator!=(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
 	return lhs.current() != rhs;
 }
 template<intmax_t min, intmax_t max, typename overflow>
-auto operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) -> bool {
+auto operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return rhs != lhs.current();
 }
 

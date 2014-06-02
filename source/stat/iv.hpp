@@ -25,9 +25,9 @@ namespace technicalmachine {
 
 class IV {
 public:
-	static constexpr unsigned max = 31u;
+	static constexpr auto max = 31U;
 	using value_type = bounded::checked_integer<0, max>;
-	constexpr explicit IV(value_type iv) noexcept:
+	constexpr explicit IV(value_type const iv) noexcept:
 		m_value(iv) {
 	}
 	constexpr auto value() const noexcept -> bounded::integer<0, max> {
