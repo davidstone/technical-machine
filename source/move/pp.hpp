@@ -51,7 +51,7 @@ public:
 		return ::technicalmachine::hash(m_current);
 	}
 	auto max_hash() const noexcept {
-		return ::technicalmachine::max_hash(m_max);
+		return BOUNDED_CONDITIONAL(m_max, *m_max + 2_bi, 1_bi);
 	}
 private:
 	using base_type = bounded::integer<1, 40>;
