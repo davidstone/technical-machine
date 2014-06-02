@@ -772,8 +772,8 @@ void ActivePokemon::normalize_hp(bool fainted) {
 
 ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
-	current_hash *= m_substitute.max_hash();
-	current_hash += m_substitute.hash();
+	current_hash *= technicalmachine::max_hash(substitute());
+	current_hash += technicalmachine::hash(substitute());
 	current_hash *= bide.max_hash();
 	current_hash += bide.hash();
 	current_hash *= confusion.max_hash();
@@ -863,7 +863,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = 0;
-	current_hash *= m_substitute.max_hash();
+	current_hash *= technicalmachine::max_hash(substitute());
 	current_hash *= bide.max_hash();
 	current_hash *= confusion.max_hash();
 	current_hash *= m_disable.max_hash();

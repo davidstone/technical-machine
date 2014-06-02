@@ -19,6 +19,7 @@
 #ifndef SUBSTITUTE_HPP_
 #define SUBSTITUTE_HPP_
 
+#include "../hash.hpp"
 #include "../stat/hp.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -33,24 +34,28 @@ class Substitute {
 private:
 	using hp_type = bounded::equivalent_type<decltype(std::declval<HP::current_type>() / 4_bi), bounded::null_policy>;
 public:
-	Substitute();
 	auto create(HP::current_type total_hp) -> hp_type;
 	template<typename Damage>
 	auto damage(Damage const damage_done) -> void {
 		m_hp -= damage_done;
 	}
-	auto hp() const {
+	constexpr auto hp() const noexcept -> hp_type {
 		return m_hp;
 	}
 	explicit operator bool() const;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
 private:
-	bounded::equivalent_type<hp_type, bounded::clamp_policy> m_hp;
+	bounded::equivalent_type<hp_type, bounded::clamp_policy> m_hp = 0_bi;
 };
 bool operator== (Substitute const & lhs, Substitute const & rhs);
 bool operator!= (Substitute const & lhs, Substitute const & rhs);
+
+constexpr auto hash(Substitute const substitute) noexcept {
+	return hash(substitute.hp());
+}
+constexpr auto max_hash(Substitute const substitute) noexcept {
+	return max_hash(substitute.hp());
+}
+
 
 }	// namespace technicalmachine
 #endif	// SUBSTITUTE_HPP_

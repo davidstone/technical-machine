@@ -20,10 +20,6 @@
 
 namespace technicalmachine {
 
-Substitute::Substitute():
-	m_hp(0_bi) {
-}
-
 auto Substitute::create(HP::current_type const total_hp) -> hp_type {
 	if (static_cast<bool>(*this)) {
 		return 0_bi;
@@ -34,14 +30,6 @@ auto Substitute::create(HP::current_type const total_hp) -> hp_type {
 
 Substitute::operator bool() const {
 	return hp() != 0_bi;
-}
-
-Substitute::hash_type Substitute::hash() const {
-	return static_cast<hash_type>(hp());
-}
-
-Substitute::hash_type Substitute::max_hash() {
-	return static_cast<hash_type>(std::numeric_limits<hp_type>::max() + 1_bi);
 }
 
 bool operator== (Substitute const & lhs, Substitute const & rhs) {
