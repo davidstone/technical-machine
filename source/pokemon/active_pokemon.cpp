@@ -78,7 +78,7 @@ void ActivePokemon::reset_switch() {
 	// TODO: remove some of these when the foe switches, too
 	if (!is_baton_passing()) {
 		aqua_ring = false;
-		confusion.reset();
+		confusion = Confusion{};
 		cursed = false;
 		embargo.reset();
 		focusing_energy = false;
@@ -774,10 +774,10 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
 	current_hash *= technicalmachine::max_hash(substitute());
 	current_hash += technicalmachine::hash(substitute());
-	current_hash *= bide.max_hash();
-	current_hash += bide.hash();
-	current_hash *= confusion.max_hash();
-	current_hash += confusion.hash();
+	current_hash *= technicalmachine::max_hash(bide);
+	current_hash += technicalmachine::hash(bide);
+	current_hash *= technicalmachine::max_hash(confusion);
+	current_hash += technicalmachine::hash(confusion);
 	current_hash *= m_disable.max_hash();
 	current_hash += m_disable.hash();
 	current_hash *= embargo.max_hash();
@@ -864,8 +864,8 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = 0;
 	current_hash *= technicalmachine::max_hash(substitute());
-	current_hash *= bide.max_hash();
-	current_hash *= confusion.max_hash();
+	current_hash *= technicalmachine::max_hash(bide);
+	current_hash *= technicalmachine::max_hash(confusion);
 	current_hash *= m_disable.max_hash();
 	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();

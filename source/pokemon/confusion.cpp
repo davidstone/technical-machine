@@ -1,5 +1,5 @@
 // Class that represents the duration left on Confusion
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,73 +21,58 @@
 
 namespace technicalmachine {
 namespace {
-constexpr unsigned inactive = 0xFF;
 constexpr unsigned min_duration = 2;
 constexpr unsigned max_duration = 5;
 }	// unnamed namespace
 
-Confusion::Confusion() :
-	turns_spent_confused(inactive),
-	is_hitting_self(false)
-	{
+auto Confusion::is_active() const -> bool {
+	return static_cast<bool>(m_turns_spent_confused);
 }
 
-bool Confusion::is_active() const {
-	return turns_spent_confused != inactive;
-}
-
-void Confusion::activate() {
-	if (is_active())
+auto Confusion::activate() -> void {
+	if (is_active()) {
 		return;
-	turns_spent_confused = 0;
+	}
+	m_turns_spent_confused = 0_bi;
 }
 
 namespace {
-void register_self_hit(Pokemon & pokemon) {
+auto register_self_hit(Pokemon & pokemon) -> void {
 	// TODO: write this
 }
-}	// unnamed namespace
+}	// namespace
 
-void Confusion::do_turn(Pokemon & pokemon) {
+auto Confusion::do_turn(Pokemon & pokemon) -> void {
 	increment();
-	if (is_active() and is_hitting_self)
+	if (is_active() and m_is_hitting_self) {
 		register_self_hit(pokemon);
+	}
 }
 
-void Confusion::increment() {
-	if (!is_active())
+auto Confusion::increment() -> void {
+	if (!is_active()) {
 		return;
-	++turns_spent_confused;
-	if (turns_spent_confused == max_duration)
-		reset();
+	}
+	if (*m_turns_spent_confused == max_duration) {
+		m_turns_spent_confused = bounded::none;
+	} else {
+		++*m_turns_spent_confused;
+	}
 }
 
-void Confusion::reset() {
-	turns_spent_confused = inactive;
-	is_hitting_self = false;
+auto Confusion::end_of_turn_reset() -> void {
+	m_is_hitting_self = false;
 }
 
-void Confusion::end_of_turn_reset() {
-	is_hitting_self = false;
+auto Confusion::hit_self() -> void {
+	m_is_hitting_self = true;
 }
 
-void Confusion::hit_self() {
-	is_hitting_self = true;
+auto operator== (Confusion const & lhs, Confusion const & rhs) -> bool {
+	return lhs.m_turns_spent_confused == rhs.m_turns_spent_confused;
 }
 
-Confusion::hash_type Confusion::hash() const {
-	return turns_spent_confused;
-}
-
-Confusion::hash_type Confusion::max_hash() {
-	return max_duration;
-}
-
-bool operator== (Confusion const & lhs, Confusion const & rhs) {
-	return lhs.turns_spent_confused == rhs.turns_spent_confused;
-}
-
-bool operator!= (Confusion const & lhs, Confusion const & rhs) {
+auto operator!= (Confusion const & lhs, Confusion const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 

@@ -1,5 +1,5 @@
 // Class that represents the duration left on Confusion
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,31 +19,44 @@
 #ifndef CONFUSION_HPP_
 #define CONFUSION_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 class Pokemon;
+using namespace bounded::literal;
 
 class Confusion {
 public:
-	Confusion();
-	bool is_active() const;
-	void activate();
-	void do_turn(Pokemon & pokemon);
-	void reset();
-	void hit_self();
-	void end_of_turn_reset();
+	auto is_active() const -> bool;
+	auto activate() -> void;
+	auto do_turn(Pokemon & pokemon) -> void;
+	auto hit_self() -> void;
+	auto end_of_turn_reset() -> void;
 	friend bool operator== (Confusion const & lhs, Confusion const & rhs);
-	typedef uint64_t hash_type;
-	hash_type hash () const;
-	static hash_type max_hash();
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_spent_confused);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_spent_confused);
+	}
 private:
-	void increment();
+	auto increment() -> void;
 	friend class Evaluate;
-	uint8_t turns_spent_confused;
-	bool is_hitting_self;
+	static constexpr auto max_duration = 4;
+	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused;
+	bool m_is_hitting_self = false;
 };
 bool operator!= (Confusion const & lhs, Confusion const & rhs);
+
+constexpr auto hash(Confusion const confusion) noexcept {
+	return confusion.hash();
+}
+constexpr auto max_hash(Confusion const confusion) noexcept {
+	return confusion.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// CONFUSION_HPP_
