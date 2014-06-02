@@ -19,6 +19,8 @@
 #ifndef STATUS_HPP_
 #define STATUS_HPP_
 
+#include "hash.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
 
@@ -44,7 +46,9 @@ public:
 		sleep_rest,
 		END
 	};
-	auto name() const -> Statuses;
+	constexpr auto name() const -> Statuses {
+		return m_status;
+	}
 
 	auto rest() -> void;
 	template<Statuses real_status, Statuses base_status = real_status>
@@ -62,8 +66,14 @@ public:
 	// sleep counter, they will definitely not awaken.
 	auto awaken_probability(Ability const & ability, bool awaken) const -> Rational;
 
-	auto hash() const -> uint64_t;
-	auto max_hash() const -> uint64_t;
+	constexpr auto hash() const noexcept {
+		return
+			static_cast<bounded::integer<0, static_cast<intmax_t>(Statuses::END) - 1>>(name()) + bounded::make<static_cast<intmax_t>(Statuses::END)>() *
+			::technicalmachine::hash(m_turns_already_slept);
+	}
+	constexpr auto max_hash() const noexcept {
+		return bounded::make<static_cast<intmax_t>(Statuses::END)>() * ::technicalmachine::max_hash(m_turns_already_slept);
+	}
 private:
 	Statuses m_status = clear;
 	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
@@ -79,8 +89,14 @@ auto weakens_physical_attacks(Status status) -> bool;
 auto boosts_facade(Status status) -> bool;
 auto boosts_smellingsalt(Status status) -> bool;
 
-
 auto operator!=(Status lhs, Status rhs) -> bool;
+
+constexpr auto hash(Status const status) noexcept {
+	return status.hash();
+}
+constexpr auto max_hash(Status const status) noexcept {
+	return status.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// STATUS_HPP_

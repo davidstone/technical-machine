@@ -47,10 +47,6 @@ constexpr auto status_is_reflectable (Status::Statuses const status) -> bool {
 
 }	// namespace
 
-auto Status::name() const -> Statuses {
-	return m_status;
-}
-
 auto is_clear(Status const status) -> bool {
 	return status.name() == Status::clear;
 }
@@ -209,16 +205,6 @@ auto Status::awaken_probability(Ability const & ability, bool const awaken) cons
 		max_sleep_turns + 1_bi - awaken_numerator(*m_turns_already_slept, ability)
 	);
 	return awaken ? result : complement(result);
-}
-
-auto Status::hash() const -> uint64_t {
-	return
-		name() + END *
-		static_cast<uint64_t>(::technicalmachine::hash(m_turns_already_slept));
-}
-
-auto Status::max_hash() const -> uint64_t {
-	return END + static_cast<uint64_t>(::technicalmachine::max_hash(m_turns_already_slept));
 }
 
 }	// namespace technicalmachine
