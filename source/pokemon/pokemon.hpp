@@ -24,7 +24,7 @@
 
 #include "happiness.hpp"
 #include "level.hpp"
-#include "species_forward.hpp"
+#include "species.hpp"
 
 #include "../ability.hpp"
 #include "../gender.hpp"
@@ -81,9 +81,6 @@ public:
 	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
 	void change_type(Type new_type);
 	auto has_been_seen() const -> bool;
-	typedef uint64_t hash_type;
-	hash_type hash () const;
-	hash_type max_hash() const;
 	friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
 
 	MoveCollection move;
@@ -112,6 +109,25 @@ private:
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 #undef TECHNICALMACHINE_FRIEND_DECLARATIONS
+
+inline auto hash(Pokemon const & pokemon) noexcept {
+	auto const species = static_cast<Species>(pokemon);
+	auto const status = get_status(pokemon);
+	auto const item = get_item(pokemon);
+	auto const hp = get_hp(pokemon);
+	// Have to use this intermediate step because the hash overflows.
+	using hash_type = uint64_t;
+	auto const intermediate = static_cast<hash_type>(hash(species, status, item, hp, pokemon.has_been_seen()));
+	return intermediate + static_cast<hash_type>(max_hash(pokemon.has_been_seen()) * hash(pokemon.move));
+}
+
+inline auto max_hash(Pokemon const & pokemon) noexcept {
+	auto const species = static_cast<Species>(pokemon);
+	auto const status = get_status(pokemon);
+	auto const item = get_item(pokemon);
+	auto const hp = get_hp(pokemon);
+	return static_cast<uint64_t>(max_hash(species, status, item, hp, pokemon.has_been_seen())) * static_cast<uint64_t>(max_hash(pokemon.move));
+}
 
 
 std::string to_string(Pokemon const & pokemon, bool include_nickname = false);

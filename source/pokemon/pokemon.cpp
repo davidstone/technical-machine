@@ -163,22 +163,6 @@ auto Pokemon::has_been_seen() const -> bool {
 	return m_has_been_seen;
 }
 
-Pokemon::hash_type Pokemon::hash() const {
-	auto const & hp = get_hp(*this);
-	return
-		static_cast<hash_type>(m_species) + number_of_species *
-		(static_cast<hash_type>(m_item) + static_cast<hash_type>(Item::END) *
-		(static_cast<hash_type>(technicalmachine::hash(m_status)) + static_cast<hash_type>(technicalmachine::max_hash(m_status)) *
-		(static_cast<hash_type>(hp.current() - 1_bi) + static_cast<hash_type>(hp.max()) *	// - 1 because you can't have 0 HP
-		(m_has_been_seen + 2 *
-		static_cast<hash_type>(::technicalmachine::hash(move))
-	))));
-}
-
-Pokemon::hash_type Pokemon::max_hash() const {
-	return number_of_species * static_cast<hash_type>(Item::END) * static_cast<hash_type>(technicalmachine::max_hash(m_status)) * static_cast<hash_type>(get_hp(*this).max()) * 2 * static_cast<hash_type>(::technicalmachine::max_hash(move));
-}
-
 bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	// Species clause is assumed, and Pokemon will only be compared for equality
 	// on the same team, so the same species implies many other things are the
