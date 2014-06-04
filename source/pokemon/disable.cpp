@@ -1,5 +1,5 @@
 // Which Move is disabled and for how long
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,66 +18,37 @@
 
 #include "disable.hpp"
 
-#include <cassert>
-#include <cstdint>
 #include <limits>
 
 namespace technicalmachine {
-namespace {
 
-constexpr uint8_t max_number_of_moves = 4;
-// Struggle and switching cannot be disabled
-constexpr auto inactive = max_number_of_moves;
-constexpr uint8_t max_disable_length = 7;
-
-}	// unnamed namespace
-
-Disable::Disable() :
-	m_index_of_disabled_move(inactive),
-	m_turns_disabled(0) {
-}
-
-void Disable::activate(uint8_t const index_of_disabled_move) {
-	assert(index_of_disabled_move < inactive);
+auto Disable::activate(RegularMoveIndex const index_of_disabled_move) -> void {
 	m_index_of_disabled_move = index_of_disabled_move;
 }
 
-void Disable::advance_one_turn() {
-	if (m_index_of_disabled_move == inactive) {
+auto Disable::advance_one_turn() -> void {
+	if (!m_index_of_disabled_move) {
 		return;
 	}
 	// TODO: update with proper probability actions
-	if (m_turns_disabled < max_disable_length)
+	if (m_turns_disabled < std::numeric_limits<TurnCount>::max()) {
 		++m_turns_disabled;
-	else
-		reset();
+	} else {
+		*this = Disable{};
+	}
 }
 
-void Disable::reset() {
-	m_index_of_disabled_move = inactive;
-	m_turns_disabled = 0;
-}
-
-bool Disable::move_is_disabled(uint8_t const index_of_move_to_check) const {
-	assert(index_of_move_to_check < inactive);
+auto Disable::move_is_disabled(RegularMoveIndex const index_of_move_to_check) const -> bool {
 	return m_index_of_disabled_move == index_of_move_to_check;
 }
 
-uint64_t Disable::hash() const {
-	return static_cast<uint64_t>(m_turns_disabled) * max_disable_length + m_index_of_disabled_move;
-}
-
-uint64_t Disable::max_hash() {
-	return max_disable_length * (max_number_of_moves + 1);
-}
-
-bool operator== (Disable const lhs, Disable const rhs) {
+auto operator== (Disable const lhs, Disable const rhs) -> bool {
 	return
 		lhs.m_turns_disabled == rhs.m_turns_disabled and
 		lhs.m_index_of_disabled_move == rhs.m_index_of_disabled_move;
 }
 
-bool operator!= (Disable const lhs, Disable const rhs) {
+auto operator!= (Disable const lhs, Disable const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

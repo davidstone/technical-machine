@@ -45,6 +45,8 @@ private:
 auto operator==(Move const & lhs, Move const & rhs) -> bool;
 auto operator!=(Move const & lhs, Move const & rhs) -> bool;
 
+auto is_regular(Moves move) -> bool;
+
 auto is_physical(Moves move) -> bool;
 auto is_special(Moves move) -> bool;
 

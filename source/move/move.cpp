@@ -21,6 +21,7 @@
 #include <cstdint>
 
 #include "base_power.hpp"
+#include "is_switch.hpp"
 #include "moves.hpp"
 
 namespace technicalmachine {
@@ -77,6 +78,11 @@ auto is_usable_while_frozen(Moves const move) -> bool {
 			return false;
 	}
 }
+
+auto is_regular(Moves const move) -> bool {
+	return !is_switch(move) and move != Moves::Struggle;
+}
+
 
 auto is_physical(Moves const move) -> bool {
 	switch (move) {

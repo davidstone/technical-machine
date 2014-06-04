@@ -96,7 +96,7 @@ void ActivePokemon::reset_switch() {
 	charged = false;
 	used_defense_curl = false;
 	destiny_bond = false;
-	m_disable.reset();
+	m_disable = Disable{};
 	encore.reset();
 	flash_fire = false;
 	flinched_this_turn = false;
@@ -239,11 +239,13 @@ bool ActivePokemon::defense_curled() const {
 }
 
 bool ActivePokemon::is_disabled(Moves const move_name) const {
-	return m_disable.move_is_disabled(static_cast<uint8_t>(*technicalmachine::index(all_moves(), move_name)));
+	return m_disable.move_is_disabled(*technicalmachine::index(all_moves(), move_name));
 }
 
 void ActivePokemon::disable() {
-	m_disable.activate(static_cast<uint8_t>(all_moves().index()));
+	if (is_regular(move())) {
+		m_disable.activate(RegularMoveIndex(all_moves().index(), bounded::non_check));
+	}
 }
 
 void ActivePokemon::advance_disable() {
@@ -378,14 +380,6 @@ bool ActivePokemon::locked_on() const {
 void ActivePokemon::lock_on_to() {
 	lock_on = true;
 }
-
-namespace {
-
-bool is_regular(Moves const move) {
-	return move != Moves::Struggle and !is_switch(move);
-}
-
-}	// namespace
 
 void ActivePokemon::lower_pp(Ability const & target) {
 	if (is_regular(move()) and !is_locked_in_to_bide()) {
@@ -772,22 +766,43 @@ void ActivePokemon::normalize_hp(bool fainted) {
 
 ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = 0;
-	current_hash *= technicalmachine::max_hash(substitute());
-	current_hash += technicalmachine::hash(substitute());
-	current_hash *= technicalmachine::max_hash(bide);
-	current_hash += technicalmachine::hash(bide);
-	current_hash *= technicalmachine::max_hash(confusion);
-	current_hash += technicalmachine::hash(confusion);
-	current_hash *= m_disable.max_hash();
-	current_hash += m_disable.hash();
+	current_hash += technicalmachine::hash(
+		substitute(),
+		bide,
+		confusion,
+		m_disable,
+		last_used_move,
+		stage(),
+		aqua_ring,
+		attracted,
+		charged,
+		cursed,
+		used_defense_curl,
+		destiny_bond,
+		flash_fire,
+		has_focused_energy(),
+		fully_trapped(),
+		gastro_acid,
+		identified,
+		used_imprison,
+		ingrain_active,
+		leech_seed,
+		loaf,
+		lock_on,
+		minimize,
+		mud_sport,
+		nightmares,
+		power_trick,
+		recharge_lock_in,
+		is_tormented,
+		water_sport
+	);
 	current_hash *= embargo.max_hash();
 	current_hash += embargo.hash();
 	current_hash *= encore.max_hash();
 	current_hash += encore.hash();
 	current_hash *= heal_block.max_hash();
 	current_hash += heal_block.hash();
-	current_hash *= technicalmachine::max_hash(last_used_move);
-	current_hash += technicalmachine::hash(last_used_move);
 	current_hash *= magnet_rise().max_hash();
 	current_hash += magnet_rise().hash();
 	current_hash *= partial_trap.max_hash();
@@ -798,8 +813,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
-	current_hash *= technicalmachine::max_hash(stage());
-	current_hash += technicalmachine::hash(stage());
 	current_hash *= stockpile.max_hash();
 	current_hash += stockpile.hash();
 	current_hash *= m_taunt.max_hash();
@@ -812,78 +825,56 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += vanish.hash();
 	current_hash *= yawn.max_hash();
 	current_hash += yawn.hash();
-	current_hash *= 2;
-	current_hash += aqua_ring;
-	current_hash *= 2;
-	current_hash += attracted;
-	current_hash *= 2;
-	current_hash += charged;
-	current_hash *= 2;
-	current_hash += cursed;
-	current_hash *= 2;
-	current_hash += used_defense_curl;
-	current_hash *= 2;
-	current_hash += destiny_bond;
-	current_hash *= 2;
-	current_hash += flash_fire;
-	current_hash *= 2;
-	current_hash += has_focused_energy();
-	current_hash *= 2;
-	current_hash += fully_trapped();
-	current_hash *= 2;
-	current_hash += gastro_acid;
-	current_hash *= 2;
-	current_hash += identified;
-	current_hash *= 2;
-	current_hash += used_imprison;
-	current_hash *= 2;
-	current_hash += ingrain_active;
-	current_hash *= 2;
-	current_hash += leech_seed;
-	current_hash *= 2;
-	current_hash += loaf;
-	current_hash *= 2;
-	current_hash += lock_on;
-	current_hash *= 2;
-	current_hash += minimize;
-	current_hash *= 2;
-	current_hash += mud_sport;
-	current_hash *= 2;
-	current_hash += nightmares;
-	current_hash *= 2;
-	current_hash += power_trick;
-	current_hash *= 2;
-	current_hash += recharge_lock_in;
-	current_hash *= 2;
-	current_hash += is_tormented;
-	current_hash *= 2;
-	current_hash += water_sport;
 	return current_hash;
 }
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = 0;
-	current_hash *= technicalmachine::max_hash(substitute());
-	current_hash *= technicalmachine::max_hash(bide);
-	current_hash *= technicalmachine::max_hash(confusion);
-	current_hash *= m_disable.max_hash();
+	current_hash *= technicalmachine::max_hash(
+		substitute(),
+		bide,
+		confusion,
+		m_disable,
+		last_used_move,
+		stage(),
+		aqua_ring,
+		attracted,
+		charged,
+		cursed,
+		used_defense_curl,
+		destiny_bond,
+		flash_fire,
+		has_focused_energy(),
+		fully_trapped(),
+		gastro_acid,
+		identified,
+		used_imprison,
+		ingrain_active,
+		leech_seed,
+		loaf,
+		lock_on,
+		minimize,
+		mud_sport,
+		nightmares,
+		power_trick,
+		recharge_lock_in,
+		is_tormented,
+		water_sport
+	);
 	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();
 	current_hash *= heal_block.max_hash();
-	current_hash *= technicalmachine::max_hash(last_used_move);
 	current_hash *= magnet_rise().max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
-	current_hash *= technicalmachine::max_hash(stage());
 	current_hash *= stockpile.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
 	current_hash *= vanish.max_hash();
 	current_hash *= yawn.max_hash();
-	current_hash *= 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
 	return current_hash;
 }
 

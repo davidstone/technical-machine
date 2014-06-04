@@ -1,5 +1,5 @@
 // Which Move is disabled and for how long
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,26 +19,40 @@
 #ifndef POKEMON__DISABLE_HPP_
 #define POKEMON__DISABLE_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+#include "../move/max_moves_per_pokemon.hpp"
+
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
+using namespace bounded::literal;
 
 class Disable {
 public:
-	Disable();
-	void activate(uint8_t index_of_disabled_move);
-	void advance_one_turn();
-	void reset();
-	bool move_is_disabled(uint8_t index_of_move_to_check) const;
-	uint64_t hash() const;
-	static uint64_t max_hash();
-	friend bool operator== (Disable lhs, Disable rhs);
+	auto activate(RegularMoveIndex index_of_disabled_move) -> void;
+	auto advance_one_turn() -> void;
+	auto move_is_disabled(RegularMoveIndex index_of_move_to_check) const -> bool;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_index_of_disabled_move, m_turns_disabled);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_index_of_disabled_move, m_turns_disabled);
+	}
+	friend auto operator==(Disable lhs, Disable rhs) -> bool;
 private:
-	uint8_t m_index_of_disabled_move;
-	uint8_t m_turns_disabled;
+	bounded::optional<RegularMoveIndex> m_index_of_disabled_move;
+	using TurnCount = bounded::integer<0, 7>;
+	TurnCount m_turns_disabled = 0_bi;
 };
 
-bool operator!= (Disable lhs, Disable rhs);
+auto operator!= (Disable lhs, Disable rhs) -> bool;
+
+constexpr auto hash(Disable const disable) noexcept {
+	return disable.hash();
+}
+constexpr auto max_hash(Disable const disable) noexcept {
+	return disable.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// POKEMON__DISABLE_HPP_
