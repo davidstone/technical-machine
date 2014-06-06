@@ -96,27 +96,56 @@ constexpr auto noexcept_max_hashable() noexcept -> bool;
 
 template<typename T, typename... Ts>
 constexpr auto hash(T const & t, Ts && ... ts) noexcept(noexcept(hash(t)) and noexcept(max_hash(t)) and noexcept_hashable<Ts...>()) {
-	static_assert(noexcept(hash(t) + max_hash(t) * hash(ts...)), "Incorrect return type for hash or max_hash.");
 	return VerifyHashBounds<T>{}, hash(t) + max_hash(t) * hash(ts...);
 }
 
 template<typename T, typename... Ts>
 constexpr auto max_hash(T const & t, Ts && ... ts) noexcept(noexcept(max_hash(t)) and noexcept_max_hashable<Ts...>()) {
-	static_assert(noexcept(max_hash(t) * max_hash(ts...)), "Incorrect return type for max_hash.");
 	return VerifyHashBounds<T>{}, max_hash(t) * max_hash(ts...);
 }
 
 
-template<typename ... Ts>
-constexpr auto noexcept_hashable() noexcept -> bool {
-	static_assert(sizeof...(Ts) >= 1, "Cannot hash nothing.");
-	return noexcept(hash(std::declval<Ts>()...));
+// Workaround for lack of bignum support in bounded::integer
+template<typename T>
+constexpr auto big_hash(T const & t) noexcept(noexcept_hashable<T>()) {
+	return static_cast<uint64_t>(hash(t));
 }
+template<typename T, typename... Ts>
+constexpr auto big_hash(T const & t, Ts && ... ts) noexcept(noexcept_hashable<T, Ts...>()) {
+	return static_cast<uint64_t>(hash(t)) + static_cast<uint64_t>(max_hash(t)) * static_cast<uint64_t>(big_hash(ts...));
+}
+
+template<typename T>
+constexpr auto big_max_hash(T const & t) noexcept(noexcept_max_hashable<T>()) {
+	return static_cast<uint64_t>(max_hash(t));
+}
+template<typename T, typename... Ts>
+constexpr auto big_max_hash(T const & t, Ts && ... ts) noexcept(noexcept_max_hashable<T, Ts...>()) {
+	return static_cast<uint64_t>(max_hash(t)) * static_cast<uint64_t>(big_max_hash(ts...));
+}
+
+template<typename... Ts>
+struct NoexceptMaxHashable;
+template<typename T, typename... Ts>
+struct NoexceptMaxHashable<T, Ts...> : std::integral_constant<bool, NoexceptMaxHashable<T>::value and NoexceptMaxHashable<Ts...>::value> {};
+template<typename T>
+struct NoexceptMaxHashable<T> : std::integral_constant<bool, noexcept(max_hash(std::declval<T>()))> {};
 
 template<typename ... Ts>
 constexpr auto noexcept_max_hashable() noexcept -> bool {
-	static_assert(sizeof...(Ts) >= 1, "Cannot hash nothing.");
-	return noexcept(max_hash(std::declval<Ts>()...));
+	return NoexceptMaxHashable<Ts...>::value;
+}
+
+template<typename... Ts>
+struct NoexceptHashable;
+template<typename T, typename... Ts>
+struct NoexceptHashable<T, Ts...> : std::integral_constant<bool, NoexceptHashable<T>::value and NoexceptMaxHashable<T>::value and NoexceptHashable<Ts...>::value> {};
+template<typename T>
+struct NoexceptHashable<T> : std::integral_constant<bool, noexcept(hash(std::declval<T>()))> {};
+
+template<typename ... Ts>
+constexpr auto noexcept_hashable() noexcept -> bool {
+	return NoexceptHashable<Ts...>::value;
 }
 
 template<typename Size, typename Iterator>

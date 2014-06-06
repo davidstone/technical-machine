@@ -1,5 +1,5 @@
 // Class that handles Embargo
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,26 +19,38 @@
 #ifndef EMBARGO_HPP_
 #define EMBARGO_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class Embargo {
 public:
-	Embargo();
-	void activate();
-	void decrement();
-	void reset();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (Embargo const & lhs, Embargo const & rhs);
+	auto is_active() const -> bool;
+	auto activate() -> void;
+	auto advance_one_turn() -> void;
+	friend auto operator==(Embargo lhs, Embargo rhs) -> bool;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_remaining);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_remaining);
+	}
 private:
 	friend class Evaluate;
-	bool is_active() const;
-	uint8_t turns_remaining;
+	using value_type = bounded::integer<0, 5>;
+	bounded::optional<value_type> m_turns_remaining;
 };
-bool operator!= (Embargo const & lhs, Embargo const & rhs);
+auto operator!= (Embargo lhs, Embargo rhs) -> bool;
+
+constexpr auto hash(Embargo const embargo) noexcept {
+	return embargo.hash();
+}
+constexpr auto max_hash(Embargo const embargo) noexcept {
+	return embargo.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// EMBARGO_HPP_

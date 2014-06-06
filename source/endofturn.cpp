@@ -174,7 +174,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	pokemon.increment_taunt();
 	pokemon.decrement_magnet_rise();
 	pokemon.decrement_heal_block();
-	pokemon.decrement_embargo();
+	pokemon.advance_embargo();
 	if (pokemon.try_to_activate_yawn()) {
 		Status::apply<Status::sleep>(pokemon, weather);
 	}

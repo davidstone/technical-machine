@@ -1,5 +1,5 @@
 // Class that handles Embargo
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,45 +19,32 @@
 #include "embargo.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max_duration = 5;
-}	// unnamed namespace
+using namespace bounded::literal;
 
-Embargo::Embargo() :
-	turns_remaining(0)
-	{
+auto Embargo::is_active() const -> bool {
+	return static_cast<bool>(m_turns_remaining);
 }
 
-bool Embargo::is_active() const {
-	return turns_remaining != 0;
+auto Embargo::activate() -> void {
+	m_turns_remaining = 0_bi;
 }
 
-void Embargo::activate() {
-	turns_remaining = max_duration;
+auto Embargo::advance_one_turn() -> void {
+	if (!is_active()) {
+		return;
+	}
+	if (*m_turns_remaining == std::numeric_limits<value_type>::max()) {
+		m_turns_remaining = bounded::none;
+	} else {
+		++*m_turns_remaining;
+	}
 }
 
-void Embargo::decrement() {
-	if (is_active())
-		--turns_remaining;
+auto operator==(Embargo const lhs, Embargo const rhs) -> bool {
+	return lhs.m_turns_remaining == rhs.m_turns_remaining;
 }
 
-void Embargo::reset() {
-	turns_remaining = 0;
-}
-
-Embargo::hash_type Embargo::hash() const {
-	return turns_remaining;
-}
-
-Embargo::hash_type Embargo::max_hash() {
-	return max_duration;
-}
-
-bool operator== (Embargo const & lhs, Embargo const & rhs) {
-	return lhs.turns_remaining == rhs.turns_remaining;
-}
-
-bool operator!= (Embargo const & lhs, Embargo const & rhs) {
+auto operator!=(Embargo const lhs, Embargo const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

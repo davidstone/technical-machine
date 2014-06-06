@@ -80,7 +80,7 @@ void ActivePokemon::reset_switch() {
 		aqua_ring = false;
 		confusion = Confusion{};
 		cursed = false;
-		embargo.reset();
+		embargo = Embargo{};
 		focusing_energy = false;
 		gastro_acid = false;
 		ingrain_active = false;
@@ -256,8 +256,8 @@ void ActivePokemon::activate_embargo() {
 	embargo.activate();
 }
 
-void ActivePokemon::decrement_embargo() {
-	embargo.decrement();
+void ActivePokemon::advance_embargo() {
+	embargo.advance_one_turn();
 }
 
 bool ActivePokemon::is_encored() const {
@@ -765,12 +765,12 @@ void ActivePokemon::normalize_hp(bool fainted) {
 }
 
 ActivePokemon::hash_type ActivePokemon::hash() const {
-	hash_type current_hash = 0;
-	current_hash += technicalmachine::hash(
+	hash_type current_hash = big_hash(
 		substitute(),
 		bide,
 		confusion,
 		m_disable,
+		embargo,
 		last_used_move,
 		stage(),
 		aqua_ring,
@@ -797,8 +797,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		is_tormented,
 		water_sport
 	);
-	current_hash *= embargo.max_hash();
-	current_hash += embargo.hash();
 	current_hash *= encore.max_hash();
 	current_hash += encore.hash();
 	current_hash *= heal_block.max_hash();
@@ -829,12 +827,12 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 }
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
-	hash_type current_hash = 0;
-	current_hash *= technicalmachine::max_hash(
+	hash_type current_hash = big_max_hash(
 		substitute(),
 		bide,
 		confusion,
 		m_disable,
+		embargo,
 		last_used_move,
 		stage(),
 		aqua_ring,
@@ -861,7 +859,6 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		is_tormented,
 		water_sport
 	);
-	current_hash *= embargo.max_hash();
 	current_hash *= encore.max_hash();
 	current_hash *= heal_block.max_hash();
 	current_hash *= magnet_rise().max_hash();

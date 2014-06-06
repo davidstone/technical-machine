@@ -106,7 +106,7 @@ public:
 	void disable();
 	void advance_disable();
 	void activate_embargo();
-	void decrement_embargo();
+	void advance_embargo();
 	bool is_encored() const;
 	void activate_encore();
 	void increment_encore();
