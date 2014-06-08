@@ -78,33 +78,33 @@ void ActivePokemon::reset_switch() {
 	// TODO: remove some of these when the foe switches, too
 	if (!is_baton_passing()) {
 		aqua_ring = false;
-		confusion = Confusion{};
+		confusion = {};
 		cursed = false;
-		embargo = Embargo{};
+		embargo = {};
 		focusing_energy = false;
 		gastro_acid = false;
 		ingrain_active = false;
 		leech_seed = false;
 		lock_on = false;
-		m_magnet_rise = MagnetRise{};
+		m_magnet_rise = {};
 		perish_song.reset();
 		power_trick = false;
 		m_stage = Stage{};
-		m_substitute = Substitute{};
+		m_substitute = {};
 	}
 	attracted = false;
 	charged = false;
 	used_defense_curl = false;
 	destiny_bond = false;
 	m_disable = Disable{};
-	encore.reset();
+	encore = {};
 	flash_fire = false;
 	flinched_this_turn = false;
 	m_fully_trapped = false;
 	heal_block.reset();
 	identified = false;
 	used_imprison = false;
-	last_used_move = LastUsedMove{};
+	last_used_move = {};
 	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
 	// replaced; false makes it wrong otherwise
 	loaf = false;
@@ -121,15 +121,15 @@ void ActivePokemon::reset_switch() {
 	is_tormented = false;
 	u_turning = false;
 	water_sport = false;
-	bide = Bide{};
+	bide = {};
 	damage_done_to_active = 0;
 	m_taunt.reset();
-	toxic = Toxic{};
-	uproar = Uproar{};
+	toxic = {};
+	uproar = {};
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
 	// vanished. Therefore, we need to reset it.
-	vanish = Vanish{};
-	yawn = Yawn{};
+	vanish = {};
+	yawn = {};
 	m_will_be_replaced = false;
 }
 
@@ -269,7 +269,7 @@ void ActivePokemon::activate_encore() {
 }
 
 void ActivePokemon::increment_encore() {
-	encore.increment();
+	encore.advance_one_turn();
 }
 
 void ActivePokemon::endure() {

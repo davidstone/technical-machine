@@ -1,5 +1,5 @@
 // Encore class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,47 +19,28 @@
 #include "encore.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned inactive = 0xFF;
-constexpr unsigned min_duration = 4;
-constexpr unsigned max_duration = 8;
-}	// unnamed namespace
-
-Encore::Encore() :
-	turns_active(inactive)
-	{
-}
 
 bool Encore::is_active() const {
-	return turns_active != inactive;
+	return static_cast<bool>(m_turns_active);
 }
 
 void Encore::activate() {
-	turns_active = 0;
+	m_turns_active = 0_bi;
 }
 
-void Encore::increment() {
-	if (!is_active())
+void Encore::advance_one_turn() {
+	if (!is_active()) {
 		return;
-	++turns_active;
-	if (turns_active == max_duration)
-		reset();
-}
-
-void Encore::reset() {
-	turns_active = inactive;
-}
-
-Encore::hash_type Encore::hash() const {
-	return turns_active;
-}
-
-Encore::hash_type Encore::max_hash() {
-	return max_duration;
+	}
+	if (*m_turns_active == std::numeric_limits<type>::max()) {
+		m_turns_active = bounded::none;
+	} else {
+		++*m_turns_active;
+	}
 }
 
 bool operator== (Encore const & lhs, Encore const & rhs) {
-	return lhs.turns_active == rhs.turns_active;
+	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
 bool operator!= (Encore const & lhs, Encore const & rhs) {

@@ -1,5 +1,5 @@
 // Encore class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,26 +19,38 @@
 #ifndef ENCORE_HPP_
 #define ENCORE_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class Encore {
 public:
-	Encore();
 	bool is_active() const;
 	void activate();
-	void increment();
-	void reset();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	void advance_one_turn();
 	friend bool operator== (Encore const & lhs, Encore const & rhs);
+	
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_active);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_active);
+	}
 private:
 	friend class Evaluate;
-	uint8_t turns_active;
+	using type = bounded::integer<0, 8>;
+	bounded::optional<type> m_turns_active;
 };
 bool operator!= (Encore const & lhs, Encore const & rhs);
+
+constexpr auto hash(Encore const encore) noexcept {
+	return encore.hash();
+}
+constexpr auto max_hash(Encore const encore) noexcept {
+	return encore.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// ENCORE_HPP_
