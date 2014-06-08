@@ -1,5 +1,5 @@
 // Perish Song duration
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,27 +19,38 @@
 #ifndef PERISH_SONG_HPP_
 #define PERISH_SONG_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class PerishSong {
 public:
-	PerishSong();
-	void activate();
+	auto activate() -> void;
 	// return value: whether this Pokemon faints
-	bool next_turn();
-	void reset();
-	friend bool operator== (PerishSong const & lhs, PerishSong const & rhs);
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	auto advance_one_turn() -> bool;
+	friend auto operator==(PerishSong lhs, PerishSong rhs) -> bool;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_active);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_active);
+	}
 private:
-	bool is_active() const;
-	uint8_t duration;
+	auto is_active() const -> bool;
+	using type = bounded::integer<0, 2>;
+	bounded::optional<type> m_turns_active;
 };
 
-bool operator!= (PerishSong const & lhs, PerishSong const & rhs);
+auto operator!=(PerishSong lhs, PerishSong rhs) -> bool;
+
+constexpr auto hash(PerishSong const perish_song) noexcept {
+	return perish_song.hash();
+}
+constexpr auto max_hash(PerishSong const perish_song) noexcept {
+	return perish_song.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// PERISH_SONG_HPP_

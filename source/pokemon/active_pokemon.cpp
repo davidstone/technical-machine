@@ -87,7 +87,7 @@ void ActivePokemon::reset_switch() {
 		leech_seed = false;
 		lock_on = false;
 		m_magnet_rise = {};
-		perish_song.reset();
+		perish_song = {};
 		power_trick = false;
 		m_stage = Stage{};
 		m_substitute = {};
@@ -466,7 +466,7 @@ void ActivePokemon::activate_perish_song() {
 }
 
 void ActivePokemon::perish_song_turn() {
-	bool const faints_this_turn = perish_song.next_turn();
+	bool const faints_this_turn = perish_song.advance_one_turn();
 	if (faints_this_turn) {
 		faint();
 	}
@@ -795,16 +795,14 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		minimize,
 		mud_sport,
 		nightmares,
+		partial_trap,
+		perish_song,
 		power_trick,
 		recharge_lock_in,
 		stockpile,
 		is_tormented,
 		water_sport
 	);
-	current_hash *= partial_trap.max_hash();
-	current_hash += partial_trap.hash();
-	current_hash *= perish_song.max_hash();
-	current_hash += perish_song.hash();
 	current_hash *= rampage.max_hash();
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
@@ -853,14 +851,14 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		minimize,
 		mud_sport,
 		nightmares,
+		partial_trap,
+		perish_song,
 		power_trick,
 		recharge_lock_in,
 		stockpile,
 		is_tormented,
 		water_sport
 	);
-	current_hash *= partial_trap.max_hash();
-	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
 	current_hash *= m_taunt.max_hash();

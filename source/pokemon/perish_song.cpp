@@ -1,5 +1,5 @@
 // Perish Song duration
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,48 +19,34 @@
 #include "perish_song.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max_duration = 3;
-}	// unnamed namespace
 
-PerishSong::PerishSong() :
-	duration(0)
-	{
+auto PerishSong::is_active() const -> bool {
+	return static_cast<bool>(m_turns_active);
 }
 
-bool PerishSong::is_active() const {
-	return duration != 0;
+auto PerishSong::activate() -> void {
+	if (!is_active()) {
+		m_turns_active = 0_bi;
+	}
 }
 
-void PerishSong::activate() {
-	if (!is_active())
-		duration = max_duration;
-}
-
-void PerishSong::reset() {
-	duration = 0;
-}
-
-bool PerishSong::next_turn() {
-	if (!is_active())
+auto PerishSong::advance_one_turn() -> bool {
+	if (!is_active()) {
 		return false;
-	--duration;
-	return duration == 0;
+	}
+	if (*m_turns_active == std::numeric_limits<type>::max()) {
+		// No need to modify anything, this Pokemon will faint.
+		return true;
+	}
+	++*m_turns_active;
+	return false;
 }
 
-PerishSong::hash_type PerishSong::hash() const {
-	return duration;
+auto operator==(PerishSong const lhs, PerishSong const rhs) -> bool {
+	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
-PerishSong::hash_type PerishSong::max_hash() {
-	return max_duration;
-}
-
-bool operator== (PerishSong const & lhs, PerishSong const & rhs) {
-	return lhs.duration == rhs.duration;
-}
-
-bool operator!= (PerishSong const & lhs, PerishSong const & rhs) {
+auto operator!=(PerishSong const lhs, PerishSong const rhs) -> bool {
 	return !(lhs == rhs);
 }
 
