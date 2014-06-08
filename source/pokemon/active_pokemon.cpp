@@ -114,7 +114,7 @@ void ActivePokemon::reset_switch() {
 	nightmares = false;
 	partial_trap = {};
 	pass = false;
-	rampage.reset();
+	rampage = {};
 	roosting = false;
 	slow_start.reset();
 	stockpile = {};
@@ -367,10 +367,11 @@ bool ActivePokemon::is_loafing() const {
 
 void ActivePokemon::decrement_lock_in() {
 	// Cannot be locked into Rampage and Uproar at the same time
-	if (rampage.decrement())
+	if (rampage.advance_one_turn()) {
 		confuse();
-	else
+	} else {
 		uproar.increment();
+	}
 }
 
 bool ActivePokemon::locked_on() const {
@@ -798,13 +799,12 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		partial_trap,
 		perish_song,
 		power_trick,
+		rampage,
 		recharge_lock_in,
 		stockpile,
 		is_tormented,
 		water_sport
 	);
-	current_hash *= rampage.max_hash();
-	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
 	current_hash *= m_taunt.max_hash();
@@ -854,12 +854,12 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		partial_trap,
 		perish_song,
 		power_trick,
+		rampage,
 		recharge_lock_in,
 		stockpile,
 		is_tormented,
 		water_sport
 	);
-	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();

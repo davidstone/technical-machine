@@ -1,5 +1,5 @@
 // Class that handles Outrage, Petal Dance, and Thrash
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,49 +19,34 @@
 #include "rampage.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned min_duration = 2;
-constexpr unsigned max_duration = 3;
-}	// unnamed namespace
 
-Rampage::Rampage() :
-	turns_remaining(0)
-	{
+auto Rampage::is_active() const -> bool {
+	return static_cast<bool>(m_turns_active);
 }
 
-bool Rampage::is_active() const {
-	return turns_remaining != 0;
+auto Rampage::activate() -> void {
+	if (!is_active()) {
+		m_turns_active = 0_bi;
+	}
 }
 
-void Rampage::activate() {
-	if (!is_active())
-		turns_remaining = max_duration;
-}
-
-bool Rampage::decrement() {
-	if (!is_active())
+auto Rampage::advance_one_turn() -> bool {
+	if (!is_active()) {
 		return false;
-	--turns_remaining;
-	return !is_active();
+	}
+	if (*m_turns_active == std::numeric_limits<type>::max()) {
+		m_turns_active = bounded::none;
+		return true;
+	}
+	++*m_turns_active;
+	return false;
 }
 
-void Rampage::reset() {
-	turns_remaining = 0;
+auto operator==(Rampage const lhs, Rampage const rhs) -> bool {
+	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
-Rampage::hash_type Rampage::hash() const {
-	return turns_remaining;
-}
-
-Rampage::hash_type Rampage::max_hash() {
-	return max_duration;
-}
-
-bool operator== (Rampage const & lhs, Rampage const & rhs) {
-	return lhs.turns_remaining == rhs.turns_remaining;
-}
-
-bool operator!= (Rampage const & lhs, Rampage const & rhs) {
+auto operator!= (Rampage const lhs, Rampage const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

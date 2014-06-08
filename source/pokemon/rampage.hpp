@@ -1,5 +1,5 @@
 // Class that handles Outrage, Petal Dance, and Thrash
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,27 +19,38 @@
 #ifndef RAMPAGE_HPP_
 #define RAMPAGE_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class Rampage {
 public:
-	Rampage();
-	void activate();
+	auto activate() -> void;
 	// returns whether the rampage ended
-	bool decrement();
-	void reset();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (Rampage const & lhs, Rampage const & rhs);
+	auto advance_one_turn() -> bool;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_active);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_active);
+	}
+	friend auto operator==(Rampage lhs, Rampage rhs) -> bool;
 private:
 	friend class Evaluate;
-	bool is_active() const;
-	uint8_t turns_remaining;
+	auto is_active() const -> bool;
+	using type = bounded::integer<0, 2>;
+	bounded::optional<type> m_turns_active;
 };
-bool operator!= (Rampage const & lhs, Rampage const & rhs);
+auto operator!=(Rampage lhs, Rampage rhs) -> bool;
+
+constexpr auto hash(Rampage const rampage) noexcept {
+	return rampage.hash();
+}
+constexpr auto max_hash(Rampage const rampage) noexcept {
+	return rampage.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// RAMPAGE_HPP_
