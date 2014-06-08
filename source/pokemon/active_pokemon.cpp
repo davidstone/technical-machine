@@ -101,7 +101,7 @@ void ActivePokemon::reset_switch() {
 	flash_fire = false;
 	flinched_this_turn = false;
 	m_fully_trapped = false;
-	heal_block.reset();
+	heal_block = {};
 	identified = false;
 	used_imprison = false;
 	last_used_move = {};
@@ -345,8 +345,8 @@ void ActivePokemon::activate_heal_block() {
 	heal_block.activate();
 }
 
-void ActivePokemon::decrement_heal_block() {
-	heal_block.decrement();
+void ActivePokemon::advance_heal_block() {
+	heal_block.advance_one_turn();
 }
 
 bool ActivePokemon::is_fully_paralyzed() const {
@@ -779,10 +779,12 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		cursed,
 		used_defense_curl,
 		destiny_bond,
+		encore,
 		flash_fire,
 		has_focused_energy(),
 		fully_trapped(),
 		gastro_acid,
+		heal_block,
 		identified,
 		used_imprison,
 		ingrain_active,
@@ -797,10 +799,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		is_tormented,
 		water_sport
 	);
-	current_hash *= encore.max_hash();
-	current_hash += encore.hash();
-	current_hash *= heal_block.max_hash();
-	current_hash += heal_block.hash();
 	current_hash *= magnet_rise().max_hash();
 	current_hash += magnet_rise().hash();
 	current_hash *= partial_trap.max_hash();
@@ -841,10 +839,12 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		cursed,
 		used_defense_curl,
 		destiny_bond,
+		encore,
 		flash_fire,
 		has_focused_energy(),
 		fully_trapped(),
 		gastro_acid,
+		heal_block,
 		identified,
 		used_imprison,
 		ingrain_active,
@@ -859,8 +859,6 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		is_tormented,
 		water_sport
 	);
-	current_hash *= encore.max_hash();
-	current_hash *= heal_block.max_hash();
 	current_hash *= magnet_rise().max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();

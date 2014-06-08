@@ -20,15 +20,15 @@
 
 namespace technicalmachine {
 
-bool Encore::is_active() const {
+auto Encore::is_active() const -> bool {
 	return static_cast<bool>(m_turns_active);
 }
 
-void Encore::activate() {
+auto Encore::activate() -> void {
 	m_turns_active = 0_bi;
 }
 
-void Encore::advance_one_turn() {
+auto Encore::advance_one_turn() -> void {
 	if (!is_active()) {
 		return;
 	}
@@ -39,11 +39,11 @@ void Encore::advance_one_turn() {
 	}
 }
 
-bool operator== (Encore const & lhs, Encore const & rhs) {
+auto operator== (Encore const & lhs, Encore const & rhs) -> bool {
 	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
-bool operator!= (Encore const & lhs, Encore const & rhs) {
+auto operator!= (Encore const & lhs, Encore const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 

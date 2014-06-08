@@ -126,7 +126,7 @@ public:
 	void fully_trap();
 	bool heal_block_is_active() const;
 	void activate_heal_block();
-	void decrement_heal_block();
+	void advance_heal_block();
 	bool leech_seeded() const;
 	void hit_with_leech_seed();
 	void clear_leech_seed();

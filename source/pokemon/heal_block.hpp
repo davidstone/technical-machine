@@ -1,5 +1,5 @@
 // Heal Block class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,26 +19,38 @@
 #ifndef HEAL_BLOCK_HPP_
 #define HEAL_BLOCK_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class HealBlock {
 public:
-	HealBlock();
-	bool is_active() const;
-	void activate();
-	void decrement();
-	void reset();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (HealBlock const & lhs, HealBlock const & rhs);
+	auto is_active() const -> bool;
+	auto activate() -> void;
+	auto advance_one_turn() -> void;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_remaining);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_remaining);
+	}
+	friend auto operator== (HealBlock lhs, HealBlock rhs) -> bool;
 private:
 	friend class Evaluate;
-	uint8_t turns_remaining;
+	using type = bounded::integer<0, 5>;
+	bounded::optional<type> m_turns_remaining;
 };
-bool operator!= (HealBlock const & lhs, HealBlock const & rhs);
+auto operator!= (HealBlock lhs, HealBlock rhs) -> bool;
+
+constexpr auto hash(HealBlock const heal_block) noexcept {
+	return heal_block.hash();
+}
+constexpr auto max_hash(HealBlock const heal_block) noexcept {
+	return heal_block.max_hash();
+}
+
 
 }	// namespace technicalmachine
 #endif	// HEAL_BLOCK_HPP_

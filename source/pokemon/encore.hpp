@@ -27,10 +27,10 @@ namespace technicalmachine {
 
 class Encore {
 public:
-	bool is_active() const;
-	void activate();
-	void advance_one_turn();
-	friend bool operator== (Encore const & lhs, Encore const & rhs);
+	auto is_active() const -> bool;
+	auto activate() -> void;
+	auto advance_one_turn() -> void;
+	friend auto operator== (Encore const & lhs, Encore const & rhs) -> bool;
 	
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_turns_active);
@@ -43,7 +43,7 @@ private:
 	using type = bounded::integer<0, 8>;
 	bounded::optional<type> m_turns_active;
 };
-bool operator!= (Encore const & lhs, Encore const & rhs);
+auto operator!= (Encore const & lhs, Encore const & rhs) -> bool;
 
 constexpr auto hash(Encore const encore) noexcept {
 	return encore.hash();

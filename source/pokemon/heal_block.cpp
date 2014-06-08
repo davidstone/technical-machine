@@ -1,5 +1,5 @@
 // Heal Block class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,45 +19,34 @@
 #include "heal_block.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned max_duration = 5;
-}	// unnamed namespace
+using namespace bounded::literal;
 
-HealBlock::HealBlock() :
-	turns_remaining(0)
-	{
+auto HealBlock::is_active() const -> bool {
+	return static_cast<bool>(m_turns_remaining);
 }
 
-bool HealBlock::is_active() const {
-	return turns_remaining != 0;
+auto HealBlock::activate() -> void {
+	if (!is_active()) {
+		m_turns_remaining = 0_bi;
+	}
 }
 
-void HealBlock::activate() {
-	turns_remaining = max_duration;
+auto HealBlock::advance_one_turn() -> void {
+	if (!is_active()) {
+		return;
+	}
+	if (*m_turns_remaining == std::numeric_limits<type>::max()) {
+		m_turns_remaining = bounded::none;
+	} else {
+		++*m_turns_remaining;
+	}
 }
 
-void HealBlock::decrement() {
-	if (is_active())
-		--turns_remaining;
+auto operator== (HealBlock const lhs, HealBlock const rhs) -> bool {
+	return lhs.m_turns_remaining == rhs.m_turns_remaining;
 }
 
-void HealBlock::reset() {
-	turns_remaining = 0;
-}
-
-HealBlock::hash_type HealBlock::hash() const {
-	return turns_remaining;
-}
-
-HealBlock::hash_type HealBlock::max_hash() {
-	return max_duration;
-}
-
-bool operator== (HealBlock const & lhs, HealBlock const & rhs) {
-	return lhs.turns_remaining == rhs.turns_remaining;
-}
-
-bool operator!= (HealBlock const & lhs, HealBlock const & rhs) {
+auto operator!= (HealBlock const lhs, HealBlock const rhs) -> bool {
 	return !(lhs == rhs);
 }
 
