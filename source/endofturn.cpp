@@ -79,9 +79,9 @@ void endofturn2 (Team & team) {
 
 void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
 	if (weather.hail() and !is_immune_to_hail(get_type(pokemon)))
-		drain(pokemon, Rational(1, 16));
+		heal(pokemon, make_rational(-1_bi, 16_bi));
 	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
-		drain(pokemon, Rational(1, 16));
+		heal(pokemon, make_rational(-1_bi, 16_bi));
 	}
 	Ability::weather_healing(pokemon, weather);
 }
@@ -91,10 +91,10 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		return;
 	}
 	if (pokemon.ingrained()) {
-		heal(pokemon, Rational(1, 16));
+		heal(pokemon, make_rational(1_bi, 16_bi));
 	}
 	if (pokemon.aqua_ring_is_active()) {
-		heal(pokemon, Rational(1, 16));
+		heal(pokemon, make_rational(1_bi, 16_bi));
 	}
 	if (get_ability(pokemon).boosts_speed()) {
 		boost(pokemon.stage(), StatNames::SPE, 1_bi);
@@ -104,20 +104,19 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	}
 	switch (get_item(pokemon)) {
 		case Item::Leftovers:
-			heal(pokemon, Rational(1, 16));
+			heal(pokemon, make_rational(1_bi, 16_bi));
 			break;
-		case Item::Black_Sludge:
-			if (is_type(pokemon, Type::Poison))
-				heal(pokemon, Rational(1, 16));
-			else
-				drain(pokemon, Rational(1, 16));
+		case Item::Black_Sludge: {
+			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), 1_bi, -1_bi);
+			heal(pokemon, make_rational(numerator, 16_bi));
 			break;
+		}
 		default:
 			break;
 	}
 	if (pokemon.leech_seeded()) {
 		auto const initial = get_hp(pokemon).current();
-		drain(pokemon, Rational(1, 8));
+		heal(pokemon, make_rational(-1_bi, 8_bi));
 		if (!foe.is_fainted()) {
 			if (get_ability(pokemon).damages_leechers()) {
 				get_hp(foe) -= initial - get_hp(pokemon).current();
@@ -128,27 +127,31 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		}
 	}
 	switch (get_status(pokemon).name()) {
-		case Status::burn:
-			drain(pokemon, Rational(1, get_ability(pokemon).weakens_burn() ? 16 : 8));
+		case Status::burn: {
+			auto const denominator = BOUNDED_CONDITIONAL(get_ability(pokemon).weakens_burn(), 16_bi, 8_bi);
+			heal(pokemon, make_rational(-1_bi, denominator));
 			break;
-		case Status::poison:
-			if (get_ability(pokemon).absorbs_poison_damage())
-				heal(pokemon, Rational(1, 8));
-			else
-				drain(pokemon, Rational(1, 8));
+		}
+		case Status::poison: {
+			auto const numerator = BOUNDED_CONDITIONAL(get_ability(pokemon).absorbs_poison_damage(), 1_bi, -1_bi);
+			heal(pokemon, make_rational(numerator, 8_bi));
 			break;
+		}
 		case Status::poison_toxic:
 			pokemon.increment_toxic();
-			if (get_ability(pokemon).absorbs_poison_damage())
-				heal(pokemon, Rational(1, 8));
-			else
-				drain(pokemon, static_cast<Rational>(pokemon.toxic_ratio()));
+			if (get_ability(pokemon).absorbs_poison_damage()) {
+				heal(pokemon, make_rational(1_bi, 8_bi));
+			} else {
+				heal(pokemon, pokemon.toxic_ratio());
+			}
 			break;
 		case Status::sleep:
-			if (pokemon.nightmare())
-				drain(pokemon, Rational(1, 4));
-			if (get_ability(foe).harms_sleepers())
-				drain(pokemon, Rational(1, 8));
+			if (pokemon.nightmare()) {
+				heal(pokemon, make_rational(-1_bi, 4_bi));
+			}
+			if (get_ability(foe).harms_sleepers()) {
+				heal(pokemon, make_rational(-1_bi, 8_bi));
+			}
 			break;
 		default:
 			break;
@@ -163,8 +166,9 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		default:
 			break;
 	}
-	if (pokemon.is_cursed())
-		drain(pokemon, Rational(1, 4));
+	if (pokemon.is_cursed()) {
+		heal(pokemon, make_rational(-1_bi, 4_bi));
+	}
 	pokemon.partial_trap_damage();
 	
 	pokemon.decrement_lock_in();
@@ -179,7 +183,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		Status::apply<Status::sleep>(pokemon, weather);
 	}
 	if (get_item(pokemon) == Item::Sticky_Barb) {
-		drain(pokemon, Rational(1, 8));
+		heal(pokemon, make_rational(-1_bi, 8_bi));
 	}
 }
 

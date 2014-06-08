@@ -76,11 +76,11 @@ auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const & wea
 			}
 		}
 		if (hazards.spikes() != 0_bi) {
-			drain(switcher, Rational(make_rational(hazards.spikes() + 1_bi, 16_bi)));
+			heal(switcher, make_rational(-hazards.spikes() - 1_bi, 16_bi));
 		}
 	}
 	if (hazards.stealth_rock()) {
-		drain(switcher, Rational(make_rational(1_bi, 8_bi) * Effectiveness(Type::Rock, switcher)));
+		heal(switcher, make_rational(-1_bi, 8_bi) * Effectiveness(Type::Rock, switcher));
 	}
 }
 

@@ -28,13 +28,6 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
-class Pokemon;
-class Rational;
-
-void heal(ActivePokemon & pokemon, Rational const & rational, bool positive = true);
-void drain(ActivePokemon & pokemon, Rational const & rational);
-
 template<typename Numerator, typename Denominator>
 void heal(ActivePokemon & pokemon, bounded_rational<Numerator, Denominator> const rational) {
 	if (pokemon.is_fainted()) {

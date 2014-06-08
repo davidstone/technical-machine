@@ -213,7 +213,7 @@ auto do_damage(ActivePokemon & user, ActivePokemon & target, damage_type const d
 	}
 	target.direct_damage(damage);
 	if (causes_recoil(get_item(user))) {
-		drain(user, Rational(1, 10));
+		heal(user, make_rational(-1_bi, 10_bi));
 	}
 }
 
@@ -648,7 +648,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Recover:
 		case Moves::Slack_Off:
 		case Moves::Softboiled:
-			heal(user, Rational(1, 2));
+			heal(user, make_rational(1_bi, 2_bi));
 			break;
 		case Moves::Healing_Wish:		// Fix
 			break;
@@ -750,14 +750,15 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Morning_Sun:
 		case Moves::Synthesis: {
 			auto const amount = [& weather]() {
+				using Numerator = bounded::integer<1, 2>;
+				using Denominator = bounded::integer<2, 4>;
+				using Result = bounded_rational<Numerator, Denominator>;
 				if (weather.sun()) {
-					return Rational(2, 3);
-				}
-				else if (weather.hail() or weather.rain() or weather.sand()) {
-					return Rational(1, 4);
-				}
-				else {
-					return Rational(1, 2);
+					return Result(2_bi, 3_bi);
+				} else if (weather.hail() or weather.rain() or weather.sand()) {
+					return Result(1_bi, 4_bi);
+				} else {
+					return Result(1_bi, 2_bi);
 				}
 			};
 			heal(user, amount());
@@ -842,7 +843,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Roost:
 			user.roost();
-			heal(user, Rational(1, 2));
+			heal(user, make_rational(1_bi, 2_bi));
 			break;
 		case Moves::Safeguard:
 			user_team.screens.activate_safeguard();

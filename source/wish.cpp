@@ -36,7 +36,7 @@ auto Wish::decrement(ActivePokemon & pokemon) -> void {
 		--*m_turns_until_activation;
 		if (*m_turns_until_activation == 0_bi) {
 			m_turns_until_activation = {};
-			heal(pokemon, Rational(1, 2));
+			heal(pokemon, make_rational(1_bi, 2_bi));
 		}
 	}
 }

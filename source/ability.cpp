@@ -411,10 +411,9 @@ void Ability::weather_healing(ActivePokemon & pokemon, Weather const & weather) 
 	switch (get_ability(pokemon).name()) {
 		case Dry_Skin:
 			if (weather.rain()) {
-				heal(pokemon, Rational(1, 8));
-			}
-			else if (weather.sun()) {
-				drain(pokemon, Rational(1, 8));
+				heal(pokemon, make_rational(1_bi, 8_bi));
+			} else if (weather.sun()) {
+				heal(pokemon, make_rational(-1_bi, 8_bi));
 			}
 			break;
 		case Hydration:
@@ -424,12 +423,12 @@ void Ability::weather_healing(ActivePokemon & pokemon, Weather const & weather) 
 			break;
 		case Ice_Body:
 			if (weather.hail()) {
-				heal(pokemon, Rational(1, 16));
+				heal(pokemon, make_rational(1_bi, 16_bi));
 			}
 			break;
 		case Rain_Dish:
 			if (weather.rain()) {
-				heal(pokemon, Rational(1, 16));
+				heal(pokemon, make_rational(1_bi, 16_bi));
 			}
 			break;
 		default:

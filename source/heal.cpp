@@ -17,31 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "heal.hpp"
-
-#include <bounded_integer/bounded_integer.hpp>
-
-#include "ability.hpp"
-#include "rational.hpp"
-
-#include "pokemon/active_pokemon.hpp"
-#include "pokemon/pokemon.hpp"
-
-namespace technicalmachine {
-
-void heal(ActivePokemon & pokemon, Rational const & rational, bool positive) {
-	if (pokemon.is_fainted())
-		return;
-	unsigned const hp_healed = static_cast<unsigned>(get_hp(pokemon).max()) * rational;
-	if (positive) {
-		get_hp(pokemon) += bounded::max(hp_healed, 1_bi);
-	}
-	else if (!get_ability(pokemon).blocks_secondary_damage()) {
-		get_hp(pokemon) -= bounded::max(hp_healed, 1_bi);
-	}
-}
-
-void drain(ActivePokemon & pokemon, Rational const & rational) {
-	heal(pokemon, rational, false);
-}
-
-}	// namespace technicalmachine
