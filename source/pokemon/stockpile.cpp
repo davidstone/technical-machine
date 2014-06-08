@@ -21,12 +21,7 @@
 
 namespace technicalmachine {
 
-Stockpile::Stockpile() :
-	m_level(0_bi)
-	{
-}
-
-bool Stockpile::increment() {
+auto Stockpile::increment() -> bool {
 	auto const initial = m_level;
 	++m_level;
 	return m_level == initial;
@@ -34,12 +29,8 @@ bool Stockpile::increment() {
 
 auto Stockpile::release() -> bounded::integer<0, max> {
 	auto const temp = m_level;
-	reset();
+	*this = {};
 	return temp;
-}
-
-void Stockpile::reset() {
-	m_level = 0_bi;
 }
 
 auto Stockpile::spit_up_power() const -> bounded::integer<0, max * 100> {
@@ -47,30 +38,22 @@ auto Stockpile::spit_up_power() const -> bounded::integer<0, max * 100> {
 }
 
 
-Rational swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpiles) {
+auto swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpiles) -> SwallowHealing{
 	switch (stockpiles.value()) {
 		case 1:
-			return Rational(1, 4);
+			return {1_bi, 4_bi};
 		case 2:
-			return Rational(1, 2);
+			return {1_bi, 2_bi};
 		default:	// case 3:
-			return Rational(1, 1);
+			return {1_bi, 1_bi};
 	}
 }
 
-Stockpile::hash_type Stockpile::hash() const {
-	return static_cast<hash_type>(m_level);
-}
-
-Stockpile::hash_type Stockpile::max_hash() {
-	return max + 1;
-}
-
-bool operator== (Stockpile const & lhs, Stockpile const & rhs) {
+auto operator==(Stockpile lhs, Stockpile rhs) -> bool {
 	return lhs.m_level == rhs.m_level;
 }
 
-bool operator!= (Stockpile const & lhs, Stockpile const & rhs) {
+auto operator!=(Stockpile lhs, Stockpile rhs) -> bool {
 	return !(lhs == rhs);
 }
 

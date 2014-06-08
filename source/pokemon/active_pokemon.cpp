@@ -117,7 +117,7 @@ void ActivePokemon::reset_switch() {
 	rampage.reset();
 	roosting = false;
 	slow_start.reset();
-	stockpile.reset();
+	stockpile = {};
 	is_tormented = false;
 	u_turning = false;
 	water_sport = false;
@@ -797,6 +797,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		nightmares,
 		power_trick,
 		recharge_lock_in,
+		stockpile,
 		is_tormented,
 		water_sport
 	);
@@ -808,8 +809,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 	current_hash += rampage.hash();
 	current_hash *= slow_start.max_hash();
 	current_hash += slow_start.hash();
-	current_hash *= stockpile.max_hash();
-	current_hash += stockpile.hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
@@ -856,6 +855,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		nightmares,
 		power_trick,
 		recharge_lock_in,
+		stockpile,
 		is_tormented,
 		water_sport
 	);
@@ -863,7 +863,6 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();
 	current_hash *= slow_start.max_hash();
-	current_hash *= stockpile.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();

@@ -19,6 +19,9 @@
 #ifndef STOCKPILE_HPP_
 #define STOCKPILE_HPP_
 
+#include "../hash.hpp"
+#include "../rational.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
@@ -28,26 +31,36 @@ using namespace bounded::literal;
 class Stockpile {
 public:
 	static constexpr auto max = 3;
-	Stockpile();
 	// Returns whether Stockpile was able to increment (true) or if it is
 	// already maxed out (false)
-	bool increment();
+	auto increment() -> bool;
 	// Returns the amount of Stockpile lost. This allows correct subtraction
 	// for stat boosts.
-	bounded::integer<0, max> release();
-	void reset();
-	bounded::integer<0, max * 100> spit_up_power() const;
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (Stockpile const & lhs, Stockpile const & rhs);
+	auto release() -> bounded::integer<0, max>;
+	auto spit_up_power() const -> bounded::integer<0, max * 100>;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_level);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_level);
+	}
+	friend auto operator==(Stockpile lhs, Stockpile rhs) -> bool;
 private:
 	friend class Evaluate;
-	bounded::clamped_integer<0, max> m_level;
+	bounded::clamped_integer<0, max> m_level = 0_bi;
 };
-bool operator!= (Stockpile const & lhs, Stockpile const & rhs);
+auto operator!=(Stockpile lhs, Stockpile rhs) -> bool;
 
-Rational swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles);
+using SwallowHealing = bounded_rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
+auto swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles) -> SwallowHealing;
+
+constexpr auto hash(Stockpile const stockpile) noexcept {
+	return stockpile.hash();
+}
+constexpr auto max_hash(Stockpile const stockpile) noexcept {
+	return stockpile.max_hash();
+}
+
 
 }	// namespace technicalmachine
 #endif	// STOCKPILE_HPP_
