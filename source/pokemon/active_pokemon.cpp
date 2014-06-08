@@ -112,7 +112,7 @@ void ActivePokemon::reset_switch() {
 	me_first = false;
 	mud_sport = false;
 	nightmares = false;
-	partial_trap.reset();
+	partial_trap = {};
 	pass = false;
 	rampage.reset();
 	roosting = false;
@@ -142,7 +142,7 @@ void ActivePokemon::reset_between_turns() {
 
 void ActivePokemon::clear_field() {
 	clear_leech_seed();
-	partial_trap.reset();
+	partial_trap = {};
 }
 
 void ActivePokemon::update_before_move() {
@@ -453,8 +453,8 @@ void ActivePokemon::give_nightmares() {
 	nightmares = true;
 }
 
-void ActivePokemon::partially_trap(bool const extended) {
-	partial_trap.activate(extended);
+void ActivePokemon::partially_trap() {
+	partial_trap.activate();
 }
 
 void ActivePokemon::partial_trap_damage() {
@@ -608,7 +608,7 @@ auto ActivePokemon::fully_trapped() const -> bool {
 }
 
 bool ActivePokemon::trapped() const {
-	return m_fully_trapped or ingrained() or partial_trap;
+	return m_fully_trapped or ingrained() or partial_trap.is_active();
 }
 
 bool ActivePokemon::tormented() const {

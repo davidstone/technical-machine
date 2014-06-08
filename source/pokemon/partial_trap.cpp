@@ -1,5 +1,5 @@
 // Partial trap timer (things like Wrap and Clamp)
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,58 +17,37 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "partial_trap.hpp"
-#include "pokemon.hpp"
 #include "../heal.hpp"
 #include "../rational.hpp"
 
 namespace technicalmachine {
 namespace {
-constexpr unsigned normal_duration = 5;
-constexpr unsigned extended_duration = 8;
-constexpr Rational end_of_turn_damage = Rational(1, 16);
-}	// unnamed namespace
+using namespace bounded::literal;
+// constexpr auto normal_duration = 5_bi;
+// constexpr auto extended_duration = 8_bi;
+}	// namespace
 
-PartialTrap::PartialTrap():
-	turns_active(0)
-	{
+auto PartialTrap::is_active() const -> bool {
+	return static_cast<bool>(m_turns_active);
 }
 
-bool PartialTrap::is_active() const {
-	return turns_active != 0;
-}
-
-void PartialTrap::activate(bool const extended) {
-	if (!is_active())
-		turns_active = extended ? extended_duration : normal_duration;
-}
-
-void PartialTrap::damage(ActivePokemon & pokemon) {
-	if (is_active()) {
-		drain(pokemon, end_of_turn_damage);
-		--turns_active;
+auto PartialTrap::activate() -> void {
+	if (!is_active()) {
+		m_turns_active = 0_bi;
 	}
 }
 
-void PartialTrap::reset() {
-	turns_active = 0;
+auto PartialTrap::damage(ActivePokemon & pokemon) -> void {
+	if (is_active()) {
+		heal(pokemon, make_rational(-1_bi, 16_bi));
+		++*m_turns_active;
+	}
 }
 
-PartialTrap::operator bool() const {
-	return is_active();
+auto operator== (PartialTrap lhs, PartialTrap rhs) -> bool {
+	return lhs.m_turns_active == rhs.m_turns_active;
 }
-
-PartialTrap::hash_type PartialTrap::hash() const {
-	return turns_active;
-}
-
-PartialTrap::hash_type PartialTrap::max_hash() {
-	return extended_duration;
-}
-
-bool operator== (PartialTrap const & lhs, PartialTrap const & rhs) {
-	return lhs.turns_active == rhs.turns_active;
-}
-bool operator!= (PartialTrap const & lhs, PartialTrap const & rhs) {
+auto operator!= (PartialTrap lhs, PartialTrap rhs) -> bool {
 	return !(lhs == rhs);
 }
 

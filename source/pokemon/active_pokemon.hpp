@@ -159,7 +159,7 @@ public:
 	void activate_mud_sport();
 	bool nightmare() const;
 	void give_nightmares();
-	void partially_trap(bool extended);
+	void partially_trap();
 	void partial_trap_damage();
 	void activate_perish_song();
 	void perish_song_turn();

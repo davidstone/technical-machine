@@ -319,7 +319,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
-			target.partially_trap(static_cast<unsigned>(variable.value()));
+			target.partially_trap();
 			break;
 		case Moves::Blast_Burn:
 		case Moves::Frenzy_Plant:
