@@ -791,6 +791,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		leech_seed,
 		loaf,
 		lock_on,
+		magnet_rise(),
 		minimize,
 		mud_sport,
 		nightmares,
@@ -799,8 +800,6 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		is_tormented,
 		water_sport
 	);
-	current_hash *= magnet_rise().max_hash();
-	current_hash += magnet_rise().hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash += partial_trap.hash();
 	current_hash *= perish_song.max_hash();
@@ -851,6 +850,7 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		leech_seed,
 		loaf,
 		lock_on,
+		magnet_rise(),
 		minimize,
 		mud_sport,
 		nightmares,
@@ -859,7 +859,6 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		is_tormented,
 		water_sport
 	);
-	current_hash *= magnet_rise().max_hash();
 	current_hash *= partial_trap.max_hash();
 	current_hash *= perish_song.max_hash();
 	current_hash *= rampage.max_hash();

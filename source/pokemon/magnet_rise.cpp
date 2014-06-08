@@ -21,16 +21,11 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-MagnetRise::MagnetRise() :
-	m_turns_remaining(0_bi)
-	{
-}
-
 auto MagnetRise::is_active() const -> bool {
 	return turns_remaining() != 0_bi;
 }
 
-auto MagnetRise::activate() -> void{
+auto MagnetRise::activate() -> void {
 	if (!is_active()) {
 		m_turns_remaining = std::numeric_limits<duration_type>::max();
 	}
@@ -44,19 +39,11 @@ auto MagnetRise::turns_remaining() const -> duration_type {
 	return m_turns_remaining;
 }
 
-auto MagnetRise::hash() const -> hash_type {
-	return static_cast<hash_type>(turns_remaining());
-}
-
-auto MagnetRise::max_hash() -> hash_type{
-	return static_cast<hash_type>(std::numeric_limits<duration_type>::max());
-}
-
-bool operator== (MagnetRise const & lhs, MagnetRise const & rhs) {
+auto operator== (MagnetRise const lhs, MagnetRise const rhs) -> bool {
 	return lhs.turns_remaining() == rhs.turns_remaining();
 }
 
-bool operator!= (MagnetRise const & lhs, MagnetRise const & rhs) {
+auto operator!= (MagnetRise const lhs, MagnetRise const rhs) -> bool{
 	return !(lhs == rhs);
 }
 
