@@ -1,5 +1,5 @@
 // Class that handles Slow Start's timer
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,25 +19,36 @@
 #ifndef SLOW_START_HPP_
 #define SLOW_START_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
+#include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
 
 class SlowStart {
 public:
-	SlowStart();
-	bool is_active() const;
-	void decrement();
-	void reset();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (SlowStart const & lhs, SlowStart const & rhs);
+	auto is_active() const -> bool;
+	auto advance_one_turn() -> void;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_turns_active);
+	}
+	constexpr auto max_hash() const noexcept {
+		return technicalmachine::max_hash(m_turns_active);
+	}
+	friend auto operator==(SlowStart lhs, SlowStart rhs) -> bool;
 private:
 	friend class Evaluate;
-	uint8_t turns_remaining;
+	using type = bounded::integer<0, 4>;
+	bounded::optional<type> m_turns_active;
 };
-bool operator!= (SlowStart const & lhs, SlowStart const & rhs);
+auto operator!=(SlowStart lhs, SlowStart rhs) -> bool;
+
+constexpr auto hash(SlowStart const slow_start) noexcept {
+	return slow_start.hash();
+}
+constexpr auto max_hash(SlowStart const slow_start) noexcept {
+	return slow_start.max_hash();
+}
 
 }	// namespace technicalmachine
 #endif	// SLOW_START_HPP_

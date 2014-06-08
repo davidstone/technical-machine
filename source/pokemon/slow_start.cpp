@@ -1,5 +1,5 @@
 // Class that handles Slow Start's timer
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,41 +19,27 @@
 #include "slow_start.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned initial_duration = 5;
-}	// unnamed namespace
 
-SlowStart::SlowStart() :
-	turns_remaining(initial_duration)
-	{
+auto SlowStart::is_active() const -> bool {
+	return static_cast<bool>(m_turns_active);
 }
 
-bool SlowStart::is_active() const {
-	return turns_remaining != 0;
+auto SlowStart::advance_one_turn() -> void {
+	if (!is_active()) {
+		return;
+	}
+	if (*m_turns_active == std::numeric_limits<type>::max()) {
+		m_turns_active = bounded::none;
+	} else {
+		++*m_turns_active;
+	}
 }
 
-void SlowStart::decrement() {
-	if (is_active())
-		--turns_remaining;
+auto operator==(SlowStart const lhs, SlowStart const rhs) -> bool {
+	return lhs.m_turns_active == rhs.m_turns_active;
 }
 
-void SlowStart::reset() {
-	turns_remaining = initial_duration;
-}
-
-SlowStart::hash_type SlowStart::hash() const {
-	return turns_remaining;
-}
-
-SlowStart::hash_type SlowStart::max_hash() {
-	return initial_duration;
-}
-
-bool operator== (SlowStart const & lhs, SlowStart const & rhs) {
-	return lhs.turns_remaining == rhs.turns_remaining;
-}
-
-bool operator!= (SlowStart const & lhs, SlowStart const & rhs) {
+auto operator!=(SlowStart const lhs, SlowStart const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

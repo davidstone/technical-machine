@@ -116,7 +116,7 @@ void ActivePokemon::reset_switch() {
 	pass = false;
 	rampage = {};
 	roosting = false;
-	slow_start.reset();
+	slow_start = {};
 	stockpile = {};
 	is_tormented = false;
 	u_turning = false;
@@ -801,12 +801,11 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		power_trick,
 		rampage,
 		recharge_lock_in,
+		slow_start,
 		stockpile,
 		is_tormented,
 		water_sport
 	);
-	current_hash *= slow_start.max_hash();
-	current_hash += slow_start.hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
@@ -856,11 +855,11 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		power_trick,
 		rampage,
 		recharge_lock_in,
+		slow_start,
 		stockpile,
 		is_tormented,
 		water_sport
 	);
-	current_hash *= slow_start.max_hash();
 	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
 	current_hash *= uproar.max_hash();
