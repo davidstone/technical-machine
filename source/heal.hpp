@@ -1,5 +1,5 @@
 // Function to change a Pokemon's HP by a fractional multiplier
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +19,13 @@
 #ifndef HEAL_HPP_
 #define HEAL_HPP_
 
+#include "ability.hpp"
+#include "rational.hpp"
+
+#include "pokemon/active_pokemon.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
 namespace technicalmachine {
 
 class ActivePokemon;
@@ -27,6 +34,20 @@ class Rational;
 
 void heal(ActivePokemon & pokemon, Rational const & rational, bool positive = true);
 void drain(ActivePokemon & pokemon, Rational const & rational);
+
+template<typename Numerator, typename Denominator>
+void heal(ActivePokemon & pokemon, bounded_rational<Numerator, Denominator> const rational) {
+	if (pokemon.is_fainted()) {
+		return;
+	}
+	auto const hp_healed = get_hp(pokemon).max() * rational;
+	bool const is_positive = rational > make_rational(0_bi, 1_bi);
+	if (is_positive) {
+		get_hp(pokemon) += bounded::max(hp_healed, 1_bi);
+	} else if (!get_ability(pokemon).blocks_secondary_damage()) {
+		get_hp(pokemon) += bounded::min(hp_healed, -1_bi);
+	}
+}
 
 }	// namespace technicalmachine
 #endif	// HEAL_HPP_
