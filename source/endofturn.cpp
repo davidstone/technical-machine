@@ -179,9 +179,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	pokemon.decrement_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	if (pokemon.try_to_activate_yawn()) {
-		Status::apply<Status::sleep>(pokemon, weather);
-	}
+	pokemon.try_to_activate_yawn(weather);
 	if (get_item(pokemon) == Item::Sticky_Barb) {
 		heal(pokemon, make_rational(-1_bi, 8_bi));
 	}

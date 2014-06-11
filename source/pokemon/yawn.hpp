@@ -19,25 +19,11 @@
 #ifndef YAWN_HPP_
 #define YAWN_HPP_
 
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class Yawn {
-public:
-	auto activate() -> void;
-	// return value represents whether Yawn activated
-	auto advance_turn() -> bool;
-	friend auto operator==(Yawn const & lhs, Yawn const & rhs) -> bool;
-	typedef uint64_t hash_type;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
-private:
-	friend class Evaluate;
-	// If present, value represents number of turns since Yawn has been used
-	bounded::optional<bounded::integer<0, 1>> m_counter;
-};
-auto operator!= (Yawn const & lhs, Yawn const & rhs) -> bool;
+using Yawn = EndOfTurnCounter<1, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// YAWN_HPP_

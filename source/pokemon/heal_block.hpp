@@ -19,38 +19,11 @@
 #ifndef HEAL_BLOCK_HPP_
 #define HEAL_BLOCK_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class HealBlock {
-public:
-	auto is_active() const -> bool;
-	auto activate() -> void;
-	auto advance_one_turn() -> void;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_remaining);
-	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_remaining);
-	}
-	friend auto operator== (HealBlock lhs, HealBlock rhs) -> bool;
-private:
-	friend class Evaluate;
-	using type = bounded::integer<0, 5>;
-	bounded::optional<type> m_turns_remaining;
-};
-auto operator!= (HealBlock lhs, HealBlock rhs) -> bool;
-
-constexpr auto hash(HealBlock const heal_block) noexcept {
-	return heal_block.hash();
-}
-constexpr auto max_hash(HealBlock const heal_block) noexcept {
-	return heal_block.max_hash();
-}
-
+using HealBlock = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// HEAL_BLOCK_HPP_

@@ -17,34 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "encore.hpp"
-
-namespace technicalmachine {
-
-auto Encore::is_active() const -> bool {
-	return static_cast<bool>(m_turns_active);
-}
-
-auto Encore::activate() -> void {
-	m_turns_active = 0_bi;
-}
-
-auto Encore::advance_one_turn() -> void {
-	if (!is_active()) {
-		return;
-	}
-	if (*m_turns_active == std::numeric_limits<type>::max()) {
-		m_turns_active = bounded::none;
-	} else {
-		++*m_turns_active;
-	}
-}
-
-auto operator== (Encore const & lhs, Encore const & rhs) -> bool {
-	return lhs.m_turns_active == rhs.m_turns_active;
-}
-
-auto operator!= (Encore const & lhs, Encore const & rhs) -> bool {
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

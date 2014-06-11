@@ -17,37 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "heal_block.hpp"
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto HealBlock::is_active() const -> bool {
-	return static_cast<bool>(m_turns_remaining);
-}
-
-auto HealBlock::activate() -> void {
-	if (!is_active()) {
-		m_turns_remaining = 0_bi;
-	}
-}
-
-auto HealBlock::advance_one_turn() -> void {
-	if (!is_active()) {
-		return;
-	}
-	if (*m_turns_remaining == std::numeric_limits<type>::max()) {
-		m_turns_remaining = bounded::none;
-	} else {
-		++*m_turns_remaining;
-	}
-}
-
-auto operator== (HealBlock const lhs, HealBlock const rhs) -> bool {
-	return lhs.m_turns_remaining == rhs.m_turns_remaining;
-}
-
-auto operator!= (HealBlock const lhs, HealBlock const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

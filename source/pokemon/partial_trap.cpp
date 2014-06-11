@@ -27,28 +27,11 @@ using namespace bounded::literal;
 // constexpr auto extended_duration = 8_bi;
 }	// namespace
 
-auto PartialTrap::is_active() const -> bool {
-	return static_cast<bool>(m_turns_active);
-}
-
-auto PartialTrap::activate() -> void {
-	if (!is_active()) {
-		m_turns_active = 0_bi;
-	}
-}
-
 auto PartialTrap::damage(ActivePokemon & pokemon) -> void {
 	if (is_active()) {
 		heal(pokemon, make_rational(-1_bi, 16_bi));
-		++*m_turns_active;
+		m_base.advance_one_turn();
 	}
-}
-
-auto operator== (PartialTrap lhs, PartialTrap rhs) -> bool {
-	return lhs.m_turns_active == rhs.m_turns_active;
-}
-auto operator!= (PartialTrap lhs, PartialTrap rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

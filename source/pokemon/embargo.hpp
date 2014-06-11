@@ -19,38 +19,11 @@
 #ifndef EMBARGO_HPP_
 #define EMBARGO_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class Embargo {
-public:
-	auto is_active() const -> bool;
-	auto activate() -> void;
-	auto advance_one_turn() -> void;
-	friend auto operator==(Embargo lhs, Embargo rhs) -> bool;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_remaining);
-	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_remaining);
-	}
-private:
-	friend class Evaluate;
-	using value_type = bounded::integer<0, 5>;
-	bounded::optional<value_type> m_turns_remaining;
-};
-auto operator!= (Embargo lhs, Embargo rhs) -> bool;
-
-constexpr auto hash(Embargo const embargo) noexcept {
-	return embargo.hash();
-}
-constexpr auto max_hash(Embargo const embargo) noexcept {
-	return embargo.max_hash();
-}
+using Embargo = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// EMBARGO_HPP_

@@ -19,38 +19,11 @@
 #ifndef PERISH_SONG_HPP_
 #define PERISH_SONG_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class PerishSong {
-public:
-	auto activate() -> void;
-	// return value: whether this Pokemon faints
-	auto advance_one_turn() -> bool;
-	friend auto operator==(PerishSong lhs, PerishSong rhs) -> bool;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
-	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
-	}
-private:
-	auto is_active() const -> bool;
-	using type = bounded::integer<0, 2>;
-	bounded::optional<type> m_turns_active;
-};
-
-auto operator!=(PerishSong lhs, PerishSong rhs) -> bool;
-
-constexpr auto hash(PerishSong const perish_song) noexcept {
-	return perish_song.hash();
-}
-constexpr auto max_hash(PerishSong const perish_song) noexcept {
-	return perish_song.max_hash();
-}
+using PerishSong = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// PERISH_SONG_HPP_

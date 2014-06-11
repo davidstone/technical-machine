@@ -1,5 +1,5 @@
 // Taunt class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,26 +19,11 @@
 #ifndef TAUNT_HPP_
 #define TAUNT_HPP_
 
-#include <cstdint>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class Taunt {
-public:
-	Taunt();
-	bool is_active() const;
-	void activate();
-	void increment();
-	void reset();
-	friend bool operator== (Taunt const & lhs, Taunt const & rhs);
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-private:
-	friend class Evaluate;
-	uint8_t turns_taunted;
-};
-bool operator!= (Taunt const & lhs, Taunt const & rhs);
+using Taunt = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// TAUNT_HPP_

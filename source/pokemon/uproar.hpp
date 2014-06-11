@@ -19,22 +19,11 @@
 #ifndef UPROAR_HPP_
 #define UPROAR_HPP_
 
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class Uproar {
-public:
-	auto increment() -> void;
-	friend auto operator== (Uproar const & lhs, Uproar const & rhs) -> bool;
-	using hash_type = uint64_t;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
-private:
-	friend class Evaluate;
-	bounded::optional<bounded::integer<1, 4>> m_counter;
-};
-auto operator!= (Uproar const & lhs, Uproar const & rhs) -> bool;
+using Uproar = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// UPROAR_HPP_

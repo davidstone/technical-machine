@@ -1,5 +1,5 @@
 // Class that handles Doom Desire / Future Sight
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,27 +19,11 @@
 #ifndef DELAYED_ATTACK_HPP_
 #define DELAYED_ATTACK_HPP_
 
-#include <cstdint>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class DelayedAttack {
-public:
-	DelayedAttack();
-	void activate();
-	// Returns whether Doom Desire / Future Sight hits this turn
-	bool decrement();
-	void reset();
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
-	friend bool operator== (DelayedAttack const & lhs, DelayedAttack const & rhs);
-private:
-	friend class Evaluate;
-	bool is_active() const;
-	uint8_t turns_before_hitting;
-};
-bool operator!= (DelayedAttack const & lhs, DelayedAttack const & rhs);
+using DelayedAttack = EndOfTurnCounter<2, CounterOperations::activate, CounterOperations::advance_one_turn_deactivated>;
 
 }	// namespace technicalmachine
 #endif	// DELAYED_ATTACK_HPP_

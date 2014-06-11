@@ -17,37 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "rampage.hpp"
-
-namespace technicalmachine {
-
-auto Rampage::is_active() const -> bool {
-	return static_cast<bool>(m_turns_active);
-}
-
-auto Rampage::activate() -> void {
-	if (!is_active()) {
-		m_turns_active = 0_bi;
-	}
-}
-
-auto Rampage::advance_one_turn() -> bool {
-	if (!is_active()) {
-		return false;
-	}
-	if (*m_turns_active == std::numeric_limits<type>::max()) {
-		m_turns_active = bounded::none;
-		return true;
-	}
-	++*m_turns_active;
-	return false;
-}
-
-auto operator==(Rampage const lhs, Rampage const rhs) -> bool {
-	return lhs.m_turns_active == rhs.m_turns_active;
-}
-
-auto operator!= (Rampage const lhs, Rampage const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

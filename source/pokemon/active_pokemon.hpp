@@ -209,8 +209,8 @@ public:
 	bool vanish_doubles_power(Moves move_name) const;
 	void activate_water_sport();
 	auto hit_with_yawn() -> void;
-	// Advanced the yawn counter and returns whether the Pokemon fell sleep
-	auto try_to_activate_yawn() -> bool;
+	// Advance the yawn counter and possibly put the Pokemon to sleep
+	auto try_to_activate_yawn(Weather weather) -> void;
 
 	// Returns whether the Pokemon ends up in a Vanished state
 	bool bounce();

@@ -19,36 +19,11 @@
 #ifndef SLOW_START_HPP_
 #define SLOW_START_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class SlowStart {
-public:
-	auto is_active() const -> bool;
-	auto advance_one_turn() -> void;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
-	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
-	}
-	friend auto operator==(SlowStart lhs, SlowStart rhs) -> bool;
-private:
-	friend class Evaluate;
-	using type = bounded::integer<0, 4>;
-	bounded::optional<type> m_turns_active;
-};
-auto operator!=(SlowStart lhs, SlowStart rhs) -> bool;
-
-constexpr auto hash(SlowStart const slow_start) noexcept {
-	return slow_start.hash();
-}
-constexpr auto max_hash(SlowStart const slow_start) noexcept {
-	return slow_start.max_hash();
-}
+using SlowStart = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn>;
 
 }	// namespace technicalmachine
 #endif	// SLOW_START_HPP_

@@ -19,38 +19,11 @@
 #ifndef RAMPAGE_HPP_
 #define RAMPAGE_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class Rampage {
-public:
-	auto activate() -> void;
-	// returns whether the rampage ended
-	auto advance_one_turn() -> bool;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
-	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
-	}
-	friend auto operator==(Rampage lhs, Rampage rhs) -> bool;
-private:
-	friend class Evaluate;
-	auto is_active() const -> bool;
-	using type = bounded::integer<0, 2>;
-	bounded::optional<type> m_turns_active;
-};
-auto operator!=(Rampage lhs, Rampage rhs) -> bool;
-
-constexpr auto hash(Rampage const rampage) noexcept {
-	return rampage.hash();
-}
-constexpr auto max_hash(Rampage const rampage) noexcept {
-	return rampage.max_hash();
-}
+using Rampage = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// RAMPAGE_HPP_

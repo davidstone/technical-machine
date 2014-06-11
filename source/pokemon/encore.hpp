@@ -19,38 +19,11 @@
 #ifndef ENCORE_HPP_
 #define ENCORE_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 
-class Encore {
-public:
-	auto is_active() const -> bool;
-	auto activate() -> void;
-	auto advance_one_turn() -> void;
-	friend auto operator== (Encore const & lhs, Encore const & rhs) -> bool;
-	
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
-	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
-	}
-private:
-	friend class Evaluate;
-	using type = bounded::integer<0, 8>;
-	bounded::optional<type> m_turns_active;
-};
-auto operator!= (Encore const & lhs, Encore const & rhs) -> bool;
-
-constexpr auto hash(Encore const encore) noexcept {
-	return encore.hash();
-}
-constexpr auto max_hash(Encore const encore) noexcept {
-	return encore.max_hash();
-}
+using Encore = EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// ENCORE_HPP_

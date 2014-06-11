@@ -1,5 +1,5 @@
 // Class that handles DelayedAttack
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,53 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "delayed_attack.hpp"
-
-namespace technicalmachine {
-namespace {
-constexpr unsigned max_turns = 3;
-}	// unnamed namespace
-
-DelayedAttack::DelayedAttack() :
-	turns_before_hitting(0)
-	{
-}
-
-bool DelayedAttack::is_active() const {
-	return turns_before_hitting != 0;
-}
-
-void DelayedAttack::activate() {
-	if (is_active())
-		return;
-	// TODO: implement
-}
-
-bool DelayedAttack::decrement() {
-	if (!is_active())
-		return false;
-
-	--turns_before_hitting;
-	return turns_before_hitting == 0;
-}
-
-void DelayedAttack::reset() {
-	turns_before_hitting = 0;
-}
-
-DelayedAttack::hash_type DelayedAttack::hash() const {
-	return turns_before_hitting;
-}
-
-DelayedAttack::hash_type DelayedAttack::max_hash() {
-	return max_turns;
-}
-
-bool operator== (DelayedAttack const & lhs, DelayedAttack const & rhs) {
-	return lhs.turns_before_hitting == rhs.turns_before_hitting;
-}
-
-bool operator!= (DelayedAttack const & lhs, DelayedAttack const & rhs) {
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

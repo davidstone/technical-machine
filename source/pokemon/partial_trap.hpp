@@ -19,9 +19,7 @@
 #ifndef PARTIAL_TRAP_HPP_
 #define PARTIAL_TRAP_HPP_
 
-#include "../hash.hpp"
-
-#include <bounded_integer/optional.hpp>
+#include "end_of_turn_counter.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
@@ -30,23 +28,30 @@ class ActivePokemon;
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap
 class PartialTrap {
 public:
-	auto is_active() const -> bool;
-	auto activate() -> void;
+	constexpr auto is_active() const {
+		return m_base.is_active();
+	}
+	auto activate() {
+		m_base.activate();
+	}
 	auto damage(ActivePokemon & pokemon) -> void;
-	friend auto operator==(PartialTrap lhs, PartialTrap rhs) -> bool;
+
 	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
+		return m_base.hash();
 	}
 	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
+		return m_base.max_hash();
+	}
+	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) -> bool {
+		return lhs.m_base == rhs.m_base;
 	}
 private:
-	friend class Evaluate;
-	using type = bounded::integer<0, 7>;
-	bounded::optional<type> m_turns_active;
+	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn> m_base;
 };
 
-auto operator!=(PartialTrap lhs, PartialTrap rhs) -> bool;
+constexpr auto operator!=(PartialTrap const lhs, PartialTrap const rhs) {
+	return !(lhs == rhs);
+}
 
 constexpr auto hash(PartialTrap const partial_trap) noexcept {
 	return partial_trap.hash();

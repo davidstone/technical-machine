@@ -23,6 +23,7 @@
 #include "../ability.hpp"
 #include "../damage.hpp"
 #include "../rational.hpp"
+#include "../weather.hpp"
 
 #include "../move/is_switch.hpp"
 #include "../move/move.hpp"
@@ -123,7 +124,7 @@ void ActivePokemon::reset_switch() {
 	water_sport = false;
 	bide = {};
 	damage_done_to_active = 0;
-	m_taunt.reset();
+	m_taunt = {};
 	toxic = {};
 	uproar = {};
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
@@ -367,10 +368,13 @@ bool ActivePokemon::is_loafing() const {
 
 void ActivePokemon::decrement_lock_in() {
 	// Cannot be locked into Rampage and Uproar at the same time
-	if (rampage.advance_one_turn()) {
-		confuse();
+	if (rampage.is_active()) {
+		rampage.advance_one_turn();
+		if (!rampage.is_active()) {
+			confuse();
+		}
 	} else {
-		uproar.increment();
+		uproar.advance_one_turn();
 	}
 }
 
@@ -397,7 +401,7 @@ void ActivePokemon::activate_magnet_rise() {
 }
 
 void ActivePokemon::decrement_magnet_rise() {
-	m_magnet_rise.decrement();
+	m_magnet_rise.advance_one_turn();
 }
 
 bool ActivePokemon::me_first_is_active() const {
@@ -467,7 +471,7 @@ void ActivePokemon::activate_perish_song() {
 }
 
 void ActivePokemon::perish_song_turn() {
-	bool const faints_this_turn = perish_song.advance_one_turn();
+	bool const faints_this_turn = perish_song.advance_one_turn_deactivated();
 	if (faints_this_turn) {
 		faint();
 	}
@@ -629,7 +633,7 @@ bool ActivePokemon::is_taunted() const {
 }
 
 void ActivePokemon::increment_taunt() {
-	m_taunt.increment();
+	m_taunt.advance_one_turn();
 }
 
 void ActivePokemon::increment_toxic() {
@@ -641,7 +645,7 @@ void ActivePokemon::u_turn() {
 }
 
 void ActivePokemon::use_uproar() {
-	uproar.increment();
+	uproar.advance_one_turn();
 }
 
 bool ActivePokemon::vanish_doubles_power(Moves const move_name) const {
@@ -656,8 +660,11 @@ auto ActivePokemon::hit_with_yawn() -> void {
 	yawn.activate();
 }
 
-auto ActivePokemon::try_to_activate_yawn() -> bool {
-	return yawn.advance_turn();
+auto ActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
+	bool const put_to_sleep = yawn.advance_one_turn_deactivated();
+	if (put_to_sleep) {
+		Status::apply<Status::sleep>(*this, weather);
+	}
 }
 
 bool ActivePokemon::bounce() {
@@ -803,19 +810,16 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 		recharge_lock_in,
 		slow_start,
 		stockpile,
+		m_taunt,
 		is_tormented,
-		water_sport
+		uproar,
+		water_sport,
+		yawn
 	);
-	current_hash *= m_taunt.max_hash();
-	current_hash += m_taunt.hash();
 	current_hash *= toxic.max_hash();
 	current_hash += toxic.hash();
-	current_hash *= uproar.max_hash();
-	current_hash += uproar.hash();
 	current_hash *= vanish.max_hash();
 	current_hash += vanish.hash();
-	current_hash *= yawn.max_hash();
-	current_hash += yawn.hash();
 	return current_hash;
 }
 
@@ -857,14 +861,14 @@ ActivePokemon::hash_type ActivePokemon::max_hash() const {
 		recharge_lock_in,
 		slow_start,
 		stockpile,
+		m_taunt,
 		is_tormented,
-		water_sport
+		uproar,
+		water_sport,
+		yawn
 	);
-	current_hash *= m_taunt.max_hash();
 	current_hash *= toxic.max_hash();
-	current_hash *= uproar.max_hash();
 	current_hash *= vanish.max_hash();
-	current_hash *= yawn.max_hash();
 	return current_hash;
 }
 

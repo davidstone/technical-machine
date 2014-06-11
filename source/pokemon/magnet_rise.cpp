@@ -17,34 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "magnet_rise.hpp"
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto MagnetRise::is_active() const -> bool {
-	return turns_remaining() != 0_bi;
-}
-
-auto MagnetRise::activate() -> void {
-	if (!is_active()) {
-		m_turns_remaining = std::numeric_limits<duration_type>::max();
-	}
-}
-
-auto MagnetRise::decrement() -> void {
-	--m_turns_remaining;
-}
-
-auto MagnetRise::turns_remaining() const -> duration_type {
-	return m_turns_remaining;
-}
-
-auto operator== (MagnetRise const lhs, MagnetRise const rhs) -> bool {
-	return lhs.turns_remaining() == rhs.turns_remaining();
-}
-
-auto operator!= (MagnetRise const lhs, MagnetRise const rhs) -> bool{
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

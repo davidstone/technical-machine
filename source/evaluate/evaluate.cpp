@@ -41,13 +41,21 @@
 namespace technicalmachine {
 namespace {
 
+template<typename T>
+class MaxTurns;
+template<intmax_t max_turns, CounterOperations... operations>
+class MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
+public:
+	static constexpr auto value = max_turns;
+};
+
 auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
 	return
 		(pokemon.aqua_ring_is_active() ? evaluate.aqua_ring() : 0_bi) +
 		(pokemon.has_focused_energy() ? evaluate.focus_energy() : 0_bi) +
 		(pokemon.ingrained() ? evaluate.ingrain() : 0_bi) +
-		evaluate.magnet_rise() * pokemon.magnet_rise().turns_remaining() +
+		(pokemon.magnet_rise().is_active() ? evaluate.magnet_rise() * (bounded::make<MaxTurns<MagnetRise>::value>() - *pokemon.magnet_rise().turns_active()) : 0_bi) +
 		(pokemon.substitute() ? (evaluate.substitute() + evaluate.substitute_hp() * pokemon.substitute().hp() / get_hp(pokemon).max()) : 0_bi) +
 		std::inner_product(pokemon.stage().begin(), pokemon.stage().end(), evaluate.stage().begin(), static_cast<stage_type>(0_bi))
 	;
@@ -160,14 +168,28 @@ auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, We
 	auto const foe_pokemon = score_all_pokemon(evaluate, foe, ai, weather);
 	return bounded::make<bounded::null_policy>(ai_field_effects - foe_field_effects + ai_pokemon - foe_pokemon);
 }
+// Extra is here to allow for one-past-the-end on both sides
 constexpr bounded::integer<-1, 1> extra = 0_bi;
 using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
 
-static_assert(std::is_same<Evaluate::type, decltype(std::declval<ScoreTeam>() + extra)>::value, "Type mismatch in Evaluate::operator()");
+template<typename T>
+struct TypeMismatchInEvaluateMessage;
+
+template<typename T, bool lazy>
+struct TypeMismatchInEvaluate {
+	static constexpr auto value = true;
+};
+template<typename T>
+struct TypeMismatchInEvaluate<T, false> {
+	static constexpr auto value = TypeMismatchInEvaluateMessage<T>{};
+};
+
+using ResultType = decltype(std::declval<ScoreTeam>() + extra);
 
 }	// namespace
 
 auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type {
+	static_cast<void>(TypeMismatchInEvaluate<ResultType, std::is_same<Evaluate::type, ResultType>::value>::value);
 	auto const score = score_team(*this, ai, foe, weather);
 	return score;
 }

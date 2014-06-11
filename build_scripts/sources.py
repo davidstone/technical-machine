@@ -64,6 +64,7 @@ active_pokemon_sources = prepend_dir('pokemon', [
 	'disable.cpp',
 	'embargo.cpp',
 	'encore.cpp',
+	'end_of_turn_counter.cpp',
 	'heal_block.cpp',
 	'last_used_move.cpp',
 	'magnet_rise.cpp',

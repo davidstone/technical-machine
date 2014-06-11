@@ -17,35 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "embargo.hpp"
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto Embargo::is_active() const -> bool {
-	return static_cast<bool>(m_turns_remaining);
-}
-
-auto Embargo::activate() -> void {
-	m_turns_remaining = 0_bi;
-}
-
-auto Embargo::advance_one_turn() -> void {
-	if (!is_active()) {
-		return;
-	}
-	if (*m_turns_remaining == std::numeric_limits<value_type>::max()) {
-		m_turns_remaining = bounded::none;
-	} else {
-		++*m_turns_remaining;
-	}
-}
-
-auto operator==(Embargo const lhs, Embargo const rhs) -> bool {
-	return lhs.m_turns_remaining == rhs.m_turns_remaining;
-}
-
-auto operator!=(Embargo const lhs, Embargo const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

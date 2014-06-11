@@ -17,38 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "uproar.hpp"
-
-// Uproar lasts 2-5 turns
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto Uproar::increment() -> void {
-	if (!m_counter) {
-		m_counter = 1_bi;
-	}
-	else if (*m_counter != std::numeric_limits<decltype(m_counter)>::max()) {
-		++*m_counter;
-	}
-	else {
-		m_counter = bounded::none;
-	}
-}
-
-auto Uproar::hash() const -> hash_type {
-	return m_counter ? static_cast<hash_type>(*m_counter) : 0;
-}
-
-auto Uproar::max_hash() -> hash_type {
-	return static_cast<hash_type>(std::numeric_limits<decltype(m_counter)::value_type>::max() + 1_bi);
-}
-
-auto operator== (Uproar const & lhs, Uproar const & rhs) -> bool {
-	return lhs.m_counter == rhs.m_counter;
-}
-
-auto operator!= (Uproar const & lhs, Uproar const & rhs) -> bool {
-	return !(lhs == rhs);
-}
-
-}	// namespace technicalmachine

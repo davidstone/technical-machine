@@ -38,7 +38,7 @@ class Team;
 class Weather;
 
 // 100% chance to win
-constexpr auto victory = 40731632_bi;
+constexpr auto victory = 40715248_bi;
 
 class Evaluate {
 public:

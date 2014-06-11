@@ -1,4 +1,4 @@
-// Perish Song duration
+// Common functionality for flags that are advanced at the end of the turn
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,4 +16,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "perish_song.hpp"
+#include "end_of_turn_counter.hpp"
