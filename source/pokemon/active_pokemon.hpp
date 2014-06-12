@@ -109,7 +109,7 @@ public:
 	void advance_embargo();
 	bool is_encored() const;
 	void activate_encore();
-	void increment_encore();
+	void advance_encore();
 	void endure();
 	// This function should be used instead of checking if hp == 0 to handle
 	// messages being sent about multiple Pokemon fainting in one turn.
@@ -131,12 +131,12 @@ public:
 	void hit_with_leech_seed();
 	void clear_leech_seed();
 	bool is_loafing() const;
-	void decrement_lock_in();
+	void advance_lock_in();
 	bool locked_on() const;
-	void lock_on_to();
+	void use_lock_on();
 	void identify();
-	bool imprisoned() const;
-	void imprison();
+	bool used_imprison() const;
+	void use_imprison();
 	PokemonCollection::index_type index() const;
 	bool ingrained() const;
 	void ingrain();
@@ -144,12 +144,20 @@ public:
 	void lower_pp(Ability const & target);
 	auto magnet_rise() const -> MagnetRise const &;
 	void activate_magnet_rise();
-	void decrement_magnet_rise();
+	void advance_magnet_rise();
 	bool me_first_is_active() const;
-	bounded::integer<10, 160> fury_cutter_power() const;
-	bounded::integer<30, 480> momentum_move_power() const;
-	bounded::integer<0, 30> triple_kick_power() const;
-	bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> metronome_boost() const;
+	auto fury_cutter_power() const {
+		return m_last_used_move.fury_cutter_power();
+	}
+	auto momentum_move_power() const {
+		return m_last_used_move.momentum_move_power();
+	}
+	auto triple_kick_power() const {
+		return m_last_used_move.triple_kick_power();
+	}
+	auto metronome_boost() const {
+		return m_last_used_move.metronome_boost();
+	}
 	bool minimized() const;
 	bool missed() const;
 	void set_miss(bool value);
@@ -157,7 +165,7 @@ public:
 	bool moved() const;
 	bool moved_since_switch() const;
 	void activate_mud_sport();
-	bool nightmare() const;
+	bool is_having_a_nightmare() const;
 	void give_nightmares();
 	void partially_trap();
 	void partial_trap_damage();
@@ -169,7 +177,7 @@ public:
 	void protect();
 	void break_protect();
 	void activate_rampage();
-	bool recharging() const;
+	bool is_recharging() const;
 	bool recharge();
 	void use_recharge_move();
 	bool is_roosting() const;
@@ -184,7 +192,9 @@ public:
 	auto stage() const -> Stage const &;
 	auto stage() -> Stage &;
 	
-	bounded::integer<0, Stockpile::max * 100> spit_up_power() const;
+	auto spit_up_power() const {
+		return m_stockpile.spit_up_power();
+	}
 	void increment_stockpile();
 	bounded::integer<0, Stockpile::max> release_stockpile();
 
@@ -195,15 +205,15 @@ public:
 	
 	auto fully_trapped() const -> bool;
 	bool trapped() const;
-	bool tormented() const;
+	bool is_tormented() const;
 	void taunt();
 	bool is_taunted() const;
 	void torment();
-	void increment_taunt();
+	void advance_taunt();
 	auto toxic_ratio() const {
-		return toxic.ratio_drained();
+		return m_toxic.ratio_drained();
 	}
-	void increment_toxic();
+	void advance_toxic();
 	void u_turn();
 	void use_uproar();
 	bool vanish_doubles_power(Moves move_name) const;
@@ -250,67 +260,67 @@ private:
 	// and move assignment operator to simply verify that the referents are
 	// the same.
 	PokemonCollection m_all_pokemon;
-	HP::current_type damage_done_to_active = 0_bi;
-	Bide bide;
+	HP::current_type m_damaged = 0_bi;
+	Bide m_bide;
 	ChanceToHit m_chance_to_hit = ChanceToHit(100_bi, 100_bi);
-	Confusion confusion;
+	Confusion m_confusion;
 	Disable m_disable;
-	Embargo embargo;
-	Encore encore;
-	HealBlock heal_block;
-	LastUsedMove last_used_move;
+	Embargo m_embargo;
+	Encore m_encore;
+	HealBlock m_heal_block;
+	LastUsedMove m_last_used_move;
 	MagnetRise m_magnet_rise;
 	Substitute m_substitute;
-	PartialTrap partial_trap;
-	PerishSong perish_song;
-	Rampage rampage;
-	RandomDamage random_damage;
+	PartialTrap m_partial_trap;
+	PerishSong m_perish_song;
+	Rampage m_rampage;
+	RandomDamage m_random_damage;
 	Stage m_stage;
-	SlowStart slow_start;
-	Stockpile stockpile;
+	SlowStart m_slow_start;
+	Stockpile m_stockpile;
 	Taunt m_taunt;
-	Toxic toxic;
-	Uproar uproar;
-	Vanish vanish;
-	Yawn yawn;
-	bool aqua_ring = false;
-	bool attracted = false;
+	Toxic m_toxic;
+	Uproar m_uproar;
+	Vanish m_vanish;
+	Yawn m_yawn;
+	bool m_aqua_ring = false;
+	bool m_attracted = false;
 	// Will it wake up
-	bool awakening = false;
-	bool ch = false;
-	bool charged = false;
-	bool cursed = false;
-	bool used_defense_curl = false;
-	bool destiny_bond = false;
-	bool enduring = false;
-	bool flash_fire = false;
-	bool flinched_this_turn = false;
-	bool focusing_energy = false;
-	bool fully_paralyzed = false;
+	bool m_awakening = false;
+	bool m_charged = false;
+	bool m_critical_hit = false;
+	bool m_is_cursed = false;
+	bool m_defense_curled = false;
+	bool m_destiny_bond = false;
+	bool m_enduring = false;
+	bool m_flash_fire = false;
+	bool m_flinched = false;
+	bool m_has_focused_energy = false;
+	bool m_is_fully_paralyzed = false;
 	// Block, Mean Look, Spider Web
 	bool m_fully_trapped = false;
-	bool gastro_acid = false;
-	bool identified = false;
-	bool used_imprison = false;
-	bool ingrain_active = false;
-	bool leech_seed = false;
-	bool loaf = false;
-	bool lock_on = false;
-	bool me_first = false;
-	bool minimize = false;
-	bool miss = false;
-	bool has_moved = false;
-	bool mud_sport = false;
-	bool nightmares = false;
-	bool pass = false;
-	bool power_trick = false;
-	bool protecting = false;
-	bool recharge_lock_in = false;
-	bool roosting = false;
-	bool shedding_skin = false;
-	bool is_tormented = false;
-	bool u_turning = false;
-	bool water_sport = false;
+	bool m_gastro_acid = false;
+	bool m_identified = false;
+	bool m_used_imprison = false;
+	bool m_ingrained = false;
+	bool m_leech_seeded = false;
+	bool m_is_loafing_turn = false;
+	bool m_locked_on = false;
+	bool m_me_first_is_active = false;
+	bool m_minimized = false;
+	bool m_missed = false;
+	bool m_moved = false;
+	bool m_mud_sport = false;
+	bool m_is_having_a_nightmare = false;
+	bool m_is_baton_passing = false;
+	bool m_power_trick_is_active = false;
+	bool m_is_protecting = false;
+	bool m_is_recharging = false;
+	bool m_is_roosting = false;
+	bool m_shed_skin_activated = false;
+	bool m_is_tormented = false;
+	bool m_u_turning = false;
+	bool m_water_sport = false;
 	bool m_will_be_replaced = false;
 };
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);

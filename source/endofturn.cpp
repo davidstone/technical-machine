@@ -138,7 +138,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			break;
 		}
 		case Status::poison_toxic:
-			pokemon.increment_toxic();
+			pokemon.advance_toxic();
 			if (get_ability(pokemon).absorbs_poison_damage()) {
 				heal(pokemon, make_rational(1_bi, 8_bi));
 			} else {
@@ -146,7 +146,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			}
 			break;
 		case Status::sleep:
-			if (pokemon.nightmare()) {
+			if (pokemon.is_having_a_nightmare()) {
 				heal(pokemon, make_rational(-1_bi, 4_bi));
 			}
 			if (get_ability(foe).harms_sleepers()) {
@@ -171,12 +171,12 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	}
 	pokemon.partial_trap_damage();
 	
-	pokemon.decrement_lock_in();
+	pokemon.advance_lock_in();
 	
 	pokemon.advance_disable();
-	pokemon.increment_encore();
-	pokemon.increment_taunt();
-	pokemon.decrement_magnet_rise();
+	pokemon.advance_encore();
+	pokemon.advance_taunt();
+	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
 	pokemon.try_to_activate_yawn(weather);

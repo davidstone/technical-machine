@@ -95,7 +95,7 @@ bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePo
 
 bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const & weather) {
 	Move const & move = user.move();
-	assert(!is_switch(move) or !user.recharging());
+	assert(!is_switch(move) or !user.is_recharging());
 	
 	if (is_switch(move)) {
 		return true;
@@ -178,7 +178,7 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 
 bool imprison(Moves const move, ActivePokemon const & other) {
 	auto const & moves = other.all_moves();
-	return other.imprisoned() and std::find(moves.regular().begin(), moves.regular().end(), move) != moves.regular().end();
+	return other.used_imprison() and std::find(moves.regular().begin(), moves.regular().end(), move) != moves.regular().end();
 }
 
 bool is_blocked_by_taunt(Moves const move) {
@@ -208,7 +208,7 @@ bool block2(ActivePokemon const & user, Moves const move, Weather const & weathe
 
 bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves const move) {
 	return !is_regular(move) ?
-		user.recharging() :
+		user.is_recharging() :
 		standard_move_lock_in(user, move);
 }
 
@@ -217,7 +217,7 @@ bool standard_move_lock_in(ActivePokemon const & user, Moves const move) {
 }
 
 bool is_locked_in (ActivePokemon const & user) {
-	return user.is_encored() or user.recharging() or is_choice_item(get_item(user));
+	return user.is_encored() or user.is_recharging() or is_choice_item(get_item(user));
 }
 
 bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move) {
@@ -225,7 +225,7 @@ bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move
 }
 
 bool blocked_by_torment(ActivePokemon const & user, Moves const move) {
-	return user.tormented() and user.was_used_last(move);
+	return user.is_tormented() and user.was_used_last(move);
 }
 
 bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {

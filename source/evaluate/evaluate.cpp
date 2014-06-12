@@ -110,12 +110,12 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokem
 	auto const has_baton_pass = std::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return
 		BOUNDED_CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.imprisoned(), evaluate.imprison(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.used_imprison(), evaluate.imprison(), 0_bi) +
 		BOUNDED_CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
 		BOUNDED_CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
 		BOUNDED_CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.nightmare(), evaluate.nightmare(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.tormented(), evaluate.torment(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_having_a_nightmare(), evaluate.nightmare(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_tormented(), evaluate.torment(), 0_bi) +
 		baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
 	;
 }

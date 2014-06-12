@@ -61,182 +61,183 @@ MoveCollection & ActivePokemon::all_moves() {
 }
 
 bool ActivePokemon::was_used_last(Moves const move_name) const {
-	return last_used_move.was_used_last(static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(), move_name)));
+	return m_last_used_move.was_used_last(static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(), move_name)));
 }
 
 
 void ActivePokemon::reset_end_of_turn() {
-	damage_done_to_active = 0;
-	enduring = false;
-	flinched_this_turn = false;
-	has_moved = false;
-	me_first = false;
-	loaf = !loaf;
-	protecting = false;
+	m_damaged = 0_bi;
+	m_enduring = false;
+	m_flinched = false;
+	m_moved = false;
+	m_me_first_is_active = false;
+	m_is_loafing_turn = !m_is_loafing_turn;
+	m_is_protecting = false;
 }
 
 void ActivePokemon::reset_switch() {
 	// TODO: remove some of these when the foe switches, too
 	if (!is_baton_passing()) {
-		aqua_ring = false;
-		confusion = {};
-		cursed = false;
-		embargo = {};
-		focusing_energy = false;
-		gastro_acid = false;
-		ingrain_active = false;
-		leech_seed = false;
-		lock_on = false;
+		m_aqua_ring = false;
+		m_confusion = {};
+		m_is_cursed = false;
+		m_embargo = {};
+		m_has_focused_energy = false;
+		m_gastro_acid = false;
+		m_ingrained = false;
+		m_leech_seeded = false;
+		m_locked_on = false;
 		m_magnet_rise = {};
-		perish_song = {};
-		power_trick = false;
+		m_perish_song = {};
+		m_power_trick_is_active = false;
 		m_stage = Stage{};
 		m_substitute = {};
 	}
-	attracted = false;
-	charged = false;
-	used_defense_curl = false;
-	destiny_bond = false;
+	m_attracted = false;
+	m_charged = false;
+	m_defense_curled = false;
+	m_destiny_bond = false;
 	m_disable = Disable{};
-	encore = {};
-	flash_fire = false;
-	flinched_this_turn = false;
+	m_encore = {};
+	m_flash_fire = false;
+	m_flinched = false;
 	m_fully_trapped = false;
-	heal_block = {};
-	identified = false;
-	used_imprison = false;
-	last_used_move = {};
+	m_heal_block = {};
+	m_identified = false;
+	m_used_imprison = false;
+	m_last_used_move = {};
 	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
 	// replaced; false makes it wrong otherwise
-	loaf = false;
-	minimize = false;
-	me_first = false;
-	mud_sport = false;
-	nightmares = false;
-	partial_trap = {};
-	pass = false;
-	rampage = {};
-	roosting = false;
-	slow_start = {};
-	stockpile = {};
-	is_tormented = false;
-	u_turning = false;
-	water_sport = false;
-	bide = {};
-	damage_done_to_active = 0;
+	m_is_loafing_turn = false;
+	m_minimized = false;
+	m_me_first_is_active = false;
+	m_mud_sport = false;
+	m_is_having_a_nightmare = false;
+	m_partial_trap = {};
+	m_is_baton_passing = false;
+	m_rampage = {};
+	m_is_roosting = false;
+	m_slow_start = {};
+	m_stockpile = {};
+	m_is_tormented = false;
+	m_u_turning = false;
+	m_water_sport = false;
+	m_bide = {};
+	m_damaged = 0_bi;
 	m_taunt = {};
-	toxic = {};
-	uproar = {};
+	m_toxic = {};
+	m_uproar = {};
 	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
 	// vanished. Therefore, we need to reset it.
-	vanish = {};
-	yawn = {};
+	m_vanish = {};
+	m_yawn = {};
 	m_will_be_replaced = false;
 }
 
 void ActivePokemon::reset_between_turns() {
-	ch = false;
-	fully_paralyzed = false;
-	confusion.end_of_turn_reset();
-	miss = false;
+	m_critical_hit = false;
+	m_is_fully_paralyzed = false;
+	m_confusion.end_of_turn_reset();
+	m_missed = false;
 }
 
 void ActivePokemon::clear_field() {
 	clear_leech_seed();
-	partial_trap = {};
+	m_partial_trap = {};
 }
 
 void ActivePokemon::update_before_move() {
-	destiny_bond = false;
-	lock_on = false;
-	has_moved = true;
+	m_destiny_bond = false;
+	m_locked_on = false;
+	m_moved = true;
 }
 
 void ActivePokemon::clear_leech_seed() {
-	leech_seed = false;
+	m_leech_seeded = false;
 }
 
 bool ActivePokemon::aqua_ring_is_active() const {
-	return aqua_ring;
+	return m_aqua_ring;
 }
 
 void ActivePokemon::activate_aqua_ring() {
-	aqua_ring = true;
+	m_aqua_ring = true;
 }
 
 void ActivePokemon::attract() {
-	attracted = true;
+	m_attracted = true;
 }
 
 void ActivePokemon::awaken(bool const value) {
-	awakening = value;
+	m_awakening = value;
 }
 
 Rational ActivePokemon::awaken_probability() const {
 	auto const & status = get_status(*this);
 	auto const & ability = get_ability(*this);
-	return status.awaken_probability(ability, awakening);
+	return status.awaken_probability(ability, m_awakening);
 }
 
 bool ActivePokemon::is_baton_passing() const {
-	return pass;
+	return m_is_baton_passing;
 }
 
 void ActivePokemon::baton_pass() {
-	pass = true;
+	m_is_baton_passing = true;
 }
 
 bool ActivePokemon::cannot_be_koed() const {
-	return enduring;
+	return m_enduring;
 }
 
 bool ActivePokemon::charge_boosted() const {
-	return charged and get_type(move(), *this) == Type::Electric;
+	return m_charged and get_type(move(), *this) == Type::Electric;
 }
 
 void ActivePokemon::charge() {
-	charged = true;
+	m_charged = true;
 }
 
 bool ActivePokemon::is_confused() const {
-	return confusion.is_active();
+	return m_confusion.is_active();
 }
 
 void ActivePokemon::confuse() {
-	if (!get_ability(*this).blocks_confusion())
-		confusion.activate();
+	if (!get_ability(*this).blocks_confusion()) {
+		m_confusion.activate();
+	}
 }
 
 void ActivePokemon::handle_confusion() {
-	confusion.do_turn(*this);
+	m_confusion.do_turn(*this);
 }
 
 bool ActivePokemon::critical_hit() const {
-	return ch;
+	return m_critical_hit;
 }
 
 void ActivePokemon::set_critical_hit(bool const value) {
-	ch = value;
+	m_critical_hit = value;
 }
 
 void ActivePokemon::curse() {
-	cursed = true;
+	m_is_cursed = true;
 }
 
 bool ActivePokemon::is_cursed() const {
-	return cursed;
+	return m_is_cursed;
 }
 
 void ActivePokemon::defense_curl() {
-	used_defense_curl = true;
+	m_defense_curled = true;
 }
 
 void ActivePokemon::use_destiny_bond() {
-	destiny_bond = true;
+	m_destiny_bond = true;
 }
 
 bool ActivePokemon::defense_curled() const {
-	return used_defense_curl;
+	return m_defense_curled;
 }
 
 bool ActivePokemon::is_disabled(Moves const move_name) const {
@@ -254,27 +255,27 @@ void ActivePokemon::advance_disable() {
 }
 
 void ActivePokemon::activate_embargo() {
-	embargo.activate();
+	m_embargo.activate();
 }
 
 void ActivePokemon::advance_embargo() {
-	embargo.advance_one_turn();
+	m_embargo.advance_one_turn();
 }
 
 bool ActivePokemon::is_encored() const {
-	return encore.is_active();
+	return m_encore.is_active();
 }
 
 void ActivePokemon::activate_encore() {
-	encore.activate();
+	m_encore.activate();
 }
 
-void ActivePokemon::increment_encore() {
-	encore.advance_one_turn();
+void ActivePokemon::advance_encore() {
+	m_encore.advance_one_turn();
 }
 
 void ActivePokemon::endure() {
-	enduring = true;
+	m_enduring = true;
 }
 
 bool ActivePokemon::is_fainted() const {
@@ -287,27 +288,27 @@ void ActivePokemon::faint() {
 }
 
 bool ActivePokemon::flash_fire_is_active() const {
-	return flash_fire;
+	return m_flash_fire;
 }
 
 void ActivePokemon::activate_flash_fire() {
-	flash_fire = true;
+	m_flash_fire = true;
 }
 
 bool ActivePokemon::flinched() const {
-	return flinched_this_turn;
+	return m_flinched;
 }
 
 void ActivePokemon::flinch() {
-	flinched_this_turn = true;
+	m_flinched = true;
 }
 
 auto ActivePokemon::has_focused_energy() const -> bool {
-	return focusing_energy;
+	return m_has_focused_energy;
 }
 
 void ActivePokemon::focus_energy() {
-	focusing_energy = true;
+	m_has_focused_energy = true;
 }
 
 void ActivePokemon::fully_trap() {
@@ -315,15 +316,15 @@ void ActivePokemon::fully_trap() {
 }
 
 void ActivePokemon::identify() {
-	identified = true;
+	m_identified = true;
 }
 
-bool ActivePokemon::imprisoned() const {
-	return used_imprison;
+bool ActivePokemon::used_imprison() const {
+	return m_used_imprison;
 }
 
-void ActivePokemon::imprison() {
-	used_imprison = true;
+void ActivePokemon::use_imprison() {
+	m_used_imprison = true;
 }
 
 PokemonCollection::index_type ActivePokemon::index() const {
@@ -331,59 +332,59 @@ PokemonCollection::index_type ActivePokemon::index() const {
 }
 
 bool ActivePokemon::ingrained() const {
-	return ingrain_active;
+	return m_ingrained;
 }
 
 void ActivePokemon::ingrain() {
-	ingrain_active = true;
+	m_ingrained = true;
 }
 
 bool ActivePokemon::heal_block_is_active() const {
-	return heal_block.is_active();
+	return m_heal_block.is_active();
 }
 
 void ActivePokemon::activate_heal_block() {
-	heal_block.activate();
+	m_heal_block.activate();
 }
 
 void ActivePokemon::advance_heal_block() {
-	heal_block.advance_one_turn();
+	m_heal_block.advance_one_turn();
 }
 
 bool ActivePokemon::is_fully_paralyzed() const {
-	return fully_paralyzed;
+	return m_is_fully_paralyzed;
 }
 
 bool ActivePokemon::leech_seeded() const {
-	return leech_seed;
+	return m_leech_seeded;
 }
 
 void ActivePokemon::hit_with_leech_seed() {
-	leech_seed = true;
+	m_leech_seeded = true;
 }
 
 bool ActivePokemon::is_loafing() const {
-	return get_ability(*this).is_loafing(loaf);
+	return get_ability(*this).is_loafing(m_is_loafing_turn);
 }
 
-void ActivePokemon::decrement_lock_in() {
+void ActivePokemon::advance_lock_in() {
 	// Cannot be locked into Rampage and Uproar at the same time
-	if (rampage.is_active()) {
-		rampage.advance_one_turn();
-		if (!rampage.is_active()) {
+	if (m_rampage.is_active()) {
+		m_rampage.advance_one_turn();
+		if (!m_rampage.is_active()) {
 			confuse();
 		}
 	} else {
-		uproar.advance_one_turn();
+		m_uproar.advance_one_turn();
 	}
 }
 
 bool ActivePokemon::locked_on() const {
-	return lock_on;
+	return m_locked_on;
 }
 
-void ActivePokemon::lock_on_to() {
-	lock_on = true;
+void ActivePokemon::use_lock_on() {
+	m_locked_on = true;
 }
 
 void ActivePokemon::lower_pp(Ability const & target) {
@@ -400,78 +401,64 @@ void ActivePokemon::activate_magnet_rise() {
 	m_magnet_rise.activate();
 }
 
-void ActivePokemon::decrement_magnet_rise() {
+void ActivePokemon::advance_magnet_rise() {
 	m_magnet_rise.advance_one_turn();
 }
 
 bool ActivePokemon::me_first_is_active() const {
-	return me_first;
-}
-
-bounded::integer<10, 160> ActivePokemon::fury_cutter_power() const {
-	return last_used_move.fury_cutter_power();
-}
-bounded::integer<30, 480> ActivePokemon::momentum_move_power() const {
-	return last_used_move.momentum_move_power();
-}
-bounded::integer<0, 30> ActivePokemon::triple_kick_power() const {
-	return last_used_move.triple_kick_power();
-}
-
-bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>> ActivePokemon::metronome_boost() const {
-	return last_used_move.metronome_boost();
+	return m_me_first_is_active;
 }
 
 bool ActivePokemon::minimized() const {
-	return minimize;
+	return m_minimized;
 }
 
 bool ActivePokemon::missed() const {
-	return miss;
+	return m_missed;
 }
 
 void ActivePokemon::set_miss(bool const value) {
-	miss = value;
+	m_missed = value;
 }
 
 void ActivePokemon::set_moved(bool const value) {
-	has_moved = value;
+	m_moved = value;
 }
 
 bool ActivePokemon::moved() const {
-	return has_moved;
+	return m_moved;
 }
 
 bool ActivePokemon::moved_since_switch() const {
-	return last_used_move.has_moved();
+	return m_last_used_move.has_moved();
 }
 
 void ActivePokemon::activate_mud_sport() {
-	mud_sport = true;
+	m_mud_sport = true;
 }
 
-bool ActivePokemon::nightmare() const {
-	return nightmares;
+bool ActivePokemon::is_having_a_nightmare() const {
+	return m_is_having_a_nightmare;
 }
 
 void ActivePokemon::give_nightmares() {
-	nightmares = true;
+	m_is_having_a_nightmare = true;
 }
 
 void ActivePokemon::partially_trap() {
-	partial_trap.activate();
+	m_partial_trap.activate();
 }
 
 void ActivePokemon::partial_trap_damage() {
-	partial_trap.damage(*this);
+	m_partial_trap.damage(*this);
 }
 
 void ActivePokemon::activate_perish_song() {
-	perish_song.activate();
+	m_perish_song.activate();
 }
 
 void ActivePokemon::perish_song_turn() {
-	bool const faints_this_turn = perish_song.advance_one_turn_deactivated();
+	bool const faints_this_turn = m_perish_song.advance_one_turn_deactivated();
 	if (faints_this_turn) {
 		faint();
 	}
@@ -482,53 +469,53 @@ bool ActivePokemon::can_be_phazed() const {
 }
 
 bool ActivePokemon::power_trick_is_active() const {
-	return power_trick;
+	return m_power_trick_is_active;
 }
 
 void ActivePokemon::activate_power_trick() {
-	power_trick = !power_trick;
+	m_power_trick_is_active = !m_power_trick_is_active;
 }
 
 void ActivePokemon::protect() {
-	protecting = true;
+	m_is_protecting = true;
 }
 
 void ActivePokemon::break_protect() {
-	protecting = false;
+	m_is_protecting = false;
 }
 
 void ActivePokemon::activate_rampage() {
-	rampage.activate();
+	m_rampage.activate();
 }
 
-bool ActivePokemon::recharging() const {
-	return recharge_lock_in;
+bool ActivePokemon::is_recharging() const {
+	return m_is_recharging;
 }
 
 bool ActivePokemon::recharge() {
-	bool const return_value = recharging();
-	recharge_lock_in = false;
+	bool const return_value = is_recharging();
+	m_is_recharging = false;
 	return return_value;
 }
 
 void ActivePokemon::use_recharge_move() {
-	recharge_lock_in = true;
+	m_is_recharging = true;
 }
 
 bool ActivePokemon::is_roosting() const {
-	return roosting;
+	return m_is_roosting;
 }
 
 void ActivePokemon::roost() {
-	roosting = true;
+	m_is_roosting = true;
 }
 
 bool ActivePokemon::shed_skin_activated() const {
-	return shedding_skin;
+	return m_shed_skin_activated;
 }
 
 void ActivePokemon::shed_skin(bool const value) {
-	shedding_skin = value;
+	m_shed_skin_activated = value;
 }
 
 Rational ActivePokemon::shed_skin_probability() const {
@@ -543,19 +530,19 @@ Rational ActivePokemon::shed_skin_probability() const {
 void ActivePokemon::increase_sleep_counter() {
 	auto & status = get_status(*this);
 	auto const & ability = get_ability(*this);
-	status.increase_sleep_counter(ability, awakening);
+	status.increase_sleep_counter(ability, m_awakening);
 }
 
 bool ActivePokemon::slow_start_is_active() const {
-	return slow_start.is_active();
+	return m_slow_start.is_active();
 }
 
 bool ActivePokemon::sport_is_active(Move const & foe_move) const {
 	switch (get_type(foe_move, *this)) {
 	case Type::Electric:
-		return mud_sport;
+		return m_mud_sport;
 	case Type::Fire:
-		return water_sport;
+		return m_water_sport;
 	default:
 		return false;
 	}
@@ -568,19 +555,15 @@ auto ActivePokemon::stage() -> Stage & {
 	return m_stage;
 }
 
-bounded::integer<0, Stockpile::max * 100> ActivePokemon::spit_up_power() const {
-	return stockpile.spit_up_power();
-}
-
 void ActivePokemon::increment_stockpile() {
-	bool const increased = stockpile.increment();
+	bool const increased = m_stockpile.increment();
 	if (increased) {
 		boost_defensive(stage(), 1_bi);
 	}
 }
 
 bounded::integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
-	auto const stages = stockpile.release();
+	auto const stages = m_stockpile.release();
 	boost_defensive(stage(), -stages);
 	return stages;
 }
@@ -598,7 +581,7 @@ bool ActivePokemon::has_switched() const {
 }
 
 bool ActivePokemon::switch_decision_required() const {
-	return pass or u_turning or will_be_replaced();
+	return m_is_baton_passing or m_u_turning or will_be_replaced();
 }
 
 void switch_pokemon(ActivePokemon & pokemon) {
@@ -613,15 +596,15 @@ auto ActivePokemon::fully_trapped() const -> bool {
 }
 
 bool ActivePokemon::trapped() const {
-	return m_fully_trapped or ingrained() or partial_trap.is_active();
+	return m_fully_trapped or ingrained() or m_partial_trap.is_active();
 }
 
-bool ActivePokemon::tormented() const {
-	return is_tormented;
+bool ActivePokemon::is_tormented() const {
+	return m_is_tormented;
 }
 
 void ActivePokemon::torment() {
-	is_tormented = true;
+	m_is_tormented = true;
 }
 
 void ActivePokemon::taunt() {
@@ -632,63 +615,63 @@ bool ActivePokemon::is_taunted() const {
 	return m_taunt.is_active();
 }
 
-void ActivePokemon::increment_taunt() {
+void ActivePokemon::advance_taunt() {
 	m_taunt.advance_one_turn();
 }
 
-void ActivePokemon::increment_toxic() {
-	toxic.increment();
+void ActivePokemon::advance_toxic() {
+	m_toxic.increment();
 }
 
 void ActivePokemon::u_turn() {
-	u_turning = true;
+	m_u_turning = true;
 }
 
 void ActivePokemon::use_uproar() {
-	uproar.advance_one_turn();
+	m_uproar.advance_one_turn();
 }
 
 bool ActivePokemon::vanish_doubles_power(Moves const move_name) const {
-	return vanish.doubles_move_power(move_name);
+	return m_vanish.doubles_move_power(move_name);
 }
 
 void ActivePokemon::activate_water_sport() {
-	water_sport = true;
+	m_water_sport = true;
 }
 
 auto ActivePokemon::hit_with_yawn() -> void {
-	yawn.activate();
+	m_yawn.activate();
 }
 
 auto ActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
-	bool const put_to_sleep = yawn.advance_one_turn_deactivated();
+	bool const put_to_sleep = m_yawn.advance_one_turn_deactivated();
 	if (put_to_sleep) {
 		Status::apply<Status::sleep>(*this, weather);
 	}
 }
 
 bool ActivePokemon::bounce() {
-	return vanish.bounce();
+	return m_vanish.bounce();
 }
 bool ActivePokemon::dig() {
-	return vanish.dig();
+	return m_vanish.dig();
 }
 bool ActivePokemon::dive() {
-	return vanish.dive();
+	return m_vanish.dive();
 }
 bool ActivePokemon::fly() {
-	return vanish.fly();
+	return m_vanish.fly();
 }
 bool ActivePokemon::shadow_force() {
-	return vanish.shadow_force();
+	return m_vanish.shadow_force();
 }
 
 void ActivePokemon::use_bide(Pokemon & target) {
-	if (!bide.is_active()) {
-		bide.activate();
+	if (!m_bide.is_active()) {
+		m_bide.activate();
 	}
 	else {
-		auto const bide_damage = bide.decrement();
+		auto const bide_damage = m_bide.decrement();
 		get_hp(target) -= bide_damage * 2_bi;
 	}
 }
@@ -714,23 +697,23 @@ void ActivePokemon::use_substitute() {
 }
 
 bool ActivePokemon::is_locked_in_to_bide() const {
-	return bide.is_active();
+	return m_bide.is_active();
 }
 
 bounded::integer<0, HP::max_value> ActivePokemon::damaged() const {
-	return damage_done_to_active;
+	return m_damaged;
 }
 
 Rational ActivePokemon::random_damage_multiplier() const {
-	return random_damage();
+	return m_random_damage();
 }
 
 void ActivePokemon::direct_damage(damage_type const damage) {
 	auto & hp = get_hp(*this);
 	auto const initial_hp = hp.current();
 	hp -= damage;
-	damage_done_to_active = initial_hp - hp.current();
-	bide.add_damage(damage);
+	m_damaged = initial_hp - hp.current();
+	m_bide.add_damage(damage);
 }
 
 void ActivePokemon::indirect_damage(damage_type const damage) {
@@ -738,15 +721,14 @@ void ActivePokemon::indirect_damage(damage_type const damage) {
 }
 
 void ActivePokemon::register_damage(damage_type const damage) {
-	damage_done_to_active = damage;
+	m_damaged = damage;
 }
 
 void ActivePokemon::increment_move_use_counter() {
 	if (is_regular(move())) {
-		last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()));
-	}
-	else {
-		last_used_move = LastUsedMove{};
+		m_last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()));
+	} else {
+		m_last_used_move = LastUsedMove{};
 	}
 }
 
@@ -775,145 +757,145 @@ void ActivePokemon::normalize_hp(bool fainted) {
 ActivePokemon::hash_type ActivePokemon::hash() const {
 	hash_type current_hash = big_hash(
 		substitute(),
-		bide,
-		confusion,
+		m_bide,
+		m_confusion,
 		m_disable,
-		embargo,
-		last_used_move,
+		m_embargo,
+		m_last_used_move,
 		stage(),
-		aqua_ring,
-		attracted,
-		charged,
-		cursed,
-		used_defense_curl,
-		destiny_bond,
-		encore,
-		flash_fire,
+		m_aqua_ring,
+		m_attracted,
+		m_charged,
+		m_is_cursed,
+		m_defense_curled,
+		m_destiny_bond,
+		m_encore,
+		m_flash_fire,
 		has_focused_energy(),
 		fully_trapped(),
-		gastro_acid,
-		heal_block,
-		identified,
-		used_imprison,
-		ingrain_active,
-		leech_seed,
-		loaf,
-		lock_on,
+		m_gastro_acid,
+		m_heal_block,
+		m_identified,
+		m_used_imprison,
+		m_ingrained,
+		m_leech_seeded,
+		m_is_loafing_turn,
+		m_locked_on,
 		magnet_rise(),
-		minimize,
-		mud_sport,
-		nightmares,
-		partial_trap,
-		perish_song,
-		power_trick,
-		rampage,
-		recharge_lock_in,
-		slow_start,
-		stockpile,
+		m_minimized,
+		m_mud_sport,
+		m_is_having_a_nightmare,
+		m_partial_trap,
+		m_perish_song,
+		m_power_trick_is_active,
+		m_rampage,
+		m_is_recharging,
+		m_slow_start,
+		m_stockpile,
 		m_taunt,
-		is_tormented,
-		uproar,
-		water_sport,
-		yawn
+		m_is_tormented,
+		m_uproar,
+		m_water_sport,
+		m_yawn
 	);
-	current_hash *= toxic.max_hash();
-	current_hash += toxic.hash();
-	current_hash *= vanish.max_hash();
-	current_hash += vanish.hash();
+	current_hash *= m_toxic.max_hash();
+	current_hash += m_toxic.hash();
+	current_hash *= m_vanish.max_hash();
+	current_hash += m_vanish.hash();
 	return current_hash;
 }
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
 	hash_type current_hash = big_max_hash(
 		substitute(),
-		bide,
-		confusion,
+		m_bide,
+		m_confusion,
 		m_disable,
-		embargo,
-		last_used_move,
+		m_embargo,
+		m_last_used_move,
 		stage(),
-		aqua_ring,
-		attracted,
-		charged,
-		cursed,
-		used_defense_curl,
-		destiny_bond,
-		encore,
-		flash_fire,
+		m_aqua_ring,
+		m_attracted,
+		m_charged,
+		m_is_cursed,
+		m_defense_curled,
+		m_destiny_bond,
+		m_encore,
+		m_flash_fire,
 		has_focused_energy(),
 		fully_trapped(),
-		gastro_acid,
-		heal_block,
-		identified,
-		used_imprison,
-		ingrain_active,
-		leech_seed,
-		loaf,
-		lock_on,
+		m_gastro_acid,
+		m_heal_block,
+		m_identified,
+		m_used_imprison,
+		m_ingrained,
+		m_leech_seeded,
+		m_is_loafing_turn,
+		m_locked_on,
 		magnet_rise(),
-		minimize,
-		mud_sport,
-		nightmares,
-		partial_trap,
-		perish_song,
-		power_trick,
-		rampage,
-		recharge_lock_in,
-		slow_start,
-		stockpile,
+		m_minimized,
+		m_mud_sport,
+		m_is_having_a_nightmare,
+		m_partial_trap,
+		m_perish_song,
+		m_power_trick_is_active,
+		m_rampage,
+		m_is_recharging,
+		m_slow_start,
+		m_stockpile,
 		m_taunt,
-		is_tormented,
-		uproar,
-		water_sport,
-		yawn
+		m_is_tormented,
+		m_uproar,
+		m_water_sport,
+		m_yawn
 	);
-	current_hash *= toxic.max_hash();
-	current_hash *= vanish.max_hash();
+	current_hash *= m_toxic.max_hash();
+	current_hash *= m_vanish.max_hash();
 	return current_hash;
 }
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return
 			lhs.m_all_pokemon == rhs.m_all_pokemon and
-			lhs.aqua_ring == rhs.aqua_ring and
-			lhs.attracted == rhs.attracted and
-			lhs.bide == rhs.bide and
-			lhs.charged == rhs.charged and
-			lhs.confusion == rhs.confusion and
-			lhs.cursed == rhs.cursed and
-			lhs.used_defense_curl == rhs.used_defense_curl and
-			lhs.destiny_bond == rhs.destiny_bond and
+			lhs.m_aqua_ring == rhs.m_aqua_ring and
+			lhs.m_attracted == rhs.m_attracted and
+			lhs.m_bide == rhs.m_bide and
+			lhs.m_charged == rhs.m_charged and
+			lhs.m_confusion == rhs.m_confusion and
+			lhs.m_is_cursed == rhs.m_is_cursed and
+			lhs.m_defense_curled == rhs.m_defense_curled and
+			lhs.m_destiny_bond == rhs.m_destiny_bond and
 			lhs.m_disable == rhs.m_disable and
-			lhs.embargo == rhs.embargo and
-			lhs.encore == rhs.encore and
-			lhs.flash_fire == rhs.flash_fire and
+			lhs.m_embargo == rhs.m_embargo and
+			lhs.m_encore == rhs.m_encore and
+			lhs.m_flash_fire == rhs.m_flash_fire and
 			lhs.has_focused_energy() == rhs.has_focused_energy() and
 			lhs.fully_trapped() == rhs.fully_trapped() and
-			lhs.heal_block == rhs.heal_block and
-			lhs.identified == rhs.identified and
-			lhs.used_imprison == rhs.used_imprison and
-			lhs.ingrain_active == rhs.ingrain_active and
-			lhs.last_used_move == rhs.last_used_move and
-			lhs.leech_seed == rhs.leech_seed and
-			lhs.loaf == rhs.loaf and
-			lhs.lock_on == rhs.lock_on and
+			lhs.m_heal_block == rhs.m_heal_block and
+			lhs.m_identified == rhs.m_identified and
+			lhs.m_used_imprison == rhs.m_used_imprison and
+			lhs.m_ingrained == rhs.m_ingrained and
+			lhs.m_last_used_move == rhs.m_last_used_move and
+			lhs.m_leech_seeded == rhs.m_leech_seeded and
+			lhs.m_is_loafing_turn == rhs.m_is_loafing_turn and
+			lhs.m_locked_on == rhs.m_locked_on and
 			lhs.magnet_rise() == rhs.magnet_rise() and
-			lhs.minimize == rhs.minimize and
-			lhs.mud_sport == rhs.mud_sport and
-			lhs.nightmares == rhs.nightmares and
-			lhs.partial_trap == rhs.partial_trap and
-			lhs.perish_song == rhs.perish_song and
-			lhs.rampage == rhs.rampage and
-			lhs.slow_start == rhs.slow_start and
+			lhs.m_minimized == rhs.m_minimized and
+			lhs.m_mud_sport == rhs.m_mud_sport and
+			lhs.m_is_having_a_nightmare == rhs.m_is_having_a_nightmare and
+			lhs.m_partial_trap == rhs.m_partial_trap and
+			lhs.m_perish_song == rhs.m_perish_song and
+			lhs.m_rampage == rhs.m_rampage and
+			lhs.m_slow_start == rhs.m_slow_start and
 			lhs.stage() == rhs.stage() and
-			lhs.stockpile == rhs.stockpile and
+			lhs.m_stockpile == rhs.m_stockpile and
 			lhs.m_taunt == rhs.m_taunt and
-			lhs.is_tormented == rhs.is_tormented and
-			lhs.toxic == rhs.toxic and
-			lhs.uproar == rhs.uproar and
-			lhs.vanish == rhs.vanish and
-			lhs.water_sport == rhs.water_sport and
-			lhs.yawn == rhs.yawn;
+			lhs.m_is_tormented == rhs.m_is_tormented and
+			lhs.m_toxic == rhs.m_toxic and
+			lhs.m_uproar == rhs.m_uproar and
+			lhs.m_vanish == rhs.m_vanish and
+			lhs.m_water_sport == rhs.m_water_sport and
+			lhs.m_yawn == rhs.m_yawn;
 }
 
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs) {

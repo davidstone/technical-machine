@@ -681,7 +681,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			boost(target.stage(), StatNames::SPE, -1_bi);
 			break;
 		case Moves::Imprison:
-			user.imprison();
+			user.use_imprison();
 			break;
 		case Moves::Ingrain:
 			user.ingrain();
@@ -700,7 +700,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			break;
 		case Moves::Lock_On:
 		case Moves::Mind_Reader:
-			user.lock_on_to();
+			user.use_lock_on();
 			break;
 		case Moves::Lucky_Chant:
 			user_team.screens.activate_lucky_chant();
