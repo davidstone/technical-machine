@@ -50,6 +50,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 #include <cstdint>
+#include <tuple>
 
 namespace technicalmachine {
 class Ability;
@@ -256,6 +257,51 @@ public:
 	hash_type max_hash() const;
 
 private:
+	auto hash_tie() const noexcept {
+		return std::tie(
+			m_substitute,
+			m_bide,
+			m_confusion,
+			m_disable,
+			m_embargo,
+			m_last_used_move,
+			m_stage,
+			m_aqua_ring,
+			m_attracted,
+			m_charged,
+			m_is_cursed,
+			m_defense_curled,
+			m_destiny_bond,
+			m_encore,
+			m_flash_fire,
+			m_has_focused_energy,
+			m_fully_trapped,
+			m_gastro_acid,
+			m_heal_block,
+			m_identified,
+			m_used_imprison,
+			m_ingrained,
+			m_leech_seeded,
+			m_is_loafing_turn,
+			m_locked_on,
+			m_magnet_rise,
+			m_minimized,
+			m_mud_sport,
+			m_is_having_a_nightmare,
+			m_partial_trap,
+			m_perish_song,
+			m_power_trick_is_active,
+			m_rampage,
+			m_is_recharging,
+			m_slow_start,
+			m_stockpile,
+			m_taunt,
+			m_is_tormented,
+			m_uproar,
+			m_water_sport,
+			m_yawn
+		);
+	}
 	// I'd make this a reference but I don't want to manually define a copy
 	// and move assignment operator to simply verify that the referents are
 	// the same.

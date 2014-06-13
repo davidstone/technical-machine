@@ -755,49 +755,7 @@ void ActivePokemon::normalize_hp(bool fainted) {
 }
 
 ActivePokemon::hash_type ActivePokemon::hash() const {
-	hash_type current_hash = big_hash(
-		substitute(),
-		m_bide,
-		m_confusion,
-		m_disable,
-		m_embargo,
-		m_last_used_move,
-		stage(),
-		m_aqua_ring,
-		m_attracted,
-		m_charged,
-		m_is_cursed,
-		m_defense_curled,
-		m_destiny_bond,
-		m_encore,
-		m_flash_fire,
-		has_focused_energy(),
-		fully_trapped(),
-		m_gastro_acid,
-		m_heal_block,
-		m_identified,
-		m_used_imprison,
-		m_ingrained,
-		m_leech_seeded,
-		m_is_loafing_turn,
-		m_locked_on,
-		magnet_rise(),
-		m_minimized,
-		m_mud_sport,
-		m_is_having_a_nightmare,
-		m_partial_trap,
-		m_perish_song,
-		m_power_trick_is_active,
-		m_rampage,
-		m_is_recharging,
-		m_slow_start,
-		m_stockpile,
-		m_taunt,
-		m_is_tormented,
-		m_uproar,
-		m_water_sport,
-		m_yawn
-	);
+	hash_type current_hash = big_hash(hash_tie());
 	current_hash *= m_toxic.max_hash();
 	current_hash += m_toxic.hash();
 	current_hash *= m_vanish.max_hash();
@@ -806,49 +764,7 @@ ActivePokemon::hash_type ActivePokemon::hash() const {
 }
 
 ActivePokemon::hash_type ActivePokemon::max_hash() const {
-	hash_type current_hash = big_max_hash(
-		substitute(),
-		m_bide,
-		m_confusion,
-		m_disable,
-		m_embargo,
-		m_last_used_move,
-		stage(),
-		m_aqua_ring,
-		m_attracted,
-		m_charged,
-		m_is_cursed,
-		m_defense_curled,
-		m_destiny_bond,
-		m_encore,
-		m_flash_fire,
-		has_focused_energy(),
-		fully_trapped(),
-		m_gastro_acid,
-		m_heal_block,
-		m_identified,
-		m_used_imprison,
-		m_ingrained,
-		m_leech_seeded,
-		m_is_loafing_turn,
-		m_locked_on,
-		magnet_rise(),
-		m_minimized,
-		m_mud_sport,
-		m_is_having_a_nightmare,
-		m_partial_trap,
-		m_perish_song,
-		m_power_trick_is_active,
-		m_rampage,
-		m_is_recharging,
-		m_slow_start,
-		m_stockpile,
-		m_taunt,
-		m_is_tormented,
-		m_uproar,
-		m_water_sport,
-		m_yawn
-	);
+	hash_type current_hash = big_max_hash(hash_tie());
 	current_hash *= m_toxic.max_hash();
 	current_hash *= m_vanish.max_hash();
 	return current_hash;

@@ -22,6 +22,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
 
+#include <tuple>
 #include <type_traits>
 
 namespace technicalmachine {
@@ -147,6 +148,30 @@ template<typename ... Ts>
 constexpr auto noexcept_hashable() noexcept -> bool {
 	return NoexceptHashable<Ts...>::value;
 }
+
+
+
+
+template<typename... Ts, std::size_t... indexes>
+constexpr auto tuple_hash(std::tuple<Ts...> const & values, std::index_sequence<indexes...>) noexcept(noexcept_hashable<Ts...>()) {
+	return big_hash(std::get<indexes>(values)...);
+}
+template<typename... Ts>
+constexpr auto hash(std::tuple<Ts...> const & values) noexcept(noexcept_hashable<Ts...>()) {
+	return tuple_hash(values, std::make_index_sequence<sizeof...(Ts)>{});
+}
+template<typename... Ts, std::size_t... indexes>
+constexpr auto tuple_max_hash(std::tuple<Ts...> const & values, std::index_sequence<indexes...>) noexcept(noexcept_hashable<Ts...>()) {
+	return big_max_hash(std::get<indexes>(values)...);
+}
+template<typename... Ts>
+constexpr auto max_hash(std::tuple<Ts...> const & values) noexcept(noexcept_hashable<Ts...>()) {
+	return tuple_max_hash(values, std::make_index_sequence<sizeof...(Ts)>{});
+}
+
+
+
+
 
 template<typename Size, typename Iterator>
 class range_result {
