@@ -116,9 +116,7 @@ inline auto hash(Pokemon const & pokemon) noexcept {
 	auto const item = get_item(pokemon);
 	auto const hp = get_hp(pokemon);
 	// Have to use this intermediate step because the hash overflows.
-	using hash_type = uint64_t;
-	auto const intermediate = static_cast<hash_type>(hash(species, status, item, hp, pokemon.has_been_seen()));
-	return intermediate + static_cast<hash_type>(max_hash(pokemon.has_been_seen()) * hash(pokemon.move));
+	return big_hash(species, status, item, hp, pokemon.has_been_seen(), pokemon.move);
 }
 
 inline auto max_hash(Pokemon const & pokemon) noexcept {
@@ -126,7 +124,7 @@ inline auto max_hash(Pokemon const & pokemon) noexcept {
 	auto const status = get_status(pokemon);
 	auto const item = get_item(pokemon);
 	auto const hp = get_hp(pokemon);
-	return static_cast<uint64_t>(max_hash(species, status, item, hp, pokemon.has_been_seen())) * static_cast<uint64_t>(max_hash(pokemon.move));
+	return big_max_hash(species, status, item, hp, pokemon.has_been_seen(), pokemon.move);
 }
 
 
