@@ -70,7 +70,7 @@ public:
 	bool blocks_switching (ActivePokemon const & switcher, Weather const & weather) const;
 	bool blocks_weather () const;
 
-	template<Status::Statuses status>
+	template<Statuses status>
 	bool blocks_status (Weather const & weather) const;
 	bool blocks_confusion () const;
 	bool reflects_status () const;

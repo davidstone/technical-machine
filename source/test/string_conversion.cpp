@@ -65,7 +65,7 @@ void string_conversion_tests () {
 	test_generic<Moves> ("move");
 	test_generic<Nature> ("nature");
 	test_generic<Species> ("species");
-	test_generic<Status::Statuses> ("status");
+	test_generic<Statuses> ("status");
 	std::cout << "String conversion tests passed.\n\n";
 }
 

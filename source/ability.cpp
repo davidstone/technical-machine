@@ -85,7 +85,7 @@ bool Ability::blocks_weather() const {
 }
 
 template<>
-bool Ability::blocks_status<Status::burn>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::burn>(Weather const & weather) const {
 	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
@@ -97,7 +97,7 @@ bool Ability::blocks_status<Status::burn>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::freeze>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::freeze>(Weather const & weather) const {
 	// Pass in weather to take advantage of template specialization, but I don't
 	// want to be warned about unused variables.
 	static_cast<void>(weather);
@@ -105,7 +105,7 @@ bool Ability::blocks_status<Status::freeze>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::paralysis>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::paralysis>(Weather const & weather) const {
 	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
@@ -117,7 +117,7 @@ bool Ability::blocks_status<Status::paralysis>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::poison>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::poison>(Weather const & weather) const {
 	switch (name()) {
 		case Immunity:
 			return true;
@@ -129,12 +129,12 @@ bool Ability::blocks_status<Status::poison>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::poison_toxic>(Weather const & weather) const {
-	return blocks_status<Status::poison>(weather);
+bool Ability::blocks_status<Statuses::poison_toxic>(Weather const & weather) const {
+	return blocks_status<Statuses::poison>(weather);
 }
 
 template<>
-bool Ability::blocks_status<Status::sleep>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::sleep>(Weather const & weather) const {
 	switch (name()) {
 		case Insomnia:
 		case Vital_Spirit:
@@ -147,8 +147,8 @@ bool Ability::blocks_status<Status::sleep>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Status::sleep_rest>(Weather const & weather) const {
-	return blocks_status<Status::sleep>(weather);
+bool Ability::blocks_status<Statuses::sleep_rest>(Weather const & weather) const {
+	return blocks_status<Statuses::sleep>(weather);
 }
 
 bool Ability::blocks_confusion() const {

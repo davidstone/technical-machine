@@ -646,7 +646,7 @@ auto ActivePokemon::hit_with_yawn() -> void {
 auto ActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
 	bool const put_to_sleep = m_yawn.advance_one_turn_deactivated();
 	if (put_to_sleep) {
-		Status::apply<Status::sleep>(*this, weather);
+		Status::apply<Statuses::sleep>(*this, weather);
 	}
 }
 

@@ -65,18 +65,18 @@ using BatonPassableScore = decltype(baton_passable_score(std::declval<Evaluate>(
 using ScoreStatus = Evaluate::value_type;
 auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> ScoreStatus {
 	switch (get_status(pokemon).name()) {
-		case Status::burn:
+		case Statuses::burn:
 			return evaluate.burn();
-		case Status::freeze:
+		case Statuses::freeze:
 			return evaluate.freeze();
-		case Status::paralysis:
+		case Statuses::paralysis:
 			return evaluate.paralysis();
-		case Status::poison:
+		case Statuses::poison:
 			return evaluate.poison();
-		case Status::poison_toxic:
+		case Statuses::poison_toxic:
 			return evaluate.toxic();
-		case Status::sleep_rest:
-		case Status::sleep:
+		case Statuses::sleep_rest:
+		case Statuses::sleep:
 			return evaluate.sleep();
 		default:
 			return 0_bi;

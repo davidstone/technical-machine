@@ -33,19 +33,20 @@ class Pokemon;
 class Rational;
 class Weather;
 
+enum class Statuses : uint8_t {
+	clear,
+	burn,
+	freeze,
+	paralysis,
+	poison,
+	poison_toxic,
+	sleep,
+	sleep_rest,
+	END
+};
+
 class Status {
 public:
-	enum Statuses : uint8_t {
-		clear,
-		burn,
-		freeze,
-		paralysis,
-		poison,
-		poison_toxic,
-		sleep,
-		sleep_rest,
-		END
-	};
 	constexpr auto name() const -> Statuses {
 		return m_status;
 	}
@@ -75,7 +76,7 @@ public:
 		return bounded::make<static_cast<intmax_t>(Statuses::END)>() * ::technicalmachine::max_hash(m_turns_already_slept);
 	}
 private:
-	Statuses m_status = clear;
+	Statuses m_status = Statuses::clear;
 	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
 	SleepCounter m_turns_already_slept;
 };

@@ -1,5 +1,5 @@
 // Status string functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,15 +19,17 @@
 #include "status.hpp"
 #include "invalid_string_conversion.hpp"
 
+#include "../status.hpp"
+
+#include <bounded_integer/array.hpp>
+
 #include <map>
 #include <string>
 
-#include "../status.hpp"
-
 namespace technicalmachine {
 
-std::string to_string(Status::Statuses const name) {
-	static std::string const status_name [] = {
+std::string to_string(Statuses const name) {
+	static auto const status_name = bounded::make_array<std::string>(
 		"No status",
 		"Burn",
 		"Freeze",
@@ -37,28 +39,29 @@ std::string to_string(Status::Statuses const name) {
 		"Sleep",
 		"Rest",
 		"END_STATUS"
-	};
-	return status_name [name];
+	);
+	return status_name.at(name);
 }
 
 template<>
-Status::Statuses from_string(std::string const & str) {
-	static std::map <std::string, Status::Statuses> const converter {
-		{ "No status", Status::clear },
-		{ "Burn", Status::burn },
-		{ "Freeze", Status::freeze },
-		{ "Paralysis", Status::paralysis },
-		{ "Poison", Status::poison },
-		{ "Toxic", Status::poison_toxic },
-		{ "Sleep", Status::sleep },
-		{ "Rest", Status::sleep_rest },
-		{ "END_STATUS", Status::END }
+Statuses from_string(std::string const & str) {
+	static std::map <std::string, Statuses> const converter {
+		{ "No status", Statuses::clear },
+		{ "Burn", Statuses::burn },
+		{ "Freeze", Statuses::freeze },
+		{ "Paralysis", Statuses::paralysis },
+		{ "Poison", Statuses::poison },
+		{ "Toxic", Statuses::poison_toxic },
+		{ "Sleep", Statuses::sleep },
+		{ "Rest", Statuses::sleep_rest },
+		{ "END_STATUS", Statuses::END }
 	};
 	auto const it = converter.find (str);
-	if (it != converter.end ())
+	if (it != converter.end()) {
 		return it->second;
-	else
+	} else {
 		throw InvalidFromStringConversion ("Status", str);
+	}
 }
 
 }	// namespace technicalmachine

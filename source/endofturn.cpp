@@ -127,17 +127,17 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		}
 	}
 	switch (get_status(pokemon).name()) {
-		case Status::burn: {
+		case Statuses::burn: {
 			auto const denominator = BOUNDED_CONDITIONAL(get_ability(pokemon).weakens_burn(), 16_bi, 8_bi);
 			heal(pokemon, make_rational(-1_bi, denominator));
 			break;
 		}
-		case Status::poison: {
+		case Statuses::poison: {
 			auto const numerator = BOUNDED_CONDITIONAL(get_ability(pokemon).absorbs_poison_damage(), 1_bi, -1_bi);
 			heal(pokemon, make_rational(numerator, 8_bi));
 			break;
 		}
-		case Status::poison_toxic:
+		case Statuses::poison_toxic:
 			pokemon.advance_toxic();
 			if (get_ability(pokemon).absorbs_poison_damage()) {
 				heal(pokemon, make_rational(1_bi, 8_bi));
@@ -145,7 +145,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 				heal(pokemon, pokemon.toxic_ratio());
 			}
 			break;
-		case Status::sleep:
+		case Statuses::sleep:
 			if (pokemon.is_having_a_nightmare()) {
 				heal(pokemon, make_rational(-1_bi, 4_bi));
 			}
@@ -158,10 +158,10 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	}
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
-			Status::apply<Status::burn>(pokemon, weather);
+			Status::apply<Statuses::burn>(pokemon, weather);
 			break;
 		case Item::Toxic_Orb:
-			Status::apply<Status::poison_toxic>(pokemon, weather);
+			Status::apply<Statuses::poison_toxic>(pokemon, weather);
 			break;
 		default:
 			break;

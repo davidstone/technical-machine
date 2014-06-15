@@ -58,7 +58,7 @@ public:
 	TypeCollection (Species name);
 	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
 	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
-	template<Status::Statuses status>
+	template<Statuses status>
 	friend auto blocks_status(TypeCollection const collection) -> bool {
 		for (auto const type : collection.types) {
 			if (blocks_status<status>(type)) {

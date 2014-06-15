@@ -71,25 +71,25 @@ inline auto is_immune_to_sandstorm(Type const type) {
 auto is_strengthened_by_weather(Type type, Weather const & weather) -> bool;
 auto is_weakened_by_weather(Type type, Weather const & weather) -> bool;
 
-template<Status::Statuses status>
+template<Statuses status>
 constexpr auto blocks_status(Type) {
 	return false;
 }
 template<>
-constexpr auto blocks_status<Status::burn>(Type const type) {
+constexpr auto blocks_status<Statuses::burn>(Type const type) {
 	return type == Type::Fire;
 }
 template<>
-constexpr auto blocks_status<Status::freeze>(Type const type) {
+constexpr auto blocks_status<Statuses::freeze>(Type const type) {
 	return type == Type::Ice;
 }
 template<>
-constexpr auto blocks_status<Status::poison>(Type const type) {
+constexpr auto blocks_status<Statuses::poison>(Type const type) {
 	return type == Type::Poison or type == Type::Steel;
 }
 template<>
-constexpr auto blocks_status<Status::poison_toxic>(Type const type) {
-	return blocks_status<Status::poison>(type);
+constexpr auto blocks_status<Statuses::poison_toxic>(Type const type) {
+	return blocks_status<Statuses::poison>(type);
 }
 
 

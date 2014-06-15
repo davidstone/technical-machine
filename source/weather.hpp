@@ -1,5 +1,5 @@
 // Weather class
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -64,7 +64,7 @@ public:
 	void set_sand (bool is_extended);
 	void set_rain (bool is_extended);
 
-	template<Status::Statuses status>
+	template<Statuses status>
 	bool blocks_status () const {
 		return false;
 	}
