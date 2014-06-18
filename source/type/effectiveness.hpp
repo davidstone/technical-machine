@@ -36,6 +36,10 @@ public:
 	auto is_not_very_effective() const -> bool;
 	auto has_no_effect() const -> bool;
 
+	template<typename Integer>
+	auto operator*(Integer const number) const {
+		return number * m_effectiveness[0_bi] * m_effectiveness[1_bi];
+	}
 private:
 	Effectiveness(Type attacking, Type defending1, Type defending2);
 	using SingleType = bounded_rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
@@ -44,10 +48,6 @@ private:
 
 	container_type m_effectiveness;
 
-	template<typename Integer>
-	friend auto operator*(Integer const number, Effectiveness const & e) -> decltype(number * std::declval<container_type>()[0_bi] * std::declval<container_type>()[1_bi]) {
-		return number * e.m_effectiveness[0_bi] * e.m_effectiveness[1_bi];
-	}
 };
 
 template<typename Integer>
@@ -55,8 +55,8 @@ auto operator*=(Integer & number, Effectiveness const & effectiveness) {
 	return number = number * effectiveness;
 }
 template<typename Integer>
-auto operator*(Effectiveness const & effectiveness, Integer const number) {
-	return number * effectiveness;
+auto operator*(Integer const number, Effectiveness const & effectiveness) {
+	return effectiveness * number;
 }
 
 }	// namespace technicalmachine
