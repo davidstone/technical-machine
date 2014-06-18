@@ -136,7 +136,7 @@ void power_test() {
 void physical_damage_test() {
 	std::cout << "\t\tRunning max physical damage tests.\n";
 	constexpr auto max_damage = 95064912_bi;
-	Weather const weather;
+	auto const weather = Weather{};
 
 	Team attacker = max_damage_physical_attacker();
 	
