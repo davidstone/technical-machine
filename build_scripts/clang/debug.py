@@ -1,5 +1,5 @@
 # Include debug symbols
-# Copyright (C) 2012 David Stone
+# Copyright (C) 2014 David Stone
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
@@ -14,4 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-debug = ['-g']
+# Debug symbols are not supported with automatic return type deduction
+# Not sure where to put template depth increase
+debug = [
+#	'-g',
+	'-ftemplate-depth=800'
+]
