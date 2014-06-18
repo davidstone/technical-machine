@@ -256,7 +256,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 
 void Battle::parse_begin_turn(InMessage & msg) const {
 	uint32_t const turn = msg.read_int();
-	handle_begin_turn(turn);
+	handle_begin_turn(static_cast<uint16_t>(turn));
 }
 
 void Battle::parse_send_out (InMessage & msg, Party const party) {
@@ -433,8 +433,9 @@ void Battle::parse_dynamic_info (InMessage & msg) {
 }
 
 void Battle::parse_dynamic_stats (InMessage & msg) {
-	for (unsigned n = 0; n != 5; ++n)
-		int16_t const something = static_cast<int16_t> (msg.read_short());
+	for (unsigned n = 0; n != 5; ++n) {
+		auto const something = static_cast<int16_t> (msg.read_short());
+	}
 }
 
 void Battle::parse_spectating (InMessage & msg) {

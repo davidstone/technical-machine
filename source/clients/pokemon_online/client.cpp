@@ -88,7 +88,8 @@ enum Action {
 }	// unnamed namespace
 
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
-	switch (code) {
+	// TODO: accept an integer instead of an InMessage::Message
+	switch (static_cast<unsigned>(code)) {
 		case InMessage::LOG_IN:
 			handle_log_in (msg);
 			break;

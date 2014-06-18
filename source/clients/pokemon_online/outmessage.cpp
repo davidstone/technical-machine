@@ -43,7 +43,7 @@ OutMessage::OutMessage (uint8_t code):
 }
 
 void OutMessage::write_string (std::string const & str) {
-	uint32_t const number_of_utf16_bytes = 2 * str.length();
+	auto const number_of_utf16_bytes = static_cast<uint32_t>(2 * str.length());
 	write_int (number_of_utf16_bytes);
 	for (char const c : str)
 		write_short (static_cast<uint16_t> (c));
@@ -77,13 +77,13 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_short (species.first);
 	write_byte (species.second);
 	write_string (pokemon.get_nickname());
-	uint16_t const item = item_to_id(get_item(pokemon));
+	auto const item = static_cast<uint16_t>(item_to_id(get_item(pokemon)));
 	write_short (item);
-	uint16_t const ability = ability_to_id (get_ability(pokemon).name());
+	auto const ability = static_cast<uint16_t>(ability_to_id(get_ability(pokemon).name()));
 	write_short (ability);
-	uint8_t const nature = nature_to_id(get_nature(pokemon));
+	auto const nature = static_cast<uint8_t>(nature_to_id(get_nature(pokemon)));
 	write_byte (nature);
-	uint8_t const gender = gender_to_id (get_gender(pokemon).gender);
+	auto const gender = static_cast<uint8_t>(gender_to_id(get_gender(pokemon).gender));
 	write_byte (gender);
 	bool shiny = false;
 	write_byte (shiny);

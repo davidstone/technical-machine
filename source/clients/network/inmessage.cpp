@@ -1,5 +1,5 @@
 // Generic incoming messages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -64,15 +64,15 @@ uint32_t InMessage::read_bytes (size_t bytes) {
 }
 
 uint8_t InMessage::read_byte () {
-	return read_bytes (1);
+	return static_cast<uint8_t>(read_bytes(1));
 }
 
 uint16_t InMessage::read_short () {
-	return read_bytes (2);
+	return static_cast<uint16_t>(read_bytes(2));
 }
 
 uint32_t InMessage::read_int () {
-	return read_bytes (4);
+	return read_bytes(4);
 }
 
 void InMessage::read_header(boost::asio::ip::tcp::socket & socket, Client * client) {
