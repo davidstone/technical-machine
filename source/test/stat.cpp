@@ -63,7 +63,7 @@ void special_attack_tests () {
 	std::cout << "\tRunning Special Attack tests.\n";
 	constexpr auto max_special_attack = 4536_bi;
 	Weather weather;
-	weather.set_sun (Weather::Duration::permanent);
+	weather.activate_sun(Weather::Duration::permanent);
 	Team attacker;
 
 	Level const level(100_bi);
@@ -136,7 +136,7 @@ void special_defense_tests () {
 
 	Team defender;
 	Weather weather;
-	weather.set_sand (Weather::Duration::permanent);
+	weather.activate_sand(Weather::Duration::permanent);
 
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
@@ -154,7 +154,7 @@ void speed_tests () {
 	std::cout << "\tRunning Speed tests.\n";
 	constexpr auto max_speed = 12096_bi;
 	Weather weather;
-	weather.set_rain (Weather::Duration::permanent);
+	weather.activate_rain(Weather::Duration::permanent);
 
 	Team team;
 

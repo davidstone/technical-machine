@@ -61,7 +61,7 @@ void Ability::set_if_unknown(Abilities const ability) {
 		m_name = ability;
 }
 
-bool Ability::blocks_switching(ActivePokemon const & switcher, Weather const & weather) const {
+bool Ability::blocks_switching(ActivePokemon const & switcher, Weather const weather) const {
 	switch (name()) {
 		case Shadow_Tag:
 			return get_ability(switcher).name() != Shadow_Tag;
@@ -85,7 +85,7 @@ bool Ability::blocks_weather() const {
 }
 
 template<>
-bool Ability::blocks_status<Statuses::burn>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::burn>(Weather const weather) const {
 	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
@@ -97,15 +97,12 @@ bool Ability::blocks_status<Statuses::burn>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Statuses::freeze>(Weather const & weather) const {
-	// Pass in weather to take advantage of template specialization, but I don't
-	// want to be warned about unused variables.
-	static_cast<void>(weather);
+bool Ability::blocks_status<Statuses::freeze>(Weather) const {
 	return name() == Magma_Armor;
 }
 
 template<>
-bool Ability::blocks_status<Statuses::paralysis>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::paralysis>(Weather const weather) const {
 	switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
@@ -117,7 +114,7 @@ bool Ability::blocks_status<Statuses::paralysis>(Weather const & weather) const 
 }
 
 template<>
-bool Ability::blocks_status<Statuses::poison>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::poison>(Weather const weather) const {
 	switch (name()) {
 		case Immunity:
 			return true;
@@ -129,12 +126,12 @@ bool Ability::blocks_status<Statuses::poison>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Statuses::poison_toxic>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::poison_toxic>(Weather const weather) const {
 	return blocks_status<Statuses::poison>(weather);
 }
 
 template<>
-bool Ability::blocks_status<Statuses::sleep>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::sleep>(Weather const weather) const {
 	switch (name()) {
 		case Insomnia:
 		case Vital_Spirit:
@@ -147,7 +144,7 @@ bool Ability::blocks_status<Statuses::sleep>(Weather const & weather) const {
 }
 
 template<>
-bool Ability::blocks_status<Statuses::sleep_rest>(Weather const & weather) const {
+bool Ability::blocks_status<Statuses::sleep_rest>(Weather const weather) const {
 	return blocks_status<Statuses::sleep>(weather);
 }
 
@@ -255,11 +252,11 @@ bool Ability::boosts_defense(Status const status) const {
 	return name() == Marvel_Scale and !is_clear(status);
 }
 
-bool Ability::boosts_special_attack(Weather const & weather) const {
+bool Ability::boosts_special_attack(Weather const weather) const {
 	return name() == Solar_Power and weather.sun();
 }
 
-bool Ability::boosts_special_defense(Weather const & weather) const {
+bool Ability::boosts_special_defense(Weather const weather) const {
 	return name() == Flower_Gift and weather.sun();
 }
 
@@ -290,7 +287,7 @@ auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyMod
 	}
 }
 
-auto ability_evasion_modifier(ActivePokemon const & target, Weather const & weather) -> AbilityEvasionModifier {
+auto ability_evasion_modifier(ActivePokemon const & target, Weather const weather) -> AbilityEvasionModifier {
 	switch (get_ability(target).name()) {
 		case Ability::Sand_Veil:
 			return weather.sand() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
@@ -384,10 +381,10 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 			break;
 		}
 		case Drizzle:
-			weather.set_rain(Weather::Duration::permanent);
+			weather.activate_rain(Weather::Duration::permanent);
 			break;
 		case Drought:
-			weather.set_sun(Weather::Duration::permanent);
+			weather.activate_sun(Weather::Duration::permanent);
 			break;
 		case Forecast:	// TODO: fix this
 			break;
@@ -395,10 +392,10 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 			boost(other.stage(), StatNames::ATK, -1_bi);
 			break;
 		case Sand_Stream:
-			weather.set_sand(Weather::Duration::permanent);
+			weather.activate_sand(Weather::Duration::permanent);
 			break;
 		case Snow_Warning:
-			weather.set_hail(Weather::Duration::permanent);
+			weather.activate_hail(Weather::Duration::permanent);
 			break;
 		case Trace:
 			break;
@@ -407,7 +404,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 	}
 }
 
-void Ability::weather_healing(ActivePokemon & pokemon, Weather const & weather) {
+void Ability::weather_healing(ActivePokemon & pokemon, Weather const weather) {
 	switch (get_ability(pokemon).name()) {
 		case Dry_Skin:
 			if (weather.rain()) {

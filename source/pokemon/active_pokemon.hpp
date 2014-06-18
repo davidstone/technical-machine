@@ -238,7 +238,7 @@ public:
 	void indirect_damage(damage_type damage);
 	void register_damage(damage_type damage);
 	void increment_move_use_counter();
-	void update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved);
+	void update_chance_to_hit(ActivePokemon const & target, Weather weather, bool target_moved);
 	// If the move is a hit, returns the chance to hit, otherwise, returns
 	// the chance to miss.
 	auto accuracy_probability() const -> ChanceToHit;

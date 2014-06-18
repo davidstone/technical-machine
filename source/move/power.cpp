@@ -50,7 +50,7 @@ using namespace bounded::literal;
 
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
-auto variable_adjusted_base_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) -> VariableAdjustedBasePower {
+auto variable_adjusted_base_power(Team const & attacker_team, Team const & defender_team, Weather const weather, Variable const & variable) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (static_cast<Moves>(attacker.move())) {
@@ -137,7 +137,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 	}
 }
 
-auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) -> bool;
+auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather weather) -> bool;
 
 auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 12>;
 auto item_modifier(Pokemon const & attacker) {
@@ -166,7 +166,7 @@ auto defender_ability_modifier(Pokemon const & attacker, Ability const ability) 
 
 }	// namespace
 
-auto move_power(Team const & attacker_team, Team const & defender_team, Weather const & weather, Variable const & variable) -> MovePower {
+auto move_power(Team const & attacker_team, Team const & defender_team, Weather const weather, Variable const & variable) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(attacker_team, defender_team, weather, variable);
@@ -183,7 +183,7 @@ auto move_power(Team const & attacker_team, Team const & defender_team, Weather 
 
 namespace {
 
-auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) -> bool {
+auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the

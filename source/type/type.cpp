@@ -29,11 +29,11 @@
 
 namespace technicalmachine {
 
-auto is_strengthened_by_weather(Type const type, Weather const & weather) -> bool {
+auto is_strengthened_by_weather(Type const type, Weather const weather) -> bool {
 	return (weather.rain() and type == Type::Water) or (weather.sun() and type == Type::Fire);
 }
 
-auto is_weakened_by_weather(Type const type, Weather const & weather) -> bool {
+auto is_weakened_by_weather(Type const type, Weather const weather) -> bool {
 	return (weather.rain() and type == Type::Fire) or (weather.sun() and type == Type::Water);
 }
 

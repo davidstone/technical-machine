@@ -76,8 +76,8 @@ private:
 
 auto is_type(Pokemon const & pokemon, Type type, bool roosting = false) -> bool;
 auto is_type(ActivePokemon const & pokemon, Type type) -> bool;
-auto grounded(Pokemon const & pokemon, Weather const & weather) -> bool;
-auto grounded(ActivePokemon const & pokemon, Weather const & weather) -> bool;
+auto grounded(Pokemon const & pokemon, Weather weather) -> bool;
+auto grounded(ActivePokemon const & pokemon, Weather weather) -> bool;
 
 }	// namespace technicalmachine
 #endif	// TYPE__COLLECTION_HPP_

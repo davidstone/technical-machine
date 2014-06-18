@@ -28,7 +28,7 @@ class Variable;
 class Weather;
 
 using MovePower = bounded::integer<1, 1440>;
-auto move_power(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) -> MovePower;
+auto move_power(Team const & attacker, Team const & defender, Weather weather, Variable const & variable) -> MovePower;
 
 }	// namespace technicalmachine
 #endif	// MOVE__POWER_HPP_

@@ -45,7 +45,7 @@ public:
 	// +1 gives me room to create a value that will always be overwritten
 	using type = bounded::integer<-static_cast<intmax_t>(victory + 1_bi), static_cast<intmax_t>(victory + 1_bi)>;
 	Evaluate();
-	auto operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type;
+	auto operator()(Team const & ai, Team const & foe, Weather weather) const -> type;
 	// Both of these return victory if the battle is won. Returns -victory
 	// if the battle is lost. Returns 0 otherwise.
 	static auto win(Team const & team) -> type;

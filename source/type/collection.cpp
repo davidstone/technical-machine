@@ -87,10 +87,10 @@ auto is_type (ActivePokemon const & pokemon, Type const type) -> bool {
 
 namespace {
 
-auto forced_grounded(Pokemon const & pokemon, Weather const & weather) -> bool {
+auto forced_grounded(Pokemon const & pokemon, Weather const weather) -> bool {
 	return weather.gravity() or grounds(get_item(pokemon));
 }
-auto forced_grounded(ActivePokemon const & pokemon, Weather const & weather) -> bool {
+auto forced_grounded(ActivePokemon const & pokemon, Weather const weather) -> bool {
 	return forced_grounded(static_cast<Pokemon const &>(pokemon), weather) or pokemon.ingrained();
 }
 
@@ -103,16 +103,16 @@ auto is_immune_to_ground(ActivePokemon const & active) -> bool {
 }
 
 template<typename PossiblyActivePokemon>
-auto is_grounded(PossiblyActivePokemon const & pokemon, Weather const & weather) -> bool {
+auto is_grounded(PossiblyActivePokemon const & pokemon, Weather const weather) -> bool {
 	return !is_immune_to_ground(pokemon) or forced_grounded(pokemon, weather);
 }
 
 }	// namespace
 
-auto grounded(Pokemon const & pokemon, Weather const & weather) -> bool {
+auto grounded(Pokemon const & pokemon, Weather const weather) -> bool {
 	return is_grounded(pokemon, weather);
 }
-auto grounded(ActivePokemon const & pokemon, Weather const & weather) -> bool {
+auto grounded(ActivePokemon const & pokemon, Weather const weather) -> bool {
 	return is_grounded(pokemon, weather);
 }
 

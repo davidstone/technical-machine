@@ -27,6 +27,7 @@
 #include "rational.hpp"
 #include "team.hpp"
 #include "variable.hpp"
+#include "weather.hpp"
 
 #include "move/move.hpp"
 #include "move/moves.hpp"
@@ -42,14 +43,14 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather);
+bool affects_target(Type const & move_type, ActivePokemon const & target, Weather weather);
 
-damage_type regular_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable);
+damage_type regular_damage(Team const & attacker, Team const & defender, Weather weather, Variable const & variable);
 
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
-Rational calculate_weather_modifier (Type type, Weather const & weather);
+Rational calculate_weather_modifier(Type type, Weather weather);
 Rational calculate_flash_fire_modifier (ActivePokemon const & attacker);
 Rational calculate_item_modifier(ActivePokemon const & attacker);
 Rational calculate_me_first_modifier (ActivePokemon const & attacker);
@@ -61,7 +62,7 @@ Rational calculate_expert_belt_modifier (Item item, Effectiveness const & effect
 bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
 
 
-bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const & weather) {
+bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const weather) {
 	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
 }
 
@@ -69,7 +70,7 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-damage_type raw_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type raw_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
 	switch (static_cast<Moves>(attacker.move())) {
 		case Moves::Dragon_Rage:
@@ -95,7 +96,7 @@ damage_type raw_damage(Team const & attacker_team, Team const & defender, Weathe
 	}
 }
 
-damage_type capped_damage(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type capped_damage(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const damage = raw_damage(attacker, defender, weather, variable);
 	return (cannot_ko(attacker.pokemon().move()) or defender.pokemon().cannot_be_koed()) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
@@ -104,7 +105,7 @@ damage_type capped_damage(Team const & attacker, Team const & defender, Weather 
 
 }	// namespace
 
-damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
 	return affects_target(get_type(attacker.pokemon().move(), attacker.pokemon()), defender.pokemon(), weather) ?
 		capped_damage(attacker, defender, weather, variable) :
 		static_cast<damage_type>(0_bi);
@@ -124,7 +125,7 @@ auto weakening_from_status(Pokemon const & attacker) {
 	);
 }
 
-auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const & weather) {
+auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const weather) {
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
@@ -163,7 +164,7 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
-damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const & weather, Variable const & variable) {
+damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
 	auto damage = static_cast<unsigned>(level_multiplier(attacker) + 2_bi);
 
@@ -216,7 +217,7 @@ bool light_screen_is_active (Move const & move, Team const & defender) {
 	return defender.screens.light_screen() and is_special(move);
 }
 
-Rational calculate_weather_modifier (Type const type, Weather const & weather) {
+Rational calculate_weather_modifier (Type const type, Weather const weather) {
 	if (is_strengthened_by_weather(type, weather))
 		return Rational(3, 2);
 	else if (is_weakened_by_weather(type, weather))

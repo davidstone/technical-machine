@@ -57,10 +57,10 @@ public:
 
 	auto rest() -> void;
 	template<Statuses real_status, Statuses base_status = real_status>
-	static auto apply(Pokemon & user, Pokemon & target, Weather const & weather) -> void;
+	static auto apply(Pokemon & user, Pokemon & target, Weather weather) -> void;
 	template<Statuses real_status>
-	static auto apply(Pokemon & target, Weather const & weather) -> void;
-	static auto shift (Pokemon & user, Pokemon & target, Weather const & weather) -> void;
+	static auto apply(Pokemon & target, Weather weather) -> void;
+	static auto shift (Pokemon & user, Pokemon & target, Weather weather) -> void;
 
 	friend auto operator==(Status lhs, Status rhs) -> bool;
 

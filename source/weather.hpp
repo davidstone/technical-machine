@@ -19,67 +19,115 @@
 #ifndef WEATHER_HPP_
 #define WEATHER_HPP_
 
-#include <cstdint>
+#include "hash.hpp"
 #include "status.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <cstdint>
+
 namespace technicalmachine {
+using namespace bounded::literal;
 
 // Weather is the set of things that are not specific to either team.
 
-// Weathers are represented as an int8_t due to the "acid weather" effect,
-// which means that multiple weathers can be in effect at the same time. The
-// order of the weathers is their order when all effects are active. Uproar is
-// present because it can be activated without being associated with any
-// particular Pokemon.
-
-// The number represents the number of turns remaining on that weather. A value
-// of -1 indicates permanent weather. Fog is a bool because it only exists as a
-// permanent weather condition.
+// Due to the "acid weather" effect, multiple weathers can be in effect at the
+// same time. The order of the weathers is their order when all effects are
+// active.
+//
+// Uproar is considered Weather because it can be activated without being
+// associated with any particular Pokemon / Team.
 
 class Weather {
 public:
-	typedef uint32_t hash_type;
 	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
-	Weather();
-	bool operator== (Weather const & other) const;
 
-	bool trick_room () const;
-	bool fog;
-	bool gravity () const;
-	bool uproar () const;
-	bool hail () const;
-	bool sun () const;
-	bool sand () const;
-	bool rain () const;
-	void decrement ();
-	void set_trick_room ();
-	void set_gravity ();
-	void set_uproar (int8_t duration);
-	void set_hail (Duration duration);
-	void set_sun (Duration duration);
-	void set_sand (Duration duration);
-	void set_rain (Duration duration);
-	void set_hail (bool is_extended);
-	void set_sun (bool is_extended);
-	void set_sand (bool is_extended);
-	void set_rain (bool is_extended);
+	auto trick_room() const -> bool;
+	auto fog() const -> bool;
+	auto gravity() const -> bool;
+	auto uproar() const -> bool;
+	auto hail() const -> bool;
+	auto sun() const -> bool;
+	auto sand() const -> bool;
+	auto rain() const -> bool;
 
-	template<Statuses status>
-	bool blocks_status () const {
-		return false;
+	auto advance_one_turn() -> void;
+
+	auto activate_trick_room() -> void;
+	auto activate_fog() -> void;
+	auto deactivate_fog() -> void;
+	auto activate_gravity() -> void;
+	template<typename T>
+	auto activate_uproar(T const duration) {
+		if (m_uproar < duration) {
+			m_uproar = duration;
+		}
 	}
-	hash_type hash () const;
+	auto activate_hail(Duration duration) -> void;
+	auto activate_sun(Duration duration) -> void;
+	auto activate_sand(Duration duration) -> void;
+	auto activate_rain(Duration duration) -> void;
+	auto activate_hail(bool is_extended) -> void;
+	auto activate_sun(bool is_extended) -> void;
+	auto activate_sand(bool is_extended) -> void;
+	auto activate_rain(bool is_extended) -> void;
+
+	auto blocks_status(Statuses status) const -> bool;
+
+	constexpr auto hash() const noexcept {
+		// There are a lot of illegal values (such as sun having 4 turns left
+		// and rain having 3 turns left), and so it should be possible to write
+		// a collision-free hash for weather that needs a much smaller range.
+		return technicalmachine::hash(
+			m_trick_room,
+			m_fog,
+			m_gravity,
+			m_uproar,
+			m_hail,
+			m_sun,
+			m_sand,
+			m_rain
+		);
+	}
+
+
+	friend auto operator==(Weather lhs, Weather rhs) -> bool;
 private:
-	void set_weather(int8_t & primary, Duration duration);
-	void set_weather(int8_t & primary, bool is_extended);
-	int8_t trick_room_duration;
-	int8_t gravity_duration;
-	int8_t uproar_duration;
-	int8_t hail_duration;
-	int8_t sun_duration;
-	int8_t sand_duration;
-	int8_t rain_duration;
+	template<typename T>
+	auto activate_weather(T & primary, bool const is_extended) {
+		activate_weather(primary, is_extended ? Duration::extended : Duration::standard);
+	}
+	template<typename T>
+	auto activate_weather(T & primary, Duration const duration) {
+		if (primary == 0_bi or duration == Duration::permanent) {
+			m_hail = 0_bi;
+			m_sand = 0_bi;
+			m_rain = 0_bi;
+			m_sun = 0_bi;
+			primary = static_cast<T>(duration);
+		}
+	}
+
+	// The number of turns remaining on that weather. A value of -1 indicates
+	// permanent weather. Fog is a bool because it only exists as a permanent
+	// weather condition.
+
+	bounded::integer<0, 5> m_trick_room = 0_bi;
+	bool m_fog = false;
+	bounded::integer<-1, 5> m_gravity = 0_bi;
+	bounded::integer<-1, 1> m_uproar = 0_bi;
+	using Standard = bounded::integer<-1, static_cast<intmax_t>(Duration::extended)>;
+	Standard m_hail = 0_bi;
+	Standard m_sun = 0_bi;
+	Standard m_sand = 0_bi;
+	Standard m_rain = 0_bi;
 };
+
+constexpr auto hash(Weather const weather) noexcept {
+	return weather.hash();
+}
+
+auto operator!=(Weather lhs, Weather rhs) -> bool;
 
 }	// namespace technicalmachine
 #endif	// WEATHER_HPP_

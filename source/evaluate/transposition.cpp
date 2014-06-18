@@ -96,13 +96,13 @@ Hash & hash_table_lookup (Hash const & current) {
 
 }	// anonymous namespace
 
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate) {
+int64_t transposition (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	if (depth == 0) {
 		return static_cast<int64_t>(evaluate(ai, foe, weather));
 	}
 	int64_t value;
 	// This long-form hash should be unique within a game.
-	Hash current (ai.hash(), foe.hash(), weather.hash(), depth);
+	Hash current (ai.hash(), foe.hash(), static_cast<uint32_t>(weather.hash().first), depth);
 	Hash & saved = hash_table_lookup (current);
 	// I verify that saved == current because hash_table_lookup only checks
 	// against shortened hashes for speed and memory reasons. I need the

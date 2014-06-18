@@ -1,5 +1,5 @@
 // Declaration of functions that block selection / execution
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,7 +33,7 @@ class LegalSelections {
 	using Container = std::vector<Moves>;
 public:
 	using const_iterator = Container::const_iterator;
-	LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const & weather);
+	LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather weather);
 	Species species() const;
 	const_iterator begin() const;
 	const_iterator end() const;
@@ -44,7 +44,7 @@ private:
 	Species m_species;
 };
 
-bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const & weather);
+bool can_execute_move(ActivePokemon & user, ActivePokemon const & other, Weather weather);
 
 }	// namespace technicalmachine
 #endif	// BLOCK_HPP_

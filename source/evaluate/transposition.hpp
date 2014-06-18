@@ -1,5 +1,5 @@
 // Transposition header
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,7 @@ class Evaluate;
 class Team;
 class Weather;
 
-int64_t transposition (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate);
+int64_t transposition (Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
 
 }	// namespace technicalmachine
 #endif	// EVALUATE__TRANSPOSITION_HPP_

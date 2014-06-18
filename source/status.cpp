@@ -34,11 +34,11 @@ namespace {
 using namespace bounded::literal;
 
 template<Statuses status>
-auto status_can_apply(Ability const ability, Pokemon const & target, Weather const & weather) -> bool {
+auto status_can_apply(Ability const ability, Pokemon const & target, Weather const weather) -> bool {
 	return is_clear(get_status(target)) and
 		(ability.ignores_blockers() or !get_ability(target).blocks_status<status>(weather)) and
 		!blocks_status<status>(get_type(target)) and
-		!weather.blocks_status<status>();
+		!weather.blocks_status(status);
 }
 
 constexpr auto status_is_reflectable (Statuses const status) -> bool {
@@ -92,7 +92,7 @@ auto Status::rest() -> void {
 }
 
 template<Statuses base_status, Statuses real_status>
-auto Status::apply(Pokemon & user, Pokemon & target, Weather const & weather) -> void {
+auto Status::apply(Pokemon & user, Pokemon & target, Weather const weather) -> void {
 	if (status_can_apply<real_status>(get_ability(user), target, weather)) {
 		get_status(target).m_status = real_status;
 		if (status_is_reflectable(base_status) and get_ability(target).reflects_status()) {
@@ -102,22 +102,22 @@ auto Status::apply(Pokemon & user, Pokemon & target, Weather const & weather) ->
 }
 
 template<Statuses base_status>
-auto Status::apply(Pokemon & target, Weather const & weather) -> void {
+auto Status::apply(Pokemon & target, Weather const weather) -> void {
 	apply<base_status>(target, target, weather);
 }
 
-template auto Status::apply<Statuses::burn>(Pokemon & user, Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::freeze>(Pokemon & user, Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::paralysis>(Pokemon & user, Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::poison>(Pokemon & user, Pokemon & target, Weather const & weather) -> void;
+template auto Status::apply<Statuses::burn>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::freeze>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::paralysis>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::poison>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
 
 template<>
-auto Status::apply<Statuses::poison_toxic>(Pokemon & user, Pokemon & target, Weather const & weather) -> void {
+auto Status::apply<Statuses::poison_toxic>(Pokemon & user, Pokemon & target, Weather const weather) -> void {
 	apply<Statuses::poison, Statuses::poison_toxic>(user, target, weather);
 }
 
 template<>
-auto Status::apply<Statuses::sleep>(Pokemon & user, Pokemon & target, Weather const & weather) -> void {
+auto Status::apply<Statuses::sleep>(Pokemon & user, Pokemon & target, Weather const weather) -> void {
 	constexpr auto status_to_apply = Statuses::sleep;
 	if (status_can_apply<status_to_apply>(get_ability(user), target, weather)) {
 		auto & status = get_status(target);
@@ -126,15 +126,15 @@ auto Status::apply<Statuses::sleep>(Pokemon & user, Pokemon & target, Weather co
 	}
 }
 
-template auto Status::apply<Statuses::burn>(Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::freeze>(Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::paralysis>(Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::poison>(Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::poison_toxic>(Pokemon & target, Weather const & weather) -> void;
-template auto Status::apply<Statuses::sleep>(Pokemon & target, Weather const & weather) -> void;
+template auto Status::apply<Statuses::burn>(Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::freeze>(Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::paralysis>(Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::poison>(Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::poison_toxic>(Pokemon & target, Weather const weather) -> void;
+template auto Status::apply<Statuses::sleep>(Pokemon & target, Weather const weather) -> void;
 
 
-auto Status::shift (Pokemon & user, Pokemon & target, Weather const & weather) -> void {
+auto Status::shift (Pokemon & user, Pokemon & target, Weather const weather) -> void {
 	switch (get_status(user).name()) {
 		case Statuses::burn:
 			apply<Statuses::burn>(user, target, weather);

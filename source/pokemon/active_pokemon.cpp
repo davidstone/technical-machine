@@ -732,7 +732,7 @@ void ActivePokemon::increment_move_use_counter() {
 	}
 }
 
-void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const & weather, bool target_moved) {
+void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const weather, bool target_moved) {
 	m_chance_to_hit = chance_to_hit(*this, target, weather, target_moved);
 }
 

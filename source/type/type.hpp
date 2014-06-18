@@ -68,8 +68,8 @@ inline auto is_immune_to_sandstorm(Type const type) {
 }
 
 
-auto is_strengthened_by_weather(Type type, Weather const & weather) -> bool;
-auto is_weakened_by_weather(Type type, Weather const & weather) -> bool;
+auto is_strengthened_by_weather(Type type, Weather weather) -> bool;
+auto is_weakened_by_weather(Type type, Weather weather) -> bool;
 
 template<Statuses status>
 constexpr auto blocks_status(Type) {

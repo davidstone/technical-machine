@@ -34,9 +34,9 @@ namespace {
 
 void endofturn1 (Team & team);
 void endofturn2 (Team & team);
-void endofturn3 (ActivePokemon & pokemon, Weather const & weather);
+void endofturn3 (ActivePokemon & pokemon, Weather const weather);
 void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather);
-void endofturn6 (Team & target, Weather const & weather);
+void endofturn6 (Team & target, Weather const weather);
 void endofturn7 (ActivePokemon & pokemon);
 
 template<typename Integer>
@@ -54,7 +54,7 @@ void endofturn (Team & first, Team & last, Weather & weather) {
 	endofturn1 (last);
 	endofturn2 (first);
 	endofturn2 (last);
-	weather.decrement();	// The order doesn't matter here.
+	weather.advance_one_turn();
 	if (!get_ability(first.pokemon()).blocks_weather() and !get_ability(last.pokemon()).blocks_weather()) {
 		endofturn3 (first.pokemon(), weather);
 		endofturn3 (last.pokemon(), weather);
@@ -77,7 +77,7 @@ void endofturn2 (Team & team) {
 	team.wish.decrement(team.pokemon());
 }
 
-void endofturn3 (ActivePokemon & pokemon, Weather const & weather) {
+void endofturn3 (ActivePokemon & pokemon, Weather const weather) {
 	if (weather.hail() and !is_immune_to_hail(get_type(pokemon)))
 		heal(pokemon, make_rational(-1_bi, 16_bi));
 	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
@@ -185,7 +185,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	}
 }
 
-void endofturn6 (Team & target, Weather const & weather) {
+void endofturn6 (Team & target, Weather const weather) {
 	// TODO: Doom Desire / Future Sight
 }
 

@@ -22,6 +22,7 @@
 
 #include "heal.hpp"
 #include "team.hpp"
+#include "weather.hpp"
 
 #include "pokemon/active_pokemon.hpp"
 
@@ -35,7 +36,7 @@ auto removes_toxic_spikes(ActivePokemon const & switcher) {
 	return is_type(switcher, Type::Poison);
 }
 
-auto apply_toxic_spikes(EntryHazards const & hazards, ActivePokemon & switcher, Weather const & weather) {
+auto apply_toxic_spikes(EntryHazards const & hazards, ActivePokemon & switcher, Weather const weather) {
 	if (hazards.toxic_spikes() == 1_bi) {
 		Status::apply<Statuses::poison>(switcher, weather);
 	} else {
@@ -61,7 +62,7 @@ auto EntryHazards::add_stealth_rock() -> void {
 	m_stealth_rock = true;
 }
 
-auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const & weather) -> void {
+auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const weather) -> void {
 	if (get_ability(switcher).blocks_secondary_damage())
 		return;
 

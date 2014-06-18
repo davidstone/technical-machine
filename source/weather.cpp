@@ -1,5 +1,5 @@
 // Weather functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,159 +17,118 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "weather.hpp"
-#include <cstdint>
 #include "status.hpp"
 
 namespace technicalmachine {
 namespace {
-void conditional_decrement (int8_t & n) {
-	if (n > 0)
+template<typename T>
+auto conditional_decrement(T & n) -> void {
+	if (n > 0_bi) {
 		--n;
+	}
 }
-}	// unnamed namespace
+}	// namespace
 
-Weather::Weather () :
-	fog (false),
-	trick_room_duration (0),
-	gravity_duration (0),
-	uproar_duration (0),
-	hail_duration (0),
-	sun_duration (0),
-	sand_duration (0),
-	rain_duration (0)
-	{
+auto Weather::trick_room() const -> bool {
+	return m_trick_room != 0_bi;
 }
-
-bool Weather::operator== (Weather const & other) const {
-	// I could theoretically speed this up by comparing the block of memory.
-	// Weather occupies a single 8-byte section of memory.
-	return trick_room_duration == other.trick_room_duration and
-			fog == other.fog and
-			gravity_duration == other.gravity_duration and
-			uproar_duration == other.uproar_duration and
-			hail_duration == other.hail_duration and
-			sun_duration == other.sun_duration and
-			sand_duration == other.sand_duration and
-			rain_duration == other.rain_duration;
+auto Weather::gravity() const -> bool {
+	return m_gravity != 0_bi;
+}
+auto Weather::uproar() const -> bool {
+	return m_uproar != 0_bi;
+}
+auto Weather::hail() const -> bool {
+	return m_hail != 0_bi;
+}
+auto Weather::sun() const -> bool {
+	return m_sun != 0_bi;
+}
+auto Weather::sand() const -> bool {
+	return m_sand != 0_bi;
+}
+auto Weather::rain() const -> bool {
+	return m_rain != 0_bi;
 }
 
-bool Weather::trick_room () const {
-	return trick_room_duration;
-}
-bool Weather::gravity () const {
-	return gravity_duration;
-}
-bool Weather::uproar () const {
-	return uproar_duration;
-}
-bool Weather::hail () const {
-	return hail_duration;
-}
-bool Weather::sun () const {
-	return sun_duration;
-}
-bool Weather::sand () const {
-	return sand_duration;
-}
-bool Weather::rain () const {
-	return rain_duration;
+auto Weather::advance_one_turn() -> void {
+	conditional_decrement(m_trick_room);
+	conditional_decrement(m_gravity);
+	conditional_decrement(m_uproar);
+	conditional_decrement(m_hail);
+	conditional_decrement(m_sun);
+	conditional_decrement(m_sand);
+	conditional_decrement(m_rain);
 }
 
-void Weather::decrement () {
-	conditional_decrement (trick_room_duration);
-	conditional_decrement (gravity_duration);
-	conditional_decrement (uproar_duration);
-	conditional_decrement (hail_duration);
-	conditional_decrement (sun_duration);
-	conditional_decrement (sand_duration);
-	conditional_decrement (rain_duration);
+auto Weather::activate_trick_room() -> void {
+	m_trick_room = BOUNDED_CONDITIONAL(trick_room(), 0_bi, 5_bi);
 }
 
-void Weather::set_trick_room () {
-	trick_room_duration = trick_room() ? 0 : 5;
+auto Weather::activate_fog() -> void {
+	m_fog = true;
+}
+auto Weather::deactivate_fog() -> void {
+	m_fog = false;
 }
 
-void Weather::set_gravity () {
-	if (!gravity())
-		gravity_duration = 5;
-}
-
-void Weather::set_uproar (int8_t const duration) {
-	if (uproar_duration < duration)
-		uproar_duration = duration;
-}
-
-void Weather::set_hail (Duration const duration) {
-	set_weather (hail_duration, duration);
-}
-void Weather::set_sun (Duration const duration) {
-	set_weather (sun_duration, duration);
-}
-void Weather::set_sand (Duration const duration) {
-	set_weather (sand_duration, duration);
-}
-void Weather::set_rain (Duration const duration) {
-	set_weather (rain_duration, duration);
-}
-void Weather::set_hail(bool const is_extended) {
-	set_weather(hail_duration, is_extended);
-}
-void Weather::set_sun(bool const is_extended) {
-	set_weather(sun_duration, is_extended);
-}
-void Weather::set_sand(bool const is_extended) {
-	set_weather(sand_duration, is_extended);
-}
-void Weather::set_rain(bool const is_extended) {
-	set_weather(rain_duration, is_extended);
-}
-
-void Weather::set_weather(int8_t & primary, bool const is_extended) {
-	set_weather(primary, is_extended ? Duration::extended : Duration::standard);
-}
-
-void Weather::set_weather(int8_t & primary, Duration const duration) {
-	if (primary == 0 or duration == Duration::permanent) {
-		hail_duration = 0;
-		sand_duration = 0;
-		rain_duration = 0;
-		sun_duration = 0;
-		primary = static_cast<int8_t>(duration);
+auto Weather::activate_gravity() -> void {
+	if (!gravity()) {
+		m_gravity = 5_bi;
 	}
 }
 
-template<>
-bool Weather::blocks_status<Statuses::freeze> () const {
-	return sun();
+auto Weather::activate_hail(Duration const duration) -> void {
+	activate_weather(m_hail, duration);
+}
+auto Weather::activate_sun(Duration const duration) -> void {
+	activate_weather(m_sun, duration);
+}
+auto Weather::activate_sand(Duration const duration) -> void {
+	activate_weather(m_sand, duration);
+}
+auto Weather::activate_rain(Duration const duration) -> void {
+	activate_weather(m_rain, duration);
+}
+auto Weather::activate_hail(bool const is_extended) -> void {
+	activate_weather(m_hail, is_extended);
+}
+auto Weather::activate_sun(bool const is_extended) -> void {
+	activate_weather(m_sun, is_extended);
+}
+auto Weather::activate_sand(bool const is_extended) -> void {
+	activate_weather(m_sand, is_extended);
+}
+auto Weather::activate_rain(bool const is_extended) -> void {
+	activate_weather(m_rain, is_extended);
 }
 
-template<>
-bool Weather::blocks_status<Statuses::sleep> () const {
-	return uproar();
+auto Weather::blocks_status(Statuses const status) const -> bool {
+	switch (status) {
+	case Statuses::freeze:
+		return sun();
+	case Statuses::sleep:
+	case Statuses::sleep_rest:
+		return uproar();
+	default:
+		return false;
+	}
 }
 
-template<>
-bool Weather::blocks_status<Statuses::sleep_rest> () const {
-	return blocks_status<Statuses::sleep>();
+auto operator==(Weather const lhs, Weather const rhs) -> bool {
+	return
+		lhs.m_trick_room == rhs.m_trick_room and
+		lhs.m_fog == rhs.m_fog and
+		lhs.m_gravity == rhs.m_gravity and
+		lhs.m_uproar == rhs.m_uproar and
+		lhs.m_hail == rhs.m_hail and
+		lhs.m_sun == rhs.m_sun and
+		lhs.m_sand == rhs.m_sand and
+		lhs.m_rain == rhs.m_rain;
 }
 
-Weather::hash_type Weather::hash () const {
-	// All of weather requires fewer than 22 bits to represent exactly, so this
-	// hash has absolutely no collisions. There are a lot of illegal values
-	// (such as sun having 4 turns left and rain having 3 turns left), and so
-	// it should be possible to write a 0-collision hash for weather that needs
-	// 16 bits of information or fewer.
-	
-	// The + 1 is because they have a minimum value of -1 to represent infinite
-	// weather
-	return static_cast<hash_type> (trick_room_duration) + 5 *
-			(static_cast<hash_type> (fog) + 2 *
-			(static_cast<hash_type> (gravity_duration + 1) + 6 *
-			(static_cast<hash_type> (uproar_duration + 1) + 6 *
-			(static_cast<hash_type> (hail_duration + 1) + 9 *
-			(static_cast<hash_type> (sun_duration + 1) + 9 *
-			(static_cast<hash_type> (sand_duration + 1) + 9 *
-			static_cast<hash_type> (rain_duration + 1)))))));
+auto operator!=(Weather const lhs, Weather const rhs) -> bool {
+	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

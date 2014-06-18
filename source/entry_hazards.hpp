@@ -59,7 +59,7 @@ constexpr auto hash(EntryHazards const hazards) noexcept {
 auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
 auto operator!=(EntryHazards lhs, EntryHazards rhs) -> bool;
 
-auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather const & weather) -> void;
+auto apply(EntryHazards & hazards, ActivePokemon & switcher, Weather weather) -> void;
 
 }	// namespace technicalmachine
 #endif	// ENTRY_HAZARDS_HPP_

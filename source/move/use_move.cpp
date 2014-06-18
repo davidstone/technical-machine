@@ -48,7 +48,7 @@ namespace technicalmachine {
 namespace {
 
 auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known) -> damage_type;
-auto calculate_real_damage(Team const & user, Team const & target, Weather const & weather, Variable const & variable, bool const damage_is_known) -> damage_type;
+auto calculate_real_damage(Team const & user, Team const & target, Weather weather, Variable const & variable, bool damage_is_known) -> damage_type;
 auto call_other_move (ActivePokemon & user) -> void;
 template<typename Predicate>
 auto cure_all_status(Team & user, Predicate const & predicate) -> void {
@@ -72,11 +72,11 @@ auto phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 auto rest(Pokemon & user) -> void;
 auto struggle(Pokemon & user) -> void;
 auto swap_items(Pokemon & user, Pokemon & target) -> void;
-auto tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather, Variable const & variable) -> void;
+auto tri_attack_status(Pokemon & user, Pokemon & target, Weather weather, Variable const & variable) -> void;
 auto use_swallow(ActivePokemon & user) -> void;
 
 template<Statuses status>
-auto fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & weather, Variable const & variable) {
+auto fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const weather, Variable const & variable) {
 	switch (variable.value().value()) {
 		case 0:
 			break;
@@ -97,7 +97,7 @@ auto fang_side_effects(Pokemon & user, ActivePokemon & target, Weather const & w
 }
 
 template<Statuses status>
-auto recoil_status(Pokemon & user, Pokemon & target, Weather const & weather, damage_type const damage, Variable const & variable) {
+auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, damage_type const damage, Variable const & variable) {
 	recoil(user, damage, 3_bi);
 	if (variable.effect_activates()) {
 		Status::apply<status>(user, target, weather);
@@ -196,7 +196,7 @@ auto do_effects_before_moving (Pokemon & user, Team & target) -> void {
 	}
 }
 
-auto calculate_real_damage(Team const & user, Team const & target, Weather const & weather, Variable const & variable, bool const damage_is_known) -> damage_type {
+auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const damage_is_known) -> damage_type {
 	if (!is_damaging(user.pokemon().move())) {
 		return 0_bi;
 	}
@@ -502,7 +502,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.defense_curl();
 			break;
 		case Moves::Defog:
-			weather.fog = false;
+			weather.deactivate_fog();
 			boost(target.stage(), StatNames::EVA, -1_bi);
 			break;
 		case Moves::Destiny_Bond:
@@ -605,7 +605,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			Status::apply<Statuses::paralysis>(user, target, weather);
 			break;
 		case Moves::Gravity:
-			weather.set_gravity();
+			weather.activate_gravity();
 			break;
 		case Moves::Growl:
 			boost(target.stage(), StatNames::ATK, -1_bi);
@@ -619,7 +619,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			swap_defensive(user.stage(), target.stage());
 			break;
 		case Moves::Hail:
-			weather.set_hail(extends_hail(get_item(user)));
+			weather.activate_hail(extends_hail(get_item(user)));
 			break;
 		case Moves::Hammer_Arm:
 			boost(user.stage(), StatNames::SPE, -1_bi);
@@ -749,7 +749,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Moonlight:
 		case Moves::Morning_Sun:
 		case Moves::Synthesis: {
-			auto const amount = [& weather]() {
+			auto const amount = [weather]() {
 				using Numerator = bounded::integer<1, 2>;
 				using Denominator = bounded::integer<2, 4>;
 				using Result = bounded_rational<Numerator, Denominator>;
@@ -817,7 +817,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Rage:		// Fix
 			break;
 		case Moves::Rain_Dance:
-			weather.set_rain(extends_rain(get_item(user)));
+			weather.activate_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
 			clear_field(user_team, target);
@@ -849,7 +849,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user_team.screens.activate_safeguard();
 			break;
 		case Moves::Sandstorm:
-			weather.set_sand(extends_sand(get_item(user)));
+			weather.activate_sand(extends_sand(get_item(user)));
 			break;
 		case Moves::Screech:
 			boost(target.stage(), StatNames::DEF, -2_bi);
@@ -915,7 +915,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			user.use_substitute();		
 			break;
 		case Moves::Sunny_Day:
-			weather.set_sun(extends_sun(get_item(user)));
+			weather.activate_sun(extends_sun(get_item(user)));
 			break;
 		case Moves::Superpower:
 			boost_physical(user.stage(), -1_bi);
@@ -972,14 +972,14 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			tri_attack_status(user, target, weather, variable);
 			break;
 		case Moves::Trick_Room:
-			weather.set_trick_room ();
+			weather.activate_trick_room();
 			break;
 		case Moves::U_turn:
 			user.u_turn();
 			break;
 		case Moves::Uproar:
 			// TODO: make this make sense
-			weather.set_uproar (static_cast<int8_t> (variable.value()));
+			weather.activate_uproar(variable.value());
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:
@@ -1090,7 +1090,7 @@ auto swap_items(Pokemon & user, Pokemon & target) -> void {
 	}
 }
 
-auto tri_attack_status(Pokemon & user, Pokemon & target, Weather const & weather, Variable const & variable) -> void {
+auto tri_attack_status(Pokemon & user, Pokemon & target, Weather const weather, Variable const & variable) -> void {
 	switch (variable.value().value()) {
 		case 1:
 			Status::apply<Statuses::burn>(user, target, weather);

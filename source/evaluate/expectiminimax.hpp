@@ -1,5 +1,5 @@
 // Expectiminimax header
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,10 +29,10 @@ class Evaluate;
 class Team;
 class Weather;
 
-Moves expectiminimax (Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
+Moves expectiminimax(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
-int64_t select_type_of_move(Team & ai, Team & foe, Weather const & weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
+int64_t select_type_of_move(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
 #endif	// EVALUATE__EXPECTIMINIMAX_HPP_

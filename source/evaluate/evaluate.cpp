@@ -19,6 +19,7 @@
 #include "evaluate.hpp"
 
 #include "../team.hpp"
+#include "../weather.hpp"
 
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
@@ -96,7 +97,7 @@ auto score_move(Evaluate const & evaluate, Move const & move, Screens const & ot
 using ScoreMove = decltype(score_move(std::declval<Evaluate>(), std::declval<Move>(), std::declval<Screens>()));
 
 using ScoreMoves = decltype(std::declval<ScoreMove>() * std::declval<RegularMoveSize>());
-auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const & weather) {
+auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const weather) {
 	// TODO: alter the score of a move based on the weather
 	ScoreMoves score = 0_bi;
 	return std::accumulate(pokemon.move.begin(), pokemon.move.end(), score, [&](auto init, auto const & move) {
@@ -122,7 +123,7 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokem
 using ScoreActivePokemon = decltype(score_active_pokemon(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
 
 
-auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const & weather) {
+auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const weather) {
 	return
 		evaluate.members() +
 		hp_ratio(pokemon) * evaluate.hp() +
@@ -136,7 +137,7 @@ auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHaza
 using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declval<Pokemon>(), std::declval<EntryHazards>(), std::declval<Team>(), std::declval<Weather>()));
 
 using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
-auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const & weather) {
+auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const weather) {
 	ScoreAllPokemon score = 0_bi;
 	for (auto const index : bounded::integer_range(team.all_pokemon().size())) {
 		if (get_hp(team.pokemon(index)) == 0_bi) {
@@ -161,7 +162,7 @@ auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wis
 	;
 }
 
-auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, Weather const & weather) {
+auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, Weather const weather) {
 	auto const ai_field_effects = score_field_effects(evaluate, ai.screens, ai.wish);
 	auto const foe_field_effects = score_field_effects(evaluate, foe.screens, foe.wish);
 	auto const ai_pokemon = score_all_pokemon(evaluate, ai, foe, weather);
@@ -188,7 +189,7 @@ using ResultType = decltype(std::declval<ScoreTeam>() + extra);
 
 }	// namespace
 
-auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const & weather) const -> type {
+auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const weather) const -> type {
 	static_cast<void>(TypeMismatchInEvaluate<ResultType, std::is_same<Evaluate::type, ResultType>::value>::value);
 	auto const score = score_team(*this, ai, foe, weather);
 	return score;
