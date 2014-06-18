@@ -36,8 +36,6 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto team_size = max_pokemon_per_team;
-
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";
 	constexpr auto max_attack = 7368_bi;

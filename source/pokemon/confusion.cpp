@@ -20,10 +20,8 @@
 #include "pokemon.hpp"
 
 namespace technicalmachine {
-namespace {
-constexpr unsigned min_duration = 2;
-constexpr unsigned max_duration = 5;
-}	// unnamed namespace
+// min_duration = 2;
+// max_duration = 5;
 
 auto Confusion::is_active() const -> bool {
 	return static_cast<bool>(m_turns_spent_confused);
