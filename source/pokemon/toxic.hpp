@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef Toxic_HPP_
-#define Toxic_HPP_
+#ifndef TOXIC_HPP_
+#define TOXIC_HPP_
 
+#include "../hash.hpp"
 #include "../rational.hpp"
 #include <bounded_integer/bounded_integer.hpp>
-#include <cstdint>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -29,22 +29,25 @@ class Rational;
 
 class Toxic {
 public:
-	Toxic() = default;
-	void increment();
+	auto increment() -> void;
 	auto ratio_drained() const {
 		return make_rational(-m_counter, 16_bi);
 	}
-	friend bool operator== (Toxic const & lhs, Toxic const & rhs);
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	static hash_type max_hash();
+	friend auto operator==(Toxic lhs, Toxic rhs) -> bool;
+	constexpr auto hash() const noexcept {
+		return technicalmachine::hash(m_counter);
+	}
 private:
 	friend class Evaluate;
 	// Number of turns this Pokemon has already taken Toxic damage (or
 	// would have if Magic Guard / Poison Heal weren't in play)
 	bounded::clamped_integer<0, 15> m_counter = 0_bi;
 };
-bool operator!= (Toxic const & lhs, Toxic const & rhs);
+auto operator!=(Toxic lhs, Toxic rhs) -> bool;
+
+constexpr auto hash(Toxic const toxic) noexcept {
+	return toxic.hash();
+}
 
 }	// namespace technicalmachine
-#endif	// Toxic_HPP_
+#endif	// TOXIC_HPP_

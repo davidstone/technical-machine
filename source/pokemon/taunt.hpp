@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-using Taunt = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using TauntCounter = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// TAUNT_HPP_

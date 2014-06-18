@@ -115,16 +115,7 @@ inline auto hash(Pokemon const & pokemon) noexcept {
 	auto const status = get_status(pokemon);
 	auto const item = get_item(pokemon);
 	auto const hp = get_hp(pokemon);
-	// Have to use this intermediate step because the hash overflows.
-	return big_hash(species, status, item, hp, pokemon.has_been_seen(), pokemon.move);
-}
-
-inline auto max_hash(Pokemon const & pokemon) noexcept {
-	auto const species = static_cast<Species>(pokemon);
-	auto const status = get_status(pokemon);
-	auto const item = get_item(pokemon);
-	auto const hp = get_hp(pokemon);
-	return big_max_hash(species, status, item, hp, pokemon.has_been_seen(), pokemon.move);
+	return hash(species, status, item, hp, pokemon.has_been_seen(), pokemon.move);
 }
 
 

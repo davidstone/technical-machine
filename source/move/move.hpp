@@ -20,7 +20,7 @@
 #define MOVE__MOVE_HPP_
 
 #include <bounded_integer/bounded_integer.hpp>
-#include "moves.hpp"
+#include "moves_forward.hpp"
 #include "pp.hpp"
 
 namespace technicalmachine {
@@ -56,19 +56,11 @@ auto is_phaze(Moves name) -> bool;
 auto is_usable_while_frozen(Moves move) -> bool;
 
 constexpr auto hash(Moves const move) noexcept {
-	using move_integer_type = bounded::integer<0, static_cast<intmax_t>(number_of_moves - 1_bi)>;
-	return static_cast<move_integer_type>(move);
-}
-constexpr auto max_hash(Moves const) noexcept {
-	return number_of_moves;
+	return hash_enum<static_cast<intmax_t>(number_of_moves - 1_bi)>(move);
 }
 
 inline auto hash(Move const & move) noexcept {
 	return hash(static_cast<Moves>(move), move.pp());
-}
-
-inline auto max_hash(Move const & move) noexcept {
-	return max_hash(static_cast<Moves>(move), move.pp());
 }
 
 }	// namespace technicalmachine

@@ -80,11 +80,7 @@ auto operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 }
 
 inline auto hash(HP const hp) noexcept {
-	return hp.current();
-}
-
-inline auto max_hash(HP const hp) noexcept {
-	return hp.max();
+	return std::make_pair(hp.current(), hp.max());
 }
 
 }	// namespace technicalmachine

@@ -64,8 +64,15 @@ public:
 	void clear_field();
 	void move(bool value = true);
 
-	typedef uint64_t hash_type;
-	hash_type hash () const;
+	auto hash() const noexcept {
+		return technicalmachine::hash(
+			active_pokemon,
+			all_pokemon(),
+			entry_hazards,
+			screens,
+			wish
+		).first;
+	}
 	friend bool operator== (Team const & lhs, Team const & rhs);
 
 private:

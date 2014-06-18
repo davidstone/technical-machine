@@ -54,11 +54,8 @@ private:
 	container_type m_stages;
 };
 
-inline auto hash(Stage const & stage) noexcept {
+inline auto hash(Stage const stage) noexcept {
 	return hash_range<Stage::container_type::size_type>(stage.begin(), stage.end());
-}
-inline auto max_hash(Stage const & stage) noexcept {
-	return max_hash_range<Stage::container_type::size_type>(stage.begin(), stage.end());
 }
 
 namespace detail {

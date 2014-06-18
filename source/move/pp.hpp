@@ -48,10 +48,10 @@ public:
 
 	// I have to declare these as member functions to work around gcc 4.9.0 bug
 	auto hash() const noexcept {
-		return ::technicalmachine::hash(m_current);
-	}
-	auto max_hash() const noexcept {
-		return BOUNDED_CONDITIONAL(m_max, *m_max + 2_bi, 1_bi);
+		return std::make_pair(
+			::technicalmachine::hash(m_current).first,
+			BOUNDED_CONDITIONAL(m_max, *m_max + 1_bi, 1_bi)
+		);
 	}
 private:
 	using base_type = bounded::integer<1, 40>;
@@ -63,11 +63,8 @@ private:
 };
 auto operator!= (Pp const & lhs, Pp const & rhs) -> bool;
 
-inline auto hash(Pp const & pp) noexcept {
+inline auto hash(Pp const pp) noexcept {
 	return pp.hash();
-}
-inline auto max_hash(Pp const & pp) noexcept {
-	return pp.max_hash();
 }
 
 }	// namespace technicalmachine

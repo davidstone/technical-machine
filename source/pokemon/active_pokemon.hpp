@@ -252,13 +252,8 @@ public:
 	PokemonCollection & all_pokemon();
 
 	friend bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs);
-	typedef uint64_t hash_type;
-	hash_type hash() const;
-	hash_type max_hash() const;
-
-private:
-	auto hash_tie() const noexcept {
-		return std::tie(
+	auto hash() const noexcept {
+		return technicalmachine::hash(
 			m_substitute,
 			m_bide,
 			m_confusion,
@@ -297,11 +292,15 @@ private:
 			m_stockpile,
 			m_taunt,
 			m_is_tormented,
+			m_toxic,
 			m_uproar,
+			m_vanish,
 			m_water_sport,
 			m_yawn
 		);
 	}
+
+private:
 	// I'd make this a reference but I don't want to manually define a copy
 	// and move assignment operator to simply verify that the referents are
 	// the same.
@@ -311,8 +310,8 @@ private:
 	ChanceToHit m_chance_to_hit = ChanceToHit(100_bi, 100_bi);
 	Confusion m_confusion;
 	Disable m_disable;
-	Embargo m_embargo;
-	Encore m_encore;
+	EmbargoCounter m_embargo;
+	EncoreCounter m_encore;
 	HealBlock m_heal_block;
 	LastUsedMove m_last_used_move;
 	MagnetRise m_magnet_rise;
@@ -324,11 +323,11 @@ private:
 	Stage m_stage;
 	SlowStart m_slow_start;
 	Stockpile m_stockpile;
-	Taunt m_taunt;
+	TauntCounter m_taunt;
 	Toxic m_toxic;
-	Uproar m_uproar;
+	UproarCounter m_uproar;
 	Vanish m_vanish;
-	Yawn m_yawn;
+	YawnCounter m_yawn;
 	bool m_aqua_ring = false;
 	bool m_attracted = false;
 	// Will it wake up
@@ -372,6 +371,10 @@ private:
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);
 
 void switch_pokemon(ActivePokemon & pokemon);
+
+inline auto hash(ActivePokemon const & pokemon) noexcept {
+	return pokemon.hash();
+}
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_

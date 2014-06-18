@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-using Uproar = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using UproarCounter = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// UPROAR_HPP_

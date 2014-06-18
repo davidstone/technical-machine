@@ -41,9 +41,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_level);
 	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_level);
-	}
 	friend auto operator==(Stockpile lhs, Stockpile rhs) -> bool;
 private:
 	friend class Evaluate;
@@ -56,9 +53,6 @@ auto swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles) -> 
 
 constexpr auto hash(Stockpile const stockpile) noexcept {
 	return stockpile.hash();
-}
-constexpr auto max_hash(Stockpile const stockpile) noexcept {
-	return stockpile.max_hash();
 }
 
 

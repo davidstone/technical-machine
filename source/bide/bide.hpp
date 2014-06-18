@@ -36,9 +36,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return ::technicalmachine::hash(m_damage, m_duration);
 	}
-	constexpr auto max_hash() const noexcept {
-		return ::technicalmachine::max_hash(m_damage, m_duration);
-	}
 	friend auto operator== (Bide lhs, Bide rhs) -> bool ;
 private:
 	BideDamage m_damage;
@@ -49,9 +46,6 @@ auto operator!= (Bide lhs, Bide rhs) -> bool ;
 
 constexpr auto hash(Bide const bide) noexcept {
 	return bide.hash();
-}
-constexpr auto max_hash(Bide const bide) noexcept {
-	return bide.max_hash();
 }
 
 }	// namespace technicalmachine

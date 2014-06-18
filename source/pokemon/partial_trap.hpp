@@ -20,6 +20,7 @@
 #define PARTIAL_TRAP_HPP_
 
 #include "end_of_turn_counter.hpp"
+#include "../hash.hpp"
 
 namespace technicalmachine {
 class ActivePokemon;
@@ -37,10 +38,7 @@ public:
 	auto damage(ActivePokemon & pokemon) -> void;
 
 	constexpr auto hash() const noexcept {
-		return m_base.hash();
-	}
-	constexpr auto max_hash() const noexcept {
-		return m_base.max_hash();
+		return technicalmachine::hash(m_base);
 	}
 	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) -> bool {
 		return lhs.m_base == rhs.m_base;
@@ -55,9 +53,6 @@ constexpr auto operator!=(PartialTrap const lhs, PartialTrap const rhs) {
 
 constexpr auto hash(PartialTrap const partial_trap) noexcept {
 	return partial_trap.hash();
-}
-constexpr auto max_hash(PartialTrap const partial_trap) noexcept {
-	return partial_trap.max_hash();
 }
 
 }	// namespace technicalmachine

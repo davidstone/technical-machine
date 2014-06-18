@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-using Encore = EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using EncoreCounter = EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// ENCORE_HPP_

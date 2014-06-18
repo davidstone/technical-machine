@@ -45,9 +45,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return ::technicalmachine::hash(m_index_of_move, m_consecutive_turns_used);
 	}
-	constexpr auto max_hash() const noexcept {
-		return ::technicalmachine::max_hash(m_index_of_move, m_consecutive_turns_used);
-	}
 private:
 	bounded::optional<index_type> m_index_of_move;
 	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
@@ -57,9 +54,6 @@ auto operator!=(LastUsedMove lhs, LastUsedMove rhs) -> bool;
 
 constexpr auto hash(LastUsedMove const last_used_move) noexcept {
 	return last_used_move.hash();
-}
-constexpr auto max_hash(LastUsedMove const last_used_move) noexcept {
-	return last_used_move.max_hash();
 }
 
 }	// namespace technicalmachine

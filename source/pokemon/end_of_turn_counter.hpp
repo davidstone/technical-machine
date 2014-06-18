@@ -73,9 +73,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_turns_active);
 	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
-	}
 private:
 	constexpr auto next_turn_value() {
 		return (static_cast<bool>(m_turns_active) and *m_turns_active != bounded::make<max_turns>()) ?
@@ -95,10 +92,6 @@ constexpr auto operator!=(EndOfTurnCounter<max_turns, operations...> const lhs, 
 template<intmax_t max_turns, CounterOperations... operations>
 constexpr auto hash(EndOfTurnCounter<max_turns, operations...> const flag) noexcept {
 	return flag.hash();
-}
-template<intmax_t max_turns, CounterOperations... operations>
-constexpr auto max_hash(EndOfTurnCounter<max_turns, operations...> const flag) noexcept {
-	return flag.max_hash();
 }
 
 }	// namespace technicalmachine

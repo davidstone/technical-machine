@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-using Yawn = EndOfTurnCounter<1, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
+using YawnCounter = EndOfTurnCounter<1, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// YAWN_HPP_

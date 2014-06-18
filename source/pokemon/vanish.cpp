@@ -22,15 +22,6 @@
 
 namespace technicalmachine {
 
-enum class Vanish::VanishTypes : uint8_t {
-	none, bounce, dig, dive, fly, shadow_force, end
-};
-
-Vanish::Vanish() :
-	m_state(VanishTypes::none)
-	{
-}
-
 auto Vanish::flip(VanishTypes const flipped) -> bool {
 	m_state = (m_state == VanishTypes::none) ? flipped : VanishTypes::none;
 	return m_state != VanishTypes::none;
@@ -87,14 +78,6 @@ auto Vanish::doubles_wind_power() const -> bool {
 		default:
 			return false;
 	}
-}
-
-auto Vanish::hash() const -> hash_type {
-	return static_cast<hash_type>(m_state);
-}
-
-auto Vanish::max_hash() -> hash_type {
-	return static_cast<hash_type>(VanishTypes::end);
 }
 
 auto operator==(Vanish const lhs, Vanish const rhs) -> bool {

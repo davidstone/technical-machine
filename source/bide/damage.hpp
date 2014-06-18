@@ -38,9 +38,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return ::technicalmachine::hash(m_damage);
 	}
-	constexpr auto max_hash() const noexcept {
-		return ::technicalmachine::max_hash(m_damage);
-	}
 private:
 	// This is the greatest range that matters since anything more is overkill
 	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;
@@ -50,9 +47,6 @@ auto operator!= (BideDamage lhs, BideDamage rhs) -> bool;
 
 constexpr auto hash(BideDamage const damage) noexcept {
 	return damage.hash();
-}
-constexpr auto max_hash(BideDamage const damage) noexcept {
-	return damage.max_hash();
 }
 
 }	// namespace technicalmachine

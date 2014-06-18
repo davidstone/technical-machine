@@ -41,14 +41,10 @@ private:
 	bounded::optional<counter_type> m_turns_until_activation;
 };
 
-// These are sufficient because hashing only has to distinguish end-of-turn
+// This is sufficient because hashing only has to distinguish end-of-turn
 // conditions.
 constexpr auto hash(Wish const wish) noexcept {
 	return hash(wish.is_active());
-}
-
-constexpr auto max_hash(Wish const wish) noexcept {
-	return max_hash(wish.is_active());
 }
 
 auto operator!= (Wish lhs, Wish rhs) -> bool;

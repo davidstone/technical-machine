@@ -20,23 +20,15 @@
 
 namespace technicalmachine {
 
-void Toxic::increment() {
+auto Toxic::increment() -> void {
 	++m_counter;
 }
 
-Toxic::hash_type Toxic::hash() const {
-	return static_cast<hash_type>(m_counter);
-}
-
-Toxic::hash_type Toxic::max_hash() {
-	return static_cast<hash_type>(std::numeric_limits<decltype(m_counter)>::max() + 1_bi);
-}
-
-bool operator== (Toxic const & lhs, Toxic const & rhs) {
+auto operator== (Toxic const lhs, Toxic const rhs) -> bool {
 	return lhs.m_counter == rhs.m_counter;
 }
 
-bool operator!= (Toxic const & lhs, Toxic const & rhs) {
+auto operator!= (Toxic const lhs, Toxic const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

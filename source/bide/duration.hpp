@@ -38,9 +38,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_turns_active);
 	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_active);
-	}
 private:
 	static constexpr auto max = 1;
 	bounded::optional<bounded::integer<0, max>> m_turns_active;
@@ -50,9 +47,6 @@ auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool;
 
 constexpr auto hash(BideDuration const duration) noexcept {
 	return duration.hash();
-}
-constexpr auto max_hash(BideDuration const duration) noexcept {
-	return duration.max_hash();
 }
 
 }	// namespace technicalmachine

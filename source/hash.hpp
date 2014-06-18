@@ -1,4 +1,4 @@
-// Calculate hashes. Specializations should return a bounded::integer
+// Calculate hashes. Specializations should return a pair of integers
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -24,51 +24,59 @@
 
 #include <tuple>
 #include <type_traits>
+#include <utility>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
+
 constexpr auto hash(bool const value) noexcept {
-	return BOUNDED_CONDITIONAL(value, 1_bi, 0_bi);
-}
-constexpr auto max_hash(bool) noexcept {
-	return 2_bi;
+	return std::make_pair(BOUNDED_CONDITIONAL(value, 1_bi, 0_bi), 2_bi);
 }
 
 template<intmax_t minimum, intmax_t maximum, typename policy>
 constexpr auto hash(bounded::integer<minimum, maximum, policy> const value) noexcept {
-	return bounded::make<bounded::null_policy>(value) - bounded::make<minimum>();
+	return std::make_pair(
+		bounded::make<bounded::null_policy>(value) - bounded::make<minimum>(),
+		bounded::make<maximum>() - bounded::make<minimum>() + 1_bi
+	);
 }
-
-template<intmax_t minimum, intmax_t maximum, typename policy>
-constexpr auto max_hash(bounded::integer<minimum, maximum, policy>) noexcept {
-	return bounded::make<maximum>() - bounded::make<minimum>() + 1_bi;
-}
-
 
 template<intmax_t minimum, intmax_t maximum, typename policy>
 constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>> const value) noexcept {
-	return BOUNDED_CONDITIONAL(value, hash(*value) + 1_bi, 0_bi);
+	return std::make_pair(
+		BOUNDED_CONDITIONAL(value, hash(*value).first + 1_bi, 0_bi),
+		bounded::make<maximum>() - bounded::make<minimum>() + 1_bi + 1_bi
+	);
 }
 
-template<intmax_t minimum, intmax_t maximum, typename policy>
-constexpr auto max_hash(bounded::optional<bounded::integer<minimum, maximum, policy>>) noexcept {
-	return bounded::make<maximum>() - bounded::make<minimum>() + 1_bi + 1_bi;
+
+template<intmax_t max_value, typename Enum>
+constexpr auto hash_enum(Enum const value) noexcept {
+	static_assert(std::is_enum<Enum>::value, "hash_enum can only be called on an enum.");
+	return std::make_pair(
+		bounded::integer<0, max_value>(value),
+		bounded::make<max_value>() + 1_bi
+	);
 }
 
+
+
+
+// This is declared but not defined to give a helpful error message
 template<typename T>
-class overload_hash_and_max_hash_for_your_type;
+class overload_hash_for_your_type;
+
 template<typename T>
 constexpr auto hash(T const & t) {
-	return overload_hash_and_max_hash_for_your_type<T>{};
-}
-template<typename T>
-constexpr auto max_hash(T const & t) {
-	return overload_hash_and_max_hash_for_your_type<T>{};
+	return overload_hash_for_your_type<T>{};
 }
 
+
+template<typename T>
+class VerifyHashBoundsImpl;
 template<typename hash_type, typename max_hash_type>
-class VerifyHashBoundsImpl {
+class VerifyHashBoundsImpl<std::pair<hash_type, max_hash_type>> {
 	static_assert(!std::is_same<hash_type, uint64_t>::value, "Mismatched hash types.");
 	static_assert(!std::is_same<max_hash_type, uint64_t>::value, "Mismatched hash types.");
 	static_assert(
@@ -81,66 +89,45 @@ class VerifyHashBoundsImpl {
 	);
 };
 template<>
-class VerifyHashBoundsImpl<uint64_t, uint64_t> {
+class VerifyHashBoundsImpl<std::pair<uint64_t, uint64_t>> {
 };
 template<typename T>
 class VerifyHashBounds {
-	using hash_type = decltype(hash(std::declval<T>()));
-	using max_hash_type = decltype(max_hash(std::declval<T>()));
-	using type = VerifyHashBoundsImpl<hash_type, max_hash_type>;
+	using type = VerifyHashBoundsImpl<decltype(hash(std::declval<T>()))>;
 };
 
+
+
+// VerifyHashBounds already checks these types.
+template<typename LHS, typename RHS>
+constexpr auto hash_combine(LHS const lhs, RHS const rhs) noexcept {
+	// This loses the most significant bits. That will be fixed when
+	// bounded::integer has bignum support.
+	return std::make_pair(
+		static_cast<uint64_t>(lhs.first) + static_cast<uint64_t>(lhs.second) * static_cast<uint64_t>(rhs.first),
+		static_cast<uint64_t>(lhs.second) * static_cast<uint64_t>(rhs.second)
+	);
+}
+
+
+// noexcept_hashable is used because recursion cannot appear in the noexcept
 template<typename ... Ts>
 constexpr auto noexcept_hashable() noexcept -> bool;
-template<typename ... Ts>
-constexpr auto noexcept_max_hashable() noexcept -> bool;
+
+
 
 template<typename T, typename... Ts>
-constexpr auto hash(T const & t, Ts && ... ts) noexcept(noexcept(hash(t)) and noexcept(max_hash(t)) and noexcept_hashable<Ts...>()) {
-	return VerifyHashBounds<T>{}, hash(t) + max_hash(t) * hash(ts...);
-}
-
-template<typename T, typename... Ts>
-constexpr auto max_hash(T const & t, Ts && ... ts) noexcept(noexcept(max_hash(t)) and noexcept_max_hashable<Ts...>()) {
-	return VerifyHashBounds<T>{}, max_hash(t) * max_hash(ts...);
+constexpr auto hash(T const & t, Ts && ... ts) noexcept(noexcept(hash(t)) and noexcept_hashable<Ts...>()) {
+	return VerifyHashBounds<T>{}, hash_combine(hash(t), hash(ts...));
 }
 
 
-// Workaround for lack of bignum support in bounded::integer
-template<typename T>
-constexpr auto big_hash(T const & t) noexcept(noexcept_hashable<T>()) {
-	return static_cast<uint64_t>(hash(t));
-}
-template<typename T, typename... Ts>
-constexpr auto big_hash(T const & t, Ts && ... ts) noexcept(noexcept_hashable<T, Ts...>()) {
-	return static_cast<uint64_t>(hash(t)) + static_cast<uint64_t>(max_hash(t)) * static_cast<uint64_t>(big_hash(ts...));
-}
 
-template<typename T>
-constexpr auto big_max_hash(T const & t) noexcept(noexcept_max_hashable<T>()) {
-	return static_cast<uint64_t>(max_hash(t));
-}
-template<typename T, typename... Ts>
-constexpr auto big_max_hash(T const & t, Ts && ... ts) noexcept(noexcept_max_hashable<T, Ts...>()) {
-	return static_cast<uint64_t>(max_hash(t)) * static_cast<uint64_t>(big_max_hash(ts...));
-}
-
-template<typename... Ts>
-struct NoexceptMaxHashable;
-template<typename T, typename... Ts>
-struct NoexceptMaxHashable<T, Ts...> : std::integral_constant<bool, NoexceptMaxHashable<T>::value and NoexceptMaxHashable<Ts...>::value> {};
-template<typename T>
-struct NoexceptMaxHashable<T> : std::integral_constant<bool, noexcept(max_hash(std::declval<T>()))> {};
-
-template<typename ... Ts>
-constexpr auto noexcept_max_hashable() noexcept -> bool {
-	return NoexceptMaxHashable<Ts...>::value;
-}
 
 template<typename... Ts>
 struct NoexceptHashable;
 template<typename T, typename... Ts>
-struct NoexceptHashable<T, Ts...> : std::integral_constant<bool, NoexceptHashable<T>::value and NoexceptMaxHashable<T>::value and NoexceptHashable<Ts...>::value> {};
+struct NoexceptHashable<T, Ts...> : std::integral_constant<bool, NoexceptHashable<T>::value and NoexceptHashable<Ts...>::value> {};
 template<typename T>
 struct NoexceptHashable<T> : std::integral_constant<bool, noexcept(hash(std::declval<T>()))> {};
 
@@ -154,39 +141,21 @@ constexpr auto noexcept_hashable() noexcept -> bool {
 
 template<typename... Ts, std::size_t... indexes>
 constexpr auto tuple_hash(std::tuple<Ts...> const & values, std::index_sequence<indexes...>) noexcept(noexcept_hashable<Ts...>()) {
-	return big_hash(std::get<indexes>(values)...);
+	return hash(std::get<indexes>(values)...);
 }
 template<typename... Ts>
 constexpr auto hash(std::tuple<Ts...> const & values) noexcept(noexcept_hashable<Ts...>()) {
 	return tuple_hash(values, std::make_index_sequence<sizeof...(Ts)>{});
 }
-template<typename... Ts, std::size_t... indexes>
-constexpr auto tuple_max_hash(std::tuple<Ts...> const & values, std::index_sequence<indexes...>) noexcept(noexcept_hashable<Ts...>()) {
-	return big_max_hash(std::get<indexes>(values)...);
-}
-template<typename... Ts>
-constexpr auto max_hash(std::tuple<Ts...> const & values) noexcept(noexcept_hashable<Ts...>()) {
-	return tuple_max_hash(values, std::make_index_sequence<sizeof...(Ts)>{});
-}
 
 
 
-
-
-// TODO: change when bounded::integer supports large integers
-template<typename Size, typename Iterator>
-auto max_hash_range(Iterator first, Iterator last) {
-	constexpr uint64_t initial = 1;
-	return std::accumulate(first, last, initial, [](auto const current, auto const & element) {
-		return static_cast<uint64_t>(current) * static_cast<uint64_t>(max_hash(element));
-	});
-}
 
 template<typename Size, typename Iterator>
 auto hash_range(Iterator first, Iterator last) {
-	constexpr uint64_t initial = 0;
+	constexpr auto initial = std::make_pair(static_cast<uint64_t>(0), static_cast<uint64_t>(0));
 	return std::accumulate(first, last, initial, [](auto const current, auto const & element) {
-		return static_cast<uint64_t>(current) * static_cast<uint64_t>(max_hash(element)) + static_cast<uint64_t>(hash(element));
+		return hash_combine(current, hash(element));
 	});
 }
 

@@ -59,10 +59,6 @@ inline auto hash(MoveCollection const & collection) noexcept {
 	return hash_range<RegularMoveSize>(collection.regular().begin(), collection.regular().end());
 }
 
-inline auto max_hash(MoveCollection const & collection) noexcept {
-	return max_hash_range<RegularMoveSize>(collection.regular().begin(), collection.regular().end());
-}
-
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
 auto set_index(MoveCollection & moves, Moves name) -> void;
 auto regular_move(MoveCollection const & moves) -> Move const &;

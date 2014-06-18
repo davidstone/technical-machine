@@ -136,13 +136,7 @@ private:
 };
 
 inline auto hash(PokemonCollection const & collection) noexcept {
-	return
-		static_cast<uint64_t>(hash(collection.real_size())) + static_cast<uint64_t>(max_hash(collection.real_size())) *
-		hash_range<TeamSize>(collection.begin(), collection.end());
-}
-
-inline auto max_hash(PokemonCollection const & collection) noexcept {
-	return static_cast<uint64_t>(max_hash(collection.real_size())) * max_hash_range<TeamSize>(collection.begin(), collection.end());
+	return hash_combine(hash(collection.real_size()), hash_range<TeamSize>(collection.begin(), collection.end()));
 }
 
 

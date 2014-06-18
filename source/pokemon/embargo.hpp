@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-using Embargo = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using EmbargoCounter = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
 #endif	// EMBARGO_HPP_

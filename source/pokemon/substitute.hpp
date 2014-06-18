@@ -52,9 +52,6 @@ bool operator!= (Substitute const & lhs, Substitute const & rhs);
 constexpr auto hash(Substitute const substitute) noexcept {
 	return hash(substitute.hp());
 }
-constexpr auto max_hash(Substitute const substitute) noexcept {
-	return max_hash(substitute.hp());
-}
 
 
 }	// namespace technicalmachine

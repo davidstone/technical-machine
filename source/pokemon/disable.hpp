@@ -35,9 +35,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_index_of_disabled_move, m_turns_disabled);
 	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_index_of_disabled_move, m_turns_disabled);
-	}
 	friend auto operator==(Disable lhs, Disable rhs) -> bool;
 private:
 	bounded::optional<RegularMoveIndex> m_index_of_disabled_move;
@@ -49,9 +46,6 @@ auto operator!= (Disable lhs, Disable rhs) -> bool;
 
 constexpr auto hash(Disable const disable) noexcept {
 	return disable.hash();
-}
-constexpr auto max_hash(Disable const disable) noexcept {
-	return disable.max_hash();
 }
 
 }	// namespace technicalmachine

@@ -137,10 +137,7 @@ bool extends_reflect(Item item);
 void steal(Item & mine, Item & other);
 
 constexpr auto hash(Item const item) noexcept {
-	return bounded::integer<0, static_cast<intmax_t>(Item::END)>(item);
-}
-constexpr auto max_hash(Item) noexcept {
-	return bounded::make<static_cast<intmax_t>(Item::END)>();
+	return hash_enum<static_cast<intmax_t>(Item::END)>(item);
 }
 
 }	// namespace technicalmachine

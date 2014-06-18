@@ -19,17 +19,22 @@
 #ifndef VANISH_HPP_
 #define VANISH_HPP_
 
-#include <cstdint>
+#include "../hash.hpp"
+
 #include "../move/moves_forward.hpp"
+
+#include <cstdint>
 
 namespace technicalmachine {
 
 // Various states a Pokemon can be in due to vanishing moves.
 
 class Vanish {
+private:
+	enum class VanishTypes : uint8_t {
+		none, bounce, dig, dive, fly, shadow_force, end
+	};
 public:
-	Vanish();
-
 	// Returns whether the Pokemon ends up in a Vanished state
 	auto bounce() -> bool;
 	auto dig() -> bool;
@@ -38,20 +43,24 @@ public:
 	auto shadow_force() -> bool;
 
 	auto doubles_move_power(Moves move) const -> bool;
-	using hash_type = uint64_t;
-	auto hash() const -> hash_type;
-	static auto max_hash() -> hash_type;
-	friend auto operator== (Vanish const lhs, Vanish const rhs) -> bool;
+	constexpr auto hash() const noexcept {
+		return hash_enum<static_cast<intmax_t>(VanishTypes::end) - 1>(m_state);
+	}
+	friend auto operator== (Vanish lhs, Vanish rhs) -> bool;
 private:
 	auto doubles_ground_power() const -> bool;
 	auto doubles_surf_power() const -> bool;
 	auto doubles_wind_power() const -> bool;
-	enum class VanishTypes : uint8_t;
+
 	auto flip(VanishTypes const flipped) -> bool;
-	VanishTypes m_state;
+	VanishTypes m_state = VanishTypes::none;
 };
 
-bool operator!= (Vanish const lhs, Vanish const rhs);
+bool operator!= (Vanish lhs, Vanish rhs);
+
+constexpr auto hash(Vanish const vanish) noexcept {
+	return vanish.hash();
+}
 
 }	// namespace technicalmachine
 #endif	// VANISH_HPP_

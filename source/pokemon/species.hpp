@@ -739,10 +739,7 @@ inline Species & operator++(Species & species) {
 }
 
 constexpr auto hash(Species const species) noexcept {
-	return bounded::integer<0, static_cast<intmax_t>(Species::END) - 1>(species);
-}
-constexpr auto max_hash(Species) noexcept {
-	return bounded::make<static_cast<intmax_t>(Species::END)>();
+	return hash_enum<static_cast<intmax_t>(Species::END) - 1>(species);
 }
 
 }	// namespace technicalmachine

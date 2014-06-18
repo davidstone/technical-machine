@@ -136,16 +136,6 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 }	// namespace
 
-Team::hash_type Team::hash() const {
-	return
-		static_cast<uint64_t>(technicalmachine::hash(screens)) + static_cast<uint64_t>(technicalmachine::max_hash(screens)) *
-		(static_cast<uint64_t>(technicalmachine::hash(wish)) + static_cast<uint64_t>(technicalmachine::max_hash(wish)) *
-		(static_cast<uint64_t>(technicalmachine::hash(entry_hazards)) + static_cast<uint64_t>(technicalmachine::max_hash(entry_hazards)) *
-		(static_cast<uint64_t>(technicalmachine::hash(all_pokemon())) + static_cast<uint64_t>(technicalmachine::max_hash(all_pokemon())) *
-		static_cast<uint64_t>(active_pokemon.hash())
-	)));
-}
-
 void Team::load(std::string const & name) {
 	// I do no error checking because I assume my team files will always be in
 	// the proper format. This must be changed if I ever allow arbitary teams

@@ -64,18 +64,8 @@ private:
 	TailwindEffect m_tailwind;
 };
 
-constexpr auto hash(Screens const & screens) noexcept {
+constexpr auto hash(Screens const screens) noexcept {
 	return hash(
-		screens.light_screen(),
-		screens.reflect(),
-		screens.lucky_chant(),
-		screens.mist(),
-		screens.safeguard(),
-		screens.tailwind()
-	);
-}
-constexpr auto max_hash(Screens const & screens) noexcept {
-	return max_hash(
 		screens.light_screen(),
 		screens.reflect(),
 		screens.lucky_chant(),

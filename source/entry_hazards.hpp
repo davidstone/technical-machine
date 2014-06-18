@@ -55,9 +55,6 @@ private:
 constexpr auto hash(EntryHazards const hazards) noexcept {
 	return hash(hazards.spikes(), hazards.stealth_rock(), hazards.toxic_spikes());
 }
-constexpr auto max_hash(EntryHazards const hazards) noexcept {
-	return max_hash(hazards.spikes(), hazards.stealth_rock(), hazards.toxic_spikes());
-}
 
 auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
 auto operator!=(EntryHazards lhs, EntryHazards rhs) -> bool;

@@ -39,9 +39,6 @@ public:
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_turns_spent_confused);
 	}
-	constexpr auto max_hash() const noexcept {
-		return technicalmachine::max_hash(m_turns_spent_confused);
-	}
 private:
 	auto increment() -> void;
 	friend class Evaluate;
@@ -53,9 +50,6 @@ bool operator!= (Confusion const & lhs, Confusion const & rhs);
 
 constexpr auto hash(Confusion const confusion) noexcept {
 	return confusion.hash();
-}
-constexpr auto max_hash(Confusion const confusion) noexcept {
-	return confusion.max_hash();
 }
 
 }	// namespace technicalmachine

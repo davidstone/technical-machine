@@ -754,22 +754,6 @@ void ActivePokemon::normalize_hp(bool fainted) {
 	}
 }
 
-ActivePokemon::hash_type ActivePokemon::hash() const {
-	hash_type current_hash = big_hash(hash_tie());
-	current_hash *= m_toxic.max_hash();
-	current_hash += m_toxic.hash();
-	current_hash *= m_vanish.max_hash();
-	current_hash += m_vanish.hash();
-	return current_hash;
-}
-
-ActivePokemon::hash_type ActivePokemon::max_hash() const {
-	hash_type current_hash = big_max_hash(hash_tie());
-	current_hash *= m_toxic.max_hash();
-	current_hash *= m_vanish.max_hash();
-	return current_hash;
-}
-
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return
 			lhs.m_all_pokemon == rhs.m_all_pokemon and

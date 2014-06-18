@@ -45,6 +45,10 @@ enum class Statuses : uint8_t {
 	END
 };
 
+constexpr auto hash(Statuses const status) noexcept {
+	return hash_enum<static_cast<intmax_t>(Statuses::END) - 1>(status);
+}
+
 class Status {
 public:
 	constexpr auto name() const -> Statuses {
@@ -68,12 +72,7 @@ public:
 	auto awaken_probability(Ability const & ability, bool awaken) const -> Rational;
 
 	constexpr auto hash() const noexcept {
-		return
-			static_cast<bounded::integer<0, static_cast<intmax_t>(Statuses::END) - 1>>(name()) + bounded::make<static_cast<intmax_t>(Statuses::END)>() *
-			::technicalmachine::hash(m_turns_already_slept);
-	}
-	constexpr auto max_hash() const noexcept {
-		return bounded::make<static_cast<intmax_t>(Statuses::END)>() * ::technicalmachine::max_hash(m_turns_already_slept);
+		return technicalmachine::hash(name(), m_turns_already_slept);
 	}
 private:
 	Statuses m_status = Statuses::clear;
@@ -94,9 +93,6 @@ auto operator!=(Status lhs, Status rhs) -> bool;
 
 constexpr auto hash(Status const status) noexcept {
 	return status.hash();
-}
-constexpr auto max_hash(Status const status) noexcept {
-	return status.max_hash();
 }
 
 }	// namespace technicalmachine
