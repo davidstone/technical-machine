@@ -1,5 +1,5 @@
 // Sha-2 implementation
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
 // it under the terms of the GNU Affero General Public License as
@@ -174,10 +174,10 @@ static void exp (T a, T b, T c, T & d, T e, T f, T g, T & h, unsigned j, T const
 }
 
 template <unsigned block_size, unsigned array_size, typename T>
-static void transform (std::string const & message, unsigned const number_of_blocks, T h [8]) {
+static void transform (std::string const & message, uint64_t const number_of_blocks, T h [8]) {
 	T w [array_size];
 	T wv [8];
-	for (unsigned i = 0; i < number_of_blocks; ++i) {
+	for (uint64_t i = 0; i < number_of_blocks; ++i) {
 		
 		// Cannot work in larger chunks due to endian issues.
 		T const * sub_message = reinterpret_cast <T const *> (&message [i * block_size]);
@@ -215,9 +215,9 @@ static void transform (std::string const & message, unsigned const number_of_blo
 	}
 }
 
-static void add_length (std::string & message, unsigned const original_size) {
+static void add_length (std::string & message, uint64_t const original_size) {
 	// I'm supposed to support up to 128-bits for the message length for SHA-384 / 512.
-	unsigned const position_of_length = message.size () - sizeof (uint64_t);
+	auto const position_of_length = message.size () - sizeof (uint64_t);
 	uint64_t * const length_ptr = reinterpret_cast <uint64_t *> (&message [position_of_length]);
 	uint64_t const bit_length = (original_size) * 8;
 	*length_ptr = be_to_h (bit_length);
@@ -234,24 +234,24 @@ static void format_digest (unsigned const words, T h [8], std::string & digest) 
 
 template <unsigned block_size, unsigned array_size, typename T>
 static void sha (std::string message, T h [8], unsigned const words, std::string & digest) {
-	unsigned const original_size = message.size ();
-	unsigned const number_of_full_blocks = original_size / block_size;
+	auto const original_size = message.size ();
+	auto const number_of_full_blocks = original_size / block_size;
 
-	unsigned const size_of_full_blocks = number_of_full_blocks * block_size;
+	auto const size_of_full_blocks = number_of_full_blocks * block_size;
 	message.append (1, static_cast <char> (0x80));
 
-	unsigned const remaining_length = original_size - size_of_full_blocks;
+	auto const remaining_length = original_size - size_of_full_blocks;
 	// Not the length of the message, but the bytes in the integer used to give the length of the message
-	constexpr unsigned bytes_in_message_length = block_size / 8;
+	constexpr auto bytes_in_message_length = block_size / 8;
 	// Subtract 1 for the byte set at the end of the message
-	constexpr unsigned block_sizer = block_size - bytes_in_message_length - 1;
+	constexpr auto block_sizer = block_size - bytes_in_message_length - 1;
 	// I have to do the comparison instead of just adding 1 because the
 	// message might be long enough to where the addition of the byte
 	// 0x80 and the length of the original message pushes it above the
 	// size of one other block, but the message starts out not evenly
 	// divisible by the block_size.
-	unsigned const number_of_extra_blocks = 1 + (block_sizer < remaining_length);
-	unsigned const size_of_extra_blocks = number_of_extra_blocks * block_size;
+	auto const number_of_extra_blocks = 1U + (block_sizer < remaining_length);
+	auto const size_of_extra_blocks = number_of_extra_blocks * block_size;
 	message.resize (size_of_full_blocks + size_of_extra_blocks, 0);
 
 	add_length (message, original_size);
