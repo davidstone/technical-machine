@@ -1,5 +1,5 @@
 // Class that handles which party I am
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,24 +19,25 @@
 #ifndef CLIENTS__PARTY_HPP_
 #define CLIENTS__PARTY_HPP_
 
-#include <cstdint>
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 
 class Party {
 public:
-	typedef uint8_t value_type;
+	using value_type = bounded::checked_integer<0, 2>;
 	Party();
 	explicit Party(value_type initial);
-	void set_if_unknown (Party new_party);
-	Party other() const;
-	value_type value() const;
-	friend bool operator==(Party lhs, Party rhs);
+	auto value() const -> value_type;
 private:
-	value_type party;
+	value_type m_party;
 };
 
-bool operator!=(Party lhs, Party rhs);
+auto operator==(Party lhs, Party rhs) -> bool;
+auto operator!=(Party lhs, Party rhs) -> bool;
+
+auto set_if_unknown(Party & party, Party new_party) -> void;
+auto other(Party const party) -> Party;
 
 }	// namespace technicalmachine
 #endif	// CLIENTS__PARTY_HPP_

@@ -38,7 +38,7 @@ public:
 		::technicalmachine::Battle::Battle(foe_name, seed, battle_depth, std::forward<Args>(args)...),
 		action (OutMessage::BATTLE_MESSAGE)
 		{
-		set_party_if_unknown(Party(challenger ? 0 : 1));
+		set_party_if_unknown(Party(BOUNDED_CONDITIONAL(challenger, 0_bi, 1_bi)));
 	}
 	void handle_message (Client & client, uint32_t battle_id, uint8_t command, Party party, InMessage & msg);
 	static constexpr unsigned moves_per_pokemon() {

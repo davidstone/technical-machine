@@ -293,7 +293,7 @@ void Battle::parse_use_attack (InMessage & msg, Party const party) {
 void Battle::parse_straight_damage(InMessage & msg) {
 	auto const damage = UpdatedHP::VisibleHP(msg.read_short());
 	constexpr uint8_t slot = 0;
-	handle_direct_damage(last_attacker.other(), slot, damage);
+	handle_direct_damage(other(last_attacker), slot, damage);
 }
 
 void Battle::parse_hp_change (InMessage & msg, Party const party) {

@@ -91,7 +91,7 @@ bool Battle::is_me(Party const other_party) const {
 }
 
 void Battle::set_party_if_unknown(Party const new_party) {
-	my_party.set_if_unknown(new_party);
+	set_if_unknown(my_party, new_party);
 }
 
 void Battle::write_team(network::OutMessage & msg, std::string const & username) const {
@@ -119,11 +119,11 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 		}
 		else {
 			// TODO: fix for 2v2
-			auto const move_index = static_cast<uint8_t>(*index(ai.pokemon().all_moves(), move));
-			auto const target = my_party.other();
+			auto const move_index = *index(ai.pokemon().all_moves(), move);
+			auto const target = other(my_party);
 			// TODO: verify everything lines up
 			static_cast<void>(attacks_allowed);
-			msg.write_move(battle_id, move_index, target.value());
+			msg.write_move(battle_id, static_cast<uint8_t>(move_index), static_cast<uint8_t>(target.value()));
 		}
 	}
 	else {
@@ -172,7 +172,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t i
 	// support.
 
 	Team & switcher = get_team(switcher_party);
-	Team & other = get_team(switcher_party.other());
+	Team & other = get_team(technicalmachine::other(switcher_party));
 
 	if (first == nullptr) {
 		first = &switcher;

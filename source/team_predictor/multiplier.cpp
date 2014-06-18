@@ -85,7 +85,7 @@ Multiplier::Container Multiplier::species_clause() {
 
 void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unaccounted) {
 	// I may not need to calculate this...
-	unsigned const total = std::accumulate(overall.begin(), overall.end(), 0U);
+	auto const total = static_cast<value_type>(std::accumulate(overall.begin(), overall.end(), 0U));
 
 	std::string const file_name = "settings/Generation 4/OU/teammate.txt";
 	std::ifstream file (file_name);
@@ -100,7 +100,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 		auto const number_used_with = boost::lexical_cast<unsigned>(line.substr(y + 1));
 		assert(unaccounted.at(member) >= number_used_with);
 		unaccounted.at(member) -= number_used_with;
-		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / overall.at(member);
+		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / static_cast<value_type>(overall.at(member));
 		auto const per_cent_used = static_cast<value_type>(overall.at(ally)) / total;
 		multiplier.at(member).at(ally) = per_cent_used_with / per_cent_used;
 	}
@@ -124,9 +124,11 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	// suggests.
 	for (auto const a : bounded::integer_range(bounded::make<number_of_species>())) {
 		if (overall[a] != 0_bi) {
-			for (float & value : multiplier[a]) {
+			for (value_type & value : multiplier[a]) {
 				if (value == not_set) {
-					value = (unaccounted[a] != 0_bi) ? (static_cast<float>(unaccounted[a]) / (overall[a] * static_cast<unsigned>(other_pokemon_per_team))) : 0.0F;
+					value = (unaccounted[a] != 0_bi) ?
+						(static_cast<value_type>(unaccounted[a]) / static_cast<value_type>(overall[a] * static_cast<unsigned>(other_pokemon_per_team))) :
+						0.0F;
 				}
 			}
 		}

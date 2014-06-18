@@ -1,5 +1,5 @@
 // Class that handles which party I am
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,38 +20,39 @@
 
 namespace technicalmachine {
 namespace {
-constexpr Party::value_type unknown_party = 255;
-}	// unnamed namespace
+using namespace bounded::literal;
+
+constexpr auto unknown_party = 2_bi;
+}	// namespace
 
 Party::Party():
-	party(unknown_party)
-	{
+	m_party(unknown_party) {
 }
 
 Party::Party(value_type const initial):
-	party(initial)
-	{
+	m_party(initial) {
 }
 
-bool operator==(Party const lhs, Party const rhs) {
-	return lhs.party == rhs.party;
+auto operator==(Party const lhs, Party const rhs) -> bool {
+	return lhs.value() == rhs.value();
 }
 
-bool operator!=(Party const lhs, Party const rhs) {
+auto operator!=(Party const lhs, Party const rhs) -> bool {
 	return !(lhs == rhs);
 }
 
-void Party::set_if_unknown (Party const new_party) {
- 	if (party == unknown_party)
-		*this = new_party;
+auto set_if_unknown(Party & party, Party const new_party) -> void {
+ 	if (party.value() == unknown_party) {
+		party = new_party;
+	}
 }
 
-Party::value_type Party::value() const {
-	return party;
+auto Party::value() const -> value_type{
+	return m_party;
 }
 
-Party Party::other() const {
-	return Party(1 - party);
+auto other(Party const party) -> Party {
+	return Party(Party::value_type(1_bi - party.value()));
 }
 
 } // namespace technicalmachine

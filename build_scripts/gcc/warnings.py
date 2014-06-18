@@ -95,7 +95,7 @@ warnings = [
 	'-Wpedantic',
 	'-Wcast-align',
 	'-Wcast-qual',
-#	'-Wconversion',
+	'-Wconversion',
 	'-Wctor-dtor-privacy',
 	'-Wdisabled-optimization',
 	'-Wdouble-promotion',

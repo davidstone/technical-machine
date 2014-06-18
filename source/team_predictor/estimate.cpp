@@ -42,7 +42,7 @@ public:
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
 	for (auto const n : bounded::integer_range(bounded::make<number_of_species>())) {
-		estimate[n] = lead[n] * overall[n] / total;
+		estimate[n] = lead[n] * static_cast<Lead::value_type>(overall[n]) / static_cast<Lead::value_type>(total);
 	}
 }
 
