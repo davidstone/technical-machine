@@ -203,7 +203,7 @@ auto Evaluate::win(Team const & team) -> type {
 }
 
 auto Evaluate::sleep_clause (Team const & team) -> type {
-	static constexpr auto sleepers = [](Pokemon const & pokemon) {
+	auto const sleepers = [](Pokemon const & pokemon) {
 		return is_sleeping_due_to_other(get_status(pokemon));
 	};
 	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
