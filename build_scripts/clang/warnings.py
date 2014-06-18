@@ -54,12 +54,16 @@ warnings = [
 	'-Werror',
 	'-Wno-c++98-compat',
 	'-Wno-c++98-compat-pedantic',
+	'-Wno-covered-switch-default',
 	'-Wno-exit-time-destructors',
+	'-Wno-float-equal',
 	'-Wno-implicit-fallthrough',
 	'-Wno-missing-braces',
 	'-Wno-padded',
 	'-Wno-switch-enum',
 	'-Wno-unused-parameter',
+	'-Wno-unused-value',
+	'-Wno-unused-variable',
 	'-Wno-weak-vtables',
 ]
 warnings_debug = []
