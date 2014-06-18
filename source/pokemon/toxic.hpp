@@ -21,6 +21,7 @@
 
 #include "../hash.hpp"
 #include "../rational.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
@@ -30,7 +31,7 @@ class Rational;
 class Toxic {
 public:
 	auto increment() -> void;
-	auto ratio_drained() const {
+	constexpr auto ratio_drained() const {
 		return make_rational(-m_counter, 16_bi);
 	}
 	friend auto operator==(Toxic lhs, Toxic rhs) -> bool;
