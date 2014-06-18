@@ -72,7 +72,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 	}
 	#endif
 	assert(!sums.empty());
-	static constexpr auto lesser_mapped_type = [](Sums::value_type const & lhs, Sums::value_type const & rhs) {
+	auto const lesser_mapped_type = [](Sums::value_type const & lhs, Sums::value_type const & rhs) {
 		return lhs.second < rhs.second;
 	};
 	auto const it = std::min_element(sums.begin(), sums.end(), lesser_mapped_type);
