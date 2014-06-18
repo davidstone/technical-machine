@@ -83,6 +83,7 @@ private:
 	void handle_part_channel_command (std::string const & request, size_t start);
 	void handle_send_pm_command (std::string const & request, size_t start);
 	void handle_reload_settings_command ();
+	auto handle_exit_command() -> void;
 
 	boost::asio::io_service io;
 	std::string host;

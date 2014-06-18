@@ -44,6 +44,9 @@ Commands can be sent to Technical Machine on any server it is logged in to (and 
 !depth
 :	Format is `!depth #` (where `#` represents the new depth as an integer). Sets Technical Machine's depth of search to `#`. This only applies to future challenges / battles. Existing battles are fixed in their depth.
 
+!exit
+:	Technical Machine logs out of the server.
+
 !join
 :	Format is `!join channel_name` (with no '#' symbol)
 
@@ -55,6 +58,9 @@ Commands can be sent to Technical Machine on any server it is logged in to (and 
 
 !pm
 :	Format is `!pm username message` where `username` is a one word username. For usernames that may optionally contain spaces, format is `!pm "user name" message`
+
+!quit
+:	Same as !exit
 
 !reload
 :	Reloads all relevant text files. This allows updating TM's set of canned responses, how often it uses those responses, and evaluation constants, for instance.

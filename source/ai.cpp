@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "exit_program.hpp"
-
 #include "clients/network/invalid_packet.hpp"
 #include "clients/pokemon_online/client.hpp"
 #include "clients/pokemon_showdown/client.hpp"
@@ -41,10 +39,12 @@ int main (int argc, char * argv []) {
 
 		// TODO: This is not the correct solution, but it works "good enough".
 		// I'll get back to this later.
-		while (true) {
+		bool stopping = false;
+		while (!stopping) {
 			try {
 				po::Client client(depth);
 				client.run();
+				stopping = true;
 			}
 			catch (network::InvalidPacket const & error) {
 				constexpr unsigned time_in_seconds = 10;
@@ -56,10 +56,9 @@ int main (int argc, char * argv []) {
 			}
 		}
 	}
-	catch (ExitProgram const &) {
-		return 0;
-	}
 	catch (...) {
+		// This calls destructors to ensure orderly shut down but ruins core
+		// dumps
 		throw;
 	}
 }

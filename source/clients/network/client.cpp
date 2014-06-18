@@ -41,7 +41,6 @@
 #include "../battle.hpp"
 #include "../battle_settings.hpp"
 
-#include "../../exit_program.hpp"
 #include "../../settings_file.hpp"
 
 #include "../../evaluate/evaluate.hpp"
@@ -52,7 +51,6 @@ namespace {
 
 std::vector<std::string> load_highlights ();
 std::vector<std::string> load_trusted_users ();
-void handle_exit_command();
 
 }	// unnamed namespace
 
@@ -336,12 +334,9 @@ void Client::handle_send_pm_command (std::string const & request, size_t start) 
 	}
 }
 
-namespace {
-void handle_exit_command() {
-	throw ExitProgram();
+auto Client::handle_exit_command() -> void {
+	io.stop();
 }
-
-}	// unnamed namespace
 
 void Client::handle_reload_settings_command () {
 	highlights = load_highlights ();
