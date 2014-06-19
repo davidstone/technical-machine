@@ -19,15 +19,17 @@
 #ifndef TEAM_PREDICTOR__EV_OPTIMIZER_HPP_
 #define TEAM_PREDICTOR__EV_OPTIMIZER_HPP_
 
-#include <initializer_list>
-#include <random>
 #include "../../stat/stat_names.hpp"
+
+#include <bounded_integer/array.hpp>
+
+#include <random>
 
 namespace technicalmachine {
 class Pokemon;
 
-inline constexpr std::initializer_list<StatNames> regular_stats() {
-	return { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE };
+constexpr auto regular_stats() {
+	return bounded::make_array(StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE);
 }
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine);

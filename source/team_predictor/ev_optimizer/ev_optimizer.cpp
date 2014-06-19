@@ -40,7 +40,8 @@ sum_type ev_sum(Pokemon const & pokemon) {
 	auto const ev_sum = [&](sum_type const sum, StatNames const stat) {
 		return sum + get_stat(pokemon, stat).ev.value();
 	};
-	return std::accumulate(std::begin(regular_stats()), std::end(regular_stats()), sum_type(get_hp(pokemon).ev.value()), ev_sum);
+	static constexpr auto regular = regular_stats();
+	return std::accumulate(std::begin(regular), std::end(regular), sum_type(get_hp(pokemon).ev.value()), ev_sum);
 }
 
 void add_non_full_evs(std::vector<EV *> & evs, EV & ev);
