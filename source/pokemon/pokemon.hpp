@@ -95,11 +95,11 @@ private:
 	Stats stats;
 
 	Species m_species;
-	Item m_item;
+	Item m_item = Item::END;
 	Ability m_ability;
 	Gender m_gender;
 	Status m_status;
-	Nature m_nature;
+	Nature m_nature = Nature::END;
 
 	Level m_level;
 	Happiness m_happiness;
