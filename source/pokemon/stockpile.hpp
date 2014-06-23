@@ -25,7 +25,6 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class Rational;
 using namespace bounded::literal;
 
 class Stockpile {

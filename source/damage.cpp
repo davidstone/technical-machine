@@ -50,15 +50,73 @@ damage_type regular_damage(Team const & attacker, Team const & defender, Weather
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
-Rational calculate_weather_modifier(Type type, Weather weather);
-Rational calculate_flash_fire_modifier (ActivePokemon const & attacker);
-Rational calculate_item_modifier(ActivePokemon const & attacker);
-Rational calculate_me_first_modifier (ActivePokemon const & attacker);
 
-Rational calculate_stab_modifier (ActivePokemon const & attacker);
-Rational calculate_stab_boost (Ability ability);
-Rational calculate_ability_effectiveness_modifier (Ability ability, Effectiveness const & effectiveness);
-Rational calculate_expert_belt_modifier (Item item, Effectiveness const & effectiveness);
+auto calculate_weather_modifier(Type const type, Weather const weather) {
+	return
+		BOUNDED_CONDITIONAL(is_strengthened_by_weather(type, weather), make_rational(3_bi, 2_bi),
+		BOUNDED_CONDITIONAL(is_weakened_by_weather(type, weather), make_rational(1_bi, 2_bi),
+		make_rational(1_bi, 1_bi)
+	));
+}
+
+auto calculate_flash_fire_modifier(ActivePokemon const & attacker) {
+	auto const type = get_type(attacker.move(), attacker);
+	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(type),
+		make_rational(3_bi, 2_bi),
+		make_rational(1_bi, 1_bi)
+	);
+}
+
+using ItemModifier = bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
+auto calculate_item_modifier(ActivePokemon const & attacker) -> ItemModifier {
+	switch (get_item(attacker)) {
+		case Item::Life_Orb:
+			return make_rational(13_bi, 10_bi);
+		case Item::Metronome:
+			return attacker.metronome_boost();
+		default:
+			return make_rational(10_bi, 10_bi);
+	}
+}
+
+auto calculate_me_first_modifier(ActivePokemon const & attacker) {
+	return BOUNDED_CONDITIONAL(attacker.me_first_is_active(),
+		make_rational(3_bi, 2_bi),
+		make_rational(1_bi, 1_bi)
+	);
+}
+
+
+auto calculate_stab_boost(Ability const ability) {
+	return BOUNDED_CONDITIONAL(ability.boosts_stab(),
+		make_rational(2_bi, 1_bi),
+		make_rational(3_bi, 2_bi)
+	);
+}
+
+auto calculate_stab_modifier(ActivePokemon const & attacker) {
+	auto const type = get_type(attacker.move(), attacker);
+	return BOUNDED_CONDITIONAL(is_type(attacker, type),
+		calculate_stab_boost(get_ability(attacker)),
+		make_rational(1_bi, 1_bi)
+	);
+}
+
+auto calculate_ability_effectiveness_modifier(Ability const ability, Effectiveness const & effectiveness) {
+	return BOUNDED_CONDITIONAL(ability.weakens_se_attacks() and effectiveness.is_super_effective(),
+		make_rational(3_bi, 4_bi),
+		make_rational(1_bi, 1_bi)
+	);
+}
+
+auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effectiveness) {
+	return BOUNDED_CONDITIONAL(boosts_super_effective_moves(item) and effectiveness.is_super_effective(),
+		make_rational(6_bi, 5_bi),
+		make_rational(1_bi, 1_bi)
+	);
+}
+
+
 bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
 
 
@@ -169,7 +227,7 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	auto damage = static_cast<unsigned>(level_multiplier(attacker) + 2_bi);
 
 	damage *= move_power(attacker_team, defender, weather, variable);
-	damage *= Rational(physical_vs_special_modifier(attacker, defender.pokemon(), weather));
+	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);
 	damage /= screen_divisor(attacker, defender);
 	auto const type = get_type(attacker.move(), attacker);
 	damage *= calculate_weather_modifier(type, weather);
@@ -215,52 +273,6 @@ bool reflect_is_active (Move const & move, Team const & defender) {
 
 bool light_screen_is_active (Move const & move, Team const & defender) {
 	return defender.screens.light_screen() and is_special(move);
-}
-
-Rational calculate_weather_modifier (Type const type, Weather const weather) {
-	if (is_strengthened_by_weather(type, weather))
-		return Rational(3, 2);
-	else if (is_weakened_by_weather(type, weather))
-		return Rational(1, 2);
-	else
-		return Rational(1);
-}
-
-Rational calculate_flash_fire_modifier (ActivePokemon const & attacker) {
-	auto const type = get_type(attacker.move(), attacker);
-	return (attacker.flash_fire_is_active() and is_boosted_by_flash_fire(type)) ? Rational(3, 2) : Rational(1);
-}
-
-Rational calculate_item_modifier(ActivePokemon const & attacker) {
-	switch (get_item(attacker)) {
-		case Item::Life_Orb:
-			return Rational(13, 10);
-		case Item::Metronome:
-			return Rational(attacker.metronome_boost());
-		default:
-			return Rational(1);
-	}
-}
-
-Rational calculate_me_first_modifier (ActivePokemon const & attacker) {
-	return attacker.me_first_is_active() ? Rational(3, 2) : Rational(1);
-}
-
-Rational calculate_stab_modifier (ActivePokemon const & attacker) {
-	auto const type = get_type(attacker.move(), attacker);
-	return is_type(attacker, type) ? calculate_stab_boost(get_ability(attacker)) : Rational(1);
-}
-
-Rational calculate_stab_boost (Ability const ability) {
-	return ability.boosts_stab() ? Rational(2) : Rational(3, 2);
-}
-
-Rational calculate_ability_effectiveness_modifier (Ability const ability, Effectiveness const & effectiveness) {
-	return (ability.weakens_se_attacks() and effectiveness.is_super_effective()) ? Rational(3, 4) : Rational(1);
-}
-
-Rational calculate_expert_belt_modifier (Item const item, Effectiveness const & effectiveness) {
-	return (boosts_super_effective_moves(item) and effectiveness.is_super_effective()) ? Rational(6, 5) : Rational(1);
 }
 
 bool resistance_berry_activates(Item const item, Type const type, Effectiveness const & effectiveness) {

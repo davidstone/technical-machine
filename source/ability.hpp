@@ -30,7 +30,6 @@ namespace technicalmachine {
 
 class ActivePokemon;
 class Move;
-class Rational;
 class Weather;
 
 class Ability {

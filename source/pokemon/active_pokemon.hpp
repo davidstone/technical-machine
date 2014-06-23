@@ -41,6 +41,7 @@
 
 #include "../damage.hpp"
 #include "../random_damage.hpp"
+#include "../rational.hpp"
 
 #include "../bide/bide.hpp"
 
@@ -56,7 +57,6 @@ namespace technicalmachine {
 class Ability;
 class Move;
 class Pokemon;
-class Rational;
 class Weather;
 template<typename Numerator, typename Denominator>
 class bounded_rational;
@@ -84,7 +84,9 @@ public:
 	void use_substitute();
 	void attract();
 	void awaken(bool value);
-	Rational awaken_probability() const;
+	auto awaken_probability() const {
+		return get_status(*this).awaken_probability(get_ability(*this), m_awakening);
+	}
 	bool aqua_ring_is_active() const;
 	void activate_aqua_ring();
 	bool is_baton_passing() const;
@@ -185,7 +187,6 @@ public:
 	void roost();
 	bool shed_skin_activated() const;
 	void shed_skin(bool value);
-	Rational shed_skin_probability() const;
 	void increase_sleep_counter();
 	bool slow_start_is_active() const;
 	bool sport_is_active(Move const & foe_move) const;
@@ -233,7 +234,10 @@ public:
 	void use_bide(Pokemon & target);
 	bool is_locked_in_to_bide() const;
 	bounded::integer<0, HP::max_value> damaged() const;
-	Rational random_damage_multiplier() const;
+	auto random_damage_multiplier() const {
+		return m_random_damage();
+	}
+
 	void direct_damage(damage_type damage);
 	void indirect_damage(damage_type damage);
 	void register_damage(damage_type damage);
@@ -375,6 +379,15 @@ void switch_pokemon(ActivePokemon & pokemon);
 inline auto hash(ActivePokemon const & pokemon) noexcept {
 	return pokemon.hash();
 }
+
+inline auto shed_skin_probability(ActivePokemon const & pokemon) {
+	if (!get_ability(pokemon).can_clear_status(get_status(pokemon))) {
+		return make_rational(BOUNDED_CONDITIONAL(pokemon.shed_skin_activated(), 0_bi, 10_bi), 10_bi);
+	}
+	auto const numerator = BOUNDED_CONDITIONAL(pokemon.shed_skin_activated(), 3_bi, 7_bi);
+	return make_rational(static_cast<bounded::integer<0, 10>>(numerator), 10_bi);
+}
+
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_

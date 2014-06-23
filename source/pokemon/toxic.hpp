@@ -26,7 +26,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-class Rational;
 
 class Toxic {
 public:

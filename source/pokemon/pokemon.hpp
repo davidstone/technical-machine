@@ -39,7 +39,6 @@
 #include "../type/collection.hpp"
 
 namespace technicalmachine {
-class Rational;
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 // I use a macro here because I rely on a conversion operator. Friend functions

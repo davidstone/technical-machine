@@ -20,6 +20,7 @@
 #define STATUS_HPP_
 
 #include "hash.hpp"
+#include "rational.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
@@ -30,7 +31,6 @@ namespace technicalmachine {
 
 class Ability;
 class Pokemon;
-class Rational;
 class Weather;
 
 enum class Statuses : uint8_t {
@@ -69,7 +69,8 @@ public:
 	// Returns the probability the status can change from sleeping to awake in
 	// this move. Returns 0 if the Pokemon is already awake or if, due to the
 	// sleep counter, they will definitely not awaken.
-	auto awaken_probability(Ability const & ability, bool awaken) const -> Rational;
+	using AwakenProbability = bounded_rational<bounded::integer<0, 3>, bounded::integer<1, 4>>;
+	auto awaken_probability(Ability const & ability, bool awaken) const -> AwakenProbability;
 
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(name(), m_turns_already_slept);

@@ -1,5 +1,5 @@
 // Store information on the random number for damage
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,16 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "random_damage.hpp"
-#include "rational.hpp"
-
-namespace technicalmachine {
-
-RandomDamage::RandomDamage() :
-	r(100) {
-}
-
-Rational RandomDamage::operator() () const {
-	return Rational(r, 100);
-}
-
-}	// namespace technicalmachine

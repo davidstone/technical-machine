@@ -1,5 +1,5 @@
 // Store information on the random number for damage
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,17 +19,20 @@
 #ifndef RANDOM_DAMAGE_HPP_
 #define RANDOM_DAMAGE_HPP_
 
-#include <cstdint>
+#include "rational.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class Rational;
+using namespace bounded::literal;
 
 class RandomDamage {
 public:
-	RandomDamage();
-	Rational operator() () const;
+	constexpr auto operator()() const {
+		return make_rational(m_r, 100_bi);
+	}
 private:
-	uint8_t r;
+	bounded::integer<85, 100> m_r = 100_bi;
 };
 
 }	// namespace technicalmachine

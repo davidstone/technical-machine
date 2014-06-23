@@ -54,7 +54,6 @@ class bounded_rational {
 private:
 	template<typename N, typename D>
 	friend class bounded_rational;
-	friend class Rational;
 	Numerator m_numerator;
 	Denominator m_denominator;
 public:
@@ -68,6 +67,14 @@ public:
 	template<intmax_t minimum, intmax_t maximum, typename overflow_policy>
 	constexpr auto operator*(bounded::integer<minimum, maximum, overflow_policy> const number) const {
 		return number * m_numerator / m_denominator;
+	}
+	
+	// Temporary function until I finish converting expectiminimax to use
+	// bounded::integer, add big num support to bounded::integer, or improve
+	// compound assignment operators in bounded::integer.
+	template<typename T>
+	constexpr auto unchecked_multiply(T const other) const {
+		return other * static_cast<T>(m_numerator) / static_cast<T>(m_denominator);
 	}
 
 	template<typename N, typename D>
@@ -183,137 +190,7 @@ constexpr bool operator<=(bounded_rational<N1, D1> const lhs, bounded_rational<N
 }
 
 
-
-
-class Rational {
-public:
-	using underlying_type = unsigned;
-	explicit constexpr Rational(underlying_type const n = 1, underlying_type const d = 1):
-		numerator(n),
-		denominator(d) {
-	}
-	template<
-		intmax_t lhs_min, intmax_t lhs_max, typename lhs_policy,
-		intmax_t rhs_min, intmax_t rhs_max, typename rhs_policy,
-		typename = std::enable_if<
-			lhs_min >= std::numeric_limits<underlying_type>::min() and
-			rhs_min >= std::numeric_limits<underlying_type>::min() and
-			lhs_max >= std::numeric_limits<underlying_type>::max() and
-			rhs_max >= std::numeric_limits<underlying_type>::max()
-		>
-	>
-	constexpr Rational(bounded::integer<lhs_min, lhs_max, lhs_policy> const n, bounded::integer<rhs_min, rhs_max, rhs_policy> const d):
-		numerator(static_cast<underlying_type>(n)),
-		denominator(static_cast<underlying_type>(d)) {
-	}
-	template<typename Numerator, typename Denominator>
-	explicit constexpr Rational(bounded_rational<Numerator, Denominator> const & other):
-		numerator(other.m_numerator),
-		denominator(other.m_denominator) {
-	}
-	template<typename T>
-	friend T & operator*=(T & number, Rational const rational) {
-		return compound_multiplication(number, rational, std::is_floating_point<T>{});
-	}
-	friend Rational operator*=(Rational & lhs, Rational const rhs) {
-		lhs.numerator *= rhs.numerator;
-		lhs.denominator *= rhs.denominator;
-		return lhs;
-	}
-	friend constexpr Rational operator*(Rational const lhs, Rational const rhs) {
-		return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator);
-	}
-	friend Rational & operator+=(Rational & lhs, Rational const rhs) {
-		lhs.numerator *= rhs.denominator;
-		lhs.numerator += rhs.numerator * lhs.denominator;
-		lhs.denominator *= rhs.denominator;
-		return lhs;
-	}
-	friend constexpr Rational operator+(Rational const lhs, Rational const rhs) {
-		return Rational(lhs.numerator * rhs.denominator + rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
-	}
-	friend Rational & operator-=(Rational & lhs, Rational const rhs) {
-		lhs.numerator *= rhs.denominator;
-		lhs.numerator -= rhs.numerator * lhs.denominator;
-		lhs.denominator *= rhs.denominator;
-		return lhs;
-	}
-	friend constexpr Rational operator-(Rational const lhs, Rational const rhs) {
-		return Rational(lhs.numerator * rhs.denominator - rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator);
-	}
-	friend constexpr Rational complement(Rational const rational) {
-		return Rational(rational.denominator - rational.numerator, rational.denominator);
-	}
-	// All these relational operators assume no overflow
-	friend constexpr bool operator==(Rational const lhs, Rational const rhs) {
-		return lhs.numerator * rhs.denominator == rhs.numerator * lhs.denominator;
-	}
-	friend constexpr bool operator<(Rational const lhs, Rational const rhs) {
-		return lhs.numerator * rhs.denominator < rhs.numerator * lhs.denominator;
-	}
-	friend constexpr bool operator<=(Rational const lhs, Rational const rhs) {
-		return lhs.numerator * rhs.denominator <= rhs.numerator * lhs.denominator;
-	}
-	friend std::string to_string(Rational const rational) {
-		return std::to_string(rational.numerator) + " / " + std::to_string(rational.denominator);
-	}
-private:
-	template<typename T>
-	friend T & compound_multiplication(T & number, Rational const rational, std::false_type /* is_floating_point */) {
-		auto const temp = number * static_cast<typename Temp<T>::type>(rational.numerator);
-		number = static_cast<T>(temp / static_cast<typename Temp<T>::type>(rational.denominator));
-		return number;
-	}
-	template<typename T>
-	friend T & compound_multiplication(T & number, Rational const rational, std::true_type /* is_floating_point */) {
-		number *= rational.numerator;
-		number /= rational.denominator;
-		return number;
-	}
-	template<typename T, typename Enable = void>
-	class Temp;
-	template<typename T>
-	class Temp<T, typename std::enable_if<std::numeric_limits<T>::is_signed>::type> {
-	public:
-		using type = typename std::make_signed<underlying_type>::type;
-	};
-	template<typename T>
-	class Temp<T, typename std::enable_if<!std::numeric_limits<T>::is_signed>::type> {
-	public:
-		using type = typename std::make_unsigned<underlying_type>::type;
-	};
-	underlying_type numerator;
-	underlying_type denominator;
-};
-
-template<typename T>
-typename std::enable_if<std::is_arithmetic<T>::value, T>::type
-operator*(T number, Rational const rational) {
-	return number *= rational;
-}
-template<typename T>
-typename std::enable_if<std::is_arithmetic<T>::value, T>::type
-operator*(Rational const rational, T number) {
-	return number *= rational;
-}
-
-constexpr bool operator!=(Rational const lhs, Rational const rhs) {
-	return !(lhs == rhs);
-}
-constexpr bool operator>(Rational const lhs, Rational const rhs) {
-	return rhs < lhs;
-}
-constexpr bool operator>=(Rational const lhs, Rational const rhs) {
-	return rhs <= lhs;
-}
-
 }	// namespace technicalmachine
-
-// I briefly considered writing this in terms of scaling the two types to have
-// the same numerator, but I decided against that because it requires more than
-// just manipulating types; the value must be scaled as well. Instead, this
-// takes the free-at-runtime but more conservative approach of just getting the
-// common type of the numerator and denominator.
 
 namespace std {
 

@@ -22,7 +22,6 @@
 
 #include "ability.hpp"
 #include "hash.hpp"
-#include "rational.hpp"
 #include "weather.hpp"
 
 #include "pokemon/pokemon.hpp"
@@ -182,29 +181,50 @@ auto operator!= (Status const lhs, Status const rhs) -> bool {
 
 namespace {
 
-using DefiniteSleepCounter = bounded::integer<0, 4>;
+constexpr auto max_sleep_turns = 4_bi;
+using DefiniteSleepCounter = bounded::integer<0, static_cast<intmax_t>(max_sleep_turns)>;
 
-auto awaken_numerator(DefiniteSleepCounter const turns_slept, Ability const & ability) {
-	return turns_slept + BOUNDED_CONDITIONAL(ability.wakes_up_early(), 1_bi, 0_bi);
+// It's possible to acquire Early Bird in the middle of a sleep
+auto early_bird_probability(DefiniteSleepCounter const turns_slept) -> bounded_rational<bounded::integer<1, 2>, bounded::integer<1, 4>> {
+	switch (turns_slept.value()) {
+	case 0:
+		return make_rational(1_bi, 4_bi);
+	case 1:
+		return make_rational(1_bi, 2_bi);
+	case 2:
+		return make_rational(2_bi, 3_bi);
+	default:	// case 3, 4
+		return make_rational(1_bi, 1_bi);
+	}
 }
 
-auto can_awaken(DefiniteSleepCounter const turns_slept, Ability const & ability) {
-	constexpr auto min_sleep_turns = 1_bi;
-	return awaken_numerator(turns_slept, ability) >= min_sleep_turns;
+auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
+	using SleptAtLeastOneTurn = bounded::integer<1, static_cast<intmax_t>(max_sleep_turns)>;
+	return BOUNDED_CONDITIONAL(turns_slept == 0_bi,
+		make_rational(0_bi, 1_bi),
+		make_rational(1_bi, (max_sleep_turns + 1_bi) - static_cast<SleptAtLeastOneTurn>(turns_slept))
+	);
 }
+
+template<typename T>
+class Print;
 
 }	// namespace
 
-auto Status::awaken_probability(Ability const & ability, bool const awaken) const -> Rational {
+auto Status::awaken_probability(Ability const & ability, bool const awaken) const -> AwakenProbability {
+	static_assert(std::is_same<DefiniteSleepCounter, SleepCounter::value_type>::value, "Incorrect sleep counter type.");
 	if (!m_turns_already_slept) {
-		return Rational(0, 1);
+		return make_rational(0_bi, 1_bi);
 	}
-	static constexpr auto max_sleep_turns = std::numeric_limits<SleepCounter::value_type>::max();
-	Rational const result(
-		BOUNDED_CONDITIONAL(can_awaken(*m_turns_already_slept, ability), 1_bi, 0_bi),
-		max_sleep_turns + 1_bi - awaken_numerator(*m_turns_already_slept, ability)
+	auto const wake_up_probability = BOUNDED_CONDITIONAL(ability.wakes_up_early(),
+		early_bird_probability(*m_turns_already_slept),
+		non_early_bird_probability(*m_turns_already_slept)
 	);
-	return awaken ? result : complement(result);
+	// We know the value is always between 0 and 1, so the complement will also
+	// be in that range.
+	return awaken ?
+		static_cast<AwakenProbability>(wake_up_probability) :
+		complement(wake_up_probability).convert<AwakenProbability>();
 }
 
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Test status functions
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,9 +18,6 @@
 
 #include "status.hpp"
 
-#include <iostream>
-#include <string>
-
 #include "../rational.hpp"
 #include "../status.hpp"
 #include "../team.hpp"
@@ -28,11 +25,17 @@
 
 #include "../pokemon/species.hpp"
 
+#include <bounded_integer/array.hpp>
+
+#include <iostream>
+#include <string>
+
 namespace technicalmachine {
 namespace {
 class InvalidSleepProbability : public std::runtime_error {
 public:
-	InvalidSleepProbability(Rational const expected, Rational const calculated):
+	template<typename N1, typename D1, typename N2, typename D2>
+	InvalidSleepProbability(bounded_rational<N1, D1> const expected, bounded_rational<N2, D2> const calculated):
 		std::runtime_error("Expected: " + to_string(expected) + " but got " + to_string(calculated))
 		{
 	}
@@ -45,7 +48,7 @@ void awakening_probability_tests() {
 	team.add_pokemon(Species::Zapdos, level, Gender());
 	auto & pokemon = team.pokemon();
 	Status::apply<Statuses::sleep>(pokemon, weather);
-	for (auto const expected : { Rational(1, 1), Rational(3, 4), Rational(2, 3), Rational(1, 2), Rational(0, 1) }) {
+	for (auto const expected : bounded::make_array(make_rational(1_bi, 1_bi), make_rational(3_bi, 4_bi), make_rational(2_bi, 3_bi), make_rational(1_bi, 2_bi), make_rational(0_bi, 1_bi))) {
 		auto const calculated = pokemon.awaken_probability();
 		if (expected != calculated) {
 			throw InvalidSleepProbability(expected, calculated);

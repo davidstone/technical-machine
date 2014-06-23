@@ -172,12 +172,6 @@ void ActivePokemon::awaken(bool const value) {
 	m_awakening = value;
 }
 
-Rational ActivePokemon::awaken_probability() const {
-	auto const & status = get_status(*this);
-	auto const & ability = get_ability(*this);
-	return status.awaken_probability(ability, m_awakening);
-}
-
 bool ActivePokemon::is_baton_passing() const {
 	return m_is_baton_passing;
 }
@@ -518,15 +512,6 @@ void ActivePokemon::shed_skin(bool const value) {
 	m_shed_skin_activated = value;
 }
 
-Rational ActivePokemon::shed_skin_probability() const {
-	auto const & status = get_status(*this);
-	if (!get_ability(*this).can_clear_status(status)) {
-		return Rational(shed_skin_activated() ? 0 : 1, 1);
-	}
-	Rational const result(3, 10);
-	return shed_skin_activated() ? result : complement(result);
-}
-
 void ActivePokemon::increase_sleep_counter() {
 	auto & status = get_status(*this);
 	auto const & ability = get_ability(*this);
@@ -702,10 +687,6 @@ bool ActivePokemon::is_locked_in_to_bide() const {
 
 bounded::integer<0, HP::max_value> ActivePokemon::damaged() const {
 	return m_damaged;
-}
-
-Rational ActivePokemon::random_damage_multiplier() const {
-	return m_random_damage();
 }
 
 void ActivePokemon::direct_damage(damage_type const damage) {
