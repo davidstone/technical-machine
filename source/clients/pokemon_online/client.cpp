@@ -424,7 +424,7 @@ void Client::handle_battle_message (InMessage & msg) {
 	uint32_t const battle_id = msg.read_int ();
 	uint32_t length = msg.read_int ();
 	auto const command = msg.read_byte();
-	auto const player = static_cast<Party::value_type>(msg.read_byte());
+	auto const player = static_cast<Party::value_type>(static_cast<std::int8_t>(msg.read_byte()));
 	auto const party = Party(player);
 	// 1 byte each for command and player
 	length -= 2;
