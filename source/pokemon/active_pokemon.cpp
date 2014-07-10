@@ -454,10 +454,6 @@ void ActivePokemon::perish_song_turn() {
 	}
 }
 
-bool ActivePokemon::can_be_phazed() const {
-	return !ingrained() and !get_ability(*this).blocks_phazing() and all_pokemon().size() > 1;
-}
-
 bool ActivePokemon::power_trick_is_active() const {
 	return m_power_trick_is_active;
 }

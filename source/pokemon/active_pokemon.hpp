@@ -173,7 +173,6 @@ public:
 	void partial_trap_damage();
 	void activate_perish_song();
 	void perish_song_turn();
-	bool can_be_phazed() const;
 	bool power_trick_is_active() const;
 	void activate_power_trick();
 	void protect();

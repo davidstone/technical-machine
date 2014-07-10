@@ -1062,8 +1062,13 @@ auto equalize(HP & hp1, HP & hp2) -> void {
 	hp2 = temp;
 }
 
+
+auto active_pokemon_can_be_phazed(Team const & team) {
+	return !team.pokemon().ingrained() and !get_ability(team.pokemon()).blocks_phazing() and team.all_pokemon().size() > 1_bi;
+}
+
 auto phaze(Team & user, Team & target, Weather & weather, Variable const & variable) -> void {
-	if (target.pokemon().can_be_phazed()) {
+	if (active_pokemon_can_be_phazed(target)) {
 		target.all_pokemon().set_replacement(variable.phaze_index(target.all_pokemon().index()));
 		switchpokemon(target, user, weather);
 		target.move();
