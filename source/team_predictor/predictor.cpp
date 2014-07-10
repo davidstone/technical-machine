@@ -129,7 +129,7 @@ public:
 	}
 private:
 	Species species;
-	Item item;
+	Item item = Item::END;
 	Ability ability;
 	Nature nature;
 	std::array<EV, number_of_stats> evs;
