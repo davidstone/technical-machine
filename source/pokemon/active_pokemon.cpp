@@ -321,10 +321,6 @@ void ActivePokemon::use_imprison() {
 	m_used_imprison = true;
 }
 
-PokemonCollection::index_type ActivePokemon::index() const {
-	return all_pokemon().index();
-}
-
 bool ActivePokemon::ingrained() const {
 	return m_ingrained;
 }

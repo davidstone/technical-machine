@@ -80,7 +80,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 namespace {
 
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
-	auto const index = team.pokemon().index();
+	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = estimate.most_likely();
 		Level const level(100_bi);

@@ -538,7 +538,7 @@ Moves random_action (Team const & ai, Team const & foe, Weather const weather, s
 }
 
 Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
-	std::vector<Moves> const switches = all_switches (ai.all_pokemon().size(), ai.pokemon().index());
+	std::vector<Moves> const switches = all_switches (ai.all_pokemon().size(), ai.all_pokemon().index());
 	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
 	size_t const index = distribution (random_engine);
 	return switches [index];

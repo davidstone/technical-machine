@@ -140,7 +140,6 @@ public:
 	void identify();
 	bool used_imprison() const;
 	void use_imprison();
-	PokemonCollection::index_type index() const;
 	bool ingrained() const;
 	void ingrain();
 	bool is_fully_paralyzed() const;

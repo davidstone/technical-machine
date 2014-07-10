@@ -43,7 +43,7 @@ Variable::Variable(value_type const v, Probability set_probability):
 auto Variable::set_phaze_index(Team const & team, Species const species) -> void {
 	assert(team.size() > 1_bi);
 	// This is required to work with my current battle implementation
-	auto const pokemon_index = team.pokemon().has_switched() ? team.all_pokemon().replacement() : team.pokemon().index();
+	auto const pokemon_index = team.pokemon().has_switched() ? team.all_pokemon().replacement() : team.all_pokemon().index();
 	auto const new_index = team.all_pokemon().find_index(species);
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
