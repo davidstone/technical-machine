@@ -26,6 +26,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/integer_range.hpp>
 
+#include <cassert>
 #include <vector>
 
 namespace technicalmachine {
@@ -160,6 +161,7 @@ public:
 	}
 	template<class... Args>
 	auto emplace_back(Args&&... args) -> void {
+		assert(m_regular.size() < max_moves_per_pokemon);
 		// The only moves that are ever added are regular moves. Shared
 		// moves are just a reference to a collection at the Team level.
 		m_regular.emplace_back(std::forward<Args>(args)...);
