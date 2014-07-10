@@ -94,12 +94,12 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 }
 
 void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed) {
-	auto const & current = moves.regular();
+	auto const initial = moves.regular();
 	for (Moves const move : detailed) {
-		if (size(current) == max_moves_per_pokemon) {
+		if (size(moves.regular()) == max_moves_per_pokemon) {
 			break;
 		}
-		bool const already_has_move = std::find(current.begin(), current.end(), move) != current.end();
+		bool const already_has_move = std::find(initial.begin(), initial.end(), move) != initial.end();
 		if (already_has_move) {
 			continue;
 		}
