@@ -73,7 +73,7 @@ auto calculate_item_modifier(ActivePokemon const & attacker) -> ItemModifier {
 		case Item::Life_Orb:
 			return make_rational(13_bi, 10_bi);
 		case Item::Metronome:
-			return attacker.metronome_boost();
+			return attacker.last_used_move().metronome_boost();
 		default:
 			return make_rational(10_bi, 10_bi);
 	}

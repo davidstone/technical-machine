@@ -81,7 +81,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		case Moves::Frustration:
 			return frustration_power(get_happiness(attacker));
 		case Moves::Fury_Cutter:
-			return attacker.fury_cutter_power();
+			return attacker.last_used_move().fury_cutter_power();
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
 			return power_of_mass_based_moves(defender);
@@ -93,7 +93,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return attacker.momentum_move_power();
+			return attacker.last_used_move().momentum_move_power();
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded::integer<0, 5>>;
 			static constexpr bounded::array<stat_and_position_type, 5> stat_and_position {{
@@ -129,7 +129,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		case Moves::Spit_Up:
 			return attacker.spit_up_power();
 		case Moves::Triple_Kick:
-			return attacker.triple_kick_power();
+			return attacker.last_used_move().triple_kick_power();
 		case Moves::Trump_Card:
 			return current_move(attacker).pp().trump_card_power();
 		default:

@@ -21,8 +21,11 @@
 
 #include "active_pokemon_flags.hpp"
 #include "collection.hpp"
+#include "pokemon.hpp"
 
 #include "../rational.hpp"
+
+#include "../move/moves_forward.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -31,7 +34,6 @@
 namespace technicalmachine {
 class Ability;
 class Move;
-class Pokemon;
 class Weather;
 
 class ActivePokemon {
@@ -44,7 +46,8 @@ public:
 	}
 	operator Species() const;
 
-	auto was_used_last(Moves move) const -> bool;
+	auto last_used_move() const -> LastUsedMove;
+
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
 	auto reset_end_of_turn() -> void;
@@ -118,24 +121,11 @@ public:
 	auto activate_magnet_rise() -> void;
 	auto advance_magnet_rise() -> void;
 	auto me_first_is_active() const -> bool;
-	auto fury_cutter_power() const {
-		return m_flags.last_used_move.fury_cutter_power();
-	}
-	auto momentum_move_power() const {
-		return m_flags.last_used_move.momentum_move_power();
-	}
-	auto triple_kick_power() const {
-		return m_flags.last_used_move.triple_kick_power();
-	}
-	auto metronome_boost() const {
-		return m_flags.last_used_move.metronome_boost();
-	}
 	auto minimized() const -> bool;
 	auto missed() const -> bool;
 	auto set_miss(bool value) -> void;
 	auto set_moved(bool value = true) -> void;
 	auto moved() const -> bool;
-	auto moved_since_switch() const -> bool;
 	auto activate_mud_sport() -> void;
 	auto is_having_a_nightmare() const -> bool;
 	auto give_nightmares() -> void;

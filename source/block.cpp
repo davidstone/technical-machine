@@ -221,12 +221,22 @@ bool is_locked_in (ActivePokemon const & user) {
 	return user.is_encored() or user.is_recharging() or is_choice_item(get_item(user));
 }
 
+auto moved_since_switch(ActivePokemon const & pokemon) -> bool {
+	return pokemon.last_used_move().has_moved();
+}
+
+auto was_used_last(ActivePokemon const & pokemon, Moves const move) -> bool {
+	return pokemon.last_used_move().was_used_last(
+		static_cast<LastUsedMove::index_type>(*index(all_moves(pokemon), move))
+	);
+}
+
 bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move) {
-	return user.moved_since_switch() and !user.was_used_last(move);
+	return moved_since_switch(user) and !was_used_last(user, move);
 }
 
 bool blocked_by_torment(ActivePokemon const & user, Moves const move) {
-	return user.is_tormented() and user.was_used_last(move);
+	return user.is_tormented() and was_used_last(user, move);
 }
 
 bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {

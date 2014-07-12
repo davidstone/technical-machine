@@ -18,16 +18,11 @@
 
 #include "active_pokemon.hpp"
 
-#include "pokemon.hpp"
-
-#include "../ability.hpp"
 #include "../damage.hpp"
-#include "../rational.hpp"
 #include "../weather.hpp"
 
 #include "../move/is_switch.hpp"
 #include "../move/move.hpp"
-#include "../move/moves.hpp"
 
 namespace technicalmachine {
 
@@ -35,10 +30,8 @@ ActivePokemon::operator Species() const {
 	return static_cast<Species>(static_cast<Pokemon const &>(*this));
 }
 
-auto ActivePokemon::was_used_last(Moves const move_name) const -> bool {
-	return m_flags.last_used_move.was_used_last(
-		static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(*this), move_name))
-	);
+auto ActivePokemon::last_used_move() const -> LastUsedMove {
+	return m_flags.last_used_move;
 }
 
 
@@ -328,10 +321,6 @@ auto ActivePokemon::moved() const -> bool {
 	return m_flags.moved;
 }
 
-auto ActivePokemon::moved_since_switch() const -> bool {
-	return m_flags.last_used_move.has_moved();
-}
-
 auto ActivePokemon::activate_mud_sport() -> void {
 	m_flags.mud_sport = true;
 }
@@ -593,9 +582,10 @@ auto ActivePokemon::register_damage(damage_type const damage) -> void {
 
 auto ActivePokemon::increment_move_use_counter() -> void {
 	if (is_regular(current_move(*this))) {
-		m_flags.last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves(*this).index()));
+		auto const move_index = static_cast<LastUsedMove::index_type>(all_moves(*this).index());
+		m_flags.last_used_move.increment(move_index);
 	} else {
-		m_flags.last_used_move = LastUsedMove{};
+		m_flags.last_used_move = {};
 	}
 }
 
