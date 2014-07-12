@@ -31,193 +31,178 @@
 
 namespace technicalmachine {
 
-PokemonCollection const & ActivePokemon::all_pokemon() const {
-	return m_all_pokemon;
-}
-PokemonCollection & ActivePokemon::all_pokemon() {
-	return m_all_pokemon;
-}
-
-ActivePokemon::operator Pokemon const & () const {
-	return all_pokemon()();
-}
-
-ActivePokemon::operator Pokemon & () {
-	return all_pokemon()();
-}
-
 ActivePokemon::operator Species() const {
 	return static_cast<Species>(static_cast<Pokemon const &>(*this));
 }
 
-bool ActivePokemon::was_used_last(Moves const move_name) const {
+auto ActivePokemon::was_used_last(Moves const move_name) const -> bool {
 	return m_flags.last_used_move.was_used_last(
 		static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(*this), move_name))
 	);
 }
 
 
-void ActivePokemon::reset_end_of_turn() {
+auto ActivePokemon::reset_end_of_turn() -> void {
 	m_flags.reset_end_of_turn();
 }
 
-void ActivePokemon::reset_switch() {
+auto ActivePokemon::reset_switch() -> void {
 	m_flags.reset_switch();
 }
 
-void ActivePokemon::reset_between_turns() {
+auto ActivePokemon::reset_between_turns() -> void {
 	m_flags.reset_between_turns();
 }
 
-void ActivePokemon::clear_field() {
+auto ActivePokemon::clear_field() -> void {
 	m_flags.leech_seeded = false;
 	m_flags.partial_trap = {};
 }
 
-void ActivePokemon::update_before_move() {
+auto ActivePokemon::update_before_move() -> void {
 	m_flags.destiny_bond = false;
 	m_flags.locked_on = false;
 	m_flags.moved = true;
 }
 
-bool ActivePokemon::aqua_ring_is_active() const {
+auto ActivePokemon::aqua_ring_is_active() const -> bool {
 	return m_flags.aqua_ring;
 }
 
-void ActivePokemon::activate_aqua_ring() {
+auto ActivePokemon::activate_aqua_ring() -> void {
 	m_flags.aqua_ring = true;
 }
 
-void ActivePokemon::attract() {
+auto ActivePokemon::attract() -> void {
 	m_flags.attracted = true;
 }
 
-void ActivePokemon::awaken(bool const value) {
+auto ActivePokemon::awaken(bool const value) -> void {
 	m_flags.awakening = value;
 }
 
-bool ActivePokemon::is_baton_passing() const {
+auto ActivePokemon::is_baton_passing() const -> bool {
 	return m_flags.is_baton_passing;
 }
 
-void ActivePokemon::baton_pass() {
+auto ActivePokemon::baton_pass() -> void {
 	m_flags.is_baton_passing = true;
 }
 
-bool ActivePokemon::cannot_be_koed() const {
+auto ActivePokemon::cannot_be_koed() const -> bool {
 	return m_flags.enduring;
 }
 
-bool ActivePokemon::charge_boosted() const {
+auto ActivePokemon::charge_boosted() const -> bool {
 	return m_flags.charged and get_type(current_move(*this), *this) == Type::Electric;
 }
 
-void ActivePokemon::charge() {
+auto ActivePokemon::charge() -> void {
 	m_flags.charged = true;
 }
 
-bool ActivePokemon::is_confused() const {
+auto ActivePokemon::is_confused() const -> bool {
 	return m_flags.confusion.is_active();
 }
 
-void ActivePokemon::confuse() {
+auto ActivePokemon::confuse() -> void {
 	if (!get_ability(*this).blocks_confusion()) {
 		m_flags.confusion.activate();
 	}
 }
 
-void ActivePokemon::handle_confusion() {
+auto ActivePokemon::handle_confusion() -> void {
 	m_flags.confusion.do_turn(*this);
 }
 
-bool ActivePokemon::critical_hit() const {
+auto ActivePokemon::critical_hit() const -> bool {
 	return m_flags.critical_hit;
 }
 
-void ActivePokemon::set_critical_hit(bool const value) {
+auto ActivePokemon::set_critical_hit(bool const value) -> void {
 	m_flags.critical_hit = value;
 }
 
-void ActivePokemon::curse() {
+auto ActivePokemon::curse() -> void {
 	m_flags.is_cursed = true;
 }
 
-bool ActivePokemon::is_cursed() const {
+auto ActivePokemon::is_cursed() const -> bool {
 	return m_flags.is_cursed;
 }
 
-void ActivePokemon::defense_curl() {
+auto ActivePokemon::defense_curl() -> void {
 	m_flags.defense_curled = true;
 }
 
-void ActivePokemon::use_destiny_bond() {
+auto ActivePokemon::use_destiny_bond() -> void {
 	m_flags.destiny_bond = true;
 }
 
-bool ActivePokemon::defense_curled() const {
+auto ActivePokemon::defense_curled() const -> bool {
 	return m_flags.defense_curled;
 }
 
-bool ActivePokemon::is_disabled(Moves const move_name) const {
+auto ActivePokemon::is_disabled(Moves const move_name) const -> bool {
 	return m_flags.disable.move_is_disabled(*index(all_moves(*this), move_name));
 }
 
-void ActivePokemon::disable() {
+auto ActivePokemon::disable() -> void {
 	if (is_regular(current_move(*this))) {
 		m_flags.disable.activate(RegularMoveIndex(all_moves(*this).index(), bounded::non_check));
 	}
 }
 
-void ActivePokemon::advance_disable() {
+auto ActivePokemon::advance_disable() -> void {
 	m_flags.disable.advance_one_turn();
 }
 
-void ActivePokemon::activate_embargo() {
+auto ActivePokemon::activate_embargo() -> void {
 	m_flags.embargo.activate();
 }
 
-void ActivePokemon::advance_embargo() {
+auto ActivePokemon::advance_embargo() -> void {
 	m_flags.embargo.advance_one_turn();
 }
 
-bool ActivePokemon::is_encored() const {
+auto ActivePokemon::is_encored() const -> bool {
 	return m_flags.encore.is_active();
 }
 
-void ActivePokemon::activate_encore() {
+auto ActivePokemon::activate_encore() -> void {
 	m_flags.encore.activate();
 }
 
-void ActivePokemon::advance_encore() {
+auto ActivePokemon::advance_encore() -> void {
 	m_flags.encore.advance_one_turn();
 }
 
-void ActivePokemon::endure() {
+auto ActivePokemon::endure() -> void {
 	m_flags.enduring = true;
 }
 
-bool ActivePokemon::is_fainted() const {
+auto ActivePokemon::is_fainted() const -> bool {
 	return m_flags.will_be_replaced;
 }
 
-void ActivePokemon::faint() {
+auto ActivePokemon::faint() -> void {
 	get_hp(*this) = 0_bi;
 	m_flags.will_be_replaced = true;
 }
 
-bool ActivePokemon::flash_fire_is_active() const {
+auto ActivePokemon::flash_fire_is_active() const -> bool {
 	return m_flags.flash_fire;
 }
 
-void ActivePokemon::activate_flash_fire() {
+auto ActivePokemon::activate_flash_fire() -> void {
 	m_flags.flash_fire = true;
 }
 
-bool ActivePokemon::flinched() const {
+auto ActivePokemon::flinched() const -> bool {
 	return m_flags.flinched;
 }
 
-void ActivePokemon::flinch() {
+auto ActivePokemon::flinch() -> void {
 	m_flags.flinched = true;
 }
 
@@ -225,63 +210,63 @@ auto ActivePokemon::has_focused_energy() const -> bool {
 	return m_flags.has_focused_energy;
 }
 
-void ActivePokemon::focus_energy() {
+auto ActivePokemon::focus_energy() -> void {
 	m_flags.has_focused_energy = true;
 }
 
-void ActivePokemon::fully_trap() {
+auto ActivePokemon::fully_trap() -> void {
 	m_flags.fully_trapped = true;
 }
 
-void ActivePokemon::identify() {
+auto ActivePokemon::identify() -> void {
 	m_flags.identified = true;
 }
 
-bool ActivePokemon::used_imprison() const {
+auto ActivePokemon::used_imprison() const -> bool {
 	return m_flags.used_imprison;
 }
 
-void ActivePokemon::use_imprison() {
+auto ActivePokemon::use_imprison() -> void {
 	m_flags.used_imprison = true;
 }
 
-bool ActivePokemon::ingrained() const {
+auto ActivePokemon::ingrained() const -> bool {
 	return m_flags.ingrained;
 }
 
-void ActivePokemon::ingrain() {
+auto ActivePokemon::ingrain() -> void {
 	m_flags.ingrained = true;
 }
 
-bool ActivePokemon::heal_block_is_active() const {
+auto ActivePokemon::heal_block_is_active() const -> bool {
 	return m_flags.heal_block.is_active();
 }
 
-void ActivePokemon::activate_heal_block() {
+auto ActivePokemon::activate_heal_block() -> void {
 	m_flags.heal_block.activate();
 }
 
-void ActivePokemon::advance_heal_block() {
+auto ActivePokemon::advance_heal_block() -> void {
 	m_flags.heal_block.advance_one_turn();
 }
 
-bool ActivePokemon::is_fully_paralyzed() const {
+auto ActivePokemon::is_fully_paralyzed() const -> bool {
 	return m_flags.is_fully_paralyzed;
 }
 
-bool ActivePokemon::leech_seeded() const {
+auto ActivePokemon::leech_seeded() const -> bool {
 	return m_flags.leech_seeded;
 }
 
-void ActivePokemon::hit_with_leech_seed() {
+auto ActivePokemon::hit_with_leech_seed() -> void {
 	m_flags.leech_seeded = true;
 }
 
-bool ActivePokemon::is_loafing() const {
+auto ActivePokemon::is_loafing() const -> bool {
 	return get_ability(*this).is_loafing(m_flags.is_loafing_turn);
 }
 
-void ActivePokemon::advance_lock_in() {
+auto ActivePokemon::advance_lock_in() -> void {
 	// Cannot be locked into Rampage and Uproar at the same time
 	if (m_flags.rampage.is_active()) {
 		m_flags.rampage.advance_one_turn();
@@ -293,17 +278,17 @@ void ActivePokemon::advance_lock_in() {
 	}
 }
 
-bool ActivePokemon::locked_on() const {
+auto ActivePokemon::locked_on() const -> bool {
 	return m_flags.locked_on;
 }
 
-void ActivePokemon::use_lock_on() {
+auto ActivePokemon::use_lock_on() -> void {
 	m_flags.locked_on = true;
 }
 
-void ActivePokemon::lower_pp(Ability const & target) {
-	if (is_regular(current_move(*this)) and !is_locked_in_to_bide()) {
-		regular_move(all_moves(*this)).decrement_pp(target);
+auto lower_pp(ActivePokemon & user, Ability const target) -> void {
+	if (is_regular(current_move(user)) and !user.is_locked_in_to_bide()) {
+		regular_move(all_moves(user)).decrement_pp(target);
 	}
 }
 
@@ -311,134 +296,134 @@ auto ActivePokemon::magnet_rise() const -> MagnetRise const & {
 	return m_flags.magnet_rise;
 }
 
-void ActivePokemon::activate_magnet_rise() {
+auto ActivePokemon::activate_magnet_rise() -> void {
 	m_flags.magnet_rise.activate();
 }
 
-void ActivePokemon::advance_magnet_rise() {
+auto ActivePokemon::advance_magnet_rise() -> void {
 	m_flags.magnet_rise.advance_one_turn();
 }
 
-bool ActivePokemon::me_first_is_active() const {
+auto ActivePokemon::me_first_is_active() const -> bool {
 	return m_flags.me_first_is_active;
 }
 
-bool ActivePokemon::minimized() const {
+auto ActivePokemon::minimized() const -> bool {
 	return m_flags.minimized;
 }
 
-bool ActivePokemon::missed() const {
+auto ActivePokemon::missed() const -> bool {
 	return m_flags.missed;
 }
 
-void ActivePokemon::set_miss(bool const value) {
+auto ActivePokemon::set_miss(bool const value) -> void {
 	m_flags.missed = value;
 }
 
-void ActivePokemon::set_moved(bool const value) {
+auto ActivePokemon::set_moved(bool const value) -> void {
 	m_flags.moved = value;
 }
 
-bool ActivePokemon::moved() const {
+auto ActivePokemon::moved() const -> bool {
 	return m_flags.moved;
 }
 
-bool ActivePokemon::moved_since_switch() const {
+auto ActivePokemon::moved_since_switch() const -> bool {
 	return m_flags.last_used_move.has_moved();
 }
 
-void ActivePokemon::activate_mud_sport() {
+auto ActivePokemon::activate_mud_sport() -> void {
 	m_flags.mud_sport = true;
 }
 
-bool ActivePokemon::is_having_a_nightmare() const {
+auto ActivePokemon::is_having_a_nightmare() const -> bool {
 	return m_flags.is_having_a_nightmare;
 }
 
-void ActivePokemon::give_nightmares() {
+auto ActivePokemon::give_nightmares() -> void {
 	m_flags.is_having_a_nightmare = true;
 }
 
-void ActivePokemon::partially_trap() {
+auto ActivePokemon::partially_trap() -> void {
 	m_flags.partial_trap.activate();
 }
 
-void ActivePokemon::partial_trap_damage() {
+auto ActivePokemon::partial_trap_damage() -> void {
 	m_flags.partial_trap.damage(*this);
 }
 
-void ActivePokemon::activate_perish_song() {
+auto ActivePokemon::activate_perish_song() -> void {
 	m_flags.perish_song.activate();
 }
 
-void ActivePokemon::perish_song_turn() {
+auto ActivePokemon::perish_song_turn() -> void {
 	bool const faints_this_turn = m_flags.perish_song.advance_one_turn_deactivated();
 	if (faints_this_turn) {
 		faint();
 	}
 }
 
-bool ActivePokemon::power_trick_is_active() const {
+auto ActivePokemon::power_trick_is_active() const -> bool {
 	return m_flags.power_trick_is_active;
 }
 
-void ActivePokemon::activate_power_trick() {
+auto ActivePokemon::activate_power_trick() -> void {
 	m_flags.power_trick_is_active = !m_flags.power_trick_is_active;
 }
 
-void ActivePokemon::protect() {
+auto ActivePokemon::protect() -> void {
 	m_flags.is_protecting = true;
 }
 
-void ActivePokemon::break_protect() {
+auto ActivePokemon::break_protect() -> void {
 	m_flags.is_protecting = false;
 }
 
-void ActivePokemon::activate_rampage() {
+auto ActivePokemon::activate_rampage() -> void {
 	m_flags.rampage.activate();
 }
 
-bool ActivePokemon::is_recharging() const {
+auto ActivePokemon::is_recharging() const -> bool {
 	return m_flags.is_recharging;
 }
 
-bool ActivePokemon::recharge() {
+auto ActivePokemon::recharge() -> bool{
 	bool const return_value = is_recharging();
 	m_flags.is_recharging = false;
 	return return_value;
 }
 
-void ActivePokemon::use_recharge_move() {
+auto ActivePokemon::use_recharge_move() -> void {
 	m_flags.is_recharging = true;
 }
 
-bool ActivePokemon::is_roosting() const {
+auto ActivePokemon::is_roosting() const -> bool {
 	return m_flags.is_roosting;
 }
 
-void ActivePokemon::roost() {
+auto ActivePokemon::roost() -> void {
 	m_flags.is_roosting = true;
 }
 
-bool ActivePokemon::shed_skin_activated() const {
+auto ActivePokemon::shed_skin_activated() const -> bool {
 	return m_flags.shed_skin_activated;
 }
 
-void ActivePokemon::shed_skin(bool const value) {
+auto ActivePokemon::shed_skin(bool const value) -> void {
 	m_flags.shed_skin_activated = value;
 }
 
-void ActivePokemon::increase_sleep_counter() {
+auto ActivePokemon::increase_sleep_counter() -> void {
 	auto & status = get_status(*this);
 	auto const & ability = get_ability(*this);
 	status.increase_sleep_counter(ability, m_flags.awakening);
 }
 
-bool ActivePokemon::slow_start_is_active() const {
+auto ActivePokemon::slow_start_is_active() const -> bool {
 	return m_flags.slow_start.is_active();
 }
 
-bool ActivePokemon::sport_is_active(Move const & foe_move) const {
+auto ActivePokemon::sport_is_active(Move const & foe_move) const -> bool {
 	switch (get_type(foe_move, *this)) {
 	case Type::Electric:
 		return m_flags.mud_sport;
@@ -456,36 +441,28 @@ auto ActivePokemon::stage() -> Stage & {
 	return m_flags.stage;
 }
 
-void ActivePokemon::increment_stockpile() {
+auto ActivePokemon::increment_stockpile() -> void {
 	bool const increased = m_flags.stockpile.increment();
 	if (increased) {
 		boost_defensive(stage(), 1_bi);
 	}
 }
 
-bounded::integer<0, Stockpile::max> ActivePokemon::release_stockpile() {
+auto ActivePokemon::release_stockpile() -> bounded::integer<0, Stockpile::max> {
 	auto const stages = m_flags.stockpile.release();
 	boost_defensive(stage(), -stages);
 	return stages;
 }
 
-bool ActivePokemon::is_switching_to_self () const {
-	return all_pokemon().is_switching_to_self();
+auto has_switched(ActivePokemon const & pokemon) -> bool {
+	return pokemon.moved() and is_switch(current_move(pokemon));
 }
 
-bool ActivePokemon::is_switching_to_self(Moves const switch_move) const {
-	return all_pokemon().is_switching_to_self(switch_move);
-}
-
-bool ActivePokemon::has_switched() const {
-	return moved() and is_switch(current_move(*this));
-}
-
-bool ActivePokemon::switch_decision_required() const {
+auto ActivePokemon::switch_decision_required() const -> bool {
 	return m_flags.is_baton_passing or m_flags.u_turning or will_be_replaced();
 }
 
-void switch_pokemon(ActivePokemon & pokemon) {
+auto switch_pokemon(ActivePokemon & pokemon) -> void {
 	if (get_ability(pokemon).clears_status_on_switch()) {
 		get_status(pokemon) = Status{};
 	}
@@ -496,47 +473,47 @@ auto ActivePokemon::fully_trapped() const -> bool {
 	return m_flags.fully_trapped;
 }
 
-bool ActivePokemon::trapped() const {
+auto ActivePokemon::trapped() const -> bool {
 	return m_flags.fully_trapped or ingrained() or m_flags.partial_trap.is_active();
 }
 
-bool ActivePokemon::is_tormented() const {
+auto ActivePokemon::is_tormented() const -> bool {
 	return m_flags.is_tormented;
 }
 
-void ActivePokemon::torment() {
+auto ActivePokemon::torment() -> void {
 	m_flags.is_tormented = true;
 }
 
-void ActivePokemon::taunt() {
+auto ActivePokemon::taunt() -> void {
 	m_flags.taunt.activate();
 }
 
-bool ActivePokemon::is_taunted() const {
+auto ActivePokemon::is_taunted() const -> bool {
 	return m_flags.taunt.is_active();
 }
 
-void ActivePokemon::advance_taunt() {
+auto ActivePokemon::advance_taunt() -> void {
 	m_flags.taunt.advance_one_turn();
 }
 
-void ActivePokemon::advance_toxic() {
+auto ActivePokemon::advance_toxic() -> void {
 	m_flags.toxic.increment();
 }
 
-void ActivePokemon::u_turn() {
+auto ActivePokemon::u_turn() -> void {
 	m_flags.u_turning = true;
 }
 
-void ActivePokemon::use_uproar() {
+auto ActivePokemon::use_uproar() -> void {
 	m_flags.uproar.advance_one_turn();
 }
 
-bool ActivePokemon::vanish_doubles_power(Moves const move_name) const {
+auto ActivePokemon::vanish_doubles_power(Moves const move_name) const -> bool {
 	return m_flags.vanish.doubles_move_power(move_name);
 }
 
-void ActivePokemon::activate_water_sport() {
+auto ActivePokemon::activate_water_sport() -> void {
 	m_flags.water_sport = true;
 }
 
@@ -551,23 +528,23 @@ auto ActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
 	}
 }
 
-bool ActivePokemon::bounce() {
+auto ActivePokemon::bounce() -> bool {
 	return m_flags.vanish.bounce();
 }
-bool ActivePokemon::dig() {
+auto ActivePokemon::dig() -> bool {
 	return m_flags.vanish.dig();
 }
-bool ActivePokemon::dive() {
+auto ActivePokemon::dive() -> bool {
 	return m_flags.vanish.dive();
 }
-bool ActivePokemon::fly() {
+auto ActivePokemon::fly() -> bool {
 	return m_flags.vanish.fly();
 }
-bool ActivePokemon::shadow_force() {
+auto ActivePokemon::shadow_force() -> bool {
 	return m_flags.vanish.shadow_force();
 }
 
-void ActivePokemon::use_bide(Pokemon & target) {
+auto ActivePokemon::use_bide(Pokemon & target) -> void {
 	if (!m_flags.bide.is_active()) {
 		m_flags.bide.activate();
 	}
@@ -583,29 +560,29 @@ auto ActivePokemon::substitute() const -> Substitute const & {
 
 namespace {
 
-bool can_use_substitute(Pokemon const & pokemon) {
+auto can_use_substitute(Pokemon const & pokemon) -> bool {
 	auto const & hp = get_hp(pokemon);
 	return hp.current() > hp.max() / 4_bi;
 }
 
 }	// namespace
 
-void ActivePokemon::use_substitute() {
+auto ActivePokemon::use_substitute() -> void {
 	if (!can_use_substitute(*this))
 		return;
 	auto const max_hp = get_hp(*this).max();
 	indirect_damage(m_flags.substitute.create(max_hp));
 }
 
-bool ActivePokemon::is_locked_in_to_bide() const {
+auto ActivePokemon::is_locked_in_to_bide() const -> bool {
 	return m_flags.bide.is_active();
 }
 
-bounded::integer<0, HP::max_value> ActivePokemon::damaged() const {
+auto ActivePokemon::damaged() const -> bounded::integer<0, HP::max_value> {
 	return m_flags.damaged;
 }
 
-void ActivePokemon::direct_damage(damage_type const damage) {
+auto ActivePokemon::direct_damage(damage_type const damage) -> void {
 	auto & hp = get_hp(*this);
 	auto const initial_hp = hp.current();
 	hp -= damage;
@@ -613,15 +590,15 @@ void ActivePokemon::direct_damage(damage_type const damage) {
 	m_flags.bide.add_damage(damage);
 }
 
-void ActivePokemon::indirect_damage(damage_type const damage) {
+auto ActivePokemon::indirect_damage(damage_type const damage) -> void {
 	get_hp(*this) -= damage;
 }
 
-void ActivePokemon::register_damage(damage_type const damage) {
+auto ActivePokemon::register_damage(damage_type const damage) -> void {
 	m_flags.damaged = damage;
 }
 
-void ActivePokemon::increment_move_use_counter() {
+auto ActivePokemon::increment_move_use_counter() -> void {
 	if (is_regular(current_move(*this))) {
 		m_flags.last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves(*this).index()));
 	} else {
@@ -629,7 +606,7 @@ void ActivePokemon::increment_move_use_counter() {
 	}
 }
 
-void ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const weather, bool target_moved) {
+auto ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const weather, bool target_moved) -> void {
 	m_flags.chance_to_hit = chance_to_hit(*this, target, weather, target_moved);
 }
 
@@ -637,25 +614,15 @@ auto ActivePokemon::accuracy_probability() const -> ChanceToHit {
 	return missed() ? complement(m_flags.chance_to_hit) : m_flags.chance_to_hit;
 }
 
-bool ActivePokemon::will_be_replaced() const {
+auto ActivePokemon::will_be_replaced() const -> bool {
 	return m_flags.will_be_replaced;
 }
 
-void ActivePokemon::normalize_hp(bool fainted) {
-	if (fainted) {
-		faint();
-	}
-	else {
-		HP & hp = get_hp(*this);
-		hp = bounded::max(hp.current(), 1_bi);
-	}
-}
-
-bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
+auto operator==(ActivePokemon const & lhs, ActivePokemon const & rhs) -> bool {
 	return lhs.m_flags == rhs.m_flags;
 }
 
-bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs) {
+auto operator!=(ActivePokemon const & lhs, ActivePokemon const & rhs) -> bool {
 	return !(lhs == rhs);
 }
 

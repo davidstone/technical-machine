@@ -36,85 +36,88 @@ class Weather;
 
 class ActivePokemon {
 public:
-	operator Pokemon const & () const;
-	operator Pokemon & ();
+	operator Pokemon const & () const {
+		return all_pokemon()();
+	}
+	operator Pokemon & () {
+		return all_pokemon()();
+	}
 	operator Species() const;
 
-	bool was_used_last(Moves move) const;
+	auto was_used_last(Moves move) const -> bool;
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
-	void reset_end_of_turn();
-	void reset_switch();
-	void reset_between_turns();
-	void clear_field();
-	void update_before_move();
+	auto reset_end_of_turn() -> void;
+	auto reset_switch() -> void;
+	auto reset_between_turns() -> void;
+	auto clear_field() -> void;
+	auto update_before_move() -> void;
 	auto substitute() const -> Substitute const &;
-	void use_substitute();
-	void attract();
-	void awaken(bool value);
+	auto use_substitute() -> void;
+	auto attract() -> void;
+	auto awaken(bool value) -> void;
 	auto awaken_probability() const {
 		return get_status(*this).awaken_probability(get_ability(*this), m_flags.awakening);
 	}
-	bool aqua_ring_is_active() const;
-	void activate_aqua_ring();
-	bool is_baton_passing() const;
-	void baton_pass();
-	bool cannot_be_koed() const;
-	bool charge_boosted() const;
-	void charge();
-	bool is_confused() const;
-	void confuse();
-	void handle_confusion();
-	bool critical_hit() const;
-	void set_critical_hit(bool value);
-	void curse();
-	bool is_cursed() const;
-	bool defense_curled() const;
-	void defense_curl();
-	void use_destiny_bond();
+	auto aqua_ring_is_active() const -> bool;
+	auto activate_aqua_ring() -> void;
+	auto is_baton_passing() const -> bool;
+	auto baton_pass() -> void;
+	auto cannot_be_koed() const -> bool;
+	auto charge_boosted() const -> bool;
+	auto charge() -> void;
+	auto is_confused() const -> bool;
+	auto confuse() -> void;
+	auto handle_confusion() -> void;
+	auto critical_hit() const -> bool;
+	auto set_critical_hit(bool value) -> void;
+	auto curse() -> void;
+	auto is_cursed() const -> bool;
+	auto defense_curled() const -> bool;
+	auto defense_curl() -> void;
+	auto use_destiny_bond() -> void;
 	// Requires that move is actually one of this Pokemon's moves
-	bool is_disabled(Moves move) const;
-	void disable();
-	void advance_disable();
-	void activate_embargo();
-	void advance_embargo();
-	bool is_encored() const;
-	void activate_encore();
-	void advance_encore();
-	void endure();
+	auto is_disabled(Moves move) const -> bool;
+	auto disable() -> void;
+	auto advance_disable() -> void;
+	auto activate_embargo() -> void;
+	auto advance_embargo() -> void;
+	auto is_encored() const -> bool;
+	auto activate_encore() -> void;
+	auto advance_encore() -> void;
+	auto endure() -> void;
 	// This function should be used instead of checking if hp == 0 to handle
 	// messages being sent about multiple Pokemon fainting in one turn.
 	// Using this function will allow TM to correctly update an entire turn
 	// from a message.
-	bool is_fainted() const;
-	void faint();
-	bool flash_fire_is_active() const;
-	void activate_flash_fire();
-	bool flinched() const;
-	void flinch();
+	auto is_fainted() const -> bool;
+	auto faint() -> void;
+	auto flash_fire_is_active() const -> bool;
+	auto activate_flash_fire() -> void;
+	auto flinched() const -> bool;
+	auto flinch() -> void;
 	auto has_focused_energy() const -> bool;
-	void focus_energy();
-	void fully_trap();
-	bool heal_block_is_active() const;
-	void activate_heal_block();
-	void advance_heal_block();
-	bool leech_seeded() const;
-	void hit_with_leech_seed();
-	bool is_loafing() const;
-	void advance_lock_in();
-	bool locked_on() const;
-	void use_lock_on();
-	void identify();
-	bool used_imprison() const;
-	void use_imprison();
-	bool ingrained() const;
-	void ingrain();
-	bool is_fully_paralyzed() const;
-	void lower_pp(Ability const & target);
+	auto focus_energy() -> void;
+	auto fully_trap() -> void;
+	auto heal_block_is_active() const -> bool;
+	auto activate_heal_block() -> void;
+	auto advance_heal_block() -> void;
+	auto leech_seeded() const -> bool;
+	auto hit_with_leech_seed() -> void;
+	auto is_loafing() const -> bool;
+	auto advance_lock_in() -> void;
+	auto locked_on() const -> bool;
+	auto use_lock_on() -> void;
+	auto identify() -> void;
+	auto used_imprison() const -> bool;
+	auto use_imprison() -> void;
+	auto ingrained() const -> bool;
+	auto ingrain() -> void;
+	auto is_fully_paralyzed() const -> bool;
 	auto magnet_rise() const -> MagnetRise const &;
-	void activate_magnet_rise();
-	void advance_magnet_rise();
-	bool me_first_is_active() const;
+	auto activate_magnet_rise() -> void;
+	auto advance_magnet_rise() -> void;
+	auto me_first_is_active() const -> bool;
 	auto fury_cutter_power() const {
 		return m_flags.last_used_move.fury_cutter_power();
 	}
@@ -127,34 +130,34 @@ public:
 	auto metronome_boost() const {
 		return m_flags.last_used_move.metronome_boost();
 	}
-	bool minimized() const;
-	bool missed() const;
-	void set_miss(bool value);
-	void set_moved(bool value = true);
-	bool moved() const;
-	bool moved_since_switch() const;
-	void activate_mud_sport();
-	bool is_having_a_nightmare() const;
-	void give_nightmares();
-	void partially_trap();
-	void partial_trap_damage();
-	void activate_perish_song();
-	void perish_song_turn();
-	bool power_trick_is_active() const;
-	void activate_power_trick();
-	void protect();
-	void break_protect();
-	void activate_rampage();
-	bool is_recharging() const;
-	bool recharge();
-	void use_recharge_move();
-	bool is_roosting() const;
-	void roost();
-	bool shed_skin_activated() const;
-	void shed_skin(bool value);
-	void increase_sleep_counter();
-	bool slow_start_is_active() const;
-	bool sport_is_active(Move const & foe_move) const;
+	auto minimized() const -> bool;
+	auto missed() const -> bool;
+	auto set_miss(bool value) -> void;
+	auto set_moved(bool value = true) -> void;
+	auto moved() const -> bool;
+	auto moved_since_switch() const -> bool;
+	auto activate_mud_sport() -> void;
+	auto is_having_a_nightmare() const -> bool;
+	auto give_nightmares() -> void;
+	auto partially_trap() -> void;
+	auto partial_trap_damage() -> void;
+	auto activate_perish_song() -> void;
+	auto perish_song_turn() -> void;
+	auto power_trick_is_active() const -> bool;
+	auto activate_power_trick() -> void;
+	auto protect() -> void;
+	auto break_protect() -> void;
+	auto activate_rampage() -> void;
+	auto is_recharging() const -> bool;
+	auto recharge() -> bool;
+	auto use_recharge_move() -> void;
+	auto is_roosting() const -> bool;
+	auto roost() -> void;
+	auto shed_skin_activated() const -> bool;
+	auto shed_skin(bool value) -> void;
+	auto increase_sleep_counter() -> void;
+	auto slow_start_is_active() const -> bool;
+	auto sport_is_active(Move const & foe_move) const -> bool;
 
 	auto stage() const -> Stage const &;
 	auto stage() -> Stage &;
@@ -162,65 +165,63 @@ public:
 	auto spit_up_power() const {
 		return m_flags.stockpile.spit_up_power();
 	}
-	void increment_stockpile();
-	bounded::integer<0, Stockpile::max> release_stockpile();
+	auto increment_stockpile() -> void;
+	auto release_stockpile() -> bounded::integer<0, Stockpile::max>;
 
-	bool is_switching_to_self () const;
-	bool is_switching_to_self(Moves switch_move) const;
-	bool has_switched() const;
-	bool switch_decision_required() const;
+	auto switch_decision_required() const -> bool;
 	
 	auto fully_trapped() const -> bool;
-	bool trapped() const;
-	bool is_tormented() const;
-	void taunt();
-	bool is_taunted() const;
-	void torment();
-	void advance_taunt();
+	auto trapped() const -> bool;
+	auto is_tormented() const -> bool;
+	auto taunt() -> void;
+	auto is_taunted() const -> bool;
+	auto torment() -> void;
+	auto advance_taunt() -> void;
 	auto toxic_ratio() const {
 		return m_flags.toxic.ratio_drained();
 	}
-	void advance_toxic();
-	void u_turn();
-	void use_uproar();
-	bool vanish_doubles_power(Moves move_name) const;
-	void activate_water_sport();
+	auto advance_toxic() -> void;
+	auto u_turn() -> void;
+	auto use_uproar() -> void;
+	auto vanish_doubles_power(Moves move_name) const -> bool;
+	auto activate_water_sport() -> void;
 	auto hit_with_yawn() -> void;
 	// Advance the yawn counter and possibly put the Pokemon to sleep
 	auto try_to_activate_yawn(Weather weather) -> void;
 
 	// Returns whether the Pokemon ends up in a Vanished state
-	bool bounce();
-	bool dig();
-	bool dive();
-	bool fly();
-	bool shadow_force();
+	auto bounce() -> bool;
+	auto dig() -> bool;
+	auto dive() -> bool;
+	auto fly() -> bool;
+	auto shadow_force() -> bool;
 
-	void use_bide(Pokemon & target);
-	bool is_locked_in_to_bide() const;
-	bounded::integer<0, HP::max_value> damaged() const;
+	auto use_bide(Pokemon & target) -> void;
+	auto is_locked_in_to_bide() const -> bool;
+	auto damaged() const -> bounded::integer<0, HP::max_value>;
 	auto random_damage_multiplier() const {
 		return m_flags.random_damage();
 	}
 
-	void direct_damage(damage_type damage);
-	void indirect_damage(damage_type damage);
-	void register_damage(damage_type damage);
-	void increment_move_use_counter();
-	void update_chance_to_hit(ActivePokemon const & target, Weather weather, bool target_moved);
+	auto direct_damage(damage_type damage) -> void;
+	auto indirect_damage(damage_type damage) -> void;
+	auto register_damage(damage_type damage) -> void;
+	auto increment_move_use_counter() -> void;
+	auto update_chance_to_hit(ActivePokemon const & target, Weather weather, bool target_moved) -> void;
 	// If the move is a hit, returns the chance to hit, otherwise, returns
 	// the chance to miss.
 	auto accuracy_probability() const -> ChanceToHit;
 	
-	bool will_be_replaced() const;
+	auto will_be_replaced() const -> bool;
 	
-	// Fix any rounding issues caused by not seeing the foe's exact HP.
-	void normalize_hp(bool fainted);
-	
-	PokemonCollection const & all_pokemon() const;
-	PokemonCollection & all_pokemon();
+	auto all_pokemon() const -> PokemonCollection const & {
+		return m_all_pokemon;
+	}
+	auto all_pokemon() -> PokemonCollection & {
+		return m_all_pokemon;
+	}
 
-	friend bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs);
+	friend auto operator==(ActivePokemon const & lhs, ActivePokemon const & rhs) -> bool;
 	auto hash() const noexcept {
 		return technicalmachine::hash(m_flags);
 	}
@@ -232,9 +233,7 @@ private:
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;
 };
-bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);
-
-void switch_pokemon(ActivePokemon & pokemon);
+auto operator!=(ActivePokemon const & lhs, ActivePokemon const & rhs) -> bool;
 
 inline auto hash(ActivePokemon const & pokemon) noexcept {
 	return pokemon.hash();
@@ -247,6 +246,21 @@ inline auto shed_skin_probability(ActivePokemon const & pokemon) {
 	auto const numerator = BOUNDED_CONDITIONAL(pokemon.shed_skin_activated(), 3_bi, 7_bi);
 	return make_rational(static_cast<bounded::integer<0, 10>>(numerator), 10_bi);
 }
+
+auto lower_pp(ActivePokemon & user, Ability target) -> void;
+
+auto has_switched(ActivePokemon const & pokemon) -> bool;
+auto switch_pokemon(ActivePokemon & pokemon) -> void;
+
+
+
+inline auto is_switching_to_self(ActivePokemon const & pokemon) {
+	return pokemon.all_pokemon().is_switching_to_self();
+}
+inline auto is_switching_to_self(ActivePokemon const & pokemon, Moves const switch_move) {
+	return pokemon.all_pokemon().is_switching_to_self(switch_move);
+}
+
 
 
 }	// namespace technicalmachine

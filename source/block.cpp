@@ -135,7 +135,7 @@ bool is_blocked_by_bide(ActivePokemon const & user, Moves const move) {
 
 bool is_not_illegal_switch(ActivePokemon const & user, Moves const move, ActivePokemon const & other, Weather const weather) {
 	return is_switch(move) ?
-		!user.is_switching_to_self(move) and !is_blocked_from_switching (user, other, weather) :
+		!is_switching_to_self(user, move) and !is_blocked_from_switching(user, other, weather) :
 		true;
 }
 

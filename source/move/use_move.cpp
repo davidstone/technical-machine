@@ -126,7 +126,7 @@ auto call_move(Team & user_team, Team & target_team, Weather & weather, Variable
 	auto const & target = target_team.pokemon();
 	user.update_before_move();
 	if (can_execute_move (user, target, weather)) {
-		user.lower_pp(get_ability(target));
+		lower_pp(user, get_ability(target));
 		if (calls_other_move(current_move(user))) {
 			call_other_move (user);
 		}

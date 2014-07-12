@@ -443,9 +443,24 @@ void Battle::normalize_hp() {
 	normalize_hp(foe);
 }
 
+namespace {
+
+// Fix any rounding issues caused by not seeing the foe's exact HP.
+auto normalize_hp(ActivePokemon & pokemon, bool const fainted) {
+	if (fainted) {
+		pokemon.faint();
+	}
+	else {
+		HP & hp = get_hp(pokemon);
+		hp = bounded::max(hp.current(), 1_bi);
+	}
+}
+
+}	// namespace
+
 void Battle::normalize_hp(Team & team) {
 	bool const fainted = updated_hp.is_fainted(team.is_me(), team.pokemon());
-	team.pokemon().normalize_hp(fainted);
+	technicalmachine::normalize_hp(team.pokemon(), fainted);
 }
 
 std::string const & Battle::opponent() const {
