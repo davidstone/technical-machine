@@ -74,10 +74,6 @@ Pokemon::operator Species() const {
 }
 
 
-void switch_in(Pokemon & pokemon) {
-	pokemon.m_has_been_seen = true;
-}
-
 MoveCollection::index_type Pokemon::index_of_first_switch() const {
 	MoveCollection::index_type index = 0_bi;
 	while (!is_switch(move(index))) {
@@ -92,67 +88,6 @@ std::string Pokemon::get_nickname () const {
 	#else
 		return to_string(m_species);
 	#endif
-}
-
-Ability const & get_ability(Pokemon const & pokemon) {
-	return pokemon.m_ability;
-}
-Ability & get_ability(Pokemon & pokemon) {
-	return pokemon.m_ability;
-}
-
-Gender const & get_gender(Pokemon const & pokemon) {
-	return pokemon.m_gender;
-}
-Gender & get_gender(Pokemon & pokemon) {
-	return pokemon.m_gender;
-}
-
-Item const & get_item(Pokemon const & pokemon) {
-	return pokemon.m_item;
-}
-Item & get_item(Pokemon & pokemon) {
-	return pokemon.m_item;
-}
-
-Nature const & get_nature(Pokemon const & pokemon) {
-	return pokemon.m_nature;
-}
-Nature & get_nature(Pokemon & pokemon) {
-	return pokemon.m_nature;
-}
-
-HP const & get_hp(Pokemon const & pokemon) {
-	return pokemon.stats.hp();
-}
-HP & get_hp(Pokemon & pokemon) {
-	return pokemon.stats.hp();
-}
-
-Stat const & get_stat(Pokemon const & pokemon, StatNames const index_stat) {
-	return pokemon.stats[index_stat];
-}
-Stat & get_stat(Pokemon & pokemon, StatNames const index_stat) {
-	return pokemon.stats[index_stat];
-}
-
-Status const & get_status(Pokemon const & pokemon) {
-	return pokemon.m_status;
-}
-Status & get_status(Pokemon & pokemon) {
-	return pokemon.m_status;
-}
-
-TypeCollection const & get_type(Pokemon const & pokemon) {
-	return pokemon.current_type;
-}
-
-Level get_level(Pokemon const & pokemon) {
-	return pokemon.m_level;
-}
-
-Happiness get_happiness(Pokemon const & pokemon) {
-	return pokemon.m_happiness;
 }
 
 void Pokemon::change_type(Type const new_type) {

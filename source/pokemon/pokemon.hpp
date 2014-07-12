@@ -41,34 +41,6 @@
 namespace technicalmachine {
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
-// I use a macro here because I rely on a conversion operator. Friend functions
-// only declared in a class body are not found by lookup rules in that case. The
-// macro solution seemed better than duplicating all of this by hand.
-//
-// qualifier should be `friend` or nothing
-#define TECHNICALMACHINE_FRIEND_DECLARATIONS(qualifier) \
-qualifier Ability const & get_ability(Pokemon const & pokemon); \
-qualifier Ability & get_ability(Pokemon & pokemon); \
-qualifier Gender const & get_gender(Pokemon const & pokemon); \
-qualifier Gender & get_gender(Pokemon & pokemon); \
-qualifier Happiness get_happiness(Pokemon const & pokemon); \
-qualifier Item const & get_item(Pokemon const & pokemon); \
-qualifier Item & get_item(Pokemon & pokemon); \
-qualifier Level get_level(Pokemon const & pokemon); \
-qualifier Nature const & get_nature(Pokemon const & pokemon); \
-qualifier Nature & get_nature(Pokemon & pokemon); \
-qualifier HP const & get_hp(Pokemon const & pokemon); \
-qualifier HP & get_hp(Pokemon & pokemon); \
-qualifier Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat); \
-qualifier Stat & get_stat(Pokemon & pokemon, StatNames index_stat); \
-qualifier Status const & get_status(Pokemon const & pokemon); \
-qualifier Status & get_status(Pokemon & pokemon); \
-qualifier TypeCollection const & get_type(Pokemon const & pokemon); \
-qualifier void switch_in(Pokemon & pokemon)
-
-TECHNICALMACHINE_FRIEND_DECLARATIONS(/*empty*/);
-
-
 class Pokemon {
 public:
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
@@ -77,7 +49,29 @@ public:
 	MoveCollection::index_type index_of_first_switch () const;
 	std::string get_nickname () const;
 	
-	TECHNICALMACHINE_FRIEND_DECLARATIONS(friend);
+	// These cannot be defined in the class because because I rely on a
+	// conversion operator. Friend functions only declared in a class body are
+	// not found by lookup rules in that case.
+
+	friend Ability const & get_ability(Pokemon const & pokemon);
+	friend Ability & get_ability(Pokemon & pokemon);
+	friend Gender const & get_gender(Pokemon const & pokemon);
+	friend Gender & get_gender(Pokemon & pokemon);
+	friend Happiness get_happiness(Pokemon const & pokemon);
+	friend Item const & get_item(Pokemon const & pokemon);
+	friend Item & get_item(Pokemon & pokemon);
+	friend Level get_level(Pokemon const & pokemon);
+	friend Nature const & get_nature(Pokemon const & pokemon);
+	friend Nature & get_nature(Pokemon & pokemon);
+	friend HP const & get_hp(Pokemon const & pokemon);
+	friend HP & get_hp(Pokemon & pokemon);
+	friend Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat);
+	friend Stat & get_stat(Pokemon & pokemon, StatNames index_stat);
+	friend Status const & get_status(Pokemon const & pokemon);
+	friend Status & get_status(Pokemon & pokemon);
+	friend TypeCollection const & get_type(Pokemon const & pokemon);
+	friend void switch_in(Pokemon & pokemon);
+
 	void change_type(Type new_type);
 	auto has_been_seen() const -> bool;
 	friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
@@ -107,7 +101,72 @@ private:
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
-#undef TECHNICALMACHINE_FRIEND_DECLARATIONS
+
+inline Ability const & get_ability(Pokemon const & pokemon) {
+	return pokemon.m_ability;
+}
+inline Ability & get_ability(Pokemon & pokemon) {
+	return pokemon.m_ability;
+}
+
+inline Gender const & get_gender(Pokemon const & pokemon) {
+	return pokemon.m_gender;
+}
+inline Gender & get_gender(Pokemon & pokemon) {
+	return pokemon.m_gender;
+}
+
+inline Item const & get_item(Pokemon const & pokemon) {
+	return pokemon.m_item;
+}
+inline Item & get_item(Pokemon & pokemon) {
+	return pokemon.m_item;
+}
+
+inline Nature const & get_nature(Pokemon const & pokemon) {
+	return pokemon.m_nature;
+}
+inline Nature & get_nature(Pokemon & pokemon) {
+	return pokemon.m_nature;
+}
+
+inline HP const & get_hp(Pokemon const & pokemon) {
+	return pokemon.stats.hp();
+}
+inline HP & get_hp(Pokemon & pokemon) {
+	return pokemon.stats.hp();
+}
+
+inline Stat const & get_stat(Pokemon const & pokemon, StatNames const index_stat) {
+	return pokemon.stats[index_stat];
+}
+inline Stat & get_stat(Pokemon & pokemon, StatNames const index_stat) {
+	return pokemon.stats[index_stat];
+}
+
+inline Status const & get_status(Pokemon const & pokemon) {
+	return pokemon.m_status;
+}
+inline Status & get_status(Pokemon & pokemon) {
+	return pokemon.m_status;
+}
+
+inline TypeCollection const & get_type(Pokemon const & pokemon) {
+	return pokemon.current_type;
+}
+
+inline Level get_level(Pokemon const & pokemon) {
+	return pokemon.m_level;
+}
+
+inline Happiness get_happiness(Pokemon const & pokemon) {
+	return pokemon.m_happiness;
+}
+
+inline void switch_in(Pokemon & pokemon) {
+	pokemon.m_has_been_seen = true;
+}
+
 
 inline auto hash(Pokemon const & pokemon) noexcept {
 	auto const species = static_cast<Species>(pokemon);
