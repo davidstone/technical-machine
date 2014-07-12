@@ -90,16 +90,16 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
-	if (pokemon.ingrained()) {
+	if (ingrained(pokemon)) {
 		heal(pokemon, make_rational(1_bi, 16_bi));
 	}
-	if (pokemon.aqua_ring_is_active()) {
+	if (aqua_ring_is_active(pokemon)) {
 		heal(pokemon, make_rational(1_bi, 16_bi));
 	}
 	if (get_ability(pokemon).boosts_speed()) {
-		boost(pokemon.stage(), StatNames::SPE, 1_bi);
+		boost(stage(pokemon), StatNames::SPE, 1_bi);
 	}
-	else if (pokemon.shed_skin_activated()) {
+	else if (shed_skin_activated(pokemon)) {
 		get_status(pokemon) = Status{};
 	}
 	switch (get_item(pokemon)) {
@@ -114,10 +114,10 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		default:
 			break;
 	}
-	if (pokemon.leech_seeded()) {
+	if (leech_seeded(pokemon)) {
 		auto const initial = get_hp(pokemon).current();
 		heal(pokemon, make_rational(-1_bi, 8_bi));
-		if (!foe.is_fainted()) {
+		if (!is_fainted(foe)) {
 			if (get_ability(pokemon).damages_leechers()) {
 				get_hp(foe) -= initial - get_hp(pokemon).current();
 			}
@@ -142,11 +142,11 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			if (get_ability(pokemon).absorbs_poison_damage()) {
 				heal(pokemon, make_rational(1_bi, 8_bi));
 			} else {
-				heal(pokemon, pokemon.toxic_ratio());
+				heal(pokemon, toxic_ratio(pokemon));
 			}
 			break;
 		case Statuses::sleep:
-			if (pokemon.is_having_a_nightmare()) {
+			if (is_having_a_nightmare(pokemon)) {
 				heal(pokemon, make_rational(-1_bi, 4_bi));
 			}
 			if (get_ability(foe).harms_sleepers()) {
@@ -166,7 +166,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 		default:
 			break;
 	}
-	if (pokemon.is_cursed()) {
+	if (is_cursed(pokemon)) {
 		heal(pokemon, make_rational(-1_bi, 4_bi));
 	}
 	pokemon.partial_trap_damage();

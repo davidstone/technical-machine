@@ -81,7 +81,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		case Moves::Frustration:
 			return frustration_power(get_happiness(attacker));
 		case Moves::Fury_Cutter:
-			return attacker.last_used_move().fury_cutter_power();
+			return last_used_move(attacker).fury_cutter_power();
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
 			return power_of_mass_based_moves(defender);
@@ -93,7 +93,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		}
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return attacker.last_used_move().momentum_move_power();
+			return last_used_move(attacker).momentum_move_power();
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded::integer<0, 5>>;
 			static constexpr bounded::array<stat_and_position_type, 5> stat_and_position {{
@@ -121,15 +121,15 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 			assert (!variable.present_heals());
 			return variable.value();
 		case Moves::Punishment: {
-			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(defender.stage());
+			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(stage(defender));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:
 			return return_power(get_happiness(attacker));
 		case Moves::Spit_Up:
-			return attacker.spit_up_power();
+			return spit_up_power(attacker);
 		case Moves::Triple_Kick:
-			return attacker.last_used_move().triple_kick_power();
+			return last_used_move(attacker).triple_kick_power();
 		case Moves::Trump_Card:
 			return current_move(attacker).pp().trump_card_power();
 		default:
@@ -174,8 +174,8 @@ auto move_power(Team const & attacker_team, Team const & defender_team, Weather 
 		base_power *
 		BOUNDED_CONDITIONAL(doubling(attacker, defender, weather), 2_bi, 1_bi) *
 		item_modifier(attacker) *
-		BOUNDED_CONDITIONAL(attacker.charge_boosted(), 2_bi, 1_bi) /
-		BOUNDED_CONDITIONAL(defender.sport_is_active(current_move(attacker)), 2_bi, 1_bi) *
+		BOUNDED_CONDITIONAL(charge_boosted(attacker), 2_bi, 1_bi) /
+		BOUNDED_CONDITIONAL(sport_is_active(defender, current_move(attacker)), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(attacker, defender, base_power) *
 		defender_ability_modifier(attacker, get_ability(defender))
 	));
@@ -194,29 +194,29 @@ auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, We
 	// 1 less than it should be.
 
 	Moves const move = current_move(attacker);
-	if (defender.vanish_doubles_power(move))
+	if (vanish_doubles_power(defender, move))
 		return true;
 	switch (move) {
 		case Moves::Assurance:
-			return static_cast<bool>(defender.damaged());
+			return static_cast<bool>(damaged(defender));
 		case Moves::Avalanche: 
 		case Moves::Revenge:
-			return static_cast<bool>(attacker.damaged());
+			return static_cast<bool>(damaged(attacker));
 		case Moves::Brine:
 			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
 		case Moves::Facade:
 			return boosts_facade(get_status(attacker));
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return attacker.defense_curled();
+			return defense_curled(attacker);
 		case Moves::Payback:
-			return defender.moved();
+			return moved(defender);
 		case Moves::SmellingSalt:
 			return boosts_smellingsalt(get_status(defender));
 		case Moves::SolarBeam:
 			return !weather.rain();
 		case Moves::Stomp:
-			return defender.minimized();
+			return minimized(defender);
 		case Moves::Wake_Up_Slap:
 			return is_sleeping(get_status(defender));
 		case Moves::Weather_Ball:

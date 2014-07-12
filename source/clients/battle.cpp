@@ -129,8 +129,9 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 	else {
 		msg.write_move(battle_id, 1);
 	}
-	if (!ai.pokemon().will_be_replaced())
+	if (!will_be_replaced(ai.pokemon())) {
 		initialize_turn();
+	}
 }
 
 void Battle::update_from_previous_turn() {
@@ -196,7 +197,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t i
 	if (other.number_of_seen_pokemon() != 0_bi and is_phaze(current_move(other.replacement()))) {
 		variable(other).set_phaze_index(switcher, species);
 	}
-	else if (!switcher.pokemon().moved()) {
+	else if (!moved(switcher.pokemon())) {
 		Pokemon & pokemon = switcher.pokemon(replacement);
 		all_moves(pokemon).set_index(static_cast<MoveCollection::index_type>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
 	}
@@ -358,14 +359,14 @@ void Battle::do_turn() {
 		switcher.move(false);
 		normalize_hp();
 	};
-	if (first->pokemon().will_be_replaced()) {
+	if (will_be_replaced(first->pokemon())) {
 		normalize_hp();
 		replacement(*first, *last);
-		if (last->pokemon().will_be_replaced()) {
+		if (will_be_replaced(last->pokemon())) {
 			replacement(*last, *first);
 		}
 	}
-	else if (last->pokemon().will_be_replaced()) {
+	else if (will_be_replaced(last->pokemon())) {
 		normalize_hp();
 		replacement(*last, *first);
 	}
@@ -413,7 +414,7 @@ void Battle::do_turn() {
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
 		auto & pokemon = foe.pokemon();
-		while (pokemon.will_be_replaced()) {
+		while (will_be_replaced(pokemon)) {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!is_switch(current_move(pokemon))) {

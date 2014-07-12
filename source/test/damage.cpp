@@ -75,7 +75,7 @@ Team max_damage_physical_defender() {
 	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
 	get_nature(pokemon) = Nature::Hasty;
 	for (unsigned n = 0; n != 3; ++n) {
-		boost(pokemon.stage(), StatNames::DEF, -2_bi);
+		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
 	return defender;
 }
@@ -91,7 +91,7 @@ Team max_damage_special_defender() {
 	get_stat(d, StatNames::SPD).iv = IV(0_bi);
 	get_stat(d, StatNames::SPD).ev = EV(0_bi);
 	for (unsigned n = 0; n != 3; ++n) {
-		boost(d.stage(), StatNames::SPD, -2_bi);
+		boost(stage(d), StatNames::SPD, -2_bi);
 	}
 
 	return defender;
@@ -146,7 +146,7 @@ void physical_damage_test() {
 	get_nature(a) = Nature::Impish;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
-	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
+	boost(stage(attacker.pokemon()), StatNames::ATK, 6_bi);
 
 	get_item(a) = Item::Metronome;
 	attacker.pokemon().set_critical_hit(true);
@@ -169,7 +169,7 @@ void special_damage_test() {
 
 	get_stat(a, StatNames::SPA).ev = EV(bounded::make<EV::max>());
 	get_nature(a) = Nature::Modest;
-	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
+	boost(stage(attacker.pokemon()), StatNames::SPA, 6_bi);
 	
 	get_item(a) = Item::Metronome;
 	for (unsigned n = 0; n != 10; ++n) {

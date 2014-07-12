@@ -48,8 +48,73 @@
 
 namespace technicalmachine {
 
+class ActivePokemon;
+class Move;
+
+// I use a macro here because I rely on a conversion operator. Friend functions
+// only declared in a class body are not found by lookup rules in that case. The
+// macro solution seemed better than duplicating all of this by hand.
+
+#define TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS \
+	friend auto last_used_move(ActivePokemon const & pokemon) -> LastUsedMove; \
+	friend auto substitute(ActivePokemon const & pokemon) -> Substitute const &; \
+	friend auto aqua_ring_is_active(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_baton_passing(ActivePokemon const & pokemon) -> bool; \
+	friend auto cannot_be_koed(ActivePokemon const & pokemon) -> bool; \
+	friend auto charge_boosted(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_confused(ActivePokemon const & pokemon) -> bool; \
+	friend auto critical_hit(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_cursed(ActivePokemon const & pokemon) -> bool; \
+	friend auto defense_curled(ActivePokemon const & pokemon) -> bool; \
+	/* Requires that move is actually one of this Pokemon's moves */ \
+	friend auto is_disabled(ActivePokemon const & pokemon, Moves move) -> bool; \
+	friend auto is_encored(ActivePokemon const & pokemon) -> bool; \
+	/* This function should be used instead of checking if hp == 0 to handle */ \
+	/* messages being sent about multiple Pokemon fainting in one turn. */ \
+	/* Using this function will allow TM to correctly update an entire turn */ \
+	/* from a message. */ \
+	friend auto is_fainted(ActivePokemon const & pokemon) -> bool; \
+	friend auto flash_fire_is_active(ActivePokemon const & pokemon) -> bool; \
+	friend auto flinched(ActivePokemon const & pokemon) -> bool; \
+	friend auto has_focused_energy(ActivePokemon const & pokemon) -> bool; \
+	friend auto heal_block_is_active(ActivePokemon const & pokemon) -> bool; \
+	friend auto leech_seeded(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_loafing(ActivePokemon const & pokemon) -> bool; \
+	friend auto locked_on(ActivePokemon const & pokemon) -> bool; \
+	friend auto used_imprison(ActivePokemon const & pokemon) -> bool; \
+	friend auto ingrained(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_fully_paralyzed(ActivePokemon const & pokemon) -> bool; \
+	friend auto magnet_rise(ActivePokemon const & pokemon) -> MagnetRise const &; \
+	friend auto me_first_is_active(ActivePokemon const & pokemon) -> bool; \
+	friend auto minimized(ActivePokemon const & pokemon) -> bool; \
+	friend auto missed(ActivePokemon const & pokemon) -> bool; \
+	friend auto moved(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_having_a_nightmare(ActivePokemon const & pokemon) -> bool; \
+	friend auto power_trick_is_active(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_recharging(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_roosting(ActivePokemon const & pokemon) -> bool; \
+	friend auto shed_skin_activated(ActivePokemon const & pokemon) -> bool; \
+	friend auto slow_start_is_active(ActivePokemon const & pokemon) -> bool; \
+	friend auto sport_is_active(ActivePokemon const & pokemon, Move const & foe_move) -> bool; \
+	friend auto stage(ActivePokemon const & pokemon) -> Stage const &; \
+	friend auto stage(ActivePokemon & pokemon) -> Stage &; \
+	friend auto spit_up_power(ActivePokemon const & pokemon) -> decltype(std::declval<Stockpile>().spit_up_power()); \
+	friend auto switch_decision_required(ActivePokemon const & pokemon) -> bool; \
+	friend auto fully_trapped(ActivePokemon const & pokemon) -> bool; \
+	friend auto trapped(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_tormented(ActivePokemon const & pokemon) -> bool; \
+	friend auto is_taunted(ActivePokemon const & pokemon) -> bool; \
+	friend auto toxic_ratio(ActivePokemon const & pokemon) -> decltype(std::declval<Toxic>().ratio_drained()); \
+	friend auto vanish_doubles_power(ActivePokemon const & pokemon, Moves move_name) -> bool; \
+	friend auto is_locked_in_to_bide(ActivePokemon const & pokemon) -> bool; \
+	friend auto damaged(ActivePokemon const & pokemon) -> bounded::integer<0, HP::max_value>; \
+	friend auto random_damage_multiplier(ActivePokemon const & pokemon) -> decltype(std::declval<RandomDamage>()()); \
+	friend auto will_be_replaced(ActivePokemon const & pokemon) -> bool
+
 class ActivePokemonFlags {
 public:
+	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
+
 	friend auto operator==(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool;
 	auto hash() const noexcept {
 		return technicalmachine::hash(

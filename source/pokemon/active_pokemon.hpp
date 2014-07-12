@@ -46,7 +46,7 @@ public:
 	}
 	operator Species() const;
 
-	auto last_used_move() const -> LastUsedMove;
+	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
@@ -55,122 +55,68 @@ public:
 	auto reset_between_turns() -> void;
 	auto clear_field() -> void;
 	auto update_before_move() -> void;
-	auto substitute() const -> Substitute const &;
 	auto use_substitute() -> void;
 	auto attract() -> void;
 	auto awaken(bool value) -> void;
-	auto aqua_ring_is_active() const -> bool;
 	auto activate_aqua_ring() -> void;
-	auto is_baton_passing() const -> bool;
 	auto baton_pass() -> void;
-	auto cannot_be_koed() const -> bool;
-	auto charge_boosted() const -> bool;
 	auto charge() -> void;
-	auto is_confused() const -> bool;
 	auto confuse() -> void;
 	auto handle_confusion() -> void;
-	auto critical_hit() const -> bool;
 	auto set_critical_hit(bool value) -> void;
 	auto curse() -> void;
-	auto is_cursed() const -> bool;
-	auto defense_curled() const -> bool;
 	auto defense_curl() -> void;
 	auto use_destiny_bond() -> void;
-	// Requires that move is actually one of this Pokemon's moves
-	auto is_disabled(Moves move) const -> bool;
 	auto disable() -> void;
 	auto advance_disable() -> void;
 	auto activate_embargo() -> void;
 	auto advance_embargo() -> void;
-	auto is_encored() const -> bool;
 	auto activate_encore() -> void;
 	auto advance_encore() -> void;
 	auto endure() -> void;
-	// This function should be used instead of checking if hp == 0 to handle
-	// messages being sent about multiple Pokemon fainting in one turn.
-	// Using this function will allow TM to correctly update an entire turn
-	// from a message.
-	auto is_fainted() const -> bool;
 	auto faint() -> void;
-	auto flash_fire_is_active() const -> bool;
 	auto activate_flash_fire() -> void;
-	auto flinched() const -> bool;
 	auto flinch() -> void;
-	auto has_focused_energy() const -> bool;
 	auto focus_energy() -> void;
 	auto fully_trap() -> void;
-	auto heal_block_is_active() const -> bool;
 	auto activate_heal_block() -> void;
 	auto advance_heal_block() -> void;
-	auto leech_seeded() const -> bool;
 	auto hit_with_leech_seed() -> void;
-	auto is_loafing() const -> bool;
 	auto advance_lock_in() -> void;
-	auto locked_on() const -> bool;
 	auto use_lock_on() -> void;
 	auto identify() -> void;
-	auto used_imprison() const -> bool;
 	auto use_imprison() -> void;
-	auto ingrained() const -> bool;
 	auto ingrain() -> void;
-	auto is_fully_paralyzed() const -> bool;
-	auto magnet_rise() const -> MagnetRise const &;
 	auto activate_magnet_rise() -> void;
 	auto advance_magnet_rise() -> void;
-	auto me_first_is_active() const -> bool;
-	auto minimized() const -> bool;
-	auto missed() const -> bool;
 	auto set_miss(bool value) -> void;
 	auto set_moved(bool value = true) -> void;
-	auto moved() const -> bool;
 	auto activate_mud_sport() -> void;
-	auto is_having_a_nightmare() const -> bool;
 	auto give_nightmares() -> void;
 	auto partially_trap() -> void;
 	auto partial_trap_damage() -> void;
 	auto activate_perish_song() -> void;
 	auto perish_song_turn() -> void;
-	auto power_trick_is_active() const -> bool;
 	auto activate_power_trick() -> void;
 	auto protect() -> void;
 	auto break_protect() -> void;
 	auto activate_rampage() -> void;
-	auto is_recharging() const -> bool;
 	auto recharge() -> bool;
 	auto use_recharge_move() -> void;
-	auto is_roosting() const -> bool;
 	auto roost() -> void;
-	auto shed_skin_activated() const -> bool;
 	auto shed_skin(bool value) -> void;
 	auto increase_sleep_counter() -> void;
-	auto slow_start_is_active() const -> bool;
-	auto sport_is_active(Move const & foe_move) const -> bool;
 
-	auto stage() const -> Stage const &;
-	auto stage() -> Stage &;
-	
-	auto spit_up_power() const {
-		return m_flags.stockpile.spit_up_power();
-	}
 	auto increment_stockpile() -> void;
 	auto release_stockpile() -> bounded::integer<0, Stockpile::max>;
 
-	auto switch_decision_required() const -> bool;
 	
-	auto fully_trapped() const -> bool;
-	auto trapped() const -> bool;
-	auto is_tormented() const -> bool;
 	auto taunt() -> void;
-	auto is_taunted() const -> bool;
 	auto torment() -> void;
 	auto advance_taunt() -> void;
-	auto toxic_ratio() const {
-		return m_flags.toxic.ratio_drained();
-	}
 	auto advance_toxic() -> void;
 	auto u_turn() -> void;
 	auto use_uproar() -> void;
-	auto vanish_doubles_power(Moves move_name) const -> bool;
 	auto activate_water_sport() -> void;
 	auto hit_with_yawn() -> void;
 	// Advance the yawn counter and possibly put the Pokemon to sleep
@@ -184,18 +130,12 @@ public:
 	auto shadow_force() -> bool;
 
 	auto use_bide(Pokemon & target) -> void;
-	auto is_locked_in_to_bide() const -> bool;
-	auto damaged() const -> bounded::integer<0, HP::max_value>;
-	auto random_damage_multiplier() const {
-		return m_flags.random_damage();
-	}
 
 	auto direct_damage(damage_type damage) -> void;
 	auto indirect_damage(damage_type damage) -> void;
 	auto register_damage(damage_type damage) -> void;
 	auto increment_move_use_counter() -> void;
 
-	auto will_be_replaced() const -> bool;
 	
 	auto all_pokemon() const -> PokemonCollection const & {
 		return m_all_pokemon;
@@ -222,6 +162,15 @@ inline auto hash(ActivePokemon const & pokemon) noexcept {
 	return pokemon.hash();
 }
 
+
+inline auto last_used_move(ActivePokemon const & pokemon) -> LastUsedMove {
+	return pokemon.m_flags.last_used_move;
+}
+inline auto substitute(ActivePokemon const & pokemon) -> Substitute const & {
+	return pokemon.m_flags.substitute;
+}
+
+
 inline auto shed_skin_probability(ActivePokemon const & pokemon) {
 	return make_rational(
 		BOUNDED_CONDITIONAL(get_ability(pokemon).can_clear_status(get_status(pokemon)), 3_bi, 0_bi),
@@ -236,6 +185,202 @@ auto has_switched(ActivePokemon const & pokemon) -> bool;
 inline auto awaken_probability(ActivePokemon const & pokemon) {
 	return get_status(pokemon).awaken_probability(get_ability(pokemon));
 }
+
+
+inline auto aqua_ring_is_active(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.aqua_ring;
+}
+
+inline auto is_baton_passing(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_baton_passing;
+}
+
+inline auto cannot_be_koed(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.enduring;
+}
+
+inline auto charge_boosted(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.charged and get_type(current_move(pokemon), pokemon) == Type::Electric;
+}
+
+inline auto is_confused(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.confusion.is_active();
+}
+
+inline auto critical_hit(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.critical_hit;
+}
+
+inline auto is_cursed(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_cursed;
+}
+
+inline auto defense_curled(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.defense_curled;
+}
+
+inline auto is_disabled(ActivePokemon const & pokemon, Moves const move_name) -> bool {
+	return pokemon.m_flags.disable.move_is_disabled(*index(all_moves(pokemon), move_name));
+}
+
+inline auto is_encored(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.encore.is_active();
+}
+
+inline auto is_fainted(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.will_be_replaced;
+}
+
+inline auto flash_fire_is_active(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.flash_fire;
+}
+
+inline auto flinched(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.flinched;
+}
+
+inline auto has_focused_energy(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.has_focused_energy;
+}
+
+inline auto used_imprison(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.used_imprison;
+}
+
+inline auto ingrained(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.ingrained;
+}
+
+inline auto heal_block_is_active(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.heal_block.is_active();
+}
+
+inline auto is_fully_paralyzed(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_fully_paralyzed;
+}
+
+inline auto leech_seeded(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.leech_seeded;
+}
+
+inline auto is_loafing(ActivePokemon const & pokemon) -> bool {
+	return get_ability(pokemon).is_loafing(pokemon.m_flags.is_loafing_turn);
+}
+
+inline auto locked_on(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.locked_on;
+}
+
+inline auto magnet_rise(ActivePokemon const & pokemon) -> MagnetRise const & {
+	return pokemon.m_flags.magnet_rise;
+}
+
+inline auto me_first_is_active(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.me_first_is_active;
+}
+
+inline auto minimized(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.minimized;
+}
+
+inline auto missed(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.missed;
+}
+
+inline auto moved(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.moved;
+}
+
+inline auto is_having_a_nightmare(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_having_a_nightmare;
+}
+
+inline auto power_trick_is_active(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.power_trick_is_active;
+}
+
+inline auto is_recharging(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_recharging;
+}
+
+inline auto is_roosting(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_roosting;
+}
+
+inline auto shed_skin_activated(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.shed_skin_activated;
+}
+
+inline auto slow_start_is_active(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.slow_start.is_active();
+}
+
+inline auto sport_is_active(ActivePokemon const & pokemon, Move const & foe_move) -> bool {
+	switch (get_type(foe_move, pokemon)) {
+	case Type::Electric:
+		return pokemon.m_flags.mud_sport;
+	case Type::Fire:
+		return pokemon.m_flags.water_sport;
+	default:
+		return false;
+	}
+}
+
+inline auto stage(ActivePokemon const & pokemon) -> Stage const & {
+	return pokemon.m_flags.stage;
+}
+inline auto stage(ActivePokemon & pokemon) -> Stage & {
+	return pokemon.m_flags.stage;
+}
+
+inline auto spit_up_power(ActivePokemon const & pokemon) -> decltype(pokemon.m_flags.stockpile.spit_up_power()) {
+	return pokemon.m_flags.stockpile.spit_up_power();
+}
+
+inline auto switch_decision_required(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_baton_passing or pokemon.m_flags.u_turning or will_be_replaced(pokemon);
+}
+
+inline auto fully_trapped(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.fully_trapped;
+}
+
+inline auto trapped(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.fully_trapped or ingrained(pokemon) or pokemon.m_flags.partial_trap.is_active();
+}
+
+inline auto is_tormented(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.is_tormented;
+}
+
+inline auto toxic_ratio(ActivePokemon const & pokemon) -> decltype(pokemon.m_flags.toxic.ratio_drained()) {
+	return pokemon.m_flags.toxic.ratio_drained();
+}
+
+inline auto is_taunted(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.taunt.is_active();
+}
+
+inline auto vanish_doubles_power(ActivePokemon const & pokemon, Moves const move_name) -> bool {
+	return pokemon.m_flags.vanish.doubles_move_power(move_name);
+}
+
+inline auto is_locked_in_to_bide(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.bide.is_active();
+}
+
+inline auto damaged(ActivePokemon const & pokemon) -> bounded::integer<0, HP::max_value> {
+	return pokemon.m_flags.damaged;
+}
+
+inline auto random_damage_multiplier(ActivePokemon const & pokemon) -> decltype(pokemon.m_flags.random_damage()) {
+	return pokemon.m_flags.random_damage();
+}
+
+inline auto will_be_replaced(ActivePokemon const & pokemon) -> bool {
+	return pokemon.m_flags.will_be_replaced;
+}
+
 
 
 }	// namespace technicalmachine

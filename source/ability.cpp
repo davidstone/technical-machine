@@ -294,7 +294,7 @@ auto ability_evasion_modifier(ActivePokemon const & target, Weather const weathe
 		case Ability::Snow_Cloak:
 			return weather.hail() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
 		case Ability::Tangled_Feet:
-			return target.is_confused() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
+			return is_confused(target) ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
 		default:
 			return AbilityEvasionModifier(1_bi, 1_bi);
 	}
@@ -377,7 +377,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 		case Download: {
 			auto const defense = calculate_defense(other, weather);
 			auto const special_defense = calculate_special_defense(other, weather);
-			boost(switcher.stage(), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
+			boost(stage(switcher), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;
 		}
 		case Drizzle:
@@ -389,7 +389,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 		case Forecast:	// TODO: fix this
 			break;
 		case Intimidate:
-			boost(other.stage(), StatNames::ATK, -1_bi);
+			boost(stage(other), StatNames::ATK, -1_bi);
 			break;
 		case Sand_Stream:
 			weather.activate_sand(Weather::Duration::permanent);

@@ -61,7 +61,7 @@ auto calculate_weather_modifier(Type const type, Weather const weather) {
 
 auto calculate_flash_fire_modifier(ActivePokemon const & attacker) {
 	auto const type = get_type(current_move(attacker), attacker);
-	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(type),
+	return BOUNDED_CONDITIONAL(flash_fire_is_active(attacker) and is_boosted_by_flash_fire(type),
 		make_rational(3_bi, 2_bi),
 		make_rational(1_bi, 1_bi)
 	);
@@ -73,14 +73,14 @@ auto calculate_item_modifier(ActivePokemon const & attacker) -> ItemModifier {
 		case Item::Life_Orb:
 			return make_rational(13_bi, 10_bi);
 		case Item::Metronome:
-			return attacker.last_used_move().metronome_boost();
+			return last_used_move(attacker).metronome_boost();
 		default:
 			return make_rational(10_bi, 10_bi);
 	}
 }
 
 auto calculate_me_first_modifier(ActivePokemon const & attacker) {
-	return BOUNDED_CONDITIONAL(attacker.me_first_is_active(),
+	return BOUNDED_CONDITIONAL(me_first_is_active(attacker),
 		make_rational(3_bi, 2_bi),
 		make_rational(1_bi, 1_bi)
 	);
@@ -156,7 +156,7 @@ damage_type raw_damage(Team const & attacker_team, Team const & defender, Weathe
 
 damage_type capped_damage(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const damage = raw_damage(attacker, defender, weather, variable);
-	return (cannot_ko(current_move(attacker.pokemon())) or defender.pokemon().cannot_be_koed()) ?
+	return (cannot_ko(current_move(attacker.pokemon())) or cannot_be_koed(defender.pokemon())) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
 		damage;
 }
@@ -190,11 +190,11 @@ auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon 
 	return BOUNDED_CONDITIONAL(is_physical(current_move(attacker)),
 		make_rational(
 			calculate_attack(attacker, weather),
-			50_bi * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
+			50_bi * calculate_defense(defender, weather, critical_hit(attacker)) * weakening_from_status(attacker)
 		),
 		make_rational(
 			calculate_special_attack(attacker, weather),
-			50_bi * calculate_special_defense(defender, weather, attacker.critical_hit())
+			50_bi * calculate_special_defense(defender, weather, critical_hit(attacker))
 		)
 	);
 }
@@ -205,7 +205,7 @@ auto screen_divisor(ActivePokemon const & attacker, Team const & defender) {
 
 auto critical_hit_multiplier(ActivePokemon const & attacker) {
 	return BOUNDED_CONDITIONAL(
-		!attacker.critical_hit(), 1_bi,
+		!critical_hit(attacker), 1_bi,
 		BOUNDED_CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
 	);
 }
@@ -238,7 +238,7 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	damage *= calculate_item_modifier(attacker);
 	damage *= calculate_me_first_modifier(attacker);
 
-	damage *= attacker.random_damage_multiplier();
+	damage *= random_damage_multiplier(attacker);
 	damage *= calculate_stab_modifier(attacker);
 
 	Effectiveness const effectiveness(type, defender.pokemon());
@@ -264,7 +264,7 @@ namespace {
 
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender) {
 	Move const & move = current_move(attacker);
-	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.critical_hit();
+	return (reflect_is_active(move, defender) or light_screen_is_active(move, defender)) and !critical_hit(attacker);
 }
 
 bool reflect_is_active (Move const & move, Team const & defender) {

@@ -125,16 +125,14 @@ int64_t select_type_of_move(Team & ai, Team & foe, Weather const weather, unsign
 	assert(depth > 0);
 	--depth;
 	
-	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi)
+	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi) {
 		return replace(ai, foe, weather, depth, evaluate, best_move, first_turn);
-	else if (ai.pokemon().switch_decision_required())
+	} else if (switch_decision_required(ai.pokemon())) {
 		return initial_move_then_switch_branch(ai, foe, weather, depth, evaluate, best_move, first_turn);
-	else if (foe.pokemon().switch_decision_required()) {
-		assert(false);
-		return initial_move_then_switch_branch(foe, ai, weather, depth, evaluate, best_move, first_turn);
-	}
-	else
+	} else {
+		assert(!switch_decision_required(foe.pokemon()));
 		return select_move_branch(ai, foe, weather, depth, evaluate, best_move, first_turn);
+	}
 }
 
 namespace {
@@ -394,7 +392,7 @@ bool has_follow_up_decision(Moves const move) {
 
 int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
 	auto const original = static_cast<Species>(user.pokemon());
-	if (!user.pokemon().moved()) {
+	if (!moved(user.pokemon())) {
 		auto const damage = call_move(user, other, weather, user_variable);
 		other.pokemon().direct_damage(damage);
 		auto const user_win = Evaluate::win(user);
@@ -549,7 +547,7 @@ void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
 
 
 Moves random_action (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	return ai.pokemon().switch_decision_required() ?
+	return switch_decision_required(ai.pokemon()) ?
 			random_switch(ai, random_engine) :
 			random_move_or_switch(ai, foe, weather, random_engine);
 }

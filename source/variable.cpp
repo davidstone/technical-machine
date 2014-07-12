@@ -770,7 +770,7 @@ auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
 		StatNames::EVA
 	);
 	auto const non_maxed_stats = bounded::count_if(std::begin(boostable_stats), std::end(boostable_stats), [&](StatNames const stat) {
-		return pokemon.stage()[stat] != 6_bi;
+		return stage(pokemon)[stat] != 6_bi;
 	});
 	if (non_maxed_stats == 0_bi) {
 		// Arbitrary value so the code doesn't break when Acupressure can no

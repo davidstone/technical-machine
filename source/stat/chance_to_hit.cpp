@@ -57,8 +57,8 @@ auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Wea
 	auto const gravity_numerator = BOUNDED_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
 	auto const gravity_multiplier = make_rational(gravity_numerator, gravity_denominator);
 	auto const calculated_accuracy = *base_accuracy *
-		modifier<StatNames::ACC>(user.stage()) *
-		modifier<StatNames::EVA>(target.stage()) *
+		modifier<StatNames::ACC>(stage(user)) *
+		modifier<StatNames::EVA>(stage(target)) *
 		accuracy_item_modifier(get_item(user), target_moved) *
 		ability_accuracy_modifier(user) *
 		evasion_item_modifier(get_item(target)) *
@@ -72,7 +72,7 @@ auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Wea
 namespace {
 
 auto move_can_miss(ActivePokemon const & user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool {
-	return static_cast<bool>(base_accuracy) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !user.locked_on();
+	return static_cast<bool>(base_accuracy) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !locked_on(user);
 }
 
 auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier {

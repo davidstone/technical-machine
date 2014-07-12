@@ -96,29 +96,30 @@ bool is_legal_selection(Team const & user, Move const & move, ActivePokemon cons
 
 bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const weather) {
 	Move const & move = current_move(user);
-	assert(!is_switch(move) or !user.is_recharging());
+	assert(!is_switch(move) or !is_recharging(user));
 	
 	if (is_switch(move)) {
 		return true;
 	}
-	if (get_hp(user) == 0_bi or (other.is_fainted() and false)) {
+	// TODO: fix
+	if (get_hp(user) == 0_bi or (is_fainted(other) and false)) {
 		return false;
 	}
 
 	bool execute = !(is_blocked_due_to_status (user, move) or
 			block1 (user, move, other) or
-			user.is_loafing());
+			is_loafing(user));
 
 	if (execute) {
 		// Confusion doesn't block execution, it just changes the move that will
 		// execute
 		user.handle_confusion();
-		if (user.flinched()) {
+		if (flinched(user)) {
 			if (get_ability(user).boosts_speed_when_flinched ())
-				boost(user.stage(), StatNames::SPE, 1_bi);
+				boost(stage(user), StatNames::SPE, 1_bi);
 			execute = false;
 		}
-		else if (block2 (user, move, weather) or user.is_fully_paralyzed()) {
+		else if (block2(user, move, weather) or is_fully_paralyzed(user)) {
 			execute = false;
 		}
 	}
@@ -131,7 +132,7 @@ bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weathe
 namespace {
 
 bool is_blocked_by_bide(ActivePokemon const & user, Moves const move) {
-	return user.is_locked_in_to_bide() and move == Moves::Bide;
+	return is_locked_in_to_bide(user) and move == Moves::Bide;
 }
 
 bool is_not_illegal_switch(Team const & user, Moves const move, ActivePokemon const & other, Weather const weather) {
@@ -141,7 +142,7 @@ bool is_not_illegal_switch(Team const & user, Moves const move, ActivePokemon co
 }
 
 bool is_blocked_from_switching(ActivePokemon const & user, Pokemon const & other, Weather const weather) {
-	bool const block_attempted = get_ability(other).blocks_switching(user, weather) or user.trapped();
+	bool const block_attempted = get_ability(other).blocks_switching(user, weather) or trapped(user);
 	bool const result = block_attempted and !allows_switching(get_item(user));
 	return result;
 }
@@ -172,14 +173,14 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 		return false;
 	}
 	return (move.pp().is_empty())
-			or (user.is_disabled(move))
-			or (user.heal_block_is_active() and (is_healing(move)))
-			or (imprison (move, other));
+			or (is_disabled(user, move))
+			or (heal_block_is_active(user) and (is_healing(move)))
+			or (imprison(move, other));
 }
 
 bool imprison(Moves const move, ActivePokemon const & other) {
-	auto const & moves = all_moves(other);
-	return other.used_imprison() and std::find(moves.regular().begin(), moves.regular().end(), move) != moves.regular().end();
+	auto const & moves = regular_moves(other);
+	return used_imprison(other) and std::find(moves.begin(), moves.end(), move) != moves.end();
 }
 
 bool is_blocked_by_taunt(Moves const move) {
@@ -203,13 +204,13 @@ bool is_blocked_by_gravity(Moves const move) {
 // Things that both block selection and block execution after flinching
 bool block2(ActivePokemon const & user, Moves const move, Weather const weather) {
 	return !is_switch(move) and
-			((user.is_taunted() and is_blocked_by_taunt(move)) or
+			((is_taunted(user) and is_blocked_by_taunt(move)) or
 			(weather.gravity() and is_blocked_by_gravity(move)));
 }
 
 bool is_blocked_due_to_lock_in(ActivePokemon const & user, Moves const move) {
 	return !is_regular(move) ?
-		user.is_recharging() :
+		is_recharging(user) :
 		standard_move_lock_in(user, move);
 }
 
@@ -218,15 +219,15 @@ bool standard_move_lock_in(ActivePokemon const & user, Moves const move) {
 }
 
 bool is_locked_in (ActivePokemon const & user) {
-	return user.is_encored() or user.is_recharging() or is_choice_item(get_item(user));
+	return is_encored(user) or is_recharging(user) or is_choice_item(get_item(user));
 }
 
 auto moved_since_switch(ActivePokemon const & pokemon) -> bool {
-	return pokemon.last_used_move().has_moved();
+	return last_used_move(pokemon).has_moved();
 }
 
 auto was_used_last(ActivePokemon const & pokemon, Moves const move) -> bool {
-	return pokemon.last_used_move().was_used_last(
+	return last_used_move(pokemon).was_used_last(
 		static_cast<LastUsedMove::index_type>(*index(all_moves(pokemon), move))
 	);
 }
@@ -236,7 +237,7 @@ bool is_locked_in_to_different_move(ActivePokemon const & user, Moves const move
 }
 
 bool blocked_by_torment(ActivePokemon const & user, Moves const move) {
-	return user.is_tormented() and was_used_last(user, move);
+	return is_tormented(user) and was_used_last(user, move);
 }
 
 bool is_blocked_due_to_status(ActivePokemon & user, Moves const move) {

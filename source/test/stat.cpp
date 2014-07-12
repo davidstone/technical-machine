@@ -50,7 +50,7 @@ void attack_tests () {
 	get_nature(pokemon) = Nature::Impish;
 	attacker.pokemon().activate_power_trick();
 	get_ability(pokemon) = Ability::Pure_Power;
-	boost(attacker.pokemon().stage(), StatNames::ATK, 6_bi);
+	boost(stage(attacker.pokemon()), StatNames::ATK, 6_bi);
 
 	get_item(pokemon) = Item::Choice_Band;
 	
@@ -71,7 +71,7 @@ void special_attack_tests () {
 
 	get_stat(pokemon, StatNames::SPA).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon) = Nature::Modest;
-	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
+	boost(stage(attacker.pokemon()), StatNames::SPA, 6_bi);
 
 	get_ability(pokemon) = Ability::Solar_Power;
 
@@ -94,7 +94,7 @@ void max_defense_test() {
 	get_stat(pokemon, StatNames::DEF).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon) = Nature::Bold;
 
-	boost(defender.pokemon().stage(), StatNames::DEF, 6_bi);
+	boost(stage(defender.pokemon()), StatNames::DEF, 6_bi);
 
 	get_ability(pokemon) = Ability::Marvel_Scale;
 	Status::apply<Statuses::burn>(pokemon, weather);
@@ -116,7 +116,7 @@ void min_defense_test() {
 	get_nature(pokemon) = Nature::Hasty;
 
 	for (unsigned n = 0; n != 3; ++n) {
-		boost(pokemon.stage(), StatNames::DEF, -2_bi);
+		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
 
 	check_equal(calculate_defense(defender.pokemon(), Weather{}), min_defense);
@@ -143,7 +143,7 @@ void special_defense_tests () {
 	get_stat(pokemon, StatNames::SPD).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon) = Nature::Calm;
 
-	boost(defender.pokemon().stage(), StatNames::SPD, 6_bi);
+	boost(stage(defender.pokemon()), StatNames::SPD, 6_bi);
 
 	check_equal(calculate_special_defense(defender.pokemon(), weather), max_special_defense);
 }
@@ -163,7 +163,7 @@ void speed_tests () {
 	get_stat(pokemon, StatNames::SPE).ev = EV(bounded::make<EV::max>());
 	get_nature(pokemon) = Nature::Timid;
 
-	boost(team.pokemon().stage(), StatNames::SPE, 6_bi);
+	boost(stage(team.pokemon()), StatNames::SPE, 6_bi);
 
 	get_ability(pokemon) = Ability::Swift_Swim;
 

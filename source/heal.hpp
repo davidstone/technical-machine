@@ -30,7 +30,7 @@ namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
 void heal(ActivePokemon & pokemon, bounded_rational<Numerator, Denominator> const rational) {
-	if (pokemon.is_fainted()) {
+	if (is_fainted(pokemon)) {
 		return;
 	}
 	auto const hp_healed = get_hp(pokemon).max() * rational;
