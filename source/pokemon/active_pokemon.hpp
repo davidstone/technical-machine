@@ -19,47 +19,20 @@
 #ifndef ACTIVE_POKEMON_HPP_
 #define ACTIVE_POKEMON_HPP_
 
+#include "active_pokemon_flags.hpp"
 #include "collection.hpp"
-#include "confusion.hpp"
-#include "disable.hpp"
-#include "embargo.hpp"
-#include "encore.hpp"
-#include "heal_block.hpp"
-#include "last_used_move.hpp"
-#include "magnet_rise.hpp"
-#include "partial_trap.hpp"
-#include "perish_song.hpp"
-#include "rampage.hpp"
-#include "slow_start.hpp"
-#include "stockpile.hpp"
-#include "substitute.hpp"
-#include "taunt.hpp"
-#include "toxic.hpp"
-#include "uproar.hpp"
-#include "vanish.hpp"
-#include "yawn.hpp"
 
-#include "../damage.hpp"
-#include "../random_damage.hpp"
 #include "../rational.hpp"
-
-#include "../bide/bide.hpp"
-
-#include "../stat/chance_to_hit.hpp"
-#include "../stat/stage.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 
-#include <cstdint>
-#include <tuple>
+#include <utility>
 
 namespace technicalmachine {
 class Ability;
 class Move;
 class Pokemon;
 class Weather;
-template<typename Numerator, typename Denominator>
-class bounded_rational;
 
 class ActivePokemon {
 public:
@@ -85,7 +58,7 @@ public:
 	void attract();
 	void awaken(bool value);
 	auto awaken_probability() const {
-		return get_status(*this).awaken_probability(get_ability(*this), m_awakening);
+		return get_status(*this).awaken_probability(get_ability(*this), m_flags.awakening);
 	}
 	bool aqua_ring_is_active() const;
 	void activate_aqua_ring();
@@ -149,16 +122,16 @@ public:
 	void advance_magnet_rise();
 	bool me_first_is_active() const;
 	auto fury_cutter_power() const {
-		return m_last_used_move.fury_cutter_power();
+		return m_flags.last_used_move.fury_cutter_power();
 	}
 	auto momentum_move_power() const {
-		return m_last_used_move.momentum_move_power();
+		return m_flags.last_used_move.momentum_move_power();
 	}
 	auto triple_kick_power() const {
-		return m_last_used_move.triple_kick_power();
+		return m_flags.last_used_move.triple_kick_power();
 	}
 	auto metronome_boost() const {
-		return m_last_used_move.metronome_boost();
+		return m_flags.last_used_move.metronome_boost();
 	}
 	bool minimized() const;
 	bool missed() const;
@@ -193,7 +166,7 @@ public:
 	auto stage() -> Stage &;
 	
 	auto spit_up_power() const {
-		return m_stockpile.spit_up_power();
+		return m_flags.stockpile.spit_up_power();
 	}
 	void increment_stockpile();
 	bounded::integer<0, Stockpile::max> release_stockpile();
@@ -211,7 +184,7 @@ public:
 	void torment();
 	void advance_taunt();
 	auto toxic_ratio() const {
-		return m_toxic.ratio_drained();
+		return m_flags.toxic.ratio_drained();
 	}
 	void advance_toxic();
 	void u_turn();
@@ -233,7 +206,7 @@ public:
 	bool is_locked_in_to_bide() const;
 	bounded::integer<0, HP::max_value> damaged() const;
 	auto random_damage_multiplier() const {
-		return m_random_damage();
+		return m_flags.random_damage();
 	}
 
 	void direct_damage(damage_type damage);
@@ -255,51 +228,7 @@ public:
 
 	friend bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs);
 	auto hash() const noexcept {
-		return technicalmachine::hash(
-			m_substitute,
-			m_bide,
-			m_confusion,
-			m_disable,
-			m_embargo,
-			m_last_used_move,
-			m_stage,
-			m_aqua_ring,
-			m_attracted,
-			m_charged,
-			m_is_cursed,
-			m_defense_curled,
-			m_destiny_bond,
-			m_encore,
-			m_flash_fire,
-			m_has_focused_energy,
-			m_fully_trapped,
-			m_gastro_acid,
-			m_heal_block,
-			m_identified,
-			m_used_imprison,
-			m_ingrained,
-			m_leech_seeded,
-			m_is_loafing_turn,
-			m_locked_on,
-			m_magnet_rise,
-			m_minimized,
-			m_mud_sport,
-			m_is_having_a_nightmare,
-			m_partial_trap,
-			m_perish_song,
-			m_power_trick_is_active,
-			m_rampage,
-			m_is_recharging,
-			m_slow_start,
-			m_stockpile,
-			m_taunt,
-			m_is_tormented,
-			m_toxic,
-			m_uproar,
-			m_vanish,
-			m_water_sport,
-			m_yawn
-		);
+		return technicalmachine::hash(m_flags);
 	}
 
 private:
@@ -307,68 +236,7 @@ private:
 	// and move assignment operator to simply verify that the referents are
 	// the same.
 	PokemonCollection m_all_pokemon;
-	HP::current_type m_damaged = 0_bi;
-	Bide m_bide;
-	ChanceToHit m_chance_to_hit = ChanceToHit(100_bi, 100_bi);
-	Confusion m_confusion;
-	Disable m_disable;
-	EmbargoCounter m_embargo;
-	EncoreCounter m_encore;
-	HealBlock m_heal_block;
-	LastUsedMove m_last_used_move;
-	MagnetRise m_magnet_rise;
-	Substitute m_substitute;
-	PartialTrap m_partial_trap;
-	PerishSong m_perish_song;
-	Rampage m_rampage;
-	RandomDamage m_random_damage;
-	Stage m_stage;
-	SlowStart m_slow_start;
-	Stockpile m_stockpile;
-	TauntCounter m_taunt;
-	Toxic m_toxic;
-	UproarCounter m_uproar;
-	Vanish m_vanish;
-	YawnCounter m_yawn;
-	bool m_aqua_ring = false;
-	bool m_attracted = false;
-	// Will it wake up
-	bool m_awakening = false;
-	bool m_charged = false;
-	bool m_critical_hit = false;
-	bool m_is_cursed = false;
-	bool m_defense_curled = false;
-	bool m_destiny_bond = false;
-	bool m_enduring = false;
-	bool m_flash_fire = false;
-	bool m_flinched = false;
-	bool m_has_focused_energy = false;
-	bool m_is_fully_paralyzed = false;
-	// Block, Mean Look, Spider Web
-	bool m_fully_trapped = false;
-	bool m_gastro_acid = false;
-	bool m_identified = false;
-	bool m_used_imprison = false;
-	bool m_ingrained = false;
-	bool m_leech_seeded = false;
-	bool m_is_loafing_turn = false;
-	bool m_locked_on = false;
-	bool m_me_first_is_active = false;
-	bool m_minimized = false;
-	bool m_missed = false;
-	bool m_moved = false;
-	bool m_mud_sport = false;
-	bool m_is_having_a_nightmare = false;
-	bool m_is_baton_passing = false;
-	bool m_power_trick_is_active = false;
-	bool m_is_protecting = false;
-	bool m_is_recharging = false;
-	bool m_is_roosting = false;
-	bool m_shed_skin_activated = false;
-	bool m_is_tormented = false;
-	bool m_u_turning = false;
-	bool m_water_sport = false;
-	bool m_will_be_replaced = false;
+	ActivePokemonFlags m_flags;
 };
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs);
 

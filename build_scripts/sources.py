@@ -59,6 +59,7 @@ pokemon_sources += move_sources
 
 active_pokemon_sources = prepend_dir('pokemon', [
 	'active_pokemon.cpp',
+	'active_pokemon_flags.cpp',
 	'confusion.cpp',
 	'delayed_attack.cpp',
 	'disable.cpp',
