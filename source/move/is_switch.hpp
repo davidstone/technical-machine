@@ -25,7 +25,7 @@
 namespace technicalmachine {
 
 auto is_switch(Moves name) -> bool;
-auto from_replacement(TeamIndex replacement) -> Moves;
+auto to_switch(TeamIndex replacement) -> Moves;
 auto to_replacement(Moves move) -> TeamIndex;
 
 }	// namespace technicalmachine

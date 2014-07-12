@@ -417,7 +417,7 @@ void Battle::do_turn() {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
 			if (!is_switch(pokemon.move())) {
-				set_index(pokemon.all_moves(), pokemon.all_pokemon().replacement_to_switch());
+				set_index(pokemon.all_moves(), foe.all_pokemon().replacement_to_switch());
 			}
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}

@@ -76,7 +76,7 @@ Pokemon & PokemonCollection::at_replacement () {
 }
 
 Moves PokemonCollection::replacement_to_switch () const {
-	return from_replacement(replacement());
+	return to_switch(replacement());
 }
 void PokemonCollection::replacement_from_switch () {
 	Move const & move = operator()().move();

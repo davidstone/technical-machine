@@ -548,7 +548,7 @@ std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::ind
 	std::vector<Moves> switches;
 	for (auto const n : bounded::integer_range(team_size)) {
 		if (n != index) {
-			switches.emplace_back(from_replacement(n));
+			switches.emplace_back(to_switch(n));
 		}
 	}
 	return switches;

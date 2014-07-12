@@ -34,7 +34,7 @@ auto SharedMovesIterator::operator*() const -> reference {
 	static_assert(number_of_weird_moves == 1_bi, "Struggle is not the only weird move.");
 	return global_move((m_index == 0_bi) ?
 		Moves::Struggle :
-		from_replacement(static_cast<switch_index_type>(m_index) - number_of_weird_moves)
+		to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves)
 	);
 }
 

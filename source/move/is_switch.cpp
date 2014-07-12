@@ -43,7 +43,7 @@ auto is_switch(Moves const move) -> bool {
 	}
 }
 
-auto from_replacement(TeamIndex const replacement) -> Moves {
+auto to_switch(TeamIndex const replacement) -> Moves {
 	return static_cast<Moves>(replacement + static_cast<MoveInteger>(Moves::Switch0));
 }
 

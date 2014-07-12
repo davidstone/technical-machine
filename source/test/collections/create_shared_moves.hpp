@@ -37,7 +37,7 @@ inline std::vector<Moves> create_shared_moves(TeamSize const team_size) {
 	std::vector<Moves> shared ({ Moves::Struggle });
 	if (team_size != 1_bi) {
 		for (auto const n : bounded::integer_range(team_size)) {
-			shared.emplace_back(from_replacement(n));
+			shared.emplace_back(to_switch(n));
 		}
 	}
 	return shared;
