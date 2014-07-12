@@ -21,6 +21,7 @@
 #include <cassert>
 
 #include "ability.hpp"
+#include "team.hpp"
 #include "weather.hpp"
 
 #include "move/move.hpp"
@@ -33,9 +34,9 @@
 namespace technicalmachine {
 namespace {
 
-bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather weather, bool found_selectable_move);
+bool is_legal_selection(Team const & user, Move const & move, ActivePokemon const & other, Weather weather, bool found_selectable_move);
 bool is_blocked_by_bide (ActivePokemon const & user, Moves move);
-bool is_not_illegal_switch(ActivePokemon const & user, Moves move, ActivePokemon const & other, Weather weather);
+bool is_not_illegal_switch(Team const & user, Moves move, ActivePokemon const & other, Weather weather);
 bool is_blocked_from_switching(ActivePokemon const & user, Pokemon const & other, Weather weather);
 bool imprison(Moves move, ActivePokemon const & other);
 bool blocked_by_torment(ActivePokemon const & user, Moves move);
@@ -51,9 +52,9 @@ bool handle_sleep_counter(ActivePokemon & user, Moves move);
 
 }	// unnamed namespace
 
-LegalSelections::LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const weather):
-	m_species(user) {
-	for (auto const & move : all_moves(user)) {
+LegalSelections::LegalSelections(Team const & user, ActivePokemon const & other, Weather const weather):
+	m_species(user.pokemon()) {
+	for (auto const & move : all_moves(user.pokemon())) {
 		bool const found_selectable_move = !container.empty();
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
 			container.emplace_back(move);
@@ -84,12 +85,12 @@ Moves LegalSelections::operator[](size_t const index) const {
 
 namespace {
 
-bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePokemon const & other, Weather const weather, bool const found_selectable_move) {
-	return !is_blocked_by_bide (user, move) and
-			is_not_illegal_switch (user, move, other, weather) and
+bool is_legal_selection(Team const & user, Move const & move, ActivePokemon const & other, Weather const weather, bool const found_selectable_move) {
+	return !is_blocked_by_bide(user.pokemon(), move) and
+			is_not_illegal_switch(user, move, other, weather) and
 			(move != Moves::Struggle or !found_selectable_move) and
-			!((block1 (user, move, other)) or (block2 (user, move, weather)) or blocked_by_torment(user, move)) and
-			!is_blocked_due_to_lock_in(user, move);
+			!((block1(user.pokemon(), move, other)) or (block2(user.pokemon(), move, weather)) or blocked_by_torment(user.pokemon(), move)) and
+			!is_blocked_due_to_lock_in(user.pokemon(), move);
 }
 }	// namespace
 
@@ -133,9 +134,9 @@ bool is_blocked_by_bide(ActivePokemon const & user, Moves const move) {
 	return user.is_locked_in_to_bide() and move == Moves::Bide;
 }
 
-bool is_not_illegal_switch(ActivePokemon const & user, Moves const move, ActivePokemon const & other, Weather const weather) {
+bool is_not_illegal_switch(Team const & user, Moves const move, ActivePokemon const & other, Weather const weather) {
 	return is_switch(move) ?
-		!is_switching_to_self(user, move) and !is_blocked_from_switching(user, other, weather) :
+		!user.all_pokemon().is_switching_to_self(move) and !is_blocked_from_switching(user.pokemon(), other, weather) :
 		true;
 }
 

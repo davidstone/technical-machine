@@ -153,8 +153,8 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const weather, unsigne
 	if (depth >= 1) {
 		select_move_branch(ai, foe, weather, depth - 1, evaluate, best_move, false, ai_scores, foe_scores);
 	}
-	auto const ai_index = reorder(LegalSelections(ai.pokemon(), foe.pokemon(), weather), ai_scores, true);
-	auto const foe_index = reorder(LegalSelections(foe.pokemon(), ai.pokemon(), weather), foe_scores, false);
+	auto const ai_index = reorder(LegalSelections(ai, foe.pokemon(), weather), ai_scores, true);
+	auto const foe_index = reorder(LegalSelections(foe, ai.pokemon(), weather), foe_scores, false);
 
 	// Working from the inside loop out:
 
@@ -555,7 +555,7 @@ std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::ind
 }
 
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	LegalSelections const moves(ai.pokemon(), foe.pokemon(), weather);
+	LegalSelections const moves(ai, foe.pokemon(), weather);
 	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
 	auto const index = distribution(random_engine);
 	return moves[index];

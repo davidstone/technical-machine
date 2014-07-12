@@ -252,16 +252,5 @@ auto lower_pp(ActivePokemon & user, Ability target) -> void;
 auto has_switched(ActivePokemon const & pokemon) -> bool;
 auto switch_pokemon(ActivePokemon & pokemon) -> void;
 
-
-
-inline auto is_switching_to_self(ActivePokemon const & pokemon) {
-	return pokemon.all_pokemon().is_switching_to_self();
-}
-inline auto is_switching_to_self(ActivePokemon const & pokemon, Moves const switch_move) {
-	return pokemon.all_pokemon().is_switching_to_self(switch_move);
-}
-
-
-
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_

@@ -27,13 +27,14 @@
 namespace technicalmachine {
 
 class ActivePokemon;
+class Team;
 class Weather;
 
 class LegalSelections {
 	using Container = std::vector<Moves>;
 public:
 	using const_iterator = Container::const_iterator;
-	LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather weather);
+	LegalSelections(Team const & user, ActivePokemon const & other, Weather weather);
 	Species species() const;
 	const_iterator begin() const;
 	const_iterator end() const;
