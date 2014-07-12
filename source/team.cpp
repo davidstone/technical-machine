@@ -157,11 +157,11 @@ void Team::load(std::string const & name) {
 
 bool operator== (Team const & lhs, Team const & rhs) {
 	return
-			lhs.active_pokemon == rhs.active_pokemon and
-			lhs.screens == rhs.screens and
-			lhs.wish == rhs.wish and
-			lhs.entry_hazards == rhs.entry_hazards and
-			lhs.me == rhs.me;
+		lhs.active_pokemon == rhs.active_pokemon and
+		lhs.screens == rhs.screens and
+		lhs.wish == rhs.wish and
+		lhs.entry_hazards == rhs.entry_hazards and
+		lhs.me == rhs.me;
 }
 
 bool operator!= (Team const & lhs, Team const & rhs) {

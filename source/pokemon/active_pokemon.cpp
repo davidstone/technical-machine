@@ -729,46 +729,46 @@ void ActivePokemon::normalize_hp(bool fainted) {
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return
-			lhs.m_all_pokemon == rhs.m_all_pokemon and
-			lhs.m_aqua_ring == rhs.m_aqua_ring and
-			lhs.m_attracted == rhs.m_attracted and
-			lhs.m_bide == rhs.m_bide and
-			lhs.m_charged == rhs.m_charged and
-			lhs.m_confusion == rhs.m_confusion and
-			lhs.m_is_cursed == rhs.m_is_cursed and
-			lhs.m_defense_curled == rhs.m_defense_curled and
-			lhs.m_destiny_bond == rhs.m_destiny_bond and
-			lhs.m_disable == rhs.m_disable and
-			lhs.m_embargo == rhs.m_embargo and
-			lhs.m_encore == rhs.m_encore and
-			lhs.m_flash_fire == rhs.m_flash_fire and
-			lhs.has_focused_energy() == rhs.has_focused_energy() and
-			lhs.fully_trapped() == rhs.fully_trapped() and
-			lhs.m_heal_block == rhs.m_heal_block and
-			lhs.m_identified == rhs.m_identified and
-			lhs.m_used_imprison == rhs.m_used_imprison and
-			lhs.m_ingrained == rhs.m_ingrained and
-			lhs.m_last_used_move == rhs.m_last_used_move and
-			lhs.m_leech_seeded == rhs.m_leech_seeded and
-			lhs.m_is_loafing_turn == rhs.m_is_loafing_turn and
-			lhs.m_locked_on == rhs.m_locked_on and
-			lhs.magnet_rise() == rhs.magnet_rise() and
-			lhs.m_minimized == rhs.m_minimized and
-			lhs.m_mud_sport == rhs.m_mud_sport and
-			lhs.m_is_having_a_nightmare == rhs.m_is_having_a_nightmare and
-			lhs.m_partial_trap == rhs.m_partial_trap and
-			lhs.m_perish_song == rhs.m_perish_song and
-			lhs.m_rampage == rhs.m_rampage and
-			lhs.m_slow_start == rhs.m_slow_start and
-			lhs.stage() == rhs.stage() and
-			lhs.m_stockpile == rhs.m_stockpile and
-			lhs.m_taunt == rhs.m_taunt and
-			lhs.m_is_tormented == rhs.m_is_tormented and
-			lhs.m_toxic == rhs.m_toxic and
-			lhs.m_uproar == rhs.m_uproar and
-			lhs.m_vanish == rhs.m_vanish and
-			lhs.m_water_sport == rhs.m_water_sport and
-			lhs.m_yawn == rhs.m_yawn;
+		lhs.m_all_pokemon == rhs.m_all_pokemon and
+		lhs.m_aqua_ring == rhs.m_aqua_ring and
+		lhs.m_attracted == rhs.m_attracted and
+		lhs.m_bide == rhs.m_bide and
+		lhs.m_charged == rhs.m_charged and
+		lhs.m_confusion == rhs.m_confusion and
+		lhs.m_is_cursed == rhs.m_is_cursed and
+		lhs.m_defense_curled == rhs.m_defense_curled and
+		lhs.m_destiny_bond == rhs.m_destiny_bond and
+		lhs.m_disable == rhs.m_disable and
+		lhs.m_embargo == rhs.m_embargo and
+		lhs.m_encore == rhs.m_encore and
+		lhs.m_flash_fire == rhs.m_flash_fire and
+		lhs.has_focused_energy() == rhs.has_focused_energy() and
+		lhs.fully_trapped() == rhs.fully_trapped() and
+		lhs.m_heal_block == rhs.m_heal_block and
+		lhs.m_identified == rhs.m_identified and
+		lhs.m_used_imprison == rhs.m_used_imprison and
+		lhs.m_ingrained == rhs.m_ingrained and
+		lhs.m_last_used_move == rhs.m_last_used_move and
+		lhs.m_leech_seeded == rhs.m_leech_seeded and
+		lhs.m_is_loafing_turn == rhs.m_is_loafing_turn and
+		lhs.m_locked_on == rhs.m_locked_on and
+		lhs.magnet_rise() == rhs.magnet_rise() and
+		lhs.m_minimized == rhs.m_minimized and
+		lhs.m_mud_sport == rhs.m_mud_sport and
+		lhs.m_is_having_a_nightmare == rhs.m_is_having_a_nightmare and
+		lhs.m_partial_trap == rhs.m_partial_trap and
+		lhs.m_perish_song == rhs.m_perish_song and
+		lhs.m_rampage == rhs.m_rampage and
+		lhs.m_slow_start == rhs.m_slow_start and
+		lhs.stage() == rhs.stage() and
+		lhs.m_stockpile == rhs.m_stockpile and
+		lhs.m_taunt == rhs.m_taunt and
+		lhs.m_is_tormented == rhs.m_is_tormented and
+		lhs.m_toxic == rhs.m_toxic and
+		lhs.m_uproar == rhs.m_uproar and
+		lhs.m_vanish == rhs.m_vanish and
+		lhs.m_water_sport == rhs.m_water_sport and
+		lhs.m_yawn == rhs.m_yawn;
 }
 
 bool operator!= (ActivePokemon const & lhs, ActivePokemon const & rhs) {
