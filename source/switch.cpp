@@ -28,13 +28,24 @@
 #include "stat/stat.hpp"
 
 namespace technicalmachine {
+namespace {
+
+auto switch_pokemon(Team & team) {
+	auto & pokemon = team.pokemon();
+	if (get_ability(pokemon).clears_status_on_switch()) {
+		get_status(pokemon) = Status{};
+	}
+	team.all_pokemon().set_index(team.all_pokemon().replacement());
+}
+
+}	// namespace
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	auto & pokemon = switcher.pokemon();
 	pokemon.reset_switch();
 
 	if (get_hp(pokemon) != 0_bi) {
-		switch_pokemon(pokemon);
+		switch_pokemon(switcher);
 	}
 	else {
 		switcher.all_pokemon().remove_active();

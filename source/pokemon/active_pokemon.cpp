@@ -462,13 +462,6 @@ auto ActivePokemon::switch_decision_required() const -> bool {
 	return m_flags.is_baton_passing or m_flags.u_turning or will_be_replaced();
 }
 
-auto switch_pokemon(ActivePokemon & pokemon) -> void {
-	if (get_ability(pokemon).clears_status_on_switch()) {
-		get_status(pokemon) = Status{};
-	}
-	pokemon.all_pokemon().set_index(pokemon.all_pokemon().replacement());
-}
-
 auto ActivePokemon::fully_trapped() const -> bool {
 	return m_flags.fully_trapped;
 }

@@ -250,7 +250,6 @@ inline auto shed_skin_probability(ActivePokemon const & pokemon) {
 auto lower_pp(ActivePokemon & user, Ability target) -> void;
 
 auto has_switched(ActivePokemon const & pokemon) -> bool;
-auto switch_pokemon(ActivePokemon & pokemon) -> void;
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_
