@@ -127,7 +127,7 @@ auto call_move(Team & user_team, Team & target_team, Weather & weather, Variable
 	user.update_before_move();
 	if (can_execute_move (user, target, weather)) {
 		user.lower_pp(get_ability(target));
-		if (calls_other_move(user.move())) {
+		if (calls_other_move(current_move(user))) {
 			call_other_move (user);
 		}
 		if (!user.missed()) {
@@ -162,7 +162,7 @@ auto is_sound_based(Moves const move) {
 }
 
 auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> damage_type {
-	Moves const move = user.pokemon().move();
+	Moves const move = current_move(user.pokemon());
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and
@@ -186,10 +186,10 @@ constexpr auto breaks_screens(Moves const move) {
 }
 
 auto do_effects_before_moving (Pokemon & user, Team & target) -> void {
-	if (breaks_screens(user.move())) {
+	if (breaks_screens(current_move(user))) {
 		target.screens.shatter();
 	}
-	else if (is_usable_while_frozen(user.move())) {
+	else if (is_usable_while_frozen(current_move(user))) {
 		if (is_frozen(get_status(user))) {
 			get_status(user) = Status{};
 		}
@@ -197,7 +197,7 @@ auto do_effects_before_moving (Pokemon & user, Team & target) -> void {
 }
 
 auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const damage_is_known) -> damage_type {
-	if (!is_damaging(user.pokemon().move())) {
+	if (!is_damaging(current_move(user.pokemon()))) {
 		return 0_bi;
 	}
 	if (damage_is_known) {
@@ -220,7 +220,7 @@ auto do_damage(ActivePokemon & user, ActivePokemon & target, damage_type const d
 auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Variable const & variable, damage_type const damage) -> void {
 	auto & target = target_team.pokemon();
 	auto & user = user_team.pokemon();
-	Moves const move = user.move();
+	Moves const move = current_move(user);
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
@@ -465,7 +465,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 			boost(target.stage(), StatNames::SPE, -2_bi);
 			break;
 		case Moves::Counter:
-			if (is_physical(target.move())) {
+			if (is_physical(current_move(target))) {
 				target.indirect_damage(user.damaged() * 2_bi);
 			}
 			break;
@@ -726,7 +726,7 @@ auto do_side_effects(Team & user_team, Team & target_team, Weather & weather, Va
 		case Moves::Miracle_Eye:		// Fix
 			break;
 		case Moves::Mirror_Coat:
-			if (is_special(target.move())) {
+			if (is_special(current_move(target))) {
 				target.indirect_damage(user.damaged() * 2_bi);
 			}
 			break;
@@ -1032,7 +1032,7 @@ auto can_confuse_with_chatter(Species const pokemon) -> bool {
 }
 
 auto clear_field(Team & user, Pokemon const & target) -> void {
-	auto const type = get_type(user.pokemon().move(), user.pokemon());
+	auto const type = get_type(current_move(user.pokemon()), user.pokemon());
 	if (!Effectiveness(type, target).has_no_effect()) {
 		user.clear_field();
 	}

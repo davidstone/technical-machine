@@ -53,7 +53,7 @@ bool handle_sleep_counter(ActivePokemon & user, Moves move);
 
 LegalSelections::LegalSelections(ActivePokemon const & user, ActivePokemon const & other, Weather const weather):
 	m_species(user) {
-	for (auto const & move : user.all_moves()) {
+	for (auto const & move : all_moves(user)) {
 		bool const found_selectable_move = !container.empty();
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
 			container.emplace_back(move);
@@ -94,7 +94,7 @@ bool is_legal_selection (ActivePokemon const & user, Move const & move, ActivePo
 }	// namespace
 
 bool can_execute_move (ActivePokemon & user, ActivePokemon const & other, Weather const weather) {
-	Move const & move = user.move();
+	Move const & move = current_move(user);
 	assert(!is_switch(move) or !user.is_recharging());
 	
 	if (is_switch(move)) {
@@ -177,7 +177,7 @@ bool block1 (ActivePokemon const & user, Move const & move, ActivePokemon const 
 }
 
 bool imprison(Moves const move, ActivePokemon const & other) {
-	auto const & moves = other.all_moves();
+	auto const & moves = all_moves(other);
 	return other.used_imprison() and std::find(moves.regular().begin(), moves.regular().end(), move) != moves.regular().end();
 }
 

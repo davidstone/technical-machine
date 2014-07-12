@@ -100,14 +100,15 @@ using ScoreMoves = decltype(std::declval<ScoreMove>() * std::declval<RegularMove
 auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const weather) {
 	// TODO: alter the score of a move based on the weather
 	ScoreMoves score = 0_bi;
-	return std::accumulate(pokemon.move.begin(), pokemon.move.end(), score, [&](auto init, auto const & move) {
+	auto const & moves = all_moves(pokemon);
+	return std::accumulate(moves.begin(), moves.end(), score, [&](auto init, auto const & move) {
 		return init + score_move(evaluate, move, other);
 	});
 }
 
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokemon) {
-	auto const & moves = pokemon.all_moves().regular();
+	auto const & moves = regular_moves(pokemon);
 	auto const has_baton_pass = std::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return
 		BOUNDED_CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +

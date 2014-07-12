@@ -201,11 +201,11 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const weather, unsigne
 	
 	auto alpha = static_cast<int64_t>(-victory - 1_bi);
 	for (RankedMove const & ai_move : ai_index) {
-		set_index(ai.pokemon().all_moves(), ai_move.name());
+		set_index(all_moves(ai.pokemon()), ai_move.name());
 		print_action (ai, first_turn);
 		auto beta = static_cast<int64_t>(victory + 1_bi);
 		for (RankedMove const & foe_move : foe_index) {
-			set_index(foe.pokemon().all_moves(), foe_move.name());
+			set_index(all_moves(foe.pokemon()), foe_move.name());
 			print_action (foe, first_turn);
 			auto const max_score = order_branch(ai, foe, weather, depth, evaluate);
 			update_foe_best_move(foe, foe_scores, beta, max_score, first_turn);
@@ -213,8 +213,8 @@ int64_t select_move_branch(Team & ai, Team & foe, Weather const weather, unsigne
 			if (beta <= alpha)
 				break;
 		}
-		ai_scores.at(ai.pokemon(), ai.pokemon().move()) = beta;
-		update_best_move(alpha, beta, first_turn, ai.pokemon().move(), best_move);
+		ai_scores.at(ai.pokemon(), current_move(ai.pokemon())) = beta;
+		update_best_move(alpha, beta, first_turn, current_move(ai.pokemon()), best_move);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == victory)
 			break;
@@ -238,7 +238,7 @@ void update_best_move (int64_t & alpha, int64_t beta, bool first_turn, Moves new
 void update_foe_best_move (Team & foe, MoveScores & foe_scores, int64_t & beta, int64_t const max_score, bool const first_turn) {
 	if (beta > max_score) {
 		beta = max_score;
-		foe_scores.at(foe.pokemon(), foe.pokemon().move()) = beta;
+		foe_scores.at(foe.pokemon(), current_move(foe.pokemon())) = beta;
 	}
 	constexpr bool is_me = false;
 	print_estimated_score (first_turn, is_me, max_score);
@@ -315,7 +315,7 @@ int64_t random_move_effects_branch(Team & first, Team & last, Weather const weat
 	auto const probability = [](ActivePokemon const & pokemon) {
 		constexpr auto ch_probability = make_rational(1_bi, 16_bi);
 		bool const ch = pokemon.critical_hit();
-		return BOUNDED_CONDITIONAL(can_critical_hit(pokemon.move()),
+		return BOUNDED_CONDITIONAL(can_critical_hit(current_move(pokemon)),
 			BOUNDED_CONDITIONAL(ch, ch_probability, complement(ch_probability)),
 			make_rational(BOUNDED_CONDITIONAL(ch, 0_bi, 1_bi), 1_bi)
 		);
@@ -386,7 +386,7 @@ int64_t use_move_and_follow_up(Team & user, Team & other, Variable const & user_
 			return static_cast<int64_t>(user_win + other_win);
 		}
 		auto const current = static_cast<Species>(user.pokemon());
-		if (original == current and has_follow_up_decision(user.pokemon().move()) and user.all_pokemon().size() > 1_bi) {
+		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and user.all_pokemon().size() > 1_bi) {
 			Moves phony = Moves::END;
 			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
 		}
@@ -574,13 +574,13 @@ void print_action (Team const & team, bool first_turn) {
 		unsigned tabs = first_turn ? 0 : 2;
 		if (!team.is_me())
 			++tabs;
-		std::cout << std::string (tabs, '\t') + "Evaluating ";
-		if (is_switch(team.pokemon().move())) {
-			auto const replacement_index = to_replacement(team.pokemon().move());
-			std::cout << "switching to " + to_string(static_cast<Species>(team.pokemon(replacement_index))) + "\n";
+		std::cout << std::string (tabs, '\t') << "Evaluating ";
+		if (is_switch(current_move(team.pokemon()))) {
+			auto const replacement_index = to_replacement(current_move(team.pokemon()));
+			std::cout << "switching to " << to_string(static_cast<Species>(team.pokemon(replacement_index))) << '\n';
 		}
 		else {
-			std::cout << to_string(team.pokemon().move()) + "\n";
+			std::cout << to_string(current_move(team.pokemon())) << '\n';
 		}
 	}
 }

@@ -71,7 +71,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 		if (!is_set(nature)) {
 			nature = detailed.get<Nature>(pokemon);
 		}
-		predict_move(pokemon.move, detailed.get<std::vector<Moves>>(pokemon));
+		predict_move(all_moves(pokemon), detailed.get<std::vector<Moves>>(pokemon));
 		optimize_evs(pokemon, random_engine);
 	}
 	return team;

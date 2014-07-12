@@ -60,7 +60,7 @@ auto calculate_weather_modifier(Type const type, Weather const weather) {
 }
 
 auto calculate_flash_fire_modifier(ActivePokemon const & attacker) {
-	auto const type = get_type(attacker.move(), attacker);
+	auto const type = get_type(current_move(attacker), attacker);
 	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(type),
 		make_rational(3_bi, 2_bi),
 		make_rational(1_bi, 1_bi)
@@ -95,7 +95,7 @@ auto calculate_stab_boost(Ability const ability) {
 }
 
 auto calculate_stab_modifier(ActivePokemon const & attacker) {
-	auto const type = get_type(attacker.move(), attacker);
+	auto const type = get_type(current_move(attacker), attacker);
 	return BOUNDED_CONDITIONAL(is_type(attacker, type),
 		calculate_stab_boost(get_ability(attacker)),
 		make_rational(1_bi, 1_bi)
@@ -130,7 +130,7 @@ constexpr bool cannot_ko(Moves const move) {
 
 damage_type raw_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
-	switch (static_cast<Moves>(attacker.move())) {
+	switch (static_cast<Moves>(current_move(attacker))) {
 		case Moves::Dragon_Rage:
 			return 40_bi;
 		case Moves::Endeavor:
@@ -156,7 +156,7 @@ damage_type raw_damage(Team const & attacker_team, Team const & defender, Weathe
 
 damage_type capped_damage(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const damage = raw_damage(attacker, defender, weather, variable);
-	return (cannot_ko(attacker.pokemon().move()) or defender.pokemon().cannot_be_koed()) ?
+	return (cannot_ko(current_move(attacker.pokemon())) or defender.pokemon().cannot_be_koed()) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
 		damage;
 }
@@ -164,7 +164,7 @@ damage_type capped_damage(Team const & attacker, Team const & defender, Weather 
 }	// namespace
 
 damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
-	return affects_target(get_type(attacker.pokemon().move(), attacker.pokemon()), defender.pokemon(), weather) ?
+	return affects_target(get_type(current_move(attacker.pokemon()), attacker.pokemon()), defender.pokemon(), weather) ?
 		capped_damage(attacker, defender, weather, variable) :
 		static_cast<damage_type>(0_bi);
 }
@@ -187,7 +187,7 @@ auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon 
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
-	return BOUNDED_CONDITIONAL(is_physical(attacker.move()),
+	return BOUNDED_CONDITIONAL(is_physical(current_move(attacker)),
 		make_rational(
 			calculate_attack(attacker, weather),
 			50_bi * calculate_defense(defender, weather, attacker.critical_hit()) * weakening_from_status(attacker)
@@ -229,7 +229,7 @@ damage_type regular_damage(Team const & attacker_team, Team const & defender, We
 	damage *= move_power(attacker_team, defender, weather, variable);
 	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);
 	damage /= screen_divisor(attacker, defender);
-	auto const type = get_type(attacker.move(), attacker);
+	auto const type = get_type(current_move(attacker), attacker);
 	damage *= calculate_weather_modifier(type, weather);
 	damage *= calculate_flash_fire_modifier(attacker);
 	damage += 2;
@@ -263,7 +263,7 @@ void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1
 namespace {
 
 bool screen_is_active (ActivePokemon const & attacker, Team const & defender) {
-	Move const & move = attacker.move();
+	Move const & move = current_move(attacker);
 	return (reflect_is_active (move, defender) or light_screen_is_active (move, defender)) and !attacker.critical_hit();
 }
 

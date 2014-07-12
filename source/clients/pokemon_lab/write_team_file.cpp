@@ -121,7 +121,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("nature", to_string(get_nature(pokemon)));
 	member.put ("item", to_string(get_item(pokemon)));
 	member.put ("ability", to_string(get_ability(pokemon).name()));
-	for (auto const & move : pokemon.move.regular()) {
+	for (auto const & move : regular_moves(pokemon)) {
 		write_move(move, member);
 	}
 	write_stats (pokemon, member);

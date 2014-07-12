@@ -124,7 +124,7 @@ public:
 			get_stat(pokemon, stat).ev = EV(evs[static_cast<unsigned>(stat) + 1u]);
 		}
 		for (auto const move : moves) {
-			pokemon.move.add(move);
+			all_moves(pokemon).add(move);
 		}
 	}
 private:

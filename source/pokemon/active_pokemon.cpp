@@ -50,19 +50,9 @@ ActivePokemon::operator Species() const {
 	return static_cast<Species>(static_cast<Pokemon const &>(*this));
 }
 
-MoveCollection const & ActivePokemon::all_moves() const {
-	auto const & self = static_cast<Pokemon const &>(*this);
-	return self.move;
-}
-
-MoveCollection & ActivePokemon::all_moves() {
-	auto & self = static_cast<Pokemon &>(*this);
-	return self.move;
-}
-
 bool ActivePokemon::was_used_last(Moves const move_name) const {
 	return m_flags.last_used_move.was_used_last(
-		static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(), move_name))
+		static_cast<LastUsedMove::index_type>(*technicalmachine::index(all_moves(*this), move_name))
 	);
 }
 
@@ -123,7 +113,7 @@ bool ActivePokemon::cannot_be_koed() const {
 }
 
 bool ActivePokemon::charge_boosted() const {
-	return m_flags.charged and get_type(move(), *this) == Type::Electric;
+	return m_flags.charged and get_type(current_move(*this), *this) == Type::Electric;
 }
 
 void ActivePokemon::charge() {
@@ -173,12 +163,12 @@ bool ActivePokemon::defense_curled() const {
 }
 
 bool ActivePokemon::is_disabled(Moves const move_name) const {
-	return m_flags.disable.move_is_disabled(*index(all_moves(), move_name));
+	return m_flags.disable.move_is_disabled(*index(all_moves(*this), move_name));
 }
 
 void ActivePokemon::disable() {
-	if (is_regular(move())) {
-		m_flags.disable.activate(RegularMoveIndex(all_moves().index(), bounded::non_check));
+	if (is_regular(current_move(*this))) {
+		m_flags.disable.activate(RegularMoveIndex(all_moves(*this).index(), bounded::non_check));
 	}
 }
 
@@ -316,8 +306,8 @@ void ActivePokemon::use_lock_on() {
 }
 
 void ActivePokemon::lower_pp(Ability const & target) {
-	if (is_regular(move()) and !is_locked_in_to_bide()) {
-		regular_move(all_moves()).decrement_pp(target);
+	if (is_regular(current_move(*this)) and !is_locked_in_to_bide()) {
+		regular_move(all_moves(*this)).decrement_pp(target);
 	}
 }
 
@@ -492,7 +482,7 @@ bool ActivePokemon::is_switching_to_self(Moves const switch_move) const {
 }
 
 bool ActivePokemon::has_switched() const {
-	return moved() and is_switch(move());
+	return moved() and is_switch(current_move(*this));
 }
 
 bool ActivePokemon::switch_decision_required() const {
@@ -636,8 +626,8 @@ void ActivePokemon::register_damage(damage_type const damage) {
 }
 
 void ActivePokemon::increment_move_use_counter() {
-	if (is_regular(move())) {
-		m_flags.last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves().index()));
+	if (is_regular(current_move(*this))) {
+		m_flags.last_used_move.increment(static_cast<LastUsedMove::index_type>(all_moves(*this).index()));
 	} else {
 		m_flags.last_used_move = LastUsedMove{};
 	}

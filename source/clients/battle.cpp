@@ -119,7 +119,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 		}
 		else {
 			// TODO: fix for 2v2
-			auto const move_index = *index(ai.pokemon().all_moves(), move);
+			auto const move_index = *index(all_moves(ai.pokemon()), move);
 			auto const target = other(my_party);
 			// TODO: verify everything lines up
 			static_cast<void>(attacks_allowed);
@@ -161,7 +161,7 @@ void Battle::handle_use_move(Party const user, uint8_t slot, Moves move_name) {
 	}
 
 	active.move();
-	active.replacement().move.add(move_name);
+	all_moves(active.replacement()).add(move_name);
 	if (is_damaging(move_name)) {
 		move_damage = true;
 	}
@@ -193,12 +193,12 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t i
 	}
 	
 	// TODO: I'm skeptical of this logic
-	if (other.number_of_seen_pokemon() != 0 and is_phaze(other.replacement().move())) {
+	if (other.number_of_seen_pokemon() != 0_bi and is_phaze(current_move(other.replacement()))) {
 		variable(other).set_phaze_index(switcher, species);
 	}
 	else if (!switcher.pokemon().moved()) {
 		Pokemon & pokemon = switcher.pokemon(replacement);
-		pokemon.move.set_index(static_cast<MoveCollection::index_type>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
+		all_moves(pokemon).set_index(static_cast<MoveCollection::index_type>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
 	}
 }
 
@@ -370,8 +370,8 @@ void Battle::do_turn() {
 		replacement(*last, *first);
 	}
 	else {
-		std::cout << "First move: " << to_string(static_cast<Species>(first->pokemon())) << " uses " << to_string(first->pokemon().move()) << '\n';
-		std::cout << "Last move: " << to_string(static_cast<Species>(last->pokemon())) << " uses " << to_string(last->pokemon().move()) << '\n';
+		std::cout << "First move: " << to_string(static_cast<Species>(first->pokemon())) << " uses " << to_string(current_move(first->pokemon())) << '\n';
+		std::cout << "Last move: " << to_string(static_cast<Species>(last->pokemon())) << " uses " << to_string(current_move(last->pokemon())) << '\n';
 		// Anything with recoil will mess this up
 		
 		constexpr bool damage_is_known = true;
@@ -416,8 +416,8 @@ void Battle::do_turn() {
 		while (pokemon.will_be_replaced()) {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
-			if (!is_switch(pokemon.move())) {
-				set_index(pokemon.all_moves(), foe.all_pokemon().replacement_to_switch());
+			if (!is_switch(current_move(pokemon))) {
+				set_index(all_moves(pokemon), foe.all_pokemon().replacement_to_switch());
 			}
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}

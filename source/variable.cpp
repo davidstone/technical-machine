@@ -789,7 +789,7 @@ auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
 
 auto all_probabilities(ActivePokemon const & pokemon, TeamSize const foe_size) -> Probabilities {
 	static auto const probability = initial_probabilities();
-	Moves const move = pokemon.move();
+	Moves const move = current_move(pokemon);
 	if (is_phaze(move)) {
 		return phaze_probability(foe_size);
 	}

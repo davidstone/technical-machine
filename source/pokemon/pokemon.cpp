@@ -45,7 +45,7 @@
 namespace technicalmachine {
 
 Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
-	move(my_team_size),
+	m_moves(my_team_size),
 	current_type(species),
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	nickname(set_nickname);
@@ -76,7 +76,7 @@ Pokemon::operator Species() const {
 
 MoveCollection::index_type Pokemon::index_of_first_switch() const {
 	MoveCollection::index_type index = 0_bi;
-	while (!is_switch(move(index))) {
+	while (!is_switch(m_moves(index))) {
 		++index;
 	}
 	return index;
@@ -103,7 +103,7 @@ bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
 	// on the same team, so the same species implies many other things are the
 	// same
 	assert(illegal_inequality_check(lhs, rhs));
-	return lhs.move == rhs.move and
+	return lhs.m_moves == rhs.m_moves and
 			lhs.m_species == rhs.m_species and
 			lhs.m_status == rhs.m_status and
 			get_hp(lhs).current() == get_hp(rhs).current() and
@@ -156,7 +156,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	for (auto const & stat : stats) {
 		add_stat(get_stat(pokemon, stat.first), stat.second);
 	}
-	for (auto const & move : pokemon.move.regular()) {
+	for (auto const & move : regular_moves(pokemon)) {
 		output += "\n\t- " + to_string(move);
 	}
 	return output;

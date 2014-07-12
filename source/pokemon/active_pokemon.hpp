@@ -39,12 +39,7 @@ public:
 	operator Pokemon const & () const;
 	operator Pokemon & ();
 	operator Species() const;
-	MoveCollection const & all_moves() const;
-	MoveCollection & all_moves();
-	template<typename... Args>
-	Move const & move(Args&&... args) const {
-		return all_moves()(std::forward<Args>(args)...);
-	}
+
 	bool was_used_last(Moves move) const;
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.

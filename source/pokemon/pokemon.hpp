@@ -48,11 +48,13 @@ public:
 	operator Species() const;
 	MoveCollection::index_type index_of_first_switch () const;
 	std::string get_nickname () const;
-	
+
 	// These cannot be defined in the class because because I rely on a
 	// conversion operator. Friend functions only declared in a class body are
 	// not found by lookup rules in that case.
 
+	friend auto all_moves(Pokemon const & pokemon) -> MoveCollection const &;
+	friend auto all_moves(Pokemon & pokemon) -> MoveCollection &;
 	friend Ability const & get_ability(Pokemon const & pokemon);
 	friend Ability & get_ability(Pokemon & pokemon);
 	friend Gender const & get_gender(Pokemon const & pokemon);
@@ -76,10 +78,11 @@ public:
 	auto has_been_seen() const -> bool;
 	friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
 
-	MoveCollection move;
-	
 private:
 	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
+
+	MoveCollection m_moves;
+	
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	std::string nickname;
 	#endif
@@ -100,6 +103,26 @@ private:
 	bool m_has_been_seen = false;
 };
 bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
+
+inline auto all_moves(Pokemon const & pokemon) -> MoveCollection const & {
+	return pokemon.m_moves;
+}
+inline auto all_moves(Pokemon & pokemon) -> MoveCollection & {
+	return pokemon.m_moves;
+}
+inline decltype(auto) regular_moves(Pokemon const & pokemon) {
+	return all_moves(pokemon).regular();
+}
+inline decltype(auto) regular_moves(Pokemon & pokemon) {
+	return all_moves(pokemon).regular();
+}
+
+inline decltype(auto) current_move(Pokemon const & pokemon) {
+	return all_moves(pokemon)();
+}
+inline decltype(auto) current_move(Pokemon & pokemon) {
+	return all_moves(pokemon)();
+}
 
 
 inline Ability const & get_ability(Pokemon const & pokemon) {
@@ -173,7 +196,7 @@ inline auto hash(Pokemon const & pokemon) noexcept {
 	auto const status = get_status(pokemon);
 	auto const item = get_item(pokemon);
 	auto const hp = get_hp(pokemon);
-	return hash(species, status, item, hp, pokemon.has_been_seen(), pokemon.move);
+	return hash(species, status, item, hp, pokemon.has_been_seen(), all_moves(pokemon));
 }
 
 

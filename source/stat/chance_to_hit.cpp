@@ -49,7 +49,7 @@ using namespace detail_chance_to_hit;
 }	// namespace
 
 auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Weather const weather, bool target_moved) -> ChanceToHit {
-	auto const base_accuracy = accuracy(user.move());
+	auto const base_accuracy = accuracy(current_move(user));
 	if (!move_can_miss(user, base_accuracy, get_ability(target))) {
 		return ChanceToHit(max, max);
 	}

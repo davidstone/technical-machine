@@ -281,7 +281,7 @@ auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyMod
 		case Ability::Compoundeyes:
 			return AbilityAccuracyModifier(13_bi, 10_bi);
 		case Ability::Hustle:
-			return is_physical(user.move()) ? AbilityAccuracyModifier(4_bi, 5_bi) : AbilityAccuracyModifier(1_bi, 1_bi);
+			return is_physical(current_move(user)) ? AbilityAccuracyModifier(4_bi, 5_bi) : AbilityAccuracyModifier(1_bi, 1_bi);
 		default:
 			return AbilityAccuracyModifier(1_bi, 1_bi);
 	}
@@ -356,9 +356,9 @@ auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & d
 		case Ability::Torrent:
 			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Water), 3_bi, 2_bi), 2_bi);
 		case Ability::Iron_Fist:
-			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(attacker.move()), 6_bi, 5_bi), 5_bi);
+			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(current_move(attacker)), 6_bi, 5_bi), 5_bi);
 		case Ability::Reckless:
-			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(attacker.move()), 6_bi, 5_bi), 5_bi);
+			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(current_move(attacker)), 6_bi, 5_bi), 5_bi);
 		case Ability::Rivalry:
 			return make_rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
 		default:
@@ -368,7 +368,7 @@ auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & d
 
 namespace {
 bool pinch_ability_activates(Pokemon const & attacker, Type const type) {
-	return get_type(attacker.move(), attacker) == type and hp_ratio(attacker) <= make_rational(1_bi, 3_bi);
+	return get_type(current_move(attacker), attacker) == type and hp_ratio(attacker) <= make_rational(1_bi, 3_bi);
 }
 }	// namespace
 

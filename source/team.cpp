@@ -105,7 +105,7 @@ bool Team::is_me() const {
 void Team::reset_between_turns() {
 	pokemon().reset_between_turns();
 	for (auto & member : all_pokemon()) {
-		member.move.reset_index();
+		all_moves(member).reset_index();
 	}
 	all_pokemon().initialize_replacement();
 }

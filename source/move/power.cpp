@@ -53,7 +53,7 @@ auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 auto variable_adjusted_base_power(Team const & attacker_team, Team const & defender_team, Weather const weather, Variable const & variable) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	switch (static_cast<Moves>(attacker.move())) {
+	switch (static_cast<Moves>(current_move(attacker))) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
 			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
@@ -131,9 +131,9 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		case Moves::Triple_Kick:
 			return attacker.triple_kick_power();
 		case Moves::Trump_Card:
-			return attacker.move().pp().trump_card_power();
+			return current_move(attacker).pp().trump_card_power();
 		default:
-			return *base_power(attacker.move());
+			return *base_power(current_move(attacker));
 	}
 }
 
@@ -149,7 +149,7 @@ auto is_boosted_by_griseous_orb(Species species) -> bool;
 auto is_boosted_by_lustrous_orb(Species species) -> bool;
 
 auto defender_ability_modifier(Pokemon const & attacker, Ability const ability) -> bounded_rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
-	Moves const move = attacker.move();
+	Moves const move = current_move(attacker);
 	switch (ability.name()) {
 		case Ability::Dry_Skin:
 			return make_rational(BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
@@ -175,7 +175,7 @@ auto move_power(Team const & attacker_team, Team const & defender_team, Weather 
 		BOUNDED_CONDITIONAL(doubling(attacker, defender, weather), 2_bi, 1_bi) *
 		item_modifier(attacker) *
 		BOUNDED_CONDITIONAL(attacker.charge_boosted(), 2_bi, 1_bi) /
-		BOUNDED_CONDITIONAL(defender.sport_is_active(attacker.move()), 2_bi, 1_bi) *
+		BOUNDED_CONDITIONAL(defender.sport_is_active(current_move(attacker)), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(attacker, defender, base_power) *
 		defender_ability_modifier(attacker, get_ability(defender))
 	));
@@ -193,7 +193,7 @@ auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, We
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 
-	Moves const move = attacker.move();
+	Moves const move = current_move(attacker);
 	if (defender.vanish_doubles_power(move))
 		return true;
 	switch (move) {
@@ -228,12 +228,12 @@ auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, We
 
 auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 12> {
 	static constexpr auto base = 10_bi;
-	auto const type = get_type(attacker.move(), attacker);
+	auto const type = get_type(current_move(attacker), attacker);
 	switch (get_item(attacker)) {
 		case Item::Muscle_Band:
-			return BOUNDED_CONDITIONAL(is_physical(attacker.move()), 11_bi, base);
+			return BOUNDED_CONDITIONAL(is_physical(current_move(attacker)), 11_bi, base);
 		case Item::Wise_Glasses:
-			return BOUNDED_CONDITIONAL(is_special(attacker.move()), 11_bi, base);
+			return BOUNDED_CONDITIONAL(is_special(current_move(attacker)), 11_bi, base);
 		case Item::Insect_Plate:
 		case Item::SilverPowder:
 			return BOUNDED_CONDITIONAL(type == Type::Bug, 12_bi, base);

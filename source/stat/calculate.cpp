@@ -297,7 +297,7 @@ auto calculate_common_offensive_stat(ActivePokemon const & pokemon, Weather cons
 }	// namespace
 
 auto calculate_attacking_stat(ActivePokemon const & attacker, Weather const weather) -> std::common_type_t<attack_type, special_attack_type> {
-	return is_physical(attacker.move()) ?
+	return is_physical(current_move(attacker)) ?
 		calculate_attack(attacker, weather) :
 		calculate_special_attack(attacker, weather);
 }
@@ -330,8 +330,8 @@ auto is_self_KO(Moves const move) {
 }	// namespace
 
 auto calculate_defending_stat(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const weather) -> std::common_type_t<defense_type, special_defense_type> {
-	return is_physical(attacker.move()) ?
-		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(attacker.move())) :
+	return is_physical(current_move(attacker)) ?
+		calculate_defense(defender, weather, attacker.critical_hit(), is_self_KO(current_move(attacker))) :
 		calculate_special_defense(defender, weather, attacker.critical_hit());
 }
 
@@ -402,8 +402,8 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 }
 
 auto order(Team & team1, Team & team2, Weather const weather, Team* & faster, Team* & slower) -> void {
-	Priority const priority1(team1.pokemon().move());
-	Priority const priority2(team2.pokemon().move());
+	Priority const priority1(current_move(team1.pokemon()));
+	Priority const priority2(current_move(team2.pokemon()));
 	if (priority1 == priority2) {
 		faster_pokemon(team1, team2, weather, faster, slower);
 	}

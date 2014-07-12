@@ -110,7 +110,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	Pokemon & pokemon = team.all_pokemon().at_replacement();
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
-		pokemon.move.add(load_move(value.second));
+		all_moves(pokemon).add(load_move(value.second));
 	
 	for (auto const & value : pt.get_child ("stats"))
 		load_stats (pokemon, value.second);

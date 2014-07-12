@@ -79,8 +79,7 @@ Moves PokemonCollection::replacement_to_switch () const {
 	return to_switch(replacement());
 }
 void PokemonCollection::replacement_from_switch () {
-	Move const & move = operator()().move();
-	set_replacement(to_replacement(move));
+	set_replacement(to_replacement(current_move(operator()())));
 }
 
 bool PokemonCollection::is_switching_to_self () const {
@@ -124,7 +123,7 @@ void PokemonCollection::remove_active () {
 	// the only value that could get this out of bounds.
 	set_index((index() > replacement()) ? replacement() : index_type(replacement() - 1_bi, bounded::non_check));
 	for (auto & pokemon : container) {
-		pokemon.move.remove_switch();
+		all_moves(pokemon).remove_switch();
 	}
 }
 

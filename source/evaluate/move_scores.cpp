@@ -35,7 +35,7 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// If this is for my team, then it doesn't matter what I set the scores to,
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
-	for (auto const & move : pokemon.move) {
+	for (auto const & move : all_moves(pokemon)) {
 		key_type const key(pokemon, move);
 		auto const inserted = scores.emplace(key, initial);
 		if (inserted.second) {

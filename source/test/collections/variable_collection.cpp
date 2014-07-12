@@ -61,7 +61,7 @@ void add_pokemon(Team & team, Species const species) {
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(species, level, gender);
-	team.pokemon().all_moves().add(Moves::Whirlwind);
+	all_moves(team.pokemon()).add(Moves::Whirlwind);
 }
 
 void test_combinations(Team & team) {

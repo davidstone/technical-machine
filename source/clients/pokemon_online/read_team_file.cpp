@@ -73,7 +73,7 @@ ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
 		}
 		Moves const move(load_move(it->second));
 		if (move != Moves::END) {
-			pokemon.move.add(move);
+			all_moves(pokemon).add(move);
 		}
 		++it;
 	}
