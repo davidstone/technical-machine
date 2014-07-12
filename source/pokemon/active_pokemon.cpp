@@ -729,7 +729,6 @@ void ActivePokemon::normalize_hp(bool fainted) {
 
 bool operator== (ActivePokemon const & lhs, ActivePokemon const & rhs) {
 	return
-		lhs.m_all_pokemon == rhs.m_all_pokemon and
 		lhs.m_aqua_ring == rhs.m_aqua_ring and
 		lhs.m_attracted == rhs.m_attracted and
 		lhs.m_bide == rhs.m_bide and

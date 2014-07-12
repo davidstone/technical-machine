@@ -157,6 +157,7 @@ void Team::load(std::string const & name) {
 
 bool operator== (Team const & lhs, Team const & rhs) {
 	return
+		lhs.all_pokemon() == rhs.all_pokemon() and
 		lhs.active_pokemon == rhs.active_pokemon and
 		lhs.screens == rhs.screens and
 		lhs.wish == rhs.wish and
