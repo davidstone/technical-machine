@@ -42,7 +42,6 @@
 
 #include "../bide/bide.hpp"
 
-#include "../stat/chance_to_hit.hpp"
 #include "../stat/stage.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -109,7 +108,6 @@ private:
 
 	HP::current_type damaged = 0_bi;
 	Bide bide;
-	ChanceToHit chance_to_hit = ChanceToHit(100_bi, 100_bi);
 	Confusion confusion;
 	Disable disable;
 	EmbargoCounter embargo;

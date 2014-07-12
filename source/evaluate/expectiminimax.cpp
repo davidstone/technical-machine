@@ -255,6 +255,39 @@ int64_t order_branch(Team & ai, Team & foe, Weather const weather, unsigned dept
 		accuracy_branch(*first, *last, weather, depth, evaluate);
 }
 
+int64_t accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+		pokemon.set_miss(!flag);
+	};
+	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const missed) {
+		auto base = chance_to_hit(user, target, weather, target_moved);
+		return BOUNDED_CONDITIONAL(missed, complement(base), base);
+	};
+
+
+	int64_t average_score = 0;
+	for (auto const first_flag : { true, false }) {
+		constexpr bool last_moved = false;
+		auto const p1 = probability(first.pokemon(), last.pokemon(), last_moved, first_flag);
+		if (first_flag and p1 == make_rational(0_bi, 1_bi)) {
+			continue;
+		}
+		set_flag(first.pokemon(), first_flag);
+		for (auto const last_flag : { true, false }) {
+			constexpr bool first_moved = true;
+			auto const p2 = probability(last.pokemon(), first.pokemon(), first_moved, last_flag);
+			if (last_flag and p2 == make_rational(0_bi, 1_bi)) {
+				continue;
+			}
+			set_flag(last.pokemon(), last_flag);
+			auto const p = p1 * p2;
+			average_score += p.unchecked_multiply(awaken_branch(first, last, weather, depth, evaluate));
+		}
+	}
+	return average_score / (100 * 100);
+}
+
+
 template<typename SetFlag, typename Probability, typename NextBranch>
 int64_t generic_flag_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & basic_probability, NextBranch const & next_branch) {
 	auto const probability = [&](auto const & pokemon, bool const flag) {
@@ -280,20 +313,6 @@ int64_t generic_flag_branch(Team & first, Team & last, Weather const weather, un
 	return average_score;
 }
 
-int64_t accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	constexpr int divisor = 100 * 100;
-	constexpr bool first_moved = true;
-	constexpr bool last_moved = false;
-	first.pokemon().update_chance_to_hit(last.pokemon(), weather, last_moved);
-	last.pokemon().update_chance_to_hit(first.pokemon(), weather, first_moved);
-	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
-		pokemon.set_miss(!flag);
-	};
-	auto const probability = [&](ActivePokemon const & pokemon) {
-		return pokemon.accuracy_probability();
-	};
-	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, awaken_branch) / divisor;
-}
 
 int64_t awaken_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {

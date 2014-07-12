@@ -194,12 +194,7 @@ public:
 	auto indirect_damage(damage_type damage) -> void;
 	auto register_damage(damage_type damage) -> void;
 	auto increment_move_use_counter() -> void;
-	auto update_chance_to_hit(ActivePokemon const & target, Weather weather, bool target_moved) -> void;
 
-	auto accuracy_probability() const {
-		return m_flags.chance_to_hit;
-	}
-	
 	auto will_be_replaced() const -> bool;
 	
 	auto all_pokemon() const -> PokemonCollection const & {

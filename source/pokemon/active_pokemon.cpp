@@ -589,11 +589,6 @@ auto ActivePokemon::increment_move_use_counter() -> void {
 	}
 }
 
-auto ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather const weather, bool target_moved) -> void {
-	m_flags.chance_to_hit = chance_to_hit(*this, target, weather, target_moved);
-}
-
-
 auto ActivePokemon::will_be_replaced() const -> bool {
 	return m_flags.will_be_replaced;
 }
