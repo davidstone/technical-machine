@@ -100,7 +100,6 @@ public:
 	void advance_heal_block();
 	bool leech_seeded() const;
 	void hit_with_leech_seed();
-	void clear_leech_seed();
 	bool is_loafing() const;
 	void advance_lock_in();
 	bool locked_on() const;

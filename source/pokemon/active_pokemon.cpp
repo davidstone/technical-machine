@@ -70,7 +70,7 @@ void ActivePokemon::reset_between_turns() {
 }
 
 void ActivePokemon::clear_field() {
-	clear_leech_seed();
+	m_flags.leech_seeded = false;
 	m_flags.partial_trap = {};
 }
 
@@ -78,10 +78,6 @@ void ActivePokemon::update_before_move() {
 	m_flags.destiny_bond = false;
 	m_flags.locked_on = false;
 	m_flags.moved = true;
-}
-
-void ActivePokemon::clear_leech_seed() {
-	m_flags.leech_seeded = false;
 }
 
 bool ActivePokemon::aqua_ring_is_active() const {
