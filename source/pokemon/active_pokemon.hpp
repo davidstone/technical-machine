@@ -59,9 +59,6 @@ public:
 	auto use_substitute() -> void;
 	auto attract() -> void;
 	auto awaken(bool value) -> void;
-	auto awaken_probability() const {
-		return get_status(*this).awaken_probability(get_ability(*this), m_flags.awakening);
-	}
 	auto aqua_ring_is_active() const -> bool;
 	auto activate_aqua_ring() -> void;
 	auto is_baton_passing() const -> bool;
@@ -198,9 +195,10 @@ public:
 	auto register_damage(damage_type damage) -> void;
 	auto increment_move_use_counter() -> void;
 	auto update_chance_to_hit(ActivePokemon const & target, Weather weather, bool target_moved) -> void;
-	// If the move is a hit, returns the chance to hit, otherwise, returns
-	// the chance to miss.
-	auto accuracy_probability() const -> ChanceToHit;
+
+	auto accuracy_probability() const {
+		return m_flags.chance_to_hit;
+	}
 	
 	auto will_be_replaced() const -> bool;
 	
@@ -230,16 +228,20 @@ inline auto hash(ActivePokemon const & pokemon) noexcept {
 }
 
 inline auto shed_skin_probability(ActivePokemon const & pokemon) {
-	if (!get_ability(pokemon).can_clear_status(get_status(pokemon))) {
-		return make_rational(BOUNDED_CONDITIONAL(pokemon.shed_skin_activated(), 0_bi, 10_bi), 10_bi);
-	}
-	auto const numerator = BOUNDED_CONDITIONAL(pokemon.shed_skin_activated(), 3_bi, 7_bi);
-	return make_rational(static_cast<bounded::integer<0, 10>>(numerator), 10_bi);
+	return make_rational(
+		BOUNDED_CONDITIONAL(get_ability(pokemon).can_clear_status(get_status(pokemon)), 3_bi, 0_bi),
+		10_bi
+	);
 }
 
 auto lower_pp(ActivePokemon & user, Ability target) -> void;
 
 auto has_switched(ActivePokemon const & pokemon) -> bool;
+
+inline auto awaken_probability(ActivePokemon const & pokemon) {
+	return get_status(pokemon).awaken_probability(get_ability(pokemon));
+}
+
 
 }	// namespace technicalmachine
 #endif	// ACTIVE_POKEMON_HPP_

@@ -211,7 +211,7 @@ class Print;
 
 }	// namespace
 
-auto Status::awaken_probability(Ability const & ability, bool const awaken) const -> AwakenProbability {
+auto Status::awaken_probability(Ability const & ability) const -> AwakenProbability {
 	static_assert(std::is_same<DefiniteSleepCounter, SleepCounter::value_type>::value, "Incorrect sleep counter type.");
 	if (!m_turns_already_slept) {
 		return make_rational(0_bi, 1_bi);
@@ -220,11 +220,7 @@ auto Status::awaken_probability(Ability const & ability, bool const awaken) cons
 		early_bird_probability(*m_turns_already_slept),
 		non_early_bird_probability(*m_turns_already_slept)
 	);
-	// We know the value is always between 0 and 1, so the complement will also
-	// be in that range.
-	return awaken ?
-		static_cast<AwakenProbability>(wake_up_probability) :
-		complement(wake_up_probability).convert<AwakenProbability>();
+	return static_cast<AwakenProbability>(wake_up_probability);
 }
 
 }	// namespace technicalmachine

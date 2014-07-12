@@ -48,8 +48,8 @@ void awakening_probability_tests() {
 	team.add_pokemon(Species::Zapdos, level, Gender());
 	auto & pokemon = team.pokemon();
 	Status::apply<Statuses::sleep>(pokemon, weather);
-	for (auto const expected : bounded::make_array(make_rational(1_bi, 1_bi), make_rational(3_bi, 4_bi), make_rational(2_bi, 3_bi), make_rational(1_bi, 2_bi), make_rational(0_bi, 1_bi))) {
-		auto const calculated = pokemon.awaken_probability();
+	for (auto const expected : bounded::make_array(make_rational(0_bi, 1_bi), make_rational(1_bi, 4_bi), make_rational(1_bi, 3_bi), make_rational(1_bi, 2_bi), make_rational(1_bi, 1_bi))) {
+		auto const calculated = awaken_probability(pokemon);
 		if (expected != calculated) {
 			throw InvalidSleepProbability(expected, calculated);
 		}
@@ -57,7 +57,7 @@ void awakening_probability_tests() {
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 
 void status_tests () {
 	std::cout << "Running status tests.\n";

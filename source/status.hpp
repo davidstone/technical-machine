@@ -70,7 +70,7 @@ public:
 	// this move. Returns 0 if the Pokemon is already awake or if, due to the
 	// sleep counter, they will definitely not awaken.
 	using AwakenProbability = bounded_rational<bounded::integer<0, 3>, bounded::integer<1, 4>>;
-	auto awaken_probability(Ability const & ability, bool awaken) const -> AwakenProbability;
+	auto awaken_probability(Ability const & ability) const -> AwakenProbability;
 
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(name(), m_turns_already_slept);

@@ -593,9 +593,6 @@ auto ActivePokemon::update_chance_to_hit(ActivePokemon const & target, Weather c
 	m_flags.chance_to_hit = chance_to_hit(*this, target, weather, target_moved);
 }
 
-auto ActivePokemon::accuracy_probability() const -> ChanceToHit {
-	return missed() ? complement(m_flags.chance_to_hit) : m_flags.chance_to_hit;
-}
 
 auto ActivePokemon::will_be_replaced() const -> bool {
 	return m_flags.will_be_replaced;
