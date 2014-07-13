@@ -739,7 +739,8 @@ void Client::send_battle_challenge (std::string const & opponent) {
 	try {
 		if (!challenges_are_queued() and get_user_id(opponent)) {
 			constexpr bool challenger = true;
-			auto const & battle = add_pending_challenge<Battle>(opponent, challenger);
+			constexpr auto team_size = max_pokemon_per_team;
+			auto const & battle = add_pending_challenge<Battle>(opponent, team_size, challenger);
 			OutMessage msg (OutMessage::SEND_TEAM);
 			battle.write_team(msg, username());
 			send_message(msg);
@@ -782,7 +783,8 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	if (accepted and !challenges_are_queued()) {
 		// They challenged me.
 		constexpr bool challenger = false;
-		add_pending_challenge<Battle>(team, opponent, challenger);
+		constexpr auto team_size = max_pokemon_per_team;
+		add_pending_challenge<Battle>(team, opponent, team_size, challenger);
 		msg.write_byte (ACCEPTED);
 		verb = "Accepted";
 	}

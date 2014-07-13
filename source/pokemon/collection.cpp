@@ -32,9 +32,9 @@
 
 namespace technicalmachine {
 
-PokemonCollection::PokemonCollection():
+PokemonCollection::PokemonCollection(TeamSize const initial_size):
 	current_replacement(0_bi),
-	true_size(max_pokemon_per_team) {
+	true_size(initial_size) {
 }
 
 void PokemonCollection::initialize_size(TeamSize const new_size) {

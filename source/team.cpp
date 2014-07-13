@@ -45,12 +45,14 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 }	// unnamed namespace
 
-Team::Team() :
+Team::Team(TeamSize const initial_size) :
+	m_all_pokemon(initial_size),
 	me(false)
 	{
 }
 
 Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
+	m_all_pokemon(6_bi), // This size gets corrected later
 	me(true)
 	{
 	boost::filesystem::path team_file = team_file_name;

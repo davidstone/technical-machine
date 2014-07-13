@@ -69,8 +69,8 @@ public:
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string const & _opponent, std::random_device::result_type seed, unsigned battle_depth, std::string const & team_file_name);
-	Battle(std::string const & _opponent, std::random_device::result_type seed, unsigned battle_depth, Team const & team);
+	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, std::string const & team_file_name);
+	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, Team const & team);
 	uint8_t switch_slot(Moves move) const;
 	virtual VisibleFoeHP max_damage_precision() const;
 	void initialize_turn();

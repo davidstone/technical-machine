@@ -1,5 +1,5 @@
 // Test EV optimizer
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,7 +29,8 @@ namespace technicalmachine {
 void ev_optimizer_tests() {
 	std::cout << "\tEV optimizer tests.\n";
 
-	Team team;
+	constexpr auto team_size = max_pokemon_per_team;
+	Team team(team_size);
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
 	team.add_pokemon(Species::Snorlax, level, gender);

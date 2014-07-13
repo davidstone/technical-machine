@@ -43,7 +43,7 @@ public:
 
 void awakening_probability_tests() {
 	Weather weather;
-	Team team;
+	Team team(max_pokemon_per_team);
 	Level const level(100_bi);
 	team.add_pokemon(Species::Zapdos, level, Gender());
 	auto pokemon = team.pokemon();

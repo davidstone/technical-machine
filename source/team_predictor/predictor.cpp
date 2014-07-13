@@ -52,7 +52,8 @@ namespace {
 class Data {
 public:
 	Data():
-		random_engine(rd())
+		random_engine(rd()),
+		m_team(max_pokemon_per_team)
 		{
 	}
 	template<typename... Args>
@@ -179,7 +180,7 @@ void function (Fl_Widget *, void * d) {
 	generate_random_team(data);
 	Team team = predict_team(data.detailed, data.team(), data.random_engine, using_lead);
 	data.output->value(to_string(team, false).c_str());
-	data.team() = Team{};
+	data.team() = Team(max_pokemon_per_team);
 }
 
 }	// unnamed namespace

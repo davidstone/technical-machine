@@ -48,7 +48,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, PokemonC
 
 void variable_collection_tests() {
 	std::cout << "\tRunning variable collection tests.\n";
-	Team team;
+	Team team(max_pokemon_per_team);
 	add_pokemon(team, static_cast<Species>(1));
 	test_combinations(team);
 }

@@ -38,7 +38,7 @@ namespace {
 using namespace bounded::literal;
 
 Team max_damage_physical_attacker() {
-	Team attacker;
+	Team attacker(max_pokemon_per_team);
 	
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
@@ -55,7 +55,7 @@ Team max_damage_physical_attacker() {
 }
 
 Team max_damage_special_attacker() {
-	Team attacker;
+	Team attacker(max_pokemon_per_team);
 
 	Level const level(100_bi);
 	Gender const gender(Gender::GENDERLESS);
@@ -66,7 +66,7 @@ Team max_damage_special_attacker() {
 }
 
 Team max_damage_physical_defender() {
-	Team defender;
+	Team defender(max_pokemon_per_team);
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
@@ -82,7 +82,7 @@ Team max_damage_physical_defender() {
 }
 
 Team max_damage_special_defender() {
-	Team defender;
+	Team defender(max_pokemon_per_team);
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Paras, level, gender);

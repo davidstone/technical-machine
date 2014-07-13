@@ -1,5 +1,5 @@
 // Test PO team files
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,7 +29,7 @@ namespace po {
 
 void test_team_file () {
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
-	Team team;
+	Team team(max_pokemon_per_team);
 	std::string const directory = "source/test/";
 	load_team (team, directory + "test1.tp");
 	write_team (team, directory + "test2.tp");

@@ -63,12 +63,12 @@ protected:
 		return battles.find(std::forward<Args>(args)...);
 	}
 	template<typename Battle, typename ... Args>
-	Battle const & add_pending_challenge (Team const & team, std::string const & opponent, Args && ... args) {
-		return battles.add_pending_challenge<Battle>(opponent, rd(), m_depth, std::forward<Args>(args)..., team);
+	Battle const & add_pending_challenge (Team const & team, std::string const & opponent, TeamSize const team_size, Args && ... args) {
+		return battles.add_pending_challenge<Battle>(opponent, team_size, rd(), m_depth, std::forward<Args>(args)..., team);
 	}
 	template<typename Battle, typename ... Args>
-	Battle const & add_pending_challenge (std::string const & opponent, Args && ... args) {
-		return battles.add_pending_challenge<Battle>(opponent, rd(), m_depth, std::forward<Args>(args)..., team_file_name);
+	Battle const & add_pending_challenge (std::string const & opponent, TeamSize const team_size, Args && ... args) {
+		return battles.add_pending_challenge<Battle>(opponent, team_size, rd(), m_depth, std::forward<Args>(args)..., team_file_name);
 	}
 	bool challenges_are_queued() const;
 	std::string const & first_challenger() const;

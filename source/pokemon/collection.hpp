@@ -46,7 +46,7 @@ public:
 	using Base::size_type;
 	using const_iterator = Base::container_type::const_iterator;
 	using iterator = Base::container_type::iterator;
-	PokemonCollection();
+	explicit PokemonCollection(TeamSize initial_size);
 	// Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
 	void initialize_size(TeamSize const new_size);

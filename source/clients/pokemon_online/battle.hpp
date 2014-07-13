@@ -34,8 +34,8 @@ class InMessage;
 class Battle : public ::technicalmachine::Battle {
 public:
 	template<typename ... Args>
-	Battle(std::string const & foe_name, std::random_device::result_type seed, unsigned const battle_depth, bool const challenger, Args && ... args):
-		::technicalmachine::Battle::Battle(foe_name, seed, battle_depth, std::forward<Args>(args)...),
+	Battle(std::string const & foe_name, TeamSize const team_size, std::random_device::result_type seed, unsigned const battle_depth, bool const challenger, Args && ... args):
+		::technicalmachine::Battle::Battle(foe_name, team_size, seed, battle_depth, std::forward<Args>(args)...),
 		action (OutMessage::BATTLE_MESSAGE)
 		{
 		set_party_if_unknown(Party(BOUNDED_CONDITIONAL(challenger, 0_bi, 1_bi)));

@@ -39,7 +39,7 @@ using namespace bounded::literal;
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";
 	constexpr auto max_attack = 7368_bi;
-	Team attacker;
+	Team attacker(max_pokemon_per_team);
 
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
@@ -62,7 +62,7 @@ void special_attack_tests () {
 	constexpr auto max_special_attack = 4536_bi;
 	Weather weather;
 	weather.activate_sun(Weather::Duration::permanent);
-	Team attacker;
+	Team attacker(max_pokemon_per_team);
 
 	Level const level(100_bi);
 	Gender const gender(Gender::GENDERLESS);
@@ -84,7 +84,7 @@ void max_defense_test() {
 	std::cout << "\t\tRunning max Defense test.\n";
 	constexpr auto max_defense = 3684_bi;
 
-	Team defender;
+	Team defender(max_pokemon_per_team);
 	Weather weather;
 
 	Level const level(100_bi);
@@ -106,7 +106,7 @@ void min_defense_test() {
 	std::cout << "\t\tRunning min Defense test.\n";
 	constexpr auto min_defense = 1_bi;
 
-	Team defender;
+	Team defender(max_pokemon_per_team);
 
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
@@ -133,7 +133,7 @@ void special_defense_tests () {
 	std::cout << "\tRunning Special Defense tests.\n";
 	constexpr auto max_special_defense = 3684_bi;
 
-	Team defender;
+	Team defender(max_pokemon_per_team);
 	Weather weather;
 	weather.activate_sand(Weather::Duration::permanent);
 
@@ -155,7 +155,7 @@ void speed_tests () {
 	Weather weather;
 	weather.activate_rain(Weather::Duration::permanent);
 
-	Team team;
+	Team team(max_pokemon_per_team);
 
 	Level const level(100_bi);
 	Gender const gender(Gender::GENDERLESS);
