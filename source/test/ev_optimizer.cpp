@@ -27,7 +27,7 @@
 namespace technicalmachine {
 
 void ev_optimizer_tests() {
-	std::cout << "\tEV optimizer tests.\n";
+	std::cout << "Running EV optimizer tests.\n";
 
 	constexpr auto team_size = max_pokemon_per_team;
 	Team team(team_size);
@@ -46,6 +46,7 @@ void ev_optimizer_tests() {
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
 	pad_random_evs(team.pokemon(), random_engine);
+	std::cout << "EV optimizer tests passed.\n\n";
 }
 
 }	// namespace technicalmachine

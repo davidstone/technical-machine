@@ -30,7 +30,7 @@ public:
 	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 	
 	Gender();
-	explicit Gender(Genders gender_);
+	Gender(Genders gender_);
 
 	friend bool operator== (Gender lhs, Gender rhs);
 
