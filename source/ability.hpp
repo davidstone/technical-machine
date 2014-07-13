@@ -29,6 +29,7 @@
 namespace technicalmachine {
 
 class ActivePokemon;
+class MutableActivePokemon;
 class Move;
 class Weather;
 
@@ -66,7 +67,7 @@ public:
 	Abilities name() const;
 	bool is_set () const;
 	void set_if_unknown (Abilities ability);
-	bool blocks_switching (ActivePokemon const & switcher, Weather weather) const;
+	bool blocks_switching (ActivePokemon switcher, Weather weather) const;
 	bool blocks_weather () const;
 
 	template<Statuses status>
@@ -105,8 +106,8 @@ public:
 	
 	bool is_loafing (bool loaf) const;
 	
-	static void activate_on_switch (ActivePokemon & switcher, ActivePokemon & other, Weather & weather);
-	static void weather_healing(ActivePokemon & pokemon, Weather weather);
+	static void activate_on_switch (MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
+	static void weather_healing(MutableActivePokemon pokemon, Weather weather);
 	friend bool operator== (Ability lhs, Ability rhs);
 private:
 	Abilities m_name;
@@ -117,13 +118,13 @@ using AbilityAccuracyModifier = bounded_rational<
 	bounded::integer<1, 13>,
 	bounded::integer<1, 10>
 >;
-auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyModifier;
+auto ability_accuracy_modifier(ActivePokemon user) -> AbilityAccuracyModifier;
 
 using AbilityEvasionModifier = bounded_rational<
 	bounded::integer<1, 4>,
 	bounded::integer<1, 5>
 >;
-auto ability_evasion_modifier(ActivePokemon const & target, Weather weather) -> AbilityEvasionModifier;
+auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityEvasionModifier;
 
 auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 

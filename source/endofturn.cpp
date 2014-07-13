@@ -34,10 +34,10 @@ namespace {
 
 void endofturn1 (Team & team);
 void endofturn2 (Team & team);
-void endofturn3 (ActivePokemon & pokemon, Weather const weather);
-void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather);
+void endofturn3 (MutableActivePokemon pokemon, Weather const weather);
+void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather);
 void endofturn6 (Team & target, Weather const weather);
-void endofturn7 (ActivePokemon & pokemon);
+void endofturn7 (MutableActivePokemon pokemon);
 
 template<typename Integer>
 void decrement (Integer & n) {
@@ -48,8 +48,8 @@ void decrement (Integer & n) {
 }	// unnamed namespace
 
 void endofturn (Team & first, Team & last, Weather & weather) {
-	first.pokemon().reset_end_of_turn();
-	last.pokemon().reset_end_of_turn();
+	first.reset_end_of_turn();
+	last.reset_end_of_turn();
 	endofturn1 (first);
 	endofturn1 (last);
 	endofturn2 (first);
@@ -77,7 +77,7 @@ void endofturn2 (Team & team) {
 	team.wish.decrement(team.pokemon());
 }
 
-void endofturn3 (ActivePokemon & pokemon, Weather const weather) {
+void endofturn3 (MutableActivePokemon pokemon, Weather const weather) {
 	if (weather.hail() and !is_immune_to_hail(get_type(pokemon)))
 		heal(pokemon, make_rational(-1_bi, 16_bi));
 	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
@@ -86,7 +86,7 @@ void endofturn3 (ActivePokemon & pokemon, Weather const weather) {
 	Ability::weather_healing(pokemon, weather);
 }
 
-void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather) {
+void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather) {
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
@@ -107,7 +107,7 @@ void endofturn5 (ActivePokemon & pokemon, ActivePokemon & foe, Weather & weather
 			heal(pokemon, make_rational(1_bi, 16_bi));
 			break;
 		case Item::Black_Sludge: {
-			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), 1_bi, -1_bi);
+			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison, is_roosting(pokemon)), 1_bi, -1_bi);
 			heal(pokemon, make_rational(numerator, 16_bi));
 			break;
 		}
@@ -189,7 +189,7 @@ void endofturn6 (Team & target, Weather const weather) {
 	// TODO: Doom Desire / Future Sight
 }
 
-void endofturn7 (ActivePokemon & pokemon) {
+void endofturn7 (MutableActivePokemon pokemon) {
 	pokemon.perish_song_turn();
 }
 

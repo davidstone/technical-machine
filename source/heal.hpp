@@ -29,7 +29,7 @@
 namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
-void heal(ActivePokemon & pokemon, bounded_rational<Numerator, Denominator> const rational) {
+void heal(MutableActivePokemon pokemon, bounded_rational<Numerator, Denominator> const rational) {
 	if (is_fainted(pokemon)) {
 		return;
 	}

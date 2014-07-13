@@ -254,7 +254,7 @@ int64_t order_branch(Team & ai, Team & foe, Weather const weather, unsigned dept
 }
 
 int64_t accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
 		pokemon.set_miss(!flag);
 	};
 	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const missed) {
@@ -313,7 +313,7 @@ int64_t generic_flag_branch(Team & first, Team & last, Weather const weather, un
 
 
 int64_t awaken_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
 		pokemon.awaken(flag);
 	};
 	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, awaken_probability, random_move_effects_branch);
@@ -326,10 +326,10 @@ bool can_critical_hit(Moves const move) {
 }
 
 int64_t random_move_effects_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
 		pokemon.set_critical_hit(flag);
 	};
-	auto const probability = [](ActivePokemon const & pokemon) {
+	auto const probability = [](ActivePokemon const pokemon) {
 		return make_rational(
 			BOUNDED_CONDITIONAL(can_critical_hit(current_move(pokemon)), 1_bi, 0_bi),
 			16_bi
@@ -369,7 +369,7 @@ int64_t use_move_branch(Team & first, Team & last, Variable const & first_variab
 	Team * faster;
 	Team * slower;
 	faster_pokemon(first, last, weather, faster, slower);
-	auto const set_flag = [](ActivePokemon & pokemon, bool const flag) {
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
 		pokemon.shed_skin(flag);
 	};
 	// Partially apply some arguments to the function so it has the expected

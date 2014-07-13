@@ -30,7 +30,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class ActivePokemon;
 class EntryHazards;
 class Pokemon;
 class Status;

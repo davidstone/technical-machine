@@ -31,7 +31,7 @@ auto Wish::activate() -> void {
 	}
 }
 
-auto Wish::decrement(ActivePokemon & pokemon) -> void {
+auto Wish::decrement(MutableActivePokemon pokemon) -> void {
 	if (is_active()) {
 		--*m_turns_until_activation;
 		if (*m_turns_until_activation == 0_bi) {

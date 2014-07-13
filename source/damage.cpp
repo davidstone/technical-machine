@@ -43,11 +43,11 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-bool affects_target(Type const & move_type, ActivePokemon const & target, Weather weather);
+bool affects_target(Type const & move_type, ActivePokemon target, Weather weather);
 
 damage_type regular_damage(Team const & attacker, Team const & defender, Weather weather, Variable const & variable);
 
-bool screen_is_active (ActivePokemon const & attacker, Team const & defender);
+bool screen_is_active (ActivePokemon attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
 
@@ -59,7 +59,7 @@ auto calculate_weather_modifier(Type const type, Weather const weather) {
 	));
 }
 
-auto calculate_flash_fire_modifier(ActivePokemon const & attacker) {
+auto calculate_flash_fire_modifier(ActivePokemon const attacker) {
 	auto const type = get_type(current_move(attacker), attacker);
 	return BOUNDED_CONDITIONAL(flash_fire_is_active(attacker) and is_boosted_by_flash_fire(type),
 		make_rational(3_bi, 2_bi),
@@ -68,7 +68,7 @@ auto calculate_flash_fire_modifier(ActivePokemon const & attacker) {
 }
 
 using ItemModifier = bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-auto calculate_item_modifier(ActivePokemon const & attacker) -> ItemModifier {
+auto calculate_item_modifier(ActivePokemon const attacker) -> ItemModifier {
 	switch (get_item(attacker)) {
 		case Item::Life_Orb:
 			return make_rational(13_bi, 10_bi);
@@ -79,7 +79,7 @@ auto calculate_item_modifier(ActivePokemon const & attacker) -> ItemModifier {
 	}
 }
 
-auto calculate_me_first_modifier(ActivePokemon const & attacker) {
+auto calculate_me_first_modifier(ActivePokemon const attacker) {
 	return BOUNDED_CONDITIONAL(me_first_is_active(attacker),
 		make_rational(3_bi, 2_bi),
 		make_rational(1_bi, 1_bi)
@@ -94,9 +94,9 @@ auto calculate_stab_boost(Ability const ability) {
 	);
 }
 
-auto calculate_stab_modifier(ActivePokemon const & attacker) {
+auto calculate_stab_modifier(ActivePokemon const attacker) {
 	auto const type = get_type(current_move(attacker), attacker);
-	return BOUNDED_CONDITIONAL(is_type(attacker, type),
+	return BOUNDED_CONDITIONAL(is_type(attacker, type, is_roosting(attacker)),
 		calculate_stab_boost(get_ability(attacker)),
 		make_rational(1_bi, 1_bi)
 	);
@@ -120,7 +120,7 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
 
 
-bool affects_target(Type const & move_type, ActivePokemon const & target, Weather const weather) {
+bool affects_target(Type const & move_type, ActivePokemon const target, Weather const weather) {
 	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
 }
 
@@ -183,7 +183,7 @@ auto weakening_from_status(Pokemon const & attacker) {
 	);
 }
 
-auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const weather) {
+auto physical_vs_special_modifier(ActivePokemon const attacker, ActivePokemon const defender, Weather const weather) {
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
@@ -199,11 +199,11 @@ auto physical_vs_special_modifier(ActivePokemon const & attacker, ActivePokemon 
 	);
 }
 
-auto screen_divisor(ActivePokemon const & attacker, Team const & defender) {
+auto screen_divisor(ActivePokemon const attacker, Team const & defender) {
 	return BOUNDED_CONDITIONAL(screen_is_active (attacker, defender), 2_bi, 1_bi);
 }
 
-auto critical_hit_multiplier(ActivePokemon const & attacker) {
+auto critical_hit_multiplier(ActivePokemon const attacker) {
 	return BOUNDED_CONDITIONAL(
 		!critical_hit(attacker), 1_bi,
 		BOUNDED_CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
@@ -262,7 +262,7 @@ void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1
 
 namespace {
 
-bool screen_is_active (ActivePokemon const & attacker, Team const & defender) {
+bool screen_is_active (ActivePokemon const attacker, Team const & defender) {
 	Move const & move = current_move(attacker);
 	return (reflect_is_active(move, defender) or light_screen_is_active(move, defender)) and !critical_hit(attacker);
 }

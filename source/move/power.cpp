@@ -137,7 +137,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 	}
 }
 
-auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather weather) -> bool;
+auto doubling(ActivePokemon const attacker, ActivePokemon const defender, Weather weather) -> bool;
 
 auto item_modifier_numerator(Pokemon const & attacker) -> bounded::integer<10, 12>;
 auto item_modifier(Pokemon const & attacker) {
@@ -183,7 +183,7 @@ auto move_power(Team const & attacker_team, Team const & defender_team, Weather 
 
 namespace {
 
-auto doubling(ActivePokemon const & attacker, ActivePokemon const & defender, Weather const weather) -> bool {
+auto doubling(ActivePokemon const attacker, ActivePokemon const defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the

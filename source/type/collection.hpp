@@ -25,8 +25,11 @@
 
 #include <bounded_integer/array.hpp>
 
+#include <type_traits>
+
 namespace technicalmachine {
 class ActivePokemon;
+class MutableActivePokemon;
 class Pokemon;
 class Weather;
 
@@ -74,10 +77,11 @@ private:
 	detail_type_collection::TypeArray types;
 };
 
-auto is_type(Pokemon const & pokemon, Type type, bool roosting = false) -> bool;
-auto is_type(ActivePokemon const & pokemon, Type type) -> bool;
+auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
+
+auto grounded(ActivePokemon pokemon, Weather weather) -> bool;
+auto grounded(MutableActivePokemon pokemon, Weather weather) -> bool;
 auto grounded(Pokemon const & pokemon, Weather weather) -> bool;
-auto grounded(ActivePokemon const & pokemon, Weather weather) -> bool;
 
 }	// namespace technicalmachine
 #endif	// TYPE__COLLECTION_HPP_

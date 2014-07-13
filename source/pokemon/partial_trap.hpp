@@ -23,7 +23,7 @@
 #include "../hash.hpp"
 
 namespace technicalmachine {
-class ActivePokemon;
+class MutableActivePokemon;
 
 // This class handles the number of turns remaining on Bind, Clamp, Fire Spin,
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap
@@ -35,7 +35,7 @@ public:
 	auto activate() {
 		m_base.activate();
 	}
-	auto damage(ActivePokemon & pokemon) -> void;
+	auto damage(MutableActivePokemon pokemon) -> void;
 
 	constexpr auto hash() const noexcept {
 		return technicalmachine::hash(m_base);

@@ -27,6 +27,7 @@
 namespace technicalmachine {
 
 class ActivePokemon;
+class MutableActivePokemon;
 class Team;
 class Weather;
 
@@ -34,7 +35,7 @@ class LegalSelections {
 	using Container = std::vector<Moves>;
 public:
 	using const_iterator = Container::const_iterator;
-	LegalSelections(Team const & user, ActivePokemon const & other, Weather weather);
+	LegalSelections(Team const & user, ActivePokemon other, Weather weather);
 	Species species() const;
 	const_iterator begin() const;
 	const_iterator end() const;
@@ -45,7 +46,7 @@ private:
 	Species m_species;
 };
 
-bool can_execute_move(ActivePokemon & user, ActivePokemon const & other, Weather weather);
+bool can_execute_move(MutableActivePokemon user, ActivePokemon other, Weather weather);
 
 }	// namespace technicalmachine
 #endif	// BLOCK_HPP_

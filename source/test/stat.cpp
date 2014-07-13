@@ -111,11 +111,12 @@ void min_defense_test() {
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
-	auto & pokemon = defender.pokemon();
+	auto pokemon = defender.pokemon();
 	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
 	get_nature(pokemon) = Nature::Hasty;
 
-	for (unsigned n = 0; n != 3; ++n) {
+	for (auto const n : bounded::integer_range(3_bi)) {
+		static_cast<void>(n);
 		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
 

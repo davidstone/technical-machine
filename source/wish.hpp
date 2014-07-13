@@ -25,13 +25,13 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class ActivePokemon;
+class MutableActivePokemon;
 class Pokemon;
 
 class Wish {
 public:
 	auto activate() -> void;
-	auto decrement(ActivePokemon & pokemon) -> void;
+	auto decrement(MutableActivePokemon pokemon) -> void;
 	constexpr auto is_active() const {
 		return static_cast<bool>(m_turns_until_activation);
 	}

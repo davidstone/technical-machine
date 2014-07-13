@@ -27,7 +27,7 @@ using namespace bounded::literal;
 // constexpr auto extended_duration = 8_bi;
 }	// namespace
 
-auto PartialTrap::damage(ActivePokemon & pokemon) -> void {
+auto PartialTrap::damage(MutableActivePokemon pokemon) -> void {
 	if (is_active()) {
 		heal(pokemon, make_rational(-1_bi, 16_bi));
 		m_base.advance_one_turn();

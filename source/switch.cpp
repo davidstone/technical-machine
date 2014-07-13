@@ -31,9 +31,8 @@ namespace technicalmachine {
 namespace {
 
 auto switch_pokemon(Team & team) {
-	auto & pokemon = team.pokemon();
-	if (get_ability(pokemon).clears_status_on_switch()) {
-		get_status(pokemon) = Status{};
+	if (get_ability(team.pokemon()).clears_status_on_switch()) {
+		get_status(team.pokemon()) = Status{};
 	}
 	team.all_pokemon().set_index(team.all_pokemon().replacement());
 }
@@ -41,10 +40,9 @@ auto switch_pokemon(Team & team) {
 }	// namespace
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather) {
-	auto & pokemon = switcher.pokemon();
-	pokemon.reset_switch();
+	switcher.reset_switch();
 
-	if (get_hp(pokemon) != 0_bi) {
+	if (get_hp(switcher.pokemon()) != 0_bi) {
 		switch_pokemon(switcher);
 	}
 	else {
@@ -54,11 +52,11 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 			return;
 		}
 	}
-	apply(switcher.entry_hazards, pokemon, weather);
-	if (get_hp(pokemon) != 0_bi) {
-		Ability::activate_on_switch (pokemon, other.pokemon(), weather);
+	apply(switcher.entry_hazards, switcher.pokemon(), weather);
+	if (get_hp(switcher.pokemon()) != 0_bi) {
+		Ability::activate_on_switch(switcher.pokemon(), other.pokemon(), weather);
 	}
-	switch_in(pokemon);
+	switch_in(switcher.pokemon());
 }
 
 }	// namespace technicalmachine

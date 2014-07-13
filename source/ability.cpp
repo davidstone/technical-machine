@@ -61,14 +61,14 @@ void Ability::set_if_unknown(Abilities const ability) {
 		m_name = ability;
 }
 
-bool Ability::blocks_switching(ActivePokemon const & switcher, Weather const weather) const {
+bool Ability::blocks_switching(ActivePokemon const switcher, Weather const weather) const {
 	switch (name()) {
 		case Shadow_Tag:
 			return get_ability(switcher).name() != Shadow_Tag;
 		case Arena_Trap:
 			return grounded(switcher, weather);
 		case Magnet_Pull:
-			return is_type(switcher, Type::Steel);
+			return is_type(switcher, Type::Steel, is_roosting(switcher));
 		default:
 			return false;
 	}
@@ -276,7 +276,7 @@ bool Ability::is_loafing(bool const loaf) const {
 	return name() == Truant and loaf;
 }
 
-auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyModifier {
+auto ability_accuracy_modifier(ActivePokemon const user) -> AbilityAccuracyModifier {
 	switch (get_ability(user).name()) {
 		case Ability::Compoundeyes:
 			return AbilityAccuracyModifier(13_bi, 10_bi);
@@ -287,7 +287,7 @@ auto ability_accuracy_modifier(ActivePokemon const & user) -> AbilityAccuracyMod
 	}
 }
 
-auto ability_evasion_modifier(ActivePokemon const & target, Weather const weather) -> AbilityEvasionModifier {
+auto ability_evasion_modifier(ActivePokemon const target, Weather const weather) -> AbilityEvasionModifier {
 	switch (get_ability(target).name()) {
 		case Ability::Sand_Veil:
 			return weather.sand() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
@@ -372,7 +372,7 @@ bool pinch_ability_activates(Pokemon const & attacker, Type const type) {
 }
 }	// namespace
 
-void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other, Weather & weather) {
+void Ability::activate_on_switch(MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
 	switch (get_ability(switcher).name()) {
 		case Download: {
 			auto const defense = calculate_defense(other, weather);
@@ -404,7 +404,7 @@ void Ability::activate_on_switch(ActivePokemon & switcher, ActivePokemon & other
 	}
 }
 
-void Ability::weather_healing(ActivePokemon & pokemon, Weather const weather) {
+void Ability::weather_healing(MutableActivePokemon pokemon, Weather const weather) {
 	switch (get_ability(pokemon).name()) {
 		case Dry_Skin:
 			if (weather.rain()) {

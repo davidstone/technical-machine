@@ -41,7 +41,7 @@ using ChanceToHit = bounded_rational<
 	bounded::integer<detail_chance_to_hit::max.value(), detail_chance_to_hit::max.value()>
 >;
 
-auto chance_to_hit(ActivePokemon const & user, ActivePokemon const & target, Weather weather, bool target_moved) -> ChanceToHit;
+auto chance_to_hit(ActivePokemon user, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
 
 }	// namespace technicalmachine
 #endif	// STAT__CHANCE_TO_HIT_HPP_

@@ -50,7 +50,7 @@ public:
 	static constexpr auto value = max_turns;
 };
 
-auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const & pokemon) {
+auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
 	auto const substitute = technicalmachine::substitute(pokemon);
 	auto const magnet_rise = technicalmachine::magnet_rise(pokemon);
@@ -110,7 +110,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 }
 
 
-auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const & pokemon) {
+auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const & moves = regular_moves(pokemon);
 	auto const has_baton_pass = std::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return

@@ -23,7 +23,6 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
 class Pokemon;
 class Team;
 class Variable;

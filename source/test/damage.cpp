@@ -70,11 +70,12 @@ Team max_damage_physical_defender() {
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
-	auto & pokemon = defender.pokemon();
+	auto pokemon = defender.pokemon();
 	get_stat(pokemon, StatNames::DEF).iv = IV(0_bi);
 	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
 	get_nature(pokemon) = Nature::Hasty;
-	for (unsigned n = 0; n != 3; ++n) {
+	for (auto const n : bounded::integer_range(3_bi)) {
+		static_cast<void>(n);
 		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
 	return defender;
@@ -85,12 +86,13 @@ Team max_damage_special_defender() {
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Paras, level, gender);
-	auto & d = defender.pokemon();
+	auto d = defender.pokemon();
 	get_ability(d) = Ability::Dry_Skin;
 
 	get_stat(d, StatNames::SPD).iv = IV(0_bi);
 	get_stat(d, StatNames::SPD).ev = EV(0_bi);
-	for (unsigned n = 0; n != 3; ++n) {
+	for (auto const n : bounded::integer_range(3_bi)) {
+		static_cast<void>(n);
 		boost(stage(d), StatNames::SPD, -2_bi);
 	}
 
@@ -102,7 +104,7 @@ void physical_power_test() {
 	constexpr auto max_power = 1440_bi;
 
 	Team attacker = max_damage_physical_attacker();
-	auto & pokemon = attacker.pokemon();
+	auto pokemon = attacker.pokemon();
 	get_item(pokemon) = Item::Rock_Incense;
 	get_ability(pokemon) = Ability::Rivalry;
 

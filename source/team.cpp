@@ -61,14 +61,6 @@ Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
 	load(team_file.string());
 }
 
-ActivePokemon const & Team::pokemon() const {
-	return active_pokemon;
-}
-
-ActivePokemon & Team::pokemon() {
-	return active_pokemon;
-}
-
 Pokemon const & Team::pokemon(PokemonCollection::index_type const index) const {
 	return all_pokemon()(index);
 }
@@ -84,11 +76,11 @@ Pokemon & Team::replacement() {
 }
 
 PokemonCollection const & Team::all_pokemon() const {
-	return active_pokemon.all_pokemon();
+	return m_all_pokemon;
 }
 
 PokemonCollection & Team::all_pokemon() {
-	return active_pokemon.all_pokemon();
+	return m_all_pokemon;
 }
 
 TeamSize Team::number_of_seen_pokemon() const {
@@ -103,11 +95,19 @@ bool Team::is_me() const {
 }
 
 void Team::reset_between_turns() {
-	pokemon().reset_between_turns();
+	m_flags.reset_between_turns();
 	for (auto & member : all_pokemon()) {
 		all_moves(member).reset_index();
 	}
 	all_pokemon().initialize_replacement();
+}
+
+auto Team::reset_end_of_turn() -> void {
+	m_flags.reset_end_of_turn();
+}
+
+auto Team::reset_switch() -> void {
+	m_flags.reset_switch();
 }
 
 void Team::clear_field() {
@@ -158,7 +158,7 @@ void Team::load(std::string const & name) {
 bool operator== (Team const & lhs, Team const & rhs) {
 	return
 		lhs.all_pokemon() == rhs.all_pokemon() and
-		lhs.active_pokemon == rhs.active_pokemon and
+		lhs.m_flags == rhs.m_flags and
 		lhs.screens == rhs.screens and
 		lhs.wish == rhs.wish and
 		lhs.entry_hazards == rhs.entry_hazards and

@@ -413,12 +413,11 @@ void Battle::do_turn() {
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
-		auto & pokemon = foe.pokemon();
-		while (will_be_replaced(pokemon)) {
+		while (will_be_replaced(foe.pokemon())) {
 			// I suspect this check of is_switch() is not needed and may
 			// actually be wrong, but I'm not sure, so I'm leaving it as is.
-			if (!is_switch(current_move(pokemon))) {
-				set_index(all_moves(pokemon), foe.all_pokemon().replacement_to_switch());
+			if (!is_switch(current_move(foe.pokemon()))) {
+				set_index(all_moves(foe.pokemon()), foe.all_pokemon().replacement_to_switch());
 			}
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}
@@ -447,7 +446,7 @@ void Battle::normalize_hp() {
 namespace {
 
 // Fix any rounding issues caused by not seeing the foe's exact HP.
-auto normalize_hp(ActivePokemon & pokemon, bool const fainted) {
+auto normalize_hp(MutableActivePokemon pokemon, bool const fainted) {
 	if (fainted) {
 		pokemon.faint();
 	}

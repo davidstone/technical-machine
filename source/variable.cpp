@@ -759,7 +759,7 @@ auto phaze_probability(TeamSize const foe_size) -> Probabilities {
 	return probabilities;
 }
 
-auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
+auto acupressure_probability(ActivePokemon const pokemon) -> Probabilities {
 	static constexpr auto boostable_stats = bounded::make_array(
 		StatNames::ATK,
 		StatNames::DEF,
@@ -787,7 +787,7 @@ auto acupressure_probability(ActivePokemon const & pokemon) -> Probabilities {
 
 }	// namespace
 
-auto all_probabilities(ActivePokemon const & pokemon, TeamSize const foe_size) -> Probabilities {
+auto all_probabilities(ActivePokemon const pokemon, TeamSize const foe_size) -> Probabilities {
 	static auto const probability = initial_probabilities();
 	Moves const move = current_move(pokemon);
 	if (is_phaze(move)) {

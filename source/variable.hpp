@@ -64,7 +64,7 @@ private:
 };
 
 using Probabilities = std::vector<Variable>;
-auto all_probabilities(ActivePokemon const & pokemon, TeamSize foe_size) -> Probabilities;
+auto all_probabilities(ActivePokemon pokemon, TeamSize foe_size) -> Probabilities;
 
 }	// namespace technicalmachine
 #endif	// VARIABLE_HPP_

@@ -28,6 +28,8 @@
 #include "wish.hpp"
 
 #include "pokemon/active_pokemon.hpp"
+#include "pokemon/active_pokemon_flags.hpp"
+#include "pokemon/collection.hpp"
 #include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
@@ -40,8 +42,12 @@ public:
 	Team ();
 	Team(std::mt19937 & random_engine, std::string const & team_file_name);
 	
-	ActivePokemon const & pokemon() const;
-	ActivePokemon & pokemon();
+	auto pokemon() const {
+		return ActivePokemon(all_pokemon()(), m_flags);
+	}
+	auto pokemon() {
+		return MutableActivePokemon(all_pokemon()(), m_flags);
+	}
 	Pokemon const & pokemon(PokemonCollection::index_type index) const;
 	Pokemon & pokemon(PokemonCollection::index_type index);
 	Pokemon const & replacement() const;
@@ -58,16 +64,20 @@ public:
 	
 	bool is_me() const;
 	std::string who() const;
+
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
 	void reset_between_turns();
+
+	auto reset_end_of_turn() -> void;
+	auto reset_switch() -> void;
 	void clear_field();
 	void move(bool value = true);
 
 	auto hash() const noexcept {
 		return technicalmachine::hash(
-			active_pokemon,
-			all_pokemon(),
+			m_all_pokemon,
+			m_flags,
 			entry_hazards,
 			screens,
 			wish
@@ -78,8 +88,9 @@ public:
 private:
 	friend class Evaluate;
 	void load(std::string const & name);
-
-	ActivePokemon active_pokemon;
+	
+	PokemonCollection m_all_pokemon;
+	ActivePokemonFlags m_flags;
 public:
 	Screens screens;
 	Wish wish;
