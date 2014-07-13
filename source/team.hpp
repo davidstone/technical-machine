@@ -39,7 +39,7 @@ class Weather;
 
 class Team {
 public:
-	explicit Team(TeamSize initial_size);
+	explicit Team(TeamSize initial_size, bool is_me = false);
 	Team(std::mt19937 & random_engine, std::string const & team_file_name);
 	
 	auto pokemon() const {

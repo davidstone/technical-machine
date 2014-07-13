@@ -294,6 +294,7 @@ test_sources += prepend_dir('test/collections', [
 test_sources += evaluate_sources
 test_sources += prepend_dir('test/evaluate', [
 	'evaluate.cpp',
+	'expectiminimax.cpp',
 ])
 test_sources += prepend_dir('test/pokemon_lab', [
 	'team_file.cpp',

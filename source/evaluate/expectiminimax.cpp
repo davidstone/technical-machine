@@ -257,9 +257,9 @@ int64_t accuracy_branch(Team & first, Team & last, Weather const weather, unsign
 	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
 		pokemon.set_miss(!flag);
 	};
-	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const missed) {
+	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
 		auto base = chance_to_hit(user, target, weather, target_moved);
-		return BOUNDED_CONDITIONAL(missed, complement(base), base);
+		return BOUNDED_CONDITIONAL(hit, base, complement(base));
 	};
 
 
@@ -267,14 +267,14 @@ int64_t accuracy_branch(Team & first, Team & last, Weather const weather, unsign
 	for (auto const first_flag : { true, false }) {
 		constexpr bool last_moved = false;
 		auto const p1 = probability(first.pokemon(), last.pokemon(), last_moved, first_flag);
-		if (first_flag and p1 == make_rational(0_bi, 1_bi)) {
+		if (p1 == make_rational(0_bi, 1_bi)) {
 			continue;
 		}
 		set_flag(first.pokemon(), first_flag);
 		for (auto const last_flag : { true, false }) {
 			constexpr bool first_moved = true;
 			auto const p2 = probability(last.pokemon(), first.pokemon(), first_moved, last_flag);
-			if (last_flag and p2 == make_rational(0_bi, 1_bi)) {
+			if (p2 == make_rational(0_bi, 1_bi)) {
 				continue;
 			}
 			set_flag(last.pokemon(), last_flag);
@@ -295,13 +295,13 @@ int64_t generic_flag_branch(Team & first, Team & last, Weather const weather, un
 	for (auto const first_flag : { true, false }) {
 		set_flag(first.pokemon(), first_flag);
 		auto const p1 = probability(first.pokemon(), first_flag);
-		if (first_flag and p1 == make_rational(0_bi, 1_bi)) {
+		if (p1 == make_rational(0_bi, 1_bi)) {
 			continue;
 		}
 		for (auto const last_flag : { true, false }) {
 			set_flag(last.pokemon(), last_flag);
 			auto const p2 = probability(last.pokemon(), last_flag);
-			if (last_flag and p2 == make_rational(0_bi, 1_bi)) {
+			if (p2 == make_rational(0_bi, 1_bi)) {
 				continue;
 			}
 			auto const p = p1 * p2;

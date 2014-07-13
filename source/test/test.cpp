@@ -1,5 +1,5 @@
 // Test stuff
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,6 +25,7 @@
 #include "status.hpp"
 #include "string_conversion.hpp"
 #include "evaluate/evaluate.hpp"
+#include "evaluate/expectiminimax.hpp"
 #include "pokemon_lab/test.hpp"
 #include "pokemon_online/test.hpp"
 
@@ -39,6 +40,7 @@ int main() {
 	ev_optimizer_tests();
 	
 	evaluate_tests();
+	expectiminimax_tests();
 
 	pl::test ();
 	po::test ();
