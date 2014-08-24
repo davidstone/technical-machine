@@ -49,7 +49,7 @@ Server::Server (boost::property_tree::ptree const & server):
 
 void Settings::write () const {
 	boost::property_tree::ptree pt;
-	boost::property_tree::xml_writer_settings<char> format_settings ('\t', 1);
+	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> format_settings('\t', 1);
 
 	boost::property_tree::ptree & root = pt.add ("settings", "");
 

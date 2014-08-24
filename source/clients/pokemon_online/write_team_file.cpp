@@ -121,7 +121,7 @@ void write_blank_pokemon (ptree & pt) {
 
 void write_team (Team & team, std::string const & file_name) {
 	ptree pt;
-	boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
+	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
 	ptree & t = pt.add ("Team", "");
 	t.put ("<xmlattr>.version", 1);
 	t.put ("<xmlattr>.gen", 4);
