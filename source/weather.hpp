@@ -41,6 +41,8 @@ using namespace bounded::literal;
 class Weather {
 public:
 	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
+	
+	constexpr Weather() {}
 
 	auto trick_room() const -> bool;
 	auto fog() const -> bool;
