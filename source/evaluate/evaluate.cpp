@@ -51,7 +51,7 @@ public:
 };
 
 auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon) {
-	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Stage::value_type>()));
+	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Evaluate::value_type>()));
 	auto const substitute = technicalmachine::substitute(pokemon);
 	auto const magnet_rise = technicalmachine::magnet_rise(pokemon);
 	auto const & stage = technicalmachine::stage(pokemon);
