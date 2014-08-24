@@ -147,12 +147,9 @@ auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const 
 		if (get_hp(team.pokemon(index)) == 0_bi) {
 			continue;
 		}
-		bool const is_active = (index == team.all_pokemon().index());
 		score += score_pokemon(evaluate, team.pokemon(index), team.entry_hazards, other, weather);
-		if (is_active) {
-			score += score_active_pokemon(evaluate, team.pokemon());
-		}
 	}
+	score += score_active_pokemon(evaluate, team.pokemon());
 	return score;
 }
 
