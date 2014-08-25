@@ -48,14 +48,14 @@ auto make_shuffled_array(RandomEngine & random_engine, Ts ... ts) {
 }
 
 void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
-	auto const shuffled_array = [&](auto... args) {
+	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
 	constexpr auto depth = 1;
 
 	Team team1(1_bi, true);
 	team1.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-	for (auto const move : shuffled_array(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
+	for (auto const move : shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
 		all_moves(team1.pokemon()).add(move);
 	}
 	get_stat(team1.pokemon(), StatNames::SPA).ev = EV(252_bi);
@@ -63,7 +63,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 
 	Team team2(1_bi);
 	team2.add_pokemon(Species::Gyarados, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
-	for (auto const move : shuffled_array(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)) {
+	for (auto const move : shuffled(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)) {
 		all_moves(team2.pokemon()).add(move);
 	}
 	get_stat(team2.pokemon(), StatNames::ATK).ev = EV(252_bi);
@@ -73,7 +73,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	
 	Team team3(1_bi);
 	team3.add_pokemon(Species::Shedinja, Level(100_bi), Gender::MALE, Item::Lum_Berry, Ability::Wonder_Guard, Nature::Adamant);
-	for (auto const move : shuffled_array(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)) {
+	for (auto const move : shuffled(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)) {
 		all_moves(team3.pokemon()).add(move);
 	}
 	get_stat(team3.pokemon(), StatNames::ATK).ev = EV(252_bi);
@@ -84,14 +84,14 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
-	auto const shuffled_array = [&](auto... args) {
+	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
 	constexpr auto depth = 1;
 	
 	Team team1(1_bi, true);
 	team1.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-	for (auto const move : shuffled_array(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
+	for (auto const move : shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
 		all_moves(team1.pokemon()).add(move);
 	}
 	get_stat(team1.pokemon(), StatNames::SPA).ev = EV(252_bi);
@@ -99,7 +99,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 
 	Team team2(1_bi);
 	team2.add_pokemon(Species::Swampert, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Torrent, Nature::Bold);
-	for (auto const move : shuffled_array(Moves::Surf, Moves::Ice_Beam)) {
+	for (auto const move : shuffled(Moves::Surf, Moves::Ice_Beam)) {
 		all_moves(team2.pokemon()).add(move);
 	}
 	get_hp(team2.pokemon()).ev = EV(252_bi);
@@ -109,10 +109,13 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 }
 
 void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	auto const shuffled = [&](auto... args) {
+		return make_shuffled_array(random_engine, args...);
+	};
 	constexpr auto depth = 5;
 	Team team1(1_bi, true);
 	team1.add_pokemon(Species::Charizard, Level(100_bi), Gender::MALE, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
-	for (auto const move : { Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge }) {
+	for (auto const move : shuffled(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)) {
 		all_moves(team1.pokemon()).add(move);
 	}
 	get_stat(team1.pokemon(), StatNames::ATK).ev = EV(252_bi);
@@ -120,7 +123,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 
 	Team team2(1_bi);
 	team2.add_pokemon(Species::Mew, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Synchronize, Nature::Impish);
-	for (auto const move : { Moves::Rest, Moves::Synthesis, Moves::Softboiled, Moves::Roost }) {
+	for (auto const move : shuffled(Moves::Softboiled)) {
 		all_moves(team2.pokemon()).add(move);
 	}
 	get_hp(team2.pokemon()).ev = EV(252_bi);
