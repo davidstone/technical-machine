@@ -24,7 +24,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto initial = static_cast<int64_t>(victory + 1_bi);
+constexpr auto initial = static_cast<double>(victory + 1_bi);
 }
 
 MoveScores::MoveScores(Pokemon const & pokemon) {
@@ -44,10 +44,10 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	}
 }
 
-int64_t const & MoveScores::at(Species const species, Moves const name) const {
+double const & MoveScores::at(Species const species, Moves const name) const {
 	return scores.at(key_type(species, name));
 }
-int64_t & MoveScores::at(Species const species, Moves const name) {
+double & MoveScores::at(Species const species, Moves const name) {
 	return scores.at(key_type(species, name));
 }
 

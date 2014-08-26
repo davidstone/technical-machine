@@ -19,15 +19,13 @@
 #ifndef EVALUATE__TRANSPOSITION_HPP_
 #define EVALUATE__TRANSPOSITION_HPP_
 
-#include <cstdint>
-
 namespace technicalmachine {
 
 class Evaluate;
 class Team;
 class Weather;
 
-int64_t transposition (Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
+double transposition(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
 
 }	// namespace technicalmachine
 #endif	// EVALUATE__TRANSPOSITION_HPP_

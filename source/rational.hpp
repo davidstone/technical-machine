@@ -69,14 +69,6 @@ public:
 		return number * m_numerator / m_denominator;
 	}
 	
-	// Temporary function until I finish converting expectiminimax to use
-	// bounded::integer, add big num support to bounded::integer, or improve
-	// compound assignment operators in bounded::integer.
-	template<typename T>
-	constexpr auto unchecked_multiply(T const other) const {
-		return other * static_cast<T>(m_numerator) / static_cast<T>(m_denominator);
-	}
-
 	template<typename N, typename D>
 	constexpr auto operator*(bounded_rational<N, D> const other) const {
 		return make_rational(m_numerator * other.m_numerator, m_denominator * other.m_denominator);

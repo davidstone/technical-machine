@@ -185,42 +185,34 @@ constexpr auto max_sleep_turns = 4_bi;
 using DefiniteSleepCounter = bounded::integer<0, static_cast<intmax_t>(max_sleep_turns)>;
 
 // It's possible to acquire Early Bird in the middle of a sleep
-auto early_bird_probability(DefiniteSleepCounter const turns_slept) -> bounded_rational<bounded::integer<1, 2>, bounded::integer<1, 4>> {
+auto early_bird_probability(DefiniteSleepCounter const turns_slept) {
 	switch (turns_slept.value()) {
 	case 0:
-		return make_rational(1_bi, 4_bi);
+		return 1.0 / 4.0;
 	case 1:
-		return make_rational(1_bi, 2_bi);
+		return 1.0 / 2.0;
 	case 2:
-		return make_rational(2_bi, 3_bi);
+		return 2.0 / 3.0;
 	default:	// case 3, 4
-		return make_rational(1_bi, 1_bi);
+		return 1.0;
 	}
 }
 
 auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
-	using SleptAtLeastOneTurn = bounded::integer<1, static_cast<intmax_t>(max_sleep_turns)>;
-	return BOUNDED_CONDITIONAL(turns_slept == 0_bi,
-		make_rational(0_bi, 1_bi),
-		make_rational(1_bi, (max_sleep_turns + 1_bi) - static_cast<SleptAtLeastOneTurn>(turns_slept))
-	);
+	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(max_sleep_turns + 1_bi - turns_slept));
 }
-
-template<typename T>
-class Print;
 
 }	// namespace
 
 auto Status::awaken_probability(Ability const & ability) const -> AwakenProbability {
 	static_assert(std::is_same<DefiniteSleepCounter, SleepCounter::value_type>::value, "Incorrect sleep counter type.");
 	if (!m_turns_already_slept) {
-		return make_rational(0_bi, 1_bi);
+		return 0.0;
 	}
-	auto const wake_up_probability = BOUNDED_CONDITIONAL(ability.wakes_up_early(),
-		early_bird_probability(*m_turns_already_slept),
+	return ability.wakes_up_early() ?
+		early_bird_probability(*m_turns_already_slept) :
 		non_early_bird_probability(*m_turns_already_slept)
-	);
-	return static_cast<AwakenProbability>(wake_up_probability);
+	;
 }
 
 }	// namespace technicalmachine

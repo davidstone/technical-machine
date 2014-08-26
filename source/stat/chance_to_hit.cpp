@@ -44,14 +44,12 @@ auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemM
 using EvasionItemModifier = bounded_rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
 auto evasion_item_modifier(Item const item) -> EvasionItemModifier;
 
-using namespace detail_chance_to_hit;
-
 }	// namespace
 
 auto chance_to_hit(ActivePokemon const user, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
 	auto const base_accuracy = accuracy(current_move(user));
 	if (!move_can_miss(user, base_accuracy, get_ability(target))) {
-		return ChanceToHit(max, max);
+		return 1.0;
 	}
 	constexpr auto gravity_denominator = 3_bi;
 	auto const gravity_numerator = BOUNDED_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
@@ -66,7 +64,8 @@ auto chance_to_hit(ActivePokemon const user, ActivePokemon const target, Weather
 		gravity_multiplier
 	;
 	
-	return ChanceToHit(bounded::clamped_integer<min.value(), max.value()>(calculated_accuracy), max);
+	auto const max = 100;
+	return static_cast<double>(bounded::clamped_integer<0, max>(calculated_accuracy)) / static_cast<double>(max);
 }
 
 namespace {

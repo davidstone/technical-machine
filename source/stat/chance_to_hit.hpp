@@ -19,27 +19,12 @@
 #ifndef STAT__CHANCE_TO_HIT_HPP_
 #define STAT__CHANCE_TO_HIT_HPP_
 
-#include "../rational.hpp"
-
-#include <bounded_integer/bounded_integer.hpp>
-
 namespace technicalmachine {
-using namespace bounded::literal;
 
 class ActivePokemon;
 class Weather;
 
-namespace detail_chance_to_hit {
-
-constexpr auto min = 0_bi;
-constexpr auto max = 100_bi;
-
-}	// namespace detail_chance_to_hit
-
-using ChanceToHit = bounded_rational<
-	bounded::integer<detail_chance_to_hit::min.value(), detail_chance_to_hit::max.value()>,
-	bounded::integer<detail_chance_to_hit::max.value(), detail_chance_to_hit::max.value()>
->;
+using ChanceToHit = double;
 
 auto chance_to_hit(ActivePokemon user, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
 

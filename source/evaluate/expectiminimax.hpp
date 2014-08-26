@@ -19,7 +19,6 @@
 #ifndef EVALUATE__EXPECTIMINIMAX_HPP_
 #define EVALUATE__EXPECTIMINIMAX_HPP_
 
-#include <cstdint>
 #include <random>
 #include "../move/moves_forward.hpp"
 
@@ -32,7 +31,7 @@ class Weather;
 Moves expectiminimax(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
-int64_t select_type_of_move(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
+double select_type_of_move(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
 #endif	// EVALUATE__EXPECTIMINIMAX_HPP_

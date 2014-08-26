@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,11 +30,11 @@ class Pokemon;
 class MoveScores {
 public:
 	explicit MoveScores(Pokemon const & pokemon);
-	int64_t const & at(Species species, Moves name) const;
-	int64_t & at(Species species, Moves name);
+	double const & at(Species species, Moves name) const;
+	double & at(Species species, Moves name);
 private:
 	using key_type = std::pair<Species, Moves>;
-	using container_type = std::map<key_type, int64_t>;
+	using container_type = std::map<key_type, double>;
 	container_type scores;
 };
 

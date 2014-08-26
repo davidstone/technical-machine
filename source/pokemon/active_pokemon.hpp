@@ -194,10 +194,7 @@ inline auto substitute(ActivePokemon const pokemon) -> Substitute const & {
 
 
 inline auto shed_skin_probability(ActivePokemon const pokemon) {
-	return make_rational(
-		BOUNDED_CONDITIONAL(get_ability(pokemon).can_clear_status(get_status(pokemon)), 3_bi, 0_bi),
-		10_bi
-	);
+	return get_ability(pokemon).can_clear_status(get_status(pokemon)) ? 0.3 : 0.0;
 }
 
 auto lower_pp(MutableActivePokemon user, Ability target) -> void;

@@ -24,7 +24,6 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
-#include "rational.hpp"
 #include "move/moves_forward.hpp"
 #include "pokemon/collection.hpp"
 #include "pokemon/level.hpp"
@@ -40,7 +39,7 @@ class Team;
 class Variable {
 public:
 	using value_type = bounded::integer<0, 150>;
-	using Probability = bounded_rational<bounded::integer<0, 79>, bounded::integer<1, 101>>;
+	using Probability = double;
 	Variable();
 	Variable(value_type value, Probability probability);
 	// Team is the Team that was phazed, not the team that used the phazing move

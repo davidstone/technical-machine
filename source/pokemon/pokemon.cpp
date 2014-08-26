@@ -127,7 +127,7 @@ bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	std::string output = to_string(static_cast<Species>(pokemon));
 	double const d_per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
-	std::string const per_cent_hp = str(boost::format("%.1f") % d_per_cent_hp);
+	std::string const per_cent_hp = (boost::format("%.1f") % d_per_cent_hp).str();
 	output += " (" + per_cent_hp + "% HP)";
 	output += " @ " + to_string(get_item(pokemon));
 	if (include_nickname and pokemon.get_nickname() != to_string(static_cast<Species>(pokemon))) {

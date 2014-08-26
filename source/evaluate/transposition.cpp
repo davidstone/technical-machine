@@ -36,7 +36,7 @@ class Hash {
 public:
 	uint64_t ai;
 	uint64_t foe;
-	int64_t value;
+	double value;
 	uint32_t weather;
 	unsigned depth;
 	constexpr Hash ():
@@ -96,11 +96,11 @@ Hash & hash_table_lookup (Hash const & current) {
 
 }	// anonymous namespace
 
-int64_t transposition (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+double transposition(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	if (depth == 0) {
-		return static_cast<int64_t>(evaluate(ai, foe, weather));
+		return static_cast<double>(evaluate(ai, foe, weather));
 	}
-	int64_t value;
+	double value;
 	// This long-form hash should be unique within a game.
 	Hash current (ai.hash(), foe.hash(), static_cast<uint32_t>(weather.hash().first), depth);
 	Hash & saved = hash_table_lookup (current);
