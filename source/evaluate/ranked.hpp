@@ -1,5 +1,5 @@
 // Class to order moves to improve alpha-beta pruning
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,14 +26,15 @@ namespace technicalmachine {
 
 class RankedMove {
 public:
-	explicit RankedMove(Moves set_move, int16_t set_score);
+	explicit RankedMove(Moves move, double score);
 	Moves name() const;
-	friend bool operator<(RankedMove const & lhs, RankedMove const & rhs);
-	friend bool operator>(RankedMove const & lhs, RankedMove const & rhs);
+	friend bool operator<(RankedMove lhs, RankedMove rhs);
 private:
-	int16_t score;
-	Moves move;
+	double m_score;
+	Moves m_move;
 };
+
+bool operator>(RankedMove lhs, RankedMove rhs);
 
 }	// namespace technicalmachine
 #endif	// EVALUATE__RANKED_HPP_

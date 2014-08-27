@@ -20,21 +20,21 @@
 
 namespace technicalmachine {
 
-RankedMove::RankedMove(Moves const set_move, int16_t const set_score):
-	score(set_score),
-	move(set_move) {
+RankedMove::RankedMove(Moves const move, double const score):
+	m_score(score),
+	m_move(move) {
 }
 
 Moves RankedMove::name() const {
-	return move;
+	return m_move;
 }
 
-bool operator<(RankedMove const & lhs, RankedMove const & rhs) {
-	return lhs.score < rhs.score;
+bool operator<(RankedMove const lhs, RankedMove const rhs) {
+	return lhs.m_score < rhs.m_score;
 }
 
-bool operator>(RankedMove const & lhs, RankedMove const & rhs) {
-	return lhs.score > rhs.score;
+bool operator>(RankedMove const lhs, RankedMove const rhs) {
+	return rhs < lhs;
 }
 
 }	// namespace technicalmachine
