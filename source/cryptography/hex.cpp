@@ -1,5 +1,5 @@
 // Convert string to hex representation
-// Copyright (C) 2011 David Stone
+// Copyright (C) 2014 David Stone
 //
 // This program is free software: you can redistribute it and / or modify
 // it under the terms of the GNU Affero General Public License as
@@ -25,8 +25,8 @@ std::string get_hex_string (std::string const & digest) {
 	std::string output;
 	output.resize (2 * digest.size ());
 	for (unsigned n = 0; n < digest.size (); ++n) {
-		unsigned const high = (static_cast <uint8_t const> (digest [n]) / 16);
-		unsigned const low = (static_cast <uint8_t const> (digest [n]) % 16);
+		auto const high = static_cast<unsigned>(digest [n]) / 16;
+		auto const low = static_cast<unsigned>(digest [n]) % 16;
 		output [n * 2] = hex_table [high];
 		output [n * 2 + 1] = hex_table [low];
 	}
