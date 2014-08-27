@@ -108,6 +108,10 @@ Probabilities magnitude_variables();
 Probabilities present_variables();
 Probabilities psywave_variables();
 
+constexpr bool almost_equal(double const lhs, double const rhs) {
+	return lhs - std::numeric_limits<double>::epsilon() <= rhs or rhs <= lhs + std::numeric_limits<double>::epsilon();
+}
+
 auto probability_sum(Probabilities const & value) -> double {
 	return std::accumulate(value.begin(), value.end(), 0.0, [](auto const probability, Variable const & variable) {
 		return probability + variable.probability();
@@ -684,11 +688,8 @@ auto initial_probabilities() {
 		{ Variable(0_bi, 1.0) },				// Fusion Flare
 		{ Variable(0_bi, 1.0) }		// Fusion Bolt
 	}};
-	for (auto move = static_cast<Moves>(0); move != Moves::END; move = static_cast<Moves>(static_cast<unsigned>(move) + 1)) {
-		// Psywave overflows the integer counter
-		if (move != Moves::Psywave) {
-			assert(probability_sum(activate_probability.at(move)) == 1.0);
-		}
+	for (auto const & probabilities : activate_probability) {
+		assert(almost_equal(probability_sum(probabilities), 1.0));
 	}
 	return activate_probability;
 }
@@ -703,7 +704,7 @@ auto magnitude_variables() -> Probabilities {
 		Variable(110_bi, 0.1),
 		Variable(150_bi, 0.05)
 	};
-	assert(probability_sum(variables) == 1.0);
+	assert(almost_equal(probability_sum(variables), 1.0));
 	return variables;
 }
 
