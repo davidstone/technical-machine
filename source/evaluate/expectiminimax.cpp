@@ -86,7 +86,7 @@ double move_then_switch_branch(Team & switcher, Team const & other, Variable con
 double switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate);
 
 Moves random_action (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
-Moves random_switch (Team const & ai, std::mt19937 & random_engine);
+Moves random_switch(Team const & ai, std::mt19937 & random_engine);
 std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_type index);
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
 
@@ -543,11 +543,12 @@ Moves random_action (Team const & ai, Team const & foe, Weather const weather, s
 		random_move_or_switch(ai, foe, weather, random_engine);
 }
 
-Moves random_switch (Team const & ai, std::mt19937 & random_engine) {
+Moves random_switch(Team const & ai, std::mt19937 & random_engine) {
 	std::vector<Moves> const switches = all_switches (ai.all_pokemon().size(), ai.all_pokemon().index());
+	assert(!switches.empty());
 	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
-	size_t const index = distribution (random_engine);
-	return switches [index];
+	size_t const index = distribution(random_engine);
+	return switches[index];
 }
 
 std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
@@ -562,6 +563,7 @@ std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::ind
 
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
 	LegalSelections const moves(ai, foe.pokemon(), weather);
+	assert(moves.size() != 0_bi);
 	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
 	auto const index = distribution(random_engine);
 	return moves[index];
