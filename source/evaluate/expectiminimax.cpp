@@ -101,7 +101,7 @@ void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, d
 Moves expectiminimax (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine) {
 	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	double min_score = 0.0;
-	boost::timer timer;	
+	boost::timer timer;
 	Moves best_move = random_action (ai, foe, weather, random_engine);
 	try {
 		for (unsigned deeper = 1; deeper <= depth; ++deeper) {

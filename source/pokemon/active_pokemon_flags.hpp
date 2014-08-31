@@ -108,8 +108,7 @@ class Move;
 	friend auto vanish_doubles_power(ActivePokemon pokemon, Moves move_name) -> bool; \
 	friend auto is_locked_in_to_bide(ActivePokemon pokemon) -> bool; \
 	friend auto damaged(ActivePokemon pokemon) -> bounded::integer<0, HP::max_value>; \
-	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()()); \
-	friend auto will_be_replaced(ActivePokemon pokemon) -> bool
+	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
 
 class ActivePokemonFlags {
 public:
@@ -205,6 +204,7 @@ private:
 	bool defense_curled = false;
 	bool destiny_bond = false;
 	bool enduring = false;
+	bool is_fainted = false;
 	bool flash_fire = false;
 	bool flinched = false;
 	bool has_focused_energy = false;
@@ -233,7 +233,6 @@ private:
 	bool is_tormented = false;
 	bool u_turning = false;
 	bool water_sport = false;
-	bool will_be_replaced = false;
 };
 auto operator!= (ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool;
 

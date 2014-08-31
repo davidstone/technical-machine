@@ -120,7 +120,7 @@ auto MutableActivePokemon::endure() -> void {
 
 auto MutableActivePokemon::faint() -> void {
 	get_hp(*this) = 0_bi;
-	m_flags.will_be_replaced = true;
+	m_flags.is_fainted = true;
 }
 
 auto MutableActivePokemon::activate_flash_fire() -> void {

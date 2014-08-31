@@ -247,7 +247,7 @@ inline auto is_encored(ActivePokemon const pokemon) -> bool {
 }
 
 inline auto is_fainted(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.will_be_replaced;
+	return pokemon.m_flags.is_fainted;
 }
 
 inline auto flash_fire_is_active(ActivePokemon const pokemon) -> bool {
@@ -357,7 +357,7 @@ inline auto spit_up_power(ActivePokemon const pokemon) -> decltype(pokemon.m_fla
 }
 
 inline auto switch_decision_required(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.is_baton_passing or pokemon.m_flags.u_turning or will_be_replaced(pokemon);
+	return pokemon.m_flags.is_baton_passing or pokemon.m_flags.u_turning or is_fainted(pokemon);
 }
 
 inline auto fully_trapped(ActivePokemon const pokemon) -> bool {
@@ -394,10 +394,6 @@ inline auto damaged(ActivePokemon const pokemon) -> bounded::integer<0, HP::max_
 
 inline auto random_damage_multiplier(ActivePokemon const pokemon) -> decltype(pokemon.m_flags.random_damage()) {
 	return pokemon.m_flags.random_damage();
-}
-
-inline auto will_be_replaced(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.will_be_replaced;
 }
 
 

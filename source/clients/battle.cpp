@@ -131,7 +131,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 	else {
 		msg.write_move(battle_id, 1);
 	}
-	if (!will_be_replaced(ai.pokemon())) {
+	if (!switch_decision_required(ai.pokemon())) {
 		initialize_turn();
 	}
 }
@@ -361,14 +361,14 @@ void Battle::do_turn() {
 		switcher.move(false);
 		normalize_hp();
 	};
-	if (will_be_replaced(first->pokemon())) {
+	if (switch_decision_required(first->pokemon())) {
 		normalize_hp();
 		replacement(*first, *last);
-		if (will_be_replaced(last->pokemon())) {
+		if (switch_decision_required(last->pokemon())) {
 			replacement(*last, *first);
 		}
 	}
-	else if (will_be_replaced(last->pokemon())) {
+	else if (switch_decision_required(last->pokemon())) {
 		normalize_hp();
 		replacement(*last, *first);
 	}
@@ -415,12 +415,8 @@ void Battle::do_turn() {
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
-		while (will_be_replaced(foe.pokemon())) {
-			// I suspect this check of is_switch() is not needed and may
-			// actually be wrong, but I'm not sure, so I'm leaving it as is.
-			if (!is_switch(current_move(foe.pokemon()))) {
-				set_index(all_moves(foe.pokemon()), foe.all_pokemon().replacement_to_switch());
-			}
+		while (is_fainted(foe.pokemon())) {
+			set_index(all_moves(foe.pokemon()), foe.all_pokemon().replacement_to_switch());
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}
 	}

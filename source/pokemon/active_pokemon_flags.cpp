@@ -54,6 +54,7 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	destiny_bond = false;
 	disable = Disable{};
 	encore = {};
+	is_fainted = false;
 	flash_fire = false;
 	flinched = false;
 	fully_trapped = false;
@@ -86,7 +87,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	// vanished. Therefore, we need to reset it.
 	vanish = {};
 	yawn = {};
-	will_be_replaced = false;
 }
 
 auto ActivePokemonFlags::reset_between_turns() -> void {
