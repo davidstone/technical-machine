@@ -256,6 +256,8 @@ double accuracy_branch(Team & first, Team & last, Weather const weather, unsigne
 	};
 	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
 		auto const base = chance_to_hit(user, target, weather, target_moved);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
 		return hit ? base : (1.0 - base);
 	};
 
@@ -286,6 +288,8 @@ template<typename SetFlag, typename Probability, typename NextBranch>
 double generic_flag_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & basic_probability, NextBranch const & next_branch) {
 	auto const probability = [&](auto const & pokemon, bool const flag) {
 		auto const base = basic_probability(pokemon);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
 		return flag ? base : (1.0 - base);
 	};
 
