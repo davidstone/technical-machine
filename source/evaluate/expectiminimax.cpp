@@ -388,8 +388,7 @@ bool has_follow_up_decision(Moves const move) {
 double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
 	auto const original = static_cast<Species>(user.pokemon());
 	if (!moved(user.pokemon())) {
-		auto const damage = call_move(user, other, weather, user_variable);
-		other.pokemon().direct_damage(damage);
+		call_move(user, other, weather, user_variable);
 		auto const user_win = Evaluate::win(user);
 		auto const other_win = Evaluate::win(other);
 		if (user_win != 0_bi or other_win != 0_bi) {
