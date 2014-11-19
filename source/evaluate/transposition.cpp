@@ -28,6 +28,7 @@
 #include "../weather.hpp"
 
 #include "../move/moves.hpp"
+#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -107,7 +108,7 @@ double transposition(Team & ai, Team & foe, Weather const weather, unsigned dept
 	// I verify that saved == current because hash_table_lookup only checks
 	// against shortened hashes for speed and memory reasons. I need the
 	// additional check to minimize the chances of a collision.
-	if (saved.depth >= current.depth and saved == current)
+	if (saved.depth >= current.depth and saved == current and false)
 		value = saved.value;
 	else {
 		Moves phony = Moves::END;
