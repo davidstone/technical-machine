@@ -45,8 +45,6 @@ namespace {
 
 bool affects_target(Type const & move_type, ActivePokemon target, Weather weather);
 
-damage_type regular_damage(Team const & attacker, Team const & defender, Weather weather, Variable const & variable);
-
 bool screen_is_active (ActivePokemon attacker, Team const & defender);
 bool reflect_is_active (Move const & move, Team const & defender);
 bool light_screen_is_active (Move const & move, Team const & defender);
@@ -128,49 +126,6 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-damage_type raw_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
-	auto const & attacker = attacker_team.pokemon();
-	switch (static_cast<Moves>(current_move(attacker))) {
-		case Moves::Dragon_Rage:
-			return 40_bi;
-		case Moves::Endeavor:
-			return bounded::max(get_hp(defender.pokemon()).current() - get_hp(attacker).current(), 0_bi);
-		case Moves::Fissure:
-		case Moves::Guillotine:
-		case Moves::Horn_Drill:
-		case Moves::Sheer_Cold:
-			return get_hp(defender.pokemon()).max();
-		case Moves::Night_Shade:
-		case Moves::Seismic_Toss:
-			return get_level(attacker)();
-		case Moves::Psywave:
-			return variable.psywave_damage(get_level(attacker));
-		case Moves::SonicBoom:
-			return 20_bi;
-		case Moves::Super_Fang:
-			return get_hp(defender.pokemon()).current() / 2_bi;
-		default:
-			return regular_damage(attacker_team, defender, weather, variable);
-	}
-}
-
-damage_type capped_damage(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
-	auto const damage = raw_damage(attacker, defender, weather, variable);
-	return (cannot_ko(current_move(attacker.pokemon())) or cannot_be_koed(defender.pokemon())) ?
-		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
-		damage;
-}
-
-}	// namespace
-
-damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
-	return affects_target(get_type(current_move(attacker.pokemon()), attacker.pokemon()), defender.pokemon(), weather) ?
-		capped_damage(attacker, defender, weather, variable) :
-		static_cast<damage_type>(0_bi);
-}
-
-namespace {
-
 auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_bi / 5_bi) {
 	return get_level(attacker)() * 2_bi / 5_bi;
 }
@@ -222,36 +177,75 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
-damage_type regular_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
+auto regular_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
 	auto const & attacker = attacker_team.pokemon();
-	auto damage = static_cast<unsigned>(level_multiplier(attacker) + 2_bi);
-
-	damage *= move_power(attacker_team, defender, weather, variable);
-	damage *= physical_vs_special_modifier(attacker, defender.pokemon(), weather);
-	damage /= screen_divisor(attacker, defender);
 	auto const type = get_type(current_move(attacker), attacker);
-	damage *= calculate_weather_modifier(type, weather);
-	damage *= calculate_flash_fire_modifier(attacker);
-	damage += 2;
-
-	damage *= critical_hit_multiplier(attacker);
-	damage *= calculate_item_modifier(attacker);
-	damage *= calculate_me_first_modifier(attacker);
-
-	damage *= random_damage_multiplier(attacker);
-	damage *= calculate_stab_modifier(attacker);
-
 	Effectiveness const effectiveness(type, defender.pokemon());
-	damage *= effectiveness;
-	damage *= calculate_ability_effectiveness_modifier(get_ability(defender.pokemon()), effectiveness);
-	damage *= calculate_expert_belt_modifier(get_item(attacker), effectiveness);
-	damage *= tinted_lens_multiplier(get_ability(attacker), effectiveness);
-	damage /= resistance_berry_divisor(get_item(defender.pokemon()), type, effectiveness);
 
-	return bounded::max(static_cast<damage_type>(damage), 1_bi);
+	auto const temp =
+		(level_multiplier(attacker) + 2_bi) *
+		move_power(attacker_team, defender, weather, variable) *
+		physical_vs_special_modifier(attacker, defender.pokemon(), weather) /
+		screen_divisor(attacker, defender) *
+		calculate_weather_modifier(type, weather) *
+		calculate_flash_fire_modifier(attacker) +
+		2_bi;
+
+	return bounded::max(1_bi, temp *
+		critical_hit_multiplier(attacker) *
+		calculate_item_modifier(attacker) *
+		calculate_me_first_modifier(attacker) *
+		random_damage_multiplier(attacker) *
+		calculate_stab_modifier(attacker) *
+		effectiveness *
+		calculate_ability_effectiveness_modifier(get_ability(defender.pokemon()), effectiveness) *
+		calculate_expert_belt_modifier(get_item(attacker), effectiveness) *
+		tinted_lens_multiplier(get_ability(attacker), effectiveness) /
+		resistance_berry_divisor(get_item(defender.pokemon()), type, effectiveness)
+	);
+}
+
+damage_type raw_damage(Team const & attacker_team, Team const & defender, Weather const weather, Variable const & variable) {
+	auto const & attacker = attacker_team.pokemon();
+	switch (static_cast<Moves>(current_move(attacker))) {
+		case Moves::Dragon_Rage:
+			return 40_bi;
+		case Moves::Endeavor:
+			return bounded::max(get_hp(defender.pokemon()).current() - get_hp(attacker).current(), 0_bi);
+		case Moves::Fissure:
+		case Moves::Guillotine:
+		case Moves::Horn_Drill:
+		case Moves::Sheer_Cold:
+			return get_hp(defender.pokemon()).max();
+		case Moves::Night_Shade:
+		case Moves::Seismic_Toss:
+			return get_level(attacker)();
+		case Moves::Psywave:
+			return variable.psywave_damage(get_level(attacker));
+		case Moves::SonicBoom:
+			return 20_bi;
+		case Moves::Super_Fang:
+			return get_hp(defender.pokemon()).current() / 2_bi;
+		default:
+			return static_cast<damage_type>(regular_damage(attacker_team, defender, weather, variable));
+	}
+}
+
+damage_type capped_damage(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
+	auto const damage = raw_damage(attacker, defender, weather, variable);
+	return (cannot_ko(current_move(attacker.pokemon())) or cannot_be_koed(defender.pokemon())) ?
+		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
+		damage;
 }
 
 }	// namespace
+
+
+damage_type damage_calculator(Team const & attacker, Team const & defender, Weather const weather, Variable const & variable) {
+	return affects_target(get_type(current_move(attacker.pokemon()), attacker.pokemon()), defender.pokemon(), weather) ?
+		capped_damage(attacker, defender, weather, variable) :
+		static_cast<damage_type>(0_bi);
+}
 
 
 void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1, 4> const denominator) {
