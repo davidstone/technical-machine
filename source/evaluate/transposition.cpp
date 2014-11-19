@@ -32,7 +32,7 @@
 
 namespace technicalmachine {
 namespace {
-
+#if 0
 class Hash {
 public:
 	uint64_t ai;
@@ -95,32 +95,36 @@ Hash & hash_table_lookup (Hash const & current) {
 	return table [ai_position] [foe_position] [weather_position];
 }
 
+#endif
 }	// anonymous namespace
 
 double transposition(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	if (depth == 0) {
 		return static_cast<double>(evaluate(ai, foe, weather));
 	}
-	double value;
+	#if 0
 	// This long-form hash should be unique within a game.
 	Hash current (ai.hash(), foe.hash(), static_cast<uint32_t>(weather.hash().first), depth);
 	Hash & saved = hash_table_lookup (current);
 	// I verify that saved == current because hash_table_lookup only checks
 	// against shortened hashes for speed and memory reasons. I need the
 	// additional check to minimize the chances of a collision.
-	if (saved.depth >= current.depth and saved == current and false)
-		value = saved.value;
-	else {
-		Moves phony = Moves::END;
-		// If I can't find it, continue evaluation as normal.
-		value = select_type_of_move(ai, foe, weather, depth, evaluate, phony);
-		current.value = value;
-		
-		// Since I didn't find any stored value at the same hash as the
-		// current state, or the value I found was for a shallower depth,
-		// add the new value to my table.
-		saved = current;
+	if (saved.depth >= current.depth and saved == current and false) {
+		return saved.value;
 	}
+	#endif
+
+	Moves phony = Moves::END;
+	// If I can't find it, continue evaluation as normal.
+	auto const value = select_type_of_move(ai, foe, weather, depth, evaluate, phony);
+	#if 0
+	current.value = value;
+	
+	// Since I didn't find any stored value at the same hash as the
+	// current state, or the value I found was for a shallower depth,
+	// add the new value to my table.
+	saved = current;
+	#endif
 	return value;
 }
 
