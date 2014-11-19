@@ -53,23 +53,23 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	};
 	constexpr auto depth = 1;
 
-	Team team1(1_bi, true);
-	team1.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+	Team attacker(1_bi, true);
+	attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 	for (auto const move : shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
-		all_moves(team1.pokemon()).add(move);
+		all_moves(attacker.pokemon()).add(move);
 	}
-	get_stat(team1.pokemon(), StatNames::SPA).ev = EV(252_bi);
-	get_stat(team1.pokemon(), StatNames::SPE).ev = EV(252_bi);
+	get_stat(attacker.pokemon(), StatNames::SPA).ev = EV(252_bi);
+	get_stat(attacker.pokemon(), StatNames::SPE).ev = EV(252_bi);
 
-	Team team2(1_bi);
-	team2.add_pokemon(Species::Gyarados, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
+	Team defender(1_bi);
+	defender.add_pokemon(Species::Gyarados, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)) {
-		all_moves(team2.pokemon()).add(move);
+		all_moves(defender.pokemon()).add(move);
 	}
-	get_stat(team2.pokemon(), StatNames::ATK).ev = EV(252_bi);
-	get_stat(team2.pokemon(), StatNames::SPE).ev = EV(252_bi);
+	get_stat(defender.pokemon(), StatNames::ATK).ev = EV(252_bi);
+	get_stat(defender.pokemon(), StatNames::SPE).ev = EV(252_bi);
 
-	assert(expectiminimax(team1, team2, weather, depth, evaluate, random_engine) == Moves::Thunderbolt);
+	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Thunderbolt);
 	
 	Team team3(1_bi);
 	team3.add_pokemon(Species::Shedinja, Level(100_bi), Gender::MALE, Item::Lum_Berry, Ability::Wonder_Guard, Nature::Adamant);
@@ -80,7 +80,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	get_stat(team3.pokemon(), StatNames::SPE).ev = EV(252_bi);
 	
 	// TODO: implement Wonder_Guard
-//	assert(expectiminimax(team1, team3, weather, depth, evaluate, random_engine) == Moves::Shadow_Ball);
+//	assert(expectiminimax(attacker, team3, weather, depth, evaluate, random_engine) == Moves::Shadow_Ball);
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -89,48 +89,48 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	};
 	constexpr auto depth = 1;
 	
-	Team team1(1_bi, true);
-	team1.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+	Team attacker(1_bi, true);
+	attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 	for (auto const move : shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
-		all_moves(team1.pokemon()).add(move);
+		all_moves(attacker.pokemon()).add(move);
 	}
-	get_stat(team1.pokemon(), StatNames::SPA).ev = EV(252_bi);
-	get_stat(team1.pokemon(), StatNames::SPE).ev = EV(252_bi);
+	get_stat(attacker.pokemon(), StatNames::SPA).ev = EV(252_bi);
+	get_stat(attacker.pokemon(), StatNames::SPE).ev = EV(252_bi);
 
-	Team team2(1_bi);
-	team2.add_pokemon(Species::Swampert, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Torrent, Nature::Bold);
+	Team defender(1_bi);
+	defender.add_pokemon(Species::Swampert, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Torrent, Nature::Bold);
 	for (auto const move : shuffled(Moves::Surf, Moves::Ice_Beam)) {
-		all_moves(team2.pokemon()).add(move);
+		all_moves(defender.pokemon()).add(move);
 	}
-	get_hp(team2.pokemon()).ev = EV(252_bi);
-	get_stat(team2.pokemon(), StatNames::DEF).ev = EV(252_bi);
+	get_hp(defender.pokemon()).ev = EV(252_bi);
+	get_stat(defender.pokemon(), StatNames::DEF).ev = EV(252_bi);
 
-	assert(expectiminimax(team1, team2, weather, depth, evaluate, random_engine) == Moves::Shadow_Ball);
+	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Shadow_Ball);
 }
 
 void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 5;
-	Team team1(1_bi, true);
-	team1.add_pokemon(Species::Charizard, Level(100_bi), Gender::MALE, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
+	constexpr auto depth = 2;
+	Team attacker(1_bi, true);
+	attacker.add_pokemon(Species::Charizard, Level(100_bi), Gender::MALE, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)) {
-		all_moves(team1.pokemon()).add(move);
+		all_moves(attacker.pokemon()).add(move);
 	}
-	get_stat(team1.pokemon(), StatNames::ATK).ev = EV(252_bi);
-	get_stat(team1.pokemon(), StatNames::SPE).ev = EV(252_bi);
+	get_stat(attacker.pokemon(), StatNames::ATK).ev = EV(252_bi);
+	get_stat(attacker.pokemon(), StatNames::SPE).ev = EV(252_bi);
 
-	Team team2(1_bi);
-	team2.add_pokemon(Species::Mew, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Synchronize, Nature::Impish);
+	Team defender(1_bi);
+	defender.add_pokemon(Species::Mew, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Synchronize, Nature::Impish);
 	for (auto const move : shuffled(Moves::Softboiled)) {
-		all_moves(team2.pokemon()).add(move);
+		all_moves(defender.pokemon()).add(move);
 	}
-	get_hp(team2.pokemon()).ev = EV(252_bi);
-	get_stat(team2.pokemon(), StatNames::DEF).ev = EV(192_bi);
-	get_stat(team2.pokemon(), StatNames::SPD).ev = EV(64_bi);
+	get_hp(defender.pokemon()).ev = EV(252_bi);
+	get_stat(defender.pokemon(), StatNames::DEF).ev = EV(0_bi);
+	get_stat(defender.pokemon(), StatNames::SPD).ev = EV(64_bi);
 
-	assert(expectiminimax(team1, team2, weather, depth, evaluate, random_engine) == Moves::Belly_Drum);
+	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Belly_Drum);
 }
 
 }	// namespace
