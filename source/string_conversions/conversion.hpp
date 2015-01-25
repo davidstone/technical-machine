@@ -1,5 +1,5 @@
 // String conversions template
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,12 +19,12 @@
 #ifndef STRING_CONVERSIONS__CONVERSION_HPP_
 #define STRING_CONVERSIONS__CONVERSION_HPP_
 
-#include <string>
+#include <boost/utility/string_ref.hpp>
 
 namespace technicalmachine {
 
 template<typename T>
-T from_string(std::string const & str);
+T from_string(boost::string_ref str);
 
 }	// namespace technicalmachine
 #endif	// STRING_CONVERSIONS__CONVERSION_HPP_

@@ -1,5 +1,5 @@
 // Pokemon string functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,10 @@
 
 #include "conversion.hpp"
 
-#include <string>
-
 #include "../pokemon/species.hpp"
 
 namespace technicalmachine {
 
-std::string to_string(Species const name);
+std::string const & to_string(Species const name);
 
 }	// namespace technicalmachine

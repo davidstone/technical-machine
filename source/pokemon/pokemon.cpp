@@ -82,7 +82,7 @@ MoveCollection::index_type Pokemon::index_of_first_switch() const {
 	return index;
 }
 
-std::string Pokemon::get_nickname () const {
+std::string const & Pokemon::get_nickname() const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
 	#else

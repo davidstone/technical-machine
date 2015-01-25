@@ -1,5 +1,5 @@
 // Ability string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,17 +18,16 @@
 
 #include "ability.hpp"
 
-#include <map>
-#include <string>
-
 #include "invalid_string_conversion.hpp"
 
 #include "../ability.hpp"
 
+#include <map>
+
 namespace technicalmachine {
 
-std::string to_string(Ability::Abilities const name) {
-	static std::string const ability_name [] = {
+std::string const & to_string(Ability::Abilities const name) {
+	static std::string const ability_name[] = {
 		"Adaptability", "Aftermath", "Air Lock", "Anger Point",
 		"Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor",
 		"Blaze", "Chlorophyll", "Clear Body", "Cloud Nine",
@@ -61,12 +60,12 @@ std::string to_string(Ability::Abilities const name) {
 		"Unburden", "Vital Spirit", "Volt Absorb", "Water Absorb",
 		"Water Veil", "White Smoke", "Wonder Guard", "END_ABILITY"
 	};
-	return ability_name [name];
+	return ability_name[name];
 }
 
 template<>
-Ability::Abilities from_string<Ability::Abilities>(std::string const & str) {
-	static std::map <std::string, Ability::Abilities> const converter {
+Ability::Abilities from_string<Ability::Abilities>(boost::string_ref const str) {
+	static std::map<boost::string_ref, Ability::Abilities> const converter {
 		{ "Adaptability", Ability::Adaptability },
 		{ "Aftermath", Ability::Aftermath },
 		{ "Air Lock", Ability::Air_Lock },
@@ -191,11 +190,12 @@ Ability::Abilities from_string<Ability::Abilities>(std::string const & str) {
 		{ "White Smoke", Ability::White_Smoke },
 		{ "Wonder Guard", Ability::Wonder_Guard }
 	};
-	auto const it = converter.find (str);
-	if (it != converter.end ())
+	auto const it = converter.find(str);
+	if (it != converter.end()) {
 		return it->second;
-	else
-		throw InvalidFromStringConversion ("Ability", str);
+	} else {
+		throw InvalidFromStringConversion("Ability", str);
+	}
 }
 
 }	// namespace technicalmachine

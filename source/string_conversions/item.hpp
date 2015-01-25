@@ -1,5 +1,5 @@
 // Item string conversions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,10 @@
 
 #include "conversion.hpp"
 
-#include <string>
-
 #include "../item.hpp"
 
 namespace technicalmachine {
 
-std::string to_string(Item const name);
+std::string const & to_string(Item const name);
 
 }	// namespace technicalmachine

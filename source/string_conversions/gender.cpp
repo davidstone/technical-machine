@@ -1,5 +1,5 @@
 // Gender string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,35 +19,36 @@
 #include "gender.hpp"
 
 #include <map>
-#include <string>
 
+#include "conversion.hpp"
 #include "invalid_string_conversion.hpp"
 
 #include "../gender.hpp"
 
 namespace technicalmachine {
 
-std::string to_string(Gender::Genders const gender) {
-	static std::string const gender_name [] {
+std::string const & to_string(Gender::Genders const gender) {
+	static std::string const gender_name[] {
 		"Female", "Genderless", "Male"
 	};
-	return gender_name [gender];
+	return gender_name[gender];
 }
 
 template<>
-Gender::Genders from_string(std::string const & str) {
-	static std::map <std::string, Gender::Genders> const converter {
+Gender::Genders from_string(boost::string_ref const str) {
+	static std::map<boost::string_ref, Gender::Genders> const converter {
 		{ "Genderless", Gender::GENDERLESS },
 		{ "None", Gender::GENDERLESS },
 		{ "No Gender", Gender::GENDERLESS },
 		{ "Female", Gender::FEMALE },
 		{ "Male", Gender::MALE }
 	};
-	auto const it = converter.find (str);
-	if (it != converter.end ())
+	auto const it = converter.find(str);
+	if (it != converter.end()) {
 		return it->second;
-	else
-		throw InvalidFromStringConversion ("Gender", str);
+	} else {
+		throw InvalidFromStringConversion("Gender", str);
+	}
 }
 
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Exception if unable to find a Pokemon that should exist
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //

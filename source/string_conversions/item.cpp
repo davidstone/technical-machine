@@ -1,5 +1,5 @@
 // Item string conversions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,12 +25,11 @@
 #include <bounded_integer/array.hpp>
 
 #include <map>
-#include <string>
 
 namespace technicalmachine {
 
-std::string to_string(Item const name) {
-	static auto const item_name = bounded::make_array(
+std::string const & to_string(Item const name) {
+	static auto const item_name = bounded::make_array<std::string>(
 		"No Item", "Adamant Orb", "Aguav Berry", "Air Mail",
 		"Amulet Coin", "Antidote", "Apicot Berry", "Armor Fossil",
 		"Aspear Berry", "Awakening", "Babiri Berry", "Belue Berry",
@@ -146,8 +145,8 @@ std::string to_string(Item const name) {
 }
 
 template<>
-Item from_string(std::string const & str) {
-	static std::map<std::string, Item> const converter {
+Item from_string(boost::string_ref const str) {
+	static std::map<boost::string_ref, Item> const converter {
 		{ "No Item", Item::No_Item },
 		{ "Adamant Orb", Item::Adamant_Orb },
 		{ "Aguav Berry", Item::Aguav_Berry },
@@ -591,11 +590,12 @@ Item from_string(std::string const & str) {
 		{ "VS Seeker", Item::VS_Seeker },
 		{ "Works Key", Item::Works_Key }
 	};
-	auto const it = converter.find (str);
-	if (it != converter.end ())
+	auto const it = converter.find(str);
+	if (it != converter.end()) {
 		return it->second;
-	else
-		throw InvalidFromStringConversion ("Item", str);
+	} else {
+		throw InvalidFromStringConversion("Item", str);
+	}
 }
 
 }	// namespace technicalmachine

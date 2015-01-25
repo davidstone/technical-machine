@@ -1,5 +1,5 @@
 // Move string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <map>
-#include <string>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -30,8 +29,7 @@
 
 namespace technicalmachine {
 
-std::string to_string(Moves const name) {
-	assert(name <= Moves::END);
+std::string const & to_string(Moves const name) {
 	static std::string const name_to_string [] = {
 		// Generation 1
 		"Switch0", "Switch1", "Switch2", "Switch3", "Switch4",
@@ -165,8 +163,8 @@ std::string to_string(Moves const name) {
 }
 
 template<>
-Moves from_string(std::string const & str) {
-	static std::map<std::string, Moves> const converter {
+Moves from_string(boost::string_ref const str) {
+	static std::map<boost::string_ref, Moves> const converter {
 		{ "switch0", Moves::Switch0 },
 		{ "switch1", Moves::Switch1 },
 		{ "switch2", Moves::Switch2 },
@@ -752,11 +750,12 @@ Moves from_string(std::string const & str) {
 		{ "fusion bolt", Moves::Fusion_Bolt },
 		{ "end_move", Moves::END }
 	};
-	auto const it = converter.find(boost::algorithm::to_lower_copy(str));
-	if (it != converter.end ())
+	auto const it = converter.find(boost::algorithm::to_lower_copy(str.to_string()));
+	if (it != converter.end()) {
 		return it->second;
-	else
-		throw InvalidFromStringConversion ("Move", str);
+	} else {
+		throw InvalidFromStringConversion("Move", str);
+	}
 }
 
 }	// namespace technicalmachine

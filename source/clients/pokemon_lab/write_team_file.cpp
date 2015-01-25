@@ -36,6 +36,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/utility/string_ref.hpp>
 
 #include <string>
 #include <vector>
@@ -51,7 +52,7 @@ void write_move (Move const & move, boost::property_tree::ptree & pt) {
 }
 
 template<typename StatType>
-void write_stat(StatType const & stat, std::string const & str, boost::property_tree::ptree & pt) {
+void write_stat(StatType const & stat, boost::string_ref const str, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
 	s.put("<xmlattr>.name", str);
 	s.put("<xmlattr>.iv", stat.iv.value());
@@ -59,7 +60,7 @@ void write_stat(StatType const & stat, std::string const & str, boost::property_
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	static std::pair<StatNames, std::string> const stats [] = {
+	static std::pair<StatNames, boost::string_ref> const stats [] = {
 		{ StatNames::ATK, "Atk" },
 		{ StatNames::DEF, "Def" },
 		{ StatNames::SPE, "Spd" },
@@ -72,7 +73,7 @@ void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	}
 }
 
-std::string to_simulator_string(Species const species) {
+boost::string_ref to_simulator_string(Species const species) {
 	switch (species) {
 		case Species::Deoxys_Mediocre:
 			return "Deoxys";

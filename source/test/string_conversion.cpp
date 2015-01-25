@@ -1,5 +1,5 @@
 // Test string conversions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -44,18 +44,31 @@
 namespace technicalmachine {
 namespace {
 
+// I make the ToString conversion a logic error because I only convert to a
+// string from an internal data structure, so I know the input is only invalid
+// if there is a logic error in my program.
+
+class InvalidToStringConversion : public std::logic_error {
+public:
+	template<typename Test>
+	InvalidToStringConversion(Test original, Test result, boost::string_ref const intermediate):
+		std::logic_error(std::to_string(static_cast<unsigned>(original)) + " is seen as " + std::to_string(static_cast<unsigned>(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {
+	}
+};
+
 template <typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
 	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
-		std::string const str = to_string(original);
+		auto const str = to_string(original);
 		auto const result = from_string<Enum>(str);
-		if (original != result)
-			throw InvalidToStringConversion (original, result, str);
+		if (original != result) {
+			throw InvalidToStringConversion(original, result, str);
+		}
 	}
 }
 
-}	// anonymous namespace
+}	// namespace
 
 void string_conversion_tests () {
 	std::cout << "Running string conversion tests.\n";

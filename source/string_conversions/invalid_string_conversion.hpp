@@ -1,5 +1,5 @@
 // Invalid string conversion classes
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,22 +19,11 @@
 #ifndef STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_
 #define STRING_CONVERSIONS__INVALID_STRING_CONVERSION_HPP_
 
+#include <boost/utility/string_ref.hpp>
+
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
-
-// I make the ToString conversion a logic error because I only convert to a
-// string from an internal data structure, so I know the input is only invalid
-// if there is a logic error in my program.
-
-class InvalidToStringConversion : public std::logic_error {
-public:
-	template<typename Test>
-	InvalidToStringConversion(Test original, Test result, std::string const & intermediate):
-		std::logic_error(std::to_string(static_cast<unsigned>(original)) + " is seen as " + std::to_string(static_cast<unsigned>(result)) + " with an intermediate string of " + intermediate + ".\n") {
-	}
-};
 
 // I make the FromString a runtime error because I only convert from a string
 // that I get from 'outside' the program. It may also represent a logic error,
@@ -42,7 +31,7 @@ public:
 
 class InvalidFromStringConversion : public std::runtime_error {
 public:
-	InvalidFromStringConversion(std::string const & target, std::string const & requested);
+	InvalidFromStringConversion(boost::string_ref const target, boost::string_ref const requested);
 };
 
 }	// namespace technicalmachine

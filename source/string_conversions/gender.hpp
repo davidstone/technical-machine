@@ -1,5 +1,5 @@
 // Gender string conversions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,10 @@
 
 #include "conversion.hpp"
 
-#include <string>
-
 #include "../gender.hpp"
 
 namespace technicalmachine {
 
-std::string to_string(Gender::Genders const gender);
+std::string const & to_string(Gender::Genders const gender);
 
 }	// namespace technicalmachine

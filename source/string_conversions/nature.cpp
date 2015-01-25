@@ -1,5 +1,5 @@
 // Nature string conversions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,17 +18,16 @@
 
 #include "nature.hpp"
 
-#include <map>
-#include <string>
-
 #include "invalid_string_conversion.hpp"
 
 #include "../stat/nature.hpp"
 
+#include <map>
+
 namespace technicalmachine {
 
-std::string to_string(Nature const nature) {
-	std::string const nature_converter [] = {
+std::string const & to_string(Nature const nature) {
+	static std::string const nature_converter[] = {
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
 		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
 		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
@@ -39,8 +38,8 @@ std::string to_string(Nature const nature) {
 }
 
 template<>
-Nature from_string<Nature>(std::string const & str) {
-	static std::map <std::string, Nature> const converter {
+Nature from_string<Nature>(boost::string_ref const str) {
+	static std::map<boost::string_ref, Nature> const converter {
 		{ "Adamant", Nature::Adamant },
 		{ "Bashful", Nature::Bashful },
 		{ "Bold", Nature::Bold },
@@ -67,11 +66,12 @@ Nature from_string<Nature>(std::string const & str) {
 		{ "Serious", Nature::Serious },
 		{ "Timid", Nature::Timid }
 	};
-	auto const it = converter.find (str);
-	if (it != converter.end ())
+	auto const it = converter.find(str);
+	if (it != converter.end()) {
 		return it->second;
-	else
-		throw InvalidFromStringConversion ("Nature", str);
+	} else {
+		throw InvalidFromStringConversion("Nature", str);
+	}
 }
 
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Invalid string conversion classes
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,8 +20,8 @@
 
 namespace technicalmachine {
 
-InvalidFromStringConversion::InvalidFromStringConversion(std::string const & target, std::string const & requested):
-	std::runtime_error("Invalid conversion from " + requested + " to type " + target + " requested.\n")
+InvalidFromStringConversion::InvalidFromStringConversion(boost::string_ref const target, boost::string_ref const requested):
+	std::runtime_error("Invalid conversion from " + requested.to_string() + " to type " + target.to_string() + " requested.\n")
 	{
 }
 

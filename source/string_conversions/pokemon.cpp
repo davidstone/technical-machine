@@ -1,5 +1,5 @@
 // Pokemon string functions
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <map>
-#include <string>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -30,7 +29,7 @@
 
 namespace technicalmachine {
 
-std::string to_string(Species const name) {
+std::string const & to_string(Species const name) {
 	static std::string const name_to_string [] = {
 		// Generation 1
 		"Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon",
@@ -184,8 +183,8 @@ std::string to_string(Species const name) {
 }
 
 template<>
-Species from_string(std::string const & str) {
-	static std::map <std::string, Species> const converter {
+Species from_string(boost::string_ref const str) {
+	static std::map<boost::string_ref, Species> const converter {
 		// Generation 1
 		{ "bulbasaur", Species::Bulbasaur },
 		{ "ivysaur", Species::Ivysaur },
@@ -883,13 +882,15 @@ Species from_string(std::string const & str) {
 		{ "meloetta", Species::Meloetta },
 		{ "genesect", Species::Genesect }
 	};
-	auto normalized = boost::algorithm::to_lower_copy(str);
+	std::string normalized = str.to_string();
+	boost::algorithm::to_lower(normalized);
 	std::replace(normalized.begin(), normalized.end(), '_', '-');
 	auto const it = converter.find(normalized);
-	if (it != converter.end ())
+	if (it != converter.end()) {
 		return it->second;
-	else
-		throw InvalidFromStringConversion ("Species", str);
+	} else {
+		throw InvalidFromStringConversion("Species", str);
+	}
 }
 
 }	// namespace technicalmachine

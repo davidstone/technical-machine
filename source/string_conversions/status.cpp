@@ -1,5 +1,5 @@
 // Status string functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,11 +24,10 @@
 #include <bounded_integer/array.hpp>
 
 #include <map>
-#include <string>
 
 namespace technicalmachine {
 
-std::string to_string(Statuses const name) {
+std::string const & to_string(Statuses const name) {
 	static auto const status_name = bounded::make_array<std::string>(
 		"No status",
 		"Burn",
@@ -44,8 +43,8 @@ std::string to_string(Statuses const name) {
 }
 
 template<>
-Statuses from_string(std::string const & str) {
-	static std::map <std::string, Statuses> const converter {
+Statuses from_string(boost::string_ref const str) {
+	static std::map<boost::string_ref, Statuses> const converter {
 		{ "No status", Statuses::clear },
 		{ "Burn", Statuses::burn },
 		{ "Freeze", Statuses::freeze },
@@ -56,11 +55,11 @@ Statuses from_string(std::string const & str) {
 		{ "Rest", Statuses::sleep_rest },
 		{ "END_STATUS", Statuses::END }
 	};
-	auto const it = converter.find (str);
+	auto const it = converter.find(str);
 	if (it != converter.end()) {
 		return it->second;
 	} else {
-		throw InvalidFromStringConversion ("Status", str);
+		throw InvalidFromStringConversion("Status", str);
 	}
 }
 
