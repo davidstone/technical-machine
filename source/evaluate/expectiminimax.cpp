@@ -79,8 +79,6 @@ double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * 
 double replace(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn);
 double fainted(Team ai, Team foe, Weather weather, unsigned depth, Evaluate const & evaluate);
 
-void deorder (Team & first, Team & last, Team* & ai, Team* & foe);
-
 double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
 double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
 double switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate);
@@ -241,13 +239,11 @@ void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, d
 
 double order_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	// Determine turn order
-	Team* first;
-	Team* last;
-	order(ai, foe, weather, first, last); 
-	bool const speed_tie = (first == nullptr);
+	auto teams = order(ai, foe, weather); 
+	bool const speed_tie = (teams.first == nullptr);
 	return speed_tie ?
 		(accuracy_branch(ai, foe, weather, depth, evaluate) + accuracy_branch(foe, ai, weather, depth, evaluate)) / 2.0 :
-		accuracy_branch(*first, *last, weather, depth, evaluate);
+		accuracy_branch(*teams.first, *teams.second, weather, depth, evaluate);
 }
 
 double accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
@@ -357,16 +353,14 @@ double use_move_branch(Team & first, Team & last, Variable const & first_variabl
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
-	Team * faster;
-	Team * slower;
-	faster_pokemon(first, last, weather, faster, slower);
+	auto const teams = faster_pokemon(first, last, weather);
 	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
 		pokemon.shed_skin(flag);
 	};
 	// Partially apply some arguments to the function so it has the expected
 	// signature
-	auto const end_of_turn_order = [faster, slower](Team & team, Team & other, Weather const weather_, unsigned depth_, Evaluate const & evaluate_) {
-		return end_of_turn_order_branch(team, other, faster, slower, weather_, depth_, evaluate_);
+	auto const end_of_turn_order = [teams](Team & team, Team & other, Weather const weather_, unsigned depth_, Evaluate const & evaluate_) {
+		return end_of_turn_order_branch(team, other, teams.first, teams.second, weather_, depth_, evaluate_);
 	};
 	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, shed_skin_probability, end_of_turn_order);
 }
@@ -400,6 +394,22 @@ double use_move_and_follow_up(Team & user, Team & other, Variable const & user_v
 	return static_cast<double>(victory + 1_bi);		// return an illegal value
 }
 
+
+auto deorder(Team & first, Team & last) {
+	assert(first.is_me() or last.is_me());
+	struct Deorder {
+		Team & ai;
+		Team & foe;
+	};
+	return Deorder{
+		(first.is_me()) ? first : last,
+		(!first.is_me()) ? first : last
+	};
+}
+
+
+
+
 double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	bool const speed_tie = (first == nullptr);
 	return speed_tie ?
@@ -422,19 +432,15 @@ double end_of_turn_branch (Team first, Team last, Weather weather, unsigned dept
 		return static_cast<double>(first_win + last_win);
 	}
 
-	Team* ai;
-	Team* foe;
-	deorder (first, last, ai, foe);
-	return transposition(*ai, *foe, weather, depth, evaluate);
+	auto const teams = deorder(first, last);
+	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
 }
 
 
 
 double replace (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
-	Team * first;
-	Team * last;
-	faster_pokemon (ai, foe, weather, first, last);
-	bool const speed_tie = (first == nullptr);
+	auto const teams = faster_pokemon(ai, foe, weather);
+	bool const speed_tie = (teams.first == nullptr);
 	unsigned const tabs = first_turn ? 0 : 2;
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	auto const ai_break_out = [& ai]() { return get_hp(ai.pokemon()) != 0_bi; };
@@ -448,7 +454,7 @@ double replace (Team & ai, Team & foe, Weather const weather, unsigned depth, Ev
 		foe.all_pokemon().for_each_replacement(foe_break_out, [&]() {
 			beta = (speed_tie) ?
 				std::min(beta, (fainted(ai, foe, weather, depth, evaluate) + fainted(foe, ai, weather, depth, evaluate)) / 2.0) :
-				std::min(beta, fainted(*first, *last, weather, depth, evaluate));
+				std::min(beta, fainted(*teams.first, *teams.second, weather, depth, evaluate));
 		});
 		update_best_move (alpha, beta, first_turn, ai.all_pokemon().replacement_to_switch(), best_move);
 	});
@@ -475,10 +481,8 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 		}
 	}
 
-	Team* ai;
-	Team* foe;
-	deorder (first, last, ai, foe);
-	return transposition(*ai, *foe, weather, depth, evaluate);
+	auto const teams = deorder(first, last);
+	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
 }
 
 double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
@@ -528,13 +532,6 @@ double switch_after_move_branch(Team switcher, Team other, Variable const & swit
 	return use_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
 }
 
-
-
-void deorder (Team & first, Team & last, Team* & ai, Team* & foe) {
-	assert(first.is_me() or last.is_me());
-	ai = (first.is_me()) ? & first : & last;
-	foe = (!first.is_me()) ? & first : & last;
-}
 
 
 Moves random_action (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {

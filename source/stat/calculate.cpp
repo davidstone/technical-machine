@@ -401,40 +401,42 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-auto order(Team & team1, Team & team2, Weather const weather, Team* & faster, Team* & slower) -> void {
+auto order(Team & team1, Team & team2, Weather const weather) -> std::pair<Team *, Team *> {
 	Priority const priority1(current_move(team1.pokemon()));
 	Priority const priority2(current_move(team2.pokemon()));
+
 	if (priority1 == priority2) {
-		faster_pokemon(team1, team2, weather, faster, slower);
-	}
-	else if (priority1 > priority2) {
-		faster = &team1;
-		slower = &team2;
-	}
-	else {	// if (priority1 < priority2)
-		faster = &team2;
-		slower = &team1;
+		return faster_pokemon(team1, team2, weather);
+	} else if (priority1 > priority2) {
+		return { &team1, &team2 };
+	} else {	// if (priority1 < priority2)
+		return { &team2, &team1 };
 	}
 }
 
-auto faster_pokemon(Team & team1, Team & team2, Weather const weather, Team* & faster, Team* & slower) -> void {
+namespace {
+
+auto faster_pokemon_before_trick_room(Team & team1, Team & team2, Weather const weather) -> std::pair<Team *, Team *> {
 	auto const speed1 = calculate_speed(team1, weather);
 	auto const speed2 = calculate_speed(team2, weather);
+
 	if (speed1 > speed2) {
-		faster = &team1;
-		slower = &team2;
+		return { &team1, &team2};
+	} else if (speed1 < speed2) {
+		return { &team2, &team1 };
+	} else {
+		return { nullptr, nullptr };
 	}
-	else if (speed1 < speed2) {
-		faster = &team2;
-		slower = &team1;
-	}
-	else {				// All things are equal
-		faster = nullptr;
-		slower = nullptr;
-	}
+}
+
+}	// namespace
+
+auto faster_pokemon(Team & team1, Team & team2, Weather const weather) -> std::pair<Team *, Team *> {
+	auto result = faster_pokemon_before_trick_room(team1, team2, weather);
 	if (weather.trick_room()) {
-		std::swap(faster, slower);
+		std::swap(result.first, result.second);
 	}
+	return result;
 }
 
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Calculate a Pokemon's current stat
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -54,8 +54,8 @@ auto calculate_special_defense(ActivePokemon defender, Weather weather, bool ch 
 
 using speed_type = bounded::integer<1, 12096>;
 auto calculate_speed(Team const & team, Weather weather) -> speed_type;
-auto order(Team & team1, Team & team2, Weather weather, Team* & faster, Team* & slower) -> void;
-auto faster_pokemon(Team & team1, Team & team2, Weather weather, Team* & faster, Team* & slower) -> void;
+auto order(Team & team1, Team & team2, Weather weather) -> std::pair<Team *, Team *>;
+auto faster_pokemon(Team & team1, Team & team2, Weather weather) -> std::pair<Team *, Team *>;
 
 }	// namespace technicalmachine
 #endif	// STAT__CALCULATE_HPP_
