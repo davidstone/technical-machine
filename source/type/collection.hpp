@@ -40,7 +40,7 @@ private:
 	using container_type = bounded::array<Type, 2>;
 public:
 	using const_iterator = container_type::const_iterator;
-	explicit constexpr TypeArray(Type const type1):
+	constexpr TypeArray(Type const type1):
 		m_types({{type1, Type::Typeless}})
 		{
 	}

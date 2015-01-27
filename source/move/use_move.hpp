@@ -19,15 +19,13 @@
 #ifndef MOVE__USE_MOVE_HPP_
 #define MOVE__USE_MOVE_HPP_
 
-#include "../damage.hpp"
-
 namespace technicalmachine {
 
 class Team;
 class Variable;
 class Weather;
 
-auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false) -> damage_type;
+auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false) -> void;
 
 }	// namespace technicalmachine
 #endif	// MOVE__USE_MOVE_HPP_

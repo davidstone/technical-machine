@@ -47,7 +47,7 @@
 namespace technicalmachine {
 namespace {
 
-auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known) -> damage_type;
+auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known) -> void;
 auto calculate_real_damage(Team const & user, Team const & target, Weather weather, Variable const & variable, bool damage_is_known) -> damage_type;
 auto call_other_move (MutableActivePokemon user) -> void;
 template<typename Predicate>
@@ -121,18 +121,18 @@ auto calls_other_move(Moves const move) {
 
 }	// namespace
 
-auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> damage_type {
+auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> void {
 	user.pokemon().update_before_move();
-	if (can_execute_move(user.pokemon(), target.pokemon(), weather)) {
-		lower_pp(user.pokemon(), get_ability(target.pokemon()));
-		if (calls_other_move(current_move(user.pokemon()))) {
-			call_other_move(user.pokemon());
-		}
-		if (!missed(user.pokemon())) {
-			return use_move(user, target, weather, variable, damage_is_known);
-		}
+	if (!can_execute_move(user.pokemon(), target.pokemon(), weather)) {
+		return;
 	}
-	return 0_bi;
+	lower_pp(user.pokemon(), get_ability(target.pokemon()));
+	if (calls_other_move(current_move(user.pokemon()))) {
+		call_other_move(user.pokemon());
+	}
+	if (!missed(user.pokemon())) {
+		use_move(user, target, weather, variable, damage_is_known);
+	}
 }
 
 namespace {
@@ -159,24 +159,21 @@ auto is_sound_based(Moves const move) {
 	}
 }
 
-auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> damage_type {
+auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> void {
 	Moves const move = current_move(user.pokemon());
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
-	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and
-			!(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
-		return 0_bi;
+	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and !(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
+		return;
 	}
 
 	do_effects_before_moving (user.pokemon(), target);
 
 	auto const damage = calculate_real_damage(user, target, weather, variable, damage_is_known);
-	do_damage (user.pokemon(), target.pokemon(), damage);
+	do_damage(user.pokemon(), target.pokemon(), damage);
 	user.pokemon().increment_move_use_counter();
 
 	do_side_effects(user, target, weather, variable, damage);
-
-	return damage;
 }
 
 constexpr auto breaks_screens(Moves const move) {

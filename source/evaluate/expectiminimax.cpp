@@ -252,6 +252,8 @@ double accuracy_branch(Team & first, Team & last, Weather const weather, unsigne
 	};
 	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
 		auto const base = chance_to_hit(user, target, weather, target_moved);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
 		return hit ? base : (1.0 - base);
 	};
 
@@ -282,6 +284,8 @@ template<typename SetFlag, typename Probability, typename NextBranch>
 double generic_flag_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & basic_probability, NextBranch const & next_branch) {
 	auto const probability = [&](auto const & pokemon, bool const flag) {
 		auto const base = basic_probability(pokemon);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
 		return flag ? base : (1.0 - base);
 	};
 
@@ -378,8 +382,7 @@ bool has_follow_up_decision(Moves const move) {
 double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
 	auto const original = static_cast<Species>(user.pokemon());
 	if (!moved(user.pokemon())) {
-		auto const damage = call_move(user, other, weather, user_variable);
-		other.pokemon().direct_damage(damage);
+		call_move(user, other, weather, user_variable);
 		auto const user_win = Evaluate::win(user);
 		auto const other_win = Evaluate::win(other);
 		if (user_win != 0_bi or other_win != 0_bi) {

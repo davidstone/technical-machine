@@ -18,18 +18,22 @@
 
 #include "pp.hpp"
 
-#include <algorithm>
-#include <cassert>
-#include <type_traits>
-
 #include "moves_forward.hpp"
 
 #include "../ability.hpp"
+
+#include <bounded_integer/optional.hpp>
+
+#include <algorithm>
+#include <cassert>
+#include <type_traits>
 
 namespace technicalmachine {
 namespace {
 
 auto base_pp(Moves const move) {
+	// This has to use a bounded::array instead of a switch statement to take
+	// advantage of type deduction
 	using bounded::none;
 	static constexpr auto base = bounded::make_optional_array(
 		none,		// Switch0

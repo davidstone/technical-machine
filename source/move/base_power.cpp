@@ -17,584 +17,592 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "base_power.hpp"
-#include <bounded_integer/array.hpp>
+
+#include "moves.hpp"
+
+#include <stdexcept>
 
 namespace technicalmachine {
 using namespace bounded::literal;
+namespace {
+
+class InvalidMove: public std::exception {};
+
+}	// namespace
 
 auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>> {
 	// It doesn't matter if variable_power happens to have the same value as
 	// anything else, as long as it is not 0.
 	static constexpr auto variable_power = 1_bi;
-	static constexpr auto power = bounded::make_optional_array(
-		0_bi,		// Switch0
-		0_bi,		// Switch1
-		0_bi,		// Switch2
-		0_bi,		// Switch3
-		0_bi,		// Switch4
-		0_bi,		// Switch5
-		40_bi,		// Hit Self
-		40_bi,		// Pound
-		50_bi,		// Karate Chop
-		15_bi,		// DoubleSlap
-		18_bi,		// Comet Punch
-		80_bi,		// Mega Punch
-		40_bi,		// Pay Day
-		75_bi,		// Fire Punch
-		75_bi,		// Ice Punch
-		75_bi,		// ThunderPunch
-		40_bi,		// Scratch
-		55_bi,		// ViceGrip
-		bounded::none,		// Guillotine
-		80_bi,		// Razor Wind
-		0_bi,		// Swords Dance
-		50_bi,		// Cut
-		40_bi,		// Gust
-		60_bi,		// Wing Attack
-		0_bi,		// Whirlwind
-		90_bi,		// Fly
-		15_bi,		// Bind
-		80_bi,		// Slam
-		35_bi,		// Vine Whip
-		65_bi,		// Stomp
-		30_bi,		// Double Kick
-		120_bi,		// Mega Kick
-		100_bi,		// Jump Kick
-		60_bi,		// Rolling Kick
-		0_bi,		// Sand-Attack
-		70_bi,		// Headbutt
-		65_bi,		// Horn Attack
-		15_bi,		// Fury Attack
-		bounded::none,		// Horn Drill
-		50_bi,		// Tackle
-		85_bi,		// Body Slam
-		15_bi,		// Wrap
-		90_bi,		// Take Down
-		120_bi,		// Thrash
-		120_bi,		// Double-Edge
-		0_bi,		// Tail Whip
-		15_bi,		// Poison Sting
-		25_bi,		// Twineedle
-		14_bi,		// Pin Missile
-		0_bi,		// Leer
-		60_bi,		// Bite
-		0_bi,		// Growl
-		0_bi,		// Roar
-		0_bi,		// Sing
-		0_bi,		// Supersonic
-		bounded::none,		// SonicBoom
-		0_bi,		// Disable
-		40_bi,		// Acid
-		40_bi,		// Ember
-		95_bi,		// Flamethrower
-		0_bi,		// Mist
-		40_bi,		// Water Gun
-		120_bi,		// Hydro Pump
-		95_bi,		// Surf
-		95_bi,		// Ice Beam
-		120_bi,		// Blizzard
-		65_bi,		// Psybeam
-		65_bi,		// BubbleBeam
-		65_bi,		// Aurora Beam
-		150_bi,		// Hyper Beam
-		35_bi,		// Peck
-		80_bi,		// Drill Peck
-		80_bi,		// Submission
-		variable_power,		// Low Kick
-		bounded::none,		// Counter
-		bounded::none,		// Seismic Toss
-		80_bi,		// Strength
-		20_bi,		// Absorb
-		40_bi,		// Mega Drain
-		0_bi,		// Leech Seed
-		0_bi,		// Growth
-		55_bi,		// Razor Leaf
-		120_bi,		// SolarBeam
-		0_bi,		// PoisonPowder
-		0_bi,		// Stun Spore
-		0_bi,		// Sleep Powder
-		120_bi,		// Petal Dance
-		0_bi,		// String Shot
-		bounded::none,		// Dragon Rage
-		35_bi,		// Fire Spin
-		40_bi,		// ThunderShock
-		95_bi,		// Thunderbolt
-		0_bi,		// Thunder Wave
-		120_bi,		// Thunder
-		50_bi,		// Rock Throw
-		100_bi,		// Earthquake
-		bounded::none,		// Fissure
-		80_bi,		// Dig
-		0_bi,		// Toxic
-		50_bi,		// Confusion
-		90_bi,		// Psychic
-		0_bi,		// Hypnosis
-		0_bi,		// Meditate
-		0_bi,		// Agility
-		40_bi,		// Quick Attack
-		20_bi,		// Rage
-		0_bi,		// Teleport
-		bounded::none,		// Night Shade
-		0_bi,		// Mimic
-		0_bi,		// Screech
-		0_bi,		// Double Team
-		0_bi,		// Recover
-		0_bi,		// Harden
-		0_bi,		// Minimize
-		0_bi,		// SmokeScreen
-		0_bi,		// Confuse Ray
-		0_bi,		// Withdraw
-		0_bi,		// Defense Curl
-		0_bi,		// Barrier
-		0_bi,		// Light Screen
-		0_bi,		// Haze
-		0_bi,		// Reflect
-		0_bi,		// Focus Energy
-		variable_power,		// Bide
-		0_bi,		// Metronome
-		0_bi,		// Mirror Move
-		200_bi,		// Selfdestruct
-		100_bi,		// Egg Bomb
-		20_bi,		// Lick
-		20_bi,		// Smog
-		65_bi,		// Sludge
-		65_bi,		// Bone Club
-		120_bi,		// Fire Blast
-		80_bi,		// Waterfall
-		35_bi,		// Clamp
-		60_bi,		// Swift
-		100_bi,		// Skull Bash
-		20_bi,		// Spike Cannon
-		10_bi,		// Constrict
-		0_bi,		// Amnesia
-		0_bi,		// Kinesis
-		0_bi,		// Softboiled
-		130_bi,		// Hi Jump Kick
-		0_bi,		// Glare
-		100_bi,		// Dream Eater
-		0_bi,		// Poison Gas
-		15_bi,		// Barrage
-		20_bi,		// Leech Life
-		0_bi,		// Lovely Kiss
-		140_bi,		// Sky Attack
-		0_bi,		// Transform
-		20_bi,		// Bubble
-		70_bi,		// Dizzy Punch
-		0_bi,		// Spore
-		0_bi,		// Flash
-		bounded::none,		// Psywave
-		0_bi,		// Splash
-		0_bi,		// Acid Armor
-		90_bi,		// Crabhammer
-		250_bi,		// Explosion
-		18_bi,		// Fury Swipes
-		50_bi,		// Bonemerang
-		0_bi,		// Rest
-		75_bi,		// Rock Slide
-		80_bi,		// Hyper Fang
-		0_bi,		// Sharpen
-		0_bi,		// Conversion
-		80_bi,		// Tri Attack
-		bounded::none,		// Super Fang
-		70_bi,		// Slash
-		0_bi,		// Substitute
-		50_bi,		// Struggle
-		0_bi,		// Sketch
-		10_bi,		// Triple Kick
-		40_bi,		// Thief
-		0_bi,		// Spider Web
-		0_bi,		// Mind Reader
-		0_bi,		// Nightmare
-		60_bi,		// Flame Wheel
-		40_bi,		// Snore
-		0_bi,		// Curse
-		variable_power,		// Flail
-		0_bi,		// Conversion 2
-		100_bi,		// Aeroblast
-		0_bi,		// Cotton Spore
-		variable_power,		// Reversal
-		0_bi,		// Spite
-		40_bi,		// Powder Snow
-		0_bi,		// Protect
-		40_bi,		// Mach Punch
-		0_bi,		// Scary Face
-		60_bi,		// Faint Attack
-		0_bi,		// Sweet Kiss
-		0_bi,		// Belly Drum
-		90_bi,		// Sludge Bomb
-		20_bi,		// Mud-Slap
-		65_bi,		// Octazooka
-		0_bi,		// Spikes
-		120_bi,		// Zap Cannon
-		0_bi,		// Foresight
-		0_bi,		// Destiny Bond
-		0_bi,		// Perish Song
-		55_bi,		// Icy Wind
-		0_bi,		// Detect
-		25_bi,		// Bone Rush
-		0_bi,		// Lock-On
-		120_bi,		// Outrage
-		0_bi,		// Sandstorm
-		75_bi,		// Giga Drain
-		0_bi,		// Endure
-		0_bi,		// Charm
-		30_bi,		// Rollout
-		40_bi,		// False Swipe
-		0_bi,		// Swagger
-		0_bi,		// Milk Drink
-		65_bi,		// Spark
-		20_bi,		// Fury Cutter
-		70_bi,		// Steel Wing
-		0_bi,		// Mean Look
-		0_bi,		// Attract
-		0_bi,		// Sleep Talk
-		0_bi,		// Heal Bell
-		variable_power,		// Return
-		variable_power,		// Present
-		variable_power,		// Frustration
-		0_bi,		// Safeguard
-		0_bi,		// Pain Split
-		100_bi,		// Sacred Fire
-		variable_power,		// Magnitude
-		100_bi,		// DynamicPunch
-		120_bi,		// Megahorn
-		60_bi,		// DragonBreath
-		0_bi,		// Baton Pass
-		0_bi,		// Encore
-		40_bi,		// Pursuit
-		20_bi,		// Rapid Spin
-		0_bi,		// Sweet Scent
-		100_bi,		// Iron Tail
-		50_bi,		// Metal Claw
-		70_bi,		// Vital Throw
-		0_bi,		// Morning Sun
-		0_bi,		// Synthesis
-		0_bi,		// Moonlight
-		variable_power,		// Hidden Power
-		100_bi,		// Cross Chop
-		40_bi,		// Twister
-		0_bi,		// Rain Dance
-		0_bi,		// Sunny Day
-		80_bi,		// Crunch
-		bounded::none,		// Mirror Coat
-		0_bi,		// Psych Up
-		80_bi,		// ExtremeSpeed
-		60_bi,		// AncientPower
-		80_bi,		// Shadow Ball
-		100_bi,		// Future Sight
-		40_bi,		// Rock Smash
-		35_bi,		// Whirlpool
-		variable_power,		// Beat Up
-		40_bi,		// Fake Out
-		90_bi,		// Uproar
-		0_bi,		// Stockpile
-		variable_power,		// Spit Up
-		0_bi,		// Swallow
-		100_bi,		// Heat Wave
-		0_bi,		// Hail
-		0_bi,		// Torment
-		0_bi,		// Flatter
-		0_bi,		// Will-O-Wisp
-		0_bi,		// Memento
-		70_bi,		// Facade
-		150_bi,		// Focus Punch
-		60_bi,		// SmellingSalt
-		0_bi,		// Follow Me
-		0_bi,		// Nature Power
-		0_bi,		// Charge
-		0_bi,		// Taunt
-		0_bi,		// Helping Hand
-		0_bi,		// Trick
-		0_bi,		// Role Play
-		0_bi,		// Wish
-		0_bi,		// Assist
-		0_bi,		// Ingrain
-		120_bi,		// Superpower
-		0_bi,		// Magic Coat
-		0_bi,		// Recycle
-		60_bi,		// Revenge
-		75_bi,		// Brick Break
-		0_bi,		// Yawn
-		20_bi,		// Knock Off
-		bounded::none,		// Endeavor
-		150_bi,		// Eruption
-		0_bi,		// Skill Swap
-		0_bi,		// Imprison
-		0_bi,		// Refresh
-		0_bi,		// Grudge
-		0_bi,		// Snatch
-		70_bi,		// Secret Power
-		80_bi,		// Dive
-		15_bi,		// Arm Thrust
-		0_bi,		// Camouflage
-		0_bi,		// Tail Glow
-		70_bi,		// Luster Purge
-		70_bi,		// Mist Ball
-		0_bi,		// FeatherDance
-		0_bi,		// Teeter Dance
-		85_bi,		// Blaze Kick
-		0_bi,		// Mud Sport
-		30_bi,		// Ice Ball
-		60_bi,		// Needle Arm
-		0_bi,		// Slack Off
-		90_bi,		// Hyper Voice
-		50_bi,		// Poison Fang
-		75_bi,		// Crush Claw
-		150_bi,		// Blast Burn
-		150_bi,		// Hydro Cannon
-		100_bi,		// Meteor Mash
-		30_bi,		// Astonish
-		50_bi,		// Weather Ball
-		0_bi,		// Aromatherapy
-		0_bi,		// Fake Tears
-		55_bi,		// Air Cutter
-		140_bi,		// Overheat
-		0_bi,		// Odor Sleuth
-		50_bi,		// Rock Tomb
-		60_bi,		// Silver Wind
-		0_bi,		// Metal Sound
-		0_bi,		// GrassWhistle
-		0_bi,		// Tickle
-		0_bi,		// Cosmic Power
-		150_bi,		// Water Spout
-		75_bi,		// Signal Beam
-		60_bi,		// Shadow Punch
-		80_bi,		// Extrasensory
-		85_bi,		// Sky Uppercut
-		35_bi,		// Sand Tomb
-		bounded::none,		// Sheer Cold
-		95_bi,		// Muddy Water
-		25_bi,		// Bullet Seed
-		60_bi,		// Aerial Ace
-		25_bi,		// Icicle Spear
-		0_bi,		// Iron Defense
-		0_bi,		// Block
-		0_bi,		// Howl
-		80_bi,		// Dragon Claw
-		150_bi,		// Frenzy Plant
-		0_bi,		// Bulk Up
-		85_bi,		// Bounce
-		55_bi,		// Mud Shot
-		50_bi,		// Poison Tail
-		60_bi,		// Covet
-		120_bi,		// Volt Tackle
-		60_bi,		// Magical Leaf
-		0_bi,		// Water Sport
-		0_bi,		// Calm Mind
-		90_bi,		// Leaf Blade
-		0_bi,		// Dragon Dance
-		25_bi,		// Rock Blast
-		60_bi,		// Shock Wave
-		60_bi,		// Water Pulse
-		140_bi,		// Doom Desire
-		140_bi,		// Psycho Boost
-		0_bi,		// Roost
-		0_bi,		// Gravity
-		0_bi,		// Miracle Eye
-		60_bi,		// Wake-Up Slap
-		100_bi,		// Hammer Arm
-		variable_power,		// Gyro Ball
-		0_bi,		// Healing Wish
-		65_bi,		// Brine
-		variable_power,		// Natural Gift
-		30_bi,		// Feint
-		60_bi,		// Pluck
-		0_bi,		// Tailwind
-		0_bi,		// Acupressure
-		bounded::none,		// Metal Burst
-		70_bi,		// U-turn
-		120_bi,		// Close Combat
-		50_bi,		// Payback
-		50_bi,		// Assurance
-		0_bi,		// Embargo
-		variable_power,		// Fling
-		0_bi,		// Psycho Shift
-		variable_power,		// Trump Card
-		0_bi,		// Heal Block
-		variable_power,		// Wring Out
-		0_bi,		// Power Trick
-		0_bi,		// Gastro Acid
-		0_bi,		// Lucky Chant
-		variable_power,		// Me First
-		0_bi,		// Copycat
-		0_bi,		// Power Swap
-		0_bi,		// Guard Swap
-		variable_power,		// Punishment
-		140_bi,		// Last Resort
-		0_bi,		// Worry Seed
-		80_bi,		// Sucker Punch
-		0_bi,		// Toxic Spikes
-		0_bi,		// Heart Swap
-		0_bi,		// Aqua Ring
-		0_bi,		// Magnet Rise
-		120_bi,		// Flare Blitz
-		60_bi,		// Force Palm
-		90_bi,		// Aura Sphere
-		0_bi,		// Rock Polish
-		80_bi,		// Poison Jab
-		80_bi,		// Dark Pulse
-		70_bi,		// Night Slash
-		90_bi,		// Aqua Tail
-		80_bi,		// Seed Bomb
-		75_bi,		// Air Slash
-		80_bi,		// X-Scissor
-		90_bi,		// Bug Buzz
-		90_bi,		// Dragon Pulse
-		100_bi,		// Dragon Rush
-		70_bi,		// Power Gem
-		75_bi,		// Drain Punch
-		40_bi,		// Vacuum Wave
-		120_bi,		// Focus Blast
-		80_bi,		// Energy Ball
-		120_bi,		// Brave Bird
-		90_bi,		// Earth Power
-		0_bi,		// Switcheroo
-		150_bi,		// Giga Impact
-		0_bi,		// Nasty Plot
-		40_bi,		// Bullet Punch
-		60_bi,		// Avalanche
-		40_bi,		// Ice Shard
-		70_bi,		// Shadow Claw
-		65_bi,		// Thunder Fang
-		65_bi,		// Ice Fang
-		65_bi,		// Fire Fang
-		40_bi,		// Shadow Sneak
-		65_bi,		// Mud Bomb
-		70_bi,		// Psycho Cut
-		80_bi,		// Zen Headbutt
-		65_bi,		// Mirror Shot
-		80_bi,		// Flash Cannon
-		90_bi,		// Rock Climb
-		0_bi,		// Defog
-		0_bi,		// Trick Room
-		140_bi,		// Draco Meteor
-		80_bi,		// Discharge
-		80_bi,		// Lava Plume
-		140_bi,		// Leaf Storm
-		120_bi,		// Power Whip
-		150_bi,		// Rock Wrecker
-		70_bi,		// Cross Poison
-		120_bi,		// Gunk Shot
-		80_bi,		// Iron Head
-		60_bi,		// Magnet Bomb
-		100_bi,		// Stone Edge
-		0_bi,		// Captivate
-		0_bi,		// Stealth Rock
-		variable_power,		// Grass Knot
-		60_bi,		// Chatter
-		100_bi,		// Judgment
-		60_bi,		// Bug Bite
-		50_bi,		// Charge Beam
-		120_bi,		// Wood Hammer
-		40_bi,		// Aqua Jet
-		90_bi,		// Attack Order
-		0_bi,		// Defend Order
-		0_bi,		// Heal Order
-		150_bi,		// Head Smash
-		35_bi,		// Double Hit
-		150_bi,		// Roar of Time
-		100_bi,		// Spacial Rend
-		0_bi,		// Lunar Dance
-		variable_power,		// Crush Grip
-		120_bi,		// Magma Storm
-		0_bi,		// Dark Void
-		120_bi,		// Seed Flare
-		60_bi,		// Ominous Wind
-		120_bi,		// Shadow Force
-		0_bi,		// Hone Claws
-		0_bi,		// Wide Guard
-		0_bi,		// Guard Split
-		0_bi,		// Power Split
-		0_bi,		// Wonder Room
-		80_bi,		// Psyshock
-		65_bi,		// Venoshock
-		0_bi,		// Autotomize
-		0_bi,		// Rage Powder
-		0_bi,		// Telekinesis
-		0_bi,		// Magic Room
-		50_bi,		// Smack Down
-		40_bi,		// Storm Throw
-		70_bi,		// Flame Burst
-		95_bi,		// Sludge Wave
-		0_bi,		// Quiver Dance
-		variable_power,		// Heavy Slam
-		70_bi,		// Synchronoise
-		variable_power,		// Electro Ball
-		0_bi,		// Soak
-		50_bi,		// Flame Charge
-		0_bi,		// Coil
-		60_bi,		// Low Sweep
-		40_bi,		// Acid Spray
-		95_bi,		// Foul Play
-		0_bi,		// Simple Beam
-		0_bi,		// Entrainment
-		0_bi,		// After You
-		60_bi,		// Round
-		40_bi,		// Echoed Voice
-		70_bi,		// Chip Away
-		50_bi,		// Clear Smog
-		20_bi,		// Stored Power
-		0_bi,		// Quick Guard
-		0_bi,		// Ally Switch
-		80_bi,		// Scald
-		0_bi,		// Shell Smash
-		0_bi,		// Heal Pulse
-		50_bi,		// Hex
-		60_bi,		// Sky Drop
-		0_bi,		// Shift Gear
-		60_bi,		// Circle Throw
-		30_bi,		// Incinerate
-		0_bi,		// Quash
-		55_bi,		// Acrobatics
-		0_bi,		// Reflect Type
-		70_bi,		// Retaliate
-		bounded::none,		// Final Gambit
-		0_bi,		// Bestow
-		100_bi,		// Inferno
-		50_bi,		// Water Pledge
-		50_bi,		// Fire Pledge
-		50_bi,		// Grass Pledge
-		70_bi,		// Volt Switch
-		30_bi,		// Struggle Bug
-		60_bi,		// Bulldoze
-		40_bi,		// Frost Breath
-		60_bi,		// Dragon Tail
-		0_bi,		// Work Up
-		55_bi,		// Electroweb
-		90_bi,		// Wild Charge
-		80_bi,		// Drill Run
-		40_bi,		// Dual Chop
-		60_bi,		// Heart Stamp
-		75_bi,		// Horn Leech
-		90_bi,		// Sacred Sword
-		75_bi,		// Razor Shell
-		variable_power,		// Heat Crash
-		65_bi,		// Leaf Tornado
-		65_bi,		// Steamroller
-		0_bi,		// Cotton Guard
-		85_bi,		// Night Daze
-		100_bi,		// Psystrike
-		25_bi,		// Tail Slap
-		120_bi,		// Hurricane
-		120_bi,		// Head Charge
-		50_bi,		// Gear Grind
-		100_bi,		// Searing Shot
-		85_bi,		// Techno Blast
-		75_bi,		// Relic Song
-		85_bi,		// Secret Sword
-		65_bi,		// Glaciate
-		130_bi,		// Bolt Strike
-		130_bi,		// Blue Flare
-		80_bi,		// Fiery Dance
-		140_bi,		// Freeze Shock
-		140_bi,		// Ice Burn
-		55_bi,		// Snarl
-		85_bi,		// Icicle Crash
-		180_bi,		// V-create
-		100_bi,		// Fusion Flare
-		100_bi		// Fusion Bolt
-	);
-	return power.at(move);
+	switch (move) {
+		case Moves::Switch0: return 0_bi;
+		case Moves::Switch1: return 0_bi;
+		case Moves::Switch2: return 0_bi;
+		case Moves::Switch3: return 0_bi;
+		case Moves::Switch4: return 0_bi;
+		case Moves::Switch5: return 0_bi;
+		case Moves::Hit_Self: return 40_bi;
+		case Moves::Pound: return 40_bi;
+		case Moves::Karate_Chop: return 50_bi;
+		case Moves::DoubleSlap: return 15_bi;
+		case Moves::Comet_Punch: return 18_bi;
+		case Moves::Mega_Punch: return 80_bi;
+		case Moves::Pay_Day: return 40_bi;
+		case Moves::Fire_Punch: return 75_bi;
+		case Moves::Ice_Punch: return 75_bi;
+		case Moves::ThunderPunch: return 75_bi;
+		case Moves::Scratch: return 40_bi;
+		case Moves::ViceGrip: return 55_bi;
+		case Moves::Guillotine: return bounded::none;
+		case Moves::Razor_Wind: return 80_bi;
+		case Moves::Swords_Dance: return 0_bi;
+		case Moves::Cut: return 50_bi;
+		case Moves::Gust: return 40_bi;
+		case Moves::Wing_Attack: return 60_bi;
+		case Moves::Whirlwind: return 0_bi;
+		case Moves::Fly: return 90_bi;
+		case Moves::Bind: return 15_bi;
+		case Moves::Slam: return 80_bi;
+		case Moves::Vine_Whip: return 35_bi;
+		case Moves::Stomp: return 65_bi;
+		case Moves::Double_Kick: return 30_bi;
+		case Moves::Mega_Kick: return 120_bi;
+		case Moves::Jump_Kick: return 100_bi;
+		case Moves::Rolling_Kick: return 60_bi;
+		case Moves::Sand_Attack: return 0_bi;
+		case Moves::Headbutt: return 70_bi;
+		case Moves::Horn_Attack: return 65_bi;
+		case Moves::Fury_Attack: return 15_bi;
+		case Moves::Horn_Drill: return bounded::none;
+		case Moves::Tackle: return 50_bi;
+		case Moves::Body_Slam: return 85_bi;
+		case Moves::Wrap: return 15_bi;
+		case Moves::Take_Down: return 90_bi;
+		case Moves::Thrash: return 120_bi;
+		case Moves::Double_Edge: return 120_bi;
+		case Moves::Tail_Whip: return 0_bi;
+		case Moves::Poison_Sting: return 15_bi;
+		case Moves::Twineedle: return 25_bi;
+		case Moves::Pin_Missile: return 14_bi;
+		case Moves::Leer: return 0_bi;
+		case Moves::Bite: return 60_bi;
+		case Moves::Growl: return 0_bi;
+		case Moves::Roar: return 0_bi;
+		case Moves::Sing: return 0_bi;
+		case Moves::Supersonic: return 0_bi;
+		case Moves::SonicBoom: return bounded::none;
+		case Moves::Disable: return 0_bi;
+		case Moves::Acid: return 40_bi;
+		case Moves::Ember: return 40_bi;
+		case Moves::Flamethrower: return 95_bi;
+		case Moves::Mist: return 0_bi;
+		case Moves::Water_Gun: return 40_bi;
+		case Moves::Hydro_Pump: return 120_bi;
+		case Moves::Surf: return 95_bi;
+		case Moves::Ice_Beam: return 95_bi;
+		case Moves::Blizzard: return 120_bi;
+		case Moves::Psybeam: return 65_bi;
+		case Moves::BubbleBeam: return 65_bi;
+		case Moves::Aurora_Beam: return 65_bi;
+		case Moves::Hyper_Beam: return 150_bi;
+		case Moves::Peck: return 35_bi;
+		case Moves::Drill_Peck: return 80_bi;
+		case Moves::Submission: return 80_bi;
+		case Moves::Low_Kick: return variable_power;
+		case Moves::Counter: return bounded::none;
+		case Moves::Seismic_Toss: return bounded::none;
+		case Moves::Strength: return 80_bi;
+		case Moves::Absorb: return 20_bi;
+		case Moves::Mega_Drain: return 40_bi;
+		case Moves::Leech_Seed: return 0_bi;
+		case Moves::Growth: return 0_bi;
+		case Moves::Razor_Leaf: return 55_bi;
+		case Moves::SolarBeam: return 120_bi;
+		case Moves::PoisonPowder: return 0_bi;
+		case Moves::Stun_Spore: return 0_bi;
+		case Moves::Sleep_Powder: return 0_bi;
+		case Moves::Petal_Dance: return 120_bi;
+		case Moves::String_Shot: return 0_bi;
+		case Moves::Dragon_Rage: return bounded::none;
+		case Moves::Fire_Spin: return 35_bi;
+		case Moves::ThunderShock: return 40_bi;
+		case Moves::Thunderbolt: return 95_bi;
+		case Moves::Thunder_Wave: return 0_bi;
+		case Moves::Thunder: return 120_bi;
+		case Moves::Rock_Throw: return 50_bi;
+		case Moves::Earthquake: return 100_bi;
+		case Moves::Fissure: return bounded::none;
+		case Moves::Dig: return 80_bi;
+		case Moves::Toxic: return 0_bi;
+		case Moves::Confusion: return 50_bi;
+		case Moves::Psychic: return 90_bi;
+		case Moves::Hypnosis: return 0_bi;
+		case Moves::Meditate: return 0_bi;
+		case Moves::Agility: return 0_bi;
+		case Moves::Quick_Attack: return 40_bi;
+		case Moves::Rage: return 20_bi;
+		case Moves::Teleport: return 0_bi;
+		case Moves::Night_Shade: return bounded::none;
+		case Moves::Mimic: return 0_bi;
+		case Moves::Screech: return 0_bi;
+		case Moves::Double_Team: return 0_bi;
+		case Moves::Recover: return 0_bi;
+		case Moves::Harden: return 0_bi;
+		case Moves::Minimize: return 0_bi;
+		case Moves::SmokeScreen: return 0_bi;
+		case Moves::Confuse_Ray: return 0_bi;
+		case Moves::Withdraw: return 0_bi;
+		case Moves::Defense_Curl: return 0_bi;
+		case Moves::Barrier: return 0_bi;
+		case Moves::Light_Screen: return 0_bi;
+		case Moves::Haze: return 0_bi;
+		case Moves::Reflect: return 0_bi;
+		case Moves::Focus_Energy: return 0_bi;
+		case Moves::Bide: return variable_power;
+		case Moves::Metronome: return 0_bi;
+		case Moves::Mirror_Move: return 0_bi;
+		case Moves::Selfdestruct: return 200_bi;
+		case Moves::Egg_Bomb: return 100_bi;
+		case Moves::Lick: return 20_bi;
+		case Moves::Smog: return 20_bi;
+		case Moves::Sludge: return 65_bi;
+		case Moves::Bone_Club: return 65_bi;
+		case Moves::Fire_Blast: return 120_bi;
+		case Moves::Waterfall: return 80_bi;
+		case Moves::Clamp: return 35_bi;
+		case Moves::Swift: return 60_bi;
+		case Moves::Skull_Bash: return 100_bi;
+		case Moves::Spike_Cannon: return 20_bi;
+		case Moves::Constrict: return 10_bi;
+		case Moves::Amnesia: return 0_bi;
+		case Moves::Kinesis: return 0_bi;
+		case Moves::Softboiled: return 0_bi;
+		case Moves::Hi_Jump_Kick: return 130_bi;
+		case Moves::Glare: return 0_bi;
+		case Moves::Dream_Eater: return 100_bi;
+		case Moves::Poison_Gas: return 0_bi;
+		case Moves::Barrage: return 15_bi;
+		case Moves::Leech_Life: return 20_bi;
+		case Moves::Lovely_Kiss: return 0_bi;
+		case Moves::Sky_Attack: return 140_bi;
+		case Moves::Transform: return 0_bi;
+		case Moves::Bubble: return 20_bi;
+		case Moves::Dizzy_Punch: return 70_bi;
+		case Moves::Spore: return 0_bi;
+		case Moves::Flash: return 0_bi;
+		case Moves::Psywave: return bounded::none;
+		case Moves::Splash: return 0_bi;
+		case Moves::Acid_Armor: return 0_bi;
+		case Moves::Crabhammer: return 90_bi;
+		case Moves::Explosion: return 250_bi;
+		case Moves::Fury_Swipes: return 18_bi;
+		case Moves::Bonemerang: return 50_bi;
+		case Moves::Rest: return 0_bi;
+		case Moves::Rock_Slide: return 75_bi;
+		case Moves::Hyper_Fang: return 80_bi;
+		case Moves::Sharpen: return 0_bi;
+		case Moves::Conversion: return 0_bi;
+		case Moves::Tri_Attack: return 80_bi;
+		case Moves::Super_Fang: return bounded::none;
+		case Moves::Slash: return 70_bi;
+		case Moves::Substitute: return 0_bi;
+		case Moves::Struggle: return 50_bi;
+		case Moves::Sketch: return 0_bi;
+		case Moves::Triple_Kick: return 10_bi;
+		case Moves::Thief: return 40_bi;
+		case Moves::Spider_Web: return 0_bi;
+		case Moves::Mind_Reader: return 0_bi;
+		case Moves::Nightmare: return 0_bi;
+		case Moves::Flame_Wheel: return 60_bi;
+		case Moves::Snore: return 40_bi;
+		case Moves::Curse: return 0_bi;
+		case Moves::Flail: return variable_power;
+		case Moves::Conversion_2: return 0_bi;
+		case Moves::Aeroblast: return 100_bi;
+		case Moves::Cotton_Spore: return 0_bi;
+		case Moves::Reversal: return variable_power;
+		case Moves::Spite: return 0_bi;
+		case Moves::Powder_Snow: return 40_bi;
+		case Moves::Protect: return 0_bi;
+		case Moves::Mach_Punch: return 40_bi;
+		case Moves::Scary_Face: return 0_bi;
+		case Moves::Faint_Attack: return 60_bi;
+		case Moves::Sweet_Kiss: return 0_bi;
+		case Moves::Belly_Drum: return 0_bi;
+		case Moves::Sludge_Bomb: return 90_bi;
+		case Moves::Mud_Slap: return 20_bi;
+		case Moves::Octazooka: return 65_bi;
+		case Moves::Spikes: return 0_bi;
+		case Moves::Zap_Cannon: return 120_bi;
+		case Moves::Foresight: return 0_bi;
+		case Moves::Destiny_Bond: return 0_bi;
+		case Moves::Perish_Song: return 0_bi;
+		case Moves::Icy_Wind: return 55_bi;
+		case Moves::Detect: return 0_bi;
+		case Moves::Bone_Rush: return 25_bi;
+		case Moves::Lock_On: return 0_bi;
+		case Moves::Outrage: return 120_bi;
+		case Moves::Sandstorm: return 0_bi;
+		case Moves::Giga_Drain: return 75_bi;
+		case Moves::Endure: return 0_bi;
+		case Moves::Charm: return 0_bi;
+		case Moves::Rollout: return 30_bi;
+		case Moves::False_Swipe: return 40_bi;
+		case Moves::Swagger: return 0_bi;
+		case Moves::Milk_Drink: return 0_bi;
+		case Moves::Spark: return 65_bi;
+		case Moves::Fury_Cutter: return 20_bi;
+		case Moves::Steel_Wing: return 70_bi;
+		case Moves::Mean_Look: return 0_bi;
+		case Moves::Attract: return 0_bi;
+		case Moves::Sleep_Talk: return 0_bi;
+		case Moves::Heal_Bell: return 0_bi;
+		case Moves::Return: return variable_power;
+		case Moves::Present: return variable_power;
+		case Moves::Frustration: return variable_power;
+		case Moves::Safeguard: return 0_bi;
+		case Moves::Pain_Split: return 0_bi;
+		case Moves::Sacred_Fire: return 100_bi;
+		case Moves::Magnitude: return variable_power;
+		case Moves::DynamicPunch: return 100_bi;
+		case Moves::Megahorn: return 120_bi;
+		case Moves::DragonBreath: return 60_bi;
+		case Moves::Baton_Pass: return 0_bi;
+		case Moves::Encore: return 0_bi;
+		case Moves::Pursuit: return 40_bi;
+		case Moves::Rapid_Spin: return 20_bi;
+		case Moves::Sweet_Scent: return 0_bi;
+		case Moves::Iron_Tail: return 100_bi;
+		case Moves::Metal_Claw: return 50_bi;
+		case Moves::Vital_Throw: return 70_bi;
+		case Moves::Morning_Sun: return 0_bi;
+		case Moves::Synthesis: return 0_bi;
+		case Moves::Moonlight: return 0_bi;
+		case Moves::Hidden_Power: return variable_power;
+		case Moves::Cross_Chop: return 100_bi;
+		case Moves::Twister: return 40_bi;
+		case Moves::Rain_Dance: return 0_bi;
+		case Moves::Sunny_Day: return 0_bi;
+		case Moves::Crunch: return 80_bi;
+		case Moves::Mirror_Coat: return bounded::none;
+		case Moves::Psych_Up: return 0_bi;
+		case Moves::ExtremeSpeed: return 80_bi;
+		case Moves::AncientPower: return 60_bi;
+		case Moves::Shadow_Ball: return 80_bi;
+		case Moves::Future_Sight: return 100_bi;
+		case Moves::Rock_Smash: return 40_bi;
+		case Moves::Whirlpool: return 35_bi;
+		case Moves::Beat_Up: return variable_power;
+		case Moves::Fake_Out: return 40_bi;
+		case Moves::Uproar: return 90_bi;
+		case Moves::Stockpile: return 0_bi;
+		case Moves::Spit_Up: return variable_power;
+		case Moves::Swallow: return 0_bi;
+		case Moves::Heat_Wave: return 100_bi;
+		case Moves::Hail: return 0_bi;
+		case Moves::Torment: return 0_bi;
+		case Moves::Flatter: return 0_bi;
+		case Moves::Will_O_Wisp: return 0_bi;
+		case Moves::Memento: return 0_bi;
+		case Moves::Facade: return 70_bi;
+		case Moves::Focus_Punch: return 150_bi;
+		case Moves::SmellingSalt: return 60_bi;
+		case Moves::Follow_Me: return 0_bi;
+		case Moves::Nature_Power: return 0_bi;
+		case Moves::Charge: return 0_bi;
+		case Moves::Taunt: return 0_bi;
+		case Moves::Helping_Hand: return 0_bi;
+		case Moves::Trick: return 0_bi;
+		case Moves::Role_Play: return 0_bi;
+		case Moves::Wish: return 0_bi;
+		case Moves::Assist: return 0_bi;
+		case Moves::Ingrain: return 0_bi;
+		case Moves::Superpower: return 120_bi;
+		case Moves::Magic_Coat: return 0_bi;
+		case Moves::Recycle: return 0_bi;
+		case Moves::Revenge: return 60_bi;
+		case Moves::Brick_Break: return 75_bi;
+		case Moves::Yawn: return 0_bi;
+		case Moves::Knock_Off: return 20_bi;
+		case Moves::Endeavor: return bounded::none;
+		case Moves::Eruption: return 150_bi;
+		case Moves::Skill_Swap: return 0_bi;
+		case Moves::Imprison: return 0_bi;
+		case Moves::Refresh: return 0_bi;
+		case Moves::Grudge: return 0_bi;
+		case Moves::Snatch: return 0_bi;
+		case Moves::Secret_Power: return 70_bi;
+		case Moves::Dive: return 80_bi;
+		case Moves::Arm_Thrust: return 15_bi;
+		case Moves::Camouflage: return 0_bi;
+		case Moves::Tail_Glow: return 0_bi;
+		case Moves::Luster_Purge: return 70_bi;
+		case Moves::Mist_Ball: return 70_bi;
+		case Moves::FeatherDance: return 0_bi;
+		case Moves::Teeter_Dance: return 0_bi;
+		case Moves::Blaze_Kick: return 85_bi;
+		case Moves::Mud_Sport: return 0_bi;
+		case Moves::Ice_Ball: return 30_bi;
+		case Moves::Needle_Arm: return 60_bi;
+		case Moves::Slack_Off: return 0_bi;
+		case Moves::Hyper_Voice: return 90_bi;
+		case Moves::Poison_Fang: return 50_bi;
+		case Moves::Crush_Claw: return 75_bi;
+		case Moves::Blast_Burn: return 150_bi;
+		case Moves::Hydro_Cannon: return 150_bi;
+		case Moves::Meteor_Mash: return 100_bi;
+		case Moves::Astonish: return 30_bi;
+		case Moves::Weather_Ball: return 50_bi;
+		case Moves::Aromatherapy: return 0_bi;
+		case Moves::Fake_Tears: return 0_bi;
+		case Moves::Air_Cutter: return 55_bi;
+		case Moves::Overheat: return 140_bi;
+		case Moves::Odor_Sleuth: return 0_bi;
+		case Moves::Rock_Tomb: return 50_bi;
+		case Moves::Silver_Wind: return 60_bi;
+		case Moves::Metal_Sound: return 0_bi;
+		case Moves::GrassWhistle: return 0_bi;
+		case Moves::Tickle: return 0_bi;
+		case Moves::Cosmic_Power: return 0_bi;
+		case Moves::Water_Spout: return 150_bi;
+		case Moves::Signal_Beam: return 75_bi;
+		case Moves::Shadow_Punch: return 60_bi;
+		case Moves::Extrasensory: return 80_bi;
+		case Moves::Sky_Uppercut: return 85_bi;
+		case Moves::Sand_Tomb: return 35_bi;
+		case Moves::Sheer_Cold: return bounded::none;
+		case Moves::Muddy_Water: return 95_bi;
+		case Moves::Bullet_Seed: return 25_bi;
+		case Moves::Aerial_Ace: return 60_bi;
+		case Moves::Icicle_Spear: return 25_bi;
+		case Moves::Iron_Defense: return 0_bi;
+		case Moves::Block: return 0_bi;
+		case Moves::Howl: return 0_bi;
+		case Moves::Dragon_Claw: return 80_bi;
+		case Moves::Frenzy_Plant: return 150_bi;
+		case Moves::Bulk_Up: return 0_bi;
+		case Moves::Bounce: return 85_bi;
+		case Moves::Mud_Shot: return 55_bi;
+		case Moves::Poison_Tail: return 50_bi;
+		case Moves::Covet: return 60_bi;
+		case Moves::Volt_Tackle: return 120_bi;
+		case Moves::Magical_Leaf: return 60_bi;
+		case Moves::Water_Sport: return 0_bi;
+		case Moves::Calm_Mind: return 0_bi;
+		case Moves::Leaf_Blade: return 90_bi;
+		case Moves::Dragon_Dance: return 0_bi;
+		case Moves::Rock_Blast: return 25_bi;
+		case Moves::Shock_Wave: return 60_bi;
+		case Moves::Water_Pulse: return 60_bi;
+		case Moves::Doom_Desire: return 140_bi;
+		case Moves::Psycho_Boost: return 140_bi;
+		case Moves::Roost: return 0_bi;
+		case Moves::Gravity: return 0_bi;
+		case Moves::Miracle_Eye: return 0_bi;
+		case Moves::Wake_Up_Slap: return 60_bi;
+		case Moves::Hammer_Arm: return 100_bi;
+		case Moves::Gyro_Ball: return variable_power;
+		case Moves::Healing_Wish: return 0_bi;
+		case Moves::Brine: return 65_bi;
+		case Moves::Natural_Gift: return variable_power;
+		case Moves::Feint: return 30_bi;
+		case Moves::Pluck: return 60_bi;
+		case Moves::Tailwind: return 0_bi;
+		case Moves::Acupressure: return 0_bi;
+		case Moves::Metal_Burst: return bounded::none;
+		case Moves::U_turn: return 70_bi;
+		case Moves::Close_Combat: return 120_bi;
+		case Moves::Payback: return 50_bi;
+		case Moves::Assurance: return 50_bi;
+		case Moves::Embargo: return 0_bi;
+		case Moves::Fling: return variable_power;
+		case Moves::Psycho_Shift: return 0_bi;
+		case Moves::Trump_Card: return variable_power;
+		case Moves::Heal_Block: return 0_bi;
+		case Moves::Wring_Out: return variable_power;
+		case Moves::Power_Trick: return 0_bi;
+		case Moves::Gastro_Acid: return 0_bi;
+		case Moves::Lucky_Chant: return 0_bi;
+		case Moves::Me_First: return variable_power;
+		case Moves::Copycat: return 0_bi;
+		case Moves::Power_Swap: return 0_bi;
+		case Moves::Guard_Swap: return 0_bi;
+		case Moves::Punishment: return variable_power;
+		case Moves::Last_Resort: return 140_bi;
+		case Moves::Worry_Seed: return 0_bi;
+		case Moves::Sucker_Punch: return 80_bi;
+		case Moves::Toxic_Spikes: return 0_bi;
+		case Moves::Heart_Swap: return 0_bi;
+		case Moves::Aqua_Ring: return 0_bi;
+		case Moves::Magnet_Rise: return 0_bi;
+		case Moves::Flare_Blitz: return 120_bi;
+		case Moves::Force_Palm: return 60_bi;
+		case Moves::Aura_Sphere: return 90_bi;
+		case Moves::Rock_Polish: return 0_bi;
+		case Moves::Poison_Jab: return 80_bi;
+		case Moves::Dark_Pulse: return 80_bi;
+		case Moves::Night_Slash: return 70_bi;
+		case Moves::Aqua_Tail: return 90_bi;
+		case Moves::Seed_Bomb: return 80_bi;
+		case Moves::Air_Slash: return 75_bi;
+		case Moves::X_Scissor: return 80_bi;
+		case Moves::Bug_Buzz: return 90_bi;
+		case Moves::Dragon_Pulse: return 90_bi;
+		case Moves::Dragon_Rush: return 100_bi;
+		case Moves::Power_Gem: return 70_bi;
+		case Moves::Drain_Punch: return 75_bi;
+		case Moves::Vacuum_Wave: return 40_bi;
+		case Moves::Focus_Blast: return 120_bi;
+		case Moves::Energy_Ball: return 80_bi;
+		case Moves::Brave_Bird: return 120_bi;
+		case Moves::Earth_Power: return 90_bi;
+		case Moves::Switcheroo: return 0_bi;
+		case Moves::Giga_Impact: return 150_bi;
+		case Moves::Nasty_Plot: return 0_bi;
+		case Moves::Bullet_Punch: return 40_bi;
+		case Moves::Avalanche: return 60_bi;
+		case Moves::Ice_Shard: return 40_bi;
+		case Moves::Shadow_Claw: return 70_bi;
+		case Moves::Thunder_Fang: return 65_bi;
+		case Moves::Ice_Fang: return 65_bi;
+		case Moves::Fire_Fang: return 65_bi;
+		case Moves::Shadow_Sneak: return 40_bi;
+		case Moves::Mud_Bomb: return 65_bi;
+		case Moves::Psycho_Cut: return 70_bi;
+		case Moves::Zen_Headbutt: return 80_bi;
+		case Moves::Mirror_Shot: return 65_bi;
+		case Moves::Flash_Cannon: return 80_bi;
+		case Moves::Rock_Climb: return 90_bi;
+		case Moves::Defog: return 0_bi;
+		case Moves::Trick_Room: return 0_bi;
+		case Moves::Draco_Meteor: return 140_bi;
+		case Moves::Discharge: return 80_bi;
+		case Moves::Lava_Plume: return 80_bi;
+		case Moves::Leaf_Storm: return 140_bi;
+		case Moves::Power_Whip: return 120_bi;
+		case Moves::Rock_Wrecker: return 150_bi;
+		case Moves::Cross_Poison: return 70_bi;
+		case Moves::Gunk_Shot: return 120_bi;
+		case Moves::Iron_Head: return 80_bi;
+		case Moves::Magnet_Bomb: return 60_bi;
+		case Moves::Stone_Edge: return 100_bi;
+		case Moves::Captivate: return 0_bi;
+		case Moves::Stealth_Rock: return 0_bi;
+		case Moves::Grass_Knot: return variable_power;
+		case Moves::Chatter: return 60_bi;
+		case Moves::Judgment: return 100_bi;
+		case Moves::Bug_Bite: return 60_bi;
+		case Moves::Charge_Beam: return 50_bi;
+		case Moves::Wood_Hammer: return 120_bi;
+		case Moves::Aqua_Jet: return 40_bi;
+		case Moves::Attack_Order: return 90_bi;
+		case Moves::Defend_Order: return 0_bi;
+		case Moves::Heal_Order: return 0_bi;
+		case Moves::Head_Smash: return 150_bi;
+		case Moves::Double_Hit: return 35_bi;
+		case Moves::Roar_of_Time: return 150_bi;
+		case Moves::Spacial_Rend: return 100_bi;
+		case Moves::Lunar_Dance: return 0_bi;
+		case Moves::Crush_Grip: return variable_power;
+		case Moves::Magma_Storm: return 120_bi;
+		case Moves::Dark_Void: return 0_bi;
+		case Moves::Seed_Flare: return 120_bi;
+		case Moves::Ominous_Wind: return 60_bi;
+		case Moves::Shadow_Force: return 120_bi;
+		case Moves::Hone_Claws: return 0_bi;
+		case Moves::Wide_Guard: return 0_bi;
+		case Moves::Guard_Split: return 0_bi;
+		case Moves::Power_Split: return 0_bi;
+		case Moves::Wonder_Room: return 0_bi;
+		case Moves::Psyshock: return 80_bi;
+		case Moves::Venoshock: return 65_bi;
+		case Moves::Autotomize: return 0_bi;
+		case Moves::Rage_Powder: return 0_bi;
+		case Moves::Telekinesis: return 0_bi;
+		case Moves::Magic_Room: return 0_bi;
+		case Moves::Smack_Down: return 50_bi;
+		case Moves::Storm_Throw: return 40_bi;
+		case Moves::Flame_Burst: return 70_bi;
+		case Moves::Sludge_Wave: return 95_bi;
+		case Moves::Quiver_Dance: return 0_bi;
+		case Moves::Heavy_Slam: return variable_power;
+		case Moves::Synchronoise: return 70_bi;
+		case Moves::Electro_Ball: return variable_power;
+		case Moves::Soak: return 0_bi;
+		case Moves::Flame_Charge: return 50_bi;
+		case Moves::Coil: return 0_bi;
+		case Moves::Low_Sweep: return 60_bi;
+		case Moves::Acid_Spray: return 40_bi;
+		case Moves::Foul_Play: return 95_bi;
+		case Moves::Simple_Beam: return 0_bi;
+		case Moves::Entrainment: return 0_bi;
+		case Moves::After_You: return 0_bi;
+		case Moves::Round: return 60_bi;
+		case Moves::Echoed_Voice: return 40_bi;
+		case Moves::Chip_Away: return 70_bi;
+		case Moves::Clear_Smog: return 50_bi;
+		case Moves::Stored_Power: return 20_bi;
+		case Moves::Quick_Guard: return 0_bi;
+		case Moves::Ally_Switch: return 0_bi;
+		case Moves::Scald: return 80_bi;
+		case Moves::Shell_Smash: return 0_bi;
+		case Moves::Heal_Pulse: return 0_bi;
+		case Moves::Hex: return 50_bi;
+		case Moves::Sky_Drop: return 60_bi;
+		case Moves::Shift_Gear: return 0_bi;
+		case Moves::Circle_Throw: return 60_bi;
+		case Moves::Incinerate: return 30_bi;
+		case Moves::Quash: return 0_bi;
+		case Moves::Acrobatics: return 55_bi;
+		case Moves::Reflect_Type: return 0_bi;
+		case Moves::Retaliate: return 70_bi;
+		case Moves::Final_Gambit: return bounded::none;
+		case Moves::Bestow: return 0_bi;
+		case Moves::Inferno: return 100_bi;
+		case Moves::Water_Pledge: return 50_bi;
+		case Moves::Fire_Pledge: return 50_bi;
+		case Moves::Grass_Pledge: return 50_bi;
+		case Moves::Volt_Switch: return 70_bi;
+		case Moves::Struggle_Bug: return 30_bi;
+		case Moves::Bulldoze: return 60_bi;
+		case Moves::Frost_Breath: return 40_bi;
+		case Moves::Dragon_Tail: return 60_bi;
+		case Moves::Work_Up: return 0_bi;
+		case Moves::Electroweb: return 55_bi;
+		case Moves::Wild_Charge: return 90_bi;
+		case Moves::Drill_Run: return 80_bi;
+		case Moves::Dual_Chop: return 40_bi;
+		case Moves::Heart_Stamp: return 60_bi;
+		case Moves::Horn_Leech: return 75_bi;
+		case Moves::Sacred_Sword: return 90_bi;
+		case Moves::Razor_Shell: return 75_bi;
+		case Moves::Heat_Crash: return variable_power;
+		case Moves::Leaf_Tornado: return 65_bi;
+		case Moves::Steamroller: return 65_bi;
+		case Moves::Cotton_Guard: return 0_bi;
+		case Moves::Night_Daze: return 85_bi;
+		case Moves::Psystrike: return 100_bi;
+		case Moves::Tail_Slap: return 25_bi;
+		case Moves::Hurricane: return 120_bi;
+		case Moves::Head_Charge: return 120_bi;
+		case Moves::Gear_Grind: return 50_bi;
+		case Moves::Searing_Shot: return 100_bi;
+		case Moves::Techno_Blast: return 85_bi;
+		case Moves::Relic_Song: return 75_bi;
+		case Moves::Secret_Sword: return 85_bi;
+		case Moves::Glaciate: return 65_bi;
+		case Moves::Bolt_Strike: return 130_bi;
+		case Moves::Blue_Flare: return 130_bi;
+		case Moves::Fiery_Dance: return 80_bi;
+		case Moves::Freeze_Shock: return 140_bi;
+		case Moves::Ice_Burn: return 140_bi;
+		case Moves::Snarl: return 55_bi;
+		case Moves::Icicle_Crash: return 85_bi;
+		case Moves::V_create: return 180_bi;
+		case Moves::Fusion_Flare: return 100_bi;
+		case Moves::Fusion_Bolt: return 100_bi;
+		default: throw InvalidMove{};
+	}
 }
 
 }	// namespace technicalmachine

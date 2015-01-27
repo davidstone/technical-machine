@@ -26,6 +26,7 @@
 #include <bounded_integer/array.hpp>
 
 #include <algorithm>
+#include <stdexcept>
 
 namespace technicalmachine {
 
@@ -77,580 +78,580 @@ auto hidden_power_type(Pokemon const & pokemon) {
 	return lookup[index];
 }
 
+class InvalidMove : public std::exception {};
+
 }	// namespace
 
 auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
-	static constexpr auto move_type = bounded::make_array(
-		Type::Typeless,		// Switch0
-		Type::Typeless,		// Switch1
-		Type::Typeless,		// Switch2
-		Type::Typeless,		// Switch3
-		Type::Typeless,		// Switch4
-		Type::Typeless,		// Switch5
-		Type::Typeless,		// Hit Self
-		Type::Normal,		// Pound
-		Type::Fighting,		// Karate Chop
-		Type::Normal,		// DoubleSlap
-		Type::Normal,		// Comet Punch
-		Type::Normal,		// Mega Punch
-		Type::Normal,		// Pay Day
-		Type::Fire,		// Fire Punch
-		Type::Ice,		// Ice Punch
-		Type::Electric,		// ThunderPunch
-		Type::Normal,		// Scratch
-		Type::Normal,		// ViceGrip
-		Type::Normal,		// Guillotine
-		Type::Normal,		// Razor Wind
-		Type::Normal,		// Swords Dance
-		Type::Normal,		// Cut
-		Type::Flying,		// Gust
-		Type::Flying,		// Wing Attack
-		Type::Normal,		// Whirlwind
-		Type::Flying,		// Fly
-		Type::Normal,		// Bind
-		Type::Normal,		// Slam
-		Type::Grass,		// Vine Whip
-		Type::Normal,		// Stomp
-		Type::Fighting,		// Double Kick
-		Type::Normal,		// Mega Kick
-		Type::Fighting,		// Jump Kick
-		Type::Fighting,		// Rolling Kick
-		Type::Ground,		// Sand-Attack
-		Type::Normal,		// Headbutt
-		Type::Normal,		// Horn Attack
-		Type::Normal,		// Fury Attack
-		Type::Normal,		// Horn Drill
-		Type::Normal,		// Tackle
-		Type::Normal,		// Body Slam
-		Type::Normal,		// Wrap
-		Type::Normal,		// Take Down
-		Type::Normal,		// Thrash
-		Type::Normal,		// Double-Edge
-		Type::Normal,		// Tail Whip
-		Type::Poison,		// Poison Sting
-		Type::Bug,		// Twineedle
-		Type::Bug,		// Pin Missile
-		Type::Normal,		// Leer
-		Type::Dark,		// Bite
-		Type::Normal,		// Growl
-		Type::Normal,		// Roar
-		Type::Normal,		// Sing
-		Type::Normal,		// Supersonic
-		Type::Normal,		// SonicBoom
-		Type::Normal,		// Disable
-		Type::Poison,		// Acid
-		Type::Fire,		// Ember
-		Type::Fire,		// Flamethrower
-		Type::Ice,		// Mist
-		Type::Water,		// Water Gun
-		Type::Water,		// Hydro Pump
-		Type::Water,		// Surf
-		Type::Ice,		// Ice Beam
-		Type::Ice,		// Blizzard
-		Type::Psychic,		// Psybeam
-		Type::Water,		// BubbleBeam
-		Type::Ice,		// Aurora Beam
-		Type::Normal,		// Hyper Beam
-		Type::Flying,		// Peck
-		Type::Flying,		// Drill Peck
-		Type::Fighting,		// Submission
-		Type::Fighting,		// Low Kick
-		Type::Fighting,		// Counter
-		Type::Fighting,		// Seismic Toss
-		Type::Normal,		// Strength
-		Type::Grass,		// Absorb
-		Type::Grass,		// Mega Drain
-		Type::Grass,		// Leech Seed
-		Type::Normal,		// Growth
-		Type::Grass,		// Razor Leaf
-		Type::Grass,		// SolarBeam
-		Type::Poison,		// PoisonPowder
-		Type::Grass,		// Stun Spore
-		Type::Grass,		// Sleep Powder
-		Type::Grass,		// Petal Dance
-		Type::Bug,		// String Shot
-		Type::Dragon,		// Dragon Rage
-		Type::Fire,		// Fire Spin
-		Type::Electric,		// ThunderShock
-		Type::Electric,		// Thunderbolt
-		Type::Electric,		// Thunder Wave
-		Type::Electric,		// Thunder
-		Type::Rock,		// Rock Throw
-		Type::Ground,		// Earthquake
-		Type::Ground,		// Fissure
-		Type::Ground,		// Dig
-		Type::Poison,		// Toxic
-		Type::Psychic,		// Confusion
-		Type::Psychic,		// Psychic
-		Type::Psychic,		// Hypnosis
-		Type::Psychic,		// Meditate
-		Type::Psychic,		// Agility
-		Type::Normal,		// Quick Attack
-		Type::Normal,		// Rage
-		Type::Psychic,		// Teleport
-		Type::Ghost,		// Night Shade
-		Type::Normal,		// Mimic
-		Type::Normal,		// Screech
-		Type::Normal,		// Double Team
-		Type::Normal,		// Recover
-		Type::Normal,		// Harden
-		Type::Normal,		// Minimize
-		Type::Normal,		// SmokeScreen
-		Type::Ghost,		// Confuse Ray
-		Type::Water,		// Withdraw
-		Type::Normal,		// Defense Curl
-		Type::Psychic,		// Barrier
-		Type::Psychic,		// Light Screen
-		Type::Ice,		// Haze
-		Type::Psychic,		// Reflect
-		Type::Normal,		// Focus Energy
-		Type::Normal,		// Bide
-		Type::Normal,		// Metronome
-		Type::Flying,		// Mirror Move
-		Type::Normal,		// Selfdestruct
-		Type::Normal,		// Egg Bomb
-		Type::Ghost,		// Lick
-		Type::Poison,		// Smog
-		Type::Poison,		// Sludge
-		Type::Ground,		// Bone Club
-		Type::Fire,		// Fire Blast
-		Type::Water,		// Waterfall
-		Type::Water,		// Clamp
-		Type::Normal,		// Swift
-		Type::Normal,		// Skull Bash
-		Type::Normal,		// Spike Cannon
-		Type::Normal,		// Constrict
-		Type::Psychic,		// Amnesia
-		Type::Psychic,		// Kinesis
-		Type::Normal,		// Softboiled
-		Type::Fighting,		// Hi Jump Kick
-		Type::Normal,		// Glare
-		Type::Psychic,		// Dream Eater
-		Type::Poison,		// Poison Gas
-		Type::Normal,		// Barrage
-		Type::Bug,		// Leech Life
-		Type::Normal,		// Lovely Kiss
-		Type::Flying,		// Sky Attack
-		Type::Normal,		// Transform
-		Type::Water,		// Bubble
-		Type::Normal,		// Dizzy Punch
-		Type::Grass,		// Spore
-		Type::Normal,		// Flash
-		Type::Psychic,		// Psywave
-		Type::Normal,		// Splash
-		Type::Poison,		// Acid Armor
-		Type::Water,		// Crabhammer
-		Type::Normal,		// Explosion
-		Type::Normal,		// Fury Swipes
-		Type::Ground,		// Bonemerang
-		Type::Psychic,		// Rest
-		Type::Rock,		// Rock Slide
-		Type::Normal,		// Hyper Fang
-		Type::Normal,		// Sharpen
-		Type::Normal,		// Conversion
-		Type::Normal,		// Tri Attack
-		Type::Normal,		// Super Fang
-		Type::Normal,		// Slash
-		Type::Normal,		// Substitute
-		Type::Typeless,		// Struggle
-		Type::Normal,		// Sketch
-		Type::Fighting,		// Triple Kick
-		Type::Dark,		// Thief
-		Type::Bug,		// Spider Web
-		Type::Normal,		// Mind Reader
-		Type::Ghost,		// Nightmare
-		Type::Fire,		// Flame Wheel
-		Type::Normal,		// Snore
-		Type::Ghost,		// Curse
-		Type::Normal,		// Flail
-		Type::Normal,		// Conversion 2
-		Type::Flying,		// Aeroblast
-		Type::Grass,		// Cotton Spore
-		Type::Fighting,		// Reversal
-		Type::Ghost,		// Spite
-		Type::Ice,		// Powder Snow
-		Type::Normal,		// Protect
-		Type::Fighting,		// Mach Punch
-		Type::Normal,		// Scary Face
-		Type::Dark,		// Faint Attack
-		Type::Normal,		// Sweet Kiss
-		Type::Normal,		// Belly Drum
-		Type::Poison,		// Sludge Bomb
-		Type::Ground,		// Mud-Slap
-		Type::Water,		// Octazooka
-		Type::Ground,		// Spikes
-		Type::Electric,		// Zap Cannon
-		Type::Normal,		// Foresight
-		Type::Ghost,		// Destiny Bond
-		Type::Normal,		// Perish Song
-		Type::Ice,		// Icy Wind
-		Type::Fighting,		// Detect
-		Type::Ground,		// Bone Rush
-		Type::Normal,		// Lock-On
-		Type::Dragon,		// Outrage
-		Type::Rock,		// Sandstorm
-		Type::Grass,		// Giga Drain
-		Type::Normal,		// Endure
-		Type::Normal,		// Charm
-		Type::Rock,		// Rollout
-		Type::Normal,		// False Swipe
-		Type::Normal,		// Swagger
-		Type::Normal,		// Milk Drink
-		Type::Electric,		// Spark
-		Type::Bug,		// Fury Cutter
-		Type::Steel,		// Steel Wing
-		Type::Normal,		// Mean Look
-		Type::Normal,		// Attract
-		Type::Normal,		// Sleep Talk
-		Type::Normal,		// Heal Bell
-		Type::Normal,		// Return
-		Type::Normal,		// Present
-		Type::Normal,		// Frustration
-		Type::Normal,		// Safeguard
-		Type::Normal,		// Pain Split
-		Type::Fire,		// Sacred Fire
-		Type::Ground,		// Magnitude
-		Type::Fighting,		// DynamicPunch
-		Type::Bug,		// Megahorn
-		Type::Dragon,		// DragonBreath
-		Type::Normal,		// Baton Pass
-		Type::Normal,		// Encore
-		Type::Dark,		// Pursuit
-		Type::Normal,		// Rapid Spin
-		Type::Normal,		// Sweet Scent
-		Type::Steel,		// Iron Tail
-		Type::Steel,		// Metal Claw
-		Type::Fighting,		// Vital Throw
-		Type::Normal,		// Morning Sun
-		Type::Grass,		// Synthesis
-		Type::Normal,		// Moonlight
-		Type::Normal,		// Hidden Power
-		Type::Fighting,		// Cross Chop
-		Type::Dragon,		// Twister
-		Type::Water,		// Rain Dance
-		Type::Fire,		// Sunny Day
-		Type::Dark,		// Crunch
-		Type::Psychic,		// Mirror Coat
-		Type::Normal,		// Psych Up
-		Type::Normal,		// ExtremeSpeed
-		Type::Rock,		// AncientPower
-		Type::Ghost,		// Shadow Ball
-		Type::Psychic,		// Future Sight
-		Type::Fighting,		// Rock Smash
-		Type::Water,		// Whirlpool
-		Type::Dark,		// Beat Up
-		Type::Normal,		// Fake Out
-		Type::Normal,		// Uproar
-		Type::Normal,		// Stockpile
-		Type::Normal,		// Spit Up
-		Type::Normal,		// Swallow
-		Type::Fire,		// Heat Wave
-		Type::Ice,		// Hail
-		Type::Dark,		// Torment
-		Type::Dark,		// Flatter
-		Type::Fire,		// Will-O-Wisp
-		Type::Dark,		// Memento
-		Type::Normal,		// Facade
-		Type::Fighting,		// Focus Punch
-		Type::Normal,		// SmellingSalt
-		Type::Normal,		// Follow Me
-		Type::Normal,		// Nature Power
-		Type::Electric,		// Charge
-		Type::Dark,		// Taunt
-		Type::Normal,		// Helping Hand
-		Type::Psychic,		// Trick
-		Type::Psychic,		// Role Play
-		Type::Normal,		// Wish
-		Type::Normal,		// Assist
-		Type::Grass,		// Ingrain
-		Type::Fighting,		// Superpower
-		Type::Psychic,		// Magic Coat
-		Type::Normal,		// Recycle
-		Type::Fighting,		// Revenge
-		Type::Fighting,		// Brick Break
-		Type::Normal,		// Yawn
-		Type::Dark,		// Knock Off
-		Type::Normal,		// Endeavor
-		Type::Fire,		// Eruption
-		Type::Psychic,		// Skill Swap
-		Type::Psychic,		// Imprison
-		Type::Normal,		// Refresh
-		Type::Ghost,		// Grudge
-		Type::Dark,		// Snatch
-		Type::Normal,		// Secret Power
-		Type::Water,		// Dive
-		Type::Fighting,		// Arm Thrust
-		Type::Normal,		// Camouflage
-		Type::Bug,		// Tail Glow
-		Type::Psychic,		// Luster Purge
-		Type::Psychic,		// Mist Ball
-		Type::Flying,		// FeatherDance
-		Type::Normal,		// Teeter Dance
-		Type::Fire,		// Blaze Kick
-		Type::Ground,		// Mud Sport
-		Type::Ice,		// Ice Ball
-		Type::Grass,		// Needle Arm
-		Type::Normal,		// Slack Off
-		Type::Normal,		// Hyper Voice
-		Type::Poison,		// Poison Fang
-		Type::Normal,		// Crush Claw
-		Type::Fire,		// Blast Burn
-		Type::Water,		// Hydro Cannon
-		Type::Steel,		// Meteor Mash
-		Type::Ghost,		// Astonish
-		Type::Normal,		// Weather Ball
-		Type::Grass,		// Aromatherapy
-		Type::Dark,		// Fake Tears
-		Type::Flying,		// Air Cutter
-		Type::Fire,		// Overheat
-		Type::Normal,		// Odor Sleuth
-		Type::Rock,		// Rock Tomb
-		Type::Bug,		// Silver Wind
-		Type::Steel,		// Metal Sound
-		Type::Grass,		// GrassWhistle
-		Type::Normal,		// Tickle
-		Type::Psychic,		// Cosmic Power
-		Type::Water,		// Water Spout
-		Type::Bug,		// Signal Beam
-		Type::Ghost,		// Shadow Punch
-		Type::Psychic,		// Extrasensory
-		Type::Fighting,		// Sky Uppercut
-		Type::Ground,		// Sand Tomb
-		Type::Ice,		// Sheer Cold
-		Type::Water,		// Muddy Water
-		Type::Grass,		// Bullet Seed
-		Type::Flying,		// Aerial Ace
-		Type::Ice,		// Icicle Spear
-		Type::Steel,		// Iron Defense
-		Type::Normal,		// Block
-		Type::Normal,		// Howl
-		Type::Dragon,		// Dragon Claw
-		Type::Grass,		// Frenzy Plant
-		Type::Fighting,		// Bulk Up
-		Type::Flying,		// Bounce
-		Type::Ground,		// Mud Shot
-		Type::Poison,		// Poison Tail
-		Type::Normal,		// Covet
-		Type::Electric,		// Volt Tackle
-		Type::Grass,		// Magical Leaf
-		Type::Water,		// Water Sport
-		Type::Psychic,		// Calm Mind
-		Type::Grass,		// Leaf Blade
-		Type::Dragon,		// Dragon Dance
-		Type::Rock,		// Rock Blast
-		Type::Electric,		// Shock Wave
-		Type::Water,		// Water Pulse
-		Type::Steel,		// Doom Desire
-		Type::Psychic,		// Psycho Boost
-		Type::Flying,		// Roost
-		Type::Psychic,		// Gravity
-		Type::Psychic,		// Miracle Eye
-		Type::Fighting,		// Wake-Up Slap
-		Type::Fighting,		// Hammer Arm
-		Type::Steel,		// Gyro Ball
-		Type::Psychic,		// Healing Wish
-		Type::Water,		// Brine
-		Type::Normal,		// Natural Gift
-		Type::Normal,		// Feint
-		Type::Flying,		// Pluck
-		Type::Flying,		// Tailwind
-		Type::Normal,		// Acupressure
-		Type::Steel,		// Metal Burst
-		Type::Bug,		// U-turn
-		Type::Fighting,		// Close Combat
-		Type::Dark,		// Payback
-		Type::Dark,		// Assurance
-		Type::Dark,		// Embargo
-		Type::Dark,		// Fling
-		Type::Psychic,		// Psycho Shift
-		Type::Normal,		// Trump Card
-		Type::Psychic,		// Heal Block
-		Type::Normal,		// Wring Out
-		Type::Psychic,		// Power Trick
-		Type::Poison,		// Gastro Acid
-		Type::Normal,		// Lucky Chant
-		Type::Normal,		// Me First
-		Type::Normal,		// Copycat
-		Type::Psychic,		// Power Swap
-		Type::Psychic,		// Guard Swap
-		Type::Dark,		// Punishment
-		Type::Normal,		// Last Resort
-		Type::Grass,		// Worry Seed
-		Type::Dark,		// Sucker Punch
-		Type::Poison,		// Toxic Spikes
-		Type::Psychic,		// Heart Swap
-		Type::Water,		// Aqua Ring
-		Type::Electric,		// Magnet Rise
-		Type::Fire,		// Flare Blitz
-		Type::Fighting,		// Force Palm
-		Type::Fighting,		// Aura Sphere
-		Type::Rock,		// Rock Polish
-		Type::Poison,		// Poison Jab
-		Type::Dark,		// Dark Pulse
-		Type::Dark,		// Night Slash
-		Type::Water,		// Aqua Tail
-		Type::Grass,		// Seed Bomb
-		Type::Flying,		// Air Slash
-		Type::Bug,		// X-Scissor
-		Type::Bug,		// Bug Buzz
-		Type::Dragon,		// Dragon Pulse
-		Type::Dragon,		// Dragon Rush
-		Type::Rock,		// Power Gem
-		Type::Fighting,		// Drain Punch
-		Type::Fighting,		// Vacuum Wave
-		Type::Fighting,		// Focus Blast
-		Type::Grass,		// Energy Ball
-		Type::Flying,		// Brave Bird
-		Type::Ground,		// Earth Power
-		Type::Dark,		// Switcheroo
-		Type::Normal,		// Giga Impact
-		Type::Dark,		// Nasty Plot
-		Type::Steel,		// Bullet Punch
-		Type::Ice,		// Avalanche
-		Type::Ice,		// Ice Shard
-		Type::Ghost,		// Shadow Claw
-		Type::Electric,		// Thunder Fang
-		Type::Ice,		// Ice Fang
-		Type::Fire,		// Fire Fang
-		Type::Ghost,		// Shadow Sneak
-		Type::Ground,		// Mud Bomb
-		Type::Psychic,		// Psycho Cut
-		Type::Psychic,		// Zen Headbutt
-		Type::Steel,		// Mirror Shot
-		Type::Steel,		// Flash Cannon
-		Type::Normal,		// Rock Climb
-		Type::Flying,		// Defog
-		Type::Psychic,		// Trick Room
-		Type::Dragon,		// Draco Meteor
-		Type::Electric,		// Discharge
-		Type::Fire,		// Lava Plume
-		Type::Grass,		// Leaf Storm
-		Type::Grass,		// Power Whip
-		Type::Rock,		// Rock Wrecker
-		Type::Poison,		// Cross Poison
-		Type::Poison,		// Gunk Shot
-		Type::Steel,		// Iron Head
-		Type::Steel,		// Magnet Bomb
-		Type::Rock,		// Stone Edge
-		Type::Normal,		// Captivate
-		Type::Rock,		// Stealth Rock
-		Type::Grass,		// Grass Knot
-		Type::Flying,		// Chatter
-		Type::Normal,		// Judgment
-		Type::Bug,		// Bug Bite
-		Type::Electric,		// Charge Beam
-		Type::Grass,		// Wood Hammer
-		Type::Water,		// Aqua Jet
-		Type::Bug,		// Attack Order
-		Type::Bug,		// Defend Order
-		Type::Bug,		// Heal Order
-		Type::Rock,		// Head Smash
-		Type::Normal,		// Double Hit
-		Type::Dragon,		// Roar of Time
-		Type::Dragon,		// Spacial Rend
-		Type::Psychic,		// Lunar Dance
-		Type::Normal,		// Crush Grip
-		Type::Fire,		// Magma Storm
-		Type::Dark,		// Dark Void
-		Type::Grass,		// Seed Flare
-		Type::Ghost,		// Ominous Wind
-		Type::Ghost,		// Shadow Force
-		Type::Dark,		// Hone Claws
-		Type::Rock,		// Wide Guard
-		Type::Psychic,		// Guard Split
-		Type::Psychic,		// Power Split
-		Type::Psychic,		// Wonder Room
-		Type::Psychic,		// Psyshock
-		Type::Poison,		// Venoshock
-		Type::Steel,		// Autotomize
-		Type::Bug,		// Rage Powder
-		Type::Psychic,		// Telekinesis
-		Type::Psychic,		// Magic Room
-		Type::Rock,		// Smack Down
-		Type::Fighting,		// Storm Throw
-		Type::Fire,		// Flame Burst
-		Type::Poison,		// Sludge Wave
-		Type::Bug,		// Quiver Dance
-		Type::Steel,		// Heavy Slam
-		Type::Psychic,		// Synchronoise
-		Type::Electric,		// Electro Ball
-		Type::Water,		// Soak
-		Type::Fire,		// Flame Charge
-		Type::Poison,		// Coil
-		Type::Fighting,		// Low Sweep
-		Type::Poison,		// Acid Spray
-		Type::Dark,		// Foul Play
-		Type::Normal,		// Simple Beam
-		Type::Normal,		// Entrainment
-		Type::Normal,		// After You
-		Type::Normal,		// Round
-		Type::Normal,		// Echoed Voice
-		Type::Normal,		// Chip Away
-		Type::Poison,		// Clear Smog
-		Type::Psychic,		// Stored Power
-		Type::Fighting,		// Quick Guard
-		Type::Psychic,		// Ally Switch
-		Type::Water,		// Scald
-		Type::Normal,		// Shell Smash
-		Type::Psychic,		// Heal Pulse
-		Type::Ghost,		// Hex
-		Type::Flying,		// Sky Drop
-		Type::Steel,		// Shift Gear
-		Type::Fighting,		// Circle Throw
-		Type::Fire,		// Incinerate
-		Type::Dark,		// Quash
-		Type::Flying,		// Acrobatics
-		Type::Normal,		// Reflect Type
-		Type::Normal,		// Retaliate
-		Type::Fighting,		// Final Gambit
-		Type::Normal,		// Bestow
-		Type::Fire,		// Inferno
-		Type::Water,		// Water Pledge
-		Type::Fire,		// Fire Pledge
-		Type::Grass,		// Grass Pledge
-		Type::Electric,		// Volt Switch
-		Type::Bug,		// Struggle Bug
-		Type::Ground,		// Bulldoze
-		Type::Ice,		// Frost Breath
-		Type::Dragon,		// Dragon Tail
-		Type::Normal,		// Work Up
-		Type::Electric,		// Electroweb
-		Type::Electric,		// Wild Charge
-		Type::Ground,		// Drill Run
-		Type::Dragon,		// Dual Chop
-		Type::Psychic,		// Heart Stamp
-		Type::Grass,		// Horn Leech
-		Type::Fighting,		// Sacred Sword
-		Type::Water,		// Razor Shell
-		Type::Fire,		// Heat Crash
-		Type::Grass,		// Leaf Tornado
-		Type::Bug,		// Steamroller
-		Type::Grass,		// Cotton Guard
-		Type::Dark,		// Night Daze
-		Type::Psychic,		// Psystrike
-		Type::Normal,		// Tail Slap
-		Type::Flying,		// Hurricane
-		Type::Normal,		// Head Charge
-		Type::Steel,		// Gear Grind
-		Type::Fire,		// Searing Shot
-		Type::Normal,		// Techno Blast
-		Type::Normal,		// Relic Song
-		Type::Fighting,		// Secret Sword
-		Type::Ice,		// Glaciate
-		Type::Electric,		// Bolt Strike
-		Type::Fire,		// Blue Flare
-		Type::Fire,		// Fiery Dance
-		Type::Ice,		// Freeze Shock
-		Type::Ice,		// Ice Burn
-		Type::Dark,		// Snarl
-		Type::Ice,		// Icicle Crash
-		Type::Fire,		// V-create
-		Type::Fire,		// Fusion Flare
-		Type::Electric		// Fusion Bolt
-	);
-	return move == Moves::Hidden_Power ?
-		hidden_power_type(pokemon) :
-		move_type.at(move);
+	switch (move) {
+		case Moves::Switch0: return Type::Typeless;
+		case Moves::Switch1: return Type::Typeless;
+		case Moves::Switch2: return Type::Typeless;
+		case Moves::Switch3: return Type::Typeless;
+		case Moves::Switch4: return Type::Typeless;
+		case Moves::Switch5: return Type::Typeless;
+		case Moves::Hit_Self: return Type::Typeless;
+		case Moves::Pound: return Type::Normal;
+		case Moves::Karate_Chop: return Type::Fighting;
+		case Moves::DoubleSlap: return Type::Normal;
+		case Moves::Comet_Punch: return Type::Normal;
+		case Moves::Mega_Punch: return Type::Normal;
+		case Moves::Pay_Day: return Type::Normal;
+		case Moves::Fire_Punch: return Type::Fire;
+		case Moves::Ice_Punch: return Type::Ice;
+		case Moves::ThunderPunch: return Type::Electric;
+		case Moves::Scratch: return Type::Normal;
+		case Moves::ViceGrip: return Type::Normal;
+		case Moves::Guillotine: return Type::Normal;
+		case Moves::Razor_Wind: return Type::Normal;
+		case Moves::Swords_Dance: return Type::Normal;
+		case Moves::Cut: return Type::Normal;
+		case Moves::Gust: return Type::Flying;
+		case Moves::Wing_Attack: return Type::Flying;
+		case Moves::Whirlwind: return Type::Normal;
+		case Moves::Fly: return Type::Flying;
+		case Moves::Bind: return Type::Normal;
+		case Moves::Slam: return Type::Normal;
+		case Moves::Vine_Whip: return Type::Grass;
+		case Moves::Stomp: return Type::Normal;
+		case Moves::Double_Kick: return Type::Fighting;
+		case Moves::Mega_Kick: return Type::Normal;
+		case Moves::Jump_Kick: return Type::Fighting;
+		case Moves::Rolling_Kick: return Type::Fighting;
+		case Moves::Sand_Attack: return Type::Ground;
+		case Moves::Headbutt: return Type::Normal;
+		case Moves::Horn_Attack: return Type::Normal;
+		case Moves::Fury_Attack: return Type::Normal;
+		case Moves::Horn_Drill: return Type::Normal;
+		case Moves::Tackle: return Type::Normal;
+		case Moves::Body_Slam: return Type::Normal;
+		case Moves::Wrap: return Type::Normal;
+		case Moves::Take_Down: return Type::Normal;
+		case Moves::Thrash: return Type::Normal;
+		case Moves::Double_Edge: return Type::Normal;
+		case Moves::Tail_Whip: return Type::Normal;
+		case Moves::Poison_Sting: return Type::Poison;
+		case Moves::Twineedle: return Type::Bug;
+		case Moves::Pin_Missile: return Type::Bug;
+		case Moves::Leer: return Type::Normal;
+		case Moves::Bite: return Type::Dark;
+		case Moves::Growl: return Type::Normal;
+		case Moves::Roar: return Type::Normal;
+		case Moves::Sing: return Type::Normal;
+		case Moves::Supersonic: return Type::Normal;
+		case Moves::SonicBoom: return Type::Normal;
+		case Moves::Disable: return Type::Normal;
+		case Moves::Acid: return Type::Poison;
+		case Moves::Ember: return Type::Fire;
+		case Moves::Flamethrower: return Type::Fire;
+		case Moves::Mist: return Type::Ice;
+		case Moves::Water_Gun: return Type::Water;
+		case Moves::Hydro_Pump: return Type::Water;
+		case Moves::Surf: return Type::Water;
+		case Moves::Ice_Beam: return Type::Ice;
+		case Moves::Blizzard: return Type::Ice;
+		case Moves::Psybeam: return Type::Psychic;
+		case Moves::BubbleBeam: return Type::Water;
+		case Moves::Aurora_Beam: return Type::Ice;
+		case Moves::Hyper_Beam: return Type::Normal;
+		case Moves::Peck: return Type::Flying;
+		case Moves::Drill_Peck: return Type::Flying;
+		case Moves::Submission: return Type::Fighting;
+		case Moves::Low_Kick: return Type::Fighting;
+		case Moves::Counter: return Type::Fighting;
+		case Moves::Seismic_Toss: return Type::Fighting;
+		case Moves::Strength: return Type::Normal;
+		case Moves::Absorb: return Type::Grass;
+		case Moves::Mega_Drain: return Type::Grass;
+		case Moves::Leech_Seed: return Type::Grass;
+		case Moves::Growth: return Type::Normal;
+		case Moves::Razor_Leaf: return Type::Grass;
+		case Moves::SolarBeam: return Type::Grass;
+		case Moves::PoisonPowder: return Type::Poison;
+		case Moves::Stun_Spore: return Type::Grass;
+		case Moves::Sleep_Powder: return Type::Grass;
+		case Moves::Petal_Dance: return Type::Grass;
+		case Moves::String_Shot: return Type::Bug;
+		case Moves::Dragon_Rage: return Type::Dragon;
+		case Moves::Fire_Spin: return Type::Fire;
+		case Moves::ThunderShock: return Type::Electric;
+		case Moves::Thunderbolt: return Type::Electric;
+		case Moves::Thunder_Wave: return Type::Electric;
+		case Moves::Thunder: return Type::Electric;
+		case Moves::Rock_Throw: return Type::Rock;
+		case Moves::Earthquake: return Type::Ground;
+		case Moves::Fissure: return Type::Ground;
+		case Moves::Dig: return Type::Ground;
+		case Moves::Toxic: return Type::Poison;
+		case Moves::Confusion: return Type::Psychic;
+		case Moves::Psychic: return Type::Psychic;
+		case Moves::Hypnosis: return Type::Psychic;
+		case Moves::Meditate: return Type::Psychic;
+		case Moves::Agility: return Type::Psychic;
+		case Moves::Quick_Attack: return Type::Normal;
+		case Moves::Rage: return Type::Normal;
+		case Moves::Teleport: return Type::Psychic;
+		case Moves::Night_Shade: return Type::Ghost;
+		case Moves::Mimic: return Type::Normal;
+		case Moves::Screech: return Type::Normal;
+		case Moves::Double_Team: return Type::Normal;
+		case Moves::Recover: return Type::Normal;
+		case Moves::Harden: return Type::Normal;
+		case Moves::Minimize: return Type::Normal;
+		case Moves::SmokeScreen: return Type::Normal;
+		case Moves::Confuse_Ray: return Type::Ghost;
+		case Moves::Withdraw: return Type::Water;
+		case Moves::Defense_Curl: return Type::Normal;
+		case Moves::Barrier: return Type::Psychic;
+		case Moves::Light_Screen: return Type::Psychic;
+		case Moves::Haze: return Type::Ice;
+		case Moves::Reflect: return Type::Psychic;
+		case Moves::Focus_Energy: return Type::Normal;
+		case Moves::Bide: return Type::Normal;
+		case Moves::Metronome: return Type::Normal;
+		case Moves::Mirror_Move: return Type::Flying;
+		case Moves::Selfdestruct: return Type::Normal;
+		case Moves::Egg_Bomb: return Type::Normal;
+		case Moves::Lick: return Type::Ghost;
+		case Moves::Smog: return Type::Poison;
+		case Moves::Sludge: return Type::Poison;
+		case Moves::Bone_Club: return Type::Ground;
+		case Moves::Fire_Blast: return Type::Fire;
+		case Moves::Waterfall: return Type::Water;
+		case Moves::Clamp: return Type::Water;
+		case Moves::Swift: return Type::Normal;
+		case Moves::Skull_Bash: return Type::Normal;
+		case Moves::Spike_Cannon: return Type::Normal;
+		case Moves::Constrict: return Type::Normal;
+		case Moves::Amnesia: return Type::Psychic;
+		case Moves::Kinesis: return Type::Psychic;
+		case Moves::Softboiled: return Type::Normal;
+		case Moves::Hi_Jump_Kick: return Type::Fighting;
+		case Moves::Glare: return Type::Normal;
+		case Moves::Dream_Eater: return Type::Psychic;
+		case Moves::Poison_Gas: return Type::Poison;
+		case Moves::Barrage: return Type::Normal;
+		case Moves::Leech_Life: return Type::Bug;
+		case Moves::Lovely_Kiss: return Type::Normal;
+		case Moves::Sky_Attack: return Type::Flying;
+		case Moves::Transform: return Type::Normal;
+		case Moves::Bubble: return Type::Water;
+		case Moves::Dizzy_Punch: return Type::Normal;
+		case Moves::Spore: return Type::Grass;
+		case Moves::Flash: return Type::Normal;
+		case Moves::Psywave: return Type::Psychic;
+		case Moves::Splash: return Type::Normal;
+		case Moves::Acid_Armor: return Type::Poison;
+		case Moves::Crabhammer: return Type::Water;
+		case Moves::Explosion: return Type::Normal;
+		case Moves::Fury_Swipes: return Type::Normal;
+		case Moves::Bonemerang: return Type::Ground;
+		case Moves::Rest: return Type::Psychic;
+		case Moves::Rock_Slide: return Type::Rock;
+		case Moves::Hyper_Fang: return Type::Normal;
+		case Moves::Sharpen: return Type::Normal;
+		case Moves::Conversion: return Type::Normal;
+		case Moves::Tri_Attack: return Type::Normal;
+		case Moves::Super_Fang: return Type::Normal;
+		case Moves::Slash: return Type::Normal;
+		case Moves::Substitute: return Type::Normal;
+		case Moves::Struggle: return Type::Typeless;
+		case Moves::Sketch: return Type::Normal;
+		case Moves::Triple_Kick: return Type::Fighting;
+		case Moves::Thief: return Type::Dark;
+		case Moves::Spider_Web: return Type::Bug;
+		case Moves::Mind_Reader: return Type::Normal;
+		case Moves::Nightmare: return Type::Ghost;
+		case Moves::Flame_Wheel: return Type::Fire;
+		case Moves::Snore: return Type::Normal;
+		case Moves::Curse: return Type::Ghost;
+		case Moves::Flail: return Type::Normal;
+		case Moves::Conversion_2: return Type::Normal;
+		case Moves::Aeroblast: return Type::Flying;
+		case Moves::Cotton_Spore: return Type::Grass;
+		case Moves::Reversal: return Type::Fighting;
+		case Moves::Spite: return Type::Ghost;
+		case Moves::Powder_Snow: return Type::Ice;
+		case Moves::Protect: return Type::Normal;
+		case Moves::Mach_Punch: return Type::Fighting;
+		case Moves::Scary_Face: return Type::Normal;
+		case Moves::Faint_Attack: return Type::Dark;
+		case Moves::Sweet_Kiss: return Type::Normal;
+		case Moves::Belly_Drum: return Type::Normal;
+		case Moves::Sludge_Bomb: return Type::Poison;
+		case Moves::Mud_Slap: return Type::Ground;
+		case Moves::Octazooka: return Type::Water;
+		case Moves::Spikes: return Type::Ground;
+		case Moves::Zap_Cannon: return Type::Electric;
+		case Moves::Foresight: return Type::Normal;
+		case Moves::Destiny_Bond: return Type::Ghost;
+		case Moves::Perish_Song: return Type::Normal;
+		case Moves::Icy_Wind: return Type::Ice;
+		case Moves::Detect: return Type::Fighting;
+		case Moves::Bone_Rush: return Type::Ground;
+		case Moves::Lock_On: return Type::Normal;
+		case Moves::Outrage: return Type::Dragon;
+		case Moves::Sandstorm: return Type::Rock;
+		case Moves::Giga_Drain: return Type::Grass;
+		case Moves::Endure: return Type::Normal;
+		case Moves::Charm: return Type::Normal;
+		case Moves::Rollout: return Type::Rock;
+		case Moves::False_Swipe: return Type::Normal;
+		case Moves::Swagger: return Type::Normal;
+		case Moves::Milk_Drink: return Type::Normal;
+		case Moves::Spark: return Type::Electric;
+		case Moves::Fury_Cutter: return Type::Bug;
+		case Moves::Steel_Wing: return Type::Steel;
+		case Moves::Mean_Look: return Type::Normal;
+		case Moves::Attract: return Type::Normal;
+		case Moves::Sleep_Talk: return Type::Normal;
+		case Moves::Heal_Bell: return Type::Normal;
+		case Moves::Return: return Type::Normal;
+		case Moves::Present: return Type::Normal;
+		case Moves::Frustration: return Type::Normal;
+		case Moves::Safeguard: return Type::Normal;
+		case Moves::Pain_Split: return Type::Normal;
+		case Moves::Sacred_Fire: return Type::Fire;
+		case Moves::Magnitude: return Type::Ground;
+		case Moves::DynamicPunch: return Type::Fighting;
+		case Moves::Megahorn: return Type::Bug;
+		case Moves::DragonBreath: return Type::Dragon;
+		case Moves::Baton_Pass: return Type::Normal;
+		case Moves::Encore: return Type::Normal;
+		case Moves::Pursuit: return Type::Dark;
+		case Moves::Rapid_Spin: return Type::Normal;
+		case Moves::Sweet_Scent: return Type::Normal;
+		case Moves::Iron_Tail: return Type::Steel;
+		case Moves::Metal_Claw: return Type::Steel;
+		case Moves::Vital_Throw: return Type::Fighting;
+		case Moves::Morning_Sun: return Type::Normal;
+		case Moves::Synthesis: return Type::Grass;
+		case Moves::Moonlight: return Type::Normal;
+		case Moves::Hidden_Power: return hidden_power_type(pokemon);
+		case Moves::Cross_Chop: return Type::Fighting;
+		case Moves::Twister: return Type::Dragon;
+		case Moves::Rain_Dance: return Type::Water;
+		case Moves::Sunny_Day: return Type::Fire;
+		case Moves::Crunch: return Type::Dark;
+		case Moves::Mirror_Coat: return Type::Psychic;
+		case Moves::Psych_Up: return Type::Normal;
+		case Moves::ExtremeSpeed: return Type::Normal;
+		case Moves::AncientPower: return Type::Rock;
+		case Moves::Shadow_Ball: return Type::Ghost;
+		case Moves::Future_Sight: return Type::Psychic;
+		case Moves::Rock_Smash: return Type::Fighting;
+		case Moves::Whirlpool: return Type::Water;
+		case Moves::Beat_Up: return Type::Dark;
+		case Moves::Fake_Out: return Type::Normal;
+		case Moves::Uproar: return Type::Normal;
+		case Moves::Stockpile: return Type::Normal;
+		case Moves::Spit_Up: return Type::Normal;
+		case Moves::Swallow: return Type::Normal;
+		case Moves::Heat_Wave: return Type::Fire;
+		case Moves::Hail: return Type::Ice;
+		case Moves::Torment: return Type::Dark;
+		case Moves::Flatter: return Type::Dark;
+		case Moves::Will_O_Wisp: return Type::Fire;
+		case Moves::Memento: return Type::Dark;
+		case Moves::Facade: return Type::Normal;
+		case Moves::Focus_Punch: return Type::Fighting;
+		case Moves::SmellingSalt: return Type::Normal;
+		case Moves::Follow_Me: return Type::Normal;
+		case Moves::Nature_Power: return Type::Normal;
+		case Moves::Charge: return Type::Electric;
+		case Moves::Taunt: return Type::Dark;
+		case Moves::Helping_Hand: return Type::Normal;
+		case Moves::Trick: return Type::Psychic;
+		case Moves::Role_Play: return Type::Psychic;
+		case Moves::Wish: return Type::Normal;
+		case Moves::Assist: return Type::Normal;
+		case Moves::Ingrain: return Type::Grass;
+		case Moves::Superpower: return Type::Fighting;
+		case Moves::Magic_Coat: return Type::Psychic;
+		case Moves::Recycle: return Type::Normal;
+		case Moves::Revenge: return Type::Fighting;
+		case Moves::Brick_Break: return Type::Fighting;
+		case Moves::Yawn: return Type::Normal;
+		case Moves::Knock_Off: return Type::Dark;
+		case Moves::Endeavor: return Type::Normal;
+		case Moves::Eruption: return Type::Fire;
+		case Moves::Skill_Swap: return Type::Psychic;
+		case Moves::Imprison: return Type::Psychic;
+		case Moves::Refresh: return Type::Normal;
+		case Moves::Grudge: return Type::Ghost;
+		case Moves::Snatch: return Type::Dark;
+		case Moves::Secret_Power: return Type::Normal;
+		case Moves::Dive: return Type::Water;
+		case Moves::Arm_Thrust: return Type::Fighting;
+		case Moves::Camouflage: return Type::Normal;
+		case Moves::Tail_Glow: return Type::Bug;
+		case Moves::Luster_Purge: return Type::Psychic;
+		case Moves::Mist_Ball: return Type::Psychic;
+		case Moves::FeatherDance: return Type::Flying;
+		case Moves::Teeter_Dance: return Type::Normal;
+		case Moves::Blaze_Kick: return Type::Fire;
+		case Moves::Mud_Sport: return Type::Ground;
+		case Moves::Ice_Ball: return Type::Ice;
+		case Moves::Needle_Arm: return Type::Grass;
+		case Moves::Slack_Off: return Type::Normal;
+		case Moves::Hyper_Voice: return Type::Normal;
+		case Moves::Poison_Fang: return Type::Poison;
+		case Moves::Crush_Claw: return Type::Normal;
+		case Moves::Blast_Burn: return Type::Fire;
+		case Moves::Hydro_Cannon: return Type::Water;
+		case Moves::Meteor_Mash: return Type::Steel;
+		case Moves::Astonish: return Type::Ghost;
+		case Moves::Weather_Ball: return Type::Normal;
+		case Moves::Aromatherapy: return Type::Grass;
+		case Moves::Fake_Tears: return Type::Dark;
+		case Moves::Air_Cutter: return Type::Flying;
+		case Moves::Overheat: return Type::Fire;
+		case Moves::Odor_Sleuth: return Type::Normal;
+		case Moves::Rock_Tomb: return Type::Rock;
+		case Moves::Silver_Wind: return Type::Bug;
+		case Moves::Metal_Sound: return Type::Steel;
+		case Moves::GrassWhistle: return Type::Grass;
+		case Moves::Tickle: return Type::Normal;
+		case Moves::Cosmic_Power: return Type::Psychic;
+		case Moves::Water_Spout: return Type::Water;
+		case Moves::Signal_Beam: return Type::Bug;
+		case Moves::Shadow_Punch: return Type::Ghost;
+		case Moves::Extrasensory: return Type::Psychic;
+		case Moves::Sky_Uppercut: return Type::Fighting;
+		case Moves::Sand_Tomb: return Type::Ground;
+		case Moves::Sheer_Cold: return Type::Ice;
+		case Moves::Muddy_Water: return Type::Water;
+		case Moves::Bullet_Seed: return Type::Grass;
+		case Moves::Aerial_Ace: return Type::Flying;
+		case Moves::Icicle_Spear: return Type::Ice;
+		case Moves::Iron_Defense: return Type::Steel;
+		case Moves::Block: return Type::Normal;
+		case Moves::Howl: return Type::Normal;
+		case Moves::Dragon_Claw: return Type::Dragon;
+		case Moves::Frenzy_Plant: return Type::Grass;
+		case Moves::Bulk_Up: return Type::Fighting;
+		case Moves::Bounce: return Type::Flying;
+		case Moves::Mud_Shot: return Type::Ground;
+		case Moves::Poison_Tail: return Type::Poison;
+		case Moves::Covet: return Type::Normal;
+		case Moves::Volt_Tackle: return Type::Electric;
+		case Moves::Magical_Leaf: return Type::Grass;
+		case Moves::Water_Sport: return Type::Water;
+		case Moves::Calm_Mind: return Type::Psychic;
+		case Moves::Leaf_Blade: return Type::Grass;
+		case Moves::Dragon_Dance: return Type::Dragon;
+		case Moves::Rock_Blast: return Type::Rock;
+		case Moves::Shock_Wave: return Type::Electric;
+		case Moves::Water_Pulse: return Type::Water;
+		case Moves::Doom_Desire: return Type::Steel;
+		case Moves::Psycho_Boost: return Type::Psychic;
+		case Moves::Roost: return Type::Flying;
+		case Moves::Gravity: return Type::Psychic;
+		case Moves::Miracle_Eye: return Type::Psychic;
+		case Moves::Wake_Up_Slap: return Type::Fighting;
+		case Moves::Hammer_Arm: return Type::Fighting;
+		case Moves::Gyro_Ball: return Type::Steel;
+		case Moves::Healing_Wish: return Type::Psychic;
+		case Moves::Brine: return Type::Water;
+		case Moves::Natural_Gift: return Type::Normal;
+		case Moves::Feint: return Type::Normal;
+		case Moves::Pluck: return Type::Flying;
+		case Moves::Tailwind: return Type::Flying;
+		case Moves::Acupressure: return Type::Normal;
+		case Moves::Metal_Burst: return Type::Steel;
+		case Moves::U_turn: return Type::Bug;
+		case Moves::Close_Combat: return Type::Fighting;
+		case Moves::Payback: return Type::Dark;
+		case Moves::Assurance: return Type::Dark;
+		case Moves::Embargo: return Type::Dark;
+		case Moves::Fling: return Type::Dark;
+		case Moves::Psycho_Shift: return Type::Psychic;
+		case Moves::Trump_Card: return Type::Normal;
+		case Moves::Heal_Block: return Type::Psychic;
+		case Moves::Wring_Out: return Type::Normal;
+		case Moves::Power_Trick: return Type::Psychic;
+		case Moves::Gastro_Acid: return Type::Poison;
+		case Moves::Lucky_Chant: return Type::Normal;
+		case Moves::Me_First: return Type::Normal;
+		case Moves::Copycat: return Type::Normal;
+		case Moves::Power_Swap: return Type::Psychic;
+		case Moves::Guard_Swap: return Type::Psychic;
+		case Moves::Punishment: return Type::Dark;
+		case Moves::Last_Resort: return Type::Normal;
+		case Moves::Worry_Seed: return Type::Grass;
+		case Moves::Sucker_Punch: return Type::Dark;
+		case Moves::Toxic_Spikes: return Type::Poison;
+		case Moves::Heart_Swap: return Type::Psychic;
+		case Moves::Aqua_Ring: return Type::Water;
+		case Moves::Magnet_Rise: return Type::Electric;
+		case Moves::Flare_Blitz: return Type::Fire;
+		case Moves::Force_Palm: return Type::Fighting;
+		case Moves::Aura_Sphere: return Type::Fighting;
+		case Moves::Rock_Polish: return Type::Rock;
+		case Moves::Poison_Jab: return Type::Poison;
+		case Moves::Dark_Pulse: return Type::Dark;
+		case Moves::Night_Slash: return Type::Dark;
+		case Moves::Aqua_Tail: return Type::Water;
+		case Moves::Seed_Bomb: return Type::Grass;
+		case Moves::Air_Slash: return Type::Flying;
+		case Moves::X_Scissor: return Type::Bug;
+		case Moves::Bug_Buzz: return Type::Bug;
+		case Moves::Dragon_Pulse: return Type::Dragon;
+		case Moves::Dragon_Rush: return Type::Dragon;
+		case Moves::Power_Gem: return Type::Rock;
+		case Moves::Drain_Punch: return Type::Fighting;
+		case Moves::Vacuum_Wave: return Type::Fighting;
+		case Moves::Focus_Blast: return Type::Fighting;
+		case Moves::Energy_Ball: return Type::Grass;
+		case Moves::Brave_Bird: return Type::Flying;
+		case Moves::Earth_Power: return Type::Ground;
+		case Moves::Switcheroo: return Type::Dark;
+		case Moves::Giga_Impact: return Type::Normal;
+		case Moves::Nasty_Plot: return Type::Dark;
+		case Moves::Bullet_Punch: return Type::Steel;
+		case Moves::Avalanche: return Type::Ice;
+		case Moves::Ice_Shard: return Type::Ice;
+		case Moves::Shadow_Claw: return Type::Ghost;
+		case Moves::Thunder_Fang: return Type::Electric;
+		case Moves::Ice_Fang: return Type::Ice;
+		case Moves::Fire_Fang: return Type::Fire;
+		case Moves::Shadow_Sneak: return Type::Ghost;
+		case Moves::Mud_Bomb: return Type::Ground;
+		case Moves::Psycho_Cut: return Type::Psychic;
+		case Moves::Zen_Headbutt: return Type::Psychic;
+		case Moves::Mirror_Shot: return Type::Steel;
+		case Moves::Flash_Cannon: return Type::Steel;
+		case Moves::Rock_Climb: return Type::Normal;
+		case Moves::Defog: return Type::Flying;
+		case Moves::Trick_Room: return Type::Psychic;
+		case Moves::Draco_Meteor: return Type::Dragon;
+		case Moves::Discharge: return Type::Electric;
+		case Moves::Lava_Plume: return Type::Fire;
+		case Moves::Leaf_Storm: return Type::Grass;
+		case Moves::Power_Whip: return Type::Grass;
+		case Moves::Rock_Wrecker: return Type::Rock;
+		case Moves::Cross_Poison: return Type::Poison;
+		case Moves::Gunk_Shot: return Type::Poison;
+		case Moves::Iron_Head: return Type::Steel;
+		case Moves::Magnet_Bomb: return Type::Steel;
+		case Moves::Stone_Edge: return Type::Rock;
+		case Moves::Captivate: return Type::Normal;
+		case Moves::Stealth_Rock: return Type::Rock;
+		case Moves::Grass_Knot: return Type::Grass;
+		case Moves::Chatter: return Type::Flying;
+		case Moves::Judgment: return Type::Normal;
+		case Moves::Bug_Bite: return Type::Bug;
+		case Moves::Charge_Beam: return Type::Electric;
+		case Moves::Wood_Hammer: return Type::Grass;
+		case Moves::Aqua_Jet: return Type::Water;
+		case Moves::Attack_Order: return Type::Bug;
+		case Moves::Defend_Order: return Type::Bug;
+		case Moves::Heal_Order: return Type::Bug;
+		case Moves::Head_Smash: return Type::Rock;
+		case Moves::Double_Hit: return Type::Normal;
+		case Moves::Roar_of_Time: return Type::Dragon;
+		case Moves::Spacial_Rend: return Type::Dragon;
+		case Moves::Lunar_Dance: return Type::Psychic;
+		case Moves::Crush_Grip: return Type::Normal;
+		case Moves::Magma_Storm: return Type::Fire;
+		case Moves::Dark_Void: return Type::Dark;
+		case Moves::Seed_Flare: return Type::Grass;
+		case Moves::Ominous_Wind: return Type::Ghost;
+		case Moves::Shadow_Force: return Type::Ghost;
+		case Moves::Hone_Claws: return Type::Dark;
+		case Moves::Wide_Guard: return Type::Rock;
+		case Moves::Guard_Split: return Type::Psychic;
+		case Moves::Power_Split: return Type::Psychic;
+		case Moves::Wonder_Room: return Type::Psychic;
+		case Moves::Psyshock: return Type::Psychic;
+		case Moves::Venoshock: return Type::Poison;
+		case Moves::Autotomize: return Type::Steel;
+		case Moves::Rage_Powder: return Type::Bug;
+		case Moves::Telekinesis: return Type::Psychic;
+		case Moves::Magic_Room: return Type::Psychic;
+		case Moves::Smack_Down: return Type::Rock;
+		case Moves::Storm_Throw: return Type::Fighting;
+		case Moves::Flame_Burst: return Type::Fire;
+		case Moves::Sludge_Wave: return Type::Poison;
+		case Moves::Quiver_Dance: return Type::Bug;
+		case Moves::Heavy_Slam: return Type::Steel;
+		case Moves::Synchronoise: return Type::Psychic;
+		case Moves::Electro_Ball: return Type::Electric;
+		case Moves::Soak: return Type::Water;
+		case Moves::Flame_Charge: return Type::Fire;
+		case Moves::Coil: return Type::Poison;
+		case Moves::Low_Sweep: return Type::Fighting;
+		case Moves::Acid_Spray: return Type::Poison;
+		case Moves::Foul_Play: return Type::Dark;
+		case Moves::Simple_Beam: return Type::Normal;
+		case Moves::Entrainment: return Type::Normal;
+		case Moves::After_You: return Type::Normal;
+		case Moves::Round: return Type::Normal;
+		case Moves::Echoed_Voice: return Type::Normal;
+		case Moves::Chip_Away: return Type::Normal;
+		case Moves::Clear_Smog: return Type::Poison;
+		case Moves::Stored_Power: return Type::Psychic;
+		case Moves::Quick_Guard: return Type::Fighting;
+		case Moves::Ally_Switch: return Type::Psychic;
+		case Moves::Scald: return Type::Water;
+		case Moves::Shell_Smash: return Type::Normal;
+		case Moves::Heal_Pulse: return Type::Psychic;
+		case Moves::Hex: return Type::Ghost;
+		case Moves::Sky_Drop: return Type::Flying;
+		case Moves::Shift_Gear: return Type::Steel;
+		case Moves::Circle_Throw: return Type::Fighting;
+		case Moves::Incinerate: return Type::Fire;
+		case Moves::Quash: return Type::Dark;
+		case Moves::Acrobatics: return Type::Flying;
+		case Moves::Reflect_Type: return Type::Normal;
+		case Moves::Retaliate: return Type::Normal;
+		case Moves::Final_Gambit: return Type::Fighting;
+		case Moves::Bestow: return Type::Normal;
+		case Moves::Inferno: return Type::Fire;
+		case Moves::Water_Pledge: return Type::Water;
+		case Moves::Fire_Pledge: return Type::Fire;
+		case Moves::Grass_Pledge: return Type::Grass;
+		case Moves::Volt_Switch: return Type::Electric;
+		case Moves::Struggle_Bug: return Type::Bug;
+		case Moves::Bulldoze: return Type::Ground;
+		case Moves::Frost_Breath: return Type::Ice;
+		case Moves::Dragon_Tail: return Type::Dragon;
+		case Moves::Work_Up: return Type::Normal;
+		case Moves::Electroweb: return Type::Electric;
+		case Moves::Wild_Charge: return Type::Electric;
+		case Moves::Drill_Run: return Type::Ground;
+		case Moves::Dual_Chop: return Type::Dragon;
+		case Moves::Heart_Stamp: return Type::Psychic;
+		case Moves::Horn_Leech: return Type::Grass;
+		case Moves::Sacred_Sword: return Type::Fighting;
+		case Moves::Razor_Shell: return Type::Water;
+		case Moves::Heat_Crash: return Type::Fire;
+		case Moves::Leaf_Tornado: return Type::Grass;
+		case Moves::Steamroller: return Type::Bug;
+		case Moves::Cotton_Guard: return Type::Grass;
+		case Moves::Night_Daze: return Type::Dark;
+		case Moves::Psystrike: return Type::Psychic;
+		case Moves::Tail_Slap: return Type::Normal;
+		case Moves::Hurricane: return Type::Flying;
+		case Moves::Head_Charge: return Type::Normal;
+		case Moves::Gear_Grind: return Type::Steel;
+		case Moves::Searing_Shot: return Type::Fire;
+		case Moves::Techno_Blast: return Type::Normal;
+		case Moves::Relic_Song: return Type::Normal;
+		case Moves::Secret_Sword: return Type::Fighting;
+		case Moves::Glaciate: return Type::Ice;
+		case Moves::Bolt_Strike: return Type::Electric;
+		case Moves::Blue_Flare: return Type::Fire;
+		case Moves::Fiery_Dance: return Type::Fire;
+		case Moves::Freeze_Shock: return Type::Ice;
+		case Moves::Ice_Burn: return Type::Ice;
+		case Moves::Snarl: return Type::Dark;
+		case Moves::Icicle_Crash: return Type::Ice;
+		case Moves::V_create: return Type::Fire;
+		case Moves::Fusion_Flare: return Type::Fire;
+		case Moves::Fusion_Bolt: return Type::Electric;
+		default : throw InvalidMove{};
+	}
 }
 
 }	// namespace technicalmachine

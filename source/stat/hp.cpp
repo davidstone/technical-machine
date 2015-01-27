@@ -18,9 +18,10 @@
 
 #include "hp.hpp"
 
-#include <bounded_integer/array.hpp>
-
 #include "../pokemon/level.hpp"
+#include "../pokemon/species.hpp"
+
+#include <stdexcept>
 
 namespace technicalmachine {
 namespace {
@@ -62,690 +63,691 @@ auto HP::max() const -> max_type {
 
 namespace {
 
-auto get_base(Species const name) -> base_type {
-	static constexpr auto base = bounded::make_array(
-		// Generation 1		
-		45_bi,		// Bulbasaur
-		60_bi,		// Ivysaur
-		80_bi,		// Venusaur
-		39_bi,		// Charmander
-		58_bi,		// Charmeleon
-		78_bi,		// Charizard
-		44_bi,		// Squirtle
-		59_bi,		// Wartortle
-		79_bi,		// Blastoise
-		45_bi,		// Caterpie
-		50_bi,		// Metapod
-		60_bi,		// Butterfree
-		40_bi,		// Weedle
-		45_bi,		// Kakuna
-		65_bi,		// Beedrill
-		40_bi,		// Pidgey
-		63_bi,		// Pidgeotto
-		83_bi,		// Pidgeot
-		30_bi,		// Rattata
-		55_bi,		// Raticate
-		40_bi,		// Spearow
-		65_bi,		// Fearow
-		35_bi,		// Ekans
-		60_bi,		// Arbok
-		35_bi,		// Pikachu
-		60_bi,		// Raichu
-		50_bi,		// Sandshrew
-		75_bi,		// Sandslash
-		55_bi,		// Nidoran-F
-		70_bi,		// Nidorina
-		90_bi,		// Nidoqueen
-		46_bi,		// Nidoran-M
-		61_bi,		// Nidorino
-		81_bi,		// Nidoking
-		70_bi,		// Clefairy
-		95_bi,		// Clefable
-		38_bi,		// Vulpix
-		73_bi,		// Ninetales
-		115_bi,		// Jigglypuff
-		140_bi,		// Wigglytuff
-		40_bi,		// Zubat
-		75_bi,		// Golbat
-		45_bi,		// Oddish
-		60_bi,		// Gloom
-		75_bi,		// Vileplume
-		35_bi,		// Paras
-		60_bi,		// Parasect
-		60_bi,		// Venonat
-		70_bi,		// Venomoth
-		10_bi,		// Diglett
-		35_bi,		// Dugtrio
-		40_bi,		// Meowth
-		65_bi,		// Persian
-		50_bi,		// Psyduck
-		80_bi,		// Golduck
-		40_bi,		// Mankey
-		65_bi,		// Primeape
-		55_bi,		// Growlithe
-		90_bi,		// Arcanine
-		40_bi,		// Poliwag
-		65_bi,		// Poliwhirl
-		90_bi,		// Poliwrath
-		25_bi,		// Abra
-		40_bi,		// Kadabra
-		55_bi,		// Alakazam
-		70_bi,		// Machop
-		80_bi,		// Machoke
-		90_bi,		// Machamp
-		50_bi,		// Bellsprout
-		65_bi,		// Weepinbell
-		80_bi,		// Victreebel
-		40_bi,		// Tentacool
-		80_bi,		// Tentacruel
-		40_bi,		// Geodude
-		55_bi,		// Graveler
-		80_bi,		// Golem
-		50_bi,		// Ponyta
-		65_bi,		// Rapidash
-		90_bi,		// Slowpoke
-		95_bi,		// Slowbro
-		25_bi,		// Magnemite
-		50_bi,		// Magneton
-		52_bi,		// Farfetch'd
-		35_bi,		// Doduo
-		60_bi,		// Dodrio
-		65_bi,		// Seel
-		90_bi,		// Dewgong
-		80_bi,		// Grimer
-		105_bi,		// Muk
-		30_bi,		// Shellder
-		50_bi,		// Cloyster
-		30_bi,		// Gastly
-		45_bi,		// Haunter
-		60_bi,		// Gengar
-		35_bi,		// Onix
-		60_bi,		// Drowzee
-		85_bi,		// Hypno
-		30_bi,		// Krabby
-		55_bi,		// Kingler
-		40_bi,		// Voltorb
-		60_bi,		// Electrode
-		60_bi,		// Exeggcute
-		95_bi,		// Exeggutor
-		50_bi,		// Cubone
-		60_bi,		// Marowak
-		50_bi,		// Hitmonlee
-		50_bi,		// Hitmonchan
-		90_bi,		// Lickitung
-		40_bi,		// Koffing
-		65_bi,		// Weezing
-		80_bi,		// Rhyhorn
-		105_bi,		// Rhydon
-		250_bi,		// Chansey
-		65_bi,		// Tangela
-		105_bi,		// Kangaskhan
-		30_bi,		// Horsea
-		55_bi,		// Seadra
-		45_bi,		// Goldeen
-		80_bi,		// Seaking
-		30_bi,		// Staryu
-		60_bi,		// Starmie
-		40_bi,		// Mr. Mime
-		70_bi,		// Scyther
-		65_bi,		// Jynx
-		65_bi,		// Electabuzz
-		65_bi,		// Magmar
-		65_bi,		// Pinsir
-		75_bi,		// Tauros
-		20_bi,		// Magikarp
-		95_bi,		// Gyarados
-		130_bi,		// Lapras
-		48_bi,		// Ditto
-		55_bi,		// Eevee
-		130_bi,		// Vaporeon
-		65_bi,		// Jolteon
-		65_bi,		// Flareon
-		65_bi,		// Porygon
-		35_bi,		// Omanyte
-		70_bi,		// Omastar
-		30_bi,		// Kabuto
-		60_bi,		// Kabutops
-		80_bi,		// Aerodactyl
-		160_bi,		// Snorlax
-		90_bi,		// Articuno
-		90_bi,		// Zapdos
-		90_bi,		// Moltres
-		41_bi,		// Dratini
-		61_bi,		// Dragonair
-		91_bi,		// Dragonite
-		106_bi,		// Mewtwo
-		100_bi,		// Mew
-		
-		// Generation 2		
-		45_bi,		// Chikorita
-		60_bi,		// Bayleef
-		80_bi,		// Meganium
-		39_bi,		// Cyndaquil
-		58_bi,		// Quilava
-		78_bi,		// Typhlosion
-		50_bi,		// Totodile
-		65_bi,		// Croconaw
-		85_bi,		// Feraligatr
-		35_bi,		// Sentret
-		85_bi,		// Furret
-		60_bi,		// Hoothoot
-		100_bi,		// Noctowl
-		40_bi,		// Ledyba
-		55_bi,		// Ledian
-		40_bi,		// Spinarak
-		70_bi,		// Ariados
-		85_bi,		// Crobat
-		75_bi,		// Chinchou
-		125_bi,		// Lanturn
-		20_bi,		// Pichu
-		50_bi,		// Cleffa
-		90_bi,		// Igglybuff
-		35_bi,		// Togepi
-		55_bi,		// Togetic
-		40_bi,		// Natu
-		65_bi,		// Xatu
-		55_bi,		// Mareep
-		70_bi,		// Flaaffy
-		90_bi,		// Ampharos
-		75_bi,		// Bellossom
-		70_bi,		// Marill
-		100_bi,		// Azumarill
-		70_bi,		// Sudowoodo
-		90_bi,		// Politoed
-		35_bi,		// Hoppip
-		55_bi,		// Skiploom
-		75_bi,		// Jumpluff
-		55_bi,		// Aipom
-		30_bi,		// Sunkern
-		75_bi,		// Sunflora
-		65_bi,		// Yanma
-		55_bi,		// Wooper
-		95_bi,		// Quagsire
-		65_bi,		// Espeon
-		95_bi,		// Umbreon
-		60_bi,		// Murkrow
-		95_bi,		// Slowking
-		60_bi,		// Misdreavus
-		48_bi,		// Unown
-		190_bi,		// Wobbuffet
-		70_bi,		// Girafarig
-		50_bi,		// Pineco
-		75_bi,		// Forretress
-		100_bi,		// Dunsparce
-		65_bi,		// Gligar
-		75_bi,		// Steelix
-		60_bi,		// Snubbull
-		90_bi,		// Granbull
-		65_bi,		// Qwilfish
-		70_bi,		// Scizor
-		20_bi,		// Shuckle
-		80_bi,		// Heracross
-		55_bi,		// Sneasel
-		60_bi,		// Teddiursa
-		90_bi,		// Ursaring
-		40_bi,		// Slugma
-		50_bi,		// Magcargo
-		50_bi,		// Swinub
-		100_bi,		// Piloswine
-		55_bi,		// Corsola
-		35_bi,		// Remoraid
-		75_bi,		// Octillery
-		45_bi,		// Delibird
-		65_bi,		// Mantine
-		65_bi,		// Skarmory
-		45_bi,		// Houndour
-		75_bi,		// Houndoom
-		75_bi,		// Kingdra
-		90_bi,		// Phanpy
-		90_bi,		// Donphan
-		85_bi,		// Porygon2
-		73_bi,		// Stantler
-		55_bi,		// Smeargle
-		35_bi,		// Tyrogue
-		50_bi,		// Hitmontop
-		45_bi,		// Smoochum
-		45_bi,		// Elekid
-		45_bi,		// Magby
-		95_bi,		// Miltank
-		255_bi,		// Blissey
-		90_bi,		// Raikou
-		115_bi,		// Entei
-		100_bi,		// Suicune
-		50_bi,		// Larvitar
-		70_bi,		// Pupitar
-		100_bi,		// Tyranitar
-		106_bi,		// Lugia
-		106_bi,		// Ho-Oh
-		100_bi,		// Celebi
-		
-		// Generation 3		
-		40_bi,		// Treecko
-		50_bi,		// Grovyle
-		70_bi,		// Sceptile
-		45_bi,		// Torchic
-		60_bi,		// Combusken
-		80_bi,		// Blaziken
-		50_bi,		// Mudkip
-		70_bi,		// Marshtomp
-		100_bi,		// Swampert
-		35_bi,		// Poochyena
-		70_bi,		// Mightyena
-		38_bi,		// Zigzagoon
-		78_bi,		// Linoone
-		45_bi,		// Wurmple
-		50_bi,		// Silcoon
-		60_bi,		// Beautifly
-		50_bi,		// Cascoon
-		60_bi,		// Dustox
-		40_bi,		// Lotad
-		60_bi,		// Lombre
-		80_bi,		// Ludicolo
-		40_bi,		// Seedot
-		70_bi,		// Nuzleaf
-		90_bi,		// Shiftry
-		40_bi,		// Taillow
-		60_bi,		// Swellow
-		40_bi,		// Wingull
-		60_bi,		// Pelipper
-		28_bi,		// Ralts
-		38_bi,		// Kirlia
-		68_bi,		// Gardevoir
-		40_bi,		// Surskit
-		70_bi,		// Masquerain
-		60_bi,		// Shroomish
-		60_bi,		// Breloom
-		60_bi,		// Slakoth
-		80_bi,		// Vigoroth
-		150_bi,		// Slaking
-		31_bi,		// Nincada
-		61_bi,		// Ninjask
-		1_bi,		// Shedinja
-		64_bi,		// Whismur
-		84_bi,		// Loudred
-		104_bi,		// Exploud
-		72_bi,		// Makuhita
-		144_bi,		// Hariyama
-		50_bi,		// Azurill
-		30_bi,		// Nosepass
-		50_bi,		// Skitty
-		70_bi,		// Delcatty
-		50_bi,		// Sableye
-		50_bi,		// Mawile
-		50_bi,		// Aron
-		60_bi,		// Lairon
-		70_bi,		// Aggron
-		30_bi,		// Meditite
-		60_bi,		// Medicham
-		40_bi,		// Electrike
-		70_bi,		// Manectric
-		60_bi,		// Plusle
-		60_bi,		// Minun
-		65_bi,		// Volbeat
-		65_bi,		// Illumise
-		50_bi,		// Roselia
-		70_bi,		// Gulpin
-		100_bi,		// Swalot
-		45_bi,		// Carvanha
-		70_bi,		// Sharpedo
-		130_bi,		// Wailmer
-		170_bi,		// Wailord
-		60_bi,		// Numel
-		70_bi,		// Camerupt
-		70_bi,		// Torkoal
-		60_bi,		// Spoink
-		80_bi,		// Grumpig
-		60_bi,		// Spinda
-		45_bi,		// Trapinch
-		50_bi,		// Vibrava
-		80_bi,		// Flygon
-		50_bi,		// Cacnea
-		70_bi,		// Cacturne
-		45_bi,		// Swablu
-		75_bi,		// Altaria
-		73_bi,		// Zangoose
-		73_bi,		// Seviper
-		70_bi,		// Lunatone
-		70_bi,		// Solrock
-		50_bi,		// Barboach
-		110_bi,		// Whiscash
-		43_bi,		// Corphish
-		63_bi,		// Crawdaunt
-		40_bi,		// Baltoy
-		60_bi,		// Claydol
-		66_bi,		// Lileep
-		86_bi,		// Cradily
-		45_bi,		// Anorith
-		75_bi,		// Armaldo
-		20_bi,		// Feebas
-		95_bi,		// Milotic
-		70_bi,		// Castform
-		60_bi,		// Kecleon
-		44_bi,		// Shuppet
-		64_bi,		// Banette
-		20_bi,		// Duskull
-		40_bi,		// Dusclops
-		99_bi,		// Tropius
-		65_bi,		// Chimecho
-		65_bi,		// Absol
-		95_bi,		// Wynaut
-		50_bi,		// Snorunt
-		80_bi,		// Glalie
-		70_bi,		// Spheal
-		90_bi,		// Sealeo
-		110_bi,		// Walrein
-		35_bi,		// Clamperl
-		55_bi,		// Huntail
-		55_bi,		// Gorebyss
-		100_bi,		// Relicanth
-		43_bi,		// Luvdisc
-		45_bi,		// Bagon
-		65_bi,		// Shelgon
-		95_bi,		// Salamence
-		40_bi,		// Beldum
-		60_bi,		// Metang
-		80_bi,		// Metagross
-		80_bi,		// Regirock
-		80_bi,		// Regice
-		80_bi,		// Registeel
-		80_bi,		// Latias
-		80_bi,		// Latios
-		100_bi,		// Kyogre
-		100_bi,		// Groudon
-		105_bi,		// Rayquaza
-		100_bi,		// Jirachi
-		50_bi,		// Deoxys-Mediocre
-		50_bi,		// Deoxys-Attack
-		50_bi,		// Deoxys-Defense
-		50_bi,		// Deoxys-Speed
-		
-		// Generation 4		
-		55_bi,		// Turtwig
-		75_bi,		// Grotle
-		95_bi,		// Torterra
-		44_bi,		// Chimchar
-		64_bi,		// Monferno
-		76_bi,		// Infernape
-		53_bi,		// Piplup
-		64_bi,		// Prinplup
-		84_bi,		// Empoleon
-		40_bi,		// Starly
-		55_bi,		// Staravia
-		85_bi,		// Staraptor
-		59_bi,		// Bidoof
-		79_bi,		// Bibarel
-		37_bi,		// Kricketot
-		77_bi,		// Kricketune
-		45_bi,		// Shinx
-		60_bi,		// Luxio
-		80_bi,		// Luxray
-		40_bi,		// Budew
-		60_bi,		// Roserade
-		67_bi,		// Cranidos
-		97_bi,		// Rampardos
-		30_bi,		// Shieldon
-		60_bi,		// Bastiodon
-		40_bi,		// Burmy
-		60_bi,		// Wormadam-Plant
-		60_bi,		// Wormadam-Sandy
-		60_bi,		// Wormadam-Trash
-		70_bi,		// Mothim
-		30_bi,		// Combee
-		70_bi,		// Vespiquen
-		60_bi,		// Pachirisu
-		55_bi,		// Buizel
-		85_bi,		// Floatzel
-		45_bi,		// Cherubi
-		70_bi,		// Cherrim
-		76_bi,		// Shellos
-		111_bi,		// Gastrodon
-		75_bi,		// Ambipom
-		90_bi,		// Drifloon
-		150_bi,		// Drifblim
-		55_bi,		// Buneary
-		65_bi,		// Lopunny
-		60_bi,		// Mismagius
-		100_bi,		// Honchkrow
-		49_bi,		// Glameow
-		71_bi,		// Purugly
-		45_bi,		// Chingling
-		63_bi,		// Stunky
-		103_bi,		// Skuntank
-		57_bi,		// Bronzor
-		67_bi,		// Bronzong
-		50_bi,		// Bonsly
-		20_bi,		// Mime Jr.
-		100_bi,		// Happiny
-		76_bi,		// Chatot
-		50_bi,		// Spiritomb
-		58_bi,		// Gible
-		68_bi,		// Gabite
-		108_bi,		// Garchomp
-		135_bi,		// Munchlax
-		40_bi,		// Riolu
-		70_bi,		// Lucario
-		68_bi,		// Hippopotas
-		108_bi,		// Hippowdon
-		40_bi,		// Skorupi
-		70_bi,		// Drapion
-		48_bi,		// Croagunk
-		83_bi,		// Toxicroak
-		74_bi,		// Carnivine
-		49_bi,		// Finneon
-		69_bi,		// Lumineon
-		45_bi,		// Mantyke
-		60_bi,		// Snover
-		90_bi,		// Abomasnow
-		70_bi,		// Weavile
-		70_bi,		// Magnezone
-		110_bi,		// Lickilicky
-		115_bi,		// Rhyperior
-		100_bi,		// Tangrowth
-		75_bi,		// Electivire
-		75_bi,		// Magmortar
-		85_bi,		// Togekiss
-		86_bi,		// Yanmega
-		65_bi,		// Leafeon
-		65_bi,		// Glaceon
-		75_bi,		// Gliscor
-		110_bi,		// Mamoswine
-		85_bi,		// Porygon-Z
-		68_bi,		// Gallade
-		60_bi,		// Probopass
-		45_bi,		// Dusknoir
-		70_bi,		// Froslass
-		50_bi,		// Rotom
-		50_bi,		// Rotom-Heat
-		50_bi,		// Rotom-Wash
-		50_bi,		// Rotom-Frost
-		50_bi,		// Rotom-Fan
-		50_bi,		// Rotom-Mow
-		75_bi,		// Uxie
-		80_bi,		// Mesprit
-		75_bi,		// Azelf
-		100_bi,		// Dialga
-		90_bi,		// Palkia
-		91_bi,		// Heatran
-		110_bi,		// Regigigas
-		150_bi,		// Giratina-Altered
-		150_bi,		// Giratina-Origin
-		120_bi,		// Cresselia
-		80_bi,		// Phione
-		100_bi,		// Manaphy
-		70_bi,		// Darkrai
-		100_bi,		// Shaymin-Land
-		100_bi,		// Shaymin-Sky
-		120_bi,		// Arceus
-		
-		// Generation 5		
-		100_bi,		// Victini
-		45_bi,		// Snivy
-		60_bi,		// Servine
-		75_bi,		// Serperior
-		65_bi,		// Tepig
-		90_bi,		// Pignite
-		110_bi,		// Emboar
-		55_bi,		// Oshawott
-		75_bi,		// Dewott
-		95_bi,		// Samurott
-		45_bi,		// Patrat
-		60_bi,		// Watchog
-		45_bi,		// Lillipup
-		65_bi,		// Herdier
-		85_bi,		// Stoutland
-		41_bi,		// Purrloin
-		64_bi,		// Liepard
-		50_bi,		// Pansage
-		75_bi,		// Simisage
-		50_bi,		// Pansear
-		75_bi,		// Simisear
-		50_bi,		// Panpour
-		75_bi,		// Simipour
-		76_bi,		// Munna
-		116_bi,		// Musharna
-		50_bi,		// Pidove
-		62_bi,		// Tranquill
-		80_bi,		// Unfezant
-		45_bi,		// Blitzle
-		75_bi,		// Zebstrika
-		55_bi,		// Roggenrola
-		70_bi,		// Boldore
-		85_bi,		// Gigalith
-		55_bi,		// Woobat
-		67_bi,		// Swoobat
-		60_bi,		// Drilbur
-		110_bi,		// Excadrill
-		103_bi,		// Audino
-		75_bi,		// Timburr
-		85_bi,		// Gurdurr
-		105_bi,		// Conkeldurr
-		50_bi,		// Tympole
-		75_bi,		// Palpitoad
-		105_bi,		// Seismitoad
-		120_bi,		// Throh
-		75_bi,		// Sawk
-		45_bi,		// Sewaddle
-		55_bi,		// Swadloon
-		75_bi,		// Leavanny
-		30_bi,		// Venipede
-		40_bi,		// Whirlipede
-		60_bi,		// Scolipede
-		40_bi,		// Cottonee
-		60_bi,		// Whimsicott
-		45_bi,		// Petilil
-		70_bi,		// Lilligant
-		70_bi,		// Basculin-Red
-		70_bi,		// Basculin-Blue
-		50_bi,		// Sandile
-		60_bi,		// Krokorok
-		95_bi,		// Krookodile
-		70_bi,		// Darumaka
-		105_bi,		// Darmanitan
-		//105_bi,		// Darmanitan (Zen Mode)
-		75_bi,		// Maractus
-		50_bi,		// Dwebble
-		70_bi,		// Crustle
-		50_bi,		// Scraggy
-		65_bi,		// Scrafty
-		72_bi,		// Sigilyph
-		38_bi,		// Yamask
-		58_bi,		// Cofagrigus
-		54_bi,		// Tirtouga
-		74_bi,		// Carracosta
-		55_bi,		// Archen
-		75_bi,		// Archeops
-		50_bi,		// Trubbish
-		80_bi,		// Garbodor
-		40_bi,		// Zorua
-		60_bi,		// Zoroark
-		55_bi,		// Minccino
-		75_bi,		// Cinccino
-		45_bi,		// Gothita
-		60_bi,		// Gothorita
-		70_bi,		// Gothitelle
-		45_bi,		// Solosis
-		65_bi,		// Duosion
-		110_bi,		// Reuniclus
-		62_bi,		// Ducklett
-		75_bi,		// Swanna
-		36_bi,		// Vanillite
-		51_bi,		// Vanillish
-		71_bi,		// Vanilluxe
-		60_bi,		// Deerling
-		80_bi,		// Sawsbuck
-		55_bi,		// Emolga
-		50_bi,		// Karrablast
-		70_bi,		// Escavalier
-		69_bi,		// Foongus
-		114_bi,		// Amoonguss
-		55_bi,		// Frillish
-		100_bi,		// Jellicent
-		165_bi,		// Alomomola
-		50_bi,		// Joltik
-		70_bi,		// Galvantula
-		44_bi,		// Ferroseed
-		74_bi,		// Ferrothorn
-		40_bi,		// Klink
-		60_bi,		// Klang
-		60_bi,		// Klinklang
-		35_bi,		// Tynamo
-		65_bi,		// Eelektrik
-		85_bi,		// Eelektross
-		55_bi,		// Elgyem
-		75_bi,		// Beheeyem
-		50_bi,		// Litwick
-		60_bi,		// Lampent
-		60_bi,		// Chandelure
-		46_bi,		// Axew
-		66_bi,		// Fraxure
-		76_bi,		// Haxorus
-		55_bi,		// Cubchoo
-		95_bi,		// Beartic
-		70_bi,		// Cryogonal
-		50_bi,		// Shelmet
-		80_bi,		// Accelgor
-		109_bi,		// Stunfisk
-		45_bi,		// Mienfoo
-		65_bi,		// Mienshao
-		77_bi,		// Druddigon
-		59_bi,		// Golett
-		89_bi,		// Golurk
-		45_bi,		// Pawniard
-		65_bi,		// Bisharp
-		95_bi,		// Bouffalant
-		70_bi,		// Rufflet
-		100_bi,		// Braviary
-		70_bi,		// Vullaby
-		110_bi,		// Mandibuzz
-		85_bi,		// Heatmor
-		58_bi,		// Durant
-		52_bi,		// Deino
-		72_bi,		// Zweilous
-		92_bi,		// Hydreigon
-		55_bi,		// Larvesta
-		85_bi,		// Volcarona
-		91_bi,		// Cobalion
-		91_bi,		// Terrakion
-		91_bi,		// Virizion
-		79_bi,		// Tornadus-Incarnate
-		79_bi,		// Tornadus-Therian
-		79_bi,		// Thundurus-Incarnate
-		79_bi,		// Thundurus-Therian
-		100_bi,		// Reshiram
-		100_bi,		// Zekrom
-		89_bi,		// Landorus-Incarnate
-		89_bi,		// Landorus-Therian
-		125_bi,		// Kyurem
-		125_bi,		// Kyurem-Black
-		125_bi,		// Kyurem-White
-		91_bi,		// Keldeo
-		100_bi,		// Meloetta
-		// 100_bi,		// Meloetta (Pirouette form)
-		71_bi		// Genesect 
-	);
-	static_assert(std::is_same<std::decay_t<decltype(base.at(name))>, base_type>::value, "Incorrect base stat HP type.");
-	return base.at(name);
+class InvalidSpecies: public std::exception {};
+
+auto get_base(Species const species) -> base_type {
+	switch (species) {
+		// Generation 1
+		case Species::Bulbasaur: return 45_bi;
+		case Species::Ivysaur: return 60_bi;
+		case Species::Venusaur: return 80_bi;
+		case Species::Charmander: return 39_bi;
+		case Species::Charmeleon: return 58_bi;
+		case Species::Charizard: return 78_bi;
+		case Species::Squirtle: return 44_bi;
+		case Species::Wartortle: return 59_bi;
+		case Species::Blastoise: return 79_bi;
+		case Species::Caterpie: return 45_bi;
+		case Species::Metapod: return 50_bi;
+		case Species::Butterfree: return 60_bi;
+		case Species::Weedle: return 40_bi;
+		case Species::Kakuna: return 45_bi;
+		case Species::Beedrill: return 65_bi;
+		case Species::Pidgey: return 40_bi;
+		case Species::Pidgeotto: return 63_bi;
+		case Species::Pidgeot: return 83_bi;
+		case Species::Rattata: return 30_bi;
+		case Species::Raticate: return 55_bi;
+		case Species::Spearow: return 40_bi;
+		case Species::Fearow: return 65_bi;
+		case Species::Ekans: return 35_bi;
+		case Species::Arbok: return 60_bi;
+		case Species::Pikachu: return 35_bi;
+		case Species::Raichu: return 60_bi;
+		case Species::Sandshrew: return 50_bi;
+		case Species::Sandslash: return 75_bi;
+		case Species::Nidoran_F: return 55_bi;
+		case Species::Nidorina: return 70_bi;
+		case Species::Nidoqueen: return 90_bi;
+		case Species::Nidoran_M: return 46_bi;
+		case Species::Nidorino: return 61_bi;
+		case Species::Nidoking: return 81_bi;
+		case Species::Clefairy: return 70_bi;
+		case Species::Clefable: return 95_bi;
+		case Species::Vulpix: return 38_bi;
+		case Species::Ninetales: return 73_bi;
+		case Species::Jigglypuff: return 115_bi;
+		case Species::Wigglytuff: return 140_bi;
+		case Species::Zubat: return 40_bi;
+		case Species::Golbat: return 75_bi;
+		case Species::Oddish: return 45_bi;
+		case Species::Gloom: return 60_bi;
+		case Species::Vileplume: return 75_bi;
+		case Species::Paras: return 35_bi;
+		case Species::Parasect: return 60_bi;
+		case Species::Venonat: return 60_bi;
+		case Species::Venomoth: return 70_bi;
+		case Species::Diglett: return 10_bi;
+		case Species::Dugtrio: return 35_bi;
+		case Species::Meowth: return 40_bi;
+		case Species::Persian: return 65_bi;
+		case Species::Psyduck: return 50_bi;
+		case Species::Golduck: return 80_bi;
+		case Species::Mankey: return 40_bi;
+		case Species::Primeape: return 65_bi;
+		case Species::Growlithe: return 55_bi;
+		case Species::Arcanine: return 90_bi;
+		case Species::Poliwag: return 40_bi;
+		case Species::Poliwhirl: return 65_bi;
+		case Species::Poliwrath: return 90_bi;
+		case Species::Abra: return 25_bi;
+		case Species::Kadabra: return 40_bi;
+		case Species::Alakazam: return 55_bi;
+		case Species::Machop: return 70_bi;
+		case Species::Machoke: return 80_bi;
+		case Species::Machamp: return 90_bi;
+		case Species::Bellsprout: return 50_bi;
+		case Species::Weepinbell: return 65_bi;
+		case Species::Victreebel: return 80_bi;
+		case Species::Tentacool: return 40_bi;
+		case Species::Tentacruel: return 80_bi;
+		case Species::Geodude: return 40_bi;
+		case Species::Graveler: return 55_bi;
+		case Species::Golem: return 80_bi;
+		case Species::Ponyta: return 50_bi;
+		case Species::Rapidash: return 65_bi;
+		case Species::Slowpoke: return 90_bi;
+		case Species::Slowbro: return 95_bi;
+		case Species::Magnemite: return 25_bi;
+		case Species::Magneton: return 50_bi;
+		case Species::Farfetchd: return 52_bi;
+		case Species::Doduo: return 35_bi;
+		case Species::Dodrio: return 60_bi;
+		case Species::Seel: return 65_bi;
+		case Species::Dewgong: return 90_bi;
+		case Species::Grimer: return 80_bi;
+		case Species::Muk: return 105_bi;
+		case Species::Shellder: return 30_bi;
+		case Species::Cloyster: return 50_bi;
+		case Species::Gastly: return 30_bi;
+		case Species::Haunter: return 45_bi;
+		case Species::Gengar: return 60_bi;
+		case Species::Onix: return 35_bi;
+		case Species::Drowzee: return 60_bi;
+		case Species::Hypno: return 85_bi;
+		case Species::Krabby: return 30_bi;
+		case Species::Kingler: return 55_bi;
+		case Species::Voltorb: return 40_bi;
+		case Species::Electrode: return 60_bi;
+		case Species::Exeggcute: return 60_bi;
+		case Species::Exeggutor: return 95_bi;
+		case Species::Cubone: return 50_bi;
+		case Species::Marowak: return 60_bi;
+		case Species::Hitmonlee: return 50_bi;
+		case Species::Hitmonchan: return 50_bi;
+		case Species::Lickitung: return 90_bi;
+		case Species::Koffing: return 40_bi;
+		case Species::Weezing: return 65_bi;
+		case Species::Rhyhorn: return 80_bi;
+		case Species::Rhydon: return 105_bi;
+		case Species::Chansey: return 250_bi;
+		case Species::Tangela: return 65_bi;
+		case Species::Kangaskhan: return 105_bi;
+		case Species::Horsea: return 30_bi;
+		case Species::Seadra: return 55_bi;
+		case Species::Goldeen: return 45_bi;
+		case Species::Seaking: return 80_bi;
+		case Species::Staryu: return 30_bi;
+		case Species::Starmie: return 60_bi;
+		case Species::Mr_Mime: return 40_bi;
+		case Species::Scyther: return 70_bi;
+		case Species::Jynx: return 65_bi;
+		case Species::Electabuzz: return 65_bi;
+		case Species::Magmar: return 65_bi;
+		case Species::Pinsir: return 65_bi;
+		case Species::Tauros: return 75_bi;
+		case Species::Magikarp: return 20_bi;
+		case Species::Gyarados: return 95_bi;
+		case Species::Lapras: return 130_bi;
+		case Species::Ditto: return 48_bi;
+		case Species::Eevee: return 55_bi;
+		case Species::Vaporeon: return 130_bi;
+		case Species::Jolteon: return 65_bi;
+		case Species::Flareon: return 65_bi;
+		case Species::Porygon: return 65_bi;
+		case Species::Omanyte: return 35_bi;
+		case Species::Omastar: return 70_bi;
+		case Species::Kabuto: return 30_bi;
+		case Species::Kabutops: return 60_bi;
+		case Species::Aerodactyl: return 80_bi;
+		case Species::Snorlax: return 160_bi;
+		case Species::Articuno: return 90_bi;
+		case Species::Zapdos: return 90_bi;
+		case Species::Moltres: return 90_bi;
+		case Species::Dratini: return 41_bi;
+		case Species::Dragonair: return 61_bi;
+		case Species::Dragonite: return 91_bi;
+		case Species::Mewtwo: return 106_bi;
+		case Species::Mew: return 100_bi;
+
+		// Generation 2
+		case Species::Chikorita: return 45_bi;
+		case Species::Bayleef: return 60_bi;
+		case Species::Meganium: return 80_bi;
+		case Species::Cyndaquil: return 39_bi;
+		case Species::Quilava: return 58_bi;
+		case Species::Typhlosion: return 78_bi;
+		case Species::Totodile: return 50_bi;
+		case Species::Croconaw: return 65_bi;
+		case Species::Feraligatr: return 85_bi;
+		case Species::Sentret: return 35_bi;
+		case Species::Furret: return 85_bi;
+		case Species::Hoothoot: return 60_bi;
+		case Species::Noctowl: return 100_bi;
+		case Species::Ledyba: return 40_bi;
+		case Species::Ledian: return 55_bi;
+		case Species::Spinarak: return 40_bi;
+		case Species::Ariados: return 70_bi;
+		case Species::Crobat: return 85_bi;
+		case Species::Chinchou: return 75_bi;
+		case Species::Lanturn: return 125_bi;
+		case Species::Pichu: return 20_bi;
+		case Species::Cleffa: return 50_bi;
+		case Species::Igglybuff: return 90_bi;
+		case Species::Togepi: return 35_bi;
+		case Species::Togetic: return 55_bi;
+		case Species::Natu: return 40_bi;
+		case Species::Xatu: return 65_bi;
+		case Species::Mareep: return 55_bi;
+		case Species::Flaaffy: return 70_bi;
+		case Species::Ampharos: return 90_bi;
+		case Species::Bellossom: return 75_bi;
+		case Species::Marill: return 70_bi;
+		case Species::Azumarill: return 100_bi;
+		case Species::Sudowoodo: return 70_bi;
+		case Species::Politoed: return 90_bi;
+		case Species::Hoppip: return 35_bi;
+		case Species::Skiploom: return 55_bi;
+		case Species::Jumpluff: return 75_bi;
+		case Species::Aipom: return 55_bi;
+		case Species::Sunkern: return 30_bi;
+		case Species::Sunflora: return 75_bi;
+		case Species::Yanma: return 65_bi;
+		case Species::Wooper: return 55_bi;
+		case Species::Quagsire: return 95_bi;
+		case Species::Espeon: return 65_bi;
+		case Species::Umbreon: return 95_bi;
+		case Species::Murkrow: return 60_bi;
+		case Species::Slowking: return 95_bi;
+		case Species::Misdreavus: return 60_bi;
+		case Species::Unown: return 48_bi;
+		case Species::Wobbuffet: return 190_bi;
+		case Species::Girafarig: return 70_bi;
+		case Species::Pineco: return 50_bi;
+		case Species::Forretress: return 75_bi;
+		case Species::Dunsparce: return 100_bi;
+		case Species::Gligar: return 65_bi;
+		case Species::Steelix: return 75_bi;
+		case Species::Snubbull: return 60_bi;
+		case Species::Granbull: return 90_bi;
+		case Species::Qwilfish: return 65_bi;
+		case Species::Scizor: return 70_bi;
+		case Species::Shuckle: return 20_bi;
+		case Species::Heracross: return 80_bi;
+		case Species::Sneasel: return 55_bi;
+		case Species::Teddiursa: return 60_bi;
+		case Species::Ursaring: return 90_bi;
+		case Species::Slugma: return 40_bi;
+		case Species::Magcargo: return 50_bi;
+		case Species::Swinub: return 50_bi;
+		case Species::Piloswine: return 100_bi;
+		case Species::Corsola: return 55_bi;
+		case Species::Remoraid: return 35_bi;
+		case Species::Octillery: return 75_bi;
+		case Species::Delibird: return 45_bi;
+		case Species::Mantine: return 65_bi;
+		case Species::Skarmory: return 65_bi;
+		case Species::Houndour: return 45_bi;
+		case Species::Houndoom: return 75_bi;
+		case Species::Kingdra: return 75_bi;
+		case Species::Phanpy: return 90_bi;
+		case Species::Donphan: return 90_bi;
+		case Species::Porygon2: return 85_bi;
+		case Species::Stantler: return 73_bi;
+		case Species::Smeargle: return 55_bi;
+		case Species::Tyrogue: return 35_bi;
+		case Species::Hitmontop: return 50_bi;
+		case Species::Smoochum: return 45_bi;
+		case Species::Elekid: return 45_bi;
+		case Species::Magby: return 45_bi;
+		case Species::Miltank: return 95_bi;
+		case Species::Blissey: return 255_bi;
+		case Species::Raikou: return 90_bi;
+		case Species::Entei: return 115_bi;
+		case Species::Suicune: return 100_bi;
+		case Species::Larvitar: return 50_bi;
+		case Species::Pupitar: return 70_bi;
+		case Species::Tyranitar: return 100_bi;
+		case Species::Lugia: return 106_bi;
+		case Species::Ho_Oh: return 106_bi;
+		case Species::Celebi: return 100_bi;
+
+		// Generation 3
+		case Species::Treecko: return 40_bi;
+		case Species::Grovyle: return 50_bi;
+		case Species::Sceptile: return 70_bi;
+		case Species::Torchic: return 45_bi;
+		case Species::Combusken: return 60_bi;
+		case Species::Blaziken: return 80_bi;
+		case Species::Mudkip: return 50_bi;
+		case Species::Marshtomp: return 70_bi;
+		case Species::Swampert: return 100_bi;
+		case Species::Poochyena: return 35_bi;
+		case Species::Mightyena: return 70_bi;
+		case Species::Zigzagoon: return 38_bi;
+		case Species::Linoone: return 78_bi;
+		case Species::Wurmple: return 45_bi;
+		case Species::Silcoon: return 50_bi;
+		case Species::Beautifly: return 60_bi;
+		case Species::Cascoon: return 50_bi;
+		case Species::Dustox: return 60_bi;
+		case Species::Lotad: return 40_bi;
+		case Species::Lombre: return 60_bi;
+		case Species::Ludicolo: return 80_bi;
+		case Species::Seedot: return 40_bi;
+		case Species::Nuzleaf: return 70_bi;
+		case Species::Shiftry: return 90_bi;
+		case Species::Taillow: return 40_bi;
+		case Species::Swellow: return 60_bi;
+		case Species::Wingull: return 40_bi;
+		case Species::Pelipper: return 60_bi;
+		case Species::Ralts: return 28_bi;
+		case Species::Kirlia: return 38_bi;
+		case Species::Gardevoir: return 68_bi;
+		case Species::Surskit: return 40_bi;
+		case Species::Masquerain: return 70_bi;
+		case Species::Shroomish: return 60_bi;
+		case Species::Breloom: return 60_bi;
+		case Species::Slakoth: return 60_bi;
+		case Species::Vigoroth: return 80_bi;
+		case Species::Slaking: return 150_bi;
+		case Species::Nincada: return 31_bi;
+		case Species::Ninjask: return 61_bi;
+		case Species::Shedinja: return 1_bi;
+		case Species::Whismur: return 64_bi;
+		case Species::Loudred: return 84_bi;
+		case Species::Exploud: return 104_bi;
+		case Species::Makuhita: return 72_bi;
+		case Species::Hariyama: return 144_bi;
+		case Species::Azurill: return 50_bi;
+		case Species::Nosepass: return 30_bi;
+		case Species::Skitty: return 50_bi;
+		case Species::Delcatty: return 70_bi;
+		case Species::Sableye: return 50_bi;
+		case Species::Mawile: return 50_bi;
+		case Species::Aron: return 50_bi;
+		case Species::Lairon: return 60_bi;
+		case Species::Aggron: return 70_bi;
+		case Species::Meditite: return 30_bi;
+		case Species::Medicham: return 60_bi;
+		case Species::Electrike: return 40_bi;
+		case Species::Manectric: return 70_bi;
+		case Species::Plusle: return 60_bi;
+		case Species::Minun: return 60_bi;
+		case Species::Volbeat: return 65_bi;
+		case Species::Illumise: return 65_bi;
+		case Species::Roselia: return 50_bi;
+		case Species::Gulpin: return 70_bi;
+		case Species::Swalot: return 100_bi;
+		case Species::Carvanha: return 45_bi;
+		case Species::Sharpedo: return 70_bi;
+		case Species::Wailmer: return 130_bi;
+		case Species::Wailord: return 170_bi;
+		case Species::Numel: return 60_bi;
+		case Species::Camerupt: return 70_bi;
+		case Species::Torkoal: return 70_bi;
+		case Species::Spoink: return 60_bi;
+		case Species::Grumpig: return 80_bi;
+		case Species::Spinda: return 60_bi;
+		case Species::Trapinch: return 45_bi;
+		case Species::Vibrava: return 50_bi;
+		case Species::Flygon: return 80_bi;
+		case Species::Cacnea: return 50_bi;
+		case Species::Cacturne: return 70_bi;
+		case Species::Swablu: return 45_bi;
+		case Species::Altaria: return 75_bi;
+		case Species::Zangoose: return 73_bi;
+		case Species::Seviper: return 73_bi;
+		case Species::Lunatone: return 70_bi;
+		case Species::Solrock: return 70_bi;
+		case Species::Barboach: return 50_bi;
+		case Species::Whiscash: return 110_bi;
+		case Species::Corphish: return 43_bi;
+		case Species::Crawdaunt: return 63_bi;
+		case Species::Baltoy: return 40_bi;
+		case Species::Claydol: return 60_bi;
+		case Species::Lileep: return 66_bi;
+		case Species::Cradily: return 86_bi;
+		case Species::Anorith: return 45_bi;
+		case Species::Armaldo: return 75_bi;
+		case Species::Feebas: return 20_bi;
+		case Species::Milotic: return 95_bi;
+		case Species::Castform: return 70_bi;
+		case Species::Kecleon: return 60_bi;
+		case Species::Shuppet: return 44_bi;
+		case Species::Banette: return 64_bi;
+		case Species::Duskull: return 20_bi;
+		case Species::Dusclops: return 40_bi;
+		case Species::Tropius: return 99_bi;
+		case Species::Chimecho: return 65_bi;
+		case Species::Absol: return 65_bi;
+		case Species::Wynaut: return 95_bi;
+		case Species::Snorunt: return 50_bi;
+		case Species::Glalie: return 80_bi;
+		case Species::Spheal: return 70_bi;
+		case Species::Sealeo: return 90_bi;
+		case Species::Walrein: return 110_bi;
+		case Species::Clamperl: return 35_bi;
+		case Species::Huntail: return 55_bi;
+		case Species::Gorebyss: return 55_bi;
+		case Species::Relicanth: return 100_bi;
+		case Species::Luvdisc: return 43_bi;
+		case Species::Bagon: return 45_bi;
+		case Species::Shelgon: return 65_bi;
+		case Species::Salamence: return 95_bi;
+		case Species::Beldum: return 40_bi;
+		case Species::Metang: return 60_bi;
+		case Species::Metagross: return 80_bi;
+		case Species::Regirock: return 80_bi;
+		case Species::Regice: return 80_bi;
+		case Species::Registeel: return 80_bi;
+		case Species::Latias: return 80_bi;
+		case Species::Latios: return 80_bi;
+		case Species::Kyogre: return 100_bi;
+		case Species::Groudon: return 100_bi;
+		case Species::Rayquaza: return 105_bi;
+		case Species::Jirachi: return 100_bi;
+		case Species::Deoxys_Mediocre: return 50_bi;
+		case Species::Deoxys_Attack: return 50_bi;
+		case Species::Deoxys_Defense: return 50_bi;
+		case Species::Deoxys_Speed: return 50_bi;
+
+		// Generation 4
+		case Species::Turtwig: return 55_bi;
+		case Species::Grotle: return 75_bi;
+		case Species::Torterra: return 95_bi;
+		case Species::Chimchar: return 44_bi;
+		case Species::Monferno: return 64_bi;
+		case Species::Infernape: return 76_bi;
+		case Species::Piplup: return 53_bi;
+		case Species::Prinplup: return 64_bi;
+		case Species::Empoleon: return 84_bi;
+		case Species::Starly: return 40_bi;
+		case Species::Staravia: return 55_bi;
+		case Species::Staraptor: return 85_bi;
+		case Species::Bidoof: return 59_bi;
+		case Species::Bibarel: return 79_bi;
+		case Species::Kricketot: return 37_bi;
+		case Species::Kricketune: return 77_bi;
+		case Species::Shinx: return 45_bi;
+		case Species::Luxio: return 60_bi;
+		case Species::Luxray: return 80_bi;
+		case Species::Budew: return 40_bi;
+		case Species::Roserade: return 60_bi;
+		case Species::Cranidos: return 67_bi;
+		case Species::Rampardos: return 97_bi;
+		case Species::Shieldon: return 30_bi;
+		case Species::Bastiodon: return 60_bi;
+		case Species::Burmy: return 40_bi;
+		case Species::Wormadam_Plant: return 60_bi;
+		case Species::Wormadam_Sandy: return 60_bi;
+		case Species::Wormadam_Trash: return 60_bi;
+		case Species::Mothim: return 70_bi;
+		case Species::Combee: return 30_bi;
+		case Species::Vespiquen: return 70_bi;
+		case Species::Pachirisu: return 60_bi;
+		case Species::Buizel: return 55_bi;
+		case Species::Floatzel: return 85_bi;
+		case Species::Cherubi: return 45_bi;
+		case Species::Cherrim: return 70_bi;
+		case Species::Shellos: return 76_bi;
+		case Species::Gastrodon: return 111_bi;
+		case Species::Ambipom: return 75_bi;
+		case Species::Drifloon: return 90_bi;
+		case Species::Drifblim: return 150_bi;
+		case Species::Buneary: return 55_bi;
+		case Species::Lopunny: return 65_bi;
+		case Species::Mismagius: return 60_bi;
+		case Species::Honchkrow: return 100_bi;
+		case Species::Glameow: return 49_bi;
+		case Species::Purugly: return 71_bi;
+		case Species::Chingling: return 45_bi;
+		case Species::Stunky: return 63_bi;
+		case Species::Skuntank: return 103_bi;
+		case Species::Bronzor: return 57_bi;
+		case Species::Bronzong: return 67_bi;
+		case Species::Bonsly: return 50_bi;
+		case Species::Mime_Jr: return 20_bi;
+		case Species::Happiny: return 100_bi;
+		case Species::Chatot: return 76_bi;
+		case Species::Spiritomb: return 50_bi;
+		case Species::Gible: return 58_bi;
+		case Species::Gabite: return 68_bi;
+		case Species::Garchomp: return 108_bi;
+		case Species::Munchlax: return 135_bi;
+		case Species::Riolu: return 40_bi;
+		case Species::Lucario: return 70_bi;
+		case Species::Hippopotas: return 68_bi;
+		case Species::Hippowdon: return 108_bi;
+		case Species::Skorupi: return 40_bi;
+		case Species::Drapion: return 70_bi;
+		case Species::Croagunk: return 48_bi;
+		case Species::Toxicroak: return 83_bi;
+		case Species::Carnivine: return 74_bi;
+		case Species::Finneon: return 49_bi;
+		case Species::Lumineon: return 69_bi;
+		case Species::Mantyke: return 45_bi;
+		case Species::Snover: return 60_bi;
+		case Species::Abomasnow: return 90_bi;
+		case Species::Weavile: return 70_bi;
+		case Species::Magnezone: return 70_bi;
+		case Species::Lickilicky: return 110_bi;
+		case Species::Rhyperior: return 115_bi;
+		case Species::Tangrowth: return 100_bi;
+		case Species::Electivire: return 75_bi;
+		case Species::Magmortar: return 75_bi;
+		case Species::Togekiss: return 85_bi;
+		case Species::Yanmega: return 86_bi;
+		case Species::Leafeon: return 65_bi;
+		case Species::Glaceon: return 65_bi;
+		case Species::Gliscor: return 75_bi;
+		case Species::Mamoswine: return 110_bi;
+		case Species::Porygon_Z: return 85_bi;
+		case Species::Gallade: return 68_bi;
+		case Species::Probopass: return 60_bi;
+		case Species::Dusknoir: return 45_bi;
+		case Species::Froslass: return 70_bi;
+		case Species::Rotom: return 50_bi;
+		case Species::Rotom_Heat: return 50_bi;
+		case Species::Rotom_Wash: return 50_bi;
+		case Species::Rotom_Frost: return 50_bi;
+		case Species::Rotom_Fan: return 50_bi;
+		case Species::Rotom_Mow: return 50_bi;
+		case Species::Uxie: return 75_bi;
+		case Species::Mesprit: return 80_bi;
+		case Species::Azelf: return 75_bi;
+		case Species::Dialga: return 100_bi;
+		case Species::Palkia: return 90_bi;
+		case Species::Heatran: return 91_bi;
+		case Species::Regigigas: return 110_bi;
+		case Species::Giratina_Altered: return 150_bi;
+		case Species::Giratina_Origin: return 150_bi;
+		case Species::Cresselia: return 120_bi;
+		case Species::Phione: return 80_bi;
+		case Species::Manaphy: return 100_bi;
+		case Species::Darkrai: return 70_bi;
+		case Species::Shaymin_Land: return 100_bi;
+		case Species::Shaymin_Sky: return 100_bi;
+		case Species::Arceus: return 120_bi;
+
+		// Generation 5
+		case Species::Victini: return 100_bi;
+		case Species::Snivy: return 45_bi;
+		case Species::Servine: return 60_bi;
+		case Species::Serperior: return 75_bi;
+		case Species::Tepig: return 65_bi;
+		case Species::Pignite: return 90_bi;
+		case Species::Emboar: return 110_bi;
+		case Species::Oshawott: return 55_bi;
+		case Species::Dewott: return 75_bi;
+		case Species::Samurott: return 95_bi;
+		case Species::Patrat: return 45_bi;
+		case Species::Watchog: return 60_bi;
+		case Species::Lillipup: return 45_bi;
+		case Species::Herdier: return 65_bi;
+		case Species::Stoutland: return 85_bi;
+		case Species::Purrloin: return 41_bi;
+		case Species::Liepard: return 64_bi;
+		case Species::Pansage: return 50_bi;
+		case Species::Simisage: return 75_bi;
+		case Species::Pansear: return 50_bi;
+		case Species::Simisear: return 75_bi;
+		case Species::Panpour: return 50_bi;
+		case Species::Simipour: return 75_bi;
+		case Species::Munna: return 76_bi;
+		case Species::Musharna: return 116_bi;
+		case Species::Pidove: return 50_bi;
+		case Species::Tranquill: return 62_bi;
+		case Species::Unfezant: return 80_bi;
+		case Species::Blitzle: return 45_bi;
+		case Species::Zebstrika: return 75_bi;
+		case Species::Roggenrola: return 55_bi;
+		case Species::Boldore: return 70_bi;
+		case Species::Gigalith: return 85_bi;
+		case Species::Woobat: return 55_bi;
+		case Species::Swoobat: return 67_bi;
+		case Species::Drilbur: return 60_bi;
+		case Species::Excadrill: return 110_bi;
+		case Species::Audino: return 103_bi;
+		case Species::Timburr: return 75_bi;
+		case Species::Gurdurr: return 85_bi;
+		case Species::Conkeldurr: return 105_bi;
+		case Species::Tympole: return 50_bi;
+		case Species::Palpitoad: return 75_bi;
+		case Species::Seismitoad: return 105_bi;
+		case Species::Throh: return 120_bi;
+		case Species::Sawk: return 75_bi;
+		case Species::Sewaddle: return 45_bi;
+		case Species::Swadloon: return 55_bi;
+		case Species::Leavanny: return 75_bi;
+		case Species::Venipede: return 30_bi;
+		case Species::Whirlipede: return 40_bi;
+		case Species::Scolipede: return 60_bi;
+		case Species::Cottonee: return 40_bi;
+		case Species::Whimsicott: return 60_bi;
+		case Species::Petilil: return 45_bi;
+		case Species::Lilligant: return 70_bi;
+		case Species::Basculin_Red: return 70_bi;
+		case Species::Basculin_Blue: return 70_bi;
+		case Species::Sandile: return 50_bi;
+		case Species::Krokorok: return 60_bi;
+		case Species::Krookodile: return 95_bi;
+		case Species::Darumaka: return 70_bi;
+		case Species::Darmanitan: return 105_bi;
+		// case Species::Darmanitan_Zen: return 105_bi;
+		case Species::Maractus: return 75_bi;
+		case Species::Dwebble: return 50_bi;
+		case Species::Crustle: return 70_bi;
+		case Species::Scraggy: return 50_bi;
+		case Species::Scrafty: return 65_bi;
+		case Species::Sigilyph: return 72_bi;
+		case Species::Yamask: return 38_bi;
+		case Species::Cofagrigus: return 58_bi;
+		case Species::Tirtouga: return 54_bi;
+		case Species::Carracosta: return 74_bi;
+		case Species::Archen: return 55_bi;
+		case Species::Archeops: return 75_bi;
+		case Species::Trubbish: return 50_bi;
+		case Species::Garbodor: return 80_bi;
+		case Species::Zorua: return 40_bi;
+		case Species::Zoroark: return 60_bi;
+		case Species::Minccino: return 55_bi;
+		case Species::Cinccino: return 75_bi;
+		case Species::Gothita: return 45_bi;
+		case Species::Gothorita: return 60_bi;
+		case Species::Gothitelle: return 70_bi;
+		case Species::Solosis: return 45_bi;
+		case Species::Duosion: return 65_bi;
+		case Species::Reuniclus: return 110_bi;
+		case Species::Ducklett: return 62_bi;
+		case Species::Swanna: return 75_bi;
+		case Species::Vanillite: return 36_bi;
+		case Species::Vanillish: return 51_bi;
+		case Species::Vanilluxe: return 71_bi;
+		case Species::Deerling: return 60_bi;
+		case Species::Sawsbuck: return 80_bi;
+		case Species::Emolga: return 55_bi;
+		case Species::Karrablast: return 50_bi;
+		case Species::Escavalier: return 70_bi;
+		case Species::Foongus: return 69_bi;
+		case Species::Amoonguss: return 114_bi;
+		case Species::Frillish: return 55_bi;
+		case Species::Jellicent: return 100_bi;
+		case Species::Alomomola: return 165_bi;
+		case Species::Joltik: return 50_bi;
+		case Species::Galvantula: return 70_bi;
+		case Species::Ferroseed: return 44_bi;
+		case Species::Ferrothorn: return 74_bi;
+		case Species::Klink: return 40_bi;
+		case Species::Klang: return 60_bi;
+		case Species::Klinklang: return 60_bi;
+		case Species::Tynamo: return 35_bi;
+		case Species::Eelektrik: return 65_bi;
+		case Species::Eelektross: return 85_bi;
+		case Species::Elgyem: return 55_bi;
+		case Species::Beheeyem: return 75_bi;
+		case Species::Litwick: return 50_bi;
+		case Species::Lampent: return 60_bi;
+		case Species::Chandelure: return 60_bi;
+		case Species::Axew: return 46_bi;
+		case Species::Fraxure: return 66_bi;
+		case Species::Haxorus: return 76_bi;
+		case Species::Cubchoo: return 55_bi;
+		case Species::Beartic: return 95_bi;
+		case Species::Cryogonal: return 70_bi;
+		case Species::Shelmet: return 50_bi;
+		case Species::Accelgor: return 80_bi;
+		case Species::Stunfisk: return 109_bi;
+		case Species::Mienfoo: return 45_bi;
+		case Species::Mienshao: return 65_bi;
+		case Species::Druddigon: return 77_bi;
+		case Species::Golett: return 59_bi;
+		case Species::Golurk: return 89_bi;
+		case Species::Pawniard: return 45_bi;
+		case Species::Bisharp: return 65_bi;
+		case Species::Bouffalant: return 95_bi;
+		case Species::Rufflet: return 70_bi;
+		case Species::Braviary: return 100_bi;
+		case Species::Vullaby: return 70_bi;
+		case Species::Mandibuzz: return 110_bi;
+		case Species::Heatmor: return 85_bi;
+		case Species::Durant: return 58_bi;
+		case Species::Deino: return 52_bi;
+		case Species::Zweilous: return 72_bi;
+		case Species::Hydreigon: return 92_bi;
+		case Species::Larvesta: return 55_bi;
+		case Species::Volcarona: return 85_bi;
+		case Species::Cobalion: return 91_bi;
+		case Species::Terrakion: return 91_bi;
+		case Species::Virizion: return 91_bi;
+		case Species::Tornadus_Incarnate: return 79_bi;
+		case Species::Tornadus_Therian: return 79_bi;
+		case Species::Thundurus_Incarnate: return 79_bi;
+		case Species::Thundurus_Therian: return 79_bi;
+		case Species::Reshiram: return 100_bi;
+		case Species::Zekrom: return 100_bi;
+		case Species::Landorus_Incarnate: return 89_bi;
+		case Species::Landorus_Therian: return 89_bi;
+		case Species::Kyurem: return 125_bi;
+		case Species::Kyurem_Black: return 125_bi;
+		case Species::Kyurem_White: return 125_bi;
+		case Species::Keldeo: return 91_bi;
+		case Species::Meloetta: return 100_bi;
+		// case Species::Meloetta_Pirouette: return 100_bi;
+		case Species::Genesect: return 71_bi;
+		default: throw InvalidSpecies{};
+	}
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine
