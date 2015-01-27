@@ -37,12 +37,12 @@ public:
 	uint8_t read_byte ();
 	uint16_t read_short ();
 	uint32_t read_int ();
-	void read_header(boost::asio::ip::tcp::socket & socket, Client * client);
+	void read_header(boost::asio::ip::tcp::socket & socket, Client & client);
 	void read_remaining_bytes();	// helpful for debugging
 private:
 	uint32_t read_bytes (size_t bytes);
 	virtual size_t header_size() const = 0;
-	virtual void read_body (boost::asio::ip::tcp::socket & socket, Client * client) = 0;
+	virtual void read_body (boost::asio::ip::tcp::socket & socket, Client & client) = 0;
 public:
 	std::vector <uint8_t> buffer;
 	size_t index;

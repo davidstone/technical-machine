@@ -32,7 +32,7 @@ class InMessage : public network::InMessage::InMessage {
 public:
 	InMessage ();
 	std::string read_string ();
-	void read_body (boost::asio::ip::tcp::socket & socket, network::Client * client);
+	void read_body(boost::asio::ip::tcp::socket & socket, network::Client & client) final;
 
 	enum Message {
 		// WHAT_ARE_YOU and WHO_ARE_YOU are unused.

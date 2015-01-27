@@ -1,5 +1,5 @@
 // Pokemon Online incoming messages
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -41,22 +41,25 @@ std::string InMessage::read_string () {
 	// QString reports a size of 0xFFFFFFFF if the string is null. I'll just call it empty.
 	if (bytes != 0xFFFFFFFF) {
 		uint32_t const number_of_utf16_characters = bytes / 2;
-		for (uint32_t n = 0; n != number_of_utf16_characters; ++n)
+		for (uint32_t n = 0; n != number_of_utf16_characters; ++n) {
 			data += static_cast <char> (read_short ());
+		}
 	}
 	return data;
 }
 
-void InMessage::read_body (boost::asio::ip::tcp::socket & socket, network::Client * client) {
+void InMessage::read_body(boost::asio::ip::tcp::socket & socket, network::Client & client) {
 	// extract the message type and length components
-	uint16_t const bytes = read_short ();
+	auto const bytes = read_short();
 	// Don't do an invalid call to new if the server says the message has a length of 0
 	if (bytes > 0) {
-		Message code = static_cast <Message> (read_byte ());
-		reset (bytes - 1u);
-		boost::asio::async_read (socket, boost::asio::buffer (buffer), boost::bind (& Client::handle_message, static_cast<Client *>(client), code, boost::ref (*this)));
-	}
-	else {
+		auto const code = static_cast<Message>(read_byte());
+		reset(bytes - 1u);
+		// TODO: handle errors
+		boost::asio::async_read(socket, boost::asio::buffer(buffer), [&](auto, auto){
+			static_cast<Client &>(client).handle_message(code, *this);
+		});
+	} else {
 		throw technicalmachine::network::InvalidPacket ("Server sent message of length 0.");
 	}
 }

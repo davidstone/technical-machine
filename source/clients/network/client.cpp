@@ -140,7 +140,7 @@ void Client::send_message(OutMessage & msg) {
 }
 
 void Client::read_header(InMessage & msg) {
-	msg.read_header(*socket, this);
+	msg.read_header(*socket, *this);
 }
 
 void Client::connect () {

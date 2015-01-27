@@ -75,9 +75,10 @@ uint32_t InMessage::read_int () {
 	return read_bytes(4);
 }
 
-void InMessage::read_header(boost::asio::ip::tcp::socket & socket, Client * client) {
+void InMessage::read_header(boost::asio::ip::tcp::socket & socket, Client & client) {
 	reset(header_size());
-	boost::asio::async_read(socket, boost::asio::buffer(buffer), boost::bind(& InMessage::read_body, this, boost::ref(socket), client));
+	// TODO: handle errors
+	boost::asio::async_read(socket, boost::asio::buffer(buffer), [&](auto, auto){ this->read_body(socket, client); });
 }
 
 void InMessage::read_remaining_bytes() {
