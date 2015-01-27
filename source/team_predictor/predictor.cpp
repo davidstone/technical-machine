@@ -51,8 +51,10 @@ namespace {
 
 class Data {
 public:
-	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init):
+	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init, Fl_Int_Input const & random_input_, Fl_Multiline_Output & output_):
 		input(init),
+		random_input(random_input_),
+		output(output_),
 		random_engine(rd()),
 		m_team(max_pokemon_per_team)
 		{
@@ -64,8 +66,8 @@ public:
 		return m_team;
 	}
 	std::vector<std::reference_wrapper<PokemonInputs const>> input;
-	Fl_Int_Input * random_input;
-	Fl_Multiline_Output * output;
+	Fl_Int_Input const & random_input;
+	Fl_Multiline_Output & output;
 	DetailedStats detailed;
 	std::random_device rd;
 	std::mt19937 random_engine;
@@ -148,7 +150,7 @@ private:
 unsigned max_random(Data const & data) {
 	auto const remaining_pokemon = static_cast<unsigned>(max_pokemon_per_team - data.team().all_pokemon().size());
 	try {
-		return std::min(boost::lexical_cast<unsigned>(data.random_input->value()), remaining_pokemon);
+		return std::min(boost::lexical_cast<unsigned>(data.random_input.value()), remaining_pokemon);
 	}
 	catch (boost::bad_lexical_cast const &) {
 		return 0u;
@@ -160,7 +162,7 @@ void generate_random_team(Data & data) {
 }
 
 void function (Fl_Widget *, void * d) {
-	Data & data = *reinterpret_cast <Data *> (d);
+	auto & data = *reinterpret_cast<Data *> (d);
 	bool using_lead = false;
 	for (PokemonInputs const & inputs : data.input) {
 		if (data.team().all_pokemon().size() >= max_pokemon_per_team)
@@ -176,7 +178,7 @@ void function (Fl_Widget *, void * d) {
 	}
 	generate_random_team(data);
 	Team team = predict_team(data.detailed, data.team(), data.random_engine, using_lead);
-	data.output->value(to_string(team, false).c_str());
+	data.output.value(to_string(team, false).c_str());
 	data.team() = Team(max_pokemon_per_team);
 }
 
@@ -201,9 +203,11 @@ int main () {
 		Fl_Multiline_Output output (output_x_position, padding, output_width, output_height);
 	win.end();
 
-	Data data({ std::cref(input0), std::cref(input1), std::cref(input2), std::cref(input3), std::cref(input4), std::cref(input5) });
-	data.random_input = &random_input;
-	data.output = &output;
+	Data data(
+		{ std::cref(input0), std::cref(input1), std::cref(input2), std::cref(input3), std::cref(input4), std::cref(input5) },
+		random_input,
+		output
+	);
 
 	calculate.callback (function, &data);
 	win.show();
