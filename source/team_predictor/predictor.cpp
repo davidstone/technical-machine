@@ -51,14 +51,11 @@ namespace {
 
 class Data {
 public:
-	Data():
+	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init):
+		input(init),
 		random_engine(rd()),
 		m_team(max_pokemon_per_team)
 		{
-	}
-	template<typename... Args>
-	void add(Args && ... args) {
-		input.emplace_back(std::forward<Args>(args)...);
 	}
 	Team const & team() const {
 		return m_team;
@@ -66,7 +63,7 @@ public:
 	Team & team() {
 		return m_team;
 	}
-	std::vector<PokemonInputs *> input;
+	std::vector<std::reference_wrapper<PokemonInputs const>> input;
 	Fl_Int_Input * random_input;
 	Fl_Multiline_Output * output;
 	DetailedStats detailed;
@@ -165,15 +162,15 @@ void generate_random_team(Data & data) {
 void function (Fl_Widget *, void * d) {
 	Data & data = *reinterpret_cast <Data *> (d);
 	bool using_lead = false;
-	for (PokemonInputs * inputs : data.input) {
+	for (PokemonInputs const & inputs : data.input) {
 		if (data.team().all_pokemon().size() >= max_pokemon_per_team)
 			break;
-		if (!inputs->is_valid()) {
+		if (!inputs.is_valid()) {
 			continue;
 		}
-		PokemonInputValues input(*inputs);
+		PokemonInputValues input(inputs);
 		input.add_to_team(data.team());
-		if (inputs == data.input.front()) {
+		if (&inputs == &data.input.front().get()) {
 			using_lead = true;
 		}
 	}
@@ -197,7 +194,6 @@ int main () {
 		button_number += 1;
 		Fl_Int_Input random_input(left_padding, y_position(button_number), input_width, input_height, "Max random Pokemon");
 		random_input.align(FL_ALIGN_TOP);
-		// FLTK has a poor interface
 		random_input.value("6");
 		++button_number;
 		Fl_Return_Button calculate (left_padding, y_position(button_number), button_width, button_height, "Calculate");
@@ -205,14 +201,7 @@ int main () {
 		Fl_Multiline_Output output (output_x_position, padding, output_width, output_height);
 	win.end();
 
-	Data data;
-	
-	data.add(&input0);
-	data.add(&input1);
-	data.add(&input2);
-	data.add(&input3);
-	data.add(&input4);
-	data.add(&input5);
+	Data data({ std::cref(input0), std::cref(input1), std::cref(input2), std::cref(input3), std::cref(input4), std::cref(input5) });
 	data.random_input = &random_input;
 	data.output = &output;
 
