@@ -20,7 +20,7 @@
 #define MOVE__MOVE_HPP_
 
 #include <bounded_integer/bounded_integer.hpp>
-#include "moves_forward.hpp"
+#include "moves.hpp"
 #include "pp.hpp"
 
 namespace technicalmachine {

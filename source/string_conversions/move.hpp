@@ -18,7 +18,7 @@
 
 #include "conversion.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 

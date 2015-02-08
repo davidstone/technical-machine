@@ -28,7 +28,7 @@
 
 #include "../network/invalid_channel.hpp"
 
-#include "../../move/moves_forward.hpp"
+#include "../../move/moves.hpp"
 
 #include "../../pokemon/max_pokemon_per_team.hpp"
 

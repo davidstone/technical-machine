@@ -25,7 +25,7 @@
 
 #include "../rational.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 

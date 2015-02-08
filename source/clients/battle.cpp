@@ -46,7 +46,7 @@
 
 #include "../move/is_switch.hpp"
 #include "../move/move.hpp"
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 #include "../move/use_move.hpp"
 
 #include "../pokemon/pokemon_not_found.hpp"

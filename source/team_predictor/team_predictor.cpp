@@ -31,7 +31,7 @@
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 #include <bounded_integer/array.hpp>
 

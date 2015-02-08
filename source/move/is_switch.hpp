@@ -19,7 +19,7 @@
 #ifndef MOVE__IS_SWITCH_HPP_
 #define MOVE__IS_SWITCH_HPP_
 
-#include "moves_forward.hpp"
+#include "moves.hpp"
 #include "../pokemon/max_pokemon_per_team.hpp"
 
 namespace technicalmachine {

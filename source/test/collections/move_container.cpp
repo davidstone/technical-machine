@@ -22,7 +22,7 @@
 #include "create_shared_moves.hpp"
 #include "invalid_collection.hpp"
 
-#include "../../move/moves_forward.hpp"
+#include "../../move/moves.hpp"
 #include "../../move/container.hpp"
 
 #include "../../string_conversions/move.hpp"

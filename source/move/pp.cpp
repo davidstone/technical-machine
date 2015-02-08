@@ -18,7 +18,7 @@
 
 #include "pp.hpp"
 
-#include "moves_forward.hpp"
+#include "moves.hpp"
 
 #include "../ability.hpp"
 

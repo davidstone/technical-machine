@@ -21,7 +21,7 @@
 
 #include <cstdint>
 #include <map>
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {

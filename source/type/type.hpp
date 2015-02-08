@@ -20,7 +20,7 @@
 #define TYPE__TYPE_HPP_
 
 #include "../status.hpp"
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 class Effectiveness;

@@ -24,7 +24,7 @@
 #include "container.hpp"
 #include "max_moves_per_pokemon.hpp"
 #include "move.hpp"
-#include "moves_forward.hpp"
+#include "moves.hpp"
 
 #include <bounded_integer/integer_range.hpp>
 #include <bounded_integer/optional.hpp>

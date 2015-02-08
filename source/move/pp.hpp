@@ -19,7 +19,7 @@
 #ifndef MOVE__PP_HPP_
 #define MOVE__PP_HPP_
 
-#include "moves_forward.hpp"
+#include "moves.hpp"
 
 #include "../hash.hpp"
 

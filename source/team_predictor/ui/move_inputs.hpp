@@ -20,7 +20,7 @@
 #define TEAM_PREDICTOR__UI__MOVE_INPUTS_HPP_
 
 #include <FL/Fl_Input.H>
-#include "../../move/moves_forward.hpp"
+#include "../../move/moves.hpp"
 
 namespace technicalmachine {
 

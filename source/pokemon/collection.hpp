@@ -27,7 +27,7 @@
 #include "../collection.hpp"
 #include "../hash.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/integer_range.hpp>

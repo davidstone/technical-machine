@@ -20,7 +20,7 @@
 #define EVALUATE__RANKED_HPP_
 
 #include <cstdint>
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 

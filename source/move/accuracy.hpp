@@ -21,7 +21,7 @@
 
 #include <bounded_integer/optional.hpp>
 #include <bounded_integer/bounded_integer.hpp>
-#include "moves_forward.hpp"
+#include "moves.hpp"
 
 namespace technicalmachine {
 

@@ -24,7 +24,7 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
-#include "move/moves_forward.hpp"
+#include "move/moves.hpp"
 #include "pokemon/collection.hpp"
 #include "pokemon/level.hpp"
 #include "pokemon/species_forward.hpp"

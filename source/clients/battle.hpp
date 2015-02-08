@@ -33,7 +33,7 @@
 #include "../variable.hpp"
 #include "../weather.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 #include "../pokemon/species_forward.hpp"
 

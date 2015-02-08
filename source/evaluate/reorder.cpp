@@ -25,7 +25,7 @@
 
 #include "../block.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 

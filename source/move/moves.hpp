@@ -1,5 +1,5 @@
 // Moves enum
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,9 @@
 #ifndef MOVE__MOVES_HPP_
 #define MOVE__MOVES_HPP_
 
-#include "moves_forward.hpp"
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <cstdint>
 
 namespace technicalmachine {
 
@@ -608,10 +610,7 @@ enum class Moves : uint16_t {
 	END = Generation_5_End
 };
 
-static_assert(
-	number_of_moves == bounded::make<static_cast<std::underlying_type_t<Moves>>(Moves::END)>(),
-	"Incorrect number of moves."
-);
+constexpr auto number_of_moves = bounded::make<static_cast<std::intmax_t>(Moves::END)>();
 
 }	// namespace technicalmachine
 #endif	// MOVE__MOVES_HPP_

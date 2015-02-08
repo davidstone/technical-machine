@@ -22,7 +22,7 @@
 #include "../ability.hpp"
 #include "../item.hpp"
 
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 #include "../pokemon/species.hpp"
 

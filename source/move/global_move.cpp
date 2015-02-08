@@ -19,7 +19,7 @@
 #include "global_move.hpp"
 
 #include "move.hpp"
-#include "moves_forward.hpp"
+#include "moves.hpp"
 
 #include <bounded_integer/array.hpp>
 

@@ -24,7 +24,7 @@
 #include "move_inputs.hpp"
 #include "nature_input.hpp"
 #include "species_input.hpp"
-#include "../../move/moves_forward.hpp"
+#include "../../move/moves.hpp"
 #include "../../pokemon/species_forward.hpp"
 #include "../../stat/ev.hpp"
 

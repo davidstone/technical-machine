@@ -20,7 +20,7 @@
 #define EVALUATE__EXPECTIMINIMAX_HPP_
 
 #include <random>
-#include "../move/moves_forward.hpp"
+#include "../move/moves.hpp"
 
 namespace technicalmachine {
 

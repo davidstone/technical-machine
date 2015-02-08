@@ -19,7 +19,7 @@
 #ifndef MOVE__GLOBAL_MOVE_HPP_
 #define MOVE__GLOBAL_MOVE_HPP_
 
-#include "moves_forward.hpp"
+#include "moves.hpp"
 
 namespace technicalmachine {
 class Move;
