@@ -113,7 +113,7 @@ warnings = [
 	'-Wredundant-decls',
 	'-Wshadow',
 	'-Wsign-conversion',
-	'-Wsign-promo',
+#	'-Wsign-promo',
 	'-Wstrict-null-sentinel',
 #	'-Wstrict-overflow=5',
 	'-Wstrict-overflow=1',
