@@ -159,7 +159,7 @@ auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wis
 		screens.mist().turns_remaining() * evaluate.mist() +
 		screens.safeguard().turns_remaining() * evaluate.safeguard() +
 		screens.tailwind().turns_remaining() * evaluate.tailwind() +
-		bounded::make<bounded::null_policy>(wish.is_active()) * evaluate.wish()
+		BOUNDED_CONDITIONAL(wish.is_active(), 1_bi, 0_bi) * evaluate.wish()
 	;
 }
 
