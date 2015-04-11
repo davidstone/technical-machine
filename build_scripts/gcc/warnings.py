@@ -57,6 +57,10 @@
 # not worth the extra effort of maintaining that (if my class size changes,
 # it's not easy to remove those previously free variables).
 #
+# -Wsign-promo triggers on code that is guaranteed safe due to the use of the
+# bounded::integer library. Working around the warning would lead to either less
+# efficient code or more obfuscated code.
+#
 # -Wstack-protector is not used because I do not use -fstack-protector.
 #
 # -Wstrict-aliasing=3 is turned on by -Wall and is the most accurate, but it
