@@ -205,10 +205,7 @@ ai_sources += misc_sources
 ai_sources += team_sources
 ai_sources += clients
 ai_sources += prepend_dir('cryptography', [
-	'hex.cpp',
 	'md5.cpp',
-	'rijndael.cpp',
-	'sha2.cpp',
 ])
 ai_sources += evaluate_sources
 ai_sources += stat_sources
