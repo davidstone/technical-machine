@@ -1,5 +1,5 @@
 // Item header
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,7 @@
 #ifndef ITEM_HPP_
 #define ITEM_HPP_
 
-#include "hash.hpp"
+#include "enum.hpp"
 
 #include <cstdint>
 #include <bounded_integer/bounded_integer.hpp>
@@ -136,9 +136,13 @@ bool extends_light_screen(Item item);
 bool extends_reflect(Item item);
 void steal(Item & mine, Item & other);
 
-constexpr auto hash(Item const item) noexcept {
-	return hash_enum<static_cast<intmax_t>(Item::END)>(item);
-}
-
 }	// namespace technicalmachine
+
+namespace bounded {
+
+template<>
+struct basic_numeric_limits<technicalmachine::Item> : technicalmachine::basic_numeric_limits<technicalmachine::Item> {};
+
+}	// namespace bounded
+
 #endif	// ITEM_HPP_

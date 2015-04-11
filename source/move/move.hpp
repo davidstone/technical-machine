@@ -55,10 +55,6 @@ auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
 
-constexpr auto hash(Moves const move) noexcept {
-	return hash_enum<static_cast<intmax_t>(number_of_moves - 1_bi)>(move);
-}
-
 inline auto hash(Move const & move) noexcept {
 	return hash(static_cast<Moves>(move), move.pp());
 }

@@ -761,7 +761,7 @@ auto acupressure_probability(ActivePokemon const pokemon) -> Probabilities {
 	auto const probability = 1.0 / static_cast<double>(bounded::max(1_bi, non_maxed_stats));
 	Probabilities probabilities;
 	for (auto const stat : boostable_stats) {
-		probabilities.emplace_back(static_cast<Variable::value_type>(stat), probability);
+		probabilities.emplace_back(stat, probability);
 	}
 	return probabilities;
 }

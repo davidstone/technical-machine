@@ -1,5 +1,5 @@
 // Vanishing moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,8 @@
 
 #include "../move/moves.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -44,7 +46,7 @@ public:
 
 	auto doubles_move_power(Moves move) const -> bool;
 	constexpr auto hash() const noexcept {
-		return hash_enum<static_cast<intmax_t>(VanishTypes::end) - 1>(m_state);
+		return technicalmachine::hash(bounded::integer<0, static_cast<std::intmax_t>(VanishTypes::end) - 1>(m_state, bounded::non_check));
 	}
 	friend auto operator== (Vanish lhs, Vanish rhs) -> bool;
 private:
@@ -53,6 +55,7 @@ private:
 	auto doubles_wind_power() const -> bool;
 
 	auto flip(VanishTypes const flipped) -> bool;
+	
 	VanishTypes m_state = VanishTypes::none;
 };
 

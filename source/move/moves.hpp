@@ -19,6 +19,8 @@
 #ifndef MOVE__MOVES_HPP_
 #define MOVE__MOVES_HPP_
 
+#include "../enum.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 
 #include <cstdint>
@@ -613,4 +615,11 @@ enum class Moves : uint16_t {
 constexpr auto number_of_moves = bounded::make<static_cast<std::intmax_t>(Moves::END)>();
 
 }	// namespace technicalmachine
+
+namespace bounded {
+
+template<>
+struct basic_numeric_limits<technicalmachine::Moves> : technicalmachine::basic_numeric_limits<technicalmachine::Moves> {};
+
+}	// namespace bounded
 #endif	// MOVE__MOVES_HPP_

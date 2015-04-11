@@ -184,6 +184,7 @@ misc_sources = [
 	'block.cpp',
 	'damage.cpp',
 	'endofturn.cpp',
+	'enum.cpp',
 	'gender.cpp',
 	'hash.cpp',
 	'heal.cpp',

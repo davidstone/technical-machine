@@ -1,5 +1,5 @@
 // Calculate hashes. Specializations should return a pair of integers
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -51,26 +51,6 @@ constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>
 }
 
 
-template<intmax_t max_value, typename Enum>
-constexpr auto hash_enum(Enum const value) noexcept {
-	static_assert(std::is_enum<Enum>::value, "hash_enum can only be called on an enum.");
-	return std::make_pair(
-		bounded::integer<0, max_value>(value),
-		bounded::make<max_value>() + 1_bi
-	);
-}
-
-
-
-
-// This is declared but not defined to give a helpful error message
-template<typename T>
-class overload_hash_for_your_type;
-
-template<typename T>
-constexpr auto hash(T const & t) {
-	return overload_hash_for_your_type<T>{};
-}
 
 
 template<typename T>

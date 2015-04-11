@@ -1,5 +1,5 @@
 // Status class
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +19,7 @@
 #ifndef STATUS_HPP_
 #define STATUS_HPP_
 
+#include "enum.hpp"
 #include "hash.hpp"
 #include "rational.hpp"
 
@@ -45,9 +46,16 @@ enum class Statuses : uint8_t {
 	END
 };
 
-constexpr auto hash(Statuses const status) noexcept {
-	return hash_enum<static_cast<intmax_t>(Statuses::END) - 1>(status);
-}
+}	// namespace technicalmachine
+
+namespace bounded {
+
+template<>
+struct basic_numeric_limits<technicalmachine::Statuses> : technicalmachine::basic_numeric_limits<technicalmachine::Statuses> {};
+
+}	// namespace bounded
+
+namespace technicalmachine {
 
 class Status {
 public:

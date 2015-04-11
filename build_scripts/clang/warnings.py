@@ -36,6 +36,8 @@
 # and memory intensive, so it seems that disabling the warning is the better
 # option.
 #
+# -Wold-style-cast does not work with my Rijndael implementation
+#
 # -Wpadded is turned on occasionally to optimize the layout of classes, but it
 # is not left on because not all classes have enough elements to remove padding
 # at the end. In theory I could get some extra variables for 'free', but it's
@@ -59,6 +61,7 @@ warnings = [
 	'-Wno-float-equal',
 	'-Wno-implicit-fallthrough',
 	'-Wno-missing-braces',
+	'-Wno-old-style-cast',
 	'-Wno-padded',
 	'-Wno-switch-enum',
 	'-Wno-unused-parameter',

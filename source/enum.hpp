@@ -1,4 +1,4 @@
-// Convert between a switch and the equivalent Pokemon index
+// Utility to make enum -> bounded::integer conversion easier
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,35 +16,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "is_switch.hpp"
+#ifndef ENUM_HPP_
+#define ENUM_HPP_
 
-#include "moves.hpp"
+#include "hash.hpp"
 
-#include <cassert>
+#include <cstdint>
 
 namespace technicalmachine {
 
-auto is_switch(Moves const move) -> bool {
-	switch (move) {
-		case Moves::Switch0:
-		case Moves::Switch1:
-		case Moves::Switch2:
-		case Moves::Switch3:
-		case Moves::Switch4:
-		case Moves::Switch5:
-			return true;
-		default:
-			return false;
+template<typename Enum>
+struct basic_numeric_limits {
+	static constexpr auto min() noexcept -> std::intmax_t {
+		return 0;
 	}
-}
+	static constexpr auto max() noexcept -> std::intmax_t {
+		return static_cast<std::intmax_t>(Enum::END);
+	}
+	static constexpr bool is_specialized = true;
+	static constexpr bool is_integer = false;
+};
 
-auto to_switch(TeamIndex const replacement) -> Moves {
-	return static_cast<Moves>(replacement + bounded::make<static_cast<std::intmax_t>(Moves::Switch0)>());
-}
-
-auto to_replacement(Moves const move) -> TeamIndex {
-	assert(is_switch(move));
-	return static_cast<TeamIndex>(bounded::make(move) - bounded::make<static_cast<std::intmax_t>(Moves::Switch0)>());
+template<typename Enum>
+constexpr auto hash(Enum const e) noexcept {
+	static_assert(std::is_enum<Enum>::value, "Only usable with enum types.");
+	return hash(bounded::make(e));
 }
 
 }	// namespace technicalmachine
+#endif	// ENUM_HPP_
