@@ -94,7 +94,7 @@ void print_estimated_score (bool first_turn, bool is_me, double estimate);
 void update_best_move (double & alpha, double beta, bool first_turn, Moves new_move, Moves & best_move);
 void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, double max_score, bool first_turn);
 
-}	// unnamed namespace
+}	// namespace
 
 Moves expectiminimax (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine) {
 	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
@@ -602,5 +602,5 @@ void print_estimated_score (bool const first_turn, bool const is_me, double cons
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

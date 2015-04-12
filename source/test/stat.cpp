@@ -175,7 +175,7 @@ void speed_tests () {
 	check_equal(calculate_speed(team, weather), max_speed);
 }
 
-}	// unnamed namespace
+}	// namespace
 
 void stat_tests () {
 	std::cout << "Running stat tests.\n";

@@ -109,7 +109,7 @@ unsigned get_forme (Species const species) {
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 
 Species id_to_species (unsigned const id, unsigned const forme) {
 	constexpr static Species species_converter [] = {

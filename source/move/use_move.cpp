@@ -1118,5 +1118,5 @@ auto call_other_move (MutableActivePokemon user) -> void {
 	// TODO: implement
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

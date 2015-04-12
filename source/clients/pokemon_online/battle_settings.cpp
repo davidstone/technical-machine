@@ -29,7 +29,7 @@ namespace {
 
 uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses);
 
-}	// unnamed namespace
+}	// namespace
 
 BattleSettings::BattleSettings (uint32_t const battle_clauses, uint8_t const battle_mode):
 	::technicalmachine::BattleSettings(),
@@ -52,7 +52,7 @@ uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses) {
 	return clause;
 }
 
-}	// unnamed namespace
+}	// namespace
 
 bool BattleSettings::active (Clauses const check) const {
 	return clauses & check;

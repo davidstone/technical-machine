@@ -43,7 +43,7 @@ namespace {
 
 std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file);
 
-}	// unnamed namespace
+}	// namespace
 
 Team::Team(TeamSize const initial_size, bool team_is_me) :
 	m_all_pokemon(initial_size),

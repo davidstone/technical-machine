@@ -85,7 +85,7 @@ enum Action {
 	CENTER_MOVE = 4,
 	DRAW = 5
 };
-}	// unnamed namespace
+}	// namespace
 
 void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	// TODO: accept an integer instead of an InMessage::Message
@@ -311,7 +311,7 @@ enum ChallengeDescription {
 	INVALID_TEAM = 5,
 	DIFFERENT_GENERATION = 6
 };
-}	// unnamed namespace
+}	// namespace
 
 void Client::handle_challenge_stuff (InMessage & msg) {
 	ChallengeDescription const description = static_cast <ChallengeDescription> (msg.read_byte ());
@@ -386,7 +386,7 @@ public:
 		}
 	}
 };
-}	// unnamed namespace
+}	// namespace
 
 void Client::parse_battle_begin (InMessage & msg) {
 	uint32_t const battle_id = msg.read_int ();
@@ -633,7 +633,7 @@ void get_speaker_and_message (InMessage & msg, std::string & speaker, std::strin
 		message = speaker_and_message.substr (delimiter_position + delimiter.size());
 	}
 }
-}	// unnamed namespace
+}	// namespace
 
 void Client::parse_channel_message (InMessage & msg) const {
 	uint32_t const channel_id = msg.read_int ();

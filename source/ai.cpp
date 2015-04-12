@@ -30,7 +30,7 @@ using namespace technicalmachine;
 
 namespace {
 void print_debug_statements();
-}	// unnamed namespace
+}	// namespace
 
 int main (int argc, char * argv []) {
 	try {

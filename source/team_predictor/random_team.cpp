@@ -37,7 +37,7 @@ namespace technicalmachine {
 namespace {
 
 std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned random_pokemon);
-}	// unnamed namespace
+}	// namespace
 
 
 void random_team(Team & team, std::mt19937 & random_engine, unsigned const random_pokemon) {
@@ -66,6 +66,6 @@ std::vector<Species> random_species(std::mt19937 & random_engine, Team const & t
 	return current;
 }
 
-}	// unnamed namespace
+}	// namespace
 
 }	// namespace technicalmachine

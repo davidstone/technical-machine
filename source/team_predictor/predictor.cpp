@@ -182,7 +182,7 @@ void function (Fl_Widget *, void * d) {
 	data.team() = Team(max_pokemon_per_team);
 }
 
-}	// unnamed namespace
+}	// namespace
 
 int main () {
 	Fl_Window win (window_width, window_height, "Team Predictor");

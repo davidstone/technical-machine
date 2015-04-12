@@ -50,7 +50,7 @@ bool is_blocked_due_to_status(MutableActivePokemon user, Moves move);
 bool is_blocked_by_freeze(Pokemon const & user, Moves move);
 bool handle_sleep_counter(MutableActivePokemon user, Moves move);
 
-}	// unnamed namespace
+}	// namespace
 
 LegalSelections::LegalSelections(Team const & user, ActivePokemon const other, Weather const weather):
 	m_species(user.pokemon()) {
@@ -266,5 +266,5 @@ bool handle_sleep_counter(MutableActivePokemon user, Moves const move) {
 	return is_blocked_by_sleep(move);
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

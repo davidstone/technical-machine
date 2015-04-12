@@ -71,7 +71,7 @@ void collection_range_tests() {
 		}
 	}
 }
-}	// unnamed namespace
+}	// namespace
 
 void collection_tests () {
 	std::cout << "Running collection tests.\n";

@@ -53,7 +53,7 @@ namespace {
 std::vector<std::string> load_highlights ();
 std::vector<std::string> load_trusted_users ();
 
-}	// unnamed namespace
+}	// namespace
 
 Client::Client(unsigned const depth):
 	Base(depth),
@@ -112,7 +112,7 @@ std::vector<std::string> load_trusted_users () {
 	return create_sorted_vector ("settings/trusted_users.txt");
 }
 
-}	// unnamed namespace
+}	// namespace
 
 bool Client::is_trusted (std::string const & user) const {
 	// I sort the std::vector of trusted users as soon as I load them to make
@@ -226,7 +226,7 @@ size_t set_target_and_find_message_begin (std::string const & request, size_t st
 	return message_begin;
 }
 
-}	// unnamed namespace
+}	// namespace
 
 void Client::handle_private_message(std::string const & sender, std::string const & message) {
 	print_with_time_stamp(std::cout, "<PM> " + sender + ": " + message);

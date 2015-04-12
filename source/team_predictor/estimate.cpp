@@ -38,7 +38,7 @@ public:
 		{
 	}
 };
-}	// unnamed namespace
+}	// namespace
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
 	for (auto const n : bounded::integer_range(bounded::make<number_of_species>())) {

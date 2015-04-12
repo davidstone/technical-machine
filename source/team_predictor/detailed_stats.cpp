@@ -80,7 +80,7 @@ typename std::vector<T> top_sub_elements(boost::property_tree::ptree const & pt)
 
 using SpeciesIndex = bounded::integer<0, number_of_species - 1>;
 
-}	// unnamed namespace
+}	// namespace
 
 DetailedStats::DetailedStats():
 	item(),

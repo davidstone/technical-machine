@@ -166,5 +166,5 @@ bool has_special_move(Pokemon const & pokemon) {
 	return has_move(pokemon, is_special);
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

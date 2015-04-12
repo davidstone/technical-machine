@@ -45,7 +45,7 @@ void decrement (Integer & n) {
 		--n;
 }
 
-}	// unnamed namespace
+}	// namespace
 
 void endofturn (Team & first, Team & last, Weather & weather) {
 	first.reset_end_of_turn();
@@ -193,5 +193,5 @@ void endofturn7 (MutableActivePokemon pokemon) {
 	pokemon.perish_song_turn();
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine

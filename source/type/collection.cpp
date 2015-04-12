@@ -828,5 +828,5 @@ auto get_type(Species const name) -> TypeArray {
 	}
 }
 
-}	// unnamed namespace
+}	// namespace
 }	// namespace technicalmachine
