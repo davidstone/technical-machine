@@ -25,6 +25,7 @@
 
 #include <bounded_integer/optional.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <vector>
 
@@ -155,7 +156,7 @@ namespace {
 template<typename Predicate>
 bool has_move(Pokemon const & pokemon, Predicate predicate) {
 	auto const & moves = regular_moves(pokemon);
-	return std::find_if(moves.begin(), moves.end(), predicate) != moves.end();
+	return std::any_of(moves.begin(), moves.end(), predicate);
 }
 
 bool has_physical_move(Pokemon const & pokemon) {

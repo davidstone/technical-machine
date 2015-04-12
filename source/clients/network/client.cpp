@@ -188,11 +188,8 @@ bool Client::is_highlighted (std::string const & message) const {
 	// have "tm" in highlights, I usually don't want to be alerted to someone
 	// saying "atm". Fixing this problem probably requires some sort of regex
 	// or a fancy word boundary definition.
-	for (std::string const & highlight : m_highlights) {
-		if (message.find (highlight) != std::string::npos)
-			return true;
-	}
-	return false;
+	auto finder = [&](auto const & highlight) { return message.find(highlight) != std::string::npos; };
+	return std::any_of(m_highlights.begin(), m_highlights.end(), finder);
 }
 
 namespace {
