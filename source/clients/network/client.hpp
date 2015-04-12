@@ -44,7 +44,6 @@ public:
 	void send_message(OutMessage & msg);
 protected:
 	explicit Client(unsigned depth);
-	void reconnect ();
 	virtual void send_channel_message(std::string const & channel, std::string const & message) = 0;
 	virtual void send_channel_message(uint32_t channel_id, std::string const & message) = 0;
 	virtual void send_private_message(std::string const & user, std::string const & message) = 0;

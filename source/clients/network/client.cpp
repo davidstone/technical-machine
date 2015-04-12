@@ -28,6 +28,7 @@
 #include <utility>
 #include <vector>
 
+#include <boost/asio/connect.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -145,29 +146,19 @@ void Client::read_header(InMessage & msg) {
 }
 
 void Client::connect () {
-	boost::asio::ip::tcp::resolver resolver(m_io);
-	boost::asio::ip::tcp::resolver::query query(m_host, m_port);
-
-	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-	boost::asio::ip::tcp::resolver::iterator end;
-	boost::system::error_code error = boost::asio::error::host_not_found;
-	while (error and endpoint_iterator != end) {
-		m_socket.close();
-		m_socket.connect(*endpoint_iterator++, error);
+	while (true) {
+		try {
+			boost::asio::ip::tcp::resolver resolver(m_io);
+			boost::asio::ip::tcp::resolver::query query(m_host, m_port);
+			boost::asio::connect(m_socket, resolver.resolve(query));
+			break;
+		} catch (std::exception const & ex) {
+			print_with_time_stamp(std::cerr, std::string("Error connecting: ") + ex.what() + ". Waiting a few seconds and trying again.");
+			boost::asio::deadline_timer pause(m_io, boost::posix_time::seconds(5));
+			pause.wait ();
+			std::cerr << "Reconnecting.\n";
+		}
 	}
-
-	if (error) {
-		print_with_time_stamp (std::cerr, "Error connecting: " + error.message () + ". Waiting a few seconds and trying again.");
-		reconnect ();
-	}
-}
-
-void Client::reconnect () {
-	// Wait a few seconds before reconnecting.
-	boost::asio::deadline_timer pause(m_io, boost::posix_time::seconds(5));
-	pause.wait ();
-	std::cerr << "Reconnecting.\n";
-	connect ();
 }
 
 void Client::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
