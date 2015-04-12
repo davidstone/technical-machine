@@ -77,11 +77,10 @@ std::vector<std::string> create_unsorted_vector (std::string const & file_name) 
 	std::ifstream file (file_name);
 	std::string line;
 	std::string const comment = "//";
-	for (getline (file, line); !file.eof(); getline (file, line)) {
+	while (getline(file, line)) {
 		if (line.substr (0, comment.length ()) != comment and !line.empty ())
 			unsorted.emplace_back(line);
 	}
-	file.close();
 	return unsorted;
 }
 
