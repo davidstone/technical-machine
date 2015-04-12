@@ -1,5 +1,5 @@
 // Connect to an arbitrary networked Pokemon sim
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,18 +21,20 @@
 
 #include "client.hpp"
 
+#include <chrono>
 #include <cstdint>
 #include <ctime>
 #include <fstream>
+#include <iostream>
 #include <string>
+#include <thread>
 #include <utility>
 #include <vector>
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/asio/connect.hpp>
-#include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -153,8 +155,7 @@ void Client::connect () {
 			break;
 		} catch (std::exception const & ex) {
 			print_with_time_stamp(std::cerr, std::string("Error connecting: ") + ex.what() + ". Waiting a few seconds and trying again.");
-			boost::asio::deadline_timer pause(m_io, boost::posix_time::seconds(5));
-			pause.wait ();
+			std::this_thread::sleep_for(std::chrono::seconds(5));
 			std::cerr << "Reconnecting.\n";
 		}
 	}
