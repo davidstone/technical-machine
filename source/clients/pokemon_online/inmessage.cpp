@@ -56,7 +56,7 @@ void InMessage::read_body(boost::asio::ip::tcp::socket & socket, network::Client
 		auto const code = static_cast<Message>(read_byte());
 		reset(bytes - 1u);
 		// TODO: handle errors
-		boost::asio::async_read(socket, boost::asio::buffer(buffer), [&](auto, auto){
+		boost::asio::async_read(socket, boost::asio::buffer(buffer), [&, code](auto, auto){
 			static_cast<Client &>(client).handle_message(code, *this);
 		});
 	} else {
