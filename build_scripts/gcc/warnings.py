@@ -22,10 +22,6 @@
 # it triggers when using a range-based for loop on a vector of classes. Return
 # value optimization should take care of any negative effects of this.
 #
-# -Wconversion triggers on this code: `short n = 0; n += 2;` The implicit
-# conversion to int causes a warning when it's then converted back to its
-# target type.
-#
 # -Weffc++ includes a warning if all data members are not initialized in the
 # initializer list. I intentionally do not do this in many cases, so the set of
 # warnings is too cluttered to be useful. It's helpful to turn on every once in
@@ -67,11 +63,6 @@
 # looks like level 1 and 2 give more warnings. In theory a lower level is a
 # 'stronger' warning, but it's at the cost of more false positives.
 #
-# -Wswitch-default seems pointless (I don't always want a default case if I've
-# enumerated all possibilities explicitly). I suppose some people may have need
-# of it, but I do not. I could see turning on this warning and putting
-# something like assert (false) into the default case, which I may try.
-#
 # -Wswitch-enum isn't behavior that I want. I don't want to handle every switch
 # statement explicitly. It would be useful if the language had some mechanism
 # to activate this on specified switch statements (to ensure that future
@@ -86,17 +77,13 @@
 # std::string (where there is no loop in user code).
 #
 # -Wuseless-cast is incompatible with BOUNDED_INTEGER_CONDITIONAL
-#
-# -Wzero-as-null-pointer-constant triggers for a few boost libraries.
-
-# Add -Wold-style-cast when I transition to my byte swapping library and
-# rewrite the Rijndael implementation to use modern C++ techniques, rather than
-# just being a C program with .cpp as the extension.
 
 warnings = [
 	'-Wall',
 	'-Wextra',
 	'-Wpedantic',
+#	'-Weff-c++',
+#	'-Wabi',
 	'-Wcast-align',
 	'-Wcast-qual',
 	'-Wconversion',
@@ -112,22 +99,23 @@ warnings = [
 	'-Wmissing-declarations',
 	'-Wmissing-include-dirs',
 	'-Wnoexcept',
-#	'-Wold-style-cast',
+	'-Wold-style-cast',
 	'-Woverloaded-virtual',
+#	'-Wpadded',
 	'-Wredundant-decls',
 	'-Wshadow',
 	'-Wsign-conversion',
 #	'-Wsign-promo',
 	'-Wstrict-null-sentinel',
 #	'-Wstrict-overflow=5',
-	'-Wstrict-overflow=1',
 	'-Wswitch-default',
 #	'-Wswitch-enum',
 	'-Wtrampolines',
 	'-Wundef',
 #	'-Wunsafe-loop-optimizations',
+#	'-Wuseless-cast',
 	'-Wvector-operation-performance',
-#	'-Wzero-as-null-pointer-constant',
+	'-Wzero-as-null-pointer-constant',
 	'-Werror',
 	'-Wno-maybe-uninitialized',
 	'-Wno-unused-parameter',
