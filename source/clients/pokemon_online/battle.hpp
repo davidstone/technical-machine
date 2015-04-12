@@ -72,7 +72,6 @@ private:
 	void parse_clock_stop (InMessage & msg);
 	void handle_rated (Client & client, InMessage & msg);
 	void parse_tier_section (InMessage & msg);
-	void parse_battle_chat (Client const & client, InMessage & msg);
 	void parse_spectator_chat (Client const & client, InMessage & msg, uint32_t battle_id);
 	void parse_point_estimate (InMessage & msg);
 	void parse_offer_choice (Client & client, InMessage & msg, uint32_t battle_id);

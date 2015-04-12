@@ -21,7 +21,6 @@
 
 #include "client.hpp"
 
-#include <ctime>
 #include <iostream>
 
 #include "battle.hpp"
@@ -43,20 +42,6 @@ Client::~Client() {
 
 void Client::set_depth(unsigned const new_depth) {
 	m_depth = new_depth;
-}
-
-void Client::print_with_time_stamp (std::ostream & stream, std::string const & message) const {
-	stream << time_stamp() + " " + message + "\n";
-}
-
-std::string Client::time_stamp() const {
-	#define SAMPLE_OUTPUT "2000-01-01 12:34:56"
-	std::string result;
-	result.resize(sizeof(SAMPLE_OUTPUT));
-	std::time_t const current_time = std::time(nullptr);
-	tm * timeptr = localtime(&current_time);
-	std::strftime(&result.front(), result.size(), "%Y-%m-%d %H:%M:%S", timeptr);
-	return result;
 }
 
 Settings Client::load_settings(bool const reload) {

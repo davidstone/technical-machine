@@ -26,6 +26,8 @@
 #include "outmessage.hpp"
 #include "read_user_info.hpp"
 
+#include "../timestamp.hpp"
+
 #include "../network/invalid_channel.hpp"
 
 #include "../../move/moves.hpp"
@@ -269,12 +271,13 @@ void Client::handle_message (InMessage::Message code, InMessage & msg) {
 	read_header(msg);
 }
 
-void Client::handle_log_in (InMessage & msg) {
+void Client::handle_log_in(InMessage & msg) {
 	User const user (msg);
-	if (user.name == username())
+	if (user.name == username()) {
 		my_id = user.id;
-	else
-		print_with_time_stamp (std::cerr, "Server claims my username is " + user.name);
+	} else {
+		std::cerr << timestamp() << ": Server claims my username is " << user.name << '\n';
+	}
 }
 
 void Client::handle_log_out (InMessage & msg) {
@@ -599,7 +602,7 @@ void Client::handle_leave_channel (InMessage & msg) {
 }
 
 void Client::handle_channel_battle (InMessage & msg) const {
-	print_with_time_stamp (std::cerr, "CHANNEL_BATTLE");
+	std::cerr << timestamp() << ": CHANNEL_BATTLE\n";
 	uint32_t const battle_id = msg.read_int ();
 	uint32_t const id1 = msg.read_int ();
 	uint32_t const id2 = msg.read_int ();
@@ -651,10 +654,9 @@ void Client::parse_server_message (InMessage & msg) const {
 }
 
 void Client::handle_html_message (InMessage & msg) const {
-	std::string const message = msg.read_string ();
 	// Possibly do some sort of HTML parsing at some point.
 	// For now, just print it.
-	print_with_time_stamp (std::cerr, message);
+	std::cerr << timestamp() << ": " << msg.read_string() << '\n';
 }
 
 void Client::handle_html_channel (InMessage & msg) const {
@@ -679,11 +681,11 @@ void Client::handle_set_ip (InMessage & msg) const {
 }
 
 void Client::handle_unknown_message_code (InMessage::Message const code) const {
-	print_with_time_stamp (std::cerr, "Unknown code: " + std::to_string (static_cast<unsigned> (code)));
+	std::cerr << timestamp() << ": Unknown code: " << static_cast<unsigned>(code) << '\n';
 }
 
 void Client::handle_unimplemented_message (InMessage & msg, std::string const & message_name) const {
-	print_with_time_stamp (std::cerr, message_name);
+	std::cerr << timestamp() << ": " << message_name << '\n';
 	msg.read_remaining_bytes();
 }
 
@@ -715,7 +717,7 @@ void Client::remove_player (uint32_t user_id) {
 		}
 		else {
 			std::string const message = "Server requested removing non-existant player: " + std::to_string (user_id);
-			print_with_time_stamp (std::cerr, message);
+			std::cerr << timestamp() << ": " << message << '\n';
 		}
 	}
 }
@@ -747,7 +749,7 @@ void Client::send_battle_challenge (std::string const & opponent) {
 		}
 	}
 	catch (InvalidUser const & error) {
-		print_with_time_stamp (std::cerr, error.what ());
+		std::cerr << timestamp() << ": " << error.what() << '\n';
 	}
 }
 
@@ -769,9 +771,7 @@ void Client::send_battle_challenge_with_current_team () {
 	}
 	catch (InvalidUser const & error) {
 		handle_challenge_withdrawn();
-		std::string message = error.what();
-		message += " They may have logged out.";
-		print_with_time_stamp(std::cerr, message);
+		std::cerr << timestamp() << ": " << error.what() << " They may have logged out.\n";
 	}
 }
 
@@ -797,7 +797,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 	// already been validated.
 	msg.write_int (get_user_id (opponent));
 	send_message(msg);
-	print_with_time_stamp (std::cout, verb + " challenge vs. " + opponent);
+	std::cout << timestamp() << ": " << verb << " challenge vs. " << opponent << '\n';
 }
 
 void Client::handle_remove_challenge (std::string const & opponent) {
@@ -866,7 +866,7 @@ void Client::send_private_message (std::string const & user, std::string const &
 		send_private_message (get_user_id (user), message);
 	}
 	catch (InvalidUser const & error) {
-		print_with_time_stamp (std::cerr, error.what ());
+		std::cerr << timestamp() << ": " << error.what() << '\n';
 	}
 }
 
@@ -887,17 +887,16 @@ void Client::handle_version_control (std::string const & server_version) const {
 	// Pretend to be the most recent version because this is the standard I'm coding against.
 	std::string const version = "1.0.53";
 	if (version != server_version) {
-		print_with_time_stamp (std::cerr, "Server version is: " + server_version);
-		print_with_time_stamp (std::cerr, "User's 'version': " + version);
+		std::cerr << timestamp() << ": Server version is: " << server_version << " but expected version: " << version << '\n';
 	}
 }
 
 void Client::handle_server_name (std::string const & server_name) const {
-	print_with_time_stamp (std::cout, "Server name: " + server_name);
+	std::cout << timestamp() << ": Server name: " << server_name << '\n';
 }
 
 void Client::handle_announcement (std::string const & announcement) const {
-	print_with_time_stamp (std::cout, announcement);
+	std::cout << timestamp() << ": " << announcement << '\n';
 }
 
 void Client::handle_private_message (uint32_t user_id, std::string const & message) {

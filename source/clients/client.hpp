@@ -37,7 +37,6 @@ class BattleSettings;
 
 class Client {
 public:
-	void print_with_time_stamp(std::ostream & stream, std::string const & message) const;
 	DetailedStats const & detailed() const;
 	Evaluate const & evaluation_constants() const;
 	virtual ~Client();
@@ -76,7 +75,6 @@ protected:
 	virtual void send_battle_challenge(std::string const & opponent) = 0;
 private:
 	typedef std::mt19937 RandomEngine;
-	std::string time_stamp() const;
 	std::random_device rd;
 	RandomEngine random_engine;
 	Battles battles;

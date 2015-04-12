@@ -1,5 +1,5 @@
 // Pokemon Online battle logic
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,8 @@
 #include "conversion.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
+
+#include "../timestamp.hpp"
 
 #include "../../team.hpp"
 
@@ -53,6 +55,11 @@ public:
 private:
 	InMessage & msg;
 };
+
+void parse_battle_chat(InMessage & msg) {
+	Todo const t (msg);
+	std::cout << timestamp() << ": " << msg.read_string() << '\n';
+}
 
 }	// namespace
 
@@ -222,7 +229,7 @@ void Battle::handle_message (Client & client, uint32_t battle_id, uint8_t comman
 		case BATTLE_CHAT:
 		case END_MESSAGE:
 			std::cerr << ((command == BATTLE_CHAT) ? "BATTLE_CHAT\n" : "END_MESSAGE\n");
-			parse_battle_chat(client, msg);
+			parse_battle_chat(msg);
 			break;
 		case SPECTATOR_CHAT:
 			parse_spectator_chat(client, msg, battle_id);
@@ -505,12 +512,6 @@ void Battle::handle_rated (Client & client, InMessage & msg) {
 
 void Battle::parse_tier_section (InMessage & msg) {
 	std::string const tier = msg.read_string ();
-}
-
-void Battle::parse_battle_chat (Client const & client, InMessage & msg) {
-	Todo const t (msg);
-	std::string const message = msg.read_string();
-	client.print_with_time_stamp (std::cout, message);
 }
 
 void Battle::parse_spectator_chat (Client const & client, InMessage & msg, uint32_t const battle_id) {

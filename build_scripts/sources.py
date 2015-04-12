@@ -149,6 +149,7 @@ clients = prepend_dir('clients', [
 	'invalid_team_file_format.cpp',
 	'no_pending_challenges.cpp',
 	'party.cpp',
+	'timestamp.cpp',
 	'updated_hp.cpp',
 ]) + network + pokemon_lab + pokemon_online + pokemon_showdown
 

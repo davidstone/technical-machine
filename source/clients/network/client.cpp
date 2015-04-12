@@ -43,6 +43,7 @@
 
 #include "../battle.hpp"
 #include "../battle_settings.hpp"
+#include "../timestamp.hpp"
 
 #include "../../settings_file.hpp"
 
@@ -154,21 +155,21 @@ void Client::connect () {
 			boost::asio::connect(m_socket, resolver.resolve(query));
 			break;
 		} catch (std::exception const & ex) {
-			print_with_time_stamp(std::cerr, std::string("Error connecting: ") + ex.what() + ". Waiting a few seconds and trying again.");
+			std::cerr << timestamp() << ": Error connecting: " << ex.what() << ". Waiting a few seconds and trying again.\n";
 			std::this_thread::sleep_for(std::chrono::seconds(5));
-			std::cerr << "Reconnecting.\n";
+			std::cerr << timestamp() << ": Reconnecting.\n";
 		}
 	}
 }
 
 void Client::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
 	if (is_highlighted(boost::to_lower_copy(message))) {
-		print_with_time_stamp (std::cout, user + ": " + message);
+		std::cout << timestamp() << ": " << user << ": " << message << '\n';
 	}
 }
 
 void Client::handle_server_message (std::string const & sender, std::string const & message) const {
-	print_with_time_stamp (std::cout, "~~" + sender + "~~: " + message);
+	std::cout << timestamp() << ": ~~" << sender << "~~: " << message << '\n';
 }
 
 
@@ -224,7 +225,7 @@ size_t set_target_and_find_message_begin (std::string const & request, size_t st
 }	// namespace
 
 void Client::handle_private_message(std::string const & sender, std::string const & message) {
-	print_with_time_stamp(std::cout, "<PM> " + sender + ": " + message);
+	std::cout << timestamp() << ": <PM> " << sender << ": " << message << '\n';
 	if (is_trusted(sender) and is_valid_command_structure(message))
 		do_request(sender, message);
 }

@@ -31,6 +31,7 @@
 #include "battle_result.hpp"
 #include "client.hpp"
 #include "random_string.hpp"
+#include "timestamp.hpp"
 
 #include "network/invalid_simulator_data.hpp"
 #include "network/outmessage.hpp"
@@ -322,7 +323,7 @@ std::string generate_team_file_name(RandomEngine & random_engine) {
 }	// namespace
 
 void Battle::handle_end(Client const & client, Result const result) const {
-	client.print_with_time_stamp(std::cout, to_string(result) + " a battle vs. " + opponent());
+	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent() << '\n';
 	if (result == Result::lost) {
 		pl::write_team(predict_foe_team(client.detailed()), generate_team_file_name(random_engine));
 	}
