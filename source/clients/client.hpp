@@ -83,7 +83,6 @@ private:
 	DetailedStats detailed_stats;
 	Evaluate m_evaluation_constants;
 	std::string team_file_name;
-	std::string time_format;
 	unsigned m_depth;
 };
 

@@ -25,12 +25,6 @@
 	</servers>
 
 	<!--
-		time format is passed to strftime (). The default is ISO-8601 date
-		followed by ISO-8601 time: [2011-12-24 16:10:05]
-	-->
-	<time>[%Y-%m-%d %H:%M:%S]</time>
-
-	<!--
 		chattiness determines how often Technical Machine randomly says a line
 		from "responses.txt". It occurs with a frequency of 1 / chattiness, so
 		a value of 1 will have Technical Machine saying a line every time it

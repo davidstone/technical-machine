@@ -50,20 +50,12 @@ void Client::print_with_time_stamp (std::ostream & stream, std::string const & m
 }
 
 std::string Client::time_stamp() const {
-	// There does not appear to be an easy way to format the current time with
-	// a format string. This seems like a major limitation of boost::date_time
-	// and / or boost::posix_time, as well as the std header chrono.
+	#define SAMPLE_OUTPUT "2000-01-01 12:34:56"
 	std::string result;
-	if (!time_format.empty ()) {
-		// probably_big_enough is a guess at how big the time stamp will be.
-		// It is OK if it is wrong.
-		constexpr unsigned probably_big_enough = 30;
-		result.resize (probably_big_enough);
-		time_t current_time = time (nullptr);
-		tm * timeptr = localtime (&current_time);
-		while (strftime (&result [0], result.size (), time_format.c_str(), timeptr) == 0)
-			result.resize (result.size () * 2);
-	}
+	result.resize(sizeof(SAMPLE_OUTPUT));
+	std::time_t const current_time = std::time(nullptr);
+	tm * timeptr = localtime(&current_time);
+	std::strftime(&result.front(), result.size(), "%Y-%m-%d %H:%M:%S", timeptr);
 	return result;
 }
 
@@ -73,7 +65,6 @@ Settings Client::load_settings(bool const reload) {
 	}
 	Settings const settings;
 	team_file_name = settings.team_file;
-	time_format = settings.time_format;
 	return settings;
 }
 

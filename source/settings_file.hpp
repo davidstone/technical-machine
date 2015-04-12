@@ -1,5 +1,5 @@
 // Read and write settings files
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,7 +42,6 @@ class Settings {
 public:
 	std::string team_file;
 	std::vector <Server> servers;
-	std::string time_format;
 	unsigned chattiness;
 	Settings ();
 	void write () const;

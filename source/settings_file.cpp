@@ -1,5 +1,5 @@
 // Read and write settings files
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,7 +34,6 @@ Settings::Settings () {
 	team_file = root.get <std::string> ("team");
 	for (boost::property_tree::ptree::value_type const & server_tree : root.get_child ("servers"))
 		servers.emplace_back(server_tree.second);
-	time_format = root.get <std::string> ("time");
 	chattiness = root.get <unsigned> ("chattiness");
 }
 
