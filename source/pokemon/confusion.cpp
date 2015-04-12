@@ -35,7 +35,7 @@ auto Confusion::activate() -> void {
 }
 
 namespace {
-auto register_self_hit(Pokemon & pokemon) -> void {
+auto register_self_hit(Pokemon &) -> void {
 	// TODO: write this
 }
 }	// namespace

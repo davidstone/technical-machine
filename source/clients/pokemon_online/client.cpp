@@ -364,18 +364,23 @@ public:
 		for (unsigned n = 0; n != 5; ++n) {
 			// Something to do with stats. Probably boosts.
 			uint16_t const st = msg.read_short ();
+			static_cast<void>(st);
 		}
 		for (unsigned n = 0; n != 4; ++n) {
 			moves.emplace_back(id_to_move(msg.read_short()));
 			uint8_t const pp = msg.read_byte ();
 			uint8_t const total_pp = msg.read_byte ();
+			static_cast<void>(pp);
+			static_cast<void>(total_pp);
 		}
 		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
 			// PO uses a QList of int, so hopefully their int is always 32-bit.
 			uint32_t const ev = msg.read_int ();
+			static_cast<void>(ev);
 		}
 		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
 			uint32_t const dv = msg.read_int ();
+			static_cast<void>(dv);
 		}
 	}
 };
@@ -488,6 +493,7 @@ void Client::handle_cp_unban (InMessage & msg) const {
 
 void Client::handle_spectate_battle (InMessage & msg) const {
 	uint32_t const battle_id = msg.read_int ();
+	static_cast<void>(battle_id);
 	BattleConfiguration configuration (msg);
 }
 
@@ -524,6 +530,7 @@ void Client::handle_tier_selection (InMessage & msg) const {
 	// Unfortunately, the tier list contains strings, which can be variable-length.
 	// Just ignore this and read until the buffer is empty.
 	uint32_t const bytes_in_tier_list = msg.read_int ();
+	static_cast<void>(bytes_in_tier_list);
 	std::vector <std::pair <uint8_t, std::string>> tiers;
 	while (msg.index != msg.buffer.size ()) {
 		uint8_t const tier_level = msg.read_byte ();
@@ -568,6 +575,7 @@ void Client::handle_get_tban_list (InMessage & msg) const {
 void Client::handle_battle_list (InMessage & msg) {
 	// For some reason, PO associates battles with channels
 	uint32_t const channel_id = msg.read_int ();
+	static_cast<void>(channel_id);
 	uint32_t const number_of_battles = msg.read_int ();
 	for (unsigned n = 0; n != number_of_battles; ++n)
 		add_battle (msg);
@@ -583,6 +591,7 @@ void Client::handle_channels_list (InMessage & msg) {
 
 void Client::handle_channel_players (InMessage & msg) {
 	uint32_t const channel_id = msg.read_int ();
+	static_cast<void>(channel_id);
 	uint32_t const number_of_players = msg.read_int ();
 	std::vector <uint32_t> players;
 	players.reserve (number_of_players);
@@ -593,6 +602,8 @@ void Client::handle_channel_players (InMessage & msg) {
 void Client::handle_join_channel (InMessage & msg) {
 	uint32_t const channel_id = msg.read_int ();
 	uint32_t const user_id = msg.read_int ();
+	static_cast<void>(channel_id);
+	static_cast<void>(user_id);
 }
 
 void Client::handle_leave_channel (InMessage & msg) {
@@ -606,6 +617,9 @@ void Client::handle_channel_battle (InMessage & msg) const {
 	uint32_t const battle_id = msg.read_int ();
 	uint32_t const id1 = msg.read_int ();
 	uint32_t const id2 = msg.read_int ();
+	static_cast<void>(battle_id);
+	static_cast<void>(id1);
+	static_cast<void>(id2);
 	msg.read_remaining_bytes();
 }
 
@@ -775,7 +789,7 @@ void Client::send_battle_challenge_with_current_team () {
 	}
 }
 
-void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool unused) {
+void Client::handle_finalize_challenge (std::string const & opponent, bool accepted, bool) {
 	OutMessage msg (OutMessage::CHALLENGE_STUFF);
 	std::string verb;
 	// See the description of send_battle_challenge() for why I make sure
@@ -801,6 +815,7 @@ void Client::handle_finalize_challenge (std::string const & opponent, bool accep
 }
 
 void Client::handle_remove_challenge (std::string const & opponent) {
+	static_cast<void>(opponent);
 }
 
 void Client::join_channel (std::string const & channel) {
@@ -844,6 +859,7 @@ void Client::add_battle (InMessage & msg) {
 }
 
 void Client::remove_battle (InMessage & msg) {
+	static_cast<void>(msg);
 }
 
 void Client::send_channel_message(std::string const & channel, std::string const & message) {

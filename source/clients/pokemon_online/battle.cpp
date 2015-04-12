@@ -276,8 +276,10 @@ void Battle::parse_send_out (InMessage & msg, Party const party) {
 	std::string const nickname = msg.read_string();
 	uint8_t const hp_percent = msg.read_byte();
 	// TODO: use hp_percent to verify things are good
+	static_cast<void>(hp_percent);
 	uint32_t const full_status = msg.read_int();
 	// TODO: use full_status to verify things are good
+	static_cast<void>(full_status);
 	Gender const gender(id_to_gender(msg.read_byte()));
 	bool const shiny = msg.read_byte();
 	static_cast<void>(shiny);
@@ -313,17 +315,21 @@ void Battle::parse_pp_change (InMessage & msg) {
 	uint8_t const move = msg.read_byte();
 	uint8_t const new_pp = msg.read_byte();
 	// TODO: use these to verify things are still good
+	static_cast<void>(move);
+	static_cast<void>(new_pp);
 }
 
 void Battle::parse_effectiveness(InMessage & msg) {
 	// TODO: Hidden Power.
 	uint8_t const effectiveness = msg.read_byte();
 	// 0, 1, 2, 4, 8, 16
+	static_cast<void>(effectiveness);
 }
 
 void Battle::parse_number_of_hits(InMessage & msg) {
 	// TODO: parse this
 	uint8_t const number = msg.read_byte();
+	static_cast<void>(number);
 }
 
 void Battle::parse_stat_change(InMessage & msg) {
@@ -332,11 +338,14 @@ void Battle::parse_stat_change(InMessage & msg) {
 	int8_t const stat = static_cast<int8_t>(msg.read_byte());
 	int8_t const boost = static_cast<int8_t>(msg.read_byte());
 	// TODO: Parse for Accupressure
+	static_cast<void>(stat);
+	static_cast<void>(boost);
 }
 
 void Battle::parse_status_message (InMessage & msg) {
 	Todo const t(msg, "STATUS_MESSAGE");
 	int8_t const status = static_cast<int8_t>(msg.read_byte());
+	static_cast<void>(status);
 }
 
 void Battle::parse_status_change (InMessage & msg) {
@@ -344,6 +353,7 @@ void Battle::parse_status_change (InMessage & msg) {
 	int8_t const status = static_cast<int8_t> (msg.read_byte());
 	// bool const multiple_turns = msg.read_byte ();
 	// Includes things like confusion
+	static_cast<void>(status);
 }
 
 void Battle::parse_abs_status_change (InMessage & msg) {
@@ -353,10 +363,12 @@ void Battle::parse_abs_status_change (InMessage & msg) {
 		return;
 	}
 	int8_t const status = static_cast<int8_t> (msg.read_byte());
+	static_cast<void>(status);
 }
 
 void Battle::parse_already_statused (InMessage & msg) {
 	uint8_t const status = msg.read_byte ();
+	static_cast<void>(status);
 }
 
 void Battle::parse_recoil (InMessage & msg) {
@@ -374,6 +386,8 @@ void Battle::parse_weather_message (InMessage & msg) {
 	std::cerr << "WEATHER_MESSAGE\n";
 	int8_t const wstatus = static_cast<int8_t> (msg.read_byte());
 	int8_t const weather_var = static_cast<int8_t> (msg.read_byte());
+	static_cast<void>(wstatus);
+	static_cast<void>(weather_var);
 }
 
 void Battle::parse_ability_message (InMessage & msg, Party const party) {
@@ -396,7 +410,7 @@ void Battle::parse_item_message (InMessage & msg, Party const party) {
 	// int16_t const other = msg.read_short ();
 }
 
-void Battle::parse_move_message (InMessage & msg) {
+void Battle::parse_move_message (InMessage &) {
 	std::cerr << "MOVE_MESSAGE\n";
 	#if 0
 	uint16_t const move = msg.read_short ();
@@ -411,6 +425,7 @@ void Battle::parse_move_message (InMessage & msg) {
 void Battle::parse_substitute (InMessage & msg) {
 	std::cerr << "SUBSTITUTE\n";
 	bool const substitute = msg.read_byte ();
+	static_cast<void>(substitute);
 }
 
 namespace {
@@ -437,17 +452,21 @@ void Battle::parse_dynamic_info (InMessage & msg) {
 	// I don't think I need any of this
 	static_cast<void>(boosts);
 	uint8_t const flags = msg.read_byte ();
+	static_cast<void>(flags);
 }
 
 void Battle::parse_dynamic_stats (InMessage & msg) {
 	for (unsigned n = 0; n != 5; ++n) {
 		auto const something = static_cast<int16_t> (msg.read_short());
+		static_cast<void>(something);
 	}
 }
 
 void Battle::parse_spectating (InMessage & msg) {
 	bool const joining = msg.read_byte ();
 	uint32_t const user_id = msg.read_int ();
+	static_cast<void>(joining);
+	static_cast<void>(user_id);
 }
 
 void Battle::parse_temporary_pokemon_change (InMessage & msg) {
@@ -466,12 +485,15 @@ void Battle::parse_temporary_pokemon_change (InMessage & msg) {
 		case DEF_MOVE: {
 			std::cerr << "MOVE\n";
 			int8_t const slot = static_cast<int8_t> (msg.read_byte ());
+			static_cast<void>(slot);
 			break;
 		}
 		case TEMP_PP: {
 			std::cerr << "TEMP_PP\n";
 			int8_t const slot = static_cast<int8_t> (msg.read_byte ());
 			int8_t const pp = static_cast<int8_t> (msg.read_byte ());
+			static_cast<void>(slot);
+			static_cast<void>(pp);
 			break;
 		}
 		case TEMP_SPRITE: {
@@ -483,11 +505,14 @@ void Battle::parse_temporary_pokemon_change (InMessage & msg) {
 			std::cerr << "DEFINITE_FORM\n";
 			int8_t const pokemon = static_cast<int8_t> (msg.read_byte ());
 			int16_t const form = static_cast<int16_t> (msg.read_short ());
+			static_cast<void>(pokemon);
+			static_cast<void>(form);
 			break;
 		}
 		case AESTHETIC_FORM: {
 			std::cerr << "AESTHETIC_FORM\n";
 			int16_t form = static_cast<int16_t> (msg.read_short ());
+			static_cast<void>(form);
 			break;
 		}
 		default:
@@ -498,20 +523,24 @@ void Battle::parse_temporary_pokemon_change (InMessage & msg) {
 
 void Battle::parse_clock_start (InMessage & msg) {
 	uint16_t const remaining_time = msg.read_short ();
+	static_cast<void>(remaining_time);
 }
 
 void Battle::parse_clock_stop (InMessage & msg) {
 	Todo const t (msg, "CLOCK_STOP");
 	uint16_t const remaining_time = msg.read_short ();
+	static_cast<void>(remaining_time);
 }
 
 void Battle::handle_rated (Client & client, InMessage & msg) {
 	client.write_team();
 	bool const rated = msg.read_byte ();
+	static_cast<void>(rated);
 }
 
 void Battle::parse_tier_section (InMessage & msg) {
 	std::string const tier = msg.read_string ();
+	static_cast<void>(tier);
 }
 
 void Battle::parse_spectator_chat (Client const & client, InMessage & msg, uint32_t const battle_id) {
@@ -527,8 +556,10 @@ void Battle::parse_point_estimate (InMessage & msg) {
 
 void Battle::parse_offer_choice (Client & client, InMessage & msg, uint32_t const battle_id) {
 	int8_t const num_slot = static_cast<int8_t> (msg.read_byte());
+	static_cast<void>(num_slot);
 	bool const can_switch = msg.read_byte();
 	bool const can_attack = msg.read_byte();
+	static_cast<void>(can_attack);
 	std::vector<uint8_t> attacks_allowed(moves_per_pokemon());
 	std::generate(std::begin(attacks_allowed), std::end(attacks_allowed), [&]() { return msg.read_byte(); });
 	handle_request_action(client.detailed(), client.evaluation_constants(), action, battle_id, can_switch, attacks_allowed);
@@ -552,6 +583,11 @@ void Battle::parse_rearrange_team (InMessage & msg) {
 		uint8_t const level = msg.read_byte ();
 		uint8_t const gender = msg.read_byte ();
 		bool const item = msg.read_byte ();
+		static_cast<void>(species_id);
+		static_cast<void>(form_id);
+		static_cast<void>(level);
+		static_cast<void>(gender);
+		static_cast<void>(item);
 	}
 }
 
@@ -561,11 +597,15 @@ void Battle::parse_spot_shifts (InMessage & msg) {
 	int8_t const s1 = static_cast<int8_t> (msg.read_byte ());
 	int8_t const s2 = static_cast<int8_t> (msg.read_byte ());
 	bool const silent = msg.read_byte ();
+	static_cast<void>(s1);
+	static_cast<void>(s2);
+	static_cast<void>(silent);
 }
 
 void Battle::parse_battle_end (InMessage & msg) {
 	// Forfeit, Win, Tie, Close seems to be the four options in order
 	uint8_t const result = msg.read_byte ();
+	static_cast<void>(result);
 }
 
 VisibleFoeHP Battle::max_damage_precision() const {

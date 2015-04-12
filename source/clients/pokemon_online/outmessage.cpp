@@ -137,6 +137,7 @@ void OutMessage::write_switch (uint32_t battle_id, uint8_t slot) {
 }
 
 void OutMessage::write_challenge (uint32_t user_id, uint8_t generation, BattleSettings const & settings) {
+	static_cast<void>(generation);
 	// What is this for?
 	constexpr uint8_t send_var = 0;
 	write_byte (send_var);

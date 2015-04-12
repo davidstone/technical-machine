@@ -162,9 +162,9 @@ void Client::connect () {
 	}
 }
 
-void Client::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
+void Client::handle_channel_message(uint32_t channel_id, std::string const & user, std::string const & message) const {
 	if (is_highlighted(boost::to_lower_copy(message))) {
-		std::cout << timestamp() << ": " << user << ": " << message << '\n';
+		std::cout << timestamp() << ": Channel " << channel_id << ": "  << user << ": " << message << '\n';
 	}
 }
 

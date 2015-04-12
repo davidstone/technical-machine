@@ -59,6 +59,7 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 
 	m_happiness(happiness)
 	{
+	static_cast<void>(set_nickname);
 }
 
 Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, Happiness const happiness):

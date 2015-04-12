@@ -1114,7 +1114,7 @@ auto use_swallow(MutableActivePokemon user) -> void {
 	heal(user, swallow_healing(bounded::integer<1, Stockpile::max>(stockpiles)));
 }
 
-auto call_other_move (MutableActivePokemon user) -> void {
+auto call_other_move (MutableActivePokemon) -> void {
 	// TODO: implement
 }
 

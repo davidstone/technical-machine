@@ -89,7 +89,6 @@ static void process (std::string const & message, uint32_t digest_buffer [4]) {
 	};
 	for (size_t p = 0; p != message.length (); p += block_size) {
 		uint32_t const * X;
-		uintmax_t xbuf [block_size / sizeof (uintmax_t)];
 		
 		// When I get access to a big-endian system, I may change this code to
 		// not rely on macros. However, this should work and I don't want to
@@ -99,6 +98,7 @@ static void process (std::string const & message, uint32_t digest_buffer [4]) {
 			assert (reinterpret_cast <uintptr_t> (&message [p]) % sizeof (uint32_t) == 0);
 			X = reinterpret_cast <uint32_t const *> (&message [p]);
 		#elif defined BOOST_BIG_ENDIAN
+			uintmax_t xbuf [block_size / sizeof (uintmax_t)];
 			for (unsigned n = 0; n != block_size / sizeof (uintmax_t); ++n)
 				xbuf [n] = le_to_h (*reinterpret_cast <uintmax_t const *> (&message [p + n * sizeof (uintmax_t)]));
 			X = reinterpret_cast <uint32_t *> (xbuf);

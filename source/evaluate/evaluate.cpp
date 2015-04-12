@@ -100,7 +100,7 @@ auto score_move(Evaluate const & evaluate, Move const & move, Screens const & ot
 using ScoreMove = decltype(score_move(std::declval<Evaluate>(), std::declval<Move>(), std::declval<Screens>()));
 
 using ScoreMoves = decltype(std::declval<ScoreMove>() * std::declval<RegularMoveSize>());
-auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const weather) {
+auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const) {
 	// TODO: alter the score of a move based on the weather
 	ScoreMoves score = 0_bi;
 	auto const & moves = all_moves(pokemon);

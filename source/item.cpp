@@ -53,7 +53,7 @@ bool is_choice_item(Item const item) {
 	}
 }
 
-bool was_lost(Item const item) {
+bool was_lost(Item const) {
 	// TODO
 	return false;
 }

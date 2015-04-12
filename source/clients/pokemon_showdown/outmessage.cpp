@@ -1,5 +1,5 @@
 // Pokemon Showdown outgoing messages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,15 +31,23 @@ namespace technicalmachine {
 namespace ps {
 
 void OutMessage::write_string(std::string const & str) {
+	static_cast<void>(str);
 }
 
 void OutMessage::write_team(Team const & team, std::string const & username) {
+	static_cast<void>(team);
+	static_cast<void>(username);
 }
 
 void OutMessage::write_move(uint32_t battle_id, uint8_t move_index, uint8_t target) {
+	static_cast<void>(battle_id);
+	static_cast<void>(move_index);
+	static_cast<void>(target);
 }
 
 void OutMessage::write_switch(uint32_t battle_id, uint8_t slot) {
+	static_cast<void>(battle_id);
+	static_cast<void>(slot);
 }
 
 void OutMessage::finalize() {

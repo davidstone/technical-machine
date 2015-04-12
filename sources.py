@@ -1,5 +1,5 @@
 # List of sources
-# Copyright (C) 2014 David Stone
+# Copyright (C) 2015 David Stone
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU Affero General Public License as
@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-def prepend_dir(directory, sources):
-	"""Remove redundant specification of a directory for multiple sources"""
-	return map(lambda source: directory + '/' + source, sources)
+from program import prepend_dir, Program
+
+source_directory = 'source'
 
 string_conversion_sources = prepend_dir('string_conversions', [
 	'ability.cpp',
@@ -331,8 +331,25 @@ test_libraries = [
 	'boost_system',
 ]
 
-ai = ('ai', ai_sources, ai_libraries)
-predict = ('predict', predict_sources, predict_libraries)
-test = ('test', test_sources, test_libraries)
+includes = ['../endian', '../bounded_integer']
 
-base_sources = [ai, predict, test]
+programs = [
+	Program(
+		'ai',
+		sources = ai_sources,
+		libraries = ai_libraries,
+		include_directories = includes,
+	),
+	Program(
+		'predict',
+		sources = predict_sources,
+		libraries = predict_libraries,
+		include_directories = includes,
+	),
+	Program(
+		'test',
+		sources = test_sources,
+		libraries = test_libraries,
+		include_directories = includes,
+	),
+]

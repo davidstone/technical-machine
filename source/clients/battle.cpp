@@ -152,7 +152,7 @@ Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & 
 	return expectiminimax(ai, predicted, weather, depth, evaluate, random_engine);
 }
 
-void Battle::handle_use_move(Party const user, uint8_t slot, Moves move_name) {
+void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
@@ -171,7 +171,7 @@ void Battle::handle_use_move(Party const user, uint8_t slot, Moves move_name) {
 	}
 }
 
-void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level const level) {
+void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species species, Gender gender, Level const level) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
@@ -206,14 +206,14 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t slot, uint8_t i
 	}
 }
 
-void Battle::handle_hp_change(Party const changing, uint8_t slot, UpdatedHP::VisibleHP remaining_hp) {
+void Battle::handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP remaining_hp) {
 	// "slot" is only useful in NvN, which TM does not yet
 	// support.
 	Team const & team = get_team(changing);
 	updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 }
 
-void Battle::handle_direct_damage(Party const damaged, uint8_t const slot, UpdatedHP::VisibleHP const visible_damage) {
+void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, UpdatedHP::VisibleHP const visible_damage) {
 	Team const & team = get_team(damaged);
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
@@ -280,12 +280,12 @@ void Battle::correct_hp_and_report_errors(Team & team) {
 	}
 }
 
-void Battle::handle_set_pp(Party const changer, uint8_t slot, uint8_t pp) {
+void Battle::handle_set_pp(Party const, uint8_t /*slot*/, uint8_t /*pp*/) {
 	// This function may actually be useless. I believe that any PP change is
 	// already handled by other mechanisms.
 }
 
-void Battle::handle_fainted(Party const fainter, uint8_t slot) {
+void Battle::handle_fainted(Party const fainter, uint8_t /*slot*/) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 	auto const team = get_team(fainter);

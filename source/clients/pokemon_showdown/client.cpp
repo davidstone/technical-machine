@@ -1,5 +1,5 @@
 // Connect to Pokemon Showdown
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -75,7 +75,7 @@ Client::Client(unsigned depth):
 		load_settings(false);
 	}
 	socket.init_asio();
-	socket.set_message_handler([&](websocketpp::connection_hdl handle, message_ptr message) {
+	socket.set_message_handler([&](websocketpp::connection_hdl, message_ptr message) {
 		handle_message(parse_message(message));
 		std::cout << "Waiting for next message.\n";
 	});
@@ -146,24 +146,35 @@ void Client::handle_message(InMessage const & message) {
 }
 
 void Client::send_battle_challenge(std::string const & opponent) {
+	static_cast<void>(opponent);
 }
 
-void Client::handle_finalize_challenge(std::string const & opponent, bool accepted, bool unused) {
+void Client::handle_finalize_challenge(std::string const & opponent, bool accepted, bool) {
+	static_cast<void>(opponent);
+	static_cast<void>(accepted);
 }
 
 void Client::join_channel(std::string const & channel) {
+	static_cast<void>(channel);
 }
 
 void Client::part_channel(std::string const & channel) {
+	static_cast<void>(channel);
 }
 
 void Client::send_channel_message(std::string const & channel, std::string const & message) {
+	static_cast<void>(channel);
+	static_cast<void>(message);
 }
 
 void Client::send_channel_message(uint32_t channel_id, std::string const & message) {
+	static_cast<void>(channel_id);
+	static_cast<void>(message);
 }
 
 void Client::send_private_message(std::string const & user, std::string const & message) {
+	static_cast<void>(user);
+	static_cast<void>(message);
 }
 
 }	// namespace ps

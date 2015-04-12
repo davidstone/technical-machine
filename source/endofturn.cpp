@@ -185,7 +185,7 @@ void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather
 	}
 }
 
-void endofturn6 (Team & target, Weather const weather) {
+void endofturn6 (Team &, Weather const) {
 	// TODO: Doom Desire / Future Sight
 }
 
