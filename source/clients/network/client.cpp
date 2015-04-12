@@ -56,10 +56,11 @@ std::vector<std::string> load_trusted_users ();
 
 Client::Client(unsigned const depth):
 	Base(depth),
-	highlights (load_highlights ()),
-	trusted_users (load_trusted_users ())
+	m_socket(m_io),
+	m_highlights(load_highlights()),
+	m_trusted_users(load_trusted_users())
 	{
-	load_settings (false);
+	load_settings(false);
 	while (username().empty()) {
 		std::cerr << "Add a username and password entry to " + Settings::file_name() + " and hit enter.";
 		std::cin.get ();
@@ -115,45 +116,44 @@ std::vector<std::string> load_trusted_users () {
 bool Client::is_trusted (std::string const & user) const {
 	// I sort the std::vector of trusted users as soon as I load them to make
 	// this legal and as fast as possible.
-	return std::binary_search (trusted_users.begin(), trusted_users.end (), user);
+	return std::binary_search(m_trusted_users.begin(), m_trusted_users.end(), user);
 }
 
 void Client::load_settings (bool const reloading) {
 	auto settings = reloading ? Base::load_settings(true) : Settings();
-	chattiness = settings.chattiness;
+	m_chattiness = settings.chattiness;
 	
 	if (!reloading) {
 		Server & server = settings.servers.front();
-		host = server.host;
-		port = server.port;
-		current_username = server.username;
+		m_host = server.host;
+		m_port = server.port;
+		m_username = server.username;
 		if (server.password.empty()) {
 			server.password = random_string(31);
 			settings.write();
 		}
-		current_password = server.password;
+		m_password = server.password;
 	}
 }
 
 void Client::send_message(OutMessage & msg) {
-	msg.send(*socket);
+	msg.send(m_socket);
 }
 
 void Client::read_header(InMessage & msg) {
-	msg.read_header(*socket, *this);
+	msg.read_header(m_socket, *this);
 }
 
 void Client::connect () {
-	socket = std::make_unique<boost::asio::ip::tcp::socket>(io);
-	boost::asio::ip::tcp::resolver resolver (io);
-	boost::asio::ip::tcp::resolver::query query (host, port);
+	boost::asio::ip::tcp::resolver resolver(m_io);
+	boost::asio::ip::tcp::resolver::query query(m_host, m_port);
 
-	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve (query);
+	boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 	boost::asio::ip::tcp::resolver::iterator end;
 	boost::system::error_code error = boost::asio::error::host_not_found;
 	while (error and endpoint_iterator != end) {
-		socket->close ();
-		socket->connect (*endpoint_iterator++, error);
+		m_socket.close();
+		m_socket.connect(*endpoint_iterator++, error);
 	}
 
 	if (error) {
@@ -164,7 +164,7 @@ void Client::connect () {
 
 void Client::reconnect () {
 	// Wait a few seconds before reconnecting.
-	boost::asio::deadline_timer pause (io, boost::posix_time::seconds (5));
+	boost::asio::deadline_timer pause(m_io, boost::posix_time::seconds(5));
 	pause.wait ();
 	std::cerr << "Reconnecting.\n";
 	connect ();
@@ -184,11 +184,11 @@ void Client::handle_server_message (std::string const & sender, std::string cons
 
 
 std::string const & Client::username() const {
-	return current_username;
+	return m_username;
 }
 
 std::string const & Client::password() const {
-	return current_password;
+	return m_password;
 }
 
 bool Client::is_highlighted (std::string const & message) const {
@@ -199,7 +199,7 @@ bool Client::is_highlighted (std::string const & message) const {
 	// have "tm" in highlights, I usually don't want to be alerted to someone
 	// saying "atm". Fixing this problem probably requires some sort of regex
 	// or a fancy word boundary definition.
-	for (std::string const & highlight : highlights) {
+	for (std::string const & highlight : m_highlights) {
 		if (message.find (highlight) != std::string::npos)
 			return true;
 	}
@@ -335,12 +335,12 @@ void Client::handle_send_pm_command (std::string const & request, size_t start) 
 }
 
 auto Client::handle_exit_command() -> void {
-	io.stop();
+	m_io.stop();
 }
 
 void Client::handle_reload_settings_command () {
-	highlights = load_highlights ();
-	trusted_users = load_trusted_users ();
+	m_highlights = load_highlights();
+	m_trusted_users = load_trusted_users();
 	load_settings (true);
 }
 

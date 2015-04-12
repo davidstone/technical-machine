@@ -53,7 +53,7 @@ protected:
 	void run_main_service() {
 		SimulatorInMessage msg;
 		read_header(msg);
-		io.run();
+		m_io.run();
 	}
 	std::string const & username() const;
 	std::string const & password() const;
@@ -64,7 +64,7 @@ protected:
 	}
 	template<typename Timer>
 	auto make_timer() {
-		return std::make_unique<Timer>(io);
+		return std::make_unique<Timer>(m_io);
 	}
 	void handle_private_message (std::string const & sender, std::string const & message);
 private:
@@ -85,15 +85,15 @@ private:
 	void handle_reload_settings_command ();
 	auto handle_exit_command() -> void;
 
-	boost::asio::io_service io;
-	std::string host;
-	std::string port;
-	std::unique_ptr<boost::asio::ip::tcp::socket> socket;
-	std::string current_username;
-	std::string current_password;
-	std::vector <std::string> highlights;
-	std::vector <std::string> trusted_users;
-	unsigned chattiness;
+	boost::asio::io_service m_io;
+	std::string m_host;
+	std::string m_port;
+	boost::asio::ip::tcp::socket m_socket;
+	std::string m_username;
+	std::string m_password;
+	std::vector<std::string> m_highlights;
+	std::vector<std::string> m_trusted_users;
+	unsigned m_chattiness;
 };
 
 }	// namespace network
