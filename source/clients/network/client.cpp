@@ -162,9 +162,7 @@ void Client::connect () {
 }
 
 void Client::handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const {
-	std::string msg = message;
-	boost::to_lower (msg);
-	if (is_highlighted (msg)) {
+	if (is_highlighted(boost::to_lower_copy(message))) {
 		print_with_time_stamp (std::cout, user + ": " + message);
 	}
 }
