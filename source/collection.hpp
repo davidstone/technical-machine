@@ -82,8 +82,6 @@ class Collection {
 public:
 	using container_type = Container;
 	using index_type = typename container_type::index_type;
-	using size_type = typename container_type::size_type;
-	using value_type = typename container_type::value_type;
 	template<typename... Args>
 	constexpr Collection(Args &&... args) :
 		container(std::forward<Args>(args)...),
@@ -103,10 +101,10 @@ public:
 		return container.end();
 	}
 	
-	constexpr value_type const & operator() (index_type const specified_index) const {
+	constexpr decltype(auto) operator() (index_type const specified_index) const {
 		return unchecked_value(check_range(specified_index));
 	}
-	constexpr value_type const & operator() () const {
+	constexpr decltype(auto) operator() () const {
 		return unchecked_value(index());
 	}
 	constexpr bool is_empty() const {
@@ -123,14 +121,11 @@ public:
 	}
 	friend bool operator== <container_type>(Collection const & lhs, Collection const & rhs);
 protected:
-	template<typename Index, typename Size>
-	static constexpr Index check_range(Index const new_index, Size const max_index) {
-		return (new_index < max_index) ? new_index : throw InvalidCollectionIndex(new_index, max_index, typeid(value_type).name());
-	}
 	constexpr index_type check_range(index_type const new_index) const {
-		return check_range(new_index, container.size());
+		using value_type = std::decay_t<decltype(container[new_index])>;
+		return (new_index < container.size()) ? new_index : throw InvalidCollectionIndex(new_index, container.size(), typeid(value_type).name());
 	}
-	constexpr value_type const & unchecked_value(index_type const specified_index) const {
+	constexpr decltype(auto) unchecked_value(index_type const specified_index) const {
 		return container[specified_index];
 	}
 	container_type container;

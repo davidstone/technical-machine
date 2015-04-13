@@ -65,10 +65,6 @@ auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
 	return (it != moves.regular().end()) ? IndexResult(it - moves.regular().begin()) : bounded::none;
 }
 
-auto MoveCollection::size() const -> MoveCollection::size_type {
-	return container.size();
-}
-
 auto MoveCollection::remove_switch() -> void {
 	container.remove_switch();
 }

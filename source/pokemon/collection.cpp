@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -45,20 +45,6 @@ void PokemonCollection::initialize_replacement () {
 	// No need to bounds check because index() already is
 	current_replacement = index();
 }
-
-PokemonCollection::const_iterator PokemonCollection::begin() const {
-	return container.begin();
-}
-PokemonCollection::iterator PokemonCollection::begin() {
-	return container.begin();
-}
-PokemonCollection::const_iterator PokemonCollection::end() const {
-	return container.end();
-}
-PokemonCollection::iterator PokemonCollection::end() {
-	return container.end();
-}
-
 
 PokemonCollection::index_type PokemonCollection::replacement() const {
 	return current_replacement;
@@ -116,7 +102,7 @@ bool PokemonCollection::seen (Species const name) {
 
 void PokemonCollection::remove_active () {
 	assert(index() != replacement());
-	container.erase(container.begin() + index().value());
+	container.erase(container.begin() + index());
 	decrement_real_size();
 	// We don't need any bounds checking here because we've already established
 	// that replacement() is greater than index(), so it cannot be 0, which is

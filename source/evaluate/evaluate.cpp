@@ -207,7 +207,7 @@ auto Evaluate::sleep_clause (Team const & team) -> type {
 	auto const sleepers = [](Pokemon const & pokemon) {
 		return is_sleeping_due_to_other(get_status(pokemon));
 	};
-	auto const sleeper_count = std::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
+	auto const sleeper_count = bounded::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
 	if (sleeper_count > 1_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
 	}

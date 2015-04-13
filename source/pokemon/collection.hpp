@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -43,9 +43,6 @@ class PokemonCollection : public detail::Collection<PokemonContainer> {
 	using Base = detail::Collection<PokemonContainer>;
 public:
 	using Base::index_type;
-	using Base::size_type;
-	using const_iterator = Base::container_type::const_iterator;
-	using iterator = Base::container_type::iterator;
 	explicit PokemonCollection(TeamSize initial_size);
 	// Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
@@ -57,10 +54,18 @@ public:
 		auto const self = const_cast<PokemonCollection const *>(this);
 		return const_cast<Pokemon &>(self->operator()(std::forward<Args>(args)...));
 	}
-	const_iterator begin() const;
-	iterator begin();
-	const_iterator end() const;
-	iterator end();
+	auto begin() const {
+		return container.begin();
+	}
+	auto begin() {
+		return container.begin();
+	}
+	auto end() const {
+		return container.end();
+	}
+	auto end() {
+		return container.end();
+	}
 
 	index_type replacement() const;
 	void set_replacement (index_type const new_index);

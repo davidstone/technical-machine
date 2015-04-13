@@ -40,7 +40,6 @@ class MoveCollection : public detail::Collection<MoveContainer> {
 	using Base = detail::Collection<MoveContainer>;
 public:
 	using Base::index_type;
-	using Base::size_type;
 	explicit MoveCollection(TeamSize my_team_size);
 	
 	auto regular() const {
@@ -51,7 +50,9 @@ public:
 	}
 
 	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
-	auto size() const -> size_type;
+	auto size() const {
+		return container.size();
+	}
 	auto remove_switch() -> void;
 };
 

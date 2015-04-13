@@ -20,6 +20,7 @@
 #include "clients/pokemon_online/client.hpp"
 #include "clients/pokemon_showdown/client.hpp"
 
+#include "move/max_moves_per_pokemon.hpp"
 #include "pokemon/max_pokemon_per_team.hpp"
 
 #include <boost/lexical_cast.hpp>
@@ -70,7 +71,7 @@ void print_debug_statements() {
 	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
 	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
 	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-	constexpr auto heap_allocated_size = max_pokemon_per_team * (bounded::make<sizeof(Pokemon)>() + 4_bi * bounded::make<sizeof(Move)>());
+	constexpr auto heap_allocated_size = max_pokemon_per_team * max_moves_per_pokemon * bounded::make<sizeof(Move)>();
 	constexpr auto full_team_size = bounded::make<sizeof(Team)>() + heap_allocated_size;
 	std::cout << "size of full team: " << full_team_size << '\n';
 	std::cout << "heap allocated_size: " << heap_allocated_size << '\n';

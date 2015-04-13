@@ -1,5 +1,5 @@
 // Basic container for Pokemon that helps with bounds checking
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,42 +17,35 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "container.hpp"
+
+#include <algorithm>
 #include <cassert>
 
 namespace technicalmachine {
 
 auto PokemonContainer::operator[](index_type const index) const -> Pokemon const & {
 	assert(index < size());
-	return m_container[static_cast<container_type::size_type>(index)];
+	return *m_container[index];
 }
 
-auto PokemonContainer::size() const -> size_type {
-	return static_cast<size_type>(m_container.size());
+auto PokemonContainer::erase(iterator it) -> void {
+	// The iterator passed in is valid, so it is before the first boost::none
+	// element. Skip scanning anything before it.
+	auto const e = bounded::find(it.m_it, m_container.end(), boost::none);
+	assert(it.m_it != e);
+	auto const to_clear = std::move(bounded::next(it.m_it), e, it.m_it);
+	*to_clear = boost::none;
 }
 
-auto PokemonContainer::empty() const -> bool {
-	return m_container.empty();
+auto PokemonContainer::base_end() const -> container_type::const_iterator {
+	return bounded::find(m_container.begin(), m_container.end(), boost::none);
 }
 
-auto PokemonContainer::begin() const -> const_iterator {
-	return m_container.begin();
-}
-auto PokemonContainer::begin() -> iterator {
-	return m_container.begin();
-}
-auto PokemonContainer::end() const -> const_iterator {
-	return m_container.end();
-}
-auto PokemonContainer::end() -> iterator {
-	return m_container.end();
+auto PokemonContainer::base_end() -> container_type::iterator {
+	return bounded::find(m_container.begin(), m_container.end(), boost::none);
 }
 
-void PokemonContainer::erase(iterator it) {
-	m_container.erase(it);
-}
-
-
-bool operator==(PokemonContainer const & lhs, PokemonContainer const & rhs) {
+auto operator==(PokemonContainer const & lhs, PokemonContainer const & rhs) -> bool {
 	return lhs.m_container == rhs.m_container;
 }
 
