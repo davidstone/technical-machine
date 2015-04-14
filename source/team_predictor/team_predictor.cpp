@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -95,10 +95,11 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 
 void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed) {
 	for (Moves const move : detailed) {
-		if (size(moves.regular()) == max_moves_per_pokemon) {
+		auto const regular = moves.regular();
+		if (size(regular) == max_moves_per_pokemon) {
 			break;
 		}
-		bool const already_has_move = std::find(moves.regular().begin(), moves.regular().end(), move) != moves.regular().end();
+		bool const already_has_move = bounded::find(regular.begin(), regular.end(), move) != regular.end();
 		if (already_has_move) {
 			continue;
 		}

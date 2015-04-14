@@ -1,5 +1,5 @@
 // Evaluate the state of the game
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -112,7 +112,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const & moves = regular_moves(pokemon);
-	auto const has_baton_pass = std::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
+	auto const has_baton_pass = bounded::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return
 		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
 		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +

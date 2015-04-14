@@ -1,4 +1,4 @@
-// Basic container for Pokemon that helps with bounds checking
+// std::vector-like interface around a bounded::array
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,4 +16,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "container.hpp"
+#include "fixed_capacity_vector.hpp"

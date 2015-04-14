@@ -33,35 +33,30 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 }
 
 auto regular_move(MoveCollection const & moves) -> Move const & {
-	return *(moves.regular().begin() + static_cast<int>(moves.index()));
+	return *(moves.regular().begin() + RegularMoveIndex(moves.index()));
 }
 auto regular_move(MoveCollection & moves) -> Move & {
-	return *(moves.regular().begin() + static_cast<int>(moves.index()));
+	return *(moves.regular().begin() + RegularMoveIndex(moves.index()));
 }
 
 auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
-	auto it = std::find(regular().begin(), regular().end(), move);
+	auto it = bounded::find(regular().begin(), regular().end(), move);
 	if (it == regular().end()) {
 		container.emplace_back(move, pp_ups);
-		it = std::prev(regular().end());
+		it = bounded::prev(regular().end());
 	}
 	set_index(static_cast<index_type>(it - regular().begin()));
 }
 
 auto set_index(MoveCollection & moves, Moves const move) -> void {
-	auto it = moves.begin();
-	for (; it != moves.end(); ++it) {
-		if (static_cast<Moves>(*it) == move) {
-			moves.set_index(static_cast<MoveCollection::index_type>(it - moves.begin()));
-			break;
-		}
-	}
+	auto const it = bounded::find_if(moves.begin(), moves.end(), [=](Moves const test) { return move == test; });
 	assert(it != moves.end());
+	moves.set_index(static_cast<MoveCollection::index_type>(it - moves.begin()));
 }
 
 using IndexResult = bounded::optional<RegularMoveIndex>;
 auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
-	auto const it = std::find(moves.regular().begin(), moves.regular().end(), name);
+	auto const it = bounded::find(moves.regular().begin(), moves.regular().end(), name);
 	return (it != moves.regular().end()) ? IndexResult(it - moves.regular().begin()) : bounded::none;
 }
 

@@ -187,6 +187,7 @@ misc_sources = [
 	'endofturn.cpp',
 	'enum.cpp',
 	'gender.cpp',
+	'fixed_capacity_vector.cpp',
 	'hash.cpp',
 	'heal.cpp',
 	'item.cpp',

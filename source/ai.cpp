@@ -71,9 +71,6 @@ void print_debug_statements() {
 	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
 	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
 	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-	constexpr auto heap_allocated_size = max_pokemon_per_team * max_moves_per_pokemon * bounded::make<sizeof(Move)>();
-	constexpr auto full_team_size = bounded::make<sizeof(Team)>() + heap_allocated_size;
-	std::cout << "size of full team: " << full_team_size << '\n';
-	std::cout << "heap allocated_size: " << heap_allocated_size << '\n';
+	std::cout << "heap allocated_size: 0\n";
 }
 }	// namespace

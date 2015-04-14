@@ -180,7 +180,7 @@ bool block1 (ActivePokemon const user, Move const & move, ActivePokemon const ot
 
 bool imprison(Moves const move, ActivePokemon const other) {
 	auto const & moves = regular_moves(other);
-	return used_imprison(other) and std::find(moves.begin(), moves.end(), move) != moves.end();
+	return used_imprison(other) and bounded::find(moves.begin(), moves.end(), move) != moves.end();
 }
 
 bool is_blocked_by_taunt(Moves const move) {

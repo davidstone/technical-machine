@@ -23,12 +23,11 @@
 #include <algorithm>
 #include <cassert>
 #include <utility>
-#include <vector>
 
 namespace technicalmachine {
 
 auto operator+(MoveIterator const lhs, MoveIterator::difference_type const rhs) -> MoveIterator {
-	using RegularDistance = std::vector<Move>::const_iterator::difference_type;
+	using RegularDistance = RegularMoveContainer::const_iterator::difference_type;
 	static constexpr auto regular_max = static_cast<intmax_t>(std::numeric_limits<RegularMoveSize>::max());
 	auto const distance = static_cast<bounded::integer<-regular_max, regular_max>>(std::distance(lhs.m_regular, lhs.m_regular_end));
 	return (distance > rhs) ?
@@ -53,10 +52,10 @@ MoveContainer::MoveContainer(TeamSize const my_team_size):
 }
 
 auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) const -> Move const & {
-	return m_regular[index.value()];
+	return m_regular[index];
 }
 auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move & {
-	return m_regular[index.value()];
+	return m_regular[index];
 }
 
 auto MoveContainer::operator[](index_type const index) const -> Move const & {

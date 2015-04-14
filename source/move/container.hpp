@@ -23,14 +23,17 @@
 #include "move.hpp"
 #include "shared.hpp"
 
+#include "../fixed_capacity_vector.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/integer_range.hpp>
 
 #include <cassert>
-#include <vector>
 
 namespace technicalmachine {
 using namespace bounded::literal;
+
+using RegularMoveContainer = fixed_capacity_vector<Move, max_moves_per_pokemon.value()>;
 
 class MoveIterator {
 private:
@@ -61,14 +64,14 @@ public:
 
 private:
 	friend class MoveContainer;
-	MoveIterator(std::vector<Move>::const_iterator regular, std::vector<Move>::const_iterator regular_end, SharedMovesIterator shared) noexcept:
+	MoveIterator(RegularMoveContainer::const_iterator regular, RegularMoveContainer::const_iterator regular_end, SharedMovesIterator shared) noexcept:
 		m_regular(std::move(regular)),
 		m_regular_end(std::move(regular_end)),
 		m_shared(std::move(shared)) {
 	}
 	
-	std::vector<Move>::const_iterator m_regular;
-	std::vector<Move>::const_iterator m_regular_end;
+	RegularMoveContainer::const_iterator m_regular;
+	RegularMoveContainer::const_iterator m_regular_end;
 	SharedMovesIterator m_shared;
 };
 
@@ -128,8 +131,8 @@ public:
 	using size_type = MoveSize;
 	using index_type = MoveIndex;
 	using const_iterator = MoveIterator;
-	using const_regular_iterator = std::vector<Move>::const_iterator;
-	using regular_iterator = std::vector<Move>::iterator;
+	using const_regular_iterator = RegularMoveContainer::const_iterator;
+	using regular_iterator = RegularMoveContainer::iterator;
 	
 	explicit MoveContainer(TeamSize my_team_size);
 	
@@ -141,16 +144,16 @@ public:
 	}
 
 	// Skips Struggle and switches
-	const_regular_iterator regular_begin() const {
+	auto regular_begin() const {
 		return m_regular.begin();
 	}
-	regular_iterator regular_begin() {
+	auto regular_begin() {
 		return m_regular.begin();
 	}
-	const_regular_iterator regular_end() const {
+	auto regular_end() const {
 		return m_regular.end();
 	}
-	regular_iterator regular_end() {
+	auto regular_end() {
 		return m_regular.end();
 	}
 	
@@ -175,7 +178,7 @@ public:
 private:
 	auto unchecked_regular_move(RegularMoveIndex index) const -> Move const &;
 	auto unchecked_regular_move(RegularMoveIndex index) -> Move &;
-	std::vector<Move> m_regular;
+	RegularMoveContainer m_regular;
 	SharedMoves m_shared;
 };
 

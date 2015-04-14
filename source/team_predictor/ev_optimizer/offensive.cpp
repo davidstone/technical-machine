@@ -156,7 +156,7 @@ namespace {
 template<typename Predicate>
 bool has_move(Pokemon const & pokemon, Predicate predicate) {
 	auto const & moves = regular_moves(pokemon);
-	return std::any_of(moves.begin(), moves.end(), predicate);
+	return bounded::find_if(moves.begin(), moves.end(), predicate) != moves.end();
 }
 
 bool has_physical_move(Pokemon const & pokemon) {
