@@ -61,10 +61,6 @@ protected:
 	Battle const & add_pending_challenge(Args && ... args) {
 		return Base::add_pending_challenge<Battle>(std::forward<Args>(args)...);
 	}
-	template<typename Timer>
-	auto make_timer() {
-		return std::make_unique<Timer>(m_io);
-	}
 	void handle_private_message (std::string const & sender, std::string const & message);
 private:
 	bool is_trusted (std::string const & user) const;
