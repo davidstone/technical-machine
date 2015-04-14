@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,12 +20,11 @@
 #include "evaluate.hpp"
 #include "../pokemon/pokemon.hpp"
 
-namespace technicalmachine {
-namespace {
-using namespace bounded::literal;
+#include <algorithm>
+#include <cassert>
 
-constexpr auto initial = static_cast<double>(victory + 1_bi);
-}
+namespace technicalmachine {
+using namespace bounded::literal;
 
 MoveScores::MoveScores(Pokemon const & pokemon) {
 	// Set the score of all foe moves to an illegally high value, so that they
@@ -36,19 +35,31 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
 	for (auto const & move : all_moves(pokemon)) {
-		key_type const key(pokemon, move);
-		auto const inserted = scores.emplace(key, initial);
-		if (inserted.second) {
-			inserted.first->second = initial;
-		}
+		constexpr auto initial = static_cast<double>(victory + 1_bi);
+		m_scores.emplace_back(key_type(pokemon, move), initial);
 	}
+	std::sort(m_scores.begin(), m_scores.end());
 }
 
-double const & MoveScores::at(Species const species, Moves const name) const {
-	return scores.at(key_type(species, name));
+namespace {
+
+template<typename Container>
+auto & get(Container & container, Species const species, Moves const move) {
+	auto const key = std::make_pair(species, move);
+	auto compare = [](auto const & element, auto const & requested) { return element.first < requested; };
+	auto const it = std::lower_bound(container.begin(), container.end(), key, compare);
+	assert(it != container.end());
+	assert(it->first == key);
+	return it->second;
 }
-double & MoveScores::at(Species const species, Moves const name) {
-	return scores.at(key_type(species, name));
+
+}	// namespace
+
+double MoveScores::at(Species const species, Moves const move) const {
+	return get(m_scores, species, move);
+}
+double & MoveScores::at(Species const species, Moves const move) {
+	return get(m_scores, species, move);
 }
 
 }	// namespace technicalmachine

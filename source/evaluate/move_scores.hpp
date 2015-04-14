@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,8 +19,7 @@
 #ifndef EVALUATE__MOVE_SCORES_HPP_
 #define EVALUATE__MOVE_SCORES_HPP_
 
-#include <cstdint>
-#include <map>
+#include <vector>
 #include "../move/moves.hpp"
 #include "../pokemon/species_forward.hpp"
 
@@ -30,12 +29,12 @@ class Pokemon;
 class MoveScores {
 public:
 	explicit MoveScores(Pokemon const & pokemon);
-	double const & at(Species species, Moves name) const;
-	double & at(Species species, Moves name);
+	double at(Species species, Moves move) const;
+	double & at(Species species, Moves move);
 private:
 	using key_type = std::pair<Species, Moves>;
-	using container_type = std::map<key_type, double>;
-	container_type scores;
+	using container_type = std::vector<std::pair<key_type, double>>;
+	container_type m_scores;
 };
 
 }	// namespace technicalmachine
