@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,24 +18,25 @@
 
 #include "load_stats.hpp"
 
-#include <fstream>
-#include <string>
-#include <boost/lexical_cast.hpp>
-
 #include "../invalid_settings_file.hpp"
 
 #include "../pokemon/species.hpp"
 
 #include "../string_conversions/conversion.hpp"
 
+#include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include <string>
+
 namespace technicalmachine {
 
 namespace {
 
 template<typename T>
-auto load_stats_from_file(std::string const & file_name) {
+auto load_stats_from_file(boost::filesystem::path const & file_name) {
 	bounded::array<T, number_of_species> overall = {{}};
-	std::ifstream file(file_name);
+	boost::filesystem::ifstream file(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
 	}

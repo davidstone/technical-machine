@@ -27,11 +27,11 @@ namespace technicalmachine {
 
 Settings::Settings () {
 	boost::property_tree::ptree pt;
-	read_xml (file_name(), pt);
+	read_xml(file_name().string(), pt);
 
 	boost::property_tree::ptree & root = pt.get_child ("settings");
 
-	team_file = root.get <std::string> ("team");
+	team_file = root.get<boost::filesystem::path>("team");
 	for (boost::property_tree::ptree::value_type const & server_tree : root.get_child ("servers"))
 		servers.emplace_back(server_tree.second);
 	chattiness = root.get <unsigned> ("chattiness");
@@ -59,7 +59,7 @@ void Settings::write () const {
 	root.add ("time", "%Y-%m-%d %H:%M:%S");
 	root.add ("chattiness", 50);
 
-	write_xml (file_name(), pt, std::locale (), format_settings);
+	write_xml(file_name().string(), pt, std::locale (), format_settings);
 }
 
 void Server::add (boost::property_tree::ptree & root) const {
@@ -71,8 +71,8 @@ void Server::add (boost::property_tree::ptree & root) const {
 	server_tree.add ("password", password);
 }
 
-std::string Settings::file_name() {
-	static std::string const name = "settings/settings.xml";
+boost::filesystem::path const & Settings::file_name() {
+	static boost::filesystem::path const name = "settings/settings.xml";
 	return name;
 }
 

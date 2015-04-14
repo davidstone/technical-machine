@@ -86,9 +86,8 @@ DetailedStats::DetailedStats():
 	item(),
 	ability(),
 	nature() {
-	static std::string const file_name = "settings/Generation 4/OU/detailed.xml";
 	boost::property_tree::ptree pt;
-	read_xml(file_name, pt);
+	read_xml("settings/Generation 4/OU/detailed.xml", pt);
 	
 	auto const all_stats = pt.get_child("stats");
 	for (auto const & value : all_stats) {

@@ -21,23 +21,6 @@
 
 #include "client.hpp"
 
-#include <chrono>
-#include <cstdint>
-#include <ctime>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <thread>
-#include <utility>
-#include <vector>
-
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/asio/connect.hpp>
-#include <boost/asio/error.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 
@@ -48,6 +31,24 @@
 #include "../../settings_file.hpp"
 
 #include "../../evaluate/evaluate.hpp"
+
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/error.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include <chrono>
+#include <cstdint>
+#include <ctime>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace technicalmachine {
 namespace network {
@@ -66,7 +67,7 @@ Client::Client(unsigned const depth):
 	{
 	load_settings(false);
 	while (username().empty()) {
-		std::cerr << "Add a username and password entry to " + Settings::file_name() + " and hit enter.";
+		std::cerr << "Add a username and password entry to " << Settings::file_name() << " and hit enter.";
 		std::cin.get ();
 		load_settings (false);
 	}
@@ -75,9 +76,9 @@ Client::Client(unsigned const depth):
 
 namespace {
 
-std::vector<std::string> create_unsorted_vector (std::string const & file_name) {
-	std::vector <std::string> unsorted;
-	std::ifstream file (file_name);
+std::vector<std::string> create_unsorted_vector(boost::filesystem::path const & file_name) {
+	std::vector<std::string> unsorted;
+	boost::filesystem::ifstream file(file_name);
 	std::string line;
 	std::string const comment = "//";
 	while (getline(file, line)) {
@@ -87,7 +88,7 @@ std::vector<std::string> create_unsorted_vector (std::string const & file_name) 
 	return unsorted;
 }
 
-std::vector<std::string> create_sorted_vector (std::string const & file_name) {
+std::vector<std::string> create_sorted_vector(boost::filesystem::path const & file_name) {
 	// The sorted vector is used to allow std::binary_search to be used on the
 	// vector for fast searching. I use a sorted std::vector instead of a
 	// std::set because it has faster performance uses less memory. My use

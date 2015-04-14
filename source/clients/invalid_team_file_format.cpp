@@ -1,5 +1,5 @@
 // Exception if an invalid team file extension is given
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,12 +17,11 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "invalid_team_file_format.hpp"
-#include <string>
 
 namespace technicalmachine {
 
-InvalidTeamFileFormat::InvalidTeamFileFormat(std::string const & file):
-	std::logic_error("Attempted to load " + file + ".") {
+InvalidTeamFileFormat::InvalidTeamFileFormat(boost::filesystem::path const & file):
+	std::logic_error("Attempted to load " + file.string() + ".") {
 }
 
 }	// namespace technicalmachine

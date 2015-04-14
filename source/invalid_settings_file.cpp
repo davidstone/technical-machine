@@ -1,5 +1,5 @@
 // Exception class for settings files that are incorrect
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,8 +34,8 @@ std::string to_string(InvalidSettingsFile::Problem const problem) {
 }
 }	// namespace
 
-InvalidSettingsFile::InvalidSettingsFile(std::string const & file_name, Problem const problem):
-	std::runtime_error(file_name + " " + to_string(problem) + ".") {
+InvalidSettingsFile::InvalidSettingsFile(boost::filesystem::path const & file_name, Problem const problem):
+	std::runtime_error(file_name.string() + " " + to_string(problem) + ".") {
 }
 
 }	// namespace technicalmachine

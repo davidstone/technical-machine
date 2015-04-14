@@ -1,5 +1,5 @@
 // Exception if an invalid team file extension is given
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,14 +19,14 @@
 #ifndef INVALID_TEAM_FILE_FORMAT_HPP_
 #define INVALID_TEAM_FILE_FORMAT_HPP_
 
+#include <boost/filesystem/path.hpp>
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
 class InvalidTeamFileFormat : public std::logic_error {
 public:
-	explicit InvalidTeamFileFormat(std::string const & file);
+	explicit InvalidTeamFileFormat(boost::filesystem::path const & file);
 };
 }	// namespace technicalmachine
 #endif	// INVALID_TEAM_FILE_FORMAT_HPP_

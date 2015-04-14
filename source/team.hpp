@@ -19,10 +19,6 @@
 #ifndef TEAM_HPP_
 #define TEAM_HPP_
 
-#include <cstdint>
-#include <random>
-#include <string>
-
 #include "entry_hazards.hpp"
 #include "screens.hpp"
 #include "wish.hpp"
@@ -32,6 +28,12 @@
 #include "pokemon/collection.hpp"
 #include "pokemon/species_forward.hpp"
 
+#include <boost/filesystem/path.hpp>
+
+#include <cstdint>
+#include <random>
+#include <string>
+
 namespace technicalmachine {
 class Ability;
 class Pokemon;
@@ -40,7 +42,7 @@ class Weather;
 class Team {
 public:
 	explicit Team(TeamSize initial_size, bool is_me = false);
-	Team(std::mt19937 & random_engine, std::string const & team_file_name);
+	Team(std::mt19937 & random_engine, boost::filesystem::path const & team_file);
 	
 	auto pokemon() const {
 		return ActivePokemon(all_pokemon()(), m_flags);
@@ -87,7 +89,7 @@ public:
 
 private:
 	friend class Evaluate;
-	void load(std::string const & name);
+	void load(boost::filesystem::path const & team_file);
 	
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;

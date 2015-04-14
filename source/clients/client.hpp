@@ -19,15 +19,17 @@
 #ifndef CLIENTS__CLIENT_HPP_
 #define CLIENTS__CLIENT_HPP_
 
-#include <cstdint>
-#include <random>
-#include <string>
-
 #include "battles.hpp"
 
 #include "../evaluate/evaluate.hpp"
 
 #include "../team_predictor/detailed_stats.hpp"
+
+#include <boost/filesystem/path.hpp>
+
+#include <cstdint>
+#include <random>
+#include <string>
 
 namespace technicalmachine {
 class Settings;
@@ -67,7 +69,7 @@ protected:
 	}
 	template<typename Battle, typename ... Args>
 	Battle const & add_pending_challenge (std::string const & opponent, TeamSize const team_size, Args && ... args) {
-		return battles.add_pending_challenge<Battle>(opponent, team_size, rd(), m_depth, std::forward<Args>(args)..., team_file_name);
+		return battles.add_pending_challenge<Battle>(opponent, team_size, rd(), m_depth, std::forward<Args>(args)..., team_file);
 	}
 	bool challenges_are_queued() const;
 	std::string const & first_challenger() const;
@@ -80,7 +82,7 @@ private:
 	Battles battles;
 	DetailedStats detailed_stats;
 	Evaluate m_evaluation_constants;
-	std::string team_file_name;
+	boost::filesystem::path team_file;
 	unsigned m_depth;
 };
 

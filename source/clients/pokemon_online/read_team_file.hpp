@@ -1,5 +1,5 @@
 // Load Pokemon Online teams
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,13 @@
 #ifndef POKEMON_ONLINE__READ_TEAM_FILE_HPP_
 #define POKEMON_ONLINE__READ_TEAM_FILE_HPP_
 
-#include <string>
+#include <boost/filesystem/path.hpp>
 
 namespace technicalmachine {
 class Team;
 namespace po {
 
-void load_team (Team & team, std::string const & file_name);
+void load_team(Team & team, boost::filesystem::path const & team_file);
 
 } // namespace po
 } // namespace technicalmachine

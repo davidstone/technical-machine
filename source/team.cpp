@@ -51,16 +51,14 @@ Team::Team(TeamSize const initial_size, bool team_is_me) :
 	{
 }
 
-Team::Team(std::mt19937 & random_engine, std::string const & team_file_name) :
+Team::Team(std::mt19937 & random_engine, boost::filesystem::path const & team_file) :
 	m_all_pokemon(6_bi), // This size gets corrected later
 	me(true)
 	{
-	boost::filesystem::path team_file = team_file_name;
 	std::vector <boost::filesystem::path> const files = open_directory_and_add_files (team_file);
 	assert(files.size() > 0);
 	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
-	team_file = files [distribution (random_engine)];
-	load(team_file.string());
+	load(files[distribution(random_engine)]);
 }
 
 Pokemon const & Team::pokemon(PokemonCollection::index_type const index) const {
@@ -138,23 +136,19 @@ std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesy
 
 }	// namespace
 
-void Team::load(std::string const & name) {
+void Team::load(boost::filesystem::path const & team_file) {
 	// I do no error checking because I assume my team files will always be in
 	// the proper format. This must be changed if I ever allow arbitary teams
 	// to be used.
 
-	size_t const dot = name.rfind ('.');
-	// I include '.' in the extension to protect against malformed file names.
-	// If a file does not have a '.', I don't want to try to make a substr from
-	// std::string::npos + 1.
-	std::string extension = name.substr (dot);
-	boost::algorithm::to_lower (extension);
-	if (extension == ".tp")
-		po::load_team(*this, name);
-	else if (extension == ".sbt")
-		pl::load_team(*this, name);
-	else
-		throw InvalidTeamFileFormat(name);
+	auto const extension = boost::filesystem::extension(team_file);
+	if (extension == ".tp") {
+		po::load_team(*this, team_file);
+	} else if (extension == ".sbt") {
+		pl::load_team(*this, team_file);
+	} else {
+		throw InvalidTeamFileFormat(team_file);
+	}
 }
 
 bool operator== (Team const & lhs, Team const & rhs) {

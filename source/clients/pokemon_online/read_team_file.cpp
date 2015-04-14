@@ -1,5 +1,5 @@
 // Load Pokemon Online teams
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -152,9 +152,9 @@ void load_pokemon(ptree const & pt, Team & team) {
 
 }	// anonymous namespace
 
-void load_team(Team & team, std::string const & file_name) {
+void load_team(Team & team, boost::filesystem::path const & team_file) {
 	ptree pt;
-	read_xml(file_name, pt);
+	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
 	team.all_pokemon().initialize_size(number_of_pokemon(all_pokemon));

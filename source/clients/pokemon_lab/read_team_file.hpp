@@ -1,5 +1,5 @@
 // Load Pokemon Lab teams
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,13 @@
 #ifndef POKEMON_LAB__READ_TEAM_FILE_HPP_
 #define POKEMON_LAB__READ_TEAM_FILE_HPP_
 
-#include <string>
+#include <boost/filesystem/path.hpp>
 
 namespace technicalmachine {
 class Team;
 namespace pl {
 
-void load_team (Team & team, std::string const & file_name);
+void load_team (Team & team, boost::filesystem::path const & team_file);
 
 }	// namespace pl
 }	// namespace technicalmachine

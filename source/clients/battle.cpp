@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,16 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "battle.hpp"
-
-#include <algorithm>
-#include <cassert>
-#include <cstdint>
-#include <iostream>
-#include <random>
-#include <string>
-#include <vector>
-
-#include <boost/filesystem.hpp>
 
 #include "battle_result.hpp"
 #include "client.hpp"
@@ -57,13 +47,23 @@
 
 #include "../team_predictor/team_predictor.hpp"
 
+#include <boost/filesystem.hpp>
+
+#include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <iostream>
+#include <random>
+#include <string>
+#include <vector>
+
 namespace technicalmachine {
 class DetailedStats;
 
-Battle::Battle(std::string const & _opponent, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, std::string const & team_file_name):
+Battle::Battle(std::string const & _opponent, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file):
 	opponent_name(_opponent),
 	random_engine(seed),
-	ai(random_engine, team_file_name),
+	ai(random_engine, team_file),
 	foe(foe_size),
 	updated_hp(ai),
 	depth(battle_depth)
@@ -301,7 +301,7 @@ std::string get_extension() {
 }
 
 template<typename RandomEngine>
-std::string generate_team_file_name(RandomEngine & random_engine) {
+boost::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
 	// file name, and continues until it generates a name that does not exist.
@@ -311,11 +311,10 @@ std::string generate_team_file_name(RandomEngine & random_engine) {
 	// the same time. The result of this is that a team file would not be saved
 	// when it should have been, which is not a major issue.
 	constexpr unsigned file_name_length = 8;
-	std::string foe_team_file;
+	boost::filesystem::path foe_team_file;
 	do {
-		foe_team_file = "teams/foe/";
-		foe_team_file += random_string(random_engine, file_name_length);
-		foe_team_file += get_extension();
+		foe_team_file = "teams/foe";
+		foe_team_file /= random_string(random_engine, file_name_length) + get_extension();
 	} while (boost::filesystem::exists(foe_team_file));
 	return foe_team_file;
 }

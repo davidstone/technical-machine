@@ -70,7 +70,7 @@ Client::Client(unsigned depth):
 	::technicalmachine::Client(depth) {
 	load_settings (false);
 	while (m_username.empty()) {
-		std::cerr << "Add a username and password entry to " + Settings::file_name() + " and hit enter.";
+		std::cerr << "Add a username and password entry to " << Settings::file_name() << " and hit enter.";
 		std::cin.get();
 		load_settings(false);
 	}

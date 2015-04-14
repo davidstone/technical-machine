@@ -1,5 +1,5 @@
 // Exception class for settings files that are incorrect
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,20 +19,20 @@
 #ifndef INVALID_SETTINGS_FILE_HPP_
 #define INVALID_SETTINGS_FILE_HPP_
 
+#include <boost/filesystem/path.hpp>
+
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
-class InvalidSettingsFile : public std::runtime_error {
-public:
+struct InvalidSettingsFile : std::runtime_error {
 	enum Problem {
 		does_not_exist,
 		too_long,
 		too_short,
 		invalid_data
 	};
-	InvalidSettingsFile(std::string const & file_name, Problem const problem);
+	InvalidSettingsFile(boost::filesystem::path const & file_name, Problem const problem);
 };
 
 }	// namespace technicalmachine

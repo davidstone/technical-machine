@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,12 +19,6 @@
 #ifndef BATTLE_HPP_
 #define BATTLE_HPP_
 
-#include <cstdint>
-#include <map>
-#include <random>
-#include <string>
-#include <vector>
-
 #include "battle_result.hpp"
 #include "party.hpp"
 #include "updated_hp.hpp"
@@ -36,6 +30,14 @@
 #include "../move/moves.hpp"
 
 #include "../pokemon/species_forward.hpp"
+
+#include <boost/filesystem/path.hpp>
+
+#include <cstdint>
+#include <map>
+#include <random>
+#include <string>
+#include <vector>
 
 namespace technicalmachine {
 class Client;
@@ -69,7 +71,7 @@ public:
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, std::string const & team_file_name);
+	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file);
 	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, Team const & team);
 	uint8_t switch_slot(Moves move) const;
 	virtual VisibleFoeHP max_damage_precision() const;

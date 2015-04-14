@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -87,8 +87,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 	// I may not need to calculate this...
 	auto const total = static_cast<value_type>(std::accumulate(overall.begin(), overall.end(), 0U));
 
-	std::string const file_name = "settings/Generation 4/OU/teammate.txt";
-	std::ifstream file (file_name);
+	std::ifstream file("settings/Generation 4/OU/teammate.txt");
 	std::string line;
 	while (getline(file, line)) {
 		constexpr char delimiter = '\t';

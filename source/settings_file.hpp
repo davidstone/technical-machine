@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace technicalmachine {
@@ -38,14 +39,14 @@ public:
 	void add (boost::property_tree::ptree & root) const;
 };
 
-class Settings {
-public:
-	std::string team_file;
+struct Settings {
+	Settings();
+	void write() const;
+	static boost::filesystem::path const & file_name();
+
+	boost::filesystem::path team_file;
 	std::vector <Server> servers;
 	unsigned chattiness;
-	Settings ();
-	void write () const;
-	static std::string file_name();
 };
 
 }	// namespace technicalmachine

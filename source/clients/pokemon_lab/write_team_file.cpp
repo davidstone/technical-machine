@@ -130,14 +130,14 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 
 }	// namespace
 
-void write_team (Team const & team, std::string const & file_name) {
+void write_team(Team const & team, boost::filesystem::path const & file_name) {
 	boost::property_tree::ptree pt;
 	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
 	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
 	}
-	write_xml (file_name, pt, std::locale (), settings);
+	write_xml(file_name.string(), pt, std::locale (), settings);
 }
 
 }	// namespace pl

@@ -1,5 +1,5 @@
 // Load Pokemon Lab teams
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -118,9 +118,9 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 
 }	// namespace
 
-void load_team (Team & team, std::string const & file_name) {
+void load_team(Team & team, boost::filesystem::path const & team_file) {
 	boost::property_tree::ptree pt;
-	read_xml (file_name, pt);
+	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
 	team.all_pokemon().initialize_size(static_cast<TeamSize>(all_pokemon.size()));

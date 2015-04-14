@@ -1,5 +1,5 @@
 // Exception if operations are performed on an empty team
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,15 +19,15 @@
 #ifndef EMPTY_TEAM_HPP_
 #define EMPTY_TEAM_HPP_
 
+#include <boost/filesystem/path.hpp>
+
 #include <stdexcept>
-#include <string>
 
 namespace technicalmachine {
 
-class EmptyTeam : public std::logic_error {
-public:
-	EmptyTeam(std::string const & file, unsigned const line):
-		std::logic_error("Attempted operation on a team of size 0 at: " + file + ": " + std::to_string(line) + ".") {
+struct EmptyTeam : std::logic_error {
+	EmptyTeam(boost::filesystem::path const & file, unsigned const line):
+		std::logic_error("Attempted operation on a team of size 0 at: " + file.string() + ": " + std::to_string(line) + ".") {
 	}
 };
 }	// namespace technicalmachine

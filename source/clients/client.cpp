@@ -49,7 +49,7 @@ Settings Client::load_settings(bool const reload) {
 		m_evaluation_constants = Evaluate{};
 	}
 	Settings const settings;
-	team_file_name = settings.team_file;
+	team_file = settings.team_file;
 	return settings;
 }
 
@@ -62,8 +62,8 @@ Evaluate const & Client::evaluation_constants() const {
 }
 
 Team Client::generate_team() {
-	std::cerr << team_file_name << '\n';
-	return Team(random_engine, team_file_name);
+	std::cerr << team_file << '\n';
+	return Team(random_engine, team_file);
 }
 
 void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party const party) {

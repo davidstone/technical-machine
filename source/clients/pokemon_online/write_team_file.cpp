@@ -119,7 +119,7 @@ void write_blank_pokemon (ptree & pt) {
 
 }	// anonymous namespace
 
-void write_team (Team & team, std::string const & file_name) {
+void write_team(Team & team, boost::filesystem::path const & file_name) {
 	ptree pt;
 	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
 	ptree & t = pt.add ("Team", "");
@@ -138,7 +138,7 @@ void write_team (Team & team, std::string const & file_name) {
 		static_cast<void>(unused);
 		write_blank_pokemon(t);
 	}
-	write_xml(file_name, pt, std::locale{}, settings);
+	write_xml(file_name.string(), pt, std::locale{}, settings);
 }
 
 }	// namespace po
