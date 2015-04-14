@@ -18,12 +18,6 @@
 
 #include "read_team_file.hpp"
 
-#include <map>
-#include <string>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
 #include "../../team.hpp"
 
 #include "../../move/move.hpp"
@@ -36,6 +30,12 @@
 
 #include "../../string_conversions/conversion.hpp"
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include <string>
+#include <unordered_map>
+
 namespace technicalmachine {
 namespace pl {
 namespace {
@@ -47,7 +47,7 @@ Move load_move(boost::property_tree::ptree const & pt) {
 }
 
 static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
-	static std::map<std::string, StatNames> const stats = {
+	static std::unordered_map<std::string, StatNames> const stats = {
 		{ "Atk", StatNames::ATK },
 		{ "Def", StatNames::DEF },
 		{ "SpAtk", StatNames::SPA },
@@ -74,7 +74,7 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 }
 
 Species from_simulator_string(std::string const & str) {
-	static std::map<std::string, Species> const convertor = {
+	static std::unordered_map<std::string, Species> const convertor = {
 		{ "Deoxys", Species::Deoxys_Mediocre },
 		{ "Deoxys-f", Species::Deoxys_Attack },
 		{ "Deoxys-l", Species::Deoxys_Defense },

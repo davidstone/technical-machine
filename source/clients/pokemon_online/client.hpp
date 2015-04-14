@@ -1,5 +1,5 @@
 // Connect to Pokemon Online
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,13 @@
 #ifndef POKEMON_ONLINE__CONNECT_HPP_
 #define POKEMON_ONLINE__CONNECT_HPP_
 
-#include <cstdint>
-#include <map>
-#include <string>
-
 #include "inmessage.hpp"
 #include "../network/client.hpp"
 #include "../../team.hpp"
+
+#include <cstdint>
+#include <string>
+#include <unordered_map>
 
 namespace technicalmachine {
 namespace po {
@@ -133,10 +133,10 @@ public:
 	// of a new battle to prevent counter-teaming. It's only used when challenged.
 	Team team;
 private:
-	std::map <uint32_t, std::string> user_id_to_name;
-	std::map <std::string, uint32_t> user_name_to_id;
-	std::map <std::string, uint32_t> channel_to_id;
-	std::map <uint32_t, std::string> id_to_channel;
+	std::unordered_map<uint32_t, std::string> user_id_to_name;
+	std::unordered_map<std::string, uint32_t> user_name_to_id;
+	std::unordered_map<std::string, uint32_t> channel_to_id;
+	std::unordered_map<uint32_t, std::string> id_to_channel;
 	uint32_t my_id;
 };
 

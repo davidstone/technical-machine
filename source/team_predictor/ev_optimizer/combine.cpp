@@ -1,5 +1,5 @@
 // Combine all optimized EVs and correct the Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,12 +31,12 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 namespace technicalmachine {
 
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s, Pokemon & pokemon) {
-	typedef std::map<Nature, EV::total_type> Sums;
+	typedef std::unordered_map<Nature, EV::total_type> Sums;
 	Sums sums;
 	for (auto const & speed : s.container) {
 		auto const offensive = o.container.find(speed.first);

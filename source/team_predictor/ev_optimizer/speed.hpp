@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,10 +19,10 @@
 #ifndef TEAM_PREDICTOR__EV_OPTIMIZER__SPEED_HPP_
 #define TEAM_PREDICTOR__EV_OPTIMIZER__SPEED_HPP_
 
-#include <map>
-
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
+
+#include <unordered_map>
 
 namespace technicalmachine {
 class Pokemon;
@@ -34,7 +34,7 @@ public:
 	explicit SpeedEVs(Pokemon const & pokemon);
 private:
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-	using Container = std::map<Nature, EV>;
+	using Container = std::unordered_map<Nature, EV>;
 	Container container;
 };
 

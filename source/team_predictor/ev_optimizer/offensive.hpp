@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,7 @@
 #ifndef TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
 #define TEAM_PREDICTOR__EV_OPTIMIZER__OFFENSIVE_HPP_
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -62,7 +62,7 @@ private:
 	};
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
 	friend auto combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon) -> void;
-	typedef std::map<Nature, OffensiveStats> Container;
+	typedef std::unordered_map<Nature, OffensiveStats> Container;
 	Container container;
 };
 

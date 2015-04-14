@@ -1,5 +1,5 @@
 // Nature functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,7 @@
 
 #include "stat_names.hpp"
 
+#include "../enum.hpp"
 #include "../rational.hpp"
 
 namespace technicalmachine {
@@ -62,4 +63,11 @@ auto lowers_defending_stat(Nature nature) -> bool;
 
 
 }	// namespace technicalmachine
+namespace std {
+
+template<>
+class hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
+
+}	// namespace std
+
 #endif	// STAT__NATURE_HPP_

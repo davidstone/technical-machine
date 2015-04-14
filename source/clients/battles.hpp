@@ -1,5 +1,5 @@
 // Handles challenges / current battles
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,12 +19,12 @@
 #ifndef CLIENTS__BATTLES_HPP_
 #define CLIENTS__BATTLES_HPP_
 
+#include "battle.hpp"
+
 #include <cstdint>
-#include <map>
 #include <memory>
 #include <string>
-
-#include "battle.hpp"
+#include <unordered_map>
 
 namespace technicalmachine {
 
@@ -48,9 +48,9 @@ public:
 private:
 	typedef std::unique_ptr<Battle> Pointer;
 	// Battles that have not yet begun
-	typedef std::map<std::string, Pointer> Challenges;
+	typedef std::unordered_map<std::string, Pointer> Challenges;
 	// Battles currently underway
-	typedef std::map<uint32_t, Pointer> Active;
+	typedef std::unordered_map<uint32_t, Pointer> Active;
 	Challenges challenges;
 	Active active;
 };

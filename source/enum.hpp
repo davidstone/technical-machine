@@ -22,6 +22,7 @@
 #include "hash.hpp"
 
 #include <cstdint>
+#include <functional>
 
 namespace technicalmachine {
 
@@ -42,6 +43,14 @@ constexpr auto hash(Enum const e) noexcept {
 	static_assert(std::is_enum<Enum>::value, "Only usable with enum types.");
 	return hash(bounded::make(e));
 }
+
+template<typename Enum>
+struct std_hash {
+	constexpr auto operator()(Enum const e) const {
+		using T = std::underlying_type_t<Enum>;
+		return std::hash<T>{}(static_cast<T>(e));
+	}
+};
 
 }	// namespace technicalmachine
 #endif	// ENUM_HPP_

@@ -30,6 +30,7 @@
 #include <cassert>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace technicalmachine {
@@ -39,7 +40,7 @@ using namespace bounded::literal;
 
 typedef std::vector<SingleClassificationEVs> Single;
 typedef std::vector<DataPoint> Estimates;
-typedef std::map<Nature, Estimates> AllPossible;
+typedef std::unordered_map<Nature, Estimates> AllPossible;
 AllPossible combine_results(Single const & physical, Single const & special, EV::total_type max_evs);
 
 DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);

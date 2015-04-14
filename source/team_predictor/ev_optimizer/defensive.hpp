@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,12 +19,12 @@
 #ifndef TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
 #define TEAM_PREDICTOR__EV_OPTIMIZER__DEFENSIVE_HPP_
 
-#include <map>
-#include <vector>
-
 #include "defensive_data_point.hpp"
 
 #include "../../stat/nature.hpp"
+
+#include <unordered_map>
+#include <vector>
 
 namespace technicalmachine {
 class Pokemon;
@@ -34,7 +34,7 @@ class SpeedEVs;
 class DefensiveEVs {
 public:
 	explicit DefensiveEVs(Pokemon const & pokemon);
-	typedef std::map<Nature, DataPoint> BestPerNature;
+	typedef std::unordered_map<Nature, DataPoint> BestPerNature;
 private:
 	void remove_inefficient_natures(std::vector<Nature> const & divided_natures);
 	void add_other_potential_natures();
