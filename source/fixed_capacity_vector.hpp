@@ -30,6 +30,9 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+template<typename T>
+using aligned_t = std::aligned_storage_t<sizeof(T), alignof(T)>;
+
 template<typename T, std::size_t capacity>
 struct fixed_capacity_vector;
 
@@ -38,18 +41,19 @@ struct fixed_capacity_vector_iterator {
 private:
 	friend struct fixed_capacity_vector<std::remove_const_t<T>, capacity>;
 	
-	using container = bounded::array<boost::optional<std::remove_const_t<T>>, capacity>;
+	using container = bounded::array<aligned_t<std::remove_const_t<T>>, capacity>;
 	using base_iterator = std::conditional_t<std::is_const<T>::value, typename container::const_iterator, typename container::iterator>;
 
 public:
 	using iterator_category = typename base_iterator::iterator_category;
-	using value_type = typename base_iterator::value_type;
+	using value_type = T;
 	using difference_type = typename base_iterator::difference_type;
-	using pointer = typename base_iterator::pointer;
-	using reference = typename base_iterator::reference;
+	using pointer = T *;
+	using reference = T &;
 
 	constexpr decltype(auto) operator*() const {
-		return **m_it;
+		using void_star = std::conditional_t<std::is_const<T>::value, void const *, void *>;
+		return *static_cast<T *>(static_cast<void_star>(&*m_it));
 	}
 	constexpr decltype(auto) operator->() const {
 		return &operator*();
@@ -58,11 +62,6 @@ public:
 	auto & operator++() {
 		++m_it;
 		return *this;
-	}
-	auto operator++(int) {
-		auto temp = *this;
-		++m_it;
-		return temp;
 	}
 	template<typename Offset>
 	friend constexpr auto operator+(fixed_capacity_vector_iterator const it, Offset const & offset) -> fixed_capacity_vector_iterator {
@@ -92,6 +91,13 @@ private:
 	base_iterator m_it;
 };
 
+template<typename T, std::size_t capacity>
+auto operator++(fixed_capacity_vector<T, capacity> it, int) {
+	auto temp = it;
+	++it;
+	return temp;
+}
+
 template<typename T, std::size_t capacity, typename Offset>
 constexpr auto operator-(fixed_capacity_vector_iterator<T, capacity> const it, Offset const & offset) {
 	return it + -offset;
@@ -111,22 +117,46 @@ constexpr auto operator!=(fixed_capacity_vector_iterator<T, capacity> const lhs,
 template<typename T, std::size_t capacity>
 struct fixed_capacity_vector {
 private:
-	using container_type = bounded::array<boost::optional<T>, capacity>;
-
+	using container_type = bounded::array<aligned_t<T>, capacity>;
 public:
 	using const_iterator = fixed_capacity_vector_iterator<T const, capacity>;
 	using iterator = fixed_capacity_vector_iterator<T, capacity>;
 	using index_type = typename container_type::index_type;
+	
+	constexpr fixed_capacity_vector() = default;
+	fixed_capacity_vector(fixed_capacity_vector const & other) noexcept(std::is_nothrow_copy_constructible<T>::value) {
+		for (auto const & value : other) {
+			emplace_back(value);
+		}
+	}
+	fixed_capacity_vector(fixed_capacity_vector && other) noexcept(std::is_nothrow_move_constructible<T>::value) {
+		for (auto && value : other) {
+			emplace_back(std::move(value));
+		}
+	}
+	fixed_capacity_vector & operator=(fixed_capacity_vector const & other) & noexcept(std::is_nothrow_copy_assignable<T>::value) {
+		assign(other.begin(), other.end());
+		return *this;
+	}
+	fixed_capacity_vector & operator=(fixed_capacity_vector && other) & noexcept(std::is_nothrow_move_assignable<T>::value) {
+		assign(std::make_move_iterator(other.begin()), std::make_move_iterator(other.end()));
+		return *this;
+	}
+	~fixed_capacity_vector() {
+		for (auto & value : *this) {
+			value.~T();
+		}
+	}
 
 	constexpr decltype(auto) operator[](index_type index) const {
-		return *m_container[index];
+		return *(begin() + index);
 	}
 	decltype(auto) operator[](index_type index) {
-		return *m_container[index];
+		return *(begin() + index);
 	}
 
 	constexpr auto size() const {
-		return static_cast<typename container_type::size_type>(base_end() - m_container.begin());
+		return m_size;
 	}
 	constexpr auto empty() const {
 		return size() == 0_bi;
@@ -139,39 +169,42 @@ public:
 		return iterator(m_container.begin());
 	}
 	constexpr auto end() const {
-		return const_iterator(base_end());
+		return begin() + m_size;
 	}
 	auto end() {
-		return iterator(base_end());
+		return begin() + m_size;
 	}
 
 	auto erase(iterator it) {
-		// The iterator passed in is valid, so it is before the first
-		// boost::none element. Skip scanning anything before it.
-		auto const e = bounded::find(it.m_it, m_container.end(), boost::none);
-		assert(it.m_it != e);
-		auto const to_clear = std::move(bounded::next(it.m_it), e, it.m_it);
-		*to_clear = boost::none;
+		assert(it != end());
+		auto const to_clear = std::move(bounded::next(it), end(), it);
+		to_clear->~T();
+		--m_size;
 	}
 
-	template<class... Args>
-	auto emplace_back(Args&&... args) {
-		auto const it = base_end();
-		assert(it != m_container.end());
-		it->emplace(std::forward<Args>(args)...);
-	}
-	friend constexpr auto operator==(fixed_capacity_vector const & lhs, fixed_capacity_vector const & rhs) -> bool {
-		return lhs.m_container == rhs.m_container;
+	template<typename... Args>
+	auto emplace_back(Args && ... args) {
+		assert(m_size != bounded::make<capacity>());
+		new(m_container.data() + m_size) T(std::forward<Args>(args)...);
+		++m_size;
 	}
 private:
-	constexpr auto base_end() const {
-		return bounded::find(m_container.begin(), m_container.end(), boost::none);
-	}
-	auto base_end() {
-		return bounded::find(m_container.begin(), m_container.end(), boost::none);
+	template<typename InputIterator>
+	void assign(InputIterator first, InputIterator const last) {
+		std::copy_n(first, size(), begin());
+		std::advance(first, size());
+		for (; first != last; ++first) {
+			emplace_back(*first);
+		}
 	}
 	container_type m_container;
+	bounded::integer<0, capacity> m_size = 0_bi;
 };
+
+template<typename T, std::size_t capacity>
+constexpr auto operator==(fixed_capacity_vector<T, capacity> const & lhs, fixed_capacity_vector<T, capacity> const & rhs) {
+	return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
 
 }	// namespace technicalmachine
 #endif	// TECHNICALMACHINE_FIXED_CAPACITY_VECTOR_HPP_
