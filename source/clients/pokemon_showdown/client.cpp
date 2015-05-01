@@ -113,8 +113,8 @@ void Client::run() {
 
 void Client::handle_message(InMessage const & message) {
 	if (message.type() == "challstr") {
-		auto const & key_id = message.at(0);
-		auto const & challenge = message.at(1);
+		// auto const & key_id = message.at(0);
+		// auto const & challenge = message.at(1);
 		websocketpp::lib::error_code ec;
 		std::string const request = "|/join lobby";
 		socket.send(m_handle, request, websocketpp::frame::opcode::text, ec);
