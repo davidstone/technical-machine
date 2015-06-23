@@ -21,14 +21,16 @@
 #include <cstddef>
 #include <stdexcept>
 #include <string>
-#include <typeinfo>
 #include <vector>
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class InvalidCollectionIndex : public std::out_of_range {
+class Move;
+class Pokemon;
+
+class InvalidCollectionIndex final : public std::out_of_range {
 public:
 	template<typename Index, typename Size>
 	InvalidCollectionIndex(Index const index, Size const size, std::string const & name):
@@ -122,7 +124,9 @@ public:
 protected:
 	constexpr index_type check_range(index_type const new_index) const {
 		using value_type = std::decay_t<decltype(container[new_index])>;
-		return (new_index < container.size()) ? new_index : throw InvalidCollectionIndex(new_index, container.size(), typeid(value_type).name());
+		return (new_index < container.size()) ?
+			new_index :
+			throw InvalidCollectionIndex(new_index, container.size(), value_type::class_name);
 	}
 	constexpr decltype(auto) unchecked_value(index_type const specified_index) const {
 		return container[specified_index];

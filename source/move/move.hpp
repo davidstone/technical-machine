@@ -29,6 +29,7 @@ class Ability;
 
 class Move {
 public:
+	static constexpr auto class_name = "Move";
 	// move must not be Moves::END
 	explicit Move(Moves move, Pp::pp_ups_type pp_ups = 3_bi);
 	operator Moves() const;

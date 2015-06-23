@@ -33,13 +33,26 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+struct TestValue {
+	static constexpr auto class_name = "TestValue";
+	constexpr TestValue(int v):
+		m_value(v) {
+	}
+	constexpr operator int() const {
+		return m_value;
+	}
+private:
+	int m_value;
+};
+
 class TestContainer {
 private:
 	static constexpr intmax_t maximum = 7;
 public:
 	using size_type = bounded::checked_integer<0, maximum>;
 	using index_type = bounded::checked_integer<0, maximum - 1>;
-	using value_type = int;
+	using value_type = TestValue;
+	
 	template<typename ... Args>
 	TestContainer(Args && ... args):
 		m_container(std::forward<Args>(args)...) {
@@ -56,7 +69,7 @@ private:
 
 void collection_range_tests() {
 	constexpr auto size = 7_bi;
-	std::vector<int> const v ({ 2, 3, 5, 7, 11, 13, 17 });
+	std::vector<TestValue> const v ({ 2, 3, 5, 7, 11, 13, 17 });
 	using collection_type = detail::Collection<TestContainer>;
 	collection_type base(v);
 	assert(v.size() == size);

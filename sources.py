@@ -183,6 +183,7 @@ team_builder_ui_sources = prepend_dir('team_predictor/ui', [
 misc_sources = [
 	'ability.cpp',
 	'block.cpp',
+	'collection.cpp',
 	'damage.cpp',
 	'endofturn.cpp',
 	'enum.cpp',
