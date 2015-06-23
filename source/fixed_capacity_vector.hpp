@@ -186,12 +186,15 @@ public:
 		++m_size;
 	}
 private:
+	void pop_back() {
+		bounded::prev(end())->~T();
+		--m_size;
+	}
 	auto erase(iterator const first, iterator const last) {
 		bool const has_remaining_elements = last != end();
-		auto element_to_clear = has_remaining_elements ? std::move(bounded::next(last), end(), first) : first;
-		for (; element_to_clear != end(); ++element_to_clear) {
-			element_to_clear->~T();
-			--m_size;
+		auto const element_to_clear = has_remaining_elements ? std::move(bounded::next(last), end(), first) : first;
+		while (element_to_clear != end()) {
+			pop_back();
 		}
 	}
 
