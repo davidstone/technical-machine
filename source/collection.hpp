@@ -1,5 +1,5 @@
 // Allows safe access to the active Pokemon / move
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,6 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
+#include "range.hpp"
 
 #include <cstddef>
 #include <stdexcept>
@@ -38,35 +40,6 @@ public:
 		{
 	}
 };
-
-template<typename Iterator>
-class Range {
-public:
-	using iterator = Iterator;
-	constexpr Range(iterator first, iterator last):
-		m_first(std::move(first)),
-		m_last(std::move(last)) {
-	}
-	constexpr auto begin() const {
-		return m_first;
-	}
-	constexpr auto end() const {
-		return m_last;
-	}
-private:
-	iterator m_first;
-	iterator m_last;
-};
-
-template<typename Iterator>
-constexpr auto size(Range<Iterator> const & range) {
-	return range.end() - range.begin();
-}
-
-template<typename Iterator>
-constexpr auto make_range(Iterator first, Iterator last) {
-	return Range<Iterator>(first, last);
-}
 
 namespace detail {
 

@@ -174,11 +174,9 @@ public:
 		return begin() + m_size;
 	}
 
-	auto erase(iterator it) {
+	auto erase(iterator const it) {
 		assert(it != end());
-		auto const to_clear = std::move(bounded::next(it), end(), it);
-		to_clear->~T();
-		--m_size;
+		erase(it, bounded::next(it));
 	}
 
 	template<typename... Args>
@@ -188,14 +186,26 @@ public:
 		++m_size;
 	}
 private:
-	template<typename InputIterator>
-	void assign(InputIterator first, InputIterator const last) {
-		std::copy_n(first, size(), begin());
-		std::advance(first, size());
-		for (; first != last; ++first) {
-			emplace_back(*first);
+	auto erase(iterator const first, iterator const last) {
+		bool const has_remaining_elements = last != end();
+		auto element_to_clear = has_remaining_elements ? std::move(bounded::next(last), end(), first) : first;
+		for (; element_to_clear != end(); ++element_to_clear) {
+			element_to_clear->~T();
+			--m_size;
 		}
 	}
+
+	template<typename InputIterator>
+	void assign(InputIterator const first, InputIterator const last) {
+		auto const other_size = last - first;
+		auto const elements_to_reuse = bounded::min(size(), other_size);
+		auto const it = std::copy_n(first, elements_to_reuse, begin());
+		erase(it, end());
+		for (auto remaining = first + elements_to_reuse; remaining != last; ++remaining) {
+			emplace_back(*remaining);
+		}
+	}
+
 	container_type m_container;
 	bounded::integer<0, capacity> m_size = 0_bi;
 };
