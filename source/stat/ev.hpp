@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__EV_HPP_
-#define STAT__EV_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -40,4 +39,3 @@ private:
 auto is_maxed(EV ev) -> bool;
 
 }	// namespace technicalmachine
-#endif	// STAT__EV_HPP_

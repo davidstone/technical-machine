@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE__TRANSPOSITION_HPP_
-#define EVALUATE__TRANSPOSITION_HPP_
+#pragma once
 
 namespace technicalmachine {
 
@@ -28,4 +27,3 @@ class Weather;
 double transposition(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
 
 }	// namespace technicalmachine
-#endif	// EVALUATE__TRANSPOSITION_HPP_

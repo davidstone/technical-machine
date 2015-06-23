@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENUM_HPP_
-#define ENUM_HPP_
+#pragma once
 
 #include "hash.hpp"
 
@@ -53,4 +52,3 @@ struct std_hash {
 };
 
 }	// namespace technicalmachine
-#endif	// ENUM_HPP_

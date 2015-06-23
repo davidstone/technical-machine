@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__INVALID_SIMULATOR_CONVERSION_HPP_
-#define TEST__INVALID_SIMULATOR_CONVERSION_HPP_
+#pragma once
 
 #include <stdexcept>
 #include "../string_conversions/ability.hpp"
@@ -41,4 +40,3 @@ public:
 
 }	// namespace technicalmachine
 
-#endif	// TEST__INVALID_SIMULATOR_CONVERSION_HPP_

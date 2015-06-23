@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BIDE__DURATION_HPP_
-#define BIDE__DURATION_HPP_
+#pragma once
 
 #include "../hash.hpp"
 
@@ -50,4 +49,3 @@ constexpr auto hash(BideDuration const duration) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// BIDE__DURATION_HPP_

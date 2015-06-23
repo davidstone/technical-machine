@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__POKEMON_HPP_
-#define POKEMON__POKEMON_HPP_
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -208,4 +207,3 @@ inline auto hp_ratio(Pokemon const & pokemon) {
 }
 
 }	// namespace technicalmachine
-#endif	// POKEMON__POKEMON_HPP_

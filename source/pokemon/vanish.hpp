@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VANISH_HPP_
-#define VANISH_HPP_
+#pragma once
 
 #include "../hash.hpp"
 
@@ -66,4 +65,3 @@ constexpr auto hash(Vanish const vanish) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// VANISH_HPP_

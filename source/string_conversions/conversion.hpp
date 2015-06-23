@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STRING_CONVERSIONS__CONVERSION_HPP_
-#define STRING_CONVERSIONS__CONVERSION_HPP_
+#pragma once
 
 #include <boost/utility/string_ref.hpp>
 
@@ -27,4 +26,3 @@ template<typename T>
 T from_string(boost::string_ref str);
 
 }	// namespace technicalmachine
-#endif	// STRING_CONVERSIONS__CONVERSION_HPP_

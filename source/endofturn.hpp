@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENDOFTURN_HPP_
-#define ENDOFTURN_HPP_
+#pragma once
 
 namespace technicalmachine {
 
@@ -27,4 +26,3 @@ class Weather;
 void endofturn (Team & first, Team & last, Weather & weather);
 
 }	// namespace technicalmachine
-#endif	// ENDOFTURN_HPP_

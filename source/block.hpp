@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BLOCK_HPP_
-#define BLOCK_HPP_
+#pragma once
 
 #include <cstddef>
 #include <vector>
@@ -49,4 +48,3 @@ private:
 bool can_execute_move(MutableActivePokemon user, ActivePokemon other, Weather weather);
 
 }	// namespace technicalmachine
-#endif	// BLOCK_HPP_

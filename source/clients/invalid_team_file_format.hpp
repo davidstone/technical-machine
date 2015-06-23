@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef INVALID_TEAM_FILE_FORMAT_HPP_
-#define INVALID_TEAM_FILE_FORMAT_HPP_
+#pragma once
 
 #include <boost/filesystem/path.hpp>
 #include <stdexcept>
@@ -29,4 +28,3 @@ public:
 	explicit InvalidTeamFileFormat(boost::filesystem::path const & file);
 };
 }	// namespace technicalmachine
-#endif	// INVALID_TEAM_FILE_FORMAT_HPP_

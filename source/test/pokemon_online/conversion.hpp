@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__POKEMON_ONLINE__CONVERSION_HPP_
-#define TEST__POKEMON_ONLINE__CONVERSION_HPP_
+#pragma once
 
 namespace technicalmachine {
 namespace po {
@@ -27,4 +26,3 @@ void test_conversions ();
 }	// namespace po
 }	// namespace technicalmachine
 
-#endif	// TEST__POKEMON_ONLINE__CONVERSION_HPP_

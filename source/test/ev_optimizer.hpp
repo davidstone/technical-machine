@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__EV_OPTIMIZER_HPP_
-#define TEST__EV_OPTIMIZER_HPP_
+#pragma once
 
 namespace technicalmachine {
 
@@ -25,4 +24,3 @@ void ev_optimizer_tests();
 
 }	// namespace technicalmachine
 
-#endif	// TEST__EV_OPTIMIZER_HPP_

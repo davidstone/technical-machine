@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENTS__UPDATED_HP_HPP_
-#define CLIENTS__UPDATED_HP_HPP_
+#pragma once
 
 #include <map>
 #include <bounded_integer/bounded_integer.hpp>
@@ -67,4 +66,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// CLIENTS__UPDATED_HP_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__RANDOM_TEAM_HPP_
-#define TEAM_PREDICTOR__RANDOM_TEAM_HPP_
+#pragma once
 
 #include <random>
 
@@ -29,4 +28,3 @@ class Team;
 void random_team(Team & team, std::mt19937 & random_engine, unsigned random_pokemon);
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__RANDOM_TEAM_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__MOVES_HPP_
-#define MOVE__MOVES_HPP_
+#pragma once
 
 #include "../enum.hpp"
 
@@ -622,4 +621,3 @@ template<>
 struct basic_numeric_limits<technicalmachine::Moves> : technicalmachine::basic_numeric_limits<technicalmachine::Moves> {};
 
 }	// namespace bounded
-#endif	// MOVE__MOVES_HPP_

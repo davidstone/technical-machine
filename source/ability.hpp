@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ABILITY_HPP_
-#define ABILITY_HPP_
+#pragma once
 
 #include "rational.hpp"
 #include "status.hpp"
@@ -129,4 +128,3 @@ auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityE
 auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
 }
-#endif	// ABILITY_HPP_

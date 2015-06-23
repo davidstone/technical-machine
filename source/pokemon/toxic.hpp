@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TOXIC_HPP_
-#define TOXIC_HPP_
+#pragma once
 
 #include "../hash.hpp"
 #include "../rational.hpp"
@@ -50,4 +49,3 @@ constexpr auto hash(Toxic const toxic) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// TOXIC_HPP_

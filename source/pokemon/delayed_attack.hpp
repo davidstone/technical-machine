@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DELAYED_ATTACK_HPP_
-#define DELAYED_ATTACK_HPP_
+#pragma once
 
 #include "end_of_turn_counter.hpp"
 
@@ -26,4 +25,3 @@ namespace technicalmachine {
 using DelayedAttack = EndOfTurnCounter<2, CounterOperations::activate, CounterOperations::advance_one_turn_deactivated>;
 
 }	// namespace technicalmachine
-#endif	// DELAYED_ATTACK_HPP_

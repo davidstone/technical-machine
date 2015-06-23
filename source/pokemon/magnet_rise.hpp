@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MAGNET_RISE_HPP_
-#define MAGNET_RISE_HPP_
+#pragma once
 
 #include "end_of_turn_counter.hpp"
 
@@ -26,4 +25,3 @@ namespace technicalmachine {
 using MagnetRise = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::turns_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
  
 }	// namespace technicalmachine
-#endif	// MAGNET_RISE_HPP_

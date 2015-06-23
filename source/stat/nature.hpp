@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__NATURE_HPP_
-#define STAT__NATURE_HPP_
+#pragma once
 
 #include <cstdint>
 #include <bounded_integer/bounded_integer.hpp>
@@ -70,4 +69,3 @@ class hash<technicalmachine::Nature> : public technicalmachine::std_hash<technic
 
 }	// namespace std
 
-#endif	// STAT__NATURE_HPP_

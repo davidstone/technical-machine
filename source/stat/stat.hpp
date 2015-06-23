@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__STAT_HPP_
-#define STAT__STAT_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
@@ -40,4 +39,3 @@ public:
 };
 
 }	// namespace technicalmachine
-#endif	// STAT__STAT_HPP_

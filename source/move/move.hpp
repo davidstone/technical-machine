@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__MOVE_HPP_
-#define MOVE__MOVE_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include "moves.hpp"
@@ -60,4 +59,3 @@ inline auto hash(Move const & move) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// MOVE__MOVE_HPP_

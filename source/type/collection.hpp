@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TYPE__COLLECTION_HPP_
-#define TYPE__COLLECTION_HPP_
+#pragma once
 
 #include "type.hpp"
 #include "../pokemon/species_forward.hpp"
@@ -84,4 +83,3 @@ auto grounded(MutableActivePokemon pokemon, Weather weather) -> bool;
 auto grounded(Pokemon const & pokemon, Weather weather) -> bool;
 
 }	// namespace technicalmachine
-#endif	// TYPE__COLLECTION_HPP_

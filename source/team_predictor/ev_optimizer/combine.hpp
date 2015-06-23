@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__COMBINE_HPP_
-#define TEAM_PREDICTOR__EV_OPTIMIZER__COMBINE_HPP_
+#pragma once
 
 namespace technicalmachine {
 class Pokemon;
@@ -28,4 +27,3 @@ class SpeedEVs;
 void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__COMBINE_HPP_

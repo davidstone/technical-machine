@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__POKEMON_NOT_FOUND_HPP_
-#define POKEMON__POKEMON_NOT_FOUND_HPP_
+#pragma once
 
 #include <stdexcept>
 #include "species_forward.hpp"
@@ -29,4 +28,3 @@ public:
 	explicit PokemonNotFound(Species const species);
 };
 }	// namespace technicalmachine
-#endif	// POKEMON__POKEMON_NOT_FOUND_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DAMAGE_HPP_
-#define DAMAGE_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -35,4 +34,3 @@ damage_type damage_calculator(Team const & attacker, Team const & defender, Weat
 void recoil (Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
 
 }	// namespace technicalmachine
-#endif	// DAMAGE_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STOCKPILE_HPP_
-#define STOCKPILE_HPP_
+#pragma once
 
 #include "../hash.hpp"
 #include "../rational.hpp"
@@ -56,4 +55,3 @@ constexpr auto hash(Stockpile const stockpile) noexcept {
 
 
 }	// namespace technicalmachine
-#endif	// STOCKPILE_HPP_

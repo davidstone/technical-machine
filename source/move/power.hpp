@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__POWER_HPP_
-#define MOVE__POWER_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -31,4 +30,3 @@ using MovePower = bounded::integer<1, 1440>;
 auto move_power(Team const & attacker, Team const & defender, Weather weather, Variable const & variable) -> MovePower;
 
 }	// namespace technicalmachine
-#endif	// MOVE__POWER_HPP_

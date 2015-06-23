@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NETWORK__INMESSAGE_HPP_
-#define NETWORK__INMESSAGE_HPP_
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -50,4 +49,3 @@ public:
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// NETWORK__INMESSAGE_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GENDER_HPP_
-#define GENDER_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -42,4 +41,3 @@ bool operator!= (Gender lhs, Gender rhs);
 bounded::integer<-1, 1> multiplier(Gender me, Gender foe);
 
 }	// namespace technicalmachine
-#endif	// GENDER_HPP_

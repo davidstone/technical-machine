@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TYPE__TYPE_HPP_
-#define TYPE__TYPE_HPP_
+#pragma once
 
 #include "../status.hpp"
 #include "../move/moves.hpp"
@@ -94,4 +93,3 @@ constexpr auto blocks_status<Statuses::poison_toxic>(Type const type) {
 
 
 }	// namespace technicalmachine
-#endif	// TYPE__TYPE_HPP_

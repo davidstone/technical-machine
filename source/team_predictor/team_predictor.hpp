@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_
-#define TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_
+#pragma once
 
 #include <random>
 
@@ -28,4 +27,3 @@ class Team;
 Team predict_team(DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead = true);
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__TEAM_PREDICTOR_HPP_

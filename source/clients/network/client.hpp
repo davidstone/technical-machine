@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENTS__NETWORK__CLIENT_HPP_
-#define CLIENTS__NETWORK__CLIENT_HPP_
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -93,4 +92,3 @@ private:
 
 }	// namespace network
 }	// namespace technicalmachine
-#endif	// CLIENTS__NETWORK__CLIENT_HPP_

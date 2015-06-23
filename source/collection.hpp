@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COLLECTION_HPP_
-#define COLLECTION_HPP_
+#pragma once
 
 #include <cstddef>
 #include <stdexcept>
@@ -135,4 +134,3 @@ private:
 }	// namespace detail
 
 }	// namespace technicalmachine
-#endif	// COLLECTION_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RATIONAL_HPP_
-#define RATIONAL_HPP_
+#pragma once
 
 #include <limits>
 #include <string>
@@ -224,4 +223,3 @@ public:
 
 }	// namespace std
 
-#endif	// RATIONAL_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE__EXPECTIMINIMAX_HPP_
-#define EVALUATE__EXPECTIMINIMAX_HPP_
+#pragma once
 
 #include <random>
 #include "../move/moves.hpp"
@@ -34,4 +33,3 @@ Moves expectiminimax(Team & ai, Team & foe, Weather weather, unsigned depth, Eva
 double select_type_of_move(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
 
 }	// namespace technicalmachine
-#endif	// EVALUATE__EXPECTIMINIMAX_HPP_

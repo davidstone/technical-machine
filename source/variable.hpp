@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VARIABLE_HPP_
-#define VARIABLE_HPP_
+#pragma once
 
 #include <cstdint>
 #include <vector>
@@ -66,4 +65,3 @@ using Probabilities = std::vector<Variable>;
 auto all_probabilities(ActivePokemon pokemon, TeamSize foe_size) -> Probabilities;
 
 }	// namespace technicalmachine
-#endif	// VARIABLE_HPP_

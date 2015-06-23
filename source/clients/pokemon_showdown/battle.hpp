@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_SHOWDOWN__BATTLE_HPP_
-#define POKEMON_SHOWDOWN__BATTLE_HPP_
+#pragma once
 
 #include <cstdint>
 #include <random>
@@ -39,4 +38,3 @@ private:
 
 }	// namespace ps
 }	// namespace technicalmachine
-#endif	// POKEMON_SHOWDOWN__BATTLE_HPP_

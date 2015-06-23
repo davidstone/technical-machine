@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__IS_SWITCH_HPP_
-#define MOVE__IS_SWITCH_HPP_
+#pragma once
 
 #include "moves.hpp"
 #include "../pokemon/max_pokemon_per_team.hpp"
@@ -29,4 +28,3 @@ auto to_switch(TeamIndex replacement) -> Moves;
 auto to_replacement(Moves move) -> TeamIndex;
 
 }	// namespace technicalmachine
-#endif	// MOVE__IS_SWITCH_HPP_

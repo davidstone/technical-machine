@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__BASE_POWER_HPP_
-#define MOVE__BASE_POWER_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
@@ -33,4 +32,3 @@ auto base_power(Moves move) -> bounded::optional<bounded::integer<0, 250>>;
 using VariableAdjustedBasePower = bounded::integer<0, 480>;
 
 }	// namespace technicalmachine
-#endif	// MOVE__BASE_POWER_HPP_

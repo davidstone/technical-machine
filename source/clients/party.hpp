@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENTS__PARTY_HPP_
-#define CLIENTS__PARTY_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -41,4 +40,3 @@ auto set_if_unknown(Party & party, Party new_party) -> void;
 auto other(Party const party) -> Party;
 
 }	// namespace technicalmachine
-#endif	// CLIENTS__PARTY_HPP_

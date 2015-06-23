@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__PRIORITY_HPP_
-#define MOVE__PRIORITY_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include "moves.hpp"
@@ -39,4 +38,3 @@ auto operator<= (Priority lhs, Priority rhs) -> bool;
 auto operator>= (Priority lhs, Priority rhs) -> bool;
 
 }	// namespace technicalmachine
-#endif	// MOVE__MOVE_HPP_

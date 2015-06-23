@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BIDE__BIDE_HPP_
-#define BIDE__BIDE_HPP_
+#pragma once
 
 #include "damage.hpp"
 #include "duration.hpp"
@@ -49,4 +48,3 @@ constexpr auto hash(Bide const bide) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// BIDE__BIDE_HPP_

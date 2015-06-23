@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TYPE__EFFECTIVENESS_HPP_
-#define TYPE__EFFECTIVENESS_HPP_
+#pragma once
 
 #include "type.hpp"
 #include "../rational.hpp"
@@ -60,4 +59,3 @@ auto operator*(Integer const number, Effectiveness const & effectiveness) {
 }
 
 }	// namespace technicalmachine
-#endif	// TYPE__EFFECTIVENESS_HPP_

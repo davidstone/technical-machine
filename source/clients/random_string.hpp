@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENT__RANDOM_STRING_HPP_
-#define CLIENT__RANDOM_STRING_HPP_
+#pragma once
 
 #include <algorithm>
 #include <random>
@@ -42,4 +41,3 @@ std::string random_string(RandomEngine & random_engine, size_t const size) {
 }
 
 }	// namespace technicalmachine
-#endif	// CLIENT__RANDOM_STRING_HPP_

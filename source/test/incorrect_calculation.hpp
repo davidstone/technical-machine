@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__INCORRECT_CALCULATION_HPP_
-#define TEST__INCORRECT_CALCULATION_HPP_
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -49,4 +48,3 @@ void check_equal(LHS const lhs, RHS const rhs) {
 
 }	// namespace technicalmachine
 
-#endif	// TEST__INCORRECT_CALCULATION_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CONFUSION_HPP_
-#define CONFUSION_HPP_
+#pragma once
 
 #include "../hash.hpp"
 
@@ -53,4 +52,3 @@ constexpr auto hash(Confusion const confusion) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// CONFUSION_HPP_

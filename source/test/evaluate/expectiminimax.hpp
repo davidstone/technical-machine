@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__EVALUATE__EXPECTIMINIMAX_HPP_
-#define TEST__EVALUATE__EXPECTIMINIMAX_HPP_
+#pragma once
 
 namespace technicalmachine {
 
@@ -25,4 +24,3 @@ void expectiminimax_tests();
 
 }	// namespace technicalmachine
 
-#endif	// TEST__EVALUATE__EXPECTIMINIMAX_HPP_

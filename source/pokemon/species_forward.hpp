@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__SPECIES_FORWARD_HPP_
-#define POKEMON__SPECIES_FORWARD_HPP_
+#pragma once
 
 #include <cstdint>
 
@@ -26,4 +25,3 @@ namespace technicalmachine {
 enum class Species : uint16_t;
 
 }	// namespace technicalmachine
-#endif	// POKEMON__SPECIES_FORWARD_HPP_

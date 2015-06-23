@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE__REORDER_HPP_
-#define EVALUATE__REORDER_HPP_
+#pragma once
 
 #include <vector>
 #include "ranked.hpp"
@@ -30,4 +29,3 @@ class MoveScores;
 std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
 
 }	// namespace technicalmachine
-#endif	// EVALUATE__REORDER_HPP_

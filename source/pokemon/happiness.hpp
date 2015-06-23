@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__HAPPINESS_HPP_
-#define POKEMON__HAPPINESS_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <iosfwd>
@@ -44,4 +43,3 @@ std::basic_ostream<CharT, Traits> & operator<<(std::basic_ostream<CharT, Traits>
 }
 
 }	// namespace technicalmachine
-#endif	// POKEMON__HAPPINESS_HPP_

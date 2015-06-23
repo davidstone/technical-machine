@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__CALCULATE_HPP_
-#define STAT__CALCULATE_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -58,4 +57,3 @@ auto order(Team & team1, Team & team2, Weather weather) -> std::pair<Team *, Tea
 auto faster_pokemon(Team & team1, Team & team2, Weather weather) -> std::pair<Team *, Team *>;
 
 }	// namespace technicalmachine
-#endif	// STAT__CALCULATE_HPP_

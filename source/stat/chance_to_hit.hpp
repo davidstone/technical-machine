@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__CHANCE_TO_HIT_HPP_
-#define STAT__CHANCE_TO_HIT_HPP_
+#pragma once
 
 namespace technicalmachine {
 
@@ -29,4 +28,3 @@ using ChanceToHit = double;
 auto chance_to_hit(ActivePokemon user, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
 
 }	// namespace technicalmachine
-#endif	// STAT__CHANCE_TO_HIT_HPP_

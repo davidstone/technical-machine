@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__SHARED_HPP_
-#define MOVE__SHARED_HPP_
+#pragma once
 
 #include "max_moves_per_pokemon.hpp"
 
@@ -140,4 +139,3 @@ inline auto size(SharedMoves const shared) {
 auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool;
 
 }	// namespace technicalmachine
-#endif	// MOVE__SHARED_HPP_

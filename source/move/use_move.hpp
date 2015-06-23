@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__USE_MOVE_HPP_
-#define MOVE__USE_MOVE_HPP_
+#pragma once
 
 namespace technicalmachine {
 
@@ -28,4 +27,3 @@ class Weather;
 auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false) -> void;
 
 }	// namespace technicalmachine
-#endif	// MOVE__USE_MOVE_HPP_

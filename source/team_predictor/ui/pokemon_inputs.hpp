@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__UI__POKEMON_INPUTS_HPP_
-#define TEAM_PREDICTOR__UI__POKEMON_INPUTS_HPP_
+#pragma once
 
 #include <vector>
 #include "ev_inputs.hpp"
@@ -51,4 +50,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__UI__POKEMON_INPUTS_HPP_

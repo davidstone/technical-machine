@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__SPECIES_HPP_
-#define POKEMON__SPECIES_HPP_
+#pragma once
 
 #include "species_forward.hpp"
 #include "../enum.hpp"
@@ -753,4 +752,3 @@ inline Species & operator++(Species & species) {
 
 }	// namespace technicalmachine
 
-#endif	// POKEMON__SPECIES_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENTS__NO_PENDING_CHALLENGES_HPP_
-#define CLIENTS__NO_PENDING_CHALLENGES_HPP_
+#pragma once
 
 #include <cstdint>
 #include <stdexcept>
@@ -33,4 +32,3 @@ public:
 };
 
 }	// namespace technicalmachine
-#endif	// CLIENTS__NO_PENDING_CHALLENGES_HPP_

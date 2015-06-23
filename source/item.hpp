@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ITEM_HPP_
-#define ITEM_HPP_
+#pragma once
 
 #include "enum.hpp"
 
@@ -145,4 +144,3 @@ struct basic_numeric_limits<technicalmachine::Item> : technicalmachine::basic_nu
 
 }	// namespace bounded
 
-#endif	// ITEM_HPP_

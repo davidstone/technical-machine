@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_HPP_
-#define TEAM_HPP_
+#pragma once
 
 #include "entry_hazards.hpp"
 #include "screens.hpp"
@@ -105,4 +104,3 @@ bool operator!= (Team const & lhs, Team const & rhs);
 std::string to_string(Team const & team, bool include_owner = true);
 
 }	// namespace technicalmachine
-#endif	// TEAM_HPP_

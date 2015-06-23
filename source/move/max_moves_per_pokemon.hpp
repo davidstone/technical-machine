@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__MAX_MOVES_PER_POKEMON_HPP_
-#define MOVE__MAX_MOVES_PER_POKEMON_HPP_
+#pragma once
 
 #include "../pokemon/max_pokemon_per_team.hpp"
 
@@ -48,4 +47,3 @@ using MoveIndex = decltype(
 );
 
 }	// namespace technicalmachine
-#endif	// MOVE__COLLECTION_HPP_

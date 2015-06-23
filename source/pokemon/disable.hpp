@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__DISABLE_HPP_
-#define POKEMON__DISABLE_HPP_
+#pragma once
 
 #include "../hash.hpp"
 #include "../move/max_moves_per_pokemon.hpp"
@@ -49,4 +48,3 @@ constexpr auto hash(Disable const disable) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// POKEMON__DISABLE_HPP_

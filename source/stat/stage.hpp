@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__STAGE_HPP_
-#define STAT__STAGE_HPP_
+#pragma once
 
 #include "stat_names.hpp"
 #include "../hash.hpp"
@@ -136,4 +135,3 @@ auto operator==(Stage const & lhs, Stage const & rhs) -> bool;
 auto operator!=(Stage const & lhs, Stage const & rhs) -> bool;
 
 }	// namespace technicalmachine
-#endif	// STAT__STAGE_HPP_

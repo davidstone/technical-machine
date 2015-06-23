@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__LOAD_STATS_HPP_
-#define TEAM_PREDICTOR__LOAD_STATS_HPP_
+#pragma once
 
 #include "../pokemon/species.hpp"
 
@@ -31,4 +30,3 @@ auto overall_stats() -> bounded::array<unsigned, number_of_species>;
 auto lead_stats() -> bounded::array<float, number_of_species>;
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__LOAD_STATS_HPP_

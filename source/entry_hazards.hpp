@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ENTRY_HAZARDS_HPP_
-#define ENTRY_HAZARDS_HPP_
+#pragma once
 
 #include "hash.hpp"
 
@@ -62,4 +61,3 @@ auto operator!=(EntryHazards lhs, EntryHazards rhs) -> bool;
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather weather) -> void;
 
 }	// namespace technicalmachine
-#endif	// ENTRY_HAZARDS_HPP_

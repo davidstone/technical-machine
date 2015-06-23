@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__COLLECTION_HPP_
-#define MOVE__COLLECTION_HPP_
+#pragma once
 
 #include "../collection.hpp"
 
@@ -66,4 +65,3 @@ auto regular_move(MoveCollection const & moves) -> Move const &;
 auto regular_move(MoveCollection & moves) -> Move &;
 
 }	// namespace technicalmachine
-#endif	// MOVE__COLLECTION_HPP_

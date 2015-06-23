@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef RANDOM_DAMAGE_HPP_
-#define RANDOM_DAMAGE_HPP_
+#pragma once
 
 #include "rational.hpp"
 
@@ -36,4 +35,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// RANDOM_DAMAGE_HPP_

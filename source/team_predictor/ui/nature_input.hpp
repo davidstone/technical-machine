@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__UI__NATURE_INPUT_HPP_
-#define TEAM_PREDICTOR__UI__NATURE_INPUT_HPP_
+#pragma once
 
 #include <FL/Fl_Input.H>
 #include "../../stat/nature.hpp"
@@ -33,4 +32,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__UI__NATURE_INPUT_HPP_

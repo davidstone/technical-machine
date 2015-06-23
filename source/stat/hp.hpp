@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STAT__HP_HPP_
-#define STAT__HP_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
@@ -84,4 +83,3 @@ inline auto hash(HP const hp) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// STAT__HP_HPP_

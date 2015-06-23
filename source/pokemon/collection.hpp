@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__COLLECTION_HPP_
-#define POKEMON__COLLECTION_HPP_
+#pragma once
 
 #include "container.hpp"
 #include "max_pokemon_per_team.hpp"
@@ -147,4 +146,3 @@ inline auto hash(PokemonCollection const & collection) noexcept {
 
 
 }	// namespace technicalmachine
-#endif	// POKEMON__COLLECTION_HPP_

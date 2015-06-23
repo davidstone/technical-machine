@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_ONLINE__OUTMESSAGE_HPP_
-#define POKEMON_ONLINE__OUTMESSAGE_HPP_
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -107,4 +106,3 @@ public:
 
 }	// namespace po
 }	// namespace technicalmachine
-#endif	// POKEMON_ONLINE__OUTMESSAGE_HPP_

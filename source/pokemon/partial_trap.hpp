@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PARTIAL_TRAP_HPP_
-#define PARTIAL_TRAP_HPP_
+#pragma once
 
 #include "end_of_turn_counter.hpp"
 #include "../hash.hpp"
@@ -56,4 +55,3 @@ constexpr auto hash(PartialTrap const partial_trap) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// PARTIAL_TRAP_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__CONTAINER_HPP_
-#define POKEMON__CONTAINER_HPP_
+#pragma once
 
 #include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
@@ -29,4 +28,3 @@ namespace technicalmachine {
 using PokemonContainer = fixed_capacity_vector<Pokemon, max_pokemon_per_team.value()>;
 
 }	// namespace technicalmachine
-#endif	// POKEMON__CONTAINER_HPP_

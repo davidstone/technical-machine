@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SUBSTITUTE_HPP_
-#define SUBSTITUTE_HPP_
+#pragma once
 
 #include "../hash.hpp"
 #include "../stat/hp.hpp"
@@ -55,4 +54,3 @@ constexpr auto hash(Substitute const substitute) noexcept {
 
 
 }	// namespace technicalmachine
-#endif	// SUBSTITUTE_HPP_

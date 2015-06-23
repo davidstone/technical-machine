@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENTS__CLIENT_HPP_
-#define CLIENTS__CLIENT_HPP_
+#pragma once
 
 #include "battles.hpp"
 
@@ -87,4 +86,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// CLIENTS__CLIENT_HPP_

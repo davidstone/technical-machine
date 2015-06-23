@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__CONTAINER_HPP_
-#define MOVE__CONTAINER_HPP_
+#pragma once
 
 #include "max_moves_per_pokemon.hpp"
 #include "move.hpp"
@@ -183,4 +182,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// MOVE__CONTAINER_HPP_

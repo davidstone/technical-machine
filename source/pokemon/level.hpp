@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON__LEVEL_HPP_
-#define POKEMON__LEVEL_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -37,4 +36,3 @@ bool operator== (Level lhs, Level rhs);
 bool operator!= (Level lhs, Level rhs);
 
 }	// namespace technicalmachine
-#endif	// POKEMON__POKEMON_HPP_

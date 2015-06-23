@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCREEN_HPP_
-#define SCREEN_HPP_
+#pragma once
 
 #include "hash.hpp"
 
@@ -88,4 +87,3 @@ using LightScreenEffect = Screen<5, 8>;
 using TailwindEffect = Screen<3>;
 
 }	// namespace technicalmachine
-#endif	// SCREEN_HPP_

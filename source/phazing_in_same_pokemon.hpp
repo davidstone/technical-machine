@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PHAZING_IN_SAME_POKEMON_HPP_
-#define PHAZING_IN_SAME_POKEMON_HPP_
+#pragma once
 
 #include "pokemon/collection.hpp"
 
@@ -31,4 +30,3 @@ public:
 };
 
 }	// namespace technicalmachine
-#endif	// PHAZING_IN_SAME_POKEMON_HPP_

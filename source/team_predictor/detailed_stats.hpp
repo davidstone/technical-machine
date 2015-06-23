@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__DETAILED_STATS_HPP_
-#define TEAM_PREDICTOR__DETAILED_STATS_HPP_
+#pragma once
 
 #include "../ability.hpp"
 #include "../item.hpp"
@@ -48,4 +47,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__DETAILED_STATS_HPP_

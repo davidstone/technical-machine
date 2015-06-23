@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BIDE__DAMAGE_HPP_
-#define BIDE__DAMAGE_HPP_
+#pragma once
 
 #include "../damage.hpp"
 #include "../hash.hpp"
@@ -50,4 +49,3 @@ constexpr auto hash(BideDamage const damage) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// BIDE__DAMAGE_HPP_

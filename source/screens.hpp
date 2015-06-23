@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCREENS_HPP_
-#define SCREENS_HPP_
+#pragma once
 
 #include "hash.hpp"
 #include "screen.hpp"
@@ -79,4 +78,3 @@ auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
 auto operator!=(Screens const & lhs, Screens const & rhs) -> bool;
 
 }	// namespace technicalmachine
-#endif	// SCREENS_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef WEATHER_HPP_
-#define WEATHER_HPP_
+#pragma once
 
 #include "hash.hpp"
 #include "status.hpp"
@@ -132,4 +131,3 @@ constexpr auto hash(Weather const weather) noexcept {
 auto operator!=(Weather lhs, Weather rhs) -> bool;
 
 }	// namespace technicalmachine
-#endif	// WEATHER_HPP_

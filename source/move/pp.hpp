@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__PP_HPP_
-#define MOVE__PP_HPP_
+#pragma once
 
 #include "moves.hpp"
 
@@ -68,4 +67,3 @@ inline auto hash(Pp const pp) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// MOVE__PP_HPP_

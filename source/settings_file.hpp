@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SETTINGS_FILE_HPP_
-#define SETTINGS_FILE_HPP_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -50,4 +49,3 @@ struct Settings {
 };
 
 }	// namespace technicalmachine
-#endif	// SETTINGS_FILE_HPP_

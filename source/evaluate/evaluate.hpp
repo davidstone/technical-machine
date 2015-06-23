@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE__EVALUATE_HPP_
-#define EVALUATE__EVALUATE_HPP_
+#pragma once
 
 #include "../stat/stage.hpp"
 #include "../stat/stat_names.hpp"
@@ -133,4 +132,3 @@ private:
 };
 
 } // namespace technicalmachine
-#endif // EVALUATE__EVALUATE_HPP_

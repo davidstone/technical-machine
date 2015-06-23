@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_POKEMON_FLAGS_HPP_
-#define ACTIVE_POKEMON_FLAGS_HPP_
+#pragma once
 
 #include "confusion.hpp"
 #include "disable.hpp"
@@ -241,4 +240,3 @@ inline auto hash(ActivePokemonFlags const & flags) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// ACTIVE_POKEMON_FLAGS_HPP_

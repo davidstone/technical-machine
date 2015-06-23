@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef PERISH_SONG_HPP_
-#define PERISH_SONG_HPP_
+#pragma once
 
 #include "end_of_turn_counter.hpp"
 
@@ -26,4 +25,3 @@ namespace technicalmachine {
 using PerishSong = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
 
 }	// namespace technicalmachine
-#endif	// PERISH_SONG_HPP_

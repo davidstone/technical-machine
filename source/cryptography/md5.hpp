@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CRYPTOGRAPHY_MD5_HPP_
-#define CRYPTOGRAPHY_MD5_HPP_
+#pragma once
 
 #include <string>
 
@@ -27,4 +26,3 @@ std::string md5 (std::string message);
 }	// namespace cryptography
 }	// namespace technicalmachine
 
-#endif // CRYPTOGRAPHY_MD5_HPP_

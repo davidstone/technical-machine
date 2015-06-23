@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EMPTY_TEAM_HPP_
-#define EMPTY_TEAM_HPP_
+#pragma once
 
 #include <boost/filesystem/path.hpp>
 
@@ -31,4 +30,3 @@ struct EmptyTeam : std::logic_error {
 	}
 };
 }	// namespace technicalmachine
-#endif	// EMPTY_TEAM_HPP_

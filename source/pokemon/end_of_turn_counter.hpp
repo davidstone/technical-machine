@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_END_OF_TURN_FLAG_HPP_
-#define POKEMON_END_OF_TURN_FLAG_HPP_
+#pragma once
 
 #include "../hash.hpp"
 
@@ -95,4 +94,3 @@ constexpr auto hash(EndOfTurnCounter<max_turns, operations...> const flag) noexc
 }
 
 }	// namespace technicalmachine
-#endif	// POKEMON_END_OF_TURN_FLAG_HPP_

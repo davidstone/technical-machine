@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HASH_HPP_
-#define HASH_HPP_
+#pragma once
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
@@ -140,4 +139,3 @@ auto hash_range(Iterator first, Iterator last) {
 }
 
 }	// namespace technicalmachine
-#endif	// HASH_HPP_

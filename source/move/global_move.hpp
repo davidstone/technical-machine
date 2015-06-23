@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MOVE__GLOBAL_MOVE_HPP_
-#define MOVE__GLOBAL_MOVE_HPP_
+#pragma once
 
 #include "moves.hpp"
 
@@ -27,4 +26,3 @@ class Move;
 auto global_move(Moves name) -> Move const &;
 
 }	// namespace technicalmachine
-#endif	// MOVE__GLOBAL_MOVE_HPP_

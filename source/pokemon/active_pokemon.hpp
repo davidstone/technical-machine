@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ACTIVE_POKEMON_HPP_
-#define ACTIVE_POKEMON_HPP_
+#pragma once
 
 #include "active_pokemon_flags.hpp"
 #include "pokemon.hpp"
@@ -399,4 +398,3 @@ inline auto random_damage_multiplier(ActivePokemon const pokemon) -> decltype(po
 
 
 }	// namespace technicalmachine
-#endif	// ACTIVE_POKEMON_HPP_

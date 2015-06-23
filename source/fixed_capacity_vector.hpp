@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TECHNICALMACHINE_FIXED_CAPACITY_VECTOR_HPP_
-#define TECHNICALMACHINE_FIXED_CAPACITY_VECTOR_HPP_
+#pragma once
 
 #include <bounded_integer/array.hpp>
 #include <boost/optional.hpp>
@@ -207,4 +206,3 @@ constexpr auto operator==(fixed_capacity_vector<T, capacity> const & lhs, fixed_
 }
 
 }	// namespace technicalmachine
-#endif	// TECHNICALMACHINE_FIXED_CAPACITY_VECTOR_HPP_

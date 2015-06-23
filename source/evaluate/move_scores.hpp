@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE__MOVE_SCORES_HPP_
-#define EVALUATE__MOVE_SCORES_HPP_
+#pragma once
 
 #include <vector>
 #include "../move/moves.hpp"
@@ -38,4 +37,3 @@ private:
 };
 
 }	// namespace technicalmachine
-#endif	// EVALUATE__MOVE_SCORES_HPP_

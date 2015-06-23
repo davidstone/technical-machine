@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef POKEMON_LAB__WRITE_TEAM_FILE_HPP_
-#define POKEMON_LAB__WRITE_TEAM_FILE_HPP_
+#pragma once
 
 #include <boost/filesystem/path.hpp>
 
@@ -29,4 +28,3 @@ void write_team(Team const & team, boost::filesystem::path const & file_name);
 
 }	// namespace pl
 }	// namespace technicalmachine
-#endif	// POKEMON_LAB__WRITE_TEAM_FILE_HPP_

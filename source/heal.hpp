@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEAL_HPP_
-#define HEAL_HPP_
+#pragma once
 
 #include "ability.hpp"
 #include "rational.hpp"
@@ -43,4 +42,3 @@ void heal(MutableActivePokemon pokemon, bounded_rational<Numerator, Denominator>
 }
 
 }	// namespace technicalmachine
-#endif	// HEAL_HPP_

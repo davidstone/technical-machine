@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__COLLECTIONS__CREATE_REGULAR_MOVES_HPP_
-#define TEST__COLLECTIONS__CREATE_REGULAR_MOVES_HPP_
+#pragma once
 
 #include <vector>
 #include "../../move/moves.hpp"
@@ -31,4 +30,3 @@ inline std::vector<Moves> create_regular_moves() {
 }
 
 }	// namespace technicalmachine
-#endif	// TEST__COLLECTIONS__CREATE_REGULAR_MOVES_HPP_

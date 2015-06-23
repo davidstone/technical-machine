@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATUS_HPP_
-#define STATUS_HPP_
+#pragma once
 
 #include "enum.hpp"
 #include "hash.hpp"
@@ -105,4 +104,3 @@ constexpr auto hash(Status const status) noexcept {
 }
 
 }	// namespace technicalmachine
-#endif	// STATUS_HPP_

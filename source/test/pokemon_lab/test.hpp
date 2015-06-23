@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEST__POKEMON_LAB__TEST_HPP_
-#define TEST__POKEMON_LAB__TEST_HPP_
+#pragma once
 
 namespace technicalmachine {
 namespace pl {
@@ -27,4 +26,3 @@ void test ();
 }	// namespace pl
 }	// namespace technicalmachine
 
-#endif	// TEST__POKEMON_LAB__TEST_HPP_

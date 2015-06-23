@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef INVALID_SETTINGS_FILE_HPP_
-#define INVALID_SETTINGS_FILE_HPP_
+#pragma once
 
 #include <boost/filesystem/path.hpp>
 
@@ -36,4 +35,3 @@ struct InvalidSettingsFile : std::runtime_error {
 };
 
 }	// namespace technicalmachine
-#endif	// INVALID_SETTINGS_FILE_HPP_

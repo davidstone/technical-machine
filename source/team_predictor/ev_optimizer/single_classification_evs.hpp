@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TEAM_PREDICTOR__EV_OPTIMIZER__SINGLE_CLASSIFICATION_EVS_HPP_
-#define TEAM_PREDICTOR__EV_OPTIMIZER__SINGLE_CLASSIFICATION_EVS_HPP_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -46,4 +45,3 @@ template<bool physical>
 std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon);
 
 }	// namespace technicalmachine
-#endif	// TEAM_PREDICTOR__EV_OPTIMIZER__SINGLE_CLASSIFICATION_EVS_HPP_

@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef HEAL_BLOCK_HPP_
-#define HEAL_BLOCK_HPP_
+#pragma once
 
 #include "end_of_turn_counter.hpp"
 
@@ -26,4 +25,3 @@ namespace technicalmachine {
 using HealBlock = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
 
 }	// namespace technicalmachine
-#endif	// HEAL_BLOCK_HPP_

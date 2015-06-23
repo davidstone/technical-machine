@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EVALUATE__RANKED_HPP_
-#define EVALUATE__RANKED_HPP_
+#pragma once
 
 #include <cstdint>
 #include "../move/moves.hpp"
@@ -37,4 +36,3 @@ private:
 bool operator>(RankedMove lhs, RankedMove rhs);
 
 }	// namespace technicalmachine
-#endif	// EVALUATE__RANKED_HPP_

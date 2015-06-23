@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CLIENTS__TIMESTAMP_HPP_
-#define CLIENTS__TIMESTAMP_HPP_
+#pragma once
 
 #include <string>
 
@@ -26,4 +25,3 @@ namespace technicalmachine {
 std::string const & timestamp();
 
 }	// namespace technicalmachine
-#endif	// CLIENTS__TIMESTAMP_HPP_
