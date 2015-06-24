@@ -83,10 +83,12 @@ double initial_move_then_switch_branch(Team & switcher, Team const & other, Weat
 double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
 double switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate);
 
+#if 0
 Moves random_action (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
 Moves random_switch(Team const & ai, std::mt19937 & random_engine);
 std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_type index);
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
+#endif
 
 void print_best_move (Team const & team, Moves best_move, double score);
 void print_action (Team const & team, bool first_turn);
@@ -96,11 +98,12 @@ void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, d
 
 }	// namespace
 
-Moves expectiminimax (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine) {
+Moves expectiminimax (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 &) {
 	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	double min_score = 0.0;
 	boost::timer timer;
-	Moves best_move = random_action (ai, foe, weather, random_engine);
+//	Moves best_move = random_action (ai, foe, weather, random_engine);
+	Moves best_move = Moves::Switch0;
 	try {
 		for (unsigned deeper = 1; deeper <= depth; ++deeper) {
 			bool const full_evaluation = (deeper == depth);
@@ -536,7 +539,7 @@ double switch_after_move_branch(Team switcher, Team other, Variable const & swit
 }
 
 
-
+#if 0
 Moves random_action (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
 	return switch_decision_required(ai.pokemon()) ?
 		random_switch(ai, random_engine) :
@@ -568,6 +571,7 @@ Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const we
 	auto const index = distribution(random_engine);
 	return moves[index];
 }
+#endif
 
 void print_best_move (Team const & team, Moves const best_move, double score) {
 	if (is_switch(best_move))
