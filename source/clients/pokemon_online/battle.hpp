@@ -30,7 +30,7 @@ namespace po {
 class Client;
 class InMessage;
 
-class Battle : public ::technicalmachine::Battle {
+class Battle final : public ::technicalmachine::Battle {
 public:
 	template<typename ... Args>
 	Battle(std::string const & foe_name, TeamSize const team_size, std::random_device::result_type seed, unsigned const battle_depth, bool const challenger, Args && ... args):
@@ -79,7 +79,7 @@ private:
 	void parse_rearrange_team (InMessage & msg);
 	void parse_spot_shifts (InMessage & msg);
 	void parse_battle_end (InMessage & msg);
-	VisibleFoeHP max_damage_precision() const override;
+	VisibleFoeHP max_damage_precision() const  final;
 	Party last_attacker;
 	OutMessage action;
 };

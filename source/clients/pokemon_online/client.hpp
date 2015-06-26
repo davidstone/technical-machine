@@ -31,14 +31,14 @@ namespace po {
 
 class Clauses;
 
-class Client : public network::Client {
+class Client final : public network::Client {
 public:
 	explicit Client (unsigned set_depth);
 	void run ();
 	void handle_message (InMessage::Message code, InMessage & msg);
-	void send_channel_message(std::string const & channel, std::string const & message);
-	void send_channel_message (uint32_t channel_id, std::string const & message);
-	void send_private_message (std::string const & user, std::string const & message);
+	void send_channel_message(std::string const & channel, std::string const & message) final;
+	void send_channel_message (uint32_t channel_id, std::string const & message) final;
+	void send_private_message (std::string const & user, std::string const & message) final;
 	void send_private_message (uint32_t user_id, std::string const & message);
 	std::string get_user_name (uint32_t id) const;
 	void write_team();
@@ -112,9 +112,9 @@ private:
 
 	void handle_finalize_challenge (std::string const & opponent, bool accepted, bool unused = false);
 	void handle_remove_challenge (std::string const & opponent);
-	void send_keep_alive_message ();
-	void join_channel (std::string const & channel);
-	void part_channel (std::string const & channel);
+	void send_keep_alive_message() final;
+	void join_channel (std::string const & channel) final;
+	void part_channel (std::string const & channel) final;
 	void handle_add_channel (std::string const & channel_name, uint32_t channel_id);
 	void handle_remove_channel (uint32_t channel_id);
 	void add_battle (InMessage & msg);

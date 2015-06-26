@@ -1,5 +1,5 @@
-// Pokemon Lab outgoing messages
-// Copyright (C) 2012 David Stone
+// Pokemon Online outgoing messages
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,14 +30,14 @@ namespace po {
 
 class BattleSettings;
 
-class OutMessage : public network::OutMessage {
+class OutMessage final : public network::OutMessage {
 public:
 	explicit OutMessage (uint8_t code);
-	void write_string (std::string const & str);
-	void write_team (Team const & team, std::string const & username);
+	void write_string (std::string const & str) final;
+	void write_team (Team const & team, std::string const & username) final;
 	void write_pokemon (Pokemon const & pokemon);
-	void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1);
-	void write_switch (uint32_t field_id, uint8_t slot);
+	void write_move (uint32_t field_id, uint8_t move_index, uint8_t target = 1) final;
+	void write_switch (uint32_t field_id, uint8_t slot) final;
 	void write_challenge (uint32_t user_id, uint8_t generation, BattleSettings const & settings);
 	void write_color ();
 	void reset_action_code ();
