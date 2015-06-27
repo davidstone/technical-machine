@@ -20,8 +20,8 @@
 
 namespace technicalmachine {
 
-class Team;
-class Weather;
+struct Team;
+struct Weather;
 
 void switchpokemon (Team & switcher, Team & other, Weather & weather);
 

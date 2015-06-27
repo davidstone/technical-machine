@@ -1,4 +1,3 @@
-// Class that handles Slow Start's timer
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.

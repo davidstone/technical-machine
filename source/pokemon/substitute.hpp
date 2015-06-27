@@ -1,4 +1,3 @@
-// Substitute class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -29,7 +28,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Substitute {
+struct Substitute {
 private:
 	using hp_type = bounded::equivalent_type<decltype(std::declval<HP::current_type>() / 4_bi), bounded::null_policy>;
 public:

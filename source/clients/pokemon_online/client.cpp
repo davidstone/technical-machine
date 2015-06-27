@@ -336,8 +336,7 @@ void Client::handle_challenge_stuff (InMessage & msg) {
 }
 
 namespace {
-class BattlePokemon {
-public:
+struct BattlePokemon {
 	std::pair <uint16_t, uint8_t> id;
 	std::string nickname;
 	uint16_t max_hp;
@@ -385,8 +384,7 @@ public:
 	}
 };
 
-class BattleTeam {
-public:
+struct BattleTeam {
 	std::vector <BattlePokemon> pokemon;
 	explicit BattleTeam (InMessage & msg) {
 		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {

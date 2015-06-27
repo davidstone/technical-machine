@@ -53,9 +53,9 @@ constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>
 
 
 template<typename T>
-class VerifyHashBoundsImpl;
+struct VerifyHashBoundsImpl;
 template<typename hash_type, typename max_hash_type>
-class VerifyHashBoundsImpl<std::pair<hash_type, max_hash_type>> {
+struct VerifyHashBoundsImpl<std::pair<hash_type, max_hash_type>> {
 	static_assert(!std::is_same<hash_type, uint64_t>::value, "Mismatched hash types.");
 	static_assert(!std::is_same<max_hash_type, uint64_t>::value, "Mismatched hash types.");
 	static_assert(
@@ -68,10 +68,11 @@ class VerifyHashBoundsImpl<std::pair<hash_type, max_hash_type>> {
 	);
 };
 template<>
-class VerifyHashBoundsImpl<std::pair<uint64_t, uint64_t>> {
+struct VerifyHashBoundsImpl<std::pair<uint64_t, uint64_t>> {
 };
 template<typename T>
-class VerifyHashBounds {
+struct VerifyHashBounds {
+private:
 	using type = VerifyHashBoundsImpl<decltype(hash(std::declval<T>()))>;
 };
 

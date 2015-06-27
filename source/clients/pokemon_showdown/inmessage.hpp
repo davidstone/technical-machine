@@ -24,8 +24,7 @@
 namespace technicalmachine {
 namespace ps {
 
-class InMessage {
-public:
+struct InMessage {
 	using Room = std::string;
 	using Type = std::string;
 	using Data = std::vector<std::string>;

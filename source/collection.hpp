@@ -29,11 +29,10 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Move;
-class Pokemon;
+struct Move;
+struct Pokemon;
 
-class InvalidCollectionIndex final : public std::out_of_range {
-public:
+struct InvalidCollectionIndex final : std::out_of_range {
 	template<typename Index, typename Size>
 	InvalidCollectionIndex(Index const index, Size const size, std::string const & name):
 		out_of_range("Attempted to access element " + bounded::to_string(index) + " in a container of size " + bounded::to_string(size) + " with elements of type " + name + "\n")
@@ -44,7 +43,7 @@ public:
 namespace detail {
 
 template<typename Container>
-class Collection;
+struct Collection;
 
 template<typename Container>
 bool operator==(Collection<Container> const & lhs, Collection<Container> const & rhs) {
@@ -52,8 +51,7 @@ bool operator==(Collection<Container> const & lhs, Collection<Container> const &
 }
 
 template<typename Container>
-class Collection {
-public:
+struct Collection {
 	using container_type = Container;
 	using index_type = typename container_type::index_type;
 	template<typename... Args>

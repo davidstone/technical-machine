@@ -29,8 +29,7 @@
 
 namespace technicalmachine {
 
-class PokemonInputs {
-public:
+struct PokemonInputs {
 	explicit PokemonInputs(int & button_number);
 	Species species() const;
 	bool is_valid() const;

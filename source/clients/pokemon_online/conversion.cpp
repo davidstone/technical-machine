@@ -39,8 +39,7 @@ namespace po {
 
 namespace {
 
-class InvalidFormeId : public std::runtime_error {
-public:
+struct InvalidFormeId : std::runtime_error {
 	explicit InvalidFormeId (std::string const & species):
 		std::runtime_error ("Invalid forme ID for " + species + ".\n")
 		{
@@ -1313,8 +1312,7 @@ unsigned ability_to_id (Ability::Abilities ability) {
 	return ability_converter [ability];
 }
 
-class InvalidPart : public std::runtime_error {
-public:
+struct InvalidPart : std::runtime_error {
 	InvalidPart (uint16_t id, uint8_t part):
 		std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (static_cast<unsigned> (id)) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
 	}

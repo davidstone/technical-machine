@@ -40,8 +40,7 @@ namespace technicalmachine {
 namespace po {
 namespace {
 
-class Todo {
-public:
+struct Todo {
 	explicit Todo (InMessage & in_msg, std::string const & str):
 		msg (in_msg) {
 		std::cerr << str + '\n';

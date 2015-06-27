@@ -27,11 +27,10 @@
 namespace technicalmachine {
 namespace po {
 
-class Client;
-class InMessage;
+struct Client;
+struct InMessage;
 
-class Battle final : public ::technicalmachine::Battle {
-public:
+struct Battle final : ::technicalmachine::Battle {
 	template<typename ... Args>
 	Battle(std::string const & foe_name, TeamSize const team_size, std::random_device::result_type seed, unsigned const battle_depth, bool const challenger, Args && ... args):
 		::technicalmachine::Battle::Battle(foe_name, team_size, seed, battle_depth, std::forward<Args>(args)...),

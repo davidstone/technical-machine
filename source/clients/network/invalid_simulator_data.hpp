@@ -1,4 +1,3 @@
-// Exception class for illegal simulator message data
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -28,8 +27,7 @@ namespace network {
 
 using std::to_string;
 
-class InvalidSimulatorData : public InvalidPacket {
-public:
+struct InvalidSimulatorData : InvalidPacket {
 	template<typename Received, typename Minimum, typename Maximum>
 	InvalidSimulatorData(Received const received, Minimum const minimum, Maximum const maximum, std::string const & variable):
 		InvalidPacket (variable + " should be between " + to_string(minimum) + " and " + to_string(maximum) + ", but the server sent a value of " + to_string(received) + ".") {

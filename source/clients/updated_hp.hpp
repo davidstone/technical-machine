@@ -25,12 +25,11 @@
 #include "../stat/hp.hpp"
 
 namespace technicalmachine {
-class Team;
+struct Team;
 
 using VisibleFoeHP = bounded::integer<48, 100>;
 
-class UpdatedHP {
-public:
+struct UpdatedHP {
 	using VisibleHP = std::common_type<
 		bounded::equivalent_type<HP::current_type, bounded::throw_policy>,
 		VisibleFoeHP
@@ -46,8 +45,7 @@ public:
 	bool is_fainted(bool is_me, Species species) const;
 private:
 	typedef std::pair<bool, Species> key_type;
-	class mapped_type {
-	public:
+	struct mapped_type {
 		mapped_type(VisibleHP set_new_hp);
 		VisibleHP new_hp() const;
 		damage_type damage() const;

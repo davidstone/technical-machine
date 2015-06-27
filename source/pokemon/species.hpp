@@ -1,4 +1,3 @@
-// Species enum
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.

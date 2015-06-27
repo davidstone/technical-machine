@@ -33,12 +33,10 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class MoveScores;
+struct MoveScores;
 
-class MoveCollection : public detail::Collection<MoveContainer> {
-	using Base = detail::Collection<MoveContainer>;
-public:
-	using Base::index_type;
+struct MoveCollection : detail::Collection<MoveContainer> {
+	using detail::Collection<MoveContainer>::index_type;
 	explicit MoveCollection(TeamSize my_team_size);
 	
 	auto regular() const {

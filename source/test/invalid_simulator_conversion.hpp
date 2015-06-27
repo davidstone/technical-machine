@@ -1,4 +1,3 @@
-// Simulator conversion exception class stuff
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -28,10 +27,9 @@
 #include "../string_conversions/status.hpp"
 
 namespace technicalmachine {
-class Pokemon;
+struct Pokemon;
 
-class InvalidSimulatorConversion : public std::logic_error {
-public:
+struct InvalidSimulatorConversion : std::logic_error {
 	template<typename Test>
 	InvalidSimulatorConversion(Test original, Test result):
 		std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {

@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-class Team;
+struct Team;
 
 // Add random Pokemon to an already existing team
 void random_team(Team & team, std::mt19937 & random_engine, unsigned random_pokemon);

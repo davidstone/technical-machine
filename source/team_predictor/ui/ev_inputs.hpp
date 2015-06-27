@@ -23,16 +23,14 @@
 
 namespace technicalmachine {
 
-class EVInput {
-public:
+struct EVInput {
 	explicit EVInput(int button_number, int ev, char const * label = "");
 	EV value() const;
 private:
 	Fl_Int_Input input;
 };
 
-class EVInputs {
-public:
+struct EVInputs {
 	explicit EVInputs(int button_number);
 	EVInput hp;
 	EVInput atk;

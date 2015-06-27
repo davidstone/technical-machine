@@ -29,17 +29,16 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class EntryHazards;
-class Pokemon;
-class Status;
-class Team;
-class Weather;
+struct EntryHazards;
+struct Pokemon;
+struct Status;
+struct Team;
+struct Weather;
 
 // 100% chance to win
 constexpr auto victory = 41402368_bi;
 
-class Evaluate {
-public:
+struct Evaluate {
 	// +1 gives me room to create a value that will always be overwritten
 	using type = bounded::integer<-static_cast<intmax_t>(victory + 1_bi), static_cast<intmax_t>(victory + 1_bi)>;
 	Evaluate();

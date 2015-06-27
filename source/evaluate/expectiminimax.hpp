@@ -23,9 +23,9 @@
 
 namespace technicalmachine {
 
-class Evaluate;
-class Team;
-class Weather;
+struct Evaluate;
+struct Team;
+struct Weather;
 
 Moves expectiminimax(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
 

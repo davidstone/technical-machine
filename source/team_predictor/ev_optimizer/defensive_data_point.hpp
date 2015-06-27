@@ -31,16 +31,15 @@
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
-class Level;
-class Pokemon;
-class SingleClassificationEVs;
-class OffensiveEVs;
-class DefensiveEVs;
-class SpeedEVs;
+struct Level;
+struct Pokemon;
+struct SingleClassificationEVs;
+struct OffensiveEVs;
+struct DefensiveEVs;
+struct SpeedEVs;
 using namespace bounded::literal;
 
-class DataPoint {
-public:
+struct DataPoint {
 	DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	DataPoint(DataPoint const & original, Nature const & new_nature);
 	std::string to_string() const;

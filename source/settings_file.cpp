@@ -38,11 +38,11 @@ Settings::Settings () {
 }
 
 Server::Server (boost::property_tree::ptree const & server):
-	server_name(server.get<std::string>("<xmlattr>.name", std::string())),
 	host (server.get <std::string> ("host")),
 	port (server.get <std::string> ("port")),
 	username (server.get <std::string> ("username")),
-	password (server.get <std::string> ("password"))
+	password (server.get <std::string> ("password")),
+	server_name(server.get<std::string>("<xmlattr>.name", std::string()))
 	{
 }
 

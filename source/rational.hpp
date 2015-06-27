@@ -26,10 +26,10 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-class Pokemon;
+struct Pokemon;
 
 template<typename Numerator, typename Denominator>
-class bounded_rational;
+struct bounded_rational;
 
 template<typename T>
 struct is_bounded_rational : std::false_type {};
@@ -49,10 +49,10 @@ constexpr auto make_rational(Numerator const & numerator, Denominator const & de
 }
 
 template<typename Numerator, typename Denominator>
-class bounded_rational {
+struct bounded_rational {
 private:
 	template<typename N, typename D>
-	friend class bounded_rational;
+	friend struct bounded_rational;
 	Numerator m_numerator;
 	Denominator m_denominator;
 public:

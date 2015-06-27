@@ -31,12 +31,11 @@
 #include <utility>
 
 namespace technicalmachine {
-class Ability;
-class Move;
-class Weather;
+struct Ability;
+struct Move;
+struct Weather;
 
-class ActivePokemon {
-public:
+struct ActivePokemon {
 	ActivePokemon(Pokemon const & pokemon, ActivePokemonFlags const & flags):
 		m_pokemon(pokemon),
 		m_flags(flags)
@@ -64,8 +63,7 @@ private:
 	ActivePokemonFlags const & m_flags;
 };
 
-class MutableActivePokemon {
-public:
+struct MutableActivePokemon {
 	MutableActivePokemon(Pokemon & pokemon, ActivePokemonFlags & flags):
 		m_pokemon(pokemon),
 		m_flags(flags)

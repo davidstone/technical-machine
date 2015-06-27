@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class Screens {
-public:
+struct Screens {
 	auto decrement() -> void;
 
 	constexpr auto light_screen() const noexcept {

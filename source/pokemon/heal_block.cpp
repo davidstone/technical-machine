@@ -1,4 +1,3 @@
-// Heal Block class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.

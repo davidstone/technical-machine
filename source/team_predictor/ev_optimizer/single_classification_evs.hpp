@@ -25,16 +25,15 @@
 
 namespace technicalmachine {
 enum class Nature : uint8_t;
-class Pokemon;
+struct Pokemon;
 
-class SingleClassificationEVs {
-public:
+struct SingleClassificationEVs {
 	enum NatureBoost { Penalty, Neutral, Boost };
 	SingleClassificationEVs(EV hp, EV defensive, Nature nature, bool physical);
 	std::string to_string() const;
 	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type max_evs);
 private:
-	friend class DataPoint;
+	friend struct DataPoint;
 	EV hp;
 	EV defensive;
 	NatureBoost nature_boost;

@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class NatureInput {
-public:
+struct NatureInput {
 	explicit NatureInput(int button_number);
 	Nature value() const;
 private:

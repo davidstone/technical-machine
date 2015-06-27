@@ -32,8 +32,7 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
-class Stage {
-public:
+struct Stage {
 	using value_type = bounded::clamped_integer<-6, 6>;
 	using boost_type = bounded::checked_integer<-3, 12>;
 	static constexpr auto number_of_stats = bounded::make<static_cast<intmax_t>(StatNames::END)>();
@@ -60,18 +59,15 @@ inline auto hash(Stage const stage) noexcept {
 namespace detail {
 
 template<StatNames stat>
-class Base {
-public:
+struct Base {
 	static constexpr auto value = 2_bi;
 };
 template<>
-class Base<StatNames::ACC> {
-public:
+struct Base<StatNames::ACC> {
 	static constexpr auto value = 3_bi;
 };
 template<>
-class Base<StatNames::EVA> {
-public:
+struct Base<StatNames::EVA> {
 	static constexpr auto value = 3_bi;
 };
 

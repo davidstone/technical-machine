@@ -78,7 +78,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 	return lookup[index];
 }
 
-class InvalidMove : public std::exception {};
+struct InvalidMove : std::exception {};
 
 }	// namespace
 

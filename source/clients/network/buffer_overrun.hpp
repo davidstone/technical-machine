@@ -1,4 +1,3 @@
-// Exception class for improper message length
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -23,8 +22,7 @@
 namespace technicalmachine {
 namespace network {
 
-class BufferOverrun : public InvalidPacket {
-public:
+struct BufferOverrun : InvalidPacket {
 	BufferOverrun();
 };
 }	// namespace network

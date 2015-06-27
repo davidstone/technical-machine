@@ -24,8 +24,7 @@
 namespace technicalmachine {
 namespace po {
 
-class InvalidTeamFile : public std::runtime_error {
-public:
+struct InvalidTeamFile : std::runtime_error {
 	InvalidTeamFile(std::string const & expected, std::string const & received);
 };
 

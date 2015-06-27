@@ -1,4 +1,3 @@
-// Class to represent Toxic's counter
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -26,8 +25,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Toxic {
-public:
+struct Toxic {
 	auto increment() -> void;
 	constexpr auto ratio_drained() const {
 		return make_rational(-m_counter, 16_bi);
@@ -37,7 +35,7 @@ public:
 		return technicalmachine::hash(m_counter);
 	}
 private:
-	friend class Evaluate;
+	friend struct Evaluate;
 	// Number of turns this Pokemon has already taken Toxic damage (or
 	// would have if Magic Guard / Poison Heal weren't in play)
 	bounded::clamped_integer<0, 15> m_counter = 0_bi;

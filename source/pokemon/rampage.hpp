@@ -1,4 +1,4 @@
-// Class that handles Outrage, Petal Dance, and Thrash
+// Outrage, Petal Dance, and Thrash
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.

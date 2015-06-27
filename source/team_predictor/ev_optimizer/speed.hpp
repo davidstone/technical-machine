@@ -24,12 +24,11 @@
 #include <unordered_map>
 
 namespace technicalmachine {
-class Pokemon;
-class OffensiveEVs;
-class DefensiveEVs;
+struct Pokemon;
+struct OffensiveEVs;
+struct DefensiveEVs;
 
-class SpeedEVs {
-public:
+struct SpeedEVs {
 	explicit SpeedEVs(Pokemon const & pokemon);
 private:
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);

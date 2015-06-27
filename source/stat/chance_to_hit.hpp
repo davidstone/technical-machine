@@ -20,8 +20,8 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
-class Weather;
+struct ActivePokemon;
+struct Weather;
 
 using ChanceToHit = double;
 

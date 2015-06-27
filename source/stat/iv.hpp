@@ -1,4 +1,3 @@
-// IVs
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -22,8 +21,7 @@
 
 namespace technicalmachine {
 
-class IV {
-public:
+struct IV {
 	static constexpr auto max = 31U;
 	using value_type = bounded::checked_integer<0, max>;
 	constexpr explicit IV(value_type const iv) noexcept:

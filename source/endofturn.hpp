@@ -20,8 +20,8 @@
 
 namespace technicalmachine {
 
-class Team;
-class Weather;
+struct Team;
+struct Weather;
 
 void endofturn (Team & first, Team & last, Weather & weather);
 

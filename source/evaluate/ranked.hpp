@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class RankedMove {
-public:
+struct RankedMove {
 	explicit RankedMove(Moves move, double score);
 	Moves name() const;
 	friend bool operator<(RankedMove lhs, RankedMove rhs);

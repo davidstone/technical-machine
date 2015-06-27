@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class MoveInput {
-public:
+struct MoveInput {
 	MoveInput(int button_number, int x_position, char const * label = "");
 	Moves value() const;
 private:
@@ -32,8 +31,7 @@ private:
 	Fl_Input input;
 };
 
-class MoveInputs {
-public:
+struct MoveInputs {
 	explicit MoveInputs(int button_number);
 	MoveInput input0;
 	MoveInput input1;

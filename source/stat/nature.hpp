@@ -65,7 +65,7 @@ auto lowers_defending_stat(Nature nature) -> bool;
 namespace std {
 
 template<>
-class hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
+struct hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
 
 }	// namespace std
 

@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class Priority {
-public:
+struct Priority {
 	explicit Priority(Moves move);
 	friend auto operator== (Priority lhs, Priority rhs) -> bool;
 	friend auto operator< (Priority lhs, Priority rhs) -> bool;

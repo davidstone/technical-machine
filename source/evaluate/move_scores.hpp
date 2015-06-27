@@ -23,10 +23,9 @@
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-class Pokemon;
+struct Pokemon;
 
-class MoveScores {
-public:
+struct MoveScores {
 	explicit MoveScores(Pokemon const & pokemon);
 	double at(Species species, Moves move) const;
 	double & at(Species species, Moves move);

@@ -39,8 +39,7 @@ struct Any<T, value_to_find> : std::integral_constant<bool, false> {};
 enum class CounterOperations { is_active, turns_active, advance_one_turn, advance_one_turn_deactivated, activate };
 
 template<intmax_t max_turns, CounterOperations... operations>
-class EndOfTurnCounter {
-public:
+struct EndOfTurnCounter {
 	constexpr auto is_active() const {
 		static_assert(Any<CounterOperations, CounterOperations::is_active, operations...>::value, "This type does not support checking if it is active.");
 		return static_cast<bool>(m_turns_active);

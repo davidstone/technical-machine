@@ -19,10 +19,10 @@
 #pragma once
 
 namespace technicalmachine {
-class Pokemon;
-class OffensiveEVs;
-class DefensiveEVs;
-class SpeedEVs;
+struct Pokemon;
+struct OffensiveEVs;
+struct DefensiveEVs;
+struct SpeedEVs;
 
 void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 

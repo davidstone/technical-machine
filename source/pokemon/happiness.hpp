@@ -1,4 +1,3 @@
-// Happiness class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -24,8 +23,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Happiness {
-public:
+struct Happiness {
 	using value_type = bounded::checked_integer<0, 255>;
 	explicit Happiness(value_type value = 255_bi);
 	// Needed to send out to simulators

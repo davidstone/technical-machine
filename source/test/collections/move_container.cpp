@@ -36,8 +36,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-class Verify {
-public:
+struct Verify {
 	Verify(std::vector<Moves> m, TeamSize team_size):
 		m_moves(std::move(m)),
 		m_shared_moves(create_shared_moves(team_size)),

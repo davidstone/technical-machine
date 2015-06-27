@@ -1,4 +1,3 @@
-// Wish data structure
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -22,7 +21,7 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-class Pokemon;
+struct Pokemon;
 
 auto Wish::activate() -> void {
 	if (!is_active()) {

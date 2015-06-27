@@ -1,4 +1,3 @@
-// Keeps track of the last used move
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -25,12 +24,11 @@
 
 namespace technicalmachine {
 template<typename Numerator, typename Denominator>
-class bounded_rational;
+struct bounded_rational;
 
 using namespace bounded::literal;
 
-class LastUsedMove {
-public:
+struct LastUsedMove {
 	using index_type = bounded::checked_integer<0, 3>;
 	auto has_moved() const -> bool;
 	auto was_used_last(index_type index_of_move) const -> bool;

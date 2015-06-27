@@ -1,4 +1,4 @@
-// Range class
+// Range struct
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -24,8 +24,7 @@
 namespace technicalmachine {
 
 template<typename Iterator>
-class Range {
-public:
+struct Range {
 	using iterator = Iterator;
 	constexpr Range(iterator first, iterator last):
 		m_first(std::move(first)),

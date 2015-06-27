@@ -313,7 +313,7 @@ auto is_boosted_by_lustrous_orb(Species const species) -> bool {
 }
 
 namespace {
-class InvalidSpecies : public std::exception {};
+struct InvalidSpecies : std::exception {};
 }	// namespace
 
 auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 120> {

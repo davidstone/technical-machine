@@ -1,4 +1,3 @@
-// HP class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -26,11 +25,10 @@
 #include "../rational.hpp"
 
 namespace technicalmachine {
-class Level;
+struct Level;
 using namespace bounded::literal;
 
-class HP {
-public:
+struct HP {
 	static constexpr auto max_value = 714U;
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;

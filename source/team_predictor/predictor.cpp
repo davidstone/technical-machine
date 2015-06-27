@@ -49,8 +49,7 @@ using namespace technicalmachine;
 
 namespace {
 
-class Data {
-public:
+struct Data {
 	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init, Fl_Int_Input const & random_input_, Fl_Multiline_Output & output_):
 		input(init),
 		random_input(random_input_),
@@ -100,8 +99,7 @@ constexpr int output_x_position = left_padding + ev_input_width * number_of_stat
 constexpr int window_width = output_x_position + output_width + padding;
 constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
 
-class PokemonInputValues {
-public:
+struct PokemonInputValues {
 	PokemonInputValues(PokemonInputs const & inputs):
 		species(inputs.species()),
 		nature(inputs.nature()),
@@ -136,8 +134,7 @@ private:
 	std::vector<Moves> moves;
 };
 
-class Input {
-public:
+struct Input {
 	template<typename... Args>
 	void emplace_back(Args &&... args) {
 		pokemon.emplace_back(std::forward<Args>(args)...);

@@ -22,8 +22,7 @@
 
 namespace technicalmachine {
 
-class Party {
-public:
+struct Party {
 	// -1 indicates the message does not apply to a party
 	using value_type = bounded::checked_integer<-1, 2>;
 	Party();

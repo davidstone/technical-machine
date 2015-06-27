@@ -24,10 +24,9 @@
 #include "../pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-class Level;
+struct Level;
 
-class Stats {
-public:
+struct Stats {
 	Stats(Species species, Level level);
 	auto hp() const -> HP const &;
 	auto hp() -> HP &;

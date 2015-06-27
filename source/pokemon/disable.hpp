@@ -26,8 +26,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Disable {
-public:
+struct Disable {
 	auto activate(RegularMoveIndex index_of_disabled_move) -> void;
 	auto advance_one_turn() -> void;
 	auto move_is_disabled(RegularMoveIndex index_of_move_to_check) const -> bool;

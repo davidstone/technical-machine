@@ -1,4 +1,3 @@
-// Invalid string conversion classes
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -28,8 +27,7 @@ namespace technicalmachine {
 // that I get from 'outside' the program. It may also represent a logic error,
 // but it is definitely a runtime error.
 
-class InvalidFromStringConversion : public std::runtime_error {
-public:
+struct InvalidFromStringConversion : std::runtime_error {
 	InvalidFromStringConversion(boost::string_ref const target, boost::string_ref const requested);
 };
 

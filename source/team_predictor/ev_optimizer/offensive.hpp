@@ -28,13 +28,12 @@
 #include "../../stat/nature.hpp"
 
 namespace technicalmachine {
-class Pokemon;
-class DefensiveEVs;
-class SpeedEVs;
+struct Pokemon;
+struct DefensiveEVs;
+struct SpeedEVs;
 using namespace bounded::literal;
 
-class OffensiveStats {
-public:
+struct OffensiveStats {
 	OffensiveStats():
 		attack(0_bi),
 		special_attack(0_bi) {
@@ -46,12 +45,11 @@ public:
 	EV special_attack;
 };
 
-class OffensiveEVs {
-public:
+struct OffensiveEVs {
 	explicit OffensiveEVs(Pokemon const & pokemon);
 private:
 	auto optimize(Pokemon const & pokemon) -> void;
-	class OffensiveData {
+	struct OffensiveData {
 	private:
 		template<StatNames stat>
 		using StatType = decltype(initial_stat<stat>(std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));

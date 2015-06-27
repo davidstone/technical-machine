@@ -27,8 +27,7 @@
 
 namespace technicalmachine {
 
-class Battles {
-public:
+struct Battles {
 	template<typename SpecificBattle, typename ... Args>
 	SpecificBattle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
 		auto battle_ptr = std::make_unique<SpecificBattle>(opponent, std::forward<Args>(args)...);

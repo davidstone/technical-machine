@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class InvalidTeamFileFormat : public std::logic_error {
-public:
+struct InvalidTeamFileFormat : std::logic_error {
 	explicit InvalidTeamFileFormat(boost::filesystem::path const & file);
 };
 }	// namespace technicalmachine

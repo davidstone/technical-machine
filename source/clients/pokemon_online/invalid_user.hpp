@@ -25,8 +25,7 @@
 namespace technicalmachine {
 namespace po {
 
-class InvalidUser : public std::runtime_error {
-public:
+struct InvalidUser : std::runtime_error {
 	explicit InvalidUser (std::string const & name);
 	explicit InvalidUser (uint32_t id);
 };

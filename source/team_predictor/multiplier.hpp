@@ -24,8 +24,7 @@
 
 namespace technicalmachine {
 
-class Multiplier {
-public:
+struct Multiplier {
 	using Overall = bounded::array<unsigned, number_of_species>;
 	using value_type = float;
 	Multiplier(Overall const & overall);

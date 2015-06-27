@@ -30,8 +30,7 @@
 namespace technicalmachine {
 namespace ps {
 
-class Client : public ::technicalmachine::Client {
-public:
+struct Client : ::technicalmachine::Client {
 	explicit Client(unsigned depth);
 	void run();
 	void handle_message(InMessage const & message);

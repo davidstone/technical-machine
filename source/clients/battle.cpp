@@ -58,7 +58,7 @@
 #include <vector>
 
 namespace technicalmachine {
-class DetailedStats;
+struct DetailedStats;
 
 Battle::Battle(std::string const & _opponent, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file):
 	opponent_name(_opponent),

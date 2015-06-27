@@ -26,12 +26,11 @@
 #include <vector>
 
 namespace technicalmachine {
-class Pokemon;
-class OffensiveEVs;
-class SpeedEVs;
+struct Pokemon;
+struct OffensiveEVs;
+struct SpeedEVs;
 
-class DefensiveEVs {
-public:
+struct DefensiveEVs {
 	explicit DefensiveEVs(Pokemon const & pokemon);
 	typedef std::unordered_map<Nature, DataPoint> BestPerNature;
 private:

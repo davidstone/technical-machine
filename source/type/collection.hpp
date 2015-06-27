@@ -27,14 +27,14 @@
 #include <type_traits>
 
 namespace technicalmachine {
-class ActivePokemon;
-class MutableActivePokemon;
-class Pokemon;
-class Weather;
+struct ActivePokemon;
+struct MutableActivePokemon;
+struct Pokemon;
+struct Weather;
 
 namespace detail_type_collection {
 
-class TypeArray {
+struct TypeArray {
 private:
 	using container_type = bounded::array<Type, 2>;
 public:
@@ -55,8 +55,7 @@ private:
 
 }	// namespace detail_type_collection
 
-class TypeCollection {
-public:
+struct TypeCollection {
 	TypeCollection (Species name);
 	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
 	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
@@ -72,7 +71,7 @@ public:
 	auto change_type(Type const type) -> void;
 private:
 	friend auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
-	friend class Effectiveness;
+	friend struct Effectiveness;
 	detail_type_collection::TypeArray types;
 };
 

@@ -24,11 +24,10 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class MutableActivePokemon;
-class Pokemon;
+struct MutableActivePokemon;
+struct Pokemon;
 
-class Wish {
-public:
+struct Wish {
 	auto activate() -> void;
 	auto decrement(MutableActivePokemon pokemon) -> void;
 	constexpr auto is_active() const {

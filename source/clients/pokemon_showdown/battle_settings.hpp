@@ -23,8 +23,7 @@
 namespace technicalmachine {
 namespace ps {
 
-class BattleSettings : public ::technicalmachine::BattleSettings {
-public:
+struct BattleSettings : ::technicalmachine::BattleSettings {
 	bool are_acceptable() const override;
 };
 

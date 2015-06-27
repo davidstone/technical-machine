@@ -1,4 +1,3 @@
-// The maximum number of Pokemon possible on a team
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.

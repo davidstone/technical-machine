@@ -20,9 +20,9 @@
 
 namespace technicalmachine {
 
-class Team;
-class Variable;
-class Weather;
+struct Team;
+struct Variable;
+struct Weather;
 
 auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false) -> void;
 

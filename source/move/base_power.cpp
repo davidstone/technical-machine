@@ -1,4 +1,3 @@
-// Base Power calculation
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -26,7 +25,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-class InvalidMove: public std::exception {};
+struct InvalidMove: std::exception {};
 
 }	// namespace
 

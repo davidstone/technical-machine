@@ -81,11 +81,10 @@ ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
 }
 
 template<typename Field>
-class StatType;
+struct StatType;
 
 template<>
-class StatType<EV> {
-public:
+struct StatType<EV> {
 	static std::string const & name() {
 		static std::string const str = "EV";
 		return str;
@@ -96,8 +95,7 @@ public:
 	}
 };
 template<>
-class StatType<IV> {
-public:
+struct StatType<IV> {
 	static std::string const & name() {
 		static std::string const str = "DV";
 		return str;

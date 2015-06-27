@@ -39,17 +39,16 @@
 #include <vector>
 
 namespace technicalmachine {
-class Client;
-class DetailedStats;
-class Evaluate;
-class Gender;
-class Level;
+struct Client;
+struct DetailedStats;
+struct Evaluate;
+struct Gender;
+struct Level;
 namespace network {
-class OutMessage;
+struct OutMessage;
 } // namespace network
 
-class Battle {
-public:
+struct Battle {
 	bool is_me(Party other_party) const;
 	void set_party_if_unknown(Party new_party);
 	void write_team(network::OutMessage & msg, std::string const & username = std::string()) const;

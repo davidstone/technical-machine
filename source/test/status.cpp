@@ -1,4 +1,3 @@
-// Test status functions
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -31,8 +30,7 @@ namespace technicalmachine {
 namespace {
 using std::to_string;
 
-class InvalidSleepProbability : public std::runtime_error {
-public:
+struct InvalidSleepProbability : std::runtime_error {
 	InvalidSleepProbability(double const expected, double const calculated):
 		std::runtime_error("Expected: " + to_string(expected) + " but got " + to_string(calculated))
 		{

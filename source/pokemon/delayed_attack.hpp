@@ -1,4 +1,4 @@
-// Class that handles Doom Desire / Future Sight
+// Doom Desire / Future Sight
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.

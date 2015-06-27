@@ -22,10 +22,10 @@
 
 namespace technicalmachine {
 
-class Pokemon;
-class Team;
-class Variable;
-class Weather;
+struct Pokemon;
+struct Team;
+struct Variable;
+struct Weather;
 
 using damage_type = bounded::equivalent_type<unsigned, bounded::throw_policy>;
 

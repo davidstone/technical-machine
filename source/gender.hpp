@@ -24,8 +24,7 @@
 
 namespace technicalmachine {
 
-class Gender {
-public:
+struct Gender {
 	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 	
 	Gender();

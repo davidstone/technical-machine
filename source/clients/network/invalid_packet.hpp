@@ -1,4 +1,3 @@
-// Exception class for invalid packets
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -24,8 +23,7 @@
 namespace technicalmachine {
 namespace network {
 
-class InvalidPacket : public std::runtime_error {
-public:
+struct InvalidPacket : std::runtime_error {
 	explicit InvalidPacket(std::string const & reason);
 };
 }	// namespace network

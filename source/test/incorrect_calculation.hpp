@@ -1,4 +1,3 @@
-// Incorrect Calculation class
 // Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.
@@ -23,8 +22,7 @@
 
 namespace technicalmachine {
 
-class IncorrectCalculation : public std::logic_error {
-public:
+struct IncorrectCalculation : std::logic_error {
 	template<typename LHS, typename RHS>
 	IncorrectCalculation(LHS const result, RHS const expected):
 		std::logic_error("Result of " + to_string(result) + " instead of the expected " + to_string(expected) + '\n')

@@ -1,4 +1,3 @@
-// Weather class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -37,8 +36,7 @@ using namespace bounded::literal;
 // Uproar is considered Weather because it can be activated without being
 // associated with any particular Pokemon / Team.
 
-class Weather {
-public:
+struct Weather {
 	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
 	
 	constexpr Weather() {}

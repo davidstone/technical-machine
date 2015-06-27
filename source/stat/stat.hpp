@@ -27,8 +27,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Stat {
-public:
+struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
 	Stat(Species name, StatNames stat, EV ev = EV(0_bi));

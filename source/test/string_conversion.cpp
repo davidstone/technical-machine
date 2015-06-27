@@ -48,8 +48,7 @@ namespace {
 // string from an internal data structure, so I know the input is only invalid
 // if there is a logic error in my program.
 
-class InvalidToStringConversion : public std::logic_error {
-public:
+struct InvalidToStringConversion : std::logic_error {
 	template<typename Test>
 	InvalidToStringConversion(Test original, Test result, boost::string_ref const intermediate):
 		std::logic_error(std::to_string(static_cast<unsigned>(original)) + " is seen as " + std::to_string(static_cast<unsigned>(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {

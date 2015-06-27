@@ -27,8 +27,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class BideDamage {
-public:
+struct BideDamage {
 	auto add(damage_type damage) -> void;
 	auto release() -> damage_type;
 	friend auto operator== (BideDamage lhs, BideDamage rhs) -> bool;

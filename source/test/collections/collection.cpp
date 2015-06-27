@@ -45,7 +45,7 @@ private:
 	int m_value;
 };
 
-class TestContainer {
+struct TestContainer {
 private:
 	static constexpr intmax_t maximum = 7;
 public:

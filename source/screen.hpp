@@ -27,8 +27,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<intmax_t normal_duration, intmax_t max_duration = normal_duration>
-class Screen {
-public:
+struct Screen {
 	static_assert(normal_duration <= max_duration, "Max duration cannot be less than normal duration.");
 
 	constexpr operator bool() const {

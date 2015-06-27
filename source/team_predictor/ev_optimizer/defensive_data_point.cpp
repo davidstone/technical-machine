@@ -71,8 +71,7 @@ bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const 
 	return left < right;
 }
 
-class InvalidNatureCombination : public std::logic_error {
-public:
+struct InvalidNatureCombination : std::logic_error {
 	InvalidNatureCombination():
 		std::logic_error("Attempt to create a nature that cannot exist.") {
 	}

@@ -47,9 +47,9 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
-class MutableActivePokemon;
-class Move;
+struct ActivePokemon;
+struct MutableActivePokemon;
+struct Move;
 
 // I use a macro here because I rely on a conversion operator. Friend functions
 // only declared in a class body are not found by lookup rules in that case. The
@@ -109,8 +109,7 @@ class Move;
 	friend auto damaged(ActivePokemon pokemon) -> bounded::integer<0, HP::max_value>; \
 	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
 
-class ActivePokemonFlags {
-public:
+struct ActivePokemonFlags {
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;
 
@@ -168,8 +167,8 @@ public:
 	}
 
 private:
-	friend class ActivePokemon;
-	friend class MutableActivePokemon;
+	friend struct ActivePokemon;
+	friend struct MutableActivePokemon;
 	
 	HP::current_type damaged = 0_bi;
 	Bide bide;

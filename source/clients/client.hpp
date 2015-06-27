@@ -31,13 +31,12 @@
 #include <string>
 
 namespace technicalmachine {
-class Settings;
-class Party;
+struct Settings;
+struct Party;
 enum class Result;
-class BattleSettings;
+struct BattleSettings;
 
-class Client {
-public:
+struct Client {
 	DetailedStats const & detailed() const;
 	Evaluate const & evaluation_constants() const;
 	virtual ~Client();

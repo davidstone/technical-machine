@@ -20,9 +20,9 @@
 
 namespace technicalmachine {
 
-class Evaluate;
-class Team;
-class Weather;
+struct Evaluate;
+struct Team;
+struct Weather;
 
 double transposition(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
 

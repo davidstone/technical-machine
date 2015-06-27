@@ -25,11 +25,10 @@
 #include <random>
 
 namespace technicalmachine {
-class Multiplier;
-class Team;
+struct Multiplier;
+struct Team;
 
-class Estimate {
-public:
+struct Estimate {
 	using Overall = bounded::array<unsigned, number_of_species>;
 	using Lead = bounded::array<float, number_of_species>;
 	Estimate(Overall const & overall, Lead const & lead, unsigned total);

@@ -24,11 +24,10 @@
 #include <bounded_integer/optional.hpp>
 
 namespace technicalmachine {
-class Pokemon;
+struct Pokemon;
 using namespace bounded::literal;
 
-class Confusion {
-public:
+struct Confusion {
 	auto is_active() const -> bool;
 	auto activate() -> void;
 	auto do_turn(Pokemon & pokemon) -> void;
@@ -40,7 +39,7 @@ public:
 	}
 private:
 	auto increment() -> void;
-	friend class Evaluate;
+	friend struct Evaluate;
 	static constexpr auto max_duration = 4;
 	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused;
 	bool m_is_hitting_self = false;

@@ -25,10 +25,9 @@
 namespace technicalmachine {
 namespace po {
 
-class InMessage;
+struct InMessage;
 
-class BattleSettings : public ::technicalmachine::BattleSettings {
-public:
+struct BattleSettings : ::technicalmachine::BattleSettings {
 	enum Clauses : uint32_t {
 		sleep_CLAUSE = 1 << 0,
 		freeze_CLAUSE = 1 << 1,
@@ -55,8 +54,7 @@ private:
 	bool active (Clauses const check) const;
 };
 
-class BattleConfiguration {
-public:
+struct BattleConfiguration {
 	BattleConfiguration (InMessage & msg);
 private:
 	uint8_t const generation;

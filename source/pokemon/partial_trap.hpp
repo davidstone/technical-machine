@@ -22,12 +22,11 @@
 #include "../hash.hpp"
 
 namespace technicalmachine {
-class MutableActivePokemon;
+struct MutableActivePokemon;
 
-// This class handles the number of turns remaining on Bind, Clamp, Fire Spin,
+// This handles the number of turns remaining on Bind, Clamp, Fire Spin,
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap
-class PartialTrap {
-public:
+struct PartialTrap {
 	constexpr auto is_active() const {
 		return m_base.is_active();
 	}

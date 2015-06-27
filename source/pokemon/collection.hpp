@@ -36,9 +36,10 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-class Move;
+struct Move;
 
-class PokemonCollection : public detail::Collection<PokemonContainer> {
+struct PokemonCollection : detail::Collection<PokemonContainer> {
+private:
 	using Base = detail::Collection<PokemonContainer>;
 public:
 	using Base::index_type;
@@ -78,13 +79,13 @@ public:
 	TeamSize real_size() const;
 	index_type find_index(Species name) const;
 
-	template<class... Args>
+	template<typename... Args>
 	void add(Args&&... args) {
 		container.emplace_back(true_size, std::forward<Args>(args)...);
 		// Guaranteed to be a valid index
 		current_replacement = static_cast<index_type>(size() - 1_bi);
 	}
-	template<class...Args>
+	template<typename...Args>
 	bool add_if_not_present(Species name, Args&&... args) {
 		bool const add_new_pokemon = !seen(name);
 		if (add_new_pokemon) {
@@ -112,9 +113,8 @@ public:
 		for_each_replacement([]() { return false; }, f);
 	}
 private:
-	class ResetIndex {
-	public:
-		ResetIndex(PokemonCollection & collection):
+	struct ResetIndex {
+		explicit ResetIndex(PokemonCollection & collection):
 			copy(collection),
 			index(collection.current_replacement)
 			{

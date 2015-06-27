@@ -24,8 +24,7 @@
 namespace technicalmachine {
 namespace network {
 
-class InvalidChannel : public std::runtime_error {
-public:
+struct InvalidChannel : std::runtime_error {
 	explicit InvalidChannel(std::string const & channel);
 };
 

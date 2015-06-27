@@ -33,8 +33,7 @@
 namespace technicalmachine {
 namespace {
 #if 0
-class Hash {
-public:
+struct Hash {
 	uint64_t ai;
 	uint64_t foe;
 	double value;

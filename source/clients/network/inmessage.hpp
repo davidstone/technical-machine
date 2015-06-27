@@ -26,10 +26,9 @@
 
 namespace technicalmachine {
 namespace network {
-class Client;
+struct Client;
 
-class InMessage {
-public:
+struct InMessage {
 	InMessage ();
 	virtual ~InMessage() {}
 	void reset (size_t bytes);

@@ -26,8 +26,7 @@
 
 namespace technicalmachine {
 
-class Bide {
-public:
+struct Bide {
 	auto is_active() const -> bool ;
 	auto activate() -> void;
 	auto add_damage(damage_type damage) -> void;

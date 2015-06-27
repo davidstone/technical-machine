@@ -1,4 +1,3 @@
-// Class that handles Stockpile
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -26,8 +25,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Stockpile {
-public:
+struct Stockpile {
 	static constexpr auto max = 3;
 	// Returns whether Stockpile was able to increment (true) or if it is
 	// already maxed out (false)
@@ -41,7 +39,7 @@ public:
 	}
 	friend auto operator==(Stockpile lhs, Stockpile rhs) -> bool;
 private:
-	friend class Evaluate;
+	friend struct Evaluate;
 	bounded::clamped_integer<0, max> m_level = 0_bi;
 };
 auto operator!=(Stockpile lhs, Stockpile rhs) -> bool;

@@ -26,11 +26,10 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class Team;
+struct Team;
 namespace network {
 
-class OutMessage {
-public:
+struct OutMessage {
 	explicit OutMessage (uint8_t code);
 	virtual ~OutMessage () {}
 	void write_byte (uint8_t byte);

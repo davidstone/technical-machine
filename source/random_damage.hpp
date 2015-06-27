@@ -25,8 +25,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class RandomDamage {
-public:
+struct RandomDamage {
 	constexpr auto operator()() const {
 		return make_rational(m_r, 100_bi);
 	}

@@ -23,12 +23,11 @@
 
 namespace technicalmachine {
 namespace network {
-class Client;
+struct Client;
 }	// namespace network
 namespace po {
 
-class InMessage : public network::InMessage::InMessage {
-public:
+struct InMessage : network::InMessage::InMessage {
 	InMessage ();
 	std::string read_string ();
 	void read_body(boost::asio::ip::tcp::socket & socket, network::Client & client) final;

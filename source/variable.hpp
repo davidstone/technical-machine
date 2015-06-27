@@ -29,14 +29,13 @@
 #include "pokemon/species_forward.hpp"
 
 namespace technicalmachine {
-class ActivePokemon;
-class Team;
+struct ActivePokemon;
+struct Team;
 
 // Used for moves with a variable power / length / other integer range. Moves of
 // variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal).
 // It is also used to determine whether random effects activate.
-class Variable {
-public:
+struct Variable {
 	using value_type = bounded::integer<0, 150>;
 	using Probability = double;
 	Variable();

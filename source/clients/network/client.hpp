@@ -29,16 +29,14 @@
 #include "../client.hpp"
 
 namespace technicalmachine {
-class BattleSettings;
-class Party;
+struct BattleSettings;
+struct Party;
 enum class Result;
 namespace network {
-class InMessage;
-class OutMessage;
+struct InMessage;
+struct OutMessage;
 
-class Client : public ::technicalmachine::Client {
-	typedef ::technicalmachine::Client Base;
-public:
+struct Client : ::technicalmachine::Client {
 	void handle_channel_message (uint32_t channel_id, std::string const & user, std::string const & message) const;
 	void send_message(OutMessage & msg);
 protected:
@@ -56,9 +54,10 @@ protected:
 	std::string const & username() const;
 	std::string const & password() const;
 	void handle_server_message (std::string const & sender, std::string const & message) const;
+	// TODO: do I have to define this?
 	template<typename Battle, typename ... Args>
 	Battle const & add_pending_challenge(Args && ... args) {
-		return Base::add_pending_challenge<Battle>(std::forward<Args>(args)...);
+		return ::technicalmachine::Client::add_pending_challenge<Battle>(std::forward<Args>(args)...);
 	}
 	void handle_private_message (std::string const & sender, std::string const & message);
 private:

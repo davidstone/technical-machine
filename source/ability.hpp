@@ -27,13 +27,12 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
-class MutableActivePokemon;
-class Move;
-class Weather;
+struct ActivePokemon;
+struct MutableActivePokemon;
+struct Move;
+struct Weather;
 
-class Ability {
-public:
+struct Ability {
 	enum Abilities : uint8_t {
 		Adaptability, Aftermath, Air_Lock, Anger_Point, Anticipation,
 		Arena_Trap, Bad_Dreams, Battle_Armor, Blaze, Chlorophyll,

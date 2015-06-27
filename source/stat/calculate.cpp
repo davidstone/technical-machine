@@ -240,33 +240,28 @@ auto item_modifier(Pokemon const & pokemon) {
 }
 
 template<StatNames stat>
-class StatTraits;
+struct StatTraits;
 
 template<>
-class StatTraits<StatNames::ATK> {
-public:
+struct StatTraits<StatNames::ATK> {
 	static constexpr bool is_physical = true;
 	static constexpr StatNames other = StatNames::DEF;
 };
 template<>
-class StatTraits<StatNames::DEF> {
-public:
+struct StatTraits<StatNames::DEF> {
 	static constexpr bool is_physical = true;
 	static constexpr StatNames other = StatNames::ATK;
 };
 template<>
-class StatTraits<StatNames::SPA> {
-public:
+struct StatTraits<StatNames::SPA> {
 	static constexpr bool is_physical = false;
 };
 template<>
-class StatTraits<StatNames::SPD> {
-public:
+struct StatTraits<StatNames::SPD> {
 	static constexpr bool is_physical = false;
 };
 template<>
-class StatTraits<StatNames::SPE> {
-public:
+struct StatTraits<StatNames::SPE> {
 	static constexpr bool is_physical = false;
 };
 

@@ -134,7 +134,7 @@ auto grounded(Pokemon const & pokemon, Weather const weather) -> bool {
 
 namespace {
 
-class InvalidSpecies : public std::exception {};
+struct InvalidSpecies : std::exception {};
 
 auto get_type(Species const name) -> TypeArray {
 	switch (name) {

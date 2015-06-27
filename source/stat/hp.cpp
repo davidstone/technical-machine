@@ -1,4 +1,3 @@
-// HP class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -63,7 +62,7 @@ auto HP::max() const -> max_type {
 
 namespace {
 
-class InvalidSpecies: public std::exception {};
+struct InvalidSpecies: std::exception {};
 
 auto get_base(Species const species) -> base_type {
 	switch (species) {

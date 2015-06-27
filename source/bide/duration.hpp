@@ -25,8 +25,7 @@
 
 namespace technicalmachine {
 
-class BideDuration {
-public:
+struct BideDuration {
 	auto activate() -> void;
 	explicit operator bool() const;
 	// returns whether Bide releases damage

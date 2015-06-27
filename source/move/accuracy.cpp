@@ -26,7 +26,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-class InvalidMove : public std::exception {};
+struct InvalidMove : std::exception {};
 
 }	// namespace
 

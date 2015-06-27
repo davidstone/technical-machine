@@ -1,4 +1,3 @@
-// Incorrect Calculation class
 // Copyright (C) 2013 David Stone
 //
 // This file is part of Technical Machine.

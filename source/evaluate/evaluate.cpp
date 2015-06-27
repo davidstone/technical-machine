@@ -43,10 +43,9 @@ namespace technicalmachine {
 namespace {
 
 template<typename T>
-class MaxTurns;
+struct MaxTurns;
 template<intmax_t max_turns, CounterOperations... operations>
-class MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
-public:
+struct MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
 	static constexpr auto value = max_turns;
 };
 

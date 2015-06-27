@@ -1,4 +1,3 @@
-// Level data structure
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -22,8 +21,7 @@
 
 namespace technicalmachine {
 
-class Level {
-public:
+struct Level {
 	static constexpr int min = 1;
 	static constexpr int max = 100;
 	explicit Level(bounded::checked_integer<min, max> level);

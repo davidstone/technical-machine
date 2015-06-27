@@ -26,16 +26,16 @@
 
 namespace technicalmachine {
 
-class Server {
-private:
-	std::string server_name;
-public:
+struct Server {
+	explicit Server (boost::property_tree::ptree const & root);
+	void add (boost::property_tree::ptree & root) const;
+
 	std::string host;
 	std::string port;
 	std::string username;
 	std::string password;
-	explicit Server (boost::property_tree::ptree const & root);
-	void add (boost::property_tree::ptree & root) const;
+private:
+	std::string server_name;
 };
 
 struct Settings {

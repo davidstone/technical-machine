@@ -1,4 +1,3 @@
-// Vanishing moves
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -30,7 +29,7 @@ namespace technicalmachine {
 
 // Various states a Pokemon can be in due to vanishing moves.
 
-class Vanish {
+struct Vanish {
 private:
 	enum class VanishTypes : uint8_t {
 		none, bounce, dig, dive, fly, shadow_force, end

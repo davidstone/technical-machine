@@ -24,8 +24,7 @@
 
 namespace technicalmachine {
 
-class NoPendingChallenges : public std::runtime_error {
-public:
+struct NoPendingChallenges : std::runtime_error {
 	NoPendingChallenges();
 	explicit NoPendingChallenges(std::string const & name);
 	explicit NoPendingChallenges(uint32_t const id);

@@ -29,9 +29,9 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class ActivePokemon;
-class Team;
-class Weather;
+struct ActivePokemon;
+struct Team;
+struct Weather;
 
 template<StatNames stat_name>
 auto initial_stat(Stat const stat, Level const level, Nature const nature) {

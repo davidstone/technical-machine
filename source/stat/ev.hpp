@@ -23,8 +23,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class EV {
-public:
+struct EV {
 	static constexpr auto max = 252;
 	static constexpr auto max_total = 508;
 	using value_type = bounded::checked_integer<0, max>;

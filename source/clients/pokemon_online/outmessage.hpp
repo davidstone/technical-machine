@@ -24,14 +24,13 @@
 #include "../network/outmessage.hpp"
 
 namespace technicalmachine {
-class Pokemon;
-class Team;
+struct Pokemon;
+struct Team;
 namespace po {
 
-class BattleSettings;
+struct BattleSettings;
 
-class OutMessage final : public network::OutMessage {
-public:
+struct OutMessage final : network::OutMessage {
 	explicit OutMessage (uint8_t code);
 	void write_string (std::string const & str) final;
 	void write_team (Team const & team, std::string const & username) final;

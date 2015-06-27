@@ -1,4 +1,3 @@
-// PP class
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -28,12 +27,11 @@
 #include <utility>
 
 namespace technicalmachine {
-class Ability;
+struct Ability;
 
 using namespace bounded::literal;
 
-class Pp {
-public:
+struct Pp {
 	using pp_ups_type = bounded::checked_integer<0, 3>;
 	Pp(Moves move, pp_ups_type pp_ups);
 	auto is_empty() const -> bool;

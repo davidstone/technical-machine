@@ -25,15 +25,13 @@
 
 namespace technicalmachine {
 
-class ActivePokemon;
-class MutableActivePokemon;
-class Team;
-class Weather;
+struct ActivePokemon;
+struct MutableActivePokemon;
+struct Team;
+struct Weather;
 
-class LegalSelections {
-	using Container = std::vector<Moves>;
-public:
-	using const_iterator = Container::const_iterator;
+struct LegalSelections {
+	using const_iterator = std::vector<Moves>::const_iterator;
 	LegalSelections(Team const & user, ActivePokemon other, Weather weather);
 	Species species() const;
 	const_iterator begin() const;
@@ -41,7 +39,7 @@ public:
 	size_t size() const;
 	Moves operator[](size_t index) const;
 private:
-	Container container;
+	std::vector<Moves> container;
 	Species m_species;
 };
 

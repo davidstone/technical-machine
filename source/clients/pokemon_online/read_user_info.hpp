@@ -26,10 +26,9 @@
 namespace technicalmachine {
 namespace po {
 
-class InMessage;
+struct InMessage;
 
-class User {
-public:
+struct User {
 	uint32_t const id;
 	std::string const name;
 	std::string const info;

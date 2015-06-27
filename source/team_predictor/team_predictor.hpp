@@ -21,8 +21,8 @@
 #include <random>
 
 namespace technicalmachine {
-class DetailedStats;
-class Team;
+struct DetailedStats;
+struct Team;
 
 Team predict_team(DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead = true);
 

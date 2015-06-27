@@ -21,7 +21,7 @@
 #include "moves.hpp"
 
 namespace technicalmachine {
-class Move;
+struct Move;
 
 auto global_move(Moves name) -> Move const &;
 

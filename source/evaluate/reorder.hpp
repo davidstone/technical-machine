@@ -23,8 +23,8 @@
 
 namespace technicalmachine {
 
-class LegalSelections;
-class MoveScores;
+struct LegalSelections;
+struct MoveScores;
 
 std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
 

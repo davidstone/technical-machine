@@ -29,10 +29,9 @@
 namespace technicalmachine {
 namespace po {
 
-class Clauses;
+struct Clauses;
 
-class Client final : public network::Client {
-public:
+struct Client final : network::Client {
 	explicit Client (unsigned set_depth);
 	void run ();
 	void handle_message (InMessage::Message code, InMessage & msg);

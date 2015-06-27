@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class SpeciesInput {
-public:
+struct SpeciesInput {
 	explicit SpeciesInput(int button_number);
 	Species value() const;
 private:

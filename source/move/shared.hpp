@@ -23,10 +23,10 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class Move;
+struct Move;
 using namespace bounded::literal;
 
-class SharedMovesIterator {
+struct SharedMovesIterator {
 private:
 	static constexpr auto max_size = static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max());
 public:
@@ -61,7 +61,7 @@ public:
 
 private:
 	using underlying_index_type = bounded::integer<0, static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max())>;
-	friend class SharedMoves;
+	friend struct SharedMoves;
 	constexpr explicit SharedMovesIterator(underlying_index_type const other) noexcept:
 		m_index(other) {
 	}
@@ -119,8 +119,7 @@ inline auto operator--(SharedMovesIterator & it, int) -> SharedMovesIterator {
 }
 
 
-class SharedMoves {
-public:
+struct SharedMoves {
 	using size_type = SharedMoveSize;
 	using index_type = SharedMoveIndex;
 	using const_iterator = SharedMovesIterator;

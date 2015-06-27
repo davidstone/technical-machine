@@ -31,8 +31,7 @@
 
 namespace technicalmachine {
 namespace {
-class InvalidRandomSpecies : public std::logic_error {
-public:
+struct InvalidRandomSpecies : std::logic_error {
 	InvalidRandomSpecies():
 		std::logic_error("Random species selection is invalid.")
 		{

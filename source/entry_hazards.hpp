@@ -24,14 +24,13 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-class MutableActivePokemon;
-class Team;
-class Weather;
+struct MutableActivePokemon;
+struct Team;
+struct Weather;
 
 // Using an entry hazard puts them down on the opponent's side of the field.
 
-class EntryHazards {
-public:
+struct EntryHazards {
 	constexpr auto spikes() const {
 		return bounded::make<bounded::null_policy>(m_spikes);
 	}

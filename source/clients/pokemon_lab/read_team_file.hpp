@@ -21,7 +21,7 @@
 #include <boost/filesystem/path.hpp>
 
 namespace technicalmachine {
-class Team;
+struct Team;
 namespace pl {
 
 void load_team (Team & team, boost::filesystem::path const & team_file);

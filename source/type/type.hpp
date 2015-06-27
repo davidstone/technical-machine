@@ -22,9 +22,9 @@
 #include "../move/moves.hpp"
 
 namespace technicalmachine {
-class Effectiveness;
-class Pokemon;
-class Weather;
+struct Effectiveness;
+struct Pokemon;
+struct Weather;
 
 enum class Type : uint8_t {
 	Bug,

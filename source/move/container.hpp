@@ -34,7 +34,7 @@ using namespace bounded::literal;
 
 using RegularMoveContainer = fixed_capacity_vector<Move, max_moves_per_pokemon.value()>;
 
-class MoveIterator {
+struct MoveIterator {
 private:
 	static constexpr auto max_difference = static_cast<intmax_t>(std::numeric_limits<MoveSize>::max() + 1_bi);
 public:
@@ -62,7 +62,7 @@ public:
 	friend auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool;
 
 private:
-	friend class MoveContainer;
+	friend struct MoveContainer;
 	MoveIterator(RegularMoveContainer::const_iterator regular, RegularMoveContainer::const_iterator regular_end, SharedMovesIterator shared) noexcept:
 		m_regular(std::move(regular)),
 		m_regular_end(std::move(regular_end)),
@@ -124,8 +124,7 @@ inline auto operator--(MoveIterator & it, int) -> MoveIterator {
 }
 
 
-class MoveContainer {
-public:
+struct MoveContainer {
 	using value_type = Move;
 	using size_type = MoveSize;
 	using index_type = MoveIndex;
@@ -161,7 +160,7 @@ public:
 		// A move container is never empty, it always contains at least Struggle
 		return false;
 	}
-	template<class... Args>
+	template<typename... Args>
 	auto emplace_back(Args&&... args) -> void {
 		assert(m_regular.size() < max_moves_per_pokemon);
 		// The only moves that are ever added are regular moves. Shared

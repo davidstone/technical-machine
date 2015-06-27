@@ -22,9 +22,9 @@
 
 namespace technicalmachine {
 
-class Team;
-class Variable;
-class Weather;
+struct Team;
+struct Variable;
+struct Weather;
 
 using MovePower = bounded::integer<1, 1440>;
 auto move_power(Team const & attacker, Team const & defender, Weather weather, Variable const & variable) -> MovePower;

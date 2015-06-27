@@ -25,10 +25,9 @@
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-class Pokemon;
+struct Pokemon;
 
-class Effectiveness {
-public:
+struct Effectiveness {
 	Effectiveness(Type type, Pokemon const & defender);
 	Effectiveness(Type attacking, Type defending);
 	auto is_super_effective() const -> bool;

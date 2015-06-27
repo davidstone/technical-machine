@@ -34,12 +34,11 @@
 #include <string>
 
 namespace technicalmachine {
-class Ability;
-class Pokemon;
-class Weather;
+struct Ability;
+struct Pokemon;
+struct Weather;
 
-class Team {
-public:
+struct Team {
 	explicit Team(TeamSize initial_size, bool is_me = false);
 	Team(std::mt19937 & random_engine, boost::filesystem::path const & team_file);
 	
@@ -87,7 +86,7 @@ public:
 	friend bool operator== (Team const & lhs, Team const & rhs);
 
 private:
-	friend class Evaluate;
+	friend struct Evaluate;
 	void load(boost::filesystem::path const & team_file);
 	
 	PokemonCollection m_all_pokemon;

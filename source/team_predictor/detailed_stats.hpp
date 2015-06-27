@@ -34,8 +34,7 @@
 
 namespace technicalmachine {
 
-class DetailedStats {
-public:
+struct DetailedStats {
 	DetailedStats();
 	template<typename T>
 	T const & get(Species species) const;

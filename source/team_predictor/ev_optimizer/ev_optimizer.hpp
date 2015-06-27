@@ -25,7 +25,7 @@
 #include <random>
 
 namespace technicalmachine {
-class Pokemon;
+struct Pokemon;
 
 constexpr auto regular_stats() {
 	return bounded::make_array(StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE);

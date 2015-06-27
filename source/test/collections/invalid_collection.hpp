@@ -23,8 +23,7 @@
 
 namespace technicalmachine {
 
-class InvalidCollection : public std::logic_error {
-public:
+struct InvalidCollection : std::logic_error {
 	explicit InvalidCollection(std::string const & str);
 };
 

@@ -20,8 +20,7 @@
 
 namespace technicalmachine {
 
-class BattleSettings {
-public:
+struct BattleSettings {
 	virtual bool are_acceptable () const = 0;
 	virtual ~BattleSettings () {}
 };

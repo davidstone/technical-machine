@@ -26,8 +26,7 @@
 namespace technicalmachine {
 namespace ps {
 
-class Battle : public ::technicalmachine::Battle {
-public:
+struct Battle : ::technicalmachine::Battle {
 	template<typename ... Args>
 	Battle(Args &&... args):
 		::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {

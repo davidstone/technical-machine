@@ -25,10 +25,9 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-class Ability;
+struct Ability;
 
-class Move {
-public:
+struct Move {
 	static constexpr auto class_name = "Move";
 	// move must not be Moves::END
 	explicit Move(Moves move, Pp::pp_ups_type pp_ups = 3_bi);

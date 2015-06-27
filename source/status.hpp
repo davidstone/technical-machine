@@ -1,4 +1,3 @@
-// Status class
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -29,9 +28,9 @@
 
 namespace technicalmachine {
 
-class Ability;
-class Pokemon;
-class Weather;
+struct Ability;
+struct Pokemon;
+struct Weather;
 
 enum class Statuses : uint8_t {
 	clear,
@@ -56,8 +55,7 @@ struct basic_numeric_limits<technicalmachine::Statuses> : technicalmachine::basi
 
 namespace technicalmachine {
 
-class Status {
-public:
+struct Status {
 	constexpr auto name() const -> Statuses {
 		return m_status;
 	}

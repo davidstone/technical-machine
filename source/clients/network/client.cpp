@@ -60,7 +60,7 @@ std::vector<std::string> load_trusted_users ();
 }	// namespace
 
 Client::Client(unsigned const depth):
-	Base(depth),
+	::technicalmachine::Client(depth),
 	m_socket(m_io),
 	m_highlights(load_highlights()),
 	m_trusted_users(load_trusted_users())
@@ -124,7 +124,7 @@ bool Client::is_trusted (std::string const & user) const {
 }
 
 void Client::load_settings (bool const reloading) {
-	auto settings = reloading ? Base::load_settings(true) : Settings();
+	auto settings = reloading ? ::technicalmachine::Client::load_settings(true) : Settings();
 	m_chattiness = settings.chattiness;
 	
 	if (!reloading) {
