@@ -32,7 +32,7 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 	detail::Collection<MoveContainer>(my_team_size) {
 }
 
-auto regular_move(MoveCollection const & moves) -> Move const & {
+auto regular_move(MoveCollection const & moves) -> Move {
 	return *(moves.regular().begin() + RegularMoveIndex(moves.index()));
 }
 auto regular_move(MoveCollection & moves) -> Move & {

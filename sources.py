@@ -40,7 +40,6 @@ move_sources = prepend_dir('move', [
 	'base_power.cpp',
 	'collection.cpp',
 	'container.cpp',
-	'global_move.cpp',
 	'is_switch.cpp',
 	'max_moves_per_pokemon.cpp',
 	'move.cpp',

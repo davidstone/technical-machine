@@ -86,7 +86,7 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> ScoreSt
 	}
 }
 
-auto score_move(Evaluate const & evaluate, Move const & move, Screens const & other) {
+auto score_move(Evaluate const & evaluate, Move const move, Screens const & other) {
 	return
 		(
 			BOUNDED_CONDITIONAL(is_physical(move), evaluate.reflect() * other.reflect().turns_remaining(),

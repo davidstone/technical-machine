@@ -1,5 +1,5 @@
 // Moves specific to one Pokemon and shared moves (Struggle and switches)
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -41,17 +41,12 @@ public:
 	using value_type = Move const;
 	using difference_type = bounded::integer<-max_difference, max_difference>;
 	using index_type = MoveIndex;
-	using pointer = value_type *;
-	using reference = value_type &;
 	using iterator_category = std::random_access_iterator_tag;
 
-	auto operator*() const -> reference {
+	auto operator*() const -> value_type {
 		return (m_regular != m_regular_end) ? *m_regular : *m_shared;
 	}
-	auto operator->() const -> pointer {
-		return & operator*();
-	}
-	auto operator[](index_type const index) const -> reference {
+	auto operator[](index_type const index) const -> value_type {
 		return *(*this + index);
 	}
 
@@ -155,7 +150,7 @@ struct MoveContainer {
 		return m_regular.end();
 	}
 	
-	auto operator[](index_type index) const -> Move const &;
+	auto operator[](index_type index) const -> Move;
 	static constexpr auto empty() -> bool {
 		// A move container is never empty, it always contains at least Struggle
 		return false;
@@ -174,7 +169,7 @@ struct MoveContainer {
 	
 	friend auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool;
 private:
-	auto unchecked_regular_move(RegularMoveIndex index) const -> Move const &;
+	auto unchecked_regular_move(RegularMoveIndex index) const -> Move;
 	auto unchecked_regular_move(RegularMoveIndex index) -> Move &;
 	RegularMoveContainer m_regular;
 	SharedMoves m_shared;

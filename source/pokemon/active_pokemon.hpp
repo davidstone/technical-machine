@@ -331,7 +331,7 @@ inline auto slow_start_is_active(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.slow_start.is_active();
 }
 
-inline auto sport_is_active(ActivePokemon const pokemon, Move const & foe_move) -> bool {
+inline auto sport_is_active(ActivePokemon const pokemon, Moves const foe_move) -> bool {
 	switch (get_type(foe_move, pokemon)) {
 	case Type::Electric:
 		return pokemon.m_flags.mud_sport;

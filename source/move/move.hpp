@@ -41,8 +41,8 @@ private:
 	Pp m_pp;
 };
 
-auto operator==(Move const & lhs, Move const & rhs) -> bool;
-auto operator!=(Move const & lhs, Move const & rhs) -> bool;
+auto operator==(Move lhs, Move rhs) -> bool;
+auto operator!=(Move lhs, Move rhs) -> bool;
 
 auto is_regular(Moves move) -> bool;
 
@@ -54,7 +54,7 @@ auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
 
-inline auto hash(Move const & move) noexcept {
+inline auto hash(Move const move) noexcept {
 	return hash(static_cast<Moves>(move), move.pp());
 }
 

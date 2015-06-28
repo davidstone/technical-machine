@@ -46,8 +46,8 @@ namespace {
 bool affects_target(Type const & move_type, ActivePokemon target, Weather weather);
 
 bool screen_is_active (ActivePokemon attacker, Team const & defender);
-bool reflect_is_active (Move const & move, Team const & defender);
-bool light_screen_is_active (Move const & move, Team const & defender);
+bool reflect_is_active(Moves move, Team const & defender);
+bool light_screen_is_active(Moves move, Team const & defender);
 
 auto calculate_weather_modifier(Type const type, Weather const weather) {
 	return
@@ -257,15 +257,15 @@ void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1
 namespace {
 
 bool screen_is_active (ActivePokemon const attacker, Team const & defender) {
-	Move const & move = current_move(attacker);
+	auto const move = current_move(attacker);
 	return (reflect_is_active(move, defender) or light_screen_is_active(move, defender)) and !critical_hit(attacker);
 }
 
-bool reflect_is_active (Move const & move, Team const & defender) {
+bool reflect_is_active(Moves const move, Team const & defender) {
 	return defender.screens.reflect() and is_physical(move);
 }
 
-bool light_screen_is_active (Move const & move, Team const & defender) {
+bool light_screen_is_active(Moves const move, Team const & defender) {
 	return defender.screens.light_screen() and is_special(move);
 }
 

@@ -1,5 +1,5 @@
 // Handle common moves that all Pokemon can select
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,11 +19,11 @@
 #pragma once
 
 #include "max_moves_per_pokemon.hpp"
+#include "move.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
-struct Move;
 using namespace bounded::literal;
 
 struct SharedMovesIterator {
@@ -33,15 +33,10 @@ public:
 	using value_type = Move const;
 	using difference_type = bounded::integer<-max_size, max_size>;
 	using index_type = SharedMoveIndex;
-	using pointer = value_type *;
-	using reference = value_type &;
 	using iterator_category = std::random_access_iterator_tag;
 
-	auto operator*() const -> reference;
-	auto operator->() const -> pointer {
-		return & operator*();
-	}
-	auto operator[](index_type const index) const -> reference {
+	auto operator*() const -> value_type;
+	decltype(auto) operator[](index_type const index) const {
 		return *(*this + index);
 	}
 
@@ -126,7 +121,7 @@ struct SharedMoves {
 	explicit SharedMoves(TeamSize team_size = max_pokemon_per_team);
 	auto begin() const ->const_iterator;
 	auto end() const -> const_iterator;
-	auto operator[](index_type index) const -> Move const &;
+	auto operator[](index_type index) const -> Move;
 	auto remove_switch() -> void;
 private:
 	TeamSize m_number_of_switches;

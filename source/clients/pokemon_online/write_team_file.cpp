@@ -44,7 +44,7 @@ namespace {
 using namespace bounded::literal;
 using boost::property_tree::ptree;
 
-void write_move (Move const & move, ptree & pt) {
+void write_move (Move const move, ptree & pt) {
 	pt.add("Move", move_to_id(move));
 }
 

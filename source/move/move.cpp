@@ -47,14 +47,14 @@ auto is_damaging(Moves const move) -> bool {
 	return !static_cast<bool>(power) or *power != 0_bi;
 }
 
-auto operator==(Move const & lhs, Move const & rhs) -> bool {
+auto operator==(Move const lhs, Move const rhs) -> bool {
 	return
 		static_cast<Moves>(lhs) == static_cast<Moves>(rhs) and
 		lhs.pp() == rhs.pp()
 	;
 }
 
-auto operator!=(Move const & lhs, Move const & rhs) -> bool {
+auto operator!=(Move const lhs, Move const rhs) -> bool {
 	return !(lhs == rhs);
 }
 

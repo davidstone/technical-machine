@@ -18,7 +18,6 @@
 
 #include "shared.hpp"
 
-#include "global_move.hpp"
 #include "is_switch.hpp"
 #include "moves.hpp"
 
@@ -26,13 +25,13 @@ namespace technicalmachine {
 namespace {
 }
 
-auto SharedMovesIterator::operator*() const -> reference {
+auto SharedMovesIterator::operator*() const -> value_type {
 	using switch_index_type = bounded::integer<
 		static_cast<intmax_t>(number_of_weird_moves),
 		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
 	>;
 	static_assert(number_of_weird_moves == 1_bi, "Struggle is not the only weird move.");
-	return global_move((m_index == 0_bi) ?
+	return Move((m_index == 0_bi) ?
 		Moves::Struggle :
 		to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves)
 	);
@@ -55,7 +54,7 @@ auto SharedMoves::end() const -> const_iterator {
 	return const_iterator(m_number_of_switches + number_of_weird_moves);
 }
 
-auto SharedMoves::operator[](index_type const index) const -> Move const & {
+auto SharedMoves::operator[](index_type const index) const -> Move {
 	return *const_iterator(index);
 }
 

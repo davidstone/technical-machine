@@ -59,7 +59,7 @@ inline auto hash(MoveCollection const & collection) noexcept {
 
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
 auto set_index(MoveCollection & moves, Moves name) -> void;
-auto regular_move(MoveCollection const & moves) -> Move const &;
+auto regular_move(MoveCollection const & moves) -> Move;
 auto regular_move(MoveCollection & moves) -> Move &;
 
 }	// namespace technicalmachine

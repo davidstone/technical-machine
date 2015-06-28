@@ -51,14 +51,14 @@ MoveContainer::MoveContainer(TeamSize const my_team_size):
 	m_shared(my_team_size) {
 }
 
-auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) const -> Move const & {
+auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) const -> Move {
 	return m_regular[index];
 }
 auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move & {
 	return m_regular[index];
 }
 
-auto MoveContainer::operator[](index_type const index) const -> Move const & {
+auto MoveContainer::operator[](index_type const index) const -> Move {
 	assert(index < size());
 	return (index < number_of_regular_moves()) ?
 		unchecked_regular_move(RegularMoveIndex(index, bounded::non_check)) :

@@ -41,6 +41,8 @@
 
 #include "../bide/bide.hpp"
 
+#include "../move/moves.hpp"
+
 #include "../stat/stage.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -49,7 +51,6 @@ namespace technicalmachine {
 
 struct ActivePokemon;
 struct MutableActivePokemon;
-struct Move;
 
 // I use a macro here because I rely on a conversion operator. Friend functions
 // only declared in a class body are not found by lookup rules in that case. The
@@ -95,7 +96,7 @@ struct Move;
 	friend auto is_roosting(ActivePokemon pokemon) -> bool; \
 	friend auto shed_skin_activated(ActivePokemon pokemon) -> bool; \
 	friend auto slow_start_is_active(ActivePokemon pokemon) -> bool; \
-	friend auto sport_is_active(ActivePokemon pokemon, Move const & foe_move) -> bool; \
+	friend auto sport_is_active(ActivePokemon pokemon, Moves foe_move) -> bool; \
 	friend auto stage(ActivePokemon pokemon) -> Stage const &; \
 	friend auto spit_up_power(ActivePokemon pokemon) -> decltype(std::declval<Stockpile>().spit_up_power()); \
 	friend auto switch_decision_required(ActivePokemon pokemon) -> bool; \

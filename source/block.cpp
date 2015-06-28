@@ -34,13 +34,13 @@
 namespace technicalmachine {
 namespace {
 
-bool is_legal_selection(Team const & user, Move const & move, ActivePokemon other, Weather weather, bool found_selectable_move);
+bool is_legal_selection(Team const & user, Move move, ActivePokemon other, Weather weather, bool found_selectable_move);
 bool is_blocked_by_bide (ActivePokemon user, Moves move);
 bool is_not_illegal_switch(Team const & user, Moves move, ActivePokemon other, Weather weather);
 bool is_blocked_from_switching(ActivePokemon user, Pokemon const & other, Weather weather);
 bool imprison(Moves move, ActivePokemon other);
 bool blocked_by_torment(ActivePokemon user, Moves move);
-bool block1 (ActivePokemon user, Move const & move, ActivePokemon other);
+bool block1 (ActivePokemon user, Move move, ActivePokemon other);
 bool block2(ActivePokemon user, Moves move, Weather weather);
 bool is_blocked_due_to_lock_in(ActivePokemon user, Moves move);
 bool standard_move_lock_in(ActivePokemon user, Moves move);
@@ -85,7 +85,7 @@ Moves LegalSelections::operator[](size_t const index) const {
 
 namespace {
 
-bool is_legal_selection(Team const & user, Move const & move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
+bool is_legal_selection(Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
 	return !is_blocked_by_bide(user.pokemon(), move) and
 			is_not_illegal_switch(user, move, other, weather) and
 			(move != Moves::Struggle or !found_selectable_move) and
@@ -95,7 +95,7 @@ bool is_legal_selection(Team const & user, Move const & move, ActivePokemon cons
 }	// namespace
 
 bool can_execute_move (MutableActivePokemon user, ActivePokemon const other, Weather const weather) {
-	Move const & move = current_move(user);
+	auto const move = current_move(user);
 	assert(!is_switch(move) or !is_recharging(user));
 	
 	if (is_switch(move)) {
@@ -168,7 +168,7 @@ bool is_healing(Moves const name) {
 }
 
 // Things that both block selection and block execution in between sleep and confusion
-bool block1 (ActivePokemon const user, Move const & move, ActivePokemon const other) {
+bool block1 (ActivePokemon const user, Move const move, ActivePokemon const other) {
 	if (!is_regular(move)) {
 		return false;
 	}
