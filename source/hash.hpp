@@ -98,7 +98,8 @@ constexpr auto noexcept_hashable() noexcept -> bool;
 
 template<typename T, typename... Ts>
 constexpr auto hash(T const & t, Ts && ... ts) noexcept(noexcept(hash(t)) and noexcept_hashable<Ts...>()) {
-	return VerifyHashBounds<T>{}, hash_combine(hash(t), hash(ts...));
+	static_cast<void>(VerifyHashBounds<T>{});
+	return hash_combine(hash(t), hash(ts...));
 }
 
 
