@@ -1,5 +1,5 @@
 // Common functionality for flags that are advanced at the end of the turn
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -54,15 +54,11 @@ struct EndOfTurnCounter {
 	}
 	auto advance_one_turn() {
 		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn, operations...>::value, "This type does not support advancing the counter by one.");
-		m_turns_active = next_turn_value();
+		advance_one_turn_impl();
 	}
 	auto advance_one_turn_deactivated() {
 		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn_deactivated, operations...>::value, "This type does not support advancing the counter by one and returning whether it just deactivated.");
-		if (!static_cast<bool>(m_turns_active)) {
-			return false;
-		}
-		m_turns_active = next_turn_value();
-		return static_cast<bool>(m_turns_active);
+		return advance_one_turn_impl();
 	}
 	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) -> bool {
 		return lhs.m_turns_active == rhs.m_turns_active;
@@ -72,14 +68,16 @@ struct EndOfTurnCounter {
 		return technicalmachine::hash(m_turns_active);
 	}
 private:
-	constexpr auto next_turn_value() {
-		return (static_cast<bool>(m_turns_active) and *m_turns_active != bounded::make<max_turns>()) ?
-			Counter(*m_turns_active + 1_bi) :
-			bounded::none
-		;
+	constexpr auto advance_one_turn_impl() {
+		if (m_turns_active and *m_turns_active != bounded::constant<max_turns>) {
+			++*m_turns_active;
+		} else {
+			m_turns_active = bounded::none;
+		}
+		return static_cast<bool>(m_turns_active);
 	}
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;
-	Counter m_turns_active;
+	Counter m_turns_active = bounded::none;
 };
 
 template<intmax_t max_turns, CounterOperations... operations>

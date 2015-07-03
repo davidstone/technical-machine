@@ -1,5 +1,5 @@
 // Wish data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,7 +36,7 @@ struct Wish {
 	friend auto operator==(Wish lhs, Wish rhs) -> bool;
 private:
 	using counter_type = bounded::checked_integer<0, 1>;
-	bounded::optional<counter_type> m_turns_until_activation;
+	bounded::optional<counter_type> m_turns_until_activation = bounded::none;
 };
 
 // This is sufficient because hashing only has to distinguish end-of-turn

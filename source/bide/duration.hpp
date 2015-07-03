@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -38,7 +38,7 @@ struct BideDuration {
 	}
 private:
 	static constexpr auto max = 1;
-	bounded::optional<bounded::integer<0, max>> m_turns_active;
+	bounded::optional<bounded::integer<0, max>> m_turns_active = bounded::none;
 };
 
 auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool;

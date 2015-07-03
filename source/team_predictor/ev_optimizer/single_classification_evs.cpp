@@ -124,7 +124,7 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 			while (initial_stat<stat_name>(stat, level, current_nature) * hp.max() < initial_product) {
 				defensive_ev += 4_bi;
 				stat.ev = EV(defensive_ev);
-				if (defensive_ev == bounded::make<EV::max>()) {
+				if (defensive_ev == bounded::constant<EV::max>) {
 					break;
 				}
 			}

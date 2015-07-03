@@ -195,7 +195,7 @@ EV::total_type defensive_evs_available(Pokemon const & pokemon) {
 	for (auto const stat : { StatNames::ATK, StatNames::SPA, StatNames::SPE }) {
 		used_evs += get_stat(pokemon, stat).ev.value();
 	}
-	return bounded::make<EV::max_total>() - used_evs;
+	return bounded::constant<EV::max_total> - used_evs;
 }
 
 Divided divide_natures(DefensiveEVs::BestPerNature const & container) {

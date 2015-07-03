@@ -81,9 +81,10 @@ struct Status {
 		return technicalmachine::hash(name(), m_turns_already_slept);
 	}
 private:
-	Statuses m_status = Statuses::clear;
 	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
-	SleepCounter m_turns_already_slept;
+
+	Statuses m_status = Statuses::clear;
+	SleepCounter m_turns_already_slept = bounded::none;
 };
 
 auto is_clear(Status status) -> bool;

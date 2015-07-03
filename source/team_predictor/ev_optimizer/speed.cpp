@@ -40,7 +40,7 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 				container.emplace(nature, EV(ev));
 				break;
 			}
-			if (ev == bounded::make<EV::max>()) {
+			if (ev == bounded::constant<EV::max>) {
 				break;
 			}
 		}

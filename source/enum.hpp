@@ -22,6 +22,8 @@
 
 #include <cstdint>
 #include <functional>
+#include <stdexcept>
+#include <type_traits>
 
 namespace technicalmachine {
 
@@ -48,6 +50,14 @@ struct std_hash {
 	constexpr auto operator()(Enum const e) const {
 		using T = std::underlying_type_t<Enum>;
 		return std::hash<T>{}(static_cast<T>(e));
+	}
+};
+
+template<typename Enum>
+struct InvalidEnum : std::runtime_error {
+	static_assert(std::is_enum<Enum>::value, "Only valid for enums.");
+	explicit InvalidEnum(Enum const e):
+		std::runtime_error(std::to_string(static_cast<std::underlying_type_t<Enum>>(e))) {
 	}
 };
 

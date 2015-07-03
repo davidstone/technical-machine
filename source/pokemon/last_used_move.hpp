@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -43,7 +43,7 @@ struct LastUsedMove {
 		return ::technicalmachine::hash(m_index_of_move, m_consecutive_turns_used);
 	}
 private:
-	bounded::optional<index_type> m_index_of_move;
+	bounded::optional<index_type> m_index_of_move = bounded::none;
 	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
 };
 

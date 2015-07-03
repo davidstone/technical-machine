@@ -1,5 +1,5 @@
 // Which Move is disabled and for how long
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,7 +35,7 @@ struct Disable {
 	}
 	friend auto operator==(Disable lhs, Disable rhs) -> bool;
 private:
-	bounded::optional<RegularMoveIndex> m_index_of_disabled_move;
+	bounded::optional<RegularMoveIndex> m_index_of_disabled_move = bounded::none;
 	using TurnCount = bounded::integer<0, 7>;
 	TurnCount m_turns_disabled = 0_bi;
 };

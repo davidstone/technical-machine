@@ -46,12 +46,12 @@ struct Screen {
 	
 private:
 	auto activate(std::true_type) -> void {
-		set(bounded::make<normal_duration>());
+		set(bounded::constant<normal_duration>);
 	}
 	auto activate(std::false_type, bool const is_extended) -> void {
 		set(BOUNDED_CONDITIONAL(is_extended,
-			bounded::make<max_duration>(),
-			bounded::make<normal_duration>()
+			bounded::constant<max_duration>,
+			bounded::constant<normal_duration>
 		));
 	}
 	using duration_type = bounded::clamped_integer<0, max_duration>;

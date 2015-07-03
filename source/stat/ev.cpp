@@ -34,7 +34,7 @@ auto EV::add(value_type const evs) -> void {
 }
 
 auto is_maxed(EV const ev) -> bool {
-	return ev.value() == bounded::make<EV::max>();
+	return ev.value() == bounded::constant<EV::max>;
 }
 
 }	// namespace technicalmachine

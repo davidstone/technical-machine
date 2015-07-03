@@ -36,8 +36,8 @@ constexpr auto hash(bool const value) noexcept {
 template<intmax_t minimum, intmax_t maximum, typename policy>
 constexpr auto hash(bounded::integer<minimum, maximum, policy> const value) noexcept {
 	return std::make_pair(
-		bounded::make<bounded::null_policy>(value) - bounded::make<minimum>(),
-		bounded::make<maximum>() - bounded::make<minimum>() + 1_bi
+		bounded::make<bounded::null_policy>(value) - bounded::constant<minimum>,
+		bounded::constant<maximum> - bounded::constant<minimum> + 1_bi
 	);
 }
 
@@ -45,7 +45,7 @@ template<intmax_t minimum, intmax_t maximum, typename policy>
 constexpr auto hash(bounded::optional<bounded::integer<minimum, maximum, policy>> const value) noexcept {
 	return std::make_pair(
 		BOUNDED_CONDITIONAL(value, hash(*value).first + 1_bi, 0_bi),
-		bounded::make<maximum>() - bounded::make<minimum>() + 1_bi + 1_bi
+		bounded::constant<maximum> - bounded::constant<minimum> + 1_bi + 1_bi
 	);
 }
 

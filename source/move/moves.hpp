@@ -611,7 +611,7 @@ enum class Moves : uint16_t {
 	END = Generation_5_End
 };
 
-constexpr auto number_of_moves = bounded::make<static_cast<std::intmax_t>(Moves::END)>();
+constexpr auto number_of_moves = bounded::constant<static_cast<std::intmax_t>(Moves::END)>;
 
 }	// namespace technicalmachine
 

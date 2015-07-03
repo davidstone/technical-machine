@@ -72,8 +72,8 @@ Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
 	for (auto & array : multiplier)
 		array.fill(not_set);
-	for (auto const a : bounded::integer_range(bounded::make<number_of_species>())) {
-		for (auto const b : bounded::integer_range(bounded::make<number_of_species>())) {
+	for (auto const a : bounded::integer_range(bounded::constant<number_of_species>)) {
+		for (auto const b : bounded::integer_range(bounded::constant<number_of_species>)) {
 			if (is_alternate_form(static_cast<Species>(a), static_cast<Species>(b))) {
 				multiplier[a][b] = 0;
 			}
@@ -121,7 +121,7 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	// this Pokemon. If a Pokemon that is used a lot does not show up on this
 	// list, then we can be sure that it is used less than the current method
 	// suggests.
-	for (auto const a : bounded::integer_range(bounded::make<number_of_species>())) {
+	for (auto const a : bounded::integer_range(bounded::constant<number_of_species>)) {
 		if (overall[a] != 0_bi) {
 			for (value_type & value : multiplier[a]) {
 				if (value == not_set) {

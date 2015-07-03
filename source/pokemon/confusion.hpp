@@ -1,5 +1,5 @@
 // Class that represents the duration left on Confusion
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -41,7 +41,7 @@ private:
 	auto increment() -> void;
 	friend struct Evaluate;
 	static constexpr auto max_duration = 4;
-	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused;
+	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused = bounded::none;
 	bool m_is_hitting_self = false;
 };
 bool operator!= (Confusion const & lhs, Confusion const & rhs);

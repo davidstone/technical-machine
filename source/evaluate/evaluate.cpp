@@ -58,7 +58,7 @@ auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon
 		(aqua_ring_is_active(pokemon) ? evaluate.aqua_ring() : 0_bi) +
 		(has_focused_energy(pokemon) ? evaluate.focus_energy() : 0_bi) +
 		(ingrained(pokemon) ? evaluate.ingrain() : 0_bi) +
-		(magnet_rise.is_active() ? evaluate.magnet_rise() * (bounded::make<MaxTurns<MagnetRise>::value>() - *magnet_rise.turns_active()) : 0_bi) +
+		(magnet_rise.is_active() ? evaluate.magnet_rise() * (bounded::constant<MaxTurns<MagnetRise>::value> - *magnet_rise.turns_active()) : 0_bi) +
 		(substitute ? (evaluate.substitute() + evaluate.substitute_hp() * substitute.hp() / get_hp(pokemon).max()) : 0_bi) +
 		std::inner_product(stage.begin(), stage.end(), evaluate.stage().begin(), static_cast<stage_type>(0_bi))
 	;

@@ -79,7 +79,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		for (auto const stat : regular_stats()) {
 			add_non_full_evs(get_stat(pokemon, stat).ev);
 		}
-		auto const extra_evs = bounded::make<EV::max_total>() - ev_sum(pokemon);
+		auto const extra_evs = bounded::constant<EV::max_total> - ev_sum(pokemon);
 		static constexpr auto number_of_stats = 6;
 		static constexpr auto maximum_full_stats = 2;
 		bounded::checked_integer<number_of_stats - maximum_full_stats, number_of_stats> size(evs.size());

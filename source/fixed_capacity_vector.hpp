@@ -181,7 +181,7 @@ public:
 
 	template<typename... Args>
 	auto emplace_back(Args && ... args) {
-		assert(m_size != bounded::make<capacity>());
+		assert(m_size != bounded::constant<capacity>);
 		new(m_container.data() + m_size) T(std::forward<Args>(args)...);
 		++m_size;
 	}
