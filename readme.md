@@ -4,8 +4,8 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 
 ## Prerequisites
 
-* gcc version 4.9.0 or newer, with c++ support. Technical Machine makes use of some features in C++11 and C++14 that are not supported in older versions of gcc.
-* Boost. Listed as boost-devel in Fedora repositories. Technical Machine is primarily tested against version 1.53.0.
+* clang version 3.6.0 or newer, with c++ support. Technical Machine makes use of some features in C++11 and C++14 that are not supported in older versions of clang or current gcc.
+* Boost. Listed as boost-devel in Fedora repositories. Technical Machine is primarily tested against version 1.57.0.
 * fltk is needed the stand-alone team predictor / builder. It is not needed to actually run the battling AI. Listed as fltk-devel.
 * SCons is used for the build process.
 
