@@ -56,7 +56,7 @@ void speed_tests() {
 	auto const original_value = initial_stat<StatNames::SPE>(original_stat, level, get_nature(pokemon));
 	for (auto const nature : enum_range<Nature>) {
 		auto const new_value = initial_stat<StatNames::SPE>(Stat(species, StatNames::SPE, find(speedEVs, nature)), level, nature);
-		if (boosts_stat<StatNames::SPE>(nature)) {
+		if (boosts_stat<StatNames::SPE>(nature) and !boosts_stat<StatNames::SPE>(get_nature(pokemon))) {
 			assert(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
 			assert(new_value == original_value);
