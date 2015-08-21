@@ -611,13 +611,11 @@ enum class Moves : uint16_t {
 	END = Generation_5_End
 };
 
-constexpr auto number_of_moves = bounded::constant<static_cast<std::intmax_t>(Moves::END)>;
-
 }	// namespace technicalmachine
 
-namespace bounded {
+namespace std {
 
 template<>
-struct basic_numeric_limits<technicalmachine::Moves> : technicalmachine::basic_numeric_limits<technicalmachine::Moves> {};
+struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves> {};
 
 }	// namespace bounded

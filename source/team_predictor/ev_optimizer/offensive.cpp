@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 
 #include "offensive.hpp"
 
+#include "../../enum_range.hpp"
 #include "../../pokemon/pokemon.hpp"
 #include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
@@ -54,7 +55,7 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 }	// namespace
 
 OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
-	for (auto nature = static_cast<Nature>(0); nature != Nature::END; nature = static_cast<Nature>(static_cast<int>(nature) + 1)) {
+	for (auto const nature : enum_range<Nature>) {
 		container.emplace(nature, OffensiveStats{});
 	}
 	optimize(pokemon);

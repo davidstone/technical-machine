@@ -17,6 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "speed.hpp"
+#include "../../enum_range.hpp"
 #include "../../pokemon/pokemon.hpp"
 #include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
@@ -30,13 +31,11 @@ using namespace bounded::literal;
 SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 	Stat stat = get_stat(pokemon, StatNames::SPE);
 	Level const level = get_level(pokemon);
-	Nature current_nature = get_nature(pokemon);
-	auto const speed = initial_stat<StatNames::SPE>(stat, level, current_nature);
-	for (auto nature = static_cast<Nature>(0); nature != Nature::END; nature = static_cast<Nature>(static_cast<int>(nature) + 1)) {
-		current_nature = nature;
+	auto const speed = initial_stat<StatNames::SPE>(stat, level, get_nature(pokemon));
+	for (auto const nature : enum_range<Nature>) {
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
 			stat.ev = EV(ev);
-			if (initial_stat<StatNames::SPE>(stat, level, current_nature) >= speed) {
+			if (initial_stat<StatNames::SPE>(stat, level, nature) >= speed) {
 				container.emplace(nature, EV(ev));
 				break;
 			}

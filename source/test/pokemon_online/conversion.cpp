@@ -1,5 +1,5 @@
 // Test PO conversions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,7 @@
 #include "../invalid_simulator_conversion.hpp"
 
 #include "../../ability.hpp"
+#include "../../enum_range.hpp"
 
 #include "../../move/is_switch.hpp"
 #include "../../move/moves.hpp"
@@ -37,85 +38,67 @@
 namespace technicalmachine {
 namespace po {
 namespace {
-template<typename Enum, typename Function>
-void for_each(Function && f, Enum const last = Enum::END) {
-	for (Enum original = static_cast<Enum>(0); original != last; original = static_cast<Enum>(static_cast<unsigned>(original) + 1))
-		f(original);
-}
 
-void test_ability () {
-	std::cout << "\t\tVerifying correct ability.\n";
-	for_each<Ability::Abilities>([](Ability::Abilities const original) {
-		unsigned const id = ability_to_id (original);
-		Ability::Abilities const result = id_to_ability (id);
-		if (original != result)
+template<typename Enum, typename ToID, typename FromID>
+void test_enum(std::string const & name, ToID && to_id, FromID && from_id) {
+	std::cout << "\t\tVerifying correct " << name << ".\n";
+	for (auto const original : enum_range<Enum>) {
+		auto const id = to_id(original);
+		auto const result = from_id(id);
+		if (original != result) {
 			throw InvalidSimulatorConversion(original, result);
-	});
+		}
+	}
 }
 
-void test_gender () {
-	std::cout << "\t\tVerifying correct gender.\n";
-	for_each<Gender::Genders>([](Gender::Genders const original) {
-		unsigned const id = gender_to_id (original);
-		Gender::Genders const result = id_to_gender (id);
-		if (original != result)
-			throw InvalidSimulatorConversion(original, result);
-	});
-}
-
-void test_item () {
+void test_item() {
 	std::cout << "\t\tVerifying correct item.\n";
-	for_each<Item>([](Item const original) {
-		unsigned const id = item_to_id (original);
-		Item const result = id_to_item(id);
-		if (original != result and id != 0)
+	for (auto const original : enum_range<Item>) {
+		auto const id = item_to_id(original);
+		auto const result = id_to_item(id);
+		if (original != result and id != 0) {
 			throw InvalidSimulatorConversion(original, result);
-	});
+		}
+	}
 }
 
-void test_move () {
+void test_move() {
 	std::cout << "\t\tVerifying correct move.\n";
-	for_each<Moves>([](Moves const original) {
+	for(auto const original : enum_range<Moves>) {
 		if (!is_switch(original) and original != Moves::Hit_Self) {
 			unsigned const id = move_to_id (original);
 			Moves const result = id_to_move (id);
-			if (original != result)
+			if (original != result) {
 				throw InvalidSimulatorConversion(original, result);
+			}
 		}
-	});
+	}
 }
 
-void test_nature () {
-	std::cout << "\t\tVerifying correct nature.\n";
-	for_each<Nature>([](Nature const original) {
-		unsigned const id = nature_to_id (original);
-		Nature const result = id_to_nature (id);
-		if (original != result)
-			throw InvalidSimulatorConversion(original, result);
-	});
-}
-
-void test_species () {
+void test_species() {
 	std::cout << "\t\tVerifying correct species.\n";
-	auto const f = [](Species const original) {
-		std::pair <uint16_t, uint8_t> const ids = species_to_id (original);
-		Species const result = id_to_species (ids.first, ids.second);
-		if (original != result)
+	for (auto const original : enum_range<Species>) {
+		if (original == Species::Generation_4_End) {
+			break;
+		}
+		auto const ids = species_to_id(original);
+		Species const result = id_to_species(ids.first, ids.second);
+		if (original != result) {
 			throw InvalidSimulatorConversion(original, result);
-	};
-	for_each<Species>(f, Species::Generation_4_End);
+		}
+	}
 }
 
 }	// namespace
 
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Online conversion tests.\n";
-	test_ability ();
-	test_gender ();
-	test_item ();
-	test_move ();
-	test_nature ();
-	test_species ();
+	test_enum<Ability::Abilities>("Ability", ability_to_id, id_to_ability);
+	test_enum<Gender::Genders>("Gender", gender_to_id, id_to_gender);
+	test_item();
+	test_move();
+	test_enum<Nature>("Nature", nature_to_id, id_to_nature);
+	test_species();
 }
 
 }	// namespace po

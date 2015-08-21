@@ -186,6 +186,7 @@ misc_sources = [
 	'damage.cpp',
 	'endofturn.cpp',
 	'enum.cpp',
+	'enum_range.cpp',
 	'gender.cpp',
 	'fixed_capacity_vector.cpp',
 	'hash.cpp',

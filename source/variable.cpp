@@ -120,7 +120,7 @@ auto probability_sum(Probabilities const & value) -> double {
 
 
 auto initial_probabilities() {
-	bounded::array<Probabilities, number_of_moves.value()> activate_probability {{
+	bounded::array<Probabilities, static_cast<std::size_t>(Moves::END)> activate_probability {{
 		{ Variable(0_bi, 1.0) },				// Switch0
 		{ Variable(0_bi, 1.0) },				// Switch1
 		{ Variable(0_bi, 1.0) },				// Switch2

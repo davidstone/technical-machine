@@ -62,10 +62,14 @@ auto lowers_defending_stat(Nature nature) -> bool;
 
 
 }	// namespace technicalmachine
+
 namespace std {
 
 template<>
 struct hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
+
+template<>
+struct numeric_limits<technicalmachine::Nature> : technicalmachine::enum_numeric_limits<technicalmachine::Nature> {};
 
 }	// namespace std
 

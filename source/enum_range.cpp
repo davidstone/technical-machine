@@ -1,4 +1,4 @@
-// Stats data structures
+// Ensure header file compiles on its own
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,29 +16,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include "../enum.hpp"
-
-namespace technicalmachine {
-
-enum class StatNames {
-	ATK,
-	DEF,
-	SPA,
-	SPD,
-	SPE,
-	NORMAL_END,
-	ACC = NORMAL_END,
-	EVA,
-	END
-};
-
-}	// namespace technicalmachine
-
-namespace std {
-
-template<>
-struct numeric_limits<technicalmachine::StatNames> : technicalmachine::enum_numeric_limits<technicalmachine::StatNames> {};
-
-}	// namespace bounded
+#include "enum_range.hpp"

@@ -20,6 +20,8 @@
 
 #include "hash.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <cstdint>
 #include <functional>
 #include <stdexcept>
@@ -27,16 +29,68 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 template<typename Enum>
-struct basic_numeric_limits {
-	static constexpr auto min() noexcept -> std::intmax_t {
-		return 0;
-	}
-	static constexpr auto max() noexcept -> std::intmax_t {
-		return static_cast<std::intmax_t>(Enum::END);
-	}
+struct enum_numeric_limits {
+private:
+	using base = std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(Enum::END)>>;
+public:
 	static constexpr bool is_specialized = true;
+	static constexpr bool is_signed = false;
 	static constexpr bool is_integer = false;
+	static constexpr bool is_exact = true;
+	static constexpr bool has_infinity = false;
+	static constexpr bool has_quiet_NaN = false;
+	static constexpr bool has_signaling_NaN = false;
+	static constexpr auto has_denorm = std::denorm_absent;
+	static constexpr bool has_denorm_loss = false;
+	static constexpr auto round_style = base::round_style;
+	static constexpr bool is_iec559 = false;
+	static constexpr bool is_bounded = true;
+	static constexpr bool is_modulo = false;
+	static constexpr auto radix = base::radix;
+	static constexpr auto digits = base::digits;
+	static constexpr auto digits10 = base::digits10;
+	static constexpr auto max_digits10 = base::max_digits10;
+	static constexpr auto min_exponent = base::min_exponent;
+	static constexpr auto min_exponent10 = base::min_exponent10;
+	static constexpr auto max_exponent = base::max_exponent;
+	static constexpr auto max_exponent10 = base::max_exponent10;
+
+	// If 0 is not in range, there is no trap value for arithmetic
+	static constexpr auto traps = base::traps;
+
+	static constexpr bool tinyness_before = base::tinyness_before;
+	
+	static constexpr auto min() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto lowest() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto max() noexcept {
+		return bounded::constant<static_cast<std::underlying_type_t<Enum>>(Enum::END)>;
+	}
+	static constexpr auto epsilon() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto round_error() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto infinity() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto quiet_NaN() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto signaling_NaN() noexcept {
+		return 0_bi;
+	}
+	static constexpr auto denorm_min() noexcept {
+		return 0_bi;
+	}
+	
 };
 
 template<typename Enum>
@@ -57,7 +111,7 @@ template<typename Enum>
 struct InvalidEnum : std::runtime_error {
 	static_assert(std::is_enum<Enum>::value, "Only valid for enums.");
 	explicit InvalidEnum(Enum const e):
-		std::runtime_error(std::to_string(static_cast<std::underlying_type_t<Enum>>(e))) {
+		std::runtime_error(to_string(bounded::make(e))) {
 	}
 };
 

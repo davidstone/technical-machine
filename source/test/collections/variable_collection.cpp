@@ -108,7 +108,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, PokemonC
 		variable.set_phaze_index(team, team.pokemon(new_index));
 		auto const expected = expected_index[current_index][new_index];
 		if (variable.value() != expected)
-			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(expected.value()) + " but got a result of " + to_string(variable.value()) + ".");
+			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(value(expected)) + " but got a result of " + to_string(variable.value()) + ".");
 		if (new_index == foe_size)
 			throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
 	}

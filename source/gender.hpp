@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "enum.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 
 #include <cstdint>
@@ -40,3 +42,10 @@ bool operator!= (Gender lhs, Gender rhs);
 bounded::integer<-1, 1> multiplier(Gender me, Gender foe);
 
 }	// namespace technicalmachine
+
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::Gender::Genders> : technicalmachine::enum_numeric_limits<technicalmachine::Gender::Genders> {};
+
+}	// namespace std

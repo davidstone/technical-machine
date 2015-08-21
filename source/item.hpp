@@ -136,10 +136,10 @@ void steal(Item & mine, Item & other);
 
 }	// namespace technicalmachine
 
-namespace bounded {
+namespace std {
 
 template<>
-struct basic_numeric_limits<technicalmachine::Item> : technicalmachine::basic_numeric_limits<technicalmachine::Item> {};
+struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item> {};
 
 }	// namespace bounded
 

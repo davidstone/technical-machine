@@ -22,6 +22,7 @@
 #include <string>
 
 #include "../ability.hpp"
+#include "../enum_range.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
 #include "../status.hpp"
@@ -51,14 +52,14 @@ namespace {
 struct InvalidToStringConversion : std::logic_error {
 	template<typename Test>
 	InvalidToStringConversion(Test original, Test result, boost::string_ref const intermediate):
-		std::logic_error(std::to_string(static_cast<unsigned>(original)) + " is seen as " + std::to_string(static_cast<unsigned>(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {
+		std::logic_error(to_string(bounded::make(original)) + " is seen as " + to_string(bounded::make(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {
 	}
 };
 
 template <typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
-	for (auto original = static_cast<Enum>(0); original != Enum::END; original = static_cast<Enum>(static_cast<unsigned>(original) + 1)) {
+	for (auto const original : enum_range<Enum>) {
 		auto const str = to_string(original);
 		auto const result = from_string<Enum>(str);
 		if (original != result) {

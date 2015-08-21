@@ -1,5 +1,5 @@
 // Class to help get the next most likely Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 
 #include "multiplier.hpp"
 
+#include "../enum_range.hpp"
 #include "../team.hpp"
 
 #include <bounded_integer/integer_range.hpp>
@@ -40,8 +41,8 @@ struct InvalidRandomSpecies : std::logic_error {
 }	// namespace
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
-	for (auto const n : bounded::integer_range(bounded::constant<number_of_species>)) {
-		estimate[n] = lead[n] * static_cast<Lead::value_type>(overall[n]) / static_cast<Lead::value_type>(total);
+	for (auto const species : enum_range<Species>) {
+		estimate.at(species) = lead.at(species) * static_cast<Lead::value_type>(overall.at(species) / static_cast<Lead::value_type>(total));
 	}
 }
 
@@ -52,8 +53,8 @@ void Estimate::update(Multiplier const & multiplier, Team const & team) {
 }
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {
-	for (auto const predicted : bounded::integer_range(bounded::constant<number_of_species>)) {
-		estimate[predicted] *= multiplier(seen, static_cast<Species>(predicted));
+	for (auto const predicted : enum_range<Species>) {
+		estimate.at(predicted) *= multiplier(seen, predicted);
 	}
 }
 

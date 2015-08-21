@@ -39,13 +39,13 @@ void move_collection_tests() {
 	using bounded::to_string;
 	std::cout << "\tRunning MoveCollection tests.\n";
 	constexpr TeamSize team_size = 4_bi;
-	for (auto const & test_size : bounded::integer_range(1_bi, team_size + 1_bi)) {
+	for (auto const test_size : bounded::integer_range(1_bi, team_size + 1_bi)) {
 		auto const shared_moves_size = BOUNDED_CONDITIONAL(test_size > 1_bi, test_size + 1_bi, 1_bi);
 		MoveCollection collection(test_size);
 		if (collection.size() != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(test_size));
 		auto expected = create_regular_moves();
-		for (auto const & n : bounded::integer_range(static_cast<MoveSize>(expected.size()))) {
+		for (auto const n : bounded::integer_range(static_cast<MoveSize>(expected.size()))) {
 			collection.add(expected[static_cast<std::size_t>(n)]);
 			if (collection.size() != shared_moves_size + n + 1_bi or collection.size() != static_cast<RegularMoveSize>(size(collection.regular())) + shared_moves_size) {
 				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + to_string(test_size));
@@ -54,7 +54,7 @@ void move_collection_tests() {
 		
 		auto const expected_shared = create_shared_moves(test_size);
 		expected.insert(expected.end(), expected_shared.begin(), expected_shared.end());
-		for (auto const & n : bounded::integer_range(static_cast<MoveSize>(expected.size()))) {
+		for (auto const n : bounded::integer_range(static_cast<MoveSize>(expected.size()))) {
 			if (expected[static_cast<std::size_t>(n)] != collection(n)) {
 				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(test_size) + ". Stored: " + to_string(collection(n)) + " -- Expected: " + to_string(expected[static_cast<unsigned>(n)]));
 			}

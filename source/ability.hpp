@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "enum.hpp"
 #include "rational.hpp"
 #include "status.hpp"
 #include "move/base_power.hpp"
@@ -126,4 +127,11 @@ auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityE
 
 auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
-}
+}	// namespace technicalmachine
+
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::Ability::Abilities> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Abilities> {};
+
+}	// namespace std

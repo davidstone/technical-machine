@@ -46,10 +46,10 @@ enum class Statuses : uint8_t {
 
 }	// namespace technicalmachine
 
-namespace bounded {
+namespace std {
 
 template<>
-struct basic_numeric_limits<technicalmachine::Statuses> : technicalmachine::basic_numeric_limits<technicalmachine::Statuses> {};
+struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses> {};
 
 }	// namespace bounded
 

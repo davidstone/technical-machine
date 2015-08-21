@@ -734,20 +734,9 @@ constexpr auto number_of_species = static_cast<unsigned>(Species::END);
 
 }	// namespace technicalmachine
 
-namespace bounded {
+namespace std {
 
 template<>
-struct basic_numeric_limits<technicalmachine::Species> : technicalmachine::basic_numeric_limits<technicalmachine::Species> {};
+struct numeric_limits<technicalmachine::Species> : technicalmachine::enum_numeric_limits<technicalmachine::Species> {};
 
-}	// namespace bounded
-
-namespace technicalmachine {
-
-inline Species & operator++(Species & species) {
-	using namespace bounded::literal;
-	species = static_cast<Species>(bounded::make(species) + 1_bi);
-	return species;
-}
-
-}	// namespace technicalmachine
-
+}	// namespace std
