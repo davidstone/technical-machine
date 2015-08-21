@@ -35,31 +35,31 @@
 
 namespace technicalmachine {
 
-void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s, Pokemon & pokemon) {
+void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container, Pokemon & pokemon) {
 	typedef std::unordered_map<Nature, EV::total_type> Sums;
 	Sums sums;
-	for (auto const & speed : s.container) {
-		auto const offensive = o.container.find(speed.first);
+	for (auto const & speed : speed_container) {
+		auto const offensive = o.container.find(speed.nature);
 		if (offensive == o.container.end()) {
 			continue;
 		}
-		auto const defensive = d.container.find(speed.first);
+		auto const defensive = d.container.find(speed.nature);
 		if (defensive == d.container.end()) {
 			continue;
 		}
-		auto const sum = speed.second.value() + offensive->second.sum() + defensive->second.sum();
+		auto const sum = speed.ev.value() + offensive->second.sum() + defensive->second.sum();
 		static_assert(std::numeric_limits<decltype(sum)>::min() == 0_bi, "Minimum EV sum is not 0.");
 		if (sum > bounded::constant<EV::max_total>) {
 			continue;
 		}
-		sums.emplace(speed.first, EV::total_type(sum, bounded::non_check));
+		sums.emplace(speed.nature, EV::total_type(sum, bounded::non_check));
 	}
 	#if 1
 	if (sums.empty()) {
 		std::cerr << to_string(pokemon) << '\n';
 		std::cerr << "Speed:\n";
-		for (auto const & value : s.container) {
-			std::cerr << '\t' << to_string(value.first) << " : " << value.second.value() << '\n';
+		for (auto const & value : speed_container) {
+			std::cerr << '\t' << to_string(value.nature) << " : " << value.ev.value() << '\n';
 		}
 		std::cerr << "Offensive:\n";
 		for (auto const & value : o.container) {
@@ -78,7 +78,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & s,
 	auto const it = std::min_element(sums.begin(), sums.end(), lesser_mapped_type);
 	auto const & defensive = d.container.at(it->first);
 	auto const & offensive = o.container.at(it->first);
-	auto const & speed = s.container.at(it->first);
+	auto const & speed = find(speed_container, it->first);
 	get_hp(pokemon).ev = defensive.hp;
 	get_stat(pokemon, StatNames::ATK).ev = offensive.attack;
 	get_stat(pokemon, StatNames::DEF).ev = defensive.defense;

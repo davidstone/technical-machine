@@ -19,22 +19,22 @@
 #include "ev_optimizer.hpp"
 #include <iostream>
 #include <random>
+#include "../enum_range.hpp"
 #include "../team.hpp"
 #include "../pokemon/species.hpp"
+#include "../stat/calculate.hpp"
 #include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
+#include "../team_predictor/ev_optimizer/speed.hpp"
 #include "../move/moves.hpp"
 
 namespace technicalmachine {
+namespace {
 
-void ev_optimizer_tests() {
-	std::cout << "Running EV optimizer tests.\n";
-
+Pokemon make_test_pokemon() {
 	constexpr auto team_size = max_pokemon_per_team;
-	Team team(team_size);
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
-	team.add_pokemon(Species::Snorlax, level, gender);
-	Pokemon & pokemon = team.pokemon();
+	Pokemon pokemon(team_size, Species::Snorlax, level, gender);
 	get_hp(pokemon).ev = EV(128_bi);
 	for (auto const stat : { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE }) {
 		get_stat(pokemon, stat).ev = EV(76_bi);
@@ -42,10 +42,40 @@ void ev_optimizer_tests() {
 	get_nature(pokemon) = Nature::Hardy;
 	all_moves(pokemon).add(Moves::Psychic);
 	all_moves(pokemon).add(Moves::Earthquake);
-	minimize_evs(team.pokemon());
+	return pokemon;
+}
+
+void speed_tests() {
+	std::cout << "\tRunning speed tests.\n";
+	
+	auto const pokemon = make_test_pokemon();
+	auto const species = static_cast<Species>(pokemon);
+	auto const level = get_level(pokemon);
+	SpeedEVs speedEVs(pokemon);
+	auto const original_stat = get_stat(pokemon, StatNames::SPE);
+	auto const original_value = initial_stat<StatNames::SPE>(original_stat, level, get_nature(pokemon));
+	for (auto const nature : enum_range<Nature>) {
+		auto const new_value = initial_stat<StatNames::SPE>(Stat(species, StatNames::SPE, find(speedEVs, nature)), level, nature);
+		if (boosts_stat<StatNames::SPE>(nature)) {
+			assert(new_value == original_value or new_value == original_value + 1_bi);
+		} else {
+			assert(new_value == original_value);
+		}
+	}
+}
+
+}	// namespace
+
+void ev_optimizer_tests() {
+	std::cout << "Running EV optimizer tests.\n";
+	
+	speed_tests();
+
+	auto pokemon = make_test_pokemon();
+	minimize_evs(pokemon);
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
-	pad_random_evs(team.pokemon(), random_engine);
+	pad_random_evs(pokemon, random_engine);
 	std::cout << "EV optimizer tests passed.\n\n";
 }
 

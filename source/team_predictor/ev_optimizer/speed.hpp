@@ -21,6 +21,7 @@
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
 
+#include <stdexcept>
 #include <unordered_map>
 
 namespace technicalmachine {
@@ -29,11 +30,28 @@ struct OffensiveEVs;
 struct DefensiveEVs;
 
 struct SpeedEVs {
-	explicit SpeedEVs(Pokemon const & pokemon);
 private:
-	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
-	using Container = std::unordered_map<Nature, EV>;
-	Container container;
+public:
+	explicit SpeedEVs(Pokemon const & pokemon);
+	auto begin() const {
+		return m_container.begin();
+	}
+	auto end() const {
+		return m_container.end();
+	}
+private:
+	struct Mapped {
+		Nature nature;
+		EV ev;
+	};
+	using Container = std::vector<Mapped>;
+	Container m_container;
+};
+
+auto find(SpeedEVs const & container, Nature nature) -> EV;
+
+struct InvalidNature : std::logic_error {
+	using std::logic_error::logic_error;
 };
 
 }	// namespace technicalmachine

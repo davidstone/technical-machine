@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,7 @@
 #include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
+#include "../../string_conversions/nature.hpp"
 
 #include <cassert>
 
@@ -36,7 +37,7 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
 			stat.ev = EV(ev);
 			if (initial_stat<StatNames::SPE>(stat, level, nature) >= speed) {
-				container.emplace(nature, EV(ev));
+				m_container.push_back({ nature, EV(ev) });
 				break;
 			}
 			if (ev == bounded::constant<EV::max>) {
@@ -44,7 +45,15 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 			}
 		}
 	}
-	assert(!container.empty());
+	assert(!m_container.empty());
+}
+
+auto find(SpeedEVs const & container, Nature const nature) -> EV {
+	auto const it = std::find_if(container.begin(), container.end(), [=](auto const & value) { return value.nature == nature; });
+	if (it == container.end()) {
+		throw InvalidNature(to_string(nature));
+	}
+	return it->ev;
 }
 
 }	// namespace technicalmachine
