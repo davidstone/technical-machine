@@ -84,7 +84,7 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = estimate.most_likely();
 		Level const level(100_bi);
-		Gender const gender;
+		Gender const gender(Gender::GENDERLESS);
 		team.add_pokemon(name, level, gender);
 		if (team.number_of_seen_pokemon() == team.size())
 			break;

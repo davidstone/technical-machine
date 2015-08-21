@@ -29,7 +29,6 @@ namespace technicalmachine {
 struct Gender {
 	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 	
-	Gender();
 	Gender(Genders gender_);
 
 	friend bool operator== (Gender lhs, Gender rhs);

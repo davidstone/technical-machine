@@ -21,11 +21,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-Gender::Gender ():
-	gender (MALE)		// No sexism here!
-	{
-}
-
 Gender::Gender (Genders gender_):
 	gender (gender_) {
 }
