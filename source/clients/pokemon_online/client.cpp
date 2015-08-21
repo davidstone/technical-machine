@@ -42,8 +42,8 @@
 
 #include <cstdint>
 #include <iostream>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -846,7 +846,7 @@ void Client::handle_remove_channel (uint32_t channel_id) {
 
 void Client::add_battle (InMessage & msg) {
 	// Not sure if any of this is relevant. If it is, all_battles will be added to the class.
-	std::multimap <uint32_t, uint32_t> all_battles;
+	std::unordered_multimap<uint32_t, uint32_t> all_battles;
 	uint32_t const battle_id = msg.read_int ();
 	uint32_t const player1 = msg.read_int ();
 	uint32_t const player2 = msg.read_int ();

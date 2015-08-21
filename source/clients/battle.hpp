@@ -33,7 +33,6 @@
 #include <boost/filesystem/path.hpp>
 
 #include <cstdint>
-#include <map>
 #include <random>
 #include <string>
 #include <vector>
