@@ -27,14 +27,14 @@
 namespace technicalmachine {
 
 std::string const & to_string(Nature const nature) {
-	static std::string const nature_converter[] = {
+	static auto const nature_converter = bounded::make_array<std::string>(
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
 		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
 		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
 		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
 		"Timid", "End_Nature"
-	};
-	return nature_converter[static_cast<std::size_t>(nature)];
+	);
+	return nature_converter.at(nature);
 }
 
 template<>

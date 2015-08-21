@@ -28,10 +28,10 @@
 namespace technicalmachine {
 
 std::string const & to_string(Gender::Genders const gender) {
-	static std::string const gender_name[] {
+	static auto const gender_name = bounded::make_array<std::string>(
 		"Female", "Genderless", "Male"
-	};
-	return gender_name[gender];
+	);
+	return gender_name.at(gender);
 }
 
 template<>

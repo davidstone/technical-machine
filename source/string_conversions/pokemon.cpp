@@ -30,7 +30,7 @@
 namespace technicalmachine {
 
 std::string const & to_string(Species const name) {
-	static std::string const name_to_string [] = {
+	static auto const name_to_string = bounded::make_array<std::string>(
 		// Generation 1
 		"Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon",
 		"Charizard", "Squirtle", "Wartortle", "Blastoise", "Caterpie",
@@ -178,8 +178,8 @@ std::string const & to_string(Species const name) {
 		"Meloetta", "Genesect",
 		
 		"END"
-	};
-	return name_to_string[static_cast<size_t>(name)];
+	);
+	return name_to_string.at(name);
 }
 
 template<>

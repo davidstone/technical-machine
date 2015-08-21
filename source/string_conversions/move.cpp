@@ -30,7 +30,7 @@
 namespace technicalmachine {
 
 std::string const & to_string(Moves const name) {
-	static std::string const name_to_string [] = {
+	static auto const name_to_string = bounded::make_array<std::string>(
 		// Generation 1
 		"Switch0", "Switch1", "Switch2", "Switch3", "Switch4",
 		"Switch5", "Hit self in confusion", "Pound", "Karate Chop", "DoubleSlap",
@@ -158,8 +158,8 @@ std::string const & to_string(Moves const name) {
 		"Fusion Flare", "Fusion Bolt",
 
 		"END_MOVE"
-	};
-	return name_to_string[static_cast<size_t>(name)];
+	);
+	return name_to_string.at(name);
 }
 
 template<>
