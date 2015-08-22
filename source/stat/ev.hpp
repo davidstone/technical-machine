@@ -1,5 +1,5 @@
 // EVs
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,8 +28,13 @@ struct EV {
 	static constexpr auto max_total = 508;
 	using value_type = bounded::checked_integer<0, max>;
 	using total_type = bounded::checked_integer<0, max_total>;
-	explicit EV(value_type evs);
-	auto value() const -> bounded::integer<0, max>;
+
+	constexpr explicit EV(value_type evs):
+		m_value(evs) {
+	}
+	constexpr auto value() const -> bounded::integer<0, max> {
+		return m_value;
+	}
 	auto add(value_type evs) -> void;
 private:
 	bounded::clamped_integer<0, max> m_value;

@@ -1,5 +1,5 @@
 // EVs
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,15 +19,6 @@
 #include "ev.hpp"
 
 namespace technicalmachine {
-
-EV::EV(value_type const evs) :
-	m_value(evs)
-	{
-}
-
-auto EV::value() const -> bounded::integer<0, max> {
-	return m_value;
-}
 
 auto EV::add(value_type const evs) -> void {
 	m_value += evs;
