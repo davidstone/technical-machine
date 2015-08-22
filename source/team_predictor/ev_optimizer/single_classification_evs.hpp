@@ -29,15 +29,13 @@ struct Pokemon;
 
 struct SingleClassificationEVs {
 	enum NatureBoost { Penalty, Neutral, Boost };
-	SingleClassificationEVs(EV hp, EV defensive, Nature nature, bool physical);
-	std::string to_string() const;
+	SingleClassificationEVs(EV hp, EV defensive, Nature nature);
 	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type max_evs);
 private:
 	friend struct DataPoint;
 	EV hp;
 	EV defensive;
 	NatureBoost nature_boost;
-	bool physical;
 };
 
 template<bool physical>

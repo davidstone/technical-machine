@@ -40,27 +40,15 @@ constexpr StatNames from_physical(bool physical) {
 	return physical ? StatNames::DEF : StatNames::SPD;
 }
 
-std::string stat_name(bool const physical) {
-	return physical ? "Def" : "SpD";
-}
-
 }	// namespace
 
-SingleClassificationEVs::SingleClassificationEVs(EV hp_ev, EV defensive_ev, Nature nature, bool is_physical):
+SingleClassificationEVs::SingleClassificationEVs(EV hp_ev, EV defensive_ev, Nature nature):
 	hp(hp_ev),
 	defensive(defensive_ev),
-	nature_boost(nature_boost_convert(nature)),
-	physical(is_physical) {
-}
-
-std::string SingleClassificationEVs::to_string() const {
-	Nature const nature = nature_boost_convert(nature_boost, physical);
-	return ::technicalmachine::to_string(nature) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defensive.value()) + " " + stat_name(physical);
+	nature_boost(nature_boost_convert(nature)) {
 }
 
 bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type const max_evs) {
-	assert(physical.physical);
-	assert(!special.physical);
 	if (physical.hp.value() != special.hp.value()) {
 		return false;
 	}
@@ -129,7 +117,7 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 				}
 			}
 			if (initial_stat<stat_name>(stat, level, current_nature) * hp.max() >= initial_product) {
-				result.emplace_back(EV(hp_ev), EV(defensive_ev), nature, physical);
+				result.emplace_back(EV(hp_ev), EV(defensive_ev), nature);
 			}
 			if (hp_ev == EV::max) {
 				break;
