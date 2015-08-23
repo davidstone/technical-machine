@@ -203,22 +203,15 @@ Divided divide_natures(DefensiveEVs::BestPerNature const & container) {
 	Divided divided(4);
 	for (auto const & value : container) {
 		Nature const nature(value.first);
-		if (boosts_defending_stat(nature) and !lowers_defending_stat(nature)) {
-			divided[Boost].emplace_back(value.first);
-		}
-		else if (lowers_defending_stat(nature) and !boosts_defending_stat(nature)) {
-			divided[Penalty].emplace_back(value.first);
-		}
-		else if (lowers_defending_stat(nature) and boosts_defending_stat(nature)) {
-			divided[Both].emplace_back(value.first);
-		}
-		else {
-			divided[Neutral].emplace_back(value.first);
-		}
+		auto & stat =
+			(boosts_defending_stat(nature) and !lowers_defending_stat(nature)) ? divided[Boost] :
+			(lowers_defending_stat(nature) and !boosts_defending_stat(nature)) ? divided[Penalty] :
+			(lowers_defending_stat(nature) and boosts_defending_stat(nature)) ? divided[Both] :
+			divided[Neutral];
+		stat.emplace_back(value.first);
 	}
 	return divided;
 }
-
 
 }	// namespace
 }	// namespace technicalmachine
