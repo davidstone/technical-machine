@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,7 +30,7 @@ struct Pokemon;
 struct SingleClassificationEVs {
 	enum NatureBoost { Penalty, Neutral, Boost };
 	SingleClassificationEVs(EV hp, EV defensive, Nature nature);
-	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type max_evs);
+	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 private:
 	friend struct DataPoint;
 	EV hp;

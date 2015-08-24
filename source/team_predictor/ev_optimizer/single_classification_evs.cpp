@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -48,16 +48,11 @@ SingleClassificationEVs::SingleClassificationEVs(EV hp_ev, EV defensive_ev, Natu
 	nature_boost(nature_boost_convert(nature)) {
 }
 
-bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special, EV::total_type const max_evs) {
+bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
 	if (physical.hp.value() != special.hp.value()) {
 		return false;
 	}
-	bool const evs_over_cap = (physical.hp.value() + physical.defensive.value() + special.defensive.value() > max_evs);
-	if (evs_over_cap) {
-		return false;
-	}
-	bool const legal_nature_combination = (physical.nature_boost != special.nature_boost or physical.nature_boost == SingleClassificationEVs::Neutral);
-	return legal_nature_combination;
+	return physical.nature_boost != special.nature_boost or physical.nature_boost == SingleClassificationEVs::Neutral;
 }
 
 namespace {
