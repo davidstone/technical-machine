@@ -34,7 +34,20 @@
 namespace technicalmachine {
 namespace {
 Nature nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical);
-SingleClassificationEVs::NatureBoost nature_boost_convert(Nature nature);
+
+constexpr auto nature_boost_convert(Nature const nature) {
+	switch (nature) {
+	case Nature::Impish:
+	case Nature::Calm:
+		return SingleClassificationEVs::Boost;
+	case Nature::Hasty:
+	case Nature::Naive:
+		return SingleClassificationEVs::Penalty;
+	default:
+		assert(nature == Nature::Hardy);
+		return SingleClassificationEVs::Neutral;
+	}
+}
 
 constexpr StatNames from_physical(bool physical) {
 	return physical ? StatNames::DEF : StatNames::SPD;
@@ -56,20 +69,6 @@ bool are_compatible(SingleClassificationEVs const & physical, SingleClassificati
 }
 
 namespace {
-
-SingleClassificationEVs::NatureBoost nature_boost_convert(Nature const nature) {
-	switch (nature) {
-	case Nature::Impish:
-	case Nature::Calm:
-		return SingleClassificationEVs::Boost;
-	case Nature::Hasty:
-	case Nature::Naive:
-		return SingleClassificationEVs::Penalty;
-	default:
-		assert(nature == Nature::Hardy);
-		return SingleClassificationEVs::Neutral;
-	}
-}
 
 Nature nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical) {
 	switch (nature) {
