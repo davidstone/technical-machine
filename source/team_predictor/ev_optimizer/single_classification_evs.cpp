@@ -33,7 +33,6 @@
 
 namespace technicalmachine {
 namespace {
-Nature nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical);
 
 constexpr auto nature_boost_convert(Nature const nature) {
 	switch (nature) {
@@ -70,16 +69,12 @@ bool are_compatible(SingleClassificationEVs const & physical, SingleClassificati
 
 namespace {
 
-Nature nature_boost_convert(SingleClassificationEVs::NatureBoost nature, bool physical) {
-	switch (nature) {
-	case SingleClassificationEVs::Boost:
-		return physical ? Nature::Impish : Nature::Calm;
-	case SingleClassificationEVs::Penalty:
-		return physical ? Nature::Hasty : Nature::Naive;
-	default:
-		return Nature::Hardy;
-	}
+constexpr auto nature_boost_convert(bool physical) {
+	return physical ?
+		bounded::make_array(Nature::Impish, Nature::Hardy, Nature::Hasty) :
+		bounded::make_array(Nature::Calm, Nature::Hardy, Nature::Naive);
 }
+
 }	// namespace
 
 
@@ -92,12 +87,7 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 	HP const & initial_hp = get_hp(pokemon);
 	auto const initial_product = initial_hp.max() * initial_stat<stat_name>(stat, level, current_nature);
 	std::vector<SingleClassificationEVs> result;
-	static std::initializer_list<Nature> const natures = {
-		nature_boost_convert(SingleClassificationEVs::Boost, physical),
-		nature_boost_convert(SingleClassificationEVs::Neutral, physical),
-		nature_boost_convert(SingleClassificationEVs::Penalty, physical)
-	};
-	for (Nature const nature : natures) {
+	for (Nature const nature : nature_boost_convert(physical)) {
 		current_nature = nature;
 		for (EV::value_type hp_ev = 0_bi; ; hp_ev += 4_bi) {
 			HP const hp(pokemon, level, EV(hp_ev));
