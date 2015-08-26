@@ -49,7 +49,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		}
 		auto const sum = speed.ev.value() + offensive->second.sum() + defensive->second.sum();
 		static_assert(std::numeric_limits<decltype(sum)>::min() == 0_bi, "Minimum EV sum is not 0.");
-		if (sum > bounded::constant<EV::max_total>) {
+		if (sum > EV::max_total) {
 			continue;
 		}
 		sums.emplace(speed.nature, EV::total_type(sum, bounded::non_check));

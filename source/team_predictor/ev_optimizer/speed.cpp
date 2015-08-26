@@ -40,7 +40,7 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 				m_container.push_back({ nature, EV(ev) });
 				break;
 			}
-			if (ev == bounded::constant<EV::max>) {
+			if (ev == EV::max) {
 				break;
 			}
 		}

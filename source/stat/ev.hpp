@@ -24,22 +24,20 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct EV {
-	static constexpr auto max = 252;
-	static constexpr auto max_total = 508;
-	using value_type = bounded::checked_integer<0, max>;
-	using total_type = bounded::checked_integer<0, max_total>;
+	static constexpr auto max = 252_bi;
+	static constexpr auto max_total = 508_bi;
+	using value_type = bounded::checked_integer<0, max.value()>;
+	using total_type = bounded::checked_integer<0, max_total.value()>;
 
 	constexpr explicit EV(value_type evs):
 		m_value(evs) {
 	}
-	constexpr auto value() const -> bounded::integer<0, max> {
+	constexpr auto value() const -> bounded::integer<0, max.value()> {
 		return m_value;
 	}
 	auto add(value_type evs) -> void;
 private:
-	bounded::clamped_integer<0, max> m_value;
+	bounded::clamped_integer<0, max.value()> m_value;
 };
-
-auto is_maxed(EV ev) -> bool;
 
 }	// namespace technicalmachine

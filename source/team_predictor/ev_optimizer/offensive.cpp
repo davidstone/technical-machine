@@ -45,7 +45,7 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 	while (test_stat() < initial) {
 		ev += 4_bi;
 		stat.ev = EV(ev);
-		if (ev == bounded::constant<EV::max>) {
+		if (ev == EV::max) {
 			break;
 		}
 	}

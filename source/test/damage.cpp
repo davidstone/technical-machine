@@ -144,7 +144,7 @@ void physical_damage_test() {
 	
 	Pokemon & a = attacker.pokemon();
 
-	get_stat(a, StatNames::DEF).ev = EV(bounded::constant<EV::max>);
+	get_stat(a, StatNames::DEF).ev = EV(EV::max);
 	get_nature(a) = Nature::Impish;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
@@ -169,7 +169,7 @@ void special_damage_test() {
 	all_moves(a).add(Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
-	get_stat(a, StatNames::SPA).ev = EV(bounded::constant<EV::max>);
+	get_stat(a, StatNames::SPA).ev = EV(EV::max);
 	get_nature(a) = Nature::Modest;
 	boost(stage(attacker.pokemon()), StatNames::SPA, 6_bi);
 	

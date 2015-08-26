@@ -1,5 +1,5 @@
 // Optimize EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,13 +37,12 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-using sum_type = bounded::checked_integer<0, EV::max_total>;
-sum_type ev_sum(Pokemon const & pokemon) {
-	auto const ev_sum = [&](sum_type const sum, StatNames const stat) {
+EV::total_type ev_sum(Pokemon const & pokemon) {
+	auto const ev_sum = [&](EV::total_type const sum, StatNames const stat) {
 		return sum + get_stat(pokemon, stat).ev.value();
 	};
 	static constexpr auto regular = regular_stats();
-	return std::accumulate(std::begin(regular), std::end(regular), sum_type(get_hp(pokemon).ev.value()), ev_sum);
+	return std::accumulate(std::begin(regular), std::end(regular), EV::total_type(get_hp(pokemon).ev.value()), ev_sum);
 }
 
 }	// namespace
@@ -71,7 +70,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	while (ev_sum(pokemon) < EV::max_total) {
 		std::vector<std::reference_wrapper<EV>> evs;
 		auto const add_non_full_evs = [&](EV & ev) {
-			if (!is_maxed(ev)) {
+			if (ev.value() != EV::max) {
 				evs.emplace_back(ev);
 			}
 		};
@@ -79,7 +78,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		for (auto const stat : regular_stats()) {
 			add_non_full_evs(get_stat(pokemon, stat).ev);
 		}
-		auto const extra_evs = bounded::constant<EV::max_total> - ev_sum(pokemon);
+		auto const extra_evs = EV::max_total - ev_sum(pokemon);
 		static constexpr auto number_of_stats = 6;
 		static constexpr auto maximum_full_stats = 2;
 		bounded::checked_integer<number_of_stats - maximum_full_stats, number_of_stats> size(evs.size());
@@ -92,7 +91,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			it = std::find(prior, std::end(shuffled), 0_bi);
 			// I use clamped here because I expect there to be some extra EVs
 			// assigned to some stats, which is why I put this in a loop.
-			ev.add(static_cast<bounded::clamped_integer<0, EV::max>>(std::distance(prior, it)));
+			ev.add(static_cast<bounded::clamped_integer<0, EV::max.value()>>(std::distance(prior, it)));
 			++it;
 		}
 	}
