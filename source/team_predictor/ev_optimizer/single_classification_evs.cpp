@@ -48,7 +48,7 @@ constexpr auto nature_boost_convert(Nature const nature) {
 	}
 }
 
-constexpr StatNames from_physical(bool physical) {
+constexpr auto from_physical(bool physical) {
 	return physical ? StatNames::DEF : StatNames::SPD;
 }
 
@@ -80,14 +80,14 @@ constexpr auto nature_boost_convert(bool physical) {
 
 template<bool physical>
 std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon) {
-	static constexpr StatNames stat_name = from_physical(physical);
-	Stat stat = get_stat(pokemon, stat_name);
-	Level const level = get_level(pokemon);
+	static constexpr auto stat_name = from_physical(physical);
+	auto stat = get_stat(pokemon, stat_name);
+	auto const level = get_level(pokemon);
 	auto const initial_product = get_hp(pokemon).max() * initial_stat<stat_name>(stat, level, get_nature(pokemon));
-	std::vector<SingleClassificationEVs> result;
-	for (Nature const nature : nature_boost_convert(physical)) {
-		for (EV::value_type hp_ev = 0_bi; ; hp_ev += 4_bi) {
-			HP const hp(pokemon, level, EV(hp_ev));
+	auto result = std::vector<SingleClassificationEVs>{};
+	for (auto const nature : nature_boost_convert(physical)) {
+		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
+			auto const hp = HP(pokemon, level, EV(hp_ev));
 			stat.ev = EV(0_bi);
 			while (initial_stat<stat_name>(stat, level, nature) * hp.max() < initial_product) {
 				stat.ev.add(4_bi);
