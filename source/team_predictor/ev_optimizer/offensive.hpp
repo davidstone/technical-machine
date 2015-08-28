@@ -34,15 +34,8 @@ struct SpeedEVs;
 using namespace bounded::literal;
 
 struct OffensiveStats {
-	OffensiveStats():
-		attack(0_bi),
-		special_attack(0_bi) {
-	}
-	auto sum() const {
-		return attack.value() + special_attack.value();
-	}
-	EV attack;
-	EV special_attack;
+	EV attack = EV(0_bi);
+	EV special_attack = EV(0_bi);
 };
 
 struct OffensiveEVs {
