@@ -18,9 +18,7 @@
 
 #include "defensive_data_point.hpp"
 
-#include <cstdint>
 #include <stdexcept>
-#include <string>
 
 #include "single_classification_evs.hpp"
 
@@ -28,8 +26,6 @@
 
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
-
-#include "../../string_conversions/nature.hpp"
 
 namespace technicalmachine {
 
@@ -46,10 +42,6 @@ DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
 	special_defense(original.special_defense),
 	nature(new_nature)
 	{
-}
-
-std::string DataPoint::to_string() const {
-	return ::technicalmachine::to_string(nature) + " " + bounded::to_string(hp.value()) + " HP / " + bounded::to_string(defense.value()) + " Def / " + bounded::to_string(special_defense.value()) + " SpD";
 }
 
 bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {

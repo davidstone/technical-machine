@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include <string>
-
 #include <bounded_integer/bounded_integer.hpp>
 
 #include "../../pokemon/species_forward.hpp"
@@ -42,7 +40,6 @@ using namespace bounded::literal;
 struct DataPoint {
 	DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
 	DataPoint(DataPoint const & original, Nature const & new_nature);
-	std::string to_string() const;
 	auto sum() const {
 		return hp.value() + defense.value() + special_defense.value();
 	}
