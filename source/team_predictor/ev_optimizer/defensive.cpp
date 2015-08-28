@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -47,7 +47,6 @@ DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon co
 std::set<Nature> used_natures(DefensiveEVs::BestPerNature const & container);
 
 void filter_to_minimum_evs(AllPossible & all);
-void minimum_evs_per_nature(Estimates & original);
 
 DefensiveEVs::BestPerNature most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon);
 DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon);
@@ -156,19 +155,16 @@ DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon co
 
 void filter_to_minimum_evs(AllPossible & all) {
 	for (auto & per_nature : all) {
-		minimum_evs_per_nature(per_nature.second);
+		auto const least_sum = [](DataPoint const & lhs, DataPoint const & rhs) {
+			return lhs.sum() < rhs.sum();
+		};
+		auto & container = per_nature.second;
+		auto const it = std::min_element(std::begin(container), std::end(container), least_sum);
+		auto const not_minimum = [it](DataPoint const & value) {
+			return value.sum() != it->sum();
+		};
+		container.erase(std::remove_if(std::begin(container), std::end(container), not_minimum), std::end(container));
 	}
-}
-
-void minimum_evs_per_nature(Estimates & original) {
-	auto const least_sum = [](DataPoint const & value, DataPoint const & least) {
-		return value.sum() < least.sum();
-	};
-	auto const it = std::min_element(std::begin(original), std::end(original), least_sum);
-	auto const invalid = [it](DataPoint const & value) {
-		return value.sum() != it->sum();
-	};
-	original.erase(std::remove_if(std::begin(original), std::end(original), invalid), std::end(original));
 }
 
 
