@@ -38,8 +38,8 @@ struct SpeedEVs;
 using namespace bounded::literal;
 
 struct DataPoint {
-	DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
-	DataPoint(DataPoint const & original, Nature const & new_nature);
+	DataPoint(SingleClassificationEVs physical, SingleClassificationEVs special);
+	DataPoint(DataPoint original, Nature new_nature);
 	auto sum() const {
 		return hp.value() + defense.value() + special_defense.value();
 	}
@@ -49,7 +49,7 @@ private:
 	void update_pokemon(Pokemon & pokemon) const;
 
 	template<StatNames stat>
-	auto product(Species const species, Level const & level) const {
+	auto product(Species const species, Level const level) const {
 		auto const initial = initial_stat<stat>(Stat(species, stat, defense), level, nature);
 		return initial * HP(species, level, hp).max();
 	}

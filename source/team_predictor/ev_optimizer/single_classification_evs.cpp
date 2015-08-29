@@ -55,16 +55,16 @@ constexpr auto from_physical(bool physical) {
 }	// namespace
 
 SingleClassificationEVs::SingleClassificationEVs(EV hp_ev, EV defensive_ev, Nature nature):
-	hp(hp_ev),
-	defensive(defensive_ev),
-	nature_boost(nature_boost_convert(nature)) {
+	m_hp(hp_ev),
+	m_defensive(defensive_ev),
+	m_nature_boost(nature_boost_convert(nature)) {
 }
 
 bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
-	if (physical.hp.value() != special.hp.value()) {
+	if (physical.hp().value() != special.hp().value()) {
 		return false;
 	}
-	return physical.nature_boost != special.nature_boost or physical.nature_boost == SingleClassificationEVs::Neutral;
+	return physical.nature_boost() != special.nature_boost() or physical.nature_boost() == SingleClassificationEVs::Neutral;
 }
 
 namespace {
@@ -73,6 +73,18 @@ constexpr auto nature_boost_convert(bool physical) {
 	return physical ?
 		bounded::make_array(Nature::Impish, Nature::Hardy, Nature::Hasty) :
 		bounded::make_array(Nature::Calm, Nature::Hardy, Nature::Naive);
+}
+
+template<StatNames stat_name, typename Integer>
+auto calculate_ev(Stat stat, Level const level, Nature const nature, HP const hp, Integer const initial_product) {
+	stat.ev = EV(0_bi);
+	while (initial_stat<stat_name>(stat, level, nature) * hp.max() < initial_product) {
+		stat.ev.add(4_bi);
+		if (stat.ev.value() == EV::max) {
+			break;
+		}
+	}
+	return stat.ev;
 }
 
 }	// namespace
@@ -88,13 +100,7 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 	for (auto const nature : nature_boost_convert(physical)) {
 		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
-			stat.ev = EV(0_bi);
-			while (initial_stat<stat_name>(stat, level, nature) * hp.max() < initial_product) {
-				stat.ev.add(4_bi);
-				if (stat.ev.value() == EV::max) {
-					break;
-				}
-			}
+			stat.ev = calculate_ev<stat_name>(stat, level, nature, hp, initial_product);
 			if (initial_stat<stat_name>(stat, level, nature) * hp.max() >= initial_product) {
 				result.emplace_back(hp.ev, stat.ev, nature);
 			}

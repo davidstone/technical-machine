@@ -29,14 +29,15 @@
 
 namespace technicalmachine {
 
-DataPoint::DataPoint(SingleClassificationEVs const & physical, SingleClassificationEVs const & special):
-	hp(physical.hp),
-	defense(physical.defensive),
-	special_defense(special.defensive),
+DataPoint::DataPoint(SingleClassificationEVs const physical, SingleClassificationEVs const special):
+	hp(physical.hp()),
+	defense(physical.defensive()),
+	special_defense(special.defensive()),
 	nature(get_nature(physical, special)) {
+	assert(physical.hp().value() == special.hp().value());
 }
 
-DataPoint::DataPoint(DataPoint const & original, Nature const & new_nature):
+DataPoint::DataPoint(DataPoint const original, Nature const new_nature):
 	hp(original.hp),
 	defense(original.defense),
 	special_defense(original.special_defense),
@@ -70,9 +71,9 @@ struct InvalidNatureCombination : std::logic_error {
 };
 
 Nature DataPoint::get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
-	switch (physical.nature_boost) {
+	switch (physical.nature_boost()) {
 	case SingleClassificationEVs::Boost:
-		switch (special.nature_boost) {
+		switch (special.nature_boost()) {
 		case SingleClassificationEVs::Boost:
 			throw InvalidNatureCombination();
 		default:
@@ -81,7 +82,7 @@ Nature DataPoint::get_nature(SingleClassificationEVs const & physical, SingleCla
 			return Nature::Lax;
 		}
 	default:
-		switch (special.nature_boost) {
+		switch (special.nature_boost()) {
 		case SingleClassificationEVs::Boost:
 			return Nature::Calm;
 		default:
@@ -90,7 +91,7 @@ Nature DataPoint::get_nature(SingleClassificationEVs const & physical, SingleCla
 			return Nature::Naive;
 		}
 	case SingleClassificationEVs::Penalty:
-		switch (special.nature_boost) {
+		switch (special.nature_boost()) {
 		case SingleClassificationEVs::Boost:
 			return Nature::Gentle;
 		default:

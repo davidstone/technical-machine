@@ -30,13 +30,24 @@ struct Pokemon;
 struct SingleClassificationEVs {
 	enum NatureBoost { Penalty, Neutral, Boost };
 	SingleClassificationEVs(EV hp, EV defensive, Nature nature);
-	friend bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special);
+	
+	auto hp() const {
+		return m_hp;
+	}
+	auto defensive() const {
+		return m_defensive;
+	}
+	auto nature_boost() const {
+		return m_nature_boost;
+	}
+	
 private:
-	friend struct DataPoint;
-	EV hp;
-	EV defensive;
-	NatureBoost nature_boost;
+	EV m_hp;
+	EV m_defensive;
+	NatureBoost m_nature_boost;
 };
+
+auto are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> bool;
 
 template<bool physical>
 std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon);
