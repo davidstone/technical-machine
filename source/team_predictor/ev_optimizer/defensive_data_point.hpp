@@ -44,7 +44,6 @@ struct DataPoint {
 		return hp.value() + defense.value() + special_defense.value();
 	}
 	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
-	static auto get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> Nature;
 private:
 	void update_pokemon(Pokemon & pokemon) const;
 

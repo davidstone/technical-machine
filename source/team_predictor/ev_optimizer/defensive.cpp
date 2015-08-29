@@ -141,7 +141,7 @@ AllPossible combine_results(Single const & physical, Single const & special) {
 	for (auto const & p : physical) {
 		for (auto const & s : special) {
 			if (are_compatible(p, s)) {
-				all[DataPoint::get_nature(p, s)].emplace_back(p, s);
+				all[p.nature()].emplace_back(p, s);
 			}
 		}
 	}

@@ -33,7 +33,8 @@ DataPoint::DataPoint(SingleClassificationEVs const physical, SingleClassificatio
 	hp(physical.hp()),
 	defense(physical.defensive()),
 	special_defense(special.defensive()),
-	nature(get_nature(physical, special)) {
+	nature(physical.nature()) {
+	assert(physical.nature() == special.nature());
 	assert(physical.hp().value() == special.hp().value());
 }
 
@@ -69,37 +70,5 @@ struct InvalidNatureCombination : std::logic_error {
 		std::logic_error("Attempt to create a nature that cannot exist.") {
 	}
 };
-
-Nature DataPoint::get_nature(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
-	switch (physical.nature_boost()) {
-	case SingleClassificationEVs::Boost:
-		switch (special.nature_boost()) {
-		case SingleClassificationEVs::Boost:
-			throw InvalidNatureCombination();
-		default:
-			return Nature::Impish;
-		case SingleClassificationEVs::Penalty:
-			return Nature::Lax;
-		}
-	default:
-		switch (special.nature_boost()) {
-		case SingleClassificationEVs::Boost:
-			return Nature::Calm;
-		default:
-			return Nature::Hardy;
-		case SingleClassificationEVs::Penalty:
-			return Nature::Naive;
-		}
-	case SingleClassificationEVs::Penalty:
-		switch (special.nature_boost()) {
-		case SingleClassificationEVs::Boost:
-			return Nature::Gentle;
-		default:
-			return Nature::Hasty;
-		case SingleClassificationEVs::Penalty:
-			throw InvalidNatureCombination();
-		}
-	}
-}
 
 }	// namespace technicalmachine
