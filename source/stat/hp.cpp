@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,17 +28,14 @@ namespace {
 using base_type = bounded::integer<1, 255>;
 auto get_base(Species species) -> base_type;
 
-using hp_type = bounded::dynamic_max_integer<0, HP::max_value, bounded::clamp_policy>;
-auto initial_hp(base_type const base, EV const ev, IV const iv, Level const level) -> hp_type {
+auto initial_hp(base_type const base, EV const ev, IV const iv, Level const level) {
 	auto const value = BOUNDED_CONDITIONAL((base > 1_bi),
 		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
 		1_bi
 	);
 	static_assert(std::numeric_limits<decltype(value)>::min() == std::numeric_limits<HP::max_type>::min(), "Incorrect HP min.");
-	static_assert(std::numeric_limits<hp_type>::max() == std::numeric_limits<decltype(value)>::max(), "Incorrect HP max.");
-	// Current HP starts out as max HP
-	hp_type::overflow_policy_type max_hp(value);
-	return hp_type(value, std::move(max_hp));
+	static_assert(std::numeric_limits<decltype(value)>::max() == std::numeric_limits<HP::max_type>::max(), "Incorrect HP max.");
+	return value;
 }
 
 }	// namespace
@@ -46,17 +43,17 @@ auto initial_hp(base_type const base, EV const ev, IV const iv, Level const leve
 HP::HP(Species const species, Level const level, EV const set_ev) :
 	ev(set_ev),
 	iv(31_bi),
-	m_value(initial_hp(get_base(species), ev, iv, level))
+	m_max(initial_hp(get_base(species), ev, iv, level)),
+	m_current(m_max)
 	{
-	static_assert(std::is_same<decltype(m_value), hp_type>::value, "Incorrect HP type.");
 }
 
 auto HP::current() const -> current_type {
-	return m_value;
+	return m_current;
 }
 
 auto HP::max() const -> max_type {
-	return max_type(m_value.overflow_policy().max(), bounded::non_check);
+	return m_max;
 }
 
 

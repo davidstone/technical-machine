@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,8 +35,8 @@ struct HP {
 	
 	HP(Species species, Level level, EV ev = EV(0_bi));
 	template<typename T>
-	auto operator=(T const & value) -> HP & {
-		m_value = value;
+	auto & operator=(T const & value) {
+		m_current = bounded::min(value, m_max);
 		return *this;
 	}
 	auto current() const -> current_type;
@@ -44,7 +44,8 @@ struct HP {
 	EV ev;
 	IV iv;
 private:
-	bounded::dynamic_max_integer<0, max_value, bounded::clamp_policy> m_value;
+	max_type m_max;
+	bounded::clamped_integer<0, max_value> m_current;
 };
 
 template<typename T>
