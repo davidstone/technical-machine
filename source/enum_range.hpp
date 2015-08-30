@@ -135,7 +135,7 @@ constexpr auto operator<=(enum_iterator<Enum> const lhs, enum_iterator<Enum> con
 	return !(rhs < lhs);
 }
 
-template<typename Enum>
-constexpr auto enum_range = bounded::range_type<enum_iterator<Enum>>(static_cast<Enum>(0), Enum::END);
+template<typename Enum, Enum end = Enum::END>
+constexpr auto enum_range = bounded::range_type<enum_iterator<Enum>>(static_cast<Enum>(0), end);
 
 }	// namespace technicalmachine
