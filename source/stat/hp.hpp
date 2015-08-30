@@ -26,6 +26,7 @@
 
 namespace technicalmachine {
 struct Level;
+struct Pokemon;
 using namespace bounded::literal;
 
 struct HP {
@@ -33,7 +34,7 @@ struct HP {
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
-	HP(Species species, Level level, EV ev = EV(0_bi));
+	HP(Species species, Level level, EV ev_ = EV(0_bi), IV iv_ = IV(31_bi));
 	template<typename T>
 	auto & operator=(T const & value) {
 		m_current = bounded::min(value, m_max);
@@ -41,12 +42,17 @@ struct HP {
 	}
 	auto current() const -> current_type;
 	auto max() const -> max_type;
-	EV ev;
-	IV iv;
+	auto ev() const -> EV;
+	auto iv() const -> IV;
 private:
+	EV m_ev;
+	IV m_iv;
 	max_type m_max;
 	bounded::clamped_integer<0, max_value> m_current;
 };
+
+auto set_hp_ev(Pokemon & pokemon, EV ev) -> void;
+auto set_hp_ev(Pokemon & pokemon, EV ev, IV iv) -> void;
 
 template<typename T>
 auto operator+=(HP & lhs, T const & rhs) -> HP & {

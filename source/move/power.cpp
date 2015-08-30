@@ -1,5 +1,5 @@
 // Move power calculator
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -106,9 +106,9 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 			}};
 			using intermediate_type = bounded::checked_integer<0, (1 << 6) - 1>;
 			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
-				return value + (((get_stat(attacker, stat.first).iv.value() / 2_bi) % 2_bi) << stat.second);
+				return value + (((get_stat(attacker, stat.first).iv().value() / 2_bi) % 2_bi) << stat.second);
 			};
-			intermediate_type const initial = (get_hp(attacker).iv.value() / 2_bi) % 2_bi;
+			intermediate_type const initial = (get_hp(attacker).iv().value() / 2_bi) % 2_bi;
 			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), initial, sum) * 40_bi / 63_bi + 30_bi;
 			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");
 			static_assert(std::numeric_limits<decltype(result)>::max() == 70_bi, "Incorrect Hidden Power maximum.");

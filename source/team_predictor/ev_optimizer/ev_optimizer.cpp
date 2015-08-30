@@ -23,6 +23,8 @@
 #include "offensive.hpp"
 #include "speed.hpp"
 
+#include "../../enum_range.hpp"
+
 #include "../../pokemon/pokemon.hpp"
 
 #include <algorithm>
@@ -39,10 +41,10 @@ using namespace bounded::literal;
 
 EV::total_type ev_sum(Pokemon const & pokemon) {
 	auto const ev_sum = [&](EV::total_type const sum, StatNames const stat) {
-		return sum + get_stat(pokemon, stat).ev.value();
+		return sum + get_stat(pokemon, stat).ev().value();
 	};
 	static constexpr auto regular = regular_stats();
-	return std::accumulate(std::begin(regular), std::end(regular), EV::total_type(get_hp(pokemon).ev.value()), ev_sum);
+	return std::accumulate(regular.begin(), regular.end(), EV::total_type(get_hp(pokemon).ev().value()), ev_sum);
 }
 
 }	// namespace
@@ -68,32 +70,57 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// create a uniform distribution of available stats non-maxed EVs. I repeat
 	// the process in case a stat is overfilled.
 	while (ev_sum(pokemon) < EV::max_total) {
-		std::vector<std::reference_wrapper<EV>> evs;
-		auto const add_non_full_evs = [&](EV & ev) {
-			if (ev.value() != EV::max) {
-				evs.emplace_back(ev);
-			}
+		auto const hp_is_full = get_hp(pokemon).ev().value() == EV::max;
+		auto const regular = regular_stats();
+		auto adder = [&](auto number, auto const stat_name){
+			return (get_stat(pokemon, stat_name).ev().value() == EV::max) ? number : ++number;
 		};
-		add_non_full_evs(get_hp(pokemon).ev);
-		for (auto const stat : regular_stats()) {
-			add_non_full_evs(get_stat(pokemon, stat).ev);
-		}
-		auto const extra_evs = EV::max_total - ev_sum(pokemon);
+		auto const non_full_stats =
+			std::accumulate(regular.begin(), regular.end(), bounded::checked_integer<0, 5>(0_bi), adder) +
+			BOUNDED_CONDITIONAL(hp_is_full, 0_bi, 1_bi);
+
 		static constexpr auto number_of_stats = 6;
 		static constexpr auto maximum_full_stats = 2;
-		bounded::checked_integer<number_of_stats - maximum_full_stats, number_of_stats> size(evs.size());
-		std::vector<bounded::checked_integer<0, 1>> shuffled(extra_evs.value() + evs.size() - 1, 1_bi);
-		std::fill(std::begin(shuffled), std::begin(shuffled) + static_cast<int>(evs.size()) - 1, 0_bi);
-		std::shuffle(std::begin(shuffled), std::end(shuffled), random_engine);
-		auto it = shuffled.begin();
-		for (EV & ev : evs) {
-			auto const prior = it;
-			it = std::find(prior, std::end(shuffled), 0_bi);
+		assert(non_full_stats >= bounded::constant<number_of_stats - maximum_full_stats>);
+
+		auto const extra_evs = EV::max_total - ev_sum(pokemon);
+
+		std::vector<bounded::integer<0, 1>> shuffled(static_cast<std::size_t>(extra_evs + non_full_stats - 1_bi), 1_bi);
+		std::fill(shuffled.begin(), shuffled.begin() + static_cast<int>(non_full_stats - 1_bi), 0_bi);
+		std::shuffle(shuffled.begin(), shuffled.end(), random_engine);
+
+		auto find = [&](auto const it) { return std::find(it, shuffled.end(), 0_bi); };
+		auto new_ev = [&](auto const stat, auto const distance) {
+			return EV(bounded::clamped_integer<0, EV::max.value()>(distance + stat.ev().value().value()));
+		};
+
+		auto add_hp = [&]() {
+			auto & hp = get_hp(pokemon);
+			if (hp.ev().value() == EV::max) {
+				return shuffled.begin();
+			}
+			auto const it = find(shuffled.begin());
+			set_hp_ev(pokemon, new_ev(hp, it - shuffled.begin()));
+			return it;
+		};
+		auto it = add_hp();
+		if (it == shuffled.end()) {
+			continue;
+		}
+		++it;
+		for (auto const stat_name : enum_range<StatNames, StatNames::NORMAL_END>) {
+			auto const previous = it;
+			it = find(previous);
 			// I use clamped here because I expect there to be some extra EVs
 			// assigned to some stats, which is why I put this in a loop.
-			ev.add(static_cast<bounded::clamped_integer<0, EV::max.value()>>(std::distance(prior, it)));
+			set_stat_ev(pokemon, stat_name, new_ev(get_stat(pokemon, stat_name), it - previous));
+
+			if (it == shuffled.end()) {
+				break;
+			}
 			++it;
 		}
+		assert(it == shuffled.end());
 	}
 }
 

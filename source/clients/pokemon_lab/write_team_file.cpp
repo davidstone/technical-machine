@@ -1,5 +1,5 @@
 // Write Pokemon Lab teams
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -55,8 +55,8 @@ template<typename StatType>
 void write_stat(StatType const & stat, boost::string_ref const str, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add ("stats.stat", "");
 	s.put("<xmlattr>.name", str);
-	s.put("<xmlattr>.iv", stat.iv.value());
-	s.put("<xmlattr>.ev", stat.ev.value());
+	s.put("<xmlattr>.iv", stat.iv().value());
+	s.put("<xmlattr>.ev", stat.ev().value());
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {

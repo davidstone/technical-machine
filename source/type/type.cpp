@@ -51,9 +51,9 @@ auto hidden_power_type(Pokemon const & pokemon) {
 	);
 	using intermediate_type = bounded::checked_integer<0, 63>;
 	auto const sum = [&](intermediate_type const value, modifier_type const & pair) {
-		return value + ((get_stat(pokemon, pair.first).iv.value() % 2_bi) << pair.second);
+		return value + ((get_stat(pokemon, pair.first).iv().value() % 2_bi) << pair.second);
 	};
-	intermediate_type const initial = get_hp(pokemon).iv.value() % 2_bi;
+	intermediate_type const initial = get_hp(pokemon).iv().value() % 2_bi;
 	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), initial, sum) * 15_bi / 63_bi;
 	constexpr static auto lookup = bounded::make_array(
 		Type::Fighting,

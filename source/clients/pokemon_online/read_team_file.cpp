@@ -85,24 +85,24 @@ struct StatType;
 
 template<>
 struct StatType<EV> {
-	static std::string const & name() {
+	static auto const & name() {
 		static std::string const str = "EV";
 		return str;
 	}
 	template<typename Type>
-	static EV & get(Type & stat) {
-		return stat.ev;
+	static auto get(Type & stat) {
+		return stat.ev();
 	}
 };
 template<>
 struct StatType<IV> {
-	static std::string const & name() {
+	static auto const & name() {
 		static std::string const str = "DV";
 		return str;
 	}
 	template<typename Type>
-	static IV & get(Type & stat) {
-		return stat.iv;
+	static auto get(Type & stat) {
+		return stat.iv();
 	}
 };
 

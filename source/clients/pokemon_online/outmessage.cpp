@@ -102,13 +102,13 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	static constexpr auto stats = {
 		StatNames::ATK, StatNames::DEF, StatNames::SPE, StatNames::SPA, StatNames::SPD
 	};
-	write_byte(get_hp(pokemon).iv.value());
+	write_byte(get_hp(pokemon).iv().value());
 	for (auto const stat : stats) {
-		write_byte(get_stat(pokemon, stat).iv.value());
+		write_byte(get_stat(pokemon, stat).iv().value());
 	}
-	write_byte(get_hp(pokemon).ev.value());
+	write_byte(get_hp(pokemon).ev().value());
 	for (auto const stat : stats) {
-		write_byte(get_stat(pokemon, stat).ev.value());
+		write_byte(get_stat(pokemon, stat).ev().value());
 	}
 }
 

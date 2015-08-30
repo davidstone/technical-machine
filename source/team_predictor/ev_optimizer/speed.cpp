@@ -35,7 +35,7 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 	auto const speed = initial_stat<StatNames::SPE>(stat, level, get_nature(pokemon));
 	for (auto const nature : enum_range<Nature>) {
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
-			stat.ev = EV(ev);
+			stat = Stat(stat, EV(ev));
 			if (initial_stat<StatNames::SPE>(stat, level, nature) >= speed) {
 				m_container.push_back({ nature, EV(ev) });
 				break;

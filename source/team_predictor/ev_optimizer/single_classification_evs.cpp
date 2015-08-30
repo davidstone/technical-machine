@@ -51,14 +51,14 @@ namespace {
 
 template<StatNames stat_name, typename Integer>
 auto calculate_ev(Stat stat, Level const level, Nature const nature, HP const hp, Integer const initial_product) {
-	stat.ev = EV(0_bi);
+	stat = Stat(stat, EV(0_bi));
 	while (initial_stat<stat_name>(stat, level, nature) * hp.max() < initial_product) {
-		stat.ev.add(4_bi);
-		if (stat.ev.value() == EV::max) {
+		stat = Stat(stat, EV(EV::value_type(stat.ev().value() + 4_bi)));
+		if (stat.ev().value() == EV::max) {
 			break;
 		}
 	}
-	return stat.ev;
+	return stat.ev();
 }
 
 }	// namespace
@@ -74,9 +74,9 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 	for (auto const nature : enum_range<Nature>) {
 		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
-			stat.ev = calculate_ev<stat_name>(stat, level, nature, hp, initial_product);
+			stat = Stat(stat, calculate_ev<stat_name>(stat, level, nature, hp, initial_product));
 			if (initial_stat<stat_name>(stat, level, nature) * hp.max() >= initial_product) {
-				result.emplace_back(hp.ev, stat.ev, nature);
+				result.emplace_back(hp.ev(), stat.ev(), nature);
 			}
 			if (hp_ev == EV::max) {
 				break;

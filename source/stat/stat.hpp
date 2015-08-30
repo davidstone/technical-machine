@@ -1,5 +1,5 @@
 // Stat data structure (Attack, Defense, Special Attack, Special Defense, Speed)
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,14 +27,31 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+struct Pokemon;
+
 struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
-	Stat(Species name, StatNames stat, EV ev = EV(0_bi));
-
-	base_type base;
-	EV ev;
-	IV iv;
+	Stat(Species name, StatNames stat, EV ev = EV(0_bi), IV iv = IV(31_bi));
+	Stat(Stat other, EV ev);
+	Stat(Stat other, EV ev, IV vi);
+	
+	auto base() const {
+		return m_base;
+	}
+	auto ev() const {
+		return m_ev;
+	}
+	auto iv() const {
+		return m_iv;
+	}
+private:
+	base_type m_base;
+	EV m_ev;
+	IV m_iv;
 };
+
+auto set_stat_ev(Pokemon & pokemon, StatNames stat_name, EV ev) -> void;
+auto set_stat_ev(Pokemon & pokemon, StatNames stat_name, EV ev, IV iv) -> void;
 
 }	// namespace technicalmachine

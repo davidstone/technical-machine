@@ -23,8 +23,4 @@ namespace technicalmachine {
 constexpr decltype(EV::max) EV::max;
 constexpr decltype(EV::max_total) EV::max_total;
 
-auto EV::add(value_type const evs) -> void {
-	m_value += evs;
-}
-
 }	// namespace technicalmachine

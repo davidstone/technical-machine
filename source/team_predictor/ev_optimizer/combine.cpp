@@ -101,12 +101,12 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	assert(it != container.end());
 	assert(sum(*it) <= EV::max_total);
 
-	get_hp(pokemon).ev = it->hp;
-	get_stat(pokemon, StatNames::ATK).ev = it->attack;
-	get_stat(pokemon, StatNames::DEF).ev = it->defense;
-	get_stat(pokemon, StatNames::SPA).ev = it->special_attack;
-	get_stat(pokemon, StatNames::SPD).ev = it->special_defense;
-	get_stat(pokemon, StatNames::SPE).ev = it->speed;
+	set_hp_ev(pokemon, it->hp);
+	set_stat_ev(pokemon, StatNames::ATK, it->attack);
+	set_stat_ev(pokemon, StatNames::DEF, it->defense);
+	set_stat_ev(pokemon, StatNames::SPA, it->special_attack);
+	set_stat_ev(pokemon, StatNames::SPD, it->special_defense);
+	set_stat_ev(pokemon, StatNames::SPE, it->speed);
 	get_nature(pokemon) = it->nature;
 }
 

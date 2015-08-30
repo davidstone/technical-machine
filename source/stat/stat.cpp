@@ -19,9 +19,19 @@
 #include "stat.hpp"
 
 #include "stat_names.hpp"
+#include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
 namespace technicalmachine {
+
+auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev) -> void {
+	set_stat_ev(pokemon, stat_name, ev, get_stat(pokemon, stat_name).iv());
+}
+auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev, IV const iv) -> void {
+	auto & stat = get_stat(pokemon, stat_name);
+	stat = Stat(stat, ev, iv);
+}
+
 namespace {
 
 using namespace bounded::literal;
@@ -3467,10 +3477,24 @@ constexpr auto get_base(Species const species, StatNames const stat) -> Stat::ba
 
 }	// namespace
 
-Stat::Stat(Species const species, StatNames const stat_name, EV const set_ev) :
-	base(get_base(species, stat_name)),
-	ev(set_ev),
-	iv(31_bi)
+Stat::Stat(Species const species, StatNames const stat_name, EV const ev_, IV const iv_) :
+	m_base(get_base(species, stat_name)),
+	m_ev(ev_),
+	m_iv(iv_)
+	{
+}
+
+Stat::Stat(Stat const other, EV const ev_) :
+	m_base(other.base()),
+	m_ev(ev_),
+	m_iv(other.iv())
+	{
+}
+
+Stat::Stat(Stat const other, EV const ev_, IV const iv_) :
+	m_base(other.base()),
+	m_ev(ev_),
+	m_iv(iv_)
 	{
 }
 

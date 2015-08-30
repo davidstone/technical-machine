@@ -18,6 +18,7 @@
 #include "hp.hpp"
 
 #include "../pokemon/level.hpp"
+#include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
 #include <stdexcept>
@@ -40,10 +41,10 @@ auto initial_hp(base_type const base, EV const ev, IV const iv, Level const leve
 
 }	// namespace
 
-HP::HP(Species const species, Level const level, EV const set_ev) :
-	ev(set_ev),
-	iv(31_bi),
-	m_max(initial_hp(get_base(species), ev, iv, level)),
+HP::HP(Species const species, Level const level, EV const ev_, IV const iv_) :
+	m_ev(ev_),
+	m_iv(iv_),
+	m_max(initial_hp(get_base(species), m_ev, m_iv, level)),
 	m_current(m_max)
 	{
 }
@@ -56,6 +57,20 @@ auto HP::max() const -> max_type {
 	return m_max;
 }
 
+auto HP::ev() const -> EV {
+	return m_ev;
+}
+
+auto HP::iv() const -> IV {
+	return m_iv;
+}
+
+auto set_hp_ev(Pokemon & pokemon, EV const ev) -> void {
+	set_hp_ev(pokemon, ev, get_hp(pokemon).iv());
+}
+auto set_hp_ev(Pokemon & pokemon, EV const ev, IV const iv) -> void {
+	get_hp(pokemon) = HP(pokemon, get_level(pokemon), ev, iv);
+}
 
 namespace {
 

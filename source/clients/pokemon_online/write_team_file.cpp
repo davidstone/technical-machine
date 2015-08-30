@@ -53,13 +53,13 @@ void write_blank_move (ptree & pt) {
 }
 
 void write_stats (Pokemon const & pokemon, ptree & pt) {
-	pt.add("DV", get_hp(pokemon).iv.value());
+	pt.add("DV", get_hp(pokemon).iv().value());
 	for (auto const stat : stat_order) {
-		pt.add("DV", get_stat(pokemon, stat).iv.value());
+		pt.add("DV", get_stat(pokemon, stat).iv().value());
 	}
-	pt.add("EV", get_hp(pokemon).ev.value());
+	pt.add("EV", get_hp(pokemon).ev().value());
 	for (auto const stat : stat_order) {
-		pt.add("EV", get_stat(pokemon, stat).ev.value());
+		pt.add("EV", get_stat(pokemon, stat).ev().value());
 	}
 }
 

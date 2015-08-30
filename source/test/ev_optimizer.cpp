@@ -1,5 +1,5 @@
 // Test EV optimizer
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,20 +24,41 @@
 #include "../pokemon/species.hpp"
 #include "../stat/calculate.hpp"
 #include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
+#include "../team_predictor/ev_optimizer/single_classification_evs.hpp"
 #include "../team_predictor/ev_optimizer/speed.hpp"
 #include "../move/moves.hpp"
+#include "../string_conversions/nature.hpp"
 
 namespace technicalmachine {
 namespace {
+
+void defensive_tests() {
+	std::cout << "\tRunning defensive tests.\n";
+	constexpr auto team_size = max_pokemon_per_team;
+	Pokemon pokemon(team_size, Species::Celebi, Level(100_bi), Gender::GENDERLESS);
+	set_hp_ev(pokemon, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::DEF, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
+	auto & nature = get_nature(pokemon);
+	nature = Nature::Bold;
+	all_moves(pokemon).add(Moves::Psychic);
+	
+	constexpr auto physical = true;
+	for (auto const candidate : equal_defensiveness<physical>(pokemon)) {
+		assert(candidate.hp().value() == get_hp(pokemon).ev().value());
+		assert(candidate.defensive().value() == get_stat(pokemon, StatNames::DEF).ev().value());
+		assert(boosts_stat<StatNames::DEF>(candidate.nature()));
+	}
+}
 
 Pokemon make_test_pokemon() {
 	constexpr auto team_size = max_pokemon_per_team;
 	Level const level(100_bi);
 	Gender const gender(Gender::MALE);
 	Pokemon pokemon(team_size, Species::Snorlax, level, gender);
-	get_hp(pokemon).ev = EV(128_bi);
-	for (auto const stat : { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE }) {
-		get_stat(pokemon, stat).ev = EV(76_bi);
+	set_hp_ev(pokemon, EV(128_bi));
+	for (auto const stat : enum_range<StatNames, StatNames::NORMAL_END>) {
+		set_stat_ev(pokemon, stat, EV(76_bi));
 	}
 	get_nature(pokemon) = Nature::Hardy;
 	all_moves(pokemon).add(Moves::Psychic);
@@ -69,6 +90,7 @@ void speed_tests() {
 void ev_optimizer_tests() {
 	std::cout << "Running EV optimizer tests.\n";
 	
+	defensive_tests();
 	speed_tests();
 
 	auto pokemon = make_test_pokemon();

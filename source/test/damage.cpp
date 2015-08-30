@@ -18,9 +18,6 @@
 
 #include "damage.hpp"
 
-#include <iostream>
-#include <vector>
-
 #include "incorrect_calculation.hpp"
 
 #include "../damage.hpp"
@@ -32,6 +29,11 @@
 #include "../move/moves.hpp"
 
 #include "../pokemon/species.hpp"
+
+#include <bounded_integer/integer_range.hpp>
+
+#include <iostream>
+#include <vector>
 
 namespace technicalmachine {
 namespace {
@@ -70,9 +72,8 @@ Team max_damage_physical_defender() {
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Combee, level, gender);
-	auto pokemon = defender.pokemon();
-	get_stat(pokemon, StatNames::DEF).iv = IV(0_bi);
-	get_stat(pokemon, StatNames::DEF).ev = EV(0_bi);
+	auto && pokemon = defender.pokemon();
+	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
 	get_nature(pokemon) = Nature::Hasty;
 	for (auto const n : bounded::integer_range(3_bi)) {
 		static_cast<void>(n);
@@ -86,11 +87,10 @@ Team max_damage_special_defender() {
 	Level const level(1_bi);
 	Gender const gender(Gender::MALE);
 	defender.add_pokemon(Species::Paras, level, gender);
-	auto d = defender.pokemon();
+	auto && d = defender.pokemon();
 	get_ability(d) = Ability::Dry_Skin;
 
-	get_stat(d, StatNames::SPD).iv = IV(0_bi);
-	get_stat(d, StatNames::SPD).ev = EV(0_bi);
+	set_stat_ev(d, StatNames::SPD, EV(0_bi), IV(0_bi));
 	for (auto const n : bounded::integer_range(3_bi)) {
 		static_cast<void>(n);
 		boost(stage(d), StatNames::SPD, -2_bi);
@@ -144,7 +144,7 @@ void physical_damage_test() {
 	
 	Pokemon & a = attacker.pokemon();
 
-	get_stat(a, StatNames::DEF).ev = EV(EV::max);
+	set_stat_ev(a, StatNames::DEF, EV(EV::max));
 	get_nature(a) = Nature::Impish;
 	attacker.pokemon().activate_power_trick();
 	get_ability(a) = Ability::Pure_Power;
@@ -169,12 +169,13 @@ void special_damage_test() {
 	all_moves(a).add(Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
-	get_stat(a, StatNames::SPA).ev = EV(EV::max);
+	set_stat_ev(a, StatNames::SPA, EV(EV::max));
 	get_nature(a) = Nature::Modest;
 	boost(stage(attacker.pokemon()), StatNames::SPA, 6_bi);
 	
 	get_item(a) = Item::Metronome;
-	for (unsigned n = 0; n != 10; ++n) {
+	for (auto const n : bounded::integer_range(10_bi)) {
+		static_cast<void>(n);
 		attacker.pokemon().increment_move_use_counter();
 	}
 

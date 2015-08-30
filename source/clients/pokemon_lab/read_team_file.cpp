@@ -46,7 +46,7 @@ Move load_move(boost::property_tree::ptree const & pt) {
 	return Move(name, pp_ups);
 }
 
-static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
+auto lookup_stat(std::string const & name) {
 	static std::unordered_map<std::string, StatNames> const stats = {
 		{ "Atk", StatNames::ATK },
 		{ "Def", StatNames::DEF },
@@ -54,7 +54,7 @@ static Stat & lookup_stat (Pokemon & pokemon, std::string const & name) {
 		{ "SpDef", StatNames::SPD },
 		{ "Spd", StatNames::SPE }
 	};
-	return get_stat(pokemon, stats.at(name));
+	return stats.at(name);
 }
 
 static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {
@@ -62,19 +62,14 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	IV const iv(pt.get<IV::value_type>("<xmlattr>.iv"));
 	EV const ev(pt.get<EV::value_type>("<xmlattr>.ev"));
 	if (name == "HP") {
-		HP & hp = get_hp(pokemon);
-		hp.iv = iv;
-		hp.ev = ev;
-	}
-	else {
-		Stat & stat = lookup_stat(pokemon, name);
-		stat.iv = iv;
-		stat.ev = ev;
+		set_hp_ev(pokemon, ev, iv);
+	} else {
+		set_stat_ev(pokemon, lookup_stat(name), ev, iv);
 	}
 }
 
 Species from_simulator_string(std::string const & str) {
-	static std::unordered_map<std::string, Species> const convertor = {
+	static std::unordered_map<std::string, Species> const converter = {
 		{ "Deoxys", Species::Deoxys_Mediocre },
 		{ "Deoxys-f", Species::Deoxys_Attack },
 		{ "Deoxys-l", Species::Deoxys_Defense },
@@ -92,8 +87,8 @@ Species from_simulator_string(std::string const & str) {
 		{ "Wormadam-g", Species::Wormadam_Sandy },
 		{ "Wormadam-s", Species::Wormadam_Trash }
 	};
-	auto const it = convertor.find(str);
-	return (it != convertor.end()) ? it->second : from_string<Species>(str);
+	auto const it = converter.find(str);
+	return (it != converter.end()) ? it->second : from_string<Species>(str);
 }
 
 void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {

@@ -35,7 +35,6 @@ struct EV {
 	constexpr auto value() const -> bounded::integer<0, max.value()> {
 		return m_value;
 	}
-	auto add(value_type evs) -> void;
 private:
 	bounded::clamped_integer<0, max.value()> m_value;
 };

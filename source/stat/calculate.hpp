@@ -35,7 +35,7 @@ struct Weather;
 
 template<StatNames stat_name>
 auto initial_stat(Stat const stat, Level const level, Nature const nature) {
-	auto const pre_nature = (2_bi * stat.base + stat.iv.value() + stat.ev.value() / 4_bi) * level() / 100_bi + 5_bi;
+	auto const pre_nature = (2_bi * stat.base() + stat.iv().value() + stat.ev().value() / 4_bi) * level() / 100_bi + 5_bi;
 	return pre_nature * boost<stat_name>(nature);
 }
 
