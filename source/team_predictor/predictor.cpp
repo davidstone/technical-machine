@@ -30,6 +30,8 @@
 #include "../pokemon/max_pokemon_per_team.hpp"
 #include "../pokemon/pokemon.hpp"
 
+#include <containers/array/array.hpp>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Return_Button.H>
@@ -44,6 +46,7 @@
 #include <vector>
 
 using namespace technicalmachine;
+using namespace bounded::literal;
 
 // A GUI version of the team predictor.
 
@@ -117,9 +120,9 @@ struct PokemonInputValues {
 	void add_to_team(Team & team) const {
 		team.add_pokemon(species, Level(100_bi), Gender::GENDERLESS, item, ability, nature);
 		Pokemon & pokemon = team.replacement();
-		set_hp_ev(pokemon, evs[0]);
+		set_hp_ev(pokemon, evs[0_bi]);
 		for (auto const stat : regular_stats()) {
-			set_stat_ev(pokemon, stat, evs[static_cast<unsigned>(stat) + 1u]);
+			set_stat_ev(pokemon, stat, containers::at(evs, bounded::make(stat) + 1_bi));
 		}
 		for (auto const move : moves) {
 			all_moves(pokemon).add(move);
@@ -130,7 +133,7 @@ private:
 	Item item = Item::END;
 	Ability ability;
 	Nature nature;
-	std::array<EV, number_of_stats> evs;
+	containers::array<EV, number_of_stats> evs;
 	std::vector<Moves> moves;
 };
 
