@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,8 @@
 
 #include <bounded_integer/optional.hpp>
 
+#include <containers/array/make_array.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <type_traits>
@@ -34,7 +36,7 @@ auto base_pp(Moves const move) {
 	// This has to use a bounded::array instead of a switch statement to take
 	// advantage of type deduction
 	using bounded::none;
-	static constexpr auto base = bounded::make_optional_array(
+	static constexpr auto base = containers::make_array(
 		none,		// Switch0
 		none,		// Switch1
 		none,		// Switch2
@@ -602,7 +604,7 @@ auto base_pp(Moves const move) {
 		5_bi,		// Fusion Flare
 		5_bi		// Fusion Bolt
 	);
-	return base.at(move);
+	return base[move];
 }
 using BasePP = decltype(base_pp(std::declval<Moves>()));
 

@@ -22,14 +22,14 @@
 
 #include "../item.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/make_array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Item const name) {
-	static auto const item_name = bounded::make_array<std::string>(
+	static auto const item_name = containers::make_array<std::string>(
 		"No Item", "Adamant Orb", "Aguav Berry", "Air Mail",
 		"Amulet Coin", "Antidote", "Apicot Berry", "Armor Fossil",
 		"Aspear Berry", "Awakening", "Babiri Berry", "Belue Berry",
@@ -141,7 +141,7 @@ std::string const & to_string(Item const name) {
 		"Yellow Scarf", "Yellow Shard", "Zap Plate", "Zinc",
 		"Zoom Lens", "END ITEM"
 	);
-	return item_name.at(name);
+	return item_name[name];
 }
 
 template<>

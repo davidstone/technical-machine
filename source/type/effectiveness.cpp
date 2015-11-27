@@ -1,5 +1,5 @@
 // Effectiveness of a type
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,11 +17,17 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "effectiveness.hpp"
-#include <algorithm>
+
 #include "collection.hpp"
 #include "type.hpp"
 #include "../pokemon/pokemon.hpp"
 #include "../rational.hpp"
+
+#include <containers/array/array.hpp>
+#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/iterator.hpp>
+
+#include <algorithm>
 
 namespace technicalmachine {
 namespace {
@@ -33,7 +39,7 @@ constexpr auto se = make_rational(2_bi, 1_bi);
 
 auto lookup_effectiveness(Type const attacking, Type const defending) {
 	using lookup_type = std::common_type<decltype(ne), decltype(nve), decltype(reg), decltype(se)>::type;
-	static constexpr bounded::array<bounded::array<lookup_type, 18>, 18> effectiveness {{
+	static constexpr containers::array<containers::array<lookup_type, 18>, 18> effectiveness {{
 		{ reg, se, reg, reg, nve, nve, nve, nve, se, reg, reg, reg, nve, se, reg, nve, reg, reg },	// Bug
 		{ reg, nve, reg, reg, nve, reg, reg, se, reg, reg, reg, reg, reg, se, reg, nve, reg, reg },	// Dark
 		{ reg, reg, se, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, nve, reg, reg },	// Dragon
@@ -54,13 +60,13 @@ auto lookup_effectiveness(Type const attacking, Type const defending) {
 		{ reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg }	// Typeless
 		//	Bug	Drk	Drg	Elc	Ftg	Fir	Fly	Gho	Grs	Grd	Ice	Nrm	Psn	Psy	Rck	Stl	Wtr	Typ		
 	}};
-	return effectiveness.at(attacking).at(defending);
+	return effectiveness[attacking][defending];
 }
 
 template<typename Container, typename Product>
 auto check_effectiveness(Container const & effectiveness, std::initializer_list<Product> const & results) {
 	auto const value = effectiveness[0_bi] * effectiveness[1_bi];
-	return std::find(std::begin(results), std::end(results), value) != std::end(results);
+	return containers::find(std::begin(results), std::end(results), value) != std::end(results);
 }
 
 
@@ -79,7 +85,7 @@ Effectiveness::Effectiveness(Type const attacking, Type const defending1, Type c
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
-	Effectiveness(type, *get_type(defender).types.begin(), *bounded::next(get_type(defender).types.begin())) {
+	Effectiveness(type, *get_type(defender).types.begin(), *containers::next(get_type(defender).types.begin())) {
 }
 
 Effectiveness::Effectiveness(Type const attacking, Type const defending):

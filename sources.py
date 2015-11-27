@@ -188,7 +188,6 @@ misc_sources = [
 	'enum.cpp',
 	'enum_range.cpp',
 	'gender.cpp',
-	'fixed_capacity_vector.cpp',
 	'hash.cpp',
 	'heal.cpp',
 	'item.cpp',
@@ -333,7 +332,7 @@ test_libraries = [
 	'boost_system',
 ]
 
-includes = ['../endian', '../bounded_integer']
+includes = ['../endian', '../bounded_integer', '../containers/include']
 
 programs = [
 	Program(

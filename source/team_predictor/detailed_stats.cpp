@@ -104,22 +104,22 @@ DetailedStats::DetailedStats():
 
 template<>
 Ability::Abilities const & DetailedStats::get<Ability::Abilities>(Species const species) const {
-	return ability.at(species);
+	return ability[species];
 }
 
 template<>
 Item const & DetailedStats::get<Item>(Species const species) const {
-	return item.at(species);
+	return item[species];
 }
 
 template<>
 Nature const & DetailedStats::get<Nature>(Species const species) const {
-	return nature.at(species);
+	return nature[species];
 }
 
 template<>
 std::vector<Moves> const & DetailedStats::get<std::vector<Moves>>(Species const species) const {
-	return move.at(species);
+	return move[species];
 }
 
 

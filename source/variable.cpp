@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,9 @@
 #include "pokemon/level.hpp"
 
 #include <bounded_integer/integer_range.hpp>
+
+#include <containers/algorithms/count.hpp>
+#include <containers/array/make_array.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -120,7 +123,7 @@ auto probability_sum(Probabilities const & value) -> double {
 
 
 auto initial_probabilities() {
-	bounded::array<Probabilities, static_cast<std::size_t>(Moves::END)> activate_probability {{
+	containers::array<Probabilities, static_cast<std::size_t>(Moves::END)> activate_probability {{
 		{ Variable(0_bi, 1.0) },				// Switch0
 		{ Variable(0_bi, 1.0) },				// Switch1
 		{ Variable(0_bi, 1.0) },				// Switch2
@@ -709,12 +712,12 @@ auto magnitude_variables() -> Probabilities {
 }
 
 auto present_variables() -> Probabilities {
-	static constexpr auto present = bounded::make_array(
+	static constexpr auto present = containers::make_array(
 		0_bi, 40_bi, 80_bi, 120_bi
 	);
 	Probabilities probabilities;
 	for (auto const n : present) {
-		probabilities.emplace_back(n, 1.0 / static_cast<double>(present.size()));
+		probabilities.emplace_back(n, 1.0 / static_cast<double>(size(present)));
 	}
 	return probabilities;
 }
@@ -741,7 +744,7 @@ auto phaze_probability(TeamSize const foe_size) -> Probabilities {
 }
 
 auto acupressure_probability(ActivePokemon const pokemon) -> Probabilities {
-	static constexpr auto boostable_stats = bounded::make_array(
+	static constexpr auto boostable_stats = containers::make_array(
 		StatNames::ATK,
 		StatNames::DEF,
 		StatNames::SPA,
@@ -750,7 +753,7 @@ auto acupressure_probability(ActivePokemon const pokemon) -> Probabilities {
 		StatNames::ACC,
 		StatNames::EVA
 	);
-	auto const non_maxed_stats = bounded::count_if(std::begin(boostable_stats), std::end(boostable_stats), [&](StatNames const stat) {
+	auto const non_maxed_stats = containers::count_if(begin(boostable_stats), end(boostable_stats), [&](StatNames const stat) {
 		return stage(pokemon)[stat] != 6_bi;
 	});
 	if (non_maxed_stats == 0_bi) {
@@ -773,12 +776,10 @@ auto all_probabilities(ActivePokemon const pokemon, TeamSize const foe_size) -> 
 	Moves const move = current_move(pokemon);
 	if (is_phaze(move)) {
 		return phaze_probability(foe_size);
-	}
-	else if (move == Moves::Acupressure) {
+	} else if (move == Moves::Acupressure) {
 		return acupressure_probability(pokemon);
-	}
-	else {
-		return probability.at(move);
+	} else {
+		return probability[move];
 	}
 }
 }	// namespace technicalmachine

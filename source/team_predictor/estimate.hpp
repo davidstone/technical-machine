@@ -1,5 +1,5 @@
 // Class to help get the next most likely Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 
 #include "../pokemon/species.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/array.hpp>
 
 #include <random>
 
@@ -29,15 +29,15 @@ struct Multiplier;
 struct Team;
 
 struct Estimate {
-	using Overall = bounded::array<unsigned, number_of_species>;
-	using Lead = bounded::array<float, number_of_species>;
+	using Overall = containers::array<unsigned, number_of_species>;
+	using Lead = containers::array<float, number_of_species>;
 	Estimate(Overall const & overall, Lead const & lead, unsigned total);
 	void update(Multiplier const & multiplier, Team const & team);
 	void update(Multiplier const & multiplier, Species seen);
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;
 private:
-	using Container = bounded::array<float, number_of_species>;
+	using Container = containers::array<float, number_of_species>;
 	Container estimate;
 };
 

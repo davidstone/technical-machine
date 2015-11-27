@@ -91,5 +91,11 @@ constexpr auto blocks_status<Statuses::poison_toxic>(Type const type) {
 	return blocks_status<Statuses::poison>(type);
 }
 
-
 }	// namespace technicalmachine
+
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::Type> : technicalmachine::enum_numeric_limits<technicalmachine::Type, technicalmachine::Type::Typeless> {};
+
+}	// namespace std

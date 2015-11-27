@@ -70,7 +70,7 @@ auto MoveContainer::size() const -> size_type {
 }
 
 auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
-	return static_cast<RegularMoveSize>(m_regular.size());
+	return static_cast<RegularMoveSize>(containers::size(m_regular));
 }
 
 auto MoveContainer::remove_switch() -> void {

@@ -18,19 +18,19 @@
 
 #include "invalid_settings_file.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/make_array.hpp>
 
 namespace technicalmachine {
 namespace {
 
-std::string to_string(InvalidSettingsFile::Problem const problem) {
-	static auto const text = bounded::make_array<std::string>(
+std::string const & to_string(InvalidSettingsFile::Problem const problem) {
+	static auto const text = containers::make_array<std::string>(
 		"does not exist",
 		"is too long",
 		"is too short",
 		"contains invalid data"
 	);
-	return text.at(problem, bounded::non_check);
+	return text[problem];
 }
 }	// namespace
 

@@ -30,7 +30,7 @@
 #include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/array.hpp>
 
 #include <iostream>
 #include <string>
@@ -430,7 +430,7 @@ void Battle::parse_substitute (InMessage & msg) {
 namespace {
 
 auto parse_boosts(InMessage & msg) {
-	bounded::array<int8_t, 7> boosts;
+	containers::array<int8_t, 7> boosts;
 	for (int8_t & boost : boosts)
 		boost = static_cast<int8_t>(msg.read_byte());
 	return boosts;

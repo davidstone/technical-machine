@@ -18,13 +18,6 @@
 
 #include "power.hpp"
 
-#include <algorithm>
-#include <cassert>
-#include <numeric>
-#include <stdexcept>
-
-#include <bounded_integer/array.hpp>
-
 #include "base_power.hpp"
 #include "move.hpp"
 #include "moves.hpp"
@@ -44,6 +37,13 @@
 #include "../pokemon/happiness.hpp"
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
+
+#include <containers/array/array.hpp>
+
+#include <algorithm>
+#include <cassert>
+#include <numeric>
+#include <stdexcept>
 
 namespace technicalmachine {
 namespace {
@@ -97,7 +97,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 			return last_used_move(attacker).momentum_move_power();
 		case Moves::Hidden_Power: {
 			using stat_and_position_type = std::pair<StatNames, bounded::integer<0, 5>>;
-			static constexpr bounded::array<stat_and_position_type, 5> stat_and_position {{
+			static constexpr containers::array<stat_and_position_type, 5> stat_and_position {{
 				{ StatNames::ATK, 1_bi },
 				{ StatNames::DEF, 2_bi },
 				{ StatNames::SPE, 3_bi },
@@ -171,7 +171,7 @@ auto move_power(Team const & attacker_team, Team const & defender_team, Weather 
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(attacker_team, defender_team, weather, variable);
-	return static_cast<bounded::equivalent_type<MovePower, bounded::throw_policy>>(bounded::max(1_bi,
+	return static_cast<bounded::equivalent_type<MovePower, bounded::throw_policy<>>>(bounded::max(1_bi,
 		base_power *
 		BOUNDED_CONDITIONAL(doubling(attacker, defender, weather), 2_bi, 1_bi) *
 		item_modifier(attacker) *

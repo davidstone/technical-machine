@@ -21,6 +21,7 @@
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
 
+#include <algorithm>
 #include <tuple>
 #include <type_traits>
 #include <utility>

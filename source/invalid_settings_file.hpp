@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include "enum.hpp"
+
 #include <boost/filesystem/path.hpp>
 
 #include <stdexcept>
@@ -34,3 +36,15 @@ struct InvalidSettingsFile : std::runtime_error {
 };
 
 }	// namespace technicalmachine
+
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::InvalidSettingsFile::Problem> :
+	technicalmachine::enum_numeric_limits<
+		technicalmachine::InvalidSettingsFile::Problem,
+		technicalmachine::InvalidSettingsFile::Problem::invalid_data
+	> {
+};
+
+}	// namespace std

@@ -76,7 +76,7 @@ bool PokemonCollection::is_switching_to_self (Moves const move) const {
 }
 
 TeamSize PokemonCollection::size() const {
-	return static_cast<TeamSize>(container.size());
+	return containers::size(container);
 }
 TeamSize PokemonCollection::real_size() const {
 	return true_size;
@@ -102,7 +102,7 @@ bool PokemonCollection::seen (Species const name) {
 
 void PokemonCollection::remove_active () {
 	assert(index() != replacement());
-	container.erase(container.begin() + index());
+	containers::erase(container, container.begin() + index());
 	decrement_real_size();
 	// We don't need any bounds checking here because we've already established
 	// that replacement() is greater than index(), so it cannot be 0, which is

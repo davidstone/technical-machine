@@ -1,5 +1,5 @@
 // Generate a random team, weighted by usage
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,7 @@
 #include "../pokemon/species.hpp"
 #include "../string_conversions/conversion.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/array.hpp>
 
 #include <algorithm>
 #include <numeric>
@@ -51,8 +51,8 @@ namespace {
 
 std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const random_pokemon) {
 	auto const overall = overall_stats();
-	bounded::array<float, number_of_species> lead;
-	lead.fill(1.0F);
+	containers::array<float, number_of_species> lead;
+	std::fill(lead.begin(), lead.end(), 1.0F);
 	unsigned const total(std::accumulate(std::begin(overall), std::end(overall), 0U));
 	Estimate estimate(overall, lead, total);
 	Multiplier multiplier(overall);

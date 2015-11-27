@@ -20,11 +20,15 @@
 
 #include "range.hpp"
 
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <containers/common_container_functions.hpp>
+#include <containers/index_type.hpp>
+
 #include <cstddef>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -53,7 +57,9 @@ bool operator==(Collection<Container> const & lhs, Collection<Container> const &
 template<typename Container>
 struct Collection {
 	using container_type = Container;
-	using index_type = typename container_type::index_type;
+	using size_type = typename Container::size_type;
+	using const_iterator = typename Container::const_iterator;
+	using index_type = containers::index_type<container_type>;
 	template<typename... Args>
 	constexpr Collection(Args &&... args) :
 		container(std::forward<Args>(args)...),
@@ -80,7 +86,7 @@ struct Collection {
 		return unchecked_value(index());
 	}
 	constexpr bool is_empty() const {
-		return container.empty();
+		return containers::empty(container);
 	}
 	void set_index(index_type const new_index) {
 		m_current_index = check_range (new_index);
@@ -95,9 +101,9 @@ struct Collection {
 protected:
 	constexpr index_type check_range(index_type const new_index) const {
 		using value_type = std::decay_t<decltype(container[new_index])>;
-		return (new_index < container.size()) ?
+		return (new_index < containers::size(container)) ?
 			new_index :
-			throw InvalidCollectionIndex(new_index, container.size(), value_type::class_name);
+			throw InvalidCollectionIndex(new_index, containers::size(container), value_type::class_name);
 	}
 	constexpr decltype(auto) unchecked_value(index_type const specified_index) const {
 		return container[specified_index];

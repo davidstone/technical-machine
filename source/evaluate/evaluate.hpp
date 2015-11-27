@@ -21,8 +21,9 @@
 #include "../stat/stage.hpp"
 #include "../stat/stat_names.hpp"
 
-#include <bounded_integer/array.hpp>
 #include <bounded_integer/bounded_integer.hpp>
+
+#include <containers/array/array.hpp>
 
 #include <cstdint>
 
@@ -123,7 +124,7 @@ private:
 	value_type m_sleep;
 	value_type m_toxic;
 	
-	bounded::array<value_type, Stage::number_of_stats.value()> m_stage;
+	containers::array<value_type, Stage::number_of_stats.value()> m_stage;
 	value_type m_focus_energy;
 
 	value_type m_baton_pass;

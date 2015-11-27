@@ -1,5 +1,5 @@
 // Basis for some move tests
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,13 +27,13 @@
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/integer_range.hpp>
 
-#include <vector>
+#include <containers/vector/vector.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-inline std::vector<Moves> create_shared_moves(TeamSize const team_size) {
-	std::vector<Moves> shared ({ Moves::Struggle });
+inline auto create_shared_moves(TeamSize const team_size) {
+	containers::vector<Moves> shared ({ Moves::Struggle });
 	if (team_size != 1_bi) {
 		for (auto const n : bounded::integer_range(team_size)) {
 			shared.emplace_back(to_switch(n));

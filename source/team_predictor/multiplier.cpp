@@ -65,13 +65,14 @@ Multiplier::Multiplier(Overall const & overall):
 }
 
 Multiplier::value_type Multiplier::operator() (Species const species1, Species const species2) const {
-	return multiplier.at(species1).at(species2);
+	return multiplier[species1][species2];
 }
 
 Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
-	for (auto & array : multiplier)
-		array.fill(not_set);
+	for (auto & array : multiplier) {
+		std::fill(array.begin(), array.end(), not_set);
+	}
 	for (auto const a : bounded::integer_range(bounded::constant<number_of_species>)) {
 		for (auto const b : bounded::integer_range(bounded::constant<number_of_species>)) {
 			if (is_alternate_form(static_cast<Species>(a), static_cast<Species>(b))) {
@@ -97,11 +98,11 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 		auto const ally = from_string<Species>(line.substr(x + 1, y - x - 1));
 
 		auto const number_used_with = boost::lexical_cast<unsigned>(line.substr(y + 1));
-		assert(unaccounted.at(member) >= number_used_with);
-		unaccounted.at(member) -= number_used_with;
-		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / static_cast<value_type>(overall.at(member));
-		auto const per_cent_used = static_cast<value_type>(overall.at(ally)) / total;
-		multiplier.at(member).at(ally) = per_cent_used_with / per_cent_used;
+		assert(unaccounted[member] >= number_used_with);
+		unaccounted[member] -= number_used_with;
+		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / static_cast<value_type>(overall[member]);
+		auto const per_cent_used = static_cast<value_type>(overall[ally]) / total;
+		multiplier[member][ally] = per_cent_used_with / per_cent_used;
 	}
 }
 
@@ -130,11 +131,11 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 						0.0F;
 				}
 			}
-		}
-		else {
+		} else {
 			// 1 is superior to 0 because if they use an unused Pokemon, this
 			// will have no effect instead of making everything equally 0
-			multiplier[a].fill(1.0F);
+			auto & m = multiplier[a];
+			std::fill(m.begin(), m.end(), 1.0F);
 		}
 	}
 }

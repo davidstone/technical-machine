@@ -1,5 +1,5 @@
 // Optimize EVs and nature to remove waste
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 
 #include "../../stat/stat_names.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/make_array.hpp>
 
 #include <random>
 
@@ -28,7 +28,7 @@ namespace technicalmachine {
 struct Pokemon;
 
 constexpr auto regular_stats() {
-	return bounded::make_array(StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE);
+	return containers::make_array(StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE);
 }
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine);

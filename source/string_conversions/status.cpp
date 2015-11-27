@@ -21,14 +21,14 @@
 
 #include "../status.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/make_array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Statuses const name) {
-	static auto const status_name = bounded::make_array<std::string>(
+	static auto const status_name = containers::make_array<std::string>(
 		"No status",
 		"Burn",
 		"Freeze",
@@ -39,7 +39,7 @@ std::string const & to_string(Statuses const name) {
 		"Rest",
 		"END_STATUS"
 	);
-	return status_name.at(name);
+	return status_name[name];
 }
 
 template<>

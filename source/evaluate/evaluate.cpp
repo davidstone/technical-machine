@@ -33,6 +33,9 @@
 
 #include <bounded_integer/integer_range.hpp>
 
+#include <containers/algorithms/count.hpp>
+#include <containers/algorithms/find.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -111,7 +114,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const & moves = regular_moves(pokemon);
-	auto const has_baton_pass = bounded::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
+	auto const has_baton_pass = containers::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
 	return
 		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
 		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +
@@ -206,7 +209,7 @@ auto Evaluate::sleep_clause (Team const & team) -> type {
 	auto const sleepers = [](Pokemon const & pokemon) {
 		return is_sleeping_due_to_other(get_status(pokemon));
 	};
-	auto const sleeper_count = bounded::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
+	auto const sleeper_count = containers::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
 	if (sleeper_count > 1_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
 	}
@@ -218,7 +221,7 @@ Evaluate::Evaluate() {
 	read_xml("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
 
-	using underlying_type = bounded::equivalent_type<value_type, bounded::throw_policy>;
+	using underlying_type = bounded::equivalent_type<value_type, bounded::throw_policy<>>;
 
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
 	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);

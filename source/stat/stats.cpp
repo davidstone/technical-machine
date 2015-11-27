@@ -39,10 +39,10 @@ auto Stats::hp() -> HP & {
 }
 
 auto Stats::operator[](StatNames const stat) const -> Stat const & {
-	return m_stats.at(stat);
+	return m_stats[stat];
 }
 auto Stats::operator[](StatNames const stat) -> Stat & {
-	return m_stats.at(stat);
+	return m_stats[stat];
 }
 
 

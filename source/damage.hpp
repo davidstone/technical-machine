@@ -27,7 +27,7 @@ struct Team;
 struct Variable;
 struct Weather;
 
-using damage_type = bounded::equivalent_type<unsigned, bounded::throw_policy>;
+using damage_type = bounded::equivalent_type<unsigned, bounded::throw_policy<>>;
 
 damage_type damage_calculator(Team const & attacker, Team const & defender, Weather weather, Variable const & variable);
 

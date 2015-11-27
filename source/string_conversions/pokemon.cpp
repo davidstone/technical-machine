@@ -18,19 +18,21 @@
 
 #include "pokemon.hpp"
 
-#include <algorithm>
-#include <map>
-
-#include <boost/algorithm/string/case_conv.hpp>
-
 #include "invalid_string_conversion.hpp"
 
 #include "../pokemon/species.hpp"
 
+#include <containers/array/make_array.hpp>
+
+#include <boost/algorithm/string/case_conv.hpp>
+
+#include <algorithm>
+#include <map>
+
 namespace technicalmachine {
 
 std::string const & to_string(Species const name) {
-	static auto const name_to_string = bounded::make_array<std::string>(
+	static auto const name_to_string = containers::make_array<std::string>(
 		// Generation 1
 		"Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon",
 		"Charizard", "Squirtle", "Wartortle", "Blastoise", "Caterpie",
@@ -179,7 +181,7 @@ std::string const & to_string(Species const name) {
 		
 		"END"
 	);
-	return name_to_string.at(name);
+	return name_to_string[name];
 }
 
 template<>

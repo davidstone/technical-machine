@@ -18,20 +18,22 @@
 
 #include "gender.hpp"
 
-#include <map>
-
 #include "conversion.hpp"
 #include "invalid_string_conversion.hpp"
 
 #include "../gender.hpp"
 
+#include <containers/array/make_array.hpp>
+
+#include <map>
+
 namespace technicalmachine {
 
 std::string const & to_string(Gender::Genders const gender) {
-	static auto const gender_name = bounded::make_array<std::string>(
+	static auto const gender_name = containers::make_array<std::string>(
 		"Female", "Genderless", "Male"
 	);
-	return gender_name.at(gender);
+	return gender_name[gender];
 }
 
 template<>

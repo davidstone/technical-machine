@@ -1,3 +1,4 @@
 bounded_integer = https://bitbucket.org/davidstone/bounded_integer
 build_scripts = https://bitbucket.org/davidstone/scons-template
+containers = https://bitbucket.org/davidstone/containers
 endian = https://bitbucket.org/davidstone/endian

@@ -1,5 +1,5 @@
 // Type function definitions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,7 @@
 #include "../move/moves.hpp"
 #include "../pokemon/pokemon.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/make_array.hpp>
 
 #include <algorithm>
 #include <stdexcept>
@@ -42,7 +42,7 @@ namespace {
 
 auto hidden_power_type(Pokemon const & pokemon) {
 	using modifier_type = std::pair<StatNames, bounded::integer<1, 5>>;
-	static constexpr auto modifiers = bounded::make_array(
+	static constexpr auto modifiers = containers::make_array(
 		modifier_type(StatNames::ATK, 1_bi),
 		modifier_type(StatNames::DEF, 2_bi),
 		modifier_type(StatNames::SPE, 3_bi),
@@ -55,7 +55,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 	};
 	intermediate_type const initial = get_hp(pokemon).iv().value() % 2_bi;
 	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), initial, sum) * 15_bi / 63_bi;
-	constexpr static auto lookup = bounded::make_array(
+	constexpr static auto lookup = containers::make_array(
 		Type::Fighting,
 		Type::Flying,
 		Type::Poison,
@@ -74,7 +74,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 		Type::Dark
 	);
 	static_assert(std::numeric_limits<decltype(index)>::min() == 0_bi, "Incorrect minimum index.");
-	static_assert(std::numeric_limits<decltype(index)>::max() == lookup.size() - 1_bi, "Incorrect maximum index.");
+	static_assert(std::numeric_limits<decltype(index)>::max() == size(lookup) - 1_bi, "Incorrect maximum index.");
 	return lookup[index];
 }
 

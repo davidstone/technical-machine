@@ -265,7 +265,7 @@ struct StatTraits<StatNames::SPE> {
 	static constexpr bool is_physical = false;
 };
 
-template<StatNames stat, enable_if_t<StatTraits<stat>::is_physical> = clang_dummy>
+template<StatNames stat, BOUNDED_REQUIRES(StatTraits<stat>::is_physical)>
 auto calculate_initial_stat(ActivePokemon const pokemon) {
 	constexpr auto other = StatTraits<stat>::other;
 	auto const level = get_level(pokemon);
@@ -274,7 +274,7 @@ auto calculate_initial_stat(ActivePokemon const pokemon) {
 		initial_stat<stat>(get_stat(pokemon, stat), level, nature) :
 		initial_stat<other>(get_stat(pokemon, other), level, nature);
 }
-template<StatNames stat, enable_if_t<!StatTraits<stat>::is_physical> = clang_dummy>
+template<StatNames stat, BOUNDED_REQUIRES(!StatTraits<stat>::is_physical)>
 auto calculate_initial_stat(ActivePokemon const pokemon) {
 	return initial_stat<stat>(get_stat(pokemon, stat), get_level(pokemon), get_nature(pokemon));
 }

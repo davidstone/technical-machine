@@ -35,7 +35,7 @@ namespace {
 
 template<typename T>
 auto load_stats_from_file(boost::filesystem::path const & file_name) {
-	bounded::array<T, number_of_species> overall = {{}};
+	containers::array<T, number_of_species> overall = {{}};
 	boost::filesystem::ifstream file(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
@@ -46,18 +46,18 @@ auto load_stats_from_file(boost::filesystem::path const & file_name) {
 		auto const position = line.find(delimiter);
 		auto const species = from_string<Species>(line.substr(0, position));
 		auto const value = boost::lexical_cast<T>(line.substr(position + 1));
-		overall.at(species) = value;
+		overall[species] = value;
 	}
 	return overall;
 }
 
 }	// namespace
 
-auto overall_stats () -> bounded::array<unsigned, number_of_species> {
+auto overall_stats () -> containers::array<unsigned, number_of_species> {
 	return load_stats_from_file<unsigned>("settings/Generation 4/OU/usage.txt");
 }
 
-auto lead_stats () -> bounded::array<float, number_of_species> {
+auto lead_stats () -> containers::array<float, number_of_species> {
 	return load_stats_from_file<float>("settings/Generation 4/OU/lead.txt");
 }
 

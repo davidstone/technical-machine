@@ -22,17 +22,17 @@
 #include "move.hpp"
 #include "shared.hpp"
 
-#include "../fixed_capacity_vector.hpp"
-
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/integer_range.hpp>
+
+#include <containers/static_vector/static_vector.hpp>
 
 #include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-using RegularMoveContainer = fixed_capacity_vector<Move, max_moves_per_pokemon.value()>;
+using RegularMoveContainer = containers::static_vector<Move, max_moves_per_pokemon.value()>;
 
 struct MoveIterator {
 private:
@@ -157,7 +157,7 @@ struct MoveContainer {
 	}
 	template<typename... Args>
 	auto emplace_back(Args&&... args) -> void {
-		assert(m_regular.size() < max_moves_per_pokemon);
+		assert(containers::size(m_regular) < max_moves_per_pokemon);
 		// The only moves that are ever added are regular moves. Shared
 		// moves are just a reference to a collection at the Team level.
 		m_regular.emplace_back(std::forward<Args>(args)...);

@@ -22,12 +22,14 @@
 
 #include "../ability.hpp"
 
+#include <containers/array/make_array.hpp>
+
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Ability::Abilities const name) {
-	static auto const ability_name = bounded::make_array<std::string>(
+	static auto const ability_name = containers::make_array<std::string>(
 		"Adaptability", "Aftermath", "Air Lock", "Anger Point",
 		"Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor",
 		"Blaze", "Chlorophyll", "Clear Body", "Cloud Nine",
@@ -60,7 +62,7 @@ std::string const & to_string(Ability::Abilities const name) {
 		"Unburden", "Vital Spirit", "Volt Absorb", "Water Absorb",
 		"Water Veil", "White Smoke", "Wonder Guard", "END_ABILITY"
 	);
-	return ability_name.at(name);
+	return ability_name[name];
 }
 
 template<>

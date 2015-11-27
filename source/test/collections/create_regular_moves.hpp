@@ -1,5 +1,5 @@
 // Basis for some move tests
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,13 +18,14 @@
 
 #pragma once
 
-#include <vector>
 #include "../../move/moves.hpp"
+
+#include <containers/vector/vector.hpp>
 
 namespace technicalmachine {
 
-inline std::vector<Moves> create_regular_moves() {
-	return std::vector<Moves>({
+inline auto create_regular_moves() {
+	return containers::vector<Moves>({
 		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
 	});
 }

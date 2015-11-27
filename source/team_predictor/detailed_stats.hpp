@@ -27,7 +27,7 @@
 
 #include "../stat/nature.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/array.hpp>
 
 #include <cstdint>
 #include <vector>
@@ -39,10 +39,10 @@ struct DetailedStats {
 	template<typename T>
 	T const & get(Species species) const;
 private:
-	bounded::array<std::vector<Moves>, number_of_species> move;
-	bounded::array<Item, number_of_species> item;
-	bounded::array<Ability::Abilities, number_of_species> ability;
-	bounded::array<Nature, number_of_species> nature;
+	containers::array<std::vector<Moves>, number_of_species> move;
+	containers::array<Item, number_of_species> item;
+	containers::array<Ability::Abilities, number_of_species> ability;
+	containers::array<Nature, number_of_species> nature;
 };
 
 }	// namespace technicalmachine

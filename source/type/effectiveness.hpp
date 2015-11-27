@@ -21,8 +21,9 @@
 #include "type.hpp"
 #include "../rational.hpp"
 
-#include <bounded_integer/array.hpp>
 #include <bounded_integer/bounded_integer.hpp>
+
+#include <containers/array/array.hpp>
 
 namespace technicalmachine {
 struct Pokemon;
@@ -42,7 +43,7 @@ private:
 	Effectiveness(Type attacking, Type defending1, Type defending2);
 	using SingleType = bounded_rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
-	using container_type = bounded::array<SingleType, 2>;
+	using container_type = containers::array<SingleType, 2>;
 
 	container_type m_effectiveness;
 

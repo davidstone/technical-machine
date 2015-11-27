@@ -33,7 +33,8 @@
 
 #include "../move/moves.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/algorithms/find.hpp>
+#include <containers/array/array.hpp>
 
 #include <vector>
 
@@ -41,8 +42,8 @@ namespace technicalmachine {
 namespace {
 
 auto all_ones_array() {
-	bounded::array<float, number_of_species> all_ones;
-	all_ones.fill(1.0F);
+	containers::array<float, number_of_species> all_ones;
+	std::fill(all_ones.begin(), all_ones.end(), 1.0F);
 	return all_ones;
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
@@ -99,7 +100,7 @@ void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed) {
 		if (size(regular) == max_moves_per_pokemon) {
 			break;
 		}
-		bool const already_has_move = bounded::find(regular.begin(), regular.end(), move) != regular.end();
+		bool const already_has_move = containers::find(regular.begin(), regular.end(), move) != regular.end();
 		if (already_has_move) {
 			continue;
 		}

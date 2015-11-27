@@ -21,10 +21,10 @@
 #include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
 
-#include "../fixed_capacity_vector.hpp"
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
-using PokemonContainer = fixed_capacity_vector<Pokemon, max_pokemon_per_team.value()>;
+using PokemonContainer = containers::static_vector<Pokemon, max_pokemon_per_team.value()>;
 
 }	// namespace technicalmachine

@@ -31,7 +31,7 @@ using VisibleFoeHP = bounded::integer<48, 100>;
 
 struct UpdatedHP {
 	using VisibleHP = std::common_type<
-		bounded::equivalent_type<HP::current_type, bounded::throw_policy>,
+		bounded::equivalent_type<HP::current_type, bounded::throw_policy<>>,
 		VisibleFoeHP
 	>::type;
 	explicit UpdatedHP(Team const & team);

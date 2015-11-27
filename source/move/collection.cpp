@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,9 @@
 
 #include <bounded_integer/integer_range.hpp>
 
+#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/iterator.hpp>
+
 #include <cassert>
 #include <vector>
 
@@ -40,23 +43,23 @@ auto regular_move(MoveCollection & moves) -> Move & {
 }
 
 auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
-	auto it = bounded::find(regular().begin(), regular().end(), move);
+	auto it = containers::find(regular().begin(), regular().end(), move);
 	if (it == regular().end()) {
 		container.emplace_back(move, pp_ups);
-		it = bounded::prev(regular().end());
+		it = containers::prev(regular().end());
 	}
 	set_index(static_cast<index_type>(it - regular().begin()));
 }
 
 auto set_index(MoveCollection & moves, Moves const move) -> void {
-	auto const it = bounded::find_if(moves.begin(), moves.end(), [=](Moves const test) { return move == test; });
+	auto const it = containers::find_if(moves.begin(), moves.end(), [=](Moves const test) { return move == test; });
 	assert(it != moves.end());
 	moves.set_index(static_cast<MoveCollection::index_type>(it - moves.begin()));
 }
 
 using IndexResult = bounded::optional<RegularMoveIndex>;
 auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
-	auto const it = bounded::find(moves.regular().begin(), moves.regular().end(), name);
+	auto const it = containers::find(moves.regular().begin(), moves.regular().end(), name);
 	return (it != moves.regular().end()) ? IndexResult(it - moves.regular().begin()) : bounded::none;
 }
 

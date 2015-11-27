@@ -1,5 +1,5 @@
 // Teammate stat multipliers
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,17 +20,17 @@
 
 #include "../pokemon/species.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/array.hpp>
 
 namespace technicalmachine {
 
 struct Multiplier {
-	using Overall = bounded::array<unsigned, number_of_species>;
+	using Overall = containers::array<unsigned, number_of_species>;
 	using value_type = float;
 	Multiplier(Overall const & overall);
 	value_type operator() (Species species1, Species species2) const;
 private:
-	using Container = bounded::array<bounded::array<value_type, number_of_species>, number_of_species>;
+	using Container = containers::array<containers::array<value_type, number_of_species>, number_of_species>;
 	static Container species_clause();
 	void load_listed_multipliers(Overall const & overall, Overall & unaccounted);
 	void estimate_remaining(Overall const & overall, Overall const & unaccounted);

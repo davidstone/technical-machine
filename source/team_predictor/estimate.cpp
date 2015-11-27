@@ -42,7 +42,7 @@ struct InvalidRandomSpecies : std::logic_error {
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
 	for (auto const species : enum_range<Species>) {
-		estimate.at(species) = lead.at(species) * static_cast<Lead::value_type>(overall.at(species) / static_cast<Lead::value_type>(total));
+		estimate[species] = lead[species] * static_cast<Lead::value_type>(overall[species] / static_cast<Lead::value_type>(total));
 	}
 }
 
@@ -54,7 +54,7 @@ void Estimate::update(Multiplier const & multiplier, Team const & team) {
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {
 	for (auto const predicted : enum_range<Species>) {
-		estimate.at(predicted) *= multiplier(seen, predicted);
+		estimate[predicted] *= multiplier(seen, predicted);
 	}
 }
 

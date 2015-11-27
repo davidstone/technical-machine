@@ -28,10 +28,10 @@ Stage::Stage() {
 }
 
 auto Stage::operator[](StatNames const index) const -> value_type const & {
-	return m_stages[container_type::index_type(index, bounded::non_check)];
+	return m_stages[index];
 }
 auto Stage::operator[](StatNames const index) -> value_type & {
-	return m_stages[container_type::index_type(index, bounded::non_check)];
+	return m_stages[index];
 }
 
 auto Stage::begin() const -> container_type::const_iterator {

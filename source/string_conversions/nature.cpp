@@ -22,19 +22,21 @@
 
 #include "../stat/nature.hpp"
 
+#include <containers/array/make_array.hpp>
+
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Nature const nature) {
-	static auto const nature_converter = bounded::make_array<std::string>(
+	static auto const nature_converter = containers::make_array<std::string>(
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
 		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
 		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
 		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
 		"Timid", "End_Nature"
 	);
-	return nature_converter.at(nature);
+	return nature_converter[nature];
 }
 
 template<>

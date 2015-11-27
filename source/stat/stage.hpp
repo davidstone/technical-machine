@@ -22,8 +22,8 @@
 #include "../hash.hpp"
 #include "../rational.hpp"
 
-#include <bounded_integer/array.hpp>
 #include <bounded_integer/bounded_integer.hpp>
+#include <containers/array/array.hpp>
 
 #include <algorithm>
 #include <cstdint>
@@ -36,7 +36,7 @@ struct Stage {
 	using value_type = bounded::clamped_integer<-6, 6>;
 	using boost_type = bounded::checked_integer<-3, 12>;
 	static constexpr auto number_of_stats = bounded::constant<static_cast<intmax_t>(StatNames::END)>;
-	using container_type = bounded::array<value_type, number_of_stats.value()>;
+	using container_type = containers::array<value_type, number_of_stats.value()>;
 
 	Stage();
 
@@ -73,7 +73,7 @@ struct Base<StatNames::EVA> {
 
 }	// namespace detail
 
-template<StatNames stat, enable_if_t<stat == StatNames::ATK or stat == StatNames::SPA> = clang_dummy>
+template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::ATK or stat == StatNames::SPA)>
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::Base<stat>::value;
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
@@ -82,7 +82,7 @@ auto modifier(Stage const & stage, bool const ch) {
 	);
 }
 
-template<StatNames stat, enable_if_t<stat == StatNames::DEF or stat == StatNames::SPD> = clang_dummy>
+template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::DEF or stat == StatNames::SPD)>
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::Base<stat>::value;
 	return BOUNDED_CONDITIONAL((stage[stat] <= 0_bi),
@@ -91,7 +91,7 @@ auto modifier(Stage const & stage, bool const ch) {
 	);
 }
 
-template<StatNames stat, enable_if_t<stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA> = clang_dummy>
+template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA)>
 auto modifier(Stage const & stage) {
 	constexpr auto base = detail::Base<stat>::value;
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),

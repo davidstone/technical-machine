@@ -104,12 +104,12 @@ public:
 			static_cast<typename T::denominator_type>(m_denominator)
 		);
 	}
-	template<typename N, typename D, enable_if_t<
+	template<typename N, typename D, BOUNDED_REQUIRES(
 		std::numeric_limits<N>::min() <= std::numeric_limits<numerator_type>::min() and
 		std::numeric_limits<N>::max() >= std::numeric_limits<numerator_type>::max() and
 		std::numeric_limits<D>::min() <= std::numeric_limits<denominator_type>::min() and
 		std::numeric_limits<D>::max() >= std::numeric_limits<denominator_type>::max()
-	> = clang_dummy>
+	)>
 	constexpr operator bounded_rational<N, D>() const {
 		return convert<bounded_rational<N, D>>();
 	}
@@ -136,11 +136,11 @@ auto & operator*=(bounded::integer<minimum, maximum, overflow_policy> & number, 
 	return number = number * rational;
 }
 
-template<typename T, typename Numerator, typename Denominator, enable_if_t<std::is_integral<T>::value> = clang_dummy>
+template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(std::is_integral<T>::value)>
 constexpr auto operator*(T const number, bounded_rational<Numerator, Denominator> const rational) {
 	return static_cast<T>(bounded::make(number) * rational);
 }
-template<typename T, typename Numerator, typename Denominator, enable_if_t<std::is_integral<T>::value> = clang_dummy>
+template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(std::is_integral<T>::value)>
 auto operator*=(T & number, bounded_rational<Numerator, Denominator> const rational) {
 	return number = number * rational;
 }

@@ -37,21 +37,21 @@ namespace {
 using namespace bounded::literal;
 
 struct Verify {
-	Verify(std::vector<Moves> m, TeamSize team_size):
+	Verify(containers::vector<Moves> m, TeamSize team_size):
 		m_moves(std::move(m)),
 		m_shared_moves(create_shared_moves(team_size)),
 		m_index(0) {
 	}
 	void operator()(Moves const move) {
-		auto const mine = (m_index < m_moves.size()) ? m_moves[m_index] : m_shared_moves[m_index - m_moves.size()];
+		auto const mine = (m_index < size(m_moves)) ? m_moves[m_index] : m_shared_moves[m_index - size(m_moves)];
 		if (mine != move) {
 			throw InvalidCollection("MoveContainer has the wrong moves. Expected: " + to_string(mine) + " but got " + to_string(move));
 		}
 		++m_index;
 	}
 private:
-	std::vector<Moves> m_moves;
-	std::vector<Moves> m_shared_moves;
+	containers::vector<Moves> m_moves;
+	containers::vector<Moves> m_shared_moves;
 	unsigned m_index;
 };
 
@@ -66,8 +66,8 @@ void move_container_tests() {
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(c.size()));
 	}
 	auto const moves = create_regular_moves();
-	for (auto const n : bounded::integer_range(static_cast<bounded::checked_integer<0, 100>>(moves.size()))) {
-		c.emplace_back(moves[static_cast<std::size_t>(n)]);
+	for (auto const n : bounded::integer_range(static_cast<bounded::checked_integer<0, 100>>(containers::size(moves)))) {
+		c.emplace_back(moves[n]);
 		if (c.size() != shared_moves_size + n + 1_bi or c.size() != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}

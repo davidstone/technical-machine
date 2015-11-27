@@ -1,5 +1,5 @@
 // Test checked collections
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,6 +26,9 @@
 
 #include <bounded_integer/integer_range.hpp>
 
+#include <containers/array/make_array.hpp>
+#include <containers/static_vector/static_vector.hpp>
+
 #include <cassert>
 #include <iostream>
 
@@ -46,40 +49,42 @@ private:
 };
 
 struct TestContainer {
-private:
-	static constexpr intmax_t maximum = 7;
-public:
-	using size_type = bounded::checked_integer<0, maximum>;
-	using index_type = bounded::checked_integer<0, maximum - 1>;
 	using value_type = TestValue;
+	using Container = containers::static_vector<value_type, 7>;
+	using const_iterator = typename Container::const_iterator;
+	using size_type = Container::size_type;
 	
-	template<typename ... Args>
-	TestContainer(Args && ... args):
-		m_container(std::forward<Args>(args)...) {
+	template<typename Container>
+	constexpr TestContainer(Container const & container):
+		m_container(container.begin(), container.end()) {
 	}
-	size_type size() const {
-		return static_cast<size_type>(m_container.size());
+	constexpr auto begin() const {
+		return m_container.begin();
 	}
-	value_type const & operator[](index_type const index) const {
-		return m_container[static_cast<std::size_t>(index)];
+	constexpr auto end() const {
+		return m_container.end();
+	}
+	constexpr auto const & operator[](containers::index_type<TestContainer> const index) const {
+		return m_container[index];
 	}
 private:
-	std::vector<value_type> m_container;
+	Container m_container;
 };
 
 void collection_range_tests() {
-	constexpr auto size = 7_bi;
-	std::vector<TestValue> const v ({ 2, 3, 5, 7, 11, 13, 17 });
+	constexpr auto const v = containers::make_array<TestValue>(2, 3, 5, 7, 11, 13, 17);
 	using collection_type = detail::Collection<TestContainer>;
 	collection_type base(v);
-	assert(v.size() == size);
-	base.set_index(size - 1_bi);
-	if (base.index() != size - 1_bi)
+	assert(containers::size(v) == containers::size(base));
+	base.set_index(containers::size(v) - 1_bi);
+	if (base.index() != containers::size(v) - 1_bi) {
 		throw InvalidCollection("Cannot set Collection index properly.");
-	if (base() != v.back())
+	}
+	if (base() != containers::back(v)) {
 		throw InvalidCollection("Stored index in Collection does not return proper value.");
-	for (auto const n : bounded::integer_range(size)) {
-		if (v[static_cast<std::size_t>(n)] != base(n)) {
+	}
+	for (auto const n : bounded::integer_range(containers::size(v))) {
+		if (v[n] != base(n)) {
 			throw InvalidCollection("Specified index in Collection does not return proper value.");
 		}
 	}

@@ -18,19 +18,21 @@
 
 #include "move.hpp"
 
-#include <cassert>
-#include <map>
-
-#include <boost/algorithm/string/case_conv.hpp>
-
 #include "invalid_string_conversion.hpp"
 
 #include "../move/moves.hpp"
 
+#include <containers/array/make_array.hpp>
+
+#include <boost/algorithm/string/case_conv.hpp>
+
+#include <cassert>
+#include <map>
+
 namespace technicalmachine {
 
 std::string const & to_string(Moves const name) {
-	static auto const name_to_string = bounded::make_array<std::string>(
+	static auto const name_to_string = containers::make_array<std::string>(
 		// Generation 1
 		"Switch0", "Switch1", "Switch2", "Switch3", "Switch4",
 		"Switch5", "Hit self in confusion", "Pound", "Karate Chop", "DoubleSlap",
@@ -159,7 +161,7 @@ std::string const & to_string(Moves const name) {
 
 		"END_MOVE"
 	);
-	return name_to_string.at(name);
+	return name_to_string[name];
 }
 
 template<>

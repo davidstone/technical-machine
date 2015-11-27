@@ -31,10 +31,10 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
-template<typename Enum>
-struct enum_numeric_limits {
+template<typename Enum, Enum maximum = Enum::END>
+struct enum_numeric_limits : private std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(maximum)>> {
 private:
-	using base = std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(Enum::END)>>;
+	using base = std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(maximum)>>;
 public:
 	static constexpr bool is_specialized = true;
 	static constexpr bool is_signed = false;
@@ -62,35 +62,16 @@ public:
 	static constexpr auto traps = base::traps;
 
 	static constexpr bool tinyness_before = base::tinyness_before;
-	
-	static constexpr auto min() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto lowest() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto max() noexcept {
-		return bounded::constant<static_cast<std::underlying_type_t<Enum>>(Enum::END)>;
-	}
-	static constexpr auto epsilon() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto round_error() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto infinity() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto quiet_NaN() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto signaling_NaN() noexcept {
-		return 0_bi;
-	}
-	static constexpr auto denorm_min() noexcept {
-		return 0_bi;
-	}
-	
+
+	using base::min;
+	using base::lowest;
+	using base::max;
+	using base::epsilon;
+	using base::round_error;
+	using base::infinity;
+	using base::quiet_NaN;
+	using base::signaling_NaN;
+	using base::denorm_min;
 };
 
 template<typename Enum>

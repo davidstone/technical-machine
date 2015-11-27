@@ -1,5 +1,5 @@
 // Test function that determines the score functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,7 +28,8 @@
 #include "../../pokemon/species.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/array.hpp>
+
+#include <containers/array/make_array.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -41,9 +42,9 @@ template<typename RandomEngine, typename... Ts>
 auto make_shuffled_array(RandomEngine & random_engine, Ts ... ts) {
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
-	auto array = bounded::make_array(ts...);
-	// bounded::array::iterator does not support addition by integer literals
-	std::shuffle(array.data(), array.data() + array.size(), random_engine);
+	auto array = containers::make_array(ts...);
+	// gcc's stdlib does not support std::shuffle user defined intergers
+	std::shuffle(array.data(), array.data() + size(array), random_engine);
 	return array;
 }
 

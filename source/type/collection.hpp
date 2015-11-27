@@ -22,7 +22,7 @@
 #include "../pokemon/species_forward.hpp"
 #include "../status.hpp"
 
-#include <bounded_integer/array.hpp>
+#include <containers/array/array.hpp>
 
 #include <type_traits>
 
@@ -36,7 +36,7 @@ namespace detail_type_collection {
 
 struct TypeArray {
 private:
-	using container_type = bounded::array<Type, 2>;
+	using container_type = containers::array<Type, 2>;
 public:
 	using const_iterator = container_type::const_iterator;
 	constexpr TypeArray(Type const type1):
