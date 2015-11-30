@@ -83,10 +83,12 @@ Client::Client(unsigned depth):
 }
 
 void Client::log_in() {
+#if 0
 	websocketpp::lib::error_code ec;
 	auto connection_pointer = socket.get_connection(m_host, ec);
 	m_handle = connection_pointer->get_handle();
 	socket.connect(std::move(connection_pointer));
+#endif
 }
 
 // Temporary copy and paste here until I implement my better structure for
