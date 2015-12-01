@@ -27,6 +27,8 @@
 
 #include "../../pokemon/pokemon.hpp"
 
+#include <containers/algorithms/count.hpp>
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -72,11 +74,9 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	while (ev_sum(pokemon) < EV::max_total) {
 		auto const hp_is_full = get_hp(pokemon).ev().value() == EV::max;
 		auto const regular = regular_stats();
-		auto adder = [&](auto number, auto const stat_name){
-			return (get_stat(pokemon, stat_name).ev().value() == EV::max) ? number : ++number;
-		};
+		auto checker = [&](auto const stat_name) { return get_stat(pokemon, stat_name).ev().value() != EV::max; };
 		auto const non_full_stats =
-			std::accumulate(regular.begin(), regular.end(), bounded::checked_integer<0, 5>(0_bi), adder) +
+			bounded::checked_integer<0, 5>(containers::count_if(regular.begin(), regular.end(), checker)) +
 			BOUNDED_CONDITIONAL(hp_is_full, 0_bi, 1_bi);
 
 		static constexpr auto number_of_stats = 6;
