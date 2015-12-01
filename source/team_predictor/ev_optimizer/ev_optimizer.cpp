@@ -74,19 +74,19 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	while (ev_sum(pokemon) < EV::max_total) {
 		auto const hp_is_full = get_hp(pokemon).ev().value() == EV::max;
 		auto const regular = regular_stats();
-		auto checker = [&](auto const stat_name) { return get_stat(pokemon, stat_name).ev().value() != EV::max; };
-		auto const non_full_stats =
-			bounded::checked_integer<0, 5>(containers::count_if(regular.begin(), regular.end(), checker)) +
-			BOUNDED_CONDITIONAL(hp_is_full, 0_bi, 1_bi);
+		auto checker = [&](auto const stat_name) { return get_stat(pokemon, stat_name).ev().value() == EV::max; };
+		auto const full_stats = bounded::checked_integer<0, 2>(
+			containers::count_if(regular.begin(), regular.end(), checker) +
+			BOUNDED_CONDITIONAL(hp_is_full, 1_bi, 0_bi)
+		);
 
-		static constexpr auto number_of_stats = 6;
-		static constexpr auto maximum_full_stats = 2;
-		assert(non_full_stats >= bounded::constant<number_of_stats - maximum_full_stats>);
+		constexpr auto number_of_stats = 6_bi;
 
 		auto const extra_evs = EV::max_total - ev_sum(pokemon);
 
-		std::vector<bounded::integer<0, 1>> shuffled(static_cast<std::size_t>(extra_evs + non_full_stats - 1_bi), 1_bi);
-		std::fill(shuffled.begin(), shuffled.begin() + static_cast<int>(non_full_stats - 1_bi), 0_bi);
+		auto const dividers = number_of_stats - full_stats - 1_bi;
+		std::vector<bounded::integer<0, 1>> shuffled(static_cast<std::size_t>(extra_evs + dividers), 1_bi);
+		std::fill(shuffled.begin(), shuffled.begin() + static_cast<int>(dividers), 0_bi);
 		std::shuffle(shuffled.begin(), shuffled.end(), random_engine);
 
 		auto find = [&](auto const it) { return std::find(it, shuffled.end(), 0_bi); };
