@@ -28,6 +28,7 @@
 #include "../../pokemon/pokemon.hpp"
 
 #include <containers/algorithms/count.hpp>
+#include <containers/static_vector/make_static_vector.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -35,7 +36,6 @@
 #include <functional>
 #include <random>
 #include <utility>
-#include <vector>
 
 namespace technicalmachine {
 namespace {
@@ -85,11 +85,11 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		auto const extra_evs = EV::max_total - ev_sum(pokemon);
 
 		auto const dividers = number_of_stats - full_stats - 1_bi;
-		std::vector<bounded::integer<0, 1>> shuffled(static_cast<std::size_t>(extra_evs + dividers), 1_bi);
-		std::fill(shuffled.begin(), shuffled.begin() + static_cast<int>(dividers), 0_bi);
-		std::shuffle(shuffled.begin(), shuffled.end(), random_engine);
+		auto shuffled = containers::make_static_vector<bounded::integer<0, 1>>(extra_evs + dividers, 1_bi);
+		std::fill(shuffled.begin(), shuffled.begin() + dividers, 0_bi);
+		std::shuffle(shuffled.data(), shuffled.data() + size(shuffled), random_engine);
 
-		auto find = [&](auto const it) { return std::find(it, shuffled.end(), 0_bi); };
+		auto find = [&](auto const it) { return containers::find(it, shuffled.end(), 0_bi); };
 		auto new_ev = [&](auto const stat, auto const distance) {
 			return EV(bounded::clamped_integer<0, EV::max.value()>(distance + stat.ev().value().value()));
 		};
