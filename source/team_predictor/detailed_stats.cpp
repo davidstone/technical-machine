@@ -1,5 +1,5 @@
 // Detailed Pokemon stats
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -94,11 +94,10 @@ DetailedStats::DetailedStats():
 		assert(value.first == "pokemon");
 		auto const pokemon = value.second;
 		auto const species = from_string<Species>(pokemon.get<std::string>("species"));
-		SpeciesIndex const species_index(species, bounded::non_check);
-		ability[species_index] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
-		item[species_index] = most_likely_sub_elements<Item>(pokemon.get_child("items"));
-		nature[species_index] = most_likely_sub_elements<Nature>(pokemon.get_child("natures"));
-		move[species_index] = top_sub_elements<Moves>(pokemon.get_child("moves"));
+		ability[species] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
+		item[species] = most_likely_sub_elements<Item>(pokemon.get_child("items"));
+		nature[species] = most_likely_sub_elements<Nature>(pokemon.get_child("natures"));
+		move[species] = top_sub_elements<Moves>(pokemon.get_child("moves"));
 	}
 }
 
