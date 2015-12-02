@@ -31,6 +31,10 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
+#include <containers/iterator_adapter.hpp>
+#include <containers/static_vector/static_vector.hpp>
+#include <containers/vector/vector.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -45,14 +49,14 @@ namespace {
 
 // Put the double first so that std::max_element works without defining a
 // comparison function
-using Probabilities = std::vector<std::pair<double, std::string>>;
+using Probabilities = containers::vector<std::pair<double, std::string>>;
 
 Probabilities all_sub_elements(boost::property_tree::ptree const & pt) {
 	Probabilities data;
 	for (auto const & value : pt) {
 		auto const name = value.second.get<std::string>("name");
 		auto const probability = value.second.get<double>("probability");
-		data.emplace_back(std::make_pair(probability, name));
+		data.emplace_back(probability, name);
 	}
 	return data;
 }
@@ -64,21 +68,13 @@ T most_likely_sub_elements(boost::property_tree::ptree const & pt) {
 	return from_string<T>(most_likely->second);
 }
 
-template<typename T>
-typename std::vector<T> top_sub_elements(boost::property_tree::ptree const & pt) {
+auto top_sub_elements(boost::property_tree::ptree const & pt) {
 	auto data = all_sub_elements(pt);
-	std::sort(std::begin(data), std::end(data), std::greater<Probabilities::value_type>());
-	typename std::vector<T> result;
-	for (auto const & element : data) {
-		result.emplace_back(from_string<T>(element.second));
-		if (result.size() == 4) {
-			break;
-		}
-	}
-	return result;
+	auto const middle = (size(data) >= max_moves_per_pokemon) ? data.begin() + max_moves_per_pokemon : data.end();
+	std::partial_sort(data.begin(), middle, data.end(), std::greater<>());
+	auto adapt = [](auto const & value) { return from_string<Moves>(value.second); };
+	return DetailedStats::UsedMoves(containers::iterator_adapter(data.begin(), adapt), middle);
 }
-
-using SpeciesIndex = bounded::integer<0, number_of_species - 1>;
 
 }	// namespace
 
@@ -97,27 +93,27 @@ DetailedStats::DetailedStats():
 		ability[species] = most_likely_sub_elements<Ability::Abilities>(pokemon.get_child("abilities"));
 		item[species] = most_likely_sub_elements<Item>(pokemon.get_child("items"));
 		nature[species] = most_likely_sub_elements<Nature>(pokemon.get_child("natures"));
-		move[species] = top_sub_elements<Moves>(pokemon.get_child("moves"));
+		move[species] = top_sub_elements(pokemon.get_child("moves"));
 	}
 }
 
 template<>
-Ability::Abilities const & DetailedStats::get<Ability::Abilities>(Species const species) const {
+auto DetailedStats::get<Ability::Abilities>(Species const species) const -> Ability::Abilities const & {
 	return ability[species];
 }
 
 template<>
-Item const & DetailedStats::get<Item>(Species const species) const {
+auto DetailedStats::get<Item>(Species const species) const -> Item const & {
 	return item[species];
 }
 
 template<>
-Nature const & DetailedStats::get<Nature>(Species const species) const {
+auto DetailedStats::get<Nature>(Species const species) const -> Nature const & {
 	return nature[species];
 }
 
 template<>
-std::vector<Moves> const & DetailedStats::get<std::vector<Moves>>(Species const species) const {
+auto DetailedStats::get<DetailedStats::UsedMoves>(Species const species) const -> UsedMoves const & {
 	return move[species];
 }
 

@@ -1,5 +1,5 @@
 // Detailed Pokemon stats
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,6 +21,7 @@
 #include "../ability.hpp"
 #include "../item.hpp"
 
+#include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
 
 #include "../pokemon/species.hpp"
@@ -28,18 +29,20 @@
 #include "../stat/nature.hpp"
 
 #include <containers/array/array.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
 #include <cstdint>
-#include <vector>
 
 namespace technicalmachine {
 
 struct DetailedStats {
+	using UsedMoves = containers::static_vector<Moves, max_moves_per_pokemon.value()>;
+	
 	DetailedStats();
 	template<typename T>
-	T const & get(Species species) const;
+	auto get(Species species) const -> T const &;
 private:
-	containers::array<std::vector<Moves>, number_of_species> move;
+	containers::array<UsedMoves, number_of_species> move;
 	containers::array<Item, number_of_species> item;
 	containers::array<Ability::Abilities, number_of_species> ability;
 	containers::array<Nature, number_of_species> nature;

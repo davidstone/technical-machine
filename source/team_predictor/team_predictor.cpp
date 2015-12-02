@@ -36,8 +36,6 @@
 #include <containers/algorithms/find.hpp>
 #include <containers/array/array.hpp>
 
-#include <vector>
-
 namespace technicalmachine {
 namespace {
 
@@ -47,7 +45,7 @@ auto all_ones_array() {
 	return all_ones;
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
-void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed);
+void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detailed);
 
 }	// namespace
 
@@ -72,7 +70,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 		if (!is_set(nature)) {
 			nature = detailed.get<Nature>(pokemon);
 		}
-		predict_move(all_moves(pokemon), detailed.get<std::vector<Moves>>(pokemon));
+		predict_move(all_moves(pokemon), detailed.get<DetailedStats::UsedMoves>(pokemon));
 		optimize_evs(pokemon, random_engine);
 	}
 	return team;
@@ -94,7 +92,7 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move(MoveCollection & moves, std::vector<Moves> const & detailed) {
+void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detailed) {
 	for (Moves const move : detailed) {
 		auto const regular = moves.regular();
 		if (size(regular) == max_moves_per_pokemon) {
