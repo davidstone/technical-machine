@@ -134,7 +134,7 @@ private:
 	Ability ability;
 	Nature nature;
 	containers::array<EV, number_of_stats> evs;
-	std::vector<Moves> moves;
+	containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
 };
 
 struct Input {

@@ -1,5 +1,5 @@
 // Class to abstract UI of getting each Pokemon for the team builder
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,14 +18,17 @@
 
 #pragma once
 
-#include <vector>
 #include "ev_inputs.hpp"
 #include "move_inputs.hpp"
 #include "nature_input.hpp"
 #include "species_input.hpp"
+#include "../../move/max_moves_per_pokemon.hpp"
 #include "../../move/moves.hpp"
 #include "../../pokemon/species_forward.hpp"
 #include "../../stat/ev.hpp"
+#include "../../string_conversions/invalid_string_conversion.hpp"
+
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -40,7 +43,18 @@ struct PokemonInputs {
 	EV spa() const;
 	EV spd() const;
 	EV spe() const;
-	std::vector<Moves> moves() const;
+	auto moves() const {
+		containers::static_vector<Moves, max_moves_per_pokemon.value()> result;
+		for (auto const & move : m_moves.value) {
+			try {
+				result.emplace_back(move.value());
+			} catch (InvalidFromStringConversion const &) {
+				// Ignore invalid moves
+			}
+		}
+		return result;
+	}
+
 private:
 	SpeciesInput m_species;
 	NatureInput m_nature;

@@ -1,5 +1,5 @@
 // Class to abstract UI of getting each move for the team builder
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #include "pokemon_inputs.hpp"
 #include "../../pokemon/species_forward.hpp"
-#include "../../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {
 
@@ -63,23 +62,6 @@ EV PokemonInputs::spd() const {
 }
 EV PokemonInputs::spe() const {
 	return m_evs.spe.value();
-}
-
-std::vector<Moves> PokemonInputs::moves() const {
-	std::vector<Moves> result;
-	auto const all = {
-		&m_moves.input0, &m_moves.input1,
-		&m_moves.input2, &m_moves.input3
-	};
-	for (auto const & move : all) {
-		try {
-			result.emplace_back(move->value());
-		}
-		catch (InvalidFromStringConversion const &) {
-			// Ignore invalid moves
-		}
-	}
-	return result;
 }
 
 }	// namespace technicalmachine

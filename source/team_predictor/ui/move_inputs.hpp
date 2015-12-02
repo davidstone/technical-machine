@@ -1,5 +1,5 @@
 // Class to abstract UI of getting each move for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +18,12 @@
 
 #pragma once
 
-#include <FL/Fl_Input.H>
 #include "../../move/moves.hpp"
+#include "../../move/max_moves_per_pokemon.hpp"
+
+#include <containers/array/array.hpp>
+
+#include <FL/Fl_Input.H>
 
 namespace technicalmachine {
 
@@ -33,10 +37,7 @@ private:
 
 struct MoveInputs {
 	explicit MoveInputs(int button_number);
-	MoveInput input0;
-	MoveInput input1;
-	MoveInput input2;
-	MoveInput input3;
+	containers::array<MoveInput, max_moves_per_pokemon.value()> value;
 };
 
 }	// namespace technicalmachine

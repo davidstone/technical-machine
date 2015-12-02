@@ -1,5 +1,5 @@
 // Class to abstract UI of getting each move for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,10 +32,12 @@ Moves MoveInput::value() const {
 }
 
 MoveInputs::MoveInputs(int const button_number):
-	input0(button_number, 0, "Moves"),
-	input1(button_number, 1),
-	input2(button_number, 2),
-	input3(button_number, 3)
+	value{{
+		{ button_number, 0, "Moves" },
+		{ button_number, 1 },
+		{ button_number, 2 },
+		{ button_number, 3 }
+	}}
 	{
 }
 
