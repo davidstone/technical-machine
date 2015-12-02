@@ -40,10 +40,10 @@ struct Verify {
 	Verify(containers::vector<Moves> m, TeamSize team_size):
 		m_moves(std::move(m)),
 		m_shared_moves(create_shared_moves(team_size)),
-		m_index(0) {
+		m_index(0_bi) {
 	}
 	void operator()(Moves const move) {
-		auto const mine = (m_index < size(m_moves)) ? m_moves[m_index] : m_shared_moves[m_index - size(m_moves)];
+		auto const mine = (m_index < size(m_moves)) ? at(m_moves, m_index) : at(m_shared_moves, m_index - size(m_moves));
 		if (mine != move) {
 			throw InvalidCollection("MoveContainer has the wrong moves. Expected: " + to_string(mine) + " but got " + to_string(move));
 		}
@@ -52,7 +52,11 @@ struct Verify {
 private:
 	containers::vector<Moves> m_moves;
 	containers::vector<Moves> m_shared_moves;
-	unsigned m_index;
+	using Index = decltype(
+		std::declval<containers::index_type<decltype(m_moves)>>() +
+		std::declval<containers::index_type<decltype(m_shared_moves)>>()
+	);
+	Index m_index;
 };
 
 }	// namespace
