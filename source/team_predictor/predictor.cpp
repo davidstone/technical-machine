@@ -31,6 +31,7 @@
 #include "../pokemon/pokemon.hpp"
 
 #include <containers/array/array.hpp>
+#include <containers/vector/vector.hpp>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -39,7 +40,6 @@
 #include <FL/Fl_Multiline_Output.H>
 
 #include <random>
-#include <vector>
 
 using namespace technicalmachine;
 using namespace bounded::literal;
@@ -48,9 +48,11 @@ using namespace bounded::literal;
 
 namespace {
 
+using AllPokemonInputs = containers::array<PokemonInputs, max_pokemon_per_team.value()>;
+
 struct Data {
-	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init, Fl_Multiline_Output & output_):
-		input(init),
+	explicit Data(AllPokemonInputs const & inputs_, Fl_Multiline_Output & output_):
+		inputs(inputs_),
 		output(output_),
 		random_engine(rd()),
 		m_team(max_pokemon_per_team)
@@ -59,7 +61,7 @@ struct Data {
 	Team & team() {
 		return m_team;
 	}
-	std::vector<std::reference_wrapper<PokemonInputs const>> input;
+	AllPokemonInputs const & inputs;
 	Fl_Multiline_Output & output;
 	DetailedStats detailed;
 	std::random_device rd;
@@ -126,15 +128,6 @@ private:
 	containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
 };
 
-struct Input {
-	template<typename... Args>
-	void emplace_back(Args &&... args) {
-		pokemon.emplace_back(std::forward<Args>(args)...);
-	}
-private:
-	std::vector<PokemonInputValues> pokemon;
-};
-
 
 void generate_random_team(Data & data) {
 	random_team(data.team(), data.random_engine);
@@ -143,7 +136,7 @@ void generate_random_team(Data & data) {
 void function (Fl_Widget *, void * d) {
 	auto & data = *reinterpret_cast<Data *> (d);
 	bool using_lead = false;
-	for (PokemonInputs const & inputs : data.input) {
+	for (PokemonInputs const & inputs : data.inputs) {
 		if (data.team().all_pokemon().size() >= max_pokemon_per_team)
 			break;
 		if (!inputs.is_valid()) {
@@ -151,7 +144,7 @@ void function (Fl_Widget *, void * d) {
 		}
 		PokemonInputValues input(inputs);
 		input.add_to_team(data.team());
-		if (&inputs == &data.input.front().get()) {
+		if (&inputs == &front(data.inputs)) {
 			using_lead = true;
 		}
 	}
@@ -166,20 +159,19 @@ void function (Fl_Widget *, void * d) {
 int main () {
 	Fl_Window win(window_width, window_height, "Team Predictor");
 		int button_number = 0;
-		PokemonInputs input0(button_number);
-		PokemonInputs input1(button_number);
-		PokemonInputs input2(button_number);
-		PokemonInputs input3(button_number);
-		PokemonInputs input4(button_number);
-		PokemonInputs input5(button_number);
+		AllPokemonInputs all_pokemon_inputs{{
+			{button_number, PokemonInputs::construct},
+			{button_number, PokemonInputs::construct},
+			{button_number, PokemonInputs::construct},
+			{button_number, PokemonInputs::construct},
+			{button_number, PokemonInputs::construct},
+			{button_number, PokemonInputs::construct}
+		}};
 		Fl_Multiline_Output output(output_x_position, padding, output_width, output_height);
 		Fl_Return_Button calculate(output_x_position, padding + output_height + padding, output_width, button_height, "Calculate");
 	win.end();
 
-	Data data(
-		{ std::cref(input0), std::cref(input1), std::cref(input2), std::cref(input3), std::cref(input4), std::cref(input5) },
-		output
-	);
+	Data data(all_pokemon_inputs, output);
 
 	calculate.callback (function, &data);
 	win.show();

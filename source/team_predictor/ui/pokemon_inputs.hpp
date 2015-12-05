@@ -33,7 +33,12 @@
 namespace technicalmachine {
 
 struct PokemonInputs {
-	explicit PokemonInputs(int & button_number);
+	struct construct_t{};
+	static constexpr auto construct = construct_t{};
+	// FLTK does not support move semantics. We do not want a single-argument
+	// implicit constructor, but we need an implicit constructor to put this
+	// class in an array.
+	PokemonInputs(int & button_number, construct_t);
 	Species species() const;
 	bool is_valid() const;
 	Nature nature() const;

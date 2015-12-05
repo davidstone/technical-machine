@@ -21,7 +21,7 @@
 
 namespace technicalmachine {
 
-PokemonInputs::PokemonInputs(int & button_number):
+PokemonInputs::PokemonInputs(int & button_number, construct_t):
 	m_species(button_number++),
 	m_nature(button_number++),
 	m_evs(button_number++),
