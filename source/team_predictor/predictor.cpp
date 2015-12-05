@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -38,10 +38,6 @@
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Multiline_Output.H>
 
-#include <boost/lexical_cast.hpp>
-
-#include <algorithm>
-#include <memory>
 #include <random>
 #include <vector>
 
@@ -53,22 +49,17 @@ using namespace bounded::literal;
 namespace {
 
 struct Data {
-	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init, Fl_Int_Input const & random_input_, Fl_Multiline_Output & output_):
+	explicit Data(std::initializer_list<std::reference_wrapper<PokemonInputs const>> init, Fl_Multiline_Output & output_):
 		input(init),
-		random_input(random_input_),
 		output(output_),
 		random_engine(rd()),
 		m_team(max_pokemon_per_team)
 		{
 	}
-	Team const & team() const {
-		return m_team;
-	}
 	Team & team() {
 		return m_team;
 	}
 	std::vector<std::reference_wrapper<PokemonInputs const>> input;
-	Fl_Int_Input const & random_input;
 	Fl_Multiline_Output & output;
 	DetailedStats detailed;
 	std::random_device rd;
@@ -78,13 +69,10 @@ private:
 };
 
 constexpr int number_of_stats = 6;
-constexpr int button_width = input_width;
 constexpr int button_height = input_height;
 
 constexpr int input_lines_per_pokemon = 4;
-constexpr int input_lines_for_random = 2;
-constexpr int input_lines_for_button = 1;
-constexpr int total_input_lines = static_cast<int>(max_pokemon_per_team) * input_lines_per_pokemon + input_lines_for_random + input_lines_for_button;
+constexpr int total_input_lines = static_cast<int>(max_pokemon_per_team) * input_lines_per_pokemon;
 constexpr int total_input_height = total_input_lines * (input_height + padding);
 
 constexpr int output_width = 400;
@@ -98,9 +86,10 @@ constexpr int output_team_padding = 10;
 constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
 constexpr int output_height = output_team_height;
 constexpr int output_x_position = left_padding + ev_input_width * number_of_stats + left_padding;
+constexpr int total_output_height = output_height + padding + button_height;
 
 constexpr int window_width = output_x_position + output_width + padding;
-constexpr int window_height = padding + ((total_input_height > output_height) ? total_input_height : output_height + padding);
+constexpr int window_height = padding + bounded::max(total_input_height, total_output_height) + padding;
 
 struct PokemonInputValues {
 	PokemonInputValues(PokemonInputs const & inputs):
@@ -147,18 +136,8 @@ private:
 };
 
 
-unsigned max_random(Data const & data) {
-	auto const remaining_pokemon = static_cast<unsigned>(max_pokemon_per_team - data.team().all_pokemon().size());
-	try {
-		return std::min(boost::lexical_cast<unsigned>(data.random_input.value()), remaining_pokemon);
-	}
-	catch (boost::bad_lexical_cast const &) {
-		return 0u;
-	}
-}
-
 void generate_random_team(Data & data) {
-	random_team(data.team(), data.random_engine, max_random(data));
+	random_team(data.team(), data.random_engine);
 }
 
 void function (Fl_Widget *, void * d) {
@@ -185,7 +164,7 @@ void function (Fl_Widget *, void * d) {
 }	// namespace
 
 int main () {
-	Fl_Window win (window_width, window_height, "Team Predictor");
+	Fl_Window win(window_width, window_height, "Team Predictor");
 		int button_number = 0;
 		PokemonInputs input0(button_number);
 		PokemonInputs input1(button_number);
@@ -193,19 +172,12 @@ int main () {
 		PokemonInputs input3(button_number);
 		PokemonInputs input4(button_number);
 		PokemonInputs input5(button_number);
-		button_number += 1;
-		Fl_Int_Input random_input(left_padding, y_position(button_number), input_width, input_height, "Max random Pokemon");
-		random_input.align(FL_ALIGN_TOP);
-		random_input.value("6");
-		++button_number;
-		Fl_Return_Button calculate (left_padding, y_position(button_number), button_width, button_height, "Calculate");
-		++button_number;
-		Fl_Multiline_Output output (output_x_position, padding, output_width, output_height);
+		Fl_Multiline_Output output(output_x_position, padding, output_width, output_height);
+		Fl_Return_Button calculate(output_x_position, padding + output_height + padding, output_width, button_height, "Calculate");
 	win.end();
 
 	Data data(
 		{ std::cref(input0), std::cref(input1), std::cref(input2), std::cref(input3), std::cref(input4), std::cref(input5) },
-		random_input,
 		output
 	);
 
