@@ -27,7 +27,7 @@
 #include "../pokemon/species.hpp"
 #include "../string_conversions/conversion.hpp"
 
-#include <containers/array/array.hpp>
+#include <containers/array/make_array.hpp>
 
 #include <algorithm>
 #include <numeric>
@@ -36,36 +36,19 @@
 namespace technicalmachine {
 namespace {
 
-std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned random_pokemon);
 }	// namespace
-
 
 void random_team(Team & team, std::mt19937 & random_engine, unsigned const random_pokemon) {
-	for (Species const species : random_species(random_engine, team, random_pokemon)) {
-		Level const level(100_bi);
-		team.add_pokemon(species, level, Gender::GENDERLESS);
-	}
-}
-
-namespace {
-
-std::vector<Species> random_species(std::mt19937 & random_engine, Team const & team, unsigned const random_pokemon) {
 	auto const overall = overall_stats();
-	containers::array<float, number_of_species> lead;
-	std::fill(lead.begin(), lead.end(), 1.0F);
-	unsigned const total(std::accumulate(std::begin(overall), std::end(overall), 0U));
-	Estimate estimate(overall, lead, total);
-	Multiplier multiplier(overall);
+	constexpr auto lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
+	Estimate estimate(overall, lead, std::accumulate(std::begin(overall), std::end(overall), 0U));
+	Multiplier const multiplier(overall);
 	estimate.update(multiplier, team);
-	std::vector<Species> current;
 	for (unsigned generated = 0; generated != random_pokemon; ++generated) {
-		Species const species = estimate.random(random_engine);
+		auto const species = estimate.random(random_engine);
 		estimate.update(multiplier, species);
-		current.emplace_back(species);
+		team.add_pokemon(species, Level(100_bi), Gender::GENDERLESS);
 	}
-	return current;
 }
-
-}	// namespace
 
 }	// namespace technicalmachine
