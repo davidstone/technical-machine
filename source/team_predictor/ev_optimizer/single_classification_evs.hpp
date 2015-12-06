@@ -18,10 +18,11 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "../../stat/ev.hpp"
+
+#include <containers/vector/vector.hpp>
+
+#include <string>
 
 namespace technicalmachine {
 enum class Nature : uint8_t;
@@ -49,6 +50,6 @@ private:
 auto are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> bool;
 
 template<bool physical>
-std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon);
+containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon);
 
 }	// namespace technicalmachine

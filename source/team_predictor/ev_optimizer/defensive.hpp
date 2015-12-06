@@ -22,8 +22,9 @@
 
 #include "../../stat/nature.hpp"
 
+#include <containers/static_vector/static_vector.hpp>
+
 #include <unordered_map>
-#include <vector>
 
 namespace technicalmachine {
 struct Pokemon;
@@ -32,9 +33,10 @@ struct SpeedEVs;
 
 struct DefensiveEVs {
 	explicit DefensiveEVs(Pokemon const & pokemon);
-	typedef std::unordered_map<Nature, DataPoint> BestPerNature;
+	using BestPerNature = std::unordered_map<Nature, DataPoint>;
+	using Natures = containers::static_vector<Nature, static_cast<std::intmax_t>(std::numeric_limits<Nature>::max())>;
 private:
-	void remove_inefficient_natures(std::vector<Nature> const & divided_natures);
+	void remove_inefficient_natures(Natures const & divided_natures);
 	void add_other_potential_natures();
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 	BestPerNature container;

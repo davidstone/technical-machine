@@ -18,8 +18,6 @@
 
 #include "single_classification_evs.hpp"
 
-#include <vector>
-
 #include "../../enum_range.hpp"
 
 #include "../../pokemon/pokemon.hpp"
@@ -65,12 +63,12 @@ auto calculate_ev(Stat stat, Level const level, Nature const nature, HP const hp
 
 
 template<bool physical>
-std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon) {
+containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon) {
 	static constexpr auto stat_name = from_physical(physical);
 	auto stat = get_stat(pokemon, stat_name);
 	auto const level = get_level(pokemon);
 	auto const initial_product = get_hp(pokemon).max() * initial_stat<stat_name>(stat, level, get_nature(pokemon));
-	auto result = std::vector<SingleClassificationEVs>{};
+	auto result = containers::vector<SingleClassificationEVs>{};
 	for (auto const nature : enum_range<Nature>) {
 		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
@@ -85,7 +83,7 @@ std::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon
 	}
 	return result;
 }
-template std::vector<SingleClassificationEVs> equal_defensiveness<true>(Pokemon const & pokemon);
-template std::vector<SingleClassificationEVs> equal_defensiveness<false>(Pokemon const & pokemon);
+template containers::vector<SingleClassificationEVs> equal_defensiveness<true>(Pokemon const & pokemon);
+template containers::vector<SingleClassificationEVs> equal_defensiveness<false>(Pokemon const & pokemon);
 
 }	// namespace technicalmachine

@@ -26,21 +26,23 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
 
+#include <containers/array/array.hpp>
+#include <containers/vector/vector.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <set>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 namespace technicalmachine {
 namespace {
 
 using namespace bounded::literal;
 
-typedef std::vector<SingleClassificationEVs> Single;
-typedef std::vector<DataPoint> Estimates;
-typedef std::unordered_map<Nature, Estimates> AllPossible;
+using Single = containers::vector<SingleClassificationEVs>;
+using Estimates = containers::vector<DataPoint>;
+using AllPossible = std::unordered_map<Nature, Estimates>;
 AllPossible combine_results(Single const & physical, Single const & special);
 
 DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);
@@ -51,7 +53,7 @@ void filter_to_minimum_evs(AllPossible & all);
 DefensiveEVs::BestPerNature most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon);
 DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon);
 
-typedef std::vector<std::vector<Nature>> Divided;
+using Divided = containers::array<DefensiveEVs::Natures, 4>;
 Divided divide_natures(DefensiveEVs::BestPerNature const & container);
 
 bool has_same_effect_on_defenses(Nature nature, Nature reference_nature);
@@ -59,8 +61,8 @@ bool has_same_effect_on_defenses(Nature nature, Nature reference_nature);
 }	// namespace
 
 DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
-	Single const physical = equal_defensiveness<true>(pokemon);
-	Single const special = equal_defensiveness<false>(pokemon);
+	auto const physical = equal_defensiveness<true>(pokemon);
+	auto const special = equal_defensiveness<false>(pokemon);
 	container = best_possible_per_nature(combine_results(physical, special), pokemon);
 	for (auto const & value : divide_natures(container)) {
 		remove_inefficient_natures(value);
@@ -69,15 +71,15 @@ DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
 	assert(!container.empty());
 }
 
-void DefensiveEVs::remove_inefficient_natures(std::vector<Nature> const & divided_natures) {
-	typedef std::vector<BestPerNature::const_iterator> Boosters;
-	Boosters boosters;
-	for (BestPerNature::const_iterator it = container.begin(); it != container.end(); ++it) {
-		if (std::find(std::begin(divided_natures), std::end(divided_natures), it->first) != std::end(divided_natures)) {
+void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divided_natures) {
+	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
+	containers::static_vector<BestPerNature::const_iterator, capacity> boosters;
+	for (auto it = container.begin(); it != container.end(); ++it) {
+		if (containers::find(std::begin(divided_natures), std::end(divided_natures), it->first) != std::end(divided_natures)) {
 			boosters.emplace_back(it);
 		}
 	}
-	auto const iter_sum = [](Boosters::value_type const & lhs, Boosters::value_type const & rhs) {
+	auto const iter_sum = [](auto const & lhs, auto const & rhs) {
 		return lhs->second.sum() < rhs->second.sum();
 	};
 	auto const best = std::min_element(boosters.begin(), boosters.end(), iter_sum);
@@ -89,8 +91,7 @@ void DefensiveEVs::remove_inefficient_natures(std::vector<Nature> const & divide
 }
 
 void DefensiveEVs::add_other_potential_natures() {
-	auto const used = used_natures(container);
-	for (auto const reference_nature : used) {
+	for (auto const reference_nature : used_natures(container)) {
 		for (StatNames boosted = static_cast<StatNames>(0); boosted != StatNames::NORMAL_END; boosted = static_cast<StatNames>(static_cast<int>(boosted) + 1)) {
 			for (StatNames penalized = static_cast<StatNames>(0); penalized != StatNames::NORMAL_END; penalized = static_cast<StatNames>(static_cast<int>(penalized) + 1)) {
 				auto const nature = make_nature(boosted, penalized);
@@ -163,7 +164,7 @@ void filter_to_minimum_evs(AllPossible & all) {
 		auto const not_minimum = [it](DataPoint const & value) {
 			return value.sum() != it->sum();
 		};
-		container.erase(std::remove_if(std::begin(container), std::end(container), not_minimum), std::end(container));
+		erase_if(container, not_minimum);
 	}
 }
 
@@ -184,15 +185,18 @@ DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Est
 }
 
 Divided divide_natures(DefensiveEVs::BestPerNature const & container) {
-	enum Divisions { Boost, Penalty, Both, Neutral };
-	Divided divided(4);
+	constexpr auto boost = 0_bi;
+	constexpr auto penalty = 1_bi;
+	constexpr auto both = 2_bi;
+	constexpr auto neutral = 3_bi;
+	Divided divided;
 	for (auto const & value : container) {
 		Nature const nature(value.first);
 		auto & stat =
-			(boosts_defending_stat(nature) and !lowers_defending_stat(nature)) ? divided[Boost] :
-			(lowers_defending_stat(nature) and !boosts_defending_stat(nature)) ? divided[Penalty] :
-			(lowers_defending_stat(nature) and boosts_defending_stat(nature)) ? divided[Both] :
-			divided[Neutral];
+			(boosts_defending_stat(nature) and !lowers_defending_stat(nature)) ? divided[boost] :
+			(lowers_defending_stat(nature) and !boosts_defending_stat(nature)) ? divided[penalty] :
+			(lowers_defending_stat(nature) and boosts_defending_stat(nature)) ? divided[both] :
+			divided[neutral];
 		stat.emplace_back(value.first);
 	}
 	return divided;
