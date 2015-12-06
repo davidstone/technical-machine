@@ -1,5 +1,4 @@
-// Screens
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "hash.hpp"
+#include "operators.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <cstdint>
@@ -72,10 +72,6 @@ constexpr auto hash(Screen<normal_duration, max_duration> const screen) noexcept
 template<intmax_t normal_duration, intmax_t max_duration>
 auto operator==(Screen<normal_duration, max_duration> const & lhs, Screen<normal_duration, max_duration> const & rhs) -> bool {
 	return lhs.turns_remaining() == rhs.turns_remaining();
-}
-template<intmax_t normal_duration, intmax_t max_duration>
-auto operator!=(Screen<normal_duration, max_duration> const & lhs, Screen<normal_duration, max_duration> const & rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 using LuckyChantEffect = Screen<5>;

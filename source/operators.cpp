@@ -1,4 +1,3 @@
-// Class that handles which party I am
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,27 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include "../operators.hpp"
-
-#include <bounded_integer/bounded_integer.hpp>
-
-namespace technicalmachine {
-
-struct Party {
-	// -1 indicates the message does not apply to a party
-	using value_type = bounded::checked_integer<-1, 2>;
-	Party();
-	explicit Party(value_type initial);
-	auto value() const -> value_type;
-private:
-	value_type m_party;
-};
-
-auto operator==(Party lhs, Party rhs) -> bool;
-
-auto set_if_unknown(Party & party, Party new_party) -> void;
-auto other(Party const party) -> Party;
-
-}	// namespace technicalmachine
+#include "operators.hpp"

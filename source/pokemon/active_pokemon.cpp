@@ -395,8 +395,4 @@ auto operator==(ActivePokemon const lhs, ActivePokemon const rhs) -> bool {
 	return lhs.m_flags == rhs.m_flags;
 }
 
-auto operator!=(ActivePokemon const lhs, ActivePokemon const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
 }	// namespace technicalmachine

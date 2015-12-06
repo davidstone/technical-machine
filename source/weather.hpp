@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 #pragma once
 
 #include "hash.hpp"
+#include "operators.hpp"
 #include "status.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -125,7 +126,5 @@ private:
 constexpr auto hash(Weather const weather) noexcept {
 	return weather.hash();
 }
-
-auto operator!=(Weather lhs, Weather rhs) -> bool;
 
 }	// namespace technicalmachine

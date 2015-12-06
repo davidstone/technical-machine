@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../rational.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -42,7 +43,6 @@ private:
 	friend struct Evaluate;
 	bounded::clamped_integer<0, max> m_level = 0_bi;
 };
-auto operator!=(Stockpile lhs, Stockpile rhs) -> bool;
 
 using SwallowHealing = bounded_rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
 auto swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles) -> SwallowHealing;

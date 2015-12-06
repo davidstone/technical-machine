@@ -1,5 +1,4 @@
-// Class that handles Stockpile
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -51,10 +50,6 @@ auto swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpile
 
 auto operator==(Stockpile lhs, Stockpile rhs) -> bool {
 	return lhs.m_level == rhs.m_level;
-}
-
-auto operator!=(Stockpile lhs, Stockpile rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

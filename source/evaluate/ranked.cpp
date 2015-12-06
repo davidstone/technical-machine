@@ -1,5 +1,5 @@
 // Class to order moves to improve alpha-beta pruning
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,10 +31,6 @@ Moves RankedMove::name() const {
 
 bool operator<(RankedMove const lhs, RankedMove const rhs) {
 	return lhs.m_score < rhs.m_score;
-}
-
-bool operator>(RankedMove const lhs, RankedMove const rhs) {
-	return rhs < lhs;
 }
 
 }	// namespace technicalmachine

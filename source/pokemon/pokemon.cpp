@@ -1,5 +1,4 @@
-// Pokemon functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,6 +27,7 @@
 
 #include "../ability.hpp"
 #include "../gender.hpp"
+#include "../operators.hpp"
 #include "../rational.hpp"
 
 #include "../move/is_switch.hpp"
@@ -119,10 +119,6 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 			lhs.m_gender == rhs.m_gender and
 			lhs.m_nature == rhs.m_nature and
 			lhs.m_level == rhs.m_level;
-}
-
-bool operator!= (Pokemon const & lhs, Pokemon const & rhs) {
-	return !(lhs == rhs);
 }
 
 std::string to_string(Pokemon const & pokemon, bool const include_nickname) {

@@ -1,5 +1,5 @@
 // Class that handles which party I am
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,10 +35,6 @@ Party::Party(value_type const initial):
 
 auto operator==(Party const lhs, Party const rhs) -> bool {
 	return lhs.value() == rhs.value();
-}
-
-auto operator!=(Party const lhs, Party const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 auto set_if_unknown(Party & party, Party const new_party) -> void {

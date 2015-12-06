@@ -48,8 +48,4 @@ auto operator== (Disable const lhs, Disable const rhs) -> bool {
 		lhs.m_index_of_disabled_move == rhs.m_index_of_disabled_move;
 }
 
-auto operator!= (Disable const lhs, Disable const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
 }	// namespace technicalmachine

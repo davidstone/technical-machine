@@ -1,5 +1,5 @@
 // Handle common moves that all Pokemon select
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,8 @@
 
 #include "is_switch.hpp"
 #include "moves.hpp"
+
+#include <containers/common_container_functions.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -66,7 +68,7 @@ auto SharedMoves::remove_switch() -> void {
 }
 
 auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool {
-	return size(lhs) == size(rhs);
+	return containers::size(lhs) == containers::size(rhs);
 }
 
 }	// namespace technicalmachine

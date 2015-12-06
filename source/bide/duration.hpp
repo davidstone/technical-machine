@@ -19,6 +19,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
@@ -40,8 +41,6 @@ private:
 	static constexpr auto max = 1;
 	bounded::optional<bounded::integer<0, max>> m_turns_active = bounded::none;
 };
-
-auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool;
 
 constexpr auto hash(BideDuration const duration) noexcept {
 	return duration.hash();

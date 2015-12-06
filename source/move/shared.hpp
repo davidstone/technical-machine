@@ -21,6 +21,8 @@
 #include "max_moves_per_pokemon.hpp"
 #include "move.hpp"
 
+#include "../operators.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
@@ -65,55 +67,6 @@ private:
 };
 
 
-constexpr auto operator!=(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-	return !(lhs == rhs);
-}
-
-constexpr auto operator>(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-	return rhs < lhs;
-}
-constexpr auto operator<=(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-	return !(lhs > rhs);
-}
-constexpr auto operator>=(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-	return !(lhs < rhs);
-}
-
-
-constexpr auto operator+(SharedMovesIterator::difference_type const lhs, SharedMovesIterator const rhs) -> SharedMovesIterator {
-	return rhs + lhs;
-}
-constexpr auto operator-(SharedMovesIterator const lhs, SharedMovesIterator::difference_type const rhs) -> SharedMovesIterator {
-	return lhs + -rhs;
-}
-
-
-inline auto operator+=(SharedMovesIterator & it, SharedMovesIterator::difference_type const offset) -> SharedMovesIterator & {
-	return it = it + offset;
-}
-inline auto operator-=(SharedMovesIterator & it, SharedMovesIterator::difference_type const offset) -> SharedMovesIterator & {
-	return it += -offset;
-}
-
-
-inline auto operator++(SharedMovesIterator & it) -> SharedMovesIterator & {
-	return it += 1_bi;
-}
-inline auto operator++(SharedMovesIterator & it, int) -> SharedMovesIterator {
-	auto const original = it;
-	++it;
-	return original;
-}
-inline auto operator--(SharedMovesIterator & it) -> SharedMovesIterator & {
-	return it -= 1_bi;
-}
-inline auto operator--(SharedMovesIterator & it, int) -> SharedMovesIterator {
-	auto const original = it;
-	--it;
-	return original;
-}
-
-
 struct SharedMoves {
 	using size_type = SharedMoveSize;
 	using index_type = SharedMoveIndex;
@@ -127,9 +80,6 @@ private:
 	TeamSize m_number_of_switches;
 };
 
-inline auto size(SharedMoves const shared) {
-	return static_cast<SharedMoves::size_type>(shared.end() - shared.begin());
-}
 auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool;
 
 }	// namespace technicalmachine

@@ -37,8 +37,4 @@ auto operator== (BideDamage const lhs, BideDamage const rhs) -> bool {
 	return lhs.m_damage == rhs.m_damage;
 }
 
-auto operator!= (BideDamage const lhs, BideDamage const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
 }	// namespace technicalmachine

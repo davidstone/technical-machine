@@ -19,6 +19,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../move/max_moves_per_pokemon.hpp"
 
 #include <bounded_integer/optional.hpp>
@@ -39,8 +40,6 @@ private:
 	using TurnCount = bounded::integer<0, 7>;
 	TurnCount m_turns_disabled = 0_bi;
 };
-
-auto operator!= (Disable lhs, Disable rhs) -> bool;
 
 constexpr auto hash(Disable const disable) noexcept {
 	return disable.hash();

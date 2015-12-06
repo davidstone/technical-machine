@@ -1,4 +1,3 @@
-// Class that represents the duration left on Confusion
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
@@ -44,7 +44,6 @@ private:
 	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused = bounded::none;
 	bool m_is_hitting_self = false;
 };
-bool operator!= (Confusion const & lhs, Confusion const & rhs);
 
 constexpr auto hash(Confusion const confusion) noexcept {
 	return confusion.hash();

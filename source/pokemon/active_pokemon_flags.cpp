@@ -1,5 +1,4 @@
-// Flags for the active Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -137,10 +136,6 @@ auto operator== (ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs)
 		lhs.vanish == rhs.vanish and
 		lhs.water_sport == rhs.water_sport and
 		lhs.yawn == rhs.yawn;
-}
-
-auto operator!= (ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

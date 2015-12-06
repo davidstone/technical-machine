@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 #include "../move/moves.hpp"
 
@@ -56,8 +57,6 @@ private:
 	
 	VanishTypes m_state = VanishTypes::none;
 };
-
-bool operator!= (Vanish lhs, Vanish rhs);
 
 constexpr auto hash(Vanish const vanish) noexcept {
 	return vanish.hash();

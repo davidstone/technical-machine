@@ -1,5 +1,4 @@
-// Handles bide damage
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +19,7 @@
 
 #include "../damage.hpp"
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../stat/hp.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -40,8 +40,6 @@ private:
 	// This is the greatest range that matters since anything more is overkill
 	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;
 };
-
-auto operator!= (BideDamage lhs, BideDamage rhs) -> bool;
 
 constexpr auto hash(BideDamage const damage) noexcept {
 	return damage.hash();

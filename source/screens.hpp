@@ -1,5 +1,4 @@
-// All Screens a team can set up
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "hash.hpp"
+#include "operators.hpp"
 #include "screen.hpp"
 
 namespace technicalmachine {
@@ -74,6 +74,5 @@ constexpr auto hash(Screens const screens) noexcept {
 }
 
 auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
-auto operator!=(Screens const & lhs, Screens const & rhs) -> bool;
 
 }	// namespace technicalmachine

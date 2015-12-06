@@ -34,8 +34,5 @@ Substitute::operator bool() const {
 bool operator== (Substitute const & lhs, Substitute const & rhs) {
 	return lhs.hp() == rhs.hp();
 }
-bool operator!= (Substitute const & lhs, Substitute const & rhs) {
-	return !(lhs == rhs);
-}
 
 }	// namespace technicalmachine

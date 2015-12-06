@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,7 @@
 #include "duration.hpp"
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../stat/hp.hpp"
 
 namespace technicalmachine {
@@ -39,8 +40,6 @@ private:
 	BideDamage m_damage;
 	BideDuration m_duration;
 };
-
-auto operator!= (Bide lhs, Bide rhs) -> bool ;
 
 constexpr auto hash(Bide const bide) noexcept {
 	return bide.hash();

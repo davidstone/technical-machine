@@ -1,4 +1,3 @@
-// Wish data structure
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "hash.hpp"
+#include "operators.hpp"
 
 #include <bounded_integer/optional.hpp>
 #include <bounded_integer/bounded_integer.hpp>
@@ -44,7 +44,5 @@ private:
 constexpr auto hash(Wish const wish) noexcept {
 	return hash(wish.is_active());
 }
-
-auto operator!= (Wish lhs, Wish rhs) -> bool;
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include "../operators.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
@@ -31,6 +33,5 @@ private:
 };
 
 bool operator== (Level lhs, Level rhs);
-bool operator!= (Level lhs, Level rhs);
 
 }	// namespace technicalmachine

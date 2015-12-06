@@ -28,8 +28,4 @@ auto operator==(Toxic const lhs, Toxic const rhs) -> bool {
 	return lhs.m_counter == rhs.m_counter;
 }
 
-auto operator!=(Toxic const lhs, Toxic const rhs) -> bool {
-	return !(lhs == rhs);
-}
-
 }	// namespace technicalmachine

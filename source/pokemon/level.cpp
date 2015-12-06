@@ -1,5 +1,5 @@
 // Level data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,10 +31,6 @@ auto Level::operator()() const -> bounded::integer<min, max> {
 
 bool operator== (Level const lhs, Level const rhs) {
 	return lhs() == rhs();
-}
-
-bool operator!= (Level const lhs, Level const rhs) {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

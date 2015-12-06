@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -43,10 +43,6 @@ auto operator== (Bide const lhs, Bide const rhs) -> bool {
 	return
 		lhs.m_damage == rhs.m_damage and
 		lhs.m_duration == rhs.m_duration;
-}
-
-auto operator!= (Bide const lhs, Bide const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

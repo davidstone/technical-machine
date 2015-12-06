@@ -1,5 +1,5 @@
 // ActivePokemon and MutableActivePokemon provide a view; they do not own data
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,7 @@
 #include "pokemon.hpp"
 #include "pokemon.hpp"
 
+#include "../operators.hpp"
 #include "../rational.hpp"
 
 #include "../move/moves.hpp"
@@ -174,8 +175,6 @@ private:
 	Pokemon & m_pokemon;
 	ActivePokemonFlags & m_flags;
 };
-
-auto operator!=(ActivePokemon lhs, ActivePokemon rhs) -> bool;
 
 inline auto hash(ActivePokemon const pokemon) noexcept {
 	return pokemon.hash();

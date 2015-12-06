@@ -1,5 +1,5 @@
 // Class to order moves to improve alpha-beta pruning
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +18,10 @@
 
 #pragma once
 
-#include <cstdint>
+#include "../operators.hpp"
 #include "../move/moves.hpp"
+
+#include <cstdint>
 
 namespace technicalmachine {
 
@@ -31,7 +33,5 @@ private:
 	double m_score;
 	Moves m_move;
 };
-
-bool operator>(RankedMove lhs, RankedMove rhs);
 
 }	// namespace technicalmachine

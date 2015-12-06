@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #include "moves.hpp"
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 #include <bounded_integer/optional.hpp>
 #include <bounded_integer/bounded_integer.hpp>
@@ -58,7 +59,6 @@ private:
 	bounded::optional<max_type> m_max;
 	bounded::optional<current_type> m_current;
 };
-auto operator!= (Pp const & lhs, Pp const & rhs) -> bool;
 
 inline auto hash(Pp const pp) noexcept {
 	return pp.hash();

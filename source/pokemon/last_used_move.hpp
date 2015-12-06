@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/optional.hpp>
@@ -46,8 +47,6 @@ private:
 	bounded::optional<index_type> m_index_of_move = bounded::none;
 	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
 };
-
-auto operator!=(LastUsedMove lhs, LastUsedMove rhs) -> bool;
 
 constexpr auto hash(LastUsedMove const last_used_move) noexcept {
 	return last_used_move.hash();

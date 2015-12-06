@@ -1,5 +1,4 @@
-// Effectiveness of a type
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "type.hpp"
+#include "../operators.hpp"
 #include "../rational.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -49,10 +49,6 @@ private:
 
 };
 
-template<typename Integer>
-auto operator*=(Integer & number, Effectiveness const & effectiveness) {
-	return number = number * effectiveness;
-}
 template<typename Integer>
 auto operator*(Integer const number, Effectiveness const & effectiveness) {
 	return effectiveness * number;

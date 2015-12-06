@@ -1,5 +1,4 @@
-// Priority data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +17,11 @@
 
 #pragma once
 
-#include <bounded_integer/bounded_integer.hpp>
 #include "moves.hpp"
+
+#include "../operators.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 
@@ -30,10 +32,5 @@ struct Priority {
 private:
 	bounded::checked_integer<-6, 6> priority;
 };
-
-auto operator!= (Priority lhs, Priority rhs) -> bool;
-auto operator> (Priority lhs, Priority rhs) -> bool;
-auto operator<= (Priority lhs, Priority rhs) -> bool;
-auto operator>= (Priority lhs, Priority rhs) -> bool;
 
 }	// namespace technicalmachine

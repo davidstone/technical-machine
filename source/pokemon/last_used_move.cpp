@@ -60,8 +60,5 @@ auto operator== (LastUsedMove const lhs, LastUsedMove const rhs) -> bool {
 		lhs.m_index_of_move == rhs.m_index_of_move and
 		lhs.m_consecutive_turns_used == rhs.m_consecutive_turns_used;
 }
-auto operator!= (LastUsedMove const lhs, LastUsedMove const rhs) -> bool {
-	return !(lhs == rhs);
-}
 
 }	// namespace technicalmachine

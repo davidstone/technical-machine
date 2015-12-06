@@ -1,5 +1,4 @@
-// Gender functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,10 +30,6 @@ bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) {
 
 bool operator== (Gender const lhs, Gender const rhs) {
 	return lhs.gender == rhs.gender;
-}
-
-bool operator!= (Gender const lhs, Gender const rhs) {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

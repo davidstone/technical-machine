@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../rational.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -40,7 +41,6 @@ private:
 	// would have if Magic Guard / Poison Heal weren't in play)
 	bounded::clamped_integer<0, 15> m_counter = 0_bi;
 };
-auto operator!=(Toxic lhs, Toxic rhs) -> bool;
 
 constexpr auto hash(Toxic const toxic) noexcept {
 	return toxic.hash();

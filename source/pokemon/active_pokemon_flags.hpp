@@ -37,6 +37,7 @@
 #include "vanish.hpp"
 #include "yawn.hpp"
 
+#include "../operators.hpp"
 #include "../random_damage.hpp"
 
 #include "../bide/bide.hpp"
@@ -233,7 +234,6 @@ private:
 	bool u_turning = false;
 	bool water_sport = false;
 };
-auto operator!= (ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool;
 
 inline auto hash(ActivePokemonFlags const & flags) noexcept {
 	return flags.hash();

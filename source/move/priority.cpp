@@ -1,5 +1,4 @@
-// Priority data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -87,20 +86,8 @@ Priority::Priority(Moves const move) :
 auto operator== (Priority const lhs, Priority const rhs) -> bool {
 	return lhs.priority == rhs.priority;
 }
-auto operator!= (Priority const lhs, Priority const rhs) -> bool {
-	return !(lhs == rhs);
-}
 auto operator< (Priority const lhs, Priority const rhs) -> bool {
 	return lhs.priority < rhs.priority;
-}
-auto operator> (Priority const lhs, Priority const rhs) -> bool {
-	return rhs < lhs;
-}
-auto operator<= (Priority const lhs, Priority const rhs) -> bool {
-	return !(lhs > rhs);
-}
-auto operator>= (Priority const lhs, Priority const rhs) -> bool {
-	return !(lhs < rhs);
 }
 
 }	// namespace technicalmachine

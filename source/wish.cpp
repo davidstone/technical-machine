@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,9 +42,6 @@ auto Wish::decrement(MutableActivePokemon pokemon) -> void {
 
 auto operator== (Wish const lhs, Wish const rhs) -> bool {
 	return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
-}
-auto operator!= (Wish const lhs, Wish const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

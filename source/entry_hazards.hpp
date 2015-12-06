@@ -1,5 +1,4 @@
-// Entry hazards
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "hash.hpp"
+#include "operators.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
 
@@ -55,7 +55,6 @@ constexpr auto hash(EntryHazards const hazards) noexcept {
 }
 
 auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
-auto operator!=(EntryHazards lhs, EntryHazards rhs) -> bool;
 
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather weather) -> void;
 

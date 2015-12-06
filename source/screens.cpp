@@ -1,5 +1,4 @@
-// All Screens a team can set up
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -65,10 +64,6 @@ auto operator==(Screens const & lhs, Screens const & rhs) -> bool {
 			lhs.mist() == rhs.mist() and
 			lhs.safeguard() == rhs.safeguard() and
 			lhs.tailwind() == rhs.tailwind();
-}
-
-auto operator!=(Screens const & lhs, Screens const & rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

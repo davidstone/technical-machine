@@ -1,4 +1,3 @@
-// Stat stages
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -20,6 +19,7 @@
 
 #include "stat_names.hpp"
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../rational.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -128,6 +128,5 @@ auto swap_offensive(Stage & lhs, Stage & rhs) -> void;
 
 
 auto operator==(Stage const & lhs, Stage const & rhs) -> bool;
-auto operator!=(Stage const & lhs, Stage const & rhs) -> bool;
 
 }	// namespace technicalmachine

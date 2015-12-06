@@ -192,6 +192,7 @@ misc_sources = [
 	'heal.cpp',
 	'item.cpp',
 	'invalid_settings_file.cpp',
+	'operators.cpp',
 	'phazing_in_same_pokemon.cpp',
 	'settings_file.cpp',
 	'status.cpp',

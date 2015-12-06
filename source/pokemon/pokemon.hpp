@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,6 +27,7 @@
 #include "../ability.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
+#include "../operators.hpp"
 #include "../status.hpp"
 
 #include "../move/collection.hpp"
@@ -100,7 +101,6 @@ private:
 
 	bool m_has_been_seen = false;
 };
-bool operator!= (Pokemon const & lhs, Pokemon const & rhs);
 
 inline auto all_moves(Pokemon const & pokemon) -> MoveCollection const & {
 	return pokemon.m_moves;

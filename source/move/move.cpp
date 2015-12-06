@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -52,10 +52,6 @@ auto operator==(Move const lhs, Move const rhs) -> bool {
 		static_cast<Moves>(lhs) == static_cast<Moves>(rhs) and
 		lhs.pp() == rhs.pp()
 	;
-}
-
-auto operator!=(Move const lhs, Move const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 auto is_phaze(Moves const move) -> bool {

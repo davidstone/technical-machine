@@ -19,6 +19,7 @@
 #pragma once
 
 #include "hash.hpp"
+#include "operators.hpp"
 
 #include <bounded_integer/integer_range.hpp>
 
@@ -76,64 +77,6 @@ private:
 	}
 	base m_it;
 };
-
-template<typename Enum>
-constexpr auto operator+(typename enum_iterator<Enum>::difference_type const lhs, enum_iterator<Enum> const rhs) {
-	return rhs + lhs;
-}
-template<typename Enum>
-decltype(auto) operator+=(enum_iterator<Enum> & lhs, typename enum_iterator<Enum>::difference_type const rhs) {
-	return lhs = lhs + rhs;
-}
-template<typename Enum>
-constexpr auto operator-(enum_iterator<Enum> const lhs, typename enum_iterator<Enum>::difference_type const rhs) {
-	return lhs + (-rhs);
-}
-template<typename Enum>
-decltype(auto) operator-=(enum_iterator<Enum> & lhs, typename enum_iterator<Enum>::difference_type const rhs) {
-	return lhs = lhs - rhs;
-}
-
-template<typename Enum>
-decltype(auto) operator++(enum_iterator<Enum> & it) {
-	return it += 1_bi;
-}
-template<typename Enum>
-auto operator++(enum_iterator<Enum> & it, int) {
-	auto self = it;
-	++it;
-	return self;
-}
-
-template<typename Enum>
-decltype(auto) operator--(enum_iterator<Enum> & it) {
-	return it -= 1_bi;
-}
-template<typename Enum>
-auto operator--(enum_iterator<Enum> & it, int) {
-	auto self = it;
-	--it;
-	return self;
-}
-
-
-template<typename Enum>
-constexpr auto operator!=(enum_iterator<Enum> const lhs, enum_iterator<Enum> const rhs) noexcept {
-	return !(lhs == rhs);
-}
-
-template<typename Enum>
-constexpr auto operator>(enum_iterator<Enum> const lhs, enum_iterator<Enum> const rhs) noexcept {
-	return rhs < lhs;
-}
-template<typename Enum>
-constexpr auto operator>=(enum_iterator<Enum> const lhs, enum_iterator<Enum> const rhs) noexcept {
-	return !(lhs < rhs);
-}
-template<typename Enum>
-constexpr auto operator<=(enum_iterator<Enum> const lhs, enum_iterator<Enum> const rhs) noexcept {
-	return !(rhs < lhs);
-}
 
 template<typename Enum, Enum end = Enum::END>
 constexpr auto enum_range = bounded::range_type<enum_iterator<Enum>>(static_cast<Enum>(0), end);

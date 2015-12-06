@@ -1,5 +1,4 @@
-// Weather functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -125,10 +124,6 @@ auto operator==(Weather const lhs, Weather const rhs) -> bool {
 		lhs.m_sun == rhs.m_sun and
 		lhs.m_sand == rhs.m_sand and
 		lhs.m_rain == rhs.m_rain;
-}
-
-auto operator!=(Weather const lhs, Weather const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Class to properly do integer multiplication / division
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,11 +18,13 @@
 
 #pragma once
 
+#include "operators.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
 #include <limits>
 #include <string>
 #include <type_traits>
-
-#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -131,53 +133,9 @@ constexpr auto operator*(bounded::integer<minimum, maximum, overflow_policy> con
 	return rational * number;
 }
 
-template<intmax_t minimum, intmax_t maximum, typename overflow_policy, typename N, typename D>
-auto & operator*=(bounded::integer<minimum, maximum, overflow_policy> & number, bounded_rational<N, D> const rational) {
-	return number = number * rational;
-}
-
 template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(std::is_integral<T>::value)>
 constexpr auto operator*(T const number, bounded_rational<Numerator, Denominator> const rational) {
 	return static_cast<T>(bounded::make(number) * rational);
-}
-template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(std::is_integral<T>::value)>
-auto operator*=(T & number, bounded_rational<Numerator, Denominator> const rational) {
-	return number = number * rational;
-}
-
-
-template<typename N1, typename D1, typename N2, typename D2>
-auto & operator*=(bounded_rational<N1, D1> & lhs, bounded_rational<N2, D2> const rhs) {
-	return lhs = lhs * rhs;
-}
-
-template<typename N1, typename D1, typename N2, typename D2>
-auto & operator+=(bounded_rational<N1, D1> & lhs, bounded_rational<N2, D2> const rhs) {
-	return lhs = lhs + rhs;
-}
-
-template<typename N1, typename D1, typename N2, typename D2>
-auto & operator-=(bounded_rational<N1, D1> & lhs, bounded_rational<N2, D2> const rhs) {
-	return lhs = lhs - rhs;
-}
-
-
-
-template<typename N1, typename D1, typename N2, typename D2>
-constexpr bool operator!=(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
-	return !(lhs == rhs);
-}
-template<typename N1, typename D1, typename N2, typename D2>
-constexpr bool operator>(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
-	return rhs < lhs;
-}
-template<typename N1, typename D1, typename N2, typename D2>
-constexpr bool operator>=(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
-	return !(lhs < rhs);
-}
-template<typename N1, typename D1, typename N2, typename D2>
-constexpr bool operator<=(bounded_rational<N1, D1> const lhs, bounded_rational<N2, D2> const rhs) {
-	return !(rhs < lhs);
 }
 
 

@@ -19,6 +19,7 @@
 
 #include "enum.hpp"
 #include "hash.hpp"
+#include "operators.hpp"
 #include "rational.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -95,8 +96,6 @@ auto lowers_speed(Status status, Ability const & ability) -> bool;
 auto weakens_physical_attacks(Status status) -> bool;
 auto boosts_facade(Status status) -> bool;
 auto boosts_smellingsalt(Status status) -> bool;
-
-auto operator!=(Status lhs, Status rhs) -> bool;
 
 constexpr auto hash(Status const status) noexcept {
 	return status.hash();

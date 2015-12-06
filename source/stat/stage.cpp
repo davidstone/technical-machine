@@ -1,5 +1,4 @@
-// Stat stages
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -100,9 +99,6 @@ auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
 
 auto operator==(Stage const & lhs, Stage const & rhs) -> bool {
 	return std::equal(lhs.begin(), lhs.end(), rhs.begin());
-}
-auto operator!=(Stage const & lhs, Stage const & rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 } // namespace technicalmachine

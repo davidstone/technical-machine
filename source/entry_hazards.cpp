@@ -1,5 +1,4 @@
-// Entry hazards
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -89,9 +88,6 @@ auto operator== (EntryHazards const lhs, EntryHazards const rhs) -> bool {
 		lhs.spikes() == rhs.spikes() and
 		lhs.toxic_spikes() == rhs.toxic_spikes() and
 		lhs.stealth_rock() == rhs.stealth_rock();
-}
-auto operator!= (EntryHazards const lhs, EntryHazards const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

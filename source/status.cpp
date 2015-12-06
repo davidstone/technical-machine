@@ -1,5 +1,4 @@
-// Status functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -173,10 +172,6 @@ auto operator== (Status const lhs, Status const rhs) -> bool {
 	return
 		lhs.name() == rhs.name() and
 		lhs.m_turns_already_slept == rhs.m_turns_already_slept;
-}
-
-auto operator!= (Status const lhs, Status const rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 namespace {

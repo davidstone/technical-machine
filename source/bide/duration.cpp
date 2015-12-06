@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -45,10 +45,6 @@ auto BideDuration::decrement() -> bool {
 
 auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool {
 	return lhs.m_turns_active == rhs.m_turns_active;
-}
-
-auto operator!= (BideDuration const & lhs, BideDuration const & rhs) -> bool {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

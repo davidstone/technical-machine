@@ -1,5 +1,5 @@
 // Partial trap timer (things like Wrap and Clamp)
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 
 #include "end_of_turn_counter.hpp"
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 namespace technicalmachine {
 struct MutableActivePokemon;
@@ -44,10 +45,6 @@ struct PartialTrap {
 private:
 	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn> m_base;
 };
-
-constexpr auto operator!=(PartialTrap const lhs, PartialTrap const rhs) {
-	return !(lhs == rhs);
-}
 
 constexpr auto hash(PartialTrap const partial_trap) noexcept {
 	return partial_trap.hash();

@@ -66,7 +66,7 @@ auto MoveContainer::operator[](index_type const index) const -> Move {
 }
 
 auto MoveContainer::size() const -> size_type {
-	return number_of_regular_moves() + technicalmachine::size(m_shared);
+	return number_of_regular_moves() + containers::size(m_shared);
 }
 
 auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {

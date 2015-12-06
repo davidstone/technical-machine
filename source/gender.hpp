@@ -1,5 +1,5 @@
 // Gender header
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,6 +26,8 @@
 
 namespace technicalmachine {
 
+// TODO: Get rid of the intermediate struct
+
 struct Gender {
 	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 	
@@ -35,7 +37,6 @@ struct Gender {
 
 	Genders gender;
 };
-bool operator!= (Gender lhs, Gender rhs);
 
 // Return 1 if the same, -1 if opposite, and 0 if either is genderless
 bounded::integer<-1, 1> multiplier(Gender me, Gender foe);

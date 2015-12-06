@@ -1,5 +1,4 @@
-// Moves data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,9 +17,12 @@
 
 #pragma once
 
-#include <bounded_integer/bounded_integer.hpp>
 #include "moves.hpp"
 #include "pp.hpp"
+
+#include "../operators.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -42,7 +44,6 @@ private:
 };
 
 auto operator==(Move lhs, Move rhs) -> bool;
-auto operator!=(Move lhs, Move rhs) -> bool;
 
 auto is_regular(Moves move) -> bool;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 #include "../stat/hp.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -45,7 +46,6 @@ private:
 	bounded::equivalent_type<hp_type, bounded::clamp_policy> m_hp = 0_bi;
 };
 bool operator== (Substitute const & lhs, Substitute const & rhs);
-bool operator!= (Substitute const & lhs, Substitute const & rhs);
 
 constexpr auto hash(Substitute const substitute) noexcept {
 	return hash(substitute.hp());

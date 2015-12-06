@@ -1,5 +1,4 @@
-// Load teams
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -159,10 +158,6 @@ bool operator== (Team const & lhs, Team const & rhs) {
 		lhs.wish == rhs.wish and
 		lhs.entry_hazards == rhs.entry_hazards and
 		lhs.me == rhs.me;
-}
-
-bool operator!= (Team const & lhs, Team const & rhs) {
-	return !(lhs == rhs);
 }
 
 std::string to_string(Team const & team, bool const include_owner) {

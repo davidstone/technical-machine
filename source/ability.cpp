@@ -1,5 +1,4 @@
-// Ability data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -435,10 +434,6 @@ void Ability::weather_healing(MutableActivePokemon pokemon, Weather const weathe
 
 bool operator==(Ability const lhs, Ability const rhs) {
 	return lhs.m_name == rhs.m_name;
-}
-
-bool operator!=(Ability const lhs, Ability const rhs) {
-	return !(lhs == rhs);
 }
 
 }	// namespace technicalmachine

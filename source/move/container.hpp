@@ -22,6 +22,8 @@
 #include "move.hpp"
 #include "shared.hpp"
 
+#include "../operators.hpp"
+
 #include <bounded_integer/bounded_integer.hpp>
 #include <bounded_integer/integer_range.hpp>
 
@@ -68,55 +70,6 @@ private:
 	RegularMoveContainer::const_iterator m_regular_end;
 	SharedMovesIterator m_shared;
 };
-
-
-inline auto operator!=(MoveIterator const lhs, MoveIterator const rhs) noexcept {
-	return !(lhs == rhs);
-}
-
-inline auto operator>(MoveIterator const lhs, MoveIterator const rhs) noexcept {
-	return rhs < lhs;
-}
-inline auto operator<=(MoveIterator const lhs, MoveIterator const rhs) noexcept {
-	return !(lhs > rhs);
-}
-inline auto operator>=(MoveIterator const lhs, MoveIterator const rhs) noexcept {
-	return !(lhs < rhs);
-}
-
-
-inline auto operator+(MoveIterator::difference_type const lhs, MoveIterator const rhs) -> MoveIterator {
-	return rhs + lhs;
-}
-inline auto operator-(MoveIterator const lhs, MoveIterator::difference_type const rhs) -> MoveIterator {
-	return lhs + -rhs;
-}
-
-
-inline auto operator+=(MoveIterator & it, MoveIterator::difference_type const offset) -> MoveIterator & {
-	return it = it + offset;
-}
-inline auto operator-=(MoveIterator & it, MoveIterator::difference_type const offset) -> MoveIterator & {
-	return it += -offset;
-}
-
-
-inline auto operator++(MoveIterator & it) -> MoveIterator & {
-	return it += 1_bi;
-}
-inline auto operator++(MoveIterator & it, int) -> MoveIterator {
-	auto const original = it;
-	++it;
-	return original;
-}
-inline auto operator--(MoveIterator & it) -> MoveIterator & {
-	return it -= 1_bi;
-}
-inline auto operator--(MoveIterator & it, int) -> MoveIterator {
-	auto const original = it;
-	--it;
-	return original;
-}
 
 
 struct MoveContainer {

@@ -19,6 +19,7 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "../operators.hpp"
 
 #include <bounded_integer/optional.hpp>
 
@@ -79,11 +80,6 @@ private:
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;
 	Counter m_turns_active = bounded::none;
 };
-
-template<intmax_t max_turns, CounterOperations... operations>
-constexpr auto operator!=(EndOfTurnCounter<max_turns, operations...> const lhs, EndOfTurnCounter<max_turns, operations...> const rhs) {
-	return !(lhs == rhs);
-}
 
 template<intmax_t max_turns, CounterOperations... operations>
 constexpr auto hash(EndOfTurnCounter<max_turns, operations...> const flag) noexcept {

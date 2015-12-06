@@ -17,12 +17,15 @@
 
 #pragma once
 
-#include <bounded_integer/bounded_integer.hpp>
 #include "ev.hpp"
 #include "iv.hpp"
+
+#include "../operators.hpp"
 #include "../pokemon/level.hpp"
 #include "../pokemon/species_forward.hpp"
 #include "../rational.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 struct Level;
@@ -56,8 +59,7 @@ auto set_hp_ev(Pokemon & pokemon, EV ev, IV iv) -> void;
 
 template<typename T>
 auto operator+=(HP & lhs, T const & rhs) -> HP & {
-	lhs = lhs.current() + bounded::make<bounded::null_policy>(rhs);
-	return lhs;
+	return lhs = lhs.current() + bounded::make<bounded::null_policy>(rhs);
 }
 
 template<typename T>
@@ -72,15 +74,6 @@ auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
 template<intmax_t min, intmax_t max, typename overflow>
 auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return rhs == lhs.current();
-}
-
-template<intmax_t min, intmax_t max, typename overflow>
-auto operator!=(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
-	return lhs.current() != rhs;
-}
-template<intmax_t min, intmax_t max, typename overflow>
-auto operator!=(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
-	return rhs != lhs.current();
 }
 
 inline auto hash(HP const hp) noexcept {

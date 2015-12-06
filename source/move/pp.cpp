@@ -658,8 +658,4 @@ auto operator== (Pp const & lhs, Pp const & rhs) -> bool {
 	return lhs.m_current == rhs.m_current;
 }
 
-auto operator!= (Pp const & lhs, Pp const & rhs) -> bool {
-	return !(lhs == rhs);
-}
-
 }	// namespace technicalmachine

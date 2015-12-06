@@ -1,5 +1,4 @@
-// Team data structure
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +18,7 @@
 #pragma once
 
 #include "entry_hazards.hpp"
+#include "operators.hpp"
 #include "screens.hpp"
 #include "wish.hpp"
 
@@ -98,7 +98,6 @@ public:
 private:
 	bool me;
 };
-bool operator!= (Team const & lhs, Team const & rhs);
 
 std::string to_string(Team const & team, bool include_owner = true);
 
