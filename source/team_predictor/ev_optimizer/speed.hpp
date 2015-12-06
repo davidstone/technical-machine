@@ -21,8 +21,9 @@
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
 
+#include <containers/static_vector/static_vector.hpp>
+
 #include <stdexcept>
-#include <unordered_map>
 
 namespace technicalmachine {
 struct Pokemon;
@@ -44,8 +45,7 @@ private:
 		Nature nature;
 		EV ev;
 	};
-	using Container = std::vector<Mapped>;
-	Container m_container;
+	containers::static_vector<Mapped, static_cast<std::intmax_t>(std::numeric_limits<Nature>::max())> m_container;
 };
 
 auto find(SpeedEVs const & container, Nature nature) -> EV;

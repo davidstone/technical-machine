@@ -24,6 +24,8 @@
 #include "../../stat/stat_names.hpp"
 #include "../../string_conversions/nature.hpp"
 
+#include <containers/algorithms/find.hpp>
+
 #include <cassert>
 
 namespace technicalmachine {
@@ -37,7 +39,7 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
 			stat = Stat(stat, EV(ev));
 			if (initial_stat<StatNames::SPE>(stat, level, nature) >= speed) {
-				m_container.push_back({ nature, EV(ev) });
+				push_back(m_container, { nature, EV(ev) });
 				break;
 			}
 			if (ev == EV::max) {
@@ -45,11 +47,11 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 			}
 		}
 	}
-	assert(!m_container.empty());
+	assert(!empty(m_container));
 }
 
 auto find(SpeedEVs const & container, Nature const nature) -> EV {
-	auto const it = std::find_if(container.begin(), container.end(), [=](auto const & value) { return value.nature == nature; });
+	auto const it = containers::find_if(container.begin(), container.end(), [=](auto const & value) { return value.nature == nature; });
 	if (it == container.end()) {
 		throw InvalidNature(to_string(nature));
 	}
