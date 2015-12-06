@@ -28,10 +28,11 @@
 
 #include <bounded_integer/bounded_integer.hpp>
 
+#include <containers/static_vector/static_vector.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <unordered_map>
 
 namespace technicalmachine {
 namespace {
@@ -53,7 +54,7 @@ constexpr auto sum(Combined const combined) {
 }	// namespace
 
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container, Pokemon & pokemon) {
-	std::vector<Combined> container;
+	containers::static_vector<Combined, SpeedEVs::max_size> container;
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.container.find(speed.nature);
 		if (offensive == o.container.end()) {
@@ -75,7 +76,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		if (sum(combined) > EV::max_total) {
 			continue;
 		}
-		container.push_back(combined);
+		push_back(container, combined);
 	}
 
 	auto const lesser_mapped_type = [](auto const & lhs, auto const & rhs) {
