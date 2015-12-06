@@ -28,9 +28,7 @@
 
 #include <containers/algorithms/find.hpp>
 
-#include <algorithm>
 #include <cassert>
-#include <vector>
 
 namespace technicalmachine {
 namespace {
@@ -83,7 +81,7 @@ auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, b
 
 template<typename Container, typename Condition>
 void remove_individual_unused(Container & container, Condition const & condition) {
-	for (auto it = std::begin(container); it != std::end(container);) {
+	for (auto it = container.begin(); it != container.end();) {
 		if (condition(it)) {
 			it = container.erase(it);
 		}
@@ -111,8 +109,7 @@ auto remove_inferior_natures(Container & container, bool const is_physical, bool
 	if (!is_special) {
 		if (is_physical) {
 			remove_individual_unused(container, does_not_lower_special_attack);
-		}
-		else {
+		} else {
 			remove_individual_unused(container, boosts_special_attack);
 		}
 	}
@@ -137,7 +134,7 @@ void OffensiveEVs::optimize(Pokemon const & pokemon) {
 }
 
 void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
-	for (auto it = std::begin(container); it != std::end(container);) {
+	for (auto it = container.begin(); it != container.end();) {
 		auto const nature = it->first;
 		auto const atk_ev = find_least_stat<StatNames::ATK>(species, level, nature, initial.atk);
 		auto const spa_ev = find_least_stat<StatNames::SPA>(species, level, nature, initial.spa);

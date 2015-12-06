@@ -19,7 +19,6 @@
 #pragma once
 
 #include <unordered_map>
-#include <vector>
 
 #include <bounded_integer/bounded_integer.hpp>
 
