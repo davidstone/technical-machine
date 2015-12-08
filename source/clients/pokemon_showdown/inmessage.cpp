@@ -1,5 +1,5 @@
 // Pokemon Showdown incoming messages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,11 +21,6 @@
 #include <cstdint>
 #include <string>
 
-#include <boost/asio/buffer.hpp>
-#include <boost/asio/read.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/bind.hpp>
-
 #include "client.hpp"
 #include "../network/invalid_packet.hpp"
 
@@ -37,22 +32,6 @@ InMessage::InMessage(Room room_, Type type_, Data data_):
 	m_type(std::move(type_)),
 	m_data(std::move(data_)) {
 }
-
-InMessage::Type const & InMessage::type() const noexcept {
-	return m_type;
-}
-
-std::string const & InMessage::at(Data::size_type position) const {
-	return m_data.at(position);
-}
-
-InMessage::Data::const_iterator InMessage::begin() const {
-	return m_data.begin();
-}
-InMessage::Data::const_iterator InMessage::end() const {
-	return m_data.end();
-}
-
 
 }	// namespace ps
 }	// namespace technicalmachine

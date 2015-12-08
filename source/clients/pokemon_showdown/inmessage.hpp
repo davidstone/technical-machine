@@ -1,5 +1,5 @@
 // Pokemon Showdown incoming messages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +18,9 @@
 
 #pragma once
 
+#include <containers/vector/vector.hpp>
+
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 namespace ps {
@@ -27,12 +28,24 @@ namespace ps {
 struct InMessage {
 	using Room = std::string;
 	using Type = std::string;
-	using Data = std::vector<std::string>;
+	using Data = containers::vector<std::string>;
+
 	InMessage(Room room, Type type, Data data);
-	Type const & type() const noexcept;
-	Data::const_iterator begin() const;
-	Data::const_iterator end() const;
-	std::string const & at(Data::size_type position) const;
+
+	auto const & type() const noexcept {
+		return m_type;
+	}
+
+	decltype(auto) operator[](containers::index_type<Data> const position) const {
+		return m_data[position];
+	}
+
+	auto begin() const {
+		return m_data.begin();
+	}
+	auto end() const {
+		return m_data.end();
+	}
 private:
 	Room m_room;
 	Type m_type;
