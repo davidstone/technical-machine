@@ -32,6 +32,8 @@
 
 #include "../../evaluate/evaluate.hpp"
 
+#include <containers/algorithms/all_any_none.hpp>
+
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/asio/connect.hpp>
 #include <boost/asio/error.hpp>
@@ -48,14 +50,50 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include <vector>
 
 namespace technicalmachine {
 namespace network {
+
 namespace {
 
-std::vector<std::string> load_highlights ();
-std::vector<std::string> load_trusted_users ();
+auto create_unsorted_vector(boost::filesystem::path const & file_name) {
+	containers::vector<std::string> unsorted;
+	boost::filesystem::ifstream file(file_name);
+	std::string line;
+	std::string const comment = "//";
+	while (getline(file, line)) {
+		if (line.substr (0, comment.length ()) != comment and !line.empty ())
+			unsorted.emplace_back(line);
+	}
+	return unsorted;
+}
+
+auto create_sorted_vector(boost::filesystem::path const & file_name) {
+	// The sorted vector is used to allow std::binary_search to be used on the
+	// vector for fast searching. I use a sorted vector instead of a
+	// std::set because it has faster performance uses less memory. My use
+	// pattern is distinct insertion period after which the entire vector can
+	// be sorted (faster than inserting into a std::set), followed by lookups
+	// (std::binary_search of a vector is faster than std::set.find).
+	// Analysis of this can be found here: http://lafstern.org/matt/col1.pdf
+
+	// I don't use a sorted vector all of the time because for my other
+	// structures, I am either searching for every element in my list against
+	// some other text, or am I just picking an element at random, so the
+	// sorting would add nothing.
+
+	auto sorted = create_unsorted_vector(file_name);
+	std::sort(sorted.begin(), sorted.end());
+	return sorted;
+}
+
+auto load_highlights() {
+	return create_unsorted_vector("settings/highlights.txt");
+}
+
+auto load_trusted_users() {
+	return create_sorted_vector("settings/trusted_users.txt");
+}
 
 }	// namespace
 
@@ -74,52 +112,7 @@ Client::Client(unsigned const depth):
 	connect ();
 }
 
-namespace {
-
-std::vector<std::string> create_unsorted_vector(boost::filesystem::path const & file_name) {
-	std::vector<std::string> unsorted;
-	boost::filesystem::ifstream file(file_name);
-	std::string line;
-	std::string const comment = "//";
-	while (getline(file, line)) {
-		if (line.substr (0, comment.length ()) != comment and !line.empty ())
-			unsorted.emplace_back(line);
-	}
-	return unsorted;
-}
-
-std::vector<std::string> create_sorted_vector(boost::filesystem::path const & file_name) {
-	// The sorted vector is used to allow std::binary_search to be used on the
-	// vector for fast searching. I use a sorted std::vector instead of a
-	// std::set because it has faster performance uses less memory. My use
-	// pattern is distinct insertion period after which the entire vector can
-	// be sorted (faster than inserting into a std::set), followed by lookups
-	// (std::binary_search of a std::vector is faster than std::set.find).
-	// Analysis of this can be found here: http://lafstern.org/matt/col1.pdf
-
-	// I don't use a sorted vector all of the time because for my other
-	// structures, I am either searching for every element in my list against
-	// some other text, or am I just picking an element at random, so the
-	// sorting would add nothing.
-
-	std::vector<std::string> sorted = create_unsorted_vector (file_name);
-	std::sort (sorted.begin(), sorted.end());
-	return sorted;
-}
-
-std::vector<std::string> load_highlights () {
-	return create_unsorted_vector ("settings/highlights.txt");
-}
-
-std::vector<std::string> load_trusted_users () {
-	return create_sorted_vector ("settings/trusted_users.txt");
-}
-
-}	// namespace
-
 bool Client::is_trusted (std::string const & user) const {
-	// I sort the std::vector of trusted users as soon as I load them to make
-	// this legal and as fast as possible.
 	return std::binary_search(m_trusted_users.begin(), m_trusted_users.end(), user);
 }
 
@@ -191,7 +184,7 @@ bool Client::is_highlighted (std::string const & message) const {
 	// saying "atm". Fixing this problem probably requires some sort of regex
 	// or a fancy word boundary definition.
 	auto finder = [&](auto const & highlight) { return message.find(highlight) != std::string::npos; };
-	return std::any_of(m_highlights.begin(), m_highlights.end(), finder);
+	return containers::any_of(m_highlights.begin(), m_highlights.end(), finder);
 }
 
 namespace {

@@ -1,5 +1,5 @@
 // Connect to an arbitrary networked Pokemon sim
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,15 +18,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <vector>
+#include "../battle.hpp"
+#include "../client.hpp"
+
+#include <containers/vector/vector.hpp>
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include "../battle.hpp"
-#include "../client.hpp"
+#include <cstdint>
+#include <string>
 
 namespace technicalmachine {
 struct BattleSettings;
@@ -84,8 +85,9 @@ private:
 	boost::asio::ip::tcp::socket m_socket;
 	std::string m_username;
 	std::string m_password;
-	std::vector<std::string> m_highlights;
-	std::vector<std::string> m_trusted_users;
+	containers::vector<std::string> m_highlights;
+	// TODO: Use flat_map
+	containers::vector<std::string> m_trusted_users;
 	unsigned m_chattiness;
 };
 
