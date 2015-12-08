@@ -30,6 +30,7 @@
 
 #include "../network/invalid_channel.hpp"
 
+#include "../../move/max_moves_per_pokemon.hpp"
 #include "../../move/moves.hpp"
 
 #include "../../pokemon/max_pokemon_per_team.hpp"
@@ -38,6 +39,12 @@
 
 #include "../../cryptography/md5.hpp"
 
+#include <bounded_integer/integer_range.hpp>
+
+#include <containers/array/make_array.hpp>
+#include <containers/static_vector/static_vector.hpp>
+#include <containers/vector/vector.hpp>
+
 #include <boost/algorithm/string.hpp>
 
 #include <cstdint>
@@ -45,10 +52,10 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
-#include <vector>
 
 namespace technicalmachine {
 namespace po {
+using namespace bounded::literal;
 
 Client::Client(unsigned depth):
 	network::Client(depth),
@@ -349,24 +356,28 @@ struct BattlePokemon {
 		ability(id_to_ability(msg.read_short())),
 		happiness(msg.read_byte())
 		{
-		for (unsigned n = 0; n != 5; ++n) {
+		for (auto const n : bounded::integer_range(5_bi)) {
+			static_cast<void>(n);
 			// Something to do with stats. Probably boosts.
 			uint16_t const st = msg.read_short();
 			static_cast<void>(st);
 		}
-		for (unsigned n = 0; n != 4; ++n) {
-			moves.emplace_back(id_to_move(msg.read_short()));
+		for (auto const n : bounded::integer_range(max_moves_per_pokemon)) {
+			static_cast<void>(n);
+			push_back(moves, id_to_move(msg.read_short()));
 			uint8_t const pp = msg.read_byte();
 			uint8_t const total_pp = msg.read_byte();
 			static_cast<void>(pp);
 			static_cast<void>(total_pp);
 		}
-		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
+		for (auto const n : bounded::integer_range(max_pokemon_per_team)) {
+			static_cast<void>(n);
 			// PO uses a QList of int, so hopefully their int is always 32-bit.
 			uint32_t const ev = msg.read_int();
 			static_cast<void>(ev);
 		}
-		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
+		for (auto const n : bounded::integer_range(max_pokemon_per_team)) {
+			static_cast<void>(n);
 			uint32_t const dv = msg.read_int();
 			static_cast<void>(dv);
 		}
@@ -382,17 +393,20 @@ struct BattlePokemon {
 	Item item;
 	Ability ability;
 	uint8_t happiness;
-	std::vector<Moves> moves;
+	containers::static_vector<Moves, static_cast<intmax_t>(max_moves_per_pokemon)> moves;
 };
 
 struct BattleTeam {
-	std::vector <BattlePokemon> pokemon;
 	explicit BattleTeam(InMessage & msg) {
-		for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
+		for (auto const n : bounded::integer_range(max_pokemon_per_team)) {
+			static_cast<void>(n);
 			pokemon.emplace_back(msg);
 		}
 	}
+
+	containers::static_vector<BattlePokemon, static_cast<intmax_t>(max_pokemon_per_team)> pokemon;
 };
+
 }	// namespace
 
 void Client::parse_battle_begin(InMessage & msg) {
@@ -529,7 +543,7 @@ void Client::handle_tier_selection(InMessage & msg) const {
 	// Just ignore this and read until the buffer is empty.
 	uint32_t const bytes_in_tier_list = msg.read_int();
 	static_cast<void>(bytes_in_tier_list);
-	std::vector <std::pair <uint8_t, std::string>> tiers;
+	containers::vector<std::pair<uint8_t, std::string>> tiers;
 	while (msg.index != msg.buffer.size()) {
 		uint8_t const tier_level = msg.read_byte();
 		std::string const tier_name = msg.read_string();
@@ -592,9 +606,10 @@ void Client::handle_channel_players(InMessage & msg) {
 	uint32_t const channel_id = msg.read_int();
 	static_cast<void>(channel_id);
 	uint32_t const number_of_players = msg.read_int();
-	std::vector <uint32_t> players;
+	containers::vector<uint32_t> players;
 	players.reserve(number_of_players);
-	for (unsigned n = 0; n != number_of_players; ++n) {
+	for (auto const n : bounded::integer_range(number_of_players)) {
+		static_cast<void>(n);
 		players.emplace_back(msg.read_int());
 	}
 }
@@ -772,11 +787,12 @@ void Client::send_battle_challenge_with_current_team() {
 			OutMessage msg(OutMessage::CHALLENGE_STUFF);
 			uint32_t const user_id = get_user_id(first_challenger());
 			uint8_t const generation = 4;		// ???
-			std::vector <uint32_t> clauses {
+			// TODO: use bitset
+			auto const clauses = containers::make_array<std::uint32_t>(
 				BattleSettings::freeze_CLAUSE,
 				BattleSettings::sleep_CLAUSE,
-				BattleSettings::SPECIES_CLAUSE,
-			};
+				BattleSettings::SPECIES_CLAUSE
+			);
 			BattleSettings const settings(clauses, BattleSettings::SINGLES);
 			msg.write_challenge(user_id, generation, settings);
 			send_message(msg);

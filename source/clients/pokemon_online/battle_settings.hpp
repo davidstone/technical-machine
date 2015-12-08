@@ -18,9 +18,11 @@
 
 #pragma once
 
-#include <cstdint>
-#include <vector>
 #include "../battle_settings.hpp"
+
+#include <containers/array/array.hpp>
+
+#include <cstdint>
 
 namespace technicalmachine {
 namespace po {
@@ -45,8 +47,8 @@ struct BattleSettings : ::technicalmachine::BattleSettings {
 		TRIPLES = 2,
 		ROTATION = 3
 	};
-	BattleSettings (uint32_t battle_clauses, uint8_t battle_mode);
-	BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t battle_mode);
+	BattleSettings(uint32_t battle_clauses, uint8_t battle_mode);
+	BattleSettings(containers::array<uint32_t, 3> const & battle_clauses, uint8_t battle_mode);
 	bool are_acceptable () const;
 	uint32_t const clauses;
 	Mode const mode;

@@ -27,7 +27,13 @@ namespace technicalmachine {
 namespace po {
 namespace {
 
-uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses);
+uint32_t to_clauses(containers::array<uint32_t, 3> const & clauses) {
+	uint32_t clause = 0;
+	for (auto const value : clauses) {
+		clause |= value;
+	}
+	return clause;
+}
 
 }	// namespace
 
@@ -37,22 +43,11 @@ BattleSettings::BattleSettings (uint32_t const battle_clauses, uint8_t const bat
 	mode (static_cast <Mode> (battle_mode)) {
 }
 
-BattleSettings::BattleSettings (std::vector <uint32_t> const & battle_clauses, uint8_t const battle_mode):
+BattleSettings::BattleSettings(containers::array<uint32_t, 3> const & battle_clauses, uint8_t const battle_mode):
 	::technicalmachine::BattleSettings(),
-	clauses (vector_to_clauses (battle_clauses)),
+	clauses(to_clauses(battle_clauses)),
 	mode (static_cast <Mode> (battle_mode)) {
 }
-
-namespace {
-
-uint32_t vector_to_clauses (std::vector <uint32_t> const & clauses) {
-	uint32_t clause = 0;
-	for (uint32_t const value : clauses)
-		clause |= value;
-	return clause;
-}
-
-}	// namespace
 
 bool BattleSettings::active (Clauses const check) const {
 	return clauses & check;
