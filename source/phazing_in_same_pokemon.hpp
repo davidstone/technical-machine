@@ -1,5 +1,5 @@
 // Exception class if phazing attempts to bring in the currently active Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,7 +25,7 @@
 namespace technicalmachine {
 
 struct PhazingInSamePokemon : std::logic_error {
-	explicit PhazingInSamePokemon(PokemonCollection::index_type index);
+	explicit PhazingInSamePokemon(containers::index_type<PokemonCollection> index);
 };
 
 }	// namespace technicalmachine

@@ -70,10 +70,6 @@ auto Variable::effect_activates() const -> bool {
 	return value() != 0_bi;
 }
 
-auto Variable::phaze_index(PokemonCollection::index_type const foe_index) const -> PokemonCollection::index_type {
-	return (value() < foe_index) ? PokemonCollection::index_type(value()) : PokemonCollection::index_type(value() + 1_bi);
-}
-
 auto Variable::present_heals() const -> bool {
 	return value() != 0_bi;
 }

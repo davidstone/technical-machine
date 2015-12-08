@@ -40,10 +40,5 @@ using SharedMoveIndex = bounded::checked_integer<
 >;
 
 using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedMoveSize>());
-using MoveIndex = decltype(
-	std::declval<RegularMoveIndex>() +
-	std::declval<SharedMoveIndex>() +
-	std::declval<bounded::integer<0, 1>>()
-);
 
 }	// namespace technicalmachine

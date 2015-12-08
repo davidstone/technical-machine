@@ -46,7 +46,7 @@ void random_team(Team & team, std::mt19937 & random_engine) {
 	Estimate estimate(overall, lead, std::accumulate(std::begin(overall), std::end(overall), 0U));
 	Multiplier const multiplier(overall);
 	estimate.update(multiplier, team);
-	for (auto const n : bounded::integer_range(max_pokemon_per_team - team.all_pokemon().size())) {
+	for (auto const n : bounded::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
 		static_cast<void>(n);
 		auto const species = estimate.random(random_engine);
 		estimate.update(multiplier, species);

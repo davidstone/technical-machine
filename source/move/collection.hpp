@@ -18,12 +18,13 @@
 
 #pragma once
 
-#include "../collection.hpp"
-
 #include "container.hpp"
 #include "max_moves_per_pokemon.hpp"
 #include "move.hpp"
 #include "moves.hpp"
+
+#include "../collection.hpp"
+#include "../operators.hpp"
 
 #include <bounded_integer/integer_range.hpp>
 #include <bounded_integer/optional.hpp>
@@ -36,21 +37,17 @@ using namespace bounded::literal;
 struct MoveScores;
 
 struct MoveCollection : detail::Collection<MoveContainer> {
-	using detail::Collection<MoveContainer>::index_type;
 	explicit MoveCollection(TeamSize my_team_size);
 	
 	auto regular() const {
-		return make_range(container.regular_begin(), container.regular_end());
+		return make_range(regular_begin(), regular_end());
 	}
 	auto regular() {
-		return make_range(container.regular_begin(), container.regular_end());
+		return make_range(regular_begin(), regular_end());
 	}
 
 	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
-	auto size() const {
-		return container.size();
-	}
-	auto remove_switch() -> void;
+	using MoveContainer::remove_switch;
 };
 
 inline auto hash(MoveCollection const & collection) noexcept {

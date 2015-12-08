@@ -46,7 +46,11 @@ struct Variable {
 	auto value() const -> value_type;
 	auto probability() const -> Probability;
 	auto effect_activates() const -> bool;
-	auto phaze_index(PokemonCollection::index_type foe_index) const -> PokemonCollection::index_type;
+	auto phaze_index(containers::index_type<PokemonCollection> const foe_index) const {
+		return (value() < foe_index) ?
+			containers::index_type<PokemonCollection>(value()) :
+			containers::index_type<PokemonCollection>(value() + 1_bi);
+	}
 	auto present_heals() const -> bool;
 
 	using PsywaveDamage = bounded::integer<1, 150>;

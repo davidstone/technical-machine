@@ -137,7 +137,7 @@ void function (Fl_Widget *, void * d) {
 	auto & data = *reinterpret_cast<Data *> (d);
 	bool using_lead = false;
 	for (PokemonInputs const & inputs : data.inputs) {
-		if (data.team().all_pokemon().size() >= max_pokemon_per_team)
+		if (size(data.team().all_pokemon()) >= max_pokemon_per_team)
 			break;
 		if (!inputs.is_valid()) {
 			continue;

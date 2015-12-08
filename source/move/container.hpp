@@ -42,13 +42,14 @@ private:
 public:
 	using value_type = Move const;
 	using difference_type = bounded::integer<-max_difference, max_difference>;
-	using index_type = MoveIndex;
+	using pointer = value_type *;
+	using reference = value_type &;
 	using iterator_category = std::random_access_iterator_tag;
 
 	auto operator*() const -> value_type {
 		return (m_regular != m_regular_end) ? *m_regular : *m_shared;
 	}
-	auto operator[](index_type const index) const -> value_type {
+	auto operator[](containers::index_type<MoveIterator> const index) const {
 		return *(*this + index);
 	}
 
@@ -75,7 +76,6 @@ private:
 struct MoveContainer {
 	using value_type = Move;
 	using size_type = MoveSize;
-	using index_type = MoveIndex;
 	using const_iterator = MoveIterator;
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
 	using regular_iterator = RegularMoveContainer::iterator;
@@ -103,11 +103,7 @@ struct MoveContainer {
 		return m_regular.end();
 	}
 	
-	auto operator[](index_type index) const -> Move;
-	static constexpr auto empty() -> bool {
-		// A move container is never empty, it always contains at least Struggle
-		return false;
-	}
+	auto operator[](containers::index_type<MoveContainer> index) const -> Move;
 	template<typename... Args>
 	auto emplace_back(Args&&... args) -> void {
 		assert(containers::size(m_regular) < max_moves_per_pokemon);
@@ -116,11 +112,9 @@ struct MoveContainer {
 		m_regular.emplace_back(std::forward<Args>(args)...);
 	}
 
-	auto size() const -> size_type;
 	auto number_of_regular_moves() const -> RegularMoveSize;
 	auto remove_switch() -> void;
 	
-	friend auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool;
 private:
 	auto unchecked_regular_move(RegularMoveIndex index) const -> Move;
 	auto unchecked_regular_move(RegularMoveIndex index) -> Move &;

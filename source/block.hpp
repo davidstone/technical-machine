@@ -1,5 +1,5 @@
 // Declaration of functions that block selection / execution
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,10 +18,13 @@
 
 #pragma once
 
-#include <cstddef>
-#include <vector>
+#include "move/max_moves_per_pokemon.hpp"
 #include "move/moves.hpp"
 #include "pokemon/species_forward.hpp"
+
+#include <containers/static_vector/static_vector.hpp>
+
+#include <cstddef>
 
 namespace technicalmachine {
 
@@ -30,16 +33,22 @@ struct MutableActivePokemon;
 struct Team;
 struct Weather;
 
-struct LegalSelections {
-	using const_iterator = std::vector<Moves>::const_iterator;
+using LegalSelectionsBase = containers::static_vector<Moves, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
+
+struct LegalSelections : private LegalSelectionsBase {
+	using LegalSelectionsBase::value_type;
+	using LegalSelectionsBase::size_type;
+	using LegalSelectionsBase::const_iterator;
+
 	LegalSelections(Team const & user, ActivePokemon other, Weather weather);
-	Species species() const;
-	const_iterator begin() const;
-	const_iterator end() const;
-	size_t size() const;
-	Moves operator[](size_t index) const;
+	auto species() const {
+		return m_species;
+	}
+
+	using LegalSelectionsBase::begin;
+	using LegalSelectionsBase::end;
+	using LegalSelectionsBase::operator[];
 private:
-	std::vector<Moves> container;
 	Species m_species;
 };
 

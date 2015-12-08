@@ -1,5 +1,5 @@
 // Exception class if phazing attempts to bring in the currently active Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-PhazingInSamePokemon::PhazingInSamePokemon(PokemonCollection::index_type const index):
+PhazingInSamePokemon::PhazingInSamePokemon(containers::index_type<PokemonCollection> const index):
 	std::logic_error("Attempted to phaze in the currently active Pokemon at index " + bounded::to_string(index) + ".")
 	{
 }

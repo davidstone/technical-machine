@@ -66,18 +66,18 @@ void move_container_tests() {
 	constexpr TeamSize team_size(4_bi);
 	constexpr auto shared_moves_size = team_size + 1_bi;
 	MoveContainer c(team_size);
-	if (c.size() != shared_moves_size) {
-		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(c.size()));
+	if (size(c) != shared_moves_size) {
+		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(size(c)));
 	}
 	auto const moves = create_regular_moves();
-	for (auto const n : bounded::integer_range(static_cast<bounded::checked_integer<0, 100>>(containers::size(moves)))) {
+	for (auto const n : bounded::integer_range(static_cast<bounded::checked_integer<0, 100>>(size(moves)))) {
 		c.emplace_back(moves[n]);
-		if (c.size() != shared_moves_size + n + 1_bi or c.size() != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
+		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}
 	Verify verify(moves, team_size);
-	for (auto const index : bounded::integer_range(c.size())) {
+	for (auto const index : bounded::integer_range(size(c))) {
 		verify(c[index]);
 	}
 }

@@ -1,5 +1,5 @@
 // Test container for moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,12 +42,12 @@ void move_collection_tests() {
 	for (auto const test_size : bounded::integer_range(1_bi, team_size + 1_bi)) {
 		auto const shared_moves_size = BOUNDED_CONDITIONAL(test_size > 1_bi, test_size + 1_bi, 1_bi);
 		MoveCollection collection(test_size);
-		if (collection.size() != shared_moves_size)
+		if (size(collection) != shared_moves_size)
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(test_size));
 		auto expected = create_regular_moves();
 		for (auto const n : bounded::integer_range(static_cast<MoveSize>(size(expected)))) {
 			collection.add(expected[n]);
-			if (collection.size() != shared_moves_size + n + 1_bi or collection.size() != static_cast<RegularMoveSize>(size(collection.regular())) + shared_moves_size) {
+			if (size(collection) != shared_moves_size + n + 1_bi or size(collection) != static_cast<RegularMoveSize>(size(collection.regular())) + shared_moves_size) {
 				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + to_string(test_size));
 			}
 		}

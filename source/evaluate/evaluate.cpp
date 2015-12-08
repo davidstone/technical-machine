@@ -145,7 +145,7 @@ using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declv
 using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
 auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const weather) {
 	ScoreAllPokemon score = 0_bi;
-	for (auto const index : bounded::integer_range(team.all_pokemon().size())) {
+	for (auto const index : bounded::integer_range(size(team.all_pokemon()))) {
 		if (get_hp(team.pokemon(index)) == 0_bi) {
 			continue;
 		}
@@ -199,7 +199,7 @@ auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const weath
 }
 
 auto Evaluate::win(Team const & team) -> type {
-	if (team.all_pokemon().size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
+	if (size(team.all_pokemon()) == 1_bi and get_hp(team.pokemon()) == 0_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
 	}
 	return 0_bi;

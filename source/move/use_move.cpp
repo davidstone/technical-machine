@@ -1058,7 +1058,7 @@ auto equalize(HP & hp1, HP & hp2) -> void {
 
 
 auto active_pokemon_can_be_phazed(Team const & team) {
-	return !ingrained(team.pokemon()) and !get_ability(team.pokemon()).blocks_phazing() and team.all_pokemon().size() > 1_bi;
+	return !ingrained(team.pokemon()) and !get_ability(team.pokemon()).blocks_phazing() and size(team.all_pokemon()) > 1_bi;
 }
 
 auto phaze(Team & user, Team & target, Weather & weather, Variable const & variable) -> void {

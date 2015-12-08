@@ -392,7 +392,7 @@ double use_move_and_follow_up(Team & user, Team & other, Variable const & user_v
 			return static_cast<double>(user_win + other_win);
 		}
 		auto const current = static_cast<Species>(user.pokemon());
-		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and user.all_pokemon().size() > 1_bi) {
+		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
 			Moves phony = Moves::END;
 			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
 		}
@@ -519,8 +519,8 @@ double move_then_switch_branch(Team & switcher, Team const & other, Variable con
 
 double switch_after_move_branch(Team switcher, Team other, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate) {
 	switchpokemon (switcher, other, weather);
-	assert(!switcher.all_pokemon().is_empty());
-	assert(!other.all_pokemon().is_empty());
+	assert(!empty(switcher.all_pokemon()));
+	assert(!empty(other.all_pokemon()));
 	// I don't have to correct for which of the Pokemon moved first because
 	// there are only two options:
 	

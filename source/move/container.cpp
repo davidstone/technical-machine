@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -58,15 +58,11 @@ auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move
 	return m_regular[index];
 }
 
-auto MoveContainer::operator[](index_type const index) const -> Move {
-	assert(index < size());
+auto MoveContainer::operator[](containers::index_type<MoveContainer> const index) const -> Move {
+	assert(index < containers::size(*this));
 	return (index < number_of_regular_moves()) ?
 		unchecked_regular_move(RegularMoveIndex(index, bounded::non_check)) :
 		m_shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
-}
-
-auto MoveContainer::size() const -> size_type {
-	return number_of_regular_moves() + containers::size(m_shared);
 }
 
 auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
@@ -75,16 +71,6 @@ auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
 
 auto MoveContainer::remove_switch() -> void {
 	m_shared.remove_switch();
-}
-
-
-auto operator==(MoveContainer const & lhs, MoveContainer const & rhs) -> bool {
-	// I may not need to check if lhs.shared == rhs.shared, because whenever I
-	// compare two moves, it's in the context of comparing an entire team, and I
-	// believe other parts of the team will always give me all the information
-	// contained in lhs.shared == rhs.shared.
-	return lhs.m_regular == rhs.m_regular and
-			lhs.m_shared == rhs.m_shared;
 }
 
 }	// namespace technicalmachine

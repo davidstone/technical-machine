@@ -17,13 +17,19 @@
 
 #pragma once
 
-#include <containers/common_functions.hpp>
+#include <containers/common_container_functions.hpp>
 
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
-BOUNDED_COMPARISON
-BOUNDED_COMMON_ARITHMETIC
+CONTAINERS_COMMON_USING_DECLARATIONS
+	
+namespace detail {
 
+using namespace bounded::literal;
+
+CONTAINERS_COMMON_USING_DECLARATIONS
+
+}	// namespace detail
 }	// namespace technicalmachine

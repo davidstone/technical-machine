@@ -55,34 +55,15 @@ bool handle_sleep_counter(MutableActivePokemon user, Moves move);
 }	// namespace
 
 LegalSelections::LegalSelections(Team const & user, ActivePokemon const other, Weather const weather):
-	m_species(user.pokemon()) {
+	m_species(user.pokemon())
+{
 	for (auto const & move : all_moves(user.pokemon())) {
-		bool const found_selectable_move = !container.empty();
+		bool const found_selectable_move = !empty(*this);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
-			container.emplace_back(move);
+			emplace_back(move);
 		}
 	}
-	assert(!container.empty());
-}
-
-Species LegalSelections::species() const {
-	return m_species;
-}
-
-LegalSelections::const_iterator LegalSelections::begin() const {
-	return container.begin();
-}
-
-LegalSelections::const_iterator LegalSelections::end() const {
-	return container.end();
-}
-
-size_t LegalSelections::size() const {
-	return container.size();
-}
-
-Moves LegalSelections::operator[](size_t const index) const {
-	return container[index];
+	assert(!empty(*this));
 }
 
 namespace {

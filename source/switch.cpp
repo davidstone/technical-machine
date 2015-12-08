@@ -48,7 +48,7 @@ void switchpokemon (Team & switcher, Team & other, Weather & weather) {
 	else {
 		switcher.all_pokemon().remove_active();
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (switcher.all_pokemon().is_empty()) {
+		if (empty(switcher.all_pokemon())) {
 			return;
 		}
 	}

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "operators.hpp"
 #include "range.hpp"
 
 #include <bounded_integer/bounded_integer.hpp>
@@ -25,10 +26,8 @@
 #include <containers/common_container_functions.hpp>
 #include <containers/index_type.hpp>
 
-#include <cstddef>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -47,70 +46,41 @@ struct InvalidCollectionIndex final : std::out_of_range {
 namespace detail {
 
 template<typename Container>
-struct Collection;
+struct Collection : protected Container {
+	using typename Container::value_type;
+	using typename Container::size_type;
+	using typename Container::const_iterator;
 
-template<typename Container>
-bool operator==(Collection<Container> const & lhs, Collection<Container> const & rhs) {
-	return lhs.container == rhs.container;
-}
+	using Container::Container;
 
-template<typename Container>
-struct Collection {
-	using container_type = Container;
-	using size_type = typename Container::size_type;
-	using const_iterator = typename Container::const_iterator;
-	using index_type = containers::index_type<container_type>;
-	template<typename... Args>
-	constexpr Collection(Args &&... args) :
-		container(std::forward<Args>(args)...),
-		m_current_index(0_bi) {
-	}
+	using Container::begin;
+	using Container::end;
 	
-	auto begin() const {
-		return container.begin();
+	constexpr decltype(auto) operator()(containers::index_type<Collection> const specified_index) const {
+		return operator[](check_range(specified_index));
 	}
-	auto begin() {
-		return container.begin();
+	constexpr decltype(auto) operator()() const {
+		return operator[](index());
 	}
-	auto end() const {
-		return container.end();
-	}
-	auto end() {
-		return container.end();
-	}
-	
-	constexpr decltype(auto) operator() (index_type const specified_index) const {
-		return unchecked_value(check_range(specified_index));
-	}
-	constexpr decltype(auto) operator() () const {
-		return unchecked_value(index());
-	}
-	constexpr bool is_empty() const {
-		return containers::empty(container);
-	}
-	void set_index(index_type const new_index) {
-		m_current_index = check_range (new_index);
+
+	void set_index(containers::index_type<Collection> const new_index) {
+		m_current_index = check_range(new_index);
 	}
 	void reset_index() {
 		m_current_index = 0_bi;
 	}
-	constexpr index_type index() const {
+	constexpr auto index() const {
 		return m_current_index;
 	}
-	friend bool operator== <container_type>(Collection const & lhs, Collection const & rhs);
 protected:
-	constexpr index_type check_range(index_type const new_index) const {
-		using value_type = std::decay_t<decltype(container[new_index])>;
-		return (new_index < containers::size(container)) ?
+	constexpr auto check_range(containers::index_type<Collection> const new_index) const {
+		return (new_index < containers::size(*this)) ?
 			new_index :
-			throw InvalidCollectionIndex(new_index, containers::size(container), value_type::class_name);
+			throw InvalidCollectionIndex(new_index, containers::size(*this), value_type::class_name);
 	}
-	constexpr decltype(auto) unchecked_value(index_type const specified_index) const {
-		return container[specified_index];
-	}
-	container_type container;
+	using Container::operator[];
 private:
-	index_type m_current_index;
+	containers::index_type<Collection> m_current_index = 0_bi;
 };
 }	// namespace detail
 

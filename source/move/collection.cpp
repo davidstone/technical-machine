@@ -45,26 +45,22 @@ auto regular_move(MoveCollection & moves) -> Move & {
 auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
 	auto it = containers::find(regular().begin(), regular().end(), move);
 	if (it == regular().end()) {
-		container.emplace_back(move, pp_ups);
+		emplace_back(move, pp_ups);
 		it = containers::prev(regular().end());
 	}
-	set_index(static_cast<index_type>(it - regular().begin()));
+	set_index(static_cast<containers::index_type<MoveCollection>>(it - regular().begin()));
 }
 
 auto set_index(MoveCollection & moves, Moves const move) -> void {
-	auto const it = containers::find_if(moves.begin(), moves.end(), [=](Moves const test) { return move == test; });
+	auto const it = containers::find(moves.begin(), moves.end(), move);
 	assert(it != moves.end());
-	moves.set_index(static_cast<MoveCollection::index_type>(it - moves.begin()));
+	moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - moves.begin()));
 }
 
 using IndexResult = bounded::optional<RegularMoveIndex>;
 auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
 	auto const it = containers::find(moves.regular().begin(), moves.regular().end(), name);
 	return (it != moves.regular().end()) ? IndexResult(it - moves.regular().begin()) : bounded::none;
-}
-
-auto MoveCollection::remove_switch() -> void {
-	container.remove_switch();
 }
 
 }	// namespace technicalmachine

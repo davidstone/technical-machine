@@ -44,7 +44,7 @@ namespace {
 void add_pokemon(Team & team, Species species);
 void test_combinations(Team & team);
 void phaze_in_same_pokemon(Variable & variable, Team const & team);
-void phaze_in_different_pokemon(Variable & variable, Team const & team, PokemonCollection::index_type new_index, PokemonCollection::index_type current_index, TeamSize foe_size);
+void phaze_in_different_pokemon(Variable & variable, Team const & team, containers::index_type<PokemonCollection> new_index, containers::index_type<PokemonCollection> current_index, TeamSize foe_size);
 
 }	// namespace
 
@@ -70,8 +70,8 @@ void test_combinations(Team & team) {
 	for (auto const foe_size : bounded::integer_range(2_bi, max_pokemon_per_team + 1_bi)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
 		auto collection = all_probabilities(team.pokemon(), foe_size);
-		if (collection.size() != foe_size - 1_bi) {
-			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(foe_size - 1_bi) + " but got " + to_string(collection.size()));
+		if (size(collection) != foe_size - 1_bi) {
+			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(foe_size - 1_bi) + " but got " + to_string(size(collection)));
 		}
 		for (auto const new_index : bounded::integer_range(foe_size)) {
 			for (auto const current_index : bounded::integer_range(foe_size)) {
@@ -95,7 +95,7 @@ void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	}
 }
 
-void phaze_in_different_pokemon(Variable & variable, Team const & team, PokemonCollection::index_type const new_index, PokemonCollection::index_type const current_index, TeamSize foe_size) {
+void phaze_in_different_pokemon(Variable & variable, Team const & team, containers::index_type<PokemonCollection> const new_index, containers::index_type<PokemonCollection> const current_index, TeamSize foe_size) {
 	static constexpr auto expected_index = containers::make_explicit_array<6, 6>(
 		bounded::none, 0_bi, 1_bi, 2_bi, 3_bi, 4_bi,
 		0_bi, bounded::none, 1_bi, 2_bi, 3_bi, 4_bi,
@@ -112,8 +112,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, PokemonC
 		if (new_index == foe_size) {
 			throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
 		}
-	}
-	catch(InvalidCollectionIndex const &) {
+	} catch(InvalidCollectionIndex const &) {
 		if (new_index != foe_size) {
 			throw InvalidCollection("Phazing does not support " + to_string(new_index) + " elements when the foe's size is " + to_string(foe_size) + ".");
 			// otherwise, everything is good

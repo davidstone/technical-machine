@@ -48,8 +48,8 @@ struct Team {
 	auto pokemon() {
 		return MutableActivePokemon(all_pokemon()(), m_flags);
 	}
-	Pokemon const & pokemon(PokemonCollection::index_type index) const;
-	Pokemon & pokemon(PokemonCollection::index_type index);
+	Pokemon const & pokemon(containers::index_type<PokemonCollection> index) const;
+	Pokemon & pokemon(containers::index_type<PokemonCollection> index);
 	Pokemon const & replacement() const;
 	Pokemon & replacement();
 	template<typename... Args>

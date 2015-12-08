@@ -46,11 +46,7 @@ void PokemonCollection::initialize_replacement () {
 	current_replacement = index();
 }
 
-PokemonCollection::index_type PokemonCollection::replacement() const {
-	return current_replacement;
-}
-
-void PokemonCollection::set_replacement (index_type const new_index) {
+void PokemonCollection::set_replacement(containers::index_type<PokemonCollection> const new_index) {
 	current_replacement = check_range (new_index);
 }
 
@@ -75,25 +71,22 @@ bool PokemonCollection::is_switching_to_self (Moves const move) const {
 	return to_replacement(move) == index();
 }
 
-TeamSize PokemonCollection::size() const {
-	return containers::size(container);
-}
 TeamSize PokemonCollection::real_size() const {
 	return true_size;
 }
 
-PokemonCollection::index_type PokemonCollection::find_index(Species const name) const {
-	for (index_type const found_index : bounded::integer_range(size())) {
+containers::index_type<PokemonCollection> PokemonCollection::find_index(Species const name) const {
+	for (auto const found_index : bounded::integer_range(size(*this))) {
 		if (operator()(found_index) == name)
 			return found_index;
 	}
 	throw PokemonNotFound(name);
 }
 
-bool PokemonCollection::seen (Species const name) {
+bool PokemonCollection::seen(Species const name) {
 	// In the event of current_replacement == size(), a new Pokemon is added
 	// immediately, increasing size() by 1, making this safe.
-	for (current_replacement = 0_bi; current_replacement != size(); ++current_replacement) {
+	for (current_replacement = 0_bi; current_replacement != size(*this); ++current_replacement) {
 		if (name == at_replacement())
 			return true;
 	}
@@ -102,13 +95,13 @@ bool PokemonCollection::seen (Species const name) {
 
 void PokemonCollection::remove_active () {
 	assert(index() != replacement());
-	containers::erase(container, container.begin() + index());
+	containers::erase(static_cast<PokemonContainer &>(*this), begin() + index());
 	decrement_real_size();
 	// We don't need any bounds checking here because we've already established
 	// that replacement() is greater than index(), so it cannot be 0, which is
 	// the only value that could get this out of bounds.
-	set_index((index() > replacement()) ? replacement() : index_type(replacement() - 1_bi, bounded::non_check));
-	for (auto & pokemon : container) {
+	set_index((index() > replacement()) ? replacement() : containers::index_type<PokemonCollection>(replacement() - 1_bi, bounded::non_check));
+	for (auto & pokemon : *this) {
 		all_moves(pokemon).remove_switch();
 	}
 }

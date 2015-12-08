@@ -202,7 +202,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	}
 	else if (!moved(switcher.pokemon())) {
 		Pokemon & pokemon = switcher.pokemon(replacement);
-		all_moves(pokemon).set_index(static_cast<MoveCollection::index_type>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
+		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
 	}
 }
 

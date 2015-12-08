@@ -42,9 +42,8 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 private:
 	using Base = detail::Collection<PokemonContainer>;
 public:
-	using Base::index_type;
 	explicit PokemonCollection(TeamSize initial_size);
-	// Need to rework my constructors or something so that this is not
+	// TODO: Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
 	void initialize_size(TeamSize const new_size);
 	void initialize_replacement ();
@@ -54,36 +53,25 @@ public:
 		auto const self = const_cast<PokemonCollection const *>(this);
 		return const_cast<Pokemon &>(self->operator()(std::forward<Args>(args)...));
 	}
-	auto begin() const {
-		return container.begin();
-	}
-	auto begin() {
-		return container.begin();
-	}
-	auto end() const {
-		return container.end();
-	}
-	auto end() {
-		return container.end();
+
+	auto replacement() const {
+		return current_replacement;
 	}
 
-	index_type replacement() const;
-	void set_replacement (index_type const new_index);
+	void set_replacement(containers::index_type<PokemonCollection> const new_index);
 	Pokemon const & at_replacement () const;
 	Pokemon & at_replacement ();
 	Moves replacement_to_switch () const;
 	void replacement_from_switch ();
 	bool is_switching_to_self () const;
 	bool is_switching_to_self(Moves move) const;
-	TeamSize size() const;
 	TeamSize real_size() const;
-	index_type find_index(Species name) const;
+	containers::index_type<PokemonCollection> find_index(Species name) const;
 
 	template<typename... Args>
 	void add(Args&&... args) {
-		container.emplace_back(true_size, std::forward<Args>(args)...);
-		// Guaranteed to be a valid index
-		current_replacement = static_cast<index_type>(size() - 1_bi);
+		emplace_back(true_size, std::forward<Args>(args)...);
+		current_replacement = size(*this) - 1_bi;
 	}
 	template<typename...Args>
 	bool add_if_not_present(Species name, Args&&... args) {
@@ -97,9 +85,9 @@ public:
 	template<typename Function1, typename Function2>
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
 		ResetIndex reset(*this);
-		for (auto const test_replacement : bounded::integer_range(size())) {
+		for (auto const test_replacement : bounded::integer_range(size(*this))) {
 			current_replacement = test_replacement;
-			if (is_switching_to_self() and size() > 1_bi)
+			if (is_switching_to_self() and size(*this) > 1_bi)
 				continue;
 			f();
 			if (break_out())
@@ -124,17 +112,13 @@ private:
 		}
 	private:
 		PokemonCollection & copy;
-		index_type const index;
+		containers::index_type<PokemonCollection> const index;
 	};
-	using Base::unchecked_value;
-	Pokemon & unchecked_value(index_type const specified_index) {
-		auto const self = const_cast<PokemonCollection const *>(this);
-		return const_cast<Pokemon &>(self->unchecked_value(specified_index));
-	}
+
 	bool seen(Species name);
-	void decrement_real_size ();
+	void decrement_real_size();
 	// If a Pokemon switches / faints, what Pokemon should replace it?
-	index_type current_replacement;
+	containers::index_type<PokemonCollection> current_replacement;
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize true_size;
 };

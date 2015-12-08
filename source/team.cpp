@@ -60,10 +60,10 @@ Team::Team(std::mt19937 & random_engine, boost::filesystem::path const & team_fi
 	load(files[distribution(random_engine)]);
 }
 
-Pokemon const & Team::pokemon(PokemonCollection::index_type const index) const {
+Pokemon const & Team::pokemon(containers::index_type<PokemonCollection> const index) const {
 	return all_pokemon()(index);
 }
-Pokemon & Team::pokemon(PokemonCollection::index_type const index) {
+Pokemon & Team::pokemon(containers::index_type<PokemonCollection> const index) {
 	return all_pokemon()(index);
 }
 
@@ -83,7 +83,7 @@ PokemonCollection & Team::all_pokemon() {
 }
 
 TeamSize Team::number_of_seen_pokemon() const {
-	return all_pokemon().size();
+	return containers::size(all_pokemon());
 }
 TeamSize Team::size() const {
 	return all_pokemon().real_size();
