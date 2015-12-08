@@ -47,6 +47,10 @@
 
 #include "../team_predictor/team_predictor.hpp"
 
+#include <bounded_integer/integer_range.hpp>
+
+#include <containers/algorithms/find.hpp>
+
 #include <boost/filesystem.hpp>
 
 #include <algorithm>
@@ -59,32 +63,37 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-Battle::Battle(std::string const & _opponent, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file):
-	opponent_name(_opponent),
-	random_engine(seed),
-	ai(random_engine, team_file),
+namespace {
+
+auto make_team(std::random_device::result_type seed, boost::filesystem::path const & team_file) {
+	std::mt19937 random_engine(seed);
+	Team team(random_engine, team_file);
+	return std::make_tuple(std::move(random_engine), std::move(team));
+}
+
+}	// namespace
+
+Battle::Battle(std::string opponent_, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file):
+	Battle(std::move(opponent_), foe_size, battle_depth, make_team(seed, team_file))
+{
+	initialize_turn();
+}
+
+Battle::Battle(std::string opponent_, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, Team team):
+	Battle(std::move(opponent_), foe_size, battle_depth, std::make_tuple(std::mt19937(seed), std::move(team)))
+{
+	initialize_turn();
+}
+
+Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::tuple<std::mt19937, Team> tuple):
+	opponent_name(std::move(opponent_)),
+	random_engine(std::move(std::get<std::mt19937>(tuple))),
+	ai(std::move(std::get<Team>(tuple))),
 	foe(foe_size),
+	slot_memory(ai.all_pokemon().begin(), ai.all_pokemon().end()),
 	updated_hp(ai),
 	depth(battle_depth)
 	{
-	initialize();
-}
-
-Battle::Battle(std::string const & _opponent, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, Team const & team):
-	opponent_name(_opponent),
-	random_engine(seed),
-	ai(team),
-	foe(foe_size),
-	updated_hp(ai),
-	depth(battle_depth)
-	{
-	initialize();
-}
-
-void Battle::initialize() {
-	for (auto const & pokemon : ai.all_pokemon()) {
-		slot_memory.emplace_back(pokemon);
-	}
 	initialize_turn();
 }
 
@@ -327,11 +336,11 @@ void Battle::handle_end(Client const & client, Result const result) const {
 
 uint8_t Battle::switch_slot(Moves move) const {
 	Species const name = ai.pokemon(to_replacement(move));
-	for (uint8_t n = 0; n != slot_memory.size(); ++n) {
-		if (slot_memory [n] == name)
-			return n;
+	auto const it = containers::find(slot_memory.begin(), slot_memory.end(), name);
+	if (it == slot_memory.end()) {
+		throw PokemonNotFound(name);
 	}
-	throw PokemonNotFound(name);
+	return static_cast<std::uint8_t>(it - slot_memory.begin());
 }
 
 VisibleFoeHP Battle::max_damage_precision() const {
@@ -494,10 +503,9 @@ void Battle::handle_item_message(Party party, Item item) {
 }
 
 void Battle::slot_memory_bring_to_front() {
-	for (Species & name : slot_memory) {
-		if (ai.replacement() == name) {
-			std::swap(slot_memory.front(), name);
-		}
+	auto const it = containers::find(slot_memory.begin(), slot_memory.end(), ai.replacement());
+	if (it != slot_memory.end()) {
+		std::swap(*it, front(slot_memory));
 	}
 }
 

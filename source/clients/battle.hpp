@@ -70,8 +70,8 @@ struct Battle {
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file);
-	Battle(std::string const & opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, Team const & team);
+	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file);
+	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, Team team);
 	uint8_t switch_slot(Moves move) const;
 	virtual VisibleFoeHP max_damage_precision() const;
 	void initialize_turn();
@@ -85,7 +85,8 @@ protected:
 	void handle_item_message(Party party, Item item);
 	void slot_memory_bring_to_front();
 private:
-	void initialize();
+	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::tuple<std::mt19937, Team> tuple);
+
 	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate);
 	void correct_hp_and_report_errors(Team & team);
 	void normalize_hp();
@@ -104,7 +105,7 @@ private:
 	mutable std::mt19937 random_engine;
 	Team ai;
 	Team foe;
-	std::vector <Species> slot_memory;
+	containers::static_vector<Species, static_cast<intmax_t>(max_pokemon_per_team)> slot_memory;
 	UpdatedHP updated_hp;
 	Weather weather;
 	Team * first;
