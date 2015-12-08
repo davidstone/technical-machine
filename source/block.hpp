@@ -22,8 +22,6 @@
 #include "move/moves.hpp"
 #include "pokemon/species_forward.hpp"
 
-#include <containers/static_vector/static_vector.hpp>
-
 #include <cstddef>
 
 namespace technicalmachine {
@@ -32,8 +30,6 @@ struct ActivePokemon;
 struct MutableActivePokemon;
 struct Team;
 struct Weather;
-
-using StaticVectorMoves = containers::static_vector<Moves, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
 
 struct LegalSelections : private StaticVectorMoves {
 	using StaticVectorMoves::value_type;
