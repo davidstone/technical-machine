@@ -1,5 +1,5 @@
 // Generic outgoing messages
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,15 @@
 
 #pragma once
 
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <containers/vector/vector.hpp>
+
+#include <boost/asio/ip/tcp.hpp>
+
 #include <cstdint>
 #include <limits>
 #include <string>
-#include <vector>
-#include <boost/asio/ip/tcp.hpp>
-#include <bounded_integer/bounded_integer.hpp>
 
 namespace technicalmachine {
 struct Team;
@@ -56,7 +59,7 @@ struct OutMessage {
 	virtual void write_team (Team const & team, std::string const & = std::string()) = 0;
 	virtual void finalize() = 0;
 	void send(boost::asio::ip::tcp::socket & socket);
-	std::vector <uint8_t> buffer;
+	containers::vector<uint8_t> buffer;
 };
 
 }	// namespace technicalmachine

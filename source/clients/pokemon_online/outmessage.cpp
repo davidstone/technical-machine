@@ -163,11 +163,9 @@ void OutMessage::write_color () {
 
 void OutMessage::finalize() {
 	typedef uint16_t length_type;
-	length_type length = boost::endian::h_to_n(static_cast<length_type>(buffer.size()));
-	uint8_t * byte = reinterpret_cast <uint8_t *> (&length);
-	for (int n = 0; n != sizeof (length_type); ++n) {
-		buffer.insert (buffer.begin() + n, *(byte + n));
-	}
+	auto const length = boost::endian::h_to_n(static_cast<length_type>(size(buffer)));
+	auto const byte = reinterpret_cast<uint8_t const *> (&length);
+	buffer.insert(buffer.begin(), byte, byte + sizeof(length_type));
 }
 
 void OutMessage::reset_action_code () {
@@ -176,7 +174,7 @@ void OutMessage::reset_action_code () {
 	// message saying that it's ready to receive my action decision. This means
 	// that I have to be able to reset this action decision message to a "ready
 	// to be filled with the action decision" state.
-	buffer.resize (1);
+	resize(buffer, 1_bi);
 	buffer [0] = BATTLE_MESSAGE;
 }
 

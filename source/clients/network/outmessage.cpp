@@ -18,13 +18,15 @@
 
 #include "outmessage.hpp"
 
-#include <cstdint>
+#include <bounded_integer/integer_range.hpp>
+
+#include <endian/endian.hpp>
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/write.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
-#include <endian/endian.hpp>
+#include <cstdint>
 
 namespace technicalmachine {
 namespace network {
@@ -36,11 +38,12 @@ OutMessage::OutMessage (uint8_t const code) {
 namespace {
 
 template<typename Integer>
-void write_bytes(std::vector<uint8_t> & buffer, Integer const bytes) {
+void write_bytes(containers::vector<uint8_t> & buffer, Integer const bytes) {
 	Integer const network_byte = boost::endian::h_to_n(bytes);
-	uint8_t const * byte = reinterpret_cast<uint8_t const *>(&network_byte);
-	for (unsigned n = 0; n != sizeof(Integer); ++n)
-		buffer.emplace_back(*(byte + n));
+	auto const byte = reinterpret_cast<uint8_t const *>(&network_byte);
+	for (auto const n : bounded::integer_range(bounded::constant<sizeof(Integer)>)) {
+		push_back(buffer, *(byte + n));
+	}
 }
 
 }	// namespace
@@ -59,8 +62,8 @@ void OutMessage::write_int (uint32_t bytes) {
 
 void OutMessage::send(boost::asio::ip::tcp::socket & socket) {
 	finalize();
-	boost::asio::write(socket, boost::asio::buffer(buffer));
+	boost::asio::write(socket, boost::asio::buffer(buffer.data(), static_cast<std::size_t>(size(buffer))));
 }
 
-}	// namespace technicalmachine
 }	// namespace network
+}	// namespace technicalmachine
