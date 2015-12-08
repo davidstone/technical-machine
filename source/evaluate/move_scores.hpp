@@ -18,10 +18,12 @@
 
 #pragma once
 
+#include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
-#include "../pokemon/species_forward.hpp"
 
-#include <vector>
+#include <containers/static_vector/static_vector.hpp>
+
+#include <limits>
 
 namespace technicalmachine {
 struct Pokemon;
@@ -31,7 +33,8 @@ struct MoveScores {
 	double get(Moves move) const;
 	void set(Moves move, double value);
 private:
-	std::vector<std::pair<Moves, double>> m_scores;
+	static constexpr auto capacity = std::numeric_limits<MoveSize>::max();
+	containers::static_vector<std::pair<Moves, double>, static_cast<intmax_t>(capacity)> m_scores;
 };
 
 }	// namespace technicalmachine
