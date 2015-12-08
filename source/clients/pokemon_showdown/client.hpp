@@ -1,5 +1,5 @@
 // Connect to Pokemon Showdown
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,14 +18,16 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string>
+#include "inmessage.hpp"
+#include "../client.hpp"
+
+#include <containers/vector/vector.hpp>
 
 #include <websocketpp/client.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
 
-#include "inmessage.hpp"
-#include "../client.hpp"
+#include <cstdint>
+#include <string>
 
 namespace technicalmachine {
 namespace ps {
@@ -53,8 +55,8 @@ private:
 	std::string m_host;
 	std::string m_username;
 	std::string m_password;
-	std::vector<std::string> m_highlights;
-	std::vector<std::string> m_trusted_users;
+	containers::vector<std::string> m_highlights;
+	containers::vector<std::string> m_trusted_users;
 	unsigned m_chattiness;
 };
 

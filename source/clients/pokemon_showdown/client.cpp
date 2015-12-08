@@ -21,18 +21,17 @@
 
 #include "client.hpp"
 
-#include <algorithm>
-#include <cstdint>
-#include <iterator>
-#include <string>
-#include <vector>
-
 #include "battle.hpp"
 #include "inmessage.hpp"
 #include "outmessage.hpp"
 
 #include "../../settings_file.hpp"
 #include "../../team.hpp"
+
+#include <algorithm>
+#include <cstdint>
+#include <iterator>
+#include <string>
 
 namespace technicalmachine {
 namespace ps {
@@ -57,11 +56,11 @@ using message_ptr = websocketpp::config::asio_client::message_type::ptr;
 
 InMessage parse_message(message_ptr const & ptr) {
 	static constexpr char delimiter = '|';
-	auto tokens = split<std::vector<std::string> >(ptr->get_payload(), delimiter);
-	assert(tokens.size() >= 2);
+	auto tokens = split<containers::vector<std::string>>(ptr->get_payload(), delimiter);
+	assert(size(tokens) >= 2_bi);
 	std::string & room = *tokens.begin();
-	std::string & type = *(tokens.begin() + 1);
-	InMessage::Data data(std::make_move_iterator(tokens.begin() + 2), std::make_move_iterator(tokens.end()));
+	std::string & type = *(tokens.begin() + 1_bi);
+	InMessage::Data data(std::make_move_iterator(tokens.begin() + 2_bi), std::make_move_iterator(tokens.end()));
 	return InMessage(std::move(room), std::move(type), std::move(data));
 }
 }	// namespace
