@@ -1,5 +1,5 @@
 // Read "User" message from PO
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,49 +20,52 @@
 
 #include "inmessage.hpp"
 
-#include "../../pokemon/max_pokemon_per_team.hpp"
+#include <bounded_integer/integer_range.hpp>
 
 #include <cstdint>
-#include <vector>
 #include <utility>
 
 namespace technicalmachine {
 namespace po {
+namespace {
+
 using namespace bounded::literal;
 
-static std::vector<std::pair <uint16_t, uint8_t>> load_team_vector(InMessage & msg) {
-	std::vector<std::pair<uint16_t, uint8_t>> temp_team;
-	temp_team.reserve(max_pokemon_per_team.value());
-	for (bounded::integer<0, max_pokemon_per_team.value()> n = 0_bi; n != max_pokemon_per_team; ++n) {
+auto load_team_vector(InMessage & msg) {
+	PokemonStaticVector team;
+	for (auto const n : bounded::integer_range(max_pokemon_per_team)) {
+		static_cast<void>(n);
 		uint16_t const species = msg.read_short();
 		uint8_t const forme = msg.read_byte();
-		temp_team.emplace_back(species, forme);
+		team.emplace_back(species, forme);
 	}
-	return temp_team;
+	return team;
 }
 
-User::User (InMessage & msg):
-	id (msg.read_int ()),
-	name (msg.read_string ()),
-	info (msg.read_string ()),
-	authority (static_cast<int8_t> (msg.read_byte ())),
-	flags (msg.read_byte ()),
-	logged_in (flags % 2 >= 1),
-	battling (flags % 4 >= 2),
-	away (flags % 8 >= 4),
-	rating (static_cast<int16_t> (msg.read_short ())),
-	team (load_team_vector (msg)),
-	avatar (msg.read_short ()),
-	tier (msg.read_string ()),
+}	// namespace
 
-	color_spec (msg.read_byte ()),
-	alpha (msg.read_short ()),
-	red (msg.read_short ()),
-	green (msg.read_short ()),
-	blue (msg.read_short ()),
-	padding (msg.read_short ()),
+User::User(InMessage & msg):
+	id(msg.read_int()),
+	name(msg.read_string()),
+	info(msg.read_string()),
+	authority(static_cast<int8_t>(msg.read_byte())),
+	flags(msg.read_byte()),
+	logged_in(flags % 2 >= 1),
+	battling(flags % 4 >= 2),
+	away(flags % 8 >= 4),
+	rating(static_cast<int16_t>(msg.read_short())),
+	team(load_team_vector(msg)),
+	avatar(msg.read_short()),
+	tier(msg.read_string()),
 
-	gen (msg.read_byte ()) {
+	color_spec(msg.read_byte()),
+	alpha(msg.read_short()),
+	red(msg.read_short()),
+	green(msg.read_short()),
+	blue(msg.read_short()),
+	padding(msg.read_short()),
+
+	gen(msg.read_byte()) {
 }
 
 }	// namespace po

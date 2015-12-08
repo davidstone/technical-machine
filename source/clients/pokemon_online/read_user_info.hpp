@@ -1,5 +1,5 @@
 // Read "User" message from PO
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,9 +18,12 @@
 
 #pragma once
 
+#include "../../pokemon/max_pokemon_per_team.hpp"
+
+#include <containers/static_vector/static_vector.hpp>
+
 #include <cstdint>
 #include <string>
-#include <vector>
 #include <utility>
 
 namespace technicalmachine {
@@ -28,7 +31,11 @@ namespace po {
 
 struct InMessage;
 
+using PokemonStaticVector = containers::static_vector<std::pair<uint16_t, uint8_t>, max_pokemon_per_team.value()>;
+
 struct User {
+	explicit User(InMessage & msg);
+
 	uint32_t const id;
 	std::string const name;
 	std::string const info;
@@ -38,8 +45,8 @@ struct User {
 	bool const battling;
 	bool const away;
 	int16_t const rating;
-	std::vector <std::pair <uint16_t, uint8_t>> const team;
-	uint16_t avatar;
+	PokemonStaticVector const team;
+	uint16_t const avatar;
 	std::string const tier;
 	uint8_t const color_spec;
 	uint16_t const alpha;
@@ -48,7 +55,6 @@ struct User {
 	uint16_t const blue;
 	uint16_t const padding;
 	uint8_t const gen;
-	explicit User (InMessage & msg);
 };
 
 }	// namespace po
