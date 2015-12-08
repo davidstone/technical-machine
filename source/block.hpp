@@ -33,21 +33,21 @@ struct MutableActivePokemon;
 struct Team;
 struct Weather;
 
-using LegalSelectionsBase = containers::static_vector<Moves, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
+using StaticVectorMoves = containers::static_vector<Moves, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
 
-struct LegalSelections : private LegalSelectionsBase {
-	using LegalSelectionsBase::value_type;
-	using LegalSelectionsBase::size_type;
-	using LegalSelectionsBase::const_iterator;
+struct LegalSelections : private StaticVectorMoves {
+	using StaticVectorMoves::value_type;
+	using StaticVectorMoves::size_type;
+	using StaticVectorMoves::const_iterator;
 
 	LegalSelections(Team const & user, ActivePokemon other, Weather weather);
 	auto species() const {
 		return m_species;
 	}
 
-	using LegalSelectionsBase::begin;
-	using LegalSelectionsBase::end;
-	using LegalSelectionsBase::operator[];
+	using StaticVectorMoves::begin;
+	using StaticVectorMoves::end;
+	using StaticVectorMoves::operator[];
 private:
 	Species m_species;
 };

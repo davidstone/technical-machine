@@ -196,12 +196,12 @@ double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned
 	// some result.
 	
 	auto alpha = static_cast<double>(-victory - 1_bi);
-	for (RankedMove const & ai_move : ai_index) {
-		set_index(all_moves(ai.pokemon()), ai_move.name());
+	for (auto const & ai_move : ai_index) {
+		set_index(all_moves(ai.pokemon()), ai_move);
 		print_action (ai, first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
-		for (RankedMove const & foe_move : foe_index) {
-			set_index(all_moves(foe.pokemon()), foe_move.name());
+		for (auto const & foe_move : foe_index) {
+			set_index(all_moves(foe.pokemon()), foe_move);
 			print_action (foe, first_turn);
 			auto const max_score = order_branch(ai, foe, weather, depth, evaluate);
 			update_foe_best_move(foe, foe_scores, beta, max_score, first_turn);

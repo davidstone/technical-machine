@@ -166,7 +166,6 @@ evaluate_sources = prepend_dir('evaluate', [
 	'evaluate.cpp',
 	'expectiminimax.cpp',
 	'move_scores.cpp',
-	'ranked.cpp',
 	'reorder.cpp',
 	'transposition.cpp',
 ])

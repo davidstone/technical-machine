@@ -1,5 +1,5 @@
 // Reorder moves for efficient evaluation
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,18 +18,16 @@
 
 #include "reorder.hpp"
 
-#include <algorithm>
-#include <vector>
-
 #include "move_scores.hpp"
 
 #include "../block.hpp"
-
 #include "../move/moves.hpp"
+
+#include <algorithm>
 
 namespace technicalmachine {
 
-std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai) {
+StaticVectorMoves reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai) {
 	// This takes all of a Pokemon's moves and sorts them based on previously
 	// evaluated scores. Moves that haven't been evaluated are sorted to the
 	// end. I do this because alpha-beta pruning is most efficient when the
@@ -37,16 +35,13 @@ std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const 
 	// then only has to prove that further moves aren't as good as the move
 	// already searched; it is not important to know how much worse they are.
 	// Moves that cannot be selected are excluded.
-	std::vector<RankedMove> output;
-	for (auto const & move : input) {
-		output.emplace_back(move, move_scores.get(move));
-	}
-	if (ai) {
-		std::sort(output.begin(), output.end(), std::greater<RankedMove>());
-	}
-	else {
-		std::sort(output.begin(), output.end(), std::less<RankedMove>());
-	}
+	StaticVectorMoves output(input.begin(), input.end());
+	auto compare = [&](auto const & lhs, auto const & rhs) {
+		auto const lhs_score = move_scores.get(lhs);
+		auto const rhs_score = move_scores.get(rhs);
+		return ai ? (lhs_score > rhs_score) : (lhs_score < rhs_score);
+	};
+	std::sort(output.begin(), output.end(), compare);
 	return output;
 }
 

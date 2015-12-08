@@ -1,5 +1,5 @@
 // Reorder moves for efficient evaluation
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,14 +18,16 @@
 
 #pragma once
 
-#include <vector>
-#include "ranked.hpp"
+#include "../block.hpp"
+#include "../move/max_moves_per_pokemon.hpp"
+#include "../move/moves.hpp"
+
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
-struct LegalSelections;
 struct MoveScores;
 
-std::vector<RankedMove> reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
+StaticVectorMoves reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
 
 }	// namespace technicalmachine
