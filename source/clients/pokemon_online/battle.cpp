@@ -27,14 +27,16 @@
 
 #include "../../team.hpp"
 
+#include "../../move/max_moves_per_pokemon.hpp"
+
 #include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/pokemon.hpp"
 
 #include <containers/array/array.hpp>
+#include <containers/static_vector/make_static_vector.hpp>
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 namespace po {
@@ -559,8 +561,8 @@ void Battle::parse_offer_choice (Client & client, InMessage & msg, uint32_t cons
 	bool const can_switch = msg.read_byte();
 	bool const can_attack = msg.read_byte();
 	static_cast<void>(can_attack);
-	std::vector<uint8_t> attacks_allowed(moves_per_pokemon());
-	std::generate(std::begin(attacks_allowed), std::end(attacks_allowed), [&]() { return msg.read_byte(); });
+	auto attacks_allowed = containers::make_static_vector<uint8_t>(max_moves_per_pokemon);
+	std::generate(attacks_allowed.begin(), attacks_allowed.end(), [&]() { return msg.read_byte(); });
 	handle_request_action(client.detailed(), client.evaluation_constants(), action, battle_id, can_switch, attacks_allowed);
 }
 

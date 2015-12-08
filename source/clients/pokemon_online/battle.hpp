@@ -1,5 +1,5 @@
 // Pokemon Online battle logic
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -39,9 +39,6 @@ struct Battle final : ::technicalmachine::Battle {
 		set_party_if_unknown(Party(BOUNDED_CONDITIONAL(challenger, 0_bi, 1_bi)));
 	}
 	void handle_message (Client & client, uint32_t battle_id, uint8_t command, Party party, InMessage & msg);
-	static constexpr unsigned moves_per_pokemon() {
-		return 4;
-	}
 private:
 	void parse_begin_turn (InMessage & msg) const;
 	void parse_send_out (InMessage & msg, Party party);

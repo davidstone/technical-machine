@@ -26,16 +26,18 @@
 #include "../variable.hpp"
 #include "../weather.hpp"
 
+#include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
 
 #include "../pokemon/species_forward.hpp"
+
+#include <containers/static_vector/static_vector.hpp>
 
 #include <boost/filesystem/path.hpp>
 
 #include <cstdint>
 #include <random>
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 struct Client;
@@ -53,7 +55,7 @@ struct Battle {
 	void write_team(network::OutMessage & msg, std::string const & username = std::string()) const;
 	Team predict_foe_team(DetailedStats const & detailed) const;
 	void handle_begin_turn(uint16_t turn_count) const;
-	void handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector <uint8_t> const & attacks_allowed, bool forced = false);
+	void handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, containers::static_vector<uint8_t, static_cast<intmax_t>(max_moves_per_pokemon)> const & attacks_allowed, bool forced = false);
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
 	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
 	void handle_set_pp(Party changer, uint8_t slot, uint8_t pp);

@@ -55,7 +55,6 @@
 #include <iostream>
 #include <random>
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 struct DetailedStats;
@@ -109,7 +108,7 @@ void Battle::handle_begin_turn(uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
 }
 
-void Battle::handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, std::vector<uint8_t> const & attacks_allowed, bool forced) {
+void Battle::handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, containers::static_vector<uint8_t, static_cast<intmax_t>(max_moves_per_pokemon)> const & attacks_allowed, bool forced) {
 	// At some point, I will create a fail-safe that actually checks that the
 	// move TM tries to use is considered a valid move by the server.
 	update_from_previous_turn();
@@ -119,8 +118,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 			// TODO: throw an exception
 			assert(can_switch);
 			msg.write_switch(battle_id, switch_slot(move));
-		}
-		else {
+		} else {
 			// TODO: fix for 2v2
 			auto const move_index = *index(all_moves(ai.pokemon()), move);
 			auto const target = other(my_party);
@@ -128,8 +126,7 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 			static_cast<void>(attacks_allowed);
 			msg.write_move(battle_id, static_cast<uint8_t>(move_index), static_cast<uint8_t>(target.value()));
 		}
-	}
-	else {
+	} else {
 		msg.write_move(battle_id, 1);
 	}
 	if (!switch_decision_required(ai.pokemon())) {
@@ -187,8 +184,9 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	// situation in which a team switches multiple times in one turn (due to
 	// replacing fainted Pokemon).
 	auto const replacement = switcher.all_pokemon().replacement();
-	if (switcher.is_me())
+	if (switcher.is_me()) {
 		std::cerr << to_string(static_cast<Species>(switcher.pokemon(replacement))) << '\n';
+	}
 	
 	// This assumes Species Clause is in effect
 	bool const added = switcher.all_pokemon().add_if_not_present(species, level, gender, nickname);
@@ -199,8 +197,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	// TODO: I'm skeptical of this logic
 	if (other.number_of_seen_pokemon() != 0_bi and is_phaze(current_move(other.replacement()))) {
 		variable(other).set_phaze_index(switcher, species);
-	}
-	else if (!moved(switcher.pokemon())) {
+	} else if (!moved(switcher.pokemon())) {
 		Pokemon & pokemon = switcher.pokemon(replacement);
 		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
 	}
@@ -367,12 +364,10 @@ void Battle::do_turn() {
 		if (switch_decision_required(last->pokemon())) {
 			replacement(*last, *first);
 		}
-	}
-	else if (switch_decision_required(last->pokemon())) {
+	} else if (switch_decision_required(last->pokemon())) {
 		normalize_hp();
 		replacement(*last, *first);
-	}
-	else {
+	} else {
 		std::cout << "First move: " << to_string(static_cast<Species>(first->pokemon())) << " uses " << to_string(current_move(first->pokemon())) << '\n';
 		std::cout << "Last move: " << to_string(static_cast<Species>(last->pokemon())) << " uses " << to_string(current_move(last->pokemon())) << '\n';
 		// Anything with recoil will mess this up
@@ -447,8 +442,7 @@ namespace {
 auto normalize_hp(MutableActivePokemon pokemon, bool const fainted) {
 	if (fainted) {
 		pokemon.faint();
-	}
-	else {
+	} else {
 		HP & hp = get_hp(pokemon);
 		hp = bounded::max(hp.current(), 1_bi);
 	}
