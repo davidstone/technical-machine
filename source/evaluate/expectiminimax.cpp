@@ -56,7 +56,6 @@
 #include <iostream>
 #include <random>
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 namespace {
