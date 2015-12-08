@@ -36,7 +36,7 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// this works in all situations.
 	for (auto const & move : all_moves(pokemon)) {
 		constexpr auto initial = static_cast<double>(victory + 1_bi);
-		m_scores.emplace_back(key_type(pokemon, move), initial);
+		m_scores.emplace_back(move, initial);
 	}
 	std::sort(m_scores.begin(), m_scores.end());
 }
@@ -44,22 +44,21 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 namespace {
 
 template<typename Container>
-auto & get(Container & container, Species const species, Moves const move) {
-	auto const key = std::make_pair(species, move);
+auto & search(Container & container, Moves const move) {
 	auto compare = [](auto const & element, auto const & requested) { return element.first < requested; };
-	auto const it = std::lower_bound(container.begin(), container.end(), key, compare);
+	auto const it = std::lower_bound(container.begin(), container.end(), move, compare);
 	assert(it != container.end());
-	assert(it->first == key);
+	assert(it->first == move);
 	return it->second;
 }
 
 }	// namespace
 
-double MoveScores::at(Species const species, Moves const move) const {
-	return get(m_scores, species, move);
+double MoveScores::get(Moves const move) const {
+	return search(m_scores, move);
 }
-double & MoveScores::at(Species const species, Moves const move) {
-	return get(m_scores, species, move);
+void MoveScores::set(Moves const move, double const value) {
+	search(m_scores, move) = value;
 }
 
 }	// namespace technicalmachine

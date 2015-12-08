@@ -18,21 +18,20 @@
 
 #pragma once
 
-#include <vector>
 #include "../move/moves.hpp"
 #include "../pokemon/species_forward.hpp"
+
+#include <vector>
 
 namespace technicalmachine {
 struct Pokemon;
 
 struct MoveScores {
 	explicit MoveScores(Pokemon const & pokemon);
-	double at(Species species, Moves move) const;
-	double & at(Species species, Moves move);
+	double get(Moves move) const;
+	void set(Moves move, double value);
 private:
-	using key_type = std::pair<Species, Moves>;
-	using container_type = std::vector<std::pair<key_type, double>>;
-	container_type m_scores;
+	std::vector<std::pair<Moves, double>> m_scores;
 };
 
 }	// namespace technicalmachine

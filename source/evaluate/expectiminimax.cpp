@@ -209,7 +209,7 @@ double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned
 			if (beta <= alpha)
 				break;
 		}
-		ai_scores.at(ai.pokemon(), current_move(ai.pokemon())) = beta;
+		ai_scores.set(current_move(ai.pokemon()), beta);
 		update_best_move(alpha, beta, first_turn, current_move(ai.pokemon()), best_move);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == static_cast<double>(victory))
@@ -234,7 +234,7 @@ void update_best_move (double & alpha, double beta, bool first_turn, Moves new_m
 void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, double const max_score, bool const first_turn) {
 	if (beta > max_score) {
 		beta = max_score;
-		foe_scores.at(foe.pokemon(), current_move(foe.pokemon())) = beta;
+		foe_scores.set(current_move(foe.pokemon()), beta);
 	}
 	constexpr bool is_me = false;
 	print_estimated_score (first_turn, is_me, max_score);
