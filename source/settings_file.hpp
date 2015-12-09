@@ -18,11 +18,12 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <containers/vector/vector.hpp>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
+
+#include <string>
 
 namespace technicalmachine {
 
@@ -44,7 +45,7 @@ struct Settings {
 	static boost::filesystem::path const & file_name();
 
 	boost::filesystem::path team_file;
-	std::vector <Server> servers;
+	containers::vector<Server> servers;
 	unsigned chattiness;
 };
 

@@ -121,7 +121,7 @@ void Client::load_settings (bool const reloading) {
 	m_chattiness = settings.chattiness;
 	
 	if (!reloading) {
-		Server & server = settings.servers.front();
+		Server & server = front(settings.servers);
 		m_host = server.host;
 		m_port = server.port;
 		m_username = server.username;
