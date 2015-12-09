@@ -1,5 +1,5 @@
 // Generic incoming messages
-// Copyright (C) 2013 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,32 +18,46 @@
 
 #pragma once
 
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <containers/vector/vector.hpp>
+
+#include <boost/asio/ip/tcp.hpp>
+
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include <vector>
-#include <boost/asio/ip/tcp.hpp>
 
 namespace technicalmachine {
+using namespace bounded::literal;
+
 namespace network {
 struct Client;
 
 struct InMessage {
 	InMessage ();
-	virtual ~InMessage() {}
-	void reset (size_t bytes);
+	virtual ~InMessage() = default;
+
+	template<typename Size>
+	void reset(Size bytes) {
+		clear(buffer);
+		resize(buffer, bytes);
+		index = 0_bi;
+	}
+
 	uint8_t read_byte ();
 	uint16_t read_short ();
 	uint32_t read_int ();
 	void read_header(boost::asio::ip::tcp::socket & socket, Client & client);
 	void read_remaining_bytes();	// helpful for debugging
 private:
-	uint32_t read_bytes (size_t bytes);
+	using Buffer = containers::vector<std::uint8_t>;
+	uint32_t read_bytes(Buffer::size_type bytes);
 	virtual size_t header_size() const = 0;
 	virtual void read_body (boost::asio::ip::tcp::socket & socket, Client & client) = 0;
 public:
-	std::vector <uint8_t> buffer;
-	size_t index;
+	Buffer buffer;
+	Buffer::size_type index;
 };
 
 }	// namespace network

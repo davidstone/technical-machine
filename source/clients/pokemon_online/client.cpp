@@ -544,9 +544,9 @@ void Client::handle_tier_selection(InMessage & msg) const {
 	uint32_t const bytes_in_tier_list = msg.read_int();
 	static_cast<void>(bytes_in_tier_list);
 	containers::vector<std::pair<uint8_t, std::string>> tiers;
-	while (msg.index != msg.buffer.size()) {
-		uint8_t const tier_level = msg.read_byte();
-		std::string const tier_name = msg.read_string();
+	while (msg.index != size(msg.buffer)) {
+		auto const tier_level = msg.read_byte();
+		auto const tier_name = msg.read_string();
 		tiers.emplace_back(tier_level, tier_name);
 	}
 }
