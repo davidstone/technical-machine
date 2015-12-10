@@ -102,10 +102,6 @@ auto Variable::set_magnitude(Magnitude const magnitude) -> void {
 }
 
 namespace {
-using Probability = Variable::Probability;
-Probabilities magnitude_variables();
-Probabilities present_variables();
-Probabilities psywave_variables();
 
 constexpr bool almost_equal(double const lhs, double const rhs) {
 	return lhs - std::numeric_limits<double>::epsilon() <= rhs or rhs <= lhs + std::numeric_limits<double>::epsilon();
@@ -117,6 +113,40 @@ auto probability_sum(Probabilities const & value) -> double {
 	});
 }
 
+auto magnitude_variables() {
+	static Probabilities const variables {
+		Variable(10_bi, 0.05),
+		Variable(30_bi, 0.1),
+		Variable(50_bi, 0.2),
+		Variable(70_bi, 0.3),
+		Variable(90_bi, 0.2),
+		Variable(110_bi, 0.1),
+		Variable(150_bi, 0.05)
+	};
+	assert(almost_equal(probability_sum(variables), 1.0));
+	return variables;
+}
+
+auto present_variables() {
+	static constexpr auto present = containers::make_array(
+		0_bi, 40_bi, 80_bi, 120_bi
+	);
+	Probabilities probabilities;
+	for (auto const n : present) {
+		probabilities.emplace_back(n, 1.0 / static_cast<double>(size(present)));
+	}
+	return probabilities;
+}
+
+auto psywave_variables() {
+	Probabilities probabilities;
+	constexpr auto min = 50_bi;
+	constexpr auto max = 150_bi + 1_bi;
+	for (auto const n : bounded::integer_range(min, max)) {
+		probabilities.emplace_back(n, 1.0 / static_cast<double>(max - min));
+	}
+	return probabilities;
+}
 
 auto initial_probabilities() {
 	containers::array<Probabilities, static_cast<std::size_t>(Moves::END)> activate_probability {{
@@ -691,41 +721,6 @@ auto initial_probabilities() {
 		assert(almost_equal(probability_sum(probabilities), 1.0));
 	}
 	return activate_probability;
-}
-
-auto magnitude_variables() -> Probabilities {
-	static Probabilities const variables {
-		Variable(10_bi, 0.05),
-		Variable(30_bi, 0.1),
-		Variable(50_bi, 0.2),
-		Variable(70_bi, 0.3),
-		Variable(90_bi, 0.2),
-		Variable(110_bi, 0.1),
-		Variable(150_bi, 0.05)
-	};
-	assert(almost_equal(probability_sum(variables), 1.0));
-	return variables;
-}
-
-auto present_variables() -> Probabilities {
-	static constexpr auto present = containers::make_array(
-		0_bi, 40_bi, 80_bi, 120_bi
-	);
-	Probabilities probabilities;
-	for (auto const n : present) {
-		probabilities.emplace_back(n, 1.0 / static_cast<double>(size(present)));
-	}
-	return probabilities;
-}
-
-auto psywave_variables() -> Probabilities {
-	Probabilities probabilities;
-	constexpr auto min = 50_bi;
-	constexpr auto max = 150_bi + 1_bi;
-	for (auto const n : bounded::integer_range(min, max)) {
-		probabilities.emplace_back(n, 1.0 / static_cast<double>(max - min));
-	}
-	return probabilities;
 }
 
 auto phaze_probability(TeamSize const foe_size) -> Probabilities {

@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include <cstdint>
-#include <vector>
-
-#include <bounded_integer/bounded_integer.hpp>
-
 #include "move/moves.hpp"
 #include "pokemon/collection.hpp"
 #include "pokemon/level.hpp"
 #include "pokemon/species_forward.hpp"
+
+#include <bounded_integer/bounded_integer.hpp>
+
+#include <cstdint>
+#include <vector>
 
 namespace technicalmachine {
 struct ActivePokemon;
