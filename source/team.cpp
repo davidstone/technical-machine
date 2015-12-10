@@ -17,13 +17,6 @@
 
 #include "team.hpp"
 
-#include <cstdint>
-#include <string>
-#include <vector>
-
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-
 #include "ability.hpp"
 #include "damage.hpp"
 #include "item.hpp"
@@ -36,11 +29,31 @@
 #include "clients/pokemon_lab/read_team_file.hpp"
 #include "clients/pokemon_online/read_team_file.hpp"
 
-namespace technicalmachine {
+#include <containers/vector/vector.hpp>
 
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+
+#include <cstdint>
+#include <string>
+
+namespace technicalmachine {
 namespace {
 
-std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file);
+using Files = containers::vector<boost::filesystem::path>;
+auto open_directory_and_add_files (boost::filesystem::path const & team_file) -> Files {
+	Files files;
+	if (boost::filesystem::is_directory(team_file)) {
+		for (boost::filesystem::directory_iterator it(team_file); it != boost::filesystem::directory_iterator(); ++it) {
+			auto const temp = open_directory_and_add_files(it->path());
+			append(files, temp.begin(), temp.end());
+		}
+	} else if (boost::filesystem::is_regular_file(team_file)) {
+		push_back(files, team_file);
+	}
+	return files;
+}
+
 
 }	// namespace
 
@@ -54,10 +67,10 @@ Team::Team(std::mt19937 & random_engine, boost::filesystem::path const & team_fi
 	m_all_pokemon(6_bi), // This size gets corrected later
 	me(true)
 	{
-	std::vector <boost::filesystem::path> const files = open_directory_and_add_files (team_file);
-	assert(files.size() > 0);
-	std::uniform_int_distribution <size_t> distribution (0, files.size () - 1);
-	load(files[distribution(random_engine)]);
+	auto const files = open_directory_and_add_files(team_file);
+	assert(!empty(files));
+	std::uniform_int_distribution<intmax_t> distribution(0, static_cast<intmax_t>(containers::size(files) - 1_bi));
+	load(files[containers::index_type<Files>(distribution(random_engine))]);
 }
 
 Pokemon const & Team::pokemon(containers::index_type<PokemonCollection> const index) const {
@@ -117,23 +130,6 @@ void Team::clear_field() {
 void Team::move(bool const value) {
 	pokemon().set_moved(value);
 }
-
-namespace {
-
-std::vector<boost::filesystem::path> open_directory_and_add_files (boost::filesystem::path const & team_file) {
-	std::vector<boost::filesystem::path> files;
-	if (boost::filesystem::is_directory (team_file)) {
-		for (boost::filesystem::directory_iterator it (team_file); it != boost::filesystem::directory_iterator (); ++it) {
-			auto const temp = open_directory_and_add_files (it->path ());
-			files.insert (files.end(), temp.begin(), temp.end());
-		}
-	}
-	else if (boost::filesystem::is_regular_file (team_file))
-		files.emplace_back(team_file);
-	return files;
-}
-
-}	// namespace
 
 void Team::load(boost::filesystem::path const & team_file) {
 	// I do no error checking because I assume my team files will always be in
