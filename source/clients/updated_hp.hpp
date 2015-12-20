@@ -19,7 +19,7 @@
 #pragma once
 
 #include <map>
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 #include "../damage.hpp"
 #include "../pokemon/species_forward.hpp"
 #include "../stat/hp.hpp"

@@ -31,7 +31,7 @@
 
 #include "../type/effectiveness.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <containers/algorithms/count.hpp>
 #include <containers/algorithms/find.hpp>

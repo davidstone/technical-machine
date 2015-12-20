@@ -21,7 +21,7 @@
 
 #include "../ability.hpp"
 
-#include <bounded_integer/optional.hpp>
+#include <bounded/optional.hpp>
 
 #include <containers/array/make_array.hpp>
 

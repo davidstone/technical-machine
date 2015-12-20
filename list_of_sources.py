@@ -18,6 +18,8 @@ from program import prepend_dir, Program
 
 source_directory = 'source'
 
+include_directories = ['../endian', '../bounded_integer/include', '../containers/include']
+
 string_conversion_sources = prepend_dir('string_conversions', [
 	'ability.cpp',
 	'gender.cpp',
@@ -332,25 +334,23 @@ test_libraries = [
 	'boost_system',
 ]
 
-includes = ['../endian', '../bounded_integer', '../containers/include']
-
 programs = [
 	Program(
 		'ai',
 		sources = ai_sources,
 		libraries = ai_libraries,
-		include_directories = includes,
+		include_directories = include_directories,
 	),
 	Program(
 		'predict',
 		sources = predict_sources,
 		libraries = predict_libraries,
-		include_directories = includes,
+		include_directories = include_directories,
 	),
 	Program(
 		'test',
 		sources = test_sources,
 		libraries = test_libraries,
-		include_directories = includes,
+		include_directories = include_directories,
 	),
 ]

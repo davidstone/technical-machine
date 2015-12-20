@@ -21,7 +21,7 @@
 #include "operators.hpp"
 #include "range.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <containers/common_container_functions.hpp>
 #include <containers/index_type.hpp>

@@ -24,7 +24,7 @@
 #include "variable_collection.hpp"
 #include "../../collection.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <containers/array/make_array.hpp>
 #include <containers/static_vector/static_vector.hpp>

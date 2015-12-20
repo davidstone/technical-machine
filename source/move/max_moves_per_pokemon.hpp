@@ -21,7 +21,7 @@
 #include "moves.hpp"
 #include "../pokemon/max_pokemon_per_team.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 

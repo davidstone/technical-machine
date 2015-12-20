@@ -36,7 +36,7 @@
 
 #include "../../stat/stat.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

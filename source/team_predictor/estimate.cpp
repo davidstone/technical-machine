@@ -23,7 +23,7 @@
 #include "../enum_range.hpp"
 #include "../team.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <algorithm>
 #include <cstddef>

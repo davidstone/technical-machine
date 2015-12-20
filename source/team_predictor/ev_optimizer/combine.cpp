@@ -26,7 +26,7 @@
 
 #include "../../string_conversions/nature.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 

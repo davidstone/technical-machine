@@ -21,7 +21,7 @@
 #include "move.hpp"
 #include "moves.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <containers/algorithms/find.hpp>
 #include <containers/algorithms/iterator.hpp>

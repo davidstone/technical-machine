@@ -21,7 +21,7 @@
 #include "../stat/stage.hpp"
 #include "../stat/stat_names.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
 

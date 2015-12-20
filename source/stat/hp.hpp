@@ -25,7 +25,7 @@
 #include "../pokemon/species_forward.hpp"
 #include "../rational.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 struct Level;

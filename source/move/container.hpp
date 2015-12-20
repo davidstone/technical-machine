@@ -24,8 +24,8 @@
 
 #include "../operators.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 

@@ -21,7 +21,7 @@
 #include "../hash.hpp"
 #include "../operators.hpp"
 
-#include <bounded_integer/optional.hpp>
+#include <bounded/optional.hpp>
 
 #include <type_traits>
 

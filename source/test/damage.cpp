@@ -30,7 +30,7 @@
 
 #include "../pokemon/species.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <iostream>
 #include <vector>

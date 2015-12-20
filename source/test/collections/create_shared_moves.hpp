@@ -24,8 +24,8 @@
 #include "../../pokemon/collection.hpp"
 #include "../../pokemon/max_pokemon_per_team.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <containers/vector/vector.hpp>
 

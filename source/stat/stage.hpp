@@ -22,7 +22,7 @@
 #include "../operators.hpp"
 #include "../rational.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 #include <containers/array/array.hpp>
 
 #include <algorithm>

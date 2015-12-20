@@ -20,7 +20,7 @@
 
 #include "buffer_overrun.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/read.hpp>

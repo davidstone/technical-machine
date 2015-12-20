@@ -24,7 +24,7 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
-#include <bounded_integer/optional.hpp>
+#include <bounded/optional.hpp>
 
 #include <containers/algorithms/find.hpp>
 

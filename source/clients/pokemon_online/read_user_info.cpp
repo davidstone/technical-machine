@@ -20,7 +20,7 @@
 
 #include "inmessage.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <cstdint>
 #include <utility>

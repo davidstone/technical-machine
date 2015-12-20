@@ -21,7 +21,7 @@
 #include "hash.hpp"
 #include "operators.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <cstdint>
 #include <functional>

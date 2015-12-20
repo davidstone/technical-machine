@@ -20,8 +20,8 @@
 #include "../hash.hpp"
 #include "../operators.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/optional.hpp>
+#include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
 namespace technicalmachine {
 struct Pokemon;

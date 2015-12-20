@@ -23,7 +23,7 @@
 #include "pokemon/level.hpp"
 #include "pokemon/species_forward.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <cstdint>
 #include <vector>

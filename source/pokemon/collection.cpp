@@ -26,7 +26,7 @@
 #include "../move/is_switch.hpp"
 #include "../move/move.hpp"
 
-#include <bounded_integer/integer_range.hpp>
+#include <bounded/integer_range.hpp>
 
 #include <cassert>
 

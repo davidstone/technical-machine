@@ -19,7 +19,7 @@
 #pragma once
 
 #include <cstdint>
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include "stat_names.hpp"
 

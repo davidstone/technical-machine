@@ -20,7 +20,7 @@
 #include "enum.hpp"
 
 #include <cstdint>
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 

@@ -23,7 +23,7 @@
 
 #include "../operators.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

@@ -29,7 +29,7 @@
 
 #include "../string_conversions/conversion.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <containers/iterator_adapter.hpp>
 #include <containers/static_vector/static_vector.hpp>

@@ -22,7 +22,7 @@
 #include "../operators.hpp"
 #include "../move/max_moves_per_pokemon.hpp"
 
-#include <bounded_integer/optional.hpp>
+#include <bounded/optional.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

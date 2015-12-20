@@ -22,8 +22,8 @@
 #include "operators.hpp"
 #include "rational.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
-#include <bounded_integer/optional.hpp>
+#include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
 #include <cstdint>
 

@@ -26,8 +26,8 @@
 #include "../collection.hpp"
 #include "../operators.hpp"
 
-#include <bounded_integer/integer_range.hpp>
-#include <bounded_integer/optional.hpp>
+#include <bounded/integer_range.hpp>
+#include <bounded/optional.hpp>
 
 #include <vector>
 

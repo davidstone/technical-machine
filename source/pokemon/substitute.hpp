@@ -21,7 +21,7 @@
 #include "../operators.hpp"
 #include "../stat/hp.hpp"
 
-#include <bounded_integer/bounded_integer.hpp>
+#include <bounded/integer.hpp>
 
 #include <cstdint>
 #include <utility>
