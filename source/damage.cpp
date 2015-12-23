@@ -221,7 +221,7 @@ damage_type raw_damage(Team const & attacker_team, Team const & defender, Weathe
 		case Moves::Seismic_Toss:
 			return get_level(attacker)();
 		case Moves::Psywave:
-			return variable.psywave_damage(get_level(attacker));
+			return psywave_damage(variable, get_level(attacker));
 		case Moves::SonicBoom:
 			return 20_bi;
 		case Moves::Super_Fang:

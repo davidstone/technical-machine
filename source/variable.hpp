@@ -25,8 +25,9 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/static_vector/static_vector.hpp>
+
 #include <cstdint>
-#include <vector>
 
 namespace technicalmachine {
 struct ActivePokemon;
@@ -38,33 +39,29 @@ struct Team;
 struct Variable {
 	using value_type = bounded::integer<0, 150>;
 	using Probability = double;
-	Variable();
-	Variable(value_type value, Probability probability);
-	// Team is the Team that was phazed, not the team that used the phazing move
-	auto set_phaze_index(Team const & team, Species species) -> void;
-	auto set_flinch(bool set = true) -> void;
-	auto value() const -> value_type;
-	auto probability() const -> Probability;
-	auto effect_activates() const -> bool;
-	auto phaze_index(containers::index_type<PokemonCollection> const foe_index) const {
-		return (value() < foe_index) ?
-			containers::index_type<PokemonCollection>(value()) :
-			containers::index_type<PokemonCollection>(value() + 1_bi);
-	}
-	auto present_heals() const -> bool;
-
-	using PsywaveDamage = bounded::integer<1, 150>;
-	auto psywave_damage(Level const level) const -> PsywaveDamage {
-		return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(value()) / 100_bi);
-	}
 	using Magnitude = bounded::checked_integer<4, 10>;
-	auto set_magnitude(Magnitude magnitude) -> void;
-private:
-	value_type m_value;
-	Probability m_probability;
+
+	value_type value;
+	Probability probability;
 };
 
-using Probabilities = std::vector<Variable>;
-auto all_probabilities(ActivePokemon pokemon, TeamSize foe_size) -> Probabilities;
+using Probabilities = containers::static_vector<Variable, 101>;
+auto all_probabilities(ActivePokemon pokemon, TeamSize foe_size) -> Probabilities const &;
+
+// Team is the Team that was phazed, not the team that used the phazing move
+auto set_phaze_index(Variable & variable, Team const & team, Species species) -> void;
+auto set_flinch(Variable & variable, bool set = true) -> void;
+auto effect_activates(Variable variable) -> bool;
+constexpr auto phaze_index(Variable const variable, containers::index_type<PokemonCollection> const foe_index) {
+	return (variable.value < foe_index) ?
+		containers::index_type<PokemonCollection>(variable.value) :
+		containers::index_type<PokemonCollection>(variable.value + 1_bi);
+}
+auto present_heals(Variable variable) -> bool;
+
+inline auto psywave_damage(Variable const variable, Level const level) {
+	return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(variable.value) / 100_bi);
+}
+auto set_magnitude(Variable & variable, Variable::Magnitude magnitude) -> void;
 
 }	// namespace technicalmachine

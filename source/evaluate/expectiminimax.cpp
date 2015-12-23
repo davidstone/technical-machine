@@ -338,7 +338,7 @@ double random_move_effects_branch(Team & first, Team & last, Weather const weath
 			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_) {
 				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_);
 			};
-			score += generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, use_move_copy_branch) * last_variable.probability() * first_variable.probability();
+			score += generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, use_move_copy_branch) * last_variable.probability * first_variable.probability;
 		}
 	}
 	return score;

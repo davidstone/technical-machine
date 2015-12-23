@@ -67,19 +67,20 @@ void add_pokemon(Team & team, Species const species) {
 }
 
 void test_combinations(Team & team) {
-	for (auto const foe_size : bounded::integer_range(2_bi, max_pokemon_per_team + 1_bi)) {
+	for (auto const foe_size : bounded::integer_range(2_bi, max_pokemon_per_team)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
 		auto collection = all_probabilities(team.pokemon(), foe_size);
-		if (size(collection) != foe_size - 1_bi) {
-			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(foe_size - 1_bi) + " but got " + to_string(size(collection)));
+		auto const expected = foe_size - 1_bi;
+		if (size(collection) != expected) {
+			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
 		}
 		for (auto const new_index : bounded::integer_range(foe_size)) {
 			for (auto const current_index : bounded::integer_range(foe_size)) {
 				team.all_pokemon().set_index(current_index);
 				if (current_index == new_index) {
-					phaze_in_same_pokemon(collection.front(), team);
+					phaze_in_same_pokemon(front(collection), team);
 				} else {
-					phaze_in_different_pokemon(collection.front(), team, new_index, current_index, foe_size);
+					phaze_in_different_pokemon(front(collection), team, new_index, current_index, foe_size);
 				}
 			}
 		}
@@ -88,7 +89,7 @@ void test_combinations(Team & team) {
 
 void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	try {
-		variable.set_phaze_index(team, team.pokemon());
+		set_phaze_index(variable, team, team.pokemon());
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	} catch (PhazingInSamePokemon const &) {
 		// Do nothing; the above operation should throw.
@@ -105,10 +106,10 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
 	);
 	try {
-		variable.set_phaze_index(team, team.pokemon(new_index));
+		set_phaze_index(variable, team, team.pokemon(new_index));
 		auto const expected = expected_index[current_index][new_index];
-		if (variable.value() != expected)
-			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(value(expected)) + " but got a result of " + to_string(variable.value()) + ".");
+		if (variable.value != expected)
+			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(value(expected)) + " but got a result of " + to_string(variable.value) + ".");
 		if (new_index == foe_size) {
 			throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
 		}

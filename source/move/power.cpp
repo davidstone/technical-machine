@@ -115,12 +115,12 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 			return result;
 		}
 		case Moves::Magnitude:
-			return variable.value();
+			return variable.value;
 		case Moves::Natural_Gift:
 			return berry_power(get_item(attacker));
 		case Moves::Present:
-			assert (!variable.present_heals());
-			return variable.value();
+			assert(!present_heals(variable));
+			return variable.value;
 		case Moves::Punishment: {
 			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(stage(defender));
 			return bounded::min(uncapped_power, 200_bi);

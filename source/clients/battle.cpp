@@ -205,7 +205,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	
 	// TODO: I'm skeptical of this logic
 	if (other.number_of_seen_pokemon() != 0_bi and is_phaze(current_move(other.replacement()))) {
-		variable(other).set_phaze_index(switcher, species);
+		set_phaze_index(variable(other), switcher, species);
 	} else if (!moved(switcher.pokemon())) {
 		Pokemon & pokemon = switcher.pokemon(replacement);
 		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(pokemon.index_of_first_switch() + switcher.all_pokemon().replacement()));
@@ -483,7 +483,7 @@ Variable & Battle::variable(Team const & team) {
 }
 
 void Battle::handle_flinch(Party const party) {
-	variable(get_team(party)).set_flinch(true);
+	set_flinch(variable(get_team(party)), true);
 }
 
 void Battle::handle_miss(Party const party) {
