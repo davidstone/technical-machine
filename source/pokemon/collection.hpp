@@ -32,7 +32,6 @@
 #include <bounded/integer_range.hpp>
 
 #include <cstddef>
-#include <vector>
 
 namespace technicalmachine {
 using namespace bounded::literal;

@@ -29,8 +29,6 @@
 #include <bounded/integer_range.hpp>
 #include <bounded/optional.hpp>
 
-#include <vector>
-
 namespace technicalmachine {
 using namespace bounded::literal;
 

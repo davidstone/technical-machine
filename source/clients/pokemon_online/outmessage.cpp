@@ -32,7 +32,6 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 #include <utility>
 
 namespace technicalmachine {

@@ -19,7 +19,6 @@
 #include "battle_settings.hpp"
 
 #include <cstdint>
-#include <vector>
 
 #include "inmessage.hpp"
 

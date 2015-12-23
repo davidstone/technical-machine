@@ -39,7 +39,6 @@
 #include <boost/utility/string_ref.hpp>
 
 #include <string>
-#include <vector>
 
 namespace technicalmachine {
 namespace pl {

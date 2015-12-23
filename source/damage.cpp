@@ -18,9 +18,6 @@
 
 #include "damage.hpp"
 
-#include <algorithm>
-#include <vector>
-
 #include "ability.hpp"
 #include "item.hpp"
 #include "status.hpp"

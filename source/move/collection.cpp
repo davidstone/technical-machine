@@ -27,7 +27,6 @@
 #include <containers/algorithms/iterator.hpp>
 
 #include <cassert>
-#include <vector>
 
 namespace technicalmachine {
 

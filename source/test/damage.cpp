@@ -33,7 +33,6 @@
 #include <bounded/integer_range.hpp>
 
 #include <iostream>
-#include <vector>
 
 namespace technicalmachine {
 namespace {
