@@ -34,6 +34,8 @@
 #include "../../string_conversions/nature.hpp"
 #include "../../string_conversions/pokemon.hpp"
 
+#include <containers/array/make_array.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/utility/string_ref.hpp>
@@ -59,16 +61,20 @@ void write_stat(StatType const & stat, boost::string_ref const str, boost::prope
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	static std::pair<StatNames, boost::string_ref> const stats [] = {
-		{ StatNames::ATK, "Atk" },
-		{ StatNames::DEF, "Def" },
-		{ StatNames::SPE, "Spd" },
-		{ StatNames::SPA, "SpAtk" },
-		{ StatNames::SPD, "SpDef" }
+	struct Pair {
+		StatNames name;
+		boost::string_ref string;
 	};
+	static auto const stats = containers::make_array(
+		Pair{ StatNames::ATK, "Atk" },
+		Pair{ StatNames::DEF, "Def" },
+		Pair{ StatNames::SPE, "Spd" },
+		Pair{ StatNames::SPA, "SpAtk" },
+		Pair{ StatNames::SPD, "SpDef" }
+	);
 	write_stat(get_hp(pokemon), "HP", pt);
 	for (auto const & stat : stats) {
-		write_stat(get_stat(pokemon, stat.first), stat.second, pt);
+		write_stat(get_stat(pokemon, stat.name), stat.string, pt);
 	}
 }
 
