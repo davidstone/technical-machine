@@ -97,7 +97,7 @@ public:
 	void for_each_replacement (Function const & f) {
 		// Most versions of the loop do not require the ability to break out early.
 		// This passes in a function that always returns false for when to break out
-		for_each_replacement([]() { return false; }, f);
+		for_each_replacement(std::false_type{}, f);
 	}
 private:
 	struct ResetIndex {
