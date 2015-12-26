@@ -271,9 +271,7 @@ void Battle::parse_send_out (InMessage & msg, Party const party) {
 	bool const is_silent = msg.read_byte();
 	static_cast<void>(is_silent);
 	uint8_t const index = msg.read_byte();
-	uint16_t const species_id = msg.read_short();
-	uint8_t const forme_id = msg.read_byte();
-	Species const species = id_to_species(species_id, forme_id);
+	auto const species = id_to_species(SpeciesIDs{ msg.read_short(), msg.read_byte() });
 	std::string const nickname = msg.read_string();
 	uint8_t const hp_percent = msg.read_byte();
 	// TODO: use hp_percent to verify things are good
@@ -504,6 +502,7 @@ void Battle::parse_temporary_pokemon_change (InMessage & msg) {
 		}
 		case DEFINITE_FORM: {
 			std::cerr << "DEFINITE_FORM\n";
+			// TODO: Is this backward?
 			int8_t const pokemon = static_cast<int8_t> (msg.read_byte ());
 			int16_t const form = static_cast<int16_t> (msg.read_short ());
 			static_cast<void>(pokemon);
@@ -578,14 +577,16 @@ void Battle::handle_cancel_move () {
 
 void Battle::parse_rearrange_team (InMessage & msg) {
 	Todo const t (msg, "REARRANGE_TEAM");
-	for (unsigned n = 0; n != max_pokemon_per_team; ++n) {
-		uint16_t const species_id = msg.read_short ();
-		uint8_t const form_id = msg.read_byte ();
-		uint8_t const level = msg.read_byte ();
-		uint8_t const gender = msg.read_byte ();
-		bool const item = msg.read_byte ();
-		static_cast<void>(species_id);
-		static_cast<void>(form_id);
+	for (auto const n : bounded::integer_range(max_pokemon_per_team)) {
+		static_cast<void>(n);
+		SpeciesIDs const species {
+			msg.read_short(),
+			msg.read_byte()
+		};
+		uint8_t const level = msg.read_byte();
+		auto const gender = static_cast<GenderID>(msg.read_byte());
+		bool const item = msg.read_byte();
+		static_cast<void>(species);
 		static_cast<void>(level);
 		static_cast<void>(gender);
 		static_cast<void>(item);

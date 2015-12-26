@@ -66,8 +66,8 @@ void test_move() {
 	std::cout << "\t\tVerifying correct move.\n";
 	for(auto const original : enum_range<Moves>) {
 		if (!is_switch(original) and original != Moves::Hit_Self) {
-			unsigned const id = move_to_id (original);
-			Moves const result = id_to_move (id);
+			auto const id = move_to_id(original);
+			auto const result = id_to_move(id);
 			if (original != result) {
 				throw InvalidSimulatorConversion(original, result);
 			}
@@ -82,7 +82,7 @@ void test_species() {
 			break;
 		}
 		auto const ids = species_to_id(original);
-		Species const result = id_to_species(ids.first, ids.second);
+		auto const result = id_to_species(ids);
 		if (original != result) {
 			throw InvalidSimulatorConversion(original, result);
 		}

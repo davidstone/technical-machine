@@ -73,17 +73,17 @@ void write_blank_stats (ptree & pt) {
 void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	ptree & member = pt.add ("Pokemon", "");
 	member.put("<xmlattr>.Item", item_to_id(get_item(pokemon)));
-	member.put ("<xmlattr>.Ability", ability_to_id (get_ability(pokemon).name()));
-	std::pair<unsigned, unsigned> const ids = species_to_id(pokemon);
-	member.put ("<xmlattr>.Num", ids.first);
-	member.put ("<xmlattr>.Nature", nature_to_id(get_nature(pokemon)));
-	member.put ("<xmlattr>.Shiny", 0);
-	member.put ("<xmlattr>.Nickname", pokemon.get_nickname());
-	member.put ("<xmlattr>.Gen", 4);
-	member.put ("<xmlattr>.Forme", ids.second);
-	member.put ("<xmlattr>.Happiness", get_happiness(pokemon));
-	member.put ("<xmlattr>.Lvl", get_level(pokemon)());
-	member.put ("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
+	member.put("<xmlattr>.Ability", ability_to_id (get_ability(pokemon).name()));
+	auto const species = species_to_id(pokemon);
+	member.put("<xmlattr>.Num", species.id);
+	member.put("<xmlattr>.Nature", nature_to_id(get_nature(pokemon)));
+	member.put("<xmlattr>.Shiny", 0);
+	member.put("<xmlattr>.Nickname", pokemon.get_nickname());
+	member.put("<xmlattr>.Gen", 4);
+	member.put("<xmlattr>.Forme", species.forme);
+	member.put("<xmlattr>.Happiness", get_happiness(pokemon));
+	member.put("<xmlattr>.Lvl", get_level(pokemon)());
+	member.put("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
 
 	auto const & moves = regular_moves(pokemon);
 	for (auto const & move : moves) {

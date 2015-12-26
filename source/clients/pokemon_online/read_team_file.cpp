@@ -46,14 +46,10 @@ namespace po {
 namespace {
 using boost::property_tree::ptree;
 
-Moves load_move(ptree const & pt) {
-	return id_to_move(pt.get_value<unsigned>());
-}
-
 bool is_real_pokemon(ptree const & pt) {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
 	// empty slots in teams smaller than 6 Pokemon.
-	return pt.get<unsigned>("<xmlattr>.Num") != 0;
+	return pt.get<SpeciesIDs::ID>("<xmlattr>.Num") != 0_bi;
 }
 
 TeamSize number_of_pokemon(ptree const & pt) {
@@ -71,7 +67,7 @@ ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
 		if (it->first != "Move") {
 			throw InvalidTeamFile("Move", it->first);
 		}
-		Moves const move(load_move(it->second));
+		Moves const move(id_to_move(it->second.get_value<MoveID>()));
 		if (move != Moves::END) {
 			all_moves(pokemon).add(move);
 		}
@@ -127,19 +123,17 @@ ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
 }
 
 void load_pokemon(ptree const & pt, Team & team) {
-	auto const id = pt.get<unsigned>("<xmlattr>.Num");
-	auto const forme = pt.get<unsigned>("<xmlattr>.Forme");
-	auto const species = id_to_species(id, forme);
+	auto const species = id_to_species({ pt.get<SpeciesIDs::ID>("<xmlattr>.Num"), pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
-	Gender const gender(id_to_gender(pt.get<unsigned>("<xmlattr>.Gender")));
+	Gender const gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
 	Level const level(pt.get<bounded::checked_integer<Level::min, Level::max>>("<xmlattr>.Lvl"));
 	Happiness const happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
 	team.add_pokemon(species, level, gender, nickname, happiness);
 	Pokemon & pokemon = team.replacement();
 
-	get_item(pokemon) = id_to_item(pt.get<unsigned>("<xmlattr>.Item"));
-	get_ability(pokemon) = id_to_ability(pt.get<unsigned>("<xmlattr>.Ability"));
-	get_nature(pokemon) = id_to_nature(pt.get<unsigned>("<xmlattr>.Nature"));
+	get_item(pokemon) = id_to_item(pt.get<ItemID>("<xmlattr>.Item"));
+	get_ability(pokemon) = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));
+	get_nature(pokemon) = id_to_nature(pt.get<NatureID>("<xmlattr>.Nature"));
 
 	// Get past the xml attributes
 	auto it = ++pt.get_child("").begin();

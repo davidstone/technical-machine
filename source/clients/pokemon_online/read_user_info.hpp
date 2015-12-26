@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "conversion.hpp"
+
 #include "../../pokemon/max_pokemon_per_team.hpp"
 
 #include <containers/static_vector/static_vector.hpp>
@@ -31,7 +33,7 @@ namespace po {
 
 struct InMessage;
 
-using PokemonStaticVector = containers::static_vector<std::pair<uint16_t, uint8_t>, max_pokemon_per_team.value()>;
+using PokemonStaticVector = containers::static_vector<SpeciesIDs, max_pokemon_per_team.value()>;
 
 struct User {
 	explicit User(InMessage & msg);

@@ -1,5 +1,5 @@
 // Convert to / from PO's format
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,10 +18,6 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <utility>
-
 #include "../../ability.hpp"
 #include "../../gender.hpp"
 #include "../../item.hpp"
@@ -33,23 +29,45 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
+#include <bounded/integer.hpp>
+
+#include <cstdint>
+#include <string>
+#include <utility>
+
 namespace technicalmachine {
 namespace po {
 
-Species id_to_species (unsigned id, unsigned forme);
-std::pair <uint16_t, uint8_t> species_to_id (Species species);
-Ability::Abilities id_to_ability (unsigned id);
-unsigned ability_to_id (Ability::Abilities ability);
-Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part);
-Gender::Genders id_to_gender (unsigned id);
-unsigned gender_to_id (Gender::Genders gender);
-Item id_to_item(unsigned id);
-unsigned item_to_id(Item item);
+struct SpeciesIDs {
+	using ID = bounded::checked_integer<0, 493>;
+	using Forme = bounded::checked_integer<0, 5>;
+	ID id;
+	Forme forme;	
+};
+Species id_to_species(SpeciesIDs species);
+SpeciesIDs species_to_id(Species species);
+
+using AbilityID = bounded::checked_integer<0, 123>;
+Ability::Abilities id_to_ability(AbilityID id);
+AbilityID ability_to_id(Ability::Abilities ability);
+Ability::Abilities battle_id_to_ability(uint16_t id, uint8_t part);
+
+using GenderID = bounded::checked_integer<0, 2>;
+Gender::Genders id_to_gender(GenderID id);
+GenderID gender_to_id(Gender::Genders gender);
+
+using ItemID = bounded::checked_integer<0, 226>;
+Item id_to_item(ItemID id);
+ItemID item_to_id(Item item);
 Item battle_id_to_item(uint16_t id, uint8_t part);
-Moves id_to_move (unsigned id);
-unsigned move_to_id (Moves move);
-Nature id_to_nature(unsigned id);
-unsigned nature_to_id(Nature nature);
+
+using MoveID = bounded::checked_integer<0, (bounded::make(Moves::END) - bounded::make(Moves::Regular_Begin)).value()>;
+Moves id_to_move(MoveID id);
+MoveID move_to_id(Moves move);
+
+using NatureID = bounded::checked_integer<0, 24>;
+Nature id_to_nature(NatureID id);
+NatureID nature_to_id(Nature nature);
 
 } // namespace po
 } // namespace technicalmachine

@@ -35,9 +35,11 @@ auto load_team_vector(InMessage & msg) {
 	PokemonStaticVector team;
 	for (auto const n : bounded::integer_range(max_pokemon_per_team)) {
 		static_cast<void>(n);
-		uint16_t const species = msg.read_short();
-		uint8_t const forme = msg.read_byte();
-		team.emplace_back(species, forme);
+		SpeciesIDs const species{
+			msg.read_short(),
+			msg.read_byte()
+		};
+		push_back(team, species);
 	}
 	return team;
 }

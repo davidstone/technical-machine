@@ -72,9 +72,9 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 }
 
 void OutMessage::write_pokemon (Pokemon const & pokemon) {
-	std::pair <uint16_t, uint8_t> const species = species_to_id(pokemon);
-	write_short (species.first);
-	write_byte (species.second);
+	auto const species = species_to_id(pokemon);
+	write_short(species.id);
+	write_byte(species.forme);
 	write_string (pokemon.get_nickname());
 	auto const item = static_cast<uint16_t>(item_to_id(get_item(pokemon)));
 	write_short (item);
